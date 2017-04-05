@@ -3448,6 +3448,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Oferta oferta = expediente.getOferta();
 		Usuario usuarioGestorFormalizacion = null;
 		Usuario usuarioGestoriaFormalizacion = null;
+		Usuario usuarioGestorComercial = null;
+		Usuario usuarioGestorComercialBack = null;
 		
 		if(!Checks.esNulo(oferta)){
 			ActivoAgrupacion agrupacion = oferta.getAgrupacion();
@@ -3456,6 +3458,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					ActivoLoteComercial activoLoteComercial = genericDao.get(ActivoLoteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", agrupacion.getId()));
 					usuarioGestorFormalizacion = activoLoteComercial.getUsuarioGestorFormalizacion();
 					usuarioGestoriaFormalizacion = activoLoteComercial.getUsuarioGestoriaFormalizacion();
+					usuarioGestorComercial = activoLoteComercial.getUsuarioGestorComercial();
+					usuarioGestorComercialBack = activoLoteComercial.getUsuarioGestorComercialBackOffice();
 				}else{//Es una oferta de lote restringido
 					Activo activo = oferta.getActivoPrincipal();
 					if(!Checks.esNulo(activo)){
@@ -3492,6 +3496,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		if(!Checks.esNulo(usuarioGestoriaFormalizacion))
 			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION, usuarioGestoriaFormalizacion.getUsername(), dto);
+		
+		if(!Checks.esNulo(usuarioGestorComercial))
+			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_COMERCIAL, usuarioGestorComercial.getUsername(), dto);
+		
+		if(!Checks.esNulo(usuarioGestorComercialBack))
+			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE, usuarioGestorComercialBack.getUsername(), dto);
 	}
 
 	private void agregarTipoGestorYUsuarioEnDto(String codTipoGestor, String username, GestorEntidadDto dto) {

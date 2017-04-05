@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.user.impl;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,8 @@ import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -96,8 +99,19 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 
 		if(GestorActivoApi.CODIGO_GESTOR_FORMALIZACION.equals(codigoGestor) || GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION.equals(codigoGestor))
 			return this.getGestorOrSupervisorExpedienteByCodigo(tareaExterna, codigoGestor);
-		else
-			return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tipoGestor.getId());
+		
+		ActivoLoteComercial loteComercial = this.obtenerLoteComercial(tareaActivo);
+		
+		if(!Checks.esNulo(loteComercial)){
+			if(GestorActivoApi.CODIGO_GESTOR_COMERCIAL.equals(codigoGestor))
+				if(!Checks.esNulo(loteComercial.getUsuarioGestorComercial()))
+					return loteComercial.getUsuarioGestorComercial();
+			if(GestorActivoApi.CODIGO_GESTOR_BACKOFFICE.equals(codigoGestor))
+				if(!Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice()))
+					return loteComercial.getUsuarioGestorComercialBackOffice();
+		}
+
+		return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tipoGestor.getId());
 	}
 
 	@Override
@@ -114,8 +128,19 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 
 		if(GestorActivoApi.CODIGO_GESTOR_FORMALIZACION.equals(codigoSupervisor) || GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION.equals(codigoSupervisor))
 			return this.getGestorOrSupervisorExpedienteByCodigo(tareaExterna, codigoSupervisor);
-		else
-			return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tipoGestor.getId());
+		
+		ActivoLoteComercial loteComercial = this.obtenerLoteComercial(tareaActivo);
+		
+		if(!Checks.esNulo(loteComercial)){
+			if(GestorActivoApi.CODIGO_GESTOR_COMERCIAL.equals(codigoSupervisor))
+				if(!Checks.esNulo(loteComercial.getUsuarioGestorComercial()))
+					return loteComercial.getUsuarioGestorComercial();
+			if(GestorActivoApi.CODIGO_GESTOR_BACKOFFICE.equals(codigoSupervisor))
+				if(!Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice()))
+					return loteComercial.getUsuarioGestorComercialBackOffice();
+		}
+
+		return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tipoGestor.getId());
 			
 	}
 	
@@ -225,6 +250,23 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			return gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, codigo);
 		}
 		
+		return null;
+	}
+	
+	private ActivoLoteComercial obtenerLoteComercial(TareaActivo tareaActivo){
+		List<ActivoAgrupacionActivo> listaAgrupaciones = tareaActivo.getActivo().getAgrupaciones();
+		if(!Checks.estaVacio(listaAgrupaciones)){
+			for(ActivoAgrupacionActivo agr : listaAgrupaciones){
+				DDTipoAgrupacion tipoAgrupacion = agr.getAgrupacion().getTipoAgrupacion();
+				if(!Checks.esNulo(tipoAgrupacion)){
+					if(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(tipoAgrupacion.getCodigo())){
+						if(Checks.esNulo(agr.getAgrupacion().getFechaBaja()))
+							return genericDao.get(ActivoLoteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", agr.getAgrupacion().getId()));
+							//return (ActivoLoteComercial) agr.getAgrupacion();
+					}
+				}
+			}
+		}
 		return null;
 	}
 }

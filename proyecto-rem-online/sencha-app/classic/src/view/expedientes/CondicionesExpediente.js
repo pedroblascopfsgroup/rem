@@ -216,8 +216,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								            	},
 								            	displayField: 'descripcion',
 					    						valueField: 'codigo',
-					    						reference: 'plusvaliaPorCuentaDe',
-					    						disabled: true
+					    						reference: 'plusvaliaPorCuentaDe'
+					    						//,disabled: true
 									        },
 											
 							                { 
@@ -239,8 +239,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								            	},
 								            	displayField: 'descripcion',
 					    						valueField: 'codigo',
-					    						reference: 'notariaPorCuentaDe',
-					    						disabled: true
+					    						reference: 'notariaPorCuentaDe'
+					    						//,disabled: true
 									        },
 									        { 
 												xtype: 'numberfieldbase',
@@ -261,8 +261,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								            	},
 								            	displayField: 'descripcion',
 					    						valueField: 'codigo',
-					    						reference: 'compraventaOtrosPorCuentaDe',
-					    						disabled: true
+					    						reference: 'compraventaOtrosPorCuentaDe'
+					    						//,disabled: true
 									        }
 				
 										]
@@ -309,8 +309,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 											            	},
 											            	displayField: 'descripcion',
 								    						valueField: 'codigo',
-								    						reference: 'ibiPorCuentaDe',
-								    						disabled: true
+								    						reference: 'ibiPorCuentaDe'
+								    						//,disabled: true
 												        },
 														
 										                { 
@@ -332,8 +332,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 											            	},
 											            	displayField: 'descripcion',
 								    						valueField: 'codigo',
-								    						reference: 'comunidadPorCuentaDe',
-								    						disabled: true
+								    						reference: 'comunidadPorCuentaDe'
+								    						//,disabled: true
 												        },
 												        { 
 															xtype: 'numberfieldbase',
@@ -354,8 +354,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 											            	},
 											            	displayField: 'descripcion',
 								    						valueField: 'codigo',
-								    						reference: 'suministrosPorCuentaDe',
-								    						disabled: true
+								    						reference: 'suministrosPorCuentaDe'
+								    						//,disabled: true
 												        }
 							
 													]
@@ -399,8 +399,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                	fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
 									        	bind: {
 								            		store: '{comboTiposPorCuenta}',
-								            		value: '{condiciones.impuestosPorCuentaDe}',
-								            		disabled: '{!esImpuestoMayorQueCero}'
+								            		value: '{condiciones.impuestosPorCuentaDe}'
+								            		//,disabled: '{!esImpuestoMayorQueCero}'
 								            	},
 								            	displayField: 'descripcion',
 					    						valueField: 'codigo',
@@ -420,8 +420,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                	fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
 									        	bind: {
 								            		store: '{comboTiposPorCuenta}',
-								            		value: '{condiciones.comunidadesPorCuentaDe}',
-								            		disabled: '{!esComunidadesMayorQueCero}'
+								            		value: '{condiciones.comunidadesPorCuentaDe}'
+								            		//,disabled: '{!esComunidadesMayorQueCero}'
 					    							
 								            	},
 								            	displayField: 'descripcion',
@@ -449,8 +449,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								            	},
 								            	displayField: 'descripcion',
 					    						valueField: 'codigo',
-					    						reference: 'cargasPendientesOtrosPorCuentaDe',
-					    						disabled: true
+					    						reference: 'cargasPendientesOtrosPorCuentaDe'
+					    						//,disabled: true
 									        }
 									        
 									        

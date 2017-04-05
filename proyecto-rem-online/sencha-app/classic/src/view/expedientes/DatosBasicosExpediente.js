@@ -151,36 +151,36 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 						xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
 						fieldLabel: HreRem.i18n('fieldlabel.fecha.alta.oferta'),
-	                	bind:		'{expediente.fechaAltaOferta}',
-	                	readOnly: true
+	                	bind:		'{expediente.fechaAltaOferta}'
+	                	//,readOnly: true
 	                },
 	                {
 	                	xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
 	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.aceptacion'),
-	                	bind:		'{expediente.fechaAlta}',
-	                	readOnly: true
+	                	bind:		'{expediente.fechaAlta}'
+	                	//,readOnly: true
 	                },
 	                {
 	                	xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
 	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.sancion'),
-	                	bind:		'{expediente.fechaSancion}',
-	                	readOnly: true
+	                	bind:		'{expediente.fechaSancion}'
+	                	//,readOnly: true
 	                },
 	                { 
 	                	xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
 						fieldLabel: HreRem.i18n('fieldlabel.fecha.reserva'),
-	                	bind:		'{expediente.fechaReserva}',
-	                	readOnly: true
+	                	bind:		'{expediente.fechaReserva}'
+	                	//,readOnly: true
 	                },
 	                {
 	                	xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
 	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.venta'),
-	                	bind:		'{expediente.fechaVenta}',
-	                	readOnly: true
+	                	bind:		'{expediente.fechaVenta}'
+	                	//,readOnly: true
 	                	
 	                },
 	                {
@@ -199,7 +199,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 				defaultType: 'displayfield',
 				title: HreRem.i18n('title.anulacion'),
 				defaults: {
-					readOnly: true
+					//readOnly: true
 				},
 				items: [
 						{

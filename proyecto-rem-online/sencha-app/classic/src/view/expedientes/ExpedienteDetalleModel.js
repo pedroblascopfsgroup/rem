@@ -624,6 +624,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			type: 'uxproxy',
 			remoteUrl: 'expedientecomercial/getComboTipoGestorFiltered'
 			}/*,autoLoad: true*/
-		}
+		},
+		
+		storeProcedeDevolucion: {
+	    	model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+		        extraParams: {diccionario: 'devolucionReserva'}
+	    	}	    	
+	    }
+		
     }
 });

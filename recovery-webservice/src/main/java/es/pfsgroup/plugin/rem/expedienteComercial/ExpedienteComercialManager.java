@@ -655,7 +655,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				dto.setFechaSancion(expediente.getFechaSancion());
 
 				if(!Checks.esNulo(expediente.getReserva())) {
-					dto.setFechaReserva(expediente.getReserva().getFechaEnvio());
+					dto.setFechaReserva(expediente.getReserva().getFechaFirma());
 				}
 
 				if(!Checks.esNulo(oferta.getAgrupacion())) {
@@ -2294,9 +2294,6 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					DDMotivoAnulacionExpediente motivoAnulacionExpediente = 
 							(DDMotivoAnulacionExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoAnulacionExpediente.class, dto.getCodMotivoAnulacion());
 					expedienteComercial.setMotivoAnulacion(motivoAnulacionExpediente);
-				} else {
-					
-					expedienteComercial.setMotivoAnulacion(null);
 				}
 				
 				if(!Checks.esNulo(expedienteComercial.getReserva())){
@@ -2306,7 +2303,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					}
 					
 					if(!Checks.esNulo(dto.getFechaReserva())) {
-						expedienteComercial.getReserva().setFechaEnvio(dto.getFechaReserva());
+						expedienteComercial.getReserva().setFechaFirma(dto.getFechaReserva());
 					}
 				}
 				if(!Checks.esNulo(expedienteComercial.getUltimoPosicionamiento()) && !Checks.esNulo(dto.getFechaPosicionamiento())){

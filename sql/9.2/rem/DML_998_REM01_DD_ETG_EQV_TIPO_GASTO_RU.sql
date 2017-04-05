@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=DAP
---## FECHA_CREACION=20170327
+--## AUTOR=Gustavo Mora
+--## FECHA_CREACION=20170404
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-1832
@@ -10,7 +10,7 @@
 --## Finalidad: Script que carga la tabla DD_ETG_EQV_TIPO_GASTO_RU
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial DAP
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;

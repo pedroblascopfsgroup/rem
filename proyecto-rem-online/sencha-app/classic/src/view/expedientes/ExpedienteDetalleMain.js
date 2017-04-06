@@ -32,7 +32,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleMain', {
     		me.add({xtype: 'cabeceraexpediente'});
     		me.add({xtype: 'expedientedetalle', flex: 1});
     	}
-    	debugger;
     	/**
     	 * La formula que desactiva la pestaña de reserva no actua cuando se renderiza por primera vez el expediente
     	 */

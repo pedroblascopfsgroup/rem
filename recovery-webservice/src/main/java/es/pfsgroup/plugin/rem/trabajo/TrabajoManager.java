@@ -108,9 +108,11 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAdelanto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.propuestaprecios.dao.PropuestaPrecioDao;
+import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
@@ -186,6 +188,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Resource
 	MessageService messageServices;
+	
+	@Autowired
+	private ProveedoresDao proveedoresDao;
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -2043,6 +2048,32 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 		}
 		
+		return new ArrayList<VProveedores>();
+	}
+	
+	@Override
+	public List<VProveedores> getComboProveedorFiltered(Long idTrabajo) {
+		
+		Trabajo trabajo = findOne(idTrabajo);		
+		Activo activo = trabajo.getActivo();
+		
+		if(!Checks.esNulo(activo)){
+			if(!Checks.esNulo(activo.getCartera())) {
+				String codigosTipoProveedores = null;
+				
+				if(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo())) {
+					codigosTipoProveedores = DDTipoProveedor.COD_MANTENIMIENTO_TECNICO + "," + DDTipoProveedor.COD_ASEGURADORA;
+				
+				} else if(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo())) {
+					String codSubtipo = trabajo.getSubtipoTrabajo().getCodigo();
+					if(!DDSubtipoTrabajo.CODIGO_CEE.equals(codSubtipo) && !DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD.equals(codSubtipo)) {
+						codigosTipoProveedores = DDTipoProveedor.COD_MANTENIMIENTO_TECNICO + "," + DDTipoProveedor.COD_GESTORIA;
+					}
+				}
+				
+				return proveedoresDao.getProveedoresFilteredByTiposTrabajo(codigosTipoProveedores,activo.getCartera().getCodigo());
+			}
+		}
 		return new ArrayList<VProveedores>();
 	}
 	

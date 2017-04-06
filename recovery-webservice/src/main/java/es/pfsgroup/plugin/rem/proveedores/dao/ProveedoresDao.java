@@ -7,6 +7,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.VProveedores;
 
 public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
 
@@ -21,5 +22,13 @@ public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
 	public Long getNextNumCodigoProveedor();
 
 	public List<ActivoProveedor> getProveedoresByNifList(String nif);
+	
+	/**
+	 * Lista de proveedores filtrada por cartera y tipos de proveedor
+	 * @param codigosTipoProveedores
+	 * @param codCartera
+	 * @return
+	 */
+	public List<VProveedores> getProveedoresFilteredByTiposTrabajo(String codigosTipoProveedores, String codCartera);
 
 }

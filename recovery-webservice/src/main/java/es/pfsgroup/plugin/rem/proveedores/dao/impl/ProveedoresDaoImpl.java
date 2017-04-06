@@ -20,6 +20,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 
@@ -150,6 +151,22 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		hb.appendWhere("proveedor.homologado = 1");
 		
 		return HibernateQueryUtils.list(this, hb);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VProveedores> getProveedoresFilteredByTiposTrabajo(String codigosTipoProveedores, String codCartera) {
+		HQLBuilder hb = new HQLBuilder(" from VProveedores v");
+		
+		hb.appendWhere("v.codigoCartera = " + codCartera);
+		hb.appendWhere("v.baja = 0");
+		
+		if(!Checks.esNulo(codigosTipoProveedores)) 
+			hb.appendWhere("v.codigoTipoProveedor in (" + codigosTipoProveedores + ")");
+		
+		hb.orderBy("v.nombreComercial", HQLBuilder.ORDER_ASC);
+		
+		return (List<VProveedores>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 	}
 
 }

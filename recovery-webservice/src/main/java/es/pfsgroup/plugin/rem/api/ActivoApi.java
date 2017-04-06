@@ -136,7 +136,7 @@ public interface ActivoApi {
 	public boolean savePrecioVigente(DtoPrecioVigente precioVigenteDto);
 
 	@BusinessOperationDefinition("activoManager.saveOfertaActivo")
-	public boolean saveOfertaActivo(DtoOfertaActivo precioVigenteDto);
+	public boolean saveOfertaActivo(DtoOfertaActivo precioVigenteDto) throws JsonViewerException, Exception;
 
 	/**
 	 * saveActivoValoracion: Para un activo dado, actualiza o crea una

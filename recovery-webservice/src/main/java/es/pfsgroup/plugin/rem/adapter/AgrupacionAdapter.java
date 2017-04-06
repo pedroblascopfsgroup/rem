@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
@@ -161,6 +164,9 @@ public class AgrupacionAdapter {
 
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Resource
+	MessageService messageServices;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -170,7 +176,9 @@ public class AgrupacionAdapter {
 	public static final String PUBLICACION_MOTIVO_MSG = "Publicado desde agrupación";
 	public static final String PUBLICACION_AGRUPACION_BAJA_ERROR_MSG = "No ha sido posible publicar. La agrupación está dada de baja";
 	public static final String AGRUPACION_BAJA_ERROR_OFERTAS_VIVAS = "No ha sido posible dar de baja la agrupación. Existen ofertas vivas";
-
+	private static final String AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO = "activo.motivo.oferta.tipo.numero.documento";
+	private static final String AVISO_MENSAJE_CLIENTE_OBLIGATORIO = "activo.motivo.oferta.cliente";
+	
 	public DtoAgrupaciones getAgrupacionById(Long id) {
 
 		DtoAgrupaciones dtoAgrupacion = new DtoAgrupaciones();
@@ -1165,11 +1173,19 @@ public class AgrupacionAdapter {
 	}
 
 	@Transactional(readOnly = false)
-	public boolean saveOfertaAgrupacion(DtoOfertaActivo dto) throws Exception {
+	public boolean saveOfertaAgrupacion(DtoOfertaActivo dto) throws JsonViewerException, Exception {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
 		Oferta oferta = genericDao.get(Oferta.class, filtro);
 
+		if(!Checks.esNulo(oferta.getCliente())){
+			if(Checks.esNulo(oferta.getCliente().getDocumento()) || Checks.esNulo(oferta.getCliente().getTipoDocumento())){
+				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO));
+			}
+		}else{
+			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_CLIENTE_OBLIGATORIO));
+		}
+		
 		DDEstadoOferta tipoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class,
 				dto.getCodigoEstadoOferta());
 
@@ -1186,7 +1202,7 @@ public class AgrupacionAdapter {
 			}
 		}
 
-		try {
+//		try {
 			oferta.setEstadoOferta(tipoOferta);
 
 			// Si el estado de la oferta cambia a Aceptada cambiamos el resto de
@@ -1218,10 +1234,11 @@ public class AgrupacionAdapter {
 
 			genericDao.update(Oferta.class, oferta);
 
-		} catch (Exception ex) {
-			logger.error("error en agrupacionAdapter", ex);
-			return false;
-		}
+//		} 
+//		catch (Exception ex) {
+//			logger.error("error en agrupacionAdapter", ex);
+//			return false;
+//		}
 
 		return true;
 	}

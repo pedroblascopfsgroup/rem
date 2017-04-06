@@ -270,6 +270,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	private static final String AVISO_MENSAJE_ACTIVO_EN_LOTE_COMERCIAL = "activo.aviso.aceptatar.oferta.activo.dentro.lote.comercial";
 	private static final String MOTIVO_NO_PUBLICADO_POR_ACTIVO_VENDIDO = "activo.motivo.vendido.no.publicar";
+	private static final String AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO = "activo.motivo.oferta.tipo.numero.documento";
+	private static final String AVISO_MENSAJE_CLIENTE_OBLIGATORIO = "activo.motivo.oferta.cliente";
 
 	@Override
 	@BusinessOperation(overrides = "activoManager.get")
@@ -392,7 +394,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	@BusinessOperation(overrides = "activoManager.saveOfertaActivo")
 	@Transactional(readOnly = false)
-	public boolean saveOfertaActivo(DtoOfertaActivo dto) throws JsonViewerException {
+	public boolean saveOfertaActivo(DtoOfertaActivo dto) throws JsonViewerException, Exception {
 
 		boolean resultado = true;
 		// Si el activo pertenece a un lote comercial, no se pueden aceptar
@@ -401,10 +403,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACTIVO_EN_LOTE_COMERCIAL));
 		}
 
-		try {
+//		try {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
 			Oferta oferta = genericDao.get(Oferta.class, filtro);
 
+			if(!Checks.esNulo(oferta.getCliente())){
+				if(Checks.esNulo(oferta.getCliente().getDocumento()) || Checks.esNulo(oferta.getCliente().getTipoDocumento())){
+					throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO));
+				}
+			}else{
+				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_CLIENTE_OBLIGATORIO));
+			}
+			
 			DDEstadoOferta tipoOferta = (DDEstadoOferta) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
 
@@ -426,10 +436,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 			genericDao.update(Oferta.class, oferta);
 
-		} catch (Exception ex) {
-			logger.error("Error en activoManager", ex);
-			resultado = false;
-		}
+//		} 
+//		catch (Exception ex) {
+//			logger.error("Error en activoManager", ex);
+//			resultado = false;
+//		}
 
 		return resultado;
 	}
@@ -572,45 +583,48 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			// TitularReserva y TitularContratacion estan al contrario. Por
 			// decirlo de alguna forma son "Compradores secundarios"
 			for (TitularesAdicionalesOferta titularAdicional : oferta.getTitularesAdicionales()) {
+				
+				//TODO: Dani: Si el comprador adicional viene sin documento, lo descartamos
+				if(!Checks.esNulo(titularAdicional.getDocumento())){
 
-				Filter filtroCompradorAdicional = genericDao.createFilter(FilterType.EQUALS, "documento",
-						titularAdicional.getDocumento());
-				Comprador compradorBusquedaAdicional = genericDao.get(Comprador.class, filtroCompradorAdicional);
-
-				if (!Checks.esNulo(compradorBusquedaAdicional)) {
-					CompradorExpediente compradorExpedienteAdicionalNuevo = new CompradorExpediente();
-					CompradorExpedientePk pk = new CompradorExpedientePk();
-
-					pk.setComprador(compradorBusquedaAdicional);
-					pk.setExpediente(nuevoExpediente);
-					compradorExpedienteAdicionalNuevo.setPrimaryKey(pk);
-					compradorExpedienteAdicionalNuevo.setTitularReserva(1);
-					compradorExpedienteAdicionalNuevo.setTitularContratacion(0);
-					compradorExpedienteAdicionalNuevo.setPorcionCompra(100.00);
-
-					listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
-				} else {
-					Comprador nuevoCompradorAdicional = new Comprador();
-					CompradorExpediente compradorExpedienteAdicionalNuevo = new CompradorExpediente();
-
-					nuevoCompradorAdicional.setDocumento(titularAdicional.getDocumento());
-					nuevoCompradorAdicional.setNombre(titularAdicional.getNombre());
-					nuevoCompradorAdicional.setTipoDocumento(titularAdicional.getTipoDocumento());
-					genericDao.save(Comprador.class, nuevoCompradorAdicional);
-
-					CompradorExpedientePk pk = new CompradorExpedientePk();
-
-					pk.setComprador(nuevoCompradorAdicional);
-					pk.setExpediente(nuevoExpediente);
-					compradorExpedienteAdicionalNuevo.setPrimaryKey(pk);
-					compradorExpedienteAdicionalNuevo.setTitularReserva(1);
-					compradorExpedienteAdicionalNuevo.setTitularContratacion(0);
-					compradorExpedienteAdicionalNuevo.setPorcionCompra(100.00);
-
-					listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
-
+					Filter filtroCompradorAdicional = genericDao.createFilter(FilterType.EQUALS, "documento",
+							titularAdicional.getDocumento());
+					Comprador compradorBusquedaAdicional = genericDao.get(Comprador.class, filtroCompradorAdicional);
+	
+					if (!Checks.esNulo(compradorBusquedaAdicional)) {
+						CompradorExpediente compradorExpedienteAdicionalNuevo = new CompradorExpediente();
+						CompradorExpedientePk pk = new CompradorExpedientePk();
+	
+						pk.setComprador(compradorBusquedaAdicional);
+						pk.setExpediente(nuevoExpediente);
+						compradorExpedienteAdicionalNuevo.setPrimaryKey(pk);
+						compradorExpedienteAdicionalNuevo.setTitularReserva(1);
+						compradorExpedienteAdicionalNuevo.setTitularContratacion(0);
+						compradorExpedienteAdicionalNuevo.setPorcionCompra(100.00);
+	
+						listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
+					} else {
+						Comprador nuevoCompradorAdicional = new Comprador();
+						CompradorExpediente compradorExpedienteAdicionalNuevo = new CompradorExpediente();
+	
+						nuevoCompradorAdicional.setDocumento(titularAdicional.getDocumento());
+						nuevoCompradorAdicional.setNombre(titularAdicional.getNombre());
+						nuevoCompradorAdicional.setTipoDocumento(titularAdicional.getTipoDocumento());
+						genericDao.save(Comprador.class, nuevoCompradorAdicional);
+	
+						CompradorExpedientePk pk = new CompradorExpedientePk();
+	
+						pk.setComprador(nuevoCompradorAdicional);
+						pk.setExpediente(nuevoExpediente);
+						compradorExpedienteAdicionalNuevo.setPrimaryKey(pk);
+						compradorExpedienteAdicionalNuevo.setTitularReserva(1);
+						compradorExpedienteAdicionalNuevo.setTitularContratacion(0);
+						compradorExpedienteAdicionalNuevo.setPorcionCompra(100.00);
+	
+						listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
+	
+					}
 				}
-
 			}
 
 			// Una vez creadas las relaciones Comprador-Expediente se añaden al

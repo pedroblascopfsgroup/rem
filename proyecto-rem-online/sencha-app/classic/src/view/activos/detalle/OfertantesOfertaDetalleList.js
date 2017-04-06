@@ -1,5 +1,5 @@
 Ext.define('HreRem.view.activos.detalle.OfertantesOfertaDetalleList', {
-    extend		: 'HreRem.view.common.GridBaseEditableRowSinEdicion',
+    extend		: 'HreRem.view.common.GridBaseEditableRow',
     xtype		: 'ofertantesofertadetallelist',
     reference	: 'ofertanteslistdetalleofertaref',
 	topBar		: false,
@@ -22,12 +22,33 @@ Ext.define('HreRem.view.activos.detalle.OfertantesOfertaDetalleList', {
 		        {
 		        	dataIndex: 'tipoDocumento',
 		        	text: HreRem.i18n('fieldlabel.tipoDocumento'),
-		        	flex:0.5
+		        	flex:0.5,
+		        	renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
+			            var foundedRecord = this.up('activosdetallemain').getViewModel().getStore('comboTipoDocumento').findRecord('codigo', value);
+			            var descripcion;
+			        	if(!Ext.isEmpty(foundedRecord)) {
+			        		descripcion = foundedRecord.getData().descripcion;
+			        	}
+			            return descripcion;
+			        },
+			        editor: {
+			            xtype: 'combobox',
+			            displayField: 'descripcion',
+			            valueField: 'codigo',
+			            bind: {
+			            	store: '{comboTipoDocumento}'
+			            },
+			            reference: 'cbTipoDocumento'
+			        }
 		        },
 		        {
 		        	dataIndex: 'numDocumento',
 		        	text: HreRem.i18n('header.numero.documento'),
-		        	flex:1
+		        	flex:1,
+		            editor: {
+		            	xtype: 'textfield',
+		            	maxLength: 50
+		            }
 		        },
 		        {
 		        	dataIndex: 'nombre',

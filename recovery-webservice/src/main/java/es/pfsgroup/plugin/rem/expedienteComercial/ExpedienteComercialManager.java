@@ -1754,8 +1754,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		if(!Checks.esNulo(expediente.getEstadoPbc()) && expediente.getEstadoPbc() == 0) {
 			permitirGenerarHoja = false;
 		}
-		if(!Checks.esNulo(expediente.getUltimoPosicionamiento()) && new Date().compareTo(expediente.getUltimoPosicionamiento().getFechaPosicionamiento()) > 0) {
-			permitirGenerarHoja = false;
+		if(!Checks.esNulo(expediente.getUltimoPosicionamiento())){
+			if(new Date().compareTo(expediente.getUltimoPosicionamiento().getFechaPosicionamiento()) > 0) {
+				permitirGenerarHoja = false;
+			}
 		}
 		List<BloqueoActivoFormalizacion> bloqueos = genericDao.getList(BloqueoActivoFormalizacion.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId()));
 		if(!Checks.estaVacio(bloqueos)) { 

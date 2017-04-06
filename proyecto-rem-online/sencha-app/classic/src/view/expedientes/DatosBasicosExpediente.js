@@ -233,7 +233,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							title: HreRem.i18n('title.devolucion.reserva'),
 							colspan: 3,
 							bind: {
-								hidden: '{!expediente.tieneReserva}'
+								disabled: '{!expediente.tieneReserva}'
 							},
 							items: [
 									{
@@ -241,7 +241,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 										formatter: 'date("d/m/Y")',
 										fieldLabel: HreRem.i18n('fieldlabel.fecha.devolucion.reserva'),
 										bind: {
-											disabled: '{!expediente.tieneReserva}',
+											//disabled: '{!expediente.tieneReserva}',
 											value: '{expediente.fechaDevolucionEntregas}'
 										}
 									},
@@ -249,7 +249,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 										xtype: 'numberfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.importe.devolucion'),
 										bind: {
-											disabled: '{!expediente.tieneReserva}',
+											//disabled: '{!expediente.tieneReserva}',
 											value: '{expediente.importeDevolucionEntregas}'
 										}
 									},
@@ -258,7 +258,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 										reference: 'comboEstadoDevolucion',
 					                	fieldLabel:  HreRem.i18n('fieldlabel.estado.devolucion'),
 							        	bind: {
-							        		disabled: '{!expediente.tieneReserva}',
+							        		//disabled: '{!expediente.tieneReserva}',
 							        		store: '{storeEstadosDevolucion}',
 						            		value: '{expediente.estadoDevolucionCodigo}'
 						            	}

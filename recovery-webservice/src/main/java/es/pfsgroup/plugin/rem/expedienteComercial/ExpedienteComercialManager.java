@@ -2719,6 +2719,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			throw new JsonViewerException("No se ha indicado el porcentaje de impuesto en el campo Tipo aplicable.");
 		}
 		
+		
 		Double importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta() : oferta.getImporteContraOferta();	
 		Double sumatorioImporte = new Double(0);
 		Double sumatorioPorcentaje = new Double(0);
@@ -2761,6 +2762,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				instData.setTipoDeImpuesto(tipoDeImpuesto);	
 			}else{
 				throw new JsonViewerException("No se ha indicado el tipo de impuesto.");
+			}
+			
+			if(!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getRenunciaExencion())) {
+				instData.setRenunciaExencion(expediente.getCondicionante().getRenunciaExencion());
 			}
 			
 			//PorcentajeImpuesto

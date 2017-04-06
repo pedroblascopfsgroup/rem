@@ -1289,38 +1289,39 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	comprobarObligatoriedadCamposNexos: function() {
 		var me = this,
-		campoEstadoCivil = me.lookupReference('estadoCivil');
-		campoRegEconomico = me.lookupReference('regimenMatrimonial');
+		campoEstadoCivil = me.lookupReference('estadoCivil'),
+		campoRegEconomico = me.lookupReference('regimenMatrimonial'),
 		campoNumConyuge = me.lookupReference('numRegConyuge');
+
 		// Si el tipo de persona es FÍSICA, entonces el campos Estado civil es obligatorio y se habilitan campos dependientes.
 		if(me.lookupReference('tipoPersona').getValue() === "1" ) {
-			campoEstadoCivil.setDisabled(false);
-			campoRegEconomico.setDisabled(false);
-			campoNumConyuge.setDisabled(false);
+			//campoEstadoCivil.setDisabled(false);
+			//campoRegEconomico.setDisabled(false);
+			//campoNumConyuge.setDisabled(false);
 			campoEstadoCivil.allowBlank = false;
 			campoEstadoCivil.validate();
 			if(campoEstadoCivil.getValue() === "02") {
 				// Si el Estado civil es 'Casado', entonces Reg. económico es obligatorio.
 				campoRegEconomico.allowBlank = false;
-				campoRegEconomico.setDisabled(false);
-				campoNumConyuge.setDisabled(false);
+				//campoRegEconomico.setDisabled(false);
+				//campoNumConyuge.setDisabled(false);
 			} else {
 				campoRegEconomico.allowBlank = true;
-				campoRegEconomico.reset();
-				campoNumConyuge.reset();
-				campoRegEconomico.setDisabled(true);
-				campoNumConyuge.setDisabled(true);
+				//campoRegEconomico.reset();
+				//campoNumConyuge.reset();
+				//campoRegEconomico.setDisabled(true);
+				//campoNumConyuge.setDisabled(true);
 			}
 		} else {
 			//  Si el tipo de persona es 'Jurídica' entonces desactivar los campos dependientes del otro estado.
 			campoEstadoCivil.allowBlank = true;
 			campoRegEconomico.allowBlank = true;
-			campoEstadoCivil.reset();
-			campoRegEconomico.reset();
-			campoNumConyuge.reset();
-			campoEstadoCivil.setDisabled(true);
-			campoRegEconomico.setDisabled(true);
-			campoNumConyuge.setDisabled(true);
+			//campoEstadoCivil.reset();
+			//campoRegEconomico.reset();
+			//campoNumConyuge.reset();
+			//campoEstadoCivil.setDisabled(true);
+			//campoRegEconomico.setDisabled(true);
+			//campoNumConyuge.setDisabled(true);
 		}
 
 		// Validar campos para que se muestre o desaparezca la visual roja.

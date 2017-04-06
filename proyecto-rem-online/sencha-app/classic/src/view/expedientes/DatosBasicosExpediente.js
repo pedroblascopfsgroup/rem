@@ -233,7 +233,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							title: HreRem.i18n('title.devolucion.reserva'),
 							colspan: 3,
 							bind: {
-								hidden: '{!expediente.tieneReserva}'
+								disabled: '{!expediente.tieneReserva}'
 							},
 							items: [
 									{

@@ -123,10 +123,10 @@ public class ClienteWebcomGenerico {
 			registroLlamada.setResponse(response.toString());
 
 			logger.debug("[DETECCIÓN CAMBIOS] Response:");
-			if(response != null && !response.isEmpty()){
+			if (response != null && !response.isEmpty()) {
 				logger.debug(response.toString());
 			}
-			
+
 			// Gestión de errores si respuesta OK
 			if (response.containsKey("error")) {
 				String error = response.getString("error");
@@ -146,13 +146,17 @@ public class ClienteWebcomGenerico {
 		} catch (NoSuchAlgorithmException e) {
 			throw new HttpClientFacadeInternalError("No se ha podido calcular el signature", e);
 		} finally {
-			if (response != null && response.containsKey("data")) {
-				trazarObjetosRechazados(registroLlamada, response.getJSONArray("data"), false);
-			} else {
-				if ((response == null || (response.containsKey("error") && response.getBoolean("error")))
-						&& requestBody.containsKey("data")) {
-					trazarObjetosRechazados(registroLlamada, requestBody.getJSONArray("data"), true);
+			try {
+				if (response != null && response.containsKey("data") && response.getJSONObject("data").isArray()) {
+					trazarObjetosRechazados(registroLlamada, response.getJSONArray("data"), false);
+				} else {
+					if ((response == null || (response.containsKey("error") && response.getBoolean("error")))
+							&& requestBody.containsKey("data") && response.getJSONObject("data").isArray()) {
+						trazarObjetosRechazados(registroLlamada, requestBody.getJSONArray("data"), true);
+					}
 				}
+			} catch (Exception e) {
+				logger.error("Error clienteWebcom", e);
 			}
 			registroLlamada.logTiempoPeticionRest();
 

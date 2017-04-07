@@ -1240,16 +1240,15 @@ public class InformeMediadorManager implements InformeMediadorApi {
 			ActivoInfoComercial infoAux = (ActivoInfoComercial) dtoToEntity
 					.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoInfoComercial.class, "activo.numActivo");
 
-			if ((infoAux.getId() != null && infoAux.getTipoActivo() != null && informe.getCodTipoActivo() != null
-					&& !infoAux.getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()))
-					|| (infoAux.getId() != null && infoAux.getTipoActivo() == null)) {
-				// BeanUtils.copyProperties(((ActivoInfoComercial) objeto),
-				// infoAux);
-				genericaRestDaoImp.deleteInformeMediador(infoAux);
-				((ActivoInfoComercial) objeto).setAuditoria(null);
-				((ActivoInfoComercial) objeto).setId(null);
+			if (infoAux != null) {
+				if ((infoAux.getId() != null && infoAux.getTipoActivo() != null && informe.getCodTipoActivo() != null
+						&& !infoAux.getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()))
+						|| (infoAux.getId() != null && infoAux.getTipoActivo() == null)|| ((ActivoInfoComercial) objeto).getId()==null) {
+					genericaRestDaoImp.deleteInformeMediador(infoAux);
+					((ActivoInfoComercial) objeto).setAuditoria(null);
+					((ActivoInfoComercial) objeto).setId(null);
+				}
 			}
-
 		}
 	}
 

@@ -1,6 +1,6 @@
 #!/bin/bash
  
-fichero=URFACVE
+fichero=URFACVE2
 
 if [[ -z ${DIR_DESTINO} ]] || [[ ! -d ${DIR_DESTINO} ]]; then
     echo "$(basename $0) Error: DIR_DESTINO no definido o no es un directorio. Compruebe invocación previa a setBatchEnv.sh"

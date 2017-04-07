@@ -18,6 +18,7 @@ public class InstanciaDecisionDataDto {
 	private Long importeConSigno; //Es el de cada activo. Se calcula con el % de la oferta de cada activo por el importe de la oferta
 	private short tipoDeImpuesto;
 	private int porcentajeImpuesto;
+	private Boolean renunciaExencion;
 	
 
 	public Integer getIdentificadorActivoEspecial() {
@@ -51,5 +52,11 @@ public class InstanciaDecisionDataDto {
 		}else{
 			this.porcentajeImpuesto = porcentajeImpuesto;
 		}
+	}
+	public Boolean getRenunciaExencion() {
+		return renunciaExencion;
+	}
+	public void setRenunciaExencion(Boolean renunciaExencion) {
+		this.renunciaExencion = renunciaExencion;
 	}
 }

@@ -655,7 +655,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				dto.setFechaSancion(expediente.getFechaSancion());
 
 				if(!Checks.esNulo(expediente.getReserva())) {
-					dto.setFechaReserva(expediente.getReserva().getFechaEnvio());
+					dto.setFechaReserva(expediente.getReserva().getFechaFirma());
 				}
 
 				if(!Checks.esNulo(oferta.getAgrupacion())) {
@@ -1754,8 +1754,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		if(!Checks.esNulo(expediente.getEstadoPbc()) && expediente.getEstadoPbc() == 0) {
 			permitirGenerarHoja = false;
 		}
-		if(!Checks.esNulo(expediente.getUltimoPosicionamiento()) && new Date().compareTo(expediente.getUltimoPosicionamiento().getFechaPosicionamiento()) > 0) {
-			permitirGenerarHoja = false;
+		if(!Checks.esNulo(expediente.getUltimoPosicionamiento())){
+			if(new Date().compareTo(expediente.getUltimoPosicionamiento().getFechaPosicionamiento()) > 0) {
+				permitirGenerarHoja = false;
+			}
 		}
 		List<BloqueoActivoFormalizacion> bloqueos = genericDao.getList(BloqueoActivoFormalizacion.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId()));
 		if(!Checks.estaVacio(bloqueos)) { 
@@ -2294,9 +2296,6 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					DDMotivoAnulacionExpediente motivoAnulacionExpediente = 
 							(DDMotivoAnulacionExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoAnulacionExpediente.class, dto.getCodMotivoAnulacion());
 					expedienteComercial.setMotivoAnulacion(motivoAnulacionExpediente);
-				} else {
-					
-					expedienteComercial.setMotivoAnulacion(null);
 				}
 				
 				if(!Checks.esNulo(expedienteComercial.getReserva())){
@@ -2306,7 +2305,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					}
 					
 					if(!Checks.esNulo(dto.getFechaReserva())) {
-						expedienteComercial.getReserva().setFechaEnvio(dto.getFechaReserva());
+						expedienteComercial.getReserva().setFechaFirma(dto.getFechaReserva());
 					}
 				}
 				if(!Checks.esNulo(expedienteComercial.getUltimoPosicionamiento()) && !Checks.esNulo(dto.getFechaPosicionamiento())){
@@ -2720,6 +2719,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			throw new JsonViewerException("No se ha indicado el porcentaje de impuesto en el campo Tipo aplicable.");
 		}
 		
+		
 		Double importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta() : oferta.getImporteContraOferta();	
 		Double sumatorioImporte = new Double(0);
 		Double sumatorioPorcentaje = new Double(0);
@@ -2762,6 +2762,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				instData.setTipoDeImpuesto(tipoDeImpuesto);	
 			}else{
 				throw new JsonViewerException("No se ha indicado el tipo de impuesto.");
+			}
+			
+			if(!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getRenunciaExencion())) {
+				instData.setRenunciaExencion(expediente.getCondicionante().getRenunciaExencion());
 			}
 			
 			//PorcentajeImpuesto

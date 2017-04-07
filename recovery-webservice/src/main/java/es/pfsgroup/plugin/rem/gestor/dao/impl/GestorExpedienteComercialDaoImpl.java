@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.gestor.dao.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -34,4 +35,31 @@ public class GestorExpedienteComercialDaoImpl extends AbstractEntityDao<GestorEx
 		else
 			return null;
 	}
+	
+	@Override
+	public Long getUsuarioGestorFormalizacion(Long idActivo){
+		
+		StringBuilder functionHQL = new StringBuilder("SELECT CALCULAR_USUARIO_GFORM(:ACT_ID) FROM DUAL");
+		Query callFunctionSql = this.getSessionFactory().getCurrentSession().createSQLQuery(functionHQL.toString());
+		callFunctionSql.setParameter("ACT_ID", idActivo);
+		
+		BigDecimal resultado = (BigDecimal) callFunctionSql.uniqueResult();
+		if(!Checks.esNulo(resultado))
+			return resultado.longValue();
+		else return null;
+	}
+	
+	@Override
+	public Long getUsuarioGestoriaFormalizacion(Long idActivo){
+		
+		StringBuilder functionHQL = new StringBuilder("SELECT CALCULAR_USUARIO_GIAFORM(:ACT_ID) FROM DUAL");
+		Query callFunctionSql = this.getSessionFactory().getCurrentSession().createSQLQuery(functionHQL.toString());
+		callFunctionSql.setParameter("ACT_ID", idActivo);
+		
+		BigDecimal resultado = (BigDecimal) callFunctionSql.uniqueResult();
+		if(!Checks.esNulo(resultado))
+			return resultado.longValue();
+		else return null;
+	}
+
 }

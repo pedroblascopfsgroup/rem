@@ -8,7 +8,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				'HreRem.model.CompradorExpediente', 'HreRem.model.FichaComprador'],
     
     data: {
-    	expediente: null
     },
     
     formulas: {   

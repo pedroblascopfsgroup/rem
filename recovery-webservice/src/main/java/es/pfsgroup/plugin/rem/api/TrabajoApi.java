@@ -665,5 +665,12 @@ public interface TrabajoApi {
 	 * @return
 	 */
 	public List<ActivoProveedorContacto> getComboProveedorContacto(Long idProveedor);
+	
+	/**
+	 * Devuelve una lista de proveedores filtrada por cartera y tipos de proveedor segun el tipo/subtipo de trabajo
+	 * @param idTrabajo
+	 * @return
+	 */
+	public List<VProveedores> getComboProveedorFiltered(Long idTrabajo);
 
 }

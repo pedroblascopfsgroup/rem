@@ -65,8 +65,10 @@ import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.condiciontanteo.CondicionTanteoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
+import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoCargas;
@@ -79,6 +81,7 @@ import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoInformeComercialHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.ActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.ActivoLlave;
+import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
@@ -224,6 +227,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private GestorExpedienteComercialDao gestorExpedienteComercialDao;
 
 	@Override
 	public String managerName() {
@@ -264,6 +270,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	private static final String AVISO_MENSAJE_ACTIVO_EN_LOTE_COMERCIAL = "activo.aviso.aceptatar.oferta.activo.dentro.lote.comercial";
 	private static final String MOTIVO_NO_PUBLICADO_POR_ACTIVO_VENDIDO = "activo.motivo.vendido.no.publicar";
+	private static final String AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO = "activo.motivo.oferta.tipo.numero.documento";
+	private static final String AVISO_MENSAJE_CLIENTE_OBLIGATORIO = "activo.motivo.oferta.cliente";
 
 	@Override
 	@BusinessOperation(overrides = "activoManager.get")
@@ -386,7 +394,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	@BusinessOperation(overrides = "activoManager.saveOfertaActivo")
 	@Transactional(readOnly = false)
-	public boolean saveOfertaActivo(DtoOfertaActivo dto) throws JsonViewerException {
+	public boolean saveOfertaActivo(DtoOfertaActivo dto) throws JsonViewerException, Exception {
 
 		boolean resultado = true;
 		// Si el activo pertenece a un lote comercial, no se pueden aceptar
@@ -395,10 +403,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACTIVO_EN_LOTE_COMERCIAL));
 		}
 
-		try {
+//		try {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
 			Oferta oferta = genericDao.get(Oferta.class, filtro);
 
+			if(!Checks.esNulo(oferta.getCliente())){
+				if(Checks.esNulo(oferta.getCliente().getDocumento()) || Checks.esNulo(oferta.getCliente().getTipoDocumento())){
+					throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO));
+				}
+			}else{
+				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_CLIENTE_OBLIGATORIO));
+			}
+			
 			DDEstadoOferta tipoOferta = (DDEstadoOferta) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
 
@@ -420,10 +436,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 			genericDao.update(Oferta.class, oferta);
 
-		} catch (Exception ex) {
-			logger.error("Error en activoManager", ex);
-			resultado = false;
-		}
+//		} 
+//		catch (Exception ex) {
+//			logger.error("Error en activoManager", ex);
+//			resultado = false;
+//		}
 
 		return resultado;
 	}
@@ -566,45 +583,48 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			// TitularReserva y TitularContratacion estan al contrario. Por
 			// decirlo de alguna forma son "Compradores secundarios"
 			for (TitularesAdicionalesOferta titularAdicional : oferta.getTitularesAdicionales()) {
+				
+				//TODO: Dani: Si el comprador adicional viene sin documento, lo descartamos
+				if(!Checks.esNulo(titularAdicional.getDocumento())){
 
-				Filter filtroCompradorAdicional = genericDao.createFilter(FilterType.EQUALS, "documento",
-						titularAdicional.getDocumento());
-				Comprador compradorBusquedaAdicional = genericDao.get(Comprador.class, filtroCompradorAdicional);
-
-				if (!Checks.esNulo(compradorBusquedaAdicional)) {
-					CompradorExpediente compradorExpedienteAdicionalNuevo = new CompradorExpediente();
-					CompradorExpedientePk pk = new CompradorExpedientePk();
-
-					pk.setComprador(compradorBusquedaAdicional);
-					pk.setExpediente(nuevoExpediente);
-					compradorExpedienteAdicionalNuevo.setPrimaryKey(pk);
-					compradorExpedienteAdicionalNuevo.setTitularReserva(1);
-					compradorExpedienteAdicionalNuevo.setTitularContratacion(0);
-					compradorExpedienteAdicionalNuevo.setPorcionCompra(100.00);
-
-					listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
-				} else {
-					Comprador nuevoCompradorAdicional = new Comprador();
-					CompradorExpediente compradorExpedienteAdicionalNuevo = new CompradorExpediente();
-
-					nuevoCompradorAdicional.setDocumento(titularAdicional.getDocumento());
-					nuevoCompradorAdicional.setNombre(titularAdicional.getNombre());
-					nuevoCompradorAdicional.setTipoDocumento(titularAdicional.getTipoDocumento());
-					genericDao.save(Comprador.class, nuevoCompradorAdicional);
-
-					CompradorExpedientePk pk = new CompradorExpedientePk();
-
-					pk.setComprador(nuevoCompradorAdicional);
-					pk.setExpediente(nuevoExpediente);
-					compradorExpedienteAdicionalNuevo.setPrimaryKey(pk);
-					compradorExpedienteAdicionalNuevo.setTitularReserva(1);
-					compradorExpedienteAdicionalNuevo.setTitularContratacion(0);
-					compradorExpedienteAdicionalNuevo.setPorcionCompra(100.00);
-
-					listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
-
+					Filter filtroCompradorAdicional = genericDao.createFilter(FilterType.EQUALS, "documento",
+							titularAdicional.getDocumento());
+					Comprador compradorBusquedaAdicional = genericDao.get(Comprador.class, filtroCompradorAdicional);
+	
+					if (!Checks.esNulo(compradorBusquedaAdicional)) {
+						CompradorExpediente compradorExpedienteAdicionalNuevo = new CompradorExpediente();
+						CompradorExpedientePk pk = new CompradorExpedientePk();
+	
+						pk.setComprador(compradorBusquedaAdicional);
+						pk.setExpediente(nuevoExpediente);
+						compradorExpedienteAdicionalNuevo.setPrimaryKey(pk);
+						compradorExpedienteAdicionalNuevo.setTitularReserva(1);
+						compradorExpedienteAdicionalNuevo.setTitularContratacion(0);
+						compradorExpedienteAdicionalNuevo.setPorcionCompra(100.00);
+	
+						listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
+					} else {
+						Comprador nuevoCompradorAdicional = new Comprador();
+						CompradorExpediente compradorExpedienteAdicionalNuevo = new CompradorExpediente();
+	
+						nuevoCompradorAdicional.setDocumento(titularAdicional.getDocumento());
+						nuevoCompradorAdicional.setNombre(titularAdicional.getNombre());
+						nuevoCompradorAdicional.setTipoDocumento(titularAdicional.getTipoDocumento());
+						genericDao.save(Comprador.class, nuevoCompradorAdicional);
+	
+						CompradorExpedientePk pk = new CompradorExpedientePk();
+	
+						pk.setComprador(nuevoCompradorAdicional);
+						pk.setExpediente(nuevoExpediente);
+						compradorExpedienteAdicionalNuevo.setPrimaryKey(pk);
+						compradorExpedienteAdicionalNuevo.setTitularReserva(1);
+						compradorExpedienteAdicionalNuevo.setTitularContratacion(0);
+						compradorExpedienteAdicionalNuevo.setPorcionCompra(100.00);
+	
+						listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
+	
+					}
 				}
-
 			}
 
 			// Una vez creadas las relaciones Comprador-Expediente se añaden al
@@ -3432,18 +3452,70 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public void calcularRatingActivo(Long idActivo) {
 		activoDao.actualizarRatingActivo(idActivo, usuarioApi.getUsuarioLogado().getUsername());
 	}
-
+	
 	@SuppressWarnings("static-access")
 	private void asignarGestorYSupervisorFormalizacionToExpediente(ExpedienteComercial expediente) {
 		GestorEntidadDto dto = new GestorEntidadDto();
 		dto.setIdEntidad(expediente.getId());
-		dto.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
+		dto.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);		
+		
+		Oferta oferta = expediente.getOferta();
+		Usuario usuarioGestorFormalizacion = null;
+		Usuario usuarioGestoriaFormalizacion = null;
+		Usuario usuarioGestorComercial = null;
+		Usuario usuarioGestorComercialBack = null;
+		
+		if(!Checks.esNulo(oferta)){
+			ActivoAgrupacion agrupacion = oferta.getAgrupacion();
+			if(!Checks.esNulo(agrupacion)){
+				if(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupacion.getTipoAgrupacion().getCodigo())){
+					ActivoLoteComercial activoLoteComercial = genericDao.get(ActivoLoteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", agrupacion.getId()));
+					usuarioGestorFormalizacion = activoLoteComercial.getUsuarioGestorFormalizacion();
+					usuarioGestoriaFormalizacion = activoLoteComercial.getUsuarioGestoriaFormalizacion();
+					usuarioGestorComercial = activoLoteComercial.getUsuarioGestorComercial();
+					usuarioGestorComercialBack = activoLoteComercial.getUsuarioGestorComercialBackOffice();
+				}else{//Es una oferta de lote restringido
+					Activo activo = oferta.getActivoPrincipal();
+					if(!Checks.esNulo(activo)){
+						Long idUsuarioGestorFormalizacion = gestorExpedienteComercialDao.getUsuarioGestorFormalizacion(activo.getId());
+						if(!Checks.esNulo(idUsuarioGestorFormalizacion))
+							usuarioGestorFormalizacion = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", idUsuarioGestorFormalizacion));
 
-		// TODO: Hasta saber que criterios necesitamos para elegir un usuario u
-		// otro, asignamos el gestor/supervisor de GRUPO.
-		this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION, "GESTFORM", dto);
-		this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION, "SUPFORM",
-				dto);
+						Long idUsuarioGestoriaFormalizacion = gestorExpedienteComercialDao.getUsuarioGestoriaFormalizacion(activo.getId());
+						if(!Checks.esNulo(idUsuarioGestoriaFormalizacion))
+							usuarioGestoriaFormalizacion = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", idUsuarioGestoriaFormalizacion));
+					}
+				}
+			}else{//Es una oferta de activo individual
+				Activo activo = oferta.getActivoPrincipal();
+				if(!Checks.esNulo(activo)){
+					Long idUsuarioGestorFormalizacion = gestorExpedienteComercialDao.getUsuarioGestorFormalizacion(activo.getId());
+					if(!Checks.esNulo(idUsuarioGestorFormalizacion))
+						usuarioGestorFormalizacion = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", idUsuarioGestorFormalizacion));
+
+					Long idUsuarioGestoriaFormalizacion = gestorExpedienteComercialDao.getUsuarioGestoriaFormalizacion(activo.getId());
+					if(!Checks.esNulo(idUsuarioGestoriaFormalizacion))
+						usuarioGestoriaFormalizacion = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", idUsuarioGestoriaFormalizacion));
+				}
+			}
+		}
+		
+		if(!Checks.esNulo(usuarioGestorFormalizacion))
+			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION, usuarioGestorFormalizacion.getUsername(), dto);
+		else
+			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION, "GESTFORM", dto);
+		
+		
+		this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION, "SUPFORM",dto);
+		
+		if(!Checks.esNulo(usuarioGestoriaFormalizacion))
+			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION, usuarioGestoriaFormalizacion.getUsername(), dto);
+		
+		if(!Checks.esNulo(usuarioGestorComercial))
+			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_COMERCIAL, usuarioGestorComercial.getUsername(), dto);
+		
+		if(!Checks.esNulo(usuarioGestorComercialBack))
+			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE, usuarioGestorComercialBack.getUsername(), dto);
 	}
 
 	private void agregarTipoGestorYUsuarioEnDto(String codTipoGestor, String username, GestorEntidadDto dto) {

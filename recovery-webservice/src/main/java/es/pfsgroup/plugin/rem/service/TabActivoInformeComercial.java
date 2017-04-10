@@ -124,6 +124,9 @@ public class TabActivoInformeComercial implements TabActivoService {
 				}
 			}
 			
+			//HREOS-1713 - Leer el valor estimado de venta y renta de la tabla informe. Esto ya se hace en el copyProperties
+			
+			/*
 			// Entre las valoraciones del activo, se buscan los importes estimados de Venta y Renta 
 			// para añadir al Dto.
 			Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
@@ -138,6 +141,8 @@ public class TabActivoInformeComercial implements TabActivoService {
 			if(!Checks.esNulo(activoValoracionEstimadoRenta)){
 				beanUtilNotNull.copyProperty(informeComercial, "valorEstimadoRenta", activoValoracionEstimadoRenta.getImporte());
 			}			
+			*/
+			
 			
 			// Datos de la Comunidad de vecinos al Dto.
 			if (!Checks.esNulo(activo.getComunidadPropietarios())){
@@ -290,9 +295,12 @@ public class TabActivoInformeComercial implements TabActivoService {
 				}
 
 				activo.setInfoComercial(genericDao.save(ActivoInfoComercial.class, activo.getInfoComercial()));
+				
 			}
 			
-			// Se actualizan los importes estimados de venta y de renta, sobre las valoraciones de este activo
+			//HREOS-1713 - Guardar el valor estimado de venta y renta en la tabla informe.
+			
+			/*// Se actualizan los importes estimados de venta y de renta, sobre las valoraciones de este activo
 			// Si para este activo no hay valoraciones del tipo estimado venta o renta, el metodo 
 			//saveActivoInformeValoracion las creara
 			
@@ -323,7 +331,7 @@ public class TabActivoInformeComercial implements TabActivoService {
 				
 				activoManager.saveActivoValoracion(activo, activoValoracionEstimadoRenta, dto);
 			}
-
+*/
 			// Actualizar los datos de comunidad de propietarios
 			ActivoComunidadPropietarios comunidadPropietarios;
 			if(!Checks.esNulo(activo.getComunidadPropietarios())) {

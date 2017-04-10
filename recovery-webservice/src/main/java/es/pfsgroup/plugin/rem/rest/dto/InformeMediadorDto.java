@@ -305,7 +305,7 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "reformaPresupuesto")
 	private Double otrasReformasNecesariasImporteAproximado;
 
-	@EntityDefinition(propertyName = "infoDistribucionInterior")
+	@EntityDefinition(propertyName = "distribucionTxt")
 	private String distribucionInterior;
 
 	@EntityDefinition(propertyName = "edificioDivisible")
@@ -350,7 +350,7 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "entornoInfraestructura")
 	private String infraestructurasEntorno;
 
-	@EntityDefinition(propertyName = "EDI_ENTORNO_COMUNICACION")
+	@EntityDefinition(propertyName = "entornoComunicacion")
 	private String comunicacionesEntorno;
 
 	@EntityDefinition(propertyName = "usuIdoneo")

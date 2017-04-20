@@ -69,6 +69,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 	public static final String TIPO_COMBOBOX_INICIAL_ED = "comboinied";
 	public static final String TIPO_CAMPO_NUMBER = "number";
 	public static final String NO_APLICA = "No aplica";
+	public static final String TIPO_CAMPO_TEXTFIELD = "textfield";
 	
     protected final Log logger = LogFactory.getLog(getClass());
 
@@ -337,6 +338,17 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             			}	
             		}
             		
+            	}
+            	if(item.getType().equals(TIPO_CAMPO_TEXTFIELD))
+            	{
+            		if(item.getNombre().equals("tieneReserva")){
+            			Boolean reserva = ofertaApi.checkReserva(tareaExterna);
+            			if(reserva){
+            				item.setValue(DDSiNo.SI);
+            			}else{
+            				item.setValue(DDSiNo.NO);
+            			}
+            		}
             	}
             	if(item.getType().equals(TIPO_CAMPO_FECHA))
             	{

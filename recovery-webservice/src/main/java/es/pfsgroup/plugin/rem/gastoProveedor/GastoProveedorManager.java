@@ -1259,7 +1259,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						gestionGasto.setFechaRetencionPago(null);
 						gestionGasto.setUsuarioRetencionPago(null);
 						gasto.setGastoGestion(gestionGasto);
-						updaterStateApi.updaterStates(gasto, null);
+						//HREOS-1927: si se quita la retención en el estado vuelve a ser Pendiente
+						updaterStateApi.updaterStates(gasto, DDEstadoGasto.PENDIENTE);
 					}
 					
 					gasto.setGastoGestion(gestionGasto);

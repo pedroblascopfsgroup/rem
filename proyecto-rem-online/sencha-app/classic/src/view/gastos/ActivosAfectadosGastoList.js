@@ -22,14 +22,16 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 
 			var objetoStore = [];
 			var objeto = null;
-			var data = record.get("referenciasCatastrales").split(",");
-			for (var i = 0; i < data.length; i++) {
-				objeto = {
-					descripcion : '' + data[i] + '',
-					codigo : '' + data[i] + ''
+			if(record.get("referenciasCatastrales")){
+				var data = record.get("referenciasCatastrales").split(",");
+				for (var i = 0; i < data.length; i++) {
+					objeto = {
+						descripcion : '' + data[i] + '',
+						codigo : '' + data[i] + ''
+					};
+					objetoStore.push(objeto);
 				};
-				objetoStore.push(objeto);
-			};
+			}
 			combo.getStore().setData(objetoStore);
 		}
 		

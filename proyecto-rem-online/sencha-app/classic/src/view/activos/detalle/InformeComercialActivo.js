@@ -704,7 +704,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 				        	xtype: 		'textareafieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.descripcion.edificio'),
 							height: 	230,
-							maxLength:	500,
+							maxLength:	3000,
 			            	bind:		'{infoComercial.ediDescripcion}',
 					 		labelAlign: 'top'
 						},

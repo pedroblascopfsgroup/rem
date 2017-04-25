@@ -34,8 +34,9 @@ Ext.define('HreRem.view.expedientes.DocumentosExpediente', {
 					           	iconCls: 'ico-download',
 					           	tooltip: HreRem.i18n("tooltip.download"),
 					            handler: function(grid, rowIndex, colIndex) {
-					                var grid = me.down('gridBase'),
-					                record = grid.getStore().getAt(rowIndex);
+					            	
+					                var record = grid.getRecord(rowIndex);
+					                var grid = me.down('gridBase');
 					               
 					                grid.fireEvent("download", grid, record);					                
 			            		}

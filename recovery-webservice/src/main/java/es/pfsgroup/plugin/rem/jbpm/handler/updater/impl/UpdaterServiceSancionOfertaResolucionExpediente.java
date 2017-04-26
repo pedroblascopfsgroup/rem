@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -22,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
@@ -63,7 +63,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 					Filter filtro;
 				
 					
-					if(DDSiNo.NO.equals(valor.getValor())){
+					if(DDDevolucionReserva.CODIGO_NO.equals(valor.getValor())){
 
 						//Anula el expediente
 						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
@@ -96,6 +96,8 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 							Filter filtroEstadoReserva = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_RESUELTA_POSIBLE_REINTEGRO);
 							DDEstadosReserva estadoReserva = genericDao.get(DDEstadosReserva.class, filtroEstadoReserva);
 							reserva.setEstadoReserva(estadoReserva);
+							reserva.setDevolucionReserva(this.getDevolucionReserva(valor.getValor()));
+							
 							genericDao.save(Reserva.class, reserva);
 						}
 					}else{
@@ -110,6 +112,8 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 							Filter filtroEstadoReserva = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION);
 							DDEstadosReserva estadoReserva = genericDao.get(DDEstadosReserva.class, filtroEstadoReserva);
 							reserva.setEstadoReserva(estadoReserva);
+							reserva.setDevolucionReserva(this.getDevolucionReserva(valor.getValor()));
+							
 							genericDao.save(Reserva.class, reserva);
 						}
 					}
@@ -145,6 +149,13 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 
 	public String[] getKeys() {
 		return this.getCodigoTarea();
+	}
+	
+	private DDDevolucionReserva getDevolucionReserva(String codigo) {
+		Filter filtroDevolucionReserva = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
+		DDDevolucionReserva devolucionReserva = genericDao.get(DDDevolucionReserva.class, filtroDevolucionReserva);
+		
+		return devolucionReserva;
 	}
 
 }

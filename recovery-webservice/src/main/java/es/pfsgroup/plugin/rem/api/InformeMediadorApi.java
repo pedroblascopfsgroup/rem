@@ -1,7 +1,5 @@
 package es.pfsgroup.plugin.rem.api;
 
-import java.beans.IntrospectionException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,13 +9,13 @@ import es.pfsgroup.plugin.rem.rest.dto.InformeMediadorDto;
 
 public interface InformeMediadorApi {
 
-	public boolean existeInformemediadorActivo(Long numActivo);
+	public boolean existeInformemediadorActivo(Long numActivo) throws Exception;
 
 	public void validateInformeField(HashMap<String, String> errorsList, String fiedlName, Object fieldValor,
-			String codigoTipoBien);
+			String codigoTipoBien) throws Exception;
 
 	public void validateInformeMediadorDto(InformeMediadorDto informe, String codigoTipoBien, HashMap<String, String> errorsList)
-			throws IntrospectionException, IllegalAccessException, IllegalArgumentException, InvocationTargetException;
+			throws Exception;
 
 	public ArrayList<Map<String, Object>> saveOrUpdateInformeMediador(List<InformeMediadorDto> informes)
 			throws Exception;

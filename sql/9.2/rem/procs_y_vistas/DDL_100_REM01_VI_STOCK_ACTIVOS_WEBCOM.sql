@@ -6,7 +6,7 @@
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-1551
 --## PRODUCTO=NO
---## Finalidad: Tabla para almacentar el historico del stock de activos enviados a webcom. Se añaden campos HREOS-1551.
+--## Finalidad: Tabla para almacentar el historico del stock de activos enviados a webcom. Se añaden campos HREOS-1551. Se amplia campo CondicionesEspecificas HREOS-1930.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -137,9 +137,9 @@ BEGIN
 		ELSE NULL
 		END 																				AS PUBLICADO_DESDE,
 		CAST(VPO.DD_TVP_CODIGO AS VARCHAR2(5 CHAR)) 										AS COD_REGIMEN_PROTECCION,
-		CAST(EDI.EDI_DESCRIPCION AS VARCHAR2(500 CHAR))										AS DESCRIPCION,
+		CAST(EDI.EDI_DESCRIPCION AS VARCHAR2(3000 CHAR))									AS DESCRIPCION,
 		CAST(ICO.ICO_INFO_DISTRIBUCION_INTERIOR AS VARCHAR2(500 CHAR))						AS DISTRIBUCION,
-		CAST(ICO.ICO_CONDICIONES_LEGALES AS VARCHAR2(500 CHAR))								AS CONDICIONES_ESPECIFICAS,
+		CAST(ICO.ICO_CONDICIONES_LEGALES AS VARCHAR2(3000 CHAR))							AS CONDICIONES_ESPECIFICAS,
 		CAST(VCOND.ESTADO AS VARCHAR2(5 CHAR))                       						AS COD_DETALLE_PUBLICACION, 
 		CAST(PIVOT_AGR.OBRA_NUEVA_NUM_REM AS NUMBER(16,0))	                                AS CODIGO_AGRUPACION_OBRA_NUEVA,
         CAST(NVL2(PIVOT_AGR.OBRA_NUEVA_NUM_REM, SUBD_ACT.ID, NULL) AS NUMBER(16,0))         AS CODIGO_CABECERA_OBRA_NUEVA,

@@ -1067,34 +1067,57 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 				    	
 				    	me.deshabilitarCampo(me.down('[name=fechaFirma]'));
 				    	me.deshabilitarCampo(me.down('[name=motivoNoFirma]'));
+				    	me.down('[name=tieneReserva]').hide();
 				    	
 				    	me.down('[name=comboFirma]').addListener('change', function(combo){
 				    		if(combo.value == '01'){
 				    			me.habilitarCampo(me.down('[name=fechaFirma]'));
+				    			me.habilitarCampo(me.down('[name=numProtocolo]'));
+				    			me.habilitarCampo(me.down('[name=fechaIngreso]'));
+				    			me.habilitarCampo(me.down('[name=comboCondiciones]'));
+				    			me.habilitarCampo(me.down('[name=condiciones]'));
+				    			
 				    			me.deshabilitarCampo(me.down('[name=motivoNoFirma]'));
+				    			me.down('[name=motivoNoFirma]').reset();
+				    			
 				    		}else{
+
+				    			var tieneReserva = me.down('[name=tieneReserva]');
+				    			if(tieneReserva.value == '01'){
+				    				me.deshabilitarCampo(me.down('[name=motivoNoFirma]'));
+				    				me.down('[name=motivoNoFirma]').reset();
+				    			}else{
+				    				me.habilitarCampo(me.down('[name=motivoNoFirma]'));
+				    			}
 				    			me.deshabilitarCampo(me.down('[name=fechaFirma]'));
-				    			me.habilitarCampo(me.down('[name=motivoNoFirma]'));
+				    			me.deshabilitarCampo(me.down('[name=numProtocolo]'));
+				    			me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
+				    			me.deshabilitarCampo(me.down('[name=comboCondiciones]'));
+				    			me.deshabilitarCampo(me.down('[name=condiciones]'));
+				    			me.down('[name=fechaFirma]').reset();
+				    			me.down('[name=numProtocolo]').reset();
+				    			me.down('[name=fechaIngreso]').reset();
+				    			me.down('[name=comboCondiciones]').reset();
+				    			me.down('[name=condiciones]').reset();
 				    		}
 				    	})
 				    },
 				    
-//					T013_ResolucionExpedienteValidacion: function(){
-//						var me = this;
-//
-//						me.deshabilitarCampo(me.down('[name=tipoArras]'));
-//						me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
-//						
-//						me.down('[name=comboProcede]').addListener('change', function(combo){
-//							if(combo.value == '01'){
-//								me.habilitarCampo(me.down('[name=tipoArras]'));
-//								me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
-//							}else{
-//								me.deshabilitarCampo(me.down('[name=tipoArras]'));
-//								me.habilitarCampo(me.down('[name=motivoAnulacion]'));
-//							}
-//						})
-//					},
+					T013_ResolucionExpedienteValidacion: function(){
+						var me = this;
+						var tipoArras = me.down('[name=tipoArras]');
+						me.deshabilitarCampo(me.down('[name=comboProcede]'));
+						
+						if(!Ext.isEmpty(tipoArras.value))
+							me.habilitarCampo(me.down('[name=comboProcede]'));
+						
+						me.down('[name=comboProcede]').addListener('change', function(combo){
+							if(combo.value == '01' && tipoArras.value == 'Confirmatorias'){
+								me.down('[name=comboProcede]').blankText = HreRem.i18n('tarea.validacion.error.valor.no.permitido.by.tipo.arras');
+								me.down('[name=comboProcede]').reset();
+							}
+						});
+					},
 						
 					T014_PosicionamientoFirmaValidacion: function(){
 						var me = this;

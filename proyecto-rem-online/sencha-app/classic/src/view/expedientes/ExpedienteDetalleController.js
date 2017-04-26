@@ -1196,9 +1196,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		if(Ext.isEmpty(dateField.getValue())) {
 			peticionario.allowBlank = true;
 			motivoAnulacion.allowBlank = true;
+			peticionario.readOnly = true;
+			peticionario.editable = false;
 		} else {
 			peticionario.allowBlank = false;
 			motivoAnulacion.allowBlank = false;
+			peticionario.readOnly = false;
+			peticionario.editable = true;
+			
 		}
 		// Hacer saltar inmediatamente la validación de los campos.
 		peticionario.validate();

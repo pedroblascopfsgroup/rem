@@ -3576,4 +3576,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		activoEstadoPublicacionApi.cambiarEstadoPublicacionAndRegistrarHistorico(activo, motivo, filtro,
 				activo.getEstadoPublicacion(), null, null);
 	}
+
+	@Override
+	public Long getNextNumActivoRem() {
+		return activoDao.getNextNumActivoRem();
+	}
 }

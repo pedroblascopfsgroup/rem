@@ -958,9 +958,13 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 			boolean success = expedienteComercialApi.createHonorario(dto, idEntidad);
 			model.put("success", success);
 
+		} catch (JsonViewerException jve) {
+			model.put("msg", jve.getMessage());	
+			model.put("success", false);	
+			
 		} catch (Exception e) {
 			e.printStackTrace();
-			model.put("success", false);
+			model.put("success", false);		
 		}
 
 		return createModelAndViewJson(model);

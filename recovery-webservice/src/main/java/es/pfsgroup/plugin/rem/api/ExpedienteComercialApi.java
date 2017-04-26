@@ -663,4 +663,12 @@ public interface ExpedienteComercialApi {
 	 */
 	public void actualizarImporteReservaPorExpediente(ExpedienteComercial expediente);
 
+	/**
+	 * Este método calcula y actualiza el importe por cada honorario(GastoExpediente) de un Expediente.
+	 * Sólo se actualizan los honorarios cuyos tipos de cálculo es 'porcentaje'.
+	 * 
+	 * @param idExpediente: ID del expediente al que actualziar sus honorarios.
+	 */
+	public void actualizarHonorariosPorExpediente(Long idExpediente);
+
 }

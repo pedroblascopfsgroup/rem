@@ -609,12 +609,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			if (((JSONObject) jsonFields).containsKey("importeContraoferta")) {
 				oferta.setImporteContraOferta(ofertaDto.getImporteContraoferta());
+				ofertaDao.saveOrUpdate(oferta);
+
+				// Actualizar honorarios para el nuevo importe de contraoferta.
+				ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+				if(!Checks.esNulo(expedienteComercial)) {
+					expedienteComercialApi.actualizarHonorariosPorExpediente(expedienteComercial.getId());
+				}
 			}
 
-			ofertaDao.saveOrUpdate(oferta);
 			updateEstadoOferta(oferta, ofertaDto.getFechaAccion());
 			this.updateStateDispComercialActivosByOferta(oferta);
-
 		}
 
 		return errorsList;

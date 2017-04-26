@@ -26,7 +26,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
             	items : [
             	
                 	{
-					    xtype		: 'gridBaseEditableRow',
+					    xtype: 'gridBaseEditableRow',
 					    topBar: $AU.userHasFunction(['EDITAR_TAB_GESTION_ECONOMICA_EXPEDIENTES']),
 					    reference: 'listadohoronarios',
 					    idPrincipal : 'expediente.id',
@@ -34,7 +34,40 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 						bind: {
 							store: '{storeHoronarios}'
 						},									
-						
+						listeners: {
+							beforeedit: function(editor){
+								// Siempre que se vaya a entrar en modo edición filtrar o limpiar el combo 'Tipo proveedor'.
+								if (editor.editing) {
+					        		// Si se está editando impedir filtrar erroneamente.
+									return false;
+					        	}
+
+								var comboTipoProveedor = me.up('expedientedetallemain').lookupReference('tipoProveedorRef');
+								var storeTipoProveedor = comboTipoProveedor.getStore();
+								var grid = me.up('expedientedetallemain').lookupReference('listadohoronarios');
+								var ultimaSeleccion = grid.selModel.lastSelected;
+
+								if(Ext.isEmpty(ultimaSeleccion)) {
+									return true;
+								}
+
+								var tipoComision = ultimaSeleccion.get('codigoTipoComision');
+
+								if(!Ext.isEmpty(tipoComision) && tipoComision == CONST.ACCION_GASTOS['COLABORACION']) {
+									storeTipoProveedor.clearFilter();
+									storeTipoProveedor.filter([{
+						                filterFn: function(rec){
+						                    if (rec.get('codigo') == CONST.TIPO_PROVEEDOR_HONORARIO['MEDIADOR'] || rec.get('codigo') == CONST.TIPO_PROVEEDOR_HONORARIO['FVD']){
+						                        return true;
+						                    }
+						                    return false;
+						                }
+						            }]);
+								} else {
+									storeTipoProveedor.clearFilter();
+								}
+							}
+						},
 						columns: [
 						   
 						
@@ -58,7 +91,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 									displayField: 'numActivo',
     								valueField: 'idActivo',
     								listeners: {
-    									select: 'onSelectComboActivoHonorarios'
+    									beforeselect: 'onSelectComboActivoHonorarios'
     								}
 					            },
 					            renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {	
@@ -94,19 +127,20 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 										autoLoad: true
 									}),
 									displayField: 'descripcion',
-    								valueField: 'codigo'
+    								valueField: 'codigo',
+    								listeners: {
+    									select: 'onTipoComisionSelect'
+    								}
 					            },
 					            renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {	
-					        		var me = this,				        		
+					        		var me = this,
 					        		comboEditor =  me.columns  && me.columns[colIndex].getEditor ? me.columns[colIndex].getEditor() : me.getEditor ? me.getEditor() : null;
+
 					        		if(!Ext.isEmpty(comboEditor)) {
-						        		var store = comboEditor.getStore(),							        		
-						        		accion = store.findRecord("codigo", value);
-						        		if(!Ext.isEmpty(accion)) {								        			
-						        			return accion.get("descripcion");								        		
-						        		} else if (!Ext.isEmpty(record)) {
-						        			comboEditor.setValue(record.get("codigoTipoComision"));	
-						        			return record.get("descripcionTipoComision");							        			
+						        		var store = comboEditor.getStore();
+						        		if (!Ext.isEmpty(record)) {
+						        			comboEditor.setValue(record.get("codigoTipoComision"));
+						        			return record.get("descripcionTipoComision");
 						        		}
 					        		}
 								}
@@ -140,27 +174,24 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 									var me = this,				        		
 					        		comboEditor =  me.columns  && me.columns[colIndex].getEditor ? me.columns[colIndex].getEditor() : me.getEditor ? me.getEditor() : null;
 					        		if(!Ext.isEmpty(comboEditor)) {
-						        		var store = comboEditor.getStore(),							        		
-						        		tipo = store.findRecord("codigo", value);
-						        		if(!Ext.isEmpty(tipo)) {								        			
-						        			return tipo.get("descripcion");								        		
-						        		} else if (!Ext.isEmpty(record)) {
-						        			comboEditor.setValue(record.get("codigo"));	
-						        			return record.get("descripcion");							        			
+						        		var store = comboEditor.getStore();
+						        		if (!Ext.isEmpty(record)) {
+						        			comboEditor.setValue(record.get("codigoTipoProveedor"));	
+						        			return record.get("tipoProveedor");							        			
 						        		}
 					        		}
 								}
 						   },
 						   {
 						   		text: HreRem.i18n('header.proveedores.codigo.rem'),
-					            dataIndex: 'idProveedor',
+					            dataIndex: 'codigoProveedorRem',
 					            flex: 1,
 					            editor: {
 									xtype: 'textfield',
     								allowBlank: false,
-    								reference: 'proveedorRef'
+    								reference: 'proveedorRef',
+    								maskRe: /[0-9.]/
 								}
-								
 						   },
 						   {
 						   		text: HreRem.i18n('fieldlabel.proveedor'),

@@ -48,6 +48,9 @@ Ext.define('HreRem.model.Honorario', {
     			name: 'idProveedor'
     		},
     		{
+    			name: 'codigoProveedorRem'
+    		},
+    		{
     			name: 'codigoTipoProveedor'
     		},
     		{

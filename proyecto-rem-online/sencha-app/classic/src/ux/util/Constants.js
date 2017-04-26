@@ -259,5 +259,19 @@ Ext.define('HreRem.ux.util.Constants', {
     	DISPONIBLE_ALQUILER: '07',
     	DISPONIBLE_VENTA_ALQUILER: '08',
     	DISPONIBLE_CONDICIONADO: '09'
+    },
+
+    ACCION_GASTOS: {
+    	PRESCRIPCION: '04',
+    	COLABORACION: '05',
+    	RESPONSABLE_CLIENTE: '06'
+    },
+
+    TIPO_PROVEEDOR_HONORARIO: {
+    	MEDIADOR: '04',
+    	FVD: '18',
+    	OFICINA_BANKIA: '28',
+    	OFICINA_CAJAMAR: '29',
+    	CAT: '31'
     }
 });

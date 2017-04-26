@@ -852,6 +852,32 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 	},
 	
+	onTipoComisionSelect: function(combo, recordSelected) {
+		var me = this;
+		var comboTipoProveedor = me.lookupReference('tipoProveedorRef');
+		var storeTipoProveedor = comboTipoProveedor.getStore();
+		
+		// Reiniciar el contenido del combo 'Tipo proveedor'.
+		comboTipoProveedor.setValue(null);
+		comboTipoProveedor.setRawValue(null);
+
+		// Filtrar contenido del combo 'Tipo proveedor'.
+		if(recordSelected.get('codigo') == CONST.ACCION_GASTOS['COLABORACION']) {
+			storeTipoProveedor.clearFilter();
+			storeTipoProveedor.filter([{
+                filterFn: function(rec){
+                    if (rec.get('codigo') == CONST.TIPO_PROVEEDOR_HONORARIO['MEDIADOR'] || rec.get('codigo') == CONST.TIPO_PROVEEDOR_HONORARIO['FVD']){
+                        return true;
+                    }
+                    return false;
+                }
+            }]);
+		} else {
+			storeTipoProveedor.clearFilter();
+		}
+		
+	},
+	
 	onSelectComboActivoHonorarios: function(combo, recordSelected) {
 		
 		var me = this;

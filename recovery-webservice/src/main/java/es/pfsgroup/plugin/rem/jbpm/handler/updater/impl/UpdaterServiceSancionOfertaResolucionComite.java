@@ -111,6 +111,10 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 				if(IMPORTE_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
 				{
 					ofertaAceptada.setImporteContraOferta(Double.valueOf(valor.getValor()));
+					genericDao.save(Oferta.class, ofertaAceptada);
+					
+					// Actualizar honorarios para el nuevo importe de contraoferta.
+					expedienteComercialApi.actualizarHonorariosPorExpediente(expediente.getId());
 					
 					// Actualizamos la participación de los activos en la oferta;
 					expedienteComercialApi.updateParticipacionActivosOferta(ofertaAceptada);
@@ -118,7 +122,6 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 				}
 				
 				genericDao.save(ExpedienteComercial.class, expediente);
-				genericDao.save(Oferta.class, ofertaAceptada);
 			}
 		}
 

@@ -94,6 +94,8 @@ public class DtoFichaExpediente extends WebDto {
 
 	private String estadoDevolucionCodigo;
 	private Boolean ocultarPestTanteoRetracto;
+	
+	private String codDevolucionReserva;
 
 	public Long getId() {
 		return id;
@@ -472,5 +474,14 @@ public class DtoFichaExpediente extends WebDto {
 		this.ocultarPestTanteoRetracto = ocultarPestTanteoRetracto;
 	}
 
+	public String getCodDevolucionReserva() {
+		return codDevolucionReserva;
+	}
+
+	public void setCodDevolucionReserva(String codDevolucionReserva) {
+		this.codDevolucionReserva = codDevolucionReserva;
+	}
+
+	
 	
 }

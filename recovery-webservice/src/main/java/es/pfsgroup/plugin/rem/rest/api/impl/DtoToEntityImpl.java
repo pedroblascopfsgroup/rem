@@ -40,8 +40,7 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 	@SuppressWarnings("rawtypes")
 	@Transactional(readOnly = false)
 	public Serializable saveDtoToBbdd(Object dto, ArrayList<Serializable> objetoEntitys)
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException,
-			ClassNotFoundException, InstantiationException, NoSuchMethodException, SecurityException {
+			throws Exception {
 
 		if (dto.getClass().getDeclaredFields() != null) {
 			for (Field f : dto.getClass().getDeclaredFields()) {
@@ -79,14 +78,10 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Serializable obtenerObjetoEntity(Long idValue, Class entity, String fieldActivo)
-			throws InstantiationException, IllegalAccessException {
+			throws Exception {
 		Serializable objetoEntity = null;
 		if (idValue != null) {
-			try {
-				objetoEntity = genericDao.get(entity, genericDao.createFilter(FilterType.EQUALS, fieldActivo, idValue));
-			} catch (Exception e) {
-				logger.error(e);
-			}
+			objetoEntity = genericDao.get(entity, genericDao.createFilter(FilterType.EQUALS, fieldActivo, idValue));
 			if (objetoEntity == null) {
 				objetoEntity = (Serializable) entity.newInstance();
 			}
@@ -128,7 +123,7 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 	 */
 	@SuppressWarnings({ "rawtypes" })
 	private boolean setProperty(String propertyEntityName, Class claseObjeto, EntityDefinition annotation,
-			Object oFiltro, Object object, Serializable objetoEntity) {
+			Object oFiltro, Object object, Serializable objetoEntity) throws Exception {
 		ArrayList<Serializable> objetoEntitys = new ArrayList<Serializable>();
 		objetoEntitys.add(objetoEntity);
 		return this.setProperty(propertyEntityName, claseObjeto, annotation, oFiltro, object, objetoEntitys);
@@ -147,7 +142,7 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes", "deprecation" })
 	private boolean setProperty(String propertyEntityName, Class claseObjeto, EntityDefinition annotation,
-			Object oFiltro, Object object, ArrayList<Serializable> objetoEntitys) {
+			Object oFiltro, Object object, ArrayList<Serializable> objetoEntitys) throws Exception{
 		boolean resultado = false;
 		if ((annotation != null && annotation.procesar()) || annotation == null) {
 			if (oFiltro != null && annotation != null) {
@@ -212,7 +207,7 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 	 * @param parametro
 	 * @return
 	 */
-	private Method getMethod(Serializable clase, String nombreMetodo, Class<?> parametro) {
+	private Method getMethod(Serializable clase, String nombreMetodo, Class<?> parametro) throws Exception{
 		Method metodo = null;
 		try {
 			metodo = clase.getClass().getMethod(nombreMetodo, parametro);
@@ -243,8 +238,7 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 	 * @throws InvocationTargetException
 	 * @throws IntrospectionException
 	 */
-	private void guardarEntity(ArrayList<Serializable> objetoEntitys) throws NoSuchMethodException, SecurityException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
+	private void guardarEntity(ArrayList<Serializable> objetoEntitys) throws Exception{
 		for (Serializable objetoEntity : objetoEntitys) {
 			logger.trace("Guardando..." + objetoEntity.getClass().getName());
 			Serializable primaryKey = genericaRestDaoImp.save(objetoEntity);
@@ -262,7 +256,7 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 	 * @param objetoEntityFK
 	 * @param objetoEntitys
 	 */
-	private void setFk(Serializable objetoEntityFK, ArrayList<Serializable> objetoEntitys) {
+	private void setFk(Serializable objetoEntityFK, ArrayList<Serializable> objetoEntitys) throws Exception{
 		for (Serializable objetoEntity : objetoEntitys) {
 			if (!objetoEntityFK.getClass().equals(objetoEntity.getClass())) {
 				String fieldFk = this.findFieldFk(objetoEntity, objetoEntityFK.getClass());
@@ -280,7 +274,7 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 	 * @param type
 	 * @return
 	 */
-	private List<Field> getAllFields(List<Field> fields, Class<?> type) {
+	private List<Field> getAllFields(List<Field> fields, Class<?> type) throws Exception {
 		fields.addAll(Arrays.asList(type.getDeclaredFields()));
 
 		if (type.getSuperclass() != null) {
@@ -297,7 +291,7 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 	 * @param claseFK
 	 * @return
 	 */
-	private String findFieldFk(Serializable objetoEntity, Class<?> claseFK) {
+	private String findFieldFk(Serializable objetoEntity, Class<?> claseFK) throws Exception{
 		String result = null;
 		List<Field> fields = new ArrayList<Field>();
 		fields = this.getAllFields(fields, objetoEntity.getClass());
@@ -320,15 +314,9 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 	 * 
 	 * @param objetoEntity
 	 * @return
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws IllegalAccessException
-	 * @throws IllegalArgumentException
-	 * @throws InvocationTargetException
-	 * @throws IntrospectionException
+	 * @throws Exception
 	 */
-	private String findPrimaryKey(Serializable objetoEntity) throws NoSuchMethodException, SecurityException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
+	private String findPrimaryKey(Serializable objetoEntity) throws Exception {
 		String result = null;
 		List<Field> fields = new ArrayList<Field>();
 		fields = this.getAllFields(fields, objetoEntity.getClass());
@@ -360,7 +348,7 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 	 */
 	@SuppressWarnings("rawtypes")
 	private Object getValue(Object dto, Class claseDto, String methodName)
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
+			throws Exception {
 		Object obj = null;
 		for (PropertyDescriptor propertyDescriptor : Introspector.getBeanInfo(claseDto).getPropertyDescriptors()) {
 			if (propertyDescriptor.getReadMethod() != null

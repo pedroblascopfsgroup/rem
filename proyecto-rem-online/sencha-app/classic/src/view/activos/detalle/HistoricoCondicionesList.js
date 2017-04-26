@@ -35,9 +35,10 @@ Ext.define('HreRem.view.activos.detalle.HistoricoCondicionesList', {
 		        {
 		            dataIndex: 'texto',
 		            text: HreRem.i18n('title.publicaciones.condiciones.texto'),
-		            flex: 1,
+		            flex: 1,	            
 		       		editor: {
-		       			xtype:'textarea'
+		       			xtype:'textarea',
+		       			maxLength: 3000
 		       		}
 		        },
 		        {

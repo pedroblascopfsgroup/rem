@@ -1,10 +1,8 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
-import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1173,7 +1171,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 	@Override
 	public void validateInformeField(HashMap<String, String> errorsList, String fiedlName, Object fieldValor,
-			String codigoTipoBien) {
+			String codigoTipoBien) throws Exception{
 		fiedlName = fiedlName.substring(3);
 		HashMap<String, Boolean> permisos = obligatorios.get(fiedlName.toLowerCase());
 		if (permisos != null) {
@@ -1189,8 +1187,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 	@Override
 	public void validateInformeMediadorDto(InformeMediadorDto informe, String codigoTipoBien,
-			HashMap<String, String> errorsList)
-			throws IntrospectionException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			HashMap<String, String> errorsList) throws Exception {
 		for (PropertyDescriptor propertyDescriptor : Introspector.getBeanInfo(InformeMediadorDto.class)
 				.getPropertyDescriptors()) {
 			if (propertyDescriptor.getReadMethod() != null) {
@@ -1204,7 +1201,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 	}
 
 	@Override
-	public boolean existeInformemediadorActivo(Long numActivo) {
+	public boolean existeInformemediadorActivo(Long numActivo) throws Exception{
 		Activo activo;
 		Serializable objetoEntity = null;
 		boolean resultado = false;
@@ -1256,6 +1253,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 	@Transactional(readOnly = false)
 	public ArrayList<Map<String, Object>> saveOrUpdateInformeMediador(List<InformeMediadorDto> informes)
 			throws Exception {
+		
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		Map<String, Object> map = null;
 
@@ -1291,14 +1289,14 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					parcheEspecificacionTablas(informeEntity, informe);
 					entitys.add(informeEntity);
 
-				} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_EDIFICIO_COMPLETO)) {
+/*				} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_EDIFICIO_COMPLETO)) {
 					informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
 							ActivoInfoComercial.class, "activo.numActivo");
 					ActivoEdificio edificioEntity = (ActivoEdificio) dtoToEntity.obtenerObjetoEntity(
 							informe.getIdActivoHaya(), ActivoEdificio.class, "infoComercial.activo.numActivo");
 					edificioEntity.setInfoComercial(informeEntity);
 					entitys.add(informeEntity);
-					entitys.add(edificioEntity);
+					entitys.add(edificioEntity);*/
 
 				} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_EN_COSTRUCCION)) {
 					informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
@@ -1321,6 +1319,11 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					informeEntity = (ActivoVivienda) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
 							ActivoVivienda.class, "activo.numActivo");
 					parcheEspecificacionTablas(informeEntity, informe);
+					
+					
+					ActivoEdificio edificioEntity = (ActivoEdificio) dtoToEntity.obtenerObjetoEntity(
+							informe.getIdActivoHaya(), ActivoEdificio.class, "infoComercial.activo.numActivo");
+
 					ActivoInfraestructura activoInfraestructura = (ActivoInfraestructura) dtoToEntity
 							.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoInfraestructura.class,
 									"infoComercial.activo.numActivo");
@@ -1351,7 +1354,9 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					ActivoZonaComun zonaComun = (ActivoZonaComun) dtoToEntity.obtenerObjetoEntity(
 							informe.getIdActivoHaya(), ActivoZonaComun.class, "infoComercial.activo.numActivo");
 
+					
 					entitys.add(informeEntity);
+					entitys.add(edificioEntity);
 					entitys.add(activoInfraestructura);
 					entitys.add(activoCarpinteriaInt);
 					entitys.add(activoCarpinteriaExterior);

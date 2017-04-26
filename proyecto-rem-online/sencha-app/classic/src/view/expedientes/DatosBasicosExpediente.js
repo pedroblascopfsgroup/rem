@@ -198,15 +198,13 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
                 xtype:'fieldsettable',
 				defaultType: 'displayfield',
 				title: HreRem.i18n('title.anulacion'),
-				defaults: {
-					//readOnly: true
-				},
 				items: [
 						{
 							xtype:'datefieldbase',
 							formatter: 'date("d/m/Y")',
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.anulacion'),
 							bind: '{expediente.fechaAnulacion}',
+							readOnly: true,
 							listeners: {
 								change: 'onFechaAnulacionChange'
 							}
@@ -215,6 +213,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							xtype: 'textfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.peticionario'),
 							reference: 'textFieldPeticionario',
+							editable: true,
 							bind: '{expediente.peticionarioAnulacion}'
 						},
 						{ 
@@ -245,14 +244,16 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 											value: '{expediente.fechaDevolucionEntregas}'
 										}
 									},
-									{
-										xtype: 'numberfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.importe.devolucion'),
-										bind: {
-											disabled: '{!expediente.tieneReserva}',
-											value: '{expediente.importeDevolucionEntregas}'
-										}
-									},
+									{ 
+										xtype: 'comboboxfieldbase',
+					                	fieldLabel:  HreRem.i18n('fieldlabel.procede.devolucion'),
+					                	reference: 'comboProcedeDevolucion',
+					                	readOnly: true,
+							        	bind: {
+							        		store: '{storeProcedeDevolucion}',
+						            		value: '{expediente.codDevolucionReserva}'
+						            	}
+							        },
 									{ 
 										xtype: 'comboboxfieldbase',
 										reference: 'comboEstadoDevolucion',

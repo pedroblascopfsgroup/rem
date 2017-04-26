@@ -680,6 +680,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					if(!Checks.esNulo(reserva.getEstadoDevolucion())) {
 						dto.setEstadoDevolucionCodigo(reserva.getEstadoDevolucion().getCodigo());
 					}
+					
+					if(!Checks.esNulo(reserva.getDevolucionReserva())) {
+						dto.setCodDevolucionReserva(reserva.getDevolucionReserva().getCodigo());
+					}
 				}
 				dto.setPeticionarioAnulacion(expediente.getPeticionarioAnulacion());
 				dto.setFechaContabilizacionPropietario(expediente.getFechaContabilizacionPropietario());

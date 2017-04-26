@@ -34,6 +34,7 @@ import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 
 @Component
@@ -147,7 +148,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 
 
 					
-				}
+				}				
 				//La fecha de firma la guardamos como la fecha de toma de posesión
 				if(FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
 					for(ActivoOferta activoOferta : ofertaAceptada.getActivosOferta())
@@ -174,10 +175,10 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 				}
 				
 				if(MOTIVO_NO_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
-					Reserva reserva = expediente.getReserva();
-					if(!Checks.esNulo(reserva)){
-						reserva.setMotivoAnulacion(valor.getValor());
-					}
+					// Se incluye un motivo de anulacion del expediente, si se indico en la tarea
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
+					DDMotivoAnulacionExpediente motivoAnulacion = (DDMotivoAnulacionExpediente) genericDao.get(DDMotivoAnulacionExpediente.class, filtro);
+					expediente.setMotivoAnulacion(motivoAnulacion);
 				}
 			}
 		}

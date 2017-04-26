@@ -49,9 +49,7 @@ public class StockDto implements WebcomRESTDto{
 	private DateDataType publicadoDesde;
 	private BooleanDataType reformas;
 	private StringDataType codRegimenProteccion;
-	private StringDataType descripcion;
 	private StringDataType distribucion;
-	private StringDataType condicionesEspecificas;
 	private StringDataType codDetallePublicacion;
 	private LongDataType codigoAgrupacionObraNueva;
 	private LongDataType codigoCabeceraObraNueva;
@@ -125,6 +123,10 @@ public class StockDto implements WebcomRESTDto{
 	
 	//HREOS-1809
 	private StringDataType codSubCartera;
+	
+	//Petición HREOS-1930 - Se amplia campo de 500 a 3000
+	private StringDataType condicionesEspecificas;
+	private StringDataType descripcion;
 	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;

@@ -199,6 +199,7 @@
 	<logger name="es.pfsgroup.plugin.rem.controller.InformemediadorController"
 		additivity="false">
 		<level value="debug" />
+		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
 	<logger name="es.pfsgroup.plugin.rem.controller.PortalesController"

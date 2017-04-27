@@ -122,5 +122,13 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 * @return
 	 */
 	public List<VBusquedaActivosPrecios> getListActivosPreciosFromListId(String cadenaId);
+	 
+	/**
+	 *  Este método obtiene el siguiente número de la secuencia para el campo de
+	 * 'ACT_NUM_ACTIVO_REM'.
+	 * 
+	 * @return Devuelve un Long con el siguiente número de la secuencia.
+	 */
+	public Long getNextNumActivoRem();
 
 }

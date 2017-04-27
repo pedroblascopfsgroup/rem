@@ -83,9 +83,7 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 		List<String> listaValidacion = recuperarFormato(dtoFile.getIdTipoOperacion());
 
 		// recuperamos el fichero mediante el objeto excelParse
-		@SuppressWarnings("deprecation")
 		MSVHojaExcel exc;
-		@SuppressWarnings("deprecation")
 		MSVHojaExcel excPlantilla = excelParser.getExcel(recuperarPlantilla(dtoFile.getIdTipoOperacion()));
 		if (dtoFile.getExcelFile() != null) {
 			checkExcelFile(dtoFile.getExcelFile());
@@ -127,7 +125,6 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 	 * 
 	 * @author pedro
 	 */
-	@SuppressWarnings("deprecation")
 	public MSVDtoValidacion recorrerFichero(MSVHojaExcel exc, MSVHojaExcel excPlantilla, List<String> listaValidacion, MSVBusinessValidators contentValidators, 
 			MSVBusinessCompositeValidators compositeValidators, boolean validacionFormato) {
 

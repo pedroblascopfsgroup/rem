@@ -9,6 +9,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
 public interface GestorExpedienteComercialApi {
 
+	public static final String CODIGO_GESTOR_COMERCIAL = "GCOM";
 	public static final String CODIGO_GESTOR_COMERCIAL_RETAIL = "GCOMRET";
 	public static final String CODIGO_GESTOR_COMERCIAL_SINGULAR = "GCOMSIN";
 	public static final String CODIGO_GESTOR_COMERCIAL_BACKOFFICE = "GCBO";

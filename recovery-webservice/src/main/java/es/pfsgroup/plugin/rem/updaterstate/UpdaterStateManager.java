@@ -45,12 +45,12 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	
 	@Override
 	public Boolean getStateAdmision(Activo activo) {
-		return (Checks.esNulo(activo.getAdmision() ? false : activo.getAdmision()));
+		return Checks.esNulo(activo.getAdmision()) ? false :  activo.getAdmision();
 	}
 
 	@Override
 	public Boolean getStateGestion(Activo activo) {
-		return (Checks.esNulo(activo.getGestion() ? false : activo.getGestion()));
+		return (Checks.esNulo(activo.getGestion()) ? false : activo.getGestion());
 	}
 
 	@Override

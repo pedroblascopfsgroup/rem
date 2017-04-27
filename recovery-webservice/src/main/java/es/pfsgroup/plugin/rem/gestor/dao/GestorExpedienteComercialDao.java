@@ -8,4 +8,8 @@ import es.pfsgroup.plugin.rem.model.GestorExpedienteComercial;
 public interface GestorExpedienteComercialDao  extends AbstractDao<GestorExpedienteComercial, Long> {
 
 	public Usuario getUsuarioGestorBycodigoTipoYExpedienteComercial(String codigoTipoGestor, ExpedienteComercial expediente);
+	
+	public Long getUsuarioGestorFormalizacion(Long idActivo);
+	public Long getUsuarioGestoriaFormalizacion(Long idActivo);
+	
 }

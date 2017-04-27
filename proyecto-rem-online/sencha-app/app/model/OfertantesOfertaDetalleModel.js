@@ -10,6 +10,9 @@ Ext.define('HreRem.model.OfertantesOfertaDetalleModel', {
             	name:'id'
             },
             {
+            	name: 'ofertaID'
+            },
+            {
             	name: 'tipoDocumento'
             },
             {
@@ -23,7 +26,8 @@ Ext.define('HreRem.model.OfertantesOfertaDetalleModel', {
 	proxy: {
 		type: 'uxproxy',
 		api: {
-            read: 'ofertas/getOfertantesByOfertaId'
+            read: 'ofertas/getOfertantesByOfertaId',
+            update: 'ofertas/updateOfertantesByOfertaId'
 		}
     }
 });

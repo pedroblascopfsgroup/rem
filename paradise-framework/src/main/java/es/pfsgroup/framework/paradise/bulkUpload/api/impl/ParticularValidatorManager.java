@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -159,7 +160,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeActivo(String numActivo){
-		if(Checks.esNulo(numActivo))
+		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ACT_ACTIVO WHERE"
@@ -795,5 +796,113 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 		else
 			return true;
+	}
+
+	@Override
+	public Boolean existeSociedadAcreedora(String sociedadAcreedoraNIF) {
+		if(Checks.esNulo(sociedadAcreedoraNIF)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_PDV_PLAN_DIN_VENTAS WHERE"
+				+ "		 	PDV_ACREEDOR_NIF = '"+sociedadAcreedoraNIF+"' "
+				+ "		 	AND BORRADO = 0");
+		
+		if("0".equals(resultado)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public Boolean existePropietario(String propietarioNIF) {
+		if(Checks.esNulo(propietarioNIF)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_PRO_PROPIETARIO WHERE"
+				+ "		 	PRO_DOCIDENTIF = '"+propietarioNIF+"' "
+				+ "		 	AND BORRADO = 0");
+		
+		if("0".equals(resultado)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public Boolean existeProveedorMediadorByNIF(String proveedorMediadorNIF) {
+		if(Checks.esNulo(proveedorMediadorNIF)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_PVE_PROVEEDOR WHERE"
+				+ "		 PVE_DOCIDENTIF = '" + proveedorMediadorNIF + "'"
+				+ " 	 AND DD_TPR_ID = (SELECT DD_TPR_ID FROM DD_TPR_TIPO_PROVEEDOR WHERE DD_TPR_CODIGO = '04')" // Mediador-Colaborador-API.
+				+ "		 AND BORRADO = 0");
+		
+		if("0".equals(resultado)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public Boolean existeProvinciaByCodigo(String codigoProvincia) {
+		if(Checks.esNulo(codigoProvincia)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ${master.schema}.DD_PRV_PROVINCIA WHERE"
+				+ "		 DD_PRV_CODIGO = '" + codigoProvincia + "'"
+				+ "		 AND BORRADO = 0");
+		
+		if("0".equals(resultado)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public Boolean existeMunicipioByCodigo(String codigoMunicipio) {
+		if(Checks.esNulo(codigoMunicipio)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ${master.schema}.DD_LOC_LOCALIDAD WHERE"
+				+ "		 DD_LOC_CODIGO = '" + codigoMunicipio + "'");
+		
+		if("0".equals(resultado)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public Boolean existeUnidadInferiorMunicipioByCodigo(String codigoUnidadInferiorMunicipio) {
+		if(Checks.esNulo(codigoUnidadInferiorMunicipio)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ${master.schema}.DD_UPO_UNID_POBLACIONAL WHERE"
+				+ "		 DD_UPO_CODIGO = '" + codigoUnidadInferiorMunicipio + "'"
+				+ "		 AND BORRADO = 0");
+		
+		if("0".equals(resultado)) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 }

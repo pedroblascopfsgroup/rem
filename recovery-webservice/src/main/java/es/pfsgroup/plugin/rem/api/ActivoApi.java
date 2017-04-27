@@ -136,7 +136,7 @@ public interface ActivoApi {
 	public boolean savePrecioVigente(DtoPrecioVigente precioVigenteDto);
 
 	@BusinessOperationDefinition("activoManager.saveOfertaActivo")
-	public boolean saveOfertaActivo(DtoOfertaActivo precioVigenteDto);
+	public boolean saveOfertaActivo(DtoOfertaActivo precioVigenteDto) throws JsonViewerException, Exception;
 
 	/**
 	 * saveActivoValoracion: Para un activo dado, actualiza o crea una
@@ -958,4 +958,13 @@ public interface ActivoApi {
 	 * @throws JsonViewerException 
 	 */
 	public void setActivoToNoPublicado(Activo activo, String motivo) throws JsonViewerException, SQLException;
+	
+	/**
+	 * Este método llama al api del ActivoDao el cual obtiene el siguiente número
+	 *  de la secuencia para el campo de 'ACT_NUM_ACTIVO_REM'.
+	 * 
+	 * @return Devuelve un Long con el siguiente número de la secuencia.
+	 */
+	public Long getNextNumActivoRem();
+
 }

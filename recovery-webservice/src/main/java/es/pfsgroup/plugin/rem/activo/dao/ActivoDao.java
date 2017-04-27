@@ -8,6 +8,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
@@ -114,5 +115,12 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 * @return
 	 */
 	public String getCodigoTipoComercializarByActivo(Long idActivo);
+	
+	/**
+	 * Recupera una lista de activos con los id pasados en la cadena por parámetro
+	 * @param cadenaId
+	 * @return
+	 */
+	public List<VBusquedaActivosPrecios> getListActivosPreciosFromListId(String cadenaId);
 
 }

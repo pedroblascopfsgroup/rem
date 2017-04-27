@@ -42,6 +42,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
@@ -762,6 +763,15 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				+ "         AND ROWNUM = 1 ");
 		
 		return codComercializar;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VBusquedaActivosPrecios> getListActivosPreciosFromListId(String cadenaId) {
+		
+    	HQLBuilder hb = new HQLBuilder("select act from VBusquedaActivosPrecios act where act.id in ("+cadenaId+")");
+
+    	return this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 	}
 	
 }

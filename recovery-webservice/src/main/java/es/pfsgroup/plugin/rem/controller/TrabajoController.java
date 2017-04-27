@@ -1133,8 +1133,7 @@ public class TrabajoController extends ParadiseJsonController {
 	public ModelAndView comprobarCreacionPropuesta(@RequestParam Long idTrabajo, ModelMap model){
 		
 		String advertencia = preciosApi.puedeCreasePropuestaFromTrabajo(idTrabajo);
-		if(Checks.esNulo(advertencia)) {
-		
+		if(Checks.esNulo(advertencia)) {		
 			model.put("success", true);
 		}
 		else {
@@ -1144,6 +1143,20 @@ public class TrabajoController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView comprobarActivosEnOtrasPropuesta(@RequestParam Long idTrabajo, ModelMap model){
+	
+		String advertencia = preciosApi.tieneTrabajoActivosEnPropuestasEnTramitacion(idTrabajo);
+		
+		if(!Checks.esNulo(advertencia)) {
+			model.put("advertencia", advertencia);
+		}	
+		model.put("success", true);
+		
+		return createModelAndViewJson(model);
 	}
 
 	@RequestMapping(method = RequestMethod.GET)

@@ -304,13 +304,23 @@ Ext.define('HreRem.view.precios.PreciosController', {
 		    	
 		    	me.getView().mask(HreRem.i18n("msg.mask.loading"));	
 		    	params.nombrePropuesta = text;
+		    	var advertencia;
 		    	
 		    	Ext.Ajax.request({
 		    		url: url,
 		    		params: params,
 		    		success: function(response, opts){
-		    			if(Ext.decode(response.responseText).success)
-		    				me.fireEvent("infoToast", HreRem.i18n('msg.generar.propuesta.ok.mensaje')); 
+		    			if(Ext.decode(response.responseText).success) {
+		    				advertencia = Ext.JSON.decode(response.responseText).advertencia;
+		    				if(Ext.isEmpty(advertencia))
+		    					me.fireEvent("infoToast", HreRem.i18n('msg.generar.propuesta.ok.mensaje'));
+		    				else {
+		    					if(advertencia=='01')
+		    						me.fireEvent("warnToast", HreRem.i18n('msg.advertencia.precios.generar.prp.existen.activos.in.prp.entramite'));
+	    						else
+	    							me.fireEvent("errorToast", HreRem.i18n('msg.advertencia.precios.no.gernerar.prp.todos.activos.in.prp.tramite'));
+		    				}
+		    			}
 		    			else
 		    				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 		    		},

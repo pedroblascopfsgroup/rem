@@ -1,7 +1,7 @@
 --/*
 --###########################################
 --## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20170427
+--## FECHA_CREACION=20170428
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-1940
@@ -40,18 +40,18 @@ DECLARE
   TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
   V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 		   -- USER_NAME	  NOMBRE_USU			APELL1			APELL2		EMAIL      					PASS			PEF_COD		USU GRUPO	DESPACHO_EXTERNO	
-	T_TIPO_DATA( '03461780G' ,'Gema' 			,'Herrero'  	,'Diez'  	,'gherrero@grupogf.es'  	, 'tCFFY@26'  ,'GESTOCED'  	,'ogf01'  	,'GTOCED'),
-	T_TIPO_DATA( '03867799G' ,'Irene ' 			,'Sardinero'  	,'López'  	,'isardinero@grupogf.es'  	, 'LDy%6>Je'  ,'GESTOCED'  	,'ogf01'  	,'GTOCED'),
-	T_TIPO_DATA( '03876878K' ,'María Noemí ' 	,'Fernandez '  	,'Martín'  	,'mnfernandez@grupogf.es'  	, 'x7!VRXG9'  ,'GESTOCED'  	,'ogf01'  	,'GTOCED'),
-	T_TIPO_DATA( '03877533D' ,'Jaime ' 			,'Calvo '  		,'Brasal'  	,'jcalvo@grupogf.es'  		, '^z!D3q@T'  ,'GESTOCED'  	,'ogf01'  	,'GTOCED'),
-	T_TIPO_DATA( '03887362V' ,'Luis María' 		,'Nogales'  	,'Sánchez'  ,'lnogales@grupogf.es'  	, 'QHBU6@AJ'  ,'GESTOCED'  	,'ogf01'  	,'GTOCED'),
-	T_TIPO_DATA( '03893974M' ,'Pedro Luis' 		,'Chicharro'  	,'Ruiz'  	,'pchicharro@grupogf.es'  	, 'h7er~C3L'  ,'GESTOCED'  	,'ogf01'  	,'GTOCED'),
-	T_TIPO_DATA( '20253228A' ,'Luz' 			,'Sánchez'  	,'Maqueda'  ,'lsanchez@grupogf.es'  	, 'KB%9%HP$'  ,'GESTOCED'  	,'ogf01'  	,'GTOCED'),
-	T_TIPO_DATA( '41558133N' ,'Angel' 			,'Nieto'  		,'Rodriguez','anieto@grupogf.es'  		, '4y&tZDL~'  ,'GESTOCED'  	,'ogf01'  	,'GTOCED'),
-	T_TIPO_DATA( '44904379F' ,'Pablo' 			,'Sierra'  		,'Fuentes'  ,'psierra@grupogf.es'  		, 'd6yMLJ>&'  ,'GESTOCED'  	,'ogf01'  	,'GTOCED'),
-	T_TIPO_DATA( '50861491G' ,'Rebeca'			,'Asenjo'  		,'Hernanz'  ,'rasenjo@grupogf.es'  		, '+U5Jf#xD'  ,'GESTOCED'  	,'ogf01'  	,'GTOCED'),
-	T_TIPO_DATA( 'X4092272C' ,'Pablo' 			,'Varni'  		,''  		,'pvarni@grupogf.es'  		, '3+FRBcNx'  ,'GESTOCED'  	,'ogf01'  	,'GTOCED'),
-	T_TIPO_DATA( 'Y3741385N' ,'Michael' 		,'Guarnaccia'  	,''  		,'mguarn@grupogf.es'  		, 'cv7v5W2?'  ,'GESTOCED'  	,'ogf01'  	,'GTOCED')
+	T_TIPO_DATA( '03461780G' ,'Gema' 			,'Herrero'  	,'Diez'  	,'gherrero@grupogf.es'  	, 'tCFFY@26'  ,'GESTOCED'  	,''  	,'GTOCED'),
+	T_TIPO_DATA( '03867799G' ,'Irene ' 			,'Sardinero'  	,'López'  	,'isardinero@grupogf.es'  	, 'LDy%6>Je'  ,'GESTOCED'  	,''  	,'GTOCED'),
+	T_TIPO_DATA( '03876878K' ,'María Noemí ' 	,'Fernandez '  	,'Martín'  	,'mnfernandez@grupogf.es'  	, 'x7!VRXG9'  ,'GESTOCED'  	,''  	,'GTOCED'),
+	T_TIPO_DATA( '03877533D' ,'Jaime ' 			,'Calvo '  		,'Brasal'  	,'jcalvo@grupogf.es'  		, '^z!D3q@T'  ,'GESTOCED'  	,''  	,'GTOCED'),
+	T_TIPO_DATA( '03887362V' ,'Luis María' 		,'Nogales'  	,'Sánchez'  ,'lnogales@grupogf.es'  	, 'QHBU6@AJ'  ,'GESTOCED'  	,''  	,'GTOCED'),
+	T_TIPO_DATA( '03893974M' ,'Pedro Luis' 		,'Chicharro'  	,'Ruiz'  	,'pchicharro@grupogf.es'  	, 'h7er~C3L'  ,'GESTOCED'  	,''  	,'GTOCED'),
+	T_TIPO_DATA( '20253228A' ,'Luz' 			,'Sánchez'  	,'Maqueda'  ,'lsanchez@grupogf.es'  	, 'KB%9%HP$'  ,'GESTOCED'  	,''  	,'GTOCED'),
+	T_TIPO_DATA( '41558133N' ,'Angel' 			,'Nieto'  		,'Rodriguez','anieto@grupogf.es'  		, '4y&tZDL~'  ,'GESTOCED'  	,''  	,'GTOCED'),
+	T_TIPO_DATA( '44904379F' ,'Pablo' 			,'Sierra'  		,'Fuentes'  ,'psierra@grupogf.es'  		, 'd6yMLJ>&'  ,'GESTOCED'  	,''  	,'GTOCED'),
+	T_TIPO_DATA( '50861491G' ,'Rebeca'			,'Asenjo'  		,'Hernanz'  ,'rasenjo@grupogf.es'  		, '+U5Jf#xD'  ,'GESTOCED'  	,''  	,'GTOCED'),
+	T_TIPO_DATA( 'X4092272C' ,'Pablo' 			,'Varni'  		,''  		,'pvarni@grupogf.es'  		, '3+FRBcNx'  ,'GESTOCED'  	,''  	,'GTOCED'),
+	T_TIPO_DATA( 'Y3741385N' ,'Michael' 		,'Guarnaccia'  	,''  		,'mguarn@grupogf.es'  		, 'cv7v5W2?'  ,'GESTOCED'  	,''  	,'GTOCED')
   ); 
   V_TMP_TIPO_DATA T_TIPO_DATA;
   

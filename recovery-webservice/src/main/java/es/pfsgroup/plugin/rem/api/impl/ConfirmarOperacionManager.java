@@ -508,19 +508,21 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 			throw new Exception("No existe expediente comercial para esta activo.");
 		}
 		Reserva reserva = expedienteComercial.getReserva();
-		if (Checks.esNulo(reserva)) {
-			throw new Exception("El activo no tiene reserva");
-		}
 
 		// Importe Reserva:
 		CondicionanteExpediente condExp = expedienteComercial.getCondicionante();
 		if (!Checks.esNulo(condExp)) {
 			importeReserva = condExp.getImporteReserva();
 		}
-		// Importe Total:
-		importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta() - importeReserva
-				: oferta.getImporteContraOferta() - importeReserva;
-
+		
+		if (Checks.esNulo(reserva) || importeReserva == null) {
+			importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta()
+					: oferta.getImporteContraOferta();
+		} else {
+			importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta() - importeReserva
+					: oferta.getImporteContraOferta() - importeReserva;
+		}
+		
 		// Borra de entregas a cuentas la venta.
 		if (!Checks.esNulo(importeTotal)) {
 			listaEntregas = reserva.getEntregas();

@@ -43,6 +43,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPropuesta;
 import es.pfsgroup.plugin.rem.model.ActivoPropuesta.ActivoPropuestaPk;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
+import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.AdjuntoTrabajo;
 import es.pfsgroup.plugin.rem.model.CarteraCondicionesPrecios;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
@@ -166,11 +167,17 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		// Se instancia una lista de Activos, usando los id's de activos de la lista del buscador
 		List<Activo> activos = new ArrayList<Activo>();
 		for(VBusquedaActivosPrecios activoPrecio : activosPrecios){
-			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(activoPrecio.getId()));
-			Activo activo = (Activo) genericDao.get(Activo.class, filtroActivo);
-			activos.add(activo);
+			if(!activoPrecio.getActivoEnPropuestaEnTramitacion()) {
+				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(activoPrecio.getId()));
+				Activo activo = (Activo) genericDao.get(Activo.class, filtroActivo);
+				activos.add(activo);
+			}
 		}
-
+		
+		//Si esta vacio, es porque todos los activos de la busqueda están incluidos en otras propuestas en trámite.
+		if(Checks.estaVacio(activos))
+			return null;
+		
 		// Se toman precauciones para crear una lista con activos unicos ya que proveniendo de una vista,
 		// pueden haberse creado filas multiples del mismo activo
 		Set<Activo> uniqueSetActivos =  new HashSet<Activo>(activos);
@@ -193,7 +200,6 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		
 	}
 	
-	
 	@Override
 	@Transactional(readOnly = false)
 	public PropuestaPrecio createPropuestaPreciosFromTrabajo(Long idTrabajo, String nombrePropuesta) {
@@ -201,20 +207,22 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		PropuestaPrecio propuesta = null;
 		
 		List<BigDecimal> listIdActivos = propuestaPrecioDao.getActivosFromTrabajo(idTrabajo);
-		List<Activo> activos = new ArrayList<Activo>();
-		for(BigDecimal idActivo : listIdActivos) {
-			
-			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id",idActivo.longValue());
-			Activo activo = (Activo) genericDao.get(Activo.class, filtroActivo);
-			activos.add(activo);
-		}
 		
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idTrabajo);
-		Trabajo trabajo = genericDao.get(Trabajo.class, filtro);
-		String codigoPropuesta = this.getCodTipoPropuestaFromSubtipoTrabajo(trabajo.getSubtipoTrabajo().getCodigo());
-
-		propuesta = createPropuestaPrecios(activos, nombrePropuesta, codigoPropuesta, trabajo);
-
+		if(!Checks.estaVacio(listIdActivos)) {
+			List<Activo> activos = new ArrayList<Activo>();
+			for(BigDecimal idActivo : listIdActivos) {
+				
+				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id",idActivo.longValue());
+				Activo activo = (Activo) genericDao.get(Activo.class, filtroActivo);
+				activos.add(activo);
+			}
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idTrabajo);
+			Trabajo trabajo = genericDao.get(Trabajo.class, filtro);
+			String codigoPropuesta = this.getCodTipoPropuestaFromSubtipoTrabajo(trabajo.getSubtipoTrabajo().getCodigo());
+	
+			propuesta = createPropuestaPrecios(activos, nombrePropuesta, codigoPropuesta, trabajo);
+		}
 		return propuesta;
 	}
 	
@@ -806,5 +814,46 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		}
 
 		return true;
+	}
+	
+	@Override
+	public String tienePropuestaActivosEnPropuestasEnTramitacion(List<VBusquedaActivosPrecios> listaActivos) {
+		
+		String codMsgActivosEnPropuesta = null;
+		Boolean todosEnOtrasPropeustas = true;
+		
+		for(VBusquedaActivosPrecios act : listaActivos) {
+			if(act.getActivoEnPropuestaEnTramitacion()) {
+				codMsgActivosEnPropuesta = COD_MSG_GENERAR_PROPUESTA_PRECIOS_TODOS;
+			}
+			else {
+				todosEnOtrasPropeustas = false;
+			}
+			
+			if(!Checks.esNulo(codMsgActivosEnPropuesta) && !todosEnOtrasPropeustas) {
+				codMsgActivosEnPropuesta = COD_MSG_GENERAR_PROPUESTA_PRECIOS_ALGUNOS;
+				break;
+			}
+		}
+		
+		return codMsgActivosEnPropuesta;
+	}
+	
+	@Override
+	public String tieneTrabajoActivosEnPropuestasEnTramitacion(Long idTrabajo) {
+		
+		Trabajo trabajo = trabajoApi.findOne(idTrabajo);
+		String cadenaId = "";
+		for(ActivoTrabajo activoTrabajo : trabajo.getActivosTrabajo()) {
+			cadenaId = cadenaId + activoTrabajo.getPrimaryKey().getActivo().getId() +",";
+		}
+		
+		List<VBusquedaActivosPrecios> listaActivos = new ArrayList<VBusquedaActivosPrecios>();
+		if(cadenaId.length() > 0) {
+			cadenaId = cadenaId.substring(0,cadenaId.length()-1);
+			listaActivos = activoDao.getListActivosPreciosFromListId(cadenaId);
+		}
+		
+		return this.tienePropuestaActivosEnPropuestasEnTramitacion(listaActivos);
 	}
 }

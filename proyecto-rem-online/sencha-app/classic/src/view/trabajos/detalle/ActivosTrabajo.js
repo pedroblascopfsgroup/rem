@@ -10,6 +10,7 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
     		if(me.lookupController().getViewModel().get('trabajo').get('subtipoTrabajoCodigo')==='44'
     			|| me.lookupController().getViewModel().get('trabajo').get('subtipoTrabajoCodigo')==='45') {
     			me.down("[itemId=generarPropuestaFromTrabajo]").show();
+    			me.down("[itemId=msgActivoPropuestaFromTrabajo]").show();
     		}
     	}
     },
@@ -157,6 +158,17 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
 									beforerender: 'comprobarExistePropuestaTrabajo'
 								} 
 								
+							},
+							{
+					        	itemId:'msgActivoPropuestaFromTrabajo',
+					        	align: 'left',
+					        	editor: 'textfield',
+					        	hidden: true,
+					        	reference: 'msgAdvertenciaActivosEnOtrasPropuestas',
+					        	listeners:{
+									afterrender: 'comprobarActivosEnOtrasPropuestas'
+								} 
+					            
 							}
 						]
 					},

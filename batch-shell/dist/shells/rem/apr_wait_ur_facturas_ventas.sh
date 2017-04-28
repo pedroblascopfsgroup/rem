@@ -1,6 +1,6 @@
 #!/bin/bash
  
-fichero=URFACVE
+fichero=URFACVE2
 
 if [[ -z ${DIR_DESTINO} ]] || [[ ! -d ${DIR_DESTINO} ]]; then
     echo "$(basename $0) Error: DIR_DESTINO no definido o no es un directorio. Compruebe invocación previa a setBatchEnv.sh"
@@ -8,9 +8,6 @@ if [[ -z ${DIR_DESTINO} ]] || [[ ! -d ${DIR_DESTINO} ]]; then
 fi
 rm -f ${DIR_DESTINO}$fichero*
 
-#mascara='_'$1
-#extensionSem=".sem"
-#extensionZip=".dat"
 extensionTxt=".txt"
 
 OIFS=$IFS
@@ -24,8 +21,6 @@ echo "Hora actual: $hora_actual - Hora limite: $hora_limite"
 
 for fichero in $arrayfichero
 do
-#    ficheroem=$DIR_INPUT_AUX$fichero$mascara$extensionSem
-#    ficheroZip=$DIR_INPUT_AUX$fichero$mascara$extensionZip
      ficheroTxt=$DIR_INPUT_AUX$fichero$extensionTxt
 
     echo "$ficheroTxt"
@@ -48,11 +43,8 @@ then
 else
    for fichero in $arrayfichero
    do
-#            ficheroem=$DIR_INPUT_AUX$fichero$mascara$extensionSem
-#            ficheroZip=$DIR_INPUT_AUX$fichero$mascara$extensionZip
             ficheroTxt=$DIR_INPUT_AUX$fichero$extensionTxt
 
-            sed -i 's/ //g' $ficheroTxt
             mv $ficheroTxt $DIR_DESTINO
 
    done

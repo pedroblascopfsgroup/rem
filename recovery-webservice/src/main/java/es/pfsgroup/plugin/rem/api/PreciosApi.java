@@ -19,6 +19,9 @@ import es.pfsgroup.plugin.rem.propuestaprecios.dto.DtoGenerarPropuestaPreciosUni
 
 public interface PreciosApi {
 	
+	public static final String COD_MSG_GENERAR_PROPUESTA_PRECIOS_ALGUNOS = "01"; //Existen ALGUNOS activos en otras propuestas en tramite
+	public static final String COD_MSG_GENERAR_PROPUESTA_PRECIOS_TODOS = "02";   //TODOS los activos están en otras propuestas en trámite
+	
 	/**
 	 * Devuelve una Page de activos aplicando el filtro que recibe
 	 * @param dtoActivoFiltro
@@ -157,4 +160,18 @@ public interface PreciosApi {
 	 * @return Devuelve True si la operación ha sido satisfactoria.
 	 */
 	public boolean updateConfiguracionGeneracionPropuesta(DtoConfiguracionPropuestasPrecios dto);
+	
+	/**
+	 * Devuelve mensaje de advertencia si hay algún activo que ya existen en una propuesta de precios en Tramitación (Estado != Cargada)
+	 * @param listaActivos
+	 * @return
+	 */
+	public String tienePropuestaActivosEnPropuestasEnTramitacion(List<VBusquedaActivosPrecios> listaActivos);
+	
+	/**
+	 * Devuelve mensaje de adverventia, de si el trabajo tiene activos en propuestas en trámite
+	 * @param idTrabajo
+	 * @return
+	 */
+	public String tieneTrabajoActivosEnPropuestasEnTramitacion(Long idTrabajo);
 }

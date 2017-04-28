@@ -172,6 +172,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
+
+	private Oferta oferta;
+
 	@Override
 	public Oferta getOfertaById(Long id) {
 		Oferta oferta = null;
@@ -1293,10 +1296,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getCliente())) {
 			DtoOfertantesOferta dto = new DtoOfertantesOferta();
 			if (!Checks.esNulo(oferta.getCliente().getTipoDocumento())) {
-				dto.setTipoDocumento(oferta.getCliente().getTipoDocumento().getDescripcion());
+				dto.setTipoDocumento(oferta.getCliente().getTipoDocumento().getCodigo());
 			}
 			dto.setNumDocumento(oferta.getCliente().getDocumento());
 			dto.setNombre(oferta.getCliente().getNombreCompleto());
+			dto.setOfertaID(String.valueOf(oferta.getId()));
+			dto.setId(String.valueOf(oferta.getCliente().getId()+"c"));
 			listaOfertantes.add(dto);
 		}
 
@@ -1306,10 +1311,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			for (TitularesAdicionalesOferta titularAdicional : titularesAdicionales) {
 				DtoOfertantesOferta dto = new DtoOfertantesOferta();
 				if (!Checks.esNulo(titularAdicional.getTipoDocumento())) {
-					dto.setTipoDocumento(titularAdicional.getTipoDocumento().getDescripcion());
+					dto.setTipoDocumento(titularAdicional.getTipoDocumento().getCodigo());
 				}
 				dto.setNumDocumento(titularAdicional.getDocumento());
 				dto.setNombre(titularAdicional.getNombre());
+				dto.setOfertaID(String.valueOf(oferta.getId()));
+				dto.setId(String.valueOf(titularAdicional.getId()+"t"));
 				listaOfertantes.add(dto);
 			}
 		}
@@ -1317,6 +1324,54 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return listaOfertantes;
 	}
 
+	@Override
+	@Transactional(readOnly = false)
+	public boolean updateOfertantesByOfertaId(DtoOfertantesOferta dtoOfertantesOferta) {
+		List<DtoOfertantesOferta> listaOfertantes = new ArrayList<DtoOfertantesOferta>();
+
+		if (Checks.esNulo(dtoOfertantesOferta.getId())) {
+			return false;
+		}
+
+		if(dtoOfertantesOferta.getId().contains("c")) {
+			dtoOfertantesOferta.setId(dtoOfertantesOferta.getId().replace("c",""));
+			Filter filterClienteID = genericDao.createFilter(FilterType.EQUALS, "id",
+					Long.parseLong(dtoOfertantesOferta.getId()));
+			ClienteComercial cliente = genericDao.get(ClienteComercial.class, filterClienteID);
+			if (!Checks.esNulo(cliente)) {
+				if(!Checks.esNulo(dtoOfertantesOferta.getTipoDocumento())) {
+					DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTipoDocumento.class, dtoOfertantesOferta.getTipoDocumento());
+				
+					cliente.setTipoDocumento(tipoDocumento);
+				}
+				if(!Checks.esNulo(dtoOfertantesOferta.getNumDocumento())) {
+					cliente.setDocumento(dtoOfertantesOferta.getNumDocumento());
+				}
+				genericDao.save(ClienteComercial.class,cliente);
+			}
+		}
+		else if(dtoOfertantesOferta.getId().contains("t")) {
+			dtoOfertantesOferta.setId(dtoOfertantesOferta.getId().replace("t",""));
+			Filter filterTitularOfertaID = genericDao.createFilter(FilterType.EQUALS, "id",
+					Long.parseLong(dtoOfertantesOferta.getId()));
+			TitularesAdicionalesOferta titular = genericDao.get(TitularesAdicionalesOferta.class, filterTitularOfertaID);
+			if (!Checks.esNulo(titular)) {
+				if(!Checks.esNulo(dtoOfertantesOferta.getTipoDocumento())) {
+					DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTipoDocumento.class, dtoOfertantesOferta.getTipoDocumento());
+				
+					titular.setTipoDocumento(tipoDocumento);
+				}
+				if(!Checks.esNulo(dtoOfertantesOferta.getNumDocumento())) {
+					titular.setDocumento(dtoOfertantesOferta.getNumDocumento());
+				}
+				genericDao.save(TitularesAdicionalesOferta.class,titular);
+			}
+		}
+		return true;
+	}
+	
 	@Override
 	public List<DtoHonorariosOferta> getHonorariosByOfertaId(DtoHonorariosOferta dtoHonorariosOferta) {
 

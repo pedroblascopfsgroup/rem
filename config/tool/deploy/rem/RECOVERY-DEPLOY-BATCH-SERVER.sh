@@ -25,6 +25,7 @@ rm -rf $BASE_DIR/shells/ftp
 cp config/$1/setBatchEnv.sh $BASE_DIR/shells/
 cp -r scripts/shells/* $BASE_DIR/shells/
 chmod a+rx $BASE_DIR/shells/*.sh
+chmod -R 755 $BASE_DIR/shells/ftp
 rm -rf $BASE_DIR/programas/etl/apr_*
 cp etl/* $BASE_DIR/programas/etl/
 cd $BASE_DIR/programas/etl/

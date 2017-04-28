@@ -527,6 +527,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 			{   
 				xtype:'fieldset',
 				collapsible: true,
+				hidden: true,
 				defaultType: 'displayfieldbase',				
 				title: HreRem.i18n('title.subsanaciones'),
 				items : [
@@ -590,10 +591,11 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 					}
 		        ]
 			},
-		// Aparatado Resolución.
+		// Apartado Resolución.
 			{   
 				xtype:'fieldsettable',
-				defaultType: 'displayfieldbase',				
+				defaultType: 'displayfieldbase',	
+				hidden: true,
 				title: HreRem.i18n('title.resolucion'),
 //				recordName: "resolucion",
 //				recordClass: "HreRem.model.ExpedienteFormalizacionResolucion",

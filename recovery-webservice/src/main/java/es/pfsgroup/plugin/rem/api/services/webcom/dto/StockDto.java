@@ -64,6 +64,7 @@ public class StockDto implements WebcomRESTDto{
 	private StringDataType codRatio;
 	
 	//Petición HREOS-1399
+	@WebcomRequired
 	private BooleanDataType esNuevo;
 	@DecimalDataTypeFormat(decimals=2)
 	private DoubleDataType utilSuperficie;

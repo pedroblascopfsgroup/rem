@@ -742,7 +742,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 					  if(Ext.JSON.decode(response.responseText).success == "true") {
 					    	params.nombrePropuesta = text;
 					    	params.idTrabajo = idTrabajo;
-					       
+		    				
 					        config.params = params;
 							config.url= $AC.getRemoteUrl('trabajo/createPropuestaPreciosFromTrabajo');
 							
@@ -788,6 +788,42 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
  		  }
      	});
       },
+      
+	comprobarActivosEnOtrasPropuestas: function() {
+      	var me = this, params = {},
+       	idTrabajo = me.getViewModel().get('trabajo').get('id');
+       	
+       	var boton = me.lookupReference("botonGenerarPropuesta");
+       	if(!boton.isDisabled() && (me.getViewModel().get('trabajo').get('subtipoTrabajoCodigo')==='44'
+    			|| me.getViewModel().get('trabajo').get('subtipoTrabajoCodigo')==='45')) 
+    	{
+	     	//LLamada para comprobar si hay activos en otras propuestas en trámite
+	     	var url = $AC.getRemoteUrl('trabajo/comprobarActivosEnOtrasPropuesta');
+	     	var advertencia;
+	 	    Ext.Ajax.request({
+				url:url,
+				params:  {idTrabajo : idTrabajo},
+	 		  			
+				success: function(response,opts){
+		 			//Respuesta que indica si se creará la propuesta con algunos activos (ya que existen algunos en otras propuestas en trámite)
+			    	advertencia = Ext.JSON.decode(response.responseText).advertencia;
+			    	
+			    	if(!Ext.isEmpty(advertencia) && !boton.isDisabled()) {
+			    		var msgAdvertencia = me.lookupReference("msgAdvertenciaActivosEnOtrasPropuestas");
+			    		var texto = "<span style= 'color: red; float: left'>";
+			    		if(advertencia=='01')
+			    			texto += HreRem.i18n('msg.advertencia.precios.generar.prp.existen.activos.in.prp.entramite');
+			    		else {
+			    			texto += HreRem.i18n('msg.advertencia.precios.no.gernerar.prp.todos.activos.in.prp.tramite');
+			    			boton.setDisabled(true);
+			    		}
+			    		texto += "</span>";
+			    		msgAdvertencia.setText(texto);
+			    	}
+		 		}
+	     	});
+       	}
+	},
      
      onClickBotonDescargarPlantilla: function(btn) {
     	var me = this,

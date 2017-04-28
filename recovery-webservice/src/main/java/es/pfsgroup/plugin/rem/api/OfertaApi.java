@@ -459,6 +459,8 @@ public interface OfertaApi {
 	 * @return String Error o null
 	 */
 	String altaComiteProcess(TareaExterna tareaExterna);
+	
+	public boolean updateOfertantesByOfertaId(DtoOfertantesOferta dtoOfertantesOferta);
 
 }
 

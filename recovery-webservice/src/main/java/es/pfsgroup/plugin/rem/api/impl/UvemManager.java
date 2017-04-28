@@ -12,6 +12,8 @@ import java.util.Properties;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import oracle.sql.CHAR;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -892,6 +894,10 @@ public class UvemManager implements UvemManagerApi {
 	public ResultadoInstanciaDecisionDto consultarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws Exception {
 		ResultadoInstanciaDecisionDto instancia = new ResultadoInstanciaDecisionDto();
 		try {
+			//HREOS-1888 -NO se especifica código de oferta HAYA, 
+			//se consulta las facultades con los activos e importe que se alimentan al servicio de consulta, 
+			//obteniendo el comité con los datos facilitados en la entrada al servicio.
+			instanciaDecisionDto.setCodigoDeOfertaHaya("0");
 			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_CONSULTA);
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
@@ -933,6 +939,8 @@ public class UvemManager implements UvemManagerApi {
 	public ResultadoInstanciaDecisionDto instanciaDecision(InstanciaDecisionDto instanciaDecisionDto, String accion) throws WIException {
 		logger.info("------------ LLAMADA WS INSTANCIADECISION -----------------");
 		ResultadoInstanciaDecisionDto result = null;
+		char vacio = ' ';
+		
 
 		VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu numeroOcurrencias = new VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
 
@@ -980,9 +988,28 @@ public class UvemManager implements UvemManagerApi {
 			}
 
 			// IndicadorTratamientoImpuesto
-			struct.setIndicadorTratamientoImpuestobitrim('A'); // 'A' or 'B'
-																// or
-																// '\'
+			
+			if(Checks.esNulo(instanciaData.getTipoDeImpuesto())){
+				throw new WIException("El tipo de impuesto no puede estar vacío.");
+			}else{
+				
+				if(instanciaData.getTipoDeImpuesto() == InstanciaDecisionDataDto.TIPO_IMPUESTO_ITP ||
+				   instanciaData.getTipoDeImpuesto() == InstanciaDecisionDataDto.TIPO_IMPUESTO_IGIC ||
+				   instanciaData.getTipoDeImpuesto() == InstanciaDecisionDataDto.TIPO_IMPUESTO_IPSI){
+					//struct.setIndicadorTratamientoImpuestobitrim(vacio);
+				}else if(instanciaData.getTipoDeImpuesto() == InstanciaDecisionDataDto.TIPO_IMPUESTO_IVA){
+					
+					if(Checks.esNulo(instanciaData.getRenunciaExencion()) ||
+					   (!Checks.esNulo(instanciaData.getRenunciaExencion()) && !instanciaData.getRenunciaExencion())){
+						//RenunciaExencion a null o a false
+						struct.setIndicadorTratamientoImpuestobitrim('B');
+					}else{
+						struct.setIndicadorTratamientoImpuestobitrim('A');
+					}
+				}
+			}
+			
+			//struct.setIndicadorTratamientoImpuestobitrim('A'); // 'A' or 'B' or '\'
 
 			// Es un array al que se le meteran cada activo de la oferta
 			numeroOcurrencias.setStructGMPDJB13_INS_NumeroDeOcurrenciasnumocu(struct);

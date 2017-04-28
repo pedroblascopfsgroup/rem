@@ -180,6 +180,20 @@ public class OfertasController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateOfertantesByOfertaId(DtoOfertantesOferta dtoOfertantesOferta, ModelMap model) {
+		try {
+			model.put("data", ofertaApi.updateOfertantesByOfertaId(dtoOfertantesOferta));
+			model.put("success", true);			
+		} catch (Exception e) {
+			logger.error("Error en ofertasController",e);
+			model.put("success", false);		
+		}
+
+		return createModelAndViewJson(model);
+	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)

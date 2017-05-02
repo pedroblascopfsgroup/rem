@@ -15,6 +15,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.sojo.interchange.json.JsonParser;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,7 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.CarteraCondicionesPrecios;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
+import es.pfsgroup.plugin.rem.model.DtoLocalidadSimple;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -182,10 +184,28 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	}
 	
 	@Override
-	public List<Localidad> getComboMunicipioSinFiltro() {
+	public List<DtoLocalidadSimple> getComboMunicipioSinFiltro() {
+		List<DtoLocalidadSimple> listaDtoLocalidadSimple = new ArrayList<DtoLocalidadSimple>();
+		
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 		
-		return (List<Localidad>) genericDao.getListOrdered(Localidad.class, order);
+		List<Localidad> listaLocalidades = genericDao.getListOrdered(Localidad.class, order);
+
+		for (Localidad source: listaLocalidades ) {
+			try {
+				DtoLocalidadSimple target= new DtoLocalidadSimple();
+		        BeanUtils.copyProperties(target, source);
+		        target.setCodigoProvincia(source.getProvincia().getCodigo());
+		        
+		        listaDtoLocalidadSimple.add(target);		
+			} catch (IllegalAccessException e) {
+				logger.error("Error al consultar las localidades sin filtro",e);
+			} catch (InvocationTargetException e) {
+				logger.error("Error al consultar las localidades sin filtro",e);
+			}
+		}
+
+		return listaDtoLocalidadSimple; 
 	}
 
 	@Override

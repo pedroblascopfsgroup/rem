@@ -9,6 +9,7 @@ import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
+import es.pfsgroup.plugin.rem.model.DtoLocalidadSimple;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
@@ -141,7 +142,7 @@ public interface GenericApi {
 	 * 
 	 * @return Devuelve una lista de localidades.
 	 */
-	public List<Localidad> getComboMunicipioSinFiltro();
+	public List<DtoLocalidadSimple> getComboMunicipioSinFiltro();
 	
 	@BusinessOperationDefinition("genericManager.getComboEjercicioContabilidad")
 	public List<Ejercicio> getComboEjercicioContabilidad();

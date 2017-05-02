@@ -174,7 +174,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 										                    	store.clearFilter();
 										                    	store.filter([{
 										                            filterFn: function(rec){
-										                                if (rec.getData().provincia.codigo == records.getData().codigo){
+										                                if (rec.getData().codigoProvincia == records.getData().codigo){
 										                                    return true;
 										                                }
 										                                return false;

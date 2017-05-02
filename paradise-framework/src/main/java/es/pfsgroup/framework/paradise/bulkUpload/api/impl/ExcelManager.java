@@ -24,8 +24,6 @@ import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVDDOperacionMasivaDao;
 import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
 import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVProcesoDao;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoAltaProceso;
-import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoFileItem;
-import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoResultadoSubidaFicheroMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ExcelFileBean;
@@ -38,7 +36,6 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelValidator;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVExcelValidatorFactoryImpl;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
-import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 
 /**
  * Clase manager encargada de la gesti�n de las plantillas excel de la pantalla
@@ -47,7 +44,6 @@ import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
  * @author manuel
  * 
  */
-@SuppressWarnings("deprecation")
 @Service
 @Transactional(readOnly = false)
 public class ExcelManager implements ExcelManagerApi {
@@ -75,9 +71,6 @@ public class ExcelManager implements ExcelManagerApi {
 
 	@Autowired
 	private MSVExcelParser excelParser;
-	
-	@Autowired
-	private UploadAdapter uploadAdapter;
 	
 	/*
 	 * (non-Javadoc)
@@ -115,7 +108,6 @@ public class ExcelManager implements ExcelManagerApi {
 	}
 
 	@Override
-	@SuppressWarnings("unused")
 	@BusinessOperation(MSV_BO_UPLOAD_AND_VALDIATE)
 	public Boolean uploadAndValidate(MSVExcelFileItemDto excelFileItemDto) throws Exception {
 
@@ -132,6 +124,7 @@ public class ExcelManager implements ExcelManagerApi {
 		return true;
 	}
 	
+	@SuppressWarnings("unused")
 	@Override
 	public Boolean uploadOnly(MSVExcelFileItemDto excelFileItemDto) throws Exception {
 
@@ -146,6 +139,7 @@ public class ExcelManager implements ExcelManagerApi {
 		return true;
 	}
 	
+	@SuppressWarnings("unused")
 	@Override
 	public Boolean validateContentOnly(Long idProcess){
 		
@@ -189,7 +183,12 @@ public class ExcelManager implements ExcelManagerApi {
 		MSVDtoValidacion dtoValidacionFormato = null;
 		try {
 			String codigoOPM = document.getProcesoMasivo().getTipoOperacion().getCodigo();
-			if(!("CPPA_01".equals(codigoOPM) || "CPPA_02".equals(codigoOPM) || "CPPA_03".equals(codigoOPM))) {
+			
+			// Tratar la validación de los siguientes casos de manera personalizada (cuestión de cabeceras).
+			if(!(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_PROPUESTA_PRECIOS_ACTIVO_ENTIDAD01.equals(codigoOPM) ||
+					MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_PROPUESTA_PRECIOS_ACTIVO_ENTIDAD02.equals(codigoOPM) ||
+					MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_PROPUESTA_PRECIOS_ACTIVO_ENTIDAD03.equals(codigoOPM) ||
+					MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ALTA_ACTIVOS_FINANCIEROS.equals(codigoOPM))){
 				dtoValidacionFormato = excelValidator.validarFormatoFichero(excelFileDto);
 				if (dtoValidacionFormato != null) {
 					if (dtoValidacionFormato.getFicheroTieneErrores()) {

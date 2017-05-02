@@ -32,5 +32,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleMain', {
     		me.add({xtype: 'cabeceraexpediente'});
     		me.add({xtype: 'expedientedetalle', flex: 1});
     	}
+    	/**
+    	 * La formula que desactiva la pestaña de reserva no actua cuando se renderiza por primera vez el expediente
+    	 */
+    	var reservaDisabled;
+    	reservaDisabled = !me.getViewModel().get('expediente.tieneReserva') || me.getViewModel().get('expediente.tipoExpedienteCodigo') === "02";
+		reservaDisabled = Ext.isDefined(reservaDisabled)? reservaDisabled : true;		
+    	me.down('reservaexpediente').setDisabled(reservaDisabled);
+
     }
 });

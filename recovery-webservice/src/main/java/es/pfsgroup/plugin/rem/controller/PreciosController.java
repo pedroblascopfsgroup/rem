@@ -21,6 +21,7 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
@@ -131,7 +132,11 @@ public class PreciosController extends ParadiseJsonController{
 		// Metodo para crear propuestas por peticion manual
 		
 		try {
-			generarPropuesta(dtoActivoFilter,nombrePropuesta,request,response);
+			String mensajeAdvertencia = generarPropuesta(dtoActivoFilter,nombrePropuesta,request,response);
+			
+			if(!Checks.esNulo(mensajeAdvertencia)) {
+				model.put("advertencia", mensajeAdvertencia);
+			}
 			model.put("success", true);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -142,7 +147,9 @@ public class PreciosController extends ParadiseJsonController{
 		return createModelAndViewJson(model);
 	}
 	
-	private void generarPropuesta(DtoActivoFilter dtoActivoFilter, String nombrePropuesta, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	private String  generarPropuesta(DtoActivoFilter dtoActivoFilter, String nombrePropuesta, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		String codMensajeAdvertencia = null;
 		
 		dtoActivoFilter.setStart(excelReportGeneratorApi.getStart());
 		dtoActivoFilter.setLimit(excelReportGeneratorApi.getLimit());
@@ -151,12 +158,17 @@ public class PreciosController extends ParadiseJsonController{
 		@SuppressWarnings("unchecked")
 		List<VBusquedaActivosPrecios> listaActivos = (List<VBusquedaActivosPrecios>) preciosApi.getActivos(dtoActivoFilter).getResults();
 		
+		//Comprueba si hay algún activo que ya esta en una propuesta en trámite
+		codMensajeAdvertencia = preciosApi.tienePropuestaActivosEnPropuestasEnTramitacion(listaActivos);
+		
 		//Genera la propuesta en BBDD y asocia los activos
-		PropuestaPrecio propuesta =preciosApi.createPropuestaPreciosManual(listaActivos, nombrePropuesta, dtoActivoFilter.getTipoPropuestaCodigo());
+		PropuestaPrecio propuesta =preciosApi.createPropuestaPreciosManual(listaActivos, nombrePropuesta, dtoActivoFilter.getTipoPropuestaCodigo());		
+		if(!Checks.esNulo(propuesta)) {
+			// Se genera excel unificada
+			this.generarExcelPropuestaPrecios(propuesta,request,response);
+		}
 		
-		// Se genera excel unificada
-		this.generarExcelPropuestaPrecios(propuesta,request,response);
-		
+		return codMensajeAdvertencia;
 	}
 	
 	/**

@@ -773,8 +773,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				dto.setFechaAltaOferta(oferta.getFechaAlta());
 				dto.setFechaSancion(expediente.getFechaSancion());
 
-				if (!Checks.esNulo(expediente.getReserva())) {
-					dto.setFechaReserva(expediente.getReserva().getFechaEnvio());
+				if(!Checks.esNulo(expediente.getReserva())) {
+					dto.setFechaReserva(expediente.getReserva().getFechaFirma());
 				}
 
 				if (!Checks.esNulo(oferta.getAgrupacion())) {
@@ -1874,8 +1874,11 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		if (!Checks.esNulo(expediente.getEstadoPbc()) && expediente.getEstadoPbc() == 0) {
 			permitirGenerarHoja = false;
 		}
-		if (!Checks.esNulo(expediente.getUltimoPosicionamiento()) && new Date().compareTo(expediente.getUltimoPosicionamiento().getFechaPosicionamiento()) > 0) {
-			permitirGenerarHoja = false;
+
+		if(!Checks.esNulo(expediente.getUltimoPosicionamiento())){
+			if(new Date().compareTo(expediente.getUltimoPosicionamiento().getFechaPosicionamiento()) > 0) {
+				permitirGenerarHoja = false;
+			}
 		}
 		List<BloqueoActivoFormalizacion> bloqueos = genericDao.getList(BloqueoActivoFormalizacion.class,
 				genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId()));
@@ -1993,8 +1996,16 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 
 		ExpedienteComercial expedienteComercial = findOne(idExpedienteComercial);
 		Reserva reserva = expedienteComercial.getReserva();
-		if (reserva == null) {
-			throw new Exception("No existe la reserva para el expediente comercial");
+		if(reserva==null){
+			reserva = new Reserva();
+			Auditoria auditoria = Auditoria.getNewInstance();
+			reserva.setExpediente(expedienteComercial);
+			reserva.setNumReserva(reservaDao.getNextNumReservaRem());
+			reserva.setAuditoria(auditoria);
+			expedienteComercial.setReserva(reserva);
+			genericDao.save(ExpedienteComercial.class, expedienteComercial);
+			expedienteComercial = findOne(idExpedienteComercial);
+			reserva = expedienteComercial.getReserva();
 		}
 		entregaReserva.setReserva(reserva);
 
@@ -2446,9 +2457,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 								dto.getEstadoDevolucionCodigo());
 						expedienteComercial.getReserva().setEstadoDevolucion(estadoDevolucion);
 					}
-
-					if (!Checks.esNulo(dto.getFechaReserva())) {
-						expedienteComercial.getReserva().setFechaEnvio(dto.getFechaReserva());
+					
+					if(!Checks.esNulo(dto.getFechaReserva())) {
+						expedienteComercial.getReserva().setFechaFirma(dto.getFechaReserva());
 					}
 				}
 				if (!Checks.esNulo(expedienteComercial.getUltimoPosicionamiento()) && !Checks.esNulo(dto.getFechaPosicionamiento())) {
@@ -2839,8 +2850,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		return instancia;
 	}
 
-	public InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente, Long porcentajeImpuesto) throws Exception {
-
+	
+	
+	public InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente, Long porcentajeImpuesto ) throws Exception {
+		String tipoImpuestoCodigo = null;
 		InstanciaDecisionDto instancia = new InstanciaDecisionDto();
 		Double importeXActivo = null;
 		short tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_SIN_IMPUESTO;
@@ -2857,7 +2870,13 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			throw new JsonViewerException("No hay activos para la oferta indicada.");
 		}
 
-		Double importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta() : oferta.getImporteContraOferta();
+		
+		if(Checks.esNulo(porcentajeImpuesto)){
+			throw new JsonViewerException("No se ha indicado el porcentaje de impuesto en el campo Tipo aplicable.");
+		}
+		
+		
+		Double importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta() : oferta.getImporteContraOferta();	
 		Double sumatorioImporte = new Double(0);
 		Double sumatorioPorcentaje = new Double(0);
 		for (int i = 0; i < listaActivos.size(); i++) {
@@ -2885,18 +2904,31 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			instData.setImporteConSigno(importeXActivo.longValue());
 			// NumActivoUvem
 			instData.setIdentificadorActivoEspecial(Integer.valueOf(activo.getNumActivoUvem().toString()));
-
-			// TipoImpuesto
-			if (!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getTipoImpuesto())) {
-				String tipoImpuestoCodigo = expediente.getCondicionante().getTipoImpuesto().getCodigo();
+			
+			//TipoImpuesto
+			if(!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getTipoImpuesto())) {
+				tipoImpuestoCodigo = expediente.getCondicionante().getTipoImpuesto().getCodigo(); 
 				if (DDTiposImpuesto.TIPO_IMPUESTO_IVA.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_IVA;
 				if (DDTiposImpuesto.TIPO_IMPUESTO_IGIC.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_IGIC;
 				if (DDTiposImpuesto.TIPO_IMPUESTO_IPSI.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_IPSI;
 				if (DDTiposImpuesto.TIPO_IMPUESTO_ITP.equals(tipoImpuestoCodigo)) tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_ITP;
+
+			}	
+			
+			if(!Checks.esNulo(tipoDeImpuesto)){
+				instData.setTipoDeImpuesto(tipoDeImpuesto);	
+			}else{
+				throw new JsonViewerException("No se ha indicado el tipo de impuesto.");
 			}
-			instData.setTipoDeImpuesto(tipoDeImpuesto);
-			// PorcentajeImpuesto
-			instData.setPorcentajeImpuesto(porcentajeImpuesto.intValue());
+			
+			if(!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getRenunciaExencion())) {
+				instData.setRenunciaExencion(expediente.getCondicionante().getRenunciaExencion());
+			}
+			
+			//PorcentajeImpuesto
+			if(!Checks.esNulo(porcentajeImpuesto)){
+				instData.setPorcentajeImpuesto(porcentajeImpuesto.intValue());
+			}		
 			instanciaList.add(instData);
 		}
 

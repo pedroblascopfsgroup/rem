@@ -153,6 +153,9 @@ public class VBusquedaActivosPrecios implements Serializable {
     
     @Column(name="ESTADO_FISICO_DESCRIPCION")
     private String estadoActivoDescripcion;
+    
+    @Column(name = "IN_PRP_TRAMITACION")
+    private Boolean activoEnPropuestaEnTramitacion;
 
 
 	public String getId() {
@@ -499,6 +502,15 @@ public class VBusquedaActivosPrecios implements Serializable {
 
 	public void setConReserva(Integer conReserva) {
 		this.conReserva = conReserva;
+	}
+
+	public Boolean getActivoEnPropuestaEnTramitacion() {
+		return activoEnPropuestaEnTramitacion;
+	}
+
+	public void setActivoEnPropuestaEnTramitacion(
+			Boolean activoEnPropuestaEnTramitacion) {
+		this.activoEnPropuestaEnTramitacion = activoEnPropuestaEnTramitacion;
 	}
 	
 

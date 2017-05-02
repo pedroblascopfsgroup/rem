@@ -113,10 +113,12 @@ public class PropuestaPrecioDaoImpl extends AbstractEntityDao<PropuestaPrecio, L
     @Override
     @SuppressWarnings("unchecked")
 	public List<BigDecimal> getActivosFromTrabajo(Long idTrabajo) {
-    	String sql = "select act_id from V_BUSQUEDA_ACTIVOS_TRABAJO prp where prp.TBJ_ID = " + idTrabajo;
+    	String sql = "select prp.act_id from V_BUSQUEDA_ACTIVOS_TRABAJO prp ";
+    	sql += " join V_BUSQUEDA_ACTIVOS_PRECIOS act on prp.ACT_ID = act.ACT_ID ";
+    	sql += " where act.IN_PRP_TRAMITACION = 0 ";
+    	sql += " and prp.TBJ_ID = " + idTrabajo;
     	
     	return (List<BigDecimal>) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).list();
-    	
     }
 	
 }

@@ -914,12 +914,25 @@ public class Activo implements Serializable, Auditable {
   		} else {
   			return null;
   		}
-  		
   	}
   	
   	public void setMunicipio(String codigoMunicipio) {
   		if (bien.getLocalizaciones() != null) {
   			bien.getLocalizaciones().get(0).getLocalidad().setCodigo(codigoMunicipio);
+  		}
+  	}
+  	
+  	public void setUnidadMunicipio(String codigoUnidadMunicipio) {
+  		if (bien.getLocalizaciones() != null) {
+  			bien.getLocalizaciones().get(0).getUnidadPoblacional().setCodigo(codigoUnidadMunicipio);
+  		}
+  	}
+  	
+  	public String getUnidadMunicipio() {
+  		if (bien.getLocalizaciones() != null && bien.getLocalizaciones().get(0).getUnidadPoblacional() != null) {
+  			return bien.getLocalizaciones().get(0).getUnidadPoblacional().getCodigo();
+  		} else {
+  			return null;
   		}
   	}
   	

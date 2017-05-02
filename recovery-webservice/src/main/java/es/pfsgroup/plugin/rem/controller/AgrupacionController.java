@@ -378,8 +378,10 @@ public class AgrupacionController extends ParadiseJsonController {
 		try {
 			boolean success = adapter.saveOfertaAgrupacion(dtoOferta);
 			model.put("success", success);
-
-		} catch (Exception e) {
+		}catch (JsonViewerException jvex) {
+			model.put("success", false);
+			model.put("msg", jvex.getMessage());
+		}catch (Exception e) {
 			if (e.getMessage().equals(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG)) {
 				model.put("msg", AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
 				model.put("success", false);

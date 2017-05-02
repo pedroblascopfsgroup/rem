@@ -4,118 +4,127 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-public interface  ParticularValidatorApi {
-	
+public interface ParticularValidatorApi {
+
 	public String getOneNumActivoAgrupacionRaw(String numAgrupacion);
-	
-	public String getCarteraLocationByNumAgr (String numAgr);
-	
-	public String getCarteraLocationByNumAct (String numActive);
-	
-	public String getCarteraLocationTipPatrimByNumAct (String numActive);
-	
-	public Boolean esMismaCarteraLocationByNumAgrupRem (String numAgrupRem);
+
+	public String getCarteraLocationByNumAgr(String numAgr);
+
+	public String getCarteraLocationByNumAct(String numActive);
+
+	public String getCarteraLocationTipPatrimByNumAct(String numActive);
+
+	public Boolean esMismaCarteraLocationByNumAgrupRem(String numAgrupRem);
 
 	public String existeActivoEnAgrupacion(Long idActivo, Long idAgrupacion);
-	
+
 	public Boolean esActivoEnAgrupacion(Long idActivo, Long idAgrupacion);
-	
+
 	public Boolean esActivoEnOtraAgrupacion(Long numActivo, Long numAgrupacion);
-	
+
 	public Boolean existeActivo(String numActivo);
-	
+
 	public Boolean isActivoPrePublicable(String numActivo);
-	
+
 	public Boolean estadoNoPublicadoOrNull(String numActivo);
-	
+
 	public Boolean estadoOcultaractivo(String numActivo);
-	
+
 	public Boolean estadoDesocultaractivo(String numActivo);
-	
+
 	public Boolean estadoOcultarprecio(String numActivo);
-	
+
 	public Boolean estadoDesocultarprecio(String numActivo);
-	
+
 	public Boolean estadoDespublicar(String numActivo);
 
 	public Boolean estadosValidosDespublicarForzado(String numActivo);
-	
+
 	public Boolean estadosValidosDesDespublicarForzado(String numActivo);
-	
+
 	public Boolean estadoAutorizaredicion(String numActivo);
-	
+
 	public Boolean existeBloqueoPreciosActivo(String numActivo);
-	
+
 	public Boolean existeOfertaAprobadaActivo(String numActivo);
-	
+
 	public Boolean esActivoConVentaOferta(String numActivo);
-	
+
 	public Boolean esActivoVendido(String numActivo);
-	
+
 	public Boolean esActivoIncluidoPerimetro(String numActivo);
-	
-	public Boolean esActivoAsistido (String numActivo);
-	
+
+	public Boolean esActivoAsistido(String numActivo);
+
 	/**
 	 * Validacion para las agrupaciones de la lista excel. Valida si estan dadas de baja
+	 * 
 	 * @param numAgrupacion
 	 * @return
 	 */
-	public Boolean esAgrupacionConBaja (String numAgrupacion);
-	
+	public Boolean esAgrupacionConBaja(String numAgrupacion);
+
 	/**
 	 * Validacion de Localizacion unica para un grupo de activos
+	 * 
 	 * @param inSqlNumActivosRem El parametro es una cadena de numActivoRem separados por comas
 	 * @return
 	 */
-	public Boolean esActivosMismaLocalizacion (String inSqlNumActivosRem);
-	
+	public Boolean esActivosMismaLocalizacion(String inSqlNumActivosRem);
+
 	/**
 	 * Validacion de Propietario unico para un grupo de activos
+	 * 
 	 * @param inSqlNumActivosRem El parametro es una cadena de numActivoRem separados por comas
 	 * @return
 	 */
-	public Boolean esActivosMismoPropietario (String inSqlNumActivosRem);
-	
+	public Boolean esActivosMismoPropietario(String inSqlNumActivosRem);
+
 	/**
 	 * Validacion de ofertas aceptadas para un grupo de activos y agrupaciones de estos
+	 * 
 	 * @param inSqlNumActivosRem El parametro es una cadena de numActivoRem separados por comas
 	 * @param numAgrupRem Numero agrupacion
 	 * @return
 	 */
-	public Boolean esActivosOfertasAceptadas (String inSqlNumActivosRem, String numAgrupRem);
-	
+	public Boolean esActivosOfertasAceptadas(String inSqlNumActivosRem, String numAgrupRem);
+
 	/**
 	 * Validacion de un activo: Evalua si un activo tiene propietario
+	 * 
 	 * @param sqlNumActivosRem
 	 * @return
 	 */
 	public Boolean esActivoConPropietario(String sqlNumActivoRem);
-	
+
 	/**
-	 * Validacion de un activo si pertenece a alguna agrupacion no compatible 
+	 * Validacion de un activo si pertenece a alguna agrupacion no compatible
+	 * 
 	 * @param numActivo
 	 * @param codTiposAgrNoCompatibles
 	 * @return
 	 */
 	public Boolean esActivoEnOtraAgrupacionNoCompatible(Long numActivo, Long numAgrupacion, String codTiposAgrNoCompatibles);
-	
+
 	/**
 	 * Comprueba si el activo Bancario es de clase Financiero
+	 * 
 	 * @param numActivo
 	 * @return
 	 */
 	public Boolean esActivoFinanciero(String numActivo);
-	
+
 	/**
 	 * Comprueba si la propuesta ya ha sido cargada
+	 * 
 	 * @param idPropuesta
 	 * @return
 	 */
 	public Boolean esPropuestaYaCargada(Long idPropuesta);
-	
+
 	/**
 	 * Comprueba si el activo no es comercializable
+	 * 
 	 * @param numActivo
 	 * @return
 	 */
@@ -139,30 +148,85 @@ public interface  ParticularValidatorApi {
 
 	/**
 	 * Comprueba si el activo esta incluido en la propuesta
+	 * 
 	 * @param numActivo
 	 * @param numPropuesta
 	 * @return
 	 */
 	public Boolean existeActivoEnPropuesta(String numActivo, String numPropuesta);
-	
+
 	/**
 	 * Recupera el precio mínimo autorizado actual de un activo
+	 * 
 	 * @param numActivo
 	 * @return
 	 */
 	public BigDecimal getPrecioMinimoAutorizadoActualActivo(String numActivo);
-	
+
 	/**
 	 * Comprueba si el activo tiene alguna oferta viva (estado != Rechazada)
+	 * 
 	 * @param numActivo
 	 * @return
 	 */
 	public Boolean existeActivoConOfertaViva(String numActivo);
-	
+
 	/**
 	 * Comprueba que el activo no este en un expediente comercial vivo (con trámites en activo)
+	 * 
 	 * @param numActivo
 	 * @return
 	 */
 	public Boolean existeActivoConExpedienteComercialVivo(String numActivo);
+
+	/**
+	 * Este método indica si el NIF de la sociedad acreedora existe en la DB o no.
+	 * 
+	 * @param sociedadAcreedoraNIF : NIF de la sociedad acreedora a buscar en la DB.
+	 * @return Devuelve True si se encuentra una coincidencia con el NIF. False si no existe
+	 *         coincidencia.
+	 */
+	public Boolean existeSociedadAcreedora(String sociedadAcreedoraNIF);
+
+	/**
+	 * Este método indica si el NIF del propietario existe en la DB o no.
+	 * 
+	 * @param propietarioNIF : NIF del propietario a buscar en la DB.
+	 * @return Devuelve True si se encuentra una coincidencia con el NIF. False si no existe
+	 *         coincidencia.
+	 */
+	public Boolean existePropietario(String propietarioNIF);
+
+	/**
+	 * Este método indica si el NIF del proveedor mediador existe en la DB o no.
+	 * 
+	 * @param proveedorMediadorNIF : NIF del proveedor mediador a buscar en la DB.
+	 * @return Devuelve True si se encuentra una coincidencia con el NIF. False si no existe
+	 *         coincidencia.
+	 */
+	public Boolean existeProveedorMediadorByNIF(String proveedorMediadorNIF);
+
+	/**
+	 * Este método indica si el código de provincia existe en la DB.
+	 * 
+	 * @param codigoProvincia : código de la provincia.
+	 * @return Devuelve True si existe, False si no existe el código.
+	 */
+	public Boolean existeProvinciaByCodigo(String codigoProvincia);
+
+	/**
+	 * Este método indica si el código de municipio existe en la DB.
+	 * 
+	 * @param codigoMunicipio : código del municipio.
+	 * @return Devuelve True si existe, False si no existe el código.
+	 */
+	public Boolean existeMunicipioByCodigo(String codigoMunicipio);
+
+	/**
+	 * Este método indica si el código de la unidad inferior al municipio existe en la DB.
+	 * 
+	 * @param codigoUnidadInferiorMunicipio : código de la unidad inferior al municipio.
+	 * @return Devuelve True si existe, False si no existe el código.
+	 */
+	public Boolean existeUnidadInferiorMunicipioByCodigo(String codigoUnidadInferiorMunicipio);
 }

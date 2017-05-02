@@ -74,7 +74,8 @@ public class ActivoPlanDinVentas implements Serializable, Auditable {
 	@Column(name = "PDV_IMPORTE_DEUDA")
 	private Float importeDeuda;
 
-	
+	@Column(name = "PDV_ID_GARANTIA")
+	private Long idGarantia;
 	
 	
 	@Version   
@@ -158,6 +159,14 @@ public class ActivoPlanDinVentas implements Serializable, Auditable {
 		this.acreedorNombre = acreedorNombre;
 	}
 	
+	public Long getIdGarantia() {
+		return idGarantia;
+	}
+
+	public void setIdGarantia(Long idGarantia) {
+		this.idGarantia = idGarantia;
+	}
+
 	public Long getVersion() {
 		return version;
 	}

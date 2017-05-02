@@ -356,7 +356,7 @@ public class RestManagerImpl implements RestApi {
 		peticion.setMetodo(request.getMethod());
 		peticion.setQuery(request.getPathInfo());
 		peticion.setData(req.getBody());
-		peticion.setIp(request.getRemoteAddr());
+		peticion.setIp(this.getClientIpAddr(req));
 
 		return peticion;
 	}

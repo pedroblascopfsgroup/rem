@@ -79,22 +79,48 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	'gestionprovisiongastoslist' : {
     		
     		persistedsselectionchange: function (sm, record, e, grid, persistedSelection) {
-    			var me = this;
     			var autorizarBtn = grid.down('button[itemId=autorizarBtn]');
     			var rechazarBtn = grid.down('button[itemId=rechazarBtn]');
     			var displaySelection = grid.down('displayfield[itemId=displaySelection]');
+    			var displayImporteTotalLabel = grid.down('displayfield[itemId=labelImporteTotal]');
+    			var displayImporteTotal = grid.down('displayfield[itemId=displayImporteTotal]');
     			var disabled = Ext.isEmpty(persistedSelection);
     			
-    			if (!Ext.isEmpty(autorizarBtn)) autorizarBtn.setDisabled(disabled);    		
-    			if (!Ext.isEmpty(rechazarBtn)) rechazarBtn.setDisabled(disabled);
+    			if (!Ext.isEmpty(autorizarBtn)){
+    				autorizarBtn.setDisabled(disabled);    		
+    			}
+    			if (!Ext.isEmpty(rechazarBtn)){
+    				rechazarBtn.setDisabled(disabled);
+    			}
 
     			if(disabled) {
+    				displayImporteTotal.setHidden(true);
+    				displayImporteTotalLabel.setHidden(true);
     				displaySelection.setValue("No seleccionados");
     			} else if (persistedSelection.length > 1) {
+    				displayImporteTotal.setHidden(false);
+    				displayImporteTotalLabel.setHidden(false);
     				displaySelection.setValue(persistedSelection.length +  " gastos seleccionados"); 
     			} else {
+    				displayImporteTotal.setHidden(false);
+    				displayImporteTotalLabel.setHidden(false);
     				displaySelection.setValue("1 gasto seleccionado"); 
-    			}   			
+    			}
+    			//debugger;
+    			var importeTotalAcumulado = 0;
+    			var importeTotalAgrupacion = 0;
+    			Ext.Array.each(persistedSelection, function (item) {
+    				if(importeTotalAgrupacion == 0){
+    					importeTotalAgrupacion = parseFloat(item.data.importeTotalAgrupacion);
+    				}
+    				if(item.data.importeTotal && item.data.estadoGastoCodigo != '03'){
+    					//Ext.global.console.log(item.data.importeTotal);
+    					importeTotalAcumulado += parseFloat(item.data.importeTotal);
+    				}
+    				
+                });
+    			
+    			displayImporteTotal.setValue(Number(importeTotalAcumulado+importeTotalAgrupacion).toFixed(2));
     		}
     		
     	}
@@ -199,13 +225,13 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 //    }
 
 	onRowClickProvisionesList: function(gridView,record) {
-		
 		var me = this;    		
 		me.getViewModel().set("provisionSeleccionada", record);
 		me.getViewModel().notify();
 		
 		me.lookupReference('provisionesGastosList').expand();	
 		this.lookupReference('provisionesGastosList').getStore().loadPage(1);
+		
 		var estadoProvision = record.get("estadoProvisionCodigo");
 		if(CONST.ESTADOS_PROVISION['RECHAZADA_SUBSANABLE'] == estadoProvision) {
 			this.lookupReference('tbarprovisiongastoslist').setVisible(true);

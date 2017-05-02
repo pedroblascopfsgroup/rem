@@ -171,8 +171,8 @@ public class TabActivoInformeComercial implements TabActivoService {
 				beanUtilNotNull.copyProperty(informeComercial, "reformaOtroDescEdificio", activo.getInfoComercial().getEdificio().getReformaOtroDescEdificio());
 				
 				// Inf general.
-				if(!Checks.esNulo(activo.getInfoComercial().getEdificio().getEstadoConservacionEdificio())) {
-					beanUtilNotNull.copyProperty(informeComercial, "estadoConservacionCodigo", activo.getInfoComercial().getEdificio().getEstadoConservacionEdificio().getCodigo());
+				if(!Checks.esNulo(activo.getInfoComercial().getEstadoConservacion().getCodigo())) {
+					beanUtilNotNull.copyProperty(informeComercial, "estadoConservacionCodigo", activo.getInfoComercial().getEstadoConservacion().getCodigo());
 				}
 				if(!Checks.esNulo(activo.getInfoComercial().getEstadoConstruccion())) {
 					beanUtilNotNull.copyProperty(informeComercial, "estadoConstruccionCodigo", activo.getInfoComercial().getEstadoConstruccion().getCodigo());

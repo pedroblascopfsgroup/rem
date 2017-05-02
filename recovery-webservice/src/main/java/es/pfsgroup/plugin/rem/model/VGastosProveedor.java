@@ -175,6 +175,9 @@ public class VGastosProveedor implements Serializable {
 	@Transient
 	private boolean esGastoAgrupado; 
 	
+	@Transient
+	private Double importeTotalAgrupacion;
+	
 
 	public String getId() {
 		return id;
@@ -587,6 +590,14 @@ public class VGastosProveedor implements Serializable {
 
 	public void setEsGastoAgrupado(boolean esGastoAgrupado) {
 		this.esGastoAgrupado = esGastoAgrupado;
+	}
+
+	public Double getImporteTotalAgrupacion() {
+		return importeTotalAgrupacion;
+	}
+
+	public void setImporteTotalAgrupacion(Double importeTotalAgrupacion) {
+		this.importeTotalAgrupacion = importeTotalAgrupacion;
 	}	
 	 
 }

@@ -10,7 +10,6 @@ Ext.define('HreRem.view.administracion.gastos.GestionProvisionGastosList', {
     initComponent: function () {
         
         var me = this;
-        
         me.setTitle(HreRem.i18n('title.listado.gastos.provision'));
         
 		var configAutorizarBtn = {text: HreRem.i18n('btn.autorizar'), cls:'tbar-grid-button', itemId:'autorizarBtn', handler: 'onClickAutorizarGastosAgrupados', disabled: true, secFunPermToRender: 'OPERAR_GASTO'};
@@ -25,8 +24,14 @@ Ext.define('HreRem.view.administracion.gastos.GestionProvisionGastosList', {
 		};
         
         me.listeners = {	    	
-    		rowdblclick: 'onClickAbrirGastoProveedor'
+    		rowdblclick: 'onClickAbrirGastoProveedor',
+    		afterrender: function(grid) {
+    			
+    		
+    		 }
+    			
     	};
+              
         
         me.columns= [
 	       				{   
@@ -141,6 +146,20 @@ Ext.define('HreRem.view.administracion.gastos.GestionProvisionGastosList', {
 			                	xtype: 'displayfieldbase',
 			                	itemId: 'displaySelection',
 			                	fieldStyle: 'color:#0c364b; padding-top: 4px'
+			                },
+			                {
+			                	xtype: 'displayfieldbase',
+			                	itemId: 'labelImporteTotal',
+			                	fieldStyle: 'color:#ff0000; padding-top: 4px; text-align:right;;padding-left: 30px',
+			                	value: HreRem.i18n('footer.listado.gastos.sumatorio'),
+			                	hidden: true
+			                },
+			                {
+			                	xtype: 'displayfieldbase',
+			                	itemId: 'displayImporteTotal',
+			                	fieldStyle: 'color:#ff0000; padding-top: 4px;font-weight: bold;',
+			                	hidden: true			                	
+			                		
 			                }
 	            	]
 		        }

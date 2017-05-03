@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,8 +15,8 @@ import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -29,7 +31,6 @@ import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
-import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 
 @Component
@@ -49,6 +50,8 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
+    
+    protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaFirmaPropietario.class);
     
    	private static final String CODIGO_T013_FIRMA_PROPIETARIO = "T013_FirmaPropietario";
     private static final String COMBO_FIRMA = "comboFirma";
@@ -123,11 +126,10 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 
 						//Rechaza la oferta y descongela el resto
 						ofertaApi.rechazarOferta(ofertaAceptada);
-						List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
-						for(Oferta oferta : listaOfertas){
-							if((DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo()))){
-								ofertaApi.descongelarOferta(oferta);
-							}
+						try {
+							ofertaApi.descongelarOfertas(expediente);
+						} catch (Exception e) {
+							logger.error("Error descongelando ofertas.", e);
 						}
 					}
 				}

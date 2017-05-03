@@ -325,18 +325,8 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 		expedienteComercial.setEstado(estadoExpCom);
 
 		// Descongela el resto de ofertas del activo
-		List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(expedienteComercial.getTrabajo());
-		if (!Checks.esNulo(listaOfertas)) {
-			for (Oferta ofr : listaOfertas) {
-				if ((DDEstadoOferta.CODIGO_CONGELADA.equals(ofr.getEstadoOferta().getCodigo()))) {
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
-							DDEstadoOferta.CODIGO_PENDIENTE);
-					DDEstadoOferta estadoOfr = genericDao.get(DDEstadoOferta.class, filtro);
-					ofr.setEstadoOferta(estadoOfr);
-					genericDao.save(Oferta.class, ofr);
-				}
-			}
-		}
+		ofertaApi.descongelarOfertas(expedienteComercial);
+
 
 		// Actualiza fecha de devolución e importe devuelto
 		expedienteComercial.setFechaDevolucionEntregas(fechaActual);
@@ -641,18 +631,7 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 		expedienteComercial.setEstado(estadoExpCom);
 
 		// Congela el resto de ofertas del activo
-		List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(expedienteComercial.getTrabajo());
-		if (!Checks.esNulo(listaOfertas)) {
-			for (Oferta ofr : listaOfertas) {
-				if ((DDEstadoOferta.CODIGO_PENDIENTE.equals(ofr.getEstadoOferta().getCodigo()))) {
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
-							DDEstadoOferta.CODIGO_CONGELADA);
-					DDEstadoOferta estadoOfr = genericDao.get(DDEstadoOferta.class, filtro);
-					ofr.setEstadoOferta(estadoOfr);
-					genericDao.save(Oferta.class, ofr);
-				}
-			}
-		}
+		ofertaApi.congelarOfertasPendientes(expedienteComercial);;
 
 		// Borrar fecha de devolución e importe devolución. Poner a null.
 		expedienteComercial.setFechaDevolucionEntregas(null);

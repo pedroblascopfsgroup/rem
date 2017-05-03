@@ -4,11 +4,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
-import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
@@ -39,6 +40,7 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
         
+    protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma.class);
     
 	private static final String FECHA_INICIO = "fechaInicio";
 	private static final String FECHA_FIN = "fechaFin";
@@ -145,13 +147,11 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
 
 						//Rechaza la oferta y descongela el resto
 						ofertaApi.rechazarOferta(ofertaAceptada);
-						List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
-						for(Oferta oferta : listaOfertas){
-							if((DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo()))){
-								ofertaApi.descongelarOferta(oferta);
-							}
+						try {
+							ofertaApi.descongelarOfertas(expedienteComercial);
+						} catch (Exception e) {
+							logger.error("Error descongelando ofertas.", e);
 						}
-						
 					}
 				}
 			}

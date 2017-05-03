@@ -229,14 +229,14 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		me.getViewModel().set("provisionSeleccionada", record);
 		me.getViewModel().notify();
 		
-		me.lookupReference('provisionesGastosList').expand();	
+		me.lookupReference('provisionesGastosList').expand();
 		this.lookupReference('provisionesGastosList').getStore().loadPage(1);
 		
 		var estadoProvision = record.get("estadoProvisionCodigo");
 		if(CONST.ESTADOS_PROVISION['RECHAZADA_SUBSANABLE'] == estadoProvision) {
-			this.lookupReference('tbarprovisiongastoslist').setVisible(true);
+			this.lookupReference('tbarprovisiongastoslist').setDisabled(false);
 		} else {	
-			this.lookupReference('tbarprovisiongastoslist').setVisible(false);
+			this.lookupReference('tbarprovisiongastoslist').setDisabled(true);
 		}
     },
 

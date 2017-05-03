@@ -140,14 +140,15 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		List<VGastosProveedor> gastosAll = (List<VGastosProveedor>) pageGastosAll.getResults();
 		Double importeTotalAgrupacion = new Double(0);
 		for (VGastosProveedor gasto : gastosAll) {
-			if(gasto.getImporteTotal() != null && gasto.getEstadoGastoCodigo().equals(DDEstadoGasto.AUTORIZADO_ADMINISTRACION)){
+			if (gasto.getImporteTotal() != null && gasto.getEstadoGastoCodigo() != null
+					&& gasto.getEstadoGastoCodigo().equals(DDEstadoGasto.AUTORIZADO_ADMINISTRACION)) {
 				importeTotalAgrupacion += gasto.getImporteTotal();
-			}			
+			}
 		}
 
 		List<VGastosProveedor> gastos = (List<VGastosProveedor>) pageGastos.getResults();
 		for (VGastosProveedor gasto : gastos) {
-			gasto.setImporteTotalAgrupacion(importeTotalAgrupacion);		
+			gasto.setImporteTotalAgrupacion(importeTotalAgrupacion);
 		}
 
 		return new DtoPage(gastos, pageGastos.getTotalCount());

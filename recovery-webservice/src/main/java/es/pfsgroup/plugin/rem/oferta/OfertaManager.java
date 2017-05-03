@@ -800,36 +800,98 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	}
 
+	
+	@Transactional(readOnly = false)
 	@Override
-	public Boolean descongelarOferta(Oferta oferta) {
-		try {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE);
-			DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
-			oferta.setEstadoOferta(estado);
-			genericDao.save(Oferta.class, oferta);
+	public void descongelarOfertas(ExpedienteComercial expediente) throws Exception{
+		DDEstadoOferta estado = null;
+		Filter filtro = null;
+		
+		if(Checks.esNulo(expediente)){
+			throw new Exception("Parámetros incorrectos. El expediente es nulo.");
+		}else{
+			
+			// Descongela el resto de ofertas del activo
+			List<Oferta> listaOfertas = this.trabajoToOfertas(expediente.getTrabajo());
+			if (!Checks.esNulo(listaOfertas)) {
 
-			ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(oferta);
-			if (!Checks.esNulo(expediente)) {
-				Trabajo trabajo = expediente.getTrabajo();
-				List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
-				if (!Checks.estaVacio(tramites)) {
-					Set<TareaActivo> tareasTramite = tramites.get(0).getTareas();
-					for (TareaActivo tarea : tareasTramite) {
-						// Si se ha borrado sin acabarse, al descongelar se
-						// descongela.
-						if (tarea.getAuditoria().isBorrado() && Checks.esNulo(tarea.getFechaFin())) {
-							tarea.getAuditoria().setBorrado(false);
+				for(Oferta oferta : listaOfertas){
+					if((DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo()))){
+		
+						ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(oferta);
+						
+						//HREOS-1937 - Si tiene expediente poner oferta ACEPTADA. Si no tiene poner oferta PENDIENTE
+						if (!Checks.esNulo(exp)) {
+							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_ACEPTADA);
+						}else{
+							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE);
+						}
+						
+						estado = genericDao.get(DDEstadoOferta.class, filtro);
+						oferta.setEstadoOferta(estado);
+						genericDao.save(Oferta.class, oferta);
+						
+						if (!Checks.esNulo(exp) && !Checks.esNulo(exp.getTrabajo())) {										
+							List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(exp.getTrabajo().getId());
+							if (!Checks.estaVacio(tramites)) {
+								Set<TareaActivo> tareasTramite = tramites.get(0).getTareas();
+								for (TareaActivo tarea : tareasTramite) {
+									// Si se ha borrado sin acabarse, al descongelar se vuelven a mostrar.
+									if (tarea.getAuditoria().isBorrado() && Checks.esNulo(tarea.getFechaFin())) {
+										tarea.getAuditoria().setBorrado(false);
+									}
+								}
+							}	
 						}
 					}
 				}
 			}
-
-		} catch (Exception e) {
-			logger.error("error en OfertasManager", e);
-			return false;
 		}
-		return true;
 	}
+	
+	
+	@Transactional(readOnly = false)
+	@Override
+	public void congelarOfertasPendientes(ExpedienteComercial expediente) throws Exception{
+		DDEstadoOferta estado = null;
+		Filter filtro = null;
+		
+		if(Checks.esNulo(expediente)){
+			throw new Exception("Parámetros incorrectos. El expediente es nulo.");
+		}else{
+			
+			// Congela el resto de ofertas del activo
+			List<Oferta> listaOfertas = this.trabajoToOfertas(expediente.getTrabajo());
+			if (!Checks.esNulo(listaOfertas)) {
+				
+				for (Oferta ofr : listaOfertas) {
+					if(!ofr.getId().equals(expediente.getOferta().getId()) && !DDEstadoOferta.CODIGO_RECHAZADA.equals(ofr.getEstadoOferta().getCodigo())){
+						
+						ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(ofr);
+						
+						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoOferta.CODIGO_CONGELADA);
+						estado = genericDao.get(DDEstadoOferta.class, filtro);
+						ofr.setEstadoOferta(estado);
+						genericDao.save(Oferta.class, ofr);
+						
+						
+						if (!Checks.esNulo(exp) && !Checks.esNulo(exp.getTrabajo())) {
+							List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(exp.getTrabajo().getId());
+							ActivoTramite tramite = tramites.get(0);
+
+							Set<TareaActivo> tareasTramite = tramite.getTareas();
+							// Al congelar, borramos las tareas que estuvieran pendientes para que no se muestren.
+							for (TareaActivo tarea : tareasTramite) {
+								tarea.getAuditoria().setBorrado(true);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+		
 
 	@Override
 	public Boolean congelarOferta(Oferta oferta) {

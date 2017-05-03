@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +40,8 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
+    
+    protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaDefinicionOferta.class);
     
    	private static final String CODIGO_T013_DEFINICION_OFERTA = "T013_DefinicionOferta";
     private static final String FECHA_ENVIO_COMITE = "fechaEnvio";

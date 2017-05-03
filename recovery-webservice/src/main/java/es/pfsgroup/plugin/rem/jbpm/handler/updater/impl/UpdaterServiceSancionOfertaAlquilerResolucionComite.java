@@ -4,11 +4,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
-import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
@@ -18,11 +19,9 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
-import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 
 @Component
@@ -37,6 +36,7 @@ public class UpdaterServiceSancionOfertaAlquilerResolucionComite implements Upda
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
         
+    protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquilerResolucionComite.class);
     
 	private static final String FECHA_RESPUESTA = "fechaRespuesta";
 	private static final String COMBO_RES_APROBADA = "comboResAprobada";
@@ -48,7 +48,7 @@ public class UpdaterServiceSancionOfertaAlquilerResolucionComite implements Upda
 	
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 
-		ActivoSituacionPosesoria situacionPosesoria = tramite.getActivo().getSituacionPosesoria();
+//		ActivoSituacionPosesoria situacionPosesoria = tramite.getActivo().getSituacionPosesoria();
 //		Oferta ofertaAceptada = ofertaApi.getOfertaAceptadaByActivo(tramite.getActivo());
 //		ExpedienteComercial expedienteComercial = null;
 //		
@@ -90,19 +90,19 @@ public class UpdaterServiceSancionOfertaAlquilerResolucionComite implements Upda
 	
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expedienteComercial.setEstado(estado);
-					}
 					
-					//Finaliza el trámite
-					Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
-					tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
-					genericDao.save(ActivoTramite.class, tramite);
-
-					//Rechaza la oferta y descongela el resto
-					ofertaApi.rechazarOferta(ofertaAceptada);
-					List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
-					for(Oferta oferta : listaOfertas){
-						if((DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo()))){
-							ofertaApi.descongelarOferta(oferta);
+					
+						//Finaliza el trámite
+						Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
+						tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
+						genericDao.save(ActivoTramite.class, tramite);
+	
+						//Rechaza la oferta y descongela el resto
+						ofertaApi.rechazarOferta(ofertaAceptada);
+						try {
+							ofertaApi.descongelarOfertas(expedienteComercial);
+						} catch (Exception e) {
+							logger.error("Error descongelando ofertas.", e);
 						}
 					}
 				}

@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -51,6 +53,8 @@ public class UpdaterServiceSancionOfertaDevolucionLlaves implements UpdaterServi
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
 
+    protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaDevolucionLlaves.class);
+    
     private static final String CODIGO_T013_DEVOLUCIONLLAVES = "T013_DevolucionLlaves";
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
 
@@ -62,29 +66,33 @@ public class UpdaterServiceSancionOfertaDevolucionLlaves implements UpdaterServi
 		if(!Checks.esNulo(ofertaAceptada)){
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 			
-			if (!Checks.esNulo(expediente.getCondicionante())){
-				if(!Integer.valueOf(1).equals(expediente.getCondicionante().getSolicitaReserva())){
+			if(!Checks.esNulo(expediente)){
 				
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
-					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-					expediente.setEstado(estado);
-					expediente.setFechaAnulacion(new Date());
-					genericDao.save(ExpedienteComercial.class, expediente);
+				if (!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getSolicitaReserva())){
 					
-					//Finaliza el trámite
-					Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
-					tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
-					genericDao.save(ActivoTramite.class, tramite);
-		
-					//Rechaza la oferta y descongela el resto
-					ofertaApi.rechazarOferta(ofertaAceptada);
-					List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
-					for(Oferta oferta : listaOfertas){
-						if((DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo()))){
-							ofertaApi.descongelarOferta(oferta);
+					if(!Integer.valueOf(1).equals(expediente.getCondicionante().getSolicitaReserva())){
+					
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
+						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+						expediente.setEstado(estado);
+						expediente.setFechaAnulacion(new Date());
+						genericDao.save(ExpedienteComercial.class, expediente);
+						
+						//Finaliza el trámite
+						Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
+						tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
+						genericDao.save(ActivoTramite.class, tramite);
+			
+						//Rechaza la oferta y descongela el resto
+						ofertaApi.rechazarOferta(ofertaAceptada);
+						try {
+							ofertaApi.descongelarOfertas(expediente);
+						} catch (Exception e) {
+							logger.error("Error descongelando ofertas.", e);
 						}
 					}
 				}
+				
 			}
 		}
 	}

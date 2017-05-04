@@ -2385,8 +2385,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			gastoExpediente.setTipoProveedor(tipoProveedor);
 		}
 
-		if (!Checks.esNulo(dtoGastoExpediente.getIdProveedor())) {
-			Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", dtoGastoExpediente.getIdProveedor());
+		if (!Checks.esNulo(dtoGastoExpediente.getCodigoProveedorRem())) {
+			Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", dtoGastoExpediente.getCodigoProveedorRem());
 			ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filtroProveedor);
 
 			if (Checks.esNulo(proveedor) || !proveedor.getTipoProveedor().getCodigo().equals(dtoGastoExpediente.getCodigoTipoProveedor())) {

@@ -163,6 +163,9 @@ public class VGastosProveedor implements Serializable {
 	@Column(name="PVE_ID_GESTORIA")
 	private String idGestoria;
 	
+	@Column(name="PVE_NOMBRE_GESTORIA")
+	private String nombreGestoria;
+	
 	@Column(name="GPV_EXISTE_DOCUMENTO")
 	private Boolean existeDocumento;
 	
@@ -171,6 +174,9 @@ public class VGastosProveedor implements Serializable {
 	
 	@Column(name="PRO_DOCIDENTIF")
 	private String docIdentifPropietario;
+	
+	@Column(name="SUJETO_IMPUESTO_INDIRECTO")
+	private Boolean sujetoImpuestoIndirecto;
 	
 	@Transient
 	private boolean esGastoAgrupado; 
@@ -598,6 +604,22 @@ public class VGastosProveedor implements Serializable {
 
 	public void setImporteTotalAgrupacion(Double importeTotalAgrupacion) {
 		this.importeTotalAgrupacion = importeTotalAgrupacion;
+	}
+
+	public String getNombreGestoria() {
+		return nombreGestoria;
+	}
+
+	public void setNombreGestoria(String nombreGestoria) {
+		this.nombreGestoria = nombreGestoria;
+	}
+
+	public Boolean getSujetoImpuestoIndirecto() {
+		return sujetoImpuestoIndirecto;
+	}
+
+	public void setSujetoImpuestoIndirecto(Boolean sujetoImpuestoIndirecto) {
+		this.sujetoImpuestoIndirecto = sujetoImpuestoIndirecto;
 	}	
 	 
 }

@@ -63,6 +63,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
+import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
@@ -193,6 +194,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Autowired
 	private ProveedoresDao proveedoresDao;
+	
+	@Autowired
+	private GestorActivoDao gestorActivoDao;
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -209,6 +213,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
 		if (!Checks.esNulo(usuarioCartera))
 			dto.setCartera(usuarioCartera.getCartera().getCodigo());
+		
+		//Comprobar si el usuario es externo y, en tal caso, seteamos proveedor
+		if(this.gestorActivoDao.isUsuarioGestorExterno(usuarioLogado.getId()))
+			return trabajoDao.findAllFilteredByProveedorContacto(dto, usuarioLogado.getId());
+		
 
 		return trabajoDao.findAll(dto);
 	}

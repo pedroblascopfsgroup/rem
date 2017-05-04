@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.pagination.Page;
@@ -18,21 +19,54 @@ import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionEconomicaTrabajo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 
 @Repository("TrabajoDao")
 public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements TrabajoDao{
-
-
 	
-	 @Override
+	@Autowired
+	ProveedoresDao proveedorDao;
+	
+	@Override
 	public Page findAll(DtoTrabajoFilter dto) {
 
 		HQLBuilder hb = new HQLBuilder(" from VBusquedaTrabajos tbj");
+		
+		this.rellenarFiltrosBusquedaTrabajos(dto, hb);
 
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numTrabajo", dto.getNumTrabajo());
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "tbj.proveedor", dto.getProveedor(), true);
+		
+   		return HibernateQueryUtils.page(this, hb, dto);
+
+	}
+
+	@SuppressWarnings("static-access")
+	@Override
+	public Page findAllFilteredByProveedorContacto(DtoTrabajoFilter dto, Long idUsuario) {
+
+		HQLBuilder hb = new HQLBuilder(" from VBusquedaTrabajos tbj");
+		
+		this.rellenarFiltrosBusquedaTrabajos(dto, hb);
+
+		List<String> nombresProveedor = proveedorDao.getNombreProveedorByIdUsuario(idUsuario);
+		if(!Checks.estaVacio(nombresProveedor)) {
+			hb.addFiltroWhereInSiNotNull(hb, "tbj.proveedor", nombresProveedor);
+		}
+		else {
+			//Si no hay proveedores, no debe mostrar ningún trabajo en el listado
+			hb.appendWhere("tbj.id is null");
+		}
+		
+   		return HibernateQueryUtils.page(this, hb, dto);
+	}
+	
+	//Prepara lso filtros de la consulta 
+	private void rellenarFiltrosBusquedaTrabajos(DtoTrabajoFilter dto, HQLBuilder hb) {
+		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numTrabajo", dto.getNumTrabajo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.idTrabajoWebcom", dto.getIdTrabajoWebcom());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoTipo", dto.getCodigoTipo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoSubtipo", dto.getCodigoSubtipo());
@@ -41,7 +75,6 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoProvincia", dto.getCodigoProvincia());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codPostal", dto.getCodPostal());
    		HQLBuilder.addFiltroLikeSiNotNull(hb, "tbj.solicitante", dto.getSolicitante(), true);
-   		HQLBuilder.addFiltroLikeSiNotNull(hb, "tbj.proveedor", dto.getProveedor(), true);
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numActivoRem", dto.getNumActivoRem());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numAgrupacionRem", dto.getNumAgrupacionRem());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.idActivo", dto.getIdActivo());
@@ -52,10 +85,6 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.conCierreEconomico", dto.getConCierreEconomico());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.facturado", dto.getFacturado());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numActivo", dto.getNumActivo());
-   		
-//   		if(!Checks.esNulo(dto.getAnulado()) && BooleanUtils.toBoolean(dto.getAnulado())) {
-//   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.importeTotal", 0);
-//   		}
 
    		if(Checks.esNulo(dto.getNumActivo()) && Checks.esNulo(dto.getIdActivo())) {
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.rango", 1);
@@ -83,10 +112,7 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
    		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		
-   		return HibernateQueryUtils.page(this, hb, dto);
-
-	}  
+	}
  
     public Long getNextNumTrabajo() {
 		String sql = "SELECT S_TBJ_NUM_TRABAJO.NEXTVAL FROM DUAL ";
@@ -218,6 +244,6 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		}
    		
    		return existe;
-	}  
+	}  	
 
 }

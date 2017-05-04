@@ -12,8 +12,8 @@ Ext.define('HreRem.view.administracion.gastos.GestionProvisionGastosList', {
         var me = this;
         me.setTitle(HreRem.i18n('title.listado.gastos.provision'));
         
-		var configAutorizarBtn = {text: HreRem.i18n('btn.autorizar'), cls:'tbar-grid-button', itemId:'autorizarBtn', handler: 'onClickAutorizarGastosAgrupados', disabled: true, secFunPermToRender: 'OPERAR_GASTO'};
-		var configRechazarButton = {text: HreRem.i18n('btn.rechazar') , cls:'tbar-grid-button', itemId:'rechazarBtn', handler: 'onClickRechazarGastosAgrupados', disabled: true, secFunPermToRender: 'OPERAR_GASTO'};
+		var configAutorizarBtn = {text: HreRem.i18n('btn.autorizar'), cls:'tbar-grid-button', itemId:'autorizarBtn', handler: 'onClickAutorizarGastosAgrupados', disabled: true, secFunPermToRender: 'OPERAR_GASTO_AGRUPACION'};
+		var configRechazarButton = {text: HreRem.i18n('btn.rechazar') , cls:'tbar-grid-button', itemId:'rechazarBtn', handler: 'onClickRechazarGastosAgrupados', disabled: true, secFunPermToRender: 'OPERAR_GASTO_AGRUPACION'};
 		var separador = {xtype: 'tbfill'};
 			
 		me.tbar = {

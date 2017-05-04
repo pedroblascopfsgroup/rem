@@ -19,5 +19,11 @@ public interface GastoDao extends AbstractDao<GastoProveedor, Long>{
 	
 	public void deleteGastoTrabajoById(Long id);
 
-
+	/**
+	 * Devuelve un listado de gastos filtras por el proveedor contacto asociado al usuario pasado por parametro
+	 * @param dtoGastosFilter
+	 * @param idUsuario
+	 * @return
+	 */
+	public DtoPage getListGastosFilteredByProveedorContactoAndGestoriaAdm(DtoGastosFilter dtoGastosFilter, Long idUsuario, Boolean isGestoriaAdm);
 }

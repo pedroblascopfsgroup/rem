@@ -44,6 +44,7 @@ import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
+import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -107,6 +108,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public final String PESTANA_IMPUGNACION = "impugnacion";
 	
 	private static final String EXCEPTION_EXPEDIENT_NOT_FOUND_COD = "ExceptionExp";	
+	private static final String COD_PEF_GESTORIA_ADMINISTRACION = "HAYAGESTADMT";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -134,6 +136,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
+	
+	@Autowired
+	private GestorActivoDao gestorActivoDao;
 		
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -186,7 +191,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Override
 	public DtoPage getListGastos(DtoGastosFilter dtoGastosFilter) {
-
+		
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		//Comprobar si el usuario es externo y, en tal caso, seteamos proveedores contacto del usuario logado
+		if(this.gestorActivoDao.isUsuarioGestorExterno(usuarioLogado.getId())) {
+			Boolean isGestoriaAdm = genericAdapter.tienePerfil(COD_PEF_GESTORIA_ADMINISTRACION, usuarioLogado);
+			return gastoDao.getListGastosFilteredByProveedorContactoAndGestoriaAdm(dtoGastosFilter, usuarioLogado.getId(),isGestoriaAdm);
+		}
+			
 		return gastoDao.getListGastos(dtoGastosFilter);
 	}
 	

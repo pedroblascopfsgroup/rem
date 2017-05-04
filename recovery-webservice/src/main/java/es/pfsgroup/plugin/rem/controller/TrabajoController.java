@@ -34,6 +34,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
@@ -858,10 +859,20 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboProveedorContacto(Long idProveedor, ModelMap model){
-		
-		model.put("data", trabajoApi.getComboProveedorContacto(idProveedor));
-		
+	public ModelAndView getComboProveedorContacto(Long idProveedor, ModelMap model) {
+		try{
+			
+			model.put("data", trabajoApi.getComboProveedorContacto(idProveedor));
+			model.put("success", true);
+			
+		} catch (JsonViewerException e) {
+			model.put("success", false);
+			model.put("msg", e.getMessage());
+			
+		} catch (Exception e) {
+			model.put("success", false);
+			model.put("msg", "Se ha producido un error al ejecutar la petición.");
+		}
 		return createModelAndViewJson(model);
 		
 	}

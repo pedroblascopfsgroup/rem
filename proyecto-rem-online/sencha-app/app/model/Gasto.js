@@ -71,8 +71,38 @@ Ext.define('HreRem.model.Gasto', {
 			convert: function(v) {
 				return v === "true";		
 			}	
+		},
+		{
+			name: 'sujetoImpuestoIndirecto',
+			type: 'boolean',
+			convert: function(v) {
+				if(v === "true") {
+					return 'Si';
+				} else {
+					return 'No';
+				}	
+			}	
+		},
+		{
+			name: 'nombreGestoria'
+		},
+		{
+			name: 'entidadPropietariaDescripcion'
+		},
+		{
+			name: 'destinatarioDescripcion'
+		},
+		{
+			name: 'docIdentifPropietario'
+		},
+		{
+			name: 'destinatarioNombreDoc',
+			calculate: function(data) {
+				var docName = data.docIdentifPropietario + ' - ' + data.destinatarioDescripcion;
+				return docName;
+			},
+			depends: 'docIdentifPropietario'
 		}
-    		
     ],
     
 	proxy: {

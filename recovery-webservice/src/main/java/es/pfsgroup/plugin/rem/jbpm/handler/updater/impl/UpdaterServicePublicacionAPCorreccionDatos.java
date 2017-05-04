@@ -1,26 +1,17 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
-import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.direccion.model.DDProvincia;
-import es.capgemini.pfs.direccion.model.DDTipoVia;
-import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
@@ -35,11 +26,9 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
-import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 
 @Component
 public class UpdaterServicePublicacionAPCorreccionDatos implements UpdaterService {
@@ -75,11 +64,9 @@ public class UpdaterServicePublicacionAPCorreccionDatos implements UpdaterServic
 		//Se recupera el activo y la info comercial
 		Activo activo = tramite.getActivo();
 		ActivoInfoComercial activoInfoComercial = null;
-		ActivoLocalizacion activoLocalizacion = null;
 		
 		if(!Checks.esNulo(activo)){
 			activoInfoComercial = activo.getInfoComercial();
-			activoLocalizacion = activo.getLocalizacion();
 		}
 		
 		//Se asocia el activo al historico

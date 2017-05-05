@@ -17,10 +17,8 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.web.dto.factory.DTOFactory;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.utils.AgendaMultifuncionCorreoUtils;
@@ -149,6 +147,22 @@ public class GenericAdapter {
 		Perfil perfilProveedor = genericDao.get(Perfil.class, filtro);
 				
 		return usuario.getPerfiles().contains(perfilProveedor);
+	}
+	
+	/**
+	 * Comprueba si el usuario tiene el perfil pasado por parametro
+	 */
+	public Boolean tienePerfil(String codPerfil, Usuario u) {
+		
+		if (Checks.esNulo(u) || Checks.esNulo(codPerfil)) {
+	        return false;
+	    }
+	    for (Perfil p : u.getPerfiles()) {
+	    	if(codPerfil.equals(p.getCodigo()))
+	    		return true;
+	    }
+	
+	    return false;
 	}
 
 }

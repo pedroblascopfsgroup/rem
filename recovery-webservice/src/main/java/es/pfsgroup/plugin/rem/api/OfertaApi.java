@@ -171,12 +171,23 @@ public interface OfertaApi {
 	 */
 	public Boolean congelarOferta(Oferta oferta);
 	
+	
 	/**
-	 * Método que descongela una oferta y desoculta las tareas pendientes
+	 * Congela las ofertas Pendientes asociadas a 
+	 * un activo cuyo expediente comercial se ha aprobado.
 	 * @param oferta
-	 * @return Boolean true si ha podido descongelar la oferta false en caso contrario
+	 * @return Boolean true si ha podido congelar la oferta false en caso contrario
 	 */
-	public Boolean descongelarOferta(Oferta oferta);
+	public void congelarOfertasPendientes(ExpedienteComercial expediente) throws Exception;
+
+	
+	/**
+	 * Descongela las ofertas suceptibles de descongelar asociadas a 
+	 * un activo cuyo expediente comercial se ha anulado/denegado.
+	 * @param expediente: expediente cuyo activo tiene ofertas a descongelar.
+	 */
+	public void descongelarOfertas(ExpedienteComercial expediente) throws Exception;
+
 	
 	/**
 	 * Método que saca la oferta a partir de una tarea externa

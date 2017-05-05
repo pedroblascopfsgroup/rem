@@ -18,7 +18,6 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -28,6 +27,7 @@ import es.pfsgroup.plugin.rem.model.DtoGestionEconomicaTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestosTrabajo;
+import es.pfsgroup.plugin.rem.model.DtoProveedorContactoSimple;
 import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
@@ -660,11 +660,11 @@ public interface TrabajoApi {
 	public Boolean checkSuperaDelegacion(TareaExterna tarea);
 	
 	/**
-	 * Devuelve un lsitado de ProveedoresContacto filtrado por proveedor
+	 * Devuelve un listado de ProveedoresContacto filtrado por proveedor
 	 * @param idProveedor
-	 * @return
+	 * @return List<DtoProveedorContactoSimple> con la lista ordenada de contactos asociados al proveedor
 	 */
-	public List<ActivoProveedorContacto> getComboProveedorContacto(Long idProveedor);
+	public List<DtoProveedorContactoSimple> getComboProveedorContacto(Long idProveedor) throws Exception;
 	
 	/**
 	 * Devuelve una lista de proveedores filtrada por cartera y tipos de proveedor segun el tipo/subtipo de trabajo

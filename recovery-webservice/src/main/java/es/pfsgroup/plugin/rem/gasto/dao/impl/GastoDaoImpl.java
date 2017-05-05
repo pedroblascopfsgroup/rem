@@ -2,9 +2,11 @@ package es.pfsgroup.plugin.rem.gasto.dao.impl;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.pagination.Page;
@@ -19,14 +21,76 @@ import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
+import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 
 @Repository("GastoDao")
 public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implements GastoDao {
+	
+	@Autowired
+	ProveedoresDao proveedorDao;
 
-	@SuppressWarnings("unchecked")
+	
 	@Override
 	public DtoPage getListGastos(DtoGastosFilter dtoGastosFilter) {
 
+		HQLBuilder hb = this.rellenarFiltrosBusquedaGasto(dtoGastosFilter);
+
+		return this.getListadoGastosCompleto(dtoGastosFilter, hb);
+	}
+	
+	@Override
+	public DtoPage getListGastosFilteredByProveedorContactoAndGestoriaAdm(DtoGastosFilter dtoGastosFilter, Long idUsuario, Boolean isGestoriaAdm) {
+		
+		HQLBuilder hb = this.rellenarFiltrosBusquedaGasto(dtoGastosFilter);
+		
+		List<String> nombresProveedor = proveedorDao.getNombreProveedorByIdUsuario(idUsuario);
+		if(!Checks.estaVacio(nombresProveedor)) {
+			if(!isGestoriaAdm)
+				HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgasto.nombreProveedor", nombresProveedor);
+			else {
+				String listNombres = this.listToCadenaCommas(nombresProveedor);
+				String whereCondition = "vgasto.nombreProveedor in ("+listNombres+")";
+				
+				List<Long> idsProveedor = proveedorDao.getIdProveedoresByIdUsuario(idUsuario);
+				if(!Checks.estaVacio(idsProveedor)) {
+					String listIds = this.listToCadenaCommas(idsProveedor);
+					whereCondition += " or vgasto.idGestoria in ("+listIds+")";
+				}
+				hb.appendWhere(whereCondition);
+			}
+		}
+		else {
+			//Si no hay proveedores, no debe mostrar ningún gasto en el listado
+			hb.appendWhere("vgasto.id is null");
+		}
+		
+		return this.getListadoGastosCompleto(dtoGastosFilter, hb);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private DtoPage getListadoGastosCompleto(DtoGastosFilter dtoGastosFilter ,HQLBuilder hb) {
+		
+		Page pageGastos = HibernateQueryUtils.page(this, hb, dtoGastosFilter);
+		dtoGastosFilter.setLimit(100000);
+		Page pageGastosAll = HibernateQueryUtils.page(this, hb, dtoGastosFilter);
+		List<VGastosProveedor> gastosAll = (List<VGastosProveedor>) pageGastosAll.getResults();
+		Double importeTotalAgrupacion = new Double(0);
+		for (VGastosProveedor gasto : gastosAll) {
+			if (gasto.getImporteTotal() != null && gasto.getEstadoGastoCodigo() != null
+					&& gasto.getEstadoGastoCodigo().equals(DDEstadoGasto.AUTORIZADO_ADMINISTRACION)) {
+				importeTotalAgrupacion += gasto.getImporteTotal();
+			}
+		}
+
+		List<VGastosProveedor> gastos = (List<VGastosProveedor>) pageGastos.getResults();
+		for (VGastosProveedor gasto : gastos) {
+			gasto.setImporteTotalAgrupacion(importeTotalAgrupacion);
+		}
+
+		return new DtoPage(gastos, pageGastos.getTotalCount());
+	}
+	
+	private HQLBuilder rellenarFiltrosBusquedaGasto(DtoGastosFilter dtoGastosFilter) {
 		String from = "select vgasto from VGastosProveedor vgasto";
 		HQLBuilder hb = null;
 
@@ -134,25 +198,7 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 
 		HQLBuilder.addFiltroIgualQue(hb, "vgasto.rango", 1);
 
-		Page pageGastos = HibernateQueryUtils.page(this, hb, dtoGastosFilter);
-		dtoGastosFilter.setLimit(100000);
-		Page pageGastosAll = HibernateQueryUtils.page(this, hb, dtoGastosFilter);
-		List<VGastosProveedor> gastosAll = (List<VGastosProveedor>) pageGastosAll.getResults();
-		Double importeTotalAgrupacion = new Double(0);
-		for (VGastosProveedor gasto : gastosAll) {
-			if (gasto.getImporteTotal() != null && gasto.getEstadoGastoCodigo() != null
-					&& gasto.getEstadoGastoCodigo().equals(DDEstadoGasto.AUTORIZADO_ADMINISTRACION)) {
-				importeTotalAgrupacion += gasto.getImporteTotal();
-			}
-		}
-
-		List<VGastosProveedor> gastos = (List<VGastosProveedor>) pageGastos.getResults();
-		for (VGastosProveedor gasto : gastos) {
-			gasto.setImporteTotalAgrupacion(importeTotalAgrupacion);
-		}
-
-		return new DtoPage(gastos, pageGastos.getTotalCount());
-
+		return hb;
 	}
 
 	@Override
@@ -170,6 +216,16 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		StringBuilder sb = new StringBuilder("delete from GastoProveedorTrabajo gpt where gpt.id = " + id);
 		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
 
+	}
+	
+	//Convierte una lista en una cadena con los elementos separados por comas
+	private String listToCadenaCommas(List<?> lista) {
+		
+		String resultado = "";
+		if(!Checks.estaVacio(lista))
+			resultado = Arrays.toString(lista.toArray()).replace("[", "").replace("]", "");
+		
+		return resultado;
 	}
 
 }

@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.administracion.gastos.GestionProvisionesSearch', {
     extend		: 'HreRem.view.common.FormBase',
     xtype		: 'gestionprovisionessearch',
-
+    isSearchFormProvisiones: true,
   	layout: {
         type: 'table',
         // The total column count must be specified here
@@ -26,9 +26,6 @@ Ext.define('HreRem.view.administracion.gastos.GestionProvisionesSearch', {
         var me = this;
         
         me.setTitle(HreRem.i18n("title.filtro.provisiones"));
-        
-        me.buttons = [{ text: 'Buscar', handler: 'onClickProvisionesSearch' },{ text: 'Limpiar', handler: 'onCleanFiltersClick'}];
-        me.buttonAlign = 'left';
         
         var items = [
         

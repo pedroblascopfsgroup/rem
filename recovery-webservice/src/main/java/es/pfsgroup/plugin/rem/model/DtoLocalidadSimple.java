@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.model;
 
-import es.capgemini.devon.dto.WebDto;
 
 
 /**
@@ -10,10 +9,6 @@ import es.capgemini.devon.dto.WebDto;
  */
 public class DtoLocalidadSimple {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 
 	private Long id;
 

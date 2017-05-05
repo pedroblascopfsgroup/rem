@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 
 @Repository("ProveedoresDao")
 public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long> implements ProveedoresDao {
+	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
 	@SuppressWarnings("unchecked")
@@ -169,4 +170,33 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		return (List<VProveedores>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> getNombreProveedorByIdUsuario(Long idUsuario) {
+		
+		HQLBuilder hb = new HQLBuilder("select pve.nombre from ActivoProveedor pve, ActivoProveedorContacto pvc ");
+		
+		hb.appendWhere("pve.id = pvc.proveedor.id");
+		hb.appendWhere("pvc.usuario.id = "+idUsuario);
+		
+		List<String> listaProveedores = (List<String>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		List<String> listaNombres = new ArrayList<String>();
+		for(String proveedor : listaProveedores) {
+			listaNombres.add("'"+proveedor+"'");
+		}
+		
+		return listaNombres;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> getIdProveedoresByIdUsuario(Long idUsuario) {
+		
+		HQLBuilder hb = new HQLBuilder("select pve.id from ActivoProveedor pve, ActivoProveedorContacto pvc ");
+		
+		hb.appendWhere("pve.id = pvc.proveedor.id");
+		hb.appendWhere("pvc.usuario.id = "+idUsuario);
+		
+		return (List<Long>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+	}
 }

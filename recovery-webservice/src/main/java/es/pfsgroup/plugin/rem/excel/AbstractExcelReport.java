@@ -18,6 +18,8 @@ public abstract class AbstractExcelReport {
 	public static final String LISTA_DE_OFERTAS_XLS = "Lista_de_ofertas.xls";
 	public static final String LISTA_DE_PROVEEDORES_XLS = "Lista_de_proveedores.xls";
 	public static final String LISTA_DE_ACTIVOS_AGRUPACION_XLS = "Lista_de_activos_agrupacion.xls";
+	public static final String LISTA_DE_GESTION_GASTOS_XLS = "Lista_de_gestion_gastos.xls";
+	public static final String LISTA_DE_PROVISION_GASTOS_XLS = "Lista_de_provision_gastos.xls";
 	
 	private SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 	

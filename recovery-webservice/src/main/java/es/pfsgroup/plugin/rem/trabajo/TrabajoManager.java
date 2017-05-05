@@ -53,6 +53,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
@@ -62,6 +63,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
+import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
@@ -82,6 +84,7 @@ import es.pfsgroup.plugin.rem.model.DtoGestionEconomicaTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestosTrabajo;
+import es.pfsgroup.plugin.rem.model.DtoProveedorContactoSimple;
 import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
@@ -191,6 +194,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Autowired
 	private ProveedoresDao proveedoresDao;
+	
+	@Autowired
+	private GestorActivoDao gestorActivoDao;
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -207,6 +213,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
 		if (!Checks.esNulo(usuarioCartera))
 			dto.setCartera(usuarioCartera.getCartera().getCodigo());
+		
+		//Comprobar si el usuario es externo y, en tal caso, seteamos proveedor
+		if(this.gestorActivoDao.isUsuarioGestorExterno(usuarioLogado.getId()))
+			return trabajoDao.findAllFilteredByProveedorContacto(dto, usuarioLogado.getId());
+		
 
 		return trabajoDao.findAll(dto);
 	}
@@ -2073,18 +2084,57 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 	
 	@Override
-	public List<ActivoProveedorContacto> getComboProveedorContacto(Long idProveedor) {
+	public List<DtoProveedorContactoSimple> getComboProveedorContacto(Long idProveedor) throws Exception {
 		
-		if(!Checks.esNulo(idProveedor)) {
+		List<DtoProveedorContactoSimple> listaDtoProveedorContactoSimple = new ArrayList<DtoProveedorContactoSimple>();
+		List<ActivoProveedorContacto> listaProveedorContacto = null;
+		
+		
+		if(Checks.esNulo(idProveedor)) {
+			throw new JsonViewerException("Debe seleccionar antes un proveedor.");
+			
+		}else{
+			
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", idProveedor);
 			Order orden = new Order(OrderType.ASC,"nombre");
+			listaProveedorContacto = genericDao.getListOrdered(ActivoProveedorContacto.class, orden, filtro1);
 			
-			return (List<ActivoProveedorContacto>) genericDao.getListOrdered(ActivoProveedorContacto.class, orden, filtro1);
+			for (ActivoProveedorContacto source: listaProveedorContacto ) {
+				try {
+					DtoProveedorContactoSimple target= new DtoProveedorContactoSimple();
+			        BeanUtils.copyProperties(target, source);
+			        
+			        if(!Checks.esNulo(source.getUsuario())){
+			        	target.setIdUsuario(source.getUsuario().getId());
+			        }
+			        if(!Checks.esNulo(source.getUsuario())){
+			        	target.setLoginUsuario(source.getUsuario().getUsername());
+			        }
+			        if(!Checks.esNulo(source.getUsuario())){
+			        	target.setLoginUsuario(source.getUsuario().getUsername());
+			        }
+			        if(!Checks.esNulo(source.getProvincia())){
+			        	target.setCodProvincia(source.getProvincia().getCodigo());
+			        }
+			        if(!Checks.esNulo(source.getTipoDocIdentificativo())){
+			        	target.setCodTipoDocIdentificativo(source.getTipoDocIdentificativo().getCodigo());
+			        }
+			        listaDtoProveedorContactoSimple.add(target);
+			        
+				} catch (IllegalAccessException e) {
+					logger.error("Error al consultar las localidades sin filtro",e);
+					throw new Exception(e);
+				} catch (InvocationTargetException e) {
+					logger.error("Error al consultar las localidades sin filtro",e);
+					throw new Exception(e);
+				}
+			}
 		}
-		
-		return new ArrayList<ActivoProveedorContacto>();
+		return listaDtoProveedorContactoSimple;
 	}
 
+	
+	
 	@Override
 	@BusinessOperationDefinition("trabajoManager.getRecargosProveedor")
 	public List<DtoRecargoProveedor> getRecargosProveedor(Long idTrabajo) {

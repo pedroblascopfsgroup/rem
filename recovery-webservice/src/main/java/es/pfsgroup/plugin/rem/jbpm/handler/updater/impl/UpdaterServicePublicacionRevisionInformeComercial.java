@@ -64,7 +64,7 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
 		boolean checkAcepta = false;
 		boolean checkContinuaProceso = false;
 		String motivoDenegacion = new String();
-		Date fechaRevision = new Date();
+
 		
 		Activo activo = tramite.getActivo();
 		
@@ -90,7 +90,7 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
 
 		}
 		
-		fechaRevision = new Date();
+
 				
 		// Acepta / Rechaza el I.C.
 		if(checkAcepta){

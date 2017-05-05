@@ -63,6 +63,7 @@ Ext.define('HreRem.view.gastos.CabeceraGasto', {
 										text: HreRem.i18n("btn.rechazar"),
 										cls: 'boton-cabecera',
 										handler: 'onClickRechazar',
+										secFunPermToRender: 'OPERAR_GASTO',
 										hidden: true,
 										bind: {
 											hidden: '{!esRechazable}'

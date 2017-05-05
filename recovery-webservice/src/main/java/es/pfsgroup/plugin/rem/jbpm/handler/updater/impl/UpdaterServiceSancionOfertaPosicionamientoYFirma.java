@@ -22,7 +22,6 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -31,7 +30,6 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
-import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
@@ -46,8 +44,6 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
     @Autowired
     private OfertaApi ofertaApi;
     
-    @Autowired
-    private TrabajoApi trabajoApi;
     
     @Autowired
     private ActivoApi activoApi;
@@ -61,7 +57,6 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
     private static final String COMBO_FIRMA = "comboFirma";
     private static final String FECHA_FIRMA = "fechaFirma";
     private static final String MOTIVO_NO_FIRMA = "motivoNoFirma";
-    private static final String CODIGO_TRAMITE_FINALIZADO = "11";
     private static final String CODIGO_T013_POSICIONAMIENTOYFIRMA = "T013_PosicionamientoYFirma";
     private static final String MOTIVO_ESTADO_PUBLICACION_ACTIVO_VENDIDO = "activo.motivo.tramite.vendido.no.publicar";
 
@@ -120,7 +115,13 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 						
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expediente.setEstado(estado);
-					}/*
+					}else{
+						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
+						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+						expediente.setEstado(estado);
+					}
+					
+					/*
 					else{ Se pasa a la tarea de Devolución de llaves/Resolucion expediente la labora de anular.
 							
 						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);

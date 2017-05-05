@@ -22,6 +22,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 
@@ -91,6 +92,12 @@ public class UpdaterServiceComunSolicitudGestor implements UpdaterService {
 						e.printStackTrace();
 					}
 			}
+		}
+		if(DDTipoDocumentoActivo.CODIGO_CEDULA_HABITABILIDAD.equals(codigoTipoDocumento)){
+			Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo" , DDEstadoTrabajo.ESTADO_EN_TRAMITE);
+			DDEstadoTrabajo estado = genericDao.get(DDEstadoTrabajo.class, filter);
+			trabajo.setEstado(estado);
+			Auditoria.save(trabajo);
 		}
 
 	}

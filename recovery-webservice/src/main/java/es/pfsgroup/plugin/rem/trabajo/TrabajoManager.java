@@ -788,18 +788,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		// Por defecto: Solicitado
 		DDEstadoTrabajo estadoTrabajo = (DDEstadoTrabajo) genericDao.get(DDEstadoTrabajo.class, filtroSolicitado);
-		if (dtoTrabajo.getSubtipoTrabajoCodigo().equals(DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD)) {
-			// Cedula: En trámite
+		if (gestorActivoManager.isGestorActivo(activo, genericAdapter.getUsuarioLogado()) && (dtoTrabajo
+				.getTipoTrabajoCodigo().equals(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL)
+				|| dtoTrabajo.getTipoTrabajoCodigo().equals(DDTipoTrabajo.CODIGO_TASACION)
+				|| dtoTrabajo.getSubtipoTrabajoCodigo().equals(DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS))) {
+			// Es gestor activo + Obtención documental(menos Cédula) o
+			// Tasación: En Trámite
 			estadoTrabajo = (DDEstadoTrabajo) genericDao.get(DDEstadoTrabajo.class, filtroEnTramite);
-		} else {
-			if (gestorActivoManager.isGestorActivo(activo, genericAdapter.getUsuarioLogado()) && (dtoTrabajo
-					.getTipoTrabajoCodigo().equals(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL)
-					|| dtoTrabajo.getTipoTrabajoCodigo().equals(DDTipoTrabajo.CODIGO_TASACION)
-					|| dtoTrabajo.getSubtipoTrabajoCodigo().equals(DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS))) {
-				// Es gestor activo + Obtención documental(menos Cédula) o
-				// Tasación: En Trámite
-				estadoTrabajo = (DDEstadoTrabajo) genericDao.get(DDEstadoTrabajo.class, filtroEnTramite);
-			}
 		}
 
 		return estadoTrabajo;

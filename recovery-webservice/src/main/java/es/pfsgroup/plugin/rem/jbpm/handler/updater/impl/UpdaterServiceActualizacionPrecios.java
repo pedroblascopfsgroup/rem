@@ -39,7 +39,7 @@ public class UpdaterServiceActualizacionPrecios implements UpdaterService {
 				// Por defecto el trabajo pasará a 'Precios actualizados'y en
 				// caso de que se deniegue a rechazado.
 				Filter filter = genericDao.createFilter(FilterType.EQUALS,
-						"codigo", DDEstadoTrabajo.ESTADO_SOLICITADO);
+						"codigo", DDEstadoTrabajo.ESTADO_FINALIZADO);
 
 				if (valor.getValor().equals(DDSiNo.NO)) {
 					filter = genericDao.createFilter(FilterType.EQUALS,

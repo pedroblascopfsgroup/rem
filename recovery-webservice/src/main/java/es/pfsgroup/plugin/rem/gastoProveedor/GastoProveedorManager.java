@@ -796,10 +796,15 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 					if (!Checks.esNulo(gasto.getPropietario())) {
 
-						ActivoPropietario propietario = activo.getPropietarioPrincipal();
-						if (!gasto.getPropietario().getDocIdentificativo().equals(propietario.getDocIdentificativo())) {
-							throw new JsonViewerException("Propietario diferente al propietario actual del gasto");
+						if (!Checks.esNulo(gasto.getPropietario().getDocIdentificativo())){
+							ActivoPropietario propietario = activo.getPropietarioPrincipal();
+							if (!gasto.getPropietario().getDocIdentificativo().equals(propietario.getDocIdentificativo())) {
+								throw new JsonViewerException("Propietario diferente al propietario actual del gasto");
+							}
+						}else{
+							throw new JsonViewerException("Propietario del gasto sin documento");
 						}
+						
 					}
 
 					Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());

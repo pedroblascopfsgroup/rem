@@ -11,28 +11,30 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 		
 		beforeedit : function(editor, e) {
 			var me = this;
-			var record = e.record;
-			var columnas = me.getColumns();
-			for (var i = 0; i < columnas.length; i++) {
-				if (columnas[i].dataIndex == 'referenciaCatastral') {
-					var columna = columnas[i];
+			if(!me.up('gastodetallemain').getViewModel().get('gasto.asignadoATrabajos')){
+				var record = e.record;
+				var columnas = me.getColumns();
+				for (var i = 0; i < columnas.length; i++) {
+					if (columnas[i].dataIndex == 'referenciaCatastral') {
+						var columna = columnas[i];
+					}
 				}
-			}
-			var combo = columna.getEditor();
-
-			var objetoStore = [];
-			var objeto = null;
-			if(record.get("referenciasCatastrales")){
-				var data = record.get("referenciasCatastrales").split(",");
-				for (var i = 0; i < data.length; i++) {
-					objeto = {
-						descripcion : '' + data[i] + '',
-						codigo : '' + data[i] + ''
+				var combo = columna.getEditor();
+	
+				var objetoStore = [];
+				var objeto = null;
+				if(record.get("referenciasCatastrales")){
+					var data = record.get("referenciasCatastrales").split(",");
+					for (var i = 0; i < data.length; i++) {
+						objeto = {
+							descripcion : '' + data[i] + '',
+							codigo : '' + data[i] + ''
+						};
+						objetoStore.push(objeto);
 					};
-					objetoStore.push(objeto);
-				};
-			}
-			combo.getStore().setData(objetoStore);
+				}
+				combo.getStore().setData(objetoStore);
+			}else return false;
 		}
 		
 	},
@@ -102,7 +104,7 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 						store: catastroStore,
 						displayField: 'descripcion',
 						addUxReadOnlyEditFieldPlugin: false,
-    					valueField: 'codigo'		
+    					valueField: 'codigo'
 					},
 					renderer: function(value, a, record, e) {
 						return value;
@@ -147,8 +149,9 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 		            	var msg = HreRem.i18n("header.activos.afectados.importe.proporcional.total") + " " + value2 + "\u20AC";
 		            	var style = "style= 'color: black'";
 		            	var importeTotal = Ext.util.Format.number(me.up('gastodetallemain').getViewModel().get('gasto.importeTotal'), '0.00');
-		            	if(importeTotal=="")
+		            	if(importeTotal==""){
 		            		importeTotal = Ext.util.Format.number(0, '0.00');
+		            	}
 		            	if(value2 != importeTotal) {
 		            		//msg = HreRem.i18n("fieldlabel.participacion.total.error")	
 		            		style = "style= 'color: red'";
@@ -158,7 +161,7 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 				}
 
 		];
-
+		
 		me.callParent();
 	},
 	

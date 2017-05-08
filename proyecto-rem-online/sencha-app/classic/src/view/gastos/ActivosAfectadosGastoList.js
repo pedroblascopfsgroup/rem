@@ -52,7 +52,13 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 			]
 		};			
 					
-
+		me.features = [{
+            id: 'summary',
+            ftype: 'summary',
+            hideGroupedHeader: true,
+            enableGroupingMenu: false,
+            dock: 'bottom'
+		}];
 		me.columns = [
 							
 				{
@@ -117,13 +123,35 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 			          return Ext.util.Format.number(value, '0.00%');
 			        },
 					flex : 1,
-					editor: 'numberfield'
+					editor: 'numberfield',
+					summaryType: 'sum',
+		            summaryRenderer: function(value, summaryData, dataIndex) {
+		            	var value2=Ext.util.Format.number(value, '0.00');
+		            	var msg = HreRem.i18n("fieldlabel.participacion.total") + " " + value2 + "%";
+		            	var style = "style= 'color: black'" 
+		            	if(value != 100) {
+		            		//msg = HreRem.i18n("fieldlabel.participacion.total.error")	
+		            		style = "style= 'color: red'" 
+		            	}			            	
+		            	return "<span "+style+ ">"+msg+"</span>"
+		            }
 				}, {
 					xtype: 'numbercolumn', 
 					renderer: Utils.rendererCurrency,
 					text : HreRem.i18n('header.activos.afectados.importe.proporcional.total'),
 					dataIndex : 'importeProporcinalTotal',
-					flex : 1
+					flex : 1,
+					summaryType: 'sum',
+		            summaryRenderer: function(value, summaryData, dataIndex) {
+		            	var value2=Ext.util.Format.number(value, '0.00');
+		            	var msg = HreRem.i18n("header.activos.afectados.importe.proporcional.total") + " " + value2 + "\u20AC";
+		            	var style = "style= 'color: black'" 
+		            	if(value2 != Ext.util.Format.number(me.up('gastodetallemain').getViewModel().get('gasto.importeTotal'), '0.00')) {
+		            		//msg = HreRem.i18n("fieldlabel.participacion.total.error")	
+		            		style = "style= 'color: red'" 
+		            	}			            	
+		            	return "<span "+style+ ">"+msg+"</span>"
+		            }
 				}
 
 		];

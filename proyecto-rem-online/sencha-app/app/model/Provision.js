@@ -18,7 +18,25 @@ Ext.define('HreRem.model.Provision', {
 			dateFormat: 'c'
 		},
 		{
-			name : 'gestoria'
+			name : 'idGestoria'
+		},
+		{
+			name : 'nombreProveedor'
+		},
+		{
+			name : 'nomPropietario'
+		},
+		{
+			name : 'nifPropietario'
+		},
+		{
+			name : 'codCartera'
+		},
+		{
+			name : 'descCartera'
+		},
+		{
+			name : 'importeTotal'
 		},
 		{
 			name : 'fechaEnvio',

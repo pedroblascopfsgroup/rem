@@ -168,7 +168,16 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getGestoriasGasto'
 			}		
-		}
+		},
+		
+		comboCartera: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'entidadesPropietarias'}
+			}   
+    	}
     }
 	    
 });

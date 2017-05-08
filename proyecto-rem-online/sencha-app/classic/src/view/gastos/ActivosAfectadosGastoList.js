@@ -128,10 +128,10 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 		            summaryRenderer: function(value, summaryData, dataIndex) {
 		            	var value2=Ext.util.Format.number(value, '0.00');
 		            	var msg = HreRem.i18n("fieldlabel.participacion.total") + " " + value2 + "%";
-		            	var style = "style= 'color: black'" 
+		            	var style = "style= 'color: black'";
 		            	if(value != 100) {
 		            		//msg = HreRem.i18n("fieldlabel.participacion.total.error")	
-		            		style = "style= 'color: red'" 
+		            		style = "style= 'color: red'";
 		            	}			            	
 		            	return "<span "+style+ ">"+msg+"</span>"
 		            }
@@ -145,10 +145,13 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 		            summaryRenderer: function(value, summaryData, dataIndex) {
 		            	var value2=Ext.util.Format.number(value, '0.00');
 		            	var msg = HreRem.i18n("header.activos.afectados.importe.proporcional.total") + " " + value2 + "\u20AC";
-		            	var style = "style= 'color: black'" 
-		            	if(value2 != Ext.util.Format.number(me.up('gastodetallemain').getViewModel().get('gasto.importeTotal'), '0.00')) {
+		            	var style = "style= 'color: black'";
+		            	var importeTotal = Ext.util.Format.number(me.up('gastodetallemain').getViewModel().get('gasto.importeTotal'), '0.00');
+		            	if(importeTotal=="")
+		            		importeTotal = Ext.util.Format.number(0, '0.00');
+		            	if(value2 != importeTotal) {
 		            		//msg = HreRem.i18n("fieldlabel.participacion.total.error")	
-		            		style = "style= 'color: red'" 
+		            		style = "style= 'color: red'";
 		            	}			            	
 		            	return "<span "+style+ ">"+msg+"</span>"
 		            }

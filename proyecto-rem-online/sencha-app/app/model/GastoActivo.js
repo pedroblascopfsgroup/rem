@@ -29,10 +29,12 @@ Ext.define('HreRem.model.GastoActivo', {
             	name: 'direccion'
             },
             {
-            	name: 'participacion'
+            	name: 'participacion',
+            	type: 'number'
             },
             {
-            	name: 'importeProporcinalTotal'
+            	name: 'importeProporcinalTotal',
+            	type: 'number'
             },
             {
             	name: 'referenciasCatastrales'

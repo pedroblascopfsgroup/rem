@@ -1,6 +1,7 @@
 Ext.define('HreRem.view.administracion.gastos.GestionProvisionesSearch', {
     extend		: 'HreRem.view.common.FormBase',
     xtype		: 'gestionprovisionessearch',
+    isSearchFormProvisiones: true,
     collapsible: true,
     collapsed: false, 
     layout: 'column',
@@ -14,7 +15,6 @@ Ext.define('HreRem.view.administracion.gastos.GestionProvisionesSearch', {
     initComponent: function () {
     	
         var me = this;
-        
         me.setTitle(HreRem.i18n("title.agrupacion.gasto.filtro.provisiones"));
         me.removeCls('shadow-panel');
     	me.buttons = [{ text: 'Buscar', handler: 'onClickProvisionesSearch' },{ text: 'Limpiar', handler: 'onCleanFiltersClick'}];

@@ -142,6 +142,74 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		
 	},
     
+	// Función que se ejecuta al hacer click en el botón de Exportar en gestión gastos.
+	onClickDescargarExcelGestionGastos: function(btn) {
+		var me = this,
+		config = {};
+
+		var initialData = {};
+
+		var searchForm = btn.up('formBase');
+		if (!searchForm.isValid()) { 
+			return;
+		}
+		var params = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
+
+		Ext.Object.each(params, function(key, val) {
+			if (Ext.isEmpty(val)) {
+				delete params[key];
+			}
+		});
+
+		config.params = params;
+		config.url= $AC.getRemoteUrl("gastosproveedor/generateExcelGestionGastos");
+		
+		me.fireEvent("downloadFile", config);		
+	},
+
+	// Función que se ejecuta al hacer click en el botón de Exportar en agrupaciones de gastos.
+	onClickDescargarExcelProvisionGastos: function(btn) {
+		var me = this,
+		config = {};
+
+		var initialData = {};
+
+		var searchForm = btn.up('formBase');
+		if (!searchForm.isValid()) { 
+			return;
+		}
+		var params = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
+
+		Ext.Object.each(params, function(key, val) {
+			if (Ext.isEmpty(val)) {
+				delete params[key];
+			}
+		});
+
+		config.params = params;
+		config.url= $AC.getRemoteUrl("provisiongastos/generateExcelProvisionGastos");
+		
+		me.fireEvent("downloadFile", config);		
+	},
+
+	// Función que se ejecuta al hacer click en el botón de Exportar en gastos por agrupación.
+	onClickDescargarExcelGastosAgrupacion: function(btn) {
+		var me = this,
+		config = {};
+
+		var provision = me.getViewModel().get('provisionSeleccionada');
+		if(Ext.isEmpty(provision)) {
+			return;
+		}
+
+		var params = {'idProvision':provision.get('id')}
+
+		config.params = params;
+		config.url= $AC.getRemoteUrl("gastosproveedor/generateExcelGestionGastos");
+
+		me.fireEvent("downloadFile", config);		
+	},
+
 	//Funcion que se ejecuta al hacer click en el botón buscar provisiones
 	onClickProvisionesSearch: function(btn) {
 		var me = this;
@@ -182,61 +250,27 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	me.getView().fireEvent('abrirDetalleGasto', record);
 		
 	},
-	
-//	onClickDescargarExcel: function(btn) {
-//		
-//    	var me = this,
-//		config = {};
-//		
-//		
-//		
-//		var initialData = {};
-//
-//		var searchForm = btn.up('formBase');
-//		if (searchForm.isValid()) {
-//			var params = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
-//			
-//			Ext.Object.each(params, function(key, val) {
-//				if (Ext.isEmpty(val)) {
-//					delete params[key];
-//				}
-//			});
-//        }
-//		
-//		config.params = params;
-//		config.url= $AC.getRemoteUrl("visitas/generateExcel");
-//		//config.params = {};
-//		//config.params.idProcess = this.getView().down('grid').selection.data.id;
-//		
-//		me.fireEvent("downloadFile", config);		
-//    	
-//    	
-//    },
-    
-//    onEnlaceActivosClick: function(tableView, indiceFila, indiceColumna) {
-//		var me = this;
-//		var grid = tableView.up('grid');
-//	    var record = grid.store.getAt(indiceFila);
-//	    grid.setSelection(record);
-//	    var idActivo = record.get("idActivo");
-//	    me.redirectTo('activos', true);
-//	    me.getView().fireEvent('abrirDetalleActivo', record);
-//    	
-//    }
 
 	onRowClickProvisionesList: function(gridView,record) {
-		var me = this;    		
-		me.getViewModel().set("provisionSeleccionada", record);
-		me.getViewModel().notify();
-		
-		me.lookupReference('provisionesGastosList').expand();
-		this.lookupReference('provisionesGastosList').getStore().loadPage(1);
-		
+		var me = this;
+
+		var viewModel = me.getViewModel();
+		viewModel.set("provisionSeleccionada", record);
+		viewModel.notify();
+
+		var grid = me.lookupReference('provisionesGastosList');
+		var store = grid.getStore();
+		grid.expand();
+		store.loadPage(1);
+		store.on('load', function(store ,records ,successful ,eOpts){
+	        grid.mostrarExportarGastos();
+    	});
+
 		var estadoProvision = record.get("estadoProvisionCodigo");
 		if(CONST.ESTADOS_PROVISION['RECHAZADA_SUBSANABLE'] == estadoProvision) {
-			this.lookupReference('tbarprovisiongastoslist').setDisabled(false);
-		} else {	
-			this.lookupReference('tbarprovisiongastoslist').setDisabled(true);
+			grid.mostrarEdicionGastos();
+		} else {
+			grid.ocultarEdicionGastos();
 		}
     },
 

@@ -24,12 +24,11 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 
 @Component
-public class UpdaterServiceComunObtencionGestor implements UpdaterService {
+public class UpdaterServiceComunObtencionGestorInterno implements UpdaterService {
 	
 	private static final String FECHA_EMISION = "fechaEmision";
 	private static final String REFERENCIA_DOCUMENTO = "refDocumento";
 	private static final String COMBO_OBTENCION = "comboObtencion";
-	private static final String CODIGO_T002_OBTENCION_GESTORIA = "T002_ObtencionDocumentoGestoria";
 	private static final String CODIGO_T002_OBTENCION_GESTOR_INTERNO = "T002_ObtencionLPOGestorInterno";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -94,7 +93,7 @@ public class UpdaterServiceComunObtencionGestor implements UpdaterService {
                     trabajo.setEstado(estadoTrabajo);
 	            }else{
 					// Obtención documento = SI : Trabajo -> Estado -> FINALIZADO PENDIENTE VALIDACION
-					Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_FINALIZADO_PENDIENTE_VALIDACION);
+					Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_FINALIZADO);
 					DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filter);
 					trabajo.setEstado(estadoTrabajo);
 	            }
@@ -107,7 +106,7 @@ public class UpdaterServiceComunObtencionGestor implements UpdaterService {
 
 	public String[] getCodigoTarea() {
 		// TODO Constantes con los nombres de los nodos.
-		return new String[]{CODIGO_T002_OBTENCION_GESTORIA, CODIGO_T002_OBTENCION_GESTOR_INTERNO};
+		return new String[]{CODIGO_T002_OBTENCION_GESTOR_INTERNO};
 	}
 
 	public String[] getKeys() {

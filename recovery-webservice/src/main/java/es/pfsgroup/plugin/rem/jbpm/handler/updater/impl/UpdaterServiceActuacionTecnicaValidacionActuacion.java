@@ -85,6 +85,10 @@ public class UpdaterServiceActuacionTecnicaValidacionActuacion implements Update
 						genericDao.save(ActivoSituacionPosesoria.class, situacionPosesoria);
 					}
 					
+					Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_VALIDADO);
+					DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filter);
+					trabajo.setEstado(estadoTrabajo);
+					
 					/* Estado del trabajo: Un estado diferente, según si el trámite avanza o retrocede por la decisión de Validación Trabajo.
 					 * Ejecutado = SI (avanza): Estado = Finalizado PDE. Validación (se mantiene sin cambio)
 					 */

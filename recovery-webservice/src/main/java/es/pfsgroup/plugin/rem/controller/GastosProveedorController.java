@@ -28,6 +28,9 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
+import es.pfsgroup.plugin.rem.excel.ExcelReport;
+import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
+import es.pfsgroup.plugin.rem.excel.GestionGastosExcelReport;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
@@ -41,6 +44,7 @@ import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
+import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 
 
 @Controller
@@ -61,7 +65,10 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@Autowired
 	private List<GastoAvisadorApi> avisadores;
-	
+
+	@Autowired
+	private ExcelReportGeneratorApi excelReportGeneratorApi;
+
 	
 	/**
 	 * Método para modificar la plantilla de JSON utilizada en el servlet.
@@ -780,5 +787,19 @@ public class GastosProveedorController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 		
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public void generateExcelGestionGastos(DtoGastosFilter dtoGastosFilter, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		dtoGastosFilter.setStart(excelReportGeneratorApi.getStart());
+		dtoGastosFilter.setLimit(excelReportGeneratorApi.getLimit());
+
+		DtoPage page = gastoProveedorApi.getListGastos(dtoGastosFilter);
+		List<VGastosProveedor> listaGastosProveedor = (List<VGastosProveedor>) page.getResults();
+
+		ExcelReport report = new GestionGastosExcelReport(listaGastosProveedor);
+
+		excelReportGeneratorApi.generateAndSend(report, response);
 	}
 }

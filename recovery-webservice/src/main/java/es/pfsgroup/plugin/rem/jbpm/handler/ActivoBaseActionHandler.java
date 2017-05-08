@@ -70,6 +70,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
     private static final long serialVersionUID = 1L;
 
     public static final String SALTO_CIERRE_ECONOMICO = "saltoCierreEconomico";
+    public static final String SALTO_RESOLUCION_EXPEDIENTE = "saltoResolucionExpediente";
     
     protected final Log logger = LogFactory.getLog(getClass());
 

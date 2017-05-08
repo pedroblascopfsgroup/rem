@@ -74,7 +74,7 @@ public class VGastosProveedor implements Serializable {
 	private Double importeTotal;
 	
 	@Column(name = "GDE_FECHA_PAGO")
-	private String fechaPago;
+	private Date fechaPago;
 	
 	@Column(name = "GDE_FECHA_TOPE_PAGO")
 	private Date fechaTopePago;
@@ -265,11 +265,11 @@ public class VGastosProveedor implements Serializable {
 		this.codigoProveedorRem = codigoProveedorRem;
 	}
 
-	public String getFechaPago() {
+	public Date getFechaPago() {
 		return fechaPago;
 	}
 
-	public void setFechaPago(String fechaPago) {
+	public void setFechaPago(Date fechaPago) {
 		this.fechaPago = fechaPago;
 	}
 

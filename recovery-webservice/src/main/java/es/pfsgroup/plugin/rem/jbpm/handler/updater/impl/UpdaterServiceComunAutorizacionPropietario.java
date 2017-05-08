@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -19,12 +20,15 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.IncrementoPresupuesto;
 import es.pfsgroup.plugin.rem.model.PresupuestoActivo;
+import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 
 @Component
 public class UpdaterServiceComunAutorizacionPropietario implements
 		UpdaterService {
 
 	private static final String FECHA_AMPLIACION = "fecha";
+	private static final String COMBO_AMPLIACION = "comboAmpliacion";
 	private static final String IMPORTE_AMPLIACION = "numIncremento";
 	private static final String CODIGO_T002_AUTORIZACION_PROPIETARIO = "T002_AutorizacionPropietario";
 	private static final String CODIGO_T003_AUTORIZACION_PROPIETARIO = "T003_AutorizacionPropietario";
@@ -48,12 +52,23 @@ public class UpdaterServiceComunAutorizacionPropietario implements
 		Long idIncremento = activoApi.getPresupuestoActual(activo.getId());
 		Filter filterIncremento = genericDao.createFilter(FilterType.EQUALS,"id", idIncremento);
 		PresupuestoActivo presupuesto = genericDao.get(PresupuestoActivo.class,filterIncremento);
+		Trabajo trabajo = tramite.getTrabajo();
 
 		IncrementoPresupuesto nuevoIncremento = new IncrementoPresupuesto();
 		nuevoIncremento.setPresupuestoActivo(presupuesto);
 		nuevoIncremento.setTrabajo(tramite.getTrabajo());
 
 		for (TareaExternaValor valor : valores) {
+			
+			//el propietario no acepta
+			if(COMBO_AMPLIACION.equals(valor.getNombre())){
+				if(valor.getValor() != null && valor.getValor().equals(DDSiNo.NO)){
+					Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_RECHAZADO);
+					DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filter);
+					trabajo.setEstado(estadoTrabajo);
+					genericDao.save(Trabajo.class, trabajo);
+				}
+			}
 
 			// Fecha ampliación presupuesto
 			if (FECHA_AMPLIACION.equals(valor.getNombre())) {

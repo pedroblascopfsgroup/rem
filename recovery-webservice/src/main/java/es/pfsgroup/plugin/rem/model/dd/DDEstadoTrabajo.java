@@ -48,6 +48,9 @@ public class DDEstadoTrabajo implements Auditable, Dictionary {
 	public static final String ESTADO_FALLIDO = "08";
 	public static final String ESTADO_CEE_PENDIENTE_ETIQUETA = "09";
 	public static final String ESTADO_FINALIZADO_PENDIENTE_VALIDACION = "10";
+	public static final String ESTADO_PENDIENTE_CIERRE_ECONOMICO = "11";
+	public static final String ESTADO_FINALIZADO = "12";
+	public static final String ESTADO_VALIDADO = "13";
 	
 
 	@Id

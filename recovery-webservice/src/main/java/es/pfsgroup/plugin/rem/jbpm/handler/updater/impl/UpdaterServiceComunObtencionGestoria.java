@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
@@ -23,12 +24,12 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 
 @Component
-public class UpdaterServiceCedulaObtencionGestor implements UpdaterService {
+public class UpdaterServiceComunObtencionGestoria implements UpdaterService {
 	
 	private static final String FECHA_EMISION = "fechaEmision";
 	private static final String REFERENCIA_DOCUMENTO = "refDocumento";
 	private static final String COMBO_OBTENCION = "comboObtencion";
-	private static final String CODIGO_T008_OBTENCION_GESTORIA = "T008_ObtencionDocumento";
+	private static final String CODIGO_T002_OBTENCION_GESTORIA = "T002_ObtencionDocumentoGestoria";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -45,7 +46,7 @@ public class UpdaterServiceCedulaObtencionGestor implements UpdaterService {
 		for(TareaExternaValor valor : valores){
 			
 			//Fecha Emisión
-			if(FECHA_EMISION.equals(valor.getNombre()))
+			if(FECHA_EMISION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
 			{
 				DDSubtipoTrabajo subtipoTrabajo = trabajo.getSubtipoTrabajo();
 				List<ActivoAdmisionDocumento> listaDocumentos = tramite.getActivo().getAdmisionDocumento();
@@ -56,17 +57,14 @@ public class UpdaterServiceCedulaObtencionGestor implements UpdaterService {
 							DDEstadoDocumento estadoDocumento = (DDEstadoDocumento) genericDao.get(DDEstadoDocumento.class, filtro);
 							
 							documento.setFechaEmision(ft.parse(valor.getValor()));
-							documento.setFechaObtencion(ft.parse(valor.getValor())); // Cédula : fecha de obtención = fecha de validación
-							documento.setFechaVerificado(ft.parse(valor.getValor()));
 							documento.setEstadoDocumento(estadoDocumento);
-							genericDao.save(ActivoAdmisionDocumento.class, documento);
+							Auditoria.save(documento);
 						} catch (ParseException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
 				}
-				
 			}
 			
 			//Número de referencia
@@ -77,7 +75,7 @@ public class UpdaterServiceCedulaObtencionGestor implements UpdaterService {
 				for(ActivoAdmisionDocumento documento : listaDocumentos){
 					if(subtipoTrabajo.getCodigo().equals(diccionarioTargetClassMap.getSubtipoTrabajo(documento.getConfigDocumento().getTipoDocumentoActivo().getCodigo()))) {
 						documento.setNumDocumento(valor.getValor());
-						genericDao.save(ActivoAdmisionDocumento.class, documento);
+						Auditoria.save(documento);
 					}
 				}
 			}
@@ -95,20 +93,20 @@ public class UpdaterServiceCedulaObtencionGestor implements UpdaterService {
                     trabajo.setEstado(estadoTrabajo);
 	            }else{
 					// Obtención documento = SI : Trabajo -> Estado -> FINALIZADO PENDIENTE VALIDACION
-					Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_PENDIENTE_CIERRE_ECONOMICO);
+					Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_FINALIZADO_PENDIENTE_VALIDACION);
 					DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filter);
 					trabajo.setEstado(estadoTrabajo);
 	            }
             }
             
-		}
+		}	
 		genericDao.save(Trabajo.class, trabajo);
 
 	}
 
 	public String[] getCodigoTarea() {
 		// TODO Constantes con los nombres de los nodos.
-		return new String[]{CODIGO_T008_OBTENCION_GESTORIA};
+		return new String[]{CODIGO_T002_OBTENCION_GESTORIA};
 	}
 
 	public String[] getKeys() {

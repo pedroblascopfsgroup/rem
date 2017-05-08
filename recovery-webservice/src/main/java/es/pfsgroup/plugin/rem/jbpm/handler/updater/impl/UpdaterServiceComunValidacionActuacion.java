@@ -93,6 +93,13 @@ public class UpdaterServiceComunValidacionActuacion implements UpdaterService {
 				Trabajo trabajo = tramite.getTrabajo();
 				
 				if(DDSiNo.SI.equals(valor.getValor())){
+					
+					
+					Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_VALIDADO);
+					DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filter);
+					trabajo.setEstado(estadoTrabajo);
+					Auditoria.save(trabajo);					
+					
 					/*
 					 * Si es actuación técnica, subtipo tapiado o colocación de puertas, y el combo de ejecutado es SI, entonces guardamos la fecha de ejecución en la fecha
 					 * de tapiado o colocación de puertas según sea. Y se marca el booleano a true.

@@ -830,9 +830,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					if(!Checks.estaVacio(activosCatastro)) {
 						gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
 					}
+
+					List<GastoProveedorActivo> gastosActivosList = gasto.getGastoProveedorActivos();
+					gastosActivosList.add(gastoProveedorActivo);
 					
-					gasto.getGastoProveedorActivos().add(gastoProveedorActivo);
-					
+					this.calculaPorcentajeEquitativoGastoActivos(gastosActivosList);
+
 					genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
 				}
 			} else {
@@ -901,9 +904,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 								if(!Checks.estaVacio(activosCatastro)) {
 									gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
 								}
-								
-								gasto.getGastoProveedorActivos().add(gastoProveedorActivo);
-								
+
+								List<GastoProveedorActivo> gastosActivosList = gasto.getGastoProveedorActivos();
+								gastosActivosList.add(gastoProveedorActivo);
+
+								this.calculaPorcentajeEquitativoGastoActivos(gastosActivosList);
+
 								genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
 							}
 						
@@ -952,6 +958,26 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 	}
 	
+	/**
+	 * Este método recibe un listado de asociaciones de activos a un gasto y recalcula
+	 * el porcentaje de participación en el gasto para cada activo de forma equitativa.
+	 * 
+	 * @param gastosActivosList: listado con las asociaciones de los activos y el gasto.
+	 */
+	private void calculaPorcentajeEquitativoGastoActivos(List<GastoProveedorActivo> gastosActivosList) {
+		if(gastosActivosList == null || gastosActivosList.size() == 0) {
+			return;
+		}
+
+		// Calcular porcentaje equitativo.
+		Float numActivos = (float) gastosActivosList.size();
+		Float porcentaje = 100f / numActivos;
+
+		for(GastoProveedorActivo gastoProveedor : gastosActivosList) {
+			gastoProveedor.setParticipacionGasto(porcentaje);
+		}
+	}
+
 	@Override
 	@Transactional(readOnly = false)
 	public boolean updateGastoActivo(DtoActivoGasto dtoActivoGasto){
@@ -978,39 +1004,44 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		return true;
 		
 	}
-	
+
 	@Override
 	@Transactional(readOnly = false)
 	public boolean deleteGastoActivo(DtoActivoGasto dtoActivoGasto){
-
-
 		try{
-			
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoGasto.getId());
-			GastoProveedorActivo gastoActivo= genericDao.get(GastoProveedorActivo.class, filtro);
-			GastoProveedor gasto = gastoActivo.getGastoProveedor(); 
-			
-			// borramos la asignación del activo
-			genericDao.deleteById(GastoProveedorActivo.class, dtoActivoGasto.getId());
-					
-			gasto.getGastoProveedorActivos().remove(gastoActivo);
-			
-			// volvemos a establecer propietario
-			gasto = asignarPropietarioGasto(gasto);
-			// volvemos a establecer la cuenta contable y partida;
-			gasto = asignarCuentaContableYPartidaGasto(gasto);
-			genericDao.save(GastoProveedor.class, gasto);
-			
+			GastoProveedorActivo gastoActivo = genericDao.get(GastoProveedorActivo.class, filtro);
+			if(gastoActivo == null) {
+				return false;
+			}
 
+			GastoProveedor gasto = gastoActivo.getGastoProveedor(); 
+
+			// Borramos la asignación del activo.
+			genericDao.deleteById(GastoProveedorActivo.class, dtoActivoGasto.getId());
+
+			if(gasto == null) {
+				return false;
+			}
+			List<GastoProveedorActivo> gastosActivosList = gasto.getGastoProveedorActivos();
+			gastosActivosList.remove(gastoActivo);
+
+			this.calculaPorcentajeEquitativoGastoActivos(gastosActivosList);
+
+			// Volvemos a establecer propietario.
+			gasto = asignarPropietarioGasto(gasto);
+			// Volvemos a establecer la cuenta contable y partida.
+			gasto = asignarCuentaContableYPartidaGasto(gasto);
+
+			genericDao.save(GastoProveedor.class, gasto);
 		}catch(Exception e) {
 			logger.error(e.getMessage());
 			return false;
 		}
-		
+
 		return true;
-		
 	}
-	
+
 	@Override
 	@Transactional(readOnly = false)
 	public boolean deleteGastoProveedor(Long id) {

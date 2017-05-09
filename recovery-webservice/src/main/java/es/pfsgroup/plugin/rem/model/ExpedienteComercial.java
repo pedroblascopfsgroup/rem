@@ -404,6 +404,18 @@ public class ExpedienteComercial implements Serializable, Auditable {
         }
         return null;
     }
+    
+    /**
+     * devuelve el adjunto por Id.
+     * @param id id
+     * @return adjunto
+     */
+    public AdjuntoExpedienteComercial getAdjuntoGD(Long idDocRestClient) {
+    	for (AdjuntoExpedienteComercial adj : getAdjuntos()) {
+    		if(!Checks.esNulo(adj.getIdDocRestClient()) && adj.getIdDocRestClient().equals(idDocRestClient)) { return adj; }
+        }
+        return null;
+    }
 
 	public Date getFechaInicioAlquiler() {
 		return fechaInicioAlquiler;

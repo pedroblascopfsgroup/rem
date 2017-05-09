@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalExpedientesApi;
 import es.pfsgroup.plugin.gestorDocumental.api.RestClientApi;
+import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearExpedienteComercialDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearGastoDto;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.gestorDocumental.model.ServerRequest;
@@ -37,13 +38,15 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 	private static final String COD_CLASE_PATH = "codClase=";
 	private static final String DESCRIPCION_EXPEDIENTE_PATH = "descripcionExpediente=";
 	private static final String GASTO_METADATOS_PATH = "gastoMetadatos=";
+	private static final String EXPEDIENTE_COMERCIAL_METADATOS_PATH = "operacionMetadatos=";
 	
 	private static final String USUARIO = "usuario";
 	private static final String PASSWORD = "password";
 	private static final String COD_CLASE = "codClase";
 	private static final String DESCRIPCION_EXPEDIENTE = "descripcionExpediente";
 	private static final String GASTO_METADATOS="gastoMetadatos";
-	
+	private static final String EXPEDIENTE_COMERCIAL_METADATOS = "operacionMetadatos";
+
 	
 	private static final String URL_REST_CLIENT_GESTOR_DOCUMENTAL_EXPEDIENTES = "rest.client.gestor.documental.expedientes";
 	private static final String ERROR_SERVER_NOT_RESPONDING="El servidor de gestor documental no responde.";
@@ -80,6 +83,7 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 		return sb.toString();
 	}
 	
+	@SuppressWarnings("resource")
 	private MultiPart getMultipartCrearGasto(CrearGastoDto crearGasto){
 		final MultiPart multipart = new FormDataMultiPart()
 				.field(USUARIO, crearGasto.getUsuario())
@@ -122,4 +126,47 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 		
 		return resp;
 	}
+
+	@Override
+	public RespuestaCrearExpediente crearExpedienteComercial(CrearExpedienteComercialDto crearExpedienteComercialDto) throws GestorDocumentalException {
+		ServerRequest serverRequest =  new ServerRequest();
+		serverRequest.setMethod(RestClientManager.METHOD_POST);
+		serverRequest.setPath(getPathCrearExpedienteComercial(crearExpedienteComercialDto));
+		serverRequest.setMultipart(getMultipartCrearExpedienteComercial(crearExpedienteComercialDto));
+		serverRequest.setResponseClass(RespuestaCrearExpediente.class);
+		RespuestaCrearExpediente respuesta = (RespuestaCrearExpediente) getResponse(serverRequest);
+
+		if(!Checks.esNulo(respuesta) && !Checks.esNulo(respuesta.getMensajeError())) {
+			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
+			throw new GestorDocumentalException(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
+		}
+		if (Checks.esNulo(respuesta)) {
+			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);			
+		}
+		
+		return respuesta;
+	}
+
+	@SuppressWarnings("resource")
+	private MultiPart getMultipartCrearExpedienteComercial(CrearExpedienteComercialDto crearExpedienteComercialDto) {
+		final MultiPart multipart = new FormDataMultiPart()
+				.field(USUARIO, crearExpedienteComercialDto.getUsuario())
+				.field(PASSWORD,  crearExpedienteComercialDto.getPassword())
+				.field(DESCRIPCION_EXPEDIENTE, crearExpedienteComercialDto.getDescripcionExpediente())
+				.field(COD_CLASE, crearExpedienteComercialDto.getCodClase().toString())
+				.field(EXPEDIENTE_COMERCIAL_METADATOS, crearExpedienteComercialDto.getOperacionMetadatos());
+		return multipart;
+	}
+
+	private String getPathCrearExpedienteComercial(CrearExpedienteComercialDto crearExpedienteComercialDto) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("/crearOperacion");
+		sb.append("?").append(USUARIO_PATH).append(crearExpedienteComercialDto.getUsuario());
+		sb.append("&").append(PASSWORD_PATH).append(crearExpedienteComercialDto.getPassword());
+		sb.append("&").append(DESCRIPCION_EXPEDIENTE_PATH).append(UriComponent.encode(crearExpedienteComercialDto.getDescripcionExpediente(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
+		sb.append("&").append(COD_CLASE_PATH).append(crearExpedienteComercialDto.getCodClase());
+		sb.append("&").append(EXPEDIENTE_COMERCIAL_METADATOS_PATH).append(UriComponent.encode(crearExpedienteComercialDto.getOperacionMetadatos(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
+		return sb.toString();
+	}
+	
 }

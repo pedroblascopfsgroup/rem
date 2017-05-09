@@ -63,6 +63,31 @@ public class RecoveryToGestorExpAssembler {
 		sb.append("}");
 		return sb.toString();
 	}
+
+	public CrearExpedienteComercialDto getCrearExpedienteComercialDto(String idExpedienteComercial, String descripcionExpediente, String username, String cliente, String estadoExpediente, String idSistemaOrigen, String codClase) {
+		CrearExpedienteComercialDto doc = new CrearExpedienteComercialDto();
+		
+		doc.setUsuario(USUARIO);
+		doc.setPassword(PASSWORD);
+		doc.setCodClase(codClase);
+		doc.setUsuarioOperacional(username);
+		doc.setDescripcionExpediente(descripcionExpediente);
+		doc.setOperacionMetadatos(rellenarExpedienteComercialMetadatos(idExpedienteComercial, idExpedienteComercial, idSistemaOrigen, estadoExpediente, cliente));
+		
+		return doc;
+	}
+	
+	private static String rellenarExpedienteComercialMetadatos (String id, String idExterno, String idSistemaOrigen, String estadoExpediente, String cliente) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		sb.append(GestorDocumentalConstants.expedienteComercialMetadatos[0]).append("'"+id+"'").append(",");
+		sb.append(GestorDocumentalConstants.expedienteComercialMetadatos[1]).append("'"+idExterno+"'").append(",");
+		sb.append(GestorDocumentalConstants.expedienteComercialMetadatos[2]).append("'"+idSistemaOrigen+"'").append(",");
+		sb.append(GestorDocumentalConstants.expedienteComercialMetadatos[3]).append("'"+estadoExpediente+"'").append(",");
+		sb.append(GestorDocumentalConstants.expedienteComercialMetadatos[4]).append("'"+cliente+"'");
+		sb.append("}");
+		return sb.toString();
+	}
 	
 	
 }

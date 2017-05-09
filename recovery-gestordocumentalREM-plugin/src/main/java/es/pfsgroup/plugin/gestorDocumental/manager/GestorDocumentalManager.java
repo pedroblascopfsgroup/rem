@@ -118,6 +118,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 		return sb.toString();
 	}
 	
+	@SuppressWarnings("resource")
 	private MultiPart getMultipartCrearDocumento(CrearDocumentoDto crearDoc){
 		final FileDataBodyPart filePart = new FileDataBodyPart(DOCUMENTO,  crearDoc.getDocumento());
 		final MultiPart multipart = new FormDataMultiPart()
@@ -298,6 +299,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 	}
 	
 	
+	@SuppressWarnings("resource")
 	private MultiPart getMultipartBajaDoc(BajaDocumentoDto baja){
 		final MultiPart multipart = new FormDataMultiPart()
 				.field(USUARIO, baja.getUsuario())

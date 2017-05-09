@@ -178,6 +178,9 @@ public class VGastosProveedor implements Serializable {
 	@Column(name="SUJETO_IMPUESTO_INDIRECTO")
 	private Boolean sujetoImpuestoIndirecto;
 	
+	@Column(name = "FECHA_AUTORIZACION")
+	private Date fechaAutorizacion;
+	
 	@Transient
 	private boolean esGastoAgrupado; 
 	
@@ -620,6 +623,13 @@ public class VGastosProveedor implements Serializable {
 
 	public void setSujetoImpuestoIndirecto(Boolean sujetoImpuestoIndirecto) {
 		this.sujetoImpuestoIndirecto = sujetoImpuestoIndirecto;
-	}	
-	 
+	}
+
+	public Date getFechaAutorizacion() {
+		return fechaAutorizacion;
+	}
+
+	public void setFechaAutorizacion(Date fechaAutorizacion) {
+		this.fechaAutorizacion = fechaAutorizacion;
+	}	 
 }

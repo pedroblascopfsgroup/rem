@@ -68,6 +68,11 @@ public class DtoGastosFilter extends WebDto {
 	private String fechaEmisionDesde;
 	private String fechaEmisionHasta;
 	
+	private String fechaAutorizacionDesde;
+	private String fechaAutorizacionHasta;
+	private Integer impuestoIndirecto;
+	
+	
 	
 	public Long getId() {
 		return id;
@@ -360,6 +365,24 @@ public class DtoGastosFilter extends WebDto {
 	}
 	public void setFechaEmisionHasta(String fechaEmisionHasta) {
 		this.fechaEmisionHasta = fechaEmisionHasta;
+	}
+	public String getFechaAutorizacionDesde() {
+		return fechaAutorizacionDesde;
+	}
+	public void setFechaAutorizacionDesde(String fechaAutorizacionDesde) {
+		this.fechaAutorizacionDesde = fechaAutorizacionDesde;
+	}
+	public String getFechaAutorizacionHasta() {
+		return fechaAutorizacionHasta;
+	}
+	public void setFechaAutorizacionHasta(String fechaAutorizacionHasta) {
+		this.fechaAutorizacionHasta = fechaAutorizacionHasta;
+	}
+	public Integer getImpuestoIndirecto() {
+		return impuestoIndirecto;
+	}
+	public void setImpuestoIndirecto(Integer impuestoIndirecto) {
+		this.impuestoIndirecto = impuestoIndirecto;
 	}
 	
 }

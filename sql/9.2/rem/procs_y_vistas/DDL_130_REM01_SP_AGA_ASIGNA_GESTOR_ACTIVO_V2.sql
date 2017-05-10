@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20170321
+--## AUTOR=Guillem Rey
+--## FECHA_CREACION=20170510
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1770
+--## INCIDENCIA_LINK=HREOS-1975
 --## PRODUCTO=NO
 --## Finalidad: Procedimiento que asigna Gestores de todos los tipos.
 --##           
@@ -40,7 +40,7 @@ TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(5050);
 TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
 V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 		T_TIPO_DATA('GADM'),
-		T_TIPO_DATA('GPLUB'),
+		T_TIPO_DATA('GPUBL'),
 		T_TIPO_DATA('GMARK'),
 		T_TIPO_DATA('GPREC'),
 		T_TIPO_DATA('GTOPDV'),

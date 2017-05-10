@@ -671,7 +671,7 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente: ID del expediente al que actualziar sus honorarios.
 	 */
 	public void actualizarHonorariosPorExpediente(Long idExpediente);
-	
 
-	
+	String uploadDocumento(WebFileItem fileItem, Long idDocRestClient, ExpedienteComercial expedienteComercialEntrada,
+			String matricula) throws Exception;
 }

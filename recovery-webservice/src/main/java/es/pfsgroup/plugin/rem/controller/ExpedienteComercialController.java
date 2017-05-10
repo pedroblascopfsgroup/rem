@@ -6,6 +6,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -26,6 +28,7 @@ import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
@@ -56,6 +59,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 @Controller
 public class ExpedienteComercialController extends ParadiseJsonController{
 
+	protected static final Log logger = LogFactory.getLog(ActivoController.class);
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
@@ -71,6 +75,9 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@Autowired
 	private TrabajoAdapter trabajoAdapter;
+	
+	@Autowired
+	private ExpedienteComercialAdapter expedienteComercialAdapter;
 	
 	/**
 	 * Método para modificar la plantilla de JSON utilizada en el servlet.
@@ -427,7 +434,13 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListAdjuntos(Long idExpediente, ModelMap model){
 
-		model.put("data", expedienteComercialApi.getAdjuntos(idExpediente));
+		try {
+			model.put("data", expedienteComercialAdapter.getAdjuntosExpedienteComercial(idExpediente));
+		} catch (Exception e) {
+			logger.error("error en ExpedienteComercialController", e);
+			model.put("success", false);
+			model.put("errorMessage", e.getMessage());
+		}
 		
 		return createModelAndViewJson(model);
 		
@@ -451,8 +464,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 
 			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
 			
-			String errores = expedienteComercialApi.upload(fileItem);			
-
+			String errores = expedienteComercialAdapter.uploadDocumento(fileItem, null, null);
 			model.put("errores", errores);
 			model.put("success", errores==null);
 		
@@ -476,7 +488,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		boolean success= false;
 		
 		try {
-			success = expedienteComercialApi.deleteAdjunto(dtoAdjunto);
+			success = expedienteComercialAdapter.deleteAdjunto(dtoAdjunto);
 		} catch(Exception ex) {
 			ex.printStackTrace();
 		}

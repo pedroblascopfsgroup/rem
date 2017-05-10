@@ -187,10 +187,29 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 						 		fieldLabel: HreRem.i18n('fieldlabel.fecha.emision.hasta'),
 						 		name: 'fechaEmisionHasta',
 						 		formatter: 'date("d/m/Y")'					 		
-							}
-    						
-    						
-    						
+							},
+    						{ 
+			                	xtype:'datefieldbase',
+						 		fieldLabel: HreRem.i18n('fieldlabel.fecha.autorizacion.desde'),
+						 		name: 'fechaAutorizacionDesde',
+						 		formatter: 'date("d/m/Y")'					 		
+							},
+							{ 
+			                	xtype:'datefieldbase',
+						 		fieldLabel: HreRem.i18n('fieldlabel.fecha.autorizacion.hasta'),
+						 		name: 'fechaAutorizacionHasta',
+						 		formatter: 'date("d/m/Y")'					 		
+							},
+							{ 
+					        	xtype: 'comboboxfieldbase',
+					        	fieldLabel:  HreRem.i18n('fieldlabel.sujeto.impuesto.indirecto'),
+					        	name: 'impuestoIndirecto',
+					        	bind: {
+				            		store: '{comboSiNoRem}'
+				            	},
+				            	displayField: 'descripcion',
+								valueField: 'codigo'
+    						}    						
 			    		]
 				    },
 				    {

@@ -69,29 +69,36 @@ public class OperacionVentaManager implements ParamReportsApi{
 	public Map<String, Object> paramsHojaDatos(ActivoOferta activoOferta, ModelMap model) {
 		Activo activo = null;
 		Oferta oferta = null;
+		ExpedienteComercial expediente = null;
 		Map<String, Object> mapaValores = new HashMap<String, Object>();
 
 		try {
-			
-
 			if(!Checks.esNulo(activoOferta)){
 				activo = activoOferta.getPrimaryKey().getActivo();
 				oferta = activoOferta.getPrimaryKey().getOferta();
 			}
-			
+
 			if(Checks.esNulo(activo)){
 				model.put("error", RestApi.REST_NO_RELATED_ASSET);
 				throw new Exception(RestApi.REST_NO_RELATED_ASSET);
 			}
-			
+
 			if(Checks.esNulo(oferta)){
 				model.put("error", RestApi.REST_NO_RELATED_ASSET);
 				throw new Exception(RestApi.REST_NO_RELATED_ASSET);
 			}
-			
+
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
+			expediente = (ExpedienteComercial) genericDao.get(ExpedienteComercial.class, filtro);
+
+			if (expediente==null) {
+				model.put("error", RestApi.REST_NO_RELATED_EXPEDIENT);
+				throw new Exception(RestApi.REST_NO_RELATED_EXPEDIENT);					
+			}
+
 			mapaValores.put("Activo", activo.getNumActivoUvem().toString());
 			mapaValores.put("NumOfProp", oferta.getNumOferta() + "/1");
-			
+
 			if (activo.getCartera()!=null && activo.getCartera().getCodigo()!=null) {
 				mapaValores.put("Cartera", FileUtilsREM.stringify(activo.getCartera().getCodigo().toString()));
 			} else {
@@ -106,13 +113,13 @@ public class OperacionVentaManager implements ParamReportsApi{
 				mapaValores.put("Gestor", FileUtilsREM.stringify(null));
 			}
 			
-			mapaValores.put("FAprobacion",FileUtilsREM.stringify(null));
-			mapaValores.put("Referencia",FileUtilsREM.stringify(null));
-			mapaValores.put("Prescriptor",FileUtilsREM.stringify(null));
+			mapaValores.put("FAprobacion",FileUtilsREM.stringify(expediente.getFechaSancion()));
+			mapaValores.put("Referencia",FileUtilsREM.stringify(null)); 
+			mapaValores.put("Prescriptor",FileUtilsREM.stringify(oferta.getPrescriptor() != null ? oferta.getPrescriptor().getNombre() : ""));
 			mapaValores.put("Sucursal",FileUtilsREM.stringify(null));
 			
 			
-			mapaValores.put("Direccion",FileUtilsREM.stringify(activo.getDireccion()));
+			mapaValores.put("Direccion",FileUtilsREM.stringify(activo.getDireccionCompleta()));
 			if (activo.getTipoActivo()!=null) {
 				mapaValores.put("Tipo",FileUtilsREM.stringify(activo.getTipoActivo().getDescripcionLarga()));
 			} else {
@@ -170,12 +177,7 @@ public class OperacionVentaManager implements ParamReportsApi{
 //			}
 
 			//Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofertaAceptada.getId());
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
-			ExpedienteComercial expediente = (ExpedienteComercial) genericDao.get(ExpedienteComercial.class, filtro);
-			if (expediente==null) {
-				model.put("error", RestApi.REST_NO_RELATED_EXPEDIENT);
-				throw new Exception(RestApi.REST_NO_RELATED_EXPEDIENT);					
-			} 
+			
 			CondicionanteExpediente condExp = expediente.getCondicionante();
 			if (condExp==null) {
 				model.put("error", RestApi.REST_NO_RELATED_COND_EXPEDIENT);
@@ -250,7 +252,13 @@ public class OperacionVentaManager implements ParamReportsApi{
 			//TODO: Falta saber que se debe poner en Tipo Propiedad
 			mapaValores.put("TipoPropiedad",FileUtilsREM.stringify(null));
 
-			Double importeA = oferta.getImporteOfertaAprobado();
+			Double importeA;
+			if(oferta.getImporteContraOferta() != null) {
+				importeA = oferta.getImporteContraOferta();
+			} else {
+				importeA = oferta.getImporteOferta();
+			}
+
 			if (importeA==null) {
 				importeA = new Double(0);
 			}
@@ -289,9 +297,11 @@ public class OperacionVentaManager implements ParamReportsApi{
 			
 			//TODO: Falta que Tomás nos diga a que hace referencia
 			mapaValores.put("tasacion716",FileUtilsREM.stringify(null));
-			//TODO: Falta que Tomás nos diga a que hace referencia
-			mapaValores.put("financiacion",FileUtilsREM.stringify(null));
-			
+
+			if(condExp.getSolicitaFinanciacion() != null) {
+				mapaValores.put("financiacion",FileUtilsREM.stringify(condExp.getSolicitaFinanciacion() == 1 ? "Si" : "No"));
+			}
+
 			if (condExp.getTipoImpuesto()!=null) {
 				mapaValores.put("tipoImpuesto",FileUtilsREM.stringify(condExp.getTipoImpuesto().getDescripcionLarga()));
 			} else {

@@ -346,12 +346,13 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
    
    //HREOS-846 Si NO esta dentro del perimetro, ocultamos del grid las opciones de agregar/elminar y las acciones editables por fila
    //HREOS-1001 Si está en el perimetro pero no es comercializable tampoco se puede editar
+   //HREOS-1971 Si el usuario no tiene la funcion de editar el listado tampoco se puede editar
    evaluarEdicion: function() {    	
 		var me = this;
 		var activo = me.lookupController().getViewModel().get('activo');
 
 		if(activo.get('incluidoEnPerimetro')=="false" || !activo.get('aplicaComercializar') || activo.get('pertenceAgrupacionRestringida')
-			|| activo.get('isVendido') ) {
+			|| activo.get('isVendido') || !$AU.userHasFunction('EDITAR_LIST_OFERTAS_ACTIVO')) {
 			me.setTopBar(false);
 			me.rowEditing.clearListeners();
 		}

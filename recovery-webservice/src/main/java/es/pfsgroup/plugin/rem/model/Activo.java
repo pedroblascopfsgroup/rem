@@ -35,6 +35,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizacionesBienInfo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBDDOrigenBien;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
@@ -747,6 +748,26 @@ public class Activo implements Serializable, Auditable {
 		} else {
 			return null;
 		}
+	}
+	
+	public String getDireccionCompleta() {
+		String direccion = "";
+		
+		ActivoLocalizacion activoLocalizacion = this.getLocalizacion();
+		if(activoLocalizacion != null) {
+			NMBLocalizacionesBien localizacionesBien = activoLocalizacion.getLocalizacionBien();
+			if(localizacionesBien != null) {
+				if(localizacionesBien.getTipoVia() != null) {
+					direccion = localizacionesBien.getTipoVia().getDescripcion();
+				}
+
+				direccion = direccion + " " + localizacionesBien.getNombreVia();
+				
+				direccion = direccion + " " + localizacionesBien.getNumeroDomicilio();
+			}
+		}
+
+		return direccion;
 	}
   
 	public String getCodPostal() {

@@ -1,0 +1,976 @@
+--/*
+--###########################################
+--## AUTOR=Teresa Alonso
+--## FECHA_CREACION=20170511
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=HREOS-2022
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Re-asignar gestores de activo (por numero activo) al gestor ibenedito
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--###########################################
+----*/
+
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+
+DECLARE
+
+  V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+  V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+  V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+  V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+  V_NUM NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+  ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+  ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+
+BEGIN	
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] COMIENZA EL PROCESO PARA LA RE-ASIGNACIÓN DE GESTORES PARA ');
+	DBMS_OUTPUT.PUT_LINE('         ACTIVOS ASIGNADOS POR DEFECTO A OTRO GESTOR'||CHR(10));
+	
+	EXECUTE IMMEDIATE '
+	SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''TMP_GEST_ACT'' AND OWNER = '''||V_ESQUEMA||'''
+	'
+	INTO V_NUM
+	;
+	
+	IF V_NUM > 0 THEN
+  
+    EXECUTE IMMEDIATE '
+		TRUNCATE TABLE '||V_ESQUEMA||'.TMP_GEST_ACT
+		'
+		;
+	
+		EXECUTE IMMEDIATE '
+		DROP TABLE '||V_ESQUEMA||'.TMP_GEST_ACT
+		'
+		;
+		
+	END IF;
+
+	EXECUTE IMMEDIATE '
+	CREATE GLOBAL TEMPORARY TABLE '||V_ESQUEMA||'.TMP_GEST_ACT ON COMMIT PRESERVE ROWS AS (
+	
+	SELECT
+	GEE_ID,
+	GESTOR_CORRECTO,
+	DD_TGE_ID,
+	'||V_ESQUEMA||'.S_GEH_GESTOR_ENTIDAD_HIST.NEXTVAL AS GEH_ID,
+	ACT_ID
+	FROM (
+	
+		SELECT DISTINCT
+		GEE.GEE_ID,
+		GEE.DD_TGE_ID,
+		GES.USUARIO_GESTION_ACTIVOS AS GESTOR_CORRECTO,
+		GAC.ACT_ID
+		FROM '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE
+		INNER JOIN '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO GAC
+			ON GAC.GEE_ID = GEE.GEE_ID
+		INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
+			ON ACT.ACT_ID = GAC.ACT_ID
+		INNER JOIN '||V_ESQUEMA||'.BIE_BIEN BIE
+			ON BIE.BIE_ID = ACT.BIE_ID
+		INNER JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION LOC
+			ON LOC.BIE_ID = BIE.BIE_ID
+		LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_PRV_PROVINCIA PRV
+			ON LOC.DD_PRV_ID = PRV.DD_PRV_ID
+		LEFT JOIN '||V_ESQUEMA||'.ACT_GES_DISTRIBUCION GES
+			ON GES.COD_PROVINCIA = PRV.DD_PRV_CODIGO
+		LEFT JOIN '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU
+			ON USU.USU_ID = GEE.USU_ID
+		LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR TGE
+			ON TGE.DD_TGE_ID = GEE.DD_TGE_ID
+		LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_UPO_UNID_POBLACIONAL UPO
+			ON UPO.DD_UPO_CODIGO = GES.COD_MUNICIPIO
+		WHERE TGE.DD_TGE_CODIGO = ''GACT''
+
+		AND ACT.ACT_NUM_ACTIVO_UVEM in (
+			''26381108'',
+			''20904889'',
+			''28858173'',
+			''28858290'',
+			''24751906'',
+			''21415367'',
+			''20895760'',
+			''28467920'',
+			''21749834'',
+			''21630078'',
+			''19406171'',
+			''19405511'',
+			''20402563'',
+			''20904907'',
+			''22031222'',
+			''20904421'',
+			''28467551'',
+			''28467785'',
+			''24158134'',
+			''20141841'',
+			''20142753'',
+			''20142987'',
+			''20143296'',
+			''20143314'',
+			''20143548'',
+			''20144109'',
+			''20144343'',
+			''20145372'',
+			''20145489'',
+			''20145975'',
+			''20146302'',
+			''20147448'',
+			''20147700'',
+			''20147934'',
+			''20148243'',
+			''20148360'',
+			''20148846'',
+			''20149155'',
+			''20149272'',
+			''20149389'',
+			''20149524'',
+			''20149758'',
+			''20149875'',
+			''20141589'',
+			''20141607'',
+			''20141958'',
+			''20142033'',
+			''20142150'',
+			''20142267'',
+			''20142402'',
+			''20142636'',
+			''20143062'',
+			''20143431'',
+			''20144091'',
+			''20145021'',
+			''20145138'',
+			''20145507'',
+			''20145858'',
+			''20146419'',
+			''20146536'',
+			''20147079'',
+			''20147196'',
+			''20147331'',
+			''20148729'',
+			''20149038'',
+			''19323960'',
+			''20138329'',
+			''20139124'',
+			''20140560'',
+			''20140794'',
+			''20141121'',
+			''20141472'',
+			''20139358'',
+			''20139610'',
+			''20140191'',
+			''20141004'',
+			''19539059'',
+			''20149992'',
+			''20150609'',
+			''20150960'',
+			''20151386'',
+			''20152316'',
+			''20152433'',
+			''20153111'',
+			''20153462'',
+			''20153696'',
+			''20153714'',
+			''20154374'',
+			''20154509'',
+			''20155538'',
+			''20155655'',
+			''20155772'',
+			''20156081'',
+			''20164288'',
+			''20185397'',
+			''20185532'',
+			''20185649'',
+			''20186561'',
+			''20150240'',
+			''20150474'',
+			''20151152'',
+			''20151404'',
+			''20151872'',
+			''20151989'',
+			''20152181'',
+			''20152784'',
+			''20151035'',
+			''20151269'',
+			''20151521'',
+			''20151638'',
+			''20152667'',
+			''20152919'',
+			''20153345'',
+			''20153831'',
+			''20153948'',
+			''20154023'',
+			''20154977'',
+			''20155052'',
+			''20155286'',
+			''20155304'',
+			''20164306'',
+			''20186192'',
+			''20186813'',
+			''20138563'',
+			''20138680'',
+			''20139241'',
+			''20139592'',
+			''20139727'',
+			''20140209'',
+			''20140326'',
+			''20140677'',
+			''20140929'',
+			''20141355'',
+			''20138446'',
+			''20138797'',
+			''20138815'',
+			''20139007'',
+			''20139475'',
+			''20139844'',
+			''20139961'',
+			''20140443'',
+			''20140812'',
+			''20141238'',
+			''20142519'',
+			''20142870'',
+			''20143665'',
+			''20144694'',
+			''20144712'',
+			''20144946'',
+			''20145624'',
+			''20146284'',
+			''20146653'',
+			''20146887'',
+			''20146905'',
+			''20147565'',
+			''20141724'',
+			''20142384'',
+			''20143179'',
+			''20143782'',
+			''20143800'',
+			''20143917'',
+			''20144460'',
+			''20144577'',
+			''20144829'',
+			''20145255'',
+			''20145741'',
+			''20146050'',
+			''20146167'',
+			''20147214'',
+			''20147817'',
+			''20148477'',
+			''20150006'',
+			''20150123'',
+			''20150357'',
+			''20150591'',
+			''20150726'',
+			''20150843'',
+			''20151755'',
+			''20152064'',
+			''20152298'',
+			''20152550'',
+			''20152802'',
+			''20153579'',
+			''20154491'',
+			''20154626'',
+			''20155421'',
+			''20155907'',
+			''20185415'',
+			''20186795'',
+			''21623404'',
+			''20147682'',
+			''20148009'',
+			''20148126'',
+			''20148594'',
+			''20148963'',
+			''20149407'',
+			''20149641'',
+			''20533375'',
+			''21624181'',
+			''21624298'',
+			''20890228'',
+			''20735497'',
+			''21852649'',
+			''20153093'',
+			''20153228'',
+			''20154140'',
+			''20154257'',
+			''20154743'',
+			''20154860'',
+			''20155169'',
+			''20155889'',
+			''20156198'',
+			''20185883'',
+			''20185901'',
+			''21623638'',
+			''21623755'',
+			''20444061'',
+			''19371589'',
+			''20444295'',
+			''19371121'',
+			''20443869'',
+			''19370929'',
+			''20362159'',
+			''20444178'',
+			''20443986'',
+			''24807111'',
+			''25078075'',
+			''21241649'',
+			''20797444'',
+			''20797795'',
+			''20797813'',
+			''20797210'',
+			''16485252'',
+			''21850825'',
+			''16485855'',
+			''16485621'',
+			''16485369'',
+			''16485486'',
+			''26384933'',
+			''26268847'',
+			''26269039'',
+			''26269390'',
+			''26269642'',
+			''26269759'',
+			''26270007'',
+			''26270241'',
+			''26270592'',
+			''26270610'',
+			''26271036'',
+			''26271387'',
+			''26271405'',
+			''26271756'',
+			''26272182'',
+			''26272317'',
+			''26272785'',
+			''26272920'',
+			''26273094'',
+			''26273463'',
+			''26273949'',
+			''26274258'',
+			''26274510'',
+			''26275287'',
+			''26275305'',
+			''26276082'',
+			''26276820'',
+			''26246943'',
+			''26247252'',
+			''26247486'',
+			''26247504'',
+			''26248767'',
+			''26251793'',
+			''26251928'',
+			''26252588'',
+			''26253149'',
+			''26253518'',
+			''26253986'',
+			''26254313'',
+			''26254430'',
+			''26254664'',
+			''26255342'',
+			''26255945'',
+			''26256254'',
+			''26256488'',
+			''26257652'',
+			''26258213'',
+			''26259242'',
+			''26259593'',
+			''26259611'',
+			''26260327'',
+			''26260444'',
+			''26260813'',
+			''26260930'',
+			''26261005'',
+			''26261356'',
+			''26261473'',
+			''26261725'',
+			''26262403'',
+			''26262520'',
+			''26263549'',
+			''26263801'',
+			''26264713'',
+			''26265373'',
+			''26265625'',
+			''26265742'',
+			''26266537'',
+			''26266654'',
+			''26266771'',
+			''26268010'',
+			''26268730'',
+			''26269156'',
+			''26270124'',
+			''26270844'',
+			''26270961'',
+			''26271522'',
+			''26272065'',
+			''26272200'',
+			''26272434'',
+			''26272551'',
+			''26273229'',
+			''26273697'',
+			''26273832'',
+			''26274375'',
+			''26274492'',
+			''26274744'',
+			''26275656'',
+			''26276334'',
+			''26263063'',
+			''26264092'',
+			''26264227'',
+			''26265256'',
+			''26265508'',
+			''26266906'',
+			''26267080'',
+			''26267332'',
+			''26267449'',
+			''26267683'',
+			''26267935'',
+			''26268244'',
+			''26268964'',
+			''26270727'',
+			''26271153'',
+			''26271990'',
+			''26272803'',
+			''26273580'',
+			''26274141'',
+			''26274861'',
+			''26275170'',
+			''26275890'',
+			''26276217'',
+			''26276703'',
+			''26248902'',
+			''26249193'',
+			''26249211'',
+			''26249328'',
+			''26249445'',
+			''26250998'',
+			''26251325'',
+			''26251442'',
+			''26251676'',
+			''26251811'',
+			''26252003'',
+			''26252120'',
+			''26252354'',
+			''26253032'',
+			''26253266'',
+			''26253401'',
+			''26254547'',
+			''26254898'',
+			''26255090'',
+			''26255108'',
+			''26255459'',
+			''26255711'',
+			''26256020'',
+			''26256371'',
+			''26256857'',
+			''26257166'',
+			''26258078'',
+			''26258195'',
+			''26258447'',
+			''26258681'',
+			''26259125'',
+			''26259845'',
+			''26260075'',
+			''26260795'',
+			''26261239'',
+			''26261590'',
+			''26261608'',
+			''26262268'',
+			''26263666'',
+			''26263918'',
+			''26264344'',
+			''26264461'',
+			''26265139'',
+			''26265859'',
+			''26266051'',
+			''26266168'',
+			''26266303'',
+			''26266888'',
+			''26267197'',
+			''26267215'',
+			''26267566'',
+			''26267701'',
+			''26268127'',
+			''26268478'',
+			''26268595'',
+			''26268613'',
+			''26247972'',
+			''26248281'',
+			''26248650'',
+			''26249076'',
+			''26249931'',
+			''26250044'',
+			''26250530'',
+			''26250881'',
+			''26251190'',
+			''26252237'',
+			''26252471'',
+			''26253635'',
+			''26253752'',
+			''26254178'',
+			''26254295'',
+			''26254781'',
+			''26254916'',
+			''26255576'',
+			''26255693'',
+			''26255828'',
+			''26256137'',
+			''26256623'',
+			''26256740'',
+			''26257283'',
+			''26257301'',
+			''26257418'',
+			''26257535'',
+			''26257904'',
+			''26258330'',
+			''26258564'',
+			''26247135'',
+			''26247369'',
+			''26247621'',
+			''26248398'',
+			''26248416'',
+			''26248533'',
+			''26258798'',
+			''26258816'',
+			''26258933'',
+			''26260192'',
+			''26260210'',
+			''26260561'',
+			''26260678'',
+			''26261122'',
+			''26261959'',
+			''26262151'',
+			''26262754'',
+			''26262871'',
+			''26263180'',
+			''26263297'',
+			''26263315'',
+			''26263432'',
+			''26263783'',
+			''26264110'',
+			''26264578'',
+			''26264695'',
+			''26264830'',
+			''26264947'',
+			''26265022'',
+			''26265490'',
+			''26265976'',
+			''26266285'',
+			''26266420'',
+			''26267818'',
+			''26248884'',
+			''26249679'',
+			''26249814'',
+			''26250278'',
+			''26251073'',
+			''26252606'',
+			''26252723'',
+			''26252840'',
+			''26252957'',
+			''26253383'',
+			''26253869'',
+			''26254061'',
+			''26255225'',
+			''26256506'',
+			''26256974'',
+			''26257049'',
+			''26257769'',
+			''26257886'',
+			''26259008'',
+			''26259359'',
+			''26259476'',
+			''26259728'',
+			''26259962'',
+			''26261842'',
+			''26262034'',
+			''26262385'',
+			''26262637'',
+			''26262988'',
+			''26268361'',
+			''26269273'',
+			''26269408'',
+			''26269525'',
+			''26269876'',
+			''26269993'',
+			''26270358'',
+			''26270475'',
+			''26271270'',
+			''26271639'',
+			''26271873'',
+			''26272668'',
+			''26273112'',
+			''26273346'',
+			''26273715'',
+			''26274024'',
+			''26274627'',
+			''26274978'',
+			''26275053'',
+			''26275422'',
+			''26275539'',
+			''26275773'',
+			''26275908'',
+			''26276100'',
+			''26276568'',
+			''26276685'',
+			''26276451'',
+			''26247018'',
+			''26247738'',
+			''26247855'',
+			''26248047'',
+			''26248164'',
+			''26249562'',
+			''26249796'',
+			''26250161'',
+			''26250395'',
+			''26250413'',
+			''26250647'',
+			''26250764'',
+			''26251208'',
+			''26251559'',
+			''26385242'',
+			''26385359'',
+			''26385593'',
+			''26385728'',
+			''26384798'',
+			''26384816'',
+			''26384564'',
+			''26385125'',
+			''26385611'',
+			''26386037'',
+			''26384681'',
+			''26385008'',
+			''26385476'',
+			''26385845'',
+			''26385962'',
+			''26386271'',
+			''26386154'',
+			''26386388'',
+			''26279070'',
+			''23007457'',
+			''23007574'',
+			''23007340'',
+			''23007691'',
+			''26212194'',
+			''26212563'',
+			''26212446'',
+			''26212329'',
+			''26212797'',
+			''26212680'',
+			''26339203'',
+			''26339320'',
+			''26339437'',
+			''26370984'',
+			''26331403'',
+			''26331637'',
+			''26322752'',
+			''26332315'',
+			''26324693'',
+			''26338993'',
+			''26339068'',
+			''26331871'',
+			''26332063'',
+			''26325371'',
+			''26326535'',
+			''26324828'',
+			''26325020'',
+			''26325137'',
+			''26322032'',
+			''26330356'',
+			''26330590'',
+			''26330725'',
+			''26322518'',
+			''26331034'',
+			''26322635'',
+			''26331151'',
+			''26322149'',
+			''26329991'',
+			''26330122'',
+			''26322383'',
+			''26322401'',
+			''26322266'',
+			''26321588'',
+			''26321606'',
+			''26321723'',
+			''26321840'',
+			''26321957'',
+			''26279790'',
+			''26279808'',
+			''26279925'',
+			''26280155'',
+			''26320676'',
+			''26321003'',
+			''26321237'',
+			''26278995'',
+			''26279187'',
+			''26279205'',
+			''26279322'',
+			''26279439'',
+			''26278878'',
+			''26321354'',
+			''26321471'',
+			''26279556'',
+			''26279673'',
+			''26328845'',
+			''26328962'',
+			''26329271'',
+			''26329406'',
+			''26329640'',
+			''26329757'',
+			''26326769'',
+			''26326904'',
+			''26327330'',
+			''26327564'',
+			''26328242'',
+			''26328359'',
+			''26328611'',
+			''26328476'',
+			''26190280'',
+			''16508447'',
+			''21413912'',
+			''21414221'',
+			''21415016'',
+			''21415484'',
+			''21414104'',
+			''21414824'',
+			''21414455'',
+			''21414572'',
+			''21414941'',
+			''21413894'',
+			''21414086'',
+			''21415250'',
+			''21415502'',
+			''21417443'',
+			''21414707'',
+			''21414689'',
+			''21413777'',
+			''21414338'',
+			''23978649'',
+			''23978532'',
+			''28467803''
+						)
+		AND USU.USU_USERNAME not in (''ibenedito'') 
+		AND GES.PROVINCIA IS NOT NULL
+		AND GES.MUNICIPIO IS NULL
+		AND GEE.BORRADO = 0
+	)
+	)
+	'
+	;
+	
+	V_NUM := SQL%ROWCOUNT;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] SE VA A ACTUALIZAR EL GESTOR A '||V_NUM||' ACTIVOS.');
+ 
+	DBMS_OUTPUT.PUT_LINE('[INFO] ACTUALIZANDO USU_ID EN GEE_GESTOR_ENTIDAD...');
+	
+	EXECUTE IMMEDIATE '
+	MERGE INTO '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE USING
+	(
+	SELECT 
+	TMPGEST.GEE_ID,
+	TMPGEST.ACT_ID,
+	USU.USU_ID
+	FROM '||V_ESQUEMA||'.TMP_GEST_ACT TMPGEST
+	LEFT JOIN '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU
+		ON USU.USU_USERNAME = ''ibenedito'' 
+	) TMP
+	ON (GEE.GEE_ID = TMP.GEE_ID)
+	WHEN MATCHED THEN UPDATE SET
+	GEE.USU_ID = TMP.USU_ID,
+	GEE.USUARIOMODIFICAR = ''HREOS-2022-7'',
+	GEE.FECHAMODIFICAR = SYSDATE
+	'
+	;
+	
+	V_NUM := SQL%ROWCOUNT;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] GEE_GESTOR_ENTIDAD ACTUALIZADA...'||V_NUM||' REGISTROS.');
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] ACTUALIZANDO GEH_FECHA_HASTA EN GEH_GESTOR_ENTIDAD_HIST PARA DAR DE BAJA EL ANTERIOR GESTOR...');
+	
+	EXECUTE IMMEDIATE '
+	MERGE INTO '||V_ESQUEMA||'.GEH_GESTOR_ENTIDAD_HIST GEH USING
+	(
+	WITH ACT AS (
+    SELECT DISTINCT
+    TMP.ACT_ID,
+    GAH.GEH_ID,
+    TMP.DD_TGE_ID,
+    (SELECT USU_ID FROM '||V_ESQUEMA_MASTER||'.USU_USUARIOS WHERE USU_USERNAME =  ''ibenedito'' ) AS USU_ID 
+    FROM '||V_ESQUEMA||'.TMP_GEST_ACT TMP
+    LEFT JOIN '||V_ESQUEMA||'.GAH_GESTOR_ACTIVO_HISTORICO GAH
+      ON GAH.ACT_ID = TMP.ACT_ID
+    LEFT JOIN '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO GAC
+      ON GAC.ACT_ID = TMP.ACT_ID
+    LEFT JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE
+      ON GEE.GEE_ID = GAC.GEE_ID
+    WHERE GAH.ACT_ID IS NOT NULL
+    AND GEE.USUARIOMODIFICAR = ''HREOS-2022-7''
+  )
+  SELECT GEH.GEH_ID
+  FROM ACT
+  INNER JOIN '||V_ESQUEMA||'.GEH_GESTOR_ENTIDAD_HIST GEH
+    ON GEH.GEH_ID = ACT.GEH_ID
+  WHERE GEH.USU_ID != ACT.USU_ID
+  AND GEH.DD_TGE_ID = ACT.DD_TGE_ID
+	) TMP
+	ON (GEH.GEH_ID = TMP.GEH_ID)
+	WHEN MATCHED THEN UPDATE SET
+	GEH.GEH_FECHA_HASTA = SYSDATE,
+	GEH.USUARIOMODIFICAR = ''HREOS-2022-7'',
+	GEH.FECHAMODIFICAR = SYSDATE
+	'
+	;
+	
+	V_NUM := SQL%ROWCOUNT;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] GEH_GESTOR_ENTIDAD_HIST ACTUALIZADA...'||V_NUM||' REGISTROS.');
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] INSERTANDO NUEVOS REGISTROS EN GEH_GESTOR_ENTIDAD_HIST PARA DAR DE ALTA EL NUEVO GESTOR...');
+	
+	EXECUTE IMMEDIATE '
+	INSERT INTO '||V_ESQUEMA||'.GEH_GESTOR_ENTIDAD_HIST GEH
+	(GEH_ID,
+	USU_ID,
+	DD_TGE_ID,
+	GEH_FECHA_DESDE,
+	USUARIOCREAR,
+	FECHACREAR,
+	BORRADO
+	)
+	SELECT
+	GEH_ID,
+	(SELECT USU_ID FROM '||V_ESQUEMA_MASTER||'.USU_USUARIOS WHERE USU_USERNAME = ''ibenedito'' ) AS USU_ID, 
+	DD_TGE_ID,
+	SYSDATE AS GEH_FECHA_DESDE,
+	''HREOS-2022-7'' AS USUARIOCREAR,
+	SYSDATE AS FECHACREAR,
+	0 AS BORRADO
+	FROM '||V_ESQUEMA||'.TMP_GEST_ACT TMP
+	'
+	;
+	
+	V_NUM := SQL%ROWCOUNT;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] INSERTADOS '||V_NUM||' REGISTROS EN GEH_GESTOR_ENTIDAD_HIST.');
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] INSERTANDO NUEVOS REGISTROS EN GAH_GESTOR_ACTIVO_HISTORICO PARA RELACIONAR LOS REGISTROS DE');
+	DBMS_OUTPUT.PUT_LINE('       GEH_GESTOR_ENTIDAD_HIST CON LOS ACTIVOS...');
+	
+	EXECUTE IMMEDIATE '
+	INSERT INTO '||V_ESQUEMA||'.GAH_GESTOR_ACTIVO_HISTORICO GAH
+	(GEH_ID,
+	ACT_ID
+	)
+	SELECT 
+	GEH_ID,
+	ACT_ID
+	FROM '||V_ESQUEMA||'.TMP_GEST_ACT
+	'
+	;
+	
+	V_NUM := SQL%ROWCOUNT;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] INSERTADOS '||V_NUM||' REGISTROS EN GAH_GESTOR_ACTIVO_HISTORICO.');
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] GESTORES ACTUALIZADOS CORRECTAMENTE.'||CHR(10));
+
+--      HREOS-2022-7:No asignar gestores a las tareas afectadas  	
+--	DBMS_OUTPUT.PUT_LINE('[INFO] SE VAN A RE-ASIGNAR LOS GESTORES PARA LAS TAREAS AFECTADAS...');
+	
+--	DBMS_OUTPUT.PUT_LINE('[INFO] ACTUALIZANDO USU_ID EN TAC_TAREAS_ACTIVO...');
+	
+--	EXECUTE IMMEDIATE '
+--	MERGE INTO '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS TAC USING
+--	(
+--	SELECT
+--	TAC.TAR_ID,
+--	TAC.ACT_ID,
+--	TAC.USU_ID,
+--	GEE.GEE_ID,
+--	GEE.DD_TGE_ID as GEE_DD_TGE_ID,
+--	TAP.DD_TGE_ID as TAP_DD_TGE_ID,
+--	GEE.USU_ID as USU_ID_NEW
+--	FROM '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS TAC 
+--	INNER JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR
+--	  ON TAR.TAR_ID = TAC.TAR_ID
+--	INNER JOIN '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TEX
+--	  ON TEX.TAR_ID = TAR.TAR_ID
+--	INNER JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP
+--	  ON TAP.TAP_ID = TEX.TAP_ID
+--	INNER JOIN '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO GAC 
+--	  ON GAC.ACT_ID = TAC.ACT_ID
+--	INNER JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE 
+--	  ON GEE.GEE_ID = GAC.GEE_ID
+--	WHERE GEE.DD_TGE_ID = (select dd_tge_id from remmaster.dd_tge_tipo_gestor where dd_tge_codigo = ''GACT'')
+--	AND TAP.DD_TGE_ID = (select dd_tge_id from remmaster.dd_tge_tipo_gestor where dd_tge_codigo = ''GACT'') 
+--	AND TAC.USU_ID != GEE.USU_ID
+--	AND TAR.TAR_FECHA_FIN IS NULL
+--	--AND TAC.BORRADO = 0
+--	--AND TAR.BORRADO = 0
+--	--AND TEX.BORRADO = 0
+--	--AND TAP.BORRADO = 0
+--	AND GEE.BORRADO = 0
+--	AND GEE.USUARIOMODIFICAR = ''HREOS-2022-7''
+--	) TMP
+--	ON (TAC.TAR_ID = TMP.TAR_ID)
+--	WHEN MATCHED THEN UPDATE SET
+--	TAC.USU_ID = TMP.USU_ID_NEW,
+--	TAC.USUARIOMODIFICAR = ''HREOS-2022-7'',
+--	TAC.FECHAMODIFICAR = SYSDATE
+--	'
+--	;
+--	
+--	V_NUM := SQL%ROWCOUNT;
+--	
+--	DBMS_OUTPUT.PUT_LINE('[INFO] ACTUALIZADOS '||V_NUM||' REGISTROS EN TAC_TAREAS_ACTIVOS.');
+--	
+--	DBMS_OUTPUT.PUT_LINE('[INFO] TAREAS ACTUALIZADAS.'||CHR(10));
+--
+	 
+ 	EXECUTE IMMEDIATE '
+	SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''TMP_GEST_ACT'' AND OWNER = '''||V_ESQUEMA||'''
+	'
+	INTO V_NUM
+	;
+
+	IF V_NUM > 0 THEN
+  
+    EXECUTE IMMEDIATE '
+		TRUNCATE TABLE '||V_ESQUEMA||'.TMP_GEST_ACT
+		'
+		;
+	
+		EXECUTE IMMEDIATE '
+		DROP TABLE '||V_ESQUEMA||'.TMP_GEST_ACT
+		'
+		;
+		
+	END IF;
+	
+	DBMS_OUTPUT.PUT_LINE('[FIN]  PROCESO FINALIZADO CORRECTAMENTE ');
+ 
+EXCEPTION
+
+   WHEN OTHERS THEN
+        err_num := SQLCODE;
+        err_msg := SQLERRM;
+
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+        DBMS_OUTPUT.put_line(err_msg);
+
+        ROLLBACK;
+        RAISE;          
+
+END;
+
+/
+
+EXIT

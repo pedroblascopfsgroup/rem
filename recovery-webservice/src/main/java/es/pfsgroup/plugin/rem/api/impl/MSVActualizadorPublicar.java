@@ -61,6 +61,7 @@ public class MSVActualizadorPublicar implements MSVLiberator {
 			DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = activoEstadoPublicacionApi.getState(activo.getId());
 			dtoCambioEstadoPublicacion.setActivo(activo.getId());
 			dtoCambioEstadoPublicacion.setPublicacionForzada(true);
+			dtoCambioEstadoPublicacion.setMotivoPublicacion(exc.dameCelda(fila, 1));
 			activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion);
 		}
 

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160930
+--## AUTOR=DAP
+--## FECHA_CREACION=20170510
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=0
+--## VERSION_ARTEFACTO=2.0.3
+--## INCIDENCIA_LINK=HREOS-1938
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_TPE_TIPOS_PERIOCIDAD los datos añadidos en T_ARRAY_DATA
@@ -45,7 +45,7 @@ DECLARE
         T_TIPO_DATA('05'	,'Cuatrimestral','Cuatrimestral'),
         T_TIPO_DATA('06'	,'Semestral'	,'Semestral'),
         T_TIPO_DATA('07'	,'Anual'	,'Anual'),
-        T_TIPO_DATA('08'	,'Especial contable'	,'Especial Contable')
+        T_TIPO_DATA('08'	,'Varios periodos'	,'Varios periodos')
 	); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

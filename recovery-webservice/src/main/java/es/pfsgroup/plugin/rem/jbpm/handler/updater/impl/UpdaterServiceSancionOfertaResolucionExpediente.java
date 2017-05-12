@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +24,6 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
@@ -43,6 +44,8 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
     
+    protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionExpediente.class);
+    
     private static final String COMBO_PROCEDE = "comboProcede";
     private static final String MOTIVO_ANULACION = "motivoAnulacion";
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
@@ -56,88 +59,90 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 		if(!Checks.esNulo(ofertaAceptada)){
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 			
-			for(TareaExternaValor valor :  valores){
-				
-				if(COMBO_PROCEDE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
-				{
-					Filter filtro;
-				
+			if(!Checks.esNulo(expediente)){
+
+				for(TareaExternaValor valor :  valores){
 					
-					if(DDDevolucionReserva.CODIGO_NO.equals(valor.getValor())){
-
-						//Anula el expediente
-						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
+					if(COMBO_PROCEDE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
+					{
+						Filter filtro;
+					
 						
-						expediente.setFechaAnulacion(new Date());
-						
-						//Finaliza el trámite
-						Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
-						tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
-						genericDao.save(ActivoTramite.class, tramite);
-
-						//Rechaza la oferta y descongela el resto
-						ofertaApi.rechazarOferta(ofertaAceptada);
-						List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
-						for(Oferta oferta : listaOfertas){
-							if((DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo()))){
-								ofertaApi.descongelarOferta(oferta);
+						if(DDDevolucionReserva.CODIGO_NO.equals(valor.getValor())){
+	
+							//Anula el expediente
+							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
+							
+							expediente.setFechaAnulacion(new Date());
+							
+							//Finaliza el trámite
+							Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
+							tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
+							genericDao.save(ActivoTramite.class, tramite);
+	
+							//Rechaza la oferta y descongela el resto
+							ofertaApi.rechazarOferta(ofertaAceptada);
+							try {
+								ofertaApi.descongelarOfertas(expediente);
+							} catch (Exception e) {
+								logger.error("Error descongelando ofertas.", e);
+							}
+							Filter filtroTanteo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoTanteo.CODIGO_EJERCIDO);
+							ofertaAceptada.setResultadoTanteo(genericDao.get(DDResultadoTanteo.class, filtroTanteo));
+							
+							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+							expediente.setEstado(estado);
+							genericDao.save(ExpedienteComercial.class, expediente);
+							
+							Reserva reserva = expediente.getReserva();
+							if(!Checks.esNulo(reserva)){
+								reserva.setIndicadorDevolucionReserva(0);
+								Filter filtroEstadoReserva = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_RESUELTA_POSIBLE_REINTEGRO);
+								DDEstadosReserva estadoReserva = genericDao.get(DDEstadosReserva.class, filtroEstadoReserva);
+								reserva.setEstadoReserva(estadoReserva);
+								reserva.setDevolucionReserva(this.getDevolucionReserva(valor.getValor()));
+								
+								genericDao.save(Reserva.class, reserva);
+							}
+						}else{
+							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.EN_DEVOLUCION);
+							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+							expediente.setEstado(estado);
+							genericDao.save(ExpedienteComercial.class, expediente);
+							
+							Reserva reserva = expediente.getReserva();
+							if(!Checks.esNulo(reserva)){
+								reserva.setIndicadorDevolucionReserva(1);
+								Filter filtroEstadoReserva = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION);
+								DDEstadosReserva estadoReserva = genericDao.get(DDEstadosReserva.class, filtroEstadoReserva);
+								reserva.setEstadoReserva(estadoReserva);
+								reserva.setDevolucionReserva(this.getDevolucionReserva(valor.getValor()));
+								
+								genericDao.save(Reserva.class, reserva);
 							}
 						}
-						Filter filtroTanteo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoTanteo.CODIGO_EJERCIDO);
-						ofertaAceptada.setResultadoTanteo(genericDao.get(DDResultadoTanteo.class, filtroTanteo));
-						
-						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-						expediente.setEstado(estado);
-						genericDao.save(ExpedienteComercial.class, expediente);
-						
-						Reserva reserva = expediente.getReserva();
-						if(!Checks.esNulo(reserva)){
-							reserva.setIndicadorDevolucionReserva(0);
-							Filter filtroEstadoReserva = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_RESUELTA_POSIBLE_REINTEGRO);
-							DDEstadosReserva estadoReserva = genericDao.get(DDEstadosReserva.class, filtroEstadoReserva);
-							reserva.setEstadoReserva(estadoReserva);
-							reserva.setDevolucionReserva(this.getDevolucionReserva(valor.getValor()));
-							
-							genericDao.save(Reserva.class, reserva);
-						}
-					}else{
-						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.EN_DEVOLUCION);
-						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-						expediente.setEstado(estado);
-						genericDao.save(ExpedienteComercial.class, expediente);
-						
-						Reserva reserva = expediente.getReserva();
-						if(!Checks.esNulo(reserva)){
-							reserva.setIndicadorDevolucionReserva(1);
-							Filter filtroEstadoReserva = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION);
-							DDEstadosReserva estadoReserva = genericDao.get(DDEstadosReserva.class, filtroEstadoReserva);
-							reserva.setEstadoReserva(estadoReserva);
-							reserva.setDevolucionReserva(this.getDevolucionReserva(valor.getValor()));
-							
-							genericDao.save(Reserva.class, reserva);
-						}
+	
 					}
-
-				}
-				
-				if(MOTIVO_ANULACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
-// TODO: En caso de anulacion (en esta tarea, Resolucion expediente - Procede = NO), las reservas en principio no hay que anularlas
-// se anula solo el expediente. Ya que el estado de las reservas se ha definido por el valor del campo "procede" y el 
-// y el indicador de "devolucion" (ya tratado en la logica de arriba). En ningun caso deben las reservas. Bankia lo hara por WS.
-					/* Codigo anterior de anulacion de reservas
-					Reserva reserva = expediente.getReserva();
-					if(!Checks.esNulo(reserva)){
-						reserva.setMotivoAnulacion(valor.getValor());
-						genericDao.save(Reserva.class, reserva);
-					}
-					*/
 					
-					// Se incluye un motivo de anulacion del expediente, si se indico en la tarea
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
-					DDMotivoAnulacionExpediente motivoAnulacion = (DDMotivoAnulacionExpediente) genericDao.get(DDMotivoAnulacionExpediente.class, filtro);
-					expediente.setMotivoAnulacion(motivoAnulacion);
+					if(MOTIVO_ANULACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+	// TODO: En caso de anulacion (en esta tarea, Resolucion expediente - Procede = NO), las reservas en principio no hay que anularlas
+	// se anula solo el expediente. Ya que el estado de las reservas se ha definido por el valor del campo "procede" y el 
+	// y el indicador de "devolucion" (ya tratado en la logica de arriba). En ningun caso deben las reservas. Bankia lo hara por WS.
+						/* Codigo anterior de anulacion de reservas
+						Reserva reserva = expediente.getReserva();
+						if(!Checks.esNulo(reserva)){
+							reserva.setMotivoAnulacion(valor.getValor());
+							genericDao.save(Reserva.class, reserva);
+						}
+						*/
+						
+						// Se incluye un motivo de anulacion del expediente, si se indico en la tarea
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
+						DDMotivoAnulacionExpediente motivoAnulacion = (DDMotivoAnulacionExpediente) genericDao.get(DDMotivoAnulacionExpediente.class, filtro);
+						expediente.setMotivoAnulacion(motivoAnulacion);
+					}
+					
 				}
-				
 			}
 		}
 

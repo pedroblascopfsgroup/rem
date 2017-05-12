@@ -528,158 +528,187 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 				xtype:'fieldsettable',
 				title:HreRem.i18n('title.informacion.general'),
 				defaultType: 'textfieldbase',
-				/*bind: { 
-					hidden: '{!infoComercial.isInformeGeneralVisible}'
-				},*/
 				items :
 					[
-						{ // Primer cuadro.
-							xtype:'fieldsettable',
-							defaultType: 'textfieldbase',
-							collapsible: false,
-							border: false,
-							height: 230,
-							layout: {
-								type: 'table',
-								columns: 1
-							},
-							padding: '0 0 0 0',
-							items :
-								[
-									{ 
-										xtype: 'comboboxfieldbase',
-										editable: false,
-										fieldLabel: HreRem.i18n('fieldlabel.estado.conservacion'),
-										bind: {
-											store: '{comboEstadoConservacion}',
-											value: '{infoComercial.estadoConservacionCodigo}'
-										},
-										displayField: 'descripcion',
-										valueField: 'codigo'
-									},
-									{ 
-							        	xtype: 'comboboxfieldbase',
-							        	editable: false,
-							        	fieldLabel: HreRem.i18n('fieldlabel.estado.construccion'),
-							        	bind: {
-						            		store: '{comboEstadoConstruccion}',
-						            		value: '{infoComercial.estadoConstruccionCodigo}',
-						    				hidden: '{infoComercial.isSuelo}'
-						            	},
-						            	displayField: 'descripcion',
-			    						valueField: 'codigo'
-							        },
-									{
-										fieldLabel: HreRem.i18n('fieldlabel.anyo.construccion'),
-										bind: {
-											value: '{infoComercial.anyoConstruccion}',
-											hidden: '{infoComercial.isSuelo}'
-										},
-										listeners: {
-											change: 'onAnyoChange'
-										},
-										maskRe: /^\d*$/,
-										vtype: 'anyo'
-									},
-									{
-								 		fieldLabel: HreRem.i18n('fieldlabel.anyo.rehabilitacion'),
-								 		bind: {
-					                		value: '{infoComercial.anyoRehabilitacion}',
-						    				hidden: '{infoComercial.isSuelo}'
-					                	},
-					                	listeners: {
-											change: 'onAnyoChange'
-										},
-										maskRe: /^\d*$/,
-										vtype: 'anyo'
-									},
-									{
-										xtype: 'textfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.numero.plantas'),
-										maxLength:	3,
-										bind: {
-											value: '{infoComercial.numPlantas}'
-										}
-									},
-									{
-										xtype : 'comboboxfieldbase',
-									    fieldLabel : HreRem.i18n('fieldlabel.ascensor'),
-									    bind : {
-									      store : '{comboSiNoRem}',
-									      value : '{infoComercial.ascensor}'
-									    }
-									},
-									{
-										xtype: 'textfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.numero.ascensores'),
-										maxLength:	2,
-										bind: {
-											value: '{infoComercial.numAscensores}'
-										}
-									}
-								]
-						},
 						{
-				        	xtype: 		'textareafieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.descripcion.comercial'),
-					 		height: 	230,
-					 		maxLength:	500,
-			            	bind:		'{infoComercial.descripcionComercial}',
-					 		labelAlign: 'top'
-						},
-						{ // Checkboxes reformas necesarias.
 							xtype:'fieldsettable',
 							defaultType: 'textfieldbase',
-							title:HreRem.i18n('title.reformas.necesarias'),
 							collapsible: false,
-							height: 230,
-							border: true,
+							colspan: 3,
+							border: false,
 							layout: {
-								type: 'table',
-								columns: 2
-							},
-							padding: '0 0 0 15',
-							items :
-								[
-									{
-										xtype: 'checkboxfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.fachada'),
-										bind: '{infoComercial.reformaFachada}'
+				                type: 'hbox'
+				            },
+							items :[
+								{ // Primer cuadro.
+									xtype:'fieldsettable',
+									defaultType: 'textfieldbase',
+									collapsible: false,
+									border: false,
+									layout: {
+										type: 'table',
+										columns: 1
 									},
-									{
-										xtype: 'checkboxfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.escalera'),
-										bind: '{infoComercial.reformaEscalera}'
+									padding: '0 0 0 0',
+									items :
+										[
+											{ 
+												xtype: 'comboboxfieldbase',
+												editable: false,
+												fieldLabel: HreRem.i18n('fieldlabel.estado.conservacion.activo'),
+												bind: {
+													store: '{comboEstadoConservacion}',
+													value: '{infoComercial.estadoConservacionCodigo}'
+												},
+												displayField: 'descripcion',
+												valueField: 'codigo'
+											},
+											{ 
+									        	xtype: 'comboboxfieldbase',
+									        	editable: false,
+									        	fieldLabel: HreRem.i18n('fieldlabel.estado.construccion.activo'),
+									        	bind: {
+								            		store: '{comboEstadoConstruccion}',
+								            		value: '{infoComercial.estadoConstruccionCodigo}',
+								    				hidden: '{infoComercial.isSuelo}'
+								            	},
+								            	displayField: 'descripcion',
+					    						valueField: 'codigo'
+									        },
+											{
+												fieldLabel: HreRem.i18n('fieldlabel.anyo.construccion.activo'),
+												bind: {
+													value: '{infoComercial.anyoConstruccion}',
+													hidden: '{infoComercial.isSuelo}'
+												},
+												listeners: {
+													change: 'onAnyoChange'
+												},
+												maskRe: /^\d*$/,
+												vtype: 'anyo'
+											},
+											{
+										 		fieldLabel: HreRem.i18n('fieldlabel.anyo.rehabilitacion.activo'),
+										 		bind: {
+							                		value: '{infoComercial.anyoRehabilitacion}',
+								    				hidden: '{infoComercial.isSuelo}'
+							                	},
+							                	listeners: {
+													change: 'onAnyoChange'
+												},
+												maskRe: /^\d*$/,
+												vtype: 'anyo'
+											},
+											{ 
+												xtype: 'comboboxfieldbase',
+												editable: false,
+												fieldLabel: HreRem.i18n('fieldlabel.estado.conservacion.edificio'),
+												bind: {
+													store: '{comboEstadoConservacion}',
+													value: '{infoComercial.estadoConservacionEdificioCodigo}'
+												}
+											},
+											{
+										 		fieldLabel: HreRem.i18n('fieldlabel.anyo.rehabilitacion.edificio'),
+										 		bind: {
+							                		value: '{infoComercial.anyoRehabilitacionEdificio}',
+								    				hidden: '{infoComercial.isSuelo}'
+							                	},
+							                	listeners: {
+													change: 'onAnyoChange'
+												},
+												maskRe: /^\d*$/,
+												vtype: 'anyo'
+											},
+											{
+												xtype: 'textfieldbase',
+												fieldLabel: HreRem.i18n('fieldlabel.numero.plantas'),
+												maxLength:	3,
+												bind: {
+													value: '{infoComercial.numPlantas}'
+												}
+											},
+											{
+												xtype : 'comboboxfieldbase',
+											    fieldLabel : HreRem.i18n('fieldlabel.ascensor'),
+											    bind : {
+											      store : '{comboSiNoRem}',
+											      value : '{infoComercial.ascensor}'
+											    }
+											},
+											{
+												xtype: 'textfieldbase',
+												fieldLabel: HreRem.i18n('fieldlabel.numero.ascensores'),
+												maxLength:	2,
+												bind: {
+													value: '{infoComercial.numAscensores}'
+												}
+											}
+										]
+								},
+								{
+						        	xtype: 		'textareafieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.descripcion.comercial'),
+							 		height: 	230,
+							 		maxLength:	500,
+					            	bind:		'{infoComercial.descripcionComercial}',
+							 		labelAlign: 'top'
+								},
+								{ // Checkboxes reformas necesarias.
+									xtype:'fieldsettable',
+									defaultType: 'textfieldbase',
+									title:HreRem.i18n('title.reformas.necesarias'),
+									collapsible: false,
+									height: 230,
+									border: true,
+									layout: {
+										type: 'table',
+										columns: 2
 									},
-									{
-										xtype: 'checkboxfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.portal'),
-										bind: '{infoComercial.reformaPortal}'
-									},
-									{
-										xtype: 'checkboxfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.ascensor'),
-										bind: '{infoComercial.reformaAscensor}'
-									},
-									{
-										xtype: 'checkboxfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.cubierta'),
-										bind: '{infoComercial.reformaCubierta}'
-									},
-									{
-										xtype: 'checkboxfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.otras.zonas'),
-										bind: '{infoComercial.reformaOtrasZonasComunes}'
-									},
-									{
-										xtype: 'textareafieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.otros'),
-										bind: '{infoComercial.reformaOtroDescEdificio}',
-										colspan: 2,
-										maxLength: 250,
-										labelAlign: 'top'
-									}
-								]
+									padding: '0 0 0 15',
+									items :
+										[
+											{
+												xtype: 'checkboxfieldbase',
+												fieldLabel: HreRem.i18n('fieldlabel.fachada'),
+												bind: '{infoComercial.reformaFachada}'
+											},
+											{
+												xtype: 'checkboxfieldbase',
+												fieldLabel: HreRem.i18n('fieldlabel.escalera'),
+												bind: '{infoComercial.reformaEscalera}'
+											},
+											{
+												xtype: 'checkboxfieldbase',
+												fieldLabel: HreRem.i18n('fieldlabel.portal'),
+												bind: '{infoComercial.reformaPortal}'
+											},
+											{
+												xtype: 'checkboxfieldbase',
+												fieldLabel: HreRem.i18n('fieldlabel.ascensor'),
+												bind: '{infoComercial.reformaAscensor}'
+											},
+											{
+												xtype: 'checkboxfieldbase',
+												fieldLabel: HreRem.i18n('fieldlabel.cubierta'),
+												bind: '{infoComercial.reformaCubierta}'
+											},
+											{
+												xtype: 'checkboxfieldbase',
+												fieldLabel: HreRem.i18n('fieldlabel.otras.zonas'),
+												bind: '{infoComercial.reformaOtrasZonasComunes}'
+											},
+											{
+												xtype: 'textareafieldbase',
+												fieldLabel: HreRem.i18n('fieldlabel.otros'),
+												bind: '{infoComercial.reformaOtroDescEdificio}',
+												colspan: 2,
+												maxLength: 250,
+												labelAlign: 'top'
+											}
+										]
+								}
+							]
 						},
 						{
 				        	xtype: 		'textareafieldbase',

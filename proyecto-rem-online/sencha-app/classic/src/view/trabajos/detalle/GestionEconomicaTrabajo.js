@@ -174,14 +174,16 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 		    				cls:'',	    				
 						    
 	    					items: [
-	
-			    				{
-			    					//Tocar el vertical align del label
-			    					xtype: 'comboboxfieldbase',
-						        	fieldLabel:  HreRem.i18n('fieldlabel.nombre'),
+			    				
+			    				{ 
+						        	xtype: 'comboboxfieldbase',
+						        	fieldLabel: HreRem.i18n('fieldlabel.nombre'),
 						        	rowspan:	2,
 						        	labelWidth:	150,
 						        	width: 		480,
+									reference: 'comboProveedorGestionEconomica',
+						        	chainedStore: 'comboProveedorGestionEconomica',
+									chainedReference: 'proveedorContactoCombo',
 						        	bind: {
 					            		store: '{comboProveedorFiltered}',
 					            		value: '{gestionEconomica.idProveedor}'
@@ -189,9 +191,10 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 					            	displayField: 'nombreComercial',
 		    						valueField: 'idProveedor',
 		    						listeners: {
-		    							change: 'onChangeComboProveedorGE'
-		    						}
-			    				},
+					                	select: 'onChangeComboProveedorGE'
+					            	}
+						        },
+			    				
 								{
 									fieldLabel: HreRem.i18n('fieldlabel.usuario.contacto'),
 									width: 		480,
@@ -205,9 +208,9 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 									bind:		'{proveedor.email}',
 									readOnly: true
 								},
-								{
-			    					//Tocar el vertical align del label
-			    					xtype: 'comboboxfieldbase',
+			    				
+			    				{ 
+									xtype: 'comboboxfieldbase',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.proveedor.contacto'),
 						        	reference: 'proveedorContactoCombo',
 						        	labelWidth:	150,
@@ -223,7 +226,8 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 		    						listeners: {
 		    							change: 'onChangeProveedor'
 		    						}
-			    				},
+						        },			      
+			    				
 								{
 									fieldLabel: HreRem.i18n('fieldlabel.telefono.contacto'),
 									width: 		480,

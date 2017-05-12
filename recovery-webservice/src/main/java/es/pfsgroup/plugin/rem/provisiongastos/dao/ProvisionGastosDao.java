@@ -13,4 +13,12 @@ public interface ProvisionGastosDao extends AbstractDao<ProvisionGastos, Long>{
  * @return
  */
 	Page findAll (DtoProvisionGastosFilter dto);
+	
+	/**
+	 * Devuelve listado de provisiones filtrados también por el proveedor_gestoria pasado por parametro
+	 * @param dto
+	 * @param isGestoriaAdministracion
+	 * @return
+	 */
+	public Page findAllFilteredByProveedor(DtoProvisionGastosFilter dto, Long idProveedor);
 }

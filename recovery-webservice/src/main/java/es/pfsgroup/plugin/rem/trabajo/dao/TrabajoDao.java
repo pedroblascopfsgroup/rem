@@ -35,5 +35,14 @@ public interface TrabajoDao extends AbstractDao<Trabajo, Long>{
 	Page getPresupuestosTrabajo(DtoGestionEconomicaTrabajo filtro,	Usuario usuarioLogado);
 	
 	Boolean existsTrabajo(DtoTrabajoFilter dtoTrabajoFiltro);
+	
+	/**
+	 * Devuelve una lista de trabajos filtrado por el usuario logado (gestor externo), que solo obtiene
+	 * trabajos donde sea proveedor
+	 * @param dto
+	 * @param idUsuario
+	 * @return
+	 */
+	public Page findAllFilteredByProveedorContacto(DtoTrabajoFilter dto, Long idUsuario);
 
 }

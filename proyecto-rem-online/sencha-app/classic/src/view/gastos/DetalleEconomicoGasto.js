@@ -178,8 +178,10 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 								        						value: '{detalleeconomico.impuestoIndirectoExento}'							        						
 						            						},
 						            						listeners:{
-						            							afterbind: 'onChangeOperacionExenta'/*,
-						            							change: 'onChangeOperacionExenta'*/
+						            							afterbind: 'onChangeOperacionExenta',
+						            							change: function(field,newValue,oldValue){
+						            								me.lookupController().onChangeOperacionExenta(field,newValue);
+						            							}
 						            						}
 					                					},
 					                					{		                
@@ -193,8 +195,10 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 								        						value: '{detalleeconomico.renunciaExencionImpuestoIndirecto}'
 						            						},
 						            						listeners:{
-						            							afterbind: 'onChangeRenunciaExencion'/*,
-						            							change: 'onChangeRenunciaExencion',*/
+						            							afterbind: 'onChangeRenunciaExencion',
+						            							change: function(field,newValue,oldValue){
+						            								me.lookupController().onChangeRenunciaExencion(field,newValue);
+						            							}
 						            							
 						            						}
 					                					},
@@ -372,6 +376,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 														
 														{
 															cls: 'txt-importe-total',
+															reference: 'importeTotal',
 															readOnly: true,
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.importe.total'),
 														    bind: '{calcularImporteTotalGasto}',

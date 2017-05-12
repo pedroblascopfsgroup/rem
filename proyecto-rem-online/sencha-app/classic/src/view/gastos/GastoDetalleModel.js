@@ -98,7 +98,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     },
 	     
 	     sumatorioConceptosgasto: function(get) {
-	     	
+
 	     	var importePrincipalSujeto = get('detalleeconomico.importePrincipalSujeto');
 			var importePricipalNoSujeto = get('detalleeconomico.importePrincipalNoSujeto');
 			var importeRecargo = get('detalleeconomico.importeRecargo');
@@ -106,7 +106,11 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	var importeCostas = get('detalleeconomico.importeCostas');
 	     	var importeOtrosIncrementos = get('detalleeconomico.importeOtrosIncrementos')
 	     	var importeProvisionesSuplidos = get('detalleeconomico.importeProvisionesSuplidos');
-	     	var impuestoIndirectoCuota = get('detalleeconomico.impuestoIndirectoCuota');
+	     	var impuestoIndirectoCuota = 0;
+	     	if((get('detalleeconomico.impuestoIndirectoExento')=="false" || get('detalleeconomico.impuestoIndirectoExento')==false) || (get('detalleeconomico.renunciaExencionImpuestoIndirecto')=="true" || get('detalleeconomico.renunciaExencionImpuestoIndirecto')==true)){
+	     		impuestoIndirectoCuota = get('detalleeconomico.impuestoIndirectoCuota');
+	     	}
+	     	
 	     	var irpfCuota = get('detalleeconomico.irpfCuota');
 	     	
 	     	return importePrincipalSujeto + importePricipalNoSujeto + importeRecargo + importeInteresDemora
@@ -117,7 +121,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	
 	     
 	     calcularImporteTotalGasto: function(get) {
-	     	
+
 	     	var irpfCuota = get('detalleeconomico.irpfCuota');
 	     	var sumatorioConceptosGasto = get('sumatorioConceptosgasto');
 	     	return sumatorioConceptosGasto - irpfCuota; 

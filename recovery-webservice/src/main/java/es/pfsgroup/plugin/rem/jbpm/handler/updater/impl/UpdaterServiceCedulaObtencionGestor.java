@@ -15,7 +15,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
-import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
@@ -96,7 +95,7 @@ public class UpdaterServiceCedulaObtencionGestor implements UpdaterService {
                     trabajo.setEstado(estadoTrabajo);
 	            }else{
 					// Obtención documento = SI : Trabajo -> Estado -> FINALIZADO PENDIENTE VALIDACION
-					Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_FINALIZADO_PENDIENTE_VALIDACION);
+					Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_PENDIENTE_CIERRE_ECONOMICO);
 					DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filter);
 					trabajo.setEstado(estadoTrabajo);
 	            }

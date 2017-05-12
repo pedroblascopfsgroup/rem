@@ -74,7 +74,7 @@ public class VGastosProveedor implements Serializable {
 	private Double importeTotal;
 	
 	@Column(name = "GDE_FECHA_PAGO")
-	private String fechaPago;
+	private Date fechaPago;
 	
 	@Column(name = "GDE_FECHA_TOPE_PAGO")
 	private Date fechaTopePago;
@@ -163,6 +163,9 @@ public class VGastosProveedor implements Serializable {
 	@Column(name="PVE_ID_GESTORIA")
 	private String idGestoria;
 	
+	@Column(name="PVE_NOMBRE_GESTORIA")
+	private String nombreGestoria;
+	
 	@Column(name="GPV_EXISTE_DOCUMENTO")
 	private Boolean existeDocumento;
 	
@@ -171,6 +174,12 @@ public class VGastosProveedor implements Serializable {
 	
 	@Column(name="PRO_DOCIDENTIF")
 	private String docIdentifPropietario;
+	
+	@Column(name="SUJETO_IMPUESTO_INDIRECTO")
+	private Boolean sujetoImpuestoIndirecto;
+	
+	@Column(name = "FECHA_AUTORIZACION")
+	private Date fechaAutorizacion;
 	
 	@Transient
 	private boolean esGastoAgrupado; 
@@ -259,11 +268,11 @@ public class VGastosProveedor implements Serializable {
 		this.codigoProveedorRem = codigoProveedorRem;
 	}
 
-	public String getFechaPago() {
+	public Date getFechaPago() {
 		return fechaPago;
 	}
 
-	public void setFechaPago(String fechaPago) {
+	public void setFechaPago(Date fechaPago) {
 		this.fechaPago = fechaPago;
 	}
 
@@ -598,6 +607,29 @@ public class VGastosProveedor implements Serializable {
 
 	public void setImporteTotalAgrupacion(Double importeTotalAgrupacion) {
 		this.importeTotalAgrupacion = importeTotalAgrupacion;
-	}	
-	 
+	}
+
+	public String getNombreGestoria() {
+		return nombreGestoria;
+	}
+
+	public void setNombreGestoria(String nombreGestoria) {
+		this.nombreGestoria = nombreGestoria;
+	}
+
+	public Boolean getSujetoImpuestoIndirecto() {
+		return sujetoImpuestoIndirecto;
+	}
+
+	public void setSujetoImpuestoIndirecto(Boolean sujetoImpuestoIndirecto) {
+		this.sujetoImpuestoIndirecto = sujetoImpuestoIndirecto;
+	}
+
+	public Date getFechaAutorizacion() {
+		return fechaAutorizacion;
+	}
+
+	public void setFechaAutorizacion(Date fechaAutorizacion) {
+		this.fechaAutorizacion = fechaAutorizacion;
+	}	 
 }

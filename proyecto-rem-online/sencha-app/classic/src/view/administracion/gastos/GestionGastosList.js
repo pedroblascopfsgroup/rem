@@ -42,8 +42,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
 									dataIndex: 'numFactura',
 									flex: 0.4
 							   	},
-	    	                     
-	    	                     {
+	    	                    {
 	    	                    	 text: HreRem.i18n('header.tipo.gasto'),
 	    	                    	 flex: 1,
 	    	                    	 hidden: true,
@@ -105,7 +104,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
 	    	                     {
 	    	                    	 text: HreRem.i18n('header.destinatario.gasto'),
 	    	                    	 flex: 1,
-	    	                    	 dataIndex: 'destinatarioDescripcion'
+	    	                    	 dataIndex: 'destinatarioNombreDoc'
 	    	                     },
 	    	                     {
 	    	                     	text: HreRem.i18n('header.estado'),
@@ -113,7 +112,21 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
 	    	                     	dataIndex: 'estadoGastoDescripcion'
 	    	                     },
 	    	                     {
-	    	                     	
+	    	                     	text: HreRem.i18n('header.sujeto.impuesto.indirecto'),
+	    	                     	flex: 0.4,
+	    	                     	dataIndex: 'sujetoImpuestoIndirecto'
+		    	                 },
+		    	                 {
+	    	                     	text: HreRem.i18n('header.nombre.gestoria'),
+	    	                     	flex: 1,
+	    	                     	dataIndex: 'nombreGestoria'
+		    	                 },
+		    	                 {
+	    	                     	text: HreRem.i18n('fieldlabel.cartera'),
+	    	                     	flex: 0.5,
+	    	                     	dataIndex: 'entidadPropietariaDescripcion'
+		    	                 },
+	    	                     {
 	    	                     	width: 30,
 	    	                     	menuDisabled: true,
 	    	                     	hideable: false,
@@ -126,7 +139,6 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
 	    	                     		
 	    	                     		return "<div class='"+css+"'></div>"
 	    	                     	}
-	    	                     	
 	    	                     }
 		];
 		

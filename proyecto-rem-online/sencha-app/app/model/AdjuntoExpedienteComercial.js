@@ -45,7 +45,14 @@ Ext.define('HreRem.model.AdjuntoExpedienteComercial', {
     			name:'fechaDocumento',
     			type:'date',
     			dateFormat: 'c'
-    		}   
+    		},
+    		{
+		    	name: 'idExpediente',
+    			calculate: function(data) { 
+    				return Ext.isEmpty(data.idExpediente) ? data.idEntidad : data.idExpediente; 
+    			},
+    			depends: 'idEntidad' 
+		    }   
 
 
 

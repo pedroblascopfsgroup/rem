@@ -1,38 +1,35 @@
 Ext.define('HreRem.view.administracion.gastos.GestionProvisionGastosList', {
 	extend		: 'HreRem.view.common.GridBase',
     xtype		: 'gestionprovisiongastoslist',
-
     bind: {
         store: '{provisionGastos}'
     },
     plugins: 'pagingselectpersist',
     loadAfterBind: false,
+
     initComponent: function () {
-        
         var me = this;
         me.setTitle(HreRem.i18n('title.listado.gastos.provision'));
-        
-		var configAutorizarBtn = {text: HreRem.i18n('btn.autorizar'), cls:'tbar-grid-button', itemId:'autorizarBtn', handler: 'onClickAutorizarGastosAgrupados', disabled: true, secFunPermToRender: 'OPERAR_GASTO'};
-		var configRechazarButton = {text: HreRem.i18n('btn.rechazar') , cls:'tbar-grid-button', itemId:'rechazarBtn', handler: 'onClickRechazarGastosAgrupados', disabled: true, secFunPermToRender: 'OPERAR_GASTO'};
+
+		var configAutorizarBtn = {text: HreRem.i18n('btn.autorizar'), reference: 'btnAutorizarGastos', cls:'tbar-grid-button', itemId:'autorizarBtn', handler: 'onClickAutorizarGastosAgrupados', disabled: true, secFunPermToRender: 'OPERAR_GASTO_AGRUPACION'};
+		var configRechazarButton = {text: HreRem.i18n('btn.rechazar'), reference: 'btnRechazarGastos' , cls:'tbar-grid-button', itemId:'rechazarBtn', handler: 'onClickRechazarGastosAgrupados', disabled: true, secFunPermToRender: 'OPERAR_GASTO_AGRUPACION'};
+		var descargarExcelGastosAgrupacion = {text: HreRem.i18n('btn.exportar'), reference: 'btnExportarGastosAgrupacion', cls:'tbar-grid-button', handler: 'onClickDescargarExcelGastosAgrupacion', disabled: true};
 		var separador = {xtype: 'tbfill'};
-			
+
 		me.tbar = {
     		xtype: 'toolbar',
     		reference: 'tbarprovisiongastoslist',
     		dock: 'top',
-    		items: [separador, configAutorizarBtn, configRechazarButton]
+    		items: [separador, descargarExcelGastosAgrupacion, configAutorizarBtn, configRechazarButton]
 		};
-        
+
         me.listeners = {	    	
     		rowdblclick: 'onClickAbrirGastoProveedor',
     		afterrender: function(grid) {
-    			
-    		
+
     		 }
-    			
     	};
-              
-        
+
         me.columns= [
 	       				{   
 				        	dataIndex: 'id',
@@ -128,7 +125,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionProvisionGastosList', {
 	                     	dataIndex: 'estadoAutorizacionPropietarioDescripcion'
 	                     }
         ];
-      	
+
         me.dockedItems = [
 		        {
 		            xtype: 'pagingtoolbar',
@@ -158,17 +155,16 @@ Ext.define('HreRem.view.administracion.gastos.GestionProvisionGastosList', {
 			                	xtype: 'displayfieldbase',
 			                	itemId: 'displayImporteTotal',
 			                	fieldStyle: 'color:#ff0000; padding-top: 4px;font-weight: bold;',
-			                	hidden: true			                	
-			                		
+			                	hidden: true
 			                }
 	            	]
 		        }
 		];
-		    
+
 		me.selModel = Ext.create('HreRem.view.common.CheckBoxModelBase');
-    	
+
     	me.callParent();
-    	
+
     	me.getSelectionModel().on({
         	'selectionchange': function(sm,record,e) {
         		me.fireEvent('persistedsselectionchange', sm, record, e, me, me.getPersistedSelection());
@@ -182,20 +178,32 @@ Ext.define('HreRem.view.administracion.gastos.GestionProvisionGastosList', {
         		me.getPlugin('pagingselectpersist').deselectAll();
         	}
         });
-        
     },
-    
+
     getPersistedSelection: function() {
     	var me = this;
     	return me.getPlugin('pagingselectpersist').getPersistedSelection();     	
     },
-    
+
     deselectAll: function() {
     	var me = this;
     	return me.getPlugin('pagingselectpersist').deselectAll();     		
+    },
+
+    mostrarEdicionGastos: function() {
+    	var me = this;
+    	me.up('administraciongastosmain').lookupReference('btnAutorizarGastos').setDisabled(false);
+    	me.up('administraciongastosmain').lookupReference('btnRechazarGastos').setDisabled(false);
+    },
+
+    ocultarEdicionGastos: function() {
+    	var me = this;
+    	me.up('administraciongastosmain').lookupReference('btnAutorizarGastos').setDisabled(true);
+    	me.up('administraciongastosmain').lookupReference('btnRechazarGastos').setDisabled(true);
+    },
+
+    mostrarExportarGastos: function() {
+    	var me = this;
+    	me.up('administraciongastosmain').lookupReference('btnExportarGastosAgrupacion').setDisabled(false);
     }
-
-
-
 });
-

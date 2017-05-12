@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +24,6 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 
@@ -44,6 +45,8 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
     @Autowired
     private UtilDiccionarioApi utilDiccionarioApi;
     
+    protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResultadoPBC.class);
+    
     private static final String COMBO_RESULTADO = "comboResultado";
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
     private static final String CODIGO_T013_RESULTADO_PBC = "T013_ResultadoPBC";
@@ -58,58 +61,60 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 		if(!Checks.esNulo(ofertaAceptada)){
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 			
-			for(TareaExternaValor valor :  valores){
-				
-				if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
-				{
-					//TODO: Rellenar campo PBC del expediente cuando esté creado.
-					if(DDSiNo.NO.equals(valor.getValor()))
+			if (!Checks.esNulo(expediente)) {
+
+				for(TareaExternaValor valor :  valores){
+					
+					if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
 					{
-						if(!ofertaApi.checkReserva(ofertaAceptada)){
-							Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
-							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-							expediente.setEstado(estado);
-							expediente.setEstadoPbc(0);
-							expediente.setFechaAnulacion(new Date());
-							
-							genericDao.save(ExpedienteComercial.class, expediente);
-							
-							//Finaliza el trámite
-							Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
-							tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
-							genericDao.save(ActivoTramite.class, tramite);
-	
-							//Rechaza la oferta y descongela el resto
-							ofertaApi.rechazarOferta(ofertaAceptada);
-							List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
-							for(Oferta oferta : listaOfertas){
-								if((DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo()))){
-									ofertaApi.descongelarOferta(oferta);
+						//TODO: Rellenar campo PBC del expediente cuando esté creado.
+						if(DDSiNo.NO.equals(valor.getValor()))
+						{
+							if(!ofertaApi.checkReserva(ofertaAceptada)){
+								Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
+								DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+								expediente.setEstado(estado);
+								expediente.setEstadoPbc(0);
+								expediente.setFechaAnulacion(new Date());
+								
+								genericDao.save(ExpedienteComercial.class, expediente);
+								
+								//Finaliza el trámite
+								Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
+								tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
+								genericDao.save(ActivoTramite.class, tramite);
+		
+								//Rechaza la oferta y descongela el resto
+								ofertaApi.rechazarOferta(ofertaAceptada);
+								try {
+									ofertaApi.descongelarOfertas(expediente);
+								} catch (Exception e) {
+									logger.error("Error descongelando ofertas.", e);
 								}
 							}
+							
+							//Motivo anulación
+							if(!ofertaApi.checkReserva(ofertaAceptada)){
+								Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_ANULACION_IRREGULARIDADES);
+								DDMotivoAnulacionExpediente motivoAnulacion = (DDMotivoAnulacionExpediente) genericDao.get(DDMotivoAnulacionExpediente.class, filtro);
+								expediente.setMotivoAnulacion(motivoAnulacion);
+							}
+							
+						}else{
+							expediente.setEstadoPbc(1);
+							genericDao.save(ExpedienteComercial.class, expediente);
 						}
-						
-						//Motivo anulación
-						if(!ofertaApi.checkReserva(ofertaAceptada)){
-							Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_ANULACION_IRREGULARIDADES);
-							DDMotivoAnulacionExpediente motivoAnulacion = (DDMotivoAnulacionExpediente) genericDao.get(DDMotivoAnulacionExpediente.class, filtro);
-							expediente.setMotivoAnulacion(motivoAnulacion);
-						}
-						
-					}else{
-						expediente.setEstadoPbc(1);
-						genericDao.save(ExpedienteComercial.class, expediente);
 					}
+					
+	//				if(MOTIVO_ANULACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+	//					if(!ofertaApi.checkReserva(ofertaAceptada)){
+	//						// Se incluye un motivo de anulacion del expediente, si se indico en la tarea
+	//						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "601");
+	//						DDMotivoAnulacionExpediente motivoAnulacion = (DDMotivoAnulacionExpediente) genericDao.get(DDMotivoAnulacionExpediente.class, filtro);
+	//						expediente.setMotivoAnulacion(motivoAnulacion);
+	//					}
+	//				}
 				}
-				
-//				if(MOTIVO_ANULACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
-//					if(!ofertaApi.checkReserva(ofertaAceptada)){
-//						// Se incluye un motivo de anulacion del expediente, si se indico en la tarea
-//						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "601");
-//						DDMotivoAnulacionExpediente motivoAnulacion = (DDMotivoAnulacionExpediente) genericDao.get(DDMotivoAnulacionExpediente.class, filtro);
-//						expediente.setMotivoAnulacion(motivoAnulacion);
-//					}
-//				}
 			}
 		}
 	}

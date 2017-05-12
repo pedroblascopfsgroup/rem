@@ -1,8 +1,7 @@
 Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
     extend: 'HreRem.view.common.FormBase',
     xtype: 'gestiongastossearch',
-    collapsible: true,
-    collapsed: false, 
+    isSearchFormGastos: true,
     layout: 'column',
 	defaults: {
         xtype: 'fieldsettable',
@@ -10,21 +9,15 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
         cls: 'fieldsetCabecera',
         collapsed: true
     },
-	    		
 
 	initComponent: function() {
-	
+
 		var me = this;
     	me.setTitle(HreRem.i18n('title.filtro'));
     	me.removeCls('shadow-panel');
-  		
-    	me.buttonAlign = 'left';
-    	me.buttons = [{ text: 'Buscar', handler: 'onClickGastosSearch', reference: 'btnSearchGastos' },{ text: 'Limpiar', handler: 'onCleanFiltersClick'}];
-    	
-	    me.items= [
-	    
-				    {
 
+	    me.items= [
+				    {
 			    		title: HreRem.i18n('title.filtro.por.situacion.gasto'),
 			    		defaultType: 'textfieldbase',
 			    		defaults: {							        
@@ -194,10 +187,29 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 						 		fieldLabel: HreRem.i18n('fieldlabel.fecha.emision.hasta'),
 						 		name: 'fechaEmisionHasta',
 						 		formatter: 'date("d/m/Y")'					 		
-							}
-    						
-    						
-    						
+							},
+    						{ 
+			                	xtype:'datefieldbase',
+						 		fieldLabel: HreRem.i18n('fieldlabel.fecha.autorizacion.desde'),
+						 		name: 'fechaAutorizacionDesde',
+						 		formatter: 'date("d/m/Y")'					 		
+							},
+							{ 
+			                	xtype:'datefieldbase',
+						 		fieldLabel: HreRem.i18n('fieldlabel.fecha.autorizacion.hasta'),
+						 		name: 'fechaAutorizacionHasta',
+						 		formatter: 'date("d/m/Y")'					 		
+							},
+							{ 
+					        	xtype: 'comboboxfieldbase',
+					        	fieldLabel:  HreRem.i18n('fieldlabel.sujeto.impuesto.indirecto'),
+					        	name: 'impuestoIndirecto',
+					        	bind: {
+				            		store: '{comboSiNoRem}'
+				            	},
+				            	displayField: 'descripcion',
+								valueField: 'codigo'
+    						}    						
 			    		]
 				    },
 				    {

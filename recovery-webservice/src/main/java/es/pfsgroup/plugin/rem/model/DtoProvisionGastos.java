@@ -14,13 +14,23 @@ public class DtoProvisionGastos extends WebDto {
 	private static final long serialVersionUID = 0L;
 
 	private Long id;
-	private Long numProvision;
-	private String gestoria;
+	private String numProvision;
 	private String estadoProvisionCodigo;
 	private String estadoProvisionDescripcion;
 	private Date fechaAlta;
 	private Date fechaEnvio;
 	private Date fechaRespuesta;
+	private Date fechaAnulacion;	
+	private Long idProveedor;
+	private String codREMProveedor;
+	private String nombreProveedor;
+	private String nomPropietario;
+	private String nifPropietario;
+	private String codCartera;
+	private String descCartera;
+	private String codSubCartera;
+	private String descSubCartera;
+	private Double importeTotal;
 	
 	
 	public Long getId() {
@@ -29,19 +39,12 @@ public class DtoProvisionGastos extends WebDto {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public Long getNumProvision() {
+	public String getNumProvision() {
 		return numProvision;
 	}
-	public void setNumProvision(Long numProvision) {
+	public void setNumProvision(String numProvision) {
 		this.numProvision = numProvision;
 	}
-	public String getGestoria() {
-		return gestoria;
-	}
-	public void setGestoria(String gestoria) {
-		this.gestoria = gestoria;
-	}
-
 	public String getEstadoProvisionCodigo() {
 		return estadoProvisionCodigo;
 	}
@@ -71,6 +74,72 @@ public class DtoProvisionGastos extends WebDto {
 	}
 	public void setFechaRespuesta(Date fechaRespuesta) {
 		this.fechaRespuesta = fechaRespuesta;
+	}
+	public Date getFechaAnulacion() {
+		return fechaAnulacion;
+	}
+	public void setFechaAnulacion(Date fechaAnulacion) {
+		this.fechaAnulacion = fechaAnulacion;
+	}
+	public Long getIdProveedor() {
+		return idProveedor;
+	}
+	public void setIdProveedor(Long idProveedor) {
+		this.idProveedor = idProveedor;
+	}
+	public String getCodREMProveedor() {
+		return codREMProveedor;
+	}
+	public void setCodREMProveedor(String codREMProveedor) {
+		this.codREMProveedor = codREMProveedor;
+	}
+	public String getNombreProveedor() {
+		return nombreProveedor;
+	}
+	public void setNombreProveedor(String nombreProveedor) {
+		this.nombreProveedor = nombreProveedor;
+	}
+	public String getNomPropietario() {
+		return nomPropietario;
+	}
+	public void setNomPropietario(String nomPropietario) {
+		this.nomPropietario = nomPropietario;
+	}
+	public String getNifPropietario() {
+		return nifPropietario;
+	}
+	public void setNifPropietario(String nifPropietario) {
+		this.nifPropietario = nifPropietario;
+	}
+	public String getCodCartera() {
+		return codCartera;
+	}
+	public void setCodCartera(String codCartera) {
+		this.codCartera = codCartera;
+	}
+	public String getDescCartera() {
+		return descCartera;
+	}
+	public void setDescCartera(String descCartera) {
+		this.descCartera = descCartera;
+	}
+	public String getCodSubCartera() {
+		return codSubCartera;
+	}
+	public void setCodSubCartera(String codSubCartera) {
+		this.codSubCartera = codSubCartera;
+	}
+	public String getDescSubCartera() {
+		return descSubCartera;
+	}
+	public void setDescSubCartera(String descSubCartera) {
+		this.descSubCartera = descSubCartera;
+	}
+	public Double getImporteTotal() {
+		return importeTotal;
+	}
+	public void setImporteTotal(Double importeTotal) {
+		this.importeTotal = importeTotal;
 	}
 	
 	

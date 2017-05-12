@@ -10,4 +10,12 @@ import es.pfsgroup.plugin.rem.model.Activo;
 public interface GestorActivoDao extends GestorEntidadDao{
 	public List<Usuario> getListUsuariosGestoresActivoByTipoYActivo(Long idTipoGestor, Activo activo);
 	public List<Usuario> getListUsuariosGestoresActivoBycodigoTipoYActivo(String codigoTipoGestor, Activo activo);
+	
+	/**
+	 * Comprueba si el usuario es Gestor Externo, es decir, con perfiles:
+	 * 'HAYAFSV','PERFGCCBANKIA','GESTOADM','GESTIAFORM','HAYAGESTADMT','GESTOCED','GESTOPLUS','GESTOPDV','HAYAPROV','HAYACERTI','HAYACONSU'
+	 * @param idUsuario
+	 * @return
+	 */
+	public Boolean isUsuarioGestorExterno(Long idUsuario);
 }

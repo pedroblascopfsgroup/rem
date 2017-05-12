@@ -98,7 +98,7 @@
     		me.collapsible= true;
     		me.collapsed= false;    		
     		me.buttonAlign = 'left';
-    		me.buttons = [{ text: 'Buscar', handler: 'onSearchClick' },{ text: 'Limpiar', handler: 'onCleanFiltersClick'}, { text: 'Exportar', handler: 'onClickDescargarExcelTareas'}];
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcelTareas'}];
     	}
     	
     	if (me.isSearchFormAlertas) {
@@ -106,7 +106,7 @@
     		me.collapsible= true;
     		me.collapsed= false;    		
     		me.buttonAlign = 'left';
-    		me.buttons = [{ text: 'Buscar', handler: 'onSearchClick' },{ text: 'Limpiar', handler: 'onCleanFiltersClick'}, { text: 'Exportar', handler: 'onClickDescargarExcelAlertas'}];
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcelAlertas'}];
     	}
     	
     	if (me.isSearchFormAvisos) {
@@ -114,14 +114,14 @@
     		me.collapsible= true;
     		me.collapsed= false;    		
     		me.buttonAlign = 'left';
-    		me.buttons = [{ text: 'Buscar', handler: 'onSearchClick' },{ text: 'Limpiar', handler: 'onCleanFiltersClick'}, { text: 'Exportar', handler: 'onClickDescargarExcelAvisos'}];
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcelAvisos'}];
     	}
     	
     	if (me.isSearchFormActivos) {
     		me.collapsible = true;
     		me.collapsed = false;
     		me.buttonAlign = 'left';
-    		me.buttons = [{ text: 'Buscar', handler: 'onSearchClick' },{ text: 'Limpiar', handler: 'onCleanFiltersClick'}, { text: 'Exportar', handler: 'onClickDescargarExcel'}, { text: 'Crear trabajo', handler: 'onClickCrearTrabajo'}]
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel'}, { text: HreRem.i18n('btn.crearTrabajo'), handler: 'onClickCrearTrabajo'}]
     	}
     	   		
     	if (me.isSearchForm) {
@@ -129,20 +129,36 @@
     		me.collapsible= true;
     		me.collapsed= false;    		
     		me.buttonAlign = 'left';
-    		me.buttons = [{ text: 'Buscar', handler: 'onSearchClick' },{ text: 'Limpiar', handler: 'onCleanFiltersClick'}, { text: 'Exportar', handler: 'onClickDescargarExcel'}];
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel'}];
+    	}
+
+    	if (me.isSearchFormGastos) {
+
+    		me.collapsible= true;
+    		me.collapsed= false;    		
+    		me.buttonAlign = 'left';
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onClickGastosSearch', reference: 'btnSearchGastos' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcelGestionGastos'}];
     	}
     	
+    	if (me.isSearchFormProvisiones) {
+
+			me.collapsible= true;
+			me.collapsed= false;    		
+			me.buttonAlign = 'left';
+			me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onClickProvisionesSearch' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcelProvisionGastos'}];
+    	}
+
     	if (me.isSaveForm) {
     		
     		me.buttonAlign = 'left';    		
-    		me.buttons = [ { text: 'Guardar', handler: 'onSaveClick' },{ text: 'Cancelar', handler: 'onCancelClick'}];
+    		me.buttons = [ { text: HreRem.i18n('btn.saveBtnText'), handler: 'onSaveClick' },{ text: HreRem.i18n('btn.cancelBtnText'), handler: 'onCancelClick'}];
     		
     	}
     	
     	if (me.isEditForm) {
     		
     		me.buttonAlign = 'left';    		
-    		me.buttons = [ { text: 'Guardar', handler: 'onSaveEditClick' }];
+    		me.buttons = [ { text: HreRem.i18n('btn.saveBtnText'), handler: 'onSaveEditClick' }];
     		
     	}
 

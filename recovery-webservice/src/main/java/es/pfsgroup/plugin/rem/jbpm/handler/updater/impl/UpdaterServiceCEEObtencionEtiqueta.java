@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -18,8 +19,8 @@ import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
-import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 
 @Component
 public class UpdaterServiceCEEObtencionEtiqueta implements UpdaterService {
@@ -27,10 +28,7 @@ public class UpdaterServiceCEEObtencionEtiqueta implements UpdaterService {
     @Autowired
     private GenericABMDao genericDao;
     
-    @Autowired
-    private DiccionarioTargetClassMap diccionarioTargetClassMap;
-    
-	private static final String CODIGO_T003_OBTENCION_ETIQUETA = "T003_ObtencionEtiqueta";
+    private static final String CODIGO_T003_OBTENCION_ETIQUETA = "T003_ObtencionEtiqueta";
 	
 	private static final String FECHA_INSCRIPCION = "fechaInscripcion";
 	private static final String REFERENCIA_ETIQUETA= "refEtiqueta";
@@ -39,6 +37,7 @@ public class UpdaterServiceCEEObtencionEtiqueta implements UpdaterService {
 	
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		Activo activo = tramite.getActivo();
+		Trabajo trabajo = tramite.getTrabajo();
 		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "configDocumento.tipoDocumentoActivo.codigo", DDTipoDocumentoActivo.CODIGO_CEE);
 		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
 		ActivoAdmisionDocumento documentoCEE = genericDao.get(ActivoAdmisionDocumento.class, filtroTipo, filtroActivo);
@@ -63,6 +62,13 @@ public class UpdaterServiceCEEObtencionEtiqueta implements UpdaterService {
 			if(REFERENCIA_ETIQUETA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
 				documentoCEE.setNumDocumento(valor.getValor());
 			}
+			
+			//HREOS-1864: Pasamos al estado cierre economico
+			Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo" , DDEstadoTrabajo.ESTADO_PENDIENTE_CIERRE_ECONOMICO);
+			DDEstadoTrabajo estado = genericDao.get(DDEstadoTrabajo.class, filter);
+			trabajo.setEstado(estado);
+			Auditoria.save(trabajo);
+			
 						
 			// TODO: En el funcional se especifica que si se indica que no procede, en la columna FECHA EMISION del bloque documentación administrativa de la pestaña
 			// información administrativa del activo se indique el mensaje "NO PROCEDE" hay que pensar como hacerlo puesto que no podemos guardar la cadena en base de datos.

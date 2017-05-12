@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -22,8 +20,6 @@ import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoConfigDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
-import es.pfsgroup.plugin.rem.model.Trabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
@@ -44,15 +40,12 @@ public class UpdaterServiceCEEEmisionCertificado implements UpdaterService {
 	
 	private static final String FECHA_EMISION = "fechaEmision";
 	private static final String COMBO_CALIFICACION = "comboCalificacion";
-	private static final String COMBO_PROCEDE = "comboProcede";
 	
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
 	@Transactional
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		Activo activo = tramite.getActivo();
-		Trabajo trabajo = tramite.getTrabajo();
-		Filter filter;
 		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "configDocumento.tipoDocumentoActivo.codigo", DDTipoDocumentoActivo.CODIGO_CEE);
 		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
 		ActivoAdmisionDocumento documentoCEE = genericDao.get(ActivoAdmisionDocumento.class, filtroTipo, filtroActivo);
@@ -99,7 +92,8 @@ public class UpdaterServiceCEEEmisionCertificado implements UpdaterService {
 				documentoCEE.setTipoCalificacionEnergetica(tipoCalificacionEnergetica);
 			}
 
-			if(COMBO_PROCEDE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+			//HREOS-1864: Esto pasa a la tarea "SolicitudEtiqueta"
+			/**if(COMBO_PROCEDE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
 
 				if(DDSiNo.SI.equals(valor.getValor())){
 					// Si combo procede = SI, estado del trabajo a "CON CEE PENDIENTE DE ETIQUETA"
@@ -110,6 +104,7 @@ public class UpdaterServiceCEEEmisionCertificado implements UpdaterService {
 				}
 				
 			}
+			**/
 			
 			// TODO: En el funcional se especifica que si se indica que no procede, en la columna FECHA EMISION del bloque documentación administrativa de la pestaña
 			// información administrativa del activo se indique el mensaje "NO PROCEDE" hay que pensar como hacerlo puesto que no podemos guardar la cadena en base de datos.

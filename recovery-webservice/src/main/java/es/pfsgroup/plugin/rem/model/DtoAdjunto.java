@@ -17,7 +17,9 @@ public class DtoAdjunto implements Serializable{
    
     private String codigoTipo;
 
-    private String descripcionTipo;   
+    private String descripcionTipo;
+    
+    private String descripcionSubtipo;   
 
 	private String nombre;
 
@@ -64,6 +66,14 @@ public class DtoAdjunto implements Serializable{
 
 	public void setDescripcionTipo(String descripcionTipo) {
 		this.descripcionTipo = descripcionTipo;
+	}
+
+	public String getDescripcionSubtipo() {
+		return descripcionSubtipo;
+	}
+
+	public void setDescripcionSubtipo(String descripcionSubtipo) {
+		this.descripcionSubtipo = descripcionSubtipo;
 	}
 
 	public String getNombre() {

@@ -134,7 +134,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 
 		try {
 			model.put("data", gastoProveedorApi.getTabGasto(id, tab));
-			model.put("succes", true);
+			model.put("success", true);
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);

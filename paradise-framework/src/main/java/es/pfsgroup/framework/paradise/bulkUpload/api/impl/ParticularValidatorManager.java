@@ -638,15 +638,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(Checks.esNulo(numActivo))
 			return false;
 		
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
-				+ "		FROM ACT_ACTIVO act"
-				+ "		INNER JOIN ACT_PAC_PERIMETRO_ACTIVO pac "
-				+ " 	ON pac.ACT_ID = act.ACT_ID "
-				+ "		WHERE " 
-				+ "		act.ACT_NUM_ACTIVO ="+numActivo+" "
-				+ "		and (pac.PAC_INCLUIDO = 0 OR pac.PAC_CHECK_COMERCIALIZAR = 0) "
-				+ "		AND act.BORRADO = 0"
-				+ "		AND pac.BORRADO = 0");
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(act.act_id) "
+				+ "			FROM DD_SCM_SITUACION_COMERCIAL scm, "
+				+ "			  ACT_ACTIVO act "
+				+ "			WHERE scm.dd_scm_id   = act.dd_scm_id "
+				+ "			  AND scm.dd_scm_codigo = '01' "
+				+ "			  AND act.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "			  AND act.borrado = 0");
 		if("0".equals(resultado))
 			return false;
 		else

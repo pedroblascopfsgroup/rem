@@ -176,6 +176,7 @@ public class MSVHojaExcel {
 		
 		WritableSheet hoja = copy.getSheet(0);
 		int numColumnas = this.getNumeroColumnas();
+		addTexto(hoja, numColumnas, 0, "Error");
 		for (int i=0; i<listaErrores.size(); i++) {
 			addTexto(hoja, numColumnas, i+1, listaErrores.get(i));
 		}
@@ -208,11 +209,13 @@ public class MSVHojaExcel {
 		int columna = numColumnas;
 		while(it.hasNext()){
 			String error = (String) it.next();
+			addTexto(hoja, columna, 0, "ERRORES");
 			for(int i = 0; i < mapaErrores.get(error).size(); i++){
 				addTexto(hoja, columna, mapaErrores.get(error).get(i), error);
 			}
-			if(!mapaErrores.get(error).isEmpty())
-				columna++;
+			if(!mapaErrores.get(error).isEmpty()){
+				//columna++;
+			}
 		}
 		
 		copy.write();

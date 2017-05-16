@@ -43,7 +43,6 @@ import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJTrazaDto;
 import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJDDTipoRegistro;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
-import es.pfsgroup.plugin.rem.jbpm.handler.ActivoBaseActionHandler;
 import es.pfsgroup.plugin.rem.jbpm.handler.listener.ActivoGenerarSaltoImpl;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.VTareaActivoCount;

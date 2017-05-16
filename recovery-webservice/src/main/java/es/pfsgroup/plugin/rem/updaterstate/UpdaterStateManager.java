@@ -9,6 +9,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -188,7 +189,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 					gestorActivoApi.actualizarTareas(activo.getId());
 				}
 				//Si no existe el gestor comercial adecuado, pero no hay tareas activas para dicho tipo, se puede realizar el cambio en el activo de tipo comercializar
-				else if(!activoTareaExternaApi.existenTareasActivasByTramiteAndTipoGestor(activo, "T013", mapaComercial.get(codigoTipoComercializacion))) {
+				else if(!activoTareaExternaApi.existenTareasActivasByTramiteAndTipoGestor(activo, ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA, mapaComercial.get(codigoTipoComercializacion))) {
 					
 					activo.setTipoComercializar((DDTipoComercializar)utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializar.class,codigoTipoComercializacion));
 				}

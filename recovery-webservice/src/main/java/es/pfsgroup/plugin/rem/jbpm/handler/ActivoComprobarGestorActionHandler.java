@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -22,9 +23,6 @@ public class ActivoComprobarGestorActionHandler extends ActivoBaseActionHandler{
 
 	private static final long serialVersionUID = 1920406024815248515L;
 	
-	private static final String CODIGO_TRAMITE_DOCUMENTAL = "T002";
-	private static final String CODIGO_TRAMITE_DOCUMENTAL_CEE = "T003";
-	private static final String CODIGO_TRAMITE_PROPUESTA_PRECIOS = "T009";
 	
 	@Autowired
 	GestorActivoApi gestorActivoApi;
@@ -37,7 +35,7 @@ public class ActivoComprobarGestorActionHandler extends ActivoBaseActionHandler{
 		
 		//Si viene del Trámite documental, se debe comprobar "si es gest. activo o gest. de admisión".
 		//para el resto de trámites, solo "gestor de activo"
-		if(CODIGO_TRAMITE_DOCUMENTAL.equals(tramite.getTipoTramite().getCodigo())){
+		if(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC.equals(tramite.getTipoTramite().getCodigo())){
 
 			if(gestorActivoApi.isGestorActivoOAdmision(tramite.getActivo(),usuario))
 				getExecutionContext().getToken().signal("GestorActivo");
@@ -47,7 +45,7 @@ public class ActivoComprobarGestorActionHandler extends ActivoBaseActionHandler{
 		} else {
 
 			//Si viene del Tramite de Propuesta de precios, debe comprobar si "es gestor precios/marketing u otros"
-			if(CODIGO_TRAMITE_PROPUESTA_PRECIOS.equals(tramite.getTipoTramite().getCodigo())){
+			if(ActivoTramiteApi.CODIGO_TRAMITE_PROPUESTA_PRECIOS.equals(tramite.getTipoTramite().getCodigo())){
 				
 				if(gestorActivoApi.isGestorPreciosOMarketing(tramite.getActivo(),usuario))
 					getExecutionContext().getToken().signal("GestorMarketingOPrecio");
@@ -58,7 +56,7 @@ public class ActivoComprobarGestorActionHandler extends ActivoBaseActionHandler{
 
 				//Si viene del Trámite documental emision CEE, se debe comprobar "la cartera y si es gest. activo o gest. de admisión".
 				//para el resto de trámites, solo "gestor de activo"
-				if(CODIGO_TRAMITE_DOCUMENTAL_CEE.equals(tramite.getTipoTramite().getCodigo())){
+				if(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEE.equals(tramite.getTipoTramite().getCodigo())){
 					
 					//Obtenemos la lista de activos (por si fuera tramite multiactivo)
 					List<Activo> listaActivos = tramite.getActivos();

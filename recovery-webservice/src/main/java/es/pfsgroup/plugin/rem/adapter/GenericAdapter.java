@@ -67,30 +67,41 @@ public class GenericAdapter {
 		
 		Class<?> clase = DiccionarioTargetClassMap.convertToTargetClass(diccionario);
 		List lista = null;
-		try {
-			if(!Checks.esNulo(clase.getField("auditoria"))) {
-				lista = diccionarioApi.dameValoresDiccionario(clase);
-			}else{
-				lista = diccionarioApi.dameValoresDiccionarioSinBorrado(clase);
-			}
-		} catch (Exception e) {	
-		}
+		
+		//TODO: Código bueno:
+//		try {
+//			if(!Checks.esNulo(clase.getMethod("getAuditoria"))){
+//				lista = diccionarioApi.dameValoresDiccionario(clase);
+//			}
+//		} catch (SecurityException e) {
+//			lista = diccionarioApi.dameValoresDiccionarioSinBorrado(clase);
+//		} catch (NoSuchMethodException e) {
+//			lista = diccionarioApi.dameValoresDiccionarioSinBorrado(clase);
+//		}
+		
+		//TODO: Para ver que diccionarios no tienen auditoria.
+		lista = diccionarioApi.dameValoresDiccionario(clase);
 		
 		//sí el diccionario es 'tiposPeriodicidad' modificamos el orden
 		if(clase.equals(DDTipoPeriocidad.class)){
 			List listaPeriodicidad = new ArrayList();
-			for(int i=1; i<=lista.size();i++){
-				String cod;
-				if(i<10)
-					cod = "0"+i;
-				else
-					cod = ""+i;
-				listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(clase, cod));
+			if(!Checks.esNulo(lista)){
+				for(int i=1; i<=lista.size();i++){
+					String cod;
+					if(i<10)
+						cod = "0"+i;
+					else
+						cod = ""+i;
+					listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(clase, cod));
+				}
+				lista = listaPeriodicidad;
+			}else{
+				return listaPeriodicidad;
 			}
-			lista = listaPeriodicidad;
 		}
 			
 		return lista;
+
 		
 		
 		

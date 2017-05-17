@@ -67,14 +67,20 @@ public class GenericAdapter {
 		
 		Class<?> clase = DiccionarioTargetClassMap.convertToTargetClass(diccionario);
 		List lista = null;
-		try {
-			if(!Checks.esNulo(clase.getField("auditoria"))) {
-				lista = diccionarioApi.dameValoresDiccionario(clase);
-			}else{
-				lista = diccionarioApi.dameValoresDiccionarioSinBorrado(clase);
-			}
-		} catch (Exception e) {	
-		}
+		
+		//TODO: Código bueno:
+//		try {
+//			if(!Checks.esNulo(clase.getMethod("getAuditoria"))){
+//				lista = diccionarioApi.dameValoresDiccionario(clase);
+//			}
+//		} catch (SecurityException e) {
+//			lista = diccionarioApi.dameValoresDiccionarioSinBorrado(clase);
+//		} catch (NoSuchMethodException e) {
+//			lista = diccionarioApi.dameValoresDiccionarioSinBorrado(clase);
+//		}
+		
+		//TODO: Para ver que diccionarios no tienen auditoria.
+		lista = diccionarioApi.dameValoresDiccionario(clase);
 		
 		//sí el diccionario es 'tiposPeriodicidad' modificamos el orden
 		if(clase.equals(DDTipoPeriocidad.class)){

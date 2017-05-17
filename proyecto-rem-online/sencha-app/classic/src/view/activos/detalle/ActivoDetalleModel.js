@@ -171,6 +171,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			   		return 'app-tbfiedset-ico icono-ko'
 			   	}
 			 },
+			 getIconClsCondicionantesConCargas: function(get) {
+			var condicion = get('activoCondicionantesDisponibilidad.conCargas');
+			   	if(!eval(condicion)) {
+			   		return 'app-tbfiedset-ico'
+			   	} else {
+			   		return 'app-tbfiedset-ico icono-ko'
+			   	}
+			 },
+			 getIconClsCondicionantesSinInformeAprobado: function(get) {
+			var condicion = get('activoCondicionantesDisponibilidad.sinInformeAprobado');
+			   	if(!eval(condicion)) {
+			   		return 'app-tbfiedset-ico'
+			   	} else {
+			   		return 'app-tbfiedset-ico icono-ko'
+			   	}
+			 },
 		 getSiNoFromOtro: function(get) {
 				var condicion = get('activoCondicionantesDisponibilidad.otro');
 

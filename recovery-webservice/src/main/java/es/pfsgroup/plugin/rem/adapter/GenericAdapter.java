@@ -70,10 +70,11 @@ public class GenericAdapter {
 		try {
 			if(!Checks.esNulo(clase.getField("auditoria"))) {
 				lista = diccionarioApi.dameValoresDiccionario(clase);
+			}else{
+				lista = diccionarioApi.dameValoresDiccionarioSinBorrado(clase);
 			}
 		} catch (Exception e) {	
 		}
-		lista = diccionarioApi.dameValoresDiccionarioSinBorrado(clase);
 		
 		//sí el diccionario es 'tiposPeriodicidad' modificamos el orden
 		if(clase.equals(DDTipoPeriocidad.class)){

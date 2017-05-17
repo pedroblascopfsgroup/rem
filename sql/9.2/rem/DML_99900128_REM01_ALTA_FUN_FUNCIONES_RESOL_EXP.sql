@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20170510
+--## FECHA_CREACION=20170516
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1971
+--## INCIDENCIA_LINK=HREOS-2028
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que para crear la función EDITAR_LIST_OFERTAS_ACTIVO y las asigna a todos los perfiles menos a 'PERFGCCBANKIA' ni 'HAYACONSU'.
+--## Finalidad: Script que para crear la función BOTON_RESOLUCION_EXPEDIENTE y las asigna a todos los perfiles.
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -35,8 +35,8 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-    --			Descripción Larga							Descripción
-      T_FUNCION('Permitir editar grid de ofertas.',			'EDITAR_LIST_OFERTAS_ACTIVO')
+    --			Descripción Larga																Descripción
+      T_FUNCION('Puede ver el botón de Resolución Expediente en trámite comercial.',			'BOTON_RESOLUCION_EXPEDIENTE')
     ); 
     V_TMP_FUNCION T_FUNCION;
 
@@ -59,7 +59,7 @@ BEGIN
 				V_MSQL := 'INSERT INTO '|| V_ESQUEMA_M ||'.FUN_FUNCIONES (' ||
 						'FUN_ID, FUN_DESCRIPCION_LARGA, FUN_DESCRIPCION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)' ||
 						'SELECT '|| V_ENTIDAD_ID || ','''||V_TMP_FUNCION(1)||''','''||TRIM(V_TMP_FUNCION(2))||''','||
-						'0, ''DML'',SYSDATE,0 FROM DUAL';
+						'0, ''HREOS-2028'',SYSDATE,0 FROM DUAL';
 				DBMS_OUTPUT.PUT_LINE('INSERTANDO: '''||V_TMP_FUNCION(1)||''','''||TRIM(V_TMP_FUNCION(2))||'''');
 				EXECUTE IMMEDIATE V_MSQL;
 			END IF;
@@ -85,9 +85,9 @@ BEGIN
 
 			V_MSQL_1 := 'INSERT INTO '||V_ESQUEMA||'.FUN_PEF' ||
 						' (FUN_ID, PEF_ID, FP_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)' || 
-						' SELECT FUN.FUN_ID, PEF_ID, '||V_ESQUEMA||'.S_FUN_PEF.NEXTVAL, 0, ''DML'', SYSDATE, 0' ||
+						' SELECT FUN.FUN_ID, PEF_ID, '||V_ESQUEMA||'.S_FUN_PEF.NEXTVAL, 0, ''HREOS-2028'', SYSDATE, 0' ||
 						' FROM '||V_ESQUEMA||'.PEF_PERFILES PEF, '||V_ESQUEMA_M||'.FUN_FUNCIONES FUN' ||
-						' WHERE FUN.FUN_DESCRIPCION = '''||TRIM(V_TMP_FUNCION(2))||''' AND PEF.PEF_CODIGO NOT IN (''PERFGCCBANKIA'',''HAYACONSU'')';
+						' WHERE FUN.FUN_DESCRIPCION = '''||TRIM(V_TMP_FUNCION(2))||'''';
 	    	
 			EXECUTE IMMEDIATE V_MSQL_1;
       END LOOP;

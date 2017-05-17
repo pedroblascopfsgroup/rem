@@ -183,10 +183,25 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 					                		iconAlign: 'left'
 					                	},
 					                	{
-								        	// Label vacia para generar un espacio por cuestión de estética.
-								        	xtype: 'label',
-								        	colspan: 1
-								        },
+					                		xtype: 'button',
+					                		cls: 'no-pointer',
+								    		html : '<div style="color: #000;">'+HreRem.i18n('title.publicaciones.condicion.conCargas')+'</div>',
+								    		style : 'background: transparent; border: none;',
+					                		bind: {
+					                			iconCls: '{getIconClsCondicionantesConCargas}'
+					                		},
+					                		iconAlign: 'left'
+					                	},
+					                    {
+					                		xtype: 'button',
+					                		cls: 'no-pointer',
+								    		html : '<div style="color: #000;">'+HreRem.i18n('title.publicaciones.condicion.sinInformeAprobado')+'</div>',
+								    		style : 'background: transparent; border: none;',
+					                		bind: {
+					                			iconCls: '{getIconClsCondicionantesSinInformeAprobado}'
+					                		},
+					                		iconAlign: 'left'
+					                	},
 					                	{
 						                	xtype: 'comboboxfieldbase',
 						                	fieldLabel:  HreRem.i18n('title.publicaciones.condicion.otro'),
@@ -199,12 +214,6 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 					                			change: 'onChangeComboOtro'
 					                		}
 					                    },
-					                    {
-								        	// Label vacia para generar un espacio por cuestión de estética.
-								        	xtype: 'label',
-								        	reference: 'textareaCondicionantesSpan',
-								        	colspan: 2
-								        },
 					                	{
 						                	xtype: 'textareafieldbase',
 						                	reference: 'fieldtextCondicionanteOtro',

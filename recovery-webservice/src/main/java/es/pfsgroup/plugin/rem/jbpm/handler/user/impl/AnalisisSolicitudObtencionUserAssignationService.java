@@ -2,8 +2,6 @@ package es.pfsgroup.plugin.rem.jbpm.handler.user.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.sun.istack.Nullable;
-
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -20,7 +18,7 @@ public class AnalisisSolicitudObtencionUserAssignationService implements UserAss
 
 	private static final String CODIGO_T002_ANALISIS_PETICION = "T002_AnalisisPeticion";
 	private static final String CODIGO_T002_SOLICITUD_EXTRAORDINARIA = "T002_SolicitudExtraordinaria";
-	private static final String OBTENCION_DOCUMENTO_GESTORIA = "T002_ObtencionDocumentoGestoria";
+	private static final String CODIGO_T002_OBTENCION_DOCUMENTO_GESTORIA = "T002_ObtencionDocumentoGestoria";
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
@@ -36,10 +34,9 @@ public class AnalisisSolicitudObtencionUserAssignationService implements UserAss
 	@Override
 	public String[] getCodigoTarea() {
 		//TODO: poner los códigos de tipos de tareas
-		return new String[]{CODIGO_T002_ANALISIS_PETICION, CODIGO_T002_SOLICITUD_EXTRAORDINARIA, OBTENCION_DOCUMENTO_GESTORIA};
+		return new String[]{CODIGO_T002_ANALISIS_PETICION, CODIGO_T002_SOLICITUD_EXTRAORDINARIA, CODIGO_T002_OBTENCION_DOCUMENTO_GESTORIA};
 	}
 	
-	@Nullable
 	@Override
 	public Usuario getUser(TareaExterna tareaExterna) {
 		TareaActivo tareaActivo = (TareaActivo)tareaExterna.getTareaPadre();		
@@ -68,7 +65,7 @@ public class AnalisisSolicitudObtencionUserAssignationService implements UserAss
 				tipoGestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);					 
 			}
 			
-			if (!Checks.esNulo(tipoGestorActivo) && !Checks.esNulo(tipoGestorActivo.getId())) {
+			if (tipoGestorActivo!=null && !Checks.esNulo(tipoGestorActivo) && !Checks.esNulo(tipoGestorActivo.getId())) {
 				return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tipoGestorActivo.getId());
 			}
 		}
@@ -78,7 +75,6 @@ public class AnalisisSolicitudObtencionUserAssignationService implements UserAss
 		return null;
 	}
 
-	@Nullable
 	@Override
 	public Usuario getSupervisor(TareaExterna tareaExterna) {
 		TareaActivo tareaActivo = (TareaActivo)tareaExterna.getTareaPadre();
@@ -107,7 +103,7 @@ public class AnalisisSolicitudObtencionUserAssignationService implements UserAss
 				tipoGestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);			 
 			}
 			
-			if (!Checks.esNulo(tipoGestorActivo) && !Checks.esNulo(tipoGestorActivo.getId())) {
+			if (tipoGestorActivo!=null && !Checks.esNulo(tipoGestorActivo) && !Checks.esNulo(tipoGestorActivo.getId())) {
 				return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tipoGestorActivo.getId());
 			}
 		}

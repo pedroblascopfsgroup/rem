@@ -79,7 +79,7 @@ public class GenericAdapter {
 		//sí el diccionario es 'tiposPeriodicidad' modificamos el orden
 		if(clase.equals(DDTipoPeriocidad.class)){
 			List listaPeriodicidad = new ArrayList();
-			if(!Checks.esNulo(lista) || !Checks.esNulo(lista.size())){
+			if(!Checks.esNulo(lista)){
 				for(int i=1; i<=lista.size();i++){
 					String cod;
 					if(i<10)

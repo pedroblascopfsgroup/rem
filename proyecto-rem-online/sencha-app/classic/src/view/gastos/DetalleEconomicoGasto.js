@@ -146,10 +146,14 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 
 												listeners:{												
 													afterrender: function(){														
-									         			if(!Ext.isEmpty(me.up('gastodetallemain').getViewModel().get('gasto').get('nombreGestoria')))
+									         			if(!Ext.isEmpty(me.up('gastodetallemain').getViewModel().get('gasto').get('nombreGestoria'))){
 									         				this.setHidden(true);
-									         			else
+									         				this.setDisabled(true);
+									         			}
+									         			else{
 									         				this.setHidden(false);
+									         				this.setDisabled(true);
+									         			}
 													}
 												},
 												items :

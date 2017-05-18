@@ -32,18 +32,14 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
 
-
 @Component
 public class TabActivoInformeComercial implements TabActivoService {
-    
+
 	protected static final Log logger = LogFactory.getLog(ActivoManager.class);
-	
+
 	@Autowired
 	private GenericABMDao genericDao;
-	
-	@Autowired
-	private ActivoManager activoManager;
-	
+
 	@Autowired
 	private TabActivoFactoryApi tabActivoFactory;
 
@@ -54,97 +50,79 @@ public class TabActivoInformeComercial implements TabActivoService {
 
 	@Override
 	public String[] getCodigoTab() {
-		return new String[]{TabActivoService.TAB_INFORME_COMERCIAL};
+		return new String[] { TabActivoService.TAB_INFORME_COMERCIAL };
 	}
-	
+
 	/**
 	 * Método que devuelve un DTO para la carga del modelo de Informe Comercial del Activo
-	 * @param Activo 
+	 * 
+	 * @param Activo
 	 * @return DtoActivoInformeComercial
 	 */
 	public DtoActivoInformeComercial getTabData(Activo activo) throws IllegalAccessException, InvocationTargetException {
 
 		DtoActivoInformeComercial informeComercial = new DtoActivoInformeComercial();
-		
+
 		try {
-			//Rellenamos los datos desde el tab de InformacionComercial, que comparten datos. Luego seteamos a null los que podrían sobreescribirse.
+			// Rellenamos los datos desde el tab de InformacionComercial, que comparten datos. Luego
+			// seteamos a null los que podrían sobreescribirse.
 			TabActivoInformacionComercial tabActivoInformacionComerial = (TabActivoInformacionComercial) tabActivoFactory.getService(TAB_INFORMACION_COMERCIAL);
-			beanUtilNotNull.copyProperties(informeComercial,tabActivoInformacionComerial.getTabData(activo));
+			beanUtilNotNull.copyProperties(informeComercial, tabActivoInformacionComerial.getTabData(activo));
 			informeComercial.setTipoActivoCodigo(null);
 			informeComercial.setSubtipoActivoCodigo(null);
-			
-			if (!Checks.esNulo(activo.getInfoComercial())){
+
+			if (!Checks.esNulo(activo.getInfoComercial())) {
 				// Copia al "informe comercial" todos los atributos de "informacion comercial".
-				beanUtilNotNull.copyProperties(informeComercial,  activo.getInfoComercial());
-				
+				beanUtilNotNull.copyProperties(informeComercial, activo.getInfoComercial());
+
 				if (!Checks.esNulo(activo.getInfoComercial().getProvincia())) {
 					beanUtilNotNull.copyProperty(informeComercial, "provinciaCodigo", activo.getInfoComercial().getProvincia().getCodigo());
 				}
-				
+
 				if (!Checks.esNulo(activo.getInfoComercial().getLocalidad())) {
 					beanUtilNotNull.copyProperty(informeComercial, "municipioCodigo", activo.getInfoComercial().getLocalidad().getCodigo());
 				}
-				
+
 				if (!Checks.esNulo(activo.getInfoComercial().getTipoActivo())) {
 					beanUtilNotNull.copyProperty(informeComercial, "tipoActivoCodigo", activo.getInfoComercial().getTipoActivo().getCodigo());
-					
+
 					// Segun el tipo de activo, recuperaremos unos u otros datos
 					this.getDatosByTipoActivo(activo, informeComercial);
 				}
-				
+
 				if (!Checks.esNulo(activo.getInfoComercial().getSubtipoActivo())) {
 					beanUtilNotNull.copyProperty(informeComercial, "subtipoActivoCodigo", activo.getInfoComercial().getSubtipoActivo().getCodigo());
 				}
 
-				if(!Checks.esNulo(activo.getInfoComercial().getTipoVia())) {
+				if (!Checks.esNulo(activo.getInfoComercial().getTipoVia())) {
 					beanUtilNotNull.copyProperty(informeComercial, "tipoViaCodigo", activo.getInfoComercial().getTipoVia().getCodigo());
 				}
-			
+
 				beanUtilNotNull.copyProperty(informeComercial, "numeroVia", activo.getInfoComercial().getNumeroVia());
 				beanUtilNotNull.copyProperty(informeComercial, "planta", activo.getInfoComercial().getPlanta());
-				
-				if(!Checks.esNulo(activo.getInfoComercial().getUnidadPoblacional())) {
+
+				if (!Checks.esNulo(activo.getInfoComercial().getUnidadPoblacional())) {
 					beanUtilNotNull.copyProperty(informeComercial, "inferiorMunicipioCodigo", activo.getInfoComercial().getUnidadPoblacional().getCodigo());
 				}
-				
-				if(!Checks.esNulo(activo.getInfoComercial().getUbicacionActivo())) {
+
+				if (!Checks.esNulo(activo.getInfoComercial().getUbicacionActivo())) {
 					beanUtilNotNull.copyProperty(informeComercial, "ubicacionActivoCodigo", activo.getInfoComercial().getUbicacionActivo().getCodigo());
 				}
-				
+
 				// Datos del mediador (proveedor).
-				if (!Checks.esNulo(activo.getInfoComercial().getMediadorInforme())){
+				if (!Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
 					beanUtilNotNull.copyProperty(informeComercial, "codigoMediador", activo.getInfoComercial().getMediadorInforme().getCodigoProveedorRem());
 					beanUtilNotNull.copyProperty(informeComercial, "nombreMediador", activo.getInfoComercial().getMediadorInforme().getNombre());
 					beanUtilNotNull.copyProperty(informeComercial, "telefonoMediador", activo.getInfoComercial().getMediadorInforme().getTelefono1());
 					beanUtilNotNull.copyProperty(informeComercial, "emailMediador", activo.getInfoComercial().getMediadorInforme().getEmail());
 				}
 			}
-			
-			//HREOS-1713 - Leer el valor estimado de venta y renta de la tabla informe. Esto ya se hace en el copyProperties
-			
-			/*
-			// Entre las valoraciones del activo, se buscan los importes estimados de Venta y Renta 
-			// para añadir al Dto.
-			Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-			Filter estimadoVentaTPCFilter = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_ESTIMADO_VENTA);
-			Filter estimadoRentaTPCFilter = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_ESTIMADO_RENTA);
 
-			ActivoValoraciones activoValoracionEstimadoVenta = (ActivoValoraciones) genericDao.get(ActivoValoraciones.class, activoFilter, estimadoVentaTPCFilter);
-			ActivoValoraciones activoValoracionEstimadoRenta = (ActivoValoraciones) genericDao.get(ActivoValoraciones.class, activoFilter, estimadoRentaTPCFilter);
-			if(!Checks.esNulo(activoValoracionEstimadoVenta)){
-				beanUtilNotNull.copyProperty(informeComercial, "valorEstimadoVenta", activoValoracionEstimadoVenta.getImporte());
-			}
-			if(!Checks.esNulo(activoValoracionEstimadoRenta)){
-				beanUtilNotNull.copyProperty(informeComercial, "valorEstimadoRenta", activoValoracionEstimadoRenta.getImporte());
-			}			
-			*/
-			
-			
 			// Datos de la Comunidad de vecinos al Dto.
-			if (!Checks.esNulo(activo.getComunidadPropietarios())){
+			if (!Checks.esNulo(activo.getComunidadPropietarios())) {
 				ActivoComunidadPropietarios comunidadPropietarios = new ActivoComunidadPropietarios();
 				comunidadPropietarios = activo.getComunidadPropietarios();
-				
+
 				// Comunidad inscrita = constituida.
 				beanUtilNotNull.copyProperty(informeComercial, "inscritaComunidad", comunidadPropietarios.getConstituida());
 				// Derrama de la comunidad.
@@ -158,9 +136,9 @@ public class TabActivoInformeComercial implements TabActivoService {
 				beanUtilNotNull.copyProperty(informeComercial, "nomAdministradorComunidad", comunidadPropietarios.getNomAdministrador());
 				beanUtilNotNull.copyProperty(informeComercial, "telAdministradorComunidad", comunidadPropietarios.getTelfAdministrador());
 			}
-			
+
 			// Datos del edificio.
-			if(!Checks.esNulo(activo.getInfoComercial().getEdificio())){
+			if (!Checks.esNulo(activo.getInfoComercial().getEdificio())) {
 				// Reformas.
 				beanUtilNotNull.copyProperty(informeComercial, "reformaFachada", activo.getInfoComercial().getEdificio().getReformaFachada());
 				beanUtilNotNull.copyProperty(informeComercial, "reformaEscalera", activo.getInfoComercial().getEdificio().getReformaEscalera());
@@ -169,70 +147,71 @@ public class TabActivoInformeComercial implements TabActivoService {
 				beanUtilNotNull.copyProperty(informeComercial, "reformaCubierta", activo.getInfoComercial().getEdificio().getReformaCubierta());
 				beanUtilNotNull.copyProperty(informeComercial, "reformaOtrasZonasComunes", activo.getInfoComercial().getEdificio().getReformaOtraZona());
 				beanUtilNotNull.copyProperty(informeComercial, "reformaOtroDescEdificio", activo.getInfoComercial().getEdificio().getReformaOtroDescEdificio());
-				
+
 				// Inf general.
-				if(!Checks.esNulo(activo.getInfoComercial().getEstadoConservacion())) {
+				if (!Checks.esNulo(activo.getInfoComercial().getEstadoConservacion())) {
 					beanUtilNotNull.copyProperty(informeComercial, "estadoConservacionCodigo", activo.getInfoComercial().getEstadoConservacion().getCodigo());
 				}
-				if(!Checks.esNulo(activo.getInfoComercial().getEstadoConstruccion())) {
+
+				if (!Checks.esNulo(activo.getInfoComercial().getEstadoConstruccion())) {
 					beanUtilNotNull.copyProperty(informeComercial, "estadoConstruccionCodigo", activo.getInfoComercial().getEstadoConstruccion().getCodigo());
 				}
+
 				beanUtilNotNull.copyProperty(informeComercial, "numPlantas", activo.getInfoComercial().getEdificio().getNumPlantas());
 				beanUtilNotNull.copyProperty(informeComercial, "ascensor", activo.getInfoComercial().getEdificio().getAscensor());
 				beanUtilNotNull.copyProperty(informeComercial, "numAscensores", activo.getInfoComercial().getEdificio().getNumAscensores());
 				beanUtilNotNull.copyProperty(informeComercial, "ediDescripcion", activo.getInfoComercial().getEdificio().getEdiDescripcion());
 				beanUtilNotNull.copyProperty(informeComercial, "entornoInfraestructuras", activo.getInfoComercial().getEdificio().getEntornoInfraestructura());
 				beanUtilNotNull.copyProperty(informeComercial, "entornoComunicaciones", activo.getInfoComercial().getEdificio().getEntornoComunicacion());
-
 			}
-		
+
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
-		
+
 		return informeComercial;
-	
 	}
 
 	/**
-	 * Método que guarda los valores del modelo de Informe Comercial del Activo. Devuelve un Activo con los valores
-	 * que se han modificado en este, para su posterior guardado en el servicio principal de esta factoría.
-	 * @param Activo 
+	 * Método que guarda los valores del modelo de Informe Comercial del Activo. Devuelve un Activo
+	 * con los valores que se han modificado en este, para su posterior guardado en el servicio
+	 * principal de esta factoría.
+	 * 
+	 * @param Activo
 	 * @param WebDto para parsear en DtoActivoInformeComercial
 	 * @return Activo
 	 */
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto webDto) {
-		
 		DtoActivoInformeComercial activoInformeDto = (DtoActivoInformeComercial) webDto;
-		
-		try {
 
-			// Se guardan todas las propieades del "Informe Comercial" que son comunes a "Informacion Comercial"
-			if (!Checks.esNulo(activo.getInfoComercial())){
+		try {
+			// Se guardan todas las propieades del "Informe Comercial" que son comunes a
+			// "Informacion Comercial"
+			if (!Checks.esNulo(activo.getInfoComercial())) {
 				beanUtilNotNull.copyProperties(activo.getInfoComercial(), activoInformeDto);
-				
+
 				if (!Checks.esNulo(activoInformeDto.getProvinciaCodigo())) {
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getProvinciaCodigo());
 					Filter borrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 					DDProvincia provincia = (DDProvincia) genericDao.get(DDProvincia.class, filtro, borrado);
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "provincia", provincia);
 				}
-				
+
 				if (!Checks.esNulo(activoInformeDto.getMunicipioCodigo())) {
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getMunicipioCodigo());
 					Localidad localidad = (Localidad) genericDao.get(Localidad.class, filtro);
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "localidad", localidad);
 				}
-				
+
 				if (!Checks.esNulo(activoInformeDto.getTipoActivoCodigo())) {
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getTipoActivoCodigo());
 					DDTipoActivo tipoActivo = (DDTipoActivo) genericDao.get(DDTipoActivo.class, filtro);
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "tipoActivo", tipoActivo);
 				}
-				
+
 				if (!Checks.esNulo(activoInformeDto.getSubtipoActivoCodigo())) {
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getSubtipoActivoCodigo());
 					DDSubtipoActivo subtipoActivo = (DDSubtipoActivo) genericDao.get(DDSubtipoActivo.class, filtro);
@@ -244,36 +223,36 @@ public class TabActivoInformeComercial implements TabActivoService {
 					DDTipoVia tipoVia = (DDTipoVia) genericDao.get(DDTipoVia.class, filtro);
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "tipoVia", tipoVia);
 				}
-				
+
 				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "numeroVia", activoInformeDto.getNumeroVia());
 				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "planta", activoInformeDto.getPlanta());
-				
+
 				if (!Checks.esNulo(activoInformeDto.getInferiorMunicipioCodigo())) {
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getInferiorMunicipioCodigo());
 					DDUnidadPoblacional unidadPoblacional = (DDUnidadPoblacional) genericDao.get(DDUnidadPoblacional.class, filtro);
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "unidadPoblacional", unidadPoblacional);
 				}
-				
+
 				if (!Checks.esNulo(activoInformeDto.getUbicacionActivoCodigo())) {
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getUbicacionActivoCodigo());
 					DDUbicacionActivo ubicacionActivo = (DDUbicacionActivo) genericDao.get(DDUbicacionActivo.class, filtro);
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "ubicacionActivo", ubicacionActivo);
 				}
 
-				if(!Checks.esNulo(activoInformeDto.getEstadoConstruccionCodigo())) {
+				if (!Checks.esNulo(activoInformeDto.getEstadoConstruccionCodigo())) {
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getEstadoConstruccionCodigo());
 					DDEstadoConstruccion estadoConstruccion = (DDEstadoConstruccion) genericDao.get(DDEstadoConstruccion.class, filtro);
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "estadoConstruccion", estadoConstruccion);
 				}
 
-				if(!Checks.esNulo(activoInformeDto.getEstadoConservacionCodigo())) {
+				if (!Checks.esNulo(activoInformeDto.getEstadoConservacionCodigo())) {
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getEstadoConservacionCodigo());
 					DDEstadoConservacion estadoConservacion = (DDEstadoConservacion) genericDao.get(DDEstadoConservacion.class, filtro);
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "estadoConservacion", estadoConservacion);
 				}
 
 				// Datos del edificio.
-				if(!Checks.esNulo(activo.getInfoComercial().getEdificio())){
+				if (!Checks.esNulo(activo.getInfoComercial().getEdificio())) {
 					// Reformas.
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "reformaFachada", activoInformeDto.getReformaFachada());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "reformaEscalera", activoInformeDto.getReformaEscalera());
@@ -284,14 +263,15 @@ public class TabActivoInformeComercial implements TabActivoService {
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "reformaOtroDescEdificio", activoInformeDto.getReformaOtroDescEdificio());
 
 					// Inf general.
-					if(!Checks.esNulo(activoInformeDto.getEstadoConservacionEdificioCodigo())) {
+					if (!Checks.esNulo(activoInformeDto.getEstadoConservacionEdificioCodigo())) {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getEstadoConservacionEdificioCodigo());
 						DDEstadoConservacion estadoConservacion = (DDEstadoConservacion) genericDao.get(DDEstadoConservacion.class, filtro);
 						beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "estadoConservacionEdificio", estadoConservacion);
 					}
 
-					if(!Checks.esNulo(activoInformeDto.getAnyoRehabilitacionEdificio())) {
-						beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "anyoRehabilitacionEdificio", Integer.parseInt(activoInformeDto.getAnyoRehabilitacionEdificio()));
+					if (!Checks.esNulo(activoInformeDto.getAnyoRehabilitacionEdificio())) {
+						beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "anyoRehabilitacionEdificio",
+								Integer.parseInt(activoInformeDto.getAnyoRehabilitacionEdificio()));
 					}
 
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "numPlantas", activoInformeDto.getNumPlantas());
@@ -304,50 +284,15 @@ public class TabActivoInformeComercial implements TabActivoService {
 
 				activo.setInfoComercial(genericDao.save(ActivoInfoComercial.class, activo.getInfoComercial()));
 			}
-			
-			//HREOS-1713 - Guardar el valor estimado de venta y renta en la tabla informe.
-			
-			/*// Se actualizan los importes estimados de venta y de renta, sobre las valoraciones de este activo
-			// Si para este activo no hay valoraciones del tipo estimado venta o renta, el metodo 
-			//saveActivoInformeValoracion las creara
-			
-			// Actualiza o crea la valoracion de tipo Estimado Venta
-			if (!Checks.esNulo(activoInformeDto.getValorEstimadoVenta())){
-				Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-				Filter estimadoVentaTPCFilter = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_ESTIMADO_VENTA);
-				ActivoValoraciones activoValoracionEstimadoVenta = (ActivoValoraciones) genericDao.get(ActivoValoraciones.class, activoFilter, estimadoVentaTPCFilter);
-				
-				DtoPrecioVigente dto = new DtoPrecioVigente();
-				dto.setImporte(activoInformeDto.getValorEstimadoVenta());
-				dto.setCodigoTipoPrecio(DDTipoPrecio.CODIGO_TPC_ESTIMADO_VENTA);
-				dto.setFechaInicio(new Date());
-				
-				activoManager.saveActivoValoracion(activo, activoValoracionEstimadoVenta,dto);
-			}
-			
-			// Actualiza o crea la valoracion de tipo Estimado Renta
-			if (!Checks.esNulo(activoInformeDto.getValorEstimadoRenta())){
-				Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-				Filter estimadoRentaTPCFilter = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_ESTIMADO_RENTA);
-				ActivoValoraciones activoValoracionEstimadoRenta = (ActivoValoraciones) genericDao.get(ActivoValoraciones.class, activoFilter, estimadoRentaTPCFilter);
-				
-				DtoPrecioVigente dto = new DtoPrecioVigente();
-				dto.setImporte(activoInformeDto.getValorEstimadoRenta());
-				dto.setCodigoTipoPrecio(DDTipoPrecio.CODIGO_TPC_ESTIMADO_RENTA);
-				dto.setFechaInicio(new Date());
-				
-				activoManager.saveActivoValoracion(activo, activoValoracionEstimadoRenta, dto);
-			}
-*/
+
 			// Actualizar los datos de comunidad de propietarios
 			ActivoComunidadPropietarios comunidadPropietarios;
-			if(!Checks.esNulo(activo.getComunidadPropietarios())) {
+			if (!Checks.esNulo(activo.getComunidadPropietarios())) {
 				comunidadPropietarios = activo.getComunidadPropietarios();
 			} else {
 				comunidadPropietarios = new ActivoComunidadPropietarios();
 			}
-			
-			
+
 			beanUtilNotNull.copyProperty(comunidadPropietarios, "constituida", activoInformeDto.getInscritaComunidad());
 			beanUtilNotNull.copyProperty(activo.getInfoComercial(), "derramaOrientativaComunidad", activoInformeDto.getDerramaOrientativaComunidad());
 			beanUtilNotNull.copyProperty(activo.getInfoComercial(), "cuotaOrientativaComunidad", activoInformeDto.getCuotaOrientativaComunidad());
@@ -355,70 +300,64 @@ public class TabActivoInformeComercial implements TabActivoService {
 			beanUtilNotNull.copyProperty(comunidadPropietarios, "telfAdministrador", activoInformeDto.getTelAdministradorComunidad());
 			beanUtilNotNull.copyProperty(comunidadPropietarios, "nomAdministrador", activoInformeDto.getNomAdministradorComunidad());
 			beanUtilNotNull.copyProperty(comunidadPropietarios, "telfPresidente", activoInformeDto.getTelPresidenteComunidad());
-			
+
 			genericDao.save(ActivoComunidadPropietarios.class, comunidadPropietarios);
 
 			activo.setComunidadPropietarios(comunidadPropietarios);
-			
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
-		
+
 		return activo;
-		
 	}
-	
+
 	private void getDatosByTipoActivo(Activo activo, DtoActivoInformeComercial activoInformeDto) {
-		
 		try {
-			
 			String codigoTipoActivo = null;
-			if(!Checks.esNulo(activo.getInfoComercial()) &&
-					!Checks.esNulo(activo.getInfoComercial().getTipoActivo()) &&
-					!Checks.esNulo(activo.getInfoComercial().getTipoActivo().getCodigo())){
+
+			if (!Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getTipoActivo())
+					&& !Checks.esNulo(activo.getInfoComercial().getTipoActivo().getCodigo())) {
 				codigoTipoActivo = activo.getInfoComercial().getTipoActivo().getCodigo();
 			} else {
 				codigoTipoActivo = activo.getTipoActivo().getCodigo();
 			}
-			
-			switch(Integer.parseInt(codigoTipoActivo)) {
+
+			switch (Integer.parseInt(codigoTipoActivo)) {
 				case 1:
 					break;
 				case 2:
 					ActivoVivienda vivienda = (ActivoVivienda) activo.getInfoComercial();
-					beanUtilNotNull.copyProperties(activoInformeDto,vivienda);
+					beanUtilNotNull.copyProperties(activoInformeDto, vivienda);
 					break;
 				case 3:
 					ActivoLocalComercial local = (ActivoLocalComercial) activo.getInfoComercial();
-					beanUtilNotNull.copyProperties(activoInformeDto,local);
+					beanUtilNotNull.copyProperties(activoInformeDto, local);
 					beanUtilNotNull.copyProperties(activoInformeDto, activo.getInfoComercial().getInstalacion());
 					break;
 				case 4:
 					break;
 				case 5:
 					ActivoEdificio edificio = activo.getInfoComercial().getEdificio();
-					beanUtilNotNull.copyProperties(activoInformeDto,edificio);
+					beanUtilNotNull.copyProperties(activoInformeDto, edificio);
 					break;
 				case 6:
 					break;
 				case 7:
 					ActivoPlazaAparcamiento otros = (ActivoPlazaAparcamiento) activo.getInfoComercial();
-					beanUtilNotNull.copyProperties(activoInformeDto,otros);
-					if(!Checks.esNulo(otros.getTipoCalidad()))
-						beanUtilNotNull.copyProperty(activoInformeDto, "maniobrabilidadCodigo", otros.getTipoCalidad().getCodigo());
-					if(!Checks.esNulo(otros.getSubtipoPlazagaraje()))
+					beanUtilNotNull.copyProperties(activoInformeDto, otros);
+					if (!Checks.esNulo(otros.getTipoCalidad())) beanUtilNotNull.copyProperty(activoInformeDto, "maniobrabilidadCodigo", otros.getTipoCalidad().getCodigo());
+					if (!Checks.esNulo(otros.getSubtipoPlazagaraje()))
 						beanUtilNotNull.copyProperty(activoInformeDto, "subtipoPlazagarajeCodigo", otros.getSubtipoPlazagaraje().getCodigo());
-					//Instalaciones
+					// Instalaciones
 					beanUtilNotNull.copyProperties(activoInformeDto, activo.getInfoComercial().getInstalacion());
 					break;
 				default:
 					break;
-				
 			}
 
-		} catch (ClassCastException e){
+		} catch (ClassCastException e) {
 			logger.error(e.getMessage());
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
@@ -426,5 +365,4 @@ public class TabActivoInformeComercial implements TabActivoService {
 			e.printStackTrace();
 		}
 	}
-
 }

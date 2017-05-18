@@ -6,31 +6,24 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
-import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.api.controlAcceso.EXTControlAccesoApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
-import es.capgemini.pfs.direccion.api.DireccionApi;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.web.dto.factory.DTOFactory;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.utils.AgendaMultifuncionCorreoUtils;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 
 @Service
 public class GenericAdapter {
-
-	@Autowired
-	private DTOFactory dtoFactory;
 
 	@Autowired
 	private UsuarioApi usuarioApi;
@@ -40,15 +33,6 @@ public class GenericAdapter {
 
 	@Autowired
 	private DictionaryManager diccionarioManager;
-
-	@Autowired
-	private DireccionApi direccionApi;
-
-	@Autowired
-	private ActivoApi activoApi;
-
-	@Autowired
-	private Executor executor;
 
 	@Autowired
 	private AgendaMultifuncionCorreoUtils agendaMultifuncionCorreoUtils;
@@ -61,35 +45,45 @@ public class GenericAdapter {
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<Dictionary> getDiccionario(String diccionario) {
-
+		
 		Class<?> clase = DiccionarioTargetClassMap.convertToTargetClass(diccionario);
 		List lista = null;
-		try {
-			if (!Checks.esNulo(clase.getField("auditoria"))) {
-				lista = diccionarioApi.dameValoresDiccionario(clase);
-			}
-		} catch (Exception e) {
-		}
-		lista = diccionarioApi.dameValoresDiccionarioSinBorrado(clase);
-
-		// sí el diccionario es 'tiposPeriodicidad' modificamos el orden
-		if (clase.equals(DDTipoPeriocidad.class)) {
+		
+		//TODO: Código bueno:
+//		try {
+//			if(!Checks.esNulo(clase.getMethod("getAuditoria"))){
+//				lista = diccionarioApi.dameValoresDiccionario(clase);
+//			}
+//		} catch (SecurityException e) {
+//			lista = diccionarioApi.dameValoresDiccionarioSinBorrado(clase);
+//		} catch (NoSuchMethodException e) {
+//			lista = diccionarioApi.dameValoresDiccionarioSinBorrado(clase);
+//		}
+		
+		//TODO: Para ver que diccionarios no tienen auditoria.
+		lista = diccionarioApi.dameValoresDiccionario(clase);
+		
+		//sí el diccionario es 'tiposPeriodicidad' modificamos el orden
+		if(clase.equals(DDTipoPeriocidad.class)){
 			List listaPeriodicidad = new ArrayList();
-			for (int i = 1; i <= lista.size(); i++) {
-				String cod;
-				if (i < 10)
-					cod = "0" + i;
-				else
-					cod = "" + i;
-				listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(clase, cod));
+			if(!Checks.esNulo(lista)){
+				for(int i=1; i<=lista.size();i++){
+					String cod;
+					if(i<10)
+						cod = "0"+i;
+					else
+						cod = ""+i;
+					listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(clase, cod));
+				}
+				lista = listaPeriodicidad;
+			}else{
+				return listaPeriodicidad;
 			}
-			lista = listaPeriodicidad;
 		}
-
+			
 		return lista;
-
 	}
 
 	public List<Dictionary> getDiccionarioTareas(String diccionario) {

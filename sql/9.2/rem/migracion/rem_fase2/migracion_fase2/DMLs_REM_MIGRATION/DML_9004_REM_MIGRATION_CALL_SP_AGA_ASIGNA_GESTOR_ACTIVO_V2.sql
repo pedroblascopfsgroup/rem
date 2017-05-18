@@ -1,13 +1,13 @@
 --/*
 --#########################################
---## AUTOR=Pablo Meseguer
+--## AUTOR=ANAHUAC DE VICENTE
 --## FECHA_CREACION=20170510
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=HREOS-719 y HREOS-1976
+--## INCIDENCIA_LINK=HREOS-1976
 --## PRODUCTO=NO
 --## 
---## Finalidad: ASIGNACION DE GESTORES PARA LOS NUEVOS ACTIVOS. HREOS-1976 - Usar procederure de asignación de gestores.
+--## Finalidad: HREOS-1976 - Usar procedure de asignación de gestores para rellenar los huecos faltantes en la asignación de gestores a los activos.
 --##			
 --## INSTRUCCIONES:  
 --## VERSIONES:

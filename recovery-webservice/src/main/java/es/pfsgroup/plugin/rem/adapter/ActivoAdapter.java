@@ -135,7 +135,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
@@ -1564,11 +1563,11 @@ public class ActivoAdapter {
 			beanUtilNotNull.copyProperty(dtoTramite, "numActivo", tramite.getActivo().getNumActivo());
 			beanUtilNotNull.copyProperty(dtoTramite, "esMultiActivo", tramite.getActivos().size() > 1 ? true : false);
 			beanUtilNotNull.copyProperty(dtoTramite, "countActivos", tramite.getActivos().size());
-			if (!Checks.esNulo(tramite.getTrabajo()))
-				if (!DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(tramite.getTrabajo().getTipoTrabajo().getCodigo()))
+			if (!Checks.esNulo(tramite.getTipoTramite()))
+				if (!ActivoTramiteApi.CODIGO_TRAMITE_ACTUACION_TECNICA.equals(tramite.getTipoTramite().getCodigo()))
 					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonCierre", true);
-			if (!Checks.esNulo(tramite.getTrabajo()))
-				if (!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tramite.getTrabajo().getTipoTrabajo().getCodigo()))
+			if (!Checks.esNulo(tramite.getTipoTramite()))
+				if (!ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA.equals(tramite.getTipoTramite().getCodigo()))
 					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonResolucion", true);
 			beanUtilNotNull.copyProperty(dtoTramite, "tieneEC", false);
 			if (!Checks.esNulo(tramite.getTrabajo())) {
@@ -1738,7 +1737,7 @@ public class ActivoAdapter {
 
 	public Long crearTramiteAdmision(Long idActivo) {
 
-		TipoProcedimiento tprc = tipoProcedimiento.getByCodigo("T001"); // Trámite
+		TipoProcedimiento tprc = tipoProcedimiento.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_ADMISION); // Trámite
 																		// de
 																		// admisión
 
@@ -1752,7 +1751,7 @@ public class ActivoAdapter {
 
 	public Long crearTramitePublicacion(Long idActivo) {
 
-		TipoProcedimiento tprc = tipoProcedimiento.getByCodigo("T011");// Trámite
+		TipoProcedimiento tprc = tipoProcedimiento.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_PUBLICACION);// Trámite
 																		// de
 																		// publicación
 
@@ -2603,7 +2602,7 @@ public class ActivoAdapter {
 				Usuario usuario = gestorActivoApi.getGestorComercialActual(activo, codComercialAnterior);
 
 				if (!Checks.esNulo(usuario) && activoTareaExternaApi.existenTareasActivasByTramiteAndTipoGestor(activo,
-						"T013", codComercialAnterior)) {
+						ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA, codComercialAnterior)) {
 					Notificacion notif = new Notificacion();
 					String tipoComercialDesc = !isActivoRetail ? DDTipoComercializar.DESCRIPCION_SINGULAR
 							: DDTipoComercializar.DESCRIPCION_RETAIL;

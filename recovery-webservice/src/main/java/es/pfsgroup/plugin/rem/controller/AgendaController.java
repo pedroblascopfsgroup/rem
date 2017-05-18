@@ -7,7 +7,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.exception.SQLGrammarException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.stereotype.Controller;
@@ -19,17 +20,22 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.dto.WebDto;
-import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.agenda.controller.TareaController;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.TareaExcelReport;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoSolicitarProrrogaTarea;
 import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzones;
 
 @Controller
@@ -46,54 +52,14 @@ public class AgendaController extends TareaController {
 
 	@Autowired
 	ExcelReportGeneratorApi excelReportGeneratorApi;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private ActivoTramiteApi activoTramiteApi;
 
-	/*******************************************************
-	 * NOTA FASE II : Se refactoriza en ParadiseJsonController.java
-	 *******************************************************/
-	/*
-	 * @InitBinder protected void initBinder(HttpServletRequest request,
-	 * ServletRequestDataBinder binder) throws Exception{
-	 * 
-	 * JsonWriterConfiguratorTemplateRegistry registry =
-	 * JsonWriterConfiguratorTemplateRegistry.load(request);
-	 * registry.registerConfiguratorTemplate(new
-	 * SojoJsonWriterConfiguratorTemplate(){
-	 * 
-	 * @Override public SojoConfig getJsonConfig() { SojoConfig config= new
-	 * SojoConfig(); config.setIgnoreNullValues(true); return config; } } );
-	 * 
-	 * 
-	 * SimpleDateFormat dateFormat = new
-	 * SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); dateFormat.setLenient(false);
-	 * dateFormat.setTimeZone(TimeZone.getDefault());
-	 * binder.registerCustomEditor(Date.class, new
-	 * ParadiseCustomDateEditor(dateFormat, true));
-	 * 
-	 * binder.registerCustomEditor(boolean.class, new
-	 * CustomBooleanEditor("true", "false", true));
-	 * binder.registerCustomEditor(Boolean.class, new
-	 * CustomBooleanEditor("true", "false", true));
-	 * binder.registerCustomEditor(String.class, new
-	 * StringTrimmerEditor(false)); NumberFormat f =
-	 * NumberFormat.getInstance(Locale.ENGLISH); f.setGroupingUsed(false);
-	 * f.setMaximumFractionDigits(2); f.setMinimumFractionDigits(2);
-	 * binder.registerCustomEditor(double.class, new
-	 * CustomNumberEditor(Double.class, f, true));
-	 * binder.registerCustomEditor(Double.class, new
-	 * CustomNumberEditor(Double.class, f, true));
-	 * 
-	 * 
-	 * /*binder.registerCustomEditor(Float.class, new
-	 * CustomNumberEditor(Float.class, true));
-	 * binder.registerCustomEditor(Long.class, new
-	 * CustomNumberEditor(Long.class, true));
-	 * binder.registerCustomEditor(Integer.class, new
-	 * CustomNumberEditor(Integer.class, true));
-	 * 
-	 * 
-	 * 
-	 * }
-	 */
+	private final Log logger = LogFactory.getLog(getClass());
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -284,6 +250,56 @@ public class AgendaController extends TareaController {
 	public ModelAndView saltoResolucionExpediente(Long idTareaExterna, ModelMap model) {
 		model.put("success", adapter.saltoResolucionExpediente(idTareaExterna));
 
+		return createModelAndViewJson(model);
+	}
+	
+	
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saltoResolucionExpedienteByIdExp(Long idExpediente, ModelMap model) {
+
+		ExpedienteComercial eco = null;
+		List<ActivoTramite> listaTramites = null;
+		Boolean salto = false;
+		
+		try{
+
+			if(Checks.esNulo(idExpediente)){
+				throw new JsonViewerException("No se ha informado el expediente comercial.");
+				
+			}else{
+				eco = expedienteComercialApi.findOne(idExpediente);
+				if(Checks.esNulo(eco)){
+					throw new JsonViewerException("No existe el expediente comercial.");
+				}
+				
+				listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(eco.getTrabajo().getId());
+				if(Checks.esNulo(listaTramites) || 
+				  (!Checks.esNulo(listaTramites) && listaTramites.size() == 0 || 
+				  (!Checks.esNulo(listaTramites) && listaTramites.size() > 0  && Checks.esNulo(listaTramites.get(0))))){
+					throw new JsonViewerException("No se ha podido recuperar el trámite del expediente comercial.");
+				}
+				
+				List<TareaExterna> listaTareas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(listaTramites.get(0).getId());
+				for(int i=0;i< listaTareas.size(); i++){
+					TareaExterna tarea = listaTareas.get(i);						
+					if(!Checks.esNulo(tarea)){
+						salto = adapter.saltoResolucionExpediente(tarea.getId());
+						break;
+					}
+				}
+			}
+			model.put("success", salto);
+			
+		} catch (JsonViewerException e) {
+			logger.error("Error al saltar a resolución expediente", e);
+			model.put("success", salto);
+			model.put("msgError", e.getMessage());
+			
+		} catch (Exception e) {
+			model.put("success", salto);
+		}	
+		
 		return createModelAndViewJson(model);
 	}
 

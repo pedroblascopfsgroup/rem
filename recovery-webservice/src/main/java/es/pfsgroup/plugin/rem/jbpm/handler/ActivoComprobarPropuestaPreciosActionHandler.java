@@ -18,7 +18,6 @@ public class ActivoComprobarPropuestaPreciosActionHandler extends ActivoBaseActi
 
 	private static final long serialVersionUID = 102030L;
 	
-	private static final String CODIGO_TRAMITE_PROPUESTA_PRECIOS = "T009";
 	
 	@Autowired
 	GestorActivoApi gestorActivoApi;

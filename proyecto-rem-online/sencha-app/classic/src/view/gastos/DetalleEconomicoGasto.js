@@ -152,7 +152,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 									         			}
 									         			else{
 									         				this.setHidden(false);
-									         				this.setDisabled(true);
+									         				this.setDisabled(false);
 									         			}
 													}
 												},

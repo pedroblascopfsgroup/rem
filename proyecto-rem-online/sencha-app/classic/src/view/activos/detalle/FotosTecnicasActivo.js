@@ -226,11 +226,19 @@ Ext.define('HreRem.view.activos.detalle.FotosTecnicasActivo', {
     
     //HREOS-846 Si NO esta dentro del perimetro, ocultamos las opciones de agregar/eliminar imagenes
     evaluarEdicion: function() {    	
-		var me = this;
-
-		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
-			me.down('[xtype=toolbar]').hide();
+    	var me = this;
+		var allowEdit = true;		
+    	if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
+			//me.down('[xtype=toolbar]').hide();
+			allowEdit = false;
 		}
+    	if(allowEdit && me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
+ 	    	allowEdit = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+ 	    			&& $AU.userHasFunction('EDITAR_TAB_FOTOS_ACTIVO_TECNICAS'));
+ 	    }
+    	if(!allowEdit){
+    		me.down('[xtype=toolbar]').hide();
+    	}
     }
     
 });

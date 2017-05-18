@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.adapter;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,84 +28,81 @@ import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 
 @Service
 public class GenericAdapter {
-	
-    @Autowired
-    private DTOFactory dtoFactory;
-    
-    @Autowired
-    private UsuarioApi usuarioApi;
-    
-    @Autowired
-    private UtilDiccionarioApi diccionarioApi;
-    
-    @Autowired
-    private DictionaryManager diccionarioManager;
-    
-    @Autowired
-    private DireccionApi direccionApi;
-    
-    @Autowired
-    private ActivoApi activoApi;
-    
+
+	@Autowired
+	private DTOFactory dtoFactory;
+
+	@Autowired
+	private UsuarioApi usuarioApi;
+
+	@Autowired
+	private UtilDiccionarioApi diccionarioApi;
+
+	@Autowired
+	private DictionaryManager diccionarioManager;
+
+	@Autowired
+	private DireccionApi direccionApi;
+
+	@Autowired
+	private ActivoApi activoApi;
+
 	@Autowired
 	private Executor executor;
 
 	@Autowired
 	private AgendaMultifuncionCorreoUtils agendaMultifuncionCorreoUtils;
-	
+
 	@Autowired
 	EXTControlAccesoApi controlAccesoApi;
-	
-    @Autowired
-    private GenericABMDao genericDao;
-	
+
+	@Autowired
+	private GenericABMDao genericDao;
+
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
-    
+
 	@SuppressWarnings("unchecked")
 	public List<Dictionary> getDiccionario(String diccionario) {
-		
+
 		Class<?> clase = DiccionarioTargetClassMap.convertToTargetClass(diccionario);
 		List lista = null;
 		try {
-			if(!Checks.esNulo(clase.getField("auditoria"))) {
+			if (!Checks.esNulo(clase.getField("auditoria"))) {
 				lista = diccionarioApi.dameValoresDiccionario(clase);
 			}
-		} catch (Exception e) {	
+		} catch (Exception e) {
 		}
 		lista = diccionarioApi.dameValoresDiccionarioSinBorrado(clase);
-		
-		//sí el diccionario es 'tiposPeriodicidad' modificamos el orden
-		if(clase.equals(DDTipoPeriocidad.class)){
+
+		// sí el diccionario es 'tiposPeriodicidad' modificamos el orden
+		if (clase.equals(DDTipoPeriocidad.class)) {
 			List listaPeriodicidad = new ArrayList();
-			for(int i=1; i<=lista.size();i++){
+			for (int i = 1; i <= lista.size(); i++) {
 				String cod;
-				if(i<10)
-					cod = "0"+i;
+				if (i < 10)
+					cod = "0" + i;
 				else
-					cod = ""+i;
+					cod = "" + i;
 				listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(clase, cod));
 			}
 			lista = listaPeriodicidad;
 		}
-			
+
 		return lista;
-		
-		
-		
+
 	}
-	
+
 	public List<Dictionary> getDiccionarioTareas(String diccionario) {
-		
+
 		return diccionarioManager.getList(diccionario);
-		
+
 	}
 
 	public Usuario getUsuarioLogado() {
 
-		Usuario usuario = usuarioApi.getUsuarioLogado();		
+		Usuario usuario = usuarioApi.getUsuarioLogado();
 		return usuario;
-	}	
-	
+	}
 
 	/**
 	 * 
@@ -114,13 +110,15 @@ public class GenericAdapter {
 	 * @param mailsCC
 	 * @param asunto
 	 * @param cuerpo
-	 * Manda un correo electrónico sin adjunto al listado de emails indicado en mailsPara y mailsCC
+	 *            Manda un correo electrónico sin adjunto al listado de emails
+	 *            indicado en mailsPara y mailsCC
 	 */
-	public void sendMail(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo)
-	{
-	// TODO: Para poner remitente, sustituirlo por el primer null de la llamada al método enviarCorreoConAdjuntos
+	public void sendMail(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo) {
+		// TODO: Para poner remitente, sustituirlo por el primer null de la
+		// llamada al método enviarCorreoConAdjuntos
 		try {
-			//AgendaMultifuncionCorreoUtils.dameInstancia(executor).enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, null);
+			// AgendaMultifuncionCorreoUtils.dameInstancia(executor).enviarCorreoConAdjuntos(null,
+			// mailsPara, mailsCC, asunto, cuerpo, null);
 			agendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, null);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -129,40 +127,88 @@ public class GenericAdapter {
 	}
 
 	/**
-	 * LLama a la api de control de acceso para registrar al usuario identificado
+	 * LLama a la api de control de acceso para registrar al usuario
+	 * identificado
 	 */
-	public void registerUser() {		
-		controlAccesoApi.registrarAccesoDeUsuario();		
+	public void registerUser() {
+		controlAccesoApi.registrarAccesoDeUsuario();
 	}
-	
-	public Boolean isSuper(Usuario usuario){
+
+	public Boolean isSuper(Usuario usuario) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "HAYASUPER");
 		Perfil perfilSuper = genericDao.get(Perfil.class, filtro);
-				
+
 		return usuario.getPerfiles().contains(perfilSuper);
 	}
-	
-	public Boolean isProveedor(Usuario usuario){
+
+	public Boolean isProveedor(Usuario usuario) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "HAYAPROV");
 		Perfil perfilProveedor = genericDao.get(Perfil.class, filtro);
-				
+
 		return usuario.getPerfiles().contains(perfilProveedor);
 	}
-	
+
+	/**
+	 * Es proveedor HAYA o CEE?
+	 * 
+	 * @param usuario
+	 * @return
+	 */
+	public Boolean isProveedorHayaOrCee(Usuario usuario) {
+		Perfil perfilProveedorHaya = genericDao.get(Perfil.class,
+				genericDao.createFilter(FilterType.EQUALS, "codigo", "HAYAPROV"));
+
+		Perfil perfilProveedorCEE = genericDao.get(Perfil.class,
+				genericDao.createFilter(FilterType.EQUALS, "codigo", "HAYACERTI"));
+
+		return usuario.getPerfiles().contains(perfilProveedorHaya)
+				|| usuario.getPerfiles().contains(perfilProveedorCEE);
+	}
+
+	/**
+	 * Es gestoria?
+	 * 
+	 * @param usuario
+	 * @return
+	 */
+	public Boolean isGestoria(Usuario usuario) {
+		Perfil GESTOADM = genericDao.get(Perfil.class,
+				genericDao.createFilter(FilterType.EQUALS, "codigo", "GESTOADM"));
+
+		Perfil GESTIAFORM = genericDao.get(Perfil.class,
+				genericDao.createFilter(FilterType.EQUALS, "codigo", "GESTIAFORM"));
+
+		Perfil HAYAGESTADMT = genericDao.get(Perfil.class,
+				genericDao.createFilter(FilterType.EQUALS, "codigo", "HAYAGESTADMT"));
+
+		Perfil GESTOCED = genericDao.get(Perfil.class,
+				genericDao.createFilter(FilterType.EQUALS, "codigo", "GESTOCED"));
+
+		Perfil GESTOPLUS = genericDao.get(Perfil.class,
+				genericDao.createFilter(FilterType.EQUALS, "codigo", "GESTOPLUS"));
+
+		Perfil GESTOPDV = genericDao.get(Perfil.class,
+				genericDao.createFilter(FilterType.EQUALS, "codigo", "GESTOPDV"));
+
+		return usuario.getPerfiles().contains(GESTOADM) || usuario.getPerfiles().contains(GESTIAFORM)
+				|| usuario.getPerfiles().contains(HAYAGESTADMT) || usuario.getPerfiles().contains(GESTOCED)
+				|| usuario.getPerfiles().contains(GESTOPLUS) || usuario.getPerfiles().contains(GESTOPDV);
+	}
+
 	/**
 	 * Comprueba si el usuario tiene el perfil pasado por parametro
 	 */
 	public Boolean tienePerfil(String codPerfil, Usuario u) {
-		
+
 		if (Checks.esNulo(u) || Checks.esNulo(codPerfil)) {
-	        return false;
-	    }
-	    for (Perfil p : u.getPerfiles()) {
-	    	if(codPerfil.equals(p.getCodigo()))
-	    		return true;
-	    }
-	
-	    return false;
+			return false;
+		}
+		for (Perfil p : u.getPerfiles()) {
+			if (codPerfil.equals(p.getCodigo()))
+				return true;
+		}
+
+		return false;
 	}
 
 }

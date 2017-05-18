@@ -51,13 +51,19 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
 
 			    listeners : {
    	                beforeedit : function(editor, context, eOpts ) {
+   	                	var allowEdit = true;		
+	   	         	    if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
+	   	         	    	allowEdit = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+	   	         	    			&& $AU.userHasFunction('EDITAR_SITU_POSESORIA_ACTIVO'));
+	   	         	    }
    	                    var idUsuario = context.record.get("idUsuario");
    	                	if (!Ext.isEmpty(idUsuario))
    	                	{
-	   	                    var allowEdit = $AU.sameUserPermToEnable(idUsuario);
+	   	                    allowEdit = $AU.sameUserPermToEnable(idUsuario);
 	   	                    this.editOnSelect = allowEdit;
-	   	                    return allowEdit;
+	   	                    
    	                	}
+   	                	return allowEdit;
 	                }
 	            },
 

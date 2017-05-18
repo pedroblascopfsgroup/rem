@@ -93,6 +93,9 @@ public class VBusquedaProveedor implements Serializable {
 	@Column(name = "PROPIETARIO_ACTIVO_VINCULADO")
 	private String propietarioActivoVinculado;
 	
+	@Column(name = "USU_ID")
+	private Long idUser;
+	
 	public Long getId() {
 		return id;
 	}
@@ -300,5 +303,15 @@ public class VBusquedaProveedor implements Serializable {
 	public void setTopProveedor(Integer topProveedor) {
 		this.topProveedor = topProveedor;
 	}
+
+	public Long getIdUser() {
+		return idUser;
+	}
+
+	public void setIdUser(Long idUser) {
+		this.idUser = idUser;
+	}
+	
+	
 
 }

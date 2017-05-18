@@ -7,11 +7,11 @@ Ext.define('HreRem.view.activos.detalle.AdmisionActivoTabPanel', {
     requires	: ['HreRem.view.activos.detalle.AdmisionCheckInfoActivo', 'HreRem.view.activos.detalle.AdmisionCheckDocActivo'],
     listeners	: {
     	boxready: function (tabPanel) {
-			var tab = tabPanel.getActiveTab();
+    		var tab = tabPanel.getActiveTab();
 
 			// Si la pestaÃ±a necesita botones de edicion
 			if(tab.ocultarBotonesEdicion) {
-				me.down("[itemId=botoneditar]").setVisible(false);
+				tabPanel.down("[itemId=botoneditar]").setVisible(false);
 			} else {
 				tabPanel.evaluarBotonesEdicion(tab);
 			}
@@ -84,9 +84,17 @@ Ext.define('HreRem.view.activos.detalle.AdmisionActivoTabPanel', {
 
 	initComponent: function () {
 	     var me = this;
+	     //HREOS-1964: Restringir los activos financieros (asistidos) para que solo puedan ser editables por los perfiles de IT y Gestoría PDV
+		 var ocultarAdmisioncheckinfoactivo = false;		
+		 if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
+			 ocultarAdmisioncheckinfoactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+					 && $AU.userHasFunction('EDITAR_CHECKING_INFO_ADMISION'));
+		 }else{
+			 ocultarAdmisioncheckinfoactivo = !$AU.userHasFunction('EDITAR_CHECKING_INFO_ADMISION');
+		 }
 
 	     me.items = [];
-	     $AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'admisioncheckinfoactivo', funPermEdition: ['EDITAR_CHECKING_INFO_ADMISION'], title: HreRem.i18n('title.admision.check.inf.activo')})}, ['TAB_CHECKING_INFO_ADMISION']);
+	     $AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'admisioncheckinfoactivo', ocultarBotonesEdicion: ocultarAdmisioncheckinfoactivo, title: HreRem.i18n('title.admision.check.inf.activo')})}, ['TAB_CHECKING_INFO_ADMISION']);
 	     $AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'admisioncheckdocactivo', ocultarBotonesEdicion: true, title: HreRem.i18n('title.admision.check.doc.activo')})}, ['TAB_CHECKING_DOC_ADMISION']);
 
 	     me.callParent();
@@ -96,7 +104,15 @@ Ext.define('HreRem.view.activos.detalle.AdmisionActivoTabPanel', {
 		var me = this;
 		me.down("[itemId=botoneditar]").setVisible(false);
 		var editionEnabled = function() {
-			me.down("[itemId=botoneditar]").setVisible(true);
+			//HREOS-1964: Restringir los activos financieros (asistidos) para que solo puedan ser editables por los perfiles de IT y Gestoría PDV
+			 var ocultarAdmisioncheckinfoactivo = false;		
+			 if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
+				 ocultarAdmisioncheckinfoactivo = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+						 && $AU.userHasFunction('EDITAR_CHECKING_INFO_ADMISION'));
+			 }else{
+				 ocultarAdmisioncheckinfoactivo = $AU.userHasFunction('EDITAR_CHECKING_INFO_ADMISION');
+			 }
+			me.down("[itemId=botoneditar]").setVisible(ocultarAdmisioncheckinfoactivo);
 		}
 		//HREOS-846 Si NO esta dentro del perimetro, no se habilitan los botones de editar
 		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="true") {

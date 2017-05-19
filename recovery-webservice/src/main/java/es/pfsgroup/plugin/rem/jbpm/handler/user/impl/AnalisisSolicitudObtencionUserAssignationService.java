@@ -18,7 +18,10 @@ public class AnalisisSolicitudObtencionUserAssignationService implements UserAss
 
 	private static final String CODIGO_T002_ANALISIS_PETICION = "T002_AnalisisPeticion";
 	private static final String CODIGO_T002_SOLICITUD_EXTRAORDINARIA = "T002_SolicitudExtraordinaria";
+	private static final String CODIGO_T002_SOLICITUD_LPO_GESTOR_INTERNO = "T002_SolicitudLPOGestorInterno";
+	private static final String CODIGO_T002_VALIDACION_ACTUACION = "T002_ValidacionActuacion";
 	private static final String CODIGO_T002_OBTENCION_DOCUMENTO_GESTORIA = "T002_ObtencionDocumentoGestoria";
+	private static final String CODIGO_T002_SOLICITUD_DOCUMENTO_GESTORIA = "T002_SolicitudDocumentoGestoria";
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
@@ -34,7 +37,8 @@ public class AnalisisSolicitudObtencionUserAssignationService implements UserAss
 	@Override
 	public String[] getCodigoTarea() {
 		//TODO: poner los códigos de tipos de tareas
-		return new String[]{CODIGO_T002_ANALISIS_PETICION, CODIGO_T002_SOLICITUD_EXTRAORDINARIA, CODIGO_T002_OBTENCION_DOCUMENTO_GESTORIA};
+		return new String[]{CODIGO_T002_ANALISIS_PETICION, CODIGO_T002_SOLICITUD_EXTRAORDINARIA, CODIGO_T002_SOLICITUD_LPO_GESTOR_INTERNO, 
+				CODIGO_T002_VALIDACION_ACTUACION, CODIGO_T002_OBTENCION_DOCUMENTO_GESTORIA, CODIGO_T002_SOLICITUD_DOCUMENTO_GESTORIA};
 	}
 	
 	@Override

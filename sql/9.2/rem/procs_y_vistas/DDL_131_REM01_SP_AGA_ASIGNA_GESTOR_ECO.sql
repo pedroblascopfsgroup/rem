@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20170517
+--## FECHA_CREACION=20170519
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-1770 y HREOS-1977

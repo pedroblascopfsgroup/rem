@@ -23,7 +23,7 @@ SET DEFINE OFF;
 
 DECLARE
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
-    V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquema
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#REMMASTER#'; -- Configuracion Esquema Master
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
@@ -133,33 +133,34 @@ DECLARE
 
 BEGIN
 
-	
+  
     DBMS_OUTPUT.PUT_LINE('[INICIO] Empezando a insertar datos del BPM '||V_TPO_XML||'.');
     V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_XML_JBPM = '''||V_TPO_XML||'''';
     EXECUTE IMMEDIATE V_SQL INTO table_count;
     
     IF table_count = 0 THEN
-   		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.DD_TPO_TIPO_PROCEDIMIENTO... NO existe el BPM '||V_TPO_XML||'.');
+      DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.DD_TPO_TIPO_PROCEDIMIENTO... NO existe el BPM '||V_TPO_XML||'.');
         DBMS_OUTPUT.PUT_LINE('[INFO] NO SE REALIZAN MODIFICACIONES.');
-	ELSE
+  ELSE
     IF V_TAP.FIRST IS NOT NULL THEN
       DBMS_OUTPUT.PUT_LINE('');
       DBMS_OUTPUT.PUT_LINE('**** INSERTS EN TAP_TAREA_PROCEDIMIENTO ****');
       -- Insertamos en la tabla tap_tarea_procedimiento y dd_ptp_plazos_tareas_plazas
-  		FOR I IN V_TAP.FIRST .. V_TAP.LAST
+      FOR I IN V_TAP.FIRST .. V_TAP.LAST
           LOOP
               DBMS_OUTPUT.PUT_LINE('');
               V_TMP_T_TAP := V_TAP(I);
   
               V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TMP_T_TAP(1)||'''';
-              --EXECUTE IMMEDIATE V_SQL INTO table_count;
-  
+              EXECUTE IMMEDIATE V_SQL INTO table_count;
+              
               IF table_count > 0 THEN
                   DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.TAP_TAREA_PROCEDIMIENTO... YA existe la tarea '||V_TMP_T_TAP(1)||'.');
                   DBMS_OUTPUT.PUT_LINE('[INFO] NO SE REALIZAN MODIFICACIONES.');
               ELSE
                   V_MSQL := 'SELECT '||V_ESQUEMA||'.S_TAP_TAREA_PROCEDIMIENTO.NEXTVAL FROM DUAL';
-                  --EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD_ID;
+                  EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD_ID;
+                  
                   V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO (' ||
                             'TAP_ID, DD_TPO_ID, TAP_CODIGO, TAP_VIEW, TAP_SUPERVISOR, TAP_DESCRIPCION, '||
                             'VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_FAP_ID, TAP_AUTOPRORROGA, DTYPE, TAP_MAX_AUTOP, DD_STA_ID, DD_TGE_ID, DD_TPO_ID_BPM, TAP_SCRIPT_VALIDACION, TAP_SCRIPT_VALIDACION_JBPM, TAP_SCRIPT_DECISION) '||
@@ -169,21 +170,21 @@ BEGIN
                             '(SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = '''||V_TMP_T_TAP(5)||'''),'||V_TMP_T_TAP(7)||','''||V_TMP_T_TAP(8)||''','''||V_TMP_T_TAP(9)||''','''||V_TMP_T_TAP(10)||''')';
                   DBMS_OUTPUT.PUT_LINE('INSERTANDO: '''||V_TMP_T_TAP(1)||''' de '''||V_TPO_XML||''''); 
                   DBMS_OUTPUT.PUT_LINE(V_MSQL);
-                  --EXECUTE IMMEDIATE V_MSQL;
+                  EXECUTE IMMEDIATE V_MSQL;
                   DBMS_OUTPUT.PUT_LINE('INSERTADO');
                   
                   V_MSQL := 'SELECT '||V_ESQUEMA||'.S_DD_PTP_PLAZOS_TAREAS_PLAZAS.NEXTVAL FROM DUAL';
-                  --EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD_ID;
+                  EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD_ID;
                   V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.DD_PTP_PLAZOS_TAREAS_PLAZAS (' ||
                           'DD_PTP_ID, TAP_ID, DD_PTP_PLAZO_SCRIPT, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_PTP_ABSOLUTO) '||
                           'VALUES ('||V_ENTIDAD_ID||',(SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TMP_T_TAP(1)||'''),'||
                           ''''||V_TMP_T_TAP(6)||''',0, ''REM_F2'', SYSDATE, 0, 0)';
                   DBMS_OUTPUT.PUT_LINE('INSERTANDO: Plazo de '''||V_TMP_T_TAP(1)||'''.'); 
                   DBMS_OUTPUT.PUT_LINE(V_MSQL);
-                  --EXECUTE IMMEDIATE V_MSQL;
+                  EXECUTE IMMEDIATE V_MSQL;
                   DBMS_OUTPUT.PUT_LINE('INSERTADO');
-              END IF;	          
-          END LOOP;	      
+              END IF; 
+          END LOOP;       
         END IF; -- Fin insert en TAP
        
         IF V_TFI.FIRST IS NOT NULL THEN
@@ -196,14 +197,14 @@ BEGIN
               V_TMP_T_TFI := V_TFI(I);
   
               V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP INNER JOIN '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS TFI ON TAP.TAP_ID = TFI.TAP_ID WHERE TAP.TAP_CODIGO = '''||V_TMP_T_TFI(1)||''' AND TFI.TFI_NOMBRE = '''||V_TMP_T_TFI(4)||'''';
-              --EXECUTE IMMEDIATE V_SQL INTO table_count;
+              EXECUTE IMMEDIATE V_SQL INTO table_count;
   
               IF table_count > 0 THEN
                   DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.TFI_TAREAS_FORM_ITEMS... YA existe el campo '||V_TMP_T_TFI(4)||'.');
                   DBMS_OUTPUT.PUT_LINE('[INFO] NO SE REALIZAN MODIFICACIONES.');
               ELSE
                   V_MSQL := 'SELECT '||V_ESQUEMA||'.S_TFI_TAREAS_FORM_ITEMS.NEXTVAL FROM DUAL';
-                  --EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD_ID;
+                  EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD_ID;
                   V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS (' ||
                           'TFI_ID, TAP_ID, TFI_ORDEN, TFI_TIPO, TFI_NOMBRE, TFI_LABEL, TFI_ERROR_VALIDACION, TFI_VALIDACION, TFI_BUSINESS_OPERATION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) '||
                           'VALUES ('||V_ENTIDAD_ID||', (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TMP_T_TFI(1)||'''),'||
@@ -211,7 +212,7 @@ BEGIN
                           ''''||V_TMP_T_TFI(8)||''',1, ''REM_F2'', SYSDATE, 0)';
                   DBMS_OUTPUT.PUT_LINE('INSERTANDO: Campo '''||V_TMP_T_TFI(4)||''' de '''||V_TMP_T_TFI(1)||''''); 
                   DBMS_OUTPUT.PUT_LINE(V_MSQL);
-                  --EXECUTE IMMEDIATE V_MSQL;
+                  EXECUTE IMMEDIATE V_MSQL;
                   DBMS_OUTPUT.PUT_LINE('INSERTADO');
               END IF;
           END LOOP;

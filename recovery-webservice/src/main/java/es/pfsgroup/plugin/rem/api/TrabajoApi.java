@@ -395,6 +395,14 @@ public interface TrabajoApi {
 	public Boolean existeTarifaTrabajo(TareaExterna tarea);
 
 	/**
+	 * Evalúa para una tarea, si existe tarifa(s) asociados al trabajo y si el importe de dicha tarifa es superior a cero 
+	 * @param tarea
+	 * @return
+	 */
+	@BusinessOperationDefinition("trabajoManager.existeTarifaSuperiorCeroTrabajo")
+	Boolean existeTarifaSuperiorCeroTrabajo(TareaExterna tarea);
+
+	/**
 	 * Evalúa para una tarea, si existe proveedor(es) asociados al trabajo
 	 * 
 	 * @param TareaExterna

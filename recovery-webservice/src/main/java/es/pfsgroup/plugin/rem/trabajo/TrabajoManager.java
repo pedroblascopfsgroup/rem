@@ -1951,6 +1951,30 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 
 	@Override
+	@BusinessOperation(overrides = "trabajoManager.existeTarifaSuperiorCeroTrabajo")
+	public Boolean existeTarifaSuperiorCeroTrabajo(TareaExterna tarea) {
+
+		Trabajo trabajo = getTrabajoByTareaExterna(tarea);
+
+		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+		List<TrabajoConfiguracionTarifa> tarifasTrabajo = genericDao.getList(TrabajoConfiguracionTarifa.class, filtroTrabajo);
+
+		for (TrabajoConfiguracionTarifa tct : tarifasTrabajo) {
+
+			if (tct.getMedicion() != null && tct.getPrecioUnitario() != null) {
+
+				Float importe = tct.getMedicion() * tct.getPrecioUnitario();
+
+				if (importe > 0) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	@Override
 	@BusinessOperation(overrides = "trabajoManager.getPresupuestoById")
 	public DtoPresupuestoTrabajo getPresupuestoById(Long id) {
 		DtoPresupuestoTrabajo dtoPresupuesto = new DtoPresupuestoTrabajo();

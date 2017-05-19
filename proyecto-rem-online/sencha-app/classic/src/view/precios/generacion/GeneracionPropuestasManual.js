@@ -50,39 +50,50 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasManual', {
 						bind: {
 							store: '{comboEntidadPropietaria}'
 						},
-		            	allowBlank: false
+		            	allowBlank: true
+					},
+					{
+						xtype : 'comboboxfieldbase',
+					    fieldLabel : HreRem.i18n('fieldlabel.proveedores.subcartera'),
+					    name: 'subcarteraCodigo',
+					    reference: 'subcartera',
+					    bind : {
+					      disabled: '{!entidadPropietariaCodigoRef.value}',	
+					      store : '{comboSubentidadPropietaria}',
+					      filters: {
+					    	  property: 'carteraCodigo',
+					          value: '{entidadPropietariaCodigoRef.value}'
+					      }
+					    }
 					},
 					{
 						xtype: 'comboboxfieldbase',
 						editable: true,
 						fieldLabel: HreRem.i18n('fieldlabel.tipo.propuesta'),
 						name: 'tipoPropuestaCodigo',
-		            	allowBlank: false,
+		            	allowBlank: true,
 						bind: {
+							disabled: '{!entidadPropietariaCodigoRef.value}',
 		            		store: '{comboTiposPropuesta}'
 		            	}
 					},
 					{ 
 					    xtype: 'comboboxfieldbase',
 					    editable: true,
+					    multiSelect: true,
 						fieldLabel: HreRem.i18n('fieldlabel.propietario'),
 						name: 'propietario',
 						bind: {
 							store: '{comboActivoPropietario}',
-							disabled: '{!entidadPropietariaCodigoRef.value}',
+							//disabled: '{!entidadPropietariaCodigoRef.value}',
 							filters: {
 				                property: 'codigo',
-				                value: '{entidadPropietariaCodigoRef.value}'
+				                value: '{entidadPropietariaCodigoRef.value}',
+				                disableOnEmpty:true
 				            }
 						},
-		            	allowBlank: false,
+		            	allowBlank: true,
 		            	valueField: 'id'
-					},
-					{
-						xtype: 'checkboxfieldbase',
-						fieldLabel: HreRem.i18n('fieldlabel.generacion.manual.check.todos'),
-						name: 'checkTodosActivos',
-			        	inputValue: true
 					}
         	]
         },
@@ -258,7 +269,40 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasManual', {
 						bind: {
 							store: '{comboSiNoRem}'
 						}
-					}
+					},
+					{ 
+			        	xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.precios.precio.minimo.vigente'),
+		            	name:	'minimoVigente',
+			        	bind: {
+		            		store: '{comboSiNoRem}'
+		            	}
+			        },
+					{ 
+			        	xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.precios.precio.web.vigente'),
+		            	name:	'ventaWebVigente',
+			        	bind: {
+		            		store: '{comboSiNoRem}'
+		            	}
+			        },
+					{ 
+			        	xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.precios.precio.minimo.historico'),
+		            	name:	'minimoHistorico',
+			        	bind: {
+		            		store: '{comboSiNoRem}'
+		            	}
+			        }
+			        ,
+					{ 
+			        	xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.precios.precio.web.historico'),
+		            	name:	'webHistorico',
+			        	bind: {
+		            		store: '{comboSiNoRem}'
+		            	}
+			        }
         	]
         },
         {
@@ -291,7 +335,8 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasManual', {
         
         me.addPlugin({ptype: 'lazyitems', items: items });
         
-        me.callParent();
+        me.callParent();        
+        
         
     }
     

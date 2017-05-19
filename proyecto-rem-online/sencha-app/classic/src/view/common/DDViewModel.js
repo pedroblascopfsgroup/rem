@@ -18,6 +18,15 @@ Ext.define('HreRem.view.common.DDViewModel', {
     	   		source: 'entidadPropietaria',
     	   		loadSource: true
     		},
+    		
+    		comboSubentidadPropietaria: {
+    			model: 'HreRem.model.ComboBase',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'generic/getDiccionario',
+    				extraParams: {diccionario: 'subentidadesPropietarias'}
+    			}
+    		},
 
     		comboEstadosPropuesta: {
     			source: 'estadosPropuesta',

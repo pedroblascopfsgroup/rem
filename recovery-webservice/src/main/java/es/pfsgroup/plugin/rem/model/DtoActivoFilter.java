@@ -68,6 +68,10 @@ public class DtoActivoFilter extends WebDto {
 	private Integer conBloqueo;
 	private String tipoPropuestaCodigo;
 	private Boolean checkTodosActivos;
+	private Integer minimoVigente;
+	private Integer ventaWebVigente;
+	private Integer minimoHistorico;
+	private Integer webHistorico;
 
 	public String getNumActivo() {
 		return numActivo;
@@ -417,5 +421,28 @@ public class DtoActivoFilter extends WebDto {
 	public void setCheckTodosActivos(Boolean checkTodosActivos) {
 		this.checkTodosActivos = checkTodosActivos;
 	}
-	
+	public Integer getMinimoVigente() {
+		return minimoVigente;
+	}
+	public void setMinimoVigente(Integer minimoVigente) {
+		this.minimoVigente = minimoVigente;
+	}
+	public Integer getVentaWebVigente() {
+		return ventaWebVigente;
+	}
+	public void setVentaWebVigente(Integer ventaWebVigente) {
+		this.ventaWebVigente = ventaWebVigente;
+	}
+	public Integer getMinimoHistorico() {
+		return minimoHistorico;
+	}
+	public void setMinimoHistorico(Integer minimoHistorico) {
+		this.minimoHistorico = minimoHistorico;
+	}
+	public Integer getWebHistorico() {
+		return webHistorico;
+	}
+	public void setWebHistorico(Integer webHistorico) {
+		this.webHistorico = webHistorico;
+	}	
 }

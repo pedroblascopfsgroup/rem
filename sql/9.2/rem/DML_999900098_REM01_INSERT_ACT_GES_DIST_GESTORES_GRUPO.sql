@@ -139,14 +139,6 @@ BEGIN
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
 	
-	-- TRUNCATE - Primer script de carga, por tanto podemos truncarla, el resto que siguen a este, no hacermos un truncate.
-	-- Mientras sea una tabla de configuración de la que extraemos información y no haya ninguna FK apuntando a su id, 
-    -- podemos borrar la tabla completa y volver a generar la configuración.
-    V_MSQL := 'TRUNCATE TABLE '|| V_ESQUEMA ||'.'|| V_TEXT_TABLA; 
-    EXECUTE IMMEDIATE V_MSQL;
-    DBMS_OUTPUT.PUT_LINE('[INFO]: TABLA TRUNCADA');
-
-	 
     -- LOOP para insertar los valores en ACT_GES_DIST_GESTORES -----------------------------------------------------------------
     DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN '||V_ESQUEMA||'.'||V_TEXT_TABLA);
     FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST

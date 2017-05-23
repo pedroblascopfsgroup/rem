@@ -53,9 +53,9 @@ public class ProvisionGastosExcelReport extends AbstractExcelReport implements E
 			fila.add(provision.getNomPropietario());
 			fila.add(provision.getDescCartera());
 			fila.add(Checks.esNulo(provision.getImporteTotal()) ? "" : provision.getImporteTotal().toString());
-			fila.add(Checks.esNulo(provision.getFechaAlta()) ? "" : provision.getFechaAlta().toString());
-			fila.add(Checks.esNulo(provision.getFechaEnvio()) ? "" : provision.getFechaEnvio().toString());
-			fila.add(Checks.esNulo(provision.getFechaRespuesta()) ? "" : provision.getFechaRespuesta().toString());
+			fila.add(this.getDateStringValue(provision.getFechaAlta()));
+			fila.add(this.getDateStringValue(provision.getFechaEnvio()));
+			fila.add(this.getDateStringValue(provision.getFechaRespuesta()));
 
 			valores.add(fila);
 		}

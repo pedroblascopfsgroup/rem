@@ -128,8 +128,21 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivo', {
     //HREOS-846 Si NO esta dentro del perimetro, ocultamos los botones de agregar/eliminar
     evaluarEdicion: function() {    	
 		var me = this;
-
+		var allow = true;
 		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
+			//me.down('[xtype=toolbar]').hide();
+			allow = false;
+		}
+		//HREOS-1964: Restringir los activos financieros (asistidos) para que solo puedan ser editables por los perfiles de IT y Gestoria PDV
+		if(allow){
+			if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
+				allow = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+					 && $AU.userHasFunction('EDITAR_TAB_ACTIVO_DOCUMENTOS'));
+			}else{
+				allow = $AU.userHasFunction('EDITAR_TAB_ACTIVO_DOCUMENTOS');
+			}
+		}
+		if(!allow){
 			me.down('[xtype=toolbar]').hide();
 		}
     }

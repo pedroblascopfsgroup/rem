@@ -365,7 +365,21 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.codigoProvincia", dto.getProvinciaCodigo());
    		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.municipio", dto.getMunicipio(), true);
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.codigoPostal", dto.getCodPostal());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.idPropietario", dto.getPropietario());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subcarteraCodigo", dto.getSubcarteraCodigo());
+   		
+   		//caso multiseleccion propietarios
+   		if(dto.getPropietario() != null && !dto.getPropietario().isEmpty() && dto.getPropietario().contains(",")){
+   			ArrayList<String> valores = new ArrayList<String>();
+   			for(String token : dto.getPropietario().split(",")){
+   				valores.add(token);
+   			}
+   			HQLBuilder.addFiltroWhereInSiNotNull(hb, "act.idPropietario", valores);
+   			
+   		}else{
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.idPropietario", dto.getPropietario());
+   		}
+   		
+   		
    		
    		if (dto.getSubcarteraCodigo() != null) {
    			if("00".equals(dto.getSubcarteraCodigo())) {
@@ -394,6 +408,34 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    			} else {
    				hb.appendWhere("act.fsvRenta is null");
    			}
+   		}
+   		if(!Checks.esNulo(dto.getMinimoVigente())) {
+   			if(BooleanUtils.toBoolean(dto.getMinimoVigente())) {
+   				hb.appendWhere("act.precioMinimoAutorizado is not null");
+   			} else {
+   				hb.appendWhere("act.precioMinimoAutorizado is null");
+   			} 			
+   		}
+   		if(!Checks.esNulo(dto.getVentaWebVigente())) {
+   			if(BooleanUtils.toBoolean(dto.getVentaWebVigente())) {
+   				hb.appendWhere("act.precioAprobadoVenta is not null");
+   			} else {
+   				hb.appendWhere("act.precioAprobadoVenta is null");
+   			} 			
+   		}
+   		if(!Checks.esNulo(dto.getMinimoHistorico())) {
+   			if(BooleanUtils.toBoolean(dto.getMinimoHistorico())) {
+   				hb.appendWhere("act.precioHistoricoMinimoAutorizado is not null");
+   			} else {
+   				hb.appendWhere("act.precioHistoricoMinimoAutorizado is null");
+   			} 			
+   		}
+   		if(!Checks.esNulo(dto.getWebHistorico())) {
+   			if(BooleanUtils.toBoolean(dto.getWebHistorico())) {
+   				hb.appendWhere("act.precioHistoricoAprobadoVenta is not null");
+   			} else {
+   				hb.appendWhere("act.precioHistoricoAprobadoVenta is null");
+   			} 			
    		}
    		
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conBloqueo", dto.getConBloqueo());

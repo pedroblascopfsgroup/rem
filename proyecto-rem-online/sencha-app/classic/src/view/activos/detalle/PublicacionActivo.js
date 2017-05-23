@@ -97,18 +97,34 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
         ]
     },
 
-     evaluarBotonesEdicion: function(tab) {    	
-		var me = this;
+     evaluarBotonesEdicion: function(tab) {    
+    	var me = this;
 		me.down("[itemId=botoneditar]").setVisible(false);
-		var editionEnabled = function() {
-			me.down("[itemId=botoneditar]").setVisible(true);
+		var editionEnabled = function(tab) {
+			var visible = false;
+			if(tab.xtype=='informecomercialactivo'){
+				if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
+					visible = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+						 && $AU.userHasFunction('EDITAR_TAB_INFO_COMERCIAL_PUBLICACION'));
+				}else{
+					visible = $AU.userHasFunction('EDITAR_TAB_INFO_COMERCIAL_PUBLICACION');
+				}
+			}else if(tab.xtype=='datospublicacionactivo'){
+				if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
+					visible = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+						 && $AU.userHasFunction('EDITAR_TAB_DATOS_PUBLICACION'));
+				}else{
+					visible = $AU.userHasFunction('EDITAR_TAB_DATOS_PUBLICACION');
+				}
+			}
+			me.down("[itemId=botoneditar]").setVisible(visible);
 		}
 
 		//HREOS-846 Si NO esta dentro del perimetro, no se habilitan los botones de editar
 		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="true") {
 			// Si la pestaña recibida no tiene asignadas funciones de edicion 
 			if(Ext.isEmpty(tab.funPermEdition)) {
-	    		editionEnabled();
+	    		editionEnabled(tab);
 	    	} else {
 	    		$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
 	    	} 
@@ -118,10 +134,27 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
     initComponent: function () {
     	var me = this;
     	me.setTitle(HreRem.i18n('title.publicacion.activo'));
+    	
+    	//HREOS-1964: Restringir los activos financieros (asistidos) para que solo puedan ser editables por los perfiles de IT y Gestoria PDV
+		var ocultarInformecomercialactivo = false;		
+		if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
+			ocultarInformecomercialactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+				 && $AU.userHasFunction('EDITAR_TAB_INFO_COMERCIAL_PUBLICACION'));
+		}else{
+			ocultarInformecomercialactivo = !$AU.userHasFunction('EDITAR_TAB_INFO_COMERCIAL_PUBLICACION');
+		}
+		
+		var ocultarDatospublicacionactivo = false;		
+		if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
+			ocultarDatospublicacionactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+				 && $AU.userHasFunction('EDITAR_TAB_DATOS_PUBLICACION'));
+		}else{
+			ocultarDatospublicacionactivo = !$AU.userHasFunction('EDITAR_TAB_DATOS_PUBLICACION');
+		}
 
     	var items = [];
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informecomercialactivo', funPermEdition: ['EDITAR_TAB_INFO_COMERCIAL_PUBLICACION']})}, ['TAB_INFO_COMERCIAL_PUBLICACION']);
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datospublicacionactivo', funPermEdition: ['EDITAR_TAB_DATOS_PUBLICACION']})}, ['TAB_DATOS_PUBLICACION']);
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informecomercialactivo', ocultarBotonesEdicion: ocultarInformecomercialactivo})}, ['TAB_INFO_COMERCIAL_PUBLICACION']);
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datospublicacionactivo', ocultarBotonesEdicion: ocultarDatospublicacionactivo})}, ['TAB_DATOS_PUBLICACION']);
 
 		me.addPlugin({ptype: 'lazyitems', items: items});
 		me.callParent();

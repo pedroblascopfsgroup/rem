@@ -68,6 +68,13 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 								}
 							}
 						},
+						features: [{
+				            id: 'summary',
+				            ftype: 'summary',
+				            hideGroupedHeader: true,
+				            enableGroupingMenu: false,
+				            dock: 'bottom'
+						}],
 						columns: [
 						   
 						
@@ -258,12 +265,25 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 					            flex: 1,
 					            editor: {
 					            	editable: false,
-					            	xtype:'textfield',
 					            	reference: 'honorarios'
 					            },
-					            renderer: Utils.rendererCurrency
+					            renderer: Utils.rendererCurrency,
+					            summaryType: 'sum',
+				            	summaryRenderer: function(value, summaryData, dataIndex) {
+					            	var suma = 0;
+					            	var store = this.up('grid').store;
+
+					            	for(var i=0; i< store.data.length; i++){
+					            		if(store.data.items[i].data.honorarios != null){
+					            			suma += parseFloat(store.data.items[i].data.honorarios);
+					            		}
+					            	}
+					            	suma = Ext.util.Format.number(suma, '0.00');
+					            	var msg = HreRem.i18n("grid.honorarios.total.honorarios") + " " + suma + " \u20AC";		
+					            	return msg;
+					            }
 						   },
-						    {
+						   {
 						   		text: HreRem.i18n('fieldlabel.observaciones'),
 					            dataIndex: 'observaciones',
 					            flex: 1,

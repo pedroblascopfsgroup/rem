@@ -45,10 +45,12 @@ Ext.define('HreRem.model.DetalleEconomicoGasto', {
     		name: 'impuestoIndirectoTipo'
     	},
     	{
-    		name: 'impuestoIndirectoExento'
+    		name: 'impuestoIndirectoExento',
+    		critical: true
     	},
     	{
-    		name: 'renunciaExencionImpuestoIndirecto'
+    		name: 'renunciaExencionImpuestoIndirecto',
+    		critical: true
     	},
     	{
     		name: 'impuestoIndirectoTipoImpositivo',

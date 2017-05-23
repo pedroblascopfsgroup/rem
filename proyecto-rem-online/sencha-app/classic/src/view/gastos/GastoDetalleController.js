@@ -351,13 +351,14 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		  });
 		
 	},
-	onChangeOperacionExenta: function(field, value){
+	onChangeOperacionExenta: function(check,newValue){
 		var me = this;
 
 		var operacion = me.lookupReference('cbOperacionExenta');
 		var renuncia = me.lookupReference('cbRenunciaExencion');
 		var tipoImpositivo = me.lookupReference('tipoImpositivo');
 		var cuota = me.lookupReference('cbCuota');
+		var importeTotal = me.lookupReference('detalleEconomicoImporteTotal');
 		if(operacion.getValue()){
 			renuncia.setReadOnly(false);
 			tipoImpositivo.setDisabled(true);
@@ -370,10 +371,11 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			renuncia.setValue(false);
 			renuncia.setReadOnly(true);
 		}
-		//operacion.validate();
-		//renuncia.validate();
-		//tipoImpositivo.validate();
-		//cuota.validate();
+		importeTotal.validate();
+		operacion.validate();
+		renuncia.validate();
+		tipoImpositivo.validate();
+		cuota.validate();
 
 	},
 	
@@ -381,9 +383,10 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var me = this;
 		
 		var operacion = me.lookupReference('cbOperacionExenta');
-		var renuncia = me.lookupReference('cbRenunciaExencion'); 
+		var renuncia = me.lookupReference('cbRenunciaExencion');
 		var tipoImpositivo = me.lookupReference('tipoImpositivo');
 		var cuota = me.lookupReference('cbCuota');
+		var importeTotal = me.lookupReference('detalleEconomicoImporteTotal');
 		if(operacion.getValue() && !renuncia.getValue()){
 			tipoImpositivo.setDisabled(true);
 			cuota.setDisabled(true);
@@ -393,9 +396,11 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			cuota.setDisabled(false);
 			cuota.allowBlank = false;
 		}
-		//renuncia.validate();
-		//tipoImpositivo.validate();
-		//cuota.validate();
+		importeTotal.validate();
+		operacion.validate();
+		renuncia.validate();
+		tipoImpositivo.validate();
+		cuota.validate();
 	},
 	
 	estaExento: function(get){

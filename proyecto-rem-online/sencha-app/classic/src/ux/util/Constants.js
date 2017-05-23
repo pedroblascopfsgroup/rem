@@ -178,7 +178,9 @@ Ext.define('HreRem.ux.util.Constants', {
     PERFILES: {   	
     	PROVEEDOR: 'HAYAPROV',
     	GESTOR_ACTIVOS: 'GESTACT',
-    	GESTOR_ADMISION: 'GESTADM'    	
+    	GESTOR_ADMISION: 'GESTADM',
+    	HAYASUPER: 'HAYASUPER',
+    	GESTOPDV: 'GESTOPDV'
     },
     
     TIPOS_OFERTA: {

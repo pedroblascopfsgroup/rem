@@ -41,7 +41,9 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 		
 	public static final String ACTIVE_NOT_EXISTS = "El activo no existe.";
 	public static final String ACTIVE_NOT_ACTUALIZABLE = "El estado del activo no puede actualizarse al indicado.";
-	public static final String ACTIVE_NOT_PREPUBLICABLE = "msg.error.masivo.actualizar.estado.publicacion.activo.no.prepublicable";
+	public static final String ACTIVE_NOT_PREPUBLICABLE = "No prepublicable";
+	public static final String ACTIVO_VENDIDO = "Este activo está vendido";
+	public static final String ACTIVO_NO_COMERCIALIZABLE = "Este activo no es comercializable";
 
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -96,6 +98,8 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 				Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
 				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
 				mapaErrores.put(ACTIVE_NOT_ACTUALIZABLE, isActiveNotActualizableRows(exc,operacionMasiva));
+				mapaErrores.put(ACTIVO_VENDIDO, activosVendidosRows(exc));
+				mapaErrores.put(ACTIVO_NO_COMERCIALIZABLE, activosNoComercializablesRows(exc));
 				
 				//Errores especificos para publicaciones ordinarias
 				if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR_ORDINARIA.equals(operacionMasiva.getCodigo())){
@@ -106,7 +110,9 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 				try{
 					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() || 
 							!mapaErrores.get(ACTIVE_NOT_ACTUALIZABLE).isEmpty() ||
-							(!Checks.esNulo(mapaErrores.get(messageServices.getMessage(ACTIVE_NOT_PREPUBLICABLE))) && !mapaErrores.get(messageServices.getMessage(ACTIVE_NOT_PREPUBLICABLE)).isEmpty()) ){
+							!mapaErrores.get(ACTIVO_VENDIDO).isEmpty() ||
+							!mapaErrores.get(ACTIVO_NO_COMERCIALIZABLE).isEmpty() ||
+							(!Checks.esNulo(mapaErrores.get(ACTIVE_NOT_PREPUBLICABLE)) && !mapaErrores.get(ACTIVE_NOT_PREPUBLICABLE).isEmpty()) ){
 						dtoValidacionContenido.setFicheroTieneErrores(true);
 						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 						String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
@@ -247,7 +253,7 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 						if(!particularValidator.estadosValidosDesDespublicarForzado(exc.dameCelda(i, 0)))
 							listaFilas.add(i);
 					}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_AUTORIZAREDICION.equals(operacionMasiva.getCodigo())){
-						if(!particularValidator.estadoAutorizaredicion(exc.dameCelda(i, 0)));
+						if(!particularValidator.estadoAutorizaredicion(exc.dameCelda(i, 0)))
 							listaFilas.add(i);
 					}
 				} catch (ParseException e) {
@@ -280,5 +286,41 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 		}
 		return listaFilas;
 		
+	}
+	
+	private List<Integer> activosVendidosRows(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		int i = 0;
+		try {
+			for(i=1; i<this.numFilasHoja;i++){
+				if(particularValidator.esActivoVendido(exc.dameCelda(i, 0)))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> activosNoComercializablesRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try{
+			for(i=1; i<this.numFilasHoja;i++){
+				if(particularValidator.isActivoNoComercializable(exc.dameCelda(i, 0)))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
 	}
 }

@@ -3,7 +3,6 @@ package es.pfsgroup.plugin.rem.excel;
 import java.util.ArrayList;
 import java.util.List;
 
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 
 public class GestionGastosExcelReport extends AbstractExcelReport implements ExcelReport {
@@ -67,14 +66,14 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 			fila.add(gastoProveedor.getConcepto());
 			fila.add(gastoProveedor.getCodigoProveedorRem());
 			fila.add(gastoProveedor.getNombreProveedor());
-			fila.add(Checks.esNulo(gastoProveedor.getFechaEmision()) ? "" : gastoProveedor.getFechaEmision().toString());
+			fila.add(this.getDateStringValue(gastoProveedor.getFechaEmision()));
 			fila.add(String.valueOf(gastoProveedor.getImporteTotal()));
-			fila.add(Checks.esNulo(gastoProveedor.getFechaTopePago()) ? "" : gastoProveedor.getFechaTopePago().toString());
-			fila.add(Checks.esNulo(gastoProveedor.getFechaPago()) ? "" : gastoProveedor.getFechaPago().toString());
+			fila.add(this.getDateStringValue(gastoProveedor.getFechaTopePago()));
+			fila.add(this.getDateStringValue(gastoProveedor.getFechaPago()));
 			fila.add(gastoProveedor.getPeriodicidadDescripcion());
-			fila.add(gastoProveedor.getDestinatarioDescripcion());
+			fila.add(gastoProveedor.getDocIdentifPropietario() + " - " + gastoProveedor.getNombrePropietario());
 			fila.add(gastoProveedor.getEstadoGastoDescripcion());
-			fila.add(gastoProveedor.getSujetoImpuestoIndirecto() ? "Si" : "No");
+			fila.add(this.getBooleanStringValue(gastoProveedor.getSujetoImpuestoIndirecto()));
 			fila.add(gastoProveedor.getNombreGestoria());
 			fila.add(gastoProveedor.getEntidadPropietariaDescripcion());
 

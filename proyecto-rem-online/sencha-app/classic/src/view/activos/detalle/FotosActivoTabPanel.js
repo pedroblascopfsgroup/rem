@@ -92,10 +92,27 @@ Ext.define('HreRem.view.activos.detalle.FotosActivoTabPanel', {
 
     initComponent: function () {
         var me = this;
+        
+        //HREOS-1964: Restringir los activos financieros (asistidos) para que solo puedan ser editables por los perfiles de IT y Gestoria PDV
+		var ocultarFotoswebactivo = false;		
+		if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
+			ocultarFotoswebactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+				 && $AU.userHasFunction('EDITAR_TAB_FOTOS_ACTIVO_WEB'));
+		}else{
+			ocultarFotoswebactivo = !$AU.userHasFunction('EDITAR_TAB_FOTOS_ACTIVO_WEB');
+		}
+		
+		var ocultarFotostecnicasactivo = false;		
+		if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
+			ocultarFotostecnicasactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+				 && $AU.userHasFunction('EDITAR_TAB_FOTOS_ACTIVO_TECNICAS'));
+		}else{
+			ocultarFotostecnicasactivo = !$AU.userHasFunction('EDITAR_TAB_FOTOS_ACTIVO_TECNICAS');
+		}
 
         me.items = [];
-    	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'fotoswebactivo', funPermEdition: ['EDITAR_TAB_FOTOS_ACTIVO_WEB']})}, ['TAB_FOTOS_ACTIVO_WEB']);
-        $AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'fotostecnicasactivo', funPermEdition: ['EDITAR_TAB_FOTOS_ACTIVO_TECNICAS']})}, ['TAB_FOTOS_ACTIVO_TECNICAS']);
+    	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'fotoswebactivo', ocultarBotonesEdicion: ocultarFotoswebactivo})}, ['TAB_FOTOS_ACTIVO_WEB']);
+        $AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'fotostecnicasactivo', ocultarBotonesEdicion: ocultarFotostecnicasactivo})}, ['TAB_FOTOS_ACTIVO_TECNICAS']);
 
         me.callParent();
     },

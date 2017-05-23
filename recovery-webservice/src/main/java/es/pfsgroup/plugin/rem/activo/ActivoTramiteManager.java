@@ -489,6 +489,23 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		return listaTareasProc;
 	}
 	
+	@Override
+	public List<TareaExterna> getListaTareaExternaActivasByIdTramite(Long idTramite) {
+		TareaActivo tarAct = null;
+		List<TareaExterna> listaTareaExterna = new ArrayList<TareaExterna>();
+		
+		List<TareaActivo>  listaTareas = tareaActivoApi.getTareasActivoByIdTramite(idTramite);
+		if(!Checks.esNulo(listaTareas)){
+			for(int i=0; i<listaTareas.size(); i++){
+				tarAct = listaTareas.get(i);
+				if(Checks.esNulo(tarAct.getFechaFin())){
+					listaTareaExterna.add(tarAct.getTareaExterna());
+				}
+			}
+		}
+
+		return listaTareaExterna;
+	}
 	
 	@Override
 	public List<TareaProcedimiento> getTareasByIdTramite(Long idTramite) {

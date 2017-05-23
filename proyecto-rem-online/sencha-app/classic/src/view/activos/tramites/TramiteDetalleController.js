@@ -272,14 +272,14 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 	saltoResolucionExpediente: function(button){
 		var me = this;
 		
-		var idTareaExterna = me.getView().down('[reference=listadoTareasTramite]').getSelectionModel().getSelection()[0].get("idTareaExterna");
+		var idExpediente = me.getViewModel().get("tramite.idExpediente");
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));
-		var url = $AC.getRemoteUrl('agenda/saltoResolucionExpediente');
+		var url = $AC.getRemoteUrl('agenda/saltoResolucionExpedienteByIdExp');
 		
 		var data;
 		Ext.Ajax.request({
 			url:url,
-			params: {idTareaExterna : idTareaExterna},
+			params: {idExpediente : idExpediente},
 			success: function(response, opts){
 				data = Ext.decode(response.responseText);
 				if(data.success == 'true') {

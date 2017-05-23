@@ -162,6 +162,7 @@
            <value>es.pfsgroup.plugin.rem.model.dd.DDResolucionComite</value>
            <value>es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente</value>
            <value>es.pfsgroup.plugin.rem.model.dd.DDTiposArras</value>
+           <value>es.pfsgroup.plugin.rem.model.dd.DDMotivoNoObtencion</value>
     </list>
     </property>
     </bean>

@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +42,13 @@ public class UpdaterServiceCedulaObtencionGestor implements UpdaterService {
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		
 		Trabajo trabajo = tramite.getTrabajo();
+		Date fechaVencimiento = null;
 		
 		for(TareaExternaValor valor : valores){
+			
+			if (fechaVencimiento == null) {
+				fechaVencimiento = valor.getTareaExterna().getTareaPadre().getFechaVenc();
+			}
 			
 			//Fecha Emisión
 			if(FECHA_EMISION.equals(valor.getNombre()))
@@ -55,9 +61,11 @@ public class UpdaterServiceCedulaObtencionGestor implements UpdaterService {
 							Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDocumento.CODIGO_ESTADO_EN_TRAMITE);
 							DDEstadoDocumento estadoDocumento = (DDEstadoDocumento) genericDao.get(DDEstadoDocumento.class, filtro);
 							
-							documento.setFechaEmision(ft.parse(valor.getValor()));
-							documento.setFechaObtencion(ft.parse(valor.getValor())); // Cédula : fecha de obtención = fecha de validación
-							documento.setFechaVerificado(ft.parse(valor.getValor()));
+							if (! Checks.esNulo(valor.getValor())){
+								documento.setFechaEmision(ft.parse(valor.getValor()));
+								documento.setFechaObtencion(ft.parse(valor.getValor())); // Cédula : fecha de obtención = fecha de validación
+								documento.setFechaVerificado(ft.parse(valor.getValor()));
+							}
 							documento.setEstadoDocumento(estadoDocumento);
 							genericDao.save(ActivoAdmisionDocumento.class, documento);
 						} catch (ParseException e) {
@@ -101,6 +109,10 @@ public class UpdaterServiceCedulaObtencionGestor implements UpdaterService {
 	            }
             }
             
+		}
+		trabajo.setFechaEjecucionReal(new Date());
+		if (fechaVencimiento != null) {
+			trabajo.setFechaCompromisoEjecucion(fechaVencimiento);
 		}
 		genericDao.save(Trabajo.class, trabajo);
 

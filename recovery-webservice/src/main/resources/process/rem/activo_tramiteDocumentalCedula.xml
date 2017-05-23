@@ -3,8 +3,47 @@
 <process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="activo_tramiteDocumentalCedula">
 
 	<start-state name="inicio">
-		<transition to="T008_SolicitudDocumento"></transition>
+		<transition to="T008_ComprobarTipoGestor"></transition>
 	</start-state>
+	
+	<node name="T008_ComprobarTipoGestor">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>
+				activoComprobarGestorActionHandler
+			</targetBean>
+		</action>
+		<transition to="T008_AnalisisPeticion" name="ConAnalisisPeticion"></transition>
+		<transition to="T008_SolicitudDocumento" name="SinAnalisisPeticion"></transition>
+	</node>
+
+	<state name="T008_AnalisisPeticion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					ActivoGenericSaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T008_AnalisisPeticionDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	
+	<decision name="T008_AnalisisPeticionDecision" expression="#{T008_AnalisisPeticionDecision}">
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="T008_SolicitudDocumento" name="TramitarPeticion"></transition>
+	</decision>
 
 
 	<state name="T008_SolicitudDocumento">

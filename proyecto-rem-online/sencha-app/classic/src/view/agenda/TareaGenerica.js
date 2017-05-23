@@ -511,7 +511,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 					
 					T002_AutorizacionPropietarioValidacion: function() {
 						var me = this;
-						
+
+						me.down('[name=fecha]').setValue($AC.getCurrentDate());
+
 						me.deshabilitarCampo(me.down('[name=numIncremento]'));
 						
 						me.down('[name=comboAmpliacion]').addListener('change', function(combo){
@@ -563,8 +565,13 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 							}
 						})
 					},
-					
-					
+
+					T002_SolicitudExtraordinariaValidacion: function() {
+						var me = this;
+
+						me.down('[name=fecha]').setValue($AC.getCurrentDate());
+					},
+
 					T002_ValidacionActuacionValidacion: function() {
 						var me = this;
 

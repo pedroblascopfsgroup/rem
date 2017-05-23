@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=BRUNO ANGLÉS ROLBES
---## FECHA_CREACION=20170516
+--## AUTOR=JORGE MARTIN
+--## FECHA_CREACION=20170524
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-2045
@@ -83,12 +83,8 @@ DECLARE
     TYPE T_TFI IS TABLE OF VARCHAR2(4000);
     TYPE T_ARRAY_TFI IS TABLE OF T_TFI;
     V_TFI T_ARRAY_TFI := T_ARRAY_TFI(
-    --		   TAP_CODIGO						     TFI_ORDEN	TFI_TIPO	     TFI_NOMBRE				TFI_LABEL																																																																																		TFI_ERROR_VALIDACION											TFI_VALIDACION									TFI_BUSINESS_OPERATION
-    --    T_TFI('T002_AutorizacionBankia'            ,'0'        ,'label'    ,'titulo'               ,'<p style="margin-bottom: 10px">Para cumplimentar esta tarea debe anotar la fecha en que ha recibido la respuesta del propietario aceptando o rechazando una ampliación del presupuesto asociado al activo.</p><p style="margin-bottom: 10px">En el caso de que la ampliación del presupuesto sea rechazada por el propietario, el trámite concluirá ya que no podrá llevarse a cabo la actuación por falta de saldo.</p><p style="margin-bottom: 10px">En caso de que se conceda la ampliación de presupuesto solicitada, deberá anotar su importe. En este caso, la siguiente tarea será la de "fijación de plazo de ejecución".</p><p style="margin-bottom: 10px">En el campo "observaciones" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.</p>'                                                                                               ,''                                                             ,''                                             ,''                 ),
-    --    T_TFI('T002_AutorizacionBankia'            ,'1'        ,'date'     ,'fecha'                ,'Fecha'                                                                                                                                                                                                                                                                                                        ,'Debe indicar la fecha de autorizaci&oacute;n'                 ,'false'                                        ,''                 ),
-    --    T_TFI('T002_AutorizacionBankia'            ,'2'        ,'combo'    ,'comboAmpliacion'      ,'Ampliación del presupuesto'                                                                                                                                                                                                                                                                                   ,'Debe indicar si autoriza el incremento de presupuesto'        ,'false'                                        ,'DDSiNo'           ),
-    --    T_TFI('T002_AutorizacionBankia'            ,'3'        ,'textinf'  ,'numIncremento'        ,'Importe del incremento'                                                                                                                                                                                                                                                                                       ,''                                                             ,''                                             ,''                 ),
-    --    T_TFI('T002_AutorizacionBankia'            ,'4'        ,'textarea' ,'observaciones'        ,'Observaciones'                                                                                                                                                                                                                                                                                                ,''                                                             ,''                                             ,''                 )
+    --		   TAP_CODIGO						             TFI_ORDEN	  TFI_TIPO	       TFI_NOMBRE				  TFI_LABEL							                TFI_ERROR_VALIDACION											TFI_VALIDACION									TFI_BUSINESS_OPERATION
+    T_TFI('T002_AutorizacionPropietario'       ,'5'         ,'elctrabajo'    ,'DOCU'            ,'TRABAJO > Documentos adjuntos'      ,''                                       ,''                             ,''                 )
 
 		);
     V_TMP_T_TFI T_TFI;
@@ -97,10 +93,11 @@ DECLARE
     TYPE T_TAP_UPDATE IS TABLE OF VARCHAR2(4000);
     TYPE T_ARRAY_TAP_UPDATE IS TABLE OF T_TAP_UPDATE;
     V_TAP_UPDATE T_ARRAY_TAP_UPDATE := T_ARRAY_TAP_UPDATE (
-    --                  TAP_CODIGO                    TAP_CAMPO                          TAP_VALOR
+    --                  TAP_CODIGO                            TAP_CAMPO                          TAP_VALOR --
     -- ANÁLISIS PETICIÓN
-        T_TAP_UPDATE(' ''T002_AnalisisPeticion'' ',   'TAP_SCRIPT_DECISION',             'valores[''''T002_AnalisisPeticion''''][''''comboTramitar''''] == DDSiNo.NO ? ''''Fin'''' : valores[''''T002_AnalisisPeticion''''][''''comboGasto''''] == DDSiNo.NO ? ''''OKSinPago'''' : (checkBankia() ? (checkSuperaPresupuestoActivo() ? ''''OKConPagoYSinSaldoBankia'''' : (checkSuperaDelegacion() ? ''''OKConPagoYSinSaldoBankia'''' : ''''OKConPagoYSaldo'''')) : (valores[''''T002_AnalisisPeticion''''][''''comboGasto''''] == DDSiNo.SI ? (valores[''''T002_AnalisisPeticion''''][''''comboSaldo''''] == DDSiNo.SI ? ''''OKConPagoYSaldo'''' : ''''OKConPagoYSinSaldo'''') : ''''OKSinPago''''))'),
-        T_TAP_UPDATE(' ''T002_AnalisisPeticion'' ',   'TAP_SCRIPT_VALIDACION_JBPM',      'valores[''''T002_AnalisisPeticion''''][''''comboTramitar''''] == DDSiNo.NO ? null : (checkHayPresupuestoEjercicioActual() ? (valores[''''T002_AnalisisPeticion''''][''''comboGasto''''] == DDSiNo.NO ? null : ( comprobarExisteTarifaSuperiorCeroTrabajo() ?  (comprobarExisteProveedorTrabajo() ? null : ''''Debe asignar al menos un proveedo al trabajo.'''') : ''''Debe asignar al menos una tarifa con importe mayor a 0 al trabajo.'''')) : ''''El activo debe tener asignado un presupuesto para el ejercicio actual, aunque sea con saldo cero'''')')
+        T_TAP_UPDATE(' ''T002_AnalisisPeticion'' ',           'TAP_SCRIPT_DECISION',             'valores[''''T002_AnalisisPeticion''''][''''comboTramitar''''] == DDSiNo.NO ? ''''Fin'''' : valores[''''T002_AnalisisPeticion''''][''''comboGasto''''] == DDSiNo.NO ? ''''OKSinPago'''' : (checkBankia() ? (checkSuperaPresupuestoActivo() ? ''''OKConPagoYSinSaldoBankia'''' : (checkSuperaDelegacion() ? ''''OKConPagoYSinSaldoBankia'''' : ''''OKConPagoYSaldo'''')) : (valores[''''T002_AnalisisPeticion''''][''''comboGasto''''] == DDSiNo.SI ? (valores[''''T002_AnalisisPeticion''''][''''comboSaldo''''] == DDSiNo.SI ? ''''OKConPagoYSaldo'''' : ''''OKConPagoYSinSaldo'''') : ''''OKSinPago''''))'),
+        T_TAP_UPDATE(' ''T002_AnalisisPeticion'' ',           'TAP_SCRIPT_VALIDACION_JBPM',      'valores[''''T002_AnalisisPeticion''''][''''comboTramitar''''] == DDSiNo.NO ? null : (checkHayPresupuestoEjercicioActual() ? (valores[''''T002_AnalisisPeticion''''][''''comboGasto''''] == DDSiNo.NO ? null : ( comprobarExisteTarifaSuperiorCeroTrabajo() ?  (comprobarExisteProveedorTrabajo() ? null : ''''Debe asignar al menos un proveedo al trabajo.'''') : ''''Debe asignar al menos una tarifa con importe mayor a 0 al trabajo.'''')) : ''''El activo debe tener asignado un presupuesto para el ejercicio actual, aunque sea con saldo cero'''')'),
+        T_TAP_UPDATE(' ''T002_AutorizacionPropietario'' ',    'TAP_SCRIPT_VALIDACION_JBPM',      'esFechaMenor(valores[''''T002_AutorizacionPropietario''''][''''fecha''''], fechaAprobacionTrabajo()) ? ''''Fecha autorizaci&oacute;n debe ser posterior o igual a fecha de aprobaci&oacute;n del trabajo'''' : existeAdjuntoUGValidacion("26","T") ')
     );
     V_TMP_T_TAP_UPDATE T_TAP_UPDATE;
     
@@ -108,9 +105,13 @@ DECLARE
     TYPE T_PTP_UPDATE IS TABLE OF VARCHAR2(4000);
     TYPE T_ARRAY_PTP_UPDATE IS TABLE OF T_PTP_UPDATE;
     V_PTP_UPDATE T_ARRAY_PTP_UPDATE := T_ARRAY_PTP_UPDATE (
-    --                  TAP_CODIGO                    PLAZO
+    --                  TAP_CODIGO                            PLAZO
     -- ANÁLISIS PETICIÓN
-        T_PTP_UPDATE(' ''T002_AnalisisPeticion'' ',   '3*24*60*60*1000L')
+        T_PTP_UPDATE(' ''T002_AnalisisPeticion'' ',           '3*24*60*60*1000L'),
+        T_PTP_UPDATE(' ''T002_AutorizacionPropietario'' ',    '3*24*60*60*1000L'),
+        T_PTP_UPDATE(' ''T002_SolicitudExtraordinaria'' ',    '5*24*60*60*1000L'),
+        T_PTP_UPDATE(' ''T002_SolicitudLPOGestorInterno'' ',  '3*24*60*60*1000L'),
+        T_PTP_UPDATE(' ''T002_ObtencionLPOGestorInterno'' ',  '15*24*60*60*1000L')
     );
     V_TMP_T_PTP_UPDATE T_PTP_UPDATE;
     
@@ -118,9 +119,23 @@ DECLARE
     TYPE T_TFI_UPDATE IS TABLE OF VARCHAR2(4000);
     TYPE T_ARRAY_TFI_UPDATE IS TABLE OF T_TFI_UPDATE;
     V_TFI_UPDATE T_ARRAY_TFI_UPDATE := T_ARRAY_TFI_UPDATE (
-    --                  TAP_CODIGO                    TFI_NOMBRE          TFI_CAMPO         TFI_VALOR
+    --                  TAP_CODIGO                              TFI_NOMBRE                TFI_CAMPO                 TFI_VALOR
     -- ANÁLISIS PETICIÓN
-       T_TFI_UPDATE(' ''T002_AnalisisPeticion'' ',    ' ''titulo'' ',     'TFI_LABEL',      '<p style="margin-bottom: 10px">Se ha formulado una petición para la obtención de un documento, por lo que en la presente tarea deberá aceptarla o rechazarla.</p><p>Si deniega la petición, deberá hacer constar el motivo y finalizará el trámite.</p><p>En el caso de que acepte la petición, deberá indicar si la gestión se va a encomendar a un proveedor o por el contrario va a ser realizada por un gestor interno. En este último caso la siguiente tarea será la de solicitud del documento por el gestor interno.</p><p>Si el trabajo se va a encargar a un proveedor, deberá seleccionarlo en la pestaña "gestión económica" del trabajo, verificando asimismo que la tarifa que resulte aplciable tiene un importe y que este es correcto.</p><p>En el caso de que haya saldo suficiente en el activo para tramitarse el trabajo, la siguiente tarea será la de "solicitud documento por proveedor", a quien se le lanzará directamente.</p><p>Por el contrario, en el caso de que no haya saldo suficiente asociado al activo, la siguiente tarea será la de "solicitud de disposición extraordinaria al propietario". En el caso de Bankia, esta tarea se lanzará al usuario de Capa de Control.</p><p>En el campo "observaciones" puede consignar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.</p>')
+       T_TFI_UPDATE(' ''T002_AnalisisPeticion'' ',              ' ''titulo'' ',           'TFI_LABEL',              '<p style="margin-bottom: 10px">Se ha formulado una petición para la obtención de un documento, por lo que en la presente tarea deberá aceptarla o rechazarla.</p><p>Si deniega la petición, deberá hacer constar el motivo y finalizará el trámite.</p><p>En el caso de que acepte la petición, deberá indicar si la gestión se va a encomendar a un proveedor o por el contrario va a ser realizada por un gestor interno. En este último caso la siguiente tarea será la de solicitud del documento por el gestor interno.</p><p>Si el trabajo se va a encargar a un proveedor, deberá seleccionarlo en la pestaña "gestión económica" del trabajo, verificando asimismo que la tarifa que resulte aplciable tiene un importe y que este es correcto.</p><p>En el caso de que haya saldo suficiente en el activo para tramitarse el trabajo, la siguiente tarea será la de "solicitud documento por proveedor", a quien se le lanzará directamente.</p><p>Por el contrario, en el caso de que no haya saldo suficiente asociado al activo, la siguiente tarea será la de "solicitud de disposición extraordinaria al propietario". En el caso de Bankia, esta tarea se lanzará al usuario de Capa de Control.</p><p>En el campo "observaciones" puede consignar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.</p>'),
+       T_TFI_UPDATE(' ''T002_AnalisisPeticion'' ',              ' ''comboGasto'' ',       'TFI_LABEL',              'El trabajo se encarga a un proveedor'),
+       T_TFI_UPDATE(' ''T002_AnalisisPeticion'' ',              ' ''comboGasto'' ',       'TFI_ERROR_VALIDACION',   'Debe indicar si se encarga a un proveedor'),
+       T_TFI_UPDATE(' ''T002_AnalisisPeticion'' ',              ' ''comboSaldo'' ',       'TFI_LABEL',              'Existe saldo suficiente en el presupuesto asignado al activo'),
+       T_TFI_UPDATE(' ''T002_AnalisisPeticion'' ',              ' ''comboSaldo'' ',       'TFI_ERROR_VALIDACION',   'Debe indicar si existe saldo suficiente'),
+       T_TFI_UPDATE(' ''T002_ObtencionLPOGestorInterno'' ',     ' ''refDocumento'' ',     'TFI_ERROR_VALIDACION',    null),
+       T_TFI_UPDATE(' ''T002_ObtencionLPOGestorInterno,'' ',    ' ''refDocumento'' ',     'TFI_VALIDACION',          null),
+       T_TFI_UPDATE(' ''T002_ObtencionDocumentoGestoria'' ',    ' ''refDocumento'' ',     'TFI_ERROR_VALIDACION',    null),
+       T_TFI_UPDATE(' ''T002_ObtencionDocumentoGestoria,'' ',   ' ''refDocumento'' ',     'TFI_VALIDACION',          null),
+       T_TFI_UPDATE(' ''T002_AutorizacionPropietario'' ',       ' ''titulo'' ',           'TFI_LABEL',              '<p style="margin-bottom: 10px">Para cumplimentar esta tarea debe anotar la fecha en que ha recibido la respuesta del propietario aceptando o rechazando una ampliación del presupuesto asociado al activo. Asimismo, deberá subir a la pestaña “documentos” del trabajo el correo remitido por el propietario que justifique el rechazo o aceptación de la solicitud.</p><p style="margin-bottom: 10px">En el caso de que la ampliación del presupuesto sea rechazada por el propietario, el trámite concluirá ya que no podrá llevarse a cabo la actuación por falta de saldo.</p><p style="margin-bottom: 10px">En caso de que se conceda la ampliación de presupuesto solicitada, deberá anotar su importe. La siguiente tarea será la de solicitud del documento y se lanzará directamente al proveedor.</p><p style="margin-bottom: 10px">En el campo "observaciones" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.</p>'),
+       T_TFI_UPDATE(' ''T002_ObtencionLPOGestorInterno'' ',     ' ''titulo'' ',           'TFI_LABEL',              '<p style="margin-bottom: 10px">Para dar por terminada esta tarea deberá subir una copia del documento a la pestaña "documentos" del trabajo, haciendo constar a continuación en esta tarea la fecha en que se emitió o se obtuvo aquél así como su referencia, en su caso.</p><p style="margin-bottom: 10px">En el supuesto de que no haya sido posible obtener el documento, deberá hacerlo constar así en el campo "documento obtenido", anotando el motivo de tal imposibilidad.</p><p style="margin-bottom: 10px">En el campo "observaciones" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.</p><p style="margin-bottom: 10px">Con la obtención del documento finaliza el trámite.</p>'),
+       T_TFI_UPDATE(' ''T002_ObtencionLPOGestorInterno'' ',     ' ''fechaEmision'' ',     'TFI_LABEL',              'Fecha obtención documento'),
+       T_TFI_UPDATE(' ''T002_ObtencionLPOGestorInterno'' ',     ' ''refDocumento'' ',     'TFI_LABEL',              'Referencia del documento'),
+       T_TFI_UPDATE(' ''T002_ObtencionLPOGestorInterno'' ',     ' ''comboObtencion'' ',   'TFI_LABEL',              'Documento obtenido'),
+       T_TFI_UPDATE(' ''T002_ObtencionLPOGestorInterno'' ',     ' ''motivoNoObtencion'' ','TFI_LABEL',              'Motivo de no obtención')
     );
     V_TMP_T_TFI_UPDATE T_TFI_UPDATE;
     
@@ -165,7 +180,7 @@ BEGIN
                             'TAP_ID, DD_TPO_ID, TAP_CODIGO, TAP_VIEW, TAP_SUPERVISOR, TAP_DESCRIPCION, '||
                             'VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_FAP_ID, TAP_AUTOPRORROGA, DTYPE, TAP_MAX_AUTOP, DD_STA_ID, DD_TGE_ID, DD_TPO_ID_BPM, TAP_SCRIPT_VALIDACION, TAP_SCRIPT_VALIDACION_JBPM, TAP_SCRIPT_DECISION) '||
                             'VALUES ('||V_ENTIDAD_ID||',(SELECT DD_TPO_ID FROM '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = '''||V_TPO_COD||'''),'||
-                            ''''||V_TMP_T_TAP(1)||''', NULL, 0,'''||V_TMP_T_TAP(2)||''', 0, ''REM_F2'', SYSDATE, 0, NULL, 0, ''EXTTareaProcedimiento'', '||
+                            ''''||V_TMP_T_TAP(1)||''', NULL, 0,'''||V_TMP_T_TAP(2)||''', 0, ''HREOS-2045'', SYSDATE, 0, NULL, 0, ''EXTTareaProcedimiento'', '||
                             ''''||V_TMP_T_TAP(4)||''', (SELECT DD_STA_ID FROM '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO = '''||V_TMP_T_TAP(3)||'''),'||
                             '(SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = '''||V_TMP_T_TAP(5)||'''),'||V_TMP_T_TAP(7)||','''||V_TMP_T_TAP(8)||''','''||V_TMP_T_TAP(9)||''','''||V_TMP_T_TAP(10)||''')';
                   DBMS_OUTPUT.PUT_LINE('INSERTANDO: '''||V_TMP_T_TAP(1)||''' de '''||V_TPO_XML||''''); 
@@ -178,7 +193,7 @@ BEGIN
                   V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.DD_PTP_PLAZOS_TAREAS_PLAZAS (' ||
                           'DD_PTP_ID, TAP_ID, DD_PTP_PLAZO_SCRIPT, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_PTP_ABSOLUTO) '||
                           'VALUES ('||V_ENTIDAD_ID||',(SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TMP_T_TAP(1)||'''),'||
-                          ''''||V_TMP_T_TAP(6)||''',0, ''REM_F2'', SYSDATE, 0, 0)';
+                          ''''||V_TMP_T_TAP(6)||''',0, ''HREOS-2045'', SYSDATE, 0, 0)';
                   DBMS_OUTPUT.PUT_LINE('INSERTANDO: Plazo de '''||V_TMP_T_TAP(1)||'''.'); 
                   DBMS_OUTPUT.PUT_LINE(V_MSQL);
                   EXECUTE IMMEDIATE V_MSQL;
@@ -209,7 +224,7 @@ BEGIN
                           'TFI_ID, TAP_ID, TFI_ORDEN, TFI_TIPO, TFI_NOMBRE, TFI_LABEL, TFI_ERROR_VALIDACION, TFI_VALIDACION, TFI_BUSINESS_OPERATION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) '||
                           'VALUES ('||V_ENTIDAD_ID||', (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TMP_T_TFI(1)||'''),'||
                           ''''||V_TMP_T_TFI(2)||''','''||V_TMP_T_TFI(3)||''','''||V_TMP_T_TFI(4)||''','''||V_TMP_T_TFI(5)||''', '''||V_TMP_T_TFI(6)||''', '''||V_TMP_T_TFI(7)||''', '||
-                          ''''||V_TMP_T_TFI(8)||''',1, ''REM_F2'', SYSDATE, 0)';
+                          ''''||V_TMP_T_TFI(8)||''',1, ''HREOS-2045'', SYSDATE, 0)';
                   DBMS_OUTPUT.PUT_LINE('INSERTANDO: Campo '''||V_TMP_T_TFI(4)||''' de '''||V_TMP_T_TFI(1)||''''); 
                   DBMS_OUTPUT.PUT_LINE(V_MSQL);
                   EXECUTE IMMEDIATE V_MSQL;

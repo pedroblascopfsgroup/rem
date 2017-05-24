@@ -7,6 +7,7 @@ import java.util.Map;
 
 import net.sf.json.JSONObject;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -71,6 +72,15 @@ public interface OfertaApi {
 	 * @return Page<Oferta>
 	 */
 	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter);
+	
+	/**
+	 * Devuelve un Page de Ofertas aplicando el filtro que recibe de un usuario determinado
+	 * 
+	 * @param dtoOfertasFilter
+	 * @param usuario
+	 * @return
+	 */
+	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter,Usuario usuario);
 
 
 	/**

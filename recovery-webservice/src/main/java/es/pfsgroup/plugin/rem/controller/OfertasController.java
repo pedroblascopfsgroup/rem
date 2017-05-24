@@ -18,7 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
@@ -34,6 +38,7 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Controller
 public class OfertasController {
@@ -49,6 +54,12 @@ public class OfertasController {
 
 	private final Log logger = LogFactory.getLog(getClass());
 
+	@Autowired
+	private ApiProxyFactory proxyFactory;
+
+	@Autowired
+	GenericABMDao genericDao;
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListOfertas(DtoOfertasFilter dtoOfertasFilter, ModelMap model) {
@@ -59,15 +70,21 @@ public class OfertasController {
 				dtoOfertasFilter.setSort("fechaCreacion");
 
 			}
-			// Page page = ofertaApi.getListOfertas(dtoOfertasFilter);
-			DtoPage page = ofertaApi.getListOfertas(dtoOfertasFilter);
+			Usuario usuusuarioGestor = null;
+			if (dtoOfertasFilter.getUsuarioGestor() != null) {
+				usuusuarioGestor = genericDao.get(Usuario.class,
+						genericDao.createFilter(FilterType.EQUALS, "id", dtoOfertasFilter.getUsuarioGestor()));
+			} else {
+				usuusuarioGestor = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+			}
+			DtoPage page = ofertaApi.getListOfertas(dtoOfertasFilter, usuusuarioGestor);
 
 			model.put("data", page.getResults());
 			model.put("totalCount", page.getTotalCount());
 			model.put("success", true);
 
 		} catch (Exception e) {
-			logger.error("Error en ofertasController",e);
+			logger.error("Error en ofertasController", e);
 			model.put("success", false);
 		}
 
@@ -148,7 +165,7 @@ public class OfertasController {
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 		}
 
-		restApi.sendResponse(response, model,request);
+		restApi.sendResponse(response, model, request);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -157,39 +174,39 @@ public class OfertasController {
 
 		try {
 			model.put("data", ofertaApi.getDetalleOfertaById(dto));
-			model.put("success", true);			
+			model.put("success", true);
 		} catch (Exception e) {
-			logger.error("Error en ofertasController",e);
-			model.put("success", false);		
+			logger.error("Error en ofertasController", e);
+			model.put("success", false);
 		}
 
 		return createModelAndViewJson(model);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getOfertantesByOfertaId(DtoOfertantesOferta dtoOfertantesOferta, ModelMap model) {
 
 		try {
 			model.put("data", ofertaApi.getOfertantesByOfertaId(dtoOfertantesOferta));
-			model.put("success", true);			
+			model.put("success", true);
 		} catch (Exception e) {
-			logger.error("Error en ofertasController",e);
-			model.put("success", false);		
+			logger.error("Error en ofertasController", e);
+			model.put("success", false);
 		}
 
 		return createModelAndViewJson(model);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView updateOfertantesByOfertaId(DtoOfertantesOferta dtoOfertantesOferta, ModelMap model) {
 		try {
 			model.put("data", ofertaApi.updateOfertantesByOfertaId(dtoOfertantesOferta));
-			model.put("success", true);			
+			model.put("success", true);
 		} catch (Exception e) {
-			logger.error("Error en ofertasController",e);
-			model.put("success", false);		
+			logger.error("Error en ofertasController", e);
+			model.put("success", false);
 		}
 
 		return createModelAndViewJson(model);
@@ -201,25 +218,25 @@ public class OfertasController {
 
 		try {
 			model.put("data", ofertaApi.getHonorariosByOfertaId(dtoHonorariosOferta));
-			model.put("success", true);			
+			model.put("success", true);
 		} catch (Exception e) {
-			logger.error("Error en ofertasController",e);
-			model.put("success", false);		
+			logger.error("Error en ofertasController", e);
+			model.put("success", false);
 		}
 
 		return createModelAndViewJson(model);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getHonorariosByActivoOferta(DtoGastoExpediente dto, ModelMap model) {
 
 		try {
 			model.put("data", ofertaApi.getHonorariosActivoByOfertaId(dto));
-			model.put("success", true);			
+			model.put("success", true);
 		} catch (Exception e) {
-			logger.error("Error en ofertasController",e);
-			model.put("success", false);		
+			logger.error("Error en ofertasController", e);
+			model.put("success", false);
 		}
 
 		return createModelAndViewJson(model);

@@ -30,7 +30,7 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
         
         {
         	    xtype: 'panel',
- 				minHeight: 100,
+ 				minHeight: 125,
     			layout: 'column',
     			cls: 'panel-busqueda-directa',
 			    defaults: {
@@ -55,6 +55,23 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 									{
 										fieldLabel: HreRem.i18n('fieldlabel.numero.activo'),
 									    name: 'numActivo'        	
+									},
+									{
+							        	xtype: 'combo',
+							        	fieldLabel: 'Tipo de gestor:',
+							        	bind: {
+						            		store: '{comboTipoGestorOfertas}'
+						            	},
+										reference: 'tipoGestor',
+										name: 'tipoGestor',
+			        					chainedStore: 'comboUsuarios',
+										chainedReference: 'usuarioGestor',
+						            	displayField: 'descripcion',
+			    						valueField: 'id',
+			    						emptyText: 'Introduzca un gestor',
+										listeners: {
+											select: 'onChangeChainedCombo'
+										}
 									}
 									
 									
@@ -83,7 +100,36 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 						            	},
 						            	displayField: 'descripcion',
 										valueField: 'codigo'
-						        	}
+						        	},
+						        	{
+							        	xtype: 'combo',
+							        	fieldLabel: 'Usuario:',
+							        	reference: 'usuarioGestor',
+							        	name: 'usuarioGestor',
+							        	bind: {
+						            		store: '{comboUsuarios}',
+						            		disabled: '{!tipoGestor.selection}'
+						            	},
+						            	displayField: 'apellidoNombre',
+			    						valueField: 'id',
+			    						mode: 'local',
+			    						emptyText: 'Introduzca un usuario',
+			    						enableKeyEvents:true,
+		    						    listeners: {
+		    						     'keyup': function() {
+		    						    	   this.getStore().clearFilter();
+		    						    	   this.getStore().filter({
+		    						        	    property: 'apellidoNombre',
+		    						        	    value: this.getRawValue(),
+		    						        	    anyMatch: true,
+		    						        	    caseSensitive: false
+		    						        	})
+		    						     },
+		    						     'beforequery': function(queryEvent) {
+		    						           queryEvent.combo.onLoad();
+		    						     }
+		    						    }
+								    }
 						        	
 									
 									
@@ -102,13 +148,8 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 								 		fieldLabel: HreRem.i18n('header.oferta.fechaAltaHasta'),
 								 		width: 		275,
 								 		name: 'fechaAltaHasta'
-									}
-									
-								]
-				            },
-				            {
-			            	    items: [   
-			            	    { 
+									},
+									{ 
 							        	xtype: 'combo',
 							        	//hidden: true,
 							        	editable: false,
@@ -121,12 +162,10 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 						            	},
 						            	displayField: 'descripcion',
 										valueField: 'codigo'
-						        }
-									
-									
+									}
 									
 								]
-				            }
+				            }          
 									
 				            
 		         ]

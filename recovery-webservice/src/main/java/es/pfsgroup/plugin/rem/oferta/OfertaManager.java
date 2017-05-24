@@ -282,6 +282,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return oferta;
 	}
 
+	
+	@Override
+	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter,Usuario usuario) {
+
+		return ofertaDao.getListOfertas(dtoOfertasFilter,usuario);
+	}
+	
 	@Override
 	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter) {
 

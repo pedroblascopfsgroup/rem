@@ -21,6 +21,10 @@ public class AnalisisSolicObtValidUserAssignationService implements UserAssigant
 	private static final String CODIGO_T002_SOLICITUD_EXTRAORDINARIA = "T002_SolicitudExtraordinaria";
 	private static final String CODIGO_T002_SOLICITUD_LPO_GESTOR_INTERNO = "T002_SolicitudLPOGestorInterno";
 	private static final String CODIGO_T002_VALIDACION_ACTUACION = "T002_ValidacionActuacion";
+	private static final String CODIGO_T002_OBTENCION_LPO_GESTOR_INTERNO = "T002_ObtencionLPOGestorInterno";
+	private static final String CODIGO_T002_CIERRE_ECONOMICO = "T002_CierreEconomico";
+	private static final String CODIGO_T002_AUTORIZACION_PROPIETARIO = "T002_AutorizacionPropietario";
+
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
@@ -35,7 +39,8 @@ public class AnalisisSolicObtValidUserAssignationService implements UserAssigant
 
 	@Override
 	public String[] getCodigoTarea() {
-		return new String[]{CODIGO_T002_ANALISIS_PETICION,CODIGO_T002_SOLICITUD_EXTRAORDINARIA,CODIGO_T002_SOLICITUD_LPO_GESTOR_INTERNO,CODIGO_T002_VALIDACION_ACTUACION};
+		return new String[]{CODIGO_T002_ANALISIS_PETICION,CODIGO_T002_SOLICITUD_EXTRAORDINARIA,CODIGO_T002_SOLICITUD_LPO_GESTOR_INTERNO,
+				            CODIGO_T002_VALIDACION_ACTUACION, CODIGO_T002_OBTENCION_LPO_GESTOR_INTERNO, CODIGO_T002_CIERRE_ECONOMICO, CODIGO_T002_AUTORIZACION_PROPIETARIO};
 	}
 	
 	@Override

@@ -93,14 +93,17 @@ Ext.define('HreRem.model.Gasto', {
 			name: 'destinatarioDescripcion'
 		},
 		{
+			name: 'nombrePropietario'
+		},
+		{
 			name: 'docIdentifPropietario'
 		},
 		{
 			name: 'destinatarioNombreDoc',
 			calculate: function(data) {
 				var docPropietario = Ext.isDefined(data.docIdentifPropietario) ? data.docIdentifPropietario : '';
-				var descPropietario = Ext.isDefined(data.destinatarioDescripcion) ? data.destinatarioDescripcion : '';
-				var docName = docPropietario + ' - ' + descPropietario;
+				var nomPropietario = Ext.isDefined(data.nombrePropietario) ? data.nombrePropietario : '';
+				var docName = docPropietario + ' - ' + nomPropietario;
 				return docName;
 			},
 			depends: 'docIdentifPropietario'

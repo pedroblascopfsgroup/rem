@@ -97,6 +97,15 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     initComponent: function() {
     	var me = this;
 	    me.callParent(); 
+	    
+	    //HREOS-1964: Restringir los activos financieros (asistidos) para que sólo puedan ser editables por los perfiles de IT y Gestoría PDV
+	    var editable = false
+	    if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
+	    	editable = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+					 && $AU.userHasFunction('EDITAR_TAB_ACTIVO_COMERCIAL'));
+		}else{
+			editable = !$AU.userHasFunction('EDITAR_TAB_ACTIVO_COMERCIAL');
+		}
 
 	    $AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'datosgeneralesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_DATOS_GENERALES');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'tramitesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_ACTUACIONES');
@@ -112,7 +121,7 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     	}
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'preciosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PRECIOS');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'publicacionactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PUBLICACION');
-    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'comercialactivo', funPermEdition: ['EDITAR_TAB_ACTIVO_COMERCIAL']})}, 'TAB_ACTIVO_COMERCIAL');
+    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'comercialactivo', ocultarBotonesEdicion: editable/*funPermEdition: ['EDITAR_TAB_ACTIVO_COMERCIAL']*/})}, 'TAB_ACTIVO_COMERCIAL');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'administracionactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_ADMINISTRACION');
     },
 

@@ -90,15 +90,55 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivoTabPanel', {
 
     initComponent: function() {
 		var me = this;
+		//HREOS-1964: Restringir los activos financieros (asistidos) para que solo puedan ser editables por los perfiles de IT y Gestoría PDV
+		var ocultarDatosbasicosactivo = false;		
+	    if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
+	    	ocultarDatosbasicosactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+	    			&& $AU.userHasFunction('EDITAR_DATOS_BASICOS_ACTIVO'));
+	    }else{
+	    	ocultarDatosbasicosactivo = !$AU.userHasFunction('EDITAR_DATOS_BASICOS_ACTIVO');
+	    }
+	    
+	    var ocultarTituloinformacionregistralactivo = false;		
+	    if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
+	    	ocultarTituloinformacionregistralactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+	    			&& $AU.userHasFunction('EDITAR_TITULO_INFO_REGISTRAL_ACTIVO'));
+	    }else{
+	    	ocultarTituloinformacionregistralactivo = !$AU.userHasFunction('EDITAR_TITULO_INFO_REGISTRAL_ACTIVO');
+	    }
+	    
+	    var ocultarInformacionadministrativaactivo = false;		
+	    if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
+	    	ocultarInformacionadministrativaactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+	    			&& $AU.userHasFunction('EDITAR_INFO_ADMINISTRATIVA_ACTIVO'));
+	    }else{
+	    	ocultarInformacionadministrativaactivo = !$AU.userHasFunction('EDITAR_INFO_ADMINISTRATIVA_ACTIVO');
+	    }
+	    
+	    var ocultarSituacionposesoriaactivo = false;		
+	    if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
+	    	ocultarSituacionposesoriaactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+	    			&& $AU.userHasFunction('EDITAR_SITU_POSESORIA_ACTIVO'));
+	    }else{
+	    	ocultarSituacionposesoriaactivo = !$AU.userHasFunction('EDITAR_SITU_POSESORIA_ACTIVO');
+	    }
+	    
+	    var ocultarDatoscomunidadactivo = false;		
+	    if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
+	    	ocultarDatoscomunidadactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+	    			&& $AU.userHasFunction('EDITAR_DATOS_COMUNIDAD_ACTIVO'));
+	    }else{
+	    	ocultarDatoscomunidadactivo = !$AU.userHasFunction('EDITAR_DATOS_COMUNIDAD_ACTIVO');
+	    }
 
 		var items = [];
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datosbasicosactivo', funPermEdition: ['EDITAR_DATOS_BASICOS_ACTIVO']})}, ['TAB_DATOS_BASICOS_ACTIVO']);
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tituloinformacionregistralactivo', funPermEdition: ['EDITAR_TITULO_INFO_REGISTRAL_ACTIVO']})}, ['TAB_ACTIVO_TITULO_INFO_REGISTRAL']);
-    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informacionadministrativaactivo', funPermEdition: ['EDITAR_INFO_ADMINISTRATIVA_ACTIVO']})}, ['TAB_ACTIVO_INFO_ADMINISTRATIVA']);
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datosbasicosactivo', ocultarBotonesEdicion:ocultarDatosbasicosactivo })}, ['TAB_DATOS_BASICOS_ACTIVO']);
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tituloinformacionregistralactivo', ocultarBotonesEdicion:ocultarTituloinformacionregistralactivo})}, ['TAB_ACTIVO_TITULO_INFO_REGISTRAL']);
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informacionadministrativaactivo', ocultarBotonesEdicion: ocultarInformacionadministrativaactivo})}, ['TAB_ACTIVO_INFO_ADMINISTRATIVA']);
     	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'cargasactivo',ocultarBotonesEdicion: true})}, ['TAB_ACTIVO_CARGAS']);
-    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'situacionposesoriaactivo', funPermEdition: ['EDITAR_SITU_POSESORIA_ACTIVO']})}, ['TAB_ACTIVO_SITU_POSESORIA']);
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'situacionposesoriaactivo', ocultarBotonesEdicion: ocultarSituacionposesoriaactivo})}, ['TAB_ACTIVO_SITU_POSESORIA']);
     	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informacioncomercialactivo',ocultarBotonesEdicion: true})}, ['TAB_ACTIVO_INFO_COMERCIAL']);
-    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datoscomunidadactivo',ocultarBotonesEdicion: true, funPermEdition: ['EDITAR_DATOS_COMUNIDAD_ACTIVO']})}, ['TAB_ACTIVO_DATOS_COMUNIDAD']);
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datoscomunidadactivo',ocultarBotonesEdicion: ocultarDatoscomunidadactivo})}, ['TAB_ACTIVO_DATOS_COMUNIDAD']);
 
     	me.addPlugin({ptype: 'lazyitems', items: items});
      	me.callParent();

@@ -12,6 +12,14 @@ Ext.define('HreRem.view.activos.detalle.HonorariosOfertaDetalleList', {
 
      	var me = this;
 
+     	me.features = [{
+            id: 'summary',
+            ftype: 'summary',
+            hideGroupedHeader: true,
+            enableGroupingMenu: false,
+            dock: 'bottom'
+		}];
+		
 		me.columns = [
 		        {
 		        	dataIndex: 'id',
@@ -49,7 +57,20 @@ Ext.define('HreRem.view.activos.detalle.HonorariosOfertaDetalleList', {
 		        	dataIndex: 'honorarios',
 		        	text: HreRem.i18n('title.horonarios'),
 		        	flex:1,
-		        	renderer: Utils.rendererCurrency
+		        	renderer: Utils.rendererCurrency,
+		            summaryType: 'sum',
+	            	summaryRenderer: function(value, summaryData, dataIndex) {
+		            	var suma = 0;
+		            	var store = this.up('honorariosofertadetallelist').store;
+		            	for(var i=0; i< store.data.length; i++){	            		
+		            		if(store.data.items[i].data.honorarios != null){
+		            			suma += parseFloat(store.data.items[i].data.honorarios);
+		            		}
+		            	}
+		            	suma = Ext.util.Format.number(suma, '0.00');
+		            	var msg = HreRem.i18n("grid.honorarios.total.honorarios") + " " + suma + " \u20AC";		
+		            	return msg;
+		            }
 		        }
 	    ];
 

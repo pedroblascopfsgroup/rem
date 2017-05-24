@@ -37,6 +37,7 @@ public class DtoOfertasFilter extends WebDto {
 	private String tipoDocumento;
 	private Boolean deDerechoTanteo;
 	private String codigoPrescriptor;
+	private Long usuarioGestor;
 	
 	public Long getNumOferta() {
 		return numOferta;
@@ -193,6 +194,12 @@ public class DtoOfertasFilter extends WebDto {
 	}
 	public void setCodigoPrescriptor(String codigoPrescriptor) {
 		this.codigoPrescriptor = codigoPrescriptor;
+	}
+	public Long getUsuarioGestor() {
+		return usuarioGestor;
+	}
+	public void setUsuarioGestor(Long usuarioGestor) {
+		this.usuarioGestor = usuarioGestor;
 	}
 	
 }

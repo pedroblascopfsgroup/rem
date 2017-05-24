@@ -908,8 +908,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					Usuario usuProveedorBankiaSareb = genericDao.get(Usuario.class, filtroUsuProveedorBankiaSareb);
 					if(!Checks.esNulo(usuProveedorBankiaSareb)) {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario",usuProveedorBankiaSareb);
-						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,filtro);
+						Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo", DDTipoProveedor.COD_CERTIFICADORA);
+						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,filtro,filtro2);
 						if(!Checks.estaVacio(listaPVC)){
+							
 							trabajo.setProveedorContacto(listaPVC.get(0));
 							trabajo = genericDao.save(Trabajo.class, trabajo);
 						}
@@ -927,7 +929,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					Usuario usuario = gestorActivoManager.getGestorByActivoYTipo(trabajo.getActivo(), GestorActivoApi.CODIGO_GESTORIA_CEDULAS);
 					if(!Checks.esNulo(usuario)) {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario",usuario);
-						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,filtro);
+						Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo", DDTipoProveedor.COD_GESTORIA); 
+						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,filtro,filtro2);
 						if(!Checks.estaVacio(listaPVC)){
 							trabajo.setProveedorContacto(listaPVC.get(0));
 							trabajo = genericDao.save(Trabajo.class, trabajo);

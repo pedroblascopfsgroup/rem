@@ -157,6 +157,11 @@ public class VBusquedaActivosPrecios implements Serializable {
     @Column(name = "IN_PRP_TRAMITACION")
     private Boolean activoEnPropuestaEnTramitacion;
 
+    @Column(name="HISTORICO_APROBADO_VENTA")
+    private Double precioHistoricoAprobadoVenta;
+    
+    @Column(name="HISTORICO_MINIMO_AUTORIZADO")
+    private Double precioHistoricoMinimoAutorizado;
 
 	public String getId() {
 		return id;
@@ -511,6 +516,22 @@ public class VBusquedaActivosPrecios implements Serializable {
 	public void setActivoEnPropuestaEnTramitacion(
 			Boolean activoEnPropuestaEnTramitacion) {
 		this.activoEnPropuestaEnTramitacion = activoEnPropuestaEnTramitacion;
+	}
+
+	public Double getPrecioHistoricoAprobadoVenta() {
+		return precioHistoricoAprobadoVenta;
+	}
+
+	public void setPrecioHistoricoAprobadoVenta(Double precioHistoricoAprobadoVenta) {
+		this.precioHistoricoAprobadoVenta = precioHistoricoAprobadoVenta;
+	}
+
+	public Double getPrecioHistoricoMinimoAutorizado() {
+		return precioHistoricoMinimoAutorizado;
+	}
+
+	public void setPrecioHistoricoMinimoAutorizado(Double precioHistoricoMinimoAutorizado) {
+		this.precioHistoricoMinimoAutorizado = precioHistoricoMinimoAutorizado;
 	}
 	
 

@@ -6,6 +6,7 @@ import java.util.List;
 
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
@@ -25,6 +26,8 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	 * @return
 	 */
 	public Page getListTextosOfertaById(DtoTextosOferta dto, Long id);
+	
+	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter,Usuario usuario);
 	
 	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter);
 

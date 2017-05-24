@@ -62,7 +62,7 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 							        	bind: {
 						            		store: '{comboTipoGestorOfertas}',
 						            		value: $AU.userTipoGestor(),
-						            	    readOnly: false
+						            	    readOnly: $AU.userTipoGestor()=="GIAFORM"
 						            			
 						            	},
 										reference: 'tipoGestor',
@@ -75,24 +75,7 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 										listeners: {
 											select: 'onChangeChainedCombo'
 										}
-									}
-									/*{
-										xtype: 'comboboxfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.provincia'),
-										reference: 'provinciaCombo',
-										chainedStore: 'comboMunicipio',
-										chainedReference: 'municipioCombo',
-										allowBlank:	'{esAgrupacionLoteComercial}',
-						            	bind: {
-						            		store: '{comboProvincia}',
-						            	    value: '{agrupacionficha.provinciaCodigo}',
-						            	    readOnly: '{agrupacionficha.existeFechaBaja}'
-						            	},
-			    						listeners: {
-											select: 'onChangeChainedCombo'
-			    						}
-									},*/
-									
+									}						
 									
 								]
 				            },
@@ -122,13 +105,14 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 						        	},
 						        	{
 							        	xtype: 'comboboxfieldbase',
-							        	fieldLabel: 'Usuario:',
+							        	fieldLabel: HreRem.i18n('header.gestor')+"\\"+HreRem.i18n('header.gestoria'),
 							        	reference: 'usuarioGestor',
 							        	name: 'usuarioGestor',
 							        	bind: {
 						            		store: '{comboUsuarios}',
 						            		disabled: '{!tipoGestor.selection}',
-						            		value: $AU.getUser().userId
+						            		value: $AU.getUser().userId,
+						            		readOnly: $AU.userTipoGestor()=="GIAFORM"
 						            			
 						            	},
 						            	displayField: 'apellidoNombre',

@@ -12,16 +12,15 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 
-public class AnalisisSolicitudObtencionUserAssignationService implements UserAssigantionService {
+public class AnalisisSolicObtValidUserAssignationService implements UserAssigantionService {
 
 	private static final String CODIGO_T002_ANALISIS_PETICION = "T002_AnalisisPeticion";
 	private static final String CODIGO_T002_SOLICITUD_EXTRAORDINARIA = "T002_SolicitudExtraordinaria";
 	private static final String CODIGO_T002_SOLICITUD_LPO_GESTOR_INTERNO = "T002_SolicitudLPOGestorInterno";
 	private static final String CODIGO_T002_VALIDACION_ACTUACION = "T002_ValidacionActuacion";
-	private static final String CODIGO_T002_OBTENCION_DOCUMENTO_GESTORIA = "T002_ObtencionDocumentoGestoria";
-	private static final String CODIGO_T002_SOLICITUD_DOCUMENTO_GESTORIA = "T002_SolicitudDocumentoGestoria";
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
@@ -36,9 +35,7 @@ public class AnalisisSolicitudObtencionUserAssignationService implements UserAss
 
 	@Override
 	public String[] getCodigoTarea() {
-		//TODO: poner los códigos de tipos de tareas
-		return new String[]{CODIGO_T002_ANALISIS_PETICION, CODIGO_T002_SOLICITUD_EXTRAORDINARIA, CODIGO_T002_SOLICITUD_LPO_GESTOR_INTERNO, 
-				CODIGO_T002_VALIDACION_ACTUACION, CODIGO_T002_OBTENCION_DOCUMENTO_GESTORIA, CODIGO_T002_SOLICITUD_DOCUMENTO_GESTORIA};
+		return new String[]{CODIGO_T002_ANALISIS_PETICION,CODIGO_T002_SOLICITUD_EXTRAORDINARIA,CODIGO_T002_SOLICITUD_LPO_GESTOR_INTERNO,CODIGO_T002_VALIDACION_ACTUACION};
 	}
 	
 	@Override
@@ -49,16 +46,18 @@ public class AnalisisSolicitudObtencionUserAssignationService implements UserAss
 				!Checks.esNulo(tareaActivo.getTramite()) && 
 				!Checks.esNulo(tareaActivo.getTramite().getTrabajo()) &&
 				!Checks.esNulo(tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo())) {
+			
+			DDCartera cartera = tareaActivo.getTramite().getActivo().getCartera();
 
 			EXTDDTipoGestor tipoGestorActivo = null;
 			if (tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_NOTA_SIMPLE_ACTUALIZADA) ||
 				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_NOTA_SIMPLE_SIN_CARGAS) ||
 				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_VPO_AUTORIZACION_VENTA) ||
 				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_VPO_SOLICITUD_DEVOLUCION)) {
-				
+					
 				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_ADMISION);
-				tipoGestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);					 
-			}
+				tipoGestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);	
+			} 
 			if (tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_LPO) ||
 				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_CFO) ||
 				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_BOLETIN_AGUA) || 
@@ -88,6 +87,8 @@ public class AnalisisSolicitudObtencionUserAssignationService implements UserAss
 				!Checks.esNulo(tareaActivo.getTramite().getTrabajo()) &&
 				!Checks.esNulo(tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo())) {
 
+			DDCartera cartera = tareaActivo.getTramite().getActivo().getCartera();
+			
 			EXTDDTipoGestor tipoGestorActivo = null;
 			if (tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_NOTA_SIMPLE_ACTUALIZADA) ||
 				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_NOTA_SIMPLE_SIN_CARGAS) ||
@@ -106,6 +107,7 @@ public class AnalisisSolicitudObtencionUserAssignationService implements UserAss
 				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS);
 				tipoGestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);			 
 			}
+			
 			
 			if (tipoGestorActivo!=null && !Checks.esNulo(tipoGestorActivo) && !Checks.esNulo(tipoGestorActivo.getId())) {
 				return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tipoGestorActivo.getId());

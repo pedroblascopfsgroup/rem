@@ -16,6 +16,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
@@ -37,6 +38,9 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 
 	@Autowired
 	private TrabajoApi trabajoApi;
+	
+	@Autowired
+	private NotificacionApi notificacionApi;
 
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
@@ -82,6 +86,11 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 									ofertaApi.congelarOferta(oferta);
 								}
 							}
+							
+							// Se comprueba si cada activo tiene KO de admisión o de gestión
+							// y se envía una notificación
+							notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
+														
 						} else {
 							if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
 								// Deniega el expediente

@@ -17,6 +17,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
@@ -38,6 +39,9 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
     
     @Autowired
     private TrabajoApi trabajoApi;
+    
+    @Autowired
+	private NotificacionApi notificacionApi;
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
@@ -83,8 +87,11 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 									ofertaApi.congelarOferta(oferta);
 								}
 							}
-						}
-						else{
+							// Se comprueba si cada activo tiene KO de admisión o de gestión
+							// y se envía una notificación
+							notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
+							
+						}else{
 							//Resuelve el expediente
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
 							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);

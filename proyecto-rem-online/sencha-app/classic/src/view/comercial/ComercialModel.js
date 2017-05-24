@@ -23,9 +23,9 @@ Ext.define('HreRem.view.comercial.ComercialModel', {
     	comboTipoGestorOfertas: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
-			type: 'uxproxy',
-			remoteUrl: 'generic/getComboTipoGestorOfertas'
-			}/*,autoLoad: true*/
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboTipoGestorOfertas'
+			}
 		},
 		comboUsuarios: {
 			model: 'HreRem.model.ComboBase',

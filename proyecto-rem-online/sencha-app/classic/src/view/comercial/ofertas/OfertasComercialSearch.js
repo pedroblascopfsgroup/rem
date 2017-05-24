@@ -57,22 +57,41 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 									    name: 'numActivo'        	
 									},
 									{
-							        	xtype: 'combo',
+							        	xtype: 'comboboxfieldbase',
 							        	fieldLabel: 'Tipo de gestor:',
 							        	bind: {
-						            		store: '{comboTipoGestorOfertas}'
+						            		store: '{comboTipoGestorOfertas}',
+						            		value: $AU.userTipoGestor(),
+						            	    readOnly: false
+						            			
 						            	},
 										reference: 'tipoGestor',
 										name: 'tipoGestor',
 			        					chainedStore: 'comboUsuarios',
 										chainedReference: 'usuarioGestor',
 						            	displayField: 'descripcion',
-			    						valueField: 'id',
+			    						valueField: 'codigo',
 			    						emptyText: 'Introduzca un gestor',
 										listeners: {
 											select: 'onChangeChainedCombo'
 										}
 									}
+									/*{
+										xtype: 'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.provincia'),
+										reference: 'provinciaCombo',
+										chainedStore: 'comboMunicipio',
+										chainedReference: 'municipioCombo',
+										allowBlank:	'{esAgrupacionLoteComercial}',
+						            	bind: {
+						            		store: '{comboProvincia}',
+						            	    value: '{agrupacionficha.provinciaCodigo}',
+						            	    readOnly: '{agrupacionficha.existeFechaBaja}'
+						            	},
+			    						listeners: {
+											select: 'onChangeChainedCombo'
+			    						}
+									},*/
 									
 									
 								]
@@ -102,13 +121,15 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 										valueField: 'codigo'
 						        	},
 						        	{
-							        	xtype: 'combo',
+							        	xtype: 'comboboxfieldbase',
 							        	fieldLabel: 'Usuario:',
 							        	reference: 'usuarioGestor',
 							        	name: 'usuarioGestor',
 							        	bind: {
 						            		store: '{comboUsuarios}',
-						            		disabled: '{!tipoGestor.selection}'
+						            		disabled: '{!tipoGestor.selection}',
+						            		value: $AU.getUser().userId
+						            			
 						            	},
 						            	displayField: 'apellidoNombre',
 			    						valueField: 'id',

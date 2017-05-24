@@ -295,6 +295,21 @@ Ext.define('HreRem.controller.AuthenticationController', {
 
     }, 
     
+    userTipoGestor: function() {
+    	var me = this;
+    	var tipoGestor = "";
+    	if (me.userIsRol("GESTCOMBACKOFFICE")){
+    		tipoGestor = "GCBO";
+    	}else if(me.userIsRol("HAYAGESTCOM")){
+    		tipoGestor = "GCOM";
+    	}else if(me.userIsRol("GESTIAFORM")){
+    		tipoGestor = "GIAFORM";
+    	}else if(me.userIsRol("HAYAGESTFORM")){
+    		tipoGestor = "GFORM";
+    	}
+    	return tipoGestor;
+    }, 
+    
     getUser: function() { 
     	var me = this;
     	

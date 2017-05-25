@@ -124,6 +124,7 @@ import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
+import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Service("trabajoManager")
 public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> implements TrabajoApi {
@@ -183,6 +184,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private UpdaterStateApi updaterStateApi;
 	
 	@Autowired
 	private PropuestaPrecioDao propuestaDao;
@@ -424,13 +428,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					trabajo.setFechaAprobacion(new Date());
 				}
 			}
-
-			// TODO: Pendiente de definir como sacar el % de participación.
-			String participacion = String.valueOf(100 / listaActivos.size());
-
+			
+			
+			
 			// Se crea la relacion de activos - trabajos, utilizando la lista de
 			// activos de entrada
+			String participacion = null;
 			for (Activo activo : listaActivos) {
+				
+				updaterStateApi.calcularParticipacionPorActivo(trabajo.getTipoTrabajo().getCodigo(),listaActivos, activo);
+				
 				ActivoTrabajo activoTrabajo = createActivoTrabajo(activo, trabajo, participacion);
 				trabajo.getActivosTrabajo().add(activoTrabajo);
 			}

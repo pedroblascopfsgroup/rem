@@ -1,17 +1,22 @@
 package es.pfsgroup.plugin.rem.updaterstate;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -20,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 
 @Service("updaterStateManager")
@@ -43,6 +49,9 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
+	
+	@Autowired
+	private UpdaterStateApi UpdaterStateApi;
 	
 	@Override
 	public Boolean getStateAdmision(Activo activo) {
@@ -248,5 +257,149 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		
 		return codigoTipoComercializacion;
 	}	
+	
+	@Override
+	public String calcularParticipacionPorActivo(String codigoTipoTrabajo, List<Activo> activosLista, Activo activo_check){
+		//Si algún parámetro es nulo, omitimos el procedimiento
+		if (codigoTipoTrabajo == null ||activosLista == null || activosLista.size() == 0 || activo_check == null) {
+			return null;
+		}
+		
+		//Si el tipo de trabajo es OBTENCION_DOCUMENTAL o ACTUACION_TECNICA
+		if ((DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(codigoTipoTrabajo)) || 
+				(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(codigoTipoTrabajo))) {
+			
+			Filter filtroActivoId = null, filtroValorNeto = null, filtroValorMinimo = null, filtroFSV = null, filtroVACBE = null, filtroPrecioTransferencia = null, filtroValorReferencia = null;
+			ActivoValoraciones valorNeto = null, valorMinimo = null, fsv = null, vacbe = null, precioTransferencia = null, valorReferencia = null;
+						
+			
+			if(activosLista.size() > 1){
+				
+				String cartera = activo_check.getCartera().getCodigo(), reglaSeleccionada = null;
+				Boolean valorNetoNull = false, valorMinimoNull = false, valorFSVNull = false, valorVACBENull = false, valorPrecioTransferenciaNull = false, valorReferenciaNull = false;
+				
+				//Checkeamos la información de todos los activos en la lista.
+				for (Activo activo : activosLista){
+					filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo_check.getId());
+					filtroValorNeto = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT);
+					filtroValorMinimo = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
+					filtroFSV = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_FSV_VENTA);
+					filtroVACBE = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_VACBE);
+					filtroPrecioTransferencia = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_PT);
+					filtroValorReferencia = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_VALOR_REFERENCIA);
+
+					valorNeto = genericDao.get(ActivoValoraciones.class, filtroActivoId, filtroValorNeto);
+					valorMinimo = genericDao.get(ActivoValoraciones.class, filtroActivoId, filtroValorMinimo);
+					fsv = genericDao.get(ActivoValoraciones.class, filtroActivoId, filtroFSV);
+					vacbe = genericDao.get(ActivoValoraciones.class, filtroActivoId, filtroVACBE);
+					precioTransferencia = genericDao.get(ActivoValoraciones.class, filtroActivoId, filtroVACBE);
+					valorReferencia = genericDao.get(ActivoValoraciones.class, filtroActivoId, filtroVACBE);
+
+					if(valorNeto == null){valorNetoNull = true;}
+					if(valorMinimo == null){valorMinimoNull = true;}
+					if(fsv == null){valorFSVNull = true;}
+					if(vacbe == null){valorVACBENull = true;}
+					if(precioTransferencia == null){valorPrecioTransferenciaNull = true;}
+					if(valorReferencia == null){valorReferenciaNull = true;}
+					
+					
+					
+				}
+
+				//Selección de la regla dependiendo de la cartera.
+				/*
+				 * A partes iguales = "00"
+				 * Valor neto contable = DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT
+				 * Valor mínimo autorizado = DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO
+				 * First sale value = DDTipoPrecio.CODIGO_TPC_FSV_VENTA
+				 * Valor actualizado contable banco España = DDTipoPrecio.CODIGO_TPC_VACBE
+				 * Precio transferencia = DDTipoPrecio.CODIGO_TPC_PT
+				 * Valor referencia = DDTipoPrecio.CODIGO_TPC_VALOR_REFERENCIA
+				 */
+				if(cartera == "01"){//Cajamar
+					if(!valorNetoNull){
+						reglaSeleccionada = DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT;
+					}else{
+						if(!valorMinimoNull){
+							reglaSeleccionada = DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO;
+						}else{
+							if(!valorFSVNull){
+								reglaSeleccionada = DDTipoPrecio.CODIGO_TPC_FSV_VENTA;
+							}else{
+								reglaSeleccionada = "00";
+							}
+						}
+					}
+				}else if(cartera == "02"){//Sareb
+					if(!valorPrecioTransferenciaNull){
+						reglaSeleccionada = DDTipoPrecio.CODIGO_TPC_PT;
+					}else{
+						if(!valorVACBENull){
+							reglaSeleccionada = DDTipoPrecio.CODIGO_TPC_VACBE;
+						}else{
+							if(!valorMinimoNull){
+								reglaSeleccionada = DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO;
+							}else{
+								if(!valorFSVNull){
+									reglaSeleccionada = DDTipoPrecio.CODIGO_TPC_FSV_VENTA;
+								}else{
+									reglaSeleccionada = "00";
+								}
+							}
+						}
+					}
+				}else if(cartera == "03"){//Bankia
+					if(!valorReferenciaNull){
+						reglaSeleccionada = DDTipoPrecio.CODIGO_TPC_VALOR_REFERENCIA;
+					}else{
+						if(!valorMinimoNull){
+							reglaSeleccionada = DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO;
+						}else{
+							if(!valorFSVNull){
+								reglaSeleccionada = DDTipoPrecio.CODIGO_TPC_FSV_VENTA;
+							}else{
+								reglaSeleccionada = "00";
+							}
+						}
+					}
+				}else{//Otras carteras
+					if(!valorMinimoNull){
+						reglaSeleccionada = DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO;
+					}else{
+						if(!valorFSVNull){
+							reglaSeleccionada = DDTipoPrecio.CODIGO_TPC_FSV_VENTA;
+						}else{
+							reglaSeleccionada = "00";
+						}
+					}
+				}
+				
+			}else{
+				return "100";
+			}
+			
+			
+		}
+		
+		return null;
+	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

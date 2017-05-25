@@ -95,7 +95,7 @@ DECLARE
     --                  TAP_CODIGO                    TAP_CAMPO                          TAP_VALOR
         T_TAP_UPDATE(' ''T008_SolicitudDocumento'' ',   'TAP_DESCRIPCION',             'Solicitud Cédula por gestoría'),
         T_TAP_UPDATE(' ''T008_ObtencionDocumento'' ',   'TAP_DESCRIPCION',             'Finalización gestión'),
-        T_TAP_UPDATE(' ''T008_ObtencionDocumento'' ',   'TAP_SCRIPT_VALIDACION_JBPM',  'valores[''''T008_ObtencionDocumento''''][''''comboObtencion''''] == DDSiNo.SI ? (esFechaMenor(valores[''''T008_ObtencionDocumento''''][''''fechaEmision''''], fechaAprobacionTrabajo()) ? ''''Fecha emisi&oacute;n debe ser posterior o igual a fecha de aprobaci&oacute;n del trabajo'''' : existeAdjuntoUGValidacion("13","T")) : (valores[''''T008_ObtencionDocumento''''][''''motivoNoObtencion''''] == DDMotivoNoObtencion.NO_CUMPLE_REQUISITOS ? ''''Debería haber adjunto un Certificado de sustiución'''' : null)')
+        T_TAP_UPDATE(' ''T008_ObtencionDocumento'' ',   'TAP_SCRIPT_VALIDACION_JBPM',  'valores[''''T008_ObtencionDocumento''''][''''comboObtencion''''] == DDSiNo.SI ? (esFechaMenor(valores[''''T008_ObtencionDocumento''''][''''fechaEmision''''], fechaAprobacionTrabajo()) ? ''''Fecha emisi&oacute;n debe ser posterior o igual a fecha de aprobaci&oacute;n del trabajo'''' : existeAdjuntoUGValidacion("13","T")) : (valores[''''T008_ObtencionDocumento''''][''''motivoNoObtencion''''] == DDMotivoNoObtencion.NO_CUMPLE_REQUISITOS ? null : null)')
     );
     V_TMP_T_TAP_UPDATE T_TAP_UPDATE;
 

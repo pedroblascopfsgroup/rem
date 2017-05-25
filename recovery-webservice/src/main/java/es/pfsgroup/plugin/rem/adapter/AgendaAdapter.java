@@ -259,6 +259,8 @@ public class AgendaAdapter {
     		return "datefield";
     	}else if(campoTfi.equals("datemaxtod")){
     		return "datemaxtoday";
+    	}else if(campoTfi.equals("datemintod")){
+    		return "datemintoday";
     	}else if(campoTfi.equals("combo")){
     		return "combobox";
     	}else if(campoTfi.equals("comboesp")){

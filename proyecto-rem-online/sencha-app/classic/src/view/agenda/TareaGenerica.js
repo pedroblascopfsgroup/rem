@@ -222,6 +222,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 									me.campos[i].allowBlank = me.campos[i].noObligatorio;
 									camposFiltrados.push(me.campos[i]);
 									break;
+								case 'datemintoday':
+									me.campos[i].xtype = 'datefield';
+									me.campos[i].minValue = $AC.getCurrentDate();
+									me.campos[i].allowBlank = me.campos[i].noObligatorio;
+									camposFiltrados.push(me.campos[i]);
+									break;
 																	
 								default:
 									camposFiltrados.push(me.campos[i]);

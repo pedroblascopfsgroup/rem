@@ -673,4 +673,23 @@ public interface ExpedienteComercialApi {
 
 	String uploadDocumento(WebFileItem fileItem, Long idDocRestClient, ExpedienteComercial expedienteComercialEntrada,
 			String matricula) throws Exception;
+
+	/**
+	 * Este método devuelve True si la suma de todos los importes de participación de los activos
+	 * involucrados en el expediente suman lo mismo que el importe total de expediente. False si no
+	 * coinciden. El importe del expediente se saca en primer lugar del importe contra oferta, si no
+	 * se encuentra establecido lo obtiene del importe de la oferta.
+	 * 
+	 * @param idExpediente: ID del expediente comercial para comprobar su importe.
+	 * @return  Devuelve True si los importes coinciden, False si no.
+	 */
+	public Boolean checkImporteParticipacion(Long idExpediente);
+
+	/**
+	 * Este método obtiene un expediente comercial en base a un Activo.
+	 * 
+	 * @param activo: acivo al que buscar el expediente comercial al que pertenece.
+	 * @return Devuelve un expediente comercial.
+	 */
+	public ExpedienteComercial getExpedientePorActivo(Activo activo);
 }

@@ -37,6 +37,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -150,7 +151,7 @@ import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
 
 @Service("expedienteComercialManager")
-public class ExpedienteComercialManager implements ExpedienteComercialApi {
+public class ExpedienteComercialManager extends BusinessOperationOverrider<ExpedienteComercialApi> implements ExpedienteComercialApi {
 
 	protected static final Log logger = LogFactory.getLog(ExpedienteComercialManager.class);
 
@@ -209,6 +210,11 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 
 	@Autowired
 	private GestorExpedienteComercialApi gestorExpedienteApi;
+
+	@Override
+	public String managerName() {
+		return "expedienteComercialManager";
+	}
 
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -3758,6 +3764,25 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 
 		return false;
 	}
+	
+	@Override
+	public ExpedienteComercial getExpedientePorActivo(Activo activo) {
+		List<ActivoOferta> listaOfertas = activo.getOfertas();
+
+		if (!Checks.estaVacio(listaOfertas)) {
+			for (ActivoOferta activoOferta : listaOfertas) {
+				Oferta oferta = activoOferta.getPrimaryKey().getOferta();
+
+				if (!Checks.esNulo(oferta.getEstadoOferta()) && DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
+					ExpedienteComercial expediente = this.expedienteComercialPorOferta(oferta.getId());
+
+					return expediente;
+				}
+			}
+		}
+
+		return null;
+	}
 
 	@Override
 	@Transactional(readOnly = false)
@@ -3870,5 +3895,35 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			}
 		}
 
+	}
+
+	@Override
+	public Boolean checkImporteParticipacion(Long idExpediente) {
+		Double totalImporteParticipacionActivos = 0d;
+
+		ExpedienteComercial expediente = findOne(idExpediente);
+		if(expediente == null) {
+			return false;
+		}
+
+		Oferta oferta = expediente.getOferta();
+		if(oferta == null) {
+			return false;
+		}
+
+		List<ActivoOferta> activosExpediente = oferta.getActivosOferta();
+
+		Double importeExpediente = oferta.getImporteContraOferta() != null ? oferta.getImporteContraOferta() : oferta.getImporteOferta();
+		if(importeExpediente == null) {
+			return false;
+		}
+
+		for (ActivoOferta activoOferta : activosExpediente) {
+			if (!Checks.esNulo(activoOferta.getImporteActivoOferta())) {
+				totalImporteParticipacionActivos = totalImporteParticipacionActivos + activoOferta.getImporteActivoOferta();
+			}
+		}
+
+		return importeExpediente.equals(totalImporteParticipacionActivos);
 	}
 }

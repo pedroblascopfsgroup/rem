@@ -456,6 +456,10 @@
             	def activoManager = ctx.getBean("activoManager");
             	return activoManager.checkVendido(idActivo);
             }
+            def checkImporteParticipacion = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkImporteParticipacion(idExpediente);
+            }
   			 ]]></value>
   		</list>
   	</property>

@@ -549,17 +549,17 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 					T002_ObtencionDocumentoGestoriaValidacion: function() {
 						var me = this;
 						
-						me.deshabilitarCampo(me.down('[name=fechaEmision]'));
+						me.deshabilitarCampo(me.down('[name=fechaObtencion]'));
 						me.deshabilitarCampo(me.down('[name=refDocumento]'));
 						me.deshabilitarCampo(me.down('[name=motivoNoObtencion]'));
 						
 						me.down('[name=comboObtencion]').addListener('change', function(combo){
 							if(combo.value == '01'){
-								me.habilitarCampo(me.down('[name=fechaEmision]'));
+								me.habilitarCampo(me.down('[name=fechaObtencion]'));
 								me.habilitarCampo(me.down('[name=refDocumento]'));
 								me.deshabilitarCampo(me.down('[name=motivoNoObtencion]'));
 							}else{
-								me.deshabilitarCampo(me.down('[name=fechaEmision]'));
+								me.deshabilitarCampo(me.down('[name=fechaObtencion]'));
 								me.deshabilitarCampo(me.down('[name=refDocumento]'));
 								me.habilitarCampo(me.down('[name=motivoNoObtencion]'));
 							}
@@ -577,17 +577,17 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 
 						me.deshabilitarCampo(me.down('[name=motivoIncorreccion]'));
 						me.deshabilitarCampo(me.down('[name=comboValoracion]'));
-						me.deshabilitarCampo(me.down('[name=fechaValidacion]'));
+						//me.deshabilitarCampo(me.down('[name=fechaValidacion]'));
 						
 						me.down('[name=comboCorreccion]').addListener('change', function(combo){
 							if(combo.value == '01'){
 								me.deshabilitarCampo(me.down('[name=motivoIncorreccion]'));
 								me.habilitarCampo(me.down('[name=comboValoracion]'));
-								me.habilitarCampo(me.down('[name=fechaValidacion]'));
+								//me.habilitarCampo(me.down('[name=fechaValidacion]'));
 							}else{
 								me.habilitarCampo(me.down('[name=motivoIncorreccion]'));
 								me.deshabilitarCampo(me.down('[name=comboValoracion]'));
-								me.deshabilitarCampo(me.down('[name=fechaValidacion]'));
+								//me.deshabilitarCampo(me.down('[name=fechaValidacion]'));
 							}
 						})
 					},

@@ -85,6 +85,7 @@ DECLARE
     V_TFI_DELETE T_ARRAY_TFI_DELETE := T_ARRAY_TFI_DELETE (
     --                            TAP_CODIGO                    TFI_NOMBRE 
       T_TFI_DELETE(' ''T002_ValidacionActuacion'' ',           ' ''fechaValidacion'' '),
+      T_TFI_DELETE(' ''T002_ValidacionActuacion'' ',           ' ''documObtenido'' '),
       T_TFI_DELETE(' ''T002_ObtencionDocumentoGestoria'' ',    ' ''fechaEmision'' ')
     );
     V_TMP_T_TFI_DELETE T_TFI_DELETE;
@@ -94,12 +95,7 @@ DECLARE
     TYPE T_ARRAY_TFI IS TABLE OF T_TFI;
     V_TFI T_ARRAY_TFI := T_ARRAY_TFI(
     --       TAP_CODIGO                TFI_ORDEN  TFI_TIPO       TFI_NOMBRE       TFI_LABEL                                                                                                                                                                   TFI_ERROR_VALIDACION                      TFI_VALIDACION                  TFI_BUSINESS_OPERATION
-        --T_TFI('T002_ObtencionDocumentoGestoria'            ,'0'        ,'label'    ,'titulo'               ,'<p style="margin-bottom: 10px">Para cumplimentar esta tarea debe anotar la fecha en que ha recibido la respuesta del propietario aceptando o rechazando una ampliación del presupuesto asociado al activo.</p><p style="margin-bottom: 10px">En el caso de que la ampliación del presupuesto sea rechazada por el propietario, el trámite concluirá ya que no podrá llevarse a cabo la actuación por falta de saldo.</p><p style="margin-bottom: 10px">En caso de que se conceda la ampliación de presupuesto solicitada, deberá anotar su importe. En este caso, la siguiente tarea será la de "fijación de plazo de ejecución".</p><p style="margin-bottom: 10px">En el campo "observaciones" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.</p>'                                                                                               ,''                                                             ,''                                             ,''                 ),
-        --T_TFI('T002_ObtencionDocumentoGestoria'            ,'1'        ,'combo'    ,'documObtenido'        ,'Documento obtenido'                         ,''         ,''                       ,'DDSiNo'     ),
-        --T_TFI('T002_ObtencionDocumentoGestoria'            ,'2'        ,'textfield','motivoNoObtencion'    ,'Motivo de no obtención'                                                                                                                                                                                                                                                                                                        ,'Debe indicar la fecha de autorizaci&oacute;n'                 ,'false'                                        ,''                 ),
         T_TFI('T002_ObtencionDocumentoGestoria'            ,'3'        ,'date'     ,'fechaObtencion'       ,'Fecha obtención documento','Debe indicar la fecha de obtención del documento','false',''),
-        --T_TFI('T002_ObtencionDocumentoGestoria'            ,'4'        ,'textfield','refDocumento'         ,'Referencia del documento','','',''), 
-        --T_TFI('T002_ObtencionDocumentoGestoria'            ,'5'        ,'textarea' ,'observaciones'        ,'Observaciones'                                                                                                                                                                                                                                                                                                ,''                                                             ,''                                             ,''                 ),        
         T_TFI('T002_ValidacionActuacion'                   ,'1'        ,'combo'    ,'documObtenido'        ,'Se ha podido obtener el documento'                         ,''         ,''                       ,'DDSiNo'     ),
         T_TFI('T002_ValidacionActuacion'                   ,'5'        ,'combo'    ,'sePagaProveedor'      ,'Hay que pagarle al proveedor la gestión que ha realizado pese a no haber obtenido el documento'                         ,''         ,''                       ,'DDSiNo'     )
     );
@@ -110,7 +106,12 @@ DECLARE
     TYPE T_ARRAY_TAP_UPDATE IS TABLE OF T_TAP_UPDATE;
     V_TAP_UPDATE T_ARRAY_TAP_UPDATE := T_ARRAY_TAP_UPDATE (
     --                          TAP_CODIGO                        TAP_CAMPO             TAP_VALOR
-        T_TAP_UPDATE(' ''T002_SolicitudDocumentoGestoria'' ',   'TAP_DESCRIPCION',   'Solicitud documento por proveedor')
+        T_TAP_UPDATE(' ''T002_SolicitudDocumentoGestoria'' ',   'TAP_DESCRIPCION',   'Solicitud documento por proveedor'),
+        T_TAP_UPDATE(' ''T002_ObtencionDocumentoGestoria'' ',   'TAP_DESCRIPCION',   'Obtencion documento por proveedor'),
+        T_TAP_UPDATE(' ''T002_ObtencionDocumentoGestoria'' ',   'TAP_SCRIPT_VALIDACION_JBPM',  'valores[''''T002_ObtencionDocumentoGestoria''''][''''comboObtencion''''] == DDSiNo.SI ? (esFechaMenor(valores[''''T002_ObtencionDocumentoGestoria''''][''''fechaObtencion''''], fechaAprobacionTrabajo()) ? ''''Fecha obtencion debe ser posterior o igual a fecha de aprobacion del trabajo'''' : null) : null '),
+        T_TAP_UPDATE(' ''T002_ValidacionActuacion'' '       ,   'TAP_SCRIPT_VALIDACION_JBPM',  'valores[''''T002_ValidacionActuacion''''][''''comboCorreccion''''] == null ? ''''Debe hacer constar si el informe es correcto'''' : null '),
+        T_TAP_UPDATE(' ''T002_ObtencionDocumentoGestoria'' ',   'TAP_SCRIPT_DECISION', 'valores[''''T002_ObtencionDocumentoGestoria''''][''''comboObtencion''''] == DDSiNo.SI ? ''''ObtencionCorrecta'''' : ''''ObtencionIncorrecta''''   '),
+        T_TAP_UPDATE(' ''T002_ValidacionActuacion'' '       ,   'TAP_SCRIPT_DECISION', 'valores[''''T002_ValidacionActuacion''''][''''comboCorreccion''''] == DDSiNo.SI ? ''''DocumentoCorrecto'''' : ''''DocumentoIncorrecto''''   ')
     );
     V_TMP_T_TAP_UPDATE T_TAP_UPDATE;
     

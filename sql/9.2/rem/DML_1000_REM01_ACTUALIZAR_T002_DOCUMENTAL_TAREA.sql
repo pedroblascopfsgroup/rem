@@ -95,7 +95,7 @@ DECLARE
     TYPE T_ARRAY_TFI IS TABLE OF T_TFI;
     V_TFI T_ARRAY_TFI := T_ARRAY_TFI(
     --       TAP_CODIGO                TFI_ORDEN  TFI_TIPO       TFI_NOMBRE       TFI_LABEL                                                                                                                                                                   TFI_ERROR_VALIDACION                      TFI_VALIDACION                  TFI_BUSINESS_OPERATION
-        T_TFI('T002_ObtencionDocumentoGestoria'            ,'3'        ,'date'     ,'fechaObtencion'       ,'Fecha obtención documento','Debe indicar la fecha de obtención del documento','false',''),
+        T_TFI('T002_ObtencionDocumentoGestoria'            ,'3'        ,'datemaxtod'     ,'fechaObtencion'       ,'Fecha obtención documento','Debe indicar la fecha de obtención del documento','false',''),
         T_TFI('T002_ValidacionActuacion'                   ,'1'        ,'combo'    ,'documObtenido'        ,'Se ha podido obtener el documento'                         ,''         ,''                       ,'DDSiNo'     ),
         T_TFI('T002_ValidacionActuacion'                   ,'5'        ,'combo'    ,'sePagaProveedor'      ,'Hay que pagarle al proveedor la gestión que ha realizado pese a no haber obtenido el documento'                         ,''         ,''                       ,'DDSiNo'     )
     );

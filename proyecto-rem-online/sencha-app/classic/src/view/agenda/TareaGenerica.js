@@ -962,6 +962,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 				     },
 				     
 				     T008_CierreEconomicoValidacion: function(){
+				    	 var me = this;
 				    	 me.down('[name=fechaCierre]').setValue($AC.getCurrentDate());
 				     },
 				     

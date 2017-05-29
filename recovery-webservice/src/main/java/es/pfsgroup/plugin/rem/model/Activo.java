@@ -395,6 +395,13 @@ public class Activo implements Serializable, Auditable {
     @Column(name = "ACT_NUM_INMOVILIZADO_BNK")
     private Integer numInmovilizadoBnk;
     
+    @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private List<TanteoActivoExpediente> tanteoActivoExpediente;
+    
+    
+    
 	@Version   
 	private Long version;
 

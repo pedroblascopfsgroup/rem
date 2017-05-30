@@ -32,7 +32,7 @@ public abstract class AbstractNotificatorService{
 		else
 			if(!Checks.esNulo(trabajo.getFechaTope()))
 				fecha = formatoFecha.format(trabajo.getFechaTope());
-		return fecha;
+		return fecha == null ? "" : fecha;
 	}
 	
 	private String generateDireccion(Activo activo){
@@ -84,8 +84,7 @@ public abstract class AbstractNotificatorService{
 				+ "			<div style='border-radius: 12px 12px 0px 0px; background: #b7ddf0; width: 300px; height: 60px; display: table'>"
 				+ "				<img src='"+this.getUrlImagenes()+"ico_notificacion.png' "
 				+ "					style='display: table-cell; padding: 12px; display: inline-block' />"
-				+ "				<div style='font-size: 20px; vertical-align: top; color: #333; display: table-cell; padding: 12px'>Notificación"
-				+ "					encargo de trabajo en REM</div>"
+				+ "				<div style='font-size: 20px; vertical-align: top; color: #333; display: table-cell; padding: 12px'> " + dtoSendNotificator.getTitulo() + "</div>"
 				+ "			</div>"
 				+ "			<div style='background: #b7ddf0; width: 785px; min-height: 600px; border-radius: 0px 20px 20px 20px; padding: 20px'>"
 				+ "				<div style='background: #054664; width: 600px; height: 375px; border-radius: 20px; color: #fff; display: inline-block'>"
@@ -186,5 +185,16 @@ public abstract class AbstractNotificatorService{
 	
 	protected String getCorreoFrom(){
 		return appProperties.getProperty(FROM);
+	}
+
+	protected Boolean checkTrabajoCartera(Trabajo trabajo, String codigoCartera) {
+		if (!Checks.esNulo(trabajo)) {
+			Activo primerActivo = trabajo.getActivo();
+			if (!Checks.esNulo(primerActivo)) {
+				return (codigoCartera.equals(primerActivo.getCartera().getCodigo()));
+			}
+		}
+
+		return false;
 	}
 }

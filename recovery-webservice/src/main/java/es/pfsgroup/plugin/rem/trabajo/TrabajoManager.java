@@ -943,11 +943,27 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_INFORME);// Trámite
 																			// de
 																			// informes
-			else
-				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC); // Trámite
-																			// de
-																			// obtención
-																			// documental
+			else {
+				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC); 	// Trámite
+																													// de
+																													// obtención
+																													// documental
+
+				//Si el trabajo es Bankia/Sareb asignamos proveedorContacto
+				if(this.checkBankia(trabajo) || this.checkSareb(trabajo)) {
+
+					Usuario gestorAdmision = gestorActivoManager.getGestorByActivoYTipo(trabajo.getActivo(), GestorActivoApi.CODIGO_GESTOR_ADMISION);
+
+					if(!Checks.esNulo(gestorAdmision)) {
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario", gestorAdmision);
+						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,filtro);
+						if(!Checks.estaVacio(listaPVC)){
+							trabajo.setProveedorContacto(listaPVC.get(0));
+							trabajo = genericDao.save(Trabajo.class, trabajo);
+						}
+					}
+				}
+			}
 		}
 		if (trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_TASACION)) { // Tasación
 			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_TASACION); // Trámite
@@ -1951,6 +1967,30 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				filtroTrabajo);
 
 		return !tarifasTrabajo.isEmpty();
+	}
+
+	@Override
+	@BusinessOperation(overrides = "trabajoManager.existeTarifaSuperiorCeroTrabajo")
+	public Boolean existeTarifaSuperiorCeroTrabajo(TareaExterna tarea) {
+
+		Trabajo trabajo = getTrabajoByTareaExterna(tarea);
+
+		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+		List<TrabajoConfiguracionTarifa> tarifasTrabajo = genericDao.getList(TrabajoConfiguracionTarifa.class, filtroTrabajo);
+
+		for (TrabajoConfiguracionTarifa tct : tarifasTrabajo) {
+
+			if (tct.getMedicion() != null && tct.getPrecioUnitario() != null) {
+
+				Float importe = tct.getMedicion() * tct.getPrecioUnitario();
+
+				if (importe > 0) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	@Override

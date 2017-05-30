@@ -1240,6 +1240,10 @@ body.x-masked > .x-mask {
 	opacity: 1;
 }
 
+.formbase_no_shadow {
+	box-shadow: none;
+}
+
 .label-read-only-textarea.item-selector-form-read-only {
     line-height: 24px;
     padding-top: 1px;

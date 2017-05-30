@@ -36,6 +36,10 @@ public class DDTipoDocumentoGasto implements Auditable, Dictionary {
 	 */
 	private static final long serialVersionUID = -4760202568628965576L;
 
+	public static final String FACTURA_LIQUIDACION= "26";
+	public static final String JUSTIFICACNTE_PAGO= "27";
+	public static final String OTRO_DOCUMENTO_ASOCIADO_GASTO= "28";
+
 	@Id
 	@Column(name = "DD_TPD_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoDocumentoGastoGenerator")

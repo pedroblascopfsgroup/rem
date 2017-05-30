@@ -57,8 +57,11 @@ public class NotificatorServiceODocCHABProveedor extends AbstractNotificatorServ
 
 			//Notificacion al solicitante
 			Usuario proveedor = null;
-			if(!Checks.esNulo(tramite.getTrabajo())) {
+			if(!Checks.esNulo(tramite.getTrabajo()) && !Checks.esNulo(tramite.getTrabajo().getProveedorContacto())) {
 				proveedor =  tramite.getTrabajo().getProveedorContacto().getUsuario();
+				if (proveedor!=null) {
+					esProveedorExterno = proveedor.getUsuarioExterno();
+				}
 			}
 			
 			//Destinatario: El proveedor del trabajo (gestoría de Cédula de Habitabilidad en el caso de Bankia y Sareb
@@ -72,6 +75,10 @@ public class NotificatorServiceODocCHABProveedor extends AbstractNotificatorServ
 //				return;
 //			}
 
+			if (Checks.esNulo(proveedor)) {
+				return;
+			}
+			
 			Usuario usuarioTareaActivo = null;
 			if (!valores.isEmpty() 
 					&& valores.get(0).getTareaExterna() != null 

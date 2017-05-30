@@ -103,7 +103,7 @@ public class NotificatorServiceODocCHABSolicitanteCierre extends AbstractNotific
 			String titulo;
 
 			dtoSendNotificator.setTitulo("Notificación encargo de obtención de Cédula de Habitabilidad");
-			contenido = "<p>Desde HAYA RE se le ha asignado un trabajo de obtención de una Cédula de Habitabilidad para el activo cuyos datos figuran más arriba. Por favor, entre en la aplicación REM y compruebe las condiciones del trabajo cuyos datos figuran asimismo en el cuadro superior. Gracias.</p>";
+			contenido = "<p>Le informamos de que ha finalizado el trabajo solicitado por usted para la obtención de la Cédula de Habitabilidad del activo cuyos datos figuran en el cuadro superior. Por favor, entre en la aplicación REM para obtener más información y consultar el documento obtenido. Gracias.</p>";
 			titulo = "Notificación encargo de obtención de Cédula de Habitabilidad en REM (" + descripcionTrabajo + "Nº Trabajo " + dtoSendNotificator.getNumTrabajo()+")";
 
 

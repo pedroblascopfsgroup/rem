@@ -908,6 +908,24 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 						})
 					},
 					
+					T008_AnalisisPeticionValidacion: function(){
+						var me = this;
+						me.deshabilitarCampo(me.down('[name=motivoDenegar]'));
+						
+						me.down('[name=comboTramitar]').addListener('change', function(combo){
+							
+							if (combo.value === '02') {
+								me.habilitarCampo(me.down('[name=motivoDenegar]'));
+								me.down('[name=motivoDenegar]').allowBlank = false;
+							} else {
+								me.deshabilitarCampo(me.down('[name=motivoDenegar]'));
+								me.down('[name=motivoDenegar]').allowBlank = true;
+							}
+							
+						});
+						
+					},
+					
 				     T008_ObtencionDocumentoValidacion: function(){
 						var me = this;
 							
@@ -918,14 +936,40 @@ Ext.define('HreRem.view.agenda.TareaGenerica',{
 						me.down('[name=comboObtencion]').addListener('change', function(combo){
 							if(combo.value == '01'){
 								me.habilitarCampo(me.down('[name=fechaEmision]'));
+								me.down('[name=fechaEmision]').allowBlank = false;
 								me.habilitarCampo(me.down('[name=refDocumento]'));
 								me.deshabilitarCampo(me.down('[name=motivoNoObtencion]'));
+								me.down('[name=motivoNoObtencion]').allowBlank = true;
 							}else{
-								me.deshabilitarCampo(me.down('[name=fechaEmision]'));
 								me.deshabilitarCampo(me.down('[name=refDocumento]'));
 								me.habilitarCampo(me.down('[name=motivoNoObtencion]'));
+								me.down('[name=motivoNoObtencion]').allowBlank = false;
+								
+								if (me.down('[name=motivoNoObtencion]').value == '02') {
+									me.habilitarCampo(me.down('[name=fechaEmision]'));
+									me.down('[name=fechaEmision]').allowBlank = false;
+								} else {
+									me.deshabilitarCampo(me.down('[name=fechaEmision]'));
+									me.down('[name=fechaEmision]').allowBlank = true;
+								}
 							}
-						})	 
+						});
+						
+						me.down('[name=motivoNoObtencion]').addListener('change', function(combo){
+							if(combo.value == '01'){
+								me.deshabilitarCampo(me.down('[name=fechaEmision]'));
+								me.down('[name=fechaEmision]').allowBlank = true;
+							} else {
+								me.habilitarCampo(me.down('[name=fechaEmision]'));
+								me.down('[name=fechaEmision]').allowBlank = false;
+							}
+						})
+						
+				     },
+				     
+				     T008_CierreEconomicoValidacion: function(){
+				    	 var me = this;
+				    	 me.down('[name=fechaCierre]').setValue($AC.getCurrentDate());
 				     },
 				     
 				     T009_AnalisisPeticionValidacion: function(){

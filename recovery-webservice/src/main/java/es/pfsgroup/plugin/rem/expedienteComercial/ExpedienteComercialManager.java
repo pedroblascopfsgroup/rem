@@ -3898,10 +3898,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	@Override
-	public Boolean checkImporteParticipacion(Long idExpediente) {
+	public Boolean checkImporteParticipacion(Long idTramite) {
 		Double totalImporteParticipacionActivos = 0d;
 
-		ExpedienteComercial expediente = findOne(idExpediente);
+		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
+		if(activoTramite == null) {
+			return false;
+		}
+		
+		Trabajo trabajo = activoTramite.getTrabajo();
+		if(trabajo == null) {
+			return false;
+		}
+
+		ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByTrabajo(trabajo.getId());
 		if(expediente == null) {
 			return false;
 		}

@@ -1498,6 +1498,18 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				gasto.getAdjuntos().add(adjuntoGasto);
 			}
 
+			// Si el gasto se encuentra en estado 'Incompleto', cambiar estado del gasto a 'Pendiente' al adjuntar un documento.
+			if(!Checks.esNulo(gasto.getEstadoGasto()) && DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo())) {
+				updaterStateApi.updaterStates(gasto, DDEstadoGasto.PENDIENTE);
+			}
+
+			// Si el gasto se encuentra en estado 'Pagado sin justificación documental', cambiar estado del gasto a 'Pagado' al adjuntar un documento de tipo 'justificante de pago'.
+			String codigoTipoDoc = fileItem.getParameter("tipo");
+			if(!Checks.esNulo(codigoTipoDoc) && DDTipoDocumentoGasto.JUSTIFICACNTE_PAGO.equals(codigoTipoDoc) 
+					&& !Checks.esNulo(gasto.getEstadoGasto()) && DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC.equals(gasto.getEstadoGasto().getCodigo())) {
+				updaterStateApi.updaterStates(gasto, DDEstadoGasto.PAGADO);
+			}
+			
 			// TODO Falta definir que tipo de documento provoca marcar el campo existeDocumento.
 			// Ahora lo marca cualquiera.
 			updateExisteDocumentoGasto(gasto, 1);

@@ -458,7 +458,7 @@
             }
             def checkImporteParticipacion = {
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
-            	return expedienteComercialManager.checkImporteParticipacion(idExpediente);
+            	return expedienteComercialManager.checkImporteParticipacion(idTramite);
             }
   			 ]]></value>
   		</list>

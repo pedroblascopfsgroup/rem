@@ -23,7 +23,6 @@ import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 
 //@org.springframework.stereotype.Service(JBPMProcessManager.BEAN_KEY)
@@ -166,11 +165,6 @@ public class JBPMActivoScriptExecutor implements JBPMActivoScriptExecutorApi {
         	Long idActivo = activo.getId();
 	        if(idActivo != null){
 	        	context.put("idActivo", idActivo);
-	        }
-
-	        ExpedienteComercial expedienteComercial = expedienteComercialApi.getExpedientePorActivo(activo);
-	        if(expedienteComercial != null) {
-	        	context.put("idExpediente", expedienteComercial.getId());
 	        }
         }
 

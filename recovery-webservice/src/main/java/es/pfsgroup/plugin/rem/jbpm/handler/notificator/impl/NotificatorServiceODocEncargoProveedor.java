@@ -20,7 +20,7 @@ import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 @Component
 public class NotificatorServiceODocEncargoProveedor extends AbstractNotificatorService implements NotificatorService {
 
-	private static final String CODIGO_T002_SOLICITUD_DOCUMENTO_PROVEEDOR = "T002_SolicitudDocumentoGestoria";
+	private static final String CODIGO_T002_SOLICITUD_DOCUMENTO_PROVEEDOR = "T002_SolicitudDocumentoGestoria"; // solicitud documento por proveedor
 
 	@Autowired
 	private GenericAdapter genericAdapter;
@@ -42,10 +42,9 @@ public class NotificatorServiceODocEncargoProveedor extends AbstractNotificatorS
 	@Override
 	public void notificator(ActivoTramite tramite) {
 
-		if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto().getUsuario()) 
-				&& !Checks.esNulo(tramite.getTrabajo().getProveedorContacto().getUsuario().getEmail())) {
+		if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto().getUsuario()) && !Checks.esNulo(tramite.getTrabajo().getProveedorContacto().getUsuario().getEmail())) {
  
-			//Notificacion al proveedor
+			// Notificacion al proveedor
 			Usuario proveedor = null;
 			if(!Checks.esNulo(tramite.getTrabajo())) {
 				proveedor = tramite.getTrabajo().getProveedorContacto().getUsuario();

@@ -186,4 +186,15 @@ public abstract class AbstractNotificatorService{
 	protected String getCorreoFrom(){
 		return appProperties.getProperty(FROM);
 	}
+
+	protected Boolean checkTrabajoCartera(Trabajo trabajo, String codigoCartera) {
+		if (!Checks.esNulo(trabajo)) {
+			Activo primerActivo = trabajo.getActivo();
+			if (!Checks.esNulo(primerActivo)) {
+				return (codigoCartera.equals(primerActivo.getCartera().getCodigo()));
+			}
+		}
+
+		return false;
+	}
 }

@@ -26,7 +26,7 @@ public class NotificatorServiceODocValidacionActuacionIncorrecta extends Abstrac
 
 	@Autowired
 	private GenericAdapter genericAdapter;
-	
+
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
 
@@ -37,14 +37,14 @@ public class NotificatorServiceODocValidacionActuacionIncorrecta extends Abstrac
 
 	@Override
 	public String[] getCodigoTarea() {
-		return new String[]{CODIGO_T002_VALIDACION_ACTUACION};
+		return new String[] { CODIGO_T002_VALIDACION_ACTUACION };
 	}
 
 	@Override
 	public void notificator(ActivoTramite tramite) {
 
 	}
-	
+
 	@Override
 	public void notificatorFinTareaConValores(ActivoTramite tramite, List<TareaExternaValor> valores) {
 
@@ -53,13 +53,12 @@ public class NotificatorServiceODocValidacionActuacionIncorrecta extends Abstrac
 				return;
 			}
 		}
-		
-		if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto().getUsuario()) 
-				&& !Checks.esNulo(tramite.getTrabajo().getProveedorContacto().getUsuario().getEmail())) {
- 
-			//Notificacion al proveedor
+
+		if (!Checks.esNulo(tramite.getTrabajo().getProveedorContacto().getUsuario()) && !Checks.esNulo(tramite.getTrabajo().getProveedorContacto().getUsuario().getEmail())) {
+
+			// Notificacion al proveedor
 			Usuario proveedor = null;
-			if(!Checks.esNulo(tramite.getTrabajo())) {
+			if (!Checks.esNulo(tramite.getTrabajo())) {
 				proveedor = tramite.getTrabajo().getProveedorContacto().getUsuario();
 			}
 
@@ -68,18 +67,18 @@ public class NotificatorServiceODocValidacionActuacionIncorrecta extends Abstrac
 			List<String> mailsPara = new ArrayList<String>();
 			List<String> mailsCC = new ArrayList<String>();
 
-		    String correos = proveedor.getEmail();
-		    Collections.addAll(mailsPara, correos.split(";"));
+			String correos = proveedor.getEmail();
+			Collections.addAll(mailsPara, correos.split(";"));
 			mailsCC.add(this.getCorreoFrom());
 
-			String descripcionTrabajo = !Checks.esNulo(tramite.getTrabajo().getDescripcion())? (tramite.getTrabajo().getDescripcion() + " - ") : "";
+			String descripcionTrabajo = !Checks.esNulo(tramite.getTrabajo().getDescripcion()) ? (tramite.getTrabajo().getDescripcion() + " - ") : "";
 
-			dtoSendNotificator.setTitulo("Notificación encargo de obtención de documento en REM");
-			String contenido = "<p>Desde HAYA RE se le ha asignado un trabajo de obtención de un documento relativo al activo cuyos datos figuran más arriba. Por favor, entre en la aplicación REM y compruebe las condiciones del trabajo cuyos datos figuran asimismo en el cuadro superior. Gracias.</p>";
-			String titulo = "Notificación encargo de obtención de documento en REM (" + descripcionTrabajo + "Nº Trabajo " + dtoSendNotificator.getNumTrabajo()+")";
+			dtoSendNotificator.setTitulo("Notificación obtención incorrecta de documento en REM");
+			String contenido = "<p>La ejecución del encargo cuyos datos figuran en el cuadro superior no ha sido validada satisfactoriamente por el siguiente motivo: 'MOTIVO INCORRECCIÓN SELECCIONADO EN LA TAREA'. Por favor, entre en la aplicación REM y realice la tarea correspondiente. Gracias.</p>";
+			String titulo = "Notificación obtención incorrecta de documento en REM (" + descripcionTrabajo + "Nº Trabajo " + dtoSendNotificator.getNumTrabajo() + ")";
 
 			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 		}
 	}
-	
+
 }

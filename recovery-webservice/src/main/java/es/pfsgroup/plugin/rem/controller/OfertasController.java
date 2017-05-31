@@ -28,8 +28,6 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.OfertasExcelReport;
-import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
-import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;

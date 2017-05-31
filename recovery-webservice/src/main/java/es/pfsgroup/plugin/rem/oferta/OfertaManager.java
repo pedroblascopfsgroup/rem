@@ -173,7 +173,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
 
-	private Oferta oferta;
 
 	@Override
 	public Oferta getOfertaById(Long id) {

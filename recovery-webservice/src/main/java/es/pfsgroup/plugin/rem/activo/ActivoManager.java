@@ -3294,11 +3294,33 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		try {
 			beanUtilNotNull.copyProperty(activo, "fechaVentaExterna", dto.getFechaVenta());
 			beanUtilNotNull.copyProperty(activo, "importeVentaExterna", dto.getImporteVenta());
+			beanUtilNotNull.copyProperty(activo, "observacionesVentaExterna", dto.getObservaciones());
 
 			// Si se ha introducido valores en fecha o importe de venta, se
-			// actualiza la situación comercial y estado publicación del activo
-			if (!Checks.esNulo(dto.getFechaVenta()) && !Checks.esNulo(dto.getImporteVenta()))
+			// actualiza la situación comercial y estado publicación del activo.
+			// También son rechazadas las ofertas pendientes.
+			if (!Checks.esNulo(dto.getFechaVenta()) || !Checks.esNulo(dto.getImporteVenta())){
 				this.setSituacionComercialAndEstadoPublicacion(activo);
+
+				List<ActivoOferta> listaActivoOfertas = activo.getOfertas();
+				if(listaActivoOfertas != null && listaActivoOfertas.size() > 0) {
+					DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_RECHAZADA);
+
+					for (ActivoOferta actOfr : listaActivoOfertas) {
+						Oferta oferta = actOfr.getPrimaryKey().getOferta();
+						if(oferta.getEstadoOferta() != null && !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
+							oferta.setEstadoOferta(estadoOferta);
+							Auditoria auditoriaOferta = oferta.getAuditoria();
+							if(auditoriaOferta != null) {
+								auditoriaOferta.setFechaModificar(new Date());
+								auditoriaOferta.setUsuarioModificar(usuarioApi.getUsuarioLogado().getUsername());
+							}
+
+							genericDao.save(Oferta.class, oferta);
+						}
+					}
+				}
+			}
 
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);

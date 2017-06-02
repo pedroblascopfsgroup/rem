@@ -55,7 +55,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							xtype : 'comboboxfieldbase',
 							editable: false,
 							fieldLabel: HreRem.i18n('fieldlabel.activosearch.sello.calidad'),
-							name: 'selloCalidad',
+							name: 'comboSelloCalidad',
 							bind: {
 								store : '{comboSiNoRem}'
 							}

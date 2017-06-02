@@ -279,7 +279,8 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'selloCalidad',
-    			type: 'boolean'
+    			type: 'boolean',
+    			critical: true
     		},
     		{
     			name: 'admision',
@@ -557,7 +558,15 @@ Ext.define('HreRem.model.Activo', {
     				return data.situacionComercialCodigo == CONST.SITUACION_COMERCIAL['VENDIDO'];
     			},
     			depends: 'situacionComercialCodigo'
-    		}
+    		},
+    		{
+				name: 'nombreGestorSelloCalidad'
+			},
+			{
+				name: 'fechaRevisionSelloCalidad',
+				type:'date',
+    			dateFormat: 'c'
+			}
     ],
     
 	proxy: {

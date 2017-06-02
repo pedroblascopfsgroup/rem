@@ -2578,6 +2578,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			dateDevolucion.setDisabled(true);
 			dateDevolucion.setValue();
 		}
+	},
+	
+	
+	onChkbxRevisionDeptoCalidadChange: function(btn) {
+	    	var me = this;
+	    	var nomGestorCalidad = me.lookupReference('nomGestorCalidad');
+			var fechaRevisionCalidad = me.lookupReference('fechaRevisionCalidad');
+			
+	    	if(!btn.value){
+	    		nomGestorCalidad.reset();
+		    	fechaRevisionCalidad.reset();
+	    	}else{
+	    		nomGestorCalidad.setValue($AU.getUser().userName);
+	    		fechaRevisionCalidad.setValue(new Date());
+	    	}
+
 	}
-		
+	    	
 });

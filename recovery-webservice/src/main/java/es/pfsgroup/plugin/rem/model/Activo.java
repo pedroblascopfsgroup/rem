@@ -400,6 +400,13 @@ public class Activo implements Serializable, Auditable {
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<TanteoActivoExpediente> tanteoActivoExpediente;
     
+	@ManyToOne
+	@JoinColumn(name = "ACT_GESTOR_SELLO_CALIDAD")
+	private Usuario gestorSelloCalidad;
+    
+    @Column(name = "ACT_FECHA_SELLO_CALIDAD")
+    private Date fechaRevisionSelloCalidad;
+    
     
     
 	@Version   
@@ -1582,6 +1589,31 @@ public class Activo implements Serializable, Auditable {
 
 	public void setNumInmovilizadoBnk(Integer numInmovilizadoBnk) {
 		this.numInmovilizadoBnk = numInmovilizadoBnk;
+	}
+
+	public List<TanteoActivoExpediente> getTanteoActivoExpediente() {
+		return tanteoActivoExpediente;
+	}
+
+	public void setTanteoActivoExpediente(
+			List<TanteoActivoExpediente> tanteoActivoExpediente) {
+		this.tanteoActivoExpediente = tanteoActivoExpediente;
+	}
+
+	public Usuario getGestorSelloCalidad() {
+		return gestorSelloCalidad;
+	}
+
+	public void setGestorSelloCalidad(Usuario gestorSelloCalidad) {
+		this.gestorSelloCalidad = gestorSelloCalidad;
+	}
+
+	public Date getFechaRevisionSelloCalidad() {
+		return fechaRevisionSelloCalidad;
+	}
+
+	public void setFechaRevisionSelloCalidad(Date fechaRevisionSelloCalidad) {
+		this.fechaRevisionSelloCalidad = fechaRevisionSelloCalidad;
 	}
 	
 	

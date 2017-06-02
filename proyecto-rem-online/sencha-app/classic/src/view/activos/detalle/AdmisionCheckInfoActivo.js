@@ -21,8 +21,41 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckInfoActivo', {
     initComponent: function () {
 
         var me = this;
-       
+        
         me.items = [
+		{
+			xtype:'fieldsettable',
+			defaultType: 'textfieldbase',
+			
+			title: HreRem.i18n('title.admision.calidad'),
+			items :
+				[
+		            {
+						xtype:'checkboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.admision.revision.calidad'),
+						bind:		'{activoAdmision.selloCalidad}',
+						reference: 'chkbxRevisionDeptoCalidad',
+						secFunPermToEdit: 'EDITAR_SELLO_CALIDAD',
+						listeners: {
+							change: 'onChkbxRevisionDeptoCalidadChange'
+						}
+					},
+					{
+						xtype: 'displayfieldbase',
+		            	fieldLabel:  HreRem.i18n('fieldlabel.admision.gestor.calidad'),
+		            	reference: 'nomGestorCalidad',
+		            	bind:		'{activoAdmision.nombreGestorSelloCalidad}'
+		            },  
+					{ 
+						xtype: 'datefieldbase',
+						formatter: 'date("d/m/Y")',
+						fieldLabel:  HreRem.i18n('fieldlabel.admision.fecha.revision'),
+						reference: 'fechaRevisionCalidad',
+						bind:		'{activoAdmision.fechaRevisionSelloCalidad}',
+						readOnly: true
+					}
+				]        	
+		}, 
         {
 			xtype:'fieldsettable',
 			defaultType: 'textfieldbase',

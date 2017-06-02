@@ -1,14 +1,15 @@
 Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
-    extend		: 'HreRem.view.common.FormBase',
-    cls			: 'panel-base shadow-panel',
-    xtype		: 'comercialactivo',
-    reference	: 'comercialactivoref',
-    scrollable	: 'y',
-    recordName	: "comercial",
-	recordClass	: "HreRem.model.ComercialActivoModel",
-    requires	: ['HreRem.model.ComercialActivoModel', 'HreRem.view.activos.detalle.ComercialActivoTabPanel'],
+    extend			: 'HreRem.view.common.FormBase',
+    cls				: 'panel-base shadow-panel',
+    xtype			: 'comercialactivo',
+    reference		: 'comercialactivoref',
+    scrollable		: 'y',
+    refreshAfterSave: true,
+    recordName		: "comercial",
+	recordClass		: "HreRem.model.ComercialActivoModel",
+    requires		: ['HreRem.model.ComercialActivoModel', 'HreRem.view.activos.detalle.ComercialActivoTabPanel'],
 
-    listeners: {
+    listeners		: {
 		boxready:'cargarTabData'
     },
 
@@ -41,7 +42,7 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				        	reference: 'dtFechaVenta',
 				        	allowBlank: false,
 				        	bind : {
-				        		//readOnly: '{comercial.expedienteComercialVivo}',
+				        		readOnly: '{activoPertenceAgrupacionComercialOrRestringida}',
 				        		value: '{comercial.fechaVenta}'
 				        	}
 						},
@@ -56,14 +57,13 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				        },
 					// Fila 1
 						{
-							   xtype: 'currencyfieldbase',
-							   fieldLabel: HreRem.i18n('fieldlabel.importe.venta'),
-							   reference: 'cncyImporteVenta',
-							   allowBlank: false,
-							   bind : {
-					        		//readOnly: '{comercial.expedienteComercialVivo}',
-					        		value: '{comercial.importeVenta}'
-							   }
+						   xtype: 'currencyfieldbase',
+						   fieldLabel: HreRem.i18n('fieldlabel.importe.venta'),
+						   reference: 'cncyImporteVenta',
+						   allowBlank: false,
+						   bind : {
+				        		value: '{comercial.importeVenta}'
+						   }
 						}
 				]
 			},

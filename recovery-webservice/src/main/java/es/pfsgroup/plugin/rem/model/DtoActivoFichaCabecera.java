@@ -106,6 +106,7 @@ public class DtoActivoFichaCabecera extends WebDto {
 	private String tipoComercializarCodigo;
 	private String tipoComercializarDescripcion;
 	private Boolean pertenceAgrupacionRestringida;
+	private Boolean pertenceAgrupacionComercial;
 	private String situacionComercialCodigo;
 	private String situacionComercialDescripcion;
 	
@@ -1221,6 +1222,14 @@ public class DtoActivoFichaCabecera extends WebDto {
 
 	public void setFechaRevisionSelloCalidad(Date fechaRevisionSelloCalidad) {
 		this.fechaRevisionSelloCalidad = fechaRevisionSelloCalidad;
+	}
+	
+	public Boolean getPertenceAgrupacionComercial() {
+		return pertenceAgrupacionComercial;
+	}
+
+	public void setPertenceAgrupacionComercial(Boolean pertenceAgrupacionComercial) {
+		this.pertenceAgrupacionComercial = pertenceAgrupacionComercial;
 	}
 	
 

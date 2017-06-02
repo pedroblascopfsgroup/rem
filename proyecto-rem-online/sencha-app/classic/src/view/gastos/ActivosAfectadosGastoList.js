@@ -34,7 +34,9 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 					};
 				}
 				combo.getStore().setData(objetoStore);
-			}else return false;
+			}else{
+				return false;
+			}
 		}
 		
 	},

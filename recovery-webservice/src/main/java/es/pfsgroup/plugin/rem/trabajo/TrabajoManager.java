@@ -60,6 +60,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activotrabajo.dao.ActivoTrabajoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
@@ -896,7 +897,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL)) { // Obtención
 																										// documental
 			if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_CEE)) {// CEE
-				tipoTramite = tipoProcedimientoManager.getByCodigo("T003"); // Trámite
+				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEE); // Trámite
 																			// de
 																			// obtención
 																			// documental
@@ -907,8 +908,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					Usuario usuProveedorBankiaSareb = genericDao.get(Usuario.class, filtroUsuProveedorBankiaSareb);
 					if(!Checks.esNulo(usuProveedorBankiaSareb)) {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario",usuProveedorBankiaSareb);
-						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,filtro);
+						Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo", DDTipoProveedor.COD_CERTIFICADORA);
+						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,filtro,filtro2);
 						if(!Checks.estaVacio(listaPVC)){
+							
 							trabajo.setProveedorContacto(listaPVC.get(0));
 							trabajo = genericDao.save(Trabajo.class, trabajo);
 						}
@@ -916,7 +919,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				}
 			}
 			else if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD)) {
-				tipoTramite = tipoProcedimientoManager.getByCodigo("T008"); // Trámite
+				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEDULA); // Trámite
 																			// de
 																			// obtención
 																			// de
@@ -926,7 +929,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					Usuario usuario = gestorActivoManager.getGestorByActivoYTipo(trabajo.getActivo(), GestorActivoApi.CODIGO_GESTORIA_CEDULAS);
 					if(!Checks.esNulo(usuario)) {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario",usuario);
-						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,filtro);
+						Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo", DDTipoProveedor.COD_GESTORIA); 
+						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,filtro,filtro2);
 						if(!Checks.estaVacio(listaPVC)){
 							trabajo.setProveedorContacto(listaPVC.get(0));
 							trabajo = genericDao.save(Trabajo.class, trabajo);
@@ -936,30 +940,46 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				
 			}
 			else if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_INFORMES))
-				tipoTramite = tipoProcedimientoManager.getByCodigo("T006");// Trámite
+				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_INFORME);// Trámite
 																			// de
 																			// informes
-			else
-				tipoTramite = tipoProcedimientoManager.getByCodigo("T002"); // Trámite
-																			// de
-																			// obtención
-																			// documental
+			else {
+				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC); 	// Trámite
+																													// de
+																													// obtención
+																													// documental
+
+				//Si el trabajo es Bankia/Sareb asignamos proveedorContacto
+				if(this.checkBankia(trabajo) || this.checkSareb(trabajo)) {
+
+					Usuario gestorAdmision = gestorActivoManager.getGestorByActivoYTipo(trabajo.getActivo(), GestorActivoApi.CODIGO_GESTOR_ADMISION);
+
+					if(!Checks.esNulo(gestorAdmision)) {
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario", gestorAdmision);
+						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,filtro);
+						if(!Checks.estaVacio(listaPVC)){
+							trabajo.setProveedorContacto(listaPVC.get(0));
+							trabajo = genericDao.save(Trabajo.class, trabajo);
+						}
+					}
+				}
+			}
 		}
 		if (trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_TASACION)) { // Tasación
-			tipoTramite = tipoProcedimientoManager.getByCodigo("T005"); // Trámite
+			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_TASACION); // Trámite
 																		// de
 																		// tasación
 		}
 		if (trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA)) { // Actuación
 																									// técnica
 			if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS))
-				tipoTramite = tipoProcedimientoManager.getByCodigo("T006"); // Sólo
+				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_INFORME); // Sólo
 																			// en
 																			// verificación
 																			// de
 																			// averias
 			else
-				tipoTramite = tipoProcedimientoManager.getByCodigo("T004");
+				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_ACTUACION_TECNICA);
 		}
 
 		// Tramites [FASE 2] -----------------------
@@ -968,41 +988,41 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		//
 		// Propuesta de precios
 		if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_TRAMITAR_PROPUESTA_PRECIOS)) {
-			tipoTramite = tipoProcedimientoManager.getByCodigo("T009");
+			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_PROPUESTA_PRECIOS);
 		}
 		// Tramite de actualizacion de precios / propuesta descuento
 		if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_TRAMITAR_PROPUESTA_DESCUENTO)) {
-			tipoTramite = tipoProcedimientoManager.getByCodigo("T009");
+			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_PROPUESTA_PRECIOS);
 		}
 		// Tramite de bloqueo de precios
 		if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_PRECIOS_BLOQUEAR_ACTIVOS)) {
-			tipoTramite = tipoProcedimientoManager.getByCodigo("T010");
+			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_ACTUALIZA_PRECIOS);
 		}
 		// Tramite de desbloqueo de precios
 		if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_PRECIOS_DESBLOQUEAR_ACTIVOS)) {
-			tipoTramite = tipoProcedimientoManager.getByCodigo("T010");
+			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_ACTUALIZA_PRECIOS);
 		}
 		// Tramite de actualizacion de precios / carga de precios
 		if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_ACTUALIZACION_PRECIOS)) {
-			tipoTramite = tipoProcedimientoManager.getByCodigo("T010");
+			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_ACTUALIZA_PRECIOS);
 		}
 		if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_ACTUALIZACION_PRECIOS_DESCUENTO)) {
-			tipoTramite = tipoProcedimientoManager.getByCodigo("T010");
+			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_ACTUALIZA_PRECIOS);
 		}
 
 		// Módulo de Publicaciones ------------------
 		//
 		// Trámite de actualización de estados
 		if (trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_PUBLICACIONES)) {
-			tipoTramite = tipoProcedimientoManager.getByCodigo("T012");
+			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_ACTUALIZA_ESTADOS);
 		}
 
 		// Módulo de Expediente comercial ----------
 		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA)) {
-			tipoTramite = tipoProcedimientoManager.getByCodigo("T013");
+			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA);
 		}
 		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_ALQUILER)) {
-			tipoTramite = tipoProcedimientoManager.getByCodigo("T014");
+			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_SANCION_OFERTA_ALQUILER);
 		}
 
 		
@@ -1947,6 +1967,30 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				filtroTrabajo);
 
 		return !tarifasTrabajo.isEmpty();
+	}
+
+	@Override
+	@BusinessOperation(overrides = "trabajoManager.existeTarifaSuperiorCeroTrabajo")
+	public Boolean existeTarifaSuperiorCeroTrabajo(TareaExterna tarea) {
+
+		Trabajo trabajo = getTrabajoByTareaExterna(tarea);
+
+		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+		List<TrabajoConfiguracionTarifa> tarifasTrabajo = genericDao.getList(TrabajoConfiguracionTarifa.class, filtroTrabajo);
+
+		for (TrabajoConfiguracionTarifa tct : tarifasTrabajo) {
+
+			if (tct.getMedicion() != null && tct.getPrecioUnitario() != null) {
+
+				Float importe = tct.getMedicion() * tct.getPrecioUnitario();
+
+				if (importe > 0) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	@Override

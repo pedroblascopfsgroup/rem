@@ -68,6 +68,14 @@ Ext.define('HreRem.model.ActivoCondicionantesDisponibilidad', {
     		// Referente a la cabecera de datos publicacion. Campo calculado con datos de este modelo.
     		{
     			name: 'estadoCondicionadoCodigo'
+    		},
+    		{
+    			name: 'sinInformeAprobado',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'conCargas',
+    			type: 'boolean'
     		}
 
     ],

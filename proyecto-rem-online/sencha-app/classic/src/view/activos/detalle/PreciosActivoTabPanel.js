@@ -87,9 +87,17 @@ Ext.define('HreRem.view.activos.detalle.PreciosActivoTabPanel', {
 
     initComponent: function () {
      	var me = this;
+     	//HREOS-1964: Restringir los activos financieros (asistidos) para que solo puedan ser editables por los perfiles de IT y Gestoría PDV
+		var ocultarValorespreciosactivo = false;		
+		if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
+		 ocultarValorespreciosactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+				 && $AU.userHasFunction('EDITAR_TAB_VALORACIONES_PRECIOS'));
+		}else{
+		 ocultarValorespreciosactivo = !$AU.userHasFunction('EDITAR_TAB_VALORACIONES_PRECIOS');
+		}
 
      	me.items = [];
-     	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'valorespreciosactivo', funPermEdition: ['EDITAR_TAB_VALORACIONES_PRECIOS']})}, ['TAB_VALORACIONES_PRECIOS']);
+     	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'valorespreciosactivo', ocultarBotonesEdicion: ocultarValorespreciosactivo})}, ['TAB_VALORACIONES_PRECIOS']);
         $AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'tasacionesactivo', ocultarBotonesEdicion: true})}, ['TAB_TASACIONES']);
         $AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'propuestaspreciosactivo', ocultarBotonesEdicion: true})}, ['TAB_PROPUESTAS_PRECIO']);
 
@@ -100,7 +108,15 @@ Ext.define('HreRem.view.activos.detalle.PreciosActivoTabPanel', {
     	var me = this;
 		me.down("[itemId=botoneditar]").setVisible(false);
 		var editionEnabled = function() {
-			me.down("[itemId=botoneditar]").setVisible(true);
+			//HREOS-1964: Restringir los activos financieros (asistidos) para que solo puedan ser editables por los perfiles de IT y Gestoría PDV
+			 var ocultarValorespreciosactivo = false;		
+			 if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
+				 ocultarValorespreciosactivo = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+						 && $AU.userHasFunction('EDITAR_TAB_VALORACIONES_PRECIOS'));
+			 }else{
+				 ocultarValorespreciosactivo = $AU.userHasFunction('EDITAR_TAB_VALORACIONES_PRECIOS');
+			 }
+			me.down("[itemId=botoneditar]").setVisible(ocultarValorespreciosactivo);
 		}
 
 		//HREOS-846 Si NO esta dentro del perimetro, no se habilitan los botones de editar

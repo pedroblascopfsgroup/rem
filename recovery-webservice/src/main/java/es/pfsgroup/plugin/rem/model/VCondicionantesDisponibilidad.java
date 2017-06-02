@@ -78,6 +78,16 @@ public class VCondicionantesDisponibilidad  implements Serializable {
 	@Column(name = "EST_DISP_COM_CODIGO")
 	private String estadoCondicionadoCodigo;
 
+	@Column(name = "SIN_INFORME_APROBADO")
+	private Boolean sinInformeAprobado;
+	
+	@Column(name = "CON_CARGAS")
+	private Boolean conCargas;
+	
+	
+	
+	
+
 	
 	public Long getIdActivo() {
 		return idActivo;
@@ -198,5 +208,22 @@ public class VCondicionantesDisponibilidad  implements Serializable {
 	public void setEstadoCondicionadoCodigo(String estadoCondicionadoCodigo) {
 		this.estadoCondicionadoCodigo = estadoCondicionadoCodigo;
 	}
+
+	public Boolean getSinInformeAprobado() {
+		return sinInformeAprobado;
+	}
+
+	public void setSinInformeAprobado(Boolean sinInformeAprobado) {
+		this.sinInformeAprobado = sinInformeAprobado;
+	}
+
+	public Boolean getConCargas() {
+		return conCargas;
+	}
+
+	public void setConCargas(Boolean conCargas) {
+		this.conCargas = conCargas;
+	}
+	
 
 }

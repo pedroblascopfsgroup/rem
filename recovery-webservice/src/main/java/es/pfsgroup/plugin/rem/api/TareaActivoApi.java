@@ -3,7 +3,6 @@ package es.pfsgroup.plugin.rem.api;
 import java.util.List;
 
 import es.capgemini.devon.bo.BusinessOperationException;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.prorroga.dto.DtoSolicitarProrroga;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.model.TareaActivo;

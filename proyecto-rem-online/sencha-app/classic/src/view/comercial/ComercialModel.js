@@ -20,7 +20,21 @@ Ext.define('HreRem.view.comercial.ComercialModel', {
 	            beforeload : 'paramLoading'
 	        }
     	},
-    	
+    	comboTipoGestorOfertas: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboTipoGestorOfertas'
+			}
+		},
+		comboUsuarios: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+			type: 'uxproxy',
+			remoteUrl: 'activo/getComboUsuarios',
+			extraParams: {idTipoGestor: '{tipoGestor.selection.id}'}
+			}
+		},    	
     	ofertasComercial: {
     		pageSize: $AC.getDefaultPageSize(),
 	    	model: 'HreRem.model.Ofertas',

@@ -50,7 +50,16 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 				        	bind: {
 			            		store: '{comboEntidadPropietaria}'
 			            	}
-				        }
+				        },
+				        {
+							xtype : 'comboboxfieldbase',
+							editable: false,
+							fieldLabel: HreRem.i18n('fieldlabel.activosearch.sello.calidad'),
+							name: 'comboSelloCalidad',
+							bind: {
+								store : '{comboSiNoRem}'
+							}
+						}
 				    ]},
 			    	{
 			    	defaults: {

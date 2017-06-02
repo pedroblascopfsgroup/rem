@@ -7,6 +7,7 @@ import java.util.Map;
 
 import net.sf.json.JSONObject;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -71,6 +72,15 @@ public interface OfertaApi {
 	 * @return Page<Oferta>
 	 */
 	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter);
+	
+	/**
+	 * Devuelve un Page de Ofertas aplicando el filtro que recibe de un usuario determinado
+	 * 
+	 * @param dtoOfertasFilter
+	 * @param usuario
+	 * @return
+	 */
+	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter,Usuario usuario);
 
 
 	/**
@@ -346,27 +356,28 @@ public interface OfertaApi {
 	 * Este método obtiene los detalles de una oferta por ID de oferta requeridos
 	 * en la pestaña ofertas de un activo.
 	 * 
-	 * @param dto : Dto con los datos.
+	 * @param id identificador de la oferta a consultar.
 	 * @return Devuelve un objeto detalle oferta.
 	 */
-	public DtoDetalleOferta getDetalleOfertaById(DtoDetalleOferta dto);
+	public DtoDetalleOferta getDetalleOfertaById(Long idOferta);
 
 	/**
 	 * Este método obtiene una lista de ofertantes para el ID de oferta dado, esto incluye
 	 * el ofertante principal y los titulares adicionales.
 	 * 
-	 * @param dtoOfertantesOferta : dto con el ID de la oferta a filtrar.
+	 * @param idOferta id de la oferta a filtrar.
 	 * @return Devuelve una lista de DtoOfertantesOferta por cada ofertante encontrado.
 	 */
-	public List<DtoOfertantesOferta> getOfertantesByOfertaId(DtoOfertantesOferta dtoOfertantesOferta);
+	public List<DtoOfertantesOferta> getOfertantesByOfertaId(Long idOferta);
 
 	/**
 	 * Este método obtiene una lista de honorarios para el ID de oferta dado.
 	 *
-	 * @param DtoGastoExpediente : Dto con los datos de oferta y activo para filtrar.
+	 * @param idActivo id del activo para filtrar.
+	 * @param idOferta id de la oferta para filtrar.
 	 * @return Devuelve una lista de DtoGastoExpediente.
 	 */
-	public List<DtoGastoExpediente> getHonorariosActivoByOfertaId(DtoGastoExpediente dto);
+	public List<DtoGastoExpediente> getHonorariosActivoByOfertaId(Long idActivo, Long idOferta);
 	
 	/**
 	 * Este método obtiene una lista de honorarios para el ID de oferta dado.

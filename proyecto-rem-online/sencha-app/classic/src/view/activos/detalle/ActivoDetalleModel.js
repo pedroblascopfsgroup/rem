@@ -171,6 +171,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			   		return 'app-tbfiedset-ico icono-ko'
 			   	}
 			 },
+			 getIconClsCondicionantesConCargas: function(get) {
+			var condicion = get('activoCondicionantesDisponibilidad.conCargas');
+			   	if(!eval(condicion)) {
+			   		return 'app-tbfiedset-ico'
+			   	} else {
+			   		return 'app-tbfiedset-ico icono-ko'
+			   	}
+			 },
+			 getIconClsCondicionantesSinInformeAprobado: function(get) {
+			var condicion = get('activoCondicionantesDisponibilidad.sinInformeAprobado');
+			   	if(!eval(condicion)) {
+			   		return 'app-tbfiedset-ico'
+			   	} else {
+			   		return 'app-tbfiedset-ico icono-ko'
+			   	}
+			 },
 		 getSiNoFromOtro: function(get) {
 				var condicion = get('activoCondicionantesDisponibilidad.otro');
 
@@ -211,6 +227,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     getEstadoPublicacionCodigo: function(get) {
 			var codigo = Ext.isEmpty(get('activo.estadoPublicacionCodigo')) ? "" : get('activo.estadoPublicacionCodigo');
 			return codigo;
+		 },
+
+		 activoPertenceAgrupacionComercialOrRestringida: function(get) {
+			 var restringida = get('activo.pertenceAgrupacionRestringida');
+			 var comercial = get('activo.pertenceAgrupacionComercial');
+
+			 if(restringida || comercial) {
+				 return true;
+			 } else {
+				 return false;
+			 }
 		 }
 	 },
 

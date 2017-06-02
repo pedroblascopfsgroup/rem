@@ -211,7 +211,9 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 
 		HQLBuilder.addFiltroIgualQue(hb, "vgasto.rango", 1);
 
+
 		return hb;
+
 	}
 
 	@Override

@@ -307,6 +307,10 @@
             	def trabajoManager = ctx.getBean("trabajoManager");
                 return trabajoManager.existeTarifaTrabajo(tareaExterna);
             }
+            def comprobarExisteTarifaSuperiorCeroTrabajo = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+                return trabajoManager.existeTarifaSuperiorCeroTrabajo(tareaExterna);
+            }
 			def comprobarObligatoriosCheckingInfoActivo = {
             	def activoManager = ctx.getBean("activoManager");
             	return activoManager.comprobarObligatoriosCheckingInfoActivo(idActivo);
@@ -455,6 +459,10 @@
             def checkVendido = {
             	def activoManager = ctx.getBean("activoManager");
             	return activoManager.checkVendido(idActivo);
+            }
+            def checkImporteParticipacion = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkImporteParticipacion(idTramite);
             }
   			 ]]></value>
   		</list>

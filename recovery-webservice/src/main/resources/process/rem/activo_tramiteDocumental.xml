@@ -175,8 +175,13 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T002_ValidacionActuacion" name="avanzaBPM"></transition>
+		<transition to="T002_ObtencionDocumentoGestoriaDecision" name="avanzaBPM"></transition>
 	</state>
+	
+	<decision name="T002_ObtencionDocumentoGestoriaDecision" expression="#{T002_ObtencionDocumentoGestoriaDecision}">
+		<transition to="T002_CierreEconomico" name="ObtencionIncorrecta"></transition>
+		<transition to="T002_ValidacionActuacion" name="ObtencionCorrecta"></transition>
+	</decision>
 	
 	<state name="T002_ValidacionActuacion">
 		<event type="node-enter">
@@ -201,9 +206,8 @@
 	</state>
 	
 	<decision name="T002_ValidacionActuacionDecision" expression="#{T002_ValidacionActuacionDecision}">
-		<transition to="T002_SolicitudDocumentoGestoria" name="Incorrecto"></transition>
-		<transition to="T002_CierreEconomico" name="CorrectoConCoste"></transition>
-		<transition to="Fin" name="CorrectoSinCoste"></transition>
+		<transition to="T002_SolicitudDocumentoGestoria" name="DocumentoIncorrecto"></transition>
+		<transition to="T002_CierreEconomico" name="DocumentoCorrecto"></transition>
 	</decision>
 	
 	<state name="T002_CierreEconomico">

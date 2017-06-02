@@ -102,7 +102,7 @@ BEGIN
 	                                              THEN ''12''
 	                                              ELSE
 	                                                CASE
-	                                                  WHEN (EN_PRECOMERCIALIZACION = 1)
+	                                                  WHEN (SIN_INFORME_APROBADO = 1)
 	                                                  THEN ''13''
 	                                                  ELSE
 	                                                    CASE
@@ -144,10 +144,10 @@ BEGIN
 		DECODE (REG.REG_DIV_HOR_INSCRITO, 0, 1, 0)                           AS DIVHORIZONTAL_NOINSCRITA,
 		DECODE (EAC.DD_EAC_CODIGO, ''05'', 1, 0)                             AS RUINA,
 		SPS.SPS_OTRO                                                         AS OTRO,
-		0                                                                    AS EN_PRECOMERCIALIZACION,--NO EXISTE EN REM
+		DECODE(VEI.DD_AIC_CODIGO ,''02'' ,0 , 1) 							 AS SIN_INFORME_APROBADO,        
 		0                                                                    AS REVISION,               --NO EXISTE EN REM
 		0                                                                    AS PROCEDIMIENTO_JUDICIAL, --NO EXISTE EN REM
-		ACT.ACT_CON_CARGAS                                                   AS CON_CARGAS,
+		NVL2(VCG.CON_CARGAS, VCG.CON_CARGAS, 0) 	 						 AS CON_CARGAS,
 		DECODE (SPS.SPS_OCUPADO, 1, DECODE (SPS.SPS_CON_TITULO, 0, 1, 0), 0) AS OCUPADO_SINTITULO,
 		DECODE (SPS.SPS_ESTADO_PORTAL_EXTERNO, 1, 1, 0)                      AS ESTADO_PORTAL_EXTERNO
 	    FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
@@ -156,7 +156,10 @@ BEGIN
 	    INNER JOIN '||V_ESQUEMA||'.BIE_DATOS_REGISTRALES BDR ON BDR.BIE_ID = ACT.BIE_ID
 	    INNER JOIN '||V_ESQUEMA||'.ACT_REG_INFO_REGISTRAL REG ON REG.ACT_ID = ACT.ACT_ID
 	    LEFT JOIN '||V_ESQUEMA||'.DD_EON_ESTADO_OBRA_NUEVA EON ON EON.DD_EON_ID = REG.DD_EON_ID
-	    LEFT JOIN '||V_ESQUEMA||'.V_NUM_PROPIETARIOSACTIVO NPA ON NPA.ACT_ID = ACT.ACT_ID)';
+	    LEFT JOIN '||V_ESQUEMA||'.V_NUM_PROPIETARIOSACTIVO NPA ON NPA.ACT_ID = ACT.ACT_ID
+		LEFT JOIN '||V_ESQUEMA||'.VI_ACTIVOS_CON_CARGAS VCG ON VCG.ACT_ID = ACT.ACT_ID
+		LEFT JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO ON ICO.ACT_ID = ACT.ACT_ID 
+		LEFT JOIN '||V_ESQUEMA||'.VI_ESTADO_ACTUAL_INFMED VEI ON VEI.ICO_ID = ICO.ICO_ID)';
 				
 
  	 DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'...Creada OK');

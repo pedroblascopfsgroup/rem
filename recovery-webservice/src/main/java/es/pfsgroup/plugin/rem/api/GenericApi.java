@@ -78,6 +78,9 @@ public interface GenericApi {
 	
 	@BusinessOperationDefinition("genericManager.getComboTipoGestor")
 	public List<EXTDDTipoGestor> getComboTipoGestor();
+	
+	@BusinessOperationDefinition("genericManager.getComboTipoGestorOfertas")
+	public List<EXTDDTipoGestor> getComboTipoGestorOfertas();
 
 	/**
 	 * Devuelve los tipos de trabajo, filtrando los del tipo que no deben crearse para un activo dado

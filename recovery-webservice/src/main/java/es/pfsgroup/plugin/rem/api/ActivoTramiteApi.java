@@ -20,6 +20,26 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
  */
 public interface ActivoTramiteApi {
 
+	
+	
+	public static final String CODIGO_TRAMITE_PREPARACION_EXP_JUD = "PCO";
+	public static final String CODIGO_TRAMITE_NO_LITIGAR = "NOLIT";
+	public static final String CODIGO_TRAMITE_ADMISION = "T001";
+	public static final String CODIGO_TRAMITE_OBTENCION_DOC = "T002";
+	public static final String CODIGO_TRAMITE_OBTENCION_DOC_CEE = "T003";
+	public static final String CODIGO_TRAMITE_ACTUACION_TECNICA = "T004";
+	public static final String CODIGO_TRAMITE_TASACION = "T005";
+	public static final String CODIGO_TRAMITE_INFORME = "T006";
+	public static final String CODIGO_TRAMITE_FACTURACION = "T007";
+	public static final String CODIGO_TRAMITE_OBTENCION_DOC_CEDULA = "T008";
+	public static final String CODIGO_TRAMITE_PROPUESTA_PRECIOS = "T009";
+	public static final String CODIGO_TRAMITE_ACTUALIZA_PRECIOS = "T010";
+	public static final String CODIGO_TRAMITE_PUBLICACION = "T011";
+	public static final String CODIGO_TRAMITE_ACTUALIZA_ESTADOS = "T012";
+	public static final String CODIGO_TRAMITE_COMERCIAL_VENTA = "T013";
+	public static final String CODIGO_TRAMITE_SANCION_OFERTA_ALQUILER = "T014";
+	
+	
 	/**
 	 * Recupera un trámite pasándole su id.
 	 * @param idTramite
@@ -183,14 +203,19 @@ public interface ActivoTramiteApi {
 	
 	
 	/**
-	 * Segun el campo pasado por parametro, buscara entre todas las tareas que hayan en el tramite
-	 * y devolverá su valor, solo sirve para la primera coincidencia
-	 * @param idToken
-	 * @param tevNombre
-	 * @return
+	 * Devuelve una lista de TareaProcedimiento abiertas del tramite pasado por parámetro
+	 * @param idTramite
+	 * @return List<TareaProcedimiento> lista de TareaProcedimiento con las tareas activas
 	 */
 	public List<TareaProcedimiento>  getTareasActivasByIdTramite(Long idTramite);
 	
+	
+	/**
+	 * Devuelve una lista de TareaExterna abiertas del tramite pasado por parámetro
+	 * @param idTramite
+	 * @return List<TareaExterna> lista de TareaExterna con las tareas activas
+	 */
+	public List<TareaExterna> getListaTareaExternaActivasByIdTramite(Long idTramite);
 	
 	/**
 	 * Devuelve todas las tareas que hayan en el tramite abiertas y cerradas

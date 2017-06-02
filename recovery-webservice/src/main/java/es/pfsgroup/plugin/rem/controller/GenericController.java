@@ -175,6 +175,14 @@ public class GenericController extends ParadiseJsonController{
 		return new ModelAndView("jsonView", model);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboTipoGestorOfertas(WebDto webDto, ModelMap model){
+		model.put("data", genericApi.getComboTipoGestorOfertas());
+		
+		return new ModelAndView("jsonView", model);
+	}
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboTipoTrabajoCreaFiltered(String idActivo){
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboTipoTrabajoCreaFiltered(idActivo)));	

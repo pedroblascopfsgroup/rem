@@ -51,7 +51,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 	   			 		layout: {
 	   			 			type: 'vbox'
 	   			 		},
-	    				cls:'',
+	   			 		cls:'formbase_no_shadow',
 	    				items: [
 	    						{
 

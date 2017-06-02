@@ -58,6 +58,11 @@ Ext.define('HreRem.controller.AuthenticationController', {
     		beforerender : 'confirmFunPermToEnable'
     	},
     	
+    	'component[secFunPermToEdit]' : {
+    		
+    		beforerender : 'confirmFunPermToEdit'
+    	},
+    	
     	'component[secRolesPermToEdit]' : {
     		
     		beforerender : 'confirmRolesPermToEdit'
@@ -189,6 +194,26 @@ Ext.define('HreRem.controller.AuthenticationController', {
     	
     },
     
+    
+    /**
+     * Función que cambia el componente a readOnly si el usuario no tiene la funci�n incluida
+     * en el atributo secFunPermToEdit.
+     * @param {} cmp
+     */
+    confirmFunPermToEdit: function(cmp) {
+    	var me = this;
+    	
+    	if (!Ext.isEmpty(cmp.secFunPermToEdit) && !me.userHasFunction(cmp.secFunPermToEdit)){
+
+    		cmp.setReadOnly(true);    		
+    		me.log("confirmFunPermToEdit ["+cmp.id+"] read only");
+            
+    	}
+    	
+    },
+    
+    
+    
      /**
      * Función que habilita o deshabilita el componente que recibe si el usuario tiene o no el rol cuyo valor
      * se encontrará en el atributo secRolesPermToEnable. 
@@ -293,6 +318,21 @@ Ext.define('HreRem.controller.AuthenticationController', {
     	
     	return userIsRol;   	
 
+    }, 
+    
+    userTipoGestor: function() {
+    	var me = this;
+    	var tipoGestor = "";
+    	if (me.userIsRol("GESTCOMBACKOFFICE")){
+    		tipoGestor = "GCBO";
+    	}else if(me.userIsRol("HAYAGESTCOM")){
+    		tipoGestor = "GCOM";
+    	}else if(me.userIsRol("GESTIAFORM")){
+    		tipoGestor = "GIAFORM";
+    	}else if(me.userIsRol("HAYAGESTFORM")){
+    		tipoGestor = "GFORM";
+    	}
+    	return tipoGestor;
     }, 
     
     getUser: function() { 

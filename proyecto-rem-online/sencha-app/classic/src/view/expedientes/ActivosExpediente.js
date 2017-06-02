@@ -1,10 +1,14 @@
 Ext.define('HreRem.view.expedientes.ActivosExpediente', {
-    extend: 'HreRem.view.common.FormBase',
+	extend: 'Ext.panel.Panel',
     xtype: 'activosexpediente', 
     cls	: 'panel-base shadow-panel',
+    requires: ['HreRem.view.expedientes.ActivoExpedienteTabPanel'],
     collapsed: false,
     reference: 'activosexpedienteref',
-	layout: 'fit',
+    layout: {
+        type: 'vbox',
+        align: 'stretch'
+    },
 
     initComponent: function () {
 
@@ -28,6 +32,9 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 				            enableGroupingMenu: false,
 				            dock: 'bottom'
 				}],
+				listeners : {
+			    	rowclick: 'onRowClickListadoactivos'
+			    },
 				columns: [
 				   {    xtype: 'actioncolumn',
 	    			text: HreRem.i18n('fieldlabel.numero.activo'),
@@ -105,7 +112,21 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			        }
 			    ]
 			    
+			},
+			{
+		        xtype: 'splitter',
+		        cls: 'x-splitter-base',
+		        collapsible: true
+		    },
+			{	
+				xtype: 'activoExpedienteTabPanel',
+				reference: 'activoExpedienteMain',
+				collapsed: false,
+				hidden: true,
+				scrollable: 'y',
+				flex: 1
 			}
+			//HREOS-2222  
             
             
         ];

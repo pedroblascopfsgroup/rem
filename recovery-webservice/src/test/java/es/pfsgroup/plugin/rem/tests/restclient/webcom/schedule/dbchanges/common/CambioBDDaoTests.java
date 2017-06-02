@@ -75,6 +75,12 @@ public class CambioBDDaoTests {
 			return clavePrimariaJson;
 		}
 
+		@Override
+		public List<String> vistasAuxiliares() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
 	}
 
 	@Mock

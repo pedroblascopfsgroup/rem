@@ -91,13 +91,25 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					            },
 					            summaryType: 'sum',
 					            summaryRenderer: function(value, summaryData, dataIndex) {
-					            	var msg = HreRem.i18n("fieldlabel.porcentaje.compra.total") + " " + value + "%";
+					            	var suma = 0;
+					            	var store = this.up('grid').store;
+
+					            	for(var i=0; i< store.data.length; i++){
+					            		if(store.data.items[i].data.porcentajeCompra != null){
+					            			suma += parseFloat(store.data.items[i].data.porcentajeCompra);
+					            		}
+					            	}
+					            	suma = Ext.util.Format.number(suma, '0.00');
+					            	
+					            	var msg = HreRem.i18n("fieldlabel.porcentaje.compra.total") + " " + suma + "%";
 					            	var style = "" 
-					            	if(value != 100) {
-					            		msg = HreRem.i18n("fieldlabel.porcentaje.compra.total.error")	
+					            	if(suma != Ext.util.Format.number(100.00,'0.00')) {
+					            		msg = HreRem.i18n("fieldlabel.porcentaje.compra.total.error");		
 					            		style = "style= 'color: red'" 
-					            	}			            	
+					            	}	
+					            	
 					            	return "<span "+style+ ">"+msg+"</span>"
+					            	
 					            }
 						   },
 						   {

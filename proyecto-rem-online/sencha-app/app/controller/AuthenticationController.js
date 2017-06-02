@@ -58,6 +58,11 @@ Ext.define('HreRem.controller.AuthenticationController', {
     		beforerender : 'confirmFunPermToEnable'
     	},
     	
+    	'component[secFunPermToEdit]' : {
+    		
+    		beforerender : 'confirmFunPermToEdit'
+    	},
+    	
     	'component[secRolesPermToEdit]' : {
     		
     		beforerender : 'confirmRolesPermToEdit'
@@ -188,6 +193,26 @@ Ext.define('HreRem.controller.AuthenticationController', {
     	}
     	
     },
+    
+    
+    /**
+     * Función que cambia el componente a readOnly si el usuario no tiene la funci�n incluida
+     * en el atributo secFunPermToEdit.
+     * @param {} cmp
+     */
+    confirmFunPermToEdit: function(cmp) {
+    	var me = this;
+    	
+    	if (!Ext.isEmpty(cmp.secFunPermToEdit) && !me.userHasFunction(cmp.secFunPermToEdit)){
+
+    		cmp.setReadOnly(true);    		
+    		me.log("confirmFunPermToEdit ["+cmp.id+"] read only");
+            
+    	}
+    	
+    },
+    
+    
     
      /**
      * Función que habilita o deshabilita el componente que recibe si el usuario tiene o no el rol cuyo valor

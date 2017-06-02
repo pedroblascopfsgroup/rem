@@ -72,7 +72,8 @@ public class DtoActivoFilter extends WebDto {
 	private Integer ventaWebVigente;
 	private Integer minimoHistorico;
 	private Integer webHistorico;
-
+	private Boolean selloCalidad;
+	
 	public String getNumActivo() {
 		return numActivo;
 	}
@@ -444,5 +445,11 @@ public class DtoActivoFilter extends WebDto {
 	}
 	public void setWebHistorico(Integer webHistorico) {
 		this.webHistorico = webHistorico;
+	}
+	public Boolean getSelloCalidad() {
+		return selloCalidad;
+	}
+	public void setSelloCalidad(Boolean selloCalidad) {
+		this.selloCalidad = selloCalidad;
 	}	
 }

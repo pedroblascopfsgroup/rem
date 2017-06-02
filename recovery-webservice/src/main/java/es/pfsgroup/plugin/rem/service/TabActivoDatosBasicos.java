@@ -15,6 +15,7 @@ import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -24,6 +25,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -65,6 +67,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
 	
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
@@ -231,16 +236,27 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		
 		if(activo.getAgrupaciones().size() > 0){
-			Boolean pertenceAgrupacionRestringida= false;
+			Boolean pertenceAgrupacionRestringida = false;
 			for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
 				if(Checks.esNulo(agrupaciones.getAgrupacion().getFechaBaja())) {
 					if(!Checks.esNulo(agrupaciones.getAgrupacion().getTipoAgrupacion()) && DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo())){
-						pertenceAgrupacionRestringida= true;
+						pertenceAgrupacionRestringida = true;
 						break;
 					}
 				}
 			}
+			Boolean pertenceAgrupacionComercial = false;
+			for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
+				if(Checks.esNulo(agrupaciones.getAgrupacion().getFechaBaja())) {
+					if(!Checks.esNulo(agrupaciones.getAgrupacion().getTipoAgrupacion()) && DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo())){
+						pertenceAgrupacionComercial = true;
+						break;
+					}
+				}
+			}
+
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionRestringida", pertenceAgrupacionRestringida);
+			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionComercial", pertenceAgrupacionComercial);
 		}
 
 		// Obtener si el ultimo estado del informe comercial es ACEPTADO.
@@ -337,7 +353,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(!Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getTipoActivo())) {
 			BeanUtils.copyProperty(activoDto, "tipoActivoMediadorCodigo", activo.getInfoComercial().getTipoActivo().getCodigo());
 		}
-
+		
+		if(!Checks.esNulo(activo.getGestorSelloCalidad())){
+			BeanUtils.copyProperty(activoDto, "nombreGestorSelloCalidad", activo.getGestorSelloCalidad().getApellidoNombre());
+		}
 		
 		return activoDto;	
 	}
@@ -604,6 +623,18 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			if (!Checks.esNulo(dto.getTipoAlquilerCodigo())) {
 				DDTipoAlquiler tipoAlquiler = (DDTipoAlquiler) diccionarioApi.dameValorDiccionarioByCod(DDTipoAlquiler.class,  dto.getTipoAlquilerCodigo());
 				activo.setTipoAlquiler(tipoAlquiler);
+			}
+			
+			//HREOS-1983 - Si marcan el check de sello de calidad, ponemos la fecha actual y el gestor logueado.
+			if(!Checks.esNulo(dto.getSelloCalidad()) && dto.getSelloCalidad()) {
+				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+				if(!Checks.esNulo(usuarioLogado)){
+					activo.setGestorSelloCalidad(usuarioLogado);
+				}
+				activo.setFechaRevisionSelloCalidad(new Date());
+			}else{
+				activo.setGestorSelloCalidad(null);
+				activo.setFechaRevisionSelloCalidad(null);
 			}
 			
 			// Activo bancario -------------

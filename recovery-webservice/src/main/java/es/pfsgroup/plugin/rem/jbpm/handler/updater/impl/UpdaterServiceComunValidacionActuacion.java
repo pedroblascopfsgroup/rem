@@ -2,8 +2,11 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +40,7 @@ public class UpdaterServiceComunValidacionActuacion implements UpdaterService {
 	private static final String CODIGO_T006_VALIDACION_INFORME = "T006_ValidacionInforme";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+	private static final Log logger = LogFactory.getLog(UpdaterServiceComunValidacionActuacion.class);
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -46,37 +50,23 @@ public class UpdaterServiceComunValidacionActuacion implements UpdaterService {
 	
 	@Transactional
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+
+		if (!valores.isEmpty() && CODIGO_T002_SOLICITUD_VALIDACION_ACTUACION.equals(valores.get(0).getTareaExterna().getTareaProcedimiento().getCodigo())) {
+			updateFechaObtencionDocumento(tramite, new Date());
+		}
+
 		for(TareaExternaValor valor : valores){
-			
+
 			//Fecha Solicitud - Se procesa guardado adicional solo si la pantalla la informa (gestión de campos obligatorios)
 			if(FECHA_VALIDACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
 			{
-				Trabajo trabajo = tramite.getTrabajo();
-				
-				DDSubtipoTrabajo subtipoTrabajo = trabajo.getSubtipoTrabajo();
-				List<ActivoAdmisionDocumento> listaDocumentos = tramite.getActivo().getAdmisionDocumento();
-				for(ActivoAdmisionDocumento documento : listaDocumentos){
-					if(subtipoTrabajo.getCodigo().equals(diccionarioTargetClassMap.getSubtipoTrabajo(documento.getConfigDocumento().getTipoDocumentoActivo().getCodigo())))
-						try {
-							Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO);
-							DDEstadoDocumento estadoDocumento = (DDEstadoDocumento) genericDao.get(DDEstadoDocumento.class, filtro);
-							
-							documento.setFechaSolicitud(ft.parse(valor.getValor()));
-							documento.setEstadoDocumento(estadoDocumento);
-							Auditoria.save(documento);
-						} catch (ParseException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-				}
-				
 				try {
-					trabajo.setFechaValidacion(ft.parse(valor.getValor()));
+					updateFechaObtencionDocumento(tramite, ft.parse(valor.getValor()));
 				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error("UpdaterServiceComunValidacionActuacion, Error parse date", e);
 				}
 			}
+
 			//Combo de valoración - Se procesa guardado adicional solo si la pantalla lo informa (gestión de campos obligatorios)
 			if(COMBO_VALORACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
 				Trabajo trabajo = tramite.getTrabajo();
@@ -135,6 +125,26 @@ public class UpdaterServiceComunValidacionActuacion implements UpdaterService {
 			}
 		}
 
+	}
+
+	private void updateFechaObtencionDocumento(ActivoTramite tramite, Date fecha) {
+		Trabajo trabajo = tramite.getTrabajo();
+		
+		DDSubtipoTrabajo subtipoTrabajo = trabajo.getSubtipoTrabajo();
+		List<ActivoAdmisionDocumento> listaDocumentos = tramite.getActivo().getAdmisionDocumento();
+		for(ActivoAdmisionDocumento documento : listaDocumentos){
+			if(subtipoTrabajo.getCodigo().equals(diccionarioTargetClassMap.getSubtipoTrabajo(documento.getConfigDocumento().getTipoDocumentoActivo().getCodigo()))) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO);
+				DDEstadoDocumento estadoDocumento = (DDEstadoDocumento) genericDao.get(DDEstadoDocumento.class, filtro);
+
+				documento.setFechaSolicitud(fecha);
+				documento.setEstadoDocumento(estadoDocumento);
+				Auditoria.save(documento);
+			}
+		}
+
+		trabajo.setFechaValidacion(fecha);
+		Auditoria.save(trabajo);
 	}
 
 	public String[] getCodigoTarea() {

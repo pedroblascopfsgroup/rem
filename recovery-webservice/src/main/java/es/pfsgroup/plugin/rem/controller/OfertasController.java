@@ -28,8 +28,6 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.OfertasExcelReport;
-import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
-import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
@@ -170,10 +168,10 @@ public class OfertasController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getDetalleOfertaById(DtoDetalleOferta dto, ModelMap model) {
+	public ModelAndView getDetalleOfertaById(Long id, ModelMap model) {
 
 		try {
-			model.put("data", ofertaApi.getDetalleOfertaById(dto));
+			model.put("data", ofertaApi.getDetalleOfertaById(id));
 			model.put("success", true);
 		} catch (Exception e) {
 			logger.error("Error en ofertasController", e);
@@ -185,10 +183,10 @@ public class OfertasController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getOfertantesByOfertaId(DtoOfertantesOferta dtoOfertantesOferta, ModelMap model) {
+	public ModelAndView getOfertantesByOfertaId(Long ofertaID, ModelMap model) {
 
 		try {
-			model.put("data", ofertaApi.getOfertantesByOfertaId(dtoOfertantesOferta));
+			model.put("data", ofertaApi.getOfertantesByOfertaId(ofertaID));
 			model.put("success", true);
 		} catch (Exception e) {
 			logger.error("Error en ofertasController", e);
@@ -229,10 +227,10 @@ public class OfertasController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getHonorariosByActivoOferta(DtoGastoExpediente dto, ModelMap model) {
+	public ModelAndView getHonorariosByActivoOferta(Long idOferta, Long idActivo, ModelMap model) {
 
 		try {
-			model.put("data", ofertaApi.getHonorariosActivoByOfertaId(dto));
+			model.put("data", ofertaApi.getHonorariosActivoByOfertaId(idActivo, idOferta));
 			model.put("success", true);
 		} catch (Exception e) {
 			logger.error("Error en ofertasController", e);

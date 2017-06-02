@@ -20,15 +20,16 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 @Component
 public class CedulaHabitabilidadUserAssigantionService implements UserAssigantionService {
 
+	private static final String CODIGO_T008_ANALISIS_PETICION = "T008_AnalisisPeticion";
 	private static final String CODIGO_T008_SOLICITUD_DOCUMENTO = "T008_SolicitudDocumento";
 	private static final String CODIGO_T008_OBTENCION_DOCUMENTO = "T008_ObtencionDocumento";
-	
+
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
-	
+
 	@Autowired
 	private GenericABMDao genericDao;
-	
+
 	@Override
 	public String[] getKeys() {
 		return this.getCodigoTarea();
@@ -36,53 +37,90 @@ public class CedulaHabitabilidadUserAssigantionService implements UserAssigantio
 
 	@Override
 	public String[] getCodigoTarea() {
-		//TODO: poner los códigos de tipos de tareas
-		return new String[]{CODIGO_T008_SOLICITUD_DOCUMENTO, CODIGO_T008_OBTENCION_DOCUMENTO};
+		// TODO: poner los códigos de tipos de tareas
+		return new String[] { CODIGO_T008_ANALISIS_PETICION, CODIGO_T008_SOLICITUD_DOCUMENTO,
+				CODIGO_T008_OBTENCION_DOCUMENTO };
 	}
 
 	@Override
 	public Usuario getUser(TareaExterna tareaExterna) {
-		TareaActivo tareaActivo = (TareaActivo)tareaExterna.getTareaPadre();
-		
-		if(!Checks.esNulo(tareaActivo) && 
-				!Checks.esNulo(tareaActivo.getTramite()) && 
-				!Checks.esNulo(tareaActivo.getTramite().getActivo()) &&
-				!Checks.esNulo(tareaActivo.getTramite().getActivo().getCartera())) {
-			
+		TareaActivo tareaActivo = (TareaActivo) tareaExterna.getTareaPadre();
+
+		if (!Checks.esNulo(tareaActivo) && !Checks.esNulo(tareaActivo.getTramite())
+				&& !Checks.esNulo(tareaActivo.getTramite().getActivo())
+				&& !Checks.esNulo(tareaActivo.getTramite().getActivo().getCartera())) {
+
 			DDCartera cartera = tareaActivo.getTramite().getActivo().getCartera();
-			
-			// Si la cartera es BANKIA o SAREB, el gestor de las tareas es GESTOR DE CEDULA
-			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo())){
-				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTORIA_CEDULAS);
+
+			String codTarea = tareaExterna.getTareaProcedimiento().getCodigo();
+
+			if (DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo())
+					|| DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo())) {
+
+				Filter filtroTipoGestor = null;
+				if (CODIGO_T008_SOLICITUD_DOCUMENTO.equals(codTarea)
+						|| CODIGO_T008_OBTENCION_DOCUMENTO.equals(codTarea)) {
+
+					filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							GestorActivoApi.CODIGO_GESTORIA_CEDULAS);
+
+				} else {
+					filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							GestorActivoApi.CODIGO_GESTOR_ADMISION);
+
+				}
 				EXTDDTipoGestor tipoGestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
 
-				if(!Checks.esNulo(tipoGestorActivo.getId()))
+				if (!Checks.esNulo(tipoGestorActivo.getId()))
 					return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tipoGestorActivo.getId());
 
 			} else {
-			//Otras carteras, el gestor de las tareas es GESTOR ACTIVOS
-				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+
+				Filter filtroTipoGestor = null;
+				if (CODIGO_T008_SOLICITUD_DOCUMENTO.equals(codTarea)
+						|| CODIGO_T008_OBTENCION_DOCUMENTO.equals(codTarea)) {
+					
+					ActivoProveedorContacto proveedor = tareaActivo.getTramite().getTrabajo().getProveedorContacto();
+					if (!Checks.esNulo(proveedor)) {
+						return proveedor.getUsuario();
+					}
+
+				} else {
+					filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+
+				}
+
 				EXTDDTipoGestor tipoGestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
 
-				if(!Checks.esNulo(tipoGestorActivo.getId()))
+				if (!Checks.esNulo(tipoGestorActivo.getId()))
 					return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tipoGestorActivo.getId());
 
 			}
 		}
 
-		//Si no se ha podido determinar el gestor destinatario se mantiene el que tenga asociado la TAR_TAREAS
-		//(gestor del activo para estas tareas)
+		// Si no se ha podido determinar el gestor destinatario se mantiene el
+		// que tenga asociado la TAR_TAREAS
+		// (gestor del activo para estas tareas)
 		return null;
 	}
 
 	@Override
 	public Usuario getSupervisor(TareaExterna tareaExterna) {
-		TareaActivo tareaActivo = (TareaActivo)tareaExterna.getTareaPadre();
-		
-		//TODO: ¡Hay que cambiar el método para que no pida ID sino código!
-		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+		TareaActivo tareaActivo = (TareaActivo) tareaExterna.getTareaPadre();
+
+		Filter filtroTipoGestor = null;
+		String codigoTarea = tareaExterna.getTareaProcedimiento().getCodigo();
+		if (CODIGO_T008_ANALISIS_PETICION.equals(codigoTarea)) {
+			filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+					GestorActivoApi.CODIGO_SUPERVISOR_ADMISION);
+		} else {
+			filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+					GestorActivoApi.CODIGO_GESTOR_ADMISION);
+		}
+
 		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
-		
+
 		return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tipoGestor.getId());
 	}
 

@@ -134,6 +134,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		if (dto.getConTitulo() != null)
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conTitulo", dto.getConTitulo());
 
+   		if (dto.getSelloCalidad() != null)
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.selloCalidad", dto.getSelloCalidad());
+
 		return HibernateQueryUtils.page(this, hb, dto);
 
 	}
@@ -215,6 +218,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		if (dto.getConTitulo() != null)
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conTitulo", dto.getConTitulo());
 
+   		if (dto.getSelloCalidad() != null)
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.selloCalidad", dto.getSelloCalidad());
+   		
 		return HibernateQueryUtils.list(this, hb);
 
 	}

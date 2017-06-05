@@ -5,7 +5,7 @@ ruta="CTLs_DATs/DATs/"
 echo "SE INICIA EL PROCESO DE RENOMBRADO DE LOS FICHEROS"
 echo "Descomprimiendo ficheros"
 
-rm -rf $ruta
+rm -f $ruta/*.dat
 
 unzip -o Ficheros_entrada/*_FaseI_*.zip
 unzip -o Ficheros_entrada/*_FaseII_*.zip
@@ -28,8 +28,6 @@ do
 	fi
 
 done < "Ficheros_entrada/renombrado.list"
-
-rm -f *.dat
 
 echo "Nombres cambiados, verificar cambios"
 exit 0

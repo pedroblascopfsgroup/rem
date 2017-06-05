@@ -15,6 +15,10 @@ echo "	-------------------------------------------------------"
 fecha=`date +%Y%m%d_%H%M%S`
 inicioparte=`date +%s`
 ./DDL/mig_lanza_DDL.sh $1 > Logs/creacion_tablas_$fecha.log
+if [ $? != 0 ] ; then 
+   echo -e "\n\n======>>> "Error creando tablas
+   exit 1
+fi
 fin=`date +%s`
 let total=($fin-$inicioparte)/60
 echo "	Tablas creadas en $total minutos."
@@ -26,6 +30,10 @@ echo "	-------------------------------------------------------"
 fecha=`date +%Y%m%d_%H%M%S`
 inicioparte=`date +%s`
 ./Ficheros_entrada/cambia_nombre_ficheros.sh > Logs/despliegue_ficheros_$fecha.log
+if [ $? != 0 ] ; then 
+   echo -e "\n\n======>>> "Error descomprimiendo y/o reubicando ficheros
+   exit 1
+fi
 fin=`date +%s`
 let total=($fin-$inicioparte)/60
 echo "	Ficheros reubicados y renombrados en $total minutos."
@@ -36,6 +44,10 @@ echo "	-------------------------------------------------------"
 fecha=`date +%Y%m%d_%H%M%S`
 inicioparte=`date +%s`
 ./CTLs_DATs/mig_lanza_CTL.sh $1 > Logs/carga_migs_$fecha.log
+if [ $? != 0 ] ; then 
+   echo -e "\n\n======>>> "Error cargando tablas MIG
+   exit 1
+fi
 fin=`date +%s`
 let total=($fin-$inicioparte)/60
 echo "	Tablas MIG rellenadas en $total minutos."
@@ -46,6 +58,10 @@ echo "	------ [INFO] Rellenando tablas VALIDACION"
 echo "	-------------------------------------------------------"
 fecha=`date +%Y%m%d_%H%M%S`
 inicioparte=`date +%s`
+if [ $? != 0 ] ; then 
+   echo -e "\n\n======>>> "Error cargando tablas de validación
+   exit 1
+fi
 ./DML/mig_lanza_DML.sh $1 > Logs/carga_validaciones_$fecha.log
 fin=`date +%s`
 let total=($fin-$inicioparte)/60
@@ -57,6 +73,10 @@ echo "	------ [INFO] Compilando procesos almacenados"
 echo "	-------------------------------------------------------"
 fecha=`date +%Y%m%d_%H%M%S`
 inicioparte=`date +%s`
+if [ $? != 0 ] ; then 
+   echo -e "\n\n======>>> "Error compilando procedimientos almacenados
+   exit 1
+fi
 ./SP/compila_SP.sh $1 > Logs/compila_procedimientos_almacenados_$fecha.log
 fin=`date +%s`
 let total=($fin-$inicioparte)/60
@@ -68,6 +88,10 @@ echo "	------ [INFO] Ejecutando validaciones"
 echo "	-------------------------------------------------------"
 fecha=`date +%Y%m%d_%H%M%S`
 inicioparte=`date +%s`
+if [ $? != 0 ] ; then 
+   echo -e "\n\n======>>> "Error ejecutando validaciones
+   exit 1
+fi
 ./SP/lanza_SP.sh $1 > Logs/ejecuta_procedimientos_almacenados_$fecha.log
 fin=`date +%s`
 let total=($fin-$inicioparte)/60

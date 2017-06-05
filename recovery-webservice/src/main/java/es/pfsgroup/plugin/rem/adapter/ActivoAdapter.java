@@ -1540,6 +1540,7 @@ public class ActivoAdapter {
 	public DtoTramite getTramite(Long idTramite) {
 		DtoTramite dtoTramite = new DtoTramite();
 		ActivoTramite tramite = activoTramiteApi.get(idTramite);
+		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
 
 		try {
 			beanUtilNotNull.copyProperty(dtoTramite, "idTramite", tramite.getId());
@@ -1566,9 +1567,10 @@ public class ActivoAdapter {
 						tramite.getActivo().getSubtipoActivo().getDescripcion());
 			if (!Checks.esNulo(tramite.getActivo().getCartera()))
 				beanUtilNotNull.copyProperty(dtoTramite, "cartera", tramite.getActivo().getCartera().getDescripcion());
-			beanUtilNotNull.copyProperty(dtoTramite, "fechaInicio", tramite.getFechaInicio());
+			if (!Checks.esNulo(tramite.getFechaInicio()))
+				beanUtilNotNull.copyProperty(dtoTramite, "fechaInicio", formato.format(tramite.getFechaInicio()));
 			if (!Checks.esNulo(tramite.getFechaFin()))
-				beanUtilNotNull.copyProperty(dtoTramite, "fechaFinalizacion", tramite.getFechaFin());
+				beanUtilNotNull.copyProperty(dtoTramite, "fechaFinalizacion", formato.format(tramite.getFechaFin()));
 			beanUtilNotNull.copyProperty(dtoTramite, "numActivo", tramite.getActivo().getNumActivo());
 			beanUtilNotNull.copyProperty(dtoTramite, "esMultiActivo", tramite.getActivos().size() > 1 ? true : false);
 			beanUtilNotNull.copyProperty(dtoTramite, "countActivos", tramite.getActivos().size());

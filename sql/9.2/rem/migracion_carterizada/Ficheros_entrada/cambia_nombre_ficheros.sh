@@ -11,6 +11,7 @@ cat Fich_Trabajo2.dat >> Fich_Trabajo.dat
 
 rm -rf Ficheros_entrada/Fich_Trabajo1.dat
 rm -rf Ficheros_entrada/Fich_Trabajo2.dat
+
 ruta="CTLs_DATs/DATs/"
 
 while read line

@@ -106,15 +106,15 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	var importeCostas = get('detalleeconomico.importeCostas');
 	     	var importeOtrosIncrementos = get('detalleeconomico.importeOtrosIncrementos')
 	     	var importeProvisionesSuplidos = get('detalleeconomico.importeProvisionesSuplidos');
-	     	var impuestoIndirectoCuota = 0;
-	     	if((get('detalleeconomico.impuestoIndirectoExento')=="false" || get('detalleeconomico.impuestoIndirectoExento')==false) || (get('detalleeconomico.renunciaExencionImpuestoIndirecto')=="true" || get('detalleeconomico.renunciaExencionImpuestoIndirecto')==true)){
+	     	var impuestoIndirectoCuota = 0;   	
+	     	var cbOperacionExenta = get('detalleeconomico.impuestoIndirectoExento');  
+	     	var cbRenunciaExencion = get('detalleeconomico.renunciaExencionImpuestoIndirecto');  
+	     	if(cbOperacionExenta==false || (cbOperacionExenta==true && cbRenunciaExencion==true)){
 	     		impuestoIndirectoCuota = get('detalleeconomico.impuestoIndirectoCuota');
 	     	}
-	     	
-	     	var irpfCuota = get('detalleeconomico.irpfCuota');
-	     	
+
 	     	return importePrincipalSujeto + importePricipalNoSujeto + importeRecargo + importeInteresDemora
-	     	+ importeCostas+ importeOtrosIncrementos + importeProvisionesSuplidos + impuestoIndirectoCuota
+	     	+ importeCostas+ importeOtrosIncrementos + importeProvisionesSuplidos + impuestoIndirectoCuota; 
 	     	
 	     	
 	     },
@@ -124,6 +124,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 
 	     	var irpfCuota = get('detalleeconomico.irpfCuota');
 	     	var sumatorioConceptosGasto = get('sumatorioConceptosgasto');
+
 	     	return sumatorioConceptosGasto - irpfCuota; 
 	     	
 	     },

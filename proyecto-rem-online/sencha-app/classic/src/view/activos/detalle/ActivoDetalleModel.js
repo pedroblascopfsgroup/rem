@@ -1086,6 +1086,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			remoteUrl: 'proveedores/getProveedores',
 			extraParams: {tipoProveedorCodigo: '03', subtipoProveedorCodigo: '{tipoProveedor.selection.codigo}'}
 			}
+		},
+
+		storeTipoObservacionActivo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoObservacionActivo'}
+			},
+			autoLoad: true
 		}
 //		,
 //		

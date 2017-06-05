@@ -175,6 +175,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("indicadorCondicionPrecio", DDCondicionIndicadorPrecio.class);
 		mapa.put("tiposFinanciacion", DDTipoRiesgoClase.class);
 		mapa.put("devolucionReserva", DDDevolucionReserva.class);
+		mapa.put("tipoObservacionActivo", DDTipoObservacionActivo.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

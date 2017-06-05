@@ -59,3 +59,7 @@ Fich_Gastos_Detalle_Economico.dat;DETALLE_ECONOMICO_GASTOS.dat
 Fich_Gastos_Provision.dat;GASTOS_PROVISIONES.dat
 Fich_Subsanaciones.dat;SUBSANACIONES.dat
 Fich_Propietarios_Historico.dat;PROPIETARIOS_HISTORICO.dat
+Fich_Usuarios.dat;USUARIOS.dat
+Fich_Gestores_Activo.dat;GESTORES_ACTIVO.dat
+Fich_Gestores_Ofertas.dat;GESTORES_OFERTAS
+Fich_Grupos_Usuarios.dat;GRUPOS_USUARIOS

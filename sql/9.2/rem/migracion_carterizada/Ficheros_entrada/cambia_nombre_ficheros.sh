@@ -13,8 +13,8 @@ unzip -o Ficheros_entrada/*_FaseII_*.zip
 cat Fich_Trabajo1.dat > Fich_Trabajo.dat
 cat Fich_Trabajo2.dat >> Fich_Trabajo.dat
 
-rm -rf Ficheros_entrada/Fich_Trabajo1.dat
-rm -rf Ficheros_entrada/Fich_Trabajo2.dat
+rm -rf Fich_Trabajo1.dat
+rm -rf Fich_Trabajo2.dat
 
 while read line
 do

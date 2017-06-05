@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.service;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -63,6 +64,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	public static final String MSG_ERROR_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS = "activo.aviso.demsarcar.comercializar.ofertas.vivas";
 	public static final String MSG_ERROR_PERIMETRO_FORMALIZACION_EXPEDIENTE_VIVO = "activo.aviso.demsarcar.formalizar.expediente.vivo";
 	public static final String MOTIVO_ACTIVO_NO_COMERCIALIZABLE_NO_PUBLICADO = "activo.motivo.desmarcar.comercializar.no.publicar";
+	public static final String MSG_ERROR_PERIMETRO_COMERCIALIZACION_AGR_RESTRINGIDA_NO_PRINCIPAL = "activo.aviso.demsarcar.comercializar.agr.restringida.no.principal";
     
 
 	@Autowired
@@ -586,7 +588,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					
 					//Validacion al desmarcar check formalizar
 					if(!dto.getAplicaFormalizar()) {
-						this.validarPerimetroActivo(activo,2);;
+						this.validarPerimetroActivo(activo,2);
 					}
 				}
 				if(!Checks.esNulo(dto.getAplicaGestion())) {
@@ -717,13 +719,17 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	/**
 	 * Acciones al desmarcar check Comercializar
 	 * 1. Valida si se puede demarcar (Activo sin ofertas vivas).
-	 * 2. Si puede, hay que poner el activo en estado publicación a 'No publicado'
+	 * 2. Valida si el activo pertenece a una agrupación de tipo restringida y es el activo principal.
+	 * 3. Si puede desmarcar y es activo principal de una agrupación de tipo restringida, hay que poner
+	 *  el activo en estado publicación a 'No publicado' y desmarcar todos los comercializar de los activos
+	 *  que componen la agrupación restringida.
 	 * @param activo
 	 * @throws SQLException 
 	 * @throws JsonViewerException 
 	 */
 	private void accionesDesmarcarComercializar(Activo activo) throws JsonViewerException, SQLException {
 		this.validarPerimetroActivo(activo,1);
+		this.validarPerimetroActivo(activo,3);
 		//Si se permite desmarcar, cambiamos el estado de publicación del activo a 'No Publicado'
 		String motivo = messageServices.getMessage(MOTIVO_ACTIVO_NO_COMERCIALIZABLE_NO_PUBLICADO);
 		activoApi.setActivoToNoPublicado(activo, motivo);
@@ -733,6 +739,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	 * Valida condiciones del perimitro, según se marque/desmarque los checks.
 	 * case 1: Al desmarcar check comercializar, no se puede hacer si el activo tiene ofertas vivas. (estado != rechazada)
 	 * case 2: Al desmarcar check formalizar, no se puede hacer si el activo tiene un exp. comercial vivo (tareas activas)
+	 * case 3: Al desmarcar check comercializar, no se puede hacer si el activo se encuentra en una agrupación restringida y NO es activo principal.
 	 * @param activo
 	 * @return
 	 */
@@ -751,6 +758,18 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					error = messageServices.getMessage(MSG_ERROR_PERIMETRO_FORMALIZACION_EXPEDIENTE_VIVO);
 				break;
 			}
+			case 3: {
+				if(activoApi.isIntegradoAgrupacionRestringida(activo.getId(), genericAdapter.getUsuarioLogado())) {
+					if(activoApi.isActivoPrincipalAgrupacionRestringida(activo.getId())) {
+						// Quitar comercializar todos los activos de la misma AGR restringida que el activo.
+						this.quitarComercializacionEnActivosAgrupacionRestringidaPorActivo(activo);
+					} else {
+						error = messageServices.getMessage(MSG_ERROR_PERIMETRO_COMERCIALIZACION_AGR_RESTRINGIDA_NO_PRINCIPAL);
+					}
+				}
+
+				break;
+			}
 			default:
 				break;
 		}
@@ -758,5 +777,39 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(!Checks.esNulo(error))
 			throw new JsonViewerException(error);
 	}
-	
+
+	/**
+	 * Este método pone la comercialización de todos los activos de una agrupación de tipo restringida
+	 * a NO. Obtiene la agrupación en base a un activo.
+	 * 
+	 * @param activo: activo desde el que obtener la agrupación de tipo restringida.
+	 */
+	private void quitarComercializacionEnActivosAgrupacionRestringidaPorActivo(Activo activo) {
+		ActivoAgrupacionActivo activoAgrupacionActivo = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId());
+
+		if(activoAgrupacionActivo == null) {
+			return;
+		}
+
+		List<ActivoAgrupacionActivo> activoAgrupacionActivoList = activoAgrupacionActivo.getAgrupacion().getActivos();
+
+		for(ActivoAgrupacionActivo activos : activoAgrupacionActivoList) {
+			// No modificar el perímetro del activo de procedencia, su perimetro se actualiza en el método padre de la tab.
+			if(activos.getActivo().getId() == activo.getId()) {
+				continue;
+			}
+
+			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activos.getActivo().getId());
+			if(perimetroActivo != null) {
+				perimetroActivo.setAplicaComercializar(0);
+				perimetroActivo.setFechaAplicaComercializar(new Date());
+
+				perimetroActivo.setAplicaFormalizar(0);
+				perimetroActivo.setFechaAplicaFormalizar(new Date());
+
+				activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
+			}
+		}
+	}
+
 }

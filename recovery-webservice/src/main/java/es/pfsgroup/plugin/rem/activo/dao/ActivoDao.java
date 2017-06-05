@@ -10,6 +10,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
@@ -130,5 +131,23 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 * @return Devuelve un Long con el siguiente número de la secuencia.
 	 */
 	public Long getNextNumActivoRem();
+
+	/**
+	 * Este método devuelve 1 si el ID del activo pertenece a una agrupación de tipo restringida
+	 * y es el activo principal de la misma. 0 si no es el activo principal de la agrupación.
+	 * 
+	 * @param id: ID del activo a comprobar si es el activo principal de la agrupación restringida.
+	 * @return Devuelve 1 si es el activo principal, 0 si no lo es.
+	 */
+	public Integer isActivoPrincipalAgrupacionRestringida(Long id);
+
+	/**
+	 * Este método obtiene un objeto ActivoAgrupacionActivo de una agrupación de tipo restringida por el ID
+	 * de activo.
+	 * 
+	 * @param id: Id del activo que pertenece a la agrupación.
+	 * @return Devuelve un objeto de tipo ActivoAgrupacionActivo.
+	 */
+	public ActivoAgrupacionActivo getActivoAgrupacionActivoAgrRestringidaPorActivoID(Long id);
 
 }

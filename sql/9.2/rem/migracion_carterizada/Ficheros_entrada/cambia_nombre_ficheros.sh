@@ -1,8 +1,12 @@
 #!/bin/bash
 
-echo "SE INICIA EL PROCESO DE RENOMBRADO DE LOS FICHEROS"
+ruta="CTLs_DATs/DATs/"
 
+echo "SE INICIA EL PROCESO DE RENOMBRADO DE LOS FICHEROS"
 echo "Descomprimiendo ficheros"
+
+rm -f $ruta/*.dat
+
 unzip -o Ficheros_entrada/*_FaseI_*.zip
 unzip -o Ficheros_entrada/*_FaseII_*.zip
 
@@ -11,7 +15,6 @@ cat Fich_Trabajo2.dat >> Fich_Trabajo.dat
 
 rm -rf Ficheros_entrada/Fich_Trabajo1.dat
 rm -rf Ficheros_entrada/Fich_Trabajo2.dat
-ruta="CTLs_DATs/DATs/"
 
 while read line
 do
@@ -25,8 +28,6 @@ do
 	fi
 
 done < "Ficheros_entrada/renombrado.list"
-
-rm -f *.dat
 
 echo "Nombres cambiados, verificar cambios"
 exit 0

@@ -967,4 +967,22 @@ public interface ActivoApi {
 	 */
 	public Long getNextNumActivoRem();
 
+	/**
+	 * Este método devuelve True si el ID del activo pertenece a una agrupación de tipo restringida
+	 * y es el activo principal de la misma. False si no es el activo principal de la agrupación.
+	 * 
+	 * @param id: ID del activo a comprobar si es el activo principal de la agrupación restringida.
+	 * @return Devuelve True si es el activo principal, False si no lo es.
+	 */
+	public boolean isActivoPrincipalAgrupacionRestringida(Long id);
+
+	/**
+	 * Este método obtiene un objeto ActivoAgrupacionActivo de una agrupación de tipo restringida por el ID
+	 * de activo.
+	 * 
+	 * @param id: Id del activo que pertenece a la agrupación.
+	 * @return Devuelve un objeto de tipo ActivoAgrupacionActivo.
+	 */
+	public ActivoAgrupacionActivo getActivoAgrupacionActivoAgrRestringidaPorActivoID(Long id);
+
 }

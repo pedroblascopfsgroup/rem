@@ -8,6 +8,15 @@ Ext.define('HreRem.view.activos.tramites.TramitesDetalleTab', {
     requires 	: ['HreRem.view.activos.tramites.TramitesActivo','HreRem.view.activos.tramites.DatosGeneralesTramite','HreRem.view.activos.tramites.TareasModel',
 				'HreRem.view.activos.tramites.TareasList','HreRem.view.activos.tramites.HistoricoTareasList','HreRem.model.ActivoTramite', 'HreRem.view.tramites.ActivosTramite'],
 
+	listeners	: {
+    	boxready: function (tabPanel) {
+			if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
+				var tab = tabPanel.items.items[0];
+				tabPanel.setActiveTab(tab);
+			}
+    	}
+	},
+
 	initComponent: function () {
        var me = this;
 

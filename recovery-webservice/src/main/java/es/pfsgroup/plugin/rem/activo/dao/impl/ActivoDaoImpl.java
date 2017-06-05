@@ -30,6 +30,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
@@ -47,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 
 @Repository("ActivoDao")
 public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements ActivoDao{
@@ -241,31 +243,28 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
     
     @Override
 	public Integer isIntegradoAgrupacionRestringida(Long id, Usuario usuLogado) {
-
-		/*HQLBuilder hb = new HQLBuilder("select count(*) from Activo act");
-
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.id", id);
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.agrupaciones.agrupacion.tipoAgrupacion.id", 1);
-		*/
-    	HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + id + " and act.agrupacion.tipoAgrupacion.id = " + 2);
-
-		/*HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.activo.id", id);
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.agrupacion.agrupacion.tipoAgrupacion.id", 1);
-   		//getHibernateTemplate().*/
-    	//Integer cont = ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
+    	HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + id + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
 
    		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
-		//return HibernateQueryUtils.uniqueResult(this, hb);
-
 	}
-    
-    
+
+    @Override
+	public Integer isActivoPrincipalAgrupacionRestringida(Long id) {
+    	HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.agrupacion.activoPrincipal.id = " + id + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
+
+    	return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
+	}
+
+    @Override
+    public ActivoAgrupacionActivo getActivoAgrupacionActivoAgrRestringidaPorActivoID(Long id) {
+    	HQLBuilder hb = new HQLBuilder("select act from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + id + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
+
+    	return ((ActivoAgrupacionActivo) getHibernateTemplate().find(hb.toString()).get(0));
+	}
+
     @Override
 	public Integer isIntegradoAgrupacionObraNueva(Long id, Usuario usuLogado) {
-
-    	HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + id + " and act.agrupacion.tipoAgrupacion.id = " + 1);
-
-    	//Integer cont = ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
+    	HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + id + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA);
 
    		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
 
@@ -828,5 +827,4 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		String sql = "SELECT S_ACT_NUM_ACTIVO_REM.NEXTVAL FROM DUAL ";
 		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
 	}
-	
 }

@@ -328,6 +328,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
+	public ActivoAgrupacionActivo getActivoAgrupacionActivoAgrRestringidaPorActivoID(Long id) {
+		return activoDao.getActivoAgrupacionActivoAgrRestringidaPorActivoID(id);
+	}
+
+	@Override
+	public boolean isActivoPrincipalAgrupacionRestringida(Long id) {
+		Integer contador = activoDao.isActivoPrincipalAgrupacionRestringida(id);
+		if (contador > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
 	@BusinessOperation(overrides = "activoManager.isIntegradoAgrupacionObraNueva")
 	public boolean isIntegradoAgrupacionObraNueva(Long id, Usuario usuarioLogado) {
 		Integer contador = activoDao.isIntegradoAgrupacionObraNueva(id, usuarioLogado);

@@ -132,6 +132,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
@@ -423,6 +424,12 @@ public class ActivoAdapter {
 		try {
 
 			beanUtilNotNull.copyProperties(activoObservacion, dtoObservacion);
+			if(dtoObservacion.getTipoObservacionCodigo() != null) {
+				DDTipoObservacionActivo tipoObservacion = (DDTipoObservacionActivo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoObservacionActivo.class, dtoObservacion.getTipoObservacionCodigo());
+				if(tipoObservacion != null) {
+					activoObservacion.setTipoObservacion(tipoObservacion);
+				}
+			}
 			genericDao.save(ActivoObservacion.class, activoObservacion);
 
 		} catch (IllegalAccessException e) {
@@ -451,11 +458,14 @@ public class ActivoAdapter {
 			activoObservacion.setUsuario(usuarioLogado);
 			activoObservacion.setActivo(activo);
 
-			ActivoObservacion observacionNueva = genericDao.save(ActivoObservacion.class, activoObservacion);
+			if(dtoObservacion.getTipoObservacionCodigo() != null) {
+				DDTipoObservacionActivo tipoObservacion = (DDTipoObservacionActivo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoObservacionActivo.class, dtoObservacion.getTipoObservacionCodigo());
+				if(tipoObservacion != null) {
+					activoObservacion.setTipoObservacion(tipoObservacion);
+				}
+			}
 
-			activo.getObservacion().add(observacionNueva);
-			activoApi.saveOrUpdate(activo);
-
+			genericDao.save(ActivoObservacion.class, activoObservacion);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -919,30 +929,29 @@ public class ActivoAdapter {
 		if (activo.getObservacion() != null) {
 
 			for (int i = 0; i < activo.getObservacion().size(); i++) {
-
 				DtoObservacion observacionDto = new DtoObservacion();
 
 				try {
-
 					BeanUtils.copyProperties(observacionDto, activo.getObservacion().get(i));
 
 					if (activo.getObservacion().get(i).getUsuario() != null) {
 						String nombreCompleto = activo.getObservacion().get(i).getUsuario().getNombre();
 						Long idUsuario = activo.getObservacion().get(i).getUsuario().getId();
 						if (activo.getObservacion().get(i).getUsuario().getApellido1() != null) {
-
 							nombreCompleto += activo.getObservacion().get(i).getUsuario().getApellido1();
 
 							if (activo.getObservacion().get(i).getUsuario().getApellido2() != null) {
 								nombreCompleto += activo.getObservacion().get(i).getUsuario().getApellido2();
 							}
+						}
 
+						if(activo.getObservacion().get(i).getTipoObservacion() != null) {
+							BeanUtils.copyProperty(observacionDto, "tipoObservacionCodigo", activo.getObservacion().get(i).getTipoObservacion().getCodigo());
 						}
 
 						BeanUtils.copyProperty(observacionDto, "nombreCompleto", nombreCompleto);
 						BeanUtils.copyProperty(observacionDto, "idUsuario", idUsuario);
 					}
-
 				} catch (IllegalAccessException e) {
 					e.printStackTrace();
 				} catch (InvocationTargetException e) {
@@ -1531,6 +1540,7 @@ public class ActivoAdapter {
 	public DtoTramite getTramite(Long idTramite) {
 		DtoTramite dtoTramite = new DtoTramite();
 		ActivoTramite tramite = activoTramiteApi.get(idTramite);
+		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
 
 		try {
 			beanUtilNotNull.copyProperty(dtoTramite, "idTramite", tramite.getId());
@@ -1557,9 +1567,10 @@ public class ActivoAdapter {
 						tramite.getActivo().getSubtipoActivo().getDescripcion());
 			if (!Checks.esNulo(tramite.getActivo().getCartera()))
 				beanUtilNotNull.copyProperty(dtoTramite, "cartera", tramite.getActivo().getCartera().getDescripcion());
-			beanUtilNotNull.copyProperty(dtoTramite, "fechaInicio", tramite.getFechaInicio());
+			if (!Checks.esNulo(tramite.getFechaInicio()))
+				beanUtilNotNull.copyProperty(dtoTramite, "fechaInicio", formato.format(tramite.getFechaInicio()));
 			if (!Checks.esNulo(tramite.getFechaFin()))
-				beanUtilNotNull.copyProperty(dtoTramite, "fechaFinalizacion", tramite.getFechaFin());
+				beanUtilNotNull.copyProperty(dtoTramite, "fechaFinalizacion", formato.format(tramite.getFechaFin()));
 			beanUtilNotNull.copyProperty(dtoTramite, "numActivo", tramite.getActivo().getNumActivo());
 			beanUtilNotNull.copyProperty(dtoTramite, "esMultiActivo", tramite.getActivos().size() > 1 ? true : false);
 			beanUtilNotNull.copyProperty(dtoTramite, "countActivos", tramite.getActivos().size());

@@ -1,7 +1,5 @@
 package es.pfsgroup.plugin.rem.model;
 
-import java.util.Date;
-
 import es.capgemini.devon.dto.WebDto;
 
 /**
@@ -33,9 +31,9 @@ public class DtoTramite extends WebDto {
 	
 	private String cartera;
 	
-	private Date fechaInicio;
+	private String fechaInicio;
 	
-	private Date fechaFinalizacion;
+	private String fechaFinalizacion;
 	
 	private String tipoTrabajo;
 	
@@ -145,19 +143,19 @@ public class DtoTramite extends WebDto {
 		this.cartera = cartera;
 	}
 	
-	public Date getFechaInicio(){
+	public String getFechaInicio(){
 		return fechaInicio;
 	}
 	
-	public void setFechaInicio(Date fechaInicio){
+	public void setFechaInicio(String fechaInicio){
 		this.fechaInicio = fechaInicio;
 	}
 	
-	public Date getFechaFinalizacion(){
+	public String getFechaFinalizacion(){
 		return fechaFinalizacion;
 	}
 	
-	public void setFechaFinalizacion(Date fechaFin){
+	public void setFechaFinalizacion(String fechaFin){
 		this.fechaFinalizacion = fechaFin;
 	}
 	

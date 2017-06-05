@@ -821,5 +821,21 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		String sql = "SELECT S_ACT_NUM_ACTIVO_REM.NEXTVAL FROM DUAL ";
 		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
 	}
+
+	@Override
+	public List<Activo> getListActivosPorID(List<Long> activosID) {
+		HQLBuilder hb = new HQLBuilder("from Activo act" );
+		
+		StringBuilder cadenaID = new StringBuilder();
+		
+		for(Long activoID : activosID){
+			cadenaID.append(String.valueOf(activoID));
+			cadenaID.append(",");
+		}
+
+		hb.appendWhere("id in ("+cadenaID.substring(0, cadenaID.length()-2)+")");
+		
+		return HibernateQueryUtils.list(this, hb);
+	}
 	
 }

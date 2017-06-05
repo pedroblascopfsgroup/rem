@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.updaterstate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +14,14 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
-import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
@@ -27,6 +30,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
+import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 
 @Service("updaterStateManager")
 public class UpdaterStateManager implements UpdaterStateApi{
@@ -48,10 +52,13 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	private ActivoApi activoApi;
 	
 	@Autowired
-	private GestorActivoApi gestorActivoApi;
+	private TrabajoApi trabajoApi;
 	
 	@Autowired
-	private UpdaterStateApi UpdaterStateApi;
+	private TrabajoDao trabajoDao;
+	
+	@Autowired
+	private GestorActivoApi gestorActivoApi;
 	
 	@Override
 	public Boolean getStateAdmision(Activo activo) {
@@ -258,26 +265,41 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		return codigoTipoComercializacion;
 	}	
 	
-	@Override
+	
+	public String calcularParticipacionPorActivo(Activo activo_check){//
+		return "100";
+	}
+	
+	@SuppressWarnings("unused")
 	public String calcularParticipacionPorActivo(String codigoTipoTrabajo, List<Activo> activosLista, Activo activo_check){
-		//Si algún parámetro es nulo, omitimos el procedimiento
-		if (codigoTipoTrabajo == null ||activosLista == null || activosLista.size() == 0 || activo_check == null) {
+		//Si algún parámetro es nulo, omitimos el procedimiento.
+		if (codigoTipoTrabajo == null || activo_check == null) {
 			return null;
 		}
 		
-		//Si el tipo de trabajo es OBTENCION_DOCUMENTAL o ACTUACION_TECNICA
-		if ((DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(codigoTipoTrabajo)) || 
-				(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(codigoTipoTrabajo))) {
-			
-			Filter filtroActivoId = null, filtroValorNeto = null, filtroValorMinimo = null, filtroFSV = null, filtroVACBE = null, filtroPrecioTransferencia = null, filtroValorReferencia = null;
-			ActivoValoraciones valorNeto = null, valorMinimo = null, fsv = null, vacbe = null, precioTransferencia = null, valorReferencia = null;
-						
-			
-			if(activosLista.size() > 1){
+		//Si todos los argumentos son null, se devuelve un 100% de participación.
+		if((activosLista == null || activosLista.size() == 0) && codigoTipoTrabajo == null && activo_check == null){
+			return "100";
+		}
+		
+		if(activosLista == null || activosLista.size() == 0){
+			return "100";
+		}
+		try{
+		
+			//Si el tipo de trabajo es OBTENCION_DOCUMENTAL o ACTUACION_TECNICA.
+			//if ((DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(codigoTipoTrabajo)) || 
+				//	(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(codigoTipoTrabajo))) {
 				
+				Filter filtroActivoId = null, filtroValorNeto = null, filtroValorMinimo = null, filtroFSV = null, filtroVACBE = null, filtroPrecioTransferencia = null, filtroValorReferencia = null;
+				ActivoValoraciones valorNeto = null, valorMinimo = null, fsv = null, vacbe = null, precioTransferencia = null, valorReferencia = null;
+							
+								
 				String cartera = activo_check.getCartera().getCodigo(), reglaSeleccionada = null;
 				Boolean valorNetoNull = false, valorMinimoNull = false, valorFSVNull = false, valorVACBENull = false, valorPrecioTransferenciaNull = false, valorReferenciaNull = false;
-				
+				Double valorNetoTotal = 0d, valorMinimoTotal = 0d, fsvTotal = 0d, vacbeTotal = 0d, precioTransferenciaTotal = 0d, valorReferenciaTotal = 0d;
+				Double valorNeto_act = 0d, valorMinimo_act = 0d, fsv_act = 0d, vacbe_act = 0d, precioTransferencia_act = 0d, valorReferencia_act = 0d;
+					
 				//Checkeamos la información de todos los activos en la lista.
 				for (Activo activo : activosLista){
 					filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo_check.getId());
@@ -287,27 +309,88 @@ public class UpdaterStateManager implements UpdaterStateApi{
 					filtroVACBE = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_VACBE);
 					filtroPrecioTransferencia = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_PT);
 					filtroValorReferencia = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_VALOR_REFERENCIA);
-
+	
 					valorNeto = genericDao.get(ActivoValoraciones.class, filtroActivoId, filtroValorNeto);
 					valorMinimo = genericDao.get(ActivoValoraciones.class, filtroActivoId, filtroValorMinimo);
 					fsv = genericDao.get(ActivoValoraciones.class, filtroActivoId, filtroFSV);
 					vacbe = genericDao.get(ActivoValoraciones.class, filtroActivoId, filtroVACBE);
 					precioTransferencia = genericDao.get(ActivoValoraciones.class, filtroActivoId, filtroVACBE);
 					valorReferencia = genericDao.get(ActivoValoraciones.class, filtroActivoId, filtroVACBE);
-
-					if(valorNeto == null){valorNetoNull = true;}
-					if(valorMinimo == null){valorMinimoNull = true;}
-					if(fsv == null){valorFSVNull = true;}
-					if(vacbe == null){valorVACBENull = true;}
-					if(precioTransferencia == null){valorPrecioTransferenciaNull = true;}
-					if(valorReferencia == null){valorReferenciaNull = true;}
-					
-					
-					
+	
+						
+					//Identificamos que comunes valores podemos utilizar.
+					if(valorNeto == null){
+						valorNetoNull = true;
+						}else{
+							valorNetoTotal = valorNetoTotal + valorNeto.getImporte();
+						}
+					if(valorMinimo == null){
+						valorMinimoNull = true;
+						}else{
+							valorMinimoTotal = valorMinimoTotal + valorMinimo.getImporte();
+						}
+					if(fsv == null){
+						valorFSVNull = true;
+						}else{
+							fsvTotal = fsvTotal + fsv.getImporte();
+						}
+					if(vacbe == null){
+						valorVACBENull = true;
+						}else{
+							vacbeTotal = vacbeTotal + vacbe.getImporte();
+						}
+					if(precioTransferencia == null){
+						valorPrecioTransferenciaNull = true;
+						}else{
+							precioTransferenciaTotal = precioTransferenciaTotal + precioTransferencia.getImporte();
+						}
+					if(valorReferencia == null){
+						valorReferenciaNull = true;
+						}else{
+							valorReferenciaTotal = valorReferenciaTotal + valorReferencia.getImporte();
+						}
+						
+					//Cuando se encuentre el activo que se va a checkear, se guarda su información para calcular luego la regla de tres.
+					if(activo == activo_check){
+						if(valorNeto == null){
+							valorNeto_act = 0d;
+						}else{
+							valorNeto_act = valorNeto.getImporte();
+						}
+						if(valorMinimo == null){
+							valorMinimo_act = 0d;
+						}else{
+							valorMinimo_act = valorMinimo.getImporte();
+						}
+						if(fsv == null){
+							fsv_act = 0d;
+						}else{
+							fsv_act = fsv.getImporte();
+						}
+						if(vacbe == null){
+							vacbe_act = 0d;
+						}else{
+							vacbe_act = vacbe.getImporte();
+						}
+						if(precioTransferencia == null){
+							precioTransferencia_act = 0d;
+						}else{
+							precioTransferencia_act = precioTransferencia.getImporte();
+						}
+						if(valorReferencia == null){
+							valorReferencia_act = 0d;
+						}else{
+							valorReferencia_act = valorReferencia.getImporte();
+						}
+	
+					}
+						
+						
 				}
-
+	
 				//Selección de la regla dependiendo de la cartera.
 				/*
+				 * ------------------Diccionario de reglas------------------
 				 * A partes iguales = "00"
 				 * Valor neto contable = DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT
 				 * Valor mínimo autorizado = DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO
@@ -332,7 +415,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 					}
 				}else if(cartera == "02"){//Sareb
 					if(!valorPrecioTransferenciaNull){
-						reglaSeleccionada = DDTipoPrecio.CODIGO_TPC_PT;
+							reglaSeleccionada = DDTipoPrecio.CODIGO_TPC_PT;
 					}else{
 						if(!valorVACBENull){
 							reglaSeleccionada = DDTipoPrecio.CODIGO_TPC_VACBE;
@@ -362,7 +445,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 							}
 						}
 					}
-				}else{//Otras carteras
+				}else{//Otras carteras (Ni Cajamar, ni Sareb, ni Bankia)
 					if(!valorMinimoNull){
 						reglaSeleccionada = DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO;
 					}else{
@@ -373,16 +456,86 @@ public class UpdaterStateManager implements UpdaterStateApi{
 						}
 					}
 				}
+					
+				//Realización de la regla de tres para el activo a checkear según la regla seleccionada anteriormente.
+					
+				if(reglaSeleccionada.equals("00")){//A partes iguales.
+					return String.valueOf((double)(100/activosLista.size()));
+					
+				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT)){//Valor neto contable.
+					return String.valueOf((double)((valorNeto_act*100)/valorNetoTotal));
+						
+				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO)){//Valor mínimo autorizado.
+					return String.valueOf((double)((valorMinimo_act*100)/valorMinimoTotal));
+						
+				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_FSV_VENTA)){//First sale value.
+					return String.valueOf((double)((fsv_act*100)/fsvTotal));
+						
+				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_VACBE)){//Valor actualizado contable banco España.
+					return String.valueOf((double)((vacbe_act*100)/vacbeTotal));
+					
+				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_PT)){//Precio transferencia.
+					return String.valueOf((double)((precioTransferencia_act*100)/precioTransferenciaTotal));
+						
+				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_VALOR_REFERENCIA)){//Valor referencia.
+					return String.valueOf((double)((valorReferencia_act*100)/valorReferenciaTotal));
+						
+				}
 				
-			}else{
-				return "100";
-			}
-			
-			
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+			
+		//}//Si el tabajo no es ni de tipo OBTENCION_DOCUMENTAL ni de tipo ACTUACION_TECNICA. 
 		
 		return null;
 	}
+	
+	@SuppressWarnings("unused")
+	public void recalcularParticipacion(Long idTrabajo){
+		if(idTrabajo == null){//Evitamos el cálculo si el parámetro idTrabajo es nulo.
+			return;
+		}
+		
+		try{
+			Trabajo trabajo = trabajoApi.findOne(idTrabajo);
+			String codigoTipoTrabajo = trabajo.getTipoTrabajo().getCodigo();
+			List<ActivoTrabajo> activosTrabajoLista = trabajo.getActivosTrabajo();
+			List<Activo> activosLista = new ArrayList<Activo>();
+			
+			for(ActivoTrabajo activoTrabajo : activosTrabajoLista){//Obtenemos los activos de la lista de tipo ActivoTrabajo a la lista de tipo Activo.
+				if(activoTrabajo.getPrimaryKey().getActivo() != null){
+					activosLista.add(activoTrabajo.getPrimaryKey().getActivo());
+	
+				}
+			}
+			
+			String participacion = null; 
+			ActivoTrabajo activoTrabajo = new ActivoTrabajo();
+			for(Activo activo_check : activosLista){//Calculamos la participación para cada activo.
+				participacion = calcularParticipacionPorActivo(codigoTipoTrabajo, activosLista, activo_check);
+				
+				//Si participación es null significa que, o no se han pasado bien los parámetros, 
+				//o que no son ni de tipo obtención documental ni actuaciones técnicas.
+				//Se calcula a partes iguales para todos los activos.
+				if(participacion == null){
+					participacion = String.valueOf((double)(100/activosLista.size()));
+				}
+				
+				//Creamos una relación ActivoTrabajo y añadimos al trabajo.
+				activoTrabajo = trabajoApi.createActivoTrabajo(activo_check, trabajo, participacion);
+				trabajo.getActivosTrabajo().add(activoTrabajo);
+							
+			}
+			
+			//Hacemos un update del trabajo.
+			trabajoDao.saveOrUpdate(trabajo);
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 
 }
 

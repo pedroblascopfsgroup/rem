@@ -867,5 +867,30 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
  			}
  		}
 
-     }
+     },
+
+     onClickRefrescarParticipacion: function(btn) {
+    	var me = this;
+
+    	idTrabajo = me.getViewModel().get('trabajo').get('id');
+    	 
+	    var url = $AC.getRemoteUrl('trabajo/recalcularParticipacion');
+	 	Ext.Ajax.request({
+			url:url,
+			params:  {idTrabajo : idTrabajo},
+			success: function(response,opts){
+				btn.up('activostrabajo').funcionRecargar();
+			}
+	    });
+	 	    
+ 	}
 });
+
+
+
+
+
+
+
+
+

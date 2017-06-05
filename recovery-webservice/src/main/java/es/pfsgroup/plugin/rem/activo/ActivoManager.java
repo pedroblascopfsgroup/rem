@@ -3581,4 +3581,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public Long getNextNumActivoRem() {
 		return activoDao.getNextNumActivoRem();
 	}
+
+	@Override
+	public List<Activo> getListActivosPorID(List<Long> activosID) {
+		return activoDao.getListActivosPorID(activosID);
+	}
+	
+	
+	
 }

@@ -70,6 +70,7 @@ import es.pfsgroup.plugin.rem.rest.dto.TrabajoRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
+import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 
 
@@ -99,6 +100,9 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	@Autowired
 	private PreciosApi preciosApi;
+	
+	@Autowired
+	private UpdaterStateApi updaterStateApi;
 	
 	@Autowired
 	private GenerarPropuestaPreciosFactoryApi generarPropuestaApi;
@@ -1188,6 +1192,17 @@ public class TrabajoController extends ParadiseJsonController {
 			logger.error(ex.getMessage());
 		}
 
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView recalcularParticipacion(@RequestParam Long idTrabajo, ModelMap model){
+	
+		updaterStateApi.recalcularParticipacion(idTrabajo);
+		
+		model.put("success", true);
+		
+		return createModelAndViewJson(model);
 	}
 
 }

@@ -967,4 +967,11 @@ public interface ActivoApi {
 	 */
 	public Long getNextNumActivoRem();
 
+	/**
+	 * Este método recoje una lista de Ids de activo y obtiene en base a estos una lista de activos.
+	 * @param activosID : Lista de ID de los activos a obtener.
+	 * @return Devuelve una lista de Activos.
+	 */
+	public List<Activo> getListActivosPorID(List<Long> activosID);
+
 }

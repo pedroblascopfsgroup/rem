@@ -1,6 +1,7 @@
 Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
     extend	 : 'Ext.panel.Panel',
-    xtype	 : 'activostrabajo',    
+    xtype	 : 'activostrabajo',
+    reference: 'activostrabajoref',
     cls		 : 'panel-base shadow-panel',
 	layout	 : 'fit',
 	listeners: {
@@ -37,6 +38,17 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
 				            enableGroupingMenu: false,
 				            dock: 'bottom'
 				}],
+				tbar: [{
+					xtype: 'toolbar',
+		    		dock: 'top',
+		    		align: 'right',
+		    		items: [{
+		    			text: HreRem.i18n('btn.actualizar.participacion.activos'), 
+		    			cls:'tbar-grid-button', 
+		    			handler: 'onClickRefrescarParticipacion'
+		    				}]
+				}],
+				
 				columns: [				    
 					{
 				        xtype: 'actioncolumn',
@@ -48,7 +60,6 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
 				        }],
 				        hideable: false
 			    	} ,  	
-				
 				    {   text: HreRem.i18n('header.numero.activo'),
 			        	dataIndex: 'numActivo',
 			        	flex: 1
@@ -123,6 +134,7 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
 			            	}			            	
 			            	return "<span "+style+ ">"+msg+"</span>"
 			            }
+			            
 			        },
 			        {
 			        	dataIndex: 'importeParticipa',
@@ -186,6 +198,8 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
 
     	me.callParent();
     },
+    
+    
     
     funcionRecargar: function() {
 		var me = this; 

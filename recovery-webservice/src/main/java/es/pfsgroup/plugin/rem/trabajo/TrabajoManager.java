@@ -430,18 +430,25 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			
 			
-			
 			// Se crea la relacion de activos - trabajos, utilizando la lista de
 			// activos de entrada
 			String participacion = null;
 			for (Activo activo : listaActivos) {
 				
-				updaterStateApi.calcularParticipacionPorActivo(trabajo.getTipoTrabajo().getCodigo(),listaActivos, activo);
+				participacion = updaterStateApi.calcularParticipacionPorActivo(trabajo.getTipoTrabajo().getCodigo(),listaActivos, activo);
+				
+				//Si participación es null significa que, o no se han pasado bien los parámetros, 
+				//o que no son ni de tipo obtención documental ni actuaciones técnicas.
+				//Se calcula a partes iguales para todos los activos.
+				if(participacion == null){
+					participacion = String.valueOf((double)(100/listaActivos.size()));
+				}
 				
 				ActivoTrabajo activoTrabajo = createActivoTrabajo(activo, trabajo, participacion);
 				trabajo.getActivosTrabajo().add(activoTrabajo);
 			}
-
+			
+			
 			// Si es un trabajo derivado de propuesta de precios:
 			// - Antes de crear el tramite, se relacionan la propuesta y el
 			// trabajo, porque el tramite puede requerir la propuesta
@@ -484,10 +491,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				createTramiteTrabajo(trabajoActivo);
 			}
 
+			
 		} else {
 			if (dtoTrabajo.getIdActivo() != null) {
 				Activo activo = activoDao.get(dtoTrabajo.getIdActivo());
-				dtoTrabajo.setParticipacion("100");
+				dtoTrabajo.setParticipacion(updaterStateApi.calcularParticipacionPorActivo(trabajo.getTipoTrabajo().getCodigo(), null, activo));
 				trabajo = crearTrabajoPorActivo(activo, dtoTrabajo);
 				createTramiteTrabajo(trabajo);
 
@@ -510,13 +518,25 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	private List<Trabajo> crearTrabajoPorActivoAgrupacion(DtoFichaTrabajo dtoTrabajo) {
 		List<Trabajo> trabajos = new ArrayList<Trabajo>();
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "agrId", Long.valueOf(dtoTrabajo.getIdAgrupacion()));
-		List<VActivosAgrupacionTrabajo> activos = genericDao.getList(VActivosAgrupacionTrabajo.class, filtro);
+		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "agrId", Long.valueOf(dtoTrabajo.getIdAgrupacion()));
+		List<VActivosAgrupacionTrabajo> activosAgrupacionTrabajo = genericDao.getList(VActivosAgrupacionTrabajo.class, filtro1);
 
-		for (VActivosAgrupacionTrabajo activoAgrupacion : activos) {
-			Activo activo = activoDao.get(Long.valueOf(activoAgrupacion.getActivoId()));
-			dtoTrabajo.setParticipacion("100");
-			Trabajo trabajo = crearTrabajoPorActivo(activo, dtoTrabajo);
+		List<Long> activosID = new ArrayList<Long>();
+		
+		for(VActivosAgrupacionTrabajo activoAgrupacion : activosAgrupacionTrabajo) {
+			if(activoAgrupacion.getActivoId() != null) {
+				activosID.add(Long.parseLong(activoAgrupacion.getActivoId()));
+			}
+		}
+
+		List<Activo> activosList = activoApi.getListActivosPorID(activosID);
+
+		Trabajo trabajo = null;
+		Activo activo = null;
+		for (VActivosAgrupacionTrabajo activoAgrupacion : activosAgrupacionTrabajo) {
+			activo = activoDao.get(Long.valueOf(activoAgrupacion.getActivoId()));
+			dtoTrabajo.setParticipacion(updaterStateApi.calcularParticipacionPorActivo(dtoTrabajo.getTipoTrabajoCodigo(), activosList, null));
+			trabajo = crearTrabajoPorActivo(activo, dtoTrabajo);
 			trabajos.add(trabajo);
 		}
 
@@ -529,7 +549,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		ActivoAgrupacion agrupacion = activoAgrupacionDao.get(dtoTrabajo.getIdAgrupacion());
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "agrId", Long.valueOf(dtoTrabajo.getIdAgrupacion()));
-		List<VActivosAgrupacionTrabajo> activos = genericDao.getList(VActivosAgrupacionTrabajo.class, filtro);
+		List<VActivosAgrupacionTrabajo> activosAgrupacionTrabajo = genericDao.getList(VActivosAgrupacionTrabajo.class, filtro);
 
 		Trabajo trabajo = new Trabajo();
 
@@ -541,9 +561,19 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajo.setNumTrabajo(trabajoDao.getNextNumTrabajo());
 			trabajo.setAgrupacion(agrupacion);
 			trabajo.setSolicitante(genericAdapter.getUsuarioLogado());
+			
+			List<Long> activosID = new ArrayList<Long>();
+			
+			for(VActivosAgrupacionTrabajo activoAgrupacion : activosAgrupacionTrabajo) {
+				if(activoAgrupacion.getActivoId() != null) {
+					activosID.add(Long.parseLong(activoAgrupacion.getActivoId()));
+				}
+			}
 
+			List<Activo> activosList = activoApi.getListActivosPorID(activosID);
+			
 			Boolean isFirstLoop = true;
-			for (VActivosAgrupacionTrabajo activoAgrupacion : activos) {
+			for (VActivosAgrupacionTrabajo activoAgrupacion : activosAgrupacionTrabajo) {
 				Activo activo = activoDao.get(Long.valueOf(activoAgrupacion.getActivoId()));
 				// En la tabla de activo-agrupación no aparece ningún valor para
 				// los importes netos contables
@@ -552,7 +582,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				// * 100))) ?
 				// (activoAgrupacion.getImporteNetoContable()/activoAgrupacion.getSumaAgrupacionNetoContable()
 				// * 100) : 0.0D);
-				dtoTrabajo.setParticipacion(getParticipacion(activoAgrupacion));
+								
+				dtoTrabajo.setParticipacion(updaterStateApi.calcularParticipacionPorActivo(trabajo.getTipoTrabajo().getCodigo(), activosList, activo));
 				// dtoTrabajo.setParticipacion(Double.toString(activoAgrupacion.getImporteNetoContable()/activoAgrupacion.getSumaAgrupacionNetoContable()
 				// * 100));
 
@@ -678,9 +709,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 			Boolean isFirstLoop = true;
 			for (Activo activo : listaActivos) {
-				dtoTrabajo.setParticipacion("100");// TODO: Pendiente de definir
-													// como sacar el % de
-													// participación.
+				dtoTrabajo.setParticipacion(updaterStateApi.calcularParticipacionPorActivo(trabajo.getTipoTrabajo().getCodigo(), listaActivos, activo));
+				
 				if (isFirstLoop || !dtoTrabajo.getEsSolicitudConjunta()) {
 					trabajo = new Trabajo();
 					dtoToTrabajo(dtoTrabajo, trabajo);
@@ -819,7 +849,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return estadoTrabajo;
 	}
 
-	private ActivoTrabajo createActivoTrabajo(Activo activo, Trabajo trabajo, String participacion) {
+	@Override
+	public ActivoTrabajo createActivoTrabajo(Activo activo, Trabajo trabajo, String participacion) {
 		ActivoTrabajoPk pk = new ActivoTrabajoPk();
 		ActivoTrabajo activoTrabajo = new ActivoTrabajo();
 		pk.setActivo(activo);

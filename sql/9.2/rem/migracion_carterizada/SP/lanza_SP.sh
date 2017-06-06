@@ -21,12 +21,12 @@ do
 ETIQUETA
 		if [ $? != 0 ] ; then 
 		   echo -e "\n\n======>>> "Error en @"$line"
-		   echo "SP ejecutado en $total segundos"
+		   echo "SP ejecutado en $total minutos"
 		   exit 1
 		fi
 		fin=`date +%s`
 		let total=($fin-$inicio)/60
-		echo "SP ejecutado en $total segundos"
+		echo "SP ejecutado en $total minutos"
 		echo "Fin $line"
 		echo " "
 	fi

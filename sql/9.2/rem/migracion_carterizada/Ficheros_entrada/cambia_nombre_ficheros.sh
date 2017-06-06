@@ -29,5 +29,7 @@ do
 
 done < "Ficheros_entrada/renombrado.list"
 
+rm -f *.dat
+
 echo "Nombres cambiados, verificar cambios"
 exit 0

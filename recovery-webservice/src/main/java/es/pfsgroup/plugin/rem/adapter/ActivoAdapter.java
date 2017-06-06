@@ -66,6 +66,7 @@ import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManagerApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoCargas;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
@@ -80,6 +81,7 @@ import es.pfsgroup.plugin.rem.model.ActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -2668,4 +2670,43 @@ public class ActivoAdapter {
 		return codigoEstado;
 	}
 
+	public List<DtoUsuario> getComboUsuariosPorTipoGestorYCarteraDelLoteComercial(ActivoAgrupacion activoAgrupacion, Long tipoGestor) {
+		// Obtener una lista de usuarios filtrados por tipo gestor.
+		List<DtoUsuario> usuariosPorTipoGestorList = this.getComboUsuarios(tipoGestor);
+		if(usuariosPorTipoGestorList == null) {
+			return null;
+		}
+
+		// Obtener el id de cartera por la agrupación.
+		Long idCartera;
+		if (activoAgrupacion.getActivoPrincipal() != null && activoAgrupacion.getActivoPrincipal().getCartera() != null) {
+			idCartera = activoAgrupacion.getActivoPrincipal().getCartera().getId();
+		} else if (activoAgrupacion.getActivos() != null && !activoAgrupacion.getActivos().isEmpty()
+				&& activoAgrupacion.getActivos().get(0).getActivo().getCartera() != null) {
+			idCartera = activoAgrupacion.getActivos().get(0).getActivo().getCartera().getId();
+		} else {
+			// Si la agrupación no contiene activos, por lo que no pertenece a una cartera, devolver la lista de usuarios por tipo gestor sólo.
+			return usuariosPorTipoGestorList;
+		}
+
+		// Contrastar el tipo de cartera de cada usuario contra la cartera de la agrupación.
+		List<Long> usuarioIdList = new ArrayList<Long>();
+		for(DtoUsuario usuario: usuariosPorTipoGestorList) {
+			usuarioIdList.add(usuario.getId());
+		}
+
+		List<DtoUsuario> usuariosPorTipoGestorYCarteraList = new ArrayList<DtoUsuario>();
+
+		List<ActivoProveedorContacto> activoProveedorContactoList = proveedoresApi.getActivoProveedorContactoPorIdsUsuarioYCartera(usuarioIdList, idCartera);
+		for(ActivoProveedorContacto  activoProveedorContacto: activoProveedorContactoList) {
+			DtoUsuario dto = new DtoUsuario();
+
+			dto.setId(activoProveedorContacto.getUsuario().getId());
+			dto.setApellidoNombre(activoProveedorContacto.getUsuario().getApellidoNombre());
+
+			usuariosPorTipoGestorYCarteraList.add(dto);
+		}
+
+		return usuariosPorTipoGestorYCarteraList;
+	}
 }

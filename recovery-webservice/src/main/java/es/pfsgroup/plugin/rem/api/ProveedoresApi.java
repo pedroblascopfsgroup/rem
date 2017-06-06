@@ -5,6 +5,7 @@ import java.util.List;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -260,4 +261,13 @@ public interface ProveedoresApi {
 	 * @return Devuelve el proveedor encontrado.
 	 */
 	public Object searchProveedorCodigo(String codigoUnicoProveedor);
+
+	/**
+	 * Este método obtien un listado de proveedores contacto en base a una lista de IDs de usuario y una cartera.
+	 * 
+	 * @param idUsuarios: ID de contacto que han de coincidir con los proveedores contacto.
+	 * @param idCartera: ID de la cartera.
+	 * @return Devuelve una lista de proveedores contacto.
+	 */
+	public List<ActivoProveedorContacto> getActivoProveedorContactoPorIdsUsuarioYCartera(List<Long> idUsuarios, Long idCartera);
 }

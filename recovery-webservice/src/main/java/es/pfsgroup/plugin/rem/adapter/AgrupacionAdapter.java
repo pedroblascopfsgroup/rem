@@ -1943,4 +1943,25 @@ public class AgrupacionAdapter {
 
 		return codigoEstado;
 	}
+
+	/**
+	 * Este método obtiene una lista de usuarios filtrados por el tipo de gestor que recibe
+	 * y por la cartera a la que pertenece la agrupación.
+	 * 
+	 * @param agrId: ID de la agrupación.
+	 * @param codigoGestor: código del tipo de gestor.
+	 * @return Devuelve una lista de usuarios.
+	 */
+	public List<DtoUsuario> getUsuariosPorTipoGestorYCarteraDelLoteComercial(Long agrId, String codigoGestor) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoGestor);
+		EXTDDTipoGestor tipoGestor = (EXTDDTipoGestor) genericDao.get(EXTDDTipoGestor.class, filtro);
+
+		ActivoAgrupacion activoAgrupacion = activoAgrupacionApi.get(agrId);
+
+		if (!Checks.esNulo(tipoGestor) && !Checks.esNulo(activoAgrupacion)) {
+			return activoAdapter.getComboUsuariosPorTipoGestorYCarteraDelLoteComercial(activoAgrupacion, tipoGestor.getId());
+		}
+
+		return null;
+	}
 }

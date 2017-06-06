@@ -26,8 +26,6 @@ BEGIN
 
     DBMS_OUTPUT.PUT_LINE('[INICIO] Inicio del proceso');
 
-    REM01.OPERACION_DDL.DDL_TABLE('ANALYZE',''||TABLA_VALIDACION||'','10');
-
     --******************************************
     --*** DUPLICADOS EN TABLAS DE PRODUCCION ***
     --******************************************

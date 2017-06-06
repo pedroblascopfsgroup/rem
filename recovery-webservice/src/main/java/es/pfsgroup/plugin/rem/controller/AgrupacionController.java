@@ -700,6 +700,22 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getUsuariosPorTipoGestorYCarteraDelLoteComercial(@RequestParam Long agrId, @RequestParam String codigoGestor,
+			ModelMap model) {
+
+		try {
+			model.put("data", adapter.getUsuariosPorTipoGestorYCarteraDelLoteComercial(agrId, codigoGestor));
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error(e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
 	public void exportarActivosLoteComercial(Long agrID, DtoAgrupacionFilter dtoAgrupacionFilter,
 			HttpServletRequest request, HttpServletResponse response) throws Exception {
 

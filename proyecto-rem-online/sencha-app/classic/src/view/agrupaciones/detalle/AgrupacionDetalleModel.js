@@ -237,7 +237,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'agrupacion/getGestoresLoteComercial',
+				remoteUrl: 'agrupacion/getUsuariosPorTipoGestorYCarteraDelLoteComercial',
 				extraParams: {agrId: '{agrupacionficha.id}', codigoGestor: 'GIAFORM'}
 			}   	
 	    },

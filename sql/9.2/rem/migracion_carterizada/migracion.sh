@@ -58,11 +58,11 @@ echo "	------ [INFO] Rellenando tablas VALIDACION"
 echo "	-------------------------------------------------------"
 fecha=`date +%Y%m%d_%H%M%S`
 inicioparte=`date +%s`
+./DML/mig_lanza_DML.sh $1 > Logs/carga_validaciones_$fecha.log
 if [ $? != 0 ] ; then 
    echo -e "\n\n======>>> "Error cargando tablas de validación
    exit 1
 fi
-./DML/mig_lanza_DML.sh $1 > Logs/carga_validaciones_$fecha.log
 fin=`date +%s`
 let total=($fin-$inicioparte)/60
 echo "	Tablas de validación rellenadas en $total minutos."
@@ -73,11 +73,11 @@ echo "	------ [INFO] Compilando procesos almacenados"
 echo "	-------------------------------------------------------"
 fecha=`date +%Y%m%d_%H%M%S`
 inicioparte=`date +%s`
+./SP/compila_SP.sh $1 > Logs/compila_procedimientos_almacenados_$fecha.log
 if [ $? != 0 ] ; then 
    echo -e "\n\n======>>> "Error compilando procedimientos almacenados
    exit 1
 fi
-./SP/compila_SP.sh $1 > Logs/compila_procedimientos_almacenados_$fecha.log
 fin=`date +%s`
 let total=($fin-$inicioparte)/60
 echo "	Procesos almacenados compilados en $total minutos."
@@ -88,11 +88,11 @@ echo "	------ [INFO] Ejecutando validaciones"
 echo "	-------------------------------------------------------"
 fecha=`date +%Y%m%d_%H%M%S`
 inicioparte=`date +%s`
+./SP/lanza_SP.sh $1 > Logs/ejecuta_procedimientos_almacenados_$fecha.log
 if [ $? != 0 ] ; then 
    echo -e "\n\n======>>> "Error ejecutando validaciones
    exit 1
 fi
-./SP/lanza_SP.sh $1 > Logs/ejecuta_procedimientos_almacenados_$fecha.log
 fin=`date +%s`
 let total=($fin-$inicioparte)/60
 echo "	Validaciones completadas en $total minutos."

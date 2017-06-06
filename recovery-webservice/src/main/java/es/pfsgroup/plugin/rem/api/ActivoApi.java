@@ -48,7 +48,6 @@ import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Reserva;
-import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.Visita;
@@ -739,10 +738,12 @@ public interface ActivoApi {
 	/**
 	 * Devuelve la lista de los gastos proveedores para un activo y un proveedor
 	 * 
-	 * @param idActivo
+	 * @param idActivo: ID del activo.
+	 * @param idProveedor: ID del proveedor.
+	 * @param dto: dto con los datos de paginación.
 	 * @return
 	 */
-	public List<VBusquedaGastoActivo> getGastoByActivo(Long idActivo, Long idProveedor);
+	public Page getGastoByActivo(Long idActivo, Long idProveedor, WebDto dto);
 
 	/**
 	 * Averigua si el activo tiene ofertas acpetadas // MODIFICACIÓN: Mira si el expediente está aprobado (y estados posteriores).

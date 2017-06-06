@@ -2731,17 +2731,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	}
 
-	public List<VBusquedaGastoActivo> getGastoByActivo(Long idActivo, Long idProveedor) {
+	@Override
+	public Page getGastoByActivo(Long idActivo, Long idProveedor, WebDto dto) {
 
-		List<VBusquedaGastoActivo> vGastosActivos = new ArrayList<VBusquedaGastoActivo>();
+		Page gastosActivos = null;
+
+		dto.setSort(" idGasto ");
+		dto.setDir("ASC");
 
 		if (!Checks.esNulo(idActivo) && !Checks.esNulo(idProveedor)) {
 			Filter filtroGastoActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
 			Filter filtroGastoProveedor = genericDao.createFilter(FilterType.EQUALS, "idProveedor", idProveedor);
-			vGastosActivos = genericDao.getList(VBusquedaGastoActivo.class, filtroGastoActivo, filtroGastoProveedor);
+			gastosActivos = genericDao.getPage(VBusquedaGastoActivo.class, dto, filtroGastoActivo, filtroGastoProveedor);
 		}
 
-		return vGastosActivos;
+		return gastosActivos;
 	}
 
 	@Override

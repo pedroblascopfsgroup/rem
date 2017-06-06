@@ -92,7 +92,6 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
-import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
@@ -2082,13 +2081,15 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getGastoByActivo(Long idActivo, Long idProveedor, ModelMap model) {
+	public ModelAndView getGastoByActivo(Long idActivo, Long idProveedor, WebDto dto, ModelMap model) {
 
 		try {
+			Page lista = activoApi.getGastoByActivo(idActivo, idProveedor, dto);
 
-			List<VBusquedaGastoActivo> lista = activoApi.getGastoByActivo(idActivo, idProveedor);
-
-			model.put("data", lista);
+			if(lista != null) {
+				model.put("data", lista.getResults());
+				model.put("totalCount", lista.getTotalCount());
+			}
 			model.put("success", true);
 
 		} catch (Exception e) {

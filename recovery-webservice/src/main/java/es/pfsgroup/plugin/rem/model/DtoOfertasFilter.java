@@ -15,6 +15,7 @@ public class DtoOfertasFilter extends WebDto {
 	private Long numActivo;
 	private Long numAgrupacion;
 	private String estadoOferta;
+	private String[] estadosOferta;
 	private String tipoOferta;
 	private Long idAgrupacion;
 	private Long idActivo;
@@ -22,6 +23,7 @@ public class DtoOfertasFilter extends WebDto {
 	private String fechaAltaHasta;
 	private Long numExpediente;
 	private String estadoExpediente;
+	private String[] estadosExpediente;
 	private String subtipoActivo;
 	private String importeOferta;
 	private String ofertante;
@@ -38,6 +40,16 @@ public class DtoOfertasFilter extends WebDto {
 	private Boolean deDerechoTanteo;
 	private String codigoPrescriptor;
 	private Long usuarioGestor;
+	private String tipoFecha;
+	private String fechaDesde;
+	private String fechaHasta;
+	private String canal;
+	private String nombreCanal;
+	private String telefonoOfertante;
+	private String emailOfertante;
+	private String documentoOfertante;
+	private Long gestoria;	
+	
 	
 	public Long getNumOferta() {
 		return numOferta;
@@ -62,6 +74,12 @@ public class DtoOfertasFilter extends WebDto {
 	}
 	public void setEstadoOferta(String estadoOferta) {
 		this.estadoOferta = estadoOferta;
+	}
+	public String[] getEstadosOferta() {
+		return estadosOferta;
+	}
+	public void setEstadosOferta(String[] estadosOferta) {
+		this.estadosOferta = estadosOferta;
 	}
 	public String getTipoOferta() {
 		return tipoOferta;
@@ -98,6 +116,12 @@ public class DtoOfertasFilter extends WebDto {
 	}
 	public void setEstadoExpediente(String estadoExpediente) {
 		this.estadoExpediente = estadoExpediente;
+	}
+	public String[] getEstadosExpediente() {
+		return estadosExpediente;
+	}
+	public void setEstadosExpediente(String[] estadosExpediente) {
+		this.estadosExpediente = estadosExpediente;
 	}
 	public String getSubtipoActivo() {
 		return subtipoActivo;
@@ -200,6 +224,60 @@ public class DtoOfertasFilter extends WebDto {
 	}
 	public void setUsuarioGestor(Long usuarioGestor) {
 		this.usuarioGestor = usuarioGestor;
+	}
+	public String getTipoFecha() {
+		return tipoFecha;
+	}
+	public void setTipoFecha(String tipoFecha) {
+		this.tipoFecha = tipoFecha;
+	}
+	public String getFechaDesde() {
+		return fechaDesde;
+	}
+	public void setFechaDesde(String fechaDesde) {
+		this.fechaDesde = fechaDesde;
+	}
+	public String getFechaHasta() {
+		return fechaHasta;
+	}
+	public void setFechaHasta(String fechaHasta) {
+		this.fechaHasta = fechaHasta;
+	}
+	public String getCanal() {
+		return canal;
+	}
+	public void setCanal(String canal) {
+		this.canal = canal;
+	}
+	public String getNombreCanal() {
+		return nombreCanal;
+	}
+	public void setNombreCanal(String nombreCanal) {
+		this.nombreCanal = nombreCanal;
+	}
+	public String getTelefonoOfertante() {
+		return telefonoOfertante;
+	}
+	public void setTelefonoOfertante(String telefonoOfertante) {
+		this.telefonoOfertante = telefonoOfertante;
+	}
+	public String getEmailOfertante() {
+		return emailOfertante;
+	}
+	public void setEmailOfertante(String emailOfertante) {
+		this.emailOfertante = emailOfertante;
+	}
+	public String getDocumentoOfertante() {
+		return documentoOfertante;
+	}
+	public void setDocumentoOfertante(String documentoOfertante) {
+		this.documentoOfertante = documentoOfertante;
+	}
+	public Long getGestoria() {
+		return gestoria;
+	}
+	public void setGestoria(Long gestoria) {
+		this.gestoria = gestoria;
 	}
 	
 }

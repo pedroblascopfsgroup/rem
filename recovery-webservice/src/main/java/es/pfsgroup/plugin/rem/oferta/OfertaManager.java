@@ -39,6 +39,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -85,6 +86,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.oferta.dao.VOfertaActivoDao;
+import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
@@ -164,6 +166,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
+	
+	@Autowired
+	private ProveedoresDao proveedoresDao;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
 
 	@Override
 	public String managerName() {
@@ -281,17 +289,37 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return oferta;
 	}
 
-	
-	@Override
-	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter,Usuario usuario) {
-
-		return ofertaDao.getListOfertas(dtoOfertasFilter,usuario);
-	}
-	
+		
 	@Override
 	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter) {
-
+		
 		return ofertaDao.getListOfertas(dtoOfertasFilter);
+	}
+	
+	public DtoPage getListOfertasUsuario(DtoOfertasFilter dto) {
+		
+		Usuario usuarioGestor = null;
+		Usuario usuarioGestoria = null;
+		
+		if (dto.getUsuarioGestor() != null) {
+			usuarioGestor = genericDao.get(Usuario.class,
+					genericDao.createFilter(FilterType.EQUALS, "id", dto.getUsuarioGestor()));
+		}
+		
+		if (dto.getGestoria() != null) {
+			usuarioGestoria = genericDao.get(Usuario.class,
+					genericDao.createFilter(FilterType.EQUALS, "id", dto.getGestoria()));
+		} 
+		
+		if (Checks.esNulo(dto.getGestoria()) && Checks.esNulo(dto.getUsuarioGestor())) {
+			usuarioGestor = genericAdapter.getUsuarioLogado();
+			if (genericAdapter.tienePerfil("GESTIAFORM", usuarioGestor)) {
+				usuarioGestoria = usuarioGestor;
+				usuarioGestor = null;
+			}
+		}
+		
+		return ofertaDao.getListOfertas(dto, usuarioGestor, usuarioGestoria);
 	}
 
 	@Override
@@ -1809,4 +1837,25 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return false;
 	}
+	
+
+	@Override
+	public List<DDTipoProveedor> getDiccionarioSubtipoProveedorCanal() {
+		
+		List<String> codigos = new ArrayList<String>();
+		
+		codigos.add(DDTipoProveedor.COD_MEDIADOR);
+		codigos.add(DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA);
+		codigos.add(DDTipoProveedor.COD_OFICINA_BANKIA);
+		codigos.add(DDTipoProveedor.COD_OFICINA_CAJAMAR);
+		codigos.add(DDTipoProveedor.COD_WEB_HAYA);
+		codigos.add(DDTipoProveedor.COD_PORTAL_WEB);
+		codigos.add(DDTipoProveedor.COD_CAT);
+		codigos.add(DDTipoProveedor.COD_HAYA);		
+		
+		List<DDTipoProveedor> listaTipoProveedor = proveedoresDao.getSubtiposProveedorByCodigos(codigos);		
+
+		return listaTipoProveedor;
+	}
 }
+

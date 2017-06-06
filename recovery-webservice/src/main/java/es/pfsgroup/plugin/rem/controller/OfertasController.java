@@ -18,11 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
@@ -36,7 +34,6 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
-import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Controller
 public class OfertasController {
@@ -58,6 +55,7 @@ public class OfertasController {
 	@Autowired
 	GenericABMDao genericDao;
 
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListOfertas(DtoOfertasFilter dtoOfertasFilter, ModelMap model) {
@@ -68,14 +66,8 @@ public class OfertasController {
 				dtoOfertasFilter.setSort("fechaCreacion");
 
 			}
-			Usuario usuusuarioGestor = null;
-			if (dtoOfertasFilter.getUsuarioGestor() != null) {
-				usuusuarioGestor = genericDao.get(Usuario.class,
-						genericDao.createFilter(FilterType.EQUALS, "id", dtoOfertasFilter.getUsuarioGestor()));
-			} else {
-				usuusuarioGestor = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-			}
-			DtoPage page = ofertaApi.getListOfertas(dtoOfertasFilter, usuusuarioGestor);
+			
+			DtoPage page = ofertaApi.getListOfertasUsuario(dtoOfertasFilter);
 
 			model.put("data", page.getResults());
 			model.put("totalCount", page.getTotalCount());
@@ -239,4 +231,11 @@ public class OfertasController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDiccionarioSubtipoProveedorCanal(){
+		return createModelAndViewJson(new ModelMap("data", ofertaApi.getDiccionarioSubtipoProveedorCanal()));
+	}
+	
 }

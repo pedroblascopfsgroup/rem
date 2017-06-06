@@ -263,4 +263,20 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 
 		return (List<Long>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public  List<DDTipoProveedor> getSubtiposProveedorByCodigos(List<String> codigos) {
+
+		HQLBuilder hb = new HQLBuilder("from DDTipoProveedor tpr ");		
+		hb.appendWhereIN("tpr.codigo",  codigos.toArray(new String[codigos.size()]));
+
+
+		return this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+	}
+	
+	
+	
+	
+	
 }

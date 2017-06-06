@@ -24,6 +24,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -1294,6 +1295,17 @@ public class ActivoAdapter {
 
 		return listaUsuariosDto;
 	}
+	
+
+
+
+	public List<DtoUsuario> getComboUsuariosGestoria() {
+		
+		EXTDDTipoGestor tipoGestorGestoria = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION));
+		return getComboUsuarios(tipoGestorGestoria.getId());
+	}
+	
+	
 
 	public List<DtoListadoGestores> getGestores(Long idActivo) {
 		GestorEntidadDto gestorEntidadDto = new GestorEntidadDto();

@@ -322,7 +322,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		List<EXTDDTipoGestor> listaResultado = new ArrayList<EXTDDTipoGestor>();
 		for (EXTDDTipoGestor tipoGestor : lista) {
 			if (tipoGestor.getCodigo().equals("GCOM") || tipoGestor.getCodigo().equals("GCBO")
-					|| tipoGestor.getCodigo().equals("GIAFORM") || tipoGestor.getCodigo().equals("GFORM")) {
+					|| tipoGestor.getCodigo().equals("GFORM")) {
 				listaResultado.add(tipoGestor);
 			}
 		}

@@ -9,6 +9,7 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.VProveedores;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 
 public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
 
@@ -47,7 +48,13 @@ public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
 	public List<Long> getIdProveedoresByIdUsuario(Long idUsuario);
 
 	/**
-	 * Este método obtien un listado de proveedores contacto en base a una lista de IDs de usuario y una cartera.
+	 * Devuelve una lista de subtipos de proveedor filtrada por los codigos que recibe
+	 * @param codigos
+	 * @return
+	 */
+	public List<DDTipoProveedor> getSubtiposProveedorByCodigos(List<String> codigos);
+	
+	/** Este método obtien un listado de proveedores contacto en base a una lista de IDs de usuario y una cartera.
 	 * 
 	 * @param idUsuarios: ID de contacto que han de coincidir con los proveedores contacto.
 	 * @param idCartera: ID de la cartera.

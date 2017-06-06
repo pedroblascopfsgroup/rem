@@ -21,13 +21,24 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialList', {
 		            text: HreRem.i18n('header.oferta.numOferta'),
 		            flex: 1
 		        },
+		        {
+		            dataIndex: 'descripcionTipoOferta',
+		            text: HreRem.i18n('header.oferta.tipoOferta'),
+		            flex: 1
+		        },
+		        {
+		            dataIndex: 'fechaCreacion',
+		            text: HreRem.i18n('header.oferta.fechaAlta'),
+		            formatter: 'date("d/m/Y")',
+		            flex: 1
+		        },
 		        {	  
 		        	xtype: 'actioncolumn',
 		            dataIndex: 'numActivoAgrupacion',
 		            text: HreRem.i18n('header.numero.activo.agrupacion'),
 		            flex: 1,
 		            items: [{
-			            tooltip: HreRem.i18n('tooltip.ver.expediente'),
+			            tooltip: HreRem.i18n('tooltip.ver.activo.agrupacion'),
 			            getClass: function(v, metadata, record ) {
 			            	if (Ext.isEmpty(record.get("idAgrupacion"))) {
 			            		return 'app-list-ico ico-ver-activov2';
@@ -41,9 +52,8 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialList', {
 			        renderer: function(value, metadata, record) {
 			        	return '<div style="float:left; margin-top:3px; font-size: 11px; line-height: 1em;">'+ value+'</div>';
 			        },
-		            flex     : 1,            
-		            align: 'right',
-//		            menuDisabled: true,
+		            flex     : 1,
+		            align: 'center',
 		            hideable: false,
 		            sortable: true
 		        },
@@ -51,17 +61,6 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialList', {
 		            dataIndex: 'estadoOferta',
 		            text: HreRem.i18n('header.oferta.estadoOferta'),
 		            flex: 1		        	
-		        },
-		        {
-		            dataIndex: 'descripcionTipoOferta',
-		            text: HreRem.i18n('header.oferta.tipoOferta'),
-		            flex: 1
-		        },
-		        {
-		            dataIndex: 'fechaCreacion',
-		            text: HreRem.i18n('header.oferta.fechaAlta'),
-		            formatter: 'date("d/m/Y")',
-		            flex: 1
 		        },
 		        {
 	    			xtype: 'actioncolumn',
@@ -85,7 +84,6 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialList', {
 			        },
 		            flex     : 1,            
 		            align: 'center',
-//		            menuDisabled: true,
 		            hideable: false,
 		            sortable: true
 		        },
@@ -94,36 +92,57 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialList', {
 		            text: HreRem.i18n('header.oferta.estadoExpediente'),
 		            flex: 1
 		        },
-		        /*{	        	
-		            dataIndex: 'subtipoActivo',
-		            text: HreRem.i18n('header.oferta.subtipoActivo'),
-		            flex: 1		        	
-		        },*/
 		        {
-		            dataIndex: 'importeOferta',
-		            text: HreRem.i18n('header.oferta.importeOferta'),
-		            flex: 1
-		        },
+		        	xtype: 'actioncolumn',
+	    			text: HreRem.i18n('header.oferta.visita'),
+		        	dataIndex: 'numVisita',
+			        items: [{
+			            tooltip: HreRem.i18n('tooltip.ver.visita'),
+			            getClass: function(v, metadata, record ) {
+			            	if (!Ext.isEmpty(record.get("numVisita"))) {
+			            		return 'ico-ver-visita';
+			            	}			            	
+			            },
+			            handler: 'onClickAbrirVisita'
+			        }],
+			        renderer: function(value, metadata, record) {
+			        	if(Ext.isEmpty(record.get("numVisita"))) {
+			        		return "";
+			        	} else {
+			        		return '<div style="float:left; margin-top:3px; font-size: 11px; line-height: 1em;">'+ value+'</div>'
+			        	}
+			        },
+		            flex     : 1,            
+		            align: 'center',
+		            hideable: false,
+		            sortable: true		        	
+		        }, 
 		        {
 		            dataIndex: 'ofertante',
 		            text: HreRem.i18n('header.oferta.ofertante'),
 		            flex: 1
+		        },
+		        {
+		            dataIndex: 'importeOferta',
+		            text: HreRem.i18n('header.oferta.importeOferta'),
+		            flex: 1,
+		             align: 'right'
+		        },
+		        /*{
+		            dataIndex: 'gestorFormalizacion',
+		            text: HreRem.i18n('header.gestor.formalizacion'),
+		            flex: 1
+		        },
+		        {
+		            dataIndex: 'gestoria',
+		            text: HreRem.i18n('header.gestoria'),
+		            flex: 1
+		        },*/
+		        {
+		            dataIndex: 'canalDescripcion',
+		            text: HreRem.i18n('header.canal.prescripcion'),
+		            flex: 1
 		        }
-//NO ESTA DEFINIDO		        
-//		        {
-//		            dataIndex: 'comite',
-//		            text: HreRem.i18n('header.oferta.comite'),
-//		            flex: 1
-//		        }
-//NO ESTA DEFINIDO		        
-//		        {
-//		            dataIndex: 'derechoTanteo',
-//		            text: HreRem.i18n('header.oferta.derechoTanteo'),
-//		            flex: 1
-//		        }
-		        
-		        
-		        
         ];
         
         

@@ -114,19 +114,16 @@ Ext.define('HreRem.view.activos.detalle.CargasActivo', {
 					        	}
 				],
 				listeners : [
-					{afterrender: 'onRenderCargasList'	},
+					{afterrender: 'onRenderCargasList'},
 				   	{rowdblclick: 'onCargasListDobleClick'}
 				]
-
         	}
-            
-            
      ];
+
 		me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();
-    	
     },
-    
+
     funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
@@ -135,7 +132,4 @@ Ext.define('HreRem.view.activos.detalle.CargasActivo', {
   			grid.getStore().load();
   		});
    }
-
-
-    
 });

@@ -2436,17 +2436,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			items[0].setVisible(isCarteraCajamar)
 		}
 	},
-	
-	onCargasListDobleClick: function (grid, record) {
-		
-		var me = this;
-		me.fireEvent("log",("*********CARGA SELECCIONADA********"));
-		me.fireEvent("log",record);
-		var isCarteraCajamar = me.getViewModel().get("activo.isCarteraCajamar");
-		Ext.create("HreRem.view.activos.detalle.CargaDetalle", {carga: record, parent: grid.up("form"), modoEdicion: isCarteraCajamar}).show();
 
+	onCargasListDobleClick: function (grid, record) {
+		var me = this;
+
+		Ext.create("HreRem.view.activos.detalle.CargaDetalle", {carga: record, parent: grid.up("form"), modoEdicion: true}).show();
 	},
-	
+
 	abrirFormularioAnyadirCarga: function(grid) {
 		var me = this,
 		record = Ext.create("HreRem.model.ActivoCargas");

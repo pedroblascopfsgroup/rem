@@ -22,6 +22,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
 
 
 /**
@@ -62,8 +63,9 @@ public class ActivoObservacion implements Serializable, Auditable {
 	@Column(name = "AOB_FECHA")
 	private Date fecha;
 	
-	
-	
+	@ManyToOne
+    @JoinColumn(name = "DD_TOB_ID")
+	private DDTipoObservacionActivo tipoObservacion;
 	
 	@Version   
 	private Long version;
@@ -71,10 +73,7 @@ public class ActivoObservacion implements Serializable, Auditable {
 	@Embedded
 	private Auditoria auditoria;
 
-	
-	
-	
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -132,5 +131,11 @@ public class ActivoObservacion implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 
+	public DDTipoObservacionActivo getTipoObservacion() {
+		return tipoObservacion;
+	}
 
+	public void setTipoObservacion(DDTipoObservacionActivo tipoObservacion) {
+		this.tipoObservacion = tipoObservacion;
+	}
 }

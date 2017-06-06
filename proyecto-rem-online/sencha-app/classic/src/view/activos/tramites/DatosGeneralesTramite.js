@@ -38,10 +38,10 @@ Ext.define('HreRem.view.activos.tramites.DatosGeneralesTramite', {
 		            	fieldLabel: 'Estado',
 		            	bind: '{tramite.estado}'
 		            },{ 
-		            	fieldLabel: 'Fecha Inicio',
+		            	fieldLabel: HreRem.i18n('header.fecha.inicio'),
 		            	bind: '{tramite.fechaInicio}'
 		            },{ 
-		            	fieldLabel: 'Fecha Fin',
+		            	fieldLabel: HreRem.i18n('header.fecha.fin'),
 		            	bind: '{tramite.fechaFinalizacion}'
 		            },{ 
 		            	fieldLabel: 'Tr&aacute;mite Original',

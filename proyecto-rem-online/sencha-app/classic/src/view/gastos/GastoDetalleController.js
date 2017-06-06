@@ -351,6 +351,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		  });
 		
 	},
+	
+	
 	onChangeOperacionExenta: function(check,newValue){
 		var me = this;
 
@@ -403,15 +405,16 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		cuota.validate();
 	},
 	
-	estaExento: function(get){
+
+/*	estaExento: function(get){
      	var me= this;
-     	if(get('detalleeconomico.impuestoIndirectoExento')=="true" || get('detalleeconomico.abonoCuenta')==true){
+     	if(get('detalleeconomico.impuestoIndirectoExento')==true || get('detalleeconomico.abonoCuenta')==true){
      		return true;
      	}
      	else{
      		return false;
      	}
-     },
+     },*/
 		
 	onChangeImportePrincipalSujeto: function(field, e){
 		var me= this;
@@ -1226,7 +1229,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	
     },
     
-    onChangeFechaDevengoEspecial: function(calendario){
+/*    onChangeFechaDevengoEspecial: function(calendario){
     	var me = this;
     	var fecha = new Date(calendario.value);
     	var anyo = fecha.getFullYear();
@@ -1237,18 +1240,20 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	}else{
     		console.log(HreRem.i18n('msg.info.fecha.devengoEspecial'));
     	}
-    },
+    },*/
     
     afterCargaCombo: function(){
     	var me = this;    	
     	var fechaActual = new Date();
     	var combobox = me.lookupReference('comboboxfieldFechaEjercicio');
-    	var anyo = combobox.getStore().getAt(0).data.anyo;
-    	var fechaMin = new Date(anyo);
-    	fechaActual.setMonth(fechaActual.getMonth()+1);
-    	fechaField = me.lookupReference('fechaDevengoEspecial');
-    	fechaField.setMinValue(fechaMin);
-    	fechaField.setMaxValue(fechaActual);
+    	if(combobox){
+	    	var anyo = combobox.getStore().getAt(0).data.anyo;
+	    	var fechaMin = new Date(anyo);
+	    	fechaActual.setMonth(fechaActual.getMonth()+1);
+	    	fechaField = me.lookupReference('fechaDevengoEspecial');
+	    	fechaField.setMinValue(fechaMin);
+	    	fechaField.setMaxValue(fechaActual);
+    	}
     }
 
 });

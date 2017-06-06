@@ -30,21 +30,51 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
 				columns: [
 				   {    text: 'Usuario',
 			        	dataIndex: 'nombreCompleto',
-			        	flex: 2
+			        	flex: 1
 			       },
 				   {
 			            text: 'Fecha',
 			            dataIndex: 'fecha',
 			            flex: 1,
 			        	formatter: 'date("d/m/Y")'
-			            
+			       },
+			       {
+			    	   xtype: 'gridcolumn',
+				        renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
+				        	var store =  this.up('activosdetallemain').getViewModel().getStore('storeTipoObservacionActivo');
+				        	if(store.isLoading()) {
+				        		store.on('load', function(store, items){
+	            		       		var grid = me.up('activosdetallemain').lookupReference('listadoObservaciones').getView();
+	            		       		grid.refreshNode(rowIndex);
+	            		       	});
+				        	}
+				            var foundedRecord = store.findRecord('codigo', value);
+				            var descripcion;
+				        	if(!Ext.isEmpty(foundedRecord)) {
+				        		descripcion = foundedRecord.getData().descripcion;
+				        	}
+				            return descripcion;
+				       }, 
+			    	   dataIndex: 'tipoObservacionCodigo',
+			           text: HreRem.i18n('header.tipo.observacion'),
+			           flex: 1,
+			           editor: {
+			        	   xtype: 'comboboxfieldbase',
+			        	   addUxReadOnlyEditFieldPlugin: false,
+				           allowBlank: false,
+				           bind: {
+		        	   			store: '{storeTipoObservacionActivo}'
+				           },
+				           reference: 'cbDDColTipoObservacion'
+			           }
 			       },
 			       {   
 			       		text: 'Observación',
 			       	    dataIndex: 'observacion',
 			       		flex: 6,
 			       		editor: {
-			       			xtype:'textarea'
+			       			xtype:'textarea',
+			       			allowBlank: false
 			       		}
 			       }
 			    ],

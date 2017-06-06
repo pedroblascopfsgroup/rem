@@ -45,35 +45,36 @@ BEGIN
                 GROUP BY NOMBRE_INTERFAZ';
                 DBMS_OUTPUT.PUT_LINE(V_MSQL);
             EXECUTE IMMEDIATE V_MSQL INTO vCLAVE, vCLAVE2;
+
+            V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||TABLA_VALIDACION||' (VALIDACION_ID, NOMBRE_INTERFAZ, CLAVE_DATO, COD_RECHAZO, MOTIVO_RECHAZO)
+                SELECT '||V_ESQUEMA||'.'||V_SEC||'.NEXTVAL VALIDACION_ID, NOMBRE_INTERFAZ,CLAVE_DATO, COD_RECHAZO, MOTIVO_RECHAZO FROM (
+                SELECT '''||vTABLA_O||''' NOMBRE_INTERFAZ, NI.'||vCLAVE||' CLAVE_DATO
+                    , DR.CODIGO_RECHAZO COD_RECHAZO, DR.MOTIVO_RECHAZO MOTIVO_RECHAZO
+                FROM '||V_ESQUEMA||'.'||vTABLA_O||' NI
+                JOIN '||V_ESQUEMA||'.DICCIONARIO_RECHAZOS DR ON DR.CODIGO_RECHAZO = '''||vRECHAZO_RD||'''
+                LEFT JOIN '||vTABLA_D||' TD ON NI.'||vCAMPO_O||' = TD.'||vCAMPO_D||' AND TD.VALIDACION = 0
+                WHERE TD.'||vCAMPO_D||' IS NULL AND NI.'||vCAMPO_O||' IS NOT NULL)';
+                DBMS_OUTPUT.PUT_LINE(V_MSQL);
+            EXECUTE IMMEDIATE V_MSQL;
+            
+            V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.'||vTABLA_O||' T1
+                USING (SELECT DISTINCT CLAVE_DATO
+                    FROM '||V_ESQUEMA||'.'||TABLA_VALIDACION||'
+                    WHERE NOMBRE_INTERFAZ = '''||vTABLA_O||'''
+                        AND COD_RECHAZO = '''||vRECHAZO_RD||''') T2
+                ON (TO_CHAR(T2.CLAVE_DATO) = TO_CHAR(T1.'||vCLAVE2||'))
+                WHEN MATCHED THEN UPDATE SET
+                    T1.VALIDACION = '''||vRECHAZO_RD||'''
+                WHERE T1.VALIDACION = 0';
+            
+            DBMS_OUTPUT.PUT_LINE('  [INFO] Validando código, '||vCAMPO_O||', en tabla, '||vTABLA_O||', contra el campo de la tabla, '||vTABLA_D||'.'||vCAMPO_D||'');
+            DBMS_OUTPUT.PUT_LINE(V_MSQL);
+            EXECUTE IMMEDIATE V_MSQL;
+        
         EXCEPTION
             WHEN NO_DATA_FOUND THEN
             DBMS_OUTPUT.PUT_LINE('  [ERROR] No se encuentra la clave para '||vTABLA_O||': '||vCLAVE||'.');
         END;
-        
-        V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||TABLA_VALIDACION||' (VALIDACION_ID, NOMBRE_INTERFAZ, CLAVE_DATO, COD_RECHAZO, MOTIVO_RECHAZO)
-            SELECT '||V_ESQUEMA||'.'||V_SEC||'.NEXTVAL VALIDACION_ID, NOMBRE_INTERFAZ,CLAVE_DATO, COD_RECHAZO, MOTIVO_RECHAZO FROM (
-            SELECT '''||vTABLA_O||''' NOMBRE_INTERFAZ, NI.'||vCLAVE||' CLAVE_DATO
-                , DR.CODIGO_RECHAZO COD_RECHAZO, DR.MOTIVO_RECHAZO MOTIVO_RECHAZO
-            FROM '||V_ESQUEMA||'.'||vTABLA_O||' NI
-            JOIN '||V_ESQUEMA||'.DICCIONARIO_RECHAZOS DR ON DR.CODIGO_RECHAZO = '''||vRECHAZO_RD||'''
-            LEFT JOIN '||vTABLA_D||' TD ON NI.'||vCAMPO_O||' = TD.'||vCAMPO_D||' AND TD.VALIDACION = 0
-            WHERE TD.'||vCAMPO_D||' IS NULL AND NI.'||vCAMPO_O||' IS NOT NULL)';
-            DBMS_OUTPUT.PUT_LINE(V_MSQL);
-        EXECUTE IMMEDIATE V_MSQL;
-        
-        V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.'||vTABLA_O||' T1
-            USING (SELECT DISTINCT CLAVE_DATO
-                FROM '||V_ESQUEMA||'.'||TABLA_VALIDACION||'
-                WHERE NOMBRE_INTERFAZ = '''||vTABLA_O||'''
-                    AND COD_RECHAZO = '''||vRECHAZO_RD||''') T2
-            ON (TO_CHAR(T2.CLAVE_DATO) = TO_CHAR(T1.'||vCLAVE2||'))
-            WHEN MATCHED THEN UPDATE SET
-                T1.VALIDACION = '''||vRECHAZO_RD||'''
-            WHERE T1.VALIDACION = 0';
-        
-        DBMS_OUTPUT.PUT_LINE('  [INFO] Validando código, '||vCAMPO_O||', en tabla, '||vTABLA_O||', contra el campo de la tabla, '||vTABLA_D||'.'||vCAMPO_D||'');
-        DBMS_OUTPUT.PUT_LINE(V_MSQL);
-        EXECUTE IMMEDIATE V_MSQL;
         
         END LOOP;
         

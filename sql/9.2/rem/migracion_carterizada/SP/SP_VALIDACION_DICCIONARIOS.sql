@@ -1,4 +1,4 @@
-CREATE OR REPLACE PROCEDURE SP_VALIDACION_DICCIONARIOS IS
+create or replace PROCEDURE SP_VALIDACION_DICCIONARIOS IS
 
   V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01';-- '#ESQUEMA#'; -- Configuracion Esquema
   V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER';-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
@@ -48,50 +48,51 @@ BEGIN
                 WHERE NOMBRE_INTERFAZ = REPLACE('''||vTABLA||''',''REMMASTER.'','''')
                 GROUP BY NOMBRE_INTERFAZ';
             EXECUTE IMMEDIATE V_MSQL INTO vCLAVE, vCLAVE2;
+            
+            V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||TABLA_VALIDACION||' (VALIDACION_ID, NOMBRE_INTERFAZ, CLAVE_DATO, COD_RECHAZO, MOTIVO_RECHAZO)
+                SELECT '||V_ESQUEMA||'.'||V_SEC||'.NEXTVAL VALIDACION_ID, '''||vTABLA||''' NOMBRE_INTERFAZ, '||vCLAVE||' CLAVE_DATO
+                    , DR.CODIGO_RECHAZO COD_RECHAZO, DR.MOTIVO_RECHAZO||'||''' '||' '||vTABLA||'.'||vCAMPO||' <> '||vDICCIONARIO||'.'||vCODIGO||'.'' MOTIVO_RECHAZO
+                FROM '||V_ESQUEMA||'.'||vTABLA||' NI
+                JOIN '||V_ESQUEMA||'.DICCIONARIO_RECHAZOS DR ON DR.CODIGO_RECHAZO = '''||vRECHAZO_DD||'''
+                LEFT JOIN '||vDICCIONARIO||' DD ON NI.'||vCAMPO||' = DD.'||vCODIGO||' AND DD.BORRADO = 0
+                WHERE DD.'||vCODIGO||' IS NULL AND NI.'||vCAMPO||' IS NOT NULL';
+            EXECUTE IMMEDIATE V_MSQL;
+    
+            IF vREQUERIDO = 1 THEN
+                V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||TABLA_VALIDACION||' (NOMBRE_INTERFAZ, CLAVE_DATO, COD_RECHAZO, MOTIVO_RECHAZO)
+                    SELECT '''||vTABLA||''' NOMBRE_INTERFAZ, '||vCLAVE||' CLAVE_DATO
+                        , DR.CODIGO_RECHAZO COD_RECHAZO, DR.MOTIVO_RECHAZO||'||''' Campo requerido, '||vCAMPO||', vacío.'' MOTIVO_RECHAZO
+                    FROM '||V_ESQUEMA||'.'||vTABLA||' NI
+                    JOIN '||V_ESQUEMA||'.DICCIONARIO_RECHAZOS DR ON DR.CODIGO_RECHAZO = '''||vRECHAZO_REQ||'''
+                    WHERE NI.'||vCAMPO||' IS NULL';
+                DBMS_OUTPUT.PUT_LINE('  [INFO] Validando requerimiento de campo, '||vCAMPO||', en tabla, '||vTABLA||'.');
+                EXECUTE IMMEDIATE V_MSQL;
+            END IF;
+    
+            V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.'||vTABLA||' T1
+                USING (SELECT DISTINCT CLAVE_DATO
+                    FROM '||V_ESQUEMA||'.'||TABLA_VALIDACION||'
+                    WHERE NOMBRE_INTERFAZ = '''||vTABLA||'''
+                        AND COD_RECHAZO = '''||vRECHAZO_DD||''') T2
+                ON (TO_CHAR(T2.CLAVE_DATO) = TO_CHAR(T1.'||vCLAVE2||'))
+                WHEN MATCHED THEN UPDATE SET
+                    T1.VALIDACION = '''||vRECHAZO_DD||'''
+                WHERE T1.VALIDACION = 0';
+    
+            DBMS_OUTPUT.PUT_LINE('  [INFO] Validando código, '||vCAMPO||', en tabla, '||vTABLA||', contra diccionario, '||vDICCIONARIO||'.');
+            EXECUTE IMMEDIATE V_MSQL;
+    
         EXCEPTION
             WHEN NO_DATA_FOUND THEN
             DBMS_OUTPUT.PUT_LINE('  [ERROR] No se encuentra la clave para '||vTABLA||': '||vCLAVE||'.');
         END;
-
-        V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||TABLA_VALIDACION||' (VALIDACION_ID, NOMBRE_INTERFAZ, CLAVE_DATO, COD_RECHAZO, MOTIVO_RECHAZO)
-            SELECT '||V_ESQUEMA||'.'||V_SEC||'.NEXTVAL VALIDACION_ID, '''||vTABLA||''' NOMBRE_INTERFAZ, '||vCLAVE||' CLAVE_DATO
-                , DR.CODIGO_RECHAZO COD_RECHAZO, DR.MOTIVO_RECHAZO||'||''' '||' '||vTABLA||'.'||vCAMPO||' <> '||vDICCIONARIO||'.'||vCODIGO||'.'' MOTIVO_RECHAZO
-            FROM '||V_ESQUEMA||'.'||vTABLA||' NI
-            JOIN '||V_ESQUEMA||'.DICCIONARIO_RECHAZOS DR ON DR.CODIGO_RECHAZO = '''||vRECHAZO_DD||'''
-            LEFT JOIN '||vDICCIONARIO||' DD ON NI.'||vCAMPO||' = DD.'||vCODIGO||' AND DD.BORRADO = 0
-            WHERE DD.'||vCODIGO||' IS NULL AND NI.'||vCAMPO||' IS NOT NULL';
-        EXECUTE IMMEDIATE V_MSQL;
-
-        IF vREQUERIDO = 1 THEN
-            V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||TABLA_VALIDACION||' (NOMBRE_INTERFAZ, CLAVE_DATO, COD_RECHAZO, MOTIVO_RECHAZO)
-                SELECT '''||vTABLA||''' NOMBRE_INTERFAZ, '||vCLAVE||' CLAVE_DATO
-                    , DR.CODIGO_RECHAZO COD_RECHAZO, DR.MOTIVO_RECHAZO||'||''' Campo requerido, '||vCAMPO||', vacío.'' MOTIVO_RECHAZO
-                FROM '||V_ESQUEMA||'.'||vTABLA||' NI
-                JOIN '||V_ESQUEMA||'.DICCIONARIO_RECHAZOS DR ON DR.CODIGO_RECHAZO = '''||vRECHAZO_REQ||'''
-                WHERE NI.'||vCAMPO||' IS NULL';
-            DBMS_OUTPUT.PUT_LINE('  [INFO] Validando requerimiento de campo, '||vCAMPO||', en tabla, '||vTABLA||'.');
-            EXECUTE IMMEDIATE V_MSQL;
-        END IF;
-
-        V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.'||vTABLA||' T1
-            USING (SELECT DISTINCT CLAVE_DATO
-                FROM '||V_ESQUEMA||'.'||TABLA_VALIDACION||'
-                WHERE NOMBRE_INTERFAZ = '''||vTABLA||'''
-                    AND COD_RECHAZO = '''||vRECHAZO_DD||''') T2
-            ON (TO_CHAR(T2.CLAVE_DATO) = TO_CHAR(T1.'||vCLAVE2||'))
-            WHEN MATCHED THEN UPDATE SET
-                T1.VALIDACION = '''||vRECHAZO_DD||'''
-            WHERE T1.VALIDACION = 0';
-
-        DBMS_OUTPUT.PUT_LINE('  [INFO] Validando código, '||vCAMPO||', en tabla, '||vTABLA||', contra diccionario, '||vDICCIONARIO||'.');
-        EXECUTE IMMEDIATE V_MSQL;
 
         END LOOP;
 
     CLOSE v_val_cursor;
 
     COMMIT;
-    
+
     DBMS_OUTPUT.PUT_LINE('[FIN] Validaciones de diccionarios ejecutadas.');
 
 EXCEPTION
@@ -104,8 +105,3 @@ EXCEPTION
     RAISE;
 
 END;
-/
-EXIT
-VALIDACIONES_DD_MIGRACION.sql
-Abrir con
-Mostrando VALIDACIONES_DD_MIGRACION.sql.

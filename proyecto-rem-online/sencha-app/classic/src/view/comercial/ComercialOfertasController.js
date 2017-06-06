@@ -142,6 +142,43 @@ Ext.define('HreRem.view.comercial.ComercialOfertasController', {
 			}
 		}
 
+    },
+    
+    onClickAbrirVisita: function(grid, rowIndex, colIndex) {
+    	
+    	var me = this,
+	    record = grid.getStore().getAt(rowIndex),
+	    numVisita = record.get('numVisita');
+
+    	if(Ext.isEmpty(numVisita)) {
+    		return;
+    	}
+
+    	me.getView().mask(HreRem.i18n("msg.mask.loading"));
+
+		Ext.Ajax.request({
+    		url: $AC.getRemoteUrl('visitas/getVisitaById'),
+    		params: {numVisitaRem: numVisita},
+    		
+    		success: function(response, opts){
+    			var record = JSON.parse(response.responseText);
+    			if(record.success === 'true') {
+    				var ventana = Ext.create('HreRem.view.comercial.visitas.VisitasComercialDetalle',{detallevisita: record});
+    				me.getView().add(ventana);
+    				ventana.show();
+    			} else {
+    				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    			}
+    		},
+		 	failure: function(record, operation) {
+		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    },
+		    callback: function(record, operation) {
+    			me.getView().unmask();
+		    }
+    	});
+        
+    	
     }
 
 });

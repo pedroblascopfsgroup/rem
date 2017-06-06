@@ -27,7 +27,7 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	 */
 	public Page getListTextosOfertaById(DtoTextosOferta dto, Long id);
 	
-	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter,Usuario usuario);
+	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter, Usuario usuarioGestor, Usuario usuarioGestoria);
 	
 	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter);
 
@@ -47,5 +47,6 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	 * @return Devuelve el porcentaje si está asignado o null si no se aplican honorarios.
 	 */
 	public BigDecimal getImporteCalculo(Long idOferta, String tipoComision, Long idActivo, Long idProveedor);
+
 
 }

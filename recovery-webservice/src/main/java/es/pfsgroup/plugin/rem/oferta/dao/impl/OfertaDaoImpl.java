@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.oferta.dao.impl;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -27,52 +29,88 @@ import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 
 @Repository("OfertaDao")
 public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements OfertaDao {
+	
+	
+	public static String TIPO_FECHA_ALTA = "01";
+	public static String TIPO_FECHA_FIRMA_RESERVA = "02";
+	public static String TIPO_FECHA_POSICIONAMIENTO = "03";
+	
 
 	@Autowired
 	private GenericAdapter adapter;
 
 	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter) {
-		return getListOfertas(dtoOfertasFilter, null);
+		return getListOfertas(dtoOfertasFilter, null, null);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter, Usuario usuario) {
+	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter, Usuario usuarioGestor, Usuario usuarioGestoria) {
 
 		HQLBuilder hb = null;
 		String from = "select voferta from VOfertasActivosAgrupacion voferta";
-		if (usuario != null) {
-			// segun el tipo de usuario, asumimos que la tipologia es exclusiva
-			if (adapter.tienePerfil("HAYAGESTCOM", usuario)) {
-				from = from
-						+ ",GestorActivo gestorActivo where gestorActivo.activo.id = voferta.idActivo and gestorActivo.usuario.id ="
-								.concat(String.valueOf(usuario.getId()));
-				hb = new HQLBuilder(from);
-				hb.setHasWhere(true);
-			} else if (adapter.tienePerfil("GESTCOMBACKOFFICE", usuario)) {
-				from = from
-						+ ",ActivoLoteComercial lote where lote.id = voferta.idAgrupacion and lote.usuarioGestorComercialBackOffice.id ="
-								.concat(String.valueOf(usuario.getId()));
-				hb = new HQLBuilder(from);
-				hb.setHasWhere(true);
-			} else if (adapter.tienePerfil("GESTIAFORM", usuario) || adapter.tienePerfil("HAYAGESTFORM", usuario)) {
-				from = from
-						+ ",GestorExpedienteComercial gestorExpediente where gestorExpediente.expedienteComercial.id = voferta.idExpediente and gestorExpediente.usuario.id ="
-								.concat(String.valueOf(usuario.getId()));
-				hb = new HQLBuilder(from);
-				hb.setHasWhere(true);
-			} else {
-				hb = new HQLBuilder(from);
-			}
+		String where = "";
+				
+		if (!Checks.esNulo(usuarioGestor)) {
+			
+			if (adapter.tienePerfil("HAYAGESTCOM", usuarioGestor)) {
+				if(Checks.esNulo(usuarioGestoria)) {
+					from = from	+ ",GestorActivo gestorActivo ";
+					where = "gestorActivo.activo.id = voferta.idActivo and gestorActivo.usuario.id =".concat(String.valueOf(usuarioGestor.getId()));
+					
+				} else{
+					from = from	+ ",GestorActivo gestorActivo, GestorExpedienteComercial gestorExpediente";
+					where = "gestorActivo.activo.id = voferta.idActivo and "
+							+ "gestorActivo.usuario.id =".concat(String.valueOf(usuarioGestor.getId()))+" and " 
+							+ "gestorExpediente.expedienteComercial.id = voferta.idExpediente and gestorExpediente.tipoGestor.codigo = '".concat(GestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION).concat("' and gestorExpediente.usuario.id =".concat(String.valueOf(usuarioGestoria.getId())));
+				}				
+			} else if (adapter.tienePerfil("GESTCOMBACKOFFICE", usuarioGestor)) {
+				if(Checks.esNulo(usuarioGestoria)) {
+					from = from	+ ",ActivoLoteComercial lote ";
+					where = "lote.id = voferta.idAgrupacion and lote.usuarioGestorComercialBackOffice.id =".concat(String.valueOf(usuarioGestor.getId()));
+				} else {
+					from = from	+ ",ActivoLoteComercial lote, GestorExpedienteComercial gestorExpediente ";
+					where = "lote.id = voferta.idAgrupacion and "
+							+ "lote.usuarioGestorComercialBackOffice.id =".concat(String.valueOf(usuarioGestor.getId())) + " and "
+							+ "gestorExpediente.expedienteComercial.id = voferta.idExpediente and gestorExpediente.tipoGestor.codigo = '".concat(GestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION).concat("' and gestorExpediente.usuario.id =".concat(String.valueOf(usuarioGestoria.getId())));
+				}
 
-		} else {
-			hb = new HQLBuilder(from);
+			} else if (adapter.tienePerfil("HAYAGESTFORM", usuarioGestor)) {			
+				
+				if(Checks.esNulo(usuarioGestoria)) {
+					from = from	+ ",GestorExpedienteComercial gestorExpediente ";
+					where = "gestorExpediente.expedienteComercial.id = voferta.idExpediente and gestorExpediente.tipoGestor.codigo = '".concat(GestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION).concat("' and gestorExpediente.usuario.id =".concat(String.valueOf(usuarioGestor.getId())));
+				} else{
+					from = from	+ ",GestorExpedienteComercial gestorExpediente, GestorExpedienteComercial gestoriaExpediente";
+					where = "gestorExpediente.expedienteComercial.id = voferta.idExpediente and gestoriaExpediente.expedienteComercial.id = voferta.idExpediente and "
+							+ "(gestorExpediente.tipoGestor.codigo = '".concat(GestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION).concat("' and gestorExpediente.usuario.id =".concat(String.valueOf(usuarioGestor.getId())))+") or"
+							+ "(gestoriaExpediente.tipoGestor.codigo = '".concat(GestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION).concat("' and gestoriaExpediente.usuario.id =".concat(String.valueOf(usuarioGestoria.getId())));
+				}
+			} 
+		} 
+		
+		if (!Checks.esNulo(usuarioGestoria) && Checks.esNulo(usuarioGestor)) {			
+			from = from	+ ",GestorExpedienteComercial gestorExpediente ";
+			where = "gestorExpediente.expedienteComercial.id = voferta.idExpediente and gestorExpediente.tipoGestor.codigo = '".concat(GestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION).concat("' and gestorExpediente.usuario.id =".concat(String.valueOf(usuarioGestoria.getId())));
 		}
+		
+		hb = new HQLBuilder(from);
+		
+		if(!Checks.esNulo(where)) {
+			hb.appendWhere(where);
+		}
+		
 
 		if (!Checks.esNulo(dtoOfertasFilter.getNumOferta())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.numOferta", dtoOfertasFilter.getNumOferta().toString());
 		}
-
+		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.numExpediente", dtoOfertasFilter.getNumExpediente());
+		
+		if (!Checks.esNulo(dtoOfertasFilter.getEstadosExpediente())) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "voferta.codigoEstadoExpediente", Arrays.asList(dtoOfertasFilter.getEstadosExpediente()));
+		}
+		
 		if (!Checks.esNulo(dtoOfertasFilter.getNumAgrupacion())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.numActivoAgrupacion",
 					dtoOfertasFilter.getNumAgrupacion().toString());
@@ -81,21 +119,51 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 			HQLBuilder.addFiltroLikeSiNotNull(hb, "voferta.activos", dtoOfertasFilter.getNumActivo().toString());
 		}
 
+		
 		try {
-			Date fechaAltaDesde = DateFormat.toDate(dtoOfertasFilter.getFechaAltaDesde());
-			Date fechaAltaHasta = DateFormat.toDate(dtoOfertasFilter.getFechaAltaHasta());
-			HQLBuilder.addFiltroBetweenSiNotNull(hb, "voferta.fechaCreacion", fechaAltaDesde, fechaAltaHasta);
+			
+			Date fechaDesde = DateFormat.toDate(dtoOfertasFilter.getFechaDesde());
+			Date fechaHasta = DateFormat.toDate(dtoOfertasFilter.getFechaHasta());
+			String tipo = dtoOfertasFilter.getTipoFecha();
+			String campo=null;
+			
+			if(TIPO_FECHA_ALTA.equals(tipo)) {
+				campo = "voferta.fechaCreacion";
+			} else if(TIPO_FECHA_FIRMA_RESERVA.equals(tipo)) {
+				campo = "voferta.fechaFirmaReserva";
+			}/* else if(TIPO_FECHA_POSICIONAMIENTO.equals(tipo)) {
+				campo = "";
+			}*/
+			
+			if(!Checks.esNulo(campo)) {
+				HQLBuilder.addFiltroBetweenSiNotNull(hb, campo, fechaDesde, fechaHasta);
+			}
+			
+
 
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.codigoTipoOferta", dtoOfertasFilter.getTipoOferta());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.codigoEstadoOferta", dtoOfertasFilter.getEstadoOferta());
+		if (!Checks.esNulo(dtoOfertasFilter.getEstadosOferta())) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "voferta.codigoEstadoOferta",  Arrays.asList(dtoOfertasFilter.getEstadosOferta()));
+		}
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.codigoTipoOferta", dtoOfertasFilter.getTipoOferta());
 
 		hb.orderBy("voferta.fechaCreacion", HQLBuilder.ORDER_ASC);
-		// Faltan los dos combos
+		
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "voferta.ofertante", dtoOfertasFilter.getOfertante(), true);
+		
+		// Con la arroba diferenciamos para poder buscar entre varios teléfonos
+		if (!Checks.esNulo(dtoOfertasFilter.getTelefonoOfertante())) {
+			HQLBuilder.addFiltroLikeSiNotNull(hb, "voferta.telefonoOfertante", dtoOfertasFilter.getTelefonoOfertante());
+		}
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "voferta.emailOfertante", dtoOfertasFilter.getEmailOfertante(), true);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.documentoOfertante", dtoOfertasFilter.getDocumentoOfertante());
+		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.canal", dtoOfertasFilter.getCanal());
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "voferta.nombreCanal", dtoOfertasFilter.getNombreCanal(), true);
 
 		Page pageVisitas = HibernateQueryUtils.page(this, hb, dtoOfertasFilter);
 

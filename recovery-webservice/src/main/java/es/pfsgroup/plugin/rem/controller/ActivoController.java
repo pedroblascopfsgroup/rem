@@ -933,7 +933,18 @@ public class ActivoController extends ParadiseJsonController {
 
 		return new ModelAndView("jsonView", model);
 
-	}
+	}	
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboUsuariosGestoria(WebDto webDto, ModelMap model) {
+
+		model.put("data", adapter.getComboUsuariosGestoria());
+
+		return new ModelAndView("jsonView", model);
+
+	}	
+	
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)

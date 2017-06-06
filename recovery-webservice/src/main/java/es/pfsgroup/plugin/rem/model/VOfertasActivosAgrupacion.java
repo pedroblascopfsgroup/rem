@@ -26,10 +26,10 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	private String idOferta;
 	
 	@Column(name = "OFR_NUM_OFERTA")  
-	private String numOferta;
+	private Long numOferta;
 	
 	@Column(name = "NUM_ACTIVO_AGRUPACION")
-	private String numActivoAgrupacion;
+	private Long numActivoAgrupacion;
 	
 	@Column(name = "OFR_FECHA_ALTA")
 	private Date fechaCreacion;
@@ -56,7 +56,7 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	private String idExpediente;
 	
 	@Column(name = "ECO_NUM_EXPEDIENTE")
-	private String numExpediente;
+	private Long numExpediente;
 	
 	@Column(name = "DD_EEC_DESCRIPCION")
 	private String descripcionEstadoExpediente;
@@ -85,6 +85,32 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	@Column(name = "FECHAMODIFICAR")
 	private Date fechaModificar;
 	
+	@Column(name= "TELEFONO_OFERTANTE")
+	private String telefonoOfertante;
+	
+	@Column(name="EMAIL_OFERTANTE")
+	private String emailOfertante;
+	
+	@Column(name="DOCUMENTO_OFERTANTE")
+	private String documentoOfertante;
+	
+	@Column(name="RES_FECHA_FIRMA")
+	private Date fechaFirmaReserva;
+	
+	@Column(name="VIS_ID")
+	private Long idVisita;
+	
+	@Column(name="VIS_NUM_VISITA")
+	private Long numVisita;
+	
+	@Column(name="NOMBRE_CANAL")
+	private String nombreCanal;
+	
+	@Column(name="CANAL")
+	private String canal;
+	
+	@Column(name="CANAL_DESCRIPCION")
+	private String canalDescripcion;
 	
 
 
@@ -160,11 +186,11 @@ public class VOfertasActivosAgrupacion implements Serializable {
 		this.codigoEstadoOferta = codigoEstadoOferta;
 	}
 
-	public String getNumExpediente() {
+	public Long getNumExpediente() {
 		return numExpediente;
 	}
 
-	public void setNumExpediente(String numExpediente) {
+	public void setNumExpediente(Long numExpediente) {
 		this.numExpediente = numExpediente;
 	}
 
@@ -176,11 +202,11 @@ public class VOfertasActivosAgrupacion implements Serializable {
 		this.descripcionEstadoExpediente = descripcionEstadoExpediente;
 	}
 
-	public String getNumOferta() {
+	public Long getNumOferta() {
 		return numOferta;
 	}
 
-	public void setNumOferta(String numOferta) {
+	public void setNumOferta(Long numOferta) {
 		this.numOferta = numOferta;
 	}
 
@@ -200,11 +226,11 @@ public class VOfertasActivosAgrupacion implements Serializable {
 		this.codigoTipoOferta = codigoTipoOferta;
 	}
 
-	public String getNumActivoAgrupacion() {
+	public Long getNumActivoAgrupacion() {
 		return numActivoAgrupacion;
 	}
 
-	public void setNumActivoAgrupacion(String numActivoAgrupacion) {
+	public void setNumActivoAgrupacion(Long numActivoAgrupacion) {
 		this.numActivoAgrupacion = numActivoAgrupacion;
 	}
 
@@ -262,6 +288,86 @@ public class VOfertasActivosAgrupacion implements Serializable {
 
 	public void setCodigoEstadoExpediente(String codigoEstadoExpediente) {
 		this.codigoEstadoExpediente = codigoEstadoExpediente;
+	}
+
+	public String getTelefonoOfertante() {
+		return telefonoOfertante;
+	}
+
+	public void setTelefonoOfertante(String telefonoOfertante) {
+		this.telefonoOfertante = telefonoOfertante;
+	}
+
+	public String getEmailOfertante() {
+		return emailOfertante;
+	}
+
+	public void setEmailOfertante(String emailOfertante) {
+		this.emailOfertante = emailOfertante;
+	}
+
+	public String getDocumentoOfertante() {
+		return documentoOfertante;
+	}
+
+	public void setDocumentoOfertante(String documentoOfertante) {
+		this.documentoOfertante = documentoOfertante;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public Date getFechaFirmaReserva() {
+		return fechaFirmaReserva;
+	}
+
+	public void setFechaFirmaReserva(Date fechaFirmaReserva) {
+		this.fechaFirmaReserva = fechaFirmaReserva;
+	}
+
+	public Long getIdVisita() {
+		return idVisita;
+	}
+
+	public void setIdVisita(Long idVisita) {
+		this.idVisita = idVisita;
+	}
+
+	public Long getNumVisita() {
+		return numVisita;
+	}
+
+	public void setNumVisita(Long numVisita) {
+		this.numVisita = numVisita;
+	}
+
+	public String getNombreCanal() {
+		return nombreCanal;
+	}
+
+	public void setNombreCanal(String nombreCanal) {
+		this.nombreCanal = nombreCanal;
+	}
+
+	public String getCanal() {
+		return canal;
+	}
+
+	public void setCanal(String canal) {
+		this.canal = canal;
+	}
+
+	public String getCanalDescripcion() {
+		return canalDescripcion;
+	}
+
+	public void setCanalDescripcion(String canalDescripcion) {
+		this.canalDescripcion = canalDescripcion;
 	}
 	
 	 

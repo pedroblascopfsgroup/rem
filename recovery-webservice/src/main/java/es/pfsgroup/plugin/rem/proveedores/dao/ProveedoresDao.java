@@ -8,6 +8,7 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.VProveedores;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 
 public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
 
@@ -44,5 +45,12 @@ public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
 	 * @return
 	 */
 	public List<Long> getIdProveedoresByIdUsuario(Long idUsuario);
+
+	/**
+	 * Devuelve una lista de subtipos de proveedor filtrada por los codigos que recibe
+	 * @param codigos
+	 * @return
+	 */
+	public List<DDTipoProveedor> getSubtiposProveedorByCodigos(List<String> codigos);
 
 }

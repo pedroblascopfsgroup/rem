@@ -34,7 +34,14 @@ Ext.define('HreRem.view.comercial.ComercialModel', {
 			remoteUrl: 'activo/getComboUsuarios',
 			extraParams: {idTipoGestor: '{tipoGestor.selection.id}'}
 			}
-		},    	
+		}, 
+		comboUsuariosGestoria: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+			type: 'uxproxy',
+			remoteUrl: 'activo/getComboUsuariosGestoria'
+			}
+		}, 
     	ofertasComercial: {
     		pageSize: $AC.getDefaultPageSize(),
 	    	model: 'HreRem.model.Ofertas',
@@ -52,21 +59,48 @@ Ext.define('HreRem.view.comercial.ComercialModel', {
     	},
     	
     	comboTipoOferta: {
-				model: 'HreRem.model.ComboBase',
-					proxy: {
-						type: 'uxproxy',
-						remoteUrl: 'generic/getDiccionario',
-						extraParams: {diccionario: 'tiposOfertas'}
-					}
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposOfertas'}
+			}
     	},
     	comboEstadoOferta: {
-				model: 'HreRem.model.ComboBase',
-					proxy: {
-						type: 'uxproxy',
-						remoteUrl: 'generic/getDiccionario',
-						extraParams: {diccionario: 'estadosOfertas'}
-					}
-    	}
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosOfertas'}
+			}
+    	},
+    	comboEstadoExpediente: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosExpediente'}
+			}
+    	},
+    	
+    	comboTiposFechaOfertas: {
+	    	data : [
+				        {"codigo":"01", "descripcion": "Fecha de alta"},
+				        {"codigo":"02", "descripcion": "Fecha de firma reserva"}/*,
+				        {"codigo":"03", "descripcion": "Fecha de posicionamiento"}*/
+			]		
+	    		
+    	},
+    	
+		comboCanalOferta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'ofertas/getDiccionarioSubtipoProveedorCanal'
+			}
+		}
+    	
+    	
     		
     }
 });

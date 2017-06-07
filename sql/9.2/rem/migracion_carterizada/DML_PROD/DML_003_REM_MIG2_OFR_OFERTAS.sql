@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=Pablo Meseguer
---## FECHA_CREACION=20161004
+--## AUTOR=Guillem Rey
+--## FECHA_CREACION=20170607
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=HREOS-855
+--## INCIDENCIA_LINK=HREOS-2198
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración [MIG2_OFR_OFERTAS -> OFR_OFERTAS] Y carga de ECO_EXPEDIENTE_COMERCIAL
@@ -70,6 +70,8 @@ BEGIN
 			PVE_ID_API_RESPONSABLE,
 			PVE_ID_CUSTODIO,
 			PVE_ID_FDV,
+			OFR_COMITE_SANCION,
+			OFR_FECHA_SANCION_COMITE,
             VERSION,
             USUARIOCREAR,
             FECHACREAR,
@@ -88,7 +90,7 @@ BEGIN
             CASE WHEN MIG.OFR_IMPORTE = 0 THEN null
             ELSE MIG.OFR_IMPORTE END                                    OFR_IMPORTE,
             CLC.CLC_ID                                                  CLC_ID,
-            EOF.DD_EOF_ID                                               DD_EOF_ID,
+			EOF.DD_EOF_ID                                               DD_EOF_ID,
             TOF.DD_TOF_ID                                               DD_TOF_ID,
             VIS.VIS_ID                                                  VIS_ID,
             EVO.DD_EVO_ID                                               DD_EVO_ID,            
@@ -143,9 +145,11 @@ BEGIN
 			(''04'',''18'',''23'',''28'',''29'',''30'',''31'')
 			AND PVE_COD_UVEM = TO_CHAR(MIG.OFR_COD_FDV_UVEM)
 			AND ROWNUM = 1
-			)				                                            PVE_ID_FDV,           
+			)				                                            PVE_ID_FDV,
+			MIG.OFR_COMITE_SANCION										OFR_COMITE_SANCION,
+			MIG.OFR_FECHA_SANCION_COMITE								OFR_FECHA_SANCION_COMITE,        
             0                                                           VERSION,
-            ''MIG2''                                                    USUARIOCREAR,
+            ''REMIG''                                                   USUARIOCREAR,
             SYSDATE                                                     FECHACREAR,
             0                                                           BORRADO
         FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
@@ -211,6 +215,7 @@ BEGIN
             ,ECO_FECHA_SANCION 
             ,ECO_FECHA_ANULACION
             ,DD_MAN_ID 
+			,DD_EEC_ID_ANT
             , VERSION
             , USUARIOCREAR
             , FECHACREAR
@@ -219,18 +224,24 @@ BEGIN
           '||V_ESQUEMA||'.S_ECO_EXPEDIENTE_COMERCIAL.NEXTVAL                                                                AS ECO_ID,
           '||V_ESQUEMA||'.S_ECO_NUM_EXPEDIENTE.NEXTVAL                                                                      AS ECO_NUM_EXPEDIENTE,
           OFR.OFR_ID                                                                                                        AS OFR_ID,
-          (SELECT DD.DD_EEC_ID
-            FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL DD
-            WHERE DD.DD_EEC_CODIGO =  DECODE(MIG2.OFR_COD_ESTADO_OFERTA, ''01-01'',''10'', 
-                                                                ''01-02'',''06'', 
-                                                                ''01-03'',''11'', 
-                                                                ''01-04'',''04'', 
-                                                                ''01-05'',''12'', 
-                                                                ''01-06'',''07'', 
-                                                                ''01-07'',''03'', 
-                                                                ''01-08'',''02'', 
-                                                                ''01-09'',''08'')
-                                                                )                                                           AS DD_EEC_ID,
+        CASE
+			WHEN MIG2.OFR_FECHA_ANULACION IS NULL
+			THEN (SELECT DD.DD_EEC_ID
+            		FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL DD
+            		WHERE DD.DD_EEC_CODIGO =  DECODE(MIG2.OFR_COD_ESTADO_OFERTA, ''01-01'',''10'', 
+				                                                                ''01-02'',''06'', 
+				                                                                ''01-03'',''11'', 
+				                                                                ''01-04'',''04'', 
+				                                                                ''01-05'',''12'', 
+				                                                                ''01-06'',''07'', 
+				                                                                ''01-07'',''03'', 
+				                                                                ''01-08'',''02'', 
+				                                                                ''01-09'',''08'')
+				                                                                )
+			ELSE (SELECT DD.DD_EEC_ID
+            		FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL DD 
+					WHERE DD.DD_EEC_CODIGO = ''02'')
+		END										     									                                	 AS DD_EEC_ID,
           OFR.OFR_FECHA_ALTA                                                                                                AS ECO_FECHA_ALTA,
           DECODE(MIG2.OFR_COD_ESTADO_OFERTA, 
                                                                 ''01-02'',OFR.OFR_FECHA_ALTA, 
@@ -242,15 +253,34 @@ BEGIN
                                                                 ''01-09'',OFR.OFR_FECHA_ALTA,
                                                                 NULL)                                                       AS ECO_FECHA_SANCION,
 		CASE
-			WHEN MIG2.OFR_COD_ESTADO_OFERTA = ''01-08''
-			THEN MIG2.OFR_ESTADO_FECHA
-            ELSE NULL
+			WHEN MIG2.OFR_FECHA_ANULACION IS NULL
+			THEN (CASE 
+					WHEN  MIG2.OFR_COD_ESTADO_OFERTA = ''01-08''
+					THEN MIG2.OFR_ESTADO_FECHA
+					ELSE NULL
+				  END)
+            ELSE MIG2.OFR_FECHA_ANULACION
         END                                                                                                                 AS ECO_FECHA_ANULACION,
         CASE
             WHEN MIG2.OFR_COD_ESTADO_OFERTA = ''01-08''
             THEN MAN.DD_MAN_ID
             ELSE NULL
         END  																												AS DD_MAN_ID,
+		CASE
+			WHEN MIG2.OFR_FECHA_ANULACION IS NULL
+			THEN NULL
+			ELSE (SELECT DD.DD_EEC_ID
+	            FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL DD
+	            WHERE DD.DD_EEC_CODIGO =  DECODE(MIG2.OFR_COD_ESTADO_OFERTA, ''01-01'',''10'', 
+	                                                                ''01-02'',''06'', 
+	                                                                ''01-03'',''11'', 
+	                                                                ''01-04'',''04'', 
+	                                                                ''01-05'',''12'', 
+	                                                                ''01-06'',''07'', 
+	                                                                ''01-07'',''03'', 
+	                                                                ''01-08'',''02'', 
+	                                                                ''01-09'',''08'')
+	                                                                )														AS DD_EEC_ID_ANT
           0                                                                                                                 AS VERSION,
           ''MIG2''                                                                                                          AS USUARIOCREAR,
           SYSDATE                                                                                                           AS FECHACREAR
@@ -303,66 +333,6 @@ BEGIN
     EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
     
     DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
-    
-    --VALIDACION DE DUPLICADOS
-      V_SENTENCIA := '
-      SELECT SUM(COUNT(1))
-      FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' WMIG2
-      GROUP BY OFR_COD_OFERTA 
-      HAVING COUNT(1) > 1
-      '
-      ;  
-      EXECUTE IMMEDIATE V_SENTENCIA INTO V_DUPLICADOS;
-    
-    -- INFORMAMOS A LA TABLA INFO
-    
-    -- Registros MIG
-    V_SENTENCIA := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'';  
-    EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
-    
-    -- Registros insertados en REM
-    -- V_REG_INSERTADOS
-    
-    -- Total registros rechazados
-    V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;  
-    
-    -- Observaciones
-    IF V_TABLE_ECO != 0 THEN
-         V_OBSERVACIONES := 'Se han creado '||V_TABLE_ECO||' Expedientes Comerciales de Ofertas aceptadas.';
-    END IF;
-     
-    IF V_REJECTS != 0 THEN
-        V_OBSERVACIONES := V_OBSERVACIONES ||' Se han rechazado un total de '||V_REJECTS||' OFERTAS.';
-        
-        IF V_DUPLICADOS != 0 THEN
-                        V_OBSERVACIONES := V_OBSERVACIONES||' Hay '||V_DUPLICADOS||' OFR_COD_OFERTA duplicados. ';      
-                END IF;
-    END IF;
-    
-    V_SENTENCIA := '
-      INSERT INTO '||V_ESQUEMA||'.MIG_INFO_TABLE (
-      TABLA_MIG,
-      TABLA_REM,
-      REGISTROS_TABLA_MIG,
-      REGISTROS_INSERTADOS,
-      REGISTROS_RECHAZADOS,
-      DD_COD_INEXISTENTES,
-      FECHA,
-      OBSERVACIONES
-      )
-      SELECT
-      '''||V_TABLA_MIG||''',
-      '''||V_TABLA||''',
-      '||V_REG_MIG||',
-      '||V_REG_INSERTADOS||',
-      '||V_REJECTS||',
-      '||V_COD||',
-      SYSDATE,
-      '''||V_OBSERVACIONES||'''
-      FROM DUAL
-    '
-    ;
-    EXECUTE IMMEDIATE V_SENTENCIA;
     
     COMMIT;  
 

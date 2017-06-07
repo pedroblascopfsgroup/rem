@@ -1,14 +1,14 @@
 --/*
 --#########################################
---## AUTOR=Pablo Meseguer
---## FECHA_CREACION=20161003
+--## AUTOR=Guillem Rey
+--## FECHA_CREACION=20170607
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=HREOS-855
+--## INCIDENCIA_LINK=HREOS-2195, HREOS-2108
 --## PRODUCTO=NO
 --## 
---## Finalidad: Proceso de migración MIG2_ACT_ACTIVO -> ACT_ACTIVO
---##                    
+--## Finalidad: Proceso de migración 'MIG2_ACT_ACTIVO' -> 'ACT_ACTIVO'
+--##			
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -25,79 +25,19 @@ SET DEFINE OFF;
 DECLARE
 
 TABLE_COUNT NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
 V_TABLA VARCHAR2(40 CHAR) := 'ACT_ACTIVO';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_ACT_ACTIVO';
-V_SENTENCIA VARCHAR2(32000 CHAR);
+V_SENTENCIA VARCHAR2(2000 CHAR);
 V_REG_MIG NUMBER(10,0) := 0;
 V_REG_INSERTADOS NUMBER(10,0) := 0;
 V_REJECTS NUMBER(10,0) := 0;
 V_COD NUMBER(10,0) := 0;
 V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
+VAR1 NUMBER(10,0) := 0;
 
 BEGIN
-
-  --COMPROBACIONES PREVIAS - ACTIVOS
-  DBMS_OUTPUT.PUT_LINE('[INFO] ['||V_TABLA||'] COMPROBANDO ACTIVOS...');
-  
-  V_SENTENCIA := '
-  SELECT COUNT(1) 
-  FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
-  WHERE NOT EXISTS (
-    SELECT 1 FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
-  )
-  '
-  ;
-  
-  EXECUTE IMMEDIATE V_SENTENCIA INTO TABLE_COUNT;
-  
-  IF TABLE_COUNT = 0 THEN
-  
-    DBMS_OUTPUT.PUT_LINE('[INFO] TODOS LOS ACTIVOS EXISTEN EN ACT_ACTIVO');
-    
-  ELSE
-  
-    DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN INFORMADO '||TABLE_COUNT||' ACTIVOS INEXISTENTES EN ACT_ACTIVO. SE DERIVARÁN A LA TABLA '||V_ESQUEMA||'.MIG2_ACT_NOT_EXISTS.');
-    
-    --BORRAMOS LOS REGISTROS QUE HAYA EN NOT_EXISTS REFERENTES A ESTA INTERFAZ
-    
-    EXECUTE IMMEDIATE '
-    DELETE FROM '||V_ESQUEMA||'.MIG2_ACT_NOT_EXISTS
-    WHERE TABLA_MIG = '''||V_TABLA_MIG||'''
-    '
-    ;
-    
-    COMMIT;
-  
-    EXECUTE IMMEDIATE '
-    INSERT INTO '||V_ESQUEMA||'.MIG2_ACT_NOT_EXISTS (
-    ACT_NUM_ACTIVO,
-    TABLA_MIG,
-    FECHA_COMPROBACION
-    )
-    WITH ACT_NUM_ACTIVO AS (
-                SELECT
-                MIG.ACT_NUMERO_ACTIVO 
-                FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
-                WHERE NOT EXISTS (
-                  SELECT 1 FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE MIG.ACT_NUMERO_ACTIVO = ACT.ACT_NUM_ACTIVO
-                )
-    )
-    SELECT DISTINCT
-    MIG.ACT_NUMERO_ACTIVO                                                                       ACT_NUM_ACTIVO,
-    '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
-    SYSDATE                                                                 FECHA_COMPROBACION
-    FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
-    INNER JOIN ACT_NUM_ACTIVO
-    ON ACT_NUM_ACTIVO.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
-    '
-    ;
-    
-    COMMIT;
-
-  END IF;
-
 
       DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
       
@@ -114,7 +54,12 @@ BEGIN
                                 ACT_COD_TIPO_COMERCIALIZACION,
                                 ACT_FECHA_IND_PRECIAR,
                                 ACT_FECHA_IND_REPRECIAR,
-                                ACT_FECHA_IND_DESCUENTO
+                                ACT_FECHA_IND_DESCUENTO,
+                                ACT_NUMERO_INMOVILIZADO,	
+                                ACT_CODIGO_ENTRADA,		
+                                SELLO_CALIDAD,			
+                                GESTOR_CALIDAD,			
+                                FECHA_CALIDAD			
                                 FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' 
                           ) AUX
                 ON (ACT.ACT_NUM_ACTIVO = AUX.ACT_NUMERO_ACTIVO)
@@ -129,11 +74,16 @@ BEGIN
                   ,ACT.ACT_FECHA_IND_PRECIAR = AUX.ACT_FECHA_IND_PRECIAR
                   ,ACT.ACT_FECHA_IND_REPRECIAR = AUX.ACT_FECHA_IND_REPRECIAR
                   ,ACT.ACT_FECHA_IND_DESCUENTO = AUX.ACT_FECHA_IND_DESCUENTO
-				  ,ACT.USUARIOMODIFICAR = ''MIG2''
+                  ,ACT.ACT_NUM_INMOBILIZADO_BNK = AUX.ACT_NUM_INMOBILIZADO
+                  ,ACT.DD_ENA_ID = (SELECT ENA.DD_ENA_ID FROM '||V_ESQUEMA||'.DD_ENA_ENTRADA_ACTIVO_BNK ENA WHERE ENA.DD_ENA_CODIGO = AUX.ACT_CODIGO_ENTRADA)
+                  ,ACT.ACT_SELLO_CALIDAD = AUX.SELLO_CALIDAD
+                  ,ACT.ACT_GESTOR_SELLO_CALIDAD = (SELECT USU.USU_ID FROM '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU WHERE USU.USU_USERNAME = AUX.GESTOR_CALIDAD)
+                  ,ACT.ACT_FECHA_SELLO_CALIDAD = AUX.FECHA_CALIDAD
+				  ,ACT.USUARIOMODIFICAR = ''REMIG''
 				  ,ACT.FECHAMODIFICAR = SYSDATE
       '
       ;
-      EXECUTE IMMEDIATE V_SENTENCIA     ;
+      EXECUTE IMMEDIATE V_SENTENCIA;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
@@ -161,7 +111,7 @@ BEGIN
                   ACT.ACT_VENTA_EXTERNA_IMPORTE  = AUX.ACT_IMPORTE_VENTA
       '
       ;
-      EXECUTE IMMEDIATE V_SENTENCIA     ;
+      EXECUTE IMMEDIATE V_SENTENCIA;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
@@ -185,7 +135,7 @@ BEGIN
                   ECO.ECO_FECHA_VENTA = AUX.ACT_FECHA_VENTA
       '
       ;
-      EXECUTE IMMEDIATE V_SENTENCIA     ;
+      EXECUTE IMMEDIATE V_SENTENCIA;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');                        
       
@@ -194,52 +144,6 @@ BEGIN
       EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
       
       DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
-      
-      -- INFORMAMOS A LA TABLA INFO
-      
-      -- Registros MIG
-      V_SENTENCIA := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'';  
-      EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
-            
-      -- Total registros rechazados
-      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;        
-            
-      -- Observaciones
-          IF V_REJECTS != 0 THEN
-      V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros.';
-                IF TABLE_COUNT != 0 THEN
-                
-                  V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT||' ACTIVOS inexistentes. ';
-                
-                END IF;
-      END IF;
-        
-      V_SENTENCIA := '
-      INSERT INTO '||V_ESQUEMA||'.MIG_INFO_TABLE (
-        TABLA_MIG,
-        TABLA_REM,
-        REGISTROS_TABLA_MIG,
-        REGISTROS_INSERTADOS,
-        REGISTROS_RECHAZADOS,
-        DD_COD_INEXISTENTES,
-        FECHA,
-        OBSERVACIONES
-      )
-      SELECT
-      '''||V_TABLA_MIG||''',
-      '''||V_TABLA||''',
-      '||V_REG_MIG||',
-      '||V_REG_INSERTADOS||',
-      '||V_REJECTS||',
-      '||V_COD||',
-      SYSDATE,
-      '''||V_OBSERVACIONES||'''
-      FROM DUAL
-      '
-      ;
-      EXECUTE IMMEDIATE V_SENTENCIA;
-      
-      COMMIT;  
 
 EXCEPTION
       WHEN OTHERS THEN
@@ -253,6 +157,3 @@ END;
 /
 
 EXIT;
-
-
-

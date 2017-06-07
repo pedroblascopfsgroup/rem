@@ -17,6 +17,7 @@ export NLS_LANG=SPANISH_SPAIN.WE8ISO8859P1
 
 ruta="CTLs_DATs/"
 fichero="CTLs.list"
+ls --format=single-column $ruta*.ctl | sed 's/CTLs_DATs\///g' | sed 's/.ctl//g' > $ruta$fichero
 
 if [ ! -f "$ruta""$fichero" ] ; then
 	echo "No existe lista de ficheros CTL"
@@ -34,25 +35,21 @@ echo ""
 
 while read line
 do
-
-	if [ -f "$ruta""$line".ctl ] ; then
-		if [ -f "$ruta""DATs/""$line".dat ] ; then
+	if [ -f $ruta$line.ctl ] ; then
+		if [ -s $ruta"DATs/"$line.dat ] ; then
 			echo "########################################################"
-			echo "#####    INICIO $line"
+			echo "#####    INICIO "$line.ctl
 			echo "########################################################"
-			echo " "
-			$ORACLE_HOME/bin/sqlldr $1 control=./"$ruta""$line".ctl log=./"$ruta"logs/"$line".log
+			$ORACLE_HOME/bin/sqlldr $1 control=./$ruta$line.ctl log=./$ruta"logs/"$line.log
 			if [ $? != 0 ] ; then 
-			   echo -e "\n\n======>>> "Error en @"DDL/""$line"
+			   echo -e "\n\n======>>> "Error en @"$line"
 			   exit 1
 			fi
-
 			echo "Fin $line"
 			echo ""
 		fi
 	fi
-
-done < "$ruta""$fichero"
+done < $ruta$fichero
 
 $ORACLE_HOME/bin/sqlplus $1 aux/Mig_estadisticas.sql > ./"$ruta"logs/estadisticas.log
 if [ $? != 0 ] ; then 

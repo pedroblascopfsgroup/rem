@@ -1,11 +1,27 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Where;
+
+import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 
 
 @Entity
@@ -21,7 +37,65 @@ public class VBusquedaActivos implements Serializable {
 	@Id
 	@Column(name = "ACT_ID")
 	private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_SCR_ID")
+    private DDSubcartera subcartera;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TUD_ID")
+    private DDTipoUsoDestino tipoUsoDestino; 
+
+    @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private List<ActivoBancario> activoBancario;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_STA_ID")
+    private DDSubtipoTituloActivo subtipoTitulo;
+
+    @Column(name = "ACT_DIVISION_HORIZONTAL")
+   	private Integer divHorizontal;
+
+    @OneToOne(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private ActivoTitulo titulo;
+
+    @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private List<ActivoPropietarioActivo> propietariosActivo;
+
+    @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    private List<GestorActivo> gestoresActivo;
     
+    @Column(name="SPS_FECHA_TOMA_POSESION")
+    private Date fechaTomaPosesion;
+
+	@Column(name = "SPS_ACC_TAPIADO")
+	private Integer accesoTapiado;
+	
+	@Column(name = "SPS_ACC_ANTIOCUPA")
+	private Integer accesoAntiocupa;
+
+	@Column(name = "DD_SCM_CODIGO")
+	private String situacionComercialCodigo;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TCO_ID")
+    private DDTipoComercializacion tipoComercializacion;
+
+    @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private List<PerimetroActivo> perimetroActivo;
+
+    @Column(name="ACT_CON_CARGAS")
+    private Integer conCargas;
+
     /*@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_SAC_ID")
     private DDSubtipoActivo subtipoActivo;*/

@@ -69,6 +69,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		if (dto.getEntidadPropietariaCodigo() != null)
    			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo(), true);
 
+   		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigoAvanzado(), true);
+   		
    		if (dto.getTipoTituloActivoCodigo() != null)
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoTituloActivoCodigo", dto.getTipoTituloActivoCodigo());
 
@@ -184,7 +186,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
     private String buildFrom(DtoActivoFilter dto) {
     	StringBuilder sb = new StringBuilder("select act from VBusquedaActivos act ");
 
-    	if (!Checks.esNulo(dto.getSubcarteraCodigo())) {
+    	if (!Checks.esNulo(dto.getSubcarteraCodigo()) || !Checks.esNulo(dto.getSubcarteraCodigoAvanzado())) {
     		sb.append(" join act.subcartera scr ");
     	}
 
@@ -242,8 +244,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
    		if (dto.getEntidadPropietariaCodigo() != null)
    			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo(), true);
-
-   		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigoAvanzado(), true);
 
    		if (dto.getTipoTituloActivoCodigo() != null)
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoTituloActivoCodigo", dto.getTipoTituloActivoCodigo());

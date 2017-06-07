@@ -138,7 +138,7 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		DtoActivoTramite dtoActivoTramite = new DtoActivoTramite();
 		
 		try {
-			
+			BeanUtils.copyProperty(dtoActivoTramite, "id", activo.getId());
 			BeanUtils.copyProperty(dtoActivoTramite, "numActivo", activo.getNumActivo());
 			BeanUtils.copyProperty(dtoActivoTramite, "numActivoRem", activo.getNumActivoRem());
 			BeanUtils.copyProperty(dtoActivoTramite, "idSareb", activo.getIdSareb());

@@ -1585,7 +1585,13 @@ public class ActivoAdapter {
 				beanUtilNotNull.copyProperty(dtoTramite, "fechaInicio", formato.format(tramite.getFechaInicio()));
 			if (!Checks.esNulo(tramite.getFechaFin()))
 				beanUtilNotNull.copyProperty(dtoTramite, "fechaFinalizacion", formato.format(tramite.getFechaFin()));
-			beanUtilNotNull.copyProperty(dtoTramite, "numActivo", tramite.getActivo().getNumActivo());
+
+			if(tramite.getTrabajo().getAgrupacion() != null) {
+				beanUtilNotNull.copyProperty(dtoTramite, "numActivo", tramite.getTrabajo().getAgrupacion().getNumAgrupRem());
+			} else {
+				beanUtilNotNull.copyProperty(dtoTramite, "numActivo", tramite.getTrabajo().getActivo().getNumActivo());
+			}
+
 			beanUtilNotNull.copyProperty(dtoTramite, "esMultiActivo", tramite.getActivos().size() > 1 ? true : false);
 			beanUtilNotNull.copyProperty(dtoTramite, "countActivos", tramite.getActivos().size());
 			if (!Checks.esNulo(tramite.getTipoTramite()))

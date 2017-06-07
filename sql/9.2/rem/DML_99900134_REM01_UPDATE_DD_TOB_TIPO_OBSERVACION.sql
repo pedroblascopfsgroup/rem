@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=Kevin Fernández
---## FECHA_CREACION=20170531
+--## FECHA_CREACION=20170607
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-2150
+--## INCIDENCIA_LINK=HREOS-2205
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que añade en DD_TPD_TIPO_DOCUMENTO los datos añadidos en T_ARRAY_DATA.
+--## Finalidad: Script que añade en DD_TOB_TIPO_OBSERVACION los datos añadidos en T_ARRAY_DATA.
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -31,16 +31,19 @@ DECLARE
     V_NUM_SEQUENCE NUMBER(16); -- Vble. auxiliar para almacenar el número de secuencia actual.
   	V_NUM_MAXID NUMBER(16); -- Vble. auxiliar para almacenar el número de secuencia máxima utilizada en los registros.
 
-    V_TEXT_TABLA VARCHAR2(27 CHAR) := 'DD_TPD_TIPO_DOCUMENTO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_TEXT_CHARS VARCHAR2(3 CHAR) := 'TPD'; -- Vble. auxiliar para almacenar las 3 letras orientativas de la tabla de ref.
-    V_USU_MODIFICAR VARCHAR2(30 CHAR) := '''HREOS-2150'''; -- Vble. auxiliar para almacenar el nombre de usuario que modifica los registros.
+    V_TEXT_TABLA VARCHAR2(27 CHAR) := 'DD_TOB_TIPO_OBSERVACION'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_CHARS VARCHAR2(3 CHAR) := 'TOB'; -- Vble. auxiliar para almacenar las 3 letras orientativas de la tabla de ref.
+    V_USU_MODIFICAR VARCHAR2(30 CHAR) := '''HREOS-2205'''; -- Vble. auxiliar para almacenar el nombre de usuario que modifica los registros.
 
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    --				CODIGO		DESCRIPCION							DESCRIPCION_LARGA
-        T_TIPO_DATA('21',		'Propuesta de precios generada'	,	'Propuesta de precios generada'),
-        T_TIPO_DATA('23',		'Propuesta de precios sancionada',	'Propuesta de precios sancionada')
+    --				CODIGO		DESCRIPCION					DESCRIPCION_LARGA
+        T_TIPO_DATA('01',		'Stock',					'Stock'),
+        T_TIPO_DATA('02',		'Posesión',					'Posesión'),
+		T_TIPO_DATA('03',		'Inscripción',				'Inscripción'),
+		T_TIPO_DATA('04',		'Cargas',					'Cargas'),
+		T_TIPO_DATA('05',		'Llaves',					'Llaves')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 

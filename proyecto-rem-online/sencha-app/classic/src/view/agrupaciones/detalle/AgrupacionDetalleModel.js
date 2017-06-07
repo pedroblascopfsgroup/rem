@@ -86,6 +86,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	    	 //Si NO es agrupación obra nueva OR sí hay fecha baja se debe ocultar
 	    	 return (existeFechaBaja || !(esAgrupacionObraNueva || esAgrupacionAsistida));
 	    	 
+	     },
+
+	     agrupacionTieneActivos: function(get) {
+	     		return (get('agrupacionficha.numeroActivos')>0);
 	     }
     },
     

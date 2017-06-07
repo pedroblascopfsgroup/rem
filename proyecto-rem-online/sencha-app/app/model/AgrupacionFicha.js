@@ -36,6 +36,9 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 		    		type: 'boolean'
 		    	},
 		    	{
+		    		name: 'isFormalizacion'
+		    	},
+		    	{
 		    		name : 'numeroPublicados'
 		    	},
 		    	{

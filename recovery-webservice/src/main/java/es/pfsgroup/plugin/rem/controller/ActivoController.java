@@ -2336,4 +2336,19 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)	
+	public ModelAndView comprobarActivoFormalizable(Long numActivo, ModelMap model) {
+		
+		try {
+			model.put("success", activoApi.esActivoFormalizable(numActivo));
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put("success", false);
+			model.put("errorMessage", e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
 }

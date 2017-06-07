@@ -386,17 +386,21 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
     },
 
     onAddClick: function(btn){
-    	
-		var me = this;
-		var rec = Ext.create(me.getStore().config.model);
-		me.getStore().sorters.clear();
-		me.editPosition = 0;
-        me.getStore().insert(me.editPosition, rec);
-        me.rowEditing.isNew = true;
-        me.rowEditing.startEdit(me.editPosition, 0);
-        me.disableAddButton(true);
-        me.disablePagingToolBar(true);
-        me.disableRemoveButton(true);
+		  var me = this;
+      var isFormalizacion = me.up('agrupacionesdetallemain').lookupReference('comboFormalizacion').value;
+      if (isFormalizacion==null) {
+          Ext.Msg.show({ message: 'No se ha definido el perímetro de formalización.', buttons: Ext.Msg.YES});
+      } else {
+          var rec = Ext.create(me.getStore().config.model);
+          me.getStore().sorters.clear();
+          me.editPosition = 0;
+          me.getStore().insert(me.editPosition, rec);
+          me.rowEditing.isNew = true;
+          me.rowEditing.startEdit(me.editPosition, 0);
+          me.disableAddButton(true);
+          me.disablePagingToolBar(true);
+          me.disableRemoveButton(true);
+      }
 
     },
 
@@ -511,7 +515,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
    		var me= this;
 		me.mask(HreRem.i18n("msg.mask.espere"));
 
-			if (me.isValidRecord(context.record)) {				
+			if (me.isValidRecord(context.record)) {			
         		context.record.save({
                     params: {
                         idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal)

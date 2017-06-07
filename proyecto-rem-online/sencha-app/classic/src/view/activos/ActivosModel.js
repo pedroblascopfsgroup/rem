@@ -72,7 +72,16 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 						extraParams: {diccionario: 'subtiposActivo'}
 					}
     		},
-    		
+
+    		comboFiltroTipoActivo: {
+				model: 'HreRem.model.ComboBase',
+					proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'tiposActivo'}
+					}
+    		},
+
     		comboEstadoActivo: {
 				model: 'HreRem.model.ComboBase',
 					proxy: {
@@ -80,9 +89,98 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 						remoteUrl: 'generic/getDiccionario',
 						extraParams: {diccionario: 'estadosActivo'}
 					}
-    		}
-   		
-	
+    		},
+
+			comboSubcartera: {
+				model: 'HreRem.model.ComboBase',
+					proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'subentidadesPropietarias'}
+					}
+			},
+
+			comboTiposUsoDestino: {
+				model: 'HreRem.model.ComboBase',
+					proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'tiposUsoDestino'}
+					}
+			},
+
+			comboClaseActivoBancario: {
+				model: 'HreRem.model.ComboBase',
+					proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'claseActivoBancario'}
+					}
+			},
+
+			comboSubtipoClaseActivoBancario: {
+				model: 'HreRem.model.ComboBase',
+					proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'subtipoClaseActivoBancario'}
+					}
+			},
+
+			comboSubtiposTitulo: {
+				model: 'HreRem.model.ComboBase',
+					proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'subtiposTitulo'}
+					}
+			},
+
+			comboSituacionComercial: {
+				model: 'HreRem.model.ComboBase',
+					proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'situacionComercial'}
+					}
+			},
+
+			comboTiposComercializacionActivo: {
+				model: 'HreRem.model.ComboBase',
+					proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'tiposComercializacionActivo'}
+					}
+			},
+
+			comboRatingActivo: {
+				model: 'HreRem.model.ComboBase',
+					proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'ratingActivo'}
+					}
+			},
+
+	    	comboTipoGestorOfertas: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboTipoGestorActivos'
+				}
+			},
+
+			comboUsuarios: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'activo/getComboUsuarios',
+					extraParams: {
+						idTipoGestor: '{tipoGestor.selection.id}'
+					}
+				}
+			}
      }
 
 });

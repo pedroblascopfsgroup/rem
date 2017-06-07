@@ -62,8 +62,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
     @Override
 	public Page getListActivos(DtoActivoFilter dto, Usuario usuLogado) {
 
-		HQLBuilder hb = new HQLBuilder(" from VBusquedaActivos act");
-		
+		HQLBuilder hb = new HQLBuilder(buildFrom(dto));
+
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivo", dto.getNumActivo());
 		
    		if (dto.getEntidadPropietariaCodigo() != null)
@@ -140,9 +140,98 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.selloCalidad", dto.getComboSelloCalidad().equals(Integer.valueOf(1)) ? true : false);
    		}
 
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "scr.codigo", dto.getSubcarteraCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "scr.codigo", dto.getSubcarteraCodigoAvanzado());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoActivoCodigo", dto.getTipoActivoCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tud.codigo", dto.getTipoUsoDestinoCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "ca.codigo", dto.getClaseActivoBancarioCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "subca.codigo", dto.getSubClaseActivoBancarioCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "subtipotitulo.codigo", dto.getSubtipoTituloActivoCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.divHorizontal", dto.getDivisionHorizontal());
+
+   		if (dto.getInscrito() != null) {
+   	   		if (dto.getInscrito() == 0) {
+   	   			hb.appendWhere(" tit.fechaInscripcionReg IS NULL ");	
+   	   		} else {
+   	   			hb.appendWhere(" tit.fechaInscripcionReg IS NOT NULL");
+   	   		}
+   		}
+
+   		HQLBuilder.addFiltroLikeSiNotNull(hb, "pro.nombre", dto.getPropietarioNombre(), true);
+   		HQLBuilder.addFiltroLikeSiNotNull(hb, "pro.docIdentificativo", dto.getPropietarioNIF(), true);
+
+   		if (dto.getConPosesion() != null) {
+   	   		if (dto.getConPosesion() == 0) {
+   	   			hb.appendWhere(" act.fechaTomaPosesion IS NULL ");	
+   	   		} else {
+   	   			hb.appendWhere(" act.fechaTomaPosesion IS NOT NULL");
+   	   		}
+   		}
+
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.accesoTapiado", dto.getAccesoTapiado());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.accesoAntiocupa", dto.getAccesoAntiocupa());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.situacionComercialCodigo", dto.getSituacionComercialCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tco.codigo", dto.getTipoComercializacionCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "perac.aplicaGestion", dto.getPerimetroGestion());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.flagRating", dto.getRatingCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conCargas", dto.getConCargas());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gausu.id", dto.getUsuarioGestor());
+
 		return HibernateQueryUtils.page(this, hb, dto);
 
 	}
+
+    private String buildFrom(DtoActivoFilter dto) {
+    	StringBuilder sb = new StringBuilder("select act from VBusquedaActivos act ");
+
+    	if (!Checks.esNulo(dto.getSubcarteraCodigo())) {
+    		sb.append(" join act.subcartera scr ");
+    	}
+
+    	if (!Checks.esNulo(dto.getTipoUsoDestinoCodigo())) {
+    		sb.append(" join act.tipoUsoDestino tud ");
+    	}
+
+    	if (!Checks.esNulo(dto.getClaseActivoBancarioCodigo()) || !Checks.esNulo(dto.getSubClaseActivoBancarioCodigo())) {
+    		sb.append(" join act.activoBancario ab");
+
+    		if (!Checks.esNulo(dto.getClaseActivoBancarioCodigo())) {
+    			sb.append(" join ab.claseActivo ca ");
+    		}
+
+    		if (!Checks.esNulo(dto.getSubClaseActivoBancarioCodigo())) {
+    			sb.append(" join ab.subtipoClaseActivo subca ");
+    		}
+    	}
+
+    	if (!Checks.esNulo(dto.getSubtipoTituloActivoCodigo())) {
+    		sb.append(" join act.subtipoTitulo subtipotitulo ");
+    	}
+
+    	if (dto.getInscrito() != null) {
+    		sb.append(" join act.titulo tit ");
+    	}
+
+    	if (!Checks.esNulo(dto.getPropietarioNIF()) || !Checks.esNulo(dto.getPropietarioNombre())) {
+    		sb.append(" join act.propietariosActivo pac ");
+    		sb.append(" join pac.propietario pro ");
+    	}
+
+    	if (!Checks.esNulo(dto.getTipoComercializacionCodigo())) {
+    		sb.append(" join act.tipoComercializacion tco ");
+    	}
+
+    	if (dto.getPerimetroGestion() != null) {
+    		sb.append(" join act.perimetroActivo perac ");
+    	}
+
+    	if (dto.getUsuarioGestor() != null) {
+    		sb.append(" join act.gestoresActivo ga ");
+    		sb.append(" join ga.usuario gausu ");
+    	}
+    	
+    	return sb.toString();
+    }
     
     @Override
 	public List<Activo> getListActivosLista(DtoActivoFilter dto, Usuario usuLogado) {
@@ -153,6 +242,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
    		if (dto.getEntidadPropietariaCodigo() != null)
    			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo(), true);
+
+   		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigoAvanzado(), true);
 
    		if (dto.getTipoTituloActivoCodigo() != null)
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoTituloActivoCodigo", dto.getTipoTituloActivoCodigo());

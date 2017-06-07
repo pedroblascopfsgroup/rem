@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
+import java.util.Set;
 
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -78,7 +79,9 @@ public interface GenericApi {
 	
 	@BusinessOperationDefinition("genericManager.getComboTipoGestor")
 	public List<EXTDDTipoGestor> getComboTipoGestor();
-	
+
+	List<EXTDDTipoGestor> getComboTipoGestorFiltrado(Set<String> tipoGestorCodigos);
+
 	@BusinessOperationDefinition("genericManager.getComboTipoGestorOfertas")
 	public List<EXTDDTipoGestor> getComboTipoGestorOfertas();
 

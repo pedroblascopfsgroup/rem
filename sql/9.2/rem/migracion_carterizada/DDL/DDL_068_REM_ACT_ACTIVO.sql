@@ -1,10 +1,10 @@
 --/*
 --######################################### 
---## AUTOR=MANUEL RODRIGUEZ
---## FECHA_CREACION=20160927
+--## AUTOR=GUILLEM REY
+--## FECHA_CREACION=20170607
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=HREOS-855
+--## INCIDENCIA_LINK=HREOS-2195, HREOS-2108
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Creación de tabla de migración 'MIG2_ACT_ACTIVO'
@@ -61,10 +61,11 @@ BEGIN
                 ACT_FECHA_IND_PRECIAR                                   DATE,
                 ACT_FECHA_IND_REPRECIAR                                 DATE,
                 ACT_FECHA_IND_DESCUENTO                                 DATE,
-                ACT_GESTOR_COMERCIAL									VARCHAR2(50 CHAR),
-                ACT_GESTORIA_ADMISION									VARCHAR2(50 CHAR),
-                ACT_GESTOR_ACTIVO										VARCHAR2(50 CHAR),
-                ACT_GESTORIA_ADMINISTRACION								VARCHAR2(50 CHAR)
+				ACT_NUMERO_INMOVILIZADO									NUMBER(16,0),
+				ACT_CODIGO_ENTRADA		 								VARCHAR2(20 CHAR),
+				SELLO_CALIDAD											NUMBER(1,0),
+                GESTOR_CALIDAD											VARCHAR2(50 CHAR),
+                FECHA_CALIDAD											DATE
         , VALIDACION NUMBER(1) DEFAULT 0 NOT NULL )'
         ;
 

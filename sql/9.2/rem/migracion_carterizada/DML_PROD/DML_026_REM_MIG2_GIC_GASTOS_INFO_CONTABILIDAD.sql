@@ -44,6 +44,7 @@ DECLARE
       select distinct GIC_EJERCICIO
       from MIG2_GIC_GASTOS_INFO_CONTABI mig
       where not exists (select 1 from ACT_EJE_EJERCICIO eje where eje.EJE_ANYO = mig.GIC_EJERCICIO)
+      	and mig.VALIDACION = 0
       order by GIC_EJERCICIO
       ;
 

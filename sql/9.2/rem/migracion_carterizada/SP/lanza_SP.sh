@@ -43,5 +43,6 @@ ETIQUETA
 done < "$fichero"
 
 mv -f $fichero $fichero_old
+rm -f $fichero
 
 exit 0

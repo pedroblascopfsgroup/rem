@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=Pablo Meseguer
---## FECHA_CREACION=20161007
+--## AUTOR=GUILLEM REY
+--## FECHA_CREACION=20170608
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=HREOS-855
+--## INCIDENCIA_LINK=HREOS-2209
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración 'MIG2_COE_CONDICIONAN_OFR_ACEP' -> 'COE_CONDICIONANTES_EXPEDIENTE'
@@ -39,74 +39,7 @@ V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
 
 
 BEGIN 
-  
-  --COMPROBACIONES PREVIAS - EXPEDIENTE_ECONOMICO
-  DBMS_OUTPUT.PUT_LINE('[INFO] ['||V_TABLA||'] COMPROBANDO EXPEDIENTE_ECONOMICO...');
-  
-  V_SENTENCIA := '
-  SELECT COUNT(1) 
-  FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
-  WHERE NOT EXISTS (
-    SELECT 1 FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR 
-    INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
-                ON OFR.OFR_ID = ECO.OFR_ID
-        WHERE OFR.OFR_NUM_OFERTA = MIG.COE_COD_OFERTA
-  )
-  '
-  ;
-  
-  EXECUTE IMMEDIATE V_SENTENCIA INTO TABLE_COUNT;
-  
-  IF TABLE_COUNT = 0 THEN
-  
-    DBMS_OUTPUT.PUT_LINE('[INFO] TODAS LAS OFERTAS EXISTEN EN EXPEDIENTE_ECONOMICO');
-    
-  ELSE
-  
-    DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN INFORMADO '||TABLE_COUNT||' EXPEDIENTE_ECONOMICO INEXISTENTES EN ECO_EXPEDIENTE_COMERCIAL. SE DERIVARÁN A LA TABLA '||V_ESQUEMA||'.MIG2_ECO_NOT_EXISTS.');
-    
-    --BORRAMOS LOS REGISTROS QUE HAYA EN NOT_EXISTS REFERENTES A ESTA INTERFAZ
-    
-    EXECUTE IMMEDIATE '
-    DELETE FROM '||V_ESQUEMA||'.MIG2_ECO_NOT_EXISTS
-    WHERE TABLA_MIG = '''||V_TABLA_MIG||'''
-    '
-    ;
-    
-    COMMIT;
-  
-    EXECUTE IMMEDIATE '
-    INSERT INTO '||V_ESQUEMA||'.MIG2_ECO_NOT_EXISTS (
-    OFR_NUM_OFERTA,
-    TABLA_MIG,
-    FECHA_COMPROBACION
-    )
-    WITH OFR_NUM_OFERTA AS (
-                SELECT
-                MIG.COE_COD_OFERTA 
-                FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
-                WHERE NOT EXISTS (
-                        SELECT 1 FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR 
-                        INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
-                                ON OFR.OFR_ID = ECO.OFR_ID
-                        WHERE OFR.OFR_NUM_OFERTA = MIG.COE_COD_OFERTA
-                  )
-    )
-    SELECT DISTINCT
-    MIG.COE_COD_OFERTA                                                                          OFR_NUM_OFERTA,
-    '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
-    SYSDATE                                                                 FECHA_COMPROBACION
-    FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
-    INNER JOIN '||V_ESQUEMA||'.OFR_NUM_OFERTA
-    ON OFR_NUM_OFERTA.COE_COD_OFERTA = MIG.COE_COD_OFERTA
-    '
-    ;
-    
-    COMMIT;
-
-  END IF;
-  
-  
+ 
   --Inicio del proceso de volcado sobre COE_CONDICIONANTES_EXPEDIENTE
   DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
  
@@ -190,7 +123,7 @@ BEGIN
         SIP.DD_SIP_ID                                                                                                           DD_SIP_ID,                                                                                              
         ETI.DD_ETI_ID                                                   DD_ETI_ID,
         ''0''                                                           VERSION,
-        ''MIG2''                                                        USUARIOCREAR,
+        ''#USUARIO_MIGRACION#''                                         USUARIOCREAR,
         SYSDATE                                                         FECHACREAR,
         0                                                               BORRADO,
         CASE
@@ -224,7 +157,8 @@ BEGIN
         LEFT JOIN '||V_ESQUEMA||'.DD_SIP_SITUACION_POSESORIA SIP
                 ON SIP.DD_SIP_CODIGO = MIG.COE_COD_SITUACION_POSESORIA
         LEFT JOIN '||V_ESQUEMA||'.DD_ETI_ESTADO_TITULO ETI
-                ON ETI.DD_ETI_CODIGO = MIG.COE_COD_ESTADO_TITULO                                                                        
+                ON ETI.DD_ETI_CODIGO = MIG.COE_COD_ESTADO_TITULO
+		WHERE MIG.VALIDACION = 0                                                                        
         ')
         ;
   
@@ -238,57 +172,7 @@ BEGIN
   
   DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
   
-   -- INFORMAMOS A LA TABLA INFO
-  
-  -- Registros MIG
-  V_SENTENCIA := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'';
-  EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
- 
- -- Registros insertados en REM
- -- V_REG_INSERTADOS
-  
-  -- Total registros rechazados
-  V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;
-  
-  -- Observaciones
-  IF V_REJECTS != 0 THEN
-   
-    V_OBSERVACIONES := 'Hay un total de '||V_REJECTS||' registros rechazados.';
-  
-    IF TABLE_COUNT != 0 THEN    
-      V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT||' EXPEDIENTE_ECONOMICO inexistentes.';    
-    END IF; 
-    
-  END IF;
-
-EXECUTE IMMEDIATE ('
-        INSERT INTO '||V_ESQUEMA||'.MIG_INFO_TABLE (
-        TABLA_MIG,
-        TABLA_REM,
-        REGISTROS_TABLA_MIG,
-        REGISTROS_INSERTADOS,
-        REGISTROS_RECHAZADOS,
-        DD_COD_INEXISTENTES,
-        FECHA,
-        OBSERVACIONES
-        )
-        SELECT
-        '''||V_TABLA_MIG||''',
-        '''||V_TABLA||''',
-        '||V_REG_MIG||',
-        '||V_REG_INSERTADOS||',
-        '||V_REJECTS||',
-        '||V_COD||',
-        SYSDATE,
-        '''||V_OBSERVACIONES||'''
-        FROM DUAL
-  ')
-  ;
-  
-  COMMIT;
-  
-  
-  EXCEPTION
+EXCEPTION
 
     WHEN OTHERS THEN
         DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));

@@ -43,7 +43,7 @@ do
 			$ORACLE_HOME/bin/sqlldr $1 control=./$ruta$line.ctl log=./$ruta"logs/"$line.log
 			if [ $? != 0 ] ; then 
 			   echo -e "\n\n======>>> "Error en @"$line"
-			   exit 1
+			   #exit 1
 			fi
 			echo "Fin $line"
 			echo ""

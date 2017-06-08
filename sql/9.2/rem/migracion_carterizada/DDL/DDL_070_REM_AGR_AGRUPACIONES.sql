@@ -52,6 +52,7 @@ BEGIN
                 AGR_COD_MOTIVO_BLOQUEADA                VARCHAR2(20 CHAR),
                 AGR_FECHA_INICIO_BLOQUEO                DATE,
                 AGR_FECHA_FIN_BLOQUEO                   DATE
+
         , VALIDACION NUMBER(1) DEFAULT 0 NOT NULL )'
         ;
 

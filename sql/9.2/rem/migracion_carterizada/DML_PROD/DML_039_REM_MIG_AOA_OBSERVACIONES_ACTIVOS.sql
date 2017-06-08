@@ -85,7 +85,7 @@ BEGIN
 	MIG.AOB_OBSERVACION										    AOB_OBSERVACION,
 	MIG.AOB_FECHA											    AOB_FECHA,
 	''0''													    VERSION,
-	''REMIG''													USUARIOCREAR,
+	''#USUARIO_MIGRACION#''										USUARIOCREAR,
 	SYSDATE													    FECHACREAR,
 	0														    BORRADO,
 	(SELECT TOB.DD_TOB_ID 

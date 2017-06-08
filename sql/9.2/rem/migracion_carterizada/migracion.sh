@@ -5,13 +5,15 @@ export NLS_LANG=SPANISH_SPAIN.UTF8
 
 mkdir -p Logs/backup/
 mv -f Logs/*.log Logs/backup/
+fecha_log=`date +%Y%m%d_%H%M%S`
+log_completo="Logs/migracion_completo_"$fecha_log".log"
 
 hora=`date +%H:%M:%S`
 echo "################################################################"
 echo "####### [START] Comienza la migración: $hora"
 echo "################################################################"
 echo " "
-
+##############################################################################################
 echo "	-------------------------------------------------------"
 echo "	------ [INFO] Creando tablas"
 echo "	-------------------------------------------------------"
@@ -23,10 +25,11 @@ if [ $? != 0 ] ; then
    echo -e "\n\n======>>> "Error creando tablas
    exit 1
 fi
+cat $salida >> $log_completo
 fin=`date +%s`
 let total=($fin-$inicioparte)/60
 echo "	Tablas creadas en $total minutos."
-
+##############################################################################################
 echo " "
 echo "	-------------------------------------------------------"
 echo "	------ [INFO] Descomprimiendo y reubicando ficheros"
@@ -34,14 +37,16 @@ echo "	-------------------------------------------------------"
 fecha=`date +%Y%m%d_%H%M%S`
 inicioparte=`date +%s`
 salida=Logs/002_despliegue_ficheros_$fecha.log
-./Ficheros_entrada/cambia_nombre_ficheros.sh > $salida
+./Ficheros_entrada/cambia_nombre_ficheros.sh $salida > $salida
 if [ $? != 0 ] ; then 
    echo -e "\n\n======>>> "Error descomprimiendo y/o reubicando ficheros
    exit 1
 fi
+cat $salida >> $log_completo
 fin=`date +%s`
 let total=($fin-$inicioparte)/60
 echo "	Ficheros reubicados y renombrados en $total minutos."
+##############################################################################################
 echo " "
 echo "	-------------------------------------------------------"
 echo "	------ [INFO] Rellenando tablas MIG"
@@ -54,11 +59,12 @@ if [ $? != 0 ] ; then
    echo -e "\n\n======>>> "Error cargando tablas MIG
    exit 1
 fi
+cat $salida >> $log_completo
 fin=`date +%s`
 let total=($fin-$inicioparte)/60
 echo "	Tablas MIG rellenadas en $total minutos."
+##############################################################################################
 echo " "
-
 echo "	-------------------------------------------------------"
 echo "	------ [INFO] Rellenando tablas VALIDACION"
 echo "	-------------------------------------------------------"
@@ -70,11 +76,12 @@ if [ $? != 0 ] ; then
    echo -e "\n\n======>>> "Error cargando tablas de validación
    exit 1
 fi
+cat $salida >> $log_completo
 fin=`date +%s`
 let total=($fin-$inicioparte)/60
 echo "	Tablas de validación rellenadas en $total minutos."
+##############################################################################################
 echo " "
-
 echo "	-------------------------------------------------------"
 echo "	------ [INFO] Compilando procesos almacenados"
 echo "	-------------------------------------------------------"
@@ -86,11 +93,12 @@ if [ $? != 0 ] ; then
    echo -e "\n\n======>>> "Error compilando procedimientos almacenados
    exit 1
 fi
+cat $salida >> $log_completo
 fin=`date +%s`
 let total=($fin-$inicioparte)/60
 echo "	Procesos almacenados compilados en $total minutos."
+##############################################################################################
 echo " "
-
 echo "	-------------------------------------------------------"
 echo "	------ [INFO] Ejecutando validaciones"
 echo "	-------------------------------------------------------"
@@ -102,20 +110,12 @@ if [ $? != 0 ] ; then
    echo -e "\n\n======>>> "Error ejecutando validaciones
    exit 1
 fi
+cat $salida >> $log_completo
 fin=`date +%s`
 let total=($fin-$inicioparte)/60
 echo "	Validaciones completadas en $total minutos."
+##############################################################################################
 echo " "
-
-fecha_log=`date +%Y%m%d_%H%M%S`
-log_list=Logs/log.list
-ls -x Logs/*.log > $log_list
-while read line
-do
-   cat $line >> "Logs/migracion_completo_""$fecha_log"".log"
-done < $log_list
-
-rm -f Logs/log.list
 echo "	*******************************************************"
 echo "	****** [INFO] Revise log completo: $log_completo"
 echo "	*******************************************************"

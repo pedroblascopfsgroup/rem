@@ -5,19 +5,19 @@ if [ "$#" -ne 1 ]; then
 fi
 
 fichero="DDL/DDLs.list"
-
+ls --format=single-column DDL/*.sql > $fichero
 echo "INICIO DEL SCRIPT $0"
 
 while read line
 do
-	if [ -f "DDL/""$line" ] ; then
+	if [ -f "$line" ] ; then
 		echo "########################################################"
 		echo "#####    INICIO $line"
 		echo "########################################################"
 		echo " "
-		$ORACLE_HOME/bin/sqlplus "$1" @"DDL/""$line"
+		$ORACLE_HOME/bin/sqlplus "$1" @"$line"
 		if [ $? != 0 ] ; then 
-		   echo -e "\n\n======>>> "Error en @"DDL/""$line"
+		   echo -e "\n\n======>>> "Error en @"$line"
 		   exit 1
 		fi
 

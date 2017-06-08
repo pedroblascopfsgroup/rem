@@ -80,6 +80,7 @@ BEGIN
         WITH DUPLICADOS AS (
           SELECT DISTINCT OFR_COD_OFERTA
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' WMIG2
+		  WHERE WMIG2.VALIDACION = 0
           GROUP BY OFR_COD_OFERTA 
           HAVING COUNT(1) > 1
           )
@@ -163,10 +164,11 @@ BEGIN
        WHERE NOT EXISTS (
             SELECT 1
             FROM DUPLICADOS DUP
-            WHERE DUP.OFR_COD_OFERTA = MIG.OFR_COD_OFERTA)
+            WHERE DUP.OFR_COD_OFERTA = MIG.OFR_COD_OFERTA) 
+		AND MIG.VALIDACION = 0
     '
     ;
-    EXECUTE IMMEDIATE V_SENTENCIA       ;
+    EXECUTE IMMEDIATE V_SENTENCIA;
     
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
     
@@ -255,7 +257,7 @@ BEGIN
 		CASE
 			WHEN MIG2.OFR_FECHA_ANULACION IS NULL
 			THEN (CASE 
-					WHEN  MIG2.OFR_COD_ESTADO_OFERTA = ''01-08''
+					WHEN MIG2.OFR_COD_ESTADO_OFERTA = ''01-08''
 					THEN MIG2.OFR_ESTADO_FECHA
 					ELSE NULL
 				  END)
@@ -285,14 +287,14 @@ BEGIN
           ''MIG2''                                                                                                          AS USUARIOCREAR,
           SYSDATE                                                                                                           AS FECHACREAR
         FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR
-        INNER JOIN '||V_ESQUEMA||'.MIG2_OFR_OFERTAS MIG2 ON MIG2.OFR_COD_OFERTA = OFR.OFR_NUM_OFERTA
+        INNER JOIN '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 ON MIG2.OFR_COD_OFERTA = OFR.OFR_NUM_OFERTA
         LEFT JOIN '||V_ESQUEMA||'.DD_MAN_MOTIVO_ANULACION MAN ON MIG2.OFR_COD_MOTIVO_ANULACION = MAN.DD_MAN_CODIGO
         WHERE SUBSTR(MIG2.OFR_COD_ESTADO_OFERTA,0,2) = ''01''
         AND NOT EXISTS (
             SELECT 1
             FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL AUX
             WHERE AUX.OFR_ID = OFR.OFR_ID
-        )
+        ) AND MIG.VALIDACION = 0
         
     '
     ;   

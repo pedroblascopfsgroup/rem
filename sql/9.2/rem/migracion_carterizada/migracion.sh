@@ -3,6 +3,9 @@
 inicio=`date +%s`
 export NLS_LANG=SPANISH_SPAIN.UTF8
 
+mkdir -p Logs/backup/
+mv -f Logs/*.log Logs/backup/
+
 hora=`date +%H:%M:%S`
 echo "################################################################"
 echo "####### [START] Comienza la migración: $hora"
@@ -12,9 +15,10 @@ echo " "
 echo "	-------------------------------------------------------"
 echo "	------ [INFO] Creando tablas"
 echo "	-------------------------------------------------------"
-fecha=`date +%Y%m%d_%H%M%S`
+fecha_ini=`date +%Y%m%d_%H%M%S`
 inicioparte=`date +%s`
-./DDL/mig_lanza_DDL.sh $1 > Logs/creacion_tablas_$fecha.log
+salida=Logs/001_creacion_tablas_$fecha_ini.log 
+./DDL/mig_lanza_DDL.sh $1 > $salida
 if [ $? != 0 ] ; then 
    echo -e "\n\n======>>> "Error creando tablas
    exit 1
@@ -29,7 +33,8 @@ echo "	------ [INFO] Descomprimiendo y reubicando ficheros"
 echo "	-------------------------------------------------------"
 fecha=`date +%Y%m%d_%H%M%S`
 inicioparte=`date +%s`
-./Ficheros_entrada/cambia_nombre_ficheros.sh > Logs/despliegue_ficheros_$fecha.log
+salida=Logs/002_despliegue_ficheros_$fecha.log
+./Ficheros_entrada/cambia_nombre_ficheros.sh > $salida
 if [ $? != 0 ] ; then 
    echo -e "\n\n======>>> "Error descomprimiendo y/o reubicando ficheros
    exit 1
@@ -43,7 +48,8 @@ echo "	------ [INFO] Rellenando tablas MIG"
 echo "	-------------------------------------------------------"
 fecha=`date +%Y%m%d_%H%M%S`
 inicioparte=`date +%s`
-./CTLs_DATs/mig_lanza_CTL.sh $1 > Logs/carga_migs_$fecha.log
+salida=Logs/003_carga_migs_$fecha.log
+./CTLs_DATs/mig_lanza_CTL.sh $1 > $salida
 if [ $? != 0 ] ; then 
    echo -e "\n\n======>>> "Error cargando tablas MIG
    exit 1
@@ -58,7 +64,8 @@ echo "	------ [INFO] Rellenando tablas VALIDACION"
 echo "	-------------------------------------------------------"
 fecha=`date +%Y%m%d_%H%M%S`
 inicioparte=`date +%s`
-./DML/mig_lanza_DML.sh $1 > Logs/carga_validaciones_$fecha.log
+salida=Logs/004_carga_validaciones_$fecha.log
+./DML/mig_lanza_DML.sh $1 > $salida
 if [ $? != 0 ] ; then 
    echo -e "\n\n======>>> "Error cargando tablas de validación
    exit 1
@@ -73,7 +80,8 @@ echo "	------ [INFO] Compilando procesos almacenados"
 echo "	-------------------------------------------------------"
 fecha=`date +%Y%m%d_%H%M%S`
 inicioparte=`date +%s`
-./SP/compila_SP.sh $1 > Logs/compila_procedimientos_almacenados_$fecha.log
+salida=Logs/005_compila_procedimientos_almacenados_$fecha.log
+./SP/compila_SP.sh $1 $fecha >> $salida
 if [ $? != 0 ] ; then 
    echo -e "\n\n======>>> "Error compilando procedimientos almacenados
    exit 1
@@ -88,7 +96,8 @@ echo "	------ [INFO] Ejecutando validaciones"
 echo "	-------------------------------------------------------"
 fecha=`date +%Y%m%d_%H%M%S`
 inicioparte=`date +%s`
-./SP/lanza_SP.sh $1 > Logs/ejecuta_procedimientos_almacenados_$fecha.log
+salida=Logs/006_ejecuta_procedimientos_almacenados_$fecha.log
+./SP/lanza_SP.sh $1 $fecha >> $salida
 if [ $? != 0 ] ; then 
    echo -e "\n\n======>>> "Error ejecutando validaciones
    exit 1
@@ -98,8 +107,17 @@ let total=($fin-$inicioparte)/60
 echo "	Validaciones completadas en $total minutos."
 echo " "
 
+fecha_log=`date +%Y%m%d_%H%M%S`
+log_list=Logs/log.list
+ls -x Logs/*.log > $log_list
+while read line
+do
+   cat $line >> "Logs/migracion_completo_""$fecha_log"".log"
+done < $log_list
+
+rm -f Logs/log.list
 echo "	*******************************************************"
-echo "	****** [INFO] Revise logs: Logs/"
+echo "	****** [INFO] Revise log completo: $log_completo"
 echo "	*******************************************************"
 echo " "
 

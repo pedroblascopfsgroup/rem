@@ -28,9 +28,6 @@ BEGIN
 
     DBMS_OUTPUT.PUT_LINE('[INICIO] Inicio del proceso');
 
-    V_MSQL := 'TRUNCATE TABLE '||V_ESQUEMA||'.'||TABLA_VALIDACION;
-    EXECUTE IMMEDIATE V_MSQL;
-
     v_stmt_val := 'SELECT VALIDACION_ID, NOMBRE_INTERFAZ, NOMBRE_CAMPO, NOMBRE_DICCIONARIO, NOMBRE_CODIGO, REQUERIDO
         FROM '||V_ESQUEMA||'.VIC_VAL_INTERFAZ_DD
         WHERE BORRADO = 0';
@@ -57,8 +54,8 @@ BEGIN
                         , DR.CODIGO_RECHAZO COD_RECHAZO, DR.MOTIVO_RECHAZO||'||''' '||' '||vTABLA||'.'||vCAMPO||' <> '||vDICCIONARIO||'.'||vCODIGO||'.'' MOTIVO_RECHAZO
                     FROM '||V_ESQUEMA||'.'||vTABLA||' NI
                     JOIN '||V_ESQUEMA||'.DICCIONARIO_RECHAZOS DR ON DR.CODIGO_RECHAZO = '''||vRECHAZO_DD||'''
-                    LEFT JOIN '||vDICCIONARIO||' DD ON NI.'||vCAMPO||' = DD.'||vCODIGO||' AND DD.BORRADO = 0
-                    WHERE DD.'||vCODIGO||' IS NULL AND NI.'||vCAMPO||' IS NOT NULL';
+                    LEFT JOIN '||vDICCIONARIO||' DD ON '||vCAMPO||' = DD.'||vCODIGO||' AND DD.BORRADO = 0
+                    WHERE DD.'||vCODIGO||' IS NULL AND '||vCAMPO||' IS NOT NULL';
                 EXECUTE IMMEDIATE V_MSQL;
         
                 IF vREQUERIDO = 1 THEN
@@ -67,7 +64,7 @@ BEGIN
                             , DR.CODIGO_RECHAZO COD_RECHAZO, DR.MOTIVO_RECHAZO||'||''' Campo requerido, '||vCAMPO||', vacío.'' MOTIVO_RECHAZO
                         FROM '||V_ESQUEMA||'.'||vTABLA||' NI
                         JOIN '||V_ESQUEMA||'.DICCIONARIO_RECHAZOS DR ON DR.CODIGO_RECHAZO = '''||vRECHAZO_REQ||'''
-                        WHERE NI.'||vCAMPO||' IS NULL';
+                        WHERE '||vCAMPO||' IS NULL';
                     DBMS_OUTPUT.PUT_LINE('  [INFO] Validando requerimiento de campo, '||vCAMPO||', en tabla, '||vTABLA||'.');
                     EXECUTE IMMEDIATE V_MSQL;
                 END IF;

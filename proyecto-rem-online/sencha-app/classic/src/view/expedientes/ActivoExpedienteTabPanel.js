@@ -8,6 +8,7 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTabPanel', {
     viewModel	: {
         type: 'expedientedetalle'
     },
+    scrollable	: 'n', 
     tabBar: {
 		items: [
         		{

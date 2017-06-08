@@ -35,6 +35,12 @@ Ext.define('HreRem.model.ActivosExpediente', {
     		{
     			name: 'idActivo',
     			critical: true
+    		},
+    		{
+    			name:'municipio'
+    		},
+    		{
+    			name:'direccion'
     		}
     		
     ],

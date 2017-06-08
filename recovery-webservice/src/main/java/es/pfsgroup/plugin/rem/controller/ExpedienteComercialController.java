@@ -51,6 +51,7 @@ import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
+import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -1199,7 +1200,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getBloqueosActivo(ModelMap model, Long idExpediente) {
+	public ModelAndView getBloqueosActivo(ModelMap model, Long idExpediente,Long idActivo) {
 		
 		try {
 			List<DtoGastoExpediente> list = expedienteComercialApi.getHonorarios(idExpediente, null);
@@ -1214,6 +1215,65 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		
 		return createModelAndViewJson(model);
 		
+	}
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getTanteosActivo(ModelMap model, Long idExpediente,Long idActivo) {
+		
+		try {
+			List<DtoTanteoActivoExpediente> list = expedienteComercialApi.getTanteosPorActivoExpediente(idExpediente, idActivo);
+			
+			model.put("data", list);
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteTanteo(@RequestParam(value = "id") Long idTanteo) {
+
+		ModelMap model = new ModelMap();
+
+		try {
+			expedienteComercialApi.deleteTanteoActivo(idTanteo);
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveTanteo(DtoTanteoActivoExpediente tanteo, @RequestParam(value = "idEntidad") Long idActivo,
+			@RequestParam(value = "idEntidadPk") Long idExpedienteComercial) {
+
+		ModelMap model = new ModelMap();
+
+		try {
+			tanteo.setIdActivo(idActivo);
+			tanteo.setEcoId(idExpedienteComercial);
+			expedienteComercialApi.guardarTanteoActivo(tanteo);
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+
 	}
 	
 }

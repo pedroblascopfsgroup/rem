@@ -13,6 +13,8 @@ public class DtoActivosExpediente extends WebDto {
 	private Double precioAprobadoVenta;
 	private Double porcentajeParticipacion;
 	private Double importeParticipacion;
+	private String municipio;
+	private String direccion;
 	
 
 	public Long getIdActivo() {
@@ -77,6 +79,22 @@ public class DtoActivosExpediente extends WebDto {
 
 	public void setImporteParticipacion(Double importeParticipacion) {
 		this.importeParticipacion = importeParticipacion;
+	}
+
+	public String getMunicipio() {
+		return municipio;
+	}
+
+	public void setMunicipio(String municipio) {
+		this.municipio = municipio;
+	}
+
+	public String getDireccion() {
+		return direccion;
+	}
+
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
 	}
 	
 

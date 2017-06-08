@@ -87,6 +87,7 @@ BEGIN
                                 INNER JOIN SUMATORIO OPERACION
                                   ON MIG2.GPT_ACT_NUMERO_ACTIVO = OPERACION.GPT_ACT_NUMERO_ACTIVO                                       
                                 INNER JOIN  '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = MIG2.GPT_GPV_ID
+								WHERE MIG2.VALIDACION = 0
                           ) AUX
                 ON (GAS.ACT_ID = AUX.ACT_ID AND GAS.GPV_ID = AUX.GPV_ID)
                 WHEN MATCHED THEN UPDATE SET

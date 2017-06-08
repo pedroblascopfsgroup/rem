@@ -53,7 +53,7 @@ DECLARE
       V_TABLA_TAC VARCHAR2(30 CHAR) := 'TAC_TAREAS_ACTIVOS';
       
       -- Vles. para el SP de Altas BPM
-      V_IN VARCHAR2(30 CHAR) := 'MIG2'; --Vble. de entrada para el  SP que sera el USUARIOCREAR
+      V_IN VARCHAR2(30 CHAR) := V_USUARIO; --Vble. de entrada para el  SP que sera el USUARIOCREAR
       V_OUT VARCHAR2(32000 CHAR); --Vble. de salida para el  SP que almacena la salida del SP
       
 BEGIN
@@ -176,7 +176,7 @@ BEGIN
                         INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = AO.ACT_ID AND ACT.BORRADO = 0 
                         INNER JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0
                         INNER JOIN '||V_ESQUEMA||'.MIG2_ACH_ACTIVOS_HITO ACH ON ACH.ACH_NUMERO_ACTIVO = ACT.ACT_NUM_ACTIVO
-                  WHERE EEC.DD_EEC_CODIGO IN (''10'',''06'',''11'',''04'',''07'',''03'')  
+                  WHERE EEC.DD_EEC_CODIGO IN (''10'',''06'',''11'',''04'',''07'',''03'') AND ACH.VALIDACION = 0
             )
             SELECT
                   OV.OFR_ID
@@ -270,7 +270,7 @@ BEGIN
                     INNER JOIN USU_ID ON USU_ID.ACT_ID = TRA.ACT_ID
                     INNER JOIN SUP_ID ON SUP_ID.ACT_ID = TRA.ACT_ID
             ) AUX
-            ON (AUX.ACT_ID = MIG2.ACT_ID)
+            ON (AUX.ACT_ID = MIG2.ACT_ID AND MIG2.VALIDACION = 0)
             WHEN MATCHED THEN UPDATE
                   SET MIG2.USU_ID = AUX.USU_ID
                          , MIG2.SUP_ID = AUX.SUP_ID

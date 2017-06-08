@@ -31,6 +31,7 @@ DECLARE
       V_NUM_TABLAS NUMBER(10,0) := 0;
       V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
       V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+      V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
       V_TABLA VARCHAR2(40 CHAR) := 'GPV_GASTOS_PROVEEDOR';
       V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_GPV_GASTOS_PROVEEDORES';
       V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -118,7 +119,7 @@ BEGIN
             ,TOG.DD_TOG_ID												DD_TOG_ID
             ,PRG.PVE_ID_GESTORIA										PVE_ID_GESTORIA
             ,0                                                          VERSION
-            ,''#USUARIO_MIGRACION#''                                    USUARIOCREAR
+            ,'||V_USUARIO||'                                    USUARIOCREAR
             ,SYSDATE                                                    FECHACREAR
             ,NULL                                                       USUARIOMODIFICAR
             ,NULL                                                       FECHAMODIFICAR
@@ -227,7 +228,7 @@ BEGIN
             ,TOG.DD_TOG_ID												DD_TOG_ID
             ,PRG.PVE_ID_GESTORIA										PVE_ID_GESTORIA
             ,0                                                          VERSION
-            ,''#USUARIO_MIGRACION#''                                    USUARIOCREAR
+            ,'||V_USUARIO||'                                    USUARIOCREAR
             ,SYSDATE                                                    FECHACREAR
             ,NULL                                                       USUARIOMODIFICAR
             ,NULL                                                       FECHAMODIFICAR
@@ -336,7 +337,7 @@ BEGIN
             ,TOG.DD_TOG_ID												DD_TOG_ID
             ,PRG.PVE_ID_GESTORIA										PVE_ID_GESTORIA
             ,0                                                          VERSION
-            ,''#USUARIO_MIGRACION#''                                                   USUARIOCREAR
+            ,'||V_USUARIO||'                                                   USUARIOCREAR
             ,SYSDATE                                                    FECHACREAR
             ,NULL                                                       USUARIOMODIFICAR
             ,NULL                                                       FECHAMODIFICAR
@@ -460,7 +461,7 @@ BEGIN
             ,TOG.DD_TOG_ID												DD_TOG_ID
             ,PRG.PVE_ID_GESTORIA										PVE_ID_GESTORIA
             ,0                                                          VERSION
-            ,''#USUARIO_MIGRACION#''                                                   USUARIOCREAR
+            ,'||V_USUARIO||'                                                   USUARIOCREAR
             ,SYSDATE                                                    FECHACREAR
             ,NULL                                                       USUARIOMODIFICAR
             ,NULL                                                       FECHAMODIFICAR

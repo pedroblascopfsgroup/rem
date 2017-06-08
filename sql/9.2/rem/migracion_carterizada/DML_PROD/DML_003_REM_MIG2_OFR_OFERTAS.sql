@@ -29,6 +29,7 @@ DECLARE
     V_NUM_TABLAS NUMBER(10,0) := 0;
     V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
     V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+    V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
     V_TABLA VARCHAR2(40 CHAR) := 'OFR_OFERTAS';
     V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_OFR_OFERTAS';
     V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -150,7 +151,7 @@ BEGIN
 			MIG.OFR_COMITE_SANCION										OFR_COMITE_SANCION,
 			MIG.OFR_FECHA_SANCION_COMITE								OFR_FECHA_SANCION_COMITE,        
             0                                                           VERSION,
-            ''#USUARIO_MIGRACION#''                                     USUARIOCREAR,
+            '||V_USUARIO||'                                     USUARIOCREAR,
             SYSDATE                                                     FECHACREAR,
             0                                                           BORRADO
         FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
@@ -284,7 +285,7 @@ BEGIN
 	                                                                ''01-09'',''08'')
 	                                                                )														AS DD_EEC_ID_ANT
           0                                                                                                                 AS VERSION,
-          ''#USUARIO_MIGRACION#''                                                                                           AS USUARIOCREAR,
+          '||V_USUARIO||'                                                                                           AS USUARIOCREAR,
           SYSDATE                                                                                                           AS FECHACREAR
         FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR
         INNER JOIN '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 ON MIG2.OFR_COD_OFERTA = OFR.OFR_NUM_OFERTA

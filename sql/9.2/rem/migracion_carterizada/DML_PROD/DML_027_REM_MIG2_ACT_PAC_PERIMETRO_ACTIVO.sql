@@ -27,6 +27,7 @@ DECLARE
 TABLE_COUNT NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'ACT_PAC_PERIMETRO_ACTIVO';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_PAC_PERIMETRO_ACTIVO';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -102,7 +103,7 @@ BEGIN
                   MIG2.PAC_FECHA_FORMALIZAR                                                                                                                                   AS PAC_FECHA_FORMALIZAR,
                   MIG2.PAC_MOTIVO_FORMALIZAR                                                                                                                          AS PAC_MOTIVO_FORMALIZAR,
           0                                                                                                               AS VERSION, 
-          ''#USUARIO_MIGRACION#''                                                                                        AS USUARIOCREAR,                            
+          '||V_USUARIO||'                                                                                        AS USUARIOCREAR,                            
           SYSDATE                                                                                               AS FECHACREAR,                             
           0                                                                                                         AS BORRADO,
           MNC.DD_MNC_DESCRIPCION                                                                                AS PAC_MOT_EXCL_COMERCIALIZAR

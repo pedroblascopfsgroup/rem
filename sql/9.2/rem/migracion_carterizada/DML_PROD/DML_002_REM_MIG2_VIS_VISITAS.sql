@@ -28,6 +28,7 @@ TABLE_COUNT NUMBER(10,0) := 0;
 TABLE_COUNT_2 NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'VIS_VISITAS';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_VIS_VISITAS';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -145,7 +146,7 @@ BEGIN
                 VIS.VIS_OBSERVACIONES                                                                                   VIS_OBSERVACIONES,
                 VIS.VIS_FECHA_CONCERTACION                                                                              VIS_FECHA_CONCERTACION,
                 0                                                                                                       VERSION,
-                ''#USUARIO_MIGRACION#''                                                                					USUARIOCREAR,
+                '||V_USUARIO||'                                                                					USUARIOCREAR,
                 SYSDATE                                                                         						FECHACREAR,
                 0                                                                               						BORRADO,
                 REPLACE(VIS.VIS_COD_PROCEDENCIA, ''.'')																	VIS_PROCEDENCIA

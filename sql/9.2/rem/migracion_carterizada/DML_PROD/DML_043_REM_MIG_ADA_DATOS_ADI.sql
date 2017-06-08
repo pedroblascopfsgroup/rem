@@ -28,8 +28,9 @@ DECLARE
 
 TABLE_COUNT NUMBER(10,0) := 0;
 TABLE_COUNT_2 NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(30 CHAR) := 'ACT_ADM_INF_ADMINISTRATIVA';
 V_TABLA_2 VARCHAR2(30 CHAR) := 'ACT_SPS_SIT_POSESORIA';
 V_TABLA_3 VARCHAR2(30 CHAR) := 'BIE_DATOS_REGISTRALES';
@@ -118,7 +119,7 @@ BEGIN
 	NULL                                                      ADM_REF_EXPDTE_INTERNO,
 	NULL                                                      ADM_OBS_EXPROPIACION,
 	''0''                                                     VERSION,
-	''#USUARIO_MIGRACION#''                                                   USUARIOCREAR,
+	'||V_USUARIO||'                                                   USUARIOCREAR,
 	SYSDATE                                                   FECHACREAR,
 	NULL                                                      USUARIOMODIFICAR,
 	NULL                                                      FECHAMODIFICAR,
@@ -213,7 +214,7 @@ BEGIN
 	MIG.SPS_FECHA_ACC_ANTIOCUPA                               SPS_FECHA_ACC_ANTIOCUPA,
 	MIG.ACT_IND_CONDICIONADO_OTROS							  SPS_OTRO,
 	''0''                                                     VERSION,
-	''#USUARIO_MIGRACION#''                                   USUARIOCREAR,
+	'||V_USUARIO||'                                   USUARIOCREAR,
 	SYSDATE                                                   FECHACREAR,
 	NULL                                                      USUARIOMODIFICAR,
 	NULL                                                      FECHAMODIFICAR,
@@ -297,7 +298,7 @@ BEGIN
 	NULL                        							  BIE_DREG_MUNICIPIO_LIBRO,
 	NULL                        							  BIE_DREG_CODIGO_REGISTRO,
 	''0''                                                     VERSION,
-	''#USUARIO_MIGRACION#''			                          USUARIOCREAR,
+	'||V_USUARIO||'			                          USUARIOCREAR,
 	SYSDATE                                                   FECHACREAR,
 	NULL                                                      USUARIOMODIFICAR,
 	NULL                                                      FECHAMODIFICAR,
@@ -402,7 +403,7 @@ BEGIN
 	WHERE DD_EON_CODIGO = MIG.ESTADO_OBRA_NUEVA)              DD_EON_ID,
 	MIG.REG_FECHA_CFO                                         REG_FECHA_CFO,
 	''0''                                                     VERSION,
-	''#USUARIO_MIGRACION#''                                   USUARIOCREAR,
+	'||V_USUARIO||'                                   USUARIOCREAR,
 	SYSDATE                                                   FECHACREAR,
 	NULL                                                      USUARIOMODIFICAR,
 	NULL                                                      FECHAMODIFICAR,
@@ -475,7 +476,7 @@ BEGIN
   MIG.LOC_NOMBRE_VIA||'',''||MIG.LOC_NUMERO_DOMICILIO				        BIE_LOC_DIRECCION,
   MIG.LOC_COD_POST													                                            BIE_LOC_COD_POST,
   ''0''                                                                                               VERSION,
-  ''#USUARIO_MIGRACION#''                                                                                           USUARIOCREAR,
+  '||V_USUARIO||'                                                                                           USUARIOCREAR,
   SYSDATE                                                                                      FECHACREAR,
   0                                                                                                BORRADO,
   DD.DD_PRV_ID							              DD_PRV_ID,
@@ -565,7 +566,7 @@ BEGIN
 	MIG.LOC_LATITUD                                           LOC_LATITUD,
 	MIG.LOC_DIST_PLAYA                                        LOC_DIST_PLAYA,
 	''0''                                                     VERSION,
-	''#USUARIO_MIGRACION#''                                   USUARIOCREAR,
+	'||V_USUARIO||'                                   USUARIOCREAR,
 	SYSDATE                                                   FECHACREAR,
 	NULL                                                      USUARIOMODIFICAR,
 	NULL                                                      FECHAMODIFICAR,
@@ -667,7 +668,7 @@ BEGIN
 	MIG.BIE_LOC_ID					bie_loc_id,
 	act.bie_id bie_id,
 	0,
-	''#USUARIO_MIGRACION#'',
+	'||V_USUARIO||',
 	sysdate,
 	0
 	from '||V_ESQUEMA||'.'||V_TABLA_MIG||' mig
@@ -698,7 +699,7 @@ BEGIN
 	act.ACT_ID ACT_ID,
 	MIG.BIE_LOC_ID  BIE_LOC_ID,
 	0,
-	''#USUARIO_MIGRACION#'',
+	'||V_USUARIO||',
 	sysdate,
 	0
 	from '||V_ESQUEMA||'.'||V_TABLA_MIG||' mig

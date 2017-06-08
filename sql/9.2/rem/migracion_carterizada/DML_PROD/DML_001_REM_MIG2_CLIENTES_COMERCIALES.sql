@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=MANUEL RODRIGUEZ
---## FECHA_CREACION=20160928
+--## AUTOR=GUILLEM REY
+--## FECHA_CREACION=20170608
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-855
+--## INCIDENCIA_LINK=HREOS-2209
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración MIG2_CLC_CLIENTE_COMERCIAL -> CLC_CLIENTE_COMERCIAL
@@ -84,11 +84,13 @@ BEGIN
             SELECT 1
             FROM '||V_ESQUEMA||'.'||V_TABLA||' CLC
             WHERE CLC.CLC_WEBCOM_ID = WMIG2.CLC_COD_CLIENTE_WEBCOM
-          )  
+          )
+			AND WMIG2.VALIDACION = 0  
         ),
         DUPLICADOS AS (
           SELECT DISTINCT CLC_COD_CLIENTE_WEBCOM
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' WMIG2
+		  WHERE WMIG2.VALIDACION = 0
           GROUP BY CLC_COD_CLIENTE_WEBCOM 
           HAVING COUNT(1) > 1
           )  
@@ -125,7 +127,7 @@ BEGIN
           UPO.DD_UPO_ID                                                 AS DD_UPO_ID,
           MIG2.CLC_OBSERVACIONES                                        AS CLC_OBSERVACIONES,
           0                                                             AS VERSION,
-          ''MIG2''                                                      AS USUARIOCREAR,
+          ''#USUARIO_MIGRACION#''                                       AS USUARIOCREAR,
           SYSDATE                                                       AS FECHACREAR,
           0                                                             AS BORRADO
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
@@ -141,7 +143,8 @@ BEGIN
             SELECT 1
             FROM DUPLICADOS DUP
             WHERE DUP.CLC_COD_CLIENTE_WEBCOM = MIG2.CLC_COD_CLIENTE_WEBCOM)
-        ) AUX
+		AND MIG2.VALIDACION = 0
+		) AUX
       '
       ;
       
@@ -154,64 +157,7 @@ BEGIN
       EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
       
       DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
-
-      
-      --VALIDACION DE DUPLICADOS
-      V_SENTENCIA := '
-      SELECT SUM(COUNT(1))
-      FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' WMIG2
-      GROUP BY CLC_COD_CLIENTE_WEBCOM 
-      HAVING COUNT(1) > 1
-      '
-      ;  
-      EXECUTE IMMEDIATE V_SENTENCIA INTO V_DUPLICADOS;
-      
-      -- INFORMAMOS A LA TABLA INFO
-      
-      -- Registros MIG
-      V_SENTENCIA := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'';  
-      EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
-      
-      -- Registros insertados en REM
-      -- V_REG_INSERTADOS
-      
-      -- Total registros rechazados
-      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;        
-          
-      -- Observaciones
-      IF V_REJECTS != 0 THEN
-        V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' CLIENTES_COMERCIALES, comprobar CLC_COD_CLIENTE_WEBCOM duplicados en la MIG2 o que ya existan en la tabla de volcado.';
-        
-        IF V_DUPLICADOS != 0 THEN
-                        V_OBSERVACIONES := V_OBSERVACIONES||' Hay '||V_DUPLICADOS||' VIS_COD_VISITA_WEBCOM duplicados. ';       
-                END IF;
-      END IF;
-      
-      EXECUTE IMMEDIATE '
-      INSERT INTO '||V_ESQUEMA||'.MIG_INFO_TABLE (
-        TABLA_MIG,
-        TABLA_REM,
-        REGISTROS_TABLA_MIG,
-        REGISTROS_INSERTADOS,
-        REGISTROS_RECHAZADOS,
-        DD_COD_INEXISTENTES,
-        FECHA,
-        OBSERVACIONES
-      )
-      SELECT
-      '''||V_TABLA_MIG||''',
-      '''||V_TABLA||''',
-      '||V_REG_MIG||',
-      '||V_REG_INSERTADOS||',
-      '||V_REJECTS||',
-      '||V_COD||',
-      SYSDATE,
-      '''||V_OBSERVACIONES||'''
-      FROM DUAL
-      '
-      ;
-      
-      COMMIT;  
+ 
 
 EXCEPTION
       WHEN OTHERS THEN

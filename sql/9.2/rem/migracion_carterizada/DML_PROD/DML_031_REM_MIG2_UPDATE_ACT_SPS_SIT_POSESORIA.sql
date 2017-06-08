@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=PABLO MESEGUER
---## FECHA_CREACION=20170218
+--## AUTOR=GUILLEM REY
+--## FECHA_CREACION=20170608
 --## ARTEFACTO=migracion
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-855
+--## INCIDENCIA_LINK=HREOS-2209
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración Fase 2, para la actualizacion de estados del gasto.

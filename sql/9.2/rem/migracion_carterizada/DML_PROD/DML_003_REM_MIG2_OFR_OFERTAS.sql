@@ -150,7 +150,7 @@ BEGIN
 			MIG.OFR_COMITE_SANCION										OFR_COMITE_SANCION,
 			MIG.OFR_FECHA_SANCION_COMITE								OFR_FECHA_SANCION_COMITE,        
             0                                                           VERSION,
-            ''REMIG''                                                   USUARIOCREAR,
+            ''#USUARIO_MIGRACION#''                                     USUARIOCREAR,
             SYSDATE                                                     FECHACREAR,
             0                                                           BORRADO
         FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
@@ -284,7 +284,7 @@ BEGIN
 	                                                                ''01-09'',''08'')
 	                                                                )														AS DD_EEC_ID_ANT
           0                                                                                                                 AS VERSION,
-          ''MIG2''                                                                                                          AS USUARIOCREAR,
+          ''#USUARIO_MIGRACION#''                                                                                           AS USUARIOCREAR,
           SYSDATE                                                                                                           AS FECHACREAR
         FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR
         INNER JOIN '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 ON MIG2.OFR_COD_OFERTA = OFR.OFR_NUM_OFERTA

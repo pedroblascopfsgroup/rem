@@ -1,4 +1,4 @@
-create or replace PROCEDURE SP_VALIDACION_FUNCIONAL IS
+create or replace PROCEDURE SP_003_VALIDACION_FUNCIONAL IS
 
     V_SQL VARCHAR2(4000 CHAR); -- Sentencia a ejecutar     
     V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- #ESQUEMA# Configuracion Esquema

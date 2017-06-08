@@ -5,19 +5,18 @@ if [ "$#" -ne 1 ]; then
 fi
 
 fichero="DML/DMLs.list"
-
+ls --format=single-column DML/*.sql > $fichero
 echo "INICIO DEL SCRIPT $0"
 
 while read line
 do
-	if [ -f "DML/""$line" ] ; then
+	if [ -f "$line" ] ; then
 		echo "########################################################"
 		echo "#####    INICIO $line"
 		echo "########################################################"
-		echo " "
-		$ORACLE_HOME/bin/sqlplus "$1" @"DML/""$line"
+		$ORACLE_HOME/bin/sqlplus "$1" @"$line"
 		if [ $? != 0 ] ; then 
-		   echo -e "\n\n======>>> "Error en @"DML/""$line"
+		   echo -e "\n\n======>>> "Error en @"$line"
 		   exit 1
 		fi
 

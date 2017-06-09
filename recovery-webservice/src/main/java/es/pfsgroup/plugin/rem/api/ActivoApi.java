@@ -48,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.Visita;
@@ -514,6 +515,14 @@ public interface ActivoApi {
 	 * @return PerimetroActivo
 	 */
 	public PerimetroActivo getPerimetroByIdActivo(Long idActivo);
+	
+	/**
+	 * Devuelve el perimetro del numActivo de un activo
+	 * 
+	 * @param numActivo
+	 * @return PerimetroActivo
+	 */
+	public PerimetroActivo getPerimetroByNumActivo (Long numActivo);
 
 	/**
 	 * Devuelve el perimetro de datos bancarios del ID de un activo dado
@@ -658,6 +667,14 @@ public interface ActivoApi {
 	 * @return
 	 */
 	public Boolean comprobarActivoComercializable(Long idActivo);
+	
+	/**
+	 * Comprueba si el activo tiene activada el check de formalizar
+	 * 
+	 * @param numActivo
+	 * @return
+	 */
+	public boolean esActivoFormalizable(Long numActivo);
 
 	/**
 	 * Devuelve mensaje de validación indicando los campos obligatorios que no
@@ -985,5 +1002,7 @@ public interface ActivoApi {
 	 * @return Devuelve un objeto de tipo ActivoAgrupacionActivo.
 	 */
 	public ActivoAgrupacionActivo getActivoAgrupacionActivoAgrRestringidaPorActivoID(Long id);
+	
+	
 
 }

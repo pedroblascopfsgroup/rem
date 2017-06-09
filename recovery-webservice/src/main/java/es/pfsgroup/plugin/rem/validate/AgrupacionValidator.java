@@ -35,6 +35,7 @@ public interface AgrupacionValidator extends GenericService{
 	public static final String ERROR_OFERTA_ACTIVO_EXPED_TRAMITADO = "El activo tiene algún expediente en estado avanzado de tramitación";
 	public static final String ERROR_OFERTA_AGRUPACION_ACTIVO_ACEPTADA = "La agrupación restringida a la que pertenece el activo tiene al menos una oferta aprobada y no puede ser incluido";
 	public static final String ERROR_OBRANUEVA_NO_ASISTIDA = "Un activo financiero no puede añadirse a una agrupación de Obra Nueva";
+	public static final String ERROR_ACTIVO_NO_COMPARTE_FORMALIZACION = "No se puede añadir un activo en una agrupación con un tipo de formalización distinta a los demás";
 
 
 	/**

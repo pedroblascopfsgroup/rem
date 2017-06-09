@@ -39,6 +39,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -85,6 +86,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.oferta.dao.VOfertaActivoDao;
+import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
@@ -164,6 +166,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
+	
+	@Autowired
+	private ProveedoresDao proveedoresDao;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
 
 	@Override
 	public String managerName() {
@@ -173,7 +181,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
 
-	private Oferta oferta;
 
 	@Override
 	public Oferta getOfertaById(Long id) {
@@ -282,17 +289,37 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return oferta;
 	}
 
-	
-	@Override
-	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter,Usuario usuario) {
-
-		return ofertaDao.getListOfertas(dtoOfertasFilter,usuario);
-	}
-	
+		
 	@Override
 	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter) {
-
+		
 		return ofertaDao.getListOfertas(dtoOfertasFilter);
+	}
+	
+	public DtoPage getListOfertasUsuario(DtoOfertasFilter dto) {
+		
+		Usuario usuarioGestor = null;
+		Usuario usuarioGestoria = null;
+		
+		if (dto.getUsuarioGestor() != null) {
+			usuarioGestor = genericDao.get(Usuario.class,
+					genericDao.createFilter(FilterType.EQUALS, "id", dto.getUsuarioGestor()));
+		}
+		
+		if (dto.getGestoria() != null) {
+			usuarioGestoria = genericDao.get(Usuario.class,
+					genericDao.createFilter(FilterType.EQUALS, "id", dto.getGestoria()));
+		} 
+		
+		if (Checks.esNulo(dto.getGestoria()) && Checks.esNulo(dto.getUsuarioGestor())) {
+			usuarioGestor = genericAdapter.getUsuarioLogado();
+			if (genericAdapter.tienePerfil("GESTIAFORM", usuarioGestor)) {
+				usuarioGestoria = usuarioGestor;
+				usuarioGestor = null;
+			}
+		}
+		
+		return ofertaDao.getListOfertas(dto, usuarioGestor, usuarioGestoria);
 	}
 
 	@Override
@@ -1329,64 +1356,64 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
-	public DtoDetalleOferta getDetalleOfertaById(DtoDetalleOferta dto) {
-		if (Checks.esNulo(dto.getId())) {
-			return dto;
+	public DtoDetalleOferta getDetalleOfertaById(Long idOferta) {
+		DtoDetalleOferta dtoResponse = new DtoDetalleOferta();
+		
+		if (!Checks.esNulo(idOferta)) {
+
+			Oferta oferta = this.getOfertaById(idOferta);
+	
+			if (!Checks.esNulo(oferta)) {
+				dtoResponse.setNumOferta(oferta.getNumOferta().toString());
+				if (!Checks.esNulo(oferta.getVisita())) {
+					dtoResponse.setNumVisitaRem(oferta.getVisita().getNumVisitaRem().toString());
+				}
+				if (!Checks.esNulo(oferta.getIntencionFinanciar())) {
+					dtoResponse.setIntencionFinanciar(oferta.getIntencionFinanciar().equals(1) ? "Si" : "No");
+				}
+				if (!Checks.esNulo(oferta.getVisita())) {
+					dtoResponse.setProcedenciaVisita(oferta.getVisita().getProcendencia());
+				}
+			}
 		}
 
-		Oferta oferta = this.getOfertaById(Long.parseLong(dto.getId()));
-
-		if (!Checks.esNulo(oferta)) {
-			dto.setNumOferta(oferta.getNumOferta().toString());
-			if (!Checks.esNulo(oferta.getVisita())) {
-				dto.setNumVisitaRem(oferta.getVisita().getNumVisitaRem().toString());
-			}
-			if (!Checks.esNulo(oferta.getIntencionFinanciar())) {
-				dto.setIntencionFinanciar(oferta.getIntencionFinanciar().equals(1) ? "Si" : "No");
-			}
-			if (!Checks.esNulo(oferta.getVisita())) {
-				dto.setProcedenciaVisita(oferta.getVisita().getProcendencia());
-			}
-		}
-
-		return dto;
+		return dtoResponse;
 	}
 
 	@Override
-	public List<DtoOfertantesOferta> getOfertantesByOfertaId(DtoOfertantesOferta dtoOfertantesOferta) {
+	public List<DtoOfertantesOferta> getOfertantesByOfertaId(Long idOferta) {
 		List<DtoOfertantesOferta> listaOfertantes = new ArrayList<DtoOfertantesOferta>();
 
-		if (Checks.esNulo(dtoOfertantesOferta.getOfertaID())) {
-			return listaOfertantes;
-		}
+		if (!Checks.esNulo(idOferta)) {
 
-		Filter filterOfertaID = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoOfertantesOferta.getOfertaID()));
-		Oferta oferta = genericDao.get(Oferta.class, filterOfertaID);
-		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getCliente())) {
-			DtoOfertantesOferta dto = new DtoOfertantesOferta();
-			if (!Checks.esNulo(oferta.getCliente().getTipoDocumento())) {
-				dto.setTipoDocumento(oferta.getCliente().getTipoDocumento().getCodigo());
-			}
-			dto.setNumDocumento(oferta.getCliente().getDocumento());
-			dto.setNombre(oferta.getCliente().getNombreCompleto());
-			dto.setOfertaID(String.valueOf(oferta.getId()));
-			dto.setId(String.valueOf(oferta.getCliente().getId()+"c"));
-			listaOfertantes.add(dto);
-		}
-
-		Filter filterTitularOfertaID = genericDao.createFilter(FilterType.EQUALS, "oferta.id", Long.parseLong(dtoOfertantesOferta.getOfertaID()));
-		List<TitularesAdicionalesOferta> titularesAdicionales = genericDao.getList(TitularesAdicionalesOferta.class, filterTitularOfertaID);
-		if (!Checks.estaVacio(titularesAdicionales)) {
-			for (TitularesAdicionalesOferta titularAdicional : titularesAdicionales) {
+			Filter filterOfertaID = genericDao.createFilter(FilterType.EQUALS, "id", idOferta);
+			Oferta oferta = genericDao.get(Oferta.class, filterOfertaID);
+			if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getCliente())) {
 				DtoOfertantesOferta dto = new DtoOfertantesOferta();
-				if (!Checks.esNulo(titularAdicional.getTipoDocumento())) {
-					dto.setTipoDocumento(titularAdicional.getTipoDocumento().getCodigo());
+				if (!Checks.esNulo(oferta.getCliente().getTipoDocumento())) {
+					dto.setTipoDocumento(oferta.getCliente().getTipoDocumento().getCodigo());
 				}
-				dto.setNumDocumento(titularAdicional.getDocumento());
-				dto.setNombre(titularAdicional.getNombre());
+				dto.setNumDocumento(oferta.getCliente().getDocumento());
+				dto.setNombre(oferta.getCliente().getNombreCompleto());
 				dto.setOfertaID(String.valueOf(oferta.getId()));
-				dto.setId(String.valueOf(titularAdicional.getId()+"t"));
+				dto.setId(String.valueOf(oferta.getCliente().getId()+"c"));
 				listaOfertantes.add(dto);
+			}
+	
+			Filter filterTitularOfertaID = genericDao.createFilter(FilterType.EQUALS, "oferta.id", idOferta);
+			List<TitularesAdicionalesOferta> titularesAdicionales = genericDao.getList(TitularesAdicionalesOferta.class, filterTitularOfertaID);
+			if (!Checks.estaVacio(titularesAdicionales)) {
+				for (TitularesAdicionalesOferta titularAdicional : titularesAdicionales) {
+					DtoOfertantesOferta dto = new DtoOfertantesOferta();
+					if (!Checks.esNulo(titularAdicional.getTipoDocumento())) {
+						dto.setTipoDocumento(titularAdicional.getTipoDocumento().getCodigo());
+					}
+					dto.setNumDocumento(titularAdicional.getDocumento());
+					dto.setNombre(titularAdicional.getNombre());
+					dto.setOfertaID(String.valueOf(oferta.getId()));
+					dto.setId(String.valueOf(titularAdicional.getId()+"t"));
+					listaOfertantes.add(dto);
+				}
 			}
 		}
 
@@ -1396,7 +1423,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override
 	@Transactional(readOnly = false)
 	public boolean updateOfertantesByOfertaId(DtoOfertantesOferta dtoOfertantesOferta) {
-		List<DtoOfertantesOferta> listaOfertantes = new ArrayList<DtoOfertantesOferta>();
 
 		if (Checks.esNulo(dtoOfertantesOferta.getId())) {
 			return false;
@@ -1534,21 +1560,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
-	public List<DtoGastoExpediente> getHonorariosActivoByOfertaId(DtoGastoExpediente dto) {
+	public List<DtoGastoExpediente> getHonorariosActivoByOfertaId(Long idActivo, Long idOferta) {
 
 		String[] acciones = { DDAccionGastos.CODIGO_COLABORACION, DDAccionGastos.CODIGO_PRESCRIPCION, DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE };
 
 		List<DtoGastoExpediente> listaHonorarios = new ArrayList<DtoGastoExpediente>();
 
-		if (Checks.esNulo(dto.getIdOferta()) || Checks.esNulo(dto.getIdActivo())) {
+		if (Checks.esNulo(idOferta) || Checks.esNulo(idActivo)) {
 			return listaHonorarios;
 		}
 
 		// Obtener la oferta y comprobar su estado, si el estado de la oferta es
 		// aceptado obtener un listado de gastos expediente. Si no existen
 		// expediente asociado a la oferta calcular los gastos.
-		Filter filterOfertaID = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
-		Filter filterActivoID = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdActivo());
+		Filter filterOfertaID = genericDao.createFilter(FilterType.EQUALS, "id", idOferta);
+		Filter filterActivoID = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
 		Oferta oferta = genericDao.get(Oferta.class, filterOfertaID);
 		Activo activo = genericDao.get(Activo.class, filterActivoID);
 		if (!Checks.esNulo(oferta)) {
@@ -1811,4 +1837,25 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return false;
 	}
+	
+
+	@Override
+	public List<DDTipoProveedor> getDiccionarioSubtipoProveedorCanal() {
+		
+		List<String> codigos = new ArrayList<String>();
+		
+		codigos.add(DDTipoProveedor.COD_MEDIADOR);
+		codigos.add(DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA);
+		codigos.add(DDTipoProveedor.COD_OFICINA_BANKIA);
+		codigos.add(DDTipoProveedor.COD_OFICINA_CAJAMAR);
+		codigos.add(DDTipoProveedor.COD_WEB_HAYA);
+		codigos.add(DDTipoProveedor.COD_PORTAL_WEB);
+		codigos.add(DDTipoProveedor.COD_CAT);
+		codigos.add(DDTipoProveedor.COD_HAYA);		
+		
+		List<DDTipoProveedor> listaTipoProveedor = proveedoresDao.getSubtiposProveedorByCodigos(codigos);		
+
+		return listaTipoProveedor;
+	}
 }
+

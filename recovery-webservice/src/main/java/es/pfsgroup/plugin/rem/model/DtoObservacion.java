@@ -21,6 +21,7 @@ public class DtoObservacion extends WebDto {
 	private String observacion;
 	private Date fecha;
 	private Date fechaModificacion;
+	private String tipoObservacionCodigo;
 
 	public String getId() {
 		return id;
@@ -57,6 +58,12 @@ public class DtoObservacion extends WebDto {
 	}
 	public void setFechaModificacion(Date fechaModificacion) {
 		this.fechaModificacion = fechaModificacion;
+	}
+	public String getTipoObservacionCodigo() {
+		return tipoObservacionCodigo;
+	}
+	public void setTipoObservacionCodigo(String tipoObservacionCodigo) {
+		this.tipoObservacionCodigo = tipoObservacionCodigo;
 	}
 
 }

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=JOSE VILLEL
---## FECHA_CREACION=201702
+--## AUTOR=ANAHUAC DE VICENTE
+--## FECHA_CREACION=20170610
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1325
+--## INCIDENCIA_LINK=HREOS-1325, HREOS-2113
 --## PRODUCTO=NO
 --## Finalidad: Crear una función para obtener la comisión de honorarios en función de una oferta, activo, proveedor y tipo de comisión.
 --##           
@@ -89,18 +89,32 @@ BEGIN
           from TRF_TRF_PRC_HONORARIOS TRF
           where TRF.DD_CLA_CODIGO = clase_activo
           and TRF.DD_TPR_CODIGO = canal;
-       ELSE -- Clase activo Inmobiliario.
-          select 
-              case
-                  when TIPO_COMISION = ''C'' then TRF.trf_prc_colab
-                  when TIPO_COMISION = ''P'' then TRF.trf_prc_presc
-              end
-          into prc_honorario 
-          from TRF_TRF_PRC_HONORARIOS TRF
-          where TRF.DD_CLA_CODIGO = clase_activo 
-          and TRF.DD_SCA_CODIGO = subclase_activo
-          and TRF.TRF_LLAVES_HRE = llaves_en_hre
-          and TRF.DD_TPR_CODIGO = canal;
+       ELSE 						-- Clase activo Inmobiliario.
+
+		  	IF subclase_activo = ''01'' THEN -- SubClase activo Propio.
+		          select 
+		              case
+		                  when TIPO_COMISION = ''C'' then TRF.trf_prc_colab
+		                  when TIPO_COMISION = ''P'' then TRF.trf_prc_presc
+		              end
+		          into prc_honorario 
+		          from TRF_TRF_PRC_HONORARIOS TRF
+		          where TRF.DD_CLA_CODIGO = clase_activo 
+		          and TRF.DD_SCA_CODIGO = subclase_activo
+		          and TRF.DD_TPR_CODIGO = canal;
+			ELSE 							-- SubClase activo REO.
+				 select 
+		              case
+		                  when TIPO_COMISION = ''C'' then TRF.trf_prc_colab
+		                  when TIPO_COMISION = ''P'' then TRF.trf_prc_presc
+		              end
+		          into prc_honorario 
+		          from TRF_TRF_PRC_HONORARIOS TRF
+		          where TRF.DD_CLA_CODIGO = clase_activo 
+		          and TRF.DD_SCA_CODIGO = subclase_activo
+				  and TRF.TRF_LLAVES_HRE = llaves_en_hre
+		          and TRF.DD_TPR_CODIGO = canal;
+			END IF;
        END IF;
   ELSE -- Tipo Proveedor no definido o FVD (Fuerza Venta Directa).
     IF canal = ''18'' THEN 

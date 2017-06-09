@@ -1,12 +1,32 @@
 Ext.define('HreRem.view.expedientes.ActivosExpediente', {
-    extend: 'HreRem.view.common.FormBase',
+	extend: 'Ext.panel.Panel',
     xtype: 'activosexpediente', 
     cls	: 'panel-base shadow-panel',
+    requires: ['HreRem.view.expedientes.ActivoExpedienteTabPanel'],
     collapsed: false,
     reference: 'activosexpedienteref',
-	layout: 'fit',
+    layout: {
+        type: 'vbox',
+        align: 'stretch'
+    },
 
     initComponent: function () {
+    	
+    	var estadoRenderer =  function(value) {
+        	
+        	var src = '',
+        	alt = '';
+        	
+        	if (value) {
+        		src = 'icono_OK.svg';
+        		alt = 'OK';
+        	} else { 
+        		src = 'icono_KO.svg';
+        		alt = 'KO';
+        	} 
+
+        	return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
+        }; 
 
         var me = this;        
         me.setTitle(HreRem.i18n('title.publicaciones.activos.grid'));		         
@@ -28,6 +48,9 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 				            enableGroupingMenu: false,
 				            dock: 'bottom'
 				}],
+				listeners : {
+			    	rowclick: 'onRowClickListadoactivos'
+			    },
 				columns: [
 				   {    xtype: 'actioncolumn',
 	    			text: HreRem.i18n('fieldlabel.numero.activo'),
@@ -56,12 +79,24 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			            
 			       },
 			       {
+			            text: HreRem.i18n("fieldlabel.municipio"),
+			            dataIndex: 'municipio',
+			            flex:1
+			            
+			       },
+			       {
+			            text: HreRem.i18n("header.direccion"),
+			            dataIndex: 'direccion',
+			            flex:1
+			            
+			       },
+			       {
 			            text: HreRem.i18n("header.importe.participacion"),
 			            dataIndex: 'importeParticipacion',
 			            flex:1,
 			       		renderer: Utils.rendererCurrency
 			       },
-			       {   
+			       /*{   
 			       		text: HreRem.i18n("header.porcentaje.participacion"),
 			       	    dataIndex: 'porcentajeParticipacion',
 			       	    editor: 'textfield',
@@ -79,7 +114,7 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			            	}			            	
 			            	return "<span "+style+ ">"+msg+"</span>"
 			            }
-			       },
+			       },*/
 			       {   
 			       		text: HreRem.i18n("header.precio.minimo.autorizado"),
 			       	    dataIndex: 'precioMinimo',
@@ -87,10 +122,25 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			       		renderer: Utils.rendererCurrency
 			       },
 			       {   
-			       		text: HreRem.i18n("header.precio.aprobado.venta"),
-			       	    dataIndex: 'precioAprobadoVenta',
-			       		flex:1,
-			       		renderer: Utils.rendererCurrency
+			       		text: HreRem.i18n("title.condiciones"),
+			       		renderer: estadoRenderer,	           
+			            flex: 0.5,
+			            dataIndex: 'admision',
+			            align: 'center'
+			       },
+			       {   
+			       		text: HreRem.i18n("title.bloqueos"),
+			       		renderer: estadoRenderer,	           
+			            flex: 0.5,
+			            dataIndex: 'admision',
+			            align: 'center'
+			       },
+			       {   
+			       		text: HreRem.i18n("title.tanteo"),
+			       		renderer: estadoRenderer,	           
+			            flex: 0.5,
+			            dataIndex: 'admision',
+			            align: 'center'
 			       }
 			       	        
 			    ],
@@ -105,7 +155,21 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			        }
 			    ]
 			    
+			},
+			{
+		        xtype: 'splitter',
+		        cls: 'x-splitter-base',
+		        collapsible: true
+		    },
+			{	
+				xtype: 'activoExpedienteTabPanel',
+				reference: 'activoExpedienteMain',
+				collapsed: false,
+				hidden: true,
+				scrollable: 'y',
+				flex: 1
 			}
+			//HREOS-2222  
             
             
         ];

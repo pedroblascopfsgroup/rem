@@ -166,7 +166,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
    	onSaveFormularioCompleto: function(btn, form) {
 
 		var me = this;
-		
+
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones.
 		if(form.isFormValid() || form.disableValidation) {
 			
@@ -608,13 +608,35 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
  			me.getViewModel().set("editing", true);
  		}
 	},
-    
-	onClickBotonGuardar: function(btn) {
-		
-		var me = this;	
-		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());				
+
+	onSaveFormularioCompletoTabComercial: function(btn, form){
+		var me = this;
+
+		// Se ha de confirmar la modificación.
+		Ext.Msg.show({
+			   title: HreRem.i18n('title.confirmar.modificar.venta.activo'),
+			   msg: HreRem.i18n('msg.confirmar.modificar.venta.activo'),
+			   buttons: Ext.MessageBox.YESNO,
+			   fn: function(buttonId) {
+			        if (buttonId == 'yes') {
+			        	me.onSaveFormularioCompleto(btn, form);
+			        }
+			   }
+		});
 	},
-	
+
+	onClickBotonGuardar: function(btn) {
+		var me = this;
+		var form = btn.up('tabpanel').getActiveTab();
+
+		// Ejecución especial si la pestaña es 'Comercial'.
+		if("comercialactivo" == form.getXType()) {
+			me.onSaveFormularioCompletoTabComercial(btn, form);
+		} else {
+			me.onSaveFormularioCompleto(btn, form);
+		}
+	},
+
 	onClickBotonCancelar: function(btn) {
 		var me = this,
 		activeTab = btn.up('tabpanel').getActiveTab();
@@ -2414,17 +2436,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			items[0].setVisible(isCarteraCajamar)
 		}
 	},
-	
-	onCargasListDobleClick: function (grid, record) {
-		
-		var me = this;
-		me.fireEvent("log",("*********CARGA SELECCIONADA********"));
-		me.fireEvent("log",record);
-		var isCarteraCajamar = me.getViewModel().get("activo.isCarteraCajamar");
-		Ext.create("HreRem.view.activos.detalle.CargaDetalle", {carga: record, parent: grid.up("form"), modoEdicion: isCarteraCajamar}).show();
 
+	onCargasListDobleClick: function (grid, record) {
+		var me = this;
+
+		Ext.create("HreRem.view.activos.detalle.CargaDetalle", {carga: record, parent: grid.up("form"), modoEdicion: true}).show();
 	},
-	
+
 	abrirFormularioAnyadirCarga: function(grid) {
 		var me = this,
 		record = Ext.create("HreRem.model.ActivoCargas");
@@ -2578,6 +2596,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			dateDevolucion.setDisabled(true);
 			dateDevolucion.setValue();
 		}
+	},
+	
+	
+	onChkbxRevisionDeptoCalidadChange: function(btn) {
+	    	var me = this;
+	    	var nomGestorCalidad = me.lookupReference('nomGestorCalidad');
+			var fechaRevisionCalidad = me.lookupReference('fechaRevisionCalidad');
+			
+	    	if(!btn.value){
+	    		nomGestorCalidad.reset();
+		    	fechaRevisionCalidad.reset();
+	    	}else{
+	    		nomGestorCalidad.setValue($AU.getUser().userName);
+	    		fechaRevisionCalidad.setValue(new Date());
+	    	}
+
 	}
-		
+	    	
 });

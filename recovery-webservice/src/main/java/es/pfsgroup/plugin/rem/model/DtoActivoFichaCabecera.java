@@ -98,7 +98,6 @@ public class DtoActivoFichaCabecera extends WebDto {
 	private Boolean libroEdificio;
 	private Boolean certificadoIte;
 	private String observaciones;
-	private Boolean selloCalidad;
 	private Boolean admision;
 	private Boolean gestion;
 	private String tipoInfoComercialCodigo;
@@ -107,6 +106,7 @@ public class DtoActivoFichaCabecera extends WebDto {
 	private String tipoComercializarCodigo;
 	private String tipoComercializarDescripcion;
 	private Boolean pertenceAgrupacionRestringida;
+	private Boolean pertenceAgrupacionComercial;
 	private String situacionComercialCodigo;
 	private String situacionComercialDescripcion;
 	
@@ -155,7 +155,11 @@ public class DtoActivoFichaCabecera extends WebDto {
 	
 	//Tipo Activo del mediador
 	private String tipoActivoMediadorCodigo;
-
+	
+	//HREOS-1983
+	private Boolean selloCalidad;
+	private String nombreGestorSelloCalidad;
+	private Date fechaRevisionSelloCalidad;
 	
 	private int page;
 	private int start;
@@ -1202,6 +1206,30 @@ public class DtoActivoFichaCabecera extends WebDto {
 	public void setBloqueoTipoComercializacionAutomatico(
 			Boolean bloqueoTipoComercializacionAutomatico) {
 		this.bloqueoTipoComercializacionAutomatico = bloqueoTipoComercializacionAutomatico;
+	}
+
+	public String getNombreGestorSelloCalidad() {
+		return nombreGestorSelloCalidad;
+	}
+
+	public void setNombreGestorSelloCalidad(String nombreGestorSelloCalidad) {
+		this.nombreGestorSelloCalidad = nombreGestorSelloCalidad;
+	}
+
+	public Date getFechaRevisionSelloCalidad() {
+		return fechaRevisionSelloCalidad;
+	}
+
+	public void setFechaRevisionSelloCalidad(Date fechaRevisionSelloCalidad) {
+		this.fechaRevisionSelloCalidad = fechaRevisionSelloCalidad;
+	}
+	
+	public Boolean getPertenceAgrupacionComercial() {
+		return pertenceAgrupacionComercial;
+	}
+
+	public void setPertenceAgrupacionComercial(Boolean pertenceAgrupacionComercial) {
+		this.pertenceAgrupacionComercial = pertenceAgrupacionComercial;
 	}
 	
 

@@ -13,7 +13,7 @@ public class DtoActivoTramite extends WebDto {
 	private static final long serialVersionUID = 0L;
 
 	
-
+	private String id;
 	private String numActivo;
 	private String numActivoRem;
 	private String idSareb;
@@ -40,6 +40,12 @@ public class DtoActivoTramite extends WebDto {
 	private String estadoActivoDescripcion;
 	
 	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
 	public String getNumActivo() {
 		return numActivo;
 	}

@@ -21,6 +21,7 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.VProveedores;
@@ -227,6 +228,32 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 
 	@SuppressWarnings("unchecked")
 	@Override
+	public List<ActivoProveedorContacto> getActivoProveedorContactoPorIdsUsuarioYCartera(List<Long> idUsuarios, Long idCartera) {
+
+		HQLBuilder hb = new HQLBuilder("select pvc from ActivoProveedorContacto pvc, ActivoProveedor pve, EntidadProveedor ep ");
+
+		hb.appendWhere("pve.id = pvc.proveedor.id ");
+		hb.appendWhere("pve.id = ep.proveedor.id ");
+
+		StringBuilder builder = new StringBuilder();
+		for(Long id : idUsuarios) {
+			builder.append(String.valueOf(id));
+			builder.append(",");
+		}
+
+		if(builder.length() > 0) {
+			hb.appendWhere("pvc.usuario.id in (" + builder.toString().substring(0, builder.length()-1) + ")");
+		}
+		hb.appendWhere("ep.cartera.id = " + idCartera);
+
+		List<ActivoProveedorContacto> listaProveedoresContacto = (List<ActivoProveedorContacto>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hb.toString()).list();
+
+		return listaProveedoresContacto;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
 	public List<Long> getIdProveedoresByIdUsuario(Long idUsuario) {
 
 		HQLBuilder hb = new HQLBuilder("select pve.id from ActivoProveedor pve, ActivoProveedorContacto pvc ");
@@ -236,4 +263,20 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 
 		return (List<Long>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public  List<DDTipoProveedor> getSubtiposProveedorByCodigos(List<String> codigos) {
+
+		HQLBuilder hb = new HQLBuilder("from DDTipoProveedor tpr ");		
+		hb.appendWhereIN("tpr.codigo",  codigos.toArray(new String[codigos.size()]));
+
+
+		return this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+	}
+	
+	
+	
+	
+	
 }

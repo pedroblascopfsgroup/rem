@@ -20,7 +20,9 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 
 //@org.springframework.stereotype.Service(JBPMProcessManager.BEAN_KEY)
@@ -44,6 +46,9 @@ public class JBPMActivoScriptExecutor implements JBPMActivoScriptExecutorApi {
     
     @Autowired
     private TrabajoApi trabajoManager;
+    
+    @Autowired
+    private ExpedienteComercialApi expedienteComercialApi;
     
     @Resource
     private List<String> clasesDiccionarioAnotadas;
@@ -133,6 +138,7 @@ public class JBPMActivoScriptExecutor implements JBPMActivoScriptExecutorApi {
         context.put("activoTramiteManager", activoTramiteManager);
         context.put("activoManager", activoManager);
         context.put("trabajoManager", trabajoManager);
+        context.put("expedienteComercialManager", expedienteComercialApi);
         context.put("ctx", ApplicationContextUtil.getApplicationContext());
 
         //TODO: añadir contexto del procedimiento padre.
@@ -154,9 +160,12 @@ public class JBPMActivoScriptExecutor implements JBPMActivoScriptExecutorApi {
         int nVeces = getNVecesTareaExterna(idTramite, idTareaProcedimiento);
         context.put("nVecesTareaExterna", nVeces);
         
-        Long idActivo = activoTramiteManager.get(idTramite).getActivo().getId();
-        if(idActivo != null){
-        	context.put("idActivo", idActivo);
+        Activo activo = activoTramiteManager.get(idTramite).getActivo();
+        if(activo != null) {
+        	Long idActivo = activo.getId();
+	        if(idActivo != null){
+	        	context.put("idActivo", idActivo);
+	        }
         }
 
         return context;

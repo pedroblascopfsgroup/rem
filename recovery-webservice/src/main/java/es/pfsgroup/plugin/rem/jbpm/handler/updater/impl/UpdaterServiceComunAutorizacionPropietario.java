@@ -58,6 +58,8 @@ public class UpdaterServiceComunAutorizacionPropietario implements
 		nuevoIncremento.setPresupuestoActivo(presupuesto);
 		nuevoIncremento.setTrabajo(tramite.getTrabajo());
 
+		Boolean propietarioAcepta = Boolean.TRUE;
+
 		for (TareaExternaValor valor : valores) {
 			
 			//el propietario no acepta
@@ -67,6 +69,8 @@ public class UpdaterServiceComunAutorizacionPropietario implements
 					DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filter);
 					trabajo.setEstado(estadoTrabajo);
 					genericDao.save(Trabajo.class, trabajo);
+
+					propietarioAcepta = Boolean.FALSE;
 				}
 			}
 
@@ -87,8 +91,10 @@ public class UpdaterServiceComunAutorizacionPropietario implements
 			}
 
 		}
-		genericDao.save(IncrementoPresupuesto.class, nuevoIncremento);
 
+		if (propietarioAcepta) {
+			genericDao.save(IncrementoPresupuesto.class, nuevoIncremento);	
+		}
 	}
 
 	public String[] getCodigoTarea() {

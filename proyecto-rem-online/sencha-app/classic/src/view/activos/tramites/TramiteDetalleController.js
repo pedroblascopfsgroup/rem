@@ -177,14 +177,20 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 	},
 	
 	onEnlaceActivosClick: function(tableView, indiceFila, indiceColumna) {
-		
 		var me = this;
-		//var grid = tableView.up('grid');
-		//var record = grid.store.getAt(indiceFila);
-		idActivo = me.getViewModel().get("tramite.idActivo");
-		//grid.setSelection(record);
-		
-		//grid.fireEvent("abriractivo", record);
+		var grid = tableView.up('grid');
+		var record = grid.store.getAt(indiceFila);
+		var idActivo;
+
+		if(Ext.isEmpty(record)) {
+			// Si el record está vacío indica que se ha seleccionado con doble click.
+			idActivo = grid.getSelection()[0].getData().id;
+		} else {
+			// Si el record contiene datos indica que se ha seleccionado con el icono.
+			idActivo = record.getData().id;
+			grid.setSelection(record);
+		}
+
 		me.getView().fireEvent('abrirDetalleActivoPrincipal', idActivo);
 	}, 
 

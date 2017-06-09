@@ -1187,5 +1187,9 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		}
 		return null;
 	}
-		
+
+	@Override
+	public List<ActivoProveedorContacto> getActivoProveedorContactoPorIdsUsuarioYCartera(List<Long> idUsuarios, Long idCartera) {
+		return proveedoresDao.getActivoProveedorContactoPorIdsUsuarioYCartera(idUsuarios, idCartera);
+	}
 }

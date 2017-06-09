@@ -328,6 +328,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
+	public ActivoAgrupacionActivo getActivoAgrupacionActivoAgrRestringidaPorActivoID(Long id) {
+		return activoDao.getActivoAgrupacionActivoAgrRestringidaPorActivoID(id);
+	}
+
+	@Override
+	public boolean isActivoPrincipalAgrupacionRestringida(Long id) {
+		Integer contador = activoDao.isActivoPrincipalAgrupacionRestringida(id);
+		if (contador > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
 	@BusinessOperation(overrides = "activoManager.isIntegradoAgrupacionObraNueva")
 	public boolean isIntegradoAgrupacionObraNueva(Long id, Usuario usuarioLogado) {
 		Integer contador = activoDao.isIntegradoAgrupacionObraNueva(id, usuarioLogado);
@@ -2525,6 +2540,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return perimetro.getAplicaComercializar() == 1 ? true : false;
 	}
+	
+	@Override
+	@BusinessOperationDefinition("activoManager.comprobarActivoFormalizable")
+	public boolean esActivoFormalizable(Long numActivo) {		
+		PerimetroActivo perimetro = this.getPerimetroByNumActivo(numActivo);
+		return perimetro.getAplicaFormalizar() == 1 ? true : false;
+	}
 
 	@Override
 	@BusinessOperationDefinition("activoManager.comprobarObligatoriosDesignarMediador")
@@ -2716,17 +2738,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	}
 
-	public List<VBusquedaGastoActivo> getGastoByActivo(Long idActivo, Long idProveedor) {
+	@Override
+	public Page getGastoByActivo(Long idActivo, Long idProveedor, WebDto dto) {
 
-		List<VBusquedaGastoActivo> vGastosActivos = new ArrayList<VBusquedaGastoActivo>();
+		Page gastosActivos = null;
+
+		dto.setSort(" idGasto ");
+		dto.setDir("ASC");
 
 		if (!Checks.esNulo(idActivo) && !Checks.esNulo(idProveedor)) {
 			Filter filtroGastoActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
 			Filter filtroGastoProveedor = genericDao.createFilter(FilterType.EQUALS, "idProveedor", idProveedor);
-			vGastosActivos = genericDao.getList(VBusquedaGastoActivo.class, filtroGastoActivo, filtroGastoProveedor);
+			gastosActivos = genericDao.getPage(VBusquedaGastoActivo.class, dto, filtroGastoActivo, filtroGastoProveedor);
 		}
 
-		return vGastosActivos;
+		return gastosActivos;
 	}
 
 	@Override
@@ -3294,11 +3320,33 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		try {
 			beanUtilNotNull.copyProperty(activo, "fechaVentaExterna", dto.getFechaVenta());
 			beanUtilNotNull.copyProperty(activo, "importeVentaExterna", dto.getImporteVenta());
+			beanUtilNotNull.copyProperty(activo, "observacionesVentaExterna", dto.getObservaciones());
 
 			// Si se ha introducido valores en fecha o importe de venta, se
-			// actualiza la situación comercial y estado publicación del activo
-			if (!Checks.esNulo(dto.getFechaVenta()) && !Checks.esNulo(dto.getImporteVenta()))
+			// actualiza la situación comercial y estado publicación del activo.
+			// También son rechazadas las ofertas pendientes.
+			if (!Checks.esNulo(dto.getFechaVenta()) || !Checks.esNulo(dto.getImporteVenta())){
 				this.setSituacionComercialAndEstadoPublicacion(activo);
+
+				List<ActivoOferta> listaActivoOfertas = activo.getOfertas();
+				if(listaActivoOfertas != null && listaActivoOfertas.size() > 0) {
+					DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_RECHAZADA);
+
+					for (ActivoOferta actOfr : listaActivoOfertas) {
+						Oferta oferta = actOfr.getPrimaryKey().getOferta();
+						if(oferta.getEstadoOferta() != null && !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
+							oferta.setEstadoOferta(estadoOferta);
+							Auditoria auditoriaOferta = oferta.getAuditoria();
+							if(auditoriaOferta != null) {
+								auditoriaOferta.setFechaModificar(new Date());
+								auditoriaOferta.setUsuarioModificar(usuarioApi.getUsuarioLogado().getUsername());
+							}
+
+							genericDao.save(Oferta.class, oferta);
+						}
+					}
+				}
+			}
 
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
@@ -3586,7 +3634,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public List<Activo> getListActivosPorID(List<Long> activosID) {
 		return activoDao.getListActivosPorID(activosID);
 	}
-	
-	
-	
+
+	@Override
+	public PerimetroActivo getPerimetroByNumActivo(Long numActivo) {
+
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", numActivo);
+		PerimetroActivo perimetroActivo = (PerimetroActivo) genericDao.get(PerimetroActivo.class, filtroActivo);
+		return perimetroActivo;
+
+	}
+
 }

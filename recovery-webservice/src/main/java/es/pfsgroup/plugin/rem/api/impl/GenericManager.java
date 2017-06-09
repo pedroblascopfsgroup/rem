@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -312,6 +313,23 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	}
 
 	@Override
+	public List<EXTDDTipoGestor> getComboTipoGestorFiltrado(Set<String> tipoGestorCodigos) {
+
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
+		List<EXTDDTipoGestor> lista = genericDao.getListOrdered(EXTDDTipoGestor.class, order, genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+
+		List<EXTDDTipoGestor> listaResultado = new ArrayList<EXTDDTipoGestor>();
+
+		for (EXTDDTipoGestor tipoGestor : lista) {
+			if (tipoGestorCodigos.contains(tipoGestor.getCodigo())) {
+				listaResultado.add(tipoGestor);
+			}
+		}
+
+		return listaResultado;
+	}
+
+	@Override
 	@BusinessOperationDefinition("genericManager.getComboTipoGestorOfertas")
 	public List<EXTDDTipoGestor> getComboTipoGestorOfertas() {
 
@@ -322,7 +340,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		List<EXTDDTipoGestor> listaResultado = new ArrayList<EXTDDTipoGestor>();
 		for (EXTDDTipoGestor tipoGestor : lista) {
 			if (tipoGestor.getCodigo().equals("GCOM") || tipoGestor.getCodigo().equals("GCBO")
-					|| tipoGestor.getCodigo().equals("GIAFORM") || tipoGestor.getCodigo().equals("GFORM")) {
+					|| tipoGestor.getCodigo().equals("GFORM")) {
 				listaResultado.add(tipoGestor);
 			}
 		}

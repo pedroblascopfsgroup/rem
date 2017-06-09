@@ -10,21 +10,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoCargasDao;
 import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.model.ActivoCargas;
-
 
 @Service("activoCargasManager")
 public class ActivoCargasManager extends BusinessOperationOverrider<ActivoCargasApi> implements ActivoCargasApi {
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-	
-	protected static final Log logger = LogFactory.getLog(ActivoCargasManager.class);
 
-	@Autowired
-	private GenericABMDao genericDao;
+	protected static final Log logger = LogFactory.getLog(ActivoCargasManager.class);
 
 	@Autowired
 	private ActivoCargasDao ActivoCargasDao;
@@ -39,7 +34,7 @@ public class ActivoCargasManager extends BusinessOperationOverrider<ActivoCargas
 	public ActivoCargas get(Long id) {
 		return ActivoCargasDao.get(id);
 	}
-	
+
 	@Override
 	@BusinessOperation(overrides = "activoCargasManager.saveOrUpdate")
 	@Transactional
@@ -50,7 +45,7 @@ public class ActivoCargasManager extends BusinessOperationOverrider<ActivoCargas
 
 	@Override
 	public boolean esActivoConCargasNoCanceladas(Long idActivo) {
-		
+
 		return ActivoCargasDao.esActivoConCargasNoCanceladas(idActivo);
 	}
 

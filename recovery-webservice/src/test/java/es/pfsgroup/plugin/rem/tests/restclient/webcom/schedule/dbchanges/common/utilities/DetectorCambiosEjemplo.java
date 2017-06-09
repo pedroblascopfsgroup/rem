@@ -53,4 +53,10 @@ public class DetectorCambiosEjemplo extends DetectorCambiosBD<ExampleDto>{
 		return false;
 	}
 
+	@Override
+	public List<String> vistasAuxiliares() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

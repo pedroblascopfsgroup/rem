@@ -7,7 +7,6 @@ import java.util.Map;
 
 import net.sf.json.JSONObject;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -22,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 
 public interface OfertaApi {
@@ -74,13 +74,12 @@ public interface OfertaApi {
 	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter);
 	
 	/**
-	 * Devuelve un Page de Ofertas aplicando el filtro que recibe de un usuario determinado
-	 * 
+	 * Devuelve un Page de Ofertas aplicando el filtro que recibe teniendo en cuenta si se filtra por usuario gestor o gestoria determinado, o ambos, 
+	 * o en caso de no recibirlo, teniendo en cuenta el usuario logado.
 	 * @param dtoOfertasFilter
-	 * @param usuario
 	 * @return
 	 */
-	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter,Usuario usuario);
+	public DtoPage getListOfertasUsuario(DtoOfertasFilter dtoOfertasFilter);
 
 
 	/**
@@ -356,27 +355,28 @@ public interface OfertaApi {
 	 * Este método obtiene los detalles de una oferta por ID de oferta requeridos
 	 * en la pestaña ofertas de un activo.
 	 * 
-	 * @param dto : Dto con los datos.
+	 * @param id identificador de la oferta a consultar.
 	 * @return Devuelve un objeto detalle oferta.
 	 */
-	public DtoDetalleOferta getDetalleOfertaById(DtoDetalleOferta dto);
+	public DtoDetalleOferta getDetalleOfertaById(Long idOferta);
 
 	/**
 	 * Este método obtiene una lista de ofertantes para el ID de oferta dado, esto incluye
 	 * el ofertante principal y los titulares adicionales.
 	 * 
-	 * @param dtoOfertantesOferta : dto con el ID de la oferta a filtrar.
+	 * @param idOferta id de la oferta a filtrar.
 	 * @return Devuelve una lista de DtoOfertantesOferta por cada ofertante encontrado.
 	 */
-	public List<DtoOfertantesOferta> getOfertantesByOfertaId(DtoOfertantesOferta dtoOfertantesOferta);
+	public List<DtoOfertantesOferta> getOfertantesByOfertaId(Long idOferta);
 
 	/**
 	 * Este método obtiene una lista de honorarios para el ID de oferta dado.
 	 *
-	 * @param DtoGastoExpediente : Dto con los datos de oferta y activo para filtrar.
+	 * @param idActivo id del activo para filtrar.
+	 * @param idOferta id de la oferta para filtrar.
 	 * @return Devuelve una lista de DtoGastoExpediente.
 	 */
-	public List<DtoGastoExpediente> getHonorariosActivoByOfertaId(DtoGastoExpediente dto);
+	public List<DtoGastoExpediente> getHonorariosActivoByOfertaId(Long idActivo, Long idOferta);
 	
 	/**
 	 * Este método obtiene una lista de honorarios para el ID de oferta dado.
@@ -482,6 +482,12 @@ public interface OfertaApi {
 	String altaComiteProcess(TareaExterna tareaExterna);
 	
 	public boolean updateOfertantesByOfertaId(DtoOfertantesOferta dtoOfertantesOferta);
+	
+	/**
+	 * Obtiene el listado de subtipos  de proveedor que pueden ser un canal de prescripción
+	 * @return
+	 */
+	public List<DDTipoProveedor> getDiccionarioSubtipoProveedorCanal();
 
 }
 

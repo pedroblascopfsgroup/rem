@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.expedientedetalle',  
-    requires: ['HreRem.view.expedientes.NotarioSeleccionado', 'HreRem.view.expedientes.DatosComprador', 'HreRem.view.expedientes.DatosClienteUrsus'],
+    requires: ['HreRem.view.expedientes.NotarioSeleccionado', 'HreRem.view.expedientes.DatosComprador', 'HreRem.view.expedientes.DatosClienteUrsus',"HreRem.view.expedientes.ActivoExpedienteModel"],
     
     control: {
     	'documentosexpediente gridBase': {
@@ -23,9 +23,34 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
             }
         }
     },
-	
-	
-	cargarTabData: function (form) {
+    
+   
+    
+    onRowClickListadoactivos: function(gridView,record){
+    	
+    	var me = this;
+		var viewModel = me.getViewModel();
+		var id = record.data.idActivo;
+		viewModel.set("activoExpedienteSeleccionado", record);
+		viewModel.notify();
+
+		var tabPanel = me.lookupReference('activoExpedienteMain');
+		tabPanel.setHidden(false);
+		tabPanel.mask();
+		HreRem.view.expedientes.ActivoExpedienteModel.load(id, {
+    		scope: this,
+		    success: function(expediente) {
+		    	tabPanel.unmask();
+		    },
+		   	failure: function (a, operation) {
+		   		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				tabPanel.unmask();
+	       	}
+		});		
+		
+    },
+    
+    cargarTabData: function (form) {
 		var me = this,
 		model = null,
 		models = null,
@@ -217,6 +242,60 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	onClickBotonGuardar: function(btn) {
 		var me = this;	
 		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());				
+	},
+	
+	onClickBotonGuardarActivoExpediente: function(btn) {
+		var me = this;	
+		me.onSaveFormularioActivoExpediente(btn, btn.up('tabpanel').getActiveTab());				
+	},
+	
+	onSaveFormularioActivoExpediente: function(btn, form) {
+		var me = this;
+		if(form.isFormValid()) {
+		if(form.getReference()=="activoexpedientetanteo"){
+			
+		}else{
+			if(Ext.isDefined(form.getBindRecord().getProxy().getApi().create) || Ext.isDefined(form.getBindRecord().getProxy().getApi().update)) {
+				// Si la API tiene metodo de escritura (create or update).
+				me.getView().mask(HreRem.i18n("msg.mask.loading"));
+				
+				form.getBindRecord().save({
+					success: function (a, operation, c) {
+						me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+						me.getView().unmask();
+						me.refrescarExpediente(form.refreshAfterSave);
+		            },
+			            
+		            failure: function (a, operation) {
+		            	var data = {};
+		                try {
+		                	data = Ext.decode(operation._response.responseText);
+		                }
+		                catch (e){ };
+		                if (!Ext.isEmpty(data.msg)) {
+		                	me.fireEvent("errorToast", data.msg);
+		                	// Si recibimos un error controlado, continuamos editando.
+		                	Ext.Array.each(form.query('field[isReadOnlyEdit]'),
+								function (field, index){field.fireEvent('edit');}
+							);
+		                	btn.show();
+							btn.up('tabbar').down('button[itemId=botoncancelar]').show();
+							btn.up('tabbar').down('button[itemId=botoneditar]').hide();
+							me.getViewModel().set("editing", true);
+		                	
+		                } else {
+		                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		                }
+						 me.getView().unmask();
+		            }
+				});
+			}
+		}
+		
+			
+		}else{
+			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
+		}
 	},
 	
 	onClickBotonCancelar: function(btn) {
@@ -1405,5 +1484,25 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	         }*/
     	     }
     	 });
-    }
+    },
+	onClickBotonCancelar: function(btn) {
+		var me = this,
+		activeTab = btn.up('tabpanel').getActiveTab();
+
+		btn.hide();
+		btn.up('tabbar').down('button[itemId=botonguardar]').hide();
+		btn.up('tabbar').down('button[itemId=botoneditar]').show();
+		
+		Ext.Array.each(activeTab.query('field[isReadOnlyEdit]'),
+						function (field, index) 
+							{ 
+								field.fireEvent('save');
+								field.fireEvent('update');});
+
+		if(Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
+ 			me.getViewModel().set("editingFirstLevel", false);
+ 		} else {
+ 			me.getViewModel().set("editing", false);
+ 		}
+	}
 });

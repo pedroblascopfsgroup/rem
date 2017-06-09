@@ -48,7 +48,6 @@ import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Reserva;
-import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.Visita;
@@ -515,6 +514,14 @@ public interface ActivoApi {
 	 * @return PerimetroActivo
 	 */
 	public PerimetroActivo getPerimetroByIdActivo(Long idActivo);
+	
+	/**
+	 * Devuelve el perimetro del numActivo de un activo
+	 * 
+	 * @param numActivo
+	 * @return PerimetroActivo
+	 */
+	public PerimetroActivo getPerimetroByNumActivo (Long numActivo);
 
 	/**
 	 * Devuelve el perimetro de datos bancarios del ID de un activo dado
@@ -659,6 +666,14 @@ public interface ActivoApi {
 	 * @return
 	 */
 	public Boolean comprobarActivoComercializable(Long idActivo);
+	
+	/**
+	 * Comprueba si el activo tiene activada el check de formalizar
+	 * 
+	 * @param numActivo
+	 * @return
+	 */
+	public boolean esActivoFormalizable(Long numActivo);
 
 	/**
 	 * Devuelve mensaje de validación indicando los campos obligatorios que no
@@ -739,10 +754,12 @@ public interface ActivoApi {
 	/**
 	 * Devuelve la lista de los gastos proveedores para un activo y un proveedor
 	 * 
-	 * @param idActivo
+	 * @param idActivo: ID del activo.
+	 * @param idProveedor: ID del proveedor.
+	 * @param dto: dto con los datos de paginación.
 	 * @return
 	 */
-	public List<VBusquedaGastoActivo> getGastoByActivo(Long idActivo, Long idProveedor);
+	public Page getGastoByActivo(Long idActivo, Long idProveedor, WebDto dto);
 
 	/**
 	 * Averigua si el activo tiene ofertas acpetadas // MODIFICACIÓN: Mira si el expediente está aprobado (y estados posteriores).
@@ -973,5 +990,25 @@ public interface ActivoApi {
 	 * @return Devuelve una lista de Activos.
 	 */
 	public List<Activo> getListActivosPorID(List<Long> activosID);
+
+	/**
+	 * Este método devuelve True si el ID del activo pertenece a una agrupación de tipo restringida
+	 * y es el activo principal de la misma. False si no es el activo principal de la agrupación.
+	 * 
+	 * @param id: ID del activo a comprobar si es el activo principal de la agrupación restringida.
+	 * @return Devuelve True si es el activo principal, False si no lo es.
+	 */
+	public boolean isActivoPrincipalAgrupacionRestringida(Long id);
+
+	/**
+	 * Este método obtiene un objeto ActivoAgrupacionActivo de una agrupación de tipo restringida por el ID
+	 * de activo.
+	 * 
+	 * @param id: Id del activo que pertenece a la agrupación.
+	 * @return Devuelve un objeto de tipo ActivoAgrupacionActivo.
+	 */
+	public ActivoAgrupacionActivo getActivoAgrupacionActivoAgrRestringidaPorActivoID(Long id);
+	
+	
 
 }

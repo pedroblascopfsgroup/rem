@@ -23,8 +23,10 @@ Ext.define('HreRem.model.Observaciones', {
     			name:'fecha',
     			type:'date',
     			dateFormat: 'c'
+    		},
+    		{
+    			name: 'tipoObservacionCodigo'
     		}
-    		
     ],
     
 	proxy: {

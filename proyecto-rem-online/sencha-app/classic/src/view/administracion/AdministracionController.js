@@ -106,7 +106,6 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     				displayImporteTotalLabel.setHidden(false);
     				displaySelection.setValue("1 gasto seleccionado"); 
     			}
-    			//debugger;
     			var importeTotalAcumulado = 0;
     			var importeTotalAgrupacion = 0;
     			Ext.Array.each(persistedSelection, function (item) {
@@ -253,7 +252,6 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 
 	onRowClickProvisionesList: function(gridView,record) {
 		var me = this;
-
 		var viewModel = me.getViewModel();
 		viewModel.set("provisionSeleccionada", record);
 		viewModel.notify();

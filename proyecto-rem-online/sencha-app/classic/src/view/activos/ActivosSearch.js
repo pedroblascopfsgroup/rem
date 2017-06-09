@@ -50,15 +50,58 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 				        	bind: {
 			            		store: '{comboEntidadPropietaria}'
 			            	}
+				        },
+				        { 
+							xtype: 'comboboxfieldbase',
+						    addUxReadOnlyEditFieldPlugin: false,
+				        	fieldLabel: HreRem.i18n('fieldlabel.subcartera'),
+				        	name: 'subcarteraCodigo',
+				        	bind: {
+			            		store: '{comboSubcartera}'
+			            	}
 				        }
 				    ]},
-			    	{
+				    {
+				   	defaults: {
+			    		addUxReadOnlyEditFieldPlugin: false
+			    	},
+				    items:[
+				        { 
+				        	xtype: 'comboboxfieldbase',
+				        	fieldLabel: HreRem.i18n('fieldlabel.tipo.activo'),
+				        	name: 'tipoActivoCodigo',
+				        	bind: {
+			            		store: '{comboFiltroTipoActivo}'
+			            	},
+				        	matchFieldWidth: false
+				        },
+				        { 
+				        	xtype: 'comboboxfieldbase',
+				        	fieldLabel: HreRem.i18n('fieldlabel.subtipo.activo'),
+				        	name: 'subtipoActivoCodigo',
+				        	bind: {
+			            		store: '{comboFiltroSubtipoActivo}'
+			            	},
+				        	matchFieldWidth: false
+				        },
+				        {
+							xtype : 'comboboxfieldbase',
+							editable: false,
+							fieldLabel: HreRem.i18n('fieldlabel.activosearch.sello.calidad'),
+							name: 'comboSelloCalidad',
+							bind: {
+								store : '{comboSiNoRem}'
+							}
+						}
+				        
+				    ]},
+				    {
 			    	defaults: {
 			    		addUxReadOnlyEditFieldPlugin: false
 			    	},
 			    	items:[
 					        { 
-					        	fieldLabel: HreRem.i18n('fieldlabel.poblacion'),
+					        	fieldLabel: HreRem.i18n('fieldlabel.municipio'),
 					        	name: 'localidadDescripcion'
 
 					        },
@@ -72,33 +115,6 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 				            	}
 					        }
 					    ]},
-				    {
-				   	defaults: {
-			    		addUxReadOnlyEditFieldPlugin: false
-			    	},
-				    items:[
-				        {
-				        	xtype: 'comboboxfieldbase',
-				        	fieldLabel: HreRem.i18n('fieldlabel.origen'),
-				        	name: 'tipoTituloActivoCodigo',
-							//store: { type: 'diccionario', tipo: 'tiposTitulo'},
-				        	bind: {
-				            	store: '{comboTipoTitulo}'
-				            },
-    						matchFieldWidth: false
-				        },
-				        { 
-				        	xtype: 'comboboxfieldbase',
-				        	fieldLabel: HreRem.i18n('fieldlabel.subtipo.activo'),
-				        	name: 'subtipoActivoCodigo',
-				        	bind: {
-			            		store: '{comboFiltroSubtipoActivo}'
-			            	},
-				        	matchFieldWidth: false
-
-				        }
-				        
-				    ]},
 				    {	
 				    defaults: {
 			    		addUxReadOnlyEditFieldPlugin: false
@@ -139,7 +155,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							items :
 								 [
 									 { 
-							        	fieldLabel: HreRem.i18n('fieldlabel.numero.activo'),
+							        	fieldLabel: HreRem.i18n('fieldlabel.numero.activo.sareb'),
 										labelWidth:	150,
 							        	name: 'numActivoRem'
 							         },
@@ -159,13 +175,40 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 									},
 									{
 							        	xtype: 'comboboxfieldbase',
-							        	fieldLabel:  HreRem.i18n('fieldlabel.estado'),
+							        	fieldLabel:  HreRem.i18n('fieldlabel.estado.fisico.activo'),
 							        	labelWidth:	150,
 							        	name: 'estadoActivoCodigo',
 							        	bind: {
 						            		store: '{comboEstadoActivo}'
-						            	}			
-							        }	
+						            	}
+							        },
+									{
+							        	xtype: 'comboboxfieldbase',
+							        	fieldLabel:  HreRem.i18n('fieldlabel.uso.dominante'),
+							        	labelWidth:	150,
+							        	name: 'tipoUsoDestinoCodigo',
+							        	bind: {
+						            		store: '{comboTiposUsoDestino}'
+						            	}
+							        },
+							        {
+							        	xtype: 'comboboxfieldbase',
+							        	fieldLabel:  HreRem.i18n('fieldlabel.clase.activo'),
+							        	labelWidth:	150,
+							        	name: 'claseActivoBancarioCodigo',
+							        	bind: {
+						            		store: '{comboClaseActivoBancario}'
+						            	}
+							        },
+							        {
+							        	xtype: 'comboboxfieldbase',
+							        	fieldLabel:  HreRem.i18n('fieldlabel.bancario.subclase'),
+							        	labelWidth:	150,
+							        	name: 'subClaseActivoBancarioCodigo',
+							        	bind: {
+						            		store: '{comboSubtipoClaseActivoBancario}'
+						            	}
+							        }
 
 								]
 			                
@@ -217,18 +260,16 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 									{
 										fieldLabel: HreRem.i18n('fieldlabel.municipio'),
 						            	name:		'municipio'
-									}, 
-									{ 
-							        	xtype: 'comboboxfieldbase',						    			
+									},
+									{
+							        	xtype: 'comboboxfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.pais'),
 							        	name: 'paisCodigo',
 							        	bind: {
 						            		store: '{comboPais}'
 						            	}
-							        }
-
+						        	}
 								]
-			                
 			            }
 		            	]
 		            },
@@ -264,14 +305,92 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 								{
 									fieldLabel: HreRem.i18n('fieldlabel.idufir'),
 					                name:		'idufir'
-								}
+								},
+						        {
+						        	xtype: 'comboboxfieldbase',
+						        	fieldLabel: HreRem.i18n('fieldlabel.origen.del.activo'),
+						        	name: 'tipoTituloActivoCodigo',
+						        	bind: {
+						            	store: '{comboTipoTitulo}'
+						            },
+		    						matchFieldWidth: false
+						        },
+						        {
+						        	xtype: 'comboboxfieldbase',
+						        	fieldLabel: HreRem.i18n('fieldlabel.subtipo.titulo'),
+						        	name: 'subtipoTituloActivoCodigo',
+						        	bind: {
+						            	store: '{comboSubtiposTitulo}'
+						            },
+		    						matchFieldWidth: false
+						        },
+						        { 
+						        	xtype: 'comboboxfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.division.horizontal.integrado'),
+					            	name:	'divisionHorizontal',
+						        	bind: {
+					            		store: '{comboSiNoRem}'
+					            	}
+						        },
+						        { 
+						        	xtype: 'comboboxfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.inscrito'),
+					            	name:	'inscrito',
+						        	bind: {
+					            		store: '{comboSiNoRem}'
+					            	}
+						        }
 							]
 
 			            }
 		            ]},
-		            {
+					{
     				columnWidth: 1,
-    				items:[    			
+    				items:[
+						{
+							xtype:'fieldsettable',
+							cls	 :  'fieldsetCabecera',
+							title: HreRem.i18n('fieldlabel.propietario'),
+							collapsible: true,
+							collapsed: true,
+							defaultType: 'textfieldbase',
+							defaults: {
+								addUxReadOnlyEditFieldPlugin: false
+							},
+							items :
+								[
+									{ 
+										xtype: 'comboboxfieldbase',
+										addUxReadOnlyEditFieldPlugin: false,
+										fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
+										name: 'entidadPropietariaCodigoAvanzado',
+										bind: {
+											store: '{comboEntidadPropietaria}'
+										}
+									},
+									{
+										xtype: 'comboboxfieldbase',
+										addUxReadOnlyEditFieldPlugin: false,
+										fieldLabel: HreRem.i18n('fieldlabel.subcartera'),
+										name: 'subcarteraCodigoAvanzado',
+										bind: {
+											store: '{comboSubcartera}'
+										}
+									},
+									{
+										fieldLabel: HreRem.i18n('fieldlabel.nombre.propietario'),
+									    name: 'propietarioNombre'
+									},
+									{
+										fieldLabel: HreRem.i18n('fieldlabel.nif.propietario'),
+										name: 'propietarioNIF'
+									}
+								]
+						}
+					]},
+					{
+					columnWidth: 1,
+					items:[    			
 
 						{    
 							xtype:'fieldsettable',
@@ -301,10 +420,164 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							        	bind: {
 						            		store: '{comboSiNoRem}'
 						            	}
+							        },
+							        {
+							        	xtype: 'comboboxfieldbase',
+							        	editable: false,
+										fieldLabel: HreRem.i18n('fieldlabel.con.posesion.inicial'),
+						            	name: 'conPosesion',
+							        	bind: {
+						            		store: '{comboSiNoRem}'
+						            	}
+							        },
+							        {
+							        	xtype: 'comboboxfieldbase',
+							        	editable: false,
+										fieldLabel: HreRem.i18n('fieldlabel.tapiado'),
+						            	name: 'accesoTapiado',
+							        	bind: {
+						            		store: '{comboSiNoRem}'
+						            	}
+							        },
+							        {
+							        	xtype: 'comboboxfieldbase',
+							        	editable: false,
+										fieldLabel: HreRem.i18n('fieldlabel.puerta.antiocupa'),
+						            	name: 'accesoAntiocupa',
+							        	bind: {
+						            		store: '{comboSiNoRem}'
+						            	}
 							        }
-								
 								]
-			                
+			            }
+		            ]},
+					{
+    				columnWidth: 1,
+    				items:[    			
+
+						{
+							xtype:'fieldsettable',
+							cls	 :  'fieldsetCabecera',
+							title: HreRem.i18n('header.gestor'),
+							collapsible: true,
+							collapsed: true,
+							defaultType: 'textfieldbase',
+							defaults: {
+			    				addUxReadOnlyEditFieldPlugin: false
+			    			},
+							items :
+								[
+									{
+							        	xtype: 'comboboxfieldbase',
+							        	fieldLabel: 'Tipo de gestor:',
+							        	bind: {
+						            		store: '{comboTipoGestorOfertas}',
+						            		value: $AU.userTipoGestor(),
+						            	    readOnly: $AU.userTipoGestor()=="GIAFORM"
+						            	},
+										reference: 'tipoGestor',
+										name: 'tipoGestor',
+			        					chainedStore: 'comboUsuarios',
+										chainedReference: 'usuarioGestor',
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+			    						emptyText: 'Introduzca un gestor',
+										listeners: {
+											select: 'onChangeChainedCombo'
+										}
+									},
+									{
+							        	xtype: 'comboboxfieldbase',
+							        	fieldLabel: HreRem.i18n('header.gestor')+"\\"+HreRem.i18n('header.gestoria'),
+							        	reference: 'usuarioGestor',
+							        	name: 'usuarioGestor',
+							        	bind: {
+						            		store: '{comboUsuarios}',
+						            		disabled: '{!tipoGestor.selection}',
+						            		value: $AU.getUser().userId,
+						            		readOnly: $AU.userTipoGestor()=="GIAFORM"
+						            			
+						            	},
+						            	displayField: 'apellidoNombre',
+			    						valueField: 'id',
+			    						mode: 'local',
+			    						emptyText: 'Introduzca un usuario',
+			    						enableKeyEvents:true,
+		    						    listeners: {
+											'keyup': function() {
+											   this.getStore().clearFilter();
+											   this.getStore().filter({
+												    property: 'apellidoNombre',
+												    value: this.getRawValue(),
+												    anyMatch: true,
+												    caseSensitive: false
+												})
+											},
+											'beforequery': function(queryEvent) {
+												queryEvent.combo.onLoad();
+											}
+		    						    }
+								    }
+								]
+			            }
+		            ]},
+		            {
+    				columnWidth: 1,
+    				items:[    			
+
+						{    
+							xtype:'fieldsettable',
+							cls	 :  'fieldsetCabecera',
+							title: HreRem.i18n('title.varios'),
+							collapsible: true,
+							collapsed: true,
+							defaultType: 'textfieldbase',
+							defaults: {
+			    				addUxReadOnlyEditFieldPlugin: false
+			    			},
+							items :
+								[
+									{ 
+							        	xtype: 'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.estado.comercial'),
+						            	name: 'situacionComercialCodigo',
+							        	bind: {
+						            		store: '{comboSituacionComercial}'
+						            	}
+							        },
+							        { 
+							        	xtype: 'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.perimetro.destino.comercial'),
+						            	name: 'tipoComercializacionCodigo',
+							        	bind: {
+						            		store: '{comboTiposComercializacionActivo}'
+						            	}
+							        },
+							        { 
+							        	xtype: 'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.perimetro.gestion'),
+						            	name: 'perimetroGestion',
+							        	bind: {
+						            		store: '{comboSiNoRem}'
+						            	}
+							        },
+							        {
+							        	xtype: 'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('header.rating'),
+						            	name: 'ratingCodigo',
+							        	bind: {
+						            		store: '{comboRatingActivo}'
+						            	}
+							        },
+							        { 
+							        	xtype: 'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.con.cargas'),
+						            	name: 'conCargas',
+							        	bind: {
+						            		store: '{comboSiNoRem}'
+						            	}
+							        }
+								]
 			            }
 		            ]}
 		            

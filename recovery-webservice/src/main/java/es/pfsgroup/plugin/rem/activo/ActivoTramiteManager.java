@@ -138,7 +138,7 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		DtoActivoTramite dtoActivoTramite = new DtoActivoTramite();
 		
 		try {
-			
+			BeanUtils.copyProperty(dtoActivoTramite, "id", activo.getId());
 			BeanUtils.copyProperty(dtoActivoTramite, "numActivo", activo.getNumActivo());
 			BeanUtils.copyProperty(dtoActivoTramite, "numActivoRem", activo.getNumActivoRem());
 			BeanUtils.copyProperty(dtoActivoTramite, "idSareb", activo.getIdSareb());
@@ -148,10 +148,15 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 			
 			if (activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien() != null) {
 				BeanUtils.copyProperty(dtoActivoTramite, "direccion", activo.getLocalizacion().getLocalizacionBien().getDireccion());
-				BeanUtils.copyProperty(dtoActivoTramite, "municipioCodigo", activo.getLocalizacion().getLocalizacionBien().getLocalidad().getCodigo());
-				BeanUtils.copyProperty(dtoActivoTramite, "municipioDescripcion", activo.getLocalizacion().getLocalizacionBien().getLocalidad().getDescripcion());
-				BeanUtils.copyProperty(dtoActivoTramite, "provinciaCodigo", activo.getLocalizacion().getLocalizacionBien().getProvincia().getCodigo());
-				BeanUtils.copyProperty(dtoActivoTramite, "provinciaDescripcion", activo.getLocalizacion().getLocalizacionBien().getProvincia().getDescripcion());
+				
+				if (activo.getLocalizacion().getLocalizacionBien().getLocalidad() != null) {
+					BeanUtils.copyProperty(dtoActivoTramite, "municipioCodigo", activo.getLocalizacion().getLocalizacionBien().getLocalidad().getCodigo());
+					BeanUtils.copyProperty(dtoActivoTramite, "municipioDescripcion", activo.getLocalizacion().getLocalizacionBien().getLocalidad().getDescripcion());
+				}
+				if (activo.getLocalizacion().getLocalizacionBien().getProvincia() != null) {
+					BeanUtils.copyProperty(dtoActivoTramite, "provinciaCodigo", activo.getLocalizacion().getLocalizacionBien().getProvincia().getCodigo());
+					BeanUtils.copyProperty(dtoActivoTramite, "provinciaDescripcion", activo.getLocalizacion().getLocalizacionBien().getProvincia().getDescripcion());
+				}
 			}
 			if (activo.getRating() != null ) {
 				BeanUtils.copyProperty(dtoActivoTramite, "ratingCodigo", activo.getRating().getCodigo());
@@ -194,10 +199,6 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 				BeanUtils.copyProperty(dtoActivoTramite, "entidadPropietariaCodigo", activo.getCartera().getCodigo());
 				BeanUtils.copyProperty(dtoActivoTramite, "entidadPropietariaDescripcion", activo.getCartera().getDescripcion());
 			}
-			
-//			if (activo.getBien().getLocalizaciones() != null && activo.getBien().getLocalizaciones().get(0).getLocalidad() != null) {
-//				BeanUtils.copyProperty(dtoActivoTramite, "municipioDescripcion", activo.getBien().getLocalizaciones().get(0).getLocalidad().getDescripcion());
-//			}
 			
 			if (activo.getEstadoActivo() != null) {
 				BeanUtils.copyProperty(dtoActivoTramite, "estadoActivoCodigo", activo.getEstadoActivo().getCodigo());

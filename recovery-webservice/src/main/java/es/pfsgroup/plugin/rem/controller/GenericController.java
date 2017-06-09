@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.rem.controller;
 
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -182,7 +184,23 @@ public class GenericController extends ParadiseJsonController{
 		
 		return new ModelAndView("jsonView", model);
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboTipoGestorActivos(WebDto webDto, ModelMap model){
+
+		Set<String> tipoGestorCodigos = new HashSet<String>();
+
+		tipoGestorCodigos.add("GADM"); // Gestor de admision
+		tipoGestorCodigos.add("GACT"); // Gestor de activos
+		tipoGestorCodigos.add("GCOM"); // Gestor comercial
+		tipoGestorCodigos.add("GGADM"); // Gestoría de Admisión
+
+		model.put("data", genericApi.getComboTipoGestorFiltrado(tipoGestorCodigos));
+
+		return new ModelAndView("jsonView", model);
+	}		
+
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboTipoTrabajoCreaFiltered(String idActivo){
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboTipoTrabajoCreaFiltered(idActivo)));	

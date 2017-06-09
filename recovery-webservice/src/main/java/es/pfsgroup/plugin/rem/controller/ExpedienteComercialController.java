@@ -28,6 +28,7 @@ import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
@@ -50,6 +51,7 @@ import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
+import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -78,6 +80,9 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@Autowired
 	private ExpedienteComercialAdapter expedienteComercialAdapter;
+	
+	@Autowired
+	private ActivoAdapter adapter;
 	
 	/**
 	 * Método para modificar la plantilla de JSON utilizada en el servlet.
@@ -1177,6 +1182,98 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		
 		model.put("data", expedienteComercialApi.getComboActivos(idExpediente));
 		return new ModelAndView("jsonView", model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getActivoExpedienteInfo(Long idActivo, WebDto webDto, ModelMap model){
+		try {
+			model.put("data", adapter.getTabActivo(new Long(34937), "datosbasicos"));
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put("success", false);
+			model.put("error", e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getBloqueosActivo(ModelMap model, Long idExpediente,Long idActivo) {
+		
+		try {
+			List<DtoGastoExpediente> list = expedienteComercialApi.getHonorarios(idExpediente, null);
+			
+			model.put("data", list);
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getTanteosActivo(ModelMap model, Long idExpediente,Long idActivo) {
+		
+		try {
+			List<DtoTanteoActivoExpediente> list = expedienteComercialApi.getTanteosPorActivoExpediente(idExpediente, idActivo);
+			
+			model.put("data", list);
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return new ModelAndView("jsonView", model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteTanteo(@RequestParam(value = "id") Long idTanteo) {
+
+		ModelMap model = new ModelMap();
+
+		try {
+			expedienteComercialApi.deleteTanteoActivo(idTanteo);
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveTanteo(DtoTanteoActivoExpediente tanteo, @RequestParam(value = "idEntidad") Long idActivo,
+			@RequestParam(value = "idEntidadPk") Long idExpedienteComercial) {
+
+		ModelMap model = new ModelMap();
+
+		try {
+			tanteo.setIdActivo(idActivo);
+			tanteo.setEcoId(idExpedienteComercial);
+			expedienteComercialApi.guardarTanteoActivo(tanteo);
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+
 	}
 	
 }

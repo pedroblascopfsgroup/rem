@@ -60,7 +60,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFotoTrabajo', {
 	   			 		layout: {
 	   			 			type: 'vbox'
 	   			 		},
-	    				cls:'',
+	   			 		cls:'formbase_no_shadow',
 	    				items: 
 	    					[
 

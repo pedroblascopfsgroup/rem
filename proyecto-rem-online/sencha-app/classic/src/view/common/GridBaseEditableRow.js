@@ -22,6 +22,8 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 	
 	idPrincipal: null,
 	
+	idSecundaria: null,
+	
 	/**
 	 * Parámetro para decidir si queremos que el grid se carge después del bind
 	 * 
@@ -411,7 +413,8 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
         		context.record.save({
 
                     params: {
-                        idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal)
+                        idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal),
+                        idEntidadPk: Ext.isEmpty(me.idSecundaria) ? "" : this.up('{viewModel}').getViewModel().get(me.idSecundaria)	
                     },
                     success: function (a, operation, c) {
                         context.store.load();

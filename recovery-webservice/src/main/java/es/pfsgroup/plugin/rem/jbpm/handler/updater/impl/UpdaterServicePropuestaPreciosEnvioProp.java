@@ -11,8 +11,12 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 
 @Component
 public class UpdaterServicePropuestaPreciosEnvioProp implements UpdaterService {
@@ -34,8 +38,15 @@ public class UpdaterServicePropuestaPreciosEnvioProp implements UpdaterService {
 			{
 				//Guardado adicional Fecha generación propuesta => trabajo.propuesta precios ->  Fecha envio
 				try {
-					tramite.getTrabajo().getPropuestaPrecio().setFechaEnvio(ft.parse(valor.getValor()));
-					Auditoria.save(tramite.getTrabajo().getPropuestaPrecio());
+					PropuestaPrecio propuestaPrecio = tramite.getTrabajo().getPropuestaPrecio();
+					propuestaPrecio.setFechaEnvio(ft.parse(valor.getValor()));
+
+					// Establecer estado propuesta a 'Enviada al propietario'.
+					Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPropuestaPrecio.ESTADO_ENVIADA);
+					DDEstadoPropuestaPrecio estado = genericDao.get(DDEstadoPropuestaPrecio.class, filter);
+					propuestaPrecio.setEstado(estado);
+
+					Auditoria.save(propuestaPrecio);
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}

@@ -36,11 +36,14 @@ public class DtoActivoFilter extends WebDto {
 	private String subtipoTituloActivoCodigo;
 	private String subtipoTituloActivoDescripcion;
     private String entidadPropietariaCodigo;
+    private String entidadPropietariaCodigoAvanzado;
     private String entidadPropietariaDescripcion;
     private String subcarteraCodigo;
+    private String subcarteraCodigoAvanzado;
 	private String subcarteraDescripcion;
 	private String tipoViaCodigo;
 	private String localidadRegistroDescripcion;
+	private String tipoActivoCodigo;
 	private String tipoActivoDescripcion;
 	private String nombreVia;
 	private String codPostal;
@@ -72,7 +75,21 @@ public class DtoActivoFilter extends WebDto {
 	private Integer ventaWebVigente;
 	private Integer minimoHistorico;
 	private Integer webHistorico;
-
+	private Boolean selloCalidad;
+	private Integer comboSelloCalidad;
+	private String claseActivoBancarioCodigo;
+	private String subClaseActivoBancarioCodigo;
+	private Integer divisionHorizontal;
+	private String propietarioNombre;
+	private String propietarioNIF;
+	private Integer accesoTapiado;
+	private Integer accesoAntiocupa;
+	private String situacionComercialCodigo;
+	private String tipoComercializacionCodigo;
+	private Integer perimetroGestion;
+	private String ratingCodigo;
+	private Long usuarioGestor;
+	
 	public String getNumActivo() {
 		return numActivo;
 	}
@@ -444,5 +461,107 @@ public class DtoActivoFilter extends WebDto {
 	}
 	public void setWebHistorico(Integer webHistorico) {
 		this.webHistorico = webHistorico;
+	}
+	public Boolean getSelloCalidad() {
+		return selloCalidad;
+	}
+	public void setSelloCalidad(Boolean selloCalidad) {
+		this.selloCalidad = selloCalidad;
+	}
+	public Integer getComboSelloCalidad() {
+		return comboSelloCalidad;
+	}
+	public void setComboSelloCalidad(Integer comboSelloCalidad) {
+		this.comboSelloCalidad = comboSelloCalidad;
+	}
+	public String getTipoActivoCodigo() {
+		return tipoActivoCodigo;
+	}
+	public void setTipoActivoCodigo(String tipoActivoCodigo) {
+		this.tipoActivoCodigo = tipoActivoCodigo;
+	}
+	public String getClaseActivoBancarioCodigo() {
+		return claseActivoBancarioCodigo;
+	}
+	public void setClaseActivoBancarioCodigo(String claseActivoBancarioCodigo) {
+		this.claseActivoBancarioCodigo = claseActivoBancarioCodigo;
+	}
+	public String getSubClaseActivoBancarioCodigo() {
+		return subClaseActivoBancarioCodigo;
+	}
+	public void setSubClaseActivoBancarioCodigo(String subClaseActivoBancarioCodigo) {
+		this.subClaseActivoBancarioCodigo = subClaseActivoBancarioCodigo;
+	}
+	public Integer getDivisionHorizontal() {
+		return divisionHorizontal;
+	}
+	public void setDivisionHorizontal(Integer divisionHorizontal) {
+		this.divisionHorizontal = divisionHorizontal;
+	}
+	public String getPropietarioNombre() {
+		return propietarioNombre;
+	}
+	public void setPropietarioNombre(String propietarioNombre) {
+		this.propietarioNombre = propietarioNombre;
+	}
+	public String getPropietarioNIF() {
+		return propietarioNIF;
+	}
+	public void setPropietarioNIF(String propietarioNIF) {
+		this.propietarioNIF = propietarioNIF;
+	}
+	public Integer getAccesoTapiado() {
+		return accesoTapiado;
+	}
+	public void setAccesoTapiado(Integer accesoTapiado) {
+		this.accesoTapiado = accesoTapiado;
+	}
+	public Integer getAccesoAntiocupa() {
+		return accesoAntiocupa;
+	}
+	public void setAccesoAntiocupa(Integer accesoAntiocupa) {
+		this.accesoAntiocupa = accesoAntiocupa;
+	}
+	public String getSituacionComercialCodigo() {
+		return situacionComercialCodigo;
+	}
+	public void setSituacionComercialCodigo(String situacionComercialCodigo) {
+		this.situacionComercialCodigo = situacionComercialCodigo;
+	}
+	public String getTipoComercializacionCodigo() {
+		return tipoComercializacionCodigo;
+	}
+	public void setTipoComercializacionCodigo(String tipoComercializacionCodigo) {
+		this.tipoComercializacionCodigo = tipoComercializacionCodigo;
+	}
+	public Integer getPerimetroGestion() {
+		return perimetroGestion;
+	}
+	public void setPerimetroGestion(Integer perimetroGestion) {
+		this.perimetroGestion = perimetroGestion;
+	}
+	public String getRatingCodigo() {
+		return ratingCodigo;
+	}
+	public void setRatingCodigo(String ratingCodigo) {
+		this.ratingCodigo = ratingCodigo;
+	}
+	public Long getUsuarioGestor() {
+		return usuarioGestor;
+	}
+	public void setUsuarioGestor(Long usuarioGestor) {
+		this.usuarioGestor = usuarioGestor;
+	}
+	public String getEntidadPropietariaCodigoAvanzado() {
+		return entidadPropietariaCodigoAvanzado;
+	}
+	public void setEntidadPropietariaCodigoAvanzado(String entidadPropietariaCodigoAvanzado) {
+		this.entidadPropietariaCodigoAvanzado = entidadPropietariaCodigoAvanzado;
+	}
+	public String getSubcarteraCodigoAvanzado() {
+		return subcarteraCodigoAvanzado;
+	}
+	public void setSubcarteraCodigoAvanzado(String subcarteraCodigoAvanzado) {
+		this.subcarteraCodigoAvanzado = subcarteraCodigoAvanzado;
 	}	
 }

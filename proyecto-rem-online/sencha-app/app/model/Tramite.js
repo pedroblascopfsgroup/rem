@@ -29,14 +29,10 @@ Ext.define('HreRem.model.Tramite', {
      		name : 'nombre'
     	},
      	{
-     		name : 'fechaInicio',
-     		type:'date',
-			dateFormat: 'c'
+     		name : 'fechaInicio'
      	},
      	{
-      		name : 'fechaFinalizacion',
-      		type:'date',
-			dateFormat: 'c'
+      		name : 'fechaFinalizacion'
       	},
       	{
        		name : 'cliente'

@@ -222,7 +222,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
                 result = (String) jbpmScriptExecutorApi.evaluaScript(idTramite, idTareaExterna, tareaExterna.getTareaProcedimiento().getId(), null,
                         script);
             } catch (Exception e) {
-                throw new UserException("Error en el script de decisión [" + script + "] para la tarea: " + idTareaExterna + " del trámite: "
+                throw new UserException("Error en el script de validación [" + script + "] para la tarea: " + idTareaExterna + " del trámite: "
                         + idTramite);
             }
             return result;

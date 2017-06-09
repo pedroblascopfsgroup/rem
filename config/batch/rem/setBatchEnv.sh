@@ -16,5 +16,5 @@ export DIR_DESTINO=$INSTALL_DIR/control/etl/input/
 export DIR_SALIDA=$INSTALL_DIR/control/etl/output/
 export DIR_BACKUP=$INSTALL_DIR/control/etl/backup/
 export DIR_BASE_ETL=$INSTALL_DIR/programas/etl
-export MAX_WAITING_MINUTES=60
+export MAX_WAITING_MINUTES=90
 export MAX_WAITING_MINUTES_FOR_START=720

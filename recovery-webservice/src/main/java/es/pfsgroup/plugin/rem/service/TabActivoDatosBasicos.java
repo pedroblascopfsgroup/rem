@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.service;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -15,6 +16,7 @@ import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -24,6 +26,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -61,10 +64,14 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	public static final String MSG_ERROR_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS = "activo.aviso.demsarcar.comercializar.ofertas.vivas";
 	public static final String MSG_ERROR_PERIMETRO_FORMALIZACION_EXPEDIENTE_VIVO = "activo.aviso.demsarcar.formalizar.expediente.vivo";
 	public static final String MOTIVO_ACTIVO_NO_COMERCIALIZABLE_NO_PUBLICADO = "activo.motivo.desmarcar.comercializar.no.publicar";
+	public static final String MSG_ERROR_PERIMETRO_COMERCIALIZACION_AGR_RESTRINGIDA_NO_PRINCIPAL = "activo.aviso.demsarcar.comercializar.agr.restringida.no.principal";
     
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
 	
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
@@ -231,16 +238,27 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		
 		if(activo.getAgrupaciones().size() > 0){
-			Boolean pertenceAgrupacionRestringida= false;
+			Boolean pertenceAgrupacionRestringida = false;
 			for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
 				if(Checks.esNulo(agrupaciones.getAgrupacion().getFechaBaja())) {
 					if(!Checks.esNulo(agrupaciones.getAgrupacion().getTipoAgrupacion()) && DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo())){
-						pertenceAgrupacionRestringida= true;
+						pertenceAgrupacionRestringida = true;
 						break;
 					}
 				}
 			}
+			Boolean pertenceAgrupacionComercial = false;
+			for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
+				if(Checks.esNulo(agrupaciones.getAgrupacion().getFechaBaja())) {
+					if(!Checks.esNulo(agrupaciones.getAgrupacion().getTipoAgrupacion()) && DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo())){
+						pertenceAgrupacionComercial = true;
+						break;
+					}
+				}
+			}
+
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionRestringida", pertenceAgrupacionRestringida);
+			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionComercial", pertenceAgrupacionComercial);
 		}
 
 		// Obtener si el ultimo estado del informe comercial es ACEPTADO.
@@ -337,7 +355,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(!Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getTipoActivo())) {
 			BeanUtils.copyProperty(activoDto, "tipoActivoMediadorCodigo", activo.getInfoComercial().getTipoActivo().getCodigo());
 		}
-
+		
+		if(!Checks.esNulo(activo.getGestorSelloCalidad())){
+			BeanUtils.copyProperty(activoDto, "nombreGestorSelloCalidad", activo.getGestorSelloCalidad().getApellidoNombre());
+		}
 		
 		return activoDto;	
 	}
@@ -567,7 +588,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					
 					//Validacion al desmarcar check formalizar
 					if(!dto.getAplicaFormalizar()) {
-						this.validarPerimetroActivo(activo,2);;
+						this.validarPerimetroActivo(activo,2);
 					}
 				}
 				if(!Checks.esNulo(dto.getAplicaGestion())) {
@@ -604,6 +625,18 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			if (!Checks.esNulo(dto.getTipoAlquilerCodigo())) {
 				DDTipoAlquiler tipoAlquiler = (DDTipoAlquiler) diccionarioApi.dameValorDiccionarioByCod(DDTipoAlquiler.class,  dto.getTipoAlquilerCodigo());
 				activo.setTipoAlquiler(tipoAlquiler);
+			}
+			
+			//HREOS-1983 - Si marcan el check de sello de calidad, ponemos la fecha actual y el gestor logueado.
+			if(!Checks.esNulo(dto.getSelloCalidad()) && dto.getSelloCalidad()) {
+				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+				if(!Checks.esNulo(usuarioLogado)){
+					activo.setGestorSelloCalidad(usuarioLogado);
+				}
+				activo.setFechaRevisionSelloCalidad(new Date());
+			}else{
+				activo.setGestorSelloCalidad(null);
+				activo.setFechaRevisionSelloCalidad(null);
 			}
 			
 			// Activo bancario -------------
@@ -686,13 +719,17 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	/**
 	 * Acciones al desmarcar check Comercializar
 	 * 1. Valida si se puede demarcar (Activo sin ofertas vivas).
-	 * 2. Si puede, hay que poner el activo en estado publicación a 'No publicado'
+	 * 2. Valida si el activo pertenece a una agrupación de tipo restringida y es el activo principal.
+	 * 3. Si puede desmarcar y es activo principal de una agrupación de tipo restringida, hay que poner
+	 *  el activo en estado publicación a 'No publicado' y desmarcar todos los comercializar de los activos
+	 *  que componen la agrupación restringida.
 	 * @param activo
 	 * @throws SQLException 
 	 * @throws JsonViewerException 
 	 */
 	private void accionesDesmarcarComercializar(Activo activo) throws JsonViewerException, SQLException {
 		this.validarPerimetroActivo(activo,1);
+		this.validarPerimetroActivo(activo,3);
 		//Si se permite desmarcar, cambiamos el estado de publicación del activo a 'No Publicado'
 		String motivo = messageServices.getMessage(MOTIVO_ACTIVO_NO_COMERCIALIZABLE_NO_PUBLICADO);
 		activoApi.setActivoToNoPublicado(activo, motivo);
@@ -702,6 +739,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	 * Valida condiciones del perimitro, según se marque/desmarque los checks.
 	 * case 1: Al desmarcar check comercializar, no se puede hacer si el activo tiene ofertas vivas. (estado != rechazada)
 	 * case 2: Al desmarcar check formalizar, no se puede hacer si el activo tiene un exp. comercial vivo (tareas activas)
+	 * case 3: Al desmarcar check comercializar, no se puede hacer si el activo se encuentra en una agrupación restringida y NO es activo principal.
 	 * @param activo
 	 * @return
 	 */
@@ -720,6 +758,18 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					error = messageServices.getMessage(MSG_ERROR_PERIMETRO_FORMALIZACION_EXPEDIENTE_VIVO);
 				break;
 			}
+			case 3: {
+				if(activoApi.isIntegradoAgrupacionRestringida(activo.getId(), genericAdapter.getUsuarioLogado())) {
+					if(activoApi.isActivoPrincipalAgrupacionRestringida(activo.getId())) {
+						// Quitar comercializar todos los activos de la misma AGR restringida que el activo.
+						this.quitarComercializacionEnActivosAgrupacionRestringidaPorActivo(activo);
+					} else {
+						error = messageServices.getMessage(MSG_ERROR_PERIMETRO_COMERCIALIZACION_AGR_RESTRINGIDA_NO_PRINCIPAL);
+					}
+				}
+
+				break;
+			}
 			default:
 				break;
 		}
@@ -727,5 +777,39 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(!Checks.esNulo(error))
 			throw new JsonViewerException(error);
 	}
-	
+
+	/**
+	 * Este método pone la comercialización de todos los activos de una agrupación de tipo restringida
+	 * a NO. Obtiene la agrupación en base a un activo.
+	 * 
+	 * @param activo: activo desde el que obtener la agrupación de tipo restringida.
+	 */
+	private void quitarComercializacionEnActivosAgrupacionRestringidaPorActivo(Activo activo) {
+		ActivoAgrupacionActivo activoAgrupacionActivo = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId());
+
+		if(activoAgrupacionActivo == null) {
+			return;
+		}
+
+		List<ActivoAgrupacionActivo> activoAgrupacionActivoList = activoAgrupacionActivo.getAgrupacion().getActivos();
+
+		for(ActivoAgrupacionActivo activos : activoAgrupacionActivoList) {
+			// No modificar el perímetro del activo de procedencia, su perimetro se actualiza en el método padre de la tab.
+			if(activos.getActivo().getId() == activo.getId()) {
+				continue;
+			}
+
+			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activos.getActivo().getId());
+			if(perimetroActivo != null) {
+				perimetroActivo.setAplicaComercializar(0);
+				perimetroActivo.setFechaAplicaComercializar(new Date());
+
+				perimetroActivo.setAplicaFormalizar(0);
+				perimetroActivo.setFechaAplicaFormalizar(new Date());
+
+				activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
+			}
+		}
+	}
+
 }

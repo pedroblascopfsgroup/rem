@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
+import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
@@ -667,10 +668,54 @@ public interface ExpedienteComercialApi {
 	 * Este método calcula y actualiza el importe por cada honorario(GastoExpediente) de un Expediente.
 	 * Sólo se actualizan los honorarios cuyos tipos de cálculo es 'porcentaje'.
 	 * 
-	 * @param idExpediente: ID del expediente al que actualziar sus honorarios.
+	 * @param idTramite: ID del trámite.
 	 */
-	public void actualizarHonorariosPorExpediente(Long idExpediente);
+	public void actualizarHonorariosPorExpediente(Long idTramite);
 
 	String uploadDocumento(WebFileItem fileItem, Long idDocRestClient, ExpedienteComercial expedienteComercialEntrada,
 			String matricula) throws Exception;
+
+	/**
+	 * Este método devuelve True si la suma de todos los importes de participación de los activos
+	 * involucrados en el expediente suman lo mismo que el importe total de expediente. False si no
+	 * coinciden. El importe del expediente se saca en primer lugar del importe contra oferta, si no
+	 * se encuentra establecido lo obtiene del importe de la oferta.
+	 * 
+	 * @param idExpediente: ID del expediente comercial para comprobar su importe.
+	 * @return  Devuelve True si los importes coinciden, False si no.
+	 */
+	public Boolean checkImporteParticipacion(Long idExpediente);
+
+	/**
+	 * Este método obtiene un expediente comercial en base a un Activo.
+	 * 
+	 * @param activo: acivo al que buscar el expediente comercial al que pertenece.
+	 * @return Devuelve un expediente comercial.
+	 */
+	public ExpedienteComercial getExpedientePorActivo(Activo activo);
+	
+	/**
+	 * Obtiene los tanteos para un activo en un expediente
+	 * 
+	 * @param idExpediente
+	 * @param idActivo
+	 * @return
+	 */
+	public List<DtoTanteoActivoExpediente> getTanteosPorActivoExpediente(Long idExpediente, Long idActivo);
+	
+	/**
+	 * Guardar tanteo activo
+	 * 
+	 * @param tanteoActivo
+	 * @return
+	 */
+	public boolean guardarTanteoActivo(DtoTanteoActivoExpediente tanteoActivoDto);
+	
+	/**
+	 * Borrar tanteo activo
+	 * 
+	 * @param tanteoActivoDto
+	 * @return
+	 */
+	public boolean deleteTanteoActivo(Long idTanteo);
 }

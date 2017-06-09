@@ -1,10 +1,8 @@
 package es.pfsgroup.plugin.rem.model;
 
-import es.capgemini.devon.dto.WebDto;
 
-public class DtoDetalleOferta extends WebDto {
+public class DtoDetalleOferta {
 
-	private static final long serialVersionUID = 1L;
 
 	private String id;
 	private String numOferta;

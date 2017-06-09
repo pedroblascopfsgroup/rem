@@ -341,6 +341,10 @@ white-space: normal !important;
   background-size: 30px;
 }
 
+.x-action-col-icon.ico-ver-visita {
+	background-size: 20px !important;
+}
+
 //------------------ PANEL BASE----------------------------
 
 .panel-base {  
@@ -1238,6 +1242,10 @@ body.x-masked > .x-mask {
 
 .itemselectorbase .x-form-item-default.x-item-disabled {
 	opacity: 1;
+}
+
+.formbase_no_shadow {
+	box-shadow: none;
 }
 
 .label-read-only-textarea.item-selector-form-read-only {

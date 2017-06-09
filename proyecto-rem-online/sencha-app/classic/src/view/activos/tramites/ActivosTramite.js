@@ -10,7 +10,7 @@ Ext.define('HreRem.view.tramites.ActivosTramite', {
 
     	me.items= [
 			{
-			    xtype		: 'gridBaseEditableRow',
+			    xtype		: 'gridBase',
 			    idPrincipal	: 'tramite.id',
 			    reference: 'listadoActivosTramite',
 				cls	: 'panel-base shadow-panel',
@@ -18,7 +18,9 @@ Ext.define('HreRem.view.tramites.ActivosTramite', {
 					title: '{tituloActivosTrabajo}',
 					store: '{activosTramite}'
 				},
-
+				listeners: {
+					rowdblclick: 'onEnlaceActivosClick'
+				},
 				features: [
 					{
 			            id: 'summary',

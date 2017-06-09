@@ -76,6 +76,7 @@ import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VActivosSubdivision;
@@ -96,6 +97,7 @@ import es.pfsgroup.plugin.rem.validate.AgrupacionValidator;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidatorFactoryApi;
 import es.pfsgroup.plugin.rem.validate.BusinessValidators;
 import es.pfsgroup.recovery.api.UsuarioApi;
+import net.sf.json.JSONObject;
 
 @Service
 public class AgrupacionAdapter {
@@ -178,6 +180,9 @@ public class AgrupacionAdapter {
 	public static final String AGRUPACION_BAJA_ERROR_OFERTAS_VIVAS = "No ha sido posible dar de baja la agrupación. Existen ofertas vivas";
 	private static final String AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO = "activo.motivo.oferta.tipo.numero.documento";
 	private static final String AVISO_MENSAJE_CLIENTE_OBLIGATORIO = "activo.motivo.oferta.cliente";
+	
+	private static final Integer NO_ES_FORMALIZABLE = new Integer(0);
+	private static final Integer ES_FORMALIZABLE = new Integer(1);
 	
 	public DtoAgrupaciones getAgrupacionById(Long id) {
 
@@ -354,6 +359,11 @@ public class AgrupacionAdapter {
 				// anyadir activos
 				BeanUtils.copyProperty(dtoAgrupacion, "existenOfertasVivas",
 						this.existenOfertasActivasEnAgrupacion(id));
+				
+				// Para permitir un nulo en isFormalizacion
+				if (agrupacion.getIsFormalizacion()==null) {
+					dtoAgrupacion.setIsFormalizacion(null);
+				}
 
 			}
 
@@ -503,7 +513,14 @@ public class AgrupacionAdapter {
 				agrupacion = updateAgrupacionPrimerActivo(activo, agrupacion);
 				activoAgrupacionApi.saveOrUpdate(agrupacion);
 			}
-
+			
+			// Si el activo es de tipo Formalizable, pero la agrupación en la que lo vamos a meter NO lo es, lanzamos una Excepcion
+			// Si el activo es no Formalizable, pero la agrupación en la que lo vamos a meter SI que lo es, también lanzamos una Excepcion
+			if (activoApi.esActivoFormalizable(activo.getNumActivo()) && agrupacion.getIsFormalizacion().equals(NO_ES_FORMALIZABLE) ||
+				!activoApi.esActivoFormalizable(activo.getNumActivo()) && agrupacion.getIsFormalizacion().equals(ES_FORMALIZABLE)) {
+				throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_NO_COMPARTE_FORMALIZACION);
+			}
+			
 			// Validaciones de agrupación
 			agrupacionValidate(activo, agrupacion);
 
@@ -1453,7 +1470,7 @@ public class AgrupacionAdapter {
 	public boolean saveAgrupacion(DtoAgrupaciones dto, Long id) {
 
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
-
+		
 		// Primero comprobamos si estamos dandola de baja y se cumplen todos los
 		// requisitos para poder hacerlo
 
@@ -1544,7 +1561,9 @@ public class AgrupacionAdapter {
 				if (!Checks.esNulo(dto.getCodigoGestorComercialBackOffice())) {
 					Usuario usuario = proxyFactory.proxy(UsuarioApi.class).get(dto.getCodigoGestorComercialBackOffice());
 					loteComercial.setUsuarioGestorComercialBackOffice(usuario);
-				}
+				}				
+				//TODO: 1er comprovar si es pot canviar "formalizacion"
+				
 				
 				activoAgrupacionApi.saveOrUpdate(loteComercial);
 
@@ -1942,5 +1961,26 @@ public class AgrupacionAdapter {
 		}
 
 		return codigoEstado;
+	}
+
+	/**
+	 * Este método obtiene una lista de usuarios filtrados por el tipo de gestor que recibe
+	 * y por la cartera a la que pertenece la agrupación.
+	 * 
+	 * @param agrId: ID de la agrupación.
+	 * @param codigoGestor: código del tipo de gestor.
+	 * @return Devuelve una lista de usuarios.
+	 */
+	public List<DtoUsuario> getUsuariosPorTipoGestorYCarteraDelLoteComercial(Long agrId, String codigoGestor) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoGestor);
+		EXTDDTipoGestor tipoGestor = (EXTDDTipoGestor) genericDao.get(EXTDDTipoGestor.class, filtro);
+
+		ActivoAgrupacion activoAgrupacion = activoAgrupacionApi.get(agrId);
+
+		if (!Checks.esNulo(tipoGestor) && !Checks.esNulo(activoAgrupacion)) {
+			return activoAdapter.getComboUsuariosPorTipoGestorYCarteraDelLoteComercial(activoAgrupacion, tipoGestor.getId());
+		}
+
+		return null;
 	}
 }

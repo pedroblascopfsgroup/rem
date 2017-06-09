@@ -141,7 +141,31 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						DDMotivoAnulacionExpediente motivoAnulacion = (DDMotivoAnulacionExpediente) genericDao.get(DDMotivoAnulacionExpediente.class, filtro);
 						expediente.setMotivoAnulacion(motivoAnulacion);
 					}
-					
+				}
+
+				Boolean tieneReserva = ofertaApi.checkReserva(valores.get(0).getTareaExterna());
+				// El expediente NO tiene reserva.
+				if(!tieneReserva) {
+					//Anula el expediente
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
+					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+					expediente.setEstado(estado);
+					expediente.setFechaAnulacion(new Date());
+
+					//Finaliza el trámite
+					Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
+					tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
+					genericDao.save(ActivoTramite.class, tramite);
+
+					//Rechaza la oferta y descongela el resto
+					ofertaApi.rechazarOferta(ofertaAceptada);
+					try {
+						ofertaApi.descongelarOfertas(expediente);
+					} catch (Exception e) {
+						logger.error("Error descongelando ofertas.", e);
+					}
+
+					genericDao.save(ExpedienteComercial.class, expediente);
 				}
 			}
 		}

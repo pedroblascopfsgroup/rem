@@ -72,6 +72,7 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
                 		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].hide();
                 		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].hide();
                 	}
+                	Ext.global.console.log(record.data);
 	        		this.up('form').setBindRecord(record.data);
 	        	}
             }

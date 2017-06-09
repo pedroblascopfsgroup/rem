@@ -14,18 +14,20 @@ public class DtoTanteoActivoExpediente extends WebDto {
 	private String id;
 	private String codigoTipoAdministracion;
 	private String descTipoAdministracion;
-	private Date fechaComunicacion = null;
-	private Date fechaRespuesta = null;
+	private Date fechaComunicacion;
+	private Date fechaRespuesta;
 	private String numeroExpediente;
 	private String solicitaVisita;
-	private Date fechaFinTanteo = null;
+	private Date fechaFinTanteo;
 	private String codigoTipoResolucion;
 	private String descTipoResolucion;
-	private Date fechaVencimiento = null;
-	private Date fechaVisita = null;
-	private Date fechaResolucion = null;
+	private Date fechaVencimiento;
+	private Date fechaVisita;
+	private Date fechaSolicitudVisita;
+	private Date fechaResolucion;
 	private Long idActivo;
 	private Long ecoId;
+	private String condiciones;
 
 	
 	public String getId() {
@@ -154,4 +156,19 @@ public class DtoTanteoActivoExpediente extends WebDto {
 		this.fechaResolucion = fechaResolucion;
 	}
 
+	public Date getFechaSolicitudVisita() {
+		return fechaSolicitudVisita;
+	}
+
+	public void setFechaSolicitudVisita(Date fechaSolicitudVisita) {
+		this.fechaSolicitudVisita = fechaSolicitudVisita;
+	}
+
+	public String getCondiciones() {
+		return condiciones;
+	}
+
+	public void setCondiciones(String condiciones) {
+		this.condiciones = condiciones;
+	}
 }

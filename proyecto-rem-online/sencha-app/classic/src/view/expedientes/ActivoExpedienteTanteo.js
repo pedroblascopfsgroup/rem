@@ -16,7 +16,6 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
         var items= [
 			{
 			    xtype: 'gridBaseEditableRow',
-			    topBar: $AU.userHasFunction(['EDITAR_TAB_GESTION_ECONOMICA_EXPEDIENTES']),
 			    reference: 'listadotanteos',
 			    idPrincipal : 'activoExpedienteSeleccionado.idActivo',
 			    idSecundaria : 'expediente.id',
@@ -27,8 +26,12 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 				listeners: {
 					beforeedit: function(editor){
 						
+					},
+					rowclick: function(dataview,record) {
+						this.up('form').setBindRecord(record.data);
 					}
 				},
+				
 				features: [{
 		            id: 'summary',
 		            ftype: 'summary',
@@ -191,43 +194,65 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 			        }
 	    		]*/
 			},
-			{
-				xtype : 'fieldsettable',
-				defaultType : 'textfieldbase',
-
-				title : HreRem.i18n('title.situacion.real.activo'),
-				items : [
-							{ 
-					        	xtype: 'comboboxfieldbase',				        	
-						 		fieldLabel: HreRem.i18n('fieldlabel.situacion.titulo'),
-					        	bind: {
-				            		store: '{comboEstadoTitulo}',
-				            		value: '{datosRegistrales.estadoTitulo}'
-				            	}
+			{   
+				xtype:'fieldsettable',
+				defaultType: 'displayfieldbase',				
+				title: HreRem.i18n('title.oferta.tanteo.retracto.detalle'),
+				items :
+					[
+		                {
+		                	xtype: 'textfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.condiciones'),
+		                	colspan: 3,
+		                	defaultMaxWidth: '100%',
+		                	maxLength: 1999,
+		                	bind: {
+								value: '{condiciones}'
+							}
+		                },
+		                {
+		                	xtype:'datefieldbase',
+							formatter: 'date("d/m/Y")',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.fecha.comunicacion'),
+		                	bind:		'{fechaComunicacion}'
+		                },
+		                {
+		                	xtype:'datefieldbase',
+							formatter: 'date("d/m/Y")',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.fecha.contestacion'),
+		                	colspan: 2,
+		                	bind:		'{fechaRespuesta}'
+		                },
+		                {
+		                	xtype:'datefieldbase',
+							formatter: 'date("d/m/Y")',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.fecha.solicitud.visita'),
+		                	bind:		'{fechaSolicitudVisita}'
+		                },
+		                {
+		                	xtype:'datefieldbase',
+							formatter: 'date("d/m/Y")',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.fecha.realizacion.visita'),
+		                	colspan: 2,
+		                	bind:		'{fechaVisita}'
+		                },
+		                {
+		                	xtype:'datefieldbase',
+							formatter: 'date("d/m/Y")',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.fecha.fin.tanteo'),
+		                	maxValue: null,
+		                	minValue: new Date(),
+		                	bind:		'{fechaFinTanteo}'
+		                },
+		                {
+		                	xtype: 'comboboxfieldbase',
+		                	bind: {
+								store: '{comboResultadoTanteo}',
+								value: '{codigoTipoResolucion}'
 							},
-							{ 
-					        	xtype: 'comboboxfieldbase',
-					        	fieldLabel: HreRem.i18n('fieldlabel.con.posesion.inicial'),
-					        	bind: {
-				            		store: '{comboSiNoRem}',
-				            		value: '{condiciones.posesionInicial}'			            		
-				            	},
-				            	displayField: 'descripcion',
-	    						valueField: 'codigo'
-					        },
-					        { 
-					        	xtype: 'comboboxfieldbase',
-//					        	editable: false,
-					        	fieldLabel: HreRem.i18n('fieldlabel.situacion.posesoria'),
-					        	bind: {
-				            		store: '{comboSituacionPosesoria}',
-				            		value: '{condiciones.situacionPosesoriaCodigo}'			            		
-				            	},
-				            	displayField: 'descripcion',
-	    						valueField: 'codigo',
-	    						editable: true
-					        }
-						]
+		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.resultado.tanteo')
+		                }
+				]
 			}
 		];
     

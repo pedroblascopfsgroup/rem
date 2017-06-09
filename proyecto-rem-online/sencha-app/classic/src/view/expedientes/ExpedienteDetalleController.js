@@ -30,17 +30,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	
     	var me = this;
 		var viewModel = me.getViewModel();
-	//	viewModel.set("provisionSeleccionada", record);
-	//	viewModel.notify();
-		
-		Ext.global.console.log(record.data.idActivo);
 		var id = record.data.idActivo;
 		viewModel.set("activoExpedienteSeleccionado", record);
 		viewModel.notify();
 
 		var tabPanel = me.lookupReference('activoExpedienteMain');
-		//var store = grid.getStore();
-		//tabPanel.expand();
 		tabPanel.setHidden(false);
 		tabPanel.mask();
 		HreRem.view.expedientes.ActivoExpedienteModel.load(id, {
@@ -54,12 +48,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	       	}
 		});		
 		
-
-		
     },
-	
-	
-	cargarTabData: function (form) {
+    
+    cargarTabData: function (form) {
 		var me = this,
 		model = null,
 		models = null,
@@ -251,6 +242,55 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	onClickBotonGuardar: function(btn) {
 		var me = this;	
 		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());				
+	},
+	
+	onClickBotonGuardarActivoExpediente: function(btn) {
+		var me = this;	
+		me.onSaveFormularioActivoExpediente(btn, btn.up('tabpanel').getActiveTab());				
+	},
+	
+	onSaveFormularioActivoExpediente: function(btn, form) {
+		debugger;
+		var me = this;
+		if(form.isFormValid()) {
+			if(Ext.isDefined(form.getBindRecord().getProxy().getApi().create) || Ext.isDefined(form.getBindRecord().getProxy().getApi().update)) {
+				// Si la API tiene metodo de escritura (create or update).
+				me.getView().mask(HreRem.i18n("msg.mask.loading"));
+				
+				form.getBindRecord().save({
+					success: function (a, operation, c) {
+						me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+						me.getView().unmask();
+						me.refrescarExpediente(form.refreshAfterSave);
+		            },
+			            
+		            failure: function (a, operation) {
+		            	var data = {};
+		                try {
+		                	data = Ext.decode(operation._response.responseText);
+		                }
+		                catch (e){ };
+		                if (!Ext.isEmpty(data.msg)) {
+		                	me.fireEvent("errorToast", data.msg);
+		                	// Si recibimos un error controlado, continuamos editando.
+		                	Ext.Array.each(form.query('field[isReadOnlyEdit]'),
+								function (field, index){field.fireEvent('edit');}
+							);
+		                	btn.show();
+							btn.up('tabbar').down('button[itemId=botoncancelar]').show();
+							btn.up('tabbar').down('button[itemId=botoneditar]').hide();
+							me.getViewModel().set("editing", true);
+		                	
+		                } else {
+		                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		                }
+						 me.getView().unmask();
+		            }
+				});
+			}
+		}else{
+			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
+		}
 	},
 	
 	onClickBotonCancelar: function(btn) {

@@ -1231,7 +1231,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 			model.put("success", false);
 		}	
 		
-		return createModelAndViewJson(model);
+		return new ModelAndView("jsonView", model);
 		
 	}
 	

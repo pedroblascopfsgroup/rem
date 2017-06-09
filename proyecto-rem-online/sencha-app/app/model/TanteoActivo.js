@@ -23,10 +23,15 @@ Ext.define('HreRem.model.TanteoActivo', {
     			name:'descTipoAdministracion'
     		},
     		{
-    			name: 'fechaComunicacion'
+    			name: 'fechaComunicacion',
+    			type:'date',
+    			dateFormat: 'c'
     		},
     		{
-    			name: 'fechaRespuesta'
+    			name: 'fechaRespuesta',
+    			type:'date',
+    			dateFormat: 'c'
+    				
     		},
     		{
     			name:'numeroExpediente'
@@ -35,19 +40,36 @@ Ext.define('HreRem.model.TanteoActivo', {
     			name: 'solicitaVisita'
     		},
     		{
-    			name: 'fechaFinTanteo'
+    			name: 'fechaFinTanteo',
+    			type:'date',
+    			dateFormat: 'c'
+    				
     		},
     		{
     			name:'codigoTipoResolucion'
     		},
     		{
-    			name: 'fechaVencimiento'
+    			name: 'fechaVencimiento',
+    			type:'date',
+    			dateFormat: 'c'
     		},
     		{
-    			name: 'fechaVisita'
+    			name: 'fechaVisita',
+    			type:'date',
+    			dateFormat: 'c'
     		},
     		{
-    			name: 'fechaResolucion'
+    			name: 'fechaResolucion',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name: 'fechaSolicitudVisita',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name: 'condiciones'
     		}
     ],
     

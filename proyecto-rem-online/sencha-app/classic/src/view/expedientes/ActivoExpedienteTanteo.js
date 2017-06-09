@@ -16,6 +16,7 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
         var items= [
 			{
 			    xtype: 'gridBaseEditableRow',
+			    topBar: $AU.userHasFunction(['EDITAR_TAB_GESTION_ECONOMICA_EXPEDIENTES']),
 			    reference: 'listadotanteos',
 			    idPrincipal : 'activoExpedienteSeleccionado.idActivo',
 			    idSecundaria : 'expediente.id',
@@ -202,6 +203,7 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 					[
 		                {
 		                	xtype: 'textfieldbase',
+		                	name: 'condiciones',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.condiciones'),
 		                	colspan: 3,
 		                	defaultMaxWidth: '100%',
@@ -212,32 +214,28 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 		                },
 		                {
 		                	xtype:'datefieldbase',
+		                	name: 'fechaComunicacion',
 							formatter: 'date("d/m/Y")',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.fecha.comunicacion'),
 		                	bind:		'{fechaComunicacion}'
 		                },
 		                {
 		                	xtype:'datefieldbase',
+		                	name: 'fechaRespuesta',
 							formatter: 'date("d/m/Y")',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.fecha.contestacion'),
-		                	colspan: 2,
 		                	bind:		'{fechaRespuesta}'
 		                },
 		                {
 		                	xtype:'datefieldbase',
-							formatter: 'date("d/m/Y")',
-		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.fecha.solicitud.visita'),
-		                	bind:		'{fechaSolicitudVisita}'
-		                },
-		                {
-		                	xtype:'datefieldbase',
+		                	name: 'fechaVisita',
 							formatter: 'date("d/m/Y")',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.fecha.realizacion.visita'),
-		                	colspan: 2,
 		                	bind:		'{fechaVisita}'
 		                },
 		                {
 		                	xtype:'datefieldbase',
+		                	name: 'fechaFinTanteo',
 							formatter: 'date("d/m/Y")',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.fecha.fin.tanteo'),
 		                	maxValue: null,
@@ -246,6 +244,7 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 		                },
 		                {
 		                	xtype: 'comboboxfieldbase',
+		                	name: 'codigoTipoResolucion',
 		                	bind: {
 								store: '{comboResultadoTanteo}',
 								value: '{codigoTipoResolucion}'

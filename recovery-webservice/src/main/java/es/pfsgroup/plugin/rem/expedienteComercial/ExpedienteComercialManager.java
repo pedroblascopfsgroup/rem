@@ -4015,7 +4015,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(tanteoActivoDto.getId())));
 		}
 		
-		
+		if(!Checks.esNulo(tanteoActivoDto.getCondiciones())){
+			tanteoActivo.setCondicionesTx(tanteoActivoDto.getCondiciones());
+		}
 		
 		if(!Checks.esNulo(tanteoActivoDto.getCodigoTipoAdministracion())){
 			DDAdministracion administracion= (DDAdministracion) genericDao.get(DDAdministracion.class,

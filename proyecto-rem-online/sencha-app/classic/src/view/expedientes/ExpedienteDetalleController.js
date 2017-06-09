@@ -250,9 +250,65 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	onSaveFormularioActivoExpediente: function(btn, form) {
-		debugger;
 		var me = this;
 		if(form.isFormValid()) {
+		if(form.getReference()=="activoexpedientetanteo"){
+			var formulario= btn.up('tabpanel').getActiveTab().getForm();
+			me.getView().mask(HreRem.i18n("msg.mask.loading"));
+			var url =  $AC.getRemoteUrl('expedientecomercial/saveTanteo');
+			var params={};
+			if(formulario.findField("condiciones")!=null){
+				params['condiciones']= formulario.findField("condiciones").getValue();
+			}
+			if(formulario.findField("fechaComunicacion")!=null){
+				params['fechaComunicacion']= formulario.findField("fechaComunicacion").getValue();
+			}
+			if(formulario.findField("fechaRespuesta")!=null){
+				params['fechaRespuesta']= formulario.findField("fechaRespuesta").getValue();
+			}
+			if(formulario.findField("fechaSolicitudVisita")!=null){
+				params['fechaSolicitudVisita']= formulario.findField("fechaSolicitudVisita").getValue();
+			}
+			if(formulario.findField("fechaVisita")!=null){
+				params['fechaVisita']= formulario.findField("fechaVisita").getValue();
+			}
+			if(formulario.findField("fechaFinTanteo")!=null){
+				params['fechaFinTanteo']= formulario.findField("fechaFinTanteo").getValue();
+			}
+			if(formulario.findField("codigoTipoResolucion")!=null){
+				params['codigoTipoResolucion']= formulario.findField("codigoTipoResolucion").getValue();
+			}
+			var record = form.getBindRecord();
+			params['idEntidad']= record.idActivo;
+			params['idEntidadPk']= record.ecoId;
+			params['id']= record.id;
+			Ext.Ajax.request({
+			     url: url,
+			     params:params,
+			     success: function (a, operation, context) {
+			    	me.getView().unmask();
+			    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			    	//me.onClickBotonRefrescar();
+			    	btn.hide();
+			 		btn.up('tabbar').down('button[itemId=botonguardar]').hide();
+			 		btn.up('tabbar').down('button[itemId=botoneditar]').show();
+			 		Ext.Array.each(btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]'),
+							function (field, index) 
+								{ 
+									field.fireEvent('save');
+									field.fireEvent('update');});
+			 		if(Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
+			 			me.getViewModel().set("editingFirstLevel", false);
+			 		} else {
+			 			me.getViewModel().set("editing", false);
+			 		}
+	            },
+	            failure: function (a, operation, context) {
+	            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	            	 me.getView().unmask();
+	            }
+		    });
+		}else{
 			if(Ext.isDefined(form.getBindRecord().getProxy().getApi().create) || Ext.isDefined(form.getBindRecord().getProxy().getApi().update)) {
 				// Si la API tiene metodo de escritura (create or update).
 				me.getView().mask(HreRem.i18n("msg.mask.loading"));
@@ -288,6 +344,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		            }
 				});
 			}
+		}
+		
+			
 		}else{
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
 		}

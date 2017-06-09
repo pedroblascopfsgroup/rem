@@ -42,7 +42,10 @@ BEGIN
         LOOP
         FETCH v_val_cursor INTO vID, vTABLA_MIG, vTABLA_PRO, vCLAVE_MIG, vCLAVE_PRO;
         EXIT WHEN v_val_cursor%NOTFOUND;
-
+        
+        V_EXIST_MIG := 0;
+        V_EXIST_PRO := 0;
+        
         V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = '''||vTABLA_MIG||''' AND COLUMN_NAME = ''VALIDACION'' ';
         EXECUTE IMMEDIATE V_MSQL INTO V_EXIST_MIG;
 
@@ -98,39 +101,47 @@ BEGIN
         EXIT WHEN v_val_cursor%NOTFOUND;
 
 		BEGIN
-            V_MSQL := 'SELECT LISTAGG(CLAVE_DATO, ''||''''|''''||'') WITHIN GROUP (ORDER BY CLAVE_POSICION) CLAVE_DATO
-					  ,LISTAGG(CLAVE_DATO, ''||''''|''''||T1.'') WITHIN GROUP (ORDER BY CLAVE_POSICION) CLAVE_DATO2
-                FROM '||V_ESQUEMA||'.INTERFAZ_CLAVE
-                WHERE NOMBRE_INTERFAZ = REPLACE('''||vTABLA_MIG||''',''REMMASTER.'','''')
-                GROUP BY NOMBRE_INTERFAZ';
-                --DBMS_OUTPUT.PUT_LINE(''||V_MSQL||'');
-            EXECUTE IMMEDIATE V_MSQL INTO vCLAVE, vCLAVE2;
             
-            --INSERTAMOS UN REGISTRO EN LA TABLA DE VALIDACIONES POR CADA REGISTROS DUPLICADO EN LAS TABLAS MIG
-            V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||TABLA_VALIDACION||' (VALIDACION_ID, NOMBRE_INTERFAZ, CLAVE_DATO, COD_RECHAZO, MOTIVO_RECHAZO)
-                SELECT '||V_ESQUEMA||'.'||V_SEC||'.NEXTVAL VALIDACION_ID, NOMBRE_INTERFAZ, CLAVE_DATO, COD_RECHAZO, MOTIVO_RECHAZO
-                FROM (
-                SELECT '''||vTABLA_MIG||''' NOMBRE_INTERFAZ, '||vCLAVE||' CLAVE_DATO
-                    , DR.CODIGO_RECHAZO COD_RECHAZO, DR.MOTIVO_RECHAZO||'||''' '||'Duplicado encontrado en tablas migración.'' MOTIVO_RECHAZO
-                FROM '||V_ESQUEMA||'.'||vTABLA_MIG||' NI
-                JOIN '||V_ESQUEMA||'.DICCIONARIO_RECHAZOS DR ON DR.CODIGO_RECHAZO = '''||vRECHAZO_DUP_MIG||'''
-                GROUP BY '||vCLAVE||', DR.CODIGO_RECHAZO, DR.MOTIVO_RECHAZO
-                HAVING COUNT(1)>1)';
-            --DBMS_OUTPUT.PUT_LINE(V_MSQL);
-            EXECUTE IMMEDIATE V_MSQL;
+            V_EXIST_MIG := 0;
+            
+            V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = '''||vTABLA_MIG||''' AND COLUMN_NAME = ''VALIDACION'' ';
+            EXECUTE IMMEDIATE V_MSQL INTO V_EXIST_MIG;
+            
+            IF V_EXIST_MIG > 0 THEN
+                V_MSQL := 'SELECT LISTAGG(CLAVE_DATO, ''||''''|''''||'') WITHIN GROUP (ORDER BY CLAVE_POSICION) CLAVE_DATO
+                          ,LISTAGG(CLAVE_DATO, ''||''''|''''||T1.'') WITHIN GROUP (ORDER BY CLAVE_POSICION) CLAVE_DATO2
+                    FROM '||V_ESQUEMA||'.INTERFAZ_CLAVE
+                    WHERE NOMBRE_INTERFAZ = REPLACE('''||vTABLA_MIG||''',''REMMASTER.'','''')
+                    GROUP BY NOMBRE_INTERFAZ';
+                    --DBMS_OUTPUT.PUT_LINE(''||V_MSQL||'');
+                EXECUTE IMMEDIATE V_MSQL INTO vCLAVE, vCLAVE2;
     
-            --ACTUALIZAMOS EL CAMPO VALIDACION DE LAS TABLAS MIG
-            V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.'||vTABLA_MIG||' T1
-                USING (SELECT DISTINCT CLAVE_DATO
-                    FROM '||V_ESQUEMA||'.'||TABLA_VALIDACION||'
-                    WHERE NOMBRE_INTERFAZ = '''||vTABLA_MIG||'''
-                        AND COD_RECHAZO = '''||vRECHAZO_DUP_MIG||''') T2
-                ON (TO_CHAR(T2.CLAVE_DATO) = TO_CHAR(T1.'||vCLAVE2||'))
-                WHEN MATCHED THEN UPDATE SET
-                    T1.VALIDACION = '''||vRECHAZO_DUP_MIG||'''
-                WHERE T1.VALIDACION = 0';
-            DBMS_OUTPUT.PUT_LINE('  [INFO] Validando clave/s, '||vCLAVE_MIG||', en tabla, '||vTABLA_MIG||', contra si misma.');
-            EXECUTE IMMEDIATE V_MSQL;
+                --INSERTAMOS UN REGISTRO EN LA TABLA DE VALIDACIONES POR CADA REGISTROS DUPLICADO EN LAS TABLAS MIG
+                V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||TABLA_VALIDACION||' (VALIDACION_ID, NOMBRE_INTERFAZ, CLAVE_DATO, COD_RECHAZO, MOTIVO_RECHAZO)
+                    SELECT '||V_ESQUEMA||'.'||V_SEC||'.NEXTVAL VALIDACION_ID, NOMBRE_INTERFAZ, CLAVE_DATO, COD_RECHAZO, MOTIVO_RECHAZO
+                    FROM (
+                    SELECT '''||vTABLA_MIG||''' NOMBRE_INTERFAZ, '||vCLAVE||' CLAVE_DATO
+                        , DR.CODIGO_RECHAZO COD_RECHAZO, DR.MOTIVO_RECHAZO||'||''' '||'Duplicado encontrado en tablas migración.'' MOTIVO_RECHAZO
+                    FROM '||V_ESQUEMA||'.'||vTABLA_MIG||' NI
+                    JOIN '||V_ESQUEMA||'.DICCIONARIO_RECHAZOS DR ON DR.CODIGO_RECHAZO = '''||vRECHAZO_DUP_MIG||'''
+                    GROUP BY '||vCLAVE||', DR.CODIGO_RECHAZO, DR.MOTIVO_RECHAZO
+                    HAVING COUNT(1)>1)';
+                --DBMS_OUTPUT.PUT_LINE(V_MSQL);
+                EXECUTE IMMEDIATE V_MSQL;
+    
+                --ACTUALIZAMOS EL CAMPO VALIDACION DE LAS TABLAS MIG
+                V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.'||vTABLA_MIG||' T1
+                    USING (SELECT DISTINCT CLAVE_DATO
+                        FROM '||V_ESQUEMA||'.'||TABLA_VALIDACION||'
+                        WHERE NOMBRE_INTERFAZ = '''||vTABLA_MIG||'''
+                            AND COD_RECHAZO = '''||vRECHAZO_DUP_MIG||''') T2
+                    ON (TO_CHAR(T2.CLAVE_DATO) = TO_CHAR(T1.'||vCLAVE2||'))
+                    WHEN MATCHED THEN UPDATE SET
+                        T1.VALIDACION = '''||vRECHAZO_DUP_MIG||'''
+                    WHERE T1.VALIDACION = 0';
+                DBMS_OUTPUT.PUT_LINE('  [INFO] Validando clave/s, '||vCLAVE_MIG||', en tabla, '||vTABLA_MIG||', contra si misma.');
+                EXECUTE IMMEDIATE V_MSQL;
+            END IF;
 
         EXCEPTION
             WHEN NO_DATA_FOUND THEN

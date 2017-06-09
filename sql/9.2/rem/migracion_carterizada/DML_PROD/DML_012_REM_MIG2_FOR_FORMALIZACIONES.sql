@@ -27,6 +27,7 @@ DECLARE
 TABLE_COUNT NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'FOR_FORMALIZACION';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_FOR_FORMALIZACIONES';
 V_SENTENCIA VARCHAR2(2000 CHAR);
@@ -75,7 +76,7 @@ BEGIN
         MIG.FOR_FORMA_PAGO                                                                      FOR_FORMA_PAGO,
         MIG.FOR_MOTIVO_RESOLUCION                                                       FOR_MOTIVO_RESOLUCION,
         ''0''                                               VERSION,
-        ''#USUARIO_MIGRACION#''                                            USUARIOCREAR,
+        '||V_USUARIO||'                                            USUARIOCREAR,
         SYSDATE                                             FECHACREAR,
         0                                                   BORRADO
         FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG

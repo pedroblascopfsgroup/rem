@@ -28,6 +28,7 @@ DECLARE
 		TABLE_COUNT_2 NUMBER(10,0) := 0;
 		V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
 		V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+		V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 		V_TABLA VARCHAR2(40 CHAR) := 'GIC_GASTOS_INFO_CONTABILIDAD';
 		V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_GIC_GASTOS_INFO_CONTABI';
 		V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -43,6 +44,7 @@ DECLARE
       select distinct GIC_EJERCICIO
       from MIG2_GIC_GASTOS_INFO_CONTABI mig
       where not exists (select 1 from ACT_EJE_EJERCICIO eje where eje.EJE_ANYO = mig.GIC_EJERCICIO)
+      	and mig.VALIDACION = 0
       order by GIC_EJERCICIO
       ;
 
@@ -75,7 +77,7 @@ BEGIN
             ,to_date(''31/12/'||V_OBJ||''',''dd/MM/yyyy'')				EJE_FECHAFIN
             ,''Ejercicio correspondiente al año '||V_OBJ||'''			EJE_DESCRIPCION
             ,0															VERSION
-            ,''#USUARIO_MIGRACION#''									USUARIOCREAR
+            ,'||V_USUARIO||'									USUARIOCREAR
             ,SYSDATE													FECHACREAR
             ,0															BORRADO
 			FROM DUAL            
@@ -118,7 +120,7 @@ BEGIN
                   MIG2.GIC_FECHA_DEVENGO_ESPECIAL                               AS GIC_FECHA_DEVENGO_ESPECIAL,
                   TPE.DD_TPE_ID                                                 AS DD_TPE_ID_ESPECIAL,                
                   0                                                             AS VERSION,
-                  ''#USUARIO_MIGRACION#''                                       AS USUARIOCREAR,
+                  '||V_USUARIO||'                                       AS USUARIOCREAR,
                   SYSDATE                                                       AS FECHACREAR,
                   0                                                             AS BORRADO,
                   MIG2.GIC_COD_CUENTA_CONTABLE									AS GIC_CUENTA_CONTABLE,

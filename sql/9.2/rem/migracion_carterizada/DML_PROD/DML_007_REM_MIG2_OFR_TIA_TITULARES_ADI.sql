@@ -27,6 +27,7 @@ DECLARE
 TABLE_COUNT NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'OFR_TIA_TITULARES_ADICIONALES';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_OFR_TIA_TITULARES_ADI';
 V_SENTENCIA VARCHAR2(2000 CHAR);
@@ -75,7 +76,7 @@ BEGIN
         WHERE DD_TDI_CODIGO = TIA.OFR_TIA_COD_TIPO_DOC_TITUL_ADI)                       DD_TDI_ID,
         TIA.OFR_TIA_DOCUMENTO                                                                                           TIA_DOCUMENTO,
         ''0''                                                                           VERSION,
-        ''#USUARIO_MIGRACION#''                                                                        USUARIOCREAR,
+        '||V_USUARIO||'                                                                        USUARIOCREAR,
         SYSDATE                                                                                 FECHACREAR,
         0                                                                               BORRADO
         FROM INSERTAR TIA

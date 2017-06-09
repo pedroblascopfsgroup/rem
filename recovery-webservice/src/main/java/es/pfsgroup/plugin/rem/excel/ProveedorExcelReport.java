@@ -9,7 +9,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 
 
 public class ProveedorExcelReport extends AbstractExcelReport implements ExcelReport {
-	private static final String CAB_NUM_ACTIVO = "ID Proveedor";
+	private static final String CAB_NUM_ACTIVO = "Código Proveedor";
 	private static final String CAB_TIPO = "Tipo";
 	private static final String CAB_SUBTIPO = "Subtipo";
 	private static final String CAB_NIF = "NIF";
@@ -46,7 +46,7 @@ public class ProveedorExcelReport extends AbstractExcelReport implements ExcelRe
 		
 		for(DtoProveedorFilter proveedor: listaProveedores){
 			List<String> fila = new ArrayList<String>();
-			fila.add(String.valueOf(proveedor.getId()));
+			fila.add(proveedor.getCodigo());
 			fila.add(proveedor.getTipoProveedorDescripcion());
 			fila.add(proveedor.getSubtipoProveedorDescripcion());
 			fila.add(proveedor.getNifProveedor());

@@ -29,6 +29,7 @@ TABLE_COUNT_2 NUMBER(10,0) := 0;
 TABLE_COUNT_3 NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA_1 VARCHAR2(40 CHAR) := 'GPV_ACT';
 V_TABLA_2 VARCHAR2(40 CHAR) := 'GPV_TBJ';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_GPV_ACT_TBJ';
@@ -86,6 +87,7 @@ BEGIN
                                 INNER JOIN SUMATORIO OPERACION
                                   ON MIG2.GPT_ACT_NUMERO_ACTIVO = OPERACION.GPT_ACT_NUMERO_ACTIVO                                       
                                 INNER JOIN  '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = MIG2.GPT_GPV_ID
+								WHERE MIG2.VALIDACION = 0
                           ) AUX
                 ON (GAS.ACT_ID = AUX.ACT_ID AND GAS.GPV_ID = AUX.GPV_ID)
                 WHEN MATCHED THEN UPDATE SET
@@ -117,7 +119,7 @@ BEGIN
                 '||V_ESQUEMA||'.S_'||V_TABLA_2||'.NEXTVAL                               GPV_TBJ_ID, 
                 GPV.GPV_ID                                                                                                              GPV_ID,
                 TBJ.TBJ_ID                                                                              TBJ_ID,
-                ''#USUARIO_MIGRACION#'' AS USUARIOCREAR,
+                '||V_USUARIO||' AS USUARIOCREAR,
                 0                                                                               VERSION
                 
                 FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG

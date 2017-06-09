@@ -5,7 +5,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
                 'HreRem.model.EntregaReserva', 'HreRem.model.ObservacionesExpediente', 'HreRem.model.AdjuntoExpedienteComercial',
                 'HreRem.model.Posicionamiento', 'HreRem.model.ComparecienteVendedor', 'HreRem.model.Subsanacion', 'HreRem.model.Notario',
                 'HreRem.model.ComparecienteBusqueda', 'HreRem.model.Honorario',
-				'HreRem.model.CompradorExpediente', 'HreRem.model.FichaComprador','HreRem.model.BloqueoActivo'],
+				'HreRem.model.CompradorExpediente', 'HreRem.model.FichaComprador','HreRem.model.BloqueoActivo','HreRem.model.TanteoActivo'],
     
     data: {
     },
@@ -459,7 +459,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        remoteUrl: 'expedientecomercial/getBloqueosActivo',
 		        extraParams: {idExpediente: '{expediente.id}',idActivo: '{activoExpedienteSeleccionado.idActivo}'}
 	    	}
-		},		
+		},
+		storeTanteosActivo: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.TanteoActivo',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getTanteosActivo',
+		        extraParams: {idExpediente: '{expediente.id}',idActivo: '{activoExpedienteSeleccionado.idActivo}'}
+	    	}
+		},	
 		comboTipoOferta: {
 	    	model: 'HreRem.model.ComboBase',
 			proxy: {

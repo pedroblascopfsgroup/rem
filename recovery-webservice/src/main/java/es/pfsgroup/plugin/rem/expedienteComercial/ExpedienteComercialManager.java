@@ -14,6 +14,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,6 +95,7 @@ import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoSubsanacion;
+import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
@@ -107,11 +109,13 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Posicionamiento;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.Subsanaciones;
+import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
+import es.pfsgroup.plugin.rem.model.dd.DDAdministracion;
 import es.pfsgroup.plugin.rem.model.dd.DDAreaBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
@@ -1197,6 +1201,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		} catch (Exception e) {
 			logger.error("error en expedienteComercialManager", e);
+		}
+		
+		if(activo.getMunicipio()!=null){
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activo.getMunicipio());
+			Localidad localidad = (Localidad) genericDao.get(Localidad.class, filtro);
+			dtoActivo.setMunicipio(localidad.getDescripcion());
+		}
+		if(activo.getDireccion()!=null){
+			dtoActivo.setDireccion(activo.getDireccion());
 		}
 
 		return dtoActivo;
@@ -3935,5 +3948,132 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		return importeExpediente.equals(totalImporteParticipacionActivos);
+	}
+
+	@Override
+	public List<DtoTanteoActivoExpediente> getTanteosPorActivoExpediente(Long idExpediente, Long idActivo) {
+		List<DtoTanteoActivoExpediente> tanteosList = new ArrayList<DtoTanteoActivoExpediente>();
+
+		ExpedienteComercial expediente = findOne(idExpediente);
+
+		List<TanteoActivoExpediente> tanteosExpediente = expediente.getTanteoActivoExpediente();
+
+		// Añadir al dto
+		for (TanteoActivoExpediente tanteo : tanteosExpediente) {
+
+			if (tanteo.getActivo() != null && tanteo.getActivo().getId().equals(idActivo)) {
+				DtoTanteoActivoExpediente tanteoDto = new DtoTanteoActivoExpediente();
+				tanteoDto.setId(String.valueOf(tanteo.getId()));
+				if (!Checks.esNulo(tanteo.getAdminitracion())) {
+					tanteoDto.setCodigoTipoAdministracion(tanteo.getAdminitracion().getCodigo());
+					tanteoDto.setDescTipoAdministracion(tanteo.getAdminitracion().getDescripcion());
+				}
+				tanteoDto.setFechaComunicacion(tanteo.getFechaComunicacion());
+				tanteoDto.setFechaRespuesta(tanteo.getFechaContestacion());
+				tanteoDto.setNumeroExpediente(tanteo.getNumExpediente());
+				if (tanteo.getSolicitudVisita() != null) {
+					if (tanteo.getSolicitudVisita().equals(Integer.valueOf(0))) {
+						tanteoDto.setSolicitaVisita("No");
+					} else {
+						tanteoDto.setSolicitaVisita("Si");
+					}
+				}
+				tanteoDto.setFechaVisita(tanteo.getFechaVisita());
+				tanteoDto.setFechaFinTanteo(tanteo.getFechaFinTanteo());
+				if (!Checks.esNulo(tanteo.getResultadoTanteo())) {
+					tanteoDto.setCodigoTipoResolucion(tanteo.getResultadoTanteo().getCodigo());
+					tanteoDto.setDescTipoResolucion(tanteo.getResultadoTanteo().getDescripcion());
+				}
+				tanteoDto.setFechaVencimiento(tanteo.getFechaVencimientoResol());
+				tanteoDto.setFechaResolucion(tanteo.getFechaResolucion());
+				tanteoDto.setIdActivo(tanteo.getActivo().getId());
+				tanteoDto.setEcoId(tanteo.getExpediente().getId());
+				tanteoDto.setCondiciones(tanteo.getCondicionesTx());
+
+				tanteosList.add(tanteoDto);
+			}
+
+		}
+
+		return tanteosList;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean guardarTanteoActivo(DtoTanteoActivoExpediente tanteoActivoDto) {
+		
+		TanteoActivoExpediente tanteoActivo = null;
+		if(tanteoActivoDto.getId() == null || tanteoActivoDto.getId().isEmpty() || !StringUtils.isNumeric(tanteoActivoDto.getId())){
+			tanteoActivo = new TanteoActivoExpediente();
+			tanteoActivo.setExpediente(this.findOne(tanteoActivoDto.getEcoId()));
+			tanteoActivo.setActivo(activoAdapter.getActivoById(tanteoActivoDto.getIdActivo()));
+			if(Checks.esNulo(tanteoActivoDto.getCondiciones())){
+				tanteoActivo.setCondicionesTx("Comprador asume la situación física, jurídica, registral, urbanística y administrativa existente");
+			}
+		}else{
+			tanteoActivo = (TanteoActivoExpediente)genericDao.get(TanteoActivoExpediente.class,
+					genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(tanteoActivoDto.getId())));
+		}
+		
+		
+		
+		if(!Checks.esNulo(tanteoActivoDto.getCodigoTipoAdministracion())){
+			DDAdministracion administracion= (DDAdministracion) genericDao.get(DDAdministracion.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", tanteoActivoDto.getCodigoTipoAdministracion()));
+			if(!Checks.esNulo(administracion)){
+				tanteoActivo.setAdminitracion(administracion);
+			}
+		}
+		if(!Checks.esNulo(tanteoActivoDto.getFechaComunicacion()) && tanteoActivoDto.getFechaComunicacion().getTime()>0){
+			tanteoActivo.setFechaComunicacion(tanteoActivoDto.getFechaComunicacion());
+		}
+		if(!Checks.esNulo(tanteoActivoDto.getFechaRespuesta())&& tanteoActivoDto.getFechaRespuesta().getTime()>0){
+			tanteoActivo.setFechaContestacion(tanteoActivoDto.getFechaRespuesta());
+		}
+		if(tanteoActivoDto.getNumeroExpediente()!=null){
+			tanteoActivo.setNumExpediente(tanteoActivoDto.getNumeroExpediente());
+		}
+		if(tanteoActivoDto.getSolicitaVisita()!= null && !tanteoActivoDto.getSolicitaVisita().isEmpty()){
+			if (tanteoActivoDto.getSolicitaVisita().equals("No")) {
+				tanteoActivo.setSolicitudVisita(Integer.valueOf(0));
+			} else {
+				tanteoActivo.setSolicitudVisita(Integer.valueOf(1));
+			}
+		}
+		if(!Checks.esNulo(tanteoActivoDto.getFechaVisita())&& tanteoActivoDto.getFechaVisita().getTime()>0){
+			tanteoActivo.setFechaVisita(tanteoActivoDto.getFechaVisita());
+		}
+		if(!Checks.esNulo(tanteoActivoDto.getFechaFinTanteo())&& tanteoActivoDto.getFechaFinTanteo().getTime()>0){
+			tanteoActivo.setFechaFinTanteo(tanteoActivoDto.getFechaFinTanteo());
+		}
+		if(!Checks.esNulo(tanteoActivoDto.getCodigoTipoResolucion())){
+			DDResultadoTanteo resultadoTanteo= (DDResultadoTanteo) genericDao.get(DDResultadoTanteo.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", tanteoActivoDto.getCodigoTipoResolucion()));
+			if(!Checks.esNulo(resultadoTanteo)){
+				tanteoActivo.setResultadoTanteo(resultadoTanteo);
+			}
+		}
+		if(!Checks.esNulo(tanteoActivoDto.getFechaVencimiento())&& tanteoActivoDto.getFechaVencimiento().getTime()>0){
+			tanteoActivo.setFechaVencimientoResol(tanteoActivoDto.getFechaVencimiento());
+		}
+		if(!Checks.esNulo(tanteoActivoDto.getFechaResolucion())&& tanteoActivoDto.getFechaResolucion().getTime()>0){
+			tanteoActivo.setFechaResolucion(tanteoActivoDto.getFechaResolucion());
+		}
+		
+		if(tanteoActivo.getId()==null){
+			genericDao.save(TanteoActivoExpediente.class, tanteoActivo);
+		}else{
+			genericDao.update(TanteoActivoExpediente.class, tanteoActivo);
+		}
+		
+		
+		return true;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean deleteTanteoActivo(Long idTanteo) {
+		genericDao.deleteById(TanteoActivoExpediente.class, idTanteo);
+		return true;
 	}
 }

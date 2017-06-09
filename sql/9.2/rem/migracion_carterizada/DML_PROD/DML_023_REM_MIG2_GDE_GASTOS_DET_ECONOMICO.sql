@@ -27,6 +27,7 @@ DECLARE
 TABLE_COUNT NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'GDE_GASTOS_DETALLE_ECONOMICO';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_GDE_GASTOS_DET_ECONOMICO';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -144,7 +145,7 @@ BEGIN
                 TPP.DD_TPP_ID                                                                                                   DD_TPP_ID,
                 DEP.DD_DEP_ID                                                                                                   DD_DEP_ID,
                 0                                                                                                                               VERSION,
-                ''#USUARIO_MIGRACION#''                                                                USUARIOCREAR,
+                '||V_USUARIO||'                                                                USUARIOCREAR,
                 SYSDATE                                                                         FECHACREAR,
                 0                                                                               BORRADO,
                 GDE.GDE_REEMBOLSO_TERCERO                                                                               GDE_REEMBOLSO_TERCERO,

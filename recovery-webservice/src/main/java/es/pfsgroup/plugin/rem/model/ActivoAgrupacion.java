@@ -131,6 +131,9 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 	
 	@Column(name = "AGR_FIN_VIGENCIA")
 	private Date fechaFinVigencia;
+	
+	@Column(name = "AGR_IS_FORMALIZACION")
+	private Integer isFormalizacion;
 
 	@Version   
 	private Long version;
@@ -332,5 +335,14 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 	public void setFechaFinVigencia(Date fechaFinVigencia) {
 		this.fechaFinVigencia = fechaFinVigencia;
 	}
+
+	public Integer getIsFormalizacion() {
+		return isFormalizacion;
+	}
+
+	public void setIsFormalizacion(Integer isFormalizacion) {
+		this.isFormalizacion = isFormalizacion;
+	}
+
 
 }

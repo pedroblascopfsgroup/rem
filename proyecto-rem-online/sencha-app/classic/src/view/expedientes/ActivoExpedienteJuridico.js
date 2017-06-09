@@ -4,8 +4,7 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteJuridico', {
 	cls : 'panel-base shadow-panel',
 	collapsed : false,
 	reference : 'activoexpedientejuridico',
-	scrollable : 'y',
-
+	
 	requires : [],
 
 	listeners : {},
@@ -13,7 +12,7 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteJuridico', {
 	initComponent : function() {
 
 		var me = this;
-		me.setTitle(HreRem.i18n('title.informe.juridico'));
+		me.setTitle(HreRem.i18n('title.bloqueos'));
 		var items = [
 			{
 				xtype : 'fieldsettable',

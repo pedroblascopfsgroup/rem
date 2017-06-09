@@ -27,6 +27,7 @@ DECLARE
 TABLE_COUNT NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'GIM_GASTOS_IMPUGNACION';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_GIM_GASTOS_IMPUGNACION';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -77,7 +78,7 @@ BEGIN
                 WHERE DD_RIM_CODIGO = GIM.GIM_COD_RESULTADO_IMPUGNACION)                DD_RIM_ID,
                 GIM.GIM_OBSERVACIONES                                                                                   GIM_OBSERVACIONES,
                 0                                                                                                                               VERSION,
-                ''#USUARIO_MIGRACION#''                                                                USUARIOCREAR,
+                '||V_USUARIO||'                                                                USUARIOCREAR,
                 SYSDATE                                                                         FECHACREAR,
                 0                                                                               BORRADO
                 FROM INSERTAR GIM

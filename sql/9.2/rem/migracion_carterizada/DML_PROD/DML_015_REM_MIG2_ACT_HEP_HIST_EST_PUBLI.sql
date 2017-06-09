@@ -27,6 +27,7 @@ DECLARE
 TABLE_COUNT NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'ACT_HEP_HIST_EST_PUBLICACION';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_ACT_HEP_HIST_EST_PUBLI';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -65,7 +66,7 @@ BEGIN
             EPU.DD_EPU_ID                                               AS DD_EPU_ID,
             MIG2.HEP_MOTIVO                                             AS HEP_MOTIVO,
             0                                                           AS VERSION,
-            ''#USUARIO_MIGRACION#''                                     AS USUARIOCREAR,
+            '||V_USUARIO||'                                     AS USUARIOCREAR,
             SYSDATE                                                     AS FECHACREAR,
             0                                                           AS BORRADO
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
@@ -73,7 +74,7 @@ BEGIN
           LEFT JOIN '||V_ESQUEMA||'.DD_POR_PORTAL POR ON POR.DD_POR_CODIGO = LPAD(MIG2.HEP_COD_PORTAL,2,0) AND POR.BORRADO = 0
           LEFT JOIN '||V_ESQUEMA||'.DD_TPU_TIPO_PUBLICACION TPU ON TPU.DD_TPU_CODIGO = LPAD(MIG2.HEP_COD_TIPO_PUBLICACION,2,0) AND TPU.BORRADO = 0
           LEFT JOIN '||V_ESQUEMA||'.DD_EPU_ESTADO_PUBLICACION EPU ON EPU.DD_EPU_CODIGO = LPAD(MIG2.HEP_COD_ESTADO_PUBLI,2,0) AND EPU.BORRADO = 0
-		  WHERER MIG2.VALIDACION = 0
+		  WHERE MIG2.VALIDACION = 0
       '
       ;
       EXECUTE IMMEDIATE V_SENTENCIA;

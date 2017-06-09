@@ -27,6 +27,7 @@ DECLARE
 TABLE_COUNT NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'SUB_SUBSANACIONES';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_SUB_SUBSANACIONES';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -64,7 +65,7 @@ BEGIN
                 SUB_GASTOS_SUBSANACION                          ,
                 SUB_GASTOS_INSCRIPCION                          ,
                 0                                               ,
-                ''#USUARIO_MIGRACION#''                                        ,
+                '||V_USUARIO||'                                        ,
                 SYSDATE
            FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
                 INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.ECO_NUM_EXPEDIENTE = MIG.SUB_COD_OFERTA

@@ -73,6 +73,9 @@ public class VBusquedaAgrupaciones implements Serializable {
 
 	@Column(name = "CARTERA")
 	private String cartera;
+	
+	@Column(name = "AGR_IS_FORMALIZACION")
+	private Integer isFormalizacion;
 
 	public Long getId() {
 		return id;
@@ -201,5 +204,13 @@ public class VBusquedaAgrupaciones implements Serializable {
 	public void setFechaFinVigencia(Date fechaFinVigencia) {
 		this.fechaFinVigencia = fechaFinVigencia;
 	}
-	
+
+	public Integer getIsFormalizacion() {
+		return isFormalizacion;
+	}
+
+	public void setIsFormalizacion(Integer isFormalizacion) {
+		this.isFormalizacion = isFormalizacion;
+	}
+
 }

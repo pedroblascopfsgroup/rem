@@ -28,6 +28,7 @@ TABLE_COUNT NUMBER(10,0) := 0;
 TABLE_COUNT_2 NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'TXO_TEXTOS_OFERTA';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_OBF_OBSERVACIONES_OFERTAS';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -59,7 +60,7 @@ BEGIN
             TTX.DD_TTX_ID                                                                                               AS DD_TTX_ID,
             MIG2.OBF_OBSERVACION                                        AS TXO_TEXTO,
             0                                                           AS VERSION,
-            ''#USUARIO_MIGRACION#''                                                    AS USUARIOCREAR,
+            '||V_USUARIO||'                                                    AS USUARIOCREAR,
             MIG2.OBF_FECHA                                              AS FECHACREAR,
             0                                                           AS BORRADO
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2

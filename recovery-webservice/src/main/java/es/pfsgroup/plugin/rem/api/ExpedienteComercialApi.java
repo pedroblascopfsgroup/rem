@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
+import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
@@ -692,4 +693,29 @@ public interface ExpedienteComercialApi {
 	 * @return Devuelve un expediente comercial.
 	 */
 	public ExpedienteComercial getExpedientePorActivo(Activo activo);
+	
+	/**
+	 * Obtiene los tanteos para un activo en un expediente
+	 * 
+	 * @param idExpediente
+	 * @param idActivo
+	 * @return
+	 */
+	public List<DtoTanteoActivoExpediente> getTanteosPorActivoExpediente(Long idExpediente, Long idActivo);
+	
+	/**
+	 * Guardar tanteo activo
+	 * 
+	 * @param tanteoActivo
+	 * @return
+	 */
+	public boolean guardarTanteoActivo(DtoTanteoActivoExpediente tanteoActivoDto);
+	
+	/**
+	 * Borrar tanteo activo
+	 * 
+	 * @param tanteoActivoDto
+	 * @return
+	 */
+	public boolean deleteTanteoActivo(Long idTanteo);
 }

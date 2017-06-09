@@ -178,6 +178,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("estadosExpediente", DDEstadosExpedienteComercial.class);
 		mapa.put("tipoObservacionActivo", DDTipoObservacionActivo.class);
 		mapa.put("ratingActivo", DDRatingActivo.class);
+		mapa.put("administracion", DDAdministracion.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

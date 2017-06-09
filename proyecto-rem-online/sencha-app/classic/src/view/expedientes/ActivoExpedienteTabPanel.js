@@ -8,6 +8,7 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTabPanel', {
     viewModel	: {
         type: 'expedientedetalle'
     },
+    scrollable	: 'n', 
     tabBar: {
 		items: [
         		{
@@ -23,7 +24,7 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTabPanel', {
         		{
         			xtype: 'buttontab',
         			itemId: 'botonguardar',
-        		    handler	: 'onClickBotonGuardarInfoFoto', 
+        		    handler	: 'onClickBotonGuardarActivoExpediente', 
         		    iconCls: 'save-button-color',
         		    hidden: true,
         		    bind: {hidden: '{!editing}'}

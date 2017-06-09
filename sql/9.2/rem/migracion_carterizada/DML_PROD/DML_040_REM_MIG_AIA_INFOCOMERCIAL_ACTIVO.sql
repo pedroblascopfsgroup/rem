@@ -25,9 +25,9 @@ SET DEFINE OFF;
 DECLARE
 
 
-V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
-
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 TABLE_COUNT NUMBER(10,0) := 0;
 TABLE_COUNT2 NUMBER(10,0) := 0;
 TABLE_COUNT3 NUMBER(10,0) := 0;
@@ -155,7 +155,7 @@ BEGIN
 	MIG.ICO_JUSTIFICANTE_IMP_VENTA													ICO_JUSTIFICACION_VENTA,
 	MIG.ICO_JUSTIFICANTE_IMP_ALQUILER												ICO_JUSTIFICACION_RENTA,
     ''0''                                                                                                     VERSION,
-    ''#USUARIO_MIGRACION#''                                                                  USUARIOCREAR,
+    '||V_USUARIO||'                                                                  USUARIOCREAR,
     SYSDATE                                                                                     FECHACREAR,
     0                                                                                                   BORRADO
 	FROM ACT_NUM_ACTIVO MIG
@@ -262,7 +262,7 @@ BEGIN
     MIG.EDI_ENTORNO_INFRAESTRUCTURA                                                          EDI_ENTORNO_INFRAESTRUCTURA,
     MIG.EDI_ENTORNO_COMUNICACION                                                            EDI_ENTORNO_COMUNICACION,
     ''0''                                                                                                             VERSION,
-  	''#USUARIO_MIGRACION#''                                                                                           USUARIOCREAR,
+  	'||V_USUARIO||'                                                                                           USUARIOCREAR,
   	SYSDATE                                                                                                 FECHACREAR,
   	0                                                                                                               BORRADO
 	FROM ACT_NUM_ACTIVO MIG

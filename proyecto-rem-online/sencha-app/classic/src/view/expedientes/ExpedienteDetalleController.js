@@ -250,9 +250,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	onSaveFormularioActivoExpediente: function(btn, form) {
-		debugger;
 		var me = this;
 		if(form.isFormValid()) {
+		if(form.getReference()=="activoexpedientetanteo"){
+			
+		}else{
 			if(Ext.isDefined(form.getBindRecord().getProxy().getApi().create) || Ext.isDefined(form.getBindRecord().getProxy().getApi().update)) {
 				// Si la API tiene metodo de escritura (create or update).
 				me.getView().mask(HreRem.i18n("msg.mask.loading"));
@@ -288,6 +290,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		            }
 				});
 			}
+		}
+		
+			
 		}else{
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
 		}

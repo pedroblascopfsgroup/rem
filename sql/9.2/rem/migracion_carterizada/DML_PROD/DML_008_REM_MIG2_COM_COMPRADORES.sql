@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=MANUEL RODRIGUEZ
---## FECHA_CREACION=20160928
+--## AUTOR=GUILLEM REY
+--## FECHA_CREACION=20170608
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-855
+--## INCIDENCIA_LINK=HREOS-2209
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración MIG2_COM_COMPRADOR -> COM_COMPRADOR
@@ -27,6 +27,7 @@ DECLARE
 TABLE_COUNT NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'COM_COMPRADOR';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_COM_COMPRADORES';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -38,70 +39,7 @@ V_DUPLICADOS NUMBER(10,0) := 0;
 V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
 
 BEGIN
-      
-          --COMPROBACIONES PREVIAS - CLIENTE_COMERCIAL (CLC_NUM_CLIENTE_HAYA)
-      DBMS_OUTPUT.PUT_LINE('[INFO] ['||V_TABLA||'] COMPROBANDO CLIENTE_COMERCIAL...');
-      
-      V_SENTENCIA := '
-      SELECT COUNT(1) 
-      FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 
-      WHERE NOT EXISTS (
-        SELECT 1 
-        FROM '||V_ESQUEMA||'.CLC_CLIENTE_COMERCIAL CLC 
-        WHERE CLC.CLC_NUM_CLIENTE_HAYA = MIG2.COM_COD_COMPRADOR
-      )
-      '
-      ;
-      EXECUTE IMMEDIATE V_SENTENCIA INTO TABLE_COUNT;
-      
-      IF TABLE_COUNT = 0 THEN
-      
-          DBMS_OUTPUT.PUT_LINE('[INFO] TODOS LOS CLIENTE_COMERCIAL EXISTEN EN '||V_ESQUEMA||'.CLC_CLIENTE_COMERCIAL');
-      
-      ELSE
-      
-          DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN INFORMADO '||TABLE_COUNT||' CLIENTE_COMERCIAL INEXISTENTES EN CLC_CLIENTE_COMERCIAL. SE DERIVARÁN A LA TABLA '||V_ESQUEMA||'.MIG2_CLC_NOT_EXISTS.');
-          
-          --BORRAMOS LOS REGISTROS QUE HAYA EN NOT_EXISTS REFERENTES A ESTA INTERFAZ
-          
-          EXECUTE IMMEDIATE '
-          DELETE FROM '||V_ESQUEMA||'.MIG2_CLC_NOT_EXISTS
-          WHERE TABLA_MIG = '''||V_TABLA_MIG||'''
-          '
-          ;
-          
-          COMMIT;
-          
-          EXECUTE IMMEDIATE '
-          INSERT INTO '||V_ESQUEMA||'.MIG2_CLC_NOT_EXISTS (
-            TABLA_MIG,
-            CODIGO_RECHAZADO,
-            CAMPO_CLC_MOTIVO_RECHAZO,            
-            FECHA_COMPROBACION
-          )
-          WITH NOT_EXISTS AS (
-            SELECT DISTINCT MIG2.COM_COD_COMPRADOR 
-            FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 
-            WHERE NOT EXISTS (
-              SELECT 1 
-              FROM '||V_ESQUEMA||'.CLC_CLIENTE_COMERCIAL CLC
-              WHERE MIG2.COM_COD_COMPRADOR = CLC.CLC_NUM_CLIENTE_HAYA
-            )
-          )
-          SELECT DISTINCT
-          '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
-          MIG2.COM_COD_COMPRADOR                                   CODIGO_RECHAZADO,
-          ''CLC_NUM_CLIENTE_HAYA''                                            CAMPO_CLC_MOTIVO_RECHAZO,
-          SYSDATE                                                                 FECHA_COMPROBACION
-          FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2  
-          INNER JOIN NOT_EXISTS ON NOT_EXISTS.COM_COD_COMPRADOR = MIG2.COM_COD_COMPRADOR
-          '
-          ;
-          
-          COMMIT;      
-      
-      END IF;
-      
+ 
       --Inicio del proceso de volcado sobre CLC_CLIENTE_COMERCIAL
       DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
       
@@ -128,11 +66,13 @@ BEGIN
           ) WITH DUPLICADOS AS(
                           SELECT DISTINCT COM_COD_COMPRADOR
                           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' WMIG2
+						  WHERE WMIG2.VALIDACION = 0
                           GROUP BY COM_COD_COMPRADOR 
                           HAVING COUNT(1) > 1
           ),
           DUPLICADOS_COM_DOCUMENTO  AS(
 			SELECT COM_DOCUMENTO FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'
+			WHERE VALIDACION = 0
 			GROUP BY COM_DOCUMENTO
 			HAVING COUNT(1)>1
           )
@@ -153,7 +93,7 @@ BEGIN
               MIG2.COM_DIRECCION                                                                                    AS COM_DIRECCION,              
               MIG2.COM_CODIGO_POSTAL                                                                            AS COM_CODIGO_POSTAL,
               0                                                                                                                   AS VERSION,
-              ''MIG2''                                                                                                            AS USUARIOCREAR,
+              '||V_USUARIO||'                                                                           AS USUARIOCREAR,
               SYSDATE                                                                                                     AS FECHACREAR,
               0                                                                                                                 AS BORRADO,
               LOC.DD_LOC_ID                                                                                               AS DD_LOC_ID,
@@ -180,6 +120,7 @@ BEGIN
 				SELECT 1
 				FROM DUPLICADOS_COM_DOCUMENTO DUP2
 				WHERE DUP2.COM_DOCUMENTO = MIG2.COM_DOCUMENTO)
+			AND MIG2.VALIDACIO = 0
           ) AUX      
       '
       ;
@@ -193,69 +134,7 @@ BEGIN
       EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
       
       DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
-      
-      --VALIDACION DE DUPLICADOS
-      V_SENTENCIA := '
-      SELECT SUM(COUNT(1))
-      FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' WMIG2
-      GROUP BY COM_COD_COMPRADOR 
-      HAVING COUNT(1) > 1
-      '
-      ;  
-      EXECUTE IMMEDIATE V_SENTENCIA INTO V_DUPLICADOS;
-      
-      -- INFORMAMOS A LA TABLA INFO
-      
-      -- Registros MIG
-      V_SENTENCIA := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'';  
-      EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
-      
-      -- Registros insertados en REM
-      -- V_REG_INSERTADOS
-      
-      -- Total registros rechazados
-      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;        
-      
-     
-      -- Observaciones
-      IF V_REJECTS != 0 THEN
-        V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros. Solo se migra lo que cruza con COMPRADORES_EXPEDIENTES.';
-        
-        IF TABLE_COUNT != 0 THEN
-           V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT||' CLIENTES_COMERCIALES inexistentes.';
-        END IF;
-        
-        IF V_DUPLICADOS != 0 THEN
-                        V_OBSERVACIONES := V_OBSERVACIONES||' Hay '||V_DUPLICADOS||' COM_COD_COMPRADOR duplicados.';    
-                END IF;
-      END IF;
-      
-      EXECUTE IMMEDIATE '
-      INSERT INTO '||V_ESQUEMA||'.MIG_INFO_TABLE (
-        TABLA_MIG,
-        TABLA_REM,
-        REGISTROS_TABLA_MIG,
-        REGISTROS_INSERTADOS,
-        REGISTROS_RECHAZADOS,
-        DD_COD_INEXISTENTES,
-        FECHA,
-        OBSERVACIONES
-      )
-      SELECT
-      '''||V_TABLA_MIG||''',
-      '''||V_TABLA||''',
-      '||V_REG_MIG||',
-      '||V_REG_INSERTADOS||',
-      '||V_REJECTS||',
-      '||V_COD||',
-      SYSDATE,
-      '''||V_OBSERVACIONES||'''
-      FROM DUAL
-      '
-      ;
-      
-      COMMIT;  
-
+ 
 EXCEPTION
       WHEN OTHERS THEN
             DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));

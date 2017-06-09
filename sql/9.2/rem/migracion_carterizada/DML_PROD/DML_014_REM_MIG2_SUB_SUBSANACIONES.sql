@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=Sergio Hernández
---## FECHA_CREACION=20161010
+--## AUTOR=GUILLEM REY
+--## FECHA_CREACION=20170608
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=HREOS-855
+--## INCIDENCIA_LINK=HREOS-2209
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración MIG2_SUB_SUBSANACIONES -> SUB_SUBSANACIONES
@@ -27,6 +27,7 @@ DECLARE
 TABLE_COUNT NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'SUB_SUBSANACIONES';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_SUB_SUBSANACIONES';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -38,61 +39,6 @@ V_COD NUMBER(10,0) := 0;
 
 BEGIN
       
-      --COMPROBACIONES PREVIAS - EXPEDIENTE_ECONOMICO
-      DBMS_OUTPUT.PUT_LINE('[INFO] ['||V_TABLA||'] COMPROBANDO EXPEDIENTE_ECONOMICO...');
-      
-      V_SENTENCIA := '
-      SELECT COUNT(1) 
-      FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
-      WHERE NOT EXISTS (
-        SELECT 1 FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
-      WHERE ECO.ECO_NUM_EXPEDIENTE = MIG.SUB_COD_OFERTA
-      )
-      '
-      ;
-      
-      EXECUTE IMMEDIATE V_SENTENCIA INTO TABLE_COUNT;
-      
-      IF TABLE_COUNT = 0 THEN
-      
-        DBMS_OUTPUT.PUT_LINE('[INFO] TODAS LAS OFERTAS EXISTEN EN EXPEDIENTE_ECONOMICO');
-        
-      ELSE
-      
-        DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN INFORMADO '||TABLE_COUNT||' EXPEDIENTE_ECONOMICO INEXISTENTES EN ECO_EXPEDIENTE_COMERCIAL. SE DERIVARÁN A LA TABLA '||V_ESQUEMA||'.MIG2_ECO_NOT_EXISTS.');
-        
-        --BORRAMOS LOS REGISTROS QUE HAYA EN NOT_EXISTS REFERENTES A ESTA INTERFAZ
-        
-        EXECUTE IMMEDIATE '
-        DELETE FROM '||V_ESQUEMA||'.MIG2_ECO_NOT_EXISTS
-        WHERE TABLA_MIG = '''||V_TABLA_MIG||'''
-        '
-        ;
-        
-        COMMIT;
-      
-        EXECUTE IMMEDIATE '
-        INSERT INTO '||V_ESQUEMA||'.MIG2_ECO_NOT_EXISTS (
-             OFR_NUM_OFERTA,
-             TABLA_MIG,
-             FECHA_COMPROBACION
-                        )
-        SELECT 
-             MIG.SUB_COD_OFERTA,        
-             '''||V_TABLA_MIG||'''         TABLA_MIG,
-             SYSDATE                       FECHA_COMPROBACION
-        FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG  
-        WHERE NOT EXISTS (
-            SELECT 1 FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
-             WHERE ECO.ECO_NUM_EXPEDIENTE = MIG.SUB_COD_OFERTA
-          )
-        '
-        ;
-        
-        COMMIT;
-    
-      END IF;
-
       --Inicio del proceso de volcado sobre SUB_SUBSANACIONES
       DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
       
@@ -119,11 +65,12 @@ BEGIN
                 SUB_GASTOS_SUBSANACION                          ,
                 SUB_GASTOS_INSCRIPCION                          ,
                 0                                               ,
-                ''MIG2''                                        ,
+                '||V_USUARIO||'                                        ,
                 SYSDATE
            FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
                 INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.ECO_NUM_EXPEDIENTE = MIG.SUB_COD_OFERTA
-                LEFT  JOIN '||V_ESQUEMA||'.DD_ESU_ESTADOS_SUBSANACION ESU ON ESU.DD_ESU_CODIGO = MIG.SUB_COD_ESTADO_SUBSANACION';
+                LEFT  JOIN '||V_ESQUEMA||'.DD_ESU_ESTADOS_SUBSANACION ESU ON ESU.DD_ESU_CODIGO = MIG.SUB_COD_ESTADO_SUBSANACION
+		   WHERE MIG.VALIDACION = 0';
       EXECUTE IMMEDIATE V_SENTENCIA;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
@@ -135,55 +82,7 @@ BEGIN
       EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
       
       DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
-      
-      -- INFORMAMOS A LA TABLA INFO
-      
-      -- Registros MIG
-      V_SENTENCIA := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'';  
-      EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
-      
-      -- Registros insertados en REM
-      -- V_REG_INSERTADOS
-      
-      -- Total registros rechazados
-      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;        
-      
-      -- Observaciones
-      IF V_REJECTS != 0 THEN      
-          V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros.';      
-
-          IF TABLE_COUNT != 0 THEN
-              V_OBSERVACIONES := V_OBSERVACIONES|| ' Hay '||TABLE_COUNT||' EXPEDIENTES_ECONOMICOS (OFERTAS) inexistentes. ';
-          END IF;
-        
-      END IF;
-      
-      EXECUTE IMMEDIATE '
-      INSERT INTO '||V_ESQUEMA||'.MIG_INFO_TABLE (
-        TABLA_MIG,
-        TABLA_REM,
-        REGISTROS_TABLA_MIG,
-        REGISTROS_INSERTADOS,
-        REGISTROS_RECHAZADOS,
-        DD_COD_INEXISTENTES,
-        FECHA,
-        OBSERVACIONES
-      )
-      SELECT
-      '''||V_TABLA_MIG||''',
-      '''||V_TABLA||''',
-      '||V_REG_MIG||',
-      '||V_REG_INSERTADOS||',
-      '||V_REJECTS||',
-      '||V_COD||',
-      SYSDATE,
-      '''||V_OBSERVACIONES||'''
-      FROM DUAL
-      '
-      ;
-      
-      COMMIT;  
-                        
+ 
 EXCEPTION
       WHEN OTHERS THEN
             DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));

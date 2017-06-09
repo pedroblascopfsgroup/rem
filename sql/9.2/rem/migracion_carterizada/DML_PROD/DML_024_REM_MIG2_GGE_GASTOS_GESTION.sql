@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=CLV
---## FECHA_CREACION=20161014
+--## AUTOR=GUILLEM REY
+--## FECHA_CREACION=20170608
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=HREOS-855
+--## INCIDENCIA_LINK=HREOS-2209
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración MIG2_GGE_GASTOS_GESTION -> GGE_GASTOS_GESTION
@@ -27,6 +27,7 @@ DECLARE
 TABLE_COUNT NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'GGE_GASTOS_GESTION';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_GGE_GASTOS_GESTION';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -37,67 +38,6 @@ V_COD NUMBER(10,0) := 0;
 V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
 
 BEGIN
-
-          --COMPROBACIONES PREVIAS - GASTOS_PROVEEDOR
-      DBMS_OUTPUT.PUT_LINE('[INFO] ['||V_TABLA||'] COMPROBANDO GASTOS_PROVEEDOR...');
-      
-      V_SENTENCIA := '
-      SELECT COUNT(1) 
-      FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 
-      WHERE NOT EXISTS (
-        SELECT 1 
-        FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV 
-        WHERE GPV.GPV_NUM_GASTO_HAYA = MIG2.GGE_GPV_ID
-      )
-      '
-      ;
-      EXECUTE IMMEDIATE V_SENTENCIA INTO TABLE_COUNT;
-      
-      IF TABLE_COUNT = 0 THEN
-      
-          DBMS_OUTPUT.PUT_LINE('[INFO] TODOS LOS GASTOS_PROVEEDOR EXISTEN EN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR');
-      
-      ELSE
-      
-          DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN INFORMADO '||TABLE_COUNT||' GASTOS_PROVEEDOR INEXISTENTES EN GPV_GASTOS_PROVEEDOR. SE DERIVARÁN A LA TABLA '||V_ESQUEMA||'.MIG2_GPV_NOT_EXISTS.');
-          
-          --BORRAMOS LOS REGISTROS QUE HAYA EN NOT_EXISTS REFERENTES A ESTA INTERFAZ
-          
-          EXECUTE IMMEDIATE '
-          DELETE FROM '||V_ESQUEMA||'.MIG2_GPV_NOT_EXISTS
-          WHERE TABLA_MIG = '''||V_TABLA_MIG||'''
-          '
-          ;
-          
-          COMMIT;
-          
-          EXECUTE IMMEDIATE '
-          INSERT INTO '||V_ESQUEMA||'.MIG2_GPV_NOT_EXISTS (
-            TABLA_MIG,
-            GPV_NUM_GASTO_HAYA,            
-            FECHA_COMPROBACION
-          )
-          WITH NOT_EXISTS AS (
-            SELECT DISTINCT MIG2.GGE_GPV_ID 
-            FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2 
-            WHERE NOT EXISTS (
-              SELECT 1 
-              FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV
-              WHERE MIG2.GGE_GPV_ID = GPV.GPV_NUM_GASTO_HAYA
-            )
-          )
-          SELECT DISTINCT
-          '''||V_TABLA_MIG||'''                                                   TABLA_MIG,
-          MIG2.GGE_GPV_ID                                                                                                 GPV_NUM_GASTO_HAYA,          
-          SYSDATE                                                                 FECHA_COMPROBACION
-          FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2  
-          INNER JOIN NOT_EXISTS ON NOT_EXISTS.GGE_GPV_ID = MIG2.GGE_GPV_ID
-          '
-          ;
-          
-          COMMIT;      
-      
-      END IF;
 
       DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
       
@@ -130,7 +70,7 @@ BEGIN
                                   ,FECHAMODIFICAR
                                   ,USUARIOBORRAR
                                   ,FECHABORRAR
-          ,BORRADO
+          						  ,BORRADO
                 )
                 WITH INSERTAR AS (
                 SELECT DISTINCT GPV.GPV_ID
@@ -155,6 +95,7 @@ BEGIN
                 FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
                 INNER JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV
                   ON GPV.GPV_NUM_GASTO_HAYA = MIG.GGE_GPV_ID
+				WHERE MIG.VALIDACION = 0
           )
                 SELECT
                        '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                                          GGE_ID
@@ -178,7 +119,7 @@ BEGIN
           ,(SELECT USU.USU_ID FROM '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU WHERE USU.USU_USERNAME = INS.GGE_COD_USUARIO_RETENCION_PAGO) USU_ID_RP
           ,(SELECT DD_MRP.DD_MRP_ID FROM '||V_ESQUEMA||'.DD_MRP_MOTIVOS_RET_PAGO DD_MRP WHERE DD_MRP.DD_MRP_CODIGO = INS.GGE_COD_MOTIVO_RETENCION_PAGO) DD_MRP_ID
           ,0 VERSION
-          ,''MIG2'' USUARIOCREAR
+          ,'||V_USUARIO||' USUARIOCREAR
           ,SYSDATE FECHACREAR
           ,NULL USUARIOMODIFICAR
           ,NULL FECHAMODIFICAR
@@ -199,55 +140,7 @@ BEGIN
       EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
       
       DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
-      
-      -- INFORMAMOS A LA TABLA INFO
-      
-      -- Registros MIG
-      V_SENTENCIA := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'';  
-      EXECUTE IMMEDIATE V_SENTENCIA INTO V_REG_MIG;
-      
-      -- Total registros rechazados
-      V_REJECTS := V_REG_MIG - V_REG_INSERTADOS;        
-      
-      -- Observaciones
-          IF V_REJECTS != 0 THEN
-          
-      V_OBSERVACIONES := 'Se han rechazado '||V_REJECTS||' registros.';
-      
-                IF TABLE_COUNT != 0 THEN
-                
-                  V_OBSERVACIONES := V_OBSERVACIONES || ' Hay '||TABLE_COUNT||' GASTOS_PROVEEDOR inexistentes.';
-                
-                END IF;
-      END IF;
-        
-      V_SENTENCIA := '
-      INSERT INTO '||V_ESQUEMA||'.MIG_INFO_TABLE (
-        TABLA_MIG,
-        TABLA_REM,
-        REGISTROS_TABLA_MIG,
-        REGISTROS_INSERTADOS,
-        REGISTROS_RECHAZADOS,
-        DD_COD_INEXISTENTES,
-        FECHA,
-        OBSERVACIONES
-      )
-      SELECT
-      '''||V_TABLA_MIG||''',
-      '''||V_TABLA||''',
-      '||V_REG_MIG||',
-      '||V_REG_INSERTADOS||',
-      '||V_REJECTS||',
-      '||V_COD||',
-      SYSDATE,
-      '''||V_OBSERVACIONES||'''
-      FROM DUAL
-      '
-      ;
-      EXECUTE IMMEDIATE V_SENTENCIA;
-      
-      COMMIT;  
-
+ 
 EXCEPTION
       WHEN OTHERS THEN
             DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));

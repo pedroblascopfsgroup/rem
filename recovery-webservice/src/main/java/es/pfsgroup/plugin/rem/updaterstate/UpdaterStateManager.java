@@ -29,6 +29,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 
 @Service("updaterStateManager")
@@ -284,8 +285,8 @@ public class UpdaterStateManager implements UpdaterStateApi{
 
 		try{
 			//Si el tipo de trabajo es OBTENCION_DOCUMENTAL o ACTUACION_TECNICA.
-			//if ((DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(codigoTipoTrabajo)) || 
-				//	(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(codigoTipoTrabajo))) {
+			if ((DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(codigoTipoTrabajo)) || 
+					(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(codigoTipoTrabajo))) {
 
 				Filter filtroActivoId = null, filtroValorNeto = null, filtroValorMinimo = null, filtroFSV = null, filtroVACBE = null, filtroPrecioTransferencia = null, filtroValorReferencia = null, filtroBorrado = null;
 				ActivoValoraciones valorNeto = null, valorMinimo = null, fsv = null, vacbe = null, precioTransferencia = null, valorReferencia = null;		
@@ -480,6 +481,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 					return (valorReferencia_act * 100d) / valorReferenciaTotal;
 
 				}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

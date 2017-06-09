@@ -31,7 +31,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		    }
 		});
 	},
-
+	
 	onClickBotonFavoritos: function(btn) {
 		
 		var me = this,			

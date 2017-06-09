@@ -34,7 +34,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 					[
 						{ 
 							xtype: 'displayfieldbase',
-		                	fieldLabel:  HreRem.i18n('fieldlabel.numero.agrupacion'),
+		                fieldLabel:  HreRem.i18n('fieldlabel.numero.agrupacion'),
 			            	bind: {
 			            		value: '{agrupacionficha.numAgrupRem}'
 			            	}		
@@ -167,7 +167,39 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 				        		hidden: '{!esAgrupacionAsistida}',
 				        		minValue: '{agrupacionficha.fechaInicioVigencia}'
 			            	}		
-						}
+						},
+						{
+                    xtype: 'comboboxfieldbase',
+                    reference: 'comboFormalizacion',
+                    fieldLabel: HreRem.i18n('fieldlabel.agrupacion.con.formalizacion'),
+                    bind: {
+                    		store: '{comboSiNoRem}',
+                    		value: '{agrupacionficha.isFormalizacion}',
+                        readOnly: '{agrupacionTieneActivos}'                       
+                    },
+                    listeners: {
+                        change: function(combo, value) {
+                          var me = this;
+                          if(value=='1') {
+                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').allowBlank = false;
+                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').setDisabled(false);
+                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').validate();
+                            me.up('formBase').down('[reference=cbGestorFormalizacion]').allowBlank = false;
+                            me.up('formBase').down('[reference=cbGestorFormalizacion]').setDisabled(false);
+                            me.up('formBase').down('[reference=cbGestorFormalizacion]').validate();                            
+                          } else {
+                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').allowBlank = true;
+                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').setValue("");
+                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').setDisabled(true);
+                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').validate();
+                            me.up('formBase').down('[reference=cbGestorFormalizacion]').allowBlank = true;
+                            me.up('formBase').down('[reference=cbGestorFormalizacion]').setValue("");
+                            me.up('formBase').down('[reference=cbGestorFormalizacion]').setDisabled(true);
+                            me.up('formBase').down('[reference=cbGestorFormalizacion]').validate();                            
+                          }
+                        }
+                    }                
+            }						
 					]
           },
           {

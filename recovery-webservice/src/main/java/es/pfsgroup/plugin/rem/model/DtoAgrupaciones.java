@@ -42,6 +42,7 @@ public class DtoAgrupaciones extends WebDto {
 	private Long codigoGestorComercial;
 	private Long codigoGestorFormalizacion;
 	private Long codigoGestorComercialBackOffice;
+	private Integer isFormalizacion;
 
 
 	public String getNombre() {
@@ -222,5 +223,12 @@ public class DtoAgrupaciones extends WebDto {
 	public void setCodigoGestorComercialBackOffice(Long codigoGestorComercialBackOffice) {
 		this.codigoGestorComercialBackOffice = codigoGestorComercialBackOffice;
 	}
+	public Integer getIsFormalizacion() {
+		return isFormalizacion;
+	}
+	public void setIsFormalizacion(Integer isFormalizacion) {
+		this.isFormalizacion = isFormalizacion;
+	}
+
 
 }

@@ -2540,6 +2540,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return perimetro.getAplicaComercializar() == 1 ? true : false;
 	}
+	
+	@Override
+	@BusinessOperationDefinition("activoManager.comprobarActivoFormalizable")
+	public boolean esActivoFormalizable(Long numActivo) {		
+		PerimetroActivo perimetro = this.getPerimetroByNumActivo(numActivo);
+		return perimetro.getAplicaFormalizar() == 1 ? true : false;
+	}
 
 	@Override
 	@BusinessOperationDefinition("activoManager.comprobarObligatoriosDesignarMediador")
@@ -3622,4 +3629,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public Long getNextNumActivoRem() {
 		return activoDao.getNextNumActivoRem();
 	}
+
+	@Override
+	public PerimetroActivo getPerimetroByNumActivo(Long numActivo) {
+
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", numActivo);
+		PerimetroActivo perimetroActivo = (PerimetroActivo) genericDao.get(PerimetroActivo.class, filtroActivo);
+		return perimetroActivo;
+
+	}
+
 }

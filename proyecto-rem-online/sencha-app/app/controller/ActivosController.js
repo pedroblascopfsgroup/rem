@@ -196,7 +196,7 @@ Ext.define('HreRem.controller.ActivosController', {
     	}
 
     },
-    
+
     refrescarDetalleActivo: function (detalle) {
     	
     	var me = this,

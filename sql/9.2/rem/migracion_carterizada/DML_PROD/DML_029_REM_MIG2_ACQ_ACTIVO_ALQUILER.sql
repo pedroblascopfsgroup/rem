@@ -28,6 +28,7 @@ TABLE_COUNT NUMBER(10,0) := 0;
 TABLE_COUNT_2 NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'ACT_HAL_HIST_ALQUILERES';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_ACQ_ACTIVO_ALQUILER';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -89,7 +90,7 @@ BEGIN
             TPC_COM.DD_TPC_ID                                           DD_TPC_ID_COM,
             TPC_SUMINISTRO.DD_TPC_ID                                    DD_TPC_ID_SUMINISTRO,
             0                                                           VERSION,
-            ''#USUARIO_MIGRACION#''                                     USUARIOCREAR,
+            '||V_USUARIO||'                                     USUARIOCREAR,
             SYSDATE                                                     FECHACREAR,
             0                                                           BORRADO
         FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG

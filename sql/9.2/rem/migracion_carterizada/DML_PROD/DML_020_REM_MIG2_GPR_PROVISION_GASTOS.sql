@@ -31,6 +31,7 @@ MAX_NUM_PROVISION NUMBER(20,0) := 0;
 V_NUM_TABLAS NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'PRG_PROVISION_GASTOS';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_GPR_PROVISION_GASTOS';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -86,7 +87,7 @@ BEGIN
                 MIG.GPR_FECHA_RESPUESTA                                 PRG_FECHA_RESPUESTA,
                 MIG.GPR_FECHA_ANULACION                                 PRG_FECHA_ANULACION,
                 ''0''                                                   VERSION,                                                                                
-                ''#USUARIO_MIGRACION#''                                 USUARIOCREAR,
+                '||V_USUARIO||'                                 USUARIOCREAR,
 				SYSDATE                                                 FECHACREAR,     
 				0                                                       BORRADO
                 FROM INSERTAR MIG

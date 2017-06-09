@@ -295,10 +295,18 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 							} else {
 								activoHistoricoEstadoPublicacion.setPortal((DDPortal) utilDiccionarioApi.dameValorDiccionarioByCod(DDPortal.class, DDPortal.CODIGO_HAYA));
 							}
+							
+							
+							
 							activoHistoricoEstadoPublicacion.setActivo(activo);
 							beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "motivo", motivo);
 							beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "fechaDesde" , new Date());
 							beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "estadoPublicacion", estadoPublicacion);
+							if(filtro.getPropertyValue().equals(DDEstadoPublicacion.CODIGO_NO_PUBLICADO) || 
+							   filtro.getPropertyValue().equals(DDEstadoPublicacion.CODIGO_DESPUBLICADO)){
+								activoHistoricoEstadoPublicacion.setPortal(null);
+							}
+							
 							
 							if(!Checks.esNulo(isPublicacionForzada) && isPublicacionForzada) {
 								Filter filtroTpu = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoPublicacion.CODIGO_FORZADA);

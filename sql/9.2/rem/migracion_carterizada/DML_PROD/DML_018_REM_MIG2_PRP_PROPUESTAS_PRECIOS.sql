@@ -30,6 +30,7 @@ TABLE_COUNT_3 NUMBER(10,0) := 0;
 TABLE_COUNT_4 NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'PRP_PROPUESTAS_PRECIOS';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_PRP_PROPUESTAS_PRECIOS';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -84,7 +85,7 @@ BEGIN
                         MIG.PRP_FECHA_CARGA                                                                                     PRP_FECHA_CARGA,
                         MIG.PRP_OBSERVACIONES                                                                           PRP_OBSERVACIONES,
                         0                                                                                                                       VERSION,
-                        ''#USUARIO_MIGRACION#''                                                                                                        USUARIOCREAR,
+                        '||V_USUARIO||'                                                                                                        USUARIOCREAR,
                         SYSDATE                                                                                                         FECHACREAR,
                         0                                                                                                                       BORRADO
                   FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 

@@ -27,6 +27,7 @@ DECLARE
 TABLE_COUNT NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'COM_COMPRADOR';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_COM_COMPRADORES';
 V_SENTENCIA VARCHAR2(32000 CHAR);
@@ -92,7 +93,7 @@ BEGIN
               MIG2.COM_DIRECCION                                                                                    AS COM_DIRECCION,              
               MIG2.COM_CODIGO_POSTAL                                                                            AS COM_CODIGO_POSTAL,
               0                                                                                                                   AS VERSION,
-              ''#USUARIO_MIGRACION#''                                                                           AS USUARIOCREAR,
+              '||V_USUARIO||'                                                                           AS USUARIOCREAR,
               SYSDATE                                                                                                     AS FECHACREAR,
               0                                                                                                                 AS BORRADO,
               LOC.DD_LOC_ID                                                                                               AS DD_LOC_ID,

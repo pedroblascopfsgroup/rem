@@ -27,6 +27,7 @@ DECLARE
       TABLE_COUNT NUMBER(10,0) := 0;
       V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
       V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+      V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
       V_TABLA VARCHAR2(40 CHAR) := 'RES_RESERVAS';
       V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_RES_RESERVAS';
       V_SENTENCIA VARCHAR2(2000 CHAR);
@@ -105,7 +106,7 @@ BEGIN
       RES.RES_FECHA_RESOLUCION                                          RES_FECHA_RESOLUCION,
       RES.DD_MAN_ID														DD_MAN_ID,
       ''0''                                                             VERSION,
-      ''#USUARIO_MIGRACION#''                                           USUARIOCREAR,
+      '||V_USUARIO||'                                           USUARIOCREAR,
       SYSDATE                                                           FECHACREAR,
       0                                                                 BORRADO
       FROM INSERTAR RES                                                                 

@@ -26,6 +26,7 @@ DECLARE
 
       V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
       V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+      V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
       V_TABLA VARCHAR2(40 CHAR) := 'MIG2_TRA_TRAMITES_OFERTAS'; -- Vble. Tabla pivote
       
       -- Vbls. para el cursor
@@ -52,7 +53,7 @@ DECLARE
       V_TABLA_TAC VARCHAR2(30 CHAR) := 'TAC_TAREAS_ACTIVOS';
       
       -- Vles. para el SP de Altas BPM
-      V_IN VARCHAR2(30 CHAR) := 'MIG2'; --Vble. de entrada para el  SP que sera el USUARIOCREAR
+      V_IN VARCHAR2(30 CHAR) := V_USUARIO; --Vble. de entrada para el  SP que sera el USUARIOCREAR
       V_OUT VARCHAR2(32000 CHAR); --Vble. de salida para el  SP que almacena la salida del SP
       
 BEGIN
@@ -175,7 +176,7 @@ BEGIN
                         INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = AO.ACT_ID AND ACT.BORRADO = 0 
                         INNER JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0
                         INNER JOIN '||V_ESQUEMA||'.MIG2_ACH_ACTIVOS_HITO ACH ON ACH.ACH_NUMERO_ACTIVO = ACT.ACT_NUM_ACTIVO
-                  WHERE EEC.DD_EEC_CODIGO IN (''10'',''06'',''11'',''04'',''07'',''03'')  
+                  WHERE EEC.DD_EEC_CODIGO IN (''10'',''06'',''11'',''04'',''07'',''03'') AND ACH.VALIDACION = 0
             )
             SELECT
                   OV.OFR_ID
@@ -269,7 +270,7 @@ BEGIN
                     INNER JOIN USU_ID ON USU_ID.ACT_ID = TRA.ACT_ID
                     INNER JOIN SUP_ID ON SUP_ID.ACT_ID = TRA.ACT_ID
             ) AUX
-            ON (AUX.ACT_ID = MIG2.ACT_ID)
+            ON (AUX.ACT_ID = MIG2.ACT_ID AND MIG2.VALIDACION = 0)
             WHEN MATCHED THEN UPDATE
                   SET MIG2.USU_ID = AUX.USU_ID
                          , MIG2.SUP_ID = AUX.SUP_ID
@@ -332,7 +333,7 @@ BEGIN
                     )                                                           AS DD_EST_ID 
                   , SYSDATE                                              AS TBJ_FECHA_SOLICITUD
                   , 0                                                          AS VERSION
-                  , ''#USUARIO_MIGRACION#''                               AS USUARIOCREAR
+                  , '||V_USUARIO||'                               AS USUARIOCREAR
                   , SYSDATE                                              AS FECHACREAR
                   , 0                                                           AS BORRADO
             FROM '||V_ESQUEMA||'.MIG2_TRA_TRAMITES_OFERTAS MIG2
@@ -448,7 +449,7 @@ BEGIN
                   , 0                                                                                        AS TRA_PARALIZADO
                   , SYSDATE                                                                           AS TRA_FECHA_INICIO
                   , 1                                                                                        AS VERSION
-                  , ''#USUARIO_MIGRACION#''                                                            AS USUARIOCREAR
+                  , '||V_USUARIO||'                                                            AS USUARIOCREAR
                   , SYSDATE                                                                           AS FECHACREAR         
                   , 0                                                                                        AS BORRADO
                   , (SELECT DD_TAC_ID 
@@ -510,7 +511,7 @@ BEGIN
                   , 0                                                                                              AS TAR_ALERTA
                   , 0                                                                                             AS TAR_TAREA_FINALIZADA
                   , 0                                                                                             AS VERSION
-                  , ''#USUARIO_MIGRACION#''                                                                       AS USUARIOCREAR
+                  , '||V_USUARIO||'                                                                       AS USUARIOCREAR
                   , SYSDATE                                                                                 AS FECHACREAR
                   , 0                                                                                             AS BORRADO
                   , (SELECT SYSDATE + 3 FROM DUAL)                                          AS TAR_FECHA_VENC
@@ -583,7 +584,7 @@ BEGIN
                   , NULL                     AS TEX_TOKEN_ID_BPM
                   , 0                           AS TEX_DETENIDA
                   , 0                           AS VERSION
-                  , ''#USUARIO_MIGRACION#''     AS USUARIOCREAR
+                  , '||V_USUARIO||'     AS USUARIOCREAR
                   , SYSDATE               AS FECHACREAR
                   , 0                              AS BORRADO
                   , 0                             AS TEX_NUM_AUTOP
@@ -637,7 +638,7 @@ BEGIN
                   , UA.USU_ID           AS USU_ID
                   , UA.SUP_ID           AS SUP_ID
                   , 0                       AS VERSION
-                  , ''#USUARIO_MIGRACION#'' AS USUARIOCREAR
+                  , '||V_USUARIO||' AS USUARIOCREAR
                   , SYSDATE           AS FECHACREAR
                   ,0                        AS BORRADO
             FROM UNICO_ACTIVO UA

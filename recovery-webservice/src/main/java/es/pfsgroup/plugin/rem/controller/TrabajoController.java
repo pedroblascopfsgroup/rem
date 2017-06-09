@@ -1193,16 +1193,19 @@ public class TrabajoController extends ParadiseJsonController {
 		}
 
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView recalcularParticipacion(@RequestParam Long idTrabajo, ModelMap model){
-	
-		updaterStateApi.recalcularParticipacion(idTrabajo);
-		
-		model.put("success", true);
-		
+
+		try {
+			updaterStateApi.recalcularParticipacion(idTrabajo);
+			model.put("success", true);
+		} catch (Exception ex) {
+			logger.error(ex.getMessage());
+			model.put("success", false);
+		}
+
 		return createModelAndViewJson(model);
 	}
-
 }

@@ -871,16 +871,22 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 
      onClickRefrescarParticipacion: function(btn) {
     	var me = this;
+    	var grid = btn.up('trabajosdetalle').lookupReference('listadoActivosTrabajo');
 
+    	grid.mask(HreRem.i18n("msg.mask.loading"))
     	idTrabajo = me.getViewModel().get('trabajo').get('id');
-    	 
-	    var url = $AC.getRemoteUrl('trabajo/recalcularParticipacion');
+
 	 	Ext.Ajax.request({
-			url:url,
+			url: $AC.getRemoteUrl('trabajo/recalcularParticipacion'),
 			params:  {idTrabajo : idTrabajo},
 			success: function(response,opts){
+				grid.unmask();
 				btn.up('activostrabajo').funcionRecargar();
-			}
+			},
+			failure: function (a, operation, context) {
+				grid.unmask();
+		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    }
 	    });
 	 	    
  	}

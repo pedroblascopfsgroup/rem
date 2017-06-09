@@ -56,7 +56,7 @@ public interface UpdaterStateApi {
 	 * @param activosLista : se pasan la lista de todos los activos a calcular(Se puede dejar en null si solamente se quiere calcular un activo).
 	 * @param activo_check : es el activo que se calcula.
 	 */
-	public String calcularParticipacionPorActivo(String codigoTipoTrabajo, List<Activo> activosLista, Activo activo_check);
+	public Double calcularParticipacionPorActivo(String codigoTipoTrabajo, List<Activo> activosLista, Activo activo_check);
 	
 	/**
 	 * Recalcula la participación de cada activo dependiendo de la cartera. 

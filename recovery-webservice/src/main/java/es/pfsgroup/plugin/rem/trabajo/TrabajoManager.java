@@ -432,7 +432,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			
 			// Se crea la relacion de activos - trabajos, utilizando la lista de
 			// activos de entrada
-			String participacion = null;
+			Double participacion = null;
 			for (Activo activo : listaActivos) {
 				
 				participacion = updaterStateApi.calcularParticipacionPorActivo(trabajo.getTipoTrabajo().getCodigo(),listaActivos, activo);
@@ -441,10 +441,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				//o que no son ni de tipo obtención documental ni actuaciones técnicas.
 				//Se calcula a partes iguales para todos los activos.
 				if(participacion == null){
-					participacion = String.valueOf((double)(100/listaActivos.size()));
+					participacion = (100d / listaActivos.size());
 				}
 				
-				ActivoTrabajo activoTrabajo = createActivoTrabajo(activo, trabajo, participacion);
+				ActivoTrabajo activoTrabajo = createActivoTrabajo(activo, trabajo, participacion.toString());
 				trabajo.getActivosTrabajo().add(activoTrabajo);
 			}
 			
@@ -495,7 +495,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		} else {
 			if (dtoTrabajo.getIdActivo() != null) {
 				Activo activo = activoDao.get(dtoTrabajo.getIdActivo());
-				dtoTrabajo.setParticipacion(updaterStateApi.calcularParticipacionPorActivo(trabajo.getTipoTrabajo().getCodigo(), null, activo));
+				Double participacion = updaterStateApi.calcularParticipacionPorActivo(trabajo.getTipoTrabajo().getCodigo(), null, activo);
+				dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : participacion.toString());
 				trabajo = crearTrabajoPorActivo(activo, dtoTrabajo);
 				createTramiteTrabajo(trabajo);
 
@@ -535,7 +536,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Activo activo = null;
 		for (VActivosAgrupacionTrabajo activoAgrupacion : activosAgrupacionTrabajo) {
 			activo = activoDao.get(Long.valueOf(activoAgrupacion.getActivoId()));
-			dtoTrabajo.setParticipacion(updaterStateApi.calcularParticipacionPorActivo(dtoTrabajo.getTipoTrabajoCodigo(), activosList, null));
+			Double participacion = updaterStateApi.calcularParticipacionPorActivo(dtoTrabajo.getTipoTrabajoCodigo(), activosList, null);
+			dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : participacion.toString());
 			trabajo = crearTrabajoPorActivo(activo, dtoTrabajo);
 			trabajos.add(trabajo);
 		}
@@ -582,8 +584,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				// * 100))) ?
 				// (activoAgrupacion.getImporteNetoContable()/activoAgrupacion.getSumaAgrupacionNetoContable()
 				// * 100) : 0.0D);
-								
-				dtoTrabajo.setParticipacion(updaterStateApi.calcularParticipacionPorActivo(trabajo.getTipoTrabajo().getCodigo(), activosList, activo));
+				Double participacion = updaterStateApi.calcularParticipacionPorActivo(trabajo.getTipoTrabajo().getCodigo(), activosList, activo);
+				dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : participacion.toString());
 				// dtoTrabajo.setParticipacion(Double.toString(activoAgrupacion.getImporteNetoContable()/activoAgrupacion.getSumaAgrupacionNetoContable()
 				// * 100));
 
@@ -709,7 +711,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 			Boolean isFirstLoop = true;
 			for (Activo activo : listaActivos) {
-				dtoTrabajo.setParticipacion(updaterStateApi.calcularParticipacionPorActivo(trabajo.getTipoTrabajo().getCodigo(), listaActivos, activo));
+				Double participacion = updaterStateApi.calcularParticipacionPorActivo(trabajo.getTipoTrabajo().getCodigo(), listaActivos, activo);
+				dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : participacion.toString());
 				
 				if (isFirstLoop || !dtoTrabajo.getEsSolicitudConjunta()) {
 					trabajo = new Trabajo();
@@ -2526,15 +2529,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		else
 			return groovyft.format(tareaActivoManager.getByIdTareaExterna(tareaExterna.getId()).getTramite()
 					.getTrabajo().getFechaPago());
-	}
-
-	private String getParticipacion(VActivosAgrupacionTrabajo activoAgrupacion) {
-		Double participacion = (Double) (!(Double.isNaN(
-				(activoAgrupacion.getImporteNetoContable() / activoAgrupacion.getSumaAgrupacionNetoContable() * 100)))
-						? (activoAgrupacion.getImporteNetoContable() / activoAgrupacion.getSumaAgrupacionNetoContable()
-								* 100)
-						: 0.0D);
-		return Double.toString(participacion);
 	}
 
 	@Override

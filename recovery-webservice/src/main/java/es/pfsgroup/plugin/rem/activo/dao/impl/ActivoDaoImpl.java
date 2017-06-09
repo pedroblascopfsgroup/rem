@@ -833,7 +833,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			cadenaID.append(",");
 		}
 
-		hb.appendWhere("id in ("+cadenaID.substring(0, cadenaID.length()-2)+")");
+		hb.appendWhere("id in ("+cadenaID.substring(0, cadenaID.length()-1)+")");
 		
 		return HibernateQueryUtils.list(this, hb);
 	}

@@ -25,17 +25,12 @@ SET DEFINE OFF;
 DECLARE
 
 TABLE_COUNT NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#'; --#ESQUEMA#
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#'; --#ESQUEMA_MASTER#
 V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'GDE_GASTOS_DETALLE_ECONOMICO';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_GDE_GASTOS_DET_ECONOMICO';
 V_SENTENCIA VARCHAR2(32000 CHAR);
-V_REG_MIG NUMBER(10,0) := 0;
-V_REG_INSERTADOS NUMBER(10,0) := 0;
-V_REJECTS NUMBER(10,0) := 0;
-V_COD NUMBER(10,0) := 0;
-V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
 
 BEGIN
 
@@ -145,7 +140,7 @@ BEGIN
                 TPP.DD_TPP_ID                                                                                                   DD_TPP_ID,
                 DEP.DD_DEP_ID                                                                                                   DD_DEP_ID,
                 0                                                                                                                               VERSION,
-                '||V_USUARIO||'                                                                USUARIOCREAR,
+                '''||V_USUARIO||'''                                                                USUARIOCREAR,
                 SYSDATE                                                                         FECHACREAR,
                 0                                                                               BORRADO,
                 GDE.GDE_REEMBOLSO_TERCERO                                                                               GDE_REEMBOLSO_TERCERO,
@@ -172,13 +167,10 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
-      V_REG_INSERTADOS := SQL%ROWCOUNT;
-      
       COMMIT;
       
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
-      
-      DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
  
 EXCEPTION
       WHEN OTHERS THEN

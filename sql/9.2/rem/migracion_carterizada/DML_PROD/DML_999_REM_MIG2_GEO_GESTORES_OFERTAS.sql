@@ -24,8 +24,8 @@ SET DEFINE OFF;
 
 DECLARE
 
-  V_ESQUEMA VARCHAR2(30 CHAR):= 'REM01'; -- Configuracion Esquema
-  V_ESQUEMA_M VARCHAR2(30 CHAR):= 'REMMASTER'; -- Configuracion Esquema Master
+  V_ESQUEMA VARCHAR2(30 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+  V_ESQUEMA_M VARCHAR2(30 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
   V_SQL VARCHAR2(32000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
   V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
   ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
@@ -244,8 +244,20 @@ BEGIN
       EXECUTE IMMEDIATE V_SQL;
       
       DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.GCH_GESTOR_ECO_HISTORICO cargada. '||SQL%ROWCOUNT||' Filas.');
+
+      COMMIT; 
       
-      COMMIT;  
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''GEE_GESTOR_ENTIDAD'',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''GCO_GESTOR_ADD_ECO'',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''GEH_GESTOR_ENTIDAD_HIST'',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''GCH_GESTOR_ECO_HISTORICO'',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA; 
       
       DBMS_OUTPUT.PUT_LINE('[FIN]');
       

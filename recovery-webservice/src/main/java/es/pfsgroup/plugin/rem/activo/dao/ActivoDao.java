@@ -133,6 +133,13 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public Long getNextNumActivoRem();
 
 	/**
+	 * Este método recoje una lista de Ids de activo y obtiene en base a estos una lista de activos.
+	 * @param activosID : Lista de ID de los activos a obtener.
+	 * @return Devuelve una lista de Activos.
+	 */
+	public List<Activo> getListActivosPorID(List<Long> activosID);
+
+	/**
 	 * Este método devuelve 1 si el ID del activo pertenece a una agrupación de tipo restringida
 	 * y es el activo principal de la misma. 0 si no es el activo principal de la agrupación.
 	 * 

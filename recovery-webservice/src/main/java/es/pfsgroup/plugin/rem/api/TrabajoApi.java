@@ -18,6 +18,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -680,5 +681,14 @@ public interface TrabajoApi {
 	 * @return
 	 */
 	public List<VProveedores> getComboProveedorFiltered(Long idTrabajo);
+
+	/**
+	 * Devuelve un ActivoTrabajo compuesto por un activo, un trabajo y su participación.
+	 * @param activo : activo a asignar
+	 * @param trabajo : trabajo al que se asigna.
+	 * @param participacion : participación del activo.
+	 * @return ActivoTrabajo
+	 */
+	public ActivoTrabajo createActivoTrabajo(Activo activo, Trabajo trabajo, String participacion);
 
 }

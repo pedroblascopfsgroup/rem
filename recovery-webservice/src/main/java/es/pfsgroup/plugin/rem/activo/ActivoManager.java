@@ -3631,6 +3631,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
+	public List<Activo> getListActivosPorID(List<Long> activosID) {
+		return activoDao.getListActivosPorID(activosID);
+	}
+
+	@Override
 	public PerimetroActivo getPerimetroByNumActivo(Long numActivo) {
 
 		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", numActivo);

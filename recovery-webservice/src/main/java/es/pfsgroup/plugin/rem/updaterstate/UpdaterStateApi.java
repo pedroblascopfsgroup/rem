@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.updaterstate;
 
+import java.util.List;
+
 import es.pfsgroup.plugin.rem.model.Activo;
 
 public interface UpdaterStateApi {
@@ -46,6 +48,23 @@ public interface UpdaterStateApi {
 	 * @param activo
 	 */
 	public void updaterStateTipoComercializacion(Activo activo);
+	
+	/**
+	 * Calcula la participación de cada activo dependiendo de la cartera. 
+	 * Sólo funciona en trabajos de obtención documental o actuación técnica.
+	 * @param codigoTipoTrabajo : se pasan el codigo del trabajo.
+	 * @param activosLista : se pasan la lista de todos los activos a calcular(Se puede dejar en null si solamente se quiere calcular un activo).
+	 * @param activo_check : es el activo que se calcula.
+	 */
+	public Double calcularParticipacionPorActivo(String codigoTipoTrabajo, List<Activo> activosLista, Activo activo_check);
+	
+	/**
+	 * Recalcula la participación de cada activo dependiendo de la cartera. 
+	 * Sólo funciona en trabajos de obtención documental o actuación técnica.
+	 * Sólo funciona para trabajos ya creados.
+	 * @param idTrabajo : se pasan el codigo del trabajo.
+	 */
+	public void recalcularParticipacion(Long idTrabajo);
 
 	
 }

@@ -1,6 +1,7 @@
 Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
     extend	 : 'Ext.panel.Panel',
-    xtype	 : 'activostrabajo',    
+    xtype	 : 'activostrabajo',
+    reference: 'activostrabajoref',
     cls		 : 'panel-base shadow-panel',
 	layout	 : 'fit',
 	listeners: {
@@ -37,6 +38,45 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
 				            enableGroupingMenu: false,
 				            dock: 'bottom'
 				}],
+				listeners: {
+			        afterrender: function() {
+			            var mainMenu = this.headerCt.getMenu();
+	
+						mainMenu.on({
+						    beforeshow: function(menu){
+						        // Si se despliega el menú de la columna indicada, mostrar nuevas opciones.
+						        if (menu.activeHeader.dataIndex == 'participacion'){
+						            for (var i=0; i<menu.items.items.length; i++){
+						                if (menu.items.items[i].itemId == 'participacionActivosMenuItem' || menu.items.items[i].itemId == 'participacionActivosMenuSeparatorItem'){
+						                    menu.items.items[i].show();
+						                }
+						            }
+						        // Para cualquier otra columna, ocultar las nuevas opciones.
+						        } else {
+						            for (var i=0; i<menu.items.items.length; i++){
+						                if (menu.items.items[i].itemId == 'participacionActivosMenuItem' || menu.items.items[i].itemId == 'participacionActivosMenuSeparatorItem'){
+						                    menu.items.items[i].hide();
+						                }
+						            }
+						        }
+						    }
+						});
+						
+						// Añadir al menú de cabeceras un elemento personalizado.
+				        mainMenu.insert(mainMenu.items.length-2, [
+				        	{
+				        		xtype: 'menuseparator',
+				        		itemId: 'participacionActivosMenuSeparatorItem'
+				        	},
+				        	{
+					            itemId: 'participacionActivosMenuItem',
+					            text: HreRem.i18n('btn.actualizar.participacion.activos'),
+					            iconCls: 'ico-refrescar',
+				                handler: 'onClickRefrescarParticipacion'
+				        	}
+				        ]);         
+			        }
+			    },
 				columns: [				    
 					{
 				        xtype: 'actioncolumn',
@@ -48,7 +88,6 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
 				        }],
 				        hideable: false
 			    	} ,  	
-				
 				    {   text: HreRem.i18n('header.numero.activo'),
 			        	dataIndex: 'numActivo',
 			        	flex: 1
@@ -105,7 +144,7 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
 			            	return Ext.util.Format.currency(value);
 			            }
 			        },
-			        {   
+			        {
 			        	dataIndex: 'participacion',
 			        	text: HreRem.i18n('header.porcentaje.participacion'),
 			        	flex:1,
@@ -186,6 +225,8 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
 
     	me.callParent();
     },
+    
+    
     
     funcionRecargar: function() {
 		var me = this; 

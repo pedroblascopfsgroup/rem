@@ -48,7 +48,6 @@ import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Reserva;
-import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.Visita;
@@ -984,6 +983,13 @@ public interface ActivoApi {
 	 * @return Devuelve un Long con el siguiente número de la secuencia.
 	 */
 	public Long getNextNumActivoRem();
+
+	/**
+	 * Este método recoje una lista de Ids de activo y obtiene en base a estos una lista de activos.
+	 * @param activosID : Lista de ID de los activos a obtener.
+	 * @return Devuelve una lista de Activos.
+	 */
+	public List<Activo> getListActivosPorID(List<Long> activosID);
 
 	/**
 	 * Este método devuelve True si el ID del activo pertenece a una agrupación de tipo restringida

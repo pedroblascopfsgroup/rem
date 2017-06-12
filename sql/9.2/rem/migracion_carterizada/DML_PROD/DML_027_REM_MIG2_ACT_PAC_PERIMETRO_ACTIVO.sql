@@ -25,8 +25,8 @@ SET DEFINE OFF;
 DECLARE
 
 TABLE_COUNT NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#'; --#ESQUEMA#
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#'; --#ESQUEMA_MASTER#
 V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'ACT_PAC_PERIMETRO_ACTIVO';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_PAC_PERIMETRO_ACTIVO';
@@ -43,7 +43,7 @@ BEGIN
       
       V_SENTENCIA := '
         INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
-                   PAC_ID
+          PAC_ID
           ,ACT_ID
           ,PAC_INCLUIDO
           ,PAC_CHECK_TRA_ADMISION
@@ -66,18 +66,6 @@ BEGIN
           ,FECHACREAR
           ,BORRADO
           ,PAC_MOT_EXCL_COMERCIALIZAR
-        )
-        WITH INSERTAR AS (
-          SELECT DISTINCT PAC_NUMERO_ACTIVO
-          FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' WMIG2
-          INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
-          ON WMIG2.PAC_NUMERO_ACTIVO = ACT.ACT_NUM_ACTIVO 
-          WHERE NOT EXISTS (
-            SELECT 1
-            FROM '||V_ESQUEMA||'.'||V_TABLA||' PAC
-            WHERE PAC.ACT_ID = ACT.ACT_ID
-          ) 
-			AND WMIG2.VALIDACION = 0 
         )
         SELECT 
           '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                               AS PAC_ID,
@@ -103,29 +91,25 @@ BEGIN
                   MIG2.PAC_FECHA_FORMALIZAR                                                                                                                                   AS PAC_FECHA_FORMALIZAR,
                   MIG2.PAC_MOTIVO_FORMALIZAR                                                                                                                          AS PAC_MOTIVO_FORMALIZAR,
           0                                                                                                               AS VERSION, 
-          '||V_USUARIO||'                                                                                        AS USUARIOCREAR,                            
+          '''||V_USUARIO||'''                                                                                        AS USUARIOCREAR,                            
           SYSDATE                                                                                               AS FECHACREAR,                             
           0                                                                                                         AS BORRADO,
           MNC.DD_MNC_DESCRIPCION                                                                                AS PAC_MOT_EXCL_COMERCIALIZAR
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
-          INNER JOIN INSERTAR INS ON INS.PAC_NUMERO_ACTIVO = MIG2.PAC_NUMERO_ACTIVO
           LEFT JOIN '||V_ESQUEMA||'.DD_MCO_MOTIVO_COMERCIALIZACION MCO ON MCO.DD_MCO_CODIGO = MIG2.PAC_COD_MOTIVO_COMERCIAL
           LEFT JOIN '||V_ESQUEMA||'.DD_MNC_MOT_NOCOMERCIALIZACION MNC ON MNC.DD_MNC_CODIGO = MIG2.PAC_COD_MOTIVO_NOCOMERCIAL
-		  WHERE MIG2.VALIDACION = 0
+		      WHERE MIG2.VALIDACION = 0
         ) AUX
       '
       ;
-      EXECUTE IMMEDIATE V_SENTENCIA     ;
+      EXECUTE IMMEDIATE V_SENTENCIA;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
-      V_REG_INSERTADOS := SQL%ROWCOUNT;
-      
       COMMIT;
       
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
-      
-      DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
       
 EXCEPTION
       WHEN OTHERS THEN

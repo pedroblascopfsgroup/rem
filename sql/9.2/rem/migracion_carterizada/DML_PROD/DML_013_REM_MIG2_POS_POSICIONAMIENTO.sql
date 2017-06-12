@@ -25,17 +25,12 @@ SET DEFINE OFF;
 DECLARE
 
 TABLE_COUNT NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#'; --#ESQUEMA#
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#'; --#ESQUEMA_MASTER#
 V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'POS_POSICIONAMIENTO';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_POS_POSICIONAMIENTO';
 V_SENTENCIA VARCHAR2(32000 CHAR);
-V_REG_MIG NUMBER(10,0) := 0;
-V_REG_INSERTADOS NUMBER(10,0) := 0;
-V_REJECTS NUMBER(10,0) := 0;
-V_COD NUMBER(10,0) := 0;
-V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
 
 BEGIN
     
@@ -67,17 +62,15 @@ BEGIN
               MIG2.POS_FECHA_POSICIONAMIENTO                              AS POS_FECHA_POSICIONAMIENTO,
               MIG2.POS_MOTIVO_APLAZAMIENTO                                 AS POS_MOTIVO_APLAZAMIENTO,
               0                                                                                  AS VERSION,
-              '||V_USUARIO||'                                                                           AS USUARIOCREAR,
+              '''||V_USUARIO||'''                                                                           AS USUARIOCREAR,
               SYSDATE                                                                     AS FECHACREAR,
               0                                                                                 AS BORRADO,
               PVE.PVE_ID                                                                  AS PVE_ID_NOTARIO
             FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
             INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_NUM_OFERTA = MIG2.POS_COD_OFERTA AND OFR.BORRADO = 0
             INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID AND ECO.BORRADO = 0
-            LEFT JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE 
-              ON PVE.PVE_COD_UVEM = MIG2.POS_COD_NOTARIO AND PVE.BORRADO = 0
-            LEFT JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR
-              ON PVE.DD_TPR_ID = TPR.DD_TPR_ID  AND TPR.DD_TPR_CODIGO = ''21'' AND TPR.BORRADO = 0
+            LEFT JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_COD_UVEM = MIG2.POS_COD_NOTARIO AND PVE.BORRADO = 0
+            LEFT JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR ON PVE.DD_TPR_ID = TPR.DD_TPR_ID  AND TPR.DD_TPR_CODIGO = ''21'' AND TPR.BORRADO = 0
           	WHERE MIG2.VALIDACION = 0
 			) AUX
       '
@@ -85,13 +78,10 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
-      V_REG_INSERTADOS := SQL%ROWCOUNT;
-      
       COMMIT;
       
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
-      
-      DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
       
     
 EXCEPTION

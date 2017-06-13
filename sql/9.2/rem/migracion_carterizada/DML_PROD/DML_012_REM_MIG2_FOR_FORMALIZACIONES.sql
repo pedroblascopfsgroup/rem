@@ -25,19 +25,12 @@ SET DEFINE OFF;
 DECLARE
 
 TABLE_COUNT NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#'; --#ESQUEMA#
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#'; --#ESQUEMA_MASTER#
 V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'FOR_FORMALIZACION';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_FOR_FORMALIZACIONES';
 V_SENTENCIA VARCHAR2(2000 CHAR);
-V_REG_MIG NUMBER(10,0) := 0;
-V_REG_INSERTADOS NUMBER(10,0) := 0;
-V_REJECTS NUMBER(10,0) := 0;
-V_COD NUMBER(10,0) := 0;
-V_DUP NUMBER(10,0) := 0;
-V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
-
 
 BEGIN 
   
@@ -64,7 +57,7 @@ BEGIN
     BORRADO
         )
         SELECT 
-        '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL             RES_ID,
+        '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL             FOR_ID,
         ECO.ECO_ID                                                                                      ECO_ID,
         MIG.FOR_PETICIONARIO                                                            FOR_PETICIONARIO,
         MIG.FOR_FECHA_PETICION                                                          FOR_FECHA_PETICION,
@@ -76,27 +69,22 @@ BEGIN
         MIG.FOR_FORMA_PAGO                                                                      FOR_FORMA_PAGO,
         MIG.FOR_MOTIVO_RESOLUCION                                                       FOR_MOTIVO_RESOLUCION,
         ''0''                                               VERSION,
-        '||V_USUARIO||'                                            USUARIOCREAR,
+        '''||V_USUARIO||'''                                 USUARIOCREAR,
         SYSDATE                                             FECHACREAR,
         0                                                   BORRADO
         FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-        INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR
-                ON OFR.OFR_NUM_OFERTA = MIG.FOR_COD_OFERTA
-        INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
-                ON ECO.OFR_ID = OFR.OFR_ID 
+        INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_NUM_OFERTA = MIG.FOR_COD_OFERTA
+        INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID 
 		WHERE MIG.VALIDACION = 0                                                             
         ')
         ;
   
   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
   
-  V_REG_INSERTADOS := SQL%ROWCOUNT;
-  
   COMMIT;
   
-  EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
-  
-  DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
+  V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';
+  EXECUTE IMMEDIATE V_SENTENCIA;
   
   
 EXCEPTION

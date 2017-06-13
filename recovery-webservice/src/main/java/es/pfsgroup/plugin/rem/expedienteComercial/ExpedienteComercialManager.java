@@ -919,7 +919,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setEstadoVisitaOfertaCodigo(oferta.getEstadoVisitaOferta().getCodigo());
 			dto.setEstadoVisitaOfertaDescripcion(oferta.getEstadoVisitaOferta().getDescripcion());
 		}
-
+		
+		//antiguo canal prescriptor
 		if (!Checks.esNulo(oferta.getCanalPrescripcion())) {
 			dto.setCanalPrescripcionCodigo(oferta.getCanalPrescripcion().getCodigo());
 			dto.setCanalPrescripcionDescripcion(oferta.getCanalPrescripcion().getDescripcion());
@@ -933,6 +934,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setComiteSancionadorCodigo(expediente.getComiteSancion().getCodigo());
 		}
 
+		//nuevo canal prescriptor
+		if(!Checks.esNulo(oferta.getPrescriptor())){
+			dto.setCanalPrescripcionDescripcion(oferta.getPrescriptor().getTipoProveedor().getDescripcion());
+		}else{
+			dto.setCanalPrescripcionDescripcion(null);
+		}
 		return dto;
 	}
 

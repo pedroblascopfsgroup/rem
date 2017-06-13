@@ -1,7 +1,7 @@
 --/*
 --#########################################
---## AUTOR=GUILLEM REY
---## FECHA_CREACION=20170608
+--## AUTOR=DAP
+--## FECHA_CREACION=20170612
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-2209
@@ -24,19 +24,12 @@ SET DEFINE OFF;
 
 DECLARE
 
-TABLE_COUNT NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
 V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'COM_COMPRADOR';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_COM_COMPRADORES';
 V_SENTENCIA VARCHAR2(32000 CHAR);
-V_REG_MIG NUMBER(10,0) := 0;
-V_REG_INSERTADOS NUMBER(10,0) := 0;
-V_REJECTS NUMBER(10,0) := 0;
-V_COD NUMBER(10,0) := 0;
-V_DUPLICADOS NUMBER(10,0) := 0;
-V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
 
 BEGIN
  
@@ -63,18 +56,11 @@ BEGIN
             ,BORRADO
             ,DD_LOC_ID
             ,DD_PRV_ID
-          ) WITH DUPLICADOS AS(
-                          SELECT DISTINCT COM_COD_COMPRADOR
-                          FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' WMIG2
-						  WHERE WMIG2.VALIDACION = 0
-                          GROUP BY COM_COD_COMPRADOR 
-                          HAVING COUNT(1) > 1
-          ),
-          DUPLICADOS_COM_DOCUMENTO  AS(
-			SELECT COM_DOCUMENTO FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'
-			WHERE VALIDACION = 0
-			GROUP BY COM_DOCUMENTO
-			HAVING COUNT(1)>1
+          ) WITH DUPLICADOS_COM_DOCUMENTO  AS(
+      SELECT COM_DOCUMENTO FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'
+      WHERE VALIDACION = 0
+      GROUP BY COM_DOCUMENTO
+      HAVING COUNT(1)>1
           )
           SELECT
             '||V_ESQUEMA||'.S_COM_COMPRADOR.NEXTVAL                                                           AS COM_ID,
@@ -93,7 +79,7 @@ BEGIN
               MIG2.COM_DIRECCION                                                                                    AS COM_DIRECCION,              
               MIG2.COM_CODIGO_POSTAL                                                                            AS COM_CODIGO_POSTAL,
               0                                                                                                                   AS VERSION,
-              '||V_USUARIO||'                                                                           AS USUARIOCREAR,
+              '''||V_USUARIO||'''                                                                        AS USUARIOCREAR,
               SYSDATE                                                                                                     AS FECHACREAR,
               0                                                                                                                 AS BORRADO,
               LOC.DD_LOC_ID                                                                                               AS DD_LOC_ID,
@@ -106,33 +92,20 @@ BEGIN
             LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_CODIGO = MIG2.COM_COD_LOCALIDAD AND LOC.BORRADO = 0
             LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_PRV_PROVINCIA  PRV ON PRV.DD_PRV_CODIGO = MIG2.COM_COD_PROVINCIA AND PRV.BORRADO = 0
             WHERE NOT EXISTS (
-              SELECT 1
-              FROM '||V_ESQUEMA||'.'||V_TABLA||' AUX2
-              WHERE AUX2.CLC_ID = CLC.CLC_ID
-            )
-            AND NOT EXISTS (
-				SELECT 1
-				FROM DUPLICADOS DUP
-				WHERE DUP.COM_COD_COMPRADOR = MIG2.COM_COD_COMPRADOR)
-            AND MIG2.COM_DOCUMENTO NOT IN (
-				SELECT COM.COM_DOCUMENTO FROM COM_COMPRADOR COM)
-			AND NOT EXISTS (
-				SELECT 1
-				FROM DUPLICADOS_COM_DOCUMENTO DUP2
-				WHERE DUP2.COM_DOCUMENTO = MIG2.COM_DOCUMENTO)
-			AND MIG2.VALIDACIO = 0
+        SELECT 1
+        FROM DUPLICADOS_COM_DOCUMENTO DUP2
+        WHERE DUP2.COM_DOCUMENTO = MIG2.COM_DOCUMENTO)
+      AND MIG2.VALIDACION = 0
           ) AUX      
       '
       ;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
-      V_REG_INSERTADOS := SQL%ROWCOUNT;
-      
       COMMIT;
       
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
-      
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
       DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
  
 EXCEPTION

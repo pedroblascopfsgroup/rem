@@ -1,7 +1,7 @@
 --/*
 --#########################################
---## AUTOR=GUILLEM REY
---## FECHA_CREACION=20170608
+--## AUTOR=DAP
+--## FECHA_CREACION=20170612
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=HREOS-2209
@@ -16,28 +16,18 @@
 --*/
 
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
-
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 SET DEFINE OFF;
 
-
 DECLARE
 
-TABLE_COUNT NUMBER(10,0) := 0;
-TABLE_COUNT_2 NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
 V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'VIS_VISITAS';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_VIS_VISITAS';
 V_SENTENCIA VARCHAR2(32000 CHAR);
-V_REG_MIG NUMBER(10,0) := 0;
-V_REG_INSERTADOS NUMBER(10,0) := 0;
-V_REJECTS NUMBER(10,0) := 0;
-V_DUPLICADOS NUMBER(10,0) := 0;
-V_COD NUMBER(10,0) := 0;
-V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
 
 BEGIN
 
@@ -92,27 +82,20 @@ BEGIN
                   ON CLC.CLC_WEBCOM_ID = MIG.VIS_COD_CLIENTE_WEBCOM
                 INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
                   ON ACT.ACT_NUM_ACTIVO = MIG.VIS_ACT_NUMERO_ACTIVO
-				WHERE MIG.VALIDACION = 0
-          ),
-      DUPLICADOS AS (
-          SELECT DISTINCT VIS_COD_VISITA_WEBCOM
-          FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' WMIG2
-		  WHERE WMIG2.VALIDACION = 0
-          GROUP BY VIS_COD_VISITA_WEBCOM 
-          HAVING COUNT(1) > 1
+        WHERE MIG.VALIDACION = 0
           )
                 SELECT
-                '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                                         					   VIS_ID, 
+                '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                                                      VIS_ID, 
                 VIS.VIS_COD_VISITA_WEBCOM                                                                              VIS_WEBCOM_ID,
-                '||V_ESQUEMA||'.S_VIS_NUM_VISITA.NEXTVAL                                                			   VIS_NUM_VISITA,
+                '||V_ESQUEMA||'.S_VIS_NUM_VISITA.NEXTVAL                                                         VIS_NUM_VISITA,
                 VIS.ACT_ID                                                                                             ACT_ID,
                 VIS.CLC_ID                                                                                             CLC_ID,
                 (SELECT DD_EVI_ID 
                 FROM '||V_ESQUEMA||'.DD_EVI_ESTADOS_VISITA
-                WHERE DD_EVI_CODIGO =  VIS.VIS_COD_ESTADO_VISITA)                               						DD_EVI_ID,
+                WHERE DD_EVI_CODIGO =  VIS.VIS_COD_ESTADO_VISITA)                                           DD_EVI_ID,
                 (SELECT DD_SVI_ID 
                 FROM '||V_ESQUEMA||'.DD_SVI_SUBESTADOS_VISITA
-                WHERE DD_SVI_CODIGO =  VIS.VIS_COD_SUBESTADO_VISISTA)                   								DD_SVI_ID,
+                WHERE DD_SVI_CODIGO =  VIS.VIS_COD_SUBESTADO_VISISTA)                                   DD_SVI_ID,
                 VIS.VIS_FECHA_REAL_VISITA                                                                               VIS_FECHA_VISITA,
                 VIS.VIS_FECHA_SOLCITUD                                                                                  VIS_FECHA_SOLCITUD,
                 (SELECT PVE_ID 
@@ -146,27 +129,19 @@ BEGIN
                 VIS.VIS_OBSERVACIONES                                                                                   VIS_OBSERVACIONES,
                 VIS.VIS_FECHA_CONCERTACION                                                                              VIS_FECHA_CONCERTACION,
                 0                                                                                                       VERSION,
-                '||V_USUARIO||'                                                                					USUARIOCREAR,
-                SYSDATE                                                                         						FECHACREAR,
-                0                                                                               						BORRADO,
-                REPLACE(VIS.VIS_COD_PROCEDENCIA, ''.'')																	VIS_PROCEDENCIA
-                FROM INSERTAR VIS
-                WHERE NOT EXISTS (
-            SELECT 1
-            FROM DUPLICADOS DUP
-            WHERE DUP.VIS_COD_VISITA_WEBCOM = VIS.VIS_COD_VISITA_WEBCOM)
-                '
-                ;
-      EXECUTE IMMEDIATE V_SENTENCIA     ;
+                '''||V_USUARIO||'''                                                                         USUARIOCREAR,
+                SYSDATE                                                                                     FECHACREAR,
+                0                                                                                           BORRADO,
+                REPLACE(VIS.VIS_COD_PROCEDENCIA, ''.'')                                 VIS_PROCEDENCIA
+                FROM INSERTAR VIS';
+      EXECUTE IMMEDIATE V_SENTENCIA;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
-      V_REG_INSERTADOS := SQL%ROWCOUNT;
-      
       COMMIT;
-      
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
-      
+
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
       DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
       
 EXCEPTION

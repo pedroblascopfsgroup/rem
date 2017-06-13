@@ -1,7 +1,7 @@
 --/*
 --#########################################
---## AUTOR=GUILLEM REY
---## FECHA_CREACION=20170608
+--## AUTOR=DAP
+--## FECHA_CREACION=20170612
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=HREOS-2209
@@ -21,30 +21,22 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 SET DEFINE OFF;
 
-
 DECLARE
 
       TABLE_COUNT NUMBER(10,0) := 0;
-      V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
-      V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+      V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
+      V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
       V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
       V_TABLA VARCHAR2(40 CHAR) := 'RES_RESERVAS';
       V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_RES_RESERVAS';
       V_SENTENCIA VARCHAR2(2000 CHAR);
-      V_REG_MIG NUMBER(10,0) := 0;
-      V_REG_INSERTADOS NUMBER(10,0) := 0;
-      V_REJECTS NUMBER(10,0) := 0;
-      V_COD NUMBER(10,0) := 0;
-      V_DUP NUMBER(10,0) := 0;
-      V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
-      V_TABLE_ECO NUMBER(10,0) := 0;
 
 BEGIN 
  
       --Inicio del proceso de volcado sobre RES_RESERVAS
       DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
       
-      EXECUTE IMMEDIATE ('
+      EXECUTE IMMEDIATE '
       INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
             RES_ID,
             ECO_ID,
@@ -58,7 +50,7 @@ BEGIN
             DD_ERE_ID,
             RES_FECHA_SOLICITUD,
             RES_FECHA_RESOLUCION,
-			DD_MAN_ID,
+                  DD_MAN_ID,
             VERSION,
             USUARIOCREAR,
             FECHACREAR,
@@ -84,12 +76,7 @@ BEGIN
                   LEFT JOIN '||V_ESQUEMA||'.DD_TAR_TIPOS_ARRAS TAR ON TO_NUMBER(TAR.DD_TAR_CODIGO) = MIGW.RES_COD_TIPO_ARRA
                   LEFT JOIN '||V_ESQUEMA||'.DD_ERE_ESTADOS_RESERVA ERE ON TO_NUMBER(ERE.DD_ERE_CODIGO) = MIGW.RES_COD_ESTADO_RESERVA
                   LEFT JOIN '||V_ESQUEMA||'.DD_MAN_MOTIVO_ANULACION MAN ON MAN.DD_MAN_CODIGO = MIGW.RES_COD_MOTIVO_ANULACION
-            WHERE NOT EXISTS (
-                 SELECT 1 
-                 FROM '||V_ESQUEMA||'.'||V_TABLA||' RESW 
-                 WHERE MIGW.RES_COD_NUM_RESERVA = RESW.RES_NUM_RESERVA
-            )
-			AND MIGW.VALIDACION = 0
+            WHERE MIGW.VALIDACION = 0
       )
       SELECT 
       '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                           RES_ID,
@@ -99,28 +86,24 @@ BEGIN
       RES.RES_FECHA_VENCIMIENTO                                         RES_FECHA_VENCIMIENTO,
       RES.RES_FECHA_ANULACION                                           RES_FECHA_ANULACION,
       RES.RES_IND_IMP_ANULACION                                         RES_IND_IMP_ANULACION,
-      RES.RES_IMPORTE_DEVUELTO                                          RES_IMPORTE_DEVUELTO,	
+      RES.RES_IMPORTE_DEVUELTO                                          RES_IMPORTE_DEVUELTO,   
       RES.DD_TAR_ID                                                     DD_TAR_ID,
       RES.DD_ERE_ID                                                     DD_ERE_ID,
       RES.RES_FECHA_SOLICITUD                                           RES_FECHA_SOLICITUD,
       RES.RES_FECHA_RESOLUCION                                          RES_FECHA_RESOLUCION,
-      RES.DD_MAN_ID														DD_MAN_ID,
+      RES.DD_MAN_ID                                                                                   DD_MAN_ID,
       ''0''                                                             VERSION,
-      '||V_USUARIO||'                                           USUARIOCREAR,
+      '''||V_USUARIO||'''                                           USUARIOCREAR,
       SYSDATE                                                           FECHACREAR,
       0                                                                 BORRADO
-      FROM INSERTAR RES                                                                 
-      ')
-      ;
+      FROM INSERTAR RES';
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
-      V_REG_INSERTADOS := SQL%ROWCOUNT;
-      
       COMMIT;
       
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
-      
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
       DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
       
       -----------------------------------------
@@ -178,12 +161,10 @@ BEGIN
       
       --Según comentario de Tomás y Manuel, eliminamos ECO_PETICIONARIO_ANULACION porque nunca va a venir informado y mejor que esté blanco.
       
-      V_TABLE_ECO := SQL%ROWCOUNT;
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL cargada. '||SQL%ROWCOUNT||' Filas.');
       
-      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL cargada. '||V_TABLE_ECO||' Filas.');
-      
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL COMPUTE STATISTICS');
-      
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ECO_EXPEDIENTE_COMERCIAL'',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
       DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ANALIZADA.');
       
 

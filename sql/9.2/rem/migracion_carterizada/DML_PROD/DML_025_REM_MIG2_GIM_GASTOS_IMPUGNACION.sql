@@ -1,7 +1,7 @@
 --/*
 --#########################################
---## AUTOR=GUILLEM REY
---## FECHA_CREACION=20170608
+--## AUTOR=DAP
+--## FECHA_CREACION=20170612
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=HREOS-2209
@@ -24,18 +24,12 @@ SET DEFINE OFF;
 
 DECLARE
 
-TABLE_COUNT NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
-V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
+V_USUARIO VARCHAR2(50 CHAR) := '#USUARIOS_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'GIM_GASTOS_IMPUGNACION';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_GIM_GASTOS_IMPUGNACION';
 V_SENTENCIA VARCHAR2(32000 CHAR);
-V_REG_MIG NUMBER(10,0) := 0;
-V_REG_INSERTADOS NUMBER(10,0) := 0;
-V_REJECTS NUMBER(10,0) := 0;
-V_COD NUMBER(10,0) := 0;
-V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
 
 BEGIN
 
@@ -65,7 +59,7 @@ BEGIN
                 FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
                 INNER JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV
                   ON GPV.GPV_NUM_GASTO_HAYA = MIG.GIM_GPV_ID
-				WHERE MIG.VALIDACION = 0
+                WHERE MIG.VALIDACION = 0
           )
                 SELECT
                 '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                                         GIM_ID, 
@@ -78,24 +72,22 @@ BEGIN
                 WHERE DD_RIM_CODIGO = GIM.GIM_COD_RESULTADO_IMPUGNACION)                DD_RIM_ID,
                 GIM.GIM_OBSERVACIONES                                                                                   GIM_OBSERVACIONES,
                 0                                                                                                                               VERSION,
-                '||V_USUARIO||'                                                                USUARIOCREAR,
+                '''||V_USUARIO||'''                                                                USUARIOCREAR,
                 SYSDATE                                                                         FECHACREAR,
                 0                                                                               BORRADO
                 FROM INSERTAR GIM
                 '
                 ;
-      EXECUTE IMMEDIATE V_SENTENCIA     ;
+      EXECUTE IMMEDIATE V_SENTENCIA;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
-      V_REG_INSERTADOS := SQL%ROWCOUNT;
-      
       COMMIT;
       
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
-      
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
       DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
-
+    
 EXCEPTION
       WHEN OTHERS THEN
             DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));

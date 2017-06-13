@@ -1,7 +1,7 @@
 --/*
 --#########################################
---## AUTOR=GUILLEM REY
---## FECHA_CREACION=20170608
+--## AUTOR=DAP
+--## FECHA_CREACION=20170612
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=HREOS-2209
@@ -24,19 +24,12 @@ SET DEFINE OFF;
 
 DECLARE
 
-TABLE_COUNT NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
 V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'COE_CONDICIONANTES_EXPEDIENTE';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_COE_CONDICIONAN_OFR_ACEP';
 V_SENTENCIA VARCHAR2(2000 CHAR);
-V_REG_MIG NUMBER(10,0) := 0;
-V_REG_INSERTADOS NUMBER(10,0) := 0;
-V_REJECTS NUMBER(10,0) := 0;
-V_COD NUMBER(10,0) := 0;
-V_DUP NUMBER(10,0) := 0;
-V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
 
 
 BEGIN 
@@ -44,7 +37,7 @@ BEGIN
   --Inicio del proceso de volcado sobre COE_CONDICIONANTES_EXPEDIENTE
   DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
  
-        EXECUTE IMMEDIATE ('
+        EXECUTE IMMEDIATE '
         INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
         COE_ID,
         ECO_ID,
@@ -124,12 +117,12 @@ BEGIN
         SIP.DD_SIP_ID                                                                                                           DD_SIP_ID,                                                                                              
         ETI.DD_ETI_ID                                                   DD_ETI_ID,
         ''0''                                                           VERSION,
-        '||V_USUARIO||'                                         USUARIOCREAR,
+        '''||V_USUARIO||'''                                         USUARIOCREAR,
         SYSDATE                                                         FECHACREAR,
         0                                                               BORRADO,
         CASE
-			WHEN MIG.COE_IMPORTE_RESERVA = ''0''
-			THEN 0
+            WHEN MIG.COE_IMPORTE_RESERVA = ''0''
+            THEN 0
             ELSE 1
         END                                                             AS COE_SOLICITA_RESERVA
         FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
@@ -159,22 +152,17 @@ BEGIN
                 ON SIP.DD_SIP_CODIGO = MIG.COE_COD_SITUACION_POSESORIA
         LEFT JOIN '||V_ESQUEMA||'.DD_ETI_ESTADO_TITULO ETI
                 ON ETI.DD_ETI_CODIGO = MIG.COE_COD_ESTADO_TITULO
-		WHERE MIG.VALIDACION = 0                                                                        
-        ')
-        ;
+        WHERE MIG.VALIDACION = 0';
   
   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
   
-  V_REG_INSERTADOS := SQL%ROWCOUNT;
-  
   COMMIT;
   
-  EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
-  
+  V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';
+  EXECUTE IMMEDIATE (V_SENTENCIA);
   DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
   
 EXCEPTION
-
     WHEN OTHERS THEN
         DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
         DBMS_OUTPUT.put_line('-----------------------------------------------------------');

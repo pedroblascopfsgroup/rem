@@ -8,11 +8,11 @@ Ext
 					collapsed : false,
 					reference : 'activoexpedientecondiciones',
 					scrollable : 'y',
-					recordName : "expediente",
+					recordName : "condiciones",
 
-					recordClass : "HreRem.model.ExpedienteComercial",
+					recordClass : "HreRem.model.ActivoExpedienteCondicionesModel",
 
-					requires : [ 'HreRem.model.ExpedienteComercial' ],
+					requires : [ 'HreRem.model.ActivoExpedienteCondicionesModel' ],
 
 					listeners : {},
 
@@ -20,6 +20,7 @@ Ext
 
 						var me = this;
 						me.setTitle(HreRem.i18n('title.condiciones'));
+						
 						var items = [ 
 						 {
 							xtype : 'fieldsettable',
@@ -30,17 +31,19 @@ Ext
 										{ 
 								        	xtype: 'comboboxfieldbase',				        	
 									 		fieldLabel: HreRem.i18n('fieldlabel.situacion.titulo'),
+									 		readOnly	: true,
 								        	bind: {
 							            		store: '{comboEstadoTitulo}',
-							            		value: '{datosRegistrales.estadoTitulo}'
+							            		value: '{condiciones.estadoTituloInformada}'
 							            	}
 										},
 										{ 
 								        	xtype: 'comboboxfieldbase',
 								        	fieldLabel: HreRem.i18n('fieldlabel.con.posesion.inicial'),
+								        	readOnly	: true,
 								        	bind: {
 							            		store: '{comboSiNoRem}',
-							            		value: '{condiciones.posesionInicial}'			            		
+							            		value: '{condiciones.posesionInicialInformada}'			            		
 							            	},
 							            	displayField: 'descripcion',
 				    						valueField: 'codigo'
@@ -48,10 +51,11 @@ Ext
 								        { 
 								        	xtype: 'comboboxfieldbase',
 //								        	editable: false,
+								        	readOnly	: true,
 								        	fieldLabel: HreRem.i18n('fieldlabel.situacion.posesoria'),
 								        	bind: {
 							            		store: '{comboSituacionPosesoria}',
-							            		value: '{condiciones.situacionPosesoriaCodigo}'			            		
+							            		value: '{condiciones.situacionPosesoriaCodigoInformada}'			            		
 							            	},
 							            	displayField: 'descripcion',
 				    						valueField: 'codigo',
@@ -66,15 +70,17 @@ Ext
 								title : HreRem.i18n('title.situacion.activo.comunicada.comprador'),
 								items : [
 											{ 
-								        	xtype: 'comboboxfieldbase',				        	
+								        	xtype: 'comboboxfieldbase',
+								        	name: 'estadoTitulo',
 									 		fieldLabel: HreRem.i18n('fieldlabel.situacion.titulo'),
 								        	bind: {
 							            		store: '{comboEstadoTitulo}',
-							            		value: '{datosRegistrales.estadoTitulo}'
+							            		value: '{condiciones.estadoTitulo}'
 							            	}
 										},
 										{ 
 								        	xtype: 'comboboxfieldbase',
+								        	name: 'posesionInicial',
 								        	fieldLabel: HreRem.i18n('fieldlabel.con.posesion.inicial'),
 								        	bind: {
 							            		store: '{comboSiNoRem}',
@@ -85,6 +91,7 @@ Ext
 								        },
 								        { 
 								        	xtype: 'comboboxfieldbase',
+								        	name: 'situacionPosesoriaCodigo',
 //								        	editable: false,
 								        	fieldLabel: HreRem.i18n('fieldlabel.situacion.posesoria'),
 								        	bind: {
@@ -105,20 +112,22 @@ Ext
 							items : [
 										 { 
 								        	xtype: 'comboboxfieldbase',
+								        	name: 'eviccion',
 								        	fieldLabel: HreRem.i18n('fieldlabel.eviccion'),
 								        	bind: {
 							            		store: '{comboSiNoRem}',
-							            		value: '{condiciones.renunciaSaneamientoEviccion}'			            		
+							            		value: '{condiciones.eviccion}'			            		
 							            	},
 							            	displayField: 'descripcion',
 				    						valueField: 'codigo'
 										},
 										{ 
 								        	xtype: 'comboboxfieldbase',
+								        	name: 'viciosOcultos',
 								        	fieldLabel: HreRem.i18n('fieldlabel.vicios.ocultos'),
 								        	bind: {
 							            		store: '{comboSiNoRem}',
-							            		value: '{condiciones.renunciaSaneamientoVicios}'			            		
+							            		value: '{condiciones.viciosOcultos}'			            		
 							            	},
 							            	displayField: 'descripcion',
 				    						valueField: 'codigo'

@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.expedientedetalle',  
-    requires: ['HreRem.view.expedientes.NotarioSeleccionado', 'HreRem.view.expedientes.DatosComprador', 'HreRem.view.expedientes.DatosClienteUrsus',"HreRem.view.expedientes.ActivoExpedienteModel"],
+    requires: ['HreRem.view.expedientes.NotarioSeleccionado', 'HreRem.view.expedientes.DatosComprador', 'HreRem.view.expedientes.DatosClienteUrsus',"HreRem.model.ActivoExpedienteCondicionesModel"],
     
     control: {
     	'documentosexpediente gridBase': {
@@ -31,16 +31,19 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	var me = this;
 		var viewModel = me.getViewModel();
 		var id = record.data.idActivo;
+		var idEco = me.getViewModel().get("expediente.id");
 		viewModel.set("activoExpedienteSeleccionado", record);
 		viewModel.notify();
 
 		var tabPanel = me.lookupReference('activoExpedienteMain');
 		tabPanel.setHidden(false);
 		tabPanel.mask();
-		HreRem.view.expedientes.ActivoExpedienteModel.load(id, {
+		HreRem.model.ActivoExpedienteCondicionesModel.load(id, {
+			params: {idActivo:id,idExpediente:idEco},
     		scope: this,
-		    success: function(expediente) {
+		    success: function(condiciones) {
 		    	tabPanel.unmask();
+		    	me.getViewModel().set("condiciones", condiciones);		
 		    },
 		   	failure: function (a, operation) {
 		   		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
@@ -288,7 +291,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			     success: function (a, operation, context) {
 			    	me.getView().unmask();
 			    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-			    	//me.onClickBotonRefrescar();
+			    	me.refrescarExpediente(form.refreshAfterSave);
 			    	btn.hide();
 			 		btn.up('tabbar').down('button[itemId=botonguardar]').hide();
 			 		btn.up('tabbar').down('button[itemId=botoneditar]').show();
@@ -306,6 +309,55 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	            failure: function (a, operation, context) {
 	            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 	            	 me.getView().unmask();
+	            }
+		    });
+		}if(form.getReference()=="activoexpedientecondiciones"){
+			var formulario= btn.up('tabpanel').getActiveTab().getForm();
+			me.getView().mask(HreRem.i18n("msg.mask.loading"));
+			var url =  $AC.getRemoteUrl('expedientecomercial/saveActivoExpedienteCondiciones');
+			var params={};
+			var record = form.getBindRecord();
+			params['activoId']= record.data.activoId;
+			params['ecoId']= record.data.ecoId;
+			if(formulario.findField("estadoTitulo")!=null){
+				params['estadoTitulo']= formulario.findField("estadoTitulo").getValue();
+			}
+			if(formulario.findField("posesionInicial")!=null){
+				params['posesionInicial']= formulario.findField("posesionInicial").getValue();
+			}
+			if(formulario.findField("situacionPosesoriaCodigo")!=null){
+				params['situacionPosesoriaCodigo']= formulario.findField("situacionPosesoriaCodigo").getValue();
+			}
+			if(formulario.findField("eviccion")!=null){
+				params['eviccion']= formulario.findField("eviccion").getValue();
+			}
+			if(formulario.findField("viciosOcultos")!=null){
+				params['viciosOcultos']= formulario.findField("viciosOcultos").getValue();
+			}
+			Ext.Ajax.request({
+			     url: url,
+			     params:params,
+			     success: function (a, operation, context) {
+			    	me.getView().unmask();
+			    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			    	//me.refrescarExpediente(form.refreshAfterSave);
+			    	btn.hide();
+			 		btn.up('tabbar').down('button[itemId=botonguardar]').hide();
+			 		btn.up('tabbar').down('button[itemId=botoneditar]').show();
+			 		Ext.Array.each(btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]'),
+							function (field, index) 
+								{ 
+									field.fireEvent('save');
+									field.fireEvent('update');});
+			 		if(Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
+			 			me.getViewModel().set("editingFirstLevel", false);
+			 		} else {
+			 			me.getViewModel().set("editing", false);
+			 		}
+	            },
+	            failure: function (a, operation, context) {
+	            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	             me.getView().unmask();
 	            }
 		    });
 		}else{

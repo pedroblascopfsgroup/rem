@@ -41,7 +41,17 @@ Ext.define('HreRem.model.ActivosExpediente', {
     		},
     		{
     			name:'direccion'
+    		},
+    		{
+    			name:'condiciones'
+    		},
+    		{
+    			name:'bloqueos'
+    		},
+    		{
+    			name:'tanteos'
     		}
+    		
     		
     ],
     

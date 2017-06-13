@@ -291,7 +291,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			     success: function (a, operation, context) {
 			    	me.getView().unmask();
 			    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-			    	me.refrescarExpediente(form.refreshAfterSave);
+			    	me.refrescarActivoExpediente(true);
 			    	btn.hide();
 			 		btn.up('tabbar').down('button[itemId=botonguardar]').hide();
 			 		btn.up('tabbar').down('button[itemId=botoneditar]').show();
@@ -311,7 +311,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	            	 me.getView().unmask();
 	            }
 		    });
-		}if(form.getReference()=="activoexpedientecondiciones"){
+		}else if(form.getReference()=="activoexpedientecondiciones"){
 			var formulario= btn.up('tabpanel').getActiveTab().getForm();
 			me.getView().mask(HreRem.i18n("msg.mask.loading"));
 			var url =  $AC.getRemoteUrl('expedientecomercial/saveActivoExpedienteCondiciones');
@@ -340,7 +340,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			     success: function (a, operation, context) {
 			    	me.getView().unmask();
 			    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-			    	//me.refrescarExpediente(form.refreshAfterSave);
+			    	me.refrescarActivoExpediente(true);
 			    	btn.hide();
 			 		btn.up('tabbar').down('button[itemId=botonguardar]').hide();
 			 		btn.up('tabbar').down('button[itemId=botoneditar]').show();
@@ -369,7 +369,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					success: function (a, operation, c) {
 						me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 						me.getView().unmask();
-						me.refrescarExpediente(form.refreshAfterSave);
+						me.refrescarActivoExpediente(form.refreshAfterSave);
 		            },
 			            
 		            failure: function (a, operation) {
@@ -462,10 +462,30 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	refrescarExpediente: function(refrescarTabActiva) {
-		
 		var me = this,
 		refrescarTabActiva = Ext.isEmpty(refrescarTabActiva) ? false: refrescarTabActiva,
 		activeTab = me.getView().down("tabpanel").getActiveTab();		
+  		
+		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
+		Ext.Array.each(me.getView().query('component[funcionRecargar]'), function(component) {
+  			if(component.rendered) {
+  				component.recargar=true;
+  			}
+  		});
+  		
+  		// Actualizamos la pestaña actual si tiene función de recargar 
+		if(refrescarTabActiva && activeTab.funcionRecargar) {
+  			activeTab.funcionRecargar();
+		}
+		
+		me.getView().fireEvent("refrescarExpediente", me.getView());
+		
+	},
+	
+	refrescarActivoExpediente: function(refrescarTabActiva) {
+		var me = this,
+		refrescarTabActiva = Ext.isEmpty(refrescarTabActiva) ? false: refrescarTabActiva,
+		activeTab = me.getView().getActiveTab();		
   		
 		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
 		Ext.Array.each(me.getView().query('component[funcionRecargar]'), function(component) {

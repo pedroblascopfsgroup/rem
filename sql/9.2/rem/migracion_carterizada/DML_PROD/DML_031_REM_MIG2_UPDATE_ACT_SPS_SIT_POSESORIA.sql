@@ -1,7 +1,7 @@
 --/*
 --#########################################
---## AUTOR=GUILLEM REY
---## FECHA_CREACION=20170608
+--## AUTOR=DAP
+--## FECHA_CREACION=20170612
 --## ARTEFACTO=migracion
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-2209
@@ -37,19 +37,19 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('PROCESO DE ACTUALIZACION DE CAMPOS DE SITUACION POSESORIA FASE 2....') ;
     DBMS_OUTPUT.PUT_LINE('------------------------------------------------------------------------------------') ;
 
-	--ACTUALIZACION DE SPS_NUMERO_CONTRATO_ALQUILER'
-	DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE ACTUALIZACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
+    --ACTUALIZACION DE SPS_NUMERO_CONTRATO_ALQUILER'
+    DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE ACTUALIZACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
     
     V_SENTENCIA := '
-			merge into ACT_SPS_SIT_POSESORIA act
-			using (with tmp as 
-			(select row_number()  over (partition by act_id order by HAL_FECHA_INICIO_CONTRATO desc) NUM,  act_id,HAL_NUMERO_CONTRATO_ALQUILER, HAL_FECHA_INICIO_CONTRATO 
-			 from ACT_HAL_HIST_ALQUILERES
-			)
-			select * from tmp where num = 1) alq
-			on (act.act_id = alq.act_id )
-			when matched then update
-			set act.SPS_NUMERO_CONTRATO_ALQUILER = alq.HAL_NUMERO_CONTRATO_ALQUILER
+            merge into ACT_SPS_SIT_POSESORIA act
+            using (with tmp as 
+            (select row_number()  over (partition by act_id order by HAL_FECHA_INICIO_CONTRATO desc) NUM,  act_id,HAL_NUMERO_CONTRATO_ALQUILER, HAL_FECHA_INICIO_CONTRATO 
+             from ACT_HAL_HIST_ALQUILERES
+            )
+            select * from tmp where num = 1) alq
+            on (act.act_id = alq.act_id )
+            when matched then update
+            set act.SPS_NUMERO_CONTRATO_ALQUILER = alq.HAL_NUMERO_CONTRATO_ALQUILER
     '
     ;
     EXECUTE IMMEDIATE V_SENTENCIA;
@@ -62,24 +62,23 @@ BEGIN
     
     
     --ACTUALIZACION DE SPS_FECHA_TITULO
-	DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE ACTUALIZACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
+    DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE ACTUALIZACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
     
     V_SENTENCIA := '
-		update ACT_SPS_SIT_POSESORIA act
-		set SPS_FECHA_TITULO = (
-		with alq as 
-		(select row_number()  over (partition by act_id order by HAL_FECHA_INICIO_CONTRATO desc) NUM,  act_id,HAL_FECHA_INICIO_CONTRATO 
-		 from ACT_HAL_HIST_ALQUILERES
-		) 
-		select HAL_FECHA_INICIO_CONTRATO from alq where alq.act_id = act.act_id and alq.num = 1 ),
-		 SPS_FECHA_VENC_TITULO = (
-		with alq as 
-		(select row_number()  over (partition by act_id order by HAL_FECHA_INICIO_CONTRATO desc) NUM,  act_id,HAL_FECHA_FIN_CONTRATO 
-		 from ACT_HAL_HIST_ALQUILERES
-		) 
-		select HAL_FECHA_FIN_CONTRATO from alq where alq.act_id = act.act_id and alq.num = 1 )
-
-		where SPS_FECHA_TITULO is null
+        update ACT_SPS_SIT_POSESORIA act
+        set SPS_FECHA_TITULO = (
+        with alq as 
+        (select row_number()  over (partition by act_id order by HAL_FECHA_INICIO_CONTRATO desc) NUM,  act_id,HAL_FECHA_INICIO_CONTRATO 
+         from ACT_HAL_HIST_ALQUILERES
+        ) 
+        select HAL_FECHA_INICIO_CONTRATO from alq where alq.act_id = act.act_id and alq.num = 1 ),
+         SPS_FECHA_VENC_TITULO = (
+        with alq as 
+        (select row_number()  over (partition by act_id order by HAL_FECHA_INICIO_CONTRATO desc) NUM,  act_id,HAL_FECHA_FIN_CONTRATO 
+         from ACT_HAL_HIST_ALQUILERES
+        ) 
+        select HAL_FECHA_FIN_CONTRATO from alq where alq.act_id = act.act_id and alq.num = 1 )
+        where SPS_FECHA_TITULO is null
     '
     ;
     EXECUTE IMMEDIATE V_SENTENCIA;
@@ -92,18 +91,17 @@ BEGIN
     
     
     --ACTUALIZACION DE SPS_FECHA_RESOLUCION_CONTRATO
-	DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE ACTUALIZACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
+    DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE ACTUALIZACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
     
     V_SENTENCIA := '
-		update ACT_SPS_SIT_POSESORIA act
-		set SPS_FECHA_RESOLUCION_CONTRATO = (
-		with alq as 
-		(select row_number()  over (partition by act_id order by HAL_FECHA_INICIO_CONTRATO desc) NUM,  act_id,HAL_FECHA_RESOLUCION_CONTRATO  
-		 from ACT_HAL_HIST_ALQUILERES
-		) 
-		select HAL_FECHA_RESOLUCION_CONTRATO  from alq where alq.act_id = act.act_id and alq.num = 1 )
-
-		where SPS_FECHA_RESOLUCION_CONTRATO is null
+        update ACT_SPS_SIT_POSESORIA act
+        set SPS_FECHA_RESOLUCION_CONTRATO = (
+        with alq as 
+        (select row_number()  over (partition by act_id order by HAL_FECHA_INICIO_CONTRATO desc) NUM,  act_id,HAL_FECHA_RESOLUCION_CONTRATO  
+         from ACT_HAL_HIST_ALQUILERES
+        ) 
+        select HAL_FECHA_RESOLUCION_CONTRATO  from alq where alq.act_id = act.act_id and alq.num = 1 )
+        where SPS_FECHA_RESOLUCION_CONTRATO is null
     '
     ;
     EXECUTE IMMEDIATE V_SENTENCIA;
@@ -114,11 +112,11 @@ BEGIN
     
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' ACTUALIZADAS. '||V_REG_ACTUALIZADOS||' Filas. 03 - AUTORIZADO ADMINISTRACION');
     
-    EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
-    
-    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
-    
     COMMIT;
+    
+    V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';
+    EXECUTE IMMEDIATE V_SENTENCIA;
+    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
       
 EXCEPTION
       WHEN OTHERS THEN

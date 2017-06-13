@@ -1371,8 +1371,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (!Checks.esNulo(oferta.getIntencionFinanciar())) {
 					dtoResponse.setIntencionFinanciar(oferta.getIntencionFinanciar().equals(1) ? "Si" : "No");
 				}
-				if (!Checks.esNulo(oferta.getVisita())) {
-					dtoResponse.setProcedenciaVisita(oferta.getVisita().getProcendencia());
+				if (!Checks.esNulo(oferta.getVisita()) && !Checks.esNulo(oferta.getVisita().getPrescriptor()) &&
+					!Checks.esNulo(oferta.getVisita().getPrescriptor().getTipoProveedor())) {
+					dtoResponse.setProcedenciaVisita(oferta.getVisita().getPrescriptor().getTipoProveedor().getDescripcion());
 				}
 			}
 		}

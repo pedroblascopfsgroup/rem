@@ -261,6 +261,11 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
     },
     
     funcionRecargar: function() {
-		
+    	var me = this; 
+		me.recargar = false;
+		Ext.Array.each(me.query('grid'), function(grid) {
+			grid.mask();
+  			grid.getStore().load({callback: function() {grid.unmask();}});
+  		});
     }
 });

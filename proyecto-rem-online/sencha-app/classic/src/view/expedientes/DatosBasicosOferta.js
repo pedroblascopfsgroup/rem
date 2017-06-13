@@ -68,13 +68,10 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 							readOnly: true
 		                },
 		                {
-		                	xtype: 'comboboxfieldbase',
+		                	xtype: 'textfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.canal.prescripcion'),
-		                	bind: {
-								store: '{comboCanalPrescripcion}',
-								value: '{datosbasicosoferta.canalPrescripcionCodigo}'
-							},
-							editable: true
+		                	bind: '{datosbasicosoferta.canalPrescripcionDescripcion}',
+							readOnly: true
 		                },
 		                {
 		                	xtype: 'currencyfieldbase',

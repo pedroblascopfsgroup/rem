@@ -35,7 +35,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            text: HreRem.i18n('header.numero.activo.agrupacion'),
 		            flex: 1,
 		            items: [{
-			            tooltip: HreRem.i18n('tooltip.ver.expediente'),
+			            tooltip: HreRem.i18n('tooltip.ver.activo.agrupacion'),
 			            getClass: function(v, metadata, record ) {
 			            	if (Ext.isEmpty(record.get("idAgrupacion"))) {
 			            		return 'app-list-ico ico-ver-activov2';
@@ -77,7 +77,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            hidden: true
 		        },
 		        {
-		        	dataIndex: 'canalPrescripcionDescripcion',
+		        	dataIndex: 'canalDescripcion',
 		        	text: HreRem.i18n('header.canal.prescripcion'),
 		            flex: 1
 		        },

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSEVI
---## FECHA_CREACION=20170515
+--## FECHA_CREACION=20170612
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-1591
@@ -14,6 +14,7 @@
 --## 		0.2 JOSEVI: Nuevas condiciones: Varios propietarios activo o 1 propietario con menos de 100%.
 --##             Calculo de condicionado/no condicionado desde la vista
 --##		0.3 HREOS-1954 - Inclusión condicionantes SIN_INFORME_APROBADO y CON_CARGAS
+--##		0.4 HREOS-2142 - Corregir PENDIENTE_INSCRIPCION que estaba al reves
 --##########################################
 --*/
 
@@ -72,7 +73,7 @@ BEGIN
   		SELECT ACT.ACT_ID,
              NVL2(SPS4.SPS_ID,1,0) AS SIN_TOMA_POSESION_INICIAL,
   		       NVL2(SPS3.SPS_ID,1,0) AS OCUPADO_CONTITULO,
-  	         NVL2(BDR.BIE_ID,1,0) AS PENDIENTE_INSCRIPCION,
+  	         NVL2(BDR.BIE_ID,0,1) AS PENDIENTE_INSCRIPCION,
              NVL2(NPA.ACT_ID,1,0) AS PROINDIVISO,
              NVL2(SPS1.SPS_ID,1,0) AS TAPIADO,
              NVL2(EON.DD_EON_ID,1,0) AS OBRANUEVA_SINDECLARAR,

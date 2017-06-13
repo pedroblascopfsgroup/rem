@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=Guillem Rey
---## FECHA_CREACION=20170608
+--## AUTOR=DAP
+--## FECHA_CREACION=20170612
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=HREOS-2195
+--## INCIDENCIA_LINK=HREOS-2209
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración 'MIG_ADA_DATOS_ADI' -> 'ACT_ADM_INF_ADMINISTRATIVA', 'ACT_SPS_SIT_POSESORIA',
@@ -26,8 +26,6 @@ SET DEFINE OFF;
 
 DECLARE
 
-TABLE_COUNT NUMBER(10,0) := 0;
-TABLE_COUNT_2 NUMBER(10,0) := 0;
 V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
 V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
@@ -40,13 +38,6 @@ V_TABLA_6 VARCHAR2(30 CHAR) := 'ACT_LOC_LOCALIZACION';
 V_TABLA_7 VARCHAR2(30 CHAR) := 'ACT_ACTIVO';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG_ADA_DATOS_ADI';
 V_SENTENCIA VARCHAR2(2000 CHAR);
-V_REG_MIG NUMBER(10,0) := 0;
-V_REG_INSERTADOS NUMBER(10,0) := 0;
-V_REJECTS NUMBER(10,0) := 0;
-V_REJECTS_PROV NUMBER(10,0) := 0;
-V_COD NUMBER(10,0) := 0;
-V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
-V_OBSERVACIONES_2 VARCHAR2(3000 CHAR) := '';
 
 BEGIN
   
@@ -119,7 +110,7 @@ BEGIN
 	NULL                                                      ADM_REF_EXPDTE_INTERNO,
 	NULL                                                      ADM_OBS_EXPROPIACION,
 	''0''                                                     VERSION,
-	'||V_USUARIO||'                                                   USUARIOCREAR,
+	'''||V_USUARIO||'''                                                   USUARIOCREAR,
 	SYSDATE                                                   FECHACREAR,
 	NULL                                                      USUARIOMODIFICAR,
 	NULL                                                      FECHAMODIFICAR,
@@ -127,12 +118,8 @@ BEGIN
 	NULL                                                      FECHABORRAR,
 	0                                                         BORRADO
 	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-	LEFT JOIN '||V_ESQUEMA||'.ACT_NOT_EXISTS NOTT
-	ON NOTT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
 	INNER JOIN ACT_NUM_ACTIVO ACT
 	ON ACT.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
-	WHERE NOTT.ACT_NUM_ACTIVO IS NULL
-	AND MIG.VALIDACION = 0
   ')
   ;
     
@@ -140,9 +127,9 @@ BEGIN
   
   COMMIT;
   
-  EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
-  
-  DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+      DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
   
   -------
   
@@ -178,18 +165,6 @@ BEGIN
 	FECHABORRAR,
 	BORRADO
 	)
-	WITH ACT_NUM_ACTIVO AS (
-		SELECT ACT_NUMERO_ACTIVO 
-		FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-		WHERE ACT_NUMERO_ACTIVO NOT IN (
-		  SELECT ACT_NUM_ACTIVO 
-		  FROM '||V_ESQUEMA||'.ACT_ACTIVO 
-		  WHERE ACT_ID IN (
-			SELECT ACT_ID FROM '||V_ESQUEMA||'.'||V_TABLA_2||' 
-			)
-			)
-		AND MIG.VALIDACION = 0
-	)
 	SELECT
 	'||V_ESQUEMA||'.S_ACT_SPS_SIT_POSESORIA.NEXTVAL           SPS_ID,
 	(SELECT ACT_ID
@@ -215,7 +190,7 @@ BEGIN
 	MIG.SPS_FECHA_ACC_ANTIOCUPA                               SPS_FECHA_ACC_ANTIOCUPA,
 	MIG.ACT_IND_CONDICIONADO_OTROS							  SPS_OTRO,
 	''0''                                                     VERSION,
-	'||V_USUARIO||'                                   USUARIOCREAR,
+	'''||V_USUARIO||'''                                   USUARIOCREAR,
 	SYSDATE                                                   FECHACREAR,
 	NULL                                                      USUARIOMODIFICAR,
 	NULL                                                      FECHAMODIFICAR,
@@ -223,12 +198,7 @@ BEGIN
 	NULL                                                      FECHABORRAR,
 	0                                                         BORRADO
 	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-	LEFT JOIN '||V_ESQUEMA||'.ACT_NOT_EXISTS NOTT
-	ON NOTT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
-	INNER JOIN ACT_NUM_ACTIVO ACT
-	ON ACT.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
-	WHERE NOTT.ACT_NUM_ACTIVO IS NULL
-	MIG.VALIDACION = 0
+	WHERE MIG.VALIDACION = 0
 	')
 	;
     
@@ -236,9 +206,9 @@ BEGIN
   
   COMMIT;
   
-  EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_2||' COMPUTE STATISTICS');
-  
-  DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_2||' ANALIZADA.');
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA_2||''',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+      DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_2||' ANALIZADA.');
   
 	-------
    
@@ -271,21 +241,8 @@ BEGIN
 	DD_LOC_ID,
 	DD_PRV_ID
 	)
-	WITH ACT_NUM_ACTIVO AS (
-    SELECT 
-    ACT_NUMERO_ACTIVO, BIE_DREG_ID, REG_ID
-    FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-    WHERE ACT_NUMERO_ACTIVO NOT IN (
-      SELECT ACT_NUM_ACTIVO 
-      FROM '||V_ESQUEMA||'.ACT_ACTIVO 
-      WHERE ACT_ID IN (
-        SELECT ACT_ID FROM '||V_ESQUEMA||'.'||V_TABLA_3||' 
-        )
-		)
-		AND MIG.VALIDACION = 0
-	)
 	SELECT
-	ACT.BIE_DREG_ID									          BIE_DREG_ID,
+	MIG.BIE_DREG_ID									          BIE_DREG_ID,
 	(SELECT BIE_ID
 	  FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
 	  WHERE ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO)       BIE_ID,
@@ -301,7 +258,7 @@ BEGIN
 	NULL                        							  BIE_DREG_MUNICIPIO_LIBRO,
 	NULL                        							  BIE_DREG_CODIGO_REGISTRO,
 	''0''                                                     VERSION,
-	'||V_USUARIO||'			                          USUARIOCREAR,
+	'''||V_USUARIO||'''			                          USUARIOCREAR,
 	SYSDATE                                                   FECHACREAR,
 	NULL                                                      USUARIOMODIFICAR,
 	NULL                                                      FECHAMODIFICAR,
@@ -316,12 +273,7 @@ BEGIN
 	FROM '||V_ESQUEMA_MASTER||'.DD_PRV_PROVINCIA
 	WHERE DD_PRV_CODIGO = MIG.PROVINCIA)                      DD_PRV_ID
 	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-	LEFT JOIN '||V_ESQUEMA||'.ACT_NOT_EXISTS NOTT
-	ON NOTT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
-	INNER JOIN ACT_NUM_ACTIVO ACT
-	ON ACT.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
-	WHERE NOTT.ACT_NUM_ACTIVO IS NULL
-	AND MIG.VALIDACION = 0
+	WHERE MIG.VALIDACION = 0
   ')
   ;
     
@@ -329,9 +281,9 @@ BEGIN
   
   COMMIT;
   
-  EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_3||' COMPUTE STATISTICS');
-  
-  DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_3||' ANALIZADA.');
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA_3||''',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+      DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_3||' ANALIZADA.');
   
   --------
     
@@ -366,25 +318,12 @@ BEGIN
 	FECHABORRAR,
 	BORRADO
 	)
-	WITH ACT_NUM_ACTIVO AS (
-		SELECT 
-		ACT_NUMERO_ACTIVO, BIE_DREG_ID, REG_ID
-		FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-		WHERE ACT_NUMERO_ACTIVO NOT IN (
-		  SELECT ACT_NUM_ACTIVO 
-		  FROM '||V_ESQUEMA||'.ACT_ACTIVO 
-		  WHERE ACT_ID IN (
-			SELECT ACT_ID FROM '||V_ESQUEMA||'.'||V_TABLA_4||' 
-			)
-			)
-		AND MIG.VALIDACION = 0
-	)
 	SELECT 
-	ACT.REG_ID          										REG_ID,
+	MIG.REG_ID          										REG_ID,
 	(SELECT ACT_ID
 	FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
 	WHERE ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO)         ACT_ID,
-	ACT.BIE_DREG_ID									          BIE_DREG_ID,
+	MIG.BIE_DREG_ID									          BIE_DREG_ID,
 	MIG.REG_IDUFIR                                            REG_IDUFIR,
 	MIG.REG_NUM_DEPARTAMENTO                                  REG_NUM_DEPARTAMENTO,
 	MIG.REG_HAN_CAMBIADO                                      REG_HAN_CAMBIADO,
@@ -407,7 +346,7 @@ BEGIN
 	WHERE DD_EON_CODIGO = MIG.ESTADO_OBRA_NUEVA)              DD_EON_ID,
 	MIG.REG_FECHA_CFO                                         REG_FECHA_CFO,
 	''0''                                                     VERSION,
-	'||V_USUARIO||'                                   USUARIOCREAR,
+	'''||V_USUARIO||'''                                   USUARIOCREAR,
 	SYSDATE                                                   FECHACREAR,
 	NULL                                                      USUARIOMODIFICAR,
 	NULL                                                      FECHAMODIFICAR,
@@ -415,12 +354,7 @@ BEGIN
 	NULL                                                      FECHABORRAR,
 	0                                                         BORRADO
 	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-	LEFT JOIN '||V_ESQUEMA||'.ACT_NOT_EXISTS NOTT
-	ON NOTT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
-	INNER JOIN ACT_NUM_ACTIVO ACT
-	ON ACT.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
-	WHERE NOTT.ACT_NUM_ACTIVO IS NULL
-	AND MIG.VALIDACION = 0
+	WHERE  MIG.VALIDACION = 0
   ')
   ;
     
@@ -428,9 +362,9 @@ BEGIN
   
   COMMIT;
   
-  EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_4||' COMPUTE STATISTICS');
-  
-  DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_4||' ANALIZADA.');
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA_4||''',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+      DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_4||' ANALIZADA.');
   
   --------
     
@@ -460,19 +394,8 @@ BEGIN
   DD_TVI_ID,
   DD_CIC_ID
   )
-  WITH ACT_NUM_ACTIVO AS (
-		SELECT 
-		ACT_NUMERO_ACTIVO, BIE_LOC_ID, LOC_ID
-		FROM  '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-    WHERE NOT EXISTS (
-      SELECT 1
-      FROM  '||V_ESQUEMA||'.'||V_TABLA_5||' BIE
-      WHERE BIE.BIE_LOC_ID = MIG.BIE_LOC_ID
-		)
-	AND MIG.VALIDACION = 0
-	)
   SELECT
-  ACT.BIE_LOC_ID							                    	                                        BIE_LOC_ID,
+  MIG.BIE_LOC_ID							                    	                                        BIE_LOC_ID,
   (SELECT BIE_ID
 	FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
 	WHERE ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO)         BIE_ID,
@@ -481,7 +404,7 @@ BEGIN
   MIG.LOC_NOMBRE_VIA||'',''||MIG.LOC_NUMERO_DOMICILIO				        BIE_LOC_DIRECCION,
   MIG.LOC_COD_POST													                                            BIE_LOC_COD_POST,
   ''0''                                                                                               VERSION,
-  '||V_USUARIO||'                                                                                           USUARIOCREAR,
+  '''||V_USUARIO||'''                                                                                           USUARIOCREAR,
   SYSDATE                                                                                      FECHACREAR,
   0                                                                                                BORRADO,
   DD.DD_PRV_ID							              DD_PRV_ID,
@@ -505,14 +428,9 @@ BEGIN
     FROM '||V_ESQUEMA_MASTER||'.DD_CIC_CODIGO_ISO_CIRBE_BKP
     WHERE DD_CIC_CODIGO = MIG.PAIS)									                             DD_CIC_ID
   FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-  LEFT JOIN '||V_ESQUEMA||'.ACT_NOT_EXISTS NOTT
-	ON NOTT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
-  INNER JOIN ACT_NUM_ACTIVO ACT
-	ON ACT.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
   LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_PRV_PROVINCIA DD
 	ON DD.DD_PRV_CODIGO = MIG.PROVINCIA
-  WHERE NOTT.ACT_NUM_ACTIVO IS NULL
-  AND DD.DD_PRV_CODIGO IS NOT NULL
+  WHERE DD.DD_PRV_CODIGO IS NOT NULL
   AND MIG.VALIDACION = 0
   ')
   ;
@@ -521,9 +439,9 @@ BEGIN
   
   COMMIT;
   
-  EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_5||' COMPUTE STATISTICS');
-  
-  DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_5||' ANALIZADA.');
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA_5||''',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+      DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_5||' ANALIZADA.');
   
   --------
 
@@ -547,24 +465,12 @@ BEGIN
 	FECHABORRAR,
 	BORRADO
 	)
-		WITH ACT_NUM_ACTIVO AS (
-		SELECT MIG.ACT_NUMERO_ACTIVO, MIG.BIE_LOC_ID, MIG.LOC_ID
-		FROM  '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-    INNER JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION BIE
-      ON BIE.BIE_LOC_ID=MIG.BIE_LOC_ID
-    AND NOT EXISTS (
-      SELECT 1 
-      FROM '||V_ESQUEMA||'.'||V_TABLA_6||' LOC
-      WHERE LOC.BIE_LOC_ID = BIE.BIE_LOC_ID
-    )
-	WHERE MIG.VALIDACION = 0
-	)
 	SELECT
-	ACT.LOC_ID									              LOC_ID,
+	MIG.LOC_ID									              LOC_ID,
 	(SELECT ACT_ID
 	FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
 	WHERE ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO)         ACT_ID,
-	ACT.BIE_LOC_ID									          BIE_LOC_ID,
+	MIG.BIE_LOC_ID									          BIE_LOC_ID,
 	(SELECT DD_TUB_ID
 	FROM '||V_ESQUEMA||'.DD_TUB_TIPO_UBICACION
 	WHERE DD_TUB_CODIGO = MIG.TIPO_UBICACION)                 DD_TUB_ID,
@@ -572,7 +478,7 @@ BEGIN
 	MIG.LOC_LATITUD                                           LOC_LATITUD,
 	MIG.LOC_DIST_PLAYA                                        LOC_DIST_PLAYA,
 	''0''                                                     VERSION,
-	'||V_USUARIO||'                                   USUARIOCREAR,
+	'''||V_USUARIO||'''                                   USUARIOCREAR,
 	SYSDATE                                                   FECHACREAR,
 	NULL                                                      USUARIOMODIFICAR,
 	NULL                                                      FECHAMODIFICAR,
@@ -580,15 +486,7 @@ BEGIN
 	NULL                                                      FECHABORRAR,
 	0                                                         BORRADO
 	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-	LEFT JOIN '||V_ESQUEMA||'.ACT_NOT_EXISTS NOTT
-	ON NOTT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
-	INNER JOIN ACT_NUM_ACTIVO ACT
-	ON ACT.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
-	WHERE NOTT.ACT_NUM_ACTIVO IS NULL
-	AND NOT EXISTS (
-    SELECT ACT_ID FROM '||V_ESQUEMA||'.'||V_TABLA_6||'
-    )
-	AND MIG.VALIDACION = 0
+	WHERE MIG.VALIDACION = 0
   ')
   ;
     
@@ -596,9 +494,9 @@ BEGIN
   
   COMMIT;
   
-  EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_6||' COMPUTE STATISTICS');
-  
-  DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_6||' ANALIZADA.');
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA_6||''',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+      DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_6||' ANALIZADA.');
   
   --------
     
@@ -623,9 +521,9 @@ BEGIN
   
   COMMIT;
   
-  EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_7||' COMPUTE STATISTICS');
-  
-  DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_7||' ANALIZADA.');
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA_7||''',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+      DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_7||' ANALIZADA.');
   
   --------
     
@@ -635,10 +533,7 @@ BEGIN
 	MERGE INTO '||V_ESQUEMA||'.'||V_TABLA_7||' ACT 
 	USING (
 		SELECT * FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-		LEFT JOIN '||V_ESQUEMA||'.ACT_NOT_EXISTS NOTT
-		ON NOTT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
-		WHERE NOTT.ACT_NUM_ACTIVO IS NULL
-		AND MIG.VALIDACION = 0
+		WHERE MIG.VALIDACION = 0
 	) MIG
 	ON (MIG.ACT_NUMERO_ACTIVO = ACT.ACT_NUM_ACTIVO)
 	WHEN MATCHED THEN UPDATE
@@ -654,9 +549,9 @@ BEGIN
   
   COMMIT;
   
-  EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_7||' COMPUTE STATISTICS');
-  
-  DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_7||' ANALIZADA.');
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA_7||''',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+      DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_7||' ANALIZADA.');
   
   --INSERTAMOS REGISTROS EN BIE_LOCALIZACION Y ACT_LOC_LOCALIZACION PARA QUE SEA 1 A 1 CON ACTIVOS, YA QUE LO REQUIERE LA APLICACION
   
@@ -673,18 +568,17 @@ BEGIN
 	)
 	select
 	MIG.BIE_LOC_ID					bie_loc_id,
-	act.bie_id bie_id,
+	ACT.bie_id bie_id,
 	0,
-	'||V_USUARIO||',
+	'''||V_USUARIO||''',
 	sysdate,
 	0
 	from '||V_ESQUEMA||'.'||V_TABLA_MIG||' mig
-	left join '||V_ESQUEMA||'.act_activo act
+        	INNER join '||V_ESQUEMA||'.act_activo act
 	  on act.act_num_activo = mig.act_numero_activo
 	where not exists (
 	  select 1 from '||V_ESQUEMA||'.'||V_TABLA_5||' loc where loc.bie_id = act.bie_id
 	  )
-	and act.act_num_activo is not null
 	AND mig.VALIDACION = 0
 	'
   ;
@@ -703,19 +597,18 @@ BEGIN
 	)
 	select
 	MIG.LOC_ID					LOC_ID,
-	act.ACT_ID ACT_ID,
+	ACT.ACT_ID ACT_ID,
 	MIG.BIE_LOC_ID  BIE_LOC_ID,
 	0,
-	'||V_USUARIO||',
+	'''||V_USUARIO||''',
 	sysdate,
 	0
 	from '||V_ESQUEMA||'.'||V_TABLA_MIG||' mig
-	left join '||V_ESQUEMA||'.act_activo act
+    	INNER join '||V_ESQUEMA||'.act_activo act
 	  on act.act_num_activo = mig.act_numero_activo
 	where not exists (
 	  select 1 from '||V_ESQUEMA||'.'||V_TABLA_6||' LOC where loc.ACT_ID = act.ACT_ID
 	  )
-	and act.act_num_activo is not null
 	AND mig.VALIDACION = 0
   '
   ;

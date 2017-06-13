@@ -122,7 +122,7 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	@Override
 	public Page getListActivosTrabajo(DtoActivosTrabajoFilter dto) {
 
-		HQLBuilder hb = new HQLBuilder(" from VBusquedaActivosTrabajo acttbj");		
+		HQLBuilder hb = new HQLBuilder(" from VBusquedaActivosTrabajoParticipa acttbj");		
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.idTrabajo", dto.getIdTrabajo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.idActivo", dto.getIdActivo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.estadoContable", dto.getEstadoContable());

@@ -29,17 +29,12 @@ TABLE_COUNT_2 NUMBER(10,0) := 0;
 TABLE_COUNT_3 NUMBER(10,0) := 0;
 MAX_NUM_PROVISION NUMBER(20,0) := 0;
 V_NUM_TABLAS NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#'; --#ESQUEMA#
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#'; --#ESQUEMA_MASTER#
 V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'PRG_PROVISION_GASTOS';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_GPR_PROVISION_GASTOS';
 V_SENTENCIA VARCHAR2(32000 CHAR);
-V_REG_MIG NUMBER(10,0) := 0;
-V_REG_INSERTADOS NUMBER(10,0) := 0;
-V_REJECTS NUMBER(10,0) := 0;
-V_COD NUMBER(10,0) := 0;
-V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
 
 BEGIN
           --Inicio del proceso de volcado sobre PRG_PROVISION_GASTOS
@@ -87,7 +82,7 @@ BEGIN
                 MIG.GPR_FECHA_RESPUESTA                                 PRG_FECHA_RESPUESTA,
                 MIG.GPR_FECHA_ANULACION                                 PRG_FECHA_ANULACION,
                 ''0''                                                   VERSION,                                                                                
-                '||V_USUARIO||'                                 USUARIOCREAR,
+                '''||V_USUARIO||'''                                 USUARIOCREAR,
 				SYSDATE                                                 FECHACREAR,     
 				0                                                       BORRADO
                 FROM INSERTAR MIG
@@ -99,13 +94,10 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
-      V_REG_INSERTADOS := SQL%ROWCOUNT;
-      
       COMMIT;
       
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
-      
-      DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
  
 EXCEPTION
       WHEN OTHERS THEN

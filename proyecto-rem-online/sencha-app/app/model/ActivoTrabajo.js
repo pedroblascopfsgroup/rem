@@ -5,7 +5,8 @@ Ext.define('HreRem.model.ActivoTrabajo', {
     extend: 'HreRem.model.Base',
     idProperty: 'idActivo',
 	
-    fields: [    
+    fields: [   
+
      		{
     			name:'numActivo'
     		},
@@ -64,13 +65,17 @@ Ext.define('HreRem.model.ActivoTrabajo', {
     		{
     			name: 'limitePresupuesto'
     		},
+            {
+                name: 'saldoDisponible'
+            },
     		{
     			name: 'participacion',
     			type: 'float'
     			
     		},
     		{
-    			name: 'importeParticipa'
+    			name: 'importeParticipa',
+                type: 'float'
     		},
     		{
     			name: 'saldoNecesario'

@@ -1,7 +1,7 @@
 --/*
 --#########################################
---## AUTOR=GUILLEM REY
---## FECHA_CREACION=20170608
+--## AUTOR=DAP
+--## FECHA_CREACION=20170612
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=HREOS-2209
@@ -24,19 +24,12 @@ SET DEFINE OFF;
 
 DECLARE
 
-TABLE_COUNT NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
 V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'OFR_TIA_TITULARES_ADICIONALES';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_OFR_TIA_TITULARES_ADI';
 V_SENTENCIA VARCHAR2(2000 CHAR);
-V_REG_MIG NUMBER(10,0) := 0;
-V_REG_INSERTADOS NUMBER(10,0) := 0;
-V_REJECTS NUMBER(10,0) := 0;
-V_COD NUMBER(10,0) := 0;
-V_DUP NUMBER(10,0) := 0;
-V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
 
 
 BEGIN
@@ -44,7 +37,7 @@ BEGIN
   --Inicio del proceso de volcado sobre OFR_TIA_TITULARES_ADICIONALES
   DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
  
-        EXECUTE IMMEDIATE ('
+        EXECUTE IMMEDIATE '
         INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
         TIA_ID,
         OFR_ID,
@@ -65,7 +58,7 @@ BEGIN
         FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
     INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR
       ON OFR.OFR_NUM_OFERTA = MIG.OFR_TIA_COD_OFERTA
-	WHERE MIG.VALIDACION = 0
+    WHERE MIG.VALIDACION = 0
   )
         SELECT
         '||V_ESQUEMA||'.S_OFR_TIA_TIT_ADICIONALES.NEXTVAL                                       TIA_ID,
@@ -76,21 +69,18 @@ BEGIN
         WHERE DD_TDI_CODIGO = TIA.OFR_TIA_COD_TIPO_DOC_TITUL_ADI)                       DD_TDI_ID,
         TIA.OFR_TIA_DOCUMENTO                                                                                           TIA_DOCUMENTO,
         ''0''                                                                           VERSION,
-        '||V_USUARIO||'                                                                        USUARIOCREAR,
+        '''||V_USUARIO||'''                                                                        USUARIOCREAR,
         SYSDATE                                                                                 FECHACREAR,
         0                                                                               BORRADO
         FROM INSERTAR TIA
-        ')
-        ;
+        ';
   
   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
   
-  V_REG_INSERTADOS := SQL%ROWCOUNT;
-  
   COMMIT;
   
-  EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
-  
+  V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';
+  EXECUTE IMMEDIATE V_SENTENCIA;
   DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
  
 EXCEPTION

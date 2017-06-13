@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=PABLO MESEGUER
---## FECHA_CREACION=20170214
+--## AUTOR=DAP
+--## FECHA_CREACION=20170612
 --## ARTEFACTO=migracion
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-962
+--## INCIDENCIA_LINK=HREOS-2209
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración Fase 2, para la actualizacion de ACT_ABA_ACTIVO_BANCARIO.
@@ -26,23 +26,23 @@ DECLARE
 
     V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
     V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
-    V_TABLA VARCHAR2(40 CHAR) := 'act_aba_activo_bancario';
+    V_TABLA VARCHAR2(40 CHAR) := 'ACT_ABA_ACTIVO_BANCARIO';
     V_SENTENCIA VARCHAR2(32000 CHAR);
     V_REG_ACTUALIZADOS NUMBER(10,0) := 0;
       
 BEGIN
     
     DBMS_OUTPUT.PUT_LINE('--------------------------------------------------------------') ;
-    DBMS_OUTPUT.PUT_LINE('PROCESO DE BORRADO DE REGISTROS DE ACT_ABA_ACTIVO_BANCARIO....') ;
+    DBMS_OUTPUT.PUT_LINE('PROCESO DE BORRADO DE REGISTROS DE '||V_TABLA||'....') ;
     DBMS_OUTPUT.PUT_LINE('--------------------------------------------------------------') ;
 
-	DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE BORRADO SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
+    DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE BORRADO SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
     
     V_SENTENCIA := '
-		DELETE FROM '||V_ESQUEMA||'.act_aba_activo_bancario
+        DELETE FROM '||V_ESQUEMA||'.'||V_TABLA||'
       WHERE aba_id IN (SELECT aba_id
                          FROM (SELECT aba.act_id, aba.aba_id, RANK () OVER (PARTITION BY act_id ORDER BY aba_id) rango
-                                 FROM '||V_ESQUEMA||'.act_aba_activo_bancario aba)
+                                 FROM '||V_ESQUEMA||'.'||V_TABLA||' aba)
                         WHERE rango > 1)
     '
     ;

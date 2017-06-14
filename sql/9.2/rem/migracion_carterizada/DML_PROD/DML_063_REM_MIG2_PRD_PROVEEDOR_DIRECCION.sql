@@ -24,22 +24,12 @@ SET DEFINE OFF;
 
 DECLARE
 
-      TABLE_COUNT NUMBER(10,0) := 0;
-      TABLE_COUNT_2 NUMBER(10,0) := 0;
-      TABLE_COUNT_3 NUMBER(10,0) := 0;
-      V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
-      V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#'; --#ESQUEMA#
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#'; --#ESQUEMA_MASTER#
       V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
       V_TABLA VARCHAR2(40 CHAR) := 'ACT_PRD_PROVEEDOR_DIRECCION';
       V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_PRD_PROVEEDOR_DIRECCION';
       V_SENTENCIA VARCHAR2(2000 CHAR);
-      V_REG_MIG NUMBER(10,0) := 0;
-      V_REG_INSERTADOS NUMBER(10,0) := 0;
-      V_REJECTS NUMBER(10,0) := 0;
-      V_COD NUMBER(10,0) := 0;
-      V_DUP NUMBER(10,0) := 0;
-      V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
-
 
 BEGIN 
      
@@ -82,30 +72,27 @@ BEGIN
                   MIG.PRD_EMAIL                                                                                                         PRD_EMAIL,
                   LOC.DD_LOC_ID                                                                                                         DD_LOC_ID,
                   0                                                                   VERSION,
-                  '||V_USUARIO||'                                                            USUARIOCREAR,
+                  '''||V_USUARIO||'''                                                            USUARIOCREAR,
                   SYSDATE                                                             FECHACREAR,
                   0                                                                   BORRADO,
                   MIG.PVD_COD_DIRECCION                             PVE_COD_DIRECC_UVEM
             FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG          
-                  INNER JOIN ACT_PVE_PROVEEDOR PVE      ON PVE.PVE_COD_UVEM = MIG.PVE_COD_UVEM
+                  INNER JOIN ACT_PVE_PROVEEDOR PVE ON PVE.PVE_COD_UVEM = MIG.PVE_COD_UVEM
                   INNER JOIN '||V_ESQUEMA||'.DD_TDP_TIPO_DIR_PROVEEDOR TDP ON TDP.DD_TDP_CODIGO = MIG.PRD_COD_TIPO_DIRECCION AND TDP.BORRADO = 0
                   INNER JOIN '||V_ESQUEMA_MASTER||'.DD_TVI_TIPO_VIA TVI ON TVI.DD_TVI_CODIGO = MIG.PRD_COD_TIPO_VIA AND TVI.BORRADO = 0
                   LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_UPO_UNID_POBLACIONAL UPO  ON UPO.DD_UPO_CODIGO = TRIM(LEADING 0 FROM MIG.PRD_COD_UNIDADPOBLACIONAL) AND UPO.BORRADO = 0
                   LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_CODIGO = MIG.PRD_COD_PROVINCIA AND PRV.BORRADO = 0
                   LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_CODIGO = MIG.PRD_COD_LOCALIDAD AND LOC.BORRADO = 0
-			WHERE MIG.VALIDACION = 0
+		WHERE MIG.VALIDACION = 0
       ')
       ;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
-      V_REG_INSERTADOS := SQL%ROWCOUNT;
-      
       COMMIT;
       
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
-      
-      DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
+  V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';
+  EXECUTE IMMEDIATE V_SENTENCIA;
       
 EXCEPTION
 

@@ -24,20 +24,15 @@ SET DEFINE OFF;
 
 DECLARE
 
-TABLE_COUNT NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
-V_USUARIO VARCHAR2(20 CHAR) := '#USUARIO_MIGRACION#'
+V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#'; --#ESQUEMA#
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#'; --#ESQUEMA_MASTER#
+V_USUARIO VARCHAR2(20 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'ACT_ACTIVO';
 V_TABLA_2 VARCHAR2(40 CHAR) := 'BIE_BIEN';
 V_TABLA_3 VARCHAR2(40 CHAR) := 'BIE_ADJ_ADJUDICACION';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG_ACA_CABECERA';
 V_TABLA_MIG_2 VARCHAR2(40 CHAR) := 'MIG_ADA_DATOS_ADI'; --COMPROBACION: PARA DAR DE ALTA UN NUEVO ACTIVO, DEBE VENIR TAMBIEN INFORMADO EN LA INTERFAZ
 V_SENTENCIA VARCHAR2(2600 CHAR);
-V_NUM NUMBER(10,0) := 0;
-V_REJECTS NUMBER(10,0) := 0;
-V_COD NUMBER(10,0) := 0;
-V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
 
 BEGIN
   
@@ -148,7 +143,7 @@ EXECUTE IMMEDIATE ('
   NULL                     			                                    SDV_ID,
   NULL												                                      CPR_ID,
   ''0''                                                             VERSION,
-  '||V_USUARIO||'                                                           USUARIOCREAR,
+  '''||V_USUARIO||'''                                                           USUARIOCREAR,
   SYSDATE                                                           FECHACREAR,
   NULL                                                              USUARIOMODIFICAR,
   NULL                                                              FECHAMODIFICAR,
@@ -156,26 +151,13 @@ EXECUTE IMMEDIATE ('
   NULL                                                              FECHABORRAR,
   0                                                                 BORRADO
   FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-  LEFT JOIN '||V_ESQUEMA||'.'||V_TABLA_MIG_2||' MIG2
+  INNER JOIN '||V_ESQUEMA||'.'||V_TABLA_MIG_2||' MIG2
   ON MIG.ACT_NUMERO_ACTIVO = MIG2.ACT_NUMERO_ACTIVO
-  WHERE MIG2.ACT_NUMERO_ACTIVO IS NOT NULL
-  AND NOT EXISTS (
-		SELECT 1 FROM '||V_ESQUEMA||'.'||V_TABLA||' ACT
-		WHERE ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
-    )
 	AND MIG.VALIDACION = 0 AND MIG2.VALIDACION = 0
   ')
   ;
   
   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
-  
-    COMMIT;
-  
-  EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
-  
-  DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
-  
-  
   
   --ASIGNAMOS EL DD_ENO_ID CORRESPONDIENTE AL CODIGO 9999 PENDIENTE DE DEFINIR PARA EL CAMPO DD_ENO_ORIGEN_ANT_ID, CUANDO SEA NULO
   
@@ -205,24 +187,18 @@ EXECUTE IMMEDIATE ('
   ACT.BIE_ID                                                        BIE_ID,
   ACT.ACT_NUM_ACTIVO_UVEM											BIE_NUMERO_ACTIVO,
   ''0''                                                             VERSION,
-  '||V_USUARIO||'                                                           USUARIOCREAR,
+  '''||V_USUARIO||'''                                                           USUARIOCREAR,
   SYSDATE                                                           FECHACREAR,
   0                                                                 BORRADO
   FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
   WHERE NOT EXISTS (
     SELECT 1 FROM '||V_ESQUEMA||'.BIE_BIEN BIE WHERE BIE.BIE_ID = ACT.BIE_ID
     )
-   AND ACT.USUARIOCREAR = '||V_USUARIO||' 
+   AND ACT.USUARIOCREAR = '''||V_USUARIO||''' 
   ')
   ;
   
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_2||' cargada. '||SQL%ROWCOUNT||' Filas.');
-  
-  COMMIT;
-  
-  EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_2||' COMPUTE STATISTICS');
-  
-  DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_2||' ANALIZADA.');
   
   DBMS_OUTPUT.PUT_LINE('[INFO] INSERTANDO REGISTROS EN '||V_ESQUEMA||'.'||V_TABLA_3||'.');
   
@@ -239,28 +215,21 @@ EXECUTE IMMEDIATE ('
   ACT.BIE_ID 								                	  	                  BIE_ID,
   '||V_ESQUEMA||'.S_BIE_ADJ_ADJUDICACION.NEXTVAL					          BIE_ADJ_ID,
   ''0''                                                             VERSION,
-  '||V_USUARIO||'                                                           USUARIOCREAR,
+  '''||V_USUARIO||'''                                                           USUARIOCREAR,
   SYSDATE                                                           FECHACREAR,
   0                                                                 BORRADO
   FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
-  LEFT JOIN '||V_ESQUEMA||'.'||V_TABLA_MIG_2||' MIG2
+  INNER JOIN '||V_ESQUEMA||'.'||V_TABLA_MIG_2||' MIG2
   ON ACT.ACT_NUM_ACTIVO = MIG2.ACT_NUMERO_ACTIVO
   WHERE NOT EXISTS (
     SELECT 1 FROM '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION BIE WHERE BIE.BIE_ID = ACT.BIE_ID
     )
-  AND MIG2.ACT_NUMERO_ACTIVO IS NOT NULL
-  AND ACT.USUARIOCREAR = '||V_USUARIO||'
+  AND ACT.USUARIOCREAR = '''||V_USUARIO||'''
   AND MIG2.VALIDACION = 0
   ')
   ;
   
-    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_3||' cargada. '||SQL%ROWCOUNT||' Filas.');
-  
-  COMMIT;
-  
-  EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_3||' COMPUTE STATISTICS');
-  
-  DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_3||' ANALIZADA.');
+  DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_3||' cargada. '||SQL%ROWCOUNT||' Filas.');
  
   EXECUTE IMMEDIATE ('
   alter table '||V_ESQUEMA||'.'||V_TABLA||' enable constraint FK_ACTIVO_BIEN
@@ -272,9 +241,17 @@ EXECUTE IMMEDIATE ('
 	')
 	;
   
-  
   COMMIT;
-    
+
+  V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';
+  EXECUTE IMMEDIATE V_SENTENCIA;
+
+  V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA_2||''',''10''); END;';
+  EXECUTE IMMEDIATE V_SENTENCIA;
+
+  V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA_3||''',''10''); END;';
+  EXECUTE IMMEDIATE V_SENTENCIA;
+
   EXCEPTION
 
     WHEN OTHERS THEN

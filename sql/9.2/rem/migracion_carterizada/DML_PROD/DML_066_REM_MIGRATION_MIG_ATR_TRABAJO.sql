@@ -24,29 +24,17 @@ SET DEFINE OFF;
 
 DECLARE
 
-TABLE_COUNT NUMBER(10,0) := 0;
-TABLE_COUNT_2 NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#'; --#ESQUEMA#
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#'; --#ESQUEMA_MASTER#
 V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'ACT_TBJ_TRABAJO';
 V_TABLA_2 VARCHAR2(40 CHAR) := 'ACT_TBJ';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG_ATR_TRABAJO';
 V_SENTENCIA VARCHAR2(2000 CHAR);
-V_REG_MIG NUMBER(10,0) := 0;
-V_REG_INSERTADOS NUMBER(10,0) := 0;
-V_REJECTS NUMBER(10,0) := 0;
-V_COD NUMBER(10,0) := 0;
-V_DUP NUMBER(10,0) := 0;
-V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
-
 
 BEGIN
   
   DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
-  
-  -- Estamos dando por hecho que el campo ACT_NUM_TRABAJO va a ser unico e identificara cada trabajo, cuando se reciban datos
-  -- se comprobara si es asi, si se diera el caso de que no lo fuera, cambiar el filtro del WITH
   
 	EXECUTE IMMEDIATE ('
 	INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
@@ -92,10 +80,7 @@ BEGIN
   SELECT * FROM (
    SELECT MIG.*, ROW_NUMBER() OVER (PARTITION BY TBJ_NUM_TRABAJO ORDER BY TBJ_FECHA_APROBACION DESC) ORDEN
     FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-    LEFT JOIN '||V_ESQUEMA||'.ACT_NOT_EXISTS ACTW
-      ON ACTW.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
-    WHERE ACTW.ACT_NUM_ACTIVO IS NULL
-	AND MIG.VALIDACION = 0
+    WHERE MIG.VALIDACION = 0
   ) WHERE ORDEN = 1
   )
   SELECT
@@ -145,7 +130,7 @@ BEGIN
   MIG.TBJ_IMPORTE_TOTAL                                                        TBJ_IMPORTE_TOTAL,
   MIG.TBJ_FECHA_DENEGACION												TBJ_FECHA_RECHAZO,
   ''0''                                                                                         VERSION,
-  '||V_USUARIO||'                                                                                    USUARIOCREAR,
+  '''||V_USUARIO||'''                                                                                    USUARIOCREAR,
   SYSDATE                                                                            FECHACREAR,
   0                                                                                         BORRADO
 	FROM TRABAJOS MIG
@@ -153,12 +138,6 @@ BEGIN
 	;
 
   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
-  
-  COMMIT;
-  
-  EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
-  
-  DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
   
   DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA_2||'.');
  
@@ -197,12 +176,6 @@ BEGIN
   
   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.'||V_TABLA_2||' cargada. '||SQL%ROWCOUNT||' Filas.');
   
-  COMMIT;
-  
-  EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_2||' COMPUTE STATISTICS');
-  
-  DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_2||' ANALIZADA.');
-  
   --MERGEAMOS PARA AÑADIR ACT_ID EN ACT_TBJ_TRABAJO
   
 		EXECUTE IMMEDIATE '
@@ -224,9 +197,11 @@ BEGIN
   
   COMMIT;
   
-  EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_2||' COMPUTE STATISTICS');
-  
-  DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_2||' ANALIZADA.');
+  V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';
+  EXECUTE IMMEDIATE V_SENTENCIA;
+
+  V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA_2||''',''10''); END;';
+  EXECUTE IMMEDIATE V_SENTENCIA;
   
 EXCEPTION
 

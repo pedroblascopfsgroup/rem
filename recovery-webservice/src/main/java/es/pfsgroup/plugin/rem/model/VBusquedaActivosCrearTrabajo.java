@@ -37,6 +37,10 @@ public class VBusquedaActivosCrearTrabajo implements Serializable {
 	
 	@Column(name="SITUACION_COMERCIAL")
 	private String situacionComercial;
+	
+	@Column(name="NUM_FINCA_REGISTRAL")
+	private String numFincaRegistral;
+	
 
 	public String getIdActivo() {
 		return idActivo;
@@ -93,7 +97,14 @@ public class VBusquedaActivosCrearTrabajo implements Serializable {
 	public void setSituacionComercial(String situacionComercial) {
 		this.situacionComercial = situacionComercial;
 	}
-	
+
+	public String getNumFincaRegistral() {
+		return numFincaRegistral;
+	}
+
+	public void setNumFincaRegistral(String numFincaRegistral) {
+		this.numFincaRegistral = numFincaRegistral;
+	}
 	
 	
 }

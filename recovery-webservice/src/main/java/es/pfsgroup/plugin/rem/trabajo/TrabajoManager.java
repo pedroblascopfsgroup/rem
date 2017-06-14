@@ -711,7 +711,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 			Boolean isFirstLoop = true;
 			for (Activo activo : listaActivos) {
-				Double participacion = updaterStateApi.calcularParticipacionPorActivo(trabajo.getTipoTrabajo().getCodigo(), listaActivos, activo);
+				Double participacion = updaterStateApi.calcularParticipacionPorActivo(dtoTrabajo.getTipoTrabajoCodigo(), listaActivos, activo);
 				dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : participacion.toString());
 				
 				if (isFirstLoop || !dtoTrabajo.getEsSolicitudConjunta()) {
@@ -747,6 +747,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				ActivoTrabajo activoTrabajo = createActivoTrabajo(activo, trabajo, dtoTrabajo.getParticipacion());
 				trabajo.getActivosTrabajo().add(activoTrabajo);
 				isFirstLoop = false;
+				
+				if(!Checks.esNulo(dtoTrabajo.getIdGestorActivoResponsable())){
+					Usuario usuarioGestor = genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS,"id", dtoTrabajo.getIdGestorActivoResponsable()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+					if(!Checks.esNulo(usuarioGestor)){
+						trabajo.setUsuarioGestorActivoResponsable(usuarioGestor);
+					}
+				}
 
 				if(!dtoTrabajo.getEsSolicitudConjunta()) {
 					trabajoDao.saveOrUpdate(trabajo);
@@ -910,6 +917,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			ActivoProveedor mediador = (ActivoProveedor) genericDao.get(ActivoProveedor.class, filtro);
 
 			trabajo.setMediador(mediador);
+		}
+		
+		if(!Checks.esNulo(dtoTrabajo.getIdGestorActivoResponsable())){
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdGestorActivoResponsable());
+			Usuario usuario = (Usuario) genericDao.get(Usuario.class, filtro);
+			
+			trabajo.setUsuarioGestorActivoResponsable(usuario);
 		}
 	}
 
@@ -1140,6 +1154,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		// HREOS-860 Administracion
 		if (!Checks.esNulo(trabajo.getGastoTrabajo())) {
 			dtoTrabajo.setFechaEmisionFactura(trabajo.getGastoTrabajo().getGastoProveedor().getFechaEmision());
+		}
+		
+		if(!Checks.esNulo(trabajo.getUsuarioGestorActivoResponsable())){
+			dtoTrabajo.setGestorActivoResponsable(trabajo.getUsuarioGestorActivoResponsable().getApellidoNombre());
+			dtoTrabajo.setIdGestorActivoResponsable(trabajo.getUsuarioGestorActivoResponsable().getId());
 		}
 
 		return dtoTrabajo;

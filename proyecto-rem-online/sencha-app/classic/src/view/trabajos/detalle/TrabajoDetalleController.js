@@ -70,16 +70,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		
 		if(combo.getValue() != "02" && combo.getValue() != "03") {
 			me.lookupReference("fieldSetMomentoRealizacionRef").setVisible(false);
-			me.lookupReference("containerEnglobaTodosActivosRef").setVisible(true);
-			me.lookupReference("containerEnglobaTodosActivosAgrRef").setVisible(true);
 		} 
 		else {
 			me.lookupReference("fieldSetMomentoRealizacionRef").setVisible(true);
-			me.lookupReference("containerEnglobaTodosActivosRef").setVisible(false);
-			me.lookupReference("containerEnglobaTodosActivosAgrRef").setVisible(false);
-			
-			me.lookupReference("checkEnglobaTodosActivosAgrRef").setValue();
-			me.lookupReference("checkEnglobaTodosActivosRef").setValue();
 		} 
     	
     },
@@ -121,8 +114,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     		me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(true);
     	}
     	else {
-    		me.lookupReference("checkEnglobaTodosActivosAgrRef").setValue(false);
-    		me.lookupReference("checkEnglobaTodosActivosRef").setValue(false);
     		me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(false);
     		me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(false);
     	}
@@ -253,8 +244,16 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		    		}
 			);
 		} else {
-			// Si el checkbox está seleccionado no es necesario informar.
-			me.crearTrabajo(btn);
+			// Si el checkbox está seleccionado.
+			Ext.MessageBox.confirm(
+					HreRem.i18n("msgbox.multiples.trabajos.seleccionado.title"),
+					HreRem.i18n("msgbox.multiples.trabajos.seleccionado.mensaje"),
+					function(result) {
+		        		if(result === 'yes'){
+		        			me.crearTrabajo(btn);
+		        		}
+		    		}
+			);
 		}
 	},
 	

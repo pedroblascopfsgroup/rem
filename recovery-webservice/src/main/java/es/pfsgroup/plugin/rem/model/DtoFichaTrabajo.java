@@ -49,6 +49,10 @@ public class DtoFichaTrabajo {
 
     private String ciaAseguradora;
     
+    private Long idGestorActivoResponsable;
+    
+    private String gestorActivoResponsable;
+        
     private Boolean esSolicitudConjunta;
     
     private Date fechaConcreta;
@@ -264,6 +268,22 @@ public class DtoFichaTrabajo {
 
 	public void setCiaAseguradora(String ciaAseguradora) {
 		this.ciaAseguradora = ciaAseguradora;
+	}
+
+	public Long getIdGestorActivoResponsable() {
+		return idGestorActivoResponsable;
+	}
+
+	public void setIdGestorActivoResponsable(Long idGestorActivoResponsable) {
+		this.idGestorActivoResponsable = idGestorActivoResponsable;
+	}
+
+	public String getGestorActivoResponsable() {
+		return gestorActivoResponsable;
+	}
+
+	public void setGestorActivoResponsable(String gestorActivoResponsable) {
+		this.gestorActivoResponsable = gestorActivoResponsable;
 	}
 
 	public Boolean getEsSolicitudConjunta() {

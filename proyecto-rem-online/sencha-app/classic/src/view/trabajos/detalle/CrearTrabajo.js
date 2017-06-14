@@ -108,10 +108,25 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 								                	xtype: 'textareafieldbase',
 								                	fieldLabel: HreRem.i18n('fieldlabel.descripcion'),
 								                	width: 		'100%',
-								                	colspan: 3,
+								                	colspan: 1,
 								                	bind:		'{trabajo.descripcion}',
 								                	maxLength: 256
 						                		},
+						                		{ 
+													xtype: 'comboboxfieldbase',
+										        	fieldLabel:  HreRem.i18n('fieldlabel.gestor.activo.responsable'),
+										        	reference: 'gestorActivoResponsableCombo',
+										        	colspan: 2,
+										        	editable: false,
+										        	width: 		'100%',
+										        	bind: {
+									            		store: '{comboGestorActivoResponsable}',
+									            		value: '{trabajo.idGestorActivoResponsable}',
+									            	},
+									            	displayField: 'apellidoNombre',
+						    						valueField: 'id',
+													allowBlank: false
+										        },
 										        {
 								                	xtype: 'label',
 								                	reference: 'textAdvertenciaCrearTrabajo',
@@ -182,11 +197,27 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 						        	   							align: 'stretch'
 						        	   				},
 						        	   				items : [
-						        	   						{										           
-						        	   							html: HreRem.i18n("txt.aviso.genera.trabajo.independiente"),
-						        	   							cls: 'texto-info',
-						        	   							margin: '10 0 0 0'
-						        	   						},
+						        	   				        {   
+																xtype: 'container',
+																//width: '33%',
+																reference: 'containerEnglobaTodosActivosRef',
+																layout: {
+																	type: 'vbox',
+																	align: 'stretch'
+																},
+																items :
+																[
+															       
+																		{
+																			xtype: 'checkboxfieldbase',
+																			reference: 'checkEnglobaTodosActivosRef',
+																			margin: '20 0 10 0',
+																			boxLabel: HreRem.i18n('title.ejecutar.trabajo.por.agrupacion'),
+																			bind: '{trabajo.esSolicitudConjunta}',
+																			checked: true
+																		}
+															    ]
+															},
 						        	   						{									    
 						        	   							xtype: 'gridBase',
 						        	   							cls: "",
@@ -200,6 +231,11 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 						        	   									{
 						        	   										dataIndex: 'numActivoHaya',
 						        	   										text: HreRem.i18n('header.numero.activo.haya'),
+						        	   										flex: 1										
+						        	   									},
+						        	   									{
+						        	   										dataIndex: 'numFincaRegistral',
+						        	   										text: HreRem.i18n('header.finca.registral'),
 						        	   										flex: 1										
 						        	   									},
 						        	   									{
@@ -239,48 +275,8 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 						        	   											      }
 						        	   											}
 						        	   									      ]						           
-						        	   						},
-						        	   						{   
-																xtype: 'container',
-																//width: '33%',
-																reference: 'containerEnglobaTodosActivosRef',
-																layout: {
-																	type: 'vbox',
-																	align: 'stretch'
-																},
-																items :
-																[
-														           
-								        	   						{
-				        	   											xtype: 'checkboxfieldbase',
-				        	   											reference: 'checkEnglobaTodosActivosRef',
-								        	   							margin: '20 0 10 0',
-								        	   							boxLabel: HreRem.i18n('title.ejecutar.trabajo.por.agrupacion'),
-								        	   							bind: '{trabajo.esSolicitudConjunta}'
-								        	   						},
-								        	   						{
-								        	   							html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.title"),
-								        	   							cls: 'texto-info'
-								        	   						},
-								        	   						{
-								        	   							html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.uno"),
-								        	   							cls: 'texto-info'
-								        	   						},
-								        	   						{
-								        	   							html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.dos"),
-								        	   							cls: 'texto-info'
-								        	   						},
-								        	   						{
-								        	   							html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.tres"),
-								        	   							cls: 'texto-info'
-								        	   						},
-								        	   						{
-								        	   							html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.cuatro"),
-								        	   							cls: 'texto-info',
-								        	   							margin: '0 0 20 0'
-								        	   						}
-						        	   						    ]
 						        	   						}
+						        	   						
 						        	   				]
 						        	},
 						           {
@@ -292,11 +288,26 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 											align: 'stretch'
 										},
 										items : [
-													{										           
-										           		html: HreRem.i18n("txt.aviso.genera.trabajo.independiente"),
-										           		cls: 'texto-info',
-										           		margin: '10 0 0 0'
-										           	},
+													{   
+														xtype: 'container',
+														//width: '33%',
+														reference: 'containerEnglobaTodosActivosAgrRef',
+														layout: {
+															type: 'vbox',
+															align: 'stretch'
+														},
+														items :
+														[
+												           {
+												           		xtype: 'checkboxfieldbase',
+												           		reference: 'checkEnglobaTodosActivosAgrRef',
+												           		margin: '20 0 10 0',
+																boxLabel: HreRem.i18n('title.ejecutar.trabajo.por.agrupacion'),
+																bind: '{trabajo.esSolicitudConjunta}',
+																checked: true
+												           }
+												         ]
+										           },
 										           	{									    
 											           	
 													    xtype: 'gridBase',
@@ -361,47 +372,8 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 													            }
 													        }
 													    ]						           
-										           },
-										           {   
-														xtype: 'container',
-														//width: '33%',
-														reference: 'containerEnglobaTodosActivosAgrRef',
-														layout: {
-															type: 'vbox',
-															align: 'stretch'
-														},
-														items :
-														[
-												           {
-												           		xtype: 'checkboxfieldbase',
-												           		reference: 'checkEnglobaTodosActivosAgrRef',
-												           		margin: '20 0 10 0',
-																boxLabel: HreRem.i18n('title.ejecutar.trabajo.por.agrupacion'),
-																bind: '{trabajo.esSolicitudConjunta}'
-												           },
-												           {
-												           		html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.title"),
-												           		cls: 'texto-info'
-												           },
-												           {
-												           		html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.uno"),
-												           		cls: 'texto-info'
-												           },
-												           {
-												           		html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.dos"),
-												           		cls: 'texto-info'
-												           },
-												           {
-												           		html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.tres"),
-												           		cls: 'texto-info'
-												           },
-												           {
-												           		html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.cuatro"),
-												           		cls: 'texto-info',
-												           		margin: '0 0 20 0'
-												           }
-												         ]
 										           }
+										           
 							           ]
 						           },
 				           
@@ -713,6 +685,15 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
      		me.down('[reference=fieldsetListaActivos]').setVisible(false);
      		me.down('[reference=fieldsetListaActivosSubida]').setVisible(false);
      	}
+    	
+    	if(!Ext.isEmpty(me.idActivo)){
+     		me.down('[reference=gestorActivoResponsableCombo]').setVisible(false);
+    		me.down('[reference=gestorActivoResponsableCombo]').allowBlank=true;
+    	}
+    	else{
+    		me.down('[reference=gestorActivoResponsableCombo]').setVisible(true);
+    		me.down('[reference=gestorActivoResponsableCombo]').allowBlank=false;
+    	}
      	
     	if(Ext.isEmpty(me.idAgrupacion) && Ext.isEmpty(me.idActivo)){
     		me.down('[reference=filefieldActivosRef]').allowBlank=false;
@@ -733,6 +714,9 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
     	me.down("[reference=tipoTrabajo]").reset();
 		me.down("[reference=tipoTrabajo]").getStore().removeAll();
     	me.down("[reference=tipoTrabajo]").getStore().load();
+    	
+    	me.down("[reference=checkEnglobaTodosActivosRef]").setValue(true);
+    	
 
     }
 

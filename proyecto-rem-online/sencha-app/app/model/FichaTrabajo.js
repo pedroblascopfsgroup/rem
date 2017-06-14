@@ -88,6 +88,12 @@ Ext.define('HreRem.model.FichaTrabajo', {
     			name: 'ciaAseguradora'
     		},
     		{
+    			name: 'idGestorActivoResponsable'
+    		},
+    		{
+    			name: 'gestorActivoResponsable'
+    		},
+    		{
     			name: 'fechaConcreta',
     			type:'date',
     			dateFormat: 'c'

@@ -15,6 +15,10 @@ public class DtoActivosExpediente extends WebDto {
 	private Double importeParticipacion;
 	private String municipio;
 	private String direccion;
+	private Integer condiciones;
+	private Integer bloqueos;
+	private Integer tanteos;
+	
 	
 
 	public Long getIdActivo() {
@@ -95,6 +99,30 @@ public class DtoActivosExpediente extends WebDto {
 
 	public void setDireccion(String direccion) {
 		this.direccion = direccion;
+	}
+
+	public Integer getCondiciones() {
+		return condiciones;
+	}
+
+	public void setCondiciones(Integer condiciones) {
+		this.condiciones = condiciones;
+	}
+
+	public Integer getBloqueos() {
+		return bloqueos;
+	}
+
+	public void setBloqueos(Integer bloqueos) {
+		this.bloqueos = bloqueos;
+	}
+
+	public Integer getTanteos() {
+		return tanteos;
+	}
+
+	public void setTanteos(Integer tanteos) {
+		this.tanteos = tanteos;
 	}
 	
 

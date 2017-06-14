@@ -13,11 +13,10 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
     initComponent: function () {
     	
     	var estadoRenderer =  function(value) {
-        	
         	var src = '',
         	alt = '';
         	
-        	if (value) {
+        	if (value=="1") {
         		src = 'icono_OK.svg';
         		alt = 'OK';
         	} else { 
@@ -27,6 +26,8 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 
         	return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
         }; 
+        
+        
 
         var me = this;        
         me.setTitle(HreRem.i18n('title.publicaciones.activos.grid'));		         
@@ -34,6 +35,7 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 
 			{
 			    xtype		: 'gridBaseEditableRow',
+			    minHeight	: 150,
 			    idPrincipal : 'expediente.id',
 			    reference: 'listadoactivos',
 				cls	: 'panel-base shadow-panel',
@@ -96,7 +98,7 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			            flex:1,
 			       		renderer: Utils.rendererCurrency
 			       },
-			       /*{   
+			       {   
 			       		text: HreRem.i18n("header.porcentaje.participacion"),
 			       	    dataIndex: 'porcentajeParticipacion',
 			       	    editor: 'textfield',
@@ -114,7 +116,7 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			            	}			            	
 			            	return "<span "+style+ ">"+msg+"</span>"
 			            }
-			       },*/
+			       },
 			       {   
 			       		text: HreRem.i18n("header.precio.minimo.autorizado"),
 			       	    dataIndex: 'precioMinimo',
@@ -125,21 +127,21 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			       		text: HreRem.i18n("title.condiciones"),
 			       		renderer: estadoRenderer,	           
 			            flex: 0.5,
-			            dataIndex: 'admision',
+			            dataIndex: 'condiciones',
 			            align: 'center'
 			       },
 			       {   
 			       		text: HreRem.i18n("title.bloqueos"),
 			       		renderer: estadoRenderer,	           
 			            flex: 0.5,
-			            dataIndex: 'admision',
+			            dataIndex: 'bloqueos',
 			            align: 'center'
 			       },
 			       {   
 			       		text: HreRem.i18n("title.tanteo"),
 			       		renderer: estadoRenderer,	           
 			            flex: 0.5,
-			            dataIndex: 'admision',
+			            dataIndex: 'tanteos',
 			            align: 'center'
 			       }
 			       	        
@@ -166,7 +168,6 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 				reference: 'activoExpedienteMain',
 				collapsed: false,
 				hidden: true,
-				scrollable: 'y',
 				flex: 1
 			}
 			//HREOS-2222  

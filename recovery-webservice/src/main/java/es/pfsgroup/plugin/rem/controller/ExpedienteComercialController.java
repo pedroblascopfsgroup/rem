@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoBloqueosFinalizacion;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
+import es.pfsgroup.plugin.rem.model.DtoCondicionesActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
@@ -1186,9 +1187,10 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getActivoExpedienteInfo(Long idActivo, WebDto webDto, ModelMap model){
+	public ModelAndView getActivoExpedienteCondiciones(Long idActivo,Long idExpediente, ModelMap model){
 		try {
-			model.put("data", adapter.getTabActivo(new Long(34937), "datosbasicos"));
+			model.put("data", expedienteComercialApi.getCondicionesActivoExpediete(idExpediente, idActivo));
+			model.put("success", true);
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put("success", false);
@@ -1196,6 +1198,25 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		}
 
 		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveActivoExpedienteCondiciones(DtoCondicionesActivoExpediente condiciones) {
+
+		ModelMap model = new ModelMap();
+
+		try {
+			model.put("data", expedienteComercialApi.guardarCondicionesActivoExpediente(condiciones));
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+
 	}
 	
 	@SuppressWarnings("unchecked")

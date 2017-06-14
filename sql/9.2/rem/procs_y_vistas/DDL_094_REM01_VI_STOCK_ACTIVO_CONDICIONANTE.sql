@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20170322
+--## FECHA_CREACION=20170612
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1787
+--## INCIDENCIA_LINK=HREOS-1787, HREOS-2142
 --## PRODUCTO=NO
 --## Finalidad: Vista Materializada exclusiva para Stock que contiene la relación de activos con los condicionantes de venta
 --##           
@@ -58,64 +58,64 @@ BEGIN
 	AS
   		SELECT ACT_ID,
 	    CASE
-	      WHEN (SIN_TOMA_POSESION_INICIAL = 1)
-	      THEN ''02''
+		  WHEN (OCUPADO_CONTITULO = 1)
+	      THEN ''03''	      
 	      ELSE
 	        CASE
-	          WHEN (OCUPADO_CONTITULO = 1)
-	          THEN ''03''
+			  WHEN (OTRO IS NOT NULL)
+	          THEN ''12''
 	          ELSE
 	            CASE
-	              WHEN (OCUPADO_SINTITULO = 1)
-	              THEN ''04''
+				  WHEN (SIN_TOMA_POSESION_INICIAL = 1)
+	      		  THEN ''02''	              
 	              ELSE
 	                CASE
-	                  WHEN (PENDIENTE_INSCRIPCION = 1)
-	                  THEN ''05''
+					  WHEN (PROINDIVISO = 1)
+	                  THEN ''06''        
 	                  ELSE
 	                    CASE
-	                      WHEN (PROINDIVISO = 1)
-	                      THEN ''06''
+	                      WHEN (OCUPADO_SINTITULO = 1)
+	              		  THEN ''04''
 	                      ELSE
 	                        CASE
-	                          WHEN (TAPIADO = 1)
-	                          THEN ''07''
+							  WHEN (SIN_INFORME_APROBADO = 1)
+	                          THEN ''13''                         
 	                          ELSE
 	                            CASE
-	                              WHEN (OBRANUEVA_SINDECLARAR = 1)
-	                              THEN ''08''
+								  WHEN (PENDIENTE_INSCRIPCION = 1)
+	                  			  THEN ''05''	                              
 	                              ELSE
 	                                CASE
-	                                  WHEN (OBRANUEVA_ENCONSTRUCCION = 1)
-	                                  THEN ''09''
+									  WHEN (CON_CARGAS = 1)
+	                                  THEN ''16''	                                  
 	                                  ELSE
 	                                    CASE
-	                                      WHEN (DIVHORIZONTAL_NOINSCRITA = 1)
-	                                      THEN ''10''
+										  WHEN (TAPIADO = 1)
+	                          			  THEN ''07''
 	                                      ELSE
 	                                        CASE
 	                                          WHEN (RUINA = 1)
 	                                          THEN ''11''
 	                                          ELSE
 	                                            CASE
-	                                              WHEN (OTRO IS NOT NULL)
-	                                              THEN ''12''
+	                                              WHEN (DIVHORIZONTAL_NOINSCRITA = 1)
+	                                      		  THEN ''10''
 	                                              ELSE
 	                                                CASE
-	                                                  WHEN (SIN_INFORME_APROBADO = 1)
-	                                                  THEN ''13''
+	                                                  WHEN (OBRANUEVA_SINDECLARAR = 1)
+	                              					  THEN ''08''
 	                                                  ELSE
 	                                                    CASE
-	                                                      WHEN (REVISION = 1)
-	                                                      THEN ''14''
+														  WHEN (OBRANUEVA_ENCONSTRUCCION = 1)
+	                                  					  THEN ''09''
 	                                                      ELSE
 	                                                        CASE
-	                                                          WHEN (PROCEDIMIENTO_JUDICIAL = 1)
-	                                                          THEN ''15''
+	                                                          WHEN (REVISION = 1)
+	                                                          THEN ''14''
 	                                                          ELSE
 	                                                            CASE
-	                                                              WHEN (CON_CARGAS = 1)
-	                                                              THEN ''16''
+	                                                              WHEN (PROCEDIMIENTO_JUDICIAL = 1)
+	                                                          	  THEN ''15''
 	                                                              ELSE ''01''
 	                                                            END
 	                                                        END
@@ -136,10 +136,10 @@ BEGIN
 	    (SELECT ACT.ACT_ID,
 		NVL2 (SPS.SPS_FECHA_TOMA_POSESION, 0, 1)                             AS SIN_TOMA_POSESION_INICIAL,
 		DECODE (SPS.SPS_OCUPADO, 1, DECODE (SPS.SPS_CON_TITULO, 1, 1, 0), 0) AS OCUPADO_CONTITULO,
-		NVL2 (BDR.BIE_DREG_FECHA_INSCRIPCION, 1, 0)                          AS PENDIENTE_INSCRIPCION,
+		NVL2 (BDR.BIE_DREG_FECHA_INSCRIPCION, 0, 1)                          AS PENDIENTE_INSCRIPCION,
 		NVL2 (NPA.ACT_ID, 1, 0)                                              AS PROINDIVISO,
 		DECODE (SPS.SPS_ACC_TAPIADO, 1, 1, 0)                                AS TAPIADO,
-		DECODE (EON.DD_EON_ID, ''02'', 1, ''04'', 1, ''05'', 1, 0)           AS OBRANUEVA_SINDECLARAR,
+		DECODE (EON.DD_EON_CODIGO, ''02'', 1, ''04'', 1, ''05'', 1, 0)       AS OBRANUEVA_SINDECLARAR,
 		DECODE (EAC.DD_EAC_CODIGO, ''02'', 1, 0)                             AS OBRANUEVA_ENCONSTRUCCION,
 		DECODE (REG.REG_DIV_HOR_INSCRITO, 0, 1, 0)                           AS DIVHORIZONTAL_NOINSCRITA,
 		DECODE (EAC.DD_EAC_CODIGO, ''05'', 1, 0)                             AS RUINA,

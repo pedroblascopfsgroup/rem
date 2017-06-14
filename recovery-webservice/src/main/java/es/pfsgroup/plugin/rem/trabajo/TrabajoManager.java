@@ -35,6 +35,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -136,6 +137,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	public final String PESTANA_FICHA = "ficha";
 	public final String PESTANA_GESTION_ECONOMICA = "gestionEconomica";
+	
+	public final String PERFIL_CAPA_CONTROL_BANKIA="PERFGCCBANKIA";
+	public final String PERFIL_USUARIOS_DE_CONSULTA="HAYACONSU";
+	
+	public final String CODIGO_OBTENCION_DOCUMENTACION="02";
+	public final String CODIGO_ACTUACION_TECNICA="03";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -219,10 +226,25 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (!Checks.esNulo(usuarioCartera))
 			dto.setCartera(usuarioCartera.getCartera().getCodigo());
 		
-		//Comprobar si el usuario es externo y, en tal caso, seteamos proveedor
-		if(this.gestorActivoDao.isUsuarioGestorExterno(usuarioLogado.getId()))
+		// Comprobar si el usuario es externo y, en tal caso, seteamos proveedor
+		// y según HREOS-2272 en el modulo de trabajos
+		// los perfiles externos de CAPA_CONTROL_BANKIA y USUARIOS_DE_CONSULTA
+		// Siempre tendrán filtrado por actuación técnica y obtención documental
+		if(this.gestorActivoDao.isUsuarioGestorExterno(usuarioLogado.getId())) {
+			boolean esControlConsulta =  false;
+			List<Perfil> perfilesUsuario = usuarioLogado.getPerfiles();
+			for (int i=0;i<perfilesUsuario.size() && !esControlConsulta;i++) {
+				if (perfilesUsuario.get(i).getCodigo().equals(PERFIL_CAPA_CONTROL_BANKIA) ||
+					perfilesUsuario.get(i).getCodigo().equals(PERFIL_USUARIOS_DE_CONSULTA)) {
+					esControlConsulta = true;
+				}
+			}
+			if (esControlConsulta) {
+				dto.setCodigoTipo(CODIGO_OBTENCION_DOCUMENTACION);
+				dto.setCodigoTipo2(CODIGO_ACTUACION_TECNICA);
+			}
 			return trabajoDao.findAllFilteredByProveedorContacto(dto, usuarioLogado.getId());
-		
+		}
 
 		return trabajoDao.findAll(dto);
 	}

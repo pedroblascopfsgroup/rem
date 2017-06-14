@@ -1178,7 +1178,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			DtoCondicionesActivoExpediente condiciones =this.getCondicionesActivoExpediete(idExpediente, dtoActivo.getIdActivo());
 			if(condiciones.getSituacionPosesoriaCodigo().equals(condiciones.getSituacionPosesoriaCodigoInformada())
 					&& condiciones.getPosesionInicial().equals(condiciones.getPosesionInicialInformada())
-					&& condiciones.getEstadoTitulo().equals(condiciones.getEstadoTitulo())){
+					&& condiciones.getEstadoTitulo().equals(condiciones.getEstadoTituloInformada())){
 				dtoActivo.setCondiciones(1);
 				
 			}else{

@@ -24,21 +24,12 @@ SET DEFINE OFF;
 
 DECLARE
 
-TABLE_COUNT NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#'; --#ESQUEMA#
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#'; --#ESQUEMA_MASTER#
 V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(40 CHAR) := 'ACT_ETP_ENTIDAD_PROVEEDOR';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG_AEP_ENTIDAD_PROVEEDOR';
 V_SENTENCIA VARCHAR2(1600 CHAR);
-V_REG_MIG NUMBER(10,0) := 0;
-V_REG_INSERTADOS NUMBER(10,0) := 0;
-V_REJECTS NUMBER(10,0) := 0;
-V_COD NUMBER(10,0) := 0;
-V_CRA NUMBER(10,0) := 0;
-V_EXISTEN NUMBER(10,0) := 0;
-V_TOTAL NUMBER(10,0) := 0;
-V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
 
 BEGIN
 
@@ -69,10 +60,10 @@ BEGIN
 	  MIG.ETP_FECHA_FIN                                                 ETP_FECHA_FIN,
 	  MIG.ETP_ESTADO                                                    ETP_ESTADO,
 	  ''0''                                                             VERSION,
-	  '||V_USUARIO||'                                                 USUARIOCREAR,
+	  '''||V_USUARIO||'''                                                 USUARIOCREAR,
       SYSDATE                                                           FECHACREAR,
       0                                                                 BORRADO  
-	FROM MIG_AEP_ENTIDAD_PROVEEDOR_BNK MIG
+	FROM MIG_AEP_ENTIDAD_PROVEEDOR MIG
     INNER JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE 
       ON PVE.PVE_COD_UVEM = MIG.PVE_DOCIDENTIF
     INNER JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA
@@ -88,16 +79,13 @@ BEGIN
 	AND MIG.VALIDACION = 0 
 	')
 	;
-
-	
   
   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
   
   COMMIT;
   
-  EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
-  
-  DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
+  V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';
+  EXECUTE IMMEDIATE V_SENTENCIA;
   
 EXCEPTION
 

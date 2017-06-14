@@ -24,19 +24,13 @@ SET DEFINE OFF;
 
 DECLARE
 
-TABLE_COUNT NUMBER(10,0) := 0;
-V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#'; --#ESQUEMA#
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#'; --#ESQUEMA_MASTER#
 V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
 V_TABLA VARCHAR2(30 CHAR) := 'BIE_CAR_CARGAS';
 V_TABLA_2 VARCHAR2(30 CHAR) := 'ACT_CRG_CARGAS';
 V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG_ACA_CARGAS_ACTIVO';
 V_SENTENCIA VARCHAR2(2000 CHAR);
-V_REG_MIG NUMBER(10,0) := 0;
-V_REG_INSERTADOS NUMBER(10,0) := 0;
-V_REJECTS NUMBER(10,0) := 0;
-V_COD NUMBER(10,0) := 0;
-V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
 
 BEGIN
   
@@ -51,8 +45,6 @@ BEGIN
   OR CRG_ID IS NULL
   ')
   ;
-  
-  COMMIT; 
   
   --DAMOS REGISTROS EN ALTA BIE_CAR_CARGAS PARA LOS ACTIVOS QUE TRATAMOS
 
@@ -81,7 +73,7 @@ BEGIN
     FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
     INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
     ON MIG.ACT_NUMERO_ACTIVO = ACT.ACT_NUM_ACTIVO
-	WHERE MIG.VALIDACION = 0
+	  WHERE MIG.VALIDACION = 0
   )
   SELECT
   ACT.BIE_ID                                                        BIE_ID,
@@ -96,25 +88,20 @@ BEGIN
   ACT.CRG_FECHA_INSCRIPCION											BIE_CAR_FECHA_INSCRIPCION,
   ACT.CRG_FECHA_CANCELACION											BIE_CAR_FECHA_CANCELACION,
   0                                                                 VERSION,
-  '||V_USUARIO||'                                                           USUARIOCREAR,
+  '''||V_USUARIO||'''                                                           USUARIOCREAR,
   SYSDATE                                                           FECHACREAR,
   0                                                                 BORRADO
   FROM ACTIVOS ACT
-  LEFT JOIN '||V_ESQUEMA||'.ACT_NOT_EXISTS NOTT
-  ON NOTT.ACT_NUM_ACTIVO = ACT.ACT_NUMERO_ACTIVO
   WHERE NOT EXISTS (
     SELECT 1 FROM '||V_ESQUEMA||'.'||V_TABLA||' BIE 
     WHERE BIE.BIE_ID = (SELECT BIE_ID
     FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT2
     WHERE ACT2.ACT_ID = ACT.ACT_ID)
-    )
-  AND NOTT.ACT_NUM_ACTIVO IS NULL
+  )
   ')
   ;
   
-    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
-  
-  COMMIT;  
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');  
   
   EXECUTE IMMEDIATE ('
   MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' BIE
@@ -130,8 +117,6 @@ BEGIN
   ')
   ;
   
-  COMMIT;
-  
   EXECUTE IMMEDIATE ('
   MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' BIE
   USING (
@@ -145,8 +130,6 @@ BEGIN
   BIE_CAR_ECONOMICA = 1
   ')
   ;
-  
-  COMMIT;
 
   EXECUTE IMMEDIATE ('
   UPDATE '||V_ESQUEMA||'.'||V_TABLA||'
@@ -156,8 +139,6 @@ BEGIN
   ')
   ;
   
-  COMMIT;
-  
   EXECUTE IMMEDIATE ('
   UPDATE '||V_ESQUEMA||'.'||V_TABLA||'
   SET
@@ -165,8 +146,6 @@ BEGIN
   WHERE BIE_CAR_IMPORTE_ECONOMICO IS NULL
   ')
   ;
-  
-  COMMIT;
   
   DBMS_OUTPUT.PUT_LINE('[INFO] INSERTANDO REGISTROS EN '||V_ESQUEMA||'.'||V_TABLA_2||'.');
   
@@ -216,17 +195,14 @@ BEGIN
 	MIG.CRG_ORDEN							                              CRG_ORDEN,
 	MIG.CRG_FECHA_CANCEL_REGISTRAL							            CRG_FECHA_CANCEL_REGISTRAL,
 	0                                                 	    VERSION,
-	'||V_USUARIO||'                                               	USUARIOCREAR,
+	'''||V_USUARIO||'''                                               	USUARIOCREAR,
 	SYSDATE                                               	FECHACREAR,
 	0                                                     	BORRADO
 	FROM MIG_CARGAS MIG
-	LEFT JOIN '||V_ESQUEMA||'.ACT_NOT_EXISTS NOTT
-	ON NOTT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
 	WHERE NOT EXISTS (
     SELECT 1 FROM '||V_ESQUEMA||'.'||V_TABLA_2||' CRG 
     WHERE CRG.ACT_ID = MIG.ACT_ID
-    )
-    AND NOTT.ACT_NUM_ACTIVO IS NULL
+  )
 	')
 	;
 
@@ -234,9 +210,11 @@ BEGIN
   
   COMMIT;
   
-  EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_2||' COMPUTE STATISTICS');
-  
-  DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_2||' ANALIZADA.');
+  V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';
+  EXECUTE IMMEDIATE V_SENTENCIA;
+
+  V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA_2||''',''10''); END;';
+  EXECUTE IMMEDIATE V_SENTENCIA;
   
   
 EXCEPTION

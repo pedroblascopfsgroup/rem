@@ -487,6 +487,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 					        {
 							    xtype: 'checkboxfieldbase',
 							    fieldLabel:  HreRem.i18n('fieldlabel.sujeto.tramite.tanteo'),
+							    readOnly:true, 
+							    hidden: true,
 							    bind: '{condiciones.sujetoTramiteTanteo}',
 							    colspan: 2
 		                	},

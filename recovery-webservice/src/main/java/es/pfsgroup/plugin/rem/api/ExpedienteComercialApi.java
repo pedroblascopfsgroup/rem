@@ -16,6 +16,7 @@ import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoBloqueosFinalizacion;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
+import es.pfsgroup.plugin.rem.model.DtoCondicionesActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
@@ -718,4 +719,19 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public boolean deleteTanteoActivo(Long idTanteo);
+	
+	/**
+	 * Obitene los condicionenates del activo en el exp comercial
+	 * @param idExpediente
+	 * @param idActivo
+	 * @return
+	 */
+	public DtoCondicionesActivoExpediente getCondicionesActivoExpediete(Long idExpediente, Long idActivo);
+	
+	/**
+	 * Guarda las condiciones informadas de un activo en un expediente comercial
+	 * @param condiciones
+	 * @return
+	 */
+	public boolean guardarCondicionesActivoExpediente(DtoCondicionesActivoExpediente condiciones);
 }

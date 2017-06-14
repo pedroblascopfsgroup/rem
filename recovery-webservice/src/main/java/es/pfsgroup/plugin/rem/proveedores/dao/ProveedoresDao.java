@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.proveedores.dao;
 import java.util.List;
 
 import es.capgemini.pfs.dao.AbstractDao;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
@@ -13,7 +14,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 
 public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
 
-	public List<DtoProveedorFilter> getProveedoresList(DtoProveedorFilter dtoProveedorFiltro);
+	public List<DtoProveedorFilter> getProveedoresList(DtoProveedorFilter dtoProveedorFiltro, Usuario usuarioLogado, Boolean esProveedor, Boolean esGestoria, Boolean esExterno);
 
 	public ActivoProveedor getProveedorById(Long id);
 

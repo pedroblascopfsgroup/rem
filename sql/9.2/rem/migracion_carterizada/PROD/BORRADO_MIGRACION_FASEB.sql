@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=GUILLEM REY
---## FECHA_CREACION=20170608
+--## AUTOR=DAP
+--## FECHA_CREACION=20170614
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=HREOS-2209
+--## INCIDENCIA_LINK=HREOS-2273
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración 'MIG_ACA_CATASTRO_ACTIVO' -> 'ACT_CAT_CATASTRO'

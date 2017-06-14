@@ -8,9 +8,10 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
     layout: {
         type: 'vbox',
         align: 'stretch'
-    },
+    },  
 
     initComponent: function () {
+    	
     	
     	
         var condicionesRenderer =  function(value) {
@@ -71,7 +72,7 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			    xtype		: 'gridBaseEditableRow',
 			    minHeight	: 150,
 			    idPrincipal : 'expediente.id',
-			    reference: 'listadoactivos',
+			    reference: 'listadoactivosexpediente',
 				cls	: 'panel-base shadow-panel',
 				bind: {
 					store: '{storeActivosExpediente}'
@@ -202,7 +203,7 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 				reference: 'activoExpedienteMain',
 				collapsed: false,
 				hidden: true,
-				flex: 1
+				minHeight	: 350,
 			}
 			//HREOS-2222  
             
@@ -213,6 +214,9 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
     	me.callParent();
     	
     	
+    },
+    actualizarTabActivoExpediente: function(){
+    	me.funcionRecargar();
     },
     
     funcionRecargar: function() {

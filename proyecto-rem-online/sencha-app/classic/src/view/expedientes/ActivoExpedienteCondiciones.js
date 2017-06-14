@@ -69,7 +69,7 @@ Ext
 
 								title : HreRem.i18n('title.situacion.activo.comunicada.comprador'),
 								items : [
-											{ 
+										{ 
 								        	xtype: 'comboboxfieldbase',
 								        	name: 'estadoTitulo',
 									 		fieldLabel: HreRem.i18n('fieldlabel.situacion.titulo'),

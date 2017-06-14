@@ -23,15 +23,24 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 				cls	: 'panel-base shadow-panel',
 				bind: {
 					store: '{storeTanteosActivo}'
-				},									
+				},
+				minHeight : 10,
 				listeners: {
-					beforeedit: function(editor){
-						
-					},
 					rowclick: function(dataview,record) {
-						this.up('form').setBindRecord(record.data);
+						//this.up('form').setBindRecord(record.data);
 					}
 				},
+				saveSuccessFn: function() {
+					var me = this;
+			    	var activoExpedienteMain = me.up('activosexpediente');
+					var grid = activoExpedienteMain.down('gridBaseEditableRow');
+					if(grid){
+						var store = grid.getStore();
+						grid.expand();
+						store.loadPage(1)
+					}
+			    	return true;
+			    },
 				
 				features: [{
 		            id: 'summary',

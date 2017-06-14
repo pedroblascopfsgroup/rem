@@ -34,7 +34,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var idEco = me.getViewModel().get("expediente.id");
 		viewModel.set("activoExpedienteSeleccionado", record);
 		viewModel.notify();
-
+	
 		var tabPanel = me.lookupReference('activoExpedienteMain');
 		tabPanel.setHidden(false);
 		tabPanel.mask();
@@ -50,7 +50,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				tabPanel.unmask();
 	       	}
 		});		
-		
+		var panelTanteo = tabPanel.down('activoexpedientetanteo');
+		var grid = panelTanteo.down('gridBaseEditableRow');
+		if(grid){
+			var store = grid.getStore();
+			grid.expand();
+			store.loadPage(1)
+		}
     },
     
     cargarTabData: function (form) {
@@ -291,7 +297,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			     success: function (a, operation, context) {
 			    	me.getView().unmask();
 			    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-			    	me.refrescarActivoExpediente(true);
 			    	btn.hide();
 			 		btn.up('tabbar').down('button[itemId=botonguardar]').hide();
 			 		btn.up('tabbar').down('button[itemId=botoneditar]').show();
@@ -305,6 +310,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			 		} else {
 			 			me.getViewModel().set("editing", false);
 			 		}
+			 		me.refrescarActivoExpediente(true);
+			 		var activoExpedienteMain = btn.up('activosexpediente');
+					var grid = activoExpedienteMain.down('gridBaseEditableRow');
+					if(grid){
+						var store = grid.getStore();
+						grid.expand();
+						store.loadPage(1)
+					}
 	            },
 	            failure: function (a, operation, context) {
 	            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
@@ -354,6 +367,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			 		} else {
 			 			me.getViewModel().set("editing", false);
 			 		}
+			 		var activoExpedienteMain = btn.up('activosexpediente');
+					var grid = activoExpedienteMain.down('gridBaseEditableRow');
+					if(grid){
+						var store = grid.getStore();
+						grid.expand();
+						store.loadPage(1)
+					}
 	            },
 	            failure: function (a, operation, context) {
 	            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
@@ -366,6 +386,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				me.getView().mask(HreRem.i18n("msg.mask.loading"));
 				
 				form.getBindRecord().save({
+					data:{},
 					success: function (a, operation, c) {
 						me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 						me.getView().unmask();
@@ -373,8 +394,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		            },
 			            
 		            failure: function (a, operation) {
-		            	var data = {};
-		                try {
+		            	try {
 		                	data = Ext.decode(operation._response.responseText);
 		                }
 		                catch (e){ };
@@ -397,7 +417,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				});
 			}
 		}
-		
 			
 		}else{
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));

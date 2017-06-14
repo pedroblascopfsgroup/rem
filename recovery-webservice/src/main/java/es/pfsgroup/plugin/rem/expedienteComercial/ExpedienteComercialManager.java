@@ -1175,18 +1175,53 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			
 			dtoActivo.setBloqueos(1);
 			
-			DtoCondicionesActivoExpediente condiciones =this.getCondicionesActivoExpediete(idExpediente, dtoActivo.getIdActivo());
-			if(condiciones.getSituacionPosesoriaCodigo().equals(condiciones.getSituacionPosesoriaCodigoInformada())
-					&& condiciones.getPosesionInicial().equals(condiciones.getPosesionInicialInformada())
-					&& condiciones.getEstadoTitulo().equals(condiciones.getEstadoTituloInformada())){
+			DtoCondicionesActivoExpediente condiciones = this.getCondicionesActivoExpediete(idExpediente,
+					dtoActivo.getIdActivo());
+			if (condiciones.getSituacionPosesoriaCodigo() != null
+					&& condiciones.getSituacionPosesoriaCodigoInformada() != null
+					&& condiciones.getSituacionPosesoriaCodigo()
+							.equals(condiciones.getSituacionPosesoriaCodigoInformada())
+					&& condiciones.getPosesionInicial() != null
+					&& condiciones.getPosesionInicialInformada() != null
+							& condiciones.getPosesionInicial().equals(condiciones.getPosesionInicialInformada())
+					&& condiciones.getEstadoTitulo() != null && condiciones.getEstadoTituloInformada() != null
+					&& condiciones.getEstadoTitulo().equals(condiciones.getEstadoTituloInformada())) {
 				dtoActivo.setCondiciones(1);
-				
-			}else{
+
+			} else {
 				dtoActivo.setCondiciones(0);
+			}
+			CondicionanteExpediente condicionantes = expediente.getCondicionante();
+			
+			if(condicionantes != null){
+				if(condicionantes.getSujetoTanteoRetracto() != null && condicionantes.getSujetoTanteoRetracto().equals(Integer.valueOf(0))){
+					dtoActivo.setTanteos(3);
+				}else{
+					dtoActivo.setTanteos(0);
+					List<TanteoActivoExpediente> tanteosExpediente = expediente.getTanteoActivoExpediente();
+					int contTanteosActivo = 0;
+					int contTanteosActivoRenunciado = 0;
+					for(TanteoActivoExpediente tanteo : tanteosExpediente){
+						if(tanteo.getActivo().getId().equals(activo.getId())){
+							contTanteosActivo++;
+							if(tanteo.getResultadoTanteo()!=null){
+								if(tanteo.getResultadoTanteo().getCodigo().equals(DDResultadoTanteo.CODIGO_EJERCIDO)){
+									dtoActivo.setTanteos(2);
+									break;
+								}else if(tanteo.getResultadoTanteo().getCodigo().equals(DDResultadoTanteo.CODIGO_RENUNCIADO)){
+									contTanteosActivoRenunciado++;
+								}
+							}
+						}
+					}
+					if(contTanteosActivo==contTanteosActivoRenunciado){
+						dtoActivo.setTanteos(1);
+					}
+				}
 			}
 			
 			
-			dtoActivo.setTanteos(1);
+			
 			
 			activos.add(dtoActivo);
 		}

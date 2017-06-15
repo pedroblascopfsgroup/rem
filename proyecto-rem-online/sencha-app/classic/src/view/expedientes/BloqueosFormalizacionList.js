@@ -1,19 +1,56 @@
 Ext.define('HreRem.view.expedientes.BloqueosFormalizacionList', {
     extend		: 'HreRem.view.common.GridBaseEditableRow',
     xtype		: 'bloqueosformalizacionlist',
+    scrollable: 'y',
     editOnSelect: false,
 	topBar		: true,
 	idPrincipal : 'expediente.id',
+    idSecundaria : 'activoExpedienteSeleccionado.idActivo',
     bind		: {
         store: '{storeBloqueosFormalizacion}'
     },
 
     initComponent: function () {
      	var me = this;
+     	
+     	me.coloredRender = function (value, meta, record) {
+    		var fechaBaja = record.get('fechaBaja');
+    		if(value){
+	    		if (fechaBaja) {
+	    			return '<span style="color: #DF0101;">'+value+'</span>';
+	    		} else {
+	    			return value;
+	    		}
+    		} else {
+	    		return '-';
+	    	}
+    	};
+    	
+    	me.dateColoredRender = function (value, meta, record) {
+    		var valor = me.dateRenderer(value);
+    		return me.coloredRender(valor, meta, record);
+    	};
+
+        me.dateRenderer = function(value, rec) {
+			if(!Ext.isEmpty(value)) {
+				var newDate = new Date(value);
+				var formattedDate = Ext.Date.format(newDate, 'd/m/Y');
+				return formattedDate;
+			} else {
+				return value;
+			}
+		};
 
      	me.deleteSuccessFn = function() {
         	var me = this;
         	me.getStore().reload();
+        	me.up().funcionRecargar();
+        	return true;
+        };
+        
+        me.saveSuccessFn = function() {
+        	var me = this;
+        	me.up().funcionRecargar();
         	return true;
         };
 
@@ -43,6 +80,12 @@ Ext.define('HreRem.view.expedientes.BloqueosFormalizacionList', {
 		        	hidden:true
 		        },
 		        {
+		        	dataIndex: 'numActivo',
+		        	text: HreRem.i18n('header.numero.activo'),
+		        	flex:0.5,
+	                renderer: me.coloredRender
+		        },
+		        {
 		        	xtype: 'gridcolumn',
 			        renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
 			            var foundedRecord = this.up('expedientedetallemain').getViewModel().getStore('comboAreaBloqueo').findRecord('codigo', value);
@@ -50,7 +93,7 @@ Ext.define('HreRem.view.expedientes.BloqueosFormalizacionList', {
 			        	if(!Ext.isEmpty(foundedRecord)) {
 			        		descripcion = foundedRecord.getData().descripcion;
 			        	}
-			            return descripcion;
+			        	return me.coloredRender(descripcion, metaData, record);
 			        },
 		            dataIndex: 'areaBloqueoCodigo',
 		            text: HreRem.i18n('header.area.bloqueo'),
@@ -84,7 +127,7 @@ Ext.define('HreRem.view.expedientes.BloqueosFormalizacionList', {
 			        	if(!Ext.isEmpty(foundedRecord)) {
 			        		descripcion = foundedRecord.getData().descripcion;
 			        	}
-			            return descripcion;
+			            return me.coloredRender(descripcion, metaData, record);
 			        },
 		        	dataIndex: 'tipoBloqueoCodigo',
 		            text: HreRem.i18n('header.tipo.bloqueo'),
@@ -104,23 +147,25 @@ Ext.define('HreRem.view.expedientes.BloqueosFormalizacionList', {
 		            dataIndex: 'fechaAlta',
 		            text: HreRem.i18n('header.fecha.alta'),
 		            flex: 0.5,
-		            formatter: 'date("d/m/Y")'
+	                renderer: me.dateColoredRender
 		        },
 		        {
 		            dataIndex: 'usuarioAlta',
 		            text: HreRem.i18n('title.publicaciones.condiciones.usuarioalta'),
-		            flex: 1
+		            flex: 1,
+	                renderer: me.coloredRender
 		        },
 		        {
 		            dataIndex: 'fechaBaja',
 		            text: HreRem.i18n('header.fecha.baja'),
 		            flex: 0.5,
-		            formatter: 'date("d/m/Y")'
+	                renderer: me.dateColoredRender
 		        },
 		        {
 		            dataIndex: 'usuarioBaja',
 		            text: HreRem.i18n('title.publicaciones.condiciones.usuariobaja'),
-		            flex: 1
+		            flex: 1,
+	                renderer: me.coloredRender
 		        }
 		    ];
 

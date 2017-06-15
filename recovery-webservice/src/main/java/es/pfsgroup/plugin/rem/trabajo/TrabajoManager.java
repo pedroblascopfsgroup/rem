@@ -2990,7 +2990,20 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
+
+	@Override
+	public boolean checkEsMultiactivo(TareaExterna tareaExterna) {
+		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
+		if (!Checks.esNulo(trabajo)) {
+			if (trabajo.getActivosTrabajo().size() > 1){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		return false;
+	}
+	
 	
 }

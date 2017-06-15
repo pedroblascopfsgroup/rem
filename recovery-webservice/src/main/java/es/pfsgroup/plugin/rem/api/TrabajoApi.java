@@ -690,5 +690,14 @@ public interface TrabajoApi {
 	 * @return ActivoTrabajo
 	 */
 	public ActivoTrabajo createActivoTrabajo(Activo activo, Trabajo trabajo, String participacion);
+	
+	/**
+	 * Método que comprueba si el trabajo es Multiactivo
+	 * 
+	 * @param tareaExterna
+	 * @return true si es multiactivo. false si no.
+	 */
+	public boolean checkEsMultiactivo(TareaExterna tareaExterna);
+
 
 }

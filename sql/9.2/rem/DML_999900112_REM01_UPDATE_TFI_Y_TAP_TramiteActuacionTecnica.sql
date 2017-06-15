@@ -30,11 +30,11 @@ DECLARE
     TYPE T_TIPO_CODIGO IS TABLE OF VARCHAR2(50 CHAR);
     TYPE T_ARRAY_CODIGO IS TABLE OF T_TIPO_CODIGO;
     V_TIPO_CODIGO T_ARRAY_CODIGO := T_ARRAY_CODIGO(
-    	T_TIPO_CODGIO('T004_AnalisisPeticion'),
-    	T_TIPO_CODGIO('T004_FijacionPlazo'),
-    	T_TIPO_CODGIO('T004_ResultadoTarificada'),
-    	T_TIPO_CODGIO('T004_ResultadoNoTarificada'),
-    	T_TIPO_CODGIO('T004_CierreEconomico')
+    	T_TIPO_CODIGO('T004_AnalisisPeticion'),
+    	T_TIPO_CODIGO('T004_FijacionPlazo'),
+    	T_TIPO_CODIGO('T004_ResultadoTarificada'),
+    	T_TIPO_CODIGO('T004_ResultadoNoTarificada'),
+    	T_TIPO_CODIGO('T004_CierreEconomico')
     );
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(4000 CHAR);
@@ -60,6 +60,10 @@ DECLARE
     	T_TIPO_DECISION_CODIGO('T004_EleccionPresupuesto'),
     	T_TIPO_DECISION_CODIGO('T004_EleccionProveedorYTarifa')
     );
+    V_TMP_TIPO_CODIGO T_TIPO_CODIGO;
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+    V_TMP_TIPO_DECISION_CODIGO T_TIPO_DECISION_CODIGO;
+    V_TMP_TIPO_DECISION T_TIPO_DECISION;
     
 BEGIN
 

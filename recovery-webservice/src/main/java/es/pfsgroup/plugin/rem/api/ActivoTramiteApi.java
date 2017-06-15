@@ -136,13 +136,31 @@ public interface ActivoTramiteApi {
 	 * concreto, por unidad de gestión. El mensaje incluye la descripción del documento 
 	 * y la unidad de gestión en la que debe adjuntarse
 	 * <p>
+	 * @param  tareaExterna tarea desde donde se invoca el método
 	 * @param  codigoDocumento codigo del documento de DDTipoDocumentoActivo
 	 * @param  uGestion Unidad de gestión a validar (A) Activo, (T) Trabajo
-	 * @return boolean
+	 * @return String con el mensaje de validación
 	 */
     @BusinessOperationDefinition("activoTramiteManager.existeAdjuntoUGValidacion")
 	public String existeAdjuntoUGValidacion(TareaExterna tareaExterna, String codigoDocAdjunto, String uGestion);
 	
+    
+	/**
+	 * Mensaje que valida que el número de documentos de un tipo pasado por parámetro es igual o mayor al número de activos del expediente.
+	 * @param  tareaExterna tarea desde donde se invoca el método
+	 * @param  codigoDocumento codigo del documento de DDTipoDocumentoActivo
+	 * @param  uGestion Unidad de gestión a validar (A) Activo, (T) Trabajo, (E Expediente)
+	 * @return String con el mensaje de validación
+	 */
+    public String mismoNumeroAdjuntosComoActivosExpedienteUGValidacion(TareaExterna tareaExterna, String codigoDocAdjunto, String uGestion);
+    	
+    /**
+	 * Método que valida si todos los activos del expediente tienen Fecha de emisión de informe jurídico
+	 * @param  tareaExterna tarea desde donde se invoca el método
+	 * @return Boolean true si todos los activos del expediente tienen Fecha de emisión de informe jurídico
+	 */
+    public Boolean checkFechaEmisionInformeJuridico(TareaExterna tareaExterna);
+    
 	/**
 	 * Método de validación de documento múltiple, para tareas.
 	 * Mediante una cadena codificada, realiza una validación de varios documentos

@@ -391,8 +391,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	onClickBotonGuardarActivoExpediente: function(btn) {
 		var me = this;
-		var grid = activoExpedienteMain.down('gridBaseEditableRow');
-		//me.onSaveFormularioActivoExpediente(btn, btn.up('tabpanel').getActiveTab());
 		if(btn.up('tabpanel').getActiveTab().getReference()=="activoexpedientetanteo"){
 			me.onSaveFormularioActivoExpedienteTanteo(btn, btn.up('tabpanel').getActiveTab());
 		}else{

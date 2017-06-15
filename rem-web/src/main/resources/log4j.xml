@@ -255,8 +255,8 @@
 
 
 	<!--Descomentar para Ver las SQL-->
-	<logger name="org.hibernate.SQL" additivity="false"> <level value="debug"/> 
-		<appender-ref ref="console" /> </logger>
+	<!--<logger name="org.hibernate.SQL" additivity="false"> <level value="debug"/> 
+		<appender-ref ref="console" /> </logger>-->
 
 
 

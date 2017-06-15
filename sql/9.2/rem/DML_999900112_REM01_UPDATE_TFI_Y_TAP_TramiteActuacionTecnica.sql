@@ -26,8 +26,9 @@ DECLARE
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
-ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+	ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    
     TYPE T_TIPO_CODIGO IS TABLE OF VARCHAR2(50 CHAR);
     TYPE T_ARRAY_CODIGO IS TABLE OF T_TIPO_CODIGO;
     V_TIPO_CODIGO T_ARRAY_CODIGO := T_ARRAY_CODIGO(
@@ -51,8 +52,8 @@ ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     TYPE T_TIPO_DECISION IS TABLE OF VARCHAR2(3500 CHAR);
     TYPE T_ARRAY_DECISION IS TABLE OF T_TIPO_DECISION;
     V_TIPO_DECISION T_ARRAY_DECISION := T_ARRAY_DECISION(
-    	T_TIPO_DECISION('valores[''T004_EleccionPresupuesto''][''comboPresupuesto''] == DDSiNo.NO ? ''PresupuestoInvalido'' : (checkBankia() ? (checkSuperaPresupuestoActivo() ? ''ValidoSuperaLimiteBankia'' : (checkSuperaDelegacion() ? ''ValidoSuperaLimiteBankia'' : ''ConSaldo''))  : (checkEsMultiactivo() ? ''ConSaldo'' : (checkSuperaPresupuestoActivo() ? ''SinSaldo'' : ''ConSaldo'')))'),
-    	T_TIPO_DECISION('checkBankia() ? (checkSuperaPresupuestoActivo() ? ''SuperaLimiteBankia'' : (checkSuperaDelegacion() ? ''SuperaLimiteBankia'' : ''ConSaldo'')) : (checkEsMultiactivo() ? ''ConSaldo'' :	(checkSuperaPresupuestoActivo() ? ''SinSaldo'' : ''ConSaldo'')))')
+    	T_TIPO_DECISION('valores[''''T004_EleccionPresupuesto''''][''''comboPresupuesto''''] == DDSiNo.NO ? ''''PresupuestoInvalido'''' : (checkBankia() ? (checkSuperaPresupuestoActivo() ? ''''ValidoSuperaLimiteBankia'''' : (checkSuperaDelegacion() ? ''''ValidoSuperaLimiteBankia'''' : ''''ConSaldo''''))  : (checkEsMultiactivo() ? ''''ConSaldo'''' : (checkSuperaPresupuestoActivo() ? ''''SinSaldo'''' : ''''ConSaldo'''')))'),
+    	T_TIPO_DECISION('checkBankia() ? (checkSuperaPresupuestoActivo() ? ''''SuperaLimiteBankia'''' : (checkSuperaDelegacion() ? ''''SuperaLimiteBankia'''' : ''''ConSaldo'''')) : (checkEsMultiactivo() ? ''''ConSaldo'''' :	(checkSuperaPresupuestoActivo() ? ''''SinSaldo'''' : ''''ConSaldo'''')))')
     );
     
     TYPE T_TIPO_DECISION_CODIGO IS TABLE OF VARCHAR2(3500 CHAR);
@@ -75,26 +76,24 @@ BEGIN
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
         
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS
-		   SET TFI_LABEL = '''||TRIM(V_TMP_TIPO_DATA(1))||'''
-		   WHERE TAP_ID = (SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||TRIM(V_TMP_TIPO_CODIGO(1))||''') 
-			AND TFI_NOMBRE = ''titulo''';
-		  
+		   SET TFI_LABEL = '||TRIM(V_TMP_TIPO_DATA(1))||'
+		   WHERE TAP_ID = (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = '''||TRIM(V_TMP_TIPO_CODIGO(1))||''') 
+			AND TFI_NOMBRE = ''titulo'''; 
     EXECUTE IMMEDIATE V_MSQL;
 
       END LOOP;
     COMMIT;
-    DBMS_OUTPUT.PUT_LINE('[FIN]: TABLA ''TAP_TAREA_PROCEDIMIENTO'' ACTUALIZADA CORRECTAMENTE ');
+    DBMS_OUTPUT.PUT_LINE('[FIN]: TABLA ''TFI_TAREAS_FORM_ITEMS'' ACTUALIZADA CORRECTAMENTE ');
 
-	DBMS_OUTPUT.PUT_LINE('COMENZANDO EL PROCESO DE ACTUALIZACIÓN TABLA ''TFI_TAREAS_FORM_ITEMS''');
+	DBMS_OUTPUT.PUT_LINE('COMENZANDO EL PROCESO DE ACTUALIZACIÓN TABLA ''TAP_TAREA_PROCEDIMIENTO''');
     FOR I IN V_TIPO_DECISION.FIRST .. V_TIPO_DECISION.LAST
       LOOP
       	V_TMP_TIPO_DECISION_CODIGO := V_TIPO_DECISION_CODIGO(I);
         V_TMP_TIPO_DECISION := V_TIPO_DECISION(I);
         
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO
-		   SET TAP_SCRIPT_DECISON = '''||TRIM(V_TMP_TIPO_DECISION(1))||'''
-		   WHERE TAP_CODIGO = '''||TRIM(V_TMP_TIPO_DECISION_CODIGO(1))||'''';
-		  
+		   SET TAP_SCRIPT_DECISION = '''||TRIM(V_TMP_TIPO_DECISION(1))||'''
+		   WHERE TAP_CODIGO = '''||TRIM(V_TMP_TIPO_DECISION_CODIGO(1))||''''; 
     EXECUTE IMMEDIATE V_MSQL;
 
       END LOOP;

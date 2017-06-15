@@ -193,6 +193,11 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<TanteoActivoExpediente> tanteoActivoExpediente;
      
+    @OneToMany(mappedBy = "expedienteComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ECO_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private List<InformeJuridico> listaInformeJuridico;
+    
 	@Version   
 	private Long version;
 
@@ -568,6 +573,16 @@ public class ExpedienteComercial implements Serializable, Auditable {
 			List<TanteoActivoExpediente> tanteoActivoExpediente) {
 		this.tanteoActivoExpediente = tanteoActivoExpediente;
 	}
+
+	public List<InformeJuridico> getListaInformeJuridico() {
+		return listaInformeJuridico;
+	}
+
+	public void setListaInformeJuridico(List<InformeJuridico> listaInformeJuridico) {
+		this.listaInformeJuridico = listaInformeJuridico;
+	}
+
+
 
 
 	

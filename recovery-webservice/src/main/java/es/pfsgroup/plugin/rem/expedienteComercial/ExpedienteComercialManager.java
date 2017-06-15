@@ -3588,36 +3588,47 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public boolean createBloqueoFormalizacion(DtoBloqueosFinalizacion dto, Long idActivo) {
 		try {
 			BloqueoActivoFormalizacion bloqueo = new BloqueoActivoFormalizacion();
+			BloqueoActivoFormalizacion bloqueoExistente = new BloqueoActivoFormalizacion();
 			
-			if (!Checks.esNulo(idActivo)) {
-				Activo activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", idActivo));
-				if (!Checks.esNulo(activo)) {
-					bloqueo.setActivo(activo);
+			bloqueoExistente = genericDao.get(BloqueoActivoFormalizacion.class
+					, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo)
+					, genericDao.createFilter(FilterType.EQUALS, "expediente.id", Long.parseLong(dto.getIdExpediente()))
+					, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false)
+					, genericDao.createFilter(FilterType.EQUALS, "area.codigo", dto.getAreaBloqueoCodigo())
+					, genericDao.createFilter(FilterType.EQUALS, "tipo.codigo", dto.getTipoBloqueoCodigo()));
+			
+			if(Checks.esNulo(bloqueoExistente)){
+			
+				if (!Checks.esNulo(idActivo)) {
+					Activo activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", idActivo));
+					if (!Checks.esNulo(activo)) {
+						bloqueo.setActivo(activo);
+					}
 				}
-			}
-
-			if (!Checks.esNulo(dto.getAreaBloqueoCodigo())) {
-				DDAreaBloqueo area = (DDAreaBloqueo) utilDiccionarioApi.dameValorDiccionarioByCod(DDAreaBloqueo.class, dto.getAreaBloqueoCodigo());
-				if (!Checks.esNulo(area)) {
-					bloqueo.setArea(area);
+	
+				if (!Checks.esNulo(dto.getAreaBloqueoCodigo())) {
+					DDAreaBloqueo area = (DDAreaBloqueo) utilDiccionarioApi.dameValorDiccionarioByCod(DDAreaBloqueo.class, dto.getAreaBloqueoCodigo());
+					if (!Checks.esNulo(area)) {
+						bloqueo.setArea(area);
+					}
 				}
-			}
-
-			if (!Checks.esNulo(dto.getTipoBloqueoCodigo())) {
-				DDTipoBloqueo tipo = (DDTipoBloqueo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoBloqueo.class, dto.getTipoBloqueoCodigo());
-				if (!Checks.esNulo(tipo)) {
-					bloqueo.setTipo(tipo);
+	
+				if (!Checks.esNulo(dto.getTipoBloqueoCodigo())) {
+					DDTipoBloqueo tipo = (DDTipoBloqueo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoBloqueo.class, dto.getTipoBloqueoCodigo());
+					if (!Checks.esNulo(tipo)) {
+						bloqueo.setTipo(tipo);
+					}
 				}
-			}
-
-			if (!Checks.esNulo(dto.getIdExpediente())) {
-				ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getIdExpediente())));
-				if (!Checks.esNulo(expediente)) {
-					bloqueo.setExpediente(expediente);
+	
+				if (!Checks.esNulo(dto.getIdExpediente())) {
+					ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getIdExpediente())));
+					if (!Checks.esNulo(expediente)) {
+						bloqueo.setExpediente(expediente);
+					}
 				}
+	
+				genericDao.save(BloqueoActivoFormalizacion.class, bloqueo);
 			}
-
-			genericDao.save(BloqueoActivoFormalizacion.class, bloqueo);
 		} catch (Exception e) {
 			logger.error("error en expedienteComercialManager", e);
 			return false;

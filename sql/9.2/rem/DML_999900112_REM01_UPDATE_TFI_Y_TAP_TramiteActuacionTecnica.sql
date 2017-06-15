@@ -26,7 +26,8 @@ DECLARE
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
-	
+ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     TYPE T_TIPO_CODIGO IS TABLE OF VARCHAR2(50 CHAR);
     TYPE T_ARRAY_CODIGO IS TABLE OF T_TIPO_CODIGO;
     V_TIPO_CODIGO T_ARRAY_CODIGO := T_ARRAY_CODIGO(

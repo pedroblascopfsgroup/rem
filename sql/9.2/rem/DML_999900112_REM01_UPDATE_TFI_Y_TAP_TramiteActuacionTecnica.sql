@@ -53,7 +53,7 @@ DECLARE
     TYPE T_ARRAY_DECISION IS TABLE OF T_TIPO_DECISION;
     V_TIPO_DECISION T_ARRAY_DECISION := T_ARRAY_DECISION(
     	T_TIPO_DECISION('valores[''''T004_EleccionPresupuesto''''][''''comboPresupuesto''''] == DDSiNo.NO ? ''''PresupuestoInvalido'''' : (checkBankia() ? (checkSuperaPresupuestoActivo() ? ''''ValidoSuperaLimiteBankia'''' : (checkSuperaDelegacion() ? ''''ValidoSuperaLimiteBankia'''' : ''''ConSaldo''''))  : (checkEsMultiactivo() ? ''''ConSaldo'''' : (checkSuperaPresupuestoActivo() ? ''''SinSaldo'''' : ''''ConSaldo'''')))'),
-    	T_TIPO_DECISION('checkBankia() ? (checkSuperaPresupuestoActivo() ? ''''SuperaLimiteBankia'''' : (checkSuperaDelegacion() ? ''''SuperaLimiteBankia'''' : ''''ConSaldo'''')) : (checkEsMultiactivo() ? ''''ConSaldo'''' :	(checkSuperaPresupuestoActivo() ? ''''SinSaldo'''' : ''''ConSaldo'''')))')
+    	T_TIPO_DECISION('checkBankia() ? (checkSuperaPresupuestoActivo() ? ''''SuperaLimiteBankia'''' : (checkSuperaDelegacion() ? ''''SuperaLimiteBankia'''' : ''''ConSaldo'''')) : (checkEsMultiactivo() ? ''''ConSaldo'''' :	(checkSuperaPresupuestoActivo() ? ''''SinSaldo'''' : ''''ConSaldo''''))')
     );
     
     TYPE T_TIPO_DECISION_CODIGO IS TABLE OF VARCHAR2(3500 CHAR);

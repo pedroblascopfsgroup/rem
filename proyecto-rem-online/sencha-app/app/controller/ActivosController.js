@@ -571,7 +571,7 @@ Ext.define('HreRem.controller.ActivosController', {
 
     },
     
-    refrescarExpedienteComercial: function (detalle) {debugger;
+    refrescarExpedienteComercial: function (detalle) {
     	
     	var me = this,
     	id = detalle.getViewModel().get("expediente.id");	;

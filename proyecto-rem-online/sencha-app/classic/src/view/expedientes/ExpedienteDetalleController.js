@@ -118,7 +118,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		nameModels = null,
 		id = me.getViewModel().get("expediente.id");
 		form.mask(HreRem.i18n("msg.mask.loading"));
-			debugger;
 				// Si la API tiene metodo de lectura (read).
 				HreRem.model.ExpedienteInformeJuridico.load(id, {
 					params: {idActivo: me.getViewModel().get("activoExpedienteSeleccionado.idActivo")},

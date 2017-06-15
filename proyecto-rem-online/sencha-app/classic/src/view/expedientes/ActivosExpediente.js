@@ -48,7 +48,6 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
         var bloqueosRenderer =  function(value) {
         	var src = '',
         	alt = '';
-        	value="2"
         	if (value=="1") {
         		src = 'icono_OK.svg';
         		alt = 'OK';

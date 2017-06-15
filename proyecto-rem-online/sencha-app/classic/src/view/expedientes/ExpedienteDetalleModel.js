@@ -279,7 +279,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     		pageSize: $AC.getDefaultPageSize(),
 			model: 'HreRem.model.ActivosExpediente',
 	    	proxy: {
-	    		type: 'uxproxy',
+	    		type: 'uxproxy', 
 	    		remoteUrl: 'expedientecomercial/getActivosExpediente',
 	    		extraParams: {idExpediente: '{expediente.id}'}
 	    	}
@@ -611,7 +611,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	proxy: {
 		        type: 'uxproxy',
 		        remoteUrl: 'expedientecomercial/getBloqueosFormalizacion',
-		        extraParams: {idExpediente: '{expediente.id}'}
+		        extraParams: {idExpediente: '{expediente.id}',
+		        				id: '{activoExpedienteSeleccionado.idActivo}'}
 	    	}
 		},
 		

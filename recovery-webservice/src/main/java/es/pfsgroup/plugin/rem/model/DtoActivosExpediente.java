@@ -18,7 +18,7 @@ public class DtoActivosExpediente extends WebDto {
 	private Integer condiciones;
 	private Integer bloqueos;
 	private Integer tanteos;
-	
+	private Long idCondicion;
 	
 
 	public Long getIdActivo() {
@@ -125,5 +125,12 @@ public class DtoActivosExpediente extends WebDto {
 		this.tanteos = tanteos;
 	}
 	
+	public Long getIdCondicion() {
+		return idCondicion;
+	}
 
+	public void setIdCondicion(Long idCondicion) {
+		this.idCondicion = idCondicion;
+	}
+	
 }

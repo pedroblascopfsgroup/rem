@@ -25,5 +25,5 @@ public interface GastoDao extends AbstractDao<GastoProveedor, Long>{
 	 * @param idUsuario
 	 * @return
 	 */
-	public DtoPage getListGastosFilteredByProveedorContactoAndGestoriaAdm(DtoGastosFilter dtoGastosFilter, Long idUsuario, Boolean isGestoriaAdm);
+	public DtoPage getListGastosFilteredByProveedorContactoAndGestoria(DtoGastosFilter dtoGastosFilter, Long idUsuario, Boolean isGestoriaAdm);
 }

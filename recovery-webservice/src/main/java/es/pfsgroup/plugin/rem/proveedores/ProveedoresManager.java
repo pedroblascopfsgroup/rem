@@ -37,6 +37,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
+import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoIntegrado;
@@ -56,6 +57,7 @@ import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.EntidadProveedor;
 import es.pfsgroup.plugin.rem.model.ProveedorTerritorial;
+import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedorRetirar;
@@ -94,6 +96,9 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	private ProveedoresDao proveedoresDao;
 	
 	@Autowired
+	private GestorActivoDao gestorActivoDao;	
+	
+	@Autowired
 	private MediadoresEvaluarDao mediadoresEvaluarDao;
 	
 	@Autowired
@@ -126,7 +131,21 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	@Override
 	public List<DtoProveedorFilter> getProveedores(DtoProveedorFilter dtoProveedorFiltro) {		
 		
-		return proveedoresDao.getProveedoresList(dtoProveedorFiltro);
+		
+		// Usuario logado, proveedor o gestoria
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		Boolean esProveedor = genericAdapter.isProveedorHayaOrCee(usuarioLogado);
+		Boolean esGestoria = genericAdapter.isGestoria(usuarioLogado);
+		Boolean esExterno = gestorActivoDao.isUsuarioGestorExterno(usuarioLogado.getId());
+		
+		// HREOS-2179 - Búsqueda carterizada
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
+				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+		if (!Checks.esNulo(usuarioCartera)) {
+			dtoProveedorFiltro.setCartera(usuarioCartera.getCartera().getCodigo());
+		}
+		
+		return proveedoresDao.getProveedoresList(dtoProveedorFiltro, usuarioLogado, esProveedor, esGestoria, esExterno);
 	}
 	
 	@Override

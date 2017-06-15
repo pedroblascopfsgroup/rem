@@ -6,6 +6,8 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
     reference: 'activoexpedientetanteo',
     scrollable	: 'y',    
     requires: [],
+    saveMultiple: false,
+    disableValidation: true,
     
     listeners: {},
     
@@ -27,7 +29,7 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 				minHeight : 10,
 				listeners: {
 					rowclick: function(dataview,record) {
-						//this.up('form').setBindRecord(record.data);
+						this.up('form').setBindRecord(record.data);
 					}
 				},
 				saveSuccessFn: function() {

@@ -9,7 +9,8 @@ Ext
 					reference : 'activoexpedientecondiciones',
 					scrollable : 'y',
 					recordName : "condiciones",
-
+					saveMultiple: false,
+					disableValidation: true,
 					recordClass : "HreRem.model.ActivoExpedienteCondicionesModel",
 
 					requires : [ 'HreRem.model.ActivoExpedienteCondicionesModel' ],

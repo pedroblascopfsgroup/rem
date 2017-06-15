@@ -18,4 +18,13 @@ public interface GestorActivoDao extends GestorEntidadDao{
 	 * @return
 	 */
 	public Boolean isUsuarioGestorExterno(Long idUsuario);
+	
+	/**
+	 * Comprueba si el usuario es Gestor Externo de tipo proveedor, es decir, con perfiles:
+	 * 'GESTOADM','GESTIAFORM','HAYAGESTADMT','GESTOCED','GESTOPLUS','GESTOPDV','HAYAPROV','HAYACERTI'
+	 * @param idUsuario
+	 * @return
+	 */
+	public Boolean isUsuarioGestorExternoProveedor(Long idUsuario);
+	
 }

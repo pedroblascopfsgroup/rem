@@ -25,7 +25,7 @@ public class DtoCondicionesActivoExpediente extends WebDto {
 	
 	private Long ecoId;
 	
-	private Long activoId;
+	private Long idActivo;
 
 	public String getSituacionPosesoriaCodigoInformada() {
 		return situacionPosesoriaCodigoInformada;
@@ -99,12 +99,12 @@ public class DtoCondicionesActivoExpediente extends WebDto {
 		this.ecoId = ecoID;
 	}
 
-	public Long getActivoId() {
-		return activoId;
+	public Long getIdActivo() {
+		return idActivo;
 	}
 
-	public void setActivoId(Long activoId) {
-		this.activoId = activoId;
+	public void setIdActivo(Long idActivo) {
+		this.idActivo = idActivo;
 	}
 	
 

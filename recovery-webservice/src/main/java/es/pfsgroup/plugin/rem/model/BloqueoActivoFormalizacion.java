@@ -49,6 +49,10 @@ public class BloqueoActivoFormalizacion implements Serializable, Auditable {
     @ManyToOne
     @JoinColumn(name = "ACT_BEX_ECO_ID")
     private ExpedienteComercial expediente;
+    
+    @ManyToOne
+    @JoinColumn(name = "ACT_ID")
+    private Activo activo;
 
 	@Version   
 	private Long version;
@@ -103,5 +107,13 @@ public class BloqueoActivoFormalizacion implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Activo getActivo() {
+		return activo;
+	}
+
+	public void setActivo(Activo activo) {
+		this.activo = activo;
 	}
 }

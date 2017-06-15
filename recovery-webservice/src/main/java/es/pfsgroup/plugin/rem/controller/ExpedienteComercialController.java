@@ -46,6 +46,7 @@ import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoInformeJuridico;
 import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
 import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
@@ -1063,9 +1064,10 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView createBloqueoFormalizacion(ModelMap model, DtoBloqueosFinalizacion dto) {
+	public ModelAndView createBloqueoFormalizacion(ModelMap model, DtoBloqueosFinalizacion dto, @RequestParam(value = "idEntidad") Long idExpediente,
+			@RequestParam(value = "idEntidadPk") Long idActivo) {
 		try {
-			model.put("success", expedienteComercialApi.createBloqueoFormalizacion(dto));
+			model.put("success", expedienteComercialApi.createBloqueoFormalizacion(dto, idActivo));
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
@@ -1202,11 +1204,12 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveActivoExpedienteCondiciones(DtoCondicionesActivoExpediente condiciones) {
+	public ModelAndView saveActivoExpedienteCondiciones(@RequestParam(value="id",required=true) Long ecoId,DtoCondicionesActivoExpediente condiciones) {
 
 		ModelMap model = new ModelMap();
 
 		try {
+			condiciones.setEcoId(ecoId);
 			model.put("data", expedienteComercialApi.guardarCondicionesActivoExpediente(condiciones));
 			model.put("success", true);
 
@@ -1295,6 +1298,47 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 
 		return createModelAndViewJson(model);
 
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getFechaEmisionInfJuridico(ModelMap model, Long id, Long idActivo) {
+		
+		try {
+			DtoInformeJuridico dto = expedienteComercialApi.getFechaEmisionInfJuridico(id, idActivo);
+			
+			model.put("data", dto);
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}		
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveFechaEmisionInfJuridico(DtoInformeJuridico dto, @RequestParam(value = "id") Long id, @RequestParam(value = "idActivo") Long idActivo) {
+		
+		dto.setIdActivo(idActivo);
+		dto.setIdExpediente(id);
+		
+		ModelMap model = new ModelMap();
+
+		try {
+			expedienteComercialApi.guardarInformeJuridico(dto);
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+		
 	}
 	
 }

@@ -25,7 +25,7 @@ do
 		echo "#####    INICIO $line"
 		echo "########################################################"
 		fecha_ini=`date +%Y%m%d_%H%M%S`
-		$ORACLE_HOME/bin/sqlplus "$1" @$ruta_carterizada/$line > PROD/Logs/001_volcado_produccion_$2_$fecha_ini.log
+		$ORACLE_HOME/bin/sqlplus "$1" @$ruta_carterizada/$line > PROD/Logs/002_volcado_produccion_$2_$fecha_ini.log
 		if [ $? != 0 ] ; then 
 		   echo -e "\n\n======>>> "Error en @$line
 		   exit 1

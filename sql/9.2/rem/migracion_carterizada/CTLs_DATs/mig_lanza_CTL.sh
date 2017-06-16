@@ -51,12 +51,6 @@ do
 	fi
 done < $ruta$fichero
 
-$ORACLE_HOME/bin/sqlplus $1 aux/Mig_estadisticas.sql > ./"$ruta"logs/estadisticas.log
-if [ $? != 0 ] ; then 
-	echo -e "\n\n======>>> "Error en aux/Mig_estadisticas.sql >> ./"$ruta"logs/estadisticas.log ; 
-	exit 1 ; 
-fi
-	echo "Fin de la carga de ficheros en Tablas MIG_. Revise directorio de logs y el directorio /bad."
-exit
+echo "Fin de la carga de ficheros en Tablas MIG_. Revise directorio de logs y el directorio /bad."
 
 exit 0

@@ -38,7 +38,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		
 		if(me.lookupReference('activoExpedienteMain').down('bloqueosformalizacionlist'))
 			me.lookupReference('activoExpedienteMain').down('bloqueosformalizacionlist').getStore().load();
-
+	
 		var tabPanel = me.lookupReference('activoExpedienteMain');
 		tabPanel.setHidden(false);
 		tabPanel.mask();
@@ -69,7 +69,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			
 	       	}
 		});		
-		
+		var panelTanteo = tabPanel.down('activoexpedientetanteo');
+		var grid = panelTanteo.down('gridBaseEditableRow');
+		if(grid){
+			var store = grid.getStore();
+			grid.expand();
+			store.loadPage(1)
+		}
     },
     
     cargarTabData: function (form) {
@@ -237,9 +243,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		
 	},
 	
-	onSaveFormularioCompletoIJ: function(btn, form) {
+	onSaveFormularioCompletoActivoExpediente: function(btn, form) {
 		var me = this;
-
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
 		if(form.isFormValid() && form.disableValidation) {
 
@@ -257,6 +262,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					// Si la API tiene metodo de escritura (create or update).
 					me.getView().mask(HreRem.i18n("msg.mask.loading"));
 					form.getBindRecord().save({
+						params: {idActivo: me.getViewModel().get("activoExpedienteSeleccionado.idActivo")},
 						success: function (a, operation, c) {
 							me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 							me.getView().unmask();
@@ -291,7 +297,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			} else {
 				var records = form.getBindRecords();
 				var contador = 0;
-				me.saveMultipleRecordsIJ(contador, records);
+				me.saveMultipleRecordsActivoExpediente(contador, records);
 			}
 		} else {
 		
@@ -330,7 +336,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 	},
 	
-	saveMultipleRecordsIJ: function(contador, records) {
+	saveMultipleRecordsActivoExpediente: function(contador, records) {
 		var me = this;
 		
 		if(Ext.isDefined(records[contador].getProxy().getApi().create) || Ext.isDefined(records[contador].getProxy().getApi().update)) {
@@ -384,14 +390,20 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	onClickBotonGuardarActivoExpediente: function(btn) {
-		var me = this;	
-		me.onSaveFormularioCompletoIJ(btn, btn.up('tabpanel').getActiveTab());				
+		var me = this;
+		var grid = activoExpedienteMain.down('gridBaseEditableRow');
+		//me.onSaveFormularioActivoExpediente(btn, btn.up('tabpanel').getActiveTab());
+		if(btn.up('tabpanel').getActiveTab().getReference()=="activoexpedientetanteo"){
+			me.onSaveFormularioActivoExpedienteTanteo(btn, btn.up('tabpanel').getActiveTab());
+		}else{
+			me.onSaveFormularioCompletoActivoExpediente(btn, btn.up('tabpanel').getActiveTab());
+		}
+						
 	},
 	
-	onSaveFormularioActivoExpediente: function(btn, form) {
+	onSaveFormularioActivoExpedienteTanteo: function(btn, form) {
 		var me = this;
 		if(form.isFormValid()) {
-		if(form.getReference()=="activoexpedientetanteo"){
 			var formulario= btn.up('tabpanel').getActiveTab().getForm();
 			me.getView().mask(HreRem.i18n("msg.mask.loading"));
 			var url =  $AC.getRemoteUrl('expedientecomercial/saveTanteo');
@@ -427,7 +439,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			     success: function (a, operation, context) {
 			    	me.getView().unmask();
 			    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-			    	me.refrescarActivoExpediente(true);
 			    	btn.hide();
 			 		btn.up('tabbar').down('button[itemId=botonguardar]').hide();
 			 		btn.up('tabbar').down('button[itemId=botoneditar]').show();
@@ -441,100 +452,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			 		} else {
 			 			me.getViewModel().set("editing", false);
 			 		}
-	            },
+			 		me.refrescarActivoExpediente(true);
+			 	},
 	            failure: function (a, operation, context) {
 	            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-	            	 me.getView().unmask();
+	            	me.getView().unmask();
 	            }
 		    });
-		}else if(form.getReference()=="activoexpedientecondiciones"){
-			var formulario= btn.up('tabpanel').getActiveTab().getForm();
-			me.getView().mask(HreRem.i18n("msg.mask.loading"));
-			var url =  $AC.getRemoteUrl('expedientecomercial/saveActivoExpedienteCondiciones');
-			var params={};
-			var record = form.getBindRecord();
-			params['activoId']= record.data.activoId;
-			params['ecoId']= record.data.ecoId;
-			if(formulario.findField("estadoTitulo")!=null){
-				params['estadoTitulo']= formulario.findField("estadoTitulo").getValue();
-			}
-			if(formulario.findField("posesionInicial")!=null){
-				params['posesionInicial']= formulario.findField("posesionInicial").getValue();
-			}
-			if(formulario.findField("situacionPosesoriaCodigo")!=null){
-				params['situacionPosesoriaCodigo']= formulario.findField("situacionPosesoriaCodigo").getValue();
-			}
-			if(formulario.findField("eviccion")!=null){
-				params['eviccion']= formulario.findField("eviccion").getValue();
-			}
-			if(formulario.findField("viciosOcultos")!=null){
-				params['viciosOcultos']= formulario.findField("viciosOcultos").getValue();
-			}
-			Ext.Ajax.request({
-			     url: url,
-			     params:params,
-			     success: function (a, operation, context) {
-			    	me.getView().unmask();
-			    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-			    	me.refrescarActivoExpediente(true);
-			    	btn.hide();
-			 		btn.up('tabbar').down('button[itemId=botonguardar]').hide();
-			 		btn.up('tabbar').down('button[itemId=botoneditar]').show();
-			 		Ext.Array.each(btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]'),
-							function (field, index) 
-								{ 
-									field.fireEvent('save');
-									field.fireEvent('update');});
-			 		if(Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
-			 			me.getViewModel().set("editingFirstLevel", false);
-			 		} else {
-			 			me.getViewModel().set("editing", false);
-			 		}
-	            },
-	            failure: function (a, operation, context) {
-	            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-	             me.getView().unmask();
-	            }
-		    });
-		}else{
-			if(form.getReference()=="activoexpedientejuridico"){
-				// Si la API tiene metodo de escritura (create or update).
-				me.getView().mask(HreRem.i18n("msg.mask.loading"));
-				
-				form.getBindRecord().save({
-					success: function (a, operation, c) {
-						me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-						me.getView().unmask();
-						me.refrescarActivoExpediente(form.refreshAfterSave);
-		            },
-			            
-		            failure: function (a, operation) {
-		            	var data = {};
-		                try {
-		                	data = Ext.decode(operation._response.responseText);
-		                }
-		                catch (e){ };
-		                if (!Ext.isEmpty(data.msg)) {
-		                	me.fireEvent("errorToast", data.msg);
-		                	// Si recibimos un error controlado, continuamos editando.
-		                	Ext.Array.each(form.query('field[isReadOnlyEdit]'),
-								function (field, index){field.fireEvent('edit');}
-							);
-		                	btn.show();
-							btn.up('tabbar').down('button[itemId=botoncancelar]').show();
-							btn.up('tabbar').down('button[itemId=botoneditar]').hide();
-							me.getViewModel().set("editing", true);
-		                	
-		                } else {
-		                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-		                }
-						 me.getView().unmask();
-		            }
-				});
-			}
-		}
-		
-			
 		}else{
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
 		}
@@ -635,6 +559,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
   			activeTab.funcionRecargar();
 		}
 		activeTab.up("expedientedetallemain").fireEvent("refrescarExpediente", activeTab.up("expedientedetallemain"));
+		var activoExpedienteMain = activeTab.up('activosexpediente');
+		var grid = activoExpedienteMain.down('gridBaseEditableRow');
+		if(grid){
+			var store = grid.getStore();
+			//grid.expand();
+			store.loadPage(1)
+		}
 		
 	},
 

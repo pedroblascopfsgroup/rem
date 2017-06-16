@@ -8,11 +8,13 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
     layout: {
         type: 'vbox',
         align: 'stretch'
-    },
+    },  
 
     initComponent: function () {
     	
-    	var estadoRenderer =  function(value) {
+    	
+    	
+        var condicionesRenderer =  function(value) {
         	var src = '',
         	alt = '';
         	
@@ -26,7 +28,39 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 
         	return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
         }; 
-        
+        var tanteosRenderer =  function(value) {
+        	var src = '',
+        	alt = '';
+        	if (value=="1") {
+        		src = 'icono_OK.svg';
+        		alt = 'OK';
+        		return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
+        	} else if(value=="0") { 
+        		src = 'icono_KO.svg';
+        		alt = 'KO';
+        		return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
+        	} else if(value=="2") { 
+        		return '<b style=\"color:red\">EJERCIDO</b>'
+        	} else if(value=="3") { 
+        		return 'N/A'
+        	}   
+        }; 
+        var bloqueosRenderer =  function(value) {
+        	var src = '',
+        	alt = '';
+        	if (value=="1") {
+        		src = 'icono_OK.svg';
+        		alt = 'OK';
+        		return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
+        	} else if(value=="0") { 
+        		src = 'icono_KO.svg';
+        		alt = 'KO';
+        		return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
+        	} else if(value=="2") { 
+        		return 'PENDIENTE'
+        	}   
+        }; 
+                
         
 
         var me = this;        
@@ -37,7 +71,7 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			    xtype		: 'gridBaseEditableRow',
 			    minHeight	: 150,
 			    idPrincipal : 'expediente.id',
-			    reference: 'listadoactivos',
+			    reference: 'listadoactivosexpediente',
 				cls	: 'panel-base shadow-panel',
 				bind: {
 					store: '{storeActivosExpediente}'
@@ -125,21 +159,21 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			       },
 			       {   
 			       		text: HreRem.i18n("title.condiciones"),
-			       		renderer: estadoRenderer,	           
+			       		renderer: condicionesRenderer,	           
 			            flex: 0.5,
 			            dataIndex: 'condiciones',
 			            align: 'center'
 			       },
 			       {   
 			       		text: HreRem.i18n("title.bloqueos"),
-			       		renderer: estadoRenderer,	           
+			       		renderer: bloqueosRenderer,	           
 			            flex: 0.5,
 			            dataIndex: 'bloqueos',
 			            align: 'center'
 			       },
 			       {   
 			       		text: HreRem.i18n("title.tanteo"),
-			       		renderer: estadoRenderer,	           
+			       		renderer: tanteosRenderer,	           
 			            flex: 0.5,
 			            dataIndex: 'tanteos',
 			            align: 'center'
@@ -168,7 +202,7 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 				reference: 'activoExpedienteMain',
 				collapsed: false,
 				hidden: true,
-				flex: 1
+				minHeight	: 350,
 			}
 			//HREOS-2222  
             
@@ -179,6 +213,9 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
     	me.callParent();
     	
     	
+    },
+    actualizarTabActivoExpediente: function(){
+    	me.funcionRecargar();
     },
     
     funcionRecargar: function() {

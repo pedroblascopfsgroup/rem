@@ -32,9 +32,14 @@ import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.InformeJuridico;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGasto;
@@ -360,6 +365,96 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		}		
 		return mensajeValidacion;
 	}
+	
+	
+	@Override
+	public String mismoNumeroAdjuntosComoActivosExpedienteUGValidacion(TareaExterna tareaExterna, String codigoDocAdjunto, String uGestion){
+		
+		//Mensaje de validación
+		String mensajeValidacion = "";
+		
+		//Realizamos la validación de si existe o no el doc. adjunto
+		if(Checks.esNulo(tareaExterna)){
+			mensajeValidacion = mensajeValidacion.concat(messageServices.getMessage("trabajo.adjuntos.validacion.advertencia.tareaInvalida").concat(" "));
+			
+		}else if (!uGestion.isEmpty() && !"A".equals(uGestion) &&
+				  !"T".equals(uGestion) && !"P".equals(uGestion) &&
+				  !"E".equals(uGestion) && !"G".equals(uGestion)){
+			mensajeValidacion = messageServices.getMessage("trabajo.adjuntos.validacion.advertencia.unidadGestionInvalida").concat(" ").concat(uGestion);
+
+		}else{
+			
+			Trabajo tbj = trabajoApi.getTrabajoByTareaExterna(tareaExterna);
+			if(Checks.esNulo(tbj)){
+				mensajeValidacion = messageServices.getMessage("trabajo.adjuntos.validacion.advertencia.tareaInvalida").concat(" ");
+				
+			}else{
+		
+				ExpedienteComercial eco = expedienteComercialApi.findOneByTrabajo(tbj);
+				if(Checks.esNulo(eco)){
+					mensajeValidacion = messageServices.getMessage("trabajo.adjuntos.validacion.advertencia.tareaInvalida").concat(" ");
+					
+				}else{
+				
+					//Obtenemos el tipo de documento exigido
+					DDSubtipoDocumentoExpediente tipoFicheroAdjuntoEC = genericDao.get(DDSubtipoDocumentoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoDocAdjunto));
+					
+					
+					//Obtenemos la lista de documentos del tipo pasado por parámetro del expediente
+					Filter filtroTrabajoEC = genericDao.createFilter(FilterType.EQUALS, "expediente.trabajo.id", tbj.getId());
+					Filter filtroAdjuntoSubtipoCodigo = genericDao.createFilter(FilterType.EQUALS, "subtipoDocumentoExpediente.codigo", codigoDocAdjunto);
+					List<AdjuntoExpedienteComercial> listaAdjuntosExpediente = genericDao.getList(AdjuntoExpedienteComercial.class, filtroTrabajoEC, filtroAdjuntoSubtipoCodigo);
+					
+					List<ActivoOferta> activosExpediente = eco.getOferta().getActivosOferta();
+					
+					if(!Checks.esNulo(activosExpediente) && !Checks.esNulo(listaAdjuntosExpediente)){
+						if(listaAdjuntosExpediente.size() < activosExpediente.size()){
+							Object[] obj = new Object[3];
+							obj[0] = tipoFicheroAdjuntoEC.getDescripcion();
+							obj[1] = activosExpediente.size();
+							obj[2] = listaAdjuntosExpediente.size();
+							mensajeValidacion = mensajeValidacion.concat(messageServices.getMessage("ecomercial.adjuntos.validacion.advertencia.numDocsInvalido", obj));
+						}
+					}
+				}
+			}
+		}		
+		return mensajeValidacion;
+	}
+	
+	
+	
+	@Override
+	public Boolean checkFechaEmisionInformeJuridico(TareaExterna tareaExterna){
+		
+		Boolean ok = false;
+		
+		if(!Checks.esNulo(tareaExterna)){
+			Trabajo tbj = trabajoApi.getTrabajoByTareaExterna(tareaExterna);
+			if(!Checks.esNulo(tbj)){
+				ExpedienteComercial eco = expedienteComercialApi.findOneByTrabajo(tbj);
+				if(!Checks.esNulo(eco)){
+					List<InformeJuridico> listaInformes= eco.getListaInformeJuridico();
+					List<ActivoOferta> activosExpediente = eco.getOferta().getActivosOferta();
+					if(!Checks.estaVacio(listaInformes) && !Checks.estaVacio(activosExpediente)){
+						if(activosExpediente.size() == listaInformes.size()){
+							for(int i=0;i<listaInformes.size();i++){
+								InformeJuridico infJur =listaInformes.get(i);
+								if(Checks.esNulo(infJur.getFechaEmision())){
+									break;
+								}
+								if(i==listaInformes.size()-1){
+									ok = true;
+								}
+							}	
+						}
+					}
+				}
+			}
+		}
+		return ok;
+	}
+	
 	
 	@Override
 	@BusinessOperation(overrides = "activoTramiteManager.existeAdjuntoUGCadena")

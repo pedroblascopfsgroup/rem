@@ -42,7 +42,6 @@ import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
@@ -1176,22 +1175,68 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			
 			//calculamos los pilotos de tanteos,condiciones y bloqueos
 			
-			dtoActivo.setBloqueos(1);
-			
-			DtoCondicionesActivoExpediente condiciones =this.getCondicionesActivoExpediete(idExpediente, dtoActivo.getIdActivo());
-			/*if(!Checks.esNulo(condiciones)){
-				if(condiciones.getSituacionPosesoriaCodigo().equals(condiciones.getSituacionPosesoriaCodigoInformada())
-						&& condiciones.getPosesionInicial().equals(condiciones.getPosesionInicialInformada())
-						&& condiciones.getEstadoTitulo().equals(condiciones.getEstadoTitulo())){
-					dtoActivo.setCondiciones(1);
-					
+			DtoInformeJuridico dtoInfoJuridico = this.getFechaEmisionInfJuridico(idExpediente, dtoActivo.getIdActivo());
+			if(dtoInfoJuridico == null || dtoInfoJuridico.getFechaEmision() == null){
+				dtoActivo.setBloqueos(2);//pendiente
+			}else{
+				if(dtoInfoJuridico.getResultadoBloqueo() !=null && dtoInfoJuridico.getResultadoBloqueo().equals(InformeJuridico.RESULTADO_FAVORABLE)){
+					dtoActivo.setBloqueos(1);
 				}else{
-					dtoActivo.setCondiciones(0);
+					dtoActivo.setBloqueos(0);
 				}
-			}*/
-			dtoActivo.setCondiciones(0);
+			}
 			
-			dtoActivo.setTanteos(1);
+			
+			
+			
+			
+			DtoCondicionesActivoExpediente condiciones = this.getCondicionesActivoExpediete(idExpediente,
+					dtoActivo.getIdActivo());
+			if (condiciones.getSituacionPosesoriaCodigo() != null
+					&& condiciones.getSituacionPosesoriaCodigoInformada() != null
+					&& condiciones.getSituacionPosesoriaCodigo()
+							.equals(condiciones.getSituacionPosesoriaCodigoInformada())
+					&& condiciones.getPosesionInicial() != null
+					&& condiciones.getPosesionInicialInformada() != null
+							& condiciones.getPosesionInicial().equals(condiciones.getPosesionInicialInformada())
+					&& condiciones.getEstadoTitulo() != null && condiciones.getEstadoTituloInformada() != null
+					&& condiciones.getEstadoTitulo().equals(condiciones.getEstadoTituloInformada())) {
+				dtoActivo.setCondiciones(1);
+
+			} else {
+				dtoActivo.setCondiciones(0);
+			}
+			CondicionanteExpediente condicionantes = expediente.getCondicionante();
+			
+			if(condicionantes != null){
+				if(condicionantes.getSujetoTanteoRetracto() != null && condicionantes.getSujetoTanteoRetracto().equals(Integer.valueOf(0))){
+					dtoActivo.setTanteos(3);
+				}else{
+					dtoActivo.setTanteos(0);
+					List<TanteoActivoExpediente> tanteosExpediente = expediente.getTanteoActivoExpediente();
+					int contTanteosActivo = 0;
+					int contTanteosActivoRenunciado = 0;
+					for(TanteoActivoExpediente tanteo : tanteosExpediente){
+						if(tanteo.getActivo().getId().equals(activo.getId())){
+							contTanteosActivo++;
+							if(tanteo.getResultadoTanteo()!=null){
+								if(tanteo.getResultadoTanteo().getCodigo().equals(DDResultadoTanteo.CODIGO_EJERCIDO)){
+									dtoActivo.setTanteos(2);
+									break;
+								}else if(tanteo.getResultadoTanteo().getCodigo().equals(DDResultadoTanteo.CODIGO_RENUNCIADO)){
+									contTanteosActivoRenunciado++;
+								}
+							}
+						}
+					}
+					if(contTanteosActivo==contTanteosActivoRenunciado){
+						dtoActivo.setTanteos(1);
+					}
+				}
+			}
+			
+			
+			
 			
 			activos.add(dtoActivo);
 		}
@@ -4009,7 +4054,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		DtoCondicionesActivoExpediente resultado = new DtoCondicionesActivoExpediente();
 		Activo activo = activoAdapter.getActivoById(idActivo);
 		resultado.setEcoId(idExpediente);
-		resultado.setActivoId(idActivo);
+		resultado.setIdActivo(idActivo);
 		if (activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getFechaTomaPosesion() != null) {
 			resultado.setPosesionInicialInformada(1);
 		} else {
@@ -4063,7 +4108,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Transactional(readOnly = false)
 	public boolean guardarCondicionesActivoExpediente(DtoCondicionesActivoExpediente condiciones) {
 		boolean altaNueva = false;
-		Activo activo = activoAdapter.getActivoById(condiciones.getActivoId());
+		Activo activo = activoAdapter.getActivoById(condiciones.getIdActivo());
 		ExpedienteComercial expediente = this.findOne(condiciones.getEcoId());
 		CondicionesActivo condicionesActivo = null;
 		condicionesActivo = (CondicionesActivo) genericDao.get(CondicionesActivo.class,

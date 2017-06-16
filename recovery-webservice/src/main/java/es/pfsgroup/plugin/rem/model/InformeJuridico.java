@@ -34,7 +34,6 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 @Table(name = "ACT_ECO_INFORME_JURIDICO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
-@Inheritance(strategy=InheritanceType.JOINED)
 public class InformeJuridico implements Serializable, Auditable {
 	
     /**

@@ -1204,11 +1204,12 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveActivoExpedienteCondiciones(DtoCondicionesActivoExpediente condiciones) {
+	public ModelAndView saveActivoExpedienteCondiciones(@RequestParam(value="id",required=true) Long ecoId,DtoCondicionesActivoExpediente condiciones) {
 
 		ModelMap model = new ModelMap();
 
 		try {
+			condiciones.setEcoId(ecoId);
 			model.put("data", expedienteComercialApi.guardarCondicionesActivoExpediente(condiciones));
 			model.put("success", true);
 

@@ -89,7 +89,7 @@ public class NotificatorServiceODocCHABProveedor extends AbstractNotificatorServ
 			}
 
 			// si es gestor interno y el solicitante es igual que el usuario de la tarea actual, no se envia el correo.
-			if (!esProveedorExterno && proveedor.equals(usuarioTareaActivo)) {
+			if (!esProveedorExterno && !Checks.esNulo(proveedor) && proveedor.equals(usuarioTareaActivo)) {
 				return;
 			}
 

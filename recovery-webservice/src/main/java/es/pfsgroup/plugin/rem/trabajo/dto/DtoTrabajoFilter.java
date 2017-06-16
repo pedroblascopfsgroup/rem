@@ -33,6 +33,8 @@ public class DtoTrabajoFilter extends WebDto {
 	
 	private String codigoTipo;
 	
+	private String codigoTipo2;
+	
 	private String codigoSubtipo;		
 	
 	private String codigoEstado;
@@ -273,6 +275,14 @@ public class DtoTrabajoFilter extends WebDto {
 
 	public void setFiltrar(Integer filtrar) {
 		this.filtrar = filtrar;
+	}
+
+	public String getCodigoTipo2() {
+		return codigoTipo2;
+	}
+
+	public void setCodigoTipo2(String codigoTipo2) {
+		this.codigoTipo2 = codigoTipo2;
 	}
 
 }

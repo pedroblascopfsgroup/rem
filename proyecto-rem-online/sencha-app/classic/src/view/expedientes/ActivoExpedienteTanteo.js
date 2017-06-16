@@ -26,7 +26,7 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 				bind: {
 					store: '{storeTanteosActivo}'
 				},
-				minHeight : 10,
+				minHeight : 180,
 				listeners: {
 					rowclick: function(dataview,record) {
 						this.up('form').setBindRecord(record.data);

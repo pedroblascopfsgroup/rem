@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.rem.trabajo.dao.impl;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -68,7 +70,14 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numTrabajo", dto.getNumTrabajo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.idTrabajoWebcom", dto.getIdTrabajoWebcom());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoTipo", dto.getCodigoTipo());
+   		Collection<String> listaTipo = new ArrayList<String>();
+   		if (dto!=null && dto.getCodigoTipo()!=null) {
+   			listaTipo.add(dto.getCodigoTipo());
+   		}
+   		if (dto!=null && dto.getCodigoTipo2()!=null) {
+   			listaTipo.add(dto.getCodigoTipo2());
+   		}
+		HQLBuilder.addFiltroWhereInSiNotNull(hb, "tbj.codigoTipo", listaTipo);   		
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoSubtipo", dto.getCodigoSubtipo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoEstado", dto.getCodigoEstado());
    		HQLBuilder.addFiltroLikeSiNotNull(hb, "tbj.descripcionPoblacion", dto.getDescripcionPoblacion(), true);

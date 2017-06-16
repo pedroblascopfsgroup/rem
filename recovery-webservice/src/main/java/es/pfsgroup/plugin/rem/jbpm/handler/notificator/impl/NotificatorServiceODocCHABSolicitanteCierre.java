@@ -67,10 +67,10 @@ public class NotificatorServiceODocCHABSolicitanteCierre extends AbstractNotific
 			DDCartera cartera = tramite.getActivo().getCartera();
 			Usuario gestorAdmin = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ADMISION);
 			Usuario gestorAct = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
-			if (peticionario.equals(gestorAdmin) && ( cartera.equals(DDCartera.CODIGO_CARTERA_BANKIA) ||  cartera.equals(DDCartera.CODIGO_CARTERA_SAREB) )) {
+			if (!Checks.esNulo(peticionario) && peticionario.equals(gestorAdmin) && ( cartera.equals(DDCartera.CODIGO_CARTERA_BANKIA) ||  cartera.equals(DDCartera.CODIGO_CARTERA_SAREB) )) {
 				return;
 			}
-			if (peticionario.equals(gestorAct) && ( cartera.equals(DDCartera.CODIGO_CARTERA_CAJAMAR) )) {
+			if (!Checks.esNulo(peticionario) && peticionario.equals(gestorAct) &&  cartera.equals(DDCartera.CODIGO_CARTERA_CAJAMAR )) {
 				return;
 			}
 
@@ -83,8 +83,17 @@ public class NotificatorServiceODocCHABSolicitanteCierre extends AbstractNotific
 				usuarioTareaActivo  = ((TareaActivo) valores.get(0).getTareaExterna().getTareaPadre()).getUsuario();	
 			}
 
+			Usuario proveedor = null;
+			if(!Checks.esNulo(tramite.getTrabajo()) && !Checks.esNulo(tramite.getTrabajo().getProveedorContacto())) {
+				proveedor =  tramite.getTrabajo().getProveedorContacto().getUsuario();
+				if (proveedor!=null) {
+					esProveedorExterno = proveedor.getUsuarioExterno();
+				}
+			}
+			
+
 			// si es gestor interno y el solicitante es igual que el usuario de la tarea actual, no se envia el correo.
-			if (!esProveedorExterno && peticionario.equals(usuarioTareaActivo)) {
+			if (!esProveedorExterno && !Checks.esNulo(peticionario) && peticionario.equals(usuarioTareaActivo)) {
 				return;
 			}
 

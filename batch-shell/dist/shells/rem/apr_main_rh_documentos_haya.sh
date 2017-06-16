@@ -1,8 +1,6 @@
 #!/bin/bash
 # Generado por GUSTAVO MORA 20170810
  
-
-
 filename=$(basename $0)
 nameETL="${filename%.*}"
 
@@ -23,8 +21,20 @@ if [ -f $MAINSH ]; then
     CLASEINICIO="$(cat $MAINSH | grep "^ java" | cut -f11 -d" ")"
     java -Xms512M -Xmx1536M -Dconfig.dir=$DIR_CONFIG -Dconfig.file.mask=$CFG_FILE -Duser.country=ES -Duser.language=es -cp $CLASS2 $CLASEINICIO --context=Default "$@"
     exit $?
+    
+	if [ $? = 0 ]; then
+lftp -u gestorias_rem,YugX0Gmt sftp://192.168.49.14 <<EOF
+cd /home/input/
+mput $DIR_SALIDA/DOCUMENTOS_RH_*.dat
+bye
+EOF
+
+rm -f $DIR_SALIDA/DOCUMENTOS_RH_*.dat
+
+    fi
 else
     echo "$(basename $0) Error en $filename: no se ha encontrado  $MAINSH"
     exit 1
 fi
+
 

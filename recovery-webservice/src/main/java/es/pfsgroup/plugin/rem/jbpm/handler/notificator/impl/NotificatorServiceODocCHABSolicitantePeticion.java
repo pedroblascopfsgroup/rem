@@ -77,10 +77,10 @@ public class NotificatorServiceODocCHABSolicitantePeticion extends AbstractNotif
 			DDCartera cartera = tramite.getActivo().getCartera();
 			Usuario gestorAdmin = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ADMISION);
 			Usuario gestorAct = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
-			if (peticionario.equals(gestorAdmin) && ( cartera.equals(DDCartera.CODIGO_CARTERA_BANKIA) ||  cartera.equals(DDCartera.CODIGO_CARTERA_SAREB) )) {
+			if (!Checks.esNulo(peticionario) && peticionario.equals(gestorAdmin) && ( cartera.equals(DDCartera.CODIGO_CARTERA_BANKIA) ||  cartera.equals(DDCartera.CODIGO_CARTERA_SAREB) )) {
 				return;
 			}
-			if (peticionario.equals(gestorAct) && ( cartera.equals(DDCartera.CODIGO_CARTERA_CAJAMAR) )) {
+			if (!Checks.esNulo(peticionario) && peticionario.equals(gestorAct) && cartera.equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
 				return;
 			}
 

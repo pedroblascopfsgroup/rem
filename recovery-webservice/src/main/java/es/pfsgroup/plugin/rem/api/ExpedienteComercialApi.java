@@ -22,6 +22,7 @@ import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoInformeJuridico;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
 import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
@@ -516,7 +517,7 @@ public interface ExpedienteComercialApi {
 	 * @param dto : dto con los datos del nuevo bloqueo.
 	 * @return Devuelve True si la operación ha sido satisfactoria.
 	 */
-	public boolean createBloqueoFormalizacion(DtoBloqueosFinalizacion dto);
+	public boolean createBloqueoFormalizacion(DtoBloqueosFinalizacion dto, Long idActivo);
 
 	/**
 	 * Este método establece un bloqueo por el ID de bloqueo obtenido a borrado, así como el nombre de usuario
@@ -734,4 +735,9 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public boolean guardarCondicionesActivoExpediente(DtoCondicionesActivoExpediente condiciones);
+
+	public DtoInformeJuridico getFechaEmisionInfJuridico(Long idExpediente, Long idActivo);
+
+	public boolean guardarInformeJuridico(DtoInformeJuridico dto);
+
 }

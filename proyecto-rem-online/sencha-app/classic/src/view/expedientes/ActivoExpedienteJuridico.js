@@ -3,130 +3,59 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteJuridico', {
 	xtype : 'activoexpedientejuridico',
 	cls : 'panel-base shadow-panel',
 	collapsed : false,
+	saveMultiple: true,
+    disableValidation: true,
 	reference : 'activoexpedientejuridico',
-	
-	requires : [],
-
-	listeners : {},
+	scrollable : 'y',
+    records				: ['informeJuridico'],
+    recordsClass		: ['HreRem.model.ExpedienteInformeJuridico'],
+    requires			: ['HreRem.model.ExpedienteInformeJuridico'],
 
 	initComponent : function() {
 
 		var me = this;
-		me.setTitle(HreRem.i18n('title.bloqueos'));
-		var items = [
-			{
-				xtype : 'fieldsettable',
-				defaultType : 'textfieldbase',
-			
-			//	title : HreRem.i18n('title.situacion.activo.comunicada.comprador'),
-				items : [
-							{
-						    	xtype: 'datefieldbase',
-						    	fieldLabel: HreRem.i18n('label.fecha.emision'),
-								bind:		'{gastoNuevo.fechaEmision}',
-								allowBlank: false
-							},
-							{ 
-					        	xtype: 'comboboxfieldbase',
-					        	fieldLabel: HreRem.i18n('fieldlabel.proveedor.resultado'),
-					        	bind: {
-				            		store: '{comboSiNoRem}',
-				            		value: '{condiciones.renunciaSaneamientoEviccion}'			            		
-				            	},
-				            	displayField: 'descripcion',
-								valueField: 'codigo'
-							}
-						]
-			},
-			{
-			    xtype: 'gridBaseEditableRow',
-			    topBar: $AU.userHasFunction(['EDITAR_TAB_GESTION_ECONOMICA_EXPEDIENTES']),
-			    reference: 'listadoBloqueosActivos',
-			    idPrincipal : 'expediente.id',
-				cls	: 'panel-base shadow-panel',
-				bind: {
-					store: '{storeBloqueosActivo}'
-				},									
-				listeners: {
-					beforeedit: function(editor){
-						
-					}
-				},
-				columns: [
-				   {
-				   		text: HreRem.i18n('header.area.bloqueo'),
-			            dataIndex: 'codigoProveedorRem',
-			            flex: 1,
-			            editor: {
-							xtype: 'textfield',
-							allowBlank: false,
-							reference: 'proveedorRef',
-							maskRe: /[0-9.]/
-						}
-				   },
-				   {
-				   		text: HreRem.i18n('fieldlabel.tipo'),
-			            dataIndex: 'proveedor',
-			            flex: 1
-						
-				   },
-				   {
-				   		xtype: 'numbercolumn',
-				   		text: HreRem.i18n('header.fecha.alta'),
-			            dataIndex: 'importeCalculo',
-			            flex: 1,
-			            editor: {
-			            	xtype:'numberfieldbase',
-			            	addUxReadOnlyEditFieldPlugin: false,
-			            	allowBlank: false,
-			            	reference: 'importeCalculoHonorario',
-			            	listeners:{
-			            		change: 'onHaCambiadoImporteCalculo'
-			           		}					           							            
-			            }
-				   },
-				   {
-				   		text: HreRem.i18n('title.publicaciones.condiciones.usuarioalta'),
-			            dataIndex: 'observaciones',
-			            flex: 1,
-			            editor: {
-			            	xtype:'textarea',
-			            	reference: 'observaciones'
-			            }
-				   },
-				   {
-				   		text: HreRem.i18n('header.fecha.baja'),
-			            dataIndex: 'observaciones',
-			            flex: 1,
-			            editor: {
-			            	xtype:'textarea',
-			            	reference: 'observaciones'
-			            }
-				   },
-				   {
-				   		text: HreRem.i18n('title.publicaciones.condiciones.usuariobaja'),
-			            dataIndex: 'observaciones',
-			            flex: 1,
-			            editor: {
-			            	xtype:'textarea',
-			            	reference: 'observaciones'
-			            }
-				   }
-			    ]
-			}
-		    
+		me.setTitle(HreRem.i18n('title.informe.juridico'));
+		me.items = [
+		     {   
+				xtype:'fieldsettable',
+				defaultType: 'textfieldbase',				
+				title: HreRem.i18n('title.situacion.activo.comunicada.comprador'),
+				items :
+					[
+		                {
+		                	xtype: 'datefieldbase', 
+		                	formatter: 'date("d/m/Y")',
+		                	fieldLabel:  HreRem.i18n('label.fecha.emision'),
+		                	maxValue: null,
+		                	minValue: new Date(),
+		                	bind:		'{informeJuridico.fechaEmision}'
 
+		                },						
+						{
+							xtype: 'displayfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.proveedor.resultado'),
+							bind:		'{informeJuridico.resultadoBloqueo}'
+						}
+					]
+			}
+		     ,
+			{
+			    xtype: 'bloqueosformalizacionlist',
+				reference: 'bloqueosformalizacionlistref'
+			}
 		];
 
-		me.addPlugin({
+		/*me.addPlugin({
 			ptype : 'lazyitems',
-			items : items
-		});
+			items : me.items
+		});*/
 
 		me.callParent();
 	},
 
 	funcionRecargar : function() {
-
+		var me = this; 
+		me.recargar = false;		
+		me.lookupController().cargarTabDataInformeJuridico(me);		
 	}
 });

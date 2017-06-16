@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.VProveedores;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 
@@ -38,15 +39,7 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<DtoProveedorFilter> getProveedoresList(DtoProveedorFilter dto) {
-
-		// Es proveedor o gestoria
-		Usuario usuarioLogado = adapter.getUsuarioLogado();
-		Boolean esProveedor = adapter.isProveedorHayaOrCee(usuarioLogado);
-		Boolean esGestoria = false;
-		if(!esProveedor){
-			esGestoria = adapter.isGestoria(usuarioLogado);
-		}
+	public List<DtoProveedorFilter> getProveedoresList(DtoProveedorFilter dto, Usuario usuarioLogado, Boolean esProveedor, Boolean esGestoria, Boolean esExterno) {
 
 		HQLBuilder hb = new HQLBuilder(
 				"select distinct pve.id, pve.codigoProveedorRem, pve.tipoProveedorDescripcion, pve.subtipoProveedorDescripcion, pve.nifProveedor, pve.nombreProveedor, pve.nombreComercialProveedor, pve.estadoProveedorDescripcion, pve.observaciones from VBusquedaProveedor pve");
@@ -72,7 +65,6 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.subtipoProveedorCodigo", dto.getSubtipoProveedorCodigo());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "pve.nifProveedor", dto.getNifProveedor(), true);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.tipoPersonaProveedorCodigo", dto.getTipoPersonaCodigo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.cartera", dto.getCartera());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "pve.propietarioActivoVinculado", dto.getPropietario(), true);
 		// HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.subCartera",
 		// dto.getSubCartera());// TODO: falta por definir en la vista
@@ -88,17 +80,20 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.calificacionProveedor", dto.getCalificacionCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.topProveedor", dto.getTopCodigo());
 		
-		//HREOS-1964: Los proveedores solo se pueden ver a si mismo en el listado de proveedores
-		if(esProveedor){
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.idUser", usuarioLogado.getId());
+		// HREOS-2179: Las gestorias y proveedores tecnicos y de certificacion pueden ver todos los proveedores de tipo "entidad" y "administracion", 
+		// y de los de tipo proveedor, unicamente a si mismos.
+		if(esGestoria || esProveedor ){			
+			hb.appendWhere(" pve.tipoProveedorCodigo in ('"+DDEntidadProveedor.TIPO_ENTIDAD_CODIGO+"','"+DDEntidadProveedor.TIPO_ADMINISTRACION_CODIGO+"') "					
+							+ "or (pve.tipoProveedorCodigo = '" + DDEntidadProveedor.TIPO_PROVEEDOR_CODIGO + "' and pve.idUser = "+usuarioLogado.getId()+") ");
 		}
 		
-		//HREOS-1964: Las gestorias se pueden ver a si misma y a todos los de tipo "entidad" y "administracion"
-		if(esGestoria){
-			ArrayList<String> codigos = new ArrayList<String>();
-			codigos.add("01");
-			codigos.add("02");
-			HQLBuilder.addFiltroWhereInSiNotNull(hb, "pve.tipoProveedorCodigo", codigos);
+		// Si es externo pero no es gestoria ni proveedor, es fsv, capa control o consulta, y hay que carterizar en función del tipo de proveedor
+		if(esExterno && !esGestoria && !esProveedor) {
+			
+			hb.appendWhere(" (pve.tipoProveedorCodigo in ('"+DDEntidadProveedor.TIPO_ENTIDAD_CODIGO+"','"+DDEntidadProveedor.TIPO_PROVEEDOR_CODIGO+"') and pve.cartera = '"+dto.getCartera()+"' )"					
+					+ "or (pve.tipoProveedorCodigo = '" + DDEntidadProveedor.TIPO_ADMINISTRACION_CODIGO + "')");
+		} else {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.cartera", dto.getCartera());
 		}
 
 		// Tiene que tratarse de la siguiente manera debido a la personalizacion

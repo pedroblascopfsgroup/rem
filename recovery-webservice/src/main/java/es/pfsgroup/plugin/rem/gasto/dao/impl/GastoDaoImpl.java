@@ -38,14 +38,14 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 	}
 
 	@Override
-	public DtoPage getListGastosFilteredByProveedorContactoAndGestoriaAdm(DtoGastosFilter dtoGastosFilter,
-			Long idUsuario, Boolean isGestoriaAdm) {
+	public DtoPage getListGastosFilteredByProveedorContactoAndGestoria(DtoGastosFilter dtoGastosFilter,
+			Long idUsuario, Boolean isGestoria) {
 
 		HQLBuilder hb = this.rellenarFiltrosBusquedaGasto(dtoGastosFilter);
 
 		List<String> nombresProveedor = proveedorDao.getNombreProveedorByIdUsuario(idUsuario);
 		if (!Checks.estaVacio(nombresProveedor)) {
-			if (!isGestoriaAdm)
+			if (!isGestoria)
 				HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgasto.nombreProveedor", nombresProveedor);
 			else {
 				String listNombres = this.listToCadenaCommas(nombresProveedor);

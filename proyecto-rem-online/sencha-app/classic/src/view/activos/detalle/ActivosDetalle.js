@@ -1,6 +1,7 @@
 Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     extend		: 'Ext.tab.Panel',
     xtype		: 'activosdetalle',
+    reference	: 'activosdetalle',
 	cls			: 'panel-base shadow-panel, tabPanel-segundo-nivel',
     requires 	: ['HreRem.view.activos.detalle.DatosGeneralesActivo', 'HreRem.view.activos.detalle.AdmisionActivo', 'HreRem.view.activos.tramites.TramitesActivo', 
     			'HreRem.view.activos.detalle.ObservacionesActivo', 'HreRem.view.activos.detalle.AgrupacionesActivo', 'HreRem.view.activos.detalle.GestoresActivo', 

@@ -9,7 +9,8 @@ Ext
 					reference : 'activoexpedientecondiciones',
 					scrollable : 'y',
 					recordName : "condiciones",
-
+					saveMultiple: false,
+					disableValidation: true,
 					recordClass : "HreRem.model.ActivoExpedienteCondicionesModel",
 
 					requires : [ 'HreRem.model.ActivoExpedienteCondicionesModel' ],
@@ -69,7 +70,7 @@ Ext
 
 								title : HreRem.i18n('title.situacion.activo.comunicada.comprador'),
 								items : [
-											{ 
+										{ 
 								        	xtype: 'comboboxfieldbase',
 								        	name: 'estadoTitulo',
 									 		fieldLabel: HreRem.i18n('fieldlabel.situacion.titulo'),

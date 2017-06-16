@@ -50,9 +50,10 @@ Ext.define('HreRem.model.ActivosExpediente', {
     		},
     		{
     			name:'tanteos'
+    		},
+    		{
+    			name:'idCondicion'
     		}
-    		
-    		
     ],
     
     proxy: {

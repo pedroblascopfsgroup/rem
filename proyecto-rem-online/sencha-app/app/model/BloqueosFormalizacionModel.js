@@ -31,6 +31,9 @@ Ext.define('HreRem.model.BloqueosFormalizacionModel', {
     		},
     		{
     			name: 'usuarioBaja'
+    		},
+    		{
+    			name: 'idActivo'
     		}
     ],
 

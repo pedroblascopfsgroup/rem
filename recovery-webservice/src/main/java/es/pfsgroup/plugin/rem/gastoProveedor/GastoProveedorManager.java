@@ -75,6 +75,7 @@ import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoProveedorActivo;
 import es.pfsgroup.plugin.rem.model.GastoProveedorTrabajo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -109,6 +110,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	private static final String EXCEPTION_EXPEDIENT_NOT_FOUND_COD = "ExceptionExp";
 	private static final String COD_PEF_GESTORIA_ADMINISTRACION = "HAYAGESTADMT";
+	private static final String COD_PEF_GESTORIA_PLUSVALIA = "GESTOPLUS";
+	private static final String COD_PEF_USUARIO_CERTIFICADOR = "HAYACERTI";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -191,11 +194,23 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public DtoPage getListGastos(DtoGastosFilter dtoGastosFilter) {
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		// Comprobar si el usuario es externo y, en tal caso, seteamos proveedores contacto del
-		// usuario logado
-		if (this.gestorActivoDao.isUsuarioGestorExterno(usuarioLogado.getId())) {
-			Boolean isGestoriaAdm = genericAdapter.tienePerfil(COD_PEF_GESTORIA_ADMINISTRACION, usuarioLogado);
-			return gastoDao.getListGastosFilteredByProveedorContactoAndGestoriaAdm(dtoGastosFilter, usuarioLogado.getId(), isGestoriaAdm);
+		
+		// HREOS-2179 - Búsqueda carterizada
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
+				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+		if (!Checks.esNulo(usuarioCartera)) {
+			dtoGastosFilter.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
+		}
+		
+		
+		// Comprobar si el usuario es externo y de tipo proveedor y, en tal caso, seteamos proveedores contacto del
+		// usuario logado para filtrar los gastos en los que esté como emisor
+		// Ademas si es un tipo de gestoria concreto, se filtrará los gastos que le pertenezcan como gestoria.
+		if (gestorActivoDao.isUsuarioGestorExternoProveedor(usuarioLogado.getId())) {
+			Boolean isGestoria = genericAdapter.tienePerfil(COD_PEF_GESTORIA_ADMINISTRACION, usuarioLogado) 
+					|| genericAdapter.tienePerfil(COD_PEF_GESTORIA_PLUSVALIA, usuarioLogado)
+					|| genericAdapter.tienePerfil(COD_PEF_USUARIO_CERTIFICADOR, usuarioLogado);
+			return gastoDao.getListGastosFilteredByProveedorContactoAndGestoria(dtoGastosFilter, usuarioLogado.getId(), isGestoria);
 		}
 
 		return gastoDao.getListGastos(dtoGastosFilter);

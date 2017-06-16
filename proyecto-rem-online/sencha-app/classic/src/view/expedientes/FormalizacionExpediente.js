@@ -159,20 +159,6 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 			        }
 		        ]
 			},
-        // Apartado Bloqueos.
-        	{
-        		xtype:'fieldset',
-				collapsible: true,
-				defaultType: 'displayfieldbase',
-				cls	: 'panel-base shadow-panel',
-				title: HreRem.i18n('title.bloqueos'),
-				items : [
-					{
-						xtype: 'bloqueosformalizacionlist',
-						reference: 'bloqueosformalizacionlistref'
-					}
-				]
-        	},
         // Apartado Posicionamiento y Firma.
 			{   
 				xtype:'fieldset',

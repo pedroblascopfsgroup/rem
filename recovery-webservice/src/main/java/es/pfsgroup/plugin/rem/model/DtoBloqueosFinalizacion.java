@@ -10,12 +10,15 @@ public class DtoBloqueosFinalizacion extends WebDto {
 
 	private String idExpediente;
 	private String id;
+	private String numActivo;
 	private String areaBloqueoCodigo;
 	private String tipoBloqueoCodigo;
 	private Date fechaAlta;
 	private String usuarioAlta;
 	private Date fechaBaja;
 	private String usuarioBaja;
+	private String resultado;
+	private Long idActivo;
 
 
 	public String getIdExpediente() {
@@ -84,5 +87,29 @@ public class DtoBloqueosFinalizacion extends WebDto {
 
 	public void setUsuarioBaja(String usuarioBaja) {
 		this.usuarioBaja = usuarioBaja;
+	}
+
+	public String getNumActivo() {
+		return numActivo;
+	}
+
+	public void setNumActivo(String numActivo) {
+		this.numActivo = numActivo;
+	}
+
+	public String getResultado() {
+		return resultado;
+	}
+
+	public void setResultado(String resultado) {
+		this.resultado = resultado;
+	}
+
+	public Long getIdActivo() {
+		return idActivo;
+	}
+
+	public void setIdActivo(Long idActivo) {
+		this.idActivo = idActivo;
 	}
 }

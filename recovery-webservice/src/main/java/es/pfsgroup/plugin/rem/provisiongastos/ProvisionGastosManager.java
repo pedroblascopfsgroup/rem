@@ -31,6 +31,8 @@ public class ProvisionGastosManager extends BusinessOperationOverrider<Provision
 	protected static final Log logger = LogFactory.getLog(ProvisionGastosManager.class);
 	
 	private static final String COD_PEF_GESTORIA_ADMINISTRACION = "HAYAGESTADMT";
+	private static final String COD_PEF_GESTORIA_PLUSVALIA = "GESTOPLUS";
+	private static final String COD_PEF_USUARIO_CERTIFICADOR = "HAYACERTI";
 	
 	@Autowired
 	ProvisionGastosDao provisionGastosDao;
@@ -65,8 +67,13 @@ public class ProvisionGastosManager extends BusinessOperationOverrider<Provision
 		//Comprobar si el usuario logado es externo (no puede ver gastos)
 		if(this.gestorActivoDao.isUsuarioGestorExterno(usuarioLogado.getId())) {
 			dto.setIsExterno(true);
-			// Si es externo, pero es gestoría de administración, puede ver gastos en los que conste como gestoría, si no es gestoriaAdm no puede verlos
-			if(genericAdapter.tienePerfil(COD_PEF_GESTORIA_ADMINISTRACION, usuarioLogado)){
+			// Si es externo, pero es gestoría de administración, plusvalia o certificación puede ver gastos en los que conste como gestoría, si no, no puede verlos
+			
+			Boolean isGestoria = genericAdapter.tienePerfil(COD_PEF_GESTORIA_ADMINISTRACION, usuarioLogado) 
+					|| genericAdapter.tienePerfil(COD_PEF_GESTORIA_PLUSVALIA, usuarioLogado)
+					|| genericAdapter.tienePerfil(COD_PEF_USUARIO_CERTIFICADOR, usuarioLogado);			
+			
+			if(isGestoria){
 				dto.setListaIdProveedor(proveedoresDao.getIdProveedoresByIdUsuario(usuarioLogado.getId()));
 			}
 		}

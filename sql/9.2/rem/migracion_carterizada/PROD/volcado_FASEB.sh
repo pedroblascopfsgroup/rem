@@ -24,7 +24,7 @@ SELECT USUARIOCREAR FROM REM01.MIG2_USUARIOCREAR_CARTERIZADO WHERE UPPER(USUARIO
 EOF
 )
 usuario=$(echo $OUTPUT | awk '{ print $1 }')
-
+echo $usuario
 ruta_descarterizada="PROD/DML_PROD/DMLs_DESCARTERIZADOS"
 ruta_carterizada="PROD/DML_PROD"
 dml_list="DMLs.list"
@@ -33,6 +33,7 @@ cd $ruta_descarterizada
 ls --format=single-column *.sql > ../$dml_list
 cd ../../../
 
+fecha_ini=`date +%Y%m%d_%H%M%S`
 while read line
 do
 	sed "s/#USUARIO_MIGRACION#/$usuario/g" $ruta_descarterizada/$line > $ruta_carterizada/$line
@@ -44,17 +45,21 @@ do
 		echo "########################################################"
 		echo "#####    INICIO $line"
 		echo "########################################################"
-		fecha_ini=`date +%Y%m%d_%H%M%S`
-		$ORACLE_HOME/bin/sqlplus REMMASTER/"$1" @$ruta_carterizada/$line > PROD/Logs/005_volcado_produccion_$usuario_$fecha_ini.log
+		username=$(echo $line | cut -d '_' -f3)
+		echo "$line" >> PROD/Logs/005_volcado_"$usuario"_"$fecha_ini".log
+		$ORACLE_HOME/bin/sqlplus $username/$1 @$ruta_carterizada/$line >> PROD/Logs/005_volcado_"$usuario"_"$fecha_ini".log
+		echo >> PROD/Logs/005_volcado_"$usuario"_"$fecha_ini".log
 		if [ $? != 0 ] ; then 
 		   echo -e "\n\n======>>> "Error en @$line
 		   exit 1
 		fi
 		echo Fin $line
-		echo "Revise log: PROD/Logs/001_volcado_produccion_$2_$fecha_ini.log"
+		echo
 	else
 		echo No existe $line
 	fi
 done < $ruta_carterizada/$dml_list
+
+echo Revise log: PROD/Logs/005_volcado_"$usuario"_"$fecha_ini".log
 
 exit 0

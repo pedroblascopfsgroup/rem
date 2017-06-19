@@ -20,19 +20,24 @@ Ext.define('HreRem.view.trabajos.TrabajosList', {
 		        	dataIndex: 'tipoEntidad',
 			        handler: 'onEnlaceActivosClick',
 			        items: [{
-			            tooltip: 'Ver Activo',
+			            tooltip: 'Ver Activo/Agrupación',
 			            //iconCls: 'app-list-ico ico-ver-activov2',
 			            isDisabled: function(view, rowIndex, colIndex, item, record) {
-			            	if (record.get("tipoEntidad")!='activo')
+			            	if (record.get("tipoEntidad")!='activo' && record.get("tipoEntidad")!='agrupaciones')
 			            		return true;
 			            	else
 			            		return false;
 			            },
 			            getClass: function(v, metadata, record ) {
-			            	if (record.get("tipoEntidad")!='activo')
-			            		return "app-list-ico ico-ver-agrupacion";
-			            	else
-			            		return "app-list-ico ico-ver-activov2";
+			            	if(record.get("tipoEntidad")!='listado'){
+				            	if (record.get("tipoEntidad")!='activo'){
+				            		return "app-list-ico ico-ver-agrupacion";
+				            	}else{
+				            		return "app-list-ico ico-ver-activov2";
+				        		}
+			            	}else{
+			            		return null;
+			            	}
 			            	
 			            }
 			        }],

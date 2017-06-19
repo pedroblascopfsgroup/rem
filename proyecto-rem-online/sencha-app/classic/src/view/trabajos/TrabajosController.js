@@ -70,11 +70,21 @@ Ext.define('HreRem.view.trabajos.TrabajosController', {
 
     	grid.setSelection(record);
     	
-    	var idActivo = record.get("idActivo");
-    	
-    	me.redirectTo('activos', true);
+    	if(record.get("tipoEntidad")=='agrupaciones'){
+    		var idAgrupacion = record.get("numAgrupacionRem");
+    		
+    		me.redirectTo('activos', true);
 
-    	me.getView().fireEvent('abrirDetalleActivo', idActivo);
+        	me.getView().fireEvent('abrirDetalleAgrupacion', idAgrupacion);
+    	}else{
+    		var idActivo = record.get("idActivo");
+        	
+        	me.redirectTo('activos', true);
+
+        	me.getView().fireEvent('abrirDetalleActivo', idActivo);
+    	}
+    	
+    	
     	
     },
     

@@ -15,7 +15,10 @@ Ext.define('HreRem.model.BusquedaTrabajo', {
     		},
     		{
     			name: 'numActivoAgrupacion',
-    			convert: function(value) {
+    			convert: function(value,model) {
+    				if(model.get('tipoEntidad')=='listado'){
+    					return '-';
+    				}
     				return value == -1? '-' : value;
     			}
     		}, 

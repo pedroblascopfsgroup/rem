@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -483,6 +484,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		 * provienen de la pantalla "Crear trabajo"
 		 */
 		Trabajo trabajo = new Trabajo();
+		List<Long> idsActivosSeleccionados= new ArrayList<Long>();
+		if(!Checks.esNulo(dtoTrabajo.getIdsActivos())){
+			List<String> activosIDArray = Arrays.asList(dtoTrabajo.getIdsActivos().split(","));
+			for(String idActivoSeleccionado: activosIDArray){
+				idsActivosSeleccionados.add(Long.parseLong(idActivoSeleccionado));
+			}
+		}
 
 		if (!Checks.esNulo(dtoTrabajo.getIdProceso())) {
 			List<Trabajo> trabajos = crearTrabajoPorSubidaActivos(dtoTrabajo);
@@ -500,24 +508,54 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				trabajo = crearTrabajoPorActivo(activo, dtoTrabajo);
 				createTramiteTrabajo(trabajo);
 
-			} else if (!dtoTrabajo.getEsSolicitudConjunta()) {
+			} /*else if (!dtoTrabajo.getEsSolicitudConjunta()) { //Desde agrupacion y sin check
 				List<Trabajo> trabajos = crearTrabajoPorActivoAgrupacion(dtoTrabajo);
 
 				for (Trabajo trabajoActivoAgrupacion : trabajos) {
 					createTramiteTrabajo(trabajoActivoAgrupacion);
 				}
 
-			} else {
+			} else { //Desde agrupacion y con check
 				trabajo = crearTrabajoPorAgrupacion(dtoTrabajo);
 				createTramiteTrabajo(trabajo);
+			}*/
+			
+			else if(Checks.esNulo(dtoTrabajo.getIdsActivos())){ //Si no se selecciona ningun activo
+				if(!Checks.esNulo(dtoTrabajo.getEsSolicitudConjunta()) && dtoTrabajo.getEsSolicitudConjunta().equals(true)){ //Si se marca el check
+					//Se lanza un trabajo que englobe a todos loas activos de la agrupacion
+					trabajo = crearTrabajoPorAgrupacion(dtoTrabajo, null);
+					createTramiteTrabajo(trabajo);
+				}
+				else{//Si no se marca el check
+					//Se lanza un trabajo por cada activo de la agrupacion
+					List<Trabajo> trabajos = crearTrabajoPorActivoAgrupacion(dtoTrabajo, null);
+					for (Trabajo trabajoActivoAgrupacion : trabajos) {
+						createTramiteTrabajo(trabajoActivoAgrupacion);
+					}
+				}
 			}
+			else{//Si se seleccionan activos
+				if(!Checks.esNulo(dtoTrabajo.getEsSolicitudConjunta()) && dtoTrabajo.getEsSolicitudConjunta().equals(true)){//Si se marca el check
+					//se lanza un trabajo que engloba a todos los activos seleccionados
+					trabajo = crearTrabajoPorAgrupacion(dtoTrabajo, idsActivosSeleccionados);
+					createTramiteTrabajo(trabajo);
+				}
+				else{ //Si no se marca el check
+					//Se lanza un trabajo por cada activo seleccionados
+					List<Trabajo> trabajos= crearTrabajoPorActivoAgrupacion(dtoTrabajo,idsActivosSeleccionados);
+					for (Trabajo trabajoActivoAgrupacion : trabajos) {
+						createTramiteTrabajo(trabajoActivoAgrupacion);
+					}
+				}
+			}
+			
 
 		}
 
 		return trabajo.getId();
 	}
 
-	private List<Trabajo> crearTrabajoPorActivoAgrupacion(DtoFichaTrabajo dtoTrabajo) {
+	private List<Trabajo> crearTrabajoPorActivoAgrupacion(DtoFichaTrabajo dtoTrabajo, List<Long> idsActivosSeleccionados) {
 		List<Trabajo> trabajos = new ArrayList<Trabajo>();
 		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "agrId", Long.valueOf(dtoTrabajo.getIdAgrupacion()));
 		List<VActivosAgrupacionTrabajo> activosAgrupacionTrabajo = genericDao.getList(VActivosAgrupacionTrabajo.class, filtro1);
@@ -526,16 +564,25 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		for(VActivosAgrupacionTrabajo activoAgrupacion : activosAgrupacionTrabajo) {
 			if(activoAgrupacion.getActivoId() != null) {
-				activosID.add(Long.parseLong(activoAgrupacion.getActivoId()));
+				
+				if(!Checks.esNulo(idsActivosSeleccionados)){
+					for(Long idActivoSeleccionado: idsActivosSeleccionados){
+						if(activoAgrupacion.getActivoId().equals(idActivoSeleccionado.toString())){
+							activosID.add(Long.parseLong(activoAgrupacion.getActivoId()));
+							break;
+						}
+					}
+				}
+				else{
+					activosID.add(Long.parseLong(activoAgrupacion.getActivoId()));
+				}
 			}
 		}
 
 		List<Activo> activosList = activoApi.getListActivosPorID(activosID);
 
 		Trabajo trabajo = null;
-		Activo activo = null;
-		for (VActivosAgrupacionTrabajo activoAgrupacion : activosAgrupacionTrabajo) {
-			activo = activoDao.get(Long.valueOf(activoAgrupacion.getActivoId()));
+		for (Activo activo : activosList) {
 			Double participacion = updaterStateApi.calcularParticipacionPorActivo(dtoTrabajo.getTipoTrabajoCodigo(), activosList, null);
 			dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : participacion.toString());
 			trabajo = crearTrabajoPorActivo(activo, dtoTrabajo);
@@ -546,13 +593,33 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	}
 
-	private Trabajo crearTrabajoPorAgrupacion(DtoFichaTrabajo dtoTrabajo) {
+	private Trabajo crearTrabajoPorAgrupacion(DtoFichaTrabajo dtoTrabajo, List<Long> idsActivosSelecionados) {
 
 		ActivoAgrupacion agrupacion = activoAgrupacionDao.get(dtoTrabajo.getIdAgrupacion());
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "agrId", Long.valueOf(dtoTrabajo.getIdAgrupacion()));
-		List<VActivosAgrupacionTrabajo> activosAgrupacionTrabajo = genericDao.getList(VActivosAgrupacionTrabajo.class, filtro);
+		List<VActivosAgrupacionTrabajo> activosAgrupacionTrabajoTem = genericDao.getList(VActivosAgrupacionTrabajo.class, filtro);
+		List<VActivosAgrupacionTrabajo> activosAgrupacionTrabajo = new ArrayList<VActivosAgrupacionTrabajo>();
 
+		if(!Checks.esNulo(idsActivosSelecionados) && !Checks.esNulo(dtoTrabajo.getEsSolicitudConjunta()) && dtoTrabajo.getEsSolicitudConjunta().equals(true)){
+			boolean seleccionado;
+			for(VActivosAgrupacionTrabajo activoAgr: activosAgrupacionTrabajoTem){
+				seleccionado= false;
+				for(Long idActivoSeleccionado: idsActivosSelecionados){
+					if(activoAgr.getActivoId().equals(idActivoSeleccionado.toString())){
+						seleccionado= true;
+						break;
+					}
+				}
+				if(seleccionado){
+					activosAgrupacionTrabajo.add(activoAgr);
+				}
+			}			
+		}
+		else{
+			activosAgrupacionTrabajo= activosAgrupacionTrabajoTem;
+		}
+		
 		Trabajo trabajo = new Trabajo();
 
 		try {

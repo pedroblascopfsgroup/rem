@@ -125,6 +125,8 @@ public class DtoFichaTrabajo {
     
     private Date fechaEmisionFactura;
     
+    private String idsActivos;
+    
 	
     public Long getIdTrabajo() {
 		return idTrabajo;
@@ -591,5 +593,13 @@ public class DtoFichaTrabajo {
 
 	public void setFechaEmisionFactura(Date fechaEmisionFactura) {
 		this.fechaEmisionFactura = fechaEmisionFactura;
+	}
+
+	public String getIdsActivos() {
+		return idsActivos;
+	}
+
+	public void setIdsActivos(String idsActivos) {
+		this.idsActivos = idsActivos;
 	}
 }

@@ -53,10 +53,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     },
     
     onClickCrearTrabajo: function (btn) {
-    	
     	var me = this;
     	var idAgrupacion = me.getViewModel().get("agrupacionficha.id");
-    	me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: null, idAgrupacion: idAgrupacion});
+    	var tipoAgrupacionCodigo= me.getViewModel().get("agrupacionficha.tipoAgrupacionCodigo");
+    	me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: null, idAgrupacion: idAgrupacion, tipoAgrupacionCodigo: tipoAgrupacionCodigo});
   	    	
     },
 	

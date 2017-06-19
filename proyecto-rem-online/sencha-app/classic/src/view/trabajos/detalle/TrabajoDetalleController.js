@@ -142,7 +142,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 				
 			    success: success,
 			 	failure: function(record, operation) {
-			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			 		me.getView().down("[reference=activosagrupaciontrabajo]").deselectAll();
 			    },
 			    callback: function(record, operation) {
 			    	form.unmask();
@@ -229,36 +230,72 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	onClickBotonCrearTrabajo: function(btn) {
 
 		var me =this;
-
+		var arraySelection = me.lookupReference('activosagrupaciontrabajo').getActivoIDPersistedSelection();
 		// Comprobar el estado del checkbox para agrupar los activos en un trabajo.
 		var check = me.lookupReference('checkEnglobaTodosActivosRef').getValue();	
-		if(!check && Ext.isEmpty(me.getView().idActivo)) {
-			// Si el check no está seleccionado avisar de que se van a crear tantos trabajos como activos.
-			Ext.MessageBox.confirm(
-					HreRem.i18n("msgbox.multiples.trabajos.title"),
-					HreRem.i18n("msgbox.multiples.trabajos.mensaje"),
-					function(result) {
-		        		if(result === 'yes'){
-		        			me.crearTrabajo(btn);
-		        		}
-		    		}
-			);
-		} else {
-			// Si el checkbox está seleccionado.
-			Ext.MessageBox.confirm(
-					HreRem.i18n("msgbox.multiples.trabajos.seleccionado.title"),
-					HreRem.i18n("msgbox.multiples.trabajos.seleccionado.mensaje"),
-					function(result) {
-		        		if(result === 'yes'){
-		        			me.crearTrabajo(btn);
-		        		}
-		    		}
-			);
+		
+		//Si no se ha seleccionado ning�n activo
+		if(Ext.isEmpty(arraySelection)){
+			//Si se marca el check y se esta creando desde agrupaciones
+			if(check && Ext.isEmpty(me.getView().idActivo)){
+				Ext.MessageBox.confirm(
+						HreRem.i18n("msgbox.multiples.trabajos.title"),
+						HreRem.i18n("msgbox.multiples.trabajos.seleccionado.check.mensaje"),
+						function(result) {
+			        		if(result === 'yes'){
+			        			me.crearTrabajo(btn,arraySelection);
+			        		}
+			    		}
+				);
+			}
+			else{
+				Ext.MessageBox.confirm(
+						HreRem.i18n("msgbox.multiples.trabajos.title"),
+						HreRem.i18n("msgbox.multiples.trabajos.check.mensaje"),
+						function(result) {
+			        		if(result === 'yes'){
+			        			me.crearTrabajo(btn,arraySelection);
+			        		}
+			    		}
+				);
+			}
 		}
+		else{
+			if(check && Ext.isEmpty(me.getView().idActivo)){
+				Ext.MessageBox.confirm(
+						HreRem.i18n("msgbox.multiples.trabajos.title"),
+						HreRem.i18n("msgbox.multiples.trabajos.seleccionados.check.mensaje"),
+						function(result) {
+			        		if(result === 'yes'){
+			        			me.crearTrabajo(btn,arraySelection);
+			        		}
+			    		}
+				);
+			}
+			else{
+				Ext.MessageBox.confirm(
+						HreRem.i18n("msgbox.multiples.trabajos.title"),
+						HreRem.i18n("msgbox.multiples.trabajos.checks.mensaje"),
+						function(result) {
+			        		if(result === 'yes'){
+			        			me.crearTrabajo(btn,arraySelection);
+			        		}
+			    		}
+				);
+			}
+			
+		}
+		
 	},
 	
+	hideWindowPeticionTrabajo: function(btn) {
+    	var me = this;
+    	me.getView().down("[reference=activosagrupaciontrabajo]").deselectAll();
+    	btn.up('window').hide();   	
+    },
+	
 	// Este método crea el trabajo especificado en la ventana pop-up de crear trabajo.
-	crearTrabajo: function(btn) {
+	crearTrabajo: function(btn,arraySelection) {
 		var me =this,
 		window = btn.up("window"),
 		form = window.down("form"),
@@ -269,12 +306,15 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		form.getBindRecord().set("idActivo", idActivo);
 		form.getBindRecord().set("idAgrupacion", idAgrupacion);
 		form.getBindRecord().set("idProceso", idProceso);
+		form.getBindRecord().set("idsActivos", arraySelection);
+				
 		var success = function(record, operation) {
 			me.getView().unmask();
 	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 	    	me.getView().fireEvent("refreshComponentOnActivate", "trabajosmain");
 	    	me.getView().fireEvent("refreshComponentOnActivate", "agendamain");
-	    	me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], idActivo);	
+	    	me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], idActivo);
+	    	me.getView().down("[reference=activosagrupaciontrabajo]").deselectAll();
 	    	window.hide();
 		};
 

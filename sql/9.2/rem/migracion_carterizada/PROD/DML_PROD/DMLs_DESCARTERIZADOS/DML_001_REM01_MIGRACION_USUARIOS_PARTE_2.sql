@@ -41,57 +41,6 @@ DECLARE
 BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INICIO]');
-
-       -------------------------------------------------
-       --INSERCION EN USU_USUARIOS--
-       -------------------------------------------------
-       
-      DBMS_OUTPUT.PUT_LINE('  [INFO] INSERCION EN USU_USUARIOS');
-
-      V_SQL := 'SELECT '|| V_ESQUEMA_M ||'.S_USU_USUARIOS.NEXTVAL FROM DUAL';
-      EXECUTE IMMEDIATE V_SQL INTO V_ID;
-        
-      V_SQL := '
-        INSERT INTO '||V_ESQUEMA_M||'.USU_USUARIOS (
-          USU_ID,
-          ENTIDAD_ID,
-          USU_USERNAME,
-          USU_PASSWORD,
-          USU_NOMBRE,
-          USU_APELLIDO1,
-          USU_APELLIDO2,
-          USU_MAIL,
-          USU_GRUPO,
-          USU_FECHA_VIGENCIA_PASS,
-          USUARIOCREAR,
-          FECHACREAR,
-          BORRADO
-        )
-        SELECT 
-          '|| V_ID || '
-          , '|| ENTIDAD ||'
-          , MIG2.USU_USERNAME
-          , NULL
-          , MIG2.USU_NOMBRE
-          , MIG2.USU_APELLIDO1
-          , MIG2.USU_APELLIDO2
-          , MIG2.USU_EMAIL
-          , ''0''
-          , SYSDATE+730
-          , '''|| USUARIO_MIGRACION ||'''
-          , SYSDATE
-          , 0 
-        FROM '||V_ESQUEMA||'.MIG2_USU_USUARIOS MIG2
-        WHERE MIG2.VALIDACION = 0 AND NOT EXISTS (
-          SELECT 1
-          FROM '||V_ESQUEMA_M||'.USU_USUARIOS USU
-          WHERE USU.USU_USERNAME = MIG2.USU_USERNAME 
-        )
-      '
-      ;
-      EXECUTE IMMEDIATE V_SQL;
-      
-      DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA_M||'.USU_USUARIOS cargada. '||SQL%ROWCOUNT||' Filas.');
       
       -------------------------------------------------
       --INSERCION EN ZON_PEF_USU--
@@ -177,56 +126,12 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS cargada. '||SQL%ROWCOUNT||' Filas.');     
       
-       -------------------------------------------------
-      --INSERCION EN GRU_GRUPOS_USUARIOS--
-      -------------------------------------------------
-      
-      DBMS_OUTPUT.PUT_LINE('  [INFO] INSERCION EN GRU_GRUPOS_USUARIOS ');
-      
-       V_SQL := '
-          INSERT INTO '||V_ESQUEMA_M||'.GRU_GRUPOS_USUARIOS (
-            GRU_ID
-            , USU_ID_GRUPO
-            , USU_ID_USUARIO
-            , USUARIOCREAR
-            , FECHACREAR
-            , BORRADO
-          )
-          SELECT 
-            '||V_ESQUEMA_M||'.S_GRU_GRUPOS_USUARIOS.NEXTVAL    AS GRU_ID
-            , USU_GRUPO.USU_ID                                 AS USU_ID_GRUPO
-            , USU_PERT.USU_ID                                  AS USU_ID_USUARIO
-            , '''|| USUARIO_MIGRACION ||'''                    AS USUARIOCREAR
-            , SYSDATE                                          AS FECHACREAR
-            , 0                                                AS BORRADO
-          FROM '||V_ESQUEMA||'.MIG2_GRU_GRUPOS_USUARIOS MIG2
-          INNER JOIN '||V_ESQUEMA_M||'.USU_USUARIOS USU_GRUPO ON USU_GRUPO.USU_USERNAME = MIG2.GRU_USERNAME_PRINCIPAL
-          INNER JOIN '||V_ESQUEMA_M||'.USU_USUARIOS USU_PERT ON USU_PERT.USU_USERNAME = MIG2.GRU_USERNAME
-          WHERE MIG2.VALIDACION = 0 AND NOT EXISTS (
-            SELECT 1
-            FROM '||V_ESQUEMA_M||'.GRU_GRUPOS_USUARIOS GRU
-            INNER JOIN '||V_ESQUEMA_M||'.USU_USUARIOS USU1 ON USU1.USU_ID = GRU.USU_ID_GRUPO
-            INNER JOIN '||V_ESQUEMA_M||'.USU_USUARIOS USU2 ON USU2.USU_ID = GRU.USU_ID_USUARIO
-            WHERE USU1.USU_USERNAME = MIG2.GRU_USERNAME_PRINCIPAL AND USU2.USU_USERNAME = MIG2.GRU_USERNAME AND GRU.BORRADO = 0
-          )   
-      '
-      ;
-      EXECUTE IMMEDIATE V_SQL;
-      
-      DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA_M||'.GRU_GRUPOS_USUARIOS cargada. '||SQL%ROWCOUNT||' Filas.');     
-      
       COMMIT;  
-
-      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''USU_USUARIOS'',''10''); END;';
-      EXECUTE IMMEDIATE V_SENTENCIA;
 
       V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ZON_PEF_USU'',''10''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
 
       V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''USD_USUARIOS_DESPACHOS'',''10''); END;';
-      EXECUTE IMMEDIATE V_SENTENCIA;
-
-      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''GRU_GRUPOS_USUARIOS'',''10''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
       
       DBMS_OUTPUT.PUT_LINE('[FIN]');

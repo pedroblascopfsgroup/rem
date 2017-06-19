@@ -3,6 +3,9 @@ if [ "$#" -eq 2 ]; then
 	fecha_ini=`date +%Y%m%d_%H%M%S`
 	sed "s/#USUARIO_MIGRACION#/$2/g" PROD/BORRADO_MIGRACION_FASEB.sql > PROD/BORRADO_MIGRACION_FASEB_$2.sql
 	echo "Borrando... "$2
+	if [ -f PROD/Logs/001_*.log ] ; then
+		mv -f PROD/Logs/001_*.log PROD/Logs/backup
+	fi
 	$ORACLE_HOME/bin/sqlplus "$1" @PROD/BORRADO_MIGRACION_FASEB_$2.sql > PROD/Logs/001_borrado_migracion_$2_$fecha_ini.log
 	if [ $? != 0 ] ; then 
 	   	echo -e "\n\n======>>> "Error en @PROD/BORRADO_MIGRACION_FASEB_$2.sql

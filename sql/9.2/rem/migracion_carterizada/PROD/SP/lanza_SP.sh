@@ -16,6 +16,10 @@ fichero="PROD/SP/SPs.list"
 sql=`grep -riC 0 $2 $fichero`
 procedure=`grep -riC 0 $2 $fichero | sed "s/PROD\/SP\/SP_0"$2"_//g"`
 
+if [ -f PROD/Logs/003_*.log ] ; then
+	mv -f PROD/Logs/003_*.log PROD/Logs/backup
+fi
+
 if [ -s "$sql".sql ] ; then
 	echo "########################################################"
 	echo "#####    EJECUTANDO "$procedure

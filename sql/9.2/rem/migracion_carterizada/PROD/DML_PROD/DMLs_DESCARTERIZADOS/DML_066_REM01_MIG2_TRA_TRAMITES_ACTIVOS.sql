@@ -270,7 +270,7 @@ BEGIN
                     INNER JOIN USU_ID ON USU_ID.ACT_ID = TRA.ACT_ID
                     INNER JOIN SUP_ID ON SUP_ID.ACT_ID = TRA.ACT_ID
             ) AUX
-            ON (AUX.ACT_ID = MIG2.ACT_ID AND MIG2.VALIDACION = 0)
+            ON (AUX.ACT_ID = MIG2.ACT_ID)
             WHEN MATCHED THEN UPDATE
                   SET MIG2.USU_ID = AUX.USU_ID
                          , MIG2.SUP_ID = AUX.SUP_ID
@@ -333,13 +333,12 @@ BEGIN
                     )                                                           AS DD_EST_ID 
                   , SYSDATE                                              AS TBJ_FECHA_SOLICITUD
                   , 0                                                          AS VERSION
-                  , '||V_USUARIO||'                               AS USUARIOCREAR
+                  , '''||V_USUARIO||'''                               AS USUARIOCREAR
                   , SYSDATE                                              AS FECHACREAR
                   , 0                                                           AS BORRADO
             FROM '||V_ESQUEMA||'.MIG2_TRA_TRAMITES_OFERTAS MIG2
                   INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_ID = MIG2.OFR_ID
                   INNER JOIN '||V_ESQUEMA||'.DD_TOF_TIPOS_OFERTA TOF ON TOF.DD_TOF_ID = OFR.DD_TOF_ID 
-			WHERE MIG2.VALIDACION = 0     
       '
       ;
       
@@ -367,7 +366,6 @@ BEGIN
                         MIG2.TBJ_ID              AS TBJ_ID
                         , COUNT(1)              AS TOTAL
                   FROM '||V_ESQUEMA||'.'||V_TABLA||' MIG2
-				  WHERE MIG2.VALIDACION = 0
                   GROUP BY MIG2.TBJ_ID
             )
             SELECT DISTINCT
@@ -376,8 +374,7 @@ BEGIN
                   , ROUND(100/NVL(TOTAL,1),2)             AS ACT_TBJ_PARTICIPACION
                   , 0                                                       AS VERSION
             FROM '||V_ESQUEMA||'.'||V_TABLA||' MIG2
-                  INNER JOIN PARTICIPACION PAR ON PAR.TBJ_ID = MIG2.TBJ_ID 
-			WHERE MIG2.VALIDACION = 0   
+                  INNER JOIN PARTICIPACION PAR ON PAR.TBJ_ID = MIG2.TBJ_ID  
       '
       ;
       
@@ -449,7 +446,7 @@ BEGIN
                   , 0                                                                                        AS TRA_PARALIZADO
                   , SYSDATE                                                                           AS TRA_FECHA_INICIO
                   , 1                                                                                        AS VERSION
-                  , '||V_USUARIO||'                                                            AS USUARIOCREAR
+                  , '''||V_USUARIO||'''                                                            AS USUARIOCREAR
                   , SYSDATE                                                                           AS FECHACREAR         
                   , 0                                                                                        AS BORRADO
                   , (SELECT DD_TAC_ID 
@@ -458,7 +455,6 @@ BEGIN
                           AND BORRADO = 0
                   )                                                                                           AS DD_TAC_ID
             FROM '||V_ESQUEMA||'.'||V_TABLA||' MIG2
-			WHERE MIG2.VALIDACION = 0
       '
       ;
       
@@ -511,7 +507,7 @@ BEGIN
                   , 0                                                                                              AS TAR_ALERTA
                   , 0                                                                                             AS TAR_TAREA_FINALIZADA
                   , 0                                                                                             AS VERSION
-                  , '||V_USUARIO||'                                                                       AS USUARIOCREAR
+                  , '''||V_USUARIO||'''                                                                       AS USUARIOCREAR
                   , SYSDATE                                                                                 AS FECHACREAR
                   , 0                                                                                             AS BORRADO
                   , (SELECT SYSDATE + 3 FROM DUAL)                                          AS TAR_FECHA_VENC
@@ -520,7 +516,6 @@ BEGIN
             FROM '||V_ESQUEMA||'.'||V_TABLA||' MIG2
                   INNER JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = MIG2.TAP_ID
                   INNER JOIN '||V_ESQUEMA_MASTER||'.DD_STA_SUBTIPO_TAREA_BASE STA ON STA.DD_STA_ID = TAP.DD_STA_ID
-			WHERE MIG2.VALIDACION = 0
       '
       ;
       
@@ -546,7 +541,6 @@ BEGIN
                   MIG2.TAR_ID
                   ,(SELECT SYSDATE + 3 FROM DUAL) AS TAR_FECHA_VENC_REAL
             FROM '||V_ESQUEMA||'.'||V_TABLA||' MIG2
-			WHERE MIG2.VALIDACION = 0
       '
       ;
       
@@ -584,14 +578,13 @@ BEGIN
                   , NULL                     AS TEX_TOKEN_ID_BPM
                   , 0                           AS TEX_DETENIDA
                   , 0                           AS VERSION
-                  , '||V_USUARIO||'     AS USUARIOCREAR
+                  , '''||V_USUARIO||'''     AS USUARIOCREAR
                   , SYSDATE               AS FECHACREAR
                   , 0                              AS BORRADO
                   , 0                             AS TEX_NUM_AUTOP
                   , ''EXTTareaExterna''     AS DTYPE
             FROM '||V_ESQUEMA||'.'||V_TABLA||' MIG2
                   INNER JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = MIG2.TAP_ID
-			WHERE MIG2.VALIDACION = 0
       '
       ;
       
@@ -629,7 +622,6 @@ BEGIN
                         , MIG2.SUP_ID        
                         , ROW_NUMBER () OVER (PARTITION BY MIG2.TAR_ID ORDER BY MIG2.ACT_ID DESC) AS ORDEN
                   FROM '||V_ESQUEMA||'.'||V_TABLA||' MIG2
-				  WHERE MIG2.VALIDACION = 0
             )
             SELECT
                   UA.TAR_ID             AS TAR_ID
@@ -638,7 +630,7 @@ BEGIN
                   , UA.USU_ID           AS USU_ID
                   , UA.SUP_ID           AS SUP_ID
                   , 0                       AS VERSION
-                  , '||V_USUARIO||' AS USUARIOCREAR
+                  , '''||V_USUARIO||''' AS USUARIOCREAR
                   , SYSDATE           AS FECHACREAR
                   ,0                        AS BORRADO
             FROM UNICO_ACTIVO UA

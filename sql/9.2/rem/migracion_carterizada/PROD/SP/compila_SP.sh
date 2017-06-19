@@ -7,6 +7,10 @@ fi
 fichero="PROD/SP/SPs.list"
 ls --format=single-column PROD/SP/*.sql | sed 's/.sql//g' > $fichero
 
+if [ -f PROD/Logs/002_*.log ] ; then
+	mv -f PROD/Logs/002_*.log PROD/Logs/backup
+fi
+
 while read line
 do
 	if [ -f "$line".sql ] ; then

@@ -9,6 +9,9 @@ echo "########################################################"
 echo "#####    ACTUALIZANDO Secuencias"
 echo "########################################################"
 fecha_ini=`date +%Y%m%d_%H%M%S`
+if [ -f PROD/Logs/004_*.log ] ; then
+	mv -f PROD/Logs/004_*.log PROD/Logs/backup
+fi
 ./PROD/DDL_PROD/DDL_sequences.sh $1 > PROD/Logs/004_actualizado_secuencias_$fecha_ini.log
 if [ $? != 0 ] ; then 
    echo -e "\n\n======>>> "Error en actualización de secuencias. Consultar log: PROD/Logs/004_actualizado_secuencias_$fecha_ini.log
@@ -25,6 +28,7 @@ EOF
 )
 usuario=$(echo $OUTPUT | awk '{ print $1 }')
 echo $usuario
+
 ruta_descarterizada="PROD/DML_PROD/DMLs_DESCARTERIZADOS"
 ruta_carterizada="PROD/DML_PROD"
 dml_list="DMLs.list"
@@ -34,6 +38,9 @@ ls --format=single-column *.sql > ../$dml_list
 cd ../../../
 
 fecha_ini=`date +%Y%m%d_%H%M%S`
+if [ -f PROD/Logs/005_*.log ] ; then
+	mv -f PROD/Logs/005_*.log PROD/Logs/backup
+fi
 while read line
 do
 	sed "s/#USUARIO_MIGRACION#/$usuario/g" $ruta_descarterizada/$line > $ruta_carterizada/$line
@@ -48,11 +55,11 @@ do
 		username=$(echo $line | cut -d '_' -f3)
 		echo "$line" >> PROD/Logs/005_volcado_"$usuario"_"$fecha_ini".log
 		$ORACLE_HOME/bin/sqlplus $username/$1 @$ruta_carterizada/$line >> PROD/Logs/005_volcado_"$usuario"_"$fecha_ini".log
-		echo >> PROD/Logs/005_volcado_"$usuario"_"$fecha_ini".log
 		if [ $? != 0 ] ; then 
 		   echo -e "\n\n======>>> "Error en @$line
 		   exit 1
 		fi
+		echo >> PROD/Logs/005_volcado_"$usuario"_"$fecha_ini".log
 		echo Fin $line
 		echo
 	else

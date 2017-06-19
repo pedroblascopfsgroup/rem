@@ -20,7 +20,7 @@ Ext.define('HreRem.view.trabajos.TrabajosList', {
 		        	dataIndex: 'tipoEntidad',
 			        handler: 'onEnlaceActivosClick',
 			        items: [{
-			            tooltip: 'Ver Activo/Agrupación',
+			            tooltip: HreRem.i18n('tooltip.ver.activo.agrupacion'),
 			            //iconCls: 'app-list-ico ico-ver-activov2',
 			            isDisabled: function(view, rowIndex, colIndex, item, record) {
 			            	if (record.get("tipoEntidad")!='activo' && record.get("tipoEntidad")!='agrupaciones')

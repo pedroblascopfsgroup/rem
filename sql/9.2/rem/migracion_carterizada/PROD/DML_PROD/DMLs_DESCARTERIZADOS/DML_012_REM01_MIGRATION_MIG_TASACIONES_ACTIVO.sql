@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=GUILLEM REY
---## FECHA_CREACION=20170608
+--## AUTOR=DAP
+--## FECHA_CREACION=20170620
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=HREOS-2209
+--## INCIDENCIA_LINK=HREOS-2264
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración 'MIG_ATA_TASACIONES_ACTIVO' -> 'ACT_TAS_TASACION', 'BIE_VALORACIONES'
@@ -14,41 +14,38 @@
 --##        0.1 Versión inicial
 --#########################################
 --*/
-
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
-
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 SET DEFINE OFF;
 
-
 DECLARE
 
-V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01'; --REM01
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER'; --REMMASTER
-V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
-V_TABLA VARCHAR2(40 CHAR) := 'BIE_VALORACIONES';
-V_TABLA_2 VARCHAR2(40 CHAR) := 'ACT_TAS_TASACION';
-V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG_ATA_TASACIONES_ACTIVO';
-V_SENTENCIA VARCHAR2(2000 CHAR);
+    V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01'; --REM01
+    V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER'; --REMMASTER
+    V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
+    V_TABLA VARCHAR2(40 CHAR) := 'BIE_VALORACIONES';
+    V_TABLA_2 VARCHAR2(40 CHAR) := 'ACT_TAS_TASACION';
+    V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG_ATA_TASACIONES_ACTIVO';
+    V_SENTENCIA VARCHAR2(2000 CHAR);
 
 BEGIN
-  
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' comienza el proceso.');
   --REGISTRAMOS TAS_ID Y BIE_VAL_ID
+    DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_MIG||' se actualizará.');
+    EXECUTE IMMEDIATE ('
+        UPDATE '||V_ESQUEMA||'.'||V_TABLA_MIG||'
+        SET
+        BIE_VAL_ID = S_BIE_VALORACIONES.NEXTVAL,
+        TAS_ID = S_ACT_TAS_TASACION.NEXTVAL
+        WHERE BIE_VAL_ID IS NULL
+        OR TAS_ID IS NULL
+    ');
   
-  EXECUTE IMMEDIATE ('
-  UPDATE '||V_ESQUEMA||'.'||V_TABLA_MIG||'
-  SET
-  BIE_VAL_ID = S_BIE_VALORACIONES.NEXTVAL,
-  TAS_ID = S_ACT_TAS_TASACION.NEXTVAL
-  WHERE BIE_VAL_ID IS NULL
-  OR TAS_ID IS NULL
-  ')
-  ; 
-  
+    DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_MIG||' actualizada. '||SQL%ROWCOUNT||' Filas.');
   --DAMOS REGISTROS EN ALTA BIE_VALORACIONES PARA LOS ACTIVOS QUE TRATAMOS
   
-  DBMS_OUTPUT.PUT_LINE('[INFO] INSERTANDO REGISTROS EN '||V_ESQUEMA||'.'||V_TABLA||'.');
+    DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' se cargará.');
   
   EXECUTE IMMEDIATE ('
   INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
@@ -81,18 +78,14 @@ BEGIN
   SYSDATE                                                           FECHACREAR,
   0                                                                 BORRADO
   FROM ACTIVOS ACT
-  WHERE NOT EXISTS (
-    SELECT 1 FROM '||V_ESQUEMA||'.'||V_TABLA||' BIE 
-    WHERE BIE.BIE_ID = (SELECT BIE_ID
-    FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT2
-    WHERE ACT2.ACT_ID = ACT.ACT_ID)
-   )
+  LEFT JOIN '||V_ESQUEMA||'.'||V_TABLA||' BIE ON BIE.BIE_ID = ACT.BIE_ID
+  WHERE BIE.BIE_ID IS NULL
   ')
   ;
   
-  DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
+    DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
 
-  DBMS_OUTPUT.PUT_LINE('[INFO] INSERTANDO REGISTROS EN '||V_ESQUEMA||'.'||V_TABLA_2||'.');
+    DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_2||' se cargará.');
   
 	EXECUTE IMMEDIATE ('
 	INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_2||' (
@@ -203,27 +196,24 @@ BEGIN
 	0                                                     				BORRADO,
 	MIG.TAS_CODIGO_TASA_UVEM											TAS_ID_EXTERNO	
 	FROM MIG_TASACIONES MIG
-	WHERE NOT EXISTS (
-    SELECT 1 FROM '||V_ESQUEMA||'.'||V_TABLA_2||' CRG 
-    WHERE CRG.ACT_ID = MIG.ACT_ID
-    )
+    LEFT JOIN '||V_ESQUEMA||'.'||V_TABLA_2||' CRG ON CRG.ACT_ID = MIG.ACT_ID
+    WHERE CRG.TAS_ID IS NULL
 	')
 	;
 	
   
-  DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_2||' cargada. '||SQL%ROWCOUNT||' Filas.');
+    DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_2||' cargada. '||SQL%ROWCOUNT||' Filas.');
   
   -- ACTUALIZAMOS EL CAMPO TAS_ID_EXTERNO CON LOS DATOS DE FASE 1
   
-  DBMS_OUTPUT.PUT_LINE('[INFO] ACTUALIZANDO TAS_ID_EXTERNO EN '||V_ESQUEMA||'.'||V_TABLA_2||' DESDE FASE 1.');
+    DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_2||' se actualizará.');
   
 	EXECUTE IMMEDIATE ('
-	MERGE INTO ACT_TAS_TASACION TAS
+	MERGE INTO '||V_ESQUEMA||'.'||V_TABLA_2||' TAS
 	USING
 	(
-		SELECT TAS.BIE_VAL_ID, ATA.TAS_CODIGO_TASA_UVEM FROM '||V_ESQUEMA||'.MIG_ATA_TASACIONES_ACTIVO ATA
-		INNER JOIN '||V_ESQUEMA||'.'||V_TABLA_2||' TAS
-		  ON TAS.BIE_VAL_ID = ATA.BIE_VAL_ID
+		SELECT ATA.BIE_VAL_ID, ATA.TAS_CODIGO_TASA_UVEM 
+        FROM '||V_ESQUEMA||'.MIG_ATA_TASACIONES_ACTIVO ATA
 		WHERE ATA.VALIDACION = 0
 	) AUX
 	ON (AUX.BIE_VAL_ID = TAS.BIE_VAL_ID)
@@ -234,16 +224,20 @@ BEGIN
 	')
 	;
   
-	DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_2||' cargada. '||SQL%ROWCOUNT||' Filas.');
-  
 	COMMIT;
+    
+    DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_2||' actualizada. '||SQL%ROWCOUNT||' Filas.');
   
+    DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' se analizará.');
       V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
-
+    DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' analizada.');
+    
+    DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_2||' se analizará.');
       V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA_2||''',''10''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
-	
+	DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_2||' analizada.');
+
 EXCEPTION
 
     WHEN OTHERS THEN

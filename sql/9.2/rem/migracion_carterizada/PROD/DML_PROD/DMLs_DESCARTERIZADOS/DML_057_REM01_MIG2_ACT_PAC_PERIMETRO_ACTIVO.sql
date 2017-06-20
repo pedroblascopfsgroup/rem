@@ -72,8 +72,7 @@ BEGIN
           AUX.*
         FROM (      
           SELECT DISTINCT      
-          (SELECT ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
-          WHERE ACT.ACT_NUM_ACTIVO = MIG2.PAC_NUMERO_ACTIVO)           AS ACT_ID,      
+          ACT.ACT_ID,      
           MIG2.PAC_IND_INCLUIDO                                                                  AS PAC_INCLUIDO,
                   MIG2.PAC_IND_CHECK_TRA_ADMISION                                                                                                         AS PAC_CHECK_TRA_ADMISION,
                   MIG2.PAC_FECHA_TRA_ADMISION                                                                                                                 AS PAC_FECHA_TRA_ADMISION,
@@ -96,6 +95,7 @@ BEGIN
           0                                                                                                         AS BORRADO,
           MNC.DD_MNC_DESCRIPCION                                                                                AS PAC_MOT_EXCL_COMERCIALIZAR
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
+          JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = MIG2.PAC_NUMERO_ACTIVO
           LEFT JOIN '||V_ESQUEMA||'.DD_MCO_MOTIVO_COMERCIALIZACION MCO ON MCO.DD_MCO_CODIGO = MIG2.PAC_COD_MOTIVO_COMERCIAL
           LEFT JOIN '||V_ESQUEMA||'.DD_MNC_MOT_NOCOMERCIALIZACION MNC ON MNC.DD_MNC_CODIGO = MIG2.PAC_COD_MOTIVO_NOCOMERCIAL
 		      WHERE MIG2.VALIDACION = 0

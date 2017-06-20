@@ -27,7 +27,10 @@ SELECT USUARIOCREAR FROM REM01.MIG2_USUARIOCREAR_CARTERIZADO WHERE UPPER(USUARIO
 EOF
 )
 usuario=$(echo $OUTPUT | awk '{ print $1 }')
-echo $usuario
+echo "********************************************************"
+echo "USUARIOCREAR="$usuario
+echo "********************************************************"
+echo
 
 ruta_descarterizada="PROD/DML_PROD/DMLs_DESCARTERIZADOS"
 ruta_carterizada="PROD/DML_PROD"
@@ -53,7 +56,9 @@ do
 		echo "#####    INICIO $line"
 		echo "########################################################"
 		username=$(echo $line | cut -d '_' -f3)
-		echo "$line" >> PROD/Logs/005_volcado_"$usuario"_"$fecha_ini".log
+		echo "########################################################" >> PROD/Logs/005_volcado_"$usuario"_"$fecha_ini".log
+		echo "#####    INICIO $line" >> PROD/Logs/005_volcado_"$usuario"_"$fecha_ini".log
+		echo "########################################################" >> PROD/Logs/005_volcado_"$usuario"_"$fecha_ini".log
 		$ORACLE_HOME/bin/sqlplus $username/$1 @$ruta_carterizada/$line >> PROD/Logs/005_volcado_"$usuario"_"$fecha_ini".log
 		if [ $? != 0 ] ; then 
 		   echo -e "\n\n======>>> "Error en @$line

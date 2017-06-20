@@ -37,8 +37,8 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(256);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('FECHA_ALTA_CATASTRO', 'DATE', '', 'Fecha de alta en catastro')
-        ,T_TIPO_DATA('FECHA_BAJA_CATASTRO', 'DATE', '', 'Fecha de baja en catastro')
+        T_TIPO_DATA('F_ALTA_CATASTRO', 'DATE', '', 'Fecha de alta en catastro')
+        ,T_TIPO_DATA('F_BAJA_CATASTRO', 'DATE', '', 'Fecha de baja en catastro')
         ,T_TIPO_DATA('OBSERVACIONES ', 'VARCHAR2(400 CHAR)', '', 'Observaciones')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

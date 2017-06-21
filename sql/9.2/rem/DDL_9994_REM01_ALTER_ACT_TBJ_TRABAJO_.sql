@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Luis Caballero
---## FECHA_CREACION=20170613
+--## FECHA_CREACION=20170620
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-2243
@@ -44,7 +44,8 @@ DECLARE
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION
-    	T_ALTER(  'TBJ_GESTOR_ACTIVO_RESPONSABLE',		 					'NUMBER(16,0)',						'Código único del cliente comercial que es gestor de activo responsable.')
+    	T_ALTER(  'TBJ_GESTOR_ACTIVO_RESPONSABLE',		 					'NUMBER(16,0)',						'Código único del cliente comercial que es gestor de activo responsable.'),
+    	T_ALTER(  'TBJ_SUPERVISOR_ACT_RESPONSABLE',		 					'NUMBER(16,0)',						'Código único del cliente comercial que es supervisor de activo responsable.')
 		);
     V_T_ALTER T_ALTER;
     
@@ -53,7 +54,8 @@ DECLARE
     TYPE T_ARRAY_FK IS TABLE OF T_FK;
     V_FK T_ARRAY_FK := T_ARRAY_FK(
     			--NOMBRE FK 							CAMPO FK 				TABLA DESTINO FK 							CAMPO DESTINO FK
-    	T_FK(	'FK_GESTOR_USU',							'TBJ_GESTOR_ACTIVO_RESPONSABLE',		V_ESQUEMA_M||'.USU_USUARIOS',					'USU_ID'			)
+    	T_FK(	'FK_GESTOR_USU',							'TBJ_GESTOR_ACTIVO_RESPONSABLE',		V_ESQUEMA_M||'.USU_USUARIOS',					'USU_ID'			),
+    	T_FK(	'FK_SUPERVISOR_USU',							'TBJ_SUPERVISOR_ACT_RESPONSABLE',		V_ESQUEMA_M||'.USU_USUARIOS',					'USU_ID'			)
     );
     V_T_FK T_FK;
     

@@ -699,5 +699,7 @@ public interface TrabajoApi {
 	 */
 	public boolean checkEsMultiactivo(TareaExterna tareaExterna);
 
+	public Map<String, Long> getSupervisorGestor(Long idAgrupacion);
+
 
 }

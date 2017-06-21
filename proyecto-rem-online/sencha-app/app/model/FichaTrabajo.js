@@ -94,6 +94,12 @@ Ext.define('HreRem.model.FichaTrabajo', {
     			name: 'gestorActivoResponsable'
     		},
     		{
+    			name: 'idSupervisorActivo'
+    		},
+    		{
+    			name: 'supervisorActivo'
+    		},
+    		{
     			name: 'fechaConcreta',
     			type:'date',
     			dateFormat: 'c'

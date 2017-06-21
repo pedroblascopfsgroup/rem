@@ -2376,4 +2376,16 @@ public class ActivoController extends ParadiseJsonController {
 		return new ModelAndView("jsonView", model);
 
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboSupervisorActivos(WebDto webDto, ModelMap model) {
+		
+		EXTDDTipoGestor tipoGestorActivos= (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "SUPACT");
+
+		model.put("data", adapter.getComboUsuarios(tipoGestorActivos.getId()));
+		
+		return new ModelAndView("jsonView", model);
+
+	}
 }

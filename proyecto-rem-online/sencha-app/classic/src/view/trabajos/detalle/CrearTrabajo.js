@@ -131,8 +131,24 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 								                	xtype: 'label',
 								                	reference: 'textAdvertenciaCrearTrabajo',
 								                	style: 'color: red; font-weight: bolder;',
-								                	width: 		'100%'
-						                		}
+								                	width: 		'100%',
+								                	colspan: 1,
+						                		},
+						                		{ 
+													xtype: 'comboboxfieldbase',
+										        	fieldLabel:  HreRem.i18n('fieldlabel.supervisor.activo'),
+										        	reference: 'supervisorActivoCombo',
+										        	colspan: 2,
+										        	editable: false,
+										        	width: 		'100%',
+										        	bind: {
+									            		store: '{comboSupervisorActivoResponsable}',
+									            		value: '{trabajo.idSupervisorActivo}',
+									            	},
+									            	displayField: 'apellidoNombre',
+						    						valueField: 'id',
+													allowBlank: false
+										        }
 
 											]
 						           },
@@ -624,28 +640,38 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
     	if(!Ext.isEmpty(me.idAgrupacion)) {
     		me.lookupReference('activosagrupaciontrabajo').getStore().load();
     		me.down('[reference=fieldsetListaActivos]').setVisible(true);
+    		me.down('[reference=supervisorActivoCombo]').setValue(me.idSupervisor);
+    		me.down('[reference=gestorActivoResponsableCombo]').setValue(me.idGestor);
      	} else {
      		me.down('[reference=fieldsetListaActivos]').setVisible(false);
      		me.down('[reference=fieldsetListaActivosSubida]').setVisible(false);
      	}
     	
     	if(!Ext.isEmpty(me.idActivo)){
-     		me.down('[reference=gestorActivoResponsableCombo]').setVisible(false);
+    		me.down('[reference=supervisorActivoCombo]').setDisabled(true);
+    		me.down('[reference=supervisorActivoCombo]').allowBlank=true;
+     		me.down('[reference=gestorActivoResponsableCombo]').setDisabled(true);
     		me.down('[reference=gestorActivoResponsableCombo]').allowBlank=true;
+    		
     	}
     	else{
-    		me.down('[reference=gestorActivoResponsableCombo]').setVisible(true);
+    		me.down('[reference=gestorActivoResponsableCombo]').setDisabled(false);
     		me.down('[reference=gestorActivoResponsableCombo]').allowBlank=false;
+    		me.down('[reference=supervisorActivoCombo]').setDisabled(false);
+    		me.down('[reference=supervisorActivoCombo]').allowBlank=false;
     	}
      	
     	if(Ext.isEmpty(me.idAgrupacion) && Ext.isEmpty(me.idActivo)){
     		me.down('[reference=filefieldActivosRef]').allowBlank=false;
      		me.down('[reference=fieldSetSubirFichero]').setVisible(true);
      		me.down('[reference=fieldsetListaActivosSubida]').setVisible(true);
+     		me.down('[reference=supervisorActivoCombo]').setValue(me.idSupervisor);
+     		me.down('[reference=supervisorActivoCombo]').readOnly= true;    		
      	} else {
      		me.down('[reference=filefieldActivosRef]').allowBlank=true;
      		me.down('[reference=fieldSetSubirFichero]').setVisible(false);
      		me.down('[reference=fieldsetListaActivosSubida]').setVisible(false);
+     		me.down('[reference=supervisorActivoCombo]').readOnly= false; 
      	}
     	
     	// Recarga las advertencias del trabajo

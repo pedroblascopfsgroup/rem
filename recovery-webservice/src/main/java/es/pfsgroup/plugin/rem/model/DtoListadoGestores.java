@@ -15,6 +15,8 @@ public class DtoListadoGestores extends WebDto {
 
 	private Long id;
 	
+	private Long idUsuario;
+	
 	private String apellidoNombre;
 	
 	private Date fechaDesde;
@@ -27,6 +29,8 @@ public class DtoListadoGestores extends WebDto {
 	
 	private String descripcion;
 	
+	private String codigo;
+	
 	public Long getId(){
 		return id;
 	}
@@ -37,6 +41,14 @@ public class DtoListadoGestores extends WebDto {
 
 	public String getApellidoNombre() {
 		return apellidoNombre;
+	}
+
+	public Long getIdUsuario() {
+		return idUsuario;
+	}
+
+	public void setIdUsuario(Long idUsuario) {
+		this.idUsuario = idUsuario;
 	}
 
 	public void setApellidoNombre(String apellidoNombre) {
@@ -84,6 +96,13 @@ public class DtoListadoGestores extends WebDto {
 		this.telefono = telefono;
 	}
 
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
 
 
 }

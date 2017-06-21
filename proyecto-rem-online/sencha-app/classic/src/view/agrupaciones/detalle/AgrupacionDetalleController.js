@@ -54,10 +54,23 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     
     onClickCrearTrabajo: function (btn) {
     	var me = this;
-    	var idAgrupacion = me.getViewModel().get("agrupacionficha.id");
+    	var idActivo = me.getViewModel().get("activo.id");
+	  	var idAgrupacion = me.getViewModel().get("agrupacionficha.id");
+	  	var url= $AC.getRemoteUrl('trabajo/getSupervisorGestorTrabajo');
     	var tipoAgrupacionCodigo= me.getViewModel().get("agrupacionficha.tipoAgrupacionCodigo");
-    	me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: null, idAgrupacion: idAgrupacion, tipoAgrupacionCodigo: tipoAgrupacionCodigo});
-  	    	
+    	var data;
+		Ext.Ajax.request({
+		     url: url,
+		     params: {idActivo : idActivo, idAgrupacion : idAgrupacion},
+		     success: function(response, opts) {
+		    	 data = Ext.decode(response.responseText);
+		    	 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: null, idAgrupacion: idAgrupacion, idGestor: data.data.GACT, idSupervisor: data.data.SUPACT, tipoAgrupacionCodigo: tipoAgrupacionCodigo});
+		         
+		     },
+		     failure: function(response) {
+		    	 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: null, idAgrupacion: idAgrupacion, idUsuario: null, tipoAgrupacionCodigo: tipoAgrupacionCodigo});
+		     }
+		 });   	    	
     },
 	
 	 /**

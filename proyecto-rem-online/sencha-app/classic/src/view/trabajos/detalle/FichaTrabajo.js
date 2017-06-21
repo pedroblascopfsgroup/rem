@@ -15,6 +15,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
         //Si el tipo es de Precios/Publicacion/Sancion no mostrar el bloque -Cuando hay que hacerlo...-
         me.codigoTipoTrabajo = me.lookupController().getViewModel().get('trabajo').get('tipoTrabajoCodigo');
         me.idGestorActivoResponsable = me.lookupController().getViewModel().get('trabajo').get('idGestorActivoResponsable');
+        me.idSupervisorActivo = me.lookupController().getViewModel().get('trabajo').get('idSupervisorActivo');
 
         me.items= [
         			{
@@ -69,6 +70,35 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 						        	
 						        },
 						        {
+						        	xtype: 'comboboxfieldbase',
+						        	editable: false,
+						        	fieldLabel: HreRem.i18n('fieldlabel.supervisor.activo'),
+						        	bind: {
+					            		store: '{comboSupervisorActivoResponsable}',
+					            		value: '{trabajo.idSupervisorActivo}'
+					            	},
+					            	displayField: 'apellidoNombre',
+		    						valueField: 'id',
+		    						readOnly: (Ext.isEmpty(this.idSupervisorActivo)),
+					            	hidden: (this.codigoTipoTrabajo!="03"),
+						        	reference: 'comboSupervisorActivo'
+						        },
+						        {
+						        	xtype: 'comboboxfieldbase',
+						        	editable: false,
+						        	fieldLabel: HreRem.i18n('fieldlabel.gestor.activo.responsable'),
+						        	bind: {
+					            		store: '{comboGestorActivoResponsable}',
+					            		value: '{trabajo.idGestorActivoResponsable}'
+					            	},
+					            	displayField: 'apellidoNombre',
+		    						valueField: 'id',
+		    						readOnly: (Ext.isEmpty(this.idGestorActivoResponsable)),
+					            	hidden: (this.codigoTipoTrabajo!="03"),
+						        	reference: 'comboGestorActivoResposable'
+						        },
+						        
+						        {
 						        	xtype: 'checkboxfieldbase',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.actuacion.cubierta.seguro'),
 						        	reference: 'checkCiaAseguradora',
@@ -86,21 +116,6 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 						        			}
 						        		}
 						        	}
-						        },
-						        {
-						        	xtype: 'comboboxfieldbase',
-						        	editable: false,
-						        	fieldLabel: HreRem.i18n('fieldlabel.gestor.activo.responsable'),
-						        	bind: {
-					            		store: '{comboGestorActivoResponsable}',
-					            		value: '{trabajo.idGestorActivoResponsable}'
-					            	},
-					            	displayField: 'apellidoNombre',
-		    						valueField: 'id',
-		    						readOnly: (Ext.isEmpty(this.idGestorActivoResponsable)),
-					            	hidden: (this.codigoTipoTrabajo!="03"),
-					            	colspan: 2,
-						        	reference: 'comboGestorActivoResposable'
 						        },
 						        {
 						        	xtype: 'comboboxfieldbase',

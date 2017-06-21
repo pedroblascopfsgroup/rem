@@ -59,7 +59,9 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activotrabajo.dao.ActivoTrabajoDao;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -83,6 +85,7 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoConfiguracionTarifa;
 import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoGestionEconomicaTrabajo;
+import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestosTrabajo;
@@ -203,6 +206,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Autowired
 	private GestorActivoDao gestorActivoDao;
+	
+	@Autowired
+	private ActivoAgrupacionApi activoAgrupacionApi;
+	
+	@Autowired
+	private ActivoAdapter activoAdapter;
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -821,6 +830,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						trabajo.setUsuarioGestorActivoResponsable(usuarioGestor);
 					}
 				}
+				
+				if(!Checks.esNulo(dtoTrabajo.getIdSupervisorActivo())){
+					Usuario usuarioGestor = genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS,"id", dtoTrabajo.getIdSupervisorActivo()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+					if(!Checks.esNulo(usuarioGestor)){
+						trabajo.setSupervisorActivoResponsable(usuarioGestor);
+					}
+				}
 
 				if(!dtoTrabajo.getEsSolicitudConjunta()) {
 					trabajoDao.saveOrUpdate(trabajo);
@@ -991,6 +1007,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			Usuario usuario = (Usuario) genericDao.get(Usuario.class, filtro);
 			
 			trabajo.setUsuarioGestorActivoResponsable(usuario);
+		}
+		
+		if(!Checks.esNulo(dtoTrabajo.getIdSupervisorActivo())){
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdSupervisorActivo());
+			Usuario usuario = (Usuario) genericDao.get(Usuario.class, filtro);
+			
+			trabajo.setSupervisorActivoResponsable(usuario);;
 		}
 	}
 
@@ -1226,6 +1249,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if(!Checks.esNulo(trabajo.getUsuarioGestorActivoResponsable())){
 			dtoTrabajo.setGestorActivoResponsable(trabajo.getUsuarioGestorActivoResponsable().getApellidoNombre());
 			dtoTrabajo.setIdGestorActivoResponsable(trabajo.getUsuarioGestorActivoResponsable().getId());
+		}
+		
+		if(!Checks.esNulo(trabajo.getSupervisorActivoResponsable())){
+			dtoTrabajo.setSupervisorActivo(trabajo.getSupervisorActivoResponsable().getApellidoNombre());
+			dtoTrabajo.setIdSupervisorActivo(trabajo.getSupervisorActivoResponsable().getId());
 		}
 
 		return dtoTrabajo;
@@ -3070,6 +3098,35 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public Map<String,Long> getSupervisorGestor(Long idAgrupacion){
+		Map<String,Long> supervisorGestor= new HashMap<String, Long>();
+		
+		ActivoAgrupacion agrupacion= activoAgrupacionApi.get(idAgrupacion);
+		if(!Checks.esNulo(agrupacion)){
+			Activo activo= agrupacion.getActivos().get(0).getActivo();
+			if(!Checks.esNulo(activo)){
+				List<DtoListadoGestores> gestores= activoAdapter.getGestores(activo.getId());
+				for(DtoListadoGestores gestor: gestores){
+					if(gestor.getCodigo().equals(GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS)){
+						if(Checks.esNulo(gestor.getFechaHasta())){
+							supervisorGestor.put("SUPACT", gestor.getIdUsuario());
+						}
+					}
+					if(gestor.getCodigo().equals(GestorActivoApi.CODIGO_GESTOR_ACTIVO)){
+						if(Checks.esNulo(gestor.getFechaHasta())){
+							supervisorGestor.put("GACT", gestor.getIdUsuario());
+						}
+					}
+				}
+			}
+		}
+		
+		return supervisorGestor;
+		
+		
 	}
 	
 	

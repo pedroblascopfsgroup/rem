@@ -242,6 +242,10 @@ public class Trabajo implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="TBJ_GESTOR_ACTIVO_RESPONSABLE")
     private Usuario usuarioGestorActivoResponsable;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="TBJ_SUPERVISOR_ACT_RESPONSABLE")
+    private Usuario supervisorActivoResponsable;
        	
 	@Version   
 	private Long version;
@@ -842,6 +846,14 @@ public class Trabajo implements Serializable, Auditable {
 
 	public void setUsuarioGestorActivoResponsable(Usuario usuarioGestorActivoResponsable) {
 		this.usuarioGestorActivoResponsable = usuarioGestorActivoResponsable;
+	}
+
+	public Usuario getSupervisorActivoResponsable() {
+		return supervisorActivoResponsable;
+	}
+
+	public void setSupervisorActivoResponsable(Usuario supervisorActivoResponsable) {
+		this.supervisorActivoResponsable = supervisorActivoResponsable;
 	}
 
 

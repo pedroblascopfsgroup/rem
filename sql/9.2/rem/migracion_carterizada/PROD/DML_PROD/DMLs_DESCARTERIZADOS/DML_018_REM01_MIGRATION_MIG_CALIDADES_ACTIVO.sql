@@ -9,8 +9,8 @@
 --## 
 --## Finalidad: Proceso de migración 'MIG_AIA_CALIDADES_ACTIVO' -> 'ACT_CRI_CARPINTERIA_INT' - ACT_CRE_CARPINTERIA_EXT - ACT_PRV_PARAMENTO_VERTICAL 
 --##                                    - ACT_SOL_SOLADO - ACT_INF_INFRAESTRUCTURA - ACT_ZCO_ZONA_COMUN - ACT_INS_INSTALACION - ACT_BNY_BANYO
---## 									- ACT_COC_COCINA
---##			
+--##                  - ACT_COC_COCINA
+--##      
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -47,8 +47,8 @@ BEGIN
 
 --Llenamos la primera tabla ACT_CRI_CARPINTERIA_INT
 
-	EXECUTE IMMEDIATE ('
-	INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
+  EXECUTE IMMEDIATE ('
+  INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
         CRI_ID,
         ICO_ID,
         DD_ACR_ID,
@@ -68,21 +68,21 @@ BEGIN
         USUARIOBORRAR,
         FECHABORRAR,
         BORRADO
-	)
-	WITH ACT_NUM_ACTIVO AS (
+  )
+  WITH ACT_NUM_ACTIVO AS (
         SELECT MIG.ACT_NUMERO_ACTIVO, ICO.ICO_ID
         FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
         JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
         JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO ON ICO.ACT_ID = ACT.ACT_ID
         LEFT JOIN '||V_ESQUEMA||'.'||V_TABLA||' ZCO ON ZCO.ICO_ID = ICO.ICO_ID
-        WHERE ZCO.CRI_ID IS NULL AND MIG.VALIDACION = 0
-	)
-	SELECT
-	'||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                       CRI_ID,
+        WHERE ZCO.ICO_ID IS NULL AND MIG.VALIDACION = 0
+  )
+  SELECT
+  '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                       CRI_ID,
   ACT.ICO_ID ICO_ID,
     (SELECT DD_ACR_ID
-		FROM '||V_ESQUEMA||'.DD_ACR_ACABADO_CARPINTERIA ACR
-		WHERE ACR.DD_ACR_CODIGO = MIG.NIVEL_ACABADO_INTERIOR) DD_ACR_ID,  
+    FROM '||V_ESQUEMA||'.DD_ACR_ACABADO_CARPINTERIA ACR
+    WHERE ACR.DD_ACR_CODIGO = MIG.NIVEL_ACABADO_INTERIOR) DD_ACR_ID,  
 CRI_PTA_ENT_NORMAL,
 CRI_PTA_ENT_BLINDADA,
 CRI_PTA_ENT_ACORAZADA,
@@ -91,19 +91,20 @@ CRI_PTA_PASO_HUECAS,
 CRI_PTA_PASO_LACADAS,
 CRI_ARMARIOS_EMPOTRADOS,
 CRI_CRP_INT_OTROS,    
-	0                                                 VERSION,
-	'''||V_USUARIO||'''                                   USUARIOCREAR,
-	SYSDATE                                               FECHACREAR,
-	NULL                                                  USUARIOMODIFICAR,
-	NULL                                                  FECHAMODIFICAR,
-	NULL                                                  USUARIOBORRAR,
-	NULL                                                  FECHABORRAR,
-	0                                                     BORRADO
-	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-	INNER JOIN '||V_ESQUEMA||'.ACT_NUM_ACTIVO ACT
-	ON ACT.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
-	')
-	;
+  0                                                 VERSION,
+  '''||V_USUARIO||'''                                   USUARIOCREAR,
+  SYSDATE                                               FECHACREAR,
+  NULL                                                  USUARIOMODIFICAR,
+  NULL                                                  FECHAMODIFICAR,
+  NULL                                                  USUARIOBORRAR,
+  NULL                                                  FECHABORRAR,
+  0                                                     BORRADO
+  FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+  INNER JOIN '||V_ESQUEMA||'.ACT_NUM_ACTIVO ACT
+  ON ACT.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
+  '
+  )
+  ;
   
   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
   
@@ -115,9 +116,9 @@ CRI_CRP_INT_OTROS,
 
 --Llenamos la segunda tabla ACT_CRE_CARPINTERIA_EXT
 
-	EXECUTE IMMEDIATE ('
-	INSERT INTO '||V_ESQUEMA||'.'||V_TABLA2||' (
-	CRE_ID,
+  EXECUTE IMMEDIATE ('
+  INSERT INTO '||V_ESQUEMA||'.'||V_TABLA2||' (
+  CRE_ID,
   ICO_ID,
   CRE_VTNAS_HIERRO,
   CRE_VTNAS_ALU_ANODIZADO,
@@ -133,24 +134,24 @@ CRI_CRP_INT_OTROS,
   CRE_EST_DOBLE_CRISTAL,
   CRE_CRP_EXT_OTROS,
   VERSION,
-	USUARIOCREAR,
-	FECHACREAR,
-	USUARIOMODIFICAR,
-	FECHAMODIFICAR,
-	USUARIOBORRAR,
-	FECHABORRAR,
-	BORRADO
-	)
-	WITH ACT_NUM_ACTIVO AS (
+  USUARIOCREAR,
+  FECHACREAR,
+  USUARIOMODIFICAR,
+  FECHAMODIFICAR,
+  USUARIOBORRAR,
+  FECHABORRAR,
+  BORRADO
+  )
+  WITH ACT_NUM_ACTIVO AS (
         SELECT MIG.ACT_NUMERO_ACTIVO, ICO.ICO_ID
         FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
         JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
         JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO ON ICO.ACT_ID = ACT.ACT_ID
         LEFT JOIN '||V_ESQUEMA||'.'||V_TABLA2||' ZCO ON ZCO.ICO_ID = ICO.ICO_ID
-        WHERE ZCO.CRE_ID IS NULL AND MIG.VALIDACION = 0)
-	
+        WHERE ZCO.ICO_ID IS NULL AND MIG.VALIDACION = 0)
+  
     SELECT
-	'||V_ESQUEMA||'.S_'||V_TABLA2||'.NEXTVAL                       CRE_ID, 
+  '||V_ESQUEMA||'.S_'||V_TABLA2||'.NEXTVAL                       CRE_ID, 
   
   ACT.ICO_ID,
     CRE_VTNAS_HIERRO,
@@ -166,19 +167,19 @@ CRI_CRP_INT_OTROS,
     CRE_DOBLE_CRISTAL,
     CRE_EST_DOBLE_CRISTAL,
     CRE_CRP_EXT_OTROS,
-	''0''                                                 VERSION,
-	'''||V_USUARIO||'''                                               USUARIOCREAR,
-	SYSDATE                                               FECHACREAR,
-	NULL                                                  USUARIOMODIFICAR,
-	NULL                                                  FECHAMODIFICAR,
-	NULL                                                  USUARIOBORRAR,
-	NULL                                                  FECHABORRAR,
-	0                                                     BORRADO
-	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-	INNER JOIN '||V_ESQUEMA||'.ACT_NUM_ACTIVO ACT
-	ON ACT.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
-	')
-	;
+  ''0''                                                 VERSION,
+  '''||V_USUARIO||'''                                               USUARIOCREAR,
+  SYSDATE                                               FECHACREAR,
+  NULL                                                  USUARIOMODIFICAR,
+  NULL                                                  FECHAMODIFICAR,
+  NULL                                                  USUARIOBORRAR,
+  NULL                                                  FECHABORRAR,
+  0                                                     BORRADO
+  FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+  INNER JOIN '||V_ESQUEMA||'.ACT_NUM_ACTIVO ACT
+  ON ACT.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
+  ')
+  ;
   
   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_TABLA2||' cargada. '||SQL%ROWCOUNT||' Filas.');
   
@@ -191,9 +192,9 @@ CRI_CRP_INT_OTROS,
 
 --Llenamos la tercera tabla ACT_PRV_PARAMENTO_VERTICAL
 
-	EXECUTE IMMEDIATE ('
-	INSERT INTO '||V_ESQUEMA||'.'||V_TABLA3||' (
-	PRV_ID,
+  EXECUTE IMMEDIATE ('
+  INSERT INTO '||V_ESQUEMA||'.'||V_TABLA3||' (
+  PRV_ID,
   ICO_ID,
   PRV_HUMEDAD_PARED,
   PRV_HUMEDAD_TECHO,
@@ -208,24 +209,24 @@ CRI_CRP_INT_OTROS,
   PRV_MOLDURA_ESCAYOLA_EST,
   PRV_PARAMENTOS_OTROS,
   VERSION,
-	USUARIOCREAR,
-	FECHACREAR,
-	USUARIOMODIFICAR,
-	FECHAMODIFICAR,
-	USUARIOBORRAR,
-	FECHABORRAR,
-	BORRADO
-	)
-	WITH ACT_NUM_ACTIVO AS (
-	    SELECT MIG.ACT_NUMERO_ACTIVO, ICO.ICO_ID
-	    FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+  USUARIOCREAR,
+  FECHACREAR,
+  USUARIOMODIFICAR,
+  FECHAMODIFICAR,
+  USUARIOBORRAR,
+  FECHABORRAR,
+  BORRADO
+  )
+  WITH ACT_NUM_ACTIVO AS (
+      SELECT MIG.ACT_NUMERO_ACTIVO, ICO.ICO_ID
+      FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
         JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
         JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO ON ICO.ACT_ID = ACT.ACT_ID
         LEFT JOIN '||V_ESQUEMA||'.'||V_TABLA3||' ZCO ON ZCO.ICO_ID = ICO.ICO_ID
-        WHERE ZCO.PRV_ID IS NULL AND MIG.VALIDACION = 0
-	)
-	SELECT
-	'||V_ESQUEMA||'.S_'||V_TABLA3||'.NEXTVAL                       PRV_ID,
+        WHERE ZCO.ICO_ID IS NULL AND MIG.VALIDACION = 0
+  )
+  SELECT
+  '||V_ESQUEMA||'.S_'||V_TABLA3||'.NEXTVAL                       PRV_ID,
   ACT.ICO_ID,
   PRV_HUMEDAD_PARED,
   PRV_HUMEDAD_TECHO,
@@ -239,19 +240,19 @@ CRI_CRP_INT_OTROS,
   PRV_MOLDURA_ESCAYOLA,
   PRV_MOLDURA_ESCAYOLA_EST,
   PRV_PARAMENTOS_OTROS,
-	''0''                                                 VERSION,
-	'''||V_USUARIO||'''                                               USUARIOCREAR,
-	SYSDATE                                               FECHACREAR,
-	NULL                                                  USUARIOMODIFICAR,
-	NULL                                                  FECHAMODIFICAR,
-	NULL                                                  USUARIOBORRAR,
-	NULL                                                  FECHABORRAR,
-	0                                                     BORRADO
-	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-	INNER JOIN '||V_ESQUEMA||'.ACT_NUM_ACTIVO ACT
-	ON ACT.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
-	')
-	;
+  ''0''                                                 VERSION,
+  '''||V_USUARIO||'''                                               USUARIOCREAR,
+  SYSDATE                                               FECHACREAR,
+  NULL                                                  USUARIOMODIFICAR,
+  NULL                                                  FECHAMODIFICAR,
+  NULL                                                  USUARIOBORRAR,
+  NULL                                                  FECHABORRAR,
+  0                                                     BORRADO
+  FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+  INNER JOIN '||V_ESQUEMA||'.ACT_NUM_ACTIVO ACT
+  ON ACT.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
+  ')
+  ;
   
   
   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_TABLA3||' cargada. '||SQL%ROWCOUNT||' Filas.');
@@ -264,9 +265,9 @@ CRI_CRP_INT_OTROS,
   
   --Llenamos la cuarta tabla ACT_SOL_SOLADO
 
-	EXECUTE IMMEDIATE ('
-	INSERT INTO '||V_ESQUEMA||'.'||V_TABLA4||' (
-	SOL_ID,
+  EXECUTE IMMEDIATE ('
+  INSERT INTO '||V_ESQUEMA||'.'||V_TABLA4||' (
+  SOL_ID,
   ICO_ID,
   SOL_TARIMA_FLOTANTE,
   SOL_PARQUE,
@@ -274,24 +275,24 @@ CRI_CRP_INT_OTROS,
   SOL_PLAQUETA,
   SOL_SOLADO_OTROS,
   VERSION,
-	USUARIOCREAR,
-	FECHACREAR,
-	USUARIOMODIFICAR,
-	FECHAMODIFICAR,
-	USUARIOBORRAR,
-	FECHABORRAR,
-	BORRADO
-	)
-	WITH ACT_NUM_ACTIVO AS (
-	    SELECT MIG.ACT_NUMERO_ACTIVO, ICO.ICO_ID
-	    FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+  USUARIOCREAR,
+  FECHACREAR,
+  USUARIOMODIFICAR,
+  FECHAMODIFICAR,
+  USUARIOBORRAR,
+  FECHABORRAR,
+  BORRADO
+  )
+  WITH ACT_NUM_ACTIVO AS (
+      SELECT MIG.ACT_NUMERO_ACTIVO, ICO.ICO_ID
+      FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
         JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
         JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO ON ICO.ACT_ID = ACT.ACT_ID
         LEFT JOIN '||V_ESQUEMA||'.'||V_TABLA4||' ZCO ON ZCO.ICO_ID = ICO.ICO_ID
-        WHERE ZCO.SOL_ID IS NULL AND MIG.VALIDACION = 0
-	)
+        WHERE ZCO.ICO_ID IS NULL AND MIG.VALIDACION = 0
+  )
 SELECT
-	'||V_ESQUEMA||'.S_'||V_TABLA4||'.NEXTVAL                       PRV_ID,
+  '||V_ESQUEMA||'.S_'||V_TABLA4||'.NEXTVAL                       PRV_ID,
 
  ACT.ICO_ID, 
   SOL_TARIMA_FLOTANTE,
@@ -299,19 +300,19 @@ SELECT
   SOL_MARMOL,
   SOL_PLAQUETA,
   SOL_SOLADO_OTROS,
-	''0''                                                 VERSION,
-	'''||V_USUARIO||'''                                               USUARIOCREAR,
-	SYSDATE                                               FECHACREAR,
-	NULL                                                  USUARIOMODIFICAR,
-	NULL                                                  FECHAMODIFICAR,
-	NULL                                                  USUARIOBORRAR,
-	NULL                                                  FECHABORRAR,
-	0                                                     BORRADO
-	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-	INNER JOIN '||V_ESQUEMA||'.ACT_NUM_ACTIVO ACT
-	ON ACT.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
-	')
-	;
+  ''0''                                                 VERSION,
+  '''||V_USUARIO||'''                                               USUARIOCREAR,
+  SYSDATE                                               FECHACREAR,
+  NULL                                                  USUARIOMODIFICAR,
+  NULL                                                  FECHAMODIFICAR,
+  NULL                                                  USUARIOBORRAR,
+  NULL                                                  FECHABORRAR,
+  0                                                     BORRADO
+  FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+  INNER JOIN '||V_ESQUEMA||'.ACT_NUM_ACTIVO ACT
+  ON ACT.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
+  ')
+  ;
   
   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_TABLA4||' cargada. '||SQL%ROWCOUNT||' Filas.');
   
@@ -322,9 +323,9 @@ SELECT
 
 --Llenamos la quinta tabla ACT_INF_INFRAESTRUCTURA
 
-	EXECUTE IMMEDIATE ('
-	INSERT INTO '||V_ESQUEMA||'.'||V_TABLA5||' (
-	INF_ID,
+  EXECUTE IMMEDIATE ('
+  INSERT INTO '||V_ESQUEMA||'.'||V_TABLA5||' (
+  INF_ID,
   ICO_ID,
   INF_OCIO,
   INF_HOTELES,
@@ -368,24 +369,24 @@ SELECT
   INF_EST_TREN_DESC,
   INF_COMUNICACIONES_OTRO,
   VERSION,
-	USUARIOCREAR,
-	FECHACREAR,
-	USUARIOMODIFICAR,
-	FECHAMODIFICAR,
-	USUARIOBORRAR,
-	FECHABORRAR,
-	BORRADO
-	)
-		WITH ACT_NUM_ACTIVO AS (
-	    SELECT MIG.ACT_NUMERO_ACTIVO, ICO.ICO_ID
-	    FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+  USUARIOCREAR,
+  FECHACREAR,
+  USUARIOMODIFICAR,
+  FECHAMODIFICAR,
+  USUARIOBORRAR,
+  FECHABORRAR,
+  BORRADO
+  )
+    WITH ACT_NUM_ACTIVO AS (
+      SELECT MIG.ACT_NUMERO_ACTIVO, ICO.ICO_ID
+      FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
         JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
         JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO ON ICO.ACT_ID = ACT.ACT_ID
         LEFT JOIN '||V_ESQUEMA||'.'||V_TABLA5||' ZCO ON ZCO.ICO_ID = ICO.ICO_ID
-        WHERE ZCO.INF_ID IS NULL AND MIG.VALIDACION = 0
-	)
-	SELECT
-	'||V_ESQUEMA||'.S_'||V_TABLA5||'.NEXTVAL                       INF_ID,
+        WHERE ZCO.ICO_ID IS NULL AND MIG.VALIDACION = 0
+  )
+  SELECT
+  '||V_ESQUEMA||'.S_'||V_TABLA5||'.NEXTVAL                       INF_ID,
   
   ACT.ICO_ID,
     
@@ -430,19 +431,19 @@ SELECT
   INF_EST_TREN,
   INF_EST_TREN_DESC,
   INF_COMUNICACIONES_OTRO,
-	''0''                                                 VERSION,
-	'''||V_USUARIO||'''                                               USUARIOCREAR,
-	SYSDATE                                               FECHACREAR,
-	NULL                                                  USUARIOMODIFICAR,
-	NULL                                                  FECHAMODIFICAR,
-	NULL                                                  USUARIOBORRAR,
-	NULL                                                  FECHABORRAR,
-	0                                                     BORRADO
-	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-	INNER JOIN '||V_ESQUEMA||'.ACT_NUM_ACTIVO ACT
-	ON ACT.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
-	')
-	;
+  ''0''                                                 VERSION,
+  '''||V_USUARIO||'''                                               USUARIOCREAR,
+  SYSDATE                                               FECHACREAR,
+  NULL                                                  USUARIOMODIFICAR,
+  NULL                                                  FECHAMODIFICAR,
+  NULL                                                  USUARIOBORRAR,
+  NULL                                                  FECHABORRAR,
+  0                                                     BORRADO
+  FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+  INNER JOIN '||V_ESQUEMA||'.ACT_NUM_ACTIVO ACT
+  ON ACT.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
+  ')
+  ;
   
   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_TABLA5||' cargada. '||SQL%ROWCOUNT||' Filas.');
   
@@ -452,9 +453,9 @@ SELECT
   
   --Llenamos la sexta tabla ACT_ZCO_ZONA_COMUN
 
-	EXECUTE IMMEDIATE ('
-	INSERT INTO '||V_ESQUEMA||'.'||V_TABLA6||' (
-	ZCO_ID,
+  EXECUTE IMMEDIATE ('
+  INSERT INTO '||V_ESQUEMA||'.'||V_TABLA6||' (
+  ZCO_ID,
   ICO_ID,
   ZCO_ZONAS_COMUNES,
   ZCO_JARDINES,
@@ -469,24 +470,24 @@ SELECT
   ZCO_GIMNASIO,
   ZCO_ZONA_COMUN_OTROS,
   VERSION,
-	USUARIOCREAR,
-	FECHACREAR,
-	USUARIOMODIFICAR,
-	FECHAMODIFICAR,
-	USUARIOBORRAR,
-	FECHABORRAR,
-	BORRADO
-	)
+  USUARIOCREAR,
+  FECHACREAR,
+  USUARIOMODIFICAR,
+  FECHAMODIFICAR,
+  USUARIOBORRAR,
+  FECHABORRAR,
+  BORRADO
+  )
 WITH ACT_NUM_ACTIVO AS (
-	    SELECT MIG.ACT_NUMERO_ACTIVO, ICO.ICO_ID
-	    FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+      SELECT MIG.ACT_NUMERO_ACTIVO, ICO.ICO_ID
+      FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
         JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
         JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO ON ICO.ACT_ID = ACT.ACT_ID
         LEFT JOIN '||V_ESQUEMA||'.'||V_TABLA6||' ZCO ON ZCO.ICO_ID = ICO.ICO_ID
-        WHERE ZCO.ZCO_ID IS NULL AND MIG.VALIDACION = 0
-	)
+        WHERE ZCO.ICO_ID IS NULL AND MIG.VALIDACION = 0
+  )
 SELECT
-	'||V_ESQUEMA||'.S_'||V_TABLA6||'.NEXTVAL                       ZCO_ID,
+  '||V_ESQUEMA||'.S_'||V_TABLA6||'.NEXTVAL                       ZCO_ID,
   ACT.ICO_ID,
   ZCO_ZONAS_COMUNES,
   ZCO_JARDINES,
@@ -500,19 +501,19 @@ SELECT
   ZCO_CONSERJE_VIGILANCIA,
   ZCO_GIMNASIO,
   ZCO_ZONA_COMUN_OTROS,
-	''0''                                                 VERSION,
-	'''||V_USUARIO||'''                                               USUARIOCREAR,
-	SYSDATE                                               FECHACREAR,
-	NULL                                                  USUARIOMODIFICAR,
-	NULL                                                  FECHAMODIFICAR,
-	NULL                                                  USUARIOBORRAR,
-	NULL                                                  FECHABORRAR,
-	0                                                     BORRADO
-	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-	INNER JOIN '||V_ESQUEMA||'.ACT_NUM_ACTIVO ACT
-	ON ACT.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
-	')
-	;
+  ''0''                                                 VERSION,
+  '''||V_USUARIO||'''                                               USUARIOCREAR,
+  SYSDATE                                               FECHACREAR,
+  NULL                                                  USUARIOMODIFICAR,
+  NULL                                                  FECHAMODIFICAR,
+  NULL                                                  USUARIOBORRAR,
+  NULL                                                  FECHABORRAR,
+  0                                                     BORRADO
+  FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+  INNER JOIN '||V_ESQUEMA||'.ACT_NUM_ACTIVO ACT
+  ON ACT.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
+  ')
+  ;
   
   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_TABLA6||' cargada. '||SQL%ROWCOUNT||' Filas.');
   
@@ -522,9 +523,9 @@ SELECT
   
   --Llenamos la séptima tabla ACT_INS_INSTALACION
 
-	EXECUTE IMMEDIATE ('
-	INSERT INTO '||V_ESQUEMA||'.'||V_TABLA7||' (
-	INS_ID,
+  EXECUTE IMMEDIATE ('
+  INSERT INTO '||V_ESQUEMA||'.'||V_TABLA7||' (
+  INS_ID,
   ICO_ID,
   INS_ELECTR,
   INS_ELECTR_CON_CONTADOR,
@@ -551,24 +552,24 @@ SELECT
   INS_AIRE_FRIO_CALOR,
   INS_INST_OTROS,
   VERSION,
-	USUARIOCREAR,
-	FECHACREAR,
-	USUARIOMODIFICAR,
-	FECHAMODIFICAR,
-	USUARIOBORRAR,
-	FECHABORRAR,
-	BORRADO
-	)
-	WITH ACT_NUM_ACTIVO AS (
-	    SELECT MIG.ACT_NUMERO_ACTIVO, ICO.ICO_ID
-	    FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+  USUARIOCREAR,
+  FECHACREAR,
+  USUARIOMODIFICAR,
+  FECHAMODIFICAR,
+  USUARIOBORRAR,
+  FECHABORRAR,
+  BORRADO
+  )
+  WITH ACT_NUM_ACTIVO AS (
+      SELECT MIG.ACT_NUMERO_ACTIVO, ICO.ICO_ID
+      FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
         JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
         JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO ON ICO.ACT_ID = ACT.ACT_ID
         LEFT JOIN '||V_ESQUEMA||'.'||V_TABLA7||' ZCO ON ZCO.ICO_ID = ICO.ICO_ID
-        WHERE ZCO.INS_ID IS NULL AND MIG.VALIDACION = 0
-	)
+        WHERE ZCO.ICO_ID IS NULL AND MIG.VALIDACION = 0
+  )
 SELECT
-	'||V_ESQUEMA||'.S_'||V_TABLA7||'.NEXTVAL                       INS_ID,
+  '||V_ESQUEMA||'.S_'||V_TABLA7||'.NEXTVAL                       INS_ID,
   
   
   
@@ -598,19 +599,19 @@ SELECT
   INS_AIRE_INSTALACION,
   INS_AIRE_FRIO_CALOR,
   INS_INST_OTROS,
-	''0''                                                 VERSION,
-	'''||V_USUARIO||'''                                               USUARIOCREAR,
-	SYSDATE                                               FECHACREAR,
-	NULL                                                  USUARIOMODIFICAR,
-	NULL                                                  FECHAMODIFICAR,
-	NULL                                                  USUARIOBORRAR,
-	NULL                                                  FECHABORRAR,
-	0                                                     BORRADO
-	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-	INNER JOIN '||V_ESQUEMA||'.ACT_NUM_ACTIVO ACT
-	ON ACT.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
-	')
-	;
+  ''0''                                                 VERSION,
+  '''||V_USUARIO||'''                                               USUARIOCREAR,
+  SYSDATE                                               FECHACREAR,
+  NULL                                                  USUARIOMODIFICAR,
+  NULL                                                  FECHAMODIFICAR,
+  NULL                                                  USUARIOBORRAR,
+  NULL                                                  FECHABORRAR,
+  0                                                     BORRADO
+  FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+  INNER JOIN '||V_ESQUEMA||'.ACT_NUM_ACTIVO ACT
+  ON ACT.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
+  ')
+  ;
   
   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_TABLA7||' cargada. '||SQL%ROWCOUNT||' Filas.');
   
@@ -621,9 +622,9 @@ SELECT
   
   --Llenamos la octava tabla ACT_BNY_BANYO
 
-	EXECUTE IMMEDIATE ('
-	INSERT INTO '||V_ESQUEMA||'.'||V_TABLA8||' (
-	BNY_ID,
+  EXECUTE IMMEDIATE ('
+  INSERT INTO '||V_ESQUEMA||'.'||V_TABLA8||' (
+  BNY_ID,
   ICO_ID,
   BNY_DUCHA_BANYERA,
   BNY_DUCHA,
@@ -644,24 +645,24 @@ SELECT
   BNY_GRIFO_MONOMANDO_EST,
   BNY_BANYO_OTROS,
   VERSION,
-	USUARIOCREAR,
-	FECHACREAR,
-	USUARIOMODIFICAR,
-	FECHAMODIFICAR,
-	USUARIOBORRAR,
-	FECHABORRAR,
-	BORRADO
-	)
-	WITH ACT_NUM_ACTIVO AS (
-	    SELECT MIG.ACT_NUMERO_ACTIVO, ICO.ICO_ID
-	    FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+  USUARIOCREAR,
+  FECHACREAR,
+  USUARIOMODIFICAR,
+  FECHAMODIFICAR,
+  USUARIOBORRAR,
+  FECHABORRAR,
+  BORRADO
+  )
+  WITH ACT_NUM_ACTIVO AS (
+      SELECT MIG.ACT_NUMERO_ACTIVO, ICO.ICO_ID
+      FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
         JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
         JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO ON ICO.ACT_ID = ACT.ACT_ID
         LEFT JOIN '||V_ESQUEMA||'.'||V_TABLA8||' ZCO ON ZCO.ICO_ID = ICO.ICO_ID
-        WHERE ZCO.BNY_ID IS NULL AND MIG.VALIDACION = 0
-	)
+        WHERE ZCO.ICO_ID IS NULL AND MIG.VALIDACION = 0
+  )
 SELECT
-	'||V_ESQUEMA||'.S_'||V_TABLA8||'.NEXTVAL                       BNY_ID,
+  '||V_ESQUEMA||'.S_'||V_TABLA8||'.NEXTVAL                       BNY_ID,
   
   
   
@@ -685,19 +686,19 @@ SELECT
   BNY_GRIFO_MONOMANDO,
   BNY_GRIFO_MONOMANDO_EST,
   BNY_BANYO_OTROS,
-	''0''                                                 VERSION,
-	'''||V_USUARIO||'''                                               USUARIOCREAR,
-	SYSDATE                                               FECHACREAR,
-	NULL                                                  USUARIOMODIFICAR,
-	NULL                                                  FECHAMODIFICAR,
-	NULL                                                  USUARIOBORRAR,
-	NULL                                                  FECHABORRAR,
-	0                                                     BORRADO
-	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-	INNER JOIN '||V_ESQUEMA||'.ACT_NUM_ACTIVO ACT
-	ON ACT.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
-	')
-	;
+  ''0''                                                 VERSION,
+  '''||V_USUARIO||'''                                               USUARIOCREAR,
+  SYSDATE                                               FECHACREAR,
+  NULL                                                  USUARIOMODIFICAR,
+  NULL                                                  FECHAMODIFICAR,
+  NULL                                                  USUARIOBORRAR,
+  NULL                                                  FECHABORRAR,
+  0                                                     BORRADO
+  FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+  INNER JOIN '||V_ESQUEMA||'.ACT_NUM_ACTIVO ACT
+  ON ACT.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
+  ')
+  ;
   
   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_TABLA8||' cargada. '||SQL%ROWCOUNT||' Filas.');
   
@@ -706,9 +707,9 @@ SELECT
   EXECUTE IMMEDIATE  'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA8||''',''10''); END;';
   --Llenamos la novena tabla ACT_COC_COCINA
 
-	EXECUTE IMMEDIATE ('
-	INSERT INTO '||V_ESQUEMA||'.'||V_TABLA9||' (
-	COC_ID,
+  EXECUTE IMMEDIATE ('
+  INSERT INTO '||V_ESQUEMA||'.'||V_TABLA9||' (
+  COC_ID,
   ICO_ID,
   COC_AMUEBLADA,
   COC_AMUEBLADA_EST,
@@ -729,24 +730,24 @@ SELECT
   COC_GRIFOS_MONOMANDO_EST,
   COC_COCINA_OTROS,
   VERSION,
-	USUARIOCREAR,
-	FECHACREAR,
-	USUARIOMODIFICAR,
-	FECHAMODIFICAR,
-	USUARIOBORRAR,
-	FECHABORRAR,
-	BORRADO
-	)
-		WITH ACT_NUM_ACTIVO AS (
-	    SELECT MIG.ACT_NUMERO_ACTIVO, ICO.ICO_ID
-	    FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+  USUARIOCREAR,
+  FECHACREAR,
+  USUARIOMODIFICAR,
+  FECHAMODIFICAR,
+  USUARIOBORRAR,
+  FECHABORRAR,
+  BORRADO
+  )
+    WITH ACT_NUM_ACTIVO AS (
+      SELECT MIG.ACT_NUMERO_ACTIVO, ICO.ICO_ID
+      FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
         JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
         JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO ON ICO.ACT_ID = ACT.ACT_ID
         LEFT JOIN '||V_ESQUEMA||'.'||V_TABLA9||' ZCO ON ZCO.ICO_ID = ICO.ICO_ID
-        WHERE ZCO.COC_ID IS NULL AND MIG.VALIDACION = 0
-	)
+        WHERE ZCO.ICO_ID IS NULL AND MIG.VALIDACION = 0
+  )
 SELECT
-	'||V_ESQUEMA||'.S_'||V_TABLA9||'.NEXTVAL                       COC_ID,
+  '||V_ESQUEMA||'.S_'||V_TABLA9||'.NEXTVAL                       COC_ID,
   
   ACT.ICO_ID,
     
@@ -768,19 +769,19 @@ SELECT
   COC_GRIFOS_MONOMANDO,
   COC_GRIFOS_MONOMANDO_EST,
   COC_COCINA_OTROS,
-	''0''                                                 VERSION,
-	'''||V_USUARIO||'''                                               USUARIOCREAR,
-	SYSDATE                                               FECHACREAR,
-	NULL                                                  USUARIOMODIFICAR,
-	NULL                                                  FECHAMODIFICAR,
-	NULL                                                  USUARIOBORRAR,
-	NULL                                                  FECHABORRAR,
-	0                                                     BORRADO
-	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-	INNER JOIN '||V_ESQUEMA||'.ACT_NUM_ACTIVO ACT
-	ON ACT.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
-	')
-	;
+  ''0''                                                 VERSION,
+  '''||V_USUARIO||'''                                               USUARIOCREAR,
+  SYSDATE                                               FECHACREAR,
+  NULL                                                  USUARIOMODIFICAR,
+  NULL                                                  FECHAMODIFICAR,
+  NULL                                                  USUARIOBORRAR,
+  NULL                                                  FECHABORRAR,
+  0                                                     BORRADO
+  FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+  INNER JOIN '||V_ESQUEMA||'.ACT_NUM_ACTIVO ACT
+  ON ACT.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
+  ')
+  ;
   
   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_TABLA9||' cargada. '||SQL%ROWCOUNT||' Filas.');
   

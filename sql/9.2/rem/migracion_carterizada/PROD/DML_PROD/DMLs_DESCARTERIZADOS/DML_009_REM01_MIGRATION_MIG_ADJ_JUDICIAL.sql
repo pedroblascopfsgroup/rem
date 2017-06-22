@@ -1,7 +1,7 @@
 --/*
 --#########################################
---## AUTOR=GUILLEM REY
---## FECHA_CREACION=20170608
+--## AUTOR=DAP
+--## FECHA_CREACION=20170622
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=HREOS-2209
@@ -64,9 +64,7 @@ BEGIN
 	AUX.*
 	FROM (
 	SELECT
-	(SELECT ACT_ID
-	  FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
-	  WHERE ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO)   ACT_ID,
+	ACT.ACT_ID,
 	(SELECT BIE_ADJ_ID
 	  FROM '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION BIE
 	  WHERE BIE.BIE_ID = (
@@ -101,7 +99,8 @@ BEGIN
 	NULL                                                  FECHABORRAR,
 	0                                                     BORRADO
 	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-    WHERE MIG.VALIDACION = 0
+    JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
+    WHERE MIG.VALIDACION = 0 AND NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.'||V_TABLA||' AUX WHERE AUX.ACT_ID = ACT.ACT_ID AND AUX.BORRADO = 0)
     ) AUX
     where bie_adj_id is not null
 	')

@@ -135,7 +135,7 @@ BEGIN
     WHERE DIS.DD_DIS_CODIGO = MIG.ICO_DISTRITO)                 DD_DIS_ID, 
     (SELECT PVE.PVE_ID
     FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE
-    WHERE PVE.PVE_COD_UVEM = MIG.PVE_CODIGO)                        ICO_MEDIADOR_ID,
+    WHERE PVE.PVE_COD_UVEM = MIG.PVE_CODIGO AND ROWNUM=1)                        ICO_MEDIADOR_ID,
     MIG.ICO_DESCRIPCION                                                                  ICO_DESCRIPCION,
     MIG.ICO_ANO_CONSTRUCCION                                                     ICO_ANO_CONSTRUCCION,
     MIG.ICO_ANO_REHABILITACION                                                  ICO_ANO_REHABILITACION,

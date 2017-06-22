@@ -19,7 +19,7 @@ public class ResultadoATPlazoAssignationService implements PlazoAssignationServi
 
 	private static final String CODIGO_T004_RESULTADO_TARIFICADA = "T004_ResultadoTarificada";
 	private static final String CODIGO_T004_RESULTADO_NOTARIFICADA = "T004_ResultadoNoTarificada";
-	private static final int PLAZO_DEFECTO = 1;
+	private static final int PLAZO_DEFECTO = 7;
 	
 	@Autowired
 	GenericABMDao genericDao;
@@ -40,8 +40,15 @@ public class ResultadoATPlazoAssignationService implements PlazoAssignationServi
 		ActivoTramite tramite = genericDao.get(ActivoTramite.class, filtroTramite);
 
 		Trabajo trabajo = tramite.getTrabajo();
-		Date fechaNueva = new Date((!Checks.esNulo(trabajo.getFechaHoraConcreta()) ? trabajo.getFechaHoraConcreta()
-				: trabajo.getFechaTope()).getTime());
+		Date fechaNueva = null;
+		if(!Checks.esNulo(trabajo.getFechaHoraConcreta())){ 
+			fechaNueva = new Date(trabajo.getFechaHoraConcreta().getTime());
+				
+		}else if(!Checks.esNulo(trabajo.getFechaTope())){
+			fechaNueva = new Date(trabajo.getFechaTope().getTime());
+		}else{
+			fechaNueva = null;
+		}
 		// en los plazos tope situamos la fecha en el ultimo segundo del dia. En
 		// caso de seleccionar la fecha de hoy, si no hacemos esto, la
 		// diferencia sera negativa

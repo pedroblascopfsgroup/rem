@@ -177,6 +177,12 @@ public interface ActivoTramiteApi {
      */
 	public int numeroFijacionPlazos(ActivoTramite tramite);
 	
+    /**
+     * Devuelve el número de tareas de validacion trabajo que existen para un trámite
+     * @param tramite
+     * @return
+     */
+	public int numeroValidacionTrabajo(ActivoTramite tramite);
 	/**
 	 * Devuelve el último motivo de denegación del trámite de actuación técnica.
 	 * @param tramite

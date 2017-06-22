@@ -1,10 +1,13 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.user.impl;
 
+import org.springframework.stereotype.Component;
+
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 
+@Component
 public class ActuacionTecnicaUserAssignationService implements UserAssigantionService {
 
 	private static final String CODIGO_T004_ANALISIS_PETICION = "T004_AnalisisPeticion";
@@ -34,21 +37,14 @@ public class ActuacionTecnicaUserAssignationService implements UserAssigantionSe
 
 	@Override
 	public Usuario getUser(TareaExterna tareaExterna) {
-
-		return ((TareaActivo)tareaExterna.getTareaPadre()).getTramite().getTrabajo().getUsuarioGestorActivoResponsable();
-		
+		TareaActivo tareaActivo = (TareaActivo)tareaExterna.getTareaPadre();
+		return tareaActivo.getTramite().getTrabajo().getUsuarioGestorActivoResponsable();
 	}
 
 	@Override
-	public Usuario getSupervisor(TareaExterna tareaExterna) {/*
+	public Usuario getSupervisor(TareaExterna tareaExterna) {
 		TareaActivo tareaActivo = (TareaActivo)tareaExterna.getTareaPadre();
-		
-		//TODO: ¡Hay que cambiar el método para que no pida ID sino código!
-		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_ACTIVO);
-		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
-		
-		return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tipoGestor.getId());*/
-		return null;
+		return tareaActivo.getTramite().getTrabajo().getSupervisorActivoResponsable();
 	}
 
 }

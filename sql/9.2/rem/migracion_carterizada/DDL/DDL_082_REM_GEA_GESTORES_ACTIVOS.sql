@@ -49,6 +49,8 @@ BEGIN
             , GEA_GESTOR_ACTIVO   VARCHAR2(20 CHAR)     NOT NULL
             , GEA_TIPO_GESTOR     VARCHAR2(20 CHAR)     NOT NULL
             , VALIDACION          NUMBER(1)             DEFAULT 0 NOT NULL
+            , GEE_ID              NUMBER(16,0)
+            , GEH_ID              NUMBER(16,0)
         )
         '
         ;

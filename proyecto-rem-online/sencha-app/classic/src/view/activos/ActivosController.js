@@ -83,9 +83,24 @@ Ext.define('HreRem.view.activos.ActivosController', {
 		},
 		    
 		onClickCrearTrabajo: function (btn) {
+			
 		  	var me = this;
-		   	me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: null, idAgrupacion: null});
-		 	    	
+		  	var idActivo = me.getViewModel().get("activo.id");
+		  	var idAgrupacion = me.getViewModel().get("agrupacionficha.id");
+		  	var url= $AC.getRemoteUrl('trabajo/getSupervisorGestorTrabajo');
+        	var data;
+    		Ext.Ajax.request({
+    		     url: url,
+    		     params: {idActivo : idActivo, idAgrupacion : idAgrupacion},
+    		     success: function(response, opts) {
+    		    	 data = Ext.decode(response.responseText);
+    		    	 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: null, idAgrupacion: null, idGestor: null, idSupervisor: data.data.id});
+    		         
+    		     },
+    		     failure: function(response) {
+    		    	 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: null, idAgrupacion: null, idUsuario: null});
+    		     }
+    		 });    	
 		},
 
 	onChangeChainedCombo: function(combo) {

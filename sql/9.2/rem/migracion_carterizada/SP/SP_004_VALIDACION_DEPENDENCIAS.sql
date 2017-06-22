@@ -59,7 +59,7 @@ BEGIN
                         , DR.CODIGO_RECHAZO COD_RECHAZO, DR.MOTIVO_RECHAZO MOTIVO_RECHAZO
                     FROM '||V_ESQUEMA||'.'||vTABLA_O||' NI
                     JOIN '||V_ESQUEMA||'.DICCIONARIO_RECHAZOS DR ON DR.CODIGO_RECHAZO = '''||vRECHAZO_RD||'''
-                    LEFT JOIN '||vTABLA_D||' TD ON NI.'||vCAMPO_O||' = TD.'||vCAMPO_D||' AND TD.VALIDACION = 0
+                    LEFT JOIN '||vTABLA_D||' TD ON NI.'||vCAMPO_O||' = TD.'||vCAMPO_D||' AND TD.VALIDACION IN(0,1)
                     WHERE TD.'||vCAMPO_D||' IS NULL AND NI.'||vCAMPO_O||' IS NOT NULL)';
                     --DBMS_OUTPUT.PUT_LINE(V_MSQL);
                 EXECUTE IMMEDIATE V_MSQL;
@@ -72,7 +72,7 @@ BEGIN
                     ON (TO_CHAR(T2.CLAVE_DATO) = TO_CHAR(T1.'||vCLAVE2||'))
                     WHEN MATCHED THEN UPDATE SET
                         T1.VALIDACION = '''||vRECHAZO_RD||'''
-                    WHERE T1.VALIDACION = 0';
+                    WHERE T1.VALIDACION IN (0,1)';
                 
                 DBMS_OUTPUT.PUT_LINE('  [INFO] Validando código, '||vCAMPO_O||', en tabla, '||vTABLA_O||', contra el campo de la tabla, '||vTABLA_D||'.'||vCAMPO_D||'');
                 --DBMS_OUTPUT.PUT_LINE(V_MSQL);

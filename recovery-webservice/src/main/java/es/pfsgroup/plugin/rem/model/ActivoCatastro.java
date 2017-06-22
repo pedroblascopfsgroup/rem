@@ -88,6 +88,15 @@ public class ActivoCatastro implements Serializable, Auditable {
 	@Column(name = "CAT_FECHA_REV_VALOR_CATASTRAL")
 	private Date fechaRevValorCatastral;
 	
+	@Column(name = "CAT_F_ALTA_CATASTRO")
+	private Date fechaAltaCatastro;
+
+	@Column(name = "CAT_F_BAJA_CATASTRO")
+	private Date fechaBajaCatastro;
+	
+	@Column(name = "CAT_OBSERVACIONES")
+	private String observaciones;
+	
 	
 	
 	
@@ -229,6 +238,29 @@ public class ActivoCatastro implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 
+	public Date getFechaAltaCatastro() {
+		return fechaAltaCatastro;
+	}
+
+	public void setFechaAltaCatastro(Date fechaAltaCatastro) {
+		this.fechaAltaCatastro = fechaAltaCatastro;
+	}
+
+	public Date getFechaBajaCatastro() {
+		return fechaBajaCatastro;
+	}
+
+	public void setFechaBajaCatastro(Date fechaBajaCatastro) {
+		this.fechaBajaCatastro = fechaBajaCatastro;
+	}
+
+	public String getObservaciones() {
+		return observaciones;
+	}
+
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
+	}
 
 
 

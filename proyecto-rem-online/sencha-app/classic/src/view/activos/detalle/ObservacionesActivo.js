@@ -72,6 +72,7 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
 			       		text: 'Observación',
 			       	    dataIndex: 'observacion',
 			       		flex: 6,
+			       		maxLength : 1000,
 			       		editor: {
 			       			xtype:'textarea',
 			       			allowBlank: false

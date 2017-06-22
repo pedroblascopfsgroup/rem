@@ -64,6 +64,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 
 	public static final String TIPO_CAMPO_INFORMATIVO = "textinf";
 	public static final String TIPO_CAMPO_FECHA = "date";
+	public static final String TIPO_CAMPO_FECHA_MAX_TO_DAY = "datemaxtod";
 	public static final String TIPO_CAMPO_HORA = "time";
 	public static final String TIPO_COMBOBOX_INICIAL = "comboini";
 	public static final String TIPO_COMBOBOX_INICIAL_ED = "comboinied";
@@ -380,6 +381,15 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 	            		    if(!Checks.esNulo(fecha))
 	            		    	item.setValue(formatoFecha.format(fecha));
             			}
+            		}
+            	}
+            	if(item.getType().equals(TIPO_CAMPO_FECHA_MAX_TO_DAY))
+            	{
+            		if(item.getTareaProcedimiento().getCodigo().equals("T004_EleccionProveedorYTarifa") 
+            				&& item.getNombre().equals("fechaEmision")){
+            			Date fecha = new Date();
+            			SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+            			item.setValue(formatoFecha.format(fecha));
             		}
             	}
             	if(item.getType().equals(TIPO_CAMPO_HORA))

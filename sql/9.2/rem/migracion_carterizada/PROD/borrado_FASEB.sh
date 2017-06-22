@@ -2,18 +2,21 @@
 if [ "$#" -eq 2 ]; then
 	fecha_ini=`date +%Y%m%d_%H%M%S`
 	sed "s/#USUARIO_MIGRACION#/$2/g" PROD/BORRADO_MIGRACION_FASEB.sql > PROD/BORRADO_MIGRACION_FASEB_$2.sql
-	echo "Borrando..."
-	$ORACLE_HOME/bin/sqlplus "$1" @PROD/BORRADO_MIGRACION_FASEB_$2.sql > PROD/Logs/000_borrado_migracion_$2_$fecha_ini.log
+	echo "Borrando... "$2
+	if [ -f PROD/Logs/001_*.log ] ; then
+		mv -f PROD/Logs/001_*.log PROD/Logs/backup
+	fi
+	$ORACLE_HOME/bin/sqlplus "$1" @PROD/BORRADO_MIGRACION_FASEB_$2.sql > PROD/Logs/001_borrado_migracion_$2_$fecha_ini.log
 	if [ $? != 0 ] ; then 
 	   	echo -e "\n\n======>>> "Error en @PROD/BORRADO_MIGRACION_FASEB_$2.sql
 	   	exit 1
 	else
 		rm -f PROD/BORRADO_MIGRACION_FASEB_$2.sql
-		echo "Revise log: PROD/Logs/000_borrado_migracion_$2_$fecha_ini.log"
+		echo "Revise log: PROD/Logs/001_borrado_migracion_$2_$fecha_ini.log"
 	fi
 else
 	echo "Parametros: <pass@host:puerto/ORACLE_SID>"
-	echo "Parametros: <USUARIO_MIGRACION>"
+	echo "Parametros: <USUARIO_MIGRACION> {'MIG2','MIGRAREM01BNK}"
 	exit 1
 fi
 

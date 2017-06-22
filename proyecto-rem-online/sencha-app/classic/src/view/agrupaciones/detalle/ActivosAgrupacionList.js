@@ -336,7 +336,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 		];
 
         me.selModel = Ext.create('HreRem.view.common.CheckBoxModelBase');
-
     	me.callParent();
 
     	me.getSelectionModel().on({

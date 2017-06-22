@@ -26,7 +26,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleMain', {
 
     configCmp: function(data) {
     	var me = this;
-
     	if(me.down('[cls=container-mask-background]')) {
     		me.removeAll();
     		me.add({xtype: 'cabeceraexpediente'});
@@ -36,9 +35,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleMain', {
     	 * La formula que desactiva la pestaña de reserva no actua cuando se renderiza por primera vez el expediente
     	 */
     	var reservaDisabled;
+    	var bloqueado;
     	reservaDisabled = !me.getViewModel().get('expediente.tieneReserva') || me.getViewModel().get('expediente.tipoExpedienteCodigo') === "02";
-		reservaDisabled = Ext.isDefined(reservaDisabled)? reservaDisabled : true;		
+		reservaDisabled = Ext.isDefined(reservaDisabled)? reservaDisabled : true;
+		bloqueado = me.getViewModel().get('expediente.bloqueado');
     	me.down('reservaexpediente').setDisabled(reservaDisabled);
-
+		me.down('expedientedetalle').bloquearExpediente(me.down('datosbasicosexpediente'),bloqueado);
+		me.down('ofertaexpediente').bloquearExpediente(me.down('ofertaexpediente'),bloqueado);
+		if(me.down('activoExpedienteTabPanel') != undefined){
+			me.down('activoExpedienteTabPanel').bloquearExpediente(me.down('activoExpedienteTabPanel'),bloqueado);
+		}
     }
 });

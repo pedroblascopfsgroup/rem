@@ -10,7 +10,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
     records				: ['resolucion', 'financiacion'],
     recordsClass		: ['HreRem.model.ExpedienteFormalizacionResolucion', 'HreRem.model.ExpedienteFinanciacion'],
     requires			: ['HreRem.model.ExpedienteFormalizacionResolucion', 'HreRem.model.ExpedienteFinanciacion',
-    						'HreRem.view.expedientes.BloqueosFormalizacionList', 'HreRem.model.BloqueosFormalizacionModel'],
+    						'HreRem.view.expedientes.BloqueosFormalizacionList', 'HreRem.model.BloqueosFormalizacionModel', 'HreRem.view.expedientes.Desbloquear'],
     listeners			: {
 		boxready :'cargarTabData'
 	},
@@ -172,11 +172,12 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 			    		title: HreRem.i18n('title.posicionamiento'),
 					    reference: 'listadoposicionamiento',
 					    idPrincipal: 'expediente.id',
+					    topBar: true,
 						bind: {
-							store: '{storePosicionamientos}'
-						},			    
-			    		topBar: true,
-			    		listeners: { 
+							store: '{storePosicionamientos}',
+							topBar: '{!esExpedienteBloqueado}'
+						},		    
+						listeners: { 
 		    				rowdblclick: 'comprobarCamposFechas',
 		    				beforeedit: 'comprobarCamposFechas',
 							rowclick: 'onRowClickPosicionamiento'
@@ -449,6 +450,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 //							
 //						}
 //					},
+					 
 				    {
 	                	xtype: 'button',
 	                	reference: 'btnGenerarHojaDatos',
@@ -458,6 +460,26 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 	                	text: HreRem.i18n('btn.generar.hoja.datos'),
 	                	handler: 'onClickGenerarHojaExcel',
 	                	margin: '10 10 10 10'
+	                },
+	                {
+	                	xtype: 'button',
+	                	reference: 'btnDesBloquearExpediente',
+	                	text:HreRem.i18n('title.bloquear.exp'),
+	                	handler: 'onClickBloquearExpediente',
+	                	margin: '10 10 10 10',
+	                	bind: {
+	                		disabled: '{expediente.bloqueado}'
+	                	},
+	                },
+	                {
+	                	xtype: 'button',
+	                	reference: 'btnBloquearExpediente',
+	                	text:HreRem.i18n('title.desbloquear.exp'),
+	                	handler: 'onClickDesbloquearExpediente',
+	                	margin: '10 10 10 10',
+	                	bind: {
+	                		disabled: '{!expediente.bloqueado}'
+	                	},
 	                }
 				]			
 			},
@@ -671,6 +693,12 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
     funcionRecargar: function() {
     	var me = this; 
 		me.recargar = false;		
-		me.lookupController().cargarTabData(me);		
+		me.lookupController().cargarTabData(me);	
+    },
+    
+    funcionReloadExp: function() {
+    	var me = this; 
+		me.recargar = false;		
+		me.lookupController().refrescarExpediente(true);
     }
 });

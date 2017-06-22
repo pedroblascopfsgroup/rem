@@ -222,9 +222,10 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 		var me = this; 
 		me.recargar = false;
 		Ext.Array.each(me.query('grid'), function(grid) {
-			grid.mask();
-  			grid.getStore().load({callback: function() {grid.unmask();}});
-  		});	
+			if(grid != undefined){
+				grid.getStore().load();
+			}
+  		});		
     }
     
 });

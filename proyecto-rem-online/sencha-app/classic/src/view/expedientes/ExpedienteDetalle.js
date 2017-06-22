@@ -9,6 +9,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
     			'HreRem.view.expedientes.FormalizacionExpediente', 'HreRem.view.expedientes.GestionEconomicaExpediente',
 				'HreRem.view.expedientes.CompradoresExpediente', 'HreRem.view.expedientes.OfertaTanteoYRetracto',
 				'HreRem.view.expedientes.GestoresExpediente'],
+	bloqueado: false,
 
     listeners	: {
 			boxready: function (tabPanel) {
@@ -105,18 +106,27 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 	        me.callParent();
 	    },
 
-		evaluarBotonesEdicion: function(tab) {    	
+		evaluarBotonesEdicion: function(tab) {
 			var me = this;
+			me.bloquearExpediente(tab,me.bloqueado);
+		},
+	    bloquearExpediente: function(tab,bloqueado) {    	
+			var me = this;
+			me.bloqueado = bloqueado;
 			me.down("[itemId=botoneditar]").setVisible(false);
 			var editionEnabled = function() {
 				me.down("[itemId=botoneditar]").setVisible(true);
 			}
 			
-			// Si la pestaña recibida no tiene asignados roles de edicion 
-			if(Ext.isEmpty(tab.funPermEdition)) {
-				editionEnabled();
-			} else {
-				$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
+			if(!bloqueado){
+				// Si la pestaña recibida no tiene asignados roles de edicion 
+				if(Ext.isEmpty(tab.funPermEdition)) {
+					editionEnabled();
+				} else {
+					$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
+				}
+			}else{
+				me.down("[itemId=botoneditar]").setVisible(false);
 			}
 		}
 });

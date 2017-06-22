@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.expedienteComercial;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -56,6 +57,7 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
@@ -132,6 +134,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
@@ -218,6 +221,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Autowired
 	private GestorExpedienteComercialApi gestorExpedienteApi;
+	
+	@Autowired
+	private GestorActivoApi gestorActivoApi;
 
 	@Override
 	public String managerName() {
@@ -879,6 +885,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					} else {
 						dto.setAlquilerOpcionCompra(0);
 					}
+				}
+				
+				if (Checks.esNulo(expediente.getBloqueado()) || expediente.getBloqueado().equals(Integer.valueOf(0)) ) {
+					dto.setBloqueado(false);
+				}else{
+					dto.setBloqueado(true);
 				}
 
 			}
@@ -1994,66 +2006,68 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		// Comprobar si se habilita el botón de 'generación hoja de datos'.
 		Boolean permitirGenerarHoja = true;
-
-		if (!Checks.esNulo(expediente.getEstadoPbc()) && expediente.getEstadoPbc() == 0) {
-			permitirGenerarHoja = false;
-		}
-
-		if(!Checks.esNulo(expediente.getUltimoPosicionamiento())){
-			if(new Date().compareTo(expediente.getUltimoPosicionamiento().getFechaPosicionamiento()) > 0) {
+		//permitimos hoja de datos si el expediente está bloqueado
+		if(expediente.getBloqueado() == null || expediente.getBloqueado().equals(Integer.valueOf(0))){
+			if (!Checks.esNulo(expediente.getEstadoPbc()) && expediente.getEstadoPbc() == 0) {
 				permitirGenerarHoja = false;
 			}
-		}
-		List<BloqueoActivoFormalizacion> bloqueos = genericDao.getList(BloqueoActivoFormalizacion.class,
-				genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId()));
-		if (!Checks.estaVacio(bloqueos)) {
-			permitirGenerarHoja = false;
-		}
-
-		CondicionanteExpediente condiciones = expediente.getCondicionante();
-		Activo activoPrincipal = expediente.getOferta().getActivoPrincipal();
-		if (!Checks.esNulo(activoPrincipal.getSituacionPosesoria()) && !Checks.esNulo(condiciones)) {
-
-			// Comprobar fecha toma posesión.
-			if (!Checks.esNulo(activoPrincipal.getSituacionPosesoria().getFechaTomaPosesion()) && !Checks.esNulo(condiciones.getPosesionInicial())
-					&& condiciones.getPosesionInicial() != 1) {
-				permitirGenerarHoja = false;
-			} else if (Checks.esNulo(activoPrincipal.getSituacionPosesoria().getFechaTomaPosesion()) && !Checks.esNulo(condiciones.getPosesionInicial())
-					&& condiciones.getPosesionInicial() != 0) {
-				permitirGenerarHoja = false;
-			} else if (Checks.esNulo(condiciones.getPosesionInicial())) {
+	
+			if(!Checks.esNulo(expediente.getUltimoPosicionamiento())){
+				if(new Date().compareTo(expediente.getUltimoPosicionamiento().getFechaPosicionamiento()) > 0) {
+					permitirGenerarHoja = false;
+				}
+			}
+			List<BloqueoActivoFormalizacion> bloqueos = genericDao.getList(BloqueoActivoFormalizacion.class,
+					genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId()));
+			if (!Checks.estaVacio(bloqueos)) {
 				permitirGenerarHoja = false;
 			}
-
-			// Comprobar estado del título.
-			if (!Checks.esNulo(condiciones.getEstadoTitulo()) && Checks.esNulo(activoPrincipal.getTitulo().getEstado())) {
-				permitirGenerarHoja = false;
-			} else if (Checks.esNulo(condiciones.getEstadoTitulo()) && !Checks.esNulo(activoPrincipal.getTitulo().getEstado())) {
-				permitirGenerarHoja = false;
-			} else if (!Checks.esNulo(condiciones.getEstadoTitulo()) && !Checks.esNulo(activoPrincipal.getTitulo().getEstado())
-					&& !condiciones.getEstadoTitulo().equals(activoPrincipal.getTitulo().getEstado())) {
-				permitirGenerarHoja = false;
-			}
-
-			// Comprobar ocupación y con título.
-			if (Checks.esNulo(condiciones.getSituacionPosesoria())
-					&& (!Checks.esNulo(activoPrincipal.getSituacionPosesoria().getOcupado()) || !Checks.esNulo(activoPrincipal.getSituacionPosesoria().getConTitulo()))) {
-				permitirGenerarHoja = false;
-			} else if (!Checks.esNulo(condiciones.getSituacionPosesoria())
-					&& (Checks.esNulo(activoPrincipal.getSituacionPosesoria().getOcupado()) && Checks.esNulo(activoPrincipal.getSituacionPosesoria().getConTitulo()))) {
-				permitirGenerarHoja = false;
-			} else if (!Checks.esNulo(condiciones.getSituacionPosesoria())
-					&& condiciones.getSituacionPosesoria().getCodigo().equals(DDSituacionesPosesoria.SITUACION_POSESORIA_LIBRE)
-					&& (activoPrincipal.getSituacionPosesoria().getOcupado() != 0 || activoPrincipal.getSituacionPosesoria().getConTitulo() != 0)) {
-				permitirGenerarHoja = false;
-			} else if (!Checks.esNulo(condiciones.getSituacionPosesoria())
-					&& condiciones.getSituacionPosesoria().getCodigo().equals(DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_CON_TITULO)
-					&& (activoPrincipal.getSituacionPosesoria().getOcupado() != 1 || activoPrincipal.getSituacionPosesoria().getConTitulo() != 1)) {
-				permitirGenerarHoja = false;
-			} else if (!Checks.esNulo(condiciones.getSituacionPosesoria())
-					&& condiciones.getSituacionPosesoria().getCodigo().equals(DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_SIN_TITULO)
-					&& (activoPrincipal.getSituacionPosesoria().getOcupado() != 1 || activoPrincipal.getSituacionPosesoria().getConTitulo() != 0)) {
-				permitirGenerarHoja = false;
+	
+			CondicionanteExpediente condiciones = expediente.getCondicionante();
+			Activo activoPrincipal = expediente.getOferta().getActivoPrincipal();
+			if (!Checks.esNulo(activoPrincipal.getSituacionPosesoria()) && !Checks.esNulo(condiciones)) {
+	
+				// Comprobar fecha toma posesión.
+				if (!Checks.esNulo(activoPrincipal.getSituacionPosesoria().getFechaTomaPosesion()) && !Checks.esNulo(condiciones.getPosesionInicial())
+						&& condiciones.getPosesionInicial() != 1) {
+					permitirGenerarHoja = false;
+				} else if (Checks.esNulo(activoPrincipal.getSituacionPosesoria().getFechaTomaPosesion()) && !Checks.esNulo(condiciones.getPosesionInicial())
+						&& condiciones.getPosesionInicial() != 0) {
+					permitirGenerarHoja = false;
+				} else if (Checks.esNulo(condiciones.getPosesionInicial())) {
+					permitirGenerarHoja = false;
+				}
+	
+				// Comprobar estado del título.
+				if (!Checks.esNulo(condiciones.getEstadoTitulo()) && Checks.esNulo(activoPrincipal.getTitulo().getEstado())) {
+					permitirGenerarHoja = false;
+				} else if (Checks.esNulo(condiciones.getEstadoTitulo()) && !Checks.esNulo(activoPrincipal.getTitulo().getEstado())) {
+					permitirGenerarHoja = false;
+				} else if (!Checks.esNulo(condiciones.getEstadoTitulo()) && !Checks.esNulo(activoPrincipal.getTitulo().getEstado())
+						&& !condiciones.getEstadoTitulo().equals(activoPrincipal.getTitulo().getEstado())) {
+					permitirGenerarHoja = false;
+				}
+	
+				// Comprobar ocupación y con título.
+				if (Checks.esNulo(condiciones.getSituacionPosesoria())
+						&& (!Checks.esNulo(activoPrincipal.getSituacionPosesoria().getOcupado()) || !Checks.esNulo(activoPrincipal.getSituacionPosesoria().getConTitulo()))) {
+					permitirGenerarHoja = false;
+				} else if (!Checks.esNulo(condiciones.getSituacionPosesoria())
+						&& (Checks.esNulo(activoPrincipal.getSituacionPosesoria().getOcupado()) && Checks.esNulo(activoPrincipal.getSituacionPosesoria().getConTitulo()))) {
+					permitirGenerarHoja = false;
+				} else if (!Checks.esNulo(condiciones.getSituacionPosesoria())
+						&& condiciones.getSituacionPosesoria().getCodigo().equals(DDSituacionesPosesoria.SITUACION_POSESORIA_LIBRE)
+						&& (activoPrincipal.getSituacionPosesoria().getOcupado() != 0 || activoPrincipal.getSituacionPosesoria().getConTitulo() != 0)) {
+					permitirGenerarHoja = false;
+				} else if (!Checks.esNulo(condiciones.getSituacionPosesoria())
+						&& condiciones.getSituacionPosesoria().getCodigo().equals(DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_CON_TITULO)
+						&& (activoPrincipal.getSituacionPosesoria().getOcupado() != 1 || activoPrincipal.getSituacionPosesoria().getConTitulo() != 1)) {
+					permitirGenerarHoja = false;
+				} else if (!Checks.esNulo(condiciones.getSituacionPosesoria())
+						&& condiciones.getSituacionPosesoria().getCodigo().equals(DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_SIN_TITULO)
+						&& (activoPrincipal.getSituacionPosesoria().getOcupado() != 1 || activoPrincipal.getSituacionPosesoria().getConTitulo() != 0)) {
+					permitirGenerarHoja = false;
+				}
 			}
 		}
 
@@ -4374,6 +4388,218 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		
 		return true;
+	}
+
+	@Override
+	public String validaBloqueoExpediente(Long idExpediente) {
+		String codigoError = "";
+
+		ExpedienteComercial expediente = this.findOne(idExpediente);
+		//validamos condiciones juridicas
+		if (expediente.getEstadoPbc() == null || expediente.getEstadoPbc().equals(Integer.valueOf(0))
+				|| expediente.getRiesgoReputacional() == null
+				|| expediente.getRiesgoReputacional().equals(Integer.valueOf(1))
+				|| expediente.getConflictoIntereses() == null
+				|| expediente.getConflictoIntereses().equals(Integer.valueOf(1))) {
+			codigoError = "imposible.bloquear.responsabilidad.corporativa";
+
+		} else {
+			//validamos los bloqueos
+			List<ActivoOferta> activosExpediente = expediente.getOferta().getActivosOferta();
+			boolean bloqueoVigente = false;
+			for (ActivoOferta activoOferta : activosExpediente) {
+				Activo activo = activoOferta.getPrimaryKey().getActivo();
+				DtoInformeJuridico dtoInfoJuridico = this.getFechaEmisionInfJuridico(idExpediente, activo.getId());
+				if (dtoInfoJuridico != null && dtoInfoJuridico.getResultadoBloqueo() != null
+						&& dtoInfoJuridico.getResultadoBloqueo().equals(InformeJuridico.RESULTADO_DESFAVORABLE)) {
+					bloqueoVigente = true;
+					break;
+				}
+			}
+			if (bloqueoVigente) {
+				codigoError = "imposible.bloquear.bloqueo.vigente";
+			} else {
+				//validamos los tanteos
+				List<TanteoActivoExpediente> tanteosExpediente = expediente.getTanteoActivoExpediente();
+				int contTanteos = 0;
+				int contTanteosRenunciado = 0;
+				for (TanteoActivoExpediente tanteo : tanteosExpediente) {
+					contTanteos++;
+					if (tanteo.getResultadoTanteo() != null) {
+						if (tanteo.getResultadoTanteo().getCodigo().equals(DDResultadoTanteo.CODIGO_EJERCIDO)) {
+							break;
+						} else if (tanteo.getResultadoTanteo().getCodigo()
+								.equals(DDResultadoTanteo.CODIGO_RENUNCIADO)) {
+							contTanteosRenunciado++;
+						}
+					}
+
+				}
+				if (contTanteos != contTanteosRenunciado) {
+					codigoError = "imposible.bloquear.tanteos.vigentes";
+				}else{
+					//validamos condiciones
+					boolean seCumplenCondiciones = true;
+					for (ActivoOferta activoOferta : activosExpediente) {
+						Activo activo = activoOferta.getPrimaryKey().getActivo();
+						DtoCondicionesActivoExpediente condiciones = this.getCondicionesActivoExpediete(idExpediente,
+								activo.getId());
+						if (condiciones.getSituacionPosesoriaCodigo() != null
+								&& condiciones.getSituacionPosesoriaCodigoInformada() != null
+								&& condiciones.getSituacionPosesoriaCodigo()
+										.equals(condiciones.getSituacionPosesoriaCodigoInformada())
+								&& condiciones.getPosesionInicial() != null
+								&& condiciones.getPosesionInicialInformada() != null
+										& condiciones.getPosesionInicial().equals(condiciones.getPosesionInicialInformada())
+								&& condiciones.getEstadoTitulo() != null && condiciones.getEstadoTituloInformada() != null
+								&& condiciones.getEstadoTitulo().equals(condiciones.getEstadoTituloInformada())) {
+							seCumplenCondiciones = true;
+
+						} else {
+							seCumplenCondiciones = false;
+							break;
+						}
+					}
+					if(!seCumplenCondiciones){
+						codigoError = "imposible.bloquear.condiciones";
+					}else{
+						//validamos fecha posicionamiento
+						if(expediente.getPosicionamientos() == null || expediente.getPosicionamientos().size()<1){
+							codigoError = "imposible.bloquear.fecha.posicionamiento";
+						}else{
+							//el usuario logada tiene que ser gestoria
+							Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+							if(!genericAdapter.isGestoria(usuarioLogado) && !genericAdapter.isSuper(usuarioLogado)){
+								codigoError = "imposible.bloquear.no.es.gestoria";
+							}
+						}
+					}
+					
+				}
+
+			}
+
+		}
+		
+		
+		return codigoError;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void bloquearExpediente(Long idExpediente) {
+		ExpedienteComercial expediente = this.findOne(idExpediente);
+		expediente.setBloqueado(1);
+		genericDao.update(ExpedienteComercial.class, expediente);
+
+		try {
+			// notificamos por correo a los interesados
+			Posicionamiento posicionamiento = expediente.getUltimoPosicionamiento();
+			ArrayList<String> mailsPara = this.obtnerEmailsBloqueoExpediente(expediente);
+			String asunto = "Bloqueo del expediente comercial ".concat(String.valueOf(expediente.getId()));
+			String cuerpo = "El expediente ".concat(String.valueOf(expediente.getId()))
+					+ " se ha posicionado correctamente para su firma el"
+					+ " día #Fecha_posicionamiento a las #Hora_posicionamiento en la notaría #Notaria";
+			if(posicionamiento != null){
+				DateFormat dfDia = new SimpleDateFormat("dd/MM/yyyy");
+				DateFormat dfHora = new SimpleDateFormat("HH:mm");
+				if(posicionamiento.getFechaPosicionamiento() != null){
+					String fechaPos = dfDia.format(posicionamiento.getFechaPosicionamiento());
+					cuerpo = cuerpo.replace("#Fecha_posicionamiento", fechaPos);
+					String horaPos = dfHora.format(posicionamiento.getFechaPosicionamiento());
+					cuerpo = cuerpo.replace("#Hora_posicionamiento", horaPos);
+				}
+				if(posicionamiento.getNotario() != null){
+					cuerpo = cuerpo.replace("#Notaria", posicionamiento.getNotario().getNombre());
+					if(posicionamiento.getNotario().getDireccion() != null){
+						cuerpo = cuerpo.concat(", situado en ").concat(posicionamiento.getNotario().getDireccion());
+					}
+					
+				}
+			}
+			
+			genericAdapter.sendMail(mailsPara, new ArrayList<String>(), asunto, cuerpo);
+		} catch (Exception e) {
+			logger.error("No se podido notificar por correo el bloqueo del expediente",e);
+		}
+
+	}
+
+	@Override
+	public String validaDesbloqueoExpediente(Long idExpediente) {
+		String codigoError = "";
+		ExpedienteComercial expediente = this.findOne(idExpediente);
+		if(expediente.getEstado() != null && expediente.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.VENDIDO)){
+			codigoError = "imposible.desbloquear.vendido";
+		}
+		return codigoError;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void desbloquearExpediente(Long idExpediente, String motivoCodigo, String motivoDescLibre) {
+		ExpedienteComercial expediente = this.findOne(idExpediente);
+		DDMotivosDesbloqueo motivoDesbloqueo = null;
+		if(!Checks.esNulo(expediente)){
+			expediente.setBloqueado(0);
+			if(!Checks.esNulo(motivoCodigo)){
+				motivoDesbloqueo= (DDMotivosDesbloqueo) genericDao.get(DDMotivosDesbloqueo.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", motivoCodigo));
+				if(!Checks.esNulo(motivoDesbloqueo)){
+					expediente.setMotivoDesbloqueo(motivoDesbloqueo);
+				}
+			}
+			
+			expediente.setMotivoDesbloqueoDescLibre(motivoDescLibre);
+			genericDao.update(ExpedienteComercial.class, expediente);
+			try {
+				if((motivoDescLibre == null || motivoDescLibre.isEmpty()) && motivoDesbloqueo != null){
+					motivoDescLibre = motivoDesbloqueo.getDescripcionLarga();
+				}
+				// notificamos por correo a los interesados
+				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+				ArrayList<String> mailsPara = this.obtnerEmailsBloqueoExpediente(expediente);
+				String asunto = "Desbloqueo del expediente comercial ".concat(String.valueOf(expediente.getId()));
+				String cuerpo = "El expediente ".concat(String.valueOf(expediente.getId()))
+						+ "  se ha desbloqueado por el usuario #Usuario_logado por motivo: #Motivo";
+				
+				cuerpo = cuerpo.replace("#Usuario_logado", usuarioLogado.getApellidoNombre());
+				cuerpo = cuerpo.replace("#Motivo", motivoDescLibre);
+				genericAdapter.sendMail(mailsPara, new ArrayList<String>(), asunto, cuerpo);
+			}catch (Exception e) {
+				logger.error("No se podido notificar por correo el desbloqueo del expediente",e);
+			}
+		}
+	}
+	
+	private ArrayList<String> obtnerEmailsBloqueoExpediente(ExpedienteComercial expediente) {
+		ArrayList<String> mailsPara = new ArrayList<String>();
+		if (expediente.getOferta() != null && expediente.getOferta().getPrescriptor() != null
+				&& expediente.getOferta().getPrescriptor().getEmail() != null) {
+			mailsPara.add(expediente.getOferta().getPrescriptor().getEmail());
+
+		}
+		String correoMediador = null;
+		if (expediente.getTrabajo() != null && !Checks.esNulo(expediente.getTrabajo().getMediador())) {
+			correoMediador = expediente.getTrabajo().getMediador().getEmail();
+		}
+		if (!Checks.esNulo(correoMediador)) {
+			mailsPara.add(correoMediador);
+		}
+		if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null) {
+			Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(expediente.getOferta().getActivoPrincipal(),
+					GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+			if (gestorActivo != null && gestorActivo.getEmail() != null) {
+				mailsPara.add(gestorActivo.getEmail());
+			}
+			Usuario gestorActivoBackoffice = gestorActivoApi.getGestorByActivoYTipo(
+					expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_BACKOFFICE);
+			if (gestorActivoBackoffice != null && gestorActivoBackoffice.getEmail() != null) {
+				mailsPara.add(gestorActivoBackoffice.getEmail());
+			}
+		}
+		return mailsPara;
+
 	}
 
 }

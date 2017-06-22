@@ -5,6 +5,7 @@ Ext.define('HreRem.view.expedientes.OfertaExpediente', {
     reference	: 'ofertaexpedienteref',
     layout		: 'fit',
     requires	: ['HreRem.view.expedientes.DatosBasicosOferta'],
+    bloqueado: false,
 	listeners	: {
     	boxready: function (tabPanel) {
 			if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
@@ -92,14 +93,37 @@ Ext.define('HreRem.view.expedientes.OfertaExpediente', {
 
     	me.callParent();
     },
-
+    
+	evaluarBotonesEdicion: function(tab) {
+		var me = this;
+		me.bloquearExpediente(tab,me.bloqueado);
+	},
+    bloquearExpediente: function(tab,bloqueado) {  
+    	var me = this;
+		me.bloqueado = bloqueado;
+		me.down("[itemId=botoneditar]").setVisible(false);
+		var editionEnabled = function() {
+			me.down("[itemId=botoneditar]").setVisible(true);
+		}
+		
+		if(!bloqueado){
+			// Si la pestaña recibida no tiene asignados roles de edicion 
+			if(Ext.isEmpty(tab.funPermEdition)) {
+				editionEnabled();
+			} else {
+				$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
+			}
+		}else{
+			me.down("[itemId=botoneditar]").setVisible(false);
+		}
+	},
     funcionRecargar: function() {
 		var me = this;
 		me.recargar = false;
 		me.getActiveTab().funcionRecargar();
-    },
+    }
 
-    evaluarBotonesEdicion: function(tab) {
+    /*evaluarBotonesEdicion: function(tab) {
 		var me = this;
 		me.down("[itemId=botoneditar]").setVisible(false);
 		var editionEnabled = function() {
@@ -111,5 +135,5 @@ Ext.define('HreRem.view.expedientes.OfertaExpediente', {
     	} else {
     		$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
     	}
-	}
+	}*/
 });

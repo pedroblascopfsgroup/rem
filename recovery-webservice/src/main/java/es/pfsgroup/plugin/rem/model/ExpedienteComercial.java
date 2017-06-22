@@ -35,6 +35,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
 
 
 /**
@@ -197,6 +198,16 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @JoinColumn(name = "ECO_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<InformeJuridico> listaInformeJuridico;
+    
+    @Column(name="ECO_BLOQUEADO")
+    private Integer bloqueado;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_MDE_ID")
+    private DDMotivosDesbloqueo motivoDesbloqueo;
+    
+    @Column(name="ECO_MDE_OTROS")
+    private String motivoDesbloqueoDescLibre;
     
 	@Version   
 	private Long version;
@@ -582,10 +593,28 @@ public class ExpedienteComercial implements Serializable, Auditable {
 		this.listaInformeJuridico = listaInformeJuridico;
 	}
 
+	public Integer getBloqueado() {
+		return bloqueado;
+	}
 
+	public void setBloqueado(Integer bloqueado) {
+		this.bloqueado = bloqueado;
+	}
 
+	public DDMotivosDesbloqueo getMotivoDesbloqueo() {
+		return motivoDesbloqueo;
+	}
 
-	
-    
+	public void setMotivoDesbloqueo(DDMotivosDesbloqueo motivoDesbloqueo) {
+		this.motivoDesbloqueo = motivoDesbloqueo;
+	}
+
+	public String getMotivoDesbloqueoDescLibre() {
+		return motivoDesbloqueoDescLibre;
+	}
+
+	public void setMotivoDesbloqueoDescLibre(String motivoDesbloqueoDescLibre) {
+		this.motivoDesbloqueoDescLibre = motivoDesbloqueoDescLibre;
+	}
    
 }

@@ -18,15 +18,17 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
         var items= [
 			{
 			    xtype: 'gridBaseEditableRow',
-			    topBar: $AU.userHasFunction(['EDITAR_TAB_GESTION_ECONOMICA_EXPEDIENTES']),
+			    topBar: true,
 			    reference: 'listadotanteos',
 			    idPrincipal : 'activoExpedienteSeleccionado.idActivo',
 			    idSecundaria : 'expediente.id',
 				cls	: 'panel-base shadow-panel',
 				bind: {
-					store: '{storeTanteosActivo}'
+					store: '{storeTanteosActivo}',
+					topBar: '{!esExpedienteBloqueado}'
+						
 				},
-				minHeight : 180,
+				minHeight : 250,
 				listeners: {
 					rowclick: function(dataview,record) {
 						this.up('form').setBindRecord(record.data);
@@ -274,9 +276,11 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
     funcionRecargar: function() {
     	var me = this; 
 		me.recargar = false;
+		//bloqueado = me.getViewModel().get('expediente.bloqueado');
 		Ext.Array.each(me.query('grid'), function(grid) {
 			grid.mask();
   			grid.getStore().load({callback: function() {grid.unmask();}});
+  			//grid.setTopBar(!bloqueado)
   		});
     }
 });

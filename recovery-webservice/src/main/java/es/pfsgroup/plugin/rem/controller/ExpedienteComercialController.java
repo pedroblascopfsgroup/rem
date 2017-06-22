@@ -28,7 +28,6 @@ import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
-import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
@@ -83,8 +82,6 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	@Autowired
 	private ExpedienteComercialAdapter expedienteComercialAdapter;
 	
-	@Autowired
-	private ActivoAdapter adapter;
 	
 	/**
 	 * Método para modificar la plantilla de JSON utilizada en el servlet.
@@ -1337,6 +1334,60 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 			model.put("success", false);
 		}
 
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView bloqueoExpediente(ModelMap model, Long idExpediente) {
+		
+		try {
+			
+			String errorCode = expedienteComercialApi.validaBloqueoExpediente(idExpediente);
+			
+			if(errorCode == null || errorCode.isEmpty()){
+				expedienteComercialApi.bloquearExpediente(idExpediente);
+				model.put("success", true);
+			}else{
+				model.put("success", false);
+				model.put("errorCode", errorCode);
+			}			
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("errorCode", "imposible.bloquear.general");
+		}		
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView desbloqueoExpediente(ModelMap model, Long idExpediente, String motivoCodigo, String motivoDescLibre) {
+		
+		try {
+			
+			String errorCode = expedienteComercialApi.validaDesbloqueoExpediente(idExpediente);
+			
+			if(errorCode == null || errorCode.isEmpty()){
+				expedienteComercialApi.desbloquearExpediente(idExpediente,motivoCodigo,motivoDescLibre);
+				model.put("success", true);
+			}else{
+				model.put("success", false);
+				model.put("errorCode", errorCode);
+			}			
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("errorCode", "imposible.bloquear.general");
+		}		
+		
 		return createModelAndViewJson(model);
 		
 	}

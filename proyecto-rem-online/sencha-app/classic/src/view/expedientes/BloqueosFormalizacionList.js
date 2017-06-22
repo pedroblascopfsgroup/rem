@@ -7,7 +7,8 @@ Ext.define('HreRem.view.expedientes.BloqueosFormalizacionList', {
 	idPrincipal : 'expediente.id',
     idSecundaria : 'activoExpedienteSeleccionado.idActivo',
     bind		: {
-        store: '{storeBloqueosFormalizacion}'
+        store: '{storeBloqueosFormalizacion}',
+        topBar: '{!esExpedienteBloqueado}'
     },
 
     initComponent: function () {

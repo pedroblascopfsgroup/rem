@@ -27,7 +27,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
    
     
     onRowClickListadoactivos: function(gridView,record){
-    	
     	var me = this;
 		var viewModel = me.getViewModel();
 		var idExpediente = me.getViewModel().get("expediente.id");
@@ -36,8 +35,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		viewModel.set("activoExpedienteSeleccionado", record);
 		viewModel.notify();
 		
-		if(me.lookupReference('activoExpedienteMain').down('bloqueosformalizacionlist'))
+		if(me.lookupReference('activoExpedienteMain').down('bloqueosformalizacionlist')){
 			me.lookupReference('activoExpedienteMain').down('bloqueosformalizacionlist').getStore().load();
+		}
+		
+		var bloqueado = me.getViewModel().get('expediente.bloqueado');
+		if(me.lookupReference('activoExpedienteMain') != undefined){
+			me.lookupReference('activoExpedienteMain').bloquearExpediente(me.lookupReference('activoExpedienteMain'),bloqueado);
+		}
 	
 		var tabPanel = me.lookupReference('activoExpedienteMain');
 		tabPanel.setHidden(false);
@@ -68,13 +73,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		   		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 			
 	       	}
-		});		
+		});	
 		var panelTanteo = tabPanel.down('activoexpedientetanteo');
 		var grid = panelTanteo.down('gridBaseEditableRow');
-		if(grid){
+		if(grid != undefined){
 			var store = grid.getStore();
 			grid.expand();
 			store.loadPage(1)
+		}
+		
+		var panelJuridico = tabPanel.down('activoexpedientejuridico');
+		if(panelJuridico != undefined){
+			me.cargarTabDataInformeJuridico(panelJuridico,false);
 		}
     },
     
@@ -117,28 +127,27 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 	},
 	
-	cargarTabDataInformeJuridico: function (form) {
+	cargarTabDataInformeJuridico: function (form,refreshActivoExpediente) {
 		var me = this,
 		model = null,
 		models = null,
 		nameModels = null,
 		id = me.getViewModel().get("expediente.id");
-		form.mask(HreRem.i18n("msg.mask.loading"));
-				// Si la API tiene metodo de lectura (read).
-				HreRem.model.ExpedienteInformeJuridico.load(id, {
-					params: {idActivo: me.getViewModel().get("activoExpedienteSeleccionado.idActivo")},
-		    		scope: this,
-				    success: function(informeJuridico) {
-				    	me.getViewModel().set("informeJuridico", informeJuridico);
-				    	form.unmask();
-				    	//me.refrescarActivoExpediente(form.refreshAfterSave);
-				    	me.refrescarActivoExpediente(false);
-				    },
-				   	failure: function (a, operation) {
-				   		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		// Si la API tiene metodo de lectura (read).
+		HreRem.model.ExpedienteInformeJuridico.load(id, {
+			params: {idActivo: me.getViewModel().get("activoExpedienteSeleccionado.idActivo")},
+		    scope: this,
+			success: function(informeJuridico) {
+				me.getViewModel().set("informeJuridico", informeJuridico);
+				if(refreshActivoExpediente){
+					me.refrescarActivoExpediente(false);
+				}
+			},
+			failure: function (a, operation) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 					
-			       	}
-				});
+			}
+		});
 			
 	},
 	
@@ -579,29 +588,37 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 
 	abrirFormularioAdjuntarDocumentos: function(grid) {
-		
 		var me = this,
 		idExpediente = me.getViewModel().get("expediente.id");
-    	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente", {entidad: 'expedientecomercial', idEntidad: idExpediente, parent: grid}).show();
+		bloqueado = me.getViewModel().get("expediente.bloqueado");
+		if(!bloqueado){
+			Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente", {entidad: 'expedientecomercial', idEntidad: idExpediente, parent: grid}).show();
+		}else{
+			me.fireEvent("errorToast","Expediente bloqueado");	
+		}
 		
 	},
 	
 	borrarDocumentoAdjunto: function(grid, record) {
 		var me = this;
 		idExpediente = me.getViewModel().get("expediente.id");
-
-		record.erase({
-			params: {idEntidad: idExpediente},
-            success: function(record, operation) {
-           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-           		 grid.fireEvent("afterdelete", grid);
-            },
-            failure: function(record, operation) {
-                  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-                  grid.fireEvent("afterdelete", grid);
-            }
-            
-        });	
+		bloqueado = me.getViewModel().get("expediente.bloqueado");
+		if(!bloqueado){
+			record.erase({
+				params: {idEntidad: idExpediente},
+	            success: function(record, operation) {
+	           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	           		 grid.fireEvent("afterdelete", grid);
+	            },
+	            failure: function(record, operation) {
+	                  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	                  grid.fireEvent("afterdelete", grid);
+	            }
+	            
+	        });
+		}else{
+			me.fireEvent("errorToast","Expediente bloqueado");	
+		}
 	},
 	
 	downloadDocumentoAdjunto: function(grid, record) {
@@ -1260,14 +1277,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this,
 		idExpediente = me.getViewModel().get("expediente.id"),
 		codigoEstado= me.getViewModel().get("expediente.codigoEstado");
-		
-		if(CONST.ESTADOS_EXPEDIENTE['APROBADO']!=codigoEstado){
-			var ventanaCompradores= grid.up().up();
-			var expediente= me.getViewModel().get("expediente");
-			Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente}).show();
-		}
-		else{
-			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.aprobado"));
+		bloqueado = me.getViewModel().get("expediente.bloqueado");
+		if(!bloqueado){		
+			if(CONST.ESTADOS_EXPEDIENTE['APROBADO']!=codigoEstado){
+				var ventanaCompradores= grid.up().up();
+				var expediente= me.getViewModel().get("expediente");
+				Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente}).show();
+			}
+			else{
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.aprobado"));
+			}
+		}else{
+			me.fireEvent("errorToast","Expediente bloqueado");
 		}
 	},
 
@@ -1451,32 +1472,36 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		idExpediente = me.getViewModel().get("expediente.id"),
 		codigoEstado= me.getViewModel().get("expediente.codigoEstado"),
 		idComprador= record.get('id');
-
-		if(CONST.ESTADOS_EXPEDIENTE['APROBADO']!=codigoEstado){
-			record.erase({
-				params: {idExpediente: idExpediente, idComprador: idComprador},
-	            success: function(record, operation) {
-	           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-	           		 grid.fireEvent("afterdelete", grid);
-	            },
-	            failure: function(record, operation) {
-	            	var data = {};
-				    try {
-				    	data = Ext.decode(operation._response.responseText);
-				    }
-				    catch (e){ };
-				    	if (!Ext.isEmpty(data.msg)) {
-				        	me.fireEvent("errorToast", data.msg);
-				        } 
-				        else {
-				        	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-				        }
-	                  grid.fireEvent("afterdelete", grid);
-	            }
-	            
-	        });	
+		bloqueado = me.getViewModel().get("expediente.bloqueado");
+		if(!bloqueado){
+			if(CONST.ESTADOS_EXPEDIENTE['APROBADO']!=codigoEstado){
+				record.erase({
+					params: {idExpediente: idExpediente, idComprador: idComprador},
+		            success: function(record, operation) {
+		           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		           		 grid.fireEvent("afterdelete", grid);
+		            },
+		            failure: function(record, operation) {
+		            	var data = {};
+					    try {
+					    	data = Ext.decode(operation._response.responseText);
+					    }
+					    catch (e){ };
+					    	if (!Ext.isEmpty(data.msg)) {
+					        	me.fireEvent("errorToast", data.msg);
+					        } 
+					        else {
+					        	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					        }
+		                  grid.fireEvent("afterdelete", grid);
+		            }
+		            
+		        });	
+			}else{
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.aprobado"));
+			}
 		}else{
-			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.aprobado"));
+			me.fireEvent("errorToast", "Expediente bloqueado");
 		}
 	},
 
@@ -1694,5 +1719,67 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
  		} else {
  			me.getViewModel().set("editing", false);
  		}
+	},
+    
+    onClickBloquearExpediente: function(btn) {
+
+    	var me = this;
+    	var idExpediente = me.getViewModel().get("expediente.id");
+    	var url =  $AC.getRemoteUrl('expedientecomercial/bloqueoExpediente');
+    	var parametros = {idExpediente : idExpediente};
+    	me.getView().mask();
+    	Ext.Ajax.request({
+    		
+    	     url: url,
+    	     params: parametros,
+
+    	     success: function(response, opts) {
+    	    	 if(Ext.decode(response.responseText).success == "false") {
+    	    		me.fireEvent("errorToast", HreRem.i18n(Ext.decode(response.responseText).errorCode));
+    	    		me.getView().unmask();
+    	         }else if (Ext.decode(response.responseText).success == "true"){
+    	        	me.getView().unmask();
+    	        	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	 				me.refrescarExpediente(true);	
+				 }
+    	     }
+    	 });		
+	},
+	sendDesbloquearExpediente: function(btn) {
+		var me = this;
+		var window = btn.up().up();
+		var form = window.down("formBase").getForm();
+		var idExpediente = btn.up('desbloquearwindow').idExpediente;
+    	var url =  $AC.getRemoteUrl('expedientecomercial/desbloqueoexpediente');
+    	var parametros = {idExpediente : idExpediente,motivoCodigo : form.findField("motivo").getValue(),motivoDescLibre : form.findField("motivoDescLibre").getValue()};
+    	//if(form.isFormValid()) {
+	    	me.getView().mask();
+	    	Ext.Ajax.request({
+	    		
+	    	     url: url,
+	    	     params: parametros,
+	
+	    	     success: function(response, opts) {
+	    	    	 if(Ext.decode(response.responseText).success == "false") {
+	    	    		me.fireEvent("errorToast", HreRem.i18n(Ext.decode(response.responseText).errorCode));
+	    	    		me.getView().unmask();
+	    	         }else if (Ext.decode(response.responseText).success == "true"){
+	    	        	me.getView().unmask();
+	    	        	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	    	        	window.parent.funcionReloadExp();
+	    	        	window.hide();
+						
+					 }
+	    	     }
+	    	 });	
+    	//}else{
+    	//	me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
+    	//}
+	},
+	onClickDesbloquearExpediente: function(btn) {
+		var me = this;
+		var idExpediente = me.getViewModel().get("expediente.id");
+		var ventanaFormalizacion= btn.up().up();
+		Ext.create('HreRem.view.expedientes.Desbloquear',{idExpediente: idExpediente,parent: ventanaFormalizacion}).show();    	
 	}
 });

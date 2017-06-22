@@ -19,7 +19,8 @@ Ext.define('HreRem.view.expedientes.DiarioGestionesExpediente', {
 			    reference: 'listadoObservaciones',
 				cls	: 'panel-base shadow-panel',
 				bind: {
-					store: '{storeObservaciones}'
+					store: '{storeObservaciones}',
+					topBar: '{!esExpedienteBloqueado}'
 				},	
 				
 				columns: [

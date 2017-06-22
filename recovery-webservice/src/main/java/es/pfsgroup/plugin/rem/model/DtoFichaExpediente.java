@@ -96,6 +96,8 @@ public class DtoFichaExpediente extends WebDto {
 	private Boolean ocultarPestTanteoRetracto;
 	
 	private String codDevolucionReserva;
+	
+	private Boolean bloqueado;
 
 	public Long getId() {
 		return id;
@@ -480,6 +482,14 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setCodDevolucionReserva(String codDevolucionReserva) {
 		this.codDevolucionReserva = codDevolucionReserva;
+	}
+
+	public Boolean getBloqueado() {
+		return bloqueado;
+	}
+
+	public void setBloqueado(Boolean bloqueado) {
+		this.bloqueado = bloqueado;
 	}
 
 	

@@ -1323,6 +1323,7 @@ public class ActivoAdapter {
 				BeanUtils.copyProperties(dtoGestor, gestor.getUsuario());
 				BeanUtils.copyProperties(dtoGestor, gestor.getTipoGestor());
 				BeanUtils.copyProperty(dtoGestor, "id", gestor.getId());
+				BeanUtils.copyProperty(dtoGestor, "idUsuario", gestor.getUsuario().getId());
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {

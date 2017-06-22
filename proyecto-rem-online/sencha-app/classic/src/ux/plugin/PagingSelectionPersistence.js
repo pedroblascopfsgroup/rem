@@ -117,7 +117,7 @@ Ext.define('HreRem.ux.plugin.PagingSelectionPersistence', {
         for (i = store.getCount() - 1; i >= 0; i--) {
             rec = store.getAt(i);
 
-            if (me.selected[rec.getId()]) {
+            if (me.selected[rec.get(rec.idProperty)]) {
                 sel.push(rec);
             }
         }
@@ -154,11 +154,11 @@ Ext.define('HreRem.ux.plugin.PagingSelectionPersistence', {
             return;
         }
 
-        if (me.selected[rec.getId()]) {
+        if (me.selected[rec.get(rec.idProperty)]) {
             for (i = me.selection.length - 1; i >= 0; i--) {
-                if (me.selection[i].getId() == rec.getId()) {
+                if (me.selection[i].getId() == rec.get(rec.idProperty)) {
                     me.selection.splice(i, 1);
-                    me.selected[rec.getId()] = false;
+                    me.selected[rec.get(rec.idProperty)] = false;
                     break;
                 }
             }
@@ -306,7 +306,7 @@ Ext.define('HreRem.ux.plugin.PagingSelectionPersistence', {
             }
         },
         selectRecord: function(record) {
-            var id = record.getId();
+            var id = record.get(record.idProperty);
             if (!this.selected[id]) {
                 this.selection.push(record);
                 this.selected[id] = true;

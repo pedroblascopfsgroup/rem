@@ -719,28 +719,21 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
     T004_FijacionPlazoValidacion: function() {
         var me = this;
-
+        
+        me.down('[name=fechaTope]').allowBlank = true;
+        me.down('[name=fechaConcreta]').allowBlank = true;
+        me.down('[name=horaConcreta]').allowBlank = true;
+        
         if (me.down('[name=fechaTope]').value != null) {
-            me.down('[name=fechaTope]').allowBlank = false;
-            me.down('[name=fechaConcreta]').allowBlank = true;
-            me.down('[name=horaConcreta]').allowBlank = true;
             me.down('[name=fechaConcreta]').reset();
             me.down('[name=horaConcreta]').reset();
         } else if (me.down('[name=fechaConcreta]').value != null) {
-            me.down('[name=fechaTope]').allowBlank = true;
-            me.down('[name=fechaConcreta]').allowBlank = false;
-            me.down('[name=horaConcreta]').allowBlank = false;
             me.down('[name=fechaTope]').reset();
         } else {
-            me.down('[name=fechaTope]').allowBlank = false;
-            me.down('[name=fechaConcreta]').allowBlank = true;
-            me.down('[name=horaConcreta]').allowBlank = true;
+            
         }
 
         me.down('[name=fechaTope]').addListener('focus', function(campo) {
-            me.down('[name=fechaTope]').allowBlank = false;
-            me.down('[name=fechaConcreta]').allowBlank = true;
-            me.down('[name=horaConcreta]').allowBlank = true;
             me.down('[name=fechaConcreta]').reset();
             me.down('[name=horaConcreta]').reset();
             me.down('[name=fechaConcreta]').setValue('');
@@ -748,17 +741,11 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         });
 
         me.down('[name=fechaConcreta]').addListener('focus', function(campo) {
-            me.down('[name=fechaTope]').allowBlank = true;
-            me.down('[name=fechaConcreta]').allowBlank = false;
-            me.down('[name=horaConcreta]').allowBlank = false;
             me.down('[name=fechaTope]').reset();
             me.down('[name=fechaTope]').setValue('');
         });
 
         me.down('[name=horaConcreta]').addListener('focus', function(campo) {
-            me.down('[name=fechaTope]').allowBlank = true;
-            me.down('[name=fechaConcreta]').allowBlank = false;
-            me.down('[name=horaConcreta]').allowBlank = false;
             me.down('[name=fechaTope]').reset();
             me.down('[name=fechaTope]').setValue('');
         })

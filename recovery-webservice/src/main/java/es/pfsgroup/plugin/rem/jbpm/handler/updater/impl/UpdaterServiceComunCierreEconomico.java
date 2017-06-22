@@ -26,7 +26,7 @@ public class UpdaterServiceComunCierreEconomico implements UpdaterService {
 	private static final String FECHA_CIERRE = "fechaCierre";
 	private static final String CODIGO_T002_CIERRE_ECONOMICO = "T002_CierreEconomico";
 	private static final String CODIGO_T003_CIERRE_ECONOMICO = "T003_CierreEconomico";
-	private static final String CODIGO_T004_CIERRE_ECONOMICO = "T004_CierreEconomico";
+	//private static final String CODIGO_T004_CIERRE_ECONOMICO = "T004_CierreEconomico";
 	private static final String CODIGO_T005_CIERRE_ECONOMICO = "T005_CierreEconomico";
 	private static final String CODIGO_T006_CIERRE_ECONOMICO = "T006_CierreEconomico";
 	private static final String CODIGO_T008_CIERRE_ECONOMICO = "T008_CierreEconomico";
@@ -74,7 +74,7 @@ public class UpdaterServiceComunCierreEconomico implements UpdaterService {
 	public String[] getCodigoTarea() {
 		// TODO Constantes con los nombres de los nodos que ejecutan este guardado adicional
 		return new String[]{CODIGO_T002_CIERRE_ECONOMICO, CODIGO_T003_CIERRE_ECONOMICO,  
-							CODIGO_T004_CIERRE_ECONOMICO, CODIGO_T005_CIERRE_ECONOMICO, 
+							/*CODIGO_T004_CIERRE_ECONOMICO,*/ CODIGO_T005_CIERRE_ECONOMICO, 
 							CODIGO_T006_CIERRE_ECONOMICO, CODIGO_T008_CIERRE_ECONOMICO};
 	}
 

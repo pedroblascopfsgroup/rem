@@ -91,7 +91,23 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 					this.guardarHistoricoGestorAdicionalEntidad(gac, act);
 				} else {
 					//Comprobamos que el activo cumpla las condiciones para poder cambiar de gestor
-					if(this.validarTramitesNoMultiActivo(dto.getIdEntidad())) {
+					if(gac.getTipoGestor().getCodigo().equals("GPREC")){
+						if(this.validarTramitesNoMultiActivo(dto.getIdEntidad())) {
+							if (!dto.getIdUsuario().equals(gac.getUsuario().getId())) {
+								this.actualizaFechaHastaHistoricoGestorAdicionalActivo(gac);
+								gac.setUsuario(usu);
+								gac.setAuditoria(Auditoria.getNewInstance());
+								this.guardarHistoricoGestorAdicionalEntidad(gac, act);
+							}
+							gestorEntidadDao.saveOrUpdate(gac);
+							
+							//Actualizamos usuarios de las tareas
+							actualizarTareas(dto.getIdEntidad());
+						}
+						else {
+							inserccionOK = false;
+						}
+					}else{
 						if (!dto.getIdUsuario().equals(gac.getUsuario().getId())) {
 							this.actualizaFechaHastaHistoricoGestorAdicionalActivo(gac);
 							gac.setUsuario(usu);
@@ -102,9 +118,6 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 						
 						//Actualizamos usuarios de las tareas
 						actualizarTareas(dto.getIdEntidad());
-					}
-					else {
-						inserccionOK = false;
 					}
 				}
 			}

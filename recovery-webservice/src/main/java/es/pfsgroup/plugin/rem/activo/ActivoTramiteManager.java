@@ -511,6 +511,17 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		return listaTareas.size();
 	}
 	
+	@Override
+	public int numeroValidacionTrabajo(ActivoTramite tramite){
+		
+		Filter filtroTap = genericDao.createFilter(FilterType.EQUALS, "codigo", "T004_ValidacionTrabajo");
+		TareaProcedimiento tareaProcedimiento = genericDao.get(TareaProcedimiento.class, filtroTap);
+		
+		List<TareaExterna> listaTareas = activoTareaExternaApi.getByIdTareaProcedimientoIdTramite(tramite.getId(), tareaProcedimiento.getId());
+		
+		return listaTareas.size();
+	}
+	
 	
 	@Override
 	public String obtenerMotivoDenegacion(ActivoTramite tramite){
@@ -522,7 +533,7 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		List<TareaExterna> listaTareas = activoTareaExternaApi.getByIdTareaProcedimientoIdTramite(tramite.getId(), tareaProcedimiento.getId());
 	
 
-		if(this.numeroFijacionPlazos(tramite)>0){
+		if(this.numeroValidacionTrabajo(tramite)>0){
 			//Como está ordenado de manera descendente, nos quedamos con la primera tarea del tipo
 			List<TareaExternaValor> valoresTarea = activoTareaExternaApi.obtenerValoresTarea(listaTareas.get(0).getId());
 			
@@ -531,6 +542,8 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 					motivo = valor.getValor();
 			}
 		}
+	
+		
 		return motivo;
 	}
 	

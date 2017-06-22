@@ -34,6 +34,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
@@ -2362,5 +2363,29 @@ public class ActivoController extends ParadiseJsonController {
 		}
 
 		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboUsuariosGestorActivos(WebDto webDto, ModelMap model) {
+		
+		EXTDDTipoGestor tipoGestorActivos= (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GACT");
+
+		model.put("data", adapter.getComboUsuarios(tipoGestorActivos.getId()));
+		
+		return new ModelAndView("jsonView", model);
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboSupervisorActivos(WebDto webDto, ModelMap model) {
+		
+		EXTDDTipoGestor tipoGestorActivos= (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "SUPACT");
+
+		model.put("data", adapter.getComboUsuarios(tipoGestorActivos.getId()));
+		
+		return new ModelAndView("jsonView", model);
+
 	}
 }

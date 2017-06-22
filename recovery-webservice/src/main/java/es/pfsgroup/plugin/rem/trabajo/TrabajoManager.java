@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -59,7 +60,9 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activotrabajo.dao.ActivoTrabajoDao;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -83,6 +86,7 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoConfiguracionTarifa;
 import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoGestionEconomicaTrabajo;
+import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestosTrabajo;
@@ -209,6 +213,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Autowired
 	private GestorActivoDao gestorActivoDao;
+	
+	@Autowired
+	private ActivoAgrupacionApi activoAgrupacionApi;
+	
+	@Autowired
+	private ActivoAdapter activoAdapter;
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -505,6 +515,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		 * provienen de la pantalla "Crear trabajo"
 		 */
 		Trabajo trabajo = new Trabajo();
+		List<Long> idsActivosSeleccionados= new ArrayList<Long>();
+		if(!Checks.esNulo(dtoTrabajo.getIdsActivos())){
+			List<String> activosIDArray = Arrays.asList(dtoTrabajo.getIdsActivos().split(","));
+			for(String idActivoSeleccionado: activosIDArray){
+				idsActivosSeleccionados.add(Long.parseLong(idActivoSeleccionado));
+			}
+		}
 
 		if (!Checks.esNulo(dtoTrabajo.getIdProceso())) {
 			List<Trabajo> trabajos = crearTrabajoPorSubidaActivos(dtoTrabajo);
@@ -522,24 +539,54 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				trabajo = crearTrabajoPorActivo(activo, dtoTrabajo);
 				createTramiteTrabajo(trabajo);
 
-			} else if (!dtoTrabajo.getEsSolicitudConjunta()) {
+			} /*else if (!dtoTrabajo.getEsSolicitudConjunta()) { //Desde agrupacion y sin check
 				List<Trabajo> trabajos = crearTrabajoPorActivoAgrupacion(dtoTrabajo);
 
 				for (Trabajo trabajoActivoAgrupacion : trabajos) {
 					createTramiteTrabajo(trabajoActivoAgrupacion);
 				}
 
-			} else {
+			} else { //Desde agrupacion y con check
 				trabajo = crearTrabajoPorAgrupacion(dtoTrabajo);
 				createTramiteTrabajo(trabajo);
+			}*/
+			
+			else if(Checks.esNulo(dtoTrabajo.getIdsActivos())){ //Si no se selecciona ningun activo
+				if(!Checks.esNulo(dtoTrabajo.getEsSolicitudConjunta()) && dtoTrabajo.getEsSolicitudConjunta().equals(true)){ //Si se marca el check
+					//Se lanza un trabajo que englobe a todos loas activos de la agrupacion
+					trabajo = crearTrabajoPorAgrupacion(dtoTrabajo, null);
+					createTramiteTrabajo(trabajo);
+				}
+				else{//Si no se marca el check
+					//Se lanza un trabajo por cada activo de la agrupacion
+					List<Trabajo> trabajos = crearTrabajoPorActivoAgrupacion(dtoTrabajo, null);
+					for (Trabajo trabajoActivoAgrupacion : trabajos) {
+						createTramiteTrabajo(trabajoActivoAgrupacion);
+					}
+				}
 			}
+			else{//Si se seleccionan activos
+				if(!Checks.esNulo(dtoTrabajo.getEsSolicitudConjunta()) && dtoTrabajo.getEsSolicitudConjunta().equals(true)){//Si se marca el check
+					//se lanza un trabajo que engloba a todos los activos seleccionados
+					trabajo = crearTrabajoPorAgrupacion(dtoTrabajo, idsActivosSeleccionados);
+					createTramiteTrabajo(trabajo);
+				}
+				else{ //Si no se marca el check
+					//Se lanza un trabajo por cada activo seleccionados
+					List<Trabajo> trabajos= crearTrabajoPorActivoAgrupacion(dtoTrabajo,idsActivosSeleccionados);
+					for (Trabajo trabajoActivoAgrupacion : trabajos) {
+						createTramiteTrabajo(trabajoActivoAgrupacion);
+					}
+				}
+			}
+			
 
 		}
 
 		return trabajo.getId();
 	}
 
-	private List<Trabajo> crearTrabajoPorActivoAgrupacion(DtoFichaTrabajo dtoTrabajo) {
+	private List<Trabajo> crearTrabajoPorActivoAgrupacion(DtoFichaTrabajo dtoTrabajo, List<Long> idsActivosSeleccionados) {
 		List<Trabajo> trabajos = new ArrayList<Trabajo>();
 		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "agrId", Long.valueOf(dtoTrabajo.getIdAgrupacion()));
 		List<VActivosAgrupacionTrabajo> activosAgrupacionTrabajo = genericDao.getList(VActivosAgrupacionTrabajo.class, filtro1);
@@ -548,16 +595,25 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		for(VActivosAgrupacionTrabajo activoAgrupacion : activosAgrupacionTrabajo) {
 			if(activoAgrupacion.getActivoId() != null) {
-				activosID.add(Long.parseLong(activoAgrupacion.getActivoId()));
+				
+				if(!Checks.esNulo(idsActivosSeleccionados)){
+					for(Long idActivoSeleccionado: idsActivosSeleccionados){
+						if(activoAgrupacion.getActivoId().equals(idActivoSeleccionado.toString())){
+							activosID.add(Long.parseLong(activoAgrupacion.getActivoId()));
+							break;
+						}
+					}
+				}
+				else{
+					activosID.add(Long.parseLong(activoAgrupacion.getActivoId()));
+				}
 			}
 		}
 
 		List<Activo> activosList = activoApi.getListActivosPorID(activosID);
 
 		Trabajo trabajo = null;
-		Activo activo = null;
-		for (VActivosAgrupacionTrabajo activoAgrupacion : activosAgrupacionTrabajo) {
-			activo = activoDao.get(Long.valueOf(activoAgrupacion.getActivoId()));
+		for (Activo activo : activosList) {
 			Double participacion = updaterStateApi.calcularParticipacionPorActivo(dtoTrabajo.getTipoTrabajoCodigo(), activosList, null);
 			dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : participacion.toString());
 			trabajo = crearTrabajoPorActivo(activo, dtoTrabajo);
@@ -568,13 +624,33 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	}
 
-	private Trabajo crearTrabajoPorAgrupacion(DtoFichaTrabajo dtoTrabajo) {
+	private Trabajo crearTrabajoPorAgrupacion(DtoFichaTrabajo dtoTrabajo, List<Long> idsActivosSelecionados) {
 
 		ActivoAgrupacion agrupacion = activoAgrupacionDao.get(dtoTrabajo.getIdAgrupacion());
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "agrId", Long.valueOf(dtoTrabajo.getIdAgrupacion()));
-		List<VActivosAgrupacionTrabajo> activosAgrupacionTrabajo = genericDao.getList(VActivosAgrupacionTrabajo.class, filtro);
+		List<VActivosAgrupacionTrabajo> activosAgrupacionTrabajoTem = genericDao.getList(VActivosAgrupacionTrabajo.class, filtro);
+		List<VActivosAgrupacionTrabajo> activosAgrupacionTrabajo = new ArrayList<VActivosAgrupacionTrabajo>();
 
+		if(!Checks.esNulo(idsActivosSelecionados) && !Checks.esNulo(dtoTrabajo.getEsSolicitudConjunta()) && dtoTrabajo.getEsSolicitudConjunta().equals(true)){
+			boolean seleccionado;
+			for(VActivosAgrupacionTrabajo activoAgr: activosAgrupacionTrabajoTem){
+				seleccionado= false;
+				for(Long idActivoSeleccionado: idsActivosSelecionados){
+					if(activoAgr.getActivoId().equals(idActivoSeleccionado.toString())){
+						seleccionado= true;
+						break;
+					}
+				}
+				if(seleccionado){
+					activosAgrupacionTrabajo.add(activoAgr);
+				}
+			}			
+		}
+		else{
+			activosAgrupacionTrabajo= activosAgrupacionTrabajoTem;
+		}
+		
 		Trabajo trabajo = new Trabajo();
 
 		try {
@@ -733,7 +809,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 			Boolean isFirstLoop = true;
 			for (Activo activo : listaActivos) {
-				Double participacion = updaterStateApi.calcularParticipacionPorActivo(trabajo.getTipoTrabajo().getCodigo(), listaActivos, activo);
+				Double participacion = updaterStateApi.calcularParticipacionPorActivo(dtoTrabajo.getTipoTrabajoCodigo(), listaActivos, activo);
 				dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : participacion.toString());
 				
 				if (isFirstLoop || !dtoTrabajo.getEsSolicitudConjunta()) {
@@ -769,6 +845,20 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				ActivoTrabajo activoTrabajo = createActivoTrabajo(activo, trabajo, dtoTrabajo.getParticipacion());
 				trabajo.getActivosTrabajo().add(activoTrabajo);
 				isFirstLoop = false;
+				
+				if(!Checks.esNulo(dtoTrabajo.getIdGestorActivoResponsable())){
+					Usuario usuarioGestor = genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS,"id", dtoTrabajo.getIdGestorActivoResponsable()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+					if(!Checks.esNulo(usuarioGestor)){
+						trabajo.setUsuarioGestorActivoResponsable(usuarioGestor);
+					}
+				}
+				
+				if(!Checks.esNulo(dtoTrabajo.getIdSupervisorActivo())){
+					Usuario usuarioGestor = genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS,"id", dtoTrabajo.getIdSupervisorActivo()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+					if(!Checks.esNulo(usuarioGestor)){
+						trabajo.setSupervisorActivoResponsable(usuarioGestor);
+					}
+				}
 
 				if(!dtoTrabajo.getEsSolicitudConjunta()) {
 					trabajoDao.saveOrUpdate(trabajo);
@@ -932,6 +1022,20 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			ActivoProveedor mediador = (ActivoProveedor) genericDao.get(ActivoProveedor.class, filtro);
 
 			trabajo.setMediador(mediador);
+		}
+		
+		if(!Checks.esNulo(dtoTrabajo.getIdGestorActivoResponsable())){
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdGestorActivoResponsable());
+			Usuario usuario = (Usuario) genericDao.get(Usuario.class, filtro);
+			
+			trabajo.setUsuarioGestorActivoResponsable(usuario);
+		}
+		
+		if(!Checks.esNulo(dtoTrabajo.getIdSupervisorActivo())){
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdSupervisorActivo());
+			Usuario usuario = (Usuario) genericDao.get(Usuario.class, filtro);
+			
+			trabajo.setSupervisorActivoResponsable(usuario);;
 		}
 	}
 
@@ -1162,6 +1266,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		// HREOS-860 Administracion
 		if (!Checks.esNulo(trabajo.getGastoTrabajo())) {
 			dtoTrabajo.setFechaEmisionFactura(trabajo.getGastoTrabajo().getGastoProveedor().getFechaEmision());
+		}
+		
+		if(!Checks.esNulo(trabajo.getUsuarioGestorActivoResponsable())){
+			dtoTrabajo.setGestorActivoResponsable(trabajo.getUsuarioGestorActivoResponsable().getApellidoNombre());
+			dtoTrabajo.setIdGestorActivoResponsable(trabajo.getUsuarioGestorActivoResponsable().getId());
+		}
+		
+		if(!Checks.esNulo(trabajo.getSupervisorActivoResponsable())){
+			dtoTrabajo.setSupervisorActivo(trabajo.getSupervisorActivoResponsable().getApellidoNombre());
+			dtoTrabajo.setIdSupervisorActivo(trabajo.getSupervisorActivoResponsable().getId());
 		}
 
 		return dtoTrabajo;
@@ -2993,7 +3107,49 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
+
+	@Override
+	public boolean checkEsMultiactivo(TareaExterna tareaExterna) {
+		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
+		if (!Checks.esNulo(trabajo)) {
+			if (trabajo.getActivosTrabajo().size() > 1){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public Map<String,Long> getSupervisorGestor(Long idAgrupacion){
+		Map<String,Long> supervisorGestor= new HashMap<String, Long>();
+		
+		ActivoAgrupacion agrupacion= activoAgrupacionApi.get(idAgrupacion);
+		if(!Checks.esNulo(agrupacion)){
+			Activo activo= agrupacion.getActivos().get(0).getActivo();
+			if(!Checks.esNulo(activo)){
+				List<DtoListadoGestores> gestores= activoAdapter.getGestores(activo.getId());
+				for(DtoListadoGestores gestor: gestores){
+					if(gestor.getCodigo().equals(GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS)){
+						if(Checks.esNulo(gestor.getFechaHasta())){
+							supervisorGestor.put("SUPACT", gestor.getIdUsuario());
+						}
+					}
+					if(gestor.getCodigo().equals(GestorActivoApi.CODIGO_GESTOR_ACTIVO)){
+						if(Checks.esNulo(gestor.getFechaHasta())){
+							supervisorGestor.put("GACT", gestor.getIdUsuario());
+						}
+					}
+				}
+			}
+		}
+		
+		return supervisorGestor;
+		
+		
+	}
+	
 	
 }

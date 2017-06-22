@@ -19,7 +19,8 @@ public class ResultadoATPlazoAssignationService implements PlazoAssignationServi
 
 	private static final String CODIGO_T004_RESULTADO_TARIFICADA = "T004_ResultadoTarificada";
 	private static final String CODIGO_T004_RESULTADO_NOTARIFICADA = "T004_ResultadoNoTarificada";
-
+	private static final int PLAZO_DEFECTO = 7;
+	
 	@Autowired
 	GenericABMDao genericDao;
 
@@ -39,13 +40,26 @@ public class ResultadoATPlazoAssignationService implements PlazoAssignationServi
 		ActivoTramite tramite = genericDao.get(ActivoTramite.class, filtroTramite);
 
 		Trabajo trabajo = tramite.getTrabajo();
-		Date fechaNueva = new Date((!Checks.esNulo(trabajo.getFechaHoraConcreta()) ? trabajo.getFechaHoraConcreta()
-				: trabajo.getFechaTope()).getTime());
+		Date fechaNueva = null;
+		if(!Checks.esNulo(trabajo.getFechaHoraConcreta())){ 
+			fechaNueva = new Date(trabajo.getFechaHoraConcreta().getTime());
+				
+		}else if(!Checks.esNulo(trabajo.getFechaTope())){
+			fechaNueva = new Date(trabajo.getFechaTope().getTime());
+		}else{
+			fechaNueva = null;
+		}
 		// en los plazos tope situamos la fecha en el ultimo segundo del dia. En
 		// caso de seleccionar la fecha de hoy, si no hacemos esto, la
 		// diferencia sera negativa
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(fechaNueva);
+		if(Checks.esNulo(fechaNueva)){
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			cal.add(Calendar.DAY_OF_YEAR, PLAZO_DEFECTO);
+			fechaNueva = cal.getTime();		
+		}
+		Calendar cal = Calendar.getInstance();		
+		cal.setTime(fechaNueva);		
 		cal.add(Calendar.HOUR_OF_DAY, 23);
 		cal.add(Calendar.MINUTE, 59);
 		cal.add(Calendar.SECOND, 59);

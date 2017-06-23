@@ -58,6 +58,9 @@ public class VActivosAgrupacionTrabajo implements Serializable {
 	@Column(name="DD_CRA_DESCRIPCION")
 	private String cartera;
 	
+	@Column(name="NUM_FINCA_REGISTRAL")
+	private String numFincaRegistral;
+	
 
 	public String getId() {
 		return id;
@@ -161,6 +164,14 @@ public class VActivosAgrupacionTrabajo implements Serializable {
 
 	public void setCartera(String cartera) {
 		this.cartera = cartera;
+	}
+
+	public String getNumFincaRegistral() {
+		return numFincaRegistral;
+	}
+
+	public void setNumFincaRegistral(String numFincaRegistral) {
+		this.numFincaRegistral = numFincaRegistral;
 	}	
 	
 

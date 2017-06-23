@@ -48,7 +48,9 @@ BEGIN
             GEO_COD_OFERTA          NUMBER(16,0)          NOT NULL
             , GEO_GESTOR_ACTIVO     VARCHAR2(20 CHAR)     NOT NULL
             , GEO_TIPO_GESTOR       VARCHAR2(20 CHAR)     NOT NULL
-            , VALIDACION            NUMBER(1)             DEFAULT 0 NOT NULL
+            , VALIDACION          NUMBER(1)             DEFAULT 0 NOT NULL
+            , GEE_ID              NUMBER(16,0)
+            , GEH_ID              NUMBER(16,0)
         )
         '
         ;

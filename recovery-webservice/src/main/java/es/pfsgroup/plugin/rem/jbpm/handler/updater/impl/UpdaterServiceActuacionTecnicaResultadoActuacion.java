@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -42,12 +43,13 @@ public class UpdaterServiceActuacionTecnicaResultadoActuacion implements Updater
 			
 			//Fecha Finalización
 			if(FECHA_FINALIZACION.equals(valor.getNombre()))
-			{		
-				try {
-					trabajo.setFechaEjecucionReal(ft.parse(valor.getValor()));
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			{	if(!Checks.esNulo(valor.getValor())){	
+					try {
+						trabajo.setFechaEjecucionReal(ft.parse(valor.getValor()));
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				
 				// Con fecha finalización: Trabajo -> Estado -> FINALIZADO PENDIENTE VALIDACION

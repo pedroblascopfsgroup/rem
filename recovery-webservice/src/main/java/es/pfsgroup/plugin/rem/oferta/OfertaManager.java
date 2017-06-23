@@ -824,6 +824,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA);
 			DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
 			oferta.setEstadoOferta(estado);
+			updateStateDispComercialActivosByOferta(oferta);
 			genericDao.save(Oferta.class, oferta);
 
 		} catch (Exception e) {
@@ -863,6 +864,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						
 						estado = genericDao.get(DDEstadoOferta.class, filtro);
 						oferta.setEstadoOferta(estado);
+						updateStateDispComercialActivosByOferta(oferta);
 						genericDao.save(Oferta.class, oferta);
 						
 						if (!Checks.esNulo(exp) && !Checks.esNulo(exp.getTrabajo())) {										
@@ -906,6 +908,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoOferta.CODIGO_CONGELADA);
 						estado = genericDao.get(DDEstadoOferta.class, filtro);
 						ofr.setEstadoOferta(estado);
+						updateStateDispComercialActivosByOferta(ofr);
 						genericDao.save(Oferta.class, ofr);
 						
 						
@@ -933,6 +936,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA);
 			DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
 			oferta.setEstadoOferta(estado);
+			updateStateDispComercialActivosByOferta(oferta);
 			genericDao.save(Oferta.class, oferta);
 
 			ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(oferta);

@@ -20,6 +20,7 @@ public class DtoTrabajoListActivos extends WebDto {
 	private String cartera;
 	private String situacionComercial;
 	private String situacionPosesoria;
+	private String numFincaRegistral;
 	
 	public String getIdActivo() {
 		return idActivo;
@@ -69,4 +70,11 @@ public class DtoTrabajoListActivos extends WebDto {
 	public void setSituacionPosesoria(String situacionPosesoria) {
 		this.situacionPosesoria = situacionPosesoria;
 	}
+	public String getNumFincaRegistral() {
+		return numFincaRegistral;
+	}
+	public void setNumFincaRegistral(String numFincaRegistral) {
+		this.numFincaRegistral = numFincaRegistral;
+	}
+	
 }

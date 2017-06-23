@@ -29,6 +29,9 @@ public class DtoActivoCatastro extends WebDto {
 	private String valorCatastralSuelo;
 	// FIXME SOLUCION PARA BORRAR FECHAS PONER A STRING
 	private Date fechaRevValorCatastral;
+	private Date fechaAltaCatastro;
+	private Date fechaBajaCatastro;
+	private String observaciones;
 	private String idCatastro;
 	
 	
@@ -115,6 +118,25 @@ public class DtoActivoCatastro extends WebDto {
 	}
 	public void setFechaRevValorCatastral(Date fechaRevValorCatastral) {
 		this.fechaRevValorCatastral = fechaRevValorCatastral;
+	}
+	
+	public Date getFechaAltaCatastro() {
+		return fechaAltaCatastro;
+	}
+	public void setFechaAltaCatastro(Date fechaAltaCatastro) {
+		this.fechaAltaCatastro = fechaAltaCatastro;
+	}
+	public Date getFechaBajaCatastro() {
+		return fechaBajaCatastro;
+	}
+	public void setFechaBajaCatastro(Date fechaBajaCatastro) {
+		this.fechaBajaCatastro = fechaBajaCatastro;
+	}
+	public String getObservaciones() {
+		return observaciones;
+	}
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
 	}
 	
 	

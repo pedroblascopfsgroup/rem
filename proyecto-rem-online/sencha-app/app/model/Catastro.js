@@ -52,6 +52,19 @@ Ext.define('HreRem.model.Catastro', {
     			dateFormat: 'c'
     			// FIXME SOLUCION PARA BORRAR FECHAS
     			//dateWriteFormat: 'Y-m-d'
+    		},
+    		{
+    			name:'fechaAltaCatastro',
+    			type:'date',
+    			dateFormat: 'c'    			
+    		},
+    		{
+    			name:'fechaBajaCatastro',
+    			type:'date',
+    			dateFormat: 'c'    			
+    		},
+    		{
+    			name:'observaciones' 			
     		}
     		
     ],

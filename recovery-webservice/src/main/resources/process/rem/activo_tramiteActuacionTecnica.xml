@@ -80,13 +80,13 @@
 	</state>
 	
 	<decision name="T004_EleccionPresupuestoDecision" expression="#{T004_EleccionPresupuestoDecision}">
-		<transition to="T004_DisponibilidadSaldo" name="PresupuestoValido"></transition>
+		<transition to="T004_SolicitudExtraordinaria" name="SinSaldo"></transition>
 		<transition to="T004_SolicitudPresupuestos" name="PresupuestoInvalido"></transition>
 		<transition to="T004_AutorizacionBankia" name="ValidoSuperaLimiteBankia"></transition>
-		<transition to="T004_FijacionPlazo" name="ValidoDentroLimiteBankia"></transition>
+		<transition to="T004_FijacionPlazo" name="ConSaldo"></transition>
 	</decision>
 
-
+<!--
 	<state name="T004_DisponibilidadSaldo">
 		<event type="node-enter">
 			<action name="miTarea"
@@ -114,7 +114,7 @@
 		<transition to="T004_FijacionPlazo" name="ConSaldo"></transition>
 	</decision>
 
-
+  -->
 
 
 	<state name="T004_SolicitudExtraordinaria">
@@ -265,7 +265,7 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T004_DisponibilidadSaldo" name="avanzaBPM"></transition>
+		<transition to="T004_FijacionPlazo" name="avanzaBPM"></transition>
 	</state>
 	
 	
@@ -341,9 +341,9 @@
 	</state>
 	
 	<decision name="T004_EleccionProveedorYTarifaDecision" expression="#{T004_EleccionProveedorYTarifaDecision}">
-		<transition to="T004_DisponibilidadSaldo" name="avanzaBPM"></transition>
+		<transition to="T004_SolicitudExtraordinaria" name="SinSaldo"></transition>
 		<transition to="T004_AutorizacionBankia" name="SuperaLimiteBankia"></transition>
-		<transition to="T004_FijacionPlazo" name="DentroLimiteBankia"></transition>
+		<transition to="T004_FijacionPlazo" name="ConSaldo"></transition>
 	</decision>
 	
 	<state name="T004_AutorizacionBankia">

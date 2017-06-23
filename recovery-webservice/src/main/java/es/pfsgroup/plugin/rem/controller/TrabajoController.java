@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.controller;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
@@ -1208,4 +1210,26 @@ public class TrabajoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getSupervisorGestorTrabajo(Long idActivo, Long idAgrupacion, ModelMap model) {
+		Map<String,Long> mapaGestorSupervisor= new HashMap<String, Long>();
+		if(Checks.esNulo(idActivo) && Checks.esNulo(idAgrupacion)){
+			mapaGestorSupervisor.put("data", genericAdapter.getUsuarioLogado().getId());
+			model.put("data", genericAdapter.getUsuarioLogado());
+		}
+		else{
+			if(Checks.esNulo(idActivo) && !Checks.esNulo(idAgrupacion)){
+				
+				mapaGestorSupervisor=  trabajoApi.getSupervisorGestor(idAgrupacion);
+				model.put("data", mapaGestorSupervisor);
+				
+			}
+		}
+
+		return new ModelAndView("jsonView", model);
+
+	}
+	
 }

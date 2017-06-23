@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.user.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -14,6 +15,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 
+@Component
 public class AutorizacionBankiaUserAssignation implements UserAssigantionService {
 
 	private static final String CODIGO_T002_AUTORIZACION_BANKIA = "T002_AutorizacionBankia";

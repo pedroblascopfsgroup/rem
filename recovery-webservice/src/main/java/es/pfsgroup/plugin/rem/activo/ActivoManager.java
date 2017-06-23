@@ -449,7 +449,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 				crearExpediente(oferta, trabajo);
 			}
-
+			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
 			genericDao.update(Oferta.class, oferta);
 
 //		} 

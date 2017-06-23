@@ -49,6 +49,14 @@ public class DtoFichaTrabajo {
 
     private String ciaAseguradora;
     
+    private Long idGestorActivoResponsable;
+    
+    private String gestorActivoResponsable;
+    
+    private Long idSupervisorActivo;
+    
+    private String supervisorActivo;
+        
     private Boolean esSolicitudConjunta;
     
     private Date fechaConcreta;
@@ -120,6 +128,8 @@ public class DtoFichaTrabajo {
     private Long idProceso;
     
     private Date fechaEmisionFactura;
+    
+    private String idsActivos;
     
 	
     public Long getIdTrabajo() {
@@ -264,6 +274,38 @@ public class DtoFichaTrabajo {
 
 	public void setCiaAseguradora(String ciaAseguradora) {
 		this.ciaAseguradora = ciaAseguradora;
+	}
+
+	public Long getIdGestorActivoResponsable() {
+		return idGestorActivoResponsable;
+	}
+
+	public void setIdGestorActivoResponsable(Long idGestorActivoResponsable) {
+		this.idGestorActivoResponsable = idGestorActivoResponsable;
+	}
+
+	public String getGestorActivoResponsable() {
+		return gestorActivoResponsable;
+	}
+
+	public void setGestorActivoResponsable(String gestorActivoResponsable) {
+		this.gestorActivoResponsable = gestorActivoResponsable;
+	}
+
+	public Long getIdSupervisorActivo() {
+		return idSupervisorActivo;
+	}
+
+	public void setIdSupervisorActivo(Long idSupervisorActivo) {
+		this.idSupervisorActivo = idSupervisorActivo;
+	}
+
+	public String getSupervisorActivo() {
+		return supervisorActivo;
+	}
+
+	public void setSupervisorActivo(String supervisorActivo) {
+		this.supervisorActivo = supervisorActivo;
 	}
 
 	public Boolean getEsSolicitudConjunta() {
@@ -571,5 +613,13 @@ public class DtoFichaTrabajo {
 
 	public void setFechaEmisionFactura(Date fechaEmisionFactura) {
 		this.fechaEmisionFactura = fechaEmisionFactura;
+	}
+
+	public String getIdsActivos() {
+		return idsActivos;
+	}
+
+	public void setIdsActivos(String idsActivos) {
+		this.idsActivos = idsActivos;
 	}
 }

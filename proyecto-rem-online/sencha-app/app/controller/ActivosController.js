@@ -109,10 +109,13 @@ Ext.define('HreRem.controller.ActivosController', {
     	
     	'trabajosmain' : {    		
 			abrirDetalleTrabajo: 'abrirDetalleTrabajo',
+			abrirDetalleAgrupacion: function(idAgrupacion) {
+				var me = this;
+    			me.abrirDetalleAgrupacionById(idAgrupacion);      
+			},
 			abrirDetalleActivo: function(idActivo) {
 				var me = this;
     			me.abrirDetalleActivoById(idActivo);      
-				
 			}
     	},
     	
@@ -366,7 +369,7 @@ Ext.define('HreRem.controller.ActivosController', {
     },
     
     abrirDetalleAgrupacion: function(record) {
-    	
+ 
     	var me = this,
     	titulo = "Agrupación " + record.get("numAgrupacionRem"),
     	id = record.get("id");		
@@ -380,7 +383,7 @@ Ext.define('HreRem.controller.ActivosController', {
     	var me = this,    	
     	cfg = {}, 
     	tab = null;
-    	
+
     	cfg.title = titulo;
 
     	tab = me.createTab (me.getActivosMain(), 'agrupacion', "agrupacionesdetallemain",  id, cfg);
@@ -394,8 +397,8 @@ Ext.define('HreRem.controller.ActivosController', {
 		    	me.logTime("Load agrupacion success"); 
 		    	me.setLogTime();
 		    	
-		    	if(Ext.isEmpty(titulo)) {		    		
-		    		titulo = "Agrupacion " + agrupacion.get("numAgrupacionRem");
+		    	if(Ext.isEmpty(titulo)) {
+		    		titulo = "Agrupacion " + agrupacion.get("numAgrupRem");
 		    		tab.setTitle(titulo);
 		    	}
 		    	

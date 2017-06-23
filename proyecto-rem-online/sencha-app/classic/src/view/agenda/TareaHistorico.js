@@ -140,6 +140,13 @@ Ext.define('HreRem.view.agenda.TareaHistorico',{
 								camposFiltrados.push(me.campos[i]);
 								break;
 								
+							case 'datemintoday':
+			                    me.campos[i].xtype = 'datefield';
+			                    me.campos[i].minValue = $AC.getCurrentDate();              
+			        			me.campos[i].readOnly = true;
+								me.campos[i].editable = false;								
+								camposFiltrados.push(me.campos[i]);
+			                    break;
 							default:
 								me.campos[i].editable = false;
 								me.campos[i].readOnly = true;

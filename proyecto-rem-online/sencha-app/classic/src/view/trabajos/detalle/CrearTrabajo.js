@@ -10,7 +10,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
         type: 'trabajodetalle'
     },
     
-    requires: ['HreRem.model.FichaTrabajo'],
+    requires: ['HreRem.model.FichaTrabajo','HreRem.view.trabajos.detalle.ActivosAgrupacionTrabajoList'],
     
     idActivo: null,
     
@@ -48,7 +48,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
     	
     	me.buttonAlign = 'left';    	
     	
-    	me.buttons = [ { itemId: 'btnGuardar', text: 'Crear', handler: 'onClickBotonCrearTrabajo'},{ itemId: 'btnCancelar', text: 'Cancelar', handler: 'hideWindow', scope: this}];
+    	me.buttons = [ { itemId: 'btnGuardar', text: 'Crear', handler: 'onClickBotonCrearTrabajo'},{ itemId: 'btnCancelar', text: 'Cancelar', handler: 'hideWindowPeticionTrabajo'}];
 
     	me.items = [
     				{
@@ -108,16 +108,47 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 								                	xtype: 'textareafieldbase',
 								                	fieldLabel: HreRem.i18n('fieldlabel.descripcion'),
 								                	width: 		'100%',
-								                	colspan: 3,
+								                	colspan: 1,
 								                	bind:		'{trabajo.descripcion}',
 								                	maxLength: 256
 						                		},
+						                		{ 
+													xtype: 'comboboxfieldbase',
+										        	fieldLabel:  HreRem.i18n('fieldlabel.gestor.activo.responsable'),
+										        	reference: 'gestorActivoResponsableCombo',
+										        	colspan: 2,
+										        	editable: false,
+										        	width: 		'100%',
+										        	bind: {
+									            		store: '{comboGestorActivoResponsable}',
+									            		value: '{trabajo.idGestorActivoResponsable}',
+									            	},
+									            	displayField: 'apellidoNombre',
+						    						valueField: 'id',
+													allowBlank: false
+										        },
 										        {
 								                	xtype: 'label',
 								                	reference: 'textAdvertenciaCrearTrabajo',
 								                	style: 'color: red; font-weight: bolder;',
-								                	width: 		'100%'
-						                		}
+								                	width: 		'100%',
+								                	colspan: 1,
+						                		},
+						                		{ 
+													xtype: 'comboboxfieldbase',
+										        	fieldLabel:  HreRem.i18n('fieldlabel.supervisor.activo'),
+										        	reference: 'supervisorActivoCombo',
+										        	colspan: 2,
+										        	editable: false,
+										        	width: 		'100%',
+										        	bind: {
+									            		store: '{comboSupervisorActivoResponsable}',
+									            		value: '{trabajo.idSupervisorActivo}',
+									            	},
+									            	displayField: 'apellidoNombre',
+						    						valueField: 'id',
+													allowBlank: false
+										        }
 
 											]
 						           },
@@ -182,11 +213,27 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 						        	   							align: 'stretch'
 						        	   				},
 						        	   				items : [
-						        	   						{										           
-						        	   							html: HreRem.i18n("txt.aviso.genera.trabajo.independiente"),
-						        	   							cls: 'texto-info',
-						        	   							margin: '10 0 0 0'
-						        	   						},
+						        	   				        {   
+																xtype: 'container',
+																//width: '33%',
+																reference: 'containerEnglobaTodosActivosRef',
+																layout: {
+																	type: 'vbox',
+																	align: 'stretch'
+																},
+																items :
+																[
+															       
+																		{
+																			xtype: 'checkboxfieldbase',
+																			reference: 'checkEnglobaTodosActivosRef',
+																			margin: '20 0 10 0',
+																			boxLabel: HreRem.i18n('title.ejecutar.trabajo.por.agrupacion'),
+																			bind: '{trabajo.esSolicitudConjunta}',
+																			checked: true
+																		}
+															    ]
+															},
 						        	   						{									    
 						        	   							xtype: 'gridBase',
 						        	   							cls: "",
@@ -200,6 +247,11 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 						        	   									{
 						        	   										dataIndex: 'numActivoHaya',
 						        	   										text: HreRem.i18n('header.numero.activo.haya'),
+						        	   										flex: 1										
+						        	   									},
+						        	   									{
+						        	   										dataIndex: 'numFincaRegistral',
+						        	   										text: HreRem.i18n('header.finca.registral'),
 						        	   										flex: 1										
 						        	   									},
 						        	   									{
@@ -239,48 +291,8 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 						        	   											      }
 						        	   											}
 						        	   									      ]						           
-						        	   						},
-						        	   						{   
-																xtype: 'container',
-																//width: '33%',
-																reference: 'containerEnglobaTodosActivosRef',
-																layout: {
-																	type: 'vbox',
-																	align: 'stretch'
-																},
-																items :
-																[
-														           
-								        	   						{
-				        	   											xtype: 'checkboxfieldbase',
-				        	   											reference: 'checkEnglobaTodosActivosRef',
-								        	   							margin: '20 0 10 0',
-								        	   							boxLabel: HreRem.i18n('title.ejecutar.trabajo.por.agrupacion'),
-								        	   							bind: '{trabajo.esSolicitudConjunta}'
-								        	   						},
-								        	   						{
-								        	   							html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.title"),
-								        	   							cls: 'texto-info'
-								        	   						},
-								        	   						{
-								        	   							html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.uno"),
-								        	   							cls: 'texto-info'
-								        	   						},
-								        	   						{
-								        	   							html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.dos"),
-								        	   							cls: 'texto-info'
-								        	   						},
-								        	   						{
-								        	   							html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.tres"),
-								        	   							cls: 'texto-info'
-								        	   						},
-								        	   						{
-								        	   							html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.cuatro"),
-								        	   							cls: 'texto-info',
-								        	   							margin: '0 0 20 0'
-								        	   						}
-						        	   						    ]
 						        	   						}
+						        	   						
 						        	   				]
 						        	},
 						           {
@@ -292,77 +304,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 											align: 'stretch'
 										},
 										items : [
-													{										           
-										           		html: HreRem.i18n("txt.aviso.genera.trabajo.independiente"),
-										           		cls: 'texto-info',
-										           		margin: '10 0 0 0'
-										           	},
-										           	{									    
-											           	
-													    xtype: 'gridBase',
-													    cls: "",
-													    margin: '20 0 20 0',
-													    reference: 'listaActivosRef',
-													    loadAfterBind: false,
-														bind: {
-															store: '{activosAgrupacion}'														
-														},
-														/*
-														features: [{
-													            id: 'summary',
-													            ftype: 'summary',
-													            hideGroupedHeader: true,
-													            enableGroupingMenu: false,
-													            dock: 'bottom'
-														}],*/
-														
-														columns: [
-														   
-														    {
-													            dataIndex: 'numActivo',
-													            text: HreRem.i18n('header.numero.activo.haya'),
-													            flex: 1										
-													        },
-													        {
-													            dataIndex: 'tipoActivoDescripcion',
-													            text: HreRem.i18n('header.tipo'),
-													            flex: 1
-													        },
-													        {
-													            dataIndex: 'subtipoActivoDescripcion',
-													            text: HreRem.i18n('header.subtipo'),
-													            flex: 1													            
-													        },
-													        {
-													        	dataIndex: 'cartera',
-													            text: HreRem.i18n('header.cartera'),
-													            flex: 1	
-													        	
-													        },
-													        {
-													            dataIndex: 'situacionComercial',
-													            text: HreRem.i18n('header.situacion.comercial'),
-													            flex: 1
-													        },
-													        {
-													            dataIndex: 'situacionPosesoria',
-													            text: HreRem.i18n('header.situacion.posesoria'),
-													            flex: 1													            
-													        }
-													         	        
-													    ],
-													    dockedItems : [
-													        {
-													            xtype: 'pagingtoolbar',
-													            dock: 'bottom',
-													            displayInfo: true,
-													            bind: {
-													                store: '{activosAgrupacion}'
-													            }
-													        }
-													    ]						           
-										           },
-										           {   
+													{   
 														xtype: 'container',
 														//width: '33%',
 														reference: 'containerEnglobaTodosActivosAgrRef',
@@ -377,31 +319,20 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 												           		reference: 'checkEnglobaTodosActivosAgrRef',
 												           		margin: '20 0 10 0',
 																boxLabel: HreRem.i18n('title.ejecutar.trabajo.por.agrupacion'),
-																bind: '{trabajo.esSolicitudConjunta}'
+																bind: '{trabajo.esSolicitudConjunta}',
+																checked: true
 												           },
 												           {
-												           		html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.title"),
-												           		cls: 'texto-info'
-												           },
-												           {
-												           		html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.uno"),
-												           		cls: 'texto-info'
-												           },
-												           {
-												           		html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.dos"),
-												           		cls: 'texto-info'
-												           },
-												           {
-												           		html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.tres"),
-												           		cls: 'texto-info'
-												           },
-												           {
-												           		html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.cuatro"),
-												           		cls: 'texto-info',
-												           		margin: '0 0 20 0'
-												           }
+																html: HreRem.i18n("txt.condiciones.trabajo.agrupacion"),
+																cls: 'texto-info'
+															}
 												         ]
+										           },
+										           {									    
+										        	   	xtype: 'activosagrupaciontrabajolist',
+													   	reference: 'activosagrupaciontrabajo'						           
 										           }
+										           
 							           ]
 						           },
 				           
@@ -707,21 +638,40 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
     	me.lookupReference('listaActivosSubidaRef').getStore().loadPage(1);
 
     	if(!Ext.isEmpty(me.idAgrupacion)) {
-    		me.getViewModel().get("activosAgrupacion").load();
+    		me.lookupReference('activosagrupaciontrabajo').getStore().load();
     		me.down('[reference=fieldsetListaActivos]').setVisible(true);
+    		me.down('[reference=supervisorActivoCombo]').setValue(me.idSupervisor);
+    		me.down('[reference=gestorActivoResponsableCombo]').setValue(me.idGestor);
      	} else {
      		me.down('[reference=fieldsetListaActivos]').setVisible(false);
      		me.down('[reference=fieldsetListaActivosSubida]').setVisible(false);
      	}
+    	
+    	if(!Ext.isEmpty(me.idActivo)){
+    		me.down('[reference=supervisorActivoCombo]').setDisabled(true);
+    		me.down('[reference=supervisorActivoCombo]').allowBlank=true;
+     		me.down('[reference=gestorActivoResponsableCombo]').setDisabled(true);
+    		me.down('[reference=gestorActivoResponsableCombo]').allowBlank=true;
+    		
+    	}
+    	else{
+    		me.down('[reference=gestorActivoResponsableCombo]').setDisabled(false);
+    		me.down('[reference=gestorActivoResponsableCombo]').allowBlank=false;
+    		me.down('[reference=supervisorActivoCombo]').setDisabled(false);
+    		me.down('[reference=supervisorActivoCombo]').allowBlank=false;
+    	}
      	
     	if(Ext.isEmpty(me.idAgrupacion) && Ext.isEmpty(me.idActivo)){
     		me.down('[reference=filefieldActivosRef]').allowBlank=false;
      		me.down('[reference=fieldSetSubirFichero]').setVisible(true);
      		me.down('[reference=fieldsetListaActivosSubida]').setVisible(true);
+     		me.down('[reference=supervisorActivoCombo]').setValue(me.idSupervisor);
+     		me.down('[reference=supervisorActivoCombo]').readOnly= true;    		
      	} else {
      		me.down('[reference=filefieldActivosRef]').allowBlank=true;
      		me.down('[reference=fieldSetSubirFichero]').setVisible(false);
      		me.down('[reference=fieldsetListaActivosSubida]').setVisible(false);
+     		me.down('[reference=supervisorActivoCombo]').readOnly= false; 
      	}
     	
     	// Recarga las advertencias del trabajo
@@ -733,6 +683,18 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
     	me.down("[reference=tipoTrabajo]").reset();
 		me.down("[reference=tipoTrabajo]").getStore().removeAll();
     	me.down("[reference=tipoTrabajo]").getStore().load();
+    	
+    	me.down("[reference=checkEnglobaTodosActivosRef]").setValue(true);
+    	
+    	if(!Ext.isEmpty(me.tipoAgrupacionCodigo) && (me.tipoAgrupacionCodigo!='01' && me.tipoAgrupacionCodigo != '02')){
+    		me.down("[reference=checkEnglobaTodosActivosAgrRef]").setValue(false);
+    		me.down("[reference=checkEnglobaTodosActivosAgrRef]").setVisible(false);
+    		me.down("[reference=checkEnglobaTodosActivosAgrRef]").setDisabled(true);
+    	}else{
+    		me.down("[reference=checkEnglobaTodosActivosAgrRef]").setValue(true);
+    		me.down("[reference=checkEnglobaTodosActivosAgrRef]").setVisible(true);
+    		me.down("[reference=checkEnglobaTodosActivosAgrRef]").setDisabled(false);
+    	}  	
 
     }
 

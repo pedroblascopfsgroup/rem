@@ -259,7 +259,6 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 			        		mouseWheelEnable: false},
 			        	flex: 1
 			        },
-
 			        {   text: HreRem.i18n('fieldlabel.fecha.revision.valor.catastral'),
 			        	dataIndex: 'fechaRevValorCatastral',
 			        	formatter: 'date("d/m/Y")',
@@ -269,7 +268,36 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 		                    xtype: 'datefield'
 		                },
 		                flex: 1 
-			        }
+			        },
+			        {   text: HreRem.i18n('fieldlabel.fecha.alta.catastro'),
+			        	dataIndex: 'fechaAltaCatastro',
+			        	formatter: 'date("d/m/Y")',
+			        	/*format: 'M d, Y',
+			        	format: 'Y',*/
+			        	editor: {
+		                    xtype: 'datefield'
+		                },
+		                flex: 1 
+			        },
+			        {   text: HreRem.i18n('fieldlabel.fecha.baja.catastro'),
+			        	dataIndex: 'fechaBajaCatastro',
+			        	formatter: 'date("d/m/Y")',
+			        	/*format: 'M d, Y',
+			        	format: 'Y',*/
+			        	editor: {
+		                    xtype: 'datefield'
+		                },
+		                flex: 1 
+			        },
+			        {   
+			        	text: HreRem.i18n('fieldlabel.observaciones'),
+			        	dataIndex: 'observaciones',
+			        	editor: {
+			        		xtype:'textarea',
+			        		maxLength : 400
+			        	},
+			        	flex: 1
+			        },
 			       	        
 			    ],
 			    dockedItems : [

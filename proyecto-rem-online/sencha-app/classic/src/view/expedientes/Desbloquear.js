@@ -96,7 +96,8 @@ Ext.define('HreRem.view.expedientes.Desbloquear', {
 							                        name: 'motivoDescLibre',
 							                        itemId: 'motivoDescLibre',
 							                        reference: 'motivoDescLibre',
-							                        width: 400
+							                        width: 400,
+							                        allowBlank: true
 								                }
 												
 											

@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ "$#" -ne 2 ]; then
     echo "Parametros: <pass@host:puerto/ORACLE_SID>"
-    echo "Parametros: <USUARIO_MIGRACION> {MIG_CAJAMAR,MIG_SAREB,MIG_BANKIA}"
+    echo "Parametros: <USUARIO_MIGRACION> {CAJAMAR,SAREB,BANKIA}"
     exit 1
 fi
 
@@ -32,6 +32,12 @@ echo "USUARIOCREAR="$usuario
 echo "********************************************************"
 echo
 
+borrado_parcial=$2
+echo "********************************************************"
+echo "BORRADO_PARCIAL="$borrado_parcial
+echo "********************************************************"
+echo
+
 ruta_descarterizada="PROD/DML_PROD/DMLs_DESCARTERIZADOS"
 ruta_carterizada="PROD/DML_PROD"
 dml_list="DMLs.list"
@@ -46,7 +52,7 @@ if [ -f PROD/Logs/005_*.log ] ; then
 fi
 while read line
 do
-	sed "s/#USUARIO_MIGRACION#/$usuario/g" $ruta_descarterizada/$line > $ruta_carterizada/$line
+	sed "s/#USUARIO_MIGRACION#/$usuario/g" $ruta_descarterizada/$line | sed "s/#CARTERA#/$borrado_parcial/g" > $ruta_carterizada/$line
 	if [ $? != 0 ] ; then 
 	   echo -e "\n\n======>>> "Error sustituyendo cartera en @$line
 	   exit 1

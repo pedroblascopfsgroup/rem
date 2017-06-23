@@ -51,7 +51,7 @@ BEGIN
 	  BORRADO
 		)
 	SELECT
-	  '||V_ESQUEMA||'.S_ACT_PVC_PROVEEDOR_CONTACTO.NEXTVAL	  			ETP_ID,
+	  '||V_ESQUEMA||'.S_ACT_ETP_ENTIDAD_PROVEEDOR.NEXTVAL	  			ETP_ID,
 	  CRA.DD_CRA_ID                           							DD_CRA_ID,
 	  PVE.PVE_ID                              							PVE_ID,
 	  TCL.DD_TCL_ID                           							DD_TCL_ID,

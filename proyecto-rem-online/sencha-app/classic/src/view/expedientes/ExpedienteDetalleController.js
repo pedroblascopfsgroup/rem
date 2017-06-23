@@ -1763,9 +1763,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var form = window.down("formBase").getForm();
 		var idExpediente = btn.up('desbloquearwindow').idExpediente;
     	var url =  $AC.getRemoteUrl('expedientecomercial/desbloqueoexpediente');
-    	var parametros = {idExpediente : idExpediente,motivoCodigo : form.findField("motivo").getValue(),motivoDescLibre : form.findField("motivoDescLibre").getValue()};
-    	//if(form.isFormValid()) {
-	    	me.getView().mask();
+    	if(me.validarActivarForm(form)) {
+    		var parametros = {idExpediente : idExpediente,motivoCodigo : form.findField("motivo").getValue(),motivoDescLibre : form.findField("motivoDescLibre").getValue()};
+    		me.getView().mask();
 	    	Ext.Ajax.request({
 	    		
 	    	     url: url,
@@ -1784,14 +1784,26 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					 }
 	    	     }
 	    	 });	
-    	//}else{
-    	//	me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
-    	//}
+    	}else{
+    		me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
+    	}
 	},
 	onClickDesbloquearExpediente: function(btn) {
 		var me = this;
 		var idExpediente = me.getViewModel().get("expediente.id");
 		var ventanaFormalizacion= btn.up().up();
 		Ext.create('HreRem.view.expedientes.Desbloquear',{idExpediente: idExpediente,parent: ventanaFormalizacion}).show();    	
+	},
+	validarActivarForm: function(form){
+		var motivoCodigo = form.findField("motivo").getValue();
+		var motivoDescLibre = form.findField("motivoDescLibre").getValue()
+		if(motivoCodigo == undefined || motivoCodigo == ""){
+			return false;
+		}else if(motivoCodigo =="04" && (motivoDescLibre == undefined || motivoDescLibre =="")){
+			return false;
+		}else{
+			return true;
+		}
+		
 	}
 });

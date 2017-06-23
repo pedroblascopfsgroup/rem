@@ -318,7 +318,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
     saveSuccessFn: function () {
    		var me = this;
         me.unmask();			                        
-        me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));	
+        me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+        me.up('activosdetalle').lookupController().refrescarActivo(true);
 		return true;
 	},
 	

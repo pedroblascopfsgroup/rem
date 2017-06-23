@@ -6,6 +6,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -4192,6 +4193,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				tanteoDto.setFechaRespuesta(tanteo.getFechaContestacion());
 				tanteoDto.setNumeroExpediente(tanteo.getNumExpediente());
 				if (tanteo.getSolicitudVisita() != null) {
+					tanteoDto.setSolicitaVisitaCodigo(tanteo.getSolicitudVisita());
 					if (tanteo.getSolicitudVisita().equals(Integer.valueOf(0))) {
 						tanteoDto.setSolicitaVisita("No");
 					} else {
@@ -4262,12 +4264,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				tanteoActivo.setSolicitudVisita(Integer.valueOf(1));
 			}
 		}
+		if(tanteoActivoDto.getSolicitaVisitaCodigo()!= null){
+			tanteoActivo.setSolicitudVisita(tanteoActivoDto.getSolicitaVisitaCodigo());
+		}
 		if(!Checks.esNulo(tanteoActivoDto.getFechaVisita())&& tanteoActivoDto.getFechaVisita().getTime()>0){
 			tanteoActivo.setFechaVisita(tanteoActivoDto.getFechaVisita());
 		}
-		if(!Checks.esNulo(tanteoActivoDto.getFechaFinTanteo())&& tanteoActivoDto.getFechaFinTanteo().getTime()>0){
-			tanteoActivo.setFechaFinTanteo(tanteoActivoDto.getFechaFinTanteo());
-		}
+		
 		if(!Checks.esNulo(tanteoActivoDto.getCodigoTipoResolucion())){
 			DDResultadoTanteo resultadoTanteo= (DDResultadoTanteo) genericDao.get(DDResultadoTanteo.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigo", tanteoActivoDto.getCodigoTipoResolucion()));
@@ -4280,6 +4283,37 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		if(!Checks.esNulo(tanteoActivoDto.getFechaResolucion())&& tanteoActivoDto.getFechaResolucion().getTime()>0){
 			tanteoActivo.setFechaResolucion(tanteoActivoDto.getFechaResolucion());
+		}
+		
+        Calendar cal;
+		if(!Checks.esNulo(tanteoActivoDto.getSolicitaVisitaCodigo()) && tanteoActivoDto.getSolicitaVisitaCodigo().equals(Integer.valueOf(1))){
+			if(tanteoActivoDto.getFechaSolicitudVisita()==null){
+				tanteoActivoDto.setFechaSolicitudVisita(new Date());
+			}
+			cal = Calendar.getInstance(); 
+            cal.setTime(tanteoActivoDto.getFechaComunicacion()); 
+            cal.add(Calendar.DATE, 16);
+            
+			if(tanteoActivoDto.getFechaSolicitudVisita().compareTo(cal.getTime())<0){
+				cal = Calendar.getInstance(); 
+	            cal.setTime(tanteoActivoDto.getFechaComunicacion()); 
+	            cal.add(Calendar.DATE, 15);
+	            cal.add(Calendar.MONTH, 2);
+	            tanteoActivo.setFechaFinTanteo(cal.getTime());
+			}else{
+				long diferencia = tanteoActivoDto.getFechaSolicitudVisita().getTime() - tanteoActivoDto.getFechaComunicacion().getTime();
+				long dias = diferencia / (1000 * 60 * 60 * 24);
+				cal = Calendar.getInstance(); 
+	            cal.setTime(tanteoActivoDto.getFechaComunicacion()); 
+	            cal.add(Calendar.MONTH, 2);
+	            cal.add(Calendar.DATE, (int)dias);
+	            tanteoActivo.setFechaFinTanteo(cal.getTime());
+			}
+		}else{
+			cal = Calendar.getInstance(); 
+            cal.setTime(tanteoActivoDto.getFechaComunicacion()); 
+            cal.add(Calendar.MONTH, 2);
+            tanteoActivo.setFechaFinTanteo(cal.getTime());
 		}
 		
 		if(tanteoActivo.getId()==null){
@@ -4295,8 +4329,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	@Transactional(readOnly = false)
 	public boolean deleteTanteoActivo(Long idTanteo) {
-		genericDao.deleteById(TanteoActivoExpediente.class, idTanteo);
-		return true;
+		boolean resultado = false;
+		TanteoActivoExpediente tanteo = genericDao.get(TanteoActivoExpediente.class, genericDao.createFilter(FilterType.EQUALS,"id", idTanteo));
+		if(tanteo.getFechaContestacion()== null){
+			genericDao.deleteById(TanteoActivoExpediente.class, idTanteo);
+			resultado = true;
+		}
+		return resultado;
 	}
 	
 	@Override

@@ -433,8 +433,20 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			if(formulario.findField("fechaFinTanteo")!=null){
 				params['fechaFinTanteo']= formulario.findField("fechaFinTanteo").getValue();
 			}
+			if(formulario.findField("fechaResolucion")!=null){
+				params['fechaResolucion']= formulario.findField("fechaResolucion").getValue();
+			}
+			if(formulario.findField("fechaVencimiento")!=null){
+				params['fechaVencimiento']= formulario.findField("fechaVencimiento").getValue();
+			}
 			if(formulario.findField("codigoTipoResolucion")!=null){
 				params['codigoTipoResolucion']= formulario.findField("codigoTipoResolucion").getValue();
+			}
+			if(formulario.findField("numeroExpediente")!=null){
+				params['numeroExpediente']= formulario.findField("numeroExpediente").getValue();
+			}
+			if(formulario.findField("solicitaVisitaCodigo")!=null){
+				params['solicitaVisitaCodigo']= formulario.findField("solicitaVisitaCodigo").getValue();
 			}
 			var record = form.getBindRecord();
 			params['idEntidad']= record.idActivo;

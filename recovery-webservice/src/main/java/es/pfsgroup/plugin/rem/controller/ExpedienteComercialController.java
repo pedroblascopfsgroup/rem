@@ -1261,16 +1261,15 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	public ModelAndView deleteTanteo(@RequestParam(value = "id") Long idTanteo) {
 
 		ModelMap model = new ModelMap();
+		boolean resultado = false;
 
 		try {
-			expedienteComercialApi.deleteTanteoActivo(idTanteo);
-			model.put("success", true);
-
+			resultado = expedienteComercialApi.deleteTanteoActivo(idTanteo);
 		} catch (Exception e) {
 			e.printStackTrace();
-			model.put("success", false);
+			
 		}
-
+		model.put("success", resultado);
 		return createModelAndViewJson(model);
 
 	}

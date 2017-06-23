@@ -93,7 +93,8 @@ BEGIN
 				JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO TPC ON (VAL.DD_TPC_ID = TPC.DD_TPC_ID and tpc.DD_TPC_CODIGO = ''03'' and VAL.borrado = 0)) val2 on val2.act_id_val_renta = act.act_id
    		WHERE (pac.pac_id IS NULL OR pac.pac_check_comercializar = 1) AND (hic.hic_fecha IS NULL OR hic.hic_fecha = (SELECT MAX (hist2.hic_fecha)
                                                                                                                    FROM act_hic_est_inf_comer_hist hist2
-                                                                                                                  WHERE act.act_id = hist2.act_id))';
+                                                                                                                  WHERE act.act_id = hist2.act_id))
+                                                                                                                  and act.borrado = 0';
 
   DBMS_OUTPUT.PUT_LINE('Vista creada OK');
   

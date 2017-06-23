@@ -134,6 +134,7 @@ BEGIN
 						       max(tasacion.BIE_FECHA_VALOR_TASACION) over (partition by tasacion.act_id) max_date
 							from (select tas.act_id, bie_val.BIE_FECHA_VALOR_TASACION, TAS.TAS_IMPORTE_TAS_FIN from '||V_ESQUEMA||'.ACT_TAS_TASACION TAS JOIN '||V_ESQUEMA||'.BIE_VALORACIONES BIE_VAL ON BIE_VAL.BIE_VAL_ID = TAS.BIE_VAL_ID ) tasacion)
 						where BIE_FECHA_VALOR_TASACION = max_date) tasacion on tasacion.act_id = act.act_id
+			where act.borrado = 0
 		';
 		    
 

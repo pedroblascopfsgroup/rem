@@ -69,6 +69,7 @@ BEGIN
 --			AND vista.INFORME_COMERCIAL = 1 -- Que tenga IC aceptado se evalua directamente en el procedure ACTIVO_PUBLICACION_AUTO
 			AND vista.ACT_ID = activo.ACT_ID -- Que el ID de la vista y el activo se correspondan.
 			AND (vista.ESTADO_PUBLICACION_CODIGO IS NULL OR vista.ESTADO_PUBLICACION_CODIGO NOT IN (''01'', ''03'', ''04'')) -- Que el activo no se encuentre en ningun tipo de publicacion ordinaria o despublicado forzado.
+      and activo.borrado = 0
 		';
 
   DBMS_OUTPUT.PUT_LINE('Vista creada OK');

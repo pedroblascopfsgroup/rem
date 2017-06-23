@@ -22,21 +22,21 @@ create or replace PROCEDURE CALCULO_RATING_ACTIVO_AUTO (
    p_username     	IN #ESQUEMA#.act_activo.usuariomodificar%TYPE
 )
 AUTHID CURRENT_USER IS
-       
+
 	-- Definición de cursores
 	-- Recupera el codigo y el valor de los criterios de puntuación
    	CURSOR crs_criterios_puntuacion
    	IS
       	SELECT cpu.cpu_codigo, cpu.cpu_valor
         	FROM #ESQUEMA#.cpu_criterio_puntuacion_act cpu;
-    
+
 	-- Recupera los datos de rating que tiene el activo para calcular la puntuacion
 	CURSOR crs_datos_rating_activo(p_act_id #ESQUEMA#.act_activo.act_id%TYPE)
 	IS
 		SELECT v.*
 			FROM #ESQUEMA#.v_datos_rating_activos v
 			WHERE act_id = p_act_id;
-	
+
 	-- Recupera el valor mínimo por tramo y su id rating correspondiente
 	CURSOR crs_tramos_rating
 	IS
@@ -44,22 +44,22 @@ AUTHID CURRENT_USER IS
 			FROM #ESQUEMA#.tpr_tramo_puntuacion_rating
 			ORDER BY tpr_valor_desde DESC;
 
-	
+
 	-- Declaración de variables
    	v_dd_rtg_id                  	#ESQUEMA#.dd_rtg_rating_activo.dd_rtg_id%TYPE;
-   	v_tramos_puntuacion				crs_tramos_rating%ROWTYPE;		
+   	v_tramos_puntuacion				crs_tramos_rating%ROWTYPE;
 	v_total_entorno      			NUMBER;
 	v_total_edificio				NUMBER;
 	v_total_interior				NUMBER;
 	v_total							NUMBER;
 	v_act_id 						NUMBER(16);
 	v_username						#ESQUEMA#.act_activo.usuariomodificar%TYPE;
-   	
+
    	TYPE criterio_valor_map IS TABLE OF NUMBER INDEX BY VARCHAR2(30);
 	criterio_valor criterio_valor_map;
 	TYPE ACTIVOS_REF IS REF CURSOR;
 	crs_activos ACTIVOS_REF;
-	
+
 BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INICIO]');
 	-- Si no viene informado el username, asignamos el de este procedure
@@ -67,34 +67,35 @@ BEGIN
 	IF(p_username IS NULL) THEN
 		v_username := 'SP_CALCULO_RATING';
 	END IF;
-	
+
    -- Guardamos en una colección el criterio y su valor de las puntuaciones
  	FOR row IN crs_criterios_puntuacion
       LOOP
          criterio_valor(row.cpu_codigo) := row.cpu_valor;
       END LOOP;
-    
+
     -- Abriremos un cursor u otro, dependiendo si el parametro de entrada p_act_id viene informado
 	IF(p_act_id IS NULL) THEN
-		OPEN crs_activos FOR        			
+		OPEN crs_activos FOR
    		 SELECT DISTINCT act.act_id
-			FROM #ESQUEMA#.act_activo act 
-			INNER JOIN #ESQUEMA#.act_ico_info_comercial ico on act.act_id = ico.act_id;
+			FROM #ESQUEMA#.act_activo act
+			INNER JOIN #ESQUEMA#.act_ico_info_comercial ico on act.act_id = ico.act_id
+      where act.borrado = 0;
 	ELSE
-		OPEN crs_activos FOR        			
+		OPEN crs_activos FOR
    		 SELECT p_act_id from dual;
 	END IF;
 
-	
+
 	-- Calcula la puntuación y el rating correspondiente por activo
 	FETCH crs_activos INTO v_act_id;
 	WHILE (crs_activos%FOUND) LOOP
-	
+
 		FOR row IN crs_datos_rating_activo(v_act_id)
 	      LOOP
 	      	-- Suma puntuacion por datos ENTORNO
 	      	 v_total_entorno := 0;
-	      
+
 	         v_total_entorno := v_total_entorno + criterio_valor(row.DD_TPR_CODIGO);
 	         v_total_entorno := v_total_entorno + criterio_valor('04')*row.INF_HOTELES;
 	         v_total_entorno := v_total_entorno + criterio_valor('05')*row.INF_TEATROS;
@@ -108,15 +109,15 @@ BEGIN
 	         v_total_entorno := v_total_entorno + criterio_valor('13')*row.INF_LINEAS_BUS;
 	         v_total_entorno := v_total_entorno + criterio_valor('14')*row.INF_METRO;
 	         v_total_entorno := v_total_entorno + criterio_valor('15')*row.INF_EST_TREN;
-	         
+
 	         IF criterio_valor('ENT') IS NOT NULL AND v_total_entorno > criterio_valor('ENT') THEN
 	         	v_total_entorno := criterio_valor('ENT');
 	         END IF;
 
-	         
+
 	         -- Suma puntuacion por datos EDIFICIO
 	         v_total_edificio := 0;
-	         
+
 	         v_total_edificio := v_total_edificio + criterio_valor('16')*row.EDI_PREVISIBLE_REHAB;
 	         v_total_edificio := v_total_edificio + criterio_valor('17')*row.EDI_BUEN_ESTADO;
 	         v_total_edificio := v_total_edificio + criterio_valor('18')*row.EDI_BAJO;
@@ -128,15 +129,15 @@ BEGIN
 	         v_total_edificio := v_total_edificio + criterio_valor('24')*row.ZCO_ZONA_INFANTIL;
 	         v_total_edificio := v_total_edificio + criterio_valor('25')*row.ZCO_CONSERJE_VIGILANCIA;
 	         v_total_edificio := v_total_edificio + criterio_valor('26')*row.ZCO_GIMNASIO;
-	         
+
 	         IF criterio_valor('EDI') IS NOT NULL AND v_total_edificio > criterio_valor('EDI') THEN
 	         	v_total_edificio := criterio_valor('EDI');
 	         END IF;
 
-	         
+
 	         -- Suma puntuación por datos INTERIOR
 	         v_total_interior := 0;
-	         
+
 	         v_total_interior := v_total_interior + criterio_valor('27')*row.CRI_PTA_ENT_BLINDADA;
 	         v_total_interior := v_total_interior + criterio_valor('28')*row.CRI_PTA_ENT_ACORAZADA;
 	         v_total_interior := v_total_interior + criterio_valor('29')*row.CRI_PTA_PASO_MACIZAS;
@@ -193,16 +194,16 @@ BEGIN
 	         v_total_interior := v_total_interior + criterio_valor('80')*row.INS_AGUA_CALIENTE_CENTRAL;
 	         v_total_interior := v_total_interior + criterio_valor('81')*row.INS_AIRE_PREINSTALACION;
 	         v_total_interior := v_total_interior + criterio_valor('82')*row.INS_AIRE_INSTALACION;
-	         
+
 	         IF criterio_valor('INT') IS NOT NULL AND v_total_interior > criterio_valor('INT') THEN
 	         	v_total_interior := criterio_valor('INT');
 	         END IF;
 
-	         
+
 	         -- Suma de totales
 	         v_total := v_total_entorno + v_total_edificio + v_total_interior;
 	      END LOOP;
-	      
+
       	-- Lista con los tramos de puntuación de rating
 		FOR tramo IN crs_tramos_rating
           LOOP
@@ -214,13 +215,13 @@ BEGIN
         		EXIT;
         	END IF;
           END LOOP;
-          
+
         FETCH crs_activos INTO v_act_id;
 	  END LOOP;
-		  
+
 	CLOSE crs_activos;
    COMMIT;
-   
+
    DBMS_OUTPUT.PUT_LINE('[Rating actualizado correctamente] - idRating asignado: ');
 EXCEPTION
    WHEN OTHERS

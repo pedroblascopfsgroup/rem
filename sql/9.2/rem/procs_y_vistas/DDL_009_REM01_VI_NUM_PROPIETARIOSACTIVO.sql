@@ -50,13 +50,18 @@ BEGIN
           select
             PAC1.ACT_ID idactivo,
           COUNT(*) num_propietarios
-          FROM REM01.ACT_PAC_PROPIETARIO_ACTIVO PAC1
+          FROM '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO PAC1
           GROUP BY PAC1.ACT_ID
     ) nprop
-    INNER JOIN REM01.ACT_PAC_PROPIETARIO_ACTIVO PAC ON NPROP.idactivo = PAC.ACT_ID
+    INNER JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO PAC ON NPROP.idactivo = PAC.ACT_ID
+    inner join '|| V_ESQUEMA ||'.act_activo act
+    on act.act_id = pac.act_id
     WHERE
+    act.borrado = 0 
+    and (
     NPROP.NUM_PROPIETARIOS > 1
     OR (NPROP.NUM_PROPIETARIOS = 1 AND PAC.PAC_PORC_PROPIEDAD < 100)
+    )
     GROUP BY PAC.ACT_ID, NPROP.NUM_PROPIETARIOS';
 
 

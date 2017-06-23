@@ -53,10 +53,13 @@ BEGIN
 	AS
   		with pivot_data as (
 			select * from (
-				SELECT act_id,dd_tpc_codigo, val_fecha_inicio, val_fecha_fin, val_importe
-				FROM ' || V_ESQUEMA || '.ACT_VAL_VALORACIONES VAL 
+				SELECT val.act_id,dd_tpc_codigo, val_fecha_inicio, val_fecha_fin, val_importe
+				FROM ' || V_ESQUEMA || '.ACT_activo act
+        inner join ' || V_ESQUEMA || '.ACT_VAL_VALORACIONES VAL 
+        on val.act_id = act.act_id
         JOIN ' || V_ESQUEMA || '.DD_TPC_TIPO_PRECIO TPC ON VAL.DD_TPC_ID = TPC.DD_TPC_ID
-        WHERE VAL.BORRADO = 0))
+        WHERE act.borrado = 0
+        and VAL.BORRADO = 0))
 				select * from pivot_data
 				pivot (max(val_fecha_inicio) as F_INI,
 				max(val_fecha_fin) as F_FIN,

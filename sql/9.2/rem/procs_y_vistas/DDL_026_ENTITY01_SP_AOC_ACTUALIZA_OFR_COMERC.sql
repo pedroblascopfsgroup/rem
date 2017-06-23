@@ -32,8 +32,8 @@ AS
 --07-10-2016
 --V0.1
 
-V_ESQUEMA VARCHAR2(15 CHAR) := 'REM01';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_ESQUEMA VARCHAR2(15 CHAR) := '#ESQUEMA#';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
 V_SQL VARCHAR2(4000 CHAR);
 V_COUNT NUMBER(16);
 
@@ -83,8 +83,8 @@ BEGIN
 	  ECO.ECO_ID,
 	  (SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''02'') AS DD_EEC_ID,
 	  APR.FEC_BAJA AS ECO_FECHA_ANULACION,
-	  APR.FEC_INFO AS OFR_FECHA_ACCION, 
-	  APR.COD_MOT_ANULA_DENEGA, 
+	  APR.FEC_INFO AS OFR_FECHA_ACCION,
+	  APR.COD_MOT_ANULA_DENEGA,
 	  EQV.DD_DESCRIPCION_BANKIA AS eco_motivo_anulacion
 	  FROM '||V_ESQUEMA||'.APR_AUX_URCOMERC APR
 	  INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
@@ -101,6 +101,7 @@ BEGIN
 	    AND EQV.DD_CODIGO_BANKIA = APR.COD_MOT_ANULA_DENEGA
 	  WHERE CORTOH = 0
 	  AND COACHY = ''1''
+    and act.borrado = 0
 	) TMP
 	ON (ECO.ECO_ID = TMP.ECO_ID)
 	WHEN MATCHED THEN UPDATE
@@ -113,9 +114,9 @@ BEGIN
 	WHERE ECO.DD_EEC_ID = (SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''01'')
 	'
 	;
-  
+
   V_COUNT := SQL%ROWCOUNT;
-  
+
   DBMS_OUTPUT.PUT_LINE('[INFO] Se han anulado '||V_COUNT||' expedientes comerciales.');
   PL_OUTPUT := PL_OUTPUT||'[INFO] Se han anulado '||V_COUNT||' expedientes comerciales.'||CHR(10)||CHR(10);
 
@@ -141,6 +142,7 @@ BEGIN
 	      ON OFR.OFR_ID = AOF.OFR_ID
 	    WHERE APR.CORTOH = 0
 	    AND APR.COACHY = ''1''
+      and act.borrado = 0
 	    AND (OFR.DD_EOF_ID = (SELECT DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = ''01'')
 	    OR OFR.DD_EOF_ID = (SELECT DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = ''04''))
 	) TMP
@@ -153,12 +155,12 @@ BEGIN
   AND OFR.DD_EOF_ID != (SELECT DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = ''02'')
 	'
 	;
-  
+
   V_COUNT := SQL%ROWCOUNT;
-  
+
   DBMS_OUTPUT.PUT_LINE('[INFO] Se han descongelado '||V_COUNT||' ofertas relacionadas con la anulación.');
   PL_OUTPUT := PL_OUTPUT||'[INFO] Se han descongelado '||V_COUNT||' ofertas relacionadas con la anulación.'||CHR(10)||CHR(10);
-  
+
   --ANULAMOS LA OFERTA A TRATAR
 	-- ESTADO OFERTA -> ANULADA
   EXECUTE IMMEDIATE '
@@ -183,34 +185,34 @@ BEGIN
   WHERE OFR.DD_EOF_ID != (SELECT DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = ''05'')
 	'
 	;
-  
+
   V_COUNT := SQL%ROWCOUNT;
-  
+
   DBMS_OUTPUT.PUT_LINE('[INFO] Se han anulado '||V_COUNT||' ofertas.');
   PL_OUTPUT := PL_OUTPUT||'[INFO] Se han anulado '||V_COUNT||' ofertas.'||CHR(10)||CHR(10);
-  
+
   PL_OUTPUT := PL_OUTPUT||'---------------------------------------------------------------------'||CHR(10)||CHR(10);
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   DBMS_OUTPUT.PUT_LINE('[INFO] -BLOQUE DENEGACIONES-');
   PL_OUTPUT := PL_OUTPUT||'[INFO] -BLOQUE DENEGACIONES-'||CHR(10)||CHR(10);
@@ -248,12 +250,12 @@ BEGIN
     OFR.OFR_ID,
     ECO.ECO_ID,
     (SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''12'') AS DD_EEC_ID,
-    APR.COD_MOT_ANULA_DENEGA, 
+    APR.COD_MOT_ANULA_DENEGA,
     EQV.DD_DESCRIPCION_BANKIA AS eco_motivo_anulacion
     FROM '||V_ESQUEMA||'.APR_AUX_URCOMERC APR
     INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
       ON ACT.ACT_NUM_ACTIVO_UVEM = APR.ACT_NUMERO_UVEM
-    INNER JOIN '||V_ESQUEMA||'.ACT_OFR 
+    INNER JOIN '||V_ESQUEMA||'.ACT_OFR
       ON ACT_OFR.ACT_ID = ACT.ACT_ID
     INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR
       ON OFR.OFR_ID = ACT_OFR.OFR_ID
@@ -265,9 +267,10 @@ BEGIN
       AND EQV.DD_CODIGO_BANKIA = APR.COD_MOT_ANULA_DENEGA
     WHERE CORTOH = 0
     AND COACHY = ''2''
+    and act.borrado = 0
   ) TMP
-  ON (ECO.ECO_ID = TMP.ECO_ID) 
-  WHEN MATCHED THEN UPDATE 
+  ON (ECO.ECO_ID = TMP.ECO_ID)
+  WHEN MATCHED THEN UPDATE
   SET
   ECO.DD_EEC_ID = TMP.DD_EEC_ID,
   ECO.USUARIOMODIFICAR = '''||V_USUARIO||''',
@@ -275,9 +278,9 @@ BEGIN
   WHERE ECO.DD_EEC_ID = (SELECT DD_EEC_ID FROM DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''01'')
 	'
 	;
-  
+
   V_COUNT := SQL%ROWCOUNT;
-  
+
   DBMS_OUTPUT.PUT_LINE('[INFO] Se han denegado '||V_COUNT||' expedientes comerciales.');
   PL_OUTPUT := PL_OUTPUT||'[INFO] Se han denegado '||V_COUNT||' expedientes comerciales.'||CHR(10)||CHR(10);
 
@@ -303,6 +306,7 @@ BEGIN
 	      ON OFR.OFR_ID = AOF.OFR_ID
 	    WHERE APR.CORTOH = 0
 	    AND APR.COACHY = ''2''
+      and act.borrado = 0
 	    AND (OFR.DD_EOF_ID = (SELECT DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = ''01'')
 	    OR OFR.DD_EOF_ID = (SELECT DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = ''04''))
 	) TMP
@@ -315,12 +319,12 @@ BEGIN
   AND OFR.DD_EOF_ID != (SELECT DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = ''02'')
 	'
 	;
-  
+
   V_COUNT := SQL%ROWCOUNT;
-  
+
   DBMS_OUTPUT.PUT_LINE('[INFO] Se han descongelado '||V_COUNT||' ofertas relacionadas con la denegación.');
   PL_OUTPUT := PL_OUTPUT||'[INFO] Se han descongelado '||V_COUNT||' ofertas relacionadas con la denegación.'||CHR(10)||CHR(10);
-  
+
   --ANULAMOS LA OFERTA A TRATAR
 	-- ESTADO OFERTA -> ANULADA
   EXECUTE IMMEDIATE '
@@ -345,34 +349,34 @@ BEGIN
   WHERE OFR.DD_EOF_ID != (SELECT DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = ''05'')
 	'
 	;
-  
+
   V_COUNT := SQL%ROWCOUNT;
-  
+
   DBMS_OUTPUT.PUT_LINE('[INFO] Se han rechazado '||V_COUNT||' ofertas.');
   PL_OUTPUT := PL_OUTPUT||'[INFO] Se han rechazado '||V_COUNT||' ofertas.'||CHR(10)||CHR(10);
-  
+
   DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------------');
   PL_OUTPUT := PL_OUTPUT||'---------------------------------------------------------------------'||CHR(10)||CHR(10);
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
   DBMS_OUTPUT.PUT_LINE('[INFO] -BLOQUE DEVOLUCIONES-');
 
@@ -411,7 +415,7 @@ BEGIN
     FROM APR_AUX_URCOMERC APR
     INNER JOIN ACT_ACTIVO ACT
       ON ACT.ACT_NUM_ACTIVO_UVEM = APR.ACT_NUMERO_UVEM
-    INNER JOIN ACT_OFR 
+    INNER JOIN ACT_OFR
       ON ACT_OFR.ACT_ID = ACT.ACT_ID
     INNER JOIN OFR_OFERTAS OFR
       ON OFR.OFR_ID = ACT_OFR.OFR_ID
@@ -424,8 +428,8 @@ BEGIN
     WHERE CORTOH = 0
     AND COACHY = ''2''
   ) TMP
-  ON (ECO.ECO_ID = TMP.ECO_ID) 
-  WHEN MATCHED THEN UPDATE 
+  ON (ECO.ECO_ID = TMP.ECO_ID)
+  WHEN MATCHED THEN UPDATE
   SET
   ECO.DD_EEC_ID = TMP.DD_EEC_ID,
   ECO.USUARIOMODIFICAR = '''||V_USUARIO||''',
@@ -433,9 +437,9 @@ BEGIN
   WHERE ECO.DD_EEC_ID = (SELECT DD_EEC_ID FROM DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''01'')
 	'
 	;
-  
+
   V_COUNT := SQL%ROWCOUNT;
-  
+
   DBMS_OUTPUT.PUT_LINE('[INFO] Se han denegado '||V_COUNT||' expedientes comerciales.');
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] Descongelando Ofertas.');
@@ -471,11 +475,11 @@ BEGIN
   AND OFR.DD_EOF_ID != (SELECT DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = ''02'')
 	'
 	;
-  
+
   V_COUNT := SQL%ROWCOUNT;
-  
+
   DBMS_OUTPUT.PUT_LINE('[INFO] Se han descongelado '||V_COUNT||' ofertas relacionadas con la denegación.');
-  
+
   EXECUTE IMMEDIATE '
 	--ANULAMOS LA OFERTA A TRATAR
 	-- ESTADO OFERTA -> ANULADA
@@ -499,33 +503,33 @@ BEGIN
   WHERE OFR.DD_EOF_ID != (SELECT DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = ''05'')
 	'
 	;
-  
+
   V_COUNT := SQL%ROWCOUNT;
-  
+
   DBMS_OUTPUT.PUT_LINE('[INFO] Se han rechazado '||V_COUNT||' ofertas.');
   */
   DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------------');
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   DBMS_OUTPUT.PUT_LINE('[INFO] -BLOQUE FINANCIACIÓN-');
 
@@ -548,37 +552,37 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE('[INFO] Informando financiaciones.');
 
   /*EXECUTE IMMEDIATE '
- 	
+
 	'
 	;*/
-  
+
   V_COUNT := SQL%ROWCOUNT;
-  
+
   DBMS_OUTPUT.PUT_LINE('[INFO] Se han informado '||V_COUNT||' financiaciones.');
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] Descongelando Ofertas.');
 
 	/*EXECUTE IMMEDIATE '
-	
+
 	'
 	;*/
-  
+
   V_COUNT := SQL%ROWCOUNT;
-  
+
   DBMS_OUTPUT.PUT_LINE('[INFO] Se han descongelado '||V_COUNT||' ofertas relacionadas con la financiación.');
-  
+
   /*EXECUTE IMMEDIATE '
-	
+
 	'
 	;*/
-  
+
   V_COUNT := SQL%ROWCOUNT;
-  
+
   DBMS_OUTPUT.PUT_LINE('[INFO] Se han informado '||V_COUNT||' financiaciones.');
-  
+
   DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------------');
 
-  
+
 
 
 

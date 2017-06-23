@@ -108,7 +108,10 @@ BEGIN
           LEFT JOIN ' || V_ESQUEMA_MASTER || '.usu_usuarios solic ON solic.usu_id = tbj.usu_id
           LEFT JOIN
           (SELECT act_id, tbj_id, ROW_NUMBER() OVER(PARTITION BY tbj_id ORDER BY act_id) rango
-             FROM ' || V_ESQUEMA || '.act_tbj) rn ON (rn.act_id = act.act_id AND rn.tbj_id = tbj.tbj_id)';
+             FROM ' || V_ESQUEMA || '.act_tbj) rn ON (rn.act_id = act.act_id AND rn.tbj_id = tbj.tbj_id)
+          where act.borrado = 0
+          and tbj.borrado = 0
+          and agr.borrado = 0';
 
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_BUSQUEDA_TRABAJOS...Creada OK');

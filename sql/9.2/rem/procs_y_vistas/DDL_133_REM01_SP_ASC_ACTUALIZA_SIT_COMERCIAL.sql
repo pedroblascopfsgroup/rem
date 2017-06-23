@@ -21,7 +21,7 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 SET DEFINE OFF;
 
-CREATE OR REPLACE PROCEDURE SP_ASC_ACTUALIZA_SIT_COMERCIAL (
+create or replace PROCEDURE SP_ASC_ACTUALIZA_SIT_COMERCIAL (
       ID_ACTIVO       IN NUMBER DEFAULT 0,
       ACTUALIZAR      IN NUMBER DEFAULT 0
 )
@@ -43,7 +43,7 @@ AS
 
 --EJEMPLOS DE USO:
 ----SP_ASC_ACTUALIZA_SIT_COMERCIAL(161,0); | Solo informaria la Situacion Comercial para el ACT_ID 161
-----SP_ASC_ACTUALIZA_SIT_COMERCIAL(161);   | 
+----SP_ASC_ACTUALIZA_SIT_COMERCIAL(161);   |
 ----SP_ASC_ACTUALIZA_SIT_COMERCIAL(161,1); | Informaria y actualizaria la Situacion Comercial para el ACT_ID 161
 ----SP_ASC_ACTUALIZA_SIT_COMERCIAL(0,0);   | Solo informaria la Situacion Comercial para el todos los Activos
 ----SP_ASC_ACTUALIZA_SIT_COMERCIAL();      |
@@ -82,37 +82,37 @@ BEGIN
   EXECUTE IMMEDIATE 'TRUNCATE TABLE '||V_ESQUEMA||'.'||TABLA_APOYO||'';
 
   IF ID_ACTIVO > 0 THEN --IF_1
-  
+
     EXECUTE IMMEDIATE '
     SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||TABLA_ACTIVO||' WHERE ACT_ID = '||ID_ACTIVO||' AND BORRADO = 0
     ' INTO V_COUNT;
-    
+
     IF V_COUNT > 0 THEN --IF_2
-    
+
       DBMS_OUTPUT.PUT_LINE('[INFO] Se ejecutará el proceso para el Activo '||ID_ACTIVO||'.');
-      
+
       EXECUTE IMMEDIATE '
-        INSERT INTO '||V_ESQUEMA||'.'||TABLA_APOYO||' (ACT_ID,DD_SCM_ID_OLD,DD_SCM_ID_NEW,FECHA_CALCULO) 
+        INSERT INTO '||V_ESQUEMA||'.'||TABLA_APOYO||' (ACT_ID,DD_SCM_ID_OLD,DD_SCM_ID_NEW,FECHA_CALCULO)
         SELECT ACT_ID, DD_SCM_ID, (SELECT DD_SCM_ID FROM '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL WHERE DD_SCM_CODIGO = '''||SITCOM_VENTA||''')
         , SYSDATE FROM '||V_ESQUEMA||'.'||TABLA_ACTIVO||' WHERE ACT_ID = '||ID_ACTIVO||' AND BORRADO = 0 ORDER BY ACT_ID DESC
       ';
-      
+
     ELSE --IF_2
-    
+
       DBMS_OUTPUT.PUT_LINE('[INFO] No existe el Activo '||ID_ACTIVO||' pasado por parámetros. El proceso finalizará.');
-      
+
     END IF; --IF_2
-    
+
   ELSE --IF_1
-  
+
     DBMS_OUTPUT.PUT_LINE('[INFO] Se informará/actualizará la Situación Comercial para todos los Activos.');
-    
+
     EXECUTE IMMEDIATE '
-      INSERT INTO '||V_ESQUEMA||'.'||TABLA_APOYO||' (ACT_ID,DD_SCM_ID_OLD,DD_SCM_ID_NEW,FECHA_CALCULO) 
+      INSERT INTO '||V_ESQUEMA||'.'||TABLA_APOYO||' (ACT_ID,DD_SCM_ID_OLD,DD_SCM_ID_NEW,FECHA_CALCULO)
       SELECT ACT_ID, DD_SCM_ID, (SELECT DD_SCM_ID FROM '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL WHERE DD_SCM_CODIGO = '''||SITCOM_VENTA||''')
       , SYSDATE FROM '||V_ESQUEMA||'.'||TABLA_ACTIVO||' WHERE BORRADO = 0 ORDER BY ACT_ID DESC
     ';
-    
+
   END IF; --IF_1
 
 
@@ -121,17 +121,17 @@ BEGIN
   ' INTO V_COUNT;
 
   IF V_COUNT > 0 THEN --IF_3
-  
+
     IF ACTUALIZAR > 0 THEN --IF_4
-    
+
       DBMS_OUTPUT.PUT_LINE('[INFO] Existen '||V_COUNT||' Activos que informar. Puede ver los nuevos estados en la tabla '||V_ESQUEMA||'.'||TABLA_APOYO||'. O en la tabla de Activos, donde la Situación Comercial se habrá actualizado.');
-    
+
     ELSE --IF_4
-    
+
       DBMS_OUTPUT.PUT_LINE('[INFO] Existen '||V_COUNT||' Activos que informar. Puede ver los nuevos estados en la tabla '||V_ESQUEMA||'.'||TABLA_APOYO||'.');
-    
+
     END IF; --IF_4
-    
+
     /*-----------------------*/
     /*SCM_DISPONIBLE_ALQUILER*/
     /*-----------------------*/
@@ -142,6 +142,7 @@ BEGIN
         INNER JOIN '||V_ESQUEMA||'.'||TABLA_APOYO||' TMP
         ON TMP.ACT_ID = ACT.ACT_ID
         WHERE ACT.DD_TCO_ID = (SELECT DD_TCO_ID FROM '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION WHERE DD_TCO_CODIGO = '''||TIPOCOM_ALQUILER||''')
+        and act.borrado = 0
       ) TMP
       ON (ACT.ACT_ID = TMP.ACT_ID)
       WHEN MATCHED THEN UPDATE SET
@@ -150,9 +151,9 @@ BEGIN
       WHERE ACT.DD_SCM_ID_NEW != TMP.SIT_NUEVA
       ';
     COMMIT;
-    
+
     DBMS_OUTPUT.PUT_LINE('[INFO] Informado SITUACION COMERCIAL -> DISPONIBLE PARA ALQUILER.');
-    
+
     /*-----------------------------*/
     /*SCM_DISPONIBLE_VENTA_ALQUILER*/
     /*-----------------------------*/
@@ -163,6 +164,7 @@ BEGIN
         INNER JOIN '||V_ESQUEMA||'.'||TABLA_APOYO||' TMP
         ON TMP.ACT_ID = ACT.ACT_ID
         WHERE ACT.DD_TCO_ID = (SELECT DD_TCO_ID FROM '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION WHERE DD_TCO_CODIGO = '''||TIPOCOM_ALQUILER_VENTA||''')
+        and act.borrado = 0
       ) TMP
       ON (ACT.ACT_ID = TMP.ACT_ID)
       WHEN MATCHED THEN UPDATE SET
@@ -171,7 +173,7 @@ BEGIN
       WHERE ACT.DD_SCM_ID_NEW != TMP.SIT_NUEVA
       ';
     COMMIT;
-    
+
     DBMS_OUTPUT.PUT_LINE('[INFO] Informado SITUACION COMERCIAL -> DISPONIBLE VENTA ALQUILER.');
 
     /*--------------------*/
@@ -184,6 +186,7 @@ BEGIN
         INNER JOIN '||V_ESQUEMA||'.'||TABLA_APOYO||' TMP
         ON TMP.ACT_ID = ACT.ACT_ID
         WHERE ACT.DD_TCO_ID = (SELECT DD_TCO_ID FROM '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION WHERE DD_TCO_CODIGO = '''||TIPOCOM_VENTA||''')
+        and act.borrado = 0
       ) TMP
       ON (ACT.ACT_ID = TMP.ACT_ID)
       WHEN MATCHED THEN UPDATE SET
@@ -192,7 +195,7 @@ BEGIN
       WHERE ACT.DD_SCM_ID_NEW != TMP.SIT_NUEVA
       ';
     COMMIT;
-    
+
     DBMS_OUTPUT.PUT_LINE('[INFO] Informado SITUACION COMERCIAL -> DISPONIBLE PARA VENTA.');
 
     /*----------------*/
@@ -208,6 +211,7 @@ BEGIN
         INNER JOIN '||V_ESQUEMA||'.V_COND_DISPONIBILIDAD VISTA
         ON VISTA.ACT_ID = ACT.ACT_ID
         WHERE VISTA.ES_CONDICIONADO = 1
+        and act.borrado = 0
       ) TMP
       ON (ACT.ACT_ID = TMP.ACT_ID)
       WHEN MATCHED THEN UPDATE SET
@@ -216,7 +220,7 @@ BEGIN
       WHERE ACT.DD_SCM_ID_NEW != TMP.SIT_NUEVA
       ';
     COMMIT;
-    
+
     DBMS_OUTPUT.PUT_LINE('[INFO] Informado SITUACION COMERCIAL -> CONDICIONADO.');
 
     /*----------------------------*/
@@ -240,6 +244,7 @@ BEGIN
         ON RES.ECO_ID = ECO.ECO_ID
         AND RES.BORRADO=0
         WHERE RES.DD_ERE_ID = (SELECT DD_ERE_ID FROM '||V_ESQUEMA||'.DD_ERE_ESTADOS_RESERVA WHERE DD_ERE_CODIGO = '''||ESTADORES_FIRMADA||''')
+        and act.borrado = 0
       ) TMP
       ON (ACT.ACT_ID = TMP.ACT_ID)
       WHEN MATCHED THEN UPDATE SET
@@ -248,9 +253,9 @@ BEGIN
       WHERE ACT.DD_SCM_ID_NEW != TMP.SIT_NUEVA
       ';
     COMMIT;
-    
+
     DBMS_OUTPUT.PUT_LINE('[INFO] Informado SITUACION COMERCIAL -> DISPONIBLE PARA VENTA RESERVA.');
- 
+
     /*---------------------------*/
     /*SCM_DISPONIBLE_VENTA_OFERTA*/
     /*---------------------------*/
@@ -266,6 +271,7 @@ BEGIN
         ON OFR.OFR_ID = ACTOFR.OFR_ID
         AND OFR.BORRADO=0
         WHERE OFR.DD_EOF_ID = (SELECT DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = '''||ESTADOOFE_ACEPTADA||''')
+        and act.borrado = 0
       ) TMP
       ON (ACT.ACT_ID = TMP.ACT_ID)
       WHEN MATCHED THEN UPDATE SET
@@ -274,7 +280,7 @@ BEGIN
       WHERE ACT.DD_SCM_ID_NEW != TMP.SIT_NUEVA
       ';
     COMMIT;
-    
+
     DBMS_OUTPUT.PUT_LINE('[INFO] Informado SITUACION COMERCIAL -> DISPONIBLE PARA VENTA OFERTA.');
 
     /*----------------------*/
@@ -290,6 +296,7 @@ BEGIN
         ON PAC.ACT_ID = ACT.ACT_ID
         AND PAC.BORRADO=0
         WHERE PAC.PAC_CHECK_COMERCIALIZAR = 0
+        and act.borrado = 0
       ) TMP
       ON (ACT.ACT_ID = TMP.ACT_ID)
       WHEN MATCHED THEN UPDATE SET
@@ -298,9 +305,9 @@ BEGIN
       WHERE ACT.DD_SCM_ID_NEW != TMP.SIT_NUEVA
       ';
     COMMIT;
-    
+
     DBMS_OUTPUT.PUT_LINE('[INFO] Informado SITUACION COMERCIAL -> NO COMERCIALIZABLE.');
-    
+
     /*------------*/
     /*SCM_VENDIDO*/
     /*------------*/
@@ -319,6 +326,7 @@ BEGIN
         ON ECO.OFR_ID = ACTOFR.OFR_ID
         AND ECO.BORRADO=0
         WHERE ECO.ECO_FECHA_VENTA IS NOT NULL
+        and act.borrado = 0
       ) TMP
       ON (ACT.ACT_ID = TMP.ACT_ID)
       WHEN MATCHED THEN UPDATE SET
@@ -327,7 +335,7 @@ BEGIN
       WHERE ACT.DD_SCM_ID_NEW != TMP.SIT_NUEVA
       ';
     COMMIT;
-    
+
     /*-----------*/
     /*SCM_VENDIDO2*/
     /*-----------*/
@@ -338,6 +346,7 @@ BEGIN
         INNER JOIN '||V_ESQUEMA||'.'||TABLA_APOYO||' TMP
         ON TMP.ACT_ID = ACT.ACT_ID
         WHERE ACT.ACT_VENTA_EXTERNA_FECHA IS NOT NULL
+        and act.borrado = 0
       ) TMP
       ON (ACT.ACT_ID = TMP.ACT_ID)
       WHEN MATCHED THEN UPDATE SET
@@ -346,27 +355,27 @@ BEGIN
       WHERE ACT.DD_SCM_ID_NEW != TMP.SIT_NUEVA
       ';
     COMMIT;
-    
+
     DBMS_OUTPUT.PUT_LINE('[INFO] Informado SITUACION COMERCIAL -> VENDIDO.');
-    
+
     EXECUTE IMMEDIATE '
     SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||TABLA_APOYO||' WHERE DD_SCM_ID_OLD != DD_SCM_ID_NEW OR DD_SCM_ID_OLD IS NULL AND BORRADO = 0
     ' INTO V_COUNT;
-    
+
     IF V_COUNT > 0 THEN --IF_5
-    
+
       DBMS_OUTPUT.PUT_LINE('[INFO] La Situación Comercial ha cambiado para '||V_COUNT||' Activos.');
-      
+
     ELSE --IF_5
-    
+
       DBMS_OUTPUT.PUT_LINE('[INFO] La Situación Comercial no ha cambiado.');
-      
+
     END IF; --IF_5
-  
+
     IF ACTUALIZAR = 1 AND V_COUNT > 0 THEN --IF_6
-    
+
       DBMS_OUTPUT.PUT_LINE('[INFO] Se va a proceder a ACTUALIZAR la Situación Comercial en la tabla de Activos.');
-      
+
       EXECUTE IMMEDIATE '
       MERGE INTO '||V_ESQUEMA||'.'||TABLA_ACTIVO||' ACT USING (
         SELECT DISTINCT TMP.ACT_ID, TMP.DD_SCM_ID_NEW AS SIT_NUEVA
@@ -376,6 +385,7 @@ BEGIN
         WHERE (TMP.DD_SCM_ID_NEW != TMP.DD_SCM_ID_OLD
         OR TMP.DD_SCM_ID_OLD IS NULL)
         AND TMP.BORRADO = 0
+        and act.borrado = 0
       ) TMP
       ON (ACT.ACT_ID = TMP.ACT_ID)
       WHEN MATCHED THEN UPDATE SET
@@ -387,17 +397,17 @@ BEGIN
       ';
       V_COUNT := SQL%ROWCOUNT;
       COMMIT;
-      
+
       DBMS_OUTPUT.PUT_LINE('[INFO] '||V_COUNT||' Activos actualizados.');
-      
+
     END IF; --IF_6
-  
+
   ELSE --IF_3
 
     DBMS_OUTPUT.PUT_LINE('[INFO] No hay activos que informar/actualizar.');
 
   END IF; --IF_3
-  
+
   DBMS_OUTPUT.PUT_LINE('[OK] - PROCESO FINALIZADO.');
 
 EXCEPTION

@@ -55,14 +55,20 @@ BEGIN
 		SELECT PVE.PVE_ID AS ID_MEDIADOR,
 		  (
 		    SELECT COUNT(ICO1.ACT_ID) AS NUM_ACTIVOS
-		    FROM '|| V_ESQUEMA ||'.ACT_ICO_INFO_COMERCIAL ICO1
+		    FROM '|| V_ESQUEMA ||'.ACT_activo act
+		    inner join '|| V_ESQUEMA ||'.ACT_ICO_INFO_COMERCIAL ICO1
+		    on ico1.act_id = act.act_id
 		    WHERE ICO1.ICO_MEDIADOR_ID = PVE.PVE_ID
+		    and act.borrado = 0
 		    -- ACTIVOS (como mediador del informe comercial de los activos)
 		  ) AS NUM_ACTIVOS,
 		  (
 		    SELECT COUNT(VIS1.VIS_ID)
-		    FROM '|| V_ESQUEMA ||'.VIS_VISITAS VIS1
+		    FROM '|| V_ESQUEMA ||'.ACT_activo act
+		    inner join '|| V_ESQUEMA ||'.VIS_VISITAS VIS1
+		    on vis1.act_id = act.act_id
 		    WHERE VIS1.PVE_ID_PVE_VISITA = PVE.PVE_ID
+		    and act.borrado = 0
 		    -- VISITAS (realizadas)
 		  ) AS NUM_VISITAS,
 		  (
@@ -73,21 +79,25 @@ BEGIN
 		  ) AS NUM_OFERTAS,
 		  (
 		    SELECT COUNT(ECO1.ECO_ID) AS RESERVAS
-		    FROM '|| V_ESQUEMA ||'.ACT_ICO_INFO_COMERCIAL ICO1
+		    FROM '||V_ESQUEMA||'.act_activo act
+		    inner join '|| V_ESQUEMA ||'.ACT_ICO_INFO_COMERCIAL ICO1 on ico1.act_id = act.act_id
 		    INNER JOIN '|| V_ESQUEMA ||'.ACT_OFR AOF1 ON ICO1.ICO_MEDIADOR_ID = AOF1.OFR_ID
 		    INNER JOIN '|| V_ESQUEMA ||'.ECO_EXPEDIENTE_COMERCIAL ECO1 ON AOF1.OFR_ID = ECO1.OFR_ID
 		    INNER JOIN '|| V_ESQUEMA ||'.DD_EEC_EST_EXP_COMERCIAL EEC1 ON ECO1.DD_EEC_ID          = EEC1.DD_EEC_ID
-		    WHERE ICO1.ICO_MEDIADOR_ID = PVE.PVE_ID
+		    WHERE act.borrado = 0
+		    and ICO1.ICO_MEDIADOR_ID = PVE.PVE_ID
 		    AND EEC1.DD_EEC_CODIGO     = ''06'' -- RESERVADO
 		    -- RESERVAS
 		  ) AS NUM_RESERVAS,
 		  (
 		    SELECT COUNT(ECO1.ECO_ID) AS VENTAS
-		    FROM '|| V_ESQUEMA ||'.ACT_ICO_INFO_COMERCIAL ICO1
+		    FROM '||V_ESQUEMA||'.act_activo act
+		    inner join '|| V_ESQUEMA ||'.ACT_ICO_INFO_COMERCIAL ICO1 on ico1.act_id = act.act_id
 		    INNER JOIN '|| V_ESQUEMA ||'.ACT_OFR AOF1 ON ICO1.ICO_MEDIADOR_ID = AOF1.OFR_ID
 		    INNER JOIN '|| V_ESQUEMA ||'.ECO_EXPEDIENTE_COMERCIAL ECO1 ON AOF1.OFR_ID = ECO1.OFR_ID
 		    INNER JOIN '|| V_ESQUEMA ||'.DD_EEC_EST_EXP_COMERCIAL EEC1 ON ECO1.DD_EEC_ID          = EEC1.DD_EEC_ID
-		    WHERE ICO1.ICO_MEDIADOR_ID = PVE.PVE_ID
+		    WHERE act.borrado = 0
+		    and ICO1.ICO_MEDIADOR_ID = PVE.PVE_ID
 		    AND EEC1.DD_EEC_CODIGO     = ''08'' -- VENDIDO
 		    -- ACTIVOS VENDIDOS (VENTAS)
 		  ) AS NUM_VENTAS,

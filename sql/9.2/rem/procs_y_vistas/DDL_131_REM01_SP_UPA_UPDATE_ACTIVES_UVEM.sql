@@ -30,8 +30,8 @@ AS
 --27-09-2016
 --V0.1
 
-V_ESQUEMA VARCHAR2(15 CHAR) := 'REM01';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_ESQUEMA VARCHAR2(15 CHAR) := '#ESQUEMA#';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
 V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
 V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
 V_NOT_UPDATE VARCHAR2(2000 CHAR) := '';
@@ -47,8 +47,8 @@ V_NOT_UPDATE VARCHAR2(2000 CHAR) := '';
                        --ACT_VPO
                        --ACT_LLAVES_NECESARIAS
                        --ACT_LLAVES_FECHA_RECEP
-		       --ACT_NUM_INMOVILIZADO_BNK
-		       --DD_ENA_ID
+           --ACT_NUM_INMOVILIZADO_BNK
+           --DD_ENA_ID
   --[5]TABLA ACT_AJD_ADJJUDICIAL
                       --AJD_NUM_AUTO
                       --AJD_PROCURADOR
@@ -123,6 +123,7 @@ BEGIN
              BIE.BIE_VIVIENDA_HABITUAL IS NULL
               AND
               TEMP.RESIDENCIA_HABITUAL IS NOT NULL
+               and act.borrado = 0
         ) TMP
         ON (TMP.BIE_ID = BIE.BIE_ID)
         WHEN MATCHED THEN UPDATE SET
@@ -155,6 +156,7 @@ BEGIN
              BIE.BIE_PORCT_IMP_COMPRA IS NULL
               AND
               TEMP.PORCENTAJE_IMPUESTO_COMPRA IS NOT NULL
+               and act.borrado = 0
         ) TMP
         ON (TMP.BIE_ID = BIE.BIE_ID)
         WHEN MATCHED THEN UPDATE SET
@@ -204,6 +206,7 @@ BEGIN
              (BIE.BIE_DREG_LIBRO IS NULL OR BIE.BIE_DREG_TOMO IS NULL OR BIE.BIE_DREG_FOLIO IS NULL)
               AND
               (TEMP.NUM_LIBRO_ESCRITURA IS NOT NULL OR TEMP.NUM_TOMO_ESCRITURA IS NOT NULL OR TEMP.NUM_FOLIO_ESCRITURA IS NOT NULL)
+               and act.borrado = 0
           ) TMP
           ON (TMP.BIE_ID = BIE.BIE_ID)
           WHEN MATCHED THEN UPDATE SET
@@ -252,6 +255,7 @@ BEGIN
              (BIE.BIE_ADJ_IMPORTE_ADJUDICACION IS NULL
               AND
               TEMP.IMPORTE_ADJUDICACION IS NOT NULL)
+               and act.borrado = 0
           ) TMP
           ON (TMP.BIE_ID = BIE.BIE_ID)
           WHEN MATCHED THEN UPDATE SET
@@ -298,6 +302,7 @@ BEGIN
              (ACT.ACT_VPO IS NULL
               AND
               TEMP.REGIMEN_PROTECCION IS NOT NULL)
+               and act.borrado = 0
           ) TMP
           ON (TMP.ACT_ID = ACT.ACT_ID)
           WHEN MATCHED THEN UPDATE SET
@@ -327,6 +332,7 @@ BEGIN
              (ACT.ACT_LLAVES_NECESARIAS IS NULL
               AND
               TEMP.LLAVES_NECESARIAS IS NOT NULL)
+               and act.borrado = 0
           ) TMP
           ON (TMP.ACT_ID = ACT.ACT_ID)
           WHEN MATCHED THEN UPDATE SET
@@ -356,6 +362,7 @@ BEGIN
              (ACT.ACT_LLAVES_FECHA_RECEP IS NULL
               AND
               TEMP.FEC_RECEP_LLAVES IS NOT NULL)
+               and act.borrado = 0
           ) TMP
           ON (TMP.ACT_ID = ACT.ACT_ID)
           WHEN MATCHED THEN UPDATE SET
@@ -386,6 +393,7 @@ BEGIN
              (ACT.ACT_NUM_INMOVILIZADO_BNK IS NULL
               AND
               TEMP.NUINMU IS NOT NULL)
+               and act.borrado = 0
           ) TMP
           ON (TMP.ACT_ID = ACT.ACT_ID)
           WHEN MATCHED THEN UPDATE SET
@@ -405,7 +413,7 @@ BEGIN
            WITH TEMP AS (
              SELECT DISTINCT
               (SELECT ENA.DD_ENA_ID FROM '||V_ESQUEMA||'.DD_ENA_ENTRADA_ACTIVO_BNK ENA WHERE ENA.DD_ENA_CODIGO = APR.COD_ENTRADA_ACTIVO) AS ENA,
-	      APR_ID, ACT_NUMERO_UVEM, REM
+        APR_ID, ACT_NUMERO_UVEM, REM
               FROM '||V_ESQUEMA||'.APR_AUX_STOCK_UVEM_TO_REM APR
             )
             SELECT TEMP.*, ACT.DD_ENA_ID, ACT.ACT_ID
@@ -418,6 +426,7 @@ BEGIN
              (ACT.DD_ENA_ID IS NULL
               AND
               TEMP.ENA IS NOT NULL)
+               and act.borrado = 0
           ) TMP
           ON (TMP.ACT_ID = ACT.ACT_ID)
           WHEN MATCHED THEN UPDATE SET
@@ -463,6 +472,7 @@ BEGIN
              (ACT.AJD_NUM_AUTO IS NULL
               AND
               TEMP.NUM_AUTOS_JUZGADO IS NOT NULL)
+               and link.borrado = 0
           ) TMP
           ON (TMP.ACT_ID = ACT.ACT_ID)
           WHEN MATCHED THEN UPDATE SET
@@ -494,6 +504,7 @@ BEGIN
              (ACT.AJD_PROCURADOR IS NULL
               AND
               TEMP.NOMBRE_PROCURADOR IS NOT NULL)
+               and link.borrado = 0
           ) TMP
           ON (TMP.ACT_ID = ACT.ACT_ID)
           WHEN MATCHED THEN UPDATE SET
@@ -539,6 +550,7 @@ BEGIN
              (ACT.ADN_FECHA_FIRMA_TITULO IS NULL
               AND
               TEMP.FEC_RESOLUCION IS NOT NULL)
+               and link.borrado = 0
           ) TMP
           ON (TMP.ACT_ID = ACT.ACT_ID)
           WHEN MATCHED THEN UPDATE SET
@@ -584,6 +596,7 @@ BEGIN
              (ACT.SPS_FECHA_TITULO IS NULL
               AND
               TEMP.FEC_INICIO_CONTRATO IS NOT NULL)
+               and link.borrado = 0
           ) TMP
           ON (TMP.ACT_ID = ACT.ACT_ID)
           WHEN MATCHED THEN UPDATE SET
@@ -615,6 +628,7 @@ BEGIN
              (ACT.SPS_FECHA_TOMA_POSESION IS NULL
               AND
               TEMP.FEC_REALIZADA_POSESION IS NOT NULL)
+               and link.borrado = 0
           ) TMP
           ON (TMP.ACT_ID = ACT.ACT_ID)
           WHEN MATCHED THEN UPDATE SET
@@ -646,6 +660,7 @@ BEGIN
              (ACT.SPS_OCUPADO IS NULL
               AND
               TEMP.OCUPADO IS NOT NULL)
+               and link.borrado = 0
           ) TMP
           ON (TMP.ACT_ID = ACT.ACT_ID)
           WHEN MATCHED THEN UPDATE SET
@@ -679,6 +694,7 @@ BEGIN
              (ACT.DD_TPO_ID IS NULL
               AND
               TEMP.TPO IS NOT NULL)
+               and link.borrado = 0
           ) TMP
           ON (TMP.ACT_ID = ACT.ACT_ID)
           WHEN MATCHED THEN UPDATE SET
@@ -729,6 +745,7 @@ BEGIN
              (ACT.DD_TVP_ID IS NULL
               AND
               TEMP.REGIMEN_PROTECCION IS NOT NULL)
+               and link.borrado = 0
           ) TMP
           ON (TMP.ACT_ID = ACT.ACT_ID)
           WHEN MATCHED THEN UPDATE SET
@@ -780,6 +797,7 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
         WHERE '||V_TMP_TIPO_TABLA10(1)||' IS NOT NULL
         AND ACT.BIE_ID IS NOT NULL
         AND DISTINTOS.ORDEN = 1
+        and act.borrado = 0
         ) TMP
         ON (TIT.ACT_ID = TMP.ACT_ID)
         WHEN MATCHED THEN UPDATE SET
@@ -832,6 +850,7 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
              (ACT.DD_ETI_ID IS NULL
               AND
               TEMP.SITUACION_TITULO IS NOT NULL)
+              and link.borrado = 0
           ) TMP
           ON (TMP.ACT_ID = ACT.ACT_ID)
           WHEN MATCHED THEN UPDATE SET
@@ -879,6 +898,7 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
              (ACT.OLE_NOMBRE IS NULL
               AND
               TEMP.NOMBRE_ARRENDATARIO IS NOT NULL)
+              and link.borrado = 0
           ) TMP
           ON (TMP.SPS_ID = ACT.SPS_ID)
           WHEN MATCHED THEN UPDATE SET
@@ -952,6 +972,7 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
             WHERE TCE.DD_TCE_ID IS NOT NULL
             AND
               APR.REM = 1
+            and act.borrado = 0
           ) TMP
           ON (TMP.CFD_ID = ACT.CFD_ID)
           WHEN NOT MATCHED THEN INSERT
@@ -1017,6 +1038,7 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
               (ACT.MLV_FECHA_ENTREGA IS NULL
               AND
               TEMP.FEC_ENVIO_LLAVES_GESTOR IS NOT NULL)
+              and link.borrado = 0
           ) TMP
           ON (TMP.MLV_ID = ACT.MLV_ID)
           WHEN MATCHED THEN UPDATE SET
@@ -1069,6 +1091,7 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
     INNER JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO
     ON ICO.ACT_ID = ACT.ACT_ID
     WHERE APR.ASCENSOR_ACTIVO IS NOT NULL
+    and act.borrado = 0
   ) TMP
   ON (TMP.ICO_ID = EDI.ICO_ID)
   WHEN NOT MATCHED THEN INSERT
@@ -1121,6 +1144,7 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
     LEFT JOIN '||V_ESQUEMA||'.ACT_DIS_DISTRIBUCION DIS
     ON DIS.ICO_ID = ICO.ICO_ID
     WHERE DIS.ICO_ID IS NULL
+    and act.borrado = 0
     AND (APR.DORMITORIOS_ACTIVO IS NOT NULL
     OR APR.BANIOS_ACTIVO IS NOT NULL
     OR APR.GARAJE IS NOT NULL
@@ -1171,6 +1195,7 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
     INNER JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO
     ON ICO.ACT_ID = ACT.ACT_ID
     where APR.DORMITORIOS_ACTIVO IS NOT NULL
+    and act.borrado = 0
   ) TMP
   ON (TMP.ICO_ID = DIS.ICO_ID
   AND TMP.DD_TPH_ID = DIS.DD_TPH_ID)
@@ -1219,6 +1244,7 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
     INNER JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO
     ON ICO.ACT_ID = ACT.ACT_ID
     where APR.BANIOS_ACTIVO IS NOT NULL
+    and act.borrado = 0
   ) TMP
   ON (TMP.ICO_ID = DIS.ICO_ID
   AND TMP.DD_TPH_ID = DIS.DD_TPH_ID)
@@ -1266,6 +1292,7 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
     INNER JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO
     ON ICO.ACT_ID = ACT.ACT_ID
     where APR.NUM_TERRAZAS_DESCUBIERTAS IS NOT NULL
+    and act.borrado = 0
   ) TMP
   ON (TMP.ICO_ID = DIS.ICO_ID
   AND TMP.DD_TPH_ID = DIS.DD_TPH_ID)
@@ -1313,6 +1340,7 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
     INNER JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO
     ON ICO.ACT_ID = ACT.ACT_ID
     where APR.TRASTERO_ACTIVO = ''S''
+    and act.borrado = 0
   ) TMP
   ON (TMP.ICO_ID = DIS.ICO_ID
   AND TMP.DD_TPH_ID = DIS.DD_TPH_ID)
@@ -1359,6 +1387,7 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
       INNER JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO
         ON ICO.ACT_ID = ACT.ACT_ID
       WHERE APR.GARAJE = ''S''
+      and act.borrado = 0
     ) TMP
     ON (TMP.ICO_ID = DIS.ICO_ID
     AND TMP.DD_TPH_ID = DIS.DD_TPH_ID)
@@ -1413,6 +1442,8 @@ EXCEPTION
     RAISE;
 
 END SP_UPA_UPDATE_ACTIVES_UVEM;
+
+
 
 
 /

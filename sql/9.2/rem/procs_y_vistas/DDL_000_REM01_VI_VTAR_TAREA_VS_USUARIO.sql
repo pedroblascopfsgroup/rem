@@ -367,7 +367,8 @@ execute immediate
 '  LEFT JOIN '||V_ESQUEMA||'.ACT_TRA_TRAMITE ATT ON TAC.TRA_ID = ATT.TRA_ID '||Chr(13)||Chr(10)||
 '  LEFT JOIN '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO TPO ON ATT.DD_TPO_ID = TPO.DD_TPO_ID '||Chr(13)||Chr(10)||
 '--  LEFT JOIN '||V_ESQUEMA_M||'.USU_USUARIOS USU ON USU.USU_ID = TAC.USU_ID '||Chr(13)||Chr(10)||
-'--  LEFT JOIN '||V_ESQUEMA||'.VTAR_TAR_VRE_VIA_PRC VRE_PRC ON TAR.TAR_ID = VRE_PRC.TAR_ID ');
+'--  LEFT JOIN '||V_ESQUEMA||'.VTAR_TAR_VRE_VIA_PRC VRE_PRC ON TAR.TAR_ID = VRE_PRC.TAR_ID 
+where (tar.borrado = 0 and tar.tar_fecha_fin is null)');
 
 --/* Recompilar nueva vista
 --************************************************************/

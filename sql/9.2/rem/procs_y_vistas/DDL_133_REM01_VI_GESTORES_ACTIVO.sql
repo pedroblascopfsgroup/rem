@@ -49,12 +49,14 @@ BEGIN
 SELECT act.act_id, NULL dd_cra_codigo, NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, dist1.tipo_gestor, dist1.username username,
                   dist1.nombre_usuario nombre
              FROM act_activo act JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON dist1.tipo_gestor IN (''GADM'', ''GPUBL'', ''GMARK'', ''GPREC'', ''GTOPDV'', ''GTOPLUS'', ''GESTLLA'', ''GADMT'', ''GFSV'', ''GCAL'')
+           where act.borrado = 0
            UNION ALL
 /*Gestor capa de control*/
            SELECT act.act_id, dist1.cod_cartera, NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, dist1.tipo_gestor tipo_gestor,
                   dist1.username username, dist1.nombre_usuario nombre
              FROM act_activo act JOIN dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
                   JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON (dist1.cod_cartera = dd_cra.dd_cra_codigo AND dist1.tipo_gestor = ''GCCBANKIA'')
+           where act.borrado = 0
            UNION ALL
 /*Gestor del activo*/
 SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo, dd_eac.dd_eac_codigo, NULL dd_tcr_codigo, dd_prov.dd_prv_codigo, 
@@ -92,7 +94,8 @@ SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo, dd_eac.dd_eac
            AND dist3.cod_municipio = dd_loc.dd_loc_codigo
            AND dist3.cod_postal  = loc.BIE_LOC_COD_POST
            AND dist3.tipo_gestor = ''GACT''
-          )                    
+          )   
+          where act.borrado = 0                 
            UNION ALL
 /*Gestoría de admisión*/
 SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo), dd_eac.dd_eac_codigo, NULL dd_tcr_codigo, to_char(dist2.cod_provincia), dist3.cod_municipio, dist4.cod_postal,
@@ -108,6 +111,7 @@ SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo), dd_eac.dd_eac_codigo, NULL 
        LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2 ON (dd_prov.dd_prv_codigo = dist2.cod_provincia AND dist2.cod_cartera = dd_cra.dd_cra_codigo AND dist2.tipo_gestor = ''GGADM'')
        LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist3 ON (dd_loc.dd_loc_codigo = dist3.cod_municipio AND dist3.cod_cartera = dd_cra.dd_cra_codigo AND dist3.tipo_gestor = ''GGADM'')
        LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist4 ON (loc.bie_loc_cod_post = dist4.cod_postal AND dist4.cod_cartera = dd_cra.dd_cra_codigo AND dist4.tipo_gestor = ''GGADM'')
+           where act.borrado = 0
            UNION ALL
 /*Gestoría de administración*/
            SELECT DISTINCT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo), dd_eac.dd_eac_codigo, NULL dd_tcr_codigo, to_char(dist2.cod_provincia), dist3.cod_municipio, dist4.cod_postal,
@@ -125,6 +129,7 @@ SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo), dd_eac.dd_eac_codigo, NULL 
                            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2 ON (dd_prov.dd_prv_codigo = dist2.cod_provincia AND dist2.cod_cartera = dd_cra.dd_cra_codigo AND dist2.tipo_gestor = ''GIAADMT'')
                            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist3 ON (dd_loc.dd_loc_codigo = dist3.cod_municipio AND dist3.cod_cartera = dd_cra.dd_cra_codigo AND dist3.tipo_gestor = ''GIAADMT'')
                            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist4 ON (loc.bie_loc_cod_post = dist4.cod_postal AND dist4.cod_cartera = dd_cra.dd_cra_codigo AND dist4.tipo_gestor = ''GIAADMT'')
+           where act.borrado = 0
            UNION ALL
 /*Gestoría de formalización*/
            SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo), dd_eac.dd_eac_codigo, NULL dd_tcr_codigo, to_char(dist2.cod_provincia), dist3.cod_municipio, dist4.cod_postal,
@@ -142,6 +147,7 @@ SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo), dd_eac.dd_eac_codigo, NULL 
                            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2 ON (dd_prov.dd_prv_codigo = dist2.cod_provincia AND dist2.cod_cartera = dd_cra.dd_cra_codigo AND dist2.tipo_gestor = ''GIAFORM'')
                            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist3 ON (dd_loc.dd_loc_codigo = dist3.cod_municipio AND dist3.cod_cartera = dd_cra.dd_cra_codigo AND dist3.tipo_gestor = ''GIAFORM'')
                            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist4 ON (loc.bie_loc_cod_post = dist4.cod_postal AND dist4.cod_cartera = dd_cra.dd_cra_codigo AND dist4.tipo_gestor = ''GIAFORM'')
+           where act.borrado = 0
            UNION ALL
 /*Gestor de formalización*/
 SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo), NULL cod_estado_activo, NULL dd_tcr_codigo, to_char(dist1.cod_provincia), NULL cod_municipio, NULL cod_postal, dist1.tipo_gestor AS tipo_gestor,
@@ -151,6 +157,7 @@ SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo), NULL cod_estado_activo, NUL
        JOIN '||V_ESQUEMA_M||'.dd_prv_provincia dd_prov ON dd_prov.dd_prv_id = loc.dd_prv_id
        JOIN dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
        LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON (dist1.cod_cartera = dd_cra.dd_cra_codigo AND dd_prov.dd_prv_codigo = dist1.cod_provincia AND dist1.tipo_gestor = ''GFORM'')                           
+            where act.borrado = 0
             UNION ALL
 /*Gestor comercial*/
              SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo, null dd_eac_codigo, dd_tcr.dd_tcr_codigo, dd_prov.dd_prv_codigo, 
@@ -189,6 +196,7 @@ SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo), NULL cod_estado_activo, NUL
                        AND dist3.cod_postal = loc.BIE_LOC_COD_POST
                        AND dist3.tipo_gestor = ''GCOM''
                       )
+                      where act.borrado = 0
                            )
     WHERE tipo_gestor IS NOT NULL';
 

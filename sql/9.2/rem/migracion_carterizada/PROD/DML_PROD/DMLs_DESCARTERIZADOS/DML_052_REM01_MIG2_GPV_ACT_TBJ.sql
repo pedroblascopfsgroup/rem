@@ -79,14 +79,15 @@ BEGIN
                                 INNER JOIN SUMATORIO OPERACION
                                   ON MIG2.GPT_ACT_NUMERO_ACTIVO = OPERACION.GPT_ACT_NUMERO_ACTIVO                                       
                                 INNER JOIN  '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = MIG2.GPT_GPV_ID
+                                JOIN '||V_ESQUEMA||'.GPV_ACT T1 ON T1.GPV_ID = GPV.GPV_ID AND T1.ACT_ID = ACT.ACT_ID
 								WHERE MIG2.VALIDACION = 0
                           ) AUX
-                ON (GAS.ACT_ID = AUX.ACT_ID AND GAS.GPV_ID = AUX.GPV_ID)
+                ON (GAS.GPV_ACT_ID = AUX.GPV_ACT_ID)
                 WHEN MATCHED THEN UPDATE SET
                   GAS.GPV_PARTICIPACION_GASTO = AUX.SUMA
       '
       ;
-      EXECUTE IMMEDIATE V_SENTENCIA     ;
+      --EXECUTE IMMEDIATE V_SENTENCIA     ;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_1||' actualizada (GPV_PARTICIPACION_GASTO). '||SQL%ROWCOUNT||' Filas.');
       

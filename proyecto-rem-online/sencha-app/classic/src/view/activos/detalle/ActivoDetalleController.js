@@ -717,7 +717,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 	
 	refrescarActivo: function(refrescarPestañaActiva) {
-		
 		var me = this,
 		refrescarPestañaActiva = Ext.isEmpty(refrescarPestañaActiva) ? false: refrescarPestañaActiva,
 		activeTab = me.getView().down("tabpanel").getActiveTab();		
@@ -1371,17 +1370,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me =this;
 		var window= btn.up('window'),
 		form= window.down('formBase');
-	
 		var success = function(record, operation) {
 			form.unmask();
 	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-	    	window.parent.funcionRecargar();
-	    	window.destroy();    	
-   		
+	    	//window.parent.funcionRecargar();
+	    	window.parent.up('activosdetalle').lookupController().refrescarActivo(true);
+	    	window.destroy();    
 		};
-
-		me.onSaveFormularioCompletoOferta(form, success);	
-		
+		me.onSaveFormularioCompletoOferta(form, success);
 	},
 	
 	// Este método copia los valores de los campos de 'Datos Mediador' a los campos de 'Datos admisión'.
@@ -1433,7 +1429,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
 		}
-	
+		
 	},
 	
 	onActivosVinculadosClick: function(tableView, indiceFila, indiceColumna) {

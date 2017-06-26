@@ -40,6 +40,9 @@ Ext.define('HreRem.model.TanteoActivo', {
     			name: 'solicitaVisita'
     		},
     		{
+    			name: 'solicitaVisitaCodigo'
+    		},
+    		{
     			name: 'fechaFinTanteo',
     			type:'date',
     			dateFormat: 'c'

@@ -736,8 +736,51 @@ public interface ExpedienteComercialApi {
 	 */
 	public boolean guardarCondicionesActivoExpediente(DtoCondicionesActivoExpediente condiciones);
 
+	/**
+	 * Obtiene la fecha de emisión del informe jurídico
+	 * @param idExpediente
+	 * @param idActivo
+	 * @return
+	 */
 	public DtoInformeJuridico getFechaEmisionInfJuridico(Long idExpediente, Long idActivo);
 
+	/**
+	 * Guarda el informe jurídico
+	 * @param dto
+	 * @return
+	 */
 	public boolean guardarInformeJuridico(DtoInformeJuridico dto);
+	
+	/**
+	 * Valida la posibilidad de bloquear un expediente comercial. Si no es posible devuelve codigo error. Si lo es cadena vacía 
+	 * @param idExpediente
+	 * @return
+	 */
+	public String validaBloqueoExpediente(Long idExpediente);
+	
+	
+	/**
+	 * Bloquea el expediente comercial
+	 * 
+	 * @param idExpediente
+	 * @return
+	 */
+	public void bloquearExpediente(Long idExpediente);
+	
+	/**
+	 * Valida la posibilidad de desbloquear un expediente comercial. Si no es posible devuelve codigo error. Si lo es cadena vacía 
+	 * @param idExpediente
+	 * @return
+	 */
+	public String validaDesbloqueoExpediente(Long idExpediente);
+	
+	
+	/**
+	 * Desbloquea el expediente comercial
+	 * 
+	 * @param idExpediente
+	 * @return
+	 */
+	public void desbloquearExpediente(Long idExpediente, String motivoCodigo, String motivoDescLibre);
 
 }

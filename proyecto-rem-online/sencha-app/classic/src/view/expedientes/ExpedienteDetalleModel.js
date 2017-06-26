@@ -139,7 +139,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     esExpedienteSinReservaOdeTipoAlquiler: function(get) {
 	    	 var me = this;
 	    	 return get('esExpedienteSinReserva') ||  get('expediente.tipoExpedienteCodigo') === "02";	    	 
-	     }
+	     },
+	     
+	     esExpedienteBloqueado: function(get) {
+		     	
+		     	var bloqueado = get('expediente.bloqueado');
+		     	return bloqueado;
+		     	
+		 }
 	     
 		
 	 },
@@ -194,6 +201,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'estadosFinanciacion'}
+			}   
+    	},
+    	comboMotivoDesbloqueo: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivosDesbloqueo'}
 			}   
     	},
     	

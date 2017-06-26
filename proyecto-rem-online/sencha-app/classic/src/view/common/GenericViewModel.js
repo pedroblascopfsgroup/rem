@@ -157,6 +157,14 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					extraParams: {diccionario: 'estadosTitulo'}
 				}/*,autoLoad: true*/
     		},
+    		comboAdministracion: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'administracion'}
+				}/*,autoLoad: true*/
+    		},
     		
     		comboTipoUbicacion: {
 				model: 'HreRem.model.ComboBase',

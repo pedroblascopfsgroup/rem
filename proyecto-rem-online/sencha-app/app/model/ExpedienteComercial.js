@@ -4,6 +4,7 @@
 Ext.define('HreRem.model.ExpedienteComercial', {
     extend: 'HreRem.model.Base',
     idProperty: 'id',
+    alias: 'viewmodel.expedientecomercial',
 
     fields: [ 
     		
@@ -175,8 +176,21 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     				return data.entidadPropietariaCodigo == CONST.CARTERA['BANKIA'];
     			},
     			depends: 'entidadPropietariaCodigo'
+    		},
+    		{
+    			name: 'bloqueado',
+    			type: 'boolean'
     		}
+    		 
     ],
+    formulas: {
+    	esExpedienteBloqueado: function(get) {
+		     	
+		     	var bloqueado = get('expediente.bloqueado');
+		     	return bloqueado === "true";
+		     	
+		 }
+    },
     
 	proxy: {
 		type: 'uxproxy',

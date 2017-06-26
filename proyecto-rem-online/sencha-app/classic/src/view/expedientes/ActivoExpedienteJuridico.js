@@ -56,6 +56,6 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteJuridico', {
 	funcionRecargar : function() {
 		var me = this; 
 		me.recargar = false;		
-		me.lookupController().cargarTabDataInformeJuridico(me);		
+		me.lookupController().cargarTabDataInformeJuridico(me,true);		
 	}
 });

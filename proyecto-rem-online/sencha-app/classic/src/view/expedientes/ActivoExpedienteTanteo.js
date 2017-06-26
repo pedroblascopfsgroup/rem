@@ -18,19 +18,37 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
         var items= [
 			{
 			    xtype: 'gridBaseEditableRow',
-			    topBar: $AU.userHasFunction(['EDITAR_TAB_GESTION_ECONOMICA_EXPEDIENTES']),
+			    topBar: true,
 			    reference: 'listadotanteos',
 			    idPrincipal : 'activoExpedienteSeleccionado.idActivo',
 			    idSecundaria : 'expediente.id',
 				cls	: 'panel-base shadow-panel',
 				bind: {
-					store: '{storeTanteosActivo}'
+					store: '{storeTanteosActivo}',
+					topBar: '{!esExpedienteBloqueado}'
+						
 				},
-				minHeight : 180,
+				minHeight : 250,
 				listeners: {
 					rowclick: function(dataview,record) {
 						this.up('form').setBindRecord(record.data);
+						this.up('form').down('fieldsettable').setHidden(false);
+						
+						var me = this;
+	     				var selection = me.getSelection();
+	     				if(Ext.isEmpty(selection)) {
+	     					return;
+	     				}
+	     				var fechaRespuesta = selection[0].getData().fechaRespuesta;
+	     				
+
+	     				if(!Ext.isEmpty(fechaRespuesta)) {
+	     					me.disableRemoveButton(true);
+	     				} else {
+	     					me.disableRemoveButton(false);
+	     				}
 					}
+					
 				},
 				saveSuccessFn: function() {
 					var me = this;
@@ -93,8 +111,10 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 			            flex: 1,
 			            editor: {
 			            	xtype: 'datefield',
-							allowBlank: true,
-							reference: 'fechaComunicacion',
+							allowBlank: false,
+							maxValue: new Date(),
+		                	minValue: null,
+		                	reference: 'fechaComunicacion',
 							maskRe: /[0-9.]/
 						}
 				   },
@@ -123,17 +143,42 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 				   },
 				   {
 				   		text: HreRem.i18n('header.solicita.visita'),
-				   		dataIndex: 'solicitaVisita',
+				   		dataIndex: 'solicitaVisitaCodigo',
 			            flex: 1,
 			            editor: {
 				            xtype: 'combobox',
 				            displayField: 'descripcion',
-				            valueField: 'descripcion',
+				            valueField: 'codigo',
 				            bind: {
 				            	store: '{comboSiNoRem}'
 				            },
-				            reference: 'solicitaVisita'
-				        }
+				            reference: 'solicitaVisitaCodigo'
+				        },
+				        renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {	
+			        		var me = this,
+			        		comboEditor =  me.columns  && me.columns[colIndex].getEditor ? me.columns[colIndex].getEditor() : me.getEditor ? me.getEditor() : null;
+
+			        		if(!Ext.isEmpty(comboEditor)) {
+				        		var store = comboEditor.getStore();
+				        		if (!Ext.isEmpty(record)) {
+				        			comboEditor.setValue(record.get("solicitaVisitaCodigo"));
+				        			return record.get("solicitaVisita");
+				        		}
+			        		}
+						}
+				   },
+				   {
+				   		text: HreRem.i18n('fieldlabel.otyr.fecha.realizacion.visita'),
+			            dataIndex: 'fechaVisita',
+			            align: 'center',
+			            formatter: 'date("d/m/Y")',
+			            flex: 1,
+			            editor: {
+			            	xtype: 'datefield',
+			            	allowBlank: true,
+							reference: 'fechaVisita',
+							maskRe: /[0-9.]/
+						}
 				   },
 				   {
 				   		text: HreRem.i18n('header.fecha.fin.tanteo'),
@@ -143,6 +188,7 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 			            flex: 1,
 			            editor: {
 			            	xtype: 'datefield',
+			            	readOnly : true,
 							allowBlank: true,
 							reference: 'fechaFinTanteo',
 							maskRe: /[0-9.]/
@@ -210,8 +256,39 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 				xtype:'fieldsettable',
 				defaultType: 'displayfieldbase',				
 				title: HreRem.i18n('title.oferta.tanteo.retracto.detalle'),
+				hidden: true,
 				items :
 					[
+						{
+							xtype: 'textfieldbase',
+							name: 'idActivo',
+							fieldLabel:  'Nº activo',
+							readOnly: true,
+							maxLength: 10,
+							bind: {
+								value: '{idActivo}'
+							}
+						},
+						{ 
+				        	xtype: 'comboboxfieldbase',
+				        	readOnly: true,
+				        	reference: 'comboTipoAdministracionRef',
+					 		fieldLabel: HreRem.i18n('title.configuracion.administracion'),
+					 		bind: {
+			            		store: '{comboAdministracion}',
+			            		value: '{codigoTipoAdministracion}'
+			            	}
+						},
+			            {
+		                	xtype:'datefieldbase',
+		                	name: 'fechaFinTanteo',
+							formatter: 'date("d/m/Y")',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.fecha.fin.tanteo'),
+		                	readOnly: true,
+		                	maxValue: null,
+		                	minValue: null,
+		                	bind:		'{fechaFinTanteo}'
+		                },
 		                {
 		                	xtype: 'textfieldbase',
 		                	name: 'condiciones',
@@ -228,7 +305,11 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 		                	name: 'fechaComunicacion',
 							formatter: 'date("d/m/Y")',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.fecha.comunicacion'),
-		                	bind:		'{fechaComunicacion}'
+		                	bind:		'{fechaComunicacion}',
+		                	maxValue: new Date(),
+		                	minValue: null,
+		                	allowBlank: false
+		                		
 		                },
 		                {
 		                	xtype:'datefieldbase',
@@ -237,21 +318,29 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.fecha.contestacion'),
 		                	bind:		'{fechaRespuesta}'
 		                },
+		                { 
+							xtype: 'textfieldbase',
+							name: 'numeroExpediente',
+		                	fieldLabel:  HreRem.i18n('header.oferta.expediente'),
+				        	bind: '{numeroExpediente}'
+				        },
+				        { 
+				        	xtype: 'comboboxfieldbase',
+				        	name: 'solicitaVisitaCodigo',
+				        	fieldLabel: HreRem.i18n('header.solicita.visita'),
+				        	bind: {
+			            		store: '{comboSiNoRem}',
+			            		value: '{solicitaVisitaCodigo}'			            		
+			            	},
+			            	displayField: 'descripcion',
+    						valueField: 'codigo'
+				        },
 		                {
 		                	xtype:'datefieldbase',
 		                	name: 'fechaVisita',
 							formatter: 'date("d/m/Y")',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.fecha.realizacion.visita'),
 		                	bind:		'{fechaVisita}'
-		                },
-		                {
-		                	xtype:'datefieldbase',
-		                	name: 'fechaFinTanteo',
-							formatter: 'date("d/m/Y")',
-		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.fecha.fin.tanteo'),
-		                	maxValue: null,
-		                	minValue: new Date(),
-		                	bind:		'{fechaFinTanteo}'
 		                },
 		                {
 		                	xtype: 'comboboxfieldbase',
@@ -261,6 +350,24 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 								value: '{codigoTipoResolucion}'
 							},
 		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.resultado.tanteo')
+		                },
+		                {
+		                	xtype:'datefieldbase',
+		                	name: 'fechaResolucion',
+							formatter: 'date("d/m/Y")',
+		                	fieldLabel:  HreRem.i18n('header.fecha.resolucion'),
+		                	bind:		'{fechaResolucion}',
+		                	allowBlank: true,
+							maskRe: /[0-9.]/
+		                },
+		                {
+		                	xtype:'datefieldbase',
+		                	name: 'fechaVencimiento',
+							formatter: 'date("d/m/Y")',
+		                	fieldLabel:  HreRem.i18n('header.fecha.vencimiento'),
+		                	bind:		'{fechaVencimiento}',
+		                	allowBlank: true,
+							maskRe: /[0-9.]/
 		                }
 				]
 			}
@@ -274,9 +381,11 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
     funcionRecargar: function() {
     	var me = this; 
 		me.recargar = false;
+		//bloqueado = me.getViewModel().get('expediente.bloqueado');
 		Ext.Array.each(me.query('grid'), function(grid) {
 			grid.mask();
   			grid.getStore().load({callback: function() {grid.unmask();}});
+  			//grid.setTopBar(!bloqueado)
   		});
     }
 });

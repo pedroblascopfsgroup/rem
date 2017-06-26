@@ -469,7 +469,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 	                	margin: '10 10 10 10',
 	                	bind: {
 	                		disabled: '{expediente.bloqueado}'
-	                	},
+	                	}
 	                },
 	                {
 	                	xtype: 'button',
@@ -479,7 +479,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 	                	margin: '10 10 10 10',
 	                	bind: {
 	                		disabled: '{!expediente.bloqueado}'
-	                	},
+	                	}
 	                }
 				]			
 			},

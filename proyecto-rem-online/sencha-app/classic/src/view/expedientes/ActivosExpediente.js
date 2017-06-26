@@ -202,7 +202,7 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 				reference: 'activoExpedienteMain',
 				collapsed: false,
 				hidden: true,
-				minHeight	: 350,
+				minHeight	: 350
 			}
 			//HREOS-2222  
             

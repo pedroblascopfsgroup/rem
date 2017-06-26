@@ -48,7 +48,7 @@ BEGIN
 		SELECT DISTINCT
 			ATBJ1.TBJ_ID, 
 			ATBJ1.ACT_ID
-			FROM (SELECT MIN(ACT_ID) AS ACT_ID, TBJ_ID 
+			FROM (SELECT MIN(ACT_TBJ.ACT_ID) AS ACT_ID, TBJ_ID 
         FROM '||V_ESQUEMA||'.act_activo act
         inner join '||V_ESQUEMA||'.ACT_TBJ 
         on act.act_id = act_tbj.act_id

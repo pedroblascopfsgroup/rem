@@ -396,7 +396,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 			ExpedienteComercial expediente = expedienteComercialApi.getExpedienteComercialResetPBC(activo);
 			if (!Checks.esNulo(expediente)) {
-				ofertaApi.resetPBC(expediente);
+				ofertaApi.resetPBC(expediente, false);
 			}
 
 		} catch (Exception ex) {

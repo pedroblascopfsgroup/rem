@@ -674,7 +674,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if ("".equals(dto.getNumVisita())) oferta.setVisita(null);
 
 		if (!Checks.esNulo(dto.getImporteOferta())) {
-			ofertaApi.resetPBC(expedienteComercial);
+			ofertaApi.resetPBC(expedienteComercial, false);
 		}
 
 		try {
@@ -1707,7 +1707,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(dto.getRenunciaExencion()) || !Checks.esNulo(dto.getReservaConImpuesto()) || !Checks.esNulo(dto.getTipoImpuestoCodigo())
 					|| !Checks.esNulo(dto.getTipoAplicable())) {
 				// Si se cambia algún dato del apartado Fiscales.
-				ofertaApi.resetPBC(condiciones.getExpediente());
+				ofertaApi.resetPBC(condiciones.getExpediente(), false);
 			}
 
 			// Gastos CompraVenta
@@ -2339,7 +2339,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 						if (!Checks.esNulo(dto.getPorcentajeCompra())) {
 							compradorExpediente.setPorcionCompra(dto.getPorcentajeCompra());
-							reiniciarPBC = true;
+							//reiniciarPBC = true;
 						}
 						if (!Checks.esNulo(dto.getTitularContratacion())) {
 							compradorExpediente.setTitularContratacion(dto.getTitularContratacion());
@@ -2423,7 +2423,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 
 				if (reiniciarPBC) {
-					ofertaApi.resetPBC(expedienteComercial);
+					ofertaApi.resetPBC(expedienteComercial, false);
 				}
 			}
 		} catch (Exception e) {
@@ -2583,7 +2583,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				beanUtilNotNull.copyProperties(expedienteComercial, dto);
 
 				if (Checks.esNulo(dto.getEstadoPbc()) || !Checks.esNulo(dto.getConflictoIntereses()) || !Checks.esNulo(dto.getRiesgoReputacional())) {
-					ofertaApi.resetPBC(expedienteComercial);
+					ofertaApi.resetPBC(expedienteComercial, false);
 				}
 
 				if (!Checks.esNulo(dto.getCodMotivoAnulacion())) {
@@ -2752,7 +2752,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			genericDao.save(ExpedienteComercial.class, expediente);
 
-			ofertaApi.resetPBC(expediente);
+			ofertaApi.resetPBC(expediente, true);
 
 			return true;
 
@@ -2899,7 +2899,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				genericDao.save(ExpedienteComercial.class, expediente);
 
-				ofertaApi.resetPBC(expediente);
+				ofertaApi.resetPBC(expediente, true);
 
 				return true;
 
@@ -3489,7 +3489,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					if (compradorExpediente.getTitularContratacion() == 0) {
 						expedienteComercialDao.deleteCompradorExpediente(idExpediente, idComprador);
 						ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", idExpediente));
-						ofertaApi.resetPBC(expediente);
+						ofertaApi.resetPBC(expediente, true);
 					}
 				} else {
 					throw new JsonViewerException("Operación no permitida, por ser el titular de la contratación");

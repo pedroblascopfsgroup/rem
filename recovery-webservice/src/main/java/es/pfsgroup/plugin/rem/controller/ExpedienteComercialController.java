@@ -166,6 +166,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		
 		DtoAviso avisosFormateados = new DtoAviso();
 		avisosFormateados.setDescripcion("");
+		avisosFormateados.setId(id.toString());
 		
 		for (ExpedienteAvisadorApi avisador: avisadores) {
 			

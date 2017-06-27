@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 
 @Component
 public class ComercialUserAssigantionService implements UserAssigantionService  {
@@ -269,4 +270,27 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		}
 		return null;
 	}
+	
+	/**
+	 * ¿La oferta lleguen del canal "FVD" o "Gestión directa"?
+	 * 
+	 * @param tareaExterna
+	 */
+	private boolean isFuerzaVentaDirecta(TareaExterna tareaExterna) {
+		boolean resultado = false;
+		TareaActivo tareaActivo = (TareaActivo) tareaExterna.getTareaPadre();
+		if (!Checks.esNulo(tareaActivo.getTramite().getTrabajo())) {
+			ExpedienteComercial expediente = expedienteComercialDao
+					.getExpedienteComercialByTrabajo(tareaActivo.getTramite().getTrabajo().getId());
+			if (!Checks.esNulo(expediente.getOferta()) && !Checks.esNulo(expediente.getOferta().getPrescriptor())
+					&& !Checks.esNulo(expediente.getOferta().getPrescriptor().getTipoProveedor())) {
+				if(expediente.getOferta().getPrescriptor().getTipoProveedor().equals(DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA)){
+					resultado = true;
+				}
+			}
+		}
+		return resultado;
+	}
+	
+	
 }

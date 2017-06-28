@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.BusinessOperationException;
@@ -44,9 +45,11 @@ import es.pfsgroup.plugin.recovery.mejoras.web.tareas.BuzonTareasViewHandlerFact
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
+import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoCampo;
 import es.pfsgroup.plugin.rem.model.DtoNombreTarea;
+import es.pfsgroup.plugin.rem.model.DtoReasignarTarea;
 import es.pfsgroup.plugin.rem.model.DtoSolicitarProrrogaTarea;
 import es.pfsgroup.plugin.rem.model.DtoTarea;
 import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
@@ -518,5 +521,26 @@ public class AgendaAdapter {
 			return false;
 		}
 		return true;
+	}
+	
+	@Transactional(readOnly = false)
+	public Boolean reasignarTarea(DtoReasignarTarea dto){
+		
+		TareaActivo tareaActivo = tareaActivoApi.get(dto.getIdTarea());
+		
+		if(!Checks.esNulo(dto.getUsuarioGestor()) && !Checks.esNulo(dto.getUsuarioSupervisor())){
+			Filter filtroGestor = genericDao.createFilter(FilterType.EQUALS, "id", dto.getUsuarioGestor());
+			Usuario usuarioGestor = genericDao.get(Usuario.class, filtroGestor);
+			Filter filtroSupervisor = genericDao.createFilter(FilterType.EQUALS, "id", dto.getUsuarioSupervisor());
+			Usuario usuarioSupervisor = genericDao.get(Usuario.class, filtroSupervisor);
+			
+			tareaActivo.setUsuario(usuarioGestor);
+			tareaActivo.setSupervisorActivo(usuarioSupervisor);
+			genericDao.update(TareaActivo.class, tareaActivo);
+			
+			return true;
+		}
+		
+		return false;		
 	}
 }

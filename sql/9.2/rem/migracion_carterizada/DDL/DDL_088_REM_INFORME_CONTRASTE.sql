@@ -45,7 +45,7 @@ BEGIN
         EXECUTE IMMEDIATE '
         CREATE TABLE '||V_ESQUEMA_1||'.'||V_TABLA||'
         (
-            INTERFAZ                    VARCHAR2(50 CHAR)     NOT NULL
+            INTERFAZ                    VARCHAR2(256 CHAR)     NOT NULL
             , REGISTROS_ENTRADA         NUMBER(16,0)
             , REGISTROS_RECHAZADOS      NUMBER(16,0)
             , REGISTROS_INVALIDOS       NUMBER(16,0)

@@ -49,15 +49,25 @@ BEGIN
                     GROUP BY NOMBRE_INTERFAZ';
                 EXECUTE IMMEDIATE V_MSQL INTO vCLAVE, vCLAVE2;
                 
-                V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||TABLA_VALIDACION||' (VALIDACION_ID, NOMBRE_INTERFAZ, CLAVE_DATO, COD_RECHAZO, MOTIVO_RECHAZO)
-                    SELECT '||V_ESQUEMA||'.'||V_SEC||'.NEXTVAL VALIDACION_ID, '''||vTABLA||''' NOMBRE_INTERFAZ, '||vCLAVE||' CLAVE_DATO
-                        , DR.CODIGO_RECHAZO COD_RECHAZO, DR.MOTIVO_RECHAZO||'||''' '||' '||vTABLA||'.'||vCAMPO||' <> '||vDICCIONARIO||'.'||vCODIGO||'.'' MOTIVO_RECHAZO
-                    FROM '||V_ESQUEMA||'.'||vTABLA||' NI
-                    JOIN '||V_ESQUEMA||'.DICCIONARIO_RECHAZOS DR ON DR.CODIGO_RECHAZO = '''||vRECHAZO_DD||'''
-                    LEFT JOIN '||vDICCIONARIO||' DD ON '||vCAMPO||' = DD.'||vCODIGO||' AND DD.BORRADO = 0
-                    WHERE DD.'||vCODIGO||' IS NULL AND '||vCAMPO||' IS NOT NULL';
+                IF vDICCIONARIO != 'REM01.MIG2_USU_USUARIOS' THEN
+                  V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||TABLA_VALIDACION||' (VALIDACION_ID, NOMBRE_INTERFAZ, CLAVE_DATO, COD_RECHAZO, MOTIVO_RECHAZO)
+                      SELECT '||V_ESQUEMA||'.'||V_SEC||'.NEXTVAL VALIDACION_ID, '''||vTABLA||''' NOMBRE_INTERFAZ, '||vCLAVE||' CLAVE_DATO
+                          , DR.CODIGO_RECHAZO COD_RECHAZO, DR.MOTIVO_RECHAZO||'||''' '||' '||vTABLA||'.'||vCAMPO||' <> '||vDICCIONARIO||'.'||vCODIGO||'.'' MOTIVO_RECHAZO
+                      FROM '||V_ESQUEMA||'.'||vTABLA||' NI
+                      JOIN '||V_ESQUEMA||'.DICCIONARIO_RECHAZOS DR ON DR.CODIGO_RECHAZO = '''||vRECHAZO_DD||'''
+                      LEFT JOIN '||vDICCIONARIO||' DD ON '||vCAMPO||' = DD.'||vCODIGO||' AND DD.BORRADO = 0
+                      WHERE DD.'||vCODIGO||' IS NULL AND '||vCAMPO||' IS NOT NULL';                  
+                ELSE
+                  V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||TABLA_VALIDACION||' (VALIDACION_ID, NOMBRE_INTERFAZ, CLAVE_DATO, COD_RECHAZO, MOTIVO_RECHAZO)
+                      SELECT '||V_ESQUEMA||'.'||V_SEC||'.NEXTVAL VALIDACION_ID, '''||vTABLA||''' NOMBRE_INTERFAZ, '||vCLAVE||' CLAVE_DATO
+                          , DR.CODIGO_RECHAZO COD_RECHAZO, DR.MOTIVO_RECHAZO||'||''' '||' '||vTABLA||'.'||vCAMPO||' <> '||vDICCIONARIO||'.'||vCODIGO||'.'' MOTIVO_RECHAZO
+                      FROM '||V_ESQUEMA||'.'||vTABLA||' NI
+                      JOIN '||V_ESQUEMA||'.DICCIONARIO_RECHAZOS DR ON DR.CODIGO_RECHAZO = '''||vRECHAZO_DD||'''
+                      LEFT JOIN '||vDICCIONARIO||' DD ON '||vCAMPO||' = DD.'||vCODIGO||'
+                      WHERE DD.'||vCODIGO||' IS NULL AND '||vCAMPO||' IS NOT NULL'; 
+                END IF;
                 EXECUTE IMMEDIATE V_MSQL;
-        
+
                 IF vREQUERIDO = 1 THEN
                     V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||TABLA_VALIDACION||' (NOMBRE_INTERFAZ, CLAVE_DATO, COD_RECHAZO, MOTIVO_RECHAZO)
                         SELECT '''||vTABLA||''' NOMBRE_INTERFAZ, '||vCLAVE||' CLAVE_DATO

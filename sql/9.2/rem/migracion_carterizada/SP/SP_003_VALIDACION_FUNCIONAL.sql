@@ -75,8 +75,7 @@ BEGIN
                         AND MOTIVO_RECHAZO LIKE ''[CRITICAL]%'') T2
                 ON (TO_CHAR(T2.CLAVE_DATO) = TO_CHAR(T1.'||vClave2||'))
                 WHEN MATCHED THEN UPDATE SET
-                    T1.VALIDACION = '''||CODIGO_RECHAZO_FUN||'''
-                WHERE T1.VALIDACION = 0';
+                    T1.VALIDACION = '''||CODIGO_RECHAZO_FUN||'''';
             EXECUTE IMMEDIATE V_SQL;
             
         EXCEPTION

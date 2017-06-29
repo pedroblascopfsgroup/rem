@@ -86,8 +86,7 @@ BEGIN
                             AND COD_RECHAZO = '''||vRECHAZO_DD||''') T2
                     ON (TO_CHAR(T2.CLAVE_DATO) = TO_CHAR(T1.'||vCLAVE2||'))
                     WHEN MATCHED THEN UPDATE SET
-                        T1.VALIDACION = '''||vRECHAZO_DD||'''
-                    WHERE T1.VALIDACION = 0';
+                        T1.VALIDACION = '''||vRECHAZO_DD||'''';
         
                 DBMS_OUTPUT.PUT_LINE('  [INFO] Validando código, '||vCAMPO||', en tabla, '||vTABLA||', contra diccionario, '||vDICCIONARIO||'.');
                 EXECUTE IMMEDIATE V_MSQL;

@@ -40,7 +40,8 @@ Ext.define('HreRem.controller.AgendaController', {
 			abrirtarea : 'abrirtarea',
 			abrirtareahistorico : 'abrirtareahistorico',
 			solicitarautoprorroga: 'solicitarautoprorroga',
-			saltocierreconomico: 'saltocierreconomico'
+			saltocierreconomico: 'saltocierreconomico',
+			reasignartarea: 'reasignartarea'
 		},
 		
 		'trabajosdetalle' : {			
@@ -344,6 +345,15 @@ Ext.define('HreRem.controller.AgendaController', {
 	   	target.add(window);
 		window.show();
     	
+    },
+    
+    reasignartarea: function(target, idTareaExterna,idGestor,idSupervisor,nombreUsuarioGestor,nombreUsuarioSupervisor){
+    	var me = this;
+    	var window;
+    	
+    	window = Ext.create('HreRem.view.activos.tramites.ReasignarTarea',{idTareaExterna: idTareaExterna, idGestor:idGestor, idSupervisor:idSupervisor, nombreUsuarioGestor:nombreUsuarioGestor, nombreUsuarioSupervisor:nombreUsuarioSupervisor});
+	   	target.add(window);
+		window.show();
     }
     
 	

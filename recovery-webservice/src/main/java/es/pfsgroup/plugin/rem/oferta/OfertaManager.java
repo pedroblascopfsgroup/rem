@@ -1789,13 +1789,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
-	public boolean resetPBC(ExpedienteComercial expediente) {
+	public boolean resetPBC(ExpedienteComercial expediente, Boolean fullReset) {
 		if (Checks.esNulo(expediente)) {
 			return false;
 		}
 
 		// Reiniciar estado del PBC.
-		expediente.setEstadoPbc(null);
+		if(!Checks.esNulo(fullReset)){
+			//reseteamos responsabilidad corporativa
+			expediente.setConflictoIntereses(null);
+			expediente.setRiesgoReputacional(null);
+			expediente.setEstadoPbc(null);
+		} else {
+			expediente.setEstadoPbc(null);
+		}
 		genericDao.update(ExpedienteComercial.class, expediente);
 
 		// Avisar al gestor de formalización del activo.

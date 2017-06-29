@@ -1657,6 +1657,11 @@ public class ActivoAdapter {
 				if (!Checks.esNulo(tareaActivo.getUsuario())) {
 					beanUtilNotNull.copyProperty(dtoListadoTareas, "idGestor", tareaActivo.getUsuario().getId());
 					beanUtilNotNull.copyProperty(dtoListadoTareas, "gestor", tareaActivo.getUsuario().getUsername());
+					beanUtilNotNull.copyProperty(dtoListadoTareas, "nombreUsuarioGestor", tareaActivo.getUsuario().getApellidoNombre());
+				}
+				if(!Checks.esNulo(tareaActivo.getSupervisorActivo())){
+					beanUtilNotNull.copyProperty(dtoListadoTareas, "idSupervisor", tareaActivo.getSupervisorActivo().getId());
+					beanUtilNotNull.copyProperty(dtoListadoTareas, "nombreUsuarioSupervisor", tareaActivo.getSupervisorActivo().getApellidoNombre());
 				}
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "subtipoTareaCodigoSubtarea",
 						tareaActivo.getSubtipoTarea().getCodigoSubtarea());

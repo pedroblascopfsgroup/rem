@@ -1271,6 +1271,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	    					form.reset();
 	    					window.parent.funcionRecargar();
 	    					window.hide();
+	    					me.getView().fireEvent("refrescarExpediente", me.getView());
 	    				},
 	    				failure: function(a, operation){
 	    					me.getView().unmask();
@@ -1297,6 +1298,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				var ventanaCompradores= grid.up().up();
 				var expediente= me.getViewModel().get("expediente");
 				Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente}).show();
+				me.onClickBotonRefrescar();
 			}
 			else{
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.aprobado"));
@@ -1494,6 +1496,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		            success: function(record, operation) {
 		           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 		           		 grid.fireEvent("afterdelete", grid);
+		           		 me.onClickBotonRefrescar();
 		            },
 		            failure: function(record, operation) {
 		            	var data = {};

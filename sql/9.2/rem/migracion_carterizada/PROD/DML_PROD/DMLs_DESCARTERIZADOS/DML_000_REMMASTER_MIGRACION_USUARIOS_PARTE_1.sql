@@ -66,21 +66,33 @@ BEGIN
         )
         SELECT 
           '|| V_ESQUEMA_M ||'.S_USU_USUARIOS.NEXTVAL
-          , SQLI.*
+          , SQLI.ENTIDAD_ID
+          , SQLI.USU_USERNAME
+          , SQLI.USU_PASSWORD
+          , SQLI.USU_NOMBRE
+          , SQLI.USU_APELLIDO1
+          , SQLI.USU_APELLIDO2
+          , SQLI.USU_EMAIL
+          , SQLI.USU_GRUPO
+          , SQLI.USU_FECHA_VIGENCIA_PASS
+          , SQLI.USUARIOCREAR
+          , SQLI.FECHACREAR
+          , SQLI.BORRADO
         FROM (
           SELECT DISTINCT
-            '|| ENTIDAD ||'
+            '|| ENTIDAD ||'                   AS ENTIDAD_ID
             , MIG2.USU_USERNAME
-            , NULL
+            , NULL                            AS USU_PASSWORD
             , MIG2.USU_NOMBRE
             , MIG2.USU_APELLIDO1
             , MIG2.USU_APELLIDO2
             , MIG2.USU_EMAIL
-            , ''0''
-            , SYSDATE+730
-            , '''|| USUARIO_MIGRACION ||'''
-            , SYSDATE
-            , 0 
+            , ''0''                           AS USU_GRUPO
+            , SYSDATE+730                     AS USU_FECHA_VIGENCIA_PASS
+            , '''|| USUARIO_MIGRACION ||'''   AS USUARIOCREAR
+            , SYSDATE                         AS FECHACREAR
+            , 0                               AS BORRADO
+            , ROW_NUMBER () OVER (PARTITION BY MIG2.USU_USERNAME ORDER BY MIG2.USU_USERNAME DESC) RANK
           FROM '||V_ESQUEMA||'.MIG2_USU_USUARIOS MIG2
           WHERE MIG2.VALIDACION = 0 AND NOT EXISTS (
             SELECT 1
@@ -88,6 +100,7 @@ BEGIN
             WHERE USU.USU_USERNAME = MIG2.USU_USERNAME 
           )
         ) SQLI
+        WHERE SQLI.RANK = 1
       '
       ;
       EXECUTE IMMEDIATE V_SQL;

@@ -82,6 +82,9 @@ public class DDSubtipoDocumentoExpediente implements Auditable, Dictionary {
 	
 	@Column(name = "DD_SDE_MATRICULA_GD")   
 	private String matricula;
+	
+	@Column(name= "DD_SDE_VINCULABLE")
+	private Integer vinculable;
 	    
 	@Version   
 	private Long version;
@@ -163,6 +166,14 @@ public class DDSubtipoDocumentoExpediente implements Auditable, Dictionary {
 
 	public void setMatricula(String matricula) {
 		this.matricula = matricula;
+	}
+
+	public Integer getVinculable() {
+		return vinculable;
+	}
+
+	public void setVinculable(Integer vinculable) {
+		this.vinculable = vinculable;
 	}
 	
 

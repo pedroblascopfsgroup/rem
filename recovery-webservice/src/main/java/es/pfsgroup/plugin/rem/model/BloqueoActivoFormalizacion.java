@@ -53,6 +53,9 @@ public class BloqueoActivoFormalizacion implements Serializable, Auditable {
     @ManyToOne
     @JoinColumn(name = "ACT_ID")
     private Activo activo;
+    
+    @Column(name = "ACT_BEX_SOLUCIONAR")
+    private String solucionarBloqueo; 
 
 	@Version   
 	private Long version;
@@ -115,5 +118,13 @@ public class BloqueoActivoFormalizacion implements Serializable, Auditable {
 
 	public void setActivo(Activo activo) {
 		this.activo = activo;
+	}
+
+	public String getSolucionarBloqueo() {
+		return solucionarBloqueo;
+	}
+
+	public void setSolucionarBloqueo(String solucionarBloqueo) {
+		this.solucionarBloqueo = solucionarBloqueo;
 	}
 }

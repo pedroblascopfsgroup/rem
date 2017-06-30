@@ -783,4 +783,6 @@ public interface ExpedienteComercialApi {
 	 */
 	public void desbloquearExpediente(Long idExpediente, String motivoCodigo, String motivoDescLibre);
 
+	public boolean updateBloqueoFormalizacion(DtoBloqueosFinalizacion dto);
+
 }

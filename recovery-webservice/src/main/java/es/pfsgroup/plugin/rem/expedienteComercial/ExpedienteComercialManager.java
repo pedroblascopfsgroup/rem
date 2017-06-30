@@ -19,6 +19,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -1274,6 +1275,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(activo.getSubtipoActivo())) {
 				dtoActivo.setSubtipoActivo(activo.getSubtipoActivo().getDescripcion());
 			}
+			if (!Checks.esNulo(activo.getTipoActivo())) {
+				dtoActivo.setTipoActivo(activo.getTipoActivo().getDescripcion());
+			}
+			
 			// Falta precio minimo y precio aprobado venta
 
 			if (!Checks.estaVacio(activoPorcentajeParti)) {
@@ -1297,9 +1302,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activo.getMunicipio());
 			Localidad localidad = (Localidad) genericDao.get(Localidad.class, filtro);
 			dtoActivo.setMunicipio(localidad.getDescripcion());
+			dtoActivo.setProvincia(localidad.getProvincia().getDescripcion());
 		}
 		if(activo.getDireccion()!=null){
 			dtoActivo.setDireccion(activo.getDireccion());
+		}
+		
+		if(!Checks.esNulo(activo.getInfoRegistral()) && !Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien())) {
+			dtoActivo.setFincaRegistral(activo.getInfoRegistral().getInfoRegistralBien().getNumFinca());
 		}
 
 		return dtoActivo;
@@ -3585,6 +3595,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							beanUtilNotNull.copyProperty(bloqueoDto, "fechaBaja", bloqueo.getAuditoria().getFechaBorrar());
 							beanUtilNotNull.copyProperty(bloqueoDto, "usuarioBaja", bloqueo.getAuditoria().getUsuarioBorrar());
 						}
+						if (!Checks.esNulo(bloqueo.getSolucionarBloqueo())) {
+							beanUtilNotNull.copyProperty(bloqueoDto, "acuerdoCodigo", bloqueo.getSolucionarBloqueo());
+						}
+						
 						bloqueosdto.add(bloqueoDto);
 					} catch (IllegalAccessException e) {
 						e.printStackTrace();
@@ -3598,6 +3612,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return bloqueosdto;
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	@Transactional(readOnly = false)
 	public boolean createBloqueoFormalizacion(DtoBloqueosFinalizacion dto, Long idActivo) {
@@ -3610,7 +3625,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					, genericDao.createFilter(FilterType.EQUALS, "expediente.id", Long.parseLong(dto.getIdExpediente()))
 					, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false)
 					, genericDao.createFilter(FilterType.EQUALS, "area.codigo", dto.getAreaBloqueoCodigo())
-					, genericDao.createFilter(FilterType.EQUALS, "tipo.codigo", dto.getTipoBloqueoCodigo()));
+					, genericDao.createFilter(FilterType.EQUALS, "tipo.codigo", dto.getTipoBloqueoCodigo())
+					, genericDao.createFilter(FilterType.EQUALS, "solucionarBloqueo", dto.getAcuerdoCodigo()));
 			
 			if(Checks.esNulo(bloqueoExistente)){
 			
@@ -3641,6 +3657,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						bloqueo.setExpediente(expediente);
 					}
 				}
+				
+				if(!Checks.esNulo(dto.getAcuerdoCodigo())){
+					bloqueo.setSolucionarBloqueo(dto.getAcuerdoCodigo());
+					if("0".equals(dto.getAcuerdoCodigo())){
+						if(Checks.esNulo(bloqueo.getAuditoria())){
+							bloqueo.setAuditoria(Auditoria.getNewInstance());		
+						}
+						bloqueo.getAuditoria().delete(bloqueo);
+					}
+				}
 	
 				genericDao.save(BloqueoActivoFormalizacion.class, bloqueo);
 			}
@@ -3665,6 +3691,23 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					}
 					bloqueo.getAuditoria().setFechaBorrar(new Date());
 					bloqueo.getAuditoria().setBorrado(true);
+				}
+			}
+		}
+		return true;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean updateBloqueoFormalizacion(DtoBloqueosFinalizacion dto) {
+		if (!Checks.esNulo(dto.getId())) {
+			BloqueoActivoFormalizacion bloqueo = genericDao.get(BloqueoActivoFormalizacion.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getId())));
+			if (!Checks.esNulo(bloqueo)) {
+				if(!Checks.esNulo(dto.getAcuerdoCodigo())){
+					if("0".equals(dto.getAcuerdoCodigo())){
+						bloqueo.setSolucionarBloqueo(dto.getAcuerdoCodigo());
+						this.deleteBloqueoFormalizacion(dto);
+					}
 				}
 			}
 		}

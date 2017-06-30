@@ -127,7 +127,9 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
 										select: function(combo, record) {
 											if (record.get("vinculable")) {
 												me.down("gridBase").setDisabled(false);
-												me.down("gridBase").getStore().load();
+												if(!me.down("gridBase").getStore().isLoaded()) {
+													me.down("gridBase").getStore().load();
+												}
 											} else {
 												me.down("gridBase").setDisabled(true);
 												me.down("gridBase").getSelectionModel().deselectAll();
@@ -139,10 +141,21 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
     				},
     				{
     					
-					    xtype		: 'gridBase',
-					    title		: HreRem.i18n("title.activos"),
-					    selModel : Ext.create('HreRem.view.common.CheckBoxModelBase'),
+					    xtype		: 'gridBase',					    
+					    selModel : Ext.create('HreRem.view.common.CheckBoxModelBase', {
+					    
+					    	listeners: {
+					    		selectionchange: function(selModel, selected, eOpts ) {
+					    			if(selected.length === 1) {
+					    				me.down("gridBase").setTitle(selected.length + " " + HreRem.i18n("title.activo.seleccionado"));
+					    			} else {
+					    				me.down("gridBase").setTitle(selected.length + " " + HreRem.i18n("title.activos.seleccionados"));
+					    			}
+					    		}
+					    	}
+					    }),
 					    reference: 'listadoactivosexpedienteadjunto',
+					    title: "0 " + HreRem.i18n("title.activos.seleccionados"),
 					    margin: '0 0 120 0',
 					    maxHeight: 250,
 						cls	: 'panel-base shadow-panel',
@@ -150,6 +163,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
 						bind: {
 							store: '{storeActivos}'
 						},
+						
 						loadAfterBind: false,
 						columns: [
 							   			{   
@@ -210,33 +224,27 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
     		 	activosSeleccionados.push(selected.get("numActivo"));
     		});
     		
-    		
-			if (subtipoDocumento.get("vinculable") && activosSeleccionados.length == 0) {
-				
-				me.fireEvent("errorToast", HreRem.i18n("txt.obligado.marcar.activos.documento.seleccionado")); 
-				
-			} else {
 	            
-	            form.submit({
-	                waitMsg: HreRem.i18n('msg.mask.loading'),
-	                params: {idEntidad: me.idEntidad, activos: activosSeleccionados.toString()},
-	                success: function(fp, o) {
-	                	
-	                	if(o.result.success == "false") {
-	                		me.fireEvent("errorToast", o.result.errores);
-	                	}else{
-	                		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-	                	}
-	                	if(!Ext.isEmpty(me.parent)) {
-	                		me.parent.fireEvent("afterupload", me.parent);
-	                	}
-	                    me.close();
-	                }, 
-	                failure: function(fp, o) {
-	                	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-	                }
-	            });
-			}
+            form.submit({
+                waitMsg: HreRem.i18n('msg.mask.loading'),
+                params: {idEntidad: me.idEntidad, activos: activosSeleccionados.toString()},
+                success: function(fp, o) {
+                	
+                	if(o.result.success == "false") {
+                		me.fireEvent("errorToast", o.result.errores);
+                	}else{
+                		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+                	}
+                	if(!Ext.isEmpty(me.parent)) {
+                		me.parent.fireEvent("afterupload", me.parent);
+                	}
+                    me.close();
+                }, 
+                failure: function(fp, o) {
+                	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+                }
+            });
+			
         }
     	
     	

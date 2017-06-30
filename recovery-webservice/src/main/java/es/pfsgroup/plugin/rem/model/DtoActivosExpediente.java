@@ -15,6 +15,8 @@ public class DtoActivosExpediente extends WebDto {
 	private Double importeParticipacion;
 	private String municipio;
 	private String direccion;
+	private String provincia;
+	private String fincaRegistral;
 	private Integer condiciones;
 	private Integer bloqueos;
 	private Integer tanteos;
@@ -131,6 +133,22 @@ public class DtoActivosExpediente extends WebDto {
 
 	public void setIdCondicion(Long idCondicion) {
 		this.idCondicion = idCondicion;
+	}
+
+	public String getProvincia() {
+		return provincia;
+	}
+
+	public void setProvincia(String provincia) {
+		this.provincia = provincia;
+	}
+
+	public String getFincaRegistral() {
+		return fincaRegistral;
+	}
+
+	public void setFincaRegistral(String fincaRegistral) {
+		this.fincaRegistral = fincaRegistral;
 	}
 	
 }

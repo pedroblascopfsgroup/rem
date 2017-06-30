@@ -1274,6 +1274,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(activo.getSubtipoActivo())) {
 				dtoActivo.setSubtipoActivo(activo.getSubtipoActivo().getDescripcion());
 			}
+			if (!Checks.esNulo(activo.getTipoActivo())) {
+				dtoActivo.setTipoActivo(activo.getTipoActivo().getDescripcion());
+			}
+			
 			// Falta precio minimo y precio aprobado venta
 
 			if (!Checks.estaVacio(activoPorcentajeParti)) {
@@ -1297,9 +1301,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activo.getMunicipio());
 			Localidad localidad = (Localidad) genericDao.get(Localidad.class, filtro);
 			dtoActivo.setMunicipio(localidad.getDescripcion());
+			dtoActivo.setProvincia(localidad.getProvincia().getDescripcion());
 		}
 		if(activo.getDireccion()!=null){
 			dtoActivo.setDireccion(activo.getDireccion());
+		}
+		
+		if(!Checks.esNulo(activo.getInfoRegistral()) && !Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien())) {
+			dtoActivo.setFincaRegistral(activo.getInfoRegistral().getInfoRegistralBien().getNumFinca());
 		}
 
 		return dtoActivo;

@@ -34,6 +34,9 @@ Ext.define('HreRem.model.BloqueosFormalizacionModel', {
     		},
     		{
     			name: 'idActivo'
+    		},
+    		{
+    			name: 'acuerdoCodigo'
     		}
     ],
 
@@ -41,6 +44,7 @@ Ext.define('HreRem.model.BloqueosFormalizacionModel', {
 		type: 'uxproxy',
 		api	: {
 			create: 'expedientecomercial/createBloqueoFormalizacion',
+			update: 'expedientecomercial/updateBloqueoFormalizacion',
             destroy: 'expedientecomercial/deleteBloqueoFormalizacion'
         }
     }

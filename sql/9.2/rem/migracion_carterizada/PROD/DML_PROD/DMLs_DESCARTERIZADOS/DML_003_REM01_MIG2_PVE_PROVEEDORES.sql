@@ -360,6 +360,7 @@ BEGIN
             ,PVE.USUARIOCREAR
             ,PVE.FECHACREAR
             ,PVE.BORRADO
+            ,PVE.PVE_COD_REM
       )
       VALUES (
             '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL,
@@ -406,7 +407,8 @@ BEGIN
             ''0'',
             '''||V_USUARIO||''',
             SYSDATE,
-            0
+            0,
+            '||V_ESQUEMA||'.S_PVE_COD_REM.NEXTVAL
       )      
       '
       ;

@@ -36,7 +36,7 @@ Ext.define('HreRem.view.activos.tramites.ReasignarTarea', {
 			scrollable	: 'y',
 			defaults	: {
 		        layout: 'column',
-		        defaultType: 'displayfield',
+		        defaultType: 'displayfield'
 		    },
 
 			items : [

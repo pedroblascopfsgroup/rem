@@ -181,7 +181,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 												maxValue: null,
 												bind: {
 														value:  '{trabajo.fechaConcreta}',
-														minValue: '{trabajo.fechaSolicitud}',
+														minValue: '{trabajo.fechaSolicitud}'
 												}
 											},
 											{
@@ -232,7 +232,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 												maxValue: null,
 												bind: {
 													value: '{trabajo.fechaTope}',
-													minValue: '{trabajo.fechaSolicitud}',
+													minValue: '{trabajo.fechaSolicitud}'
 												},
 												listeners: {
 													select: function(datefield, newValue) {

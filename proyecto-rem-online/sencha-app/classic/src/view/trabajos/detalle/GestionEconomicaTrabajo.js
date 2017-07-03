@@ -51,11 +51,14 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 	    					layout:'fit',
 	    					minHeight: 250,
 	    					colspan:	2,
-	    					topBar: true,
 	    					cls	: 'panel-base shadow-panel',
+	    					topBar: true,
+	    					editOnSelect: true,
 	    					//height: '100%',
 	    					bind: {
-	    						store: '{storeTarifasTrabajo}'
+	    						store: '{storeTarifasTrabajo}',
+	    						editOnSelect: '{editableTarificacionProveedor}',
+	    						topBar: '{editableTarificacionProveedor}'
 	    					},
 	    					reference: 'gridtarifastrabajo',
 							features: [{

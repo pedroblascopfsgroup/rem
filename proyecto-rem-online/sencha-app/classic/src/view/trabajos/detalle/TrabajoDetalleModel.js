@@ -53,6 +53,18 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    	 
 	    },
 	    
+	    editableTarificacionProveedor: function (get){
+	    	var fechaEjecucionReal = get('trabajo.fechaEjecucionReal');
+	    	
+	    	if (Ext.isEmpty(fechaEjecucionReal))
+	    		 return true;
+	    	 else {
+		    		 return false;
+	    	 }
+	    	
+	    	
+	    },
+	    
 	    disablePresupuesto: function (get) {
 	    	
 	    	 var fechaCierreEco = get('trabajo.fechaCierreEconomico');

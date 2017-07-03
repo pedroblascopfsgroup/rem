@@ -856,9 +856,18 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboProveedorFiltered(Long idTrabajo, ModelMap model) {
+	public ModelAndView getComboProveedorFiltered(Long idTrabajo, String codigoTipoProveedor, ModelMap model) {
 		
-		model.put("data", trabajoApi.getComboProveedorFiltered(idTrabajo));
+		model.put("data", trabajoApi.getComboProveedorFiltered(idTrabajo, codigoTipoProveedor));
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboTipoProveedorFiltered(Long idTrabajo, ModelMap model) {
+		
+		model.put("data", trabajoApi.getComboTipoProveedorFiltered(idTrabajo));
 		
 		return createModelAndViewJson(model);
 	}

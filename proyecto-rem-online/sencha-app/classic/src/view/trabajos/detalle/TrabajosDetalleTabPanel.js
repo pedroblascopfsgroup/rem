@@ -14,7 +14,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
 				var tab = tabPanel.items.items[0];
 				tabPanel.setActiveTab(tab);
 			}
-
+			
 			if(tab.ocultarBotonesEdicion) {
 				tabPanel.down("[itemId=botoneditar]").setVisible(false);
 			} else {		
@@ -134,7 +134,17 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
 		var me = this;
 		me.down("[itemId=botoneditar]").setVisible(false);
 		var editionEnabled = function() {
-			me.down("[itemId=botoneditar]").setVisible(true);
+			var visible = false;
+				if(Ext.isEmpty(me.lookupController().getViewModel().get('trabajo').get('fechaCierreEconomico')) && ($AU.userIsRol(CONST.PERFILES['PROVEEDOR']))){
+					visible = true;
+				}else if(!Ext.isEmpty(me.lookupController().getViewModel().get('trabajo').get('fechaCierreEconomico')) && ($AU.userIsRol(CONST.PERFILES['PROVEEDOR']))){
+					visible = false;
+				}
+				else{
+					visible= true;
+				}
+			
+			me.down("[itemId=botoneditar]").setVisible(visible);
 		}
 
 		// Si la pestaña recibida no tiene asignados roles de edicion 

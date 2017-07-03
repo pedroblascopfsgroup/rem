@@ -61,5 +61,6 @@ Fich_Subsanaciones.dat;SUBSANACIONES.dat
 Fich_Propietarios_Historico.dat;PROPIETARIOS_HISTORICO.dat
 Fich_Usuarios.dat;USUARIOS.dat
 Fich_Gestores_Activo.dat;GESTORES_ACTIVO.dat
-Fich_Gestores_Ofertas.dat;GESTORES_OFERTAS
-Fich_Grupos_Usuarios.dat;GRUPOS_USUARIOS
+Fich_Gestores_Ofertas.dat;GESTORES_OFERTAS.dat
+Fich_Grupos_Usuarios.dat;GRUPOS_USUARIOS.dat
+Fich_Observaciones_Activo.dat;OBSERVACIONES_ACTIVOS.dat

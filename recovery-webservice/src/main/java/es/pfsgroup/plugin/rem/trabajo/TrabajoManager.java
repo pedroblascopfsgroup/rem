@@ -35,6 +35,7 @@ import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -1035,7 +1036,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdSupervisorActivo());
 			Usuario usuario = (Usuario) genericDao.get(Usuario.class, filtro);
 			
-			trabajo.setSupervisorActivoResponsable(usuario);;
+			trabajo.setSupervisorActivoResponsable(usuario);
 		}
 	}
 
@@ -1319,6 +1320,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			
 			if (trabajo.getProveedorContacto().getProveedor() != null) {
 				dtoTrabajo.setIdProveedor(trabajo.getProveedorContacto().getProveedor().getId());
+				dtoTrabajo.setCodigoTipoProveedor(trabajo.getProveedorContacto().getProveedor().getTipoProveedor().getCodigo());
 			}
 			if (trabajo.getProveedorContacto().getUsuario() != null) {
 				dtoTrabajo.setUsuarioProveedorContacto(trabajo.getProveedorContacto().getUsuario().getApellidoNombre());
@@ -1385,11 +1387,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Trabajo trabajo = trabajoDao.get(idTrabajo);
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", presupuestoDto.getIdProveedor());
 		ActivoProveedor proveedor = (ActivoProveedor) genericDao.get(ActivoProveedor.class, filtro);
-
+		filtro = genericDao.createFilter(FilterType.EQUALS, "id", presupuestoDto.getIdProveedorContacto());
+		ActivoProveedorContacto proveedorContacto = (ActivoProveedorContacto) genericDao.get(ActivoProveedorContacto.class, filtro);
 		try {
+
 			PresupuestoTrabajo presupuesto = new PresupuestoTrabajo();
 			presupuesto.setTrabajo(trabajo);
 			presupuesto.setProveedor(proveedor);
+			presupuesto.setProveedorContacto(proveedorContacto);
 			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "codigo", "03"); // Estado
 																							// inicial
 																							// del
@@ -1402,6 +1407,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			beanUtilNotNull.copyProperties(presupuesto, presupuestoDto);
 			genericDao.save(PresupuestoTrabajo.class, presupuesto);
 
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1424,7 +1430,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				ActivoProveedor proveedor = (ActivoProveedor) genericDao.get(ActivoProveedor.class, filtro2);
 				presupuestoTrabajo.setProveedor(proveedor);
 			}
-
+			if (presupuestoDto.getIdProveedorContacto() != null) {
+				Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "id", presupuestoDto.getIdProveedorContacto());
+				ActivoProveedorContacto proveedorContacto = (ActivoProveedorContacto) genericDao.get(ActivoProveedorContacto.class, filtro2);
+				presupuestoTrabajo.setProveedorContacto(proveedorContacto);
+			}
 			if (presupuestoDto.getEstadoPresupuestoCodigo() != null) {
 				Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "codigo",
 						presupuestoDto.getEstadoPresupuestoCodigo());
@@ -1442,8 +1452,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 							filtroPresupuestos);
 
 					// Buscamos el proveedor y lo asignamos al trabajo
-					filtro = genericDao.createFilter(FilterType.EQUALS, "id",
-							presupuestoTrabajo.getProveedor().getId());
+					filtro = genericDao.createFilter(FilterType.EQUALS, "id", presupuestoTrabajo.getProveedorContacto().getId());
 					ActivoProveedorContacto activoProveedor = genericDao.get(ActivoProveedorContacto.class, filtro);
 					trabajo.setProveedorContacto(activoProveedor);
 
@@ -1836,12 +1845,21 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			if (presupuesto.getProveedor() != null) {
 				BeanUtils.copyProperty(presupuestoDto, "idProveedor", presupuesto.getProveedor().getId());
 				BeanUtils.copyProperty(presupuestoDto, "proveedorDescripcion", presupuesto.getProveedor().getNombre());
+				BeanUtils.copyProperty(presupuestoDto, "codigoTipoProveedor", presupuesto.getProveedor().getTipoProveedor().getCodigo());
 			}
 			if (presupuesto.getEstadoPresupuesto() != null) {
 				BeanUtils.copyProperty(presupuestoDto, "estadoPresupuestoCodigo",
 						presupuesto.getEstadoPresupuesto().getCodigo());
 				BeanUtils.copyProperty(presupuestoDto, "estadoPresupuestoDescripcion",
 						presupuesto.getEstadoPresupuesto().getDescripcion());
+			}
+			if(presupuesto.getProveedorContacto() != null){
+				BeanUtils.copyProperty(presupuestoDto, "idProveedorContacto", presupuesto.getProveedorContacto().getId());
+				BeanUtils.copyProperty(presupuestoDto, "nombreProveedorContacto", presupuesto.getProveedorContacto().getNombre());
+				BeanUtils.copyProperty(presupuestoDto, "emailProveedorContacto", presupuesto.getProveedorContacto().getEmail());
+				if(presupuesto.getProveedorContacto().getUsuario() != null) {
+					BeanUtils.copyProperty(presupuestoDto, "usuarioProveedorContacto", presupuesto.getProveedorContacto().getUsuario().getApellidoNombre());
+				}
 			}
 
 		} catch (Exception e) {
@@ -2199,8 +2217,25 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						presupuestoSeleccionado.getProveedor().getEmail());
 				beanUtilNotNull.copyProperty(dtoPresupuesto, "telefonoProveedor",
 						presupuestoSeleccionado.getProveedor().getTelefono1());
+				beanUtilNotNull.copyProperty(dtoPresupuesto, "idProveedor",
+						presupuestoSeleccionado.getProveedor().getId());
+				beanUtilNotNull.copyProperty(dtoPresupuesto, "codigoTipoProveedor",
+						presupuestoSeleccionado.getProveedor().getTipoProveedor().getCodigo());
 				// El usuario actualmente no está conectado con el proveedor,
 				// así que no podemos hacer su copyProperty
+			}
+			if(presupuestoSeleccionado.getProveedorContacto() != null){
+				beanUtilNotNull.copyProperty(dtoPresupuesto, "idProveedorContacto",
+						presupuestoSeleccionado.getProveedorContacto().getId());
+				beanUtilNotNull.copyProperty(dtoPresupuesto, "nombreProveedorContacto",
+						presupuestoSeleccionado.getProveedorContacto().getNombre());
+				if(presupuestoSeleccionado.getProveedorContacto().getUsuario() != null) {
+					beanUtilNotNull.copyProperty(dtoPresupuesto, "usuarioProveedorContacto",
+							presupuestoSeleccionado.getProveedorContacto().getUsuario().getApellidoNombre());
+				}
+				beanUtilNotNull.copyProperty(dtoPresupuesto, "emailProveedorContacto",
+						presupuestoSeleccionado.getProveedorContacto().getEmail());
+				
 			}
 
 		} catch (IllegalAccessException e) {
@@ -2279,29 +2314,53 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 	
 	@Override
-	public List<VProveedores> getComboProveedorFiltered(Long idTrabajo) {
+	public List<VProveedores> getComboProveedorFiltered(Long idTrabajo, String codigoTipoProveedor) {
 		
 		Trabajo trabajo = findOne(idTrabajo);		
 		Activo activo = trabajo.getActivo();
 		
 		if(!Checks.esNulo(activo)){
 			if(!Checks.esNulo(activo.getCartera())) {
-				String codigosTipoProveedores = null;
-				
+				return proveedoresDao.getProveedoresFilteredByTiposTrabajo(codigoTipoProveedor,activo.getCartera().getCodigo());
+			}
+		}
+		return new ArrayList<VProveedores>();
+	}
+	
+	@Override
+	public List<DDTipoProveedor> getComboTipoProveedorFiltered(Long idTrabajo) {
+		
+		Trabajo trabajo = findOne(idTrabajo);		
+		Activo activo = trabajo.getActivo();
+		List<DDTipoProveedor> listaTiposProveedor = new ArrayList<DDTipoProveedor>();
+		
+		if(!Checks.esNulo(activo)){
+			if(!Checks.esNulo(activo.getCartera())) {
+				Filter filtroTipoProveedor = null;
+				DDTipoProveedor tipoProveedor = null;
 				if(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo())) {
-					codigosTipoProveedores = DDTipoProveedor.COD_MANTENIMIENTO_TECNICO + "," + DDTipoProveedor.COD_ASEGURADORA;
+					filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoProveedor.COD_MANTENIMIENTO_TECNICO);
+					tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
+					listaTiposProveedor.add(tipoProveedor);
+					filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoProveedor.COD_ASEGURADORA);
+					tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
+					listaTiposProveedor.add(tipoProveedor);
 				
 				} else if(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo())) {
 					String codSubtipo = trabajo.getSubtipoTrabajo().getCodigo();
 					if(!DDSubtipoTrabajo.CODIGO_CEE.equals(codSubtipo) && !DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD.equals(codSubtipo)) {
-						codigosTipoProveedores = DDTipoProveedor.COD_MANTENIMIENTO_TECNICO + "," + DDTipoProveedor.COD_GESTORIA;
+						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoProveedor.COD_MANTENIMIENTO_TECNICO);
+						tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
+						listaTiposProveedor.add(tipoProveedor);
+						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoProveedor.COD_GESTORIA);
+						tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
+						listaTiposProveedor.add(tipoProveedor);
 					}
 				}
 				
-				return proveedoresDao.getProveedoresFilteredByTiposTrabajo(codigosTipoProveedores,activo.getCartera().getCodigo());
 			}
 		}
-		return new ArrayList<VProveedores>();
+		return listaTiposProveedor;
 	}
 	
 	@Override

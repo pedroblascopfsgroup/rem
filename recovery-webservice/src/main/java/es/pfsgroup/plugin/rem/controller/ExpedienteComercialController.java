@@ -166,6 +166,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		
 		DtoAviso avisosFormateados = new DtoAviso();
 		avisosFormateados.setDescripcion("");
+		avisosFormateados.setId(id.toString());
 		
 		for (ExpedienteAvisadorApi avisador: avisadores) {
 			
@@ -1078,6 +1079,19 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	public ModelAndView deleteBloqueoFormalizacion(ModelMap model, DtoBloqueosFinalizacion dto) {
 		try {
 			model.put("success", expedienteComercialApi.deleteBloqueoFormalizacion(dto));
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateBloqueoFormalizacion(ModelMap model, DtoBloqueosFinalizacion dto) {
+		try {
+			model.put("success", expedienteComercialApi.updateBloqueoFormalizacion(dto));
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);

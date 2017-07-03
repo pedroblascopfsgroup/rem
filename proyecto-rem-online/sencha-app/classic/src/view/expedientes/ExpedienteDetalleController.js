@@ -1,7 +1,9 @@
 Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.expedientedetalle',  
-    requires: ['HreRem.view.expedientes.NotarioSeleccionado', 'HreRem.view.expedientes.DatosComprador', 'HreRem.view.expedientes.DatosClienteUrsus',"HreRem.model.ActivoExpedienteCondicionesModel"],
+    requires: ['HreRem.view.expedientes.NotarioSeleccionado', 'HreRem.view.expedientes.DatosComprador', 
+    'HreRem.view.expedientes.DatosClienteUrsus',"HreRem.model.ActivoExpedienteCondicionesModel",
+    "HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente"],
     
     control: {
     	'documentosexpediente gridBase': {
@@ -1269,6 +1271,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	    					form.reset();
 	    					window.parent.funcionRecargar();
 	    					window.hide();
+	    					me.getView().fireEvent("refrescarExpediente", me.getView());
 	    				},
 	    				failure: function(a, operation){
 	    					me.getView().unmask();
@@ -1295,6 +1298,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				var ventanaCompradores= grid.up().up();
 				var expediente= me.getViewModel().get("expediente");
 				Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente}).show();
+				me.onClickBotonRefrescar();
 			}
 			else{
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.aprobado"));
@@ -1492,6 +1496,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		            success: function(record, operation) {
 		           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 		           		 grid.fireEvent("afterdelete", grid);
+		           		 me.onClickBotonRefrescar();
 		            },
 		            failure: function(record, operation) {
 		            	var data = {};

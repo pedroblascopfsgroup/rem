@@ -9,6 +9,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.tc.aspectwerkz.expression.regexp.Pattern;
+
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -23,8 +25,6 @@ import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 
 @Service
 public class ExpedienteComercialAdapter {
@@ -115,8 +115,13 @@ public class ExpedienteComercialAdapter {
 	}
 
 	public String uploadDocumento(WebFileItem webFileItem, ExpedienteComercial expedienteComercialEntrada, String matricula) throws Exception {
+		
+		String activos = webFileItem.getParameter("activos");
+		String[] arrayActivos = activos.split(",");
+		
 		if (Checks.esNulo(expedienteComercialEntrada)) {
 			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+								
 				ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(Long.parseLong(webFileItem.getParameter("idEntidad")));
 				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("subtipo"));

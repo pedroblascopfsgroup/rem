@@ -2,9 +2,20 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpedienteModel', {
 	extend: 'Ext.app.ViewModel',
     alias: 'viewmodel.adjuntardocumentoexpediente',
 
-    requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase'],
-    
+    requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.SubtipoDocumento'],
+        
     stores: {
+    	
+    	
+    	storeActivos: {
+			model: 'HreRem.model.ActivosExpediente',
+	    	proxy: {
+	    		type: 'uxproxy', 
+	    		remoteUrl: 'expedientecomercial/getActivosExpediente',
+	    		extraParams: {idExpediente: '{expediente.id}'}
+	    	},
+	    	autoLoad: false
+    	},
     	
     	
     	comboTipoDocumento : {
@@ -17,7 +28,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpedienteModel', {
     	},
     	
     	comboSubtipoDocumento : {
-			model: 'HreRem.model.ComboBase',
+			model: 'HreRem.model.SubtipoDocumento',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',

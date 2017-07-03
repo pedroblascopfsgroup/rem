@@ -702,7 +702,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			if(reiniciarPBC) {
 				ExpedienteComercial expediente = expedienteComercialApi.getExpedienteComercialResetPBC(activo);
 				if(!Checks.esNulo(expediente)) {
-					ofertaApi.resetPBC(expediente);
+					ofertaApi.resetPBC(expediente, false);
 				}
 			}
 			

@@ -88,8 +88,8 @@ BEGIN
 			ttr.dd_ttr_filtrar
 
      FROM ' || V_ESQUEMA || '.act_tbj_trabajo tbj JOIN ' || V_ESQUEMA || '.act_tbj atj ON atj.tbj_id = tbj.tbj_id
-          LEFT JOIN ' || V_ESQUEMA || '.act_activo act ON act.act_id = atj.act_id
-          LEFT JOIN ' || V_ESQUEMA || '.act_agr_agrupacion agr ON agr.agr_id = tbj.agr_id
+          LEFT JOIN ' || V_ESQUEMA || '.act_activo act ON act.act_id = atj.act_id and act.borrado = 0
+          LEFT JOIN ' || V_ESQUEMA || '.act_agr_agrupacion agr ON agr.agr_id = tbj.agr_id and agr.borrado = 0
           LEFT JOIN ' || V_ESQUEMA || '.gac_gestor_add_activo gac ON gac.act_id = act.act_id
           LEFT JOIN ' || V_ESQUEMA || '.gee_gestor_entidad gee ON gac.gee_id = gee.gee_id
           JOIN ' || V_ESQUEMA_MASTER || '.dd_tge_tipo_gestor tge ON (tge.dd_tge_id = gee.dd_tge_id AND tge.dd_tge_codigo = ''GACT'')
@@ -109,9 +109,8 @@ BEGIN
           LEFT JOIN
           (SELECT act_id, tbj_id, ROW_NUMBER() OVER(PARTITION BY tbj_id ORDER BY act_id) rango
              FROM ' || V_ESQUEMA || '.act_tbj) rn ON (rn.act_id = act.act_id AND rn.tbj_id = tbj.tbj_id)
-          where act.borrado = 0
-          and tbj.borrado = 0
-          and agr.borrado = 0';
+          where tbj.borrado = 0
+          ';
 
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_BUSQUEDA_TRABAJOS...Creada OK');

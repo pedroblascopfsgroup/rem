@@ -53,6 +53,28 @@ Ext.define('HreRem.model.PresupuestosTrabajo', {
     		},
     		{
     			name:'refPresupuestoProveedor'
+    		},
+    		{
+    			name: 'idProveedorContacto'
+    		},
+    		{
+    			name: 'codigoTipoProveedor'
+    		},
+    		{
+    			name: 'nombreProveedorContacto'
+    		},
+    		{
+    			name: 'emailProveedorContacto'
+    		},
+    		{
+    			name: 'usuarioProveedorContacto',
+    			convert: function(value){
+    				if(Ext.isEmpty(value)){
+    					return '---';
+    				}else{
+    					return value;
+    				}
+    			}
     		}
     ],
     

@@ -47,6 +47,16 @@ public class DtoPresupuestoTrabajo extends WebDto {
 	private String comentarios;
 	
 	private String refPresupuestoProveedor;
+	
+	private Long idProveedorContacto;
+	
+	private String codigoTipoProveedor;
+	
+	private String nombreProveedorContacto;
+	
+	private String emailProveedorContacto;
+	
+	private String usuarioProveedorContacto;
 
 	public String getId() {
 		return id;
@@ -183,5 +193,46 @@ public class DtoPresupuestoTrabajo extends WebDto {
 	public void setRefPresupuestoProveedor(String refPresupuestoProveedor) {
 		this.refPresupuestoProveedor = refPresupuestoProveedor;
 	}
+
+	public Long getIdProveedorContacto() {
+		return idProveedorContacto;
+	}
+
+	public void setIdProveedorContacto(Long idProveedorContacto) {
+		this.idProveedorContacto = idProveedorContacto;
+	}
+
+	public String getCodigoTipoProveedor() {
+		return codigoTipoProveedor;
+	}
+
+	public void setCodigoTipoProveedor(String codigoTipoProveedor) {
+		this.codigoTipoProveedor = codigoTipoProveedor;
+	}
+
+	public String getNombreProveedorContacto() {
+		return nombreProveedorContacto;
+	}
+
+	public void setNombreProveedorContacto(String nombreProveedorContacto) {
+		this.nombreProveedorContacto = nombreProveedorContacto;
+	}
+
+	public String getEmailProveedorContacto() {
+		return emailProveedorContacto;
+	}
+
+	public void setEmailProveedorContacto(String emailProveedorContacto) {
+		this.emailProveedorContacto = emailProveedorContacto;
+	}
+
+	public String getUsuarioProveedorContacto() {
+		return usuarioProveedorContacto;
+	}
+
+	public void setUsuarioProveedorContacto(String usuarioProveedorContacto) {
+		this.usuarioProveedorContacto = usuarioProveedorContacto;
+	}
+	
 	
 }

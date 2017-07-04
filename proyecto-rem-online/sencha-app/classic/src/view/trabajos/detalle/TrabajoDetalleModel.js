@@ -53,6 +53,18 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    	 
 	    },
 	    
+	    editableTarificacionProveedor: function (get){
+	    	var fechaEjecucionReal = get('trabajo.fechaEjecucionReal');
+	    	
+	    	if (Ext.isEmpty(fechaEjecucionReal))
+	    		 return true;
+	    	 else {
+		    		 return false;
+	    	 }
+	    	
+	    	
+	    },
+	    
 	    disablePresupuesto: function (get) {
 	    	
 	    	 var fechaCierreEco = get('trabajo.fechaCierreEconomico');
@@ -320,15 +332,87 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 				autoLoad: false
     		},
     		
+    		comboTipoProveedorFiltered : {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboTipoProveedorFiltered',
+					extraParams: {idTrabajo: '{trabajo.id}'}
+				}
+    		},
+    		
     		comboProveedorFiltered : {
     			model: 'HreRem.model.ComboBase',
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'trabajo/getComboProveedorFiltered',
+					extraParams: {
+						idTrabajo: '{trabajo.id}',
+						codigoTipoProveedor: '{comboTipoProveedorGestionEconomica.selection.codigo}'
+						
+					}
+				},
+				autoLoad: false
+    		},
+    		comboTipoProveedorFilteredA : {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboTipoProveedorFiltered',
 					extraParams: {idTrabajo: '{trabajo.id}'}
 				}
     		},
-    		
+    		comboProveedorFilteredA : {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboProveedorFiltered',
+					extraParams: {
+						idTrabajo: '{trabajo.id}',
+						codigoTipoProveedor: '{comboTipoProveedorGestionEconomica2.selection.codigo}'
+					}
+				},
+				autoLoad: false
+    		},
+    		comboProveedorContactoA : {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboProveedorContacto',
+					extraParams: {idProveedor: '{comboProveedorGestionEconomica2.selection.idProveedor}'}
+				}, 
+				autoLoad: false
+    		},
+    		comboTipoProveedorFilteredM : {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboTipoProveedorFiltered',
+					extraParams: {idTrabajo: '{trabajo.id}'}
+				}
+    		},
+    		comboProveedorFilteredM : {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboProveedorFiltered',
+					extraParams: {
+						idTrabajo: '{trabajo.id}',
+						codigoTipoProveedor: '{comboTipoProveedorGestionEconomica3.selection.codigo}'
+					}
+				},
+				autoLoad: false
+    		},
+    		comboProveedorContactoM : {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboProveedorContacto',
+					extraParams: {idProveedor: '{comboProveedorGestionEconomica3.selection.idProveedor}'}
+				}, 
+				autoLoad: false
+    		},
+
     		comboGestorActivoResponsable: {    		
 				model: 'HreRem.model.ComboBase',
 				proxy: {

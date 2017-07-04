@@ -56,6 +56,8 @@ public class DtoGestionEconomicaTrabajo extends WebDto {
 	private Double importeTotal;
 	
 	private Long idProveedorContacto;
+	
+	private String codigoTipoProveedor;
 
 	public Long getIdTrabajo() {
 		return idTrabajo;
@@ -223,6 +225,14 @@ public class DtoGestionEconomicaTrabajo extends WebDto {
 
 	public void setIdProveedorContacto(Long idProveedorContacto) {
 		this.idProveedorContacto = idProveedorContacto;
+	}
+
+	public String getCodigoTipoProveedor() {
+		return codigoTipoProveedor;
+	}
+
+	public void setCodigoTipoProveedor(String codigoTipoProveedor) {
+		this.codigoTipoProveedor = codigoTipoProveedor;
 	}
 	
 }

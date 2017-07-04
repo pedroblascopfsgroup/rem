@@ -151,6 +151,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private GestorActivoApi gestorActivoApi;
 
 	@Autowired
 	private ActivoDao activoDao;
@@ -1272,11 +1275,19 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if(!Checks.esNulo(trabajo.getUsuarioGestorActivoResponsable())){
 			dtoTrabajo.setGestorActivoResponsable(trabajo.getUsuarioGestorActivoResponsable().getApellidoNombre());
 			dtoTrabajo.setIdGestorActivoResponsable(trabajo.getUsuarioGestorActivoResponsable().getId());
+		//HREOS-2332
+		} else if(!Checks.esNulo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO))){
+			dtoTrabajo.setGestorActivoResponsable(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO).getApellidoNombre());
+			dtoTrabajo.setIdGestorActivoResponsable(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO).getId());
 		}
 		
 		if(!Checks.esNulo(trabajo.getSupervisorActivoResponsable())){
 			dtoTrabajo.setSupervisorActivo(trabajo.getSupervisorActivoResponsable().getApellidoNombre());
 			dtoTrabajo.setIdSupervisorActivo(trabajo.getSupervisorActivoResponsable().getId());
+		//HREOS-2332
+		} else if(!Checks.esNulo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS))){
+			dtoTrabajo.setSupervisorActivo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS).getApellidoNombre());
+			dtoTrabajo.setIdSupervisorActivo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS).getId());
 		}
 
 		return dtoTrabajo;

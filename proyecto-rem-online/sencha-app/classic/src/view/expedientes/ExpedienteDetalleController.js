@@ -1767,7 +1767,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var window = btn.up().up();
 		var form = window.down("formBase").getForm();
 		var idExpediente = btn.up('desbloquearwindow').idExpediente;
-    	var url =  $AC.getRemoteUrl('expedientecomercial/desbloqueoexpediente');
+    	var url =  $AC.getRemoteUrl('expedientecomercial/desbloqueoExpediente');
     	if(me.validarActivarForm(form)) {
     		var parametros = {idExpediente : idExpediente,motivoCodigo : form.findField("motivo").getValue(),motivoDescLibre : form.findField("motivoDescLibre").getValue()};
     		me.getView().mask();

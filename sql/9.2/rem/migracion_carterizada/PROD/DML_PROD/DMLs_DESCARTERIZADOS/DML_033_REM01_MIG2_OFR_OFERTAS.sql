@@ -74,7 +74,8 @@ BEGIN
             VERSION,
             USUARIOCREAR,
             FECHACREAR,
-            BORRADO
+            BORRADO,
+            OFR_WEBCOM_ID
         )
         SELECT 
             '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                     OFR_ID, 
@@ -142,7 +143,8 @@ BEGIN
             0                                                           VERSION,
             '''||V_USUARIO||'''                                     USUARIOCREAR,
             SYSDATE                                                     FECHACREAR,
-            0                                                           BORRADO
+            0                                                           BORRADO,
+            MIG.OFR_WEBCOM_ID                                           OFR_WEBCOM_ID
         FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
             LEFT JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_NUM_AGRUP_UVEM = MIG.OFR_COD_AGRUPACION
             LEFT JOIN '||V_ESQUEMA||'.CLC_CLIENTE_COMERCIAL CLC ON CLC.CLC_WEBCOM_ID = MIG.OFR_COD_CLIENTE_WEBCOM

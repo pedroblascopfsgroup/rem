@@ -272,7 +272,8 @@ BEGIN
                   MIG.PVE_FECHA_PBC,
                   RPB.DD_RPB_ID,
                   MIG.PVE_COD_API_PROVEEDOR,
-                          MIG.PVE_IND_MODIFICAR_DATOS_WEB
+                  MIG.PVE_IND_MODIFICAR_DATOS_WEB,
+                  MIG.PVE_WEBCOM_ID
             FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
                   INNER JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR ON TPR.DD_TPR_CODIGO = MIG.PVE_COD_TIPO_PROVEEDOR
                   LEFT JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_COD_UVEM = MIG.PVE_COD_UVEM AND PVE.PVE_DOCIDENTIF = MIG.PVE_DOCUMENTO_ID AND PVE.DD_TPR_ID = TPR.DD_TPR_ID
@@ -313,7 +314,8 @@ BEGIN
             ,PVE.USUARIOMODIFICAR = '''||V_USUARIO||'''
             ,PVE.FECHAMODIFICAR = SYSDATE
             ,PVE_COD_API_PROVEEDOR = SQLI.PVE_COD_API_PROVEEDOR
-                  ,PVE.PVE_AUTORIZACION_WEB = SQLI.PVE_IND_MODIFICAR_DATOS_WEB
+            ,PVE.PVE_AUTORIZACION_WEB = SQLI.PVE_IND_MODIFICAR_DATOS_WEB
+            ,PVE.PVE_WEBCOM_ID
       WHEN NOT MATCHED THEN INSERT (
             PVE_ID
             ,PVE.PVE_COD_UVEM
@@ -355,12 +357,13 @@ BEGIN
             ,PVE.PVE_FECHA_PBC
             ,PVE.DD_RPB_ID
             ,PVE_COD_API_PROVEEDOR
-                  ,PVE.PVE_AUTORIZACION_WEB
+            ,PVE.PVE_AUTORIZACION_WEB
             ,PVE.VERSION
             ,PVE.USUARIOCREAR
             ,PVE.FECHACREAR
             ,PVE.BORRADO
             ,PVE.PVE_COD_REM
+            ,PVE.PVE_WEBCOM_ID
       )
       VALUES (
             '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL,
@@ -403,12 +406,13 @@ BEGIN
             SQLI.PVE_FECHA_PBC,
             SQLI.DD_RPB_ID,
             SQLI.PVE_COD_API_PROVEEDOR,
-                  SQLI.PVE_IND_MODIFICAR_DATOS_WEB,
+            SQLI.PVE_IND_MODIFICAR_DATOS_WEB,
             ''0'',
             '''||V_USUARIO||''',
             SYSDATE,
             0,
-            '||V_ESQUEMA||'.S_PVE_COD_REM.NEXTVAL
+            '||V_ESQUEMA||'.S_PVE_COD_REM.NEXTVAL,
+            SQLI.PVE_WEBCOM_ID
       )      
       '
       ;

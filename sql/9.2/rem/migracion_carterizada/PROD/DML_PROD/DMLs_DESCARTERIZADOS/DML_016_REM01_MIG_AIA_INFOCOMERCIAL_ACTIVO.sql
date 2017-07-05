@@ -121,7 +121,7 @@ BEGIN
     MIG.ICO_JUSTIFICANTE_IMP_VENTA                          ICO_JUSTIFICACION_VENTA,
     MIG.ICO_JUSTIFICANTE_IMP_ALQUILER                       ICO_JUSTIFICACION_RENTA,
     ''0''                                                                                                     VERSION,
-    ''MIG_SAREB''                                                                  USUARIOCREAR,
+    '''||V_USUARIO||'''                                                                   USUARIOCREAR,
     SYSDATE                                                                                     FECHACREAR,
     0                                                                                                   BORRADO
     FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG

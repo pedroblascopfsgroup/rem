@@ -1863,7 +1863,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		codigos.add(DDTipoProveedor.COD_WEB_HAYA);
 		codigos.add(DDTipoProveedor.COD_PORTAL_WEB);
 		codigos.add(DDTipoProveedor.COD_CAT);
-		codigos.add(DDTipoProveedor.COD_HAYA);		
+		codigos.add(DDTipoProveedor.COD_HAYA);
+		codigos.add(DDTipoProveedor.COD_GESTIONDIRECTA);
 		
 		List<DDTipoProveedor> listaTipoProveedor = proveedoresDao.getSubtiposProveedorByCodigos(codigos);		
 

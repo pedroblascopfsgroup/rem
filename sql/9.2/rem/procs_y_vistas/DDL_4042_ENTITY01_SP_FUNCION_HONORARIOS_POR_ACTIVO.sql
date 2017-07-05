@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20170610
+--## FECHA_CREACION=20170705
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-1325, HREOS-2113
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 HREOS-2302_GUILLEM REY
 --##########################################
 --*/
 
@@ -116,8 +117,8 @@ BEGIN
 		          and TRF.DD_TPR_CODIGO = canal;
 			END IF;
        END IF;
-  ELSE -- Tipo Proveedor no definido o FVD (Fuerza Venta Directa).
-    IF canal = ''18'' THEN 
+  ELSE -- Tipo Proveedor no definido o FVD (Fuerza Venta Directa) o Gestión Directa.
+    IF canal = ''18'' OR canal = ''37'' THEN 
       select
           case
               when TIPO_COMISION = ''C'' then TRF.trf_prc_colab

@@ -726,7 +726,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 			var url =  $AC.getRemoteUrl('proveedores/searchProveedorCodigo');
 			var codPrescriptor = field.getValue();
 			var data;
-			var re = new RegExp("^((04$))|^((18$))|^((28$))|^((29$))|^((31$)).*$");
+			var re = new RegExp("^((04$))|^((18$))|^((28$))|^((29$))|^((31$))|^((37$)).*$");
 	
 			Ext.Ajax.request({
 			    			

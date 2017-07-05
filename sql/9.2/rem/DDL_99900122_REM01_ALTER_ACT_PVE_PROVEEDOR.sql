@@ -44,7 +44,7 @@ DECLARE
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION
-    	T_ALTER(  'PVE_WEBCOM_ID',				'NUMBER(18,0)',		'Id en webcom')
+    	T_ALTER(  'PVE_WEBCOM_ID',				'NUMBER(16,0)',		'Id en webcom')
 		);
     V_T_ALTER T_ALTER;
     

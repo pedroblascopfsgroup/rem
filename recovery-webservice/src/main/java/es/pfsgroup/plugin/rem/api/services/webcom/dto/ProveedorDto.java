@@ -46,6 +46,8 @@ public class ProveedorDto implements WebcomRESTDto {
 	private BooleanDataType abierta;
 	@MappedColumn("TELFONO_CONTACTO_VISITAS")
 	private StringDataType telefonoContactoVisitas;
+	private LongDataType idProveedorWebcom;
+	
 	
 
 	@NestedDto(groupBy = "idProveedorRem", type = DelegacionDto.class)
@@ -274,6 +276,16 @@ public class ProveedorDto implements WebcomRESTDto {
 	public void setTelefonoContactoVisitas(StringDataType telefonoContactoVisitas) {
 		this.telefonoContactoVisitas = telefonoContactoVisitas;
 	}
+
+	public LongDataType getIdProveedorWebcom() {
+		return idProveedorWebcom;
+	}
+
+	public void setIdProveedorWebcom(LongDataType idProveedorWebcom) {
+		this.idProveedorWebcom = idProveedorWebcom;
+	}
+
+	
 	
 	
 }

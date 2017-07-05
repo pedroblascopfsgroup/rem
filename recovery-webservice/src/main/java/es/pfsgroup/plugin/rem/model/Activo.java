@@ -107,6 +107,7 @@ public class Activo implements Serializable, Auditable {
     @Column(name = "ACT_DIVISION_HORIZONTAL")
    	private Integer divHorizontal;
     
+    @Deprecated
     @Column(name = "ACT_GESTION_HRE")
    	private Integer gestionHre;
     

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=GUILLEM REY
---## FECHA_CREACION=20170704
+--## FECHA_CREACION=20170705
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-2302
@@ -36,15 +36,15 @@ DECLARE
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     	--			DD_CLA_CODIGO		DD_SCA_CODIGO		TRF_LLAVES_HRE		DD_TPR_CODIGO		TRF_PRC_COLAB		TRF_PRC_PRESC
 -- Financiero.
-        T_TIPO_DATA(	'01',				NULL,				NULL,				'37',				'0000',				'0000'),
-        T_TIPO_DATA(	'02',				NULL,				NULL,				'37',				'0000',				'0000')
+        T_TIPO_DATA(	'01',				NULL,				NULL,				'37',				'00000',			'00000'),
+        T_TIPO_DATA(	'02',				NULL,				NULL,				'37',				'00000',			'00000')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 
 BEGIN	
 
 	DBMS_OUTPUT.PUT_LINE('[INICIO]');
-
+	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_TPR_CODIGO = ''37''';
     -- LOOP para insertar los valores --
     DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN '||V_TEXT_TABLA);
     FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST

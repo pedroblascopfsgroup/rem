@@ -41,6 +41,7 @@ create or replace FUNCTION '||V_ESQUEMA||'.CALCULAR_HONORARIO (P_OFR_ID IN NUMBE
   llaves_en_HRE VARCHAR2(1 CHAR);
   canal VARCHAR2(2 CHAR);
   importe_ultima_tasacion NUMBER(12);
+  tipo_persona VARCHAR2(20 CHAR);
   prc_honorario NUMBER(5,2);
 
 BEGIN
@@ -52,7 +53,8 @@ BEGIN
       sac.dd_sac_codigo as subtipo_activo,  -- Subtipo activo (xa relacion con COSBIN).
       act.ACT_LLAVES_HRE as llaves_en_HRE, -- Llaves en HRE.
       tpr.dd_tpr_codigo as canal, -- Tipo de mediador.
-      tas.TAS_IMPORTE_TAS_FIN as importe_ultima_tasacion
+      tas.TAS_IMPORTE_TAS_FIN as importe_ultima_tasacion,
+      tpe.dd_tpe_codigo as tipo_persona
     into
       clase_activo,
       subclase_activo,
@@ -60,7 +62,8 @@ BEGIN
       subtipo_activo,
       llaves_en_HRE,
       canal,
-      importe_ultima_tasacion
+      importe_ultima_tasacion,
+      tipo_persona
     from ofr_ofertas ofr
     inner join act_ofr aof on ofr.ofr_id = aof.ofr_id and ofr.ofr_id = p_ofr_id
     inner join act_activo act on aof.act_id = act.act_id and act.act_id = p_act_id
@@ -69,56 +72,69 @@ BEGIN
     inner join act_pve_proveedor pve on pve.pve_id = p_pve_id
     inner join dd_tpr_tipo_proveedor tpr on pve.dd_tpr_id = tpr.dd_tpr_id
     inner join (
-      select tas1.act_id, max(tas_id) ultima_tasacion_id 
+      select tas1.act_id, max(tas_id) ultima_tasacion_id
       from act_tas_tasacion tas1
       group by tas1.act_id
     ) mtas on act.act_id = mtas.act_id
     inner join act_tas_tasacion tas on mtas.ultima_tasacion_id = tas.tas_id
     inner join act_aba_activo_bancario aba on act.act_id = aba.act_id
     inner join dd_cla_clase_activo cla on aba.dd_cla_id = cla.dd_cla_id
-    left join dd_sca_subclase_activo sca on aba.dd_sca_id = sca.dd_sca_id;
+    left join dd_sca_subclase_activo sca on aba.dd_sca_id = sca.dd_sca_id
+    left join '||V_ESQUEMA_M||'.dd_tpe_tipo_persona tpe on tpe.dd_tpe_id = pve.dd_tpe_id;
 
 -- Obtener resultado primera tabla.
   IF canal IN (''04'',''28'',''29'',''30'',''31'') THEN -- Tipo Proveedor definido.
       IF clase_activo = ''01'' THEN -- Clase activo Financiero.
-          select 
+          select
               case
                   when TIPO_COMISION = ''C'' then TRF.trf_prc_colab
                   when TIPO_COMISION = ''P'' then TRF.trf_prc_presc
               end
-          into prc_honorario 
+          into prc_honorario
           from TRF_TRF_PRC_HONORARIOS TRF
           where TRF.DD_CLA_CODIGO = clase_activo
           and TRF.DD_TPR_CODIGO = canal;
        ELSE 						-- Clase activo Inmobiliario.
 
 		  	IF subclase_activo = ''01'' THEN -- SubClase activo Propio.
-		          select 
+		          select
 		              case
 		                  when TIPO_COMISION = ''C'' then TRF.trf_prc_colab
 		                  when TIPO_COMISION = ''P'' then TRF.trf_prc_presc
 		              end
-		          into prc_honorario 
+		          into prc_honorario
 		          from TRF_TRF_PRC_HONORARIOS TRF
-		          where TRF.DD_CLA_CODIGO = clase_activo 
+		          where TRF.DD_CLA_CODIGO = clase_activo
 		          and TRF.DD_SCA_CODIGO = subclase_activo
 		          and TRF.DD_TPR_CODIGO = canal;
 			ELSE 							-- SubClase activo REO.
-				 select 
+				 select
 		              case
 		                  when TIPO_COMISION = ''C'' then TRF.trf_prc_colab
 		                  when TIPO_COMISION = ''P'' then TRF.trf_prc_presc
 		              end
-		          into prc_honorario 
+		          into prc_honorario
 		          from TRF_TRF_PRC_HONORARIOS TRF
-		          where TRF.DD_CLA_CODIGO = clase_activo 
+		          where TRF.DD_CLA_CODIGO = clase_activo
 		          and TRF.DD_SCA_CODIGO = subclase_activo
 				  and TRF.TRF_LLAVES_HRE = llaves_en_hre
 		          and TRF.DD_TPR_CODIGO = canal;
 			END IF;
        END IF;
   ELSE -- Tipo Proveedor no definido o FVD (Fuerza Venta Directa) o Gestión Directa.
-    IF canal = ''18'' OR canal = ''37'' THEN 
+    IF canal = ''18'' THEN
+      select
+          case
+              when TIPO_COMISION = ''C'' then TRF.trf_prc_colab
+              when TIPO_COMISION = ''P'' then TRF.trf_prc_presc
+          end
+      into prc_honorario
+      from TRF_TRF_PRC_HONORARIOS TRF
+      where TRF.DD_TPR_CODIGO = canal
+        and TRF.DD_TPE_CODIGO = tipo_persona
+        and TRF.DD_CLA_CODIGO = clase_activo
+        and rownum = 1; --FVD es el mismo para cualquier clase/subclase/llaves
+    ELSIF canal = ''37'' THEN
       select
           case
               when TIPO_COMISION = ''C'' then TRF.trf_prc_colab
@@ -129,7 +145,7 @@ BEGIN
       where TRF.DD_TPR_CODIGO = canal
         and rownum = 1; --FVD es el mismo para cualquier clase/subclase/llaves
     ELSE -- No definido tipo proveedor
-      RETURN NULL; 
+      RETURN NULL;
     END IF;
   END IF;
 
@@ -143,14 +159,14 @@ BEGIN
 
 
 -- Obtener resultado segunda tabla.
-  select 
+  select
       case
           when TIPO_COMISION = ''C'' then TPT.tpt_prc_colab
           when TIPO_COMISION = ''P'' then TPT.tpt_prc_presc
       end
-  into prc_honorario 
+  into prc_honorario
   from TRF_TPT_PRC_HONORAR_TIPOLOG TPT
-  where TPT.DD_TPA_CODIGO = tipo_activo 
+  where TPT.DD_TPA_CODIGO = tipo_activo
   and TPT.DD_SAC_CODIGO = subtipo_activo;
 
 
@@ -189,8 +205,7 @@ EXCEPTION
               DBMS_OUTPUT.put_line(SQLERRM);
               RETURN NULL;
 
-END;
-	';
+END;';
   
 DBMS_OUTPUT.PUT_LINE('[INFO] Proceso ejecutado CORRECTAMENTE. Function creada.');
 	

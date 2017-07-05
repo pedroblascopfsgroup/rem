@@ -45,7 +45,7 @@ END IF;
 EXECUTE IMMEDIATE '
 CREATE TABLE '||V_ESQUEMA_1||'.'||V_TABLA||'
 (
-        VIS_COD_VISITA_WEBCOM                           NUMBER(16,0)                NOT NULL,     
+        VIS_COD_VISITA_WEBCOM                           NUMBER(18,0)                NOT NULL,     
         VIS_COD_CLIENTE_WEBCOM                          NUMBER(16,0)                            NOT NULL,
         VIS_ACT_NUMERO_ACTIVO                           NUMBER(16,0)                            NOT NULL,
         VIS_COD_ESTADO_VISITA                           VARCHAR2(20 CHAR),              

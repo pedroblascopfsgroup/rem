@@ -163,6 +163,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
@@ -3650,6 +3651,50 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		PerimetroActivo perimetroActivo = (PerimetroActivo) genericDao.get(PerimetroActivo.class, filtroActivo);
 		return perimetroActivo;
 
+	}
+	
+	public String getCodigoTipoComercializacionFromActivo(Activo activo) {
+		
+		String codigoTipoComercializacion = null;
+		
+		if(this.isIntegradoAgrupacionObraNuevaOrAsistida(activo))
+			codigoTipoComercializacion = DDTipoComercializar.CODIGO_RETAIL;
+		else if(DDTipoUsoDestino.TIPO_USO_PRIMERA_RESIDENCIA.equals(activo.getTipoUsoDestino()) ||
+				DDTipoUsoDestino.TIPO_USO_SEGUNDA_RESIDENCIA.equals(activo.getTipoUsoDestino()))
+			codigoTipoComercializacion = DDTipoComercializar.CODIGO_RETAIL;
+		else 
+		{
+			Double importeLimite = (double) 500000;
+			
+			if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo()))
+			{
+				Double valorVNC = this.getImporteValoracionActivoByCodigo(activo, DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT);
+				if(!Checks.esNulo(valorVNC)) {
+					if(valorVNC <= importeLimite)
+						codigoTipoComercializacion = DDTipoComercializar.CODIGO_RETAIL;
+					else
+						codigoTipoComercializacion = DDTipoComercializar.CODIGO_SINGULAR;
+				}
+			} 
+			else if(DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo()) ||
+					DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) 
+			{
+				importeLimite += 100000;
+				Double valorActivo = this.getImporteValoracionActivoByCodigo(activo, DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
+				
+				if(Checks.esNulo(valorActivo))
+					valorActivo = this.getTasacionMasReciente(activo).getImporteTasacionFin().doubleValue();
+				
+				if(!Checks.esNulo(valorActivo)) {
+					if(valorActivo <= importeLimite)
+						codigoTipoComercializacion = DDTipoComercializar.CODIGO_RETAIL;
+					else
+						codigoTipoComercializacion = DDTipoComercializar.CODIGO_SINGULAR;
+				}
+			}
+		}
+		
+		return codigoTipoComercializacion;
 	}
 
 }

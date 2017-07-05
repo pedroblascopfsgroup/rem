@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=SERGIO HERNANDEZ
---## FECHA_CREACION=20170326
+--## AUTOR=MANUEL RODRIGUEZ
+--## FECHA_CREACION=20170705
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=HREOS-1800
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-2333
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Modificaciones varias tras migracion
@@ -35,9 +35,10 @@ DECLARE
 
 BEGIN
 
- --   ###############################################
- --   ##### MODIFICACIONES CLIENTES_COMERCIALES #####
- --   ###############################################
+     --###############################################
+     --##### MODIFICACIONES CLIENTES_COMERCIALES #####
+     --###############################################
+     
 
     DBMS_OUTPUT.PUT_LINE('[INFO] MODIFICACION CLC_CLIENTE_COMERCIAL');
 
@@ -56,9 +57,11 @@ BEGIN
     EXECUTE IMMEDIATE('update '||V_ESQUEMA||'.CLC_CLIENTE_COMERCIAL set CLC_WEBCOM_ID = CLC_REM_ID where usuariocrear = '''||V_USUARIO||'''');
     EXECUTE IMMEDIATE('update '||V_ESQUEMA||'.ACT_AGR_AGRUPACION set AGR_NUM_AGRUP_REM = AGR_NUM_AGRUP_UVEM where AGR_NUM_AGRUP_UVEM IS NOT NULL AND  USUARIOMODIFICAR = '''||V_USUARIO||'''');
 
- --   ###############################################
- --   ##### MODIFICACIONES AGRUPACIONES #####
- --   ###############################################
+
+    --###############################################
+    --##### MODIFICACIONES AGRUPACIONES #####
+    --###############################################
+
 
     -- Obtenemos el valor maximo de la columna AGR_NUM_AGRUP_REM y lo incrementamos en 1
     V_MSQL := 'SELECT NVL(MAX(AGR_NUM_AGRUP_REM),0) FROM '||V_ESQUEMA||'.ACT_AGR_AGRUPACION';
@@ -76,8 +79,39 @@ BEGIN
     
     EXECUTE IMMEDIATE 'CREATE SEQUENCE ' ||V_ESQUEMA|| '.S_AGR_NUM_AGRUP_REM  MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH '||MAX_NUM||' NOCACHE NOORDER  NOCYCLE';
     
-    DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.S_AGR_NUM_AGRUP_REM... Secuencia creada e inicializada correctamente.');
- 
+    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_AGR_NUM_AGRUP_REM... Secuencia creada e inicializada correctamente.');
+
+
+    --###############################################################
+    --##### [HREOS-2333] - CORREGIR ESTADO DIVISION HORIZONTAL #####
+    --###############################################################
+
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] CORRIGIENDO REG_DIV_HOR_INSCRITO...');
+
+    V_MSQL := '
+        UPDATE '||V_ESQUEMA||'.ACT_REG_INFO_REGISTRAL 
+        SET REG_DIV_HOR_INSCRITO = NULL
+        WHERE ACT_ID IN
+        (SELECT ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO where ACT_DIVISION_HORIZONTAL = 0)
+    '
+    ;
+    EXECUTE IMMEDIATE V_MSQL;
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] REGISTROS CORREGIDOS - '||SQL%ROWCOUNT||''); 
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] CORRIGIENDO ESTADO DIV HORIZONTAL...');
+
+    V_MSQL := '
+        UPDATE '||V_ESQUEMA||'.ACT_REG_INFO_REGISTRAL 
+        SET DD_EDH_ID = null
+        WHERE (REG_DIV_HOR_INSCRITO IS NULL OR REG_DIV_HOR_INSCRITO = 1)
+    '
+    ;
+    EXECUTE IMMEDIATE V_MSQL;
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] REGISTROS CORREGIDOS - '||SQL%ROWCOUNT||'');
+
     COMMIT;
 
 EXCEPTION

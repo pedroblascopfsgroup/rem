@@ -36,8 +36,8 @@ DECLARE
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     	--			DD_CLA_CODIGO		DD_SCA_CODIGO		TRF_LLAVES_HRE		DD_TPR_CODIGO		TRF_PRC_COLAB		TRF_PRC_PRESC
 -- Financiero.
-        T_TIPO_DATA(	'01',				NULL,				NULL,				'37',				'0000',				'0000'),
-        T_TIPO_DATA(	'02',				NULL,				NULL,				'37',				'0000',				'0000')
+        T_TIPO_DATA(	'01',				NULL,				NULL,				'37',				'00000',			'00000'),
+        T_TIPO_DATA(	'02',				NULL,				NULL,				'37',				'00000',			'00000')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=GUILLEM REY
---## FECHA_CREACION=20170705
+--## FECHA_CREACION=20170706
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-2302
@@ -27,7 +27,8 @@ DECLARE
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_ID NUMBER(16); -- Vble. auxiliar para almacenar temporalmente el numero de la sequencia.
+    V_ID_SECUENCIA NUMBER(16) := 1; -- Vble. auxiliar para almacenar temporalmente el numero de la sequencia.
+    V_ID NUMBER(16);
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'TRF_TRF_PRC_HONORARIOS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_TEXT_CHARS VARCHAR2(2400 CHAR) := 'TRF'; -- Vble. auxiliar para almacenar las 3 letras orientativas de la tabla de ref.
 
@@ -53,12 +54,19 @@ BEGIN
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
 
        	-- Insertar datos.
-          DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAR NUEVO REGISTRO');   
-          V_MSQL := 'SELECT '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL FROM DUAL';
+          DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAR NUEVO REGISTRO');  
+          V_MSQL := 'SELECT MAX(TRF_ID) FROM '||V_TEXT_TABLA||'';
           EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
+          
+          WHILE (V_ID_SECUENCIA <= V_ID)
+          	LOOP
+	          V_MSQL := 'SELECT '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL FROM DUAL';
+	          EXECUTE IMMEDIATE V_MSQL INTO V_ID_SECUENCIA;	
+          	END LOOP;
+          	
           V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (' ||
                       'TRF_ID, DD_CLA_CODIGO, DD_SCA_CODIGO, TRF_LLAVES_HRE, DD_TPR_CODIGO, TRF_PRC_COLAB, TRF_PRC_PRESC) ' ||
-                      'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''','''||TRIM(V_TMP_TIPO_DATA(4))||''','''||TRIM(V_TMP_TIPO_DATA(5))||''','''||TRIM(V_TMP_TIPO_DATA(6))||''' FROM DUAL';
+                      'SELECT '|| V_ID_SECUENCIA || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''','''||TRIM(V_TMP_TIPO_DATA(4))||''','''||TRIM(V_TMP_TIPO_DATA(5))||''','''||TRIM(V_TMP_TIPO_DATA(6))||''' FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
 

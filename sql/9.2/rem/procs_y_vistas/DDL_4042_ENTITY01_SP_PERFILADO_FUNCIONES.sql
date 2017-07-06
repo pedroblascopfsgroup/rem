@@ -208,8 +208,9 @@ AS
     T_VAR('TAB_DATOS_GENERALES_GASTOS'                       ,'S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
     T_VAR('EDITAR_TAB_DETALLE_ECONOMICO_GASTOS'              ,'N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','N','N','N','S','S','S','S','S','S','S','S','N','S','N','N','N','N','N'),
     T_VAR('TAB_DETALLE_ECONOMICO_GASTOS'                     ,'S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
-    T_VAR('TAB_ACTIVOS_AFECTADOS_GASTOS'                     ,'S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S')
-  );
+    T_VAR('TAB_ACTIVOS_AFECTADOS_GASTOS'                     ,'S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
+	T_VAR('BOTON_CREAR_TRABAJO'								 ,'S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S')
+    );
   V_TMP_VAR T_VAR;
 
 BEGIN

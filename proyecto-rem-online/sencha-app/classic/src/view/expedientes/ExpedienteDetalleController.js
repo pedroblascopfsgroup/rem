@@ -1810,5 +1810,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			return true;
 		}
 		
-	}
+	},
+	
+	onClickGenerarHojaExcelActivos: function(btn) {
+    	var me = this,
+		config = {};
+
+		config.params = {};
+		config.params.idExpediente=me.getViewModel().get("expediente.id");
+		config.url= $AC.getRemoteUrl("expedientecomercial/getExcelActivosExpediente");
+
+		me.fireEvent("downloadFile", config);		
+	},
 });

@@ -112,8 +112,6 @@ BEGIN
 
     DBMS_OUTPUT.PUT_LINE('[INFO] REGISTROS CORREGIDOS - '||SQL%ROWCOUNT||'');
 
-    DBMS_OUTPUT.PUT_LINE('[INFO] REGISTROS CORREGIDOS - '||SQL%ROWCOUNT||'');
-
     --###############################################################
     --##### [https://link.pfsgroup.es/jira/browse/REMNIVDOS-914] - CORREGIR proveedores #####
     --###############################################################
@@ -121,7 +119,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO] CORRIGIENDO PROVEEDORES PVE_COD_REM...');
 
      V_MSQL := '
-        update '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR set PVE_COD_REM = PVE_WEBCOM_ID WHERE PVE_WEBCOM_ID IS NOT NULL;
+        update '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR set PVE_COD_REM = PVE_WEBCOM_ID WHERE PVE_WEBCOM_ID IS NOT NULL
     '
     ;
     EXECUTE IMMEDIATE V_MSQL;

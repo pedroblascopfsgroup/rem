@@ -166,7 +166,7 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getGestoriasGasto'
+				remoteUrl: 'generic/getComboGestoriasGasto'
 			}		
 		},
 		

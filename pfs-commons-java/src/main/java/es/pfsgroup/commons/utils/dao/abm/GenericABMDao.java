@@ -3,7 +3,6 @@ package es.pfsgroup.commons.utils.dao.abm;
 import java.io.Serializable;
 import java.util.List;
 
-import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.pagination.PaginationParams;
 
@@ -28,7 +27,9 @@ public interface GenericABMDao {
 	 * 
 	 */
 	public static enum FilterType {
-		EQUALS
+		EQUALS,
+		NULL,
+		NOTNULL
 	}
 
 	/**

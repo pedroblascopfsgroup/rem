@@ -556,7 +556,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", subtipoProveedorCodigo);
-		Filter filtroVigente = genericDao.createFilter(FilterType.NULL, "fechaBaja", null); 
+		Filter filtroVigente = genericDao.createFilter(FilterType.NULL, "fechaBaja"); 
 		Order order = new Order(OrderType.ASC, "nombre");
 		List<ActivoProveedor> lista = genericDao.getListOrdered(ActivoProveedor.class, order, filtroBorrado, filtroSubtipo, filtroVigente);
 

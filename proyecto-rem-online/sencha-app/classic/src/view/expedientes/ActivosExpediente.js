@@ -66,7 +66,27 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
         var me = this;        
         me.setTitle(HreRem.i18n('title.publicaciones.activos.grid'));		         
         var items= [
-
+			{   
+				xtype:'fieldset',
+				collapsible: false,
+				border: false,
+				defaultType: 'displayfieldbase',
+				cls	: 'panel-base shadow-panel',
+				items : [
+					{
+						
+			            	xtype: 'button',
+			            	reference: 'btnGenerarHojaExcelActivos',
+			            	bind: {
+			            		disabled: '{!resolucion.generacionHojaDatos}'
+			            	},
+			            	text: HreRem.i18n('title.activo.administracion.exportar.excel'),
+			            	handler: 'onClickGenerarHojaExcelActivos',
+			            	margin: '10 10 10 10'
+			            
+					}
+					]
+			},
 			{
 			    xtype		: 'gridBaseEditableRow',
 			    minHeight	: 150,

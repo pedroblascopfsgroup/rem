@@ -50,7 +50,7 @@ BEGIN
             DD_ERE_ID,
             RES_FECHA_SOLICITUD,
             RES_FECHA_RESOLUCION,
-                  DD_MAN_ID,
+                  DD_MAR_ID,
             VERSION,
             USUARIOCREAR,
             FECHACREAR,
@@ -65,7 +65,7 @@ BEGIN
                   MIGW.RES_FECHA_ANULACION,
                   MIGW.RES_IND_IMP_ANULACION,
                   MIGW.RES_IMPORTE_DEVUELTO,
-                  MAN.DD_MAN_ID,
+                  MAN.DD_MAR_ID,
                   TAR.DD_TAR_ID,
                   ERE.DD_ERE_ID,
                   MIGW.RES_FECHA_SOLICITUD,
@@ -75,7 +75,7 @@ BEGIN
                   INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID
                   LEFT JOIN '||V_ESQUEMA||'.DD_TAR_TIPOS_ARRAS TAR ON TO_NUMBER(TAR.DD_TAR_CODIGO) = MIGW.RES_COD_TIPO_ARRA
                   LEFT JOIN '||V_ESQUEMA||'.DD_ERE_ESTADOS_RESERVA ERE ON TO_NUMBER(ERE.DD_ERE_CODIGO) = MIGW.RES_COD_ESTADO_RESERVA
-                  LEFT JOIN '||V_ESQUEMA||'.DD_MAN_MOTIVO_ANULACION MAN ON MAN.DD_MAN_CODIGO = MIGW.RES_COD_MOTIVO_ANULACION
+                  LEFT JOIN '||V_ESQUEMA||'.DD_MAR_MOTIVO_ANULACION_RES MAN ON MAN.DD_MAR_CODIGO = MIGW.RES_COD_MOTIVO_ANULACION
             WHERE MIGW.VALIDACION = 0
       )
       SELECT 
@@ -91,7 +91,7 @@ BEGIN
       RES.DD_ERE_ID                                                     DD_ERE_ID,
       RES.RES_FECHA_SOLICITUD                                           RES_FECHA_SOLICITUD,
       RES.RES_FECHA_RESOLUCION                                          RES_FECHA_RESOLUCION,
-      RES.DD_MAN_ID                                                                                   DD_MAN_ID,
+      RES.DD_MAR_ID                                                                                   DD_MAR_ID,
       ''0''                                                             VERSION,
       '''||V_USUARIO||'''                                           USUARIOCREAR,
       SYSDATE                                                           FECHACREAR,

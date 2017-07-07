@@ -5,6 +5,12 @@ if [ "$#" -ne 2 ]; then
     exit 1
 fi
 
+if [[ "$2" != "SAREB" ]] && [[ "$2" != "CAJAMAR" ]] && [[ "$2" != "BANKIA" ]]; then
+    echo "[INFO] Entidad no válida."
+    echo "[INFO] Valores aceptados [SAREB, CAJAMAR, BANKIA]"
+    exit 1
+fi
+
 echo "########################################################"
 echo "#####    ACTUALIZANDO Secuencias"
 echo "########################################################"

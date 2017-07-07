@@ -520,6 +520,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							{
 					        	xtype: 'comboboxfieldbase',					        	
 						 		fieldLabel: HreRem.i18n('fieldlabel.gestion.hre'),
+						 		hidden: true,
 					        	bind: {
 				            		store: '{comboSiNoRem}',
 				            		value: '{datosRegistrales.gestionHre}'

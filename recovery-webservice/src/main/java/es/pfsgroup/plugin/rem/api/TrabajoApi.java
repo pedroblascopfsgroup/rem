@@ -117,6 +117,24 @@ public interface TrabajoApi {
 	public Trabajo create(DDSubtipoTrabajo subtipoTrabajo, List<Activo> listaActivos, PropuestaPrecio propuestaPrecio);
 
 	/**
+	 * Crear trabajo a partir de una lista de activos y un subtipo dados: -
+	 * Nuevos trabajos del módulo de precios y marketing - Otros trabajos que no
+	 * provengan de la pantalla "Crear trabajo", por esto no requiere el
+	 * DtoFichaTrabajo solo requiere una lista de activos y el subtipo de
+	 * trabajo a generar. - La propuesta ES OPCIONAL para crear el trabajo. Si
+	 * se pasa la propuesta crea la relación, si no, solo crea el
+	 * trabajo-tramite.
+	 * 
+	 * @param subtipoTrabajo
+	 * @param listaActivos
+	 * @param propuestaPrecio
+	 * @param inicializarTramite
+	 * @return
+	 */
+	public Trabajo create(DDSubtipoTrabajo subtipoTrabajo, List<Activo> listaActivos, PropuestaPrecio propuestaPrecio,
+			boolean inicializarTramite);
+
+	/**
 	 * Crear trabajo desde la pantalla de crear trabajos: - Crea un trabajo
 	 * desde el activo o desde la agrupación de activos (Nuevos trabajos Fase1)
 	 * o crea un trabajo introduciendo un listado de activos en excel (trabajos
@@ -182,6 +200,7 @@ public interface TrabajoApi {
 
 	/**
 	 * Devuelve la lista de activos de un trabajo con datos de presupuestos
+	 * 
 	 * @param dto
 	 * @return
 	 */
@@ -266,14 +285,16 @@ public interface TrabajoApi {
 
 	/**
 	 * Devuelve una lista de tarifas aplicadas al trabajo determinado
+	 * 
 	 * @param filtro
 	 * @param idTrabajo
 	 * @return
 	 */
 	public List<DtoTarifaTrabajo> getListDtoTarifaTrabajo(DtoGestionEconomicaTrabajo filtro, Long idTrabajo);
-	
+
 	/**
-	 * Devuelve un DtoPage con la lista de tarifas aplicadas a un trabajo determinado
+	 * Devuelve un DtoPage con la lista de tarifas aplicadas a un trabajo
+	 * determinado
 	 * 
 	 * @param filtro
 	 * @param idTrabajo
@@ -359,34 +380,40 @@ public interface TrabajoApi {
 	public Boolean existePresupuestoTrabajo(TareaExterna tarea);
 
 	/**
-	 * Verifica desde una tarea si el presupuesto acumulado del trabajo supera el ultimo presupuesto del activo
-	 * Retorna true si hay un exceso de presupuesto sobre el saldo del activo
-	 * Retorna false si el activo tiene suficiente saldo
+	 * Verifica desde una tarea si el presupuesto acumulado del trabajo supera
+	 * el ultimo presupuesto del activo Retorna true si hay un exceso de
+	 * presupuesto sobre el saldo del activo Retorna false si el activo tiene
+	 * suficiente saldo
+	 * 
 	 * @param tarea
 	 * @return
 	 */
 	@BusinessOperationDefinition("trabajoManager.checkSuperaPresupuestoActivoTarea")
 	public Boolean checkSuperaPresupuestoActivoTarea(TareaExterna tarea);
-	
+
 	/**
-	 * Verifica desde una tarea si el presupuesto acumulado del trabajo supera el ultimo presupuesto del activo
-	 * Retorna true si hay un exceso de presupuesto sobre el saldo del activo
-	 * Retorna false si el activo tiene suficiente saldo
+	 * Verifica desde una tarea si el presupuesto acumulado del trabajo supera
+	 * el ultimo presupuesto del activo Retorna true si hay un exceso de
+	 * presupuesto sobre el saldo del activo Retorna false si el activo tiene
+	 * suficiente saldo
+	 * 
 	 * @param trabajo
 	 * @return
 	 */
 	@BusinessOperationDefinition("trabajoManager.checkSuperaPresupuestoActivo")
 	public Boolean checkSuperaPresupuestoActivo(Trabajo trabajo);
-	
+
 	/**
-	 * Obtiene el importe de exceso de presupuesto del activo, para el acumulado de presupuestos de trabajos
-	 * incluyendo el presupuesto del trabajo que se consulta
+	 * Obtiene el importe de exceso de presupuesto del activo, para el acumulado
+	 * de presupuestos de trabajos incluyendo el presupuesto del trabajo que se
+	 * consulta
+	 * 
 	 * @param trabajo
 	 * @return
 	 */
 	@BusinessOperationDefinition("trabajoManager.getExcesoPresupuestoActivo")
 	public Float getExcesoPresupuestoActivo(Trabajo trabajo);
-	
+
 	/**
 	 * Evalúa para una tarea, si existe tarifa(s) asociados al trabajo
 	 * 
@@ -397,7 +424,9 @@ public interface TrabajoApi {
 	public Boolean existeTarifaTrabajo(TareaExterna tarea);
 
 	/**
-	 * Evalúa para una tarea, si existe tarifa(s) asociados al trabajo y si el importe de dicha tarifa es superior a cero 
+	 * Evalúa para una tarea, si existe tarifa(s) asociados al trabajo y si el
+	 * importe de dicha tarifa es superior a cero
+	 * 
 	 * @param tarea
 	 * @return
 	 */
@@ -629,8 +658,6 @@ public interface TrabajoApi {
 	 */
 	public boolean checkSareb(Trabajo trabajo);
 
-	
-
 	/**
 	 * Método que comprueba si el activo pertenece a la cartera Bankia.
 	 * 
@@ -646,8 +673,7 @@ public interface TrabajoApi {
 	 * @return true si pertenece a la cartera, false si no
 	 */
 	public boolean checkBankia(Trabajo trabajo);
-	
-	
+
 	/**
 	 * Comprueba la existencia de una propuesta en el tramite de Propuestas, en
 	 * la tarea Generacion de propuesta, devolviendo mensaje en caso de que se
@@ -657,41 +683,52 @@ public interface TrabajoApi {
 	 * @return
 	 */
 	public String comprobarPropuestaPrecios(TareaExterna tareaExterna);
-	
+
 	/**
 	 * Devuelve una plantilla pasandole el codigo por parametro
+	 * 
 	 * @param request
 	 * @param response
 	 * @param codPlantilla
 	 * @throws Exception
 	 */
-	public void downloadTemplateActivosTrabajo(HttpServletRequest request, HttpServletResponse response, String codPlantilla) throws Exception;
+	public void downloadTemplateActivosTrabajo(HttpServletRequest request, HttpServletResponse response,
+			String codPlantilla) throws Exception;
 
 	public Boolean checkSuperaDelegacion(TareaExterna tarea);
-	
+
 	/**
 	 * Devuelve un listado de ProveedoresContacto filtrado por proveedor
+	 * 
 	 * @param idProveedor
-	 * @return List<DtoProveedorContactoSimple> con la lista ordenada de contactos asociados al proveedor
+	 * @return List<DtoProveedorContactoSimple> con la lista ordenada de
+	 *         contactos asociados al proveedor
 	 */
 	public List<DtoProveedorContactoSimple> getComboProveedorContacto(Long idProveedor) throws Exception;
-	
+
 	/**
-	 * Devuelve una lista de proveedores filtrada por cartera y tipos de proveedor segun el tipo/subtipo de trabajo
+	 * Devuelve una lista de proveedores filtrada por cartera y tipos de
+	 * proveedor segun el tipo/subtipo de trabajo
+	 * 
 	 * @param idTrabajo
 	 * @return
 	 */
 	public List<VProveedores> getComboProveedorFiltered(Long idTrabajo, String codigoTipoProveedor);
 
 	/**
-	 * Devuelve un ActivoTrabajo compuesto por un activo, un trabajo y su participación.
-	 * @param activo : activo a asignar
-	 * @param trabajo : trabajo al que se asigna.
-	 * @param participacion : participación del activo.
+	 * Devuelve un ActivoTrabajo compuesto por un activo, un trabajo y su
+	 * participación.
+	 * 
+	 * @param activo
+	 *            : activo a asignar
+	 * @param trabajo
+	 *            : trabajo al que se asigna.
+	 * @param participacion
+	 *            : participación del activo.
 	 * @return ActivoTrabajo
 	 */
 	public ActivoTrabajo createActivoTrabajo(Activo activo, Trabajo trabajo, String participacion);
-	
+
 	/**
 	 * Método que comprueba si el trabajo es Multiactivo
 	 * 
@@ -703,6 +740,5 @@ public interface TrabajoApi {
 	public Map<String, Long> getSupervisorGestor(Long idAgrupacion);
 
 	List<DDTipoProveedor> getComboTipoProveedorFiltered(Long idTrabajo);
-
 
 }

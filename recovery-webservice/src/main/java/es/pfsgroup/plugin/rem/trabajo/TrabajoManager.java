@@ -422,10 +422,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return trabajo;
 
 	}
-
+	
 	@Override
 	@Transactional(readOnly = false)
-	public Trabajo create(DDSubtipoTrabajo subtipoTrabajo, List<Activo> listaActivos, PropuestaPrecio propuestaPrecio) {
+	public Trabajo create(DDSubtipoTrabajo subtipoTrabajo, List<Activo> listaActivos, PropuestaPrecio propuestaPrecio,
+			boolean inicializarTramite) {
 		/*
 		 * Crear trabajo a partir de una lista de activos y un subtipo dados: -
 		 * Nuevos trabajos del módulo de precios y marketing - Otros trabajos
@@ -497,7 +498,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 			// Crea el trámite relacionado con el nuevo trabajo generado
 			// --------------------
-			createTramiteTrabajo(trabajo);
+			if(inicializarTramite){
+				createTramiteTrabajo(trabajo);
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -505,6 +508,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 
 		return trabajo;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public Trabajo create(DDSubtipoTrabajo subtipoTrabajo, List<Activo> listaActivos, PropuestaPrecio propuestaPrecio) {
+		return this.create(subtipoTrabajo, listaActivos, propuestaPrecio,true);
 	}
 
 	@Override
@@ -3220,6 +3229,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		
 	}
+
 	
 	
 }

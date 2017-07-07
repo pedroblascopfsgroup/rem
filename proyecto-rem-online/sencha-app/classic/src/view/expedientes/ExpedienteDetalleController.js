@@ -1821,5 +1821,5 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		config.url= $AC.getRemoteUrl("expedientecomercial/getExcelActivosExpediente");
 
 		me.fireEvent("downloadFile", config);		
-	},
+	}
 });

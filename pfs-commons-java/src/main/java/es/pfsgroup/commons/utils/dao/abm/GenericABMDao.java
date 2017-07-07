@@ -97,6 +97,19 @@ public interface GenericABMDao {
 	 */
 	Filter createFilter(FilterType type, String propertyName,
 			Object propertyValue);
+	
+	/**
+	 * FactoryMethod para crear un filtro.
+	 * 
+	 * Crea filtros interpretables por la implementación concreta del DAO
+	 * 
+	 * @param type
+	 *            Tipo de filtro
+	 * @param propertyName
+	 *            Nombre de la propiedad a comparar
+	 * @return
+	 */
+	Filter createFilter(FilterType type, String propertyName);
 
 	/**
 	 * Devuelve una lista de entidades

@@ -13,6 +13,9 @@ import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.impl.GenericABMDaoImpl.FilterImpl;
 
 public class GenericABMEntityDaoImpl implements GenericABMDao {
 
@@ -98,6 +101,11 @@ public class GenericABMEntityDaoImpl implements GenericABMDao {
 	@Override
 	public Filter createFilter(FilterType type, String propertyName, Object propertyValue) {
 		return new FilterImpl(type, propertyName, propertyValue);
+	}
+	
+	@Override
+	public Filter createFilter(FilterType type, String propertyName) {
+		return new FilterImpl(type, propertyName, null);
 	}
 
 	public <T extends Serializable> List<T> getList(Class<T> clazz) {

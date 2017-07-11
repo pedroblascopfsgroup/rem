@@ -37,18 +37,18 @@ DECLARE
 
 BEGIN
 
-     --###############################################
-     --##### MODIFICACIONES SITUACION POSESORIA #####
-     --###############################################
+    --###############################################
+    --##### MODIFICACIONES SITUACION POSESORIA 
+    --###############################################
 
     --ACTUALIZACION DE SPS_NUMERO_CONTRATO_ALQUILER'
     DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE ACTUALIZACION SOBRE LA TABLA '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA');
     
     V_MSQL := '
-            merge into ACT_SPS_SIT_POSESORIA act
+            merge into '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA act
             using (with tmp as 
             (select row_number()  over (partition by act_id order by HAL_FECHA_INICIO_CONTRATO desc) NUM,  act_id,HAL_NUMERO_CONTRATO_ALQUILER, HAL_FECHA_INICIO_CONTRATO 
-             from ACT_HAL_HIST_ALQUILERES
+             from '||V_ESQUEMA||'.ACT_HAL_HIST_ALQUILERES
             )
             select * from tmp where num = 1) alq
             on (act.act_id = alq.act_id )
@@ -69,17 +69,17 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE ACTUALIZACION SOBRE LA TABLA '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA');
     
     V_MSQL := '
-        update ACT_SPS_SIT_POSESORIA act
+        update '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA act
         set SPS_FECHA_TITULO = (
         with alq as 
         (select row_number()  over (partition by act_id order by HAL_FECHA_INICIO_CONTRATO desc) NUM,  act_id,HAL_FECHA_INICIO_CONTRATO 
-         from ACT_HAL_HIST_ALQUILERES
+         from '||V_ESQUEMA||'.ACT_HAL_HIST_ALQUILERES
         ) 
         select HAL_FECHA_INICIO_CONTRATO from alq where alq.act_id = act.act_id and alq.num = 1 ),
          SPS_FECHA_VENC_TITULO = (
         with alq as 
         (select row_number()  over (partition by act_id order by HAL_FECHA_INICIO_CONTRATO desc) NUM,  act_id,HAL_FECHA_FIN_CONTRATO 
-         from ACT_HAL_HIST_ALQUILERES
+         from '||V_ESQUEMA||'.ACT_HAL_HIST_ALQUILERES
         ) 
         select HAL_FECHA_FIN_CONTRATO from alq where alq.act_id = act.act_id and alq.num = 1 )
         where SPS_FECHA_TITULO is null
@@ -98,11 +98,11 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE ACTUALIZACION SOBRE LA TABLA '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA');
     
     V_MSQL := '
-        update ACT_SPS_SIT_POSESORIA act
+        update '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA act
         set SPS_FECHA_RESOLUCION_CONTRATO = (
         with alq as 
         (select row_number()  over (partition by act_id order by HAL_FECHA_INICIO_CONTRATO desc) NUM,  act_id,HAL_FECHA_RESOLUCION_CONTRATO  
-         from ACT_HAL_HIST_ALQUILERES
+         from '||V_ESQUEMA||'.ACT_HAL_HIST_ALQUILERES
         ) 
         select HAL_FECHA_RESOLUCION_CONTRATO  from alq where alq.act_id = act.act_id and alq.num = 1 )
         where SPS_FECHA_RESOLUCION_CONTRATO is null
@@ -117,9 +117,9 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA ACTUALIZADAS. '||V_REG_ACTUALIZADOS||' Filas. 03 - AUTORIZADO ADMINISTRACION');
 
 
-     --###############################################
-     --##### MODIFICACIONES CLIENTES_COMERCIALES #####
-     --###############################################
+    --###############################################
+    --##### MODIFICACIONES CLIENTES_COMERCIALES 
+    --###############################################
      
 
     DBMS_OUTPUT.PUT_LINE('[INFO] MODIFICACION CLC_CLIENTE_COMERCIAL');
@@ -141,7 +141,7 @@ BEGIN
 
 
     --###############################################
-    --##### MODIFICACIONES AGRUPACIONES #####
+    --##### MODIFICACIONES AGRUPACIONES 
     --###############################################
 
 
@@ -165,7 +165,7 @@ BEGIN
 
 
     --###############################################################
-    --##### [HREOS-2333] - CORREGIR ESTADO DIVISION HORIZONTAL #####
+    --##### [HREOS-2333] - CORREGIR ESTADO DIVISION HORIZONTAL 
     --###############################################################
 
 
@@ -191,13 +191,13 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO] REGISTROS CORREGIDOS - '||SQL%ROWCOUNT||'');
 
     --###############################################################
-    --##### [https://link.pfsgroup.es/jira/browse/REMNIVDOS-914] - CORREGIR proveedores #####
+    --##### [https://link.pfsgroup.es/jira/browse/REMNIVDOS-914] - CORREGIR proveedores
     --###############################################################
 
     DBMS_OUTPUT.PUT_LINE('[INFO] CORRIGIENDO PROVEEDORES PVE_COD_REM...');
 
      V_MSQL := '
-        update '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR set PVE_COD_REM = PVE_WEBCOM_ID WHERE PVE_WEBCOM_ID IS NOT NULL
+        UPDATE '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR SET PVE_COD_REM = PVE_WEBCOM_ID WHERE PVE_WEBCOM_ID IS NOT NULL
     '
     ;
     EXECUTE IMMEDIATE V_MSQL;

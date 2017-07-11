@@ -119,7 +119,7 @@ public class ClienteWebcomGenerico {
 			debugJsonFile(jsonString);
 
 			response = httpClient.processRequest(endpointUrl, httpMethod, headers, jsonString,
-					(endpoint.getTimeout() * 1000), endpoint.getCharset());
+					endpoint.getTimeout(), endpoint.getCharset());
 			registroLlamada.setResponse(response.toString());
 
 			logger.debug("[DETECCIÓN CAMBIOS] Response:");

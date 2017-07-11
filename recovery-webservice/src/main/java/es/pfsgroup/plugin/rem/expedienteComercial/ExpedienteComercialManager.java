@@ -2483,16 +2483,19 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(gastoExpediente.getTipoCalculo().getCodigo())) {
 
 				Oferta oferta = gastoExpediente.getExpediente().getOferta();
-				if (!Checks.esNulo(oferta.getImporteContraOferta())) {
-					Double importeContraOferta = oferta.getImporteContraOferta();
-					Double honorario = (importeContraOferta * gastoExpediente.getImporteCalculo()) / 100;
-
-					gastoExpediente.setImporteFinal(honorario);
-				} else {
-					Double importeOferta = oferta.getImporteOferta();
-					Double honorario = (importeOferta * gastoExpediente.getImporteCalculo()) / 100;
-
-					gastoExpediente.setImporteFinal(honorario);
+				
+				if(!Checks.esNulo(gastoExpediente.getImporteCalculo())) {
+					if (!Checks.esNulo(oferta.getImporteContraOferta())) {
+						Double importeContraOferta = oferta.getImporteContraOferta();
+						Double honorario = (importeContraOferta * gastoExpediente.getImporteCalculo()) / 100;
+	
+						gastoExpediente.setImporteFinal(honorario);
+					} else {
+						Double importeOferta = oferta.getImporteOferta();
+						Double honorario = (importeOferta * gastoExpediente.getImporteCalculo()) / 100;
+	
+						gastoExpediente.setImporteFinal(honorario);
+					}
 				}
 
 				genericDao.save(GastosExpediente.class, gastoExpediente);
@@ -3533,7 +3536,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						if (!Checks.esNulo(dto.getPorcentajeParticipacion())) {
 							activoOferta.setPorcentajeParticipacion(dto.getPorcentajeParticipacion());
 							activoOferta.setImporteActivoOferta((importeOferta * dto.getPorcentajeParticipacion()) / 100);
-						}
+					
+ 						}
 					}
 				}
 			}

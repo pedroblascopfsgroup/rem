@@ -54,6 +54,7 @@ import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.PublicacionExcelReport;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
+import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
@@ -386,6 +387,24 @@ public class ActivoController extends ParadiseJsonController {
 
 		try {
 			boolean success = adapter.saveTabActivo(valoracionesDto, id, TabActivoService.TAB_VALORACIONES_PRECIOS);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveActivoAdministracion(DtoActivoAdministracion activoDto, @RequestParam Long id,
+			ModelMap model) {
+
+		try {
+			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_ADMINISTRACION);
 			model.put("success", success);
 
 		} catch (Exception e) {

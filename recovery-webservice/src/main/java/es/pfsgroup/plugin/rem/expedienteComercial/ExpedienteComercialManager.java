@@ -3533,11 +3533,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			for (ActivoOferta activoOferta : activosOferta) {
 				if (activoOferta.getPrimaryKey().getActivo().getId().equals(dto.getIdActivo())) {
 					if (!Checks.esNulo(dto.getIdActivo())) {
-						if (!Checks.esNulo(dto.getPorcentajeParticipacion())) {
-							activoOferta.setPorcentajeParticipacion(dto.getPorcentajeParticipacion());
-							activoOferta.setImporteActivoOferta((importeOferta * dto.getPorcentajeParticipacion()) / 100);
-					
- 						}
+						if (!Checks.esNulo(dto.getImporteParticipacion())) {							
+							activoOferta.setImporteActivoOferta(dto.getImporteParticipacion());
+							activoOferta.setPorcentajeParticipacion(100 / (importeOferta / dto.getImporteParticipacion()));
+						}
 					}
 				}
 			}

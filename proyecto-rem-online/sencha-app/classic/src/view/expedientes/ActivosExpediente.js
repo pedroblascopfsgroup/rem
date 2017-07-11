@@ -96,7 +96,9 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 				bind: {
 					store: '{storeActivosExpediente}'
 				},
-				
+				saveSuccessFn: function() {
+					this.lookupController().refrescarExpediente(true);
+				},
 				features: [{
 				            id: 'summary',
 				            ftype: 'summary',
@@ -107,26 +109,26 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 				listeners : {
 			    	rowclick: 'onRowClickListadoactivos'
 			    },
+
 				columns: [
 				   {    xtype: 'actioncolumn',
-	    			text: HreRem.i18n('fieldlabel.numero.activo'),
-		        	dataIndex: 'numActivo',
-			        items: [{
-			            tooltip: HreRem.i18n('fieldlabel.ver.activo'),
-			            getClass: function(v, metadata, record ) {
-			            	return "app-list-ico ico-ver-activov2";
-			            				            	
-			            },
-			            handler: 'onEnlaceActivosClick'
-			        }],
-			        renderer: function(value, metadata, record) {
-			        		return '<div style="float:right; margin-top:3px; font-size: 11px; line-height: 1em;">'+ value+'</div>'
-			        	
-			        },
-		            flex     : 1,            
-		            align: 'left',
-		            menuDisabled: true,
-		            hideable: false
+		    			text: HreRem.i18n('fieldlabel.numero.activo'),
+			        	dataIndex: 'numActivo',		        	
+				        items: [{
+				            tooltip: HreRem.i18n('fieldlabel.ver.activo'),
+				            getClass: function(v, metadata, record ) {
+				            	return "app-list-ico ico-ver-activov2";			            				            	
+				            },
+				            handler: 'onEnlaceActivosClick'
+				        }],
+				        renderer: function(value, metadata, record) {
+				        		return '<div style="float:right; margin-top:3px; font-size: 11px; line-height: 1em;">'+ value+'</div>'
+				        	
+				        },
+			            flex     : 1,            
+			            align: 'left',
+			            menuDisabled: true,
+			            hideable: false
 			       },
 				   {
 			            text: HreRem.i18n("fieldlabel.subtipo.activo"),
@@ -149,27 +151,41 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			       {
 			            text: HreRem.i18n("header.importe.participacion"),
 			            dataIndex: 'importeParticipacion',
+			            editor:  'textfield',			            
 			            flex:1,
-			       		renderer: Utils.rendererCurrency
+			       		renderer: Utils.rendererCurrency,
+			       		summaryType: 'sum',
+			            summaryRenderer: function(value, summaryData, dataIndex) {
+			            	var msg = HreRem.i18n("fieldlabel.importe.participacion.igual")
+			            	var style = ""
+			            	if(value != this.lookupController().getViewModel().get('expediente.importe')) {
+			            		msg = HreRem.i18n("fieldlabel.importe.participacion.desigual") + " " + 
+			            			(value - this.lookupController().getViewModel().get('expediente.importe')) + "&euro;"
+			            		style = "style= 'color: red'"
+			            	}
+			            	
+			            	return "<span "+style+ ">"+msg+"</span>"
+			            }
+			            
 			       },
 			       {   
 			       		text: HreRem.i18n("header.porcentaje.participacion"),
 			       	    dataIndex: 'porcentajeParticipacion',
-			       	    editor: 'textfield',
+			       	    //editor: 'textfield',
 			       		flex:1,
 			       		renderer: function(value) {
 			            	return Ext.util.Format.number(value, '0.00%');
-			            },
-			       		summaryType: 'sum',
-			            summaryRenderer: function(value, summaryData, dataIndex) {
-			            	var msg = HreRem.i18n("fieldlabel.participacion.total") + " " + value + "%";
-			            	var style = "" 
-			            	if(value != 100) {
-			            		msg = HreRem.i18n("fieldlabel.participacion.total.error")	
-			            		style = "style= 'color: red'" 
-			            	}			            	
-			            	return "<span "+style+ ">"+msg+"</span>"
-			            }
+			            }//,
+//			       		summaryType: 'sum',
+//			            summaryRenderer: function(value, summaryData, dataIndex) {
+//			            	var msg = HreRem.i18n("fieldlabel.participacion.total") + " " + value + "%";
+//			            	var style = "";
+//			            	if(value != 100) {
+//			            		msg = HreRem.i18n("fieldlabel.participacion.total.error");	
+//			            		style = "style= 'color: red'";
+//			            	}			            	
+//			            	return "<span "+style+ ">"+msg+"</span>";
+//			            }
 			       },
 			       {   
 			       		text: HreRem.i18n("header.precio.minimo.autorizado"),

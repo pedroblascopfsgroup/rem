@@ -1795,7 +1795,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		// Reiniciar estado del PBC.
-		if(!Checks.esNulo(fullReset)){
+		if(fullReset){
 			//reseteamos responsabilidad corporativa
 			expediente.setConflictoIntereses(null);
 			expediente.setRiesgoReputacional(null);

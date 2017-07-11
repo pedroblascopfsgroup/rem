@@ -6,7 +6,7 @@
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-2089
 --## PRODUCTO=NO
---## Finalidad: Añadimos a la tabla ACT_ACTIVO el campo ACT_IBI_EXTENTO
+--## Finalidad: Añadimos a la tabla ACT_ACTIVO el campo ACT_IBI_EXENTO
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -35,7 +35,7 @@ DECLARE
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_TABLA VARCHAR2(100 CHAR) := 'ACT_ACTIVO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_COL_TO_INSERT VARCHAR2(100 CHAR) := 'ACT_IBI_EXTENTO'; -- Vble. auxiliar para almacenar el nombre de la columna a insertar.
+    V_COL_TO_INSERT VARCHAR2(100 CHAR) := 'ACT_IBI_EXENTO'; -- Vble. auxiliar para almacenar el nombre de la columna a insertar.
     V_TIPO_COL_TO_INSERT VARCHAR2(100 CHAR) := 'NUMBER(1,0)'; -- Vble. auxiliar para almacenar el tipo de la columna a insertar.
 	V_COMENTARIO_COL VARCHAR2(250 CHAR) := 'Indicador de activo exento de IBI';
     

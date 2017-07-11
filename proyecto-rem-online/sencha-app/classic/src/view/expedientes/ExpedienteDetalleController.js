@@ -397,7 +397,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     
 	onClickBotonGuardar: function(btn) {
 		var me = this;	
-		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());				
+		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());	
 	},
 	
 	onClickBotonGuardarActivoExpediente: function(btn) {
@@ -488,7 +488,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	onClickBotonCancelar: function(btn) {
 		var me = this,
 		activeTab = btn.up('tabpanel').getActiveTab();
-
 		if (!activeTab.saveMultiple) {
 			if(activeTab && activeTab.getBindRecord && activeTab.getBindRecord()) {
 				/*activeTab.getForm().clearInvalid();
@@ -1720,7 +1719,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	onClickBotonCancelar: function(btn) {
 		var me = this,
 		activeTab = btn.up('tabpanel').getActiveTab();
-
 		btn.hide();
 		btn.up('tabbar').down('button[itemId=botonguardar]').hide();
 		btn.up('tabbar').down('button[itemId=botoneditar]').show();

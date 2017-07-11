@@ -570,6 +570,10 @@ Ext.define('HreRem.model.Activo', {
 				name: 'fechaRevisionSelloCalidad',
 				type:'date',
     			dateFormat: 'c'
+			},
+			{
+				name: 'ibiExento',
+				type: 'boolean'
 			}
     ],
     

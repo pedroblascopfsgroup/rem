@@ -710,7 +710,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
      * funciónRecargar con el código necesario para refrescar los datos.
      */
 	onClickBotonRefrescar: function (btn) {
-		
 		var me = this;
 		me.refrescarActivo(true);
 

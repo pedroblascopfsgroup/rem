@@ -408,6 +408,9 @@ public class Activo implements Serializable, Auditable {
     @Column(name = "ACT_FECHA_SELLO_CALIDAD")
     private Date fechaRevisionSelloCalidad;
     
+    @Column(name = "ACT_IBI_EXTENTO")
+    private Boolean ibiExento;
+    
     
     
 	@Version   
@@ -1615,6 +1618,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setFechaRevisionSelloCalidad(Date fechaRevisionSelloCalidad) {
 		this.fechaRevisionSelloCalidad = fechaRevisionSelloCalidad;
+	}
+
+	public Boolean getIbiExento() {
+		return ibiExento;
+	}
+
+	public void setIbiExento(Boolean ibiExento) {
+		this.ibiExento = ibiExento;
 	}
 	
 	

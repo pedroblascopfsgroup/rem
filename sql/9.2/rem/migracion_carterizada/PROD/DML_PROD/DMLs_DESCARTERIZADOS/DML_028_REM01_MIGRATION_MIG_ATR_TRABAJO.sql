@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=GUILLEM REY
---## FECHA_CREACION=20170608
+--## AUTOR=GUSTAVO MORA NAVARRO
+--## FECHA_CREACION=20170712
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=HREOS-2209
+--## VERSION_ARTEFACTO=Parche 2.0.6 - p2
+--## INCIDENCIA_LINK=HREOS-2405
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Proceso de migración 'MIG_ATR_TRABAJO' -> 'ACT_TBJ_TRABAJO', 'ACT_TBJ'
@@ -89,7 +89,8 @@ BEGIN
 			MIG.TBJ_NUM_TRABAJO                                                                 TBJ_NUM_TRABAJO,
 			(SELECT PVC.PVC_ID
 			FROM '||V_ESQUEMA||'.ACT_PVC_PROVEEDOR_CONTACTO PVC
-			WHERE PVC.PVC_DOCIDENTIF = MIG.PVC_DOCIDENTIF)                  PVC_ID,
+			WHERE PVC.PVC_DOCIDENTIF = MIG.PVC_DOCIDENTIF
+			  AND rownum = 1)                  PVC_ID,
 			NULL                                                                                         USU_ID,
 			(SELECT TTR.DD_TTR_ID
 			FROM '||V_ESQUEMA||'.DD_TTR_TIPO_TRABAJO TTR

@@ -8,7 +8,7 @@
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Modificaciones varias tras migracion
---##			
+--##            
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -32,7 +32,8 @@ DECLARE
     V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
     V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
     V_MSQL VARCHAR2(2000 CHAR);
-
+  
+    V_REG_TOTAL NUMBER(10,0) := 0;
     V_REG_ACTUALIZADOS NUMBER(10,0) := 0;
 
 BEGIN
@@ -129,9 +130,9 @@ BEGIN
     -- Si NO existen los campos los creamos
  
     IF V_EXISTE = 0 THEN
-		V_MSQL := 'ALTER TABLE '||v_esquema||'.CLC_CLIENTE_COMERCIAL ADD CLC_WEBCOM_ID_OLD NUMBER(16,0)';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] CLC_CLIENTE_COMERCIAL creada columna CLC_WEBCOM_ID_OLD');	     
+        V_MSQL := 'ALTER TABLE '||v_esquema||'.CLC_CLIENTE_COMERCIAL ADD CLC_WEBCOM_ID_OLD NUMBER(16,0)';
+        EXECUTE IMMEDIATE V_MSQL;
+        DBMS_OUTPUT.PUT_LINE('[INFO] CLC_CLIENTE_COMERCIAL creada columna CLC_WEBCOM_ID_OLD');       
     END IF; 
   
     --Pedido en HREOS-1800
@@ -172,7 +173,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO] CORRIGIENDO REG_DIV_HOR_INSCRITO...');
 
     V_MSQL := '
-        UPDATE '||V_ESQUEMA||'.ACT_REG_INFO_REGISTRAL SET REG_DIV_HOR_INSCRITO = NULL WHERE USUARIOCREAR = '''||V_USUARIO||''';
+        UPDATE '||V_ESQUEMA||'.ACT_REG_INFO_REGISTRAL SET REG_DIV_HOR_INSCRITO = NULL WHERE USUARIOCREAR = '''||V_USUARIO||'''
     '
     ;
     EXECUTE IMMEDIATE V_MSQL;
@@ -241,7 +242,7 @@ BEGIN
     '
     ;
         
-    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.'||V_TABLA||' mergeada. '||SQL%ROWCOUNT||' Filas.');
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.ACT_TBJ_TRABAJO mergeada. '||SQL%ROWCOUNT||' Filas.');
 
     COMMIT;
 

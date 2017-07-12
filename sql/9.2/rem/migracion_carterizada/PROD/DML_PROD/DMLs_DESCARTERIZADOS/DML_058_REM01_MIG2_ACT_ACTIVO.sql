@@ -78,7 +78,6 @@ BEGIN
           ,ACT.FECHAMODIFICAR = SYSDATE
       '
       ;
-      DBMS_OUTPUT.PUT_LINE(V_SENTENCIA);
       EXECUTE IMMEDIATE V_SENTENCIA;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');

@@ -132,6 +132,17 @@ public class AgrupacionController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getAgrupacionBynumAgrupRem(Long numAgrupRem, ModelMap model) {
+
+		Long idAgrupacion= adapter.getAgrupacionIdByNumAgrupRem(numAgrupRem);
+		
+		model.put("data", idAgrupacion);
+
+		return createModelAndViewJson(model);
+	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)

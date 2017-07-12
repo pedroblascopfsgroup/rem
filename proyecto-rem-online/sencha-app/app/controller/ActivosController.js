@@ -113,6 +113,10 @@ Ext.define('HreRem.controller.ActivosController', {
 				var me = this;
     			me.abrirDetalleAgrupacionById(idAgrupacion);      
 			},
+			abrirDetalleAgrupacionByNum: function(numAgrupRem){
+				var me= this;
+				me.abrirDetalleAgrupacionByNumAgrupRem(numAgrupRem);
+			},
 			abrirDetalleActivo: function(idActivo) {
 				var me = this;
     			me.abrirDetalleActivoById(idActivo);      
@@ -423,7 +427,64 @@ Ext.define('HreRem.controller.ActivosController', {
 	       	}
 		});
 
-    },    
+    },  
+    
+    abrirDetalleAgrupacionByNumAgrupRem: function(numAgrupRem, titulo) {
+    	var me = this,    	
+    	cfg = {}, 
+    	tab = null;
+    	cfg.title = titulo;
+
+    	tab = me.createTab (me.getActivosMain(), 'agrupacion', "agrupacionesdetallemain",  numAgrupRem, cfg);
+    	tab.mask(HreRem.i18n("msg.mask.loading"));
+    	me.setLogTime(); 
+    	
+    	
+    	var url =  $AC.getRemoteUrl('agrupacion/getAgrupacionBynumAgrupRem');
+    	var data;
+		Ext.Ajax.request({
+			
+		     url: url,
+		     params: {numAgrupRem : numAgrupRem},
+		
+		     success: function(response, opts) {
+		    	 data = Ext.decode(response.responseText);
+		    	 var id= data.data;
+		    	 HreRem.model.AgrupacionFicha.load(id, {
+		     		scope: this,
+		 		    success: function(agrupacion) {
+		 		    	me.logTime("Load agrupacion success"); 
+		 		    	me.setLogTime();
+		 		    	if(Ext.isEmpty(titulo)) {
+		 		    		titulo = "Agrupacion " + agrupacion.get("numAgrupRem");
+		 		    		tab.setTitle(titulo);
+		 		    	}
+		 		    	
+		 		    	tab.getViewModel().set("agrupacionficha", agrupacion);
+		 		    	tab.configCmp(agrupacion);
+		 		    	
+		 		    	HreRem.model.AgrupacionAviso.load(id, {
+		 		    		scope: this,
+		 				    success: function(avisos) {
+		 				    	if (tab != null && tab.getViewModel() != null)
+		 				    		tab.getViewModel().set("avisos", avisos);
+		 				    	
+		 				    }
+		 				});
+
+		 				tab.unmask();
+		 		    	me.logTime("Fin Set values"); 
+		 		    },
+		 		    failure: function (a, operation) {
+		 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		 				tab.unmask();
+		 	       	}
+		 		});
+		         
+		     }		     
+		 });
+    	
+    },
     
     //FIXME: Unir con el método abrirDetalleAgrupacion cuando se modifique para que no traiga objetos a la vista
     

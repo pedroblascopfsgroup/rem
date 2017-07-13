@@ -118,8 +118,8 @@ public class ClienteWebcomGenerico {
 
 			debugJsonFile(jsonString);
 
-			response = httpClient.processRequest(endpointUrl, httpMethod, headers, jsonString,
-					endpoint.getTimeout(), endpoint.getCharset());
+			response = httpClient.processRequest(endpointUrl, httpMethod, headers, jsonString, endpoint.getTimeout(),
+					endpoint.getCharset());
 			registroLlamada.setResponse(response.toString());
 
 			logger.debug("[DETECCIÓN CAMBIOS] Response:");
@@ -147,16 +147,20 @@ public class ClienteWebcomGenerico {
 			throw new HttpClientFacadeInternalError("No se ha podido calcular el signature", e);
 		} finally {
 			try {
-				if (response != null && response.containsKey("data") && response.getJSONObject("data").isArray()) {
+				response.isNullObject();
+				if (response != null && response.containsKey("data") && !response.getJSONObject("data").isNullObject()
+						&& response.getJSONObject("data").isArray()) {
 					trazarObjetosRechazados(registroLlamada, response.getJSONArray("data"), false);
 				} else {
-					if ((response == null || (response.containsKey("error") && response.getBoolean("error")))
-							&& requestBody.containsKey("data") && response.getJSONObject("data").isArray()) {
+					if ((response == null
+							|| (response.containsKey("error") && !response.getJSONObject("error").isNullObject()))
+							&& requestBody.containsKey("data") && !requestBody.getJSONObject("data").isNullObject()
+							&& requestBody.getJSONObject("data").isArray()) {
 						trazarObjetosRechazados(registroLlamada, requestBody.getJSONArray("data"), true);
 					}
 				}
 			} catch (Exception e) {
-				logger.error("Error clienteWebcom", e);
+				logger.error("Error trazando datos rechazados", e);
 			}
 			registroLlamada.logTiempoPeticionRest();
 

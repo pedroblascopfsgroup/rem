@@ -178,34 +178,6 @@ BEGIN
   
 	DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.'||V_TABLA_2||' cargada. '||SQL%ROWCOUNT||' Filas.');
 
-	--#############################################################
-	--############ ACT_TBJ_TRABAJO.ACT_ID
-	--#############################################################
-
-	DBMS_OUTPUT.PUT_LINE('[INFO] ASIGNANDO ACT_ID EN ACT_TBJ_TRABAJO...');
-
-	EXECUTE IMMEDIATE '
-	MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' TBJ USING
-	(
-		SELECT ACT_ID, TBJ_ID 
-		FROM(
-		  SELECT  ACT_TBJ.TBJ_ID
-		  , ACT_TBJ.ACT_ID
-		  , ROW_NUMBER() OVER (PARTITION BY ACT_TBJ.TBJ_ID ORDER BY ACT_TBJ.ACT_ID DESC) AS ORDEN
-		  FROM '||V_ESQUEMA||'.ACT_TBJ_TRABAJO TBJ 
-	      INNER JOIN '||V_ESQUEMA||'.ACT_TBJ ON ACT_TBJ.TBJ_ID = TBJ.TBJ_ID
-	      WHERE TBJ.ACT_ID IS NULL
-		)
-		WHERE ORDEN = 1
-	) TMP
-	ON (TBJ.TBJ_ID = TMP.TBJ_ID)
-	WHEN MATCHED THEN UPDATE
-	SET TBJ.ACT_ID = TMP.ACT_ID
-	'
-	;
-		
-	DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.'||V_TABLA||' mergeada. '||SQL%ROWCOUNT||' Filas.');
-
 	COMMIT;
 
 	V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';

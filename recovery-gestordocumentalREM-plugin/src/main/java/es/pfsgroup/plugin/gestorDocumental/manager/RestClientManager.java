@@ -30,6 +30,7 @@ public class RestClientManager implements RestClientApi {
 	public static final String METHOD_POST = "POST";
 	public static final String METHOD_PUT = "PUT";
 	public static final String METHOD_DELETE = "DELETE";
+	public static final String APPLICATION_JSON = "application/json";
 	
 	private static final String PROPIEDAD_ACTIVAR_REST_CLIENT = "rest.client.gestor.documental.activar";
 	
@@ -43,6 +44,8 @@ public class RestClientManager implements RestClientApi {
 		
 		final Client client = ClientBuilder.newBuilder().register(MultiPartFeature.class).register(JacksonFeature.class).build();
 		String url = restClientUrl + serverRequest.getPath();
+		url = url.replaceAll("%7B", "{");
+		url = url.replaceAll("%7D", "}");
 		WebTarget webTarget = client.target(url);
 		Response response = null;
 		
@@ -68,7 +71,7 @@ public class RestClientManager implements RestClientApi {
 			} else if (METHOD_POST.equals(serverRequest.getMethod())) {
 				response = webTarget.request().post(Entity.entity(serverRequest.getMultipart(), serverRequest.getMultipart().getMediaType()));
 			} else if (METHOD_PUT.equals(serverRequest.getMethod())) {			
-				response = webTarget.request().put(Entity.entity(serverRequest.getMultipart(), serverRequest.getMultipart().getMediaType()));	
+				response = webTarget.request().put(Entity.entity("{}", APPLICATION_JSON));	
 			} else if (METHOD_DELETE.equals(serverRequest.getMethod())) {			
 				//response = webTarget.request().delete();			
 			}

@@ -182,7 +182,7 @@ BEGIN
            , GRU_OLD.USUARIOMODIFICAR = '''|| USUARIO_MIGRACION ||''' ';
 
       DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA_M||'.GRU_GRUPOS_USUARIOS borrado. '||SQL%ROWCOUNT||' Filas.');
-      */
+       */
 
       COMMIT;  
       

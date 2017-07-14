@@ -83,7 +83,7 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.ZON_PEF_USU cargada. '||SQL%ROWCOUNT||' Filas.');
 /*      
-      DBMS_OUTPUT.PUT_LINE('  [INFO] DANDO DE BAJA EN ZON_PEF_USU '); 
+       DBMS_OUTPUT.PUT_LINE('  [INFO] DANDO DE BAJA EN ZON_PEF_USU '); 
        
       EXECUTE IMMEDIATE '
       MERGE INTO REM01.ZON_PEF_USU ZPU_OLD

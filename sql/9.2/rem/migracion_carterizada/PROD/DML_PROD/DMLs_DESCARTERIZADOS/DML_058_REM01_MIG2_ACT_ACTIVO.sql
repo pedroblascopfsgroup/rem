@@ -54,7 +54,7 @@ BEGIN
                                 ACT_CODIGO_ENTRADA,   
                                 SELLO_CALIDAD,      
                                 GESTOR_CALIDAD,     
-                                FECHA_CALIDAD     
+                                FECHA_CALIDAD   
                                 FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' 
                 WHERE VALIDACION = 0
                           ) AUX
@@ -108,7 +108,18 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
-      
+      -- ACTUALIZACION DE LA FECHA IND PUBLICABLE
+      EXECUTE IMMEDIATE 'MERGE INTO REM01.ACT_ACTIVO T1
+        USING (SELECT ACT_ID 
+            FROM REM01.ACT_ACTIVO A
+            JOIN REM01.DD_EPU_ESTADO_PUBLICACION DD ON DD.DD_EPU_ID = A.DD_EPU_ID AND DD.DD_EPU_CODIGO = ''01''
+            WHERE A.BORRADO = 0) T2
+        ON (T1.ACT_ID = T2.ACT_ID)
+        WHEN MATCHED THEN UPDATE SET
+            T1.ACT_FECHA_IND_PUBLICABLE = SYSTIMESTAMP';
+
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||'.ACT_FECHA_IND_PUBLICABLE actualizados. '||SQL%ROWCOUNT||' Filas.');
+
        -- ACTUALIZACION DE LA FECHA DE VENTA EN ECO_EXPEDIENTE_COMERCIAL     
       V_SENTENCIA := '
         MERGE INTO '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO

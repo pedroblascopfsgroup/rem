@@ -1514,7 +1514,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				gasto.getAdjuntos().add(adjuntoGasto);
 			}
 
-			boolean tieneIva = false;
+			boolean tieneIva = Checks.esNulo(gasto.getGestoria());
 			String nuevoEstado = checkReglaCambioEstado(gasto.getEstadoGasto().getCodigo(), tieneIva,
   					tipoDocumento.getMatricula());
   			if (!Checks.esNulo(nuevoEstado)) {

@@ -19,10 +19,17 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 		layout: 'form',
 		style: 'width: 25%'
 	},
+	listeners: {
 
+		boxready: function(window) {
+			var me = this;
+			me.primeraCarga= true;
+		}
+		
+	},
+	
     initComponent: function () {
         var me = this;
-        
         me.setTitle(HreRem.i18n("title.filtro.ofertas"));
         
         //me.buttons = [{ text: 'Buscar', handler: '' },{ text: 'Limpiar', handler: ''}];

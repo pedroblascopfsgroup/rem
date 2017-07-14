@@ -311,13 +311,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					genericDao.createFilter(FilterType.EQUALS, "id", dto.getGestoria()));
 		} 
 		
-		if (Checks.esNulo(dto.getGestoria()) && Checks.esNulo(dto.getUsuarioGestor())) {
-			usuarioGestor = genericAdapter.getUsuarioLogado();
-			if (genericAdapter.tienePerfil("GESTIAFORM", usuarioGestor)) {
-				usuarioGestoria = usuarioGestor;
-				usuarioGestor = null;
-			}
-		}
+//		if (Checks.esNulo(dto.getGestoria()) && Checks.esNulo(dto.getUsuarioGestor())) {
+//			usuarioGestor = genericAdapter.getUsuarioLogado();
+//			if (genericAdapter.tienePerfil("GESTIAFORM", usuarioGestor)) {
+//				usuarioGestoria = usuarioGestor;
+//				usuarioGestor = null;
+//			}
+//		}
 		
 		return ofertaDao.getListOfertas(dto, usuarioGestor, usuarioGestoria);
 	}

@@ -82,7 +82,7 @@ BEGIN
       EXECUTE IMMEDIATE V_SQL;
       
       DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.ZON_PEF_USU cargada. '||SQL%ROWCOUNT||' Filas.');
-      
+/*      
       DBMS_OUTPUT.PUT_LINE('  [INFO] DANDO DE BAJA EN ZON_PEF_USU '); 
        
       EXECUTE IMMEDIATE '
@@ -103,7 +103,7 @@ BEGIN
          , ZPU_OLD.USUARIOBORRAR = '''|| USUARIO_MIGRACION ||'''';
 
       DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.ZON_PEF_USU borrada. '||SQL%ROWCOUNT||' Filas.');
-
+*/
       -------------------------------------------------
       --INSERCION EN USD_USUARIOS_DESPACHOS--
       -------------------------------------------------
@@ -148,7 +148,7 @@ BEGIN
       DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS cargada. '||SQL%ROWCOUNT||' Filas.');     
       
 --USD_USUARIOS_DESPACHOS
-
+/*
       EXECUTE IMMEDIATE 'MERGE INTO REM01.USD_USUARIOS_DESPACHOS USD_OLD
         USING (
         SELECT USD.USD_ID
@@ -167,7 +167,7 @@ BEGIN
            , USD_OLD.USUARIOBORRAR = '''|| USUARIO_MIGRACION ||''' ';
 
       DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS borrada. '||SQL%ROWCOUNT||' Filas.');   
-
+*/
       COMMIT;  
 
       V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ZON_PEF_USU'',''10''); END;';

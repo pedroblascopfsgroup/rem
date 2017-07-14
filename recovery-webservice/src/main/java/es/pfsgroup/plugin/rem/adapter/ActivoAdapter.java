@@ -1296,7 +1296,7 @@ public class ActivoAdapter {
 		return listaUsuariosDto;
 	}
 	
-	public List<DtoUsuario> getComboUsuariosGrupos(long idTipoGestor) {
+/*	public List<DtoUsuario> getComboUsuariosGrupos(long idTipoGestor) {
 		List<DespachoExterno> listDespachoExterno = coreextensionApi.getListAllDespachos(idTipoGestor, false);
 		List<DtoUsuario> listaUsuariosDto = new ArrayList<DtoUsuario>();
 
@@ -1321,12 +1321,13 @@ public class ActivoAdapter {
 
 		return listaUsuariosDto;
 	}
+*/
 
 
 	public List<DtoUsuario> getComboUsuariosGestoria() {
 		
 		EXTDDTipoGestor tipoGestorGestoria = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION));
-		return getComboUsuariosGrupos(tipoGestorGestoria.getId());
+		return getComboUsuarios(tipoGestorGestoria.getId());
 	}
 	
 	

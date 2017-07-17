@@ -15,9 +15,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -34,9 +32,6 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	@Autowired
 	private OfertaApi ofertaApi;
 
-	@Autowired
-	private TrabajoApi trabajoApi;
-	
 	private static int NUMERO_DIAS_VENCIMIENTO = 40;
 
 	@Autowired

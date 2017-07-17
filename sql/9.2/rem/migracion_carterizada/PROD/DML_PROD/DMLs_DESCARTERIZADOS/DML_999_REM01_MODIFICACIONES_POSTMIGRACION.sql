@@ -296,6 +296,19 @@ BEGIN
 
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.ACT_ACTIVO mergeada. '||SQL%ROWCOUNT||' Filas.');
 
+    DBMS_OUTPUT.PUT_LINE('[INFO] ACTUALIZANDO CAMPO LLAVES EN PODER DE HRE...');
+
+    V_MSQL := '
+        UPDATE '||V_ESQUEMA||'.ACT_ACTIVO ACT 
+            SET ACT.ACT_LLAVES_HRE = NULL 
+            , USUARIOMODIFICAR = '''||V_USUARIO||'''
+        WHERE ACT.ACT_LLAVES_NECESARIAS = 0 AND ACT.ACT_LLAVES_HRE = 0
+    '
+    ;
+    EXECUTE IMMEDIATE V_MSQL;
+        
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.ACT_ACTIVO mergeada. '||SQL%ROWCOUNT||' Filas.');
+
     COMMIT;
 
 EXCEPTION

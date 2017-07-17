@@ -108,7 +108,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.numExpediente", dtoOfertasFilter.getNumExpediente());
 		
 		if (!Checks.esNulo(dtoOfertasFilter.getEstadosExpediente())) {
-			HQLBuilder.addFiltroWhereInSiNotNull(hb, "voferta.codigoEstadoExpediente", Arrays.asList(dtoOfertasFilter.getEstadosExpediente()));
+			addFiltroWhereInSiNotNullConStrings(hb, "voferta.codigoEstadoExpediente", Arrays.asList(dtoOfertasFilter.getEstadosExpediente()));
 		}
 		
 		if (!Checks.esNulo(dtoOfertasFilter.getNumAgrupacion())) {
@@ -147,7 +147,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.codigoTipoOferta", dtoOfertasFilter.getTipoOferta());
 		if (!Checks.esNulo(dtoOfertasFilter.getEstadosOferta())) {
-			HQLBuilder.addFiltroWhereInSiNotNull(hb, "voferta.codigoEstadoOferta",  Arrays.asList(dtoOfertasFilter.getEstadosOferta()));
+			addFiltroWhereInSiNotNullConStrings(hb, "voferta.codigoEstadoOferta",  Arrays.asList(dtoOfertasFilter.getEstadosOferta()));
 		}
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.codigoTipoOferta", dtoOfertasFilter.getTipoOferta());
 
@@ -222,5 +222,32 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		callFunctionSql.setParameter("TIPO_COMISION", tipoComision);
 
 		return (BigDecimal) callFunctionSql.uniqueResult();
+	}
+	
+	/**
+	 * Sustituye el método "HQLBuilder.addFiltroWhereInSiNotNull" que presenta
+	 * un comportamiento extraño cuando los valores son Strings.
+	 * 
+	 * Se añadien comillas simples "'" a claúsula in (...)
+	 * 
+	 * @param hb
+	 * @param nombreCampo
+	 * @param valores
+	 */
+	private void addFiltroWhereInSiNotNullConStrings(HQLBuilder hb, String nombreCampo, List<String> valores) {
+		if (!Checks.estaVacio(valores)) {
+			final StringBuilder b = new StringBuilder();
+			boolean first = true;
+			for (String s : valores) {
+				if (!first) {
+					b.append(", ");
+				} else {
+					first = false;
+				}
+				b.append("'" + s.toString() + "'");
+			}
+			hb.appendWhere(nombreCampo.concat(" in (").concat(b.toString()).concat(")"));
+		}
+		
 	}
 }

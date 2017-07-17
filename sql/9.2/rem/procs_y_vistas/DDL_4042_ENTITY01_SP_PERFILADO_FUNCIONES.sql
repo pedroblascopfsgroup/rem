@@ -209,8 +209,14 @@ AS
     T_VAR('EDITAR_TAB_DETALLE_ECONOMICO_GASTOS'              ,'N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','N','N','N','S','S','S','S','S','S','S','S','N','S','N','N','N','N','N'),
     T_VAR('TAB_DETALLE_ECONOMICO_GASTOS'                     ,'S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
     T_VAR('TAB_ACTIVOS_AFECTADOS_GASTOS'                     ,'S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
-	T_VAR('BOTON_CREAR_TRABAJO'								 ,'S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S')
-    );
+	T_VAR('BOTON_CREAR_TRABAJO'								 ,'S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S'),
+	T_VAR('ALTA_ACTIVOS_FINAN'								 ,'N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','S','N','N','N','N','N'),
+	T_VAR('EDITAR_LIST_AGRUPACIONES'						 ,'S','S','S','S','N','N','N','N','N','N','N','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','S','N','N','N','N','N'),
+	T_VAR('ASISTIDAPDV_CARGA'								 ,'N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','S','N','N','N','N','N'),
+	T_VAR('MASIVO_LOTE_COMERCIAL'							 ,'N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','S','N','N','N'),
+	T_VAR('MASIVO_DESPUBLICAR_FORZADO'						 ,'N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N'),
+	T_VAR('EDITAR_TAB_PUBLICACION_LISTA_ACTIVOS_AGRUPACION'	 ,'N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N')
+	);
   V_TMP_VAR T_VAR;
 
 BEGIN

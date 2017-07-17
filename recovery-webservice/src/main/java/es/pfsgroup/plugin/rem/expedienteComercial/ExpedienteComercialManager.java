@@ -2223,7 +2223,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		// Añadir al dto
 		for (GastosExpediente gasto : gastosExpediente) {
-			if(!Checks.esNulo(idActivo) && (gasto.getActivo().getId().equals(idActivo))){
 				DtoGastoExpediente gastoExpedienteDto = new DtoGastoExpediente();
 				if (!Checks.esNulo(gasto.getAccionGastos())) {
 					gastoExpedienteDto.setDescripcionTipoComision(gasto.getAccionGastos().getDescripcion());
@@ -2263,7 +2262,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				} else if (idActivo.equals(gastoExpedienteDto.getIdActivo())) {
 					honorarios.add(gastoExpedienteDto);
 				}
-			}
 		}
 
 		return honorarios;

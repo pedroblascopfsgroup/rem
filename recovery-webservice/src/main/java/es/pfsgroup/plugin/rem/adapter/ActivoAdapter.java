@@ -1296,7 +1296,32 @@ public class ActivoAdapter {
 		return listaUsuariosDto;
 	}
 	
+/*	public List<DtoUsuario> getComboUsuariosGrupos(long idTipoGestor) {
+		List<DespachoExterno> listDespachoExterno = coreextensionApi.getListAllDespachos(idTipoGestor, false);
+		List<DtoUsuario> listaUsuariosDto = new ArrayList<DtoUsuario>();
 
+		if (!Checks.estaVacio(listDespachoExterno)) {
+			DespachoExterno despachoExterno = listDespachoExterno.get(0);
+			List<Usuario> listaUsuarios = coreextensionApi.getListAllUsuariosData(despachoExterno.getId(), false);
+
+			try {
+				for (Usuario usuario : listaUsuarios) {
+					DtoUsuario dtoUsuario = new DtoUsuario();
+					BeanUtils.copyProperties(dtoUsuario, usuario);
+					if(usuario.getUsuarioGrupo()){
+						listaUsuariosDto.add(dtoUsuario);
+					}
+				}
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return listaUsuariosDto;
+	}
+*/
 
 
 	public List<DtoUsuario> getComboUsuariosGestoria() {

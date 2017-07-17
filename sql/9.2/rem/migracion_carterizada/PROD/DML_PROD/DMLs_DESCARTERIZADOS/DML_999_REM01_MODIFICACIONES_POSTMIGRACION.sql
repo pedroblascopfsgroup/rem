@@ -227,7 +227,7 @@ BEGIN
     ;
     EXECUTE IMMEDIATE V_MSQL;
 
-    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.'||V_TABLA||' mergeada. '||SQL%ROWCOUNT||' Filas.');
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.ACT_TBJ_TRABAJO mergeada. '||SQL%ROWCOUNT||' Filas.');
 
     --
     --
@@ -277,22 +277,6 @@ BEGIN
     EXECUTE IMMEDIATE V_MSQL;
         
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.ACT_TBJ_TRABAJO mergeada. '||SQL%ROWCOUNT||' Filas.');
-
-    --
-    --
-
-    DBMS_OUTPUT.PUT_LINE('[INFO] CORRIGIENDO EL ACT_ID DE TRABAJOS DE AGRUPACIONES...');
-
-    V_MSQL := '
-        UPDATE '||V_ESQUEMA||'.ACT_TBJ_TRABAJO 
-        SET ACT_ID = NULL
-            , USUARIOCREAR = '''||V_USUARIO||''' 
-        WHERE AGR_ID IS NOT NULL AND ACT_ID IS NOT NULL
-    '
-    ;
-    EXECUTE IMMEDIATE V_MSQL;
-        
-    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.'||V_TABLA||' mergeada. '||SQL%ROWCOUNT||' Filas.');
 
     --#############################################################
     --############ ACTIVOS

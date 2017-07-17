@@ -82,57 +82,66 @@ BEGIN
 		)
 		SELECT
 			'||V_ESQUEMA||'.S_ACT_TBJ_TRABAJO.NEXTVAL			                         TBJ_ID,
-			NULL																	           ACT_ID,
-			(SELECT AGR.AGR_ID
-			FROM '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR
-			WHERE AGR.AGR_NUM_AGRUP_UVEM = MIG.AGR_UVEM)                 AGR_ID,
-			MIG.TBJ_NUM_TRABAJO                                                                 TBJ_NUM_TRABAJO,
-			(SELECT PVC.PVC_ID
-			FROM '||V_ESQUEMA||'.ACT_PVC_PROVEEDOR_CONTACTO PVC
-			WHERE PVC.PVC_DOCIDENTIF = MIG.PVC_DOCIDENTIF
-			  AND rownum = 1)                  PVC_ID,
-			NULL                                                                                         USU_ID,
-			(SELECT TTR.DD_TTR_ID
-			FROM '||V_ESQUEMA||'.DD_TTR_TIPO_TRABAJO TTR
-			WHERE TTR.DD_TTR_CODIGO = MIG.TIPO_TRABAJO)                    DD_TTR_ID,
-			(SELECT STR.DD_STR_ID
-			FROM '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO STR
-			WHERE STR.DD_STR_CODIGO = MIG.SUBTIPO_TRABAJO)                 DD_STR_ID,
-			(SELECT EST.DD_EST_ID
-			FROM '||V_ESQUEMA||'.DD_EST_ESTADO_TRABAJO EST
-			WHERE EST.DD_EST_CODIGO = MIG.ESTADO_TRABAJO)              DD_EST_ID,
-			MIG.TBJ_DESCRIPCION                                                            TBJ_DESCRIPCION,
-			MIG.TBJ_FECHA_SOLICITUD                                                        TBJ_FECHA_SOLICITUD,
-			MIG.TBJ_FECHA_APROBACION                                                 TBJ_FECHA_APROBACION,
-			MIG.TBJ_FECHA_INICIO                                                             TBJ_FECHA_INICIO,
-			MIG.TBJ_FECHA_FIN                                                                  TBJ_FECHA_FIN,
-			MIG.TBJ_CONTINUO_OBSERVACIONES                                       TBJ_CONTINUO_OBSERVACIONES,
-			MIG.TBJ_FECHA_FIN_COMPROMISO                                                      TBJ_FECHA_FIN_COMPROMISO,
-			MIG.TBJ_FECHA_TOPE                                                                  TBJ_FECHA_TOPE,
-			MIG.TBJ_FECHA_HORA_CONCRETA                                          TBJ_FECHA_HORA_CONCRETA,
-			MIG.TBJ_URGENTE                                                                 TBJ_URGENTE,
-			MIG.TBJ_CON_RIESGO_TERCEROS                                                 TBJ_CON_RIESGO_TERCEROS,
-			MIG.TBJ_CUBRE_SEGURO                                                       TBJ_CUBRE_SEGURO,
-			MIG.TBJ_CIA_ASEGURADORA                                                    TBJ_CIA_ASEGURADORA,
-			(SELECT TCA.DD_TCA_ID
-			FROM '||V_ESQUEMA||'.DD_TCA_TIPO_CALIDAD TCA
-			WHERE TCA.DD_TCA_CODIGO = MIG.TIPO_CALIDAD)               DD_TCA_ID,
-			MIG.TBJ_TERCERO_NOMBRE                                                     TBJ_TERCERO_NOMBRE,
-			MIG.TBJ_TERCERO_EMAIL                                                       TBJ_TERCERO_EMAIL,
-			MIG.TBJ_TERCERO_DIRECCION                                               TBJ_TERCERO_DIRECCION,
-			MIG.TBJ_TERCERO_CONTACTO                                               TBJ_TERCERO_CONTACTO,
-			MIG.TBJ_TERCERO_TEL1                                                       TBJ_TERCERO_TEL1,
-			MIG.TBJ_TERCERO_TEL2                                                         TBJ_TERCERO_TEL2,
-			MIG.TBJ_IMPORTE_PENAL_DIARIO                                            TBJ_IMPORTE_PENAL_DIARIO,
-			MIG.TBJ_OBSERVACIONES                                                         TBJ_OBSERVACIONES,
-			MIG.TBJ_IMPORTE_TOTAL                                                        TBJ_IMPORTE_TOTAL,
-			MIG.TBJ_FECHA_DENEGACION												TBJ_FECHA_RECHAZO,
-			''0''                                                                                         VERSION,
-			'''||V_USUARIO||'''                                                                                    USUARIOCREAR,
-			SYSDATE                                                                            FECHACREAR,
-			0                                                                                         BORRADO
-		FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-		WHERE MIG.VALIDACION = 0
+      SQLI.*
+    FROM 
+    (
+      SELECT DISTINCT 
+        NULL																	           ACT_ID,
+        (SELECT AGR.AGR_ID
+        FROM '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR
+        WHERE AGR.AGR_NUM_AGRUP_UVEM = MIG.AGR_UVEM)                 AGR_ID,
+        MIG.TBJ_NUM_TRABAJO                                                                 TBJ_NUM_TRABAJO,
+        (SELECT PVC.PVC_ID
+        FROM '||V_ESQUEMA||'.ACT_PVC_PROVEEDOR_CONTACTO PVC
+        WHERE PVC.PVC_DOCIDENTIF = MIG.PVC_DOCIDENTIF
+          AND rownum = 1)                  PVC_ID,
+        NULL                                                                                         USU_ID,
+        (SELECT TTR.DD_TTR_ID
+        FROM '||V_ESQUEMA||'.DD_TTR_TIPO_TRABAJO TTR
+        WHERE TTR.DD_TTR_CODIGO = MIG.TIPO_TRABAJO)                    DD_TTR_ID,
+        (SELECT STR.DD_STR_ID
+        FROM '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO STR
+        WHERE STR.DD_STR_CODIGO = MIG.SUBTIPO_TRABAJO)                 DD_STR_ID,
+        (SELECT EST.DD_EST_ID
+        FROM '||V_ESQUEMA||'.DD_EST_ESTADO_TRABAJO EST
+        WHERE EST.DD_EST_CODIGO = MIG.ESTADO_TRABAJO)              DD_EST_ID,
+        MIG.TBJ_DESCRIPCION                                                            TBJ_DESCRIPCION,
+        MIG.TBJ_FECHA_SOLICITUD                                                        TBJ_FECHA_SOLICITUD,
+        MIG.TBJ_FECHA_APROBACION                                                 TBJ_FECHA_APROBACION,
+        MIG.TBJ_FECHA_INICIO                                                             TBJ_FECHA_INICIO,
+        MIG.TBJ_FECHA_FIN                                                                  TBJ_FECHA_FIN,
+        MIG.TBJ_CONTINUO_OBSERVACIONES                                       TBJ_CONTINUO_OBSERVACIONES,
+        MIG.TBJ_FECHA_FIN_COMPROMISO                                                      TBJ_FECHA_FIN_COMPROMISO,
+        MIG.TBJ_FECHA_TOPE                                                                  TBJ_FECHA_TOPE,
+        MIG.TBJ_FECHA_HORA_CONCRETA                                          TBJ_FECHA_HORA_CONCRETA,
+        MIG.TBJ_URGENTE                                                                 TBJ_URGENTE,
+        MIG.TBJ_CON_RIESGO_TERCEROS                                                 TBJ_CON_RIESGO_TERCEROS,
+        MIG.TBJ_CUBRE_SEGURO                                                       TBJ_CUBRE_SEGURO,
+        MIG.TBJ_CIA_ASEGURADORA                                                    TBJ_CIA_ASEGURADORA,
+        (SELECT TCA.DD_TCA_ID
+        FROM '||V_ESQUEMA||'.DD_TCA_TIPO_CALIDAD TCA
+        WHERE TCA.DD_TCA_CODIGO = MIG.TIPO_CALIDAD)               DD_TCA_ID,
+        MIG.TBJ_TERCERO_NOMBRE                                                     TBJ_TERCERO_NOMBRE,
+        MIG.TBJ_TERCERO_EMAIL                                                       TBJ_TERCERO_EMAIL,
+        MIG.TBJ_TERCERO_DIRECCION                                               TBJ_TERCERO_DIRECCION,
+        MIG.TBJ_TERCERO_CONTACTO                                               TBJ_TERCERO_CONTACTO,
+        MIG.TBJ_TERCERO_TEL1                                                       TBJ_TERCERO_TEL1,
+        MIG.TBJ_TERCERO_TEL2                                                         TBJ_TERCERO_TEL2,
+        MIG.TBJ_IMPORTE_PENAL_DIARIO                                            TBJ_IMPORTE_PENAL_DIARIO,
+        MIG.TBJ_OBSERVACIONES                                                         TBJ_OBSERVACIONES,
+        MIG.TBJ_IMPORTE_TOTAL                                                        TBJ_IMPORTE_TOTAL,
+        MIG.TBJ_FECHA_DENEGACION												TBJ_FECHA_RECHAZO,
+        ''0''                                                                                         VERSION,
+        '''||V_USUARIO||'''                                                                                    USUARIOCREAR,
+        SYSDATE                                                                            FECHACREAR,
+        0                                                                                         BORRADO
+      FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+      WHERE MIG.VALIDACION = 0 AND NOT EXISTS (
+        SELECT 1
+        FROM ACT_TBJ_TRABAJO AUX
+        WHERE AUX.TBJ_NUM_TRABAJO = MIG.TBJ_NUM_TRABAJO
+      )
+    ) SQLI
 	'
 	)
 	;

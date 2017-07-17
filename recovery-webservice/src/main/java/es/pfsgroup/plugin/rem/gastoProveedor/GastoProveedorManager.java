@@ -7,6 +7,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -1488,13 +1489,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		GastoProveedor gasto = findOne(Long.parseLong(fileItem.getParameter("idEntidad")));
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
+		DDTipoDocumentoGasto tipoDocumento = (DDTipoDocumentoGasto) genericDao.get(DDTipoDocumentoGasto.class, filtro);
 
 		try {
 
 			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
-				DDTipoDocumentoGasto tipoDocumento = (DDTipoDocumentoGasto) genericDao.get(DDTipoDocumentoGasto.class, filtro);
 				try {
 					gestorDocumentalAdapterApi.uploadDocumentoGasto(gasto, fileItem, usuarioLogado.getUsername(), tipoDocumento.getMatricula());
 				} catch (GestorDocumentalException gex) {
@@ -1513,17 +1514,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				gasto.getAdjuntos().add(adjuntoGasto);
 			}
 
-			// Si el gasto se encuentra en estado 'Incompleto', cambiar estado del gasto a 'Pendiente' al adjuntar un documento.
-			if(!Checks.esNulo(gasto.getEstadoGasto()) && DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo())) {
-				updaterStateApi.updaterStates(gasto, DDEstadoGasto.PENDIENTE);
-			}
-
-			// Si el gasto se encuentra en estado 'Pagado sin justificación documental', cambiar estado del gasto a 'Pagado' al adjuntar un documento de tipo 'justificante de pago'.
-			String codigoTipoDoc = fileItem.getParameter("tipo");
-			if(!Checks.esNulo(codigoTipoDoc) && DDTipoDocumentoGasto.JUSTIFICACNTE_PAGO.equals(codigoTipoDoc) 
-					&& !Checks.esNulo(gasto.getEstadoGasto()) && DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC.equals(gasto.getEstadoGasto().getCodigo())) {
-				updaterStateApi.updaterStates(gasto, DDEstadoGasto.PAGADO);
-			}
+			boolean tieneIva = Checks.esNulo(gasto.getGestoria());
+			String nuevoEstado = checkReglaCambioEstado(gasto.getEstadoGasto().getCodigo(), tieneIva,
+  					tipoDocumento.getMatricula());
+  			if (!Checks.esNulo(nuevoEstado)) {
+  				updaterStateApi.updaterStates(gasto, DDEstadoGasto.PAGADO);
+  			}
 			
 			// TODO Falta definir que tipo de documento provoca marcar el campo existeDocumento.
 			// Ahora lo marca cualquiera.
@@ -2097,5 +2093,19 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		gasto.setExisteDocumento(i);
 		genericDao.update(GastoProveedor.class, gasto);
+	}
+	
+	public String checkReglaCambioEstado(String codigoEstado, boolean coniva, String matriculaTipoDoc) {
+		Pattern factPattern = Pattern.compile(".*-FACT-.*");
+		Pattern justPattern = Pattern.compile(".*-CERA-.*");
+
+		if (factPattern.matcher(matriculaTipoDoc).matches() && DDEstadoGasto.INCOMPLETO.equals(codigoEstado)) {
+			return DDEstadoGasto.PENDIENTE;
+		} else if (justPattern.matcher(matriculaTipoDoc).matches()
+				&& DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC.equals(codigoEstado) && (!coniva)) {
+			return DDEstadoGasto.PAGADO;
+		} else {
+			return null;
+		}
 	}
 }

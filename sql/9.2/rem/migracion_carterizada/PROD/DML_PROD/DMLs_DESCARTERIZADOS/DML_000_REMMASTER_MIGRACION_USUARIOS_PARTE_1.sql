@@ -145,6 +145,45 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA_M||'.GRU_GRUPOS_USUARIOS cargada. '||SQL%ROWCOUNT||' Filas.');     
       
+      -- BAJA USUARIOS
+/*      DBMS_OUTPUT.PUT_LINE('  [INFO] DANDO DE BAJA USUARIOS...');
+      
+      EXECUTE IMMEDIATE 'MERGE INTO REMMASTER.usu_usuarios USU_OLD
+        USING (
+        select usu.usu_id
+        from REMMASTER.usu_usuarios usu
+        left join REM01.MIG2_USU_USUARIOS mig2 on usu.usu_username = mig2.usu_username
+        where mig2.usu_username is null
+        and usu.borrado = 0
+        ) USU_NEW
+        ON (USU_OLD.USU_ID = USU_NEW.USU_ID)
+        WHEN MATCHED THEN UPDATE 
+        SET  USU_OLD.USU_FECHA_VIGENCIA_PASS = sysdate-1
+           , USU_OLD.fechamodificar = sysdate
+           , USU_OLD.USUARIOMODIFICAR = '''|| USUARIO_MIGRACION ||'''';
+
+      DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA_M||'.USU_USUARIOS borrado. '||SQL%ROWCOUNT||' Filas.');
+
+      -- BAJA GRUPOS USUARIOS
+      DBMS_OUTPUT.PUT_LINE('  [INFO] DANDO DE BAJA GRUPOS...');
+      
+      EXECUTE IMMEDIATE 'MERGE INTO REMMASTER.GRU_GRUPOS_USUARIOS GRU_OLD
+        USING (
+          SELECT GRU.GRU_ID
+          FROM REMMASTER.GRU_GRUPOS_USUARIOS GRU
+          INNER JOIN REMMASTER.USU_USUARIOS USU1 ON USU1.USU_ID = GRU.USU_ID_GRUPO
+          left join REM01.MIG2_USU_USUARIOS mig2 on USU1.usu_username = mig2.usu_username
+          WHERE USU1.USU_USERNAME = MIG2.USU_USERNAME AND GRU.BORRADO = 0
+        ) GRU_NEW
+        ON (GRU_OLD.GRU_ID = GRU_NEW.GRU_ID)
+        WHEN MATCHED THEN UPDATE 
+        SET  GRU_OLD.borrado = 1
+           , GRU_OLD.fechamodificar = sysdate
+           , GRU_OLD.USUARIOMODIFICAR = '''|| USUARIO_MIGRACION ||''' ';
+
+      DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA_M||'.GRU_GRUPOS_USUARIOS borrado. '||SQL%ROWCOUNT||' Filas.');
+       */
+
       COMMIT;  
       
       DBMS_OUTPUT.PUT_LINE('[FIN]');

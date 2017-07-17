@@ -52,7 +52,8 @@ DECLARE
     T_VAR('REM01.BIE_DATOS_REGISTRALES',        'T1.BIE_ID',        'REM01.BIE_BIEN',        'T2.BIE_ID'),
     T_VAR('REM01.ACT_LOC_LOCALIZACION',         'T1.ACT_ID',        'REM01.ACT_ACTIVO',      'T2.ACT_ID'),
     T_VAR('REM01.BIE_LOCALIZACION',             'T1.BIE_ID',        'REM01.BIE_BIEN',        'T2.BIE_ID'),
-    T_VAR('REM01.ACT_ABA_ACTIVO_BANCARIO',      'T1.ACT_ID',        'REM01.ACT_ACTIVO',      'T2.ACT_ID')
+    T_VAR('REM01.ACT_ABA_ACTIVO_BANCARIO',      'T1.ACT_ID',        'REM01.ACT_ACTIVO',      'T2.ACT_ID'),
+    T_VAR('REM01.ACT_AOB_ACTIVO_OBS',           'T1.ACT_ID',        'REM01.ACT_ACTIVO',      'T2.ACT_ID')
   );
   V_TMP_VAR T_VAR;
 

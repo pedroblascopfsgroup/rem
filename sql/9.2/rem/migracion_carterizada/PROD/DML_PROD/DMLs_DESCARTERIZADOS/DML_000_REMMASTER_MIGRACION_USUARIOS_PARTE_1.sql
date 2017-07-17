@@ -146,7 +146,7 @@ BEGIN
       DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA_M||'.GRU_GRUPOS_USUARIOS cargada. '||SQL%ROWCOUNT||' Filas.');     
       
       -- BAJA USUARIOS
-      DBMS_OUTPUT.PUT_LINE('  [INFO] DANDO DE BAJA USUARIOS...');
+/*      DBMS_OUTPUT.PUT_LINE('  [INFO] DANDO DE BAJA USUARIOS...');
       
       EXECUTE IMMEDIATE 'MERGE INTO REMMASTER.usu_usuarios USU_OLD
         USING (
@@ -182,6 +182,7 @@ BEGIN
            , GRU_OLD.USUARIOMODIFICAR = '''|| USUARIO_MIGRACION ||''' ';
 
       DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA_M||'.GRU_GRUPOS_USUARIOS borrado. '||SQL%ROWCOUNT||' Filas.');
+       */
 
       COMMIT;  
       

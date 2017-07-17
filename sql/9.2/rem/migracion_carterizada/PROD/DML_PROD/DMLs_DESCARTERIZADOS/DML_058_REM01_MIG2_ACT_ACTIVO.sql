@@ -56,7 +56,7 @@ BEGIN
                                 GESTOR_CALIDAD,     
                                 FECHA_CALIDAD   
                                 FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' 
-                WHERE VALIDACION = 0
+                WHERE VALIDACION IN (0,1)
                           ) AUX
                 ON (ACT.ACT_NUM_ACTIVO = AUX.ACT_NUMERO_ACTIVO)
                 WHEN MATCHED THEN UPDATE SET
@@ -88,7 +88,7 @@ BEGIN
         USING (  
           SELECT MIG2.ACT_NUMERO_ACTIVO, MIG2.ACT_FECHA_VENTA, MIG2.ACT_IMPORTE_VENTA 
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
-          WHERE MIG2.VALIDACION = 0 AND MIG2.ACT_NUMERO_ACTIVO NOT IN (
+          WHERE MIG2.VALIDACION IN (0,1) AND MIG2.ACT_NUMERO_ACTIVO NOT IN (
           SELECT DISTINCT MIG.ACT_NUMERO_ACTIVO 
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
           INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT

@@ -46,12 +46,13 @@ echo "********************************************************"
 echo
 
 ruta_descarterizada="PROD/DML_PROD/DMLs_DESCARTERIZADOS"
-ruta_carterizada="PROD/DML_PROD"
+ruta_carterizada="PROD/DML_PROD/TMP"
 dml_list="DMLs.list"
 rm -f $ruta_carterizada/*.sql
 cd $ruta_descarterizada
-ls --format=single-column *.sql > ../$dml_list
+ls --format=single-column *.sql > $dml_list
 cd ../../../
+mv -f $ruta_descarterizada/$dml_list $ruta_carterizada
 
 fecha_ini=`date +%Y%m%d_%H%M%S`
 if [ -f PROD/Logs/005_* ] ; then
@@ -83,7 +84,7 @@ do
 	else
 		echo No existe $line
 	fi
-done < $ruta_carterizada/$dml_list
+done < "$ruta_carterizada"/"$dml_list"
 
 echo Revise log: PROD/Logs/005_volcado_"$usuario"_"$fecha_ini".log
 fin=`date +%s`

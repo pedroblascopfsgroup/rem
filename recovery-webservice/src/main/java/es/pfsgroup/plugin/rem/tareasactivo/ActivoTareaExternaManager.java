@@ -67,9 +67,9 @@ public class ActivoTareaExternaManager /*extends TareaExternaManager*/ implement
 	@Override
 	public List<TareaExterna> getActivasByIdTramite(Long idTramite, Usuario usuarioLogado) {
 		
-		EXTGrupoUsuarios grupoUsuarioLogado  = genericDao.get(EXTGrupoUsuarios.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));		
+		List<EXTGrupoUsuarios> grupos  = genericDao.getList(EXTGrupoUsuarios.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));		
 		
-		return activoTareaExternaDao.getTareasTramite(idTramite, usuarioLogado, grupoUsuarioLogado);
+		return activoTareaExternaDao.getTareasTramite(idTramite, usuarioLogado, grupos);
 	}
 	
 	/* (non-Javadoc)

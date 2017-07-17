@@ -2875,16 +2875,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						}
 					}*/
 				}
-				// Validamos que no vengan los 2 campos a true
-				if (!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())
-						&& trabajoDto.getUrgentePrioridadRequiriente()
-						&& !Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())
-						&& trabajoDto.getRiesgoPrioridadRequiriente()) {
-					hashErrores.put("urgentePrioridadRequiriente", RestApi.REST_MSG_UNKNOWN_KEY);
-				}
-
+				
 				if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequirienteEsExacta())
 						&& trabajoDto.getFechaPrioridadRequirienteEsExacta()) {
+					
+					if (Checks.esNulo(trabajoDto.getFechaPrioridadRequiriente())) {
+						hashErrores.put("fechaPrioridadRequiriente", RestApi.REST_MSG_MISSING_REQUIRED);
+					}
+
+				} else if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequirienteEsExacta())
+						&& !trabajoDto.getFechaPrioridadRequirienteEsExacta()) {
 
 					// Validamos que venga fecha o alguno de los checks
 					if (Checks.esNulo(trabajoDto.getFechaPrioridadRequiriente())
@@ -2894,21 +2894,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 							&& (Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())
 									|| (!Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())
 											&& !trabajoDto.getRiesgoPrioridadRequiriente()))) {
-						hashErrores.put("fechaPrioridadRequiriente", RestApi.REST_MSG_MISSING_REQUIRED);
-					}
-
-				} else if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequirienteEsExacta())
-						&& !trabajoDto.getFechaPrioridadRequirienteEsExacta()) {
-
-					if (!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())
-							&& trabajoDto.getUrgentePrioridadRequiriente()) {
-						hashErrores.put("urgentePrioridadRequiriente", RestApi.REST_MSG_UNKNOWN_KEY);
-
-					} else if (!Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())
-							&& trabajoDto.getRiesgoPrioridadRequiriente()) {
-						hashErrores.put("riesgoPrioridadRequiriente", RestApi.REST_MSG_UNKNOWN_KEY);
-
-					} else if (Checks.esNulo(trabajoDto.getFechaPrioridadRequiriente())) {
 						hashErrores.put("fechaPrioridadRequiriente", RestApi.REST_MSG_MISSING_REQUIRED);
 					}
 				}
@@ -2995,22 +2980,30 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 				if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequirienteEsExacta())
 						&& trabajoDto.getFechaPrioridadRequirienteEsExacta()) {
+					if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequiriente())) {
+						dtoFichaTrabajo.setFechaConcreta(trabajoDto.getFechaPrioridadRequiriente());
+						dtoFichaTrabajo.setHoraConcreta(trabajoDto.getFechaPrioridadRequiriente());
+					}else{
+						//este supuesto no es posible x la validacion de la peticion
+						dtoFichaTrabajo.setFechaConcreta(new Date());
+					}
+				} else {
 					Calendar cal = Calendar.getInstance();
 					if (!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())
 							&& trabajoDto.getUrgentePrioridadRequiriente()) {
-						dtoFichaTrabajo.setUrgente(trabajoDto.getUrgentePrioridadRequiriente());
+						dtoFichaTrabajo.setUrgente(true);
 						dtoFichaTrabajo.setFechaTope(cal.getTime());
 					} else if (!Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())
 							&& trabajoDto.getRiesgoPrioridadRequiriente()) {
-						dtoFichaTrabajo.setRiesgoInminenteTerceros(trabajoDto.getRiesgoPrioridadRequiriente());
+						dtoFichaTrabajo.setRiesgoInminenteTerceros(true);
 						cal.add(Calendar.DATE, 2);
 						dtoFichaTrabajo.setFechaTope(cal.getTime());
 					} else {
-						dtoFichaTrabajo.setFechaTope(trabajoDto.getFechaPrioridadRequiriente());
-					}
-				} else {
-					if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequiriente())) {
-						dtoFichaTrabajo.setFechaConcreta(trabajoDto.getFechaPrioridadRequiriente());
+						if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequiriente())) {
+							dtoFichaTrabajo.setFechaTope(trabajoDto.getFechaPrioridadRequiriente());
+						}else{
+							dtoFichaTrabajo.setFechaTope(new Date());
+						}						
 					}
 				}
 			}

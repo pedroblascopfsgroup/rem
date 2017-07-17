@@ -352,6 +352,14 @@
      			def ofertaManager = ctx.getBean("ofertaManager");
      			return ofertaManager.checkDerechoTanteo(tareaExterna);
      		}
+     		def checkEjercidoTanteo= {
+     			def ofertaManager = ctx.getBean("ofertaManager");
+     			return ofertaManager.checkEjercidoTanteo(tareaExterna);
+     		}    		
+     		def checkRenunciaTanteo= {
+     			def ofertaManager = ctx.getBean("ofertaManager");
+     			return ofertaManager.checkRenunciaTanteo(tareaExterna);
+     		}
             def checkComiteSancionador = {
             	def ofertaManager = ctx.getBean("ofertaManager");
             	return ofertaManager.checkComiteSancionador(tareaExterna);

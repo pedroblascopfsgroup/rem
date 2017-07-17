@@ -2022,8 +2022,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(expediente.getEstadoPbc()) && expediente.getEstadoPbc() == 0) {
 				permitirGenerarHoja = false;
 			}
-	
-			if(!Checks.esNulo(expediente.getUltimoPosicionamiento())){
+			
+			if(!Checks.esNulo(expediente.getUltimoPosicionamiento()) && !Checks.esNulo(expediente.getUltimoPosicionamiento().getFechaPosicionamiento())){
 				if(new Date().compareTo(expediente.getUltimoPosicionamiento().getFechaPosicionamiento()) > 0) {
 					permitirGenerarHoja = false;
 				}

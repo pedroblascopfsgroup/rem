@@ -22,7 +22,7 @@ public interface ActivoTareaExternaDao extends AbstractDao<TareaExterna, Long>{
 	 * @param idTramite el id del trámite
 	 * @return la lista de tareas de activo
 	 */
-	List<TareaExterna> getTareasTramite(Long idTramite, Usuario usuarioLogado, EXTGrupoUsuarios grupoUsuarioLogado);
+	List<TareaExterna> getTareasTramite(Long idTramite, Usuario usuarioLogado, List<EXTGrupoUsuarios> grupos);
 	
 	/**
 	 * Devuelve las tareas asociadas a un trámite y que se encuentren activas

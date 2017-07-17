@@ -1,16 +1,23 @@
 #!/bin/bash
+inicio=`date +%s`
 if [ "$#" -ne 2 ]; then
-    echo "Parametros: <pass@host:puerto/ORACLE_SID>"
+    echo "Parametros: <user/pass@host:puerto/ORACLE_SID>"
     echo "Parametros: <USUARIO_MIGRACION> {CAJAMAR,SAREB,BANKIA}"
     exit 1
 fi
 
+if [[ "$2" != "SAREB" ]] && [[ "$2" != "CAJAMAR" ]] && [[ "$2" != "BANKIA" ]]; then
+    echo "[INFO] Entidad no válida."
+    echo "[INFO] Valores aceptados [SAREB, CAJAMAR, BANKIA]"
+    exit 1
+fi
+hora=`date +%H:%M:%S`
 echo "########################################################"
 echo "#####    ACTUALIZANDO Secuencias"
 echo "########################################################"
 fecha_ini=`date +%Y%m%d_%H%M%S`
-if [ -f PROD/Logs/004_*.log ] ; then
-	mv -f PROD/Logs/004_*.log PROD/Logs/backup
+if [ -f PROD/Logs/004_* ] ; then
+	mv -f PROD/Logs/004_* PROD/Logs/backup
 fi
 ./PROD/DDL_PROD/DDL_sequences.sh $1 > PROD/Logs/004_actualizado_secuencias_$fecha_ini.log
 if [ $? != 0 ] ; then 
@@ -47,8 +54,8 @@ ls --format=single-column *.sql > ../$dml_list
 cd ../../../
 
 fecha_ini=`date +%Y%m%d_%H%M%S`
-if [ -f PROD/Logs/005_*.log ] ; then
-	mv -f PROD/Logs/005_*.log PROD/Logs/backup
+if [ -f PROD/Logs/005_* ] ; then
+	mv -f PROD/Logs/005_* PROD/Logs/backup
 fi
 while read line
 do
@@ -79,5 +86,10 @@ do
 done < $ruta_carterizada/$dml_list
 
 echo Revise log: PROD/Logs/005_volcado_"$usuario"_"$fecha_ini".log
+fin=`date +%s`
+let total=($fin-$inicio)/60
+echo "###############################################################"
+echo "####### [END] Volcado completado en [$total] minutos"
+echo "###############################################################"
 
 exit 0

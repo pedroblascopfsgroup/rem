@@ -107,6 +107,7 @@ public class Activo implements Serializable, Auditable {
     @Column(name = "ACT_DIVISION_HORIZONTAL")
    	private Integer divHorizontal;
     
+    @Deprecated
     @Column(name = "ACT_GESTION_HRE")
    	private Integer gestionHre;
     
@@ -406,6 +407,9 @@ public class Activo implements Serializable, Auditable {
     
     @Column(name = "ACT_FECHA_SELLO_CALIDAD")
     private Date fechaRevisionSelloCalidad;
+    
+    @Column(name = "ACT_IBI_EXENTO")
+    private Boolean ibiExento;
     
     
     
@@ -1614,6 +1618,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setFechaRevisionSelloCalidad(Date fechaRevisionSelloCalidad) {
 		this.fechaRevisionSelloCalidad = fechaRevisionSelloCalidad;
+	}
+
+	public Boolean getIbiExento() {
+		return ibiExento;
+	}
+
+	public void setIbiExento(Boolean ibiExento) {
+		this.ibiExento = ibiExento;
 	}
 	
 	

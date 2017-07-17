@@ -438,9 +438,10 @@ public interface OfertaApi {
 	 * Este método resetea el PBC.
 	 * 
 	 * @param expediente : entidad expediente.
+	 * @param fullReset, Booleano para indicar si reseteamos solo el estado o también la responsabilidad corporativa.
 	 * @return Devuelve True si la operación ha sido satisfactoria, False si ha habido un error.
 	 */
-	public boolean resetPBC(ExpedienteComercial expediente);
+	public boolean resetPBC(ExpedienteComercial expediente, Boolean fullReset);
 	
 	/**
 	 * Este método comprueba si hay impuestos.

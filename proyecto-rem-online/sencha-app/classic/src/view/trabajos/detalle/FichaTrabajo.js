@@ -178,10 +178,10 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 											{
 												xtype: 'datefieldbase',
 												fieldLabel: HreRem.i18n('fieldlabel.fecha.debe.realizarse.trabajo'),
-												minValue: $AC.getCurrentDate(),
 												maxValue: null,
 												bind: {
-														value:  '{trabajo.fechaConcreta}'
+														value:  '{trabajo.fechaConcreta}',
+														minValue: '{trabajo.fechaSolicitud}'
 												}
 											},
 											{
@@ -229,10 +229,10 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 												xtype: 'datefieldbase',
 												reference: 'datefieldFechaTope',
 												fieldLabel: HreRem.i18n('fieldlabel.fecha.debe.finalizar.trabajo'),
-												minValue: $AC.getCurrentDate(),
 												maxValue: null,
 												bind: {
-													value: '{trabajo.fechaTope}'
+													value: '{trabajo.fechaTope}',
+													minValue: '{trabajo.fechaSolicitud}'
 												},
 												listeners: {
 													select: function(datefield, newValue) {

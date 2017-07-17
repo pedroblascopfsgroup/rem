@@ -1296,7 +1296,32 @@ public class ActivoAdapter {
 		return listaUsuariosDto;
 	}
 	
+/*	public List<DtoUsuario> getComboUsuariosGrupos(long idTipoGestor) {
+		List<DespachoExterno> listDespachoExterno = coreextensionApi.getListAllDespachos(idTipoGestor, false);
+		List<DtoUsuario> listaUsuariosDto = new ArrayList<DtoUsuario>();
 
+		if (!Checks.estaVacio(listDespachoExterno)) {
+			DespachoExterno despachoExterno = listDespachoExterno.get(0);
+			List<Usuario> listaUsuarios = coreextensionApi.getListAllUsuariosData(despachoExterno.getId(), false);
+
+			try {
+				for (Usuario usuario : listaUsuarios) {
+					DtoUsuario dtoUsuario = new DtoUsuario();
+					BeanUtils.copyProperties(dtoUsuario, usuario);
+					if(usuario.getUsuarioGrupo()){
+						listaUsuariosDto.add(dtoUsuario);
+					}
+				}
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return listaUsuariosDto;
+	}
+*/
 
 
 	public List<DtoUsuario> getComboUsuariosGestoria() {
@@ -1657,6 +1682,11 @@ public class ActivoAdapter {
 				if (!Checks.esNulo(tareaActivo.getUsuario())) {
 					beanUtilNotNull.copyProperty(dtoListadoTareas, "idGestor", tareaActivo.getUsuario().getId());
 					beanUtilNotNull.copyProperty(dtoListadoTareas, "gestor", tareaActivo.getUsuario().getUsername());
+					beanUtilNotNull.copyProperty(dtoListadoTareas, "nombreUsuarioGestor", tareaActivo.getUsuario().getApellidoNombre());
+				}
+				if(!Checks.esNulo(tareaActivo.getSupervisorActivo())){
+					beanUtilNotNull.copyProperty(dtoListadoTareas, "idSupervisor", tareaActivo.getSupervisorActivo().getId());
+					beanUtilNotNull.copyProperty(dtoListadoTareas, "nombreUsuarioSupervisor", tareaActivo.getSupervisorActivo().getApellidoNombre());
 				}
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "subtipoTareaCodigoSubtarea",
 						tareaActivo.getSubtipoTarea().getCodigoSubtarea());

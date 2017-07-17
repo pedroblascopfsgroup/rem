@@ -471,9 +471,9 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							        	xtype: 'comboboxfieldbase',
 							        	fieldLabel: 'Tipo de gestor:',
 							        	bind: {
-						            		store: '{comboTipoGestorOfertas}',
-						            		value: $AU.userTipoGestor(),
-						            	    readOnly: $AU.userTipoGestor()=="GIAFORM"
+						            		store: '{comboTipoGestorOfertas}'
+						            		//value: $AU.userTipoGestor(),
+						            	    //readOnly: $AU.userTipoGestor()=="GIAFORM"
 						            	},
 										reference: 'tipoGestor',
 										name: 'tipoGestor',
@@ -493,9 +493,9 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							        	name: 'usuarioGestor',
 							        	bind: {
 						            		store: '{comboUsuarios}',
-						            		disabled: '{!tipoGestor.selection}',
-						            		value: $AU.getUser().userId,
-						            		readOnly: $AU.userTipoGestor()=="GIAFORM"
+						            		disabled: '{!tipoGestor.selection}'
+						            		//value: $AU.getUser().userId,
+						            		//readOnly: $AU.userTipoGestor()=="GIAFORM"
 						            			
 						            	},
 						            	displayField: 'apellidoNombre',

@@ -585,8 +585,10 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	},
 	
 	onChangeProveedor: function(combo, value) {
-		var me = this;		    
-		me.getViewModel().set('proveedor', combo.getSelection());		
+		var me = this;		
+		
+		me.getViewModel().set('proveedor', combo.getSelection());
+		//combo.validate();
 	},
 
 	onListadoTramitesTareasTrabajoDobleClick : function(gridView,record) {
@@ -658,25 +660,33 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	parent = grid.up("gestioneconomicatrabajo"),    	
     	idTrabajo = parent.getBindRecord().get('idTrabajo'),
     	tipoTrabajoDescripcion = parent.getBindRecord().get('tipoTrabajoDescripcion'),
-    	subtipoTrabajoDescripcion = parent.getBindRecord().get('subtipoTrabajoDescripcion');
+    	subtipoTrabajoDescripcion = parent.getBindRecord().get('subtipoTrabajoDescripcion'),
+    	codigoTipoProveedor = parent.getBindRecord().get('codigoTipoProveedor'),
+    	idProveedor = parent.getBindRecord().get('idProveedor'),
+    	idProveedorContacto = parent.getBindRecord().get('idProveedorContacto');
+    	emailProveedorContacto = parent.getBindRecord().get('emailProveedorContacto');
+    	nombreProveedorContacto = parent.getBindRecord().get('nombreProveedorContacto');
+    	usuarioProveedorContacto = parent.getBindRecord().get('usuarioProveedorContacto');
 
-    	Ext.create("HreRem.view.trabajos.detalle.ModificarPresupuesto", {idTrabajo: idTrabajo, tipoTrabajoDescripcion: tipoTrabajoDescripcion, subtipoTrabajoDescripcion: subtipoTrabajoDescripcion, parent: parent, modoEdicion: true, presupuesto: record}).show();
+    	var window=Ext.create("HreRem.view.trabajos.detalle.ModificarPresupuesto", {idTrabajo: idTrabajo, tipoTrabajoDescripcion: tipoTrabajoDescripcion, subtipoTrabajoDescripcion: subtipoTrabajoDescripcion, codigoTipoProveedor: codigoTipoProveedor, idProveedor: idProveedor, idProveedorContacto: idProveedorContacto, emailProveedorContacto: emailProveedorContacto, nombreProveedorContacto: nombreProveedorContacto, usuarioProveedorContacto: usuarioProveedorContacto, parent: parent, modoEdicion: true, presupuesto: record}).show();
+    	window.getViewModel().set('trabajo',me.getViewModel().get('trabajo'));
     },
     
     onPresupuestosListClick: function(grid, record) {
     	var form = grid.up('form');
+    	
     	if (grid.getSelectionModel().getCount() != 0)
     	{
     		//Cuando la selecci�n no es 0: Rellenar el form de presupuesto con los campos correspondientes
 	    	model = Ext.create('HreRem.model.PresupuestoTrabajo'),
 	    	idPresupuesto = record.get("id"),
-	    	
 	    	fieldset = grid.up('form').down('[reference=detallepresupuesto]');
 			fieldset.mask(HreRem.i18n("msg.mask.loading"));
-	    	
+
 			model.setId(idPresupuesto);
 			model.load({			
 			    success: function(record) {	
+
 			    	form.setBindRecord(record);
 			    	fieldset.unmask();
 			    }
@@ -687,7 +697,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     		//Cuando la selecci�n es 0: Resetear el form (no hay nada seleccionado) 
     		form.getForm().reset();
     	}
-    	
+    	//me.getViewModel().set('proveedor', record);
     },
     
     onClickBotonGuardarPresupuesto: function(btn) {
@@ -715,8 +725,10 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     onClickBotonActualizarPresupuesto: function(btn) {
 		var me = this,
 		window = btn.up("window"),
-		form = window.down("form");
+		form = window.down("form"),
+		combo = me.lookupReference('labelEmailContacto');
 		
+		combo.validate();
 		form.recordName = "presupuesto";
 		form.recordClass = "HreRem.model.PresupuestosTrabajo";
 		
@@ -879,14 +891,12 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
      	chainedCombo = me.lookupReference(combo.chainedReference);   
      	
      	me.getViewModel().notify();
-     	
+
      	if(!Ext.isEmpty(chainedCombo.getValue())) {
  			chainedCombo.clearValue();
      	}
-
  		chainedCombo.getStore().load({ 			
  			callback: function(records, operation, success) {
-
     				if(!Ext.isEmpty(records) && records.length > 0) {
     					if (chainedCombo.selectFirst == true) {
 	 	   					chainedCombo.setSelection(1);
@@ -896,15 +906,21 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     				}
  			}
  		});
- 		
  		if (me.lookupReference(chainedCombo.chainedReference) != null) {
  			var chainedDos = me.lookupReference(chainedCombo.chainedReference);
- 			if(!chainedDos.isDisabled()) {
- 				chainedDos.clearValue();
- 				chainedDos.getStore().removeAll();
- 				chainedDos.setDisabled(true);
+ 			if(chainedDos.getXType()=='comboboxfieldbase'){
+	 			if(!chainedDos.isDisabled()) {
+	 				chainedDos.clearValue();
+	 				chainedDos.getStore().removeAll();
+	 				chainedDos.setDisabled(true);
+	 			}
  			}
+ 			do{
+ 				chainedDos.setValue('');
+ 				chainedDos = me.lookupReference(chainedDos.chainedReference);
+ 			}while(chainedDos != null);
  		}
+ 		
 
      },
 

@@ -311,13 +311,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					genericDao.createFilter(FilterType.EQUALS, "id", dto.getGestoria()));
 		} 
 		
-		if (Checks.esNulo(dto.getGestoria()) && Checks.esNulo(dto.getUsuarioGestor())) {
-			usuarioGestor = genericAdapter.getUsuarioLogado();
-			if (genericAdapter.tienePerfil("GESTIAFORM", usuarioGestor)) {
-				usuarioGestoria = usuarioGestor;
-				usuarioGestor = null;
-			}
-		}
+//		if (Checks.esNulo(dto.getGestoria()) && Checks.esNulo(dto.getUsuarioGestor())) {
+//			usuarioGestor = genericAdapter.getUsuarioLogado();
+//			if (genericAdapter.tienePerfil("GESTIAFORM", usuarioGestor)) {
+//				usuarioGestoria = usuarioGestor;
+//				usuarioGestor = null;
+//			}
+//		}
 		
 		return ofertaDao.getListOfertas(dto, usuarioGestor, usuarioGestoria);
 	}
@@ -1789,13 +1789,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
-	public boolean resetPBC(ExpedienteComercial expediente) {
+	public boolean resetPBC(ExpedienteComercial expediente, Boolean fullReset) {
 		if (Checks.esNulo(expediente)) {
 			return false;
 		}
 
 		// Reiniciar estado del PBC.
-		expediente.setEstadoPbc(null);
+		if(fullReset){
+			//reseteamos responsabilidad corporativa
+			expediente.setConflictoIntereses(null);
+			expediente.setRiesgoReputacional(null);
+			expediente.setEstadoPbc(null);
+		} else {
+			expediente.setEstadoPbc(null);
+		}
 		genericDao.update(ExpedienteComercial.class, expediente);
 
 		// Avisar al gestor de formalización del activo.
@@ -1856,7 +1863,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		codigos.add(DDTipoProveedor.COD_WEB_HAYA);
 		codigos.add(DDTipoProveedor.COD_PORTAL_WEB);
 		codigos.add(DDTipoProveedor.COD_CAT);
-		codigos.add(DDTipoProveedor.COD_HAYA);		
+		codigos.add(DDTipoProveedor.COD_HAYA);
+		codigos.add(DDTipoProveedor.COD_GESTIONDIRECTA);
 		
 		List<DDTipoProveedor> listaTipoProveedor = proveedoresDao.getSubtiposProveedorByCodigos(codigos);		
 

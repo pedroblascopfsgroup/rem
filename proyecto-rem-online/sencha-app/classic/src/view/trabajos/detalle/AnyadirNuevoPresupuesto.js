@@ -98,29 +98,112 @@ Ext.define('HreRem.view.trabajos.detalle.AnyadirNuevoPresupuesto', {
 										flex: 		1,
 										bind:		'{presupuesto.subtipoTrabajoDescripcion}'
 									},
-									{
+									{ 
+							        	xtype: 'comboboxfieldbase',
+							        	fieldLabel: HreRem.i18n('fieldlabel.tipo.proveedor'),
+										flex: 		1,
+							        	labelWidth:	150,
+							        	width: 		480,
+							        	//itemId:	'comboTipoProveedor',
+										reference: 'comboTipoProveedorGestionEconomica2',
+							        	
+										chainedReference: 'comboProveedorGestionEconomica2',
+							        	bind: {
+						            		store: '{comboTipoProveedorFilteredA}',
+						            		value: '{presupuesto.codigoTipoProveedor}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+			    						allowBlank: false,
+			    						listeners: {
+						                	select: 'onChangeComboProveedorGE'
+						            	}
+							        },
+				    				{ 
+							        	xtype: 'comboboxfieldbase',
+							        	fieldLabel: HreRem.i18n('fieldlabel.nombre'),
+										flex: 		1,
+							        	labelWidth:	150,
+							        	width: 		480,
+										//itemId: 'comboProveedorNombre',
+										reference: 'comboProveedorGestionEconomica2',
+										chainedReference: 'proveedorContactoCombo2',
+							        	bind: {
+						            		store: '{comboProveedorFilteredA}',
+						            		value: '{presupuesto.idProveedor}',
+						            		disabled: '{!presupuesto.codigoTipoProveedor}'
+						            	},
+						            	displayField: 'nombreComercial',
+			    						valueField: 'idProveedor',
+			    						allowBlank: false,
+			    						listeners: {
+						                	select: 'onChangeComboProveedorGE'
+						            	}
+							        },
+							        { 
 										xtype: 'comboboxfieldbase',
-	    					        	fieldLabel:  HreRem.i18n('fieldlabel.proveedor'),
-	    					        	itemId: 'comboProveedor',
-	    					        	flex:	1,
-	    					        	bind: {
-	    				            		store: '{comboProveedor}',
-	    				            		value: '{presupuesto.idProveedor}'
-	    				            	},
-	    				            	displayField: 'nombreComercial',
-	    	    						valueField: 'idProveedor'
+							        	fieldLabel:  HreRem.i18n('fieldlabel.proveedor.contacto'),
+							        	reference: 'proveedorContactoCombo2',
+							        	//itemId: 'comboProveedorContacto',
+										flex: 		1,
+							        	labelWidth:	150,
+							        	width: 		480,
+							        	chainedReference: 'labelUsuarioContacto2',
+							        	bind: {
+						            		store: '{comboProveedorContactoA}',
+						            		value: '{presupuesto.idProveedorContacto}',
+						            		disabled: '{!presupuesto.idProveedor}'
+						            	},
+						            	displayField: 'nombre',
+			    						valueField: 'id',
+			    						allowBlank: false,
+			    						listeners: {
+			    							change: 'onChangeProveedor'
+			    						},
+			    						validator: function(v){
+			    							
+			    							var email = me.lookupReference('labelEmailContacto2'),
+			    							usuario = me.lookupReference('labelUsuarioContacto2');			    							
+			    							if(!Ext.isDefined(email.getValue()) || !Ext.isDefined(usuario.getValue())){
+			    								return "Debe seleccionar un Contacto con Email y Usuario";
+			    							}else{
+			    								this.clearInvalid();
+			    								return true;
+			    							}
+			    						}
+							        },
+							        {
+										xtype:      'displayfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.usuario.contacto'),
+										reference: 'labelUsuarioContacto2',
+										chainedReference: 'labelEmailContacto2',
+										width: 		480,
+										bind:		'{proveedor.nombre}',
+										//readOnly: true,
+										allowBlank: false,
+										listeners: {
+											change:function(v){	
+												
+												me.lookupReference('proveedorContactoCombo2').clearInvalid();
+												me.lookupReference('proveedorContactoCombo2').validate();
+											}
+										}
 									},
 									{
-										xtype: 'comboboxfieldbase',
-	    					        	fieldLabel:  HreRem.i18n('fieldlabel.proveedor'),
-	    					        	itemId: 'comboProveedor',
-	    					        	flex:	1,
-	    					        	bind: {
-	    				            		store: '{comboProveedor}',
-	    				            		value: '{presupuesto.idProveedor}'
-	    				            	},
-	    				            	displayField: 'nombreComercial',
-	    	    						valueField: 'idProveedor'
+										xtype:      'displayfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.email.contacto'),
+										reference: 'labelEmailContacto2',
+										width: 		480,
+										bind:		'{proveedor.email}',
+										//readOnly: true,
+										allowBlank: false,
+										listeners: {
+											change:function(v){	
+												
+												me.lookupReference('proveedorContactoCombo2').clearInvalid();
+												me.lookupReference('proveedorContactoCombo2').validate();
+											}
+										}
 									},
 									{
 										xtype: 'comboboxfieldbase',
@@ -180,8 +263,8 @@ Ext.define('HreRem.view.trabajos.detalle.AnyadirNuevoPresupuesto', {
 		me.down('button[itemId=btnGuardar]').setVisible(!me.modoEdicion);
 		me.down('button[itemId=btnActualizar]').setVisible(me.modoEdicion);
 		me.down('comboboxfieldbase[itemId=comboEstadoPresupuesto]').setVisible(me.modoEdicion);
-		me.down('comboboxfieldbase[itemId=comboProveedor]').setVisible(!me.modoEdicion);
-		
-		
+		me.lookupReference('comboTipoProveedorGestionEconomica2').setVisible(!me.modoEdicion);
+		me.lookupReference('comboProveedorGestionEconomica2').setVisible(!me.modoEdicion);
+		me.lookupReference('proveedorContactoCombo2').setVisible(!me.modoEdicion);
     }
 });

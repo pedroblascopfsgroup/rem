@@ -16,16 +16,22 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 
 @Component
 public class ComercialUserAssigantionService implements UserAssigantionService  {
@@ -51,6 +57,9 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private OfertaApi ofertaApi;
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
@@ -81,14 +90,15 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	@Override
 	public Usuario getUser(TareaExterna tareaExterna) {
 		TareaActivo tareaActivo = (TareaActivo)tareaExterna.getTareaPadre();
+		boolean isFuerzaVentaDirecta = this.isFuerzaVentaDirecta(tareaExterna);
 		String codigoTarea = tareaExterna.getTareaProcedimiento().getCodigo();
 		String codigoGestor = null;
 		
 		if(this.isTrabajoDeActivoOrLoteRestEntidad01(tareaActivo)) {
-			codigoGestor = this.getMapCodigoTipoGestorActivoAndLoteRestEntidad01().get(codigoTarea);
+			codigoGestor = this.getMapCodigoTipoGestorActivoAndLoteRestEntidad01(isFuerzaVentaDirecta).get(codigoTarea);
 		}
 		else {
-			codigoGestor = this.getMapCodigoTipoGestor().get(codigoTarea);
+			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta).get(codigoTarea);
 		}
 				
 		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoGestor);
@@ -166,14 +176,23 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	}
 
 	//  --- Mapas con la relación Tarea - Tipo Gestor/supervisor  -------------------------------------------------
-	private HashMap<String,String> getMapCodigoTipoGestor() {
+	private HashMap<String,String> getMapCodigoTipoGestor(boolean isFdv) {
 		
 		HashMap<String,String> mapa = new HashMap<String,String>();
 		
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_COMITE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_OFERTANTE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		if(!isFdv){
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_COMITE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_OFERTANTE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		}else{
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_FVD_BKOFERTA);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_COMITE, GestorActivoApi.CODIGO_FVD_BKOFERTA);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_OFERTANTE, GestorActivoApi.CODIGO_FVD_BKOFERTA);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_FVD_BKVENTA);
+		}
+		
+		
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_EXPEDIENTE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_FIRMA_PROPIETARIO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RATIFICACION_COMITE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
@@ -183,6 +202,40 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESULTADO_PBC, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_INFORME_JURIDICO, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_TANTEO, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEVOLUCION_LLAVES, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_POSICIONAMIENTO_FIRMA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
+		
+		return mapa;
+	}
+	
+	/**
+	 * La entidad 01 para activos o lotes restringidos tiene una configuración diferente
+	 * @return
+	 */
+	private HashMap<String,String> getMapCodigoTipoGestorActivoAndLoteRestEntidad01(boolean isFdv) {
+		
+		HashMap<String,String> mapa = new HashMap<String,String>();
+		
+		if(!isFdv){
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_BACKOFFICE);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_COMITE, GestorActivoApi.CODIGO_GESTOR_BACKOFFICE);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_OFERTANTE, GestorActivoApi.CODIGO_GESTOR_BACKOFFICE);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		}else{
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_FVD_BKOFERTA);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_COMITE, GestorActivoApi.CODIGO_FVD_BKOFERTA);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_OFERTANTE, GestorActivoApi.CODIGO_FVD_BKOFERTA);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_FVD_BKVENTA);
+		}
+		
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_EXPEDIENTE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_FIRMA_PROPIETARIO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_OBTENCION_CONTRATO_RESERVA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DOCUMENTOS_POSTVENTA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESULTADO_PBC, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_INFORME_JURIDICO, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_TANTEO, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEVOLUCION_LLAVES, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_POSICIONAMIENTO_FIRMA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 		
@@ -212,31 +265,6 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		return mapa;
 	}
 	
-	/**
-	 * La entidad 01 para activos o lotes restringidos tiene una configuración diferente
-	 * @return
-	 */
-	private HashMap<String,String> getMapCodigoTipoGestorActivoAndLoteRestEntidad01() {
-		
-		HashMap<String,String> mapa = new HashMap<String,String>();
-		
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_BACKOFFICE);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_COMITE, GestorActivoApi.CODIGO_GESTOR_BACKOFFICE);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_OFERTANTE, GestorActivoApi.CODIGO_GESTOR_BACKOFFICE);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_EXPEDIENTE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_FIRMA_PROPIETARIO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_OBTENCION_CONTRATO_RESERVA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DOCUMENTOS_POSTVENTA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESULTADO_PBC, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_INFORME_JURIDICO, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_TANTEO, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEVOLUCION_LLAVES, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_POSICIONAMIENTO_FIRMA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
-		
-		return mapa;
-	}
 	// ------------------------------------------------------------------------------------------------------------
 	
 	 //Obtención de usuarios desde el expediente comecial
@@ -269,4 +297,58 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		}
 		return null;
 	}
+	
+	/**
+	 * ¿La oferta lleguen del canal "FVD" o "Gestión directa"?
+	 * Ademas comprueba que no sea financiero, ni pertenezca a la cartera cajamar
+	 * HREOS-2303
+	 * 
+	 * @param tareaExterna
+	 */
+	private boolean isFuerzaVentaDirecta(TareaExterna tareaExterna) {
+		boolean esFdv = false;
+		TareaActivo tareaActivo = (TareaActivo) tareaExterna.getTareaPadre();
+
+		if (!Checks.esNulo(tareaActivo) && !Checks.esNulo(tareaActivo.getTramite())
+				&& !Checks.esNulo(tareaActivo.getTramite().getTrabajo())) {
+			String codCarteraActivo = !Checks.esNulo(tareaActivo.getActivo())
+					? (!Checks.esNulo(tareaActivo.getActivo().getCartera())
+							? tareaActivo.getActivo().getCartera().getCodigo() : null)
+					: null;
+			boolean carteraCajaMar = false;
+			if (!Checks.esNulo(tareaActivo.getTramite().getTrabajo()) && !Checks.esNulo(codCarteraActivo)
+					&& DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codCarteraActivo)) {
+				if (Checks.esNulo(tareaActivo.getTramite().getTrabajo().getAgrupacion())
+						|| (!Checks.esNulo(tareaActivo.getTramite().getTrabajo().getAgrupacion().getTipoAgrupacion())
+								&& DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(tareaActivo.getTramite().getTrabajo()
+										.getAgrupacion().getTipoAgrupacion().getCodigo())))
+					carteraCajaMar = true;
+			}
+			ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(tareaActivo.getActivo().getId());
+
+			boolean esFinanciero = false;
+			if (!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getClaseActivo())
+					&& activoBancario.getClaseActivo().getCodigo().equals(DDClaseActivoBancario.CODIGO_FINANCIERO)) {
+				esFinanciero = true;
+			}
+			boolean esSingular = false;
+			String tipoFormalizacion = activoApi.getCodigoTipoComercializacionFromActivo(tareaActivo.getActivo());
+			if(!Checks.esNulo(tipoFormalizacion) && tipoFormalizacion.equals(DDTipoComercializar.CODIGO_SINGULAR)){
+				esSingular = true;
+			}
+			
+			Oferta oferta = ofertaApi.tareaExternaToOferta(tareaExterna);
+			if (!Checks.esNulo(oferta)
+					&& !Checks.esNulo(oferta.getPrescriptor())
+					&& !Checks.esNulo(oferta.getPrescriptor().getTipoProveedor())) {
+				if (oferta.getPrescriptor().getTipoProveedor()
+						.equals(DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA) && !carteraCajaMar && !esFinanciero && !esSingular) {
+					esFdv = true;
+				}
+			}
+		}
+		return esFdv;
+	}
+	
+	
 }

@@ -75,6 +75,9 @@ public class PresupuestoTrabajo implements Serializable, Auditable {
     @Column(name = "PRT_REF_PRESUPUESTO_PROVEEDOR")
 	private String refPresupuestoProveedor;
     
+    @ManyToOne
+    @JoinColumn(name = "PVC_ID")
+    private ActivoProveedorContacto proveedorContacto;
     
 	@Version   
 	private Long version;
@@ -173,6 +176,14 @@ public class PresupuestoTrabajo implements Serializable, Auditable {
 
 	public void setRefPresupuestoProveedor(String refPresupuestoProveedor) {
 		this.refPresupuestoProveedor = refPresupuestoProveedor;
+	}
+
+	public ActivoProveedorContacto getProveedorContacto() {
+		return proveedorContacto;
+	}
+
+	public void setProveedorContacto(ActivoProveedorContacto proveedorContacto) {
+		this.proveedorContacto = proveedorContacto;
 	}
 
 	

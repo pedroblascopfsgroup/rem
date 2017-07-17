@@ -3,7 +3,11 @@ if [ "$#" -ne 3 ]; then
     echo "Parametros: <pass@host:puerto/ORACLE_SID>"
     echo "Parametros: <proceso> [01 para borrar cartera/02 para activarla]"
     echo "Parametros: <cartera> [CAJAMAR/SAREB/BANKIA/OTROS/...DD_CRA_CARTERA]"
-    exit
+    exit 1
+fi
+
+if [ -f PROD/Logs/002_* ] ; then
+	mv -f PROD/Logs/002_* PROD/Logs/backup/
 fi
 
 ./PROD/SP/compila_SP.sh $1
@@ -14,7 +18,7 @@ fi
 
 fichero="PROD/SP/SPs.list"
 sql=`grep -riC 0 $2 $fichero`
-procedure=`grep -riC 0 $2 $fichero | sed "s/PROD\/SP\/SP_0"$2"_//g"`
+procedure=`grep -riC 0 $2 $fichero | sed "s/PROD\/SP\/SP_0$2_//g"`
 
 if [ -f PROD/Logs/003_*.log ] ; then
 	mv -f PROD/Logs/003_*.log PROD/Logs/backup
@@ -31,7 +35,7 @@ if [ -s "$sql".sql ] ; then
 	elif [ "$2" == "02" ] ; then
 		echo "Activando cartera... "$3
 	fi
-	$ORACLE_HOME/bin/sqlplus "$1" << ETIQUETA > ./PROD/Logs/003_ejecuta_$procedure_$fecha_ini.log
+	$ORACLE_HOME/bin/sqlplus "$1" << ETIQUETA > ./PROD/Logs/003_ejecuta_"$procedure"_$fecha_ini.log
 		EXECUTE $procedure('$3');
 ETIQUETA
 	if [ $? != 0 ] ; then 

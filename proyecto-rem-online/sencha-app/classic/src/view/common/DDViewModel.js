@@ -83,6 +83,13 @@ Ext.define('HreRem.view.common.DDViewModel', {
 			        {"codigo": 0, "descripcion": "Rechazado"},
 			        {"codigo": 1, "descripcion": "Aprobado"}
 			    ]
+    		},
+    		
+    		comboAcuerdo: {
+				data : [
+			        {"codigo": 0, "descripcion": "No Solucionar"},
+			        {"codigo": 1, "descripcion": "Solucionar"}
+			    ]
     		}
      }
 });

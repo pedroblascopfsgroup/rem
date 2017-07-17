@@ -37,6 +37,12 @@ public class DtoListadoTareas extends WebDto {
 	
 	private String codigoTarea;
 	
+	private String nombreUsuarioGestor;
+	
+	private Long idSupervisor;
+	
+	private String nombreUsuarioSupervisor;
+	
 	public Long getIdTareaExterna() {
 		return idTareaExterna;
 	}
@@ -131,6 +137,30 @@ public class DtoListadoTareas extends WebDto {
 	
 	public void setCodigoTarea(String codigoTarea){
 		this.codigoTarea = codigoTarea;
+	}
+
+	public String getNombreUsuarioGestor() {
+		return nombreUsuarioGestor;
+	}
+
+	public void setNombreUsuarioGestor(String nombreUsuarioGestor) {
+		this.nombreUsuarioGestor = nombreUsuarioGestor;
+	}
+
+	public Long getIdSupervisor() {
+		return idSupervisor;
+	}
+
+	public void setIdSupervisor(Long idSupervisor) {
+		this.idSupervisor = idSupervisor;
+	}
+
+	public String getNombreUsuarioSupervisor() {
+		return nombreUsuarioSupervisor;
+	}
+
+	public void setNombreUsuarioSupervisor(String nombreUsuarioSupervisor) {
+		this.nombreUsuarioSupervisor = nombreUsuarioSupervisor;
 	}
 
 

@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 
 
 @Service("activoAvisadorManager")
@@ -167,15 +168,16 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		
 		// Aviso 8: Sin gestión
 		// Si no es judicial...
-		if (activo.getTitulo() != null && activo.getTitulo().getId() != 1) {
-			if (activo.getGestionHre() == 0) {
+		if(!Checks.esNulo(activo)){
+			PerimetroActivo perimetro= activoApi.getPerimetroByIdActivo(activo.getId());
+			if(!Checks.esNulo(perimetro) && 0 == perimetro.getAplicaGestion()){
 				DtoAviso dtoAviso = new DtoAviso();
 				dtoAviso.setDescripcion("Activo sin gestión");
 				dtoAviso.setId(String.valueOf(id));
 				listaAvisos.add(dtoAviso);
 			}
-			
 		}
+		
 		
 		// Aviso 9: Estado Comercial		
 		if(!Checks.esNulo(activo.getSituacionComercial())) {

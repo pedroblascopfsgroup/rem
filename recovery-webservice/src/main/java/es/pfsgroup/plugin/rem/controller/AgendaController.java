@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.TareaExcelReport;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoReasignarTarea;
 import es.pfsgroup.plugin.rem.model.DtoSolicitarProrrogaTarea;
 import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -325,6 +326,13 @@ public class AgendaController extends TareaController {
 			mensajeError = "Se ha producido un error con la base de datos al avanzar la tarea. Inténtelo más tarde.";
 
 		return mensajeError;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView reasignarTarea(DtoReasignarTarea dtoReasignarTarea, ModelMap model) {
+		model.put("success", adapter.reasignarTarea(dtoReasignarTarea));
+		return createModelAndViewJson(model);
 	}
 
 }

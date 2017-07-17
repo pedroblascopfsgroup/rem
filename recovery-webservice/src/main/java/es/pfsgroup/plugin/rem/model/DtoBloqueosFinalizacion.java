@@ -19,6 +19,7 @@ public class DtoBloqueosFinalizacion extends WebDto {
 	private String usuarioBaja;
 	private String resultado;
 	private Long idActivo;
+	private String acuerdoCodigo;
 
 
 	public String getIdExpediente() {
@@ -111,5 +112,13 @@ public class DtoBloqueosFinalizacion extends WebDto {
 
 	public void setIdActivo(Long idActivo) {
 		this.idActivo = idActivo;
+	}
+
+	public String getAcuerdoCodigo() {
+		return acuerdoCodigo;
+	}
+
+	public void setAcuerdoCodigo(String acuerdoCodigo) {
+		this.acuerdoCodigo = acuerdoCodigo;
 	}
 }

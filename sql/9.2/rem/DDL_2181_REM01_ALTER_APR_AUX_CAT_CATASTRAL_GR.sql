@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Cristian Hernández
---## FECHA_CREACION=20170620
+--## FECHA_CREACION=20170628
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-2117

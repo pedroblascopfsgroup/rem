@@ -89,13 +89,12 @@ public class HQLBuilder {
 	 * @param valor
 	 *            valor del parámetro
 	 */
-	public static void addFiltroIgualQueSiNotNull(final HQLBuilder hqlBuilder,
-			final String nombreCampo, final Object valor) {
+	public static void addFiltroIgualQueSiNotNull(final HQLBuilder hqlBuilder, final String nombreCampo,
+			final Object valor) {
 		final String nombreParametro = nombraParametro(nombreCampo);
 
 		if (!Checks.esNulo(valor)) {
-			hqlBuilder.appendWhere(nombreCampo.concat(" = :").concat(
-					nombreParametro));
+			hqlBuilder.appendWhere(nombreCampo.concat(" = :").concat(nombreParametro));
 			hqlBuilder.getParametros().putObject(nombreParametro, valor);
 		}
 
@@ -115,17 +114,14 @@ public class HQLBuilder {
 	 * @throws IllegalArgumentException
 	 *             En el caso que 'valor' sea NULL
 	 */
-	public static void addFiltroIgualQue(final HQLBuilder hqlBuilder,
-			final String nombreCampo, final Object valor) {
+	public static void addFiltroIgualQue(final HQLBuilder hqlBuilder, final String nombreCampo, final Object valor) {
 
 		if (valor == null) {
-			throw new IllegalArgumentException(nombreCampo
-					.concat(": no puede ser NULL"));
+			throw new IllegalArgumentException(nombreCampo.concat(": no puede ser NULL"));
 		}
 		final String nombreParametro = nombraParametro(nombreCampo);
 
-		hqlBuilder.appendWhere(nombreCampo.concat(" = :").concat(
-				nombreParametro));
+		hqlBuilder.appendWhere(nombreCampo.concat(" = :").concat(nombreParametro));
 		hqlBuilder.getParametros().putObject(nombreParametro, valor);
 
 	}
@@ -153,24 +149,21 @@ public class HQLBuilder {
 	 * @param valorMin
 	 *            valor máximo del parámetro
 	 */
-	public static void addFiltroBetweenSiNotNull(final HQLBuilder hqlBuilder,
-			final String nombreCampo, final Object valorMin, final Object valorMax) {
+	public static void addFiltroBetweenSiNotNull(final HQLBuilder hqlBuilder, final String nombreCampo,
+			final Object valorMin, final Object valorMax) {
 		final String nombreParametroMin = nombraParametro(nombreCampo);
 		final String nombreParametroMax = nombraParametro(nombreCampo);
 
 		if (!Checks.esNulo(valorMin) && !Checks.esNulo(valorMax)) {
-			hqlBuilder.appendWhere(nombreCampo.concat(" between :").concat(
-					nombreParametroMin).concat(" and :").concat(
-					nombreParametroMax));
+			hqlBuilder.appendWhere(nombreCampo.concat(" between :").concat(nombreParametroMin).concat(" and :")
+					.concat(nombreParametroMax));
 			hqlBuilder.getParametros().putObject(nombreParametroMin, valorMin);
 			hqlBuilder.getParametros().putObject(nombreParametroMax, valorMax);
 		} else if (!Checks.esNulo(valorMin) && Checks.esNulo(valorMax)) {
-			hqlBuilder.appendWhere(nombreCampo.concat(" >= :").concat(
-					nombreParametroMin));
+			hqlBuilder.appendWhere(nombreCampo.concat(" >= :").concat(nombreParametroMin));
 			hqlBuilder.getParametros().putObject(nombreParametroMin, valorMin);
 		} else if (Checks.esNulo(valorMin) && !Checks.esNulo(valorMax)) {
-			hqlBuilder.appendWhere(nombreCampo.concat(" <= :").concat(
-					nombreParametroMax));
+			hqlBuilder.appendWhere(nombreCampo.concat(" <= :").concat(nombreParametroMax));
 			hqlBuilder.getParametros().putObject(nombreParametroMax, valorMax);
 		}
 	}
@@ -192,8 +185,8 @@ public class HQLBuilder {
 	 *            del campo
 	 */
 	@SuppressWarnings("unchecked")
-	public static void addFiltroWhereInSiNotNull(final HQLBuilder hqlBuilder,
-			final String nombreCampo, final Collection valores) {
+	public static void addFiltroWhereInSiNotNull(final HQLBuilder hqlBuilder, final String nombreCampo,
+			final Collection valores) {
 		if (!Checks.estaVacio(valores)) {
 			final StringBuilder b = new StringBuilder();
 			boolean first = true;
@@ -205,8 +198,7 @@ public class HQLBuilder {
 				}
 				b.append(o.toString());
 			}
-			hqlBuilder.appendWhere(nombreCampo.concat(" in (").concat(
-					b.toString()).concat(")"));
+			hqlBuilder.appendWhere(nombreCampo.concat(" in (").concat(b.toString()).concat(")"));
 		}
 	}
 
@@ -226,9 +218,35 @@ public class HQLBuilder {
 	 * @param valor
 	 *            valor del parámetro
 	 */
-	public static void addFiltroLikeSiNotNull(final HQLBuilder hqlBuilder,
-			final String nombreCampo, final Object valor) {
+	public static void addFiltroLikeSiNotNull(final HQLBuilder hqlBuilder, final String nombreCampo,
+			final Object valor) {
 		addFiltroLikeSiNotNull(hqlBuilder, nombreCampo, valor, false);
+	}
+
+	/**
+	 * Ayuda a crear una cláusula WHERE campo is null
+	 * 
+	 * @param hqlBuilder
+	 *            Constructor de la sentencia
+	 * @param nombreCampo
+	 *            Nombre del campo
+	 */
+	public static void addFiltroIsNull(final HQLBuilder hqlBuilder, final String nombreCampo) {
+
+		hqlBuilder.appendWhere(nombreCampo.concat(" is null"));
+	}
+
+	/**
+	 * Ayuda a crear una cláusula WHERE not campo is null
+	 * 
+	 * @param hqlBuilder
+	 *            Constructor de la sentencia
+	 * @param nombreCampo
+	 *            Nombre del campo
+	 */
+	public static void addFiltroNotIsNull(final HQLBuilder hqlBuilder, final String nombreCampo) {
+
+		hqlBuilder.appendWhere("not ".concat(nombreCampo.concat(" is null")));
 	}
 
 	/**
@@ -243,7 +261,7 @@ public class HQLBuilder {
 	 * @param hqlBuilder
 	 *            Constructor de la sentencia
 	 * @param nombreCampo
-	 *            Nombre del campo	
+	 *            Nombre del campo
 	 * @param valor
 	 *            valor del parámetro
 	 * @param ignoreCase
@@ -251,15 +269,13 @@ public class HQLBuilder {
 	 *            sentencia HQL procesando con una función upper() el
 	 *            nombreCampo
 	 */
-	public static void addFiltroLikeSiNotNull(final HQLBuilder hqlBuilder,
-			final String nombreCampo, final Object valor, final boolean ignoreCase) {
+	public static void addFiltroLikeSiNotNull(final HQLBuilder hqlBuilder, final String nombreCampo, final Object valor,
+			final boolean ignoreCase) {
 		final String nombreParametro = nombraParametro(nombreCampo);
 
 		if (!Checks.esNulo(valor)) {
-			final String field = ignoreCase ? "upper(".concat(nombreCampo).concat(")")
-					: nombreCampo;
-			hqlBuilder.appendWhere(field.concat(" like '%'|| :").concat(
-					nombreParametro).concat(" ||'%'"));
+			final String field = ignoreCase ? "upper(".concat(nombreCampo).concat(")") : nombreCampo;
+			hqlBuilder.appendWhere(field.concat(" like '%'|| :").concat(nombreParametro).concat(" ||'%'"));
 			hqlBuilder.getParametros().putObject(nombreParametro,
 					ignoreCase ? valor.toString().toUpperCase() : valor.toString());
 		}
@@ -268,9 +284,8 @@ public class HQLBuilder {
 	private final StringBuilder stringBuilder;
 	private final StringBuilder order;
 	private final int parentesis;
-	
+
 	private boolean hasWhere = false;
-	
 
 	public void setHasWhere(boolean hasWhere) {
 		this.hasWhere = hasWhere;
@@ -350,18 +365,20 @@ public class HQLBuilder {
 		this.stringBuilder.append(strValores);
 		this.stringBuilder.append("))");
 	}
-	
+
 	/**
-	 * añade cláusulas WHERE para filtrar por los campos definidos como propiedades extendidas en un {@link ExtensibleDto}
+	 * añade cláusulas WHERE para filtrar por los campos definidos como
+	 * propiedades extendidas en un {@link ExtensibleDto}
 	 * 
-	 * @param dto Subclase de {@link ExtensibleDto}
+	 * @param dto
+	 *            Subclase de {@link ExtensibleDto}
 	 */
-	public void appendExtensibleDto(final ExtensibleDto dto){
-	    if ((dto != null) && (!Checks.estaVacio(dto.getParametersMap()))){
-	        for (Entry<String, String> param : dto.getParametersMap().entrySet()){
-	            this.appendWhere(param.getKey() + " = '" + param.getValue() + "'");
-	        }
-	    }
+	public void appendExtensibleDto(final ExtensibleDto dto) {
+		if ((dto != null) && (!Checks.estaVacio(dto.getParametersMap()))) {
+			for (Entry<String, String> param : dto.getParametersMap().entrySet()) {
+				this.appendWhere(param.getKey() + " = '" + param.getValue() + "'");
+			}
+		}
 	}
 
 	/**
@@ -374,23 +391,23 @@ public class HQLBuilder {
 	 *            defecto.
 	 */
 	public void orderBy(final String campo, final String sentido) {
-		if ((sentido == null) || ORDER_ASC.equals(sentido)
-				|| ORDER_DESC.equals(sentido)) {
+		if ((sentido == null) || ORDER_ASC.equals(sentido) || ORDER_DESC.equals(sentido)) {
 			this.order.append(" order by ").append(campo);
 			if (sentido != null) {
 				this.order.append(" ").append(sentido);
 			}
 		} else {
-			throw new IllegalArgumentException(
-					sentido
-							.concat(": opción no aceptada para el sentido de la ordenación"));
+			throw new IllegalArgumentException(sentido.concat(": opción no aceptada para el sentido de la ordenación"));
 		}
 	}
-	
+
 	/**
 	 * Este método permite cambiar la cláusula FROM
-	 * @param string cadena de búsqueda
-	 * @param replacement reemplazo
+	 * 
+	 * @param string
+	 *            cadena de búsqueda
+	 * @param replacement
+	 *            reemplazo
 	 * 
 	 * @since 2.7.0
 	 */
@@ -425,8 +442,7 @@ public class HQLBuilder {
 	 * @return
 	 */
 	private static String nombraParametro(final String nombreCampo) {
-		return nombreCampo.substring(nombreCampo.lastIndexOf('.') + 1).concat(
-				"_").concat((contador++).toString());
+		return nombreCampo.substring(nombreCampo.lastIndexOf('.') + 1).concat("_").concat((contador++).toString());
 	}
 
 	/**
@@ -470,6 +486,5 @@ public class HQLBuilder {
 		}
 		return count;
 	}
-
 
 }

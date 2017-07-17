@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.ServletOutputStream;
@@ -33,6 +34,9 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.excel.ActivosExpedienteExcelReport;
+import es.pfsgroup.plugin.rem.excel.ExcelReport;
+import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
@@ -81,6 +85,9 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@Autowired
 	private ExpedienteComercialAdapter expedienteComercialAdapter;
+	
+	@Autowired
+	ExcelReportGeneratorApi excelReportGeneratorApi;
 	
 	
 	/**
@@ -166,6 +173,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		
 		DtoAviso avisosFormateados = new DtoAviso();
 		avisosFormateados.setDescripcion("");
+		avisosFormateados.setId(id.toString());
 		
 		for (ExpedienteAvisadorApi avisador: avisadores) {
 			
@@ -1088,6 +1096,19 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateBloqueoFormalizacion(ModelMap model, DtoBloqueosFinalizacion dto) {
+		try {
+			model.put("success", expedienteComercialApi.updateBloqueoFormalizacion(dto));
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView obtencionDatosPrestamo(ModelMap model, DtoObtencionDatosFinanciacion dto) {
 		try {
 			model.put("success", expedienteComercialApi.obtencionDatosPrestamo(dto));
@@ -1389,6 +1410,19 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		
 		return createModelAndViewJson(model);
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public void getExcelActivosExpediente(Long idExpediente, HttpServletRequest request, HttpServletResponse response) throws Exception{
+		
+		DtoPage dto= expedienteComercialApi.getActivosExpediente(idExpediente);
+		ExpedienteComercial expedienteComercial= expedienteComercialApi.findOne(idExpediente);
+		List<DtoActivosExpediente> dtosActivos= (List<DtoActivosExpediente>) dto.getResults();
+		
+		ExcelReport report = new ActivosExpedienteExcelReport(dtosActivos, expedienteComercial.getNumExpediente());
+		excelReportGeneratorApi.generateAndSend(report, response);
+
 	}
 	
 }

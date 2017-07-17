@@ -18,12 +18,17 @@ import es.pfsgroup.recovery.ext.impl.multigestor.model.EXTGrupoUsuarios;
 public class VTareaActivoCountDaoImpl extends AbstractEntityDao<VTareaActivoCount, Long> implements VTareaActivoCountDao{
 
 	@Override
-	public List<VTareaActivoCount> getContador(Usuario usuario, EXTGrupoUsuarios grupoUsuario) {
+	public List<VTareaActivoCount> getContador(Usuario usuario, List<EXTGrupoUsuarios> grupos) {
 		
 		ArrayList<Long> usuarioYGrupo = new ArrayList<Long>();
 		usuarioYGrupo.add(usuario.getId());
-		if(!Checks.esNulo(grupoUsuario))
-			usuarioYGrupo.add(grupoUsuario.getGrupo().getId());
+		
+		if (!Checks.esNulo(grupos)){
+			for (EXTGrupoUsuarios grupoUsuario : grupos){
+				usuarioYGrupo.add(grupoUsuario.getGrupo().getId());
+			}
+		}
+		
 		
 		HQLBuilder hb = new HQLBuilder(" from VTareaActivoCount");
 		HQLBuilder.addFiltroWhereInSiNotNull(hb, "usuario", usuarioYGrupo);

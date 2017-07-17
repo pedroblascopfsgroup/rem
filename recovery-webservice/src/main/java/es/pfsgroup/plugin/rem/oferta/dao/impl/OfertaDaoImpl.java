@@ -151,7 +151,10 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		}
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.codigoTipoOferta", dtoOfertasFilter.getTipoOferta());
 
-		hb.orderBy("voferta.fechaCreacion", HQLBuilder.ORDER_ASC);
+		if(dtoOfertasFilter.getSort() == null || dtoOfertasFilter.getSort().isEmpty()){
+			hb.orderBy("voferta.fechaCreacion", HQLBuilder.ORDER_ASC);
+		}
+		
 		
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "voferta.ofertante", dtoOfertasFilter.getOfertante(), true);
 		

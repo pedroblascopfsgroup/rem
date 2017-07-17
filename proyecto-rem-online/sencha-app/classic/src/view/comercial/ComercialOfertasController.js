@@ -5,7 +5,6 @@ Ext.define('HreRem.view.comercial.ComercialOfertasController', {
 	//Funcion que se ejecuta al hacer click en el botón buscar
 	onSearchClick: function(btn) {
 		var initialData = {};
-
 		var searchForm = btn.up('formBase');
 		
 		if (searchForm.isValid()) {
@@ -22,11 +21,17 @@ Ext.define('HreRem.view.comercial.ComercialOfertasController', {
 	
 	paramLoading: function(store, operation, opts) {
 		var initialData = {};
-		
 		var searchForm = this.lookupReference('ofertasComercialSearch');
 		if (searchForm.isValid()) {
 			
 			var criteria = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
+			
+			if(!Ext.isEmpty(criteria.tipoGestor) && searchForm.primeraCarga){
+				if(!criteria.usuarioGestor){
+					criteria.usuarioGestor=$AU.getUser().userId;
+					searchForm.primeraCarga=false;				
+				}
+			}
 			
 			Ext.Object.each(criteria, function(key, val) {
 				if (Ext.isEmpty(val)) {

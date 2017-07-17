@@ -218,48 +218,10 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	 * @return
 	 */
 	@SuppressWarnings("unused")
+	@Deprecated
 	private String getCodigoTipoComercializacionFromActivo(Activo activo) {
 		
-		String codigoTipoComercializacion = null;
-		
-		if(activoApi.isIntegradoAgrupacionObraNuevaOrAsistida(activo))
-			codigoTipoComercializacion = DDTipoComercializar.CODIGO_RETAIL;
-		else if(DDTipoUsoDestino.TIPO_USO_PRIMERA_RESIDENCIA.equals(activo.getTipoUsoDestino()) ||
-				DDTipoUsoDestino.TIPO_USO_SEGUNDA_RESIDENCIA.equals(activo.getTipoUsoDestino()))
-			codigoTipoComercializacion = DDTipoComercializar.CODIGO_RETAIL;
-		else 
-		{
-			Double importeLimite = (double) 500000;
-			
-			if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo()))
-			{
-				Double valorVNC = activoApi.getImporteValoracionActivoByCodigo(activo, DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT);
-				if(!Checks.esNulo(valorVNC)) {
-					if(valorVNC <= importeLimite)
-						codigoTipoComercializacion = DDTipoComercializar.CODIGO_RETAIL;
-					else
-						codigoTipoComercializacion = DDTipoComercializar.CODIGO_SINGULAR;
-				}
-			} 
-			else if(DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo()) ||
-					DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) 
-			{
-				importeLimite += 100000;
-				Double valorActivo = activoApi.getImporteValoracionActivoByCodigo(activo, DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
-				
-				if(Checks.esNulo(valorActivo))
-					valorActivo = activoApi.getTasacionMasReciente(activo).getImporteTasacionFin().doubleValue();
-				
-				if(!Checks.esNulo(valorActivo)) {
-					if(valorActivo <= importeLimite)
-						codigoTipoComercializacion = DDTipoComercializar.CODIGO_RETAIL;
-					else
-						codigoTipoComercializacion = DDTipoComercializar.CODIGO_SINGULAR;
-				}
-			}
-		}
-		
-		return codigoTipoComercializacion;
+		return activoApi.getCodigoTipoComercializacionFromActivo(activo);
 	}	
 	
 	

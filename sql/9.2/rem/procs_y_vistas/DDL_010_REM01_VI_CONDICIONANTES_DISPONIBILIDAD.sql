@@ -87,22 +87,15 @@ BEGIN
   		     NVL2(VCG.CON_CARGAS, VCG.CON_CARGAS, 0) AS CON_CARGAS,
   		     NVL2(SPS2.SPS_ID,1,0) AS OCUPADO_SINTITULO,
   		     NVL2(SPS6.SPS_ID,1,0) AS ESTADO_PORTAL_EXTERNO,
-             NVL2( 
-                EAC1.DD_EAC_ID        || --RUINA
-                BDR.BIE_ID            || --PENDIENTE_INSCRIPCION
-                EON.DD_EON_ID         || --OBRANUEVA_SINDECLARAR
-                SPS4.SPS_ID           || --SIN_TOMA_POSESION_INICIAL
-                NPA.ACT_ID            || --PROINDIVISO
-                EAC2.DD_EAC_ID        || --OBRANUEVA_ENCONSTRUCCION
-                SPS3.SPS_ID           || --OCUPADO_CONTITULO
-                SPS1.SPS_ID           || --TAPIADO
-                SPS2.SPS_ID           || --OCUPADO_SINTITULO
-                REG2.REG_ID           || --DIVHORIZONTAL_NOINSCRITA
-                SPS5.SPS_OTRO            --OTRO
-                ,''01''
-                ,''02''
-              ) as EST_DISP_COM_CODIGO,
-  		       0 AS BORRADO
+             CASE
+                  WHEN (NVL2(SPS4.SPS_ID,1,0) = 1 OR NVL2(EAC1.DD_EAC_ID,1,0) = 1 OR NVL2(BDR.BIE_ID,0,1) = 1 
+                        OR NVL2(EON.DD_EON_ID,1,0) = 1 OR NVL2(NPA.ACT_ID,1,0) = 1 OR NVL2(EAC2.DD_EAC_ID,1,0) = 1 
+                        OR NVL2(SPS3.SPS_ID,1,0) = 1 OR NVL2(SPS1.SPS_ID,1,0) = 1 OR NVL2(SPS2.SPS_ID,1,0) = 1
+                        OR NVL2(REG2.REG_ID,1,0) = 1 OR NVL2(SPS5.SPS_OTRO,1,0) = 1)
+                    THEN ''01''
+	                  ELSE ''02''
+             END AS EST_DISP_COM_CODIGO,
+  		     0 AS BORRADO
   		FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
   		LEFT JOIN '||V_ESQUEMA||'.DD_EAC_ESTADO_ACTIVO EAC1 ON EAC1.DD_EAC_ID = ACT.DD_EAC_ID AND EAC1.DD_EAC_CODIGO = ''05'' -- RUINA
   		LEFT JOIN '||V_ESQUEMA||'.DD_EAC_ESTADO_ACTIVO EAC2 ON EAC2.DD_EAC_ID = ACT.DD_EAC_ID AND EAC2.DD_EAC_CODIGO = ''02'' -- OBRA NUEVA EN CONSTRUCCIÓN

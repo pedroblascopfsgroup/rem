@@ -3,7 +3,7 @@
 <process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="activo_tramiteDocumental">
 
 	<start-state name="inicio">
-		<transition to="T002_ComprobarTipoGestor"></transition>
+		<transition to="T002_AnalisisPeticion"></transition>
 	</start-state>
 	
 	<state name="T002_AnalisisPeticion">
@@ -232,17 +232,6 @@
 		<transition to="Fin" name="avanzaBPM"></transition>
 	</state>
 
-	<node name="T002_ComprobarTipoGestor">
-		<action name="miTarea" config-type="bean"
-			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>
-				activoComprobarGestorActionHandler
-			</targetBean>
-		</action>
-		<transition to="T002_AnalisisPeticion" name="OtrosGestores"></transition>
-		<transition to="T002_SolicitudDocumentoGestoria" name="GestorActivo"></transition>
-	</node>
-	
 	<state name="T002_AutorizacionBankia">
 		<event type="node-enter">
 			<action name="miTarea"

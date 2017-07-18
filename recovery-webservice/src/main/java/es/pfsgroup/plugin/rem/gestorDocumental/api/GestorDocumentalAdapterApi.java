@@ -34,5 +34,7 @@ public interface GestorDocumentalAdapterApi {
 			String username, String matricula) throws GestorDocumentalException;
 
 	Integer crearExpedienteComercial(ExpedienteComercial expedienteComercial, String username) throws GestorDocumentalException;
+	
+	void crearRelacionActivosExpediente(ExpedienteComercial expedienteComercial, Long idDocRestClient, String[] listaActivos, String login) throws GestorDocumentalException ;
 
 }

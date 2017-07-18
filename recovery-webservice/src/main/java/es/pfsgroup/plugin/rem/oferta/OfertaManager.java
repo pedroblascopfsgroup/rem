@@ -1662,10 +1662,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			dto.setImporteCalculo(calculoImporteC);
 
 			if (!Checks.esNulo(activo)) {
-				ActivoTasacion tasacion = activoApi.getTasacionMasReciente(activo);
-				if (!Checks.esNulo(tasacion)) {
-					Double tasacionFin = tasacion.getImporteTasacionFin();
-					Double result = (tasacionFin * calculoImporteC / 100);
+				if (!Checks.esNulo(oferta.getImporteOferta())) {
+					Double result= (oferta.getImporteOferta() * calculoImporteC / 100);
 					dto.setHonorarios(result);
 				}
 			}

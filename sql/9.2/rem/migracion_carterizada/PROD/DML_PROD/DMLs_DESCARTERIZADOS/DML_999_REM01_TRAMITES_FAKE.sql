@@ -28,7 +28,8 @@ DECLARE
       V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
       V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
       V_TABLA VARCHAR2(40 CHAR) := 'MIG2_TRA_TRAMITES_OFERTAS'; -- Vble. Tabla pivote
-      
+      V_SENTENCIA VARCHAR2(2600 CHAR);
+
       -- Vbls. para el cursor
       V_OFR_ID NUMBER(16) := 0; -- Vble. para almacenar el OFR_ID
       S_TBJ NUMBER(16) := 0; -- Vble. para almacenar la secuencia generada para el TBJ_ID
@@ -57,6 +58,27 @@ DECLARE
       V_OUT VARCHAR2(32000 CHAR); --Vble. de salida para el  SP que almacena la salida del SP
       
 BEGIN
+  
+    /*
+      * Autor: mrodriguez
+      *
+      * En este DML se generan todos los trámites ya sean de Alquiler o Venta
+      * directamente en la primera tarea del tramite "Definición de la oferta", sin tener 
+      * en cuenta el estado real del expediente comercial.
+      *
+      * Tanto el gestor comercial como el supervisor comercial se están obteniendo directamente 
+      * del activo, sin tener en cuenta si es una oferta de un lote comercial, FDV, etc...
+      *
+      * TODO: 
+      *
+      *   - Modificar el insert en la tabla pivote para que se generen los trámites realmente en la
+      *       tarea que corresponde, para ello basarse en el DML de tramites original y el excel de
+      *       Tomas que contiene el nuevo mapeo de estados - tareas.
+      *   
+      *   - Modificar la obtencion de los gestores y supervisores comerciales, para que tenga en cuenta
+      *       el tipo de oferta.      
+      * 
+    */
     
       DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------------------') ;
       DBMS_OUTPUT.PUT_LINE('PROCESO DE GENERACION DE TRAMITES PARA LAS OFERTAS MIGRADAS EN FASE 2....') ;
@@ -128,8 +150,6 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
-      
       ---------------------------------------------------------------------------------------------------------------
       -- UPDATE MIG2_TRA_TRAMITES_OFERTAS (TBJ_ID, TRA_ID, TAR_ID, TEX_ID) --
       ---------------------------------------------------------------------------------------------------------------
@@ -164,8 +184,6 @@ BEGIN
       CLOSE CURSOR_OFERTAS; 
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada.');
-      
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
       
       ---------------------------------------------------------------------------------------------------------------
       -- UPDATE MIG2_TRA_TRAMITES_OFERTAS (USU_ID, SUP_ID) --
@@ -210,8 +228,6 @@ BEGIN
       ;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada. '||SQL%ROWCOUNT||' Filas.');
-      
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
       
       ---------------------------------------------------------------------------------------------------------------
       -- INSERT ACT_TBJ_TRABAJO --
@@ -274,8 +290,6 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TBJ||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_TBJ||' COMPUTE STATISTICS');
-      
       ---------------------------------------------------------------------------------------------------------------
       -- INSERT ACT_TBJ --
       ---------------------------------------------------------------------------------------------------------------
@@ -308,8 +322,6 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_ACT_TBJ||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_ACT_TBJ||' COMPUTE STATISTICS'); 
-      
       ---------------------------------------------------------------------------------------------------------------
       -- UPDATE ECO_EXPEDIENTE_COMERCIAL (TBJ_ID) --
       ---------------------------------------------------------------------------------------------------------------
@@ -330,8 +342,6 @@ BEGIN
       ;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_ECO||' cargada. '||SQL%ROWCOUNT||' Filas.');
-      
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_ECO||' COMPUTE STATISTICS'); 
       
       ---------------------------------------------------------------------------------------------------------------
       -- INSERT ACT_TRA_TRAMITE --
@@ -383,8 +393,6 @@ BEGIN
       ;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TRA||' cargada. '||SQL%ROWCOUNT||' Filas.');
-      
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_TRA||' COMPUTE STATISTICS');
       
       ---------------------------------------------------------------------------------------------------------------
       -- INSERT TAR_TAREAS_NOTIFICACIONES --
@@ -443,8 +451,6 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TAR||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_TAR||' COMPUTE STATISTICS');
-      
       ---------------------------------------------------------------------------------------------------------------
       -- INSERT ETN_EXTAREAS_NOTIFICACIONES --
       ---------------------------------------------------------------------------------------------------------------
@@ -466,8 +472,6 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_ETN||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_ETN||' COMPUTE STATISTICS');
-
       ---------------------------------------------------------------------------------------------------------------
       -- INSERT TEX_TAREA_EXTERNA --
       ---------------------------------------------------------------------------------------------------------------
@@ -508,8 +512,6 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TEX||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_TEX||' COMPUTE STATISTICS');
-
       ---------------------------------------------------------------------------------------------------------------
       -- INSERT TAC_TAREAS_ACTIVOS --
       ---------------------------------------------------------------------------------------------------------------
@@ -558,7 +560,26 @@ BEGIN
       
      COMMIT;
 
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_TAC||' COMPUTE STATISTICS');
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ACT_TBJ_TRABAJO'',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ACT_TBJ'',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ACT_TRA_TRAMITE'',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''TAR_TAREAS_NOTIFICACIONES'',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ETN_EXTAREAS_NOTIFICACIONES'',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''TEX_TAREA_EXTERNA'',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''TAC_TAREAS_ACTIVOS'',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] FIN DEL PROCESO DE GENERACION DE TRAMITES PARA LAS OFERTAS MIGRADAS EN FASE 2.');
 

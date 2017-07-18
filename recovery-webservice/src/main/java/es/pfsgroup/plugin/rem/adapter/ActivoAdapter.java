@@ -1612,7 +1612,7 @@ public class ActivoAdapter {
 			if (!Checks.esNulo(tramite.getFechaFin()))
 				beanUtilNotNull.copyProperty(dtoTramite, "fechaFinalizacion", formato.format(tramite.getFechaFin()));
 
-			if(tramite.getTrabajo().getAgrupacion() != null) {
+			if((tramite.getTrabajo() != null) && (tramite.getTrabajo().getAgrupacion() != null)) {
 				beanUtilNotNull.copyProperty(dtoTramite, "numActivo", tramite.getTrabajo().getAgrupacion().getNumAgrupRem());
 			} else {
 				beanUtilNotNull.copyProperty(dtoTramite, "numActivo", tramite.getTrabajo().getActivo().getNumActivo());

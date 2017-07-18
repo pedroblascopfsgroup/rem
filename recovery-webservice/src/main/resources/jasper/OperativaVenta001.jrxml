@@ -1011,27 +1011,6 @@
 	</detail>
 	<pageFooter>
 		<band height="33">
-			<textField isBlankWhenNull="true">
-				<reportElement x="443" y="13" width="72" height="20" uuid="8da9810a-e7d0-4025-99d8-fd0015d74494"/>
-				<textElement textAlignment="Right">
-					<font fontName="Verdana" size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Pág. "+$V{PAGE_NUMBER}+" de "]]></textFieldExpression>
-			</textField>
-			<textField evaluationTime="Report">
-				<reportElement x="520" y="13" width="35" height="20" uuid="94753ce7-a97a-4474-9f2e-594c4ab3ef34"/>
-				<textElement>
-					<font fontName="Verdana" size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="5" y="5" width="62" height="13" uuid="db417178-0531-43f7-9207-f9d4a1e9500e"/>
-				<textElement>
-					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
-				</textElement>
-				<text><![CDATA[Importante:]]></text>
-			</staticText>
 			<staticText>
 				<reportElement x="62" y="5" width="356" height="28" uuid="52438540-6129-4888-a0be-c705dd73a68e"/>
 				<textElement>

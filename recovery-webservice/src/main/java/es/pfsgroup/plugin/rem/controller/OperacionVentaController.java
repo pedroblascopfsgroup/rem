@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.controller;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,17 +25,21 @@ import es.pfsgroup.plugin.rem.api.GenerarFacturaVentaActivosApi;
 import es.pfsgroup.plugin.rem.api.ParamReportsApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaSimpleDto;
 import es.pfsgroup.plugin.rem.rest.dto.PropuestaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import es.pfsgroup.plugin.rem.utils.FileUtilsREM;
 
 @Controller
 public class OperacionVentaController {
 
 		final String templateOperacionVenta = "OperativaVenta001";
+		final String templateOperacionVentaShort = "OperativaVenta";
 
 		@Autowired
 		private ParamReportsApi paramReportsApi;
@@ -116,23 +121,38 @@ public class OperacionVentaController {
 				}
 			}
 			
-			//OBTENCION DE LOS DATOS PARA RELLENAR EL DOCUMENTO
-			if (model.get("error")==null || model.get("error")=="") {
-				params = paramReportsApi.paramsHojaDatos(oferta.getActivosOferta().get(0), model);
-			}
-			if (model.get("error")==null || model.get("error")=="") {
-				dataSource = paramReportsApi.dataSourceHojaDatos(oferta.getActivosOferta().get(0), model);
+			//Generamos una lista de PDF por cada activoOferta
+			List<File> listaPdf = new ArrayList<File>(); 			
+			for(ActivoOferta activoOferta : oferta.getActivosOferta()) {				
+				//OBTENCION DE LOS DATOS PARA RELLENAR EL DOCUMENTO
+				if (model.get("error")==null || model.get("error")=="") {
+					params = paramReportsApi.paramsHojaDatos(activoOferta, model);
+				}
+				if (model.get("error")==null || model.get("error")=="") {
+					dataSource = paramReportsApi.dataSourceHojaDatos(activoOferta, model);
+				}
+				//GENERACION DEL DOCUMENTO EN PDF		
+				if (model.get("error")==null || model.get("error")=="") {
+					fileSalidaTemporal = paramReportsApi.getPDFFile(params, dataSource, templateOperacionVenta, model, numExpediente);
+					listaPdf.add(fileSalidaTemporal);
+				}										
 			}
 			
-			//GENERACION DEL DOCUMENTO EN PDF		
+			//AGRUPAR TODOS LOS PDF DE SALIDA EN UNO SOLO
+			File salida = null;
 			if (model.get("error")==null || model.get("error")=="") {
-				fileSalidaTemporal = paramReportsApi.getPDFFile(params, dataSource, templateOperacionVenta, model, numExpediente);
+				try {
+					salida = File.createTempFile(templateOperacionVentaShort, ".pdf");
+					FileUtilsREM.concatenatePdfs(listaPdf, salida);
+				} catch (Exception e) {
+					model.put("error", e.getLocalizedMessage());
+				}
 			}
 
 			//ENVIO DE LOS DATOS DEL DOCUMENTO AL CLIENTE
 			if (model.get("error")==null || model.get("error")=="") {
 				try {
-					excelReportGeneratorApi.sendReport(fileSalidaTemporal, response);
+					excelReportGeneratorApi.sendReport(salida, response);
 				} catch (IOException e) {
 					model.put("error", e.getLocalizedMessage());	
 				}

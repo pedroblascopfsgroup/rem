@@ -490,5 +490,20 @@ public interface OfertaApi {
 	 */
 	public List<DDTipoProveedor> getDiccionarioSubtipoProveedorCanal();
 
+	
+	/**
+	 * Este método comprueba que todos los tanteos de los activos del expedientes tienen una resolucion renuncia
+	 * @param tareaExterna
+	 * @return
+	 */
+	boolean checkRenunciaTanteo(TareaExterna tareaExterna);
+
+	/**
+	 * Este método comprueba que alguno de los tanteos de los activos del expedientes tienen una resolucion ejercida
+	 * @param tareaExterna
+	 * @return
+	 */
+	boolean checkEjercidoTanteo(TareaExterna tareaExterna);
+
 }
 

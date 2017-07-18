@@ -14,6 +14,7 @@ public class RecoveryToGestorDocAssembler {
 
 	private String USUARIO;
 	private String PASSWORD;
+	private final String TIPO_EXPEDIENTE="Tipo%20Expediente";
 
 	public RecoveryToGestorDocAssembler(Properties appProperties){
 		USUARIO = appProperties.getProperty("rest.client.gestor.documental.user");
@@ -34,8 +35,8 @@ public class RecoveryToGestorDocAssembler {
 		DocumentosExpedienteDto doc = new DocumentosExpedienteDto();
 		doc.setUsuario(USUARIO);
 		doc.setPassword(PASSWORD);
-		doc.setTipoConsulta(null);
-		doc.setVinculoDocumento(false);
+		doc.setTipoConsulta(TIPO_EXPEDIENTE);//HREOS-2296
+		doc.setVinculoDocumento(true);//HREOS-2296
 		doc.setVinculoExpediente(false);
 		return doc;
 	}
@@ -52,7 +53,10 @@ public class RecoveryToGestorDocAssembler {
 
 	public CrearDocumentoDto getCrearDocumentoDto(WebFileItem webFileItem, String userLogin, String matricula) {
 		CrearDocumentoDto doc = new CrearDocumentoDto();
-		String[] arrayMatricula = matricula.split("-");
+		String[] arrayMatricula = new String[4];
+		if (matricula!=null && matricula.contains("-")) {
+			arrayMatricula = matricula.split("-");
+		}
 		doc.setUsuario(USUARIO);
 		doc.setPassword(PASSWORD);
 		doc.setUsuarioOperacional(userLogin);
@@ -147,6 +151,16 @@ public class RecoveryToGestorDocAssembler {
 		baja.setPassword(PASSWORD);
 		baja.setUsuarioOperacional(login);
 		return baja;
+	}
+	
+	
+	public CredencialesUsuarioDto getCredencialesDto(String login) {
+		CredencialesUsuarioDto credUsu = new CredencialesUsuarioDto();
+		
+		credUsu.setUsuario(USUARIO);
+		credUsu.setPassword(PASSWORD);
+		credUsu.setUsuarioOperacional(login);
+		return credUsu;
 	}
 	
 }

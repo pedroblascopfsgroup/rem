@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CabeceraPeticionRestCl
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearDocumentoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearVersionDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearVersionMetadatosDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CredencialesUsuarioDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DescargaDocumentosExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DocumentosExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.ModificarMetadatosDto;
@@ -45,7 +46,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 	private static final String USUARIO_PATH = "usuario=";
 	private static final String PASSWORD_PATH = "password=";
 	private static final String USUARIO_OPERACIONAL_PATH = "usuarioOperacional=";
-	private static final String TIPO_CONSULTA_PATH = "tipoConsulta=";
+	private static final String TIPO_CONSULTA_PATH = "tipoConsultaRelacion=";
 	private static final String VINCULO_DOCUMENTO_PATH = "vinculoDocumento=";
 	private static final String VINCULO_EXPEDIENTE_PATH = "vinculoExpediente=";
 	
@@ -72,7 +73,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);
 		}
 		if(!Checks.esNulo(respuesta.getCodigoError())) {
-			throw new GestorDocumentalException(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
+			throw new GestorDocumentalException(respuesta.getCodigoError() + " - " + respuesta.getMensajeError());
 		}
 		return respuesta;
 	}
@@ -309,10 +310,10 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 	}
 
 	@Override
-	public RespuestaGeneral crearRelacionExpediente(CabeceraPeticionRestClientDto cabecera) throws GestorDocumentalException {
+	public RespuestaGeneral crearRelacionExpediente(CabeceraPeticionRestClientDto cabecera, CredencialesUsuarioDto credUsu) throws GestorDocumentalException {
 		ServerRequest serverRequest =  new ServerRequest();
 		serverRequest.setMethod(RestClientManager.METHOD_PUT);
-		serverRequest.setPath(getPathCrearRelExp(cabecera));
+		serverRequest.setPath(getPathCrearRelExp(cabecera, credUsu));
 		serverRequest.setResponseClass(RespuestaGeneral.class);
 		RespuestaGeneral respuesta = (RespuestaGeneral) getResponse(serverRequest);
 		if (Checks.esNulo(respuesta)) {
@@ -325,13 +326,16 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 		return respuesta;
 	}
 	
-	private String getPathCrearRelExp(CabeceraPeticionRestClientDto cabecera) {
+	private String getPathCrearRelExp(CabeceraPeticionRestClientDto cabecera, CredencialesUsuarioDto credUsuDto) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("/crearRelacionExpediente");
 		sb.append("/").append(cabecera.getCodTipo());
 		sb.append("/").append(cabecera.getCodClase());
 		sb.append("/").append(cabecera.getIdExpedienteHaya());
 		sb.append("/").append(cabecera.getIdDocumento());
+		sb.append("?").append(USUARIO_PATH).append(credUsuDto.getUsuario());
+		sb.append("&").append(PASSWORD_PATH).append(credUsuDto.getPassword());
+		sb.append("&").append(USUARIO_OPERACIONAL_PATH).append(credUsuDto.getUsuarioOperacional());
 		return sb.toString();
 	}
 

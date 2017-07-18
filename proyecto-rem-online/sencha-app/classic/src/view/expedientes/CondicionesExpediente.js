@@ -471,6 +471,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 					disabled: '{!esOfertaVenta}'
 			    },
 				title: HreRem.i18n('title.juridicas'),
+				hidden: true,
 				items : [
 				
 					{   

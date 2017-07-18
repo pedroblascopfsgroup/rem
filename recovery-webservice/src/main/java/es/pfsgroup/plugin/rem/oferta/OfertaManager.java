@@ -11,8 +11,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,12 +58,14 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
+import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
+import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -78,6 +78,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
@@ -94,6 +95,7 @@ import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
+import net.sf.json.JSONObject;
 
 @Service("ofertaManager")
 public class OfertaManager extends BusinessOperationOverrider<OfertaApi> implements OfertaApi {
@@ -1660,10 +1662,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			dto.setImporteCalculo(calculoImporteC);
 
 			if (!Checks.esNulo(activo)) {
-				ActivoTasacion tasacion = activoApi.getTasacionMasReciente(activo);
-				if (!Checks.esNulo(tasacion)) {
-					Double tasacionFin = tasacion.getImporteTasacionFin();
-					Double result = (tasacionFin * calculoImporteC / 100);
+				if (!Checks.esNulo(oferta.getImporteOferta())) {
+					Double result= (oferta.getImporteOferta() * calculoImporteC / 100);
 					dto.setHonorarios(result);
 				}
 			}
@@ -1869,6 +1869,67 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		List<DDTipoProveedor> listaTipoProveedor = proveedoresDao.getSubtiposProveedorByCodigos(codigos);		
 
 		return listaTipoProveedor;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean checkRenunciaTanteo(TareaExterna tareaExterna) {
+		boolean result= false;
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		
+		if (!Checks.esNulo(ofertaAceptada)) {
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			if (!Checks.esNulo(expediente)){			
+				DtoPage dtosActivosExpediente= expedienteComercialApi.getActivosExpediente(expediente.getId());
+				List<DtoActivosExpediente> dtosActivos= (List<DtoActivosExpediente>) dtosActivosExpediente.getResults();			
+				for(DtoActivosExpediente dtoActExp: dtosActivos){							
+					List<DtoTanteoActivoExpediente> dtosTanteos= expedienteComercialApi.getTanteosPorActivoExpediente(expediente.getId(), dtoActExp.getIdActivo());	
+					if(!Checks.estaVacio(dtosTanteos)){
+						for(DtoTanteoActivoExpediente dtoTanteo: dtosTanteos){
+							if(!DDResultadoTanteo.CODIGO_RENUNCIADO.equals(dtoTanteo.getCodigoTipoResolucion())){
+								return false;
+							}	
+						}
+						result= true;
+					}
+					else{
+						//caso de que el activo del expediente no tenga ningun tanteo
+					}
+				}
+			}
+		}
+
+		return result;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean checkEjercidoTanteo(TareaExterna tareaExterna) {
+		boolean result= false;
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		
+		if (!Checks.esNulo(ofertaAceptada)) {
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			if (!Checks.esNulo(expediente)){			
+				DtoPage dtosActivosExpediente= expedienteComercialApi.getActivosExpediente(expediente.getId());
+				List<DtoActivosExpediente> dtosActivos= (List<DtoActivosExpediente>) dtosActivosExpediente.getResults();			
+				for(DtoActivosExpediente dtoActExp: dtosActivos){							
+					List<DtoTanteoActivoExpediente> dtosTanteos= expedienteComercialApi.getTanteosPorActivoExpediente(expediente.getId(), dtoActExp.getIdActivo());	
+					if(!Checks.estaVacio(dtosTanteos)){
+						for(DtoTanteoActivoExpediente dtoTanteo: dtosTanteos){
+							if(DDResultadoTanteo.CODIGO_EJERCIDO.equals(dtoTanteo.getCodigoTipoResolucion())){
+								return true;
+							}	
+						}
+					}
+					else{
+						//caso de que el activo del expediente no tenga ningun tanteo
+					}
+				}
+			}
+		}
+
+		return result;
 	}
 }
 

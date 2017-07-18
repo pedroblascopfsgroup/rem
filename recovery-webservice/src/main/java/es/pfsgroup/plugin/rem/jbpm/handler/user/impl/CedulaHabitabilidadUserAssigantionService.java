@@ -75,8 +75,6 @@ public class CedulaHabitabilidadUserAssigantionService implements UserAssigantio
 					return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tipoGestorActivo.getId());
 
 			} else {
-
-				Filter filtroTipoGestor = null;
 				if (CODIGO_T008_SOLICITUD_DOCUMENTO.equals(codTarea)
 						|| CODIGO_T008_OBTENCION_DOCUMENTO.equals(codTarea)) {
 					
@@ -86,15 +84,14 @@ public class CedulaHabitabilidadUserAssigantionService implements UserAssigantio
 					}
 
 				} else {
-					filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+					Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo",
 							GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+					
+					EXTDDTipoGestor tipoGestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+					if (!Checks.esNulo(tipoGestorActivo.getId()))
+						return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tipoGestorActivo.getId());
 
 				}
-
-				EXTDDTipoGestor tipoGestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
-
-				if (!Checks.esNulo(tipoGestorActivo.getId()))
-					return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tipoGestorActivo.getId());
 
 			}
 		}

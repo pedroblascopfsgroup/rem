@@ -37,32 +37,42 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    		 return false;
 	    },
 	    
-		disableTarificacion: function (get) {   	
-	     	
+		disableTarificacion: function (get) {
+			 var fechaEjecucionReal = get('trabajo.fechaEjecucionReal');
 			 var fechaCierreEco = get('trabajo.fechaCierreEconomico');
 	    	 var esTarificado = get('gestionEconomica.esTarificado');
+	    	 var isSupervisorActivo = $AU.userIsRol('HAYASUPACT') || $AU.userIsRol('HAYASUPADM') || $AU.userIsRol('HAYASUPER');
+		     var isGestorActivos = $AU.userIsRol('HAYAGESACT') || $AU.userIsRol('HAYAGESTADM');
+		     var isProveedor = $AU.userIsRol('HAYAPROV') || $AU.userIsRol('HAYACERTI') 
+		     				   || $AU.userIsRol('GESTOCED') || $AU.userIsRol('GESTOADM');
+		     
+		     if(isSupervisorActivo){
+		    		return false;
+		    } else if(isGestorActivos){
+		    	if (!Ext.isEmpty(fechaCierreEco))
+			    	 return true;
+			    else {
+				   	 if (esTarificado)
+				   		 return false;
+				    else
+				    	 return true;
+			    }	    		
+		    } else if(isProveedor){
+		    	if (Ext.isEmpty(fechaEjecucionReal))
+	    			return false;
+	    		else {
+	    			return true;
+	    		}
+		    } else {
+		    	return true;
+		    }
 	    	 
-	    	 if (!Ext.isEmpty(fechaCierreEco))
-	    		 return true;
-	    	 else {
-		    	 if (esTarificado)
-		    		 return false;
-		    	 else
-		    		 return true;
-	    	 }
+	    	 
 	    	 
 	    },
 	    
 	    editableTarificacionProveedor: function (get){
-	    	var fechaEjecucionReal = get('trabajo.fechaEjecucionReal');
-	    	
-	    	if (Ext.isEmpty(fechaEjecucionReal))
-	    		 return true;
-	    	 else {
-		    		 return false;
-	    	 }
-	    	
-	    	
+	    	return true;
 	    },
 	    
 	    disablePresupuesto: function (get) {

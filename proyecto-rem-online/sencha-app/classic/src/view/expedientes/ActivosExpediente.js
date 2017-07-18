@@ -96,9 +96,9 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 				bind: {
 					store: '{storeActivosExpediente}'
 				},
-				saveSuccessFn: function() {
-					this.lookupController().refrescarExpediente(true);
-				},
+//				saveSuccessFn: function() {
+//					this.lookupController().refrescarExpediente(true);
+//				},
 				features: [{
 				            id: 'summary',
 				            ftype: 'summary',

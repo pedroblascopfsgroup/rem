@@ -198,6 +198,27 @@ BEGIN
 
     DBMS_OUTPUT.PUT_LINE('[INFO] REGISTROS CORREGIDOS - '||SQL%ROWCOUNT||'');
 
+    DBMS_OUTPUT.PUT_LINE('[INFO] ACTUALIZANDO SEQUENCE PVE_COD_REM');
+
+    -- Obtenemos el valor maximo de la columna AGR_NUM_AGRUP_REM y lo incrementamos en 1
+    V_MSQL := 'SELECT NVL(MAX(PVE_COD_REM),0) FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR';
+    EXECUTE IMMEDIATE V_MSQL INTO MAX_NUM;
+    
+    MAX_NUM := MAX_NUM +1;
+    
+    EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_PVE_COD_REM'' AND SEQUENCE_OWNER = '''||V_ESQUEMA||'''' INTO V_EXISTE; 
+    
+    -- Si existe secuencia la borramos
+    IF V_EXISTE = 1 THEN
+        EXECUTE IMMEDIATE 'DROP SEQUENCE '||V_ESQUEMA||'.S_PVE_COD_REM';
+        DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.S_PVE_COD_REM... Secuencia eliminada');    
+    END IF;
+    
+    EXECUTE IMMEDIATE 'CREATE SEQUENCE ' ||V_ESQUEMA|| '.S_PVE_COD_REM  MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH '||MAX_NUM||' NOCACHE NOORDER  NOCYCLE';
+    
+    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_PVE_COD_REM... Secuencia creada e inicializada correctamente.');
+
+
     --#############################################################
     --############ TRABAJOS
     --#############################################################

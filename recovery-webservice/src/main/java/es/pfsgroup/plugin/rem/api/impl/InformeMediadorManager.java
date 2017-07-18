@@ -1171,7 +1171,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 	@Override
 	public void validateInformeField(HashMap<String, String> errorsList, String fiedlName, Object fieldValor,
-			String codigoTipoBien) throws Exception{
+			String codigoTipoBien) throws Exception {
 		fiedlName = fiedlName.substring(3);
 		HashMap<String, Boolean> permisos = obligatorios.get(fiedlName.toLowerCase());
 		if (permisos != null) {
@@ -1201,7 +1201,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 	}
 
 	@Override
-	public boolean existeInformemediadorActivo(Long numActivo) throws Exception{
+	public boolean existeInformemediadorActivo(Long numActivo) throws Exception {
 		Activo activo;
 		Serializable objetoEntity = null;
 		boolean resultado = false;
@@ -1240,7 +1240,8 @@ public class InformeMediadorManager implements InformeMediadorApi {
 			if (infoAux != null) {
 				if ((infoAux.getId() != null && infoAux.getTipoActivo() != null && informe.getCodTipoActivo() != null
 						&& !infoAux.getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()))
-						|| (infoAux.getId() != null && infoAux.getTipoActivo() == null)|| ((ActivoInfoComercial) objeto).getId()==null) {
+						|| (infoAux.getId() != null && infoAux.getTipoActivo() == null)
+						|| ((ActivoInfoComercial) objeto).getId() == null) {
 					genericaRestDaoImp.deleteInformeMediador(infoAux);
 					((ActivoInfoComercial) objeto).setAuditoria(null);
 					((ActivoInfoComercial) objeto).setId(null);
@@ -1375,9 +1376,13 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				List<PlantaDto> plantas = informe.getPlantas();
 				if (plantas != null) {
 					for (PlantaDto planta : plantas) {
+						
+						
 						ActivoDistribucion activoDistribucion = genericDao.get(ActivoDistribucion.class,
 								genericDao.createFilter(FilterType.EQUALS, "numPlanta", planta.getNumero()),
-								genericDao.createFilter(FilterType.EQUALS, "infoComercial", informeEntity));
+								genericDao.createFilter(FilterType.EQUALS, "infoComercial", informeEntity),
+								genericDao.createFilter(FilterType.EQUALS, "tipoHabitaculo.codigo" , planta.getCodTipoEstancia())
+								);
 						if (activoDistribucion == null) {
 							activoDistribucion = new ActivoDistribucion();
 						}

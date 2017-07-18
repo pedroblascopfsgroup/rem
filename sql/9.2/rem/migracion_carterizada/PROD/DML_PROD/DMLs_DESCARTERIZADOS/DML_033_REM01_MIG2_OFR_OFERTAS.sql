@@ -41,6 +41,7 @@ DECLARE
     V_OBSERVACIONES VARCHAR2(3000 CHAR) := '';
     V_OFR_ID NUMBER(16,0);    -- Varaible que almacenara las OFR_ID de aquellas ofertas aceptadas
     V_TABLE_ECO NUMBER(16,0); -- Variable que almacenara los Expedientes Comerciales creados
+    V_TABLE_ECO_MER NUMBER(16,0); -- Variable que almacenara los Expedientes Comerciales mergeados
     V_TABLE_DD_EOF NUMBER(16,0); -- Variable que almacenara los ESTADOS_OFERTAS modificados
     
 BEGIN
@@ -290,6 +291,36 @@ BEGIN
     V_TABLE_ECO := SQL%ROWCOUNT;
     
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL cargada. '||V_TABLE_ECO||' Filas.');
+    
+    ---------------------------------
+    -- ACTUALIZACION DE ESTADO PBC --
+    ---------------------------------
+    DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MERGEO DEL ECO_ESTADO_PBC PARA LOS EXPEDIENTES COMERCIALES CREADOS');
+
+    EXECUTE IMMEDIATE '
+	MERGE INTO '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
+	  USING (
+	  WITH SUMATORIO AS (SELECT CEX_COD_OFERTA, SUM(CEX_IND_PBC) AS SUMA, COUNT(1)AS CON FROM '||V_ESQUEMA||'.MIG2_CEX_COMPRADOR_EXPEDIENTE
+						GROUP BY CEX_COD_OFERTA)
+	  SELECT CASE
+		WHEN SUMA.CON = SUMA.SUMA
+		  THEN 1
+		WHEN SUMA.SUMA = 0
+		  THEN 0
+		ELSE NULL
+		END AS RESULTADO, OFR.OFR_ID, SUMA.SUMA, SUMA.CON
+	  FROM SUMATORIO SUMA
+	  INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON SUMA.CEX_COD_OFERTA = OFR.OFR_NUM_OFERTA
+	  ) AUX
+	ON (ECO.OFR_ID = AUX.OFR_ID)
+	WHEN MATCHED THEN UPDATE SET
+		  ECO.ECO_ESTADO_PBC = AUX.RESULTADO
+    '
+    ;   
+    
+    V_TABLE_ECO_MER := SQL%ROWCOUNT;
+    
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL cargada. '||V_TABLE_ECO_MER||' ECO_ESTADO_PBC mergeados.');
     
     -----------------------------------------
     -- ACTUALIZACION DE ESTADOS DE OFERTAS --

@@ -1725,9 +1725,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						// Ha de ser mayor o igual que la fecha fin descuento aprobado, si existe
 						return HreRem.i18n('info.datefield.begin.date.pdw.msg.validacion');
 					}
-					if(!Ext.isEmpty(fechaInicioExistenteAprobadoVentaWeb) && fechaInicioDescuentoPublicadoWeb < fechaInicioExistenteAprobadoVentaWeb) {
+					if(!Ext.isEmpty(fechaFinExistenteDescuentoAprobado) && fechaFinExistenteDescuentoAprobado < fechaFinDescuentoPublicadoWeb) {
 						// Ha de ser mayor o igual que la fecha fin aprobado venta web, si existe
-						return HreRem.i18n('info.datefield.begin.date.pdw.msg.validacion.dos');
+						return HreRem.i18n('info.datefield.end.date.descuento.web');
 					}
 				} else {
 					// La fecha de inicio

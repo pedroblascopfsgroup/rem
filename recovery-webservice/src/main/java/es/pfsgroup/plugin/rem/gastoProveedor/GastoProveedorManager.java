@@ -1518,7 +1518,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			String nuevoEstado = checkReglaCambioEstado(gasto.getEstadoGasto().getCodigo(), tieneIva,
   					tipoDocumento.getMatricula());
   			if (!Checks.esNulo(nuevoEstado)) {
-  				updaterStateApi.updaterStates(gasto, DDEstadoGasto.PAGADO);
+  				updaterStateApi.updaterStates(gasto, nuevoEstado);
   			}
 			
 			// TODO Falta definir que tipo de documento provoca marcar el campo existeDocumento.

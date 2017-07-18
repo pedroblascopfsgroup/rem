@@ -19,7 +19,6 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -1226,7 +1225,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if(condicionantes.getSujetoTanteoRetracto() != null && condicionantes.getSujetoTanteoRetracto().equals(Integer.valueOf(0))){
 					dtoActivo.setTanteos(3);
 				}else{
-					dtoActivo.setTanteos(0);
+					dtoActivo.setTanteos(3);
 					List<TanteoActivoExpediente> tanteosExpediente = expediente.getTanteoActivoExpediente();
 					int contTanteosActivo = 0;
 					int contTanteosActivoRenunciado = 0;
@@ -1240,10 +1239,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								}else if(tanteo.getResultadoTanteo().getCodigo().equals(DDResultadoTanteo.CODIGO_RENUNCIADO)){
 									contTanteosActivoRenunciado++;
 								}
+							}else {
+								dtoActivo.setTanteos(0);
 							}
 						}
 					}
-					if(contTanteosActivo==contTanteosActivoRenunciado){
+					if(contTanteosActivo > 0 && contTanteosActivo == contTanteosActivoRenunciado){
 						dtoActivo.setTanteos(1);
 					}
 				}
@@ -4330,27 +4331,38 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
         Calendar cal;
-		if(!Checks.esNulo(tanteoActivoDto.getSolicitaVisitaCodigo()) && tanteoActivoDto.getSolicitaVisitaCodigo().equals(Integer.valueOf(1))){
-			if(tanteoActivoDto.getFechaSolicitudVisita()==null){
-				tanteoActivoDto.setFechaSolicitudVisita(new Date());
-			}
-			cal = Calendar.getInstance(); 
-            cal.setTime(tanteoActivoDto.getFechaComunicacion()); 
-            cal.add(Calendar.DATE, 16);
-            
-			if(tanteoActivoDto.getFechaSolicitudVisita().compareTo(cal.getTime())<0){
+        if(!Checks.esNulo(tanteoActivoDto.getFechaRespuesta()) && tanteoActivoDto.getFechaRespuesta().getTime()>0
+        		&& !Checks.esNulo(tanteoActivoDto.getFechaVisita()) && tanteoActivoDto.getFechaVisita().getTime()>0) {
+			if(!Checks.esNulo(tanteoActivoDto.getSolicitaVisitaCodigo()) && tanteoActivoDto.getSolicitaVisitaCodigo().equals(Integer.valueOf(1))){
+				if(tanteoActivoDto.getFechaSolicitudVisita()==null){
+					tanteoActivoDto.setFechaSolicitudVisita(new Date());
+				}
+				cal = Calendar.getInstance(); 
+	            cal.setTime(tanteoActivoDto.getFechaRespuesta()); 
+	            cal.add(Calendar.DATE, 16);
+	            
+				if(tanteoActivoDto.getFechaVisita().compareTo(cal.getTime())<0){
+					cal = Calendar.getInstance(); 
+					cal.setTime(tanteoActivoDto.getFechaRespuesta()); 
+		            //cal.setTime(tanteoActivoDto.getFechaComunicacion()); 
+		            cal.add(Calendar.DATE, 15);
+		            //cal.add(Calendar.MONTH, 2);
+		            tanteoActivo.setFechaFinTanteo(cal.getTime());
+				}else{
+					//long diferencia = tanteoActivoDto.getFechaSolicitudVisita().getTime() - tanteoActivoDto.getFechaComunicacion().getTime();
+					long diferencia = tanteoActivoDto.getFechaVisita().getTime() - tanteoActivoDto.getFechaRespuesta().getTime();
+					long dias = diferencia / (1000 * 60 * 60 * 24);
+					cal = Calendar.getInstance(); 
+					cal.setTime(tanteoActivoDto.getFechaRespuesta()); 
+		            //cal.setTime(tanteoActivoDto.getFechaComunicacion()); 
+		            //cal.add(Calendar.MONTH, 2);
+		            cal.add(Calendar.DATE, (int)dias);
+		            tanteoActivo.setFechaFinTanteo(cal.getTime());
+				}
+			}else {
 				cal = Calendar.getInstance(); 
 	            cal.setTime(tanteoActivoDto.getFechaComunicacion()); 
-	            cal.add(Calendar.DATE, 15);
 	            cal.add(Calendar.MONTH, 2);
-	            tanteoActivo.setFechaFinTanteo(cal.getTime());
-			}else{
-				long diferencia = tanteoActivoDto.getFechaSolicitudVisita().getTime() - tanteoActivoDto.getFechaComunicacion().getTime();
-				long dias = diferencia / (1000 * 60 * 60 * 24);
-				cal = Calendar.getInstance(); 
-	            cal.setTime(tanteoActivoDto.getFechaComunicacion()); 
-	            cal.add(Calendar.MONTH, 2);
-	            cal.add(Calendar.DATE, (int)dias);
 	            tanteoActivo.setFechaFinTanteo(cal.getTime());
 			}
 		}else{

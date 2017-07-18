@@ -162,10 +162,31 @@ BEGIN
       --Según comentario de Tomás y Manuel, eliminamos ECO_PETICIONARIO_ANULACION porque nunca va a venir informado y mejor que esté blanco.
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL cargada. '||SQL%ROWCOUNT||' Filas.');
+
+      DBMS_OUTPUT.PUT_LINE('[INFO] ACTUALIZANDO EL ESTADO DEL EXPEDIENTE COMERCIAL A RESERVADO PARA AQUELLOS QUE TIENEN RESERVA Y TIENEN CODIGO 01-06');
+      
+      EXECUTE IMMEDIATE '
+            MERGE INTO '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
+            USING 
+            (
+              SELECT ECO.ECO_ID
+              FROM '||V_ESQUEMA||'.RES_RESERVAS RES
+                INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON RES.ECO_ID = ECO.ECO_ID
+                INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_ID = ECO.OFR_ID
+                INNER JOIN '||V_ESQUEMA||'.MIG2_OFR_OFERTAS MIG2 ON MIG2.OFR_COD_OFERTA = OFR.OFR_NUM_OFERTA
+              WHERE MIG2.OFR_COD_ESTADO_OFERTA = ''01-06''
+            ) SQLI ON (SQLI.ECO_ID = ECO.ECO_ID)
+            WHEN MATCHED THEN UPDATE SET
+              ECO.DD_EEC_ID = (SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''06'' AND BORRADO = 0)    
+      '
+      ;   
+      
+      --Según comentario de Tomás y Manuel, eliminamos ECO_PETICIONARIO_ANULACION porque nunca va a venir informado y mejor que esté blanco.
+      
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL actualizada. '||SQL%ROWCOUNT||' Filas.');
       
       V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ECO_EXPEDIENTE_COMERCIAL'',''10''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
-      DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ANALIZADA.');
       
 
 EXCEPTION

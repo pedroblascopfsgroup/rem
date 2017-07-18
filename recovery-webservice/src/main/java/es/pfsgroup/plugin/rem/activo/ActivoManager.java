@@ -274,6 +274,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String MOTIVO_NO_PUBLICADO_POR_ACTIVO_VENDIDO = "activo.motivo.vendido.no.publicar";
 	private static final String AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO = "activo.motivo.oferta.tipo.numero.documento";
 	private static final String AVISO_MENSAJE_CLIENTE_OBLIGATORIO = "activo.motivo.oferta.cliente";
+	private static final String AVISO_MEDIADOR_NO_EXISTE= "activo.aviso.mediador.no.existe";
 
 	@Override
 	@BusinessOperation(overrides = "activoManager.get")
@@ -1629,7 +1630,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	@Transactional(readOnly = false)
-	public Boolean createHistoricoMediador(DtoHistoricoMediador dto) {
+	public Boolean createHistoricoMediador(DtoHistoricoMediador dto) throws JsonViewerException {
 		ActivoInformeComercialHistoricoMediador historicoMediador = new ActivoInformeComercialHistoricoMediador();
 		Activo activo = null;
 
@@ -1664,10 +1665,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			beanUtilNotNull.copyProperty(historicoMediador, "fechaDesde", new Date());
 			beanUtilNotNull.copyProperty(historicoMediador, "activo", activo);
 
-			if (!Checks.esNulo(dto.getMediador()) || !dto.getMediador().equals("")) { // si no se selecciona mediador en el combo, se devuelve mediador "", no null.
-				Filter proveedorFiltro = genericDao.createFilter(FilterType.EQUALS, "id",
-						Long.parseLong(dto.getMediador()));
+			if (!Checks.esNulo(dto.getCodigo()) || !dto.getCodigo().equals("")) { // si no se selecciona mediador en el combo, se devuelve mediador "", no null.
+				Filter proveedorFiltro = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
+						Long.parseLong(dto.getCodigo()));
 				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, proveedorFiltro);
+				
+				if(Checks.esNulo(proveedor)){
+					//mandar mensaje
+					throw new JsonViewerException(messageServices.getMessage(AVISO_MEDIADOR_NO_EXISTE));
+				}
+				
 				beanUtilNotNull.copyProperty(historicoMediador, "mediadorInforme", proveedor);
 
 				// Asignar el nuevo proveedor de tipo mediador al activo,

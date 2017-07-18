@@ -1923,7 +1923,14 @@ public class ActivoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createHistoricoMediador(DtoHistoricoMediador dto, ModelMap model) {
-		model.put("success", activoApi.createHistoricoMediador(dto));
+		
+		try{
+			model.put("success", activoApi.createHistoricoMediador(dto));
+		}
+		catch (JsonViewerException jvex) {
+			model.put("success", false);
+			model.put("msg", jvex.getMessage());
+		}
 		return createModelAndViewJson(model);
 	}
 

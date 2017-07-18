@@ -2609,6 +2609,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						DDEstadoDevolucion estadoDevolucion = (DDEstadoDevolucion) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoDevolucion.class,
 								dto.getEstadoDevolucionCodigo());
 						expedienteComercial.getReserva().setEstadoDevolucion(estadoDevolucion);
+						
+						if(dto.getEstadoDevolucionCodigo().equals(DDEstadoDevolucion.ESTADO_DEVUELTA)) {
+							expedienteComercial.setEstado((DDEstadosExpedienteComercial)utilDiccionarioApi.dameValorDiccionarioByCod(
+									DDEstadosExpedienteComercial.class, DDEstadosExpedienteComercial.ANULADO));
+							expedienteComercial.getReserva().setEstadoReserva((DDEstadosReserva) utilDiccionarioApi.dameValorDiccionarioByCod(
+									DDEstadosReserva.class, DDEstadosReserva.CODIGO_RESUELTA_DEVUELTA));							
+							expedienteComercial.getOferta().setEstadoOferta((DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class,
+									DDEstadoOferta.CODIGO_RECHAZADA));
+						}
 					}
 					
 					if(!Checks.esNulo(dto.getFechaReserva())) {
@@ -2618,8 +2627,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(expedienteComercial.getUltimoPosicionamiento()) && !Checks.esNulo(dto.getFechaPosicionamiento())) {
 					expedienteComercial.getUltimoPosicionamiento().setFechaPosicionamiento(dto.getFechaPosicionamiento());
 				}
-
-				genericDao.save(ExpedienteComercial.class, expedienteComercial);
+				if(expedienteComercial.getId()!=null) {
+					genericDao.update(ExpedienteComercial.class, expedienteComercial);
+				}else {
+					genericDao.save(Reserva.class, expedienteComercial.getReserva());
+					genericDao.save(Oferta.class, expedienteComercial.getOferta());
+					genericDao.save(ExpedienteComercial.class, expedienteComercial);
+				}
 			} catch (IllegalAccessException e) {
 				logger.error("error en expedienteComercialManager", e);
 			} catch (InvocationTargetException e) {

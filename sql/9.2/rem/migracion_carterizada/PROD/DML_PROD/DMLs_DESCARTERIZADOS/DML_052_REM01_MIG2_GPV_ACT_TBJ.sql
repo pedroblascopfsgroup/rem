@@ -82,7 +82,7 @@ BEGIN
                                 JOIN '||V_ESQUEMA||'.GPV_ACT T1 ON T1.GPV_ID = GPV.GPV_ID AND T1.ACT_ID = ACT.ACT_ID
 								WHERE MIG2.VALIDACION = 0
                           ) AUX
-                ON (GAS.GPV_ACT_ID = AUX.GPV_ACT_ID)
+                ON (GAS.GPV_ID = AUX.GPV_ID AND GAS.ACT_ID = AUX.ACT_ID)
                 WHEN MATCHED THEN UPDATE SET
                   GAS.GPV_PARTICIPACION_GASTO = AUX.SUMA
       '

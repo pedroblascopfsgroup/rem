@@ -169,24 +169,25 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 			            	}		
 						},
 						{
-                    xtype: 'comboboxfieldbase',
+                    xtype: 'comboboxfieldbase',                    
                     reference: 'comboFormalizacion',
                     fieldLabel: HreRem.i18n('fieldlabel.agrupacion.con.formalizacion'),
                     bind: {
                     		store: '{comboSiNoRem}',
                     		value: '{agrupacionficha.isFormalizacion}',
-                        readOnly: '{agrupacionTieneActivos}'                       
+                    		hidden: '{!esAgrupacionLoteComercial}',
+                        	readOnly: '{agrupacionTieneActivos}'                       
                     },
                     listeners: {
                         change: function(combo, value) {
                           var me = this;
-                          if(value=='1') {
-                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').allowBlank = false;
+                          if(value=='1') {                            
                             me.up('formBase').down('[reference=cbGestoriaFormalizacion]').setDisabled(false);
                             me.up('formBase').down('[reference=cbGestoriaFormalizacion]').validate();
-                            me.up('formBase').down('[reference=cbGestorFormalizacion]').allowBlank = false;
                             me.up('formBase').down('[reference=cbGestorFormalizacion]').setDisabled(false);
-                            me.up('formBase').down('[reference=cbGestorFormalizacion]').validate();                            
+                            me.up('formBase').down('[reference=cbGestorFormalizacion]').validate();
+                            me.up('formBase').down('[reference=cbGestorFormalizacion]').allowBlank = '{!esAgrupacionLoteComercial}';
+                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').allowBlank = '{!esAgrupacionLoteComercial}';
                           } else {
                             me.up('formBase').down('[reference=cbGestoriaFormalizacion]').allowBlank = true;
                             me.up('formBase').down('[reference=cbGestoriaFormalizacion]').setValue("");

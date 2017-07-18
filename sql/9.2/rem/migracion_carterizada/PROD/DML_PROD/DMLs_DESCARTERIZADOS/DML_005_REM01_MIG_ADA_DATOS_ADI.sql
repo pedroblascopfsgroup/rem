@@ -336,7 +336,7 @@ BEGIN
 	ACT.ACT_ID,
 	MIG.BIE_DREG_ID									          BIE_DREG_ID,
 	MIG.REG_IDUFIR                                            REG_IDUFIR,
-	MIG.REG_NUM_DEPARTAMENTO                                  REG_NUM_DEPARTAMENTO,
+	NULL					                                  REG_NUM_DEPARTAMENTO,
 	MIG.REG_HAN_CAMBIADO                                      REG_HAN_CAMBIADO,
 	(SELECT DD_LOC_ID
 	FROM '||V_ESQUEMA_MASTER||'.DD_LOC_LOCALIDAD

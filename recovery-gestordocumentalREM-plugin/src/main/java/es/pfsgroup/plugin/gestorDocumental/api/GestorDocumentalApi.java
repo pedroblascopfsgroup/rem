@@ -5,6 +5,7 @@ import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CabeceraPeticionRestCl
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearDocumentoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearVersionDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearVersionMetadatosDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CredencialesUsuarioDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DescargaDocumentosExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DocumentosExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.ModificarMetadatosDto;
@@ -101,10 +102,11 @@ public interface GestorDocumentalApi {
 	 * Permite introducir una relación entre un documento y un expediente
 	 * 
 	 * @param cabecera
+	 * @param credencialesUsuario
 	 * @return RespuestaGeneral
 	 * @throws GestorDocumentalException 
 	 */
-	RespuestaGeneral crearRelacionExpediente(CabeceraPeticionRestClientDto cabecera) throws GestorDocumentalException;
+	RespuestaGeneral crearRelacionExpediente(CabeceraPeticionRestClientDto cabecera, CredencialesUsuarioDto credUsuDto) throws GestorDocumentalException;
 
 	/**
 	 * Permite consultar todo el conjunto de serie documentales, TDN1s y TDN2s
@@ -122,5 +124,6 @@ public interface GestorDocumentalApi {
 	 * @return
 	 */
 	boolean modoRestClientActivado();
+
 
 }

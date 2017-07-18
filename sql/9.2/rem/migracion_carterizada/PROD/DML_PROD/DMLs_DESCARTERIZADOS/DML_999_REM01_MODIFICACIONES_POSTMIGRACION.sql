@@ -198,6 +198,27 @@ BEGIN
 
     DBMS_OUTPUT.PUT_LINE('[INFO] REGISTROS CORREGIDOS - '||SQL%ROWCOUNT||'');
 
+    DBMS_OUTPUT.PUT_LINE('[INFO] ACTUALIZANDO SEQUENCE PVE_COD_REM');
+
+    -- Obtenemos el valor maximo de la columna AGR_NUM_AGRUP_REM y lo incrementamos en 1
+    V_MSQL := 'SELECT NVL(MAX(PVE_COD_REM),0) FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR';
+    EXECUTE IMMEDIATE V_MSQL INTO MAX_NUM;
+    
+    MAX_NUM := MAX_NUM +1;
+    
+    EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_PVE_COD_REM'' AND SEQUENCE_OWNER = '''||V_ESQUEMA||'''' INTO V_EXISTE; 
+    
+    -- Si existe secuencia la borramos
+    IF V_EXISTE = 1 THEN
+        EXECUTE IMMEDIATE 'DROP SEQUENCE '||V_ESQUEMA||'.S_PVE_COD_REM';
+        DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.S_PVE_COD_REM... Secuencia eliminada');    
+    END IF;
+    
+    EXECUTE IMMEDIATE 'CREATE SEQUENCE ' ||V_ESQUEMA|| '.S_PVE_COD_REM  MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH '||MAX_NUM||' NOCACHE NOORDER  NOCYCLE';
+    
+    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_PVE_COD_REM... Secuencia creada e inicializada correctamente.');
+
+
     --#############################################################
     --############ TRABAJOS
     --#############################################################
@@ -294,6 +315,19 @@ BEGIN
         WHEN MATCHED THEN UPDATE SET
             T1.DD_SCM_ID = (SELECT SCM.DD_SCM_ID FROM REM01.DD_SCM_SITUACION_COMERCIAL SCM WHERE SCM.DD_SCM_CODIGO = T2.SITUACION_COMERCIAL)';
 
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.ACT_ACTIVO mergeada. '||SQL%ROWCOUNT||' Filas.');
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] ACTUALIZANDO CAMPO LLAVES EN PODER DE HRE...');
+
+    V_MSQL := '
+        UPDATE '||V_ESQUEMA||'.ACT_ACTIVO ACT 
+            SET ACT.ACT_LLAVES_HRE = NULL 
+            , USUARIOMODIFICAR = '''||V_USUARIO||'''
+        WHERE ACT.ACT_LLAVES_NECESARIAS = 0 AND ACT.ACT_LLAVES_HRE = 0
+    '
+    ;
+    EXECUTE IMMEDIATE V_MSQL;
+        
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.ACT_ACTIVO mergeada. '||SQL%ROWCOUNT||' Filas.');
 
     COMMIT;

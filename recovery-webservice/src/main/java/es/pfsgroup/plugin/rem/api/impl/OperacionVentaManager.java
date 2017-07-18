@@ -312,7 +312,10 @@ public class OperacionVentaManager implements ParamReportsApi{
 			
 			
 			List<ActivoTasacion> listActivoTasacion = activoDao.getListActivoTasacionByIdActivo(activo.getId());
-			if (listActivoTasacion!=null) {
+			if (listActivoTasacion!=null &&
+				listActivoTasacion.size()>0 &&
+				listActivoTasacion.get(0)!=null &&
+				listActivoTasacion.get(0).getFechaRecepcionTasacion()!=null) {
 				mapaValores.put("fechaTasacion",FileUtilsREM.stringify(listActivoTasacion.get(0).getFechaRecepcionTasacion()));
 			} else {
 				mapaValores.put("fechaTasacion",FileUtilsREM.stringify(null));

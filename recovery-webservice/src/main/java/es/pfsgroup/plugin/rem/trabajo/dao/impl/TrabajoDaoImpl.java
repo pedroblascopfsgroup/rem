@@ -45,7 +45,6 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 
 	}
 
-	@SuppressWarnings("static-access")
 	@Override
 	public Page findAllFilteredByProveedorContacto(DtoTrabajoFilter dto, Long idUsuario) {
 
@@ -55,7 +54,7 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 
 		List<String> nombresProveedor = proveedorDao.getNombreProveedorByIdUsuario(idUsuario);
 		if(!Checks.estaVacio(nombresProveedor)) {
-			hb.addFiltroWhereInSiNotNull(hb, "tbj.proveedor", nombresProveedor);
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "tbj.proveedor", nombresProveedor);
 		}
 		else {
 			//Si no hay proveedores, no debe mostrar ningún trabajo en el listado
@@ -197,8 +196,12 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	@Override
 	public Page getPresupuestosTrabajo(DtoGestionEconomicaTrabajo filtro, Usuario usuarioLogado)
 	{
+		List<String> nombresProveedor = proveedorDao.getNombreProveedorByIdUsuario(usuarioLogado.getId());
 		HQLBuilder hb = new HQLBuilder(" from PresupuestoTrabajo preTra");
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "preTra.trabajo.id", filtro.getIdTrabajo());
+		if(!Checks.estaVacio(nombresProveedor)) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "preTra.proveedor.nombre", nombresProveedor);
+		}
 		
 		return HibernateQueryUtils.page(this, hb, filtro);
 	}

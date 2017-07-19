@@ -53,10 +53,6 @@ DECLARE
       V_TABLA_TEX VARCHAR2(30 CHAR) := 'TEX_TAREA_EXTERNA';
       V_TABLA_TAC VARCHAR2(30 CHAR) := 'TAC_TAREAS_ACTIVOS';
       
-      -- Vles. para el SP de Altas BPM
-      V_IN VARCHAR2(30 CHAR) := V_USUARIO; --Vble. de entrada para el  SP que sera el USUARIOCREAR
-      V_OUT VARCHAR2(32000 CHAR); --Vble. de salida para el  SP que almacena la salida del SP
-      
 BEGIN
   
     /*
@@ -580,14 +576,6 @@ BEGIN
 
       V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''TAC_TAREAS_ACTIVOS'',''10''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
-      
-      DBMS_OUTPUT.PUT_LINE('[INFO] FIN DEL PROCESO DE GENERACION DE TRAMITES PARA LAS OFERTAS MIGRADAS EN FASE 2.');
-
-      DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------------------') ;
-      DBMS_OUTPUT.PUT_LINE('PROCESO DE ALTAS DE INSTANCIAS PARA LOS BPMS...') ;
-      DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------------------') ;
-      
-      REM01.ALTA_BPM_INSTANCES(V_IN,V_OUT);
       
 EXCEPTION
       WHEN OTHERS THEN

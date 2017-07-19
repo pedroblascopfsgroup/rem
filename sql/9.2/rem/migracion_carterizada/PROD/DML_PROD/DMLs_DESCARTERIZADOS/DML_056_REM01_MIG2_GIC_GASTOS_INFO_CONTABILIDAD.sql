@@ -132,6 +132,53 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
+      
+      
+      EXECUTE IMMEDIATE '      
+      MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' GIC_OLD
+      USING (
+            SELECT GPV.GPV_ID, CPP.CPP_PARTIDA_PRESUPUESTARIA
+            FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV
+            INNER JOIN '||V_ESQUEMA||'.GDE_GASTOS_DETALLE_ECONOMICO GDE on GPV.gpv_id = GDE.gpv_id
+            INNER JOIN '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD GIC on GPV.gpv_id = GIC.gpv_id
+            INNER JOIN '||V_ESQUEMA||'.CPP_CONFIG_PTDAS_PREP CPP on GPV.DD_STG_ID = CPP.DD_STG_ID AND GIC.EJE_ID = CPP.EJE_ID
+            WHERE GDE.DD_TIT_ID IS NULL
+              AND GPV.USUARIOCREAR = '''||V_USUARIO||'''
+              AND CPP.CPP_ARRENDAMIENTO = 0
+              AND GPV.BORRADO = 0
+              AND CPP.BORRADO = 0
+            ) GIC_NEW
+      ON (GIC_NEW.GPV_ID = GIC_OLD.GPV_ID)
+      WHEN MATCHED THEN UPDATE 
+        SET GIC_OLD.GIC_PTDA_PRESUPUESTARIA = GIC_NEW.CPP_PARTIDA_PRESUPUESTARIA'
+        ;
+      
+      
+       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada GIC_PTDA_PRESUPUESTARIA '||SQL%ROWCOUNT||' Filas.');     
+      
+      
+      EXECUTE IMMEDIATE '        
+      MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' GIC_OLD
+      USING (
+            SELECT GPV.GPV_ID, CCC.CCC_CUENTA_CONTABLE
+            FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV
+            INNER JOIN '||V_ESQUEMA||'.GDE_GASTOS_DETALLE_ECONOMICO GDE on GPV.gpv_id = GDE.gpv_id
+            INNER JOIN '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD GIC on GPV.gpv_id = GIC.gpv_id
+            INNER JOIN '||V_ESQUEMA||'.CCC_CONFIG_CTAS_CONTABLES CCC on GPV.DD_STG_ID = CCC.DD_STG_ID AND GIC.EJE_ID = CCC.EJE_ID
+            WHERE GDE.DD_TIT_ID IS NULL
+            AND GPV.USUARIOCREAR = '''||V_USUARIO||'''
+            AND CCC.CCC_ARRENDAMIENTO = 0
+            AND GPV.BORRADO = 0
+            AND CCC.BORRADO = 0
+            ) GIC_NEW
+      ON (GIC_NEW.GPV_ID = GIC_OLD.GPV_ID)
+      WHEN MATCHED THEN UPDATE                                     
+      SET GIC_OLD.GIC_CUENTA_CONTABLE = GIC_NEW.CCC_CUENTA_CONTABLE'
+      ;
+      
+      
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada GIC_CUENTA_CONTABLE '||SQL%ROWCOUNT||' Filas.');           
+      
       COMMIT;
       
       V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';

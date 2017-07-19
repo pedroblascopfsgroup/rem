@@ -44,21 +44,30 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 				        },
 				        { 
 							xtype: 'comboboxfieldbase',
-						    addUxReadOnlyEditFieldPlugin: false,
 				        	fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
 				        	name: 'entidadPropietariaCodigo',
+				        	displayField: 'descripcion',
+    						valueField: 'id',
 				        	bind: {
 			            		store: '{comboEntidadPropietaria}'
-			            	}
+			            	},
+			            	reference: 'comboCarteraActivoSearch',
+			            	chainedStore: 'comboSubcarteraFiltered',
+							chainedReference: 'comboSubcarteraActivoSearch',
+							listeners: {
+								select: 'onChangeChainedCombo'
+							}
 				        },
 				        { 
 							xtype: 'comboboxfieldbase',
-						    addUxReadOnlyEditFieldPlugin: false,
 				        	fieldLabel: HreRem.i18n('fieldlabel.subcartera'),
 				        	name: 'subcarteraCodigo',
 				        	bind: {
-			            		store: '{comboSubcartera}'
-			            	}
+			            		store: '{comboSubcarteraFiltered}'
+			            	},
+			            	reference: 'comboSubcarteraActivoSearch',
+			            	valueField: 'codigo',
+    						displayField: 'descripcion'
 				        }
 				    ]},
 				    {

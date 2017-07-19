@@ -51,9 +51,11 @@ import es.pfsgroup.plugin.rem.model.DtoLocalidadSimple;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
@@ -675,5 +677,17 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		}
 
 		return listaTipoPropuestas;
+	}
+	
+	@Override
+	public List<DDSubcartera> getComboSubcartera(String idCartera){
+		
+		Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.id",
+				Long.parseLong(idCartera));
+		
+		List<DDSubcartera> listaSubcartera= genericDao.getList(DDSubcartera.class, filtroCartera);
+		
+		return listaSubcartera;
+		
 	}
 }

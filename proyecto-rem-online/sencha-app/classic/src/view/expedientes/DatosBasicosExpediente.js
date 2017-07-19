@@ -238,6 +238,8 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 									{
 										xtype:'datefieldbase',
 										formatter: 'date("d/m/Y")',
+										reference: 'fechaDevolucionReservaRef',
+										allowBlank: true,
 										fieldLabel: HreRem.i18n('fieldlabel.fecha.devolucion.reserva'),
 										bind: {
 											disabled: '{!expediente.tieneReserva}',
@@ -262,6 +264,17 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							        		disabled: '{!expediente.tieneReserva}',
 							        		store: '{storeEstadosDevolucion}',
 						            		value: '{expediente.estadoDevolucionCodigo}'
+						            	},
+						            	listeners:{
+						            		change: function(){
+						            			if(me.up('expedientedetallemain').lookupReference('fechaDevolucionReservaRef')!=null&&(!Ext.isEmpty(this.value)||this.value!=null) ){
+						            				if(this.value=='02'){//Devuelta
+						            					me.up('expedientedetallemain').lookupReference('fechaDevolucionReservaRef').allowBlank=false;
+						            				}else{
+						            					me.up('expedientedetallemain').lookupReference('fechaDevolucionReservaRef').allowBlank=true;
+						            				}
+						            			}
+						            		}
 						            	}
 							        }
 								]

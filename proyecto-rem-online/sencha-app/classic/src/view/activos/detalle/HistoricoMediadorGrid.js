@@ -30,6 +30,10 @@ Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
 		        {
 		            dataIndex: 'codigo',
 		            text: HreRem.i18n('title.publicaciones.mediador.codigo'),
+		            editor: {
+		            	xtype: 'numberfield',
+		            	allowBlank: false
+		            },
 		            flex: 0.5
 		        },
 		        {
@@ -40,7 +44,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
 		            	xtype: 'combobox',
 			            displayField: 'nombreProveedor',
 			            valueField: 'idProveedor',
-			            allowBlank: false,
+			            allowBlank: true,
 			            bind: {
 			            	store: '{storeMediadorListFiltered}'
 			            },

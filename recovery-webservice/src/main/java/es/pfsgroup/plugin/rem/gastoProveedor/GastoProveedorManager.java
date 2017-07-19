@@ -1252,6 +1252,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 							Trabajo trabajo = gastoTrabajo.getTrabajo();
 							trabajo.setFechaEmisionFactura(null);
 							genericDao.save(Trabajo.class, trabajo);
+							genericDao.deleteById(GastoProveedorTrabajo.class, gastoTrabajo.getId());
 						}
 
 					}

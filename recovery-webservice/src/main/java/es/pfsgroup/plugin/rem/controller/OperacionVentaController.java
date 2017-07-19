@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.itextpdf.text.DocumentException;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -144,8 +145,10 @@ public class OperacionVentaController {
 				try {
 					salida = File.createTempFile(templateOperacionVentaShort, ".pdf");
 					FileUtilsREM.concatenatePdfs(listaPdf, salida);
-				} catch (Exception e) {
-					model.put("error", e.getLocalizedMessage());
+				} catch (IOException ex1) {
+					model.put("error", ex1.getLocalizedMessage());
+				} catch (DocumentException ex2) {
+					model.put("error", ex2.getLocalizedMessage());
 				}
 			}
 

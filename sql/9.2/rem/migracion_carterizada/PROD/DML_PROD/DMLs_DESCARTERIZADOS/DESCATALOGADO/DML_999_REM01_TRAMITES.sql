@@ -28,7 +28,8 @@ DECLARE
       V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
       V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
       V_TABLA VARCHAR2(40 CHAR) := 'MIG2_TRA_TRAMITES_OFERTAS'; -- Vble. Tabla pivote
-      
+      V_SENTENCIA VARCHAR2(2600 CHAR);
+
       -- Vbls. para el cursor
       V_OFR_ID NUMBER(16) := 0; -- Vble. para almacenar el OFR_ID
       S_TBJ NUMBER(16) := 0; -- Vble. para almacenar la secuencia generada para el TBJ_ID
@@ -39,7 +40,7 @@ DECLARE
       
       -- Cursor que almacena las secuencias
       CURSOR CURSOR_OFERTAS IS
-      SELECT DISTINCT OFR_ID  FROM REM01.MIG2_TRA_TRAMITES_OFERTAS TRA
+      SELECT DISTINCT OFR_ID  FROM '||V_ESQUEMA||'.MIG2_TRA_TRAMITES_OFERTAS TRA
       ;
 
       -- Tablas de volcado
@@ -52,15 +53,11 @@ DECLARE
       V_TABLA_TEX VARCHAR2(30 CHAR) := 'TEX_TAREA_EXTERNA';
       V_TABLA_TAC VARCHAR2(30 CHAR) := 'TAC_TAREAS_ACTIVOS';
       
-      -- Vles. para el SP de Altas BPM
-      V_IN VARCHAR2(30 CHAR) := V_USUARIO; --Vble. de entrada para el  SP que sera el USUARIOCREAR
-      V_OUT VARCHAR2(32000 CHAR); --Vble. de salida para el  SP que almacena la salida del SP
-      
 BEGIN
-    
-                  DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------------------') ;
-                  DBMS_OUTPUT.PUT_LINE('PROCESO DE GENERACION DE TRAMITES PARA LAS OFERTAS MIGRADAS EN FASE 2....') ;
-                  DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------------------') ;
+
+      DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------------------') ;
+      DBMS_OUTPUT.PUT_LINE('PROCESO DE GENERACION DE TRAMITES PARA LAS OFERTAS MIGRADAS EN FASE 2....') ;
+      DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------------------') ;
 
       ---------------------------------------------------------------------------------------------------------------
       -- INSERT MIG2_TRA_TRAMITES_OFERTAS --
@@ -82,101 +79,72 @@ BEGIN
                         OFR.OFR_ID
                         , ACT.ACT_ID
                         , CASE TOF.DD_TOF_CODIGO
-                              WHEN ''01'' 
+                              WHEN ''01''
                                     THEN (SELECT DD_TPO_ID FROM '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = ''T013'' AND BORRADO = 0)
-                              WHEN ''02'' 
+                              WHEN ''02''
                                     THEN (SELECT DD_TPO_ID FROM '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = ''T014'' AND BORRADO = 0)
                         END AS TPO_ID
                         , CASE
-                              --Firma propietario
                               WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
-                                    AND ACH.ACH_CODIGO_HITO = 1 
-                                    AND EEC.DD_EEC_CODIGO = ''10'' -- Pent. Sancion
-                                    AND PAC_CHECK_FORMALIZAR = 0
-                                          THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_FirmaPropietario'')
-                              --Resolución comité
+                                    AND MIG2.OFR_COD_ESTADO_OFERTA = ''01-01''
+                                    AND EEC.DD_EEC_CODIGO = ''10'' --Pte. Sanción
+                                        THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_DefinicionOferta'' AND BORRADO = 0)
+                             
                               WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
-                                    AND ACH.ACH_CODIGO_HITO = 2 
-                                    AND EEC.DD_EEC_CODIGO = ''10'' -- Pent. Sancion
-                                    AND PAC_CHECK_FORMALIZAR = 1
-                                          THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_ResolucionComite'')
-                              --Instrucciones reserva
+                                    AND MIG2.OFR_COD_ESTADO_OFERTA = ''01-02''
+                                    AND EEC.DD_EEC_CODIGO = ''06'' --Reservado
+                                        THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_ResultadoPBC'' AND BORRADO = 0)
+                              
                               WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
-                                    AND ACH.ACH_CODIGO_HITO = 3 
-                                    AND EEC.DD_EEC_CODIGO = ''06'' -- Reservado
-                                    AND PAC_CHECK_FORMALIZAR = 1
-                                          THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_InstruccionesReserva'')
-                              --Informe jurídico
+                                    AND MIG2.OFR_COD_ESTADO_OFERTA = ''01-03''
+                                    AND EEC.DD_EEC_CODIGO = ''11'' --Aprobado
+                                    AND RES.RES.ECO_ID IS NULL -- Sin reserva
+                                        THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_ResultadoPBC'' AND BORRADO = 0)                            
+                              
                               WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
-                                    AND ACH.ACH_CODIGO_HITO = 4 
-                                    AND EEC.DD_EEC_CODIGO = ''11'' -- Aprobado
-                                    AND PAC_CHECK_FORMALIZAR = 1
-                                          THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_InformeJuridico'')
-                              --Instrucciones reserva
+                                    AND MIG2.OFR_COD_ESTADO_OFERTA = ''01-03''
+                                    AND EEC.DD_EEC_CODIGO = ''11'' --Aprobado
+                                    AND RES.RES.ECO_ID IS NOT NULL -- Con reserva
+                                        THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_InstruccionesReserva'' AND BORRADO = 0)                             
+
                               WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
-                                    AND ACH.ACH_CODIGO_HITO = 5 
-                                    AND EEC.DD_EEC_CODIGO = ''11'' -- Aprobado
-                                    AND PAC_CHECK_FORMALIZAR = 1
-                                          THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_InstruccionesReserva'')
-                              --Informe jurídico
+                                    AND MIG2.OFR_COD_ESTADO_OFERTA = ''01-04''
+                                    AND EEC.DD_EEC_CODIGO = ''04'' --Contraofertado
+                                        THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_RespuestaOfertante'' AND BORRADO = 0)  
+                              
                               WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
-                                    AND ACH.ACH_CODIGO_HITO = 6 
-                                    AND EEC.DD_EEC_CODIGO = ''04'' -- Contraofertado
-                                    AND PAC_CHECK_FORMALIZAR = 1
-                                          THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_InformeJuridico'')
-                              --Resultado PBC
+                                    AND MIG2.OFR_COD_ESTADO_OFERTA = ''01-06''
+                                    AND EEC.DD_EEC_CODIGO = ''11'' --Aprobado
+                                        THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_ResultadoPBC'' AND BORRADO = 0)
+
                               WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
-                                    AND ACH.ACH_CODIGO_HITO = 7 
-                                    AND EEC.DD_EEC_CODIGO = ''04'' -- Contraofertado
-                                    AND PAC_CHECK_FORMALIZAR = 1
-                                          THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_ResultadoPBC'')                          
-                              --Resultado PBC
-                              WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
-                                    AND ACH.ACH_CODIGO_HITO = 7 
-                                    AND EEC.DD_EEC_CODIGO = ''11'' -- Aprobado
-                                    AND PAC_CHECK_FORMALIZAR = 1
-                                          THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_ResultadoPBC'')                                         
-                              --Posicionamiento y firma
-                              WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
-                                    AND ACH.ACH_CODIGO_HITO = 9 
-                                    AND EEC.DD_EEC_CODIGO = ''07'' -- Posicionado
-                                    AND PAC_CHECK_FORMALIZAR = 1
-                                          THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_PosicionamientoYFirma'')
-                              --Devolución de llaves HRE
-                              WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
-                                    AND ACH.ACH_CODIGO_HITO = 10 
-                                    AND EEC.DD_EEC_CODIGO = ''03'' -- Firmado
-                                    AND PAC_CHECK_FORMALIZAR = 1
-                                          THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_DevolucionLlaves'')
-                              --Documentos post-venta Cierre económico
-                              WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
-                                    AND ACH.ACH_CODIGO_HITO = 11 
-                                    AND EEC.DD_EEC_CODIGO = ''03'' -- Firmado
-                                    AND PAC_CHECK_FORMALIZAR = 1
-                                          THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_DocumentosPostVenta'')
-                              --T014_DefinicionOferta
+                                    AND MIG2.OFR_COD_ESTADO_OFERTA = ''01-06''
+                                    AND EEC.DD_EEC_CODIGO = ''06'' --Reservado
+                                        THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_ResultadoPBC'' AND BORRADO = 0)
+                                        
                               WHEN TOF.DD_TOF_CODIGO = ''02'' -- Alquiler
-                                          THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T014_DefinicionOferta'')
+                                          THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T014_DefinicionOferta'' AND BORRADO = 0)
                         END TAP_ID,
                         (SELECT MAX(GEE.USU_ID) 
                               FROM '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO GAC 
                               JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE ON GEE.GEE_ID = GAC.GEE_ID
-                              WHERE GAC.ACT_ID = ACT.ACT_ID AND GEE.DD_TGE_ID = (SELECT TGE.DD_TGE_ID FROM '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR TGE WHERE TGE.DD_TGE_CODIGO = ''GACT'')
+                              WHERE GAC.ACT_ID = ACT.ACT_ID AND GEE.DD_TGE_ID = (SELECT TGE.DD_TGE_ID FROM REMMASTER.DD_TGE_TIPO_GESTOR TGE WHERE TGE.DD_TGE_CODIGO = ''GCOM'')
                         ) AS USU_ID,
                       (SELECT MAX(GEE.USU_ID) 
                             FROM '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO GAC 
                             JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE ON GEE.GEE_ID = GAC.GEE_ID 
-                            WHERE GAC.ACT_ID = ACT.ACT_ID AND GEE.DD_TGE_ID = (SELECT TGE.DD_TGE_ID FROM '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR TGE WHERE TGE.DD_TGE_CODIGO = ''SUPACT'')
+                            WHERE GAC.ACT_ID = ACT.ACT_ID AND GEE.DD_TGE_ID = (SELECT TGE.DD_TGE_ID FROM REMMASTER.DD_TGE_TIPO_GESTOR TGE WHERE TGE.DD_TGE_CODIGO = ''SCOM'')
                       ) AS SUP_ID
                   FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO 
                         INNER JOIN '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL EEC ON EEC.DD_EEC_ID = ECO.DD_EEC_ID AND EEC.BORRADO = 0 
                         INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_ID = ECO.OFR_ID AND ECO.BORRADO = 0
+                        INNER JOIN '||V_ESQUEMA||'.MIG2_OFR_OFERTAS MIG2 ON MIG2.OFR_COD_OFERTA = OFR.OFR_NUM_OFERTA
                         INNER JOIN '||V_ESQUEMA||'.DD_TOF_TIPOS_OFERTA TOF ON TOF.DD_TOF_ID = OFR.DD_TOF_ID AND TOF.BORRADO = 0 
                         INNER JOIN '||V_ESQUEMA||'.ACT_OFR AO ON AO.OFR_ID = OFR.OFR_ID 
                         INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = AO.ACT_ID AND ACT.BORRADO = 0 
                         INNER JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0
-                        INNER JOIN '||V_ESQUEMA||'.MIG2_ACH_ACTIVOS_HITO ACH ON ACH.ACH_NUMERO_ACTIVO = ACT.ACT_NUM_ACTIVO
-                  WHERE EEC.DD_EEC_CODIGO IN (''10'',''06'',''11'',''04'',''07'',''03'') AND ACH.VALIDACION = 0
+                        LEFT JOIN '||V_ESQUEMA||'.RES_RESERVAS RES ON RES.ECO_ID = ECO.ECO_ID
+                  WHERE ECO.TBJ_ID IS NULL AND EEC.DD_EEC_CODIGO IN (''10'',''06'',''11'',''04'') -- Pte. Sanción || Reservado || Aprobado || Contraofertado
             )
             SELECT
                   OV.OFR_ID
@@ -191,10 +159,6 @@ BEGIN
       ;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
-      
---      COMMIT;
-      
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
       
       ---------------------------------------------------------------------------------------------------------------
       -- UPDATE MIG2_TRA_TRAMITES_OFERTAS (TBJ_ID, TRA_ID, TAR_ID, TEX_ID) --
@@ -231,10 +195,6 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada.');
       
---      COMMIT;
-      
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
-      
       ---------------------------------------------------------------------------------------------------------------
       -- UPDATE MIG2_TRA_TRAMITES_OFERTAS (USU_ID, SUP_ID) --
       ---------------------------------------------------------------------------------------------------------------
@@ -251,7 +211,7 @@ BEGIN
                             , MAX(USU_GEE.USU_ID) AS USU_ID
                       FROM '||V_TABLA||' TRA
                         JOIN '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO GAC ON GAC.ACT_ID = TRA.ACT_ID
-                        JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD USU_GEE ON USU_GEE.GEE_ID = GAC.GEE_ID AND USU_GEE.DD_TGE_ID = (SELECT TGE.DD_TGE_ID FROM '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR TGE WHERE TGE.DD_TGE_CODIGO = ''GACT'')
+                        JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD USU_GEE ON USU_GEE.GEE_ID = GAC.GEE_ID AND USU_GEE.DD_TGE_ID = (SELECT TGE.DD_TGE_ID FROM '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR TGE WHERE TGE.DD_TGE_CODIGO = ''GCOM'')
                         GROUP BY TRA.ACT_ID, USU_GEE.USU_ID
                 ), SUP_ID AS (
                       SELECT
@@ -259,7 +219,7 @@ BEGIN
                             , MAX(SUP_GEE.USU_ID) AS USU_ID
                       FROM '||V_TABLA||' TRA
                         JOIN '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO GAC ON GAC.ACT_ID = TRA.ACT_ID
-                        JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD SUP_GEE ON SUP_GEE.GEE_ID = GAC.GEE_ID AND SUP_GEE.DD_TGE_ID = (SELECT TGE.DD_TGE_ID FROM '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR TGE WHERE TGE.DD_TGE_CODIGO = ''SUPACT'')
+                        JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD SUP_GEE ON SUP_GEE.GEE_ID = GAC.GEE_ID AND SUP_GEE.DD_TGE_ID = (SELECT TGE.DD_TGE_ID FROM '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR TGE WHERE TGE.DD_TGE_CODIGO = ''SCOM'')
                         GROUP BY TRA.ACT_ID, SUP_GEE.USU_ID
                 )
                 SELECT DISTINCT
@@ -278,10 +238,6 @@ BEGIN
       ;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada. '||SQL%ROWCOUNT||' Filas.');
-      
---      COMMIT;
-      
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA||' COMPUTE STATISTICS');
       
       ---------------------------------------------------------------------------------------------------------------
       -- INSERT ACT_TBJ_TRABAJO --
@@ -344,10 +300,6 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TBJ||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
---      COMMIT;
-
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_TBJ||' COMPUTE STATISTICS');
-      
       ---------------------------------------------------------------------------------------------------------------
       -- INSERT ACT_TBJ --
       ---------------------------------------------------------------------------------------------------------------
@@ -380,10 +332,6 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_ACT_TBJ||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
---      COMMIT;
-
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_ACT_TBJ||' COMPUTE STATISTICS'); 
-      
       ---------------------------------------------------------------------------------------------------------------
       -- UPDATE ECO_EXPEDIENTE_COMERCIAL (TBJ_ID) --
       ---------------------------------------------------------------------------------------------------------------
@@ -404,10 +352,6 @@ BEGIN
       ;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_ECO||' cargada. '||SQL%ROWCOUNT||' Filas.');
-      
---      COMMIT;
-
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_ECO||' COMPUTE STATISTICS'); 
       
       ---------------------------------------------------------------------------------------------------------------
       -- INSERT ACT_TRA_TRAMITE --
@@ -459,10 +403,6 @@ BEGIN
       ;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TRA||' cargada. '||SQL%ROWCOUNT||' Filas.');
-      
-      COMMIT;
-
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_TRA||' COMPUTE STATISTICS');
       
       ---------------------------------------------------------------------------------------------------------------
       -- INSERT TAR_TAREAS_NOTIFICACIONES --
@@ -521,10 +461,6 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TAR||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
---      COMMIT;
-
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_TAR||' COMPUTE STATISTICS');
-      
       ---------------------------------------------------------------------------------------------------------------
       -- INSERT ETN_EXTAREAS_NOTIFICACIONES --
       ---------------------------------------------------------------------------------------------------------------
@@ -546,10 +482,6 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_ETN||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
---      COMMIT;
-
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_ETN||' COMPUTE STATISTICS');
-
       ---------------------------------------------------------------------------------------------------------------
       -- INSERT TEX_TAREA_EXTERNA --
       ---------------------------------------------------------------------------------------------------------------
@@ -590,10 +522,6 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TEX||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
---      COMMIT;
-
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_TEX||' COMPUTE STATISTICS');
-
       ---------------------------------------------------------------------------------------------------------------
       -- INSERT TAC_TAREAS_ACTIVOS --
       ---------------------------------------------------------------------------------------------------------------
@@ -642,15 +570,26 @@ BEGIN
       
      COMMIT;
 
-      EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.'||V_TABLA_TAC||' COMPUTE STATISTICS');
-      
-      DBMS_OUTPUT.PUT_LINE('[INFO] FIN DEL PROCESO DE GENERACION DE TRAMITES PARA LAS OFERTAS MIGRADAS EN FASE 2.');
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ACT_TBJ_TRABAJO'',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
 
-      DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------------------') ;
-      DBMS_OUTPUT.PUT_LINE('PROCESO DE ALTAS DE INSTANCIAS PARA LOS BPMS...') ;
-      DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------------------') ;
-      
-      REM01.ALTA_BPM_INSTANCES(V_IN,V_OUT);
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ACT_TBJ'',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ACT_TRA_TRAMITE'',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''TAR_TAREAS_NOTIFICACIONES'',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ETN_EXTAREAS_NOTIFICACIONES'',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''TEX_TAREA_EXTERNA'',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''TAC_TAREAS_ACTIVOS'',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
       
 EXCEPTION
       WHEN OTHERS THEN

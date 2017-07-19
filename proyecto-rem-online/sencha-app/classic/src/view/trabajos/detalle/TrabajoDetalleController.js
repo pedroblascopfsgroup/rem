@@ -234,7 +234,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		// Comprobar el estado del checkbox para agrupar los activos en un trabajo.
 		var check = me.lookupReference('checkEnglobaTodosActivosRef').getValue();	
 		
-		//Si no se ha seleccionado ningún activo
+		//Si no se ha seleccionado ningï¿½n activo
 		if(Ext.isEmpty(arraySelection)){
 			//Si se marca el check y se esta creando desde agrupaciones
 			if(check && Ext.isEmpty(me.getView().idActivo)){
@@ -248,7 +248,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			    		}
 				);
 			}
-			else{
+			else if(Ext.isEmpty(me.getView().idActivo)){
 				Ext.MessageBox.confirm(
 						HreRem.i18n("msgbox.multiples.trabajos.title"),
 						HreRem.i18n("msgbox.multiples.trabajos.check.mensaje"),
@@ -258,6 +258,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			        		}
 			    		}
 				);
+			}else{
+				me.crearTrabajo(btn,arraySelection);
 			}
 		}
 		else{

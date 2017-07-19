@@ -603,12 +603,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	abrirFormularioAdjuntarDocumentos: function(grid) {
 		var me = this,
 		idExpediente = me.getViewModel().get("expediente.id");
-		bloqueado = me.getViewModel().get("expediente.bloqueado");
-		if(!bloqueado){
-			Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente", {entidad: 'expedientecomercial', idEntidad: idExpediente, parent: grid}).show();
-		}else{
-			me.fireEvent("errorToast","Expediente bloqueado");	
-		}
+		Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente", {entidad: 'expedientecomercial', idEntidad: idExpediente, parent: grid}).show();
 		
 	},
 	

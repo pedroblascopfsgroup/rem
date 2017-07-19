@@ -143,7 +143,7 @@ EXECUTE IMMEDIATE ('
   NULL                     			                                    SDV_ID,
   NULL												                                      CPR_ID,
   ''0''                                                             VERSION,
-  '''||V_USUARIO||'''                                                           USUARIOCREAR,
+  '''||V_USUARIO||'''                                               USUARIOCREAR,
   SYSDATE                                                           FECHACREAR,
   NULL                                                              USUARIOMODIFICAR,
   NULL                                                              FECHAMODIFICAR,
@@ -168,7 +168,18 @@ EXECUTE IMMEDIATE ('
   '
   ;
   
+
+  EXECUTE IMMEDIATE '
+    MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' T1
+    USING (SELECT ACT_NUMERO_ACTIVO, TIPO_ACTIVO, SUBTIPO_ACTIVO
+      FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+      WHERE VALIDACION IN (0,1)) T2
+    ON (T1.ACT_NUM_ACTIVO = T2.ACT_NUMERO_ACTIVO)
+    WHEN MATCHED THEN UPDATE SET
+      T1.DD_TPA_ID = (SELECT DD_TPA_ID FROM '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO TPA WHERE TPA.DD_TPA_CODIGO = T2.TIPO_ACTIVO)
+      , T1.DD_SAC_ID = (SELECT DD_SAC_ID FROM '||V_ESQUEMA||'.DD_SAC_SUBTIPO_ACTIVO SAC WHERE SAC.DD_SAC_CODIGO = T2.SUBTIPO_ACTIVO)';
   ----------
+  DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' tipos y subtipos actualizados. '||SQL%ROWCOUNT||' Filas.');
   
   --DAMOS REGISTROS EN ALTA BIE_BIEN Y BIE_ADJ_ADJUDICACION PARA LOS ACTIVOS QUE TRATAMOS
     
@@ -185,9 +196,9 @@ EXECUTE IMMEDIATE ('
   )
   SELECT
   ACT.BIE_ID                                                        BIE_ID,
-  ACT.ACT_NUM_ACTIVO_UVEM											BIE_NUMERO_ACTIVO,
+  ACT.ACT_NUM_ACTIVO_UVEM											                      BIE_NUMERO_ACTIVO,
   ''0''                                                             VERSION,
-  '''||V_USUARIO||'''                                                           USUARIOCREAR,
+  '''||V_USUARIO||'''                                               USUARIOCREAR,
   SYSDATE                                                           FECHACREAR,
   0                                                                 BORRADO
   FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
@@ -215,7 +226,7 @@ EXECUTE IMMEDIATE ('
   ACT.BIE_ID 								                	  	                  BIE_ID,
   '||V_ESQUEMA||'.S_BIE_ADJ_ADJUDICACION.NEXTVAL					          BIE_ADJ_ID,
   ''0''                                                             VERSION,
-  '''||V_USUARIO||'''                                                           USUARIOCREAR,
+  '''||V_USUARIO||'''                                               USUARIOCREAR,
   SYSDATE                                                           FECHACREAR,
   0                                                                 BORRADO
   FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT

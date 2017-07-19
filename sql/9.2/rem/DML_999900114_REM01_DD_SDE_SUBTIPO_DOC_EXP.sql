@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Jose Villel
---## FECHA_CREACION=20170628
+--## AUTOR=Carlos Pons
+--## FECHA_CREACION=20170819
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-2295
+--## INCIDENCIA_LINK=HREOS-2379
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que inserta en el campo DD_SDE_VINCULABLE de la tabla DD_SDE_SUBTIPO_DOC_EXP
@@ -42,9 +42,15 @@ DECLARE
 		20 - Liquidación plusvalía
 		16 - Copia simple escritura de venta
 		09 - Contrato alquiler 
+
+    24 - Contrato ampliación arras
+    27 - Copia simple escritura de venta
+    19 - Catastro: alteración catastral
+    28 - Subsanación de escritura de venta
+    35 - Retrocesión de la venta
 	 */ 
 	
-    V_CODIGOS_SDE_VINCULABLES VARCHAR2(2400 CHAR) := '''06'',''12'',''17'',''20'',''16'',''09''';
+    V_CODIGOS_SDE_VINCULABLES VARCHAR2(2400 CHAR) := '''06'',''12'',''17'',''20'',''16'',''09'',''24'',''27'',''19'',''28'',''35''';
     
     
 BEGIN	

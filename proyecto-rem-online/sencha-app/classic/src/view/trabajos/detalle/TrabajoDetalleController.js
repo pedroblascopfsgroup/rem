@@ -53,8 +53,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	},
 	
 	onChangeChainedCombo: function(combo) {
-    	
-    	var me = this,
+		var me = this,
     	chainedCombo = me.lookupReference(combo.chainedReference);    	
     	me.getViewModel().notify();
 		chainedCombo.clearValue("");
@@ -67,6 +66,13 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
    				}
 			}
 		});
+		if(combo.getValue() == "02"){
+			me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(true);
+			me.lookupReference('checkEnglobaTodosActivosAgrRef').setValue(false);
+		}else{
+			me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(false);
+			me.lookupReference('checkEnglobaTodosActivosAgrRef').setValue(true);
+		}
 		
 		if(combo.getValue() != "02" && combo.getValue() != "03") {
 			me.lookupReference("fieldSetMomentoRealizacionRef").setVisible(false);
@@ -75,6 +81,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			me.lookupReference("fieldSetMomentoRealizacionRef").setVisible(true);
 		} 
     	
+		
     },
     
     refreshStoreSeleccionTarifas: function(combo) {

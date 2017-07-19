@@ -385,9 +385,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
     },
 
     onAddClick: function(btn){
-		  var me = this;
+	  var me = this;
       var isFormalizacion = me.up('agrupacionesdetallemain').lookupReference('comboFormalizacion').value;
-      if (isFormalizacion==null) {
+      var isComercial = me.up('agrupacionesdetallemain').getViewModel().get("agrupacionficha.isComercial");
+      if (isComercial && isFormalizacion==null) {
           Ext.Msg.show({ message: 'No se ha definido el perímetro de formalización.', buttons: Ext.Msg.YES});
       } else {
           var rec = Ext.create(me.getStore().config.model);

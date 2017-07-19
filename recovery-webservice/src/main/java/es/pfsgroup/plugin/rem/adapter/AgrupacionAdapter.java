@@ -505,6 +505,12 @@ public class AgrupacionAdapter {
 				if(!Checks.estaVacio(ofertasAgrupacion)) {
 					throw new JsonViewerException("No se puede alterar el listado de activos cuando la agrupación tiene ofertas");
 				}
+				// Si el activo es de tipo Formalizable, pero la agrupación en la que lo vamos a meter NO lo es, lanzamos una Excepcion
+				// Si el activo es no Formalizable, pero la agrupación en la que lo vamos a meter SI que lo es, también lanzamos una Excepcion
+				if (activoApi.esActivoFormalizable(activo.getNumActivo()) && agrupacion.getIsFormalizacion().equals(NO_ES_FORMALIZABLE) ||
+					!activoApi.esActivoFormalizable(activo.getNumActivo()) && agrupacion.getIsFormalizacion().equals(ES_FORMALIZABLE)) {
+					throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_NO_COMPARTE_FORMALIZACION);
+				}
 			}
 			// Si es el primer activo, validamos si tenemos los datos necesarios
 			// del activo, y modificamos la agrupación con esos datos
@@ -514,12 +520,6 @@ public class AgrupacionAdapter {
 				activoAgrupacionApi.saveOrUpdate(agrupacion);
 			}
 			
-			// Si el activo es de tipo Formalizable, pero la agrupación en la que lo vamos a meter NO lo es, lanzamos una Excepcion
-			// Si el activo es no Formalizable, pero la agrupación en la que lo vamos a meter SI que lo es, también lanzamos una Excepcion
-			if (activoApi.esActivoFormalizable(activo.getNumActivo()) && agrupacion.getIsFormalizacion().equals(NO_ES_FORMALIZABLE) ||
-				!activoApi.esActivoFormalizable(activo.getNumActivo()) && agrupacion.getIsFormalizacion().equals(ES_FORMALIZABLE)) {
-				throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_NO_COMPARTE_FORMALIZACION);
-			}
 			
 			// Validaciones de agrupación
 			agrupacionValidate(activo, agrupacion);

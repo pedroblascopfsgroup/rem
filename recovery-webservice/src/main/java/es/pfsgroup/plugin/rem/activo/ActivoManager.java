@@ -2561,9 +2561,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Override
 	@BusinessOperationDefinition("activoManager.comprobarActivoFormalizable")
-	public boolean esActivoFormalizable(Long numActivo) {		
+	public boolean esActivoFormalizable(Long numActivo) {
+		boolean esActivoFormalizable = false;
 		PerimetroActivo perimetro = this.getPerimetroByNumActivo(numActivo);
-		return perimetro.getAplicaFormalizar() == 1 ? true : false;
+		if(perimetro != null){
+			esActivoFormalizable =  perimetro.getAplicaFormalizar() == 1 ? true : false;
+		}
+		return esActivoFormalizable;
 	}
 
 	@Override
@@ -3655,11 +3659,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	public PerimetroActivo getPerimetroByNumActivo(Long numActivo) {
-
-		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", numActivo);
-		PerimetroActivo perimetroActivo = (PerimetroActivo) genericDao.get(PerimetroActivo.class, filtroActivo);
-		return perimetroActivo;
-
+		PerimetroActivo perimetro = null;
+		Activo activo = this.getByNumActivo(numActivo);
+		if(activo != null){
+			perimetro = this.getPerimetroByIdActivo(activo.getId());
+		}
+		return perimetro;
 	}
 	
 	public String getCodigoTipoComercializacionFromActivo(Activo activo) {

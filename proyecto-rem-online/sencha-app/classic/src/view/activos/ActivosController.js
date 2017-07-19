@@ -112,6 +112,11 @@ Ext.define('HreRem.view.activos.ActivosController', {
 		if(!Ext.isEmpty(chainedCombo.getValue())) {
 			chainedCombo.clearValue();
 		}
+		
+		if(combo.chainedStore == 'comboSubcarteraFiltered'){
+			var store=chainedCombo.getStore(); 
+			store.getProxy().setExtraParams({'idCartera':combo.getValue()});
+		}
 
 		chainedCombo.getStore().load({ 			
 			callback: function(records, operation, success) {
@@ -135,4 +140,5 @@ Ext.define('HreRem.view.activos.ActivosController', {
 			}
 		}
 	}
+		
 });

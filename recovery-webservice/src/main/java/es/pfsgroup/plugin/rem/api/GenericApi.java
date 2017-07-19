@@ -15,6 +15,7 @@ import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
@@ -198,6 +199,14 @@ public interface GenericApi {
 	 * @return Devuelve una lista con los resultados filtrados.
 	 */
 	public List<DDCondicionIndicadorPrecio> getIndicadorCondicionPrecioFiltered(String codigoCartera);
+
+	/**
+	 * Este método obtiene una lista con las carteras filtradas por el código de cartera.
+	 * 
+	 * @param codigoCartera : código de cartera.
+	 * @return Devuelve una lista con las subcarteras
+	 */
+	public List<DDSubcartera> getComboSubcartera(String codigoCartera);
 
 }
 

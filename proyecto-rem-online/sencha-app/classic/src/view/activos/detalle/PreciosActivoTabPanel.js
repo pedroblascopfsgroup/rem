@@ -90,7 +90,7 @@ Ext.define('HreRem.view.activos.detalle.PreciosActivoTabPanel', {
      	//HREOS-1964: Restringir los activos financieros (asistidos) para que solo puedan ser editables por los perfiles de IT y Gestoría PDV
 		var ocultarValorespreciosactivo = false;		
 		if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
-		 ocultarValorespreciosactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+		 ocultarValorespreciosactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL'])) 
 				 && $AU.userHasFunction('EDITAR_TAB_VALORACIONES_PRECIOS'));
 		}else{
 		 ocultarValorespreciosactivo = !$AU.userHasFunction('EDITAR_TAB_VALORACIONES_PRECIOS');
@@ -111,7 +111,7 @@ Ext.define('HreRem.view.activos.detalle.PreciosActivoTabPanel', {
 			//HREOS-1964: Restringir los activos financieros (asistidos) para que solo puedan ser editables por los perfiles de IT y Gestoría PDV
 			 var ocultarValorespreciosactivo = false;		
 			 if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
-				 ocultarValorespreciosactivo = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+				 ocultarValorespreciosactivo = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL'])) 
 						 && $AU.userHasFunction('EDITAR_TAB_VALORACIONES_PRECIOS'));
 			 }else{
 				 ocultarValorespreciosactivo = $AU.userHasFunction('EDITAR_TAB_VALORACIONES_PRECIOS');

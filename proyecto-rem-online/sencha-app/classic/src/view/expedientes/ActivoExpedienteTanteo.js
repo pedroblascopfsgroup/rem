@@ -141,7 +141,22 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 							xtype: 'datefield',
 							allowBlank: true,
 							reference: 'fechaRespuesta',
-							maskRe: /[0-9.]/
+							maskRe: /[0-9.]/,
+		                	listeners:{
+		                		focusleave: function(){
+		                			
+		                			me.up().lookupReference('fechaVisita').setMinValue(Ext.Date.add(new Date(this.getValue()), Ext.Date.DAY, 1));
+		                		},
+		                		change: function(){
+		                			
+		                			if(this.value instanceof Date){
+		                					                				
+		                				me.up().lookupReference('fechaVisita').setMinValue(Ext.Date.add(new Date(this.getValue()), Ext.Date.DAY, 1));	                				
+		                	            
+		                			}
+		                		}
+		                		
+		                	}
 						}
 				   },
 				   {
@@ -190,7 +205,19 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 			            	xtype: 'datefield',
 			            	allowBlank: true,
 							reference: 'fechaVisita',
-							maskRe: /[0-9.]/
+							maskRe: /[0-9.]/,
+				        	listeners:{
+		                		blur: function(){
+		                			
+		                			this.setMinValue(Ext.Date.add(new Date(me.up().lookupReference('fechaRespuesta').getValue()), Ext.Date.DAY, 1));
+		                			
+		                		},
+		                		edit:function(){
+		                			
+		                			this.setMinValue(Ext.Date.add(new Date(me.up().lookupReference('fechaRespuesta').getValue()), Ext.Date.DAY, 1));
+		                			
+		                		}
+				        	}
 						}
 				   },
 				   {

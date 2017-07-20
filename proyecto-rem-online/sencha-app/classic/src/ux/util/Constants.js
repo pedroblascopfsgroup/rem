@@ -181,7 +181,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	GESTOR_ADMISION: 'GESTADM',
     	HAYASUPER: 'HAYASUPER',
     	GESTOPDV: 'GESTOPDV',
-    	SUPERVISOR_ACTIVO: 'HAYASUPACT'
+    	SUPERVISOR_ACTIVO: 'HAYASUPACT',
+    	HAYACAL: 'HAYACAL'
     },
     
     TIPOS_OFERTA: {

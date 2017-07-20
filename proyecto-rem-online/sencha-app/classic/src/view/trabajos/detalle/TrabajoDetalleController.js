@@ -93,8 +93,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	
 	onChangeSubtipoTrabajoCombo: function(combo) {
 
-		    	
-    	var me = this;
+		var me = this;
     	var idActivo = combo.up("window").idActivo;
     	var codigoSubtipoTrabajo = combo.getValue();
     	var advertencia;
@@ -121,8 +120,10 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     		me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(true);
     	}
     	else {
-    		me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(false);
-    		me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(false);
+    		if(me.lookupReference("tipoTrabajo").getValue() != "02"){
+    			me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(false);
+    			me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(false);
+    		}
     	}
 	    
     },

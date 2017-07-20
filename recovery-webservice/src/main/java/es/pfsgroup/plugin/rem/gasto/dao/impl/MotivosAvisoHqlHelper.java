@@ -4,12 +4,14 @@ package es.pfsgroup.plugin.rem.gasto.dao.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.collections.MapUtils;
+
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 
 public class MotivosAvisoHqlHelper {
 	
-	public static Map<String, String> MAPA_CODIGOS = new HashMap<String, String>();
+	private static final Map<String, String> MAPA_CODIGOS = new HashMap<String, String>();
 	
 	/**
 	 * Mapea el DD con propiedades de es.pfsgroup.plugin.rem.model.GastoProveedorAvisos
@@ -52,6 +54,15 @@ public class MotivosAvisoHqlHelper {
 		
 		if (!Checks.esNulo(campo)){
 			return MotivosAvisoHqlHelper.ALIAS + "." + campo + " = true";
+		} else {
+			return null;
+		}
+		
+	}
+
+	public static String codigoMotivo(String campo) {
+		if (!Checks.esNulo(campo)) {
+			return (String) MapUtils.invertMap(MAPA_CODIGOS).get(campo);
 		} else {
 			return null;
 		}

@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -19,6 +21,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * Modelo que gestiona la relación entre gastos y activo
@@ -198,6 +201,30 @@ public class GastoProveedorAvisos implements Serializable {
 
 	public void setAlgunMotivo(Boolean algunMotivo) {
 		this.algunMotivo = algunMotivo;
+	}
+
+	public String[] camposAlerta() {
+		ArrayList<String> campos = new ArrayList<String>();
+		Field[] fields = this.getClass().getDeclaredFields();
+		for (Field f : fields) {
+			if (f.isAnnotationPresent(Column.class) && (f.getType().equals(Boolean.class))) {
+				f.setAccessible(true);
+				try {
+					if (Boolean.TRUE.equals((Boolean) f.get(this))) {
+						campos.add(f.getName());
+					}
+				} catch (IllegalArgumentException e) {
+					// Nothing to do
+				} catch (IllegalAccessException e) {
+					// Nothing to do
+				}
+			}
+		}
+		if (Checks.estaVacio(campos)) {
+			return null;
+		} else {
+			return campos.toArray(new String[] {});
+		}
 	}
 
 }

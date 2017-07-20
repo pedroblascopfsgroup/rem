@@ -151,6 +151,10 @@ public class GastoProveedor implements Serializable, Auditable {
     @JoinColumn(name = "GPV_ID")
     private List<GastoProveedorActivo> gastoProveedorActivos;
     
+    @OneToMany(mappedBy = "gastoProveedor", fetch = FetchType.LAZY)
+    @JoinColumn(name = "GPV_ID")
+    private List<GastoProveedorAvisos> gastoProveedorAvisos;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_EGA_ID")
     private DDEstadoGasto estadoGasto;
@@ -464,6 +468,14 @@ public class GastoProveedor implements Serializable, Auditable {
 
 	public void setExisteDocumento(Integer existeDocumento) {
 		this.existeDocumento = existeDocumento;
+	}
+
+	public List<GastoProveedorAvisos> getGastoProveedorAvisos() {
+		return gastoProveedorAvisos;
+	}
+
+	public void setGastoProveedorAvisos(List<GastoProveedorAvisos> gastoProveedorAvisos) {
+		this.gastoProveedorAvisos = gastoProveedorAvisos;
 	}
 
 }

@@ -778,7 +778,14 @@ public class GastosProveedorController extends ParadiseJsonController {
 			
 			DtoAviso aviso  = avisador.getAviso(gasto, usuarioLogado);
 			if (!Checks.esNulo(aviso) && !Checks.esNulo(aviso.getDescripcion())) {
-				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso'>" + aviso.getDescripcion() + "</div>");
+				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + 
+						formateaAviso(aviso.getDescripcion()));
+			}
+			if (!Checks.estaVacio(aviso.getDescripciones())) {
+				for (String descripcion : aviso.getDescripciones()) {
+					avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + 
+							formateaAviso(descripcion));
+				}
 			}
 			
         }
@@ -801,5 +808,10 @@ public class GastosProveedorController extends ParadiseJsonController {
 		ExcelReport report = new GestionGastosExcelReport(listaGastosProveedor);
 
 		excelReportGeneratorApi.generateAndSend(report, response);
+	}
+	
+	private String formateaAviso(String descripcion) {
+		String formateado = "<div class='div-aviso'>" + descripcion + "</div>";
+		return formateado;
 	}
 }

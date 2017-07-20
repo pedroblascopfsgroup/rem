@@ -181,6 +181,9 @@ public class VGastosProveedor implements Serializable {
 	@Column(name = "FECHA_AUTORIZACION")
 	private Date fechaAutorizacion;
 	
+	@Column(name = "GPV_ALERTAS")
+	private Boolean alertas;
+	
 	@Transient
 	private boolean esGastoAgrupado; 
 	
@@ -631,5 +634,13 @@ public class VGastosProveedor implements Serializable {
 
 	public void setFechaAutorizacion(Date fechaAutorizacion) {
 		this.fechaAutorizacion = fechaAutorizacion;
+	}
+
+	public Boolean getAlertas() {
+		return alertas;
+	}
+
+	public void setAlertas(Boolean alertas) {
+		this.alertas = alertas;
 	}	 
 }

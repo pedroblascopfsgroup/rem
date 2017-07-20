@@ -1,11 +1,11 @@
 /**
- *  Modelo para el tab Informacion Administrativa de Activos 
+ *  Modelo para el tab Informacion Administrativa de Activos
  */
 Ext.define('HreRem.model.Gasto', {
     extend: 'HreRem.model.Base',
     idProperty: 'id',
 
-    fields: [ 
+    fields: [
     	{
     		name: 'numGastoHaya'
     	},
@@ -17,7 +17,7 @@ Ext.define('HreRem.model.Gasto', {
     	},
     	{
     		name: 'subtipo'
-    		
+
     	},
 		{
 			name : 'concepto'
@@ -62,15 +62,22 @@ Ext.define('HreRem.model.Gasto', {
 			name: 'existeDocumento',
 			type: 'boolean',
 			convert: function(v) {
-				return v === "true";		
-			}	
+				return v === "true";
+			}
+		},
+    {
+			name: 'alertas',
+			type: 'boolean',
+			convert: function(v) {
+				return v === "true";
+			}
 		},
 		{
 			name: 'esGastoAgrupado',
 			type: 'boolean',
 			convert: function(v) {
-				return v === "true";		
-			}	
+				return v === "true";
+			}
 		},
 		{
 			name: 'sujetoImpuestoIndirecto',
@@ -80,8 +87,8 @@ Ext.define('HreRem.model.Gasto', {
 					return 'Si';
 				} else {
 					return 'No';
-				}	
-			}	
+				}
+			}
 		},
 		{
 			name: 'nombreGestoria'
@@ -109,7 +116,7 @@ Ext.define('HreRem.model.Gasto', {
 			depends: 'docIdentifPropietario'
 		}
     ],
-    
+
 	proxy: {
 		type: 'uxproxy',
 		localUrl: 'gasto.json',

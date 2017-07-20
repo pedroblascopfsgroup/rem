@@ -55,6 +55,8 @@ public class DDTipoTituloPosesorio implements Auditable, Dictionary {
 
 	 @Embedded
 	 private Auditoria auditoria;
+	 
+	 public static final String CODIGO_ARRENDAMIENTO = "02";
 
 	public Long getId() {
 		return id;

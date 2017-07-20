@@ -95,6 +95,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateGastoApi;
 
@@ -1931,17 +1932,64 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	public GastoProveedor asignarCuentaContableYPartidaGasto(GastoProveedor gasto) {
 
-		ConfigCuentaContable cuenta = buscarCuentaContable(gasto);
+		//ConfigCuentaContable cuenta = buscarCuentaContable(gasto);		
 		ConfigPdaPresupuestaria partida = buscarPartidaPresupuestaria(gasto);
 		GastoInfoContabilidad gastoInfoContabilidad = gasto.getGastoInfoContabilidad();
+		boolean todosActivoAlquilados= false;
 
-		if (!Checks.esNulo(cuenta) && !Checks.esNulo(partida) && !Checks.esNulo(gastoInfoContabilidad)) {
+		if (!Checks.esNulo(partida) && !Checks.esNulo(gastoInfoContabilidad)) {
 
 			Ejercicio ejercicio = gastoInfoContabilidad.getEjercicio();
-			if (String.valueOf(new GregorianCalendar().get(GregorianCalendar.YEAR)).equals(ejercicio.getAnyo())) {
-				gastoInfoContabilidad.setCuentaContable(cuenta.getCuentaContableAnyoCurso());
-			} else {
-				gastoInfoContabilidad.setCuentaContable(cuenta.getCuentaContableAnyosAnteriores());
+			
+			Filter filtroBorrado= genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			Filter filtroEjercicioCuentaContable= genericDao.createFilter(FilterType.EQUALS, "ejercicio.id", ejercicio.getId());
+			Filter filtroSubtipoGasto= genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.id", gasto.getSubtipoGasto().getId());
+			Filter filtroCartera= genericDao.createFilter(FilterType.EQUALS, "cartera.id", gasto.getPropietario().getCartera().getId());
+			Filter filtroCuentaArrendamiento= genericDao.createFilter(FilterType.EQUALS, "cuentaArrendamiento", 1);
+			Filter filtroCuentaNoArrendamiento= genericDao.createFilter(FilterType.EQUALS, "cuentaArrendamiento", 0);
+			
+			ConfigCuentaContable cuentaArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaArrendamiento,filtroBorrado);
+			ConfigCuentaContable cuentaNoArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaNoArrendamiento,filtroBorrado);
+			
+			if(!Checks.esNulo(cuentaArrendada) || !Checks.esNulo(cuentaNoArrendada)){
+				
+				Filter filtroGastoActivo= genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
+				List<GastoProveedorActivo> gastosActivos= genericDao.getList(GastoProveedorActivo.class,filtroGastoActivo);
+				for(GastoProveedorActivo gastoActivo: gastosActivos){
+					Activo activo= gastoActivo.getActivo();
+					
+					if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getSituacionPosesoria())){
+						if(activo.getSituacionPosesoria().getOcupado()==1 && activo.getSituacionPosesoria().getConTitulo()==1){
+							if(!Checks.esNulo(activo.getSituacionPosesoria().getTipoTituloPosesorio()) &&
+									activo.getSituacionPosesoria().getTipoTituloPosesorio().getCodigo().equals(DDTipoTituloPosesorio.CODIGO_ARRENDAMIENTO)){
+								todosActivoAlquilados= true;								
+							}
+							else{
+								todosActivoAlquilados= false;
+								break;
+							}
+						}
+						else{
+							todosActivoAlquilados= false;
+							break;
+						}
+					}
+				}
+				
+				if(!todosActivoAlquilados){
+					if(!Checks.esNulo(cuentaNoArrendada)){
+						gastoInfoContabilidad.setCuentaContable(cuentaNoArrendada.getCuentaContable());
+					}
+				}
+				else{
+					if(!Checks.esNulo(cuentaArrendada)){
+						gastoInfoContabilidad.setCuentaContable(cuentaArrendada.getCuentaContable());
+					}
+					else{
+						gastoInfoContabilidad.setCuentaContable(cuentaNoArrendada.getCuentaContable());
+					}
+				}
+				
 			}
 
 			gastoInfoContabilidad.setPartidaPresupuestaria(partida.getPartidaPresupuestaria());

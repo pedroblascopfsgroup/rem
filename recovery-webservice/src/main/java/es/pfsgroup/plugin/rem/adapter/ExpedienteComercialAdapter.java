@@ -88,7 +88,7 @@ public class ExpedienteComercialAdapter {
 				}
 			} catch (GestorDocumentalException gex) {
 				String[] error = gex.getMessage().split("-");
-				if(EXCEPTION_EXPEDIENT_NOT_FOUND_COD.equals(error[0])){
+				if(error.length > 0 && EXCEPTION_EXPEDIENT_NOT_FOUND_COD.equals(error[0].trim())){
 					
 					Integer idExpediente;
 					try{

@@ -100,6 +100,10 @@ Ext.define('HreRem.model.Tramite', {
     	},
     	{
     		name: 'ocultarBotonResolucion'
+    	},
+    	{
+    		name: 'ocultarBotonCierre',
+    		type: 'boolean'
     	}
     ],
 

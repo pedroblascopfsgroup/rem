@@ -209,7 +209,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			} else {
 
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
-						ultimoHistoricoPublicado.getEstadoPublicacion().getCodigo());
+						DDEstadoPublicacion.CODIGO_PUBLICADO);
 				motivo = dtoCambioEstadoPublicacion.getMotivoPublicacion();
 			}
 
@@ -262,7 +262,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					// - Debe registrar cualquier cambio de estado a excepcion del cambio a estado PUBLICADO 
 					//   el cual ya se ha registrado por el procedure de publicacion
 					try {
-						if(!DDEstadoPublicacion.CODIGO_PUBLICADO.equals(filtro.getPropertyValue())){
+						//if(DDEstadoPublicacion.CODIGO_PUBLICADO.equals(filtro.getPropertyValue())){
 							// Si existen otros registros en historico
 							ActivoHistoricoEstadoPublicacion ultimoHistorico = activoApi.getUltimoHistoricoEstadoPublicacion(activo.getId());
 							if(!Checks.esNulo(ultimoHistorico) ){
@@ -327,7 +327,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			
 							genericDao.save(ActivoHistoricoEstadoPublicacion.class, activoHistoricoEstadoPublicacion);
 	
-						} // Cierra if ... CODIGO_PUBLICADO.equals
+						//} // Cierra if ... CODIGO_PUBLICADO.equals
 					} catch (IllegalAccessException e) {
 						logger.error(e);
 						e.printStackTrace();

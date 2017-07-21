@@ -87,7 +87,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionActivoTabPanel', {
 	     //HREOS-1964: Restringir los activos financieros (asistidos) para que solo puedan ser editables por los perfiles de IT y Gestoría PDV
 		 var ocultarAdmisioncheckinfoactivo = false;		
 		 if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
-			 ocultarAdmisioncheckinfoactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+			 ocultarAdmisioncheckinfoactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL'])) 
 					 && $AU.userHasFunction('EDITAR_CHECKING_INFO_ADMISION'));
 		 }else{
 			 ocultarAdmisioncheckinfoactivo = !$AU.userHasFunction('EDITAR_CHECKING_INFO_ADMISION');

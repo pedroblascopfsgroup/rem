@@ -1,11 +1,18 @@
 package es.pfsgroup.plugin.rem.model.dd;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -78,9 +85,11 @@ public class DDTipoDocumentoActivo implements Auditable, Dictionary {
 	@Embedded
 	private Auditoria auditoria;
 
-	 
-	 
-	 
+	@OneToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "TPD_TTR", joinColumns = @JoinColumn(name = "DD_TPD_ID", referencedColumnName = "DD_TPD_ID"), 
+		inverseJoinColumns = @JoinColumn(name = "DD_TTR_ID", referencedColumnName = "DD_TTR_ID"))
+	private List<DDTipoTrabajo> tiposTrabajo;
+
 	public Long getId() {
 		return id;
 	}
@@ -138,4 +147,7 @@ public class DDTipoDocumentoActivo implements Auditable, Dictionary {
 		this.matricula = matricula;
 	}
 
+	public List<DDTipoTrabajo> getTiposTrabajo() {
+		return tiposTrabajo;
+	}
 }

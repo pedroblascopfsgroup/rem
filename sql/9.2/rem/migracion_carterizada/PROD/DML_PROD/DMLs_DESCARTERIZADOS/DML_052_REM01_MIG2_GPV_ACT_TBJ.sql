@@ -87,7 +87,7 @@ BEGIN
                   GAS.GPV_PARTICIPACION_GASTO = AUX.SUMA
       '
       ;
-      --EXECUTE IMMEDIATE V_SENTENCIA     ;
+      EXECUTE IMMEDIATE V_SENTENCIA;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_1||' actualizada (GPV_PARTICIPACION_GASTO). '||SQL%ROWCOUNT||' Filas.');
       

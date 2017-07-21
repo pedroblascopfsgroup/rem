@@ -9,30 +9,30 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
     listeners:{
        rowdblclick: 'onClickAbrirGastoProveedor'
     },
-    
+
     initComponent: function() {
-    	
-    	var me = this;
-    	      	
+
+      var me = this;
+
       	var configAddBtn = {iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onClickAdd', scope: this, secFunPermToRender: 'CREAR_GASTO'};
 		var configAutorizarBtn = {text: HreRem.i18n('btn.autorizar'), cls:'tbar-grid-button', itemId:'autorizarBtn', handler: 'onClickAutorizar', disabled: true, secFunPermToRender: 'OPERAR_GASTO'};
 		var configRechazarButton = {text: HreRem.i18n('btn.rechazar') , cls:'tbar-grid-button', itemId:'rechazarBtn', handler: 'onClickRechazar', disabled: true, secFunPermToRender: 'OPERAR_GASTO'};
 		var separador = {xtype: 'tbfill'};
-			
+
 		me.tbar = {
     		xtype: 'toolbar',
     		dock: 'top',
     		items: [configAddBtn, separador, configAutorizarBtn, configRechazarButton]
 		};
-      	
+
     	me.columns = [
-	 							{   
+	 							{
 						        	dataIndex: 'id',
 						        	flex: 1,
 						        	hidden: true,
 						        	hideable: false
 						       	},
-						       	{   
+						       	{
 						       		text: HreRem.i18n('header.num.gasto'),
 						        	dataIndex: 'numGastoHaya',
 						        	flex: 0.4
@@ -74,7 +74,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
 	    	                     	text: HreRem.i18n('header.fecha.emision.gasto'),
 	    	                     	flex: 0.4,
 	    	                    	dataIndex: 'fechaEmision',
-		   	                    	formatter: 'date("d/m/Y")'	
+		   	                    	formatter: 'date("d/m/Y")'
 	    	                     },
 	    	                     {
 	    	                    	 text: HreRem.i18n('header.importe.gasto'),
@@ -86,7 +86,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
 	    	                     	text: HreRem.i18n('header.fecha.tope.pago.gasto'),
 	    	                     	flex: 0.4,
 	    	                    	dataIndex: 'fechaTopePago',
-	    	                    	formatter: 'date("d/m/Y")'	
+	    	                    	formatter: 'date("d/m/Y")'
 	    	                     },
 	    	                     {
 	    	                     	text: HreRem.i18n('header.fecha.pago.gasto'),
@@ -125,7 +125,19 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
 	    	                     	text: HreRem.i18n('fieldlabel.cartera'),
 	    	                     	flex: 0.5,
 	    	                     	dataIndex: 'entidadPropietariaDescripcion'
-		    	                 },
+		    	                 },{
+                             width: 30,
+                             menuDisabled: true,
+                             hideable: false,
+                             dataIndex: 'alertas',
+                             renderer: function(alertas) {
+                               var css = "";
+                               if(alertas) {
+                                 css = "x-fa fa-exclamation-circle";
+                               }
+                               return "<div style='color:#E0840C;'' class='"+css+"'></div>"
+                             }
+                           },
 	    	                     {
 	    	                     	width: 30,
 	    	                     	menuDisabled: true,
@@ -136,12 +148,12 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
 	    	                     		if(existeDocumento) {
 	    	                     			css = "x-fa fa-paperclip";
 	    	                     		}
-	    	                     		
+
 	    	                     		return "<div class='"+css+"'></div>"
 	    	                     	}
 	    	                     }
 		];
-		
+
 		me.dockedItems= [
 		        {
 		            xtype: 'pagingtoolbar',
@@ -162,42 +174,42 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
 	            	]
 		        }
 		];
-		
+
 		me.selModel = Ext.create('HreRem.view.common.CheckBoxModelBase');
-    	
+
     	me.callParent();
-    	
+
     	me.getSelectionModel().on({
         	'selectionchange': function(sm,record,e) {
         		me.fireEvent('persistedsselectionchange', sm, record, e, me, me.getPersistedSelection());
         	},
-        	
+
         	'selectall': function(sm) {
         		me.getPlugin('pagingselectpersist').selectAll();
         	},
-        	   	
+
         	'deselectall': function(sm) {
         		me.getPlugin('pagingselectpersist').deselectAll();
         	}
         });
     },
-    
+
     onClickAdd: function (btn) {
 		var me = this;
 		me.fireEvent("onClickAddGasto", me);
 	},
-    
+
     getPersistedSelection: function() {
     	var me = this;
-    	return me.getPlugin('pagingselectpersist').getPersistedSelection();     	
+    	return me.getPlugin('pagingselectpersist').getPersistedSelection();
     },
-    
+
     deselectAll: function() {
     	var me = this;
-    	return me.getPlugin('pagingselectpersist').deselectAll();     		
+    	return me.getPlugin('pagingselectpersist').deselectAll();
     }
-    	        
-				
 
-    
+
+
+
 });

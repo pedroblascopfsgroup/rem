@@ -37,7 +37,8 @@ public class WebcomRESTDevonProperties {
 	public static final String REST_WORKINGCODE = "rest.server.workingcode";
 
 	public static String extractDevonProperty(Properties appProperties, String key, String defaultValue) {
-		return (appProperties != null ? appProperties.getProperty(key, defaultValue) : defaultValue);
+		String value = appProperties != null ? appProperties.getProperty(key, defaultValue) : defaultValue;
+		return value != null ? value : defaultValue;
 	}
 
 }

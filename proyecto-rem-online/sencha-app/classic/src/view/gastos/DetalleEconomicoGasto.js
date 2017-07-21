@@ -43,9 +43,14 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											        symbol: HreRem.i18n("symbol.euro"),
 											        listeners:{
 								        				edit: function(){
+								        					Ext.global.console.log(me.up('gastodetallemain').getViewModel().get('gasto').get('asignadoATrabajos'));
 								        					if(!me.up('gastodetallemain').getViewModel().get('gasto').get('asignadoATrabajos'))
 									        					if(this.getValue()==0)
-									        						this.setValue('');								        					
+									        						this.setValue('');
+								        					if(me.up('gastodetallemain').getViewModel().get('gasto').get('asignadoATrabajos'))
+								        						this.setReadOnly(true);
+								        					else
+								        						this.setReadOnly(false);
 								        				},
 								        				
 														update: function(){

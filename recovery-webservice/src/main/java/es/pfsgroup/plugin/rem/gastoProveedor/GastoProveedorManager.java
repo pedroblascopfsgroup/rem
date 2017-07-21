@@ -1442,7 +1442,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				String[] error = gex.getMessage().split("-");
 
 				// Si no existe el expediente lo creamos
-				if (EXCEPTION_EXPEDIENT_NOT_FOUND_COD.equals(error[0])) {
+				if (error.length > 0 &&  EXCEPTION_EXPEDIENT_NOT_FOUND_COD.equals(error[0].trim())) {
 
 					Integer idExpediente;
 					try {

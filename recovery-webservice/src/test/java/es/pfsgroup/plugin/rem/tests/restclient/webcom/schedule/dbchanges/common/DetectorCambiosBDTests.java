@@ -71,7 +71,7 @@ public class DetectorCambiosBDTests {
 
 		
 		
-		when(dao.listCambios(any(Class.class), any(InfoTablasBD.class), any(RestLlamada.class), listPendientes)).thenReturn(listPendientes);
+		when(dao.listCambios(any(Class.class), any(InfoTablasBD.class), any(RestLlamada.class), any(CambiosList.class))).thenReturn(listPendientes);
 
 		////////////////////////
 		//public CambiosList listPendientes(Class<?> dtoClass, RestLlamada registro, CambiosList listPendientes) {

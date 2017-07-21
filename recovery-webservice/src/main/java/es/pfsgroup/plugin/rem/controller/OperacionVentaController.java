@@ -26,8 +26,8 @@ import es.pfsgroup.plugin.rem.api.GenerarFacturaVentaActivosApi;
 import es.pfsgroup.plugin.rem.api.ParamReportsApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.rem.utils.FileUtilsREM;
 public class OperacionVentaController {
 
 		final String templateOperacionVenta = "OperativaVenta001";
+		final String templateOperacionVentaAgrupacion = "OperativaVentaAgrupacion";
 		final String templateOperacionVentaShort = "OperativaVenta";
 
 		@Autowired
@@ -106,37 +107,55 @@ public class OperacionVentaController {
 			//Primero comprobar que existe OFERTA
 			if (model.get("error")==null || model.get("error")=="") {
 				if(!Checks.esNulo(expediente)){
-					oferta = expediente.getOferta(); //ofertaApi.getOfertaByNumOfertaRem(ofertaHRE);
+					oferta = expediente.getOferta();
 					if (oferta==null) {
 					model.put("error", RestApi.REST_NO_RELATED_OFFER);
 					}
 				}
 			}
-			
-			//Despueś comprabar que existe un ACTIVO relacionado
+
+			//Despueś comprobar que existe un ACTIVO principal y que esta relacionado con la oferta 
 			Activo activo = null;
 			if (model.get("error")==null || model.get("error")=="") {
 				activo = oferta.getActivoPrincipal();
-				if (activo==null) {
+				if (activo==null || oferta.getActivosOferta()==null) {
 					model.put("error", RestApi.REST_NO_RELATED_ASSET);				
 				}
 			}
 			
 			//Generamos una lista de PDF por cada activoOferta
-			List<File> listaPdf = new ArrayList<File>(); 			
-			for(ActivoOferta activoOferta : oferta.getActivosOferta()) {				
-				//OBTENCION DE LOS DATOS PARA RELLENAR EL DOCUMENTO
+			List<File> listaPdf = new ArrayList<File>();
+			
+			//PRIMERO GENERAMOS PDF CABECERA DE LA AGRUPACION (SI TIENE)
+			if (oferta.getActivosOferta().size()>1) {
 				if (model.get("error")==null || model.get("error")=="") {
-					params = paramReportsApi.paramsHojaDatos(activoOferta, model);
+					params = paramReportsApi.paramsCabeceraHojaDatos(oferta.getActivosOferta().get(0), model);
 				}
 				if (model.get("error")==null || model.get("error")=="") {
-					dataSource = paramReportsApi.dataSourceHojaDatos(activoOferta, model);
+					dataSource = paramReportsApi.dataSourceHojaDatos(oferta.getActivosOferta().get(0), model);
 				}
-				//GENERACION DEL DOCUMENTO EN PDF		
+				//GENERACION DE LA CABECERA DEL DOCUMENTO EN PDF		
 				if (model.get("error")==null || model.get("error")=="") {
-					fileSalidaTemporal = paramReportsApi.getPDFFile(params, dataSource, templateOperacionVenta, model, numExpediente);
+					fileSalidaTemporal = paramReportsApi.getPDFFile(params, dataSource, templateOperacionVentaAgrupacion, model, numExpediente);
 					listaPdf.add(fileSalidaTemporal);
-				}										
+				}
+			}			
+			
+			if (model.get("error")==null || model.get("error")=="") {
+				for(ActivoOferta activoOferta : oferta.getActivosOferta()) {				
+					//OBTENCION DE LOS DATOS PARA RELLENAR EL DOCUMENTO
+					if (model.get("error")==null || model.get("error")=="") {
+						params = paramReportsApi.paramsHojaDatos(activoOferta, model);
+					}
+					if (model.get("error")==null || model.get("error")=="") {
+						dataSource = paramReportsApi.dataSourceHojaDatos(activoOferta, model);
+					}
+					//GENERACION DEL DOCUMENTO EN PDF		
+					if (model.get("error")==null || model.get("error")=="") {
+						fileSalidaTemporal = paramReportsApi.getPDFFile(params, dataSource, templateOperacionVenta, model, numExpediente);
+						listaPdf.add(fileSalidaTemporal);
+					}										
+				}
 			}
 			
 			//AGRUPAR TODOS LOS PDF DE SALIDA EN UNO SOLO

@@ -7,43 +7,60 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumento', {
 	reference: 'adjuntarDocumentoWindowRef',
     /**
      * Parámetro para construir la url que sibirá el documento
-     * @type 
+     * @type
      */
     entidad: null,
     /**
      * Parámetro para enviar el id de la entidad a la que se adjunta el documento. Debe darse valor al
      * crear/abrir la ventana.
-     * @type 
+     * @type
      */
     idEntidad: null,
+
+		/**
+		 * Parámetro para enviar el codigo del tipo de trabajo para realizar un filtrado de los tipos de documento.
+		 * si no se envia no se realizará ningun filtrado sobre los tipos de documento
+		 * @type
+		 */
+		tipoTrabajoCodigo: null,
+
     /**
      * Párametro para saber que componente abre la ventana, y poder refrescarlo después.
-     * @type 
+     * @type
      */
     parent: null,
-	
+
     initComponent: function() {
-    	
+
     	var me = this;
 
     	me.setTitle(HreRem.i18n("title.adjuntar.documento"));
-    	
+
     	me.buttonAlign = 'left';
-    	
+
     	var comboTipoDocumento = new Ext.data.Store({
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
+				remoteUrl: 'generic/getDiccionarioTiposDocumento',
 				extraParams: {diccionario: 'tiposDocumento'}
 			}
     	});
-    	
+
+			comboTipoDocumento.filter([
+				{
+			    fn: function(record) {
+			      return tipoTrabajoCodigo==null || record.get('tipoTrabajoCodigos').indexOf(tipoTrabajoCodigo) != -1
+			    },
+			    scope: this
+			  }
+			]);
+
     	me.buttons = [ { formBind: true, itemId: 'btnGuardar', text: 'Adjuntar', handler: 'onClickBotonAdjuntarDocumento', scope: this},{ itemId: 'btnCancelar', text: 'Cancelar', handler: 'closeWindow', scope: this}];
 
     	me.items = [
     				{
-	    				xtype: 'formBase', 
+	    				xtype: 'formBase',
 	    				url: $AC.getRemoteUrl(me.entidad + "/upload"),
 	    				reference: 'adjuntarDocumentoFormRef',
 	    				collapsed: false,
@@ -57,7 +74,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumento', {
 
  									xtype: 'filefield',
 							        fieldLabel:   HreRem.i18n('fieldlabel.archivo'),
-							        name: 'fileUpload',							        
+							        name: 'fileUpload',
 							        anchor: '100%',
 							        width: '100%',
 							        allowBlank: false,
@@ -80,7 +97,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumento', {
 				                        }
 				                    }
 					    		},
-					    		{ 
+					    		{
 									xtype: 'combobox',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
 						        	name: 'tipo',
@@ -88,7 +105,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumento', {
 						        	msgTarget: 'side',
 					            	store: comboTipoDocumento,
 					            	displayField	: 'descripcion',
-								    							
+
 								    valueField		: 'codigo',
 									allowBlank: false,
 									width: '100%'
@@ -99,26 +116,26 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumento', {
 				                	name: 'descripcion',
 				                	maxLength: 256,
 				                	msgTarget: 'side',
-				                	width: '100%'				                	
+				                	width: '100%'
 			            		}
     					]
     				}
     	];
-    	
+
     	me.callParent();
     },
-    
+
     onClickBotonAdjuntarDocumento: function(btn) {
-    	
+
     	var me = this,
     	form = me.down("form");
     	if(form.isValid()){
-            
+
             form.submit({
                 waitMsg: HreRem.i18n('msg.mask.loading'),
                 params: {idEntidad: me.idEntidad},
                 success: function(fp, o) {
-                	
+
                 	if(o.result.success == "false") {
                 		me.fireEvent("errorToast", o.result.errorMessage);
                 	}else{
@@ -128,15 +145,14 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumento', {
                 		me.parent.fireEvent("afterupload", me.parent);
                 	}
                     me.close();
-                }, 
+                },
                 failure: function(fp, o) {
                 	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
                 }
             });
         }
-    	
-    	
-    	
+
+
+
     }
 });
-    

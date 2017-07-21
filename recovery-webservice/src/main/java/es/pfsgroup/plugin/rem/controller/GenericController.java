@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.controller;
 
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,12 +21,15 @@ import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfiguratorTemplate;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.pfs.diccionarios.Dictionary;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
+import es.pfsgroup.plugin.rem.rest.dto.DDTipoDocumentoActivoDto;
 
 
 
@@ -72,7 +76,25 @@ public class GenericController extends ParadiseJsonController{
 		return createModelAndViewJson(new ModelMap("data", adapter.getDiccionario(diccionario)));
 		
 	}
-	
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDiccionarioTiposDocumento(String diccionario) {	
+
+		if ("tiposDocumento".equals(diccionario)) {
+			List<Dictionary> result = adapter.getDiccionario(diccionario);
+
+			List<DDTipoDocumentoActivoDto> out = new ArrayList<DDTipoDocumentoActivoDto>();
+
+			for (Dictionary ddTipoDocumentoActivo : result) {
+				out.add(new DDTipoDocumentoActivoDto((DDTipoDocumentoActivo) ddTipoDocumentoActivo));
+			}
+
+			return createModelAndViewJson(new ModelMap("data", out));	
+		}
+
+		return createModelAndViewJson(new ModelMap("data", adapter.getDiccionario(diccionario)));
+	}
+
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getDiccionarioTareas(String diccionario) {	
 		

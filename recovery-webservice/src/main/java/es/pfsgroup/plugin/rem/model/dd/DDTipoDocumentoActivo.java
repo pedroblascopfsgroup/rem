@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model.dd;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -148,6 +149,9 @@ public class DDTipoDocumentoActivo implements Auditable, Dictionary {
 	}
 
 	public List<DDTipoTrabajo> getTiposTrabajo() {
-		return tiposTrabajo;
+		ArrayList copy = new ArrayList (tiposTrabajo.size());
+		Collections.copy(copy, tiposTrabajo);
+
+		return copy;
 	}
 }

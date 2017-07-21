@@ -114,14 +114,18 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 		}
 
 		final CambiosList cambios = dao.listCambios(dtoClass, this, registro, listPendientes);
-		cambios.setPaginacion(listPendientes.getPaginacion());
-
-		return extractDtos(dtoClass, new DataAccessOperation() {
-			@Override
-			public CambiosList getDatabaseChanges() {
-				return cambios;
-			}
-		});
+			if (cambios != null) {
+			cambios.setPaginacion(listPendientes.getPaginacion());
+	
+			return extractDtos(dtoClass, new DataAccessOperation() {
+				@Override
+				public CambiosList getDatabaseChanges() {
+					return cambios;
+				}
+			});
+		} else {
+			return null;
+		}
 
 	}
 

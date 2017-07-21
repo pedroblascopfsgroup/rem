@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.rest.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -99,5 +100,4 @@ public class DDTipoDocumentoActivoDto implements Serializable{
 	public void setTipoTrabajoCodigos(List<String> tipoTrabajoCodigos) {
 		this.tipoTrabajoCodigos = tipoTrabajoCodigos;
 	}
-	
 }

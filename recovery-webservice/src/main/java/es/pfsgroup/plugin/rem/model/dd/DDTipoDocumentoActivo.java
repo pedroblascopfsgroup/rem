@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model.dd;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.Column;

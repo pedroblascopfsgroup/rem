@@ -51,10 +51,10 @@ public class ServiciosWebcomTestsBase {
 	}
 
 	protected JSONArray genericValidation(HttpClientFacade httpClient, String method, String charset) {
-		ArgumentCaptor<JSONObject> jsonArg = ArgumentCaptor.forClass(JSONObject.class);
+		ArgumentCaptor<String> jsonArg = ArgumentCaptor.forClass(String.class);
 		ArgumentCaptor<Map> headersArg = ArgumentCaptor.forClass(Map.class);
 		try {
-			Mockito.verify(httpClient).processRequest(anyString(), eq(method), headersArg.capture(), jsonArg.toString(),
+			Mockito.verify(httpClient).processRequest(anyString(), eq(method), headersArg.capture(), jsonArg.capture(),
 					anyInt(), eq(charset));
 		} catch (HttpClientException e) {
 	
@@ -92,11 +92,11 @@ public class ServiciosWebcomTestsBase {
 				requestData.getJSONObject(idx).get(key));
 	}
 
-	private JSONArray validateRequestAndExtractData(ArgumentCaptor<Map> headersArg, ArgumentCaptor<JSONObject> jsonArg) {
+	private JSONArray validateRequestAndExtractData(ArgumentCaptor<Map> headersArg, ArgumentCaptor<String> jsonArg) {
 		Map headers = headersArg.getValue();
 		assertNotNull("El header 'signatue' es requerido", headers.get("signature"));
 		
-		JSONObject request = jsonArg.getValue();
+		JSONObject request = JSONObject.fromObject(jsonArg.getValue());
 		assertTrue("'id' es requerido", request.containsKey("id"));
 		assertNotNull("El 'id' de la petición no puede ser NULL", request.get("id"));
 		

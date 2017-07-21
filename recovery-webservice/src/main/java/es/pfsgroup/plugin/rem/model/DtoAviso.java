@@ -42,7 +42,13 @@ public class DtoAviso extends WebDto {
 		
 	}
 	public List<String> getDescripciones() {
-		return descripciones;
+		if (descripciones == null){
+			return null;
+		} else {
+			ArrayList<String> list = new ArrayList<String>();
+			list.addAll(descripciones);
+			return list;
+		}
 	}
 
 	

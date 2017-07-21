@@ -25,6 +25,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivosAvisoGasto;
 @RunWith(MockitoJUnitRunner.class)
 public class GetAvisoTest {
 
+	private static final int TWO = 2;
+
 	@InjectMocks
 	private GastoAvisoAlertas avisador;
 
@@ -66,7 +68,7 @@ public class GetAvisoTest {
 		DtoAviso dto = avisador.getAviso(gasto, null); // el usuario logado nos la debe trufar
 		
 		assertNotNull("No se han devuelto avisos", dto.getDescripciones());
-		assertEquals("No se han devuelto los avisos esperados", 2, dto.getDescripciones().size());
+		assertEquals("No se han devuelto los avisos esperados", TWO, dto.getDescripciones().size());
 		
 		assertTrue("No se ha encontrado el valor esperado", dto.getDescripciones().contains("correspondeComprador"));
 		assertTrue("No se ha encontrado el valor esperado", dto.getDescripciones().contains("ibiExento"));

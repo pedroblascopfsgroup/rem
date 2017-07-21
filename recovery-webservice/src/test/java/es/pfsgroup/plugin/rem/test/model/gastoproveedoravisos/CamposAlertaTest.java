@@ -11,6 +11,8 @@ import es.pfsgroup.plugin.rem.model.GastoProveedorAvisos;
 
 public class CamposAlertaTest {
 	
+	private static final int TWO = 2;
+
 	@Test
 	public void sinAlertas ()  {
 		GastoProveedorAvisos avisos = new GastoProveedorAvisos();
@@ -30,7 +32,7 @@ public class CamposAlertaTest {
 		assertNotNull("No se han devuelto avisos", avisos.camposAlerta());
 		
 		List<String> campos = Arrays.asList(avisos.camposAlerta());
-		assertEquals("Se esperaban 2 avisos", 2, campos.size());
+		assertEquals("Se esperaban 2 avisos", TWO, campos.size());
 		
 		assertTrue("No se ha encontrado el valor esperado", campos.contains("bajaProveedor"));
 		assertTrue("No se ha encontrado el valor esperado", campos.contains("fueraPerimetro"));

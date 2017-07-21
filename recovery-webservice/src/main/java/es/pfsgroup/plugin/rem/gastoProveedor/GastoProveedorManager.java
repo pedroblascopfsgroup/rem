@@ -1271,7 +1271,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						gestionGasto.setUsuarioRetencionPago(null);
 						gasto.setGastoGestion(gestionGasto);
 						// HREOS-1927: si se quita la retención en el estado vuelve a ser Pendiente
-						updaterStateApi.updaterStates(gasto, DDEstadoGasto.PENDIENTE);
+						updaterStateApi.updaterStates(gasto, null);
 					}
 
 					gasto.setGastoGestion(gestionGasto);
@@ -2149,7 +2149,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		Pattern justPattern = Pattern.compile(".*-CERA-.*");
 
 		if (factPattern.matcher(matriculaTipoDoc).matches() && DDEstadoGasto.INCOMPLETO.equals(codigoEstado)) {
-			return DDEstadoGasto.PENDIENTE;
+			//return DDEstadoGasto.PENDIENTE;
+			return null;
 		} else if (justPattern.matcher(matriculaTipoDoc).matches()
 				&& DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC.equals(codigoEstado) && (!coniva)) {
 			return DDEstadoGasto.PAGADO;

@@ -92,8 +92,8 @@ BEGIN
         WHERE AGR.AGR_NUM_AGRUP_UVEM = MIG.AGR_UVEM)                 AGR_ID,
         MIG.TBJ_NUM_TRABAJO                                                                 TBJ_NUM_TRABAJO,
         (SELECT PVC.PVC_ID
-        FROM '||V_ESQUEMA||'.ACT_PVC_PROVEEDOR_CONTACTO PVC
-        WHERE PVC.PVC_DOCIDENTIF = MIG.PVC_DOCIDENTIF
+        FROM '||V_ESQUEMA||'.ACT_PVC_PROVEEDOR_CONTACTO PVC JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_ID = PVC.PVE_ID
+        WHERE PVE.PVE_COD_UVEM = MIG.PVC_DOCIDENTIF
           AND rownum = 1)                  PVC_ID,
         NULL                                                                                         USU_ID,
         (SELECT TTR.DD_TTR_ID

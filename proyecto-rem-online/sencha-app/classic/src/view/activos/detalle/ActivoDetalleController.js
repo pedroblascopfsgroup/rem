@@ -1233,16 +1233,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	switch (id){
     	case "chkbxpublicacionordinaria":
     		// checkbox.
-    		view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
+    		//view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
     		view.lookupReference('chkbxpublicaciondespublicar').setValue(false);
     		view.lookupReference('chkbxpublicacionocultacionforzada').setValue(false);
-    		view.lookupReference('chkbxpublicacionforzada').setValue(false);
+    		//view.lookupReference('chkbxpublicacionforzada').setValue(false);
     		// textfield.
-    		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
+    		//view.lookupReference('textfieldpublicacionocultacionprecio').reset();
     		view.lookupReference('textfieldpublicaciondespublicar').reset();
     		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
     		view.lookupReference('textfieldpublicacionpublicar').reset();
-    		view.lookupReference('textfieldpublicacionocultacionprecio').setAllowBlank(true);
+    		//view.lookupReference('textfieldpublicacionocultacionprecio').setAllowBlank(true);
     		view.lookupReference('textfieldpublicaciondespublicar').setAllowBlank(true);
     		view.lookupReference('textfieldpublicacionocultacionforzada').setAllowBlank(true);
     		view.lookupReference('textfieldpublicacionpublicar').setAllowBlank(false);
@@ -1254,7 +1254,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
     		view.lookupReference('chkbxpublicaciondespublicar').setValue(false);
     		view.lookupReference('chkbxpublicacionocultacionforzada').setValue(false);
-    		view.lookupReference('chkbxpublicacionordinaria').setValue(false);
+    		//view.lookupReference('chkbxpublicacionordinaria').setValue(false);
     		// textfield.
     		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
     		view.lookupReference('textfieldpublicaciondespublicar').reset();

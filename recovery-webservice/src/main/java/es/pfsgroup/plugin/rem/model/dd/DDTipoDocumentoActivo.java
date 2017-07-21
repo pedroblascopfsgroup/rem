@@ -149,9 +149,6 @@ public class DDTipoDocumentoActivo implements Auditable, Dictionary {
 	}
 
 	public List<DDTipoTrabajo> getTiposTrabajo() {
-		ArrayList copy = new ArrayList (tiposTrabajo.size());
-		Collections.copy(copy, tiposTrabajo);
-
-		return copy;
+		return tiposTrabajo;
 	}
 }

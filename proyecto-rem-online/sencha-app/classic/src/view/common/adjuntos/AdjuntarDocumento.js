@@ -17,12 +17,12 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumento', {
      */
     idEntidad: null,
 
-		/**
-		 * Parámetro para enviar el codigo del tipo de trabajo para realizar un filtrado de los tipos de documento.
-		 * si no se envia no se realizará ningun filtrado sobre los tipos de documento
-		 * @type
-		 */
-		tipoTrabajoCodigo: null,
+	/**
+	 * Parámetro para enviar el codigo del tipo de trabajo para realizar un filtrado de los tipos de documento.
+	 * si no se envia no se realizará ningun filtrado sobre los tipos de documento
+	 * @type
+	 */
+	tipoTrabajoCodigo: null,
 
     /**
      * Párametro para saber que componente abre la ventana, y poder refrescarlo después.
@@ -47,14 +47,14 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumento', {
 			}
     	});
 
-			comboTipoDocumento.filter([
-				{
-			    fn: function(record) {
-			      return tipoTrabajoCodigo==null || record.get('tipoTrabajoCodigos').indexOf(tipoTrabajoCodigo) != -1
-			    },
-			    scope: this
-			  }
-			]);
+		comboTipoDocumento.filter([
+			{
+		    fn: function(record) {
+					return me.tipoTrabajoCodigo == null || record.get('tipoTrabajoCodigos').indexOf(me.tipoTrabajoCodigo) != -1;
+		    },
+		    scope: this
+		  }
+		]);
 
     	me.buttons = [ { formBind: true, itemId: 'btnGuardar', text: 'Adjuntar', handler: 'onClickBotonAdjuntarDocumento', scope: this},{ itemId: 'btnCancelar', text: 'Cancelar', handler: 'closeWindow', scope: this}];
 

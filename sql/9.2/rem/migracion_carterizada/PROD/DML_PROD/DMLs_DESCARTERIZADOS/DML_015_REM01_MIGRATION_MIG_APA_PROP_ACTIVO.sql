@@ -107,6 +107,33 @@ BEGIN
   
   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
   
+  
+        EXECUTE IMMEDIATE ('  
+               MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' PAC_OLD
+             USING (
+             select a.idactivo from
+             (
+                 select idactivo
+                 from (
+                      select
+                         PAC1.ACT_ID idactivo,
+                       COUNT(*) num_propietarios
+                       FROM '||V_ESQUEMA||'.'||V_TABLA||' PAC1
+                       GROUP BY PAC1.ACT_ID
+                       ) where num_propietarios = 1
+                       ) a
+                     inner join '||V_ESQUEMA||'.'||V_TABLA||' PAC2 on a.idactivo = PAC2.ACT_ID
+                     where PAC2.PAC_PORC_PROPIEDAD = 0
+                     and pac2.usuariocrear = '''||V_USUARIO||'''
+                     ) PAC_NEW
+                 ON (PAC_OLD.ACT_ID = PAC_NEW.idactivo)
+                 WHEN MATCHED THEN UPDATE
+                   SET PAC_OLD.PAC_PORC_PROPIEDAD = 100
+        ')  
+        ;
+  
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizado porc_propiedad . '||SQL%ROWCOUNT||' Filas.');
+  
   COMMIT;
   
       V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';

@@ -347,8 +347,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		
 		var me = this,
 		idTrabajo = me.getViewModel().get("trabajo.id");
-    	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumento", {entidad: 'trabajo', idEntidad: idTrabajo, parent: grid}).show();
-		
+		tipoTrabajoCodigo = me.getViewModel().get("trabajo.tipoTrabajoCodigo");
+		Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumento", {entidad: 'trabajo', idEntidad: idTrabajo, tipoTrabajoCodigo: tipoTrabajoCodigo, parent: grid}).show();
+
 	},
 	
 	borrarDocumentoAdjunto: function(grid, record) {
@@ -956,12 +957,3 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	 	    
  	}
 });
-
-
-
-
-
-
-
-
-

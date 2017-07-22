@@ -93,7 +93,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivoTabPanel', {
 		//HREOS-1964: Restringir los activos financieros (asistidos) para que solo puedan ser editables por los perfiles de IT y Gestoría PDV
 		var ocultarDatosbasicosactivo = false;		
 	    if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
-	    	ocultarDatosbasicosactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL'])) 
+	    	ocultarDatosbasicosactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
 	    			&& $AU.userHasFunction('EDITAR_DATOS_BASICOS_ACTIVO'));
 	    }else{
 	    	ocultarDatosbasicosactivo = !$AU.userHasFunction('EDITAR_DATOS_BASICOS_ACTIVO');
@@ -101,7 +101,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivoTabPanel', {
 	    
 	    var ocultarTituloinformacionregistralactivo = false;		
 	    if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
-	    	ocultarTituloinformacionregistralactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL'])) 
+	    	ocultarTituloinformacionregistralactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
 	    			&& $AU.userHasFunction('EDITAR_TITULO_INFO_REGISTRAL_ACTIVO'));
 	    }else{
 	    	ocultarTituloinformacionregistralactivo = !$AU.userHasFunction('EDITAR_TITULO_INFO_REGISTRAL_ACTIVO');
@@ -109,7 +109,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivoTabPanel', {
 	    
 	    var ocultarInformacionadministrativaactivo = false;		
 	    if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
-	    	ocultarInformacionadministrativaactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL'])) 
+	    	ocultarInformacionadministrativaactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
 	    			&& $AU.userHasFunction('EDITAR_INFO_ADMINISTRATIVA_ACTIVO'));
 	    }else{
 	    	ocultarInformacionadministrativaactivo = !$AU.userHasFunction('EDITAR_INFO_ADMINISTRATIVA_ACTIVO');
@@ -117,7 +117,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivoTabPanel', {
 	    
 	    var ocultarSituacionposesoriaactivo = false;		
 	    if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
-	    	ocultarSituacionposesoriaactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL'])) 
+	    	ocultarSituacionposesoriaactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
 	    			&& $AU.userHasFunction('EDITAR_SITU_POSESORIA_ACTIVO'));
 	    }else{
 	    	ocultarSituacionposesoriaactivo = !$AU.userHasFunction('EDITAR_SITU_POSESORIA_ACTIVO');
@@ -125,7 +125,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivoTabPanel', {
 	    
 	    var ocultarDatoscomunidadactivo = false;		
 	    if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
-	    	ocultarDatoscomunidadactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL'])) 
+	    	ocultarDatoscomunidadactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
 	    			&& $AU.userHasFunction('EDITAR_DATOS_COMUNIDAD_ACTIVO'));
 	    }else{
 	    	ocultarDatoscomunidadactivo = !$AU.userHasFunction('EDITAR_DATOS_COMUNIDAD_ACTIVO');

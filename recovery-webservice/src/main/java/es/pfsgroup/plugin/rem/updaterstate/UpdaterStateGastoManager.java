@@ -127,13 +127,18 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				if(Checks.esNulo(gastoGestion.getMotivoRetencionPago())) {
 					
 					// Si estado es INCOMPLETO, comprobamos si ya no lo está para pasarlo a pendiente.
-					if(DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo())) {
+					//if(DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo()) || DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo())) {
 						String error = validarAutorizacionGasto(gasto);
 						if(Checks.esNulo(error)) {
-							codigo = DDEstadoGasto.PENDIENTE;
+							if(DDEstadoAutorizacionHaya.CODIGO_RECHAZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())) {
+								codigo = DDEstadoGasto.RECHAZADO_ADMINISTRACION;
+							}else if(DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())) {
+								codigo = DDEstadoGasto.AUTORIZADO_ADMINISTRACION;
+							}else {
+								codigo = DDEstadoGasto.PENDIENTE;
+							}							
 						}				
-					} else if((DDEstadoAutorizacionHaya.CODIGO_PENDIENTE.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())
-							|| DDEstadoAutorizacionHaya.CODIGO_RECHAZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())) 
+					/*} else */if(DDEstadoAutorizacionHaya.CODIGO_RECHAZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())
 							&& genericAdapter.isProveedor(usuario)) {
 							codigo = DDEstadoGasto.SUBSANADO;
 						

@@ -9,10 +9,10 @@ Ext.define('HreRem.view.common.DDViewModel', {
     	   		loadSource: true
     		},
 
-    		//comboFiltroMunicipios: {
-    	   	//	source: 'municipios',
-    	   	//	loadSource: false
-    		//},
+    		comboFiltroMunicipios: {
+    	   		source: 'municipios',
+    	   		loadSource: true
+    		},
 
     	   	comboEntidadPropietaria: {
     	   		source: 'entidadPropietaria',

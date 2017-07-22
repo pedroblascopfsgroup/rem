@@ -94,10 +94,14 @@ public class DDTipoDocumentoActivoDto implements Serializable{
 	}
 
 	public List<String> getTipoTrabajoCodigos() {
-		return tipoTrabajoCodigos;
+		List<String> copy = new ArrayList<String>();
+		copy.addAll(tipoTrabajoCodigos);
+		return copy;
 	}
 
 	public void setTipoTrabajoCodigos(List<String> tipoTrabajoCodigos) {
-		this.tipoTrabajoCodigos = tipoTrabajoCodigos;
+		List<String> copy = new ArrayList<String>();
+		copy.addAll(tipoTrabajoCodigos);
+		this.tipoTrabajoCodigos = copy;
 	}
 }

@@ -146,7 +146,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 						&& genericAdapter.isProveedor(usuario)) {
 						codigo = DDEstadoGasto.SUBSANADO;					
 					}
-					if((!codigo.equals(DDEstadoGasto.RETENIDO) && !gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.ANULADO) || !gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.RECHAZADO_ADMINISTRACION) || 
+					if((!gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.ANULADO) || !gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.RECHAZADO_ADMINISTRACION) || 
 							!gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.RECHAZADO_PROPIETARIO) || !gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.RETENIDO))
 							&& !Checks.esNulo(gasto.getGastoDetalleEconomico().getFechaPago())) {
 						if(gasto.getGastoDetalleEconomico().getFechaPago().before(new Date())) {

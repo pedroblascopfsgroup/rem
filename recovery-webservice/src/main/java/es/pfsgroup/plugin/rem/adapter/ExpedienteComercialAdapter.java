@@ -141,24 +141,30 @@ public class ExpedienteComercialAdapter {
 					Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoExpedienteComercial(expedienteComercial, webFileItem, usuarioLogado.getUsername(), subtipoDocumento.getMatricula());
 					expedienteComercialApi.uploadDocumento(webFileItem, idDocRestClient,null,null);
 					String activos = webFileItem.getParameter("activos");
-					String[] arrayActivos = activos.split(",");
-					gestorDocumentalAdapterApi.crearRelacionActivosExpediente(expedienteComercial, idDocRestClient, arrayActivos, usuarioLogado.getUsername());
-					for(int i = 0; i < arrayActivos.length; i++){
-						Activo activoEntrada = activoApi.getByNumActivo(Long.parseLong(arrayActivos[i],10));
-						//Según item HREOS-2379:
-						//Adjuntar el documento a la tabla de adjuntos del activo, pero sin subir el documento realmente, sólo insertando la fila.
-						File file = File.createTempFile("idDocRestClient["+idDocRestClient+"]", ".pdf");
-						BufferedWriter out = new BufferedWriter(new FileWriter(file));
-					    out.write("pfs");
-					    out.close();					    
-					    FileItem fileItem = new FileItem();
-						fileItem.setFileName("idDocRestClient["+idDocRestClient+"]");
-						fileItem.setFile(file);
-						fileItem.setLength(file.length());			
-						webFileItem.setFileItem(fileItem);
-						activoManager.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, matricula);
-						file.delete();
-					}					
+					String[] arrayActivos = null;
+					if(activos != null && !activos.isEmpty()){
+						arrayActivos = activos.split(",");
+					}
+					if(arrayActivos != null && arrayActivos.length > 0){
+						gestorDocumentalAdapterApi.crearRelacionActivosExpediente(expedienteComercial, idDocRestClient, arrayActivos, usuarioLogado.getUsername());
+						for(int i = 0; i < arrayActivos.length; i++){
+							Activo activoEntrada = activoApi.getByNumActivo(Long.parseLong(arrayActivos[i],10));
+							//Según item HREOS-2379:
+							//Adjuntar el documento a la tabla de adjuntos del activo, pero sin subir el documento realmente, sólo insertando la fila.
+							File file = File.createTempFile("idDocRestClient["+idDocRestClient+"]", ".pdf");
+							BufferedWriter out = new BufferedWriter(new FileWriter(file));
+						    out.write("pfs");
+						    out.close();					    
+						    FileItem fileItem = new FileItem();
+							fileItem.setFileName("idDocRestClient["+idDocRestClient+"]");
+							fileItem.setFile(file);
+							fileItem.setLength(file.length());			
+							webFileItem.setFileItem(fileItem);
+							activoManager.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, matricula);
+							file.delete();
+						}
+					}
+										
 				}
 			} else {
 				expedienteComercialApi.uploadDocumento(webFileItem, null,null,null);

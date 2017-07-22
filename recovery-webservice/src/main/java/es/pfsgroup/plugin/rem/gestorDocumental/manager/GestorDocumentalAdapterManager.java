@@ -208,7 +208,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		String fechaGasto = !Checks.esNulo(gasto.getFechaEmision()) ? formatter.format(gasto.getFechaEmision()) : "";
 		String idReo = !Checks.estaVacio(gasto.getGastoProveedorActivos()) ?  gasto.getGastoProveedorActivos().get(0).getActivo().getNumActivo().toString() : "";
 		String cliente = !Checks.estaVacio(gasto.getGastoProveedorActivos()) ?  gasto.getGastoProveedorActivos().get(0).getActivo().getCartera().getDescripcion() : "";
-		if(Checks.esNulo(cliente) && gasto.esAutorizadoSinActivos()) {			
+		if((Checks.esNulo(cliente) || cliente.isEmpty()) && gasto.esAutorizadoSinActivos()) {			
 			if(!Checks.esNulo(gasto.getPropietario())) {
 				cliente = gasto.getPropietario().getCartera().getDescripcion();				
 			}

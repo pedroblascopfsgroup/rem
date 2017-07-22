@@ -102,7 +102,7 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
 	    //HREOS-1964: Restringir los activos financieros (asistidos) para que sólo puedan ser editables por los perfiles de IT y Gestoría PDV
 	    var editable = false
 	    if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
-	    	editable = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL'])) 
+	    	editable = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
 					 && $AU.userHasFunction('EDITAR_TAB_ACTIVO_COMERCIAL'));
 		}else{
 			editable = !$AU.userHasFunction('EDITAR_TAB_ACTIVO_COMERCIAL');

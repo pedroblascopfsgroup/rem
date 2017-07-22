@@ -59,7 +59,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 			// actualizamos el estado de la reserva a firmada
 			if (!Checks.esNulo(expediente.getReserva())) {
 				DDEstadosReserva estadoReserva = genericDao.get(DDEstadosReserva.class,
-						genericDao.createFilter(FilterType.EQUALS, DDEstadosReserva.CODIGO_FIRMADA));
+						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_FIRMADA));
 				expediente.getReserva().setEstadoReserva(estadoReserva);
 				
 				//Si ningun activo esta sujeto a tanteo, se informa el campo "Fecha vencimiento reserva" con Fecha firma + 40 dias

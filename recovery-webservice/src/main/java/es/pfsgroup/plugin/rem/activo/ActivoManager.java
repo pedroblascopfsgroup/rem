@@ -3696,7 +3696,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				importeLimite += 100000;
 				Double valorActivo = this.getImporteValoracionActivoByCodigo(activo, DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
 				
-				if(Checks.esNulo(valorActivo))
+				if(Checks.esNulo(valorActivo) && !Checks.esNulo(this.getTasacionMasReciente(activo)) && Checks.esNulo(this.getTasacionMasReciente(activo).getImporteTasacionFin()))
 					valorActivo = this.getTasacionMasReciente(activo).getImporteTasacionFin().doubleValue();
 				
 				if(!Checks.esNulo(valorActivo)) {
@@ -3704,6 +3704,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						codigoTipoComercializacion = DDTipoComercializar.CODIGO_RETAIL;
 					else
 						codigoTipoComercializacion = DDTipoComercializar.CODIGO_SINGULAR;
+				}else{
+					codigoTipoComercializacion = DDTipoComercializar.CODIGO_RETAIL;
 				}
 			}
 		}

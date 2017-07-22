@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.user.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -16,6 +17,7 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 
+@Component
 public class ObtSolicitudDocumentoGestoriaUserAssignationService implements UserAssigantionService {
 
 	private static final String CODIGO_T002_OBTENCION_DOCUMENTO_GESTORIA = "T002_ObtencionDocumentoGestoria";

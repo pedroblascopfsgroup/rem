@@ -99,7 +99,7 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     	var me = this;
 	    me.callParent(); 
 	    
-	    //HREOS-1964: Restringir los activos financieros (asistidos) para que sólo puedan ser editables por los perfiles de IT y Gestoría PDV
+	    //HREOS-1964: Restringir los activos financieros (asistidos) para que sï¿½lo puedan ser editables por los perfiles de IT y Gestorï¿½a PDV
 	    var editable = false
 	    if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
 	    	editable = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
@@ -116,10 +116,11 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'documentosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_DOCUMENTOS');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'agrupacionesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_AGRUPACIONES');
     	// Si el activo esta en agrupacion asistida, se ocultan estas dos pestanyas
-    	if(me.lookupController().getViewModel().get('activo').get('integradoEnAgrupacionAsistida')=="false") {
+    	//if(me.lookupController().getViewModel().get('activo').get('integradoEnAgrupacionAsistida')=="false") {
+    	//Se comenta el IF anterior para que se pueda mostrar el check de calidad
 	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'admisionactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_ADMISION');
 	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'gestionactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_GESTION');
-    	}
+    	//}
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'preciosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PRECIOS');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'publicacionactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PUBLICACION');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'comercialactivo', ocultarBotonesEdicion: editable/*funPermEdition: ['EDITAR_TAB_ACTIVO_COMERCIAL']*/})}, 'TAB_ACTIVO_COMERCIAL');

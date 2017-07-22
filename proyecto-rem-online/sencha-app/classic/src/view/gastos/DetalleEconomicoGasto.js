@@ -482,8 +482,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 														       	bind: '{detalleeconomico.fechaPago}',
 														       	listeners: {
 														       		afterbind: 'onChangeFechaPago'
-														       	},
-														       	maxValue: null
+														       	}														       	
 														    }
 												]
 											},

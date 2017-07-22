@@ -159,8 +159,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	var estaPagado = CONST.ESTADOS_GASTO['PAGADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaAnulado = CONST.ESTADOS_GASTO['ANULADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaEnviado = get('gasto.enviado');
+	     	var estaRetenido = CONST.ESTADOS_GASTO['RETENIDO'] == get('gasto.estadoGastoCodigo');
 	     	
-	     	return !estaEnviado && !estaAutorizado && !estaContabilizado && !estaPagado && !estaAnulado
+	     	return !estaEnviado && !estaAutorizado && !estaContabilizado && !estaPagado && !estaAnulado && !estaRetenido;
 	     },
 	     
 	     esRechazable: function(get) {	     
@@ -169,9 +170,10 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	var estaPagado = CONST.ESTADOS_GASTO['PAGADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaAnulado = CONST.ESTADOS_GASTO['ANULADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaEnviado = get('gasto.enviado');
+	     	var estaRetenido = CONST.ESTADOS_GASTO['RETENIDO'] == get('gasto.estadoGastoCodigo');
 	     	
-	     	return  !estaEnviado && !estaRechazado && !estaContabilizado && !estaPagado && !estaAnulado;
 
+	     	return  !estaEnviado && !estaRechazado && !estaContabilizado && !estaPagado && !estaAnulado && !estaRetenido;
 	     },
 	     
 	     getSrcCartera: function(get) {

@@ -538,8 +538,8 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 
     	if(CONST.ESTADOS_GASTO['ANULADO'] == gasto.get("estadoGastoCodigo") ||
 			CONST.ESTADOS_GASTO['PAGADO'] == gasto.get("estadoGastoCodigo") ||
-			CONST.ESTADOS_GASTO['CONTABILIZADO'] == gasto.get("estadoGastoCodigo")) {	    		
-			error = ("<span>Se han seleccionado gastos anulados, contabilizados o pagados</span></br>")
+			CONST.ESTADOS_GASTO['CONTABILIZADO'] == gasto.get("estadoGastoCodigo") || CONST.ESTADOS_GASTO['RETENIDO'] == gasto.get("estadoGastoCodigo")) {	    		
+			error = ("<span>Se han seleccionado gastos retenidos, anulados, contabilizados o pagados</span></br>")
 		} else if (SELECCION_GASTOS == origen && gasto.get("esGastoAgrupado")) {
 			error = ("<span>Se han seleccionado gastos agrupados. Estos gastos deben gestionarse desde la pestaña de agrupación de gastos.</span></br>")
 		

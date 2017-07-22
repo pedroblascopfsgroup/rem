@@ -770,6 +770,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				genericDao.update(GastoDetalleEconomico.class, detalleGasto);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 

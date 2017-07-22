@@ -650,9 +650,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
         me.deshabilitarCampo(me.down('[name=comboAseguradoras]'));
         me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
-        if (me.down('[name=comboTarifa]').value == '02') {
-            me.bloquearCampo(me.down('[name=comboTarifa]'));
-        }
+//        if (me.down('[name=comboTarifa]').value == '02') {
+//            me.bloquearCampo(me.down('[name=comboTarifa]'));
+//        }
 
 
         me.down('[name=comboTramitar]').addListener('change', function(combo) {

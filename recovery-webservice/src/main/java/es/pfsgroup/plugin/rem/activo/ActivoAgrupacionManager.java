@@ -466,13 +466,26 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				} else {
 					// Con que haya un activo sin valor tasacion o valor
 					// aprobado venta, no se haran las asignaciones de ninguno.
-					return null;
+					return asignarValoresCero(activos);
 				}
 			}
 			valores.put(activo.getActivo().getId().toString(), valor);
 			total = total + valor;
 		}
 
+		valores.put("total", total);
+		return valores;
+	}
+
+	private Map<String, Double> asignarValoresCero(List<ActivoAgrupacionActivo> activos) {
+		Map<String, Double> valores = new HashMap<String, Double>();
+		Double total = 0.0;
+
+		for (ActivoAgrupacionActivo activo : activos) {
+			Double valor = 0.0;
+			valores.put(activo.getActivo().getId().toString(), valor);
+		}
+		
 		valores.put("total", total);
 		return valores;
 	}

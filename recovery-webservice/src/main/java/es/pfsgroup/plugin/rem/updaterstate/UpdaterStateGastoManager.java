@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.updaterstate;
 
+import java.util.Date;
+
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -23,7 +25,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 
 	
 	@Autowired
-	private GenericABMDao genericDao;
+	private GenericABMDao genericDao;	
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
@@ -123,27 +125,44 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 		// Comprobamos la situación del gasto y determinamos el próximo código de estado
 			GastoGestion gastoGestion = gasto.getGastoGestion();
 			if(!Checks.esNulo(gasto.getEstadoGasto())){
+				
+				
 			// Si el pago sigue retenido, ningún cambio en el gasto implica cambio de estado.
 				if(Checks.esNulo(gastoGestion.getMotivoRetencionPago())) {
-					
+				
 					// Si estado es INCOMPLETO, comprobamos si ya no lo está para pasarlo a pendiente.
 					//if(DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo()) || DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo())) {
-						String error = validarAutorizacionGasto(gasto);
-						if(Checks.esNulo(error)) {
-							if(DDEstadoAutorizacionHaya.CODIGO_RECHAZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())) {
-								codigo = DDEstadoGasto.RECHAZADO_ADMINISTRACION;
-							}else if(DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())) {
-								codigo = DDEstadoGasto.AUTORIZADO_ADMINISTRACION;
-							}else {
-								codigo = DDEstadoGasto.PENDIENTE;
-							}							
-						}				
-					/*} else */if(DDEstadoAutorizacionHaya.CODIGO_RECHAZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())
-							&& genericAdapter.isProveedor(usuario)) {
-							codigo = DDEstadoGasto.SUBSANADO;
-						
+					String error = validarAutorizacionGasto(gasto);
+					if(Checks.esNulo(error)) {
+						if(DDEstadoAutorizacionHaya.CODIGO_RECHAZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())) {
+							codigo = DDEstadoGasto.RECHAZADO_ADMINISTRACION;
+						}else if(DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())) {
+							codigo = DDEstadoGasto.AUTORIZADO_ADMINISTRACION;
+						}else if(DDEstadoAutorizacionHaya.CODIGO_PENDIENTE.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())){
+							codigo = DDEstadoGasto.PENDIENTE;
+						}							
+					}				
+					if(DDEstadoAutorizacionHaya.CODIGO_RECHAZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())
+						&& genericAdapter.isProveedor(usuario)) {
+						codigo = DDEstadoGasto.SUBSANADO;					
 					}
+					if((!codigo.equals(DDEstadoGasto.RETENIDO) && !gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.ANULADO) || !gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.RECHAZADO_ADMINISTRACION) || 
+							!gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.RECHAZADO_PROPIETARIO) || !gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.RETENIDO))
+							&& !Checks.esNulo(gasto.getGastoDetalleEconomico().getFechaPago())) {
+						if(gasto.getGastoDetalleEconomico().getFechaPago().before(new Date())) {
+							if(!Checks.esNulo(gasto.getGastoDetalleEconomico().getReembolsoTercero())) {
+								if(gasto.getGastoDetalleEconomico().getReembolsoTercero() != 1) {
+									codigo = DDEstadoGasto.PAGADO;	
+								}
+							}else {
+								codigo = DDEstadoGasto.PAGADO;
+							}
+							
+						}
+					}
+					
 				}
+				
 			}				
 		}
 		

@@ -127,9 +127,10 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	@Override
 	public Usuario getSupervisor(TareaExterna tareaExterna) {
 		TareaActivo tareaActivo = (TareaActivo)tareaExterna.getTareaPadre();
+		boolean isFuerzaVentaDirecta = this.isFuerzaVentaDirecta(tareaExterna);
 		String codigoTarea = tareaExterna.getTareaProcedimiento().getCodigo();
 		
-		String codigoSupervisor = this.getMapCodigoTipoSupervisor().get(codigoTarea);
+		String codigoSupervisor = this.getMapCodigoTipoSupervisor(isFuerzaVentaDirecta).get(codigoTarea);
 		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoSupervisor);
 		
 		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
@@ -242,14 +243,21 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		return mapa;
 	}
 	
-	private HashMap<String,String> getMapCodigoTipoSupervisor() {
+	private HashMap<String,String> getMapCodigoTipoSupervisor(boolean isFdv) {
 		
 		HashMap<String,String> mapa = new HashMap<String,String>();
 		
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_COMITE, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_OFERTANTE, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+		if(!isFdv){
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_COMITE, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_OFERTANTE, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+		}else {
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_SUPERVISOR_FVD);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_COMITE, GestorActivoApi.CODIGO_SUPERVISOR_FVD);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_OFERTANTE, GestorActivoApi.CODIGO_SUPERVISOR_FVD);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_SUPERVISOR_FVD);
+		}
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_EXPEDIENTE, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_FIRMA_PROPIETARIO, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RATIFICACION_COMITE, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
@@ -341,8 +349,8 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			if (!Checks.esNulo(oferta)
 					&& !Checks.esNulo(oferta.getPrescriptor())
 					&& !Checks.esNulo(oferta.getPrescriptor().getTipoProveedor())) {
-				if (oferta.getPrescriptor().getTipoProveedor()
-						.equals(DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA) && !carteraCajaMar && !esFinanciero && !esSingular) {
+				if (oferta.getPrescriptor().getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA) 
+						&& !carteraCajaMar && !esFinanciero && !esSingular) {
 					esFdv = true;
 				}
 			}

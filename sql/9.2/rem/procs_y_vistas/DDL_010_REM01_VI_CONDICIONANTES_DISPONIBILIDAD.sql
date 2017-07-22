@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=JOSEVI
---## FECHA_CREACION=20170612
+--## AUTOR=DANIEL GUTIERREZ
+--## FECHA_CREACION=2017072017
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-1591
@@ -15,6 +15,7 @@
 --##             Calculo de condicionado/no condicionado desde la vista
 --##		0.3 HREOS-1954 - Inclusión condicionantes SIN_INFORME_APROBADO y CON_CARGAS
 --##		0.4 HREOS-2142 - Corregir PENDIENTE_INSCRIPCION que estaba al reves
+--##		0.5 Correcciones pre arranque REM
 --##########################################
 --*/
 
@@ -91,7 +92,8 @@ BEGIN
                   WHEN (NVL2(SPS4.SPS_ID,1,0) = 1 OR NVL2(EAC1.DD_EAC_ID,1,0) = 1 OR NVL2(TIT.ACT_ID,0,1) = 1 
                         OR NVL2(EON.DD_EON_ID,1,0) = 1 OR NVL2(NPA.ACT_ID,1,0) = 1 OR NVL2(EAC2.DD_EAC_ID,1,0) = 1 
                         OR NVL2(SPS3.SPS_ID,1,0) = 1 OR NVL2(SPS1.SPS_ID,1,0) = 1 OR NVL2(SPS2.SPS_ID,1,0) = 1
-                        OR NVL2(REG2.REG_ID,1,0) = 1 OR NVL2(SPS5.SPS_OTRO,1,0) = 1)
+                        OR NVL2(REG2.REG_ID,1,0) = 1 OR NVL2(SPS5.SPS_OTRO,1,0) = 1) OR DECODE(VEI.DD_AIC_CODIGO ,''02'' ,0 , 1) = 1
+						OR NVL2(VCG.CON_CARGAS, VCG.CON_CARGAS, 0) = 1
                     THEN ''01''
 	                  ELSE ''02''
              END AS EST_DISP_COM_CODIGO,

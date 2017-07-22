@@ -185,7 +185,6 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 		if(boundList.xtype === 'combobox' && record.getKey() != 13) {
 			return;
 		}
-
     	var me = this;
     	var combo;
     	if(boundList.xtype === 'combobox') {
@@ -221,7 +220,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     		chainedStore.clearFilter();
     		chainedStore.filter([{
                 filterFn: function(rec){
-                    if (rec.getData().provincia.codigo == codigoValue){
+                    if (rec.getData().codigoProvincia == codigoValue){
                         return true;
                     }
                     return false;

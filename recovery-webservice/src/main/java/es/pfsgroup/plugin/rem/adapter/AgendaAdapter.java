@@ -55,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.DtoTarea;
 import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
 
@@ -63,6 +64,8 @@ public class AgendaAdapter {
 	
     public static final String CODIGO_TAREA_ACTIVO = "811";
     public static final String CODIGO_NOTIFICACION = "700";
+    public static final String CODIGO_DEFINICION_OFERTA = "T013_DefinicionOferta";
+    public static final String TEXTO_ADVERTENCIA_T013_DO = "ATENCIÓN: Si ha seleccionado comité Haya está a punto de aprobar esta oferta. Confirme que el importe de la oferta es superior al precio mínimo. En caso contrario, especialmente para las PDV, solicite autorización a su supervisor.";
 
     @Resource
     MessageService messageServices;
@@ -430,6 +433,26 @@ public class AgendaAdapter {
 		}
 		
 		return mensaje;
+	}
+	
+	public String getAdvertenciaTareaComercial(Long idTarea){
+		
+		//Advertencias para avisar al usuario desde la ventana de tareas
+		
+		String mensaje = new String();
+		TareaActivo tarea = tareaActivoApi.get(idTarea);
+		Long idActivo = tarea.getActivo().getId();
+		
+		if(!Checks.esNulo(tarea.getTramite().getTrabajo())){
+			String codigoSubtipoTrabajo = tarea.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo();
+			
+			if(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA.equals(codigoSubtipoTrabajo)){
+				if(CODIGO_DEFINICION_OFERTA.equals(tarea.getTareaExterna().getTareaProcedimiento().getCodigo())){
+					return TEXTO_ADVERTENCIA_T013_DO;
+				}
+			}
+		}
+			return mensaje;
 	}
 	
 	public String getCodigoTramiteTarea(Long idTarea){

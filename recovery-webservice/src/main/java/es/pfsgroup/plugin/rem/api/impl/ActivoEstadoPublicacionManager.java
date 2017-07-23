@@ -370,7 +370,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 							Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", activo.getId());
 							VCondicionantesDisponibilidad condicionantesDisponibilidad = (VCondicionantesDisponibilidad) genericDao.get(VCondicionantesDisponibilidad.class, filtroActivo);
 							if(!Checks.esNulo(condicionantesDisponibilidad)) {
-								if(condicionantesDisponibilidad.getIsCondicionado()){
+								if(!condicionantesDisponibilidad.getIsCondicionado()){
 								/*if(!condicionantesDisponibilidad.getRuina() &&
 										!condicionantesDisponibilidad.getPendienteInscripcion() &&
 										!condicionantesDisponibilidad.getObraNuevaSinDeclarar() &&

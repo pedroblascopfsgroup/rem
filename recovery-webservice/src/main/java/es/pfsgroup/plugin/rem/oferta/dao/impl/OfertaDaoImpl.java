@@ -55,9 +55,10 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 			
 			if (adapter.tienePerfil("HAYAGESTCOM", usuarioGestor)) {
 				if(Checks.esNulo(usuarioGestoria)) {
-					from = from	+ ",GestorActivo gestorActivo ";
-					where = "gestorActivo.activo.id = voferta.idActivo and gestorActivo.usuario.id =".concat(String.valueOf(usuarioGestor.getId()));
-					
+					from = from	+ ",GestorActivo gestorActivo, GestorExpedienteComercial gestorExpediente ";
+					where = "gestorActivo.activo.id = voferta.idActivo and "
+							+ "gestorActivo.usuario.id =".concat(String.valueOf(usuarioGestor.getId()))+" or "
+							+ "gestorExpediente.expedienteComercial.id = voferta.idExpediente and gestorExpediente.tipoGestor.codigo = '".concat(GestorExpedienteComercialApi.CODIGO_GESTOR_COMERCIAL).concat("' and gestorExpediente.usuario.id =".concat(String.valueOf(usuarioGestor.getId())));					
 				} else{
 					from = from	+ ",GestorActivo gestorActivo, GestorExpedienteComercial gestorExpediente";
 					where = "gestorActivo.activo.id = voferta.idActivo and "

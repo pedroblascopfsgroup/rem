@@ -97,6 +97,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             afterrender: function() {
                 me.lookupController().getValidacionPrevia(me);
                 me.lookupController().getAdvertenciaTarea(me);
+                me.lookupController().getAdvertenciaTareaComercial(me);
                 me.lookupController().verBotonEnlaceTrabajo(me, esInvisibleEcTrabajo);
                 me.lookupController().verBotonEnlaceActivo(me, esInvisibleEcActivo);
                 me.lookupController().verBotonEnlaceExpediente(me, esInvisibleEcExpediente);
@@ -269,6 +270,13 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
                         },
                         style: 'color: red'
                     }, {
+                        xtype: 'label',
+                        cls: '.texto-alerta',
+                        bind: {
+                            html: '{textoAdvertenciaTareaComercial}'
+                        },
+                        style: 'color: red'
+                    },{
                         xtype: 'label',
                         cls: 'info-tarea',
                         bind: {

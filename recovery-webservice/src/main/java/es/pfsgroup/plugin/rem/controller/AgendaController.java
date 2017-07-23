@@ -207,6 +207,19 @@ public class AgendaController extends TareaController {
 		return createModelAndViewJson(model);
 
 	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getAdvertenciaTareaComercial(@RequestParam Long idTarea, ModelMap model) {
+
+		// TODO: Aquí se generan los distintos textos de avisos para la tarea
+		String advertencia = adapter.getAdvertenciaTareaComercial(idTarea);
+
+		model.put("textoAdvertencia", advertencia);
+		model.put("success", true);
+
+		return createModelAndViewJson(model);
+
+	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public void generateExcel(DtoTareaFilter dtoTareaFilter, HttpServletRequest request, HttpServletResponse response)

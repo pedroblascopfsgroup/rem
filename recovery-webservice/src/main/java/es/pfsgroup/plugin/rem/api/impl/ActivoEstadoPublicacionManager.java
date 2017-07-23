@@ -370,7 +370,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 							Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", activo.getId());
 							VCondicionantesDisponibilidad condicionantesDisponibilidad = (VCondicionantesDisponibilidad) genericDao.get(VCondicionantesDisponibilidad.class, filtroActivo);
 							if(!Checks.esNulo(condicionantesDisponibilidad)) {
-								if(!condicionantesDisponibilidad.getRuina() &&
+								if(condicionantesDisponibilidad.getIsCondicionado()){
+								/*if(!condicionantesDisponibilidad.getRuina() &&
 										!condicionantesDisponibilidad.getPendienteInscripcion() &&
 										!condicionantesDisponibilidad.getObraNuevaSinDeclarar() &&
 										!condicionantesDisponibilidad.getSinTomaPosesionInicial() &&
@@ -380,7 +381,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 										!condicionantesDisponibilidad.getTapiado() &&
 										!condicionantesDisponibilidad.getPortalesExternos() &&
 										!condicionantesDisponibilidad.getOcupadoSinTitulo() &&
-										!condicionantesDisponibilidad.getDivHorizontalNoInscrita()) {
+										!condicionantesDisponibilidad.getDivHorizontalNoInscrita()) {*/
 									activoHistoricoEstadoPublicacion.setPortal((DDPortal) utilDiccionarioApi.dameValorDiccionarioByCod(DDPortal.class, DDPortal.CODIGO_HAYA));
 								} else {
 									activoHistoricoEstadoPublicacion.setPortal((DDPortal) utilDiccionarioApi.dameValorDiccionarioByCod(DDPortal.class, DDPortal.CODIGO_INVERSORES));

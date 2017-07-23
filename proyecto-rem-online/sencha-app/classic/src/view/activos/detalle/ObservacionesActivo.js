@@ -19,6 +19,7 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
 			    xtype		: 'gridBaseEditableRow',
 			    idPrincipal : 'activo.id',
 			    topBar: true,
+			    disabledDeleteBtn: true,
 			    reference: 'listadoObservaciones',
 				cls	: 'panel-base shadow-panel',
 				bind: {

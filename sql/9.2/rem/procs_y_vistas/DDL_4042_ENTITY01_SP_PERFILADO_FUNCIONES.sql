@@ -39,11 +39,11 @@ AS
   TYPE T_ARRAY IS TABLE OF T_VAR;
   V_FUN T_ARRAY := T_ARRAY(
     ------    FUNCION   ---------------------------------------2---3---4---5---6---7---8---9--10--11--12--13--14--15--16--17--18--19--20--21--22--23--24--25--26--27--28--29--31--31--32--33--34--35--36--37--38--39--40--
-  	T_VAR( 'TAB_ACTIVO_DATOS_GENERALES',					  'S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
+  	T_VAR( 'TAB_ACTIVO_DATOS_GENERALES','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
 	T_VAR( 'TAB_ACTIVO_ACTUACIONES','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S'),
 	T_VAR( 'TAB_ACTIVO_GESTORES','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
 	T_VAR( 'MOSTRAR_COMBO_GESTORES','N','S','N','S','N','S','N','S','N','S','N','N','S','N','S','N','S','N','S','N','S','N','S','N','N','N','N','N','N','N','N','N','N','S','N','S','S','S','S','S'),
-	T_VAR( 'TAB_ACTIVO_OBSERVACIONES','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S'),
+	T_VAR( 'TAB_ACTIVO_OBSERVACIONES','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','S','S','S','S','S','S','S'),
 	T_VAR( 'EDITAR_TAB_ACTIVO_FOTOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
 	T_VAR( 'EDITAR_TAB_ACTIVO_DOCUMENTOS','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S'),
 	T_VAR( 'TAB_ACTIVO_DOCUMENTOS','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
@@ -237,8 +237,8 @@ AS
 	T_VAR( 'TRABAJO_DOCUMENTOS_ADD','S','S','S','S','N','N','S','S','S','S','N','S','S','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S'),
 	T_VAR( 'SUBIR_LISTA_ACTIVOS_IBI','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','N','N','N','S','S','S','S','S','S','N','N','N','S','N','N','N','N','N','N'),
 	T_VAR( 'ACTIVO_OBSERVACIONES_ADD','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','S','S','S','S','S','S','N','S','S','S','S','S','S','N','N','N','S','S','S','S','S','S','S'),
-	T_VAR( 'ACTIVO_DOCUMENTOS_ADD','S','S','S','S','N','N','S','S','S','S','N','S','S','N','N','N','N','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S')  
-	);
+	T_VAR( 'ACTIVO_DOCUMENTOS_ADD','S','S','S','S','N','N','S','S','S','S','N','S','S','N','N','N','N','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S')	
+  );
   V_TMP_VAR T_VAR;
 
 BEGIN

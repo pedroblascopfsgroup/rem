@@ -14,7 +14,8 @@ public class RecoveryToGestorDocAssembler {
 
 	private String USUARIO;
 	private String PASSWORD;
-	private final String TIPO_EXPEDIENTE="Tipo%20Expediente";
+	//private final String TIPO_EXPEDIENTE="Tipo%20Expediente";
+	private final String TIPO_EXPEDIENTE="Global";
 
 	public RecoveryToGestorDocAssembler(Properties appProperties){
 		USUARIO = appProperties.getProperty("rest.client.gestor.documental.user");

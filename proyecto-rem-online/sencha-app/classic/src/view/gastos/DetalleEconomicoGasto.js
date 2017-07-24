@@ -86,6 +86,10 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											                	edit: function(){
 											                		if(this.getValue()==0)
 											                			this.setValue('');
+											                		if(me.up('gastodetallemain').getViewModel().get('gasto').get('asignadoATrabajos'))
+										        						this.setReadOnly(true);
+										        					else
+										        						this.setReadOnly(false);
 										        				},											                
 										        				change: function(){	
 										        					var field=me.up('gastodetallemain').lookupReference('tipoImpositivo');

@@ -40,6 +40,14 @@ BEGIN
 --############ TRABAJOS
 --#############################################################
 
+EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA||'.'||V_TABLA_2||' T1 WHERE EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.'||V_TABLA||' TP JOIN '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG ON TP.TBJ_NUM_TRABAJO = MIG.TBJ_NUM_TRABAJO AND MIG.VALIDACION IN (0,1) WHERE T1.TBJ_ID = TP.TBJ_ID)';
+
+DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.'||V_TABLA_2||' borrada (Registros que vienen en la migración). '||SQL%ROWCOUNT||' Filas.');
+
+EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA||'.'||V_TABLA||' T1 WHERE EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG WHERE T1.TBJ_NUM_TRABAJO = MIG.TBJ_NUM_TRABAJO AND MIG.VALIDACION IN (0,1))';
+
+DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.'||V_TABLA||' borrada (Registros que vienen en la migración). '||SQL%ROWCOUNT||' Filas.');
+
 	EXECUTE IMMEDIATE ('
 		INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
 			TBJ_ID,

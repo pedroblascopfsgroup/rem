@@ -53,10 +53,6 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_TABLA|| '********'); 
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comprobaciones previas *************************************************');
 
-	 -- Mientras sea una tabla de configuración de la que extraemos información y no haya ninguna FK apuntando a su id, 
-    -- podemos borrar la tabla completa y volver a generar la configuración.
-    V_MSQL := 'TRUNCATE TABLE '||V_ESQUEMA||'.'|| V_TEXT_TABLA; 
-    EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO]: TABLA TRUNCADA');
     
 	-- Bucle que BORRAS las columnas del array T_ARRAY_DROP

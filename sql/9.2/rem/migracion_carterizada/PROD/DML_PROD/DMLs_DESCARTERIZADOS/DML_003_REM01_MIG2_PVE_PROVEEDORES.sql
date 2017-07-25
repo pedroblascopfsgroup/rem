@@ -431,7 +431,7 @@ BEGIN
             WHERE
                 NVL(T1.DD_EPR_ID,0) <> (SELECT DD_EPR_ID FROM REM01.DD_EPR_ESTADO_PROVEEDOR WHERE DD_EPR_CODIGO = ''07'')
                 AND T1.PVE_FECHA_BAJA IS NULL AND T1.USUARIOCREAR <> '''||V_USUARIO||''' 
-                AND NVL(T1.USUARIOMODIFICAR,' ') <> '''||V_USUARIO||''' AND UPPER(T1.PVE_NOMBRE) NOT LIKE ''%TINSA CERTIFY%'' 
+                AND NVL(T1.USUARIOMODIFICAR,'' '') <> '''||V_USUARIO||''' AND UPPER(T1.PVE_NOMBRE) NOT LIKE ''%TINSA CERTIFY%'' 
                 AND T1.BORRADO = 0';
 
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' dados de baja. '||SQL%ROWCOUNT||' Filas.');

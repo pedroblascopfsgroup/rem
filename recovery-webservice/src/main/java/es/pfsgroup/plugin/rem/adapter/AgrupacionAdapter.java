@@ -49,6 +49,7 @@ import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.AgrupacionAvisadorApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
@@ -75,8 +76,8 @@ import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VActivosSubdivision;
@@ -97,7 +98,6 @@ import es.pfsgroup.plugin.rem.validate.AgrupacionValidator;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidatorFactoryApi;
 import es.pfsgroup.plugin.rem.validate.BusinessValidators;
 import es.pfsgroup.recovery.api.UsuarioApi;
-import net.sf.json.JSONObject;
 
 @Service
 public class AgrupacionAdapter {
@@ -166,6 +166,9 @@ public class AgrupacionAdapter {
 
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
 	
 	@Resource
 	MessageService messageServices;
@@ -751,15 +754,23 @@ public class AgrupacionAdapter {
 							if (!Checks.esNulo(ofertaActivo.getPrimaryKey())
 									&& !Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta())
 									&& !Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta())) {
-								// Si su estado es 'congelada' asignar nuevo estado
-								// a 'pendiente'.
-								if (ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta().getCodigo()
-										.equals(DDEstadoOferta.CODIGO_CONGELADA)) {
-									DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
-											.dameValorDiccionarioByCod(DDEstadoOferta.class,
-													DDEstadoOferta.CODIGO_PENDIENTE);
-									ofertaActivo.getPrimaryKey().getOferta().setEstadoOferta(estadoOferta);
-								}
+								// Si tiene expediente poner oferta ACEPTADA. Si no
+								// tiene poner oferta PENDIENTE
+								try{
+									if (ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta().getCodigo()
+											.equals(DDEstadoOferta.CODIGO_CONGELADA)) {
+										ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(ofertaActivo.getPrimaryKey().getOferta());
+										if (!Checks.esNulo(exp)) {
+											ofertaApi.descongelarOfertas(exp);
+										} else {
+											ofertaActivo.getPrimaryKey().getOferta().setEstadoOferta( genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo",
+													DDEstadoOferta.CODIGO_PENDIENTE)));
+											genericDao.save(Oferta.class, ofertaActivo.getPrimaryKey().getOferta());
+										}
+									}
+								}catch(Exception e){
+									logger.error("error descongelando ofertas",e);
+								}								
 							}
 						}
 					}
@@ -1634,6 +1645,17 @@ public class AgrupacionAdapter {
 				logger.error("error en agrupacionAdapter", e);
 				return false;
 			}
+		}
+
+		try {
+			// HREOS-2552: Si damos de baja la agrupación Descongelamos las
+			// ofertas congeladas en los activos de la grupacion
+			if (!Checks.esNulo(dto.getFechaBaja())) {
+				activoAgrupacionApi.descongelarOfertasActivoAgrupacion(agrupacion);
+			}
+		} catch (Exception e) {
+			logger.error("error Descongelamos las ofertas congeladas en los activos de la agrupacion", e);
+			return false;
 		}
 
 		return true;

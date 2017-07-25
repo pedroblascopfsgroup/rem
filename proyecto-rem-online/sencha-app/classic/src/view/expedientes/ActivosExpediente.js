@@ -89,7 +89,7 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			},
 			{
 			    xtype		: 'gridBaseEditableRow',
-			    minHeight	: 150,
+			    minHeight	: 200,
 			    idPrincipal : 'expediente.id',
 			    reference: 'listadoactivosexpediente',
 				cls	: 'panel-base shadow-panel',

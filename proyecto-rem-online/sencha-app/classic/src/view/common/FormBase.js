@@ -121,7 +121,9 @@
     		me.collapsible = true;
     		me.collapsed = false;
     		me.buttonAlign = 'left';
-    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel'}, { text: HreRem.i18n('btn.crearTrabajo'), handler: 'onClickCrearTrabajo', hidden: !$AU.userIsRol(CONST.PERFILES['SUPERVISOR_ACTIVO'])}]
+    		//me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel'}, { text: HreRem.i18n('btn.crearTrabajo'), handler: 'onClickCrearTrabajo', hidden: !$AU.userIsRol(CONST.PERFILES['SUPERVISOR_ACTIVO'])}]
+    		//El botón de crear trabajo se pone visible para todos en el arranque
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel'}, { text: HreRem.i18n('btn.crearTrabajo'), handler: 'onClickCrearTrabajo'}]
     	}
     	   		
     	if (me.isSearchForm) {

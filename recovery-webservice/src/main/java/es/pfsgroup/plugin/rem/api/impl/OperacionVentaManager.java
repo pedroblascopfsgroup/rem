@@ -49,6 +49,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.utils.FileUtilsREM;
@@ -97,7 +98,7 @@ public class OperacionVentaManager implements ParamReportsApi{
 				throw new Exception(RestApi.REST_NO_RELATED_EXPEDIENT);					
 			}
 
-			mapaValores.put("Activo", activo.getNumActivoUvem().toString());
+			mapaValores.put("Activo", activo.getNumActivo().toString());
 			mapaValores.put("NumOfProp", oferta.getNumOferta() + "/1");
 
 			if (activo.getCartera()!=null && activo.getCartera().getCodigo()!=null) {
@@ -115,7 +116,7 @@ public class OperacionVentaManager implements ParamReportsApi{
 			}
 			
 			mapaValores.put("FAprobacion",FileUtilsREM.stringify(expediente.getFechaSancion()));
-			mapaValores.put("Referencia",FileUtilsREM.stringify(null)); 
+			mapaValores.put("Referencia",FileUtilsREM.stringify(activo.getNumInmovilizadoBnk())); 
 			mapaValores.put("Prescriptor",FileUtilsREM.stringify(oferta.getPrescriptor() != null ? oferta.getPrescriptor().getNombre() : ""));
 			mapaValores.put("Sucursal",FileUtilsREM.stringify(null));
 			
@@ -250,10 +251,9 @@ public class OperacionVentaManager implements ParamReportsApi{
 				mapaValores.put("Folio",FileUtilsREM.stringify(null));
 			}
 			
-			//TODO: Falta saber que se debe poner en Tipo Propiedad
-			mapaValores.put("TipoPropiedad",FileUtilsREM.stringify(null));
+			mapaValores.put("TipoPropiedad",FileUtilsREM.stringify(this.getTipoPropiedadActivo(activo)));
 
-			Double participacion = activoOferta.getPorcentajeParticipacion();
+			Double participacion = activoOferta.getPorcentajeParticipacion()/100;
 			
 			Double importeA;
 			if(oferta.getImporteContraOferta() != null) {
@@ -267,39 +267,39 @@ public class OperacionVentaManager implements ParamReportsApi{
 			}
 			Double impuestoB = new Double(0);
 			if (condExp.getTipoAplicable()!=null) {
-				impuestoB = condExp.getTipoAplicable()*importeA;
+				impuestoB = condExp.getTipoAplicable()/100*importeA;
 			}
 			Double cobrada = new Double(0);
 			
 			mapaValores.put("importeA",FileUtilsREM.stringify(importeA));
 			if (condExp.getTipoAplicable()!=null) {
 				mapaValores.put("impuestoB",FileUtilsREM.stringify(impuestoB));
-				mapaValores.put("importeAB",FileUtilsREM.stringify(importeA*(1+condExp.getTipoAplicable())));
+				mapaValores.put("importeAB",FileUtilsREM.stringify(importeA*(1+condExp.getTipoAplicable()/100)));
 			} else {
 				mapaValores.put("impuestoB",FileUtilsREM.stringify(null));
 				mapaValores.put("importeAB",FileUtilsREM.stringify(null));
 			}
-			if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(condExp.getTipoCalculoReserva()) ) {
-				mapaValores.put("cobrada", FileUtilsREM.stringify(condExp.getPorcentajeReserva()*importeA));
-				cobrada = condExp.getPorcentajeReserva()*importeA;
-			} else {
-				Double importeReserva = condExp.getImporteReserva();
-				if (importeReserva!=null ) {
-					mapaValores.put("cobrada", FileUtilsREM.stringify(importeReserva));
-					cobrada = importeReserva;
+			if(!Checks.esNulo(condExp.getTipoCalculoReserva())){
+				if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(condExp.getTipoCalculoReserva().getCodigo())) {
+					mapaValores.put("cobrada", FileUtilsREM.stringify(condExp.getPorcentajeReserva()/100*importeA));
+					cobrada = condExp.getPorcentajeReserva()/100*importeA;
 				} else {
-					mapaValores.put("cobrada", FileUtilsREM.stringify(null));					
+					Double importeReserva = condExp.getImporteReserva();
+					if (importeReserva!=null ) {
+						mapaValores.put("cobrada", FileUtilsREM.stringify(importeReserva));
+						cobrada = importeReserva;
+					} else {
+						mapaValores.put("cobrada", FileUtilsREM.stringify(null));					
+					}
 				}
+			}else {
+				mapaValores.put("cobrada", FileUtilsREM.stringify(null));
 			}
 			mapaValores.put("importeCobr",FileUtilsREM.stringify(importeA+impuestoB-cobrada));
 			
-			//TODO: Falta que Tomás nos diga a que hace referencia
-			mapaValores.put("sujecion",FileUtilsREM.stringify(null));
+			mapaValores.put("sujecion",FileUtilsREM.stringify(this.getSujecionDirecta(condExp)));
 			
 			mapaValores.put("renuncia",FileUtilsREM.stringify(condExp.getRenunciaExencion()));
-			
-			//TODO: Falta que Tomás nos diga a que hace referencia
-			mapaValores.put("tasacion716",FileUtilsREM.stringify(null));
 
 			if(condExp.getSolicitaFinanciacion() != null) {
 				mapaValores.put("financiacion",FileUtilsREM.stringify(condExp.getSolicitaFinanciacion() == 1 ? "Si" : "No"));
@@ -310,8 +310,11 @@ public class OperacionVentaManager implements ParamReportsApi{
 			} else {
 				mapaValores.put("tipoImpuesto",FileUtilsREM.stringify(null));
 			}
-			
-			mapaValores.put("porcentajeImp",FileUtilsREM.stringify(condExp.getPorcentajeReserva()));
+			if(!Checks.esNulo(condExp.getPorcentajeReserva())){
+				mapaValores.put("porcentajeImp",FileUtilsREM.stringify(condExp.getPorcentajeReserva()));
+			}else {
+				mapaValores.put("porcentajeImp", FileUtilsREM.stringify(null));
+			}
 			
 			
 			List<ActivoTasacion> listActivoTasacion = activoDao.getListActivoTasacionByIdActivo(activo.getId());
@@ -319,8 +322,10 @@ public class OperacionVentaManager implements ParamReportsApi{
 				listActivoTasacion.size()>0 &&
 				listActivoTasacion.get(0)!=null &&
 				listActivoTasacion.get(0).getFechaRecepcionTasacion()!=null) {
+				mapaValores.put("tasacion716",FileUtilsREM.stringify(listActivoTasacion.get(0).getImporteTasacionFin()));
 				mapaValores.put("fechaTasacion",FileUtilsREM.stringify(listActivoTasacion.get(0).getFechaRecepcionTasacion()));
 			} else {
+				mapaValores.put("tasacion716",FileUtilsREM.stringify(null));
 				mapaValores.put("fechaTasacion",FileUtilsREM.stringify(null));
 			}
 			
@@ -475,8 +480,7 @@ public class OperacionVentaManager implements ParamReportsApi{
 			}
 			mapaValores.put("Tratamientodecargas", txtCargas);
 			
-			//TODO: Falta saber que se debe poner en Tipo Propiedad
-			mapaValores.put("TipoPropiedad",FileUtilsREM.stringify(null));
+			mapaValores.put("TipoPropiedad",FileUtilsREM.stringify(this.getTipoPropiedadActivo(activo)));
 
 			Double importeA;
 			if(oferta.getImporteContraOferta() != null) {
@@ -516,13 +520,9 @@ public class OperacionVentaManager implements ParamReportsApi{
 			}
 			mapaValores.put("importeCobr",FileUtilsREM.stringify(importeA+impuestoB-cobrada));
 			
-			//TODO: Falta que Tomás nos diga a que hace referencia
-			mapaValores.put("sujecion",FileUtilsREM.stringify(null));
+			mapaValores.put("sujecion",FileUtilsREM.stringify(this.getSujecionDirecta(condExp)));
 			
 			mapaValores.put("renuncia",FileUtilsREM.stringify(condExp.getRenunciaExencion()));
-			
-			//TODO: Falta que Tomás nos diga a que hace referencia
-			mapaValores.put("tasacion716",FileUtilsREM.stringify(null));
 
 			if(condExp.getSolicitaFinanciacion() != null) {
 				mapaValores.put("financiacion",FileUtilsREM.stringify(condExp.getSolicitaFinanciacion() == 1 ? "Si" : "No"));
@@ -542,11 +542,14 @@ public class OperacionVentaManager implements ParamReportsApi{
 					listActivoTasacion.size()>0 &&
 					listActivoTasacion.get(0)!=null &&
 					listActivoTasacion.get(0).getFechaRecepcionTasacion()!=null) {
+					mapaValores.put("tasacion716",FileUtilsREM.stringify(listActivoTasacion.get(0).getImporteTasacionFin()));
 					mapaValores.put("fechaTasacion",FileUtilsREM.stringify(listActivoTasacion.get(0).getFechaRecepcionTasacion()));
 				} else {
+					mapaValores.put("tasacion716",FileUtilsREM.stringify(null));
 					mapaValores.put("fechaTasacion",FileUtilsREM.stringify(null));
 				}
 			} else {
+				mapaValores.put("tasacion716",FileUtilsREM.stringify(null));
 				mapaValores.put("fechaTasacion",FileUtilsREM.stringify(null));
 			}
 			
@@ -718,6 +721,30 @@ public class OperacionVentaManager implements ParamReportsApi{
 		
 		return fileSalidaTemporal;
 
+	}
+	
+	private String getTipoPropiedadActivo(Activo activo) {
+		if ((activo != null) 
+				&& (!Checks.estaVacio(activo.getPropietariosActivo())) 
+				&& (!Checks.esNulo(activo.getPropietariosActivo().get(0).getTipoGradoPropiedad()))){
+			
+			return activo.getPropietariosActivo().get(0).getTipoGradoPropiedad().getDescripcion();
+			
+		} else {
+			return null;
+		}
+	}
+	
+	private Boolean getSujecionDirecta (CondicionanteExpediente condExp) {
+		if ((condExp != null) 
+				&& (condExp.getTipoImpuesto() != null) 	
+				&& (DDTiposImpuesto.TIPO_IMPUESTO_IVA.equals(condExp.getTipoImpuesto().getCodigo()))
+				&& (! Boolean.TRUE.equals(condExp.getRenunciaExencion()))) {
+				
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	

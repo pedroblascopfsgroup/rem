@@ -33,13 +33,12 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
         			handler: 'onTramiteClick',
         			secFunPermToShow: 'BOTON_CREAR_TRAMITE',
 		            hidden: (me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false")
+        		},
+        		{
+        			text: 'Lanzar T. de Publicacion',
+        			handler: 'onTramitePublicacionClick',
+		            hidden: (me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false")
         		}
-//        		,
-//        		{
-//        			text: 'Lanzar T. de Publicacion (sólo pruebas)',
-//        			handler: 'onTramitePublicacionClick',
-//		            hidden: (me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false")
-//        		}
 	    		
 	    	]
 	    	

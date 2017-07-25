@@ -303,6 +303,8 @@ public class OperacionVentaManager implements ParamReportsApi{
 
 			if(condExp.getSolicitaFinanciacion() != null) {
 				mapaValores.put("financiacion",FileUtilsREM.stringify(condExp.getSolicitaFinanciacion() == 1 ? "Si" : "No"));
+			}else{
+				mapaValores.put("financiacion", FileUtilsREM.stringify(null));
 			}
 
 			if (condExp.getTipoImpuesto()!=null) {
@@ -526,6 +528,8 @@ public class OperacionVentaManager implements ParamReportsApi{
 
 			if(condExp.getSolicitaFinanciacion() != null) {
 				mapaValores.put("financiacion",FileUtilsREM.stringify(condExp.getSolicitaFinanciacion() == 1 ? "Si" : "No"));
+			}else{
+				mapaValores.put("financiacion",FileUtilsREM.stringify(null));
 			}
 
 			if (condExp.getTipoImpuesto()!=null) {

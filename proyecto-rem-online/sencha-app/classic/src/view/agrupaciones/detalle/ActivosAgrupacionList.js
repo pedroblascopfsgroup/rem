@@ -216,7 +216,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            bind: {
 		        	hidden: '{!esAgrupacionObraNuevaOrAsistida}'
 		        },
-	            flex: 0.5
+	            flex: 2
 	        },
 	        {
 	            dataIndex: 'direccion',
@@ -248,8 +248,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	        {
 	            dataIndex: 'publicado',
 	            text: HreRem.i18n('header.publicado'),
-	            flex: 0.5,
-	            renderer: Utils.rendererBooleanToSiNo
+	            flex: 1//,
+	            //renderer: Utils.rendererBooleanToSiNo
 	        },
 	        {
 	            dataIndex: 'situacionComercial',

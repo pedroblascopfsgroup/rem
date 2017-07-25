@@ -98,7 +98,7 @@ public class VActivosAgrupacion implements Serializable {
 	private String puerta;
 	
 	@Column(name="PUBLICADO")
-	private Boolean publicado;
+	private String publicado;
 
 
 	public Long getId() {
@@ -285,11 +285,11 @@ public class VActivosAgrupacion implements Serializable {
 		this.importeDescuentoPublicado = importeDescuentoPublicado;
 	}
 
-	public Boolean getPublicado() {
+	public String getPublicado() {
 		return publicado;
 	}
 
-	public void setPublicado(Boolean publicado) {
+	public void setPublicado(String publicado) {
 		this.publicado = publicado;
 	}
 	

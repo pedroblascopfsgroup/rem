@@ -98,7 +98,7 @@ public class OperacionVentaManager implements ParamReportsApi{
 				throw new Exception(RestApi.REST_NO_RELATED_EXPEDIENT);					
 			}
 
-			mapaValores.put("Activo", activo.getNumActivoUvem().toString());
+			mapaValores.put("Activo", activo.getNumActivo().toString());
 			mapaValores.put("NumOfProp", oferta.getNumOferta() + "/1");
 
 			if (activo.getCartera()!=null && activo.getCartera().getCodigo()!=null) {
@@ -253,7 +253,7 @@ public class OperacionVentaManager implements ParamReportsApi{
 			
 			mapaValores.put("TipoPropiedad",FileUtilsREM.stringify(this.getTipoPropiedadActivo(activo)));
 
-			Double participacion = activoOferta.getPorcentajeParticipacion();
+			Double participacion = activoOferta.getPorcentajeParticipacion()/100;
 			
 			Double importeA;
 			if(oferta.getImporteContraOferta() != null) {
@@ -267,29 +267,33 @@ public class OperacionVentaManager implements ParamReportsApi{
 			}
 			Double impuestoB = new Double(0);
 			if (condExp.getTipoAplicable()!=null) {
-				impuestoB = condExp.getTipoAplicable()*importeA;
+				impuestoB = condExp.getTipoAplicable()/100*importeA;
 			}
 			Double cobrada = new Double(0);
 			
 			mapaValores.put("importeA",FileUtilsREM.stringify(importeA));
 			if (condExp.getTipoAplicable()!=null) {
 				mapaValores.put("impuestoB",FileUtilsREM.stringify(impuestoB));
-				mapaValores.put("importeAB",FileUtilsREM.stringify(importeA*(1+condExp.getTipoAplicable())));
+				mapaValores.put("importeAB",FileUtilsREM.stringify(importeA*(1+condExp.getTipoAplicable()/100)));
 			} else {
 				mapaValores.put("impuestoB",FileUtilsREM.stringify(null));
 				mapaValores.put("importeAB",FileUtilsREM.stringify(null));
 			}
-			if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(condExp.getTipoCalculoReserva()) ) {
-				mapaValores.put("cobrada", FileUtilsREM.stringify(condExp.getPorcentajeReserva()*importeA));
-				cobrada = condExp.getPorcentajeReserva()*importeA;
-			} else {
-				Double importeReserva = condExp.getImporteReserva();
-				if (importeReserva!=null ) {
-					mapaValores.put("cobrada", FileUtilsREM.stringify(importeReserva));
-					cobrada = importeReserva;
+			if(!Checks.esNulo(condExp.getTipoCalculoReserva())){
+				if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(condExp.getTipoCalculoReserva().getCodigo())) {
+					mapaValores.put("cobrada", FileUtilsREM.stringify(condExp.getPorcentajeReserva()/100*importeA));
+					cobrada = condExp.getPorcentajeReserva()/100*importeA;
 				} else {
-					mapaValores.put("cobrada", FileUtilsREM.stringify(null));					
+					Double importeReserva = condExp.getImporteReserva();
+					if (importeReserva!=null ) {
+						mapaValores.put("cobrada", FileUtilsREM.stringify(importeReserva));
+						cobrada = importeReserva;
+					} else {
+						mapaValores.put("cobrada", FileUtilsREM.stringify(null));					
+					}
 				}
+			}else {
+				mapaValores.put("cobrada", FileUtilsREM.stringify(null));
 			}
 			mapaValores.put("importeCobr",FileUtilsREM.stringify(importeA+impuestoB-cobrada));
 			
@@ -299,6 +303,8 @@ public class OperacionVentaManager implements ParamReportsApi{
 
 			if(condExp.getSolicitaFinanciacion() != null) {
 				mapaValores.put("financiacion",FileUtilsREM.stringify(condExp.getSolicitaFinanciacion() == 1 ? "Si" : "No"));
+			}else{
+				mapaValores.put("financiacion", FileUtilsREM.stringify(null));
 			}
 
 			if (condExp.getTipoImpuesto()!=null) {
@@ -306,8 +312,11 @@ public class OperacionVentaManager implements ParamReportsApi{
 			} else {
 				mapaValores.put("tipoImpuesto",FileUtilsREM.stringify(null));
 			}
-			
-			mapaValores.put("porcentajeImp",FileUtilsREM.stringify(condExp.getPorcentajeReserva()));
+			if(!Checks.esNulo(condExp.getPorcentajeReserva())){
+				mapaValores.put("porcentajeImp",FileUtilsREM.stringify(condExp.getPorcentajeReserva()));
+			}else {
+				mapaValores.put("porcentajeImp", FileUtilsREM.stringify(null));
+			}
 			
 			
 			List<ActivoTasacion> listActivoTasacion = activoDao.getListActivoTasacionByIdActivo(activo.getId());
@@ -519,6 +528,8 @@ public class OperacionVentaManager implements ParamReportsApi{
 
 			if(condExp.getSolicitaFinanciacion() != null) {
 				mapaValores.put("financiacion",FileUtilsREM.stringify(condExp.getSolicitaFinanciacion() == 1 ? "Si" : "No"));
+			}else{
+				mapaValores.put("financiacion",FileUtilsREM.stringify(null));
 			}
 
 			if (condExp.getTipoImpuesto()!=null) {

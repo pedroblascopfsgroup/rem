@@ -94,5 +94,13 @@ public interface ActivoAgrupacionApi {
 	 * @return Float porcentaje correspondiente de un activo
 	 */
 	public Float asignarPorcentajeParticipacionEntreActivos(ActivoAgrupacionActivo activo, Map<String,Double> valores, Double total) throws Exception;
+	
+	/**
+	 * Descongela las ofertas congeladas de los activos pertenecientes a la agrupación
+	 * 
+	 * @param agrupacion
+	 * @return
+	 */
+	public boolean descongelarOfertasActivoAgrupacion(ActivoAgrupacion agrupacion) throws Exception;
 		
 }

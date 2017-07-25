@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -27,8 +26,6 @@ public class AgrupacionValidatorLoteComercial extends AgrupacionValidatorCommonI
     @Autowired 
     private ActivoAgrupacionActivoApi activoAgrupacionActivoApi;
 
-    @Autowired
-	private UtilDiccionarioApi utilDiccionarioApi;
     
     @Autowired
     private OfertaApi ofertaApi;
@@ -76,9 +73,8 @@ public class AgrupacionValidatorLoteComercial extends AgrupacionValidatorCommonI
 
 									if(ofertaApi.isOfertaAceptadaConExpedienteBlocked(oferta)) {
 										return ERROR_OFERTA_AGRUPACION_ACTIVO_ACEPTADA;
-									} else if(oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_PENDIENTE)) {
-										DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_CONGELADA);
-										oferta.setEstadoOferta(estadoOferta);
+									} else if(oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_PENDIENTE)||oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_ACEPTADA)) {
+										ofertaApi.congelarOferta(oferta);
 									}
 								}
 							}
@@ -103,9 +99,8 @@ public class AgrupacionValidatorLoteComercial extends AgrupacionValidatorCommonI
 						
 						if(ofertaApi.isOfertaAceptadaConExpedienteBlocked(ofertaActivo.getPrimaryKey().getOferta())) {
 							return ERROR_OFERTA_ACTIVO_EXPED_TRAMITADO;
-						} else if(ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_PENDIENTE)) {
-							DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_CONGELADA);
-							ofertaActivo.getPrimaryKey().getOferta().setEstadoOferta(estadoOferta);
+						} else if(ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_PENDIENTE) || ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_ACEPTADA)) {
+							ofertaApi.congelarOferta(ofertaActivo.getPrimaryKey().getOferta());
 						}
 					}
 				}

@@ -496,14 +496,14 @@ public class OperacionVentaManager implements ParamReportsApi{
 			}
 			Double impuestoB = new Double(0);
 			if (condExp.getTipoAplicable()!=null) {
-				impuestoB = condExp.getTipoAplicable()*importeA;
+				impuestoB = condExp.getTipoAplicable()/100*importeA;
 			}
 			Double cobrada = new Double(0);
 			
 			mapaValores.put("importeA",FileUtilsREM.stringify(importeA));
 			if (condExp.getTipoAplicable()!=null) {
 				mapaValores.put("impuestoB",FileUtilsREM.stringify(impuestoB));
-				mapaValores.put("importeAB",FileUtilsREM.stringify(importeA*(1+condExp.getTipoAplicable())));
+				mapaValores.put("importeAB",FileUtilsREM.stringify(importeA*(1+condExp.getTipoAplicable()/100)));
 			} else {
 				mapaValores.put("impuestoB",FileUtilsREM.stringify(null));
 				mapaValores.put("importeAB",FileUtilsREM.stringify(null));

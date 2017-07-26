@@ -508,9 +508,9 @@ public class OperacionVentaManager implements ParamReportsApi{
 				mapaValores.put("impuestoB",FileUtilsREM.stringify(null));
 				mapaValores.put("importeAB",FileUtilsREM.stringify(null));
 			}
-			if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(condExp.getTipoCalculoReserva()) ) {
-				mapaValores.put("cobrada", FileUtilsREM.stringify(condExp.getPorcentajeReserva()*importeA));
-				cobrada = condExp.getPorcentajeReserva()*importeA;
+			if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(condExp.getTipoCalculoReserva().getCodigo()) ) {
+				mapaValores.put("cobrada", FileUtilsREM.stringify(condExp.getPorcentajeReserva()/100*importeA));
+				cobrada = condExp.getPorcentajeReserva()/100*importeA;
 			} else {
 				Double importeReserva = condExp.getImporteReserva();
 				if (importeReserva!=null ) {

@@ -53,6 +53,7 @@ public class UpdaterServiceCEEObtencionEtiqueta implements UpdaterService {
 					documentoCEE.setFechaObtencion(ft.parse(valor.getValor())); //En caso de que sea CEE con etiqueta se sobreescribe con este valor
 					documentoCEE.setFechaVerificado(ft.parse(valor.getValor())); //En este trámite: Fecha obtención = Fecha validación
 					documentoCEE.setEstadoDocumento(estadoDocumento);
+					trabajo.setFechaEjecucionReal(ft.parse(valor.getValor()));
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -62,6 +63,7 @@ public class UpdaterServiceCEEObtencionEtiqueta implements UpdaterService {
 			if(REFERENCIA_ETIQUETA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
 				documentoCEE.setNumDocumento(valor.getValor());
 			}
+			
 			
 			//HREOS-1864: Pasamos al estado cierre economico
 			Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo" , DDEstadoTrabajo.ESTADO_PENDIENTE_CIERRE_ECONOMICO);

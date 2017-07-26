@@ -356,7 +356,22 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 											    bind : {
 											      store : '{comboSiNoRem}',
 											      value : '{proveedor.retencionPagoCodigo}'
-											    }
+											    },
+											    listeners: {
+			    	    							change: function(combo, value) {
+			    	    								var me = this;
+		    	    									var form = combo.up('form');
+		    	    									var motivoRetencionCombo = form.down('field[name=cbProveedorMotivoRetencion]');
+			    	    								if(value=="0"){			    	    									
+			    	    									motivoRetencionCombo.setDisabled(true);
+			    	    								}else{
+			    	    									motivoRetencionCombo.setDisabled(false);
+			    	    								}
+			    	    								//checkTanteo.reset();
+			    	    								//checkTanteo.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value)
+			    	    								
+			    	    							}
+			    	    						}											
 											},
 											{ 
 												xtype: 'datefieldbase',
@@ -367,6 +382,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 												xtype : 'comboboxfieldbase',
 											    fieldLabel : HreRem.i18n('fieldlabel.proveedor.retener.pago.motivo'),
 											    reference: 'cbProveedorMotivoRetencion',
+											    name: 'cbProveedorMotivoRetencion',
 											    colspan: 2,
 											    bind : {
 											      store : '{comboMotivoRetencionPago}',

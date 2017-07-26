@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.gasto.dao.impl;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -181,8 +182,26 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 			HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgasto.fechaEmision", fechaEmisionDesde, fechaEmisionHasta);
 			
 			// filtrar por fechas de autorizacion
-			HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgasto.fechaAutorizacion",
-					DateFormat.toDate(dtoGastosFilter.getFechaAutorizacionDesde()), DateFormat.toDate(dtoGastosFilter.getFechaAutorizacionHasta()));
+			Date fechaAutorizacionDesde = null;
+			if(dtoGastosFilter.getFechaAutorizacionDesde() != null){
+				Calendar calendar = Calendar.getInstance();
+		        calendar.setTime(DateFormat.toDate(dtoGastosFilter.getFechaAutorizacionDesde()));
+		        calendar.set(Calendar.HOUR_OF_DAY, 0);
+		        calendar.set(Calendar.MINUTE,0);
+		        calendar.set(Calendar.SECOND,0);
+		        fechaAutorizacionDesde = calendar.getTime();
+			}
+			Date fechaAutorizacionHasta = null;
+			if(dtoGastosFilter.getFechaAutorizacionHasta() != null){
+				Calendar calendar = Calendar.getInstance();
+		        calendar.setTime(DateFormat.toDate(dtoGastosFilter.getFechaAutorizacionDesde()));
+		        calendar.set(Calendar.HOUR_OF_DAY, 23);
+		        calendar.set(Calendar.MINUTE,59);
+		        calendar.set(Calendar.SECOND,59);
+		        fechaAutorizacionHasta = calendar.getTime();
+			}
+			
+			HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgasto.fechaAutorizacion",fechaAutorizacionDesde,fechaAutorizacionHasta);
 
 		} catch (ParseException e) {
 			e.printStackTrace();

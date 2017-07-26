@@ -370,9 +370,6 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 			    	    									motivoRetencionCombo.setDisabled(false);
 			    	    									fechaRetencion.setDisabled(false);
 			    	    								}
-			    	    								//checkTanteo.reset();
-			    	    								//checkTanteo.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value)
-			    	    								
 			    	    							}
 			    	    						}											
 											},

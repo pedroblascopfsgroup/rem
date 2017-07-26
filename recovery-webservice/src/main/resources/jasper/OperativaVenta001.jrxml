@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-07-26T09:00:02 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="OperativaVenta001" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="df415416-7b17-4495-a87b-cf5885d1390a">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
@@ -505,7 +507,7 @@
 						</datasetRun>
 						<jr:listContents height="39" width="555">
 							<textField>
-								<reportElement x="4" y="0" width="184" height="20" uuid="fcbc8a27-a2c2-4750-9025-5137597d03eb"/>
+								<reportElement x="4" y="0" width="196" height="20" uuid="fcbc8a27-a2c2-4750-9025-5137597d03eb"/>
 								<textElement>
 									<font fontName="Verdana" size="8"/>
 								</textElement>
@@ -519,35 +521,35 @@
 								<textFieldExpression><![CDATA[$F{direccionComprador}]]></textFieldExpression>
 							</textField>
 							<textField>
-								<reportElement x="188" y="0" width="59" height="20" uuid="c155fad5-0cb0-44b1-b5cc-3ef51268c137"/>
+								<reportElement x="206" y="0" width="64" height="20" uuid="c155fad5-0cb0-44b1-b5cc-3ef51268c137"/>
 								<textElement>
 									<font fontName="Verdana" size="8" isBold="false"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{dniComprador}]]></textFieldExpression>
 							</textField>
 							<textField>
-								<reportElement x="331" y="25" width="70" height="13" uuid="a22ffe1e-beaa-4711-acfc-e980f2d69401"/>
+								<reportElement x="452" y="1" width="100" height="19" uuid="a22ffe1e-beaa-4711-acfc-e980f2d69401"/>
 								<textElement>
 									<font fontName="Verdana" size="8" isBold="false"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{tlfComprador}]]></textFieldExpression>
 							</textField>
 							<textField>
-								<reportElement x="373" y="0" width="56" height="20" uuid="00dec1be-10f3-47d2-88a0-a15ffb68ebcc"/>
+								<reportElement x="327" y="0" width="56" height="20" uuid="00dec1be-10f3-47d2-88a0-a15ffb68ebcc"/>
 								<textElement textAlignment="Center">
 									<font fontName="Verdana" size="8" isBold="false"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{rBienesComprador}]]></textFieldExpression>
 							</textField>
 							<textField>
-								<reportElement x="275" y="0" width="59" height="20" uuid="a2df7dae-060d-49a8-887e-bed11417e615"/>
+								<reportElement x="276" y="0" width="45" height="20" uuid="a2df7dae-060d-49a8-887e-bed11417e615"/>
 								<textElement>
 									<font fontName="Verdana" size="8" isBold="false"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{eCivilComprador}]]></textFieldExpression>
 							</textField>
 							<textField>
-								<reportElement x="480" y="0" width="59" height="20" uuid="59cfe85b-4e64-4690-a8b6-0a1ab4534cc4"/>
+								<reportElement x="389" y="0" width="59" height="20" uuid="59cfe85b-4e64-4690-a8b6-0a1ab4534cc4"/>
 								<textElement>
 									<font fontName="Verdana" size="8" isBold="false"/>
 								</textElement>
@@ -571,35 +573,35 @@
 					<text><![CDATA[Nombre/Dirección]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="278" y="241" width="46" height="13" uuid="ad9493f7-59a6-407c-a6f4-427162b9080c"/>
+					<reportElement x="452" y="203" width="46" height="13" uuid="ad9493f7-59a6-407c-a6f4-427162b9080c"/>
 					<textElement>
 						<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 					</textElement>
 					<text><![CDATA[Teléfono:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="188" y="203" width="46" height="13" uuid="8d68b9bb-9625-4155-ac39-046d022dcdfe"/>
+					<reportElement x="203" y="203" width="46" height="13" uuid="8d68b9bb-9625-4155-ac39-046d022dcdfe"/>
 					<textElement>
 						<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 					</textElement>
 					<text><![CDATA[NIF]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="278" y="203" width="46" height="13" uuid="98cb49fc-012c-4502-86c2-bfc9539fb45c"/>
+					<reportElement x="271" y="203" width="46" height="13" uuid="98cb49fc-012c-4502-86c2-bfc9539fb45c"/>
 					<textElement>
 						<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 					</textElement>
 					<text><![CDATA[Est. Civil]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="377" y="203" width="46" height="13" uuid="c1defb04-23e2-410c-896c-19f475a89023"/>
+					<reportElement x="327" y="203" width="46" height="13" uuid="c1defb04-23e2-410c-896c-19f475a89023"/>
 					<textElement>
 						<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 					</textElement>
 					<text><![CDATA[R. Bienes]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="478" y="203" width="58" height="13" uuid="56936b34-d638-4645-812e-bdb9f1b356d6"/>
+					<reportElement x="386" y="203" width="58" height="13" uuid="56936b34-d638-4645-812e-bdb9f1b356d6"/>
 					<textElement>
 						<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 					</textElement>

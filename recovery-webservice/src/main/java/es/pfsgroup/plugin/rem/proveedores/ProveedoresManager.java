@@ -410,6 +410,10 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				DDMotivoRetencion motivoRetencion = (DDMotivoRetencion) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoRetencion.class, dto.getMotivoRetencionCodigo());
 				beanUtilNotNull.copyProperty(proveedor, "motivoRetencion", motivoRetencion);
 			}
+			if(!Checks.esNulo(dto.getRetencionPagoCodigo()) && dto.getRetencionPagoCodigo().equals("0")) {
+				proveedor.setMotivoRetencion(null);
+				proveedor.setFechaRetencion(null);
+			}
 			beanUtilNotNull.copyProperty(proveedor, "fechaProcesoBlanqueo", dto.getFechaProceso());
 			if(!Checks.esNulo(dto.getResultadoBlanqueoCodigo())) {
 				DDResultadoProcesoBlanqueo resutladoProcesoBlanqueo = (DDResultadoProcesoBlanqueo) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoProcesoBlanqueo.class, dto.getResultadoBlanqueoCodigo());

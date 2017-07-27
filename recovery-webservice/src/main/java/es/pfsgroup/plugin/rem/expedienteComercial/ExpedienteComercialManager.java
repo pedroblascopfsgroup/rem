@@ -2620,6 +2620,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							expedienteComercial.getOferta().setEstadoOferta((DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class,
 									DDEstadoOferta.CODIGO_RECHAZADA));
 						}
+						//descongelamos el resto de ofertas del activo
+						ofertaApi.descongelarOfertas(expedienteComercial);
 					}
 					
 					if(!Checks.esNulo(dto.getFechaReserva())) {
@@ -2639,6 +2641,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			} catch (IllegalAccessException e) {
 				logger.error("error en expedienteComercialManager", e);
 			} catch (InvocationTargetException e) {
+				logger.error("error en expedienteComercialManager", e);
+			} catch (Exception e){
 				logger.error("error en expedienteComercialManager", e);
 			}
 		}

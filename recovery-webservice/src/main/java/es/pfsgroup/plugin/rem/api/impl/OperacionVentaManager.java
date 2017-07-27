@@ -496,29 +496,33 @@ public class OperacionVentaManager implements ParamReportsApi{
 			}
 			Double impuestoB = new Double(0);
 			if (condExp.getTipoAplicable()!=null) {
-				impuestoB = condExp.getTipoAplicable()*importeA;
+				impuestoB = condExp.getTipoAplicable()/100*importeA;
 			}
 			Double cobrada = new Double(0);
 			
 			mapaValores.put("importeA",FileUtilsREM.stringify(importeA));
 			if (condExp.getTipoAplicable()!=null) {
 				mapaValores.put("impuestoB",FileUtilsREM.stringify(impuestoB));
-				mapaValores.put("importeAB",FileUtilsREM.stringify(importeA*(1+condExp.getTipoAplicable())));
+				mapaValores.put("importeAB",FileUtilsREM.stringify(importeA*(1+condExp.getTipoAplicable()/100)));
 			} else {
 				mapaValores.put("impuestoB",FileUtilsREM.stringify(null));
 				mapaValores.put("importeAB",FileUtilsREM.stringify(null));
 			}
-			if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(condExp.getTipoCalculoReserva()) ) {
-				mapaValores.put("cobrada", FileUtilsREM.stringify(condExp.getPorcentajeReserva()*importeA));
-				cobrada = condExp.getPorcentajeReserva()*importeA;
-			} else {
-				Double importeReserva = condExp.getImporteReserva();
-				if (importeReserva!=null ) {
-					mapaValores.put("cobrada", FileUtilsREM.stringify(importeReserva));
-					cobrada = importeReserva;
+			if(!Checks.esNulo(condExp.getTipoCalculoReserva())) {
+				if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(condExp.getTipoCalculoReserva().getCodigo()) ) {
+					mapaValores.put("cobrada", FileUtilsREM.stringify(condExp.getPorcentajeReserva()/100*importeA));
+					cobrada = condExp.getPorcentajeReserva()/100*importeA;
 				} else {
-					mapaValores.put("cobrada", FileUtilsREM.stringify(null));					
+					Double importeReserva = condExp.getImporteReserva();
+					if (importeReserva!=null ) {
+						mapaValores.put("cobrada", FileUtilsREM.stringify(importeReserva));
+						cobrada = importeReserva;
+					} else {
+						mapaValores.put("cobrada", FileUtilsREM.stringify(null));					
+					}
 				}
+			}else {
+				mapaValores.put("cobrada", FileUtilsREM.stringify(null));
 			}
 			mapaValores.put("importeCobr",FileUtilsREM.stringify(importeA+impuestoB-cobrada));
 			

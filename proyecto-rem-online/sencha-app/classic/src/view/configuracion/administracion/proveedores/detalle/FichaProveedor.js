@@ -356,17 +356,34 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 											    bind : {
 											      store : '{comboSiNoRem}',
 											      value : '{proveedor.retencionPagoCodigo}'
-											    }
+											    },
+											    listeners: {
+			    	    							change: function(combo, value) {
+			    	    								var me = this;
+		    	    									var form = combo.up('form');
+		    	    									var motivoRetencionCombo = form.down('field[name=cbProveedorMotivoRetencion]');
+		    	    									var fechaRetencion = form.down('field[name=fechaRetencion]');
+			    	    								if(value=="0"){			    	    									
+			    	    									motivoRetencionCombo.setDisabled(true);
+			    	    									fechaRetencion.setDisabled(true);
+			    	    								}else{
+			    	    									motivoRetencionCombo.setDisabled(false);
+			    	    									fechaRetencion.setDisabled(false);
+			    	    								}
+			    	    							}
+			    	    						}											
 											},
 											{ 
 												xtype: 'datefieldbase',
-												fieldLabel:  HreRem.i18n('fieldlabel.proveedor.retener.pago.fecha'),						        	
+												fieldLabel:  HreRem.i18n('fieldlabel.proveedor.retener.pago.fecha'),
+												name: 'fechaRetencion',
 												bind: '{proveedor.fechaRetencion}'
 											},
 											{
 												xtype : 'comboboxfieldbase',
 											    fieldLabel : HreRem.i18n('fieldlabel.proveedor.retener.pago.motivo'),
 											    reference: 'cbProveedorMotivoRetencion',
+											    name: 'cbProveedorMotivoRetencion',
 											    colspan: 2,
 											    bind : {
 											      store : '{comboMotivoRetencionPago}',

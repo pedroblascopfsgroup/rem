@@ -839,6 +839,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
  		  params:  {idTrabajo : idTrabajo},
  		  			
  		  success: function(response,opts){
+ 			  
  			  boton = me.lookupReference("botonGenerarPropuesta");
  			  //Si se puede crear la propuesta, activa el boton sino lo desactiva
  			  if(Ext.JSON.decode(response.responseText).success == "true") {
@@ -870,12 +871,13 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		 			//Respuesta que indica si se creará la propuesta con algunos activos (ya que existen algunos en otras propuestas en trámite)
 			    	advertencia = Ext.JSON.decode(response.responseText).advertencia;
 			    	
-			    	if(!Ext.isEmpty(advertencia) && !boton.isDisabled()) {
+			    	if(!Ext.isEmpty(advertencia) /*&& !boton.isDisabled()*/) {
 			    		var msgAdvertencia = me.lookupReference("msgAdvertenciaActivosEnOtrasPropuestas");
 			    		var texto = "<span style= 'color: red; float: left'>";
-			    		if(advertencia=='01')
+			    		if(advertencia=='01'){
 			    			texto += HreRem.i18n('msg.advertencia.precios.generar.prp.existen.activos.in.prp.entramite');
-			    		else {
+			    			boton.setDisabled(false);
+			    		}else {
 			    			texto += HreRem.i18n('msg.advertencia.precios.no.gernerar.prp.todos.activos.in.prp.tramite');
 			    			boton.setDisabled(true);
 			    		}

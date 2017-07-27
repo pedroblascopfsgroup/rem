@@ -116,6 +116,27 @@ public class TabActivoInformeComercial implements TabActivoService {
 					beanUtilNotNull.copyProperty(informeComercial, "telefonoMediador", activo.getInfoComercial().getMediadorInforme().getTelefono1());
 					beanUtilNotNull.copyProperty(informeComercial, "emailMediador", activo.getInfoComercial().getMediadorInforme().getEmail());
 				}
+				
+				// Datos de la Comunidad de vecinos al Dto.
+				// Comunidad inscrita = constituida.
+				beanUtilNotNull.copyProperty(informeComercial, "inscritaComunidad",
+						activo.getInfoComercial().getExisteComunidadEdificio());
+				// Derrama de la comunidad.
+				beanUtilNotNull.copyProperty(informeComercial, "derramaOrientativaComunidad",
+						activo.getInfoComercial().getDerramaOrientativaComunidad());
+				// Cuota de la comunidad, tomada del importe medio.
+				beanUtilNotNull.copyProperty(informeComercial, "cuotaOrientativaComunidad",
+						activo.getInfoComercial().getCuotaOrientativaComunidad());
+				// Nombre y telefono Presidente.
+				beanUtilNotNull.copyProperty(informeComercial, "nomPresidenteComunidad",
+						activo.getInfoComercial().getNombrePresidenteComunidadEdificio());
+				beanUtilNotNull.copyProperty(informeComercial, "telPresidenteComunidad",
+						activo.getInfoComercial().getTelefonoPresidenteComunidadEdificio());
+				// Nombre y telefono Administrador.
+				beanUtilNotNull.copyProperty(informeComercial, "nomAdministradorComunidad",
+						activo.getInfoComercial().getNombreAdministradorComunidadEdificio());
+				beanUtilNotNull.copyProperty(informeComercial, "telAdministradorComunidad",
+						activo.getInfoComercial().getTelefonoAdministradorComunidadEdificio());
 			}
 
 			// Datos de la Comunidad de vecinos al Dto.
@@ -280,30 +301,21 @@ public class TabActivoInformeComercial implements TabActivoService {
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "ediDescripcion", activoInformeDto.getEdiDescripcion());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "entornoInfraestructura", activoInformeDto.getEntornoInfraestructuras());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "entornoComunicacion", activoInformeDto.getEntornoComunicaciones());
+					
+					//Datos de la propiedad de comunitarios
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "existeComunidadEdificio", activoInformeDto.getInscritaComunidad());
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "derramaOrientativaComunidad", activoInformeDto.getDerramaOrientativaComunidad());
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "cuotaOrientativaComunidad", activoInformeDto.getCuotaOrientativaComunidad());
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "nombrePresidenteComunidadEdificio", activoInformeDto.getNomPresidenteComunidad());
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "telefonoAdministradorComunidadEdificio", activoInformeDto.getTelAdministradorComunidad());
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "nombreAdministradorComunidadEdificio", activoInformeDto.getNomAdministradorComunidad());
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "telefonoPresidenteComunidadEdificio", activoInformeDto.getTelPresidenteComunidad());
 				}
 
 				activo.setInfoComercial(genericDao.save(ActivoInfoComercial.class, activo.getInfoComercial()));
 			}
 
-			// Actualizar los datos de comunidad de propietarios
-			ActivoComunidadPropietarios comunidadPropietarios;
-			if (!Checks.esNulo(activo.getComunidadPropietarios())) {
-				comunidadPropietarios = activo.getComunidadPropietarios();
-			} else {
-				comunidadPropietarios = new ActivoComunidadPropietarios();
-			}
-
-			beanUtilNotNull.copyProperty(comunidadPropietarios, "constituida", activoInformeDto.getInscritaComunidad());
-			beanUtilNotNull.copyProperty(activo.getInfoComercial(), "derramaOrientativaComunidad", activoInformeDto.getDerramaOrientativaComunidad());
-			beanUtilNotNull.copyProperty(activo.getInfoComercial(), "cuotaOrientativaComunidad", activoInformeDto.getCuotaOrientativaComunidad());
-			beanUtilNotNull.copyProperty(comunidadPropietarios, "nomPresidente", activoInformeDto.getNomPresidenteComunidad());
-			beanUtilNotNull.copyProperty(comunidadPropietarios, "telfAdministrador", activoInformeDto.getTelAdministradorComunidad());
-			beanUtilNotNull.copyProperty(comunidadPropietarios, "nomAdministrador", activoInformeDto.getNomAdministradorComunidad());
-			beanUtilNotNull.copyProperty(comunidadPropietarios, "telfPresidente", activoInformeDto.getTelPresidenteComunidad());
-
-			genericDao.save(ActivoComunidadPropietarios.class, comunidadPropietarios);
-
-			activo.setComunidadPropietarios(comunidadPropietarios);
+			
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {

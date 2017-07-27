@@ -40,15 +40,18 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 		disableTarificacion: function (get) {
 			 var fechaEjecucionReal = get('trabajo.fechaEjecucionReal');
 			 var fechaCierreEco = get('trabajo.fechaCierreEconomico');
+			 var fechaEmisionFactura = get('trabajo.fechaEmisionFactura');
 	    	 var esTarificado = get('gestionEconomica.esTarificado');
 	    	 var isSupervisorActivo = $AU.userIsRol('HAYASUPACT') || $AU.userIsRol('HAYASUPADM') || $AU.userIsRol('HAYASUPER');
 		     var isGestorActivos = $AU.userIsRol('HAYAGESACT') || $AU.userIsRol('HAYAGESTADM');
 		     var isProveedor = $AU.userIsRol('HAYAPROV') || $AU.userIsRol('HAYACERTI') 
 		     				   || $AU.userIsRol('GESTOCED') || $AU.userIsRol('GESTOADM');
-		     
-		     if(isSupervisorActivo){
-		    		return false;
-		    } else if(isGestorActivos){
+
+		     if(!Ext.isEmpty(fechaEmisionFactura)){
+		    	 return true;	    		
+		     } else if(isSupervisorActivo){
+		    	return false;		    		
+		     } else if(isGestorActivos){
 		    	if (!Ext.isEmpty(fechaCierreEco))
 			    	 return true;
 			    else {
@@ -73,6 +76,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    
 	    editableTarificacionProveedor: function (get){
 	    	return true;
+	    	 
 	    },
 	    
 	    disablePresupuesto: function (get) {

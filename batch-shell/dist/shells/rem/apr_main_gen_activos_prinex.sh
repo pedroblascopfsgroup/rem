@@ -8,7 +8,7 @@ nameETL="${filename%.*}"
 
 export DIR_ETL=$DIR_BASE_ETL/$nameETL
 export DIR_CONFIG=$DIR_BASE_ETL/config/
-export CFG_FILE=config_cajamar_rem.ini
+export CFG_FILE=config.ini
 export MAINSH="$nameETL"_run.sh
 
 cd "$DIR_ETL" &> /dev/null

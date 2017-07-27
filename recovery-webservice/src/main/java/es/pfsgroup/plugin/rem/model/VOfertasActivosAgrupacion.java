@@ -76,6 +76,9 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	@Column(name= "AGR_ID")
 	private String idAgrupacion;
 	
+	@Column(name= "GESTOR_LOTE")
+	private String gestorLote;
+
 	@Column(name = "DD_CAP_DESCRIPCION")
 	private String canalPrescripcionDescripcion;
 	

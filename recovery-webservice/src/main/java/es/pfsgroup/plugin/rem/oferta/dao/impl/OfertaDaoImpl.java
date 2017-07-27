@@ -12,13 +12,18 @@ import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
@@ -38,6 +43,9 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 
 	@Autowired
 	private GenericAdapter adapter;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 
 	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter) {
 		return getListOfertas(dtoOfertasFilter, null, null);
@@ -55,8 +63,20 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 			
 			if (adapter.tienePerfil("HAYAGESTCOM", usuarioGestor)) {
 				if(Checks.esNulo(usuarioGestoria)) {
-					from = from	+ ",GestorActivo gestorActivo ";
-					where = "gestorActivo.activo.id = voferta.idActivo and gestorActivo.usuario.id =".concat(String.valueOf(usuarioGestor.getId()));	
+					// Consulta el tipo gestor: Gestor Comercial
+					Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+					EXTDDTipoGestor tipoGestorComercial = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+					
+					// Busca ofertas por gestor comercial en activos o en agrupaciones
+					from = from + " "
+					+ "	 , GestorActivo gac,  " 
+					+ "	   GestorEntidad gee ";
+					where =
+					  "       gac.activo.id = voferta.idActivo "
+					+ "       AND gac.id = gee.id AND gee.tipoGestor.id = ".concat(String.valueOf(tipoGestorComercial.getId()))+ " "
+					+ "	      AND (voferta.gestorLote = ".concat(String.valueOf(usuarioGestor.getId()))+" "
+					+ "		       OR gee.usuario.id = ".concat(String.valueOf(usuarioGestor.getId()))+" )"
+					+ "  "; 
 				} else{
 					from = from	+ ",GestorActivo gestorActivo, GestorExpedienteComercial gestorExpediente";
 					where = "gestorActivo.activo.id = voferta.idActivo and "

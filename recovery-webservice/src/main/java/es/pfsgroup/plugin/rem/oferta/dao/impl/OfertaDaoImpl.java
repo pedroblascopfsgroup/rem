@@ -25,6 +25,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -61,11 +62,14 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 				
 		if (!Checks.esNulo(usuarioGestor)) {
 			
-			if (adapter.tienePerfil("HAYAGESTCOM", usuarioGestor)) {
+			if (adapter.tienePerfil("HAYAGESTCOM", usuarioGestor)
+					|| adapter.tienePerfil("GESTCOMBACKOFFICE", usuarioGestor)) {
+				
+				// Consulta el tipo gestor: Gestor Comercial (para cruzar por ID en lugar de codigo - evitar subconsulta)
+				Filter filtroTipoGestorComer = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+				EXTDDTipoGestor tipoGestorComercial = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestorComer);
+				
 				if(Checks.esNulo(usuarioGestoria)) {
-					// Consulta el tipo gestor: Gestor Comercial
-					Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-					EXTDDTipoGestor tipoGestorComercial = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
 					
 					// Busca ofertas por gestor comercial en activos o en agrupaciones
 					from = from + " "
@@ -78,11 +82,47 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 					+ "		       OR gee.usuario.id = ".concat(String.valueOf(usuarioGestor.getId()))+" )"
 					+ "  "; 
 				} else{
+/*					
 					from = from	+ ",GestorActivo gestorActivo, GestorExpedienteComercial gestorExpediente";
 					where = "gestorActivo.activo.id = voferta.idActivo and "
 							+ "gestorActivo.usuario.id =".concat(String.valueOf(usuarioGestor.getId()))+" and " 
 							+ "gestorExpediente.expedienteComercial.id = voferta.idExpediente and gestorExpediente.tipoGestor.codigo = '".concat(GestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION).concat("' and gestorExpediente.usuario.id =".concat(String.valueOf(usuarioGestoria.getId())));
+
+					// Consulta el tipo gestor: Gestor Formalizacion (para cruzar por ID en lugar de codigo - evitar subconsulta)
+					Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+					EXTDDTipoGestor tipoGestorFormalizacion = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+*/
+					
+					// Consulta el tipo gestor: Gestoria Formalizacion (para cruzar por ID en lugar de codigo - evitar subconsulta)
+					Filter filtroTipoGestorFormal = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+					EXTDDTipoGestor tipoGestorFormalizacion = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestorFormal);
+					
+					// Busca ofertas por usuario gestor comercial y por gestoria en activos o en agrupaciones
+					// Nota: Las gestorías actuales son de formalizacion
+					from = from + " "
+					+ "	 , GestorActivo gac,  " 
+					+ "	   GestorEntidad gee, "
+					+ "    GestorExpedienteComercial gex ";
+					where =
+					  "       gac.activo.id = voferta.idActivo "
+					+ "       AND gex.expedienteComercial.id = voferta.idExpediente "
+					+ "       AND gac.id = gee.id "
+					+ "	      AND ( "
+					//                Cruce con gestorias de tipo formalizacion, en gestores del expediente
+					+ "               ( "
+					+ "                  gex.tipoGestor.id = ".concat(String.valueOf(tipoGestorFormalizacion.getId()))+ " "
+					+ "                  AND gex.usuario.id = ".concat(String.valueOf(usuarioGestoria.getId()))+" "
+					+ "               ) "
+					+ "               AND "
+					//                Cruce con gestores comerciales, en gestores del activo
+					+ "               ( "
+					+ "                  gee.tipoGestor.id = ".concat(String.valueOf(tipoGestorComercial.getId()))+ " "
+					+ "                  AND gee.usuario.id = ".concat(String.valueOf(usuarioGestoria.getId()))+" "
+					+ "               ) "
+					+ "       ) "
+					+ "  "; 
 				}				
+/*				
 			} else if (adapter.tienePerfil("GESTCOMBACKOFFICE", usuarioGestor)) {
 				if(Checks.esNulo(usuarioGestoria)) {
 					from = from	+ ",ActivoLoteComercial lote ";
@@ -93,7 +133,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 							+ "lote.usuarioGestorComercialBackOffice.id =".concat(String.valueOf(usuarioGestor.getId())) + " and "
 							+ "gestorExpediente.expedienteComercial.id = voferta.idExpediente and gestorExpediente.tipoGestor.codigo = '".concat(GestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION).concat("' and gestorExpediente.usuario.id =".concat(String.valueOf(usuarioGestoria.getId())));
 				}
-
+*/
 			} else if (adapter.tienePerfil("HAYAGESTFORM", usuarioGestor)) {			
 				
 				if(Checks.esNulo(usuarioGestoria)) {
@@ -103,7 +143,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 					from = from	+ ",GestorExpedienteComercial gestorExpediente, GestorExpedienteComercial gestoriaExpediente";
 					where = "gestorExpediente.expedienteComercial.id = voferta.idExpediente and gestoriaExpediente.expedienteComercial.id = voferta.idExpediente and "
 							+ "(gestorExpediente.tipoGestor.codigo = '".concat(GestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION).concat("' and gestorExpediente.usuario.id =".concat(String.valueOf(usuarioGestor.getId())))+") or"
-							+ "(gestoriaExpediente.tipoGestor.codigo = '".concat(GestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION).concat("' and gestoriaExpediente.usuario.id =".concat(String.valueOf(usuarioGestoria.getId())));
+							+ "(gestoriaExpediente.tipoGestor.codigo = '".concat(GestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION).concat("' and gestoriaExpediente.usuario.id =".concat(String.valueOf(usuarioGestoria.getId()))+") ");
 				}
 			} 
 		} 
@@ -112,6 +152,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 			from = from	+ ",GestorExpedienteComercial gestorExpediente ";
 			where = "gestorExpediente.expedienteComercial.id = voferta.idExpediente and gestorExpediente.tipoGestor.codigo = '".concat(GestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION).concat("' and gestorExpediente.usuario.id =".concat(String.valueOf(usuarioGestoria.getId())));
 		}
+		
 		
 		hb = new HQLBuilder(from);
 		
@@ -134,10 +175,13 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.numActivoAgrupacion",
 					dtoOfertasFilter.getNumAgrupacion().toString());
 		}
-		if (!Checks.esNulo(dtoOfertasFilter.getNumActivo())) {
-			HQLBuilder.addFiltroLikeSiNotNull(hb, "voferta.activos", dtoOfertasFilter.getNumActivo());
-		}
 
+		if (!Checks.esNulo(dtoOfertasFilter.getNumActivo())) {
+			Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "numActivo", dtoOfertasFilter.getNumActivo());
+			Activo idActivo = genericDao.get(Activo.class, filtroIdActivo);
+			
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.idActivo", idActivo.getId().toString());
+		}
 		
 		try {
 			

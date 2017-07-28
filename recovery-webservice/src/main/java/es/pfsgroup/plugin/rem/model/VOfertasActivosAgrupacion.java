@@ -67,8 +67,8 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	@Column(name = "DD_TOF_CODIGO")  
 	private String codigoTipoOferta;
 	
-	@Column(name = "ACTIVOS")  
-	private String activos;
+//	@Column(name = "ACTIVOS")  
+//	private String activos;
 	
 	@Column(name= "ACT_ID")
 	private String idActivo;	
@@ -245,13 +245,13 @@ public class VOfertasActivosAgrupacion implements Serializable {
 		this.codigoTipoOferta = codigoTipoOferta;
 	}
 
-	public String getActivos() {
-		return activos;
-	}
+//	public String getActivos() {
+//		return activos;
+//	}
 
-	public void setActivos(String activos) {
-		this.activos = activos;
-	}
+//	public void setActivos(String activos) {
+//		this.activos = activos;
+//	}
 
 	public String getIdActivo() {
 		return idActivo;

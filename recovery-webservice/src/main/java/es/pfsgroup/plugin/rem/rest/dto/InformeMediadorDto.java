@@ -468,7 +468,7 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "numAscensores")
 	private Integer numeroAscensoresEdificio;
 
-	@EntityDefinition(procesar = false)
+	@EntityDefinition(propertyName = "existeComunidadEdificio", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean existeComunidadEdificio;
 
 	@EntityDefinition(propertyName = "cuotaOrientativaComunidad")

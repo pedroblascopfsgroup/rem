@@ -15,6 +15,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
             },
             afterdelete: function(grid) {
             	grid.getStore().load();
+            	grid.disableRemoveButton(true);
             }
         },
         
@@ -610,23 +611,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	borrarDocumentoAdjunto: function(grid, record) {
 		var me = this;
 		idExpediente = me.getViewModel().get("expediente.id");
-		bloqueado = me.getViewModel().get("expediente.bloqueado");
-		if(!bloqueado){
-			record.erase({
-				params: {idEntidad: idExpediente},
-	            success: function(record, operation) {
-	           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-	           		 grid.fireEvent("afterdelete", grid);
-	            },
-	            failure: function(record, operation) {
-	                  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-	                  grid.fireEvent("afterdelete", grid);
-	            }
-	            
-	        });
-		}else{
-			me.fireEvent("errorToast","Expediente bloqueado");	
-		}
+		record.erase({
+			params: {idEntidad: idExpediente},
+            success: function(record, operation) {
+           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+           		 grid.fireEvent("afterdelete", grid);
+            },
+            failure: function(record, operation) {
+                  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                  grid.fireEvent("afterdelete", grid);
+            }
+            
+        });
 	},
 	
 	downloadDocumentoAdjunto: function(grid, record) {

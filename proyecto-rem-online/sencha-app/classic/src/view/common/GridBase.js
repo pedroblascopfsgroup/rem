@@ -113,7 +113,11 @@ Ext.define('HreRem.view.common.GridBase', {
     	
     	var me = this,
     	sm = me.getSelectionModel();
-		me.fireEvent("onClickRemove", me, sm.getSelection()[0]);
+    	if(sm.getSelection() && sm.getSelection()[0]){
+    		me.fireEvent("onClickRemove", me, sm.getSelection()[0]);
+    	}else{
+    		me.disableRemoveButton(true);
+    	}
     },
 
 	privates: {

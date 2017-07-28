@@ -4584,7 +4584,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						}else{
 							//el usuario logada tiene que ser gestoria
 							Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-							if(!genericAdapter.isGestoria(usuarioLogado) && !genericAdapter.isSuper(usuarioLogado) && !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, genericAdapter.getUsuarioLogado())){
+							if(!genericAdapter.isGestoria(usuarioLogado) && !genericAdapter.isSuper(usuarioLogado) && !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, usuarioLogado)){
 								codigoError = "imposible.bloquear.no.es.gestoria";
 							}
 						}

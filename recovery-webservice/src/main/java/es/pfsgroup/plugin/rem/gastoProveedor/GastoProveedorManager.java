@@ -1520,16 +1520,16 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			boolean tieneIva = Checks.esNulo(gasto.getGestoria());
 			String nuevoEstado = checkReglaCambioEstado(gasto.getEstadoGasto().getCodigo(), tieneIva,
   					tipoDocumento.getMatricula());
+			updateExisteDocumentoGasto(gasto, 1);
   			if (!Checks.esNulo(nuevoEstado)) {
   				updaterStateApi.updaterStates(gasto, nuevoEstado);
   			}
 			
 			// TODO Falta definir que tipo de documento provoca marcar el campo existeDocumento.
-			// Ahora lo marca cualquiera.
-			updateExisteDocumentoGasto(gasto, 1);
+			
 
 			// Comprobamos si ha cambiado el estado del gasto.
-			updaterStateApi.updaterStates(gasto, null);
+			//updaterStateApi.updaterStates(gasto, null);
 			genericDao.save(GastoProveedor.class, gasto);
 
 		} catch (Exception e) {
@@ -2150,13 +2150,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		Pattern justPattern = Pattern.compile(".*-CERA-.*");
 
 		if (factPattern.matcher(matriculaTipoDoc).matches() && DDEstadoGasto.INCOMPLETO.equals(codigoEstado)) {
-			//return DDEstadoGasto.PENDIENTE;
-			return null;
+			return DDEstadoGasto.PENDIENTE;
+
 		} else if (justPattern.matcher(matriculaTipoDoc).matches()
 				&& DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC.equals(codigoEstado) && (!coniva)) {
 			return DDEstadoGasto.PAGADO;
 		} else {
-			return null;
+			return "no_cambiar";
 		}
 	}
 }

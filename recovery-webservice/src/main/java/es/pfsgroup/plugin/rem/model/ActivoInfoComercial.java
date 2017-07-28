@@ -328,6 +328,9 @@ public class ActivoInfoComercial implements Serializable, Auditable {
     @JoinColumn(name = "ICO_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<ActivoDistribucion> distribucion;
+	
+	@Column(name = "ICO_EXIS_COM_PROP")
+	private Integer existeComunidadEdificio;
 
 	public Float getCuotaOrientativaComunidad() {
 		return cuotaOrientativaComunidad;
@@ -935,6 +938,14 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	public void setDistribucion(List<ActivoDistribucion> distribucion) {
 		this.distribucion = distribucion;
+	}
+
+	public Integer getExisteComunidadEdificio() {
+		return existeComunidadEdificio;
+	}
+
+	public void setExisteComunidadEdificio(Integer existeComunidadEdificio) {
+		this.existeComunidadEdificio = existeComunidadEdificio;
 	}
 	
 

@@ -48,6 +48,8 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
     @Resource
     private MessageService messageService;
     
+   
+    
     
     private static final String COMBO_ACEPTACION = "comboAceptacion";
     private static final String COMBO_DATOS_IGUALES = "comboDatosIguales";
@@ -182,8 +184,19 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
 		}
 		
 		//Si han habido cambios en el activo, lo persistimos
-		if(!Checks.esNulo(activo))
+		if(!Checks.esNulo(activo)){
+			//actualizamos el informemediador para que se envie el cambio de estado
+			if(!Checks.esNulo(activo.getInfoComercial())){
+				activo.getInfoComercial().getAuditoria().setFechaModificar(new Date());
+				if(!Checks.esNulo(genericAdapter.getUsuarioLogado())){
+					activo.getInfoComercial().getAuditoria().setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
+				}
+			}
+			
 			activoApi.saveOrUpdate(activo);
+		}
+		
+		
 
 	}
 

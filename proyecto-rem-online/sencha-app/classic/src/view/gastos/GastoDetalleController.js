@@ -25,8 +25,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
              	grid.fireEvent("refreshComponent", "gestiongastos");
              },
              afterdelete: function(grid) {
-             	grid.getStore().load();
+            	grid.getStore().load();
              	grid.fireEvent("refreshComponent", "gestiongastos");
+             	grid.disableRemoveButton(true);
              }
          }
     	

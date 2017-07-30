@@ -26,8 +26,8 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteJuridico', {
 		                	xtype: 'datefieldbase', 
 		                	formatter: 'date("d/m/Y")',
 		                	fieldLabel:  HreRem.i18n('label.fecha.emision'),
-		                	maxValue: null,
-		                	minValue: new Date(),
+		                	maxValue: new Date(),
+		                	minValue: null,
 		                	bind:		'{informeJuridico.fechaEmision}'
 
 		                },						

@@ -4430,14 +4430,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			Filter filtro4 = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 			List<BloqueoActivoFormalizacion> bloqueos = genericDao.getList(BloqueoActivoFormalizacion.class, filtro3, filtro4); 
 			
-			dto.setResultadoBloqueo(InformeJuridico.RESULTADO_FAVORABLE);
+			if(!Checks.esNulo(informeJuridico.getFechaEmision())){//No calcular el estado del informe hasta que se haya introducido fecha de emisión. REMNIVDOS-931.
+				dto.setResultadoBloqueo(InformeJuridico.RESULTADO_FAVORABLE);
 			
-			if(!Checks.estaVacio(bloqueos)){
-				for(BloqueoActivoFormalizacion bloqueo : bloqueos){
-					
-					if(Checks.esNulo(bloqueo.getAuditoria().getUsuarioBorrar()))
-						dto.setResultadoBloqueo(InformeJuridico.RESULTADO_DESFAVORABLE);
-					
+				if(!Checks.estaVacio(bloqueos)){
+					for(BloqueoActivoFormalizacion bloqueo : bloqueos){
+						
+						if(Checks.esNulo(bloqueo.getAuditoria().getUsuarioBorrar()))
+							dto.setResultadoBloqueo(InformeJuridico.RESULTADO_DESFAVORABLE);
+						
+					}
 				}
 			}
 			
@@ -4445,7 +4447,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setIdActivo(informeJuridico.getActivo().getId());
 			dto.setIdExpediente(informeJuridico.getExpedienteComercial().getId());
 		} else {
-			dto.setResultadoBloqueo(InformeJuridico.RESULTADO_FAVORABLE);
+			//dto.setResultadoBloqueo(InformeJuridico.RESULTADO_FAVORABLE);
 			dto.setFechaEmision(null);
 			dto.setIdActivo(idActivo);
 			dto.setIdExpediente(idExpediente);

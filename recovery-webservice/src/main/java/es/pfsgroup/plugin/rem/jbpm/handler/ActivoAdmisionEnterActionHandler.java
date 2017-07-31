@@ -338,11 +338,7 @@ public class ActivoAdmisionEnterActionHandler extends ActivoGenericActionHandler
 		valores.put("idActivoTramite", idActivoTramite);
 		valores.put("idTareaProcedimiento", idTareaProcedimiento);
 		valores.put("tokenIdBpm", getTokenId(executionContext));
-
-		if (tipoCalculoVencimiento != null) {
-			//valores.put("tipoCalculo", tipoCalculoVencimiento);
-			valores.put("tipoCalculo", TipoCalculo.NO_SALTAR_AGOSTO);
-		}
+		valores.put("tipoCalculo", TipoCalculo.NO_SALTAR_AGOSTO);
 		
 		EXTDtoCrearTareaExterna dto = new ActivoDtoCrearTareaExterna(valores);
 		//EXTDtoCrearTareaExterna dto = DynamicDtoUtils.create(EXTDtoCrearTareaExterna.class, valores);

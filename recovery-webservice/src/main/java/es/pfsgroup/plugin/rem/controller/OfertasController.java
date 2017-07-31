@@ -87,7 +87,8 @@ public class OfertasController {
 		dtoOfertasFilter.setLimit(excelReportGeneratorApi.getLimit());
 
 		List<VOfertasActivosAgrupacion> listaOfertas = (List<VOfertasActivosAgrupacion>) ofertaApi
-				.getListOfertas(dtoOfertasFilter).getResults();
+				//.getListOfertas(dtoOfertasFilter).getResults();
+				.getListOfertasUsuario(dtoOfertasFilter).getResults();
 
 		ExcelReport report = new OfertasExcelReport(listaOfertas);
 

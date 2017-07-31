@@ -285,6 +285,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		
 	@Override
+	@Deprecated
 	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter) {
 		
 		return ofertaDao.getListOfertas(dtoOfertasFilter);

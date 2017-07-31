@@ -72,10 +72,11 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			error = messageServices.getMessage(VALIDACION_TIPO_OPERACION);
 			return error;
 		}
-		
-		if(Checks.esNulo(gasto.getTipoPeriocidad())) {
-			error = messageServices.getMessage(VALIDACION_TIPO_PERIODICIDAD);
-			return error;
+		if(!Checks.esNulo(gasto.getGestoria())) {
+			if(Checks.esNulo(gasto.getTipoPeriocidad())) {
+				error = messageServices.getMessage(VALIDACION_TIPO_PERIODICIDAD);
+				return error;
+			}
 		}
 		
 		if(Checks.esNulo(gasto.getGastoDetalleEconomico()) || Checks.esNulo(gasto.getGastoDetalleEconomico().getImporteTotal())) {
@@ -166,6 +167,14 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				}
 				
 			}				
+		}else if(codigo.equals("no_cambiar")) {
+			codigo=null;
+		}
+		else {
+			String valido = validarAutorizacionGasto(gasto);
+			if(!Checks.esNulo(valido)) {
+				codigo = null;
+			}
 		}
 		
 		// Si tenemos definido un estado, lo búscamos y modificamos en el gasto

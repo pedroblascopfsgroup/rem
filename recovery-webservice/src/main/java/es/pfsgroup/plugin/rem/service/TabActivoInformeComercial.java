@@ -115,6 +115,14 @@ public class TabActivoInformeComercial implements TabActivoService {
 					beanUtilNotNull.copyProperty(informeComercial, "nombreMediador", activo.getInfoComercial().getMediadorInforme().getNombre());
 					beanUtilNotNull.copyProperty(informeComercial, "telefonoMediador", activo.getInfoComercial().getMediadorInforme().getTelefono1());
 					beanUtilNotNull.copyProperty(informeComercial, "emailMediador", activo.getInfoComercial().getMediadorInforme().getEmail());
+					
+					if(activo.getInfoComercial().getMediadorInforme().getAutorizacionWeb() != null && activo.getInfoComercial().getMediadorInforme().getAutorizacionWeb().equals(Integer.valueOf(1))){
+						informeComercial.setAutorizacionWeb(1);
+					}else{
+						informeComercial.setAutorizacionWeb(0);
+					}
+				}else{
+					informeComercial.setAutorizacionWeb(0);
 				}
 				
 				// Datos de la Comunidad de vecinos al Dto.

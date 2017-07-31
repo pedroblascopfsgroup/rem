@@ -1,4 +1,6 @@
 #!/bin/bash
+export NLS_LANG=SPANISH_SPAIN.UTF8
+
 if [ "$#" -ne 2 ]; then
    echo "[INFO] Parametros: <entidad> [SAREB, CAJAMAR, BANKIA]"
    echo "[INFO] Parametros: <cadena_conexion> <pass@host:puerto/ORACLE_SID>"

@@ -247,6 +247,12 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				}
 				beanUtilNotNull.copyProperty(dto, "criterioCajaIVA", proveedor.getCriterioCajaIVA());
 				beanUtilNotNull.copyProperty(dto, "fechaEjercicioOpcion", proveedor.getFechaEjercicioOpcion());
+				if(proveedor.getAutorizacionWeb() != null && proveedor.getAutorizacionWeb().equals(Integer.valueOf(1))){
+					beanUtilNotNull.copyProperty(dto, "autorizacionWeb", "true");
+				}else{
+					beanUtilNotNull.copyProperty(dto, "autorizacionWeb", "false");
+				}
+				
 				
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
@@ -297,6 +303,15 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 					beanUtilNotNull.copyProperty(proveedor, "tipoDocIdentificativo", tipoDocumento);
 				}
 			}
+			if(dto.getAutorizacionWeb() != null){
+				if(dto.getAutorizacionWeb().equals("true")){
+					proveedor.setAutorizacionWeb(1);
+				}else if(dto.getAutorizacionWeb().equals("false")){
+					proveedor.setAutorizacionWeb(0);
+				}
+			}
+			
+			
 			beanUtilNotNull.copyProperty(proveedor, "localizada", dto.getLocalizadaProveedorCodigo());
 			if(!Checks.esNulo(dto.getEstadoProveedorCodigo())) {
 				DDEstadoProveedor estadoProveedor = (DDEstadoProveedor) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoProveedor.class, dto.getEstadoProveedorCodigo());

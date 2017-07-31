@@ -8,6 +8,8 @@ import java.util.Date;
  */
 public class DtoEstadosInformeComercialHistorico {
 	public static final String ESTADO_MOTIVO_MODIFICACION_MANUAL= "Modificación manual de los datos de informe comercial";
+	public static final String ESTADO_MOTIVO_MODIFICACION_PROVEEDOR= "Modificación del proveedor";
+	public static final String ESTADO_MOTIVO_MODIFICACION_RECHAZADA= "Modificación rechazada. El proveedor no tiene permisos para editar";
 	private Long id;
 	private String estadoInfoComercial;
 	private String motivo;

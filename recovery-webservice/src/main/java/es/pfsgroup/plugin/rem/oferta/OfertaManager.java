@@ -51,6 +51,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
@@ -1923,6 +1924,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		return result;
+	}
+	
+	@Override
+	public Usuario getUsuarioPreescriptor(Oferta oferta){
+		ActivoProveedor proveedor = oferta.getPrescriptor();
+		if(!Checks.esNulo(proveedor)){
+			List<ActivoProveedorContacto> proveedorContactoList = 
+					genericDao.getList(ActivoProveedorContacto.class, genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId()));
+			if(!Checks.estaVacio(proveedorContactoList)){
+				for(ActivoProveedorContacto proveedorContacto : proveedorContactoList)
+					if(!Checks.esNulo(proveedorContacto.getUsuario()))
+							return proveedorContacto.getUsuario();
+			}
+		}
+		return null;		
 	}
 }
 

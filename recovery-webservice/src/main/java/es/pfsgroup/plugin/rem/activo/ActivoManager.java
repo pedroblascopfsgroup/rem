@@ -78,6 +78,7 @@ import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
+import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoInformeComercialHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.ActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.ActivoLlave;
@@ -86,6 +87,7 @@ import es.pfsgroup.plugin.rem.model.ActivoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
@@ -3711,6 +3713,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return codigoTipoComercializacion;
+	}
+	
+	
+	@Override
+	public Usuario getUsuarioMediador(Activo activo){
+		ActivoInfoComercial infoComercial = activo.getInfoComercial();
+		if(!Checks.esNulo(infoComercial)){
+			ActivoProveedor proveedor = infoComercial.getMediadorInforme();
+			if(!Checks.esNulo(proveedor)){
+				List<ActivoProveedorContacto> proveedorContactoList = 
+						genericDao.getList(ActivoProveedorContacto.class, genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId()));
+				if(!Checks.estaVacio(proveedorContactoList)){
+					for(ActivoProveedorContacto proveedorContacto : proveedorContactoList)
+						if(!Checks.esNulo(proveedorContacto.getUsuario()))
+								return proveedorContacto.getUsuario();
+				}
+			}
+		}
+		return null;	
 	}
 
 }

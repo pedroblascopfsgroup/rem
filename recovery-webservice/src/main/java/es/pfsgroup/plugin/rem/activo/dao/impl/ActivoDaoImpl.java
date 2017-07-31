@@ -26,6 +26,9 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
@@ -33,6 +36,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
@@ -42,6 +46,7 @@ import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
@@ -55,6 +60,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@Autowired
 	private MSVRawSQLDao rawDao;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 	
 	@Resource
 	private PaginationManager paginationManager;
@@ -856,11 +864,27 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<VOfertasActivosAgrupacion> getListOfertasActivo(Long numActivo) {
+	public List<VOfertasActivosAgrupacion> getListOfertasActivo(Long idActivo) {
 		
-		HQLBuilder hb = new HQLBuilder(" from VOfertasActivosAgrupacion voa");
+		String hql = " from VOfertasActivosAgrupacion voa ";
+		String listaIdsOfertas = "";
 		
-		hb.appendWhere("voa.activos like ('%''"+numActivo+"''%')");
+		HQLBuilder hb = new HQLBuilder(hql);
+
+		if (!Checks.esNulo(idActivo)) {
+			Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+			Activo activo = genericDao.get(Activo.class, filtroIdActivo);
+			
+			List<ActivoOferta> listaActivoOfertas = activo.getOfertas();
+
+			
+			for (ActivoOferta activoOferta : listaActivoOfertas){
+				listaIdsOfertas = listaIdsOfertas.concat(activoOferta.getPrimaryKey().getOferta().getId().toString()).concat(",");
+			}
+			listaIdsOfertas = listaIdsOfertas.concat("-1");
+			
+			hb.appendWhere(" voa.idOferta in (" + listaIdsOfertas + ") ");
+		}
 		
 		return (List<VOfertasActivosAgrupacion>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 				

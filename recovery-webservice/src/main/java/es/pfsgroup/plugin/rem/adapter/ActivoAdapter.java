@@ -1835,9 +1835,7 @@ public class ActivoAdapter {
 
 	public List<VOfertasActivosAgrupacion> getListOfertasActivos(Long idActivo) {
 
-		Activo activo = getActivoById(idActivo);
-
-		return activoDao.getListOfertasActivo(activo.getNumActivo());
+		return activoDao.getListOfertasActivo(idActivo);
 
 	}
 

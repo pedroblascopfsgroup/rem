@@ -340,7 +340,8 @@ public class ActivoAdmisionEnterActionHandler extends ActivoGenericActionHandler
 		valores.put("tokenIdBpm", getTokenId(executionContext));
 
 		if (tipoCalculoVencimiento != null) {
-			valores.put("tipoCalculo", tipoCalculoVencimiento);
+			//valores.put("tipoCalculo", tipoCalculoVencimiento);
+			valores.put("tipoCalculo", TipoCalculo.NO_SALTAR_AGOSTO);
 		}
 		
 		EXTDtoCrearTareaExterna dto = new ActivoDtoCrearTareaExterna(valores);

@@ -17,7 +17,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoEstadosInformeComercial', {
 		            dataIndex: 'fecha',
 		            text: HreRem.i18n('title.publicaciones.condiciones.fecha'),
 		            flex: 0.5,
-		            formatter: 'date("d/m/Y")'
+		            formatter: 'date("d/m/Y h:m:s")'
 		        },
 		        {
 		            dataIndex: 'estadoInfoComercial',

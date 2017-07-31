@@ -48,7 +48,7 @@ BEGIN
             KPI_ID              NUMBER(16)          NOT NULL
             , KPI_INDICADOR     VARCHAR2(200 CHAR)  NOT NULL
             , CONCEPTO          VARCHAR2(100 CHAR)
-            , CANTIDAD          NUMBER(16)
+            , CANTIDAD          NUMBER(16,2)
         )
         '
         ;

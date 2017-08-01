@@ -785,4 +785,11 @@ public interface ExpedienteComercialApi {
 
 	public boolean updateBloqueoFormalizacion(DtoBloqueosFinalizacion dto);
 
+	/**
+	 * Devuelve true si el expediente está bloqueado y false en caso contrario
+	 * @param idTramite
+	 * @return
+	 */
+	Boolean checkExpedienteBloqueado(Long idTramite);
+
 }

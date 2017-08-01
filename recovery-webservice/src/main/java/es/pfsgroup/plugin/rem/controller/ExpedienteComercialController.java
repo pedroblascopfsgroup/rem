@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.controller;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
@@ -43,7 +42,6 @@ import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
-import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoBloqueosFinalizacion;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;

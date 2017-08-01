@@ -54,28 +54,7 @@ DECLARE
       V_TABLA_TAC VARCHAR2(30 CHAR) := 'TAC_TAREAS_ACTIVOS';
       
 BEGIN
-  
-    /*
-      * Autor: mrodriguez
-      *
-      * En este DML se generan todos los trámites ya sean de Alquiler o Venta
-      * directamente en la primera tarea del tramite "Definición de la oferta", sin tener 
-      * en cuenta el estado real del expediente comercial.
-      *
-      * Tanto el gestor comercial como el supervisor comercial se están obteniendo directamente 
-      * del activo, sin tener en cuenta si es una oferta de un lote comercial, FDV, etc...
-      *
-      * TODO: 
-      *
-      *   - Modificar el insert en la tabla pivote para que se generen los trámites realmente en la
-      *       tarea que corresponde, para ello basarse en el DML de tramites original y el excel de
-      *       Tomas que contiene el nuevo mapeo de estados - tareas.
-      *   
-      *   - Modificar la obtencion de los gestores y supervisores comerciales, para que tenga en cuenta
-      *       el tipo de oferta.      
-      * 
-    */
-    
+
       DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------------------') ;
       DBMS_OUTPUT.PUT_LINE('PROCESO DE GENERACION DE TRAMITES PARA LAS OFERTAS MIGRADAS EN FASE 2....') ;
       DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------------------') ;
@@ -100,18 +79,75 @@ BEGIN
                         OFR.OFR_ID
                         , ACT.ACT_ID
                         , CASE TOF.DD_TOF_CODIGO
-                              WHEN ''01'' 
+                              WHEN ''01''
                                     THEN (SELECT DD_TPO_ID FROM '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = ''T013'' AND BORRADO = 0)
-                              WHEN ''02'' 
+                              WHEN ''02''
                                     THEN (SELECT DD_TPO_ID FROM '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = ''T014'' AND BORRADO = 0)
                         END AS TPO_ID
                         , CASE
-                              --T013_DefinicionOferta
                               WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
-                                          THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_DefinicionOferta'')
-                              --T014_DefinicionOferta
+                                    AND MIG2.OFR_COD_ESTADO_OFERTA = ''01-01''
+                                    AND EEC.DD_EEC_CODIGO = ''10'' --Pte. Sanción
+                                    AND OFR.OFR_FECHA_NOTIFICACION IS NULL
+                                        THEN (SELECT TAP.TAP_ID FROM REM01.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_DefinicionOferta'' AND BORRADO = 0)
+                             
+                              WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
+                                    AND MIG2.OFR_COD_ESTADO_OFERTA = ''01-02''
+                                    AND EEC.DD_EEC_CODIGO = ''06'' --Reservado
+                                      AND OFR.OFR_IMPORTE_CONTRAOFERTA IS NOT NULL
+                                      AND RES.RES_FECHA_FIRMA IS NOT NULL                                      
+                                      AND PAC.PAC_CHECK_FORMALIZAR = 1
+                                        THEN (SELECT TAP.TAP_ID FROM REM01.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_ResultadoPBC'' AND BORRADO = 0)
+                              
+                              WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
+                                    AND MIG2.OFR_COD_ESTADO_OFERTA = ''01-03''
+                                    AND EEC.DD_EEC_CODIGO = ''11'' --Aprobado
+                                    AND RES.RES.ECO_ID IS NULL -- Sin reserva
+                                    AND ECO.ECO_FECHA_SANCION IS NOT NULL
+                                    AND ECO.ECO_FECHA_ANULACION IS NULL
+                                    AND OFR.OFR_IMPORTE_CONTRAOFERTA IS NULL
+                                    AND PAC.PAC_CHECK_FORMALIZAR = 1
+                                        THEN (SELECT TAP.TAP_ID FROM REM01.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_ResultadoPBC'' AND BORRADO = 0)                            
+                              
+                              WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
+                                    AND MIG2.OFR_COD_ESTADO_OFERTA = ''01-03''
+                                    AND EEC.DD_EEC_CODIGO = ''11'' --Aprobado
+                                    AND RES.RES.ECO_ID IS NOT NULL -- Con reserva
+                                    AND ECO.ECO_FECHA_SANCION IS NOT NULL
+                                    AND ECO.ECO_FECHA_ANULACION IS NULL
+                                    AND OFR.OFR_IMPORTE_CONTRAOFERTA IS NULL
+                                    AND PAC.PAC_CHECK_FORMALIZAR = 1
+                                        THEN (SELECT TAP.TAP_ID FROM REM01.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_InstruccionesReserva'' AND BORRADO = 0)                            
+
+                              WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
+                                    AND MIG2.OFR_COD_ESTADO_OFERTA = ''01-04''
+                                    AND EEC.DD_EEC_CODIGO = ''04'' --Contraofertado
+                                    AND OFR.OFR_FECHA_CONTRAOFERTA IS NOT NULL
+                                    AND PAC.PAC_CHECK_FORMALIZAR = 1
+                                        THEN (SELECT TAP.TAP_ID FROM REM01.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_RespuestaOfertante'' AND BORRADO = 0)  
+                              
+                              WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
+                                    AND MIG2.OFR_COD_ESTADO_OFERTA = ''01-06''
+                                    AND EEC.DD_EEC_CODIGO = ''11'' --Aprobado
+                                    AND ECO.ECO_ESTADO_PBC = 1
+                                    AND ECO.ECO_FECHA_VENTA IS NULL
+                                    AND RES.RES_ID IS NULL
+                                    AND POS.POS_FECHA_POSICIONAMIENTO IS NOT NULL
+                                    AND PAC.PAC_CHECK_FORMALIZAR = 1
+                                        THEN (SELECT TAP.TAP_ID FROM REM01.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_ResultadoPBC'' AND BORRADO = 0)
+
+                              WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
+                                    AND MIG2.OFR_COD_ESTADO_OFERTA = ''01-06''
+                                    AND EEC.DD_EEC_CODIGO = ''06'' --Reservado
+                                    AND ECO.ECO_ESTADO_PBC = 1
+                                    AND ECO.ECO_FECHA_VENTA IS NULL
+                                    AND RES.RES_ID IS NOT NULL
+                                    AND POS.POS_FECHA_POSICIONAMIENTO IS NOT NULL
+                                    AND PAC.PAC_CHECK_FORMALIZAR = 1
+                                        THEN (SELECT TAP.TAP_ID FROM REM01.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_ResultadoPBC'' AND BORRADO = 0)
+                                        
                               WHEN TOF.DD_TOF_CODIGO = ''02'' -- Alquiler
-                                          THEN (SELECT TAP.TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T014_DefinicionOferta'')
+                                          THEN (SELECT TAP.TAP_ID FROM REM01.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T014_DefinicionOferta'' AND BORRADO = 0)
                         END TAP_ID,
                         (SELECT MAX(GEE.USU_ID) 
                               FROM '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO GAC 
@@ -131,6 +167,8 @@ BEGIN
                         INNER JOIN '||V_ESQUEMA||'.ACT_OFR AO ON AO.OFR_ID = OFR.OFR_ID 
                         INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = AO.ACT_ID AND ACT.BORRADO = 0 
                         INNER JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0
+                        LEFT JOIN '||V_ESQUEMA||'.RES_RESERVAS RES ON RES.ECO_ID = ECO.ECO_ID
+                        LEFT JOIN '||V_ESQUEMA||'.POS_POSICIONAMIENTO POS ON POS.ECO_ID = ECO.ECO_ID
                   WHERE ECO.TBJ_ID IS NULL AND EEC.DD_EEC_CODIGO IN (''10'',''06'',''11'',''04'') -- Pte. Sanción || Reservado || Aprobado || Contraofertado
             )
             SELECT

@@ -101,7 +101,7 @@ BEGIN
     
     END LOOP;
 
-    ROLLBACK;
+    COMMIT;
     DBMS_OUTPUT.PUT_LINE('');
     DBMS_OUTPUT.PUT_LINE('[FIN] Borrado físico de interfaces a cargar desde cero');
 

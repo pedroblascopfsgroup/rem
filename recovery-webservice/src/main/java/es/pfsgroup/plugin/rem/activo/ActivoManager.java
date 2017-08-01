@@ -78,6 +78,7 @@ import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
+import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoInformeComercialHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.ActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.ActivoLlave;
@@ -86,6 +87,7 @@ import es.pfsgroup.plugin.rem.model.ActivoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
@@ -267,6 +269,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private GestorExpedienteComercialApi gestorExpedienteComercialApi;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -400,7 +405,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (!Checks.esNulo(expediente)) {
 				ofertaApi.resetPBC(expediente, false);
 			}
-
+			if(!activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO)
+					|| !activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO)
+					|| !activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO)
+					|| !activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_DESPUBLICADO)) {
+				Usuario usuario = genericAdapter.getUsuarioLogado();
+				int esError = activoDao.publicarActivo(activo.getId(), usuario.getUsername());
+				if (esError != 1){
+					logger.error(messageServices.getMessage("activo.publicacion.error.publicar.ordinario.server").concat(" ").concat(String.valueOf(activo.getId())));
+					throw new SQLException(messageServices.getMessage("activo.publicacion.error.publicar.ordinario.server").concat(" ").concat(String.valueOf(activo.getId())));
+				}
+				
+				logger.info(messageServices.getMessage("activo.publicacion.OK.publicar.ordinario.server").concat(" ").concat(String.valueOf(activo.getId())));
+			}
 		} catch (Exception ex) {
 			logger.error("Error en activoManager", ex);
 			resultado = false;
@@ -1580,11 +1597,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		List<ActivoEstadosInformeComercialHistorico> activoEstadoInfComercialHistoricoList = genericDao
 				.getListOrdered(ActivoEstadosInformeComercialHistorico.class, order, filter);
 		if (!Checks.estaVacio(activoEstadoInfComercialHistoricoList)) {
-			ActivoEstadosInformeComercialHistorico historico = activoEstadoInfComercialHistoricoList.get(0);
-
-			if (historico.getEstadoInformeComercial().getCodigo()
-					.equals(DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION))
-				return true;
+			//ActivoEstadosInformeComercialHistorico historico = activoEstadoInfComercialHistoricoList.get(0);
+			for(ActivoEstadosInformeComercialHistorico historico : activoEstadoInfComercialHistoricoList) {
+				if (historico.getEstadoInformeComercial().getCodigo()
+						.equals(DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION))
+					return true;
+				else if(historico.getEstadoInformeComercial().getCodigo()
+						.equals(DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_RECHAZO))
+					return false;
+			}
 		}
 
 		return false;
@@ -3711,6 +3732,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return codigoTipoComercializacion;
+	}
+	
+	
+	@Override
+	public Usuario getUsuarioMediador(Activo activo){
+		ActivoInfoComercial infoComercial = activo.getInfoComercial();
+		if(!Checks.esNulo(infoComercial)){
+			ActivoProveedor proveedor = infoComercial.getMediadorInforme();
+			if(!Checks.esNulo(proveedor)){
+				List<ActivoProveedorContacto> proveedorContactoList = 
+						genericDao.getList(ActivoProveedorContacto.class, genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId()));
+				if(!Checks.estaVacio(proveedorContactoList)){
+					for(ActivoProveedorContacto proveedorContacto : proveedorContactoList)
+						if(!Checks.esNulo(proveedorContacto.getUsuario()))
+								return proveedorContacto.getUsuario();
+				}
+			}
+		}
+		return null;	
 	}
 
 }

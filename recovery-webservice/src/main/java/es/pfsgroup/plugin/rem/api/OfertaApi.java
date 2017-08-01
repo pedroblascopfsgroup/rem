@@ -7,6 +7,7 @@ import java.util.Map;
 
 import net.sf.json.JSONObject;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -504,6 +505,14 @@ public interface OfertaApi {
 	 * @return
 	 */
 	boolean checkEjercidoTanteo(TareaExterna tareaExterna);
+
+	
+	/**
+	 * Devuelve el primer Usuario asociado al preescritor de la oferta. En caso de no existir devuelve null.
+	 * @param oferta
+	 * @return Usuario
+	 */
+	Usuario getUsuarioPreescriptor(Oferta oferta);
 
 }
 

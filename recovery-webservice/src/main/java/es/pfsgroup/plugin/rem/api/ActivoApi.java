@@ -1017,6 +1017,13 @@ public interface ActivoApi {
 	 * @return
 	 */
 	public String getCodigoTipoComercializacionFromActivo(Activo activo);
+
+	/**
+	 * Devuelve el primer Usuario asociado al mediador del activo. En caso de no existir devuelve null.
+	 * @param oferta
+	 * @return Usuario
+	 */
+	Usuario getUsuarioMediador(Activo activo);
 	
 	
 

@@ -130,10 +130,13 @@ BEGIN
       		WHERE MIG2.VALIDACION = 0'
       ;
       
-      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');     
       
+      COMMIT;
       
-      
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+
       EXECUTE IMMEDIATE '      
       MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' GIC_OLD
       USING (
@@ -179,13 +182,10 @@ BEGIN
       ;
       
       
-      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada GIC_CUENTA_CONTABLE '||SQL%ROWCOUNT||' Filas.');           
-      
-      COMMIT;
-      
-      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';
-      EXECUTE IMMEDIATE V_SENTENCIA;
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada GIC_CUENTA_CONTABLE '||SQL%ROWCOUNT||' Filas.');      
   
+      COMMIT;
+
 EXCEPTION
       WHEN OTHERS THEN
             DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));

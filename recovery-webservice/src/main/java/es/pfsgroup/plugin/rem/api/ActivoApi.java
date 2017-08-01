@@ -14,7 +14,6 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -52,10 +51,6 @@ import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.Visita;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
@@ -1022,6 +1017,13 @@ public interface ActivoApi {
 	 * @return
 	 */
 	public String getCodigoTipoComercializacionFromActivo(Activo activo);
+
+	/**
+	 * Devuelve el primer Usuario asociado al mediador del activo. En caso de no existir devuelve null.
+	 * @param oferta
+	 * @return Usuario
+	 */
+	Usuario getUsuarioMediador(Activo activo);
 	
 	
 

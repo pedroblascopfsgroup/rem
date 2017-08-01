@@ -163,6 +163,12 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 						        	bind: '{proveedor.webUrlProveedor}',
 									maxLength: 50
 						        },
+						        {
+									xtype: 'checkboxfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.autorizado.web'),
+									bind: '{proveedor.autorizacionWeb}',
+									readOnly: false
+								},
 					         // Fila 5
 					            {// Siempre oculto por el momento.
 					            	xtype: 'comboboxfieldbase',

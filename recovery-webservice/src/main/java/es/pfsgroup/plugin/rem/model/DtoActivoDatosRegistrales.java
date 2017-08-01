@@ -56,7 +56,7 @@ public class DtoActivoDatosRegistrales extends WebDto {
 	private Date fechaEnvioAuto;
 	private Date fechaPres1Registro;
 	private Date fechaPres2Registro;
-	private Date fechaInscripcionReg;
+	private Date fechaInscripcion;
 	private Date fechaRetiradaReg;
 	private Date fechaNotaSimple;
 	
@@ -429,11 +429,11 @@ public class DtoActivoDatosRegistrales extends WebDto {
 	public void setFechaPres2Registro(Date fechaPres2Registro) {
 		this.fechaPres2Registro = fechaPres2Registro;
 	}
-	public Date getFechaInscripcionReg() {
-		return fechaInscripcionReg;
+	public Date getFechaInscripcion() {
+		return fechaInscripcion;
 	}
-	public void setFechaInscripcionReg(Date fechaInscripcionReg) {
-		this.fechaInscripcionReg = fechaInscripcionReg;
+	public void setFechaInscripcion(Date fechaInscripcionReg) {
+		this.fechaInscripcion = fechaInscripcionReg;
 	}
 	public Date getFechaRetiradaReg() {
 		return fechaRetiradaReg;

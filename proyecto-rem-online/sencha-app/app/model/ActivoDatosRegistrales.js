@@ -248,7 +248,7 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
     			}
     		},
     		{
-    			name:'fechaInscripcionReg',
+    			name:'fechaInscripcion',
     			convert: function(value) {
     				if (!Ext.isEmpty(value)) {
 						if  ((typeof value) == 'string') {

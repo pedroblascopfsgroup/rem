@@ -82,17 +82,6 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 					+ "		       OR gee.usuario.id = ".concat(String.valueOf(usuarioGestor.getId()))+" )"
 					+ "  "; 
 				} else{
-/*					
-					from = from	+ ",GestorActivo gestorActivo, GestorExpedienteComercial gestorExpediente";
-					where = "gestorActivo.activo.id = voferta.idActivo and "
-							+ "gestorActivo.usuario.id =".concat(String.valueOf(usuarioGestor.getId()))+" and " 
-							+ "gestorExpediente.expedienteComercial.id = voferta.idExpediente and gestorExpediente.tipoGestor.codigo = '".concat(GestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION).concat("' and gestorExpediente.usuario.id =".concat(String.valueOf(usuarioGestoria.getId())));
-
-					// Consulta el tipo gestor: Gestor Formalizacion (para cruzar por ID en lugar de codigo - evitar subconsulta)
-					Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
-					EXTDDTipoGestor tipoGestorFormalizacion = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
-*/
-					
 					// Consulta el tipo gestor: Gestoria Formalizacion (para cruzar por ID en lugar de codigo - evitar subconsulta)
 					Filter filtroTipoGestorFormal = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 					EXTDDTipoGestor tipoGestorFormalizacion = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestorFormal);
@@ -122,18 +111,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 					+ "       ) "
 					+ "  "; 
 				}				
-/*				
-			} else if (adapter.tienePerfil("GESTCOMBACKOFFICE", usuarioGestor)) {
-				if(Checks.esNulo(usuarioGestoria)) {
-					from = from	+ ",ActivoLoteComercial lote ";
-					where = "lote.id = voferta.idAgrupacion and lote.usuarioGestorComercialBackOffice.id =".concat(String.valueOf(usuarioGestor.getId()));
-				} else {
-					from = from	+ ",ActivoLoteComercial lote, GestorExpedienteComercial gestorExpediente ";
-					where = "lote.id = voferta.idAgrupacion and "
-							+ "lote.usuarioGestorComercialBackOffice.id =".concat(String.valueOf(usuarioGestor.getId())) + " and "
-							+ "gestorExpediente.expedienteComercial.id = voferta.idExpediente and gestorExpediente.tipoGestor.codigo = '".concat(GestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION).concat("' and gestorExpediente.usuario.id =".concat(String.valueOf(usuarioGestoria.getId())));
-				}
-*/
+
 			} else if (adapter.tienePerfil("HAYAGESTFORM", usuarioGestor)) {			
 				
 				if(Checks.esNulo(usuarioGestoria)) {

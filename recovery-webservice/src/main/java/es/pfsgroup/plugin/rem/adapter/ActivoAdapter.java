@@ -1839,9 +1839,7 @@ public class ActivoAdapter {
 
 	public List<VOfertasActivosAgrupacion> getListOfertasActivos(Long idActivo) {
 
-		Activo activo = getActivoById(idActivo);
-
-		return activoDao.getListOfertasActivo(activo.getNumActivo());
+		return activoDao.getListOfertasActivo(idActivo);
 
 	}
 
@@ -2364,6 +2362,9 @@ public class ActivoAdapter {
 		// comercial del activo
 		// Vinculado a varias pestanyas del activo
 		updaterState.updaterStateDisponibilidadComercial(activo);
+		
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		activoDao.publicarActivoPortal(activo.getId(), usuarioLogado.getUsername());
 	}
 
 	@Transactional(readOnly = false)

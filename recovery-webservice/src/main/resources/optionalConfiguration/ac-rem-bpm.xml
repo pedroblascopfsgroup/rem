@@ -181,7 +181,7 @@
                 return trabajoManager.diffDate(date1, date2);
   			}
   			def esFechaIgual(String date1, String date2) {
-  				if(date2 != null{
+  				if(date2 != null){
 	  				if ("IGUAL".equals(diffDate(date1, date2))){
 	  					return true;
 	  				}else{
@@ -395,6 +395,10 @@
             	def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.checkBankia(tareaExterna);
             }
+            def checkExpedienteBloqueado = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkExpedienteBloqueado(idTramite);
+            }
             def comprobarActivoComercializable = {
             	def activoManager = ctx.getBean("activoManager");
             	return activoManager.comprobarActivoComercializable(idActivo);
@@ -498,10 +502,6 @@
             def checkEsMultiactivo = {
             	def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.checkEsMultiactivo(tareaExterna);
-            }
-            def checkExpedienteBloqueado = {
-            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
-            	return expedienteComercialManager.checkExpedienteBloqueado(idTramite);
             }
   			 ]]></value>
   		</list>

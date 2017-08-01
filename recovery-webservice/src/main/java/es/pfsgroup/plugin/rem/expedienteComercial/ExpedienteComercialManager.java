@@ -4733,13 +4733,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	
 	@Override
-	public Boolean checkExpedienteBloqueado(Long idTramite) {
+	public boolean checkExpedienteBloqueado(Long idTramite) {
 		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
 		if(!Checks.esNulo(activoTramite)){
 			Trabajo trabajo = activoTramite.getTrabajo();
 			if(!Checks.esNulo(trabajo)){
 				ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByTrabajo(trabajo.getId());
-				return (expediente.getBloqueado() == 1 ? true : false);
+				return (new Integer(1).equals(expediente.getBloqueado()) ? true : false);
 			}
 		}
 		return false;

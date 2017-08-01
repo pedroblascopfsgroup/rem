@@ -790,6 +790,6 @@ public interface ExpedienteComercialApi {
 	 * @param idTramite
 	 * @return
 	 */
-	Boolean checkExpedienteBloqueado(Long idTramite);
+	public boolean checkExpedienteBloqueado(Long idTramite) ;
 
 }

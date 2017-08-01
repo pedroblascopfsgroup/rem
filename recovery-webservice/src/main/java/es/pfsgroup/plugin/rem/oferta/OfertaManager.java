@@ -1657,8 +1657,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			if (!Checks.esNulo(activo)) {
 				if (!Checks.esNulo(oferta.getImporteOferta())) {
-					Double result= (oferta.getImporteOferta() * calculoImporteC / 100);
-					dto.setHonorarios(result);
+					for(ActivoOferta activoOferta : oferta.getActivosOferta()){
+						if(activoOferta.getPrimaryKey().getActivo().getId().equals(activo.getId()))
+						{
+							//Double result= (oferta.getImporteOferta()  * calculoImporteC / 100);
+							if(!Checks.esNulo(activoOferta.getImporteActivoOferta())){
+								Double result=(activoOferta.getImporteActivoOferta() * calculoImporteC / 100);
+								dto.setHonorarios(result);
+							}
+						}
+					}
 				}
 			}
 		} /*

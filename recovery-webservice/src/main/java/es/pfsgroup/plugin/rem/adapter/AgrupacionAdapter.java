@@ -93,6 +93,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidator;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidatorFactoryApi;
@@ -169,7 +170,10 @@ public class AgrupacionAdapter {
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
-	
+
+	@Autowired
+	private NotificationOfertaManager notificationOfertaManager;
+
 	@Resource
 	MessageService messageServices;
 
@@ -1353,6 +1357,8 @@ public class AgrupacionAdapter {
 			genericDao.save(Oferta.class, oferta);
 			// Actualizamos la situacion comercial de los activos de la oferta
 			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
+
+			notificationOfertaManager.sendNotification(oferta);
 
 		} catch (Exception ex) {
 			logger.error("error en agrupacionAdapter", ex);

@@ -119,6 +119,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		DDEstadoPublicacion estadoPublicacionActual = null;
 		String motivo = null;
 		
+
 		//Para hacer un cambio en estados de publicacion es necesario saber que validaciones es necesario aplicar
 		//Si no se indicaron por parametro, por defecto se aplican todas las validaciones de publicacion
 		if(Checks.esNulo(dtoValidacionesPublicacion) || Checks.esNulo(dtoValidacionesPublicacion.getActivo())){
@@ -191,6 +192,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				&& dtoCambioEstadoPublicacion.getPublicacionOrdinaria()) { // Publicación
 																			// ordinaria.
 			
+			if (Checks.esNulo(activo.getFechaPublicable())) {
+				activo.setFechaPublicable(new Date());
+				activoApi.saveOrUpdate(activo);
+				OkPublicacionSinPublicar= true;
+			}
+			
 			if(DDEstadoPublicacion.CODIGO_DESPUBLICADO.equals(activo.getEstadoPublicacion().getCodigo())){
 			// Si se publica por primera vez (no historico) o el estado anterior
 			// no era ya "publicado ordinario"
@@ -207,11 +214,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				// le asigna una
 				// Se marca el activo con el indicador de publicable porque
 				// va a publicarse
-				if (Checks.esNulo(activo.getFechaPublicable())) {
-					activo.setFechaPublicable(new Date());
-					activoApi.saveOrUpdate(activo);
-					OkPublicacionSinPublicar= true;
-				}
+				
 				if (cumpleCondicionesPublicar) {
 					
 					
@@ -277,7 +280,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 						
 					} else {
 					// Si no cumple condiciones, se pasa a NO PUBLICADO
-						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
+						//filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
 					}
 					
 				}

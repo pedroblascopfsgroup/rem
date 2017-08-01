@@ -68,6 +68,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
 	public int publicarActivo(Long idActivo, String username);
 	
+	public int publicarActivoPortal(Long idActivo, String username);
+	
     public Long getNextNumOferta();
     
     public Long getNextNumExpedienteComercial();

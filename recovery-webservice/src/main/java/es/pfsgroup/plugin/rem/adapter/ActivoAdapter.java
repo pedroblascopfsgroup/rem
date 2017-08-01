@@ -2358,6 +2358,9 @@ public class ActivoAdapter {
 		// comercial del activo
 		// Vinculado a varias pestanyas del activo
 		updaterState.updaterStateDisponibilidadComercial(activo);
+		
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		activoDao.publicarActivoPortal(activo.getId(), usuarioLogado.getUsername());
 	}
 
 	@Transactional(readOnly = false)

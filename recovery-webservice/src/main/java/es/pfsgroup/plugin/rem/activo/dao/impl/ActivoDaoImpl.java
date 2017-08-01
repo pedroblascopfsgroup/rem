@@ -699,6 +699,20 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		return callProcedureSql.executeUpdate();
 	}
 	
+	@Override
+	public int publicarActivoPortal(Long idActivo, String username){
+		StringBuilder procedureHQL = new StringBuilder(
+							" BEGIN ");
+		procedureHQL.append("   ACTIVO_PUBLICACION_PORTAL(:idActivoParam, :usernameParam); ");
+		procedureHQL.append(" END; ");
+		
+		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL.toString());
+		callProcedureSql.setParameter("idActivoParam", idActivo);
+		callProcedureSql.setParameter("usernameParam", username);
+		
+		return callProcedureSql.executeUpdate();
+	}
+	
     public Long getNextNumExpedienteComercial() {
 		String sql = "SELECT S_ECO_NUM_EXPEDIENTE.NEXTVAL FROM DUAL ";
 		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();

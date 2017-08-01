@@ -4561,6 +4561,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						Activo activo = activoOferta.getPrimaryKey().getActivo();
 						DtoCondicionesActivoExpediente condiciones = this.getCondicionesActivoExpediete(idExpediente,
 								activo.getId());
+						
+						
+						
 						if (condiciones.getSituacionPosesoriaCodigo() != null
 								&& condiciones.getSituacionPosesoriaCodigoInformada() != null
 								&& condiciones.getSituacionPosesoriaCodigo()
@@ -4584,10 +4587,19 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						if(expediente.getPosicionamientos() == null || expediente.getPosicionamientos().size()<1){
 							codigoError = "imposible.bloquear.fecha.posicionamiento";
 						}else{
-							//el usuario logada tiene que ser gestoria
+							//el usuario logado tiene que ser gestoria
 							Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 							if(!genericAdapter.isGestoria(usuarioLogado) && !genericAdapter.isSuper(usuarioLogado) && !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, usuarioLogado)){
 								codigoError = "imposible.bloquear.no.es.gestoria";
+							}else{
+								//la financiación tiene que estar informada
+								DtoFormalizacionFinanciacion financiacion = new DtoFormalizacionFinanciacion();
+								financiacion.setId(String.valueOf(idExpediente));
+								financiacion = this.getFormalizacionFinanciacion(financiacion);
+								if(Checks.esNulo(financiacion.getSolicitaFinanciacion())){
+									codigoError = "imposible.bloquear.financiacion.no.informada";
+								}
+								
 							}
 						}
 					}
@@ -4718,5 +4730,22 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return mailsPara;
 
 	}
+	
+	
+	@Override
+	public Boolean checkExpedienteBloqueado(Long idTramite) {
+		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
+		if(!Checks.esNulo(activoTramite)){
+			Trabajo trabajo = activoTramite.getTrabajo();
+			if(!Checks.esNulo(trabajo)){
+				ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByTrabajo(trabajo.getId());
+				return (expediente.getBloqueado() == 1 ? true : false);
+			}
+		}
+		return false;
+	}
+
+
+		
 
 }

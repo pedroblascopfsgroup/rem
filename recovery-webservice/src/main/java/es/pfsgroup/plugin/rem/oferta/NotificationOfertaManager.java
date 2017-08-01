@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.rem.oferta;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,18 +47,15 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	public void sendNotification(Oferta oferta) {
 
 		Usuario usuario = null;
+		Activo activo = oferta.getActivoPrincipal();
 
 		if (!Checks.esNulo(oferta.getAgrupacion()) && !Checks.esNulo(oferta.getAgrupacion().getTipoAgrupacion() != null)) {
 			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo()) && oferta.getAgrupacion() instanceof ActivoLoteComercial) {
 				ActivoLoteComercial activoLoteComercial = (ActivoLoteComercial) oferta.getAgrupacion();
 				usuario = activoLoteComercial.getUsuarioGestorComercial();
+			} else {
+				usuario = gestorActivoManager.getGestorByActivoYTipo(activo, "GCOM");
 			}
-		}
-
-		Activo activo = oferta.getActivoPrincipal();
-
-		if (usuario == null) {
-			usuario = gestorActivoManager.getGestorByActivoYTipo(activo, "GCOM");	
 		}
 
 		if (activo != null && usuario != null) {
@@ -80,8 +79,8 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			mailsCC.add(this.getCorreoFrom());
 
 			String contenido = 
-					String.format("<p>Ha recibido una nueva oferta con número identificador %s, a nombre de %s, por importe de %,10.2f €.</p>", 
-							oferta.getNumOferta().toString(), oferta.getCliente().getNombreCompleto(), oferta.getImporteOferta());
+					String.format("<p>Ha recibido una nueva oferta con número identificador %s, a nombre de %s, por importe de %s €.</p>", 
+							oferta.getNumOferta().toString(), oferta.getCliente().getNombreCompleto(), NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()));
 
 			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 		}

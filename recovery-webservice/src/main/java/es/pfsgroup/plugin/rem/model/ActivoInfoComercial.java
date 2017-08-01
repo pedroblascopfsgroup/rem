@@ -230,6 +230,10 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_LOC_ID")
 	private Localidad localidad;
+	
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_LOC_REGISTRO_ID")
+	private Localidad localidadRegistro;
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_PRV_ID")
@@ -946,6 +950,14 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	public void setExisteComunidadEdificio(Integer existeComunidadEdificio) {
 		this.existeComunidadEdificio = existeComunidadEdificio;
+	}
+
+	public Localidad getLocalidadRegistro() {
+		return localidadRegistro;
+	}
+
+	public void setLocalidadRegistro(Localidad localidadRegistro) {
+		this.localidadRegistro = localidadRegistro;
 	}
 	
 

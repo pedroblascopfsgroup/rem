@@ -24,7 +24,7 @@ public class PlantaDto implements Serializable {
 			Update.class })
 	private String codTipoEstancia;
 
-	private Long numeroEstancias;
+	private Integer numeroEstancias;
 
 	private Float estancias;
 
@@ -46,11 +46,11 @@ public class PlantaDto implements Serializable {
 		this.codTipoEstancia = codTipoEstancia;
 	}
 
-	public Long getNumeroEstancias() {
+	public Integer getNumeroEstancias() {
 		return numeroEstancias;
 	}
 
-	public void setNumeroEstancias(Long numeroEstancias) {
+	public void setNumeroEstancias(Integer numeroEstancias) {
 		this.numeroEstancias = numeroEstancias;
 	}
 

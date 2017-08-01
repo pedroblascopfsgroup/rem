@@ -92,7 +92,7 @@ BEGIN
                   WHEN (NVL2(SPS4.SPS_ID,1,0) = 1 OR NVL2(EAC1.DD_EAC_ID,1,0) = 1 OR NVL2(TIT.ACT_ID,0,1) = 1 
                         OR NVL2(EON.DD_EON_ID,1,0) = 1 OR NVL2(NPA.ACT_ID,1,0) = 1 OR NVL2(EAC2.DD_EAC_ID,1,0) = 1 
                         OR NVL2(SPS3.SPS_ID,1,0) = 1 OR NVL2(SPS1.SPS_ID,1,0) = 1 OR NVL2(SPS2.SPS_ID,1,0) = 1
-                        OR NVL2(REG2.REG_ID,1,0) = 1 OR NVL2(SPS5.SPS_OTRO,1,0) = 1) OR DECODE(VEI.DD_AIC_CODIGO ,''02'' ,0 , 1) = 1
+                        OR NVL2(REG2.REG_ID,1,0) = 1 OR NVL2(SPS5.SPS_OTRO,1,0) = 1) --OR DECODE(VEI.DD_AIC_CODIGO ,''02'' ,0 , 1) = 1
 						OR NVL2(VCG.CON_CARGAS, VCG.CON_CARGAS, 0) = 1
                     THEN ''01''
 	                  ELSE ''02''

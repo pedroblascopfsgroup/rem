@@ -165,8 +165,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Autowired
 	private ProveedoresDao proveedoresDao;
-	
-	
+
+	@Autowired
+	private NotificationOfertaManager notificationOfertaManager;
+
 	@Override
 	public String managerName() {
 		return "ofertaManager";
@@ -605,6 +607,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			oferta.setId(idOferta);
 			updateEstadoOferta(oferta, ofertaDto.getFechaAccion());
 			this.updateStateDispComercialActivosByOferta(oferta);
+			
+			notificationOfertaManager.sendNotification(oferta);
 
 		}
 		return errorsList;

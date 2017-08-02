@@ -1118,7 +1118,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             if (combo.value == '01') {
                 me.habilitarCampo(me.down('[name=fechaFirma]'));
                 me.habilitarCampo(me.down('[name=numProtocolo]'));
-                me.habilitarCampo(me.down('[name=fechaIngreso]'));
                 me.habilitarCampo(me.down('[name=comboCondiciones]'));
                 me.habilitarCampo(me.down('[name=condiciones]'));
 
@@ -1136,12 +1135,10 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
                 }
                 me.deshabilitarCampo(me.down('[name=fechaFirma]'));
                 me.deshabilitarCampo(me.down('[name=numProtocolo]'));
-                me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
                 me.deshabilitarCampo(me.down('[name=comboCondiciones]'));
                 me.deshabilitarCampo(me.down('[name=condiciones]'));
                 me.down('[name=fechaFirma]').reset();
                 me.down('[name=numProtocolo]').reset();
-                me.down('[name=fechaIngreso]').reset();
                 me.down('[name=comboCondiciones]').reset();
                 me.down('[name=condiciones]').reset();
             }

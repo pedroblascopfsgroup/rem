@@ -54,8 +54,12 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				ActivoLoteComercial activoLoteComercial = (ActivoLoteComercial) oferta.getAgrupacion();
 				usuario = activoLoteComercial.getUsuarioGestorComercial();
 			} else {
+				// Lote Restringido
 				usuario = gestorActivoManager.getGestorByActivoYTipo(activo, "GCOM");
 			}
+		} else {
+			// por activo
+			usuario = gestorActivoManager.getGestorByActivoYTipo(activo, "GCOM");
 		}
 
 		if (activo != null && usuario != null) {

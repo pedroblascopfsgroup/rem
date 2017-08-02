@@ -97,7 +97,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 					if (!Checks.esNulo(reserva)) {
 						try {
 							//Si hay reserva y firma, se desbloquea la tarea ResultadoPBC
-							reactivarTareaResultadoPBC(valor.getTareaExterna());
+							reactivarTareaResultadoPBC(valor.getTareaExterna(), expediente);
 							
 							reserva.setFechaFirma(ft.parse(valor.getValor()));
 							genericDao.save(Reserva.class, reserva);
@@ -120,7 +120,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 		return this.getCodigoTarea();
 	}
 	
-	private void reactivarTareaResultadoPBC(TareaExterna tareaExterna){
+	private void reactivarTareaResultadoPBC(TareaExterna tareaExterna, ExpedienteComercial expediente){
 		ActivoTramite tramite = ((TareaActivo) tareaExterna.getTareaPadre()).getTramite();
 
 		List<TareaActivo> tareas = tareaActivoManager.getTareasActivoByIdTramite(tramite.getId());
@@ -129,38 +129,46 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 		// En el tramite, se busca tarea "Resultado PBC" y se reactiva
 		for (TareaActivo tarea : tareas) {
 			if (CODIGO_T013_RESULTADO_PBC.equals(tarea.getTareaExterna().getTareaProcedimiento().getCodigo())) {
-				if(!tarea.getTareaFinalizada() && tarea.getAuditoria().isBorrado())
+				if(!tarea.getTareaFinalizada() && tarea.getAuditoria().isBorrado()){
 					tarea.getAuditoria().setBorrado(false);
-				tareaPBC = tarea;
-				break;
+					tareaPBC = tarea;
+				}
 			}
 
 		}
-		
-		// Se recalculan plazos en funcion de si existe tanteo
-		Activo activo = tramite.getActivo();
-		List<TanteoActivoExpediente> listaTanteoActivoExpediente = activo.getTanteoActivoExpediente();
-		
-		boolean tieneTanteo = false;
-		Date ultimaFechaTanteo = new Date(0);
-		for (TanteoActivoExpediente tanteo : listaTanteoActivoExpediente ){
-			if (DDResultadoTanteo.CODIGO_EJERCIDO.equals(tanteo.getResultadoTanteo().getCodigo())){
-				tieneTanteo = true;
-				if(tanteo.getFechaResolucion().compareTo(ultimaFechaTanteo) > 0)
-					ultimaFechaTanteo = tanteo.getFechaResolucion();
+
+		if (!Checks.esNulo(tareaPBC)){
+			// Se recalculan plazos en funcion de si existe tanteo
+			boolean tieneTanteo = false;
+			Date ultimaFechaTanteo = new Date(0);
+			if(new Integer(1).equals(expediente.getCondicionante().getSujetoTanteoRetracto()))//Comprueba si tiene tanteo
+			{
+				List<TanteoActivoExpediente> tanteos = expediente.getTanteoActivoExpediente();
+				for(TanteoActivoExpediente tanteo : tanteos){
+					if(!Checks.esNulo(tanteo.getFechaResolucion()) &&
+							tanteo.getFechaResolucion().compareTo(ultimaFechaTanteo) > 0){
+						ultimaFechaTanteo = tanteo.getFechaResolucion();
+						tieneTanteo = true;
+					}
+				}
 			}
+			
+			// Si no se ha actualizado la ultima fecha de tanteo, se establece Hoy
+			if ((new Date(0)).compareTo(ultimaFechaTanteo) == 0){
+				ultimaFechaTanteo = new Date();
+			}
+			
+			// CON tanteo: F.Resolucion Tanteo + 30 dias
+			// SIN tanteo: Hoy + 30 dias
+			Date fechaFinTarea = new Date();
+			if (tieneTanteo){
+				fechaFinTarea = addDays(ultimaFechaTanteo, 30);
+			} else {			
+				fechaFinTarea = addDays(new Date(), 30);
+			}
+			
+			tareaPBC.setFechaFin(fechaFinTarea);
 		}
-		
-		// CON tanteo: F.Resolucion Tanteo + 30 dias
-		// SIN tanteo: Hoy + 30 dias
-		Date fechaFinTarea = new Date();
-		if (tieneTanteo){
-			fechaFinTarea = addDays(ultimaFechaTanteo, 30);
-		} else {			
-			fechaFinTarea = addDays(new Date(), 30);
-		}
-		
-		tareaPBC.setFechaFin(fechaFinTarea);
 		
 	}
 	

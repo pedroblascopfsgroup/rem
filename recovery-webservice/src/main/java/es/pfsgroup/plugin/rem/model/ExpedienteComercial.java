@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -390,7 +392,10 @@ public class ExpedienteComercial implements Serializable, Auditable {
     	
     	Posicionamiento posicionamiento = null;
     	
-    	if(!Checks.esNulo(this.posicionamientos) && !this.posicionamientos.isEmpty()) {    		
+    	if(!Checks.esNulo(this.posicionamientos) && !this.posicionamientos.isEmpty()) {    	
+    		Comparator<Posicionamiento> comparador = Collections.reverseOrder();
+    		Collections.sort(this.posicionamientos, comparador);
+    		
     		posicionamiento = this.posicionamientos.get(0);
     	}
     	

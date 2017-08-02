@@ -26,10 +26,10 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 
-
 /**
- * Modelo que gestiona la informacion de un posicionamiento de un expediente comercial
- *  
+ * Modelo que gestiona la informacion de un posicionamiento de un expediente
+ * comercial
+ * 
  * @author Jose Villel
  *
  */
@@ -37,44 +37,42 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 @Table(name = "POS_POSICIONAMIENTO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
-@Inheritance(strategy=InheritanceType.JOINED)
-public class Posicionamiento implements Serializable, Auditable {
-	
-    /**
+@Inheritance(strategy = InheritanceType.JOINED)
+public class Posicionamiento implements Serializable, Auditable, Comparable<Posicionamiento> {
+
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-		
+
 	@Id
-    @Column(name = "POS_ID")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "PosicionamientoGenerator")
-    @SequenceGenerator(name = "PosicionamientoGenerator", sequenceName = "S_POS_POSICIONAMIENTO")
-    private Long id;
-	
+	@Column(name = "POS_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "PosicionamientoGenerator")
+	@SequenceGenerator(name = "PosicionamientoGenerator", sequenceName = "S_POS_POSICIONAMIENTO")
+	private Long id;
+
 	@OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ECO_ID")
-    private ExpedienteComercial expediente;
-	
-	@Column(name="POS_FECHA_AVISO")
+	@JoinColumn(name = "ECO_ID")
+	private ExpedienteComercial expediente;
+
+	@Column(name = "POS_FECHA_AVISO")
 	private Date fechaAviso;
-	
-	@Column(name="POS_FECHA_POSICIONAMIENTO")
+
+	@Column(name = "POS_FECHA_POSICIONAMIENTO")
 	private Date fechaPosicionamiento;
-	
-	@Column(name="POS_MOTIVO_APLAZAMIENTO")
+
+	@Column(name = "POS_MOTIVO_APLAZAMIENTO")
 	private String motivoAplazamiento;
-	
+
 	@ManyToOne
-	@JoinColumn(name="PVE_ID_NOTARIO")
+	@JoinColumn(name = "PVE_ID_NOTARIO")
 	private ActivoProveedor notario;
 
-    
-    @Version   
+	@Version
 	private Long version;
 
 	@Embedded
 	private Auditoria auditoria;
-    
 
 	public Long getId() {
 		return id;
@@ -91,8 +89,6 @@ public class Posicionamiento implements Serializable, Auditable {
 	public void setExpediente(ExpedienteComercial expediente) {
 		this.expediente = expediente;
 	}
-	
-	
 
 	public Date getFechaAviso() {
 		return fechaAviso;
@@ -141,9 +137,17 @@ public class Posicionamiento implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
-    
-    
-    
-    
-   
+
+	@Override
+	public int compareTo(Posicionamiento o) {
+		int resultado = 0;
+		if (this.getAuditoria() != null && this.getAuditoria().getFechaCrear() != null && o.getAuditoria() != null
+				&& o.getAuditoria().getFechaCrear() != null){
+			resultado = this.getAuditoria().getFechaCrear().compareTo(o.getAuditoria().getFechaCrear());			
+		}
+		return resultado;
+		
+
+	}
+
 }

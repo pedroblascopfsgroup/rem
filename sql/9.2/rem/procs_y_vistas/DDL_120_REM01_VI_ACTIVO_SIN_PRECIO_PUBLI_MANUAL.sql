@@ -1,10 +1,10 @@
  --/*
 --##########################################
---## AUTOR=JOSEVI JIMENEZ
---## FECHA_CREACION=20170109
+--## AUTOR=GUILLEM REY
+--## FECHA_CREACION=20170731
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1297
+--## INCIDENCIA_LINK=HREOS-2583
 --## PRODUCTO=NO
 --## Finalidad: DDL creación de la vista de filtro de activos para publicar automáticamente.
 --##           
@@ -47,34 +47,43 @@ BEGIN
   END IF;
   
   DBMS_OUTPUT.PUT_LINE('Crear nueva vista: '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'..');
-  EXECUTE IMMEDIATE 'CREATE VIEW ' || V_ESQUEMA || '.'|| V_TEXT_VISTA ||' 
-	AS
-		SELECT
-			VISTA.ACT_ID,
-      VISTA.INFORME_COMERCIAL,
-      ACTIVO.ACT_FECHA_IND_PUBLICABLE,
-			VISTA.ESTADO_PUBLICACION_CODIGO,
-			(SELECT COND.RUINA + COND.PENDIENTE_INSCRIPCION + COND.OBRANUEVA_SINDECLARAR + COND.SIN_TOMA_POSESION_INICIAL + COND.PROINDIVISO + 
-			COND.OBRANUEVA_ENCONSTRUCCION + COND.OCUPADO_CONTITULO + COND.TAPIADO + COND.ESTADO_PORTAL_EXTERNO + COND.OCUPADO_SINTITULO +
-			COND.DIVHORIZONTAL_NOINSCRITA + NVL2(COND.OTRO, 1, 0) FROM ' || V_ESQUEMA || '.V_COND_DISPONIBILIDAD COND WHERE activo.ACT_ID = cond.ACT_ID) AS CONDICIONADO
-			
-		FROM
-			' || V_ESQUEMA || '.V_BUSQUEDA_PUBLICACION_ACTIVO VISTA,
-			' || V_ESQUEMA || '.ACT_RPA_REGLAS_PUBLICA_AUTO REGLA,
-			' || V_ESQUEMA || '.ACT_ACTIVO ACTIVO
+  EXECUTE IMMEDIATE 'CREATE OR REPLACE FORCE VIEW ' || V_ESQUEMA || '.'|| V_TEXT_VISTA ||' (act_id, informe_comercial, act_fecha_ind_publicable, estado_publicacion_codigo, condicionado)
+AS
+   SELECT vista.act_id, vista.informe_comercial, activo.act_fecha_ind_publicable, vista.estado_publicacion_codigo,
+          (SELECT   cond.ruina
+                  + cond.pendiente_inscripcion
+                  + cond.obranueva_sindeclarar
+                  + cond.sin_toma_posesion_inicial
+                  + cond.proindiviso
+                  + cond.obranueva_enconstruccion
+                  + cond.ocupado_contitulo
+                  + cond.tapiado
+                  + cond.estado_portal_externo
+                  + cond.ocupado_sintitulo
+                  + cond.divhorizontal_noinscrita
+                  + NVL2 (cond.otro, 1, 0)
+             FROM ' || V_ESQUEMA || '.v_cond_disponibilidad cond
+            WHERE activo.act_id = cond.act_id) AS condicionado
+     FROM ' || V_ESQUEMA || '.v_busqueda_publicacion_activo vista, ' || V_ESQUEMA || '.act_rpa_reglas_publica_auto regla, ' || V_ESQUEMA || '.act_activo activo
+    WHERE vista.cartera_codigo IN (SELECT cra.dd_cra_codigo
+                                     FROM dd_cra_cartera cra
+                                    WHERE cra.dd_cra_id IN (regla.dd_cra_id))                                                                  -- Donde el activo sea de la cartera que indica la regla.
+      AND vista.tipo_activo_codigo IN (SELECT tpa.dd_tpa_codigo
+                                         FROM dd_tpa_tipo_activo tpa
+                                        WHERE tpa.dd_tpa_id IN (regla.dd_tpa_id))                                                                   -- Donde el activo sea del tipo que indica la regla.
+      AND vista.subtipo_activo_codigo IN (SELECT sac.dd_sac_codigo
+                                            FROM dd_sac_subtipo_activo sac
+                                           WHERE sac.dd_sac_id IN (regla.dd_sac_id))                                                             -- Donde el activo sea del subtipo que indica la regla.
+      AND regla.borrado = 0                                                                                                                                     -- Que la regla no se encuentre borrada.
+      AND vista.admision = 1                                                                                                                                -- Que el activo tenga el check de admision.
+      AND vista.gestion = 1                                                                                                                                  -- Que el activo tenga el check de gestion.
+      AND vista.precio = 0                                                                                                                                -- Que el activo no tenga el check de precios.
+	  AND VISTA.INFORME_COMERCIAL = 1 -- Que tenga IC aceptado se evalua directamente en el procedure ACTIVO_PUBLICACION_AUTO
+      AND vista.act_id = activo.act_id                                                                                                             -- Que el ID de la vista y el activo se correspondan.
+      AND (vista.estado_publicacion_codigo IS NULL OR vista.estado_publicacion_codigo NOT IN (''01'', ''03'', ''04'', ''05'')
+          )                                                                                             -- Que el activo no se encuentre en ningun tipo de publicacion ordinaria o despublicado forzado.
+      AND activo.borrado = 0
 
-		WHERE
-			VISTA.CARTERA_CODIGO IN (SELECT CRA.DD_CRA_CODIGO FROM DD_CRA_CARTERA CRA WHERE CRA.DD_CRA_ID IN(REGLA.DD_CRA_ID)) -- Donde el activo sea de la cartera que indica la regla.
-			AND VISTA.TIPO_ACTIVO_CODIGO IN (SELECT TPA.DD_TPA_CODIGO FROM DD_TPA_TIPO_ACTIVO TPA WHERE TPA.DD_TPA_ID IN (REGLA.DD_TPA_ID)) -- Donde el activo sea del tipo que indica la regla.
-			AND VISTA.SUBTIPO_ACTIVO_CODIGO IN (SELECT SAC.DD_SAC_CODIGO FROM DD_SAC_SUBTIPO_ACTIVO SAC WHERE SAC.DD_SAC_ID IN (REGLA.DD_SAC_ID)) -- Donde el activo sea del subtipo que indica la regla.
-			AND REGLA.borrado = 0 -- Que la regla no se encuentre borrada.
-			AND VISTA.ADMISION = 1 -- Que el activo tenga el check de admision.
-			AND VISTA.GESTION = 1 -- Que el activo tenga el check de gestion.
-			AND VISTA.PRECIO = 0 -- Que el activo no tenga el check de precios.
---			AND VISTA.INFORME_COMERCIAL = 1 -- Que tenga IC aceptado se evalua directamente en el procedure ACTIVO_PUBLICACION_AUTO
-			AND VISTA.ACT_ID = ACTIVO.ACT_ID -- Que el ID de la vista y el activo se correspondan.
-			AND (VISTA.ESTADO_PUBLICACION_CODIGO IS NULL OR VISTA.ESTADO_PUBLICACION_CODIGO NOT IN (''01'', ''03'', ''04'', ''05'')) -- Que el activo no se encuentre en ningun tipo de publicacion ordinaria o despublicado forzado.
-		and activo.borrado = 0
     ';
 
   DBMS_OUTPUT.PUT_LINE('Vista creada OK');

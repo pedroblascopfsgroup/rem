@@ -1378,7 +1378,16 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						entitys.add(banyo);
 						entitys.add(instalacion);
 						entitys.add(zonaComun);
-					}
+					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_EDIFICIO_COMPLETO)) {
+						informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
+								ActivoInfoComercial.class, "activo.numActivo");
+						ActivoEdificio edificioEntity = (ActivoEdificio) dtoToEntity.obtenerObjetoEntity(
+								informe.getIdActivoHaya(), ActivoEdificio.class, "infoComercial.activo.numActivo");
+						edificioEntity.setInfoComercial(informeEntity);
+						entitys.add(informeEntity);
+						entitys.add(edificioEntity);
+
+					} 
 					if (informeEntity.getActivo() == null) {
 						informeEntity.setActivo(activo);
 					}
@@ -1404,7 +1413,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 										.createFilter(FilterType.EQUALS, "codigo", planta.getCodTipoEstancia()));
 							}
 							activoDistribucion.setTipoHabitaculo(tipoHabitaculo);
-							activoDistribucion.setCantidad(planta.getNumero());
+							activoDistribucion.setCantidad(planta.getNumeroEstancias());
 							activoDistribucion.setSuperficie(planta.getEstancias());
 							activoDistribucion.setDescripcion(planta.getDescripcionEstancias());
 							genericDao.save(ActivoDistribucion.class, activoDistribucion);

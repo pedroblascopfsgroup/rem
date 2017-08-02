@@ -140,6 +140,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
+import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
@@ -232,6 +233,9 @@ public class ActivoAdapter {
 
 	@Autowired
 	private ProveedoresApi proveedoresApi;
+
+	@Autowired
+	private NotificationOfertaManager notificationOfertaManager;
 
 	@Resource
 	MessageService messageServices;
@@ -2358,6 +2362,9 @@ public class ActivoAdapter {
 		// comercial del activo
 		// Vinculado a varias pestanyas del activo
 		updaterState.updaterStateDisponibilidadComercial(activo);
+		
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		activoDao.publicarActivoPortal(activo.getId(), usuarioLogado.getUsername());
 	}
 
 	@Transactional(readOnly = false)
@@ -2434,6 +2441,8 @@ public class ActivoAdapter {
 			genericDao.save(Oferta.class, oferta);
 			// Actualizamos la situacion comercial del activo
 			updaterState.updaterStateDisponibilidadComercialAndSave(activo);
+
+			notificationOfertaManager.sendNotification(oferta);
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);
 			return false;

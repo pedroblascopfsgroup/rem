@@ -182,7 +182,9 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				activo.setTitulo(new ActivoTitulo());
 				activo.getTitulo().setActivo(activo);
 			}
-
+			
+			beanUtilNotNull.copyProperties(activo.getTitulo(), dto);
+			
 			if (dto.getEstadoTitulo() != null) {
 				
 				DDEstadoTitulo estadoTituloNuevo = (DDEstadoTitulo) 

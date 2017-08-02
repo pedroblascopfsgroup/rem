@@ -164,7 +164,7 @@ public class InformeMediadorDto implements Serializable {
 	@NotNull(groups = Insert.class)
 	@Diccionary(clase = Localidad.class, message = "El codMunicipioRegistro no existe", groups = { Insert.class,
 			Update.class })
-	@EntityDefinition(procesar = false, motivo = "Falta columna DD_LOC_REGISTRO_ID en ACT_ICO_INFO_COMERCIAL")
+	@EntityDefinition(propertyName = "localidadRegistro", classObj = Localidad.class)
 	private String codMunicipioRegistro;
 
 	@NotNull(groups = Insert.class)
@@ -271,10 +271,10 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "despensaOtrasDependencias", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean despensaOtrasDependencias;
 
-	@EntityDefinition(propertyName = "despensaOtrasDependencias", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	@EntityDefinition(propertyName = "lavaderoOtrasDependencias", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean lavaderoOtrasDependencias;
 
-	@EntityDefinition(propertyName = "despensaOtrasDependencias", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	@EntityDefinition(propertyName = "azoteaOtrasDependencias", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean azoteaOtrasDependencias;
 
 	private String otrosOtrasDependencias;
@@ -461,7 +461,7 @@ public class InformeMediadorDto implements Serializable {
 	private Date anyoRehabilitacionEdificio;
 
 	@EntityDefinition(propertyName = "numPlantas")
-	private Long numeroPlantasEdificio;
+	private Integer numeroPlantasEdificio;
 
 	@EntityDefinition(propertyName = "ascensor", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean ascensorEdificio;
@@ -486,7 +486,7 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "reformaFachada")
 	private Boolean fachadaReformasNecesariasEdificio;
 
-	@EntityDefinition(propertyName = "reformaEscalera")
+	@EntityDefinition(propertyName = "reformaEscalera", procesar = false)
 	private String escaleraReformasNecesariasEdificio;
 
 	@EntityDefinition(propertyName = "reformaPortal")
@@ -1879,11 +1879,11 @@ public class InformeMediadorDto implements Serializable {
 		this.anyoRehabilitacionEdificio = anyoRehabilitacionEdificio;
 	}
 
-	public Long getNumeroPlantasEdificio() {
+	public Integer getNumeroPlantasEdificio() {
 		return numeroPlantasEdificio;
 	}
 
-	public void setNumeroPlantasEdificio(Long numeroPlantasEdificio) {
+	public void setNumeroPlantasEdificio(Integer numeroPlantasEdificio) {
 		this.numeroPlantasEdificio = numeroPlantasEdificio;
 	}
 

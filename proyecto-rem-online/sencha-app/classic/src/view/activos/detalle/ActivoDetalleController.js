@@ -166,7 +166,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
    	onSaveFormularioCompleto: function(btn, form) {
 
 		var me = this;
-
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones.
 		if(form.isFormValid() || form.disableValidation) {
 			

@@ -194,6 +194,65 @@ Ext.define('HreRem.view.activos.detalle.InfoVivienda', {
 														xtype: 'distribucionplantasactivolist'
 													} 
 									 			]
+											},
+											/////////////////////
+											 {
+								        	    xtype:'fieldsettable',				        	 
+										        defaultType: 'textfieldbase',
+												title: HreRem.i18n('fieldlabel.terrazas'),
+												colspan: 2,
+												items :
+												[
+									              
+													{
+														fieldLabel : HreRem.i18n('fieldlabel.descubiertas'),							
+														bind : '{infoComercial.numTerrazaDescubierta}'
+													},
+													{
+														fieldLabel : HreRem.i18n('header.descripcion'),
+														bind : '{infoComercial.descTerrazaDescubierta}',
+														colspan: 2
+													},
+													{
+														fieldLabel : HreRem.i18n('fieldlabel.cubiertas'),							
+														bind : '{infoComercial.numTerrazaCubierta}'
+													},
+													{
+														fieldLabel : HreRem.i18n('header.descripcion'),
+														bind : '{infoComercial.descTerrazaCubierta}',
+														colspan: 2
+													}
+									            ]
+											 },
+											 {
+									            xtype:'fieldsettable',				        	 
+											    defaultType: 'textfieldbase',
+											    title: HreRem.i18n('header.otras.dependencias'),
+												items :
+												[
+												 	
+												 		{
+															xtype: 'checkboxfieldbase',
+															fieldLabel: HreRem.i18n('fieldlabel.despensa'),
+															bind: '{infoComercial.despensa}',
+														},
+														{
+															xtype: 'checkboxfieldbase',
+															fieldLabel: HreRem.i18n('fieldlabel.lavadero'),
+															bind: '{infoComercial.lavadero}',
+														},
+														{
+															xtype: 'checkboxfieldbase',
+															fieldLabel: HreRem.i18n('fieldlabel.azotea'),
+															bind: '{infoComercial.azotea}',
+														},
+														{
+															fieldLabel : HreRem.i18n('header.descripcion'),
+															bind : '{infoComercial.descOtras}',
+															colspan: 3
+														}
+										            
+										        ]
 											}
 											
 			        

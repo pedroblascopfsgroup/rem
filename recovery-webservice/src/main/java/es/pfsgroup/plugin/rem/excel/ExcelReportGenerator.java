@@ -29,14 +29,20 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 	@Resource
 	Properties appProperties;
 	
+	@Override
+	public void sendReport(File reportFile, HttpServletResponse response) throws IOException {
+		String fileName = reportFile.getName();
+		this.sendReport(fileName,reportFile, response);
+		
+	}
+	
 	/* (non-Javadoc)
 	 * @see es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi#sendReport(java.io.File, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
-	public void sendReport(File reportFile, HttpServletResponse response) throws IOException{
+	public void sendReport(String fileName,File reportFile, HttpServletResponse response) throws IOException{
 		
 		ServletOutputStream salida = response.getOutputStream();
-		String fileName = reportFile.getName();
 		String extension = "";
 		int i = fileName.lastIndexOf('.');
 		if (i > 0) {
@@ -99,5 +105,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 		String limite = appProperties.getProperty(EXPORTAR_EXCEL_LIMITE_ACTIVOS);
 		return (!(Checks.esNulo(limite)) ? Integer.parseInt(limite) : MAX_ROW_LIMIT);
 	}
+
+	
 
 }

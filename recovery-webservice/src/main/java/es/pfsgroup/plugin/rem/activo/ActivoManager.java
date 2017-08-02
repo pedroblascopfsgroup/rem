@@ -1345,7 +1345,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		ActivoSituacionPosesoria condicionantesDisponibilidad = genericDao.get(ActivoSituacionPosesoria.class, filtro);
 
 		condicionantesDisponibilidad.setOtro(dtoCondicionanteDisponibilidad.getOtro());
-
+		
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		activoDao.publicarActivoPortal(idActivo, usuarioLogado.getUsername());
+		
 		genericDao.save(ActivoSituacionPosesoria.class, condicionantesDisponibilidad);
 
 		return true;

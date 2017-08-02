@@ -16,6 +16,7 @@
     <bean id="activoGenericEnterEmailActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoGenericEnterEmailActionHandler"></bean>
 	<bean id="activoComprobarPropuestaPreciosActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoComprobarPropuestaPreciosActionHandler"></bean>
 	<bean id="activoComprobarDatosActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoComprobarDatosActionHandler"></bean>
+	<bean id="resultadoPBCEnterActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ResultadoPBCEnterActionHandler"></bean>
 	    
     <bean id="avanzaBPM" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoAvanzaBPMActionHandler"></bean>
     
@@ -180,6 +181,17 @@
             	def trabajoManager = ctx.getBean("trabajoManager");
                 return trabajoManager.diffDate(date1, date2);
   			}
+  			def esFechaIgual(String date1, String date2) {
+  				if(date2 != null){
+	  				if ("IGUAL".equals(diffDate(date1, date2))){
+	  					return true;
+	  				}else{
+	  					return false;
+	  				}
+	  			}else{
+	  				return false;
+	  			}
+  			}
             def esFechaMayor(String date1, String date2) {
             	if(date2 != null){
 	            	if ("MAYOR".equals(diffDate(date1, date2))){
@@ -274,6 +286,10 @@
             def fechaPagoTrabajo = {
             	def trabajoManager = ctx.getBean("trabajoManager");
                 return trabajoManager.getFechaPagoTrabajo(tareaExterna);
+            }
+            def fechaPosicionamiento = {
+            	def ofertaManager = ctx.getBean("ofertaManager");
+            	return ofertaManager.getFechaPosicionamiento(tareaExterna);
             }
 			def comprobacionGestorActivo = {
             	def gestorActivo = ctx.getBean("gestorActivoManager");
@@ -379,6 +395,10 @@
             def checkBankia = {
             	def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.checkBankia(tareaExterna);
+            }
+            def checkExpedienteBloqueado = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkExpedienteBloqueado(idTramite);
             }
             def comprobarActivoComercializable = {
             	def activoManager = ctx.getBean("activoManager");

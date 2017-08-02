@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.oferta;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -43,6 +44,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -99,6 +101,7 @@ import net.sf.json.JSONObject;
 public class OfertaManager extends BusinessOperationOverrider<OfertaApi> implements OfertaApi {
 
 	protected static final Log logger = LogFactory.getLog(OfertaManager.class);
+	SimpleDateFormat groovyft = new SimpleDateFormat("yyyy-MM-dd");
 
 	// private static final String HONORARIO_TIPO_COLABORACION = "C";
 	// private static final String HONORARIO_TIPO_PRESCRIPCION = "P";
@@ -166,6 +169,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Autowired
 	private ProveedoresDao proveedoresDao;
+	
+	@Autowired
+	private TareaActivoApi tareaActivoApi;
 
 	@Autowired
 	private NotificationOfertaManager notificationOfertaManager;
@@ -1358,6 +1364,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		else
 			return false;
 	}
+	
+	public String getFechaPosicionamiento(TareaExterna tareaExterna) {
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+		if (!Checks.estaVacio(expediente.getPosicionamientos())){
+			if(!Checks.esNulo(expediente.getUltimoPosicionamiento().getFechaPosicionamiento()))
+				return groovyft.format(expediente.getUltimoPosicionamiento().getFechaPosicionamiento());
+			else
+				return null;
+		}else{
+			return null;
+		}
+	}
 
 	@Override
 	public DtoDetalleOferta getDetalleOfertaById(Long idOferta) {
@@ -1661,8 +1680,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			if (!Checks.esNulo(activo)) {
 				if (!Checks.esNulo(oferta.getImporteOferta())) {
-					Double result= (oferta.getImporteOferta() * calculoImporteC / 100);
-					dto.setHonorarios(result);
+					for(ActivoOferta activoOferta : oferta.getActivosOferta()){
+						if(activoOferta.getPrimaryKey().getActivo().getId().equals(activo.getId()))
+						{
+							//Double result= (oferta.getImporteOferta()  * calculoImporteC / 100);
+							if(!Checks.esNulo(activoOferta.getImporteActivoOferta())){
+								Double result=(activoOferta.getImporteActivoOferta() * calculoImporteC / 100);
+								dto.setHonorarios(result);
+							}
+						}
+					}
 				}
 			}
 		} /*

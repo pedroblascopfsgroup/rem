@@ -62,34 +62,7 @@ BEGIN
                 ;
       EXECUTE IMMEDIATE V_SENTENCIA;
       
-      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_1||' cargada. '||SQL%ROWCOUNT||' Filas.');
-      
-       V_SENTENCIA := '
-        MERGE INTO '||V_ESQUEMA||'.'||V_TABLA_1||' GAS
-        USING ( 
-                                WITH SUMATORIO AS(
-                                        SELECT GPT_ACT_NUMERO_ACTIVO, GREATEST(SUM(GPT_BASE_IMPONIBLE),1) AS SUMA
-                                        FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'
-										WHERE VALIDACION = 0
-                                        GROUP BY GPT_ACT_NUMERO_ACTIVO
-                                )
-                                SELECT GPV.GPV_ID, ACT.ACT_ID, GPT_BASE_IMPONIBLE, ROUND(100*GPT_BASE_IMPONIBLE/OPERACION.SUMA,4) AS SUMA FROM MIG2_GPV_ACT_TBJ MIG2
-                                INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
-                                  ON ACT.ACT_NUM_ACTIVO = MIG2.GPT_ACT_NUMERO_ACTIVO
-                                INNER JOIN SUMATORIO OPERACION
-                                  ON MIG2.GPT_ACT_NUMERO_ACTIVO = OPERACION.GPT_ACT_NUMERO_ACTIVO                                       
-                                INNER JOIN  '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = MIG2.GPT_GPV_ID
-                                JOIN '||V_ESQUEMA||'.GPV_ACT T1 ON T1.GPV_ID = GPV.GPV_ID AND T1.ACT_ID = ACT.ACT_ID
-								WHERE MIG2.VALIDACION = 0
-                          ) AUX
-                ON (GAS.GPV_ID = AUX.GPV_ID AND GAS.ACT_ID = AUX.ACT_ID)
-                WHEN MATCHED THEN UPDATE SET
-                  GAS.GPV_PARTICIPACION_GASTO = AUX.SUMA
-      '
-      ;
-      EXECUTE IMMEDIATE V_SENTENCIA;
-      
-      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_1||' actualizada (GPV_PARTICIPACION_GASTO). '||SQL%ROWCOUNT||' Filas.');
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_2||' cargada. '||SQL%ROWCOUNT||' Filas.'); 
       
       --Inicio del proceso de volcado sobre GPV_TBJ
       DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA_2||'.');
@@ -126,7 +99,7 @@ BEGIN
                 ;
       EXECUTE IMMEDIATE V_SENTENCIA     ;
       
-      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_2||' cargada. '||SQL%ROWCOUNT||' Filas.');
+
       
       COMMIT;
       
@@ -135,6 +108,38 @@ BEGIN
 
       V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA_2||''',''10''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
+     
+      
+       V_SENTENCIA := '
+        MERGE INTO '||V_ESQUEMA||'.'||V_TABLA_1||' GAS
+        USING ( 
+                                WITH SUMATORIO AS(
+                                        SELECT GPT_ACT_NUMERO_ACTIVO, GREATEST(SUM(GPT_BASE_IMPONIBLE),1) AS SUMA
+                                        FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'
+                                                                                WHERE VALIDACION = 0
+                                        GROUP BY GPT_ACT_NUMERO_ACTIVO
+                                )
+                                SELECT GPV.GPV_ID, ACT.ACT_ID, GPT_BASE_IMPONIBLE, ROUND(100*GPT_BASE_IMPONIBLE/OPERACION.SUMA,4) AS SUMA FROM MIG2_GPV_ACT_TBJ MIG2
+                                INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
+                                  ON ACT.ACT_NUM_ACTIVO = MIG2.GPT_ACT_NUMERO_ACTIVO
+                                INNER JOIN SUMATORIO OPERACION
+                                  ON MIG2.GPT_ACT_NUMERO_ACTIVO = OPERACION.GPT_ACT_NUMERO_ACTIVO                                       
+                                INNER JOIN  '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = MIG2.GPT_GPV_ID
+                                JOIN '||V_ESQUEMA||'.GPV_ACT T1 ON T1.GPV_ID = GPV.GPV_ID AND T1.ACT_ID = ACT.ACT_ID
+                                                                WHERE MIG2.VALIDACION = 0
+                          ) AUX
+                ON (GAS.GPV_ID = AUX.GPV_ID AND GAS.ACT_ID = AUX.ACT_ID)
+                WHEN MATCHED THEN UPDATE SET
+                  GAS.GPV_PARTICIPACION_GASTO = AUX.SUMA
+      '
+      ;
+      EXECUTE IMMEDIATE V_SENTENCIA;
+      
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_1||' actualizada (GPV_PARTICIPACION_GASTO). '||SQL%ROWCOUNT||' Filas.');
+      
+      
+      COMMIT;
+     
      
 EXCEPTION
       WHEN OTHERS THEN

@@ -82,7 +82,7 @@ AS
       AND vista.act_id = activo.act_id                                                                                                             -- Que el ID de la vista y el activo se correspondan.
       AND (vista.estado_publicacion_codigo IS NULL OR vista.estado_publicacion_codigo NOT IN (''01'', ''03'', ''04'', ''05'')
           )                                                                                             -- Que el activo no se encuentre en ningun tipo de publicacion ordinaria o despublicado forzado.
-      AND activo.borrado = 0;
+      AND activo.borrado = 0
 
     ';
 

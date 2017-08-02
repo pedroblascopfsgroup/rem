@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=GUSTAVO MORA
---## FECHA_CREACION=20170724
+--## FECHA_CREACION=20170802
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=Parche2.0.6-p2
---## INCIDENCIA_LINK=HREOS-2503
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-2589
 --## PRODUCTO=NO
 --##
 --## Finalidad: Crear tabla nueva
@@ -41,12 +41,12 @@ BEGIN
 
 	
         V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' '||
-                 ' SET USERNAME_GIAADMT = ''ogf02''  , USUARIOMODIFICAR = ''HREOS-2503'' , FECHAMODIFICAR = SYSDATE '||
-                 ' WHERE  DD_GRF_CODIGO = ''6'' ';
+                 ' SET BORRADO = 1  , USUARIOMODIFICAR = ''HREOS-2589'' , FECHAMODIFICAR = SYSDATE '||
+                 ' WHERE  DD_GRF_CODIGO NOT IN (''6'', ''7'',''10'')  ';
 
 	        EXECUTE IMMEDIATE V_MSQL;
 	
-		    DBMS_OUTPUT.PUT_LINE('[INFO] Modificado usuario de OGF a ogf02.');		        
+		    DBMS_OUTPUT.PUT_LINE('[INFO] Desactivamos las gestorías que no son OGF, TECNOTRAMIT o TINSA.');		        
 		    
 		    
     COMMIT;

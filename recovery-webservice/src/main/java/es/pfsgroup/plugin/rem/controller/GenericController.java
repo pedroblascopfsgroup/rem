@@ -86,7 +86,8 @@ public class GenericController extends ParadiseJsonController{
 			List<DDTipoDocumentoActivoDto> out = new ArrayList<DDTipoDocumentoActivoDto>();
 
 			for (Dictionary ddTipoDocumentoActivo : result) {
-				out.add(new DDTipoDocumentoActivoDto((DDTipoDocumentoActivo) ddTipoDocumentoActivo));
+				if(((DDTipoDocumentoActivo)ddTipoDocumentoActivo).getVisible())
+					out.add(new DDTipoDocumentoActivoDto((DDTipoDocumentoActivo) ddTipoDocumentoActivo));
 			}
 
 			return createModelAndViewJson(new ModelMap("data", out));	

@@ -3,11 +3,15 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -16,12 +20,18 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
+import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
+import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
+import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 
 @Component
 public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterService {
@@ -31,6 +41,9 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private TareaActivoManager tareaActivoManager;
 
 	private static int NUMERO_DIAS_VENCIMIENTO = 40;
 
@@ -38,6 +51,8 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	private ExpedienteComercialApi expedienteComercialApi;
 
 	private static final String CODIGO_T013_OBTENCION_CONTRATO_RESERVA = "T013_ObtencionContratoReserva";
+	private static final String CODIGO_T013_RESULTADO_PBC = "T013_ResultadoPBC";
+	
 	private static final String FECHA_FIRMA = "fechaFirma";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -81,6 +96,9 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 					Reserva reserva = expediente.getReserva();
 					if (!Checks.esNulo(reserva)) {
 						try {
+							//Si hay reserva y firma, se desbloquea la tarea ResultadoPBC
+							reactivarTareaResultadoPBC(valor.getTareaExterna());
+							
 							reserva.setFechaFirma(ft.parse(valor.getValor()));
 							genericDao.save(Reserva.class, reserva);
 						} catch (ParseException e) {
@@ -101,5 +119,54 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	public String[] getKeys() {
 		return this.getCodigoTarea();
 	}
+	
+	private void reactivarTareaResultadoPBC(TareaExterna tareaExterna){
+		ActivoTramite tramite = ((TareaActivo) tareaExterna.getTareaPadre()).getTramite();
+
+		List<TareaActivo> tareas = tareaActivoManager.getTareasActivoByIdTramite(tramite.getId());
+		TareaActivo tareaPBC = null;
+		
+		// En el tramite, se busca tarea "Resultado PBC" y se reactiva
+		for (TareaActivo tarea : tareas) {
+			if (CODIGO_T013_RESULTADO_PBC.equals(tarea.getTareaExterna().getTareaProcedimiento().getCodigo())) {
+				if(!tarea.getTareaFinalizada() && tarea.getAuditoria().isBorrado())
+					tarea.getAuditoria().setBorrado(false);
+				tareaPBC = tarea;
+				break;
+			}
+
+		}
+		
+		// Se recalculan plazos en funcion de si existe tanteo
+		Activo activo = tramite.getActivo();
+		List<TanteoActivoExpediente> listaTanteoActivoExpediente = activo.getTanteoActivoExpediente();
+		
+		boolean tieneTanteo = false;
+		Date ultimaFechaTanteo = new Date(0);
+		for (TanteoActivoExpediente tanteo : listaTanteoActivoExpediente ){
+			if (DDResultadoTanteo.CODIGO_EJERCIDO.equals(tanteo.getResultadoTanteo().getCodigo())){
+				tieneTanteo = true;
+				if(tanteo.getFechaResolucion().compareTo(ultimaFechaTanteo) > 0)
+					ultimaFechaTanteo = tanteo.getFechaResolucion();
+			}
+		}
+		
+		// CON tanteo: F.Resolucion Tanteo + 30 dias
+		// SIN tanteo: Hoy + 30 dias
+		Date fechaFinTarea = new Date();
+		if (tieneTanteo){
+			fechaFinTarea = addDays(ultimaFechaTanteo, 30);
+		} else {			
+			fechaFinTarea = addDays(new Date(), 30);
+		}
+		
+		tareaPBC.setFechaFin(fechaFinTarea);
+		
+	}
+	
+    public Date addDays(Date d, int days){
+        d.setTime(d.getTime() + days * 1000 * 60 * 60 * 24);
+        return d;
+    }
 
 }

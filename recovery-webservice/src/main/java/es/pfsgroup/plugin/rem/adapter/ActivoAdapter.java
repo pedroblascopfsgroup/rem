@@ -129,6 +129,7 @@ import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -2336,6 +2337,37 @@ public class ActivoAdapter {
 
 	@Transactional(readOnly = false)
 	public boolean saveTabActivo(WebDto dto, Long id, String tab) {
+		
+		if (this.saveTabActivoTransactional(dto, id, tab)){
+			//this.updatePortalPublicacion(dto, id);
+		}
+		return true;
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean updatePublicarActivo(Long id) {
+		Activo activo = activoApi.get(id);
+		if(!activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO)
+				|| !activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO)
+				|| !activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO)
+				|| !activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_DESPUBLICADO)) {
+			Usuario usuario = genericAdapter.getUsuarioLogado();
+			activoDao.publicarActivo(activo.getId(), usuario.getUsername());
+		}
+		
+		return true;
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean updatePortalPublicacion(Long id) {
+		Activo activo = activoApi.get(id);
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		activoDao.publicarActivoPortal(activo.getId(), usuarioLogado.getUsername());
+		return true;
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean saveTabActivoTransactional(WebDto dto, Long id, String tab) {
 
 		TabActivoService tabActivoService = tabActivoFactory.getService(tab);
 		Activo activo = activoApi.get(id);
@@ -2363,8 +2395,7 @@ public class ActivoAdapter {
 		// Vinculado a varias pestanyas del activo
 		updaterState.updaterStateDisponibilidadComercial(activo);
 		
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		activoDao.publicarActivoPortal(activo.getId(), usuarioLogado.getUsername());
+
 	}
 
 	@Transactional(readOnly = false)

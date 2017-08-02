@@ -131,6 +131,7 @@ import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -141,6 +142,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
+import es.pfsgroup.plugin.rem.model.dd.DDAdministracion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -182,6 +184,7 @@ import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
+import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Service("activoManager")
 public class ActivoManager extends BusinessOperationOverrider<ActivoApi> implements ActivoApi {
@@ -520,7 +523,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			CondicionanteExpediente nuevoCondicionante = new CondicionanteExpediente();
 			nuevoCondicionante.setAuditoria(Auditoria.getNewInstance());
 			nuevoCondicionante.setExpediente(nuevoExpediente);
+
 			// Comprobamos si tiene derecho de tanteo
+			/*
 			boolean noCumple = false;
 			for (CondicionTanteoApi condicion : condiciones) {
 				if (!condicion.checkCondicion(oferta.getActivoPrincipal()))
@@ -528,7 +533,41 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 			if (!noCumple)
 				nuevoCondicionante.setSujetoTanteoRetracto(1);
+			*/
 
+			boolean noCumple = false;
+			List<ActivoOferta> activoOfertaList = oferta.getActivosOferta();
+			List<TanteoActivoExpediente> tanteosExpediente = new ArrayList<TanteoActivoExpediente>();
+			for(ActivoOferta activoOferta : activoOfertaList){
+				noCumple = false;
+				Activo activo = activoOferta.getPrimaryKey().getActivo();
+				for (CondicionTanteoApi condicion : condiciones){
+					if(!condicion.checkCondicion(activo))
+						noCumple = true;
+				}
+				if(!noCumple)
+				{
+					TanteoActivoExpediente tanteoActivo = new TanteoActivoExpediente();
+					tanteoActivo.setActivo(activo);
+					tanteoActivo.setExpediente(nuevoExpediente);
+					
+					
+					Auditoria auditoria = new Auditoria();
+					auditoria.setFechaCrear(new Date());
+					auditoria.setUsuarioCrear(usuarioApi.getUsuarioLogado().getUsername());
+					auditoria.setBorrado(false);
+					
+					tanteoActivo.setAuditoria(auditoria);
+					DDAdministracion administracion = genericDao.get(DDAdministracion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "02"));
+					tanteoActivo.setAdminitracion(administracion);
+					nuevoCondicionante.setSujetoTanteoRetracto(1);
+					//genericDao.save(TanteoActivoExpediente.class, tanteoActivo);
+					tanteosExpediente.add(tanteoActivo);
+				}
+			}
+			
+			nuevoExpediente.setTanteoActivoExpediente(tanteosExpediente);
+			
 			nuevoExpediente.setCondicionante(nuevoCondicionante);
 
 			// Establecer la fecha de aceptación/alta a ahora.
@@ -550,6 +589,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		return true;
+		
 	}
 
 	public boolean crearCompradores(Oferta oferta, ExpedienteComercial nuevoExpediente) {

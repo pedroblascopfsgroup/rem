@@ -172,7 +172,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 		}
 		else {
 			String valido = validarAutorizacionGasto(gasto);
-			if(!Checks.esNulo(valido)) {
+			if(!Checks.esNulo(valido) && !codigo.equals(DDEstadoGasto.INCOMPLETO)) {
 				codigo = null;
 			}
 		}

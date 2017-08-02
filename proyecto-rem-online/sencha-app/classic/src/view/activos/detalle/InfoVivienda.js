@@ -234,17 +234,17 @@ Ext.define('HreRem.view.activos.detalle.InfoVivienda', {
 												 		{
 															xtype: 'checkboxfieldbase',
 															fieldLabel: HreRem.i18n('fieldlabel.despensa'),
-															bind: '{infoComercial.despensa}',
+															bind: '{infoComercial.despensa}'
 														},
 														{
 															xtype: 'checkboxfieldbase',
 															fieldLabel: HreRem.i18n('fieldlabel.lavadero'),
-															bind: '{infoComercial.lavadero}',
+															bind: '{infoComercial.lavadero}'
 														},
 														{
 															xtype: 'checkboxfieldbase',
 															fieldLabel: HreRem.i18n('fieldlabel.azotea'),
-															bind: '{infoComercial.azotea}',
+															bind: '{infoComercial.azotea}'
 														},
 														{
 															fieldLabel : HreRem.i18n('header.descripcion'),

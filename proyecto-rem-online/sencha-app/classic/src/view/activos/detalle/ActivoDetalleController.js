@@ -211,7 +211,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				me.saveMultipleRecords(contador, records, form);
 			}
 		} else {
+			me.getView().unmask();
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
+			
 		}
 		
 	},

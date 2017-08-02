@@ -83,7 +83,7 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(procesar = false)
 	private String motivoNoPosibleInforme;
 
-	@NotNull(groups = Insert.class)
+	//@NotNull(groups = Insert.class)
 	@Diccionary(clase = DDTipoVivienda.class, message = "El codTpoVivienda de activo no existe", groups = {
 			Insert.class, Update.class })
 	@EntityDefinition(propertyName = "tipoVivienda", classObj = DDTipoVivienda.class)

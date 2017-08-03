@@ -3610,6 +3610,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					DtoBloqueosFinalizacion bloqueoDto = new DtoBloqueosFinalizacion();
 					try {
 						beanUtilNotNull.copyProperty(bloqueoDto, "id", bloqueo.getId().toString());
+						if(!Checks.esNulo(bloqueo.getActivo())){
+							beanUtilNotNull.copyProperty(bloqueoDto, "numActivo", bloqueo.getActivo().getNumActivo());
+						}
 						if (!Checks.esNulo(bloqueo.getArea())) {
 							beanUtilNotNull.copyProperty(bloqueoDto, "areaBloqueoCodigo", bloqueo.getArea().getCodigo());
 						}

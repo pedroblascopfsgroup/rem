@@ -284,6 +284,16 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					}
 					
 				}
+				else if(DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO.equals(activo.getEstadoPublicacion().getCodigo()) || 
+						DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO.equals(activo.getEstadoPublicacion().getCodigo())){
+					
+					if(cumpleCondicionesPublicar && !Checks.esNulo(activo.getFechaPublicable())){
+						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO); // Cambiar estado activo obligatoriamente.
+						motivo = dtoCambioEstadoPublicacion.getMotivoPublicacion();
+						
+					}
+					
+				}				
 				
 			}
 		} else {

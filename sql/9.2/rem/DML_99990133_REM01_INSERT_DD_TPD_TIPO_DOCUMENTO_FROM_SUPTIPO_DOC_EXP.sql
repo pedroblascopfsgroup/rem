@@ -1,0 +1,82 @@
+--/*
+--##########################################
+--## AUTOR=GUILLEM REY
+--## FECHA_CREACION=20170802
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-2592
+--## PRODUCTO=NO
+--## Finalidad: DML inserta documentos de activos de los documentos de expediente vinculables
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+
+DECLARE
+    err_num NUMBER; -- Numero de error.
+    err_msg VARCHAR2(2048); -- Mensaje de error.
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas.
+    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas.
+    V_MSQL VARCHAR2(4000 CHAR);
+    V_MAX_TPD_ID NUMBER(16,0);
+    V_MAX_TPD_CODIGO VARCHAR2(20 CHAR);
+    V_TABLA_INSERT VARCHAR2(50 CHAR) := 'DD_TPD_TIPO_DOCUMENTO';
+    V_TABLA_SELECT VARCHAR2(50 CHAR) := 'DD_SDE_SUBTIPO_DOC_EXP';
+    V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-2592';
+
+    
+    CURSOR DOCUMENTOS_ACTIVO IS SELECT SDE.DD_SDE_DESCRIPCION AS DESCRIPCION, SDE.DD_SDE_DESCRIPCION_LARGA AS DESCRIPCION_LARGA, SDE.DD_SDE_MATRICULA_GD AS MATRICULA_GD 
+    								FROM DD_SDE_SUBTIPO_DOC_EXP SDE WHERE BORRADO = 0 AND SDE.DD_SDE_VINCULABLE = 1 
+    							MINUS
+              					SELECT TPD.DD_TPD_DESCRIPCION, TPD.DD_TPD_DESCRIPCION_LARGA, TPD.DD_TPD_MATRICULA_GD FROM DD_TPD_TIPO_DOCUMENTO TPD
+    								WHERE TPD.BORRADO = 0;				
+    						
+    FILA DOCUMENTOS_ACTIVO%ROWTYPE;
+    
+BEGIN
+	
+  DBMS_OUTPUT.put_line('[INFO] Ejecutando inserción de Documentos activo...........');
+	
+	OPEN DOCUMENTOS_ACTIVO;
+
+	LOOP
+  		FETCH DOCUMENTOS_ACTIVO INTO FILA;
+  		EXIT WHEN DOCUMENTOS_ACTIVO%NOTFOUND;
+  		
+		V_MSQL := 'SELECT '||V_ESQUEMA||'.S_'||V_TABLA_INSERT||'.NEXTVAL FROM DUAL';
+		EXECUTE IMMEDIATE V_MSQL INTO V_MAX_TPD_ID;
+		
+		V_MSQL := 'SELECT MAX(DD_TPD_CODIGO)+1 FROM '||V_ESQUEMA||'.'||V_TABLA_INSERT||'';
+		EXECUTE IMMEDIATE V_MSQL INTO V_MAX_TPD_CODIGO;
+				
+  		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_INSERT||'(DD_TPD_ID, DD_TPD_CODIGO, DD_TPD_DESCRIPCION, DD_TPD_DESCRIPCION_LARGA, 
+					USUARIOCREAR, FECHACREAR, DD_TPD_MATRICULA_GD, DD_TPD_VISIBLE) VALUES('||V_MAX_TPD_ID||', '''||V_MAX_TPD_CODIGO||''', '''||FILA.DESCRIPCION||''', 
+					'''||FILA.DESCRIPCION_LARGA||''', '''||V_USUARIO||''', SYSDATE, '''||FILA.MATRICULA_GD||''',0)';
+
+  		EXECUTE IMMEDIATE V_MSQL;
+  		
+  	
+
+	END LOOP;
+	CLOSE DOCUMENTOS_ACTIVO;
+	  
+  
+  COMMIT;
+
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;

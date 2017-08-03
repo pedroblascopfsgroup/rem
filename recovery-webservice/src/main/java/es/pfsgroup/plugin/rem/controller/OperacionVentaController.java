@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,6 +101,7 @@ public class OperacionVentaController {
 			Map<String, Object> params = null;
 			List<Object> dataSource = null;			
 			File fileSalidaTemporal = null;
+			SecureRandom random = new SecureRandom();
 			
 			ExpedienteComercial expediente = expedienteComercialApi.findOneByNumExpediente(numExpediente);
 			
@@ -174,7 +176,14 @@ public class OperacionVentaController {
 			//ENVIO DE LOS DATOS DEL DOCUMENTO AL CLIENTE
 			if (model.get("error")==null || model.get("error")=="") {
 				try {
-					excelReportGeneratorApi.sendReport(salida, response);
+					long n = random.nextLong();
+		            if (n == Long.MIN_VALUE) {
+		                n = 0;      // corner case
+		            } else {
+		                n = Math.abs(n);
+		            }
+					String name ="Hoja_Datos_Exp_" + String.valueOf(numExpediente) +"_"+Long.toString(n) +".pdf";
+					excelReportGeneratorApi.sendReport(name,salida, response);
 				} catch (IOException e) {
 					model.put("error", e.getLocalizedMessage());	
 				}

@@ -205,6 +205,8 @@ Ext.define('HreRem.view.activos.detalle.InfoVivienda', {
 												[
 									              
 													{
+														xtype: 'numberfieldbase',
+														decimalPrecision: 0,
 														fieldLabel : HreRem.i18n('fieldlabel.descubiertas'),							
 														bind : '{infoComercial.numTerrazaDescubierta}'
 													},
@@ -214,6 +216,8 @@ Ext.define('HreRem.view.activos.detalle.InfoVivienda', {
 														colspan: 2
 													},
 													{
+														xtype: 'numberfieldbase',
+														decimalPrecision: 0,
 														fieldLabel : HreRem.i18n('fieldlabel.cubiertas'),							
 														bind : '{infoComercial.numTerrazaCubierta}'
 													},
@@ -234,17 +238,17 @@ Ext.define('HreRem.view.activos.detalle.InfoVivienda', {
 												 		{
 															xtype: 'checkboxfieldbase',
 															fieldLabel: HreRem.i18n('fieldlabel.despensa'),
-															bind: '{infoComercial.despensa}',
+															bind: '{infoComercial.despensa}'
 														},
 														{
 															xtype: 'checkboxfieldbase',
 															fieldLabel: HreRem.i18n('fieldlabel.lavadero'),
-															bind: '{infoComercial.lavadero}',
+															bind: '{infoComercial.lavadero}'
 														},
 														{
 															xtype: 'checkboxfieldbase',
 															fieldLabel: HreRem.i18n('fieldlabel.azotea'),
-															bind: '{infoComercial.azotea}',
+															bind: '{infoComercial.azotea}'
 														},
 														{
 															fieldLabel : HreRem.i18n('header.descripcion'),

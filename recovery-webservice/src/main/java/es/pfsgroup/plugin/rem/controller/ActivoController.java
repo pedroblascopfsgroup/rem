@@ -290,6 +290,8 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_DATOS_BASICOS);
+			if (success)
+				adapter.updatePortalPublicacion(id);
 			model.put("success", success);
 
 		} catch (JsonViewerException jvex) {
@@ -311,6 +313,8 @@ public class ActivoController extends ParadiseJsonController {
 
 		try {
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_DATOS_REGISTRALES);
+			if (success)
+				adapter.updatePortalPublicacion(id);
 			model.put("success", success);
 			// model.put("totalCount", page.getTotalCount());
 
@@ -347,6 +351,8 @@ public class ActivoController extends ParadiseJsonController {
 
 		try {
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_INFO_ADMINISTRATIVA);
+			if (success)
+				adapter.updatePortalPublicacion(id);
 			model.put("success", success);
 
 		} catch (Exception e) {
@@ -365,6 +371,8 @@ public class ActivoController extends ParadiseJsonController {
 
 		try {
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_INFORMACION_COMERCIAL);
+			if (success)
+				adapter.updatePortalPublicacion(id);
 
 			// Después de haber guardado los cambios sobre informacion
 			// comercial, recalculamos el rating del activo.
@@ -405,6 +413,8 @@ public class ActivoController extends ParadiseJsonController {
 
 		try {
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_ADMINISTRACION);
+			if (success)
+				adapter.updatePortalPublicacion(id);
 			model.put("success", success);
 
 		} catch (Exception e) {
@@ -423,6 +433,8 @@ public class ActivoController extends ParadiseJsonController {
 
 		try {
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_SIT_POSESORIA_LLAVES);
+			if (success)
+				adapter.updatePortalPublicacion(id);
 			model.put("success", success);
 
 		} catch (Exception e) {
@@ -440,6 +452,8 @@ public class ActivoController extends ParadiseJsonController {
 
 		try {
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_INFORME_COMERCIAL);
+			if (success)
+				adapter.updatePortalPublicacion(id);
 
 			// Después de haber guardado los cambios sobre informacion
 			// comercial, recalculamos el rating del activo.
@@ -667,6 +681,8 @@ public class ActivoController extends ParadiseJsonController {
 
 		try {
 			boolean success = activoApi.savePrecioVigente(precioVigenteDto);
+			if (success)
+				adapter.updatePublicarActivo(precioVigenteDto.getIdActivo());
 			model.put("success", success);
 
 		} catch (Exception e) {
@@ -1812,6 +1828,8 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			boolean success = activoApi.saveCondicionantesDisponibilidad(idActivo, dto);
 			activoApi.updateCondicionantesDisponibilidad(idActivo);
+			if (success)
+				adapter.updatePortalPublicacion(idActivo);
 			model.put("success", success);
 
 		} catch (Exception e) {

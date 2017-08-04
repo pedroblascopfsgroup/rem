@@ -17,6 +17,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.utils.AgendaMultifuncionCorreoUtils;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
@@ -106,18 +107,32 @@ public class GenericAdapter {
 	 * @param cuerpo
 	 *            Manda un correo electrónico sin adjunto al listado de emails
 	 *            indicado en mailsPara y mailsCC
+	 * @param adjuntos Archivos adjuntos a manar por correo
 	 */
-	public void sendMail(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo) {
+	public void sendMail(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo, List<DtoAdjuntoMail> adjuntos) {
 		// TODO: Para poner remitente, sustituirlo por el primer null de la
 		// llamada al método enviarCorreoConAdjuntos
 		try {
 			// AgendaMultifuncionCorreoUtils.dameInstancia(executor).enviarCorreoConAdjuntos(null,
 			// mailsPara, mailsCC, asunto, cuerpo, null);
-			agendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, null);
+			agendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, adjuntos);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * 
+	 * @param mailsPara
+	 * @param mailsCC
+	 * @param asunto
+	 * @param cuerpo
+	 *            Manda un correo electrónico sin adjunto al listado de emails
+	 *            indicado en mailsPara y mailsCC
+	 */
+	public void sendMail(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo) {
+		this.sendMail(mailsPara, mailsCC, asunto, cuerpo, null);
 	}
 
 	/**

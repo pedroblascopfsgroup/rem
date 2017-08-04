@@ -147,6 +147,9 @@ public class ExpedienteComercialAdapter {
 					}
 					if(arrayActivos != null && arrayActivos.length > 0){
 						gestorDocumentalAdapterApi.crearRelacionActivosExpediente(expedienteComercial, idDocRestClient, arrayActivos, usuarioLogado.getUsername());
+						if(!Checks.esNulo(subtipoDocumento.getTipoDocumentoActivo())) {
+							webFileItem.putParameter("tipo", subtipoDocumento.getTipoDocumentoActivo().getCodigo());
+						}
 						for(int i = 0; i < arrayActivos.length; i++){
 							Activo activoEntrada = activoApi.getByNumActivo(Long.parseLong(arrayActivos[i],10));
 							//Según item HREOS-2379:

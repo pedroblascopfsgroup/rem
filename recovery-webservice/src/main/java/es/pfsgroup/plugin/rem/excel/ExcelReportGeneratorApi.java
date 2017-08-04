@@ -6,6 +6,8 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 
 public interface ExcelReportGeneratorApi {
+	
+	public void sendReport(String fileName,File reportFile, HttpServletResponse response) throws IOException;
 
 	public void sendReport(File reportFile, HttpServletResponse response) throws IOException;
 

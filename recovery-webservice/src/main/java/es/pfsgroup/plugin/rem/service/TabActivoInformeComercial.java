@@ -192,6 +192,28 @@ public class TabActivoInformeComercial implements TabActivoService {
 				beanUtilNotNull.copyProperty(informeComercial, "ediDescripcion", activo.getInfoComercial().getEdificio().getEdiDescripcion());
 				beanUtilNotNull.copyProperty(informeComercial, "entornoInfraestructuras", activo.getInfoComercial().getEdificio().getEntornoInfraestructura());
 				beanUtilNotNull.copyProperty(informeComercial, "entornoComunicaciones", activo.getInfoComercial().getEdificio().getEntornoComunicacion());
+				
+				//terrazas
+				beanUtilNotNull.copyProperty(informeComercial, "numTerrazaCubierta", activo.getInfoComercial().getNumeroTerrazasCubiertas());
+				beanUtilNotNull.copyProperty(informeComercial, "descTerrazaCubierta", activo.getInfoComercial().getDescripcionTerrazasCubiertas());
+				beanUtilNotNull.copyProperty(informeComercial, "numTerrazaDescubierta", activo.getInfoComercial().getNumeroTerrazasDescubiertas());
+				beanUtilNotNull.copyProperty(informeComercial, "descTerrazaDescubierta", activo.getInfoComercial().getDescripcionTerrazasDescubiertas());
+				
+				// otras dependencias
+				if (!Checks.esNulo(activo.getInfoComercial().getDespensaOtrasDependencias())
+						&& activo.getInfoComercial().getDespensaOtrasDependencias().equals(Integer.valueOf(1))) {
+					beanUtilNotNull.copyProperty(informeComercial, "despensa", true);
+				}
+				if (!Checks.esNulo(activo.getInfoComercial().getLavaderoOtrasDependencias())
+						&& activo.getInfoComercial().getLavaderoOtrasDependencias().equals(Integer.valueOf(1))) {
+					beanUtilNotNull.copyProperty(informeComercial, "lavadero", true);
+				}
+				if (!Checks.esNulo(activo.getInfoComercial().getAzoteaOtrasDependencias())
+						&& activo.getInfoComercial().getAzoteaOtrasDependencias().equals(Integer.valueOf(1))) {
+					beanUtilNotNull.copyProperty(informeComercial, "azotea", true);
+				}
+				beanUtilNotNull.copyProperty(informeComercial, "descOtras", activo.getInfoComercial().getOtrosOtrasDependencias());
+				
 			}
 
 		} catch (IllegalAccessException e) {
@@ -318,6 +340,41 @@ public class TabActivoInformeComercial implements TabActivoService {
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "telefonoAdministradorComunidadEdificio", activoInformeDto.getTelAdministradorComunidad());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "nombreAdministradorComunidadEdificio", activoInformeDto.getNomAdministradorComunidad());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "telefonoPresidenteComunidadEdificio", activoInformeDto.getTelPresidenteComunidad());
+					
+					
+					//terrazas
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "numeroTerrazasCubiertas", activoInformeDto.getNumTerrazaCubierta());
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "descripcionTerrazasCubiertas", activoInformeDto.getDescTerrazaCubierta());
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "numeroTerrazasDescubiertas", activoInformeDto.getNumTerrazaDescubierta());
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "descripcionTerrazasDescubiertas", activoInformeDto.getDescTerrazaDescubierta());
+					
+					
+					
+					//otras dependencias
+					if(activoInformeDto.getDespensa() != null){
+						if(activoInformeDto.getDespensa()){
+							beanUtilNotNull.copyProperty(activo.getInfoComercial(), "despensaOtrasDependencias", Integer.valueOf(1));
+						}else{
+							beanUtilNotNull.copyProperty(activo.getInfoComercial(), "despensaOtrasDependencias", Integer.valueOf(0));
+						}
+					}
+					if(activoInformeDto.getLavadero() != null){
+						if(activoInformeDto.getLavadero()){
+							beanUtilNotNull.copyProperty(activo.getInfoComercial(), "lavaderoOtrasDependencias", Integer.valueOf(1));
+						}else{
+							beanUtilNotNull.copyProperty(activo.getInfoComercial(), "lavaderoOtrasDependencias", Integer.valueOf(0));
+						}
+					}
+					if(activoInformeDto.getAzotea() != null){
+						if(activoInformeDto.getAzotea()){
+							beanUtilNotNull.copyProperty(activo.getInfoComercial(), "azoteaOtrasDependencias", Integer.valueOf(1));
+						}else{
+							beanUtilNotNull.copyProperty(activo.getInfoComercial(), "azoteaOtrasDependencias", Integer.valueOf(0));
+						}
+					}
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "otrosOtrasDependencias", activoInformeDto.getDescOtras());
+					
+					
 				}
 
 				activo.setInfoComercial(genericDao.save(ActivoInfoComercial.class, activo.getInfoComercial()));

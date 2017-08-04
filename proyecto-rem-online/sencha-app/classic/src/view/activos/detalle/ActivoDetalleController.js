@@ -211,7 +211,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				me.saveMultipleRecords(contador, records, form);
 			}
 		} else {
+			me.getView().unmask();
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
+			
 		}
 		
 	},
@@ -2268,13 +2270,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this,
 		form = grid.up("form"),
 		model = Ext.create('HreRem.model.DetalleOfertaModel'),
-		idOferta = null,
-		idActivo = null;
+		idOferta = null;
+		var activo = me.getViewModel().get('activo');
+		idActivo= activo.get('id');
 
 		if(!Ext.isEmpty(grid.selection)){
 			idOferta = record.get("idOferta");
-			idActivo = record.get("idActivo");
-    	}
+		}
 
 		var fieldset =  me.lookupReference('detalleOfertaFieldsetref');
 		fieldset.mask(HreRem.i18n("msg.mask.loading"));

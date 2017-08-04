@@ -344,8 +344,19 @@ BEGIN
                        where PRO_DOCIDENTIF = ''A86602158''
                          and DD_CRA_ID = (select DD_CRA_ID FROM REM01.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = ''01'')';
 
-    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO actualizada. '||SQL%ROWCOUNT||' Filas.');    
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO actualizada. '||SQL%ROWCOUNT||' Filas.');   
+
+    --#############################################################
+    --############ AGR_FECHA_BAJA
+    --#############################################################
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] ACTUALIZANDO A A FECHA ACTUAL AGR_FECHA_BAJA...');
+
+    EXECUTE IMMEDIATE 'UPDATE REM01.ACT_AGR_AGRUPACION SET AGR_FECHA_BAJA = SYSDATE WHERE AGR_ELIMINADO = 1 AND AGR_FECHA_BAJA IS NULL'; 
     
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.ACT_AGR_AGRUPACION actualizada. '||SQL%ROWCOUNT||' Filas.');  
+
+    EXECUTE IMMEDIATE 'delete from ACT_ADO_ADMISION_DOCUMENTO where ado_id in ( select ado_id from ACT_ADO_ADMISION_DOCUMENTO where (act_id, cfd_id) in ( select act_id, cfd_id from ACT_ADO_ADMISION_DOCUMENTO group by act_id, cfd_id having count(1) > 1) and usuariocrear <> '''||V_USUARIO||''');'
 
     COMMIT;
 

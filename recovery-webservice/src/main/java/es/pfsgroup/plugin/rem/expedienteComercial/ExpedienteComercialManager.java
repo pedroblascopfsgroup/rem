@@ -7,6 +7,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -1836,6 +1838,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		List<Posicionamiento> listaPosicionamientos = expediente.getPosicionamientos();
 		List<DtoPosicionamiento> posicionamientos = new ArrayList<DtoPosicionamiento>();
+		
+		Comparator<Posicionamiento> comparador = Collections.reverseOrder();
+		Collections.sort(listaPosicionamientos, comparador);
 
 		for (Posicionamiento posicionamiento : listaPosicionamientos) {
 			DtoPosicionamiento posicionamientoDto = posicionamientoToDto(posicionamiento);
@@ -3605,6 +3610,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					DtoBloqueosFinalizacion bloqueoDto = new DtoBloqueosFinalizacion();
 					try {
 						beanUtilNotNull.copyProperty(bloqueoDto, "id", bloqueo.getId().toString());
+						if(!Checks.esNulo(bloqueo.getActivo())){
+							beanUtilNotNull.copyProperty(bloqueoDto, "numActivo", bloqueo.getActivo().getNumActivo());
+						}
 						if (!Checks.esNulo(bloqueo.getArea())) {
 							beanUtilNotNull.copyProperty(bloqueoDto, "areaBloqueoCodigo", bloqueo.getArea().getCodigo());
 						}

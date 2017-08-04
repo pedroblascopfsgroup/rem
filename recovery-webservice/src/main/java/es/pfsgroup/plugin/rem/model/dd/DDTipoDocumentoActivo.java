@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.model.dd;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -79,6 +78,9 @@ public class DDTipoDocumentoActivo implements Auditable, Dictionary {
 	    
 	@Column(name = "DD_TPD_MATRICULA_GD")   
 	private String matricula;
+	
+	@Column(name = "DD_TPD_VISIBLE")   
+	private Boolean visible;
 	    
 	@Version   
 	private Long version;
@@ -153,4 +155,13 @@ public class DDTipoDocumentoActivo implements Auditable, Dictionary {
 		copy.addAll(tiposTrabajo);
 		return copy;
 	}
+
+	public Boolean getVisible() {
+		return visible;
+	}
+
+	public void setVisible(Boolean visible) {
+		this.visible = visible;
+	}
+	
 }

@@ -281,7 +281,7 @@ BEGIN
 	NULL                        							  BIE_DREG_MUNICIPIO_LIBRO,
 	NULL                        							  BIE_DREG_CODIGO_REGISTRO,
 	''0''                                                     VERSION,
-	'''||V_USUARIO||'''			                          USUARIOCREAR,
+	'''||V_USUARIO||'''			                          	  USUARIOCREAR,
 	SYSDATE                                                   FECHACREAR,
 	NULL                                                      USUARIOMODIFICAR,
 	NULL                                                      FECHAMODIFICAR,

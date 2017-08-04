@@ -181,39 +181,43 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad02 implements MSVLibera
 	private void actualizarCrearValoresPrecios(Activo activo, String codigoTipoPrecio,
 			Double importe, String fechaInicioExcel, String fechaFinExcel) throws ParseException{
 		
-		//Intenta ver si el activo tiene ya un precio del tipo indicado para actualizar
-		//Se prevee la posibilidad de que exista mas de 1 tipo precio por activo, en ese caso solo se toma el ultimo insertado para evitar error
-		//Funcionalmente (Precios v3.0)solo descuento puede tener mas de 1 registro x activo.
-		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", activo.getNumActivo());
-		Filter filtroTipoPrecio = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", codigoTipoPrecio);
-		Order orderIdDesc = new Order(OrderType.DESC,"id");
-		
-		List<ActivoValoraciones> activoValoracionesList = genericDao.getListOrdered(ActivoValoraciones.class, orderIdDesc, filtroActivo, filtroTipoPrecio);
-		ActivoValoraciones activoValoracion = null;
-		
-		if (activoValoracionesList.size() > 0)
-			activoValoracion = activoValoracionesList.get(0);
-		
-		//Preparamos un registro de valoraciones/precios, con los datos indicados en el excel
-		DtoPrecioVigente dtoActivoValoracion = new DtoPrecioVigente();
-		dtoActivoValoracion.setIdActivo(activo.getId());
-		dtoActivoValoracion.setCodigoTipoPrecio(codigoTipoPrecio);
-		dtoActivoValoracion.setImporte(importe);
-		if(!Checks.esNulo(fechaFinExcel)){
-			Date fechaFin = simpleDate.parse(fechaFinExcel);
-			dtoActivoValoracion.setFechaFin(fechaFin);
+		//HREOS-2608 - El importe 0 se utiliza para descartar activos de la propuesta
+		if(Double.compare(0D, importe) != 0){
+
+			//Intenta ver si el activo tiene ya un precio del tipo indicado para actualizar
+			//Se prevee la posibilidad de que exista mas de 1 tipo precio por activo, en ese caso solo se toma el ultimo insertado para evitar error
+			//Funcionalmente (Precios v3.0)solo descuento puede tener mas de 1 registro x activo.
+			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", activo.getNumActivo());
+			Filter filtroTipoPrecio = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", codigoTipoPrecio);
+			Order orderIdDesc = new Order(OrderType.DESC,"id");
+			
+			List<ActivoValoraciones> activoValoracionesList = genericDao.getListOrdered(ActivoValoraciones.class, orderIdDesc, filtroActivo, filtroTipoPrecio);
+			ActivoValoraciones activoValoracion = null;
+			
+			if (activoValoracionesList.size() > 0)
+				activoValoracion = activoValoracionesList.get(0);
+			
+			//Preparamos un registro de valoraciones/precios, con los datos indicados en el excel
+			DtoPrecioVigente dtoActivoValoracion = new DtoPrecioVigente();
+			dtoActivoValoracion.setIdActivo(activo.getId());
+			dtoActivoValoracion.setCodigoTipoPrecio(codigoTipoPrecio);
+			dtoActivoValoracion.setImporte(importe);
+			if(!Checks.esNulo(fechaFinExcel)){
+				Date fechaFin = simpleDate.parse(fechaFinExcel);
+				dtoActivoValoracion.setFechaFin(fechaFin);
+			}
+			if(Checks.esNulo(fechaInicioExcel)){
+				dtoActivoValoracion.setFechaInicio(new Date());
+			} else {
+				Date fechaInicio = simpleDate.parse(fechaInicioExcel);
+				dtoActivoValoracion.setFechaInicio(fechaInicio);
+			}
+			
+			//El metodo saveActivoValoracion actualizara el importe y las fechas del precio existente (encontrado en activoValoracion
+			// o crea uno nuevo si no existia ningun precio del tipo indicado.
+			//El metodo se encarga tambien de actualizar el historico de precios
+			activoApi.saveActivoValoracion(activo, activoValoracion, dtoActivoValoracion);
 		}
-		if(Checks.esNulo(fechaInicioExcel)){
-			dtoActivoValoracion.setFechaInicio(new Date());
-		} else {
-			Date fechaInicio = simpleDate.parse(fechaInicioExcel);
-			dtoActivoValoracion.setFechaInicio(fechaInicio);
-		}
-		
-		//El metodo saveActivoValoracion actualizara el importe y las fechas del precio existente (encontrado en activoValoracion
-		// o crea uno nuevo si no existia ningun precio del tipo indicado.
-		//El metodo se encarga tambien de actualizar el historico de precios
-		activoApi.saveActivoValoracion(activo, activoValoracion, dtoActivoValoracion);
 	}
 
 }

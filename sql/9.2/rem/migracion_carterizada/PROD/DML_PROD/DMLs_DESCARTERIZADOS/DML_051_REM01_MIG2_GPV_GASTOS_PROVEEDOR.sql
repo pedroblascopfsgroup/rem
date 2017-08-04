@@ -94,7 +94,7 @@ BEGIN
             ,MIG2.GPV_CONCEPTO                                          GPV_CONCEPTO
             ,TPE.DD_TPE_ID                                              DD_TPE_ID
             ,PVE.PVE_ID                                                 PVE_ID_EMISOR
-            ,NULL                                                       PRO_ID
+            ,PRO.PRO_ID                                                       PRO_ID
             ,MIG2.GPV_FECHA_EMISION                                     GPV_FECHA_EMISION
             ,MIG2.GPV_FECHA_NOTIFICACION                                GPV_FECHA_NOTIFICACION
             ,DEG.DD_DEG_ID                                              DD_DEG_ID
@@ -128,6 +128,8 @@ BEGIN
             LEFT  JOIN '||V_ESQUEMA||'.DD_TPE_TIPOS_PERIOCIDAD TPE ON TPE.DD_TPE_CODIGO = NVL(MIG2.GPV_COD_PERIODICIDAD, ''01'')            
             LEFT  JOIN '||V_ESQUEMA||'.DD_DEG_DESTINATARIOS_GASTO DEG ON DEG.DD_DEG_CODIGO = ''01''
             LEFT  JOIN '||V_ESQUEMA||'.DD_TOG_TIPO_OPERACION_GASTO TOG ON TOG.DD_TOG_CODIGO = MIG2.GPV_COD_TIPO_OPERACION
+            LEFT JOIN REM01.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_DOCIDENTIF = ''A86602158''
+            LEFT JOIN REM01.DD_CRA_CARTERA CRA ON CRA.DD_CRA_CODIGO = ''02'' AND CRA.DD_CRA_ID = PRO.DD_CRA_ID
       WHERE MIG2.VALIDACION = 0
             AND ((TGA.DD_TGA_CODIGO = ''01'' AND TPR.DD_TPR_CODIGO IN (''13'', ''15''))
             OR (TGA.DD_TGA_CODIGO = ''02'' AND TPR.DD_TPR_CODIGO IN (''13'', ''16''))
@@ -195,7 +197,7 @@ BEGIN
             ,MIG2.GPV_CONCEPTO                                          GPV_CONCEPTO
             ,TPE.DD_TPE_ID                                              DD_TPE_ID
             ,PVE.PVE_ID                                                 PVE_ID_EMISOR
-            ,NULL                                                       PRO_ID
+            ,PRO.PRO_ID                                                       PRO_ID
             ,MIG2.GPV_FECHA_EMISION                                     GPV_FECHA_EMISION
             ,MIG2.GPV_FECHA_NOTIFICACION                                GPV_FECHA_NOTIFICACION
             ,DEG.DD_DEG_ID                                              DD_DEG_ID
@@ -229,6 +231,8 @@ BEGIN
             LEFT JOIN  '||V_ESQUEMA||'.DD_TPE_TIPOS_PERIOCIDAD TPE ON TPE.DD_TPE_CODIGO = NVL(MIG2.GPV_COD_PERIODICIDAD, ''01'')            
             LEFT JOIN '||V_ESQUEMA||'.DD_DEG_DESTINATARIOS_GASTO DEG ON DEG.DD_DEG_CODIGO = ''01''
             LEFT JOIN '||V_ESQUEMA||'.DD_TOG_TIPO_OPERACION_GASTO TOG ON TOG.DD_TOG_CODIGO = MIG2.GPV_COD_TIPO_OPERACION
+            LEFT JOIN REM01.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_DOCIDENTIF = ''A86602158''
+            LEFT JOIN REM01.DD_CRA_CARTERA CRA ON CRA.DD_CRA_CODIGO = ''02'' AND CRA.DD_CRA_ID = PRO.DD_CRA_ID
       WHERE MIG2.VALIDACION = 0
             AND ((TGA.DD_TGA_CODIGO = ''05'' AND TPR.DD_TPR_CODIGO IN (''07''))
             OR (TGA.DD_TGA_CODIGO = ''06'' AND TPR.DD_TPR_CODIGO IN (''08''))
@@ -295,7 +299,7 @@ BEGIN
             ,MIG2.GPV_CONCEPTO                                          GPV_CONCEPTO
             ,TPE.DD_TPE_ID                                              DD_TPE_ID
             ,PVE.PVE_ID                                                 PVE_ID_EMISOR
-            ,NULL                                                       PRO_ID
+            ,PRO.PRO_ID                                                       PRO_ID
             ,MIG2.GPV_FECHA_EMISION                                     GPV_FECHA_EMISION
             ,MIG2.GPV_FECHA_NOTIFICACION                                GPV_FECHA_NOTIFICACION
             ,DEG.DD_DEG_ID                                              DD_DEG_ID
@@ -329,6 +333,8 @@ BEGIN
             LEFT JOIN '||V_ESQUEMA||'.DD_TPE_TIPOS_PERIOCIDAD TPE ON TPE.DD_TPE_CODIGO = NVL(MIG2.GPV_COD_PERIODICIDAD, ''01'')            
             LEFT JOIN '||V_ESQUEMA||'.DD_DEG_DESTINATARIOS_GASTO DEG ON DEG.DD_DEG_CODIGO = ''01''
             LEFT JOIN '||V_ESQUEMA||'.DD_TOG_TIPO_OPERACION_GASTO TOG ON TOG.DD_TOG_CODIGO = MIG2.GPV_COD_TIPO_OPERACION
+                        LEFT JOIN REM01.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_DOCIDENTIF = ''A86602158''
+            LEFT JOIN REM01.DD_CRA_CARTERA CRA ON CRA.DD_CRA_CODIGO = ''02'' AND CRA.DD_CRA_ID = PRO.DD_CRA_ID
       WHERE MIG2.VALIDACION = 0 
             AND ((TGA.DD_TGA_CODIGO = ''09'' AND TPR.DD_TPR_CODIGO IN (''25''))
             OR (TGA.DD_TGA_CODIGO = ''10'' AND TPR.DD_TPR_CODIGO IN (''03''))            
@@ -411,7 +417,7 @@ BEGIN
             ,MIG2.GPV_CONCEPTO                                          GPV_CONCEPTO
             ,TPE.DD_TPE_ID                                              DD_TPE_ID
             ,PVE.PVE_ID                                                 PVE_ID_EMISOR
-            ,NULL                                                       PRO_ID
+            ,PRO.PRO_ID                                                       PRO_ID
             ,MIG2.GPV_FECHA_EMISION                                     GPV_FECHA_EMISION
             ,MIG2.GPV_FECHA_NOTIFICACION                                GPV_FECHA_NOTIFICACION
             ,DEG.DD_DEG_ID                                              DD_DEG_ID
@@ -445,6 +451,8 @@ BEGIN
             LEFT JOIN  '||V_ESQUEMA||'.DD_TPE_TIPOS_PERIOCIDAD TPE ON TPE.DD_TPE_CODIGO = NVL(MIG2.GPV_COD_PERIODICIDAD, ''01'')            
             LEFT JOIN '||V_ESQUEMA||'.DD_DEG_DESTINATARIOS_GASTO DEG ON DEG.DD_DEG_CODIGO = ''01''
             LEFT JOIN '||V_ESQUEMA||'.DD_TOG_TIPO_OPERACION_GASTO TOG ON TOG.DD_TOG_CODIGO = MIG2.GPV_COD_TIPO_OPERACION
+            LEFT JOIN REM01.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_DOCIDENTIF = ''A86602158''
+            LEFT JOIN REM01.DD_CRA_CARTERA CRA ON CRA.DD_CRA_CODIGO = ''02'' AND CRA.DD_CRA_ID = PRO.DD_CRA_ID
         WHERE TPR.DD_TPR_CODIGO = ''01'' AND MIG2.VALIDACION = 0
       '
       ;
@@ -542,7 +550,7 @@ BEGIN
                   ,MIG2.GPV_CONCEPTO                                      GPV_CONCEPTO    
                   ,TPE.DD_TPE_ID                                          DD_TPE_ID    
                   ,PVE.PVE_ID                                             PVE_ID_EMISOR    
-                  ,NULL                                                   PRO_ID    
+                  ,PRO.PRO_ID                                                   PRO_ID    
                   ,MIG2.GPV_FECHA_EMISION                                 GPV_FECHA_EMISION    
                   ,MIG2.GPV_FECHA_NOTIFICACION                            GPV_FECHA_NOTIFICACION    
                   ,DEG.DD_DEG_ID                                          DD_DEG_ID    
@@ -576,6 +584,8 @@ BEGIN
                   LEFT JOIN '||V_ESQUEMA||'.DD_TPE_TIPOS_PERIOCIDAD TPE ON TPE.DD_TPE_CODIGO = NVL(MIG2.GPV_COD_PERIODICIDAD, ''01'')            
                   LEFT JOIN '||V_ESQUEMA||'.DD_DEG_DESTINATARIOS_GASTO DEG ON DEG.DD_DEG_CODIGO = ''01''
                   LEFT JOIN '||V_ESQUEMA||'.DD_TOG_TIPO_OPERACION_GASTO TOG ON TOG.DD_TOG_CODIGO = MIG2.GPV_COD_TIPO_OPERACION
+                  LEFT JOIN REM01.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_DOCIDENTIF = ''A86602158''
+            LEFT JOIN REM01.DD_CRA_CARTERA CRA ON CRA.DD_CRA_CODIGO = ''02'' AND CRA.DD_CRA_ID = PRO.DD_CRA_ID
             )
       WHERE PARTICION = 1 
       '

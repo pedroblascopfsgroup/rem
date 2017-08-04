@@ -11,14 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
@@ -35,7 +27,6 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.ParamReportsApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
@@ -53,6 +44,13 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.utils.FileUtilsREM;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Service("operacionVentaManager")
 public class OperacionVentaManager implements ParamReportsApi{
@@ -427,12 +425,17 @@ public class OperacionVentaManager implements ParamReportsApi{
 			//Número total activos
 			mapaValores.put("NoTotalActivos", String.valueOf(oferta.getActivosOferta().size()));
 			
+			
 			if (activo.getCartera()!=null && activo.getCartera().getCodigo()!=null) {
 				mapaValores.put("Cartera", FileUtilsREM.stringify(activo.getCartera().getCodigo().toString()));
 				mapaValores.put("NomCartera", FileUtilsREM.stringify(activo.getCartera().getDescripcion()));
 			} else {
 				mapaValores.put("Cartera", FileUtilsREM.stringify(null));
 				mapaValores.put("NomCartera", FileUtilsREM.stringify(null));
+			}
+			
+			if(!Checks.esNulo(oferta.getAgrupacion())){
+				mapaValores.put("nLote", FileUtilsREM.stringify(oferta.getAgrupacion().getNumAgrupRem()));
 			}
 
 			

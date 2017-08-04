@@ -1620,7 +1620,7 @@ public class ActivoAdapter {
 			if((tramite.getTrabajo() != null) && (tramite.getTrabajo().getAgrupacion() != null)) {
 				beanUtilNotNull.copyProperty(dtoTramite, "numActivo", tramite.getTrabajo().getAgrupacion().getNumAgrupRem());
 			} else {
-				beanUtilNotNull.copyProperty(dtoTramite, "numActivo", tramite.getTrabajo().getActivo().getNumActivo());
+				beanUtilNotNull.copyProperty(dtoTramite, "numActivo", tramite.getActivo().getNumActivo());
 			}
 
 			beanUtilNotNull.copyProperty(dtoTramite, "esMultiActivo", tramite.getActivos().size() > 1 ? true : false);

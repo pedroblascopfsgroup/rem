@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-07-26T08:43:29 -->
+<!-- 2017-08-03T11:14:29 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="OperativaVenta001" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="df415416-7b17-4495-a87b-cf5885d1390a">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
@@ -46,6 +46,7 @@
 	<parameter name="Otros" class="java.lang.String"/>
 	<parameter name="NoTotalActivos" class="java.lang.String"/>
 	<parameter name="NomCartera" class="java.lang.String"/>
+	<parameter name="nLote" class="java.lang.String"/>
 	<field name="listaComprador" class="java.util.List"/>
 	<background>
 		<band splitType="Stretch"/>
@@ -732,6 +733,20 @@
 				</textElement>
 				<text><![CDATA[Ver hoja de datos individual de cada activo]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="275" y="19" width="55" height="13" uuid="e826a51e-7466-4ac4-b4f8-c302c41cc9fe"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Nº de lote:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="330" y="19" width="100" height="13" uuid="4d655f4e-d7dd-4c31-bc7b-926ad14f9862"/>
+				<textElement>
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{nLote}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<pageFooter>

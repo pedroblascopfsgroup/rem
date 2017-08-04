@@ -137,7 +137,8 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		if(Checks.esNulo(tipoGestor))
 			return null;
 
-		if(GestorActivoApi.CODIGO_GESTOR_FORMALIZACION.equals(codigoSupervisor) || GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION.equals(codigoSupervisor))
+		if(GestorActivoApi.CODIGO_GESTOR_FORMALIZACION.equals(codigoSupervisor) || GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION.equals(codigoSupervisor)
+				|| GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION.equals(codigoSupervisor))
 			return this.getGestorOrSupervisorExpedienteByCodigo(tareaExterna, codigoSupervisor);
 		
 		ActivoLoteComercial loteComercial = this.obtenerLoteComercial(tareaActivo);

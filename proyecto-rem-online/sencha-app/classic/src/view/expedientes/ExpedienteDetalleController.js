@@ -143,7 +143,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			success: function(informeJuridico) {
 				me.getViewModel().set("informeJuridico", informeJuridico);
 				if(refreshActivoExpediente){
-					me.refrescarActivoExpediente(false);
+					me.refrescarActivoExpediente(true);
 				}
 			},
 			failure: function (a, operation) {

@@ -10,6 +10,8 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.aop.interceptor.PerformanceMonitorInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -45,6 +48,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 
 public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNotificatorService implements NotificatorService {
+	
+	private final Log logger = LogFactory.getLog(getClass());
 
 	private static final String GESTOR_PRESCRIPTOR = "prescriptor";
 	private static final String GESTOR_MEDIADOR = "mediador";
@@ -118,35 +123,65 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		if(!Checks.esNulo(ofertaAceptada)){
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 			if(DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())){ // APROVACIÓN
+	
+				ArrayList<String> destinatarios = getDestinatariosNotificacion(activo, ofertaAceptada, expediente);
 				
-				boolean formalizacion = checkFormalizar(activo.getId());
-				String[] clavesGestores = null;
-				String claveGestorComercial = this.getTipoGestorComercial(ofertaAceptada);
-				
-				if (formalizacion) {
-					clavesGestores = new String[] {
-						GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial
-					};
+				if (! destinatarios.isEmpty()){
+					this.enviaNotificacionAceptar(tramite, expediente.getReserva() != null ? expediente.getId() : null, destinatarios.toArray(new String[]{}));
 				} else {
-					clavesGestores = new String[]{
-						GESTOR_FORMALIZACION, GESTOR_GESTORIA_FASE_3, GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial
-					};
+					logger.warn("No se han encontrado destinatarios para la notificación. No se va a enviar la notificación [oferta.id=" + ofertaAceptada.getId() + "]");
 				}
-				
-				Map<String, String> gestores = getGestores(activo, ofertaAceptada, this.getLoteComercial(ofertaAceptada), expediente, clavesGestores);
-				ArrayList<String> destinatarios = new ArrayList<String>();
-				for (String clave : clavesGestores){
-					destinatarios.add(gestores.get(clave));
-				}
-				
-				this.enviaNotificacionAceptar(tramite, expediente.getReserva() != null ? expediente.getId() : null, destinatarios.toArray(new String[]{}));
 				
 				
 			} else if (permieRechazar && DDEstadoOferta.CODIGO_RECHAZADA.equals(ofertaAceptada.getEstadoOferta().getCodigo())) { // RECHAZO
-				Map<String, String> gestores = getGestores(activo, ofertaAceptada, null, null, GESTOR_PRESCRIPTOR);
-				this.enviaNotificacionRechazar(tramite, gestores.get(GESTOR_PRESCRIPTOR));
+				String prescriptor = getPrescriptor(activo, ofertaAceptada);
+				if (! Checks.esNulo(prescriptor)) {
+					this.enviaNotificacionRechazar(tramite, prescriptor);
+				} else {
+					logger.warn("No se ha encontrado el prescriptor. No se va a mandar la notificación [oferta.id=" + ofertaAceptada.getId() + "]");
+				}
 			}
 		}
+	}
+
+
+	private String getPrescriptor(Activo activo, Oferta ofertaAceptada) {
+		Map<String, String> gestores = getGestores(activo, ofertaAceptada, null, null, GESTOR_PRESCRIPTOR);
+		return gestores.get(GESTOR_PRESCRIPTOR);
+	}
+
+
+	private String[] getGestoresANotificar(Activo activo, Oferta ofertaAceptada) {
+		boolean formalizacion = checkFormalizar(activo.getId());
+		String[] clavesGestores = null;
+		String claveGestorComercial = this.getTipoGestorComercial(ofertaAceptada);
+		
+		if (formalizacion) {
+			
+			clavesGestores = new String[]{
+					GESTOR_FORMALIZACION, GESTOR_GESTORIA_FASE_3, GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial
+			};
+		} else {
+			clavesGestores = new String[] {
+					GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial
+			};
+		}
+		return clavesGestores;
+	}
+
+
+	private ArrayList<String> getDestinatariosNotificacion(Activo activo, Oferta ofertaAceptada,
+			ExpedienteComercial expediente) {
+		String[] clavesGestores = getGestoresANotificar(activo, ofertaAceptada);
+		Map<String, String> gestores = getGestores(activo, ofertaAceptada, this.getLoteComercial(ofertaAceptada), expediente, clavesGestores);
+		ArrayList<String> destinatarios = new ArrayList<String>();
+		for (String clave : clavesGestores){
+			String value = gestores.get(clave);
+			if ((value != null) && (!destinatarios.contains(value))) {
+				destinatarios.add(value);
+			}
+		}
+		return destinatarios;
 	}
 
 	private ActivoLoteComercial getLoteComercial(Oferta oferta) {
@@ -183,14 +218,14 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		if (id == null) {
 			throw new IllegalArgumentException("'id' no puede ser NULL");
 		}
-		List<PerimetroActivo> perimetros = genericDao.getList(PerimetroActivo.class,  genericDao.createFilter(FilterType.EQUALS, "activo.id", id));
 		
-		if (Checks.estaVacio(perimetros)) {
-			throw new IllegalStateException("Activo sin perímetro [activo.id=" + id + "]");
+		PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(id);
+		if (perimetro != null) {
+			Integer check = perimetro.getAplicaFormalizar();
+			return (check != null) && (check == 1);
+		} else {
+			return false;
 		}
-		
-		Integer check = perimetros.get(0).getAplicaFormalizar();
-		return (check != null) && (check == 1);
 	}
 
 	private Map<String, String> getGestores(Activo activo, Oferta oferta, ActivoLoteComercial loteComercial, ExpedienteComercial expediente, String ...filtroGestores) {
@@ -209,27 +244,33 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		
 		for (String s : claves) {
 			if (GESTOR_PRESCRIPTOR.equals(s)) {
-				ofertaApi.getUsuarioPreescriptor(oferta);
+				gestores.put(s, extractEmail(ofertaApi.getUsuarioPreescriptor(oferta)));
 			} else if (GESTOR_MEDIADOR.equals(s)) {
-				activoApi.getUsuarioMediador(activo);
+				gestores.put(s, extractEmail(activoApi.getUsuarioMediador(activo)));
 			} else if (GESTOR_COMERCIAL_ACTIVO.equals(s) || GESTOR_COMERCIAL_LOTE_RESTRINGIDO.equals(s)) {
-				gestores.put(s, gestorActivoApi.getGestorByActivoYTipo(activo, "GCOM").getEmail());
+				gestores.put(s, extractEmail(gestorActivoApi.getGestorByActivoYTipo(activo, "GCOM")));
 			} else if (GESTOR_COMERCIAL_LOTE_COMERCIAL.equals(s)) {
-				gestores.put(s, loteComercial.getUsuarioGestorComercial().getEmail());
+				gestores.put(s, extractEmail(loteComercial.getUsuarioGestorComercial()));
 			} else if (GESTOR_FORMALIZACION.equals(s) || GESTOR_GESTORIA_FASE_3.equals(s)) {
-				gestores.put(s, gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GFORM").getEmail());
+				gestores.put(s, extractEmail(gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GFORM")));
 			}
 		}
 		
 		return gestores;
 	}
 	
+	private String extractEmail(Usuario u) {
+		if (u != null) {
+			return u.getEmail();
+		} else {
+			return null;
+		}
+	}
+	
 	private void compruebaRequisitos(Activo activo, Oferta oferta, ActivoLoteComercial loteComercial, ExpedienteComercial expediente, List<String> claves) {
 		if (claves != null) {
-			if (activo == null) {
-				if (claves.contains(GESTOR_COMERCIAL_ACTIVO) || claves.contains(GESTOR_COMERCIAL_LOTE_RESTRINGIDO) || claves.contains(GESTOR_MEDIADOR)) {
-					throw new IllegalStateException("Se necesita un Activo para obtener alguno de los gestores: " + claves.toString());
-				}
+			if ((activo == null) && (claves.contains(GESTOR_COMERCIAL_ACTIVO) || claves.contains(GESTOR_COMERCIAL_LOTE_RESTRINGIDO) || claves.contains(GESTOR_MEDIADOR))) {
+				throw new IllegalStateException("Se necesita un Activo para obtener alguno de los gestores: " + claves.toString());
 			}
 			
 			if (oferta == null && claves.contains(GESTOR_PRESCRIPTOR)) {
@@ -240,10 +281,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				throw new IllegalStateException("Se necesita un ActivoLoteComercial para obtener alguno de los gestores: " + claves.toString());
 			}
 			
-			if (expediente == null) {
-				if (claves.contains(GESTOR_FORMALIZACION) || claves.contains(GESTOR_GESTORIA_FASE_3)) {
-					throw new IllegalStateException("Se necesita un ExpedienteComercial para obtener alguno de los gestores: " + claves.toString());
-				}
+			if ((expediente == null) && (claves.contains(GESTOR_FORMALIZACION) || claves.contains(GESTOR_GESTORIA_FASE_3))) {
+				throw new IllegalStateException("Se necesita un ExpedienteComercial para obtener alguno de los gestores: " + claves.toString());
 			}
 		}
 	}
@@ -290,77 +329,12 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					adjuntos);
 		} finally {
 			if ((fileitem != null) && (fileitem.getFile() != null)) {
-				fileitem.getFile().delete();
+				boolean deleted = fileitem.getFile().delete();
+				if (! deleted) {
+					logger.warn("No se ha borrado el fichero: " + fileitem.getFile().getAbsolutePath() + ". Se ha quedado basurilla.");
+				}
 			}
 		}
 	}
-	
-	
-	private String getUrlImagenes(){
-		String url = appProperties.getProperty("url");
-		
-		return url+"/pfs/js/plugin/rem/resources/images/notificator/";
-	}
-	
-//	protected String generateCuerpo(String titulo, String contenido, Long idReserva) {
-//		StringBuilder cuerpo = new StringBuilder("<html>"
-//				+ "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'>"
-//				+ "<html>"
-//				+ "<head>"
-//				+ "<META http-equiv='Content-Type' content='text/html; charset=utf-8'>"
-//				+ "</head>"
-//				+ "<body>"
-//				+ "	<div>"
-//				+ "		<div style='font-family: Arial,&amp; amp;'>"
-//				+ "			<div style='border-radius: 12px 12px 0px 0px; background: #b7ddf0; width: 100%; min-height: 60px; display: table'>"
-//				+ "				<img src='"+this.getUrlImagenes()+"ico_notificacion.png' "
-//				+ "					style='display: table-cell; padding: 12px; display: inline-block' />"
-//				+ "				<div style='font-size: 20px; vertical-align: top; color: #333; display: table-cell; padding: 12px'>" + titulo + "</div>"
-//				+ "			</div>"			
-//				+ "			<div style='background: #fff; color: #333; border-radius: 20px; padding: 25px; line-height: 22px; text-align: justify; margin-top: 20px; font-size: 16px'>"
-//				+ "              <p>"
-//				+ 					contenido
-//				+ "              </p>");
-//		if (idReserva != null) {
-//			cuerpo.append("      <p>"
-//				+ "                Puede descargar la reserva desde <a href=\"https://ws.haya.es/test-word/reservation/" + idReserva + "/1\">aquí</a>"
-//				+ "              </p>");
-//		}
-//		cuerpo.append("     </div>"
-//				+ "			<div style='color: #333; margin: 23px 0px 0px 65px; font-size: 16px; display: table;'>"
-//				+ "					<div style='display: table-cell'>"
-//				+ "						<img src='"+this.getUrlImagenes()+"ico_advertencia.png' />"
-//				+ "					</div>"			
-//				+ "					<div style='display: table-cell; vertical-align: middle; padding: 5px;'>"
-//				+ "						Este mensaje es una notificación automática. No responda a este correo.</div>"
-//				+ "				</div>"
-//				+ "			</div>"
-//				+ "		</div>"
-//				+ "</body>"
-//				+ "</html>");
-//		
-//		return cuerpo.toString();
-//	}
-	
-	
-	
-	
-//	public static void main(String[] args) throws NoSuchAlgorithmException, KeyManagementException {
-//		
-//		
-//		
-//		HttpClientFacade facade = new HttpClientFacade();
-//		try {
-//			Object o = facade.processRequestToString("https://ws.haya.es/test-word/reservation/1/word/", "GET", null, "{}", 10, "UTF-8");
-//			//Object o = facade.processRequestToJSON("http://www.mocky.io/v2/59805c2d110000c9091cf99d", "GET", null, "{}", 10, "UTF-8");
-//			
-//			if (o != null) {
-//				System.out.println(o.getClass() + " -> " + o.toString());
-//			}
-//		} catch (HttpClientException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
 
 }

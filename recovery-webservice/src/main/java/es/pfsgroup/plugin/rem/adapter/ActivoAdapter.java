@@ -37,6 +37,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.framework.paradise.agenda.adapter.NotificacionAdapter;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
@@ -53,12 +54,14 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
+import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
@@ -89,7 +92,6 @@ import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
-import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
@@ -132,7 +134,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
@@ -149,7 +150,9 @@ import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.rest.dto.OperationResultResponse;
 import es.pfsgroup.plugin.rem.service.TabActivoDatosBasicos;
+import es.pfsgroup.plugin.rem.service.TabActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
+import es.pfsgroup.plugin.rem.service.TabActivoSitPosesoriaLlaves;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
@@ -236,6 +239,16 @@ public class ActivoAdapter {
 
 	@Autowired
 	private NotificationOfertaManager notificationOfertaManager;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
+	
+    @Autowired
+    private NotificacionAdapter notificacionAdapter;
+    
+    @Autowired 
+    private GestorExpedienteComercialManager gestorExpedienteComercialManager;
+    
 
 	@Resource
 	MessageService messageServices;
@@ -244,8 +257,6 @@ public class ActivoAdapter {
 	// "rest.client.gestor.documental.activar";
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	public static final String OFERTA_INCOMPATIBLE_MSG = "El tipo de oferta es incompatible con el destino comercial del activo";
-	private static final String AVISO_TITULO_GESTOR_COMERCIAL = "activo.aviso.titulo.cambio.gestor.comercial";
-	private static final String AVISO_MENSAJE_GESTOR_COMERCIAL = "activo.aviso.descripcion.cambio.gestor.comercial";
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -2352,10 +2363,21 @@ public class ActivoAdapter {
 	}
 
 	private void afterSaveTabActivo(WebDto dto, Activo activo, TabActivoService tabActivoService) {
-		// Cambios dependientes que requieren que se hayan guardado previamente
-		// en el activo
-		if (tabActivoService instanceof TabActivoDatosBasicos) {
-			this.comprobacionesDatosFichaCabecera(activo, (DtoActivoFichaCabecera) dto);
+		
+		if (tabActivoService instanceof TabActivoDatosBasicos) {			
+
+			((TabActivoDatosBasicos) tabActivoService).afterSaveTabActivo(activo, dto);
+
+		} else if (tabActivoService instanceof TabActivoSitPosesoriaLlaves) {
+			
+			((TabActivoSitPosesoriaLlaves) tabActivoService).afterSaveTabActivo(activo, dto);
+			
+		}
+		
+		else if (tabActivoService instanceof TabActivoDatosRegistrales) {
+			
+			((TabActivoDatosRegistrales) tabActivoService).afterSaveTabActivo(activo, dto);
+
 		}
 
 		// Actualizacion Tipo comercializacion y Estado de disponibilidad
@@ -2643,62 +2665,7 @@ public class ActivoAdapter {
 	 * @param activo
 	 * @param dtoFicha
 	 */
-	private void comprobacionesDatosFichaCabecera(Activo activo, DtoActivoFichaCabecera dtoFicha) {
-
-		// Comprueba si ha habido cambios en el Tipo Comercializar para
-		// actualizar el gestor comercial de las tareas
-		if (!Checks.esNulo(dtoFicha.getTipoComercializarCodigo())) {
-			this.comprobacionCambioTipoComercializacion(activo);
-		}
-	}
-
-	private void comprobacionCambioTipoComercializacion(Activo activo) {
-
-		String codGestorSingular = "GCOMSIN", codGestorRetail = "GCOMRET";
-		Boolean isActivoRetail = DDTipoComercializar.CODIGO_RETAIL.equals(activo.getTipoComercializar().getCodigo());
-
-		// Comprobamos que se pueda realizar el cambio, analizando tareas
-		// activas comerciales y si hay gestor adecuado en el activo
-		if (gestorActivoApi.existeGestorEnActivo(activo, isActivoRetail ? codGestorRetail : codGestorSingular)) {
-			if (gestorActivoApi.validarTramitesNoMultiActivo(activo.getId()))
-				gestorActivoApi.actualizarTareas(activo.getId());
-			else {
-				// El activo pertenece a un trámite multiactivo, y por tanto no
-				// se puede cambiar el gestor en las taras, enviamos un aviso al
-				// gestor comercial anterior
-				// Si ahora el activo es Retail, entonces antes era Singular. Y
-				// viceversa.
-				String codComercialAnterior = isActivoRetail ? "GCOMSIN" : "GCOMRET";
-				Usuario usuario = gestorActivoApi.getGestorComercialActual(activo, codComercialAnterior);
-
-				if (!Checks.esNulo(usuario) && activoTareaExternaApi.existenTareasActivasByTramiteAndTipoGestor(activo,
-						ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA, codComercialAnterior)) {
-					Notificacion notif = new Notificacion();
-					String tipoComercialDesc = !isActivoRetail ? DDTipoComercializar.DESCRIPCION_SINGULAR
-							: DDTipoComercializar.DESCRIPCION_RETAIL;
-					String tipoComercialDescAnterior = isActivoRetail ? DDTipoComercializar.DESCRIPCION_SINGULAR
-							: DDTipoComercializar.DESCRIPCION_RETAIL;
-					String[] datosDescripcion = { activo.getNumActivo().toString(), tipoComercialDescAnterior,
-							tipoComercialDesc };
-					String descripcion = messageServices.getMessage(AVISO_MENSAJE_GESTOR_COMERCIAL, datosDescripcion);
-
-					notif.setIdActivo(activo.getId());
-					notif.setDestinatario(usuario.getId());
-					notif.setTitulo(messageServices.getMessage(AVISO_TITULO_GESTOR_COMERCIAL));
-					notif.setDescripcion(descripcion);
-					notif.setFecha(null);
-					try {
-						anotacionApi.saveNotificacion(notif);
-					} catch (ParseException e) {
-						logger.error(
-								"No se ha podido enviar el aviso por no poder cambiar el gestor comercial en las tareas: "
-										+ e);
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-	}
+	
 
 	private String getEstadoNuevaOferta(Activo activo) {
 		String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
@@ -2753,5 +2720,31 @@ public class ActivoAdapter {
 		}
 
 		return usuariosPorTipoGestorYCarteraList;
+	}
+	
+	
+	private void enviarNotificacionCambioSituacionLegalActivo(Usuario usuario, Activo activo) {
+		
+		Notificacion notificacion = new Notificacion();
+		
+		notificacion.setIdActivo(activo.getId());
+		
+		String descripcionNotificacion = "Se han modificado las condiciones jurídicas del activo #numactivo. Revise las condiciones comunicadas al comprador"
+				.replace("#numactivo", activo.getNumActivo().toString());
+		notificacion.setDescripcion(descripcionNotificacion);
+		
+		notificacion.setTitulo("Modificación condiciones jurídicas");		
+		notificacion.setDestinatario(usuario.getId());									
+		
+		try {
+			
+			notificacionAdapter.saveNotificacion(notificacion);
+			logger.debug("ENVIO NOTIFICACION: [TITULO " + notificacion.getTitulo() + " | ACTIVO " + activo.getNumActivo() + "| DESTINATARIO " + usuario.getUsername() + " ]");
+			
+		} catch (ParseException e) {
+				logger.error(e.getMessage());
+		}
+		
+		
 	}
 }

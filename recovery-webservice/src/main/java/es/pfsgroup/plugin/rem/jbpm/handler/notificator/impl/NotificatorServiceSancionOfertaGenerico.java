@@ -10,6 +10,7 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import org.springframework.aop.interceptor.PerformanceMonitorInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,18 +38,14 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 
-@Component
-public class NotificatorServiceSancionOferta extends AbstractNotificatorService implements NotificatorService {
+public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNotificatorService implements NotificatorService {
 
-	public static final String CODIGO_T013_DEFINICION_OFERTA = "T013_DefinicionOferta";
-	public static final String CODIGO_T013_SANCION_COMITE_EXTERNO = "T013_ResolucionComite";
-	public static final String CODIGO_T013_RESPUESTA_OFERTANTE = "T013_RespuestaOfertante";
-	public static final String CODIGO_T013_RATIFICACION_COMITE_EXTERNO = "T013_RatificacionComite";
 	private static final String GESTOR_PRESCRIPTOR = "prescriptor";
 	private static final String GESTOR_MEDIADOR = "mediador";
 	private static final String GESTOR_COMERCIAL_ACTIVO = "gestor-comercial-activo";
@@ -83,25 +80,12 @@ public class NotificatorServiceSancionOferta extends AbstractNotificatorService 
 
 
 	@Override
-	public String[] getKeys() {
-		return this.getCodigoTarea();
-	}
-
-	@Override
-	public String[] getCodigoTarea() {
-		// TODO: poner los códigos de tipos de tareas
-		return new String[] { CODIGO_T013_DEFINICION_OFERTA, CODIGO_T013_SANCION_COMITE_EXTERNO,
-				CODIGO_T013_RESPUESTA_OFERTANTE, CODIGO_T013_RATIFICACION_COMITE_EXTERNO };
-	}
-
-	@Override
-	public void notificator(ActivoTramite tramite) {
-		// TODO Auto-generated method stub
+	public final void notificator(ActivoTramite tramite) {
 
 	}
 	
 	
-	public void pruebaEnvioNotificacion (String destinatario){
+	public final void pruebaEnvioNotificacion (String destinatario){
 		ActivoTramite tramite = new ActivoTramite();
 		
 		Activo activo = new Activo();
@@ -126,8 +110,7 @@ public class NotificatorServiceSancionOferta extends AbstractNotificatorService 
 	}
 	
 
-	@Override
-	public void notificatorFinTareaConValores(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	protected void generaNotificacion(ActivoTramite tramite, boolean permieRechazar) {
 		
 		Activo activo = tramite.getActivo();
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
@@ -138,7 +121,6 @@ public class NotificatorServiceSancionOferta extends AbstractNotificatorService 
 				
 				boolean formalizacion = checkFormalizar(activo.getId());
 				String[] clavesGestores = null;
-				// TODO Gestor comercial - si la oferta es de activo, lote restringido, lote comercial
 				String claveGestorComercial = this.getTipoGestorComercial(ofertaAceptada);
 				
 				if (formalizacion) {
@@ -151,23 +133,27 @@ public class NotificatorServiceSancionOferta extends AbstractNotificatorService 
 					};
 				}
 				
-				// TODO Obtener el lote comercial
-				Map<String, String> gestores = getGestores(activo, ofertaAceptada, null, expediente, clavesGestores);
+				Map<String, String> gestores = getGestores(activo, ofertaAceptada, this.getLoteComercial(ofertaAceptada), expediente, clavesGestores);
 				ArrayList<String> destinatarios = new ArrayList<String>();
 				for (String clave : clavesGestores){
 					destinatarios.add(gestores.get(clave));
 				}
 				
-				// TODO En el endpoint ¿cual es el valor que hay que poner en id_expediente?
 				this.enviaNotificacionAceptar(tramite, expediente.getReserva() != null ? expediente.getId() : null, destinatarios.toArray(new String[]{}));
 				
 				
-				
-			} else { // RECHAZO
-				// TODO Afinar condiciones de rechazo.
+			} else if (permieRechazar && DDEstadoOferta.CODIGO_RECHAZADA.equals(ofertaAceptada.getEstadoOferta().getCodigo())) { // RECHAZO
 				Map<String, String> gestores = getGestores(activo, ofertaAceptada, null, null, GESTOR_PRESCRIPTOR);
 				this.enviaNotificacionRechazar(tramite, gestores.get(GESTOR_PRESCRIPTOR));
 			}
+		}
+	}
+
+	private ActivoLoteComercial getLoteComercial(Oferta oferta) {
+		if ((oferta != null) && (oferta.getAgrupacion() != null)){
+			return genericDao.get(ActivoLoteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", oferta.getAgrupacion().getId()));
+		} else {
+			return null;
 		}
 	}
 

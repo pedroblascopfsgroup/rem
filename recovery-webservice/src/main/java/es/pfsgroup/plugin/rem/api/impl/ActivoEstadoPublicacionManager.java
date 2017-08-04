@@ -259,7 +259,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 						motivo = dtoCambioEstadoPublicacion.getMotivoPublicacion();
 						
 						// Ademas, se publica el activo lanzando el procedure para este
-						publicarActivoProcedure(activo.getId(), genericAdapter.getUsuarioLogado().getNombre());
+						OkPublicacionSinPublicar= false;
+						//publicarActivoProcedure(activo.getId(), genericAdapter.getUsuarioLogado().getNombre());
 					} else {
 					// Si no cumple condiciones, se pasa a NO PUBLICADO
 						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_NO_PUBLICADO);

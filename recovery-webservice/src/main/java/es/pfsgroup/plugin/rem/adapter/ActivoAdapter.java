@@ -2347,10 +2347,10 @@ public class ActivoAdapter {
 	@Transactional(readOnly = false)
 	public boolean updatePublicarActivo(Long id) {
 		Activo activo = activoApi.get(id);
-		if(!activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO)
+		if(Checks.esNulo(activo)&&!Checks.esNulo(activo.getFechaPublicable())&&(!activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO)
 				|| !activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO)
 				|| !activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO)
-				|| !activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_DESPUBLICADO)) {
+				|| !activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_DESPUBLICADO))) {
 			Usuario usuario = genericAdapter.getUsuarioLogado();
 			activoDao.publicarActivo(activo.getId(), usuario.getUsername());
 		}

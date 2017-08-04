@@ -49,6 +49,7 @@ import es.pfsgroup.plugin.rem.rest.dao.impl.GenericaRestDaoImp;
 import es.pfsgroup.plugin.rem.rest.dto.InformeMediadorDto;
 import es.pfsgroup.plugin.rem.rest.dto.PlantaDto;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
+import net.sf.json.JSONObject;
 
 @Service("informeMediadorManager")
 public class InformeMediadorManager implements InformeMediadorApi {
@@ -286,11 +287,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		divisible.put(DDTipoActivo.COD_EDIFICIO_COMPLETO, true);
 		obligatorios.put("otrasreformasnecesarias", divisible);
 
-		// ascensor
-		HashMap<String, Boolean> ascensor = new HashMap<String, Boolean>();
-		ascensor.put(DDTipoActivo.COD_EDIFICIO_COMPLETO, true);
-		obligatorios.put("ascensor", ascensor);
-
+		
 		// numeroAscensores
 		HashMap<String, Boolean> numeroAscensores = new HashMap<String, Boolean>();
 		numeroAscensores.put(DDTipoActivo.COD_EDIFICIO_COMPLETO, true);
@@ -545,12 +542,6 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		numeroPlantasEdificio.put(DDTipoActivo.COD_OTROS, true);
 		obligatorios.put("numeroplantasedificio", numeroPlantasEdificio);
 
-		// ascensorEdificio
-		HashMap<String, Boolean> ascensorEdificio = new HashMap<String, Boolean>();
-		ascensorEdificio.put(DDTipoActivo.COD_VIVIENDA, true);
-		ascensorEdificio.put(DDTipoActivo.COD_COMERCIAL, true);
-		ascensorEdificio.put(DDTipoActivo.COD_OTROS, true);
-		obligatorios.put("ascensoredificio", ascensorEdificio);
 
 		// numeroAscensoresEdificio
 		HashMap<String, Boolean> numeroAscensoresEdificio = new HashMap<String, Boolean>();
@@ -1258,12 +1249,13 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 	@Override
 	@Transactional(readOnly = false)
-	public ArrayList<Map<String, Object>> saveOrUpdateInformeMediador(List<InformeMediadorDto> informes)
+	public ArrayList<Map<String, Object>> saveOrUpdateInformeMediador(List<InformeMediadorDto> informes,JSONObject jsonFields)
 			throws Exception {
 
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		Map<String, Object> map = null;
 
+		int i=0;
 		for (InformeMediadorDto informe : informes) {
 			// proveedor de confianza, puede editar el informe, sin tramite de
 			// aceptacion
@@ -1334,8 +1326,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 								ActivoVivienda.class, "activo.numActivo");
 						parcheEspecificacionTablas(informeEntity, informe);
 
-						ActivoEdificio edificioEntity = (ActivoEdificio) dtoToEntity.obtenerObjetoEntity(
-								informe.getIdActivoHaya(), ActivoEdificio.class, "infoComercial.activo.numActivo");
+						
 
 						ActivoInfraestructura activoInfraestructura = (ActivoInfraestructura) dtoToEntity
 								.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoInfraestructura.class,
@@ -1368,7 +1359,6 @@ public class InformeMediadorManager implements InformeMediadorApi {
 								informe.getIdActivoHaya(), ActivoZonaComun.class, "infoComercial.activo.numActivo");
 
 						entitys.add(informeEntity);
-						entitys.add(edificioEntity);
 						entitys.add(activoInfraestructura);
 						entitys.add(activoCarpinteriaInt);
 						entitys.add(activoCarpinteriaExterior);
@@ -1391,7 +1381,11 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					if (informeEntity.getActivo() == null) {
 						informeEntity.setActivo(activo);
 					}
-					informeEntity = (ActivoInfoComercial) dtoToEntity.saveDtoToBbdd(informe, entitys);
+					ActivoEdificio edificioEntity = (ActivoEdificio) dtoToEntity.obtenerObjetoEntity(
+							informe.getIdActivoHaya(), ActivoEdificio.class, "infoComercial.activo.numActivo");
+					entitys.add(edificioEntity);
+					
+					informeEntity = (ActivoInfoComercial) dtoToEntity.saveDtoToBbdd(informe, entitys,(JSONObject)jsonFields.getJSONArray("data").get(i));
 					// Si viene información de las plantas lo guardamos
 					List<PlantaDto> plantas = informe.getPlantas();
 					if (plantas != null) {
@@ -1511,6 +1505,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 			}
 
 			listaRespuesta.add(map);
+			i++;
 		}
 		return listaRespuesta;
 	}

@@ -352,7 +352,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		ActivoEdificio activoEdificio = new ActivoEdificio();
 		activoEdificio.setInfoComercial(activoInfoComercial);
 		if (!Checks.esNulo(dtoAAF.getAscensor())) {
-			activoEdificio.setAscensor(dtoAAF.getAscensor() ? 1 : 0);
+			activoEdificio.setAscensorEdificio(dtoAAF.getAscensor() ? 1 : 0);
 		}
 		genericDao.save(ActivoEdificio.class, activoEdificio);
 

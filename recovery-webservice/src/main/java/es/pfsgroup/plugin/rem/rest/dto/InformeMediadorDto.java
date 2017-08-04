@@ -457,13 +457,13 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "estadoConservacionEdificio", classObj = DDEstadoConservacion.class)
 	private String codEstadoConservacionEdificio;
 
-	@EntityDefinition(propertyName = "anyoRehabilitacion", transform = TRANSFORM_TYPE.DATE_TO_YEAR_INTEGER)
+	@EntityDefinition(propertyName = "anyoRehabilitacionEdificio", transform = TRANSFORM_TYPE.DATE_TO_YEAR_INTEGER)
 	private Date anyoRehabilitacionEdificio;
 
 	@EntityDefinition(propertyName = "numPlantas")
 	private Integer numeroPlantasEdificio;
 
-	@EntityDefinition(propertyName = "ascensor", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	@EntityDefinition(propertyName = "ascensorEdificio", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean ascensorEdificio;
 
 	@EntityDefinition(propertyName = "numAscensores")

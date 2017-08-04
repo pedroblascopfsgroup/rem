@@ -204,5 +204,35 @@ public class GenericAdapter {
 
 		return false;
 	}
+	
+	/**
+	 * Comprueba si un usuario es gestor Haya a través de su perfil.
+	 * @param usuario
+	 * @return Boolean
+	 */
+	public Boolean isGestorHaya(Usuario usuario) {
+		
+		
+		
+		Perfil HAYAGESTCOM = genericDao.get(Perfil.class,
+				genericDao.createFilter(FilterType.EQUALS, "codigo", "HAYAGESTCOM"));
+
+		Perfil FVDBACKOFERTA = genericDao.get(Perfil.class,
+				genericDao.createFilter(FilterType.EQUALS, "codigo", "FVDBACKOFERTA"));
+
+		Perfil FVDBACKVENTA = genericDao.get(Perfil.class,
+				genericDao.createFilter(FilterType.EQUALS, "codigo", "FVDBACKVENTA"));
+
+		Perfil HAYABACKOFFICE = genericDao.get(Perfil.class,
+				genericDao.createFilter(FilterType.EQUALS, "codigo", "HAYABACKOFFICE"));
+
+		Perfil FVDNEGOCIO = genericDao.get(Perfil.class,
+				genericDao.createFilter(FilterType.EQUALS, "codigo", "FVDNEGOCIO"));
+		
+
+		return usuario.getPerfiles().contains(HAYAGESTCOM) || usuario.getPerfiles().contains(FVDBACKOFERTA)
+				|| usuario.getPerfiles().contains(FVDBACKVENTA) || usuario.getPerfiles().contains(HAYABACKOFFICE)
+				|| usuario.getPerfiles().contains(FVDNEGOCIO);		
+	}
 
 }

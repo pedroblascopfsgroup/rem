@@ -237,13 +237,9 @@ EXECUTE IMMEDIATE ('
   SYSDATE                                                           FECHACREAR,
   0                                                                 BORRADO
   FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
-  INNER JOIN '||V_ESQUEMA||'.'||V_TABLA_MIG_2||' MIG2
-  ON ACT.ACT_NUM_ACTIVO = MIG2.ACT_NUMERO_ACTIVO
   WHERE NOT EXISTS (
     SELECT 1 FROM '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION BIE WHERE BIE.BIE_ID = ACT.BIE_ID
     )
-  AND ACT.USUARIOCREAR = '''||V_USUARIO||'''
-  AND MIG2.VALIDACION = 0
   ')
   ;
   

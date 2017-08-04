@@ -2,12 +2,15 @@ package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +24,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
@@ -28,7 +32,10 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -56,6 +63,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProductoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
+import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Component
@@ -65,6 +73,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	public static final String MSG_ERROR_PERIMETRO_FORMALIZACION_EXPEDIENTE_VIVO = "activo.aviso.demsarcar.formalizar.expediente.vivo";
 	public static final String MOTIVO_ACTIVO_NO_COMERCIALIZABLE_NO_PUBLICADO = "activo.motivo.desmarcar.comercializar.no.publicar";
 	public static final String MSG_ERROR_PERIMETRO_COMERCIALIZACION_AGR_RESTRINGIDA_NO_PRINCIPAL = "activo.aviso.demsarcar.comercializar.agr.restringida.no.principal";
+	public static final String AVISO_TITULO_GESTOR_COMERCIAL = "activo.aviso.titulo.cambio.gestor.comercial";
+	public static final String AVISO_MENSAJE_GESTOR_COMERCIAL = "activo.aviso.descripcion.cambio.gestor.comercial";
     
 
 	@Autowired
@@ -88,8 +98,19 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	@Autowired
 	private OfertaApi ofertaApi;
 	
+	@Autowired
+	private GestorActivoApi gestorActivoApi;
+	
+	@Autowired
+	private ActivoTareaExternaApi activoTareaExternaApi;
+	
+	@Autowired
+	private AnotacionApi anotacionApi;
+	
 	@Resource
     MessageService messageServices;
+	
+	protected static final Log logger = LogFactory.getLog(TabActivoDatosBasicos.class);	
 
 	@Override
 	public String[] getKeys() {
@@ -811,5 +832,58 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 		}
 	}
+	
+	public void afterSaveTabActivo(Activo activo, WebDto dto) {
+		
+		DtoActivoFichaCabecera dtoFicha = (DtoActivoFichaCabecera) dto;
+		
+		// Comprueba si ha habido cambios en el Tipo Comercializar para
+				// actualizar el gestor comercial de las tareas
+		if (!Checks.esNulo(dtoFicha.getTipoComercializarCodigo())) {
+			String codGestorSingular = "GCOMSIN", codGestorRetail = "GCOMRET";
+			Boolean isActivoRetail = DDTipoComercializar.CODIGO_RETAIL.equals(activo.getTipoComercializar().getCodigo());
+
+			// Comprobamos que se pueda realizar el cambio, analizando tareas
+			// activas comerciales y si hay gestor adecuado en el activo
+			if (gestorActivoApi.existeGestorEnActivo(activo, isActivoRetail ? codGestorRetail : codGestorSingular)) {
+				if (gestorActivoApi.validarTramitesNoMultiActivo(activo.getId()))
+					gestorActivoApi.actualizarTareas(activo.getId());
+				else {
+					// El activo pertenece a un trámite multiactivo, y por tanto no
+					// se puede cambiar el gestor en las taras, enviamos un aviso al
+					// gestor comercial anterior
+					// Si ahora el activo es Retail, entonces antes era Singular. Y
+					// viceversa.
+					String codComercialAnterior = isActivoRetail ? "GCOMSIN" : "GCOMRET";
+					Usuario usuario = gestorActivoApi.getGestorComercialActual(activo, codComercialAnterior);
+
+					if (!Checks.esNulo(usuario) && activoTareaExternaApi.existenTareasActivasByTramiteAndTipoGestor(activo,
+							ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA, codComercialAnterior)) {
+						Notificacion notif = new Notificacion();
+						String tipoComercialDesc = !isActivoRetail ? DDTipoComercializar.DESCRIPCION_SINGULAR
+								: DDTipoComercializar.DESCRIPCION_RETAIL;
+						String tipoComercialDescAnterior = isActivoRetail ? DDTipoComercializar.DESCRIPCION_SINGULAR
+								: DDTipoComercializar.DESCRIPCION_RETAIL;
+						String[] datosDescripcion = { activo.getNumActivo().toString(), tipoComercialDescAnterior,
+								tipoComercialDesc };
+						String descripcion = messageServices.getMessage(AVISO_MENSAJE_GESTOR_COMERCIAL, datosDescripcion);
+
+						notif.setIdActivo(activo.getId());
+						notif.setDestinatario(usuario.getId());
+						notif.setTitulo(messageServices.getMessage(AVISO_TITULO_GESTOR_COMERCIAL));
+						notif.setDescripcion(descripcion);
+						notif.setFecha(null);
+						try {
+							anotacionApi.saveNotificacion(notif);
+						} catch (ParseException e) {
+							logger.error("No se ha podido enviar el aviso por no poder cambiar el gestor comercial en las tareas: " + e);
+						}
+					}
+				}
+			}
+		}
+		
+	}
+
 
 }

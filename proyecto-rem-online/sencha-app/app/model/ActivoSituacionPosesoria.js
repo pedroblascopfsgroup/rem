@@ -19,11 +19,6 @@ Ext.define('HreRem.model.ActivoSituacionPosesoria', {
     			
     		},
     		{
-    			name:'fechaTomaPosesion',
-    			type:'date',
-    			dateFormat: 'c'
-    		},
-    		{
     			name:'ocupado'
     		},
     		{
@@ -99,6 +94,11 @@ Ext.define('HreRem.model.ActivoSituacionPosesoria', {
     			calculate: function(){
     				return Ext.getStore('storeLlaves').getCount();
     			}*/
+    		},
+    		 {
+    			name:'fechaTomaPosesion',
+    			type:'date',
+    			dateFormat: 'c'
     		}
     		
     ],

@@ -41,7 +41,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							reference: 'fechaTomaPosesion',
 							allowBlank: false,
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.toma.posesion'),
-		                	bind:		'{situacionPosesoria.fechaTomaPosesion}'
+		                	bind:		'{situacionPosesoria.fechaTomaPosesion}',
+		                	readOnly: true
 		                },
 		                { 
 							xtype:'datefieldbase',

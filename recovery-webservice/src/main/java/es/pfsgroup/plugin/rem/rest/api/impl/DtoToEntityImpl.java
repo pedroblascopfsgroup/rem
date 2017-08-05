@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Entit
 import es.pfsgroup.plugin.rem.rest.api.DtoToEntityApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TRANSFORM_TYPE;
 import es.pfsgroup.plugin.rem.rest.dao.impl.GenericaRestDaoImp;
+import net.sf.json.JSONObject;
 
 @Service("dtoToEntity")
 public class DtoToEntityImpl implements DtoToEntityApi {
@@ -39,7 +40,7 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 
 	@SuppressWarnings("rawtypes")
 	@Transactional(readOnly = false)
-	public Serializable saveDtoToBbdd(Object dto, ArrayList<Serializable> objetoEntitys)
+	public Serializable saveDtoToBbdd(Object dto, ArrayList<Serializable> objetoEntitys,JSONObject jsonFields)
 			throws Exception {
 
 		if (dto.getClass().getDeclaredFields() != null) {
@@ -55,24 +56,24 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 						Class claseObjeto = f.getType();
 						claseObjeto = transformClass(annotation, claseObjeto);
 						Object object = this.getValue(dto, dto.getClass(), "get".concat(propertyName));
-						this.setProperty(propertyEntityName, claseObjeto, annotation, null, object, objetoEntitys);
+						this.setProperty(propertyEntityName, claseObjeto, annotation, null, object, objetoEntitys,jsonFields,f.getName());
 					} else {
 						Class claseObjeto = annotation.classObj();
 						claseObjeto = transformClass(annotation, claseObjeto);
 						Object oFiltro = this.getValue(dto, dto.getClass(), "get".concat(propertyName));
-						this.setProperty(propertyEntityName, claseObjeto, annotation, oFiltro, null, objetoEntitys);
+						this.setProperty(propertyEntityName, claseObjeto, annotation, oFiltro, null, objetoEntitys,jsonFields,f.getName());
 					}
 				} else {
 					EntityDefinition annotation = f.getAnnotation(EntityDefinition.class);
 					String propertyEntityName = null;
 					propertyEntityName = f.getName().substring(0, 1).toUpperCase() + f.getName().substring(1);
 					this.setProperty(propertyEntityName, f.getType(), annotation, null,
-							this.getValue(dto, dto.getClass(), "get".concat(propertyEntityName)), objetoEntitys);
+							this.getValue(dto, dto.getClass(), "get".concat(propertyEntityName)), objetoEntitys,jsonFields,f.getName());
 
 				}
 			}
 		}
-		guardarEntity(objetoEntitys);
+		guardarEntity(objetoEntitys,jsonFields,null);
 		return objetoEntitys.get(0);
 	}
 
@@ -123,10 +124,10 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 	 */
 	@SuppressWarnings({ "rawtypes" })
 	private boolean setProperty(String propertyEntityName, Class claseObjeto, EntityDefinition annotation,
-			Object oFiltro, Object object, Serializable objetoEntity) throws Exception {
+			Object oFiltro, Object object, Serializable objetoEntity,JSONObject jsonFields,String fieldName) throws Exception {
 		ArrayList<Serializable> objetoEntitys = new ArrayList<Serializable>();
 		objetoEntitys.add(objetoEntity);
-		return this.setProperty(propertyEntityName, claseObjeto, annotation, oFiltro, object, objetoEntitys);
+		return this.setProperty(propertyEntityName, claseObjeto, annotation, oFiltro, object, objetoEntitys,jsonFields,fieldName);
 	}
 
 	/**
@@ -142,7 +143,7 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes", "deprecation" })
 	private boolean setProperty(String propertyEntityName, Class claseObjeto, EntityDefinition annotation,
-			Object oFiltro, Object object, ArrayList<Serializable> objetoEntitys) throws Exception{
+			Object oFiltro, Object object, ArrayList<Serializable> objetoEntitys,JSONObject jsonFields,String fieldName) throws Exception{
 		boolean resultado = false;
 		if ((annotation != null && annotation.procesar()) || annotation == null) {
 			if (oFiltro != null && annotation != null) {
@@ -150,8 +151,8 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 						genericDao.createFilter(FilterType.EQUALS, annotation.foreingField(), oFiltro));
 			}
 
-			if (object != null) {
-				if (annotation != null && annotation.transform().equals(TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)) {
+			if (object != null || fieldName != null) {
+				if (annotation != null && annotation.transform().equals(TRANSFORM_TYPE.BOOLEAN_TO_INTEGER) && object != null) {
 					if (object instanceof Boolean) {
 						if ((Boolean) object) {
 							object = 1;
@@ -162,9 +163,9 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 						logger.error("FAIL --------------->" + propertyEntityName
 								+ " no se puede pasar de Integer a Boolean");
 					}
-				} else if (annotation != null && annotation.transform().equals(TRANSFORM_TYPE.FLOAT_TO_BIGDECIMAL)) {
+				} else if (annotation != null && annotation.transform().equals(TRANSFORM_TYPE.FLOAT_TO_BIGDECIMAL) && object != null) {
 					object = new BigDecimal((Float) object);
-				} else if (annotation != null && annotation.transform().equals(TRANSFORM_TYPE.DATE_TO_YEAR_INTEGER)) {
+				} else if (annotation != null && annotation.transform().equals(TRANSFORM_TYPE.DATE_TO_YEAR_INTEGER) && object != null) {
 					object = Integer.valueOf(((Date) object).getYear());
 				}
 
@@ -173,7 +174,13 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 					try {
 						Method metodo = this.getMethod(objetoEntity, "set".concat(propertyEntityName), claseObjeto);
 						if (metodo != null) {
-							metodo.invoke(objetoEntity, object);
+							if(fieldName != null){
+								fieldName = fieldName.substring(0, 1).toLowerCase()
+								+ fieldName.substring(1);
+							}
+							if(object != null || (fieldName != null && !fieldName.isEmpty() && jsonFields.containsKey(fieldName))){
+								metodo.invoke(objetoEntity, object);
+							}
 							resultado = true;
 							contador++;
 						}
@@ -238,14 +245,14 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 	 * @throws InvocationTargetException
 	 * @throws IntrospectionException
 	 */
-	private void guardarEntity(ArrayList<Serializable> objetoEntitys) throws Exception{
+	private void guardarEntity(ArrayList<Serializable> objetoEntitys,JSONObject jsonFields,String fieldName) throws Exception{
 		for (Serializable objetoEntity : objetoEntitys) {
 			logger.trace("Guardando..." + objetoEntity.getClass().getName());
 			Serializable primaryKey = genericaRestDaoImp.save(objetoEntity);
 			logger.trace("Exito..." + primaryKey.getClass().getName());
 			String primaryKeFieldName = this.findPrimaryKey(objetoEntity);
-			this.setProperty(primaryKeFieldName, primaryKey.getClass(), null, null, primaryKey, objetoEntity);
-			this.setFk(objetoEntity, objetoEntitys);
+			this.setProperty(primaryKeFieldName, primaryKey.getClass(), null, null, primaryKey, objetoEntity,jsonFields,fieldName);
+			this.setFk(objetoEntity, objetoEntitys,jsonFields,fieldName);
 		}
 
 	}
@@ -256,12 +263,12 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 	 * @param objetoEntityFK
 	 * @param objetoEntitys
 	 */
-	private void setFk(Serializable objetoEntityFK, ArrayList<Serializable> objetoEntitys) throws Exception{
+	private void setFk(Serializable objetoEntityFK, ArrayList<Serializable> objetoEntitys,JSONObject jsonFields,String fieldName) throws Exception{
 		for (Serializable objetoEntity : objetoEntitys) {
 			if (!objetoEntityFK.getClass().equals(objetoEntity.getClass())) {
 				String fieldFk = this.findFieldFk(objetoEntity, objetoEntityFK.getClass());
 				if (fieldFk != null) {
-					this.setProperty(fieldFk, objetoEntityFK.getClass(), null, null, objetoEntityFK, objetoEntity);
+					this.setProperty(fieldFk, objetoEntityFK.getClass(), null, null, objetoEntityFK, objetoEntity,jsonFields,fieldName);
 				}
 			}
 		}

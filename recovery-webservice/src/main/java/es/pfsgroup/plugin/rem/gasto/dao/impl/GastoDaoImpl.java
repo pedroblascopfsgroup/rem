@@ -194,7 +194,7 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 			Date fechaAutorizacionHasta = null;
 			if(dtoGastosFilter.getFechaAutorizacionHasta() != null){
 				Calendar calendar = Calendar.getInstance();
-		        calendar.setTime(DateFormat.toDate(dtoGastosFilter.getFechaAutorizacionDesde()));
+		        calendar.setTime(DateFormat.toDate(dtoGastosFilter.getFechaAutorizacionHasta()));
 		        calendar.set(Calendar.HOUR_OF_DAY, 23);
 		        calendar.set(Calendar.MINUTE,59);
 		        calendar.set(Calendar.SECOND,59);

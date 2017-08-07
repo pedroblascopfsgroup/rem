@@ -69,7 +69,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			params: {idActivo: idActivo},
     		scope: this,
 		    success: function(informeJuridico) {
-		    	viewModel.set("informeJuridico", informeJuridico);
+		    	viewModel.set("informeJuridico", informeJuridico);	    	
 		    	tabPanel.unmask();
 		    },
 		   	failure: function (a, operation) {
@@ -136,12 +136,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		models = null,
 		nameModels = null,
 		id = me.getViewModel().get("expediente.id");
+		var tabPanel = me.lookupReference('activoExpedienteMain');
 		// Si la API tiene metodo de lectura (read).
 		HreRem.model.ExpedienteInformeJuridico.load(id, {
 			params: {idActivo: me.getViewModel().get("activoExpedienteSeleccionado.idActivo")},
 		    scope: this,
 			success: function(informeJuridico) {
 				me.getViewModel().set("informeJuridico", informeJuridico);
+				if(!Ext.isEmpty(tabPanel)){
+					var panelJ = tabPanel.down('activoexpedientejuridico');
+		    		panelJ.down('[reference=fechaEmisionInformeJuridico]').setValue(informeJuridico.get('fechaEmision'));
+		    		panelJ.down('[reference=resultadoBloqueoInformeJuridico]').setValue(informeJuridico.get('resultadoBloqueo'));
+				}	
 				if(refreshActivoExpediente){
 					//me.refrescarActivoExpediente(false);
 				}

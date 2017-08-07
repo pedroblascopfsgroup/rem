@@ -47,6 +47,7 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
+import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -183,6 +184,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
+	@Autowired
+	private GestorExpedienteComercialManager gestorExpedienteComercialManager;
 
 
 	@Override
@@ -1828,30 +1831,30 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		} else {
 			expediente.setEstadoPbc(null);
 		}
+
 		genericDao.update(ExpedienteComercial.class, expediente);
 
 		// Avisar al gestor de formalización del activo.
 		Notificacion notificacion = new Notificacion();
 
-		if (!Checks.esNulo(expediente.getOferta()) && !Checks.esNulo(expediente.getOferta().getActivoPrincipal()) && !Checks.esNulo(expediente.getOferta().getActivoPrincipal())) {
+		if (!Checks.esNulo(expediente.getOferta()) 
+				&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal())) {
+
 			notificacion.setIdActivo(expediente.getOferta().getActivoPrincipal().getId());
 
-			Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
-			EXTDDTipoGestor gestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
-			if (!Checks.esNulo(gestorActivo)) {
-				Usuario usuario = gestorActivoApi.getGestorByActivoYTipo(expediente.getOferta().getActivoPrincipal(), gestorActivo.getId());
-				if (!Checks.esNulo(usuario)) {
-					notificacion.setDestinatario(usuario.getId());
+			Usuario gestoriaFormalizacion = gestorExpedienteComercialManager.getGestorByExpedienteComercialYTipo(expediente, "GFORM");
 
-					notificacion.setTitulo("Notificación PBC reiniciado");
-					notificacion.setDescripcion("Se ha reiniciado el PBC de la oferta: " + expediente.getOferta().getNumOferta() + ".");
-					notificacion.setFecha(new Date());
+			if (!Checks.esNulo(gestoriaFormalizacion)) {
 
-					try {
-						notificacionAdapter.saveNotificacion(notificacion);
-					} catch (ParseException e) {
-						logger.error("error en OfertasManager", e);
-					}
+				notificacion.setDestinatario(gestoriaFormalizacion.getId());
+
+				notificacion.setTitulo("Reseteo del PBC - Expediente " + expediente.getNumExpediente());
+				notificacion.setDescripcion(String.format("Se ha reseteado el PBC por modificación de algunos parámetros del expediente %s.",expediente.getNumExpediente().toString()));
+
+				try {
+					notificacionAdapter.saveNotificacion(notificacion);
+				} catch (ParseException e) {
+					logger.error("error en OfertasManager", e);
 				}
 			}
 		}

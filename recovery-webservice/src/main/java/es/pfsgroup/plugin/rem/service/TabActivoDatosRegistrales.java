@@ -1,35 +1,55 @@
 package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.util.List;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.agenda.adapter.NotificacionAdapter;
+import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdjudicacionBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistralBien;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoPlanDinVentas;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadEjecutante;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdjudicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDivHorizontal;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 
@@ -41,6 +61,32 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
+	
+	@Autowired
+	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
+    
+    @Autowired 
+    private GestorExpedienteComercialManager gestorExpedienteComercialManager;
+    
+	@Autowired
+	private ActivoTramiteApi activoTramiteApi;
+	
+	@Autowired
+	private GenericAdapter genericAdapter; 
+	
+    @Autowired
+    private NotificacionAdapter notificacionAdapter;
+	
+	@Resource
+    MessageService messageServices;	
+	
+	protected static final Log logger = LogFactory.getLog(TabActivoDatosRegistrales.class);
+	
+	public static final String AVISO_TITULO_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.titulo.modificadas.condiciones.juridicas";
+	public static final String AVISO_DESCRIPCION_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.descripcion.modificadas.condiciones.juridicas";
 	
 
 	@Override
@@ -185,6 +231,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			
 			beanUtilNotNull.copyProperties(activo.getTitulo(), dto);
 			
+			
 			if (dto.getEstadoTitulo() != null) {
 				
 				DDEstadoTitulo estadoTituloNuevo = (DDEstadoTitulo) 
@@ -281,6 +328,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 					beanUtilNotNull.copyProperties(activo.getAdjNoJudicial(), dto);
 					
 					activo.setAdjNoJudicial((genericDao.save(ActivoAdjudicacionNoJudicial.class, activo.getAdjNoJudicial())));
+					activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaTitulo());
 					
 				} else if (activo.getTipoTitulo().getCodigo().equals(DDTipoTituloActivo.tipoTituloPDV)) {
 					ActivoPlanDinVentas pdv = null;
@@ -361,6 +409,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 					
 					activo.getAdjJudicial().setAdjudicacionBien((genericDao.save(NMBAdjudicacionBien.class, activo.getAdjJudicial().getAdjudicacionBien())));
 					activo.setAdjJudicial((genericDao.save(ActivoAdjudicacionJudicial.class, activo.getAdjJudicial())));
+					activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getBien().getAdjudicacion().getFechaSenalamientoPosesion());
 
 				}
 			
@@ -376,6 +425,80 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		}
 		
 		return activo;
+		
+	}
+	
+	public void afterSaveTabActivo(Activo activo, WebDto dto) {
+		
+		DtoActivoDatosRegistrales dtoDatReg = (DtoActivoDatosRegistrales) dto;
+		Oferta oferta = ofertaApi.getOfertaAceptadaByActivo(activo);
+		Usuario destinatario=null;
+	
+		
+		// Si el activo está asociado a un espediente, y si ha cambiado el estado del título registral a inscrito
+		if(!Checks.esNulo(oferta) && !Checks.esNulo(dtoDatReg.getEstadoTitulo()) && DDEstadoTitulo.ESTADO_INSCRITO.equals(dtoDatReg.getEstadoTitulo())) {
+			
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());			
+			//comprobar borrado y fechafinalizacion
+			List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());						
+			
+			for (TareaActivo tarea: tramites.get(0).getTareas()) {
+				
+				if(!tarea.getAuditoria().isBorrado() && Checks.esNulo(tarea.getFechaFin())
+						&& genericAdapter.isGestorHaya(tarea.getUsuario())) {
+					
+					if(Checks.esNulo(destinatario)) { 
+						destinatario = tarea.getUsuario();
+					}							
+				}
+			}
+			
+			if(!Checks.esNulo(destinatario)) {									
+									
+				enviarNotificacionCambioSituacionLegalActivo(destinatario, activo);
+			}
+				
+			// Si expediente ya ha sido aprobado avisamos a gestor de formalización
+			if (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
+						|| DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())
+						|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
+						|| DDEstadosExpedienteComercial.ALQUILADO.equals(expediente.getEstado().getCodigo())
+						|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo())
+						|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo())) {
+					
+				Usuario gestorFormalizacion = gestorExpedienteComercialManager.getGestorByExpedienteComercialYTipo(expediente, "GFORM");
+					
+				if(!Checks.esNulo(gestorFormalizacion) && !gestorFormalizacion.equals(destinatario)) {
+					enviarNotificacionCambioSituacionLegalActivo(gestorFormalizacion, activo);
+				}					
+			}
+
+		}
+		
+	}
+	
+	private void enviarNotificacionCambioSituacionLegalActivo(Usuario usuario, Activo activo) {
+		
+		Notificacion notificacion = new Notificacion();
+		
+		notificacion.setIdActivo(activo.getId());		
+		
+		String[] numActivo = {String.valueOf(activo.getNumActivo())};
+		notificacion.setDescripcion(messageServices.getMessage(AVISO_DESCRIPCION_MODIFICADAS_CONDICIONES_JURIDICAS, numActivo));
+		
+		notificacion.setTitulo(messageServices.getMessage(AVISO_TITULO_MODIFICADAS_CONDICIONES_JURIDICAS));		
+		notificacion.setDestinatario(usuario.getId());	
+									
+		
+		try {
+			
+			notificacionAdapter.saveNotificacion(notificacion);
+			logger.debug("ENVIO NOTIFICACION: [TITULO " + notificacion.getTitulo() + " | ACTIVO " + activo.getNumActivo() + "| DESTINATARIO " + usuario.getUsername() + " ]");
+			
+		} catch (ParseException e) {
+				logger.error(e.getMessage());
+		}
+		
 		
 	}
 

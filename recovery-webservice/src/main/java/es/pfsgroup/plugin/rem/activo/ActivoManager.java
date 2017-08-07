@@ -3267,7 +3267,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		propuesta.setFechaCarga(new Date());
 
 		DDEstadoPropuestaPrecio estado = (DDEstadoPropuestaPrecio) utilDiccionarioApi
-				.dameValorDiccionarioByCod(DDEstadoPropuestaPrecio.class, DDEstadoPropuestaPrecio.ESTADO_CARGADA);
+				.dameValorDiccionarioByCod(DDEstadoPropuestaPrecio.class, DDEstadoPropuestaPrecio.ESTADO_SANCIONADA);
 		propuesta.setEstado(estado);
 
 		genericDao.update(PropuestaPrecio.class, propuesta);
@@ -3760,7 +3760,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				importeLimite += 100000;
 				Double valorActivo = this.getImporteValoracionActivoByCodigo(activo, DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
 				
-				if(Checks.esNulo(valorActivo) && !Checks.esNulo(this.getTasacionMasReciente(activo)) && Checks.esNulo(this.getTasacionMasReciente(activo).getImporteTasacionFin()))
+				if(Checks.esNulo(valorActivo) && !Checks.esNulo(this.getTasacionMasReciente(activo)) && !Checks.esNulo(this.getTasacionMasReciente(activo).getImporteTasacionFin()))
 					valorActivo = this.getTasacionMasReciente(activo).getImporteTasacionFin().doubleValue();
 				
 				if(!Checks.esNulo(valorActivo)) {

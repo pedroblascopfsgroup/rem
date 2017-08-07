@@ -29,14 +29,22 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 				defaultType: 'textfieldbase',
 				items :
 					[
+						
 
+					
+						{ 	// Este campo es necesario para corregir lo que parece un BUG. 
+							// TODO Investigar porqué al quitar este campo, el valor del siguiente campo se manda siempre al guardar, aunque no se haya modificado.
+			            	hidden: true
+						},
 						{ 
 							xtype:'datefieldbase',
 							reference: 'fechaTomaPosesion',
+							allowBlank: false,
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.toma.posesion'),
-		                	bind:		'{situacionPosesoria.fechaTomaPosesion}'
+		                	bind:		'{situacionPosesoria.fechaTomaPosesion}',
+		                	readOnly: true
 		                },
-						{ 
+		                { 
 							xtype:'datefieldbase',
 							reference: 'fechaRevisionEstadoPosesorio',
 							allowBlank: false,

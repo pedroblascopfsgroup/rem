@@ -112,7 +112,7 @@ AS
     WHERE (pac.pac_id IS NULL OR pac.pac_check_comercializar = 1) AND (hic.hic_fecha IS NULL OR hic.hic_fecha = (SELECT MAX (hist2.hic_fecha)
   FROM ' || V_ESQUEMA || '.act_hic_est_inf_comer_hist hist2
   JOIN ' || V_ESQUEMA || '.dd_aic_accion_inf_comercial aic ON hist2.dd_aic_id = aic.dd_aic_id
- WHERE act.act_id = hist2.act_id and aic.DD_AIC_CODIGO in (''02'',''04''))) AND act.borrado = 0
+ WHERE act.act_id = hist2.act_id and aic.DD_AIC_CODIGO in (''01'',''02'',''03'',''04''))) AND act.borrado = 0
 ';
 
   DBMS_OUTPUT.PUT_LINE('Vista creada OK');

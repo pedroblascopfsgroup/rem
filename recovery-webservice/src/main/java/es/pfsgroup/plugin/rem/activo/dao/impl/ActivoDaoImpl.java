@@ -656,6 +656,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		hb.appendWhere("activopubli.numActivo = " + activo.getNumActivo());
 		
 		VBusquedaPublicacionActivo busquedaActivo = (VBusquedaPublicacionActivo) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).uniqueResult();
+		if(Checks.esNulo(busquedaActivo))
+			return null;
 		return busquedaActivo.getPrecio();
 	}
 	

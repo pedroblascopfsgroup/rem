@@ -14,7 +14,14 @@ Ext.define('HreRem.model.OfertaTanteoYRetracto', {
     			name:'numOferta'
     		},
 		    {
-    			name:'condicionesTransmision'
+    			name:'condicionesTransmision',
+    			convert: function(value){
+    				if(value == null){
+    					return '';
+    				}else{
+    					return value;
+    				}
+    			}
     		},
     		{
     			name:'fechaComunicacionReg',

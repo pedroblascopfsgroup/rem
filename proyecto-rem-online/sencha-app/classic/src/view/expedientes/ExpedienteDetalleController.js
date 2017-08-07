@@ -418,8 +418,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			me.getView().mask(HreRem.i18n("msg.mask.loading"));
 			var url =  $AC.getRemoteUrl('expedientecomercial/saveTanteo');
 			var params={};
-			if(formulario.findField("condiciones")!=null){
-				params['condiciones']= formulario.findField("condiciones").getValue();
+			if(formulario.findField("condicionesTransmision")!=null){
+				params['condicionesTransmision']= formulario.findField("condicionesTransmision").getValue();
 			}
 			if(formulario.findField("fechaComunicacion")!=null){
 				params['fechaComunicacion']= formulario.findField("fechaComunicacion").getValue();

@@ -152,12 +152,12 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
     												},
     												tpl: Ext.create('Ext.XTemplate',
 									            		    '<tpl for=".">',
-									            		        '<div class="x-boundlist-item">{codigo} - {nombreProveedor} - {subtipoProveedorDescripcion}</div>',
+									            		        '<div class="x-boundlist-item">{codigo} - {nombreProveedor} - {subtipoProveedorDescripcion} - {estadoProveedorDescripcion}</div>',
 									            		    '</tpl>'
 									            	),
 									            	displayTpl:  Ext.create('Ext.XTemplate',
 									            		    '<tpl for=".">',
-									            		        '{codigo} - {nombreProveedor} - {subtipoProveedorDescripcion}',
+									            		        '{codigo} - {nombreProveedor} - {subtipoProveedorDescripcion} - {estadoProveedorDescripcion}',
 									            		    '</tpl>'
 									            	)
 							            	    },					        

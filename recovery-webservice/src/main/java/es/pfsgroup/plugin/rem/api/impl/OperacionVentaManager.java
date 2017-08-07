@@ -255,7 +255,7 @@ public class OperacionVentaManager implements ParamReportsApi{
 			
 			Double importeA;
 			if(oferta.getImporteContraOferta() != null) {
-				importeA = oferta.getImporteContraOferta();
+				importeA = oferta.getImporteContraOferta()*participacion;
 			} else {
 				importeA = oferta.getImporteOferta()*participacion;
 			}

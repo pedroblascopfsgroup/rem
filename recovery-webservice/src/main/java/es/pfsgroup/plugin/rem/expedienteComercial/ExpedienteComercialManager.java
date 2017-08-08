@@ -4312,8 +4312,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if(!Checks.esNulo(tanteoActivoDto.getCondicionesTransmision())){
 			tanteoActivo.setCondicionesTx(tanteoActivoDto.getCondicionesTransmision());
-		}else {
-			tanteoActivo.setCondicionesTx("");
 		}
 		
 		if(!Checks.esNulo(tanteoActivoDto.getCodigoTipoAdministracion())){

@@ -133,6 +133,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
@@ -258,6 +259,8 @@ public class ActivoAdapter {
 	// "rest.client.gestor.documental.activar";
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	public static final String OFERTA_INCOMPATIBLE_MSG = "El tipo de oferta es incompatible con el destino comercial del activo";
+	public static final String AVISO_TITULO_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.titulo.modificadas.condiciones.juridicas";
+	public static final String AVISO_DESCRIPCION_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.descripcion.modificadas.condiciones.juridicas";
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -2753,29 +2756,71 @@ public class ActivoAdapter {
 		return usuariosPorTipoGestorYCarteraList;
 	}
 	
-	
-	private void enviarNotificacionCambioSituacionLegalActivo(Usuario usuario, Activo activo) {
+	public void enviarAvisosCambioSituacionLegalActivo(Activo activo, ExpedienteComercial expediente) {
 		
 		Notificacion notificacion = new Notificacion();
+		Usuario destinatario = null;
 		
-		notificacion.setIdActivo(activo.getId());
+		notificacion.setIdActivo(activo.getId());	
 		
-		String descripcionNotificacion = "Se han modificado las condiciones jurídicas del activo #numactivo. Revise las condiciones comunicadas al comprador"
-				.replace("#numactivo", activo.getNumActivo().toString());
-		notificacion.setDescripcion(descripcionNotificacion);
+		String[] numActivo = {String.valueOf(activo.getNumActivo())};
+		notificacion.setDescripcion(messageServices.getMessage(AVISO_DESCRIPCION_MODIFICADAS_CONDICIONES_JURIDICAS, numActivo));
 		
-		notificacion.setTitulo("Modificación condiciones jurídicas");		
-		notificacion.setDestinatario(usuario.getId());									
+		notificacion.setTitulo(messageServices.getMessage(AVISO_TITULO_MODIFICADAS_CONDICIONES_JURIDICAS));	
 		
-		try {
+		// Buscamos el gestor responsable de Haya
+		List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());						
+		
+		for(TareaActivo tarea: tramites.get(0).getTareas()) {
 			
-			notificacionAdapter.saveNotificacion(notificacion);
-			logger.debug("ENVIO NOTIFICACION: [TITULO " + notificacion.getTitulo() + " | ACTIVO " + activo.getNumActivo() + "| DESTINATARIO " + usuario.getUsername() + " ]");
-			
-		} catch (ParseException e) {
-				logger.error(e.getMessage());
+			if(!tarea.getAuditoria().isBorrado() && Checks.esNulo(tarea.getFechaFin())
+					&& genericAdapter.isGestorHaya(tarea.getUsuario())) {
+
+				if(Checks.esNulo(destinatario)) {
+					destinatario = tarea.getUsuario();
+				}
+											
+			}
 		}
+
+		if (!Checks.esNulo(destinatario)) {														
+			
+			notificacion.setDestinatario(destinatario.getId());									
+			
+			try {
+				
+				notificacionAdapter.saveNotificacion(notificacion);
+				logger.debug("ENVIO NOTIFICACION: [TITULO " + notificacion.getTitulo() + " | ACTIVO " + activo.getNumActivo() + "| DESTINATARIO " + destinatario.getUsername() + " ]");
+				
+			} catch (ParseException e) {
+					logger.error(e.getMessage());
+			}
+		}
+									
+		// Si expediente ya ha sido aprobado avisamos al gestor de formalización
+		if (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
+				|| DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())
+				|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
+				|| DDEstadosExpedienteComercial.ALQUILADO.equals(expediente.getEstado().getCodigo())
+				|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo())
+				|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo())) {
+			
+			Usuario gestorFormalizacion = gestorExpedienteComercialManager.getGestorByExpedienteComercialYTipo(expediente, "GFORM");
+			
+			if(!Checks.esNulo(gestorFormalizacion) && !gestorFormalizacion.equals(destinatario)) {
 		
-		
+				notificacion.setDestinatario(gestorFormalizacion.getId());								
+				
+				try {
+					
+					notificacionAdapter.saveNotificacion(notificacion);
+					logger.debug("ENVIO NOTIFICACION: [TITULO " + notificacion.getTitulo() + " | ACTIVO " + activo.getNumActivo() + "| DESTINATARIO " + gestorFormalizacion.getUsername() + " ]");
+					
+				} catch (ParseException e) {
+						logger.error(e.getMessage());
+				}
+			}
+		}
 	}
+	
 }

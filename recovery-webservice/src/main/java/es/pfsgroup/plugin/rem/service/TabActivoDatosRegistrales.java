@@ -7,6 +7,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +29,13 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdjudicacionBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistralBien;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceDesbloqExpCambioSitJuridica;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
@@ -66,27 +69,18 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	private OfertaApi ofertaApi;
 	
 	@Autowired
-	private ExpedienteComercialApi expedienteComercialApi;
-    
-    @Autowired 
-    private GestorExpedienteComercialManager gestorExpedienteComercialManager;
+	private ExpedienteComercialApi expedienteComercialApi; 
     
 	@Autowired
 	private ActivoTramiteApi activoTramiteApi;
 	
 	@Autowired
-	private GenericAdapter genericAdapter; 
+	private ActivoAdapter activoAdapter;
 	
-    @Autowired
-    private NotificacionAdapter notificacionAdapter;
-	
-	@Resource
-    MessageService messageServices;	
+	@Autowired
+	private NotificatorServiceDesbloqExpCambioSitJuridica notificatorServiceDesbloqueoExpediente;
 	
 	protected static final Log logger = LogFactory.getLog(TabActivoDatosRegistrales.class);
-	
-	public static final String AVISO_TITULO_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.titulo.modificadas.condiciones.juridicas";
-	public static final String AVISO_DESCRIPCION_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.descripcion.modificadas.condiciones.juridicas";
 	
 
 	@Override
@@ -428,75 +422,32 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	public void afterSaveTabActivo(Activo activo, WebDto dto) {
 		
 		DtoActivoDatosRegistrales dtoDatReg = (DtoActivoDatosRegistrales) dto;
-		Oferta oferta = ofertaApi.getOfertaAceptadaByActivo(activo);
-		Usuario destinatario=null;
-	
+		Oferta oferta = ofertaApi.getOfertaAceptadaByActivo(activo);	
 		
-		// Si el activo está asociado a un espediente, y si ha cambiado el estado del título registral a inscrito
-		if(!Checks.esNulo(oferta) && !Checks.esNulo(dtoDatReg.getEstadoTitulo()) && DDEstadoTitulo.ESTADO_INSCRITO.equals(dtoDatReg.getEstadoTitulo())) {
+		// Si ha cambiado el estado del título registral a inscrito
+		if(!Checks.esNulo(dtoDatReg.getEstadoTitulo()) && DDEstadoTitulo.ESTADO_INSCRITO.equals(dtoDatReg.getEstadoTitulo())) {
 			
-			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());			
-			//comprobar borrado y fechafinalizacion
-			List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());						
-			
-			for (TareaActivo tarea: tramites.get(0).getTareas()) {
-				
-				if(!tarea.getAuditoria().isBorrado() && Checks.esNulo(tarea.getFechaFin())
-						&& genericAdapter.isGestorHaya(tarea.getUsuario())) {
+			// Si tiene expediente 
+			if(!Checks.esNulo(oferta)) {
+				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+				// Si esta bloqueado, lo desbloqueamos y notificamos
+				if(!Checks.esNulo(expediente.getBloqueado()) && BooleanUtils.toBoolean(expediente.getBloqueado())) {
 					
-					if(Checks.esNulo(destinatario)) { 
-						destinatario = tarea.getUsuario();
-					}							
-				}
+					expediente.setBloqueado(0);					
+					genericDao.save(ExpedienteComercial.class, expediente);
+					
+					List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());	
+					if(!Checks.estaVacio(tramites)) {					
+						notificatorServiceDesbloqueoExpediente.notificator(tramites.get(0));
+					}
+					/// sino, solamente avisamos
+				} else {
+					
+					activoAdapter.enviarAvisosCambioSituacionLegalActivo(activo, expediente);					
+				}				
 			}
 			
-			if(!Checks.esNulo(destinatario)) {									
-									
-				enviarNotificacionCambioSituacionLegalActivo(destinatario, activo);
-			}
-				
-			// Si expediente ya ha sido aprobado avisamos a gestor de formalización
-			if (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
-						|| DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())
-						|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
-						|| DDEstadosExpedienteComercial.ALQUILADO.equals(expediente.getEstado().getCodigo())
-						|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo())
-						|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo())) {
-					
-				Usuario gestorFormalizacion = gestorExpedienteComercialManager.getGestorByExpedienteComercialYTipo(expediente, "GFORM");
-					
-				if(!Checks.esNulo(gestorFormalizacion) && !gestorFormalizacion.equals(destinatario)) {
-					enviarNotificacionCambioSituacionLegalActivo(gestorFormalizacion, activo);
-				}					
-			}
-
 		}
-		
-	}
-	
-	private void enviarNotificacionCambioSituacionLegalActivo(Usuario usuario, Activo activo) {
-		
-		Notificacion notificacion = new Notificacion();
-		
-		notificacion.setIdActivo(activo.getId());		
-		
-		String[] numActivo = {String.valueOf(activo.getNumActivo())};
-		notificacion.setDescripcion(messageServices.getMessage(AVISO_DESCRIPCION_MODIFICADAS_CONDICIONES_JURIDICAS, numActivo));
-		
-		notificacion.setTitulo(messageServices.getMessage(AVISO_TITULO_MODIFICADAS_CONDICIONES_JURIDICAS));		
-		notificacion.setDestinatario(usuario.getId());	
-									
-		
-		try {
-			
-			notificacionAdapter.saveNotificacion(notificacion);
-			logger.debug("ENVIO NOTIFICACION: [TITULO " + notificacion.getTitulo() + " | ACTIVO " + activo.getNumActivo() + "| DESTINATARIO " + usuario.getUsername() + " ]");
-			
-		} catch (ParseException e) {
-				logger.error(e.getMessage());
-		}
-		
-		
 	}
 
 }

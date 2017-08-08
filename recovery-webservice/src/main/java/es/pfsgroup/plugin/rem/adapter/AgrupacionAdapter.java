@@ -53,6 +53,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -176,6 +177,9 @@ public class AgrupacionAdapter {
 
 	@Resource
 	MessageService messageServices;
+
+	@Autowired
+	private NotificatorServiceSancionOfertaAceptacionYRechazo notificatorServiceSancionOfertaAceptacionYRechazo;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -1279,6 +1283,11 @@ public class AgrupacionAdapter {
 			}
 
 			genericDao.update(Oferta.class, oferta);
+			
+			// si la oferta ha sido rechazada enviamos un email/notificacion.
+			if (DDEstadoOferta.CODIGO_RECHAZADA.equals(tipoOferta.getCodigo())) {
+				notificatorServiceSancionOfertaAceptacionYRechazo.notificatorFinSinTramite(oferta.getId());
+			}
 
 //		} 
 //		catch (Exception ex) {

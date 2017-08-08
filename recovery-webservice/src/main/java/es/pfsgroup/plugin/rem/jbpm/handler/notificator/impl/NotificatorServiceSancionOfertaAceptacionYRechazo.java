@@ -10,10 +10,15 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 
 @Component
 public class NotificatorServiceSancionOfertaAceptacionYRechazo extends NotificatorServiceSancionOfertaGenerico implements NotificatorService{
-	
-	public static final String CODIGO_T013_SANCION_COMITE_EXTERNO = "T013_ResolucionComite";
-	public static final String CODIGO_T013_RESPUESTA_OFERTANTE = "T013_RespuestaOfertante";
-	public static final String CODIGO_T013_RATIFICACION_COMITE_EXTERNO = "T013_RatificacionComite";
+
+	private static final String CODIGO_T013_FIRMA = "T013_FirmaPropietario";
+	private static final String CODIGO_T013_RES_TANTEO = "T013_ResolucionTanteo";
+	private static final String CODIGO_T013_RES_EXPEDIENTE = "T013_ResolucionExpediente";
+	private static final String CODIGO_T013_RES_PBC = "T013_ResultadoPBC";
+	private static final String CODIGO_T013_DEV_LLAVES = "T013_DevolucionLlaves";
+	private static final String CODIGO_T013_SANCION_COMITE_EXTERNO = "T013_ResolucionComite";
+	private static final String CODIGO_T013_RESPUESTA_OFERTANTE = "T013_RespuestaOfertante";
+	private static final String CODIGO_T013_RATIFICACION_COMITE_EXTERNO = "T013_RatificacionComite";
 
 	@Override
 	public String[] getKeys() {
@@ -22,15 +27,24 @@ public class NotificatorServiceSancionOfertaAceptacionYRechazo extends Notificat
 
 	@Override
 	public String[] getCodigoTarea() {
-		return new String[] { CODIGO_T013_SANCION_COMITE_EXTERNO,
-				CODIGO_T013_RESPUESTA_OFERTANTE, CODIGO_T013_RATIFICACION_COMITE_EXTERNO };
+		return new String[] { 
+				CODIGO_T013_SANCION_COMITE_EXTERNO, 
+				CODIGO_T013_RESPUESTA_OFERTANTE, 
+				CODIGO_T013_RATIFICACION_COMITE_EXTERNO, 
+				CODIGO_T013_FIRMA, 
+				CODIGO_T013_RES_TANTEO, 
+				CODIGO_T013_RES_EXPEDIENTE, 
+				CODIGO_T013_RES_PBC, 
+				CODIGO_T013_DEV_LLAVES };
 	}
 
 
 	@Override
 	public void notificatorFinTareaConValores(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		this.generaNotificacion(tramite, true);
-		
 	}
 
+	public void notificatorFinSinTramite(Long idOferta) {
+		this.generaNotificacionSinTramite(idOferta);
+	}
 }

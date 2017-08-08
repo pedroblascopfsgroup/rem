@@ -428,7 +428,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		Oferta oferta = ofertaApi.getOfertaAceptadaByActivo(activo);	
 		
 		// Si ha cambiado el estado del título registral a inscrito
-		if(!Checks.esNulo(dtoDatReg.getEstadoTitulo()) && DDEstadoTitulo.ESTADO_INSCRITO.equals(dtoDatReg.getEstadoTitulo())) {
+		if(!Checks.esNulo(dtoDatReg.getEstadoTitulo()) || !Checks.esNulo(dtoDatReg.getFechaTitulo()) || !Checks.esNulo(dtoDatReg.getFechaSenalamientoPosesion())  /*&& DDEstadoTitulo.ESTADO_INSCRITO.equals(dtoDatReg.getEstadoTitulo())*/) {
 			
 			// Si tiene expediente 
 			if(!Checks.esNulo(oferta)) {

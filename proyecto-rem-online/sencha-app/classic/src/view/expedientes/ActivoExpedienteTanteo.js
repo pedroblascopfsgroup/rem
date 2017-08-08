@@ -332,13 +332,13 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 		                },
 		                {
 		                	xtype: 'textfieldbase',
-		                	name: 'condiciones',
+		                	name: 'condicionesTransmision',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.condiciones'),
 		                	colspan: 3,
 		                	defaultMaxWidth: '100%',
 		                	maxLength: 1999,
 		                	bind: {
-								value: '{condiciones}'
+								value: '{condicionesTransmision}'
 							}
 		                },
 		                {
@@ -398,6 +398,7 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 							formatter: 'date("d/m/Y")',
 							reference: 'fechaVisitaRef',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.fecha.realizacion.visita'),
+		                	maxValue: null,
 		                	bind: {
 		                		value: '{fechaVisita}',
 		                		minValue: '{fechaRespuesta}'

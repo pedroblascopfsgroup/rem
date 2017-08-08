@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 GUILLEM REY - HREOS-2520 - 20170808 - No contar publicados oculto
 --##########################################
 --*/
 
@@ -69,7 +70,7 @@ BEGIN
 				INNER JOIN ' || V_ESQUEMA || '.DD_EPU_ESTADO_PUBLICACION DD_EPU ON ACT.DD_EPU_ID = DD_EPU.DD_EPU_ID 
  				WHERE AGA.AGR_ID = AGR.AGR_ID 
 				AND ACT.DD_EPU_ID IS NOT NULL
-				AND DD_EPU.DD_EPU_CODIGO NOT IN (''05'',''06'')
+				AND DD_EPU.DD_EPU_CODIGO NOT IN (''03'',''05'',''06'')
        			AND DD_EPU.BORRADO = 0 AND AGA.BORRADO = 0
        		) AS PUBLICADOS,
 			COALESCE( OBR.DD_PRV_ID, RES.DD_PRV_ID, LCO.DD_PRV_ID, ASI.DD_PRV_ID) AS PROVINCIA,

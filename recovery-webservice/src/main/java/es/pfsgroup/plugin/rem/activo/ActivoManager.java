@@ -67,6 +67,7 @@ import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.condiciontanteo.CondicionTanteoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -277,6 +278,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Autowired
 	private GenericAdapter genericAdapter;
 
+	@Autowired
+	private NotificatorServiceSancionOfertaAceptacionYRechazo notificatorServiceSancionOfertaAceptacionYRechazo;
+
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
 	private static final String AVISO_MENSAJE_ACTIVO_EN_LOTE_COMERCIAL = "activo.aviso.aceptatar.oferta.activo.dentro.lote.comercial";
@@ -474,6 +478,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
 			genericDao.update(Oferta.class, oferta);
+
+			// si la oferta ha sido rechazada enviamos un email/notificacion.
+			if (DDEstadoOferta.CODIGO_RECHAZADA.equals(tipoOferta.getCodigo())) {
+				notificatorServiceSancionOfertaAceptacionYRechazo.notificatorFinSinTramite(oferta.getId());
+			}
 
 //		} 
 //		catch (Exception ex) {
@@ -1387,8 +1396,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		condicionantesDisponibilidad.setOtro(dtoCondicionanteDisponibilidad.getOtro());
 		
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		activoDao.publicarActivoPortal(idActivo, usuarioLogado.getUsername());
+		//Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		//activoDao.publicarActivoPortal(idActivo, usuarioLogado.getUsername());
 		
 		genericDao.save(ActivoSituacionPosesoria.class, condicionantesDisponibilidad);
 

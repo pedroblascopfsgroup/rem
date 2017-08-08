@@ -53,6 +53,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -176,6 +177,9 @@ public class AgrupacionAdapter {
 
 	@Resource
 	MessageService messageServices;
+
+	@Autowired
+	private NotificatorServiceSancionOfertaAceptacionYRechazo notificatorServiceSancionOfertaAceptacionYRechazo;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -1279,6 +1283,11 @@ public class AgrupacionAdapter {
 			}
 
 			genericDao.update(Oferta.class, oferta);
+			
+			// si la oferta ha sido rechazada enviamos un email/notificacion.
+			if (DDEstadoOferta.CODIGO_RECHAZADA.equals(tipoOferta.getCodigo())) {
+				notificatorServiceSancionOfertaAceptacionYRechazo.notificatorFinSinTramite(oferta.getId());
+			}
 
 //		} 
 //		catch (Exception ex) {
@@ -1745,6 +1754,11 @@ public class AgrupacionAdapter {
 			Activo activo = activoDao.get(Long.parseLong(idActivo));
 			if (!Checks.esNulo(activo.getEstadoPublicacion())) {
 				if (DDEstadoPublicacion.CODIGO_NO_PUBLICADO.equals(activo.getEstadoPublicacion().getCodigo())) {
+					if(activo.getSituacionComercial().getCodigo().equals(DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE)
+							|| activo.getSituacionComercial().getCodigo().equals(DDSituacionComercial.CODIGO_TRASPASADO)
+							|| activo.getSituacionComercial().getCodigo().equals(DDSituacionComercial.CODIGO_VENDIDO)) {
+						throw new Exception(AgrupacionAdapter.PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG);
+					}
 					activosIDAPublicar.add(idActivo);
 				} else {
 					// Si algún activo tiene estado y no se encuentra en estado

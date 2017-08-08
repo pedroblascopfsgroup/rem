@@ -109,10 +109,8 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 									logger.error("Error descongelando ofertas.", e);
 								}
 	
-							} else if (DDResolucionComite.CODIGO_CONTRAOFERTA.equals(valor.getValor())) if (!trabajoApi.checkSareb(tramite.getTrabajo()))
+							} else if (DDResolucionComite.CODIGO_CONTRAOFERTA.equals(valor.getValor())) 
 								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.CONTRAOFERTADO);
-							else
-								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DOBLE_FIRMA);
 						}
 	
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);

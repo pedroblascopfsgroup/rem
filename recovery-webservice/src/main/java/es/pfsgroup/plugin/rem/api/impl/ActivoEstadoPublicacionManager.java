@@ -27,6 +27,7 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
@@ -36,6 +37,7 @@ import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDPortal;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
 import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
 
@@ -259,7 +261,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 						motivo = dtoCambioEstadoPublicacion.getMotivoPublicacion();
 						
 						// Ademas, se publica el activo lanzando el procedure para este
-						publicarActivoProcedure(activo.getId(), genericAdapter.getUsuarioLogado().getNombre());
+						OkPublicacionSinPublicar= false;
+						//publicarActivoProcedure(activo.getId(), genericAdapter.getUsuarioLogado().getNombre());
 					} else {
 					// Si no cumple condiciones, se pasa a NO PUBLICADO
 						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
@@ -325,7 +328,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			if(filtro == null && dtoCambioEstadoPublicacion.getPublicacionOrdinaria()){
 				//filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO);
 				return true;
-			}else{
+			}else {
 				// Cambia al NUEVO ESTADO DE PUBLICACION y REGISTRA EN EL HISTORICO DE PUBLICACION -------------
 				return this.cambiarEstadoPublicacionAndRegistrarHistorico(activo, motivo, filtro, estadoPublicacionActual, 
 							dtoCambioEstadoPublicacion.getPublicacionForzada(), dtoCambioEstadoPublicacion.getPublicacionOrdinaria());
@@ -572,13 +575,15 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	
 	public boolean verificaValidacionesPublicacion(DtoPublicacionValidaciones dtoPublicacionValidaciones){
 
-		if(!Checks.esNulo(dtoPublicacionValidaciones) && !Checks.esNulo(dtoPublicacionValidaciones.getActivo())){
-			boolean tieneOkGestion = Checks.esNulo(dtoPublicacionValidaciones.getActivo().getAdmision()) ? false :  dtoPublicacionValidaciones.getActivo().getAdmision(); // Tiene OK de admision
-			boolean tieneOkAdmision = Checks.esNulo(dtoPublicacionValidaciones.getActivo().getGestion()) ? false :  dtoPublicacionValidaciones.getActivo().getGestion(); // Tiene OK de gestion
+		if(!Checks.esNulo(dtoPublicacionValidaciones) && !Checks.esNulo(dtoPublicacionValidaciones.getActivo())){			
+			boolean tieneOkAdmision = Checks.esNulo(dtoPublicacionValidaciones.getActivo().getAdmision()) ? false :  dtoPublicacionValidaciones.getActivo().getAdmision(); // Tiene OK de admision
+			boolean tieneOkGestion = Checks.esNulo(dtoPublicacionValidaciones.getActivo().getGestion()) ? false :  dtoPublicacionValidaciones.getActivo().getGestion(); // Tiene OK de gestion
 			boolean tieneOkPrecios = activoApi.getDptoPrecio(dtoPublicacionValidaciones.getActivo()); // Tiene OK de precios
 			boolean tieneInfComercialTiposIguales = !activoApi.checkTiposDistintos(dtoPublicacionValidaciones.getActivo()); // Tipos activo Inf. comercial iguales
 			boolean tieneInfComercialAceptado = activoApi.isInformeComercialAceptado(dtoPublicacionValidaciones.getActivo()); // Tiene Inf. comercial aceptado
-		
+			if(Checks.esNulo(tieneOkGestion) || Checks.esNulo(tieneOkAdmision) || Checks.esNulo(tieneOkPrecios) || Checks.esNulo(tieneInfComercialAceptado) 
+					|| Checks.esNulo(tieneInfComercialTiposIguales))
+				return false;
 			return 
 					(dtoPublicacionValidaciones.isValidarOKGestion() ? tieneOkGestion : true) &&
 					(dtoPublicacionValidaciones.isValidarOKAdmision() ? tieneOkAdmision : true) &&

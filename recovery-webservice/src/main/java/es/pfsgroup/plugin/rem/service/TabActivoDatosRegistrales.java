@@ -225,6 +225,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			
 			beanUtilNotNull.copyProperties(activo.getTitulo(), dto);
 			
+			
 			if (dto.getEstadoTitulo() != null) {
 				
 				DDEstadoTitulo estadoTituloNuevo = (DDEstadoTitulo) 
@@ -321,6 +322,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 					beanUtilNotNull.copyProperties(activo.getAdjNoJudicial(), dto);
 					
 					activo.setAdjNoJudicial((genericDao.save(ActivoAdjudicacionNoJudicial.class, activo.getAdjNoJudicial())));
+					activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaTitulo());
 					
 				} else if (activo.getTipoTitulo().getCodigo().equals(DDTipoTituloActivo.tipoTituloPDV)) {
 					ActivoPlanDinVentas pdv = null;
@@ -401,6 +403,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 					
 					activo.getAdjJudicial().setAdjudicacionBien((genericDao.save(NMBAdjudicacionBien.class, activo.getAdjJudicial().getAdjudicacionBien())));
 					activo.setAdjJudicial((genericDao.save(ActivoAdjudicacionJudicial.class, activo.getAdjJudicial())));
+					activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getBien().getAdjudicacion().getFechaSenalamientoPosesion());
 
 				}
 			

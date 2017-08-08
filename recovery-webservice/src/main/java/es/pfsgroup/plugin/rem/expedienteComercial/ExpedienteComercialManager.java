@@ -4283,7 +4283,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				tanteoDto.setFechaResolucion(tanteo.getFechaResolucion());
 				tanteoDto.setIdActivo(tanteo.getActivo().getId());
 				tanteoDto.setEcoId(tanteo.getExpediente().getId());
-				tanteoDto.setCondiciones(tanteo.getCondicionesTx());
+				tanteoDto.setCondicionesTransmision(tanteo.getCondicionesTx());
 
 				tanteosList.add(tanteoDto);
 			}
@@ -4302,7 +4302,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			tanteoActivo = new TanteoActivoExpediente();
 			tanteoActivo.setExpediente(this.findOne(tanteoActivoDto.getEcoId()));
 			tanteoActivo.setActivo(activoAdapter.getActivoById(tanteoActivoDto.getIdActivo()));
-			if(Checks.esNulo(tanteoActivoDto.getCondiciones())){
+			if(Checks.esNulo(tanteoActivoDto.getCondicionesTransmision())){
 				tanteoActivo.setCondicionesTx("Comprador asume la situación física, jurídica, registral, urbanística y administrativa existente");
 			}
 		}else{
@@ -4310,8 +4310,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(tanteoActivoDto.getId())));
 		}
 		
-		if(!Checks.esNulo(tanteoActivoDto.getCondiciones())){
-			tanteoActivo.setCondicionesTx(tanteoActivoDto.getCondiciones());
+		if(!Checks.esNulo(tanteoActivoDto.getCondicionesTransmision())){
+			tanteoActivo.setCondicionesTx(tanteoActivoDto.getCondicionesTransmision());
 		}
 		
 		if(!Checks.esNulo(tanteoActivoDto.getCodigoTipoAdministracion())){

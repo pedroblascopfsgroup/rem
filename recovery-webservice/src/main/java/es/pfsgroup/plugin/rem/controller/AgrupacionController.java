@@ -753,7 +753,11 @@ public class AgrupacionController extends ParadiseJsonController {
 			logger.error(jViewEx.getMessage());
 			model.put("msg", jViewEx.getMessage());
 			model.put("success", false);
-		} catch (Exception e) {
+		}catch(NullPointerException e) {
+			//logger.error(e);
+			model.put("msg", "NO HA SIDO POSIBLE REALIZAR LA OPERACIÓN");
+			model.put("success", false);
+		} catch (Exception e) {			
 			if (e.getMessage().equals(AgrupacionAdapter.PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG)) {
 				model.put("msg", AgrupacionAdapter.PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG);
 				model.put("success", false);
@@ -762,6 +766,7 @@ public class AgrupacionController extends ParadiseJsonController {
 				model.put("success", false);
 			} else {
 				logger.error(e);
+				model.put("msg", e.getMessage());
 				model.put("success", false);
 			}
 		}
@@ -790,6 +795,7 @@ public class AgrupacionController extends ParadiseJsonController {
 				model.put("success", false);
 			} else {
 				logger.error(e);
+				model.put("msg", e.getMessage());
 				model.put("success", false);
 			}
 		}
@@ -814,6 +820,7 @@ public class AgrupacionController extends ParadiseJsonController {
 				model.put("success", false);
 			} else {
 				logger.error(e);
+				model.put("msg", e.getMessage());
 				model.put("success", false);
 			}
 		}

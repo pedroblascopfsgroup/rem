@@ -27,7 +27,6 @@ import es.pfsgroup.plugin.rem.api.GenerarFacturaVentaActivosApi;
 import es.pfsgroup.plugin.rem.api.ParamReportsApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -182,7 +181,11 @@ public class OperacionVentaController {
 		            } else {
 		                n = Math.abs(n);
 		            }
-					String name ="Hoja_Datos_Exp_" + String.valueOf(numExpediente) +"_"+Long.toString(n) +".pdf";
+		            String aleatorio = Long.toString(n);
+		            if(aleatorio.length() > 5){
+		            	aleatorio = aleatorio.substring(0, 5);
+		            }
+					String name ="Hoja_Datos_Exp_" + String.valueOf(numExpediente) +"_"+aleatorio +".pdf";
 					excelReportGeneratorApi.sendReport(name,salida, response);
 				} catch (IOException e) {
 					model.put("error", e.getLocalizedMessage());	

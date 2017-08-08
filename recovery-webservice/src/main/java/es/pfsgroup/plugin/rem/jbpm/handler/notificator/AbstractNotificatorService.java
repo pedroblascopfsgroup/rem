@@ -186,11 +186,15 @@ public abstract class AbstractNotificatorService{
 		DtoSendNotificator dtoSendNotificator = new DtoSendNotificator();
 		
 		dtoSendNotificator.setNumActivo(tramite.getActivo().getNumActivo());
-		dtoSendNotificator.setTipoContrato(tramite.getTrabajo().getSubtipoTrabajo().getDescripcion());
 		dtoSendNotificator.setDireccion(this.generateDireccion(tramite.getActivo()));
-		dtoSendNotificator.setNumTrabajo(tramite.getTrabajo().getNumTrabajo());
-		dtoSendNotificator.setFechaFinalizacion(this.generateFechaTrabajo(tramite.getTrabajo()));
-		if(!Checks.esNulo(tramite.getTrabajo().getAgrupacion()))
+
+		if (!Checks.esNulo(tramite.getTrabajo())) {
+			dtoSendNotificator.setTipoContrato(tramite.getTrabajo().getSubtipoTrabajo().getDescripcion());
+			dtoSendNotificator.setNumTrabajo(tramite.getTrabajo().getNumTrabajo());
+			dtoSendNotificator.setFechaFinalizacion(this.generateFechaTrabajo(tramite.getTrabajo()));	
+		}
+
+		if(!Checks.esNulo(tramite.getTrabajo()) && !Checks.esNulo(tramite.getTrabajo().getAgrupacion()))
 			dtoSendNotificator.setNumAgrupacion(tramite.getTrabajo().getAgrupacion().getNumAgrupRem());
 		
 		return dtoSendNotificator;

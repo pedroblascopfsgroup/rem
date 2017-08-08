@@ -7,6 +7,8 @@ import java.util.ArrayList;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import net.sf.json.JSONObject;
+
 public interface DtoToEntityApi {
 
 	/**
@@ -25,7 +27,7 @@ public interface DtoToEntityApi {
 	 * @throws SecurityException
 	 */
 	@Transactional(readOnly = false)
-	public Serializable saveDtoToBbdd(Object dto, ArrayList<Serializable> objetoEntity)
+	public Serializable saveDtoToBbdd(Object dto, ArrayList<Serializable> objetoEntity,JSONObject jsonFields)
 			throws Exception;
 
 	/**

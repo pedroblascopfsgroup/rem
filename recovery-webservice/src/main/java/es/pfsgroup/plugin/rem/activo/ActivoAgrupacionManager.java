@@ -212,7 +212,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 		Long agrupacionId = Long.parseLong(fileItem.getMetadata().get("id_agrupacion_haya"));
 		//ActivoAgrupacion agrupacion = this.get(agrupacionId);
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", agrupacionId);
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", agrupacionId);
 		ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
 		try {
 			if (agrupacion != null) {

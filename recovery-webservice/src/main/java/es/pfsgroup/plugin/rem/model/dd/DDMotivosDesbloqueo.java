@@ -33,6 +33,7 @@ public class DDMotivosDesbloqueo implements Auditable, Dictionary {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
 
 	@Id
 	@Column(name = "DD_MDE_ID")

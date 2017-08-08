@@ -62,18 +62,15 @@ BEGIN
     WHERE ERE.DD_ERE_CODIGO = '02' AND TRUNC(RES_FECHA_VENCIMIENTO)-TRUNC(SYSDATE) < 10 
         AND TRUNC(RES_FECHA_VENCIMIENTO) > TRUNC(SYSDATE) AND LCO.LCO_GESTOR_COMERCIAL IS NOT NULL
         AND NOT EXISTS (SELECT 1 FROM REM01.MNO_MAESTRO_NOTIFICACIONES AUX WHERE AUX.EIN_ID = ACT.ACT_ID AND AUX.TAR_ID_DEST = LCO.LCO_GESTOR_COMERCIAL
-            AND AUX.TAR_DESCRIPCION = 'Vencimiento reserva próximo. Verifique la situación de la firma de la reserva y, en su caso, solicite ampliación de plazo, reflejando la nueva fecha de vencimiento en el expediente comercial');;
+            AND AUX.TAR_DESCRIPCION = 'Vencimiento reserva próximo. Verifique la situación de la firma de la reserva y, en su caso, solicite ampliación de plazo, reflejando la nueva fecha de vencimiento en el expediente comercial');
 
     COMMIT;
 
 EXCEPTION
-    WHEN NO_DATA_FOUND THEN
-        DBMS_OUTPUT.PUT_LINE('[ERROR] No se ha proporcionado una cartera válida: '||cartera);
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE));
         DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------');
         DBMS_OUTPUT.PUT_LINE(SQLERRM);
-        DBMS_OUTPUT.PUT_LINE(TABLA);
         ROLLBACK;
         RAISE;
 END;

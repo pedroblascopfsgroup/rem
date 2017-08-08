@@ -1754,6 +1754,11 @@ public class AgrupacionAdapter {
 			Activo activo = activoDao.get(Long.parseLong(idActivo));
 			if (!Checks.esNulo(activo.getEstadoPublicacion())) {
 				if (DDEstadoPublicacion.CODIGO_NO_PUBLICADO.equals(activo.getEstadoPublicacion().getCodigo())) {
+					if(activo.getSituacionComercial().getCodigo().equals(DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE)
+							|| activo.getSituacionComercial().getCodigo().equals(DDSituacionComercial.CODIGO_TRASPASADO)
+							|| activo.getSituacionComercial().getCodigo().equals(DDSituacionComercial.CODIGO_VENDIDO)) {
+						throw new Exception(AgrupacionAdapter.PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG);
+					}
 					activosIDAPublicar.add(idActivo);
 				} else {
 					// Si algún activo tiene estado y no se encuentra en estado

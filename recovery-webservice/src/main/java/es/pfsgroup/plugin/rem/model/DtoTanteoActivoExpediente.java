@@ -28,7 +28,7 @@ public class DtoTanteoActivoExpediente extends WebDto {
 	private Date fechaResolucion;
 	private Long idActivo;
 	private Long ecoId;
-	private String condiciones;
+	private String condicionesTransmision;
 	
 
 	
@@ -166,12 +166,12 @@ public class DtoTanteoActivoExpediente extends WebDto {
 		this.fechaSolicitudVisita = fechaSolicitudVisita;
 	}
 
-	public String getCondiciones() {
-		return condiciones;
+	public String getCondicionesTransmision() {
+		return condicionesTransmision;
 	}
 
-	public void setCondiciones(String condiciones) {
-		this.condiciones = condiciones;
+	public void setCondicionesTransmision(String condicionesTransmision) {
+		this.condicionesTransmision = condicionesTransmision;
 	}
 
 	public Integer getSolicitaVisitaCodigo() {

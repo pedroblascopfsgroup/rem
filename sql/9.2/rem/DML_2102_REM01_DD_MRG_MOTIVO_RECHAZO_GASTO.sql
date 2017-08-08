@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20170512
+--## FECHA_CREACION=201700807
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1938
+--## VERSION_ARTEFACTO=2.0.7
+--## INCIDENCIA_LINK=HREOS-2547
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_GRF_GESTORIA_RECEP_FICH los datos añadidos de T_ARRAY_DATA
@@ -73,7 +73,9 @@ DECLARE
 		T_TIPO_DATA('F24' ,'Valor incorrecto para "tipo_envio" (DD -> DD_TEN_TIPO_ENVIO)', '1' ,'LEFT JOIN DD_TEN_TIPO_ENVIO TEN ON TEN.DD_TEN_CODIGO = AUX.TIPO_ENVIO WHERE TEN.DD_TEN_ID is null'),
 		T_TIPO_DATA('F25' ,'Esta cumplimentado sin ser obligatorio, pero el valor es incorrecto para "motivo_anulacion" (DD -> DD_MAG_MOTIVOS_ANULACION_GASTO)', '1' ,'LEFT JOIN DD_MAG_MOTIVOS_ANULACION_GASTO MAG ON MAG.DD_MAG_CODIGO = AUX.MOTIVO_ANULACION WHERE MAG.DD_MAG_ID is null AND AUX.MOTIVO_ANULACION is not null'),
 		T_TIPO_DATA('F26' ,'La cuenta contable no está informada', '1', 'WHERE AUX.CUENTA_CONTABLE_ESPECIAL IS NULL'),
-		T_TIPO_DATA('F27' ,'La partida presupuestaria no está informada', '1', 'WHERE AUX.PARTIDA_PRESU_ESPECIAL IS NULL')
+		T_TIPO_DATA('F27' ,'La partida presupuestaria no está informada', '1', 'WHERE AUX.PARTIDA_PRESU_ESPECIAL IS NULL'),
+    T_TIPO_DATA('F28' ,'La fecha_devengo es posterior a 30 días vista', '1', 'WHERE AUX.TRUNC(FECHA_DEVENGO_REAL) > TRUNC(SYSDATE) + 30'),
+    T_TIPO_DATA('F29' ,'No pueden darse alta gastos de tipo: Cobro de renta de alquiler o Cobro precio venta', '1', 'WHERE AUX.TIPO_GASTO IN ('04','05')')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

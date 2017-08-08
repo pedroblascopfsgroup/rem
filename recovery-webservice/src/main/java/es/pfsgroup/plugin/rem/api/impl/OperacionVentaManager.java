@@ -255,7 +255,7 @@ public class OperacionVentaManager implements ParamReportsApi{
 			
 			Double importeA;
 			if(oferta.getImporteContraOferta() != null) {
-				importeA = oferta.getImporteContraOferta();
+				importeA = oferta.getImporteContraOferta()*participacion;
 			} else {
 				importeA = oferta.getImporteOferta()*participacion;
 			}
@@ -310,11 +310,11 @@ public class OperacionVentaManager implements ParamReportsApi{
 			} else {
 				mapaValores.put("tipoImpuesto",FileUtilsREM.stringify(null));
 			}
-			if(!Checks.esNulo(condExp.getPorcentajeReserva())){
-				mapaValores.put("porcentajeImp",FileUtilsREM.stringify(condExp.getPorcentajeReserva()));
-			}else {
+			if(!Checks.esNulo(condExp.getTipoAplicable())){
+				mapaValores.put("porcentajeImp",FileUtilsREM.stringify(condExp.getTipoAplicable()).concat("%"));
+			}else {						
 				mapaValores.put("porcentajeImp", FileUtilsREM.stringify(null));
-			}
+			}	
 			
 			
 			List<ActivoTasacion> listActivoTasacion = activoDao.getListActivoTasacionByIdActivo(activo.getId());
@@ -545,7 +545,7 @@ public class OperacionVentaManager implements ParamReportsApi{
 				mapaValores.put("tipoImpuesto",FileUtilsREM.stringify(null));
 			}
 			
-			mapaValores.put("porcentajeImp",FileUtilsREM.stringify(condExp.getPorcentajeReserva()));
+			mapaValores.put("porcentajeImp",FileUtilsREM.stringify(condExp.getTipoAplicable()).concat("%"));
 			
 			if (activo!=null) {
 				List<ActivoTasacion> listActivoTasacion = activoDao.getListActivoTasacionByIdActivo(activo.getId());

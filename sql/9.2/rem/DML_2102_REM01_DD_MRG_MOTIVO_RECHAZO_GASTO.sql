@@ -75,7 +75,7 @@ DECLARE
 		T_TIPO_DATA('F26' ,'La cuenta contable no está informada', '1', 'WHERE AUX.CUENTA_CONTABLE_ESPECIAL IS NULL'),
 		T_TIPO_DATA('F27' ,'La partida presupuestaria no está informada', '1', 'WHERE AUX.PARTIDA_PRESU_ESPECIAL IS NULL'),
     T_TIPO_DATA('F28' ,'La fecha_devengo es posterior a 30 días vista', '1', 'WHERE AUX.TRUNC(FECHA_DEVENGO_REAL) > TRUNC(SYSDATE) + 30'),
-    T_TIPO_DATA('F29' ,'No pueden darse alta gastos de tipo: Cobro de renta de alquiler o Cobro precio venta', '1', 'WHERE AUX.TIPO_GASTO IN ('04','05')')
+    T_TIPO_DATA('F29' ,'No pueden darse alta gastos de tipo: Cobro de renta de alquiler o Cobro precio venta', '1', 'WHERE AUX.TIPO_GASTO IN (''''04'''',''''05'''')')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

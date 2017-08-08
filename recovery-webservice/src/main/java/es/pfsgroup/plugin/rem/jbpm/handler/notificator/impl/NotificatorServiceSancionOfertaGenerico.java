@@ -83,69 +83,65 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	@Autowired
 	private GenericABMDao genericDao;
 
+	@Autowired
+	private GestorActivoApi gestorActivoManager;
 
 	@Override
 	public final void notificator(ActivoTramite tramite) {
 
 	}
-	
-	
-	public final void pruebaEnvioNotificacion (String destinatario){
-		ActivoTramite tramite = new ActivoTramite();
-		
-		Activo activo = new Activo();
-		activo.setNumActivo(1234L);
-		NMBBien bien = new NMBBien();
-		bien.setLocalizaciones(Arrays.asList(new NMBLocalizacionesBien()));
-		activo.setBien(bien);
-		tramite.setActivo(activo);
-		
-		
-		Trabajo trabajo = new Trabajo();
-		DDSubtipoTrabajo subtipoTrabajo = new DDSubtipoTrabajo();
-		subtipoTrabajo.setDescripcion("Trabajo Fake");
-		trabajo.setSubtipoTrabajo(subtipoTrabajo);
-		trabajo.setNumTrabajo(1234567L);
-		trabajo.setFechaTope(new Date());
-		tramite.setTrabajo(trabajo);
-		
-		Oferta oferta = new Oferta();
-		
-		enviaNotificacionAceptar(tramite, oferta, 1L, destinatario);
-		
-		enviaNotificacionRechazar(tramite, activo, oferta, destinatario);
-	}
-	
 
 	protected void generaNotificacion(ActivoTramite tramite, boolean permieRechazar) {
 		
 		Activo activo = tramite.getActivo();
-		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+		Oferta oferta = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 
-		if(!Checks.esNulo(ofertaAceptada)){
-			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
-			if(DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())){ // APROVACIÓN
+		ActivoTramite tramiteSimulado = new ActivoTramite();
+		tramiteSimulado.setActivo(activo);
+
+		sendNotification(tramiteSimulado, permieRechazar, activo, oferta);
+	}
+
+	private void sendNotification(ActivoTramite tramite, boolean permiteRechazar, Activo activo, Oferta oferta) {
+
+		if(!Checks.esNulo(oferta)){
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+			if(!Checks.esNulo(expediente) && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) { // APROVACIÓN
 	
-				ArrayList<String> destinatarios = getDestinatariosNotificacion(activo, ofertaAceptada, expediente);
-				
-				if (! destinatarios.isEmpty()){
-					this.enviaNotificacionAceptar(tramite, ofertaAceptada, expediente.getReserva() != null ? expediente.getId() : null, destinatarios.toArray(new String[]{}));
-				} else {
-					logger.warn("No se han encontrado destinatarios para la notificación. No se va a enviar la notificación [oferta.id=" + ofertaAceptada.getId() + "]");
+				ArrayList<String> destinatarios = getDestinatariosNotificacion(activo, oferta, expediente);
+
+				if (destinatarios.isEmpty()) {
+					logger.warn("No se han encontrado destinatarios para la notificación. No se va a enviar la notificación [oferta.id=" + oferta.getId() + "]");
+					return;
 				}
-				
-				
-			} else if (permieRechazar && DDEstadoOferta.CODIGO_RECHAZADA.equals(ofertaAceptada.getEstadoOferta().getCodigo())) { // RECHAZO
-				String prescriptor = getPrescriptor(activo, ofertaAceptada);
-				if (! Checks.esNulo(prescriptor)) {
-					this.enviaNotificacionRechazar(tramite, activo, ofertaAceptada, prescriptor);
-				} else {
-					logger.warn("No se ha encontrado el prescriptor. No se va a mandar la notificación [oferta.id=" + ofertaAceptada.getId() + "]");
+
+				this.enviaNotificacionAceptar(tramite, oferta, expediente.getReserva() != null ? expediente.getId() : null, destinatarios.toArray(new String[]{}));
+
+			} else if (permiteRechazar && DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) { // RECHAZO
+				String prescriptor = getPrescriptor(activo, oferta);
+
+				if (Checks.esNulo(prescriptor)) {
+					logger.warn("No se ha encontrado el prescriptor. No se va a mandar la notificación [oferta.id=" + oferta.getId() + "]");
+					return;
 				}
+
+				this.enviaNotificacionRechazar(tramite, activo, oferta, prescriptor);
 			}
 		}
 	}
 
+	protected void generaNotificacionSinTramite(Long idOferta) {
+
+		Oferta oferta = ofertaApi.getOfertaById(idOferta);
+		Activo activo = oferta.getActivoPrincipal(); 
+
+		// ya que se trata de una notificacion sin tramite simulamos uno para cumplir con la definicion de los metodos comunes 
+		// ya que la idea es que se genere exactamente la misma notificacion como si viniera de un tramite
+		ActivoTramite tramiteSimulado = new ActivoTramite();
+		tramiteSimulado.setActivo(activo);
+
+		sendNotification(tramiteSimulado, true, activo, oferta);
+	}
 
 	private String getPrescriptor(Activo activo, Oferta ofertaAceptada) {
 		Map<String, String> gestores = getGestores(activo, ofertaAceptada, null, null, GESTOR_PRESCRIPTOR);
@@ -290,11 +286,32 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	}
 
 	private void enviaNotificacionAceptar(ActivoTramite tramite, Oferta oferta, Long idExpediente, String ...destinatarios) {
-		String asunto = "Aceptación Provisional de la Oferta y Formalización de la Reserva de la Oferta";
-		String cuerpo = "<p>Nos complace informarles que la oferta #" + oferta.getNumOferta() + ", que se detalla en los documentos adjuntos, ha sido PROVISIONALMENTE ACEPTADA. Siga las instrucciones indicadas.</p>";
+		String asunto = "Notificación de aprobación provisional de la oferta " + oferta.getNumOferta();
+		String cuerpo = "<p>Nos complace comunicarle que la oferta " + oferta.getNumOferta() + " ha sido PROVISIONALMENTE ACEPTADA. Adjunto a este correo encotnrará el documento con las instrucciones a seguir para la formalización de la reserva.</p>";
 		if (idExpediente != null) {
-			cuerpo = cuerpo + "<p>Puede descargar la reserva desde <a href=\"https://ws.haya.es/test-word/reservation/" + idExpediente + "/1\">aquí</a></p>";
+			cuerpo = cuerpo + "<p>Pinche <a href=\"https://ws.haya.es/test-word/reservation/" + idExpediente + "/1\">aquí</a> para la descarga del contrato de reserva.</p>";
 		}
+
+		cuerpo = cuerpo + "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
+
+		Usuario gestorComercial = null;
+
+		if (!Checks.esNulo(oferta.getAgrupacion()) && !Checks.esNulo(oferta.getAgrupacion().getTipoAgrupacion() != null)) {
+			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo()) && oferta.getAgrupacion() instanceof ActivoLoteComercial) {
+				ActivoLoteComercial activoLoteComercial = (ActivoLoteComercial) oferta.getAgrupacion();
+				gestorComercial = activoLoteComercial.getUsuarioGestorComercial();
+			} else {
+				// Lote Restringido
+				gestorComercial = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "GCOM");
+			}
+		} else {
+			// Activo
+			gestorComercial = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "GCOM");
+		}
+
+		cuerpo = cuerpo + String.format("<p>Gestor comercial: %s </p>", gestorComercial.getApellidoNombre());
+		cuerpo = cuerpo + String.format("<p>%s</p>", gestorComercial.getEmail());
+
 		String cuerpoCorreo = this.generateCuerpo(this.rellenaDtoSendNotificator(tramite), cuerpo);
 		enviaNotificacionGenerico(asunto, cuerpoCorreo, true, destinatarios);
 	}
@@ -304,7 +321,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		if (oferta.getAgrupacion() != null) {
 			numAgrupacion = " / #" + oferta.getAgrupacion().getNumAgrupRem();
 		}
-		String asunto = "Rechazo de la oferta";
+		String asunto = "Notificación de rechazo de oferta " + oferta.getNumOferta();
 		String cuerpo = "La oferta #" + oferta.getNumOferta() + " presentada por el activo #" + activo.getNumActivo() + numAgrupacion + " ha sido rechazada.";
 		String cuerpoCorreo = this.generateCuerpo(this.rellenaDtoSendNotificator(tramite), cuerpo);
 		enviaNotificacionGenerico(asunto, cuerpoCorreo, false, destinatarios);

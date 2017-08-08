@@ -37,6 +37,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -312,7 +313,10 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		cuerpo = cuerpo + String.format("<p>Gestor comercial: %s </p>", gestorComercial.getApellidoNombre());
 		cuerpo = cuerpo + String.format("<p>%s</p>", gestorComercial.getEmail());
 
-		String cuerpoCorreo = this.generateCuerpo(this.rellenaDtoSendNotificator(tramite), cuerpo);
+		DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
+		dtoSendNotificator.setTitulo(asunto);
+
+		String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
 		enviaNotificacionGenerico(asunto, cuerpoCorreo, true, destinatarios);
 	}
 	
@@ -323,7 +327,11 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		}
 		String asunto = "Notificación de rechazo de oferta " + oferta.getNumOferta();
 		String cuerpo = "La oferta #" + oferta.getNumOferta() + " presentada por el activo #" + activo.getNumActivo() + numAgrupacion + " ha sido rechazada.";
-		String cuerpoCorreo = this.generateCuerpo(this.rellenaDtoSendNotificator(tramite), cuerpo);
+
+		DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
+		dtoSendNotificator.setTitulo(asunto);
+
+		String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
 		enviaNotificacionGenerico(asunto, cuerpoCorreo, false, destinatarios);
 	}
 	

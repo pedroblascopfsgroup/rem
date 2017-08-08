@@ -398,6 +398,7 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 							formatter: 'date("d/m/Y")',
 							reference: 'fechaVisitaRef',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.fecha.realizacion.visita'),
+		                	maxValue: null,
 		                	bind: {
 		                		value: '{fechaVisita}',
 		                		minValue: '{fechaRespuesta}'

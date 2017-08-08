@@ -1263,7 +1263,7 @@ public class ActivoAdapter {
 						listaActivoFoto = genericDao.getListOrdered(ActivoFoto.class, order, filtro);
 					}
 				} catch (Exception e) {
-					logger.error("Error obteniedno las fotos del CDN", e);
+					logger.error("Error obteniendo las fotos del CDN", e);
 				}
 
 			}

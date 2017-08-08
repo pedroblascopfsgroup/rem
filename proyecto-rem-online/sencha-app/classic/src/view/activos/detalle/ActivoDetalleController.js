@@ -166,7 +166,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
    	onSaveFormularioCompleto: function(btn, form) {
 
 		var me = this;
-
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones.
 		if(form.isFormValid() || form.disableValidation) {
 			
@@ -211,7 +211,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				me.saveMultipleRecords(contador, records, form);
 			}
 		} else {
+			me.getView().unmask();
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
+			
 		}
 		
 	},
@@ -710,7 +712,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
      * funciónRecargar con el código necesario para refrescar los datos.
      */
 	onClickBotonRefrescar: function (btn) {
-		
 		var me = this;
 		me.refrescarActivo(true);
 
@@ -1234,16 +1235,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	switch (id){
     	case "chkbxpublicacionordinaria":
     		// checkbox.
-    		view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
+    		//view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
     		view.lookupReference('chkbxpublicaciondespublicar').setValue(false);
     		view.lookupReference('chkbxpublicacionocultacionforzada').setValue(false);
-    		view.lookupReference('chkbxpublicacionforzada').setValue(false);
+    		//view.lookupReference('chkbxpublicacionforzada').setValue(false);
     		// textfield.
-    		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
+    		//view.lookupReference('textfieldpublicacionocultacionprecio').reset();
     		view.lookupReference('textfieldpublicaciondespublicar').reset();
     		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
     		view.lookupReference('textfieldpublicacionpublicar').reset();
-    		view.lookupReference('textfieldpublicacionocultacionprecio').setAllowBlank(true);
+    		//view.lookupReference('textfieldpublicacionocultacionprecio').setAllowBlank(true);
     		view.lookupReference('textfieldpublicaciondespublicar').setAllowBlank(true);
     		view.lookupReference('textfieldpublicacionocultacionforzada').setAllowBlank(true);
     		view.lookupReference('textfieldpublicacionpublicar').setAllowBlank(false);
@@ -1255,7 +1256,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
     		view.lookupReference('chkbxpublicaciondespublicar').setValue(false);
     		view.lookupReference('chkbxpublicacionocultacionforzada').setValue(false);
-    		view.lookupReference('chkbxpublicacionordinaria').setValue(false);
+    		//view.lookupReference('chkbxpublicacionordinaria').setValue(false);
     		// textfield.
     		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
     		view.lookupReference('textfieldpublicaciondespublicar').reset();
@@ -1726,9 +1727,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						// Ha de ser mayor o igual que la fecha fin descuento aprobado, si existe
 						return HreRem.i18n('info.datefield.begin.date.pdw.msg.validacion');
 					}
-					if(!Ext.isEmpty(fechaInicioExistenteAprobadoVentaWeb) && fechaInicioDescuentoPublicadoWeb < fechaInicioExistenteAprobadoVentaWeb) {
+					if(!Ext.isEmpty(fechaFinExistenteDescuentoAprobado) && fechaFinExistenteDescuentoAprobado < fechaFinDescuentoPublicadoWeb) {
 						// Ha de ser mayor o igual que la fecha fin aprobado venta web, si existe
-						return HreRem.i18n('info.datefield.begin.date.pdw.msg.validacion.dos');
+						return HreRem.i18n('info.datefield.end.date.descuento.web');
 					}
 				} else {
 					// La fecha de inicio
@@ -2269,13 +2270,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this,
 		form = grid.up("form"),
 		model = Ext.create('HreRem.model.DetalleOfertaModel'),
-		idOferta = null,
-		idActivo = null;
+		idOferta = null;
+		var activo = me.getViewModel().get('activo');
+		idActivo= activo.get('id');
 
 		if(!Ext.isEmpty(grid.selection)){
 			idOferta = record.get("idOferta");
-			idActivo = record.get("idActivo");
-    	}
+		}
 
 		var fieldset =  me.lookupReference('detalleOfertaFieldsetref');
 		fieldset.mask(HreRem.i18n("msg.mask.loading"));
@@ -2518,7 +2519,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var url =  $AC.getRemoteUrl('proveedores/searchProveedorCodigo');
 		var codPrescriptor = field.getValue();
 		var data;
-		var re = new RegExp("^((04$))|^((18$))|^((28$))|^((29$))|^((31$)).*$");
+		var re = new RegExp("^((04$))|^((18$))|^((28$))|^((29$))|^((31$))|^((37$))|^((30$)).*$");
 
 		
 		Ext.Ajax.request({

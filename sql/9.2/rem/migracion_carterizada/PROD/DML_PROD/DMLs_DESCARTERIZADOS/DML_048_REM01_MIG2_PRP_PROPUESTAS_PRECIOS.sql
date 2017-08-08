@@ -85,7 +85,7 @@ BEGIN
                         0                                                                                                                       BORRADO
                   FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG 
                   INNER JOIN '||V_ESQUEMA||'.DD_EPP_ESTADO_PROP_PRECIO EPP 
-                        ON DD_EPP_CODIGO = MIG.PRP_COD_ESTADO_PRP 
+                        ON DD_EPP_CODIGO = ''03''
                   LEFT JOIN '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU 
                         ON USU.USU_USERNAME = MIG.PRP_COD_USUARIO
                   INNER JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA 

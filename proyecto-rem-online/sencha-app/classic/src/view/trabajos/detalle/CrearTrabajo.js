@@ -121,7 +121,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 										        	width: 		'100%',
 										        	bind: {
 									            		store: '{comboGestorActivoResponsable}',
-									            		value: '{trabajo.idGestorActivoResponsable}',
+									            		value: '{trabajo.idGestorActivoResponsable}'
 									            	},
 									            	displayField: 'apellidoNombre',
 						    						valueField: 'id',
@@ -132,7 +132,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 								                	reference: 'textAdvertenciaCrearTrabajo',
 								                	style: 'color: red; font-weight: bolder;',
 								                	width: 		'100%',
-								                	colspan: 1,
+								                	colspan: 1
 						                		},
 						                		{ 
 													xtype: 'comboboxfieldbase',
@@ -143,7 +143,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 										        	width: 		'100%',
 										        	bind: {
 									            		store: '{comboSupervisorActivoResponsable}',
-									            		value: '{trabajo.idSupervisorActivo}',
+									            		value: '{trabajo.idSupervisorActivo}'
 									            	},
 									            	displayField: 'apellidoNombre',
 						    						valueField: 'id',

@@ -1,35 +1,58 @@
 package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.util.List;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.agenda.adapter.NotificacionAdapter;
+import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdjudicacionBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistralBien;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceDesbloqExpCambioSitJuridica;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoPlanDinVentas;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadEjecutante;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdjudicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDivHorizontal;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 
@@ -41,6 +64,23 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
+	
+	@Autowired
+	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi; 
+    
+	@Autowired
+	private ActivoTramiteApi activoTramiteApi;
+	
+	@Autowired
+	private ActivoAdapter activoAdapter;
+	
+	@Autowired
+	private NotificatorServiceDesbloqExpCambioSitJuridica notificatorServiceDesbloqueoExpediente;
+	
+	protected static final Log logger = LogFactory.getLog(TabActivoDatosRegistrales.class);
 	
 
 	@Override
@@ -182,7 +222,10 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				activo.setTitulo(new ActivoTitulo());
 				activo.getTitulo().setActivo(activo);
 			}
-
+			
+			beanUtilNotNull.copyProperties(activo.getTitulo(), dto);
+			
+			
 			if (dto.getEstadoTitulo() != null) {
 				
 				DDEstadoTitulo estadoTituloNuevo = (DDEstadoTitulo) 
@@ -279,6 +322,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 					beanUtilNotNull.copyProperties(activo.getAdjNoJudicial(), dto);
 					
 					activo.setAdjNoJudicial((genericDao.save(ActivoAdjudicacionNoJudicial.class, activo.getAdjNoJudicial())));
+					activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaTitulo());
 					
 				} else if (activo.getTipoTitulo().getCodigo().equals(DDTipoTituloActivo.tipoTituloPDV)) {
 					ActivoPlanDinVentas pdv = null;
@@ -359,6 +403,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 					
 					activo.getAdjJudicial().setAdjudicacionBien((genericDao.save(NMBAdjudicacionBien.class, activo.getAdjJudicial().getAdjudicacionBien())));
 					activo.setAdjJudicial((genericDao.save(ActivoAdjudicacionJudicial.class, activo.getAdjJudicial())));
+					activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getBien().getAdjudicacion().getFechaSenalamientoPosesion());
 
 				}
 			
@@ -375,6 +420,37 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		
 		return activo;
 		
+	}
+	
+	public void afterSaveTabActivo(Activo activo, WebDto dto) {
+		
+		DtoActivoDatosRegistrales dtoDatReg = (DtoActivoDatosRegistrales) dto;
+		Oferta oferta = ofertaApi.getOfertaAceptadaByActivo(activo);	
+		
+		// Si ha cambiado el estado del título registral a inscrito
+		if(!Checks.esNulo(dtoDatReg.getEstadoTitulo()) && DDEstadoTitulo.ESTADO_INSCRITO.equals(dtoDatReg.getEstadoTitulo())) {
+			
+			// Si tiene expediente 
+			if(!Checks.esNulo(oferta)) {
+				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+				// Si esta bloqueado, lo desbloqueamos y notificamos
+				if(!Checks.esNulo(expediente.getBloqueado()) && BooleanUtils.toBoolean(expediente.getBloqueado())) {
+					
+					expediente.setBloqueado(0);					
+					genericDao.save(ExpedienteComercial.class, expediente);
+					
+					List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());	
+					if(!Checks.estaVacio(tramites)) {					
+						notificatorServiceDesbloqueoExpediente.notificator(tramites.get(0));
+					}
+					/// sino, solamente avisamos
+				} else {
+					
+					activoAdapter.enviarAvisosCambioSituacionLegalActivo(activo, expediente);					
+				}				
+			}
+			
+		}
 	}
 
 }

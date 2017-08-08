@@ -15,6 +15,7 @@ Ext.define('HreRem.view.trabajos.detalle.DiarioGestionesTrabajo', {
 			    xtype		: 'gridBaseEditableRow',
 			    idPrincipal : 'trabajo.id',
 			    topBar: true,
+			    disabledDeleteBtn: true,
 			    reference: 'listadoObservaciones',
 				cls	: 'panel-base shadow-panel',
 				bind: {

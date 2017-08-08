@@ -1,9 +1,12 @@
 package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,9 +14,17 @@ import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceDesbloqExpCambioSitJuridica;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 
 @Component
@@ -25,6 +36,25 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
 	
+	@Autowired
+	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;    
+    
+	@Autowired
+	private ActivoTramiteApi activoTramiteApi;
+	
+	@Autowired
+	private ActivoAdapter activoAdapter;
+	
+	@Autowired
+	private NotificatorServiceDesbloqExpCambioSitJuridica notificatorServiceDesbloqueoExpediente;
+	
+	
+	protected static final Log logger = LogFactory.getLog(TabActivoSitPosesoriaLlaves.class);
+	
+
 	
 	@Override
 	public String[] getKeys() {
@@ -133,5 +163,39 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 		
 		return activo;
 	}
+	
+	public void afterSaveTabActivo(Activo activo, WebDto dto) {
+		
+		DtoActivoSituacionPosesoria dtoSitPos = (DtoActivoSituacionPosesoria) dto;
+		Oferta oferta = ofertaApi.getOfertaAceptadaByActivo(activo);	
+
+		// Si ha cambiado la situacion juridica
+		if (!Checks.esNulo(dtoSitPos.getFechaTomaPosesion()) 
+					|| (!Checks.esNulo(dtoSitPos.getConTitulo()) &&	BooleanUtils.toBoolean(dtoSitPos.getConTitulo()))) {
+		
+			// Si tiene expediente 
+			if(!Checks.esNulo(oferta)) {
+				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+				// Si esta bloqueado, lo desbloqueamos y notificamos
+				if(!Checks.esNulo(expediente.getBloqueado()) && BooleanUtils.toBoolean(expediente.getBloqueado())) {
+					
+					expediente.setBloqueado(0);					
+					genericDao.save(ExpedienteComercial.class, expediente);
+					
+					List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());	
+					if(!Checks.estaVacio(tramites)) {					
+						notificatorServiceDesbloqueoExpediente.notificator(tramites.get(0));
+					}
+					/// sino, solamente avisamos
+				} else {
+					
+					activoAdapter.enviarAvisosCambioSituacionLegalActivo(activo, expediente);					
+				}				
+			}
+		}		
+		
+	}
+	
+	
 
 }

@@ -26,14 +26,21 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
 import es.pfsgroup.plugin.rem.rest.dto.File;
@@ -62,6 +69,12 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 	@Autowired
 	private ActivoAdapter activoAdapter;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private OfertaApi ofertaApi;
 
 	// @Override
 	// public String managerName() {
@@ -457,7 +470,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		for (ActivoAgrupacionActivo activo : activos) {
 			Double valor = null;
 			ActivoTasacion tasacion = activoApi.getTasacionMasReciente(activo.getActivo());
-			if (!Checks.esNulo(tasacion)) {
+			if (!Checks.esNulo(tasacion) && !Checks.esNulo(tasacion.getImporteTasacionFin())) {
 				valor = Double.parseDouble(tasacion.getImporteTasacionFin().toString());
 			} else {
 				ActivoValoraciones valoracion = activoApi.getValoracionAprobadoVenta(activo.getActivo());
@@ -466,13 +479,26 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				} else {
 					// Con que haya un activo sin valor tasacion o valor
 					// aprobado venta, no se haran las asignaciones de ninguno.
-					return null;
+					return asignarValoresCero(activos);
 				}
 			}
 			valores.put(activo.getActivo().getId().toString(), valor);
 			total = total + valor;
 		}
 
+		valores.put("total", total);
+		return valores;
+	}
+
+	private Map<String, Double> asignarValoresCero(List<ActivoAgrupacionActivo> activos) {
+		Map<String, Double> valores = new HashMap<String, Double>();
+		Double total = 0.0;
+
+		for (ActivoAgrupacionActivo activo : activos) {
+			Double valor = 0.0;
+			valores.put(activo.getActivo().getId().toString(), valor);
+		}
+		
 		valores.put("total", total);
 		return valores;
 	}
@@ -488,6 +514,39 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		porcentaje = (float) (porcentaje / total);
 
 		return porcentaje;
+	}
+
+	@Override
+	public boolean descongelarOfertasActivoAgrupacion(ActivoAgrupacion agrupacion) throws Exception {
+		if (agrupacion.getActivos() != null && !agrupacion.getActivos().isEmpty()) {
+			for (ActivoAgrupacionActivo activo : agrupacion.getActivos()) {
+				if (activo.getActivo() != null && activo.getActivo().getOfertas() != null
+						&& !activo.getActivo().getOfertas().isEmpty()) {
+					for (ActivoOferta activoOferta : activo.getActivo().getOfertas()) {
+						Oferta oferta = activoOferta.getPrimaryKey().getOferta();
+						if (oferta.getEstadoOferta() != null
+								&& oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_CONGELADA)) {
+
+							ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(oferta);
+							// Si tiene expediente poner oferta ACEPTADA. Si no
+							// tiene poner oferta PENDIENTE
+							if (!Checks.esNulo(exp)) {
+								ofertaApi.descongelarOfertas(exp);
+							} else {
+								oferta.setEstadoOferta( genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo",
+										DDEstadoOferta.CODIGO_PENDIENTE)));
+								genericDao.save(Oferta.class, oferta);
+							}
+							ofertaApi.updateStateDispComercialActivosByOferta(oferta);
+						}
+
+					}
+
+				}
+
+			}
+		}
+		return true;
 	}
 
 }

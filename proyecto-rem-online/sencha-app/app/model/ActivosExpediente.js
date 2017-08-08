@@ -20,7 +20,8 @@ Ext.define('HreRem.model.ActivosExpediente', {
     			name:'subtipoActivo'
     		},
     		{
-    			name:'importeParticipacion'
+    			name:'importeParticipacion',
+    			type: 'float'
     		},
     		{
     			name:'porcentajeParticipacion',

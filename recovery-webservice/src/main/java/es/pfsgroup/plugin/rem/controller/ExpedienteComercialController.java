@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.rem.controller;
 
 import java.util.List;
+import java.util.Properties;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,9 +35,13 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.excel.ActivosExpedienteExcelReport;
+import es.pfsgroup.plugin.rem.excel.ExcelReport;
+import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
+import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
+import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
-import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoBloqueosFinalizacion;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
@@ -63,6 +69,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 public class ExpedienteComercialController extends ParadiseJsonController{
 
 	protected static final Log logger = LogFactory.getLog(ActivoController.class);
+	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
@@ -81,6 +88,15 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@Autowired
 	private ExpedienteComercialAdapter expedienteComercialAdapter;
+	
+	@Autowired
+	ExcelReportGeneratorApi excelReportGeneratorApi;
+	
+	@Resource
+	private Properties appProperties;
+	
+	@Autowired
+	private DownloaderFactoryApi downloaderFactoryApi;
 	
 	
 	/**
@@ -166,6 +182,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		
 		DtoAviso avisosFormateados = new DtoAviso();
 		avisosFormateados.setDescripcion("");
+		avisosFormateados.setId(id.toString());
 		
 		for (ExpedienteAvisadorApi avisador: avisadores) {
 			
@@ -403,16 +420,21 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public void bajarAdjuntoExpediente (HttpServletRequest request, HttpServletResponse response) {
+		Long id = Long.parseLong(request.getParameter("id"));
+		String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
+		Downloader dl = downloaderFactoryApi.getDownloader(key);
+		
         
-		DtoAdjuntoExpediente dtoAdjunto = new DtoAdjuntoExpediente();
+		/*DtoAdjuntoExpediente dtoAdjunto = new DtoAdjuntoExpediente();
 		
 		dtoAdjunto.setId(Long.parseLong(request.getParameter("id")));
 		dtoAdjunto.setIdExpediente(Long.parseLong(request.getParameter("idExpediente")));
 	
 		
-       	FileItem fileItem = expedienteComercialApi.getFileItemAdjunto(dtoAdjunto);
+       	FileItem fileItem = expedienteComercialApi.getFileItemAdjunto(dtoAdjunto);*/
 		
-       	try { 
+       	try {
+       		FileItem fileItem = dl.getFileItem(id);
        		ServletOutputStream salida = response.getOutputStream(); 
        			
        		response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
@@ -429,6 +451,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
        		salida.close();
        		
        	} catch (Exception e) { 
+       		
        		e.printStackTrace();
        	}
 
@@ -1088,6 +1111,19 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateBloqueoFormalizacion(ModelMap model, DtoBloqueosFinalizacion dto) {
+		try {
+			model.put("success", expedienteComercialApi.updateBloqueoFormalizacion(dto));
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView obtencionDatosPrestamo(ModelMap model, DtoObtencionDatosFinanciacion dto) {
 		try {
 			model.put("success", expedienteComercialApi.obtencionDatosPrestamo(dto));
@@ -1389,6 +1425,19 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		
 		return createModelAndViewJson(model);
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public void getExcelActivosExpediente(Long idExpediente, HttpServletRequest request, HttpServletResponse response) throws Exception{
+		
+		DtoPage dto= expedienteComercialApi.getActivosExpediente(idExpediente);
+		ExpedienteComercial expedienteComercial= expedienteComercialApi.findOne(idExpediente);
+		List<DtoActivosExpediente> dtosActivos= (List<DtoActivosExpediente>) dto.getResults();
+		
+		ExcelReport report = new ActivosExpedienteExcelReport(dtosActivos, expedienteComercial.getNumExpediente());
+		excelReportGeneratorApi.generateAndSend(report, response);
+
 	}
 	
 }

@@ -5,6 +5,19 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
     collapsed	: false,
     reference	: 'administracionactivoref',
 	scrollable	: 'y',
+	
+	listeners: {
+    	boxready: function() {
+    		var me = this;
+    		me.lookupController().cargarTabData(me);
+    	}
+    },
+	
+	requires: ['HreRem.model.ActivoAdministracion'],
+
+    recordName: "administracion",
+
+	recordClass: "HreRem.model.ActivoAdministracion",
 
     initComponent: function () {
         var me = this;
@@ -12,6 +25,30 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
         me.setTitle(HreRem.i18n('title.administracion.activo'));
 
         var items= [
+			{
+				xtype: 'container',
+				style: {
+					backgroundColor: '#E5F6FE'
+				},
+				padding: 10,
+				margin: '5 0 10 0',
+				layout: {
+					type: 'hbox'
+				},
+				items: [
+					{
+						xtype: 'checkboxfieldbase',
+						bind:		'{administracion.ibiExento}',
+						width: 40
+					},
+					{
+						xtype: 'label',
+						cls: 'label-read-only-formulario-completo',
+						html: HreRem.i18n('fieldlabel.activo.administracion.ibi.exento')						
+					}
+				]
+			},
+         
          {
 			xtype:'fieldsettable',
 			title: HreRem.i18n('title.administracion.activo.proveedores'),
@@ -212,5 +249,6 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 		Ext.Array.each(me.query('grid'), function(grid) {
   			grid.getStore().load();
   		});
+		me.lookupController().cargarTabData(me);
     }
 });

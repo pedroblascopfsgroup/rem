@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Teresa Alonso
---## FECHA_CREACION=20170223
+--## AUTOR=Gustavo Mora
+--## FECHA_CREACION=20170731
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=HREOS-1086-HREOS-1508
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-2588
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_SEG_SUBTIPO_ERROR_GASTO los tipos de error definidos en gestorias 
@@ -13,6 +13,7 @@
 --##        0.2 Gustavo Mora: quitamos letra a códigos subtipo gasto
 --##        0.3 Diego Crespo: Añadimos códigos nuevos al subtipo '04' 
 --## 	    0.4 Joaquin Arnal: Actualizamos codigos del tipo 03
+--##        0.5 Gustavo Mora: Añadimos códigos nuevos al subtipo '03' 
 --##########################################
 --*/
 
@@ -68,6 +69,10 @@ DECLARE
       	T_TIPO_DATA('03' , '016' , 'Sdad Pagad no defini' , 'Sociedad Pagadora no definida'),
         T_TIPO_DATA('03' , '014' , 'Dif Impor KC10-KC12'  , 'Diferencia de Importes en Facturas Recibidas KC10-KC12'),
         T_TIPO_DATA('03' , '017' , 'Faltan datos cliente' , 'Faltan datos de cliente'),
+        T_TIPO_DATA('03' , '018' , 'Datos incompletos de' , 'Datos incompletos del proveedor (domicilio)'),
+        T_TIPO_DATA('03' , '019' , 'Cuenta contable inco' , 'Cuenta contable incompleta'),
+        T_TIPO_DATA('03' , '021' , 'Partida presupuestar' , 'Partida presupuestaria incorrecta'),        
+        
         
         T_TIPO_DATA('04' , '01' , 'Agr no tip ProviFond' , 'Agrupación no es del tipo provisión de fondos' ),
         T_TIPO_DATA('04' , '02' , 'Fech anula sin gasto' , 'Llega fecha de anulación y no existe gasto en la tabla' ),

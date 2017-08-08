@@ -92,11 +92,11 @@ Ext.define('HreRem.view.activos.detalle.FotosActivoTabPanel', {
 
     initComponent: function () {
         var me = this;
-        
+
         //HREOS-1964: Restringir los activos financieros (asistidos) para que solo puedan ser editables por los perfiles de IT y Gestoria PDV
 		var ocultarFotoswebactivo = false;		
 		if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
-			ocultarFotoswebactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+			ocultarFotoswebactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
 				 && $AU.userHasFunction('EDITAR_TAB_FOTOS_ACTIVO_WEB'));
 		}else{
 			ocultarFotoswebactivo = !$AU.userHasFunction('EDITAR_TAB_FOTOS_ACTIVO_WEB');
@@ -104,7 +104,7 @@ Ext.define('HreRem.view.activos.detalle.FotosActivoTabPanel', {
 		
 		var ocultarFotostecnicasactivo = false;		
 		if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
-			ocultarFotostecnicasactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+			ocultarFotostecnicasactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
 				 && $AU.userHasFunction('EDITAR_TAB_FOTOS_ACTIVO_TECNICAS'));
 		}else{
 			ocultarFotostecnicasactivo = !$AU.userHasFunction('EDITAR_TAB_FOTOS_ACTIVO_TECNICAS');

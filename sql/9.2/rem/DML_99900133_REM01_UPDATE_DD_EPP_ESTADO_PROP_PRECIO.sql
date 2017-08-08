@@ -101,8 +101,9 @@ BEGIN
 		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 		IF V_NUM_TABLAS > 0 THEN
-        	V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' '||
-        	'WHERE DD_'||V_TEXT_CHARS||'_CODIGO = ''04''';
+			V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
+					  'SET BORRADO = ''1'''|| 
+					  'WHERE DD_'||V_TEXT_CHARS||'_CODIGO = ''04''';
         	EXECUTE IMMEDIATE V_MSQL;
 		END IF;
       

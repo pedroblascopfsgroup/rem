@@ -235,7 +235,12 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 									if (somethingdone && (registroLlamadas != null)) {
 										registro.logTiempoBorrarHistorico();
 										registro.logTiempoInsertarHistorico();
-										registroLlamadas.guardaRegistroLlamada(registro, handler, contError);
+										if(marcarComoEnviado){
+											registroLlamadas.guardaRegistroLlamada(registro, handler, DeteccionCambiosBDTask.MAXIMO_INTENTOS_DEFAULT);
+										}else{
+											registroLlamadas.guardaRegistroLlamada(registro, handler, contError);
+										}
+										
 										llamadas.add(registro);
 									}
 								}

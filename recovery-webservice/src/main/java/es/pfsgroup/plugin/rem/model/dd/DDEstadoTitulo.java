@@ -30,13 +30,15 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDEstadoTitulo implements Auditable, Dictionary {
 	
-
-
 	 /**
 	 * 
 	 */
 	private static final long serialVersionUID = 8731157079642690826L;
 
+    public static final String ESTADO_EN_TRAMITACION = "01";
+	public static final String ESTADO_INSCRITO = "02";
+	public static final String ESTADO_IMPOSIBLE_INSCRIPCION = "03";
+	public static final String ESTADO_DESCONOCIDO = "04";
 	
 	
 	@Id

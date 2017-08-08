@@ -47,6 +47,7 @@ public class ProveedorDto implements WebcomRESTDto {
 	@MappedColumn("TELFONO_CONTACTO_VISITAS")
 	private StringDataType telefonoContactoVisitas;
 	
+	
 
 	@NestedDto(groupBy = "idProveedorRem", type = DelegacionDto.class)
 	private List<DelegacionDto> delegaciones;
@@ -274,6 +275,8 @@ public class ProveedorDto implements WebcomRESTDto {
 	public void setTelefonoContactoVisitas(StringDataType telefonoContactoVisitas) {
 		this.telefonoContactoVisitas = telefonoContactoVisitas;
 	}
+
+	
 	
 	
 }

@@ -1,8 +1,10 @@
 Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
 	extend		: 'HreRem.view.common.WindowBase',
     xtype		: 'adjuntardocumentowindowExpediente',
-    layout	: 'fit',
-    width	: Ext.Element.getViewportWidth() /3,
+    layout	: {
+    	type:'fit'
+    },
+    width: Ext.Element.getViewportWidth() / 1.5,
 	reference: 'adjuntarDocumentoExpedienteWindowRef',
 	requires: ['HreRem.view.common.adjuntos.AdjuntarDocumentoExpedienteModel'],
 	viewModel: {
@@ -41,21 +43,35 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
 	    				url: $AC.getRemoteUrl(me.entidad + "/upload"),
 	    				reference: 'adjuntarDocumentoExpedienteFormRef',
 	    				collapsed: false,
-	   			 		scrollable	: 'y',
-	   			 		layout: {
-	   			 			type: 'vbox'
-	   			 		},
+	    				layout: {
+							type: 'table',
+					        // The total column count must be specified here
+					        columns: 2,
+					        trAttrs: {height: '30px', width: '100%'},
+					        tdAttrs: {width: '50%'},
+					        tableAttrs: {
+					            style: {
+					                width: '100%'
+									}
+					        }
+	    				},
 	   			 		cls:'formbase_no_shadow',
+	   			 		defaults: {
+	   			 			columnWidth: '50%',
+	   			 			width: '100%',
+	   			 			labelWidth: 100,
+	   			 			msgTarget: 'side',
+	   			 			addUxReadOnlyEditFieldPlugin: false,
+	   			 			labelWidth: 100
+	   			 		},
 	    				items: [
 	    						{
 
  									xtype: 'filefield',
 							        fieldLabel:   HreRem.i18n('fieldlabel.archivo'),
 							        name: 'fileUpload',							        
-							        anchor: '100%',
-							        width: '100%',
 							        allowBlank: false,
-							        msgTarget: 'side',
+							        maxWidth: 400,
 							        buttonConfig: {
 							        	iconCls: 'ico-search-white',
 							        	text: ''
@@ -75,28 +91,28 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
 				                    }
 					    		},
 					    		{ 
-									xtype: 'combobox',
+									xtype: 'comboboxfieldbase',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
 						        	reference: 'filtroComboTipoDocumentoExpediente',
 						        	name: 'tipo',
-						        	editable: false,
-						        	msgTarget: 'side',
 					            	bind: {
 					            		store: '{comboTipoDocumento}'
 					            	},
-					            	displayField	: 'descripcion',							
-								    valueField		: 'codigo',
 									allowBlank: false,
-									width: '100%',
 									publishes: 'value'
 						        },
+						        {
+				                	xtype: 'textareafieldbase',
+				                	fieldLabel: HreRem.i18n('fieldlabel.descripcion'),
+				                	name: 'descripcion',
+				                	maxLength: 256			                	
+			            		},
 						        { 
-									xtype: 'combobox',
+									xtype: 'comboboxfieldbase',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo'),
 						        	name: 'subtipo',
 						        	queryMode: 'remote',
 						        	editable: false,
-						        	msgTarget: 'side',
 						        	forceSelection: true,
 						        	bind: {
 						        		store: '{comboSubtipoDocumento}',
@@ -106,21 +122,90 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
 					                        value: '{filtroComboTipoDocumentoExpediente.value}'
 					                    }
 					            	},
-					            	displayField	: 'descripcion',						
-								    valueField		: 'codigo',
 									allowBlank: false,
-									width: '100%'
-						        },
-						        {
-				                	xtype: 'textarea',
-				                	fieldLabel: HreRem.i18n('fieldlabel.descripcion'),
-				                	name: 'descripcion',
-				                	maxLength: 256,
-				                	msgTarget: 'side',
-				                	width: '100%'				                	
-			            		}
+									listeners: {
+										select: function(combo, record) {
+											if (record.get("vinculable")) {
+												me.down("gridBase").setDisabled(false);
+												if(!me.down("gridBase").getStore().isLoaded()) {
+													me.down("gridBase").getStore().load();
+												}
+											} else {
+												me.down("gridBase").setDisabled(true);
+												me.down("gridBase").getSelectionModel().deselectAll();
+											}
+										}
+									}
+						        }
     					]
-    				}
+    				},
+    				{
+    					
+					    xtype		: 'gridBase',					    
+					    selModel : Ext.create('HreRem.view.common.CheckBoxModelBase', {
+					    
+					    	listeners: {
+					    		selectionchange: function(selModel, selected, eOpts ) {
+					    			if(selected.length === 1) {
+					    				me.down("gridBase").setTitle(selected.length + " " + HreRem.i18n("title.activo.seleccionado"));
+					    			} else {
+					    				me.down("gridBase").setTitle(selected.length + " " + HreRem.i18n("title.activos.seleccionados"));
+					    			}
+					    		}
+					    	}
+					    }),
+					    reference: 'listadoactivosexpedienteadjunto',
+					    title: "0 " + HreRem.i18n("title.activos.seleccionados"),
+					    margin: '0 0 120 0',
+					    maxHeight: 250,
+						cls	: 'panel-base shadow-panel',
+						disabled: true,
+						bind: {
+							store: '{storeActivos}'
+						},
+						
+						loadAfterBind: false,
+						columns: [
+							   			{   
+				    						text: HreRem.i18n('fieldlabel.numero.activo'),
+					        				dataIndex: 'numActivo',
+		            						flex     : 1
+			       						},
+			       						{   
+				    						text: HreRem.i18n('fieldlabel.finca.registral'),
+					        				dataIndex: 'fincaRegistral',
+		            						flex     : 1
+			       						},
+			       						{
+								            text: HreRem.i18n("fieldlabel.tipo.activo"),
+								            dataIndex: 'tipoActivo',
+								            flex:1
+								            
+								       	},
+									   	{
+								            text: HreRem.i18n("fieldlabel.subtipo.activo"),
+								            dataIndex: 'subtipoActivo',
+								            flex:1
+								            
+								       	},
+								       	{
+								            text: HreRem.i18n("fieldlabel.municipio"),
+								            dataIndex: 'municipio',
+								            flex:1
+								            
+								       	},
+								       	{
+								            text: HreRem.i18n("fieldlabel.provincia"),
+								            dataIndex: 'provincia',
+								            flex:1								            
+								       	}
+			      
+			       	        
+			    		]
+			   
+			    
+					}
+    				
     	];
     	
     	me.callParent();
@@ -131,10 +216,18 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
     	var me = this,
     	form = me.down("form");
     	if(form.isValid()){
-            
+    		var comboSubtipoDocumento = form.down("[name=subtipo]"); 
+    		var subtipoDocumento = comboSubtipoDocumento.findRecordByValue(comboSubtipoDocumento.getValue());
+    		var activosSeleccionados = [];
+    		
+    		Ext.Array.each(me.down('gridBase').getSelection(), function(selected, index) {
+    		 	activosSeleccionados.push(selected.get("numActivo"));
+    		});
+    		
+	            
             form.submit({
                 waitMsg: HreRem.i18n('msg.mask.loading'),
-                params: {idEntidad: me.idEntidad},
+                params: {idEntidad: me.idEntidad, activos: activosSeleccionados.toString()},
                 success: function(fp, o) {
                 	
                 	if(o.result.success == "false") {
@@ -151,6 +244,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
                 	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
                 }
             });
+			
         }
     	
     	

@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.rem.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.itextpdf.text.DocumentException;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -24,17 +27,21 @@ import es.pfsgroup.plugin.rem.api.GenerarFacturaVentaActivosApi;
 import es.pfsgroup.plugin.rem.api.ParamReportsApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaSimpleDto;
 import es.pfsgroup.plugin.rem.rest.dto.PropuestaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import es.pfsgroup.plugin.rem.utils.FileUtilsREM;
 
 @Controller
 public class OperacionVentaController {
 
 		final String templateOperacionVenta = "OperativaVenta001";
+		final String templateOperacionVentaAgrupacion = "OperativaVentaAgrupacion";
+		final String templateOperacionVentaShort = "OperativaVenta";
 
 		@Autowired
 		private ParamReportsApi paramReportsApi;
@@ -93,6 +100,7 @@ public class OperacionVentaController {
 			Map<String, Object> params = null;
 			List<Object> dataSource = null;			
 			File fileSalidaTemporal = null;
+			SecureRandom random = new SecureRandom();
 			
 			ExpedienteComercial expediente = expedienteComercialApi.findOneByNumExpediente(numExpediente);
 			
@@ -100,39 +108,85 @@ public class OperacionVentaController {
 			//Primero comprobar que existe OFERTA
 			if (model.get("error")==null || model.get("error")=="") {
 				if(!Checks.esNulo(expediente)){
-					oferta = expediente.getOferta(); //ofertaApi.getOfertaByNumOfertaRem(ofertaHRE);
+					oferta = expediente.getOferta();
 					if (oferta==null) {
 					model.put("error", RestApi.REST_NO_RELATED_OFFER);
 					}
 				}
 			}
-			
-			//Despueś comprabar que existe un ACTIVO relacionado
+
+			//Despueś comprobar que existe un ACTIVO principal y que esta relacionado con la oferta 
 			Activo activo = null;
 			if (model.get("error")==null || model.get("error")=="") {
 				activo = oferta.getActivoPrincipal();
-				if (activo==null) {
+				if (activo==null || oferta.getActivosOferta()==null) {
 					model.put("error", RestApi.REST_NO_RELATED_ASSET);				
 				}
 			}
 			
-			//OBTENCION DE LOS DATOS PARA RELLENAR EL DOCUMENTO
+			//Generamos una lista de PDF por cada activoOferta
+			List<File> listaPdf = new ArrayList<File>();
+			
+			//PRIMERO GENERAMOS PDF CABECERA DE LA AGRUPACION (SI TIENE)
+			if (oferta.getActivosOferta().size()>1) {
+				if (model.get("error")==null || model.get("error")=="") {
+					params = paramReportsApi.paramsCabeceraHojaDatos(oferta.getActivosOferta().get(0), model);
+				}
+				if (model.get("error")==null || model.get("error")=="") {
+					dataSource = paramReportsApi.dataSourceHojaDatos(oferta.getActivosOferta().get(0), model);
+				}
+				//GENERACION DE LA CABECERA DEL DOCUMENTO EN PDF		
+				if (model.get("error")==null || model.get("error")=="") {
+					fileSalidaTemporal = paramReportsApi.getPDFFile(params, dataSource, templateOperacionVentaAgrupacion, model, numExpediente);
+					listaPdf.add(fileSalidaTemporal);
+				}
+			}			
+			
 			if (model.get("error")==null || model.get("error")=="") {
-				params = paramReportsApi.paramsHojaDatos(oferta.getActivosOferta().get(0), model);
-			}
-			if (model.get("error")==null || model.get("error")=="") {
-				dataSource = paramReportsApi.dataSourceHojaDatos(oferta.getActivosOferta().get(0), model);
+				for(ActivoOferta activoOferta : oferta.getActivosOferta()) {				
+					//OBTENCION DE LOS DATOS PARA RELLENAR EL DOCUMENTO
+					if (model.get("error")==null || model.get("error")=="") {
+						params = paramReportsApi.paramsHojaDatos(activoOferta, model);
+					}
+					if (model.get("error")==null || model.get("error")=="") {
+						dataSource = paramReportsApi.dataSourceHojaDatos(activoOferta, model);
+					}
+					//GENERACION DEL DOCUMENTO EN PDF		
+					if (model.get("error")==null || model.get("error")=="") {
+						fileSalidaTemporal = paramReportsApi.getPDFFile(params, dataSource, templateOperacionVenta, model, numExpediente);
+						listaPdf.add(fileSalidaTemporal);
+					}										
+				}
 			}
 			
-			//GENERACION DEL DOCUMENTO EN PDF		
+			//AGRUPAR TODOS LOS PDF DE SALIDA EN UNO SOLO
+			File salida = null;
 			if (model.get("error")==null || model.get("error")=="") {
-				fileSalidaTemporal = paramReportsApi.getPDFFile(params, dataSource, templateOperacionVenta, model, numExpediente);
+				try {
+					salida = File.createTempFile(templateOperacionVentaShort, ".pdf");
+					FileUtilsREM.concatenatePdfs(listaPdf, salida);
+				} catch (IOException ex1) {
+					model.put("error", ex1.getLocalizedMessage());
+				} catch (DocumentException ex2) {
+					model.put("error", ex2.getLocalizedMessage());
+				}
 			}
 
 			//ENVIO DE LOS DATOS DEL DOCUMENTO AL CLIENTE
 			if (model.get("error")==null || model.get("error")=="") {
 				try {
-					excelReportGeneratorApi.sendReport(fileSalidaTemporal, response);
+					long n = random.nextLong();
+		            if (n == Long.MIN_VALUE) {
+		                n = 0;      // corner case
+		            } else {
+		                n = Math.abs(n);
+		            }
+		            String aleatorio = Long.toString(n);
+		            if(aleatorio.length() > 5){
+		            	aleatorio = aleatorio.substring(0, 5);
+		            }
+					String name ="Hoja_Datos_Exp_" + String.valueOf(numExpediente) +"_"+aleatorio +".pdf";
+					excelReportGeneratorApi.sendReport(name,salida, response);
 				} catch (IOException e) {
 					model.put("error", e.getLocalizedMessage());	
 				}

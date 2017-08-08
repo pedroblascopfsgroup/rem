@@ -49,9 +49,11 @@ import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.AgrupacionAvisadorApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -75,8 +77,8 @@ import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VActivosSubdivision;
@@ -92,12 +94,12 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidator;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidatorFactoryApi;
 import es.pfsgroup.plugin.rem.validate.BusinessValidators;
 import es.pfsgroup.recovery.api.UsuarioApi;
-import net.sf.json.JSONObject;
 
 @Service
 public class AgrupacionAdapter {
@@ -167,8 +169,17 @@ public class AgrupacionAdapter {
 	@Autowired
 	private OfertaApi ofertaApi;
 	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
+
+	@Autowired
+	private NotificationOfertaManager notificationOfertaManager;
+
 	@Resource
 	MessageService messageServices;
+
+	@Autowired
+	private NotificatorServiceSancionOfertaAceptacionYRechazo notificatorServiceSancionOfertaAceptacionYRechazo;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -505,6 +516,12 @@ public class AgrupacionAdapter {
 				if(!Checks.estaVacio(ofertasAgrupacion)) {
 					throw new JsonViewerException("No se puede alterar el listado de activos cuando la agrupación tiene ofertas");
 				}
+				// Si el activo es de tipo Formalizable, pero la agrupación en la que lo vamos a meter NO lo es, lanzamos una Excepcion
+				// Si el activo es no Formalizable, pero la agrupación en la que lo vamos a meter SI que lo es, también lanzamos una Excepcion
+				if (activoApi.esActivoFormalizable(activo.getNumActivo()) && agrupacion.getIsFormalizacion().equals(NO_ES_FORMALIZABLE) ||
+					!activoApi.esActivoFormalizable(activo.getNumActivo()) && agrupacion.getIsFormalizacion().equals(ES_FORMALIZABLE)) {
+					throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_NO_COMPARTE_FORMALIZACION);
+				}
 			}
 			// Si es el primer activo, validamos si tenemos los datos necesarios
 			// del activo, y modificamos la agrupación con esos datos
@@ -514,12 +531,6 @@ public class AgrupacionAdapter {
 				activoAgrupacionApi.saveOrUpdate(agrupacion);
 			}
 			
-			// Si el activo es de tipo Formalizable, pero la agrupación en la que lo vamos a meter NO lo es, lanzamos una Excepcion
-			// Si el activo es no Formalizable, pero la agrupación en la que lo vamos a meter SI que lo es, también lanzamos una Excepcion
-			if (activoApi.esActivoFormalizable(activo.getNumActivo()) && agrupacion.getIsFormalizacion().equals(NO_ES_FORMALIZABLE) ||
-				!activoApi.esActivoFormalizable(activo.getNumActivo()) && agrupacion.getIsFormalizacion().equals(ES_FORMALIZABLE)) {
-				throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_NO_COMPARTE_FORMALIZACION);
-			}
 			
 			// Validaciones de agrupación
 			agrupacionValidate(activo, agrupacion);
@@ -751,15 +762,23 @@ public class AgrupacionAdapter {
 							if (!Checks.esNulo(ofertaActivo.getPrimaryKey())
 									&& !Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta())
 									&& !Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta())) {
-								// Si su estado es 'congelada' asignar nuevo estado
-								// a 'pendiente'.
-								if (ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta().getCodigo()
-										.equals(DDEstadoOferta.CODIGO_CONGELADA)) {
-									DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
-											.dameValorDiccionarioByCod(DDEstadoOferta.class,
-													DDEstadoOferta.CODIGO_PENDIENTE);
-									ofertaActivo.getPrimaryKey().getOferta().setEstadoOferta(estadoOferta);
-								}
+								// Si tiene expediente poner oferta ACEPTADA. Si no
+								// tiene poner oferta PENDIENTE
+								try{
+									if (ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta().getCodigo()
+											.equals(DDEstadoOferta.CODIGO_CONGELADA)) {
+										ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(ofertaActivo.getPrimaryKey().getOferta());
+										if (!Checks.esNulo(exp)) {
+											ofertaApi.descongelarOfertas(exp);
+										} else {
+											ofertaActivo.getPrimaryKey().getOferta().setEstadoOferta( genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo",
+													DDEstadoOferta.CODIGO_PENDIENTE)));
+											genericDao.save(Oferta.class, ofertaActivo.getPrimaryKey().getOferta());
+										}
+									}
+								}catch(Exception e){
+									logger.error("error descongelando ofertas",e);
+								}								
 							}
 						}
 					}
@@ -1264,6 +1283,11 @@ public class AgrupacionAdapter {
 			}
 
 			genericDao.update(Oferta.class, oferta);
+			
+			// si la oferta ha sido rechazada enviamos un email/notificacion.
+			if (DDEstadoOferta.CODIGO_RECHAZADA.equals(tipoOferta.getCodigo())) {
+				notificatorServiceSancionOfertaAceptacionYRechazo.notificatorFinSinTramite(oferta.getId());
+			}
 
 //		} 
 //		catch (Exception ex) {
@@ -1342,6 +1366,8 @@ public class AgrupacionAdapter {
 			genericDao.save(Oferta.class, oferta);
 			// Actualizamos la situacion comercial de los activos de la oferta
 			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
+
+			notificationOfertaManager.sendNotification(oferta);
 
 		} catch (Exception ex) {
 			logger.error("error en agrupacionAdapter", ex);
@@ -1636,6 +1662,17 @@ public class AgrupacionAdapter {
 			}
 		}
 
+		try {
+			// HREOS-2552: Si damos de baja la agrupación Descongelamos las
+			// ofertas congeladas en los activos de la grupacion
+			if (!Checks.esNulo(dto.getFechaBaja())) {
+				activoAgrupacionApi.descongelarOfertasActivoAgrupacion(agrupacion);
+			}
+		} catch (Exception e) {
+			logger.error("error Descongelamos las ofertas congeladas en los activos de la agrupacion", e);
+			return false;
+		}
+
 		return true;
 	}
 
@@ -1717,6 +1754,11 @@ public class AgrupacionAdapter {
 			Activo activo = activoDao.get(Long.parseLong(idActivo));
 			if (!Checks.esNulo(activo.getEstadoPublicacion())) {
 				if (DDEstadoPublicacion.CODIGO_NO_PUBLICADO.equals(activo.getEstadoPublicacion().getCodigo())) {
+					if(activo.getSituacionComercial().getCodigo().equals(DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE)
+							|| activo.getSituacionComercial().getCodigo().equals(DDSituacionComercial.CODIGO_TRASPASADO)
+							|| activo.getSituacionComercial().getCodigo().equals(DDSituacionComercial.CODIGO_VENDIDO)) {
+						throw new Exception(AgrupacionAdapter.PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG);
+					}
 					activosIDAPublicar.add(idActivo);
 				} else {
 					// Si algún activo tiene estado y no se encuentra en estado

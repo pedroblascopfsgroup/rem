@@ -253,52 +253,60 @@ public class TareaActivoManager implements TareaActivoApi {
 
 	@Override
 	public Long getTareasPendientes(Usuario usuario) {
-		EXTGrupoUsuarios grupoUsuario  = genericDao.get(EXTGrupoUsuarios.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId()));		
-		
-		List<VTareaActivoCount> contadores = vTareaActivoCountDao.getContador(usuario, grupoUsuario);
+		List<VTareaActivoCount> contadores = getContadores(usuario);
 		
 		//Si hay usuario y grupo de usuario se suman los contadores.
 		
-		if(Checks.estaVacio(contadores))
+		if(Checks.estaVacio(contadores)){
 			return 0L;
-		else
-			if(contadores.size()==2)
-				return contadores.get(0).getTareas()+contadores.get(1).getTareas();
-			else
-				return contadores.get(0).getTareas();
+		} else {
+			Long count = 0L;
+			for (VTareaActivoCount c : contadores) {
+				count += c.getTareas();
+			}
+			return count;
+		}
 	}
+
 
 	@Override
 	public Long getAlertasPendientes(Usuario usuario) {
-		EXTGrupoUsuarios grupoUsuario  = genericDao.get(EXTGrupoUsuarios.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId()));		
-		
-		List<VTareaActivoCount> contadores = vTareaActivoCountDao.getContador(usuario, grupoUsuario);
+		List<VTareaActivoCount> contadores = getContadores(usuario);
 		
 		//Si hay usuario y grupo de usuario se suman los contadores.
 		
-		if(Checks.estaVacio(contadores))
+		if(Checks.estaVacio(contadores)){
 			return 0L;
-		else
-			if(contadores.size()==2)
-				return contadores.get(0).getAlertas()+contadores.get(1).getAlertas();
-			else
-				return contadores.get(0).getAlertas();
+		} else {
+			Long count = 0L;
+			for (VTareaActivoCount c : contadores) {
+				count += c.getAlertas();
+			}
+			return count;
+		}
 	}
 
 	@Override
 	public Long getAvisosPendientes(Usuario usuario) {
-		EXTGrupoUsuarios grupoUsuario  = genericDao.get(EXTGrupoUsuarios.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId()));		
-		
-		List<VTareaActivoCount> contadores = vTareaActivoCountDao.getContador(usuario, grupoUsuario);
+		List<VTareaActivoCount> contadores = getContadores(usuario);
 		
 		//Si hay usuario y grupo de usuario se suman los contadores.
-		if(Checks.estaVacio(contadores))
+		
+		if(Checks.estaVacio(contadores)){
 			return 0L;
-		else
-			if(contadores.size()==2)
-				return contadores.get(0).getAvisos()+contadores.get(1).getAvisos();
-			else
-				return contadores.get(0).getAvisos();
+		} else {
+			Long count = 0L;
+			for (VTareaActivoCount c : contadores) {
+				count += c.getAvisos();
+			}
+			return count;
+		}
+	}
+	
+	private List<VTareaActivoCount> getContadores(Usuario usuario) {
+		List<EXTGrupoUsuarios> grupos = genericDao.getList(EXTGrupoUsuarios.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId()));
+		List<VTareaActivoCount> contadores = vTareaActivoCountDao.getContador(usuario, grupos);
+		return contadores;
 	}
 
 }

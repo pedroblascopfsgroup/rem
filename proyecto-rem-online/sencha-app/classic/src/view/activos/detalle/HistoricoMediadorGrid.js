@@ -5,15 +5,15 @@ Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
 	idPrincipal : 'activo.id',
 	editOnSelect: false,
 	disabledDeleteBtn: true,
-	
+
     bind: {
         store: '{storeHistoricoMediador}'
     },
-    
+
     initComponent: function () {
-     	
+
      	var me = this;
-		
+
 		me.columns = [
 		        {
 		            dataIndex: 'fechaDesde',
@@ -30,22 +30,16 @@ Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
 		        {
 		            dataIndex: 'codigo',
 		            text: HreRem.i18n('title.publicaciones.mediador.codigo'),
+		            editor: {
+		            	xtype: 'numberfield',
+		            	allowBlank: false
+		            },
 		            flex: 0.5
 		        },
 		        {
 		            dataIndex: 'mediador',
 		            text: HreRem.i18n('title.publicaciones.mediador.mediador'),
-		            flex: 1,
-		            editor: {
-		            	xtype: 'combobox',
-			            displayField: 'nombreProveedor',
-			            valueField: 'idProveedor',
-			            allowBlank: false,
-			            bind: {
-			            	store: '{storeMediadorListFiltered}'
-			            },
-			            reference: 'cbDDColMediador'
-		            }
+		            flex: 1
 		        },
 		        {
 		            dataIndex: 'telefono',
@@ -58,7 +52,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
 		            flex: 1
 		        }
 		    ];
-		
+
 		    me.dockedItems = [
 		        {
 		            xtype: 'pagingtoolbar',
@@ -71,13 +65,13 @@ Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
 		            }
 		        }
 		    ];
-		    
+
 		    me.saveSuccessFn = function() {
 		    	var me = this;
 		    	me.up('informecomercialactivo').funcionRecargar();
 		    	return true;
 		    },
-		    
+
 		    me.callParent();
    }
 });

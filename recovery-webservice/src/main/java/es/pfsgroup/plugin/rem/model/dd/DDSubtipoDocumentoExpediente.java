@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -82,7 +83,14 @@ public class DDSubtipoDocumentoExpediente implements Auditable, Dictionary {
 	
 	@Column(name = "DD_SDE_MATRICULA_GD")   
 	private String matricula;
+	
+	@Column(name= "DD_SDE_VINCULABLE")
+	private Integer vinculable;
 	    
+	@OneToOne
+    @JoinColumn(name= "DD_SDE_TPD_ID")
+	private DDTipoDocumentoActivo tipoDocumentoActivo;
+	
 	@Version   
 	private Long version;
 
@@ -164,6 +172,21 @@ public class DDSubtipoDocumentoExpediente implements Auditable, Dictionary {
 	public void setMatricula(String matricula) {
 		this.matricula = matricula;
 	}
-	
 
+	public Integer getVinculable() {
+		return vinculable;
+	}
+
+	public void setVinculable(Integer vinculable) {
+		this.vinculable = vinculable;
+	}
+
+	public DDTipoDocumentoActivo getTipoDocumentoActivo() {
+		return tipoDocumentoActivo;
+	}
+
+	public void setTipoDocumentoActivo(DDTipoDocumentoActivo tipoDocumentoActivo) {
+		this.tipoDocumentoActivo = tipoDocumentoActivo;
+	}
+	
 }

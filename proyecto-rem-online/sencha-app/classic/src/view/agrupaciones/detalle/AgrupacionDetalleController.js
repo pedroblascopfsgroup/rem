@@ -701,7 +701,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 
 	genericAJAXController: function(menuItem, url, params) {
 		var me = this;
-
 		Ext.Ajax.request({
 		     url: url,
 		     params:params,
@@ -714,7 +713,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 				 menuItem.up('activosagrupacionlist').unmask();
             },
 
-            failure: function (a, operation, context) {
+            failure: function (a, operation, context) {            	
           	   me.fireEvent("errorToast", 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÓN');
           	   menuItem.up('activosagrupacionlist').unmask();
            }
@@ -726,7 +725,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 			var url =  $AC.getRemoteUrl('proveedores/searchProveedorCodigo');
 			var codPrescriptor = field.getValue();
 			var data;
-			var re = new RegExp("^((04$))|^((18$))|^((28$))|^((29$))|^((31$)).*$");
+			var re = new RegExp("^((04$))|^((18$))|^((28$))|^((29$))|^((31$))|^((37$)).*$");
 	
 			Ext.Ajax.request({
 			    			

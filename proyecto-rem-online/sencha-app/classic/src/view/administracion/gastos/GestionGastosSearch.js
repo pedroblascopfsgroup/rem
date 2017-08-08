@@ -20,20 +20,20 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 				    {
 			    		title: HreRem.i18n('title.filtro.por.situacion.gasto'),
 			    		defaultType: 'textfieldbase',
-			    		defaults: {							        
+			    		defaults: {
 							addUxReadOnlyEditFieldPlugin: false
 						},
 			    		items: [
-			    		
+
 			    			{
 								xtype: 'comboboxfieldbase',
 								name: 'estadoGastoCodigo',
 				              	fieldLabel : 'Estado gasto',
 								bind: {
 									store: '{estadosGasto}'
-								}					
-							},			    		
-			    			{ 
+								}
+							},
+			    			{
 								xtype: 'comboboxfieldbase',
 								name: 'estadoAutorizacionHayaCodigo',
 				              	fieldLabel : 'Estado autorización Haya',
@@ -41,7 +41,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 									store: '{comboEstadoAutorizacionHaya}'
 								}
 							},
-							{ 
+							{
 								xtype: 'comboboxfieldbase',
 								name: 'estadoAutorizacionPropietarioCodigo',
 				              	fieldLabel : 'Estado autorización propietario',
@@ -49,21 +49,21 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 									store: '{comboEstadoAutorizacionPropietario}'
 								}
 							}
-				        				
+
 						]
 				    },
 				    {
 			    		title: HreRem.i18n('title.filtro.por.gasto'),
 			    		defaultType: 'textfieldbase',
-			    		defaults: {							        
-							addUxReadOnlyEditFieldPlugin: false						    
+			    		defaults: {
+							addUxReadOnlyEditFieldPlugin: false
 						},
-			    		items: [			    		
-	    					{ 
+			    		items: [
+	    					{
 						    	fieldLabel: HreRem.i18n('fieldlabel.numero.gasto'),
-						        name: 'numGastoHaya'								            	
+						        name: 'numGastoHaya'
 						    },
-						    { 
+						    {
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel: HreRem.i18n('fieldlabel.tipo'),
 					        	reference: 'filtroComboTipoGasto',
@@ -72,17 +72,17 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 				            		store: '{comboTipoGasto}'
 				            	},
 								publishes: 'value'
-			    						
+
 							},
-							{ 
+							{
 						    	fieldLabel: HreRem.i18n('fieldlabel.importe.desde'),
-						        name: 'importeDesde'								            	
+						        name: 'importeDesde'
 						    },
-						    { 
+						    {
 						    	fieldLabel: HreRem.i18n('fieldlabel.numero.gasto.gestoria'),
-						        name: 'numGastoGestoria'								            	
+						        name: 'numGastoGestoria'
 						    },
-						    { 
+						    {
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo'),
 					        	name: 'subtipoGastoCodigo',
@@ -95,15 +95,15 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 				                    }
 				            	}
 					        },
-    						{ 
+    						{
 						    	fieldLabel: HreRem.i18n('fieldlabel.importe.hasta'),
-						        name: 'importeHasta'								            	
+						        name: 'importeHasta'
 						    },
 						    {
 						    	fieldLabel: HreRem.i18n('fieldlabel.referencia.emisor'),
-						        name: 'referenciaEmisor'						    	
+						        name: 'referenciaEmisor'
 						    },
-						    { 
+						    {
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.periodicidad'),
 					        	name: 'periodicidad',
@@ -111,7 +111,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 				            		store: '{comboPeriodicidad}'
 				            	}
     						},
-							{ 
+							{
 			                	xtype:'datefieldbase',
 						 		fieldLabel: HreRem.i18n('fieldlabel.fecha.tope.pago.desde'),
 						 		name: 'fechaTopePagoDesde',
@@ -125,9 +125,9 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 					            		fechaHasta.reset();
 					            		fechaHasta.setMinValue(me.getValue());
 					                }
-				            	}				            	
+				            	}
 							},
-							{ 
+							{
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.destinatario'),
 					        	name: 'destinatario',
@@ -137,7 +137,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 				            	displayField: 'descripcion',
 								valueField: 'codigo'
     						},
-    						{ 
+    						{
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.cubre.seguro'),
 					        	name: 'cubreSeguro',
@@ -147,13 +147,13 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 				            	displayField: 'descripcion',
 								valueField: 'codigo'
     						},
-							{ 
+							{
 			                	xtype:'datefieldbase',
 						 		fieldLabel: HreRem.i18n('fieldlabel.fecha.tope.pago.hasta'),
 						 		name: 'fechaTopePagoHasta',
-						 		formatter: 'date("d/m/Y")'					 		
+						 		formatter: 'date("d/m/Y")'
 							},
-							{ 
+							{
 					        	xtype: 'comboboxfieldbase',
 						    	fieldLabel: HreRem.i18n('fieldlabel.gestoria.responsable'),
 					        	name: 'idGestoria',
@@ -163,44 +163,44 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 				            	displayField: 'descripcion',
 								valueField: 'id'
     						},
-    						{ 
+    						{
 						    	fieldLabel: HreRem.i18n('fieldlabel.num.provision'),
-						        name: 'numProvision'								            	
+						        name: 'numProvision'
     						},
-							{ 
+							{
 			                	xtype:'datefieldbase',
 						 		fieldLabel: HreRem.i18n('fieldlabel.fecha.emision.desde'),
 						 		name: 'fechaEmisionDesde',
-						 		formatter: 'date("d/m/Y")'					 		
+						 		formatter: 'date("d/m/Y")'
 							},
-    						
+
     						{
     							fieldLabel: HreRem.i18n('fieldlabel.nombre.propietario'),
-						        name: 'nombrePropietario'    							
+						        name: 'nombrePropietario'
     						},
     						{
     							fieldLabel: HreRem.i18n('fieldlabel.docidentif.propietario'),
-						        name: 'docIdentifPropietario'    							
+						        name: 'docIdentifPropietario'
     						},
-    						{ 
+    						{
 			                	xtype:'datefieldbase',
 						 		fieldLabel: HreRem.i18n('fieldlabel.fecha.emision.hasta'),
 						 		name: 'fechaEmisionHasta',
-						 		formatter: 'date("d/m/Y")'					 		
+						 		formatter: 'date("d/m/Y")'
 							},
-    						{ 
+    						{
 			                	xtype:'datefieldbase',
 						 		fieldLabel: HreRem.i18n('fieldlabel.fecha.autorizacion.desde'),
 						 		name: 'fechaAutorizacionDesde',
-						 		formatter: 'date("d/m/Y")'					 		
+						 		formatter: 'date("d/m/Y")'
 							},
-							{ 
+							{
 			                	xtype:'datefieldbase',
 						 		fieldLabel: HreRem.i18n('fieldlabel.fecha.autorizacion.hasta'),
 						 		name: 'fechaAutorizacionHasta',
-						 		formatter: 'date("d/m/Y")'					 		
+						 		formatter: 'date("d/m/Y")'
 							},
-							{ 
+							{
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.sujeto.impuesto.indirecto'),
 					        	name: 'impuestoIndirecto',
@@ -209,24 +209,34 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 				            	},
 				            	displayField: 'descripcion',
 								valueField: 'codigo'
-    						}    						
+              },
+              {
+                xtype: 'comboboxfieldbase',
+                fieldLabel:  HreRem.i18n('fieldlabel.motivo.aviso.gasto'),
+                name: 'codigoMotivoAviso',
+                bind: {
+                  store: '{comboMotivosAviso}'
+                },
+                displayField: 'descripcion',
+                valueField: 'codigo'
+              }
 			    		]
 				    },
 				    {
-						
+
 			    		title: HreRem.i18n('title.filtro.por.proveedor'),
 			    		defaultType: 'textfieldbase',
-			    		defaults: {							        
+			    		defaults: {
 							addUxReadOnlyEditFieldPlugin: false
 						},
 						hidden: $AU.userIsRol(CONST.PERFILES['PROVEEDOR']),
 			    		items: [
-			    		
-			    			{ 
+
+			    			{
 						    	fieldLabel: HreRem.i18n('fieldlabel.nif.proveedor'),
 						        name: 'nifProveedor'
-						    },			    		
-					    	{ 
+						    },
+					    	{
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel: HreRem.i18n('fieldlabel.tipo'),
 					        	reference: 'filtroComboTipoProveedor',
@@ -235,9 +245,9 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 				            		store: '{comboTipoProveedor}'
 				            	},
 								publishes: 'value'
-			    						
+
 							},
-    						{ 
+    						{
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo'),
 					        	name: 'codigoSubtipoProveedor',
@@ -250,28 +260,28 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 				                    }
 				            	}
 					        },
-						    { 
+						    {
 						    	fieldLabel: HreRem.i18n('fieldlabel.nombre.proveedor'),
-						        name: 'nombreProveedor'								            	
+						        name: 'nombreProveedor'
 						    }
-				        				
+
 						]
 				    },
 				    {
-						
+
 			    		title: HreRem.i18n('title.filtro.por.activo.agrupacion'),
 			    		defaultType: 'textfieldbase',
-			    		defaults: {							        
+			    		defaults: {
 							addUxReadOnlyEditFieldPlugin: false
 						},
 			    		items: [
-			    		
-			    			{ 
+
+			    			{
 						    	fieldLabel: HreRem.i18n('fieldlabel.numero.activo'),
-						        name: 'numActivo'								            	
-						    },    		
-			    						    		
-					    	{ 
+						        name: 'numActivo'
+						    },
+
+					    	{
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel: HreRem.i18n('fieldlabel.cartera'),
 					        	reference: 'filtroEntidadPropietaria',
@@ -280,10 +290,10 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 				            		store: '{comboEntidadPropietaria}'
 				            	},
 				            	publishes: 'value'
-			    						
+
 							},
-							
-							{ 
+
+							{
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel: HreRem.i18n('fieldlabel.subcartera'),
 					        	name: 'subentidadPropietariaCodigo',
@@ -295,13 +305,13 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 				                        value: '{filtroEntidadPropietaria.value}'
 				                    }
 				            	}
-			    						
+
 							}
-				        				
+
 						]
 				    }
 	    ];
-	   	
+
 	    me.callParent();
 	}
 });

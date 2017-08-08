@@ -1,7 +1,9 @@
 Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.expedientedetalle',  
-    requires: ['HreRem.view.expedientes.NotarioSeleccionado', 'HreRem.view.expedientes.DatosComprador', 'HreRem.view.expedientes.DatosClienteUrsus',"HreRem.model.ActivoExpedienteCondicionesModel"],
+    requires: ['HreRem.view.expedientes.NotarioSeleccionado', 'HreRem.view.expedientes.DatosComprador', 
+    'HreRem.view.expedientes.DatosClienteUrsus',"HreRem.model.ActivoExpedienteCondicionesModel",
+    "HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente"],
     
     control: {
     	'documentosexpediente gridBase': {
@@ -13,6 +15,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
             },
             afterdelete: function(grid) {
             	grid.getStore().load();
+            	grid.disableRemoveButton(true);
             }
         },
         
@@ -66,7 +69,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			params: {idActivo: idActivo},
     		scope: this,
 		    success: function(informeJuridico) {
-		    	viewModel.set("informeJuridico", informeJuridico);
+		    	viewModel.set("informeJuridico", informeJuridico);	    	
 		    	tabPanel.unmask();
 		    },
 		   	failure: function (a, operation) {
@@ -133,14 +136,20 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		models = null,
 		nameModels = null,
 		id = me.getViewModel().get("expediente.id");
+		var tabPanel = me.lookupReference('activoExpedienteMain');
 		// Si la API tiene metodo de lectura (read).
 		HreRem.model.ExpedienteInformeJuridico.load(id, {
 			params: {idActivo: me.getViewModel().get("activoExpedienteSeleccionado.idActivo")},
 		    scope: this,
 			success: function(informeJuridico) {
 				me.getViewModel().set("informeJuridico", informeJuridico);
+				if(!Ext.isEmpty(tabPanel)){
+					var panelJ = tabPanel.down('activoexpedientejuridico');
+		    		panelJ.down('[reference=fechaEmisionInformeJuridico]').setValue(informeJuridico.get('fechaEmision'));
+		    		panelJ.down('[reference=resultadoBloqueoInformeJuridico]').setValue(informeJuridico.get('resultadoBloqueo'));
+				}	
 				if(refreshActivoExpediente){
-					me.refrescarActivoExpediente(false);
+					//me.refrescarActivoExpediente(false);
 				}
 			},
 			failure: function (a, operation) {
@@ -395,7 +404,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     
 	onClickBotonGuardar: function(btn) {
 		var me = this;	
-		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());				
+		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());	
 	},
 	
 	onClickBotonGuardarActivoExpediente: function(btn) {
@@ -415,8 +424,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			me.getView().mask(HreRem.i18n("msg.mask.loading"));
 			var url =  $AC.getRemoteUrl('expedientecomercial/saveTanteo');
 			var params={};
-			if(formulario.findField("condiciones")!=null){
-				params['condiciones']= formulario.findField("condiciones").getValue();
+			if(formulario.findField("condicionesTransmision")!=null){
+				params['condicionesTransmision']= formulario.findField("condicionesTransmision").getValue();
 			}
 			if(formulario.findField("fechaComunicacion")!=null){
 				params['fechaComunicacion']= formulario.findField("fechaComunicacion").getValue();
@@ -486,7 +495,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	onClickBotonCancelar: function(btn) {
 		var me = this,
 		activeTab = btn.up('tabpanel').getActiveTab();
-
 		if (!activeTab.saveMultiple) {
 			if(activeTab && activeTab.getBindRecord && activeTab.getBindRecord()) {
 				/*activeTab.getForm().clearInvalid();
@@ -602,35 +610,25 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	abrirFormularioAdjuntarDocumentos: function(grid) {
 		var me = this,
 		idExpediente = me.getViewModel().get("expediente.id");
-		bloqueado = me.getViewModel().get("expediente.bloqueado");
-		if(!bloqueado){
-			Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente", {entidad: 'expedientecomercial', idEntidad: idExpediente, parent: grid}).show();
-		}else{
-			me.fireEvent("errorToast","Expediente bloqueado");	
-		}
+		Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente", {entidad: 'expedientecomercial', idEntidad: idExpediente, parent: grid}).show();
 		
 	},
 	
 	borrarDocumentoAdjunto: function(grid, record) {
 		var me = this;
 		idExpediente = me.getViewModel().get("expediente.id");
-		bloqueado = me.getViewModel().get("expediente.bloqueado");
-		if(!bloqueado){
-			record.erase({
-				params: {idEntidad: idExpediente},
-	            success: function(record, operation) {
-	           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-	           		 grid.fireEvent("afterdelete", grid);
-	            },
-	            failure: function(record, operation) {
-	                  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-	                  grid.fireEvent("afterdelete", grid);
-	            }
-	            
-	        });
-		}else{
-			me.fireEvent("errorToast","Expediente bloqueado");	
-		}
+		record.erase({
+			params: {idEntidad: idExpediente},
+            success: function(record, operation) {
+           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+           		 grid.fireEvent("afterdelete", grid);
+            },
+            failure: function(record, operation) {
+                  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                  grid.fireEvent("afterdelete", grid);
+            }
+            
+        });
 	},
 	
 	downloadDocumentoAdjunto: function(grid, record) {
@@ -1269,6 +1267,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	    					form.reset();
 	    					window.parent.funcionRecargar();
 	    					window.hide();
+	    					me.getView().fireEvent("refrescarExpediente", me.getView());
 	    				},
 	    				failure: function(a, operation){
 	    					me.getView().unmask();
@@ -1295,6 +1294,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				var ventanaCompradores= grid.up().up();
 				var expediente= me.getViewModel().get("expediente");
 				Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente}).show();
+				me.onClickBotonRefrescar();
 			}
 			else{
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.aprobado"));
@@ -1492,6 +1492,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		            success: function(record, operation) {
 		           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 		           		 grid.fireEvent("afterdelete", grid);
+		           		 me.onClickBotonRefrescar();
 		            },
 		            failure: function(record, operation) {
 		            	var data = {};
@@ -1715,7 +1716,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	onClickBotonCancelar: function(btn) {
 		var me = this,
 		activeTab = btn.up('tabpanel').getActiveTab();
-
 		btn.hide();
 		btn.up('tabbar').down('button[itemId=botonguardar]').hide();
 		btn.up('tabbar').down('button[itemId=botoneditar]').show();
@@ -1762,7 +1762,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var window = btn.up().up();
 		var form = window.down("formBase").getForm();
 		var idExpediente = btn.up('desbloquearwindow').idExpediente;
-    	var url =  $AC.getRemoteUrl('expedientecomercial/desbloqueoexpediente');
+    	var url =  $AC.getRemoteUrl('expedientecomercial/desbloqueoExpediente');
     	if(me.validarActivarForm(form)) {
     		var parametros = {idExpediente : idExpediente,motivoCodigo : form.findField("motivo").getValue(),motivoDescLibre : form.findField("motivoDescLibre").getValue()};
     		me.getView().mask();
@@ -1805,5 +1805,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			return true;
 		}
 		
+	},
+	
+	onClickGenerarHojaExcelActivos: function(btn) {
+    	var me = this,
+		config = {};
+
+		config.params = {};
+		config.params.idExpediente=me.getViewModel().get("expediente.id");
+		config.url= $AC.getRemoteUrl("expedientecomercial/getExcelActivosExpediente");
+
+		me.fireEvent("downloadFile", config);		
 	}
 });

@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.BusinessOperationException;
@@ -44,14 +45,17 @@ import es.pfsgroup.plugin.recovery.mejoras.web.tareas.BuzonTareasViewHandlerFact
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
+import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoCampo;
 import es.pfsgroup.plugin.rem.model.DtoNombreTarea;
+import es.pfsgroup.plugin.rem.model.DtoReasignarTarea;
 import es.pfsgroup.plugin.rem.model.DtoSolicitarProrrogaTarea;
 import es.pfsgroup.plugin.rem.model.DtoTarea;
 import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
 
@@ -60,6 +64,8 @@ public class AgendaAdapter {
 	
     public static final String CODIGO_TAREA_ACTIVO = "811";
     public static final String CODIGO_NOTIFICACION = "700";
+    public static final String CODIGO_DEFINICION_OFERTA = "T013_DefinicionOferta";
+    public static final String TEXTO_ADVERTENCIA_T013_DO = "ATENCIÓN: Si ha seleccionado comité Haya está a punto de aprobar esta oferta. Confirme que el importe de la oferta es superior al precio mínimo. En caso contrario, especialmente para las PDV, solicite autorización a su supervisor.";
 
     @Resource
     MessageService messageServices;
@@ -429,6 +435,26 @@ public class AgendaAdapter {
 		return mensaje;
 	}
 	
+	public String getAdvertenciaTareaComercial(Long idTarea){
+		
+		//Advertencias para avisar al usuario desde la ventana de tareas
+		
+		String mensaje = new String();
+		TareaActivo tarea = tareaActivoApi.get(idTarea);
+		Long idActivo = tarea.getActivo().getId();
+		
+		if(!Checks.esNulo(tarea.getTramite().getTrabajo())){
+			String codigoSubtipoTrabajo = tarea.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo();
+			
+			if(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA.equals(codigoSubtipoTrabajo)){
+				if(CODIGO_DEFINICION_OFERTA.equals(tarea.getTareaExterna().getTareaProcedimiento().getCodigo())){
+					return TEXTO_ADVERTENCIA_T013_DO;
+				}
+			}
+		}
+			return mensaje;
+	}
+	
 	public String getCodigoTramiteTarea(Long idTarea){
 		return tareaActivoApi.get(idTarea).getTramite().getTipoTramite().getCodigo();
 	}
@@ -518,5 +544,26 @@ public class AgendaAdapter {
 			return false;
 		}
 		return true;
+	}
+	
+	@Transactional(readOnly = false)
+	public Boolean reasignarTarea(DtoReasignarTarea dto){
+		
+		TareaActivo tareaActivo = tareaActivoApi.get(dto.getIdTarea());
+		
+		if(!Checks.esNulo(dto.getUsuarioGestor()) && !Checks.esNulo(dto.getUsuarioSupervisor())){
+			Filter filtroGestor = genericDao.createFilter(FilterType.EQUALS, "id", dto.getUsuarioGestor());
+			Usuario usuarioGestor = genericDao.get(Usuario.class, filtroGestor);
+			Filter filtroSupervisor = genericDao.createFilter(FilterType.EQUALS, "id", dto.getUsuarioSupervisor());
+			Usuario usuarioSupervisor = genericDao.get(Usuario.class, filtroSupervisor);
+			
+			tareaActivo.setUsuario(usuarioGestor);
+			tareaActivo.setSupervisorActivo(usuarioSupervisor);
+			genericDao.update(TareaActivo.class, tareaActivo);
+			
+			return true;
+		}
+		
+		return false;		
 	}
 }

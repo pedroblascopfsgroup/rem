@@ -97,6 +97,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             afterrender: function() {
                 me.lookupController().getValidacionPrevia(me);
                 me.lookupController().getAdvertenciaTarea(me);
+                me.lookupController().getAdvertenciaTareaComercial(me);
                 me.lookupController().verBotonEnlaceTrabajo(me, esInvisibleEcTrabajo);
                 me.lookupController().verBotonEnlaceActivo(me, esInvisibleEcActivo);
                 me.lookupController().verBotonEnlaceExpediente(me, esInvisibleEcExpediente);
@@ -269,6 +270,13 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
                         },
                         style: 'color: red'
                     }, {
+                        xtype: 'label',
+                        cls: '.texto-alerta',
+                        bind: {
+                            html: '{textoAdvertenciaTareaComercial}'
+                        },
+                        style: 'color: red'
+                    },{
                         xtype: 'label',
                         cls: 'info-tarea',
                         bind: {
@@ -650,9 +658,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
         me.deshabilitarCampo(me.down('[name=comboAseguradoras]'));
         me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
-        if (me.down('[name=comboTarifa]').value == '02') {
-            me.bloquearCampo(me.down('[name=comboTarifa]'));
-        }
+//        if (me.down('[name=comboTarifa]').value == '02') {
+//            me.bloquearCampo(me.down('[name=comboTarifa]'));
+//        }
 
 
         me.down('[name=comboTramitar]').addListener('change', function(combo) {
@@ -1110,7 +1118,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             if (combo.value == '01') {
                 me.habilitarCampo(me.down('[name=fechaFirma]'));
                 me.habilitarCampo(me.down('[name=numProtocolo]'));
-                me.habilitarCampo(me.down('[name=fechaIngreso]'));
                 me.habilitarCampo(me.down('[name=comboCondiciones]'));
                 me.habilitarCampo(me.down('[name=condiciones]'));
 
@@ -1128,12 +1135,10 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
                 }
                 me.deshabilitarCampo(me.down('[name=fechaFirma]'));
                 me.deshabilitarCampo(me.down('[name=numProtocolo]'));
-                me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
                 me.deshabilitarCampo(me.down('[name=comboCondiciones]'));
                 me.deshabilitarCampo(me.down('[name=condiciones]'));
                 me.down('[name=fechaFirma]').reset();
                 me.down('[name=numProtocolo]').reset();
-                me.down('[name=fechaIngreso]').reset();
                 me.down('[name=comboCondiciones]').reset();
                 me.down('[name=condiciones]').reset();
             }

@@ -277,7 +277,7 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
 			allowEdit = false;
 		}
     	if(allowEdit && me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
- 	    	allowEdit = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+ 	    	allowEdit = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
  	    			&& $AU.userHasFunction('EDITAR_TAB_FOTOS_ACTIVO_WEB'));
  	    }
     	if(!allowEdit){

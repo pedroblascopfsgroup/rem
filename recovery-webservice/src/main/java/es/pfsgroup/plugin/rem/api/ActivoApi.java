@@ -1009,6 +1009,22 @@ public interface ActivoApi {
 	 */
 	public ActivoAgrupacionActivo getActivoAgrupacionActivoAgrRestringidaPorActivoID(Long id);
 	
+	/**
+	 * (Activo en Promocion Obra Nueva o Asistida // Activo de 1ª o 2ª Residencia )-> Retail
+	 * Cajamar: VNC <= 500000 -> Retail), en caso contrario -> Singular
+	 * Sareb/Bankia: AprobadoVenta (si no hay, valorTasacion) <= 500000 -> Retail), en caso contrario -> Singular
+	 * @param activo
+	 * @return
+	 */
+	public String getCodigoTipoComercializacionFromActivo(Activo activo);
+
+	/**
+	 * Devuelve el primer Usuario asociado al mediador del activo. En caso de no existir devuelve null.
+	 * @param oferta
+	 * @return Usuario
+	 */
+	Usuario getUsuarioMediador(Activo activo);
+	
 	
 
 }

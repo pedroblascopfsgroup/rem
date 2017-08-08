@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
@@ -22,6 +23,7 @@ import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalExpedientesApi;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.BajaDocumentoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CabeceraPeticionRestClientDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearDocumentoDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CredencialesUsuarioDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DocumentosExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.RecoveryToGestorDocAssembler;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearExpedienteComercialDto;
@@ -206,7 +208,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		String fechaGasto = !Checks.esNulo(gasto.getFechaEmision()) ? formatter.format(gasto.getFechaEmision()) : "";
 		String idReo = !Checks.estaVacio(gasto.getGastoProveedorActivos()) ?  gasto.getGastoProveedorActivos().get(0).getActivo().getNumActivo().toString() : "";
 		String cliente = !Checks.estaVacio(gasto.getGastoProveedorActivos()) ?  gasto.getGastoProveedorActivos().get(0).getActivo().getCartera().getDescripcion() : "";
-		if(Checks.esNulo(cliente) && gasto.esAutorizadoSinActivos()) {			
+		if((Checks.esNulo(cliente) || cliente.isEmpty()) && gasto.esAutorizadoSinActivos()) {			
 			if(!Checks.esNulo(gasto.getPropietario())) {
 				cliente = gasto.getPropietario().getCartera().getDescripcion();				
 			}
@@ -284,16 +286,20 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 			} else if(DDTipoOferta.CODIGO_VENTA.equalsIgnoreCase(expedienteComercial.getOferta().getTipoOferta().getCodigo())){
 				codigoEstado = "06";
 			}
-		}
-		
+		}		
 		
 		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
 				expedienteComercial.getNumExpediente().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES, codigoEstado);
-		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDto(webFileItem, userLogin,
-				matricula);
-		RespuestaCrearDocumento respuestaCrearDocumento = gestorDocumentalApi.crearDocumento(cabecera, crearDoc);
-		respuesta = new Long(respuestaCrearDocumento.getIdDocumento());
-
+		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDto(webFileItem, userLogin, matricula);
+		
+		RespuestaCrearDocumento respuestaCrearDocumento = null;
+		try {
+			respuestaCrearDocumento = gestorDocumentalApi.crearDocumento(cabecera, crearDoc);
+			respuesta = new Long(respuestaCrearDocumento.getIdDocumento());
+		} catch (GestorDocumentalException gex) {
+			logger.debug(gex.getMessage());
+			throw gex;
+		}
 		return respuesta;
 	}
 
@@ -340,6 +346,34 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		}
 		
 		return idExpediente;	
+	}
+	
+	public void crearRelacionActivosExpediente(ExpedienteComercial expedienteComercial, Long idDocRestClient, String[] listaActivos, String login) throws GestorDocumentalException {	
+		
+		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
+		
+		CredencialesUsuarioDto credUsu = recoveryToGestorDocAssembler.getCredencialesDto(login);
+		String codigoEstado = "03"; //Hablado con Manuel Pardo
+			
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(expedienteComercial.getNumExpediente().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO, codigoEstado);
+		cabecera.setIdDocumento(idDocRestClient);
+
+		//Un vez adjuntado el documento al expediente, y obtenido el id del mismo, cread un bucle sobre el listado de activos seleccionados.
+		//Llamar al servicio de vinculación entre el documento adjuntado al activo.
+		String errorMessage = "";
+		for (int x=0; x<listaActivos.length; x++) {
+			cabecera.setIdExpedienteHaya(listaActivos[x]);
+			try {
+				gestorDocumentalApi.crearRelacionExpediente(cabecera,credUsu);
+			} catch (GestorDocumentalException gex) {
+				logger.debug(gex.getMessage());
+				errorMessage = errorMessage + "["+listaActivos[x]+"] "+gex.getMessage() + "\n";
+			}
+		}
+		if (errorMessage.length()!=0) {
+			GestorDocumentalException gex = new GestorDocumentalException(errorMessage);
+			throw gex;
+		}
 	}
 
 }

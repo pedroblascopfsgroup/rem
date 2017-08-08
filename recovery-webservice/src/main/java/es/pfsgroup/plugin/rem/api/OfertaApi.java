@@ -7,6 +7,7 @@ import java.util.Map;
 
 import net.sf.json.JSONObject;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -438,9 +439,10 @@ public interface OfertaApi {
 	 * Este método resetea el PBC.
 	 * 
 	 * @param expediente : entidad expediente.
+	 * @param fullReset, Booleano para indicar si reseteamos solo el estado o también la responsabilidad corporativa.
 	 * @return Devuelve True si la operación ha sido satisfactoria, False si ha habido un error.
 	 */
-	public boolean resetPBC(ExpedienteComercial expediente);
+	public boolean resetPBC(ExpedienteComercial expediente, Boolean fullReset);
 	
 	/**
 	 * Este método comprueba si hay impuestos.
@@ -488,6 +490,29 @@ public interface OfertaApi {
 	 * @return
 	 */
 	public List<DDTipoProveedor> getDiccionarioSubtipoProveedorCanal();
+
+	
+	/**
+	 * Este método comprueba que todos los tanteos de los activos del expedientes tienen una resolucion renuncia
+	 * @param tareaExterna
+	 * @return
+	 */
+	boolean checkRenunciaTanteo(TareaExterna tareaExterna);
+
+	/**
+	 * Este método comprueba que alguno de los tanteos de los activos del expedientes tienen una resolucion ejercida
+	 * @param tareaExterna
+	 * @return
+	 */
+	boolean checkEjercidoTanteo(TareaExterna tareaExterna);
+
+	
+	/**
+	 * Devuelve el primer Usuario asociado al preescritor de la oferta. En caso de no existir devuelve null.
+	 * @param oferta
+	 * @return Usuario
+	 */
+	Usuario getUsuarioPreescriptor(Oferta oferta);
 
 }
 

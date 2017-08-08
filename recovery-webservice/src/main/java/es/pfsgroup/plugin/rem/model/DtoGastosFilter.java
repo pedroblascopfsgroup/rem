@@ -71,6 +71,7 @@ public class DtoGastosFilter extends WebDto {
 	private String fechaAutorizacionDesde;
 	private String fechaAutorizacionHasta;
 	private Integer impuestoIndirecto;
+	private String codigoMotivoAviso;
 	
 	
 	
@@ -383,6 +384,12 @@ public class DtoGastosFilter extends WebDto {
 	}
 	public void setImpuestoIndirecto(Integer impuestoIndirecto) {
 		this.impuestoIndirecto = impuestoIndirecto;
+	}
+	public String getCodigoMotivoAviso() {
+		return codigoMotivoAviso;
+	}
+	public void setCodigoMotivoAviso(String codigoMotivoAviso) {
+		this.codigoMotivoAviso = codigoMotivoAviso;
 	}
 	
 }

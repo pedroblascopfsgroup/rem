@@ -38,6 +38,7 @@ public class HttpClientFacade {
 			throw new HttpClientFacadeInternalError("JSON request is required");
 		}
 
+		responseTimeOut = responseTimeOut * 1000;
 		logger.trace("Estableciendo coneixón con httpClient [url=" + serviceUrl + ", method=" + sendMethod
 				+ ", timeout=" + responseTimeOut + ", charset=" + charSet + "]");
 
@@ -62,7 +63,7 @@ public class HttpClientFacade {
 			httpclient.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
 
 			logger.trace("http.socket.timeout : " + responseTimeOut);
-			httpclient.getParams().setParameter("http.socket.timeout", responseTimeOut*1000);
+			httpclient.getParams().setParameter("http.socket.timeout", responseTimeOut);
 
 			logger.trace("http.protocol.content-charset : " + charSet);
 			httpclient.getParams().setParameter("http.protocol.content-charset", charSet);

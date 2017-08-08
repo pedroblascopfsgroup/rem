@@ -466,10 +466,11 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 				xtype:'fieldset',
 				collapsible: true,
 				defaultType: 'displayfieldbase',
-				bind: {
+				/*bind: {
 					hidden: '{!esOfertaVenta}',
 					disabled: '{!esOfertaVenta}'
-			    },
+			    },*/
+				hidden: 'true',
 				title: HreRem.i18n('title.juridicas'),
 				items : [
 				

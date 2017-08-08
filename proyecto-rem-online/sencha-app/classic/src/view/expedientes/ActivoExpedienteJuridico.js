@@ -26,15 +26,17 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteJuridico', {
 		                	xtype: 'datefieldbase', 
 		                	formatter: 'date("d/m/Y")',
 		                	fieldLabel:  HreRem.i18n('label.fecha.emision'),
-		                	maxValue: null,
-		                	minValue: new Date(),
-		                	bind:		'{informeJuridico.fechaEmision}'
+		                	maxValue: new Date(),
+		                	minValue: null,
+		                	bind:		'{informeJuridico.fechaEmision}',
+		                	reference: 'fechaEmisionInformeJuridico'
 
 		                },						
 						{
 							xtype: 'displayfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.proveedor.resultado'),
-							bind:		'{informeJuridico.resultadoBloqueo}'
+							bind:		'{informeJuridico.resultadoBloqueo}',
+							reference: 'resultadoBloqueoInformeJuridico'
 						}
 					]
 			}

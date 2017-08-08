@@ -2,7 +2,7 @@ Ext.define('HreRem.view.expedientes.BloqueosFormalizacionList', {
     extend		: 'HreRem.view.common.GridBaseEditableRow',
     xtype		: 'bloqueosformalizacionlist',
     scrollable: 'y',
-    editOnSelect: false,
+    editOnSelect: true,
 	topBar		: true,
 	idPrincipal : 'expediente.id',
     idSecundaria : 'activoExpedienteSeleccionado.idActivo',
@@ -70,7 +70,29 @@ Ext.define('HreRem.view.expedientes.BloqueosFormalizacionList', {
      				} else {
      					me.disableRemoveButton(false);
      				}
+     			},
+     			
+     			rowdblclick: function(a, record, element, rowIndex, e, eOpts){     				
+     				var columnaArea= a.grid.columns[Ext.Array.indexOf(Ext.Array.pluck(me.columns, 'dataIndex'), 'areaBloqueoCodigo')].getEditor();
+     				var columnaTipo= a.grid.columns[Ext.Array.indexOf(Ext.Array.pluck(me.columns, 'dataIndex'), 'tipoBloqueoCodigo')].getEditor();
+     				var columnaAcuerdo= a.grid.columns[Ext.Array.indexOf(Ext.Array.pluck(me.columns, 'dataIndex'), 'acuerdoCodigo')].getEditor();
+     				
+     				columnaArea.setDisabled(true);
+     				columnaTipo.setDisabled(true);
+     				if(!Ext.isEmpty(columnaAcuerdo.getSelection()) && columnaAcuerdo.getSelection().get('codigo')==0){
+     					columnaAcuerdo.setDisabled(true);
+     				}
+     				else{
+     					columnaAcuerdo.setDisabled(false);
+     				}
+     				if(record.data.acuerdoCodigo==0 || !Ext.isEmpty(record.data.fechaBaja)){
+     					columnaAcuerdo.setDisabled(true);
+     				}
+     				else{
+     					columnaAcuerdo.setDisabled(false);
+     				}
      			}
+
         };
 
 		me.columns = [
@@ -137,13 +159,48 @@ Ext.define('HreRem.view.expedientes.BloqueosFormalizacionList', {
 		            	xtype: 'comboboxfieldbase',
 			            addUxReadOnlyEditFieldPlugin: false,
 			            allowBlank: false,
-			            disabled: true,
+			           // disabled: true,
 			            bind: {
 			            	store: '{comboTipoBloqueo}'
 			            },
 			            reference: 'cbDDColTipoBloqueo'
 			        }
 		        },
+		        
+		        
+		        {
+		        	xtype: 'gridcolumn',
+			        renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
+
+			            var foundedRecord = this.up('expedientedetallemain').getViewModel().getStore('comboAcuerdo').findRecord('codigo', value);
+			            var descripcion;
+			        	if(!Ext.isEmpty(foundedRecord)) {
+			        		descripcion = foundedRecord.getData().descripcion;
+			        	}
+			        	return me.coloredRender(descripcion, metaData, record);
+			        },
+		            dataIndex: 'acuerdoCodigo',
+		            text: HreRem.i18n('header.acuerdo'),
+		            flex: 1,
+		            editor: {
+			            xtype: 'comboboxfieldbase',
+			            addUxReadOnlyEditFieldPlugin: false,
+			            allowBlank: false,
+			            listeners: {
+							select: function(combo , record , eOpts) {
+								
+							}
+						},
+			            bind: {
+			            	store: '{comboAcuerdo}'			            	
+			            },
+			            reference: 'cbDDAcuerdo',
+			            value: '1'
+			        }
+		        },
+		        
+		        
+		        
 		        {
 		            dataIndex: 'fechaAlta',
 		            text: HreRem.i18n('header.fecha.alta'),
@@ -184,5 +241,69 @@ Ext.define('HreRem.view.expedientes.BloqueosFormalizacionList', {
 		    ];
 
 		    me.callParent();
-   }
+   },
+   
+   onAddClick: function(btn){
+		var me = this;
+		var columnaArea= me.columns[Ext.Array.indexOf(Ext.Array.pluck(me.columns, 'dataIndex'), 'areaBloqueoCodigo')].getEditor();
+		var columnatipo= me.columns[Ext.Array.indexOf(Ext.Array.pluck(me.columns, 'dataIndex'), 'tipoBloqueoCodigo')].getEditor();
+		var columnaAcuerdo= me.columns[Ext.Array.indexOf(Ext.Array.pluck(me.columns, 'dataIndex'), 'acuerdoCodigo')].getEditor();
+		columnaArea.setDisabled(false);
+		columnatipo.setDisabled(false);
+		columnaAcuerdo.setDisabled(false);
+		
+		var rec = Ext.create(me.getStore().config.model);
+		me.getStore().sorters.clear();
+		me.editPosition = 0;
+        me.getStore().insert(me.editPosition, rec);
+        me.rowEditing.isNew = true;
+        me.rowEditing.startEdit(me.editPosition, 0);
+        me.disableAddButton(true);
+        me.disablePagingToolBar(true);
+        me.disableRemoveButton(true);
+	},
+	
+	onDeleteClick: function(btn){
+		var me = this,
+    	seleccionados = btn.up('grid').getSelection(),
+    	gridStore = btn.up('grid').getStore();
+    	
+    	if(Ext.isArray(seleccionados) && seleccionados.length != 0) {
+			
+			Ext.Msg.show({
+			    title:HreRem.i18n("title.ventana.eliminar.bloqueo"),
+			    message: HreRem.i18n("text.ventana.eliminar.bloqueo"),
+			    buttons: Ext.Msg.YESNO,
+			    icon: Ext.Msg.QUESTION,
+			    fn: function(btn) {
+			        if (btn === 'yes') {
+			        	
+			        	me.selection.erase({
+							params: {id: me.selection.data.id},
+			            	success: function (a, operation, c) {
+                                me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+								me.deleteSuccessFn();
+                            },
+                            
+                            failure: function (a, operation) {
+                            	var data = {};
+                            	try {
+                            		data = Ext.decode(operation._response.responseText);
+                            	}
+                            	catch (e){ };
+                            	if (!Ext.isEmpty(data.msg)) {
+                            		me.fireEvent("errorToast", data.msg);
+                            	} else {
+                            		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                            	}
+								me.deleteSuccessFn()
+                            }
+                        });
+			        	
+			        }
+			    }
+			});  
+    	}
+	}
+   
 });

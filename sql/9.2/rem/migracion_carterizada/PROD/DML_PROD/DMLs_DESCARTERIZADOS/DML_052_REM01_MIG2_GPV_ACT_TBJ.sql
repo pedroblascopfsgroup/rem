@@ -62,34 +62,7 @@ BEGIN
                 ;
       EXECUTE IMMEDIATE V_SENTENCIA;
       
-      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_1||' cargada. '||SQL%ROWCOUNT||' Filas.');
-      
-       V_SENTENCIA := '
-        MERGE INTO '||V_ESQUEMA||'.'||V_TABLA_1||' GAS
-        USING ( 
-                                WITH SUMATORIO AS(
-                                        SELECT GPT_ACT_NUMERO_ACTIVO, GREATEST(SUM(GPT_BASE_IMPONIBLE),1) AS SUMA
-                                        FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||'
-										WHERE VALIDACION = 0
-                                        GROUP BY GPT_ACT_NUMERO_ACTIVO
-                                )
-                                SELECT GPV.GPV_ID, ACT.ACT_ID, GPT_BASE_IMPONIBLE, ROUND(100*GPT_BASE_IMPONIBLE/OPERACION.SUMA,4) AS SUMA FROM MIG2_GPV_ACT_TBJ MIG2
-                                INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
-                                  ON ACT.ACT_NUM_ACTIVO = MIG2.GPT_ACT_NUMERO_ACTIVO
-                                INNER JOIN SUMATORIO OPERACION
-                                  ON MIG2.GPT_ACT_NUMERO_ACTIVO = OPERACION.GPT_ACT_NUMERO_ACTIVO                                       
-                                INNER JOIN  '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = MIG2.GPT_GPV_ID
-                                JOIN '||V_ESQUEMA||'.GPV_ACT T1 ON T1.GPV_ID = GPV.GPV_ID AND T1.ACT_ID = ACT.ACT_ID
-								WHERE MIG2.VALIDACION = 0
-                          ) AUX
-                ON (GAS.GPV_ACT_ID = AUX.GPV_ACT_ID)
-                WHEN MATCHED THEN UPDATE SET
-                  GAS.GPV_PARTICIPACION_GASTO = AUX.SUMA
-      '
-      ;
-      --EXECUTE IMMEDIATE V_SENTENCIA     ;
-      
-      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_1||' actualizada (GPV_PARTICIPACION_GASTO). '||SQL%ROWCOUNT||' Filas.');
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_2||' cargada. '||SQL%ROWCOUNT||' Filas.'); 
       
       --Inicio del proceso de volcado sobre GPV_TBJ
       DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA_2||'.');
@@ -126,7 +99,7 @@ BEGIN
                 ;
       EXECUTE IMMEDIATE V_SENTENCIA     ;
       
-      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_2||' cargada. '||SQL%ROWCOUNT||' Filas.');
+
       
       COMMIT;
       
@@ -135,6 +108,56 @@ BEGIN
 
       V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA_2||''',''10''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
+     
+      
+      V_SENTENCIA := '
+        MERGE INTO GPV_ACT GAS
+        USING (
+          WITH NUM_ACTIVOS AS(
+            SELECT GPT_GPV_ID, COUNT(1) AS NUM_ACTIVOS
+            FROM MIG2_GPV_ACT_TBJ
+            WHERE VALIDACION = 0
+            GROUP BY GPT_GPV_ID)
+          SELECT GPV.GPV_ID, ACT.ACT_ID, AUX.NUM_ACTIVOS, ROUND(100/AUX.NUM_ACTIVOS,4) AS PORCENTAJE
+          FROM MIG2_GPV_ACT_TBJ MIG2
+          JOIN NUM_ACTIVOS AUX ON MIG2.GPT_GPV_ID = AUX.GPT_GPV_ID
+          JOIN REM01.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = MIG2.GPT_GPV_ID
+          JOIN REM01.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = MIG2.GPT_ACT_NUMERO_ACTIVO
+          JOIN REM01.GPV_ACT T1 ON T1.GPV_ID = GPV.GPV_ID AND T1.ACT_ID = ACT.ACT_ID
+          WHERE MIG2.VALIDACION = 0) AUX
+        ON (GAS.GPV_ID = AUX.GPV_ID AND GAS.ACT_ID = AUX.ACT_ID)
+        WHEN MATCHED THEN UPDATE SET
+        GAS.GPV_PARTICIPACION_GASTO = AUX.PORCENTAJE';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+      
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_1||' actualizada (GPV_PARTICIPACION_GASTO). '||SQL%ROWCOUNT||' Filas.');
+     
+      V_SENTENCIA := '
+        MERGE INTO ACT_TBJ GAS
+        USING (
+          WITH NUM_ACTIVOS AS(
+            SELECT GPT_TBJ_NUM_TRABAJO, COUNT(1) AS NUM_ACTIVOS
+            FROM (SELECT DISTINCT GPT_TBJ_NUM_TRABAJO, GPT_ACT_NUMERO_ACTIVO
+                FROM MIG2_GPV_ACT_TBJ
+                WHERE VALIDACION = 0)
+            GROUP BY GPT_TBJ_NUM_TRABAJO)
+          SELECT DISTINCT TBJ.TBJ_ID, ACT.ACT_ID, AUX.NUM_ACTIVOS, ROUND(100/AUX.NUM_ACTIVOS,4) AS PORCENTAJE
+          FROM MIG2_GPV_ACT_TBJ MIG2
+          JOIN NUM_ACTIVOS AUX ON MIG2.GPT_TBJ_NUM_TRABAJO = AUX.GPT_TBJ_NUM_TRABAJO
+          JOIN REM01.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = MIG2.GPT_ACT_NUMERO_ACTIVO
+          JOIN REM01.ACT_TBJ_TRABAJO TBJ ON TBJ.TBJ_NUM_TRABAJO = MIG2.GPT_TBJ_NUM_TRABAJO
+          JOIN REM01.ACT_TBJ T1 ON T1.TBJ_ID = TBJ.TBJ_ID AND T1.ACT_ID = ACT.ACT_ID
+          WHERE MIG2.VALIDACION = 0) AUX
+        ON (GAS.TBJ_ID = AUX.TBJ_ID AND GAS.ACT_ID = AUX.ACT_ID)
+        WHEN MATCHED THEN UPDATE SET
+        GAS.ACT_TBJ_PARTICIPACION = AUX.PORCENTAJE';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+      
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_1||' actualizada (GPV_PARTICIPACION_GASTO). '||SQL%ROWCOUNT||' Filas.');
+      
+
+      COMMIT;
+     
      
 EXCEPTION
       WHEN OTHERS THEN

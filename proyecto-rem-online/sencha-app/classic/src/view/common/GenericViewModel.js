@@ -412,6 +412,24 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'subtipoPlazaGaraje'}
 				}
+    		},
+    		
+    		comboUsuariosReasignacion: {
+    			model: 'HreRem.model.ComboBase',
+    			proxy: {
+    			type: 'uxproxy',
+    			remoteUrl: 'activo/getComboUsuarios',
+    			extraParams: {idTipoGestor: '{tipoGestor.selection.id}'}
+    			}
+    		},
+    		
+    		comboSupervisorReasignacion: {
+    			model: 'HreRem.model.ComboBase',
+    			proxy: {
+    			type: 'uxproxy',
+    			remoteUrl: 'activo/getComboUsuarios',
+    			extraParams: {idTipoGestor: '{tipoGestorSupervisor.selection.id}'}
+    			}
     		}
 	    
     		

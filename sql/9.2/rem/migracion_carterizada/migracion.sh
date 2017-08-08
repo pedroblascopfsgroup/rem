@@ -9,9 +9,9 @@ fecha_log=`date +%Y%m%d_%H%M%S`
 log_completo="Logs/migracion_completo_"$fecha_log".log"
 
 hora=`date +%H:%M:%S`
-echo "################################################################"
+echo "###############################################################"
 echo "####### [START] Comienza la migración: $hora"
-echo "################################################################"
+echo "###############################################################"
 echo " "
 ##############################################################################################
 echo "	-------------------------------------------------------"
@@ -28,7 +28,12 @@ fi
 cat $salida >> $log_completo
 fin=`date +%s`
 let total=($fin-$inicioparte)/60
-echo "	Tablas creadas en $total minutos."
+if [ $total = 0 ] ; then
+   let total=($fin-$inicioparte)
+   echo "	Tablas creadas en $total segundos."
+else
+   echo "	Tablas creadas en $total minutos."
+fi
 ##############################################################################################
 echo " "
 echo "	-------------------------------------------------------"
@@ -45,7 +50,12 @@ fi
 cat $salida >> $log_completo
 fin=`date +%s`
 let total=($fin-$inicioparte)/60
-echo "	Ficheros reubicados y renombrados en $total minutos."
+if [ $total = 0 ] ; then
+   let total=($fin-$inicioparte)
+   echo "	Ficheros reubicados y renombrados en $total segundos."
+else
+   echo "	Ficheros reubicados y renombrados en $total minutos."
+fi
 ##############################################################################################
 echo " "
 echo "	-------------------------------------------------------"
@@ -62,7 +72,12 @@ fi
 cat $salida >> $log_completo
 fin=`date +%s`
 let total=($fin-$inicioparte)/60
-echo "	Tablas MIG rellenadas en $total minutos."
+if [ $total = 0 ] ; then
+   let total=($fin-$inicioparte)
+   echo "	Tablas MIG rellenadas en $total segundos."
+else
+   echo "	Tablas MIG rellenadas en $total minutos."
+fi
 ##############################################################################################
 echo " "
 echo "	-------------------------------------------------------"
@@ -79,7 +94,12 @@ fi
 cat $salida >> $log_completo
 fin=`date +%s`
 let total=($fin-$inicioparte)/60
-echo "	Tablas de validación rellenadas en $total minutos."
+if [ $total = 0 ] ; then
+   let total=($fin-$inicioparte)
+   echo "	Tablas de validación rellenadas en $total segundos."
+else
+   echo "	Tablas de validación rellenadas en $total minutos."
+fi
 ##############################################################################################
 echo " "
 echo "	-------------------------------------------------------"
@@ -96,7 +116,12 @@ fi
 cat $salida >> $log_completo
 fin=`date +%s`
 let total=($fin-$inicioparte)/60
-echo "	Procesos almacenados compilados en $total minutos."
+if [ $total = 0 ] ; then
+   let total=($fin-$inicioparte)
+   echo "	Procesos almacenados compilados en $total segundos."
+else
+   echo "	Procesos almacenados compilados en $total minutos."
+fi
 ##############################################################################################
 echo " "
 echo "	-------------------------------------------------------"
@@ -113,7 +138,12 @@ fi
 cat $salida >> $log_completo
 fin=`date +%s`
 let total=($fin-$inicioparte)/60
-echo "	Validaciones completadas en $total minutos."
+if [ $total = 0 ] ; then
+   let total=($fin-$inicioparte)
+   echo "	Validaciones completadas en $total segundos."
+else
+   echo "	Validaciones completadas en $total minutos."
+fi
 ##############################################################################################
 echo " "
 echo "	*******************************************************"
@@ -123,8 +153,8 @@ echo " "
 
 fin=`date +%s`
 let total=($fin-$inicio)/60
-echo "################################################################"
+echo "###############################################################"
 echo "####### [END] Migración completada en [$total] minutos"
-echo "################################################################"
+echo "###############################################################"
 
 exit 0

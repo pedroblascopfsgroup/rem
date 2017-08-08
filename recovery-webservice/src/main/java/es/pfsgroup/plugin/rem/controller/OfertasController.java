@@ -61,11 +61,8 @@ public class OfertasController {
 	public ModelAndView getListOfertas(DtoOfertasFilter dtoOfertasFilter, ModelMap model) {
 		try {
 
-			if (dtoOfertasFilter.getSort() == null) {
-
-				dtoOfertasFilter.setSort("fechaCreacion");
-
-			}
+			dtoOfertasFilter.setSort("voferta.fechaCreacion");
+			dtoOfertasFilter.setDir("DESC");
 			
 			DtoPage page = ofertaApi.getListOfertasUsuario(dtoOfertasFilter);
 
@@ -90,7 +87,8 @@ public class OfertasController {
 		dtoOfertasFilter.setLimit(excelReportGeneratorApi.getLimit());
 
 		List<VOfertasActivosAgrupacion> listaOfertas = (List<VOfertasActivosAgrupacion>) ofertaApi
-				.getListOfertas(dtoOfertasFilter).getResults();
+				//.getListOfertas(dtoOfertasFilter).getResults();
+				.getListOfertasUsuario(dtoOfertasFilter).getResults();
 
 		ExcelReport report = new OfertasExcelReport(listaOfertas);
 

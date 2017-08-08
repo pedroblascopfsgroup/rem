@@ -115,7 +115,36 @@ public class TabActivoInformeComercial implements TabActivoService {
 					beanUtilNotNull.copyProperty(informeComercial, "nombreMediador", activo.getInfoComercial().getMediadorInforme().getNombre());
 					beanUtilNotNull.copyProperty(informeComercial, "telefonoMediador", activo.getInfoComercial().getMediadorInforme().getTelefono1());
 					beanUtilNotNull.copyProperty(informeComercial, "emailMediador", activo.getInfoComercial().getMediadorInforme().getEmail());
+					
+					if(activo.getInfoComercial().getMediadorInforme().getAutorizacionWeb() != null && activo.getInfoComercial().getMediadorInforme().getAutorizacionWeb().equals(Integer.valueOf(1))){
+						informeComercial.setAutorizacionWeb(1);
+					}else{
+						informeComercial.setAutorizacionWeb(0);
+					}
+				}else{
+					informeComercial.setAutorizacionWeb(0);
 				}
+				
+				// Datos de la Comunidad de vecinos al Dto.
+				// Comunidad inscrita = constituida.
+				beanUtilNotNull.copyProperty(informeComercial, "inscritaComunidad",
+						activo.getInfoComercial().getExisteComunidadEdificio());
+				// Derrama de la comunidad.
+				beanUtilNotNull.copyProperty(informeComercial, "derramaOrientativaComunidad",
+						activo.getInfoComercial().getDerramaOrientativaComunidad());
+				// Cuota de la comunidad, tomada del importe medio.
+				beanUtilNotNull.copyProperty(informeComercial, "cuotaOrientativaComunidad",
+						activo.getInfoComercial().getCuotaOrientativaComunidad());
+				// Nombre y telefono Presidente.
+				beanUtilNotNull.copyProperty(informeComercial, "nomPresidenteComunidad",
+						activo.getInfoComercial().getNombrePresidenteComunidadEdificio());
+				beanUtilNotNull.copyProperty(informeComercial, "telPresidenteComunidad",
+						activo.getInfoComercial().getTelefonoPresidenteComunidadEdificio());
+				// Nombre y telefono Administrador.
+				beanUtilNotNull.copyProperty(informeComercial, "nomAdministradorComunidad",
+						activo.getInfoComercial().getNombreAdministradorComunidadEdificio());
+				beanUtilNotNull.copyProperty(informeComercial, "telAdministradorComunidad",
+						activo.getInfoComercial().getTelefonoAdministradorComunidadEdificio());
 			}
 
 			// Datos de la Comunidad de vecinos al Dto.
@@ -158,11 +187,33 @@ public class TabActivoInformeComercial implements TabActivoService {
 				}
 
 				beanUtilNotNull.copyProperty(informeComercial, "numPlantas", activo.getInfoComercial().getEdificio().getNumPlantas());
-				beanUtilNotNull.copyProperty(informeComercial, "ascensor", activo.getInfoComercial().getEdificio().getAscensor());
+				beanUtilNotNull.copyProperty(informeComercial, "ascensor", activo.getInfoComercial().getEdificio().getAscensorEdificio());
 				beanUtilNotNull.copyProperty(informeComercial, "numAscensores", activo.getInfoComercial().getEdificio().getNumAscensores());
 				beanUtilNotNull.copyProperty(informeComercial, "ediDescripcion", activo.getInfoComercial().getEdificio().getEdiDescripcion());
 				beanUtilNotNull.copyProperty(informeComercial, "entornoInfraestructuras", activo.getInfoComercial().getEdificio().getEntornoInfraestructura());
 				beanUtilNotNull.copyProperty(informeComercial, "entornoComunicaciones", activo.getInfoComercial().getEdificio().getEntornoComunicacion());
+				
+				//terrazas
+				beanUtilNotNull.copyProperty(informeComercial, "numTerrazaCubierta", activo.getInfoComercial().getNumeroTerrazasCubiertas());
+				beanUtilNotNull.copyProperty(informeComercial, "descTerrazaCubierta", activo.getInfoComercial().getDescripcionTerrazasCubiertas());
+				beanUtilNotNull.copyProperty(informeComercial, "numTerrazaDescubierta", activo.getInfoComercial().getNumeroTerrazasDescubiertas());
+				beanUtilNotNull.copyProperty(informeComercial, "descTerrazaDescubierta", activo.getInfoComercial().getDescripcionTerrazasDescubiertas());
+				
+				// otras dependencias
+				if (!Checks.esNulo(activo.getInfoComercial().getDespensaOtrasDependencias())
+						&& activo.getInfoComercial().getDespensaOtrasDependencias().equals(Integer.valueOf(1))) {
+					beanUtilNotNull.copyProperty(informeComercial, "despensa", true);
+				}
+				if (!Checks.esNulo(activo.getInfoComercial().getLavaderoOtrasDependencias())
+						&& activo.getInfoComercial().getLavaderoOtrasDependencias().equals(Integer.valueOf(1))) {
+					beanUtilNotNull.copyProperty(informeComercial, "lavadero", true);
+				}
+				if (!Checks.esNulo(activo.getInfoComercial().getAzoteaOtrasDependencias())
+						&& activo.getInfoComercial().getAzoteaOtrasDependencias().equals(Integer.valueOf(1))) {
+					beanUtilNotNull.copyProperty(informeComercial, "azotea", true);
+				}
+				beanUtilNotNull.copyProperty(informeComercial, "descOtras", activo.getInfoComercial().getOtrosOtrasDependencias());
+				
 			}
 
 		} catch (IllegalAccessException e) {
@@ -280,30 +331,56 @@ public class TabActivoInformeComercial implements TabActivoService {
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "ediDescripcion", activoInformeDto.getEdiDescripcion());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "entornoInfraestructura", activoInformeDto.getEntornoInfraestructuras());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "entornoComunicacion", activoInformeDto.getEntornoComunicaciones());
+					
+					//Datos de la propiedad de comunitarios
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "existeComunidadEdificio", activoInformeDto.getInscritaComunidad());
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "derramaOrientativaComunidad", activoInformeDto.getDerramaOrientativaComunidad());
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "cuotaOrientativaComunidad", activoInformeDto.getCuotaOrientativaComunidad());
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "nombrePresidenteComunidadEdificio", activoInformeDto.getNomPresidenteComunidad());
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "telefonoAdministradorComunidadEdificio", activoInformeDto.getTelAdministradorComunidad());
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "nombreAdministradorComunidadEdificio", activoInformeDto.getNomAdministradorComunidad());
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "telefonoPresidenteComunidadEdificio", activoInformeDto.getTelPresidenteComunidad());
+					
+					
+					//terrazas
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "numeroTerrazasCubiertas", activoInformeDto.getNumTerrazaCubierta());
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "descripcionTerrazasCubiertas", activoInformeDto.getDescTerrazaCubierta());
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "numeroTerrazasDescubiertas", activoInformeDto.getNumTerrazaDescubierta());
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "descripcionTerrazasDescubiertas", activoInformeDto.getDescTerrazaDescubierta());
+					
+					
+					
+					//otras dependencias
+					if(activoInformeDto.getDespensa() != null){
+						if(activoInformeDto.getDespensa()){
+							beanUtilNotNull.copyProperty(activo.getInfoComercial(), "despensaOtrasDependencias", Integer.valueOf(1));
+						}else{
+							beanUtilNotNull.copyProperty(activo.getInfoComercial(), "despensaOtrasDependencias", Integer.valueOf(0));
+						}
+					}
+					if(activoInformeDto.getLavadero() != null){
+						if(activoInformeDto.getLavadero()){
+							beanUtilNotNull.copyProperty(activo.getInfoComercial(), "lavaderoOtrasDependencias", Integer.valueOf(1));
+						}else{
+							beanUtilNotNull.copyProperty(activo.getInfoComercial(), "lavaderoOtrasDependencias", Integer.valueOf(0));
+						}
+					}
+					if(activoInformeDto.getAzotea() != null){
+						if(activoInformeDto.getAzotea()){
+							beanUtilNotNull.copyProperty(activo.getInfoComercial(), "azoteaOtrasDependencias", Integer.valueOf(1));
+						}else{
+							beanUtilNotNull.copyProperty(activo.getInfoComercial(), "azoteaOtrasDependencias", Integer.valueOf(0));
+						}
+					}
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "otrosOtrasDependencias", activoInformeDto.getDescOtras());
+					
+					
 				}
 
 				activo.setInfoComercial(genericDao.save(ActivoInfoComercial.class, activo.getInfoComercial()));
 			}
 
-			// Actualizar los datos de comunidad de propietarios
-			ActivoComunidadPropietarios comunidadPropietarios;
-			if (!Checks.esNulo(activo.getComunidadPropietarios())) {
-				comunidadPropietarios = activo.getComunidadPropietarios();
-			} else {
-				comunidadPropietarios = new ActivoComunidadPropietarios();
-			}
-
-			beanUtilNotNull.copyProperty(comunidadPropietarios, "constituida", activoInformeDto.getInscritaComunidad());
-			beanUtilNotNull.copyProperty(activo.getInfoComercial(), "derramaOrientativaComunidad", activoInformeDto.getDerramaOrientativaComunidad());
-			beanUtilNotNull.copyProperty(activo.getInfoComercial(), "cuotaOrientativaComunidad", activoInformeDto.getCuotaOrientativaComunidad());
-			beanUtilNotNull.copyProperty(comunidadPropietarios, "nomPresidente", activoInformeDto.getNomPresidenteComunidad());
-			beanUtilNotNull.copyProperty(comunidadPropietarios, "telfAdministrador", activoInformeDto.getTelAdministradorComunidad());
-			beanUtilNotNull.copyProperty(comunidadPropietarios, "nomAdministrador", activoInformeDto.getNomAdministradorComunidad());
-			beanUtilNotNull.copyProperty(comunidadPropietarios, "telfPresidente", activoInformeDto.getTelPresidenteComunidad());
-
-			genericDao.save(ActivoComunidadPropietarios.class, comunidadPropietarios);
-
-			activo.setComunidadPropietarios(comunidadPropietarios);
+			
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.user.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -15,6 +16,7 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 
+@Component
 public class ValidacionActuacionUserAssignationService implements UserAssigantionService {
 
 	private static final String CODIGO_T002_VALIDACION_ACTUACION = "T002_ValidacionActuacion";
@@ -47,24 +49,24 @@ public class ValidacionActuacionUserAssignationService implements UserAssigantio
 			DDCartera cartera = tareaActivo.getTramite().getActivo().getCartera();
 
 			EXTDDTipoGestor tipoGestorActivo = null;
-			if (tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_NOTA_SIMPLE_ACTUALIZADA) ||
-				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_NOTA_SIMPLE_SIN_CARGAS) ||
-				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_VPO_AUTORIZACION_VENTA)) {
+			if (tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_NOTA_SIMPLE_ACTUALIZADA) ||
+				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_NOTA_SIMPLE_SIN_CARGAS) ||
+				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_VPO_AUTORIZACION_VENTA)) {
 				
 				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_ADMISION);
 				tipoGestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);	
 			}
-			if (tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_VPO_SOLICITUD_DEVOLUCION) &&
+			if (tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_VPO_SOLICITUD_DEVOLUCION) &&
 					DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo())	) {
 					
 				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_ADMISION);
 				tipoGestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);	
 			}
-			if (tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_LPO) ||
-				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_CFO) ||
-				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_BOLETIN_AGUA) || 
-				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_BOLETIN_GAS) ||
-				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_BOLETIN_ELECTRICIDAD)) {
+			if (tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_LPO) ||
+				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_CFO) ||
+				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_BOLETIN_AGUA) || 
+				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_BOLETIN_GAS) ||
+				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_BOLETIN_ELECTRICIDAD)) {
 				
 				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_ACTIVO);
 				tipoGestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);					 
@@ -92,24 +94,24 @@ public class ValidacionActuacionUserAssignationService implements UserAssigantio
 			DDCartera cartera = tareaActivo.getTramite().getActivo().getCartera();
 			
 			EXTDDTipoGestor tipoGestorActivo = null;
-			if (tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_NOTA_SIMPLE_ACTUALIZADA) ||
-				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_NOTA_SIMPLE_SIN_CARGAS) ||
-				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_VPO_AUTORIZACION_VENTA)) {
+			if (tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_NOTA_SIMPLE_ACTUALIZADA) ||
+				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_NOTA_SIMPLE_SIN_CARGAS) ||
+				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_VPO_AUTORIZACION_VENTA)) {
 				
 				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_SUPERVISOR_ADMISION);
 				tipoGestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);					 
 			}
 			if (DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()) &&
-					tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_VPO_SOLICITUD_DEVOLUCION)) {
+					tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_VPO_SOLICITUD_DEVOLUCION)) {
 					
 					Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_SUPERVISOR_ADMISION);
 					tipoGestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);	
 			}			
-			if (tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_LPO) ||
-				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_CFO) ||
-				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_BOLETIN_AGUA) || 
-				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_BOLETIN_GAS) ||
-				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().equals(DDSubtipoTrabajo.CODIGO_BOLETIN_ELECTRICIDAD)) {
+			if (tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_LPO) ||
+				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_CFO) ||
+				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_BOLETIN_AGUA) || 
+				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_BOLETIN_GAS) ||
+				tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_BOLETIN_ELECTRICIDAD)) {
 				
 				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS);
 				tipoGestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);			 

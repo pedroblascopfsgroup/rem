@@ -28,6 +28,9 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_GESTORIA_FORMALIZACION = "GIAFORM";
 	public static final String CODIGO_SUPERVISOR_FORMALIZACION = "SFORM";
 	public static final String CODIGO_GESTOR_BACKOFFICE = "GCBO";
+	public static final String CODIGO_FVD_BKOFERTA = "FVDBACKOFR";
+	public static final String CODIGO_FVD_BKVENTA = "FVDBACKVNT";
+	public static final String CODIGO_SUPERVISOR_FVD = "SUPFVD";
 	public static final String CIF_PROVEEDOR_BANKIA_SAREB_TINSA = "B86689494";
 	
 	Boolean insertarGestorAdicionalActivo(GestorEntidadDto dto);

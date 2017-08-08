@@ -4,10 +4,10 @@ Ext.define('HreRem.view.configuracion.ConfiguracionModel', {
     requires: ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.Proveedor', 'HreRem.model.ComboMunicipio'],
 
     stores: { 
-    	comboFiltroMunicipios: {
-	   		source: 'municipios',
-	   		loadSource: true
-		},      	
+//    	comboFiltroMunicipios: {
+//	   		source: 'municipios',
+//	   		loadSource: true
+//		},      	
 		configuracionproveedores: {    
    		 	pageSize: $AC.getDefaultPageSize(),
    		 	model: 'HreRem.model.Proveedor',

@@ -72,7 +72,14 @@ Ext.define('HreRem.model.TanteoActivo', {
     			dateFormat: 'c'
     		},
     		{
-    			name: 'condiciones'
+    			name: 'condicionesTransmision',
+    			convert: function(value){
+    				if(value == null){
+    					return '';
+    				}else{
+    					return value;
+    				}
+    			}
     		}
     ],
     

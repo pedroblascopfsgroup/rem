@@ -3,7 +3,7 @@
  */
 Ext.define('HreRem.model.ActivoTrabajo', {
     extend: 'HreRem.model.Base',
-    idProperty: 'activoId',
+    idProperty: 'idActivo',
 	
     fields: [   
 
@@ -13,9 +13,9 @@ Ext.define('HreRem.model.ActivoTrabajo', {
 		    {
 		    	name: 'numActivoRem'
 		    },
-    		{
-    			name:'activoId'
-    		},
+//    		{
+//    			name:'activoId'
+//    		},
     		{
     			name:'idActivo'
     		},

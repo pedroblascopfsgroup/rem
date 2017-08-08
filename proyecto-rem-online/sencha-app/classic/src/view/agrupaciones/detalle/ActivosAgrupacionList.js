@@ -216,7 +216,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            bind: {
 		        	hidden: '{!esAgrupacionObraNuevaOrAsistida}'
 		        },
-	            flex: 0.5
+	            flex: 2
 	        },
 	        {
 	            dataIndex: 'direccion',
@@ -248,8 +248,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	        {
 	            dataIndex: 'publicado',
 	            text: HreRem.i18n('header.publicado'),
-	            flex: 0.5,
-	            renderer: Utils.rendererBooleanToSiNo
+	            flex: 1//,
+	            //renderer: Utils.rendererBooleanToSiNo
 	        },
 	        {
 	            dataIndex: 'situacionComercial',
@@ -385,9 +385,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
     },
 
     onAddClick: function(btn){
-		  var me = this;
+	  var me = this;
       var isFormalizacion = me.up('agrupacionesdetallemain').lookupReference('comboFormalizacion').value;
-      if (isFormalizacion==null) {
+      var isComercial = me.up('agrupacionesdetallemain').getViewModel().get("agrupacionficha.isComercial");
+      if (isComercial && isFormalizacion==null) {
           Ext.Msg.show({ message: 'No se ha definido el perímetro de formalización.', buttons: Ext.Msg.YES});
       } else {
           var rec = Ext.create(me.getStore().config.model);

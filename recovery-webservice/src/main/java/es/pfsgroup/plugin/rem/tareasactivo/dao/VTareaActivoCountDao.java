@@ -7,8 +7,8 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.model.VTareaActivoCount;
 import es.pfsgroup.recovery.ext.impl.multigestor.model.EXTGrupoUsuarios;
 
-public interface VTareaActivoCountDao extends AbstractDao<VTareaActivoCount, Long>{
+public interface VTareaActivoCountDao extends AbstractDao<VTareaActivoCount, Long> {
 
-	List<VTareaActivoCount> getContador(Usuario usuario, EXTGrupoUsuarios grupoUsuario);
+	List<VTareaActivoCount> getContador(Usuario usuario, List<EXTGrupoUsuarios> grupos);
 	
 }

@@ -100,6 +100,11 @@ public class GenericABMDaoImpl implements GenericABMDao {
 			Object propertyValue) {
 		return new FilterImpl(type, propertyName, propertyValue);
 	}
+	
+	@Override
+	public Filter createFilter(FilterType type, String propertyName) {
+		return new FilterImpl(type, propertyName, null);
+	}
 
 	public <T extends Serializable> List<T> getList(Class<T> clazz) {
 		return this.getListOrdered(clazz, noOrder(), noFilters());

@@ -51,11 +51,14 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 	    					layout:'fit',
 	    					minHeight: 250,
 	    					colspan:	2,
-	    					topBar: true,
 	    					cls	: 'panel-base shadow-panel',
+	    					topBar: true,
+	    					editOnSelect: true,
 	    					//height: '100%',
 	    					bind: {
-	    						store: '{storeTarifasTrabajo}'
+	    						store: '{storeTarifasTrabajo}',
+	    						editOnSelect: '{editableTarificacionProveedor}',
+	    						topBar: '{editableTarificacionProveedor}'
 	    					},
 	    					reference: 'gridtarifastrabajo',
 							features: [{
@@ -174,22 +177,22 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 		    				cls:'',	    				
 						    
 	    					items: [
-			    				
-			    				{ 
+	    						
+	    						{ 
 						        	xtype: 'comboboxfieldbase',
-						        	fieldLabel: HreRem.i18n('fieldlabel.nombre'),
+						        	fieldLabel: HreRem.i18n('fieldlabel.tipo.proveedor'),
 						        	rowspan:	2,
 						        	labelWidth:	150,
 						        	width: 		480,
-									reference: 'comboProveedorGestionEconomica',
-						        	chainedStore: 'comboProveedorGestionEconomica',
-									chainedReference: 'proveedorContactoCombo',
+									reference: 'comboTipoProveedorGestionEconomica',
+						        	chainedStore: 'comboTipoProveedorGestionEconomica',
+									chainedReference: 'comboProveedorGestionEconomica',
 						        	bind: {
-					            		store: '{comboProveedorFiltered}',
-					            		value: '{gestionEconomica.idProveedor}'
+					            		store: '{comboTipoProveedorFiltered}',
+					            		value: '{gestionEconomica.codigoTipoProveedor}'
 					            	},
-					            	displayField: 'nombreComercial',
-		    						valueField: 'idProveedor',
+					            	displayField: 'descripcion',
+		    						valueField: 'codigo',
 		    						listeners: {
 					                	select: 'onChangeComboProveedorGE'
 					            	}
@@ -201,13 +204,32 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 									bind:		'{proveedor.nombre}',
 									readOnly: true
 								},
-								
 								{
 									fieldLabel: HreRem.i18n('fieldlabel.email.contacto'),
 									width: 		480,
 									bind:		'{proveedor.email}',
 									readOnly: true
 								},
+								{ 
+						        	xtype: 'comboboxfieldbase',
+						        	fieldLabel: HreRem.i18n('fieldlabel.nombre'),
+						        	rowspan:	2,
+						        	labelWidth:	150,
+						        	width: 		480,
+									reference: 'comboProveedorGestionEconomica',
+						        	chainedStore: 'comboProveedorGestionEconomica',
+									chainedReference: 'proveedorContactoCombo',
+						        	bind: {
+					            		store: '{comboProveedorFiltered}',
+					            		value: '{gestionEconomica.idProveedor}',
+					            		disabled: '{!gestionEconomica.codigoTipoProveedor}'
+					            	},
+					            	displayField: 'nombreComercial',
+		    						valueField: 'idProveedor',
+		    						listeners: {
+					                	select: 'onChangeComboProveedorGE'
+					            	}
+						        },
 			    				
 			    				{ 
 									xtype: 'comboboxfieldbase',
@@ -348,7 +370,8 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 			    				    	modoEdicion = false;
 			    						presupuesto = Ext.create('HreRem.model.PresupuestosTrabajo', {tipoTrabajoDescripcion: tipoTrabajoDescripcion, subtipoTrabajoDescripcion: subtipoTrabajoDescripcion});
 			    						
-			    				    	Ext.create("HreRem.view.trabajos.detalle.AnyadirNuevoPresupuesto", {presupuesto: presupuesto, idTrabajo: idTrabajo, parent: parent, modoEdicion: modoEdicion}).show();
+			    				    	var window=Ext.create("HreRem.view.trabajos.detalle.AnyadirNuevoPresupuesto", {presupuesto: presupuesto, idTrabajo: idTrabajo, parent: parent, modoEdicion: modoEdicion}).show();
+			    				    	window.getViewModel().set('trabajo',me.lookupController().getViewModel().get('trabajo'));
 			    					},
 	
 			    				    listeners : [
@@ -429,25 +452,35 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 						    				items: [
 													{
 														fieldLabel: HreRem.i18n('fieldlabel.nombre'),
-														width: 		280,
+														width: 		480,
 														readOnly: true,
 														bind: 		'{presupuesto.nombreProveedor}'
 													},
+													{ 
+											        	fieldLabel:  HreRem.i18n('fieldlabel.proveedor.contacto'),
+											        	//itemId: 'comboProveedorContacto',
+														flex: 		1,
+											        	width: 		480,
+											        	bind: '{presupuesto.nombreProveedorContacto}',
+							    						readOnly: true
+							    						
+											        },
 													{
 														fieldLabel: HreRem.i18n('fieldlabel.usuario'),
 														width: 		280,
 														readOnly: true,
-														bind:		'{presupuesto.usuarioProveedor}'
+														bind:		'{presupuesto.nombreProveedorContacto}'
 													},
+													
 													{
 														fieldLabel: HreRem.i18n('fieldlabel.email'),
-														width: 		280,
+														width: 		480,
 														readOnly: true,
-														bind:		'{presupuesto.emailProveedor}'
+														bind:		'{presupuesto.emailProveedorContacto}'
 													},
 													{
 														fieldLabel: HreRem.i18n('fieldlabel.telefono'),
-														width: 		280,
+														width: 		480,
 														readOnly: true,
 														bind:		'{presupuesto.telefonoProveedor}'
 													}

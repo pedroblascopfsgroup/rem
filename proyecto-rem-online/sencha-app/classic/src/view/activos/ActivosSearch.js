@@ -44,21 +44,30 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 				        },
 				        { 
 							xtype: 'comboboxfieldbase',
-						    addUxReadOnlyEditFieldPlugin: false,
 				        	fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
 				        	name: 'entidadPropietariaCodigo',
+				        	displayField: 'descripcion',
+    						valueField: 'id',
 				        	bind: {
 			            		store: '{comboEntidadPropietaria}'
-			            	}
+			            	},
+			            	reference: 'comboCarteraActivoSearch',
+			            	chainedStore: 'comboSubcarteraFiltered',
+							chainedReference: 'comboSubcarteraActivoSearch',
+							listeners: {
+								select: 'onChangeChainedCombo'
+							}
 				        },
 				        { 
 							xtype: 'comboboxfieldbase',
-						    addUxReadOnlyEditFieldPlugin: false,
 				        	fieldLabel: HreRem.i18n('fieldlabel.subcartera'),
 				        	name: 'subcarteraCodigo',
 				        	bind: {
-			            		store: '{comboSubcartera}'
-			            	}
+			            		store: '{comboSubcarteraFiltered}'
+			            	},
+			            	reference: 'comboSubcarteraActivoSearch',
+			            	valueField: 'codigo',
+    						displayField: 'descripcion'
 				        }
 				    ]},
 				    {
@@ -471,9 +480,9 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							        	xtype: 'comboboxfieldbase',
 							        	fieldLabel: 'Tipo de gestor:',
 							        	bind: {
-						            		store: '{comboTipoGestorOfertas}',
-						            		value: $AU.userTipoGestor(),
-						            	    readOnly: $AU.userTipoGestor()=="GIAFORM"
+						            		store: '{comboTipoGestorOfertas}'
+						            		//value: $AU.userTipoGestor(),
+						            	    //readOnly: $AU.userTipoGestor()=="GIAFORM"
 						            	},
 										reference: 'tipoGestor',
 										name: 'tipoGestor',
@@ -493,9 +502,9 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							        	name: 'usuarioGestor',
 							        	bind: {
 						            		store: '{comboUsuarios}',
-						            		disabled: '{!tipoGestor.selection}',
-						            		value: $AU.getUser().userId,
-						            		readOnly: $AU.userTipoGestor()=="GIAFORM"
+						            		disabled: '{!tipoGestor.selection}'
+						            		//value: $AU.getUser().userId,
+						            		//readOnly: $AU.userTipoGestor()=="GIAFORM"
 						            			
 						            	},
 						            	displayField: 'apellidoNombre',

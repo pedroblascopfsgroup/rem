@@ -116,7 +116,14 @@ Ext.define('HreRem.model.GestionEconomicaTrabajo', {
     			name: 'nombreProveedor'
     		},
     		{
-    			name: 'usuarioProveedorContacto'
+    			name: 'usuarioProveedorContacto',
+				convert: function(value){
+    				if(Ext.isEmpty(value)){
+    					return '____';
+    				}else{
+    					return value;
+    				}
+    			}
     		},
     		{
     			name: 'emailProveedorContacto'
@@ -129,6 +136,9 @@ Ext.define('HreRem.model.GestionEconomicaTrabajo', {
     		},
     		{
     			name: 'idProveedorContacto'
+    		},
+    		{
+    			name: 'codigoTipoProveedor'
     		}
     ],
     

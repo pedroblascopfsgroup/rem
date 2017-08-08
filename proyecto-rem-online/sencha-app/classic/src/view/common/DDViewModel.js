@@ -9,10 +9,10 @@ Ext.define('HreRem.view.common.DDViewModel', {
     	   		loadSource: true
     		},
 
-    		//comboFiltroMunicipios: {
-    	   	//	source: 'municipios',
-    	   	//	loadSource: false
-    		//},
+    		comboFiltroMunicipios: {
+    	   		source: 'municipios',
+    	   		loadSource: true
+    		},
 
     	   	comboEntidadPropietaria: {
     	   		source: 'entidadPropietaria',
@@ -82,6 +82,13 @@ Ext.define('HreRem.view.common.DDViewModel', {
 				data : [
 			        {"codigo": 0, "descripcion": "Rechazado"},
 			        {"codigo": 1, "descripcion": "Aprobado"}
+			    ]
+    		},
+    		
+    		comboAcuerdo: {
+				data : [
+			        {"codigo": 0, "descripcion": "No Solucionar"},
+			        {"codigo": 1, "descripcion": "Solucionar"}
 			    ]
     		}
      }

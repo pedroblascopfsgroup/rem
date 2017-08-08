@@ -54,9 +54,9 @@ BEGIN
                                 ACT_CODIGO_ENTRADA,   
                                 SELLO_CALIDAD,      
                                 GESTOR_CALIDAD,     
-                                FECHA_CALIDAD     
+                                FECHA_CALIDAD   
                                 FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' 
-                WHERE VALIDACION = 0
+                WHERE VALIDACION IN (0,1)
                           ) AUX
                 ON (ACT.ACT_NUM_ACTIVO = AUX.ACT_NUMERO_ACTIVO)
                 WHEN MATCHED THEN UPDATE SET
@@ -78,7 +78,6 @@ BEGIN
           ,ACT.FECHAMODIFICAR = SYSDATE
       '
       ;
-      DBMS_OUTPUT.PUT_LINE(V_SENTENCIA);
       EXECUTE IMMEDIATE V_SENTENCIA;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
@@ -89,7 +88,7 @@ BEGIN
         USING (  
           SELECT MIG2.ACT_NUMERO_ACTIVO, MIG2.ACT_FECHA_VENTA, MIG2.ACT_IMPORTE_VENTA 
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
-          WHERE MIG2.VALIDACION = 0 AND MIG2.ACT_NUMERO_ACTIVO NOT IN (
+          WHERE MIG2.VALIDACION IN (0,1) AND MIG2.ACT_NUMERO_ACTIVO NOT IN (
           SELECT DISTINCT MIG.ACT_NUMERO_ACTIVO 
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
           INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
@@ -109,7 +108,19 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
-      
+      -- ACTUALIZACION DE LA FECHA IND PUBLICABLE
+      EXECUTE IMMEDIATE 'MERGE INTO REM01.ACT_ACTIVO T1
+        USING (SELECT ACT_ID 
+            FROM REM01.ACT_ACTIVO A
+            JOIN REM01.'||V_TABLA_MIG||' MIG ON MIG.ACT_NUMERO_ACTIVO = A.ACT_NUM_ACTIVO AND MIG.VALIDACION IN (0,1)
+            JOIN REM01.DD_EPU_ESTADO_PUBLICACION DD ON DD.DD_EPU_ID = A.DD_EPU_ID AND DD.DD_EPU_CODIGO NOT IN  (''05'',''06'')
+            WHERE A.BORRADO = 0) T2
+        ON (T1.ACT_ID = T2.ACT_ID)
+        WHEN MATCHED THEN UPDATE SET
+            T1.ACT_FECHA_IND_PUBLICABLE = SYSTIMESTAMP';
+
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||'.ACT_FECHA_IND_PUBLICABLE actualizados. '||SQL%ROWCOUNT||' Filas.');
+
        -- ACTUALIZACION DE LA FECHA DE VENTA EN ECO_EXPEDIENTE_COMERCIAL     
       V_SENTENCIA := '
         MERGE INTO '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO

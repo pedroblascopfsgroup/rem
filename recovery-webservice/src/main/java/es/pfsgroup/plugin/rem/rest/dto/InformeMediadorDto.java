@@ -70,9 +70,10 @@ public class InformeMediadorDto implements Serializable {
 		Update.class })
 	private Long idProveedorRemAnterior;
 
-	@EntityDefinition(procesar = false)
+	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = ActivoProveedor.class, foreingField="codigoProveedorRem",message = "El idProveedorRem no existe", groups = { Insert.class,
-		Update.class })
+			Update.class })
+	@EntityDefinition(propertyName = "mediadorInforme", classObj = ActivoProveedor.class, foreingField = "codigoProveedorRem")
 	private Long idProveedorRem;
 
 	@NotNull(groups = Insert.class)
@@ -82,7 +83,7 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(procesar = false)
 	private String motivoNoPosibleInforme;
 
-	@NotNull(groups = Insert.class)
+	//@NotNull(groups = Insert.class)
 	@Diccionary(clase = DDTipoVivienda.class, message = "El codTpoVivienda de activo no existe", groups = {
 			Insert.class, Update.class })
 	@EntityDefinition(propertyName = "tipoVivienda", classObj = DDTipoVivienda.class)
@@ -163,7 +164,7 @@ public class InformeMediadorDto implements Serializable {
 	@NotNull(groups = Insert.class)
 	@Diccionary(clase = Localidad.class, message = "El codMunicipioRegistro no existe", groups = { Insert.class,
 			Update.class })
-	@EntityDefinition(procesar = false, motivo = "Falta columna DD_LOC_REGISTRO_ID en ACT_ICO_INFO_COMERCIAL")
+	@EntityDefinition(propertyName = "localidadRegistro", classObj = Localidad.class)
 	private String codMunicipioRegistro;
 
 	@NotNull(groups = Insert.class)
@@ -270,10 +271,10 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "despensaOtrasDependencias", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean despensaOtrasDependencias;
 
-	@EntityDefinition(propertyName = "despensaOtrasDependencias", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	@EntityDefinition(propertyName = "lavaderoOtrasDependencias", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean lavaderoOtrasDependencias;
 
-	@EntityDefinition(propertyName = "despensaOtrasDependencias", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	@EntityDefinition(propertyName = "azoteaOtrasDependencias", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean azoteaOtrasDependencias;
 
 	private String otrosOtrasDependencias;
@@ -456,19 +457,19 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "estadoConservacionEdificio", classObj = DDEstadoConservacion.class)
 	private String codEstadoConservacionEdificio;
 
-	@EntityDefinition(propertyName = "anyoRehabilitacion", transform = TRANSFORM_TYPE.DATE_TO_YEAR_INTEGER)
+	@EntityDefinition(propertyName = "anyoRehabilitacionEdificio", transform = TRANSFORM_TYPE.DATE_TO_YEAR_INTEGER)
 	private Date anyoRehabilitacionEdificio;
 
 	@EntityDefinition(propertyName = "numPlantas")
-	private Long numeroPlantasEdificio;
+	private Integer numeroPlantasEdificio;
 
-	@EntityDefinition(propertyName = "ascensor", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	@EntityDefinition(propertyName = "ascensorEdificio", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean ascensorEdificio;
 
 	@EntityDefinition(propertyName = "numAscensores")
 	private Integer numeroAscensoresEdificio;
 
-	@EntityDefinition(procesar = false)
+	@EntityDefinition(propertyName = "existeComunidadEdificio", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean existeComunidadEdificio;
 
 	@EntityDefinition(propertyName = "cuotaOrientativaComunidad")
@@ -485,7 +486,7 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "reformaFachada")
 	private Boolean fachadaReformasNecesariasEdificio;
 
-	@EntityDefinition(propertyName = "reformaEscalera")
+	@EntityDefinition(propertyName = "reformaEscalera", procesar = false)
 	private String escaleraReformasNecesariasEdificio;
 
 	@EntityDefinition(propertyName = "reformaPortal")
@@ -1878,11 +1879,11 @@ public class InformeMediadorDto implements Serializable {
 		this.anyoRehabilitacionEdificio = anyoRehabilitacionEdificio;
 	}
 
-	public Long getNumeroPlantasEdificio() {
+	public Integer getNumeroPlantasEdificio() {
 		return numeroPlantasEdificio;
 	}
 
-	public void setNumeroPlantasEdificio(Long numeroPlantasEdificio) {
+	public void setNumeroPlantasEdificio(Integer numeroPlantasEdificio) {
 		this.numeroPlantasEdificio = numeroPlantasEdificio;
 	}
 

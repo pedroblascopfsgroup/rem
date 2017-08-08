@@ -7,6 +7,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -94,6 +95,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateGastoApi;
 
@@ -768,6 +770,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				genericDao.update(GastoDetalleEconomico.class, detalleGasto);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 
@@ -1251,6 +1254,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 							Trabajo trabajo = gastoTrabajo.getTrabajo();
 							trabajo.setFechaEmisionFactura(null);
 							genericDao.save(Trabajo.class, trabajo);
+							genericDao.deleteById(GastoProveedorTrabajo.class, gastoTrabajo.getId());
 						}
 
 					}
@@ -1268,7 +1272,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						gestionGasto.setUsuarioRetencionPago(null);
 						gasto.setGastoGestion(gestionGasto);
 						// HREOS-1927: si se quita la retención en el estado vuelve a ser Pendiente
-						updaterStateApi.updaterStates(gasto, DDEstadoGasto.PENDIENTE);
+						updaterStateApi.updaterStates(gasto, null);
 					}
 
 					gasto.setGastoGestion(gestionGasto);
@@ -1439,7 +1443,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				String[] error = gex.getMessage().split("-");
 
 				// Si no existe el expediente lo creamos
-				if (EXCEPTION_EXPEDIENT_NOT_FOUND_COD.equals(error[0])) {
+				if (error.length > 0 &&  EXCEPTION_EXPEDIENT_NOT_FOUND_COD.equals(error[0].trim())) {
 
 					Integer idExpediente;
 					try {
@@ -1488,13 +1492,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		GastoProveedor gasto = findOne(Long.parseLong(fileItem.getParameter("idEntidad")));
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
+		DDTipoDocumentoGasto tipoDocumento = (DDTipoDocumentoGasto) genericDao.get(DDTipoDocumentoGasto.class, filtro);
 
 		try {
 
 			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
-				DDTipoDocumentoGasto tipoDocumento = (DDTipoDocumentoGasto) genericDao.get(DDTipoDocumentoGasto.class, filtro);
 				try {
 					gestorDocumentalAdapterApi.uploadDocumentoGasto(gasto, fileItem, usuarioLogado.getUsername(), tipoDocumento.getMatricula());
 				} catch (GestorDocumentalException gex) {
@@ -1513,24 +1517,19 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				gasto.getAdjuntos().add(adjuntoGasto);
 			}
 
-			// Si el gasto se encuentra en estado 'Incompleto', cambiar estado del gasto a 'Pendiente' al adjuntar un documento.
-			if(!Checks.esNulo(gasto.getEstadoGasto()) && DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo())) {
-				updaterStateApi.updaterStates(gasto, DDEstadoGasto.PENDIENTE);
-			}
-
-			// Si el gasto se encuentra en estado 'Pagado sin justificación documental', cambiar estado del gasto a 'Pagado' al adjuntar un documento de tipo 'justificante de pago'.
-			String codigoTipoDoc = fileItem.getParameter("tipo");
-			if(!Checks.esNulo(codigoTipoDoc) && DDTipoDocumentoGasto.JUSTIFICACNTE_PAGO.equals(codigoTipoDoc) 
-					&& !Checks.esNulo(gasto.getEstadoGasto()) && DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC.equals(gasto.getEstadoGasto().getCodigo())) {
-				updaterStateApi.updaterStates(gasto, DDEstadoGasto.PAGADO);
-			}
+			boolean tieneIva = Checks.esNulo(gasto.getGestoria());
+			String nuevoEstado = checkReglaCambioEstado(gasto.getEstadoGasto().getCodigo(), tieneIva,
+  					tipoDocumento.getMatricula());
+			updateExisteDocumentoGasto(gasto, 1);
+  			if (!Checks.esNulo(nuevoEstado)) {
+  				updaterStateApi.updaterStates(gasto, nuevoEstado);
+  			}
 			
 			// TODO Falta definir que tipo de documento provoca marcar el campo existeDocumento.
-			// Ahora lo marca cualquiera.
-			updateExisteDocumentoGasto(gasto, 1);
+			
 
 			// Comprobamos si ha cambiado el estado del gasto.
-			updaterStateApi.updaterStates(gasto, null);
+			//updaterStateApi.updaterStates(gasto, null);
 			genericDao.save(GastoProveedor.class, gasto);
 
 		} catch (Exception e) {
@@ -1934,17 +1933,64 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	public GastoProveedor asignarCuentaContableYPartidaGasto(GastoProveedor gasto) {
 
-		ConfigCuentaContable cuenta = buscarCuentaContable(gasto);
+		//ConfigCuentaContable cuenta = buscarCuentaContable(gasto);		
 		ConfigPdaPresupuestaria partida = buscarPartidaPresupuestaria(gasto);
 		GastoInfoContabilidad gastoInfoContabilidad = gasto.getGastoInfoContabilidad();
+		boolean todosActivoAlquilados= false;
 
-		if (!Checks.esNulo(cuenta) && !Checks.esNulo(partida) && !Checks.esNulo(gastoInfoContabilidad)) {
+		if (!Checks.esNulo(partida) && !Checks.esNulo(gastoInfoContabilidad)) {
 
 			Ejercicio ejercicio = gastoInfoContabilidad.getEjercicio();
-			if (String.valueOf(new GregorianCalendar().get(GregorianCalendar.YEAR)).equals(ejercicio.getAnyo())) {
-				gastoInfoContabilidad.setCuentaContable(cuenta.getCuentaContableAnyoCurso());
-			} else {
-				gastoInfoContabilidad.setCuentaContable(cuenta.getCuentaContableAnyosAnteriores());
+			
+			Filter filtroBorrado= genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			Filter filtroEjercicioCuentaContable= genericDao.createFilter(FilterType.EQUALS, "ejercicio.id", ejercicio.getId());
+			Filter filtroSubtipoGasto= genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.id", gasto.getSubtipoGasto().getId());
+			Filter filtroCartera= genericDao.createFilter(FilterType.EQUALS, "cartera.id", gasto.getPropietario().getCartera().getId());
+			Filter filtroCuentaArrendamiento= genericDao.createFilter(FilterType.EQUALS, "cuentaArrendamiento", 1);
+			Filter filtroCuentaNoArrendamiento= genericDao.createFilter(FilterType.EQUALS, "cuentaArrendamiento", 0);
+			
+			ConfigCuentaContable cuentaArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaArrendamiento,filtroBorrado);
+			ConfigCuentaContable cuentaNoArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaNoArrendamiento,filtroBorrado);
+			
+			if(!Checks.esNulo(cuentaArrendada) || !Checks.esNulo(cuentaNoArrendada)){
+				
+				Filter filtroGastoActivo= genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
+				List<GastoProveedorActivo> gastosActivos= genericDao.getList(GastoProveedorActivo.class,filtroGastoActivo);
+				for(GastoProveedorActivo gastoActivo: gastosActivos){
+					Activo activo= gastoActivo.getActivo();
+					
+					if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getSituacionPosesoria())){
+						if(activo.getSituacionPosesoria().getOcupado()==1 && activo.getSituacionPosesoria().getConTitulo()==1){
+							if(!Checks.esNulo(activo.getSituacionPosesoria().getTipoTituloPosesorio()) &&
+									activo.getSituacionPosesoria().getTipoTituloPosesorio().getCodigo().equals(DDTipoTituloPosesorio.CODIGO_ARRENDAMIENTO)){
+								todosActivoAlquilados= true;								
+							}
+							else{
+								todosActivoAlquilados= false;
+								break;
+							}
+						}
+						else{
+							todosActivoAlquilados= false;
+							break;
+						}
+					}
+				}
+				
+				if(!todosActivoAlquilados){
+					if(!Checks.esNulo(cuentaNoArrendada)){
+						gastoInfoContabilidad.setCuentaContable(cuentaNoArrendada.getCuentaContable());
+					}
+				}
+				else{
+					if(!Checks.esNulo(cuentaArrendada)){
+						gastoInfoContabilidad.setCuentaContable(cuentaArrendada.getCuentaContable());
+					}
+					else{
+						gastoInfoContabilidad.setCuentaContable(cuentaNoArrendada.getCuentaContable());
+					}
+				}
+				
 			}
 
 			gastoInfoContabilidad.setPartidaPresupuestaria(partida.getPartidaPresupuestaria());
@@ -2097,5 +2143,20 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		gasto.setExisteDocumento(i);
 		genericDao.update(GastoProveedor.class, gasto);
+	}
+	
+	public String checkReglaCambioEstado(String codigoEstado, boolean coniva, String matriculaTipoDoc) {
+		Pattern factPattern = Pattern.compile(".*-FACT-.*");
+		Pattern justPattern = Pattern.compile(".*-CERA-.*");
+
+		if (factPattern.matcher(matriculaTipoDoc).matches() && DDEstadoGasto.INCOMPLETO.equals(codigoEstado)) {
+			return DDEstadoGasto.PENDIENTE;
+
+		} else if (justPattern.matcher(matriculaTipoDoc).matches()
+				&& DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC.equals(codigoEstado) && (!coniva)) {
+			return DDEstadoGasto.PAGADO;
+		} else {
+			return "no_cambiar";
+		}
 	}
 }

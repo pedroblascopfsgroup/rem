@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.gasto.dao.impl;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -91,6 +92,7 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 
 	private HQLBuilder rellenarFiltrosBusquedaGasto(DtoGastosFilter dtoGastosFilter) {
 		String from = "select vgasto from VGastosProveedor vgasto";
+		boolean hasWhere = false;
 		HQLBuilder hb = null;
 
 		if (!Checks.esNulo(dtoGastosFilter.getNumActivo())
@@ -98,11 +100,20 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 				|| !Checks.esNulo(dtoGastosFilter.getSubentidadPropietariaCodigo())) {
 
 			from = from + ",GastoProveedorActivo gastoActivo where vgasto.id = gastoActivo.gastoProveedor.id ";
-			hb = new HQLBuilder(from);
-			hb.setHasWhere(true);
+			
+			hasWhere = true;
 
-		} else {
-			hb = new HQLBuilder(from);
+		}
+		// Por si es necesario filtrar por motivos de gasto
+		String fromMotivos = MotivosAvisoHqlHelper.getFrom(dtoGastosFilter);
+		if (!Checks.esNulo(fromMotivos)) {
+			from = from + MotivosAvisoHqlHelper.getFrom(dtoGastosFilter);
+			hasWhere = true;
+		}
+		
+		hb = new HQLBuilder(from);
+		if (hasWhere) {
+			hb.setHasWhere(true);
 		}
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gastoActivo.activo.numActivo", dtoGastosFilter.getNumActivo());
@@ -171,8 +182,26 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 			HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgasto.fechaEmision", fechaEmisionDesde, fechaEmisionHasta);
 			
 			// filtrar por fechas de autorizacion
-			HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgasto.fechaAutorizacion",
-					DateFormat.toDate(dtoGastosFilter.getFechaAutorizacionDesde()), DateFormat.toDate(dtoGastosFilter.getFechaAutorizacionHasta()));
+			Date fechaAutorizacionDesde = null;
+			if(dtoGastosFilter.getFechaAutorizacionDesde() != null){
+				Calendar calendar = Calendar.getInstance();
+		        calendar.setTime(DateFormat.toDate(dtoGastosFilter.getFechaAutorizacionDesde()));
+		        calendar.set(Calendar.HOUR_OF_DAY, 0);
+		        calendar.set(Calendar.MINUTE,0);
+		        calendar.set(Calendar.SECOND,0);
+		        fechaAutorizacionDesde = calendar.getTime();
+			}
+			Date fechaAutorizacionHasta = null;
+			if(dtoGastosFilter.getFechaAutorizacionHasta() != null){
+				Calendar calendar = Calendar.getInstance();
+		        calendar.setTime(DateFormat.toDate(dtoGastosFilter.getFechaAutorizacionHasta()));
+		        calendar.set(Calendar.HOUR_OF_DAY, 23);
+		        calendar.set(Calendar.MINUTE,59);
+		        calendar.set(Calendar.SECOND,59);
+		        fechaAutorizacionHasta = calendar.getTime();
+			}
+			
+			HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgasto.fechaAutorizacion",fechaAutorizacionDesde,fechaAutorizacionHasta);
 
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -210,6 +239,12 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgasto.nombreProveedor", dtoGastosFilter.getNombreProveedor(), true);
 
 		HQLBuilder.addFiltroIgualQue(hb, "vgasto.rango", 1);
+		
+		//////////////////////// Motivos de Aviso 
+		String motivosAvisoWhere = MotivosAvisoHqlHelper.getWhere(dtoGastosFilter);
+		if (!Checks.esNulo(motivosAvisoWhere)){
+			hb.appendWhere(motivosAvisoWhere);
+		}
 
 
 		return hb;

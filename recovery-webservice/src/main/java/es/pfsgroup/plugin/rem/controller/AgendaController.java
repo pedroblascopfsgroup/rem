@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.TareaExcelReport;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoReasignarTarea;
 import es.pfsgroup.plugin.rem.model.DtoSolicitarProrrogaTarea;
 import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -206,6 +207,19 @@ public class AgendaController extends TareaController {
 		return createModelAndViewJson(model);
 
 	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getAdvertenciaTareaComercial(@RequestParam Long idTarea, ModelMap model) {
+
+		// TODO: Aquí se generan los distintos textos de avisos para la tarea
+		String advertencia = adapter.getAdvertenciaTareaComercial(idTarea);
+
+		model.put("textoAdvertencia", advertencia);
+		model.put("success", true);
+
+		return createModelAndViewJson(model);
+
+	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public void generateExcel(DtoTareaFilter dtoTareaFilter, HttpServletRequest request, HttpServletResponse response)
@@ -325,6 +339,13 @@ public class AgendaController extends TareaController {
 			mensajeError = "Se ha producido un error con la base de datos al avanzar la tarea. Inténtelo más tarde.";
 
 		return mensajeError;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView reasignarTarea(DtoReasignarTarea dtoReasignarTarea, ModelMap model) {
+		model.put("success", adapter.reasignarTarea(dtoReasignarTarea));
+		return createModelAndViewJson(model);
 	}
 
 }

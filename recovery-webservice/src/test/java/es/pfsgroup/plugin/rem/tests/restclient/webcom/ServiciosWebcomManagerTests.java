@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -59,7 +60,10 @@ import es.pfsgroup.plugin.rem.tests.restclient.webcom.examples.ExampleDto;
 public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 
 	@Mock
-	HttpClientFacade httpClient;
+	private HttpClientFacade httpClient;
+	
+	@Mock
+	private Properties appProperties;
 	
 	@InjectMocks
 	private ClienteWebcomGenerico clienteWebcom;

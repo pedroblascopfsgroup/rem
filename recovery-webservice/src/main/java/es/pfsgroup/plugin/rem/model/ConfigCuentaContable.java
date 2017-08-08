@@ -63,12 +63,16 @@ public class ConfigCuentaContable implements Serializable, Auditable {
 	@Column(name="CCC_CUENTA_ACTIVABLE")
     private String cuentaContableActivable;
 
-	@Column(name="CCC_CUENTA_ANYO_CURSO")
-    private String cuentaContableAnyoCurso;
+	@Column(name="CCC_CUENTA_CONTABLE")
+    private String cuentaContable;
+	
+	@Column(name="CCC_ARRENDAMIENTO")
+    private Integer cuentaArrendamiento;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="EJE_ID")
+	private Ejercicio ejercicio;
     
-    @Column(name = "CCC_CUENTA_ANYOS_ANTERIORES")
-	private String cuentaContableAnyosAnteriores;
-
     
 	@Version   
 	private Long version;
@@ -111,23 +115,6 @@ public class ConfigCuentaContable implements Serializable, Auditable {
 	public void setCuentaContableActivable(String cuentaContableActivable) {
 		this.cuentaContableActivable = cuentaContableActivable;
 	}
-
-	public String getCuentaContableAnyoCurso() {
-		return cuentaContableAnyoCurso;
-	}
-
-	public void setCuentaContableAnyoCurso(String cuentaContableAnyoCurso) {
-		this.cuentaContableAnyoCurso = cuentaContableAnyoCurso;
-	}
-
-	public String getCuentaContableAnyosAnteriores() {
-		return cuentaContableAnyosAnteriores;
-	}
-
-	public void setCuentaContableAnyosAnteriores(
-			String cuentaContableAnyosAnteriores) {
-		this.cuentaContableAnyosAnteriores = cuentaContableAnyosAnteriores;
-	}
 	
     public ActivoPropietario getPropietario() {
 		return propietario;
@@ -157,5 +144,28 @@ public class ConfigCuentaContable implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 
-	
+	public String getCuentaContable() {
+		return cuentaContable;
+	}
+
+	public void setCuentaContable(String cuentaContable) {
+		this.cuentaContable = cuentaContable;
+	}
+
+	public Integer getCuentaArrendamiento() {
+		return cuentaArrendamiento;
+	}
+
+	public void setCuentaArrendamiento(Integer cuentaArrendamiento) {
+		this.cuentaArrendamiento = cuentaArrendamiento;
+	}
+
+	public Ejercicio getEjercicio() {
+		return ejercicio;
+	}
+
+	public void setEjercicio(Ejercicio ejercicio) {
+		this.ejercicio = ejercicio;
+	}
+		
 }

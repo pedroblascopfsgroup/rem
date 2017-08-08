@@ -1,20 +1,27 @@
 #!/bin/bash
+inicio=`date +%s`
 if [ "$#" -ne 2 ]; then
-    echo "Parametros: <pass@host:puerto/ORACLE_SID>"
+    echo "Parametros: <user/pass@host:puerto/ORACLE_SID>"
     echo "Parametros: <USUARIO_MIGRACION> {CAJAMAR,SAREB,BANKIA}"
     exit 1
 fi
 
+if [[ "$2" != "SAREB" ]] && [[ "$2" != "CAJAMAR" ]] && [[ "$2" != "BANKIA" ]]; then
+    echo "[INFO] Entidad no válida."
+    echo "[INFO] Valores aceptados [SAREB, CAJAMAR, BANKIA]"
+    exit 1
+fi
+hora=`date +%H:%M:%S`
 echo "########################################################"
-echo "#####    ACTUALIZANDO Secuencias"
+echo "#####    ACTUALIZANDO Secuencias PRE-MIGRACION"
 echo "########################################################"
 fecha_ini=`date +%Y%m%d_%H%M%S`
-if [ -f PROD/Logs/004_*.log ] ; then
-	mv -f PROD/Logs/004_*.log PROD/Logs/backup
+if [ -f PROD/Logs/004_* ] ; then
+	mv -f PROD/Logs/004_* PROD/Logs/backup
 fi
-./PROD/DDL_PROD/DDL_sequences.sh $1 > PROD/Logs/004_actualizado_secuencias_$fecha_ini.log
+./PROD/DDL_PROD/DDL_sequences.sh $1 > PROD/Logs/004_actualizado_secuencias_PRE_$fecha_ini.log
 if [ $? != 0 ] ; then 
-   echo -e "\n\n======>>> "Error en actualización de secuencias. Consultar log: PROD/Logs/004_actualizado_secuencias_$fecha_ini.log
+   echo -e "\n\n======>>> "Error en actualización de secuencias. Consultar log: PROD/Logs/004_actualizado_secuencias_PRE_$fecha_ini.log
    exit 1
 fi
 echo "Secuencias actualizadas."
@@ -39,16 +46,17 @@ echo "********************************************************"
 echo
 
 ruta_descarterizada="PROD/DML_PROD/DMLs_DESCARTERIZADOS"
-ruta_carterizada="PROD/DML_PROD"
+ruta_carterizada="PROD/DML_PROD/TMP"
 dml_list="DMLs.list"
 rm -f $ruta_carterizada/*.sql
 cd $ruta_descarterizada
-ls --format=single-column *.sql > ../$dml_list
+ls --format=single-column *.sql > $dml_list
 cd ../../../
+mv -f $ruta_descarterizada/$dml_list $ruta_carterizada
 
 fecha_ini=`date +%Y%m%d_%H%M%S`
-if [ -f PROD/Logs/005_*.log ] ; then
-	mv -f PROD/Logs/005_*.log PROD/Logs/backup
+if [ -f PROD/Logs/005_* ] ; then
+	mv -f PROD/Logs/005_* PROD/Logs/backup
 fi
 while read line
 do
@@ -76,8 +84,30 @@ do
 	else
 		echo No existe $line
 	fi
-done < $ruta_carterizada/$dml_list
+done < "$ruta_carterizada"/"$dml_list"
 
 echo Revise log: PROD/Logs/005_volcado_"$usuario"_"$fecha_ini".log
+
+hora=`date +%H:%M:%S`
+echo "########################################################"
+echo "#####    ACTUALIZANDO Secuencias POST-MIGRACION"
+echo "########################################################"
+fecha_ini=`date +%Y%m%d_%H%M%S`
+if [ -f PROD/Logs/004_* ] ; then
+	mv -f PROD/Logs/004_* PROD/Logs/backup
+fi
+./PROD/DDL_PROD/DDL_sequences.sh $1 > PROD/Logs/006_actualizado_secuencias_POST_$fecha_ini.log
+if [ $? != 0 ] ; then 
+   echo -e "\n\n======>>> "Error en actualización de secuencias. Consultar log: PROD/Logs/006_actualizado_secuencias_POST_$fecha_ini.log
+   exit 1
+fi
+echo "Secuencias actualizadas."
+echo
+
+fin=`date +%s`
+let total=($fin-$inicio)/60
+echo "###############################################################"
+echo "####### [END] Volcado completado en [$total] minutos"
+echo "###############################################################"
 
 exit 0

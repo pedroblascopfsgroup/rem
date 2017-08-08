@@ -37,19 +37,45 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    		 return false;
 	    },
 	    
-		disableTarificacion: function (get) {   	
-	     	
+		disableTarificacion: function (get) {
+			 var fechaEjecucionReal = get('trabajo.fechaEjecucionReal');
 			 var fechaCierreEco = get('trabajo.fechaCierreEconomico');
+			 var fechaEmisionFactura = get('trabajo.fechaEmisionFactura');
 	    	 var esTarificado = get('gestionEconomica.esTarificado');
+	    	 var isSupervisorActivo = $AU.userIsRol('HAYASUPACT') || $AU.userIsRol('HAYASUPADM') || $AU.userIsRol('HAYASUPER');
+		     var isGestorActivos = $AU.userIsRol('HAYAGESACT') || $AU.userIsRol('HAYAGESTADM');
+		     var isProveedor = $AU.userIsRol('HAYAPROV') || $AU.userIsRol('HAYACERTI') 
+		     				   || $AU.userIsRol('GESTOCED') || $AU.userIsRol('GESTOADM');
+
+		     if(!Ext.isEmpty(fechaEmisionFactura)){
+		    	 return true;	    		
+		     } else if(isSupervisorActivo){
+		    	return false;		    		
+		     } else if(isGestorActivos){
+		    	if (!Ext.isEmpty(fechaCierreEco))
+			    	 return true;
+			    else {
+				   	 if (esTarificado)
+				   		 return false;
+				    else
+				    	 return true;
+			    }	    		
+		    } else if(isProveedor){
+		    	if (Ext.isEmpty(fechaEjecucionReal))
+	    			return false;
+	    		else {
+	    			return true;
+	    		}
+		    } else {
+		    	return true;
+		    }
 	    	 
-	    	 if (!Ext.isEmpty(fechaCierreEco))
-	    		 return true;
-	    	 else {
-		    	 if (esTarificado)
-		    		 return false;
-		    	 else
-		    		 return true;
-	    	 }
+	    	 
+	    	 
+	    },
+	    
+	    editableTarificacionProveedor: function (get){
+	    	return true;
 	    	 
 	    },
 	    
@@ -320,15 +346,87 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 				autoLoad: false
     		},
     		
+    		comboTipoProveedorFiltered : {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboTipoProveedorFiltered',
+					extraParams: {idTrabajo: '{trabajo.id}'}
+				}
+    		},
+    		
     		comboProveedorFiltered : {
     			model: 'HreRem.model.ComboBase',
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'trabajo/getComboProveedorFiltered',
+					extraParams: {
+						idTrabajo: '{trabajo.id}',
+						codigoTipoProveedor: '{comboTipoProveedorGestionEconomica.selection.codigo}'
+						
+					}
+				},
+				autoLoad: false
+    		},
+    		comboTipoProveedorFilteredA : {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboTipoProveedorFiltered',
 					extraParams: {idTrabajo: '{trabajo.id}'}
 				}
     		},
-    		
+    		comboProveedorFilteredA : {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboProveedorFiltered',
+					extraParams: {
+						idTrabajo: '{trabajo.id}',
+						codigoTipoProveedor: '{comboTipoProveedorGestionEconomica2.selection.codigo}'
+					}
+				},
+				autoLoad: false
+    		},
+    		comboProveedorContactoA : {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboProveedorContacto',
+					extraParams: {idProveedor: '{comboProveedorGestionEconomica2.selection.idProveedor}'}
+				}, 
+				autoLoad: false
+    		},
+    		comboTipoProveedorFilteredM : {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboTipoProveedorFiltered',
+					extraParams: {idTrabajo: '{trabajo.id}'}
+				}
+    		},
+    		comboProveedorFilteredM : {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboProveedorFiltered',
+					extraParams: {
+						idTrabajo: '{trabajo.id}',
+						codigoTipoProveedor: '{comboTipoProveedorGestionEconomica3.selection.codigo}'
+					}
+				},
+				autoLoad: false
+    		},
+    		comboProveedorContactoM : {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboProveedorContacto',
+					extraParams: {idProveedor: '{comboProveedorGestionEconomica3.selection.idProveedor}'}
+				}, 
+				autoLoad: false
+    		},
+
     		comboGestorActivoResponsable: {    		
 				model: 'HreRem.model.ComboBase',
 				proxy: {

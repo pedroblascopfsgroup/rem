@@ -69,7 +69,7 @@ public class ActivoEdificio implements Serializable, Auditable {
 	private Integer numPlantas;
 	 
 	@Column(name = "EDI_ASCENSOR")
-	private Integer ascensor;
+	private Integer ascensorEdificio;
 	
 	@Column(name = "EDI_NUM_ASCENSORES")
 	private Integer numAscensores;
@@ -174,12 +174,12 @@ public class ActivoEdificio implements Serializable, Auditable {
 		this.numPlantas = numPlantas;
 	}
 
-	public Integer getAscensor() {
-		return ascensor;
+	public Integer getAscensorEdificio() {
+		return ascensorEdificio;
 	}
 
-	public void setAscensor(Integer ascensor) {
-		this.ascensor = ascensor;
+	public void setAscensorEdificio(Integer ascensorEdificio) {
+		this.ascensorEdificio = ascensorEdificio;
 	}
 
 	public Integer getNumAscensores() {

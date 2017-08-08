@@ -196,7 +196,7 @@ Ext.define('HreRem.controller.AuthenticationController', {
     
     
     /**
-     * Función que cambia el componente a readOnly si el usuario no tiene la funci�n incluida
+     * Función que cambia el componente a readOnly si el usuario no tiene la funci�n incluida
      * en el atributo secFunPermToEdit.
      * @param {} cmp
      */

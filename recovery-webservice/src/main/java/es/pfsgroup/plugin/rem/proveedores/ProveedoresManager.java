@@ -247,6 +247,12 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				}
 				beanUtilNotNull.copyProperty(dto, "criterioCajaIVA", proveedor.getCriterioCajaIVA());
 				beanUtilNotNull.copyProperty(dto, "fechaEjercicioOpcion", proveedor.getFechaEjercicioOpcion());
+				if(proveedor.getAutorizacionWeb() != null && proveedor.getAutorizacionWeb().equals(Integer.valueOf(1))){
+					beanUtilNotNull.copyProperty(dto, "autorizacionWeb", "true");
+				}else{
+					beanUtilNotNull.copyProperty(dto, "autorizacionWeb", "false");
+				}
+				
 				
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
@@ -297,6 +303,15 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 					beanUtilNotNull.copyProperty(proveedor, "tipoDocIdentificativo", tipoDocumento);
 				}
 			}
+			if(dto.getAutorizacionWeb() != null){
+				if(dto.getAutorizacionWeb().equals("true")){
+					proveedor.setAutorizacionWeb(1);
+				}else if(dto.getAutorizacionWeb().equals("false")){
+					proveedor.setAutorizacionWeb(0);
+				}
+			}
+			
+			
 			beanUtilNotNull.copyProperty(proveedor, "localizada", dto.getLocalizadaProveedorCodigo());
 			if(!Checks.esNulo(dto.getEstadoProveedorCodigo())) {
 				DDEstadoProveedor estadoProveedor = (DDEstadoProveedor) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoProveedor.class, dto.getEstadoProveedorCodigo());
@@ -409,6 +424,10 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			if(!Checks.esNulo(dto.getMotivoRetencionCodigo())) {
 				DDMotivoRetencion motivoRetencion = (DDMotivoRetencion) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoRetencion.class, dto.getMotivoRetencionCodigo());
 				beanUtilNotNull.copyProperty(proveedor, "motivoRetencion", motivoRetencion);
+			}
+			if(!Checks.esNulo(dto.getRetencionPagoCodigo()) && dto.getRetencionPagoCodigo().equals("0")) {
+				proveedor.setMotivoRetencion(null);
+				proveedor.setFechaRetencion(null);
 			}
 			beanUtilNotNull.copyProperty(proveedor, "fechaProcesoBlanqueo", dto.getFechaProceso());
 			if(!Checks.esNulo(dto.getResultadoBlanqueoCodigo())) {
@@ -1182,6 +1201,9 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			beanUtilNotNull.copyProperty(dtoProveedor, "nombreProveedor", proveedor.getNombre());
 			if(!Checks.esNulo(proveedor.getTipoProveedor())) {
 				beanUtilNotNull.copyProperty(dtoProveedor, "subtipoProveedorDescripcion", proveedor.getTipoProveedor().getDescripcion());
+			}
+			if(!Checks.esNulo(proveedor.getEstadoProveedor())){
+				beanUtilNotNull.copyProperty(dtoProveedor, "estadoProveedorDescripcion", proveedor.getEstadoProveedor().getDescripcion());
 			}
 			beanUtilNotNull.copyProperty(dtoProveedor, "fechaBaja", proveedor.getFechaBaja());
 			

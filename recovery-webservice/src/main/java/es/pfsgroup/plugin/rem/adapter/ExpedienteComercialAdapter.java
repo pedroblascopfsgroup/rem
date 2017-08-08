@@ -1,5 +1,8 @@
 package es.pfsgroup.plugin.rem.adapter;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +12,10 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.tc.aspectwerkz.expression.regexp.Pattern;
+
 import es.capgemini.devon.beans.Service;
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -23,8 +29,10 @@ import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
+
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.activo.ActivoManager;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 
 @Service
 public class ExpedienteComercialAdapter {
@@ -36,6 +44,12 @@ public class ExpedienteComercialAdapter {
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private ActivoApi activoApi;
+	
+	@Autowired
+	private ActivoManager activoManager;
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
@@ -74,7 +88,7 @@ public class ExpedienteComercialAdapter {
 				}
 			} catch (GestorDocumentalException gex) {
 				String[] error = gex.getMessage().split("-");
-				if(EXCEPTION_EXPEDIENT_NOT_FOUND_COD.equals(error[0])){
+				if(error.length > 0 && EXCEPTION_EXPEDIENT_NOT_FOUND_COD.equals(error[0].trim())){
 					
 					Integer idExpediente;
 					try{
@@ -115,16 +129,45 @@ public class ExpedienteComercialAdapter {
 	}
 
 	public String uploadDocumento(WebFileItem webFileItem, ExpedienteComercial expedienteComercialEntrada, String matricula) throws Exception {
+		
 		if (Checks.esNulo(expedienteComercialEntrada)) {
 			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+								
 				ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(Long.parseLong(webFileItem.getParameter("idEntidad")));
 				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("subtipo"));
 				DDSubtipoDocumentoExpediente subtipoDocumento = (DDSubtipoDocumentoExpediente) genericDao.get(DDSubtipoDocumentoExpediente.class, filtro);
 				if (!Checks.esNulo(subtipoDocumento)) {
-					Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoExpedienteComercial(expedienteComercial, webFileItem,
-						usuarioLogado.getUsername(), subtipoDocumento.getMatricula());
-				expedienteComercialApi.uploadDocumento(webFileItem, idDocRestClient,null,null);
+					Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoExpedienteComercial(expedienteComercial, webFileItem, usuarioLogado.getUsername(), subtipoDocumento.getMatricula());
+					expedienteComercialApi.uploadDocumento(webFileItem, idDocRestClient,null,null);
+					String activos = webFileItem.getParameter("activos");
+					String[] arrayActivos = null;
+					if(activos != null && !activos.isEmpty()){
+						arrayActivos = activos.split(",");
+					}
+					if(arrayActivos != null && arrayActivos.length > 0){
+						gestorDocumentalAdapterApi.crearRelacionActivosExpediente(expedienteComercial, idDocRestClient, arrayActivos, usuarioLogado.getUsername());
+						if(!Checks.esNulo(subtipoDocumento.getTipoDocumentoActivo())) {
+							webFileItem.putParameter("tipo", subtipoDocumento.getTipoDocumentoActivo().getCodigo());
+						}
+						for(int i = 0; i < arrayActivos.length; i++){
+							Activo activoEntrada = activoApi.getByNumActivo(Long.parseLong(arrayActivos[i],10));
+							//Según item HREOS-2379:
+							//Adjuntar el documento a la tabla de adjuntos del activo, pero sin subir el documento realmente, sólo insertando la fila.
+							File file = File.createTempFile("idDocRestClient["+idDocRestClient+"]", ".pdf");
+							BufferedWriter out = new BufferedWriter(new FileWriter(file));
+						    out.write("pfs");
+						    out.close();					    
+						    FileItem fileItem = new FileItem();
+							fileItem.setFileName("idDocRestClient["+idDocRestClient+"]");
+							fileItem.setFile(file);
+							fileItem.setLength(file.length());			
+							webFileItem.setFileItem(fileItem);
+							activoManager.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, matricula);
+							file.delete();
+						}
+					}
+										
 				}
 			} else {
 				expedienteComercialApi.uploadDocumento(webFileItem, null,null,null);

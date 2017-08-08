@@ -25,11 +25,13 @@ public class DtoActivoProveedor extends WebDto {
 	private String tipoDocumentoCodigo;
 	private String localizadaProveedorCodigo;
 	private String estadoProveedorCodigo;
+	private String estadoProveedorDescripcion;
 	private String tipoPersonaProveedorCodigo;
 	private String observacionesProveedor;
 	private String webUrlProveedor;
 	private Date fechaConstitucionProveedor;
 	private String operativaCodigo;
+	private String autorizacionWeb;
 	
 	
 	// Ambito.
@@ -142,6 +144,12 @@ public class DtoActivoProveedor extends WebDto {
 	}
 	public void setEstadoProveedorCodigo(String estadoProveedorCodigo) {
 		this.estadoProveedorCodigo = estadoProveedorCodigo;
+	}
+	public String getEstadoProveedorDescripcion() {
+		return estadoProveedorDescripcion;
+	}
+	public void setEstadoProveedorDescripcion(String estadoProveedorDescripcion) {
+		this.estadoProveedorDescripcion = estadoProveedorDescripcion;
 	}
 	public String getTipoPersonaProveedorCodigo() {
 		return tipoPersonaProveedorCodigo;
@@ -317,4 +325,11 @@ public class DtoActivoProveedor extends WebDto {
 	public void setFechaBaja(Date fechaBaja) {
 		this.fechaBaja = fechaBaja;
 	}
+	public String getAutorizacionWeb() {
+		return autorizacionWeb;
+	}
+	public void setAutorizacionWeb(String autorizacionWeb) {
+		this.autorizacionWeb = autorizacionWeb;
+	}
+	
 }

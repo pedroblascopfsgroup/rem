@@ -5,7 +5,8 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
     collapsed	: false,
     reference	: 'tareaslistref',
     layout		: 'fit',
-    requires	: ['HreRem.view.activos.tramites.SolicitarProrroga', 'HreRem.view.activos.tramites.solicitarProrrogaModel'],
+    requires	: ['HreRem.view.activos.tramites.SolicitarProrroga', 'HreRem.view.activos.tramites.solicitarProrrogaModel','HreRem.view.activos.tramites.ReasignarTarea',
+            	   'HreRem.view.activos.tramites.ReasignarTareaModel'],
 
     initComponent: function () {
    		var me = this;
@@ -33,11 +34,21 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
              {
 	           	 name: 'btnSaltoRE',
 	           	 itemId: 'btnSaltoRE',
-	           	 text: 'Avanzar a Resolución Expediente',
+	           	 text: 'Anular trámite comercial',
 	           	 secFunPermToShow: 'BOTON_RESOLUCION_EXPEDIENTE',
 	          	 handler: 'saltoResolucionExpediente',
 	          	 bind: {
 	          		 hidden: '{tramite.ocultarBotonResolucion}'
+	          	 }
+             },
+             {
+	           	 name: 'reasignarTarea',
+	           	 itemId: 'reasignarTarea',
+	           	 text: HreRem.i18n('btn.reasignar.tarea'),
+	           	 //secFunPermToShow: 'BOTON_REASIGNAR_TAREA',
+	          	 handler: 'reasignarTarea',
+	          	 bind: {
+	          		 disabled: '{!listadoTareasTramite.selection}'
 	          	 }
              }
    		];

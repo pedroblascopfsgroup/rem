@@ -72,7 +72,7 @@ BEGIN
 	MIG.TIT_FECHA_RETIRADA_REG                            TIT_FECHA_RETIRADA_REG,
 	MIG.TIT_FECHA_NOTA_SIMPLE                             TIT_FECHA_NOTA_SIMPLE,
 	''0''                                                 VERSION,
-	'''||V_USUARIO||'''                                               USUARIOCREAR,
+	'''||V_USUARIO||'''                                   USUARIOCREAR,
 	SYSDATE                                               FECHACREAR,
 	NULL                                                  USUARIOMODIFICAR,
 	NULL                                                  FECHAMODIFICAR,
@@ -80,13 +80,26 @@ BEGIN
 	NULL                                                  FECHABORRAR,
 	0                                                     BORRADO
 	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-	JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
+	JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO AND act.BORRADO = 0
 	WHERE MIG.VALIDACION = 0 AND NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.'||V_TABLA||' AUX WHERE AUX.ACT_ID = ACT.ACT_ID AND AUX.BORRADO = 0)
 	')
 	;
   
   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
   
+  EXECUTE IMMEDIATE 'MERGE INTO REM01.BIE_DATOS_REGISTRALES T1
+	USING (SELECT T1.BIE_ID, TIT.TIT_FECHA_INSC_REG
+	    FROM REM01.ACT_TIT_TITULO TIT
+	    JOIN REM01.ACT_ACTIVO T1 ON T1.ACT_ID = TIT.ACT_ID AND T1.BORRADO = 0
+	    WHERE TIT.BORRADO = 0) T2
+	ON (T1.BIE_ID = T2.BIE_ID)
+	WHEN MATCHED THEN UPDATE SET
+	    T1.BIE_DREG_FECHA_INSCRIPCION = T2.TIT_FECHA_INSC_REG
+	WHERE T1.BORRADO = 0 AND (TRUNC(T2.TIT_FECHA_INSC_REG) <> TRUNC(T1.BIE_DREG_FECHA_INSCRIPCION) 
+	    OR (T1.BIE_DREG_FECHA_INSCRIPCION IS NULL AND T2.TIT_FECHA_INSC_REG IS NOT NULL))';
+
+  DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.BIE_DATOS_REGISTRALES actualizada (BIE_DREG_FECHA_INSCRIPCION). '||SQL%ROWCOUNT||' Filas.');
+
   COMMIT;
   
   V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';

@@ -61,7 +61,6 @@ Ext.define('HreRem.view.trabajos.TrabajosController', {
 	
     
     onEnlaceActivosClick: function(tableView, indiceFila, indiceColumna) {
-
     	var me = this;
     	
     	var grid = tableView.up('grid');
@@ -75,7 +74,7 @@ Ext.define('HreRem.view.trabajos.TrabajosController', {
     		
     		me.redirectTo('activos', true);
 
-        	me.getView().fireEvent('abrirDetalleAgrupacion', idAgrupacion);
+        	me.getView().fireEvent('abrirDetalleAgrupacionByNum', idAgrupacion);
     	}else{
     		var idActivo = record.get("idActivo");
         	

@@ -31,7 +31,7 @@ public class ActivoTareaExternaDaoImpl extends AbstractEntityDao<TareaExterna, L
 	 * @return la lista de tareas del trámite
 	 */
     @Override
-	public List<TareaExterna> getTareasTramite(Long idTramite, Usuario usuarioLogado, EXTGrupoUsuarios grupoUsuarioLogado){
+	public List<TareaExterna> getTareasTramite(Long idTramite, Usuario usuarioLogado, List<EXTGrupoUsuarios> grupos){
 		
     	List<TareaExterna> listaTareas = new ArrayList<TareaExterna>();
 		List<TareaExterna> listaTareasUsuarios = new ArrayList<TareaExterna>();
@@ -39,8 +39,11 @@ public class ActivoTareaExternaDaoImpl extends AbstractEntityDao<TareaExterna, L
 		
 		ArrayList<Long> usuarioYGrupo = new ArrayList<Long>();
 		usuarioYGrupo.add(usuarioLogado.getId());
-		if(!Checks.esNulo(grupoUsuarioLogado))
-			usuarioYGrupo.add(grupoUsuarioLogado.getGrupo().getId());
+		if (!Checks.esNulo(grupos)){
+			for (EXTGrupoUsuarios grupoUsuario : grupos){
+				usuarioYGrupo.add(grupoUsuario.getGrupo().getId());
+			}
+		}
 	
 		
 		// Obtenemos las tareas pendientes del usuario.

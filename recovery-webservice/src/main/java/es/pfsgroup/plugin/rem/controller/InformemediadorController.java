@@ -46,7 +46,7 @@ public class InformemediadorController {
 			jsonData = (InformemediadorRequestDto) request.getRequestData(InformemediadorRequestDto.class);
 			List<InformeMediadorDto> informes = jsonData.getData();
 
-			listaRespuesta = informeMediadorApi.saveOrUpdateInformeMediador(informes);
+			listaRespuesta = informeMediadorApi.saveOrUpdateInformeMediador(informes,jsonFields);
 			model.put("id", jsonFields.get("id"));
 			model.put("data", listaRespuesta);
 			model.put("error", null);

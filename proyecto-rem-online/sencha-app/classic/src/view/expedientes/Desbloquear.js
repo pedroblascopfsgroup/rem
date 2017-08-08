@@ -87,7 +87,7 @@ Ext.define('HreRem.view.expedientes.Desbloquear', {
 														store: '{comboMotivoDesbloqueo}',
 														value: ''
 													},
-													allowBlank: false,
+													allowBlank: false
 													
 												},
 												{ 

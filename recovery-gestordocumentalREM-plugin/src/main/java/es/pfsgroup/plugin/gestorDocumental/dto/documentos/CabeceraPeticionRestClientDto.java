@@ -16,7 +16,7 @@ public class CabeceraPeticionRestClientDto {
 	/**
 	 * Identificador del documento (DataID)
 	 */
-	private Integer idDocumento;
+	private Long idDocumento;
 
 	/**
 	 * Identificador interno de Haya del expediente
@@ -40,11 +40,11 @@ public class CabeceraPeticionRestClientDto {
 		this.codClase = codClase;
 	}
 
-	public Integer getIdDocumento() {
+	public Long getIdDocumento() {
 		return idDocumento;
 	}
 
-	public void setIdDocumento(Integer idDocumento) {
+	public void setIdDocumento(Long idDocumento) {
 		this.idDocumento = idDocumento;
 	}
 

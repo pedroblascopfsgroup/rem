@@ -171,7 +171,22 @@ Ext.define('HreRem.view.common.TareaController', {
 				  }
 			  }
 			});
-       },        
+       },
+       
+       getAdvertenciaTareaComercial: function(window) {
+			var me = this;
+				
+			//Advertencia de que existen otros trabajos del mismo Tipo/Subtipo
+			var url = $AC.getRemoteUrl('agenda/getAdvertenciaTareaComercial');
+			Ext.Ajax.request({
+			  url:url,
+			  params:  {idTarea : window.idTarea},
+			  success: function(response,opts){
+				  var advertencia = Ext.JSON.decode(response.responseText).textoAdvertencia;
+				  me.getViewModel().set("textoAdvertenciaTarea", advertencia);
+			  }
+			});
+      },    
 
 		verBotonEnlaceTrabajo: function(window, invisible) {
 		

@@ -53,8 +53,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	},
 	
 	onChangeChainedCombo: function(combo) {
-    	
-    	var me = this,
+		var me = this,
     	chainedCombo = me.lookupReference(combo.chainedReference);    	
     	me.getViewModel().notify();
 		chainedCombo.clearValue("");
@@ -67,6 +66,13 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
    				}
 			}
 		});
+		if(combo.getValue() == "02"){
+			me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(true);
+			me.lookupReference('checkEnglobaTodosActivosAgrRef').setValue(false);
+		}else{
+			me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(false);
+			me.lookupReference('checkEnglobaTodosActivosAgrRef').setValue(true);
+		}
 		
 		if(combo.getValue() != "02" && combo.getValue() != "03") {
 			me.lookupReference("fieldSetMomentoRealizacionRef").setVisible(false);
@@ -75,6 +81,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			me.lookupReference("fieldSetMomentoRealizacionRef").setVisible(true);
 		} 
     	
+		
     },
     
     refreshStoreSeleccionTarifas: function(combo) {
@@ -86,8 +93,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	
 	onChangeSubtipoTrabajoCombo: function(combo) {
 
-		    	
-    	var me = this;
+		var me = this;
     	var idActivo = combo.up("window").idActivo;
     	var codigoSubtipoTrabajo = combo.getValue();
     	var advertencia;
@@ -114,8 +120,10 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     		me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(true);
     	}
     	else {
-    		me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(false);
-    		me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(false);
+    		if(me.lookupReference("tipoTrabajo").getValue() != "02"){
+    			me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(false);
+    			me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(false);
+    		}
     	}
 	    
     },
@@ -234,7 +242,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		// Comprobar el estado del checkbox para agrupar los activos en un trabajo.
 		var check = me.lookupReference('checkEnglobaTodosActivosRef').getValue();	
 		
-		//Si no se ha seleccionado ning�n activo
+		//Si no se ha seleccionado ning�n activo
 		if(Ext.isEmpty(arraySelection)){
 			//Si se marca el check y se esta creando desde agrupaciones
 			if(check && Ext.isEmpty(me.getView().idActivo)){
@@ -248,7 +256,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			    		}
 				);
 			}
-			else{
+			else if(Ext.isEmpty(me.getView().idActivo)){
 				Ext.MessageBox.confirm(
 						HreRem.i18n("msgbox.multiples.trabajos.title"),
 						HreRem.i18n("msgbox.multiples.trabajos.check.mensaje"),
@@ -258,6 +266,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			        		}
 			    		}
 				);
+			}else{
+				me.crearTrabajo(btn,arraySelection);
 			}
 		}
 		else{
@@ -337,8 +347,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		
 		var me = this,
 		idTrabajo = me.getViewModel().get("trabajo.id");
-    	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumento", {entidad: 'trabajo', idEntidad: idTrabajo, parent: grid}).show();
-		
+		tipoTrabajoCodigo = me.getViewModel().get("trabajo.tipoTrabajoCodigo");
+		Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumento", {entidad: 'trabajo', idEntidad: idTrabajo, tipoTrabajoCodigo: tipoTrabajoCodigo, parent: grid}).show();
+
 	},
 	
 	borrarDocumentoAdjunto: function(grid, record) {
@@ -585,8 +596,10 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	},
 	
 	onChangeProveedor: function(combo, value) {
-		var me = this;		    
-		me.getViewModel().set('proveedor', combo.getSelection());		
+		var me = this;		
+		
+		me.getViewModel().set('proveedor', combo.getSelection());
+		//combo.validate();
 	},
 
 	onListadoTramitesTareasTrabajoDobleClick : function(gridView,record) {
@@ -658,25 +671,33 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	parent = grid.up("gestioneconomicatrabajo"),    	
     	idTrabajo = parent.getBindRecord().get('idTrabajo'),
     	tipoTrabajoDescripcion = parent.getBindRecord().get('tipoTrabajoDescripcion'),
-    	subtipoTrabajoDescripcion = parent.getBindRecord().get('subtipoTrabajoDescripcion');
+    	subtipoTrabajoDescripcion = parent.getBindRecord().get('subtipoTrabajoDescripcion'),
+    	codigoTipoProveedor = parent.getBindRecord().get('codigoTipoProveedor'),
+    	idProveedor = parent.getBindRecord().get('idProveedor'),
+    	idProveedorContacto = parent.getBindRecord().get('idProveedorContacto');
+    	emailProveedorContacto = parent.getBindRecord().get('emailProveedorContacto');
+    	nombreProveedorContacto = parent.getBindRecord().get('nombreProveedorContacto');
+    	usuarioProveedorContacto = parent.getBindRecord().get('usuarioProveedorContacto');
 
-    	Ext.create("HreRem.view.trabajos.detalle.ModificarPresupuesto", {idTrabajo: idTrabajo, tipoTrabajoDescripcion: tipoTrabajoDescripcion, subtipoTrabajoDescripcion: subtipoTrabajoDescripcion, parent: parent, modoEdicion: true, presupuesto: record}).show();
+    	var window=Ext.create("HreRem.view.trabajos.detalle.ModificarPresupuesto", {idTrabajo: idTrabajo, tipoTrabajoDescripcion: tipoTrabajoDescripcion, subtipoTrabajoDescripcion: subtipoTrabajoDescripcion, codigoTipoProveedor: codigoTipoProveedor, idProveedor: idProveedor, idProveedorContacto: idProveedorContacto, emailProveedorContacto: emailProveedorContacto, nombreProveedorContacto: nombreProveedorContacto, usuarioProveedorContacto: usuarioProveedorContacto, parent: parent, modoEdicion: true, presupuesto: record}).show();
+    	window.getViewModel().set('trabajo',me.getViewModel().get('trabajo'));
     },
     
     onPresupuestosListClick: function(grid, record) {
     	var form = grid.up('form');
+    	
     	if (grid.getSelectionModel().getCount() != 0)
     	{
     		//Cuando la selecci�n no es 0: Rellenar el form de presupuesto con los campos correspondientes
 	    	model = Ext.create('HreRem.model.PresupuestoTrabajo'),
 	    	idPresupuesto = record.get("id"),
-	    	
 	    	fieldset = grid.up('form').down('[reference=detallepresupuesto]');
 			fieldset.mask(HreRem.i18n("msg.mask.loading"));
-	    	
+
 			model.setId(idPresupuesto);
 			model.load({			
 			    success: function(record) {	
+
 			    	form.setBindRecord(record);
 			    	fieldset.unmask();
 			    }
@@ -687,7 +708,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     		//Cuando la selecci�n es 0: Resetear el form (no hay nada seleccionado) 
     		form.getForm().reset();
     	}
-    	
+    	//me.getViewModel().set('proveedor', record);
     },
     
     onClickBotonGuardarPresupuesto: function(btn) {
@@ -715,8 +736,10 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     onClickBotonActualizarPresupuesto: function(btn) {
 		var me = this,
 		window = btn.up("window"),
-		form = window.down("form");
+		form = window.down("form"),
+		combo = me.lookupReference('labelEmailContacto');
 		
+		combo.validate();
 		form.recordName = "presupuesto";
 		form.recordClass = "HreRem.model.PresupuestosTrabajo";
 		
@@ -816,6 +839,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
  		  params:  {idTrabajo : idTrabajo},
  		  			
  		  success: function(response,opts){
+ 			  
  			  boton = me.lookupReference("botonGenerarPropuesta");
  			  //Si se puede crear la propuesta, activa el boton sino lo desactiva
  			  if(Ext.JSON.decode(response.responseText).success == "true") {
@@ -847,12 +871,13 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		 			//Respuesta que indica si se creará la propuesta con algunos activos (ya que existen algunos en otras propuestas en trámite)
 			    	advertencia = Ext.JSON.decode(response.responseText).advertencia;
 			    	
-			    	if(!Ext.isEmpty(advertencia) && !boton.isDisabled()) {
+			    	if(!Ext.isEmpty(advertencia) /*&& !boton.isDisabled()*/) {
 			    		var msgAdvertencia = me.lookupReference("msgAdvertenciaActivosEnOtrasPropuestas");
 			    		var texto = "<span style= 'color: red; float: left'>";
-			    		if(advertencia=='01')
+			    		if(advertencia=='01'){
 			    			texto += HreRem.i18n('msg.advertencia.precios.generar.prp.existen.activos.in.prp.entramite');
-			    		else {
+			    			boton.setDisabled(false);
+			    		}else {
 			    			texto += HreRem.i18n('msg.advertencia.precios.no.gernerar.prp.todos.activos.in.prp.tramite');
 			    			boton.setDisabled(true);
 			    		}
@@ -879,14 +904,12 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
      	chainedCombo = me.lookupReference(combo.chainedReference);   
      	
      	me.getViewModel().notify();
-     	
+
      	if(!Ext.isEmpty(chainedCombo.getValue())) {
  			chainedCombo.clearValue();
      	}
-
  		chainedCombo.getStore().load({ 			
  			callback: function(records, operation, success) {
-
     				if(!Ext.isEmpty(records) && records.length > 0) {
     					if (chainedCombo.selectFirst == true) {
 	 	   					chainedCombo.setSelection(1);
@@ -896,15 +919,21 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     				}
  			}
  		});
- 		
  		if (me.lookupReference(chainedCombo.chainedReference) != null) {
  			var chainedDos = me.lookupReference(chainedCombo.chainedReference);
- 			if(!chainedDos.isDisabled()) {
- 				chainedDos.clearValue();
- 				chainedDos.getStore().removeAll();
- 				chainedDos.setDisabled(true);
+ 			if(chainedDos.getXType()=='comboboxfieldbase'){
+	 			if(!chainedDos.isDisabled()) {
+	 				chainedDos.clearValue();
+	 				chainedDos.getStore().removeAll();
+	 				chainedDos.setDisabled(true);
+	 			}
  			}
+ 			do{
+ 				chainedDos.setValue('');
+ 				chainedDos = me.lookupReference(chainedDos.chainedReference);
+ 			}while(chainedDos != null);
  		}
+ 		
 
      },
 
@@ -930,12 +959,3 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	 	    
  	}
 });
-
-
-
-
-
-
-
-
-

@@ -102,7 +102,7 @@ EXECUTE IMMEDIATE ('
   (SELECT DD_RTG_ID
     FROM '||V_ESQUEMA||'.DD_RTG_RATING_ACTIVO 
     WHERE DD_RTG_CODIGO = MIG.ACT_RATING)                           DD_RTG_ID,
-  MIG.ACT_DIVISION_HORIZONTAL                                       ACT_DIVISION_HORIZONTAL,
+  NVL(MIG.ACT_DIVISION_HORIZONTAL,0)                                       ACT_DIVISION_HORIZONTAL,
   MIG.ACT_FECHA_REV_CARGAS                                          ACT_FECHA_REV_CARGAS,
   MIG.ACT_CON_CARGAS                                                ACT_CON_CARGAS,
   MIG.GESTION_HRE                                                   ACT_GESTION_HRE,
@@ -143,7 +143,7 @@ EXECUTE IMMEDIATE ('
   NULL                     			                                    SDV_ID,
   NULL												                                      CPR_ID,
   ''0''                                                             VERSION,
-  '''||V_USUARIO||'''                                                           USUARIOCREAR,
+  '''||V_USUARIO||'''                                               USUARIOCREAR,
   SYSDATE                                                           FECHACREAR,
   NULL                                                              USUARIOMODIFICAR,
   NULL                                                              FECHAMODIFICAR,
@@ -153,7 +153,7 @@ EXECUTE IMMEDIATE ('
   FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
   INNER JOIN '||V_ESQUEMA||'.'||V_TABLA_MIG_2||' MIG2
   ON MIG.ACT_NUMERO_ACTIVO = MIG2.ACT_NUMERO_ACTIVO
-	AND MIG.VALIDACION = 0 AND MIG2.VALIDACION = 0 AND NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.'||V_TABLA||' AUX WHERE AUX.ACT_NUM_aCTIVO = MIG.ACT_NUMERO_ACTIVO)
+	AND MIG.VALIDACION = 0 AND NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.'||V_TABLA||' AUX WHERE AUX.ACT_NUM_aCTIVO = MIG.ACT_NUMERO_ACTIVO)
   ')
   ;
   
@@ -168,7 +168,25 @@ EXECUTE IMMEDIATE ('
   '
   ;
   
+
+  EXECUTE IMMEDIATE '
+    MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' T1
+    USING (SELECT ACT_NUMERO_ACTIVO, TIPO_ACTIVO, SUBTIPO_ACTIVO, ESTADO_ACTIVO, ESTADO_GESTION, SITUACION_COMERCIAL
+        , ACT_CON_CARGAS, ACT_FECHA_REV_CARGAS, ESTADO_ADMISION, TIPO_TITULO, SUBTIPO_TITULO
+      FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+      WHERE VALIDACION IN (0,1)) T2
+    ON (T1.ACT_NUM_ACTIVO = T2.ACT_NUMERO_ACTIVO)
+    WHEN MATCHED THEN UPDATE SET
+      T1.DD_TPA_ID = (SELECT DD_TPA_ID FROM '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO TPA WHERE TPA.DD_TPA_CODIGO = T2.TIPO_ACTIVO)
+      , T1.DD_SAC_ID = (SELECT DD_SAC_ID FROM '||V_ESQUEMA||'.DD_SAC_SUBTIPO_ACTIVO SAC WHERE SAC.DD_SAC_CODIGO = T2.SUBTIPO_ACTIVO)
+      , T1.DD_EAC_ID = (SELECT DD_EAC_ID FROM '||V_ESQUEMA||'.DD_EAC_ESTADO_ACTIVO EAC WHERE EAC.DD_EAC_CODIGO = T2.ESTADO_ACTIVO)
+      , T1.ACT_GESTION = T2.ESTADO_GESTION, T1.ACT_ADMISION = T2.ESTADO_ADMISION
+      , T1.DD_SCM_ID = (SELECT DD_SCM_ID FROM '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL SCM WHERE SCM.DD_SCM_CODIGO = T2.SITUACION_COMERCIAL)
+      , T1.ACT_CON_CARGAS = T2.ACT_CON_CARGAS, T1.ACT_FECHA_REV_CARGAS = T2.ACT_FECHA_REV_CARGAS
+      , T1.DD_TTA_ID = (SELECT DD_TTA_ID FROM '||V_ESQUEMA||'.DD_TTA_TIPO_TITULO_ACTIVO TTA WHERE TTA.DD_TTA_CODIGO = T2.TIPO_TITULO)
+      , T1.DD_STA_ID = (SELECT DD_STA_ID FROM '||V_ESQUEMA||'.DD_STA_SUBTIPO_TITULO_ACTIVO STA WHERE STA.DD_STA_CODIGO = T2.SUBTIPO_TITULO)';
   ----------
+  DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' tipos y subtipos actualizados. '||SQL%ROWCOUNT||' Filas.');
   
   --DAMOS REGISTROS EN ALTA BIE_BIEN Y BIE_ADJ_ADJUDICACION PARA LOS ACTIVOS QUE TRATAMOS
     
@@ -185,9 +203,9 @@ EXECUTE IMMEDIATE ('
   )
   SELECT
   ACT.BIE_ID                                                        BIE_ID,
-  ACT.ACT_NUM_ACTIVO_UVEM											BIE_NUMERO_ACTIVO,
+  ACT.ACT_NUM_ACTIVO_UVEM											                      BIE_NUMERO_ACTIVO,
   ''0''                                                             VERSION,
-  '''||V_USUARIO||'''                                                           USUARIOCREAR,
+  '''||V_USUARIO||'''                                               USUARIOCREAR,
   SYSDATE                                                           FECHACREAR,
   0                                                                 BORRADO
   FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
@@ -215,17 +233,13 @@ EXECUTE IMMEDIATE ('
   ACT.BIE_ID 								                	  	                  BIE_ID,
   '||V_ESQUEMA||'.S_BIE_ADJ_ADJUDICACION.NEXTVAL					          BIE_ADJ_ID,
   ''0''                                                             VERSION,
-  '''||V_USUARIO||'''                                                           USUARIOCREAR,
+  '''||V_USUARIO||'''                                               USUARIOCREAR,
   SYSDATE                                                           FECHACREAR,
   0                                                                 BORRADO
   FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
-  INNER JOIN '||V_ESQUEMA||'.'||V_TABLA_MIG_2||' MIG2
-  ON ACT.ACT_NUM_ACTIVO = MIG2.ACT_NUMERO_ACTIVO
   WHERE NOT EXISTS (
     SELECT 1 FROM '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION BIE WHERE BIE.BIE_ID = ACT.BIE_ID
     )
-  AND ACT.USUARIOCREAR = '''||V_USUARIO||'''
-  AND MIG2.VALIDACION = 0
   ')
   ;
   

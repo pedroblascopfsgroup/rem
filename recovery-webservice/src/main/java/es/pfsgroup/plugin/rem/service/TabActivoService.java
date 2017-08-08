@@ -18,6 +18,7 @@ public interface TabActivoService extends GenericService{
 	public static final String TAB_VALORACIONES_PRECIOS = "valoracionesprecios";	// Pestana 6
 	public static final String TAB_INFORMACION_COMERCIAL = "informacioncomercial"; 	// Pestana 7
 	public static final String TAB_INFORME_COMERCIAL = "informecomercial";
+	public static final String TAB_ADMINISTRACION = "administracion";
 	
     BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	

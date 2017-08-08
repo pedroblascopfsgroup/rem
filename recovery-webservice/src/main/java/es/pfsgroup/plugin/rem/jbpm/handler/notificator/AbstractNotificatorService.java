@@ -35,7 +35,7 @@ public abstract class AbstractNotificatorService{
 		return fecha == null ? "" : fecha;
 	}
 	
-	private String generateDireccion(Activo activo){
+	public String generateDireccion(Activo activo){
 		String direccion = (!Checks.esNulo(activo.getLocalizacionActual().getTipoVia())? activo.getLocalizacionActual().getTipoVia().getDescripcion() : "") + " "
 				 		 + (!Checks.esNulo(activo.getLocalizacionActual().getDireccion())? activo.getLocalizacionActual().getDireccion() : "") + " "
 				 		 + (!Checks.esNulo(activo.getLocalizacionActual().getNumeroDomicilio())? activo.getLocalizacionActual().getNumeroDomicilio() : "") + " "
@@ -88,31 +88,44 @@ public abstract class AbstractNotificatorService{
 				+ "			</div>"
 				+ "			<div style='background: #b7ddf0; width: 785px; min-height: 600px; border-radius: 0px 20px 20px 20px; padding: 20px'>"
 				+ "				<div style='background: #054664; width: 600px; height: 375px; border-radius: 20px; color: #fff; display: inline-block'>"
-				+ "					<div style='display: table; margin: 20px;'>"
-				+ "						<div style='display: table-row;'>"
-				+ "							<div style='display: table-cell; vertical-align: middle; padding: 10px;'>"
-				+ "								<img src='"+this.getUrlImagenes()+"ico_trabajos.png' />"
-				+ "							</div>"
-				+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
-				+ "								Nº Trabajo:<strong>"+dtoSendNotificator.getNumTrabajo()+"</strong>"
-				+ "							</div>"
-				+ "						</div>"				
-				+ "						<div style='display: table-row;'>"
-				+ "							<div style='display: table-cell; vertical-align: middle; padding: 10px;'>"
-				+ "								<img src='"+this.getUrlImagenes()+"ico_tipo.png' />"
-				+ "							</div>"
-				+ "						<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
-				+ "								Tipo de trabajo: <strong>"+dtoSendNotificator.getTipoContrato()+"</strong>"
-				+ "							</div>"
-				+ "						</div>"
-				+ "						<div style='display: table-row;'>"
-				+ "							<div style='display: table-cell; vertical-align: middle; padding: 10px;'>"
-				+ "								<img src='"+this.getUrlImagenes()+"ico_fecha.png' />"
-				+ "							</div>"
-				+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
-				+ "								Fecha finalización trabajo: <strong>"+dtoSendNotificator.getFechaFinalizacion()+"</strong>"
-				+ "							</div>"
-				+ "						</div>"
+				+ "					<div style='display: table; margin: 20px;'>";
+
+				if (dtoSendNotificator.getNumTrabajo() != null) {
+					cuerpo = cuerpo 
+					+ "						<div style='display: table-row;'>"
+					+ "							<div style='display: table-cell; vertical-align: middle; padding: 10px;'>"
+					+ "								<img src='"+this.getUrlImagenes()+"ico_trabajos.png' />"
+					+ "							</div>"
+					+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
+					+ "								Nº Trabajo:<strong>"+dtoSendNotificator.getNumTrabajo()+"</strong>"
+					+ "							</div>"
+					+ "						</div>";
+				}
+
+				if (dtoSendNotificator.getTipoContrato() != null) {
+					cuerpo = cuerpo
+					+ "						<div style='display: table-row;'>"
+					+ "							<div style='display: table-cell; vertical-align: middle; padding: 10px;'>"
+					+ "								<img src='"+this.getUrlImagenes()+"ico_tipo.png' />"
+					+ "							</div>"
+					+ "						<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
+					+ "								Tipo de trabajo: <strong>"+dtoSendNotificator.getTipoContrato()+"</strong>"
+					+ "							</div>"
+					+ "						</div>";
+				}
+
+				if (dtoSendNotificator.getFechaFinalizacion() != null) {
+					cuerpo = cuerpo
+					+ "						<div style='display: table-row;'>"
+					+ "							<div style='display: table-cell; vertical-align: middle; padding: 10px;'>"
+					+ "								<img src='"+this.getUrlImagenes()+"ico_fecha.png' />"
+					+ "							</div>"
+					+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
+					+ "								Fecha finalización trabajo: <strong>"+dtoSendNotificator.getFechaFinalizacion()+"</strong>"
+					+ "							</div>"
+					+ "						</div>";
+				}
+				cuerpo = cuerpo
 				+ "						<div style='display: table-row;'>"
 				+ "							<div style='display: table-cell; vertical-align: middle; padding: 10px;'>"
 				+ "								<img src='"+this.getUrlImagenes()+"ico_activos.png' />"
@@ -173,11 +186,15 @@ public abstract class AbstractNotificatorService{
 		DtoSendNotificator dtoSendNotificator = new DtoSendNotificator();
 		
 		dtoSendNotificator.setNumActivo(tramite.getActivo().getNumActivo());
-		dtoSendNotificator.setTipoContrato(tramite.getTrabajo().getSubtipoTrabajo().getDescripcion());
 		dtoSendNotificator.setDireccion(this.generateDireccion(tramite.getActivo()));
-		dtoSendNotificator.setNumTrabajo(tramite.getTrabajo().getNumTrabajo());
-		dtoSendNotificator.setFechaFinalizacion(this.generateFechaTrabajo(tramite.getTrabajo()));
-		if(!Checks.esNulo(tramite.getTrabajo().getAgrupacion()))
+
+		if (!Checks.esNulo(tramite.getTrabajo())) {
+			dtoSendNotificator.setTipoContrato(tramite.getTrabajo().getSubtipoTrabajo().getDescripcion());
+			dtoSendNotificator.setNumTrabajo(tramite.getTrabajo().getNumTrabajo());
+			dtoSendNotificator.setFechaFinalizacion(this.generateFechaTrabajo(tramite.getTrabajo()));	
+		}
+
+		if(!Checks.esNulo(tramite.getTrabajo()) && !Checks.esNulo(tramite.getTrabajo().getAgrupacion()))
 			dtoSendNotificator.setNumAgrupacion(tramite.getTrabajo().getAgrupacion().getNumAgrupRem());
 		
 		return dtoSendNotificator;

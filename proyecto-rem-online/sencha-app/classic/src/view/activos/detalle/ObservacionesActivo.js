@@ -19,6 +19,7 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
 			    xtype		: 'gridBaseEditableRow',
 			    idPrincipal : 'activo.id',
 			    topBar: true,
+			    disabledDeleteBtn: true,
 			    reference: 'listadoObservaciones',
 				cls	: 'panel-base shadow-panel',
 				bind: {
@@ -84,7 +85,7 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
    	                beforeedit : function(editor, context, eOpts ) {
    	                	var allowEdit = true;		
 	   	         	    if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
-	   	         	    	allowEdit = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+	   	         	    	allowEdit = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
 	   	         	    			&& $AU.userHasFunction('EDITAR_SITU_POSESORIA_ACTIVO'));
 	   	         	    }
    	                    var idUsuario = context.record.get("idUsuario");

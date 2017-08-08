@@ -99,6 +99,14 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 						extraParams: {diccionario: 'subentidadesPropietarias'}
 					}
 			},
+			
+			comboSubcarteraFiltered: {
+				model: 'HreRem.model.ComboBase',
+					proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getComboSubcartera'
+					}
+			},
 
 			comboTiposUsoDestino: {
 				model: 'HreRem.model.ComboBase',

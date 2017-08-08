@@ -104,14 +104,14 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
 			var visible = false;
 			if(tab.xtype=='informecomercialactivo'){
 				if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
-					visible = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+					visible = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
 						 && $AU.userHasFunction('EDITAR_TAB_INFO_COMERCIAL_PUBLICACION'));
 				}else{
 					visible = $AU.userHasFunction('EDITAR_TAB_INFO_COMERCIAL_PUBLICACION');
 				}
 			}else if(tab.xtype=='datospublicacionactivo'){
 				if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
-					visible = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+					visible = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
 						 && $AU.userHasFunction('EDITAR_TAB_DATOS_PUBLICACION'));
 				}else{
 					visible = $AU.userHasFunction('EDITAR_TAB_DATOS_PUBLICACION');
@@ -138,7 +138,7 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
     	//HREOS-1964: Restringir los activos financieros (asistidos) para que solo puedan ser editables por los perfiles de IT y Gestoria PDV
 		var ocultarInformecomercialactivo = false;		
 		if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
-			ocultarInformecomercialactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+			ocultarInformecomercialactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
 				 && $AU.userHasFunction('EDITAR_TAB_INFO_COMERCIAL_PUBLICACION'));
 		}else{
 			ocultarInformecomercialactivo = !$AU.userHasFunction('EDITAR_TAB_INFO_COMERCIAL_PUBLICACION');
@@ -146,7 +146,7 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
 		
 		var ocultarDatospublicacionactivo = false;		
 		if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
-			ocultarDatospublicacionactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+			ocultarDatospublicacionactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
 				 && $AU.userHasFunction('EDITAR_TAB_DATOS_PUBLICACION'));
 		}else{
 			ocultarDatospublicacionactivo = !$AU.userHasFunction('EDITAR_TAB_DATOS_PUBLICACION');

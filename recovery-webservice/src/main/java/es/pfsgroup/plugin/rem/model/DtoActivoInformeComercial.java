@@ -44,6 +44,14 @@ public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
 	private Date fechaEstimacionRenta;
 	private String inferiorMunicipioCodigo;
 	private String ubicacionActivoCodigo;
+	private Integer numTerrazaCubierta;
+	private String descTerrazaCubierta;
+	private Integer numTerrazaDescubierta;
+	private String descTerrazaDescubierta;
+	private Boolean despensa;
+	private Boolean lavadero;
+	private Boolean azotea;
+	private String descOtras;
 	
 	
 	public String getInferiorMunicipioCodigo() {
@@ -243,6 +251,54 @@ public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
 	}
 	public void setJustificacionRenta(String justificacionRenta) {
 		this.justificacionRenta = justificacionRenta;
+	}
+	public Integer getNumTerrazaCubierta() {
+		return numTerrazaCubierta;
+	}
+	public void setNumTerrazaCubierta(Integer numTerrazaCubierta) {
+		this.numTerrazaCubierta = numTerrazaCubierta;
+	}
+	public String getDescTerrazaCubierta() {
+		return descTerrazaCubierta;
+	}
+	public void setDescTerrazaCubierta(String descTerrazaCubierta) {
+		this.descTerrazaCubierta = descTerrazaCubierta;
+	}
+	public Integer getNumTerrazaDescubierta() {
+		return numTerrazaDescubierta;
+	}
+	public void setNumTerrazaDescubierta(Integer numTerrazaDescubierta) {
+		this.numTerrazaDescubierta = numTerrazaDescubierta;
+	}
+	public String getDescTerrazaDescubierta() {
+		return descTerrazaDescubierta;
+	}
+	public void setDescTerrazaDescubierta(String descTerrazaDescubierta) {
+		this.descTerrazaDescubierta = descTerrazaDescubierta;
+	}
+	public Boolean getDespensa() {
+		return despensa;
+	}
+	public void setDespensa(Boolean despensa) {
+		this.despensa = despensa;
+	}
+	public Boolean getLavadero() {
+		return lavadero;
+	}
+	public void setLavadero(Boolean lavadero) {
+		this.lavadero = lavadero;
+	}
+	public Boolean getAzotea() {
+		return azotea;
+	}
+	public void setAzotea(Boolean azotea) {
+		this.azotea = azotea;
+	}
+	public String getDescOtras() {
+		return descOtras;
+	}
+	public void setDescOtras(String descOtras) {
+		this.descOtras = descOtras;
 	}
 	
 	

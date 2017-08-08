@@ -14,7 +14,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
 				var tab = tabPanel.items.items[0];
 				tabPanel.setActiveTab(tab);
 			}
-
+			
 			if(tab.ocultarBotonesEdicion) {
 				tabPanel.down("[itemId=botoneditar]").setVisible(false);
 			} else {		
@@ -134,7 +134,21 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
 		var me = this;
 		me.down("[itemId=botoneditar]").setVisible(false);
 		var editionEnabled = function() {
-			me.down("[itemId=botoneditar]").setVisible(true);
+			var visible = false;
+				if((Ext.isEmpty(me.lookupController().getViewModel().get('trabajo').get('fechaEjecucionReal')) && ($AU.userIsRol(CONST.PERFILES['PROVEEDOR'])))
+						|| (Ext.isEmpty(me.lookupController().getViewModel().get('trabajo').get('fechaCierreEconomico')) && ($AU.userIsRol('HAYAGESACT') || $AU.userIsRol('HAYAGESTADM')))
+						|| (Ext.isEmpty(me.lookupController().getViewModel().get('trabajo').get('fechaEmisionFactura')) && ($AU.userIsRol('HAYASUPACT') || $AU.userIsRol('HAYASUPADM') || $AU.userIsRol('HAYASUPER')))){
+					visible = true;
+				}else if(!Ext.isEmpty(me.lookupController().getViewModel().get('trabajo').get('fechaEjecucionReal')) && ($AU.userIsRol(CONST.PERFILES['PROVEEDOR']))
+						|| (!Ext.isEmpty(me.lookupController().getViewModel().get('trabajo').get('fechaCierreEconomico')) && ($AU.userIsRol('HAYAGESACT') || $AU.userIsRol('HAYAGESTADM')))
+						|| (!Ext.isEmpty(me.lookupController().getViewModel().get('trabajo').get('fechaEmisionFactura')) && ($AU.userIsRol('HAYASUPACT') || $AU.userIsRol('HAYASUPADM') || $AU.userIsRol('HAYASUPER')))){
+					visible = false;
+				}
+				else{
+					visible= true;
+				}
+			
+			me.down("[itemId=botoneditar]").setVisible(visible);
 		}
 
 		// Si la pestaña recibida no tiene asignados roles de edicion 

@@ -1,5 +1,5 @@
 Ext.define('HreRem.view.activos.tramites.TramiteDetalleModel', {
-    extend: 'Ext.app.ViewModel',
+    extend: 'HreRem.view.common.GenericViewModel',
     alias: 'viewmodel.tramitedetalle',
 
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.Gestor' ],
@@ -79,7 +79,25 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleModel', {
 					remoteUrl: 'activo/getActivosTramite',
 					extraParams: {idTramite: '{tramite.idTramite}'}
 				 }
-    	}  		
+    	},
+    	
+    	comboUsuariosReasignacion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+			type: 'uxproxy',
+			remoteUrl: 'activo/getComboUsuarios',
+			extraParams: {idTipoGestor: '{tipoGestor.selection.id}'}
+			}
+		},
+		
+		comboSupervisorReasignacion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+			type: 'uxproxy',
+			remoteUrl: 'activo/getComboUsuarios',
+			extraParams: {idTipoGestor: '{tipoGestorSupervisor.selection.id}'}
+			}
+		}
 	
      }    
 });

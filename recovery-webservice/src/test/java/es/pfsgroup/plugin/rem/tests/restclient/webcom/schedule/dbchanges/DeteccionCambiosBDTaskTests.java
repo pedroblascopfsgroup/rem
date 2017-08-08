@@ -13,6 +13,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+
+import javax.servlet.ServletContext;
 
 import org.junit.After;
 import org.junit.Before;
@@ -28,6 +31,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ComisionesDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.schedule.DeteccionCambiosBDTask;
@@ -46,6 +50,12 @@ import es.pfsgroup.plugin.rem.tests.restclient.webcom.schedule.dbchanges.common.
 
 @RunWith(MockitoJUnitRunner.class)
 public class DeteccionCambiosBDTaskTests {
+	
+	@Mock
+	private ServletContext servletContext;
+	
+	@Mock
+	private RestApi restApi;
 
 	@Mock
 	private ServiciosWebcomManager servicios;
@@ -55,6 +65,9 @@ public class DeteccionCambiosBDTaskTests {
 	
 	@Mock
 	private RegistroLlamadasManager registroLlamadas;
+	
+	@Mock
+	private Properties appProperties;
 
 	@InjectMocks
 	private DetectorWebcomStock detectorCambiosStock;
@@ -102,7 +115,7 @@ public class DeteccionCambiosBDTaskTests {
 		data2.put(ServicioStockConstantes.ID_ACTIVO_HAYA, "2");
 		listPendientes.add(new CambioBDStub(data2));
 		
-		when(detectorCambiosDao.listCambios(eq(StockDto.class), any(InfoTablasBD.class), any(RestLlamada.class), listPendientes))
+		when(detectorCambiosDao.listCambios(eq(StockDto.class), any(InfoTablasBD.class), any(RestLlamada.class), any(CambiosList.class)))
 				.thenReturn(listPendientes);
 
 		//////////////////////////
@@ -146,7 +159,7 @@ public class DeteccionCambiosBDTaskTests {
 		CambiosList listPendientes = new CambiosList(tamanyoBloque);
 		listPendientes.add(new CambioBDStub(data));
 		when(detectorCambiosDao.listCambios(eq(EstadoTrabajoDto.class), any(InfoTablasBD.class),
-				any(RestLlamada.class), listPendientes)).thenReturn(listPendientes);
+				any(RestLlamada.class), any(CambiosList.class))).thenReturn(listPendientes);
 
 		//////////////////////////
 		task.detectaCambios();
@@ -189,7 +202,7 @@ public class DeteccionCambiosBDTaskTests {
 		Integer tamanyoBloque = Integer.valueOf(1000);
 		CambiosList listPendientes = new CambiosList(tamanyoBloque);
 		listPendientes.add(new CambioBDStub(data));
-		when(detectorCambiosDao.listCambios(eq(StockDto.class), any(InfoTablasBD.class), any(RestLlamada.class), listPendientes))
+		when(detectorCambiosDao.listCambios(eq(StockDto.class), any(InfoTablasBD.class), any(RestLlamada.class), any(CambiosList.class)))
 				.thenReturn(listPendientes);
 
 		//////////////////////////
@@ -252,7 +265,7 @@ public class DeteccionCambiosBDTaskTests {
 		vh.put(VentasYComisionesConstantes.OBSERVACIONES, "observaciones antiguas");
 		stub.setValoresHistoricos(vh);
 
-		when(detectorCambiosDao.listCambios(eq(ComisionesDto.class), any(InfoTablasBD.class), any(RestLlamada.class), listPendientes))
+		when(detectorCambiosDao.listCambios(eq(ComisionesDto.class), any(InfoTablasBD.class), any(RestLlamada.class), any(CambiosList.class)))
 				.thenReturn(listPendientes);
 
 		//////////////////////////
@@ -287,7 +300,7 @@ public class DeteccionCambiosBDTaskTests {
 		ArgumentCaptor<DetectorCambiosBD> handler = ArgumentCaptor.forClass(DetectorCambiosBD.class);
 		Integer contError = Integer.valueOf(0);
 		 
-		Mockito.verify(registroLlamadas).guardaRegistroLlamada(llamadaCaptor.capture(), handler.capture(), contError);
+		Mockito.verify(registroLlamadas).guardaRegistroLlamada(llamadaCaptor.capture(), handler.capture(), any(Integer.class));
 
 		RestLlamada registro = llamadaCaptor.getValue();
 		return registro;

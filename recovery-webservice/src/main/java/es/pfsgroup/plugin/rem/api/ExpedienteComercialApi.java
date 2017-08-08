@@ -783,4 +783,13 @@ public interface ExpedienteComercialApi {
 	 */
 	public void desbloquearExpediente(Long idExpediente, String motivoCodigo, String motivoDescLibre);
 
+	public boolean updateBloqueoFormalizacion(DtoBloqueosFinalizacion dto);
+
+	/**
+	 * Devuelve true si el expediente está bloqueado y false en caso contrario
+	 * @param idTramite
+	 * @return
+	 */
+	public boolean checkExpedienteBloqueado(Long idTramite) ;
+
 }

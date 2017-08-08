@@ -297,7 +297,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 			        		maxLength : 400
 			        	},
 			        	flex: 1
-			        },
+			        }
 			       	        
 			    ],
 			    dockedItems : [

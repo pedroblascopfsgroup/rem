@@ -74,6 +74,15 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			me.lookupReference('checkEnglobaTodosActivosAgrRef').setValue(true);
 		}
 		
+		if(combo.getValue() == "04" || combo.getValue() == "05"){
+			me.lookupReference("gestorActivoResponsableCombo").allowBlank= true;
+			me.lookupReference("supervisorActivoCombo").allowBlank= true;
+		}
+		else{
+			me.lookupReference("gestorActivoResponsableCombo").allowBlank= false;
+			me.lookupReference("supervisorActivoCombo").allowBlank= false;
+		}
+		
 		if(combo.getValue() != "02" && combo.getValue() != "03") {
 			me.lookupReference("fieldSetMomentoRealizacionRef").setVisible(false);
 		} 

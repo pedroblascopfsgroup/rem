@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlanDinVentas;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -425,29 +426,35 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	public void afterSaveTabActivo(Activo activo, WebDto dto) {
 		
 		DtoActivoDatosRegistrales dtoDatReg = (DtoActivoDatosRegistrales) dto;
-		Oferta oferta = ofertaApi.getOfertaAceptadaByActivo(activo);	
+		//Oferta oferta = ofertaApi.getOfertaAceptadaByActivo(activo);
+		List<ActivoOferta> ofertas = activo.getOfertas();
 		
 		// Si ha cambiado el estado del título registral a inscrito
 		if(!Checks.esNulo(dtoDatReg.getEstadoTitulo()) || !Checks.esNulo(dtoDatReg.getFechaTitulo()) || !Checks.esNulo(dtoDatReg.getFechaSenalamientoPosesion())  /*&& DDEstadoTitulo.ESTADO_INSCRITO.equals(dtoDatReg.getEstadoTitulo())*/) {
 			
-			// Si tiene expediente 
-			if(!Checks.esNulo(oferta)) {
-				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
-				// Si esta bloqueado, lo desbloqueamos y notificamos
-				if(!Checks.esNulo(expediente.getBloqueado()) && BooleanUtils.toBoolean(expediente.getBloqueado())) {
+			for(ActivoOferta oferta : ofertas){
+				// Si tiene expediente 
+				if(!Checks.esNulo(oferta)) {
+					ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getPrimaryKey().getOferta().getId());
 					
-					expediente.setBloqueado(0);					
-					genericDao.save(ExpedienteComercial.class, expediente);
-					
-					List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());	
-					if(!Checks.estaVacio(tramites)) {					
-						notificatorServiceDesbloqueoExpediente.notificator(tramites.get(0));
+					if(!Checks.esNulo(expediente)){
+						// Si esta bloqueado, lo desbloqueamos y notificamos
+						if(!Checks.esNulo(expediente.getBloqueado()) && BooleanUtils.toBoolean(expediente.getBloqueado())) {
+							
+							expediente.setBloqueado(0);					
+							genericDao.save(ExpedienteComercial.class, expediente);
+							
+							List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());	
+							if(!Checks.estaVacio(tramites)) {					
+								notificatorServiceDesbloqueoExpediente.notificator(tramites.get(0));
+							}
+							/// sino, solamente avisamos
+						} else {
+							
+							activoAdapter.enviarAvisosCambioSituacionLegalActivo(activo, expediente);					
+						}		
 					}
-					/// sino, solamente avisamos
-				} else {
-					
-					activoAdapter.enviarAvisosCambioSituacionLegalActivo(activo, expediente);					
-				}				
+				}
 			}
 			
 		}

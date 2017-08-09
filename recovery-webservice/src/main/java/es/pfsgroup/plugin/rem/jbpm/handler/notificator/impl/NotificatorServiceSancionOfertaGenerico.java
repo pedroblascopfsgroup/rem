@@ -35,6 +35,7 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
@@ -288,7 +289,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 
 	private void enviaNotificacionAceptar(ActivoTramite tramite, Oferta oferta, Long idExpediente, String ...destinatarios) {
 		String asunto = "Notificación de aprobación provisional de la oferta " + oferta.getNumOferta();
-		String cuerpo = "<p>Nos complace comunicarle que la oferta " + oferta.getNumOferta() + " ha sido PROVISIONALMENTE ACEPTADA. Adjunto a este correo encotnrará el documento con las instrucciones a seguir para la formalización de la reserva.</p>";
+		String cuerpo = "<p>Nos complace comunicarle que la oferta " + oferta.getNumOferta() + " ha sido PROVISIONALMENTE ACEPTADA. Adjunto a este correo encontrará el documento con las instrucciones a seguir para la formalización de la reserva.</p>";
 		if (idExpediente != null) {
 			cuerpo = cuerpo + "<p>Pinche <a href=\"https://ws.haya.es/test-word/reservation/" + idExpediente + "/1\">aquí</a> para la descarga del contrato de reserva.</p>";
 		}
@@ -296,18 +297,16 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		cuerpo = cuerpo + "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
 
 		Usuario gestorComercial = null;
+		
+		if (!Checks.esNulo(oferta.getAgrupacion()) 
+		        && !Checks.esNulo(oferta.getAgrupacion().getTipoAgrupacion())
+		        && DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo())) {
 
-		if (!Checks.esNulo(oferta.getAgrupacion()) && !Checks.esNulo(oferta.getAgrupacion().getTipoAgrupacion() != null)) {
-			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo()) && oferta.getAgrupacion() instanceof ActivoLoteComercial) {
-				ActivoLoteComercial activoLoteComercial = (ActivoLoteComercial) oferta.getAgrupacion();
-				gestorComercial = activoLoteComercial.getUsuarioGestorComercial();
-			} else {
-				// Lote Restringido
-				gestorComercial = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "GCOM");
-			}
+			ActivoLoteComercial activoLoteComercial = genericDao.get(ActivoLoteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", oferta.getAgrupacion().getId()));
+			gestorComercial = activoLoteComercial.getUsuarioGestorComercial();
+
 		} else {
-			// Activo
-			gestorComercial = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "GCOM");
+		    gestorComercial = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "GCOM");
 		}
 
 		cuerpo = cuerpo + String.format("<p>Gestor comercial: %s </p>", gestorComercial.getApellidoNombre());

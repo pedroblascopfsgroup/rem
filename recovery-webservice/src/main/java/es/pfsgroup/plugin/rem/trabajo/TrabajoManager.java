@@ -2368,11 +2368,17 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				
 				} else if(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo())) {
 					String codSubtipo = trabajo.getSubtipoTrabajo().getCodigo();
-					if(!DDSubtipoTrabajo.CODIGO_CEE.equals(codSubtipo) && !DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD.equals(codSubtipo)) {
+					if(!DDSubtipoTrabajo.CODIGO_CEE.equals(codSubtipo)) {
 						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoProveedor.COD_MANTENIMIENTO_TECNICO);
 						tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
 						listaTiposProveedor.add(tipoProveedor);
 						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoProveedor.COD_GESTORIA);
+						tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
+						listaTiposProveedor.add(tipoProveedor);
+						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoProveedor.COD_CERTIFICADORA);
+						tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
+						listaTiposProveedor.add(tipoProveedor);
+						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoProveedor.COD_ASEGURADORA);
 						tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
 						listaTiposProveedor.add(tipoProveedor);
 						

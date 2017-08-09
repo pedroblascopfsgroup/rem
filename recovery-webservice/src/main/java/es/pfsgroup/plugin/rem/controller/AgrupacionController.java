@@ -546,6 +546,7 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	@Transactional(readOnly = false)
 	public ModelAndView getFotosSubdivisionById(DtoSubdivisiones subdivision, ModelMap model) {
 
 		List<DtoFoto> listaDtoFotos = new ArrayList<DtoFoto>();

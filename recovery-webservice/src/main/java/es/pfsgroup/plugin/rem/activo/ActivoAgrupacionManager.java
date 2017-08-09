@@ -320,7 +320,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		}
 		BigDecimal subdivisionId = new BigDecimal(fileItem.getMetadata().get("id_subdivision_haya"));
 		Long agrupacionId = Long.parseLong(fileItem.getMetadata().get("id_agrupacion_haya"));
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", agrupacionId);
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", agrupacionId);
 		ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
 		try {
 			if (agrupacion != null) {
@@ -411,10 +411,15 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				HashMap<String, String> metadata = new HashMap<String, String>();
 				metadata.put("propiedad", "subdivision");
 				metadata.put("id_subdivision_haya", String.valueOf(subdivision.getId()));
-				metadata.put("id_agrupacion_haya", String.valueOf(subdivision.getAgrId()));
-				fileSearch.setMetadata(metadata);
+				
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", subdivision.getAgrId());
 				ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
+				
+//				metadata.put("id_agrupacion_haya", String.valueOf(subdivision.getAgrId()));
+				metadata.put("id_agrupacion_haya", String.valueOf(agrupacion.getNumAgrupRem()));
+				fileSearch.setMetadata(metadata);
+//				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", subdivision.getAgrId());
+//				ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
 
 				if (agrupacion != null) {
 					fileListResponse = gestorDocumentalFotos.get(fileSearch);

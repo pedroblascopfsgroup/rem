@@ -290,6 +290,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		// ActivoInfoComercial.
 		ActivoInfoComercial activoInfoComercial = new ActivoInfoComercial();
 		activoInfoComercial.setActivo(activo);
+		activoInfoComercial.setTipoActivo(activo.getTipoActivo());
 		if (!Checks.esNulo(dtoAAF.getNifMediador())) {
 			Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAAF.getNifMediador());
 			ActivoProveedor mediador = genericDao.get(ActivoProveedor.class, f1);

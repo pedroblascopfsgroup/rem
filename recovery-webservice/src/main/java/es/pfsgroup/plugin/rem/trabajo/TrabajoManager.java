@@ -607,18 +607,18 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		List<Long> activosID = new ArrayList<Long>();
 		
 		for(VActivosAgrupacionTrabajo activoAgrupacion : activosAgrupacionTrabajo) {
-			if(activoAgrupacion.getActivoId() != null) {
+			if(activoAgrupacion.getIdActivo() != null) {
 				
 				if(!Checks.esNulo(idsActivosSeleccionados)){
 					for(Long idActivoSeleccionado: idsActivosSeleccionados){
-						if(activoAgrupacion.getActivoId().equals(idActivoSeleccionado.toString())){
-							activosID.add(Long.parseLong(activoAgrupacion.getActivoId()));
+						if(activoAgrupacion.getIdActivo().equals(idActivoSeleccionado.toString())){
+							activosID.add(Long.parseLong(activoAgrupacion.getIdActivo()));
 							break;
 						}
 					}
 				}
 				else{
-					activosID.add(Long.parseLong(activoAgrupacion.getActivoId()));
+					activosID.add(Long.parseLong(activoAgrupacion.getIdActivo()));
 				}
 			}
 		}
@@ -650,7 +650,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			for(VActivosAgrupacionTrabajo activoAgr: activosAgrupacionTrabajoTem){
 				seleccionado= false;
 				for(Long idActivoSeleccionado: idsActivosSelecionados){
-					if(activoAgr.getActivoId().equals(idActivoSeleccionado.toString())){
+					if(activoAgr.getIdActivo().equals(idActivoSeleccionado.toString())){
 						seleccionado= true;
 						break;
 					}
@@ -678,8 +678,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			List<Long> activosID = new ArrayList<Long>();
 			
 			for(VActivosAgrupacionTrabajo activoAgrupacion : activosAgrupacionTrabajo) {
-				if(activoAgrupacion.getActivoId() != null) {
-					activosID.add(Long.parseLong(activoAgrupacion.getActivoId()));
+				if(activoAgrupacion.getIdActivo() != null) {
+					activosID.add(Long.parseLong(activoAgrupacion.getIdActivo()));
 				}
 			}
 
@@ -687,7 +687,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			
 			Boolean isFirstLoop = true;
 			for (VActivosAgrupacionTrabajo activoAgrupacion : activosAgrupacionTrabajo) {
-				Activo activo = activoDao.get(Long.valueOf(activoAgrupacion.getActivoId()));
+				Activo activo = activoDao.get(Long.valueOf(activoAgrupacion.getIdActivo()));
 				// En la tabla de activo-agrupación no aparece ningún valor para
 				// los importes netos contables
 				// Double participacion = (Double)

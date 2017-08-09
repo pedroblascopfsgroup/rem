@@ -1591,13 +1591,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				// Calcular los días que ha estado en un estado eliminando el
 				// tiempo de las fechas.
 				int dias = 0;
-				if (!Checks.esNulo(estado.getFechaDesde()) && !Checks.esNulo(estado.getFechaHasta())) {
-					SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-					Date fechaHastaSinTiempo = sdf.parse(sdf.format(estado.getFechaHasta()));
-					Date fechaDesdeSinTiempo = sdf.parse(sdf.format(estado.getFechaDesde()));
-					Long diferenciaMilis = fechaHastaSinTiempo.getTime() - fechaDesdeSinTiempo.getTime();
-					Long diferenciaDias = diferenciaMilis / (1000 * 60 * 60 * 24);
-					dias = Integer.valueOf(diferenciaDias.intValue());
+				if(!estado.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_NO_PUBLICADO)
+						&& !estado.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_DESPUBLICADO)
+						&& !estado.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO)) {
+					if (!Checks.esNulo(estado.getFechaDesde())) {
+						SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+						Date fechaDesdeSinTiempo = sdf.parse(sdf.format(estado.getFechaDesde()));
+						Date fechaHastaSinTiempo = new Date();
+						if(!Checks.esNulo(estado.getFechaHasta())) {
+							fechaHastaSinTiempo = sdf.parse(sdf.format(estado.getFechaHasta()));
+						}
+						Long diferenciaMilis = fechaHastaSinTiempo.getTime() - fechaDesdeSinTiempo.getTime();
+						Long diferenciaDias = diferenciaMilis / (1000 * 60 * 60 * 24);
+						dias = Integer.valueOf(diferenciaDias.intValue());
+					}
 				}
 				beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "diasPeriodo", dias);
 			} catch (IllegalAccessException e) {
@@ -1871,14 +1878,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					// iteración.
 					despublicado = true;
 
-				} else if (!DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO
-						.equals(estado.getEstadoPublicacion().getCodigo())) {
-					if (!Checks.esNulo(estado.getFechaDesde()) && !Checks.esNulo(estado.getFechaHasta())) {
+				} else if (!DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO.equals(estado.getEstadoPublicacion().getCodigo())
+							&& !DDEstadoPublicacion.CODIGO_NO_PUBLICADO.equals(estado.getEstadoPublicacion().getCodigo())) {
+					if (!Checks.esNulo(estado.getFechaDesde())) {
 						// Cualquier otro estado distinto a publicado oculto
 						// sumará días de publicación.
 						try {
 							SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-							Date fechaHastaSinTiempo = sdf.parse(sdf.format(estado.getFechaHasta()));
+							Date fechaHastaSinTiempo = new Date();
+							if(!Checks.esNulo(estado.getFechaHasta())) {
+								fechaHastaSinTiempo = sdf.parse(sdf.format(estado.getFechaHasta()));
+							}
 							Date fechaDesdeSinTiempo = sdf.parse(sdf.format(estado.getFechaDesde()));
 							Long diferenciaMilis = fechaHastaSinTiempo.getTime() - fechaDesdeSinTiempo.getTime();
 							Long diferenciaDias = diferenciaMilis / (1000 * 60 * 60 * 24);

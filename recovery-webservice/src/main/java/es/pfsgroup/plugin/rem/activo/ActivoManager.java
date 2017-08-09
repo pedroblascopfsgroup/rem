@@ -40,7 +40,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
-import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
@@ -186,7 +185,7 @@ import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
-import es.pfsgroup.recovery.api.UsuarioApi;
+import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
 
 @Service("activoManager")
 public class ActivoManager extends BusinessOperationOverrider<ActivoApi> implements ActivoApi {
@@ -280,6 +279,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private NotificatorServiceSancionOfertaAceptacionYRechazo notificatorServiceSancionOfertaAceptacionYRechazo;
+	
+	@Autowired
+	private EXTGrupoUsuariosApi eXTGrupoUsuariosApi;
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -819,12 +821,22 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
 		ActivoValoraciones activoValoracion = genericDao.get(ActivoValoraciones.class, filtro);
+		
+		Filter filtroUsuarioGrupoPrecio = genericDao.createFilter(FilterType.EQUALS, "username", "usugrupre");
+		Filter filtroUsuarioGrupoPrecioBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Usuario grupoPrecio= genericDao.get(Usuario.class, filtroUsuarioGrupoPrecio,filtroUsuarioGrupoPrecioBorrado);
+		
+		Filter filtroUsuarioGrupoPublicacion = genericDao.createFilter(FilterType.EQUALS, "username", "usugrupub");
+		Filter filtroUsuarioGrupoPublicacionBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Usuario grupoPublicacion= genericDao.get(Usuario.class, filtroUsuarioGrupoPublicacion,filtroUsuarioGrupoPublicacionBorrado);
 
 		if (guardadoEnHistorico) {
 			saveActivoValoracionHistorico(activoValoracion);
 			activoDao.deleteValoracionById(id);
 		} else if (!Checks.esNulo(activoValoracion.getGestor())
-				&& !adapter.getUsuarioLogado().equals(activoValoracion.getGestor())) {
+				&& !adapter.getUsuarioLogado().equals(activoValoracion.getGestor()) 
+				&& !eXTGrupoUsuariosApi.usuarioPerteneceAGrupo(adapter.getUsuarioLogado(), grupoPrecio)
+				&& !eXTGrupoUsuariosApi.usuarioPerteneceAGrupo(adapter.getUsuarioLogado(), grupoPublicacion)) {
 			// Si el usuario logado es distinto al que ha creado la valoracion,
 			// no puede borrarla sin historico
 			return false;

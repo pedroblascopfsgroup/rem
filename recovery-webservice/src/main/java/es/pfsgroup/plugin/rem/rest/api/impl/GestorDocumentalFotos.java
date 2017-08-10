@@ -196,7 +196,7 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 		if (propiedad.equals(PROPIEDAD.ACTIVO)) {
 			Activo activo = activoManager.getByNumActivo(idRegistro);
 			metadata.put("propiedad", "activo");
-			metadata.put("id_activo_haya", String.valueOf(activo.getNumActivoRem()));
+			metadata.put("id_activo_haya", String.valueOf(activo.getNumActivo()));
 			if (activo != null && activo.getCartera() != null) {
 				metadata.put("cartera", activo.getCartera().getCodigo());
 			}

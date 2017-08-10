@@ -133,21 +133,24 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				
 					// Si estado es INCOMPLETO, comprobamos si ya no lo está para pasarlo a pendiente.
 					//if(DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo()) || DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo())) {
-					String error = validarAutorizacionGasto(gasto);
-					if(Checks.esNulo(error)) {
-						if(DDEstadoAutorizacionHaya.CODIGO_RECHAZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())) {
-							codigo = DDEstadoGasto.RECHAZADO_ADMINISTRACION;
-						}else if(DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())) {
-							codigo = DDEstadoGasto.AUTORIZADO_ADMINISTRACION;
-						}else if(DDEstadoAutorizacionHaya.CODIGO_PENDIENTE.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())){
-							codigo = DDEstadoGasto.PENDIENTE;
-						}							
-					}else {
-						codigo = DDEstadoGasto.INCOMPLETO;
-					}
-					if(DDEstadoAutorizacionHaya.CODIGO_RECHAZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())
-						&& genericAdapter.isProveedor(usuario)) {
-						codigo = DDEstadoGasto.SUBSANADO;					
+					if(!Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionHaya())) {
+						String error = validarAutorizacionGasto(gasto);
+						if(Checks.esNulo(error)) {
+							if(DDEstadoAutorizacionHaya.CODIGO_RECHAZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())) {
+								codigo = DDEstadoGasto.RECHAZADO_ADMINISTRACION;
+							}else if(DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())) {
+								codigo = DDEstadoGasto.AUTORIZADO_ADMINISTRACION;
+							}else if(DDEstadoAutorizacionHaya.CODIGO_PENDIENTE.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())){
+								codigo = DDEstadoGasto.PENDIENTE;
+							}							
+						}else {
+							codigo = DDEstadoGasto.INCOMPLETO;
+						}
+	
+						if(DDEstadoAutorizacionHaya.CODIGO_RECHAZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())
+							&& genericAdapter.isProveedor(usuario)) {
+							codigo = DDEstadoGasto.SUBSANADO;					
+						}
 					}
 					if((!gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.ANULADO) || !gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.RECHAZADO_ADMINISTRACION) || 
 							!gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.RECHAZADO_PROPIETARIO) || !gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.RETENIDO))
@@ -167,8 +170,6 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				}
 				
 			}				
-		}else if(codigo.equals("no_cambiar")) {
-			codigo=null;
 		}
 		else {
 			String valido = validarAutorizacionGasto(gasto);

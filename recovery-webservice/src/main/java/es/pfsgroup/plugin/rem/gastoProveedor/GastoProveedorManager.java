@@ -1592,7 +1592,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				if (gasto.getAdjuntos().isEmpty()) {
 					updateExisteDocumentoGasto(gasto, 0);
 				}
-
+				updaterStateApi.updaterStates(gasto, null);
 				genericDao.save(GastoProveedor.class, gasto);
 			}
 			borrado = true;
@@ -2156,7 +2156,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				&& DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC.equals(codigoEstado) && (!coniva)) {
 			return DDEstadoGasto.PAGADO;
 		} else {
-			return "no_cambiar";
+			return null;
 		}
 	}
 }

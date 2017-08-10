@@ -223,8 +223,8 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 				activoFoto.setAgrupacion(agrupacion);
 				
-				if (fileItem.getMetadata().get("id_subdivision_haya") != null) {
-					activoFoto.setSubdivision(new BigDecimal(fileItem.getMetadata().get("id_subdivision_haya"))); 
+				if (fileItem.getMetadata().get("id_subdivision") != null) {
+					activoFoto.setSubdivision(new BigDecimal(fileItem.getMetadata().get("id_subdivision"))); 
 				}
 
 				activoFoto.setNombre(fileItem.getBasename());
@@ -316,13 +316,13 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 	@Transactional(readOnly = false)
 	public String uploadFotoSubdivision(File fileItem) throws Exception {
-		if (fileItem.getMetadata().get("id_subdivision_haya") == null) {
+		if (fileItem.getMetadata().get("id_subdivision") == null) {
 			throw new Exception("La foto no tiene subdivision");
 		}
 		if (fileItem.getMetadata().get("id_agrupacion_haya") == null) {
 			throw new Exception("La foto no tiene agrupacion");
 		}
-		BigDecimal subdivisionId = new BigDecimal(fileItem.getMetadata().get("id_subdivision_haya"));
+		BigDecimal subdivisionId = new BigDecimal(fileItem.getMetadata().get("id_subdivision"));
 		Long agrupacionId = Long.parseLong(fileItem.getMetadata().get("id_agrupacion_haya"));
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", agrupacionId);
 		ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);

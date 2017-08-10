@@ -2564,7 +2564,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO)
 						|| codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO)
 						|| codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO)
-						|| codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO)
 						|| codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO_PRECIOOCULTO)) {
 					contador++;
 				}

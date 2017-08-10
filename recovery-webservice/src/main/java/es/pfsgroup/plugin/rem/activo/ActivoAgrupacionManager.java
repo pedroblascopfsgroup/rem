@@ -222,6 +222,10 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				}
 
 				activoFoto.setAgrupacion(agrupacion);
+				
+				if (fileItem.getMetadata().get("id_subdivision_haya") != null) {
+					activoFoto.setSubdivision(new BigDecimal(fileItem.getMetadata().get("id_subdivision_haya"))); 
+				}
 
 				activoFoto.setNombre(fileItem.getBasename());
 

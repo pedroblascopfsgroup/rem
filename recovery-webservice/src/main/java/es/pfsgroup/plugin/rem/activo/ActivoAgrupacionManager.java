@@ -414,18 +414,13 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				FileSearch fileSearch = new FileSearch();
 				HashMap<String, String> metadata = new HashMap<String, String>();
 				metadata.put("propiedad", "subdivision");
-				metadata.put("id_subdivision_haya", String.valueOf(subdivision.getId()));
-				
+				metadata.put("id_subdivision", String.valueOf(subdivision.getId()));
+
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", subdivision.getAgrId());
 				ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
-				
-//				metadata.put("id_agrupacion_haya", String.valueOf(subdivision.getAgrId()));
-				metadata.put("id_agrupacion_haya", String.valueOf(agrupacion.getNumAgrupRem()));
-				fileSearch.setMetadata(metadata);
-//				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", subdivision.getAgrId());
-//				ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
-
 				if (agrupacion != null) {
+					metadata.put("id_agrupacion_haya", String.valueOf(agrupacion.getNumAgrupRem()));
+					fileSearch.setMetadata(metadata);
 					fileListResponse = gestorDocumentalFotos.get(fileSearch);
 
 					if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {

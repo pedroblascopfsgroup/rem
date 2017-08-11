@@ -303,9 +303,9 @@ BEGIN
                     )                                                           AS DD_TTR_ID    
                   , CASE TOF.DD_TOF_CODIGO
                           WHEN ''01''
-                                THEN (SELECT DD_STR_ID FROM '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO WHERE DD_STR_CODIGO = ''55'' AND BORRADO = 0)   
-                          WHEN ''02''
                                 THEN (SELECT DD_STR_ID FROM '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO WHERE DD_STR_CODIGO = ''56'' AND BORRADO = 0)   
+                          WHEN ''02''
+                                THEN (SELECT DD_STR_ID FROM '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO WHERE DD_STR_CODIGO = ''55'' AND BORRADO = 0)   
                     END                                                     AS DD_STR_ID 
                   , (SELECT DD_EST_ID
                           FROM '||V_ESQUEMA||'.DD_EST_ESTADO_TRABAJO

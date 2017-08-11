@@ -45,8 +45,8 @@ create or replace FUNCTION '||V_ESQUEMA||'.CALCULAR_HONORARIO (P_OFR_ID IN NUMBE
   tipo_persona VARCHAR2(20 CHAR);
   prc_honorario NUMBER(5,2);
   
-  chk_agr_obra_nueva NUMBER(1,0);
-  chk_es_visita_oficina NUMBER(1,0);
+  chk_agr_obra_nueva NUMBER(1,0) := 0;
+  chk_es_visita_oficina NUMBER(1,0) := 0;
 
 BEGIN
 
@@ -162,33 +162,32 @@ BEGIN
 
 
   -- Procesar resultado primera tabla.
-  IF prc_honorario IS NULL THEN -- Sin honorarios.
-    RETURN null;
-  ELSE
 
-    -- Check: La visita la realiza la oficina
-    -- (Inmobiliario + REO + Llaves=SI + proveedor Oficinas en Colaboracion)
-    IF (TIPO_COMISION = ''C'' AND clase_activo = ''02'' AND subclase_activo = ''02'' 
-      AND llaves_en_HRE = 1 AND canal in (''28'',''29'')) THEN
-      select decode(count(vis1.vis_id), 0, 0, 1) chk_es_visita_oficina
-      into chk_es_visita_oficina
-      from vis_visitas vis1
-      inner join ofr_ofertas ofr1 on vis1.vis_id = ofr1.vis_id
-      where 
-        vis1.act_id = p_act_id
-        and ofr1.ofr_id = p_ofr_id
-        and vis1.PVE_ID_PVE_VISITA = p_pve_id
-        and rownum = 1;
-    END IF;
-
+  -- Check: La visita la realiza la oficina
+  -- (Inmobiliario + REO + Llaves=SI + proveedor Oficinas | Colaboracion)
+  IF (TIPO_COMISION = ''C'' AND clase_activo = ''02'' AND subclase_activo = ''02'' 
+    AND llaves_en_HRE = 1 AND canal in (''28'',''29'')) THEN
+    select decode(count(vis1.vis_id), 0, 0, 1) chk_es_visita_oficina
+    into chk_es_visita_oficina
+    from vis_visitas vis1
+    inner join ofr_ofertas ofr1 on vis1.vis_id = ofr1.vis_id
+    where 
+      vis1.act_id = p_act_id
+      and ofr1.ofr_id = p_ofr_id
+      and vis1.PVE_ID_PVE_VISITA = p_pve_id
+      and rownum = 1;
+      
     IF chk_es_visita_oficina = 1 THEN
       RETURN 0;
     END IF;
+  END IF;
     
+  IF prc_honorario IS NULL THEN -- Sin honorarios.
+    RETURN null;
+  ELSE
     IF prc_honorario != 00000 THEN -- Tiene Honorarios.
       RETURN prc_honorario;
     END IF;
-
   END IF;
 
 
@@ -204,23 +203,30 @@ BEGIN
   where TPT.DD_TPA_CODIGO = tipo_activo
     and TPT.DD_SAC_CODIGO = subtipo_activo;
 
-  -- Check: Activo pertenece a una agrupacion de obra nueva (activa)
-  -- Si NO pertenece a agrupacion de obra nueva, debe calcular sobre tercera tabla.
-  SELECT decode(count(agr.agr_id), 0 ,0, 1) INTO chk_agr_obra_nueva
-  FROM ACT_AGR_AGRUPACION agr 
-  INNER JOIN DD_TAG_TIPO_AGRUPACION tag on agr.DD_TAG_ID = tag.DD_TAG_ID 
-    and tag.DD_TAG_CODIGO = ''01'' and agr.borrado = 0 and tag.borrado = 0 
-  INNER JOIN ACT_AGA_AGRUPACION_ACTIVO aga on agr.agr_id = aga.agr_id 
-    and aga.borrado = 0 and aga.act_id = p_act_id;
 
   -- Procesar resultado segunda tabla.
-  IF prc_honorario IS NULL THEN -- Sin honorarios.
-    RETURN null;
-  ELSIF prc_honorario != 00000 THEN -- Tiene Honorarios.
+  
+  -- Check: Tipo-Subtipo Activo Comercial-Local pertenece a una agrupacion
+  --        de obra nueva (activa)
+  -- Si NO pertenece a agrupacion de obra nueva, debe calcular sobre tercera tabla.
+  IF (tipo_activo = ''03'' AND subtipo_activo = ''13'') THEN-- Tipo=Comercial y Subtipo=Local
+    SELECT decode(count(agr.agr_id), 0 ,0, 1) INTO chk_agr_obra_nueva
+    FROM ACT_AGR_AGRUPACION agr 
+    INNER JOIN DD_TAG_TIPO_AGRUPACION tag on agr.DD_TAG_ID = tag.DD_TAG_ID 
+      and tag.DD_TAG_CODIGO = ''01'' and agr.borrado = 0 and tag.borrado = 0 
+    INNER JOIN ACT_AGA_AGRUPACION_ACTIVO aga on agr.agr_id = aga.agr_id 
+      and aga.borrado = 0 and aga.act_id = p_act_id;
+      
     IF chk_agr_obra_nueva = 1 THEN -- Si es obra nueva => Resultado fijo, y si no es, 3a tabla 
       IF TIPO_COMISION = ''C'' THEN RETURN 0.75; END IF;
       IF TIPO_COMISION = ''P'' THEN RETURN 2.25; END IF;
-    ELSE 
+    END IF;
+  END IF;
+  
+  IF prc_honorario IS NULL THEN -- Sin honorarios.
+    RETURN null;
+  ELSE
+    IF prc_honorario != 00000 THEN -- Tiene Honorarios.
       RETURN prc_honorario;
     END IF;
   END IF;

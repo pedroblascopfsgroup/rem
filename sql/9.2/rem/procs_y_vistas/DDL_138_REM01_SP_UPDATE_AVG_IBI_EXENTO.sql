@@ -24,7 +24,7 @@ SET DEFINE OFF;
 -- ------------------------------------------------------------------------------------------------------------------------
 
 CREATE OR REPLACE PROCEDURE UPDATE_AVG_IBI_EXENTO (
-   p_gpv_id       	IN REM01.gpv_gastos_proveedor.gpv_id%TYPE
+   p_gpv_id       	IN #ESQUEMA#.gpv_gastos_proveedor.gpv_id%TYPE
 )
 AUTHID CURRENT_USER IS
 
@@ -36,7 +36,7 @@ AUTHID CURRENT_USER IS
 	v_stg_codigo_ibi_urbana 	VARCHAR2(10 CHAR) := '01';
 	v_stg_codigo_ibi_rustica 	VARCHAR2(10 CHAR) := '02';
 	-- Gasto a actualizar
-	v_gpv_id 					REM01.gpv_gastos_proveedor.gpv_id%TYPE;
+	v_gpv_id 					#ESQUEMA#.gpv_gastos_proveedor.gpv_id%TYPE;
 	-- Número de activos que no tienen exención de ibi para un gasto dado.
 	v_num_activos				NUMBER(4,0);
 	-- Valor de la columna de alerta que añadiremos/modicaremos [0/1]
@@ -60,15 +60,15 @@ BEGIN
 	
 		OPEN crs_gastos FOR
 	   		SELECT DISTINCT gpv.gpv_id
-			FROM REM01.gpv_gastos_proveedor gpv
-			INNER JOIN REM01.dd_stg_subtipos_gasto stg on stg.dd_stg_id = gpv.dd_stg_id
+			FROM #ESQUEMA#.gpv_gastos_proveedor gpv
+			INNER JOIN #ESQUEMA#.dd_stg_subtipos_gasto stg on stg.dd_stg_id = gpv.dd_stg_id
 			WHERE stg.dd_stg_codigo IN (v_stg_codigo_ibi_urbana,v_stg_codigo_ibi_rustica)
 			AND gpv.borrado = 0;
 	ELSE
 		OPEN crs_gastos FOR
 	   		SELECT DISTINCT gpv.gpv_id
-			FROM REM01.gpv_gastos_proveedor gpv
-			INNER JOIN REM01.dd_stg_subtipos_gasto stg on stg.dd_stg_id = gpv.dd_stg_id
+			FROM #ESQUEMA#.gpv_gastos_proveedor gpv
+			INNER JOIN #ESQUEMA#.dd_stg_subtipos_gasto stg on stg.dd_stg_id = gpv.dd_stg_id
 			WHERE stg.dd_stg_codigo IN (v_stg_codigo_ibi_urbana,v_stg_codigo_ibi_rustica) 
 			AND gpv.gpv_id = p_gpv_id
 			AND gpv.borrado = 0;
@@ -101,7 +101,7 @@ BEGIN
             END IF;
             
         -- Intentamos actualizar la alerta 
-        	UPDATE REM01.AVG_AVISOS_GASTOS SET 
+        	UPDATE #ESQUEMA#.AVG_AVISOS_GASTOS SET 
         	AVG_IBI_EXENTO=v_alerta_value, 
         	USUARIOMODIFICAR = v_username,
         	FECHAMODIFICAR = SYSDATE
@@ -114,8 +114,8 @@ BEGIN
         	ELSE
         -- Si no ha encontrado alertas, la creamos solamente si es activa 
         		IF(v_alerta_value=1) THEN
-        			INSERT INTO REM01.AVG_AVISOS_GASTOS(AVG_ID,GPV_ID,AVG_IBI_EXENTO,USUARIOCREAR,FECHACREAR) values
-            		(REM01.S_AVG_AVISOS_GASTOS.nextval,v_gpv_id,v_alerta_value,v_username,SYSDATE);
+        			INSERT INTO #ESQUEMA#.AVG_AVISOS_GASTOS(AVG_ID,GPV_ID,AVG_IBI_EXENTO,USUARIOCREAR,FECHACREAR) values
+            		(#ESQUEMA#.S_AVG_AVISOS_GASTOS.nextval,v_gpv_id,v_alerta_value,v_username,SYSDATE);
             		DBMS_OUTPUT.PUT_LINE('[GASTO ' || v_gpv_id || '] Insertamos alerta Ibi Exento.' || v_alerta_value);
             	END IF;
         	END IF;

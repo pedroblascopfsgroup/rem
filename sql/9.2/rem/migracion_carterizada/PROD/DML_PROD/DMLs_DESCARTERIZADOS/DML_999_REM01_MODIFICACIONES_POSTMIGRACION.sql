@@ -375,7 +375,13 @@ BEGIN
         where ACT_NUM_ACTIVO_UVEM is null';
 
 
+    --###############################################################
+    --##### [HREOS-2647] - CORREGIR ESTADO PROVEEDORES
+    --###############################################################
 
+	EXECUTE IMMEDIATE 'UPDATE ACT_PVE_PROVEEDOR PVE
+	SET PVE.DD_EPR_ID = (SELECT EPR.DD_EPR_ID FROM DD_EPR_ESTADO_PROVEEDOR EPR WHERE EPR.DD_EPR_CODIGO = ''07'')
+	WHERE PVE.DD_EPR_ID IS NULL';
 
     COMMIT;
 

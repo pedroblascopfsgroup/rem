@@ -375,6 +375,15 @@ BEGIN
         where ACT_NUM_ACTIVO_UVEM is null';
 
 
+EXECUTE IMMEDIATE
+'merge into act_activo  act
+using ( select aca.ACT_NUMERO_ACTIVO, aca.ACT_NUMERO_UVEM from rem01.mig_aca_cabecera aca 
+        inner join rem01.act_activo act on  (aca.ACT_NUMERO_ACTIVO = act.ACT_NUM_ACTIVO and act.ACT_NUM_ACTIVO_UVEM <> aca.ACT_NUMERO_UVEM) ) datos
+        on (act.ACT_NUM_ACTIVO = datos.ACT_NUMERO_ACTIVO)
+        when matched then update
+        set act.ACT_NUM_ACTIVO_UVEM = datos.ACT_NUMERO_UVEM';
+
+
 
 
     COMMIT;

@@ -903,4 +903,53 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return true;
 		}
 	}
+	
+	@Override
+	public Boolean existeGasto(String numGasto){
+		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM GPV_GASTOS_PROVEEDOR WHERE"
+				+ "		 	GPV_NUM_GASTO_HAYA ="+numGasto+" "
+				+ "		 	AND BORRADO = 0");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public Boolean propietarioGastoConDocumento(String numGasto){
+		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM GPV_GASTOS_PROVEEDOR gpv "
+				+ "			INNER JOIN ACT_PRO_PROPIETARIO act_pro ON gpv.PRO_ID = act_pro.PRO_ID "
+				+ "			WHERE act_pro.DD_TDI_ID IS NOT NULL "
+				+ "			AND act_pro.PRO_DOCIDENTIF IS NOT NULL "
+				+ "		 	AND gpv.GPV_NUM_GASTO_HAYA ="+numGasto+" "
+				+ "		 	AND BORRADO = 0");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public Boolean propietarioGastoIgualActivo(String numGasto){
+		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM GPV_GASTOS_PROVEEDOR gpv "
+				+ "			INNER JOIN ACT_PRO_PROPIETARIO act_pro ON gpv.PRO_ID = act_pro.PRO_ID "
+				+ "			WHERE act_pro.DD_TDI_ID IS NOT NULL "
+				+ "			AND act_pro.PRO_DOCIDENTIF IS NOT NULL "
+				+ "		 	AND gpv.GPV_NUM_GASTO_HAYA ="+numGasto+" "
+				+ "		 	AND BORRADO = 0");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
 }

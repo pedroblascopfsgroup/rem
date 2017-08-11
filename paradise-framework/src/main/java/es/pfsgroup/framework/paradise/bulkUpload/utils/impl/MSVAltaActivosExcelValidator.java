@@ -54,7 +54,7 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 	public static final String TIPO_VIA_IS_NULL = "El tipo de vía no puede estar vacía.";
 	public static final String NOMBRE_VIA_IS_NULL = "El nombre de la vía no puede estar vacía.";
 	public static final String NUM_VIA_IS_NULL = "El número de la vía no puede estar vacía.";
-	public static final String PROVINCIA_IS_NULL = "La provincia no puede estar vacía.";
+	//public static final String PROVINCIA_IS_NULL = "La provincia no puede estar vacía.";
 	public static final String UNIDAD_INFERIOR_MUNICIPIO_IS_NULL = "La unidad inferior al municipio no puede estar vacía.";
 	public static final String CODIGO_POSTAL_IS_NULL = "El código postal no puede estar vacío.";
 	public static final String DESTINO_COMERCIAL_IS_NULL = "El destino comercial no puede estar vacío.";
@@ -100,7 +100,7 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 	public static final String PORCENTAJE_IS_NAN = "El porcentaje de propiedad no tiene un formato numérico válido";
 	public static final String PORCENTAJE_SUPERIOR = "El porcentaje de propiedad no se encuentra en un rango válido";
 	public static final String CODIGO_POSTAL_IS_NAN = "El código postal no tiene un formato numérico válido o no contiene 5 posiciones";
-	public static final String PROVINCIA_NOT_EXISTS = "El código de provincia especificado no existe";
+	//public static final String PROVINCIA_NOT_EXISTS = "El código de provincia especificado no existe";
 	public static final String MUNICIPIO_NOT_EXISTS = "El código de municipio especificado no existe";
 	public static final String UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS = "El código de la unidad inferior al municipio especificado no existe";
 
@@ -235,7 +235,7 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 			mapaErrores.put(TIPO_VIA_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_TIPO_VIA));
 			mapaErrores.put(NOMBRE_VIA_IS_NULL, isColumnNullByRows(exc, COL_NUM.NOMBRE_VIA));
 			mapaErrores.put(NUM_VIA_IS_NULL, isColumnNullByRows(exc, COL_NUM.NUM_VIA));
-			mapaErrores.put(PROVINCIA_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_PROVINCIA));
+			//mapaErrores.put(PROVINCIA_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_PROVINCIA));
 			mapaErrores.put(UNIDAD_INFERIOR_MUNICIPIO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_UNIDAD_MUNICIPIO));
 			mapaErrores.put(CODIGO_POSTAL_IS_NULL, isColumnNullByRows(exc, COL_NUM.CODPOSTAL));
 			mapaErrores.put(DESTINO_COMERCIAL_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_DESTINO_COMER));
@@ -281,7 +281,7 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 			mapaErrores.put(PORCENTAJE_IS_NAN, isColumnFloatNANByRows(exc, COL_NUM.PERCENT_PROPIEDAD));
 			mapaErrores.put(PORCENTAJE_SUPERIOR, isColumnPorcentajeSuperiorByRows(exc, COL_NUM.PERCENT_PROPIEDAD));
 			mapaErrores.put(CODIGO_POSTAL_IS_NAN, isColumnCodigoPostalValido(exc, COL_NUM.CODPOSTAL));
-			mapaErrores.put(PROVINCIA_NOT_EXISTS, isCodigoProvinciaValido(exc, COL_NUM.COD_PROVINCIA));
+			//mapaErrores.put(PROVINCIA_NOT_EXISTS, isCodigoProvinciaValido(exc, COL_NUM.COD_PROVINCIA));
 			mapaErrores.put(MUNICIPIO_NOT_EXISTS, isCodigoMunicipioValido(exc, COL_NUM.COD_MUNICIPIO));
 			mapaErrores.put(UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS, isCodigoUnidadInferiorMunicipioValido(exc, COL_NUM.COD_UNIDAD_MUNICIPIO));
 
@@ -290,7 +290,7 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 						|| !mapaErrores.get(TIPO_ACTIVO_IS_NULL).isEmpty() || !mapaErrores.get(SUBTIPO_ACTIVO_IS_NULL).isEmpty()
 						|| !mapaErrores.get(ESTADO_FISICO_ACTIVO_IS_NULL).isEmpty() || !mapaErrores.get(USO_DOMINANTE_ACTIVO_IS_NULL).isEmpty()
 						|| !mapaErrores.get(DESC_ACTIVO_IS_NULL).isEmpty() || !mapaErrores.get(TIPO_VIA_IS_NULL).isEmpty() || !mapaErrores.get(NOMBRE_VIA_IS_NULL).isEmpty()
-						|| !mapaErrores.get(NUM_VIA_IS_NULL).isEmpty() || !mapaErrores.get(PROVINCIA_IS_NULL).isEmpty()
+						|| !mapaErrores.get(NUM_VIA_IS_NULL).isEmpty() //|| !mapaErrores.get(PROVINCIA_IS_NULL).isEmpty()
 						|| !mapaErrores.get(UNIDAD_INFERIOR_MUNICIPIO_IS_NULL).isEmpty() || !mapaErrores.get(CODIGO_POSTAL_IS_NULL).isEmpty()
 						|| !mapaErrores.get(DESTINO_COMERCIAL_IS_NULL).isEmpty() || !mapaErrores.get(TIPO_ALQUILER_IS_NULL).isEmpty()
 						|| !mapaErrores.get(NUM_PRESTAMO_IS_NULL).isEmpty() || !mapaErrores.get(NIF_SOCIEDAD_ACREEDORA_IS_NULL).isEmpty()
@@ -311,7 +311,7 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 						|| !mapaErrores.get(FOLIO_REGISTRO_IS_NAN).isEmpty() || !mapaErrores.get(SUPERFICIE_CONSTRUIDA_REGISTRO_IS_NAN).isEmpty()
 						|| !mapaErrores.get(SUPERFICIE_UTIL_REGISTRO_IS_NAN).isEmpty() || !mapaErrores.get(SUPERFICIE_REPERCUSION_EECC_REGISTRO_IS_NAN).isEmpty()
 						|| !mapaErrores.get(PARCELA_REGISTRO_IS_NAN).isEmpty() || !mapaErrores.get(PORCENTAJE_IS_NAN).isEmpty() || !mapaErrores.get(PORCENTAJE_SUPERIOR).isEmpty()
-						|| !mapaErrores.get(CODIGO_POSTAL_IS_NAN).isEmpty() || !mapaErrores.get(PROVINCIA_NOT_EXISTS).isEmpty() || !mapaErrores.get(MUNICIPIO_NOT_EXISTS).isEmpty()
+						|| !mapaErrores.get(CODIGO_POSTAL_IS_NAN).isEmpty() || /*!mapaErrores.get(PROVINCIA_NOT_EXISTS).isEmpty() ||*/ !mapaErrores.get(MUNICIPIO_NOT_EXISTS).isEmpty()
 						|| !mapaErrores.get(UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS).isEmpty()) {
 
 					dtoValidacionContenido.setFicheroTieneErrores(true);

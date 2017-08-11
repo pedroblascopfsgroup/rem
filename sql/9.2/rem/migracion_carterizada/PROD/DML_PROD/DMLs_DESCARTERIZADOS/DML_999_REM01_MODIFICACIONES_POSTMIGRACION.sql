@@ -384,7 +384,13 @@ using ( select aca.ACT_NUMERO_ACTIVO, aca.ACT_NUMERO_UVEM from rem01.mig_aca_cab
         set act.ACT_NUM_ACTIVO_UVEM = datos.ACT_NUMERO_UVEM';
 
 
+    --###############################################################
+    --##### [HREOS-2647] - CORREGIR ESTADO PROVEEDORES
+    --###############################################################
 
+	EXECUTE IMMEDIATE 'UPDATE REM01.ACT_PVE_PROVEEDOR PVE
+	SET PVE.DD_EPR_ID = (SELECT EPR.DD_EPR_ID FROM REM01.DD_EPR_ESTADO_PROVEEDOR EPR WHERE EPR.DD_EPR_CODIGO = ''07'')
+	WHERE PVE.DD_EPR_ID IS NULL';
 
     COMMIT;
 

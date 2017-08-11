@@ -39,8 +39,8 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-		T_TIPO_DATA('02','01','2','','',''),
-		T_TIPO_DATA('02','01','1','','',''),
+		T_TIPO_DATA('02','01','02','','',''),
+		T_TIPO_DATA('02','01','01','','',''),
 		T_TIPO_DATA('02','01','12','','',''),
 		T_TIPO_DATA('02','01','16','','',''),
 		T_TIPO_DATA('02','02','51','','',''),

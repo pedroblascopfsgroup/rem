@@ -166,8 +166,10 @@ BEGIN
     RETURN null;
   ELSE
 
-    -- Check: La visita la realiza la oficina (Inmobiliario + REO + Llaves=SI en Colaboracion)
-    IF (TIPO_COMISION = ''C'' AND clase_activo = ''02'' AND llaves_en_HRE = 1) THEN
+    -- Check: La visita la realiza la oficina
+    -- (Inmobiliario + REO + Llaves=SI + proveedor Oficinas en Colaboracion)
+    IF (TIPO_COMISION = ''C'' AND clase_activo = ''02'' AND subclase_activo = ''02'' 
+      AND llaves_en_HRE = 1 AND canal in (''28'',''29'')) THEN
       select decode(count(vis1.vis_id), 0, 0, 1) chk_es_visita_oficina
       into chk_es_visita_oficina
       from vis_visitas vis1
@@ -225,7 +227,7 @@ BEGIN
 
 
   -- Obtener resultado tercera tabla. --  ------------------------------------------------------
-  
+
   SELECT
   case
     when TIPO_COMISION = ''C'' then TTR.ttr_prc_colab

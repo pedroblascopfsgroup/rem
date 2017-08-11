@@ -60,15 +60,25 @@ BEGIN
 -- Cursor para perimetros de activos:
     CURSOR PERIMETRO IS 
       SELECT PAC.PAC_ID
-      FROM ACT_PAC_PERIMETRO_ACTIVO PAC, ACT_ACTIVO ACT, ACT_AGR_AGRUPACION AGR, ACT_AGA_AGRUPACION_ACTIVO AGA
-      WHERE AGR.AGR_FIN_VIGENCIA <= SYSDATE -- Que la fecha de fin de vigencia sea hoy o anterior.
-      AND AGR.DD_TAG_ID = (SELECT TAG.DD_TAG_ID FROM DD_TAG_TIPO_AGRUPACION TAG WHERE TAG.DD_TAG_CODIGO = ''13'') -- Que la agrupación sea de tipo asistida.
-      AND AGR.BORRADO = 0 -- Que la agrupación no esté borrada.
-      AND ACT.BORRADO = 0 -- Que el activo no esté borrado.
-      AND PAC.BORRADO = 0 -- Que el perímetro no esté borrado.
-      AND AGR.AGR_ID = AGA.AGR_ID -- Que la agrupación se corresponda con la lista de activos por agrupación.
-      AND AGA.ACT_ID = ACT.ACT_ID -- Que el activo se encuentre dentro de la lista de activos por agrupación.
-      AND PAC.ACT_ID = ACT.ACT_ID -- Que el perímetro se corresponda con el activo.
+	  FROM ACT_PAC_PERIMETRO_ACTIVO PAC, ACT_ACTIVO ACT, ACT_AGR_AGRUPACION AGR, ACT_AGA_AGRUPACION_ACTIVO AGA
+	  WHERE AGR.AGR_FIN_VIGENCIA <= SYSDATE -- Que la fecha de fin de vigencia sea hoy o anterior.
+	  AND AGR.DD_TAG_ID = (SELECT TAG.DD_TAG_ID FROM DD_TAG_TIPO_AGRUPACION TAG WHERE TAG.DD_TAG_CODIGO = ''13'') -- Que la agrupación sea de tipo asistida.
+	  AND AGR.BORRADO = 0 -- Que la agrupación no esté borrada.
+	  AND ACT.BORRADO = 0 -- Que el activo no esté borrado.
+	  AND PAC.BORRADO = 0 -- Que el perímetro no esté borrado.
+	  AND AGR.AGR_ID = AGA.AGR_ID -- Que la agrupación se corresponda con la lista de activos por agrupación.
+	  AND AGA.ACT_ID = ACT.ACT_ID -- Que el activo se encuentre dentro de la lista de activos por agrupación.
+	  AND PAC.ACT_ID = ACT.ACT_ID -- Que el perímetro se corresponda con el activo.
+	  AND NOT EXISTS (
+	  SELECT 1
+	  FROM ACT_ACTIVO ACT1, ACT_AGR_AGRUPACION AGR1, ACT_AGA_AGRUPACION_ACTIVO AGA1
+	  WHERE AGR1.AGR_FIN_VIGENCIA > SYSDATE -- Que la fecha de fin de vigencia sea mayor que hoy.
+	  AND AGR1.DD_TAG_ID = (SELECT TAG1.DD_TAG_ID FROM DD_TAG_TIPO_AGRUPACION TAG1 WHERE TAG1.DD_TAG_CODIGO = ''13'')-- Que la agrupación sea de tipo asistida.
+	  AND AGR1.BORRADO = 0 -- Que la agrupación no esté borrada.
+	  AND ACT1.BORRADO = 0 -- Que el activo no esté borrado.
+	  AND AGR1.AGR_ID = AGA1.AGR_ID -- Que la agrupación se corresponda con la lista de activos por agrupación.
+	  AND AGA1.ACT_ID = ACT1.ACT_ID -- Que el activo se encuentre dentro de la lista de activos por agrupación.
+	  AND ACT1.ACT_ID = ACT.ACT_ID)
 	  AND PAC.PAC_INCLUIDO != 0 -- Que no este fuera de perimetro.
       ;
     FILA_PAC PERIMETRO%ROWTYPE; -- Registro para el loop.

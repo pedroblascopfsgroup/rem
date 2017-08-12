@@ -400,7 +400,7 @@ using ( select aca.ACT_NUMERO_ACTIVO, aca.ACT_NUMERO_UVEM from rem01.mig_aca_cab
        execute immediate 'MERGE INTO REM01.act_pve_proveedor PVE_OLD
                           USING
                              ( select  pve.pve_id, pve.pve_docidentif, tpr.dd_tpr_codigo
-                                    , CASE WHEN  tpr.dd_tpr_codigo in (''07'',''08'',''09'',''10'',''11'',''12'',''13'',''14'',''15'',''16'',''17'',''18'',''19'',''21'',''22'',''23'',''24'',''25'',''27'',''28'',''29'',''30'',''31'',''32'',''33'',''34'',''35'',''37'')
+                                    , CASE WHEN  tpr.dd_tpr_codigo in (''07'',''08'',''09'',''10'',''11'',''12'',''13'',''14'',''15'',''16'',''17'',''22'',''23'',''28'',''29'',''30'',''31'',''32'',''33'',''34'',''35'',''37'')
                                            THEN (select dd_tpe_id from REMMASTER.DD_TPE_TIPO_PERSONA where dd_tpe_codigo = ''2'') /*JURIDICA*/
                                          ELSE
                                             CASE WHEN 

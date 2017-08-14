@@ -43,7 +43,7 @@ public class MSVAsociarActivosGasto extends MSVExcelValidatorAbstract {
 	public static final String PROPIETARIO_SIN_DOCUMENTO = "Propietario del gasto sin documento";
 	public static final String PROPIETARIO_DIFERENTE = "Propietario del activo diferente al propietario actual del gasto";
 	public static final String ACTIVO_ASIGNADO = "Este activo ya está asignado";
-	public static final String ESTADO_NO_PERMITE_ADICION = "El estado del gasto no permite adición";
+	public static final String ESTADO_NO_PERMITE_ADICION_ACTIVO = "El estado del gasto no permite adición";
 	public static final String GASTO_AUTORIZADO = "El gasto esta autorizado";
 	public static final String GASTO_ASOCIADO_TRABAJO = "El gasto esta asociado a un trabajo";
 
@@ -98,17 +98,29 @@ public class MSVAsociarActivosGasto extends MSVExcelValidatorAbstract {
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 //			if (!isActiveExists(exc)){
 				Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
+				mapaErrores.put(PROPIETARIO_SIN_DOCUMENTO, isPropietarioGastoSinDocumento(exc));
+				mapaErrores.put(PROPIETARIO_DIFERENTE, isPropietarioGastoDiferenteActivo(exc));
+				mapaErrores.put(GASTO_AUTORIZADO, isGastoAutorizado(exc));
+				mapaErrores.put(ESTADO_NO_PERMITE_ADICION_ACTIVO, isGastoNoPermiteAnyadirActivo(exc));
+				mapaErrores.put(GASTO_ASOCIADO_TRABAJO, isGastoAsociadoTrabajo(exc));
+				mapaErrores.put(ACTIVO_ASIGNADO, isActivoAsignado(exc));
 				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
 				mapaErrores.put(GASTO_NOT_EXISTS, isGastoNotExistsRows(exc));
-				mapaErrores.put(PROPIETARIO_SIN_DOCUMENTO, isPropietarioGastoSinDocumento(exc));
 				
 				try{
-					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty()){
-						dtoValidacionContenido.setFicheroTieneErrores(true);
-						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-						String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
-						FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-						dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
+					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() ||
+						!mapaErrores.get(GASTO_NOT_EXISTS).isEmpty() ||
+						!mapaErrores.get(PROPIETARIO_SIN_DOCUMENTO).isEmpty() ||
+						!mapaErrores.get(PROPIETARIO_DIFERENTE).isEmpty() ||
+						!mapaErrores.get(ACTIVO_ASIGNADO).isEmpty() ||
+						!mapaErrores.get(GASTO_AUTORIZADO).isEmpty() ||
+						!mapaErrores.get(GASTO_ASOCIADO_TRABAJO).isEmpty() ||
+						!mapaErrores.get(ESTADO_NO_PERMITE_ADICION_ACTIVO).isEmpty()){
+							dtoValidacionContenido.setFicheroTieneErrores(true);
+							exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
+							String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
+							FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
+							dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -190,6 +202,29 @@ public class MSVAsociarActivosGasto extends MSVExcelValidatorAbstract {
 		return listaFilas;
 	}
 	
+	private List<Integer> isActivoAsignado(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(!particularValidator.activoNoAsignado(exc.dameCelda(i, 0),exc.dameCelda(i, 1)))
+						listaFilas.add(i);
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+			} catch (IllegalArgumentException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			} catch (IOException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			}
+		return listaFilas;
+	}
+	
+	
 	private List<Integer> isGastoNotExistsRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
@@ -240,7 +275,73 @@ public class MSVAsociarActivosGasto extends MSVExcelValidatorAbstract {
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					if(!particularValidator.propietarioGastoIgualActivo(exc.dameCelda(i, 1)))
+					if(!particularValidator.propietarioGastoIgualActivo(exc.dameCelda(i, 0),exc.dameCelda(i, 1)))
+						listaFilas.add(i);
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+			} catch (IllegalArgumentException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			} catch (IOException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			}
+		return listaFilas;
+	}
+	
+	private List<Integer> isGastoAutorizado(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(!particularValidator.isGastoNoAutorizado(exc.dameCelda(i, 1)))
+						listaFilas.add(i);
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+			} catch (IllegalArgumentException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			} catch (IOException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			}
+		return listaFilas;
+	}
+	
+	private List<Integer> isGastoAsociadoTrabajo(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(!particularValidator.isGastoNoAsociadoTrabajo(exc.dameCelda(i, 1)))
+						listaFilas.add(i);
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+			} catch (IllegalArgumentException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			} catch (IOException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			}
+		return listaFilas;
+	}
+	
+	private List<Integer> isGastoNoPermiteAnyadirActivo(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(!particularValidator.isGastoPermiteAnyadirActivo(exc.dameCelda(i, 1)))
 						listaFilas.add(i);
 				} catch (ParseException e) {
 					listaFilas.add(i);

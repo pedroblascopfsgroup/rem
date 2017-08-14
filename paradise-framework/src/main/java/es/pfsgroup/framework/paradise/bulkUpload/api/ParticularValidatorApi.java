@@ -234,5 +234,13 @@ public interface ParticularValidatorApi {
 	
 	public Boolean propietarioGastoConDocumento(String numGasto);
 	
-	public Boolean propietarioGastoIgualActivo(String numGasto);
+	public Boolean propietarioGastoIgualActivo(String numActivo, String numGasto);
+	
+	public Boolean activoNoAsignado(String numActivo, String numGasto);
+	
+	public Boolean isGastoNoAutorizado(String numGasto);
+	
+	public Boolean isGastoNoAsociadoTrabajo(String numGasto);
+	
+	public Boolean isGastoPermiteAnyadirActivo(String numGasto);
 }

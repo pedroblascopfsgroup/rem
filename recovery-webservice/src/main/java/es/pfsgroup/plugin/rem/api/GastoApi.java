@@ -24,6 +24,8 @@ public interface GastoApi {
 	 * @return DtoPage 
 	 */
 	
+	public GastoProveedor getByNumGasto(Long numGastoHaya);
+	
 	
 
 }

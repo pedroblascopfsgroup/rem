@@ -928,7 +928,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			WHERE act_pro.DD_TDI_ID IS NOT NULL "
 				+ "			AND act_pro.PRO_DOCIDENTIF IS NOT NULL "
 				+ "		 	AND gpv.GPV_NUM_GASTO_HAYA ="+numGasto+" "
-				+ "		 	AND BORRADO = 0");
+				+ "		 	AND gpv.BORRADO = 0");
 		if("0".equals(resultado))
 			return false;
 		else
@@ -936,20 +936,91 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
-	public Boolean propietarioGastoIgualActivo(String numGasto){
+	public Boolean propietarioGastoIgualActivo(String numActivo, String numGasto){
+		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
+			return false;
+		String resultadoGasto = rawDao.getExecuteSQL("SELECT actpro.PRO_DOCIDENTIF "
+				+ "		 FROM GPV_GASTOS_PROVEEDOR gpv "
+				+ "			INNER JOIN ACT_PRO_PROPIETARIO actpro on gpv.PRO_ID = actpro.PRO_ID "
+				+ "		 	where gpv.GPV_NUM_GASTO_HAYA ="+numGasto+" "
+				+ "		 	AND actpro.BORRADO = 0");
+		
+		String resultadoActivo = rawDao.getExecuteSQL("SELECT actpro.PRO_DOCIDENTIF "
+				+ "		 FROM ACT_PAC_PROPIETARIO_ACTIVO actpac "
+				+ "			INNER JOIN ACT_PRO_PROPIETARIO actpro on actpac.PRO_ID = actpro.PRO_ID "
+				+ "			INNER JOIN ACT_ACTIVO act on actpac.ACT_ID = act.ACT_ID "
+				+ "		 	where act.ACT_NUM_ACTIVO ="+numActivo+" "
+				+ "		 	AND actpro.BORRADO = 0 ORDER BY actpac.PAC_PORC_PROPIEDAD");
+		
+		
+		if(!Checks.esNulo(resultadoGasto) && !Checks.esNulo(resultadoActivo) && !resultadoGasto.equals(resultadoActivo))
+			return false;
+		else
+			return true;
+	}
+	
+	
+	@Override
+	public Boolean activoNoAsignado(String numActivo, String numGasto){
+		if((Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) || (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto)))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM GPV_ACT gasact "
+				+ "			INNER JOIN GPV_GASTOS_PROVEEDOR gpv on gasact.GPV_ID = gpv.GPV_ID "
+				+ "			INNER JOIN ACT_ACTIVO act on gasact.ACT_ID = act.ACT_ID "
+				+ "			WHERE gpv.GPV_NUM_GASTO_HAYA ="+numGasto+" "
+				+ "			AND act.ACT_NUM_ACTIVO ="+numActivo+" "
+				+ "		 	AND gpv.BORRADO = 0 AND act.BORRADO = 0");
+		if("0".equals(resultado))
+			return true;
+		else
+			return false;
+	}
+	
+	@Override
+	public Boolean isGastoNoAutorizado(String numGasto){
 		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM GPV_GASTOS_PROVEEDOR gpv "
-				+ "			INNER JOIN ACT_PRO_PROPIETARIO act_pro ON gpv.PRO_ID = act_pro.PRO_ID "
-				+ "			WHERE act_pro.DD_TDI_ID IS NOT NULL "
-				+ "			AND act_pro.PRO_DOCIDENTIF IS NOT NULL "
-				+ "		 	AND gpv.GPV_NUM_GASTO_HAYA ="+numGasto+" "
-				+ "		 	AND BORRADO = 0");
+				+ "			INNER JOIN GGE_GASTOS_GESTION gge on gpv.GPV_ID = gge.GPV_ID "
+				+ "			INNER JOIN DD_EAH_ESTADOS_AUTORIZ_HAYA eah on gge.DD_EAH_ID = eah.DD_EAH_ID "
+				+ "			WHERE gpv.GPV_NUM_GASTO_HAYA ="+numGasto+" "
+				+ "		 	AND eah.DD_EAH_CODIGO =" +"03"+ " AND gpv.BORRADO = 0");
 		if("0".equals(resultado))
-			return false;
-		else
 			return true;
+		else
+			return false;
+	}
+	
+	@Override
+	public Boolean isGastoNoAsociadoTrabajo(String numGasto){
+		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM GPV_GASTOS_PROVEEDOR gpv "
+				+ "			INNER JOIN GPV_TBJ gpvtbj on gpv.GPV_ID = gpvtbj.GPV_ID "
+				+ "			WHERE gpv.GPV_NUM_GASTO_HAYA ="+numGasto+" "
+				+ "		 	AND gpv.BORRADO = 0 and gpvtbj.BORRADO = 0");
+		if("0".equals(resultado))
+			return true;
+		else
+			return false;
+	}
+	
+	@Override
+	public Boolean isGastoPermiteAnyadirActivo(String numGasto){
+		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM GPV_GASTOS_PROVEEDOR gpv "
+				+ "			INNER JOIN DD_EGA_ESTADOS_GASTO ega on gpv.DD_EGA_ID = ega.DD_EGA_ID "
+				+ "			WHERE gpv.GPV_NUM_GASTO_HAYA ="+numGasto+" "
+				+ "		 	AND ega.DD_EGA_CODIGO IN (01,02,07,08,10,11,12) AND gpv.BORRADO = 0");
+		if("0".equals(resultado))
+			return true;
+		else
+			return false;
 	}
 	
 }

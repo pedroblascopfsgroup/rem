@@ -36,7 +36,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	  T_FUNCION('ACGA', 'Asociación Activos-gasto', 'Asociación Activos-gasto','SUBIR_ASOCIAR_ACTIVOS_GASTO','nD*,nD*')
+	  T_FUNCION('ACGA', 'Asociación Activos-Gasto', 'Asociación Activos-Gasto','SUBIR_ASOCIAR_ACTIVOS_GASTO','n*,nD*')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_PERFILES VARCHAR2(100 CHAR) := '%';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.

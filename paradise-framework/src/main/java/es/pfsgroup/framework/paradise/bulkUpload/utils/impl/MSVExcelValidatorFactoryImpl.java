@@ -63,6 +63,9 @@ public class MSVExcelValidatorFactoryImpl {
 	@Autowired
 	private MSVActualizarIbiExentoActivo actualizarIbiExentoActivo;
 	
+	@Autowired
+	private MSVAsociarActivosGasto asociarActivosGasto;
+	
 	
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 		
@@ -111,6 +114,9 @@ public class MSVExcelValidatorFactoryImpl {
 			else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_MARCAR_IBI_EXENTO_ACTIVO.equals(codTipoOperacion) || 
 					MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_DESMARCAR_IBI_EXENTO_ACTIVO.equals(codTipoOperacion)){
 				return actualizarIbiExentoActivo;
+			}
+			else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ASOCIAR_ACTIVOS_GASTO.equals(codTipoOperacion)){
+				return asociarActivosGasto;
 			}
 		return null;
 	}

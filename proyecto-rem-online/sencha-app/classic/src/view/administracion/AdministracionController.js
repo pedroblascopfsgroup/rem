@@ -58,7 +58,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     			var rechazarBtn = grid.down('button[itemId=rechazarBtn]');
     			var displaySelection = grid.down('displayfield[itemId=displaySelection]');
     			var disabled = Ext.isEmpty(persistedSelection);
-    			
+
     			if (!Ext.isEmpty(autorizarBtn)) autorizarBtn.setDisabled(disabled);    		
     			if (!Ext.isEmpty(rechazarBtn)) rechazarBtn.setDisabled(disabled);
 
@@ -85,13 +85,13 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     			var displayImporteTotalLabel = grid.down('displayfield[itemId=labelImporteTotal]');
     			var displayImporteTotal = grid.down('displayfield[itemId=displayImporteTotal]');
     			var disabled = Ext.isEmpty(persistedSelection);
-    			
-    			if (!Ext.isEmpty(autorizarBtn)){
-    				autorizarBtn.setDisabled(disabled);    		
-    			}
-    			if (!Ext.isEmpty(rechazarBtn)){
-    				rechazarBtn.setDisabled(disabled);
-    			}
+
+//    			if (!Ext.isEmpty(autorizarBtn)){
+//    				autorizarBtn.setDisabled(disabled);    		
+//    			}
+//    			if (!Ext.isEmpty(rechazarBtn)){
+//    				rechazarBtn.setDisabled(disabled);
+//    			}
 
     			if(disabled) {
     				displayImporteTotal.setHidden(true);

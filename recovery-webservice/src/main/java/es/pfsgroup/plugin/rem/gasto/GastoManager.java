@@ -7,11 +7,14 @@ import org.springframework.stereotype.Service;
 
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.GastoApi;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -68,6 +71,13 @@ public class GastoManager extends BusinessOperationOverrider<GastoApi> implement
 	public DtoPage getListGastos(DtoGastosFilter dtoGastosFilter) {
 
 		return gastoDao.getListGastos(dtoGastosFilter);
+	}
+	
+	@Override
+	public GastoProveedor getByNumGasto(Long numGastoHaya) {
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", numGastoHaya);
+		Filter filterBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		return genericDao.get(GastoProveedor.class, filter,filterBorrado);
 	}
 	
 	

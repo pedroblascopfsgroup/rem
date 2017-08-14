@@ -229,4 +229,18 @@ public interface ParticularValidatorApi {
 	 * @return Devuelve True si existe, False si no existe el código.
 	 */
 	public Boolean existeUnidadInferiorMunicipioByCodigo(String codigoUnidadInferiorMunicipio);
+	
+	public Boolean existeGasto(String numGasto);
+	
+	public Boolean propietarioGastoConDocumento(String numGasto);
+	
+	public Boolean propietarioGastoIgualActivo(String numActivo, String numGasto);
+	
+	public Boolean activoNoAsignado(String numActivo, String numGasto);
+	
+	public Boolean isGastoNoAutorizado(String numGasto);
+	
+	public Boolean isGastoNoAsociadoTrabajo(String numGasto);
+	
+	public Boolean isGastoPermiteAnyadirActivo(String numGasto);
 }

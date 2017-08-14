@@ -4,14 +4,15 @@ import java.text.SimpleDateFormat;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import es.capgemini.pfs.users.domain.Usuario;
-import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.AgrupacionAvisadorApi;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 
 
 @Service("agrupacionAvisoRestringidaObraNueva")
@@ -20,54 +21,34 @@ public class AgrupacionAvisoRestringidaObraNueva implements AgrupacionAvisadorAp
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	
 	protected static final Log logger = LogFactory.getLog(AgrupacionAvisoRestringidaObraNueva.class);
-	
-	@Autowired
-	private ActivoAgrupacionApi agrupacionApi;
-
 
 	@Override
 	public DtoAviso getAviso(ActivoAgrupacion agrupacion, Usuario usuarioLogado) {
 
 
 		DtoAviso dtoAviso = new DtoAviso();
-		
-		if (agrupacion.getTipoAgrupacion() != null && agrupacion.getTipoAgrupacion().getId() == 2) {
-			
-			Long tipos = agrupacionApi.haveActivoRestringidaAndObraNueva(agrupacion.getId());
-			
-			if (tipos > 1) {
-				dtoAviso.setDescripcion("Agrupación restringida integrada en obra nueva");
-				dtoAviso.setId(String.valueOf(agrupacion.getId()));
+		boolean continuar = true;
+		if (!Checks.esNulo(agrupacion.getTipoAgrupacion()) && DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+
+			// Obtener los activos de la agrupación restringida.
+			for(ActivoAgrupacionActivo activoAgrupacion : agrupacion.getActivos()) {
+				// Por cada activo obtener las agrupaciones a las que pertenezca.
+				for(ActivoAgrupacionActivo agr : activoAgrupacion.getActivo().getAgrupaciones()) {
+					// Comprobar si alguna (primera coincidencia) es de tipo obra nueva.
+					if(!Checks.esNulo(agr.getAgrupacion().getTipoAgrupacion()) && DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(agr.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+						dtoAviso.setDescripcion("Agrupación restringida integrada en obra nueva");
+						dtoAviso.setId(String.valueOf(agrupacion.getId()));
+						continuar = false;
+						break;
+					}
+				}
+				if(!continuar) {
+					break;
+				}
 			}
 		}
 
-		return dtoAviso;
-		
+		return dtoAviso;		
 	}
-
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 }

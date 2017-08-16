@@ -82,8 +82,8 @@ BEGIN
 		-- Buscamos entre los activos de este gasto si alguno no tiene marcado el ibi como exento.
 		
 		    SELECT COUNT(GPV_ACT.ACT_ID) INTO v_num_activos 
-		    FROM GPV_ACT GPV_ACT
-            INNER JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = GPV_ACT.ACT_ID
+		    FROM  #ESQUEMA#.GPV_ACT GPV_ACT
+            INNER JOIN  #ESQUEMA#.ACT_ACTIVO ACT ON ACT.ACT_ID = GPV_ACT.ACT_ID
             WHERE GPV_ID = v_gpv_id 
             AND (ACT.ACT_IBI_EXENTO IS NULL OR ACT.ACT_IBI_EXENTO = 0);
             

@@ -453,7 +453,10 @@ public class GastosProveedorController extends ParadiseJsonController {
 			boolean success = gastoProveedorApi.updateGestionGasto(dtoGestion, id);
 			model.put("success", success);
 			
-		} catch (Exception e) {
+		} catch (JsonViewerException ex) {
+			model.put("msg", ex.getMessage());
+			model.put("success", false);	
+		}catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
 		}	

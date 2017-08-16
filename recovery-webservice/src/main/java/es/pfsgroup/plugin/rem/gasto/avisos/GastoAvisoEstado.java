@@ -9,7 +9,6 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.GastoAvisadorApi;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 
 
 @Service("gastoAvisoEstado")
@@ -24,12 +23,7 @@ public class GastoAvisoEstado implements GastoAvisadorApi {
 
 		DtoAviso dtoAviso = new DtoAviso();		
 						
-		if(!Checks.esNulo(gasto.getEstadoGasto()) && 
-				(DDEstadoGasto.ANULADO.equals(gasto.getEstadoGasto().getCodigo())
-				 || DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo())
-				 || DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo())
-				 || DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo())
-				 || DDEstadoGasto.RECHAZADO_PROPIETARIO.equals(gasto.getEstadoGasto().getCodigo()))) 
+		if(!Checks.esNulo(gasto.getEstadoGasto())) 
 		{
 
 			dtoAviso.setDescripcion(gasto.getEstadoGasto().getDescripcion());

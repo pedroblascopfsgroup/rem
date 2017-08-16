@@ -332,6 +332,7 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 		} else if (propiedad.equals(PROPIEDAD.AGRUPACION)) {
 			metadata.put("propiedad", "agrupacion");
 			metadata.put("id_agrupacion_haya", idRegistro);
+			metadata.put("tipo", "01");
 		} else if (propiedad.equals(PROPIEDAD.SUBDIVISION)) {
 			metadata.put("propiedad", "subdivision");
 			metadata.put("id_subdivision_haya", idRegistro);

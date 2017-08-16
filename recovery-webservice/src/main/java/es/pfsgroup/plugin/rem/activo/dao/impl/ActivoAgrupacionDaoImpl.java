@@ -166,13 +166,13 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
     	
     	try {
 
-    		HQLBuilder hb = new HQLBuilder("from ActivoFoto foto where foto.activo.id in "
+    		HQLBuilder hb = new HQLBuilder("from ActivoFoto foto where foto.tipoFoto.codigo = '01' AND foto.activo.id in "
     				+ " ( select distinct(agru.agrupacion.activoPrincipal) from ActivoAgrupacionActivo agru where agru.agrupacion.id = " + id + ") order by foto.activo.id desc ");
     		
     		List<ActivoFoto> listaPrincipal = (List<ActivoFoto>) getHibernateTemplate().find(hb.toString());
     		
 
-    		HQLBuilder hbDos = new HQLBuilder("from ActivoFoto foto where foto.activo.id in "
+    		HQLBuilder hbDos = new HQLBuilder("from ActivoFoto foto where foto.tipoFoto.codigo = '01' AND  foto.activo.id in "
 			+ " ( select distinct(agru.activo.id) from ActivoAgrupacionActivo agru where agru.agrupacion.id = " + id + " and agru.agrupacion.activoPrincipal != foto.activo.id) order by foto.activo.id desc ");
 
     		List<ActivoFoto> listaResto = (List<ActivoFoto>) getHibernateTemplate().find(hbDos.toString());

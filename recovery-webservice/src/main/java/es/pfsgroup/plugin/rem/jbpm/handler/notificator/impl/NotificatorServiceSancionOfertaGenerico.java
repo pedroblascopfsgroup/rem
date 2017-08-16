@@ -290,10 +290,14 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	private void enviaNotificacionAceptar(ActivoTramite tramite, Oferta oferta, Long idExpediente, String ...destinatarios) {
 		String asunto = "Notificación de aprobación provisional de la oferta " + oferta.getNumOferta();
 		String cuerpo = "<p>Nos complace comunicarle que la oferta " + oferta.getNumOferta() + " ha sido PROVISIONALMENTE ACEPTADA. Adjunto a este correo encontrará el documento con las instrucciones a seguir para la formalización de la reserva.</p>";
+
 		if (idExpediente != null) {
-			cuerpo = cuerpo + "<p>Pinche <a href=\"https://ws.haya.es/test-word/reservation/" + idExpediente + "/1\">aquí</a> para la descarga del contrato de reserva.</p>";
+			String reservationKey = String.valueOf(idExpediente).concat(appProperties.getProperty("haya.reservation.pwd"));
+			String reservationUrl = appProperties.getProperty("haya.reservation.url");
+			cuerpo = cuerpo + "<p>Pinche <a href=\""+reservationUrl + idExpediente +"/"+reservationKey+"/1\">aquí</a> para la descarga del contrato de reserva.</p>";
 		}
 
+		
 		cuerpo = cuerpo + "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
 
 		Usuario gestorComercial = null;

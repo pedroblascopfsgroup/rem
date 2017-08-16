@@ -1,0 +1,55 @@
+stash@{0}: On desarrollo-rem: HREOS-2669 Gasto: Incorrecta configuración del globo de estado de la cabecera
+stash@{1}: On desarrollo-rem: HREOS-2489 Gasto: Incorrecto funcionamiento de los gastos retenidos
+stash@{2}: On desarrollo-rem: HREOS-2039 Gasto: Aviso en cabecera por participación activos diferente a 100 %
+stash@{3}: On desarrollo-rem: HREOS-2662-Agrupación: Mensaje integrado en agrupación obra nueva incorrecto
+stash@{4}: On HREOS-2110_Carga_Masiva_Gasto: HREOS-2110_Carga_Masiva_Gasto: HREOS-2110_Carga_Masiva_Gasto: Carga masiva activos-gasto 4
+stash@{5}: On HREOS-2110_Carga_Masiva_Gasto: HREOS-2110_Carga_Masiva_Gasto: Carga masiva activos-gasto 3
+stash@{6}: On HREOS-2110_Carga_Masiva_Gasto: Carga masiva activos-gasto 2
+stash@{7}: On vrem-produccion: Correo Tomas: campos por cuenta de habilitados siempre
+stash@{8}: On desarrollo-rem: Nueva carga masiva gasto
+stash@{9}: On desarrollo-rem: HREOS-2643 Carga activos financieros-completo
+stash@{10}: On desarrollo-rem: HREOS-2643 Carga activos financieros, punto 3,1
+stash@{11}: On vrem-produccion: HREOS-2089 Cambio de nombres de las excel, marcar y desmarcar
+stash@{12}: On vrem-produccion: HREOS-2643 Carga activos financieros, punto 3
+stash@{13}: On desarrollo-rem: HREOS-2643 Carga activos financieros - Campos información comercial
+stash@{14}: On vrem-produccion: Borrar precios usuarios grupos precios y publicacion, combo añadir gasto tamaño dinamico
+stash@{15}: On vrem-produccion: HREOS-2245 No permitir crear trabajo multiactivo para trabajo de tipo Obtención documentacion
+stash@{16}: On vrem-produccion: HREOS-2245 Listado de activos al crear trabajo no se desmarcan
+stash@{17}: On vrem-produccion: HREOS-2638 Agrupaciones. Número activos de cabecera no se corresponde con listado
+stash@{18}: On vrem-produccion: HREOS-2635 Gasto: Mostrar el estado del proveedor en la ventana emergente de creación
+stash@{19}: On vrem-produccion: HREOS-2527 Informe jurídico-recarga fecha al añadir informe
+stash@{20}: On vrem-produccion: HREOS-2527 ECO: Actualización estado informe jurídico
+stash@{21}: On vrem-produccion: publicacion
+stash@{22}: On vrem-produccion: cuentas contables Final
+stash@{23}: On vrem-produccion: publicación
+stash@{24}: On vrem-produccion: cuenta contable
+stash@{25}: On vrem-produccion: HREOS-2433 Buscador activos: Incorrecto funcionamiento filtro por subcartera
+stash@{26}: On vrem-produccion: HREOS-2147 Empezado el filtro
+stash@{27}: On vrem-produccion: HREOS-2147 Urgente
+stash@{28}: On vrem-produccion: HREOS-2434 Tarea Resolución tanteo no valida resoluciones de activos
+stash@{29}: On vrem-produccion: HREOS-2421 Módulo comercial: problemas con filtro Tipo gestor
+stash@{30}: On vrem-produccion: HREOS-2421- Módulo comercial: problemas con filtro Tipo gestor
+stash@{31}: On vrem-produccion: Trabajo: Error al abrir agrupación asociada a trabajo
+stash@{32}: On vrem-produccion: arreglo
+stash@{33}: On vrem-produccion: HREOS-2089 Activo: Nuevo campo IBI EXENTO y carga masiva
+stash@{34}: On parche-2.0.6-170714-rem: HREOS-2089 Nuevo campo IBI Exento
+stash@{35}: On parche-2.0.6-170714-rem: Prueba junit
+stash@{36}: On parche-2.0.6-170714-rem: comas furtivas
+stash@{37}: On parche-2.0.6-170714-rem: HREOS-2010 Administración, se crea método createFilter para null y notnulls
+stash@{38}: On parche-2.0.6-170714-rem: HREOS-2286 ECO:Descarga de listado de condicionantes de venta
+stash@{39}: On parche-2.0.6-170714-rem: HREOS-2085 Perímero 2
+stash@{40}: On parche-2.0.6-170714-rem: HREOS-2085 Perímetro: Gestionar marcado, pero muestra aviso Sin gestión
+stash@{41}: On parche-2.0.6-170714-rem: HREOS-2337 Trámite actuación técnica: Permite editar gestión económica por proveedor tras validación
+stash@{42}: On parche-2.0.6-170714-rem: HREOS-2015 Trabajo: Edición por proveedor cuando no debe
+stash@{43}: On parche-2.0.6-170714-rem: HREOS-2233 Grid de bloqueos: nuevo campo Acuerdo
+stash@{44}: On parche-2.0.6-170714-rem: HREOS-2240 Trabajo:Error en fecha tope ejecución
+stash@{45}: On parche-2.0.6-170714-rem: HREOS-2283 Delegación de tareas: otro gestor bajo mi supervisión-Terminado
+stash@{46}: On desarrollo-rem: HREOS-2283 Delegación de tareas: otro gestor bajo mi supervisión
+stash@{47}: On func-trabajo-multiactivo: HREOS-2245 Modificaciones - Supervisor del activo
+stash@{48}: On func-trabajo-multiactivo: HREOS-2245 Multiactivos desde agrupación
+stash@{49}: On func-trabajo-multiactivo: HREOS-2243 Multiactivos desde filtro de activos
+stash@{50}: On func-trabajo-multiactivo: multiactivo 3
+stash@{51}: On func-trabajo-multiactivo: multiactivo 2
+stash@{52}: On func-trabajo-multiactivo: multiactivo 1
+stash@{53}: On desarrollo-rem: HREOS-2238 Parte Fase A del item HREOS-2195
+stash@{54}: On desarrollo-rem: HREOS-1786 Error al resolver la tarea de posicionamiento y firma

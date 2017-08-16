@@ -1227,6 +1227,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						gestionGasto.setMotivoRechazoAutorizacionHaya(motivoAutoHaya);
 					}
 					if (!Checks.esNulo(dtoGestionGasto.getComboMotivoAnulado())) {
+						
+						if(!Checks.esNulo(gasto.getEstadoGasto()) && DDEstadoGasto.RETENIDO.equals(gasto.getEstadoGasto().getCodigo())){
+							throw new JsonViewerException("El gasto no se puede anular porque está retenido");
+						}
+						
 						DDMotivoAnulacionGasto motivoAnulacion = (DDMotivoAnulacionGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoAnulacionGasto.class,
 								dtoGestionGasto.getComboMotivoAnulado());
 						gestionGasto.setMotivoAnulacion(motivoAnulacion);
@@ -1281,6 +1286,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 				return true;
 			}
+		}catch (JsonViewerException ex) {
+			throw new JsonViewerException(ex.getMessage());
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return false;

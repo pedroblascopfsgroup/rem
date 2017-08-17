@@ -541,7 +541,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	}
 
 	private void refreshMaterializedView(String nombreVista, Session session) {
-		String sqlRefreshViews = "BEGIN DBMS_SNAPSHOT.REFRESH( '" + nombreVista + "','C'); end;";
+		String sqlRefreshViews = "BEGIN DBMS_SNAPSHOT.REFRESH( '" + nombreVista + "','C',atomic_refresh=>FALSE); end;";
 		queryExecutor.sqlRunExecuteUpdate(session, sqlRefreshViews);
 	}
 

@@ -2118,6 +2118,7 @@ public class ActivoAdapter {
 
 	}
 
+	@Transactional(readOnly = false)
 	public void deleteFotoByRemoteId(Long remoteId) throws Exception {
 		try {
 			ActivoFoto actvFoto = this.getFotoActivoByRemoteId(remoteId);

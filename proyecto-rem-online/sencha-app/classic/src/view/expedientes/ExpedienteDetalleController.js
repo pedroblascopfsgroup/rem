@@ -655,12 +655,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	onCompradoresListDobleClick : function(gridView,record) {
-		var me=this,
-		idCliente = record.get("id"),
-		expediente= me.getViewModel().get("expediente");
-		var storeGrid= gridView.store;
-		var edicion = $AU.userHasFunction(['TAB_COMPRADORES_EXP_DETALLES_COMPRADOR']);
-	    Ext.create("HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: edicion, storeGrid:storeGrid, expediente: expediente }).show();
+		var me=this;
+		var codigoEstado= me.getViewModel().get("expediente.codigoEstado");
+		if(codigoEstado!=CONST.ESTADOS_EXPEDIENTE['VENDIDO']){
+			var idCliente = record.get("id"),
+			expediente= me.getViewModel().get("expediente");
+			var storeGrid= gridView.store;
+			var edicion = $AU.userHasFunction(['TAB_COMPRADORES_EXP_DETALLES_COMPRADOR']);
+		    Ext.create("HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: edicion, storeGrid:storeGrid, expediente: expediente }).show();
+		}
 	},
 
 	onHaCambiadoSolicitaFinanciacion: function(combo, value){

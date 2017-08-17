@@ -21,6 +21,7 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 
 		HQLBuilder hql = new HQLBuilder("from VBusquedaCompradoresExpediente");
 		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "idExpediente", idExpediente.toString());
+		hql.orderBy("borrado", HQLBuilder.ORDER_ASC);
 
 		return HibernateQueryUtils.page(this, hql, webDto);
 	}
@@ -58,7 +59,8 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 	@Override
 	public void deleteCompradorExpediente(Long idExpediente, Long idComprador) {
 
-		StringBuilder sb = new StringBuilder("delete from CompradorExpediente ce where ce.primaryKey.comprador = "+idComprador+" and ce.primaryKey.expediente= "+idExpediente);		
+		//StringBuilder sb = new StringBuilder("delete from CompradorExpediente ce where ce.primaryKey.comprador = "+idComprador+" and ce.primaryKey.expediente= "+idExpediente);	
+		StringBuilder sb = new StringBuilder("update CompradorExpediente ce set ce.borrado = 1, ce.porcionCompra= 0, ce.fechaBaja= SYSDATE where ce.primaryKey.comprador = "+idComprador+" and ce.primaryKey.expediente= "+idExpediente);
 		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
 	}
 	

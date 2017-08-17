@@ -654,6 +654,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorExpedienteNuevo.setTitularReserva(0);
 				compradorExpedienteNuevo.setTitularContratacion(1);
 				compradorExpedienteNuevo.setPorcionCompra(100.00);
+				compradorExpedienteNuevo.setBorrado(false);
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
 			} else { // Si no existe un comprador con dicho dni, lo crea, añade
@@ -665,6 +666,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				nuevoComprador.setDocumento(oferta.getCliente().getDocumento());
 				nuevoComprador.setNombre(oferta.getCliente().getNombre());
 				nuevoComprador.setApellidos(oferta.getCliente().getApellidos());
+				if(Checks.esNulo(nuevoComprador.getNombre()) && Checks.esNulo(nuevoComprador.getApellidos())){
+					nuevoComprador.setNombre(oferta.getCliente().getRazonSocial());
+				}
 				nuevoComprador.setTipoDocumento(oferta.getCliente().getTipoDocumento());
 				nuevoComprador.setTelefono1(oferta.getCliente().getTelefono1());
 				nuevoComprador.setTelefono2(oferta.getCliente().getTelefono2());
@@ -689,6 +693,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorExpedienteNuevo.setTitularReserva(0);
 				compradorExpedienteNuevo.setTitularContratacion(1);
 				compradorExpedienteNuevo.setPorcionCompra(100.00);
+				compradorExpedienteNuevo.setBorrado(false);
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
 			}

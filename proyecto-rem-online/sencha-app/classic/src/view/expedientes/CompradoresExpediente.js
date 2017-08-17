@@ -12,6 +12,30 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 
         var me = this;
 		me.setTitle(HreRem.i18n('title.compradores'));
+		
+		var coloredRender = function (value, meta, record) {
+    		var borrado = record.get('borrado');
+    		if(value){
+	    		if (borrado) {
+	    			if(meta.column.dataIndex=='porcentajeCompra'){
+	    				return '<span style="color: #DF0101;">'+Ext.util.Format.number(value, '0.00%')+'</span>';
+	    			}
+	    			return '<span style="color: #DF0101;">'+value+'</span>';
+	    		} else {
+	    			if(meta.column.dataIndex=='porcentajeCompra'){
+	    				return Ext.util.Format.number(value, '0.00%');
+	    			}
+	    			return value;
+	    		}
+    		} else {
+    			if(borrado){
+    				return '<span style="color: #DF0101;">-</span>';
+    			}
+	    		return '-';
+	    	}
+    	};
+		
+		
         var items= [
 
 			{   
@@ -66,29 +90,31 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						   {
 								text: HreRem.i18n('header.nombre.razon.social'),
 								dataIndex: 'nombreComprador',
-								flex: 1
+								flex: 1,
+								renderer: coloredRender
 						   },
 						   {
 						   		text: HreRem.i18n('header.numero.documento'),
 					            dataIndex: 'numDocumentoComprador',
-					            flex: 1
+					            flex: 1,
+					            renderer: coloredRender
 						   },						   
 						   {
 						   		text: HreRem.i18n('header.representante'),
 					            dataIndex: 'nombreRepresentante',
-					            flex: 1						   
+					            flex: 1,
+					            renderer: coloredRender
 						   },
 						   {    text: HreRem.i18n('header.numero.documento'),
 					        	dataIndex: 'numDocumentoRepresentante',
-					        	flex: 1
+					        	flex: 1,
+					        	renderer: coloredRender
 					       },
 						   {
 								text: HreRem.i18n('header.procentaje.compra'),
 								dataIndex: 'porcentajeCompra',
 								flex: 1,
-								renderer: function(value) {
-					            	return Ext.util.Format.number(value, '0.00%');
-					            },
+								renderer: coloredRender,
 					            summaryType: 'sum',
 					            summaryRenderer: function(value, summaryData, dataIndex) {
 					            	var suma = 0;
@@ -113,36 +139,48 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					            }
 						   },
 						   {
+						   		text: HreRem.i18n('fieldlabel.grado.propiedad'),
+					            dataIndex: 'descripcionGradoPropiedad',
+					            flex: 1,
+					            renderer: coloredRender
+						   },
+						   {
 						   		text: HreRem.i18n('header.telefono'),
 					            dataIndex: 'telefono',
-					            flex: 1
+					            flex: 1,
+					            renderer: coloredRender
 						   },						   
 						   {
 						   		text: HreRem.i18n('header.email'),
 					            dataIndex: 'email',
-					            flex: 1						   
+					            flex: 1,
+					            renderer: coloredRender
 						   },
 						   {
 						   		text: HreRem.i18n('fieldlabel.estado.pbc'),
 					            dataIndex: 'descripcionEstadoPbc',
 					            flex: 1,
-					            hidden: true
+					            hidden: true,
+					            renderer: coloredRender
 						   },
 						   {
 						   		text: HreRem.i18n('fieldlabel.relacion.hre'),
 					            dataIndex: 'relacionHre',
-					            flex: 1						   
+					            flex: 1,
+					            renderer: coloredRender
 						   },
 						   {
 						   		text: HreRem.i18n('header.compradores.numero.factura'),
 					            dataIndex: 'numFactura',
-					            flex: 1						   
+					            flex: 1,
+					            renderer: coloredRender
 						   },
 						   {
 						   		text: HreRem.i18n('header.compradores.fecha.factura'),
 					            dataIndex: 'fechaFactura',
 					            flex: 1,
-					            formatter: 'date("d/m/Y")'
+					            formatter: 'date("d/m/Y")',
+					            renderer: coloredRender
 						   }
 					    ],
 					    dockedItems : [

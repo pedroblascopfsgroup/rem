@@ -186,6 +186,9 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			hashErrores = restApi.validateRequestObject(visitaDto, TIPO_VALIDACION.INSERT);
 		} else {
 			hashErrores = restApi.validateRequestObject(visitaDto, TIPO_VALIDACION.UPDATE);
+			if (((JSONObject) jsonFields).containsKey("idClienteRem") && visitaDto.getIdClienteRem() == null) {
+				hashErrores.put("idClienteRem", RestApi.REST_MSG_MISSING_REQUIRED);
+			}
 		}
 
 		if (!Checks.esNulo(visitaDto.getIdClienteRem())) {

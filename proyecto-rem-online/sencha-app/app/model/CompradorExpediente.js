@@ -51,6 +51,21 @@ Ext.define('HreRem.model.CompradorExpediente', {
     			name:'fechaFactura',
         		type : 'date',
         		dateFormat: 'c'
+    		},
+    		{
+    			name:'borrado',
+    			type: 'boolean'
+    		},
+    		{
+    			name:'fechaBaja',
+    			type : 'date',
+        		dateFormat: 'c'
+    		},
+    		{
+    			name:'codigoGradoPropiedad'
+    		},
+    		{
+    			name:'descripcionGradoPropiedad'
     		}
     		
     ],

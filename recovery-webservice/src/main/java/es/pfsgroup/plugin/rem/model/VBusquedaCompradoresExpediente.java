@@ -62,6 +62,18 @@ public class VBusquedaCompradoresExpediente implements Serializable {
     
     @Column(name = "CEX_FECHA_FACTURA")
     private Date fechaFactura;
+    
+    @Column(name = "BORRADO")
+    private Boolean borrado;
+    
+    @Column(name = "CEX_FECHA_BAJA")
+    private Date fechaBaja;
+    
+    @Column(name = "COD_GRADO_PROPIEDAD")
+    private String codigoGradoPropiedad;
+    
+    @Column(name = "DESC_GRADO_PROPIEDAD")
+    private String descripcionGradoPropiedad;
 	
 	
 	public String getId() {
@@ -183,6 +195,37 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 	public void setFechaFactura(Date fechaFactura) {
 		this.fechaFactura = fechaFactura;
 	}
-	
 
+	public Boolean getBorrado() {
+		return borrado;
+	}
+
+	public void setBorrado(Boolean borrado) {
+		this.borrado = borrado;
+	}
+
+	public Date getFechaBaja() {
+		return fechaBaja;
+	}
+
+	public void setFechaBaja(Date fechaBaja) {
+		this.fechaBaja = fechaBaja;
+	}
+
+	public String getCodigoGradoPropiedad() {
+		return codigoGradoPropiedad;
+	}
+
+	public void setCodigoGradoPropiedad(String codigoGradoPropiedad) {
+		this.codigoGradoPropiedad = codigoGradoPropiedad;
+	}
+
+	public String getDescripcionGradoPropiedad() {
+		return descripcionGradoPropiedad;
+	}
+
+	public void setDescripcionGradoPropiedad(String descripcionGradoPropiedad) {
+		this.descripcionGradoPropiedad = descripcionGradoPropiedad;
+	}
+	
 }

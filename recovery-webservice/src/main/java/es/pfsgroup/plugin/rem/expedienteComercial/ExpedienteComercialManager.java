@@ -2784,7 +2784,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			} else {
 				compradorExpediente.setTitularContratacion(0);
 			}
-
+			compradorExpediente.setBorrado(false);
 			expediente.getCompradores().add(compradorExpediente);
 
 			genericDao.save(ExpedienteComercial.class, expediente);

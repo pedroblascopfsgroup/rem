@@ -181,6 +181,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("administracion", DDAdministracion.class);
 		mapa.put("motivosDesbloqueo", DDMotivosDesbloqueo.class);
 		mapa.put("motivosAvisoGasto", DDMotivosAvisoGasto.class);
+		mapa.put("paises", DDPaises.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

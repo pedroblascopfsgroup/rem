@@ -138,6 +138,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
@@ -146,6 +147,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedorHonorario;
@@ -2433,6 +2435,22 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						if (!Checks.esNulo(dto.getEmailRte())) {
 							compradorExpediente.setEmailRepresentante(dto.getEmailRte());
 						}
+						if (!Checks.esNulo(dto.getCodigoPais())) {
+							Filter filtroPais = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoPais());
+							DDPaises pais = (DDPaises) genericDao.get(DDPaises.class, filtroPais);
+							compradorExpediente.setPais(pais);
+						}
+						if (!Checks.esNulo(dto.getCodigoPaisRte())) {
+							Filter filtroPaisRte = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoPaisRte());
+							DDPaises paisRte = (DDPaises) genericDao.get(DDPaises.class, filtroPaisRte);
+							compradorExpediente.setPaisRte(paisRte);
+						}
+						if (!Checks.esNulo(dto.getCodigoGradoPropiedad())) {
+							Filter filtroGradoPropiedad = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoGradoPropiedad());
+							DDTipoGradoPropiedad gradoPropiedad = (DDTipoGradoPropiedad) genericDao.get(DDTipoGradoPropiedad.class, filtroGradoPropiedad);
+							compradorExpediente.setGradoPropiedad(gradoPropiedad);
+						}
+						
 						genericDao.save(Comprador.class, comprador);
 						genericDao.update(CompradorExpediente.class, compradorExpediente);
 					}
@@ -2924,6 +2942,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 				if (!Checks.esNulo(dto.getEmailRte())) {
 					compradorExpediente.setEmailRepresentante(dto.getEmailRte());
+				}
+				if (!Checks.esNulo(dto.getCodigoPais())) {
+					Filter filtroPais = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoPais());
+					DDPaises pais = (DDPaises) genericDao.get(DDPaises.class, filtroPais);
+					compradorExpediente.setPais(pais);
+				}
+				if (!Checks.esNulo(dto.getCodigoPaisRte())) {
+					Filter filtroPaisRte = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoPaisRte());
+					DDPaises paisRte = (DDPaises) genericDao.get(DDPaises.class, filtroPaisRte);
+					compradorExpediente.setPaisRte(paisRte);
+				}
+				if (!Checks.esNulo(dto.getCodigoGradoPropiedad())) {
+					Filter filtroGradoPropiedad = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoGradoPropiedad());
+					DDTipoGradoPropiedad gradoPropiedad = (DDTipoGradoPropiedad) genericDao.get(DDTipoGradoPropiedad.class, filtroGradoPropiedad);
+					compradorExpediente.setGradoPropiedad(gradoPropiedad);
 				}
 
 				CompradorExpedientePk pk = new CompradorExpedientePk();

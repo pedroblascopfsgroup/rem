@@ -1632,13 +1632,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this,
 		campoEstadoCivil = me.lookupReference('estadoCivil'),
 		campoRegEconomico = me.lookupReference('regimenMatrimonial'),
-		campoNumConyuge = me.lookupReference('numRegConyuge');
+		campoNumConyuge = me.lookupReference('numRegConyuge'),
+		campoApellidos = me.lookupReference('apellidos');
 
 		// Si el tipo de persona es FÍSICA, entonces el campos Estado civil es obligatorio y se habilitan campos dependientes.
 		if(me.lookupReference('tipoPersona').getValue() === "1" ) {
 			//campoEstadoCivil.setDisabled(false);
 			//campoRegEconomico.setDisabled(false);
 			//campoNumConyuge.setDisabled(false);
+			campoApellidos.setDisabled(false);
 			campoEstadoCivil.allowBlank = false;
 			campoEstadoCivil.validate();
 			if(campoEstadoCivil.getValue() === "02") {
@@ -1657,6 +1659,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			//  Si el tipo de persona es 'Jurídica' entonces desactivar los campos dependientes del otro estado.
 			campoEstadoCivil.allowBlank = true;
 			campoRegEconomico.allowBlank = true;
+			campoApellidos.setDisabled(true);
 			//campoEstadoCivil.reset();
 			//campoRegEconomico.reset();
 			//campoNumConyuge.reset();

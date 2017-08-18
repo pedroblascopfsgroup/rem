@@ -176,6 +176,24 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	
 	@Column(name = "ID_COMPRADOR_URSUS")
 	private Long numeroClienteUrsus;
+	
+	@Column(name = "COD_GRADO_PROPIEDAD")
+	private String codigoGradoPropiedad;
+	
+	@Column(name = "DESC_GRADO_PROPIEDAD")
+	private String descripcionGradoPropiedad;
+	
+	@Column(name = "COD_PAIS")
+	private String codigoPais;
+	
+	@Column(name = "DESC_PAIS")
+	private String descripcionPais;
+	
+	@Column(name = "COD_PAIS_RTE")
+	private String codigoPaisRte;
+	
+	@Column(name = "DESC_PAIS_RTE")
+	private String descripcionPaisRte;
     
 
 	public String getId() {
@@ -601,6 +619,54 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 
 	public void setNumeroClienteUrsus(Long numeroClienteUrsus) {
 		this.numeroClienteUrsus = numeroClienteUrsus;
+	}
+
+	public String getCodigoGradoPropiedad() {
+		return codigoGradoPropiedad;
+	}
+
+	public void setCodigoGradoPropiedad(String codigoGradoPropiedad) {
+		this.codigoGradoPropiedad = codigoGradoPropiedad;
+	}
+
+	public String getDescripcionGradoPropiedad() {
+		return descripcionGradoPropiedad;
+	}
+
+	public void setDescripcionGradoPropiedad(String descripcionGradoPropiedad) {
+		this.descripcionGradoPropiedad = descripcionGradoPropiedad;
+	}
+
+	public String getCodigoPais() {
+		return codigoPais;
+	}
+
+	public void setCodigoPais(String codigoPais) {
+		this.codigoPais = codigoPais;
+	}
+
+	public String getDescripcionPais() {
+		return descripcionPais;
+	}
+
+	public void setDescripcionPais(String descripcionPais) {
+		this.descripcionPais = descripcionPais;
+	}
+
+	public String getCodigoPaisRte() {
+		return codigoPaisRte;
+	}
+
+	public void setCodigoPaisRte(String codigoPaisRte) {
+		this.codigoPaisRte = codigoPaisRte;
+	}
+
+	public String getDescripcionPaisRte() {
+		return descripcionPaisRte;
+	}
+
+	public void setDescripcionPaisRte(String descripcionPaisRte) {
+		this.descripcionPaisRte = descripcionPaisRte;
 	}
 
 

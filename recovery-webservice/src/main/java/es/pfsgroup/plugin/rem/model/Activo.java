@@ -1357,10 +1357,12 @@ public class Activo implements Serializable, Auditable {
 		this.llavesNecesarias = llavesNecesarias;
 	}
 
+	@Deprecated
 	public Integer getGestionHre() {
 		return gestionHre;
 	}
 
+	@Deprecated
 	public void setGestionHre(Integer gestionHre) {
 		this.gestionHre = gestionHre;
 	}

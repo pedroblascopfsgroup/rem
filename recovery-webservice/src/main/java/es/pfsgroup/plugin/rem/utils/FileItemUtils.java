@@ -18,6 +18,8 @@ public class FileItemUtils {
 	
 	private static final Random RANDOM = new Random();
 	
+	private FileItemUtils(){}
+	
 	public static FileItem fromResource(String resourceName) {
 		
 		if (! Checks.esNulo(resourceName)) {
@@ -30,7 +32,7 @@ public class FileItemUtils {
 				try {
 					FileUtils.copyURLToFile(url, dest);
 				} catch (IOException e) {
-					throw new IllegalStateException("No se ha podido copiar el recurso " + resourceName + " -> " + dest);
+					throw new IllegalStateException("No se ha podido copiar el recurso " + resourceName + " -> " + dest, e);
 				}
 				return new FileItem(dest);
 			} else {
@@ -46,18 +48,16 @@ public class FileItemUtils {
 	private static File getTemporaryFile(final String extension) {
 		synchronized (MONITOR) {
 			try {
-				String name = "tmp_" + new Date().getTime() + "_" + RANDOM.nextInt();
-				
 				String fileExtension = Checks.esNulo(extension) ? ".tmp" : ("." + extension.replaceFirst("\\.", ""));
-				String pathname = System.getProperty("java.io.tmpdir") + name;
-				File file = new File(pathname + fileExtension);
+				String directory = System.getProperty("java.io.tmpdir");
+				File file = newRandomFile(directory, fileExtension);
 				
-				if (file.exists()) {
-					Thread.sleep(1000);
-					return getTemporaryFile(extension);
-				} else {
-					return file;
+				while(file.exists()) {
+					MONITOR.wait(1000);
+					file = newRandomFile(directory, fileExtension);
 				}
+				
+				return file;
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 				return null;
@@ -65,6 +65,10 @@ public class FileItemUtils {
 				MONITOR.notifyAll();
 			}
 		}
+	}
+
+	private static File newRandomFile(String directory, String fileExtension) {
+		return new File(directory + ("tmp_" + new Date().getTime() + "_" + RANDOM.nextInt()) + fileExtension);
 	}
 
 }

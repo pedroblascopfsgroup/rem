@@ -1244,10 +1244,13 @@ public class AgrupacionAdapter {
 		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())) {
 			if (!Checks.esNulo(oferta.getAgrupacion()) && oferta.getAgrupacion().getTipoAgrupacion().getCodigo()
 					.equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
-				// Comprobar si la agrupación tiene todos los gestores
-				// asignados.
-				if (!agrupacionLoteComercialGestoresAsignados(oferta.getAgrupacion())) {
-					throw new Exception(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
+				//En caso que la agrupación sea formalizable comprobamos tenga todos los gestores
+				if(oferta.getAgrupacion().getIsFormalizacion().equals(ES_FORMALIZABLE)){
+	//				// Comprobar si la agrupación tiene todos los gestores
+	//				// asignados.
+					if (!agrupacionLoteComercialGestoresAsignados(oferta.getAgrupacion())) {
+						throw new Exception(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
+					}
 				}
 			}
 		}
@@ -1262,10 +1265,13 @@ public class AgrupacionAdapter {
 				// comercial'.
 				if (!Checks.esNulo(oferta.getAgrupacion()) && oferta.getAgrupacion().getTipoAgrupacion().getCodigo()
 						.equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
-					// Comprobar si la agrupación tiene todos los gestores
-					// asignados.
-					if (!agrupacionLoteComercialGestoresAsignados(oferta.getAgrupacion())) {
-						throw new Exception(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
+					//En caso que la agrupación sea formalizable comprobamos tenga todos los gestores
+					if(oferta.getAgrupacion().getIsFormalizacion().equals(ES_FORMALIZABLE)){
+						// Comprobar si la agrupación tiene todos los gestores
+						// asignados.
+						if (!agrupacionLoteComercialGestoresAsignados(oferta.getAgrupacion())) {
+							throw new Exception(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
+						}
 					}
 				}
 

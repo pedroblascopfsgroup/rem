@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
@@ -28,11 +29,18 @@ import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
+import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVAgrupacionAsistidaPDVExcelValidator.ACTIVOS_NO_MISMA_LOCALIZACION;
 
 @Component
 public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbstract {
 
+	private static final String SEPARATOR = ", ";
+
+	private static final String CODIGO_TIPO_AGRUPACION_RESTRINGIDA = "02";
+
 	public static final String ACTIVE_NOT_SHARING_PLACE = "Todos los activos no comparten la misma PROVINCIA, MUNICIPIO, CP, CARTERA, TIPO y SOC. PATRIMONIAL.";
+	
+	public static final String ACTIVE_IN_AGRUPACION_RESTRINGIDA = "Los siguientes activos pertenecen ya a una agrupación restringida: ";
 	
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -74,29 +82,55 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 		try {
 			this.numFilasHoja = exc.getNumeroFilasByHoja(0, operacionMasiva);
 		} catch (Exception e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
-		if (!dtoValidacionContenido.getFicheroTieneErrores()) {			
+		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
+			List<String> listaErrores = new ArrayList<String>();
 			if (!isActiveSharingPlace(exc)) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
-				List<String> listaErrores = new ArrayList<String>();
 				listaErrores.add(ACTIVE_NOT_SHARING_PLACE);
+			}
+			
+			String[] activosEnAgrupacion = isActiveInAgrupacionRestringida(exc);
+			if (activosEnAgrupacion != null) {
+				String errorString = buildMsgWithData(ACTIVE_IN_AGRUPACION_RESTRINGIDA, activosEnAgrupacion);
+				if (errorString != null) {
+					dtoValidacionContenido.setFicheroTieneErrores(true);
+					listaErrores.add(errorString);
+				}
+			}
+			
+			if (dtoValidacionContenido.getFicheroTieneErrores()) {
 				try {
 					exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 					String nomFicheroErrores = exc.crearExcelErrores(listaErrores);
 					FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
 					dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+					logger.error("No se han podido grabar los errores en la Excel", e);
+				}	
 			}
 		}
 		exc.cerrar();
 		
 		
 		return dtoValidacionContenido;
+	}
+
+	private String buildMsgWithData(String msg, String[] data) {
+		if (data == null) {
+			return null;
+		}
+		
+		StringBuilder b = null;
+		for (String num : data) {
+			if (b != null) {
+				b.append(SEPARATOR + num);
+			} else {
+				b = new StringBuilder(msg + num);
+			}
+		}
+		return (b != null) ? b.toString() : null;
 	}
 
 	protected ResultadoValidacion validaContenidoCelda(String nombreColumna, String contenidoCelda, MSVBusinessValidators contentValidators) {
@@ -141,7 +175,7 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 			FileItem fileItem = proxyFactory.proxy(ExcelRepoApi.class).dameExcelByTipoOperacion(idTipoOperacion);
 			return fileItem.getFile();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.error("No se ha podido recuperar la plantilla", e);
 		}
 		return null;
 	}
@@ -152,20 +186,42 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 			int i = 1;
 			String numAgr = exc.dameCelda(i, 0);
 			String location = particularValidator.getCarteraLocationByNumAgr(numAgr);
-			if (location==null) return false;
 			boolean isFound = false;
 			String tmp = null;
 			while (!isFound && i < this.numFilasHoja ) {				
 				tmp = particularValidator.getCarteraLocationTipPatrimByNumAct(exc.dameCelda(i, 1));
+				if (location == null) {
+					location = tmp;
+				}
 				if (tmp==null || !tmp.equals(location)) return false;
 				i++;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("No se ha podido comprobar la dirección de los activos", e);
 			return false;
 		}
 		
 		return true;
+	}
+	
+	private String[] isActiveInAgrupacionRestringida(MSVHojaExcel exc) {
+		ArrayList<String> activos = new ArrayList<String>();
+		try {
+			if (this.numFilasHoja<3) return null;
+			int i = 1;
+			
+			while (i < this.numFilasHoja ) {				
+				String numActivo = exc.dameCelda(i, 1);
+				if (particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(numActivo), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)) {
+					activos.add(numActivo);
+				}
+				i++;
+			}
+		} catch (Exception e) {
+			throw new RuntimeException("No se ha podido comprobar si los activos están en otras agrupaciones restringidas", e);
+		}
+		
+		return activos.isEmpty() ? null : activos.toArray(new String[]{});
 	}
 
 }

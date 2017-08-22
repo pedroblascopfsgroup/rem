@@ -603,8 +603,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							) {
 						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "11")));
 						
-					}else if((esFinanciero && activoBancario.getActivo().getTipoActivo().getCodigo().equals(DDTipoActivo.COD_COMERCIAL) 
-							&& getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) || 
+					}else if((esFinanciero && getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) || 
 							(activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_RETAIL) 
 							&& (activoBancario.getActivo().getTipoActivo().getCodigo().equals(DDTipoActivo.COD_COMERCIAL) 
 							&& (activoDao.getListActivosPreciosFromListId(activoBancario.getActivo().getId().toString()).get(0).getPrecioMinimoAutorizado()<oferta.getImporteOferta())))) {

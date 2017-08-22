@@ -3,7 +3,7 @@
  */
 Ext.define('HreRem.model.ActivoCargasTab', {
     extend: 'HreRem.model.Base',
-    idProperty: 'id',
+    idProperty: 'idActivo',
 
     fields: [    
   
@@ -34,8 +34,8 @@ Ext.define('HreRem.model.ActivoCargasTab', {
 		remoteUrl: 'activo/getTabActivo',
 		api: {
             read: 'activo/getTabActivo',
-            create: 'activo/saveActivoCarga',
-            update: 'activo/saveActivoCarga',
+            create: 'activo/saveActivoCargaTab',
+            update: 'activo/saveActivoCargaTab',
             destroy: 'activo/getTabActivo'
         },
 		extraParams: {tab: 'cargasactivo'}

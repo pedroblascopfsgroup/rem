@@ -40,7 +40,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
-import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
@@ -100,6 +99,7 @@ import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
+import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
@@ -188,7 +188,6 @@ import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
-import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Service("activoManager")
 public class ActivoManager extends BusinessOperationOverrider<ActivoApi> implements ActivoApi {
@@ -3615,6 +3614,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return true;
 
+	}
+	
+	@Transactional(readOnly = false)
+	public Boolean saveActivoCargaTab(DtoActivoCargasTab cargaDto) {
+		
+		if(!Checks.esNulo(cargaDto.getIdActivo())){
+			Activo activo = get(cargaDto.getIdActivo());
+			if(!Checks.esNulo(cargaDto.getFechaRevisionCarga())){
+				activo.setFechaRevisionCarga(cargaDto.getFechaRevisionCarga());
+				genericDao.update(Activo.class, activo);
+				return true;
+			}
+		}
+		return false;
+		
 	}
 
 	@Override

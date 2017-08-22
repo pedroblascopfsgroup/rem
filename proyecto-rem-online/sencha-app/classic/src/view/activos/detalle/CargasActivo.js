@@ -45,7 +45,8 @@ Ext.define('HreRem.view.activos.detalle.CargasActivo', {
 					bind: {
 						store: '{comboSiNoRem}',
 						value: '{cargaTab.conCargas}'
-					}		
+					},
+					readOnly: true
             	  },
             	  {
             		  xtype: 'datefieldbase',

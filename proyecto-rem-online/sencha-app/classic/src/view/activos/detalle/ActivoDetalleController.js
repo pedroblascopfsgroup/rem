@@ -1798,10 +1798,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			if(!Ext.isEmpty(importeActualDescuentoAprobado) && !Ext.isEmpty(importeDecuentoPublicadoWeb) && (importeActualDescuentoAprobado > importeDecuentoPublicadoWeb)){
 				return HreRem.i18n('info.precio.importe.descuentoAprobado.msg.validacion');
 			}
-
-			if(!Ext.isEmpty(importeActualDescuentoAprobado) && !Ext.isEmpty(importeAprobadoVentaWeb) && (importeActualDescuentoAprobado > importeAprobadoVentaWeb)){
-				return HreRem.i18n('info.precio.importe.descuentoAprobado.msg.validacion');
-			}
+//
+//			if(!Ext.isEmpty(importeActualDescuentoAprobado) && !Ext.isEmpty(importeAprobadoVentaWeb) && (importeActualDescuentoAprobado > importeAprobadoVentaWeb)){
+//				return HreRem.i18n('info.precio.importe.descuentoAprobado.msg.validacion');
+//			}
 
 			return true;
 
@@ -1813,9 +1813,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				return HreRem.i18n('info.precio.importe.descuentoPublicadoWeb.msg.validacion');
 			}
 
-			if(!Ext.isEmpty(importeActualDescuentoWeb) && !Ext.isEmpty(importeAprobadoVentaWeb) && (importeActualDescuentoWeb > importeAprobadoVentaWeb)) {
-				return HreRem.i18n('info.precio.importe.descuentoPublicadoWeb.msg.validacion');
-			}
+//			if(!Ext.isEmpty(importeActualDescuentoWeb) && !Ext.isEmpty(importeAprobadoVentaWeb) && (importeActualDescuentoWeb > importeAprobadoVentaWeb)) {
+//				return HreRem.i18n('info.precio.importe.descuentoPublicadoWeb.msg.validacion');
+//			}
 
 			return true;
 
@@ -1827,13 +1827,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				return HreRem.i18n('info.precio.importe.aprobadoVenta.msg.validacion');
 			}
 
-			if(!Ext.isEmpty(importeActualAprobadoVentaWeb) && !Ext.isEmpty(importeDescuentoAprobado) && (importeActualAprobadoVentaWeb < importeDescuentoAprobado)) {
-				return HreRem.i18n('info.precio.importe.aprobadoVenta.msg.validacion');
-			}
+//			if(!Ext.isEmpty(importeActualAprobadoVentaWeb) && !Ext.isEmpty(importeDescuentoAprobado) && (importeActualAprobadoVentaWeb < importeDescuentoAprobado)) {
+//				return HreRem.i18n('info.precio.importe.aprobadoVenta.msg.validacion');
+//			}
 
-			if(!Ext.isEmpty(importeActualAprobadoVentaWeb) && !Ext.isEmpty(importeDecuentoPublicadoWeb) && (importeActualAprobadoVentaWeb < importeDecuentoPublicadoWeb)) {
-				return HreRem.i18n('info.precio.importe.aprobadoVenta.msg.validacion');
-			}
+//			if(!Ext.isEmpty(importeActualAprobadoVentaWeb) && !Ext.isEmpty(importeDecuentoPublicadoWeb) && (importeActualAprobadoVentaWeb < importeDecuentoPublicadoWeb)) {
+//				return HreRem.i18n('info.precio.importe.aprobadoVenta.msg.validacion');
+//			}
 
 			return true;
 

@@ -128,7 +128,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 			mapaErrores.put(ACTIVE_PRIZE_NAN, getNANPrecioIncorrectoRows(exc));
 			mapaErrores.put(ACTIVE_PRIZES_DESCUENTOS_LIMIT_EXCEEDED, getLimitePreciosDescAprobDescWebIncorrectoRows(exc));
 			mapaErrores.put(ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEEDED, getLimitePreciosAprobadoMinimoIncorrectoRows(exc));
-			mapaErrores.put(ACTIVE_PRIZES_VENTA_DESCUENTOWEB_LIMIT_EXCEEDED, getLimitePreciosAprobadoDescWebIncorrectoRows(exc));
+			//mapaErrores.put(ACTIVE_PRIZES_VENTA_DESCUENTOWEB_LIMIT_EXCEEDED, getLimitePreciosAprobadoDescWebIncorrectoRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVE_PRIZES_NOT_GREATER_ZERO), isPreciosMayorCeroRows(exc));
 			mapaErrores.put(ACTIVE_PAV_DATE_INIT_EXCEEDED, getFechaInicioAprobadoVentaIncorrectaRows(exc));
 			mapaErrores.put(ACTIVE_PAR_DATE_INIT_EXCEEDED, getFechaInicioAprobadoRentaIncorrectaRows(exc));
@@ -158,7 +158,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 						!mapaErrores.get(ACTIVE_PRIZE_NAN).isEmpty() ||
 						!mapaErrores.get(ACTIVE_PRIZES_DESCUENTOS_LIMIT_EXCEEDED).isEmpty() ||
 						!mapaErrores.get(ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEEDED).isEmpty() ||
-						!mapaErrores.get(ACTIVE_PRIZES_VENTA_DESCUENTOWEB_LIMIT_EXCEEDED).isEmpty() ||
+						//!mapaErrores.get(ACTIVE_PRIZES_VENTA_DESCUENTOWEB_LIMIT_EXCEEDED).isEmpty() ||
 						!mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZES_NOT_GREATER_ZERO)).isEmpty() ||
 						!mapaErrores.get(ACTIVE_PAV_DATE_INIT_EXCEEDED).isEmpty() ||
 						!mapaErrores.get(ACTIVE_PMA_DATE_INIT_EXCEEDED).isEmpty() ||
@@ -390,19 +390,19 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 						}
 					}
 	
-					if(!Checks.esNulo(importePDA) && !Checks.esNulo(importePAV) && (importePDA.compareTo(importePAV) == 1)) {
-						// adjuntar linea, es erroneo.
-						if(!listaFilas.contains(i)) {
-							listaFilas.add(i);
-						}
-					}
+//					if(!Checks.esNulo(importePDA) && !Checks.esNulo(importePAV) && (importePDA.compareTo(importePAV) == 1)) {
+//						// adjuntar linea, es erroneo.
+//						if(!listaFilas.contains(i)) {
+//							listaFilas.add(i);
+//						}
+//					}
 	
-					if(!Checks.esNulo(importePDP) && !Checks.esNulo(importePAV) && (importePDP.compareTo(importePAV) == 1)) {
-						// adjuntar linea, es erroneo.
-						if(!listaFilas.contains(i)) {
-							listaFilas.add(i);
-						}
-					}
+//					if(!Checks.esNulo(importePDP) && !Checks.esNulo(importePAV) && (importePDP.compareTo(importePAV) == 1)) {
+//						// adjuntar linea, es erroneo.
+//						if(!listaFilas.contains(i)) {
+//							listaFilas.add(i);
+//						}
+//					}
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

@@ -23,7 +23,9 @@ import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosPbc;
+import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDUsosActivo;
 
 
@@ -146,6 +148,24 @@ public class CompradorExpediente implements Serializable {
     
     @Column(name="CEX_FECHA_FACTURA")
     private Date fechaFactura;
+    
+    @Column(name="BORRADO")
+    private Boolean borrado;
+    
+    @Column(name="CEX_FECHA_BAJA")
+    private Date fechaBaja;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TGP_ID")
+    private DDTipoGradoPropiedad gradoPropiedad;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PAI_ID")
+    private DDPaises pais;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PAI_ID_RTE")
+    private DDPaises paisRte;
     
     
 	@Version   
@@ -494,6 +514,46 @@ public class CompradorExpediente implements Serializable {
 			this.expediente = expediente;
 		}
     }
+
+	public Boolean getBorrado() {
+		return borrado;
+	}
+
+	public void setBorrado(Boolean borrado) {
+		this.borrado = borrado;
+	}
+
+	public Date getFechaBaja() {
+		return fechaBaja;
+	}
+
+	public void setFechaBaja(Date fechaBaja) {
+		this.fechaBaja = fechaBaja;
+	}
+
+	public DDTipoGradoPropiedad getGradoPropiedad() {
+		return gradoPropiedad;
+	}
+
+	public void setGradoPropiedad(DDTipoGradoPropiedad gradoPropiedad) {
+		this.gradoPropiedad = gradoPropiedad;
+	}
+
+	public DDPaises getPais() {
+		return pais;
+	}
+
+	public void setPais(DDPaises pais) {
+		this.pais = pais;
+	}
+
+	public DDPaises getPaisRte() {
+		return paisRte;
+	}
+
+	public void setPaisRte(DDPaises paisRte) {
+		this.paisRte = paisRte;
+	}
     
    
 }

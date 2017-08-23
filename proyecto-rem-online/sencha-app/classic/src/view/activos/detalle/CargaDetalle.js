@@ -151,6 +151,9 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
 											        	bind: {
 										            		store: '{comboEstadoCarga}',
 										            		value: '{carga.estadoCodigo}'
+										            	},
+										            	listeners: {
+										            		select: 'onChangeEstadoCargaCombo'
 										            	}
 											        },													
 													{ 
@@ -218,7 +221,8 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
 													{
 														xtype:'datefieldbase',
 														fieldLabel: HreRem.i18n('fieldlabel.fecha.cancelacion.registral'),
-										            	bind:		'{carga.fechaCancelacionRegistral}'
+										            	bind:		'{carga.fechaCancelacionRegistral}',
+										            	reference: 'fechaCancelacionRegistral'
 										            	
 													}
 							

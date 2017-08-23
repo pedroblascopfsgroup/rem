@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.emory.mathcs.backport.java.util.Collections;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
@@ -2407,9 +2408,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}else{
 			
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", idProveedor);
-			Order orden = new Order(OrderType.ASC,"nombre");
-			listaProveedorContacto = genericDao.getListOrdered(ActivoProveedorContacto.class, orden, filtro1);
-			
+			//Order orden = new Order(OrderType.ASC,"nombre");
+			listaProveedorContacto = genericDao.getList(ActivoProveedorContacto.class, filtro1);
+						
 			for (ActivoProveedorContacto source: listaProveedorContacto ) {
 				try {
 					DtoProveedorContactoSimple target= new DtoProveedorContactoSimple();
@@ -2430,6 +2431,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			        if(!Checks.esNulo(source.getTipoDocIdentificativo())){
 			        	target.setCodTipoDocIdentificativo(source.getTipoDocIdentificativo().getCodigo());
 			        }
+			        if(!Checks.esNulo(source.getUsuario().getUsuarioGrupo())){
+			        	target.setUsuarioGrupo(source.getUsuario().getUsuarioGrupo());
+			        }
 			        listaDtoProveedorContactoSimple.add(target);
 			        
 				} catch (IllegalAccessException e) {
@@ -2441,6 +2445,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				}
 			}
 		}
+		Collections.sort(listaDtoProveedorContactoSimple);
 		return listaDtoProveedorContactoSimple;
 	}
 

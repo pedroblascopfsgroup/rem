@@ -676,6 +676,24 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        extraParams: {idProvision: '{activoExpedienteSeleccionado.data.idActivo}'}
 	    	}
     		
+    	},
+    	
+    	comboTipoGradoPropiedad : {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposGradoPropiedad'}
+			}
+    	},
+    	
+    	comboPaises : {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'paises'}
+			}
     	}
     	
 		

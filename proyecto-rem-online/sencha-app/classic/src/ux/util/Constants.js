@@ -278,5 +278,13 @@ Ext.define('HreRem.ux.util.Constants', {
     	OFICINA_BANKIA: '28',
     	OFICINA_CAJAMAR: '29',
     	CAT: '31'
+    },
+    
+    SITUACION_CARGA: {
+    	VIEGENTE: 'VIG',
+    	NO_CANCELABLE: 'NCN',
+    	CANCELADA: 'CAN',
+    	EN_SANEAMIENTO: 'SAN'
     }
+    
 });

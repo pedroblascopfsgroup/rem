@@ -40,7 +40,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
-import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
@@ -100,6 +99,7 @@ import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
+import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
@@ -188,7 +188,6 @@ import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
-import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Service("activoManager")
 public class ActivoManager extends BusinessOperationOverrider<ActivoApi> implements ActivoApi {
@@ -603,8 +602,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							) {
 						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "11")));
 						
-					}else if((esFinanciero && activoBancario.getActivo().getTipoActivo().getCodigo().equals(DDTipoActivo.COD_COMERCIAL) 
-							&& getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) || 
+					}else if((esFinanciero && getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) || 
 							(activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_RETAIL) 
 							&& (activoBancario.getActivo().getTipoActivo().getCodigo().equals(DDTipoActivo.COD_COMERCIAL) 
 							&& (activoDao.getListActivosPreciosFromListId(activoBancario.getActivo().getId().toString()).get(0).getPrecioMinimoAutorizado()<oferta.getImporteOferta())))) {
@@ -654,6 +652,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorExpedienteNuevo.setTitularReserva(0);
 				compradorExpedienteNuevo.setTitularContratacion(1);
 				compradorExpedienteNuevo.setPorcionCompra(100.00);
+				compradorExpedienteNuevo.setBorrado(false);
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
 			} else { // Si no existe un comprador con dicho dni, lo crea, añade
@@ -665,6 +664,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				nuevoComprador.setDocumento(oferta.getCliente().getDocumento());
 				nuevoComprador.setNombre(oferta.getCliente().getNombre());
 				nuevoComprador.setApellidos(oferta.getCliente().getApellidos());
+				if(Checks.esNulo(nuevoComprador.getNombre()) && Checks.esNulo(nuevoComprador.getApellidos())){
+					nuevoComprador.setNombre(oferta.getCliente().getRazonSocial());
+				}
 				nuevoComprador.setTipoDocumento(oferta.getCliente().getTipoDocumento());
 				nuevoComprador.setTelefono1(oferta.getCliente().getTelefono1());
 				nuevoComprador.setTelefono2(oferta.getCliente().getTelefono2());
@@ -689,6 +691,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorExpedienteNuevo.setTitularReserva(0);
 				compradorExpedienteNuevo.setTitularContratacion(1);
 				compradorExpedienteNuevo.setPorcionCompra(100.00);
+				compradorExpedienteNuevo.setBorrado(false);
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
 			}
@@ -3611,6 +3614,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return true;
 
+	}
+	
+	@Transactional(readOnly = false)
+	public Boolean saveActivoCargaTab(DtoActivoCargasTab cargaDto) {
+		
+		if(!Checks.esNulo(cargaDto.getIdActivo())){
+			Activo activo = get(cargaDto.getIdActivo());
+			if(!Checks.esNulo(cargaDto.getFechaRevisionCarga())){
+				activo.setFechaRevisionCarga(cargaDto.getFechaRevisionCarga());
+				genericDao.update(Activo.class, activo);
+				return true;
+			}
+		}
+		return false;
+		
 	}
 
 	@Override

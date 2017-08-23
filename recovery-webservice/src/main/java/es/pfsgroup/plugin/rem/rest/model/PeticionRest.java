@@ -130,7 +130,7 @@ public class PeticionRest implements Serializable, Auditable {
 	}
 
 	public void setErrorDesc(String errorDesc) {
-		if (errorDesc.length() > 200) {
+		if (errorDesc !=null && errorDesc.length() > 200) {
 			errorDesc = errorDesc.substring(0, 199);
 		}
 		this.errorDesc = errorDesc;

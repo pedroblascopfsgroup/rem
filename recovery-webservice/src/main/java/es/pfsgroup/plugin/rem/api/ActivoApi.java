@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
+import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
@@ -1025,6 +1026,6 @@ public interface ActivoApi {
 	 */
 	Usuario getUsuarioMediador(Activo activo);
 	
-	
+	public Boolean saveActivoCargaTab(DtoActivoCargasTab cargaDto);
 
 }

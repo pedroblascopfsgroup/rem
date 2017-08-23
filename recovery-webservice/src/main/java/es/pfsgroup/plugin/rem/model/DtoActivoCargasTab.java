@@ -20,6 +20,7 @@ public class DtoActivoCargasTab extends WebDto {
 	private String numeroActivo;
     private Integer conCargas;
     private Date fechaRevisionCarga;
+    private Long idActivo;
     
 	public String getNumeroActivo() {
 		return numeroActivo;
@@ -39,5 +40,12 @@ public class DtoActivoCargasTab extends WebDto {
 	public void setFechaRevisionCarga(Date fechaRevisionCarga) {
 		this.fechaRevisionCarga = fechaRevisionCarga;
 	}
+	public Long getIdActivo() {
+		return idActivo;
+	}
+	public void setIdActivo(Long idActivo) {
+		this.idActivo = idActivo;
+	}
+	
     
 }

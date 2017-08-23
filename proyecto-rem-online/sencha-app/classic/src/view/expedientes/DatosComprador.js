@@ -132,6 +132,15 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 									            		hidden: '{!comprador.titularContratacion}'
 									            	},
 									            	disabled: true
+						                		},
+						                		{
+						                			xtype: 'comboboxfieldbase',
+										        	fieldLabel: HreRem.i18n('fieldlabel.grado.propiedad'),
+													reference: 'gradoPropiedad',
+										        	bind: {
+									            		store: '{comboTipoGradoPropiedad}',
+									            		value: '{comprador.codigoGradoPropiedad}'
+									            	}
 						                		}
 											]
 						           },
@@ -254,8 +263,14 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 									            	}
 										        },
 										        {
-										        	xtype: 'box'
-										        },
+													xtype: 'comboboxfieldbase',
+													fieldLabel: HreRem.i18n('fieldlabel.pais'),
+													reference: 'pais',
+									            	bind: {
+									            		store: '{comboPaises}',
+									            		value: '{comprador.codigoPais}'
+									            	}
+												},
 										        {
 										        	xtype      : 'container',
 							                        layout: 'box',
@@ -562,7 +577,16 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	bind: {
 									            		value: '{comprador.emailRte}'
 									            	}
-										        }
+										        },
+										        {
+													xtype: 'comboboxfieldbase',
+													fieldLabel: HreRem.i18n('fieldlabel.pais'),
+													reference: 'paisRte',
+									            	bind: {
+									            		store: '{comboPaises}',
+									            		value: '{comprador.codigoPaisRte}'
+									            	}
+												}
 											]
 						           }
         				]

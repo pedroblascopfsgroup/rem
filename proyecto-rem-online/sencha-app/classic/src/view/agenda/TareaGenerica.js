@@ -10,25 +10,25 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     //modal: false,
 
     /**
-     * PÃ¡rametro para saber que componente abre la ventana, y poder refrescarlo despuÃ©s.
+     * Párametro para saber que componente abre la ventana, y poder refrescarlo después.
      * @type Component
      */
     parent: null,
 
     /**
-     * PÃ¡rametro para guardar el id del trabajo en caso de existir.
+     * Párametro para guardar el id del trabajo en caso de existir.
      * @type Long
      */
     idTrabajo: null,
 
     /**
-     * PÃ¡rametro para guardar el id del activo en caso de existir.
+     * Párametro para guardar el id del activo en caso de existir.
      * @type Long
      */
     idActivo: null,
 
     /**
-     * PÃ¡rametro para guardar el id del expediente en caso de existir.
+     * Párametro para guardar el id del expediente en caso de existir.
      * @type Long
      */
     idExpediente: null,
@@ -165,7 +165,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
                     break;
 
                 case 'textinf':
-                    var textinf = {}
+                    var textinf = {};
                     textinf.xtype = 'generictextlabel';
                     textinf.name = me.campos[i].name;
                     textinf.fieldLabel = me.campos[i].fieldLabel;
@@ -1104,7 +1104,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
                 me.deshabilitarCampo(me.down('[name=administracion]'));
                 me.deshabilitarCampo(me.down('[name=nif]'));
             }
-        })
+        });
     },
 
     T013_PosicionamientoYFirmaValidacion: function() {
@@ -1142,17 +1142,18 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
                 me.down('[name=comboCondiciones]').reset();
                 me.down('[name=condiciones]').reset();
             }
-        })
+        });
     },
 
     T013_ResolucionExpedienteValidacion: function() {
         var me = this;
         var tipoArras = me.down('[name=tipoArras]');
+        var estadoReserva = me.down('[name=estadoReserva]');
         me.deshabilitarCampo(me.down('[name=comboProcede]'));
 
-        if (!Ext.isEmpty(tipoArras.value))
+        if (!Ext.isEmpty(estadoReserva) && estadoReserva.value == 'Firmada') 
             me.habilitarCampo(me.down('[name=comboProcede]'));
-
+            
         me.down('[name=comboProcede]').addListener('change', function(combo) {
             if (combo.value == '01' && tipoArras.value == 'Confirmatorias') {
                 me.down('[name=comboProcede]').blankText = HreRem.i18n('tarea.validacion.error.valor.no.permitido.by.tipo.arras');

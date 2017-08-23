@@ -55,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
@@ -338,7 +339,21 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             				}
             			}	
             		}
-            		
+            		if(item.getNombre().equals("estadoReserva")){
+            			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
+            			if (!Checks.esNulo(ofertaAceptada)) {
+            				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+            				if (!Checks.esNulo(expediente)){
+            					Reserva reserva = expediente.getReserva();
+            					if(!Checks.esNulo(reserva)){
+            						DDEstadosReserva estadoReserva = reserva.getEstadoReserva();
+            						if(!Checks.esNulo(estadoReserva)){
+            							item.setValue(estadoReserva.getDescripcion());
+            						}
+            					}
+            				}
+            			}	
+            		} 
             	}
             	if(item.getType().equals(TIPO_CAMPO_TEXTFIELD))
             	{

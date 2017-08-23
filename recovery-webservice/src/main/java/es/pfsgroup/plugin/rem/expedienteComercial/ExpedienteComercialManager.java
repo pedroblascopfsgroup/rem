@@ -828,6 +828,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					if (!Checks.esNulo(reserva.getDevolucionReserva())) {
 						dto.setCodDevolucionReserva(reserva.getDevolucionReserva().getCodigo());
 					}
+					
+					if (!Checks.esNulo(reserva.getEstadoReserva())) {
+						dto.setEstadoReserva(reserva.getEstadoReserva().getDescripcion());
+					}
 				}
 				dto.setPeticionarioAnulacion(expediente.getPeticionarioAnulacion());
 				dto.setFechaContabilizacionPropietario(expediente.getFechaContabilizacionPropietario());

@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
+import es.pfsgroup.commons.utils.Checks;
+
 
 
 /**
@@ -9,7 +11,7 @@ import java.util.Date;
  *  
  * @author Anahuac de Vicente
  */
-public class DtoProveedorContactoSimple {
+public class DtoProveedorContactoSimple implements Comparable<DtoProveedorContactoSimple> {
 
 
 	private Long id;
@@ -31,6 +33,7 @@ public class DtoProveedorContactoSimple {
 	private Long idUsuario;
 	private String loginUsuario;
 	private String codProvincia;
+	private Boolean usuarioGrupo;
 	
 	
 	
@@ -147,6 +150,31 @@ public class DtoProveedorContactoSimple {
 	}
 	public void setCodProvincia(String codProvincia) {
 		this.codProvincia = codProvincia;
+	}
+	public Boolean getUsuarioGrupo() {
+		return usuarioGrupo;
+	}
+	public void setUsuarioGrupo(Boolean usuarioGrupo) {
+		this.usuarioGrupo = usuarioGrupo;
+	}
+	
+	@Override
+	public int compareTo(DtoProveedorContactoSimple o) {
+		int resultado = 0;
+			
+		if(this.getUsuarioGrupo() && o.getUsuarioGrupo()){
+			resultado= this.getNombre().compareTo(o.getNombre());
+		}
+		else{
+			if(this.getUsuarioGrupo() || o.getUsuarioGrupo()){
+				resultado= o.getUsuarioGrupo().compareTo(this.getUsuarioGrupo());
+			}
+			else{
+				resultado= this.getNombre().compareTo(o.getNombre());
+			}
+		}				
+		
+		return resultado;
 	}
 	
 	

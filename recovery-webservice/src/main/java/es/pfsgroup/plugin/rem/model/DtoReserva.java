@@ -39,7 +39,7 @@ public class DtoReserva extends WebDto {
 	
 	private String Observaciones;
 
-
+	private String estadoReserva;
 
 	public Long getIdReserva() {
 		return idReserva;
@@ -135,5 +135,13 @@ public class DtoReserva extends WebDto {
 
 	public void setObservaciones(String observaciones) {
 		Observaciones = observaciones;
+	}
+
+	public String getEstadoReserva() {
+		return estadoReserva;
+	}
+
+	public void setEstadoReserva(String estadoReserva) {
+		this.estadoReserva = estadoReserva;
 	}
 }

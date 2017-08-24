@@ -40,7 +40,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
-import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
@@ -100,6 +99,7 @@ import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
+import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
@@ -188,7 +188,6 @@ import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
-import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Service("activoManager")
 public class ActivoManager extends BusinessOperationOverrider<ActivoApi> implements ActivoApi {
@@ -603,8 +602,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							) {
 						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "11")));
 						
-					}else if((esFinanciero && activoBancario.getActivo().getTipoActivo().getCodigo().equals(DDTipoActivo.COD_COMERCIAL) 
-							&& getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) || 
+					}else if((esFinanciero && getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) || 
 							(activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_RETAIL) 
 							&& (activoBancario.getActivo().getTipoActivo().getCodigo().equals(DDTipoActivo.COD_COMERCIAL) 
 							&& (activoDao.getListActivosPreciosFromListId(activoBancario.getActivo().getId().toString()).get(0).getPrecioMinimoAutorizado()<oferta.getImporteOferta())))) {
@@ -642,7 +640,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			Comprador compradorBusqueda = genericDao.get(Comprador.class, filtroComprador);
 			List<CompradorExpediente> listaCompradoresExpediente = new ArrayList<CompradorExpediente>();
 			CompradorExpediente compradorExpedienteNuevo = new CompradorExpediente();
-
+			
+			Double parteCompra= 0.00;
+			Double parteCompraAdicionales= 0.00;
+			Double totalParteCompraAdicional= 0.00;
+			Double parteCompraPrincipal= 100.00;
+			
+			if(!Checks.estaVacio(oferta.getTitularesAdicionales())){
+				parteCompra= 100.00/(oferta.getTitularesAdicionales().size()+1);
+				parteCompraAdicionales=(double)((int)(parteCompra*100.00)/100.00);
+				totalParteCompraAdicional= parteCompraAdicionales * oferta.getTitularesAdicionales().size();
+				parteCompraPrincipal= 100 - totalParteCompraAdicional;
+			}
+			
 			// si ya existe un comprador con dicho dni, crea una nueva relación
 			// Comprador-Expediente
 			if (!Checks.esNulo(compradorBusqueda)) {
@@ -653,7 +663,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorExpedienteNuevo.setPrimaryKey(pk);
 				compradorExpedienteNuevo.setTitularReserva(0);
 				compradorExpedienteNuevo.setTitularContratacion(1);
-				compradorExpedienteNuevo.setPorcionCompra(100.00);
+				compradorExpedienteNuevo.setPorcionCompra(parteCompraPrincipal);
 				compradorExpedienteNuevo.setBorrado(false);
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
@@ -692,7 +702,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorExpedienteNuevo.setPrimaryKey(pk);
 				compradorExpedienteNuevo.setTitularReserva(0);
 				compradorExpedienteNuevo.setTitularContratacion(1);
-				compradorExpedienteNuevo.setPorcionCompra(100.00);
+				compradorExpedienteNuevo.setPorcionCompra(parteCompraPrincipal);
 				compradorExpedienteNuevo.setBorrado(false);
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
@@ -721,7 +731,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						compradorExpedienteAdicionalNuevo.setPrimaryKey(pk);
 						compradorExpedienteAdicionalNuevo.setTitularReserva(1);
 						compradorExpedienteAdicionalNuevo.setTitularContratacion(0);
-						compradorExpedienteAdicionalNuevo.setPorcionCompra(100.00);
+						compradorExpedienteAdicionalNuevo.setPorcionCompra(parteCompraAdicionales);
 	
 						listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
 					} else {
@@ -740,7 +750,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						compradorExpedienteAdicionalNuevo.setPrimaryKey(pk);
 						compradorExpedienteAdicionalNuevo.setTitularReserva(1);
 						compradorExpedienteAdicionalNuevo.setTitularContratacion(0);
-						compradorExpedienteAdicionalNuevo.setPorcionCompra(100.00);
+						compradorExpedienteAdicionalNuevo.setPorcionCompra(parteCompraAdicionales);
 	
 						listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
 	
@@ -3616,6 +3626,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return true;
 
+	}
+	
+	@Transactional(readOnly = false)
+	public Boolean saveActivoCargaTab(DtoActivoCargasTab cargaDto) {
+		
+		if(!Checks.esNulo(cargaDto.getIdActivo())){
+			Activo activo = get(cargaDto.getIdActivo());
+			if(!Checks.esNulo(cargaDto.getFechaRevisionCarga())){
+				activo.setFechaRevisionCarga(cargaDto.getFechaRevisionCarga());
+				genericDao.update(Activo.class, activo);
+				return true;
+			}
+		}
+		return false;
+		
 	}
 
 	@Override

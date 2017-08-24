@@ -56,6 +56,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
+import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
@@ -333,6 +334,23 @@ public class ActivoController extends ParadiseJsonController {
 
 		try {
 			boolean success = activoApi.saveActivoCarga(cargaDto);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveActivoCargaTab(DtoActivoCargasTab cargaDto, ModelMap model) {
+
+		try {
+			boolean success = activoApi.saveActivoCargaTab(cargaDto);
 			model.put("success", success);
 
 		} catch (Exception e) {

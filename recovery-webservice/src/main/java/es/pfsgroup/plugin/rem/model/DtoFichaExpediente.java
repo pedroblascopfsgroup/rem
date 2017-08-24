@@ -95,6 +95,7 @@ public class DtoFichaExpediente extends WebDto {
 	private String estadoDevolucionCodigo;
 	private Boolean ocultarPestTanteoRetracto;
 	
+	private String estadoReserva;
 	private String codDevolucionReserva;
 	
 	private Boolean bloqueado;
@@ -492,6 +493,12 @@ public class DtoFichaExpediente extends WebDto {
 		this.bloqueado = bloqueado;
 	}
 
-	
+	public String getEstadoReserva() {
+		return estadoReserva;
+	}
+
+	public void setEstadoReserva(String estadoReserva) {
+		this.estadoReserva = estadoReserva;
+	}
 	
 }

@@ -17,6 +17,7 @@
 	<bean id="activoComprobarPropuestaPreciosActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoComprobarPropuestaPreciosActionHandler"></bean>
 	<bean id="activoComprobarDatosActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoComprobarDatosActionHandler"></bean>
 	<bean id="resultadoPBCEnterActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ResultadoPBCEnterActionHandler"></bean>
+	<bean id="resolucionExpedienteEnterActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ResolucionExpedienteEnterActionHandler"></bean>
 	    
     <bean id="avanzaBPM" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoAvanzaBPMActionHandler"></bean>
     

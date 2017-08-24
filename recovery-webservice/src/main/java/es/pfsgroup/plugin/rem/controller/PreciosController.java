@@ -37,6 +37,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaNumActivosTipoPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.propuestaprecios.service.GenerarPropuestaPreciosService;
 
 @Controller
@@ -131,9 +132,13 @@ public class PreciosController extends ParadiseJsonController{
 	public ModelAndView generarPropuestaManual(DtoActivoFilter dtoActivoFilter, String nombrePropuesta, HttpServletRequest request, HttpServletResponse response, ModelMap model) {
 		// Metodo para crear propuestas por peticion manual
 		
+		String mensajeAdvertencia;
 		try {
-			String mensajeAdvertencia = generarPropuesta(dtoActivoFilter,nombrePropuesta,request,response);
 			
+			if (Checks.esNulo(dtoActivoFilter.getTipoPropuestaCodigo())) {
+				dtoActivoFilter.setTipoPropuestaCodigo(DDTipoPropuestaPrecio.TIPO_PRECIAR);
+			}
+			mensajeAdvertencia = generarPropuesta(dtoActivoFilter,nombrePropuesta,request,response);
 			if(!Checks.esNulo(mensajeAdvertencia)) {
 				model.put("advertencia", mensajeAdvertencia);
 			}

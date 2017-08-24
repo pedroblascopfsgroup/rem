@@ -4,7 +4,7 @@ rm -f $2.*
 
 lftp -u sftp_ogf,VCMRwacF sftp://192.168.49.14 <<EOF
 cd /input/
-mget $2.*
+mget $2.dat
 bye
 EOF
 
@@ -13,8 +13,8 @@ rm -f $2.*
 sleep 30
 
 lftp -u sftp_ogf,VCMRwacF sftp://192.168.49.14 <<EOF
-cd /$1/
-mget $2.*
+cd /input/
+mget $2.dat
 bye
 EOF
 

@@ -123,8 +123,7 @@ Ext.define('HreRem.view.precios.PreciosController', {
     	var me = this,
     	searchForm = this.lookupReference('generacionPropuestasManual');
     	
-    	if(Ext.isEmpty(searchForm.down("[name=entidadPropietariaCodigo]").getValue())
-    		|| Ext.isEmpty(searchForm.down("[name=tipoPropuestaCodigo]").getValue())) {
+    	if(Ext.isEmpty(searchForm.down("[name=entidadPropietariaCodigo]").getValue())) {
     		
 			 me.fireEvent("warnToast", HreRem.i18n("msg.falta.filtro.propuesta.precios.manual"));   		
     			

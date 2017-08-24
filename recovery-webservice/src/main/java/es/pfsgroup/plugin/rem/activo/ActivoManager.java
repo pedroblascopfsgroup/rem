@@ -640,7 +640,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			Comprador compradorBusqueda = genericDao.get(Comprador.class, filtroComprador);
 			List<CompradorExpediente> listaCompradoresExpediente = new ArrayList<CompradorExpediente>();
 			CompradorExpediente compradorExpedienteNuevo = new CompradorExpediente();
-
+			
+			Double parteCompra= 0.00;
+			Double parteCompraAdicionales= 0.00;
+			Double totalParteCompraAdicional= 0.00;
+			Double parteCompraPrincipal= 100.00;
+			
+			if(!Checks.estaVacio(oferta.getTitularesAdicionales())){
+				parteCompra= 100.00/(oferta.getTitularesAdicionales().size()+1);
+				parteCompraAdicionales=(double)((int)(parteCompra*100.00)/100.00);
+				totalParteCompraAdicional= parteCompraAdicionales * oferta.getTitularesAdicionales().size();
+				parteCompraPrincipal= 100 - totalParteCompraAdicional;
+			}
+			
 			// si ya existe un comprador con dicho dni, crea una nueva relación
 			// Comprador-Expediente
 			if (!Checks.esNulo(compradorBusqueda)) {
@@ -651,7 +663,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorExpedienteNuevo.setPrimaryKey(pk);
 				compradorExpedienteNuevo.setTitularReserva(0);
 				compradorExpedienteNuevo.setTitularContratacion(1);
-				compradorExpedienteNuevo.setPorcionCompra(100.00);
+				compradorExpedienteNuevo.setPorcionCompra(parteCompraPrincipal);
 				compradorExpedienteNuevo.setBorrado(false);
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
@@ -690,7 +702,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorExpedienteNuevo.setPrimaryKey(pk);
 				compradorExpedienteNuevo.setTitularReserva(0);
 				compradorExpedienteNuevo.setTitularContratacion(1);
-				compradorExpedienteNuevo.setPorcionCompra(100.00);
+				compradorExpedienteNuevo.setPorcionCompra(parteCompraPrincipal);
 				compradorExpedienteNuevo.setBorrado(false);
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
@@ -719,7 +731,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						compradorExpedienteAdicionalNuevo.setPrimaryKey(pk);
 						compradorExpedienteAdicionalNuevo.setTitularReserva(1);
 						compradorExpedienteAdicionalNuevo.setTitularContratacion(0);
-						compradorExpedienteAdicionalNuevo.setPorcionCompra(100.00);
+						compradorExpedienteAdicionalNuevo.setPorcionCompra(parteCompraAdicionales);
 	
 						listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
 					} else {
@@ -738,7 +750,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						compradorExpedienteAdicionalNuevo.setPrimaryKey(pk);
 						compradorExpedienteAdicionalNuevo.setTitularReserva(1);
 						compradorExpedienteAdicionalNuevo.setTitularContratacion(0);
-						compradorExpedienteAdicionalNuevo.setPorcionCompra(100.00);
+						compradorExpedienteAdicionalNuevo.setPorcionCompra(parteCompraAdicionales);
 	
 						listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
 	

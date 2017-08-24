@@ -19,6 +19,8 @@ public interface ParticularValidatorApi {
 	public String existeActivoEnAgrupacion(Long idActivo, Long idAgrupacion);
 
 	public Boolean esActivoEnAgrupacion(Long idActivo, Long idAgrupacion);
+	
+	public Boolean esActivoEnAgrupacionPorTipo(Long numActivo, String codTipoAgrupacion);
 
 	public Boolean esActivoEnOtraAgrupacion(Long numActivo, Long numAgrupacion);
 

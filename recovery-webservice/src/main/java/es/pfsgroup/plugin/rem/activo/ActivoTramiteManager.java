@@ -240,19 +240,6 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 	}
 
 	@Override
-	public Boolean existeAdjuntoUGCartera(TareaExterna tareaExterna, String codigoDocAdjunto, String uGestion, String cartera) {
-
-		if (!Checks.esNulo(cartera)) {
-			DDCartera carteraObj = trabajoApi.getCartera(tareaExterna);
-			if (cartera.equals(carteraObj.getCodigo())) {
-				return existeAdjuntoUG(tareaExterna, codigoDocAdjunto, uGestion);	
-			}
-		}
-
-		return true; // solo se valida el documento si cumple con la cartera seleccionada
-	}
-
-	@Override
 	@BusinessOperation(overrides = "activoTramiteManager.existeAdjuntoUG")
 	public Boolean existeAdjuntoUG(TareaExterna tareaExterna, String codigoDocAdjunto, String uGestion){
 		//Balancea la comprobación de existencia de archivos adjuntos, dentro de la unidad de gestión indicada:
@@ -380,6 +367,18 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		return mensajeValidacion;
 	}
 	
+	@Override
+	public String existeAdjuntoUGCarteraValidacion(TareaExterna tareaExterna, String codigoDocAdjunto, String uGestion, String cartera) {
+
+		if (!Checks.esNulo(cartera)) {
+			DDCartera carteraObj = trabajoApi.getCartera(tareaExterna);
+			if (cartera.equals(carteraObj.getCodigo())) {
+				return existeAdjuntoUGValidacion(tareaExterna, codigoDocAdjunto, uGestion);
+			}
+		}
+
+		return null; // solo se valida el documento si cumple con la cartera seleccionada
+	}
 	
 	@Override
 	public String mismoNumeroAdjuntosComoActivosExpedienteUGValidacion(TareaExterna tareaExterna, String codigoDocAdjunto, String uGestion){

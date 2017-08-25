@@ -349,6 +349,10 @@
 				def activoTramiteManager = ctx.getBean("activoTramiteManager");
             	return activoTramiteManager.existeAdjuntoUGValidacion(tareaExterna, codigo, unidadGestion);
             }
+            def existeAdjuntoUGCarteraValidacion(String codigo, String unidadGestion, String cartera) {
+				def activoTramiteManager = ctx.getBean("activoTramiteManager");
+				return activoTramiteManager.existeAdjuntoUGCarteraValidacion(tareaExterna, codigo, unidadGestion, cartera);
+            }
             def existeAdjuntoUGValidacion(String cadenaDAUG) {
 				def activoTramiteManager = ctx.getBean("activoTramiteManager");
             	return activoTramiteManager.existeAdjuntoUGValidacionCadena(tareaExterna, cadenaDAUG);

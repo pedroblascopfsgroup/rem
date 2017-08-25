@@ -30,4 +30,8 @@ public class NotificatorServiceSancionOfertaSoloAceptacion extends NotificatorSe
 		
 	}
 
+	public void notificatorFinSinTramite(Long idOferta) {
+		this.generaNotificacionSinTramite(idOferta);
+	}
+
 }

@@ -25,6 +25,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
@@ -40,6 +41,8 @@ import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.Comprador;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -54,6 +57,8 @@ import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNotificatorService
 		implements NotificatorService {
 
+	private static final String STR_MISSING_VALUE = "---";
+
 	private final Log logger = LogFactory.getLog(getClass());
 
 	private static final String GESTOR_PRESCRIPTOR = "prescriptor";
@@ -62,7 +67,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	private static final String GESTOR_COMERCIAL_LOTE_RESTRINGIDO = "gestor-comercial-lote-restringido";
 	private static final String GESTOR_COMERCIAL_LOTE_COMERCIAL = "gestor-comercial-lote-comercial";
 	private static final String GESTOR_FORMALIZACION = "gestor-formalizacion";
-	private static final String GESTOR_GESTORIA_FASE_3 = "gestoria-fase-3";
+	private static final String GESTOR_BACKOFFICE = "gestor-backoffice";
 
 	@Resource
 	private Properties appProperties;
@@ -124,7 +129,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				}
 
 				this.enviaNotificacionAceptar(tramite, oferta,
-						expediente.getReserva() != null ? expediente.getId() : null,
+						expediente,
 						destinatarios.toArray(new String[] {}));
 
 			} else if (permiteRechazar
@@ -164,17 +169,16 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 
 	private String[] getGestoresANotificar(Activo activo, Oferta ofertaAceptada) {
 		boolean formalizacion = checkFormalizar(activo.getId());
-		String[] clavesGestores = null;
+		ArrayList<String> clavesGestores = new ArrayList<String>();
 		String claveGestorComercial = this.getTipoGestorComercial(ofertaAceptada);
+		clavesGestores.addAll(Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial, GESTOR_BACKOFFICE));
+		
 
 		if (formalizacion) {
-
-			clavesGestores = new String[] { GESTOR_FORMALIZACION, GESTOR_GESTORIA_FASE_3, GESTOR_PRESCRIPTOR,
-					GESTOR_MEDIADOR, claveGestorComercial };
-		} else {
-			clavesGestores = new String[] { GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial };
+			clavesGestores.add(GESTOR_FORMALIZACION);
 		}
-		return clavesGestores;
+
+		return clavesGestores.toArray(new String[]{});
 	}
 
 	private ArrayList<String> getDestinatariosNotificacion(Activo activo, Oferta ofertaAceptada,
@@ -243,8 +247,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			ExpedienteComercial expediente, String... filtroGestores) {
 		String[] claves = filtroGestores != null ? filtroGestores
 				: new String[] { GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, GESTOR_COMERCIAL_ACTIVO,
-						GESTOR_COMERCIAL_LOTE_RESTRINGIDO, GESTOR_COMERCIAL_LOTE_COMERCIAL, GESTOR_FORMALIZACION,
-						GESTOR_GESTORIA_FASE_3 };
+						GESTOR_COMERCIAL_LOTE_RESTRINGIDO, GESTOR_COMERCIAL_LOTE_COMERCIAL, GESTOR_FORMALIZACION, GESTOR_BACKOFFICE};
 		this.compruebaRequisitos(activo, oferta, loteComercial, expediente, Arrays.asList(claves));
 
 		HashMap<String, String> gestores = new HashMap<String, String>();
@@ -258,9 +261,11 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				gestores.put(s, extractEmail(gestorActivoApi.getGestorByActivoYTipo(activo, "GCOM")));
 			} else if (GESTOR_COMERCIAL_LOTE_COMERCIAL.equals(s)) {
 				gestores.put(s, extractEmail(loteComercial.getUsuarioGestorComercial()));
-			} else if (GESTOR_FORMALIZACION.equals(s) || GESTOR_GESTORIA_FASE_3.equals(s)) {
+			} else if (GESTOR_FORMALIZACION.equals(s)) {
 				gestores.put(s, extractEmail(
 						gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GFORM")));
+			} else if (GESTOR_BACKOFFICE.equals(s)) {
+				gestores.put(s, extractEmail(gestorActivoApi.getGestorByActivoYTipo(activo, "GBO")));
 			}
 		}
 
@@ -278,8 +283,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	private void compruebaRequisitos(Activo activo, Oferta oferta, ActivoLoteComercial loteComercial,
 			ExpedienteComercial expediente, List<String> claves) {
 		if (claves != null) {
-			if ((activo == null) && (claves.contains(GESTOR_COMERCIAL_ACTIVO)
-					|| claves.contains(GESTOR_COMERCIAL_LOTE_RESTRINGIDO) || claves.contains(GESTOR_MEDIADOR))) {
+			if ((activo == null) && seRequiereActivo(claves)) {
 				throw new IllegalStateException(
 						"Se necesita un Activo para obtener alguno de los gestores: " + claves.toString());
 			}
@@ -295,14 +299,21 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			}
 
 			if ((expediente == null)
-					&& (claves.contains(GESTOR_FORMALIZACION) || claves.contains(GESTOR_GESTORIA_FASE_3))) {
+					&& (claves.contains(GESTOR_FORMALIZACION))) {
 				throw new IllegalStateException(
 						"Se necesita un ExpedienteComercial para obtener alguno de los gestores: " + claves.toString());
 			}
 		}
 	}
 
-	private String computeKey(String key) {
+	private boolean seRequiereActivo(List<String> claves) {
+		return claves.contains(GESTOR_COMERCIAL_ACTIVO)
+				|| claves.contains(GESTOR_COMERCIAL_LOTE_RESTRINGIDO) || claves.contains(GESTOR_MEDIADOR) || claves.contains(GESTOR_BACKOFFICE);
+	}
+	
+	
+
+	/* private String computeKey(String key) {
 		String result = "";
 		try {
 			byte[] bytesOfMessage = key.getBytes("UTF-8");
@@ -323,22 +334,23 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			e.printStackTrace();
 		}
 		return result;
-	}
+	} */
 
-	private void enviaNotificacionAceptar(ActivoTramite tramite, Oferta oferta, Long idExpediente,
+	private void enviaNotificacionAceptar(ActivoTramite tramite, Oferta oferta, ExpedienteComercial expediente,
 			String... destinatarios) {
 		String asunto = "Notificación de aprobación provisional de la oferta " + oferta.getNumOferta();
 		String cuerpo = "<p>Nos complace comunicarle que la oferta " + oferta.getNumOferta()
-				+ " ha sido PROVISIONALMENTE ACEPTADA. Adjunto a este correo encotnrará el documento con las instrucciones a seguir para la formalización de la reserva.</p>";
+				+ " a nombre de " + nombresOfertantes(expediente)
+				+ " ha sido PROVISIONALMENTE ACEPTADA. Adjunto a este correo encontrará el documento con las instrucciones a seguir para la reserva y formalización, así como la Ficha cliente a cumplimentar";
 
-		if (idExpediente != null) {
+		/* if (idExpediente != null) {
 			String reservationKey = String.valueOf(idExpediente)
 					.concat(appProperties.getProperty("haya.reservation.pwd"));
 			reservationKey = this.computeKey(reservationKey);
 			String reservationUrl = appProperties.getProperty("haya.reservation.url");
 			cuerpo = cuerpo + "<p>Pinche <a href=\"" + reservationUrl + idExpediente + "/" + reservationKey
 					+ "/1\">aquí</a> para la descarga del contrato de reserva.</p>";
-		}
+		} */
 
 		cuerpo = cuerpo + "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
 
@@ -360,14 +372,44 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			gestorComercial = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "GCOM");
 		}
 
-		cuerpo = cuerpo + String.format("<p>Gestor comercial: %s </p>", gestorComercial.getApellidoNombre());
-		cuerpo = cuerpo + String.format("<p>%s</p>", gestorComercial.getEmail());
+		cuerpo = cuerpo + String.format("<p>Gestor comercial: %s </p>", (gestorComercial != null) ? gestorComercial.getApellidoNombre() : STR_MISSING_VALUE );
+		cuerpo = cuerpo + String.format("<p>%s</p>", (gestorComercial != null) ? gestorComercial.getEmail() : STR_MISSING_VALUE);
 
 		DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
 		dtoSendNotificator.setTitulo(asunto);
 
 		String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
 		enviaNotificacionGenerico(asunto, cuerpoCorreo, true, destinatarios);
+	}
+
+	private String nombresOfertantes(ExpedienteComercial expediente) {
+		if ((expediente != null) && (expediente.getCompradores() != null) && (!expediente.getCompradores().isEmpty())) {
+			StringBuilder ofertantes= null;
+			for (CompradorExpediente ce : expediente.getCompradores()) {
+				String fullName = getCompradorFullName(ce.getComprador());
+				if (ofertantes != null) {
+					ofertantes.append(" / " + fullName);
+				} else {
+					ofertantes = new StringBuilder(fullName);
+				}
+			}
+			return (ofertantes != null) ? ofertantes.toString() : STR_MISSING_VALUE;
+		} else {
+			return STR_MISSING_VALUE;
+		}
+	}
+
+	private String getCompradorFullName(Long compradorId) {
+		if (compradorId != null) {
+			Comprador comprador = genericDao.get(Comprador.class, genericDao.createFilter(FilterType.EQUALS, "id", compradorId) );
+			if (comprador != null) {
+				return comprador.getFullName();
+			} else {
+				return STR_MISSING_VALUE;
+			}
+		} else {
+			return STR_MISSING_VALUE;
+		}
 	}
 
 	private void enviaNotificacionRechazar(ActivoTramite tramite, Activo activo, Oferta oferta,
@@ -393,28 +435,42 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			throw new IllegalArgumentException("Es necesario especificar el destinatario de la notificación.");
 		}
 		List<String> mailsCC = new ArrayList<String>();
-
-		DtoAdjuntoMail adjMail = new DtoAdjuntoMail();
-		FileItem fileitem = FileItemUtils.fromResource("docs/correo_sancion_oferta.docx");
+		List<DtoAdjuntoMail> adjuntos = new ArrayList<DtoAdjuntoMail>();
+		
+		FileItem f1 = null;
+		FileItem f2 = null;
 		try {
-			List<DtoAdjuntoMail> adjuntos = new ArrayList<DtoAdjuntoMail>();
-
 			if (adjuntaInstrucciones) {
-				Adjunto adjunto = new Adjunto(fileitem);
-				adjMail.setAdjunto(adjunto);
-				adjMail.setNombre("Instrucciones de la reserva.docx");
-				adjuntos.add(adjMail);
+				f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_formalizacion.pdf");
+				f2 = FileItemUtils.fromResource("docs/ficha_cliente.xlsx");
+				
+				adjuntos.add(createAdjunto(f1, "Instrucciones_Reserva_Formalizacion.pdf"));
+				adjuntos.add(createAdjunto(f2, "Ficha_cliente.xlsx"));
 			}
 			genericAdapter.sendMail(Arrays.asList(destinatarios), mailsCC, asunto, cuerpoCorreo, adjuntos);
-		} finally {
-			if ((fileitem != null) && (fileitem.getFile() != null)) {
-				boolean deleted = fileitem.getFile().delete();
-				if (!deleted) {
-					logger.warn("No se ha borrado el fichero: " + fileitem.getFile().getAbsolutePath()
-							+ ". Se ha quedado basurilla.");
-				}
+		}finally {
+			deleteFile(f1);
+			deleteFile(f2);
+		}
+	}
+
+	private void deleteFile(FileItem fileitem) {
+		if ((fileitem != null) && (fileitem.getFile() != null)) {
+			boolean deleted = fileitem.getFile().delete();
+			// boolean deleted = false;
+			if (!deleted) {
+				logger.warn("No se ha borrado el fichero: " + fileitem.getFile().getAbsolutePath()
+						+ ". Se ha quedado basurilla.");
 			}
 		}
+	}
+
+	private DtoAdjuntoMail createAdjunto(FileItem fileitem, String name) {
+		DtoAdjuntoMail adjMail = new DtoAdjuntoMail();
+		Adjunto adjunto = new Adjunto(fileitem);
+		adjMail.setAdjunto(adjunto);
+		adjMail.setNombre(name);	
+		return adjMail;
 	}
 
 }

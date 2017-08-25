@@ -3103,6 +3103,19 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return false;
 	}
 
+	@Override
+	public DDCartera getCartera(TareaExterna tareaExterna) {
+		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
+		if (!Checks.esNulo(trabajo)) {
+			Activo primerActivo = trabajo.getActivo();
+			if (!Checks.esNulo(primerActivo)) {
+				return primerActivo.getCartera();
+			}
+		}
+
+		return null;
+	}
+	
 	public String comprobarPropuestaPrecios(TareaExterna tareaExterna) {
 
 		String mensaje = new String();

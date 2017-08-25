@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.InformeJuridico;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGasto;
@@ -237,7 +238,20 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		List<ActivoTramite> listaTramites = activoTramiteDao.getListaTramitesActivoAdmision(idActivo);
 		return (!listaTramites.isEmpty());
 	}
-	
+
+	@Override
+	public Boolean existeAdjuntoUGCartera(TareaExterna tareaExterna, String codigoDocAdjunto, String uGestion, String cartera) {
+
+		if (!Checks.esNulo(cartera)) {
+			DDCartera carteraObj = trabajoApi.getCartera(tareaExterna);
+			if (cartera.equals(carteraObj.getCodigo())) {
+				return existeAdjuntoUG(tareaExterna, codigoDocAdjunto, uGestion);	
+			}
+		}
+
+		return true; // solo se valida el documento si cumple con la cartera seleccionada
+	}
+
 	@Override
 	@BusinessOperation(overrides = "activoTramiteManager.existeAdjuntoUG")
 	public Boolean existeAdjuntoUG(TareaExterna tareaExterna, String codigoDocAdjunto, String uGestion){

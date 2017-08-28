@@ -11,21 +11,31 @@ import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.devon.mail.MailManager;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
-import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.utils.AgendaMultifuncionCorreoUtils;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
-import es.pfsgroup.plugin.rem.rest.api.NotificatorApi;
+import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
 
 @Component
-public class NotificatorServiceResolucionComite implements NotificatorApi{
+public class NotificatorServiceResolucionComite extends AbstractNotificatorService implements NotificatorService{
 
 	public static final String CODIGO_T013_RESOLUCION_COMITE = "T013_ResolucionComite";
+    public static final String CODIGO_T013_DEFINICION_OFERTA = "T013_DefinicionOferta";
 
 	
 	
@@ -36,10 +46,14 @@ public class NotificatorServiceResolucionComite implements NotificatorApi{
 	private GenericAdapter genericAdapter;
 	
 	@Autowired
-	private AgendaMultifuncionCorreoUtils agendaMultifuncionCorreoUtils;
+	private ActivoTramiteApi activoTramiteApi;
 	
-	@Resource(name = "mailManager")
-	private MailManager mailManager;
+	@Autowired
+	private OfertaApi ofertaApi;	
+
+	@Autowired
+	private ExpedienteComercialDao expedienteComercialDao;
+	
 
 	List<String> mailsPara = new ArrayList<String>();
 	List<String> mailsCC = new ArrayList<String>();
@@ -57,29 +71,81 @@ public class NotificatorServiceResolucionComite implements NotificatorApi{
 		//TODO: poner los códigos de tipos de tareas
 		return new String[]{CODIGO_T013_RESOLUCION_COMITE};
 	}
-
-
-	
 	
 	@Override
-	public void notificator(ResolucionComiteBankia resol, Notificacion notif) {		
+	public final void notificator(ActivoTramite tramite) {
+
+	}	
+
+	@Override
+	public void notificatorFinTareaConValores(ActivoTramite tramite, List<TareaExternaValor> valores) {
+		
+			
+		DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
+		
+		ExpedienteComercial expediente = getExpedienteComercial(tramite);
+		Oferta oferta = expediente.getOferta();
+			
+		List<String> mailsPara = new ArrayList<String>();
+		List<String> mailsCC = new ArrayList<String>();
+		mailsCC.add(this.getCorreoFrom());			
+		
+		
+		if(activoTramiteApi.getTareaValorByNombre(valores, "comboResolucion").equalsIgnoreCase(DDResolucionComite.CODIGO_CONTRAOFERTA)) {
+						
+			Activo activo = oferta.getActivoPrincipal();
+			Usuario preescriptor = ofertaApi.getUsuarioPreescriptor(oferta);
+			
+			Usuario gestor = null;
+			Usuario supervisor = null;
+			
+			for (TareaActivo tareaActivo : tramite.getTareas()) {				
+				if (CODIGO_T013_DEFINICION_OFERTA.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) {
+					gestor = tareaActivo.getUsuario();
+					supervisor = tareaActivo.getSupervisorActivo();
+				}
+			}
+
+			
+			List<Usuario> usuarios = new ArrayList<Usuario>();
+			usuarios.add(preescriptor);
+			usuarios.add(gestor);
+			usuarios.add(supervisor);
+			
+		    mailsPara = getEmailsNotificacionContraoferta(usuarios);
+			mailsCC.add(this.getCorreoFrom());
+		
+		    
+			String contenido = "<p> Le informamos que la citada propuesta ha sido CONTRAOFERTADA por un importe de #importeContraoferta.</p>"
+					+"<p> Quedamos a su disposición para cualquier consulta o aclaración.</p>"
+					+"<p> Saludos cordiales.</p>"
+					+"<p> Fdo: #gestorTarea </p>"
+					+"<p> Email: #mailGestorTarea </p>";
+			
+			contenido = contenido.replace("#importeContraoferta", activoTramiteApi.getTareaValorByNombre(valores, "numImporteContra"))
+								.replace("#gestorTarea", gestor.getApellidoNombre())
+								.replace("#mailGestorTarea", gestor.getEmail());
+	
+			String titulo = "Contratoferta Activo/Agrupación #numactivo_agrupacion Oferta #numoferta";	
+			String numactivoagrupacion = Checks.esNulo(oferta.getAgrupacion()) ? activo.getNumActivo().toString() : oferta.getAgrupacion().getNumAgrupRem().toString();
+			titulo = titulo.replace("#numactivo_agrupacion", numactivoagrupacion)
+					 		.replace("#numoferta", oferta.getNumOferta().toString());
+	
+			dtoSendNotificator.setTitulo("Notificación REM");
+			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
+		}
+	}
+	
+	public void notificarResolucionBankia(ResolucionComiteBankia resol, Notificacion notif) {		
 		List<String> mailsPara = new ArrayList<String>();
 		List<String> mailsCC = new ArrayList<String>();
 		
 	    String correos = notif.getPara();
 	    Collections.addAll(mailsPara, correos.split(";"));
 		
-		genericAdapter.sendMail(mailsPara, mailsCC, notif.getTitulo(), this.generateCuerpo(resol, notif.getDescripcion()));
+		genericAdapter.sendMail(mailsPara, mailsCC, notif.getTitulo(), this.generateCuerpoNotificacionBankia(resol, notif.getDescripcion()));
 	}
-	
-	
-	
-	private String getUrlImagenes(){
-		String url = appProperties.getProperty("url");
 		
-		return url+"/pfs/js/plugin/rem/resources/images/notificator/";
-	}
-	
 	
 	private String getUnidadGestion(ResolucionComiteBankia resol){
 		String ud = "";
@@ -147,9 +213,15 @@ public class NotificatorServiceResolucionComite implements NotificatorApi{
 		}
 		return importe;
 	}
+	
+	private String getUrlImagenes(){
+		String url = appProperties.getProperty("url");
+		
+		return url+"/pfs/js/plugin/rem/resources/images/notificator/";
+	}
 
 	
-	protected String generateCuerpo(ResolucionComiteBankia resol, String contenido){
+	private String generateCuerpoNotificacionBankia(ResolucionComiteBankia resol, String contenido){
 		String cuerpo = "<html>"
 				+ "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'>"
 				+ "<html>"
@@ -222,5 +294,54 @@ public class NotificatorServiceResolucionComite implements NotificatorApi{
 		
 		return cuerpo;
 	}
+	
+	private ExpedienteComercial getExpedienteComercial(ActivoTramite tramite) {
+		ActivoTramite activoTramite = activoTramiteApi.get(tramite.getId());
 
+		if (activoTramite == null) {
+			return null;
+		}
+
+		Trabajo trabajo = activoTramite.getTrabajo();
+
+		if (trabajo == null) {
+			return null;
+		}
+
+		ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByTrabajo(trabajo.getId());
+
+		if (expediente == null) {
+			return null;
+		}
+
+		return expediente;
+	}
+	
+	private List<String> getEmailsNotificacionContraoferta(List<Usuario> usuarios) {
+
+
+		List<String> mailsPara = new ArrayList<String>();
+		
+		for(Usuario usuario: usuarios) {
+			
+			if (usuario != null && !Checks.esNulo(usuario.getEmail())) {
+				mailsPara.add(usuario.getEmail());
+			}
+		}
+		
+
+		
+		return mailsPara;
+	}
+	
+	public DtoSendNotificator rellenaDtoSendNotificator(ActivoTramite tramite){
+		DtoSendNotificator dtoSendNotificator = new DtoSendNotificator();
+		
+		dtoSendNotificator.setNumActivo(tramite.getActivo().getNumActivo());
+		dtoSendNotificator.setDireccion(this.generateDireccion(tramite.getActivo()));
+		if(!Checks.esNulo(tramite.getTrabajo().getAgrupacion()))
+			dtoSendNotificator.setNumAgrupacion(tramite.getTrabajo().getAgrupacion().getNumAgrupRem());
+		
+		return dtoSendNotificator;
+	}
 }

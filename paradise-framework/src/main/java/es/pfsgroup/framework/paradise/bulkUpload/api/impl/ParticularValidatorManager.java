@@ -62,10 +62,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 					+ " 		AGR.AGR_NUM_AGRUP_REM = "+numAgr+" AND AGR.AGR_ID = ONV.AGR_ID"
 					+ "         AND ROWNUM = 1 ");
 		} else if (tagId.equals("2")) {
-			return rawDao.getExecuteSQL("SELECT '"+cartera+"-'||RES.DD_PRV_ID||'-'||RES.DD_LOC_ID||'-'||RES.RES_CP||'-TIPO-'||ACT.DD_ENO_ORIGEN_ANT_ID "
-					+ "		  FROM ACT_RES_RESTRINGIDA RES, ACT_AGR_AGRUPACION AGR, ACT_AGA_AGRUPACION_ACTIVO AGA, ACT_ACTIVO ACT WHERE"
+			return rawDao.getExecuteSQL("SELECT '"+cartera+"-'||RES.DD_PRV_ID||'-'||RES.DD_LOC_ID||'-'||RES.RES_CP||'-PROPIETARIO-'|| PAC.PRO_ID "
+					+ "		  FROM ACT_RES_RESTRINGIDA RES, ACT_AGR_AGRUPACION AGR, ACT_AGA_AGRUPACION_ACTIVO AGA, ACT_ACTIVO ACT, ACT_PAC_PROPIETARIO_ACTIVO PAC WHERE"
 					+ " 		AGR.AGR_NUM_AGRUP_REM = "+numAgr+" AND AGR.AGR_ID = RES.AGR_ID AND AGA.AGR_ID = AGR.AGR_ID AND"
-					+ " 		AGA.ACT_ID = ACT.ACT_ID "
+					+ " 		AGA.ACT_ID = ACT.ACT_ID AND PAC.ACT_ID = ACT.ACT_ID"
 					+ " 		AND ACT.BORRADO = 0"
 					+ " 		AND AGR.BORRADO = 0"
 					+ " 		AND AGA.BORRADO = 0"
@@ -85,10 +85,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	public String getCarteraLocationTipPatrimByNumAct (String numActive) {
-		return rawDao.getExecuteSQL("SELECT ACT.DD_CRA_ID||'-'||DD_PRV_ID||'-'||DD_LOC_ID||'-'||BIE_LOC_COD_POST||'-TIPO-'||ACT.DD_ENO_ORIGEN_ANT_ID "
-							+ "		  FROM ACT_ACTIVO ACT, BIE_LOCALIZACION BIE WHERE"
+		return rawDao.getExecuteSQL("SELECT ACT.DD_CRA_ID||'-'||DD_PRV_ID||'-'||DD_LOC_ID||'-'||BIE_LOC_COD_POST||'-PROPIETARIO-'||PAC.PRO_ID "
+							+ "		  FROM ACT_ACTIVO ACT, BIE_LOCALIZACION BIE, ACT_PAC_PROPIETARIO_ACTIVO PAC WHERE"
 							+ " 		ACT.ACT_NUM_ACTIVO = "+numActive+" "
 							+ " 		AND ACT.BIE_ID=BIE.BIE_ID"
+							+ "			AND PAC.ACT_ID =  ACT.ACT_ID"
 							+ " 		AND ACT.BORRADO = 0"
 							+ " 		AND BIE.BORRADO = 0"
 							+ "         AND ROWNUM = 1 ");

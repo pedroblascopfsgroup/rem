@@ -67,6 +67,9 @@ public class Posicionamiento implements Serializable, Auditable, Comparable<Posi
 	@ManyToOne
 	@JoinColumn(name = "PVE_ID_NOTARIO")
 	private ActivoProveedor notario;
+	
+	@Column(name = "POS_FECHA_FIN_POSICIONAMIENTO")
+	private Date fechaFinPosicionamiento;
 
 	@Version
 	private Long version;
@@ -148,6 +151,14 @@ public class Posicionamiento implements Serializable, Auditable, Comparable<Posi
 		return resultado;
 		
 
+	}
+
+	public Date getFechaFinPosicionamiento() {
+		return fechaFinPosicionamiento;
+	}
+
+	public void setFechaFinPosicionamiento(Date fechaFinPosicionamiento) {
+		this.fechaFinPosicionamiento = fechaFinPosicionamiento;
 	}
 
 }

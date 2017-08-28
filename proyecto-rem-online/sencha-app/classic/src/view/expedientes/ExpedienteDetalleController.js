@@ -1570,11 +1570,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 
 	onRowClickPosicionamiento:  function(gridView, record) {
-		var me = this;    		
-
-		me.getViewModel().set("posicionamSelected", record);
-		me.getViewModel().notify();
-		me.lookupReference('listadoNotarios').getStore().load();
+		var me = this;  
+		if(!Ext.isEmpty(record.get('fechaFinPosicionamiento'))){
+			gridView.grid.down('#removeButton').setDisabled(true);
+		}
+		else{
+			gridView.grid.down('#removeButton').setDisabled(false);
+		}
+		if(!Ext.isEmpty(record.get('idProveedorNotario'))){
+			me.getViewModel().set("posicionamSelected", record);
+			me.getViewModel().notify();
+			me.lookupReference('listadoNotarios').getStore().load();
+		}
 	},
 
 	changeFecha: function(campoFecha) {
@@ -1822,5 +1829,21 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		config.url= $AC.getRemoteUrl("expedientecomercial/getExcelActivosExpediente");
 
 		me.fireEvent("downloadFile", config);		
+	},
+	
+	validarFechaPosicionamiento: function(value){
+		var hoy= new Date();
+		hoy.setHours(0,0,0,0);
+		var from = value.split("/");
+		var fechaPosiString = new Date(from[2], from[1] - 1, from[0]);
+		var fechaPosiDate= new Date(fechaPosiString);
+		
+		if(fechaPosiDate<hoy){
+			return HreRem.i18n('info.msg.fecha.posicionamiento.mayor.hoy');;
+		}
+		else{
+			return true;
+		}
+	
 	}
 });

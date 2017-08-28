@@ -2,7 +2,10 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
+import org.hibernate.annotations.Check;
+
 import es.capgemini.devon.dto.WebDto;
+import es.pfsgroup.commons.utils.Checks;
 
 
 /**
@@ -11,7 +14,7 @@ import es.capgemini.devon.dto.WebDto;
  * @author Luis Caballero
  *
  */
-public class DtoPosicionamiento extends WebDto {
+public class DtoPosicionamiento extends WebDto implements Comparable<DtoPosicionamiento> {
 
 	/**
 	 * 
@@ -28,6 +31,8 @@ public class DtoPosicionamiento extends WebDto {
 	private Date horaPosicionamiento;
 	private Date fechaHoraPosicionamiento;
 	private Date fechaHoraAviso;
+	private Date fechaAlta;
+	private Date fechaFinPosicionamiento;
 	
 	
 	public Long getIdPosicionamiento() {
@@ -83,7 +88,36 @@ public class DtoPosicionamiento extends WebDto {
 	}
 	public void setFechaHoraAviso(Date fechaHoraAviso) {
 		this.fechaHoraAviso = fechaHoraAviso;
+	}
+	public Date getFechaAlta() {
+		return fechaAlta;
+	}
+	public void setFechaAlta(Date fechaAlta) {
+		this.fechaAlta = fechaAlta;
+	}
+	public Date getFechaFinPosicionamiento() {
+		return fechaFinPosicionamiento;
+	}
+	public void setFechaFinPosicionamiento(Date fechaFinPosicionamiento) {
+		this.fechaFinPosicionamiento = fechaFinPosicionamiento;
 	} 	
+	
+	@Override
+	public int compareTo(DtoPosicionamiento o) {
+		
+		if(!Checks.esNulo(this.getFechaFinPosicionamiento()) || !Checks.esNulo(o.getFechaFinPosicionamiento())){
+			if(Checks.esNulo(this.getFechaFinPosicionamiento())){
+				return -1;
+			}
+			else if(Checks.esNulo(o.getFechaFinPosicionamiento())){
+				return 1;
+			}
+			return o.getFechaFinPosicionamiento().compareTo(this.getFechaFinPosicionamiento());
+		}
+		else{
+			return o.getFechaAlta().compareTo(this.getFechaAlta());
+		}
+	}
 	
    	
 }

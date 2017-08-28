@@ -35,6 +35,7 @@ import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
@@ -740,5 +741,13 @@ public interface TrabajoApi {
 	public Map<String, Long> getSupervisorGestor(Long idAgrupacion);
 
 	List<DDTipoProveedor> getComboTipoProveedorFiltered(Long idTrabajo);
+
+	/**
+	 * Metodo que dado una tarea devuelve la cartera
+	 *  
+	 * @param tareaExterna
+	 * @return devuelve null en caso de que no se encuentre una cartera para dicha tarea (no deberia pasar)
+	 */
+	DDCartera getCartera(TareaExterna tareaExterna);
 
 }

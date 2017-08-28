@@ -68,7 +68,7 @@ public class FileItemUtils {
 	}
 
 	private static File newRandomFile(String directory, String fileExtension) {
-		return new File(directory + ("tmp_" + new Date().getTime() + "_" + RANDOM.nextInt()) + fileExtension);
+		return new File(directory + ("/tmp_" + new Date().getTime() + "_" + RANDOM.nextInt()) + fileExtension);
 	}
 
 }

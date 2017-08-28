@@ -247,5 +247,16 @@ public interface ActivoTramiteApi {
 	 * @return
 	 */
 	public List<TareaProcedimiento> getTareasByIdTramite(Long idTramite);
+
+	/**
+	 * Método de validación de documento único, para tareas teniendo en cuenta que dicha validacion se aplique solo para una determinada cartera pasada por parametro
+	 * 
+	 * @param tareaExterna
+	 * @param codigoDocAdjunto
+	 * @param uGestion
+	 * @param cartera
+	 * @return
+	 */
+	String existeAdjuntoUGCarteraValidacion(TareaExterna tareaExterna, String codigoDocAdjunto, String uGestion, String cartera);
 }
 

@@ -11,6 +11,11 @@ Ext.define('HreRem.model.Posicionamiento', {
     			name:'idPosicionamiento'
     		},
     		{
+    			name:'fechaAlta',
+    			type : 'date',
+				dateFormat: 'c'
+    		},
+    		{
     			name:'fechaAviso',
     			type : 'date',
 				dateFormat: 'c'
@@ -43,6 +48,11 @@ Ext.define('HreRem.model.Posicionamiento', {
     		},
     		{
     			name:'fechaHoraAviso',
+    			type : 'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name:'fechaFinPosicionamiento',
     			type : 'date',
     			dateFormat: 'c'
     		}

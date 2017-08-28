@@ -5,8 +5,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +26,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceResolucionComite;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -37,11 +36,11 @@ import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
-import es.pfsgroup.plugin.rem.rest.api.NotificatorApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import net.sf.json.JSONObject;
 
 @Controller
 public class ResolucionComiteController {
@@ -71,7 +70,7 @@ public class ResolucionComiteController {
 	private OfertaApi ofertaApi;
 	
 	@Autowired
-	NotificatorApi notificatorApi;
+	private NotificatorServiceResolucionComite notificatorApi;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/resolucioncomite")
@@ -201,7 +200,7 @@ public class ResolucionComiteController {
 							errorsList.put("error", "Se ha producido un error al enviar la notificación.");
 						}else{
 							notif.setPara(usu.getEmail());
-							notificatorApi.notificator(resol,notif);
+							notificatorApi.notificarResolucionBankia(resol,notif);
 							logger.debug("\tEnviando correo a: " + notif.getPara());
 						}
 					}

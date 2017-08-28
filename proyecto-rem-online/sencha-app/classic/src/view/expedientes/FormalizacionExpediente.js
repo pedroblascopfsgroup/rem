@@ -18,6 +18,49 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
     initComponent: function () {
         var me = this;
 		me.setTitle(HreRem.i18n('title.formalizacion'));
+		
+		var coloredRender = function (value, meta, record) {
+    		var borrado = record.get('fechaFinPosicionamiento');
+    		if(value){
+	    		if (borrado) {
+	    			return '<span style="color: #DF0101;">'+value+'</span>';
+	    		} else {
+	    			return value;
+	    		}
+    		} else {
+	    		return '-';
+	    	}
+    	};
+    	
+    	var dateColoredRender = function (value, meta, record) {
+    		var valor = dateRenderer(value);
+    		return coloredRender(valor, meta, record);
+    	};
+    	
+    	var hourColoredRender = function (value, meta, record) {
+    		var valor = hourRenderer(value);
+    		return coloredRender(valor, meta, record);
+    	};
+    	
+    	var dateRenderer = function(value, rec) {
+			if(!Ext.isEmpty(value)) {
+				var newDate = new Date(value);
+				var formattedDate = Ext.Date.format(newDate, 'd/m/Y');
+				return formattedDate;
+			} else {
+				return value;
+			}
+		}
+		
+		var hourRenderer = function(value, rec){
+			if(!Ext.isEmpty(value)) {
+				var newDate = new Date(value);
+				var formattedDate = Ext.Date.format(newDate, 'H:i');
+				return formattedDate;
+			} else {
+				return value;
+			}
+		}
 
         var items= [
         // Apartado Financiación.
@@ -186,7 +229,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 							{   
 								text: HreRem.i18n('fieldlabel.fecha.aviso'),
 						  		dataIndex: 'fechaAviso',
-					            formatter: 'date("d/m/Y")',
+					           // formatter: 'date("d/m/Y")',
 					        	flex: 1,
 					        	editor: {
 		                  			xtype: 'datefield',
@@ -194,12 +237,14 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						            listeners: {
 										change: 'changeFecha'
 									}
-					        	}
+					        	},
+					        	hidden: true,
+					        	renderer: dateColoredRender
 					       	},
 					       	{
 					       		text: HreRem.i18n('fieldlabel.hora.aviso'),
 					       		dataIndex: 'horaAviso',
-					       		formatter: 'date("H:i")',
+					       		//formatter: 'date("H:i")',
 					       		flex: 0.5,
 								editor: {
 						       		xtype: 'timefieldbase',
@@ -213,12 +258,21 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						            listeners: {
 										change: 'changeHora'
 									}
-								}
+								},
+								hidden: true,
+								renderer: hourColoredRender
 							},	
+							{   
+					       		text: HreRem.i18n('fieldlabel.fecha.alta'),
+						  		dataIndex: 'fechaAlta',
+					            //formatter: 'date("d/m/Y")',
+					        	flex: 1,
+					        	renderer: dateColoredRender
+					       	},
 					       	{   
 					       		text: HreRem.i18n('fieldlabel.fecha.posicionamiento'),
 						  		dataIndex: 'fechaPosicionamiento',
-					            formatter: 'date("d/m/Y")',
+					           // formatter: 'date("d/m/Y")',
 					        	flex: 1,
 					        	editor: {
 		                  			xtype: 'datefield',
@@ -226,13 +280,17 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 		                  			allowBlank: false,
 						            listeners: {
 										change: 'changeFecha'
+									},
+									validator: function(value){
+										return this.up('expedientedetallemain').getController().validarFechaPosicionamiento(value);
 									}
-					        	}
+					        	},
+					        	renderer: dateColoredRender
 					       	},
 					    	{
 					       		text: HreRem.i18n('fieldlabel.hora.posicionamiento'),
 					       		dataIndex: 'horaPosicionamiento',
-					       		formatter: 'date("H:i")',
+					       		//formatter: 'date("H:i")',
 					       		flex: 0.5,
 								editor: {
 						       		xtype: 'timefieldbase',
@@ -246,24 +304,39 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						            listeners: {
 										change: 'changeHora'
 									}
-								}
+								},
+								renderer: hourColoredRender
 					    	},
 						   	{
 					            text: HreRem.i18n('fieldlabel.notaria'),
 					            dataIndex: 'idProveedorNotario',
 					            flex: 1,
-					            renderer: function(value) {								        		
-					        		var me = this;					        		
-					        		var comboEditor = me.columns && me.down('gridcolumn[dataIndex=idProveedorNotario]').getEditor ? me.down('gridcolumn[dataIndex=idProveedorNotario]').getEditor() : me.getEditor ? me.getEditor():null;
-					        		if(!Ext.isEmpty(comboEditor)) {
-						        		var store = comboEditor.getStore(),							        		
-						        		record = store.findRecord("id", value);
-						        		if(!Ext.isEmpty(record)) {								        			
-						        			return record.get("descripcion");								        		
-						        		} else {
-						        			comboEditor.setValue(value);								        			
+					            renderer: function(value, meta, record) {
+					        		var me = this;
+					        		if(Ext.isEmpty(value) && meta.record.get('fechaFinPosicionamiento')){
+					        			return '<span style="color: #DF0101;">-</span>';
+					        		}
+					        		else if(Ext.isEmpty(value) && !meta.record.get('fechaFinPosicionamiento')){
+					        			return '-';
+					        		}
+					        		else{
+					        			var comboEditor = me.columns && me.down('gridcolumn[dataIndex=idProveedorNotario]').getEditor ? me.down('gridcolumn[dataIndex=idProveedorNotario]').getEditor() : me.getEditor ? me.getEditor():null;
+						        		if(!Ext.isEmpty(comboEditor)) {
+							        		var store = comboEditor.getStore(),							        		
+							        		record = store.findRecord("id", value);
+							        		if(!Ext.isEmpty(record)) {
+							        			if(meta.record.get('fechaFinPosicionamiento')){
+							        				return '<span style="color: #DF0101;">'+record.get("descripcion")+'</span>';
+							        			}
+							        			else{
+							        				return record.get("descripcion");
+							        			}
+							        		} else {
+							        			comboEditor.setValue(value);								        			
+							        		}
 						        		}
 					        		}
+					        		
 								},
 					            editor: {
 					            	xtype: 'comboboxfieldbase',
@@ -285,8 +358,10 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 					            dataIndex: 'motivoAplazamiento',
 					            flex: 1,
 					            editor: {
-		                  			xtype: 'textarea'
-					        	}
+		                  			xtype: 'textarea',
+		                  			allowBlank: false
+					        	},
+					        	renderer: coloredRender
 						   	},
 						   	{
 					       		dataIndex: 'fechaHoraPosicionamiento',
@@ -335,7 +410,55 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 			    		deleteSuccessFn: function() {
 			    			var me = this;
 			    			me.up('form').down('gridBase[reference=listadoNotarios]').getStore().load();			    			
-			    		}
+			    		},
+			    		onDeleteClick: function(btn){
+							var me = this,
+							seleccionados = btn.up('grid').getSelection(),
+							gridStore = btn.up('grid').getStore();
+								    	
+							if(Ext.isArray(seleccionados) && seleccionados.length != 0) {
+											
+								if(!Ext.isEmpty(me.selection.get('motivoAplazamiento'))){
+									Ext.Msg.show({
+										title:HreRem.i18n("title.ventana.eliminar.posicionamiento"),
+										message: HreRem.i18n("text.ventana.eliminar.posicionamiento"),
+										buttons: Ext.Msg.YESNO,
+										icon: Ext.Msg.QUESTION,
+											fn: function(btn) {
+												if (btn === 'yes') {
+												        	
+													me.selection.erase({
+														params: {id: me.selection.data.id},
+												        success: function (a, operation, c) {
+									                    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+															me.deleteSuccessFn();
+															me.getStore().reload();
+									                   	},
+									                            
+									                    failure: function (a, operation) {
+									                    	var data = {};
+									                        try {
+									                        	data = Ext.decode(operation._response.responseText);
+									                       	}
+									                        catch (e){ };
+									                        	if (!Ext.isEmpty(data.msg)) {
+									                            	me.fireEvent("errorToast", data.msg);
+									                            } else {
+									                            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+									                            }
+																me.deleteSuccessFn()
+									                  	}
+									            	});
+												        	
+												}
+											}
+										}); 
+								    }
+								    else{
+								    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.eliminar.posicionamiento.motivo"));
+								    }
+							}
+						}
 					},
 					{
 					    xtype		: 'gridBase',

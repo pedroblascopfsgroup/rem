@@ -29,7 +29,6 @@ import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
-import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVAgrupacionAsistidaPDVExcelValidator.ACTIVOS_NO_MISMA_LOCALIZACION;
 
 @Component
 public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbstract {
@@ -38,7 +37,7 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 
 	private static final String CODIGO_TIPO_AGRUPACION_RESTRINGIDA = "02";
 
-	public static final String ACTIVE_NOT_SHARING_PLACE = "Todos los activos no comparten la misma PROVINCIA, MUNICIPIO, CP, CARTERA, TIPO y SOC. PATRIMONIAL.";
+	public static final String ACTIVE_NOT_SHARING_PLACE = "Todos los activos no comparten la misma PROVINCIA, MUNICIPIO, CP, CARTERA y PROPIETARIO.";
 	
 	public static final String ACTIVE_IN_AGRUPACION_RESTRINGIDA = "Los siguientes activos pertenecen ya a una agrupación restringida: ";
 	

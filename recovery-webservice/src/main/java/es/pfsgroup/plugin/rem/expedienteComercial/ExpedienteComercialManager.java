@@ -1852,7 +1852,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			DtoPosicionamiento posicionamientoDto = posicionamientoToDto(posicionamiento);
 			posicionamientos.add(posicionamientoDto);
 		}
-
+		Collections.sort(posicionamientos);
 		return new DtoPage(posicionamientos, posicionamientos.size());
 
 	}
@@ -1869,6 +1869,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			beanUtilNotNull.copyProperty(posicionamientoDto, "horaAviso", posicionamiento.getFechaAviso());
 			beanUtilNotNull.copyProperty(posicionamientoDto, "horaPosicionamiento", posicionamiento.getFechaPosicionamiento());
+			beanUtilNotNull.copyProperty(posicionamientoDto, "fechaAlta", posicionamiento.getAuditoria().getFechaCrear());
+			beanUtilNotNull.copyProperty(posicionamientoDto, "fechaFinPosicionamiento", posicionamiento.getFechaFinPosicionamiento());
 
 		} catch (IllegalAccessException e) {
 			logger.error("error en expedienteComercialManager", e);
@@ -3196,7 +3198,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public boolean deletePosicionamiento(Long idPosicionamiento) {
 
 		try {
-			genericDao.deleteById(Posicionamiento.class, idPosicionamiento);
+			//genericDao.deleteById(Posicionamiento.class, idPosicionamiento);
+			Filter filtroPosicionamiento= genericDao.createFilter(FilterType.EQUALS, "id", idPosicionamiento);
+			Posicionamiento posicionamiento= genericDao.get(Posicionamiento.class, filtroPosicionamiento);
+			
+			if(!Checks.esNulo(posicionamiento)){
+				posicionamiento.setFechaFinPosicionamiento(new Date());
+				genericDao.update(Posicionamiento.class, posicionamiento);
+			}
 		} catch (Exception e) {
 			logger.error("error en expedienteComercialManager", e);
 		}

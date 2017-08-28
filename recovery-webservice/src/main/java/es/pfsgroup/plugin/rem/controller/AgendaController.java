@@ -53,10 +53,10 @@ public class AgendaController extends TareaController {
 
 	@Autowired
 	ExcelReportGeneratorApi excelReportGeneratorApi;
-	
+
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
-	
+
 	@Autowired
 	private ActivoTramiteApi activoTramiteApi;
 
@@ -207,7 +207,7 @@ public class AgendaController extends TareaController {
 		return createModelAndViewJson(model);
 
 	}
-	
+
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getAdvertenciaTareaComercial(@RequestParam Long idTarea, ModelMap model) {
 
@@ -266,53 +266,75 @@ public class AgendaController extends TareaController {
 
 		return createModelAndViewJson(model);
 	}
-	
-	
-	
+
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saltoResolucionExpedienteByIdExp(Long idExpediente, ModelMap model) {
 
 		ExpedienteComercial eco = null;
 		List<ActivoTramite> listaTramites = null;
 		Boolean salto = false;
-		
-		try{
 
-			if(Checks.esNulo(idExpediente)){
+		try {
+
+			if (Checks.esNulo(idExpediente)) {
 				throw new JsonViewerException("No se ha informado el expediente comercial.");
-				
-			}else{
+
+			} else {
 				eco = expedienteComercialApi.findOne(idExpediente);
-				if(Checks.esNulo(eco)){
+				if (Checks.esNulo(eco)) {
 					throw new JsonViewerException("No existe el expediente comercial.");
 				}
-				
+
 				listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(eco.getTrabajo().getId());
-				if(Checks.esNulo(listaTramites) || 
-				  (!Checks.esNulo(listaTramites) && listaTramites.size() == 0 || 
-				  (!Checks.esNulo(listaTramites) && listaTramites.size() > 0  && Checks.esNulo(listaTramites.get(0))))){
+				if (Checks.esNulo(listaTramites)
+						|| (!Checks.esNulo(listaTramites) && listaTramites.size() == 0 || (!Checks.esNulo(listaTramites)
+								&& listaTramites.size() > 0 && Checks.esNulo(listaTramites.get(0))))) {
 					throw new JsonViewerException("No se ha podido recuperar el trámite del expediente comercial.");
 				}
-				
-				List<TareaExterna> listaTareas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(listaTramites.get(0).getId());
-				for(int i=0;i< listaTareas.size(); i++){
-					TareaExterna tarea = listaTareas.get(i);						
-					if(!Checks.esNulo(tarea)){
+
+				List<TareaExterna> listaTareas = activoTramiteApi
+						.getListaTareaExternaActivasByIdTramite(listaTramites.get(0).getId());
+				for (int i = 0; i < listaTareas.size(); i++) {
+					TareaExterna tarea = listaTareas.get(i);
+					if (!Checks.esNulo(tarea)) {
 						salto = adapter.saltoResolucionExpediente(tarea.getId());
 						break;
 					}
 				}
 			}
 			model.put("success", salto);
-			
+
 		} catch (JsonViewerException e) {
 			logger.error("Error al saltar a resolución expediente", e);
 			model.put("success", salto);
 			model.put("msgError", e.getMessage());
-			
+
 		} catch (Exception e) {
 			model.put("success", salto);
-		}	
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView anularTramite(Long idTramite, ModelMap model) {
+		Boolean anulado = false;
+		try {
+			if (Checks.esNulo(idTramite)) {
+				throw new JsonViewerException("No se ha informado el expediente comercial.");
+			} else {
+				anulado = adapter.anularTramite(idTramite);
+			}
+			model.put("success", anulado);
+			
+		} catch (JsonViewerException jve) {
+			logger.error("Error al anular el trámite", jve);
+			model.put("success", anulado);
+			model.put("msgError", jve.getMessage());
+		} catch (Exception e) {
+			logger.error("Error al anular el trámite", e);
+			model.put("success", anulado);
+		}
 		
 		return createModelAndViewJson(model);
 	}
@@ -340,7 +362,7 @@ public class AgendaController extends TareaController {
 
 		return mensajeError;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView reasignarTarea(DtoReasignarTarea dtoReasignarTarea, ModelMap model) {

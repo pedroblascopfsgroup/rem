@@ -34,6 +34,15 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleModel', {
 		 		return 'resources/images/ico_agrupaciones_active.svg';
 		 	}
 		 	
+		},
+		
+		esEnTramite: function(get) {
+			var estado = get('tramite.estado');
+			if (estado === 'En trámite') {
+				return true;
+			} else {
+				return false;
+			}
 		}
 		
     },

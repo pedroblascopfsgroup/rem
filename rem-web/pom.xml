@@ -16,7 +16,12 @@
 		<devon.version.web>1.1.1</devon.version.web>
 		<devon.version.webflow>1.1.1</devon.version.webflow>
 		<downloadSources>true</downloadSources>
-        <downloadJavadocs>true</downloadJavadocs>
+  	<downloadJavadocs>true</downloadJavadocs>
+
+		<aspectj.groupid>es.pfsgroup.recovery.framework.spring.v2_5</aspectj.groupid>
+		<aspectj.artifactid.runtime>com.springsource.org.aspectj.runtime</aspectj.artifactid.runtime>
+		<aspectj.artifactid.weaver>com.springsource.org.aspectj.weaver</aspectj.artifactid.weaver>
+		<aspectj.version>UNKNOWN</aspectj.version>
 	</properties>
 
 	<groupId>es.pfsgroup.rem</groupId>
@@ -90,6 +95,12 @@
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>paradise-framework</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<!--<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
@@ -148,8 +159,8 @@
 					<groupId>*</groupId>
 					<artifactId>*</artifactId>
 				</exclusion>
-			</exclusions>			
-		</dependency>		
+			</exclusions>
+		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin.evolution</groupId>
 			<artifactId>recovery-geninformes-plugin-evol</artifactId>
@@ -1087,7 +1098,7 @@
 		</dependency>
 		<!-- fin importadas otros plugins -->
 		<!-- Fin framework de Recovery -->
-		
+
 		<!-- Inicio provided -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -1239,7 +1250,7 @@
 		</dependency>
 		<!-- Fin dependencias UVEM BANKIA -->
 
-		
+
 	</dependencies>
 	<build>
 		<finalName>pfs-${project.version}</finalName>
@@ -1413,15 +1424,15 @@
 			<dependencies>
 				<!-- Versión de AspectJ -->
 				<dependency>
-					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
-					<artifactId>com.springsource.org.aspectj.runtime</artifactId>
-					<version>UNKNOWN</version>
+					<groupId>${aspectj.groupid}</groupId>
+					<artifactId>${aspectj.artifactid.runtime}</artifactId>
+					<version>${aspectj.version}</version>
 					<scope>compile</scope>
 				</dependency>
 				<dependency>
-					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
-					<artifactId>com.springsource.org.aspectj.weaver</artifactId>
-					<version>UNKNOWN</version>
+					<groupId>${aspectj.groupid}</groupId>
+					<artifactId>${aspectj.artifactid.weaver}</artifactId>
+					<version>${aspectj.version}</version>
 					<scope>compile</scope>
 				</dependency>
 				<!-- Fin versión de AspectJ -->
@@ -1436,19 +1447,19 @@
 			<dependencies>
 				<!-- Versión de AspectJ -->
 				<dependency>
-					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
-					<artifactId>com.springsource.org.aspectj.runtime</artifactId>
-					<version>UNKNOWN</version>
+					<groupId>${aspectj.groupid}</groupId>
+					<artifactId>${aspectj.artifactid.runtime}</artifactId>
+					<version>${aspectj.version}</version>
 					<scope>compile</scope>
 				</dependency>
 				<dependency>
-					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
-					<artifactId>com.springsource.org.aspectj.weaver</artifactId>
-					<version>UNKNOWN</version>
+					<groupId>${aspectj.groupid}</groupId>
+					<artifactId>${aspectj.artifactid.weaver}</artifactId>
+					<version>${aspectj.version}</version>
 					<scope>compile</scope>
 				</dependency>
 				<!-- Libs para Spring Json View  -->
-				
+
 				<dependency>
 					<groupId>net.sf.spring-json</groupId>
 					<artifactId>spring-json</artifactId>
@@ -1465,7 +1476,7 @@
 				  <artifactId>sojo-optional</artifactId>
 				  <version>0.5.0</version>
 				</dependency>
-				
+
 				<!--<dependency>
 					<groupId>groupId</groupId>
 					<artifactId>sojo-optional</artifactId>
@@ -1473,20 +1484,31 @@
 					<scope>system</scope>
 					<systemPath>${basedir}/src/main/webapp/WEB-INF/lib/sojo-optional-0.5.0.jar</systemPath>
 				</dependency>-->
-				
+
 				<!-- Fin versión de AspectJ -->
 				<dependency>
     				<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>proyecto-rem-online</artifactId>
 				</dependency>
-				
+
 				<dependency>
     				<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-webservice</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+					<scope>test</scope>
 				</dependency>
 			</dependencies>
 
-			<build>			
+			<build>
 				<resources>
 					<resource>
 						<directory>src/main/resources</directory>
@@ -1502,6 +1524,15 @@
 					</plugin>
 				</plugins>
 			</build>
-		</profile>		
+		</profile>
+		<profile>
+			<id>java7</id>
+			<properties>
+				<aspectj.groupid>org.aspectj</aspectj.groupid>
+				<aspectj.artifactid.runtime>com.springsource.org.aspectj.runtime</aspectj.artifactid.runtime>
+				<aspectj.artifactid.weaver>com.springsource.org.aspectj.weaver</aspectj.artifactid.weaver>
+				<aspectj.version>1.7.2.RELEASE</aspectj.version>
+			</properties>
+		</profile>
 	</profiles>
 </project>

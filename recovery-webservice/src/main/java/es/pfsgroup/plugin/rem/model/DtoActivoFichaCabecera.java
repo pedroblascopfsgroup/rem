@@ -161,6 +161,16 @@ public class DtoActivoFichaCabecera extends WebDto {
 	private String nombreGestorSelloCalidad;
 	private Date fechaRevisionSelloCalidad;
 	
+	//HREOS-2684
+	private String minimoAutorizado;
+	private String aprobadoVentaWeb;
+	private String aprobadoRentaWeb;
+	private String descuentoAprobado;
+	private String descuentoPublicado;
+	private String valorNetoContable;
+	private String costeAdquisicion;
+	private String valorUltimaTasacion;
+	
 	private int page;
 	private int start;
 	private int limit;
@@ -1230,6 +1240,70 @@ public class DtoActivoFichaCabecera extends WebDto {
 
 	public void setPertenceAgrupacionComercial(Boolean pertenceAgrupacionComercial) {
 		this.pertenceAgrupacionComercial = pertenceAgrupacionComercial;
+	}
+
+	public String getMinimoAutorizado() {
+		return minimoAutorizado;
+	}
+
+	public void setMinimoAutorizado(String minimoAutorizado) {
+		this.minimoAutorizado = minimoAutorizado;
+	}
+
+	public String getAprobadoVentaWeb() {
+		return aprobadoVentaWeb;
+	}
+
+	public void setAprobadoVentaWeb(String aprobadoVentaWeb) {
+		this.aprobadoVentaWeb = aprobadoVentaWeb;
+	}
+
+	public String getAprobadoRentaWeb() {
+		return aprobadoRentaWeb;
+	}
+
+	public void setAprobadoRentaWeb(String aprobadoRentaWeb) {
+		this.aprobadoRentaWeb = aprobadoRentaWeb;
+	}
+
+	public String getDescuentoAprobado() {
+		return descuentoAprobado;
+	}
+
+	public void setDescuentoAprobado(String descuentoAprobado) {
+		this.descuentoAprobado = descuentoAprobado;
+	}
+
+	public String getDescuentoPublicado() {
+		return descuentoPublicado;
+	}
+
+	public void setDescuentoPublicado(String descuentoPublicado) {
+		this.descuentoPublicado = descuentoPublicado;
+	}
+
+	public String getValorNetoContable() {
+		return valorNetoContable;
+	}
+
+	public void setValorNetoContable(String valorNetoContable) {
+		this.valorNetoContable = valorNetoContable;
+	}
+
+	public String getCosteAdquisicion() {
+		return costeAdquisicion;
+	}
+
+	public void setCosteAdquisicion(String costeAdquisicion) {
+		this.costeAdquisicion = costeAdquisicion;
+	}
+
+	public String getValorUltimaTasacion() {
+		return valorUltimaTasacion;
+	}
+
+	public void setValorUltimaTasacion(String valorUltimaTasacion) {
+		this.valorUltimaTasacion = valorUltimaTasacion;
 	}
 	
 

@@ -42,10 +42,13 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
+import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
@@ -60,6 +63,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProductoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
@@ -379,6 +383,31 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		if(!Checks.esNulo(activo.getGestorSelloCalidad())){
 			BeanUtils.copyProperty(activoDto, "nombreGestorSelloCalidad", activo.getGestorSelloCalidad().getApellidoNombre());
+		}
+		
+		List<VPreciosVigentes> listaPrecios = activoApi.getPreciosVigentesById(activo.getId());
+		if (!Checks.esNulo(listaPrecios)) {
+			for (int i = 0; i < listaPrecios.size(); i++) {
+				if (listaPrecios.get(i).getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO)) {
+					BeanUtils.copyProperty(activoDto, "minimoAutorizado", listaPrecios.get(i).getImporte());
+				} else if (listaPrecios.get(i).getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA)) {
+					BeanUtils.copyProperty(activoDto, "aprobadoVentaWeb", listaPrecios.get(i).getImporte());
+				} else if (listaPrecios.get(i).getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA)) {
+					BeanUtils.copyProperty(activoDto, "aprobadoRentaWeb", listaPrecios.get(i).getImporte());
+				} else if (listaPrecios.get(i).getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_DESC_APROBADO)) {
+					BeanUtils.copyProperty(activoDto, "descuentoAprobado", listaPrecios.get(i).getImporte());
+				} else if (listaPrecios.get(i).getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO)) {
+					BeanUtils.copyProperty(activoDto, "descuentoPublicado", listaPrecios.get(i).getImporte());
+				} else if (listaPrecios.get(i).getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT)) {
+					BeanUtils.copyProperty(activoDto, "valorNetoContable", listaPrecios.get(i).getImporte());
+				} else if (listaPrecios.get(i).getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_COSTE_ADQUISICION)) {
+					BeanUtils.copyProperty(activoDto, "costeAdquisicion", listaPrecios.get(i).getImporte());
+				}
+			}
+		}
+		if(!Checks.esNulo(activo.getTasacion()) && activo.getTasacion().size()>0){
+			ActivoTasacion tasacionMasReciente = activo.getTasacion().get(0);
+			BeanUtils.copyProperty(activoDto, "valorUltimaTasacion", tasacionMasReciente.getImporteTasacionFin());
 		}
 		
 		return activoDto;	

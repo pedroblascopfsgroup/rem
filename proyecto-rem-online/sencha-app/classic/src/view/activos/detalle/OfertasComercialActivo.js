@@ -107,6 +107,73 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 		    				reference: 'procedenciavisitadetalleofertaref',
 		    				colspan: 2
 		    			},
+		    		// Fila 2 - Solo Cajamar
+		    			{
+		                    xtype: 'fieldsettable',
+		                    title: HreRem.i18n('title.comerical.oferta.detalle.cajamar'),
+		                    bind: {
+		                        hidden: '{!activo.isCarteraCajamar}'
+		                    },
+		                    colspan: 3,
+		                    items: [
+									{
+									    xtype: 'textfield',
+									    fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.minimoAutorizado'),
+									    bind: '{activo.minimoAutorizado}',
+									    width: 410,
+									    readOnly: true
+									},
+									{
+									    xtype: 'textfield',
+									    fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.aprobadoVentaWeb'),
+									    bind: '{activo.aprobadoVentaWeb}',
+									    width: 410,
+									    readOnly: true
+									},
+									{
+									    xtype: 'textfield',
+									    fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.aprobadoRentaWeb'),
+									    bind: '{activo.aprobadoRentaWeb}',
+									    width: 410,
+									    readOnly: true
+									},
+									{
+									    xtype: 'textfield',
+									    fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.descuentoAprobado'),
+									    bind: '{activo.descuentoAprobado}',
+									    width: 410,
+									    readOnly: true
+									},
+									{
+									    xtype: 'textfield',
+									    fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.descuentoPublicado'),
+									    bind: '{activo.descuentoPublicado}',
+									    width: 410,
+									    readOnly: true
+									},
+									{
+									    xtype: 'textfield',
+									    fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.valorNetoContable'),
+									    bind: '{activo.valorNetoContable}',
+									    width: 410,
+									    readOnly: true
+									},
+									{
+									    xtype: 'textfield',
+									    fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.costeAdquisicion'),
+									    bind: '{activo.costeAdquisicion}',
+									    width: 410,
+									    readOnly: true
+									},
+									{
+									    xtype: 'textfield',
+									    fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.valorUltimaTasacion'),
+									    bind: '{activo.valorUltimaTasacion}',
+									    width: 410,
+									    readOnly: true
+									}		                        
+		                    ]
+                		},
 		    		// Lista ofertantes
 		    			{
 			    			xtype:'fieldsettable',

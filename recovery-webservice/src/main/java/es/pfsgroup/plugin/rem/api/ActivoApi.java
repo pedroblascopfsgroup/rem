@@ -51,6 +51,7 @@ import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
+import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
@@ -1027,5 +1028,12 @@ public interface ActivoApi {
 	Usuario getUsuarioMediador(Activo activo);
 	
 	public Boolean saveActivoCargaTab(DtoActivoCargasTab cargaDto);
+	
+	/**
+	 * Devuelve la lista de precios vigentes para un activo dado.
+	 * @param id (identificador Activo)
+	 * @return List<VPreciosVigentes>
+	 */
+	public List<VPreciosVigentes> getPreciosVigentesById(Long id);
 
 }

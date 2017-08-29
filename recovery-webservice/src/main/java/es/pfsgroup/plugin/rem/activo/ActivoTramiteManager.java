@@ -35,6 +35,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.InformeJuridico;
@@ -432,6 +433,62 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 				}
 			}
 		}		
+		return mensajeValidacion;
+	}
+	
+	public String mismoNumeroAdjuntosComoCompradoresExpedienteUGValidacion(TareaExterna tareaExterna, String codigoDocAdjunto, String uGestion, String cartera){
+		
+		// Mensaje de validación
+		String mensajeValidacion = "";
+
+		// Realizamos la validación de si existe o no el doc. adjunto
+		if (Checks.esNulo(tareaExterna)) {
+			mensajeValidacion = mensajeValidacion.concat(
+					messageServices.getMessage("trabajo.adjuntos.validacion.advertencia.tareaInvalida").concat(" "));
+
+		}
+		else{
+			
+			DDCartera carteraObj = trabajoApi.getCartera(tareaExterna);
+			if(!Checks.esNulo(cartera) && !Checks.esNulo(carteraObj)){
+				if(cartera.equals(carteraObj.getCodigo())){
+					Trabajo tbj = trabajoApi.getTrabajoByTareaExterna(tareaExterna);
+					if(Checks.esNulo(tbj)){
+						mensajeValidacion = messageServices.getMessage("trabajo.adjuntos.validacion.advertencia.tareaInvalida").concat(" ");
+						
+					}
+					else{
+						ExpedienteComercial eco = expedienteComercialApi.findOneByTrabajo(tbj);
+						if(Checks.esNulo(eco)){
+							mensajeValidacion = messageServices.getMessage("trabajo.adjuntos.validacion.advertencia.tareaInvalida").concat(" ");
+							
+						}
+						else{
+							
+							//Obtenemos el tipo de documento exigido
+							DDSubtipoDocumentoExpediente tipoFicheroAdjuntoEC = genericDao.get(DDSubtipoDocumentoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoDocAdjunto));
+							
+							
+							//Obtenemos la lista de documentos del tipo pasado por parámetro del expediente
+							Filter filtroTrabajoEC = genericDao.createFilter(FilterType.EQUALS, "expediente.trabajo.id", tbj.getId());
+							Filter filtroAdjuntoSubtipoCodigo = genericDao.createFilter(FilterType.EQUALS, "subtipoDocumentoExpediente.codigo", codigoDocAdjunto);
+							List<AdjuntoExpedienteComercial> listaAdjuntosExpediente = genericDao.getList(AdjuntoExpedienteComercial.class, filtroTrabajoEC, filtroAdjuntoSubtipoCodigo);
+							
+							List<CompradorExpediente> compradoresNoBorrados= eco.getCompradoresAlta();
+								
+							if(listaAdjuntosExpediente.size() != compradoresNoBorrados.size()){
+								Object[] obj = new Object[3];
+								obj[0] = tipoFicheroAdjuntoEC.getDescripcion();
+								obj[1] = compradoresNoBorrados.size();
+								obj[2] = listaAdjuntosExpediente.size();
+								mensajeValidacion = mensajeValidacion.concat(messageServices.getMessage("ecomercial.adjuntos.validacion.advertencia.compradores.numDocsInvalido", obj));
+							}
+						}
+					}
+				}
+			}
+		}
+		
 		return mensajeValidacion;
 	}
 	

@@ -85,6 +85,15 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 				    expediente.getReserva().setFechaVencimiento(calendar.getTime());
 				}
 				
+				//Si algún activo esta sujeto a tanteo y todos tienen la resolucion Renunciada, se informa el campo "Fecha vencimiento reserva" con la mayor fecha de resolucion de los tanteos
+				if(ofertaApi.checkDerechoTanteo(tramite.getTrabajo())){
+					List<TanteoActivoExpediente> tanteosExpediente= expediente.getTanteoActivoExpediente();
+					if(!Checks.estaVacio(tanteosExpediente)){
+						//HREOS-2686 Punto 2
+						expedienteComercialApi.actualizarFVencimientoReservaTanteosRenunciados(null, tanteosExpediente);
+					}
+				}
+				
 				
 			}
 

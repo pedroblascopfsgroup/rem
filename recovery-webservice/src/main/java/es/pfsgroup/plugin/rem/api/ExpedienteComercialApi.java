@@ -37,6 +37,7 @@ import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
@@ -791,5 +792,15 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public boolean checkExpedienteBloqueado(Long idTramite) ;
+	
+	/**
+	 * Actualiza la Fecha vencimiento reserva con la Fecha resolucion + 40 días.
+	 * Esto se hace en caso que algún activo esté sujeto a tanteo y todos los activos tengan resolución tanteo = Renunciado.
+	 * Debe recibir al menos uno de los dos parámetros de entrada.
+	 * @param tanteoActivo
+	 * @param tanteosActivo
+	 * @return
+	 */
+	public void actualizarFVencimientoReservaTanteosRenunciados(TanteoActivoExpediente tanteoActivo,List<TanteoActivoExpediente> tanteosActivo);
 
 }

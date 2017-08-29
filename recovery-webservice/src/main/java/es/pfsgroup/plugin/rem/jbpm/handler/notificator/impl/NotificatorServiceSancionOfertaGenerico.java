@@ -101,7 +101,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 
 	}
 
-	protected void generaNotificacion(ActivoTramite tramite, boolean permieRechazar) {
+	protected void generaNotificacion(ActivoTramite tramite, boolean permieRechazar, boolean permiteNotificarAprobacion) {
 
 		Activo activo = tramite.getActivo();
 		Oferta oferta = ofertaApi.trabajoToOferta(tramite.getTrabajo());
@@ -109,15 +109,15 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		ActivoTramite tramiteSimulado = new ActivoTramite();
 		tramiteSimulado.setActivo(activo);
 
-		sendNotification(tramiteSimulado, permieRechazar, activo, oferta);
+		sendNotification(tramiteSimulado, permieRechazar, activo, oferta, permiteNotificarAprobacion);
 	}
 
-	private void sendNotification(ActivoTramite tramite, boolean permiteRechazar, Activo activo, Oferta oferta) {
+	private void sendNotification(ActivoTramite tramite, boolean permiteRechazar, Activo activo, Oferta oferta, boolean permiteNotificarAprobacion) {
 
 		if (!Checks.esNulo(oferta)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
-			if (!Checks.esNulo(expediente)
-					&& DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) { // APROVACIÓN
+			if (permiteNotificarAprobacion && !Checks.esNulo(expediente)
+					&& DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) { // APROBACIÓN
 
 				ArrayList<String> destinatarios = getDestinatariosNotificacion(activo, oferta, expediente);
 
@@ -159,7 +159,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		ActivoTramite tramiteSimulado = new ActivoTramite();
 		tramiteSimulado.setActivo(activo);
 
-		sendNotification(tramiteSimulado, true, activo, oferta);
+		sendNotification(tramiteSimulado, true, activo, oferta, true);
 	}
 
 	private String getPrescriptor(Activo activo, Oferta ofertaAceptada) {

@@ -2167,7 +2167,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				&& DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC.equals(codigoEstado) && (!coniva)) {
 			return DDEstadoGasto.PAGADO;
 		} else {
-			return "no_cambiar";
+			return null;
 		}
 	}
 }

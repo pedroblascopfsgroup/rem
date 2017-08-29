@@ -574,6 +574,9 @@ Ext.define('HreRem.model.Activo', {
 			{
 				name: 'ibiExento',
 				type: 'boolean'
+			},
+			{
+				name: 'codigoPromocionPrinex'
 			}
     ],
     

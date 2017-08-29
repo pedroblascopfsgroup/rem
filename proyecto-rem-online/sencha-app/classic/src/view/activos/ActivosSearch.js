@@ -122,6 +122,10 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 					        	bind: {
 				            		store: '{comboFiltroProvincias}'
 				            	}
+					        },
+					        {
+					        	fieldLabel: HreRem.i18n('fieldlabel.activosearch.codigo.promocion'),
+					        	name: 'codigoPromocionPrinex'
 					        }
 					    ]},
 				    {	

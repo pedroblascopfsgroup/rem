@@ -409,6 +409,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			ActivoTasacion tasacionMasReciente = activo.getTasacion().get(0);
 			BeanUtils.copyProperty(activoDto, "valorUltimaTasacion", tasacionMasReciente.getImporteTasacionFin());
 		}
+		if(activo.getCodigoPromocionPrinex() != null ) {
+			BeanUtils.copyProperty(activoDto, "codigoPromocionPrinex", activo.getCodigoPromocionPrinex());
+		}
 		
 		return activoDto;	
 	}

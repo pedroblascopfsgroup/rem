@@ -49,7 +49,7 @@ public class DtoOfertasFilter extends WebDto {
 	private String emailOfertante;
 	private String documentoOfertante;
 	private Long gestoria;	
-	
+	private String codigoPromocionPrinex;
 	
 	public Long getNumOferta() {
 		return numOferta;
@@ -278,6 +278,12 @@ public class DtoOfertasFilter extends WebDto {
 	}
 	public void setGestoria(Long gestoria) {
 		this.gestoria = gestoria;
+	}
+	public String getCodigoPromocionPrinex() {
+		return codigoPromocionPrinex;
+	}
+	public void setCodigoPromocionPrinex(String codigoPromocionPrinex) {
+		this.codigoPromocionPrinex = codigoPromocionPrinex;
 	}
 	
 }

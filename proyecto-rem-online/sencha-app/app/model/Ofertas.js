@@ -47,6 +47,9 @@ Ext.define('HreRem.model.Ofertas', {
 		},
 		{
 			name : 'derechoTanteo'
+		},
+		{
+			name : 'codigoPromocionPrinex'
 		}
  	
     		

@@ -262,6 +262,8 @@ public class VBusquedaActivos implements Serializable {
 	@Column(name="LOC_LONGITUD")
 	private String longitud;
 	
+	@Column(name="ACT_COD_PROMOCION_PRINEX")
+	private String codigoPromocionPrinex;
 	
 	public Long getId() {
 		return id;
@@ -623,6 +625,14 @@ public class VBusquedaActivos implements Serializable {
 
 	public void setLongitud(String longitud) {
 		this.longitud = longitud;
+	}
+
+	public String getCodigoPromocionPrinex() {
+		return codigoPromocionPrinex;
+	}
+
+	public void setCodigoPromocionPrinex(String codigoPromocionPrinex) {
+		this.codigoPromocionPrinex = codigoPromocionPrinex;
 	}
 
 

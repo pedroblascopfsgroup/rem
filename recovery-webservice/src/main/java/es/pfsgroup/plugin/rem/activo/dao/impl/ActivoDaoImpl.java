@@ -46,7 +46,6 @@ import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
-import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
@@ -90,6 +89,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinciaCodigo());
    		
    		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.localidadDescripcion", dto.getLocalidadDescripcion(), true);
+   		if(dto.getCodigoPromocionPrinex() != null) {
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.codigoPromocionPrinex", dto.getCodigoPromocionPrinex());
+   		}
    		
    		//Parámteros para la búsqueda avanzada
    		if (dto.getNumActivoRem() != null)
@@ -264,7 +266,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinciaCodigo());
    		
    		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.localidadDescripcion", dto.getLocalidadDescripcion(), true);
-   		
+   		if(dto.getCodigoPromocionPrinex() != null) {
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.codigoPromocionPrinex", dto.getCodigoPromocionPrinex());
+   		}
    		//Parámteros para la búsqueda avanzada
    		if (dto.getNumActivoRem() != null)
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoRem", dto.getNumActivoRem());

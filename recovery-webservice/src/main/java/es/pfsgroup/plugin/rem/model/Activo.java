@@ -411,7 +411,8 @@ public class Activo implements Serializable, Auditable {
     @Column(name = "ACT_IBI_EXENTO")
     private Boolean ibiExento;
     
-    
+    @Column(name = "ACT_COD_PROMOCION_PRINEX")
+    private String codigoPromocionPrinex;
     
 	@Version   
 	private Long version;
@@ -1629,6 +1630,13 @@ public class Activo implements Serializable, Auditable {
 	public void setIbiExento(Boolean ibiExento) {
 		this.ibiExento = ibiExento;
 	}
-	
+
+	public String getCodigoPromocionPrinex() {
+		return codigoPromocionPrinex;
+	}
+
+	public void setCodigoPromocionPrinex(String codigoPromocionPrinex) {
+		this.codigoPromocionPrinex = codigoPromocionPrinex;
+	}
 	
 }

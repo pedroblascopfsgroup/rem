@@ -64,7 +64,7 @@ DECLARE
 	TYPE T_ARRAY_PEF IS TABLE OF T_TIPO_PEF;
 	V_TIPO_PEF T_ARRAY_PEF := T_ARRAY_PEF(
 	--				CODIGO	  			DESCRIPCION	 						DESCRIPCION_LARGA   
-		T_TIPO_PEF('FVDNEGOCIO', 		'Gestoría de administración',			'Gestoría de administración'		),
+		T_TIPO_PEF('FVDNEGOCIO', 		'Gestor FVD de negocio',				'Gestor FVD de negocio'		),
 		T_TIPO_PEF('FVDBACKOFERTA', 	'Gestor FVD de Backoffice de oferta',	'Gestor FVD de Backoffice de oferta'		),
 		T_TIPO_PEF('FVDBACKVENTA', 		'Gestor FVD de Backoffice de venta',	'Gestor FVD de Backoffice de venta'	)
 	); 

@@ -2460,12 +2460,14 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView propagarInformacion(@RequestParam(required = true) Long id, @RequestParam(required = true) String tab, ModelMap model) {
 
 		List<String> fields = new ArrayList<String>();
-		fields.addAll(ActivoPropagacionFieldTabMap.map.get(tab));
+
+		if (ActivoPropagacionFieldTabMap.map.get(tab) != null) {
+			fields.addAll(ActivoPropagacionFieldTabMap.map.get(tab));
+		}
 
 		model.put("propagateFields", fields);
 		model.put("activos", activoPropagacionApi.getAllActivosAgrupacionPorActivo(id));
 
 		return new ModelAndView("jsonView", model);
-
 	}
 }

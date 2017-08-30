@@ -3,9 +3,6 @@ package es.pfsgroup.plugin.rem.api;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.rest.dto.ActivoPropagacionDto;
-
 /**
  * Servicio que ayuda con la propagacion de datos entre activos
  */
@@ -21,6 +18,6 @@ public interface ActivoPropagacionApi {
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	List<ActivoPropagacionDto> getAllActivosAgrupacionPorActivo(final Long idActivo);
+	List<?> getAllActivosAgrupacionPorActivo(final Long idActivo);
 }
 

@@ -11,6 +11,8 @@ public class ActivoPropagacionFieldTabMap {
     public static final Map<String, List<String>> map;
 
     private static final String TAB_DATOS_BASICOS = "datosbasicos";
+    private static final String TAB_SIT_POSESORIA = "sitposesoriallaves";
+    private static final String TAB_INFORME_COMERCIAL = "informecomercial";
 
     static {
     	Map<String, List<String>> pmap = new HashMap<String, List<String>>();
@@ -44,7 +46,7 @@ public class ActivoPropagacionFieldTabMap {
 	    			"aplicaGestion",
 	    			"aplicaFormalizar",
 	    			"aplicaComercializar",
-	    			
+
 	    			// comercializacion
     				"tipoComercializarCodigo",
     				"tipoComercializacionCodigo",
@@ -60,6 +62,40 @@ public class ActivoPropagacionFieldTabMap {
     				"estadoExpIncorrienteCodigo"
     			));
 
+    	pmap.put(TAB_SIT_POSESORIA, 
+    			Arrays.asList(
+			    	"fechaRevisionEstado",
+			    	"ocupado",
+			    	"riesgoOcupacion",
+			    	"conTitulo",
+			    	"accesoTapiado",
+			    	"fechaAccesoTapiado",
+			    	"accesoAntiocupa",
+			    	"fechaAccesoAntiocupa",
+
+			    	// Ocupante Ilegal
+			    	"fechaSolDesahucio",
+			    	"fechalanzamiento",
+			    	"fechaLanzamientoEfectivo"
+    			));
+
+    	pmap.put(TAB_INFORME_COMERCIAL, 
+    			Arrays.asList(
+			    	"estadoConservacionCodigo",
+			    	"estadoConservacionEdificioCodigo",
+			    	"numPlantas",
+			    	"ascensor",
+			    	"numAscensores",
+			    	"descripcionComercial",
+			    	"reformaFachada",
+			    	"reformaPortal",
+			    	"reformaCubierta",
+			    	"reformaEscalera",
+			    	"reformaAscensor",
+			    	"reformaOtrasZonasComunes",
+			    	"reformaOtroDescEdificio"
+    			));
+    	
         map = Collections.unmodifiableMap(pmap);
     }
 }

@@ -21,7 +21,14 @@ Ext.define('HreRem.model.ActivosExpediente', {
     		},
     		{
     			name:'importeParticipacion',
-    			type: 'float'
+    			type: 'float',
+    			convert: function(value){
+    				if(value.includes(',')){
+    					return value.replace(',','.');
+    				}else{
+    					return value;
+    				}
+    			}
     		},
     		{
     			name:'porcentajeParticipacion',

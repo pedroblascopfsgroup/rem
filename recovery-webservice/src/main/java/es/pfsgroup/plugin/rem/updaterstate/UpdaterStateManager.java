@@ -139,11 +139,11 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		else if(!Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaComercializar()) && perimetro.getAplicaComercializar() == 0) {
 			codigo = DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE;
 		}
-		else if(activoApi.isActivoConOfertaByEstado(activo,DDEstadoOferta.CODIGO_ACEPTADA)) {
-			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA;
-		}
 		else if(activoApi.isActivoConReservaByEstado(activo,DDEstadosReserva.CODIGO_FIRMADA)) {
 			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_RESERVA;
+		}
+		else if(activoApi.isActivoConOfertaByEstado(activo,DDEstadoOferta.CODIGO_ACEPTADA)) {
+			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA;
 		}
 		else if(activoApi.getCondicionantesDisponibilidad(activo.getId()).getIsCondicionado()) {
 			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_CONDICIONADO;

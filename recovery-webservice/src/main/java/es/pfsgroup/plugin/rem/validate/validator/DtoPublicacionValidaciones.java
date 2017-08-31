@@ -63,6 +63,13 @@ public class DtoPublicacionValidaciones {
 		this.validarInfComercialTiposIguales = true;
 		this.validarInfComercialAceptado = false;
 	}
+	public void setValidacionesNinguna(){
+		this.validarOKGestion = false;
+		this.validarOKAdmision = false;
+		this.validarOKPrecio = false;
+		this.validarInfComercialTiposIguales = false;
+		this.validarInfComercialAceptado = false;
+	}
 
 
 }

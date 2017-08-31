@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.json.JSONObject;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
@@ -24,6 +23,7 @@ import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
+import net.sf.json.JSONObject;
 
 public interface OfertaApi {
 
@@ -513,6 +513,10 @@ public interface OfertaApi {
 	 * @return Usuario
 	 */
 	Usuario getUsuarioPreescriptor(Oferta oferta);
+	
+	public void ocultarActivoOferta(Oferta oferta) throws Exception;
+	
+	public void desocultarActivoOferta(Oferta oferta) throws Exception;
 
 }
 

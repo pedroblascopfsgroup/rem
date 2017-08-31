@@ -166,6 +166,16 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 					}
 				}
 			}
+			
+			try {
+				//Actualizar el estado comercial de los activos de la oferta
+				ofertaApi.updateStateDispComercialActivosByOferta(ofertaAceptada);
+				//Actualizar el estado de la publicación de los activos de la oferta (desocultar activos)
+				ofertaApi.desocultarActivoOferta(ofertaAceptada);
+			} catch (Exception e) {
+				logger.error("Error al ocultar activos de la oferta.", e);
+			} 
+			
 		}
 
 	}

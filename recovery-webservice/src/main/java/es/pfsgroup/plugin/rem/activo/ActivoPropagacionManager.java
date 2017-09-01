@@ -33,8 +33,10 @@ public class ActivoPropagacionManager implements ActivoPropagacionApi {
 			for (ActivoAgrupacionActivo activoAgrupacionActivo : activo.getAgrupaciones()) {
 				if (activoAgrupacionActivo.getAgrupacion() != null 
 						&& isActivoAgrupacionTipo(activoAgrupacionActivo, DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA, DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
-	
-					Page page = agrupacionAdapter.getListActivosAgrupacionById(new DtoAgrupacionFilter(), activoAgrupacionActivo.getAgrupacion().getId());
+					DtoAgrupacionFilter filter = new DtoAgrupacionFilter();
+					filter.setLimit(1000);
+					filter.setStart(0);
+					Page page = agrupacionAdapter.getListActivosAgrupacionById(filter, activoAgrupacionActivo.getAgrupacion().getId());
 					return page.getResults(); // "teoricamente" solo puede haber una agrupacion de esos tipos en el activo.
 				}
 			}

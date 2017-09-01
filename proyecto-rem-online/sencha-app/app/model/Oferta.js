@@ -30,6 +30,12 @@ Ext.define('HreRem.model.Oferta', {
     	'idVisita',
     	'fechaVisita',
     	'codigoPrescriptor',
+    	'codigoSucursal',
+    	'tipoSucursal',
+    	{
+    		name : 'intencionFinanciar',
+    		type : 'boolean'
+    	},
     	 {
         	name: 'descItemMenu',
         	convert: function (value, rec) {

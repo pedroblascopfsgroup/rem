@@ -128,6 +128,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDAdministracion;
 import es.pfsgroup.plugin.rem.model.dd.DDAreaBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
@@ -1023,6 +1024,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setConImpuesto(expediente.getCondicionante().getReservaConImpuesto());
 				dto.setImporte(expediente.getCondicionante().getImporteReserva());
 			}
+			if(!Checks.esNulo(expediente.getOferta().getSucursal())) {					
+				dto.setCodigoSucursal(expediente.getOferta().getSucursal().getCodProveedorUvem().substring(4));
+				dto.setSucursal(expediente.getOferta().getSucursal().getNombre()+" ("+expediente.getOferta().getSucursal().getTipoProveedor().getDescripcion()+")");
+			}
+			dto.setCartera(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo());
 		}
 
 		return dto;
@@ -2209,6 +2215,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				DDTiposArras tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, dto.getTipoArrasCodigo());
 				reserva.setTipoArras(tipoArras);
+			}
+			if(!Checks.esNulo(dto.getCodigoSucursal())) {
+				String codigoCartera = "";
+				if(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA))
+					codigoCartera = "2038";
+				else if (expediente.getOferta().getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR))
+					codigoCartera = "3058";
+				Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "codProveedorUvem", codigoCartera + dto.getCodigoSucursal());
+				expediente.getOferta().setSucursal((ActivoProveedor) genericDao.get(ActivoProveedor.class, filtroProveedor));
+				genericDao.save(Oferta.class, expediente.getOferta());
 			}
 
 			genericDao.save(Reserva.class, reserva);

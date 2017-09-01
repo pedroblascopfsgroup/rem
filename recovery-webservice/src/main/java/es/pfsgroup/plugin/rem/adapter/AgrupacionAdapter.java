@@ -483,12 +483,11 @@ public class AgrupacionAdapter {
 	}
 
 	@Transactional(readOnly = false)
-	public void createActivoAgrupacion(Long numActivo, Long numAgrupacionRem, Integer activoPrincipal)
+	public void createActivoAgrupacion(Long numActivo, Long idAgrupacion, Integer activoPrincipal)
 			throws JsonViewerException {
 
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
 		Activo activo = genericDao.get(Activo.class, filter);
-		Long idAgrupacion = activoAgrupacionApi.getAgrupacionIdByNumAgrupRem(numAgrupacionRem);
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idAgrupacion);
 
 		int num = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(agrupacion.getId());

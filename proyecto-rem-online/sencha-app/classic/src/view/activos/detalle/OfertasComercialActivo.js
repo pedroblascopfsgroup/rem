@@ -107,6 +107,20 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 		    				reference: 'procedenciavisitadetalleofertaref',
 		    				colspan: 2
 		    			},
+		    			{
+		    				//colspan: 1
+		    			},
+		    			{
+		    				xtype: "textfield",
+							fieldLabel: HreRem.i18n('fieldlabel.detalle.oferta.sucursal'),
+							bind: {
+								value: '{detalleOfertaModel.sucursal}'
+							},
+							width: 410,
+							readOnly: true,
+		    				reference: 'sucursaldetalleofertaref',
+		    				colspan: 2
+		    			},
 		    		// Fila 2 - Solo Cajamar
 		    			{
 		                    xtype: 'fieldsettable',

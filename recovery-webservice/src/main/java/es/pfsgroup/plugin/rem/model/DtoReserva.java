@@ -40,6 +40,12 @@ public class DtoReserva extends WebDto {
 	private String Observaciones;
 
 	private String estadoReserva;
+	
+	private String codigoSucursal;
+	
+	private String cartera;
+	
+	private String sucursal;
 
 	public Long getIdReserva() {
 		return idReserva;
@@ -144,4 +150,30 @@ public class DtoReserva extends WebDto {
 	public void setEstadoReserva(String estadoReserva) {
 		this.estadoReserva = estadoReserva;
 	}
+
+	public String getCodigoSucursal() {
+		return codigoSucursal;
+	}
+
+	public void setCodigoSucursal(String codigoSucursal) {
+		this.codigoSucursal = codigoSucursal;
+	}
+
+	public String getCartera() {
+		return cartera;
+	}
+
+	public void setCartera(String cartera) {
+		this.cartera = cartera;
+	}
+
+	public String getSucursal() {
+		return sucursal;
+	}
+
+	public void setSucursal(String sucursal) {
+		this.sucursal = sucursal;
+	}
+	
+	
 }

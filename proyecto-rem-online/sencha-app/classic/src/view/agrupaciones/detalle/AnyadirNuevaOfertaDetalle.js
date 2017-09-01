@@ -170,6 +170,59 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 										//disabled: true,
 										readOnly: true,
 										allowBlank: false
+									},
+									{
+										xtype: 		'checkboxfieldbase',
+				            	    	fieldLabel:	HreRem.i18n('fieldlabel.intencionfinanciar'),
+				            	    	name:		'intencionfinanciar',
+				            	    	allowBlank:	false,
+				            	    	bind:		'{oferta.intencionFinanciar}',
+							        	inputValue: true
+									},
+									{
+										xtype: 'textfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.codigo.sucursalreserva'),
+										name: 'buscadorSucursales',
+										maskRe: /^\d{1,4}$/,
+										maxLength: 4,
+										//disabled: true,
+										bind: {
+											value: '{oferta.codigoSucursal}'
+										},
+										allowBlank: true,
+										triggers: {
+											
+												buscarEmisor: {
+										            cls: Ext.baseCSSPrefix + 'form-search-trigger',
+										            handler: 'buscarSucursal'
+										        }
+										},
+										cls: 'searchfield-input sf-con-borde',
+										emptyText:  'Introduce el código de la Sucursal',
+										enableKeyEvents: true,
+								        listeners: {
+								        	specialKey: function(field, e) {
+								        		if (e.getKey() === e.ENTER) {
+								        			field.lookupController().buscarSucursal(field);											        			
+								        		}
+								        	}/*,
+								        	
+								        	blur: function(field, e) {											        		
+								        		if(!Ext.isEmpty(field.getValue())) {
+								        			field.lookupController().buscarPrescriptor(field);
+								        		}
+								        	}*/
+								        	
+								        	
+								        }
+				                	},
+				                	{
+										xtype: 'textfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.sucursalreserva'),
+										name: 'nombreSucursal',
+										//disabled: true,
+										readOnly: true,
+										allowBlank: true
 									}
 									
 

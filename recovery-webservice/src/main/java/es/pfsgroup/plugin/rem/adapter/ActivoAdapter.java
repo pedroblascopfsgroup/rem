@@ -132,6 +132,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
@@ -2508,7 +2509,15 @@ public class ActivoAdapter {
 			oferta.setCliente(clienteComercial);
 
 			oferta.setPrescriptor((ActivoProveedor) proveedoresApi.searchProveedorCodigo(dto.getCodigoPrescriptor()));
-
+			
+			if(!Checks.esNulo(dto.getIntencionFinanciar()))
+				oferta.setIntencionFinanciar(dto.getIntencionFinanciar()? 1 : 0);
+			if(!Checks.esNulo(dto.getCodigoSucursal())) {
+				String codigoOficina = activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)? "2038" : 
+					activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)? "3058" : "";
+				if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA) || activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR))
+					oferta.setSucursal((ActivoProveedor) proveedoresApi.searchProveedorCodigoUvem(codigoOficina+dto.getCodigoSucursal()));
+			}
 			genericDao.save(Oferta.class, oferta);
 			// Actualizamos la situacion comercial del activo
 			updaterState.updaterStateDisponibilidadComercialAndSave(activo);

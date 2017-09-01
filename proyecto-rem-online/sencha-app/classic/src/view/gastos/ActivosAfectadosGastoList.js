@@ -130,10 +130,11 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 					editor: 'numberfield',
 					summaryType: 'sum',
 		            summaryRenderer: function(value, summaryData, dataIndex) {
+
 		            	var value2=Ext.util.Format.number(value, '0.00');
 		            	var msg = HreRem.i18n("fieldlabel.participacion.total") + " " + value2 + "%";
 		            	var style = "style= 'color: black'";
-		            	if(value != 100) {
+		            	if(parseFloat(value2) != parseFloat('100')) {
 		            		//msg = HreRem.i18n("fieldlabel.participacion.total.error")	
 		            		style = "style= 'color: red'";
 		            	}			            	

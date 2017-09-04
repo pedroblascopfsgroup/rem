@@ -31,13 +31,13 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
 
+
 @Component
 public class NotificatorServiceResolucionComite extends AbstractNotificatorService implements NotificatorService{
 
 	public static final String CODIGO_T013_RESOLUCION_COMITE = "T013_ResolucionComite";
     public static final String CODIGO_T013_DEFINICION_OFERTA = "T013_DefinicionOferta";
 
-	
 	
 	@Resource
 	private Properties appProperties;
@@ -53,6 +53,9 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 
 	@Autowired
 	private ExpedienteComercialDao expedienteComercialDao;
+	
+	@Autowired
+	private NotificatorServiceSancionOfertaAceptacionYRechazo notificatorServiceSancionOfertaAceptacionYRechazo;
 	
 
 	List<String> mailsPara = new ArrayList<String>();
@@ -133,6 +136,9 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 	
 			dtoSendNotificator.setTitulo("Notificación REM");
 			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
+		} else {
+			// Para los otros estados posibles, genero una notificacion de aceptacion o rechazo segun corresponda.
+			notificatorServiceSancionOfertaAceptacionYRechazo.generaNotificacion(tramite, true, true);
 		}
 	}
 	

@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
+import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -61,6 +62,7 @@ import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
+import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
@@ -75,6 +77,7 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
@@ -96,6 +99,7 @@ import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
+import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
 import net.sf.json.JSONObject;
 
 @Service("ofertaManager")
@@ -176,6 +180,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private NotificationOfertaManager notificationOfertaManager;
+	
+	@Autowired
+	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
 
 	@Override
 	public String managerName() {
@@ -1401,6 +1408,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					!Checks.esNulo(oferta.getVisita().getPrescriptor().getTipoProveedor())) {
 					dtoResponse.setProcedenciaVisita(oferta.getVisita().getPrescriptor().getTipoProveedor().getDescripcion());
 				}
+				if(!Checks.esNulo(oferta.getSucursal())) {
+					dtoResponse.setSucursal(oferta.getSucursal().getNombre()+" ("+oferta.getSucursal().getTipoProveedor().getDescripcion()+")");
+				}
 			}
 		}
 
@@ -1695,7 +1705,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				}
 			}
-		} /*
+		}
+		else{ // Si el importe calculo está vacío mostrar 0.00 y honorarios a 0.00
+			dto.setImporteCalculo(0.00);
+			dto.setHonorarios(0.00);
+		}
+			/*
+		}
 			 * else { // Si el importe calculo está vacío mostrar 'Sin // Honorarios'.
 			 * dto.setTipoCalculo("-"); dto.setHonorarios("Sin Honorarios"); }
 			 */
@@ -1974,6 +1990,49 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return null;		
 	}
+	
+	@Override
+	public void ocultarActivoOferta(Oferta oferta) throws Exception{
+		
+		if (oferta.getActivosOferta() != null && oferta.getActivosOferta().size() > 0) {
+			for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
+				Activo activo = activoOferta.getPrimaryKey().getActivo();
+				if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo()) && DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_RESERVA.equals(activo.getSituacionComercial().getCodigo())){
+					
+					DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion= activoEstadoPublicacionApi.getState(activo.getId());
+					dtoCambioEstadoPublicacion.setOcultacionForzada(true);
+					DtoPublicacionValidaciones dtoPublicacionValidaciones= new DtoPublicacionValidaciones();
+					dtoPublicacionValidaciones.setValidacionesNinguna();
 
+					activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion,dtoPublicacionValidaciones);
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void desocultarActivoOferta(Oferta oferta) throws Exception{
+		
+		if (oferta.getActivosOferta() != null && oferta.getActivosOferta().size() > 0) {
+			for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
+				Activo activo = activoOferta.getPrimaryKey().getActivo();
+				if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo()) && 
+						(DDSituacionComercial.CODIGO_DISPONIBLE_VENTA.equals(activo.getSituacionComercial().getCodigo()) ||
+						DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA.equals(activo.getSituacionComercial().getCodigo()) ||
+						DDSituacionComercial.CODIGO_DISPONIBLE_CONDICIONADO.equals(activo.getSituacionComercial().getCodigo()))){
+					
+					DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion= activoEstadoPublicacionApi.getState(activo.getId());
+
+					dtoCambioEstadoPublicacion.setPublicacionOrdinaria(true);
+					dtoCambioEstadoPublicacion.setOcultacionForzada(false);
+					DtoPublicacionValidaciones dtoPublicacionValidaciones= new DtoPublicacionValidaciones();
+					dtoPublicacionValidaciones.setValidacionesNinguna();
+					dtoPublicacionValidaciones.setActivo(activo);
+					
+					activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion,dtoPublicacionValidaciones);
+				}
+			}
+		}
+	}
 }
 

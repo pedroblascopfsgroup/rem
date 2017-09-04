@@ -19,6 +19,7 @@ import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -43,10 +44,13 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.mejoras.web.tareas.BuzonTareasViewHandler;
 import es.pfsgroup.plugin.recovery.mejoras.web.tareas.BuzonTareasViewHandlerFactory;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoCampo;
 import es.pfsgroup.plugin.rem.model.DtoNombreTarea;
 import es.pfsgroup.plugin.rem.model.DtoReasignarTarea;
@@ -54,7 +58,11 @@ import es.pfsgroup.plugin.rem.model.DtoSolicitarProrrogaTarea;
 import es.pfsgroup.plugin.rem.model.DtoTarea;
 import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
@@ -98,6 +106,12 @@ public class AgendaAdapter {
     
     @Autowired
     private TrabajoAdapter trabajoAdapter;
+    
+    @Autowired
+    private ActivoTramiteApi activoTramiteApi;
+    
+    @Autowired
+    private PreciosApi preciosApi;
     
 	SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
     
@@ -566,4 +580,64 @@ public class AgendaAdapter {
 		
 		return false;		
 	}
+
+	@Transactional(readOnly = false)
+	public Boolean anularTramite(Long idTramite) {
+		
+		if (idTramite != null) {
+			ActivoTramite tramite = activoTramiteApi.get(idTramite);
+			finalizarTramiteYTareas(tramite);
+			
+			DDEstadoTrabajo anulado = genericDao.get(DDEstadoTrabajo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_ANULADO));
+			if ((anulado != null) && (tramite != null)  && (tramite.getTrabajo() != null)) {
+				Trabajo trabajo = tramite.getTrabajo();
+				trabajo.setEstado(anulado);
+				genericDao.save(Trabajo.class, trabajo);
+			}
+			
+			if ((tramite != null)  && (tramite.getTipoTramite() != null)) {
+				String codigoTipotramite = tramite.getTipoTramite().getCodigo();
+				if (ActivoTramiteApi.CODIGO_TRAMITE_PROPUESTA_PRECIOS.equals(codigoTipotramite)) {
+					anularPropuestaPrecios(tramite);
+				}
+			}
+			
+			return true;
+		}
+		
+		return false;
+		
+	}
+
+	private void finalizarTramiteYTareas(ActivoTramite tramite) {
+		if (tramite != null) {
+			List<TareaExterna> tareas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
+			if (!Checks.estaVacio(tareas)) {
+				for (TareaExterna t : tareas) {
+					if (t != null) {
+						tareaActivoApi.saltoFin(t.getId());
+					}
+				}
+			}
+			
+			DDEstadoProcedimiento cerrado = genericDao.get(DDEstadoProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO));
+			if ((cerrado != null)) {
+				tramite.setEstadoTramite(cerrado);
+				activoTramiteApi.saveOrUpdateActivoTramite(tramite);
+			}
+		}
+	}
+
+	private void anularPropuestaPrecios(ActivoTramite tramite) {
+		DDEstadoPropuestaPrecio anulada = genericDao.get(DDEstadoPropuestaPrecio.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPropuestaPrecio.ESTADO_ANULADA));
+		if (anulada != null) {
+			PropuestaPrecio propuesta = preciosApi.getPropuestaByTrabajo(tramite.getTrabajo().getId());
+			if (propuesta != null) {
+				propuesta.setEstado(anulada);
+				genericDao.save(PropuestaPrecio.class, propuesta);
+			}
+		}
+	}
+	
+	
 }

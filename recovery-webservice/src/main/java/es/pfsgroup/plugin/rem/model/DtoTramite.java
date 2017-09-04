@@ -52,6 +52,8 @@ public class DtoTramite extends WebDto {
 	private Boolean ocultarBotonCierre;
 	
 	private Boolean ocultarBotonResolucion;
+	
+	private Boolean ocultarBotonAnular;
 
 	private Boolean tieneEC;
 	
@@ -261,6 +263,14 @@ public class DtoTramite extends WebDto {
 
 	public void setIdExpediente(Long idExpediente) {
 		this.idExpediente = idExpediente;
+	}
+
+	public Boolean getOcultarBotonAnular() {
+		return ocultarBotonAnular;
+	}
+
+	public void setOcultarBotonAnular(Boolean ocultarBotonAnular) {
+		this.ocultarBotonAnular = ocultarBotonAnular;
 	}
 	
 }

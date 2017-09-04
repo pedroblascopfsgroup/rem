@@ -150,7 +150,7 @@ public class OperacionVentaManager implements ParamReportsApi{
 			mapaValores.put("SuperficieRegistro",FileUtilsREM.stringify(activo.getTotalSuperficieSuelo()));
 			
 			List<ActivoPropietarioActivo> listaPropietarios = activo.getPropietariosActivo();
-			if (listaPropietarios!=null && listaPropietarios.get(0).getPropietario()!=null && listaPropietarios.get(0).getPropietario().getFullName()!=null){
+			if (listaPropietarios!=null && !Checks.estaVacio(listaPropietarios) && listaPropietarios.get(0).getPropietario()!=null && listaPropietarios.get(0).getPropietario().getFullName()!=null){
 				mapaValores.put("SociedadPatrimonial",listaPropietarios.get(0).getPropietario().getFullName());
 				Double porcentaje =  (double) (100/listaPropietarios.size());
 				mapaValores.put("PorcentajePropiedad",FileUtilsREM.stringify(porcentaje));
@@ -160,15 +160,15 @@ public class OperacionVentaManager implements ParamReportsApi{
 			}
 			
 			NMBBien bien =  activo.getBien();
-			if (bien!=null) {
-				if (bien.getDatosRegistrales()!=null) {
-					mapaValores.put("FincaRegistral",FileUtilsREM.stringify(bien.getDatosRegistrales()));
-				} else {
-					mapaValores.put("FincaRegistral",FileUtilsREM.stringify(null));
-				}
-			} else {
-				mapaValores.put("FincaRegistral",FileUtilsREM.stringify(null));
-			}
+//			if (bien!=null) {
+//				if (bien.getDatosRegistrales()!=null) {
+//					mapaValores.put("FincaRegistral",FileUtilsREM.stringify(bien.getDatosRegistrales()));
+//				} else {
+//					mapaValores.put("FincaRegistral",FileUtilsREM.stringify(null));
+//				}
+//			} else {
+//				mapaValores.put("FincaRegistral",FileUtilsREM.stringify(null));
+//			}
 
 //			Oferta ofertaAceptada = ofertaApi.getOfertaAceptadaByActivo(activo);
 //			if (ofertaAceptada==null) {
@@ -240,6 +240,7 @@ public class OperacionVentaManager implements ParamReportsApi{
 				mapaValores.put("Tomo",FileUtilsREM.stringify(activo.getInfoRegistral().getInfoRegistralBien().getTomo()));
 				mapaValores.put("Libro",FileUtilsREM.stringify(activo.getInfoRegistral().getInfoRegistralBien().getLibro()));
 				mapaValores.put("Folio",FileUtilsREM.stringify(activo.getInfoRegistral().getInfoRegistralBien().getFolio()));
+				mapaValores.put("FincaRegistral",FileUtilsREM.stringify(activo.getInfoRegistral().getInfoRegistralBien().getNumFinca()));
 			} else {
 				mapaValores.put("Inscripcion", FileUtilsREM.stringify(null));
 				mapaValores.put("Registro",FileUtilsREM.stringify(null));
@@ -247,6 +248,7 @@ public class OperacionVentaManager implements ParamReportsApi{
 				mapaValores.put("Tomo",FileUtilsREM.stringify(null));
 				mapaValores.put("Libro",FileUtilsREM.stringify(null));
 				mapaValores.put("Folio",FileUtilsREM.stringify(null));
+				mapaValores.put("FincaRegistral",FileUtilsREM.stringify(null));
 			}
 			
 			mapaValores.put("TipoPropiedad",FileUtilsREM.stringify(this.getTipoPropiedadActivo(activo)));

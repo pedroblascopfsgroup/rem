@@ -9,6 +9,7 @@ public class DtoDetalleOferta {
 	private String intencionFinanciar;
 	private String numVisitaRem;
 	private String procedenciaVisita;
+	private String sucursal;
 
 
 	public String getId() {
@@ -41,5 +42,11 @@ public class DtoDetalleOferta {
 	public void setProcedenciaVisita(String procedenciaVisita) {
 		this.procedenciaVisita = procedenciaVisita;
 	}
-
+	public String getSucursal() {
+		return sucursal;
+	}
+	public void setSucursal(String sucursal) {
+		this.sucursal = sucursal;
+	}
+	
 }

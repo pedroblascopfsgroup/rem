@@ -74,7 +74,53 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.dias.transcurridos'),
 							bind: 		'{reserva.diasFirma}'
-		                }
+		                },
+		                {
+							xtype: 'textfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.codigo.sucursalreserva'),
+							name: 'buscadorSucursales',
+							maskRe: /^\d{1,4}$/,
+							maxLength: 4,
+							//disabled: true,
+							bind: {
+								value: '{reserva.codigoSucursal}'
+							},
+							allowBlank: true,
+							triggers: {
+								
+									buscarEmisor: {
+							            cls: Ext.baseCSSPrefix + 'form-search-trigger',
+							            handler: 'buscarSucursal'
+							        }
+							},
+							cls: 'searchfield-input sf-con-borde',
+							emptyText:  'Introduce el código de la Sucursal',
+							enableKeyEvents: true,
+					        listeners: {
+					        	specialKey: function(field, e) {
+					        		if (e.getKey() === e.ENTER) {
+					        			field.lookupController().buscarSucursal(field);											        			
+					        		}
+					        	}/*,
+					        	
+					        	blur: function(field, e) {											        		
+					        		if(!Ext.isEmpty(field.getValue())) {
+					        			field.lookupController().buscarPrescriptor(field);
+					        		}
+					        	}*/
+					        	
+					        	
+					        }
+	                	},
+	                	{
+							xtype: 'textfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.sucursalreserva'),
+							name: 'nombreSucursal',
+							bind: '{reserva.sucursal}',
+							//disabled: true,
+							readOnly: true,
+							allowBlank: true
+						}
 		                		               
 		        ]
 			},

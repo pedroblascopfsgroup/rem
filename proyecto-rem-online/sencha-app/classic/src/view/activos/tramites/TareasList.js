@@ -32,13 +32,24 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
 	          	 }
              },
              {
+	           	 name: 'btnaAnularTramite',
+	           	 itemId: 'btnAnularTramite',
+	           	 text: 'AnularTrámite',
+	           	 secFunPermToShow: 'BOTON_ANULAR_TRAMITE',
+	          	 handler: 'anularTramite',
+	          	 bind: {
+	          		 hidden: '{tramite.ocultarBotonAnular}',
+	          		 disabled: '{!esEnTramite}'
+	          	 }
+             },
+             {
 	           	 name: 'btnSaltoRE',
 	           	 itemId: 'btnSaltoRE',
 	           	 text: 'Anular trámite comercial',
 	           	 secFunPermToShow: 'BOTON_RESOLUCION_EXPEDIENTE',
 	          	 handler: 'saltoResolucionExpediente',
 	          	 bind: {
-	          		 hidden: '{tramite.ocultarBotonResolucion}'
+	          		hidden: '{tramite.ocultarBotonResolucion}'
 	          	 }
              },
              {

@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.oferta.dao.impl;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -22,13 +23,16 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
@@ -47,6 +51,9 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private ActivoDao activoDao;
 
 	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter) {
 		return getListOfertas(dtoOfertasFilter, null, null);
@@ -159,6 +166,18 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 			Activo idActivo = genericDao.get(Activo.class, filtroIdActivo);
 			
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.idActivo", idActivo.getId().toString());
+		}
+		
+		//HREOS-2716
+		if (!Checks.esNulo(dtoOfertasFilter.getCodigoPromocionPrinex())) {
+			DtoActivoFilter dtoActivo = new DtoActivoFilter();
+			dtoActivo.setCodigoPromocionPrinex(dtoOfertasFilter.getCodigoPromocionPrinex());
+			List activos = activoDao.getListActivosLista(dtoActivo, null);
+			List<Long> idActivos = new ArrayList<Long>();
+			for(int i = 0; i < activos.size(); i++) {
+				idActivos.add(((VBusquedaActivos)activos.get(i)).getId());
+			}
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "voferta.idActivo", idActivos);
 		}
 		
 		try {

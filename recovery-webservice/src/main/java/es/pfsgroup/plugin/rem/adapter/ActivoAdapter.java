@@ -132,6 +132,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
@@ -1645,13 +1646,21 @@ public class ActivoAdapter {
 
 			beanUtilNotNull.copyProperty(dtoTramite, "esMultiActivo", tramite.getActivos().size() > 1 ? true : false);
 			beanUtilNotNull.copyProperty(dtoTramite, "countActivos", tramite.getActivos().size());
-			if (!Checks.esNulo(tramite.getTipoTramite()))
+			if (!Checks.esNulo(tramite.getTipoTramite())){
 				if (!ActivoTramiteApi.CODIGO_TRAMITE_ACTUACION_TECNICA.equals(tramite.getTipoTramite().getCodigo())
-						&& !ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC.equals(tramite.getTipoTramite().getCodigo()))
+						&& !ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC.equals(tramite.getTipoTramite().getCodigo())) {
 					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonCierre", true);
-			if (!Checks.esNulo(tramite.getTipoTramite()))
-				if (!ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA.equals(tramite.getTipoTramite().getCodigo()))
+				}
+				if (!ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA.equals(tramite.getTipoTramite().getCodigo())) {
 					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonResolucion", true);
+				}
+				
+				if (!ActivoTramiteApi.CODIGO_TRAMITE_PROPUESTA_PRECIOS.equals(tramite.getTipoTramite().getCodigo())) {
+					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonAnular", true);
+				}
+			}
+				
+				
 			beanUtilNotNull.copyProperty(dtoTramite, "tieneEC", false);
 			if (!Checks.esNulo(tramite.getTrabajo())) {
 				// Trabajos asociados con expediente comercial
@@ -2500,7 +2509,15 @@ public class ActivoAdapter {
 			oferta.setCliente(clienteComercial);
 
 			oferta.setPrescriptor((ActivoProveedor) proveedoresApi.searchProveedorCodigo(dto.getCodigoPrescriptor()));
-
+			
+			if(!Checks.esNulo(dto.getIntencionFinanciar()))
+				oferta.setIntencionFinanciar(dto.getIntencionFinanciar()? 1 : 0);
+			if(!Checks.esNulo(dto.getCodigoSucursal())) {
+				String codigoOficina = activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)? "2038" : 
+					activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)? "3058" : "";
+				if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA) || activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR))
+					oferta.setSucursal((ActivoProveedor) proveedoresApi.searchProveedorCodigoUvem(codigoOficina+dto.getCodigoSucursal()));
+			}
 			genericDao.save(Oferta.class, oferta);
 			// Actualizamos la situacion comercial del activo
 			updaterState.updaterStateDisponibilidadComercialAndSave(activo);

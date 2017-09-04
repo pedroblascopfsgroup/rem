@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -620,6 +621,20 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setMotivoDesbloqueoDescLibre(String motivoDesbloqueoDescLibre) {
 		this.motivoDesbloqueoDescLibre = motivoDesbloqueoDescLibre;
+	}
+	
+	public List<CompradorExpediente> getCompradoresAlta(){
+		List<CompradorExpediente> compradoresAlta= new ArrayList<CompradorExpediente>();
+		
+		if(!Checks.estaVacio(this.getCompradores())){
+			for(CompradorExpediente com: this.getCompradores()){
+				if(Checks.esNulo(com.getFechaBaja())){
+					compradoresAlta.add(com);
+				}
+			}
+		}
+		
+		return compradoresAlta;
 	}
    
 }

@@ -72,7 +72,7 @@ public class GestorActivoDaoImpl extends GestorEntidadDaoImpl implements GestorA
 		String resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ZON_PEF_USU zpu "
 				+ "	JOIN PEF_PERFILEs pef ON zpu.pef_id = pef.pef_id "
 				+ " WHERE zpu.usu_id = " + idUsuario
-				+ " AND pef.pef_codigo IN ('GESTOADM','GESTIAFORM','HAYAGESTADMT','GESTOCED','GESTOPLUS','GESTOPDV','HAYAPROV','HAYACERTI')");
+				+ " AND pef.pef_codigo IN ('GESTOADM','GESTIAFORM','GESTOCED','GESTOPLUS','GESTOPDV','HAYAPROV','HAYACERTI')");
 		
 		if("0".equals(resultado)) {
 			return false;

@@ -202,7 +202,10 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 					    	addUxReadOnlyEditFieldPlugin: false
 					    }, 
 	            	    items: [
-	            	    
+	            	    	{
+	            	    		fieldLabel: HreRem.i18n('fieldlabel.activosearch.codigo.promocion'),
+					        	name: 'codigoPromocionPrinex'
+	            	    	},
 	            	    	{ 
 					        	fieldLabel:  HreRem.i18n('fieldlabel.nombre.canal'),
 					        	name: 'nombreCanal',

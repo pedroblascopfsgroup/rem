@@ -104,7 +104,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 						                	bind: {
 												store: '{comboComites}',
 												value: '{datosbasicosoferta.comiteSancionadorCodigo}',
-												readOnly: '{esCarteraBankia}'
+												readOnly: '{comiteSancionadorNoEditable}'
 												
 											},
 											// TODO Sobreescribimos la función porque está dando problemas la carga del store. A veces llega null.

@@ -36,7 +36,10 @@ Ext.define('HreRem.model.Reserva', {
 					return null;
 			},
 			depends: 'fechaFirma'
-    	}
+    	},
+    	'codigoSucursal',
+    	'cartera',
+    	'sucursal'
     	
     ],
 

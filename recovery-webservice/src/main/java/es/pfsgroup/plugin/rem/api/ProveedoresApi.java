@@ -261,7 +261,13 @@ public interface ProveedoresApi {
 	 * @return Devuelve el proveedor encontrado.
 	 */
 	public Object searchProveedorCodigo(String codigoUnicoProveedor);
-
+	/**
+	 * Método que busca el código del proveedor a través de su codigo Uvem.
+	 * 
+	 * @param codigoUnicoProveedor : codigo identificativo del proveedor.
+	 * @return Devuelve el proveedor encontrado.
+	 */
+	public Object searchProveedorCodigoUvem(String codigoProveedorUvem);
 	/**
 	 * Este método obtien un listado de proveedores contacto en base a una lista de IDs de usuario y una cartera.
 	 * 

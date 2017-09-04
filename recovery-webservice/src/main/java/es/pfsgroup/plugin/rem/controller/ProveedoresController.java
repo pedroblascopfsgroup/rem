@@ -586,4 +586,20 @@ public class ProveedoresController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 		
 	}
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView searchProveedorCodigoUvem(@RequestParam String codigoProveedorUvem) {
+		ModelMap model = new ModelMap();
+		
+		try {
+			model.put("data", proveedoresApi.searchProveedorCodigoUvem(codigoProveedorUvem));
+			model.put("success", true);			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
 }

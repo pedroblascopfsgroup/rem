@@ -1228,7 +1228,18 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		}
 		return null;
 	}
+	
+	@Override
+	public ActivoProveedor searchProveedorCodigoUvem(String codigoProveedorUvem) {
+		List<ActivoProveedor> listaProveedores= new ArrayList<ActivoProveedor>();
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codProveedorUvem", codigoProveedorUvem);
+		listaProveedores = genericDao.getList(ActivoProveedor.class, filtro);
 
+		if(!Checks.estaVacio(listaProveedores)){
+			return listaProveedores.get(0);
+		}
+		return null;
+	}
 	@Override
 	public List<ActivoProveedorContacto> getActivoProveedorContactoPorIdsUsuarioYCartera(List<Long> idUsuarios, Long idCartera) {
 		return proveedoresDao.getActivoProveedorContactoPorIdsUsuarioYCartera(idUsuarios, idCartera);

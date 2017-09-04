@@ -6,11 +6,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
@@ -20,7 +20,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
-import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -29,9 +28,7 @@ import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
-import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
-import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 
 @Component
 public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterService {
@@ -56,6 +53,8 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	private static final String FECHA_FIRMA = "fechaFirma";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+	
+	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaObtencionContrato.class);
 
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 
@@ -85,8 +84,19 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 				    expediente.getReserva().setFechaVencimiento(calendar.getTime());
 				}
 				
+				//Si algún activo esta sujeto a tanteo y todos tienen la resolucion Renunciada, se informa el campo "Fecha vencimiento reserva" con la mayor fecha de resolucion de los tanteos
+				if(ofertaApi.checkDerechoTanteo(tramite.getTrabajo())){
+					List<TanteoActivoExpediente> tanteosExpediente= expediente.getTanteoActivoExpediente();
+					if(!Checks.estaVacio(tanteosExpediente)){
+						//HREOS-2686 Punto 2
+						expedienteComercialApi.actualizarFVencimientoReservaTanteosRenunciados(null, tanteosExpediente);
+					}
+				}
+				
 				
 			}
+			
+		
 
 			genericDao.save(ExpedienteComercial.class, expediente);
 
@@ -107,7 +117,18 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 					}
 				}
 				genericDao.save(ExpedienteComercial.class, expediente);
+				
+				
 			}
+			
+			//Actualizar el estado comercial de los activos de la oferta
+			ofertaApi.updateStateDispComercialActivosByOferta(ofertaAceptada);
+			//Actualizar el estado de la publicación de los activos de la oferta (ocultar activos)
+			try {
+				ofertaApi.ocultarActivoOferta(ofertaAceptada);
+			} catch (Exception e) {
+				logger.error("Error descongelando ofertas.", e);
+			} 
 		}
 
 	}

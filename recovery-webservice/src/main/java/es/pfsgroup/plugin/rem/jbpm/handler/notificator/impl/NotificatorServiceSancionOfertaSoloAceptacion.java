@@ -26,7 +26,7 @@ public class NotificatorServiceSancionOfertaSoloAceptacion extends NotificatorSe
 
 	@Override
 	public void notificatorFinTareaConValores(ActivoTramite tramite, List<TareaExternaValor> valores) {
-		this.generaNotificacion(tramite, false);
+		this.generaNotificacion(tramite, false, true);
 		
 	}
 

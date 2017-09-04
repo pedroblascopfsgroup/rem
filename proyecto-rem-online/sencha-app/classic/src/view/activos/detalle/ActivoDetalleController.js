@@ -2566,6 +2566,61 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		});		
 	},
 	
+	buscarSucursal: function(field, e){
+
+		var me= this;
+		var url =  $AC.getRemoteUrl('proveedores/searchProveedorCodigoUvem');
+		var carteraBankia = me.view.up().lookupController().getViewModel().get('activo.isCarteraBankia');
+		var carteraCajamar = me.view.up().lookupController().getViewModel().get('activo.isCarteraCajamar');
+		var codSucursal = '';
+		var nombreSucursal = '';
+		if(carteraBankia){
+			codSucursal = '2038' + field.getValue();
+			nombreSucursal = ' (Oficina Bankia)';
+		}else if(carteraCajamar){
+			codSucursal = '3058' + field.getValue();
+			nombreSucursal = ' (Oficina Cajamar)'
+		}
+		var data;
+		var re = new RegExp("^[0-9]{8}$");
+		
+		Ext.Ajax.request({
+		    			
+		 		url: url,
+		   		params: {codigoProveedorUvem : codSucursal},
+		    		
+		    	success: function(response, opts) {
+			    	data = Ext.decode(response.responseText);
+		    		var buscadorSucursal = field.up('formBase').down('[name=buscadorSucursales]'),
+		    		nombreSucursalField = field.up('formBase').down('[name=nombreSucursal]');
+
+			    	if(!Utils.isEmptyJSON(data.data)){
+						var id= data.data.id;
+		    		    nombreSucursal = data.data.nombre + nombreSucursal;
+		    		    
+		    		    if(re.test(codSucursal) && nombreSucursal != null && nombreSucursal != ''){
+			    		    if(!Ext.isEmpty(nombreSucursalField)) {
+			    		    	nombreSucursalField.setValue(nombreSucursal);	
+				    		}
+		    		    }else{
+		    		    	nombreSucursalField.setValue('');
+		    				me.fireEvent("errorToast", "El código de la Sucursal introducido no corresponde con ninguna Oficina");
+		    			}
+			    	} else {
+			    		if(!Ext.isEmpty(nombreSucursalField)) {
+			    			nombreSucursalField.setValue('');
+		    		    }
+			    		me.fireEvent("errorToast", HreRem.i18n("msg.buscador.no.encuentra.sucursal.codigo"));
+			    		buscadorSucursal.markInvalid(HreRem.i18n("msg.buscador.no.encuentra.sucursal.codigo"));		    		    
+			    	}		    		    	 
+		    	},
+		    	failure: function(response) {
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    	},
+		    	callback: function(options, success, response){
+				}   		     
+		});		
+	},
 	onChangeFechasMinimaMovimientosLlaveList: function() {
 		var me = this;
 		var dateDevolucion = me.lookupReference('datefieldDevolucion');

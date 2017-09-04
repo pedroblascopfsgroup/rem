@@ -31,16 +31,16 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.id.activo.haya'),
 		                	bind:		'{activo.numActivo}'
 
-		                },
-						{ 
+		                },	
+		                {
 							xtype: 'displayfieldbase',
-							fieldLabel:  HreRem.i18n('fieldlabel.id.bien.recovery'),
-							bind:		'{activo.idRecovery}'
+							fieldLabel: HreRem.i18n('fieldlabel.activosearch.codigo.promocion'),
+							bind:		'{activo.codigoPromocionPrinex}'
 						},
 						{ 
 		                	xtype: 'textareafieldbase',
 		                	labelWidth: 200,
-		                	rowspan: 4,
+		                	rowspan: 5,
 		                	height: 160,
 		                	labelAlign: 'top',
 		                	fieldLabel: HreRem.i18n('fieldlabel.breve.descripcion.activo'),
@@ -50,7 +50,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							xtype: 'displayfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.id.activo.prinex'),
 							bind:		'{activo.idProp}'
-						},
+						},						
 						{ 
 				        	xtype: 'comboboxfieldbase',
 				        	fieldLabel: HreRem.i18n('fieldlabel.tipo.activo'),
@@ -109,7 +109,12 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			            		store: '{comboTipoUsoDestino}',
 			            		value: '{activo.tipoUsoDestinoCodigo}'
 			            	}
-		                }
+		                },
+		                { 
+							xtype: 'displayfieldbase',
+							fieldLabel:  HreRem.i18n('fieldlabel.id.bien.recovery'),
+							bind:		'{activo.idRecovery}'
+						}
 					]
            },
            

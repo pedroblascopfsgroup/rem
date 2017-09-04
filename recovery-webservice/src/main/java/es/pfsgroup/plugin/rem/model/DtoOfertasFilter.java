@@ -49,7 +49,10 @@ public class DtoOfertasFilter extends WebDto {
 	private String emailOfertante;
 	private String documentoOfertante;
 	private Long gestoria;	
-	
+	private String codigoPromocionPrinex;
+	private Boolean intencionFinanciar;
+	private String codigoSucursal;
+	private String tipoSucursal;
 	
 	public Long getNumOferta() {
 		return numOferta;
@@ -279,5 +282,30 @@ public class DtoOfertasFilter extends WebDto {
 	public void setGestoria(Long gestoria) {
 		this.gestoria = gestoria;
 	}
+	public String getCodigoPromocionPrinex() {
+		return codigoPromocionPrinex;
+	}
+	public void setCodigoPromocionPrinex(String codigoPromocionPrinex) {
+		this.codigoPromocionPrinex = codigoPromocionPrinex;
+	}
+	public Boolean getIntencionFinanciar() {
+		return intencionFinanciar;
+	}
+	public void setIntencionFinanciar(Boolean intencionFinanciar) {
+		this.intencionFinanciar = intencionFinanciar;
+	}
+	public String getCodigoSucursal() {
+		return codigoSucursal;
+	}
+	public void setCodigoSucursal(String codigoSucursal) {
+		this.codigoSucursal = codigoSucursal;
+	}
+	public String getTipoSucursal() {
+		return tipoSucursal;
+	}
+	public void setTipoSucursal(String tipoSucursal) {
+		this.tipoSucursal = tipoSucursal;
+	}
+	
 	
 }

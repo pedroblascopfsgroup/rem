@@ -89,6 +89,7 @@ public class DtoActivoFilter extends WebDto {
 	private Integer perimetroGestion;
 	private String ratingCodigo;
 	private Long usuarioGestor;
+	private String codigoPromocionPrinex;
 	
 	public String getNumActivo() {
 		return numActivo;
@@ -563,5 +564,12 @@ public class DtoActivoFilter extends WebDto {
 	}
 	public void setSubcarteraCodigoAvanzado(String subcarteraCodigoAvanzado) {
 		this.subcarteraCodigoAvanzado = subcarteraCodigoAvanzado;
+	}
+	public String getCodigoPromocionPrinex() {
+		return codigoPromocionPrinex;
+	}
+	public void setCodigoPromocionPrinex(String codigoPromocionPrinex) {
+		this.codigoPromocionPrinex = codigoPromocionPrinex;
 	}	
+	
 }

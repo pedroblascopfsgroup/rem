@@ -35,12 +35,24 @@ Ext.define('HreRem.view.activos.detalle.HonorariosOfertaDetalleList', {
 		        {
 		        	dataIndex: 'tipoProveedor',
 		        	text: HreRem.i18n('fieldlabel.tipo.proveedor'),
-		        	flex:1
+		        	flex:1,
+		        	renderer: function(value, cell, record){
+		        		if(!Ext.isEmpty(value) && value.length != 0){
+		        			return value;
+		        		}
+		        		return '-';
+		        	}
 		        },
 		        {
 		        	dataIndex: 'proveedor',
 		        	text: HreRem.i18n('header.personas.contacto.nombre'),
-		        	flex:2
+		        	flex:2,
+		        	renderer: function(value, cell, record){
+		        		if(!Ext.isEmpty(value) && value.length != 0){
+		        			return value;
+		        		}
+		        		return '-';
+		        	}
 		        },
 		        {
 		        	dataIndex: 'tipoCalculo',
@@ -51,13 +63,44 @@ Ext.define('HreRem.view.activos.detalle.HonorariosOfertaDetalleList', {
 		        	xtype: 'numbercolumn',
 		        	dataIndex: 'importeCalculo',
 		        	text: HreRem.i18n('header.oferta.detalle.importe.calculo'),
-		        	flex:1
+		        	flex:1,
+		        	renderer: function(value, cell, record) {
+		        		var codigoTipoCalculo = record.get("codigoTipoCalculo");
+		        		if(!Ext.isEmpty(value)){
+			        		if(!Ext.isEmpty(codigoTipoCalculo)){
+			        			if(codigoTipoCalculo=='01'){
+			        				return value+' %';
+			        			}
+			        			else{
+			        				return value;
+			        			}
+			        		}
+		        		}
+		        		else{
+		        			if(!Ext.isEmpty(codigoTipoCalculo)){
+			        			if(codigoTipoCalculo=='01'){
+			        				return '0.0 %';
+			        			}
+			        			else{
+			        				return '0';
+			        			}
+			        		}
+		        		}
+		        		
+		        	}
 		        },
 		        {
 		        	dataIndex: 'honorarios',
 		        	text: HreRem.i18n('title.horonarios'),
 		        	flex:1,
-		        	renderer: Utils.rendererCurrency,
+		        	renderer: function(value, cell, record) {
+		        		if(!Ext.isEmpty(value) && value != '0.0'){
+		        			return Utils.rendererCurrency(value);
+		        		}
+		        		else{
+		        			return '0.00'+' \u20AC';
+		        		}
+		        	},
 		            summaryType: 'sum',
 	            	summaryRenderer: function(value, summaryData, dataIndex) {
 		            	var suma = 0;

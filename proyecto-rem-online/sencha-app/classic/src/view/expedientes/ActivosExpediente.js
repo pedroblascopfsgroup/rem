@@ -155,10 +155,11 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			            flex:1,
 			       		renderer: Utils.rendererCurrency,
 			       		summaryType: 'sum',
-			            summaryRenderer: function(value, summaryData, dataIndex) {
+			            summaryRenderer: function(value, summaryData, dataIndex) {			            	
+			            	value = parseFloat(value);
 			            	var msg = HreRem.i18n("fieldlabel.importe.participacion.igual")
 			            	var style = ""
-			            	if(value != this.lookupController().getViewModel().get('expediente.importe')) {
+			            	if(value != parseFloat(this.lookupController().getViewModel().get('expediente.importe'))) {
 			            		msg = HreRem.i18n("fieldlabel.importe.participacion.desigual") + " " + 
 			            			(value - this.lookupController().getViewModel().get('expediente.importe')) + "&euro;"
 			            		style = "style= 'color: red'"

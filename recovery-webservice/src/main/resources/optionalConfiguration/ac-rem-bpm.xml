@@ -361,6 +361,12 @@
 				def activoTramiteManager = ctx.getBean("activoTramiteManager");
             	return activoTramiteManager.mismoNumeroAdjuntosComoActivosExpedienteUGValidacion(tareaExterna, codigo, unidadGestion);
             }
+            
+            def mismoNumeroAdjuntosComoCompradoresExpedienteUGValidacion(String codigo, String unidadGestion, String cartera){
+            	def activoTramiteManager = ctx.getBean("activoTramiteManager");
+            	return activoTramiteManager.mismoNumeroAdjuntosComoCompradoresExpedienteUGValidacion(tareaExterna, codigo, unidadGestion, cartera);
+            }
+            
             def checkFechaEmisionInformeJuridico() {
 				def activoTramiteManager = ctx.getBean("activoTramiteManager");
             	return activoTramiteManager.checkFechaEmisionInformeJuridico(tareaExterna);

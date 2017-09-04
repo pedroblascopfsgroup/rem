@@ -265,6 +265,33 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 		//me.getView().fireEvent('saltocierreeconomico', me.getView(), idTareaExterna);
 	},
 	
+	anularTramite : function(button) {
+		var me = this;
+		var idTramite = me.getViewModel().get("tramite.idTramite");
+		var url = $AC.getRemoteUrl('agenda/anularTramite');
+		
+		var data;
+		Ext.Ajax.request({
+			url:url,
+			params: {idTramite : idTramite},
+			success: function(response, opts){
+				data = Ext.decode(response.responseText);
+				if(data.success == 'true') {
+					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				} else {
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.anulartramite"));
+				}
+				me.onClickBotonRefrescar(button);
+			},
+			failure: function(options, success, response){
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.anulartramite"));
+			},
+			callback: function(options, success, response){
+				me.getView().unmask();
+			}
+		})
+	},
+	
 	saltoResolucionExpediente: function(button){
 		var me = this;
 		

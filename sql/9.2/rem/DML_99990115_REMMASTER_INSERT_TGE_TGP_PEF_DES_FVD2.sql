@@ -64,7 +64,7 @@ DECLARE
 	TYPE T_ARRAY_PEF IS TABLE OF T_TIPO_PEF;
 	V_TIPO_PEF T_ARRAY_PEF := T_ARRAY_PEF(
 	--				CODIGO	  			DESCRIPCION	 						DESCRIPCION_LARGA   
-		T_TIPO_PEF('FVDNEGOCIO', 		'Gestoría de administración',			'Gestoría de administración'		),
+		T_TIPO_PEF('FVDNEGOCIO', 		'Gestor FVD de negocio',				'Gestor FVD de negocio'		),
 		T_TIPO_PEF('FVDBACKOFERTA', 	'Gestor FVD de Backoffice de oferta',	'Gestor FVD de Backoffice de oferta'		),
 		T_TIPO_PEF('FVDBACKVENTA', 		'Gestor FVD de Backoffice de venta',	'Gestor FVD de Backoffice de venta'	)
 	); 
@@ -245,8 +245,15 @@ BEGIN
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         
         --Si existe lo modificamos
-       IF V_NUM_TABLAS > 0 THEN			       
-         DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.PEF_PERFILES...no se modifica nada.');
+       IF V_NUM_TABLAS > 0 THEN			
+       DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
+       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.PEF_PERFILES '||
+                    'SET PEF_DESCRIPCION = '''|| TRIM(V_TMP_TIPO_PEF(2)) ||''', PEF_DESCRIPCION_LARGA = '''|| TRIM(V_TMP_TIPO_PEF(3)) ||''' '|| 
+					', USUARIOMODIFICAR = ''REM_F2'' , FECHAMODIFICAR = SYSDATE '||
+					', BORRADO = 0 '||
+					'WHERE PEF_CODIGO = '''||TRIM(V_TMP_TIPO_PEF(1))||'''';
+          EXECUTE IMMEDIATE V_MSQL;
+          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
          
        ELSE
        

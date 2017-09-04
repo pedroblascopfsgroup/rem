@@ -128,12 +128,42 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 			        },
 					flex : 1,
 					editor: 'numberfield',
-					summaryType: 'sum',
+					summaryType: function(){
+							
+						var store = this;
+	                    var records = store.getData().items;
+	                    var field = ['participacion'];
+	                    function Suma(record, field) {
+	                        var total = 0;
+	                        var j = 0,
+	                        lenn = record.length;
+	                        for (; j < lenn; ++j) {
+	                           total = total + parseFloat(record[j].get(field));
+	                        }
+	                        return total.toFixed(2);
+	                    };
+	                    if (this.isGrouped()) {
+	                        var groups = this.getGroups();
+	                        var i = 0;
+	                        var len = groups.length;
+	                        var out = {},
+	                        group;
+	                        for (; i < len; i++) {
+	                            group = groups[i];
+	                            out[group.name] = Suma.apply(store, [group.children].concat(field));
+	                        }
+	                        var groupSum = out[groups[w].name];
+	                        w++;
+	                        return groupSum;
+	                    } else {
+	                        return Suma.apply(store, [records].concat(field));
+	                    }
+					},
 		            summaryRenderer: function(value, summaryData, dataIndex) {
 		            	var value2=Ext.util.Format.number(value, '0.00');
 		            	var msg = HreRem.i18n("fieldlabel.participacion.total") + " " + value2 + "%";
 		            	var style = "style= 'color: black'";
-		            	if(value != 100) {
+		            	if(parseFloat(value) != parseFloat('100.00')) {
 		            		//msg = HreRem.i18n("fieldlabel.participacion.total.error")	
 		            		style = "style= 'color: red'";
 		            	}			            	
@@ -184,6 +214,7 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 					    
    	saveSuccessFn: function () {
 		var me = this;
+		me.up('form').funcionRecargar();
 		return true;
 	}
 

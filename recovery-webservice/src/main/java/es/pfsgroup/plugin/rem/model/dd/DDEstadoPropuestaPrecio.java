@@ -39,6 +39,7 @@ public class DDEstadoPropuestaPrecio implements Auditable, Dictionary {
 	public static final String ESTADO_ENVIADA = "02";
 	public static final String ESTADO_SANCIONADA = "03";
 	public static final String ESTADO_CARGADA = "04";
+	public static final String ESTADO_ANULADA = "05";
 
 	@Id
 	@Column(name = "DD_EPP_ID")

@@ -171,6 +171,9 @@ public class DtoActivoFichaCabecera extends WebDto {
 	private String costeAdquisicion;
 	private String valorUltimaTasacion;
 	
+	//HREOS-2716
+	private String codigoPromocionPrinex;
+	
 	private int page;
 	private int start;
 	private int limit;
@@ -1304,6 +1307,14 @@ public class DtoActivoFichaCabecera extends WebDto {
 
 	public void setValorUltimaTasacion(String valorUltimaTasacion) {
 		this.valorUltimaTasacion = valorUltimaTasacion;
+	}
+
+	public String getCodigoPromocionPrinex() {
+		return codigoPromocionPrinex;
+	}
+
+	public void setCodigoPromocionPrinex(String codigoPromocionPrinex) {
+		this.codigoPromocionPrinex = codigoPromocionPrinex;
 	}
 	
 

@@ -1845,5 +1845,57 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			return true;
 		}
 	
+	},
+	buscarSucursal: function(field, e){
+		var me= this;
+		var url =  $AC.getRemoteUrl('proveedores/searchProveedorCodigoUvem');
+		var cartera = me.getViewModel().get('reserva.cartera');
+		var codSucursal = '';
+		var nombreSucursal = '';
+		if(cartera == CONST.CARTERA['BANKIA']){
+			codSucursal = '2038' + field.getValue();
+			nombreSucursal = ' (Oficina Bankia)';
+		}else if(cartera == CONST.CARTERA['CAJAMAR']){
+			codSucursal = '3058' + field.getValue();
+			nombreSucursal = ' (Oficina Cajamar)'
+		}
+		var data;
+		var re = new RegExp("^[0-9]{8}$");
+		
+		Ext.Ajax.request({
+		    			
+		 		url: url,
+		   		params: {codigoProveedorUvem : codSucursal},
+		    		
+		    	success: function(response, opts) {
+			    	data = Ext.decode(response.responseText);
+		    		var buscadorSucursal = field.up('formBase').down('[name=buscadorSucursales]'),
+		    		nombreSucursalField = field.up('formBase').down('[name=nombreSucursal]');
+			    	if(!Utils.isEmptyJSON(data.data)){
+						var id= data.data.id;
+		    		    nombreSucursal = data.data.nombre + nombreSucursal;
+		    		    
+		    		    if(re.test(codSucursal) && nombreSucursal != null && nombreSucursal != ''){
+			    		    if(!Ext.isEmpty(nombreSucursalField)) {
+			    		    	nombreSucursalField.setValue(nombreSucursal);	
+				    		}
+		    		    }else{
+		    		    	nombreSucursalField.setValue('');
+		    				me.fireEvent("errorToast", "El código de la Sucursal introducido no corresponde con ninguna Oficina");
+		    			}
+			    	} else {
+			    		if(!Ext.isEmpty(nombreSucursalField)) {
+			    			nombreSucursalField.setValue('');
+		    		    }
+			    		me.fireEvent("errorToast", HreRem.i18n("msg.buscador.no.encuentra.sucursal.codigo"));
+			    		buscadorSucursal.markInvalid(HreRem.i18n("msg.buscador.no.encuentra.sucursal.codigo"));		    		    
+			    	}		    		    	 
+		    	},
+		    	failure: function(response) {
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    	},
+		    	callback: function(options, success, response){
+				}   		     
+		});		
 	}
 });

@@ -65,6 +65,7 @@ import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
+import es.pfsgroup.plugin.rem.jbpm.handler.updater.impl.UpdaterServiceSancionOfertaObtencionContrato;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -127,6 +128,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDAdministracion;
 import es.pfsgroup.plugin.rem.model.dd.DDAreaBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
@@ -182,6 +184,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public static final String TANTEO_CONDICIONES_TRANSMISION = "msg.defecto.oferta.tanteo.condiciones.transmision";
 	public static final String VISITA_SIN_RELACION_OFERTA = "oferta.validacion.numVisita";
 	public static final String PROVEDOR_NO_EXISTE_O_DISTINTO_TIPO = "El proveedor indicado no existe, o no es del tipo indicado";
+	public static final int NUMERO_DIAS_VENCIMIENTO= 40;
 	
 	public static final String PERFIL_GESTOR_FORMALIZACION = "HAYAGESTFORM";
 
@@ -1029,6 +1032,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setConImpuesto(expediente.getCondicionante().getReservaConImpuesto());
 				dto.setImporte(expediente.getCondicionante().getImporteReserva());
 			}
+			if(!Checks.esNulo(expediente.getOferta().getSucursal())) {					
+				dto.setCodigoSucursal(expediente.getOferta().getSucursal().getCodProveedorUvem().substring(4));
+				dto.setSucursal(expediente.getOferta().getSucursal().getNombre()+" ("+expediente.getOferta().getSucursal().getTipoProveedor().getDescripcion()+")");
+			}
+			dto.setCartera(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo());
 		}
 
 		return dto;
@@ -2215,6 +2223,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				DDTiposArras tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, dto.getTipoArrasCodigo());
 				reserva.setTipoArras(tipoArras);
+			}
+			if(!Checks.esNulo(dto.getCodigoSucursal())) {
+				String codigoCartera = "";
+				if(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA))
+					codigoCartera = "2038";
+				else if (expediente.getOferta().getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR))
+					codigoCartera = "3058";
+				Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "codProveedorUvem", codigoCartera + dto.getCodigoSucursal());
+				expediente.getOferta().setSucursal((ActivoProveedor) genericDao.get(ActivoProveedor.class, filtroProveedor));
+				genericDao.save(Oferta.class, expediente.getOferta());
 			}
 
 			genericDao.save(Reserva.class, reserva);
@@ -4403,6 +4421,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					genericDao.createFilter(FilterType.EQUALS, "codigo", tanteoActivoDto.getCodigoTipoResolucion()));
 			if(!Checks.esNulo(resultadoTanteo)){
 				tanteoActivo.setResultadoTanteo(resultadoTanteo);
+				//HREOS-2686 Punto 2
+				actualizarFVencimientoReservaTanteosRenunciados(tanteoActivo, null);				
 			}
 		}
 		if(!Checks.esNulo(tanteoActivoDto.getFechaVencimiento())&& tanteoActivoDto.getFechaVencimiento().getTime()>0){
@@ -4462,6 +4482,83 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		
 		return true;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void actualizarFVencimientoReservaTanteosRenunciados(TanteoActivoExpediente tanteoActivo, List<TanteoActivoExpediente> tanteosActivo){
+		
+		Boolean todosRenunciados= true;
+		Date fechaResolucionMayor= null;
+		if(!Checks.esNulo(tanteoActivo)){
+			if(!Checks.esNulo(tanteoActivo.getResultadoTanteo()) && DDResultadoTanteo.CODIGO_RENUNCIADO.equals(tanteoActivo.getResultadoTanteo().getCodigo())){
+				if(!Checks.esNulo(tanteoActivo.getExpediente()) && !Checks.esNulo(tanteoActivo.getExpediente().getCondicionante())){
+					if((Integer.valueOf(1).equals(tanteoActivo.getExpediente().getCondicionante().getSujetoTanteoRetracto()))){
+						List<TanteoActivoExpediente> tanteosExpediente= tanteoActivo.getExpediente().getTanteoActivoExpediente();
+						if(!Checks.estaVacio(tanteosExpediente)){
+							fechaResolucionMayor= tanteosExpediente.get(0).getFechaResolucion();
+						}
+						for(TanteoActivoExpediente tanteo: tanteosExpediente){
+							if(!Checks.esNulo(tanteo.getResultadoTanteo())){
+								if(!DDResultadoTanteo.CODIGO_RENUNCIADO.equals(tanteo.getResultadoTanteo().getCodigo())){
+									todosRenunciados= false;
+									break;
+								}
+							}
+							else{
+								todosRenunciados= false;
+								break;
+							}
+							Date fechaResolucion= tanteo.getFechaResolucion();
+							if(!Checks.esNulo(fechaResolucionMayor) && !Checks.esNulo(fechaResolucion) && fechaResolucion.after(fechaResolucionMayor)){
+								fechaResolucionMayor= fechaResolucion;
+							}
+						}
+						
+						if(todosRenunciados && !Checks.esNulo(fechaResolucionMayor)){
+							Calendar calendar = Calendar.getInstance();
+							calendar.setTime(fechaResolucionMayor);
+						    calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO);
+						    tanteoActivo.getExpediente().getReserva().setFechaVencimiento(calendar.getTime());
+						}
+						else{
+							tanteoActivo.getExpediente().getReserva().setFechaVencimiento(null);
+						}
+					}
+				}
+			}
+			else{
+				 tanteoActivo.getExpediente().getReserva().setFechaVencimiento(null);
+			}
+		}
+		else if(!Checks.esNulo(tanteosActivo) && !Checks.estaVacio(tanteosActivo)){;
+				fechaResolucionMayor= tanteosActivo.get(0).getFechaResolucion();
+				for(TanteoActivoExpediente tanteo: tanteosActivo){
+					if(!Checks.esNulo(tanteo.getResultadoTanteo())){
+						if(!DDResultadoTanteo.CODIGO_RENUNCIADO.equals(tanteo.getResultadoTanteo().getCodigo())){
+							todosRenunciados= false;
+							break;
+						}
+					}
+					else{
+						todosRenunciados= false;
+						break;
+					}
+					Date fechaResolucion= tanteo.getFechaResolucion();
+					if(!Checks.esNulo(fechaResolucionMayor) && !Checks.esNulo(fechaResolucion) && fechaResolucion.after(fechaResolucionMayor)){
+						fechaResolucionMayor= fechaResolucion;
+					}
+				}
+				
+				if(todosRenunciados && !Checks.esNulo(fechaResolucionMayor)){
+					ExpedienteComercial expediente= tanteosActivo.get(0).getExpediente();
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime(fechaResolucionMayor);
+				    calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO);
+				    expediente.getReserva().setFechaVencimiento(calendar.getTime());
+				}
+			
+		}
 	}
 
 	@Override

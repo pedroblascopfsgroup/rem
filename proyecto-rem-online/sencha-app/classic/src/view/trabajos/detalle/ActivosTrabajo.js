@@ -154,11 +154,12 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
 			            },
 			            summaryType: 'sum',
 			            summaryRenderer: function(value, summaryData, dataIndex) {
-			            	var msg = HreRem.i18n("fieldlabel.participacion.total") + " " + value + "%";
-			            	var style = "" 
-			            	if(value != 100) {
-			            		msg = HreRem.i18n("fieldlabel.participacion.total.error")	
-			            		style = "style= 'color: red'" 
+			            	var value2=Ext.util.Format.number(value, '0.00');
+			            	var msg = HreRem.i18n("fieldlabel.participacion.total") + " " + value2 + "%";
+			            	var style = "style= 'color: black'";
+			            	if(parseFloat(value2) != parseFloat('100')) {
+			            		//msg = HreRem.i18n("fieldlabel.participacion.total.error")	
+			            		style = "style= 'color: red'";
 			            	}			            	
 			            	return "<span "+style+ ">"+msg+"</span>"
 			            }

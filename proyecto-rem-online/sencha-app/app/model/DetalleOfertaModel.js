@@ -17,6 +17,9 @@ Ext.define('HreRem.model.DetalleOfertaModel', {
 		},
 		{
 			name:'procedenciaVisita'
+		},
+		{
+			name:'sucursal'
 		}
     ],
 

@@ -190,6 +190,9 @@ public class Oferta implements Serializable, Auditable {
 	private Date plazoMaxFormalizacion;	
 	//+-+-+-+-+-+ TR
 	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PVE_ID_SUCURSAL")
+	private ActivoProveedor sucursal;
 	
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -536,6 +539,14 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setIntencionFinanciar(Integer intencionFinanciar) {
 		this.intencionFinanciar = intencionFinanciar;
+	}
+
+	public ActivoProveedor getSucursal() {
+		return sucursal;
+	}
+
+	public void setSucursal(ActivoProveedor sucursal) {
+		this.sucursal = sucursal;
 	}
 
 }

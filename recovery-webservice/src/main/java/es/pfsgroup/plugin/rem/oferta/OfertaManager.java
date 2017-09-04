@@ -1705,7 +1705,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				}
 			}
-		} /*
+		}
+		else{ // Si el importe calculo está vacío mostrar 0.00 y honorarios a 0.00
+			dto.setImporteCalculo(0.00);
+			dto.setHonorarios(0.00);
+		}
+			/*
+		}
 			 * else { // Si el importe calculo está vacío mostrar 'Sin // Honorarios'.
 			 * dto.setTipoCalculo("-"); dto.setHonorarios("Sin Honorarios"); }
 			 */

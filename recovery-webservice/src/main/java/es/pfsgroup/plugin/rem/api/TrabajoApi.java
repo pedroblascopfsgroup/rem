@@ -749,5 +749,12 @@ public interface TrabajoApi {
 	 * @return devuelve null en caso de que no se encuentre una cartera para dicha tarea (no deberia pasar)
 	 */
 	DDCartera getCartera(TareaExterna tareaExterna);
+	
+	/**
+	 * Este método comprueba que el campo ReservaNecesaria contenga un valor SI ó NO.
+	 * @param tareaExterna
+	 * @return
+	 */
+	public boolean checkReservaNecesariaNotNull(TareaExterna tareaExterna);
 
 }

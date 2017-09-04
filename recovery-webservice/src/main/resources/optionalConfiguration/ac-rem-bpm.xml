@@ -369,6 +369,26 @@
             	def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.checkFormalizacion(tareaExterna);
             }
+            def checkReservaNecesariaNotNull = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+            	return trabajoManager.checkReservaNecesariaNotNull(tareaExterna);
+            }
+            def definicionOfertaT013 = {
+            	def validateJbpmManager = ctx.getBean("validateJbpmManager");
+            	return validateJbpmManager.definicionOfertaT013(tareaExterna);
+            }
+            def respuestaOfertanteT013  = {
+            	def validateJbpmManager = ctx.getBean("validateJbpmManager");
+            	return validateJbpmManager.respuestaOfertanteT013(tareaExterna);
+            }  
+            def resolucionComiteT013 = {
+            	def validateJbpmManager = ctx.getBean("validateJbpmManager");
+            	return validateJbpmManager.resolucionComiteT013(tareaExterna);
+            }            
+            def ratificacionComiteT013 = {
+            	def validateJbpmManager = ctx.getBean("validateJbpmManager");
+            	return validateJbpmManager.ratificacionComiteT013(tareaExterna);
+            }
             def checkDeDerechoTanteo = {
             	def ofertaManager = ctx.getBean("ofertaManager");
             	return ofertaManager.checkDeDerechoTanteo(tareaExterna);

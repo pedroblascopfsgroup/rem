@@ -67,6 +67,7 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
@@ -96,6 +97,7 @@ import es.pfsgroup.plugin.rem.model.DtoProveedorContactoSimple;
 import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
@@ -224,6 +226,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Autowired
 	private ActivoAdapter activoAdapter;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -3055,6 +3060,20 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 		}
 		return false;
+	}
+	
+
+	@Override
+	public boolean checkReservaNecesariaNotNull(TareaExterna tareaExterna) {
+		boolean result= false;
+		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
+		if (!Checks.esNulo(trabajo)) {
+			ExpedienteComercial expediente = expedienteComercialApi.findOneByTrabajo(trabajo);
+			if (!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getSolicitaReserva())) {
+				result = true;
+			}
+		}
+		return result;
 	}
 
 	@Override

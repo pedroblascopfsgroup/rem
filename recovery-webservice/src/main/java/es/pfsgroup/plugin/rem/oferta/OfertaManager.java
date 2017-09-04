@@ -1974,5 +1974,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return null;		
 	}
+
 }
 

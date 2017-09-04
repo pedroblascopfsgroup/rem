@@ -261,6 +261,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		return expediente;
 	}
+	
+	@Override
+	public boolean isComiteSancionadorHaya(Trabajo trabajo) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "comiteSancion.codigo", DDComiteSancion.CODIGO_HAYA_SAREB);
+		Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro, filtro2);
+		return !Checks.esNulo(expediente);
+	}
 
 	@Override
 	public ExpedienteComercial findOneByOferta(Oferta oferta) {

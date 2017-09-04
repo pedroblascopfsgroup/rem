@@ -506,7 +506,6 @@ public interface OfertaApi {
 	 */
 	boolean checkEjercidoTanteo(TareaExterna tareaExterna);
 
-	
 	/**
 	 * Devuelve el primer Usuario asociado al preescritor de la oferta. En caso de no existir devuelve null.
 	 * @param oferta

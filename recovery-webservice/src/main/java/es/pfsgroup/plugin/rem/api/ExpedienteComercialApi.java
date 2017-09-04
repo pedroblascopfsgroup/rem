@@ -792,4 +792,11 @@ public interface ExpedienteComercialApi {
 	 */
 	public boolean checkExpedienteBloqueado(Long idTramite) ;
 
+	/**
+	 * Devuelve true si el expediente asociado al trabajo está sancionado por el comite de Haya_Sareb
+	 * @param trabajo
+	 * @return
+	 */
+	public boolean isComiteSancionadorHaya(Trabajo trabajo);
+
 }

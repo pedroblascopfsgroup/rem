@@ -2623,7 +2623,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		idActivo = me.getViewModel().get("activo.id"),
     	url = $AC.getRemoteUrl('activo/propagarInformacion'),
     	tab = form.getBindRecord().getProxy().getExtraParams().tab,
-    	dirtyFields =  form.getBindRecord().modified;
+    	dirtyFieldsModel =  form.getBindRecord().modified,
+    	propagableData = {};
 								
     	me.getView().mask(HreRem.i18n("msg.mask.loading"));
  
@@ -2635,11 +2636,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		success: function(response, opts){
     			
     			var data,
-    			preguntarPropagarCambios=false,
     			campos=[],
     			activoActual=null;		
 		   		try{
 					data = Ext.decode(response.responseText);
+					// data.activos y data.propagateFields
 		   		} catch(e) {
 		   			data = {}
 		   		}
@@ -2647,38 +2648,36 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		   		// Si hay activos a los que propagar los cambios....
 		   		if(Ext.isArray(data.activos) && data.activos.length > 0) {
 		   			
-		   			Ext.Array.each(data.propagateFields, function(fieldName, index) {
-		   				// ... y si encuentro un campo susceptible de propagar, 
-		   				// mostraremos la ventana de selección de activos.
-		   				if(Ext.isDefined(dirtyFields[fieldName])) {
-		   					preguntarPropagarCambios = true;
-		   					return false;
+		   			// Recorremos los campos del formulario para obtener los modificados que además son susceptibles de propagar
+		   			
+		   			form.getForm().getFields().each(function(field) {
+		   				// Si el campo está enlazado con el modelo
+		   				if (!Ext.isEmpty(field) && !Ext.isEmpty(field.bind) && !Ext.isEmpty(field.bind.value) && !Ext.isEmpty(field.bind.value.stub)  ) {
+		   					// Si el campo se ha modificado y está incluido en los campos susceptibles de propagar ...
+		   					if(Ext.isDefined(dirtyFieldsModel[field.bind.value.stub.name]) && data.propagateFields.includes(field.bind.value.stub.name)) {
+		   						campos.push(field);
+								propagableData[field.bind.value.stub.name] = field.getValue();
+		   				
+		   					}
 		   				}
 		   				
 		   			});
 		   			
-		   			if (preguntarPropagarCambios) {
-		   				
-		   				form.getForm().getFields().findBy(function(field) {
+		   			
+					// Si hay cambios que propagar
+		   			if (campos.length > 0) {
 
-							if (!Ext.isEmpty(field.bind) && !Ext.isEmpty(field.bind.value) && !Ext.isEmpty(field.bind.value.stub)  ) {
-								
-								if(Ext.isDefined(dirtyFields[field.bind.value.stub.name])) {
-									campos.push(field);
-								}
-							}
-							
-						});
-						
+						// sacamos el activo actual del listado
 						activoActual = data.activos.splice(data.activos.findIndex(function(activo){return activo.activoId == idActivo}),1)[0];		   				
 
-		   				var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {formActivo: form, activos: data.activos, campos:campos, activoGuardado: activoActual}).show();
+						// abrimos la ventana de opciones
+		   				var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {formActivo: form, activos: data.activos, campos:campos, propagableData: propagableData, activoActual: activoActual}).show();
 		   				me.getView().add(ventanaOpcionesPropagacionCambios);
 		   				
 		   				me.getView().unmask();
 		   			
 		   			} else {
-		   				// Si no hay campos susceptibles de trasladar.
+		   				// Si no hay campos susceptibles de trasladar guardamos.
 		   				me.saveTab(form);
 		   			}
 
@@ -2729,7 +2728,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	formActivo = window.formActivo,
     	activosSeleccionados = grid.getSelectionModel().getSelection()
     	opcionPropagacion = radioGroup.getValue().seleccion,
-    	cambios =  formActivo.getBindRecord().modified;
+    	cambios =  window.propagableData;
 
 		me.fireEvent("log", cambios);
 		
@@ -2741,7 +2740,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var successFn = function(record, operation) {
 
 			if(activosSeleccionados.length > 0) {
-    			me.propagarCambios(operation, activosSeleccionados);
+				
+				var config={};
+				config.params={};
+				
+	    		config.url = record.getProxy().getApi().update;	
+	    		config.params.tab = record.getProxy().getExtraParams().tab    		
+
+	    		Ext.apply(config.params, cambios);    		
+				
+    			me.propagarCambios(config, activosSeleccionados);
     		} else {
     			me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 				me.getView().unmask();
@@ -2766,32 +2774,29 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     	
     
-    /**
-     * Replica una operación ya realizada sobre un activo, utilizando el array de activos que recibe y llamandose recursivamente hasta que no quedan activos .
-     * @param {} Ext.data.Operation operation
-     * @param [] HreRem.model.ActivoAgrupacionActivo activos 
-     * @return {Boolean}
-     */
-    propagarCambios: function(operation, activos) {
+	/**
+	 * Replica una operación ya realizada sobre un activo, utilizando el array de activos que recibe y llamandose recursivamente hasta que no quedan activos .
+	 * @param {} config - url y parametros comunes para guardar(datos modificados y tab) 
+	 * @param {} activos
+	 * @return {Boolean}
+	 */
+    propagarCambios: function(config, activos) {
     	
     	var me = this;
 
     	if (activos.length>0) {
     		
-    		var activo = activos.shift(), 
-    		params = operation.getRequest().getParams(),
-    		url = operation.getRecords()[0].getProxy().getApi().update;
-
-    		params.id = activo.get("activoId");
+    		var activo = activos.shift();
+    		config.params.id = activo.get("activoId");	
     		
     		Ext.Ajax.request({
     			method : 'POST',
-	    		url: url,
-	    		params: params,
+	    		url: config.url,
+	    		params: config.params,
 				success: function(response, opts){
 					// Lanzamos el evento de refrescar el activo por si está abierto.
-					me.fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], activo.get("activoId"));
-					me.propagarCambios(operation, activos);
+					me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], activo.get("activoId"));
+					me.propagarCambios(config, activos);
 				},
 			 	failure: function(response, opts) {
 			 		// TODO ¿Que hacemos con los activos que fallen al guardar?

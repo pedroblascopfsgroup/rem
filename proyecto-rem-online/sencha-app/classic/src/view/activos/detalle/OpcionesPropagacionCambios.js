@@ -13,7 +13,9 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambios', {
     
     campos: null,
     
-    activoGuardado: null,
+    activoActual: null,
+    
+    propagableData: null,
     
     listeners: {
     	
@@ -316,7 +318,7 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambios', {
 				
 				checkColumn.setVisible(false);
 				grid.getSelectionModel().deselectAll();
-				grid.getStore().filter('subdivision', me.activoGuardado.subdivision);
+				grid.getStore().filter('subdivision', me.activoActual.subdivision);
 				grid.getSelectionModel().selectAll();
 				break;
 			

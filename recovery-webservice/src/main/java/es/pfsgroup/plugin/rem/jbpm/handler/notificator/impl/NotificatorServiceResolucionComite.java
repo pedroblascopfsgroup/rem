@@ -125,9 +125,17 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 					+"<p> Fdo: #gestorTarea </p>"
 					+"<p> Email: #mailGestorTarea </p>";
 			
+			String gestorNombre = "SIN_DATOS_NOMBRE_APELLIDO_GESTOR";
+			String gestorEmail = "SIN_DATOS_EMAIL_GESTOR";
+			if (gestor != null && gestor.getApellidoNombre() != null ) {
+				gestorNombre = gestor.getApellidoNombre();
+			}
+			if (gestor != null && gestor.getEmail() != null ) {
+				gestorEmail = gestor.getEmail();
+			}
 			contenido = contenido.replace("#importeContraoferta", activoTramiteApi.getTareaValorByNombre(valores, "numImporteContra"))
-								.replace("#gestorTarea", gestor.getApellidoNombre())
-								.replace("#mailGestorTarea", gestor.getEmail());
+								 .replace("#gestorTarea", gestorNombre)
+								 .replace("#mailGestorTarea", gestorEmail);
 	
 			String titulo = "Contratoferta Activo/Agrupación #numactivo_agrupacion Oferta #numoferta";	
 			String numactivoagrupacion = Checks.esNulo(oferta.getAgrupacion()) ? activo.getNumActivo().toString() : oferta.getAgrupacion().getNumAgrupRem().toString();

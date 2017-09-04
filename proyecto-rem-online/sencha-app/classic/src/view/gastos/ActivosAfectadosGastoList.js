@@ -214,6 +214,7 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 					    
    	saveSuccessFn: function () {
 		var me = this;
+		me.up('form').funcionRecargar();
 		return true;
 	}
 

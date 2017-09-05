@@ -102,7 +102,7 @@ public class GastosExpedienteManager extends BusinessOperationOverrider<GastosEx
 			JSONObject jsonFields) {
 		Map<String, Object> map = null;
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
-		HashMap<String, String> errorsList = new HashMap<String, String>();
+		HashMap<String, String> errorsList = null;
 		for (int i = 0; i < listaComisionDto.size(); i++) {
 
 			map = new HashMap<String, Object>();

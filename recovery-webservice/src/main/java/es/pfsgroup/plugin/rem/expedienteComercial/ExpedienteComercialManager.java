@@ -3897,6 +3897,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setNumExpedienteRiesgo(formalizacion.getNumExpediente());
 				if (!Checks.esNulo(formalizacion.getTipoRiesgoClase())) {
 					dto.setTiposFinanciacionCodigo(formalizacion.getTipoRiesgoClase().getCodigo());
+					dto.setTiposFinanciacionCodigoBankia(formalizacion.getTipoRiesgoClase().getCodigo());
 				}
 				if (!Checks.esNulo(formalizacion.getCapitalConcedido())) {
 					dto.setCapitalConcedido(formalizacion.getCapitalConcedido());
@@ -3910,6 +3911,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setSolicitaFinanciacion(condiciones.getSolicitaFinanciacion());
 				if (!Checks.esNulo(condiciones.getEstadoFinanciacion())) {
 					dto.setEstadosFinanciacion(condiciones.getEstadoFinanciacion().getCodigo());
+					dto.setEstadosFinanciacionBankia(condiciones.getEstadoFinanciacion().getCodigo());
 				}
 				dto.setEntidadFinanciacion(condiciones.getEntidadFinanciacion());
 				dto.setFechaInicioExpediente(condiciones.getFechaInicioExpediente());
@@ -3934,19 +3936,55 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			CondicionanteExpediente condiciones = expediente.getCondicionante();
 			if (!Checks.esNulo(condiciones)) {
 
-				condiciones.setSolicitaFinanciacion(dto.getSolicitaFinanciacion());
-
-				if (!Checks.esNulo(dto.getEstadosFinanciacion())) {
-					DDEstadoFinanciacion estadoFinanciacion = (DDEstadoFinanciacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoFinanciacion.class,
-							dto.getEstadosFinanciacion());
-					condiciones.setEstadoFinanciacion(estadoFinanciacion);
+				if(!Checks.esNulo(dto.getSolicitaFinanciacion())){
+					condiciones.setSolicitaFinanciacion(dto.getSolicitaFinanciacion());
 				}
-				condiciones.setEntidadFinanciacion(dto.getEntidadFinanciacion());
-				condiciones.setFechaInicioExpediente(dto.getFechaInicioExpediente());
-				condiciones.setFechaInicioFinanciacion(dto.getFechaInicioFinanciacion());
-				condiciones.setFechaFinFinanciacion(dto.getFechaFinFinanciacion());
+
+				if (!Checks.esNulo(dto.getEstadosFinanciacion()) || !Checks.esNulo(dto.getEstadosFinanciacionBankia())) {
+					if(!Checks.esNulo(dto.getEstadosFinanciacion())){
+						DDEstadoFinanciacion estadoFinanciacion = (DDEstadoFinanciacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoFinanciacion.class,
+								dto.getEstadosFinanciacion());
+						condiciones.setEstadoFinanciacion(estadoFinanciacion);
+					}
+					if(!Checks.esNulo(dto.getEstadosFinanciacionBankia())){
+						DDEstadoFinanciacion estadoFinanciacionBankia = (DDEstadoFinanciacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoFinanciacion.class,
+								dto.getEstadosFinanciacionBankia());
+						condiciones.setEstadoFinanciacion(estadoFinanciacionBankia);
+					}
+				}
+				if(!Checks.esNulo(dto.getEntidadFinanciacion())){
+					condiciones.setEntidadFinanciacion(dto.getEntidadFinanciacion());
+				}
+				if(!Checks.esNulo(dto.getFechaInicioExpediente())){
+					condiciones.setFechaInicioExpediente(dto.getFechaInicioExpediente());
+				}
+				if(!Checks.esNulo(dto.getFechaInicioFinanciacion())){
+					condiciones.setFechaInicioFinanciacion(dto.getFechaInicioFinanciacion());
+				}
+				if(!Checks.esNulo(dto.getFechaFinFinanciacion())){
+					condiciones.setFechaFinFinanciacion(dto.getFechaFinFinanciacion());
+				}
 
 				genericDao.save(CondicionanteExpediente.class, condiciones);
+			}
+			
+			Formalizacion formalizacion= expediente.getFormalizacion();
+			if(!Checks.esNulo(formalizacion)){
+				if(!Checks.esNulo(dto.getNumExpedienteRiesgo())){
+					formalizacion.setNumExpediente(dto.getNumExpedienteRiesgo());
+				}
+				if(!Checks.esNulo(dto.getTiposFinanciacionCodigo()) || !Checks.esNulo(dto.getTiposFinanciacionCodigoBankia())){
+					if(!Checks.esNulo(dto.getTiposFinanciacionCodigo())){
+						DDTipoRiesgoClase tipoFinanciacion= (DDTipoRiesgoClase) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoRiesgoClase.class, dto.getTiposFinanciacionCodigo());
+						formalizacion.setTipoRiesgoClase(tipoFinanciacion);
+					}
+					if(!Checks.esNulo(dto.getTiposFinanciacionCodigoBankia())){
+						DDTipoRiesgoClase tipoFinanciacionBankia= (DDTipoRiesgoClase) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoRiesgoClase.class, dto.getTiposFinanciacionCodigoBankia());
+						formalizacion.setTipoRiesgoClase(tipoFinanciacionBankia);
+					}
+				}
+				
+				genericDao.save(Formalizacion.class, formalizacion);
 			}
 		}
 

@@ -1141,11 +1141,33 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		fieldFechaFinFinanciacion.setMinValue(fechaInicioFinanciacion);
 	},
 	
+	onHaCambiadoFechaInicioFinanciacionBankia: function(field, value, oldValue){
+		var me= this;
+		var fechaInicioFinanciacionBankia= value;
+		var fechaFinFinanciacionBankia= me.lookupReference('fechaFinFinanciacionBankia').value;
+		if(!Ext.isEmpty(fechaFinFinanciacionBankia) && !Ext.isEmpty(fechaInicioFinanciacionBankia) && fechaInicioFinanciacionBankia>fechaFinFinanciacionBankia){
+			me.fireEvent("errorToast", HreRem.i18n("msg.fechaFin.mayor.Fecha.Inicio"));
+			field.setValue('');
+		}
+		var fieldFechaFinFinanciacionBankia= me.lookupReference('fechaFinFinanciacionBankia');
+		fieldFechaFinFinanciacionBankia.setMinValue(fechaInicioFinanciacionBankia);
+	},
+	
 	onHaCambiadoFechaFinFinanciacion: function(field, value, oldValue){
 		var me= this;
 		var fechaFinFinanciacion= value;
 		var fechaInicioFinanciacion= me.lookupReference('fechaInicioFinanciacion').value;
 		if(!Ext.isEmpty(fechaInicioFinanciacion) && !Ext.isEmpty(fechaFinFinanciacion) && fechaInicioFinanciacion>fechaFinFinanciacion){
+			me.fireEvent("errorToast", HreRem.i18n("msg.fechaFin.mayor.Fecha.Inicio"));
+			field.setValue('');
+		}
+	},
+	
+	onHaCambiadoFechaFinFinanciacionBankia: function(field, value, oldValue){
+		var me= this;
+		var fechaFinFinanciacionBankia= value;
+		var fechaInicioFinanciacionBankia= me.lookupReference('fechaInicioFinanciacionBankia').value;
+		if(!Ext.isEmpty(fechaInicioFinanciacionBankia) && !Ext.isEmpty(fechaFinFinanciacionBankia) && fechaInicioFinanciacionBankia>fechaFinFinanciacionBankia){
 			me.fireEvent("errorToast", HreRem.i18n("msg.fechaFin.mayor.Fecha.Inicio"));
 			field.setValue('');
 		}

@@ -1,12 +1,12 @@
 --/*
 --##########################################
 --## AUTOR=GUILLEM REY
---## FECHA_CREACION=20170801
+--## FECHA_CREACION=20170905
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-2592
+--## INCIDENCIA_LINK=HREOS-2733
 --## PRODUCTO=NO
---## Finalidad: Anyadir columna DD_TPD_VISIBLE en DD_TPD_TIPO_DOCUMENTO
+--## Finalidad: Anyadir columna dd_odt_id en act_crg_cargas
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -86,7 +86,7 @@ BEGIN
 			
 			
 		END IF;
-			--Comprobamos si existe foreign key FK_COE_DD_ETI_ID
+			--Comprobamos si existe foreign key FK_CRG_DD_ODT_ID
 		V_MSQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE CONSTRAINT_NAME= ''FK_CRG_DD_ODT_ID'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
 		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 		

@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=HREOS-2733
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que añade en GRU_GRUPOS_USUARIOS los datos añadidos en T_ARRAY_DATA.
+--## Finalidad: Script que añade en DD_ODT_ORIGEN_DATO los datos añadidos en T_ARRAY_DATA.
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial

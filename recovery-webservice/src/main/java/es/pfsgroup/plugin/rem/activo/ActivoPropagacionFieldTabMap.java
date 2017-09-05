@@ -10,12 +10,12 @@ public class ActivoPropagacionFieldTabMap {
 
     public static final Map<String, List<String>> map;
 
-    private static final String TAB_DATOS_BASICOS = "datosbasicos";
-    private static final String TAB_SIT_POSESORIA = "sitposesoriallaves";
-    private static final String TAB_INFORME_COMERCIAL = "informecomercial";
-    private static final String TAB_DATOS_REGISTRALES = "datosregistrales";
-    private static final String TAB_INFO_ADMINISTRATIVA = "infoadministrativa";
-    private static final String TAB_CARGAS_ACTIVO = "cargasactivo";
+    public static final String TAB_DATOS_BASICOS = "datosbasicos";
+    public static final String TAB_SIT_POSESORIA = "sitposesoriallaves";
+    public static final String TAB_INFORME_COMERCIAL = "informecomercial";
+    public static final String TAB_DATOS_REGISTRALES = "datosregistrales";
+    public static final String TAB_INFO_ADMINISTRATIVA = "infoadministrativa";
+    public static final String TAB_CARGAS_ACTIVO = "cargasactivo";
     
     static {
     	Map<String, List<String>> pmap = new HashMap<String, List<String>>();

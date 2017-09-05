@@ -1664,23 +1664,26 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	public boolean isInformeComercialAceptado(Activo activo) {
-		Filter filter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-		Order order = new Order(OrderType.DESC, "id");
-		List<ActivoEstadosInformeComercialHistorico> activoEstadoInfComercialHistoricoList = genericDao
-				.getListOrdered(ActivoEstadosInformeComercialHistorico.class, order, filter);
-		if (!Checks.estaVacio(activoEstadoInfComercialHistoricoList)) {
-			//ActivoEstadosInformeComercialHistorico historico = activoEstadoInfComercialHistoricoList.get(0);
-			for(ActivoEstadosInformeComercialHistorico historico : activoEstadoInfComercialHistoricoList) {
-				if (historico.getEstadoInformeComercial().getCodigo()
-						.equals(DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION))
-					return true;
-				else if(historico.getEstadoInformeComercial().getCodigo()
-						.equals(DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_RECHAZO))
-					return false;
+		boolean resultado = false;
+		if(activo != null){
+			Filter filter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			Order order = new Order(OrderType.DESC, "id");
+			List<ActivoEstadosInformeComercialHistorico> activoEstadoInfComercialHistoricoList = genericDao
+					.getListOrdered(ActivoEstadosInformeComercialHistorico.class, order, filter);
+			if (!Checks.estaVacio(activoEstadoInfComercialHistoricoList)) {
+				//ActivoEstadosInformeComercialHistorico historico = activoEstadoInfComercialHistoricoList.get(0);
+				for(ActivoEstadosInformeComercialHistorico historico : activoEstadoInfComercialHistoricoList) {
+					if (historico.getEstadoInformeComercial().getCodigo()
+							.equals(DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION))
+						resultado = true;
+					else if(historico.getEstadoInformeComercial().getCodigo()
+							.equals(DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_RECHAZO))
+						resultado = false;
+				}
 			}
 		}
 
-		return false;
+		return resultado;
 	}
 
 	@Override

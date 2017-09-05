@@ -102,6 +102,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
+import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 
@@ -2470,6 +2471,25 @@ public class ActivoController extends ParadiseJsonController {
 
 		model.put("propagateFields", fields);
 		model.put("activos", activoPropagacionApi.getAllActivosAgrupacionPorActivo(activoApi.get(id)));
+
+		return new ModelAndView("jsonView", model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveActivo(HttpServletRequest request, ModelMap model) {
+
+		if (request != null) {
+			try {
+				RestRequestWrapper restRequest = new RestRequestWrapper(request);
+				ActivoControllerDispatcher dispatcher = new ActivoControllerDispatcher(this);
+			
+				dispatcher.dispatchSave(restRequest.getJsonObject());
+			} catch (Exception e) {
+				logger.error("No se ha podido guardar el activo", e);
+				model.put("error", e.getMessage());
+			}
+		}
+
 
 		return new ModelAndView("jsonView", model);
 	}

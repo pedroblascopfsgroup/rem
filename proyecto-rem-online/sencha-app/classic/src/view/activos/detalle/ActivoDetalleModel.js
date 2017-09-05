@@ -100,13 +100,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		     },
 		     
 		 getIconClsCondicionantesPendiente: function(get) {
-			 var condicion = get('activoCondicionantesDisponibilidad.pendienteInscripcion');
+		 	var claseActivo= get('activo.claseActivoCodigo');
+			if(CONST.CLASE_ACTIVO['FINANCIERO'] != claseActivo){
+				var condicion = get('activoCondicionantesDisponibilidad.pendienteInscripcion');
 			   	if(!eval(condicion)) {
 			   		return 'app-tbfiedset-ico'
 			   	} else {
 			   		return 'app-tbfiedset-ico icono-ko'
 			   	}
-			 },		 
+			}
+			return 'app-tbfiedset-ico'
+		},		 
 		getIconClsCondicionantesObraTerminada: function(get) {
 			var condicion = get('activoCondicionantesDisponibilidad.obraNuevaSinDeclarar');
 			   	if(!eval(condicion)) {
@@ -116,13 +120,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			   	}
 			 },			     
 		getIconClsCondicionantesSinPosesion: function(get) {
-			var condicion = get('activoCondicionantesDisponibilidad.sinTomaPosesionInicial');
-			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico'
-			   	} else {
-			   		return 'app-tbfiedset-ico icono-ko'
-			   	}
-			 },
+			var claseActivo= get('activo.claseActivoCodigo');
+			if(CONST.CLASE_ACTIVO['FINANCIERO'] != claseActivo){
+				var condicion = get('activoCondicionantesDisponibilidad.sinTomaPosesionInicial');
+				if(!eval(condicion)) {
+					return 'app-tbfiedset-ico'
+				} else {
+					return 'app-tbfiedset-ico icono-ko'
+				}
+			}
+			return 'app-tbfiedset-ico'
+		},
 		getIconClsCondicionantesProindiviso: function(get) {
 			var condicion = get('activoCondicionantesDisponibilidad.proindiviso');
 			   	if(!eval(condicion)) {

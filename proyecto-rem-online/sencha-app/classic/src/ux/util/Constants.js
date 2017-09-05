@@ -285,6 +285,11 @@ Ext.define('HreRem.ux.util.Constants', {
     	NO_CANCELABLE: 'NCN',
     	CANCELADA: 'CAN',
     	EN_SANEAMIENTO: 'SAN'
+    },
+    
+    CLASE_ACTIVO: {
+    	FINANCIERO: '01',
+    	INMOBILIARIO: '02'
     }
     
 });

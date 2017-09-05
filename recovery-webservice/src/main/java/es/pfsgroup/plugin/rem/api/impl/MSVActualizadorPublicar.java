@@ -58,10 +58,16 @@ public class MSVActualizadorPublicar implements MSVLiberator {
 		Integer numFilas = exc.getNumeroFilasByHoja(0,file.getProcesoMasivo().getTipoOperacion());
 		for (int fila = 1; fila < numFilas; fila++) {
 			Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
+			String motivo = exc.dameCelda(fila, 1);
+			if(Checks.esNulo(motivo)) {
+				motivo = "";
+			}
 			DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = activoEstadoPublicacionApi.getState(activo.getId());
+			
 			dtoCambioEstadoPublicacion.setActivo(activo.getId());
 			dtoCambioEstadoPublicacion.setPublicacionForzada(true);
-			dtoCambioEstadoPublicacion.setMotivoPublicacion(exc.dameCelda(fila, 1));
+			dtoCambioEstadoPublicacion.setMotivoPublicacion(motivo);
+			
 			activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion);
 		}
 

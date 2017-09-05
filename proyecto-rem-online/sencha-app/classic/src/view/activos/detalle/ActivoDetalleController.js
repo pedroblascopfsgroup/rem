@@ -58,7 +58,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			if(Ext.isDefined(model.getProxy().getApi().read)) {
 				// Si la API tiene metodo de lectura (read).
 				model.load({
-				    success: function(record) {
+				    success: function(record,b,c,d) {
 				    	form.setBindRecord(record);			    	
 				    	form.unmask();
 				    	if(Ext.isFunction(form.afterLoad)) {
@@ -2668,9 +2668,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 	
 	/**
-	 * Antes de guardar los cambios hacemos una llamada Ajax para obtener los campos susceptibles de ser propagados y los activos a los que se podrian propagar.
-	 * Si recibimos esta información sacaremos la ventana de selección de propagación de cambios, sino guardaremos el activo de la forma habitual. 
-	 * @param {} form Tab que estamos guardando.
+	 * Antes de guardar los cambios, si hay cambios propagables y activos a los que propagar, 
+	 * sacaremos la ventana de selección de propagación de cambios, 
+	 * sino guardaremos el activo de la forma habitual. 
+	 * @param {} form - Tab que estamos guardando.
 	 */
 	comprobarPropagacionCambios: function(form) {
 		
@@ -2678,80 +2679,80 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		idActivo = me.getViewModel().get("activo.id"),
     	url = $AC.getRemoteUrl('activo/propagarInformacion'),
     	tab = form.getBindRecord().getProxy().getExtraParams().tab,
+    	activosPropagables = me.getViewModel().get("activo.activosPropagables"),
+    	camposPropagables = form.getBindRecord().get("camposPropagables"),
     	dirtyFieldsModel =  form.getBindRecord().modified,
     	propagableData = {};
 								
     	me.getView().mask(HreRem.i18n("msg.mask.loading"));
- 
-    	Ext.Ajax.request({
-    		url: url,
-    		method: "GET",
-    		params: {id: idActivo, tab: tab},
-    		
-    		success: function(response, opts){
     			
-    			var data,
-    			campos=[],
-    			activoActual=null;		
-		   		try{
-					data = Ext.decode(response.responseText);
-					// data.activos y data.propagateFields
-		   		} catch(e) {
-		   			data = {}
-		   		}
-		   		
-		   		// Si hay activos a los que propagar los cambios....
-		   		if(Ext.isArray(data.activos) && data.activos.length > 0) {
+    	var campos=[],
+    	activoActual=null;	
+    	
+    	// Si hay activos a los que propagar los cambios....
+		if(Ext.isArray(activosPropagables) && activosPropagables.length > 0) {
 		   			
-		   			// Recorremos los campos del formulario para obtener los modificados que además son susceptibles de propagar
+   			// Recorremos los campos del formulario para obtener los modificados que además son susceptibles de propagar
+   			
+   			form.getForm().getFields().each(function(field) {
+   				// Si el campo está enlazado con el modelo
+   				if (!Ext.isEmpty(field) && !Ext.isEmpty(field.bind) && !Ext.isEmpty(field.bind.value) && !Ext.isEmpty(field.bind.value.stub)  ) {
+   					// Si el campo se ha modificado y está incluido en los campos susceptibles de propagar ...
+   					if(Ext.isDefined(dirtyFieldsModel[field.bind.value.stub.name]) && camposPropagables.includes(field.bind.value.stub.name)) {
+   						campos.push(field);
+						propagableData[field.bind.value.stub.name] = field.getValue();
+   				
+   					}
+   				}
+   				
+   			});		   			
 		   			
-		   			form.getForm().getFields().each(function(field) {
-		   				// Si el campo está enlazado con el modelo
-		   				if (!Ext.isEmpty(field) && !Ext.isEmpty(field.bind) && !Ext.isEmpty(field.bind.value) && !Ext.isEmpty(field.bind.value.stub)  ) {
-		   					// Si el campo se ha modificado y está incluido en los campos susceptibles de propagar ...
-		   					if(Ext.isDefined(dirtyFieldsModel[field.bind.value.stub.name]) && data.propagateFields.includes(field.bind.value.stub.name)) {
-		   						campos.push(field);
-								propagableData[field.bind.value.stub.name] = field.getValue();
-		   				
-		   					}
-		   				}
-		   				
-		   			});
-		   			
-		   			
-					// Si hay cambios que propagar
-		   			if (campos.length > 0) {
+			// Si hay cambios que propagar
+   			if (campos.length > 0) {
 
-						// sacamos el activo actual del listado
-						activoActual = data.activos.splice(data.activos.findIndex(function(activo){return activo.activoId == idActivo}),1)[0];		   				
+				// sacamos el activo actual del listado
+				activoActual = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == idActivo}),1)[0];		   				
 
-						// abrimos la ventana de opciones
-		   				var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {formActivo: form, activos: data.activos, campos:campos, propagableData: propagableData, activoActual: activoActual}).show();
-		   				me.getView().add(ventanaOpcionesPropagacionCambios);
-		   				
-		   				me.getView().unmask();
-		   			
-		   			} else {
-		   				// Si no hay campos susceptibles de trasladar guardamos.
-		   				me.saveTab(form);
-		   			}
+				// abrimos la ventana de opciones
+   				var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {formActivo: form, activos: activosPropagables, campos:campos, propagableData: propagableData, activoActual: activoActual}).show();
+   				me.getView().add(ventanaOpcionesPropagacionCambios);
+   				
+   				me.getView().unmask();
+   			
+   			} else {
+   				// Si no hay campos susceptibles de trasladar guardamos.
+   				me.saveTab(form);
+   			}
 
-		   		} else {
-		   			// Si no hay activos a los que trasladar cambios.
-		   			me.saveTab(form);
-		   		}
-    		},
-		 	failure: function(record, operation) {
-		 		Utils.defaultRequestFailure(response);
-		    }
-    	});	
-
-		me.getView().mask(HreRem.i18n("msg.mask.loading"));	    	
-		
-			
+   		} else {
+   			// Si no hay activos a los que trasladar cambios.
+   			me.saveTab(form);
+   		}
+	
 	},
 	
 	saveTab: function(form, successFn) {
+		
+		/*/var me = this,
+		url =  $AC.getRemoteUrl('activo/saveActivo');
+		
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		
+		var tabdataJSON = me.createTabDataJSON(form);
+		
+		Ext.Ajax.request({
+			method : 'POST',
+			url: url,
+			jsondata: tabdataJSON,
+			success: function(response, opts){
+				// Lanzamos el evento de refrescar el activo por si está abierto.
+				me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], activo.get("activoId"));
+				me.propagarCambios(config, activos);
+			},
+		 	failure: function(response, opts) {
+		 		// TODO Activos no guardados
+		    }			    
+		});*/
 	
 		var me = this;
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));
@@ -2854,7 +2855,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					me.propagarCambios(config, activos);
 				},
 			 	failure: function(response, opts) {
-			 		// TODO ¿Que hacemos con los activos que fallen al guardar?
+			 		// TODO Activos no guardados
 			    }
     		});
 
@@ -2863,6 +2864,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			me.getView().unmask();
     		return false;
     	}
+    },
+    
+    createTabDataJSON: function(form) {
+    	
+    	var me = this,
+    	tabDataJSON = {};
+    	
+    	tabDataJSON.id = me.getViewModel("activo.id"); 	
+    	    
+    	
     }
 		
 	

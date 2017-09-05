@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
+import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
 
@@ -10,7 +11,7 @@ import es.capgemini.devon.dto.WebDto;
  * @author Benjamín Guerrero
  *
  */
-public class DtoActivoFichaCabecera extends WebDto {
+public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	private static final long serialVersionUID = 0L;
 
@@ -173,6 +174,9 @@ public class DtoActivoFichaCabecera extends WebDto {
 	
 	//HREOS-2716
 	private String codigoPromocionPrinex;
+
+	// HREOS-2761
+	private List<?> activosPropagables;
 	
 	private int page;
 	private int start;
@@ -1315,6 +1319,15 @@ public class DtoActivoFichaCabecera extends WebDto {
 
 	public void setCodigoPromocionPrinex(String codigoPromocionPrinex) {
 		this.codigoPromocionPrinex = codigoPromocionPrinex;
+	}
+
+	public List<?> getActivosPropagables() {
+		return activosPropagables;
+	}
+
+	public void setActivosPropagables(List<?> activosPropagables) {
+		this.activosPropagables = activosPropagables;
+
 	}
 	
 

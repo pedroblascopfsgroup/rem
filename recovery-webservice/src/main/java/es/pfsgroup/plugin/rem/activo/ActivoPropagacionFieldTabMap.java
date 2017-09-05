@@ -41,6 +41,7 @@ public class ActivoPropagacionFieldTabMap {
 	    			"tipoViaCodigo",
 	    			"codPostal",
 	    			"codPostalFormateado",
+	    			"nombreVia",
 
 	    			// perimetro
 	    			"motivoAplicaGestion",

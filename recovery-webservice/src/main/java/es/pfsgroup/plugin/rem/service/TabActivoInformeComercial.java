@@ -215,6 +215,10 @@ public class TabActivoInformeComercial implements TabActivoService {
 				beanUtilNotNull.copyProperty(informeComercial, "descOtras", activo.getInfoComercial().getOtrosOtrasDependencias());
 				
 			}
+			
+
+			// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
+			informeComercial.setCamposPropagables(TabActivoService.TAB_INFORME_COMERCIAL);
 
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
@@ -379,6 +383,7 @@ public class TabActivoInformeComercial implements TabActivoService {
 
 				activo.setInfoComercial(genericDao.save(ActivoInfoComercial.class, activo.getInfoComercial()));
 			}
+			
 
 			
 		} catch (IllegalAccessException e) {

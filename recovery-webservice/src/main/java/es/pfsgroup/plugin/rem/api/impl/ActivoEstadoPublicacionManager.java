@@ -227,8 +227,17 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO); // Cambiar
 																															// estado
 																															// activo
-																															// obligatoriamente.
-					motivo = dtoCambioEstadoPublicacion.getMotivoPublicacion();
+					if(!Checks.esNulo(dtoCambioEstadoPublicacion.getMotivoPublicacion())) {
+						motivo = dtoCambioEstadoPublicacion.getMotivoPublicacion();
+					}else if(!Checks.esNulo(dtoCambioEstadoPublicacion.getMotivoOcultacionPrecio())) {
+						motivo = dtoCambioEstadoPublicacion.getMotivoOcultacionPrecio();
+					}else if(!Checks.esNulo(dtoCambioEstadoPublicacion.getMotivoOcultacionForzada())) {
+						motivo = dtoCambioEstadoPublicacion.getMotivoOcultacionForzada();
+					}else if(!Checks.esNulo(dtoCambioEstadoPublicacion.getMotivoDespublicacionForzada())){
+						motivo = dtoCambioEstadoPublicacion.getMotivoDespublicacionForzada();
+					}else {																									// obligatoriamente.
+						motivo = "";
+					}
 					OkPublicacionSinPublicar= false;
 					// Si en publicacion ordinaria no se cumplen condiciones,
 					// devuelve error
@@ -292,8 +301,16 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					
 					if(cumpleCondicionesPublicar && !Checks.esNulo(activo.getFechaPublicable())){
 						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO); // Cambiar estado activo obligatoriamente.
-						motivo = dtoCambioEstadoPublicacion.getMotivoPublicacion();
-						
+						if(!Checks.esNulo(dtoCambioEstadoPublicacion.getMotivoPublicacion())) {
+							motivo = dtoCambioEstadoPublicacion.getMotivoPublicacion();
+						}else if(!Checks.esNulo(dtoCambioEstadoPublicacion.getMotivoOcultacionPrecio())) {
+							motivo = dtoCambioEstadoPublicacion.getMotivoOcultacionPrecio();
+						}else if(!Checks.esNulo(dtoCambioEstadoPublicacion.getMotivoOcultacionForzada())) {
+							motivo = dtoCambioEstadoPublicacion.getMotivoOcultacionForzada();
+						}else {
+							motivo = "";
+						}
+												
 					}
 					
 				}				

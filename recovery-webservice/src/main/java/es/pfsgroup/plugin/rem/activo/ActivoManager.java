@@ -157,6 +157,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenDato;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -3593,6 +3594,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			cargaBien.setEconomica(false);
 			genericDao.save(NMBBienCargas.class, cargaBien);
 			cargaSeleccionada.setCargaBien(cargaBien);
+			cargaSeleccionada.setOrigenDato((DDOrigenDato) utilDiccionarioApi.dameValorDiccionarioByCod(DDOrigenDato.class, DDOrigenDato.CODIGO_REM));
 		}
 
 		try {
@@ -3621,6 +3623,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				DDSubtipoCarga subtipoCarga = (DDSubtipoCarga) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDSubtipoCarga.class, cargaDto.getSubtipoCargaCodigo());
 				cargaSeleccionada.setSubtipoCarga(subtipoCarga);
+			}
+			//HREOS-2733
+			if(!Checks.esNulo(cargaDto.getOrigenDatoCodigo())) {
+				DDOrigenDato origenDato = (DDOrigenDato) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDOrigenDato.class, cargaDto.getOrigenDatoCodigo());
+				cargaSeleccionada.setOrigenDato(origenDato);
 			}
 
 		} catch (IllegalAccessException e) {

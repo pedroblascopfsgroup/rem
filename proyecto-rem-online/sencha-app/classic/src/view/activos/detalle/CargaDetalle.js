@@ -81,7 +81,18 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
 										scrollable	: 'y',
 										items :
 												[
-									               	{ 
+													{
+											        	readOnly: true,
+												 		fieldLabel: HreRem.i18n('header.origen.dato'),
+										               	reference: 'origenDato',
+												      	bind: '{carga.origenDatoDescripcion}',											         	
+											         	allowBlank: false
+													},
+									               	{
+														fieldLabel: '',
+														readOnly: true,
+									               	},
+													{ 
 														xtype: 'comboboxfieldbase',
 											        	editable: false,
 												 		fieldLabel: HreRem.i18n('fieldlabel.tipo'),

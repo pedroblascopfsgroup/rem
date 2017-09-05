@@ -67,7 +67,12 @@ Ext.define('HreRem.view.activos.detalle.CargasActivo', {
 				},
 				
 				columns: [
-						    {   text: HreRem.i18n('header.tipo.carga'),
+						    {
+						    	text: HreRem.i18n('header.origen.dato'),
+						    	dataIndex: 'origenDatoDescripcion',
+						    	flex: 1
+						    },
+							{   text: HreRem.i18n('header.tipo.carga'),
 					        	dataIndex: 'tipoCargaDescripcion',
 					        	flex: 1
 					        },

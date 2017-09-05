@@ -632,6 +632,12 @@ public class ActivoAdapter {
 						beanUtilNotNull.copyProperty(cargaDto, "subtipoCargaCodigo",
 								activoCarga.getSubtipoCarga().getCodigo());
 					}
+					//HREOS-2733
+					if(!Checks.esNulo(activoCarga.getOrigenDato())) {
+						beanUtilNotNull.copyProperty(cargaDto, "origenDatoCodigo", activoCarga.getOrigenDato().getCodigo());
+						beanUtilNotNull.copyProperty(cargaDto, "origenDatoDescripcion", activoCarga.getOrigenDato().getDescripcion());
+					}
+					
 					if (activoCarga.getCargaBien() != null) {
 						// HREOS-1666 - Si tiene F. Cancelacion debe mostrar el
 						// estado Cancelado (independientemente del registrado

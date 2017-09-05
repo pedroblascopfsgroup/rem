@@ -2,7 +2,8 @@
 Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.activodetalle',  
-    requires: ['HreRem.view.activos.detalle.AnyadirEntidadActivo' , 'HreRem.view.activos.detalle.CargaDetalle'],
+    requires: ['HreRem.view.activos.detalle.AnyadirEntidadActivo' , 'HreRem.view.activos.detalle.CargaDetalle',
+    "HreRem.view.activos.detalle.OpcionesPropagacionCambios"],
     
     control: {
     	
@@ -41,9 +42,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
          	onClickRemove: 'onClickRemoveCarga'         	
          }
          
-     },
-	
-	
+    },
+    
 	cargarTabData: function (form) {
 		var me = this,
 		model = null,
@@ -187,24 +187,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			}
 		
 			if (!form.saveMultiple) {
+				// Si la API tiene metodo de escritura (create or update).
 				if(form.getBindRecord() != null && (Ext.isDefined(form.getBindRecord().getProxy().getApi().create) || Ext.isDefined(form.getBindRecord().getProxy().getApi().update))) {
-					// Si la API tiene metodo de escritura (create or update).
-					me.getView().mask(HreRem.i18n("msg.mask.loading"));
-					
-					form.getBindRecord().save({
-						success: function (a, operation) {
-							me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-							me.getView().unmask();
-							me.refrescarActivo(form.refreshAfterSave);
-							me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
-			            },
-				            
-			            failure: function (a, operation) {
-			            	Utils.defaultOperationFailure(a, operation, form);
-			            }
-					});
+					me.comprobarPropagacionCambios(form);
 				}
-			//Guardamos múltiples records	
+			//Guardamos mÃºltiples records	
 			} else {
 				var records = form.getBindRecords();
 				var contador = 0;
@@ -614,7 +601,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onSaveFormularioCompletoTabComercial: function(btn, form){
 		var me = this;
 
-		// Se ha de confirmar la modificación.
+		// Se ha de confirmar la modificaciÃ³n.
 		Ext.Msg.show({
 			   title: HreRem.i18n('title.confirmar.modificar.venta.activo'),
 			   msg: HreRem.i18n('msg.confirmar.modificar.venta.activo'),
@@ -631,7 +618,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this;
 		var form = btn.up('tabpanel').getActiveTab();
 
-		// Ejecución especial si la pestaña es 'Comercial'.
+		// EjecuciÃ³n especial si la pestaña es 'Comercial'.
 		if("comercialactivo" == form.getXType()) {
 			me.onSaveFormularioCompletoTabComercial(btn, form);
 		} else {
@@ -707,9 +694,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
 
      /**
-     * Función que refresca la pestaña activa, y marca el resto de componentes para referescar.
-     * Para que un componente sea marcado para refrescar, es necesario que implemente la función 
-     * funciónRecargar con el código necesario para refrescar los datos.
+     * FunciÃ³n que refresca la pestaña activa, y marca el resto de componentes para referescar.
+     * Para que un componente sea marcado para refrescar, es necesario que implemente la funciÃ³n 
+     * funciÃ³nRecargar con el cÃ³digo necesario para refrescar los datos.
      */
 	onClickBotonRefrescar: function (btn) {
 		var me = this;
@@ -729,7 +716,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
   			}
   		});
   		
-  		// Actualizamos la pestaña actual si tiene función de recargar 
+  		// Actualizamos la pestaña actual si tiene funciÃ³n de recargar 
 		if(refrescarPestañaActiva && activeTab.funcionRecargar) {
   			activeTab.funcionRecargar();
 		}
@@ -794,7 +781,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			if (store.getData().items[i].data.orden != orden) {
 				store.getAt(i).data.orden = orden;
 				
-				//FIXME: ¿Poner máscara?
+				//FIXME: Â¿Poner mÃ¡scara?
 				//me.getView().mask(HreRem.i18n("msg.mask.loading"));
 				var url =  $AC.getRemoteUrl('activo/updateFotosById');
     			Ext.Ajax.request({
@@ -810,9 +797,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	                    if (me.ordenGuardado >= me.storeGuardado.getData().items.length && me.refrescarGuardado) {
 	                    	me.storeGuardado.load();
 	                    	me.refrescarGuardado = false;
-	                    	/* //FIXME: ¿Poner máscara?
+	                    	/* //FIXME: Â¿Poner mÃ¡scara?
 	                    	Ext.toast({
-							     html: 'LA OPERACIÓN SE HA REALIZADO CORRECTAMENTE',
+							     html: 'LA OPERACIÃN SE HA REALIZADO CORRECTAMENTE',
 							     width: 360,
 							     height: 100,
 							     align: 't'
@@ -826,7 +813,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	                
 	                failure: function (a, operation, context) {
 	                	  Ext.toast({
-						     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÓN',
+						     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÃN',
 						     width: 360,
 						     height: 100,
 						     align: 't'									     
@@ -884,7 +871,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                                 	storeTemp.load();
 
                                     Ext.toast({
-									     html: 'LA OPERACIÓN SE HA REALIZADO CORRECTAMENTE',
+									     html: 'LA OPERACIÃN SE HA REALIZADO CORRECTAMENTE',
 									     width: 360,
 									     height: 100,
 									     align: 't'
@@ -894,7 +881,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                                 failure: function (a, operation, context) {
 
                                 	  Ext.toast({
-									     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÓN',
+									     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÃN',
 									     width: 360,
 									     height: 100,
 									     align: 't'									     
@@ -928,7 +915,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
     
     
-    // Se deja planteado para fase 2, pero para fase 1 se elimina el botón imprimir.
+    // Se deja planteado para fase 2, pero para fase 1 se elimina el botÃ³n imprimir.
 	onPrintFotoClick: function(btn) {
 		
 		var me = this;
@@ -950,7 +937,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	},
 	
-	// Se deja planteado para fase 2, pero para fase 1 se elimina el botón imprimir.
+	// Se deja planteado para fase 2, pero para fase 1 se elimina el botÃ³n imprimir.
 	findComponentByElement: function(node) {
 	    var topmost = document.body,
 	        target = node,
@@ -1009,7 +996,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 	
 	
-	//FIXME: Funciones para el gráfico de presupuestos. Llevar a otro controlador aparte.
+	//FIXME: Funciones para el grÃ¡fico de presupuestos. Llevar a otro controlador aparte.
 	onAxisLabelRender: function (axis, label, layoutContext) {
         // Custom renderer overrides the native axis label renderer.
         // Since we don't want to do anything fancy with the value
@@ -1057,7 +1044,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	Ext.create("HreRem.ux.window.geolocalizacion.ValidarGeoLocalizacion", {geoCodeAddr: geoCodeAddr, latLng: latLng,  parent: btn.up("form")}).show();  	
     },
     
-    // Este método comprueba si el municipio es 'Barcelona, Madrid, Valencia o Alicante/Alacant'.
+    // Este mÃ©todo comprueba si el municipio es 'Barcelona, Madrid, Valencia o Alicante/Alacant'.
     checkDistrito: function(combobox) {
     	var me = this;
     	var view = me.getView();
@@ -1123,12 +1110,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		return criteria;
     },
 
-    // Funcion que se ejecuta al hacer click en el botón limpiar
+    // Funcion que se ejecuta al hacer click en el botÃ³n limpiar
 	onCleanFiltersClick: function(btn) {
 		btn.up('form').getForm().reset();
 	},
 
-    // Esta función es llamada cuando cambia el estado de publicación del activo.
+    // Esta funciÃ³n es llamada cuando cambia el estado de publicaciÃ³n del activo.
     onChangeEstadoPublicacion: function(field){
     	var me = this;
     	var view = me.getView();
@@ -1141,7 +1128,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		view.lookupReference('seccionOcultacionPrecio').show();
     		view.lookupReference('seccionDespublicacionForzada').show();
     		break;
-    	case "02": // Publicación forzada.
+    	case "02": // PublicaciÃ³n forzada.
     		view.lookupReference('seccionPublicacionForzada').show();
     		view.lookupReference('seccionOcultacionForzada').hide();
     		view.lookupReference('seccionOcultacionPrecio').show();
@@ -1186,17 +1173,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	}
     },
     
-    // Esta funcion es llamada cuando algún checkbox del apartado de 'Estados de publicación' es activado
-    // y se encarga de permitir tener sólo un checkbox de estado activado. Además, reinicia el estado de
-    // los componentes de cada sección que no esté seleccionada.
+    // Esta funcion es llamada cuando algÃºn checkbox del apartado de 'Estados de publicaciÃ³n' es activado
+    // y se encarga de permitir tener sÃ³lo un checkbox de estado activado. AdemÃ¡s, reinicia el estado de
+    // los componentes de cada secciÃ³n que no estÃ© seleccionada.
     onchkbxEstadoPublicacionChange: function(chkbx) {
     	var me = this;
     	var id = chkbx.getReference();
     	var view = me.getView();
 
     	if(!chkbx.getValue()){
-    		// Si el checkbox esta siendo desactivado, tan sólo resetear conenido textbox de la propia sección del checkbox.
-    		// Si el checkbox es de la sección de publicación, no hacer nada.
+    		// Si el checkbox esta siendo desactivado, tan sÃ³lo resetear conenido textbox de la propia secciÃ³n del checkbox.
+    		// Si el checkbox es de la secciÃ³n de publicaciÃ³n, no hacer nada.
     		switch (id){
     		case "chkbxpublicacionordinaria":
     			view.lookupReference('textfieldpublicacionpublicar').reset();
@@ -1319,8 +1306,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	}
     },
     
-    // Esta función es llamada cuando cambia el estado del combo 'otro' en los
-    // condicionantes de la publicación del activo. Muestra u oculta el área de
+    // Esta funciÃ³n es llamada cuando cambia el estado del combo 'otro' en los
+    // condicionantes de la publicaciÃ³n del activo. Muestra u oculta el Ã¡rea de
     // texto que muestra el condicionante 'otro'.
     onChangeComboOtro: function(combo) {
     	var me = this;
@@ -1381,7 +1368,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		me.onSaveFormularioCompletoOferta(form, success);
 	},
 	
-	// Este método copia los valores de los campos de 'Datos Mediador' a los campos de 'Datos admisión'.
+	// Este mÃ©todo copia los valores de los campos de 'Datos Mediador' a los campos de 'Datos admisiÃ³n'.
 	onClickCopiarDatosDelMediador: function(btn) {
 		var me =this;
 		var view = me.getView();
@@ -1443,7 +1430,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	me.getView().fireEvent('abrirDetalleActivo', record.get('idActivo'), "Activo " + record.get("numActivo"));
 	},
 	
-	// Este método comprueba si el campo fechaHasta o UsuarioBaja tiene datos, lo que supone que el registro
+	// Este mÃ©todo comprueba si el campo fechaHasta o UsuarioBaja tiene datos, lo que supone que el registro
 	// ya se encuentra dado de baja y no se permite volver a dar de baja.
 	onGridCondicionesEspecificasRowClick: function(grid , record , tr , rowIndex) {
 		if(!Ext.isEmpty(record.getData().fechaHasta) || !Ext.isEmpty(record.getData().usuarioBaja)){
@@ -1451,7 +1438,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 	
-	//Método para borrar/anular un precio vigente sin guardar en el Historico
+	//MÃ©todo para borrar/anular un precio vigente sin guardar en el Historico
 	onDeletePrecioVigenteClick: function(tableView, indiceFila, indiceColumna) {
 
     	var me = this;
@@ -1508,7 +1495,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	},
 	
-	// Método que es llamado cuando se solicita la tasación del activo desde Bankia.
+	// MÃ©todo que es llamado cuando se solicita la tasaciÃ³n del activo desde Bankia.
 	onClickSolicitarTasacionBankia: function(btn) {
 		var me = this;
     	var idActivo = me.getViewModel().get("activo.id");
@@ -1617,18 +1604,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    }
 	},
 
-	//Este método obtiene los valores de las fechas fin e inicio de la fila que se está editando y comprueba las validaciones oportunas.
+	//Este mÃ©todo obtiene los valores de las fechas fin e inicio de la fila que se estÃ¡ editando y comprueba las validaciones oportunas.
 	validateFechas: function(datefield, value){
 		var me = this;
 		var grid = me.lookupReference('gridPreciosVigentes');
 		if(Ext.isEmpty(grid)){ return true;}
 		var selected = grid.getSelectionModel().getSelection();
-		// Obtener columnas automáticamente por 'dataindex = fechaFin' y 'dataindex = fechaInicio'.
+		// Obtener columnas automÃ¡ticamente por 'dataindex = fechaFin' y 'dataindex = fechaInicio'.
 		var fechaFinActualRow = grid.columns[Ext.Array.indexOf(Ext.Array.pluck(grid.columns, 'dataIndex'), 'fechaFin')];
 		var fechaInicioActualRow = grid.columns[Ext.Array.indexOf(Ext.Array.pluck(grid.columns, 'dataIndex'), 'fechaInicio')];
 
 		if(!Ext.isEmpty(selected)) {
-			// Almacenar la fila selecciona para cuando esté siendo editada.
+			// Almacenar la fila selecciona para cuando estÃ© siendo editada.
 			grid.codigoTipoPrecio = selected[0].getData().codigoTipoPrecio;
 		}
 
@@ -1639,7 +1626,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var tipoDescuentoAprobado = '07';
 		var tipoDescuentoPublicadoWeb = '13';
 
-		// Recogemos los valores actuales del grid y los mismos almacenados en el store según casos.
+		// Recogemos los valores actuales del grid y los mismos almacenados en el store segÃºn casos.
 		var fechaInicioMinimo = fechaInicioActualRow.getEditor().value;
 		var fechaInicioExistenteMinimo = grid.getStore().findRecord('codigoTipoPrecio', tipoMinimoAutorizado).getData().fechaInicio;
 		var fechaFinMinimo = grid.getStore().findRecord('codigoTipoPrecio', tipoMinimoAutorizado).getData().fechaFin;
@@ -1661,7 +1648,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				if(datefield.dataIndex === 'fechaInicio') {
 					// La fecha de inicio
 					if(Ext.isEmpty(fechaInicioMinimo)) {
-						// No puede estar vacía
+						// No puede estar vacÃ­a
 						return HreRem.i18n('info.fecha.precios.msg.validacion');
 					} else {
 						if(fechaInicioMinimo > new Date()) {
@@ -1671,23 +1658,23 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					}
 				}
 				return true;
-			case tipoAprobadoVentaWeb: // La fecha de fin de aprobado venta(web) debe ser menor o igual a la fecha fin mínimo.
+			case tipoAprobadoVentaWeb: // La fecha de fin de aprobado venta(web) debe ser menor o igual a la fecha fin mÃ­nimo.
 				if(datefield.dataIndex === 'fechaFin') {
 					// La fecha de fin
 					if(Ext.isEmpty(fechaFinMinimo) || Ext.isEmpty(fechaFinAprobadoVentaWeb)) {
-						// Si la fecha contra la que compara o la misma no están definidas, se valida positivo.
+						// Si la fecha contra la que compara o la misma no estÃ¡n definidas, se valida positivo.
 						return true;
 					}
 					if(fechaFinAprobadoVentaWeb > fechaFinMinimo) {
-						// Ha de ser menor o igual a la fecha fin mínimo.
+						// Ha de ser menor o igual a la fecha fin mÃ­nimo.
 						return HreRem.i18n('info.fecha.fin.aprobadoVentaWeb.msg.validacion');
 					}
 				} else {
 					// La fecha de inicio
 					if(!Ext.isEmpty(fechaInicioExistenteMinimo)) {
-						// Si la fecha inicio mínimo está definida
+						// Si la fecha inicio mÃ­nimo estÃ¡ definida
 						if(!Ext.isEmpty(fechaInicioAprobadoVentaWeb) && fechaInicioAprobadoVentaWeb < fechaInicioExistenteMinimo) {
-							// Si la propia fecha está definida, ha de ser mayor o igual que la fecha inicio mínimo
+							// Si la propia fecha estÃ¡ definida, ha de ser mayor o igual que la fecha inicio mÃ­nimo
 							return HreRem.i18n('info.datefield.begin.date.pav.msg.validacion');
 						}
 					}
@@ -1697,7 +1684,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				if(datefield.dataIndex === 'fechaFin') {
 					// La fecha de fin
 					if(Ext.isEmpty(fechaFinDescuentoAprobado)) {
-						// No puede estar vacía
+						// No puede estar vacÃ­a
 						return HreRem.i18n('info.fecha.precios.msg.validacion');
 					}
 					if(!Ext.isEmpty(fechaFinExistenteAprobadoVentaWeb) && fechaFinDescuentoAprobado > fechaFinExistenteAprobadoVentaWeb) {
@@ -1707,7 +1694,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				} else {
 					// La fecha de inicio
 					if(Ext.isEmpty(fechaInicioDescuentoAprobado)) {
-						// No puede estar vacía
+						// No puede estar vacÃ­a
 						return HreRem.i18n('info.fecha.precios.msg.validacion');
 					}
 					if(!Ext.isEmpty(fechaInicioExistenteAprobadoVentaWeb) && fechaInicioDescuentoAprobado < fechaInicioExistenteAprobadoVentaWeb) {
@@ -1720,7 +1707,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				if(datefield.dataIndex === 'fechaFin') {
 					// La fecha de fin
 					if(Ext.isEmpty(fechaFinDescuentoPublicadoWeb)) {
-						// No puede estar vacía
+						// No puede estar vacÃ­a
 						return HreRem.i18n('info.fecha.precios.msg.validacion');
 					}
 					if(!Ext.isEmpty(fechaInicioExistenteDescuentoAprobado) && fechaInicioDescuentoPublicadoWeb < fechaInicioExistenteDescuentoAprobado) {
@@ -1734,7 +1721,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				} else {
 					// La fecha de inicio
 					if(Ext.isEmpty(fechaInicioDescuentoPublicadoWeb)){
-						// No puede estar vacía
+						// No puede estar vacÃ­a
 						return HreRem.i18n('info.fecha.precios.msg.validacion');
 					}
 					if(!Ext.isEmpty(fechaFinExistenteDescuentoAprobado) && fechaInicioDescuentoPublicadoWeb > fechaFinExistenteDescuentoAprobado) {
@@ -1752,17 +1739,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 
-	// Este método obtiene el valor del campo importe que se está editando y comprueba las validaciones oportunas.
+	// Este mÃ©todo obtiene el valor del campo importe que se estÃ¡ editando y comprueba las validaciones oportunas.
 	validatePreciosVigentes: function(value) {
 		var me = this;
 		var grid = me.lookupReference('gridPreciosVigentes');
 		if(Ext.isEmpty(grid)){ return true;}
 		var selected = grid.getSelectionModel().getSelection();
-		// Obtener columna automáticamente por 'dataindex = importe'.
+		// Obtener columna automÃ¡ticamente por 'dataindex = importe'.
 		var importeActualColumn = grid.columns[Ext.Array.indexOf(Ext.Array.pluck(grid.columns, 'dataIndex'), 'importe')];
 
 		if(!Ext.isEmpty(selected)) {
-			// Almacenar la fila selecciona para cuando esté siendo editada.
+			// Almacenar la fila selecciona para cuando estÃ© siendo editada.
 			grid.codTipoPrecio = selected[0].getData().codigoTipoPrecio;
 		}
 
@@ -1782,7 +1769,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var codTipoPrecio = grid.codTipoPrecio;
 
 		switch(codTipoPrecio) {
-		case tipoMinimoAutorizado: // Mínimo <= Aprobado venta web.
+		case tipoMinimoAutorizado: // MÃ­nimo <= Aprobado venta web.
 
 			var importeActualMinimo = importeActualColumn.getEditor().value; 
 			
@@ -1819,7 +1806,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 			return true;
 
-		case tipoAprobadoVentaWeb: // Mínimo <= Aprobado venta web.
+		case tipoAprobadoVentaWeb: // MÃ­nimo <= Aprobado venta web.
 
 			var importeActualAprobadoVentaWeb = importeActualColumn.getEditor().value;
 
@@ -1842,7 +1829,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 
-	// Este método desmarca el checkbox de formalizar cuando el checkbox de comercializar se desmarca.
+	// Este mÃ©todo desmarca el checkbox de formalizar cuando el checkbox de comercializar se desmarca.
 	onChkbxPerimetroChange: function(chkbx) {
 		var me = this;
 		var ref = chkbx.getReference();
@@ -2020,7 +2007,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			            }
 					});
 				}
-			//Guardamos múltiples records	
+			//Guardamos mÃºltiples records	
 			} else {
 				var records = form.getBindRecords();
 				var contador = 0;
@@ -2153,7 +2140,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 	
-	//Llamar desde cualquier GridEditableRow, y así se desactivaran las ediciones.
+	//Llamar desde cualquier GridEditableRow, y asÃ­ se desactivaran las ediciones.
 	quitarEdicionEnGridEditablePorFueraPerimetro: function(grid,record) {
 		var me = this; 
 		
@@ -2163,9 +2150,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 	
-	// Este método filtra los anyos de construcción y rehabilitación de una vivienda
-	// de modo que si el value es '0' lo quita. Es una medida de protección al v-type
-	// por que en la DB están establecidos a 0 todos los activos.
+	// Este mÃ©todo filtra los anyos de construcciÃ³n y rehabilitaciÃ³n de una vivienda
+	// de modo que si el value es '0' lo quita. Es una medida de protecciÃ³n al v-type
+	// por que en la DB estÃ¡n establecidos a 0 todos los activos.
 	onAnyoChange: function(field) {
 		if(!Ext.isEmpty(field.getValue()) && field.getValue() === '0') {
 			field.setValue('');
@@ -2213,7 +2200,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	}
     },
     
-    //Este método se usa para marcar en rojo el campo en primera instancia, o vaciar su contenido
+    //Este mÃ©todo se usa para marcar en rojo el campo en primera instancia, o vaciar su contenido
     vaciarCampoMostrarRojoObligatoriedad: function(campo, mostrarObligatoriedad, vaciarCampo) {
     	if(mostrarObligatoriedad) {
     		campo.setValue(' ');
@@ -2223,8 +2210,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		campo.setValue();
     },
 
-    // Este método es llamado cuando se pulsa el botón 'ver' del ID de visita en el detalle de una oferta
-    // y abre un pop-up con información sobre la visita.
+    // Este mÃ©todo es llamado cuando se pulsa el botÃ³n 'ver' del ID de visita en el detalle de una oferta
+    // y abre un pop-up con informaciÃ³n sobre la visita.
     onClickMostrarVisita: function(btn) {
     	var me = this;
     	var model = me.getViewModel().get('detalleOfertaModel');
@@ -2264,8 +2251,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	});
     },
 
-    // Este método es llamado cuando se selecciona una oferta del listado de ofertas del activo.
-    // Obtiene el ID de la oferta y carga sus detalles en la sección 'Detalle ofertas'.
+    // Este mÃ©todo es llamado cuando se selecciona una oferta del listado de ofertas del activo.
+    // Obtiene el ID de la oferta y carga sus detalles en la secciÃ³n 'Detalle ofertas'.
     onOfertaListClick: function (grid, record) {
 		var me = this,
 		form = grid.up("form"),
@@ -2311,7 +2298,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		});		
 	},
 	
-	// Este método abre el activo o agrupación asociado a la oferta en el grid de ofertas del activo.
+	// Este mÃ©todo abre el activo o agrupaciÃ³n asociado a la oferta en el grid de ofertas del activo.
 	onClickAbrirActivoAgrupacion: function(tableView, indiceFila, indiceColumna) {
 		var me = this;
 		var grid = tableView.up('grid');
@@ -2548,7 +2535,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				    		}
 		    		    }else{
 		    		    	nombrePrescriptorField.setValue('');
-		    				me.fireEvent("errorToast", "El código del Proveedor introducido no es un Prescriptor");
+		    				me.fireEvent("errorToast", "El cÃ³digo del Proveedor introducido no es un Prescriptor");
 		    			}
 			    	} else {
 			    		if(!Ext.isEmpty(nombrePrescriptorField)) {
@@ -2637,7 +2624,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		me.setFechaMinimaDevolucionMovimientoLlave(fila.fechaEntrega,dateDevolucion);
 	},
 	
-	// Establece fecha mínima en Devolución en función de la fecha de Entrega
+	// Establece fecha mÃ­nima en DevoluciÃ³n en funciÃ³n de la fecha de Entrega
 	setFechaMinimaDevolucionMovimientoLlave: function(valorFecha, dateDevolucion) {
 		
 		if(!Ext.isEmpty(valorFecha)) {
@@ -2678,7 +2665,211 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				fechaCancelacionRegistral.setValue('');
 			}
 		}
-	}
+	},
+	
+	/**
+	 * Antes de guardar los cambios hacemos una llamada Ajax para obtener los campos susceptibles de ser propagados y los activos a los que se podrian propagar.
+	 * Si recibimos esta información sacaremos la ventana de selección de propagación de cambios, sino guardaremos el activo de la forma habitual. 
+	 * @param {} form Tab que estamos guardando.
+	 */
+	comprobarPropagacionCambios: function(form) {
+		
+		var me = this,		
+		idActivo = me.getViewModel().get("activo.id"),
+    	url = $AC.getRemoteUrl('activo/propagarInformacion'),
+    	tab = form.getBindRecord().getProxy().getExtraParams().tab,
+    	dirtyFieldsModel =  form.getBindRecord().modified,
+    	propagableData = {};
+								
+    	me.getView().mask(HreRem.i18n("msg.mask.loading"));
+ 
+    	Ext.Ajax.request({
+    		url: url,
+    		method: "GET",
+    		params: {id: idActivo, tab: tab},
+    		
+    		success: function(response, opts){
+    			
+    			var data,
+    			campos=[],
+    			activoActual=null;		
+		   		try{
+					data = Ext.decode(response.responseText);
+					// data.activos y data.propagateFields
+		   		} catch(e) {
+		   			data = {}
+		   		}
+		   		
+		   		// Si hay activos a los que propagar los cambios....
+		   		if(Ext.isArray(data.activos) && data.activos.length > 0) {
+		   			
+		   			// Recorremos los campos del formulario para obtener los modificados que además son susceptibles de propagar
+		   			
+		   			form.getForm().getFields().each(function(field) {
+		   				// Si el campo está enlazado con el modelo
+		   				if (!Ext.isEmpty(field) && !Ext.isEmpty(field.bind) && !Ext.isEmpty(field.bind.value) && !Ext.isEmpty(field.bind.value.stub)  ) {
+		   					// Si el campo se ha modificado y está incluido en los campos susceptibles de propagar ...
+		   					if(Ext.isDefined(dirtyFieldsModel[field.bind.value.stub.name]) && data.propagateFields.includes(field.bind.value.stub.name)) {
+		   						campos.push(field);
+								propagableData[field.bind.value.stub.name] = field.getValue();
+		   				
+		   					}
+		   				}
+		   				
+		   			});
+		   			
+		   			
+					// Si hay cambios que propagar
+		   			if (campos.length > 0) {
+
+						// sacamos el activo actual del listado
+						activoActual = data.activos.splice(data.activos.findIndex(function(activo){return activo.activoId == idActivo}),1)[0];		   				
+
+						// abrimos la ventana de opciones
+		   				var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {formActivo: form, activos: data.activos, campos:campos, propagableData: propagableData, activoActual: activoActual}).show();
+		   				me.getView().add(ventanaOpcionesPropagacionCambios);
+		   				
+		   				me.getView().unmask();
+		   			
+		   			} else {
+		   				// Si no hay campos susceptibles de trasladar guardamos.
+		   				me.saveTab(form);
+		   			}
+
+		   		} else {
+		   			// Si no hay activos a los que trasladar cambios.
+		   			me.saveTab(form);
+		   		}
+    		},
+		 	failure: function(record, operation) {
+		 		Utils.defaultRequestFailure(response);
+		    }
+    	});	
+
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));	    	
+		
+			
+	},
+	
+	saveTab: function(form, successFn) {
+	
+		var me = this;
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+
+		form.getBindRecord().save({
+			success: function (record, operation) {
+				
+				if(successFn) {
+					successFn(record, operation);
+				} else {
+					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					me.getView().unmask();
+					me.refrescarActivo(form.refreshAfterSave);
+					me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+				}
+            },
+	            
+            failure: function (record, operation) {
+            	Utils.defaultOperationFailure(record, operation, form);
+            }
+		});
+	},
+	
+	onClickGuardarPropagarCambios: function(btn) {
+    	var me = this,
+    	window = btn.up("window"),
+    	grid = me.lookupReference("listaActivos"),
+    	radioGroup = me.lookupReference("opcionesPropagacion"),
+    	formActivo = window.formActivo,
+    	activosSeleccionados = grid.getSelectionModel().getSelection()
+    	opcionPropagacion = radioGroup.getValue().seleccion,
+    	cambios =  window.propagableData;
+
+		me.fireEvent("log", cambios);
+		
+    	if (opcionPropagacion != "1" &&  !activosSeleccionados.length>0) {
+	    	me.fireEvent("errorToast", HreRem.i18n("msg.no.activos.seleccionados"));
+	    	return false;
+    	}
+    	
+    	var successFn = function(record, operation) {
+
+			if(activosSeleccionados.length > 0) {
+				
+				var config={};
+				config.params={};
+				
+	    		config.url = record.getProxy().getApi().update;	
+	    		config.params.tab = record.getProxy().getExtraParams().tab    		
+
+	    		Ext.apply(config.params, cambios);    		
+				
+    			me.propagarCambios(config, activosSeleccionados);
+    		} else {
+    			me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				me.getView().unmask();
+				me.refrescarActivo(formActivo.refreshAfterSave);
+				me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+    		}
+    	}
+    	
+    	window.destroy();
+    	me.saveTab(formActivo, successFn);
+
+
+    },
+    
+    onClickCancelarPropagarCambios: function(btn) {
+    	var me = this,
+    	window = btn.up("window");    	
+    	
+    	window.destroy();
+    	
+    	me.onClickBotonRefrescar();
+    },
+    	
+    
+	/**
+	 * Replica una operación ya realizada sobre un activo, utilizando el array de activos que recibe y llamandose recursivamente hasta que no quedan activos .
+	 * @param {} config - url y parametros comunes para guardar(datos modificados y tab) 
+	 * @param {} activos
+	 * @return {Boolean}
+	 */
+    propagarCambios: function(config, activos) {
+    	
+    	var me = this;
+
+    	if (activos.length>0) {
+    		
+    		var activo = activos.shift();
+    		config.params.id = activo.get("activoId");	
+    		
+    		Ext.Ajax.request({
+    			method : 'POST',
+	    		url: config.url,
+	    		params: config.params,
+				success: function(response, opts){
+					// Lanzamos el evento de refrescar el activo por si está abierto.
+					me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], activo.get("activoId"));
+					me.propagarCambios(config, activos);
+				},
+			 	failure: function(response, opts) {
+			 		// TODO ¿Que hacemos con los activos que fallen al guardar?
+			    }
+    		});
+
+    	} else {
+    		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			me.getView().unmask();
+    		return false;
+    	}
+    }
+		
+	
+	
+
+	
+	
 		
 	    	
 });

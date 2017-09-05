@@ -43,9 +43,11 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.excel.ActivoExcelReport;
@@ -131,6 +133,9 @@ public class ActivoController extends ParadiseJsonController {
 	@Autowired
 	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
 
+	@Autowired
+	private ActivoPropagacionApi activoPropagacionApi;
+	
 	@Autowired
 	GestorDocumentalFotosApi gestorDocumentalFotos;
 
@@ -2449,5 +2454,20 @@ public class ActivoController extends ParadiseJsonController {
 		
 		return new ModelAndView("jsonView", model);
 
+	}
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView propagarInformacion(@RequestParam(required = true) Long id, @RequestParam(required = true) String tab, ModelMap model) {
+
+		List<String> fields = new ArrayList<String>();
+
+		if (ActivoPropagacionFieldTabMap.map.get(tab) != null) {
+			fields.addAll(ActivoPropagacionFieldTabMap.map.get(tab));
+		}
+
+		model.put("propagateFields", fields);
+		model.put("activos", activoPropagacionApi.getAllActivosAgrupacionPorActivo(id));
+
+		return new ModelAndView("jsonView", model);
 	}
 }

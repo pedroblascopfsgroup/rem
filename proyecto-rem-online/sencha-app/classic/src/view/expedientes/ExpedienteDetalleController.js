@@ -1919,5 +1919,27 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    	callback: function(options, success, response){
 				}   		     
 		});		
+	},
+	
+	onHaCambiadoFechaResolucion: function( field, newDate, oldDate, eOpts){
+		var me = this;
+		var resultado= me.lookupReference('comboResultadoTanteoForm');
+		if(!Ext.isEmpty(newDate)){
+			resultado.allowBlank= false;
+		}
+		else{
+			resultado.allowBlank= true;
+		}
+	},
+	
+	onHaCambiadoResultadoTanteo: function(combo, value){
+		var me = this;
+		var fechaResolucion= me.lookupReference('fechaResolucionForm');
+		if(!Ext.isEmpty(value)){
+			fechaResolucion.allowBlank= false;
+		}
+		else{
+		 	fechaResolucion.allowBlank= true;
+		}
 	}
 });

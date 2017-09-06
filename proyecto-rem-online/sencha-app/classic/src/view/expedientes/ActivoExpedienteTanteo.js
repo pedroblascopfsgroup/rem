@@ -128,7 +128,19 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 							maxValue: new Date(),
 		                	minValue: null,
 		                	reference: 'fechaComunicacion',
-							maskRe: /[0-9.]/
+							maskRe: /[0-9.]/,
+							listeners:{
+								edit: function(){
+									if(!Ext.isEmpty(me.up().lookupReference('fechaRespuesta').getValue())){
+										this.setMaxValue(new Date(me.up().lookupReference('fechaRespuesta').getValue()));
+									}
+								},
+								blur: function(){
+									if(!Ext.isEmpty(me.up().lookupReference('fechaRespuesta').getValue())){
+										this.setMaxValue(new Date(me.up().lookupReference('fechaRespuesta').getValue()));
+									}
+								}
+							}
 						}
 				   },
 				   {
@@ -154,7 +166,17 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 		                				me.up().lookupReference('fechaVisita').setMinValue(Ext.Date.add(new Date(this.getValue()), Ext.Date.DAY, 1));	                				
 		                	            
 		                			}
-		                		}
+		                		},
+		                		edit: function(){
+									if(!Ext.isEmpty(me.up().lookupReference('fechaComunicacion').getValue())){
+										this.setMinValue(new Date(me.up().lookupReference('fechaComunicacion').getValue()));
+									}
+								},
+								blur: function(){
+									if(!Ext.isEmpty(me.up().lookupReference('fechaComunicacion').getValue())){
+										this.setMinValue(new Date(me.up().lookupReference('fechaComunicacion').getValue()));
+									}
+								}
 		                		
 		                	}
 						}
@@ -210,12 +232,12 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 		                		blur: function(){
 		                			
 		                			this.setMinValue(Ext.Date.add(new Date(me.up().lookupReference('fechaRespuesta').getValue()), Ext.Date.DAY, 1));
-		                			
+		                			this.setMaxValue(new Date(me.up().lookupReference('fechaResolucionForm').getValue()));
 		                		},
 		                		edit:function(){
 		                			
 		                			this.setMinValue(Ext.Date.add(new Date(me.up().lookupReference('fechaRespuesta').getValue()), Ext.Date.DAY, 1));
-		                			
+		                			this.setMaxValue(new Date(me.up().lookupReference('fechaResolucionForm').getValue()));
 		                		}
 				        	}
 						}
@@ -271,13 +293,13 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 				   		text: HreRem.i18n('header.fecha.vencimiento'),
 			            dataIndex: 'fechaVencimiento',
 			            formatter: 'date("d/m/Y")',
-			            flex: 1,
-			            editor: {
-			            	xtype: 'datefield',
-							allowBlank: true,
-							reference: 'fechaVencimiento',
-							maskRe: /[0-9.]/
-						}
+			            flex: 1
+//			            editor: {
+//			            	xtype: 'datefield',
+//							allowBlank: true,
+//							reference: 'fechaVencimiento',
+//							maskRe: /[0-9.]/
+//						}
 				   }
 				   
 			    ]/*,
@@ -344,12 +366,20 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 		                {
 		                	xtype:'datefieldbase',
 		                	name: 'fechaComunicacion',
+		                	reference: 'fechaComunicacionForm',
 							formatter: 'date("d/m/Y")',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.fecha.comunicacion'),
 		                	bind:		'{fechaComunicacion}',
 		                	maxValue: new Date(),
 		                	minValue: null,
-		                	allowBlank: false
+		                	allowBlank: false,
+		                	listeners:{
+		                		blur: function(){
+		                			if(!Ext.isEmpty(me.up().lookupReference('fechaRespuestaRef').getValue())){
+		                				this.setMaxValue(new Date(me.up().lookupReference('fechaRespuestaRef').getValue()));
+		                			}
+		                		}
+		                	}
 		                		
 		                },
 		                {
@@ -368,8 +398,13 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 		                			
 		                			if(this.value instanceof Date){
 		                					                				
-		                				me.up().lookupReference('fechaVisitaRef').setMinValue(Ext.Date.add(new Date(this.getValue()), Ext.Date.DAY, 1));	                				
+		                				me.up().lookupReference('fechaVisitaRef').setMinValue(Ext.Date.add(new Date(this.getValue()), Ext.Date.DAY, 1));
 		                	            
+		                			}
+		                		},
+		                		blur: function(){
+		                			if(!Ext.isEmpty(me.up().lookupReference('fechaComunicacionForm').getValue())){
+		                				this.setMinValue(new Date(me.up().lookupReference('fechaComunicacionForm').getValue()));
 		                			}
 		                		}
 		                		
@@ -405,13 +440,22 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 		                	},
 				        	listeners:{
 		                		blur: function(){
-		                			
-		                			this.setMinValue(Ext.Date.add(new Date(me.up().lookupReference('fechaRespuestaRef').getValue()), Ext.Date.DAY, 1));
+		                			if(!Ext.isEmpty(me.up().lookupReference('fechaRespuestaRef').getValue())){
+		                				this.setMinValue(Ext.Date.add(new Date(me.up().lookupReference('fechaRespuestaRef').getValue()), Ext.Date.DAY, 1));
+		                			}
+		                			if(!Ext.isEmpty(me.up().lookupReference('fechaResolucionForm').getValue())){
+		                				this.setMaxValue(new Date(me.up().lookupReference('fechaResolucionForm').getValue()));
+		                			}
 		                			
 		                		},
 		                		edit:function(){
 		                			
-		                			this.setMinValue(Ext.Date.add(new Date(me.up().lookupReference('fechaRespuestaRef').getValue()), Ext.Date.DAY, 1));
+		                			if(!Ext.isEmpty(me.up().lookupReference('fechaRespuestaRef').getValue())){
+		                				this.setMinValue(Ext.Date.add(new Date(me.up().lookupReference('fechaRespuestaRef').getValue()), Ext.Date.DAY, 1));
+		                			}
+		                			if(!Ext.isEmpty(me.up().lookupReference('fechaResolucionForm').getValue())){
+		                				this.setMaxValue(new Date(me.up().lookupReference('fechaResolucionForm').getValue()));
+		                			}
 		                			
 		                		}
 				        	}
@@ -419,11 +463,15 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 		                {
 		                	xtype: 'comboboxfieldbase',
 		                	name: 'codigoTipoResolucion',
+		                	reference: 'comboResultadoTanteoForm',
 		                	bind: {
 								store: '{comboResultadoTanteo}',
 								value: '{codigoTipoResolucion}'
 							},
-		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.resultado.tanteo')
+		                	fieldLabel:  HreRem.i18n('fieldlabel.otyr.resultado.tanteo'),
+		                	listeners: {
+								change: 'onHaCambiadoResultadoTanteo'
+							}
 		                },
 		                {
 		                	xtype:'datefieldbase',
@@ -431,8 +479,23 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 							formatter: 'date("d/m/Y")',
 		                	fieldLabel:  HreRem.i18n('header.fecha.resolucion'),
 		                	bind:		'{fechaResolucion}',
+		                	reference: 'fechaResolucionForm',
 		                	allowBlank: true,
-							maskRe: /[0-9.]/
+							maskRe: /[0-9.]/,
+							listeners: {
+								change: 'onHaCambiadoFechaResolucion',
+								
+								blur: function(){
+									if(!Ext.isEmpty(me.up().lookupReference('fechaVisitaRef').getValue())){
+										this.setMinValue(new Date(me.up().lookupReference('fechaVisitaRef').getValue()));
+									}
+								},
+								edit:function(){
+									if(!Ext.isEmpty(me.up().lookupReference('fechaVisitaRef').getValue())){
+										this.setMinValue(new Date(me.up().lookupReference('fechaVisitaRef').getValue()));
+									}
+								}
+							}
 		                },
 		                {
 		                	xtype:'datefieldbase',
@@ -441,6 +504,7 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTanteo', {
 		                	fieldLabel:  HreRem.i18n('header.fecha.vencimiento'),
 		                	bind:		'{fechaVencimiento}',
 		                	allowBlank: true,
+		                	readOnly: true,
 							maskRe: /[0-9.]/
 		                }
 				]

@@ -90,8 +90,8 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'activosafectadosgasto', funPermEdition: ['EDITAR_TAB_ACTIVOS_AFECTADOS_GASTOS']})}, ['TAB_ACTIVOS_AFECTADOS_GASTOS']);
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'contabilidadgasto', funPermEdition: ['EDITAR_TAB_CONTABILIDAD_GASTOS']})}, ['TAB_CONTABILIDAD_GASTOS']);
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'gestiongasto', funPermEdition: ['EDITAR_TAB_GESTION_GASTOS']})}, ['TAB_GESTION_GASTOS']);
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'impugnaciongasto', funPermEdition: ['EDITAR_TAB_IMPUGNACION_GASTOS']})}, ['TAB_IMPUGNACION_GASTOS']);
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentosgasto', ocultarBotonesEdicion: true})}, ['TAB_DOCUMENTOS']);
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'impugnaciongasto', id: 'impugnacionGasto'/*, funPermEdition: ['EDITAR_TAB_IMPUGNACION_GASTOS']*/})}, ['TAB_IMPUGNACION_GASTOS']);
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentosgasto', id: 'documentosGasto', ocultarBotonesEdicion: true})}, ['TAB_DOCUMENTOS']);
 
 		me.addPlugin({ptype: 'lazyitems', items: items});
 		me.callParent();
@@ -102,9 +102,9 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
 			viewModel= me.lookupViewModel(),
 			esEditable = viewModel.get('gasto.esGastoEditable')== true;
 			me.down("[itemId=botoneditar]").setVisible(false);
-			
+
 			var editionEnabled = function() {
-				if(esEditable) {
+				if(tab.getId() == 'impugnacionGasto' || tab.getId() == 'documentosGasto' || esEditable) {
 					me.down("[itemId=botoneditar]").setVisible(true);
 				}
 			}

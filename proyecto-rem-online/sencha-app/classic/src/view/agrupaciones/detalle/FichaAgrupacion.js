@@ -222,6 +222,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 							xtype		: 'comboboxfieldbase',
 				        	fieldLabel	: HreRem.i18n('fieldlabel.gestoria.formalizacion'),
 				        	reference	: 'cbGestoriaFormalizacion',
+				        	hidden: true,
 				        	displayField: 'apellidoNombre',
 				        	valueField	: 'id',
 				        	bind		: {
@@ -244,6 +245,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 							xtype		: 'comboboxfieldbase',
 				        	fieldLabel	: HreRem.i18n('fieldlabel.gestor.formalizacion'),
 				        	reference	: 'cbGestorFormalizacion',
+				        	hidden: true,
 				        	displayField: 'apellidoNombre',
 				        	valueField	: 'id',
 				        	bind		: {

@@ -3686,38 +3686,34 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Usuario usuarioGestorComercial = null;
 		Usuario usuarioGestorComercialBack = null;
 		
+		Activo activo= null;
 		if(!Checks.esNulo(oferta)){
+			/*Antes se diferenciaba entre agrupacion lote comercial y lote restringido
+			 * Comercial: Asignaba los gestores que hubiese en la ficha del activo
+			 * Restringida: Llama al procedimiento de balanceo (como si fuera un activo individual
+			 * Ahora se quieren todos iguales, la unica diferencia es que el lote comercial no tiene activo principal y el resto si (restringida y activo unico)*/
 			ActivoAgrupacion agrupacion = oferta.getAgrupacion();
-			if(!Checks.esNulo(agrupacion)){
+			if(!Checks.esNulo(agrupacion)){				
 				if(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupacion.getTipoAgrupacion().getCodigo())){
-					ActivoLoteComercial activoLoteComercial = genericDao.get(ActivoLoteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", agrupacion.getId()));
-					usuarioGestorFormalizacion = activoLoteComercial.getUsuarioGestorFormalizacion();
-					usuarioGestoriaFormalizacion = activoLoteComercial.getUsuarioGestoriaFormalizacion();
-					usuarioGestorComercial = activoLoteComercial.getUsuarioGestorComercial();
-					usuarioGestorComercialBack = activoLoteComercial.getUsuarioGestorComercialBackOffice();
-				}else{//Es una oferta de lote restringido
-					Activo activo = oferta.getActivoPrincipal();
-					if(!Checks.esNulo(activo)){
-						Long idUsuarioGestorFormalizacion = gestorExpedienteComercialDao.getUsuarioGestorFormalizacion(activo.getId());
-						if(!Checks.esNulo(idUsuarioGestorFormalizacion))
-							usuarioGestorFormalizacion = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", idUsuarioGestorFormalizacion));
-
-						Long idUsuarioGestoriaFormalizacion = gestorExpedienteComercialDao.getUsuarioGestoriaFormalizacion(activo.getId());
-						if(!Checks.esNulo(idUsuarioGestoriaFormalizacion))
-							usuarioGestoriaFormalizacion = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", idUsuarioGestoriaFormalizacion));
+					if(!Checks.estaVacio(oferta.getActivosOferta())){
+						activo= oferta.getActivosOferta().get(0).getPrimaryKey().getActivo();
 					}
 				}
-			}else{//Es una oferta de activo individual
-				Activo activo = oferta.getActivoPrincipal();
-				if(!Checks.esNulo(activo)){
-					Long idUsuarioGestorFormalizacion = gestorExpedienteComercialDao.getUsuarioGestorFormalizacion(activo.getId());
-					if(!Checks.esNulo(idUsuarioGestorFormalizacion))
-						usuarioGestorFormalizacion = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", idUsuarioGestorFormalizacion));
-
-					Long idUsuarioGestoriaFormalizacion = gestorExpedienteComercialDao.getUsuarioGestoriaFormalizacion(activo.getId());
-					if(!Checks.esNulo(idUsuarioGestoriaFormalizacion))
-						usuarioGestoriaFormalizacion = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", idUsuarioGestoriaFormalizacion));
+				else{
+					activo = oferta.getActivoPrincipal();
 				}
+			}
+			else{
+				activo = oferta.getActivoPrincipal();
+			}
+			if(!Checks.esNulo(activo)){
+				Long idUsuarioGestorFormalizacion = gestorExpedienteComercialDao.getUsuarioGestorFormalizacion(activo.getId());
+				if(!Checks.esNulo(idUsuarioGestorFormalizacion))
+					usuarioGestorFormalizacion = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", idUsuarioGestorFormalizacion));
+
+				Long idUsuarioGestoriaFormalizacion = gestorExpedienteComercialDao.getUsuarioGestoriaFormalizacion(activo.getId());
+				if(!Checks.esNulo(idUsuarioGestoriaFormalizacion))
+					usuarioGestoriaFormalizacion = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", idUsuarioGestoriaFormalizacion));
 			}
 		}
 		

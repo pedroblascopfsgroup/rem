@@ -12,12 +12,13 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
---*/
+--*/ 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 SET DEFINE OFF;
 
-create or replace PROCEDURE AGR_ASISTIDA_PROCESO_FIN IS
+CREATE OR REPLACE PROCEDURE AGR_ASISTIDA_PROCESO_FIN IS
+
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema.
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.

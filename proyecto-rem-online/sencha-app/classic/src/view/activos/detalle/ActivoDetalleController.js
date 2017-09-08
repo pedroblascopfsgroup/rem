@@ -2792,7 +2792,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], activo.get("activoId"));
 				me.propagarCambios(window, activos);
 			};
-    		debugger;
+
 			window.mask("Guardando activos "+ numActivoActual +" de " + numTotalActivos);
 			me.saveActivo(propagableData, successFn);
 

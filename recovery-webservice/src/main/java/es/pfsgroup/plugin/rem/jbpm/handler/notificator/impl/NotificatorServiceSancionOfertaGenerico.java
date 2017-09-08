@@ -1,11 +1,8 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl;
 
-import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,20 +12,15 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.aop.interceptor.PerformanceMonitorInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -38,17 +30,14 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
-import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 
@@ -259,11 +248,16 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				gestores.put(s, extractEmail(gestorActivoApi.getGestorByActivoYTipo(activo, "GCOM")));
 			} else if (GESTOR_COMERCIAL_LOTE_COMERCIAL.equals(s)) {
 				gestores.put(s, extractEmail(loteComercial.getUsuarioGestorComercial()));
-			} else if (GESTOR_FORMALIZACION.equals(s) || GESTOR_GESTORIA_FASE_3.equals(s)) {
+			} else if (GESTOR_FORMALIZACION.equals(s)) {
 				gestores.put(s, extractEmail(
 						gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GFORM")));
+			} else if (GESTOR_GESTORIA_FASE_3.equals(s)) {
+				gestores.put(s, extractEmail(
+						gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GIAFORM")));
 			}
 		}
+		
+		
 
 		return gestores;
 	}

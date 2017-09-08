@@ -57,6 +57,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -65,7 +66,6 @@ import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
-import es.pfsgroup.plugin.rem.jbpm.handler.updater.impl.UpdaterServiceSancionOfertaObtencionContrato;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -234,6 +234,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
+	
+	@Autowired
+	private ActivoApi activoApi;
 
 	@Override
 	public String managerName() {
@@ -4941,8 +4944,37 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return false;
 	}
-
-
+	
+	@Override
+	public boolean importeExpedienteMenorPreciosMinimosActivos(Long idTramite){
+		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
+		if(!Checks.esNulo(activoTramite)){
+			Trabajo trabajo = activoTramite.getTrabajo();
+			if(!Checks.esNulo(trabajo)){
+				if(isComiteSancionadorHaya(trabajo)){
+					ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByTrabajo(trabajo.getId());
+					if(!Checks.esNulo(expediente)){
+						Oferta oferta = expediente.getOferta();
+						if(!Checks.esNulo(oferta)){
+							Double importeExpediente = oferta.getImporteContraOferta() != null ? oferta.getImporteContraOferta() : oferta.getImporteOferta();
+							List<Activo> activos = activoTramite.getActivos();
+							Double precioMinimo= 0.00;
+							if(!Checks.estaVacio(activos)){
+								for(Activo activo: activos){
+									precioMinimo+=activoApi.getImporteValoracionActivoByCodigo(activo, DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
+								}
+							}
+							
+							if(importeExpediente<precioMinimo){
+								return true;
+							}
+						}
+					}
+				}
+			}
+		}		
 		
+		return false;
+	}		
 
 }

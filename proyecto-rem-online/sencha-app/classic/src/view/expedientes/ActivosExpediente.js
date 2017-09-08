@@ -192,7 +192,19 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			       		text: HreRem.i18n("header.precio.minimo.autorizado"),
 			       	    dataIndex: 'precioMinimo',
 			       		flex:1,
-			       		renderer: Utils.rendererCurrency
+			       		renderer: Utils.rendererCurrency,
+			       		summaryType: 'sum',
+			            summaryRenderer: function(value, summaryData, dataIndex) {			            	
+			            	var suma= 0;
+			            	var store = this.up('gridBaseEditableRow').getStore();
+			            	for(var i=0; i< store.data.length; i++){	            		
+			            		if(store.data.items[i].data.precioMinimo != null){
+			            			suma += parseFloat(store.data.items[i].data.precioMinimo);
+			            		}
+		            		}
+			            	var msg = HreRem.i18n("fieldlabel.precio.minimo.autorizado.total")+": "+Ext.util.Format.currency(suma);
+			            	return "<span>"+msg+"</span>"
+			            }
 			       },
 			       {   
 			       		text: HreRem.i18n("title.condiciones"),

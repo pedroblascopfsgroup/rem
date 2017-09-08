@@ -45,10 +45,10 @@ import es.pfsgroup.plugin.recovery.mejoras.web.tareas.BuzonTareasViewHandler;
 import es.pfsgroup.plugin.recovery.mejoras.web.tareas.BuzonTareasViewHandlerFactory;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
-import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoCampo;
@@ -63,7 +63,6 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
 
@@ -73,7 +72,7 @@ public class AgendaAdapter {
     public static final String CODIGO_TAREA_ACTIVO = "811";
     public static final String CODIGO_NOTIFICACION = "700";
     public static final String CODIGO_DEFINICION_OFERTA = "T013_DefinicionOferta";
-    public static final String TEXTO_ADVERTENCIA_T013_DO = "ATENCIÓN: Si ha seleccionado comité Haya está a punto de aprobar esta oferta. Confirme que el importe de la oferta es superior al precio mínimo. En caso contrario, especialmente para las PDV, solicite autorización a su supervisor.";
+    public static final String TEXTO_ADVERTENCIA_T013_DO = "ATENCIÓN: Va a aprobar un expediente con importe inferior al precio mínimo. Confirme que tiene la autorización de su supervisor.";
 
     @Resource
     MessageService messageServices;
@@ -112,6 +111,9 @@ public class AgendaAdapter {
     
     @Autowired
     private PreciosApi preciosApi;
+    
+    @Autowired
+    private ExpedienteComercialApi expedienteComercialApi;
     
 	SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
     
@@ -455,17 +457,15 @@ public class AgendaAdapter {
 		
 		String mensaje = new String();
 		TareaActivo tarea = tareaActivoApi.get(idTarea);
-		Long idActivo = tarea.getActivo().getId();
 		
-		if(!Checks.esNulo(tarea.getTramite().getTrabajo())){
-			String codigoSubtipoTrabajo = tarea.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo();
-			
-			if(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA.equals(codigoSubtipoTrabajo)){
-				if(CODIGO_DEFINICION_OFERTA.equals(tarea.getTareaExterna().getTareaProcedimiento().getCodigo())){
+		if(!Checks.esNulo(tarea.getTramite())){
+			if(CODIGO_DEFINICION_OFERTA.equals(tarea.getTareaExterna().getTareaProcedimiento().getCodigo())){
+				if(expedienteComercialApi.importeExpedienteMenorPreciosMinimosActivos(tarea.getTramite().getId())){
 					return TEXTO_ADVERTENCIA_T013_DO;
 				}
 			}
 		}
+		
 			return mensaje;
 	}
 	

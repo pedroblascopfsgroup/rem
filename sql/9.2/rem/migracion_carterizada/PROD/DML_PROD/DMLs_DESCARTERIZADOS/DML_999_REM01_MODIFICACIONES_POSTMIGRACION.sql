@@ -356,7 +356,7 @@ BEGIN
     
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.ACT_AGR_AGRUPACION actualizada. '||SQL%ROWCOUNT||' Filas.');  
 
-    EXECUTE IMMEDIATE 'delete from ACT_ADO_ADMISION_DOCUMENTO where ado_id in ( select ado_id from ACT_ADO_ADMISION_DOCUMENTO where (act_id, cfd_id) in ( select act_id, cfd_id from ACT_ADO_ADMISION_DOCUMENTO group by act_id, cfd_id having count(1) > 1) and usuariocrear <> '''||V_USUARIO||''')';
+    --EXECUTE IMMEDIATE 'delete from ACT_ADO_ADMISION_DOCUMENTO where ado_id in ( select ado_id from ACT_ADO_ADMISION_DOCUMENTO where (act_id, cfd_id) in ( select act_id, cfd_id from ACT_ADO_ADMISION_DOCUMENTO group by act_id, cfd_id having count(1) > 1) and usuariocrear <> '''||V_USUARIO||''')';
 
 
 

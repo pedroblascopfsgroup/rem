@@ -2,7 +2,10 @@ package es.pfsgroup.plugin.rem.controller;
 
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -68,7 +71,7 @@ public class ActivoControllerDispatcher {
 		T dto;
 		try {
 			dto = clazz.newInstance();
-			for (Field f : clazz.getDeclaredFields()) {
+			for (Field f : getAllFields(new LinkedList<Field>(), clazz)) {
 				if (json.containsKey(f.getName())) {
 					f.setAccessible(true);
 					f.set(dto, convertToType(f.getType(), json.get(f.getName())));
@@ -94,12 +97,24 @@ public class ActivoControllerDispatcher {
 					value = Integer.parseInt(object.toString());
 				} else if (Long.class.isAssignableFrom(type)) {
 					value = Long.parseLong(object.toString());
+				} else if (Boolean.class.isAssignableFrom(type)) {
+					value = Boolean.parseBoolean(object.toString());
 				}
 			} catch (Exception e) {
 				logger.warn("No se va a setear el valor", e);
 			}
 		}
 		return value;
+	}
+	
+	private static List<Field> getAllFields(List<Field> fields, Class<?> type) {
+	    fields.addAll(Arrays.asList(type.getDeclaredFields()));
+
+	    if (type.getSuperclass() != null) {
+	        getAllFields(fields, type.getSuperclass());
+	    }
+
+	    return fields;
 	}
 
 }

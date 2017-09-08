@@ -1388,9 +1388,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public Boolean comprobarExisteAdjuntoExpedienteComercial(Long idTrabajo, String codigoDocumento) {
 		Filter filtroTrabajoEC = genericDao.createFilter(FilterType.EQUALS, "expediente.trabajo.id", idTrabajo);
 		Filter filtroAdjuntoSubtipoCodigo = genericDao.createFilter(FilterType.EQUALS, "subtipoDocumentoExpediente.codigo", codigoDocumento);
-		AdjuntoExpedienteComercial adjuntoExpedienteComercial = genericDao.get(AdjuntoExpedienteComercial.class, filtroTrabajoEC, filtroAdjuntoSubtipoCodigo);
-
-		if (!Checks.esNulo(adjuntoExpedienteComercial))
+		
+		List<AdjuntoExpedienteComercial> adjuntos = genericDao.getList(AdjuntoExpedienteComercial.class, filtroTrabajoEC, filtroAdjuntoSubtipoCodigo);
+		
+		if (!Checks.esNulo(adjuntos))
 			return true;
 		else
 			return false;

@@ -39,7 +39,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
          
          'cargasactivo gridBase': {
          	abrirFormulario: 'abrirFormularioAnyadirCarga',
-         	onClickRemove: 'onClickRemoveCarga'         	
+         	onClickRemove: 'onClickRemoveCarga',
+         	onClickPropagation :  'onClickPropagation' 
          }
          
     },
@@ -2454,6 +2455,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             
         });	
     	
+    },
+    
+    onClickPropagation: function(grid, record) {
+    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
     },
 	
 	onClickBotonCancelarCarga: function(btn) { 

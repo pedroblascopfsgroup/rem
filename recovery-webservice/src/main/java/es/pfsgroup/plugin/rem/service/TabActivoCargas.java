@@ -39,6 +39,9 @@ public class TabActivoCargas implements TabActivoService {
 			activoDto.setConCargas(0);
 		}
 		
+		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
+		activoDto.setCamposPropagables(TabActivoService.TAB_CARGAS_ACTIVO);
+		
 		return activoDto;
 	}
 

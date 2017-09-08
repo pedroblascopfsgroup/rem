@@ -190,6 +190,8 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			
 		}
 
+		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
+		activoDto.setCamposPropagables(TabActivoService.TAB_DATOS_REGISTRALES);
 		
 		return activoDto;
 		

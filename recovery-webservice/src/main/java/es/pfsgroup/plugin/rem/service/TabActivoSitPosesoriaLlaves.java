@@ -101,6 +101,10 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			}
 		}*/
 		
+
+		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
+		 activoDto.setCamposPropagables(TabActivoService.TAB_SIT_POSESORIA_LLAVES);
+		
 		return activoDto;
 		
 	}

@@ -59,7 +59,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			if(Ext.isDefined(model.getProxy().getApi().read)) {
 				// Si la API tiene metodo de lectura (read).
 				model.load({
-				    success: function(record) {
+				    success: function(record,b,c,d) {
 				    	form.setBindRecord(record);			    	
 				    	form.unmask();
 				    	if(Ext.isFunction(form.afterLoad)) {
@@ -186,18 +186,36 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		 			me.getViewModel().set("editing", false);
 		 		}
 			}
-		
-			if (!form.saveMultiple) {
-				// Si la API tiene metodo de escritura (create or update).
-				if(form.getBindRecord() != null && (Ext.isDefined(form.getBindRecord().getProxy().getApi().create) || Ext.isDefined(form.getBindRecord().getProxy().getApi().update))) {
-					me.comprobarPropagacionCambios(form);
+			
+			// Obtener jsondata para guardar activo
+			var tabData = me.createTabData(form);
+			
+			var activosPropagables = me.getViewModel().get("activo.activosPropagables") || [];
+			var tabPropagableData = null;
+
+			if(activosPropagables.length > 0) {
+				
+				tabPropagableData = me.createFormPropagableData(form, tabData);	
+				if (!Ext.isEmpty(tabPropagableData)) {
+					// sacamos el activo actual del listado
+					var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
+					
+					// Abrimos la ventana de selección de activos
+					var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {form: form, activoActual: activo, activos: activosPropagables, tabData: tabData, propagableData: tabPropagableData}).show();
+   					me.getView().add(ventanaOpcionesPropagacionCambios);
+   					me.getView().unmask();
+   					return false;
 				}
-			//Guardamos mÃºltiples records	
-			} else {
-				var records = form.getBindRecords();
-				var contador = 0;
-				me.saveMultipleRecords(contador, records, form);
 			}
+				
+			var successFn = function(response, eOpts) {
+				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				me.getView().unmask();
+				me.refrescarActivo(form.refreshAfterSave);
+				me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+			}
+			me.saveActivo(tabData, successFn);
+			
 		} else {
 			me.getView().unmask();
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
@@ -619,7 +637,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this;
 		var form = btn.up('tabpanel').getActiveTab();
 
-		// EjecuciÃ³n especial si la pestaña es 'Comercial'.
+		// Ejecución especial si la pestaña es 'Comercial'.
 		if("comercialactivo" == form.getXType()) {
 			me.onSaveFormularioCompletoTabComercial(btn, form);
 		} else {
@@ -2672,121 +2690,41 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 	
-	/**
-	 * Antes de guardar los cambios hacemos una llamada Ajax para obtener los campos susceptibles de ser propagados y los activos a los que se podrian propagar.
-	 * Si recibimos esta información sacaremos la ventana de selección de propagación de cambios, sino guardaremos el activo de la forma habitual. 
-	 * @param {} form Tab que estamos guardando.
-	 */
-	comprobarPropagacionCambios: function(form) {
-		
-		var me = this,		
-		idActivo = me.getViewModel().get("activo.id"),
-    	url = $AC.getRemoteUrl('activo/propagarInformacion'),
-    	tab = form.getBindRecord().getProxy().getExtraParams().tab,
-    	dirtyFieldsModel =  form.getBindRecord().modified,
-    	propagableData = {};
-								
-    	me.getView().mask(HreRem.i18n("msg.mask.loading"));
- 
-    	Ext.Ajax.request({
-    		url: url,
-    		method: "GET",
-    		params: {id: idActivo, tab: tab},
-    		
-    		success: function(response, opts){
-    			
-    			var data,
-    			campos=[],
-    			activoActual=null;		
-		   		try{
-					data = Ext.decode(response.responseText);
-					// data.activos y data.propagateFields
-		   		} catch(e) {
-		   			data = {}
-		   		}
-		   		
-		   		// Si hay activos a los que propagar los cambios....
-		   		if(Ext.isArray(data.activos) && data.activos.length > 0) {
-		   			
-		   			// Recorremos los campos del formulario para obtener los modificados que además son susceptibles de propagar
-		   			
-		   			form.getForm().getFields().each(function(field) {
-		   				// Si el campo está enlazado con el modelo
-		   				if (!Ext.isEmpty(field) && !Ext.isEmpty(field.bind) && !Ext.isEmpty(field.bind.value) && !Ext.isEmpty(field.bind.value.stub)  ) {
-		   					// Si el campo se ha modificado y está incluido en los campos susceptibles de propagar ...
-		   					if(Ext.isDefined(dirtyFieldsModel[field.bind.value.stub.name]) && data.propagateFields.includes(field.bind.value.stub.name)) {
-		   						campos.push(field);
-								propagableData[field.bind.value.stub.name] = field.getValue();
-		   				
-		   					}
-		   				}
-		   				
-		   			});
-		   			
-		   			
-					// Si hay cambios que propagar
-		   			if (campos.length > 0) {
-
-						// sacamos el activo actual del listado
-						activoActual = data.activos.splice(data.activos.findIndex(function(activo){return activo.activoId == idActivo}),1)[0];		   				
-
-						// abrimos la ventana de opciones
-		   				var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {formActivo: form, activos: data.activos, campos:campos, propagableData: propagableData, activoActual: activoActual}).show();
-		   				me.getView().add(ventanaOpcionesPropagacionCambios);
-		   				
-		   				me.getView().unmask();
-		   			
-		   			} else {
-		   				// Si no hay campos susceptibles de trasladar guardamos.
-		   				me.saveTab(form);
-		   			}
-
-		   		} else {
-		   			// Si no hay activos a los que trasladar cambios.
-		   			me.saveTab(form);
-		   		}
-    		},
-		 	failure: function(record, operation) {
-		 		Utils.defaultRequestFailure(response);
-		    }
-    	});	
-
-		me.getView().mask(HreRem.i18n("msg.mask.loading"));	    	
-		
-			
-	},
 	
-	saveTab: function(form, successFn) {
-	
-		var me = this;
+	saveActivo: function(jsonData, successFn) {
+		
+		var me = this,
+		url =  $AC.getRemoteUrl('activo/saveActivo');
+		
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));
-
-		form.getBindRecord().save({
-			success: function (record, operation) {
-				
-				if(successFn) {
-					successFn(record, operation);
-				} else {
-					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-					me.getView().unmask();
-					me.refrescarActivo(form.refreshAfterSave);
-					me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
-				}
-            },
-	            
-            failure: function (record, operation) {
-            	Utils.defaultOperationFailure(record, operation, form);
-            }
-		});
+		
+		successFn = successFn || Ext.emptyFn
+			
+		
+		if(Ext.isEmpty(jsonData)) {
+			me.fireEvent("log", "Obligatorio jsonData para guardar el activo");
+		} else {
+		
+			Ext.Ajax.request({
+				method : 'POST',
+				url: url,
+				jsonData: Ext.JSON.encode(jsonData),
+				success: successFn,
+			 	failure: function(response, opts) {
+			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			    }			    
+			});
+		}
 	},
 	
 	onClickGuardarPropagarCambios: function(btn) {
+		
     	var me = this,
     	window = btn.up("window"),
     	grid = me.lookupReference("listaActivos"),
     	radioGroup = me.lookupReference("opcionesPropagacion"),
-    	formActivo = window.formActivo,
-    	activosSeleccionados = grid.getSelectionModel().getSelection()
+    	formActivo = window.form,
+    	activosSeleccionados = grid.getSelectionModel().getSelection(),
     	opcionPropagacion = radioGroup.getValue().seleccion,
     	cambios =  window.propagableData;
 
@@ -2797,31 +2735,29 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    	return false;
     	}
     	
-    	var successFn = function(record, operation) {
+    	// Si estamos modificando una pestaña con formulario
+    	if(!Ext.isEmpty(formActivo)) {
+    		
+    		var successFn = function(record, operation) {
 
-			if(activosSeleccionados.length > 0) {
-				
-				var config={};
-				config.params={};
-				
-	    		config.url = record.getProxy().getApi().update;	
-	    		config.params.tab = record.getProxy().getExtraParams().tab    		
-
-	    		Ext.apply(config.params, cambios);    		
-				
-    			me.propagarCambios(config, activosSeleccionados);
-    		} else {
-    			me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-				me.getView().unmask();
-				me.refrescarActivo(formActivo.refreshAfterSave);
-				me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
-    		}
-    	}
+				if(activosSeleccionados.length > 0) { 
+	    			me.propagarCambios(window, activosSeleccionados);
+	    		} else {
+	    			window.destroy();
+	    			me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					me.getView().unmask();
+					me.refrescarActivo(formActivo.refreshAfterSave);
+					me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+	    		}
+	    	}
+	    	
+	    	me.saveActivo(window.tabData, successFn);
+	    	
+    	} /* TODO else { // Propagar los cambios solamente a los activos seleccionados ( por ejemplo para propagar cambios de grids )
+    		me.propagarCambios(window, activosSeleccionados);	
+    	}*/
     	
-    	window.destroy();
-    	me.saveTab(formActivo, successFn);
-
-
+    	window.mask("Guardando activos 1 de " + (activosSeleccionados.length + 1));
     },
     
     onClickCancelarPropagarCambios: function(btn) {
@@ -2840,41 +2776,134 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	 * @param {} activos
 	 * @return {Boolean}
 	 */
-    propagarCambios: function(config, activos) {
+    propagarCambios: function(window, activos) {
     	
-    	var me = this;
+    	var me = this
+    	grid = window.down("grid"),
+    	propagableData = window.propagableData,
+    	numTotalActivos = grid.getSelectionModel().getSelection().length + 1,
+    	numActivoActual = numTotalActivos;
 
     	if (activos.length>0) {
     		
     		var activo = activos.shift();
-    		config.params.id = activo.get("activoId");	
     		
-    		Ext.Ajax.request({
-    			method : 'POST',
-	    		url: config.url,
-	    		params: config.params,
-				success: function(response, opts){
+    		numActivoActual = numTotalActivos - activos.length;
+    		
+    		propagableData.id = activo.get("activoId");
+			
+    		var successFn = function(response, opts){
 					// Lanzamos el evento de refrescar el activo por si está abierto.
-					me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], activo.get("activoId"));
-					me.propagarCambios(config, activos);
-				},
-			 	failure: function(response, opts) {
-			 		// TODO ¿Que hacemos con los activos que fallen al guardar?
-			    }
-    		});
+				me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], activo.get("activoId"));
+				me.propagarCambios(window, activos);
+			};
+
+			window.mask("Guardando activos "+ numActivoActual +" de " + numTotalActivos);
+			me.saveActivo(propagableData, successFn);
 
     	} else {
+    		Ext.ComponentQuery.query('opcionespropagacioncambios')[0].destroy();
     		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 			me.getView().unmask();
     		return false;
     	}
-    }
-		
-	
-	
+    },
+    
+    createTabData: function(form) {
+    	
+    	var me = this,
+    	tabData = {};
+    	
+    	tabData.id = me.getViewModel().get("activo.id");
+    	tabData.models = [];
+    	
+    	if(form.saveMultiple) {
+    		var types = form.records; 
+    		Ext.Array.each(form.getBindRecords(), function(record, index) {
+    			var model = me.createModelToSave(record, types[index]);
+	    		if(!Ext.isEmpty(model)) {
+	    			tabData.models.push(model);
+	    		}
+    		});
+    		
+    	} else {
+    		var type = form.recordName; 
+    		var model = me.createModelToSave(form.getBindRecord(), type);
+    		if(!Ext.isEmpty(model)) {
+    			tabData.models.push(model);
+    		}
+    	}
+    	
+    	if(tabData.models.length > 0) {
+    		return tabData;
+    			
+    	} else {
+    		return null;
+    	}
+    },
+    
+    createModelToSave: function(record, type) {
+    	
+    	var me = this;
+    	
+    	var model = null;
 
+    	if (Ext.isDefined(record.getProxy().getApi().update)) { 
+    		model = {};
+    		model.name= record.getProxy().getExtraParams().tab;
+    		model.type= type;
+    		model.data= record.getProxy().getWriter().getRecordData(record);
+    	} 
+    	
+    	return model;
+    		
+    },
+    
+    createFormPropagableData: function(form, tabData) {
+    	
+    	var me = this,
+    	propagableData=null,
+    	camposPropagables = [],
+    	dirtyFieldsModel =  [],
+    	propagableData = [];
+    	
+    	var records = [],
+    	models = [];
+    	
+    	if(form.saveMultiple) {
+    		records = records.concat(form.getBindRecords()) 
+    	} else {
+    		records.push(form.getBindRecord());
+    	}
+    	
+    	Ext.Array.each(records, function(record, index) {
+    		var name = record.getProxy().getExtraParams().tab;
+    		camposPropagables[name] = record.get("camposPropagables");    		
+    	}); 
+
+    	Ext.Array.each(tabData.models, function(model, index) {
+    		var data = {},
+    		modelHasData = false;
+    		Ext.Array.each(camposPropagables[model.name], function(campo, index){
+    			if(Ext.isDefined(model.data[campo])) {
+    				data[campo] = model.data[campo];
+    				modelHasData=true;
+    			}
+    		});
+    		
+    		if(modelHasData) {
+    			model.data=data;
+    			models.push(model);	
+    		}
+    		
+    	});	
+    	
+    	if(models.length>0) {
+    		propagableData = {};
+    		propagableData.models = models
+    	}
 	
-	
-		
+    	return propagableData;
+    }
 	    	
 });

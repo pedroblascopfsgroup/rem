@@ -10,7 +10,7 @@ import es.capgemini.devon.dto.WebDto;
  * @author Carlos Feliu
  *
  */
-public class DtoActivoCargasTab extends WebDto {
+public class DtoActivoCargasTab extends DtoTabActivo {
 
 	/**
 	 * 

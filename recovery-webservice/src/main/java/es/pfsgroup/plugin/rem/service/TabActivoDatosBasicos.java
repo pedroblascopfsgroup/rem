@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -43,7 +44,6 @@ import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
-import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -110,6 +110,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private AnotacionApi anotacionApi;
+	
+	@Autowired
+	private ActivoPropagacionApi activoPropagacionApi;
 	
 	@Resource
     MessageService messageServices;
@@ -412,6 +415,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(activo.getCodigoPromocionPrinex() != null ) {
 			BeanUtils.copyProperty(activoDto, "codigoPromocionPrinex", activo.getCodigoPromocionPrinex());
 		}
+
+		// HREOS-2761: Buscamos si existen activos candidatos para propagar cambios. Llamada única para el activo
+		 activoDto.setActivosPropagables(activoPropagacionApi.getAllActivosAgrupacionPorActivo(activo));
+		 
+		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
+		 activoDto.setCamposPropagables(TabActivoService.TAB_DATOS_BASICOS);
+
 		
 		return activoDto;	
 	}

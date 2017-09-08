@@ -24,9 +24,9 @@ public class ActivoPropagacionManager implements ActivoPropagacionApi {
 	@Autowired
 	private AgrupacionAdapter agrupacionAdapter;
 
-	public List<?> getAllActivosAgrupacionPorActivo(final Long idActivo) {
+	public List<?> getAllActivosAgrupacionPorActivo(Activo activo) {
 
-		Activo activo = activoDao.get(idActivo);
+		//Activo activo = activoDao.get(idActivo);
 
 		if (activo != null) {
 

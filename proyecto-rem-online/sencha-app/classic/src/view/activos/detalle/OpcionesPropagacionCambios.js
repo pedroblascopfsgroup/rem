@@ -11,7 +11,7 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambios', {
     
     activos: null,
     
-    campos: null,
+    form: null,
     
     activoActual: null,
     
@@ -21,7 +21,7 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambios', {
     	
 		show: function() {			
 			var me = this;
-			me.resetWindow();			
+			me.createContent();			
 		}
 		
 	},
@@ -39,7 +39,8 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambios', {
     	{
     		xtype: 'container',
     		margin: '0 10 0 0',
-    		flex: 1,
+    		reference: "campos",
+    		flex: 1.5,
     		layout: {
     			type: 'vbox',
     			align: 'stretch'
@@ -49,6 +50,10 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambios', {
 			    		xtype: 'fieldset',
 			    		padding: 10,
 			    		flex: 1,
+			    		layout: {
+			    			type: 'vbox',
+			    			align: 'stretch'
+			    		},
 			    		items: [
 			    			{
 			                      xtype: 'label',
@@ -56,9 +61,11 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambios', {
 			            	},
 			            	{
 			            		xtype: 'container',
+			            		flex: 1,
+			            		reference: 'camposContent',
 			            		margin: '20 0 0 0',
 			            		bodyPadding: 10,
-			            		reference: "campos"
+			            		scrollable: 'vertical'
 			            	}
 			            ]
 			    		
@@ -92,8 +99,8 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambios', {
 			        	
 			        },
 			        items: [
-			        	{ boxLabel: HreRem.i18n("label.solo.activo.actual"), name: 'seleccion', inputValue: '1', checked: true },
-			            { boxLabel: HreRem.i18n("label.activos.agrupacion.pertenece"), name: 'seleccion', inputValue: '2' },
+			        	{ boxLabel: HreRem.i18n("label.solo.activo.actual"), name: 'seleccion', inputValue: '1', checked: !Ext.isEmpty(me.form), hidden: Ext.isEmpty(me.form) },
+			            { boxLabel: HreRem.i18n("label.activos.agrupacion.pertenece"), name: 'seleccion', inputValue: '2', checked: Ext.isEmpty(me.form)},
 			            { boxLabel: HreRem.i18n("label.activos.subdivision.pertenece"), name: 'seleccion', inputValue: '3'},
 			            { boxLabel: HreRem.i18n("label.siguientes.activos.seleccionados"), name: 'seleccion', inputValue: '4' }
 			        ]			        
@@ -249,40 +256,89 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambios', {
     	
     },
     
-    resetWindow: function() {
-    	var me = this;
+    createContent: function() {
+    	var me = this,
+    	campos = [];
     	
-    	me.down("container[reference=campos]").removeAll();
-    	
-    	Ext.Array.each(me.campos, function(campo, index) {
+    	if(!Ext.isEmpty(me.form)) {
     		
-    		var newField;
-    		
-    		switch (campo.xtype) {
+    		var fields = me.form.getForm().getFields();
+
+    		fields.each(function(field) {
     			
-    			case 'textfield' :
-    			case 'textfieldbase' :
-	    			newField = Ext.create("HreRem.view.common.DisplayFieldBase", 
-	    				{
-	    					fieldLabel: campo.getFieldLabel(),
-	    					value: campo.getValue()
-	    				}
-	    			);
-	    			break;
-	    		case 'comboboxfieldbase' :
-	    		case 'combobox' :
-    				newField = Ext.create("HreRem.view.common.DisplayFieldBase", 
-	    				{
-	    					fieldLabel: campo.getFieldLabel(),
-	    					value: campo.getDisplayValue()
-	    				}
-	    			);
-	    			break;
-    		}
+    			if (!Ext.isEmpty(field) && !Ext.isEmpty(field.bind) && !Ext.isEmpty(field.bind.value) && !Ext.isEmpty(field.bind.value.stub)  ) {
+    				
+    				var path = field.bind.value.stub.path;
+    				var indexSeparator = path.indexOf(".");
+    				var name = path.substring(0,indexSeparator);
+    				var property = path.substring(indexSeparator+1, path.length);
+    				
+    				Ext.Array.each(me.propagableData.models, function(model,index) {
+    					if (model.type == name && model.data.hasOwnProperty(property)) {
+    						campos.push(field);
+    					}
+    				});
+    				
+    			}
+    					
     		
-    		me.down("container[reference=campos]").add(newField);
+    		});
+    	}
     	
-    	});
+    	var containerCampos = me.down("container[reference=campos]");
+
+    	if(campos.length==0) {
+    		containerCampos.setVisible(false);
+    	} else {
+
+	    	Ext.Array.each(campos, function(campo, index) {
+	    		
+	    		var configField = {
+	    			xtype: 'displayfieldbase',
+	    			value: "undefined", 
+	    			fieldLabel: campo.getFieldLabel(),
+	    			width: '90%'
+	    		};
+	    		
+	    		switch (campo.xtype) {
+	    			
+	    			case 'textfield' :
+	    			case 'textfieldbase' :
+	    			case 'numberfield' :
+	    			case 'numberfieldbase' :
+		    			configField.value = campo.getValue();		    			
+		    			break;
+		    		case 'currencyfieldbase' :
+		    			configField.value = Ext.util.Format.currency(campo.getRawValue());
+		    			break;
+		    		case 'comboboxfieldbase' :
+		    		case 'combobox' :
+		    			configField.value = campo.getDisplayValue();		    			
+		    			break;
+		    		case 'textarea' :
+	    			case 'textareafield' :
+	    			case 'textareafieldbase' :
+	    				configField.labelAlign = 'top';
+	    				configField.value = campo.getValue();
+	    				break;
+	    			case 'datefieldbase' :
+	    			case 'datefield' :
+	    				configField.value = campo.getRawValue();
+	    				break;
+	    			case 'checkbox' :
+	    			case 'checkboxfieldbase' :
+	    				configField.xtype= 'checkbox';
+	    				configField.readOnly= true;
+	    				configField.value = campo.getValue();
+	    				break;
+		    		default :
+		    			me.fireEvent("log", "Tipo de campo no definido - " + campo.xtype);
+	    		}  		
+
+	    		containerCampos.down("[reference=camposContent]").add(Ext.widget(configField));
+	    	
+	    	});
+    	}
 
     	var store =  Ext.create('Ext.data.Store', {
     	pageSize:0,

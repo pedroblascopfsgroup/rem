@@ -5,7 +5,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -77,6 +76,7 @@ import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoConfigDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
+import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoLlave;
@@ -122,7 +122,6 @@ import es.pfsgroup.plugin.rem.model.DtoValoracion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.IncrementoPresupuesto;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.Posicionamiento;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
@@ -134,6 +133,7 @@ import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
@@ -1852,6 +1852,7 @@ public class ActivoAdapter {
 		return idBpm;
 	}
 
+	@Transactional(readOnly = false)
 	public Long crearTramitePublicacion(Long idActivo) {
 
 		TipoProcedimiento tprc = tipoProcedimiento.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_PUBLICACION);// Trámite
@@ -1859,6 +1860,18 @@ public class ActivoAdapter {
 																		// publicación
 
 		ActivoTramite tramite = jbpmActivoTramiteManagerApi.creaActivoTramite(tprc, activoApi.get(idActivo));
+		
+		//Creación registro historial comercial con estado informe emision
+		ActivoEstadosInformeComercialHistorico estadoInformeComercialHistorico= new ActivoEstadosInformeComercialHistorico();
+		estadoInformeComercialHistorico.setActivo(activoApi.get(idActivo));
+		DDEstadoInformeComercial estadoInformeComercial = (DDEstadoInformeComercial) proxyFactory.proxy(UtilDiccionarioApi.class)
+				.dameValorDiccionarioByCod(DDEstadoInformeComercial.class, DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_EMISION);
+		estadoInformeComercialHistorico.setEstadoInformeComercial(estadoInformeComercial);
+		estadoInformeComercialHistorico.setFecha(new Date());
+		
+		genericDao.save(ActivoEstadosInformeComercialHistorico.class, estadoInformeComercialHistorico);
+		
+		
 		Long idBpm = jbpmActivoTramiteManagerApi.lanzaBPMAsociadoATramite(tramite.getId());
 
 		return idBpm;

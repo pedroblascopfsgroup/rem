@@ -90,7 +90,7 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
 													},
 									               	{
 														fieldLabel: '',
-														readOnly: true,
+														readOnly: true
 									               	},
 													{ 
 														xtype: 'comboboxfieldbase',

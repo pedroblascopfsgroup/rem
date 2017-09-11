@@ -3,9 +3,9 @@ package es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,21 +15,16 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.aop.interceptor.PerformanceMonitorInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -47,10 +42,8 @@ import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
-import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 
@@ -58,7 +51,6 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		implements NotificatorService {
 
 	private static final String STR_MISSING_VALUE = "---";
-
 	private final Log logger = LogFactory.getLog(getClass());
 
 	private static final String GESTOR_PRESCRIPTOR = "prescriptor";
@@ -68,6 +60,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	private static final String GESTOR_COMERCIAL_LOTE_COMERCIAL = "gestor-comercial-lote-comercial";
 	private static final String GESTOR_FORMALIZACION = "gestor-formalizacion";
 	private static final String GESTOR_BACKOFFICE = "gestor-backoffice";
+	private static final String GESTOR_GESTORIA_FASE_3 = "gestoria-fase-3";
 
 	@Resource
 	private Properties appProperties;
@@ -118,6 +111,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 			if (permiteNotificarAprobacion && !Checks.esNulo(expediente)
 					&& DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) { // APROBACIÓN
+
 
 				ArrayList<String> destinatarios = getDestinatariosNotificacion(activo, oferta, expediente);
 
@@ -176,6 +170,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 
 		if (formalizacion) {
 			clavesGestores.add(GESTOR_FORMALIZACION);
+			clavesGestores.add(GESTOR_GESTORIA_FASE_3);
 		}
 
 		return clavesGestores.toArray(new String[]{});
@@ -247,7 +242,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			ExpedienteComercial expediente, String... filtroGestores) {
 		String[] claves = filtroGestores != null ? filtroGestores
 				: new String[] { GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, GESTOR_COMERCIAL_ACTIVO,
-						GESTOR_COMERCIAL_LOTE_RESTRINGIDO, GESTOR_COMERCIAL_LOTE_COMERCIAL, GESTOR_FORMALIZACION, GESTOR_BACKOFFICE};
+						GESTOR_COMERCIAL_LOTE_RESTRINGIDO, GESTOR_COMERCIAL_LOTE_COMERCIAL, GESTOR_FORMALIZACION, GESTOR_BACKOFFICE, GESTOR_GESTORIA_FASE_3};
 		this.compruebaRequisitos(activo, oferta, loteComercial, expediente, Arrays.asList(claves));
 
 		HashMap<String, String> gestores = new HashMap<String, String>();
@@ -266,9 +261,12 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 						gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GFORM")));
 			} else if (GESTOR_BACKOFFICE.equals(s)) {
 				gestores.put(s, extractEmail(gestorActivoApi.getGestorByActivoYTipo(activo, "GBO")));
+			} else if (GESTOR_GESTORIA_FASE_3.equals(s)) {
+				gestores.put(s, extractEmail(
+						gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GIAFORM")));
 			}
 		}
-
+		
 		return gestores;
 	}
 
@@ -299,7 +297,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			}
 
 			if ((expediente == null)
-					&& (claves.contains(GESTOR_FORMALIZACION))) {
+					&& (claves.contains(GESTOR_FORMALIZACION) || claves.contains(GESTOR_GESTORIA_FASE_3))) {
 				throw new IllegalStateException(
 						"Se necesita un ExpedienteComercial para obtener alguno de los gestores: " + claves.toString());
 			}
@@ -314,6 +312,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	
 
 	/* private String computeKey(String key) {
+
 		String result = "";
 		try {
 			byte[] bytesOfMessage = key.getBytes("UTF-8");
@@ -332,6 +331,26 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			result  = hexString.toString();
 		} catch (Exception e) {
 			e.printStackTrace();
+<<<<<<< HEAD
+=======
+		}
+		return result;
+	}
+
+	private void enviaNotificacionAceptar(ActivoTramite tramite, Oferta oferta, Long idExpediente,
+			String... destinatarios) {
+		String asunto = "Notificación de aprobación provisional de la oferta " + oferta.getNumOferta();
+		String cuerpo = "<p>Nos complace comunicarle que la oferta " + oferta.getNumOferta()
+				+ " ha sido PROVISIONALMENTE ACEPTADA. Adjunto a este correo encotnrará el documento con las instrucciones a seguir para la formalización de la reserva.</p>";
+
+		if (idExpediente != null) {
+			String reservationKey = String.valueOf(idExpediente)
+					.concat(appProperties.getProperty("haya.reservation.pwd"));
+			reservationKey = this.computeKey(reservationKey);
+			String reservationUrl = appProperties.getProperty("haya.reservation.url");
+			cuerpo = cuerpo + "<p>Pinche <a href=\"" + reservationUrl + idExpediente + "/" + reservationKey
+					+ "/1\">aquí</a> para la descarga del contrato de reserva.</p>";
+>>>>>>> vrem-produccion
 		}
 		return result;
 	} */
@@ -368,8 +387,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				gestorComercial = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "GCOM");
 			}
 		} else {
-			// Activo
-			gestorComercial = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "GCOM");
+		    gestorComercial = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "GCOM");
 		}
 
 		cuerpo = cuerpo + String.format("<p>Gestor comercial: %s </p>", (gestorComercial != null) ? gestorComercial.getApellidoNombre() : STR_MISSING_VALUE );
@@ -440,6 +458,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		FileItem f1 = null;
 		FileItem f2 = null;
 		try {
+
 			if (adjuntaInstrucciones) {
 				f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_formalizacion.pdf");
 				f2 = FileItemUtils.fromResource("docs/ficha_cliente.xlsx");

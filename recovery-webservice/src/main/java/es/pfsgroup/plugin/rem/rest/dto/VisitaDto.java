@@ -8,7 +8,10 @@ import javax.validation.constraints.Size;
 
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisita;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 
@@ -22,11 +25,17 @@ public class VisitaDto implements Serializable {
 	private Long idVisitaWebcom;
 	private Long idVisitaRem;
 	@NotNull(groups = { Insert.class })
+	@Diccionary(clase = ClienteComercial.class, message = "El idClienteRem no existe", groups = { Insert.class,
+			Update.class },foreingField="idClienteRem")
 	private Long idClienteRem;
 	@NotNull(groups = { Insert.class })
+	@Diccionary(clase = Activo.class, message = "El activo no existe", foreingField = "numActivo", groups = {
+			Insert.class, Update.class })
 	private Long idActivoHaya;
+	
 	@NotNull(groups = { Insert.class})
-	@Size(max=20,groups = { Insert.class, Update.class })
+	@Diccionary(clase = DDEstadosVisita.class, message = "El codEstadoVisita no existe", groups = {
+			Insert.class, Update.class })
 	private String codEstadoVisita;
 	//@NotNull(groups = { Insert.class})
 	@Size(max=20,groups = { Insert.class, Update.class })

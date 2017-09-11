@@ -187,6 +187,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public static final int NUMERO_DIAS_VENCIMIENTO= 40;
 	
 	public static final String PERFIL_GESTOR_FORMALIZACION = "HAYAGESTFORM";
+	public static final String PERFIL_SUPERVISOR_FORMALIZACION = "HAYASUPFORM";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -4790,7 +4791,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						}else{
 							//el usuario logado tiene que ser gestoria
 							Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-							if(!genericAdapter.isGestoria(usuarioLogado) && !genericAdapter.isSuper(usuarioLogado) && !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, usuarioLogado)){
+							if(!genericAdapter.isGestoria(usuarioLogado) && !genericAdapter.isSuper(usuarioLogado) && !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, usuarioLogado) && !genericAdapter.tienePerfil(PERFIL_SUPERVISOR_FORMALIZACION, usuarioLogado)){
 								codigoError = "imposible.bloquear.no.es.gestoria";
 							}else{
 								//la financiación tiene que estar informada

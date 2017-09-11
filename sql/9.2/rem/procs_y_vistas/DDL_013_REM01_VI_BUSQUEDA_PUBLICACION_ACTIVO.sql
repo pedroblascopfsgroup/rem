@@ -109,10 +109,20 @@ AS
           (SELECT val_id AS val_id_renta, act_id AS act_id_val_renta
              FROM ' || V_ESQUEMA || '.act_val_valoraciones val JOIN ' || V_ESQUEMA || '.dd_tpc_tipo_precio tpc ON (val.dd_tpc_id = tpc.dd_tpc_id AND tpc.dd_tpc_codigo = ''03'' AND val.borrado = 0)
                   ) val2 ON val2.act_id_val_renta = act.act_id
-    WHERE (pac.pac_id IS NULL OR pac.pac_check_comercializar = 1) AND (hic.hic_fecha IS NULL OR hic.hic_fecha = (SELECT MAX (hist2.hic_fecha)
-  FROM ' || V_ESQUEMA || '.act_hic_est_inf_comer_hist hist2
-  JOIN ' || V_ESQUEMA || '.dd_aic_accion_inf_comercial aic ON hist2.dd_aic_id = aic.dd_aic_id
- WHERE act.act_id = hist2.act_id and aic.DD_AIC_CODIGO in (''01'',''02'',''03'',''04''))) AND act.borrado = 0
+    WHERE (pac.pac_id IS NULL OR pac.pac_check_comercializar = 1) AND (hic.hic_fecha IS NULL OR hic.hic_fecha = 
+	NVL(
+    	(SELECT MAX (hist2.hic_fecha)
+        	FROM ' || V_ESQUEMA || '.act_hic_est_inf_comer_hist hist2
+        	JOIN ' || V_ESQUEMA || '.dd_aic_accion_inf_comercial aic ON hist2.dd_aic_id = aic.dd_aic_id
+        	WHERE act.act_id = hist2.act_id and aic.DD_AIC_CODIGO in (''02'',''04''))
+  		,
+      	(SELECT MAX (hist2.hic_fecha)
+        	FROM ' || V_ESQUEMA || '.act_hic_est_inf_comer_hist hist2
+        	JOIN ' || V_ESQUEMA || '.dd_aic_accion_inf_comercial aic ON hist2.dd_aic_id = aic.dd_aic_id
+        	WHERE act.act_id = hist2.act_id and aic.DD_AIC_CODIGO in (''01'',''02'',''03'',''04''))
+  )
+
+) AND act.borrado = 0
 ';
 
   DBMS_OUTPUT.PUT_LINE('Vista creada OK');

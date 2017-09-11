@@ -43,15 +43,14 @@ DECLARE
         T_VAL('AAII'   ,'01'    ,'SUPADM'),
         T_VAL('AAII'   ,'01'    ,'GACT'),
         T_VAL('AAII'   ,'01'    ,'SUPACT'),
-        T_VAL('AAII'   ,'01'    ,'GGADM'),
         T_VAL('AAII'   ,'01'    ,'GCOM'),
         T_VAL('AAII'   ,'01'    ,'SCOM'),
         T_VAL('AAII'   ,'01'    ,'GPREC'),
         T_VAL('AAII'   ,'01'    ,'GPUBL'),
         T_VAL('AAII'   ,'01'    ,'SPREC'),
         T_VAL('AAII'   ,'01'    ,'SPUBL'),
-        T_VAL('AAII'   ,'01'    ,'GCBO'),
-        T_VAL('AAII'   ,'01'    ,'GBACKOFFICE'),
+        T_VAL('AAII'   ,'01'    ,'GCBOINM'),
+        T_VAL('AAII'   ,'01'    ,'SBOINM'),
 
         -- Sareb
         T_VAL('AAII'   ,'02'    ,'GADM'),
@@ -87,8 +86,8 @@ DECLARE
         T_VAL('AAFF'   ,'01'    ,'GPUBL'),
         T_VAL('AAFF'   ,'01'    ,'SPREC'),
         T_VAL('AAFF'   ,'01'    ,'SPUBL'),
-        T_VAL('AAFF'   ,'01'    ,'GCBO'),
-        T_VAL('AAFF'   ,'01'    ,'GBACKOFFICE'),
+        T_VAL('AAFF'   ,'01'    ,'GCBOFIN'),
+        T_VAL('AAFF'   ,'01'    ,'SBOFIN'),
 
         -- Sareb
         T_VAL('AAFF'   ,'02'    ,'GCOM'),

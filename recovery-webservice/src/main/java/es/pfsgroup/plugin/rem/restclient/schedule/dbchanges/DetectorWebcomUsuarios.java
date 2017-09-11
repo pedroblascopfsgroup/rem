@@ -50,7 +50,7 @@ public class DetectorWebcomUsuarios  extends DetectorCambiosBD<UsuarioDto> {
 	
 	@Override
 	public boolean isActivo() {
-		return true;
+		return false;
 	}
 
 	@Override

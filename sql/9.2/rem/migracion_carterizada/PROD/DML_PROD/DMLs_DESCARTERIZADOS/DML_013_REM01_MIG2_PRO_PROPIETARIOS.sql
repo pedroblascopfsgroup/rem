@@ -57,9 +57,19 @@ BEGIN
       '
       ;
       EXECUTE IMMEDIATE V_SENTENCIA     ;
-      
-      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
-      
+
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] ACTUALIZANDO A NULO NIF A86602158 CARTERA CAJAMAR...');
+
+    EXECUTE IMMEDIATE 'UPDATE ACT_PRO_PROPIETARIO
+                          SET PRO_DOCIDENTIF = NULL
+                       where PRO_DOCIDENTIF = ''A86602158''
+                         and DD_CRA_ID = (select DD_CRA_ID FROM REM01.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = ''01'')';
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO actualizada. '||SQL%ROWCOUNT||' Filas.');   
+
+
+            
       COMMIT;
 
 EXCEPTION

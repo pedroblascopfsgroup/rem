@@ -69,9 +69,22 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		if(combo.getValue() == "02"){
 			me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(true);
 			me.lookupReference('checkEnglobaTodosActivosAgrRef').setValue(false);
+			me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(true);
+			me.lookupReference('checkEnglobaTodosActivosRef').setValue(false);
 		}else{
 			me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(false);
 			me.lookupReference('checkEnglobaTodosActivosAgrRef').setValue(true);
+			me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(false);
+			me.lookupReference('checkEnglobaTodosActivosRef').setValue(true);
+		}
+		
+		if(combo.getValue() == "04" || combo.getValue() == "05"){
+			me.lookupReference("gestorActivoResponsableCombo").allowBlank= true;
+			me.lookupReference("supervisorActivoCombo").allowBlank= true;
+		}
+		else{
+			me.lookupReference("gestorActivoResponsableCombo").allowBlank= false;
+			me.lookupReference("supervisorActivoCombo").allowBlank= false;
 		}
 		
 		if(combo.getValue() != "02" && combo.getValue() != "03") {

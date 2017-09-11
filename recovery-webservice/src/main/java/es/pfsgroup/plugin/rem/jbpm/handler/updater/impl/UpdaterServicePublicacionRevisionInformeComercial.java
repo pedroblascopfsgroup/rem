@@ -105,6 +105,8 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
 				estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION);
 				activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
 				activoEstadosInformeComercialHistorico.setFecha(new Date());
+				activo.getInfoComercial().setFechaAceptacion(new Date());
+				activo.getInfoComercial().setFechaRechazo(null);
 				
 				// Si continua con proceso publicacion
 				if(checkContinuaProceso){
@@ -160,6 +162,8 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
 				activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
 				activoEstadosInformeComercialHistorico.setFecha(new Date());
 				activoEstadosInformeComercialHistorico.setMotivo(motivoDenegacion);
+				activo.getInfoComercial().setFechaRechazo(new Date());
+				activo.getInfoComercial().setFechaAceptacion(null);
 					
 				// El tramite NO puede des-publicar activos, solo sirve para publicar
 				// activo.setFechaPublicable(null);

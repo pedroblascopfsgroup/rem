@@ -60,21 +60,24 @@ Ext.define('HreRem.view.common.GridBase', {
 
 			var configAddButton = {iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onClickAdd', scope: this, hidden: !me.addButton };
 			var configRemoveButton = {iconCls:'x-fa fa-minus', itemId:'removeButton', handler: 'onClickRemove', scope: this, disabled: true, hidden: !me.removeButton };
-			var configPropagationButton = {iconCls:'x-fa fa-th-list', itemId:'propagationButton', handler: 'onClickPropagation', disabled: true, hidden: !me.propagationButton };
+			
+			//var configPropagationButton = {iconCls:'x-fa fa-th-list', itemId:'propagationButton', handler: 'onClickPropagation', disabled: true, hidden: !me.propagationButton };
+			// ^- HREOS-2775 Este item se queda es standby 
 			
 			if(!Ext.isEmpty(me.buttonSecurity)) {
 				
 				for(var key in me.buttonSecurity) {					
 					configAddButton[key] = me.buttonSecurity[key];
 					configRemoveButton[key] = me.buttonSecurity[key];
-					configPropagationButton[key] = me.buttonSecurity[key];
+					//configPropagationButton[key] = me.buttonSecurity[key];
+					// ^- HREOS-2775 Este item se queda es standby
 				}
 			}
 			
 			me.tbar = {
 	    		xtype: 'toolbar',
 	    		dock: 'top',
-	    		items: [configAddButton, configRemoveButton, configPropagationButton]
+	    		items: [configAddButton, configRemoveButton] //, configPropagationButton] <- HREOS-2775 Este item se queda es standby
     		};
 
 		};

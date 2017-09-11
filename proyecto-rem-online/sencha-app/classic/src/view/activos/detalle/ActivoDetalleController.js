@@ -2475,8 +2475,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	
     },
     
-    onClickPropagation: function(grid, record) {
-    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+    onClickPropagation: function(grid, record) {     	
+    	var me = this;
+		var activosPropagables = me.getViewModel().get("activo.activosPropagables") || [];
+		var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
+		// Abrimos la ventana de selección de activos
+		var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {form: null, activoActual: activo, activos: activosPropagables, tabData: null, propagableData: null}).show();
+		me.getView().add(ventanaOpcionesPropagacionCambios);
     },
 	
 	onClickBotonCancelarCarga: function(btn) { 

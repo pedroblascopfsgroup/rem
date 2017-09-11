@@ -63,7 +63,7 @@ Ext.define('HreRem.view.activos.detalle.CargasActivo', {
               title : HreRem.i18n('title.listado.cargas'),
               reference : 'listadoCargasActivo',
               topBar : true,
-              propagationButton : true,
+              //propagationButton : true, <- HREOS-2775 Este item se queda es standby 
               cls : 'panel-base shadow-panel',
               bind : {
                 store : '{storeCargas}'

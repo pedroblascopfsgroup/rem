@@ -3443,20 +3443,28 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					beanUtilNotNull.copyProperty(dto, "fechaVenta", exp.getFechaVenta());
 
 					Double importe = null;
+					
+					if(!Checks.esNulo(activo.getSituacionComercial()) &&
+							(DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo()) ||
+							DDSituacionComercial.CODIGO_TRASPASADO.equals(activo.getSituacionComercial().getCodigo()))){
 
-					if (!Checks.esNulo(oferta.getImporteContraOferta())) {
-						importe = oferta.getImporteContraOferta();
-					} else {
-						importe = oferta.getImporteOferta();
-					}
-					for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
-						if (activo.getId().equals(activoOferta.getPrimaryKey().getActivo().getId())) {
-							importe = activoOferta.getImporteActivoOferta();
+						if (!Checks.esNulo(oferta.getImporteContraOferta())) {
+							importe = oferta.getImporteContraOferta();
+						} else {
+							importe = oferta.getImporteOferta();
+						}
+						for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
+							if (activo.getId().equals(activoOferta.getPrimaryKey().getActivo().getId())) {
+								importe = activoOferta.getImporteActivoOferta();
+							}
 						}
 					}
 
 					beanUtilNotNull.copyProperty(dto, "importeVenta", importe);
 				}
+			}
+			else{
+				beanUtilNotNull.copyProperty(dto, "importeVenta", null);
 			}
 
 			// Si no existe oferta aceptada con expediente obtener datos de

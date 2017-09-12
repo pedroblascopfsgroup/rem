@@ -2096,6 +2096,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					permitirGenerarHoja = false;
 				}
 	
+				Integer ocupado = 0;
+				if(activoPrincipal.getSituacionPosesoria() !=null){
+					if(activoPrincipal.getSituacionPosesoria().getOcupado()!=null)
+						ocupado = activoPrincipal.getSituacionPosesoria().getOcupado();
+				}
+				Integer conTitulo = 0;
+				if(activoPrincipal.getSituacionPosesoria() !=null){
+					if(activoPrincipal.getSituacionPosesoria().getConTitulo()!=null)
+						conTitulo = activoPrincipal.getSituacionPosesoria().getConTitulo();
+				}
 				// Comprobar ocupación y con título.
 				if (Checks.esNulo(condiciones.getSituacionPosesoria())
 						&& (!Checks.esNulo(activoPrincipal.getSituacionPosesoria().getOcupado()) || !Checks.esNulo(activoPrincipal.getSituacionPosesoria().getConTitulo()))) {
@@ -2105,15 +2115,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					permitirGenerarHoja = false;
 				} else if (!Checks.esNulo(condiciones.getSituacionPosesoria())
 						&& condiciones.getSituacionPosesoria().getCodigo().equals(DDSituacionesPosesoria.SITUACION_POSESORIA_LIBRE)
-						&& (activoPrincipal.getSituacionPosesoria().getOcupado() != 0 || activoPrincipal.getSituacionPosesoria().getConTitulo() != 0)) {
+						&& (ocupado != 0 || conTitulo != 0)) {
 					permitirGenerarHoja = false;
 				} else if (!Checks.esNulo(condiciones.getSituacionPosesoria())
 						&& condiciones.getSituacionPosesoria().getCodigo().equals(DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_CON_TITULO)
-						&& (activoPrincipal.getSituacionPosesoria().getOcupado() != 1 || activoPrincipal.getSituacionPosesoria().getConTitulo() != 1)) {
+						&& (ocupado != 1 || conTitulo != 1)) {
 					permitirGenerarHoja = false;
 				} else if (!Checks.esNulo(condiciones.getSituacionPosesoria())
 						&& condiciones.getSituacionPosesoria().getCodigo().equals(DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_SIN_TITULO)
-						&& (activoPrincipal.getSituacionPosesoria().getOcupado() != 1 || activoPrincipal.getSituacionPosesoria().getConTitulo() != 0)) {
+						&& (ocupado != 1 || conTitulo != 0)) {
 					permitirGenerarHoja = false;
 				}
 			}

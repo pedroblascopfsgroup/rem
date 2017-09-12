@@ -747,6 +747,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						width : '50%',
 						items : [{
 							xtype : 'datefieldbase',
+							readOnly: 'true',
 							formatter : 'date("d/m/Y")',
 							fieldLabel : HreRem
 									.i18n('fieldlabel.formalizacion.fecha.venta'),
@@ -771,6 +772,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						width : '50%',
 						items : [{
 							xtype : 'textfieldbase',
+							readOnly: 'true',
 							fieldLabel : HreRem
 									.i18n('fieldlabel.formalizacion.numero.protocolo'),
 							bind : '{resolucion.numProtocolo}'

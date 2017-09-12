@@ -1,8 +1,7 @@
 Ext.define('HreRem.view.activos.detalle.DistribucionPlantasActivoList', {
-	extend		: 'HreRem.view.common.GridBase',
+	extend		: 'HreRem.view.common.GridBaseEditableRow',
     xtype		: 'distribucionplantasactivolist',
 	topBar		: false,
-	editOnSelect: false,
 	idPrincipal : 'activo.id',
 	
 	features: [{
@@ -34,12 +33,24 @@ Ext.define('HreRem.view.activos.detalle.DistribucionPlantasActivoList', {
 				},
 				{   text: HreRem.i18n('header.cantidad'),
 					dataIndex: 'cantidad',
-					flex:1 
+					flex:1,
+					editor: {
+						xtype:'numberfield', 
+		        		hideTrigger: true,
+		        		keyNavEnable: false,
+		        		mouseWheelEnable: false
+					}
 				},	
 				{   text: HreRem.i18n('header.superficie'), 
 					renderer: Ext.util.Format.numberRenderer('0,000.00'),														        	
 					dataIndex: 'superficie',
-					flex:1
+					flex:1,
+					editor: {
+						xtype:'numberfield', 
+		        		hideTrigger: true,
+		        		keyNavEnable: false,
+		        		mouseWheelEnable: false
+					}
 				}       
 		        
         ]; 

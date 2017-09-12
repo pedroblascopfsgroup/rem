@@ -960,9 +960,9 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		for(ActivoProveedor proveedor : this.getProveedoresByActivoId(idActivo)){
 			Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId());
 			Filter filtroAdjuntoCodigo = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoProveedor.codigo", codigoDocumento);
-			ActivoAdjuntoProveedor activoAdjuntoProveedor = genericDao.get(ActivoAdjuntoProveedor.class, filtroProveedor, filtroAdjuntoCodigo);			
+			List<ActivoAdjuntoProveedor> adjuntos = genericDao.getList(ActivoAdjuntoProveedor.class, filtroProveedor, filtroAdjuntoCodigo);			
 		
-			if(!Checks.esNulo(activoAdjuntoProveedor))
+			if(!Checks.esNulo(adjuntos))
 				documentoEncontrado =  true;
 		}
 		

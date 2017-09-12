@@ -21,7 +21,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoEstadosInformeComercial', {
 		        },
 		        {
 		            dataIndex: 'estadoInfoComercial',
-		            text: HreRem.i18n('title.publicaciones.condiciones.accion'),
+		            text: HreRem.i18n('title.publicaciones.condiciones.estado'),
 		            flex: 1
 		        },
 		        {

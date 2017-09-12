@@ -351,6 +351,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 			beanUtilNotNull.copyProperty(activoInfoComercial, "planta", dtoAAF.getNumPlantasVivienda());
 			activoInfoComercialDos= activoInfoComercial;
 			genericDao.save(ActivoInfoComercial.class, activoInfoComercial);
+
 		}
 
 		// Baños.

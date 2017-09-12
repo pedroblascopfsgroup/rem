@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
@@ -138,6 +139,7 @@ public class InformeMediadorDto implements Serializable {
 
 	// ok
 	@NotNull(groups = Insert.class)
+	@Size(max=100,groups = { Insert.class, Update.class })
 	private String zona;
 
 	@NotNull(groups = Insert.class)

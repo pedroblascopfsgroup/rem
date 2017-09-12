@@ -170,7 +170,7 @@ BEGIN
       LEFT JOIN '||V_ESQUEMA||'.VIS_VISITAS VIS ON VIS.VIS_WEBCOM_ID = MIG.OFR_COD_VISITA_WEBCOM
       LEFT JOIN '||V_ESQUEMA||'.DD_EVO_EST_VISITA_OFERTA EVO ON EVO.DD_EVO_CODIGO = MIG.OFR_COD_ESTADO_VISITA_OFR
       LEFT JOIN '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU ON USU.USU_USERNAME = MIG.OFR_COD_USUARIO_LDAP_ACCION
-    WHERE MIG.VALIDACION = 0
+    WHERE MIG.VALIDACION = 0 AND NOT EXISTS (SELECT 1 FROM REM01.OFR_OFERTAS OFR WHERE MIG.OFR_WEBCOM_ID = OFR.OFR_WEBCOM_ID)
   '
   ;
   EXECUTE IMMEDIATE V_SENTENCIA;
@@ -250,7 +250,7 @@ DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA
                                                                             ''01-02'',''06'', 
                                                                             ''01-03'',''11'', 
                                                                             ''01-04'',''04'', 
-                                                                            ''01-05'',''12'', 
+                                                                            ''01-05'',''02'', 
                                                                             ''01-06'',''11'', 
                                                                             ''01-07'',''08'', 
                                                                             ''01-08'',''02'', 

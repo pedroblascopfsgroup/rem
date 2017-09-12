@@ -96,7 +96,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.SubdivisionesAgrupacion', {
 			        	flex: 0.3,
 			        	align: 'center',
 			        	renderer: function(value) {
-			        		return Ext.isEmpty(value) ? "" : '<span class="fa fa-check green-color"><span/>'
+			        		return Ext.isEmpty(value) ? 'No' : 'Si'
 			        	}
 			        }
 			        

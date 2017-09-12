@@ -227,7 +227,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 							hidden : '{expediente.esBankia}'
 						},
 						maxLength : 250
-						// colspan: 3,
+						// colspan: 3
 
 				}	, {
 						xtype : 'comboboxfieldbase',
@@ -238,7 +238,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 							value : '{financiacion.tiposFinanciacionCodigo}',
 							hidden : '{expediente.esBankia}'
 						}
-						// colspan: 3,
+						// colspan: 3
 
 					},
 

@@ -186,25 +186,8 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			hashErrores = restApi.validateRequestObject(visitaDto, TIPO_VALIDACION.INSERT);
 		} else {
 			hashErrores = restApi.validateRequestObject(visitaDto, TIPO_VALIDACION.UPDATE);
-			if (((JSONObject) jsonFields).containsKey("idClienteRem") && visitaDto.getIdClienteRem() == null) {
-				hashErrores.put("idClienteRem", RestApi.REST_MSG_MISSING_REQUIRED);
-			}
 		}
 
-		if (!Checks.esNulo(visitaDto.getIdClienteRem())) {
-			ClienteComercial cliente = (ClienteComercial) genericDao.get(ClienteComercial.class,
-					genericDao.createFilter(FilterType.EQUALS, "idClienteRem", visitaDto.getIdClienteRem()));
-			if (Checks.esNulo(cliente)) {
-				hashErrores.put("idClienteRem", RestApi.REST_MSG_UNKNOWN_KEY);
-			}
-		}
-		if (!Checks.esNulo(visitaDto.getIdActivoHaya())) {
-			Activo activo = (Activo) genericDao.get(Activo.class,
-					genericDao.createFilter(FilterType.EQUALS, "numActivo", visitaDto.getIdActivoHaya()));
-			if (Checks.esNulo(activo)) {
-				hashErrores.put("idActivoHaya", RestApi.REST_MSG_UNKNOWN_KEY);
-			}
-		}
 		if (!Checks.esNulo(visitaDto.getIdUsuarioRemAccion())) {
 			Usuario user = (Usuario) genericDao.get(Usuario.class,
 					genericDao.createFilter(FilterType.EQUALS, "id", visitaDto.getIdUsuarioRemAccion()));
@@ -212,13 +195,7 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 				hashErrores.put("idUsuarioRemAccion", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
-		if (!Checks.esNulo(visitaDto.getCodEstadoVisita())) {
-			DDEstadosVisita estadoVis = (DDEstadosVisita) genericDao.get(DDEstadosVisita.class,
-					genericDao.createFilter(FilterType.EQUALS, "codigo", visitaDto.getCodEstadoVisita()));
-			if (Checks.esNulo(estadoVis)) {
-				hashErrores.put("codEstadoVisita", RestApi.REST_MSG_UNKNOWN_KEY);
-			}
-		}
+		
 		
 		if(Checks.esNulo(visitaDto.getCodDetalleEstadoVisita()) && !Checks.esNulo(visitaDto.getCodEstadoVisita()) && 
 				(visitaDto.getCodEstadoVisita().equalsIgnoreCase(DDEstadosVisita.CODIGO_REALIZADA) || visitaDto.getCodEstadoVisita().equalsIgnoreCase(DDEstadosVisita.CODIGO_NO_REALIZADA))){
@@ -255,13 +232,6 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			if (Checks.esNulo(cust)) {
 				hashErrores.put("idProveedorRemCustodio", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
-			/*else {
-				//el proveedor tiene que ser custodio
-				if ((cust.getCustodio() != null && !cust.getCustodio().equals(new Integer(1)))
-						|| cust.getCustodio() == null) {
-					hashErrores.put("idProveedorRemCustodio", RestApi.REST_MSG_UNKNOWN_KEY);
-				}
-			}*/
 		}
 	
 
@@ -395,8 +365,6 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 					if (!Checks.esNulo(cliente)) {
 						visita.setCliente(cliente);
 					}
-				} else {
-					visita.setCliente(null);
 				}
 			}
 
@@ -407,8 +375,6 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 					if (!Checks.esNulo(activo)) {
 						visita.setActivo(activo);
 					}
-				} else {
-					visita.setActivo(null);
 				}
 			}
 			if (((JSONObject) jsonFields).containsKey("codEstadoVisita")) {

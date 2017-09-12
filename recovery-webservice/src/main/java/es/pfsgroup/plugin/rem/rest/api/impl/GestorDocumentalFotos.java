@@ -161,7 +161,7 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 		file.setBasename(name);
 		HashMap<String, String> metadata = new HashMap<String, String>();
 		metadata.put("propiedad", "subdivision");
-		metadata.put("id_subdivision_haya", String.valueOf(idSubdivision));
+		metadata.put("id_subdivision", String.valueOf(idSubdivision));
 		metadata.put("id_agrupacion_haya", String.valueOf(agrupacion.getNumAgrupRem()));
 		if (agrupacion != null && agrupacion.getActivoPrincipal() != null
 				&& agrupacion.getActivoPrincipal().getCartera() != null) {
@@ -196,7 +196,7 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 		if (propiedad.equals(PROPIEDAD.ACTIVO)) {
 			Activo activo = activoManager.getByNumActivo(idRegistro);
 			metadata.put("propiedad", "activo");
-			metadata.put("id_activo_haya", String.valueOf(activo.getNumActivoRem()));
+			metadata.put("id_activo_haya", String.valueOf(activo.getNumActivo()));
 			if (activo != null && activo.getCartera() != null) {
 				metadata.put("cartera", activo.getCartera().getCodigo());
 			}
@@ -334,7 +334,7 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 			metadata.put("id_agrupacion_haya", idRegistro);
 		} else if (propiedad.equals(PROPIEDAD.SUBDIVISION)) {
 			metadata.put("propiedad", "subdivision");
-			metadata.put("id_subdivision_haya", idRegistro);
+			metadata.put("id_subdivision", idRegistro);
 		}
 
 		fileSearch.setMetadata(metadata);

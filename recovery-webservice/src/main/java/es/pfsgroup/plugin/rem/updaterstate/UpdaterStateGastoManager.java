@@ -146,6 +146,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 						}else {
 							codigo = DDEstadoGasto.INCOMPLETO;
 						}
+
 						if(DDEstadoAutorizacionHaya.CODIGO_RECHAZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())
 							&& genericAdapter.isProveedor(usuario)) {
 							codigo = DDEstadoGasto.SUBSANADO;					

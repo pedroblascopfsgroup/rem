@@ -107,13 +107,12 @@ public class GastosExpedienteManager extends BusinessOperationOverrider<GastosEx
 
 			map = new HashMap<String, Object>();
 			ComisionDto comisionDto = listaComisionDto.get(i);
-
+			errorsList = restApi.validateRequestObject(comisionDto, TIPO_VALIDACION.INSERT);
 			List<GastosExpediente> listaGastos = this.getListaGastosExpediente(comisionDto);
 			if (Checks.esNulo(listaGastos) || (!Checks.esNulo(listaGastos) && listaGastos.size() != 1)) {
 				errorsList.put("idOfertaWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
 
 			} else {
-				errorsList = restApi.validateRequestObject(listaGastos.get(0), TIPO_VALIDACION.INSERT);
 				if (errorsList.size() == 0) {
 					this.updateAceptacionGasto(listaGastos.get(0), comisionDto, jsonFields.getJSONArray("data").get(i));
 				}

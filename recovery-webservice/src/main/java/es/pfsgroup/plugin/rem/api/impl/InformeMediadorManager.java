@@ -1260,7 +1260,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 			// proveedor de confianza, puede editar el informe, sin tramite de
 			// aceptacion
 			boolean autorizacionWebProveedor = false;
-			boolean tieneInformeComercialAceptado = false;
+			
 
 			map = new HashMap<String, Object>();
 			HashMap<String, String> errorsList = null;
@@ -1292,9 +1292,11 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					}
 				}
 			}
-			tieneInformeComercialAceptado = activoApi.isInformeComercialAceptado(activo);
+			
 
 			if (errorsList.size() == 0) {
+				boolean tieneInformeComercialAceptado = false;
+				tieneInformeComercialAceptado = activoApi.isInformeComercialAceptado(activo);
 				ActivoInfoComercial informeEntity = null;
 				if (!tieneInformeComercialAceptado || autorizacionWebProveedor) {
 					ArrayList<Serializable> entitys = new ArrayList<Serializable>();

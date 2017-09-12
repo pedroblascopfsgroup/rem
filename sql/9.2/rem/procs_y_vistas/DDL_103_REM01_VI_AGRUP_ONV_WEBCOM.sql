@@ -129,8 +129,8 @@ BEGIN
 		END 																				    AS HASTA,	
 		CASE WHEN (AGR.BORRADO = 1 OR 
 			(AGR.AGR_FECHA_BAJA IS NOT NULL 
-			OR AGR.AGR_FECHA_BAJA < TO_DATE(SYSDATE, ''DD/MM/YY''))) 
-		  THEN CAST(''0'' AS VARCHAR2(5 CHAR))
+			AND AGR.AGR_FECHA_BAJA < TO_DATE(SYSDATE, ''DD/MM/YY''))) 
+		  THEN CAST(''2'' AS VARCHAR2(5 CHAR))
 		  ELSE CAST(''1'' AS VARCHAR2(5 CHAR))
 		END                                                                 					AS COD_ESTADO_AGRUPACION,
 		CAST(DIR.DD_LOC_CODIGO AS VARCHAR2(5 CHAR))                       						AS COD_MUNICIPIO,

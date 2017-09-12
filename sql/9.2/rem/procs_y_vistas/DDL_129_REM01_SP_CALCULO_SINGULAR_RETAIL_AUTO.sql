@@ -125,8 +125,8 @@ AUTHID CURRENT_USER IS
 	v_cod_cartera_3					VARCHAR2(10 CHAR) := '03';
 	v_cod_importe_vnc				VARCHAR2(10 CHAR) := '01';
 	v_cod_importe_aprobado_venta	VARCHAR2(10 CHAR) := '02';
-	v_cod_gestor_sing				VARCHAR2(10 CHAR) := 'GCOMSIN';
-	v_cod_gestor_ret				VARCHAR2(10 CHAR) := 'GCOMRET';
+	v_cod_gestor_sing				VARCHAR2(10 CHAR) := 'GCOM';
+	v_cod_gestor_ret				VARCHAR2(10 CHAR) := 'GCOM';
 	v_cod_gestor					VARCHAR2(10 CHAR);
 	v_update_ok						NUMBER(1);
 	v_cadena_aux					VARCHAR2(10 CHAR);

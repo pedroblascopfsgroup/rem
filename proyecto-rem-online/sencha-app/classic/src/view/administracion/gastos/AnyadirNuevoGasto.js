@@ -141,6 +141,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 													allowBlank: false,
 													editable: false,
 													autoLoadOnValue: false,
+													matchFieldWidth: false,
 													queryMode: 'local',
 													store: storeEmisoresGasto,
 													loadOnBind: false,

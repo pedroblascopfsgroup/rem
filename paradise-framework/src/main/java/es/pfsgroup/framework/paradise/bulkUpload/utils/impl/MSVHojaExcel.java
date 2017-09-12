@@ -211,7 +211,7 @@ public class MSVHojaExcel {
 			String error = (String) it.next();
 			addTexto(hoja, columna, 0, "ERRORES");
 			for(int i = 0; i < mapaErrores.get(error).size(); i++){
-				addTexto(hoja, columna, mapaErrores.get(error).get(i), error);
+				addTextoErrores(hoja, columna, mapaErrores.get(error).get(i), error);
 			}
 			if(!mapaErrores.get(error).isEmpty()){
 				//columna++;
@@ -332,6 +332,17 @@ public class MSVHojaExcel {
 	    Label label;
 	    label = new Label(column, row, s);
 	    sheet.addCell(label);
+	  }
+	
+	private void addTextoErrores(WritableSheet sheet, int column, int row, String s)
+		      throws RowsExceededException, WriteException {
+	    Label label;
+	    Cell celdaErrores=	sheet.getCell(column, row);
+	    if(!Checks.esNulo(celdaErrores)){
+	    	String erroresAnteriores= celdaErrores.getContents();
+	    	label = new Label(column, row, erroresAnteriores+" - "+s);
+	    	sheet.addCell(label);
+	    }
 	  }
 
 	private String getNombreFicheroErrores() {

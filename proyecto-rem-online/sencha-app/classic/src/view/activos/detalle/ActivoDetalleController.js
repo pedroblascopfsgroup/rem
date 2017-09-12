@@ -324,6 +324,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    },
 		    callback: function(record, operation) {
     			me.getView().unmask();
+    			me.onClickBotonRefrescar();
 		    }
     	});
     },

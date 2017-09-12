@@ -1389,9 +1389,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public Boolean comprobarExisteAdjuntoExpedienteComercial(Long idTrabajo, String codigoDocumento) {
 		Filter filtroTrabajoEC = genericDao.createFilter(FilterType.EQUALS, "expediente.trabajo.id", idTrabajo);
 		Filter filtroAdjuntoSubtipoCodigo = genericDao.createFilter(FilterType.EQUALS, "subtipoDocumentoExpediente.codigo", codigoDocumento);
-		AdjuntoExpedienteComercial adjuntoExpedienteComercial = genericDao.get(AdjuntoExpedienteComercial.class, filtroTrabajoEC, filtroAdjuntoSubtipoCodigo);
-
-		if (!Checks.esNulo(adjuntoExpedienteComercial))
+		
+		List<AdjuntoExpedienteComercial> adjuntos = genericDao.getList(AdjuntoExpedienteComercial.class, filtroTrabajoEC, filtroAdjuntoSubtipoCodigo);
+		
+		if (!Checks.esNulo(adjuntos))
 			return true;
 		else
 			return false;
@@ -4800,7 +4801,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						}else{
 							//el usuario logado tiene que ser gestoria
 							Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-							if(!genericAdapter.isGestoria(usuarioLogado) && !genericAdapter.isSuper(usuarioLogado) && !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, usuarioLogado)){
+							if(!genericAdapter.isGestoria(usuarioLogado) && !genericAdapter.isSuper(usuarioLogado) && !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, usuarioLogado) && !genericAdapter.tienePerfil(PERFIL_SUPERVISOR_FORMALIZACION, usuarioLogado)){
 								codigoError = "imposible.bloquear.no.es.gestoria";
 							}else{
 								//la financiación tiene que estar informada

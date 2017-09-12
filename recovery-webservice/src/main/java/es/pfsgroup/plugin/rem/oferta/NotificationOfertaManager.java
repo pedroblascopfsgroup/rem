@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
@@ -36,6 +38,9 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 
 	@Autowired
 	private GestorActivoApi gestorActivoManager;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 
 	/**
 	 * Cada vez que llegue una oferta de un activo, 
@@ -49,14 +54,13 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		Usuario usuario = null;
 		Activo activo = oferta.getActivoPrincipal();
 
-		if (!Checks.esNulo(oferta.getAgrupacion()) && !Checks.esNulo(oferta.getAgrupacion().getTipoAgrupacion() != null)) {
-			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo()) && oferta.getAgrupacion() instanceof ActivoLoteComercial) {
-				ActivoLoteComercial activoLoteComercial = (ActivoLoteComercial) oferta.getAgrupacion();
-				usuario = activoLoteComercial.getUsuarioGestorComercial();
-			} else {
-				// Lote Restringido
-				usuario = gestorActivoManager.getGestorByActivoYTipo(activo, "GCOM");
-			}
+		if (!Checks.esNulo(oferta.getAgrupacion()) 
+		        && !Checks.esNulo(oferta.getAgrupacion().getTipoAgrupacion())
+		        && DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+
+			ActivoLoteComercial activoLoteComercial = genericDao.get(ActivoLoteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", oferta.getAgrupacion().getId()));
+			usuario = activoLoteComercial.getUsuarioGestorComercial();
+
 		} else {
 			// por activo
 			usuario = gestorActivoManager.getGestorByActivoYTipo(activo, "GCOM");

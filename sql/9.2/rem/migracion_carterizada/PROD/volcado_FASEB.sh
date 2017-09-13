@@ -1,16 +1,11 @@
 #!/bin/bash
 inicio=`date +%s`
 if [ "$#" -ne 2 ]; then
-    echo "Parametros: <user/pass@host:puerto/ORACLE_SID>"
+    echo "Parametros: <pass@host:puerto/ORACLE_SID>"
     echo "Parametros: <USUARIO_MIGRACION> {CAJAMAR,SAREB,BANKIA}"
     exit 1
 fi
 
-if [[ "$2" != "SAREB" ]] && [[ "$2" != "CAJAMAR" ]] && [[ "$2" != "BANKIA" ]]; then
-    echo "[INFO] Entidad no válida."
-    echo "[INFO] Valores aceptados [SAREB, CAJAMAR, BANKIA]"
-    exit 1
-fi
 hora=`date +%H:%M:%S`
 echo "########################################################"
 echo "#####    ACTUALIZANDO Secuencias PRE-MIGRACION"
@@ -39,11 +34,11 @@ echo "USUARIOCREAR="$usuario
 echo "********************************************************"
 echo
 
-borrado_parcial=$2
-echo "********************************************************"
-echo "BORRADO_PARCIAL="$borrado_parcial
-echo "********************************************************"
-echo
+#borrado_parcial=$2
+#echo "********************************************************"
+#echo "BORRADO_PARCIAL="$borrado_parcial
+#echo "********************************************************"
+#echo
 
 ruta_descarterizada="PROD/DML_PROD/DMLs_DESCARTERIZADOS"
 ruta_carterizada="PROD/DML_PROD/TMP"
@@ -60,7 +55,8 @@ if [ -f PROD/Logs/005_* ] ; then
 fi
 while read line
 do
-	sed "s/#USUARIO_MIGRACION#/$usuario/g" $ruta_descarterizada/$line | sed "s/#CARTERA#/$borrado_parcial/g" > $ruta_carterizada/$line
+	sed "s/#USUARIO_MIGRACION#/$usuario/g" $ruta_descarterizada/$line > $ruta_carterizada/$line
+	#sed "s/#USUARIO_MIGRACION#/$usuario/g" $ruta_descarterizada/$line | sed "s/#CARTERA#/$borrado_parcial/g" > $ruta_carterizada/$line
 	if [ $? != 0 ] ; then 
 	   echo -e "\n\n======>>> "Error sustituyendo cartera en @$line
 	   exit 1

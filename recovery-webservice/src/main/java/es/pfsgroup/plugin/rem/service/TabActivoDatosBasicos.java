@@ -687,7 +687,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					activo.setGestorSelloCalidad(usuarioLogado);
 				}
 				activo.setFechaRevisionSelloCalidad(new Date());
-			}else{
+			}else if(!Checks.esNulo(dto.getSelloCalidad()) && !dto.getSelloCalidad()){
 				activo.setGestorSelloCalidad(null);
 				activo.setFechaRevisionSelloCalidad(null);
 			}

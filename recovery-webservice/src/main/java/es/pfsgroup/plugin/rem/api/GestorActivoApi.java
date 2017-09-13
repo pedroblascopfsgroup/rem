@@ -31,6 +31,14 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_FVD_BKOFERTA = "FVDBACKOFR";
 	public static final String CODIGO_FVD_BKVENTA = "FVDBACKVNT";
 	public static final String CODIGO_SUPERVISOR_FVD = "SUPFVD";
+	public static final String CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO = "HAYAGBOINM";
+	public static final String CODIGO_GESTOR_COMERCIAL_BACKOFFICE_FINANCIERO = "HAYAGBOFIN";
+	public static final String CODIGO_GESTOR_RESERVA_CAJAMAR = "GESRES";
+	public static final String CODIGO_GESTOR_MINUTA_CAJAMAR = "GESMIN";
+	public static final String CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO = "HAYASBOINM";
+	public static final String CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_FINANCIERO = "HAYASBOFIN";
+	public static final String CODIGO_SUPERVISOR_RESERVA_CAJAMAR = "SUPRES";
+	public static final String CODIGO_SUPERVISOR_MINUTA_CAJAMAR = "SUPMIN";
 	public static final String CIF_PROVEEDOR_BANKIA_SAREB_TINSA = "B86689494";
 	
 	Boolean insertarGestorAdicionalActivo(GestorEntidadDto dto);

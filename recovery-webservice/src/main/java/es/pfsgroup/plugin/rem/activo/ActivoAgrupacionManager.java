@@ -150,7 +150,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		ActivoFoto activoFoto = null;
 		FileResponse fileReponse;
 		try {
-			if (gestorDocumentalFotos.isActive()) {
+			if (!gestorDocumentalFotos.isActive()) {
 
 				fileReponse = gestorDocumentalFotos.upload(fileItem.getFileItem().getFile(),
 						fileItem.getFileItem().getFileName(), PROPIEDAD.AGRUPACION, idAgrupacion, null,

@@ -49,8 +49,8 @@ DECLARE
         T_VAL('AAII'   ,'01'    ,'GPUBL'),
         T_VAL('AAII'   ,'01'    ,'SPREC'),
         T_VAL('AAII'   ,'01'    ,'SPUBL'),
-        T_VAL('AAII'   ,'01'    ,'GCBOINM'),
-        T_VAL('AAII'   ,'01'    ,'SBOINM'),
+        T_VAL('AAII'   ,'01'    ,'HAYAGBOINM'),
+        T_VAL('AAII'   ,'01'    ,'HAYASBOINM'),
 
         -- Sareb
         T_VAL('AAII'   ,'02'    ,'GADM'),
@@ -86,7 +86,7 @@ DECLARE
         T_VAL('AAFF'   ,'01'    ,'GPUBL'),
         T_VAL('AAFF'   ,'01'    ,'SPREC'),
         T_VAL('AAFF'   ,'01'    ,'SPUBL'),
-        T_VAL('AAFF'   ,'01'    ,'GCBOFIN'),
+        T_VAL('AAFF'   ,'01'    ,'HAYAGBOFIN'),
         T_VAL('AAFF'   ,'01'    ,'SBOFIN'),
 
         -- Sareb

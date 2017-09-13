@@ -962,7 +962,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			Filter filtroAdjuntoCodigo = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoProveedor.codigo", codigoDocumento);
 			List<ActivoAdjuntoProveedor> adjuntos = genericDao.getList(ActivoAdjuntoProveedor.class, filtroProveedor, filtroAdjuntoCodigo);			
 		
-			if(!Checks.esNulo(adjuntos))
+			if(!Checks.estaVacio(adjuntos))
 				documentoEncontrado =  true;
 		}
 		

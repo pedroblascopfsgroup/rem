@@ -1392,7 +1392,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		List<AdjuntoExpedienteComercial> adjuntos = genericDao.getList(AdjuntoExpedienteComercial.class, filtroTrabajoEC, filtroAdjuntoSubtipoCodigo);
 		
-		if (!Checks.esNulo(adjuntos))
+		if (!Checks.estaVacio(adjuntos))
 			return true;
 		else
 			return false;

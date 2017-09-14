@@ -120,6 +120,81 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 										bind:		'{oferta.numDocumentoCliente}'
 				            	    },
 				            	    {
+										xtype: 'comboboxfieldbase',
+	    					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.persona'),
+	    					        	itemId: 'comboTipoPersona',
+	    					        	flex:	1,
+	    					        	allowBlank: true,
+	    					        	bind: {
+	    				            		store: '{comboTipoPersona}',
+	    				            		value: '{oferta.tipoPersona}'
+	    				            	},
+	    				            	displayField: 'descripcion',
+	    	    						valueField: 'codigo',
+	    	    						listeners: {
+	    	    							change: function(combo, value) {
+	    	    								var me = this;
+	    	    								var form = combo.up('form');
+	    	    								var estadoCivil = form.down('field[name=comboEstadoCivil]');
+	    	    								var regimen = form.down('field[name=comboRegimenMatrimonial]');
+	    	    								if(value=="1"){
+	    	    									estadoCivil.setDisabled(false);
+	    	    								}else{
+	    	    									estadoCivil.setDisabled(true);
+	    	    									regimen.setDisabled(true);
+	    	    									
+	    	    									estadoCivil.reset();
+	    	    									regimen.reset();
+	    	    								}
+	    	    								
+	    	    							}
+	    	    						}
+									},
+									{
+										xtype: 'comboboxfieldbase',
+	    					        	fieldLabel:  HreRem.i18n('fieldlabel.estado.civil'),
+	    					        	itemId: 'comboEstadoCivil',
+	    					        	name: 'comboEstadoCivil',
+	    					        	flex:	1,
+	    					        	allowBlank: true,
+	    					        	bind: {
+	    				            		store: '{comboEstadoCivil}',
+	    				            		value: '{oferta.estadoCivil}'
+	    				            	},
+	    				            	displayField: 'descripcion',
+	    	    						valueField: 'codigo',
+	    	    						disabled: true,
+	    	    						listeners: {
+	    	    							change: function(combo, value) {
+	    	    								var me = this;
+	    	    								var form = combo.up('form');
+	    	    								var regimen = form.down('field[name=comboRegimenMatrimonial]');
+	    	    								if(value=="02"){
+	    	    									regimen.setDisabled(false);
+	    	    								}else{
+	    	    									regimen.setDisabled(true);
+	    	    									regimen.reset();
+	    	    								}
+	    	    								
+	    	    							}
+	    	    						}
+									},
+									{
+										xtype: 'comboboxfieldbase',
+	    					        	fieldLabel:  HreRem.i18n('header.regimen.matrimonial'),
+	    					        	itemId: 'comboRegimenMatrimonial',
+	    					        	name: 'comboRegimenMatrimonial',
+	    					        	flex:	1,
+	    					        	allowBlank: true,
+	    					        	bind: {
+	    				            		store: '{comboRegimenMatrimonial}',
+	    				            		value: '{oferta.regimenMatrimonial}'
+	    				            	},
+	    				            	displayField: 'descripcion',
+	    	    						valueField: 'codigo',
+	    	    						disabled: true
+									},
+				            	    {
 				            	    	xtype: 		'checkboxfieldbase',
 				            	    	fieldLabel:	HreRem.i18n('fieldlabel.dederechotanteo'),
 				            	    	name:		'dederechotanteo',

@@ -28,6 +28,9 @@ import es.pfsgroup.plugin.rem.api.ClienteComercialApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteDto;
@@ -243,6 +246,30 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 					cliente.setUnidadPoblacional(pedania);
 				}
 			}
+			
+			if (!Checks.esNulo(clienteDto.getCodTipoPersona())) {
+				DDTiposPersona tipoPersona = (DDTiposPersona) genericDao.get(DDTiposPersona.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoPersona()));
+				if (!Checks.esNulo(tipoPersona)) {
+					cliente.setTipoPersona(tipoPersona);
+				}
+			}
+			
+			if (!Checks.esNulo(clienteDto.getCodEstadoCivil())) {
+				DDEstadosCiviles estadoCivil = (DDEstadosCiviles) genericDao.get(DDEstadosCiviles.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodEstadoCivil()));
+				if (!Checks.esNulo(estadoCivil)) {
+					cliente.setEstadoCivil(estadoCivil);
+				}
+			}
+			
+			if (!Checks.esNulo(clienteDto.getCodRegimenMatrimonial())) {
+				DDRegimenesMatrimoniales regimen = (DDRegimenesMatrimoniales) genericDao.get(DDRegimenesMatrimoniales.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodRegimenMatrimonial()));
+				if (!Checks.esNulo(regimen)) {
+					cliente.setRegimenMatrimonial(regimen);
+				}
+			}
 
 			clienteComercialDao.save(cliente);
 		} catch (Exception e) {
@@ -413,6 +440,42 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			if (((JSONObject) jsonFields).containsKey("telefonoContactoVisitas")) {
 				cliente.setTelefonoContactoVisitas(clienteDto.getTelefonoContactoVisitas());
 			}
+			
+			if (((JSONObject) jsonFields).containsKey("codTipoPersona")) {
+				if (!Checks.esNulo(clienteDto.getCodTipoPersona())) {
+					DDTiposPersona tipoPersona = (DDTiposPersona) genericDao.get(DDTiposPersona.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoPersona()));
+					if (!Checks.esNulo(tipoPersona)) {
+						cliente.setTipoPersona(tipoPersona);
+					}
+				}else{
+					cliente.setTipoPersona(null);
+				}
+			}
+			
+			if (((JSONObject) jsonFields).containsKey("codEstadoCivil")) {
+				if (!Checks.esNulo(clienteDto.getCodEstadoCivil())) {
+					DDEstadosCiviles estadoCivil = (DDEstadosCiviles) genericDao.get(DDEstadosCiviles.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodEstadoCivil()));
+					if (!Checks.esNulo(estadoCivil)) {
+						cliente.setEstadoCivil(estadoCivil);
+					}
+				}else{
+					cliente.setEstadoCivil(null);
+				}
+			}
+			
+			if (((JSONObject) jsonFields).containsKey("codRegimenMatrimonial")) {
+				if (!Checks.esNulo(clienteDto.getCodRegimenMatrimonial())) {
+					DDRegimenesMatrimoniales regimen = (DDRegimenesMatrimoniales) genericDao.get(DDRegimenesMatrimoniales.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodRegimenMatrimonial()));
+					if (!Checks.esNulo(regimen)) {
+						cliente.setRegimenMatrimonial(regimen);
+					}
+				}else{
+					cliente.setRegimenMatrimonial(null);
+				}
+			}
 
 
 			clienteComercialDao.saveOrUpdate(cliente);
@@ -498,6 +561,18 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			ClienteComercial cliente = this.getClienteComercialByIdClienteWebcom(clienteDto.getIdClienteWebcom());
 			if (Checks.esNulo(cliente)) {
 				errorsList = restApi.validateRequestObject(clienteDto, TIPO_VALIDACION.INSERT);
+				//validamos los campos que dependen del tipo de persona
+				if (!Checks.esNulo(clienteDto.getCodTipoPersona())
+						&& clienteDto.getCodTipoPersona().equals(DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA)) {
+					if(Checks.esNulo(clienteDto.getCodEstadoCivil())){
+						errorsList.put("codEstadoCivil", RestApi.REST_MSG_MISSING_REQUIRED);
+					}else if(clienteDto.getCodEstadoCivil().equals(DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO)){
+						if(Checks.esNulo(clienteDto.getCodRegimenMatrimonial())){
+							errorsList.put("codRegimenMatrimonial", RestApi.REST_MSG_MISSING_REQUIRED);
+						}
+					}
+				}
+				
 				if (errorsList.size() == 0) {
 					this.saveClienteComercial(clienteDto);
 				}

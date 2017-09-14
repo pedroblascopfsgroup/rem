@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.security.UsuarioSecurityManager;
@@ -1424,6 +1423,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dto.setNombre(oferta.getCliente().getNombreCompleto());
 				dto.setOfertaID(String.valueOf(oferta.getId()));
 				dto.setId(String.valueOf(oferta.getCliente().getId()+"c"));
+				if(!Checks.esNulo(oferta.getCliente().getTipoPersona())){
+					dto.setTipoPersona(oferta.getCliente().getTipoPersona().getDescripcion());
+				}
+				if(!Checks.esNulo(oferta.getCliente().getRegimenMatrimonial())){
+					dto.setRegimenMatrimonial(oferta.getCliente().getRegimenMatrimonial().getDescripcion());
+				}
+				if(!Checks.esNulo(oferta.getCliente().getEstadoCivil())){
+					dto.setEstadoCivil(oferta.getCliente().getEstadoCivil().getDescripcion());
+				}
 				listaOfertantes.add(dto);
 			}
 	

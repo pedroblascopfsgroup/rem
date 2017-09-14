@@ -40,7 +40,7 @@ DECLARE
   V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 		--	  USER_NAME	   	NOMBRE_USU		APELL1			APELL2			EMAIL      			PASS		PEF_COD		USU GRUPO	DESPACHO_EXTERNO	
 		
-	  T_TIPO_DATA('palcocer', 'Penélope', 'Alcocer', 'Marqués', 'palcocer@externos.haya.es', '1234', 'HAYAGESTCOM', '', 'REMGCOM')
+	  T_TIPO_DATA('palcocer', 'Penélope', 'Alcocer', 'Marqués', 'palcocer@externos.haya.es', 'eHfsqQaEYY', 'HAYAGESTCOM', '', 'REMGCOM')
 
   ); 
   V_TMP_TIPO_DATA T_TIPO_DATA;

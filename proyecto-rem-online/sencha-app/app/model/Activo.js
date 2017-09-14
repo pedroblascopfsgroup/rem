@@ -279,8 +279,7 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'selloCalidad',
-    			type: 'boolean',
-    			critical: true
+    			type: 'boolean'
     		},
     		{
     			name: 'admision',

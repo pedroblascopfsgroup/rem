@@ -43,6 +43,8 @@ DECLARE
 		AND ACT.BORRADO = 0;
     
 BEGIN	
+
+	--DBMS_OUTPUT.ENABLE(NULL);
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] Se inicia el proceso de actualización de los activos dados de alta por el proceso ''apr_main_actives_from_sareb''.');
 	
@@ -95,7 +97,7 @@ BEGIN
 	END IF;
 	
 	--*********************************************************************ACT_CRG_CARGAS**********************************************************************
-	DBMS_OUTPUT.PUT_LINE('[INFO] **ACT_CRG_CARGAS**');
+	/*DBMS_OUTPUT.PUT_LINE('[INFO] **ACT_CRG_CARGAS**');
 	
 	--Comprobamos si existe el activo en tabla destino
     V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_CRG_CARGAS WHERE ACT_ID = '||V_ACT_ID||' AND BORRADO = 0';
@@ -116,7 +118,7 @@ BEGIN
 	
 	ELSE		
 		DBMS_OUTPUT.PUT_LINE('[INFO]: No existe el registro '''||V_ACT_ID||''' en la tabla '||V_ESQUEMA||'.ACT_CRG_CARGAS - No se puede actualizar');		
-	END IF;
+	END IF;*/
 	
 	--******************************************************************ACT_PAC_PERIMETRO_ACTIVO*******************************************************************
 	DBMS_OUTPUT.PUT_LINE('[INFO] **ACT_PAC_PERIMETRO_ACTIVO**');

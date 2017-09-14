@@ -122,10 +122,22 @@ public class GastosExpedienteManager extends BusinessOperationOverrider<GastosEx
 			if (!Checks.esNulo(errorsList) && errorsList.isEmpty() && !Checks.esNulo(listaGastos)) {
 				map.put("idOfertaWebcom", listaGastos.get(0).getExpediente().getOferta().getIdWebCom());
 				map.put("idOfertaRem", listaGastos.get(0).getExpediente().getOferta().getNumOferta());
+				map.put("idProveedorRem", comisionDto.getIdProveedorRem());
+				map.put("esPrescripcion", comisionDto.getEsPrescripcion());
+				map.put("esColaboracion", comisionDto.getEsColaboracion());
+				map.put("esResponsable", comisionDto.getEsResponsable());
+				map.put("esFdv", comisionDto.getEsFdv());
+				map.put("esDoblePrescripcion", comisionDto.getEsDoblePrescripcion());
 				map.put("success", true);
 			} else {
 				map.put("idOfertaWebcom", comisionDto.getIdOfertaWebcom());
 				map.put("idOfertaRem", comisionDto.getIdOfertaRem());
+				map.put("idProveedorRem", comisionDto.getIdProveedorRem());
+				map.put("esPrescripcion", comisionDto.getEsPrescripcion());
+				map.put("esColaboracion", comisionDto.getEsColaboracion());
+				map.put("esResponsable", comisionDto.getEsResponsable());
+				map.put("esFdv", comisionDto.getEsFdv());
+				map.put("esDoblePrescripcion", comisionDto.getEsDoblePrescripcion());
 				map.put("success", false);
 				map.put("invalidFields", errorsList);
 			}

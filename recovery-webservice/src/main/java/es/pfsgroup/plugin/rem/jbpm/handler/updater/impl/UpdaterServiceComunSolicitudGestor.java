@@ -51,55 +51,60 @@ public class UpdaterServiceComunSolicitudGestor implements UpdaterService {
 		
 		// Tipo de documento a obtener
 		String codigoTipoDocumento = diccionarioTargetClassMap.getTipoDocumento(trabajo.getSubtipoTrabajo().getCodigo());
-		
-		// Obtenemos el tipo de documento afectado
-		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "configDocumento.tipoDocumentoActivo.codigo", codigoTipoDocumento);
-		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
-		ActivoAdmisionDocumento documento = genericDao.get(ActivoAdmisionDocumento.class, filtroTipo, filtroActivo);
-		
-		
-		// Comprobamos si es nulo para crearlo
-		if(Checks.esNulo(documento)){
-			DtoAdmisionDocumento dtoDocumento = new DtoAdmisionDocumento();
-			dtoDocumento.setIdActivo(activo.getId());
-			Filter filtroTipoActivo = genericDao.createFilter(FilterType.EQUALS, "tipoActivo", activo.getTipoActivo());
-			Filter filtroTipoDocumento = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoTipoDocumento);
-			DDTipoDocumentoActivo tipoDocumento = genericDao.get(DDTipoDocumentoActivo.class, filtroTipoDocumento);
-			Filter filtroTipoDocumentoId = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo", tipoDocumento);
-			ActivoConfigDocumento config = genericDao.get(ActivoConfigDocumento.class, filtroTipoActivo, filtroTipoDocumentoId);
-			dtoDocumento.setIdConfiguracionDoc(config.getId());
-			//TODO: Pendiente de concretar si ha de ser SI aplica o NO aplica, cuando el documento se crea automáticamente por crear el trámite desde el trabajo.
-			dtoDocumento.setAplica(0);
+
+		//Existen trabajos de Obtencion Documental que no tienen relacion con un tipo de documento
+		// Estos trabajos producen un "codigoTipoDocumento" nulo y no deben operar/validar ningun documento
+		if(!Checks.esNulo(codigoTipoDocumento)){
 			
-			activoAdapter.saveAdmisionDocumento(dtoDocumento);
-			documento = genericDao.get(ActivoAdmisionDocumento.class, filtroTipo, filtroActivo);
-		}
-		
-		for(TareaExternaValor valor : valores){
+			// Obtenemos el tipo de documento afectado
+			Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "configDocumento.tipoDocumentoActivo.codigo", codigoTipoDocumento);
+			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
+			ActivoAdmisionDocumento documento = genericDao.get(ActivoAdmisionDocumento.class, filtroTipo, filtroActivo);
 			
-			//Fecha Solicitud
-			if(FECHA_SOLICITUD.equals(valor.getNombre()))
-			{
-				try {
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDocumento.CODIGO_ESTADO_EN_TRAMITE);
-						DDEstadoDocumento estadoDocumento = (DDEstadoDocumento) genericDao.get(DDEstadoDocumento.class, filtro);
-						
-						documento.setFechaSolicitud(ft.parse(valor.getValor()));
-						documento.setEstadoDocumento(estadoDocumento);
-						Auditoria.save(documento);
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+			
+			// Comprobamos si es nulo para crearlo
+			if(Checks.esNulo(documento)){
+				DtoAdmisionDocumento dtoDocumento = new DtoAdmisionDocumento();
+				dtoDocumento.setIdActivo(activo.getId());
+				Filter filtroTipoActivo = genericDao.createFilter(FilterType.EQUALS, "tipoActivo", activo.getTipoActivo());
+				Filter filtroTipoDocumento = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoTipoDocumento);
+				DDTipoDocumentoActivo tipoDocumento = genericDao.get(DDTipoDocumentoActivo.class, filtroTipoDocumento);
+				Filter filtroTipoDocumentoId = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo", tipoDocumento);
+				ActivoConfigDocumento config = genericDao.get(ActivoConfigDocumento.class, filtroTipoActivo, filtroTipoDocumentoId);
+				dtoDocumento.setIdConfiguracionDoc(config.getId());
+				//TODO: Pendiente de concretar si ha de ser SI aplica o NO aplica, cuando el documento se crea automáticamente por crear el trámite desde el trabajo.
+				dtoDocumento.setAplica(0);
+				
+				activoAdapter.saveAdmisionDocumento(dtoDocumento);
+				documento = genericDao.get(ActivoAdmisionDocumento.class, filtroTipo, filtroActivo);
+			}
+			
+			for(TareaExternaValor valor : valores){
+				
+				//Fecha Solicitud
+				if(FECHA_SOLICITUD.equals(valor.getNombre()))
+				{
+					try {
+							Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDocumento.CODIGO_ESTADO_EN_TRAMITE);
+							DDEstadoDocumento estadoDocumento = (DDEstadoDocumento) genericDao.get(DDEstadoDocumento.class, filtro);
+							
+							documento.setFechaSolicitud(ft.parse(valor.getValor()));
+							documento.setEstadoDocumento(estadoDocumento);
+							Auditoria.save(documento);
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+				}
 			}
 		}
+		
 		if(DDTipoDocumentoActivo.CODIGO_CEDULA_HABITABILIDAD.equals(codigoTipoDocumento)){
 			Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo" , DDEstadoTrabajo.ESTADO_EN_TRAMITE);
 			DDEstadoTrabajo estado = genericDao.get(DDEstadoTrabajo.class, filter);
 			trabajo.setEstado(estado);
 			Auditoria.save(trabajo);
 		}
-
 	}
 
 	public String[] getCodigoTarea() {

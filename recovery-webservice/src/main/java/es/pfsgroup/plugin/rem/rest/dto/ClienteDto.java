@@ -107,7 +107,7 @@ public class ClienteDto implements Serializable{
 	private String telefonoContactoVisitas;
 	
 	//HREOS-2804
-	@NotNull(groups = { Insert.class})
+	//@NotNull(groups = { Insert.class})
 	@Diccionary(clase = DDTiposPersona.class, message = "El tipoPersona no existe", groups = { Insert.class,
 			Update.class })
 	private String codTipoPersona;

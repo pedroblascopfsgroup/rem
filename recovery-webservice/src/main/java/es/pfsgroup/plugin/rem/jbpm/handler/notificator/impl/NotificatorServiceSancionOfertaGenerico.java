@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -88,6 +89,9 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 
 	@Autowired
 	private GestorActivoApi gestorActivoManager;
+	
+	@Autowired
+	private TrabajoApi trabajoApi;
 
 	@Override
 	public final void notificator(ActivoTramite tramite) {
@@ -126,17 +130,28 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 						expediente,
 						destinatarios.toArray(new String[] {}));
 
-			} else if (permiteRechazar
+			}else if (permiteNotificarAprobacion && !Checks.esNulo(expediente)
+					&& DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())) {
+				
+				this.enviaNotificacionAceptar(tramite, oferta, expediente, getGestorFormalizacion(activo, oferta));
+				
+			}else if (permiteRechazar
 					&& DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) { // RECHAZO
 				String prescriptor = getPrescriptor(activo, oferta);
-
+				String gestorComercial = getGestorComercial(activo, oferta);
 				if (Checks.esNulo(prescriptor)) {
 					logger.warn("No se ha encontrado el prescriptor. No se va a mandar la notificación [oferta.id="
 							+ oferta.getId() + "]");
 					return;
 				}
-
-				this.enviaNotificacionRechazar(tramite, activo, oferta, prescriptor);
+				String gestorFormalizacion = null;
+				if(trabajoApi.checkReservaNecesariaNotNull(expediente)) {
+					gestorFormalizacion = getGestorFormalizacion(activo,oferta);
+				}
+				if(Checks.esNulo(gestorFormalizacion))
+					this.enviaNotificacionRechazar(tramite, activo, oferta, prescriptor, gestorComercial);
+				else
+					this.enviaNotificacionRechazar(tramite, activo, oferta, prescriptor, gestorComercial, gestorFormalizacion);
 			}
 		}
 	}
@@ -159,6 +174,15 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	private String getPrescriptor(Activo activo, Oferta ofertaAceptada) {
 		Map<String, String> gestores = getGestores(activo, ofertaAceptada, null, null, GESTOR_PRESCRIPTOR);
 		return gestores.get(GESTOR_PRESCRIPTOR);
+	}
+	private String getGestorComercial(Activo activo, Oferta ofertaAceptada) {
+		String comercial = getTipoGestorComercial(ofertaAceptada);
+		Map<String, String> gestores = getGestores(activo, ofertaAceptada, null, null, comercial);
+		return gestores.get(comercial);
+	}
+	private String getGestorFormalizacion(Activo activo, Oferta ofertaAceptada) {
+		Map<String, String> gestores = getGestores(activo, ofertaAceptada, null, null, GESTOR_FORMALIZACION);
+		return gestores.get(GESTOR_FORMALIZACION);
 	}
 
 	private String[] getGestoresANotificar(Activo activo, Oferta ofertaAceptada) {

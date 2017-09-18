@@ -20,15 +20,18 @@ cat Fich_Trabajo2.dat >> Fich_Trabajo.dat
 rm -rf Fich_Trabajo1.dat
 rm -rf Fich_Trabajo2.dat
 
-cp "$ruta_old"Updates_migracion_Cajamar_v02.csv .
+cp "$ruta_old"Updates_migracion_Cajamar_*.csv .
 
 while read line
 do
 	fichero_old=`echo "$line" | cut -d ";" -f 1`
+	echo $fichero_old
 	fichero_new=`echo "$line" | cut -d ";" -f 2`
-	
+	echo $fichero_new
+
 	if [ -s "$fichero_old" ] ; then
 		mv -f "$fichero_old" "$ruta""$fichero_new"
+		echo "mv -f $fichero_old" "$ruta""$fichero_new"
 	else
 		echo [ WARNING ] "$fichero_old" no encontrado o vacío
 	fi

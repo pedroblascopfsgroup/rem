@@ -64,4 +64,4 @@ Fich_Gestores_Activo.dat;GESTORES_ACTIVO.dat
 Fich_Gestores_Ofertas.dat;GESTORES_OFERTAS.dat
 Fich_Grupos_Usuarios.dat;GRUPOS_USUARIOS.dat
 Fich_Observaciones_Activo.dat;OBSERVACIONES_ACTIVOS.dat
-Updates_migracion_Cajamar_v02.csv;Z_UPDATE_CAMPOS.csv
+Updates_migracion_Cajamar_*.csv;Z_UPDATE_CAMPOS.csv

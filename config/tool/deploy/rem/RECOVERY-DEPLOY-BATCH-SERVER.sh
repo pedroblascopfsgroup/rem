@@ -4,7 +4,7 @@ if [ "$#" -lt 1 ]; then
     echo ""
     echo "Uso: " $0 " <entorno>"
     echo ""
-    echo "   <entorno>: inte, pre, pro"
+    echo "   <entorno>: inte, pre, val, pro"
     echo "" 
     exit 1
 fi

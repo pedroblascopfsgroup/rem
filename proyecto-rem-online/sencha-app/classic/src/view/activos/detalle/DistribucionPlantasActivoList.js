@@ -3,6 +3,7 @@ Ext.define('HreRem.view.activos.detalle.DistribucionPlantasActivoList', {
     xtype		: 'distribucionplantasactivolist',
 	topBar		: false,
 	idPrincipal : 'activo.id',
+	scrollable	: 'y',
 	
 	features: [{
         ftype: 'grouping',

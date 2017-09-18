@@ -562,7 +562,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			if (Checks.esNulo(cliente)) {
 				errorsList = restApi.validateRequestObject(clienteDto, TIPO_VALIDACION.INSERT);
 				//validamos los campos que dependen del tipo de persona
-				if (!Checks.esNulo(clienteDto.getCodTipoPersona())
+				/*if (!Checks.esNulo(clienteDto.getCodTipoPersona())
 						&& clienteDto.getCodTipoPersona().equals(DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA)) {
 					if(Checks.esNulo(clienteDto.getCodEstadoCivil())){
 						errorsList.put("codEstadoCivil", RestApi.REST_MSG_MISSING_REQUIRED);
@@ -571,7 +571,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 							errorsList.put("codRegimenMatrimonial", RestApi.REST_MSG_MISSING_REQUIRED);
 						}
 					}
-				}
+				}*/
 				
 				if (errorsList.size() == 0) {
 					this.saveClienteComercial(clienteDto);

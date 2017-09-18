@@ -2679,6 +2679,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				fechaCancelacionRegistral.setValue('');
 			}
 		}
+	},
+	
+	onChangeEstadoEconomicoCombo: function(combo){
+		var me = this;
+		var fechaCancelacionEconomica =  me.lookupReference('fechaCancelacionEconomica');
+		if(CONST.SITUACION_CARGA['CANCELADA']==combo.getSelection().get('codigo')){
+				fechaCancelacionEconomica.allowBlank = false;
+		}
+		else{
+			fechaCancelacionEconomica.allowBlank = true;
+			if(!Ext.isEmpty(fechaCancelacionEconomica.getValue())){
+				fechaCancelacionEconomica.setValue('');
+			}
+		}
 	}
 		
 	    	

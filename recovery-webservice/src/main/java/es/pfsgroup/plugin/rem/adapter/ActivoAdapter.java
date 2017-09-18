@@ -2810,22 +2810,22 @@ public class ActivoAdapter {
 		notificacion.setDescripcion(messageServices.getMessage(AVISO_DESCRIPCION_MODIFICADAS_CONDICIONES_JURIDICAS, numActivo));
 		
 		notificacion.setTitulo(messageServices.getMessage(AVISO_TITULO_MODIFICADAS_CONDICIONES_JURIDICAS));	
-		
+		if(!Checks.esNulo(expediente.getTrabajo())) {
 		// Buscamos el gestor responsable de Haya
-		List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());						
-		
-		for(TareaActivo tarea: tramites.get(0).getTareas()) {
+			List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());						
 			
-			if(!tarea.getAuditoria().isBorrado() && Checks.esNulo(tarea.getFechaFin())
-					&& genericAdapter.isGestorHaya(tarea.getUsuario())) {
-
-				if(Checks.esNulo(destinatario)) {
-					destinatario = tarea.getUsuario();
+			for(TareaActivo tarea: tramites.get(0).getTareas()) {
+				
+				if(!tarea.getAuditoria().isBorrado() && Checks.esNulo(tarea.getFechaFin())
+						&& genericAdapter.isGestorHaya(tarea.getUsuario())) {
+	
+					if(Checks.esNulo(destinatario)) {
+						destinatario = tarea.getUsuario();
+					}
+												
 				}
-											
 			}
 		}
-
 		if (!Checks.esNulo(destinatario)) {														
 			
 			notificacion.setDestinatario(destinatario.getId());									

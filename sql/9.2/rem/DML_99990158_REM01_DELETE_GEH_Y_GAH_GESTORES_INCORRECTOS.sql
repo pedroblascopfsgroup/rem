@@ -38,28 +38,30 @@ DECLARE
 BEGIN
 	DBMS_OUTPUT.PUT_LINE('******** GAH_GESTOR_ACTIVO_HISTORICO ********'); 
     
-    IF c1 %ISOPEN THEN
-    	CLOSE c1 ;
-  	END IF;
-  	OPEN c1;
-  	DBMS_OUTPUT.PUT_LINE('[INFO] ABIERTO CURSOR');
-	
-  	LOOP
-  	
-  		FETCH c1 INTO ID_MI;
-  		EXIT WHEN c1%NOTFOUND;
-  	
-      --DBMS_OUTPUT.PUT_LINE(ID_MI);
-      V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.GAH_GESTOR_ACTIVO_HISTORICO GAH WHERE GAH.GEH_ID = '|| ID_MI;
+	V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.GAH_GESTOR_ACTIVO_HISTORICO T1 WHERE EXISTS (select 1 from '||V_ESQUEMA||'.GAH_GESTOR_ACTIVO_HISTORICO gac '||
+      			' inner join '||V_ESQUEMA||'.GEH_GESTOR_ENTIDAD_HIST gee on gac.GEH_ID = gee.GEH_ID '||
+      			' inner join '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR tge on gee.DD_TGE_ID = tge.DD_TGE_ID '||
+      			' inner join '||V_ESQUEMA||'.ACT_ABA_ACTIVO_BANCARIO aba on gac.ACT_ID = aba.ACT_ID '||
+      			' inner join '||V_ESQUEMA||'.DD_CLA_CLASE_ACTIVO cla on aba.DD_CLA_ID = cla.DD_CLA_ID '||
+      			' where cla.DD_CLA_CODIGO = 01 and tge.DD_TGE_CODIGO NOT IN(''GPUBL'',''SPUBL'',''GCOM'',''SCOM'',''FVDNEG'',''FVDBACKOFR'',''FVDBACKVNT'',''SUPFVD'',''GFORM'',''SFORM'') '||
+      			' and gee.USUARIOCREAR IN (''ALT_PRINEX'',''ALT_SAREB'') AND gac.GEH_ID = T1.GEH_ID)';
+      			
       EXECUTE IMMEDIATE V_MSQL;
-			DBMS_OUTPUT.PUT_LINE('[INFO] Borrado registro '||V_ESQUEMA||'.GAH_GESTOR_ACTIVO_HISTORICO');
+    DBMS_OUTPUT.PUT_LINE('[INFO] Borrado registro '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO');
       
-      V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.GEH_GESTOR_ENTIDAD_HIST GEH WHERE GEH.GEH_ID = '|| ID_MI;
+      
+       V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.GEH_GESTOR_ENTIDAD_HIST T1 WHERE EXISTS (select 1 from '||V_ESQUEMA||'.GAH_GESTOR_ACTIVO_HISTORICO gac '||
+      			' inner join '||V_ESQUEMA||'.GEH_GESTOR_ENTIDAD_HIST gee on gac.GEH_ID = gee.GEH_ID '||
+      			' inner join '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR tge on gee.DD_TGE_ID = tge.DD_TGE_ID '||
+      			' inner join '||V_ESQUEMA||'.ACT_ABA_ACTIVO_BANCARIO aba on gac.ACT_ID = aba.ACT_ID '||
+      			' inner join '||V_ESQUEMA||'.DD_CLA_CLASE_ACTIVO cla on aba.DD_CLA_ID = cla.DD_CLA_ID '||
+      			' where cla.DD_CLA_CODIGO = 01 and tge.DD_TGE_CODIGO NOT IN(''GPUBL'',''SPUBL'',''GCOM'',''SCOM'',''FVDNEG'',''FVDBACKOFR'',''FVDBACKVNT'',''SUPFVD'',''GFORM'',''SFORM'') '||
+      			' and gee.USUARIOCREAR IN (''ALT_PRINEX'',''ALT_SAREB'') AND gac.GEH_ID = T1.GEH_ID)';
+            
+      			
+      			
       EXECUTE IMMEDIATE V_MSQL;
-			DBMS_OUTPUT.PUT_LINE('[INFO] Borrado registro '||V_ESQUEMA||'.GEH_GESTOR_ENTIDAD_HIST');
-  	
-  	END LOOP;
-  	CLOSE c1;
+    DBMS_OUTPUT.PUT_LINE('[INFO] Borrado registro '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD');
 	
     COMMIT;
 	

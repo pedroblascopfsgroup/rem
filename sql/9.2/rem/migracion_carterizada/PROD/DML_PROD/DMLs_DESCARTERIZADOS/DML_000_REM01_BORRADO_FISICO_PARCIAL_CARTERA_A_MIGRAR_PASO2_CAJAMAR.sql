@@ -125,7 +125,60 @@ BEGIN
         WHERE EXISTS (SELECT 1 FROM REM01.ACT_ACTIVO T2 WHERE T1.ACT_ID = T2.ACT_ID 
           AND T2.USUARIOBORRAR = ''BORRADO_FISICO_TABLAS_ACTIVOS_RECIBIDOS'')';
     EXECUTE IMMEDIATE V_MSQL;
+ 
+    /*GMN borrado FOR_FORMALIZACION por FK con la ECO*/
+    V_MSQL := 'delete FROM REM01.for_formalizacion for1             
+              WHERE EXISTS (SELECT 1 FROM REM01.ACT_TBJ_TRABAJO T2 
+                    inner join REM01.ECO_EXPEDIENTE_COMERCIAL T1   on T1.TBJ_ID = T2.TBJ_ID
+                       WHERE t1.eco_id = for1.eco_id 
+                         AND T2.USUARIOBORRAR = ''BORRADO_FISICO_TABLAS_ACTIVOS_RECIBIDOS'') ';
+                         
+    EXECUTE IMMEDIATE V_MSQL;
+    
+    
+     V_MSQL := 'delete FROM REM01.COE_CONDICIONANTES_EXPEDIENTE coe             
+              WHERE EXISTS (SELECT 1 FROM REM01.ACT_TBJ_TRABAJO T2 
+                    inner join REM01.ECO_EXPEDIENTE_COMERCIAL T1   on T1.TBJ_ID = T2.TBJ_ID
+                       WHERE t1.eco_id = coe.eco_id 
+                         AND T2.USUARIOBORRAR = ''BORRADO_FISICO_TABLAS_ACTIVOS_RECIBIDOS'') ';
+                         
+    EXECUTE IMMEDIATE V_MSQL;
+    
+    
+     V_MSQL := 'delete FROM REM01.CEX_COMPRADOR_EXPEDIENTE T3             
+              WHERE EXISTS (SELECT 1 FROM REM01.ACT_TBJ_TRABAJO T2 
+                    inner join REM01.ECO_EXPEDIENTE_COMERCIAL T1   on T1.TBJ_ID = T2.TBJ_ID
+                       WHERE t1.eco_id = T3.eco_id 
+                         AND T2.USUARIOBORRAR = ''BORRADO_FISICO_TABLAS_ACTIVOS_RECIBIDOS'') ';
 
+      EXECUTE IMMEDIATE V_MSQL;
+      
+           V_MSQL := 'delete FROM REM01.GEX_GASTOS_EXPEDIENTE T3             
+              WHERE EXISTS (SELECT 1 FROM REM01.ACT_TBJ_TRABAJO T2 
+                    inner join REM01.ECO_EXPEDIENTE_COMERCIAL T1   on T1.TBJ_ID = T2.TBJ_ID
+                       WHERE t1.eco_id = T3.eco_id 
+                         AND T2.USUARIOBORRAR = ''BORRADO_FISICO_TABLAS_ACTIVOS_RECIBIDOS'') ';
+
+      EXECUTE IMMEDIATE V_MSQL;
+      
+      
+                 V_MSQL := 'delete FROM REM01.GCO_GESTOR_ADD_ECO T3             
+              WHERE EXISTS (SELECT 1 FROM REM01.ACT_TBJ_TRABAJO T2 
+                    inner join REM01.ECO_EXPEDIENTE_COMERCIAL T1   on T1.TBJ_ID = T2.TBJ_ID
+                       WHERE t1.eco_id = T3.eco_id 
+                         AND T2.USUARIOBORRAR = ''BORRADO_FISICO_TABLAS_ACTIVOS_RECIBIDOS'') ';
+
+      EXECUTE IMMEDIATE V_MSQL;
+      
+      
+                       V_MSQL := 'delete FROM REM01.GCH_GESTOR_ECO_HISTORICO T3             
+              WHERE EXISTS (SELECT 1 FROM REM01.ACT_TBJ_TRABAJO T2 
+                    inner join REM01.ECO_EXPEDIENTE_COMERCIAL T1   on T1.TBJ_ID = T2.TBJ_ID
+                       WHERE t1.eco_id = T3.eco_id 
+                         AND T2.USUARIOBORRAR = ''BORRADO_FISICO_TABLAS_ACTIVOS_RECIBIDOS'') ';
+
+      EXECUTE IMMEDIATE V_MSQL;
+    
     V_STMT_VAL := 'WITH DEPENDENCIAS AS (
          SELECT T1.OWNER ESQUEMA, T1.TABLE_NAME TABLE_NAME, T1.CONSTRAINT_NAME, T3.COLUMN_NAME COLUMN_NAME, T3.POSITION POSITION_KEY
              , T2.OWNER ESQUEMA_REF, T2.TABLE_NAME TABLE_REFERENCED, T2.CONSTRAINT_NAME CONSTRAINT_REFERENCED, T4.COLUMN_NAME COLUMN_REFERENCED, T4.POSITION POSITION_KEY_REFERENCED
@@ -151,7 +204,7 @@ BEGIN
             V_MSQL := 'DELETE FROM '||TABLA||' T1 WHERE EXISTS (SELECT 1 FROM '||TABLA_REF||' T2 WHERE '||CLAVE_TABLA||' = '||CLAVE_REF||' AND T2.USUARIOBORRAR = ''BORRADO_FISICO_TABLAS_ACTIVOS_RECIBIDOS'')';
             --DBMS_OUTPUT.PUT_LINE(V_MSQL);
             EXECUTE IMMEDIATE V_MSQL;
-            DBMS_OUTPUT.PUT_LINE('      [INFO - BORRADO] - '||TO_CHAR(SYSDATE,'HH24:MI:SS')||' - Se han borrado '||SQL%ROWCOUNT||' filas en '||TABLA||'');
+            DBMS_OUTPUT.PUT_LINE('      [INFO - BORRADO 1] - '||TO_CHAR(SYSDATE,'HH24:MI:SS')||' - Se han borrado '||SQL%ROWCOUNT||' filas en '||TABLA||'');
         EXCEPTION
             WHEN NO_DATA_FOUND THEN
             DBMS_OUTPUT.PUT_LINE('      [ERROR] No se encuentra la clave para '||TABLA||': '||CLAVE_TABLA||'.');
@@ -170,7 +223,7 @@ BEGIN
 
       V_MSQL := 'DELETE FROM '||V_TMP_VAR(1)||' WHERE USUARIOBORRAR = ''BORRADO_FISICO_TABLAS_ACTIVOS_RECIBIDOS'' ';
       EXECUTE IMMEDIATE V_MSQL;
-      DBMS_OUTPUT.PUT_LINE('      [INFO - BORRADO] - '||TO_CHAR(SYSDATE,'HH24:MI:SS')||' - Se han borrado '||SQL%ROWCOUNT||' filas en '||V_TMP_VAR(1));
+      DBMS_OUTPUT.PUT_LINE('      [INFO - BORRADO 2] - '||TO_CHAR(SYSDATE,'HH24:MI:SS')||' - Se han borrado '||SQL%ROWCOUNT||' filas en '||V_TMP_VAR(1));
     
     END LOOP;
 

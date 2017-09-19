@@ -89,11 +89,14 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidator;
@@ -1353,7 +1356,30 @@ public class AgrupacionAdapter {
 			clienteComercial.setTipoDocumento(tipoDocumento);
 			clienteComercial.setRazonSocial(dto.getRazonSocialCliente());
 			clienteComercial.setIdClienteRem(clcremid);
-
+			
+			if (!Checks.esNulo(dto.getTipoPersona())) {
+				DDTiposPersona tipoPersona = (DDTiposPersona) genericDao.get(DDTiposPersona.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoPersona()));
+				if (!Checks.esNulo(tipoPersona)) {
+					clienteComercial.setTipoPersona(tipoPersona);
+				}
+			}
+			
+			if (!Checks.esNulo(dto.getEstadoCivil())) {
+				DDEstadosCiviles estadoCivil = (DDEstadosCiviles) genericDao.get(DDEstadosCiviles.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoCivil()));
+				if (!Checks.esNulo(estadoCivil)) {
+					clienteComercial.setEstadoCivil(estadoCivil);
+				}
+			}
+			
+			if (!Checks.esNulo(dto.getRegimenMatrimonial())) {
+				DDRegimenesMatrimoniales regimen = (DDRegimenesMatrimoniales) genericDao.get(DDRegimenesMatrimoniales.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getRegimenMatrimonial()));
+				if (!Checks.esNulo(regimen)) {
+					clienteComercial.setRegimenMatrimonial(regimen);
+				}
+			}
 			genericDao.save(ClienteComercial.class, clienteComercial);
 
 			Oferta oferta = new Oferta();

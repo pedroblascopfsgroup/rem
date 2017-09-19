@@ -165,6 +165,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
@@ -541,6 +542,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			nuevoCondicionante.setAuditoria(Auditoria.getNewInstance());
 			nuevoCondicionante.setExpediente(nuevoExpediente);
 
+			//Activos de Cajamar, debe haber reserva necesaria con un importe fijo de 1.000 euros
+			if(!Checks.esNulo(oferta.getActivoPrincipal())
+					&& !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
+					&& DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
+				nuevoCondicionante.setSolicitaReserva(1);
+				DDTipoCalculo tipoCalculoImporteFijo = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO);
+				nuevoCondicionante.setTipoCalculoReserva(tipoCalculoImporteFijo);
+				nuevoCondicionante.setImporteReserva(new Double(1000));
+				nuevoCondicionante.setPlazoFirmaReserva(5);
+			}
 			// Comprobamos si tiene derecho de tanteo
 			/*
 			boolean noCumple = false;

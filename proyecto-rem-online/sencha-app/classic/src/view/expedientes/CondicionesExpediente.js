@@ -141,17 +141,18 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								            		value: '{condiciones.tipoImpuestoCodigo}'
 								            	},
 					            				displayField: 'descripcion',
-		    									valueField: 'codigo'
+		    									valueField: 'codigo',
+				                				listeners: {
+				                					change: 'onCambioTipoImpuesto'
+				                				}
 									        },	
 									        { 
 												xtype: 'numberfieldbase',
 												reference: 'tipoAplicable',
 										 		symbol: HreRem.i18n("symbol.porcentaje"),
 												fieldLabel: HreRem.i18n('fieldlabel.tipo.aplicable'),
-												reference: 'tipoAplicable',
 				                				bind: {
-				                					value: '{condiciones.tipoAplicable}',
-				                					allowBlank: '{!condiciones.tipoImpuestoCodigo}'
+				                					value: '{condiciones.tipoAplicable}'
 				                				}
 							                },
 									        {		                

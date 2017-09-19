@@ -1921,6 +1921,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		});		
 	},
 	
+	onCambioTipoImpuesto: function(combo, value){
+		var me = this,
+    	tipoAplicable = me.lookupReference('tipoAplicable'),
+    	esCajamar = CONST.CARTERA['CAJAMAR'] == me.getViewModel().get('expediente.entidadPropietariaCodigo');
+		
+    	if (esCajamar || Ext.isEmpty(value))
+    		tipoAplicable.allowBlank = true;
+    	else
+    		tipoAplicable.allowBlank = false;
+
+	},
+	
 	onHaCambiadoFechaResolucion: function( field, newDate, oldDate, eOpts){
 		var me = this;
 		var resultado= me.lookupReference('comboResultadoTanteoForm');

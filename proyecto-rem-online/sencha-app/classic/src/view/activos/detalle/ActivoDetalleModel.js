@@ -955,6 +955,33 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			},
 			autoLoad: true   	
 	    },
+	    comboTipoPersona: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoPersona'}
+			},
+			autoLoad: true   	
+	    },
+	    comboEstadoCivil: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosCiviles'}
+			},
+			autoLoad: true   	
+	    },
+	    comboRegimenMatrimonial: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'regimenesMatrimoniales'}
+			},
+			autoLoad: true   	
+	    },
 	    
 	    comboUnidadPoblacional: {
 			model: 'HreRem.model.ComboBase',

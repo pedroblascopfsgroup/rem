@@ -112,7 +112,8 @@ BEGIN
                 FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
                 INNER JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV
                   ON GPV.GPV_NUM_GASTO_HAYA = MIG.GDE_GPV_ID
-				WHERE MIG.VALIDACION = 0
+                                 left join rem01.GDE_GASTOS_DETALLE_ECONOMICO gde2 on gpv.gpv_id = gde2.gpv_id               
+                                WHERE MIG.VALIDACION = 0 and gde2.gpv_id is  null   
           )
                 SELECT
                 '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                                         GDE_ID, 

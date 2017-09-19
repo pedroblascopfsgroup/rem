@@ -14,6 +14,9 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 
@@ -103,6 +106,38 @@ public class ClienteDto implements Serializable{
 	@Size(max=14,groups = { Insert.class, Update.class })
 	private String telefonoContactoVisitas;
 	
+	//HREOS-2804
+	//@NotNull(groups = { Insert.class})
+	@Diccionary(clase = DDTiposPersona.class, message = "El tipoPersona no existe", groups = { Insert.class,
+			Update.class })
+	private String codTipoPersona;
+	
+	@Diccionary(clase = DDEstadosCiviles.class, message = "El estado civil no existe", groups = { Insert.class,
+			Update.class })
+	private String codEstadoCivil;
+	
+	@Diccionary(clase = DDRegimenesMatrimoniales.class, message = "El regimen matrimonial no existe", groups = { Insert.class,
+			Update.class })
+	private String codRegimenMatrimonial;
+	
+	public String getCodTipoPersona() {
+		return codTipoPersona;
+	}
+	public void setCodTipoPersona(String codTipoPersona) {
+		this.codTipoPersona = codTipoPersona;
+	}
+	public String getCodEstadoCivil() {
+		return codEstadoCivil;
+	}
+	public void setCodEstadoCivil(String codEstadoCivil) {
+		this.codEstadoCivil = codEstadoCivil;
+	}
+	public String getCodRegimenMatrimonial() {
+		return codRegimenMatrimonial;
+	}
+	public void setCodRegimenMatrimonial(String codRegimenMatrimonial) {
+		this.codRegimenMatrimonial = codRegimenMatrimonial;
+	}
 	public Date getFechaAccion() {
 		return fechaAccion;
 	}

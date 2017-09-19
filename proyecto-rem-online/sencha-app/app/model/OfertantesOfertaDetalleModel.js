@@ -20,7 +20,17 @@ Ext.define('HreRem.model.OfertantesOfertaDetalleModel', {
             },
             {
             	name: 'nombre'
+            },
+            {
+            	name: 'tipoPersona'
+            },
+            {
+            	name: 'estadoCivil'
+            },
+            {
+            	name: 'regimenMatrimonial'
             }
+            
     ],
 
 	proxy: {

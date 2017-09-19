@@ -31,7 +31,10 @@ import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposColaborador;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 
 
 /**
@@ -162,6 +165,18 @@ public class ClienteComercial implements Serializable, Auditable {
     
     @Column(name = "CLC_TELF_CONTACTO_VIS")
     private String telefonoContactoVisitas;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_TPE_ID")
+	private DDTiposPersona tipoPersona;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_ECV_ID")
+	private DDEstadosCiviles estadoCivil;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_REM_ID")
+	private DDRegimenesMatrimoniales regimenMatrimonial;
     
 	
 	
@@ -468,6 +483,30 @@ public class ClienteComercial implements Serializable, Auditable {
 
 	public void setTelefonoContactoVisitas(String telefonoContactoVisitas) {
 		this.telefonoContactoVisitas = telefonoContactoVisitas;
+	}
+
+	public DDTiposPersona getTipoPersona() {
+		return tipoPersona;
+	}
+
+	public void setTipoPersona(DDTiposPersona tipoPersona) {
+		this.tipoPersona = tipoPersona;
+	}
+
+	public DDEstadosCiviles getEstadoCivil() {
+		return estadoCivil;
+	}
+
+	public void setEstadoCivil(DDEstadosCiviles estadoCivil) {
+		this.estadoCivil = estadoCivil;
+	}
+
+	public DDRegimenesMatrimoniales getRegimenMatrimonial() {
+		return regimenMatrimonial;
+	}
+
+	public void setRegimenMatrimonial(DDRegimenesMatrimoniales regimenMatrimonial) {
+		this.regimenMatrimonial = regimenMatrimonial;
 	}
 
    

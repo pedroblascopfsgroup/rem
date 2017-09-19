@@ -20,6 +20,8 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 	 */
 	removeButton: true,
 	
+	propagationButton: false,
+	
 	idPrincipal: null,
 	
 	idSecundaria: null,
@@ -148,7 +150,6 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
         	
         me.addListener('selectionchange', function(grid, records) {
         	me.onGridBaseSelectionChange(grid, records);
-
         });
 
 	    me.addListener('rowdblclick', function(){
@@ -177,12 +178,14 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 
 			var configAddButton = {iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onAddClick', scope: this, hidden: !me.addButton  };
 			var configRemoveButton = {iconCls:'x-fa fa-minus', itemId:'removeButton', handler: 'onDeleteClick', scope: this, disabled: true, hidden: !me.removeButton };
+			var configPropagationButton = {iconCls:'x-fa fa-th-list', itemId:'propagationButton', handler: 'onClickPropagation', disabled: true, hidden: !me.propagationButton };
 			
 			if(!Ext.isEmpty(me.buttonSecurity)) {
 				
 				for(var key in me.buttonSecurity) {					
 					configAddButton[key] = me.buttonSecurity[key];
-					configRemoveButton[key] = me.buttonSecurity[key];					
+					configRemoveButton[key] = me.buttonSecurity[key];
+					configPropagationButton[key] = me.buttonSecurity[key];
 				}
 			}
 			
@@ -190,7 +193,8 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 				
 				for(var key in me.secButtons) {					
 					configAddButton[key] = me.secButtons[key];
-					configRemoveButton[key] = me.secButtons[key];					
+					configRemoveButton[key] = me.secButtons[key];	
+					configPropagationButton[key] = me.secButtons[key];	
 				}
 			}
 			
@@ -199,7 +203,7 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 	    		dock: 'top',
 	    		tipo: 'toolbaredicion',
 	    		hidden: !me.topBar,
-	    		items: [configAddButton, configRemoveButton]
+	    		items: [configAddButton, configRemoveButton, configPropagationButton]
     		};
 
 		};
@@ -255,7 +259,7 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
                             		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
                             	}
 								me.unmask();
-								me.deleteFailureFn()
+								me.deleteFailureFn();
                             }
                         }
 			            	
@@ -276,21 +280,26 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 		if(!records.length)
 		{
 			me.disableRemoveButton(true);
+			me.disablePropagationButton(true);
 			//S�lo si no estamos editando, se llamar� a las dos l�neas siguientes
 			//if (!me.getPlugin("rowEditingPlugin").editing || typeof me.getPlugin("rowEditingPlugin").editing != 'undefined')
 			//{
 			me.disableAddButton(false);
-			me.disablePagingToolBar(false);
+			me.disablePagingToolBar(false); 
 			//}
 		}
 		else
 		{
 			if(me.editable) {
 				
-				if (me.getPlugin("rowEditingPlugin").editing)
+				if (me.getPlugin("rowEditingPlugin").editing) {
 					me.disableRemoveButton(true);
-				else
+					me.disablePropagationButton(true);
+				}					
+				else {
 					me.disableRemoveButton(false);
+					me.disablePropagationButton(false);
+				}				
 			}
 		}
     	
@@ -311,6 +320,15 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 
     	if (!Ext.isEmpty(me.down('#removeButton')) && !me.disabledDeleteBtn) {
     		me.down('#removeButton').setDisabled(disabled);    		
+    	}
+    },
+    
+    disablePropagationButton: function(disabled) {
+    	
+    	var me = this;
+    	
+    	if (!Ext.isEmpty(me.down('#propagationButton'))) {
+    		me.down('#propagationButton').setDisabled(disabled);    		
     	}
     },
     

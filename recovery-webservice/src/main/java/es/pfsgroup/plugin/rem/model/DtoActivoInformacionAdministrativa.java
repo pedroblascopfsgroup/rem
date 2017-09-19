@@ -11,7 +11,7 @@ import es.capgemini.devon.dto.WebDto;
  * @author Benjamín Guerrero
  *
  */
-public class DtoActivoInformacionAdministrativa extends WebDto {
+public class DtoActivoInformacionAdministrativa extends DtoTabActivo {
 
 	private static final long serialVersionUID = 0L;
 

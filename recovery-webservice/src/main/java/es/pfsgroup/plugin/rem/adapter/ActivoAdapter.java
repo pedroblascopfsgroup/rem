@@ -49,6 +49,7 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
+import es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -92,6 +93,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.DtoActivo;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
@@ -137,7 +139,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
@@ -146,6 +150,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
@@ -2378,9 +2383,7 @@ public class ActivoAdapter {
 		TabActivoService tabActivoService = tabActivoFactory.getService(tab);
 		Activo activo = activoApi.get(id);
 
-		WebDto dto = tabActivoService.getTabData(activo);
-
-		return dto;
+		return tabActivoService.getTabData(activo);
 
 	}
 
@@ -2512,6 +2515,30 @@ public class ActivoAdapter {
 			clienteComercial.setTipoDocumento(tipoDocumento);
 			clienteComercial.setRazonSocial(dto.getRazonSocialCliente());
 			clienteComercial.setIdClienteRem(clcremid);
+
+			if (!Checks.esNulo(dto.getTipoPersona())) {
+				DDTiposPersona tipoPersona = (DDTiposPersona) genericDao.get(DDTiposPersona.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoPersona()));
+				if (!Checks.esNulo(tipoPersona)) {
+					clienteComercial.setTipoPersona(tipoPersona);
+				}
+			}
+			
+			if (!Checks.esNulo(dto.getEstadoCivil())) {
+				DDEstadosCiviles estadoCivil = (DDEstadosCiviles) genericDao.get(DDEstadosCiviles.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoCivil()));
+				if (!Checks.esNulo(estadoCivil)) {
+					clienteComercial.setEstadoCivil(estadoCivil);
+				}
+			}
+			
+			if (!Checks.esNulo(dto.getRegimenMatrimonial())) {
+				DDRegimenesMatrimoniales regimen = (DDRegimenesMatrimoniales) genericDao.get(DDRegimenesMatrimoniales.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getRegimenMatrimonial()));
+				if (!Checks.esNulo(regimen)) {
+					clienteComercial.setRegimenMatrimonial(regimen);
+				}
+			}
 
 			genericDao.save(ClienteComercial.class, clienteComercial);
 

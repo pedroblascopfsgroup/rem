@@ -21,6 +21,12 @@ Ext.define('HreRem.view.common.GridBase', {
 	removeButton: true,
 	
 	/**
+	 * Para mostrar en la botonera el boton de eliminar
+	 * @type Boolean
+	 */
+	propagationButton: true,
+	
+	/**
 	 * Parámetro para decidir si queremos que el grid se carge después del bind
 	 * 
 	 */
@@ -54,19 +60,24 @@ Ext.define('HreRem.view.common.GridBase', {
 
 			var configAddButton = {iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onClickAdd', scope: this, hidden: !me.addButton };
 			var configRemoveButton = {iconCls:'x-fa fa-minus', itemId:'removeButton', handler: 'onClickRemove', scope: this, disabled: true, hidden: !me.removeButton };
-
+			
+			//var configPropagationButton = {iconCls:'x-fa fa-th-list', itemId:'propagationButton', handler: 'onClickPropagation', disabled: true, hidden: !me.propagationButton };
+			// ^- HREOS-2775 Este item se queda es standby 
+			
 			if(!Ext.isEmpty(me.buttonSecurity)) {
 				
 				for(var key in me.buttonSecurity) {					
 					configAddButton[key] = me.buttonSecurity[key];
-					configRemoveButton[key] = me.buttonSecurity[key];					
+					configRemoveButton[key] = me.buttonSecurity[key];
+					//configPropagationButton[key] = me.buttonSecurity[key];
+					// ^- HREOS-2775 Este item se queda es standby
 				}
 			}
 			
 			me.tbar = {
 	    		xtype: 'toolbar',
 	    		dock: 'top',
-	    		items: [configAddButton, configRemoveButton]
+	    		items: [configAddButton, configRemoveButton] //, configPropagationButton] <- HREOS-2775 Este item se queda es standby
     		};
 
 		};
@@ -74,8 +85,10 @@ Ext.define('HreRem.view.common.GridBase', {
 		me.addListener('selectionchange', function(grid, records) {
 				if(!Ext.isEmpty(records) && !records.length) {
 					me.disableRemoveButton(true);
+					me.disablePropagationButton(true);
 				} else {
 					me.disableRemoveButton(false);
+					me.disablePropagationButton(false);
 				}
 		});
 		
@@ -99,6 +112,15 @@ Ext.define('HreRem.view.common.GridBase', {
     	
     	if (!Ext.isEmpty(me.down('#removeButton'))) {
     		me.down('#removeButton').setDisabled(disabled);    		
+    	}
+    },
+    
+    disablePropagationButton: function(disabled) {
+    	
+    	var me = this;
+    	
+    	if (!Ext.isEmpty(me.down('#propagationButton'))) {
+    		me.down('#propagationButton').setDisabled(disabled);    		
     	}
     },
 	

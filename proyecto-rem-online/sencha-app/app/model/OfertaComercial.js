@@ -47,7 +47,16 @@ Ext.define('HreRem.model.OfertaComercial', {
     		},
     		{
     			name:'deDerechoTanteo'
-    		}
+    		},
+    		{
+            	name: 'tipoPersona'
+            },
+            {
+            	name: 'estadoCivil'
+            },
+            {
+            	name: 'regimenMatrimonial'
+            }
     ],
     
 	proxy: {

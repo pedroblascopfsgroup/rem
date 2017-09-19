@@ -19,9 +19,10 @@ rm -rf Fich_Trabajo1.dat
 rm -rf Fich_Trabajo2.dat
 
 fichero_update=Updates_migracion_Cajamar_*.csv
-
-echo $ruta_old$fichero_update
-cp $ruta_old$fichero_update .
+if [ -s $ruta_old$fichero_update ] ; then
+	echo $ruta_old$fichero_update
+	cp $ruta_old$fichero_update .
+fi
 
 echo "Borrado de ficheros antiguos"
 

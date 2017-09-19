@@ -32,6 +32,11 @@ public class DDEstadosCiviles implements Auditable, Dictionary {
 	
 
 	private static final long serialVersionUID = 1L;
+	
+	public static final String CODIGO_ESTADO_CIVIL_SOLTERO = "01";
+	public static final String CODIGO_ESTADO_CIVIL_CASADO = "02";
+	public static final String CODIGO_ESTADO_CIVIL_DIVORCIADO = "03";
+	public static final String CODIGO_ESTADO_CIVIL_VIUDO = "04";
 
 	@Id
 	@Column(name = "DD_ECV_ID")

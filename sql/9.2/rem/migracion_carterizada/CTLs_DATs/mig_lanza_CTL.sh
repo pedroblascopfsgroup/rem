@@ -36,7 +36,7 @@ echo ""
 while read line
 do
 	if [ -f $ruta$line.ctl ] ; then
-		if [ -s $ruta"DATs/"$line.dat ] ; then
+		if [ -s $ruta"DATs/"$line.* ] ; then
 			echo "########################################################"
 			echo "#####    INICIO "$line.ctl
 			echo "########################################################"

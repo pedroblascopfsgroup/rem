@@ -54,6 +54,21 @@ Ext.define('HreRem.view.activos.detalle.OfertantesOfertaDetalleList', {
 		        	dataIndex: 'nombre',
 		        	text: HreRem.i18n('header.nombre.razon.social'),
 		        	flex:2
+		        },
+		        {
+		        	dataIndex: 'tipoPersona',
+		        	text: HreRem.i18n('fieldlabel.tipo.persona'),
+		        	flex:2
+		        },
+		        {
+		        	dataIndex: 'estadoCivil',
+		        	text: HreRem.i18n('fieldlabel.estado.civil'),
+		        	flex:2
+		        },
+		        {
+		        	dataIndex: 'regimenMatrimonial',
+		        	text: HreRem.i18n('header.regimen.matrimonial'),
+		        	flex:2
 		        }
 	    ];
 

@@ -1315,7 +1315,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		codigoEstado= me.getViewModel().get("expediente.codigoEstado");
 		bloqueado = me.getViewModel().get("expediente.bloqueado");
 		if(!bloqueado){		
-			if(CONST.ESTADOS_EXPEDIENTE['APROBADO']!=codigoEstado){
+			if(CONST.ESTADOS_EXPEDIENTE['VENDIDO']!=codigoEstado){
 				var ventanaCompradores= grid.up().up();
 				var expediente= me.getViewModel().get("expediente");
 				Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente}).show();
@@ -1511,7 +1511,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		idComprador= record.get('id');
 		bloqueado = me.getViewModel().get("expediente.bloqueado");
 		if(!bloqueado){
-			if(CONST.ESTADOS_EXPEDIENTE['APROBADO']!=codigoEstado){
+			if(CONST.ESTADOS_EXPEDIENTE['VENDIDO']!=codigoEstado){
 				record.erase({
 					params: {idExpediente: idExpediente, idComprador: idComprador},
 		            success: function(record, operation) {

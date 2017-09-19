@@ -98,6 +98,14 @@ Ext.define('HreRem.view.comercial.ComercialModel', {
 				type: 'uxproxy',
 				remoteUrl: 'ofertas/getDiccionarioSubtipoProveedorCanal'
 			}
+		},
+		comboEntidadPropietaria: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'entidadesPropietarias'}
+			}
 		}
     	
     	

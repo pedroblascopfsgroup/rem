@@ -228,6 +228,9 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.canal", dtoOfertasFilter.getCanal());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "voferta.nombreCanal", dtoOfertasFilter.getNombreCanal(), true);
 
+		if(!Checks.esNulo(dtoOfertasFilter.getCarteraCodigo())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.carteraCodigo", dtoOfertasFilter.getCarteraCodigo());
+		}
 		Page pageVisitas = HibernateQueryUtils.page(this, hb, dtoOfertasFilter);
 
 		List<VOfertasActivosAgrupacion> ofertas = (List<VOfertasActivosAgrupacion>) pageVisitas.getResults();

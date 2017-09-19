@@ -203,8 +203,16 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 					    }, 
 	            	    items: [
 	            	    	{
-	            	    		fieldLabel: HreRem.i18n('fieldlabel.activosearch.codigo.promocion'),
-					        	name: 'codigoPromocionPrinex'
+	            	    		
+    							xtype: 'comboboxfieldbase',
+    				        	fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
+    				        	name: 'carteraCodigo',
+    				        	displayField: 'descripcion',
+        						valueField: 'codigo',
+    				        	bind: {
+    			            		store: '{comboEntidadPropietaria}'
+    			            	},
+    			            	reference: 'comboCarteraOfertaSearch'
 	            	    	},
 	            	    	{ 
 					        	fieldLabel:  HreRem.i18n('fieldlabel.nombre.canal'),
@@ -230,7 +238,11 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 								fieldLabel:  HreRem.i18n('fieldlabel.email'),
 								name: 'emailOfertante'
 								
-							}
+							},
+							{
+	            	    		fieldLabel: HreRem.i18n('fieldlabel.activosearch.codigo.promocion'),
+					        	name: 'codigoPromocionPrinex'
+	            	    	}
 	            	    
 	            	    ]
 		            }

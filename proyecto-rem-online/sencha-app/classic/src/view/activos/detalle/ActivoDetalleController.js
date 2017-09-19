@@ -330,6 +330,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    },
 		    callback: function(record, operation) {
     			me.getView().unmask();
+    			me.onClickBotonRefrescar();
 		    }
     	});
     },
@@ -2708,7 +2709,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 	
-	
+
+	onChangeEstadoEconomicoCombo: function(combo){
+		var me = this;
+		var fechaCancelacionEconomica =  me.lookupReference('fechaCancelacionEconomica');
+		if(CONST.SITUACION_CARGA['CANCELADA']==combo.getSelection().get('codigo')){
+				fechaCancelacionEconomica.allowBlank = false;
+		}
+		else{
+			fechaCancelacionEconomica.allowBlank = true;
+			if(!Ext.isEmpty(fechaCancelacionEconomica.getValue())){
+				fechaCancelacionEconomica.setValue('');
+			}
+		}
+	},
+
+
 	saveActivo: function(jsonData, successFn) {
 		
 		var me = this,

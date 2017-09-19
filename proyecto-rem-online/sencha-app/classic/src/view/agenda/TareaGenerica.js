@@ -10,25 +10,25 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     //modal: false,
 
     /**
-     * Párametro para saber que componente abre la ventana, y poder refrescarlo después.
+     * Pï¿½rametro para saber que componente abre la ventana, y poder refrescarlo despuï¿½s.
      * @type Component
      */
     parent: null,
 
     /**
-     * Párametro para guardar el id del trabajo en caso de existir.
+     * Pï¿½rametro para guardar el id del trabajo en caso de existir.
      * @type Long
      */
     idTrabajo: null,
 
     /**
-     * Párametro para guardar el id del activo en caso de existir.
+     * Pï¿½rametro para guardar el id del activo en caso de existir.
      * @type Long
      */
     idActivo: null,
 
     /**
-     * Párametro para guardar el id del expediente en caso de existir.
+     * Pï¿½rametro para guardar el id del expediente en caso de existir.
      * @type Long
      */
     idExpediente: null,
@@ -501,16 +501,13 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
         me.deshabilitarCampo(me.down('[name=comboGasto]'));
         me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
-        me.deshabilitarCampo(me.down('[name=comboSaldo]'));
 
         me.down('[name=comboTramitar]').addListener('change', function(combo) {
             if (combo.value == '01') {
                 me.habilitarCampo(me.down('[name=comboGasto]'));
-                me.habilitarCampo(me.down('[name=comboSaldo]'));
                 me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
             } else {
                 me.deshabilitarCampo(me.down('[name=comboGasto]'));
-                me.deshabilitarCampo(me.down('[name=comboSaldo]'));
                 me.habilitarCampo(me.down('[name=motivoDenegacion]'));
             }
         })

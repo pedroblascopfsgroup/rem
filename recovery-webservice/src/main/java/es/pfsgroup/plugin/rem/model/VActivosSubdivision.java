@@ -40,8 +40,8 @@ public class VActivosSubdivision implements Serializable {
 	@Column(name = "DD_SAC_DESCRIPCION")
 	private String subtipoActivo;	
 	
-	@Column(name = "ICO_FECHA_ACEPTACION")
-	private Date fechaAceptacionInformeComercial;
+	@Column(name = "DD_AIC_DESCRIPCION")
+	private String estadoDisposicionInforme;
 	
 
 	public Long getIdSubdivision() {
@@ -100,13 +100,12 @@ public class VActivosSubdivision implements Serializable {
 		this.subtipoActivo = subtipoActivo;
 	}
 
-	public Date getFechaAceptacionInformeComercial() {
-		return fechaAceptacionInformeComercial;
+	public String getEstadoDisposicionInforme() {
+		return estadoDisposicionInforme;
 	}
 
-	public void setFechaAceptacionInformeComercial(
-			Date fechaAceptacionInformeComercial) {
-		this.fechaAceptacionInformeComercial = fechaAceptacionInformeComercial;
+	public void setEstadoDisposicionInforme(String estadoDisposicionInforme) {
+		this.estadoDisposicionInforme = estadoDisposicionInforme;
 	}	
 
 

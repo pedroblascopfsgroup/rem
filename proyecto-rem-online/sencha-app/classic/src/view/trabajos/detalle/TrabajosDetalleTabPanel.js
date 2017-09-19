@@ -135,18 +135,33 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
 		me.down("[itemId=botoneditar]").setVisible(false);
 		var editionEnabled = function() {
 			var visible = false;
-				if((Ext.isEmpty(me.lookupController().getViewModel().get('trabajo').get('fechaEjecucionReal')) && ($AU.userIsRol(CONST.PERFILES['PROVEEDOR'])))
-						|| (Ext.isEmpty(me.lookupController().getViewModel().get('trabajo').get('fechaCierreEconomico')) && ($AU.userIsRol('HAYAGESACT') || $AU.userIsRol('HAYAGESTADM')))
-						|| (Ext.isEmpty(me.lookupController().getViewModel().get('trabajo').get('fechaEmisionFactura')) && ($AU.userIsRol('HAYASUPACT') || $AU.userIsRol('HAYASUPADM') || $AU.userIsRol('HAYASUPER')))){
-					visible = true;
-				}else if(!Ext.isEmpty(me.lookupController().getViewModel().get('trabajo').get('fechaEjecucionReal')) && ($AU.userIsRol(CONST.PERFILES['PROVEEDOR']))
-						|| (!Ext.isEmpty(me.lookupController().getViewModel().get('trabajo').get('fechaCierreEconomico')) && ($AU.userIsRol('HAYAGESACT') || $AU.userIsRol('HAYAGESTADM')))
-						|| (!Ext.isEmpty(me.lookupController().getViewModel().get('trabajo').get('fechaEmisionFactura')) && ($AU.userIsRol('HAYASUPACT') || $AU.userIsRol('HAYASUPADM') || $AU.userIsRol('HAYASUPER')))){
-					visible = false;
-				}
-				else{
-					visible= true;
-				}
+			var notFechaEjecucionReal = Ext.isEmpty(me.lookupController().getViewModel().get('trabajo').get('fechaEjecucionReal'));
+			var notFechaCierreEconomico = Ext.isEmpty(me.lookupController().getViewModel().get('trabajo').get('fechaCierreEconomico'));
+			var notFechaEmisionFactura = Ext.isEmpty(me.lookupController().getViewModel().get('trabajo').get('fechaEmisionFactura'));
+			var isRolProveedor = $AU.userIsRol(CONST.PERFILES['PROVEEDOR']);
+			var isRolGesActivo = $AU.userIsRol('HAYAGESACT');
+			var isRolGesAdmision = $AU.userIsRol('HAYAGESTADM');
+			var isRolSupActivo = $AU.userIsRol('HAYASUPACT');
+			var isRolSupAdmision = $AU.userIsRol('HAYASUPADM');
+			var isRolSuper = $AU.userIsRol('HAYASUPER');
+			var subtipoTrabajoCod = me.lookupController().getViewModel().get('trabajo').get('subtipoTrabajoCodigo');
+			var subtiposPermitidosSupActivo = ["19", "21", "22", "23", "24", "25"]; //Subtipos de trabajo ODoc. con edicion permitida en gestion eco trabajo para superv. activo
+			var subtiposPermitidosSupAdmision = ["13", "15", "17"]; //Subtipos de trabajo ODoc. con edicion permitida en gestion eco trabajo para superv. admision
+			
+			if((notFechaEjecucionReal && (isRolProveedor))
+				|| (notFechaCierreEconomico && (isRolGesActivo || isRolGesAdmision))
+				|| (notFechaEmisionFactura && (isRolSupActivo || isRolSupAdmision || isRolSuper)) ){
+				visible = true;
+			}
+			
+			// Obtencion Documental: Gestor Activo y Admision tienen designados cada uno un grupo de tipos de documentos,
+			// por tanto la misma responsabilidad para editar la gestion eco del trabajo debe designarse a sus supervisores.
+			// Gestor activo no debe trabajar con los tipos designados para el gestor de admision y por tanto el supervisor
+			// de uno no debe operar con la gestion eco para trabajos del otro supervisor.
+			if((isRolSupAdmision && subtiposPermitidosSupActivo.indexOf(subtipoTrabajoCod) > -1)
+					||(isRolSupActivo && subtiposPermitidosSupAdmision.indexOf(subtipoTrabajoCod) > -1) ){
+				visible = false;
+			}
 			
 			me.down("[itemId=botoneditar]").setVisible(visible);
 		}

@@ -23,6 +23,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenDato;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 
@@ -76,7 +77,9 @@ public class ActivoCargas implements Serializable, Auditable {
     @Column(name="CRG_FECHA_CANCEL_REGISTRAL")
     private Date fechaCancelacionRegistral;
     
-    
+    @ManyToOne
+    @JoinColumn(name = "DD_ODT_ID")
+    private DDOrigenDato origenDato;
 
 	@Version   
 	private Long version;
@@ -165,6 +168,14 @@ public class ActivoCargas implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public DDOrigenDato getOrigenDato() {
+		return origenDato;
+	}
+
+	public void setOrigenDato(DDOrigenDato origenDato) {
+		this.origenDato = origenDato;
 	}
 
 	

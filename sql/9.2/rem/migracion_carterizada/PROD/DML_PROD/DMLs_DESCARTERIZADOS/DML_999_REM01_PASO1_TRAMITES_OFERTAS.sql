@@ -94,7 +94,6 @@ BEGIN
                               WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
                                     AND MIG2.OFR_COD_ESTADO_OFERTA = ''01-02''
                                     AND EEC.DD_EEC_CODIGO = ''06'' --Reservado
-                                      AND OFR.OFR_IMPORTE_CONTRAOFERTA IS NOT NULL
                                       AND RES.RES_FECHA_FIRMA IS NOT NULL                                      
                                       AND PAC.PAC_CHECK_FORMALIZAR = 1
                                         THEN (SELECT TAP.TAP_ID FROM REM01.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_ResultadoPBC'' AND BORRADO = 0)
@@ -105,7 +104,6 @@ BEGIN
                                     AND RES.RES.ECO_ID IS NULL -- Sin reserva
                                     AND ECO.ECO_FECHA_SANCION IS NOT NULL
                                     AND ECO.ECO_FECHA_ANULACION IS NULL
-                                    AND OFR.OFR_IMPORTE_CONTRAOFERTA IS NULL
                                     AND PAC.PAC_CHECK_FORMALIZAR = 1
                                         THEN (SELECT TAP.TAP_ID FROM REM01.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_ResultadoPBC'' AND BORRADO = 0)                            
                               
@@ -115,7 +113,6 @@ BEGIN
                                     AND RES.RES.ECO_ID IS NOT NULL -- Con reserva
                                     AND ECO.ECO_FECHA_SANCION IS NOT NULL
                                     AND ECO.ECO_FECHA_ANULACION IS NULL
-                                    AND OFR.OFR_IMPORTE_CONTRAOFERTA IS NULL
                                     AND PAC.PAC_CHECK_FORMALIZAR = 1
                                         THEN (SELECT TAP.TAP_ID FROM REM01.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_InstruccionesReserva'' AND BORRADO = 0)                            
 
@@ -303,9 +300,9 @@ BEGIN
                     )                                                           AS DD_TTR_ID    
                   , CASE TOF.DD_TOF_CODIGO
                           WHEN ''01''
-                                THEN (SELECT DD_STR_ID FROM '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO WHERE DD_STR_CODIGO = ''55'' AND BORRADO = 0)   
-                          WHEN ''02''
                                 THEN (SELECT DD_STR_ID FROM '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO WHERE DD_STR_CODIGO = ''56'' AND BORRADO = 0)   
+                          WHEN ''02''
+                                THEN (SELECT DD_STR_ID FROM '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO WHERE DD_STR_CODIGO = ''55'' AND BORRADO = 0)   
                     END                                                     AS DD_STR_ID 
                   , (SELECT DD_EST_ID
                           FROM '||V_ESQUEMA||'.DD_EST_ESTADO_TRABAJO

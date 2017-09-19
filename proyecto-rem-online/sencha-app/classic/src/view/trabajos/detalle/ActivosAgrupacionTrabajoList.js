@@ -89,7 +89,7 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosAgrupacionTrabajoList', {
 		var activoSelection = [];
 
 		Ext.Array.each(arraySelection, function(rec) {
-			activoSelection.push(rec.getData().activoId);
+			activoSelection.push(rec.getData().idActivo);
         });
 
     	return activoSelection;

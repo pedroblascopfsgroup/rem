@@ -435,7 +435,9 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
                         idEntidadPk: Ext.isEmpty(me.idSecundaria) ? "" : this.up('{viewModel}').getViewModel().get(me.idSecundaria)	
                     },
                     success: function (a, operation, c) {
-                        context.store.load();
+                        if (context.store.load) {
+                        	context.store.load();
+                        }
                         me.unmask();
                         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));																			
 						me.saveSuccessFn();											

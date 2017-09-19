@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -49,6 +51,9 @@ public class NotificatorServicePBCResultado extends AbstractNotificatorService i
 
 	@Autowired
 	private GestorActivoApi gestorActivoManager;
+
+	@Autowired
+	private GenericABMDao genericDao;
 
 	@Override
 	public String[] getKeys() {
@@ -112,14 +117,13 @@ public class NotificatorServicePBCResultado extends AbstractNotificatorService i
 		Usuario gestorComercial = null;
 		Activo activo = oferta.getActivoPrincipal();
 
-		if (!Checks.esNulo(oferta.getAgrupacion()) && !Checks.esNulo(oferta.getAgrupacion().getTipoAgrupacion() != null)) {
-			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo()) && oferta.getAgrupacion() instanceof ActivoLoteComercial) {
-				ActivoLoteComercial activoLoteComercial = (ActivoLoteComercial) oferta.getAgrupacion();
-				gestorComercial = activoLoteComercial.getUsuarioGestorComercial();
-			} else {
-				// Lote Restringido
-				gestorComercial = gestorActivoManager.getGestorByActivoYTipo(activo, "GCOM");
-			}
+		if (!Checks.esNulo(oferta.getAgrupacion()) 
+		        && !Checks.esNulo(oferta.getAgrupacion().getTipoAgrupacion())
+		        && DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+
+			ActivoLoteComercial activoLoteComercial = genericDao.get(ActivoLoteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", oferta.getAgrupacion().getId()));
+			gestorComercial = activoLoteComercial.getUsuarioGestorComercial();
+
 		} else {
 			// Activo
 			gestorComercial = gestorActivoManager.getGestorByActivoYTipo(activo, "GCOM");

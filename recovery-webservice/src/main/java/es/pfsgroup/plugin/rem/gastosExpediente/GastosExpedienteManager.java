@@ -107,13 +107,12 @@ public class GastosExpedienteManager extends BusinessOperationOverrider<GastosEx
 
 			map = new HashMap<String, Object>();
 			ComisionDto comisionDto = listaComisionDto.get(i);
-
+			errorsList = restApi.validateRequestObject(comisionDto, TIPO_VALIDACION.INSERT);
 			List<GastosExpediente> listaGastos = this.getListaGastosExpediente(comisionDto);
 			if (Checks.esNulo(listaGastos) || (!Checks.esNulo(listaGastos) && listaGastos.size() != 1)) {
 				errorsList.put("idOfertaWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
 
 			} else {
-				errorsList = restApi.validateRequestObject(listaGastos.get(0), TIPO_VALIDACION.INSERT);
 				if (errorsList.size() == 0) {
 					this.updateAceptacionGasto(listaGastos.get(0), comisionDto, jsonFields.getJSONArray("data").get(i));
 				}
@@ -123,10 +122,22 @@ public class GastosExpedienteManager extends BusinessOperationOverrider<GastosEx
 			if (!Checks.esNulo(errorsList) && errorsList.isEmpty() && !Checks.esNulo(listaGastos)) {
 				map.put("idOfertaWebcom", listaGastos.get(0).getExpediente().getOferta().getIdWebCom());
 				map.put("idOfertaRem", listaGastos.get(0).getExpediente().getOferta().getNumOferta());
+				map.put("idProveedorRem", comisionDto.getIdProveedorRem());
+				map.put("esPrescripcion", comisionDto.getEsPrescripcion());
+				map.put("esColaboracion", comisionDto.getEsColaboracion());
+				map.put("esResponsable", comisionDto.getEsResponsable());
+				map.put("esFdv", comisionDto.getEsFdv());
+				map.put("esDoblePrescripcion", comisionDto.getEsDoblePrescripcion());
 				map.put("success", true);
 			} else {
 				map.put("idOfertaWebcom", comisionDto.getIdOfertaWebcom());
 				map.put("idOfertaRem", comisionDto.getIdOfertaRem());
+				map.put("idProveedorRem", comisionDto.getIdProveedorRem());
+				map.put("esPrescripcion", comisionDto.getEsPrescripcion());
+				map.put("esColaboracion", comisionDto.getEsColaboracion());
+				map.put("esResponsable", comisionDto.getEsResponsable());
+				map.put("esFdv", comisionDto.getEsFdv());
+				map.put("esDoblePrescripcion", comisionDto.getEsDoblePrescripcion());
 				map.put("success", false);
 				map.put("invalidFields", errorsList);
 			}

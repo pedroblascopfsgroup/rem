@@ -20,6 +20,15 @@ public interface GestorExpedienteComercialApi {
 	public static final String CODIGO_SUPERVISOR_COMERCIAL_SINGULAR = "SCOMSIN";
 	public static final String CODIGO_SUPERVISOR_FORMALIZACION = "SFORM";
 	
+	public static final String CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO = "HAYAGBOINM";
+	public static final String CODIGO_GESTOR_COMERCIAL_BACKOFFICE_FINANCIERO = "HAYAGBOFIN";
+	public static final String CODIGO_GESTOR_RESERVA_CAJAMAR = "GESRES";
+	public static final String CODIGO_GESTOR_MINUTA_CAJAMAR = "GESMIN";
+	public static final String CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO = "HAYASBOINM";
+	public static final String CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_FINANCIERO = "HAYASBOFIN";
+	public static final String CODIGO_SUPERVISOR_RESERVA_CAJAMAR = "SUPRES";
+	public static final String CODIGO_SUPERVISOR_MINUTA_CAJAMAR = "SUPMIN";
+	
 	/**
 	 * Guarda el gestor en el expediente, y si se sustituye por otro, lo guarda en el histórico.
 	 * @param dto

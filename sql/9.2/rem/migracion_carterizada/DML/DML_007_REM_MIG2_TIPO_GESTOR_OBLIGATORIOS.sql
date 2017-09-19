@@ -43,15 +43,18 @@ DECLARE
         T_VAL('AAII'   ,'01'    ,'SUPADM'),
         T_VAL('AAII'   ,'01'    ,'GACT'),
         T_VAL('AAII'   ,'01'    ,'SUPACT'),
-        T_VAL('AAII'   ,'01'    ,'GGADM'),
         T_VAL('AAII'   ,'01'    ,'GCOM'),
         T_VAL('AAII'   ,'01'    ,'SCOM'),
         T_VAL('AAII'   ,'01'    ,'GPREC'),
         T_VAL('AAII'   ,'01'    ,'GPUBL'),
         T_VAL('AAII'   ,'01'    ,'SPREC'),
         T_VAL('AAII'   ,'01'    ,'SPUBL'),
-        T_VAL('AAII'   ,'01'    ,'GCBO'),
-        T_VAL('AAII'   ,'01'    ,'GBACKOFFICE'),
+        T_VAL('AAII'   ,'01'    ,'HAYAGBOINM'),
+        T_VAL('AAII'   ,'01'    ,'HAYASBOINM'),
+        T_VAL('AAII'   ,'01'    ,'FVDNEG'),
+        T_VAL('AAII'   ,'01'    ,'FVDBACKOFR'),
+        T_VAL('AAII'   ,'01'    ,'FVDBACKVNT'),
+        T_VAL('AAII'   ,'01'    ,'SUPFVD'),
 
         -- Sareb
         T_VAL('AAII'   ,'02'    ,'GADM'),
@@ -80,15 +83,72 @@ DECLARE
         T_VAL('AAII'   ,'03'    ,'SPUBL'),
         T_VAL('AAII'   ,'03'    ,'GCCBANKIA'),
 
+        -- HyT
+        T_VAL('AAII'   ,'06'    ,'GADM'),
+        T_VAL('AAII'   ,'06'    ,'SUPADM'),
+        T_VAL('AAII'   ,'06'    ,'GACT'),
+        T_VAL('AAII'   ,'06'    ,'SUPACT'),
+        T_VAL('AAII'   ,'06'    ,'GPREC'),
+        T_VAL('AAII'   ,'06'    ,'GPUBL'),
+        T_VAL('AAII'   ,'06'    ,'SPREC'),
+        T_VAL('AAII'   ,'06'    ,'SPUBL'),
+        T_VAL('AAII'   ,'06'    ,'GCOM'),
+        T_VAL('AAII'   ,'06'    ,'SCOM'),
+        T_VAL('AAII'   ,'06'    ,'FVDNEG'),
+        T_VAL('AAII'   ,'06'    ,'FVDBACKOFR'),
+        T_VAL('AAII'   ,'06'    ,'FVDBACKVNT'),
+        T_VAL('AAII'   ,'06'    ,'SUPFVD'),
+        T_VAL('AAII'   ,'06'    ,'GGADM'),
+        T_VAL('AAII'   ,'06'    ,'GTOCED'),
+        T_VAL('AAII'   ,'06'    ,'CERT'),
+
+        -- Cerberus
+        T_VAL('AAII'   ,'07'    ,'GPREC'),
+        T_VAL('AAII'   ,'07'    ,'GPUBL'),
+        T_VAL('AAII'   ,'07'    ,'SPREC'),
+        T_VAL('AAII'   ,'07'    ,'SPUBL'),
+        T_VAL('AAII'   ,'07'    ,'GCOM'),
+        T_VAL('AAII'   ,'07'    ,'SCOM'),
+        T_VAL('AAII'   ,'07'    ,'FVDNEG'),
+        T_VAL('AAII'   ,'07'    ,'FVDBACKOFR'),
+        T_VAL('AAII'   ,'07'    ,'FVDBACKVNT'),
+        T_VAL('AAII'   ,'07'    ,'SUPFVD'),
+        
+        -- Liberbank
+        T_VAL('AAII'   ,'08'    ,'GPREC'),
+        T_VAL('AAII'   ,'08'    ,'GPUBL'),
+        T_VAL('AAII'   ,'08'    ,'SPREC'),
+        T_VAL('AAII'   ,'08'    ,'SPUBL'),
+        T_VAL('AAII'   ,'08'    ,'GCOM'),
+        T_VAL('AAII'   ,'08'    ,'SCOM'),
+        T_VAL('AAII'   ,'08'    ,'FVDNEG'),
+        T_VAL('AAII'   ,'08'    ,'FVDBACKOFR'),
+        T_VAL('AAII'   ,'08'    ,'FVDBACKVNT'),
+        T_VAL('AAII'   ,'08'    ,'SUPFVD'),
+
+        -- Otras carteras
+        T_VAL('AAII'   ,'04'    ,'GPREC'),
+        T_VAL('AAII'   ,'04'    ,'GPUBL'),
+        T_VAL('AAII'   ,'04'    ,'SPREC'),
+        T_VAL('AAII'   ,'04'    ,'SPUBL'),
+        T_VAL('AAII'   ,'04'    ,'GCOM'),
+        T_VAL('AAII'   ,'04'    ,'SCOM'),
+        T_VAL('AAII'   ,'04'    ,'FVDNEG'),
+        T_VAL('AAII'   ,'04'    ,'FVDBACKOFR'),
+        T_VAL('AAII'   ,'04'    ,'FVDBACKVNT'),
+        T_VAL('AAII'   ,'04'    ,'SUPFVD'),
+
         -- Cajamar
         T_VAL('AAFF'   ,'01'    ,'GCOM'),
         T_VAL('AAFF'   ,'01'    ,'SCOM'),
-        T_VAL('AAFF'   ,'01'    ,'GPREC'),
         T_VAL('AAFF'   ,'01'    ,'GPUBL'),
-        T_VAL('AAFF'   ,'01'    ,'SPREC'),
         T_VAL('AAFF'   ,'01'    ,'SPUBL'),
-        T_VAL('AAFF'   ,'01'    ,'GCBO'),
-        T_VAL('AAFF'   ,'01'    ,'GBACKOFFICE'),
+        T_VAL('AAFF'   ,'01'    ,'HAYAGBOFIN'),
+        T_VAL('AAFF'   ,'01'    ,'HAYASBOFIN'),
+        T_VAL('AAFF'   ,'01'    ,'FVDNEG'),
+        T_VAL('AAFF'   ,'01'    ,'FVDBACKOFR'),
+        T_VAL('AAFF'   ,'01'    ,'FVDBACKVNT'),
+        T_VAL('AAFF'   ,'01'    ,'SUPFVD'),
 
         -- Sareb
         T_VAL('AAFF'   ,'02'    ,'GCOM'),
@@ -107,12 +167,13 @@ DECLARE
         T_VAL('AAFF'   ,'03'    ,'SPUBL'),
 
         -- Cajamar
-        T_VAL('ECO'   ,'01'    ,'GCOM'),
-        T_VAL('ECO'   ,'01'    ,'SCOM'),
-        T_VAL('ECO'   ,'01'    ,'GCBO'),
-        T_VAL('ECO'   ,'01'    ,'GBACKOFFICE'),
         T_VAL('ECO'   ,'01'    ,'GFORM'),
         T_VAL('ECO'   ,'01'    ,'SFORM'),
+        T_VAL('ECO'   ,'01'    ,'GRES'),
+        T_VAL('ECO'   ,'01'    ,'SRES'),
+        T_VAL('ECO'   ,'01'    ,'GMIN'),
+        T_VAL('ECO'   ,'01'    ,'SMIN'),
+        T_VAL('ECO'   ,'01'    ,'GIAFORM'),
 
         -- Sareb
         T_VAL('ECO'   ,'02'    ,'GCOM'),
@@ -124,7 +185,20 @@ DECLARE
         T_VAL('ECO'   ,'03'    ,'GCOM'),
         T_VAL('ECO'   ,'03'    ,'SCOM'),
         T_VAL('ECO'   ,'03'    ,'GFORM'),
-        T_VAL('ECO'   ,'03'    ,'SFORM')
+        T_VAL('ECO'   ,'03'    ,'SFORM'),
+
+        -- HyT
+        T_VAL('ECO'   ,'06'    ,'GFORM'),
+        T_VAL('ECO'   ,'06'    ,'SFORM'),
+        T_VAL('ECO'   ,'06'    ,'GIAFORM'),
+
+        -- Cerberus
+        T_VAL('ECO'   ,'07'    ,'GFORM'),
+        T_VAL('ECO'   ,'07'    ,'SFORM'),
+        
+        -- Liberbank
+        T_VAL('ECO'   ,'08'    ,'GFORM'),
+        T_VAL('ECO'   ,'08'    ,'SFORM')
     );  
     V_TMP_VAL T_VAL; 
     

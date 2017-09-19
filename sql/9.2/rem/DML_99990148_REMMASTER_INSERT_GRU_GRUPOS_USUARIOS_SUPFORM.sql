@@ -11,6 +11,7 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 HREOS-2777 - GUILLEM REY - 20170906
 --##########################################
 --*/
 
@@ -37,6 +38,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
+   	  T_FUNCION('SUPFORM', 'ealvarez'),  -- HREOS-2777
 	  T_FUNCION('SUPFORM', 'imartin'),
 	  T_FUNCION('SUPFORM', 'abenavides')
     ); 

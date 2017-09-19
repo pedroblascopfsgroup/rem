@@ -81,7 +81,18 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
 										scrollable	: 'y',
 										items :
 												[
-									               	{ 
+													{
+											        	readOnly: true,
+												 		fieldLabel: HreRem.i18n('header.origen.dato'),
+										               	reference: 'origenDato',
+												      	bind: '{carga.origenDatoDescripcion}',											         	
+											         	allowBlank: false
+													},
+									               	{
+														fieldLabel: '',
+														readOnly: true
+									               	},
+													{ 
 														xtype: 'comboboxfieldbase',
 											        	editable: false,
 												 		fieldLabel: HreRem.i18n('fieldlabel.tipo'),
@@ -168,6 +179,9 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
 											        	bind: {
 										            		store: '{comboEstadoCarga}',
 										            		value: '{carga.estadoEconomicaCodigo}'
+										            	},
+										            	listeners: {
+										            		select: 'onChangeEstadoEconomicoCombo'
 										            	}
 											        }
 										]
@@ -209,7 +223,8 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
 													{
 														xtype:'datefieldbase',
 														fieldLabel: HreRem.i18n('fieldlabel.fecha.cancelacion.economica.carga'),
-										            	bind:		'{carga.fechaCancelacionEconomica}'
+										            	bind:		'{carga.fechaCancelacionEconomica}',
+										            	reference: 'fechaCancelacionEconomica'
 										            	
 													},
 													{

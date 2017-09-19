@@ -356,9 +356,74 @@ BEGIN
     
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.ACT_AGR_AGRUPACION actualizada. '||SQL%ROWCOUNT||' Filas.');  
 
-    EXECUTE IMMEDIATE 'delete from ACT_ADO_ADMISION_DOCUMENTO where ado_id in ( select ado_id from ACT_ADO_ADMISION_DOCUMENTO where (act_id, cfd_id) in ( select act_id, cfd_id from ACT_ADO_ADMISION_DOCUMENTO group by act_id, cfd_id having count(1) > 1) and usuariocrear <> '''||V_USUARIO||''')';
+    --EXECUTE IMMEDIATE 'delete from ACT_ADO_ADMISION_DOCUMENTO where ado_id in ( select ado_id from ACT_ADO_ADMISION_DOCUMENTO where (act_id, cfd_id) in ( select act_id, cfd_id from ACT_ADO_ADMISION_DOCUMENTO group by act_id, cfd_id having count(1) > 1) and usuariocrear <> '''||V_USUARIO||''')';
+
+
+
+
+    EXECUTE IMMEDIATE 'update rem01.GGE_GASTOS_GESTION set dd_eah_id = (select dd_eah_id from rem01.DD_EAH_ESTADOS_AUTORIZ_HAYA where dd_eah_codigo = ''01'')
+             where GGE_ID in (SELECT GGE.GGE_ID 
+            FROM REM01.GPV_GASTOS_PROVEEDOR GPV
+            JOIN REM01.GGE_GASTOS_GESTION GGE ON GGE.GPV_ID = GPV.GPV_ID
+            JOIN REM01.GDE_GASTOS_DETALLE_ECONOMICO GDE ON GDE.GPV_ID = GPV.GPV_ID
+            JOIN REM01.GIC_GASTOS_INFO_CONTABILIDAD GIC ON GIC.GPV_ID = GPV.GPV_ID
+            WHERE GPV.DD_EGA_ID = (SELECT DD_EGA_ID FROM REM01.DD_EGA_ESTADOS_GASTO WHERE DD_EGA_CODIGO = ''08''))';
+
+
+    EXECUTE IMMEDIATE 'update rem01.act_activo act 
+        set act.ACT_NUM_ACTIVO_UVEM = (select ACT_NUMERO_UVEM from rem01.mig_aca_cabecera aca where aca.ACT_NUMERO_ACTIVO = act.ACT_NUM_ACTIVO)
+        where ACT_NUM_ACTIVO_UVEM is null';
+
+
+EXECUTE IMMEDIATE
+'merge into act_activo  act
+using ( select aca.ACT_NUMERO_ACTIVO, aca.ACT_NUMERO_UVEM from rem01.mig_aca_cabecera aca 
+        inner join rem01.act_activo act on  (aca.ACT_NUMERO_ACTIVO = act.ACT_NUM_ACTIVO and act.ACT_NUM_ACTIVO_UVEM <> aca.ACT_NUMERO_UVEM) ) datos
+        on (act.ACT_NUM_ACTIVO = datos.ACT_NUMERO_ACTIVO)
+        when matched then update
+        set act.ACT_NUM_ACTIVO_UVEM = datos.ACT_NUMERO_UVEM';
+
+
+    --###############################################################
+    --##### [HREOS-2647] - CORREGIR ESTADO PROVEEDORES
+    --###############################################################
+
+	EXECUTE IMMEDIATE 'UPDATE REM01.ACT_PVE_PROVEEDOR PVE
+	SET PVE.DD_EPR_ID = (SELECT EPR.DD_EPR_ID FROM REM01.DD_EPR_ESTADO_PROVEEDOR EPR WHERE EPR.DD_EPR_CODIGO = ''07'')
+	WHERE PVE.DD_EPR_ID IS NULL';
+
+
+    --###############################################################
+    --##### HREOS-2649 Actualizar el tipo de proveedor (físico/jurídico)
+    --###############################################################    
+      
+       execute immediate 'MERGE INTO REM01.act_pve_proveedor PVE_OLD
+                          USING
+                             ( select  pve.pve_id, pve.pve_docidentif, tpr.dd_tpr_codigo
+                                    , CASE WHEN  tpr.dd_tpr_codigo in (''07'',''08'',''09'',''10'',''11'',''12'',''13'',''14'',''15'',''16'',''17'',''22'',''23'',''28'',''29'',''30'',''31'',''32'',''33'',''34'',''35'',''37'')
+                                           THEN (select dd_tpe_id from REMMASTER.DD_TPE_TIPO_PERSONA where dd_tpe_codigo = ''2'') /*JURIDICA*/
+                                         ELSE
+                                            CASE WHEN 
+                                                    REGEXP_SUBSTR (substr(pve.pve_docidentif,length(pve.pve_docidentif),1),''[^1234567890]'') is not null  
+                                                   THEN (select dd_tpe_id from REMMASTER.DD_TPE_TIPO_PERSONA where dd_tpe_codigo = ''1'') /*FISICA */
+                                                 ELSE (select dd_tpe_id from REMMASTER.DD_TPE_TIPO_PERSONA where dd_tpe_codigo = ''2'') /*JURIDICA*/
+                                            END
+                                    END  as DD_TPE_ID
+                             from REM01.act_pve_proveedor pve
+                             inner join REM01.DD_TPR_TIPO_PROVEEDOR tpr on pve.dd_tpr_id  = tpr.dd_tpr_id
+                             where pve.DD_TPE_ID is null
+                             and pve.borrado = 0
+                             and tpr.borrado = 0
+                             ) PVE_NEW
+                          ON (PVE_OLD.pve_id = PVE_NEW.pve_id )
+                          WHEN MATCHED THEN UPDATE
+                          SET PVE_OLD.DD_TPE_ID = PVE_NEW.DD_TPE_ID
+                            , PVE_OLD.USUARIOMODIFICAR = ''MIG_SAREB''
+                            , PVE_OLD.FECHAMODIFICAR = sysdate';
+    
 
     COMMIT;
+
 
 EXCEPTION
 

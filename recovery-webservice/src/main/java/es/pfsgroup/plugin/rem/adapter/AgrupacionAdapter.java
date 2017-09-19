@@ -1213,15 +1213,11 @@ public class AgrupacionAdapter {
 				&& !Checks.esNulo(agr.getActivos().get(0).getActivo().getCartera().getCodigo()) && agr.getActivos()
 						.get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
 			if (Checks.esNulo(loteComercial.getUsuarioGestorComercial())
-					|| Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice())
-					|| Checks.esNulo(loteComercial.getUsuarioGestorFormalizacion())
-					|| Checks.esNulo(loteComercial.getUsuarioGestoriaFormalizacion())) {
+					|| Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice())) {
 				return false;
 			}
 		} else {
-			if (Checks.esNulo(loteComercial.getUsuarioGestorComercial())
-					|| Checks.esNulo(loteComercial.getUsuarioGestorFormalizacion())
-					|| Checks.esNulo(loteComercial.getUsuarioGestoriaFormalizacion())) {
+			if (Checks.esNulo(loteComercial.getUsuarioGestorComercial())) {
 				return false;
 			}
 		}

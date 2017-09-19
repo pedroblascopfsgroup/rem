@@ -52,38 +52,29 @@ BEGIN
   EXECUTE IMMEDIATE 'CREATE VIEW ' || V_ESQUEMA || '.V_ACTIVOS_SUBDIVISION 
 
 	AS
-		SELECT 
-			ACT_SD.ID, 
-			AGA.AGR_ID, 
-      		ACT_SD.ACT_ID,
-			ACT_SD.ACT_NUM_ACTIVO,
-      		ACT_SD.BIE_DREG_NUM_FINCA,
-			ACT_SD.DD_TPA_DESCRIPCION,
-			ACT_SD.DD_SAC_DESCRIPCION,
-			ACT_SD.ICO_FECHA_ACEPTACION
-      	FROM(
-			SELECT SUBD.ID, SUBD.ACT_ID, SUBD.ACT_NUM_ACTIVO,SUBD.BIE_DREG_NUM_FINCA,TPA.DD_TPA_DESCRIPCION, SAC.DD_SAC_DESCRIPCION, SUBD.ICO_FECHA_ACEPTACION
-			FROM (
-					SELECT 
-						ACT.ACT_ID,
-						ACT.ACT_NUM_ACTIVO, 
-						ACT.DD_TPA_ID, 
-						ACT.DD_SAC_ID, 
-						BIEDREG.BIE_DREG_NUM_FINCA,
-						ICO.ICO_FECHA_ACEPTACION,
-						ORA_HASH(ACT.DD_TPA_ID||ACT.DD_SAC_ID||NVL(VIV.VIV_NUM_PLANTAS_INTERIOR,0)||NVL(SUM(DECODE (DIS.DD_TPH_ID, 1, DIS.DIS_CANTIDAD, NULL)),0) ||NVL(SUM(DECODE (DIS.DD_TPH_ID, 2, DIS.DIS_CANTIDAD, NULL)),0)) ID
-					FROM ACT_ICO_INFO_COMERCIAL ICO 
-					JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = ICO.ACT_ID
-                  	LEFT JOIN BIE_DATOS_REGISTRALES BIEDREG ON ACT.BIE_ID = BIEDREG.BIE_ID
-					LEFT JOIN ACT_VIV_VIVIENDA VIV ON VIV.ICO_ID = ICO.ICO_ID
-					LEFT JOIN ACT_DIS_DISTRIBUCION DIS ON DIS.ICO_ID = VIV.ICO_ID
-          where act.borrado = 0
-					GROUP BY ACT.ACT_ID, ACT.ACT_NUM_ACTIVO, ACT.DD_TPA_ID, ACT.DD_SAC_ID, BIEDREG.BIE_DREG_NUM_FINCA, ICO.ICO_FECHA_ACEPTACION, NVL(VIV.VIV_NUM_PLANTAS_INTERIOR,0)
-			) SUBD
-			JOIN DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_ID = SUBD.DD_TPA_ID
-			JOIN DD_SAC_SUBTIPO_ACTIVO SAC ON SAC.DD_SAC_ID = SUBD.DD_SAC_ID
-		) ACT_SD
-		JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT_SD.ACT_ID';
+		SELECT act_sd.ID, aga.agr_id, act_sd.act_id, act_sd.act_num_activo, act_sd.bie_dreg_num_finca, act_sd.dd_tpa_descripcion, act_sd.dd_sac_descripcion, act_sd.dd_aic_descripcion
+  FROM (SELECT subd.ID, subd.act_id, subd.act_num_activo, subd.bie_dreg_num_finca, tpa.dd_tpa_descripcion, sac.dd_sac_descripcion, subd.dd_aic_descripcion
+          FROM (SELECT   act.act_id, act.act_num_activo, act.dd_tpa_id, act.dd_sac_id, biedreg.bie_dreg_num_finca, aic.dd_aic_descripcion,
+                         ORA_HASH (   act.dd_tpa_id
+                                   || act.dd_sac_id
+                                   || NVL (viv.viv_num_plantas_interior, 0)
+                                   || NVL (SUM (DECODE (dis.dd_tph_id, 1, dis.dis_cantidad, NULL)), 0)
+                                   || NVL (SUM (DECODE (dis.dd_tph_id, 2, dis.dis_cantidad, NULL)), 0)
+                                  ) ID
+                    FROM act_ico_info_comercial ico JOIN act_activo act ON act.act_id = ico.act_id
+                         left JOIN v_max_act_hic_est_inf_com maxhic ON (maxhic.act_id = act.act_id AND maxhic.pos = 1)
+                         left JOIN dd_aic_accion_inf_comercial aic ON aic.dd_aic_id = maxhic.dd_aic_id
+                         LEFT JOIN bie_datos_registrales biedreg ON act.bie_id = biedreg.bie_id
+                         LEFT JOIN act_viv_vivienda viv ON viv.ico_id = ico.ico_id
+                         LEFT JOIN act_dis_distribucion dis ON dis.ico_id = viv.ico_id
+                   WHERE act.borrado = 0 
+                GROUP BY act.act_id, act.act_num_activo, act.dd_tpa_id, act.dd_sac_id, biedreg.bie_dreg_num_finca, aic.dd_aic_descripcion, NVL (viv.viv_num_plantas_interior, 0)) subd
+               JOIN
+               dd_tpa_tipo_activo tpa ON tpa.dd_tpa_id = subd.dd_tpa_id
+               JOIN dd_sac_subtipo_activo sac ON sac.dd_sac_id = subd.dd_sac_id
+               ) act_sd
+       JOIN
+       act_aga_agrupacion_activo aga ON aga.act_id = act_sd.act_id';
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_ACTIVOS_SUBDIVISION...Creada OK');
   

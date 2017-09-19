@@ -53,6 +53,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.ConfigCuentaContable;
@@ -1758,21 +1759,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		// NO ES EDITABLE SI....
 
-		if (!Checks.esNulo(gasto.getEstadoGasto())) {
-
-			// Si es proveedor y...
-			if (genericAdapter.isProveedor(usuario)) {
-				// el estado no está incompleto o no es pendiente o no es rechazado por gestor
-				if (!DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo()) && !DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo())
-						&& !DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo())) {
-					return false;
-				}
-
-			} else {
-
-				if (DDEstadoGasto.ANULADO.equals(gasto.getEstadoGasto().getCodigo())) {
-					return false;
-				}
+		if (!genericAdapter.tienePerfil("HAYASADM", usuario) && !Checks.esNulo(gasto.getEstadoGasto())) {			
+			if (!DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo()) && !DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo())
+					&& !DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo())) {
+				return false;
 			}
 		}
 

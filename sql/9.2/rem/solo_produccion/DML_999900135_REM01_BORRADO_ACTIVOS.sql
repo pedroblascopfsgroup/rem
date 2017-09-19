@@ -1,0 +1,954 @@
+--/*
+--#########################################
+--## AUTOR=DAP
+--## FECHA_CREACION=20170730
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=HREOS-2719
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Proceso de borrado físico de ciertas tablas
+--##            
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+
+  V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01';-- '#ESQUEMA#'; -- Configuracion Esquema
+  V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER';-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+  ERR_NUM NUMBER;-- Numero de errores
+  ERR_MSG VARCHAR2(2048);-- Mensaje de error
+  V_MSQL VARCHAR2(4000 CHAR);
+  TYPE VALCURTYP IS REF CURSOR;
+  V_VAL_CURSOR VALCURTYP;
+  V_STMT_VAL VARCHAR2(4000 CHAR);
+  TABLA VARCHAR2(63 CHAR);
+  CLAVE_TABLA VARCHAR(140 CHAR);
+  TABLA_REF VARCHAR2(63 CHAR);
+  CLAVE_REF VARCHAR(140 CHAR);
+  CANTIDAD_INSERCIONES NUMBER (16);
+  SIN_AUDITORIA EXCEPTION;
+  PRAGMA EXCEPTION_INIT(SIN_AUDITORIA, -904);
+  BORRADO_FK EXCEPTION;
+  PRAGMA EXCEPTION_INIT(BORRADO_FK, -1407);
+  ACTIVOS NUMBER(6);
+
+  --Array que contiene las tablas que se van a borrar
+  TYPE T_ARRAY is table of VARCHAR2(250);
+  V_FUN T_ARRAY := T_ARRAY(
+    -------------   TABLA  --------------
+    '16197407',
+    '16197875',
+    '16197992',
+    '16198067',
+    '16198184',
+    '16198202',
+    '16198319',
+    '16198436',
+    '16198553',
+    '16198670',
+    '16198787',
+    '16198805',
+    '16199114',
+    '16199231',
+    '16199348',
+    '18677381',
+    '18942779',
+    '18942896',
+    '18942914',
+    '18943088',
+    '20658893',
+    '20683472',
+    '21720925',
+    '22803038',
+    '22956609',
+    '24664047',
+    '24664164',
+    '24664281',
+    '24755320',
+    '24755437',
+    '24755554',
+    '24755671',
+    '24755788',
+    '24755806',
+    '24755923',
+    '24756097',
+    '24756115',
+    '24756232',
+    '24756349',
+    '24756466',
+    '24756583',
+    '24756601',
+    '24756718',
+    '24757027',
+    '24757144',
+    '24757261',
+    '24757495',
+    '24757513',
+    '24757630',
+    '24757747',
+    '24757864',
+    '24758056',
+    '24758173',
+    '24758290',
+    '24758308',
+    '24758425',
+    '24758542',
+    '24829132',
+    '24829249',
+    '24857167',
+    '25091987',
+    '25092062',
+    '25092179',
+    '25092296',
+    '25092431',
+    '25092548',
+    '25092665',
+    '25092782',
+    '25092917',
+    '25093091',
+    '25093109',
+    '25093226',
+    '25093343',
+    '25093460',
+    '25093577',
+    '25093694',
+    '25093712',
+    '25093829',
+    '25093946',
+    '25094021',
+    '25094138',
+    '25094255',
+    '25094372',
+    '25094489',
+    '25094507',
+    '25094624',
+    '25094741',
+    '25094858',
+    '25094975',
+    '25095050',
+    '25095167',
+    '25095284',
+    '25095302',
+    '25095419',
+    '25095536',
+    '25095653',
+    '25095770',
+    '25095887',
+    '25095905',
+    '26156231',
+    '26156348',
+    '26156465',
+    '26156582',
+    '26156600',
+    '26156717',
+    '26156834',
+    '26156951',
+    '26157026',
+    '26157143',
+    '26157260',
+    '26157377',
+    '26157494',
+    '26531566',
+    '26531683',
+    '26532613',
+    '26532847',
+    '26533039',
+    '26533156',
+    '26533273',
+    '26533390',
+    '26533408',
+    '26533642',
+    '26533759',
+    '26533876',
+    '26533993',
+    '26534068',
+    '26534185',
+    '26534203',
+    '26534320',
+    '26623031',
+    '27118301',
+    '27118418',
+    '27118535',
+    '27118652',
+    '27118769',
+    '27118886',
+    '27119213',
+    '27119330',
+    '27119447',
+    '27119564',
+    '27119681',
+    '27119798',
+    '27119816',
+    '27119933',
+    '27120046',
+    '27120163',
+    '27120280',
+    '27120397',
+    '27120415',
+    '27120532',
+    '27120766',
+    '27120883',
+    '27120901',
+    '27121192',
+    '27121210',
+    '27121327',
+    '27121444',
+    '27121561',
+    '27121678',
+    '27121795',
+    '27121813',
+    '27121930',
+    '27122005',
+    '27122122',
+    '27122239',
+    '27122356',
+    '27122473',
+    '27122590',
+    '27122608',
+    '27122725',
+    '27122842',
+    '27122959',
+    '27123034',
+    '27123151',
+    '27123268',
+    '27123385',
+    '27123403',
+    '27123637',
+    '27123754',
+    '27123871',
+    '27123988',
+    '27124063',
+    '27124180',
+    '27124297',
+    '27124432',
+    '27124549',
+    '27124666',
+    '27124783',
+    '27124918',
+    '27125092',
+    '27125110',
+    '27125227',
+    '27125344',
+    '27125461',
+    '27125578',
+    '27125695',
+    '27125713',
+    '27125830',
+    '27125947',
+    '27128080',
+    '27388852',
+    '27389161',
+    '27389278',
+    '27389395',
+    '27389413',
+    '27389647',
+    '27390012',
+    '27390129',
+    '27390246',
+    '27390363',
+    '27390480',
+    '27390597',
+    '27390615',
+    '27390732',
+    '27390849',
+    '27390966',
+    '27391041',
+    '27391158',
+    '27391275',
+    '27391410',
+    '27391527',
+    '27391644',
+    '27391761',
+    '27456571',
+    '27502989',
+    '27503064',
+    '27503298',
+    '27503316',
+    '27503433',
+    '27503550',
+    '27503667',
+    '27873656',
+    '27988540',
+    '27988657',
+    '28111801',
+    '28252878',
+    '28252995',
+    '28442290',
+    '28442308',
+    '28442425',
+    '28545922',
+    '28577137',
+    '28577254',
+    '28618336',
+    '28748002',
+    '28791422',
+    '28835474',
+    '28925835',
+    '28925952',
+    '28926027',
+    '28926144',
+    '28926378',
+    '28926495',
+    '28926513',
+    '28926747',
+    '28926981',
+    '28927056',
+    '28927290',
+    '28927308',
+    '28927542',
+    '28927659',
+    '28927776',
+    '28927893',
+    '28927911',
+    '28928085',
+    '28928103',
+    '28928220',
+    '28928571',
+    '28928688',
+    '28928940',
+    '28929015',
+    '28929249',
+    '28929366',
+    '28929483',
+    '28929501',
+    '28929735',
+    '28929852',
+    '28929969',
+    '28930082',
+    '28930100',
+    '28930217',
+    '28933439',
+    '28933556',
+    '28933673',
+    '28933790',
+    '28933808',
+    '28933925',
+    '28934000',
+    '28934234',
+    '28934351',
+    '28934468',
+    '28934585',
+    '28934603',
+    '28934720',
+    '28934837',
+    '28934954',
+    '28935029',
+    '28935146',
+    '28935263',
+    '28935380',
+    '28935497',
+    '28935515',
+    '28935632',
+    '28935749',
+    '28935866',
+    '28936058',
+    '28936175',
+    '28966538',
+    '28966655',
+    '28966772',
+    '28966889',
+    '28967081',
+    '28967198',
+    '28967216',
+    '28967333',
+    '28967450',
+    '28967567',
+    '28967684',
+    '28967702',
+    '28967819',
+    '28967936',
+    '28968011',
+    '28968245',
+    '28968362',
+    '28968731',
+    '28968848',
+    '28968965',
+    '28969040',
+    '28969157',
+    '28969274',
+    '28969391',
+    '28969409',
+    '28969877',
+    '28969994',
+    '28970008',
+    '28970242',
+    '28970359',
+    '28970593',
+    '28970611',
+    '28970728',
+    '28970845',
+    '28970962',
+    '28971037',
+    '28971271',
+    '28971406',
+    '28971640',
+    '28971874',
+    '28972183',
+    '28972435',
+    '28972786',
+    '28973581',
+    '28973698',
+    '28973716',
+    '28974025',
+    '28974259',
+    '28974376',
+    '28974511',
+    '28974745',
+    '28974979',
+    '28975288',
+    '28975423',
+    '28975540',
+    '28975657',
+    '28975774',
+    '28975891',
+    '28975909',
+    '28976083',
+    '28976101',
+    '28976218',
+    '28976335',
+    '28976452',
+    '28976569',
+    '28976686',
+    '28976704',
+    '28976938',
+    '28977013',
+    '28977130',
+    '28977247',
+    '28977364',
+    '28977616',
+    '28977733',
+    '28977850',
+    '28977967',
+    '28978042',
+    '28978276',
+    '28978393',
+    '28978411',
+    '28978528',
+    '28978645',
+    '28978762',
+    '28978879',
+    '28978996',
+    '28979071',
+    '28979188',
+    '28979206',
+    '28979323',
+    '28979440',
+    '28979557',
+    '28979674',
+    '28979791',
+    '28979809',
+    '28979926',
+    '28980039',
+    '28980273',
+    '28980390',
+    '28980408',
+    '28980525',
+    '28980642',
+    '28980759',
+    '28980876',
+    '28980993',
+    '28981068',
+    '28981185',
+    '28981203',
+    '28981320',
+    '28981437',
+    '28981554',
+    '28981788',
+    '28981806',
+    '28981923',
+    '28982115',
+    '28982232',
+    '28982349',
+    '28982466',
+    '28982601',
+    '28982718',
+    '28982835',
+    '28982952',
+    '28983027',
+    '28983144',
+    '28983261',
+    '28983378',
+    '28983495',
+    '28999268',
+    '28999385',
+    '28999520',
+    '29005396',
+    '29012223',
+    '29012340',
+    '29012457',
+    '29012691',
+    '29012709',
+    '29012826',
+    '29012943',
+    '29017872',
+    '29018550',
+    '29197243',
+    '29197477',
+    '29424791',
+    '29424809',
+    '29424926',
+    '29425001',
+    '29425118',
+    '29425235',
+    '29425352',
+    '29425469',
+    '29425586',
+    '29425604',
+    '29425721',
+    '29425838',
+    '29425955',
+    '29426030',
+    '29426147',
+    '29426264',
+    '29426381',
+    '29426498',
+    '29426516',
+    '29426633',
+    '29426750',
+    '29426867',
+    '29426984',
+    '29427059',
+    '29427176',
+    '29427293',
+    '29427311',
+    '29427428',
+    '29427545',
+    '29427662',
+    '29427779',
+    '29427896',
+    '29427914',
+    '29428088',
+    '29428106',
+    '29428223',
+    '29428340',
+    '29428457',
+    '29428574',
+    '29428691',
+    '29428709',
+    '29428826',
+    '29428943',
+    '29429135',
+    '29429252',
+    '29429369',
+    '29429486',
+    '29429621',
+    '29429738',
+    '29429855',
+    '29429972',
+    '29430220',
+    '29430337',
+    '29430454',
+    '29430688',
+    '29430706',
+    '29430823',
+    '29430940',
+    '29431132',
+    '29431249',
+    '29431483',
+    '29431501',
+    '29431618',
+    '29431735',
+    '29431969',
+    '29432044',
+    '29432161',
+    '29432278',
+    '29432413',
+    '29435635',
+    '29435752',
+    '29435869',
+    '29435986',
+    '29436061',
+    '29436178',
+    '29436295',
+    '29436313',
+    '29436430',
+    '29436547',
+    '29436664',
+    '29436781',
+    '29436898',
+    '29436916',
+    '29437090',
+    '29437108',
+    '29437225',
+    '29437342',
+    '29437459',
+    '29437576',
+    '29437693',
+    '29437711',
+    '29437828',
+    '29437945',
+    '29438020',
+    '29438488',
+    '29438506',
+    '29438623',
+    '29438857',
+    '29438974',
+    '29439049',
+    '29439166',
+    '29439283',
+    '29439301',
+    '29439418',
+    '29439535',
+    '29439652',
+    '29439769',
+    '29439886',
+    '29439904',
+    '29440017',
+    '29440134',
+    '29440251',
+    '29440368',
+    '29440485',
+    '29450903',
+    '29451194',
+    '29753474',
+    '29753726',
+    '29753960',
+    '29754521',
+    '29897071',
+    '29946477',
+    '29946594',
+    '29946612',
+    '29946729',
+    '29946846',
+    '29946963',
+    '29947038',
+    '29947272',
+    '29947389',
+    '29947407',
+    '29947524',
+    '29947641',
+    '29947758',
+    '29947875',
+    '29947992',
+    '29973483',
+    '29982368',
+    '29982485',
+    '29982503',
+    '29982620',
+    '29982737',
+    '29982854',
+    '29982971',
+    '29983046',
+    '29983163',
+    '29983280',
+    '29983397',
+    '29983415',
+    '29983532',
+    '29983649',
+    '29983766',
+    '29983883',
+    '29983901',
+    '29984075',
+    '29984192',
+    '29984210',
+    '29984327',
+    '29984444',
+    '29984561',
+    '29984678',
+    '29984795',
+    '29984813',
+    '29984930',
+    '29985122',
+    '29985239',
+    '29985356',
+    '29985473',
+    '29985590',
+    '29985608',
+    '29985725',
+    '29985842',
+    '29986034',
+    '29986151',
+    '29986268',
+    '29986385',
+    '29986403',
+    '29986520',
+    '29986637',
+    '29986871',
+    '29988227',
+    '29988344',
+    '29988461',
+    '29988578',
+    '29988695',
+    '29988713',
+    '29988830',
+    '29988947',
+    '29989022',
+    '29989139',
+    '29989256',
+    '29989373',
+    '29989490',
+    '29989508',
+    '29989625',
+    '29989742',
+    '29989859',
+    '29989976',
+    '29990089',
+    '29990107',
+    '29990224',
+    '29990341',
+    '29990458',
+    '29990575',
+    '29990692',
+    '29990827',
+    '29990944',
+    '29991019',
+    '29991136',
+    '29991253',
+    '29991370',
+    '29991487',
+    '29991505',
+    '29991622',
+    '29991739',
+    '29991856',
+    '29991973',
+    '29992048',
+    '29992165',
+    '29992282',
+    '29992300',
+    '29992417',
+    '29992534',
+    '29992651',
+    '29992768',
+    '29992885',
+    '29992903',
+    '29993077',
+    '29993194',
+    '29993212',
+    '29993329',
+    '29993446',
+    '29993563',
+    '29993680',
+    '29993797',
+    '29993815',
+    '29993932',
+    '29994241',
+    '29994358',
+    '29994475',
+    '29994592',
+    '29994610',
+    '29994727',
+    '29994844',
+    '29994961',
+    '29995036',
+    '29995153',
+    '29995270',
+    '29995387',
+    '29995405',
+    '29995522',
+    '29995639',
+    '29995756',
+    '29995873',
+    '29995990',
+    '29996065',
+    '29996182',
+    '29996200',
+    '29997346',
+    '29997832',
+    '29998627',
+    '29998744',
+    '29998861',
+    '29998978',
+    '29999053',
+    '29999170',
+    '29999287',
+    '29999305',
+    '29999422',
+    '29999539',
+    '29999656',
+    '29999773',
+    '29999890',
+    '29999908',
+    '30001068',
+    '30004173',
+    '30005085',
+    '30005103',
+    '30010790',
+    '30010808',
+    '30010925',
+    '30011000',
+    '30011117',
+    '30011351',
+    '30011468',
+    '30011585',
+    '30011603',
+    '30011720',
+    '30011837',
+    '30011954',
+    '30012029',
+    '30012146',
+    '30012263',
+    '30012515',
+    '30012632',
+    '30012749',
+    '30012866',
+    '30027844',
+    '30099822');
+  
+  ORDEN NUMBER(2) := 2;
+
+  PROCEDURE BORRADO (ORDEN IN NUMBER, NUMERO_INSERTADO OUT NUMBER) IS
+  BEGIN
+    V_STMT_VAL := '
+         INSERT INTO ACTIVOS_A_BORRAR
+            WITH DEPENDENCIAS AS (
+            SELECT T1.OWNER ESQUEMA, T1.TABLE_NAME TABLE_NAME, T1.CONSTRAINT_NAME, T3.COLUMN_NAME COLUMN_NAME, T3.POSITION POSITION_KEY
+             , T2.OWNER ESQUEMA_REF, T2.TABLE_NAME TABLE_REFERENCED, T2.CONSTRAINT_NAME CONSTRAINT_REFERENCED, T4.COLUMN_NAME COLUMN_REFERENCED, T4.POSITION POSITION_KEY_REFERENCED
+            FROM ALL_CONSTRAINTS T1
+            JOIN ALL_CONSTRAINTS T2 ON T2.CONSTRAINT_NAME = T1.R_CONSTRAINT_NAME
+             AND T2.CONSTRAINT_TYPE IN (''P'', ''U'')
+            JOIN ACTIVOS_A_BORRAR T5 ON T5.TABLA = T2.OWNER||''.''||T2.TABLE_NAME
+            JOIN ALL_CONS_COLUMNS T3 ON T1.CONSTRAINT_NAME = T3.CONSTRAINT_NAME
+            JOIN ALL_CONS_COLUMNS T4 ON T2.CONSTRAINT_NAME = T4.CONSTRAINT_NAME
+            WHERE T1.CONSTRAINT_TYPE = ''R'' AND T1.STATUS = ''ENABLED''
+                AND NOT EXISTS (SELECT 1 FROM ACTIVOS_A_BORRAR AUX WHERE AUX.TABLA_REF = T2.OWNER||''.''||T2.TABLE_NAME))        
+            SELECT D.ESQUEMA||''.''||D.TABLE_NAME TABLA, ''T1.''||LISTAGG(D.COLUMN_NAME, ''||T1.'') WITHIN GROUP (ORDER BY D.POSITION_KEY) CLAVE_TABLA
+            , '||ORDEN||' + 1
+            , D.ESQUEMA_REF||''.''||D.TABLE_REFERENCED TABLA_REF, ''T2.''||LISTAGG(D.COLUMN_REFERENCED, ''||T2.'') WITHIN GROUP (ORDER BY D.POSITION_KEY_REFERENCED) CLAVE_REF
+            , '||ORDEN||'
+            FROM DEPENDENCIAS D
+            GROUP BY D.ESQUEMA, D.TABLE_NAME, D.CONSTRAINT_NAME, D.ESQUEMA_REF, D.TABLE_REFERENCED, D.CONSTRAINT_REFERENCED';
+    EXECUTE IMMEDIATE V_STMT_VAL;
+    NUMERO_INSERTADO := SQL%ROWCOUNT;
+  END;
+
+BEGIN
+    
+    EXECUTE IMMEDIATE 'TRUNCATE TABLE ACTIVOS_A_BORRAR';
+    EXECUTE IMMEDIATE 'TRUNCATE TABLE ACTIVOS_A_BORRAR_2';
+    
+    DBMS_OUTPUT.PUT_LINE('[INICIO] Inicio del proceso de borrado físico de interfaces a cargar desde cero');
+    DBMS_OUTPUT.PUT_LINE('');
+
+    V_STMT_VAL := '
+        INSERT INTO ACTIVOS_A_BORRAR
+        WITH DEPENDENCIAS AS (
+         SELECT T1.OWNER ESQUEMA, T1.TABLE_NAME TABLE_NAME, T1.CONSTRAINT_NAME, T3.COLUMN_NAME COLUMN_NAME, T3.POSITION POSITION_KEY
+             , T2.OWNER ESQUEMA_REF, T2.TABLE_NAME TABLE_REFERENCED, T2.CONSTRAINT_NAME CONSTRAINT_REFERENCED, T4.COLUMN_NAME COLUMN_REFERENCED, T4.POSITION POSITION_KEY_REFERENCED
+         FROM ALL_CONSTRAINTS T1
+         JOIN ALL_CONSTRAINTS T2 ON T2.CONSTRAINT_NAME = T1.R_CONSTRAINT_NAME
+             AND T2.CONSTRAINT_TYPE IN (''P'', ''U'')
+             AND T2.TABLE_NAME IN (''ACT_ACTIVO'')
+             AND T2.OWNER = ''REM01''
+         JOIN ALL_CONS_COLUMNS T3 ON T1.CONSTRAINT_NAME = T3.CONSTRAINT_NAME
+         JOIN ALL_CONS_COLUMNS T4 ON T2.CONSTRAINT_NAME = T4.CONSTRAINT_NAME
+         WHERE T1.CONSTRAINT_TYPE = ''R'' AND T1.STATUS = ''ENABLED'')        
+        SELECT D.ESQUEMA||''.''||D.TABLE_NAME TABLA, ''T1.''||LISTAGG(D.COLUMN_NAME, ''||T1.'') WITHIN GROUP (ORDER BY D.POSITION_KEY) CLAVE_TABLA
+           , 1
+           , D.ESQUEMA_REF||''.''||D.TABLE_REFERENCED TABLA_REF, ''T2.''||LISTAGG(D.COLUMN_REFERENCED, ''||T2.'') WITHIN GROUP (ORDER BY D.POSITION_KEY_REFERENCED) CLAVE_REF
+           , 0
+        FROM DEPENDENCIAS D
+        GROUP BY D.ESQUEMA, D.TABLE_NAME, D.CONSTRAINT_NAME, D.ESQUEMA_REF, D.TABLE_REFERENCED, D.CONSTRAINT_REFERENCED';
+    EXECUTE IMMEDIATE V_STMT_VAL;
+
+    BORRADO(ORDEN, CANTIDAD_INSERCIONES);
+    WHILE CANTIDAD_INSERCIONES > 0
+    LOOP
+       ORDEN := ORDEN + 2;
+       BORRADO(ORDEN, CANTIDAD_INSERCIONES);
+    END LOOP;
+    
+    COMMIT;
+    
+    FOR I IN V_FUN.FIRST .. V_FUN.LAST
+      LOOP
+      V_MSQL := 'UPDATE REM01.ACT_ACTIVO 
+        SET USUARIOBORRAR = ''HREOS-2719'', BORRADO = 1 
+        WHERE ACT_NUM_ACTIVO_UVEM = '||V_FUN(I);
+      EXECUTE IMMEDIATE V_MSQL;
+    END LOOP;
+    
+    V_MSQL := 'SELECT COUNT(1) FROM REM01.ACT_ACTIVO WHERE USUARIOBORRAR = ''HREOS-2719'' AND BORRADO = 1';
+    EXECUTE IMMEDIATE V_MSQL INTO ACTIVOS;
+    DBMS_OUTPUT.PUT_LINE('[CON_AUDITORIA {A   BORRAR}]: TABLA REM01.ACT_ACTIVO - '||ACTIVOS||' registros marcados para posterior borrado.');
+    
+    OPEN V_VAL_CURSOR FOR SELECT TABLA, CLAVE_TABLA, TABLA_REF, CLAVE_REF FROM ACTIVOS_A_BORRAR ORDER BY ORDEN;
+        LOOP
+        FETCH V_VAL_CURSOR INTO TABLA, CLAVE_TABLA, TABLA_REF, CLAVE_REF;
+        EXIT WHEN V_VAL_CURSOR%NOTFOUND;
+        
+        DECLARE
+            SIN_AUDITORIA EXCEPTION;
+            PRAGMA EXCEPTION_INIT(SIN_AUDITORIA, -904);
+        BEGIN
+            V_MSQL := 'MERGE INTO '||TABLA||' T1 
+                USING (SELECT '||CLAVE_REF||' 
+                    FROM '||TABLA_REF||' T2 
+                    WHERE T2.USUARIOBORRAR = ''HREOS-2719'' AND T2.BORRADO = 1) T2 
+                ON ('||CLAVE_TABLA||' = '||CLAVE_REF||')
+                WHEN MATCHED THEN UPDATE SET
+                    T1.USUARIOBORRAR = ''HREOS-2719'', T1.BORRADO = 1';
+            EXECUTE IMMEDIATE V_MSQL;
+            DBMS_OUTPUT.PUT_LINE('[CON_AUDITORIA {A   BORRAR}]: TABLA '||TABLA||' - '||SQL%ROWCOUNT||' registros marcados para posterior borrado.');
+        EXCEPTION
+            WHEN SIN_AUDITORIA THEN
+            DECLARE
+                SIN_AUDITORIA EXCEPTION;
+                PRAGMA EXCEPTION_INIT(SIN_AUDITORIA, -904);
+            BEGIN
+                V_MSQL := 'DELETE FROM '||TABLA||' T1 WHERE EXISTS (SELECT 1 FROM '||TABLA_REF||' T2 WHERE '||CLAVE_REF||' = '||CLAVE_TABLA||' AND T2.USUARIOBORRAR = ''HREOS-2719'' AND T2.BORRADO = 1)';
+                EXECUTE IMMEDIATE V_MSQL;
+                DBMS_OUTPUT.PUT_LINE('[SIN_AUDITORIA {A   BORRAR}]: TABLA '||TABLA||' - '||SQL%ROWCOUNT||' registros borrados directamente');
+            EXCEPTION
+                WHEN SIN_AUDITORIA THEN
+                V_MSQL := 'MERGE INTO '||TABLA||' T1
+                    USING (SELECT '||CLAVE_TABLA||'
+                        FROM '||TABLA||' T1
+                        LEFT JOIN '||TABLA_REF||' T2 ON '||CLAVE_REF||' = '||CLAVE_TABLA||'
+                        WHERE '||CLAVE_REF||' IS NULL) T2
+                    ON ('||CLAVE_TABLA||' = ''T2.''||SUBSTR('||CLAVE_TABLA||',4) )
+                    WHEN MATCHED THEN UPDATE SET
+                        T1.USUARIOBORRAR = ''HREOS-2719'', T1.BORRADO = 1';
+                EXECUTE IMMEDIATE V_MSQL;
+                DBMS_OUTPUT.PUT_LINE('[SIN_AUDITORIA {REFERENCIA}]: TABLA '||TABLA_REF||' - '||SQL%ROWCOUNT||' registros huérfanos borrados directamente.');
+            END;
+        END;
+
+        END LOOP;
+    CLOSE V_VAL_CURSOR;
+    
+    V_MSQL := 'INSERT INTO ACTIVOS_A_BORRAR_2
+        SELECT DISTINCT TABLA, ORDEN_TABLA FROM ACTIVOS_A_BORRAR
+        UNION SELECT DISTINCT TABLA_REF, ORDEN_TABLA_REF FROM ACTIVOS_A_BORRAR';
+    EXECUTE IMMEDIATE V_MSQL;
+    
+    FOR I IN (SELECT TABLA FROM ACTIVOS_A_BORRAR_2 ORDER BY ORDEN_TABLA DESC)
+        LOOP
+        DECLARE
+            BORRADO_FK EXCEPTION;
+            PRAGMA EXCEPTION_INIT(BORRADO_FK, -1407);
+        BEGIN
+              V_MSQL := 'DELETE FROM '||I.TABLA||' WHERE USUARIOBORRAR = ''HREOS-2719'' AND BORRADO = 1';
+              TABLA := I.TABLA;
+              EXECUTE IMMEDIATE V_MSQL;
+              DBMS_OUTPUT.PUT_LINE('[BORRADA]: TABLA '||I.TABLA||' - '||SQL%ROWCOUNT||' registros eliminados.');
+            
+        EXCEPTION
+            WHEN BORRADO_FK THEN
+                DBMS_OUTPUT.PUT_LINE('[NO BORRADA - PROBLEMA FK]: TABLA '||TABLA||'.');
+            WHEN SIN_AUDITORIA THEN
+                NULL;
+        END;
+    END LOOP;
+    COMMIT;
+    DBMS_OUTPUT.PUT_LINE('');
+    DBMS_OUTPUT.PUT_LINE('[FIN] Borrado físico de activos a cargar desde cero');
+
+EXCEPTION
+    WHEN OTHERS THEN
+      DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE));
+      DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------');
+      DBMS_OUTPUT.PUT_LINE(SQLERRM);
+      DBMS_OUTPUT.PUT_LINE(TABLA);
+      ROLLBACK;
+      RAISE;
+END;
+/
+EXIT

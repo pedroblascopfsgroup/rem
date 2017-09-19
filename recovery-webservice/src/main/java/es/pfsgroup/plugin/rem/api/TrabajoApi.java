@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.DtoProveedorContactoSimple;
 import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
@@ -674,6 +675,21 @@ public interface TrabajoApi {
 	 * @return true si pertenece a la cartera, false si no
 	 */
 	public boolean checkBankia(Trabajo trabajo);
+	/**
+	 * Método que comprueba si el activo pertenece a la cartera Cajamar.
+	 * 
+	 * @param tareaExterna
+	 * @return true si pertenece a la cartera, false si no.
+	 */
+	public boolean checkCajamar(TareaExterna tareaExterna);
+
+	/**
+	 * Método que comprueba si el activo pertenece a la cartera Cajamar.
+	 * 
+	 * @param trabajo
+	 * @return true si pertenece a la cartera, false si no
+	 */
+	public boolean checkCajamar(Trabajo trabajo);
 
 	/**
 	 * Comprueba la existencia de una propuesta en el tramite de Propuestas, en
@@ -756,5 +772,12 @@ public interface TrabajoApi {
 	 * @return
 	 */
 	public boolean checkReservaNecesariaNotNull(TareaExterna tareaExterna);
+	
+	/**
+	 * Este método comprueba que el campo ReservaNecesaria contenga un valor SI ó NO.
+	 * @param tareaExterna
+	 * @return
+	 */
+	public boolean checkReservaNecesariaNotNull(ExpedienteComercial expediente);
 
 }

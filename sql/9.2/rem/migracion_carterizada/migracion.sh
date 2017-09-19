@@ -1,5 +1,8 @@
 #!/bin/bash
-
+if [ "$#" -ne 1 ]; then
+    echo "Parametros: <usuario/pass@host:puerto/ORACLE_SID>"
+    exit 1
+fi
 inicio=`date +%s`
 export NLS_LANG=SPANISH_SPAIN.UTF8
 

@@ -77,6 +77,7 @@ import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoConfigDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
+import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoLlave;
@@ -134,6 +135,7 @@ import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
@@ -632,6 +634,12 @@ public class ActivoAdapter {
 						beanUtilNotNull.copyProperty(cargaDto, "subtipoCargaCodigo",
 								activoCarga.getSubtipoCarga().getCodigo());
 					}
+					//HREOS-2733
+					if(!Checks.esNulo(activoCarga.getOrigenDato())) {
+						beanUtilNotNull.copyProperty(cargaDto, "origenDatoCodigo", activoCarga.getOrigenDato().getCodigo());
+						beanUtilNotNull.copyProperty(cargaDto, "origenDatoDescripcion", activoCarga.getOrigenDato().getDescripcion());
+					}
+					
 					if (activoCarga.getCargaBien() != null) {
 						// HREOS-1666 - Si tiene F. Cancelacion debe mostrar el
 						// estado Cancelado (independientemente del registrado
@@ -1267,7 +1275,7 @@ public class ActivoAdapter {
 						listaActivoFoto = genericDao.getListOrdered(ActivoFoto.class, order, filtro);
 					}
 				} catch (Exception e) {
-					logger.error("Error obteniedno las fotos del CDN", e);
+					logger.error("Error obteniendo las fotos del CDN", e);
 				}
 
 			}
@@ -1846,6 +1854,7 @@ public class ActivoAdapter {
 		return idBpm;
 	}
 
+	@Transactional(readOnly = false)
 	public Long crearTramitePublicacion(Long idActivo) {
 
 		TipoProcedimiento tprc = tipoProcedimiento.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_PUBLICACION);// Trámite
@@ -1853,6 +1862,18 @@ public class ActivoAdapter {
 																		// publicación
 
 		ActivoTramite tramite = jbpmActivoTramiteManagerApi.creaActivoTramite(tprc, activoApi.get(idActivo));
+		
+		//Creación registro historial comercial con estado informe emision
+		ActivoEstadosInformeComercialHistorico estadoInformeComercialHistorico= new ActivoEstadosInformeComercialHistorico();
+		estadoInformeComercialHistorico.setActivo(activoApi.get(idActivo));
+		DDEstadoInformeComercial estadoInformeComercial = (DDEstadoInformeComercial) proxyFactory.proxy(UtilDiccionarioApi.class)
+				.dameValorDiccionarioByCod(DDEstadoInformeComercial.class, DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_EMISION);
+		estadoInformeComercialHistorico.setEstadoInformeComercial(estadoInformeComercial);
+		estadoInformeComercialHistorico.setFecha(new Date());
+		
+		genericDao.save(ActivoEstadosInformeComercialHistorico.class, estadoInformeComercialHistorico);
+		
+		
 		Long idBpm = jbpmActivoTramiteManagerApi.lanzaBPMAsociadoATramite(tramite.getId());
 
 		return idBpm;
@@ -2789,22 +2810,22 @@ public class ActivoAdapter {
 		notificacion.setDescripcion(messageServices.getMessage(AVISO_DESCRIPCION_MODIFICADAS_CONDICIONES_JURIDICAS, numActivo));
 		
 		notificacion.setTitulo(messageServices.getMessage(AVISO_TITULO_MODIFICADAS_CONDICIONES_JURIDICAS));	
-		
+		if(!Checks.esNulo(expediente.getTrabajo())) {
 		// Buscamos el gestor responsable de Haya
-		List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());						
-		
-		for(TareaActivo tarea: tramites.get(0).getTareas()) {
+			List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());						
 			
-			if(!tarea.getAuditoria().isBorrado() && Checks.esNulo(tarea.getFechaFin())
-					&& genericAdapter.isGestorHaya(tarea.getUsuario())) {
-
-				if(Checks.esNulo(destinatario)) {
-					destinatario = tarea.getUsuario();
+			for(TareaActivo tarea: tramites.get(0).getTareas()) {
+				
+				if(!tarea.getAuditoria().isBorrado() && Checks.esNulo(tarea.getFechaFin())
+						&& genericAdapter.isGestorHaya(tarea.getUsuario())) {
+	
+					if(Checks.esNulo(destinatario)) {
+						destinatario = tarea.getUsuario();
+					}
+												
 				}
-											
 			}
 		}
-
 		if (!Checks.esNulo(destinatario)) {														
 			
 			notificacion.setDestinatario(destinatario.getId());									

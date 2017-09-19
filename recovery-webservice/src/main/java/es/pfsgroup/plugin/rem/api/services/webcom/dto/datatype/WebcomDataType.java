@@ -184,6 +184,8 @@ public abstract class WebcomDataType<T> {
 				} else {
 					throw new WebcomDataTypeParseException("No es un formato numérico válido o reconocible" + o);
 				}
+			}else{
+				val = valString;
 			}
 		}
 		return val;

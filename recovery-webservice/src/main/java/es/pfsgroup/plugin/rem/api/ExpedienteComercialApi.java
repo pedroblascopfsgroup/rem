@@ -809,5 +809,13 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public boolean isComiteSancionadorHaya(Trabajo trabajo);
+	
+	/**
+	 * Comprueba que el precio mínimo del activo (o activos en agrupaciones) es inferior del importe del expediente para comite sancionador Haya.
+	 * En tal caso devuelve un true
+	 * @param idTramite
+	 * @return
+	 */
+	public boolean importeExpedienteMenorPreciosMinimosActivos(Long idTramite);
 
 }

@@ -92,11 +92,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.SubdivisionesAgrupacion', {
 			        },
 			        {
 						text: HreRem.i18n('header.dispone.informe.comercial'),
-			        	dataIndex: 'fechaAceptacionInformeComercial',
+			        	dataIndex: 'estadoDisposicionInforme',
 			        	flex: 0.3,
 			        	align: 'center',
-			        	renderer: function(value) {
-			        		return Ext.isEmpty(value) ? "" : '<span class="fa fa-check green-color"><span/>'
+			        	renderer: function(value){
+			        		return (Ext.isEmpty(value) || value == 'Rechazado')? "No" : value;
 			        	}
 			        }
 			        

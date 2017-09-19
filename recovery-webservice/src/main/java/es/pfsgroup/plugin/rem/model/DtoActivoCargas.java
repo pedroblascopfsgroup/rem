@@ -48,6 +48,10 @@ public class DtoActivoCargas {
     private String subtipoCargaDescripcion;
     private String tipoCargaDescripcion;
     private String situacionCargaDescripcion;
+    
+    //HREOS-2733
+    private String origenDatoCodigo;
+    private String origenDatoDescripcion;
  
 
     
@@ -189,5 +193,18 @@ public class DtoActivoCargas {
 	}
 	public void setIdActivo(Long idActivo) {
 		this.idActivo = idActivo;
+	}
+	public String getOrigenDatoCodigo() {
+		return origenDatoCodigo;
+	}
+	public void setOrigenDatoCodigo(String origenDato) {
+		this.origenDatoCodigo = origenDato;
+	}
+	public String getOrigenDatoDescripcion() {
+		return origenDatoDescripcion;
+	}
+	public void setOrigenDatoDescripcion(String origenDatoDescripcion) {
+		this.origenDatoDescripcion = origenDatoDescripcion;
 	}    
+	
 }

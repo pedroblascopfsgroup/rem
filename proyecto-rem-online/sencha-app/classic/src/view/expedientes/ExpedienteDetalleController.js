@@ -1141,11 +1141,33 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		fieldFechaFinFinanciacion.setMinValue(fechaInicioFinanciacion);
 	},
 	
+	onHaCambiadoFechaInicioFinanciacionBankia: function(field, value, oldValue){
+		var me= this;
+		var fechaInicioFinanciacionBankia= value;
+		var fechaFinFinanciacionBankia= me.lookupReference('fechaFinFinanciacionBankia').value;
+		if(!Ext.isEmpty(fechaFinFinanciacionBankia) && !Ext.isEmpty(fechaInicioFinanciacionBankia) && fechaInicioFinanciacionBankia>fechaFinFinanciacionBankia){
+			me.fireEvent("errorToast", HreRem.i18n("msg.fechaFin.mayor.Fecha.Inicio"));
+			field.setValue('');
+		}
+		var fieldFechaFinFinanciacionBankia= me.lookupReference('fechaFinFinanciacionBankia');
+		fieldFechaFinFinanciacionBankia.setMinValue(fechaInicioFinanciacionBankia);
+	},
+	
 	onHaCambiadoFechaFinFinanciacion: function(field, value, oldValue){
 		var me= this;
 		var fechaFinFinanciacion= value;
 		var fechaInicioFinanciacion= me.lookupReference('fechaInicioFinanciacion').value;
 		if(!Ext.isEmpty(fechaInicioFinanciacion) && !Ext.isEmpty(fechaFinFinanciacion) && fechaInicioFinanciacion>fechaFinFinanciacion){
+			me.fireEvent("errorToast", HreRem.i18n("msg.fechaFin.mayor.Fecha.Inicio"));
+			field.setValue('');
+		}
+	},
+	
+	onHaCambiadoFechaFinFinanciacionBankia: function(field, value, oldValue){
+		var me= this;
+		var fechaFinFinanciacionBankia= value;
+		var fechaInicioFinanciacionBankia= me.lookupReference('fechaInicioFinanciacionBankia').value;
+		if(!Ext.isEmpty(fechaInicioFinanciacionBankia) && !Ext.isEmpty(fechaFinFinanciacionBankia) && fechaInicioFinanciacionBankia>fechaFinFinanciacionBankia){
 			me.fireEvent("errorToast", HreRem.i18n("msg.fechaFin.mayor.Fecha.Inicio"));
 			field.setValue('');
 		}
@@ -1294,10 +1316,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		bloqueado = me.getViewModel().get("expediente.bloqueado");
 		if(!bloqueado){		
 			if(CONST.ESTADOS_EXPEDIENTE['APROBADO']!=codigoEstado){
-				var ventanaCompradores= grid.up().up();
-				var expediente= me.getViewModel().get("expediente");
-				Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente}).show();
-				me.onClickBotonRefrescar();
+				if(CONST.ESTADOS_EXPEDIENTE['VENDIDO']!=codigoEstado){
+					var ventanaCompradores= grid.up().up();
+					var expediente= me.getViewModel().get("expediente");
+					Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente}).show();
+					me.onClickBotonRefrescar();
+				}
+				else{
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.vendido"));
+				}
 			}
 			else{
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.aprobado"));
@@ -1490,29 +1517,34 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		bloqueado = me.getViewModel().get("expediente.bloqueado");
 		if(!bloqueado){
 			if(CONST.ESTADOS_EXPEDIENTE['APROBADO']!=codigoEstado){
-				record.erase({
-					params: {idExpediente: idExpediente, idComprador: idComprador},
-		            success: function(record, operation) {
-		           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-		           		 grid.fireEvent("afterdelete", grid);
-		           		 me.onClickBotonRefrescar();
-		            },
-		            failure: function(record, operation) {
-		            	var data = {};
-					    try {
-					    	data = Ext.decode(operation._response.responseText);
-					    }
-					    catch (e){ };
-					    	if (!Ext.isEmpty(data.msg)) {
-					        	me.fireEvent("errorToast", data.msg);
-					        } 
-					        else {
-					        	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-					        }
-		                  grid.fireEvent("afterdelete", grid);
-		            }
-		            
-		        });	
+				if(CONST.ESTADOS_EXPEDIENTE['VENDIDO']!=codigoEstado){
+					record.erase({
+						params: {idExpediente: idExpediente, idComprador: idComprador},
+			            success: function(record, operation) {
+			           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			           		 grid.fireEvent("afterdelete", grid);
+			           		 me.onClickBotonRefrescar();
+			            },
+			            failure: function(record, operation) {
+			            	var data = {};
+						    try {
+						    	data = Ext.decode(operation._response.responseText);
+						    }
+						    catch (e){ };
+						    	if (!Ext.isEmpty(data.msg)) {
+						        	me.fireEvent("errorToast", data.msg);
+						        } 
+						        else {
+						        	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+						        }
+			                  grid.fireEvent("afterdelete", grid);
+			            }
+			            
+			        });	
+				}
+				else{
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.vendido"));
+				}
 			}else{
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.aprobado"));
 			}
@@ -1897,5 +1929,27 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    	callback: function(options, success, response){
 				}   		     
 		});		
+	},
+	
+	onHaCambiadoFechaResolucion: function( field, newDate, oldDate, eOpts){
+		var me = this;
+		var resultado= me.lookupReference('comboResultadoTanteoForm');
+		if(!Ext.isEmpty(newDate)){
+			resultado.allowBlank= false;
+		}
+		else{
+			resultado.allowBlank= true;
+		}
+	},
+	
+	onHaCambiadoResultadoTanteo: function(combo, value){
+		var me = this;
+		var fechaResolucion= me.lookupReference('fechaResolucionForm');
+		if(!Ext.isEmpty(value)){
+			fechaResolucion.allowBlank= false;
+		}
+		else{
+		 	fechaResolucion.allowBlank= true;
+		}
 	}
 });

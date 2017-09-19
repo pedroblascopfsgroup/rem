@@ -23,7 +23,7 @@ public class VActivosAgrupacionTrabajo implements Serializable {
 	private String id;
 	
 	@Column(name = "ACT_ID")
-	private String activoId;	
+	private String idActivo;	
 	
 	@Column(name = "ACT_NUM_ACTIVO")
 	private Long numActivo;  	
@@ -70,12 +70,12 @@ public class VActivosAgrupacionTrabajo implements Serializable {
 		this.id = id;
 	}
 
-	public String getActivoId() {
-		return activoId;
+	public String getIdActivo() {
+		return idActivo;
 	}
 
-	public void setActivoId(String activoId) {
-		this.activoId = activoId;
+	public void setIdActivo(String idActivo) {
+		this.idActivo = idActivo;
 	}
 
 	public Long getNumActivo() {

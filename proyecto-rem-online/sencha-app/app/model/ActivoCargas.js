@@ -113,6 +113,24 @@ Ext.define('HreRem.model.ActivoCargas', {
     		},
     		{
     			name:'ordenCarga'
+    		},
+    		{
+    			name: 'origenDatoCodigo',
+    			convert: function(value){
+    				if(value == null || value == ''){
+    					return '01';
+    				}
+    				return value;
+    			}
+    		},
+    		{
+    			name: 'origenDatoDescripcion',
+    			convert: function(value){
+    				if(value == null || value == ''){
+    					return 'REM';
+    				}
+    				return value;
+    			}
     		}
     		
     ],

@@ -1,6 +1,6 @@
 package es.pfsgroup.plugin.rem.gasto.avisos;
 
-import java.text.DecimalFormat;
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -30,16 +30,18 @@ public class GastoAvisoParticipacion implements GastoAvisadorApi {
 	public DtoAviso getAviso(GastoProveedor gasto, Usuario usuarioLogado) {
 
 		DtoAviso dtoAviso = new DtoAviso();	
-		Double participacionTotal= new Double(0);
-		Double participacionCien= new Double(100);
+		BigDecimal participacionTotal= new BigDecimal("0.00");
+		BigDecimal participacionCien= new BigDecimal("100.00");
 				
 		if(!Checks.esNulo(gasto)){
 			
 			List<VBusquedaGastoActivo> activosGasto= gastoProveedorApi.getListActivosGastos(gasto.getId());
-			DecimalFormat df = new DecimalFormat("#.00");
 			for(VBusquedaGastoActivo ag: activosGasto){
-				participacionTotal +=  ag.getParticipacion();
-				participacionTotal = Double.valueOf(df.format(participacionTotal));
+				if(!Checks.esNulo(ag.getParticipacion())) {
+					String participacion = ag.getParticipacion().toString();
+					participacion = participacion.replace(',', '.');
+					participacionTotal = participacionTotal.add(new BigDecimal(participacion));
+				}
 			}
 			
 			if(!participacionCien.equals(participacionTotal)){

@@ -25,7 +25,7 @@ Ext.define('HreRem.model.ActivoSubdivision', {
     			name:'subtipoActivo'
     		}, 
     		{
-    			name:'fechaAceptacionInformeComercial'
+    			name:'estadoDisposicionInforme'
     		}
     		
     ],

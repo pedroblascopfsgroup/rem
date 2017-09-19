@@ -3077,6 +3077,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 
 	@Override
+	public boolean checkReservaNecesariaNotNull(ExpedienteComercial expediente) {
+		boolean result= false;
+		if (!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getSolicitaReserva())) {
+			result = true;
+		}
+	
+		return result;
+	}
+	
+	@Override
 	public boolean checkSareb(TareaExterna tareaExterna) {
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
 		if (!Checks.esNulo(trabajo)) {
@@ -3121,7 +3131,29 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		return false;
 	}
+	
+	@Override
+	public boolean checkCajamar(TareaExterna tareaExterna) {
+		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
+		if (!Checks.esNulo(trabajo)) {
+			Activo primerActivo = trabajo.getActivo();
+			if (!Checks.esNulo(primerActivo)) {
+				return (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(primerActivo.getCartera().getCodigo()));
+			}
+		}
+		return false;
+	}
 
+	@Override
+	public boolean checkCajamar(Trabajo trabajo) {
+		if (!Checks.esNulo(trabajo)) {
+			Activo primerActivo = trabajo.getActivo();
+			if (!Checks.esNulo(primerActivo)) {
+				return (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(primerActivo.getCartera().getCodigo()));
+			}
+		}
+		return false;
+	}
 	@Override
 	public DDCartera getCartera(TareaExterna tareaExterna) {
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);

@@ -29,3 +29,6 @@ sql/9.2/rem/migracion_carterizada/INFORMES/CONTRASTE/volumetrias_dat.list
 sql/9.2/rem/migracion_carterizada/INFORMES/CONTRASTE/OUTPUT/REPORT-informe_contraste.csv
 sql/9.2/rem/migracion_carterizada/INFORMES/CONTRASTE/OUTPUT/REPORT-informe_contraste.xlsx
 sql/9.2/rem/migracion_carterizada/Ficheros_entrada/Ficheros_antiguos/
+package-tags/
+tags-list.txt
+

@@ -99,6 +99,15 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 				                    iconAlign: 'right',
 				                    text: 'GESTION'	                    
 			                	},
+			                	{
+						    		xtype: 'button',				            
+				                    cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+				                    bind: {
+				                    	iconCls: '{getIconClsPrecioAprobadoVentaRenta}'
+				                    },
+				                    iconAlign: 'right',
+				                    text: 'PRECIOS'	                    
+			                	},
 						    	{	xtype: 'tbfill'},
 						    	{
 						    		xtype: 'button',
@@ -182,6 +191,12 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 											},
 											cls: 'cabecera-apartado cabecera-info',
 											items: [
+														{
+															fieldLabel: HreRem.i18n('title.publicaciones.publicacion'),
+															cls: 'cabecera-info-field',
+															bind: '{activo.estadoPublicacionDescripcion}',
+															colspan: 2
+														},
 														{
 															fieldLabel: HreRem.i18n('fieldlabel.id.activo.haya'),
 															cls: 'cabecera-info-field',

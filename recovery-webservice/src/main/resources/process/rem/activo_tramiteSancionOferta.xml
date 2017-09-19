@@ -36,6 +36,9 @@
 		<transition to="forkReserva" name="ConFormalizacionSinTanteoConAtribucionConReserva"></transition>
 		<transition to="forkSinReservaConTanteo" name="ConFormalizacionSinTanteoConAtribucionSinReservaConTanteo"></transition>
 		<transition to="forkSinReservaSinTanteo" name="ConFormalizacionSinTanteoConAtribucionSinReservaSinTanteo"></transition>
+		<transition to="forkReservaCajamar" name="ApruebaConReservaCajamar"></transition>
+		<transition to="forkSinReservaConTanteoCajamar" name="ApruebaSinReservaConTanteoCajamar"></transition>
+		<transition to="forkSinReservaSinTanteoCajamar" name="ApruebaSinReservaSinTanteoCajamar"></transition>
 	</decision>
 	
 
@@ -117,6 +120,9 @@
 		<transition to="forkReserva" name="ApruebaConReserva"></transition>
 		<transition to="forkSinReservaConTanteo" name="ApruebaSinReservaConTanteo"></transition>
 		<transition to="forkSinReservaSinTanteo" name="ApruebaSinReservaSinTanteo"></transition>
+		<transition to="forkReservaCajamar" name="ApruebaConReservaCajamar"></transition>
+		<transition to="forkSinReservaConTanteoCajamar" name="ApruebaSinReservaConTanteoCajamar"></transition>
+		<transition to="forkSinReservaSinTanteoCajamar" name="ApruebaSinReservaSinTanteoCajamar"></transition>
 	</decision>
 
 	<state name="T013_RespuestaOfertante">
@@ -146,6 +152,9 @@
 		<transition to="forkReserva" name="AceptaConReserva"></transition>
 		<transition to="forkSinReservaConTanteo" name="AceptaSinReservaConTanteo"></transition>
 		<transition to="forkSinReservaSinTanteo" name="AceptaSinReservaSinTanteo"></transition>
+		<transition to="forkReservaCajamar" name="AceptaConReservaCajamar"></transition>
+		<transition to="forkSinReservaConTanteoCajamar" name="AceptaSinReservaConTanteoCajamar"></transition>
+		<transition to="forkSinReservaSinTanteoCajamar" name="AceptaSinReservaSinTanteoCajamar"></transition>
 		<transition to="Fin" name="Rechaza"></transition>
 	</decision>
 
@@ -194,6 +203,18 @@
 		<transition to="T013_ResultadoPBC" name="resultado"></transition>
 	</fork>
 
+	<fork name="forkReservaCajamar">
+		<transition to="T013_InstruccionesReserva" name="reserva"></transition>
+	</fork>
+
+	<fork name="forkSinReservaConTanteoCajamar">
+		<transition to="T013_ResultadoPBC" name="resultado"></transition>
+		<transition to="T013_ResolucionTanteo" name="resolucion"></transition>
+	</fork>
+	
+	<fork name="forkSinReservaSinTanteoCajamar">
+		<transition to="T013_ResultadoPBC" name="resultado"></transition>
+	</fork>
 	<state name="T013_InstruccionesReserva">
 		<event type="node-enter">
 			<action name="miTarea"

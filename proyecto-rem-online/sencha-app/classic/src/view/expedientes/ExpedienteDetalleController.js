@@ -1315,14 +1315,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		codigoEstado= me.getViewModel().get("expediente.codigoEstado");
 		bloqueado = me.getViewModel().get("expediente.bloqueado");
 		if(!bloqueado){		
-			if(CONST.ESTADOS_EXPEDIENTE['APROBADO']!=codigoEstado){
+			if(CONST.ESTADOS_EXPEDIENTE['VENDIDO']!=codigoEstado){
 				var ventanaCompradores= grid.up().up();
 				var expediente= me.getViewModel().get("expediente");
 				Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente}).show();
 				me.onClickBotonRefrescar();
 			}
 			else{
-				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.aprobado"));
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.vendido"));
 			}
 		}else{
 			me.fireEvent("errorToast","Expediente bloqueado");
@@ -1511,33 +1511,34 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		idComprador= record.get('id');
 		bloqueado = me.getViewModel().get("expediente.bloqueado");
 		if(!bloqueado){
-			if(CONST.ESTADOS_EXPEDIENTE['APROBADO']!=codigoEstado){
-				record.erase({
-					params: {idExpediente: idExpediente, idComprador: idComprador},
-		            success: function(record, operation) {
-		           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-		           		 grid.fireEvent("afterdelete", grid);
-		           		 me.onClickBotonRefrescar();
-		            },
-		            failure: function(record, operation) {
-		            	var data = {};
-					    try {
-					    	data = Ext.decode(operation._response.responseText);
-					    }
-					    catch (e){ };
-					    	if (!Ext.isEmpty(data.msg)) {
-					        	me.fireEvent("errorToast", data.msg);
-					        } 
-					        else {
-					        	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-					        }
-		                  grid.fireEvent("afterdelete", grid);
-		            }
-		            
-		        });	
-			}else{
-				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.aprobado"));
-			}
+				if(CONST.ESTADOS_EXPEDIENTE['VENDIDO']!=codigoEstado){
+					record.erase({
+						params: {idExpediente: idExpediente, idComprador: idComprador},
+			            success: function(record, operation) {
+			           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			           		 grid.fireEvent("afterdelete", grid);
+			           		 me.onClickBotonRefrescar();
+			            },
+			            failure: function(record, operation) {
+			            	var data = {};
+						    try {
+						    	data = Ext.decode(operation._response.responseText);
+						    }
+						    catch (e){ };
+						    	if (!Ext.isEmpty(data.msg)) {
+						        	me.fireEvent("errorToast", data.msg);
+						        } 
+						        else {
+						        	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+						        }
+			                  grid.fireEvent("afterdelete", grid);
+			            }
+			            
+			        });	
+				}
+				else{
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.vendido"));
+				}
 		}else{
 			me.fireEvent("errorToast", "Expediente bloqueado");
 		}

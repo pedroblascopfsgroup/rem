@@ -2,6 +2,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
     extend		: 'HreRem.view.common.GridBaseEditableRow',
     xtype		: 'historicomediadorgrid',
 	topBar		: true,
+	//propagationButton: true, <- se pospone para la siguiente subida 
 	idPrincipal : 'activo.id',
 	editOnSelect: false,
 	disabledDeleteBtn: true,

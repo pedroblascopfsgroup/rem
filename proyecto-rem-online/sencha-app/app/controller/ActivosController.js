@@ -291,6 +291,8 @@ Ext.define('HreRem.controller.ActivosController', {
 				}
 				
 		     	me.logTime("Fin Set values " + id);
+		     	
+		     	//me.getView().fireEvent('openModalWindow', "HreRem.view.activos.detalle.seleccionmasivo.SeleccionCambiosMasivo");
 		    },
 		    failure: function (a, operation) {
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));

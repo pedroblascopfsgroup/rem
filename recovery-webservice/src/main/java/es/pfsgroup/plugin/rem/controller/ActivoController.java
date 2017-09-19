@@ -43,9 +43,11 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.excel.ActivoExcelReport;
@@ -54,6 +56,7 @@ import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.PublicacionExcelReport;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
+import es.pfsgroup.plugin.rem.model.DtoActivo;
 import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
@@ -99,6 +102,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
+import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 
@@ -131,6 +135,9 @@ public class ActivoController extends ParadiseJsonController {
 	@Autowired
 	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
 
+	@Autowired
+	private ActivoPropagacionApi activoPropagacionApi;
+	
 	@Autowired
 	GestorDocumentalFotosApi gestorDocumentalFotos;
 
@@ -224,7 +231,9 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView getTabActivo(Long id, String tab, ModelMap model) {
 
 		try {
-			model.put("data", adapter.getTabActivo(id, tab));
+			
+			model.put("data",  adapter.getTabActivo(id, tab));
+			
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put("success", false);
@@ -1955,6 +1964,10 @@ public class ActivoController extends ParadiseJsonController {
 		model.put("data", activoApi.getHistoricoMediadorByActivo(id));
 		return createModelAndViewJson(model);
 	}
+	
+	public List<DtoHistoricoMediador> getHistoricoMediadorByActivo(Long id) {
+		return activoApi.getHistoricoMediadorByActivo(id);
+	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -2449,5 +2462,39 @@ public class ActivoController extends ParadiseJsonController {
 		
 		return new ModelAndView("jsonView", model);
 
+	}
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView propagarInformacion(@RequestParam(required = true) Long id, @RequestParam(required = true) String tab, ModelMap model) {
+
+		List<String> fields = new ArrayList<String>();
+
+		if (ActivoPropagacionFieldTabMap.map.get(tab) != null) {
+			fields.addAll(ActivoPropagacionFieldTabMap.map.get(tab));
+		}
+
+		model.put("propagateFields", fields);
+		model.put("activos", activoPropagacionApi.getAllActivosAgrupacionPorActivo(activoApi.get(id)));
+
+		return new ModelAndView("jsonView", model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveActivo(HttpServletRequest request, ModelMap model) {
+
+		if (request != null) {
+			try {
+				RestRequestWrapper restRequest = new RestRequestWrapper(request);
+				ActivoControllerDispatcher dispatcher = new ActivoControllerDispatcher(this);
+			
+				dispatcher.dispatchSave(restRequest.getJsonObject());
+			} catch (Exception e) {
+				logger.error("No se ha podido guardar el activo", e);
+				model.put("error", e.getMessage());
+			}
+		}
+
+
+		return new ModelAndView("jsonView", model);
 	}
 }

@@ -1759,6 +1759,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 
 	// Este mÃ©todo obtiene el valor del campo importe que se estÃ¡ editando y comprueba las validaciones oportunas.
+  // comprueba las validaciones oportunas.
 	validatePreciosVigentes: function(value) {
 		var me = this;
 		var grid = me.lookupReference('gridPreciosVigentes');
@@ -2475,15 +2476,27 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	
     },
     
-    onClickPropagation: function(grid, record) {     	
-    	var me = this;
-		var activosPropagables = me.getViewModel().get("activo.activosPropagables") || [];
-		var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
-		// Abrimos la ventana de selección de activos
-		var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {form: null, activoActual: activo, activos: activosPropagables, tabData: null, propagableData: null}).show();
-		me.getView().add(ventanaOpcionesPropagacionCambios);
-    },
-	
+  onClickPropagation : function(btn) {
+    var me = this;
+
+    var activosPropagables = me.getViewModel().get("activo.activosPropagables") || [];
+    var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo) {
+              return activo.activoId == me.getViewModel().get("activo.id");
+            }), 1)[0];
+
+
+    // Abrimos la ventana de selección de activos
+    var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {
+          form : null,
+          activoActual : activo,
+          activos : activosPropagables,
+          tabData : null,
+          propagableData : null
+        }).show();
+
+    me.getView().add(ventanaOpcionesPropagacionCambios);
+  },
+
 	onClickBotonCancelarCarga: function(btn) { 
 		var me = this;
 		var window = btn.up('window');
@@ -2744,7 +2757,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	if(!Ext.isEmpty(formActivo)) {
     		
     		var successFn = function(record, operation) {
-
 				if(activosSeleccionados.length > 0) { 
 	    			me.propagarCambios(window, activosSeleccionados);
 	    		} else {
@@ -2754,16 +2766,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					me.refrescarActivo(formActivo.refreshAfterSave);
 					me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
 	    		}
-	    	}
+	    	};
 	    	
 	    	me.saveActivo(window.tabData, successFn);
 	    	
-    	} /* TODO else { // Propagar los cambios solamente a los activos seleccionados ( por ejemplo para propagar cambios de grids )
-    		me.propagarCambios(window, activosSeleccionados);	
-    	}*/
-    	
-    	window.mask("Guardando activos 1 de " + (activosSeleccionados.length + 1));
-    },
+         } else {
+			
+         	var successFn = function(record, operation) {
+			      if (activosSeleccionados.length > 0) {
+			        me.propagarCambios(window, activosSeleccionados);
+			      } else {
+			        window.destroy();
+			        me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			        me.getView().unmask();
+			        me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+			      }
+         	};
+         	
+         	me.saveActivo(window.tabData, successFn);
+         	
+		    }
+	     window.mask("Guardando activos 1 de " + (activosSeleccionados.length + 1));
+	},
     
     onClickCancelarPropagarCambios: function(btn) {
     	var me = this,
@@ -2798,7 +2822,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		propagableData.id = activo.get("activoId");
 			
     		var successFn = function(response, opts){
-					// Lanzamos el evento de refrescar el activo por si está abierto.
+				// Lanzamos el evento de refrescar el activo por si está abierto.
 				me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], activo.get("activoId"));
 				me.propagarCambios(window, activos);
 			};
@@ -2847,6 +2871,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	}
     },
     
+  createPropagableDataHistoricoMediadores : function(list) {
+    var me = this, tabData = {};
+    tabData.id = me.getViewModel().get("activo.id");
+    tabData.models = [];
+
+    Ext.Array.each(list, function(record, index) {
+          var model = {};
+          model.name = 'mediadoractivo';
+          model.type = 'activo';
+          model.data = {};
+          model.data.idActivo = record.id;
+          tabData.models.push(model);
+        });
+    return tabData;
+  },
+
     createModelToSave: function(record, type) {
     	
     	var me = this;

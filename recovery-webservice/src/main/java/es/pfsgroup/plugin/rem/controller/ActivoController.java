@@ -1964,6 +1964,10 @@ public class ActivoController extends ParadiseJsonController {
 		model.put("data", activoApi.getHistoricoMediadorByActivo(id));
 		return createModelAndViewJson(model);
 	}
+	
+	public List<DtoHistoricoMediador> getHistoricoMediadorByActivo(Long id) {
+		return activoApi.getHistoricoMediadorByActivo(id);
+	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)

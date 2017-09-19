@@ -358,7 +358,7 @@ Ext.define('Ext.toolbar.Paging', {
             scope: me
         }];
     },
-
+        
     initComponent : function(){
         var me = this,
             userItems = me.items || me.buttons || [],

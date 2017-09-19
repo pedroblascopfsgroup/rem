@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.controller;
 import static es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.ui.ModelMap;
@@ -13,6 +14,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformacionAdministrativa;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 
 class ActivoControllerDispachableMethods {
 	
@@ -143,6 +145,26 @@ class ActivoControllerDispachableMethods {
 				if (dto != null ){
 					dto.setIdActivo(id);
 					this.controller.saveActivoCargaTab(dto, new ModelMap());
+				}
+			}
+		});
+		
+		/*
+		 * TAB_MEDIADOR_ACTIVO
+		 */
+		dispachableMethods.put(TAB_MEDIADOR_ACTIVO, new DispachableMethod<DtoHistoricoMediador>() {
+
+			@Override
+			public Class<DtoHistoricoMediador> getArgumentType() {
+				return DtoHistoricoMediador.class;
+			}
+
+			@Override
+			public void execute(Long id, DtoHistoricoMediador dto) {
+				if (dto != null ){
+					List<DtoHistoricoMediador> list = controller.getHistoricoMediadorByActivo(id);
+					dto.setCodigo(list.get(0).getCodigo());
+					this.controller.createHistoricoMediador(dto, new ModelMap());
 				}
 			}
 		});

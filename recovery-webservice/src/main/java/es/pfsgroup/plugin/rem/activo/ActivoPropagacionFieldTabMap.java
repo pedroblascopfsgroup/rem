@@ -16,6 +16,7 @@ public class ActivoPropagacionFieldTabMap {
     public static final String TAB_DATOS_REGISTRALES = "datosregistrales";
     public static final String TAB_INFO_ADMINISTRATIVA = "infoadministrativa";
     public static final String TAB_CARGAS_ACTIVO = "cargasactivo";
+    public static final String TAB_MEDIADOR_ACTIVO = "mediadoractivo";
     
     static {
     	Map<String, List<String>> pmap = new HashMap<String, List<String>>();
@@ -366,7 +367,7 @@ public class ActivoPropagacionFieldTabMap {
 					"libro",
 					"folio",
 					"superficie",
-					"superficieConstruida",
+					//"superficieConstruida", <-Eliminar según conversacion mantenida con Bruno 14-SEP-2017
 					"idufir",
 					"hanCambiado",
 					"numAnterior",
@@ -406,8 +407,8 @@ public class ActivoPropagacionFieldTabMap {
 					"poblacionRegistro",
 					"provinciaRegistro",
 					"localidadAnteriorCodigo",
-					"tipoTituloCodigo",
-					"subtipoTituloCodigo",
+					//"tipoTituloCodigo", <-Eliminar según conversacion mantenida con Bruno 14-SEP-2017
+					//"subtipoTituloCodigo", <-Eliminar según conversacion mantenida con Bruno 14-SEP-2017
 					"propiedadActivoDescripcion",
 					"propiedadActivoCodigo",
 					"propiedadActivoNif",

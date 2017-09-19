@@ -1486,6 +1486,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 								}
 								else {
 									storeTemp.load();
+									me.refrescarActivo(true);
 									me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 								}
 								

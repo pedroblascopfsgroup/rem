@@ -88,6 +88,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     		return 'app-tbfiedset-ico icono-ko'
 	     	}
 	     },
+	     
+	     getIconClsPrecioAprobadoVentaRenta: function(get) {
+	     	var me = this;
+	     	var aprobadoVentaWeb= get('activo.aprobadoVentaWeb');
+	     	var aprobadoRentaWeb= get('activo.aprobadoRentaWeb');
+	     	if(!Ext.isEmpty(aprobadoVentaWeb) || !Ext.isEmpty(aprobadoRentaWeb)) {
+	     		return 'app-tbfiedset-ico icono-ok'
+	     	} else {
+	     		return 'app-tbfiedset-ico icono-ko'
+	     	}
+	     },
 	    
 	     //Condicionantes
 	     getIconClsCondicionantesRuina: function(get) {

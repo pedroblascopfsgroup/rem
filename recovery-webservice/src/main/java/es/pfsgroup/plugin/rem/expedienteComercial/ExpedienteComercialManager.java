@@ -1031,6 +1031,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			if (!Checks.esNulo(reserva.getTipoArras())) {
 				dto.setTipoArrasCodigo(reserva.getTipoArras().getCodigo());
+			} else {
+				if(!Checks.esNulo(expediente.getOferta())
+						&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal())
+						&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal().getCartera())
+						&& DDCartera.CODIGO_CARTERA_CAJAMAR.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo())){
+					dto.setTipoArrasCodigo(DDTiposArras.CONFIRMATORIAS);
+				}
 			}
 			if (!Checks.esNulo(expediente.getCondicionante())) {
 				dto.setConImpuesto(expediente.getCondicionante().getReservaConImpuesto());
@@ -2235,21 +2242,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		try {
 			beanUtilNotNull.copyProperties(reserva, dto);
 			if (!Checks.esNulo(dto.getTipoArrasCodigo())) {
-
 				DDTiposArras tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, dto.getTipoArrasCodigo());
 				reserva.setTipoArras(tipoArras);
-			} else {
-				//En expedientes de Cajamar, si no hay "Tipo de arras", este debe precargar el valor "Confirmatorias"
-				if(!Checks.esNulo(expediente.getOferta())
-						&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal())
-						&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal().getCartera())
-						&& DDCartera.CODIGO_CARTERA_CAJAMAR.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo())){
-					DDTiposArras tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.CONFIRMATORIAS);
-					reserva.setTipoArras(tipoArras);
-				}
-					
-				
-			}
+			} 
+			
 			if(!Checks.esNulo(dto.getCodigoSucursal())) {
 				String codigoCartera = "";
 				if(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA))

@@ -9,8 +9,6 @@ ruta_old="Ficheros_entrada/"
 echo "SE INICIA EL PROCESO DE RENOMBRADO DE LOS FICHEROS"
 echo "Descomprimiendo ficheros"
 
-rm -f $ruta/*.dat
-
 unzip -o "$ruta_old"*_FaseI_*.zip >> $1
 unzip -o "$ruta_old"*_FaseII_*.zip >> $1
 
@@ -20,7 +18,16 @@ cat Fich_Trabajo2.dat >> Fich_Trabajo.dat
 rm -rf Fich_Trabajo1.dat
 rm -rf Fich_Trabajo2.dat
 
-cp "$ruta_old"Updates_migracion_Cajamar_*.csv .
+fichero_update=Updates_migracion_Cajamar_*.csv
+
+echo $ruta_old$fichero_update
+cp $ruta_old$fichero_update .
+
+echo "Borrado de ficheros antiguos"
+
+rm -f $ruta/*.dat
+
+echo "Se inicia el movimiento a destino de los ficheros"
 
 while read line
 do
@@ -29,14 +36,16 @@ do
 	fichero_new=`echo "$line" | cut -d ";" -f 2`
 	echo $fichero_new
 
-	if [ -s "$fichero_old" ] ; then
-		mv -f "$fichero_old" "$ruta""$fichero_new"
-		echo "mv -f $fichero_old" "$ruta""$fichero_new"
+	if [ -s $fichero_old ] ; then
+		mv -f $fichero_old "$ruta""$fichero_new"
+		echo $fichero_old "-->" $ruta$fichero_new
 	else
-		echo [ WARNING ] "$fichero_old" no encontrado o vacío
+		echo [ WARNING ] $fichero_old no encontrado o vacío
 	fi
 
 done < "$ruta_old""renombrado.list"
+
+echo "Borrando ficheros renombrados"
 
 rm -f *.dat
 rm -f *.csv

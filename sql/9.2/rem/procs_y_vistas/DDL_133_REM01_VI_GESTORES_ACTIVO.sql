@@ -48,7 +48,7 @@ BEGIN
 /*Gestores de grupo*/
 SELECT act.act_id, NULL dd_cra_codigo, NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, dist1.tipo_gestor, dist1.username username,
                   dist1.nombre_usuario nombre
-             FROM act_activo act JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON dist1.tipo_gestor IN (''GADM'', ''GPUBL'', ''GMARK'', ''GPREC'', ''GTOPDV'', ''GTOPLUS'', ''GESTLLA'', ''GADMT'', ''GFSV'', ''GCAL'', ''SPUBL'')
+             FROM act_activo act JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON dist1.tipo_gestor IN (''GADM'', ''GPUBL'', ''GMARK'', ''GPREC'', ''GTOPDV'', ''GTOPLUS'', ''GESTLLA'', ''GADMT'', ''GFSV'', ''GCAL'', ''SPUBL'', ''GESRES'', ''SUPRES'', ''GESMIN'', ''SUPMIN'')
            where act.borrado = 0
            UNION ALL
 /*Gestor de grupo - SUPERVISOR COMERCIAL BACKOFFICE*/

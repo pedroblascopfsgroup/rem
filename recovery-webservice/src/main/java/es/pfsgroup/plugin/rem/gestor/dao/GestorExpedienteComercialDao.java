@@ -11,5 +11,6 @@ public interface GestorExpedienteComercialDao  extends AbstractDao<GestorExpedie
 	
 	public Long getUsuarioGestorFormalizacion(Long idActivo);
 	public Long getUsuarioGestoriaFormalizacion(Long idActivo);
+	public String getUsuarioGestor(Long idActivo, String codigoTipoGestor);
 	
 }

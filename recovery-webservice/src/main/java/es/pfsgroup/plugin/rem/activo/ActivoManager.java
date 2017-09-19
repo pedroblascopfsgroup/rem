@@ -3730,6 +3730,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Usuario usuarioGestoriaFormalizacion = null;
 		Usuario usuarioGestorComercial = null;
 		Usuario usuarioGestorComercialBack = null;
+		Usuario usuarioGestorReserva = null;
+		Usuario usuarioSupervisorReserva = null;
+		Usuario usuarioGestorMinuta = null;
+		Usuario usuarioSupervisorMinuta = null;
 		
 		Activo activo= null;
 		if(!Checks.esNulo(oferta)){
@@ -3759,6 +3763,27 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				Long idUsuarioGestoriaFormalizacion = gestorExpedienteComercialDao.getUsuarioGestoriaFormalizacion(activo.getId());
 				if(!Checks.esNulo(idUsuarioGestoriaFormalizacion))
 					usuarioGestoriaFormalizacion = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", idUsuarioGestoriaFormalizacion));
+				
+				//HREOS-2827
+				if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
+					String usernameGestorReservaGrupo = gestorExpedienteComercialDao.getUsuarioGestor(activo.getId(), gestorExpedienteComercialApi.CODIGO_GESTOR_RESERVA_CAJAMAR);
+					String usernameSupervisorReservaGrupo = gestorExpedienteComercialDao.getUsuarioGestor(activo.getId(), gestorExpedienteComercialApi.CODIGO_SUPERVISOR_RESERVA_CAJAMAR);
+					String usernameGestorMinutaGrupo = gestorExpedienteComercialDao.getUsuarioGestor(activo.getId(), gestorExpedienteComercialApi.CODIGO_GESTOR_MINUTA_CAJAMAR);
+					String usernameSupervisorMinutaGrupo = gestorExpedienteComercialDao.getUsuarioGestor(activo.getId(), gestorExpedienteComercialApi.CODIGO_SUPERVISOR_MINUTA_CAJAMAR);
+					
+					if(!Checks.esNulo(usernameGestorReservaGrupo)) {
+						usuarioGestorReserva = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", usernameGestorReservaGrupo));
+					}
+					if(!Checks.esNulo(usernameSupervisorReservaGrupo)) {
+						usuarioSupervisorReserva = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", usernameSupervisorReservaGrupo));				
+					}
+					if(!Checks.esNulo(usernameGestorMinutaGrupo)) {
+						usuarioGestorMinuta = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", usernameGestorMinutaGrupo));
+					}
+					if(!Checks.esNulo(usernameSupervisorMinutaGrupo)) {
+						usuarioSupervisorMinuta = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", usernameSupervisorMinutaGrupo));
+					}					
+				}
 			}
 		}
 		
@@ -3778,6 +3803,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		if(!Checks.esNulo(usuarioGestorComercialBack))
 			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE, usuarioGestorComercialBack.getUsername(), dto);
+		
+		//HREOS-2827
+		if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
+			if(!Checks.esNulo(usuarioGestorReserva))
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_RESERVA_CAJAMAR, usuarioGestorReserva.getUsername(), dto);
+			if(!Checks.esNulo(usuarioSupervisorReserva))
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_RESERVA_CAJAMAR, usuarioSupervisorReserva.getUsername(), dto);
+			if(!Checks.esNulo(usuarioGestorMinuta))
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_MINUTA_CAJAMAR, usuarioGestorMinuta.getUsername(), dto);
+			if(!Checks.esNulo(usuarioSupervisorMinuta))
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_MINUTA_CAJAMAR, usuarioSupervisorMinuta.getUsername(), dto);
+		}
 	}
 
 	private void agregarTipoGestorYUsuarioEnDto(String codTipoGestor, String username, GestorEntidadDto dto) {

@@ -62,4 +62,22 @@ public class GestorExpedienteComercialDaoImpl extends AbstractEntityDao<GestorEx
 		else return null;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public String getUsuarioGestor(Long idActivo, String codigoTipoGestor) {
+		
+		HQLBuilder hb = new HQLBuilder("select distinct(ges.username) from VGestoresActivo ges");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb,  "ges.activoId", idActivo);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "ges.tipoGestorCodigo", codigoTipoGestor);
+		
+		Query query = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+		HQLBuilder.parametrizaQuery(query, hb);
+		
+		List<String> listado = query.list();
+		
+		if(!Checks.estaVacio(listado))
+			return listado.get(0);
+		else
+			return null;
+	}
 }

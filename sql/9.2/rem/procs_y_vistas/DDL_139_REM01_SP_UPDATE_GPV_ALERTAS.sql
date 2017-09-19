@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Jose Villel
---## FECHA_CREACION=20170811
+--## FECHA_CREACION=20170919
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-2555
@@ -30,8 +30,6 @@ AUTHID CURRENT_USER IS
 
 	-- Declaración de variables
 
-	-- Gasto a actualizar
-	v_gpv_id 					#ESQUEMA#.GPV_GASTOS_PROVEEDOR.GPV_ID%TYPE;
 	v_sql						VARCHAR2(1000 CHAR); 
 	-- Usuario para INSERTS y UPDATES
 	v_username 					VARCHAR2(100 CHAR) := 'SP_UPDATE_GPV_ALERTAS';
@@ -41,7 +39,7 @@ AUTHID CURRENT_USER IS
 														ELSE 0 END AS TIENE_ALGUNA_ALERTA
 														FROM #ESQUEMA#.AVG_AVISOS_GASTOS';
 	
-	v_where_gpv_selected 		VARCHAR2(100 CHAR) := ' WHERE GPV_ID = v_gpv_id';
+	v_where_gpv_selected 		VARCHAR2(100 CHAR) := ' WHERE GPV_ID = p_gpv_id';
 
 	
 	TYPE GASTOS_REF IS REF CURSOR;

@@ -51,6 +51,9 @@ public class TabActivoInfoAdministrativa implements TabActivoService {
 		
 		BeanUtils.copyProperty(activoDto, "vpo", activo.getVpo());
 		
+		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
+		activoDto.setCamposPropagables(TabActivoService.TAB_INFO_ADMINISTRATIVA);
+		
 		return activoDto;		
 	}
 

@@ -50,6 +50,9 @@ Ext.define('HreRem.model.Ofertas', {
 		},
 		{
 			name : 'codigoPromocionPrinex'
+		},
+		{
+			name : 'carteraCodigo'
 		}
  	
     		

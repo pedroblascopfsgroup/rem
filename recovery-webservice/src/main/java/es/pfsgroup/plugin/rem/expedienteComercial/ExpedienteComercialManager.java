@@ -2238,6 +2238,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				DDTiposArras tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, dto.getTipoArrasCodigo());
 				reserva.setTipoArras(tipoArras);
+			} else {
+				//En expedientes de Cajamar, si no hay "Tipo de arras", este debe precargar el valor "Confirmatorias"
+				if(!Checks.esNulo(expediente.getOferta())
+						&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal())
+						&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal().getCartera())
+						&& DDCartera.CODIGO_CARTERA_CAJAMAR.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo())){
+					DDTiposArras tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.CONFIRMATORIAS);
+					reserva.setTipoArras(tipoArras);
+				}
+					
+				
 			}
 			if(!Checks.esNulo(dto.getCodigoSucursal())) {
 				String codigoCartera = "";
@@ -4294,26 +4305,53 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		
-		//informada
+		//informada al comprador
+		// HREOS-2799 Si las condiciones al comprador no están informadas en cartera CAJAMAR, estas se
+		// copian del activo.		
 		CondicionesActivo condicionesActivo = null;
 		condicionesActivo = (CondicionesActivo) genericDao.get(CondicionesActivo.class,
 				genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo),
 				genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente));
 		
 		if(condicionesActivo != null){
-			if(condicionesActivo!=null && condicionesActivo.getEstadoTitulo() != null){
+			if(condicionesActivo.getEstadoTitulo() != null){
 				resultado.setEstadoTitulo(condicionesActivo.getEstadoTitulo().getCodigo());
 			}
 			
 			resultado.setEviccion(condicionesActivo.getRenunciaSaneamientoEviccion());
-			resultado.setPosesionInicial(condicionesActivo.getPosesionInicial());
 			
-			if(condicionesActivo != null && condicionesActivo.getSituacionPosesoria() != null){
+			if(!Checks.esNulo(condicionesActivo.getPosesionInicial())){
+				resultado.setPosesionInicial(condicionesActivo.getPosesionInicial());
+			}
+			
+			if(condicionesActivo.getSituacionPosesoria() != null){
 				resultado.setSituacionPosesoriaCodigo(condicionesActivo.getSituacionPosesoria().getCodigo());
 			}
 			
 			resultado.setViciosOcultos(condicionesActivo.getRenunciaSaneamientoVicios());
 		}
+		
+		
+		if (!Checks.esNulo(activo.getCartera()) && 
+				DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())){
+			
+			// Cajamar: Condiciones se copian del activo si no estan informadas : Estado Titulo
+			if(!Checks.esNulo(resultado.getEstadoTituloInformada()) && Checks.esNulo(resultado.getEstadoTitulo()) ){
+				resultado.setEstadoTitulo(resultado.getEstadoTituloInformada());
+			}
+
+		
+			// Cajamar: Condiciones se copian del activo si no estan informadas : Posesion Inicial
+			if(!Checks.esNulo(resultado.getPosesionInicialInformada()) && Checks.esNulo(resultado.getPosesionInicial()) ){
+				resultado.setPosesionInicial(resultado.getPosesionInicialInformada());
+			}
+		
+			// Cajamar: Condiciones se copian del activo si no estan informadas : Situacion Posesoria
+			if(!Checks.esNulo(resultado.getSituacionPosesoriaCodigoInformada()) && Checks.esNulo(resultado.getSituacionPosesoriaCodigo()) ){
+				resultado.setSituacionPosesoriaCodigo(resultado.getSituacionPosesoriaCodigoInformada());
+			}
+		}
+		
 		return resultado;
 	}
 	

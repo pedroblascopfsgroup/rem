@@ -53,6 +53,7 @@ public class DtoOfertasFilter extends WebDto {
 	private Boolean intencionFinanciar;
 	private String codigoSucursal;
 	private String tipoSucursal;
+	private String carteraCodigo;
 	
 	public Long getNumOferta() {
 		return numOferta;
@@ -306,6 +307,11 @@ public class DtoOfertasFilter extends WebDto {
 	public void setTipoSucursal(String tipoSucursal) {
 		this.tipoSucursal = tipoSucursal;
 	}
-	
+	public String getCarteraCodigo() {
+		return carteraCodigo;
+	}
+	public void setCarteraCodigo(String carteraCodigo) {
+		this.carteraCodigo = carteraCodigo;
+	}
 	
 }

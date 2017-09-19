@@ -1315,19 +1315,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		codigoEstado= me.getViewModel().get("expediente.codigoEstado");
 		bloqueado = me.getViewModel().get("expediente.bloqueado");
 		if(!bloqueado){		
-			if(CONST.ESTADOS_EXPEDIENTE['APROBADO']!=codigoEstado){
-				if(CONST.ESTADOS_EXPEDIENTE['VENDIDO']!=codigoEstado){
-					var ventanaCompradores= grid.up().up();
-					var expediente= me.getViewModel().get("expediente");
-					Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente}).show();
-					me.onClickBotonRefrescar();
-				}
-				else{
-					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.vendido"));
-				}
+			if(CONST.ESTADOS_EXPEDIENTE['VENDIDO']!=codigoEstado){
+				var ventanaCompradores= grid.up().up();
+				var expediente= me.getViewModel().get("expediente");
+				Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente}).show();
+				me.onClickBotonRefrescar();
 			}
 			else{
-				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.aprobado"));
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.vendido"));
 			}
 		}else{
 			me.fireEvent("errorToast","Expediente bloqueado");
@@ -1516,7 +1511,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		idComprador= record.get('id');
 		bloqueado = me.getViewModel().get("expediente.bloqueado");
 		if(!bloqueado){
-			if(CONST.ESTADOS_EXPEDIENTE['APROBADO']!=codigoEstado){
 				if(CONST.ESTADOS_EXPEDIENTE['VENDIDO']!=codigoEstado){
 					record.erase({
 						params: {idExpediente: idExpediente, idComprador: idComprador},
@@ -1545,9 +1539,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				else{
 					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.vendido"));
 				}
-			}else{
-				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.aprobado"));
-			}
 		}else{
 			me.fireEvent("errorToast", "Expediente bloqueado");
 		}
@@ -1929,6 +1920,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    	callback: function(options, success, response){
 				}   		     
 		});		
+	},
+	
+	onCambioTipoImpuesto: function(combo, value){
+		var me = this,
+    	tipoAplicable = me.lookupReference('tipoAplicable'),
+    	esCajamar = CONST.CARTERA['CAJAMAR'] == me.getViewModel().get('expediente.entidadPropietariaCodigo');
+		
+    	if (esCajamar || Ext.isEmpty(value))
+    		tipoAplicable.allowBlank = true;
+    	else
+    		tipoAplicable.allowBlank = false;
+
 	},
 	
 	onHaCambiadoFechaResolucion: function( field, newDate, oldDate, eOpts){

@@ -168,6 +168,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 							},
 							saveSuccessFn: function() {
 								this.up('valorespreciosactivo').funcionRecargar();
+								this.lookupController().refrescarActivo(true);
 							}
 					},
 					{

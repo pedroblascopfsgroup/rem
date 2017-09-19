@@ -115,6 +115,8 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	@Column(name="CANAL_DESCRIPCION")
 	private String canalDescripcion;
 	
+	@Column(name="CARTERA_CODIGO")
+	private String carteraCodigo;
 
 
 	public Date getFechaModificar() {
@@ -372,6 +374,15 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	public void setCanalDescripcion(String canalDescripcion) {
 		this.canalDescripcion = canalDescripcion;
 	}
+
+	public String getCarteraCodigo() {
+		return carteraCodigo;
+	}
+
+	public void setCarteraCodigo(String carteraCodigo) {
+		this.carteraCodigo = carteraCodigo;
+	}
+	
 	
 	 
 }

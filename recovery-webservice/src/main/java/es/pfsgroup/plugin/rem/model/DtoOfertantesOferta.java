@@ -11,6 +11,9 @@ public class DtoOfertantesOferta extends WebDto {
 	private String tipoDocumento;
 	private String numDocumento;
 	private String nombre;
+	private String tipoPersona;
+	private String estadoCivil;
+	private String regimenMatrimonial;
 
 
 	public String getId() {
@@ -42,6 +45,24 @@ public class DtoOfertantesOferta extends WebDto {
 	}
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
+	}
+	public String getTipoPersona() {
+		return tipoPersona;
+	}
+	public void setTipoPersona(String tipoPersona) {
+		this.tipoPersona = tipoPersona;
+	}
+	public String getEstadoCivil() {
+		return estadoCivil;
+	}
+	public void setEstadoCivil(String estadoCivil) {
+		this.estadoCivil = estadoCivil;
+	}
+	public String getRegimenMatrimonial() {
+		return regimenMatrimonial;
+	}
+	public void setRegimenMatrimonial(String regimenMatrimonial) {
+		this.regimenMatrimonial = regimenMatrimonial;
 	}
 
 }

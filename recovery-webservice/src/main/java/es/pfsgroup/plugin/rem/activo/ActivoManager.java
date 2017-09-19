@@ -280,9 +280,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Autowired
 	private GestorExpedienteComercialApi gestorExpedienteComercialApi;
 	
-	@Autowired
-	private GenericAdapter genericAdapter;
-
+	
 	@Autowired
 	private NotificatorServiceSancionOfertaAceptacionYRechazo notificatorServiceSancionOfertaAceptacionYRechazo;
 	
@@ -717,7 +715,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 
 				nuevoComprador.setCodigoPostal(oferta.getCliente().getCodigoPostal());
-
+				
+				if(!Checks.esNulo(oferta.getCliente().getTipoPersona())){
+					nuevoComprador.setTipoPersona(oferta.getCliente().getTipoPersona());
+				}
+				
 				genericDao.save(Comprador.class, nuevoComprador);
 
 				CompradorExpedientePk pk = new CompradorExpedientePk();
@@ -728,6 +730,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorExpedienteNuevo.setTitularContratacion(1);
 				compradorExpedienteNuevo.setPorcionCompra(parteCompraPrincipal);
 				compradorExpedienteNuevo.setBorrado(false);
+				compradorExpedienteNuevo.setPorcionCompra(100.00);
+				
+				if(!Checks.esNulo(oferta.getCliente().getEstadoCivil())){
+					compradorExpedienteNuevo.setEstadoCivil(oferta.getCliente().getEstadoCivil());
+				}
+				if(!Checks.esNulo(oferta.getCliente().getRegimenMatrimonial())){
+					compradorExpedienteNuevo.setRegimenMatrimonial(oferta.getCliente().getRegimenMatrimonial());
+				}
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
 			}
@@ -761,6 +771,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					} else {
 						Comprador nuevoCompradorAdicional = new Comprador();
 						CompradorExpediente compradorExpedienteAdicionalNuevo = new CompradorExpediente();
+						if(!Checks.esNulo(oferta.getCliente().getTipoPersona())){
+							nuevoCompradorAdicional.setTipoPersona(oferta.getCliente().getTipoPersona());
+						}
 	
 						nuevoCompradorAdicional.setDocumento(titularAdicional.getDocumento());
 						nuevoCompradorAdicional.setNombre(titularAdicional.getNombre());

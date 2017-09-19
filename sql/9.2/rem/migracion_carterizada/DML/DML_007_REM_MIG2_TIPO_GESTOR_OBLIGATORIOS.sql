@@ -51,10 +51,6 @@ DECLARE
         T_VAL('AAII'   ,'01'    ,'SPUBL'),
         T_VAL('AAII'   ,'01'    ,'HAYAGBOINM'),
         T_VAL('AAII'   ,'01'    ,'HAYASBOINM'),
-        T_VAL('AAII'   ,'01'    ,'FVDNEG'),
-        T_VAL('AAII'   ,'01'    ,'FVDBACKOFR'),
-        T_VAL('AAII'   ,'01'    ,'FVDBACKVNT'),
-        T_VAL('AAII'   ,'01'    ,'SUPFVD'),
 
         -- Sareb
         T_VAL('AAII'   ,'02'    ,'GADM'),
@@ -94,10 +90,6 @@ DECLARE
         T_VAL('AAII'   ,'06'    ,'SPUBL'),
         T_VAL('AAII'   ,'06'    ,'GCOM'),
         T_VAL('AAII'   ,'06'    ,'SCOM'),
-        T_VAL('AAII'   ,'06'    ,'FVDNEG'),
-        T_VAL('AAII'   ,'06'    ,'FVDBACKOFR'),
-        T_VAL('AAII'   ,'06'    ,'FVDBACKVNT'),
-        T_VAL('AAII'   ,'06'    ,'SUPFVD'),
         T_VAL('AAII'   ,'06'    ,'GGADM'),
         T_VAL('AAII'   ,'06'    ,'GTOCED'),
         T_VAL('AAII'   ,'06'    ,'CERT'),
@@ -109,10 +101,6 @@ DECLARE
         T_VAL('AAII'   ,'07'    ,'SPUBL'),
         T_VAL('AAII'   ,'07'    ,'GCOM'),
         T_VAL('AAII'   ,'07'    ,'SCOM'),
-        T_VAL('AAII'   ,'07'    ,'FVDNEG'),
-        T_VAL('AAII'   ,'07'    ,'FVDBACKOFR'),
-        T_VAL('AAII'   ,'07'    ,'FVDBACKVNT'),
-        T_VAL('AAII'   ,'07'    ,'SUPFVD'),
         
         -- Liberbank
         T_VAL('AAII'   ,'08'    ,'GPREC'),
@@ -121,10 +109,6 @@ DECLARE
         T_VAL('AAII'   ,'08'    ,'SPUBL'),
         T_VAL('AAII'   ,'08'    ,'GCOM'),
         T_VAL('AAII'   ,'08'    ,'SCOM'),
-        T_VAL('AAII'   ,'08'    ,'FVDNEG'),
-        T_VAL('AAII'   ,'08'    ,'FVDBACKOFR'),
-        T_VAL('AAII'   ,'08'    ,'FVDBACKVNT'),
-        T_VAL('AAII'   ,'08'    ,'SUPFVD'),
 
         -- Otras carteras
         T_VAL('AAII'   ,'04'    ,'GPREC'),
@@ -133,10 +117,6 @@ DECLARE
         T_VAL('AAII'   ,'04'    ,'SPUBL'),
         T_VAL('AAII'   ,'04'    ,'GCOM'),
         T_VAL('AAII'   ,'04'    ,'SCOM'),
-        T_VAL('AAII'   ,'04'    ,'FVDNEG'),
-        T_VAL('AAII'   ,'04'    ,'FVDBACKOFR'),
-        T_VAL('AAII'   ,'04'    ,'FVDBACKVNT'),
-        T_VAL('AAII'   ,'04'    ,'SUPFVD'),
 
         -- Cajamar
         T_VAL('AAFF'   ,'01'    ,'GCOM'),
@@ -145,10 +125,6 @@ DECLARE
         T_VAL('AAFF'   ,'01'    ,'SPUBL'),
         T_VAL('AAFF'   ,'01'    ,'HAYAGBOFIN'),
         T_VAL('AAFF'   ,'01'    ,'HAYASBOFIN'),
-        T_VAL('AAFF'   ,'01'    ,'FVDNEG'),
-        T_VAL('AAFF'   ,'01'    ,'FVDBACKOFR'),
-        T_VAL('AAFF'   ,'01'    ,'FVDBACKVNT'),
-        T_VAL('AAFF'   ,'01'    ,'SUPFVD'),
 
         -- Sareb
         T_VAL('AAFF'   ,'02'    ,'GCOM'),

@@ -48,12 +48,16 @@ public class DtoOfertasFilter extends WebDto {
 	private String telefonoOfertante;
 	private String emailOfertante;
 	private String documentoOfertante;
-	private Long gestoria;	
 	private String codigoPromocionPrinex;
 	private Boolean intencionFinanciar;
 	private String codigoSucursal;
 	private String tipoSucursal;
 	private String carteraCodigo;
+	private Long gestoria;
+	private String tipoPersona;
+	private String estadoCivil;
+	private String regimenMatrimonial;
+	
 	
 	public Long getNumOferta() {
 		return numOferta;
@@ -313,5 +317,23 @@ public class DtoOfertasFilter extends WebDto {
 	public void setCarteraCodigo(String carteraCodigo) {
 		this.carteraCodigo = carteraCodigo;
 	}
-	
+	public String getTipoPersona() {
+		return tipoPersona;
+	}
+	public void setTipoPersona(String tipoPersona) {
+		this.tipoPersona = tipoPersona;
+	}
+	public String getEstadoCivil() {
+		return estadoCivil;
+	}
+	public void setEstadoCivil(String estadoCivil) {
+		this.estadoCivil = estadoCivil;
+	}
+	public String getRegimenMatrimonial() {
+		return regimenMatrimonial;
+	}
+	public void setRegimenMatrimonial(String regimenMatrimonial) {
+		this.regimenMatrimonial = regimenMatrimonial;
+	}
+		
 }

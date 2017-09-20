@@ -43,6 +43,7 @@ import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
@@ -189,12 +190,21 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		boolean formalizacion = checkFormalizar(activo.getId());
 		ArrayList<String> clavesGestores = new ArrayList<String>();
 		String claveGestorComercial = this.getTipoGestorComercial(ofertaAceptada);
-		clavesGestores.addAll(Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial, GESTOR_BACKOFFICE));
 		
-
-		if (formalizacion) {
-			clavesGestores.add(GESTOR_FORMALIZACION);
-			clavesGestores.add(GESTOR_GESTORIA_FASE_3);
+		//DESTINATARIOS SI ES SAREB
+		if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)) {
+			clavesGestores.addAll(Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial));
+			if (formalizacion) {
+				clavesGestores.add(GESTOR_FORMALIZACION);
+				clavesGestores.add(GESTOR_GESTORIA_FASE_3);
+			}
+			
+		//DESTINATARIOS SI ES CAJAMAR
+		}else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
+			clavesGestores.addAll(Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial, GESTOR_BACKOFFICE));
+			if (formalizacion) {
+				clavesGestores.add(GESTOR_FORMALIZACION);
+			}
 		}
 
 		return clavesGestores.toArray(new String[]{});
@@ -421,7 +431,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		dtoSendNotificator.setTitulo(asunto);
 
 		String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
-		enviaNotificacionGenerico(asunto, cuerpoCorreo, true, destinatarios);
+		enviaNotificacionGenerico(tramite.getActivo(), asunto, cuerpoCorreo, true, destinatarios);
 	}
 
 	private String nombresOfertantes(ExpedienteComercial expediente) {
@@ -468,10 +478,10 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		dtoSendNotificator.setTitulo(asunto);
 
 		String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
-		enviaNotificacionGenerico(asunto, cuerpoCorreo, false, destinatarios);
+		enviaNotificacionGenerico(tramite.getActivo(), asunto, cuerpoCorreo, false, destinatarios);
 	}
 
-	private void enviaNotificacionGenerico(String asunto, String cuerpoCorreo, boolean adjuntaInstrucciones,
+	private void enviaNotificacionGenerico(Activo activo, String asunto, String cuerpoCorreo, boolean adjuntaInstrucciones,
 			String... destinatarios) {
 		if (Checks.esNulo(destinatarios)) {
 			throw new IllegalArgumentException("Es necesario especificar el destinatario de la notificación.");
@@ -481,14 +491,23 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		
 		FileItem f1 = null;
 		FileItem f2 = null;
+
 		try {
 
 			if (adjuntaInstrucciones) {
-				f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_formalizacion.pdf");
-				f2 = FileItemUtils.fromResource("docs/ficha_cliente.xlsx");
-				
-				adjuntos.add(createAdjunto(f1, "Instrucciones_Reserva_Formalizacion.pdf"));
-				adjuntos.add(createAdjunto(f2, "Ficha_cliente.xlsx"));
+				//ADJUNTOS SI ES CAJAMAR
+				if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
+					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_formalizacion.pdf");
+					f2 = FileItemUtils.fromResource("docs/ficha_cliente.xlsx");
+					
+					adjuntos.add(createAdjunto(f1, "Instrucciones_Reserva_Formalizacion.pdf"));
+					adjuntos.add(createAdjunto(f2, "Ficha_cliente.xlsx"));
+				}
+				//ADJUNTOS SI ES SAREB
+				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)) {
+					f1 = FileItemUtils.fromResource("docs/instrucciones_de_reserva.docx");
+					adjuntos.add(createAdjunto(f1, "Instrucciones_de_reserva.docx"));
+				}
 			}
 			genericAdapter.sendMail(Arrays.asList(destinatarios), mailsCC, asunto, cuerpoCorreo, adjuntos);
 		}finally {

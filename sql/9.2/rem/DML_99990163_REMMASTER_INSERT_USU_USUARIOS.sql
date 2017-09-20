@@ -37,7 +37,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('ficticioOfertaCajamar','hayaofertasycontraof@cajamar.com')
+    	T_TIPO_DATA('ficticioOfertaCajamar','pruebashrem@gmail.com')
     	); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

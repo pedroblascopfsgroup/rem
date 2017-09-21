@@ -1694,26 +1694,35 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		genericDao.save(CondicionanteExpediente.class, condiciones);
 
-		Reserva reserva = expedienteComercial.getReserva();
+		createReservaExpediente(expedienteComercial);
 
-		// Creamos la reserva si se existe en condiciones y no se ha creado todavia
-		// if(!Checks.esNulo(condiciones.getTipoCalculoReserva()) && Checks.esNulo(reserva)) {
+		return true;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Reserva createReservaExpediente(ExpedienteComercial expediente){
+		
+		CondicionanteExpediente condiciones = expediente.getCondicionante();
+		Reserva reserva = expediente.getReserva();
+		
 		if (!Checks.esNulo(condiciones.getSolicitaReserva()) && Checks.esNulo(reserva)) {
 			if (condiciones.getSolicitaReserva() == 1) {
 				reserva = new Reserva();
 				DDEstadosReserva estadoReserva = (DDEstadosReserva) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosReserva.class, DDEstadosReserva.CODIGO_PENDIENTE_FIRMA);
 				reserva.setEstadoReserva(estadoReserva);
-				reserva.setExpediente(expedienteComercial);
+				reserva.setExpediente(expediente);
 				reserva.setNumReserva(reservaDao.getNextNumReservaRem());
 
-				genericDao.save(Reserva.class, reserva);
-
-				// Actualiza la disponibilidad comercial del activo
-				ofertaApi.updateStateDispComercialActivosByOferta(expedienteComercial.getOferta());
 			}
 		}
-
-		return true;
+		
+		genericDao.save(Reserva.class, reserva);
+		
+		// Actualiza la disponibilidad comercial del activo
+		ofertaApi.updateStateDispComercialActivosByOferta(expediente.getOferta());
+		
+		return reserva;
 	}
 
 	public CondicionanteExpediente dtoCondicionantestoCondicionante(CondicionanteExpediente condiciones, DtoCondiciones dto) {
@@ -4270,6 +4279,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return importeExpediente.equals(totalImporteParticipacionActivos);
 	}
 	
+	
 	public DtoCondicionesActivoExpediente getCondicionesActivoExpediete(Long idExpediente, Long idActivo) {
 		DtoCondicionesActivoExpediente resultado = new DtoCondicionesActivoExpediente();
 		Activo activo = activoAdapter.getActivoById(idActivo);
@@ -4327,7 +4337,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			resultado.setViciosOcultos(condicionesActivo.getRenunciaSaneamientoVicios());
 		}
 		
-		
+/*		
 		if (!Checks.esNulo(activo.getCartera()) && 
 				DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())){
 			
@@ -4347,7 +4357,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				resultado.setSituacionPosesoriaCodigo(resultado.getSituacionPosesoriaCodigoInformada());
 			}
 		}
-		
+*/		
 		return resultado;
 	}
 	

@@ -39,14 +39,19 @@ AS
   TYPE T_ARRAY IS TABLE OF T_VAR;
   V_FUN T_ARRAY := T_ARRAY(
     ------    FUNCION   ---------------------------------------2---3---4---5---6---7---8---9--10--11--12--13--14--15--16--17--18--19--20--21--22--23--24--25--26--27--28--29--31--31--32--33--34--35--36--37--38--39--40--
+T_VAR( 'TAB_BUSQUEDA_ACTIVOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
+
 T_VAR( 'TAB_ACTIVO_DATOS_GENERALES','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'TAB_ACTIVO_ACTUACIONES','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'TAB_ACTIVO_GESTORES','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'MOSTRAR_COMBO_GESTORES','N','S','N','S','N','S','N','S','N','S','N','N','S','N','S','N','S','N','S','N','S','N','S','N','S','N','N','N','N','N','N','N','N','N','N','S','N','S','S','S','S','S','N','N','N','N'),
 T_VAR( 'TAB_ACTIVO_OBSERVACIONES','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','S','S','S','S','S','S','S','S','S','S','S'),
+T_VAR( 'ACTIVO_OBSERVACIONES_ADD','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','S','S','S','S','S','S','N','S','S','S','S','S','S','N','N','N','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'EDITAR_TAB_ACTIVO_FOTOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
+T_VAR( 'TAB_ACTIVO_FOTOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'EDITAR_TAB_ACTIVO_DOCUMENTOS','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'TAB_ACTIVO_DOCUMENTOS','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
+T_VAR( 'ACTIVO_DOCUMENTOS_ADD','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','N','N','N','N','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'TAB_ACTIVO_AGRUPACIONES','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'TAB_ACTIVO_ADMISION','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'TAB_ACTIVO_GESTION','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S'),
@@ -91,6 +96,7 @@ T_VAR( 'TAB_DATOS_PUBLICACION','S','S','S','S','S','S','S','S','S','S','N','S','
 T_VAR( 'TAB_COMERCIAL_VISITAS','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'TAB_COMERCIAL_OFERTAS','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'EDITAR_LIST_OFERTAS_ACTIVO','N','N','N','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','N','N','N','N'),
+T_VAR( 'BOTON_CREAR_TRABAJO','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
 
 T_VAR( 'TAB_DATOS_GENERALES_TRAMITE','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'TAB_TAREAS_TRAMITE','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
@@ -99,15 +105,18 @@ T_VAR( 'TAB_ACTIVOS_TRAMITE','S','S','S','S','S','S','S','S','S','S','N','S','S'
 T_VAR( 'BOTON_RESOLUCION_EXPEDIENTE','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'BOTON_ANULAR_TRAMITE','N','N','N','N','N','N','S','S','S','S','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','S','S','S','S'),
 
+T_VAR( 'EDITAR_LIST_AGRUPACIONES','S','S','S','S','N','N','S','S','S','S','N','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','S','S','S','N','N','N','N','S','S','S','S'),
 T_VAR( 'EDITAR_AGRUPACION','S','S','S','S','N','N','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','S','N','N','N','S','S','S','S','S','S','S','N','N','N','N'),
 T_VAR( 'TAB_AGRUPACION','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'EDITAR_TAB_LISTA_ACTIVOS_AGRUPACION','S','S','S','S','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','S','N','N','N','S','S','S','S','S','S','S','N','N','N','N'),
 T_VAR( 'TAB_LISTA_ACTIVOS_AGRUPACION','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
+T_VAR( 'EDITAR_TAB_PUBLICACION_LISTA_ACTIVOS_AGRUPACION','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'TAB_FOTOS_AGRUPACION','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
-T_VAR( 'EDITAR_TAB_FOTOS_AGRUPACION','N','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','S','N','N','N','N','N','N','N','N','N','N','N'),
+T_VAR( 'EDITAR_TAB_FOTOS_AGRUPACION','N','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','S','S','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'EDITAR_TAB_OBSERVACIONES_AGRUPACION','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','S','N','N','N','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'TAB_OBSERVACIONES_AGRUPACION','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'TAB_SUBDIVISIONES_AGRUPACION','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
+T_VAR( 'EDITAR_FOTOS_SUBDIVISION','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','','','','','N','N','N','N','N','N','N','S','S','S','S','N','S','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'EDITAR_TAB_COMERCIAL_AGRUPACION','N','N','N','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','S','N','N','N','N','N','N','N','S','S','S','S','S','S','S','N','N','N','N'),
 T_VAR( 'TAB_COMERCIAL_AGRUPACION','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S'),
 
@@ -125,6 +134,7 @@ T_VAR( 'TAB_FOTOS_PROVEEDOR_TRABAJO','S','S','S','S','S','S','S','S','S','S','N'
 T_VAR( 'EDITAR_TAB_FOTOS_PROVEEDOR_TRABAJO','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','S','S','N','S','S','N','S','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'EDITAR_TAB_DOCUMENTOS_TRABAJO','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'TAB_DOCUMENTOS_TRABAJO','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
+T_VAR( 'TRABAJO_DOCUMENTOS_ADD','S','S','S','S','N','N','S','S','S','S','N','S','S','S','S','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'EDITAR_GESTION_ECONOMICA_TRABAJO','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','S','S','N','S','S','N','S','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'TAB_GESTION_ECONOMICA_TRABAJO','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
 
@@ -151,6 +161,9 @@ T_VAR( 'TAB_TANTEO_RETRACTO_OFERTA_EXPEDIENTES','S','S','S','S','S','S','S','S',
 T_VAR( 'EDITAR_TAB_CONDICIONES_EXPEDIENTES','N','N','N','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','S','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'TAB_CONDICIONES_EXPEDIENTES','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'TAB_ACTIVOS_COMERCIALIZABLES_EXPEDIENTES','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S'),
+T_VAR( 'ECO_LISTADO_ACTIVOS_TANTEO','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','N','N','N','N','N','N','S','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
+T_VAR( 'ECO_LISTADO_ACTIVOS_CONDICIONES','N','N','N','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','N','N','N','N'),
+T_VAR( 'ECO_LISTADO_ACTIVOS_BLOQUEOS','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','N','N','N','N','N','N','S','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','S','S'),
 T_VAR( 'TAB_RESERVA_EXPEDIENTES','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'EDITAR_TAB_RESERVA_EXPEDIENTES','N','N','N','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','S','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','N','N'),
 T_VAR( 'TAB_COMPRADORES_EXPEDIENTES','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S'),
@@ -198,21 +211,6 @@ T_VAR( 'EDITAR_TAB_DATOS_PROVEEDORES','S','S','S','S','N','N','N','N','N','N','N
 T_VAR( 'TAB_DOCUMENTOS_PROVEEDORES','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'EDITAR_TAB_DOCUMENTOS_PROVEEDORES','S','S','S','S','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S'),
 
-T_VAR( 'MENU_DASHBOARD','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
-T_VAR( 'MENU_AGENDA','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S'),
-T_VAR( 'MENU_AGRUPACIONES','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
-T_VAR( 'MENU_TRABAJOS','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
-T_VAR( 'MENU_PRECIOS','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S'),
-T_VAR( 'MENU_PUBLICACION','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S'),
-T_VAR( 'MENU_COMERCIAL','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S'),
-T_VAR( 'MENU_ADMINISTRACION','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
-T_VAR( 'MENU_MASIVO','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','S','N','N','S','S','S','S','S','S','S','S','S','S','S','S'),
-T_VAR( 'MENU_CONFIGURACION','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
-T_VAR( 'MENU_ACTIVOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
-
-T_VAR( 'TAB_BUSQUEDA_ACTIVOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
-
-T_VAR( 'TAB_ACTIVO_FOTOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'MASIVO_DESDESPUBLICAR_FORZADO','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'ACTUALIZAR_PUBLICAR','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'ACTUALIZAR_OCULTARACTIVO','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
@@ -228,20 +226,24 @@ T_VAR( 'MASIVO_PROPUESTA_PRECIOS','N','N','N','N','N','N','S','S','S','S','N','N
 T_VAR( 'MASIVO_PROPUESTA_PRECIOS','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'MASIVO_PROPUESTA_PRECIOS','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'MASIVO_PROPUESTA_PRECIOS','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
-T_VAR( 'BOTON_CREAR_TRABAJO','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'ALTA_ACTIVOS_FINAN','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
-T_VAR( 'EDITAR_LIST_AGRUPACIONES','S','S','S','S','N','N','S','S','S','S','N','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','S','S','S','N','N','N','N','S','S','S','S'),
 T_VAR( 'ASISTIDAPDV_CARGA','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'MASIVO_LOTE_COMERCIAL','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','N','N','N','N'),
 T_VAR( 'MASIVO_DESPUBLICAR_FORZADO','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
-T_VAR( 'EDITAR_TAB_PUBLICACION_LISTA_ACTIVOS_AGRUPACION','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
-T_VAR( 'TRABAJO_DOCUMENTOS_ADD','S','S','S','S','N','N','S','S','S','S','N','S','S','S','S','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'SUBIR_LISTA_ACTIVOS_IBI','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','N','N','N','S','S','S','S','S','S','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
-T_VAR( 'ACTIVO_OBSERVACIONES_ADD','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','S','S','S','S','S','S','N','S','S','S','S','S','S','N','N','N','S','S','S','S','S','S','S','S','S','S','S'),
-T_VAR( 'ACTIVO_DOCUMENTOS_ADD','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','N','N','N','N','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S'),
-T_VAR( 'ECO_LISTADO_ACTIVOS_TANTEO','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','N','N','N','N','N','N','S','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
-T_VAR( 'ECO_LISTADO_ACTIVOS_CONDICIONES','N','N','N','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','N','N','N','N'),
-T_VAR( 'ECO_LISTADO_ACTIVOS_BLOQUEOS','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','N','N','N','N','N','N','S','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','S','S')
+
+
+T_VAR( 'MENU_DASHBOARD','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
+T_VAR( 'MENU_AGENDA','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S'),
+T_VAR( 'MENU_AGRUPACIONES','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
+T_VAR( 'MENU_TRABAJOS','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
+T_VAR( 'MENU_PRECIOS','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S'),
+T_VAR( 'MENU_PUBLICACION','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S'),
+T_VAR( 'MENU_COMERCIAL','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S'),
+T_VAR( 'MENU_ADMINISTRACION','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
+T_VAR( 'MENU_MASIVO','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','S','N','N','S','S','S','S','S','S','S','S','S','S','S','S'),
+T_VAR( 'MENU_CONFIGURACION','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
+T_VAR( 'MENU_ACTIVOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S')
 );
 V_TMP_VAR T_VAR;
 

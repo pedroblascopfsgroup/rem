@@ -1814,6 +1814,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if (!Checks.esNulo(dto.getIdActivo())) {
 			activo = activoDao.get(dto.getIdActivo());
 		}
+		
+		if (activo==null) return false;
 
 		try {
 			// Terminar periodo de vigencia del último proveedor (fecha hasta).

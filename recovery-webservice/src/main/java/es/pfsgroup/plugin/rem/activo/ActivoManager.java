@@ -508,7 +508,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		try{
 			ExpedienteComercial expedienteComercial = crearExpedienteGuardado(oferta, trabajo);
-			expedienteComercial = crearExpedienteReserva(expedienteComercial, oferta);
+			expedienteComercial = crearExpedienteReserva(expedienteComercial);
+			expedienteComercialApi.crearCondicionesActivoExpediente(oferta.getActivoPrincipal(), expedienteComercial);
 		} catch (Exception ex){
 			logger.error("Error en activoManager", ex);
 			return false;
@@ -517,9 +518,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Transactional(readOnly = false)
-	private ExpedienteComercial crearExpedienteReserva(ExpedienteComercial expedienteComercial, Oferta oferta){
+	private ExpedienteComercial crearExpedienteReserva(ExpedienteComercial expedienteComercial){
 		//HREOS-2799
 		//Activos de Cajamar, debe tener en Reserva - tipo de Arras por defecto: Confirmatorias
+		Oferta oferta = expedienteComercial.getOferta();
+		
 		if(!Checks.esNulo(oferta.getActivoPrincipal())
 				&& !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
 				&& DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
@@ -590,44 +593,43 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			nuevoCondicionante.setTipoCalculoReserva(tipoCalculoImporteFijo);
 			nuevoCondicionante.setImporteReserva(new Double(1000));
 			nuevoCondicionante.setPlazoFirmaReserva(5);
+
+			//Obtiene las condiciones del activo con la misma logica que se aplica para calcularlas
+			// y mostrarlas en pantalla, para copiarlas en las condiciones al comprador
+			Activo activo = oferta.getActivoPrincipal();
 			
-			if(!Checks.esNulo(nuevoExpediente.getOferta())
-					&& !Checks.esNulo(nuevoExpediente.getOferta().getActivoPrincipal())
-					&& !Checks.esNulo(nuevoExpediente.getOferta().getActivoPrincipal().getId()) ){
-
-				//Obtiene las condiciones del activo con la misma logica que se aplica para calcularlas
-				// y mostrarlas en pantalla, para copiarlas en las condiciones al comprador
-				Activo activo = nuevoExpediente.getOferta().getActivoPrincipal();
-				if (activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getFechaTomaPosesion() != null) {
-					nuevoCondicionante.setPosesionInicial(1);
-				} else {
-					nuevoCondicionante.setPosesionInicial(0);
-				}
-
-				if (activo.getTitulo() != null && activo.getTitulo().getEstado() != null) {
-					nuevoCondicionante.setEstadoTitulo(activo.getTitulo().getEstado());
-				}
-				if (activo.getSituacionPosesoria() != null) {
-					if (activo.getSituacionPosesoria().getOcupado() != null
-							&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(0))) {
-						DDSituacionesPosesoria situacionPosesoriaLibre = (DDSituacionesPosesoria) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionesPosesoria.class, DDSituacionesPosesoria.SITUACION_POSESORIA_LIBRE);
-						nuevoCondicionante.setSituacionPosesoria(situacionPosesoriaLibre);
-					} else if (activo.getSituacionPosesoria().getOcupado() != null
-							&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(1))
-							&& activo.getSituacionPosesoria().getConTitulo() != null
-							&& activo.getSituacionPosesoria().getConTitulo().equals(Integer.valueOf(1))) {
-						DDSituacionesPosesoria situacionPosesoriaOcupadoTitulo = (DDSituacionesPosesoria) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionesPosesoria.class, DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_CON_TITULO);
-						nuevoCondicionante.setSituacionPosesoria(situacionPosesoriaOcupadoTitulo);
-					} else if (activo.getSituacionPosesoria().getOcupado() != null
-							&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(1))
-							&& activo.getSituacionPosesoria().getConTitulo() != null
-							&& activo.getSituacionPosesoria().getConTitulo().equals(Integer.valueOf(0))) {
-						DDSituacionesPosesoria situacionPosesoriaOcupadoSinTitulo = (DDSituacionesPosesoria) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionesPosesoria.class, DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_SIN_TITULO);
-						nuevoCondicionante.setSituacionPosesoria(situacionPosesoriaOcupadoSinTitulo);
-					}
-				}
-
+			// Como estamos en la creacion del expediente crea directamente las condiciones, no busca si ya existen condiciones del Expediente-Activo
+//			CondicionesActivo condicionesActivo = new CondicionesActivo();
+//			condicionesActivo.
+			if (activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getFechaTomaPosesion() != null) {
+				nuevoCondicionante.setPosesionInicial(1);
+			} else {
+				nuevoCondicionante.setPosesionInicial(0);
 			}
+
+			if (activo.getTitulo() != null && activo.getTitulo().getEstado() != null) {
+				nuevoCondicionante.setEstadoTitulo(activo.getTitulo().getEstado());
+			}
+			if (activo.getSituacionPosesoria() != null) {
+				if (activo.getSituacionPosesoria().getOcupado() != null
+						&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(0))) {
+					DDSituacionesPosesoria situacionPosesoriaLibre = (DDSituacionesPosesoria) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionesPosesoria.class, DDSituacionesPosesoria.SITUACION_POSESORIA_LIBRE);
+					nuevoCondicionante.setSituacionPosesoria(situacionPosesoriaLibre);
+				} else if (activo.getSituacionPosesoria().getOcupado() != null
+						&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(1))
+						&& activo.getSituacionPosesoria().getConTitulo() != null
+						&& activo.getSituacionPosesoria().getConTitulo().equals(Integer.valueOf(1))) {
+					DDSituacionesPosesoria situacionPosesoriaOcupadoTitulo = (DDSituacionesPosesoria) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionesPosesoria.class, DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_CON_TITULO);
+					nuevoCondicionante.setSituacionPosesoria(situacionPosesoriaOcupadoTitulo);
+				} else if (activo.getSituacionPosesoria().getOcupado() != null
+						&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(1))
+						&& activo.getSituacionPosesoria().getConTitulo() != null
+						&& activo.getSituacionPosesoria().getConTitulo().equals(Integer.valueOf(0))) {
+					DDSituacionesPosesoria situacionPosesoriaOcupadoSinTitulo = (DDSituacionesPosesoria) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionesPosesoria.class, DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_SIN_TITULO);
+					nuevoCondicionante.setSituacionPosesoria(situacionPosesoriaOcupadoSinTitulo);
+				}
+			}
+
 		}
 
 		// Comprobamos si tiene derecho de tanteo

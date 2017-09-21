@@ -37,6 +37,7 @@ import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
@@ -237,6 +238,13 @@ public interface ExpedienteComercialApi {
 	 */
 	boolean saveCondicionesExpediente(DtoCondiciones dto, Long idExpediente);
 
+	/**
+	 * Metodo que crea la reserva para un expediente comercial
+	 * @param expediente
+	 * @return
+	 */
+	public Reserva createReservaExpediente(ExpedienteComercial expediente);
+	
 	/**
 	 * Método que guarda la información de la pestaña de un comprador del
 	 * expediente

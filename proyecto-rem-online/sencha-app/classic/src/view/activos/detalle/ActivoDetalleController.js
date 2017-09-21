@@ -2477,7 +2477,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         });	
     	
     },
-    
+  
+  
   onClickPropagation : function(btn) {
     var me = this;
 
@@ -2486,14 +2487,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
               return activo.activoId == me.getViewModel().get("activo.id");
             }), 1)[0];
 
-
     // Abrimos la ventana de selección de activos
     var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {
           form : null,
           activoActual : activo,
           activos : activosPropagables,
           tabData : null,
-          propagableData : null
+          propagableData : null,
+          targetGrid: 'mediadoractivo'
         }).show();
 
     me.getView().add(ventanaOpcionesPropagacionCambios);
@@ -2753,7 +2754,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 	
 	onClickGuardarPropagarCambios: function(btn) {
-		
     	var me = this,
     	window = btn.up("window"),
     	grid = me.lookupReference("listaActivos"),
@@ -2761,7 +2761,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	formActivo = window.form,
     	activosSeleccionados = grid.getSelectionModel().getSelection(),
     	opcionPropagacion = radioGroup.getValue().seleccion,
-    	cambios =  window.propagableData;
+    	cambios =  window.propagableData,
+    	targetGrid = window.targetGrid;
 
 		me.fireEvent("log", cambios);
 		
@@ -2770,39 +2771,52 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    	return false;
     	}
     	
-    	// Si estamos modificando una pestaña con formulario
-    	if(!Ext.isEmpty(formActivo)) {
-    		
-    		var successFn = function(record, operation) {
-				if(activosSeleccionados.length > 0) { 
-	    			me.propagarCambios(window, activosSeleccionados);
-	    		} else {
-	    			window.destroy();
-	    			me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-					me.getView().unmask();
-					me.refrescarActivo(formActivo.refreshAfterSave);
-					me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
-	    		}
-	    	};
+	    // Si estamos modificando una pestaña con formulario
+	    if (Ext.isEmpty(targetGrid)) {
 	    	
-	    	me.saveActivo(window.tabData, successFn);
-	    	
-         } else {
-			
-         	var successFn = function(record, operation) {
-			      if (activosSeleccionados.length > 0) {
-			        me.propagarCambios(window, activosSeleccionados);
-			      } else {
-			        window.destroy();
-			        me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-			        me.getView().unmask();
-			        me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
-			      }
-         	};
-         	
-         	me.saveActivo(window.tabData, successFn);
-         	
-		    }
+	      if (!Ext.isEmpty(formActivo)) {	
+	        var successFn = function(record, operation) {
+	          if (activosSeleccionados.length > 0) {
+	            me.propagarCambios(window, activosSeleccionados);
+	          } else {
+	            window.destroy();
+	            me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	            me.getView().unmask();
+	            me.refrescarActivo(formActivo.refreshAfterSave);
+	            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+	          }
+	        };
+	
+	        me.saveActivo(window.tabData, successFn);
+	
+	      } else {
+	
+	        var successFn = function(record, operation) {
+	          if (activosSeleccionados.length > 0) {
+	            me.propagarCambios(window, activosSeleccionados);
+	          } else {
+	            window.destroy();
+	            me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	            me.getView().unmask();
+	            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+	          }
+	        };
+	
+	        me.saveActivo(window.tabData, successFn);
+	
+	      }
+	    } else {
+			if(targetGrid=='mediadoractivo') {
+				
+		        var successFn = function(record, operation) {
+		            window.destroy();
+		            me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		            me.getView().unmask();
+		            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+		        };
+		        me.saveActivo(me.createTabDataHistoricoMediadores(activosSeleccionados), successFn);
+			}
+	    }
 	     window.mask("Guardando activos 1 de " + (activosSeleccionados.length + 1));
 	},
     
@@ -2824,20 +2838,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	 */
     propagarCambios: function(window, activos) {
     	
-    	var me = this
+    	var me = this,
     	grid = window.down("grid"),
     	propagableData = window.propagableData,
     	numTotalActivos = grid.getSelectionModel().getSelection().length + 1,
+    	targetGrid = window.targetGrid,
     	numActivoActual = numTotalActivos;
 
     	if (activos.length>0) {
-    		
     		var activo = activos.shift();
     		
     		numActivoActual = numTotalActivos - activos.length;
     		
-    		propagableData.id = activo.get("activoId");
-			
+    		if (Ext.isEmpty(targetGrid)) {
+    			propagableData.id = activo.get("activoId");
+    		} else {
+    			if(targetGrid=='mediadoractivo') {
+    				propagableData = me.createTabDataHistoricoMediadores(activos);
+    				// Los lanzamos todos de golpe sin necesidad de iterar
+    				activos = [];
+    			}
+    		}
+
     		var successFn = function(response, opts){
 				// Lanzamos el evento de refrescar el activo por si está abierto.
 				me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], activo.get("activoId"));
@@ -2888,7 +2910,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	}
     },
     
-  createPropagableDataHistoricoMediadores : function(list) {
+  createTabDataHistoricoMediadores : function(list) {
     var me = this, tabData = {};
     tabData.id = me.getViewModel().get("activo.id");
     tabData.models = [];
@@ -2898,7 +2920,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
           model.name = 'mediadoractivo';
           model.type = 'activo';
           model.data = {};
-          model.data.idActivo = record.id;
+          model.data.idActivo = record.data.activoId;
           tabData.models.push(model);
         });
     return tabData;

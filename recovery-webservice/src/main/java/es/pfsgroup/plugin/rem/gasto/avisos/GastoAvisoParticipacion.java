@@ -36,17 +36,19 @@ public class GastoAvisoParticipacion implements GastoAvisadorApi {
 		if(!Checks.esNulo(gasto)){
 			
 			List<VBusquedaGastoActivo> activosGasto= gastoProveedorApi.getListActivosGastos(gasto.getId());
-			for(VBusquedaGastoActivo ag: activosGasto){
-				if(!Checks.esNulo(ag.getParticipacion())) {
-					String participacion = ag.getParticipacion().toString();
-					participacion = participacion.replace(',', '.');
-					participacionTotal = participacionTotal.add(new BigDecimal(participacion));
+			if(activosGasto.size()>0) {
+				for(VBusquedaGastoActivo ag: activosGasto){
+					if(!Checks.esNulo(ag.getParticipacion())) {
+						String participacion = ag.getParticipacion().toString();
+						participacion = participacion.replace(',', '.');
+						participacionTotal = participacionTotal.add(new BigDecimal(participacion));
+					}
 				}
-			}
-			
-			if(!participacionCien.equals(participacionTotal)){
-				dtoAviso.setDescripcion("% participación de activos incorrecto");
-				dtoAviso.setId(String.valueOf(gasto.getId()));	
+				
+				if(!participacionCien.equals(participacionTotal)){
+					dtoAviso.setDescripcion("% participación de activos incorrecto");
+					dtoAviso.setId(String.valueOf(gasto.getId()));	
+				}
 			}
 			
 		}

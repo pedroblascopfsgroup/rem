@@ -11,6 +11,7 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.CondicionesActivo;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
@@ -37,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
@@ -237,6 +239,13 @@ public interface ExpedienteComercialApi {
 	 */
 	boolean saveCondicionesExpediente(DtoCondiciones dto, Long idExpediente);
 
+	/**
+	 * Metodo que crea la reserva para un expediente comercial
+	 * @param expediente
+	 * @return
+	 */
+	public Reserva createReservaExpediente(ExpedienteComercial expediente);
+	
 	/**
 	 * Método que guarda la información de la pestaña de un comprador del
 	 * expediente
@@ -817,5 +826,14 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public boolean importeExpedienteMenorPreciosMinimosActivos(Long idTramite);
+
+	/**
+	 * Crea las condiciones iniciales para un Activo-Expediente. Se le pasa el activo por parametro porque no 
+	 * siempre coincidira con el activo principal de la oferta (relacionado con expediente)
+	 * @param activo
+	 * @param expediente
+	 * @return
+	 */
+	CondicionesActivo crearCondicionesActivoExpediente(Activo activo, ExpedienteComercial expediente);
 
 }

@@ -1694,26 +1694,88 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		genericDao.save(CondicionanteExpediente.class, condiciones);
 
-		Reserva reserva = expedienteComercial.getReserva();
+		createReservaExpediente(expedienteComercial);
 
-		// Creamos la reserva si se existe en condiciones y no se ha creado todavia
-		// if(!Checks.esNulo(condiciones.getTipoCalculoReserva()) && Checks.esNulo(reserva)) {
+		return true;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public CondicionesActivo crearCondicionesActivoExpediente(Activo activo, ExpedienteComercial expediente){
+		// Como este metodo es para la creacion del expediente crea directamente las condiciones, 
+		// no busca si ya existen condiciones del Expediente-Activo
+		CondicionesActivo condicionesActivo = new CondicionesActivo();
+//		Oferta oferta = expediente.getOferta();
+		
+		condicionesActivo.setActivo(activo);
+		condicionesActivo.setExpediente(expediente);
+		condicionesActivo.setAuditoria(Auditoria.getNewInstance());
+		
+		// HREOS-2799
+		//Activos de Cajamar, deben copiar las condiciones informadas del activo en las condiciones al comprador
+		if(!Checks.esNulo(activo)
+				&& !Checks.esNulo(activo.getCartera())
+				&& DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())){
+			
+			if (activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getFechaTomaPosesion() != null) {
+				condicionesActivo.setPosesionInicial(1);
+			} else {
+				condicionesActivo.setPosesionInicial(0);
+			}
+
+			if (activo.getTitulo() != null && activo.getTitulo().getEstado() != null) {
+				condicionesActivo.setEstadoTitulo(activo.getTitulo().getEstado());
+			}
+			if (activo.getSituacionPosesoria() != null) {
+				if (activo.getSituacionPosesoria().getOcupado() != null
+						&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(0))) {
+					DDSituacionesPosesoria situacionPosesoriaLibre = (DDSituacionesPosesoria) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionesPosesoria.class, DDSituacionesPosesoria.SITUACION_POSESORIA_LIBRE);
+					condicionesActivo.setSituacionPosesoria(situacionPosesoriaLibre);
+				} else if (activo.getSituacionPosesoria().getOcupado() != null
+						&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(1))
+						&& activo.getSituacionPosesoria().getConTitulo() != null
+						&& activo.getSituacionPosesoria().getConTitulo().equals(Integer.valueOf(1))) {
+					DDSituacionesPosesoria situacionPosesoriaOcupadoTitulo = (DDSituacionesPosesoria) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionesPosesoria.class, DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_CON_TITULO);
+					condicionesActivo.setSituacionPosesoria(situacionPosesoriaOcupadoTitulo);
+				} else if (activo.getSituacionPosesoria().getOcupado() != null
+						&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(1))
+						&& activo.getSituacionPosesoria().getConTitulo() != null
+						&& activo.getSituacionPosesoria().getConTitulo().equals(Integer.valueOf(0))) {
+					DDSituacionesPosesoria situacionPosesoriaOcupadoSinTitulo = (DDSituacionesPosesoria) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionesPosesoria.class, DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_SIN_TITULO);
+					condicionesActivo.setSituacionPosesoria(situacionPosesoriaOcupadoSinTitulo);
+				}
+			}
+		}
+		
+		genericDao.save(CondicionesActivo.class, condicionesActivo);
+		
+		return condicionesActivo;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Reserva createReservaExpediente(ExpedienteComercial expediente){
+		
+		CondicionanteExpediente condiciones = expediente.getCondicionante();
+		Reserva reserva = expediente.getReserva();
+		
 		if (!Checks.esNulo(condiciones.getSolicitaReserva()) && Checks.esNulo(reserva)) {
 			if (condiciones.getSolicitaReserva() == 1) {
 				reserva = new Reserva();
 				DDEstadosReserva estadoReserva = (DDEstadosReserva) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosReserva.class, DDEstadosReserva.CODIGO_PENDIENTE_FIRMA);
 				reserva.setEstadoReserva(estadoReserva);
-				reserva.setExpediente(expedienteComercial);
+				reserva.setExpediente(expediente);
 				reserva.setNumReserva(reservaDao.getNextNumReservaRem());
-
-				genericDao.save(Reserva.class, reserva);
-
-				// Actualiza la disponibilidad comercial del activo
-				ofertaApi.updateStateDispComercialActivosByOferta(expedienteComercial.getOferta());
+				reserva.setAuditoria(Auditoria.getNewInstance());
 			}
 		}
-
-		return true;
+		
+		genericDao.save(Reserva.class, reserva);
+		
+		// Actualiza la disponibilidad comercial del activo
+		ofertaApi.updateStateDispComercialActivosByOferta(expediente.getOferta());
+		
+		return reserva;
 	}
 
 	public CondicionanteExpediente dtoCondicionantestoCondicionante(CondicionanteExpediente condiciones, DtoCondiciones dto) {
@@ -4270,6 +4332,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return importeExpediente.equals(totalImporteParticipacionActivos);
 	}
 	
+	
 	public DtoCondicionesActivoExpediente getCondicionesActivoExpediete(Long idExpediente, Long idActivo) {
 		DtoCondicionesActivoExpediente resultado = new DtoCondicionesActivoExpediente();
 		Activo activo = activoAdapter.getActivoById(idActivo);
@@ -4327,7 +4390,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			resultado.setViciosOcultos(condicionesActivo.getRenunciaSaneamientoVicios());
 		}
 		
-		
+/*		
 		if (!Checks.esNulo(activo.getCartera()) && 
 				DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())){
 			
@@ -4347,7 +4410,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				resultado.setSituacionPosesoriaCodigo(resultado.getSituacionPosesoriaCodigoInformada());
 			}
 		}
-		
+*/		
 		return resultado;
 	}
 	

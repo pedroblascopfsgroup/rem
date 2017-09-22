@@ -47,7 +47,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 				        	fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
 				        	name: 'entidadPropietariaCodigo',
 				        	displayField: 'descripcion',
-    						valueField: 'id',
+    						valueField: 'codigo',
 				        	bind: {
 			            		store: '{comboEntidadPropietaria}'
 			            	},

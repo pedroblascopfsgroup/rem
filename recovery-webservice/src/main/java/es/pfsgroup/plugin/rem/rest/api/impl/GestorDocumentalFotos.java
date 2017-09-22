@@ -155,7 +155,7 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 
 	@Override
 	public FileResponse uploadSubdivision(File fileToUpload, String name, BigDecimal idSubdivision, ActivoAgrupacion agrupacion,
-			String descripcion) throws IOException, RestClientException, HttpClientException {
+			String descripcion,TIPO tipo,PRINCIPAL principal,SITUACION situacion ) throws IOException, RestClientException, HttpClientException {
 		FileUpload file = new FileUpload();
 		file.setFile_base64(FileUtilsREM.base64Encode(fileToUpload));
 		file.setBasename(name);
@@ -170,6 +170,29 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 
 		if (descripcion != null) {
 			metadata.put("descripcion", descripcion);
+		}
+		if (tipo != null) {
+			if (tipo.equals(TIPO.WEB)) {
+				metadata.put("tipo_foto", "01");
+			} else if (tipo.equals(TIPO.TECNICA)) {
+				metadata.put("tipo_foto", "02");
+			} else if (tipo.equals(TIPO.TESTIGO)) {
+				metadata.put("tipo_foto", "03");
+			}
+		}
+		if (principal != null) {
+			if (principal.equals(PRINCIPAL.SI)) {
+				metadata.put("principal", "1");
+			} else if (principal.equals(PRINCIPAL.NO)) {
+				metadata.put("principal", "0");
+			}
+		}
+		if (situacion != null) {
+			if (situacion.equals(SITUACION.INTERIOR)) {
+				metadata.put("interior_exterior", "1");
+			} else {
+				metadata.put("interior_exterior", "0");
+			}
 		}
 
 		metadata.put("fecha_subida", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));

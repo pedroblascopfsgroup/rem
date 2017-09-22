@@ -79,7 +79,7 @@ Ext.define('HreRem.view.activos.detalle.FotosTecnicasActivo', {
                         s = l !== 1 ? 's' : '';
                     this.up('panel').setTitle('Fotos Técnicas (' + l + ' item' + s + ' seleccionado' +  s + ')');
                 },
-                itemdblclick: function(dataview,record) {
+                itemclick: function(dataview,record) {
 	        		this.up('form').setBindRecord(record.data);
 	        	}
             }

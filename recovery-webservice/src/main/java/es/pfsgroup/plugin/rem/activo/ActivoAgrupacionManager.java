@@ -41,8 +41,12 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.TIPO;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
@@ -269,6 +273,11 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 		BigDecimal subdivisionId = new BigDecimal(fileItem.getParameter("id"));
 		Long agrupacionId = Long.parseLong(fileItem.getParameter("agrId"));
+		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
+		DDTipoFoto tipoFoto = (DDTipoFoto) genericDao.get(DDTipoFoto.class, filtroTipo);
+		TIPO tipo = null;
+		SITUACION situacion;
+		PRINCIPAL principal = null;
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", agrupacionId);
 		ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
 		FileResponse fileReponse;
@@ -276,11 +285,30 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		Integer orden = activoApi.getMaxOrdenFotoByIdSubdivision(agrupacionId, subdivisionId);
 		orden++;
 		try {
+			//el gestor documental no esta activo en local/inte, para probar negarlo
 			if (gestorDocumentalFotos.isActive()) {
-
+				
+				if (tipoFoto.getCodigo().equals("01")) {
+					tipo = TIPO.WEB;
+				} else if (tipoFoto.getCodigo().equals("02")) {
+					tipo = TIPO.TECNICA;
+				} else if (tipoFoto.getCodigo().equals("03")) {
+					tipo = TIPO.TESTIGO;
+				}
+				if (Boolean.valueOf(fileItem.getParameter("principal"))) {
+					principal = PRINCIPAL.SI;
+				} else {
+					principal = PRINCIPAL.NO;
+				}
+				if (Boolean.valueOf(fileItem.getParameter("interiorExterior"))) {
+					situacion = SITUACION.INTERIOR;
+				} else {
+					situacion = SITUACION.EXTERIOR;
+				}
+				
 				fileReponse = gestorDocumentalFotos.uploadSubdivision(fileItem.getFileItem().getFile(),
 						fileItem.getFileItem().getFileName(), subdivisionId, agrupacion,
-						fileItem.getParameter("descripcion"));
+						fileItem.getParameter("descripcion"),tipo,principal,situacion);
 				activoFoto = new ActivoFoto(fileReponse.getData());
 
 			} else {
@@ -294,10 +322,14 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 			activoFoto.setTamanyo(fileItem.getFileItem().getLength());
 
 			activoFoto.setNombre(fileItem.getFileItem().getFileName());
-
+			
 			activoFoto.setDescripcion(fileItem.getParameter("descripcion"));
 
-			activoFoto.setPrincipal(false);
+			activoFoto.setPrincipal(Boolean.valueOf(fileItem.getParameter("principal")));
+			
+			activoFoto.setTipoFoto(tipoFoto);
+			
+			activoFoto.setInteriorExterior(Boolean.valueOf(fileItem.getParameter("interiorExterior")));
 
 			activoFoto.setFechaDocumento(new Date());
 

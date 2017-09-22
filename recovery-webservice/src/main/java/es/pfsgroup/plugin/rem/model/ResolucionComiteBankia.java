@@ -25,7 +25,9 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoDenegacionResolucion;
+import es.pfsgroup.plugin.rem.model.dd.DDPenitenciales;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
 
 
@@ -79,6 +81,14 @@ public class ResolucionComiteBankia implements Serializable, Auditable {
 	
 	@Column(name = "RCB_IMPORTE_CONTRAOFR")
 	private Double importeContraoferta;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_MAN_ID")
+	private DDMotivoAnulacionExpediente motivoAnulacion;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PEN_ID")
+	private DDPenitenciales penitenciales;
 	
 	
 
@@ -155,6 +165,23 @@ public class ResolucionComiteBankia implements Serializable, Auditable {
 
 	public void setTipoResolucion(DDTipoResolucion tipoResolucion) {
 		this.tipoResolucion = tipoResolucion;
+	}
+	
+	
+	public DDMotivoAnulacionExpediente getMotivoAnulacion() {
+		return motivoAnulacion;
+	}
+
+	public void setMotivoAnulacion(DDMotivoAnulacionExpediente motivoAnulacion) {
+		this.motivoAnulacion = motivoAnulacion;
+	}
+
+	public DDPenitenciales getPenitenciales() {
+		return penitenciales;
+	}
+
+	public void setPenitenciales(DDPenitenciales penitenciales) {
+		this.penitenciales = penitenciales;
 	}
 
 	public Long getVersion() {

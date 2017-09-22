@@ -9,6 +9,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Dicci
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 
@@ -35,6 +36,10 @@ public class ResolucionComiteDto implements Serializable{
 	private Date fechaAnulacion;
 	private Double importeContraoferta;
 	private String codigoTipoResolucion;
+	private String devolucion;
+	@Diccionary(clase = DDMotivoAnulacionExpediente.class, message = "El codigoAnulacion no existe", groups = { Insert.class, Update.class })
+	private String codigoAnulacion;
+	private String penitenciales;
 	
 	
 	public Long getOfertaHRE() {
@@ -84,6 +89,24 @@ public class ResolucionComiteDto implements Serializable{
 	}
 	public void setCodigoTipoResolucion(String codigoTipoResolucion) {
 		this.codigoTipoResolucion = codigoTipoResolucion;
+	}
+	public String getDevolucion() {
+		return devolucion;
+	}
+	public void setDevolucion(String devolucion) {
+		this.devolucion = devolucion;
+	}
+	public String getCodigoAnulacion() {
+		return codigoAnulacion;
+	}
+	public void setCodigoAnulacion(String codigoAnulacion) {
+		this.codigoAnulacion = codigoAnulacion;
+	}
+	public String getPenitenciales() {
+		return penitenciales;
+	}
+	public void setPenitenciales(String penitenciales) {
+		this.penitenciales = penitenciales;
 	}
 
 	

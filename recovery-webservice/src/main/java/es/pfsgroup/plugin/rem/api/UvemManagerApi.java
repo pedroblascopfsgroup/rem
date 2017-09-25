@@ -24,6 +24,10 @@ public interface UvemManagerApi {
 	public enum INDICADOR_DEVOLUCION_RESERVA {
 		DEVOLUCION_RESERVA, NO_DEVOLUCION_RESERVA
 	}
+	
+	public enum CODIGO_SERVICIO_MODIFICACION {
+		PROPUESTA_ANULACION_RESERVA_FIRMADA, ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA
+	}
 
 	/******************************************* TASACIONES ***************************************************/
 
@@ -178,6 +182,6 @@ public interface UvemManagerApi {
 	 * @throws Exception
 	 */
 	public void notificarDevolucionReserva(String codigoDeOfertaHaya, MOTIVO_ANULACION motivoAnulacionReserva,
-			INDICADOR_DEVOLUCION_RESERVA indicadorDevolucionReserva) throws Exception;
+			INDICADOR_DEVOLUCION_RESERVA indicadorDevolucionReserva,CODIGO_SERVICIO_MODIFICACION codigoServicioModificacion) throws Exception;
 
 }

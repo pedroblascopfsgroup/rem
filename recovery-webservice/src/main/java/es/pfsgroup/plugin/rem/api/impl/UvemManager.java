@@ -31,6 +31,8 @@ import es.cajamadrid.servicios.GM.GMPAJC11_INS.StructCabeceraAplicacionGMPAJC11_
 import es.cajamadrid.servicios.GM.GMPAJC11_INS.StructCabeceraFuncionalPeticion;
 import es.cajamadrid.servicios.GM.GMPAJC11_INS.StructCabeceraTecnica;
 import es.cajamadrid.servicios.GM.GMPAJC11_INS.StructGMPAJC11_INS_NumeroDeOcurrenciasnumocu;
+import es.cajamadrid.servicios.GM.GMPAJC29_INS.GMPAJC29_INS;
+import es.cajamadrid.servicios.GM.GMPAJC29_INS.StructCabeceraAplicacionGMPAJC29_INS;
 import es.cajamadrid.servicios.GM.GMPAJC34_INS.GMPAJC34_INS;
 import es.cajamadrid.servicios.GM.GMPAJC34_INS.StructCabeceraAplicacionGMPAJC34_INS;
 import es.cajamadrid.servicios.GM.GMPAJC93_INS.GMPAJC93_INS;
@@ -89,6 +91,9 @@ public class UvemManager implements UvemManagerApi {
 
 	// 10. O-RB-DEVOL - servicio GMOE83
 	private GMPTOE83_INS servicioGMPTOE83_INS;
+	
+	// 11. 11. O-RB-ANULOF
+	private GMPAJC29_INS servicioGMPAJC29_INS;
 
 	@Resource
 	private Properties appProperties;
@@ -1152,6 +1157,150 @@ public class UvemManager implements UvemManagerApi {
 
 			servicioGMPETS07_INS.setAlias(ALIAS);
 			servicioGMPETS07_INS.execute();
+
+		} catch (WIException wie) {
+			logger.error("error en UvemManager", wie);
+			errorDesc = wie.getMessage();
+			throw new JsonViewerException(wie.getMessage());
+		} finally {
+			registrarLlamada(servicioGMPTOE83_INS, errorDesc);
+		}
+
+	}
+	
+	@Override
+	public void anularOferta(String codigoDeOfertaHaya, MOTIVO_ANULACION_OFERTA motivoAnulacionOferta)
+			throws Exception {
+		servicioGMPAJC29_INS = new GMPAJC29_INS();
+		String errorDesc = null;
+
+		try {
+			iniciarServicio();
+
+			// Creamos cabeceras
+			es.cajamadrid.servicios.GM.GMPAJC29_INS.StructCabeceraFuncionalPeticion cabeceraFuncional = new es.cajamadrid.servicios.GM.GMPAJC29_INS.StructCabeceraFuncionalPeticion();
+			es.cajamadrid.servicios.GM.GMPAJC29_INS.StructCabeceraTecnica cabeceraTecnica = new es.cajamadrid.servicios.GM.GMPAJC29_INS.StructCabeceraTecnica();
+			StructCabeceraAplicacionGMPAJC29_INS cabeceraAplicacion = new StructCabeceraAplicacionGMPAJC29_INS();
+
+			// Seteamos cabeceras
+			servicioGMPAJC29_INS.setcabeceraAplicacion(cabeceraAplicacion);
+			servicioGMPAJC29_INS.setcabeceraFuncionalPeticion(cabeceraFuncional);
+			servicioGMPAJC29_INS.setcabeceraTecnica(cabeceraTecnica);
+			
+			//Sets cabecera funcional
+			cabeceraFuncional.setCOOOAQ("1");
+			//cabeceraFuncional.setFXOPAQ(fechahoy);
+			//cabeceraFuncional.setPTROAQ(fechahoy);
+			
+			//Sets cabecera tecnica
+			cabeceraTecnica.setCOAPAQ("GM");
+			cabeceraTecnica.setCOSRAQ("PAJC29");
+			cabeceraTecnica.setNUVEAQ("01");
+			cabeceraTecnica.setCLORAQ("71");
+			cabeceraTecnica.setIDORAQ("20380000000000000000");
+			cabeceraTecnica.setCLIUAQ("55");
+			//cabeceraTecnica.setFEIUAQ(fechahoy);
+			//cabeceraTecnica.setIDUSAQ(fechahoy);
+			//cabeceraTecnica.setIDUTAQ(fechahoy);
+			cabeceraTecnica.setXOB1AQ("S");
+			cabeceraTecnica.setCOPRAQ("P");
+			cabeceraTecnica.setBIEMAQ("1");
+			cabeceraTecnica.setCOFFAQ("0");
+			cabeceraTecnica.setCOFMAQ("B");
+			cabeceraTecnica.setCOFTAQ("0");
+			cabeceraTecnica.setNUVSAQ("01");
+			cabeceraTecnica.setCONTAQ("global:ENTORNO_OPERATIVA_J2EE");
+			cabeceraTecnica.setCOAFAQ("GM");
+			cabeceraTecnica.setCOMLAQ("JC29");
+			
+			// Cual de los dos
+			servicioGMPAJC29_INS.setCOPACE("PAHY0150");
+			cabeceraAplicacion.setCodigoObjetoAccesocopace("PAHY0150");
+
+			cabeceraAplicacion.setCentroGestorUsuarioSsacocgus("0562");
+			servicioGMPAJC29_INS.setCOOFHX(codigoDeOfertaHaya);
+
+			if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.COMPRADOR_NO_INTERESADO_OPERACION)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("100"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.INTERESADO_OTRO_INMUEBLE_AREA)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("101"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.INTERESADO_OTRO_INMUEBLE_OTRO_AREA)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("102"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.COMPRADOR_NO_INTERESADO_NADA)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("103"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.EXCESIVO_TIEMPO_FIRMA_RESERVA)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("200"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.NO_LOCALIZADO_CLIENTE)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("201"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.LOCALIZADO_SIN_INTERES_FIRMAR)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("202"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.FALTA_FINANCIACION)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("300"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.MAS_1_MES_FIRMAR_RESERVA)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("301"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.NO_TIENE_DINERO_SIN_FINANCIACION)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("302"));
+			} else if (motivoAnulacionOferta
+					.equals(MOTIVO_ANULACION_OFERTA.CIRCURNSTANCIA_DISTINTAS_PACTADAS_DPT_COMERCIAL)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("400"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.NO_FIRMA_RESERVA_SIN_VISITA)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("401"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.CAUSAS_FISCALES)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("402"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.CAUSAS_RELATIVAS_GASTOS)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("403"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.CAUSAS_RELATIVAS_ESTADO_FISICO)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("404"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.CARGAS_NO_PLANTEADAS)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("405"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.NO_CUMPLE_CONDICION_BANKIA)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("500"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.CLIENTE_NO_AMPLIACION_VALIDEZ)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("501"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.NO_CUMPLE_CONDICION)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("502"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.FUTURO_CUMPLIMIENTO_CONDICION)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("503"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.SOLICITADA_AREA)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("600"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.DETECTADO_IRREGULARIDADES_DPTO_COMERCIAL)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("601"));
+			} else if (motivoAnulacionOferta
+					.equals(MOTIVO_ANULACION_OFERTA.DETECTADO_IRREGULARIDADES_DPTO_ADM_TECNICO)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("602"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.DETECTADO_IRREGULARIDADES_DIRECCION)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("603"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.NO_RATIFICADA)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("604"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.MEJOR_OFERTA_POSTERIOR)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("605"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.VENTA_SKY)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("607"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.VENTA_EXTERNA)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("608"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.ANULADAS_ESCRITURACION)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("700"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.NO_PRESENTADOS_FIRMA_REQUERIDOS)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("701"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.INCUMPLIMIENTO_PLAZOS_FORMA)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("702"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.ERROR_USUARIO_1)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("800"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.ERROR_USUARIO_2)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("801"));
+			}
+			servicioGMPAJC29_INS.setnumeroUsuario("");
+			servicioGMPAJC29_INS.setidSesionWL("");
+			servicioGMPAJC29_INS.setnumeroCliente(0);
+
+			// logueamos parametros cabecera
+			logger.info("\nParámetros ANULACION_OFERTA:");
+			logger.info("COOOAQ: " + cabeceraFuncional.getCOOOAQ());
+			
+
+			servicioGMPAJC29_INS.setAlias(ALIAS);
+			servicioGMPAJC29_INS.execute();
+
 
 		} catch (WIException wie) {
 			logger.error("error en UvemManager", wie);

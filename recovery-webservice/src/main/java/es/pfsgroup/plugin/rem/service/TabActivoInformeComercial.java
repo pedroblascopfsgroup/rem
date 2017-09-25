@@ -381,6 +381,52 @@ public class TabActivoInformeComercial implements TabActivoService {
 					
 				}
 
+				// Datos de Infraestructura
+				if (!Checks.esNulo(activo.getInfoComercial().getInfraestructura())) {
+					beanUtilNotNull.copyProperties(activo.getInfoComercial().getInfraestructura(), activoInformeDto);
+				}
+
+				// Datos de CarpinteriaInterior
+				if (!Checks.esNulo(activo.getInfoComercial().getCarpinteriaInterior())) {
+					beanUtilNotNull.copyProperties(activo.getInfoComercial().getCarpinteriaInterior(), activoInformeDto);
+				}
+
+				// Datos de CarpinteriaExterior
+				if (!Checks.esNulo(activo.getInfoComercial().getCarpinteriaExterior())) {
+					beanUtilNotNull.copyProperties(activo.getInfoComercial().getCarpinteriaExterior(), activoInformeDto);
+				}
+
+				// Datos de ParamentoVertical
+				if (!Checks.esNulo(activo.getInfoComercial().getParamentoVertical())) {
+					beanUtilNotNull.copyProperties(activo.getInfoComercial().getParamentoVertical(), activoInformeDto);
+				}
+
+				// Datos de Solado
+				if (!Checks.esNulo(activo.getInfoComercial().getSolado())) {
+					beanUtilNotNull.copyProperties(activo.getInfoComercial().getSolado(), activoInformeDto);
+				}
+
+				// Datos de Cocina
+				if (!Checks.esNulo(activo.getInfoComercial().getCocina())) {
+					beanUtilNotNull.copyProperties(activo.getInfoComercial().getCocina(), activoInformeDto);
+				}
+
+				// Datos de Banyo
+				if (!Checks.esNulo(activo.getInfoComercial().getBanyo())) {
+					beanUtilNotNull.copyProperties(activo.getInfoComercial().getBanyo(), activoInformeDto);
+				}
+
+				// Datos de Instalacion
+				if (!Checks.esNulo(activo.getInfoComercial().getInstalacion())) {
+					beanUtilNotNull.copyProperties(activo.getInfoComercial().getInstalacion(), activoInformeDto);
+				}
+
+				// Datos de ZonaComun
+				if (!Checks.esNulo(activo.getInfoComercial().getZonaComun())) {
+					beanUtilNotNull.copyProperties(activo.getInfoComercial().getZonaComun(), activoInformeDto);
+				}
+
+				
 				activo.setInfoComercial(genericDao.save(ActivoInfoComercial.class, activo.getInfoComercial()));
 			}
 			

@@ -51,8 +51,7 @@ public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
 	private Boolean despensa;
 	private Boolean lavadero;
 	private Boolean azotea;
-	private String descOtras;
-	
+	private String descOtras;	
 	
 	public String getInferiorMunicipioCodigo() {
 		return inferiorMunicipioCodigo;

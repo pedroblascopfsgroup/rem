@@ -38,7 +38,8 @@ Ext.define('HreRem.view.activos.detalle.CarpinteriaExteriorInformacionComercial'
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.ventanasHierro}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -48,7 +49,8 @@ Ext.define('HreRem.view.activos.detalle.CarpinteriaExteriorInformacionComercial'
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.ventanasAluAnonizado}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -58,7 +60,8 @@ Ext.define('HreRem.view.activos.detalle.CarpinteriaExteriorInformacionComercial'
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.ventanasAluLacado}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -68,7 +71,8 @@ Ext.define('HreRem.view.activos.detalle.CarpinteriaExteriorInformacionComercial'
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.ventanasPvc}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -78,7 +82,8 @@ Ext.define('HreRem.view.activos.detalle.CarpinteriaExteriorInformacionComercial'
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.ventanasMadera}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -88,7 +93,8 @@ Ext.define('HreRem.view.activos.detalle.CarpinteriaExteriorInformacionComercial'
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.persianasPlastico}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -98,7 +104,8 @@ Ext.define('HreRem.view.activos.detalle.CarpinteriaExteriorInformacionComercial'
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.persianasAluminio}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -108,7 +115,8 @@ Ext.define('HreRem.view.activos.detalle.CarpinteriaExteriorInformacionComercial'
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.ventanasCorrederas}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -118,7 +126,8 @@ Ext.define('HreRem.view.activos.detalle.CarpinteriaExteriorInformacionComercial'
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.ventanasAbatibles}'
-							}
+							},
+							readOnly: false
 						},		
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -128,7 +137,8 @@ Ext.define('HreRem.view.activos.detalle.CarpinteriaExteriorInformacionComercial'
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.ventanasOscilobatientes}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -138,7 +148,8 @@ Ext.define('HreRem.view.activos.detalle.CarpinteriaExteriorInformacionComercial'
 							bind: {
 								store: '{comboSiNoNSRem}',
 								value: '{infoComercial.dobleCristal}'
-							}
+							},
+							readOnly: false
 						},	
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -148,13 +159,14 @@ Ext.define('HreRem.view.activos.detalle.CarpinteriaExteriorInformacionComercial'
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.dobleCristalEstado}'
-							}
+							},
+							readOnly: false
 						},						
 						{
 							xtype: 'textareafieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.otros'),
 							bind: '{infoComercial.carpinteriaExteriorOtros}',
-							readOnly: true
+							readOnly: false
 						}
 					]
 			}

@@ -4,7 +4,6 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFotoController', {
        
     
     onClickBotonAdjuntarFoto: function(btn) {
-    	
     	var me = this,
     	window = btn.up("window"),
     	form = window.down("form");
@@ -65,21 +64,40 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFotoController', {
     },
     
     onClickBotonAdjuntarFotoSubdivision:function (btn) {
-    	
     	var me = this,
     	window = btn.up("window"),
     	form = window.down("form");
-    	if(form.isValid()){            
+    	if(form.isValid()){ 
+    		
+    		var tienePrincipal = false;
+    		var fotosActuales = btn.up('window').storeSubdivision.data.items;
+            for (i=0; i < fotosActuales.length; i++) {
+            	
+            	if (form.getForm().getValues().principal == true 
+            		&& fotosActuales[i].data.principal == 'true'
+            		&& form.getForm().getValues().interiorExterior.toString() == fotosActuales[i].data.interiorExterior
+				) {
+            		tienePrincipal = true;
+            		i=fotosActuales.length;
+            	}
+            	
+            }
+            
+            if (!tienePrincipal) {
           	
-            form.submit({
-                waitMsg: HreRem.i18n('msg.mask.loading'),
-                params: {agrId: window.idAgrupacion, id: window.idSubdivision},
-                success: function(fp, o) {
-                    me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-                    window.parentToRefresh.down("[reference=imageDataViewSubdivision]").getStore().load();
-                    window.hide();                  
-                }
-            });
+	            form.submit({
+	                waitMsg: HreRem.i18n('msg.mask.loading'),
+	                params: {agrId: window.idAgrupacion, id: window.idSubdivision},
+	                success: function(fp, o) {
+	                    me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	                    window.parentToRefresh.down("[reference=imageDataViewSubdivision]").getStore().load();
+	                    window.hide();                  
+	                }
+	            });
+            }
+            else { 	
+	        	me.fireEvent("errorToast", "Ya dispone de una foto principal");
+	        } 
 		 }
     }
 

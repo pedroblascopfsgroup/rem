@@ -64,10 +64,17 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
                         s = l !== 1 ? 's' : '';
                     this.up('panel').setTitle('Fotos Web (' + l + ' item' + s + ' seleccionado' +  s + ')');
                 },
-                itemdblclick: function(dataview,record) {
+                itemclick: function(dataview,record) {
                 	if (record.getData().principal ==  true || record.getData().principal == "true") {
                 		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].show();
                 		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].show();
+                		
+                		if(record.getData().interiorExterior== "true" && !this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].getValue()){
+                			this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].setValue(true);
+                		}
+                		if(record.getData().interiorExterior== "false" && !this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].getValue()){
+                			this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].setValue(true);
+                		}
                 	} else {
                 		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].hide();
                 		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].hide();
@@ -176,11 +183,11 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
 			                                	};
 			                            	}
 			                               
-			                            },
-			                            set: function(value) {
-			                            	// FIXME: Mirar para cancelar cuando esté habilitado el modo edición
-			                                this.set('interiorExterior', value.interiorExterior);
 			                            }
+//			                            set: function(value) {
+//			                            	// FIXME: Mirar para cancelar cuando esté habilitado el modo edición
+//			                                this.set('interiorExterior', value.interiorExterior);
+//			                            }
 			                        }
 				               	}
 			                },

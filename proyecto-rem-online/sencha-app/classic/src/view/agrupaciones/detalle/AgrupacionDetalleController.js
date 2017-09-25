@@ -164,7 +164,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	},
 	
 	onClickBotonEditarFoto: function(btn) {
-		
 		var me = this;
 		Ext.Array.each(btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]'),
 						function (field, index) 
@@ -265,7 +264,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		
 		var me = this,
 		idAgrupacion = me.getViewModel().get("agrupacionficha.id");
-
 		//HREOS-1381, Permitimos más de una foto por agrupación
     	/*if (btn.up('form').down('dataview').getStore().totalCount == 0) {
 			
@@ -286,11 +284,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		var me = this,
 		idAgrupacion = me.getViewModel().get("agrupacionficha.id"),
 		idSubdivision = me.getViewModel().get("subdivisionFoto.id");
-
 		if(Ext.isEmpty(idSubdivision)) {
 			me.fireEvent("warnToast", HreRem.i18n("msg.error.necesario.seleccionar.subdivision"));
 		} else {
-			Ext.create("HreRem.view.common.adjuntos.AdjuntarFotoSubdivision", {idSubdivision: idSubdivision, idAgrupacion: idAgrupacion, parentToRefresh: btn.up("form") }).show();
+			Ext.create("HreRem.view.common.adjuntos.AdjuntarFotoSubdivision", {idSubdivision: idSubdivision, idAgrupacion: idAgrupacion, parentToRefresh: btn.up("form"), storeSubdivision: me.getViewModel().data.storeFotosSubdivision }).show();
 		}		
 	},
 	
@@ -588,10 +585,31 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 
 	onClickBotonGuardarInfoFoto: function(btn){
 		var me = this;
+		var tienePrincipal = false;
+		btn.up('tabpanel').mask();
+		form= btn.up('tabpanel').getActiveTab().getForm();
+		if(btn.up('tabpanel').getActiveTab().xtype == 'fotoswebagrupacion'){
+			var fotosActuales = me.lookupReference("imageDataView").getStore().data.items;
+		}
+		else if(btn.up('tabpanel').getActiveTab().xtype == 'fotossubdivision'){
+			var fotosActuales = me.lookupReference("imageDataViewSubdivision").getStore().data.items;
+		}
+		
+		for (i=0; i < fotosActuales.length; i++) {
+			if(form.getValues().id != fotosActuales[i].data.id && form.getValues().principal){
+				console.log(i+" id"+fotosActuales[i].data.id)
+				console.log(i+" es princpal ?"+fotosActuales[i].data.principal)
+				console.log(i+" interior exterior ? "+fotosActuales[i].data.interiorExterior)
+				if (fotosActuales[i].data.principal == 'true' && form.getValues().interiorExterior.toString() == fotosActuales[i].data.interiorExterior){
+					tienePrincipal = true;
+	            	break;
+	            }
+			}
+		}
+			
 		btn.up('tabpanel').mask();
 		form= btn.up('tabpanel').getActiveTab().getForm();
 		var url =  $AC.getRemoteUrl('activo/updateFotosById');
-		var tienePrincipal = false;
 		var params={"id":form.findField("id").getValue()};
 		if(form.findField("nombre")!=null){
 			params['nombre']= form.findField("nombre").getValue();
@@ -611,49 +629,55 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		if(form.findField("fechaDocumento")!=null){
 			params['fechaDocumento']= form.findField("fechaDocumento").getValue();
 		}
-
-       Ext.Ajax.request({
-		     url: url,
-		     params:params,
-		     success: function (a, operation, context) {
-		    	btn.up('tabpanel').unmask();
-		    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-		    	me.onClickBotonRefrescar();
-		    	activeTab = btn.up('tabpanel').getActiveTab();
-
-				if (!activeTab.saveMultiple) {
-					if(activeTab && activeTab.getBindRecord && activeTab.getBindRecord()) {
-						me.onClickBotonRefrescar();
+		
+		if(!tienePrincipal){
+	       Ext.Ajax.request({
+			     url: url,
+			     params:params,
+			     success: function (a, operation, context) {
+			    	btn.up('tabpanel').unmask();
+			    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			    	me.onClickBotonRefrescar();
+			    	activeTab = btn.up('tabpanel').getActiveTab();
+	
+					if (!activeTab.saveMultiple) {
+						if(activeTab && activeTab.getBindRecord && activeTab.getBindRecord()) {
+							me.onClickBotonRefrescar();
+							
+						}
+					} else {
 						
-					}
-				} else {
-					
-					var records = activeTab.getBindRecords();
-					
-					for (i=0; i<records.length; i++) {
-						me.onClickBotonRefrescar();
-					}
-
-				}	
-
-				btn.hide();
-				Ext.Array.each(activeTab.query('field[isReadOnlyEdit]'),
-								function (field, index) 
-									{ 
-										field.fireEvent('save');
-										field.fireEvent('update');});
-				me.getViewModel().set("editingfotos", false);
-            },
-            failure: function (a, operation, context) {
-            	  Ext.toast({
-				     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÓN',
-				     width: 360,
-				     height: 100,
-				     align: 't'									     
-				 });
-            	  btn.up('tabpanel').unmask();
-            }
-	    });
+						var records = activeTab.getBindRecords();
+						
+						for (i=0; i<records.length; i++) {
+							me.onClickBotonRefrescar();
+						}
+	
+					}	
+	
+					btn.hide();
+					Ext.Array.each(activeTab.query('field[isReadOnlyEdit]'),
+									function (field, index) 
+										{ 
+											field.fireEvent('save');
+											field.fireEvent('update');});
+					me.getViewModel().set("editingfotos", false);
+	            },
+	            failure: function (a, operation, context) {
+	            	  Ext.toast({
+					     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÓN',
+					     width: 360,
+					     height: 100,
+					     align: 't'									     
+					 });
+	            	  btn.up('tabpanel').unmask();
+	            }
+		    });
+		}
+		else{
+			me.fireEvent("errorToast", "Ya dispone de una foto principal");
+			btn.up('tabpanel').unmask();
+		}
 	},
 
 	onClickPublicarActivosSeleccionadosSubmenuGrid: function(menuItem) {

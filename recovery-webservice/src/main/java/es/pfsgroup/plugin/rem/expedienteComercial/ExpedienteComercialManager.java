@@ -1701,6 +1701,59 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Override
 	@Transactional(readOnly = false)
+	public CondicionesActivo crearCondicionesActivoExpediente(Activo activo, ExpedienteComercial expediente){
+		// Como este metodo es para la creacion del expediente crea directamente las condiciones, 
+		// no busca si ya existen condiciones del Expediente-Activo
+		CondicionesActivo condicionesActivo = new CondicionesActivo();
+//		Oferta oferta = expediente.getOferta();
+		
+		condicionesActivo.setActivo(activo);
+		condicionesActivo.setExpediente(expediente);
+		condicionesActivo.setAuditoria(Auditoria.getNewInstance());
+		
+		// HREOS-2799
+		//Activos de Cajamar, deben copiar las condiciones informadas del activo en las condiciones al comprador
+		if(!Checks.esNulo(activo)
+				&& !Checks.esNulo(activo.getCartera())
+				&& DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())){
+			
+			if (activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getFechaTomaPosesion() != null) {
+				condicionesActivo.setPosesionInicial(1);
+			} else {
+				condicionesActivo.setPosesionInicial(0);
+			}
+
+			if (activo.getTitulo() != null && activo.getTitulo().getEstado() != null) {
+				condicionesActivo.setEstadoTitulo(activo.getTitulo().getEstado());
+			}
+			if (activo.getSituacionPosesoria() != null) {
+				if (activo.getSituacionPosesoria().getOcupado() != null
+						&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(0))) {
+					DDSituacionesPosesoria situacionPosesoriaLibre = (DDSituacionesPosesoria) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionesPosesoria.class, DDSituacionesPosesoria.SITUACION_POSESORIA_LIBRE);
+					condicionesActivo.setSituacionPosesoria(situacionPosesoriaLibre);
+				} else if (activo.getSituacionPosesoria().getOcupado() != null
+						&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(1))
+						&& activo.getSituacionPosesoria().getConTitulo() != null
+						&& activo.getSituacionPosesoria().getConTitulo().equals(Integer.valueOf(1))) {
+					DDSituacionesPosesoria situacionPosesoriaOcupadoTitulo = (DDSituacionesPosesoria) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionesPosesoria.class, DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_CON_TITULO);
+					condicionesActivo.setSituacionPosesoria(situacionPosesoriaOcupadoTitulo);
+				} else if (activo.getSituacionPosesoria().getOcupado() != null
+						&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(1))
+						&& activo.getSituacionPosesoria().getConTitulo() != null
+						&& activo.getSituacionPosesoria().getConTitulo().equals(Integer.valueOf(0))) {
+					DDSituacionesPosesoria situacionPosesoriaOcupadoSinTitulo = (DDSituacionesPosesoria) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionesPosesoria.class, DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_SIN_TITULO);
+					condicionesActivo.setSituacionPosesoria(situacionPosesoriaOcupadoSinTitulo);
+				}
+			}
+		}
+		
+		genericDao.save(CondicionesActivo.class, condicionesActivo);
+		
+		return condicionesActivo;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
 	public Reserva createReservaExpediente(ExpedienteComercial expediente){
 		
 		CondicionanteExpediente condiciones = expediente.getCondicionante();
@@ -1713,7 +1766,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				reserva.setEstadoReserva(estadoReserva);
 				reserva.setExpediente(expediente);
 				reserva.setNumReserva(reservaDao.getNextNumReservaRem());
-
+				reserva.setAuditoria(Auditoria.getNewInstance());
 			}
 		}
 		

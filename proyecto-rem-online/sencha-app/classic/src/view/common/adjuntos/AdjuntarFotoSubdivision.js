@@ -29,6 +29,15 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFotoSubdivision', {
     	me.setTitle(HreRem.i18n("title.adjuntar.foto"));
     	
     	me.buttonAlign = 'left';
+    	
+    	var comboTipoFoto = new Ext.data.Store({
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposFoto'}
+			}
+    	});
 
     	me.buttons = [ { itemId: 'btnGuardar', text: 'Adjuntar', handler: 'onClickBotonAdjuntarFotoSubdivision'},{ itemId: 'btnCancelar', text: 'Cancelar',  handler: 'closeWindow', scope: this}];
 
@@ -77,13 +86,79 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFotoSubdivision', {
 				                    }
 							        
 					    		},
+					    		{ 
+									xtype: 'combobox',
+						        	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
+						        	name: 'tipo',
+						        	editable: false,
+					            	store: comboTipoFoto,
+					            	displayField	: 'descripcion',
+								    							
+								    valueField		: 'codigo',
+									allowBlank: false,
+									msgTarget: 'side',
+									width: '100%',
+									listeners: {
+			                			change: function(cmp, newValue, oldValue, eOpts ) {
+			                				if (newValue != '01') {
+			                					this.up('form').down('[name=principal]').hide();
+			                					this.up('form').down('[name=principal]').disable();	
+			                					this.up('form').down('fieldcontainer[reference=radioInterior]').hide();
+			                					this.up('form').down('fieldcontainer[reference=radioInterior]').disable();
+			                				} else {
+			                					this.up('form').down('[name=principal]').show();
+			                					this.up('form').down('[name=principal]').enable();	
+			                					this.up('form').down('fieldcontainer[reference=radioInterior]').show();
+			                					this.up('form').down('fieldcontainer[reference=radioInterior]').enable();
+			                				}
+			                			}
+			                		}
+						        },
 						        {
 				                	xtype: 'textarea',
 				                	fieldLabel: HreRem.i18n('fieldlabel.descripcion'),
 				                	name: 'descripcion',
 				                	maxLength: 256,
 				                	width: '100%'				                	
-				            	}
+				            	},
+				            	{ 
+			                		xtype : 'checkboxfield',
+			                		fieldLabel:  HreRem.i18n('fieldlabel.principal'),
+			                		name: 'principal',
+			                		inputValue : true,
+			                		listeners: {
+			                			change: function(cmp, newValue, oldValue, eOpts ) {
+			                				if (newValue == true || newValue == 'true') {
+			                					this.up('form').down('fieldcontainer[reference=radioInterior]').show();
+			                				} else {
+			                					this.up('form').down('fieldcontainer[reference=radioInterior]').hide();
+			                				}
+			                			}
+			                		}
+				                },
+				                {
+				                	hidden	   : true,
+				              		xtype      : 'fieldcontainer',
+				              		reference	: 'radioInterior',
+						            //fieldLabel : 'Size',
+						            defaultType: 'radiofield',
+						            defaults: {
+						                flex: 1
+						            },
+						            layout: 'hbox',
+						            items: [
+						                {
+						                    boxLabel  : 'Interior',
+						                    name      : 'interiorExterior',
+						                    inputValue: true
+						                }, 
+						                {
+						                    boxLabel  : 'Exterior',
+						                    name      : 'interiorExterior',
+						                    inputValue: false
+						                }
+						            ]
+						        }
 				                
     					  ]
     				}

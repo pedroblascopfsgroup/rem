@@ -61,7 +61,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosWebAgrupacion', {
             ],
             
             listeners: {
-                itemdblclick: function(dataview,record) {
+                itemclick: function(dataview,record) {
 	        		this.up('form').setBindRecord(record.data);
 	        	}
             }

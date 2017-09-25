@@ -163,7 +163,13 @@ public interface UvemManagerApi {
 
 
 
-
+	/******************************************* RESERVAS ***************************************************/
+	
+	/**
+	 * Invoca al servicio O-RB-DEVOL para generar la propuesta de anulación de reserva firmada o la anulación de la propuesta de anulación reserva firmada
+	 * @throws Exception
+	 */
+	public void notificarDevolucionReserva() throws Exception;
 
 
 

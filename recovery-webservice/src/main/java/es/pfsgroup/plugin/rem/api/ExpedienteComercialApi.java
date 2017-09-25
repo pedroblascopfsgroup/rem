@@ -11,6 +11,7 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.CondicionesActivo;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
@@ -825,5 +826,14 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public boolean importeExpedienteMenorPreciosMinimosActivos(Long idTramite);
+
+	/**
+	 * Crea las condiciones iniciales para un Activo-Expediente. Se le pasa el activo por parametro porque no 
+	 * siempre coincidira con el activo principal de la oferta (relacionado con expediente)
+	 * @param activo
+	 * @param expediente
+	 * @return
+	 */
+	CondicionesActivo crearCondicionesActivoExpediente(Activo activo, ExpedienteComercial expediente);
 
 }

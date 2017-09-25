@@ -17,10 +17,16 @@ import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
  */
 public interface UvemManagerApi {
 
-	
-	
-/*******************************************TASACIONES***************************************************/
-	
+	public enum MOTIVO_ANULACION {
+		COMPRADOR_NO_INTERESADO, DECISION_AREA, NO_DISPONE_DINERO_FINANCIACION, CIRCUSTANCIAS_DISTINTAS_PACTADAS, NO_CUMPLEN_CONDICIONANTES, NO_DESEAN_ESCRITURAR, DECISION_HAYA
+	}
+
+	public enum INDICADOR_DEVOLUCION_RESERVA {
+		DEVOLUCION_RESERVA, NO_DEVOLUCION_RESERVA
+	}
+
+	/******************************************* TASACIONES ***************************************************/
+
 	/**
 	 * Solicitar tasación de un bien
 	 * 
@@ -31,10 +37,9 @@ public interface UvemManagerApi {
 	 * @return
 	 * @throws Exception
 	 */
-	public Integer ejecutarSolicitarTasacionTest(Long numActivoUvem, String userName,String email,String telefono)
+	public Integer ejecutarSolicitarTasacionTest(Long numActivoUvem, String userName, String email, String telefono)
 			throws Exception;
 
-	
 	/**
 	 * Solicitar tasación de un bien
 	 * 
@@ -44,11 +49,8 @@ public interface UvemManagerApi {
 	 * @return
 	 * @throws Exception
 	 */
-	public Integer ejecutarSolicitarTasacion(Long numActivoUvem, Usuario usuarioGestor)
-			throws Exception;
-	
-	
-	
+	public Integer ejecutarSolicitarTasacion(Long numActivoUvem, Usuario usuarioGestor) throws Exception;
+
 	/**
 	 * Obtiene el identificador de la tasacion
 	 * 
@@ -56,121 +58,126 @@ public interface UvemManagerApi {
 	 */
 	public GMPETS07_INS resultadoSolicitarTasacion();
 
-	
-	
-	
-	
-	
-/*******************************************CLIENTES URSUS***************************************************/
-	
+	/*******************************************
+	 * CLIENTES URSUS
+	 ***************************************************/
+
 	/**
 	 * 
-	 * (DE CLIENTE SOLO DEBERIA USARSE ESTE)
-	 * Devuelve los clientes partir de los datos pasados por parámetro
+	 * (DE CLIENTE SOLO DEBERIA USARSE ESTE) Devuelve los clientes partir de los
+	 * datos pasados por parámetro
 	 * 
-	 * @param nDocumento: documento identificativo del cliente a consultar
-	 * @param tipoDocumento:Clase De Documento Identificador Cliente. 1 D.N.I 2 C.I.F. 3
-	 *            Tarjeta Residente. 4 Pasaporte 5 C.I.F país extranjero. 7
-	 *            D.N.I país extranjero. 8 Tarj. identif. diplomática 9 Menor. F
-	 *            Otros persona física. J Otros persona jurídica.
-	 * @param qcenre: Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia habitat 05021
+	 * @param nDocumento:
+	 *            documento identificativo del cliente a consultar
+	 * @param tipoDocumento:Clase
+	 *            De Documento Identificador Cliente. 1 D.N.I 2 C.I.F. 3 Tarjeta
+	 *            Residente. 4 Pasaporte 5 C.I.F país extranjero. 7 D.N.I país
+	 *            extranjero. 8 Tarj. identif. diplomática 9 Menor. F Otros
+	 *            persona física. J Otros persona jurídica.
+	 * @param qcenre:
+	 *            Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia
+	 *            habitat 05021
 	 */
 	DatosClienteDto ejecutarDatosClientePorDocumento(DtoClienteUrsus dtoCliente) throws Exception;
-	
-
-	
-	
-	
 
 	/**
-	 * Servicio GMPAJC11_INS que a partir del nº y tipo de documento, así como Entidad del
-	 * Cliente (y tipo) devolverá el/los nº cliente/s Ursus coincidentes
+	 * Servicio GMPAJC11_INS que a partir del nº y tipo de documento, así como
+	 * Entidad del Cliente (y tipo) devolverá el/los nº cliente/s Ursus
+	 * coincidentes
 	 * 
-	 * @param nDocumento: Documento según lo expresado en COCLDO. DNI, CIF, etc
-	 * @param tipoDocumento: Clase De Documento Identificador Cliente. 1 D.N.I 2 C.I.F. 3
+	 * @param nDocumento:
+	 *            Documento según lo expresado en COCLDO. DNI, CIF, etc
+	 * @param tipoDocumento:
+	 *            Clase De Documento Identificador Cliente. 1 D.N.I 2 C.I.F. 3
 	 *            Tarjeta Residente. 4 Pasaporte 5 C.I.F país extranjero. 7
 	 *            D.N.I país extranjero. 8 Tarj. identif. diplomática 9 Menor. F
 	 *            Otros persona física. J Otros persona jurídica.
-	 * @param qcenre: Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia habitat 05021
+	 * @param qcenre:
+	 *            Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia
+	 *            habitat 05021
 	 */
-	public List<DatosClienteDto> ejecutarNumCliente(String nDocumento, String tipoDocumento, String qcenre) throws Exception;
+	public List<DatosClienteDto> ejecutarNumCliente(String nDocumento, String tipoDocumento, String qcenre)
+			throws Exception;
 
-	//TODO: cuando se pruebe borrar este método.
-	public List<DatosClienteDto> ejecutarNumClienteTest(String nDocumento, String tipoDocumento, String qcenre) throws Exception;
+	// TODO: cuando se pruebe borrar este método.
+	public List<DatosClienteDto> ejecutarNumClienteTest(String nDocumento, String tipoDocumento, String qcenre)
+			throws Exception;
 
 	/**
-	 * Servicio GMPAJC93_INS que a partir del nº cliente URSUS se devuelvan
-	 * los datos del mismo, tanto identificativos como de cara a poder dar
+	 * Servicio GMPAJC93_INS que a partir del nº cliente URSUS se devuelvan los
+	 * datos del mismo, tanto identificativos como de cara a poder dar
 	 * cumplimiento a la normativa relativa a PBC.
 	 * 
-	 * @param numcliente: numero cliente Ursus (idclow)
-	 * @param qcenre: Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia habitat 05021
+	 * @param numcliente:
+	 *            numero cliente Ursus (idclow)
+	 * @param qcenre:
+	 *            Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia
+	 *            habitat 05021
 	 */
-	public DatosClienteDto ejecutarDatosCliente(Integer numcliente, String qcenre)  throws Exception;
+	public DatosClienteDto ejecutarDatosCliente(Integer numcliente, String qcenre) throws Exception;
 
-	//TODO: cuando se pruebe borrar este método.
-	public DatosClienteDto ejecutarDatosClienteTest(Integer numcliente, String qcenre)  throws Exception;
+	// TODO: cuando se pruebe borrar este método.
+	public DatosClienteDto ejecutarDatosClienteTest(Integer numcliente, String qcenre) throws Exception;
 
-	
-	
-/*******************************************INSTANCIA DECISION***************************************************/
-	
+	/*******************************************
+	 * INSTANCIA DECISION
+	 ***************************************************/
+
 	/**
-	 * Invoca al servicio GMPDJB13_INS de BANKIA para consultar una instancia de decisión de una oferta
+	 * Invoca al servicio GMPDJB13_INS de BANKIA para consultar una instancia de
+	 * decisión de una oferta
 	 * 
 	 * @param instanciaDecisionDto
 	 * @return
 	 */
-	public ResultadoInstanciaDecisionDto consultarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws Exception;
-	
-	
-	
+	public ResultadoInstanciaDecisionDto consultarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto)
+			throws Exception;
+
 	/**
-	 * Invoca al servicio GMPDJB13_INS de BANKIA para dar de alta un instancia de decisión de una oferta
+	 * Invoca al servicio GMPDJB13_INS de BANKIA para dar de alta un instancia
+	 * de decisión de una oferta
 	 * 
 	 * @param instanciaDecisionDto
 	 * @return
 	 */
-	public ResultadoInstanciaDecisionDto altaInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws Exception;
-	
-	
-	
+	public ResultadoInstanciaDecisionDto altaInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto)
+			throws Exception;
+
 	/**
-	 * Invoca al servicio GMPDJB13_INS de BANKIA para modificar una instancia de decisión de una oferta
+	 * Invoca al servicio GMPDJB13_INS de BANKIA para modificar una instancia de
+	 * decisión de una oferta
 	 * 
 	 * @param instanciaDecisionDto
 	 * @return
 	 */
-	public ResultadoInstanciaDecisionDto modificarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto) throws Exception;
-	
+	public ResultadoInstanciaDecisionDto modificarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto)
+			throws Exception;
 
-	
-	
-	
-	
-	
-/*******************************************CONSULTA PRESTAMO***************************************************/
-	
+	/*******************************************
+	 * CONSULTA PRESTAMO
+	 ***************************************************/
 
 	/**
-	 * Invoca al servicio GMPAJC34_INS de BANKIA para consultar los datos de un prestamo
+	 * Invoca al servicio GMPAJC34_INS de BANKIA para consultar los datos de un
+	 * prestamo
 	 * 
 	 * @param numExpedienteRiesgo12
 	 * @param tipoRiesgo
-	 * @return IMPORTE CONCEDIDO Multiplicado por 100 (para que no tenga decimales).
+	 * @return IMPORTE CONCEDIDO Multiplicado por 100 (para que no tenga
+	 *         decimales).
 	 */
 	public Long consultaDatosPrestamo(String numExpedienteRiesgo12, int tipoRiesgo) throws Exception;
 
-
-
 	/******************************************* RESERVAS ***************************************************/
-	
+
 	/**
-	 * Invoca al servicio O-RB-DEVOL para generar la propuesta de anulación de reserva firmada o la anulación de la propuesta de anulación reserva firmada
+	 * Invoca al servicio O-RB-DEVOL para generar la propuesta de anulación de
+	 * reserva firmada o la anulación de la propuesta de anulación reserva
+	 * firmada
+	 * 
 	 * @throws Exception
 	 */
-	public void notificarDevolucionReserva() throws Exception;
-
-
+	public void notificarDevolucionReserva(String codigoDeOfertaHaya, MOTIVO_ANULACION motivoAnulacionReserva,
+			INDICADOR_DEVOLUCION_RESERVA indicadorDevolucionReserva) throws Exception;
 
 }

@@ -37,7 +37,8 @@ Ext.define('HreRem.view.activos.detalle.SoladosInformacionComercial', {
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.tarimaFlotante}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -47,7 +48,8 @@ Ext.define('HreRem.view.activos.detalle.SoladosInformacionComercial', {
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.parque}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -57,7 +59,8 @@ Ext.define('HreRem.view.activos.detalle.SoladosInformacionComercial', {
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.marmol}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -67,13 +70,14 @@ Ext.define('HreRem.view.activos.detalle.SoladosInformacionComercial', {
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.plaqueta}'
-							}
+							},
+							readOnly: false
 						},
 						{
 							xtype: 'textareafieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.otros'),
 							bind: '{infoComercial.soladoOtros}',
-							readOnly: true
+							readOnly: false
 						}
 					]
 			}

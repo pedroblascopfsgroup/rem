@@ -37,7 +37,8 @@ Ext.define('HreRem.view.activos.detalle.ParamentosVerticalesInformacionComercial
 							bind: {
 								store: '{comboSiNoNSRem}',
 								value: '{infoComercial.humedadPared}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -47,7 +48,8 @@ Ext.define('HreRem.view.activos.detalle.ParamentosVerticalesInformacionComercial
 							bind: {
 								store: '{comboSiNoNSRem}',
 								value: '{infoComercial.humedadTecho}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -57,7 +59,8 @@ Ext.define('HreRem.view.activos.detalle.ParamentosVerticalesInformacionComercial
 							bind: {
 								store: '{comboSiNoNSRem}',
 								value: '{infoComercial.grietaPared}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -67,7 +70,8 @@ Ext.define('HreRem.view.activos.detalle.ParamentosVerticalesInformacionComercial
 							bind: {
 								store: '{comboSiNoNSRem}',
 								value: '{infoComercial.grietaTecho}'
-							}
+							},
+							readOnly: false
 						},
 						{
 							xtype:'fieldset',
@@ -94,7 +98,8 @@ Ext.define('HreRem.view.activos.detalle.ParamentosVerticalesInformacionComercial
 									bind: {
 										store: '{comboBuenoMaloRem}',
 										value: '{infoComercial.gotele}'
-									}
+									},
+									readOnly: false
 								},
 								{ 
 									xtype: 'comboboxfieldbase',
@@ -104,7 +109,8 @@ Ext.define('HreRem.view.activos.detalle.ParamentosVerticalesInformacionComercial
 									bind: {
 										store: '{comboBuenoMaloRem}',
 										value: '{infoComercial.plasticaLisa}'
-									}
+									},
+									eadOnly: false
 								},
 								{ 
 									xtype: 'comboboxfieldbase',
@@ -114,7 +120,8 @@ Ext.define('HreRem.view.activos.detalle.ParamentosVerticalesInformacionComercial
 									bind: {
 										store: '{comboBuenoMaloRem}',
 										value: '{infoComercial.papelPintado}'
-									}
+									},
+									readOnly: false
 								}
 							]
 						},
@@ -126,7 +133,8 @@ Ext.define('HreRem.view.activos.detalle.ParamentosVerticalesInformacionComercial
 							bind: {
 								store: '{comboSiNoNSRem}',
 								value: '{infoComercial.pinturaLisaTecho}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -136,7 +144,8 @@ Ext.define('HreRem.view.activos.detalle.ParamentosVerticalesInformacionComercial
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.pinturaLisaTechoEstado}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -146,7 +155,8 @@ Ext.define('HreRem.view.activos.detalle.ParamentosVerticalesInformacionComercial
 							bind: {
 								store: '{comboSiNoNSRem}',
 								value: '{infoComercial.molduraEscayola}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -156,13 +166,14 @@ Ext.define('HreRem.view.activos.detalle.ParamentosVerticalesInformacionComercial
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.molduraEscayolaEstado}'
-							}
+							},
+							readOnly: false
 						},
 						{
 							xtype: 'textareafieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.otros'),
 							bind: '{infoComercial.paramentosOtros}',
-							readOnly: true
+							readOnly: false
 						}
 					]
 			}

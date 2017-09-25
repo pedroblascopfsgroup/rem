@@ -54,6 +54,7 @@ import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
+import es.pfsgroup.plugin.rem.api.UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteUrsusRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
@@ -1549,7 +1550,8 @@ public class UvemManager implements UvemManagerApi {
 	}
 
 	@Override
-	public void notificarDevolucionReserva() throws Exception {
+	public void notificarDevolucionReserva(String codigoDeOfertaHaya, MOTIVO_ANULACION motivoAnulacionReserva,
+			INDICADOR_DEVOLUCION_RESERVA indicadorDevolucionReserva) throws Exception {
 		servicioGMPTOE83_INS = new GMPTOE83_INS();
 		try {
 			iniciarServicio();
@@ -1563,6 +1565,39 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPTOE83_INS.setcabeceraAplicacion(cabeceraAplicacion);
 			servicioGMPTOE83_INS.setcabeceraFuncionalPeticion(cabeceraFuncional);
 			servicioGMPTOE83_INS.setcabeceraTecnica(cabeceraTecnica);
+			// COPACE
+			// COCGUS
+			// COUSAE
+			servicioGMPTOE83_INS.setCodigoDeUsuariocousae("USRHAYA");
+			// COSEM1
+			servicioGMPTOE83_INS.setCodigoServicioModificacionSolicitcosem1('4');
+			// LCOMOA
+			if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.COMPRADOR_NO_INTERESADO)) {
+				servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("1"));
+			} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.DECISION_AREA)) {
+				servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("2"));
+			} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.DECISION_HAYA)) {
+				servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("9"));
+			} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.NO_CUMPLEN_CONDICIONANTES)) {
+				servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("5"));
+			} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.NO_DESEAN_ESCRITURAR)) {
+				servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("6"));
+			} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.NO_DISPONE_DINERO_FINANCIACION)) {
+				servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("3"));
+			} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.CIRCUSTANCIAS_DISTINTAS_PACTADAS)) {
+				servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("4"));
+			} else {
+				throw new Exception("motivo anulacion no soportado");
+			}
+			// COOFHX
+			servicioGMPTOE83_INS.setCodigoDeOfertaHayacoofhx(StringUtils.leftPad(codigoDeOfertaHaya, 16, "0"));
+			// BINDRE
+			if(indicadorDevolucionReserva.equals(INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA)){
+				servicioGMPTOE83_INS.setIndicadorDevolucionReservabindre('s');
+			}else{
+				servicioGMPTOE83_INS.setIndicadorDevolucionReservabindre('N');
+			}
+			
 
 		} catch (WIException wie) {
 

@@ -50,13 +50,13 @@ Ext.define('HreRem.view.activos.detalle.ServiciosInfraestructurasInformacionCome
 											store: '{comboSiNoNSRem}',
 											value: '{infoComercial.hoteles}'
 										},
-										readOnly: true
+										readOnly: false
 									},
 									{
 										xtype: 'textfieldbase',
 										flex: 1,
 										bind:	'{infoComercial.hotelesDesc}',
-										readOnly: true
+										readOnly: false
 									}
 				            	 
 				            	]
@@ -79,13 +79,13 @@ Ext.define('HreRem.view.activos.detalle.ServiciosInfraestructurasInformacionCome
 											store: '{comboSiNoNSRem}',
 											value: '{infoComercial.teatros}'
 										},
-										readOnly: true
+										readOnly: false
 									},
 									{
 										xtype: 'textfieldbase',
 										flex: 1,
 										bind:	'{infoComercial.teatrosDesc}',
-										readOnly: true
+										readOnly: false
 									}
 				            	 
 				            	]
@@ -108,13 +108,13 @@ Ext.define('HreRem.view.activos.detalle.ServiciosInfraestructurasInformacionCome
 											store: '{comboSiNoNSRem}',
 											value: '{infoComercial.salasCine}'
 										},
-										readOnly: true
+										readOnly: false
 									},
 									{
 										xtype: 'textfieldbase',
 										flex: 1,
 										bind:	'{infoComercial.salasCineDesc}',
-										readOnly: true
+										readOnly: false
 									}
 				            	 
 				            	]
@@ -137,13 +137,13 @@ Ext.define('HreRem.view.activos.detalle.ServiciosInfraestructurasInformacionCome
 											store: '{comboSiNoNSRem}',
 											value: '{infoComercial.instDeportivas}'
 										},
-										readOnly: true
+										readOnly: false
 									},
 									{
 										xtype: 'textfieldbase',
 										flex: 1,
 										bind:	'{infoComercial.instDeportivasDesc}',
-										readOnly: true
+										readOnly: false
 									}
 				            	 
 				            	]
@@ -166,13 +166,13 @@ Ext.define('HreRem.view.activos.detalle.ServiciosInfraestructurasInformacionCome
 											store: '{comboSiNoNSRem}',
 											value: '{infoComercial.centrosComerciales}'
 										},
-										readOnly: true
+										readOnly: false
 									},
 									{
 										xtype: 'textfieldbase',
 										flex: 1,
 										bind:	'{infoComercial.centrosComercialesDesc}',
-										readOnly: true
+										readOnly: false
 									}
 				            	 
 				            	]
@@ -181,7 +181,7 @@ Ext.define('HreRem.view.activos.detalle.ServiciosInfraestructurasInformacionCome
 							xtype: 'textareafieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.otros'),
 							bind: '{infoComercial.ocioOtros}',
-							readOnly: true
+							readOnly: false
 						}
 					]
 			},
@@ -222,13 +222,13 @@ Ext.define('HreRem.view.activos.detalle.ServiciosInfraestructurasInformacionCome
 											store: '{comboSiNoNSRem}',
 											value: '{infoComercial.escuelasInfantiles}'
 										},
-										readOnly: true
+										readOnly: false
 									},
 									{
 										xtype: 'textfieldbase',
 										flex: 1,
 										bind:	'{infoComercial.escuelasInfantilesDesc}',
-										readOnly: true
+										readOnly: false
 									}
 				            	 
 				            	]
@@ -251,13 +251,13 @@ Ext.define('HreRem.view.activos.detalle.ServiciosInfraestructurasInformacionCome
 											store: '{comboSiNoNSRem}',
 											value: '{infoComercial.colegios}'
 										},
-										readOnly: true
+										readOnly: false
 									},
 									{
 										xtype: 'textfieldbase',
 										flex: 1,
 										bind:	'{infoComercial.colegiosDesc}',
-										readOnly: true
+										readOnly: false
 									}
 				            	 
 				            	]
@@ -280,13 +280,13 @@ Ext.define('HreRem.view.activos.detalle.ServiciosInfraestructurasInformacionCome
 											store: '{comboSiNoNSRem}',
 											value: '{infoComercial.institutos}'
 										},
-										readOnly: true
+										readOnly: false
 									},
 									{
 										xtype: 'textfieldbase',
 										flex: 1,
 										bind:	'{infoComercial.institutosDesc}',
-										readOnly: true
+										readOnly: false
 									}
 				            	 
 				            	]
@@ -309,13 +309,13 @@ Ext.define('HreRem.view.activos.detalle.ServiciosInfraestructurasInformacionCome
 											store: '{comboSiNoNSRem}',
 											value: '{infoComercial.universidades}'
 										},
-										readOnly: true
+										readOnly: false
 									},
 									{
 										xtype: 'textfieldbase',
 										flex: 1,
 										bind:	'{infoComercial.universidadesDesc}',
-										readOnly: true
+										readOnly: false
 									}
 				            	 
 				            	]
@@ -324,7 +324,7 @@ Ext.define('HreRem.view.activos.detalle.ServiciosInfraestructurasInformacionCome
 							xtype: 'textareafieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.otros'),
 							bind: '{infoComercial.centrosEducativosOtros}',
-							readOnly: true
+							readOnly: false
 						}
 					]
 			},
@@ -365,13 +365,13 @@ Ext.define('HreRem.view.activos.detalle.ServiciosInfraestructurasInformacionCome
 											store: '{comboSiNoNSRem}',
 											value: '{infoComercial.centrosSalud}'
 										},
-										readOnly: true
+										readOnly: false
 									},
 									{
 										xtype: 'textfieldbase',
 										flex: 1,
 										bind:	'{infoComercial.centrosSaludDesc}',
-										readOnly: true
+										readOnly: false
 									}
 				            	 
 				            	]
@@ -394,13 +394,13 @@ Ext.define('HreRem.view.activos.detalle.ServiciosInfraestructurasInformacionCome
 											store: '{comboSiNoNSRem}',
 											value: '{infoComercial.clinicas}'
 										},
-										readOnly: true
+										readOnly: false
 									},
 									{
 										xtype: 'textfieldbase',
 										flex: 1,
 										bind:	'{infoComercial.clinicasDesc}',
-										readOnly: true
+										readOnly: false
 									}
 				            	 
 				            	]
@@ -423,13 +423,13 @@ Ext.define('HreRem.view.activos.detalle.ServiciosInfraestructurasInformacionCome
 											store: '{comboSiNoNSRem}',
 											value: '{infoComercial.hospitales}'
 										},
-										readOnly: true
+										readOnly: false
 									},
 									{
 										xtype: 'textfieldbase',
 										flex: 1,
 										bind:	'{infoComercial.hospitalesDesc}',
-										readOnly: true
+										readOnly: false
 									}
 				            	 
 				            	]
@@ -438,7 +438,7 @@ Ext.define('HreRem.view.activos.detalle.ServiciosInfraestructurasInformacionCome
 							xtype: 'textareafieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.otros'),
 							bind: '{infoComercial.centrosSanitariosOtros}',
-							readOnly: true
+							readOnly: false
 						}
 					]
 			},
@@ -471,7 +471,7 @@ Ext.define('HreRem.view.activos.detalle.ServiciosInfraestructurasInformacionCome
 								store: '{comboSiNoNSRem}',
 								value: '{infoComercial.parkingSuperSufi}'
 							},
-							readOnly: true
+							readOnly: false
 						}
 	            	 
 	            	]
@@ -513,13 +513,13 @@ Ext.define('HreRem.view.activos.detalle.ServiciosInfraestructurasInformacionCome
 											store: '{comboSiNoNSRem}',
 											value: '{infoComercial.facilAcceso}'
 										},
-										readOnly: true
+										readOnly: false
 									},
 									{
 										xtype: 'textfieldbase',
 										flex: 1,
 										bind:	'{infoComercial.facilAccesoDesc}',
-										readOnly: true
+										readOnly: false
 									}
 						    	 
 						    	]
@@ -542,13 +542,13 @@ Ext.define('HreRem.view.activos.detalle.ServiciosInfraestructurasInformacionCome
 											store: '{comboSiNoNSRem}',
 											value: '{infoComercial.lineasBus}'
 										},
-										readOnly: true
+										readOnly: false
 									},
 									{
 										xtype: 'textfieldbase',
 										flex: 1,
 										bind:	'{infoComercial.lineasBusDesc}',
-										readOnly: true
+										readOnly: false
 									}
 						    	 
 						    	]
@@ -571,13 +571,13 @@ Ext.define('HreRem.view.activos.detalle.ServiciosInfraestructurasInformacionCome
 											store: '{comboSiNoNSRem}',
 											value: '{infoComercial.metro}'
 										},
-										readOnly: true
+										readOnly: false
 									},
 									{
 										xtype: 'textfieldbase',
 										flex: 1,
 										bind:	'{infoComercial.metroDesc}',
-										readOnly: true
+										readOnly: false
 									}
 						    	 
 						    	]
@@ -600,13 +600,13 @@ Ext.define('HreRem.view.activos.detalle.ServiciosInfraestructurasInformacionCome
 											store: '{comboSiNoNSRem}',
 											value: '{infoComercial.estacionTren}'
 										},
-										readOnly: true
+										readOnly: false
 									},
 									{
 										xtype: 'textfieldbase',
 										flex: 1,
 										bind:	'{infoComercial.estacionTrenDesc}',
-										readOnly: true
+										readOnly: false
 									}
 						    	 
 						    	]
@@ -615,7 +615,7 @@ Ext.define('HreRem.view.activos.detalle.ServiciosInfraestructurasInformacionCome
 							xtype: 'textareafieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.otros'),
 							bind: '{infoComercial.comunicacionesOtro}',
-							readOnly: true
+							readOnly: false
 						}
 					]
 			}

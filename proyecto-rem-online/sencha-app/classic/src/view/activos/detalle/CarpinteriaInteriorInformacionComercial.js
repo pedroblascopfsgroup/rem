@@ -37,7 +37,7 @@ Ext.define('HreRem.view.activos.detalle.CarpinteriaInteriorInformacionComercial'
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.puertaEntradaNormal}'
 							},
-							readOnly: true
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -49,7 +49,7 @@ Ext.define('HreRem.view.activos.detalle.CarpinteriaInteriorInformacionComercial'
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.puertaEntradaBlindada}'
 							},
-							readOnly: true
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -61,7 +61,7 @@ Ext.define('HreRem.view.activos.detalle.CarpinteriaInteriorInformacionComercial'
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.puertaEntradaAcorazada}'
 							},
-							readOnly: true
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -73,7 +73,7 @@ Ext.define('HreRem.view.activos.detalle.CarpinteriaInteriorInformacionComercial'
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.puertaPasoMaciza}'
 							},
-							readOnly: true
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -85,7 +85,7 @@ Ext.define('HreRem.view.activos.detalle.CarpinteriaInteriorInformacionComercial'
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.puertaPasoHueca}'
 							},
-							readOnly: true
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -97,7 +97,7 @@ Ext.define('HreRem.view.activos.detalle.CarpinteriaInteriorInformacionComercial'
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.puertaPasoLacada}'
 							},
-							readOnly: true
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -109,7 +109,7 @@ Ext.define('HreRem.view.activos.detalle.CarpinteriaInteriorInformacionComercial'
 								store: '{comboSiNoNSRem}',
 								value: '{infoComercial.armariosEmpotrados}'
 							},
-							readOnly: true
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -121,13 +121,13 @@ Ext.define('HreRem.view.activos.detalle.CarpinteriaInteriorInformacionComercial'
 								store: '{comboAcabadoCarpinteria}',
 								value: '{infoComercial.acabadoCarpinteriaCodigo}'
 							},
-							readOnly: true
+							readOnly: false
 						},
 						{
 							xtype: 'textareafieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.otros'),
 							bind: '{infoComercial.carpinteriaInteriorOtros}',
-							readOnly: true
+							readOnly: false
 						}
 			 ]
 		  }

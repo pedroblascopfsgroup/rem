@@ -159,7 +159,7 @@ Ext.define('HreRem.view.activos.detalle.ZonasComunesInformacionComercial', {
 				{
 					xtype: 'textareafieldbase',
 					fieldLabel: HreRem.i18n('fieldlabel.otros'),
-					bind: '{infoComercial.zonasComunesOtros}',
+					bind: '{infoComercial.zonaComunOtros}',
 					readOnly: true
 				}
 			]

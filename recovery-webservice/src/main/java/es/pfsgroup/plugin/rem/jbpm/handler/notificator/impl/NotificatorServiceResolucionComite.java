@@ -105,6 +105,8 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 			for (TareaActivo tareaActivo : tramite.getTareas()) {				
 				if (CODIGO_T013_DEFINICION_OFERTA.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) {
 					gestor = tareaActivo.getUsuario();
+				}
+				else if(CODIGO_T013_RESOLUCION_COMITE.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) {
 					supervisor = tareaActivo.getSupervisorActivo();
 				}
 			}

@@ -188,6 +188,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	public static final String PERFIL_GESTOR_FORMALIZACION = "HAYAGESTFORM";
 	public static final String PERFIL_SUPERVISOR_FORMALIZACION = "HAYASUPFORM";
+	public static final String PERFIL_GESTOR_MINUTAS = "GESMIN";
+	public static final String PERFIL_SUPERVISOR_MINUTAS = "SUPMIN";
+	
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -4898,17 +4901,33 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						}else{
 							//el usuario logado tiene que ser gestoria
 							Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-							if(!genericAdapter.isGestoria(usuarioLogado) && !genericAdapter.isSuper(usuarioLogado) && !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, usuarioLogado) && !genericAdapter.tienePerfil(PERFIL_SUPERVISOR_FORMALIZACION, usuarioLogado)){
-								codigoError = "imposible.bloquear.no.es.gestoria";
-							}else{
-								//la financiación tiene que estar informada
-								DtoFormalizacionFinanciacion financiacion = new DtoFormalizacionFinanciacion();
-								financiacion.setId(String.valueOf(idExpediente));
-								financiacion = this.getFormalizacionFinanciacion(financiacion);
-								if(Checks.esNulo(financiacion.getSolicitaFinanciacion())){
-									codigoError = "imposible.bloquear.financiacion.no.informada";
+							
+							if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo())){
+								if(!genericAdapter.tienePerfil(PERFIL_GESTOR_MINUTAS, usuarioLogado) && !genericAdapter.tienePerfil(PERFIL_SUPERVISOR_MINUTAS, usuarioLogado) && !genericAdapter.isSuper(usuarioLogado)){
+									codigoError = "imposible.bloquear.expediente.cajamar";
+								}else{
+									//la financiación tiene que estar informada
+									DtoFormalizacionFinanciacion financiacion = new DtoFormalizacionFinanciacion();
+									financiacion.setId(String.valueOf(idExpediente));
+									financiacion = this.getFormalizacionFinanciacion(financiacion);
+									if(Checks.esNulo(financiacion.getSolicitaFinanciacion())){
+										codigoError = "imposible.bloquear.financiacion.no.informada";
+									}
 								}
-								
+							}
+							else{							
+								if(!genericAdapter.isGestoria(usuarioLogado) && !genericAdapter.isSuper(usuarioLogado) && !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, usuarioLogado) && !genericAdapter.tienePerfil(PERFIL_SUPERVISOR_FORMALIZACION, usuarioLogado)){
+									codigoError = "imposible.bloquear.no.es.gestoria";
+								}else{
+									//la financiación tiene que estar informada
+									DtoFormalizacionFinanciacion financiacion = new DtoFormalizacionFinanciacion();
+									financiacion.setId(String.valueOf(idExpediente));
+									financiacion = this.getFormalizacionFinanciacion(financiacion);
+									if(Checks.esNulo(financiacion.getSolicitaFinanciacion())){
+										codigoError = "imposible.bloquear.financiacion.no.informada";
+									}
+									
+								}
 							}
 						}
 					}

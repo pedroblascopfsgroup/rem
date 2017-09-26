@@ -37,7 +37,8 @@ Ext.define('HreRem.view.activos.detalle.CocinaInformacionComercial', {
 							bind: {
 								store: '{comboSiNoNSRem}',
 								value: '{infoComercial.amueblada}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -47,7 +48,8 @@ Ext.define('HreRem.view.activos.detalle.CocinaInformacionComercial', {
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.estadoAmueblada}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -57,7 +59,8 @@ Ext.define('HreRem.view.activos.detalle.CocinaInformacionComercial', {
 							bind: {
 								store: '{comboSiNoNSRem}',
 								value: '{infoComercial.encimera}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -67,7 +70,8 @@ Ext.define('HreRem.view.activos.detalle.CocinaInformacionComercial', {
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.encimeraGranito}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -77,7 +81,8 @@ Ext.define('HreRem.view.activos.detalle.CocinaInformacionComercial', {
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.encimeraMarmol}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -87,7 +92,8 @@ Ext.define('HreRem.view.activos.detalle.CocinaInformacionComercial', {
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.encimeraOtroMaterial}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -97,7 +103,8 @@ Ext.define('HreRem.view.activos.detalle.CocinaInformacionComercial', {
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.vitro}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -107,7 +114,8 @@ Ext.define('HreRem.view.activos.detalle.CocinaInformacionComercial', {
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.lavadora}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -117,7 +125,8 @@ Ext.define('HreRem.view.activos.detalle.CocinaInformacionComercial', {
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.frigorifico}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -127,7 +136,8 @@ Ext.define('HreRem.view.activos.detalle.CocinaInformacionComercial', {
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.lavavajillas}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -137,7 +147,8 @@ Ext.define('HreRem.view.activos.detalle.CocinaInformacionComercial', {
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.microondas}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -147,7 +158,8 @@ Ext.define('HreRem.view.activos.detalle.CocinaInformacionComercial', {
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.horno}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -157,7 +169,8 @@ Ext.define('HreRem.view.activos.detalle.CocinaInformacionComercial', {
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.suelosCocina}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -167,7 +180,8 @@ Ext.define('HreRem.view.activos.detalle.CocinaInformacionComercial', {
 							bind: {
 								store: '{comboSiNoNSRem}',
 								value: '{infoComercial.azulejos}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -177,7 +191,8 @@ Ext.define('HreRem.view.activos.detalle.CocinaInformacionComercial', {
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.estadoAzulejos}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -187,7 +202,8 @@ Ext.define('HreRem.view.activos.detalle.CocinaInformacionComercial', {
 							bind: {
 								store: '{comboSiNoNSRem}',
 								value: '{infoComercial.grifosMonomandos}'
-							}
+							},
+							readOnly: false
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
@@ -197,13 +213,14 @@ Ext.define('HreRem.view.activos.detalle.CocinaInformacionComercial', {
 							bind: {
 								store: '{comboBuenoMaloRem}',
 								value: '{infoComercial.estadoGrifosMonomandos}'
-							}
+							},
+							readOnly: false
 						},
 						{
 							xtype: 'textareafieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.otros'),
 							bind: '{infoComercial.cocinaOtros}',
-							readOnly: true
+							readOnly: false
 						}
 					]
 			}

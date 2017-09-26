@@ -142,6 +142,14 @@ DECLARE
         T_VAL('AAFF'   ,'03'    ,'SPREC'),
         T_VAL('AAFF'   ,'03'    ,'SPUBL'),
 
+        -- Otras carteras
+        T_VAL('AAFF'   ,'04'    ,'GPREC'),
+        T_VAL('AAFF'   ,'04'    ,'GPUBL'),
+        T_VAL('AAFF'   ,'04'    ,'SPREC'),
+        T_VAL('AAFF'   ,'04'    ,'SPUBL'),
+        T_VAL('AAFF'   ,'04'    ,'GCOM'),
+        T_VAL('AAFF'   ,'04'    ,'SCOM'),
+
         -- Cajamar
         T_VAL('ECO'   ,'01'    ,'GFORM'),
         T_VAL('ECO'   ,'01'    ,'SFORM'),

@@ -40,7 +40,9 @@ public class VBusquedaActivosCrearTrabajo implements Serializable {
 	
 	@Column(name="NUM_FINCA_REGISTRAL")
 	private String numFincaRegistral;
-	
+
+	@Column(name="PER_GESTION")
+	private String tienePerimetroGestion;
 
 	public String getIdActivo() {
 		return idActivo;
@@ -104,6 +106,14 @@ public class VBusquedaActivosCrearTrabajo implements Serializable {
 
 	public void setNumFincaRegistral(String numFincaRegistral) {
 		this.numFincaRegistral = numFincaRegistral;
+	}
+
+	public String getTienePerimetroGestion() {
+		return tienePerimetroGestion;
+	}
+
+	public void setTienePerimetroGestion(String tienePerimetroGestion) {
+		this.tienePerimetroGestion = tienePerimetroGestion;
 	}
 	
 	

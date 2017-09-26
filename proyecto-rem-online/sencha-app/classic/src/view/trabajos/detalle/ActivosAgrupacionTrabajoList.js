@@ -7,7 +7,18 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosAgrupacionTrabajoList', {
 		store : '{activosAgrupacion}'
 	},
 	plugins : 'pagingselectpersist',
-
+	listeners: {
+		beforeselect: function(grid, record, index, eOpts){
+	    	// Sin perimetro gestion de los activos, no se puede solicitar trabajo en ellos
+			if (record.data.tienePerimetroGestion != "1"){
+				Ext.MessageBox.alert(
+						HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
+						HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.mensaje")
+				);
+				return false; 
+			}
+		}
+	},
 	initComponent : function() {
 
 		var me = this;

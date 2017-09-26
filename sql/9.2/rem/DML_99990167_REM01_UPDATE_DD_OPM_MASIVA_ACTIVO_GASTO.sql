@@ -41,7 +41,7 @@ BEGIN
       EXECUTE IMMEDIATE V_SQL INTO V_NUM_REGISTRO;
       IF V_NUM_REGISTRO > 0 THEN
 	      V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
-	                    'SET DD_OPM_VALIDACION_FORMATO = ''n*,n*''  '||
+	                    'SET DD_OPM_VALIDACION_FORMATO = ''nD*,n*''  '||
 						', USUARIOMODIFICAR = ''DML'' , FECHAMODIFICAR = SYSDATE '||
 						'WHERE DD_OPM_CODIGO = ''ACGA''';
 	      EXECUTE IMMEDIATE V_MSQL;

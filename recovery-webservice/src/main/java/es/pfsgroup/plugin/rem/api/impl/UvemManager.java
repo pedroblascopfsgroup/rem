@@ -1121,8 +1121,10 @@ public class UvemManager implements UvemManagerApi {
 			
 			
 
-			servicioGMPTOE83_INS.setnumeroCliente(0);
 			servicioGMPTOE83_INS.setnumeroUsuario("");
+			servicioGMPTOE83_INS.setidSesionWL("");
+			servicioGMPTOE83_INS.setnumeroCliente(0);
+			
 			HttpServletRequest request = null;
 			if (RequestContextHolder.getRequestAttributes() != null) {
 				request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
@@ -1303,9 +1305,6 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPAJC29_INS.setidSesionWL("");
 			servicioGMPAJC29_INS.setnumeroCliente(0);
 
-			// logueamos parametros cabecera
-			logger.info("\nParámetros ANULACION_OFERTA:");
-			logger.info("COOOAQ: " + cabeceraFuncional.getCOOOAQ());
 			
 
 			servicioGMPAJC29_INS.setAlias(ALIAS);

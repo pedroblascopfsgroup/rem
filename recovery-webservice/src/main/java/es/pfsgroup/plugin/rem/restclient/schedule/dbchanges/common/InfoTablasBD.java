@@ -10,6 +10,10 @@ import java.util.List;
  *
  */
 public interface InfoTablasBD {
+	
+	/**
+	 * optimización para tablas con gran volumen
+	 */
 
 	/**
 	 * Es necesario implementar este método para indicar el nombre de la vistas

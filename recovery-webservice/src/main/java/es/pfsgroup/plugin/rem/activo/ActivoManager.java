@@ -683,7 +683,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		//HREOS-2511 El combo "Comité seleccionado" vendrá informado para cartera Sareb
 		if(oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)) {
+			Double precioMinimoAutorizado = 0.0;
 			ActivoBancario activoBancario = getActivoBancarioByIdActivo(oferta.getActivoPrincipal().getId());
+			if(Checks.esNulo(oferta.getAgrupacion())) {
+				
+				precioMinimoAutorizado = activoDao.getListActivosPreciosFromListId(activoBancario.getActivo().getId().toString()).get(0).getPrecioMinimoAutorizado();
+			}
+			else {
+				ActivoAgrupacion agrupacion = oferta.getAgrupacion();
+				List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
+				for(ActivoAgrupacionActivo activo : activos) {
+					precioMinimoAutorizado += activoDao.getListActivosPreciosFromListId(activo.getActivo().getId().toString()).get(0).getPrecioMinimoAutorizado();
+				}
+			}
 
 			boolean esFinanciero = false;
 			if(!Checks.esNulo(activoBancario)) {
@@ -694,17 +706,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				
 				if(activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_SINGULAR) ||
 						(activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_RETAIL) 
-								&& activoBancario.getActivo().getTipoActivo().getCodigo().equals(DDTipoActivo.COD_COMERCIAL) 
-								&& (activoDao.getListActivosPreciosFromListId(activoBancario.getActivo().getId().toString()).get(0).getPrecioMinimoAutorizado()>oferta.getImporteOferta()))
+								//&& activoBancario.getActivo().getTipoActivo().getCodigo().equals(DDTipoActivo.COD_COMERCIAL) 
+								&& (precioMinimoAutorizado>oferta.getImporteOferta()))
 						) {
-					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "11")));
+					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "11")));//sareb
 					
 				}else if((esFinanciero && getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) || 
 						(activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_RETAIL) 
-						&& (activoBancario.getActivo().getTipoActivo().getCodigo().equals(DDTipoActivo.COD_COMERCIAL) 
-						&& (activoDao.getListActivosPreciosFromListId(activoBancario.getActivo().getId().toString()).get(0).getPrecioMinimoAutorizado()<oferta.getImporteOferta())))) {
+						//&& (activoBancario.getActivo().getTipoActivo().getCodigo().equals(DDTipoActivo.COD_COMERCIAL) 
+						&& precioMinimoAutorizado<oferta.getImporteOferta())) {
 					
-					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "12")));
+					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "12")));//haya-sareb
 					
 				}
 			}

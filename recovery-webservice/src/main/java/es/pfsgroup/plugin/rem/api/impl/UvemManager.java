@@ -127,8 +127,15 @@ public class UvemManager implements UvemManagerApi {
 	}
 	
 	private void registrarLlamada(WIService servicio,String errorDesc){
-		this.registrarLlamada(servicio.getClass().getName(),servicio.getInParams().toXMLGeneric(true),
-				servicio.getOutParams().toXMLGeneric(true),errorDesc);		
+		String llamada = "";
+		String respuesta = "";
+		try{
+			llamada = servicio.getInParams().toXMLGeneric(true);
+			respuesta = servicio.getOutParams().toXMLGeneric(true);
+		}catch(Exception e){
+			logger.error("Error obteniendo los datos del ws", e);
+		}
+		this.registrarLlamada(servicio.getClass().getName(),llamada,respuesta,errorDesc);		
 	}
 
 	private void registrarLlamada(String endPoint, String request, String result, String errorDesc) {
@@ -143,7 +150,7 @@ public class UvemManager implements UvemManagerApi {
 			registro.setResponse(result);
 			llamadaDao.guardaRegistro(registro);
 		} catch (Exception e) {
-			logger.error("Error al trazar la llamada al CDM", e);
+			logger.error("Error al trazar la llamada al WS", e);
 		}
 	}
 

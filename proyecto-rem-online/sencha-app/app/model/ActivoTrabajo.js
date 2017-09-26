@@ -23,6 +23,9 @@ Ext.define('HreRem.model.ActivoTrabajo', {
     			name:'idTrabajo'
     		},
     		{
+    			name:'tienePerimetroGestion'
+    		},
+    		{
     			name:'subtipoActivoDescripcion'
     		},
     		{

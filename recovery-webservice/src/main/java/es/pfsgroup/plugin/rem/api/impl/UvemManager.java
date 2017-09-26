@@ -1113,7 +1113,17 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPTOE83_INS.setcabeceraAplicacion(cabeceraAplicacion);
 			servicioGMPTOE83_INS.setcabeceraFuncionalPeticion(cabeceraFuncional);
 			servicioGMPTOE83_INS.setcabeceraTecnica(cabeceraTecnica);
+			
+			
 
+			servicioGMPTOE83_INS.setnumeroCliente(0);
+			servicioGMPTOE83_INS.setnumeroUsuario("");
+			HttpServletRequest request = null;
+			if (RequestContextHolder.getRequestAttributes() != null) {
+				request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+			}
+			servicioGMPTOE83_INS.setidSesionWL(request != null ? request.getSession().getId() : "");
+			
 			// COUSAE
 			servicioGMPTOE83_INS.setCodigoDeUsuariocousae("USRHAYA");
 			// COSEM1

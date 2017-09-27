@@ -446,7 +446,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 								DDTipoPublicacion tipoPublicacion = genericDao.get(DDTipoPublicacion.class, filtroTpu);
 								beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "tipoPublicacion", tipoPublicacion);
 							}
-			
+							
+							genericDao.save(Activo.class, activo);
 							genericDao.save(ActivoHistoricoEstadoPublicacion.class, activoHistoricoEstadoPublicacion);
 	
 						//} // Cierra if ... CODIGO_PUBLICADO.equals

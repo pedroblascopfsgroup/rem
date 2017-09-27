@@ -75,6 +75,8 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 	private static final String REST_USER = "REST-USER";
 
+	private static final String MARCADOR_CAMBIOS = "_MOD";
+
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
@@ -124,8 +126,12 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		String columns = columns4Select(fields, infoTablas.clavePrimaria());
 
 		try {
+			String nombreVistaDatosActuales = infoTablas.nombreVistaDatosActuales();
+			if (infoTablas.procesarSoloCambiosMarcados()) {
+				nombreVistaDatosActuales = nombreVistaDatosActuales.concat(MARCADOR_CAMBIOS);
+			}
 			String columIdUsuarioRemAccion = field2column(ConstantesGenericas.ID_USUARIO_REM_ACCION);
-			String selectFromDatosActuales = SELECT + columns + FROM + infoTablas.nombreVistaDatosActuales() + WHERE
+			String selectFromDatosActuales = SELECT + columns + FROM + nombreVistaDatosActuales + WHERE
 					+ columIdUsuarioRemAccion + " <> " + getIdRestUser(session);
 			String selectFromDatosHistoricos = SELECT + columns + FROM + infoTablas.nombreTablaDatosHistoricos();
 			String queryString = selectFromDatosActuales + MINUS + selectFromDatosHistoricos;
@@ -499,13 +505,10 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	 * 
 	 * @param infoTablas
 	 */
-	public void refreshMaterializedView(InfoTablasBD infoTablas) {
+	public void refreshMaterializedView(InfoTablasBD infoTablas) throws CambiosBDDaoError{
 		Session session = this.sesionFactoryFacade.getSession(this);
 		try {
 			refreshMaterializedView(infoTablas, session);
-		} catch (Throwable t) {
-			throw new CambiosBDDaoError(
-					"No se ha podido actualizar la vista materializada " + infoTablas.nombreVistaDatosActuales());
 		} finally {
 			if (logger.isDebugEnabled()) {
 				logger.trace("Cerrando sesión");
@@ -519,20 +522,24 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	}
 
 	private void refreshMaterializedView(InfoTablasBD infoTablas, Session session) {
-		try {
-			if (logger.isDebugEnabled()) {
-				logger.trace("Refrescando vista matarializada: " + infoTablas.nombreVistaDatosActuales());
-			}
 
-			// antes de refrescar la vista principal refrescamos las auxiliares
-			if (infoTablas.vistasAuxiliares() != null) {
-				for (String vistaAux : infoTablas.vistasAuxiliares()) {
-					if(!vistaAux.isEmpty()){
+		if (logger.isDebugEnabled()) {
+			logger.trace("Refrescando vista matarializada: " + infoTablas.nombreVistaDatosActuales());
+		}
+
+		// antes de refrescar la vista principal refrescamos las auxiliares
+		if (infoTablas.vistasAuxiliares() != null) {
+			for (String vistaAux : infoTablas.vistasAuxiliares()) {
+				if (!vistaAux.isEmpty()) {
+					try {
 						this.refreshMaterializedView(vistaAux, session);
+					} catch (Exception e) {
+						throw new CambiosBDDaoError("No se ha podido actualizar la vista materializada " + vistaAux);
 					}
 				}
 			}
-
+		}
+		try {
 			this.refreshMaterializedView(infoTablas.nombreVistaDatosActuales(), session);
 		} catch (Throwable t) {
 			throw new CambiosBDDaoError(

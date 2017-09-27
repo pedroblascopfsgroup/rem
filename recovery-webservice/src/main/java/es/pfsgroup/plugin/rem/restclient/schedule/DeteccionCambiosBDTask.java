@@ -72,11 +72,11 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 		}
 	}
 
-	public void enviaInformacionCompleta(DetectorCambiosBD<?> handler) {
+	public void enviaInformacionCompleta(DetectorCambiosBD<?> handler) throws ErrorServicioWebcom {
 		this.detectaCambios(handler, TIPO_ENVIO.COMPLETO);
 	}
 
-	public void detectaCambios() {
+	public void detectaCambios() throws ErrorServicioWebcom {
 		detectaCambios(null);
 	}
 
@@ -90,7 +90,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public void detectaCambios(DetectorCambiosBD handlerToExecute) {
+	public void detectaCambios(DetectorCambiosBD handlerToExecute) throws ErrorServicioWebcom {
 		this.detectaCambios(handlerToExecute, TIPO_ENVIO.CAMBIOS);
 	}
 
@@ -98,9 +98,10 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	 * Inicia la detección de cambios en BD.
 	 * 
 	 * @param class1
+	 * @throws Exception
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void detectaCambios(DetectorCambiosBD handlerToExecute, TIPO_ENVIO tipoEnvio) {
+	public void detectaCambios(DetectorCambiosBD handlerToExecute, TIPO_ENVIO tipoEnvio) throws ErrorServicioWebcom {
 		if (running) {
 			logger.warn("El detector de cambios en BD ya se está ejecutando");
 			return;
@@ -162,7 +163,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 							handler.actualizarVistaMaterializada(registro);
 							Boolean marcarComoEnviado = false;
 							Integer contError = 0;
-						
+
 							do {
 								boolean somethingdone = false;
 								registro.setIteracion(iteracion);
@@ -235,17 +236,19 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 									if (somethingdone && (registroLlamadas != null)) {
 										registro.logTiempoBorrarHistorico();
 										registro.logTiempoInsertarHistorico();
-										if(marcarComoEnviado){
-											registroLlamadas.guardaRegistroLlamada(registro, handler, DeteccionCambiosBDTask.MAXIMO_INTENTOS_DEFAULT);
-										}else{
+										if (marcarComoEnviado) {
+											registroLlamadas.guardaRegistroLlamada(registro, handler,
+													DeteccionCambiosBDTask.MAXIMO_INTENTOS_DEFAULT);
+										} else {
 											registroLlamadas.guardaRegistroLlamada(registro, handler, contError);
 										}
-										
+
 										llamadas.add(registro);
 									}
 								}
 								registro = new RestLlamada();
-								//en la segunda pagina el tiempo de refresco es 0
+								// en la segunda pagina el tiempo de refresco es
+								// 0
 								registro.setMsRefrescoVista(new Long(0));
 							} while ((listPendientes != null && listPendientes.getPaginacion().getHasMore())
 									|| (contError > 0 && contError < MAXIMO_INTENTOS));
@@ -257,7 +260,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 							}
 						}
 					}
-				}else{
+				} else {
 					logger.error("La API REST esta cerrada no se ejecutará");
 				}
 				registroCambiosHandlersAjecutar.get(0).closeSession();
@@ -266,8 +269,8 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			}
 
 		} catch (Exception e) {
-			running = false;
-			logger.error("Imposible ejecutar el detector de cambios", e);
+			logger.error(e.getMessage(),e);
+			throw new ErrorServicioWebcom(e.getMessage());
 		} finally {
 			running = false;
 			logger.debug("[DETECCIÓN CAMBIOS] Fin [it=" + iteracion + "]");

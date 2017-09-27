@@ -62,5 +62,10 @@ public class DetectorWebcomEstadoPeticionTrabajo extends DetectorCambiosBD<Estad
 	public List<String> vistasAuxiliares() {
 		return null;
 	}
+	
+	@Override
+	public Boolean procesarSoloCambiosMarcados() {
+		return false;
+	}
 
 }

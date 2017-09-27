@@ -73,5 +73,10 @@ public class DetectorWebcomStock extends DetectorCambiosBD<StockDto> {
 		vistasAuxiliares.add("REM01.VI_STOCK_ACTIVO_GCOM");
 		return vistasAuxiliares;
 	}
+	
+	@Override
+	public Boolean procesarSoloCambiosMarcados() {
+		return true;
+	}
 
 }

@@ -11,9 +11,7 @@ import java.util.List;
  */
 public interface InfoTablasBD {
 	
-	/**
-	 * optimización para tablas con gran volumen
-	 */
+	
 
 	/**
 	 * Es necesario implementar este método para indicar el nombre de la vistas
@@ -54,5 +52,12 @@ public interface InfoTablasBD {
 	 * @return
 	 */
 	String clavePrimariaJson();
+	
+	/**
+	 * Solo proceara los registros que esten marcados como modificados
+	 * 
+	 * @return
+	 */
+	Boolean procesarSoloCambiosMarcados();
 
 }

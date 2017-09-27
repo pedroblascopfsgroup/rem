@@ -63,5 +63,10 @@ public class DetectorWebcomProveedores extends DetectorCambiosBD<ProveedorDto> {
 		return null;
 	}
 	
+	@Override
+	public Boolean procesarSoloCambiosMarcados() {
+		return false;
+	}
+	
 
 }

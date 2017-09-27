@@ -170,6 +170,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				//OkPublicacionSinPublicar= true;
 			}
 
+		// DESOCULTAR PRECIO
+		} else if(!Checks.esNulo(dtoCambioEstadoPublicacion.getOcultacionPrecio()) && !dtoCambioEstadoPublicacion.getOcultacionPrecio()){
+			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO);
+			motivo = getMotivo(dtoCambioEstadoPublicacion);
 		// DESPUBLICACION FORZADA
 		} else if(!Checks.esNulo(dtoCambioEstadoPublicacion.getDespublicacionForzada()) && dtoCambioEstadoPublicacion.getDespublicacionForzada()) { // Despublicación forzada.
 			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_DESPUBLICADO);

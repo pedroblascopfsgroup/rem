@@ -21,6 +21,7 @@ public class DtoTrabajoListActivos extends WebDto {
 	private String situacionComercial;
 	private String situacionPosesoria;
 	private String numFincaRegistral;
+	private String tienePerimetroGestion;
 	
 	public String getIdActivo() {
 		return idActivo;
@@ -75,6 +76,12 @@ public class DtoTrabajoListActivos extends WebDto {
 	}
 	public void setNumFincaRegistral(String numFincaRegistral) {
 		this.numFincaRegistral = numFincaRegistral;
+	}
+	public String getTienePerimetroGestion() {
+		return tienePerimetroGestion;
+	}
+	public void setTienePerimetroGestion(String tienePerimetroGestion) {
+		this.tienePerimetroGestion = tienePerimetroGestion;
 	}
 	
 }

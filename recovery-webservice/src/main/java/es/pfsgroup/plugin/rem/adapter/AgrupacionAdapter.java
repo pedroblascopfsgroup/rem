@@ -491,7 +491,7 @@ public class AgrupacionAdapter {
 
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
 		Activo activo = genericDao.get(Activo.class, filter);
-		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idAgrupacion);
+		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(activoAgrupacionApi.getAgrupacionIdByNumAgrupRem(idAgrupacion));
 
 		int num = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(agrupacion.getId());
 

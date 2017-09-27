@@ -101,7 +101,7 @@ public class MSVAsociarActivosGasto extends MSVExcelValidatorAbstract {
 				mapaErrores.put(PROPIETARIO_SIN_DOCUMENTO, isPropietarioGastoSinDocumento(exc));
 				mapaErrores.put(PROPIETARIO_DIFERENTE, isPropietarioGastoDiferenteActivo(exc));
 				mapaErrores.put(GASTO_AUTORIZADO, isGastoAutorizado(exc));
-				mapaErrores.put(ESTADO_NO_PERMITE_ADICION_ACTIVO, isGastoNoPermiteAnyadirActivo(exc));
+				//mapaErrores.put(ESTADO_NO_PERMITE_ADICION_ACTIVO, isGastoNoPermiteAnyadirActivo(exc));
 				mapaErrores.put(GASTO_ASOCIADO_TRABAJO, isGastoAsociadoTrabajo(exc));
 				mapaErrores.put(ACTIVO_ASIGNADO, isActivoAsignado(exc));
 				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
@@ -114,8 +114,7 @@ public class MSVAsociarActivosGasto extends MSVExcelValidatorAbstract {
 						!mapaErrores.get(PROPIETARIO_DIFERENTE).isEmpty() ||
 						!mapaErrores.get(ACTIVO_ASIGNADO).isEmpty() ||
 						!mapaErrores.get(GASTO_AUTORIZADO).isEmpty() ||
-						!mapaErrores.get(GASTO_ASOCIADO_TRABAJO).isEmpty() ||
-						!mapaErrores.get(ESTADO_NO_PERMITE_ADICION_ACTIVO).isEmpty()){
+						!mapaErrores.get(GASTO_ASOCIADO_TRABAJO).isEmpty()){
 							dtoValidacionContenido.setFicheroTieneErrores(true);
 							exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 							String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);

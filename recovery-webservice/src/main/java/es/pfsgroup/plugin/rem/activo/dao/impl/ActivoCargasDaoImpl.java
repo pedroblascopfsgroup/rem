@@ -27,8 +27,35 @@ public class ActivoCargasDaoImpl extends AbstractEntityDao<ActivoCargas, Long> i
 		HQLBuilder hb = new HQLBuilder(" from ActivoCargas ac join ac.cargaBien cb left join cb.situacionCargaEconomica sce");
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "ac.activo.id", idActivo);
-		hb.appendWhere("ac.fechaCancelacionRegistral IS NULL AND cb.fechaCancelacion IS NULL AND cb.auditoria.borrado = 0 "
-				+ "AND ac.auditoria.borrado = 0 AND (NOT sce.codigo = '" + DDSituacionCarga.CANCELADA + "' OR sce.id IS NULL)");
+		hb.appendWhere("ac.fechaCancelacionRegistral IS NULL OR (cb.fechaCancelacion IS NULL AND cb.auditoria.borrado = 0 "
+				+ "AND ac.auditoria.borrado = 0 AND (NOT sce.codigo = '" + DDSituacionCarga.CANCELADA + "' OR sce.id IS NULL))");
+
+		List<ActivoCargas> lista = HibernateQueryUtils.list(this, hb);
+
+		return !Checks.estaVacio(lista);
+	}
+	
+	@Override
+	public Boolean esActivoConCargasNoCanceladasRegistral(Long idActivo){
+		
+		HQLBuilder hb = new HQLBuilder(" from ActivoCargas ac join ac.cargaBien cb left join cb.situacionCarga sce left join ac.tipoCargaActivo tca ");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "ac.activo.id", idActivo);
+		hb.appendWhere("ac.fechaCancelacionRegistral IS NULL AND cb.auditoria.borrado = 0 "
+				+ "AND ac.auditoria.borrado = 0 AND (NOT sce.codigo = '" + DDSituacionCarga.CANCELADA + "' OR sce.id IS NULL) AND tca.codigo = 'REG' ");
+
+		List<ActivoCargas> lista = HibernateQueryUtils.list(this, hb);
+
+		return !Checks.estaVacio(lista);
+		
+	}
+	
+	@Override
+	public Boolean esActivoConCargasNoCanceladasEconomica(Long idActivo){
+		HQLBuilder hb = new HQLBuilder(" from ActivoCargas ac join ac.cargaBien cb left join cb.situacionCargaEconomica sce left join ac.tipoCargaActivo tca ");
+
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "ac.activo.id", idActivo);
+		hb.appendWhere("cb.fechaCancelacion IS NULL AND cb.auditoria.borrado = 0 "
+				+ "AND ac.auditoria.borrado = 0 AND (NOT sce.codigo = '" + DDSituacionCarga.CANCELADA + "' OR sce.id IS NULL) AND tca.codigo = 'ECO'");
 
 		List<ActivoCargas> lista = HibernateQueryUtils.list(this, hb);
 

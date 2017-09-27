@@ -33,7 +33,7 @@ public class TabActivoCargas implements TabActivoService {
 		BeanUtils.copyProperties(activoDto, activo);
 		
 		// Establecemos el estado de las cargas manualmente.
-		if(activoCargasApi.esActivoConCargasNoCanceladas(activo.getId())) {
+		if(activoCargasApi.esActivoConCargasNoCanceladasRegistral(activo.getId()) || activoCargasApi.esActivoConCargasNoCanceladasEconomica(activo.getId())) {
 			activoDto.setConCargas(1);
 		} else {
 			activoDto.setConCargas(0);

@@ -131,11 +131,6 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 						expediente,
 						destinatarios.toArray(new String[] {}));
 
-			}else if (permiteNotificarAprobacion && !Checks.esNulo(expediente)
-					&& DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())) {
-				
-				this.enviaNotificacionAceptar(tramite, oferta, expediente, getGestorFormalizacion(activo, oferta));
-				
 			}else if (permiteRechazar
 					&& DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) { // RECHAZO
 				String prescriptor = getPrescriptor(activo, oferta);
@@ -146,8 +141,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					return;
 				}
 				String gestorFormalizacion = null;
-				if(trabajoApi.checkReservaNecesariaNotNull(expediente)) {
-					gestorFormalizacion = getGestorFormalizacion(activo,oferta);
+				if(ofertaApi.checkReserva(oferta)) {
+					gestorFormalizacion = getGestorFormalizacion(activo,oferta, expediente);
 				}
 				if(Checks.esNulo(gestorFormalizacion))
 					this.enviaNotificacionRechazar(tramite, activo, oferta, prescriptor, gestorComercial);
@@ -181,8 +176,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		Map<String, String> gestores = getGestores(activo, ofertaAceptada, null, null, comercial);
 		return gestores.get(comercial);
 	}
-	private String getGestorFormalizacion(Activo activo, Oferta ofertaAceptada) {
-		Map<String, String> gestores = getGestores(activo, ofertaAceptada, null, null, GESTOR_FORMALIZACION);
+	private String getGestorFormalizacion(Activo activo, Oferta ofertaAceptada, ExpedienteComercial expediente) {
+		Map<String, String> gestores = getGestores(activo, ofertaAceptada, null, expediente, GESTOR_FORMALIZACION);
 		return gestores.get(GESTOR_FORMALIZACION);
 	}
 

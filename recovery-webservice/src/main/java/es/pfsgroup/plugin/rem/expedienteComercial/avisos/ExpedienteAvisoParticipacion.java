@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.expedienteComercial.avisos;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -20,16 +21,29 @@ public class ExpedienteAvisoParticipacion implements ExpedienteAvisadorApi {
 	@Override
 	public DtoAviso getAviso(ExpedienteComercial expediente, Usuario usuarioLogado) {		
 		Oferta oferta = expediente.getOferta();
+		/*
 		Double importeOferta = !Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteContraOferta() : oferta.getImporteOferta();
-		Double suma = 0D;
+		double suma = 0D;
+		*/
+		Double importeOferta = !Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteContraOferta() : oferta.getImporteOferta();
+		//BigDecimal sumaTotal= new BigDecimal("0.00");
+		//BigDecimal sumaCien= new BigDecimal("100.00");
+		double suma = 0D;
 		DtoAviso dto = new DtoAviso();
+		
 		try {
 
 			List<ActivoOferta> activosOferta = oferta.getActivosOferta();
 			for (ActivoOferta activoOferta : activosOferta) {
+				//suma += activoOferta.getImporteActivoOferta();
+				
+				//String suma = activoOferta.getPorcentajeParticipacion().toString();
+				//suma = suma.replace(',', '.');
+				//sumaTotal = sumaTotal.add(new BigDecimal(suma));
+				
 				suma += activoOferta.getImporteActivoOferta();
 			}
-			if(Double.compare(suma, importeOferta) != 0) {
+			if(suma != importeOferta) {
 				dto.setId(String.valueOf(expediente.getId()));
 				dto.setDescripcion("% participación de activos incorrecto");
 			}

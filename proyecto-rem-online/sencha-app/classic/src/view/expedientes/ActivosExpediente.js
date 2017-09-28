@@ -154,7 +154,37 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			            editor:  'textfield',			            
 			            flex:1,
 			       		renderer: Utils.rendererCurrency,
-			       		summaryType: 'sum',
+			       		summaryType: function(){
+							
+							var store = this;
+		                    var records = store.getData().items;
+		                    var field = ['importeParticipacion'];
+		                    function Suma(record, field) {
+		                        var total = 0;
+		                        var j = 0,
+		                        lenn = record.length;
+		                        for (; j < lenn; ++j) {
+		                           total = total + parseFloat(record[j].get(field));
+		                        }
+		                        return total.toFixed(2);
+		                    };
+		                    if (this.isGrouped()) {
+		                        var groups = this.getGroups();
+		                        var i = 0;
+		                        var len = groups.length;
+		                        var out = {},
+		                        group;
+		                        for (; i < len; i++) {
+		                            group = groups[i];
+		                            out[group.name] = Suma.apply(store, [group.children].concat(field));
+		                        }
+		                        var groupSum = out[groups[w].name];
+		                        w++;
+		                        return groupSum;
+		                    } else {
+		                        return Suma.apply(store, [records].concat(field));
+		                    }
+						},
 			            summaryRenderer: function(value, summaryData, dataIndex) {			            	
 			            	value = parseFloat(value);
 			            	var msg = HreRem.i18n("fieldlabel.importe.participacion.igual")

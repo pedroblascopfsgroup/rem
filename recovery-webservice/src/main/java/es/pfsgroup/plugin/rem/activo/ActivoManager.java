@@ -3603,7 +3603,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		} catch (InvocationTargetException e) {
 			logger.error("Error en activoManager", e);
 		}
-
+		dto.setCamposPropagables(TabActivoService.TAB_COMERCIAL);
 		return dto;
 	}
 

@@ -28,10 +28,12 @@ Ext.define('HreRem.model.ComercialActivoModel', {
     
 	proxy: {
 		type: 'uxproxy',
-		remoteUrl: 'activo/getComercialActivo',
+		remoteUrl : 'activo/getComercialActivo',
 		api: {
+			remoteUrl: 'activo/getComercialActivo',
             read: 'activo/getComercialActivo',
             update: 'activo/saveComercialActivo'
-        }
+        },
+        extraParams: {tab: 'comercial' }
     }
 });

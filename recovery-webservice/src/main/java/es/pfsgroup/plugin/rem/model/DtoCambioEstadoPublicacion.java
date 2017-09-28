@@ -1,6 +1,6 @@
 package es.pfsgroup.plugin.rem.model;
 
-public class DtoCambioEstadoPublicacion {
+public class DtoCambioEstadoPublicacion extends DtoTabActivo {
 
 	private Long idActivo;
 	private Boolean publicacionOrdinaria = false;

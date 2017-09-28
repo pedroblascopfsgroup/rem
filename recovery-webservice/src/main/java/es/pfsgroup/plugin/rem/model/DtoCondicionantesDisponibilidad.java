@@ -1,12 +1,10 @@
 package es.pfsgroup.plugin.rem.model;
 
-import es.capgemini.devon.dto.WebDto;
-
 /**
  * Dto que gestiona la disponibilidad de la publicación de un activo.
  *
  */
-public class DtoCondicionantesDisponibilidad extends WebDto {
+public class DtoCondicionantesDisponibilidad extends DtoTabActivo {
 	private static final long serialVersionUID = 1L;
 	
 	private String idActivo;

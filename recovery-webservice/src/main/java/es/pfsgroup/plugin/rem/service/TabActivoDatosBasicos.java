@@ -691,15 +691,18 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 			
 			//HREOS-1983 - Si marcan el check de sello de calidad, ponemos la fecha actual y el gestor logueado.
-			if(!Checks.esNulo(dto.getSelloCalidad()) && dto.getSelloCalidad()) {
+			if((!Checks.esNulo(dto.getSelloCalidad()) && dto.getSelloCalidad()) || 
+				(!Checks.esNulo(dto.getFechaRevisionSelloCalidad()) && !Checks.esNulo(dto.getNombreGestorSelloCalidad()))) {
 				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 				if(!Checks.esNulo(usuarioLogado)){
 					activo.setGestorSelloCalidad(usuarioLogado);
 				}
 				activo.setFechaRevisionSelloCalidad(new Date());
+				activo.setSelloCalidad(true);
 			}else if(!Checks.esNulo(dto.getSelloCalidad()) && !dto.getSelloCalidad()){
 				activo.setGestorSelloCalidad(null);
 				activo.setFechaRevisionSelloCalidad(null);
+				activo.setSelloCalidad(false);
 			}
 			
 			// Activo bancario -------------

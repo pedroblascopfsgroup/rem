@@ -17,6 +17,9 @@ public class ActivoPropagacionFieldTabMap {
     public static final String TAB_INFO_ADMINISTRATIVA = "infoadministrativa";
     public static final String TAB_CARGAS_ACTIVO = "cargasactivo";
     public static final String TAB_MEDIADOR_ACTIVO = "mediadoractivo";
+    public static final String TAB_DATOS_PUBLICACION = "datospublicacion";
+    public static final String TAB_ACTIVO_HISTORICO_ESTADO_PUBLICACION = "activohistoricoestadopublicacion";
+    public static final String TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD = "activocondicionantesdisponibilidad";
     
     static {
     	Map<String, List<String>> pmap = new HashMap<String, List<String>>();
@@ -441,6 +444,43 @@ public class ActivoPropagacionFieldTabMap {
     			Arrays.asList(
     				"fechaRevisionCarga",
     				"conCargas"
+    			));
+    	
+    	pmap.put(TAB_DATOS_PUBLICACION, 
+    			Arrays.asList(
+    				"idActivo",
+    				"totalDiasPublicado",
+    				"portalesExternos"
+    			));
+    	pmap.put(TAB_ACTIVO_HISTORICO_ESTADO_PUBLICACION, 
+    			Arrays.asList(
+    				"idActivo",
+    				"publicacionOrdinaria",
+    				"publicacionForzada",
+    				"ocultacionForzada",
+					"ocultacionPrecio",
+					"despublicacionForzada",
+					"motivoPublicacion",
+					"motivoOcultacionPrecio",
+					"motivoDespublicacionForzada",
+					"motivoOcultacionForzada",
+					"observaciones"
+    			));
+    	
+    	pmap.put(TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD, 
+    			Arrays.asList(
+    					"idActivo",
+    					"ruina",
+    					"pendienteInscripcion",
+    					"obraNuevaSinDeclarar",
+    					"sinTomaPosesionInicial",
+    					"proindiviso",
+    					"obraNuevaEnConstruccion",
+    					"ocupadoConTitulo",
+    					"tapiado",
+    					"otro",
+    					"ocupadoSinTitulo",
+    					"divHorizontalNoInscrita"
     			));
 
         map = Collections.unmodifiableMap(pmap);

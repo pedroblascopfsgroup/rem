@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Jose Villel
---## FECHA_CREACION=20170919
+--## AUTOR=Luis Caballero
+--## FECHA_CREACION=20170927
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-2555
@@ -10,7 +10,8 @@
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - Jose Villel
+--##        0.2 Se modifica where para obtener valor dinamico
 --##########################################
 --*/
 
@@ -39,7 +40,7 @@ AUTHID CURRENT_USER IS
 														ELSE 0 END AS TIENE_ALGUNA_ALERTA
 														FROM #ESQUEMA#.AVG_AVISOS_GASTOS';
 	
-	v_where_gpv_selected 		VARCHAR2(100 CHAR) := ' WHERE GPV_ID = p_gpv_id';
+	v_where_gpv_selected 		VARCHAR2(100 CHAR) := ' WHERE GPV_ID = '||p_gpv_id;
 
 	
 	TYPE GASTOS_REF IS REF CURSOR;

@@ -67,7 +67,8 @@ public class MSVActualizadorDesocultarPrecio implements MSVLiberator {
 
 			dtoCambioEstadoPublicacion.setActivo(activo.getId());
 			dtoCambioEstadoPublicacion.setOcultacionPrecio(false);			
-			dtoCambioEstadoPublicacion.setMotivoOcultacionPrecio(motivo);	
+			dtoCambioEstadoPublicacion.setMotivoOcultacionPrecio(motivo);
+			dtoCambioEstadoPublicacion.setDesOcultacionPrecio(true);
 			
 			activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion);
 		}

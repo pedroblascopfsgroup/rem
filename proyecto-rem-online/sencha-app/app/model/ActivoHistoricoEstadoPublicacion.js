@@ -42,6 +42,9 @@ Ext.define('HreRem.model.ActivoHistoricoEstadoPublicacion', {
     
 	proxy: {
 		type: 'uxproxy',
+		extraParams:{
+			tab: 'activohistoricoestadopublicacion'
+		},
 		writeAll: true,
 		api: {
             create: 'activo/setHistoricoEstadoPublicacion',

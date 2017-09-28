@@ -506,22 +506,6 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	 * @param infoTablas
 	 */
 	public void refreshMaterializedView(InfoTablasBD infoTablas) throws CambiosBDDaoError{
-		Session session = this.sesionFactoryFacade.getSession(this);
-		try {
-			refreshMaterializedView(infoTablas, session);
-		} finally {
-			if (logger.isDebugEnabled()) {
-				logger.trace("Cerrando sesión");
-			}
-			if (session != null) {
-				if (session.isOpen()) {
-					session.close();
-				}
-			}
-		}
-	}
-
-	private void refreshMaterializedView(InfoTablasBD infoTablas, Session session) {
 
 		if (logger.isDebugEnabled()) {
 			logger.trace("Refrescando vista matarializada: " + infoTablas.nombreVistaDatosActuales());
@@ -531,25 +515,29 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		if (infoTablas.vistasAuxiliares() != null) {
 			for (String vistaAux : infoTablas.vistasAuxiliares()) {
 				if (!vistaAux.isEmpty()) {
-					try {
-						this.refreshMaterializedView(vistaAux, session);
-					} catch (Exception e) {
-						throw new CambiosBDDaoError("No se ha podido actualizar la vista materializada " + vistaAux);
-					}
+					this.refreshMaterializedView(vistaAux);
 				}
 			}
 		}
-		try {
-			this.refreshMaterializedView(infoTablas.nombreVistaDatosActuales(), session);
-		} catch (Throwable t) {
-			throw new CambiosBDDaoError(
-					"No se ha podido actualizar la vista materializada " + infoTablas.nombreVistaDatosActuales());
-		}
+		this.refreshMaterializedView(infoTablas.nombreVistaDatosActuales());
 	}
 
-	private void refreshMaterializedView(String nombreVista, Session session) {
-		String sqlRefreshViews = "BEGIN DBMS_SNAPSHOT.REFRESH( '" + nombreVista + "','C',atomic_refresh=>FALSE); end;";
-		queryExecutor.sqlRunExecuteUpdate(session, sqlRefreshViews);
+	private void refreshMaterializedView(String nombreVista) throws CambiosBDDaoError{
+		Session session = this.sesionFactoryFacade.getSession(this);
+		try {
+			String sqlRefreshViews = "BEGIN DBMS_SNAPSHOT.REFRESH( '" + nombreVista
+					+ "','C',atomic_refresh=>FALSE); end;";
+			queryExecutor.sqlRunExecuteUpdate(session, sqlRefreshViews);
+		} catch (Exception e) {
+			throw new CambiosBDDaoError(
+					"No se ha podido actualizar la vista materializada " + nombreVista);
+		} finally {
+			if (session != null) {
+				if (session.isOpen()) {
+					session.close();
+				}
+			}
+		}
 	}
 
 }

@@ -18,7 +18,6 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
-import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosBDDaoError;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosList;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 
@@ -227,11 +226,6 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 										marcarComoEnviado = false;
 										contError++;
 									}
-								} catch (CambiosBDDaoError e) {
-									marcarComoEnviado = false;
-									logger.error("Detección de cambios [" + handler.getClass().getSimpleName()
-											+ "], no se han podido obtener los cambios", e);
-									break;
 								} finally {
 									if (somethingdone && (registroLlamadas != null)) {
 										registro.logTiempoBorrarHistorico();

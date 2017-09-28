@@ -10,6 +10,9 @@ Ext.define('HreRem.model.DatosPublicacion', {
 
 	proxy: {
 		type: 'uxproxy',
+		extraParams:{
+			tab: 'datospublicacion'
+		},
 		api: {
             read: 'activo/getDatosPublicacionByActivo'
         }

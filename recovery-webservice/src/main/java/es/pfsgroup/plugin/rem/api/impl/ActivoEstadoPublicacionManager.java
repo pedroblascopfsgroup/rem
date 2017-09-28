@@ -171,7 +171,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			}
 
 		// DESOCULTAR PRECIO
-		} else if(!Checks.esNulo(dtoCambioEstadoPublicacion.getOcultacionPrecio()) && !dtoCambioEstadoPublicacion.getOcultacionPrecio()){
+		} else if(!Checks.esNulo(dtoCambioEstadoPublicacion.getDesOcultacionPrecio()) && dtoCambioEstadoPublicacion.getDesOcultacionPrecio()){
 			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO);
 			motivo = getMotivo(dtoCambioEstadoPublicacion);
 		// DESPUBLICACION FORZADA

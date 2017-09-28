@@ -137,26 +137,16 @@ BEGIN
                            LEFT JOIN ' || V_ESQUEMA || '.dd_eec_est_exp_comercial EEC 
                                     ON eco.dd_eec_id = EEC.dd_eec_id 
                                         AND EEC.dd_eec_codigo = ''08''
-                    WHERE  (scm.dd_scm_codigo != ''05'' OR Nvl2(activo.act_venta_externa_fecha, activo.act_venta_externa_fecha, eco.eco_fecha_venta) > gpv.gpv_fecha_emision )
-                           AND tga.dd_tga_codigo IN ( ''06'', ''05'', ''01'', ''07'', ''08'', ''03'', ''04'', ''09'', ''02'' ) 
-                           AND NOT stg.dd_stg_codigo IN ( ''03'', ''04'' ) '
+                    WHERE scm.dd_scm_codigo != ''05'' 
+					OR Nvl2(activo.act_venta_externa_fecha, activo.act_venta_externa_fecha, eco.eco_fecha_venta) > gpv.gpv_fecha_emision
+                    OR NOT tga.dd_tga_codigo IN ( ''06'', ''05'', ''01'', ''07'', ''08'', ''03'', ''04'', ''09'', ''02'' ) 
+                    OR stg.dd_stg_codigo IN ( ''03'', ''04'' ) '
                        || V_SQL_ADITIONAL_WHERE ||
                   ' ) gasto ON (avisos.gpv_id = gasto.GPV_ID) 
         WHEN MATCHED THEN 
           UPDATE SET AVG_COMPRADOR = 0, 
                      fechamodificar = SYSDATE, 
-                     usuariomodificar = ''' || V_USUARIO || '''
-        WHEN NOT MATCHED THEN 
-          INSERT (avg_id, 
-                  gpv_id, 
-                  AVG_COMPRADOR, 
-                  usuariocrear, 
-                  fechacrear) 
-          VALUES (' || V_ESQUEMA || '.S_AVG_AVISOS_GASTOS.NEXTVAL, 
-                  gasto.GPV_ID, 
-                  0, 
-                  ''' || V_USUARIO || ''', 
-                  SYSDATE) ';
+                     usuariomodificar = ''' || V_USUARIO || '''';
 
     DBMS_OUTPUT.PUT_LINE('[INFO] FIN UPDATE / INSERT avisos que NO cumplen la condicion (AVG_COMPRADOR = 0)');
 

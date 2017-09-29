@@ -33,6 +33,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 
@@ -83,6 +84,10 @@ public class Oferta implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_EOF_ID")
 	private DDEstadoOferta estadoOferta;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_MRO_ID")
+	private DDMotivoRechazoOferta motivoRechazo;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_EVO_ID")
@@ -257,6 +262,14 @@ public class Oferta implements Serializable, Auditable {
 		this.estadoOferta = estadoOferta;
 	}
 
+	public DDMotivoRechazoOferta getMotivoRechazo() {
+		return motivoRechazo;
+	}
+
+	public void setMotivoRechazo(DDMotivoRechazoOferta motivoRechazo) {
+		this.motivoRechazo = motivoRechazo;
+	}
+	
 	public DDEstadosVisitaOferta getEstadoVisitaOferta() {
 		return estadoVisitaOferta;
 	}

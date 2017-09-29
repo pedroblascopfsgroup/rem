@@ -34,6 +34,9 @@ public class DDTipoRechazoOferta implements Auditable, Dictionary {
 	public static final String CODIGO_TIPO_DENEGADA = "D";
 			
 	private static final long serialVersionUID = 1L;
+	
+	public static final String CODIGO_ANULADA = "A";
+	public static final String CODIGO_DENEGADA = "D";
 
 	@Id
 	@Column(name = "DD_TRO_ID")

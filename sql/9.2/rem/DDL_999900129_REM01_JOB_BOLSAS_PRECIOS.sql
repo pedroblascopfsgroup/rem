@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Daniel Gutiérrez
---## FECHA_CREACION=20170809
+--## AUTOR=DAP
+--## FECHA_CREACION=20170929
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0

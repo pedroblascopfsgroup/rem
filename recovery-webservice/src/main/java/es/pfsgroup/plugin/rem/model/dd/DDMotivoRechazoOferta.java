@@ -34,6 +34,9 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDMotivoRechazoOferta implements Auditable, Dictionary {
 
 	private static final long serialVersionUID = 1L;
+	
+	public static final String CODIGO_DECISION_COMITE = "18";
+	public static final String CODIGO_PBC_DENEGADO = "902";
 
 	@Id
 	@Column(name = "DD_MRO_ID")

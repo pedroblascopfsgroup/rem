@@ -31,6 +31,9 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDTipoRechazoOferta implements Auditable, Dictionary {
 
 	private static final long serialVersionUID = 1L;
+	
+	public static final String CODIGO_ANULADA = "A";
+	public static final String CODIGO_DENEGADA = "D";
 
 	@Id
 	@Column(name = "DD_TRO_ID")

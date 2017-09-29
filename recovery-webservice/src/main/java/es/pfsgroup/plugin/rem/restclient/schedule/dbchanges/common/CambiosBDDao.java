@@ -75,7 +75,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 	private static final String REST_USER = "REST-USER";
 
-	private static final String MARCADOR_CAMBIOS = "_MOD";
+	private static final String MARCADOR_CAMBIOS = "_M";
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -294,7 +294,8 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	 *            Objeto en el que se irá dejando trazas de tiempos de
 	 *            ejecución. Puede ser NULL si no queremos dejar ninguna traza.
 	 */
-	public void marcaComoEnviados(Class<?> dtoClass, InfoTablasBD infoTablas, List<RestLlamada> registro) {
+	@SuppressWarnings("rawtypes")
+	public void marcaComoEnviados(Class<?> dtoClass, DetectorCambiosBD infoTablas, List<RestLlamada> registro) {
 		long startTime = System.currentTimeMillis();
 
 		if (dtoClass == null) {
@@ -368,6 +369,15 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 		if (logger.isDebugEnabled()) {
 			logger.trace("TIMER DETECTOR Marcado de cambios: " + (System.currentTimeMillis() - startTime));
+		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	public void marcarComoEnviadosMarcadosComun(CambiosList listPendientes, DetectorCambiosBD infoTablas,
+			Class<?> dtoClass) {
+		for (int i = 0; i < listPendientes.size(); i++) {
+			CambioBD cambio = (CambioBD)listPendientes.get(i);
+			
 		}
 	}
 
@@ -505,7 +515,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	 * 
 	 * @param infoTablas
 	 */
-	public void refreshMaterializedView(InfoTablasBD infoTablas) throws CambiosBDDaoError{
+	public void refreshMaterializedView(InfoTablasBD infoTablas) throws CambiosBDDaoError {
 
 		if (logger.isDebugEnabled()) {
 			logger.trace("Refrescando vista matarializada: " + infoTablas.nombreVistaDatosActuales());
@@ -519,18 +529,21 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 				}
 			}
 		}
-		this.refreshMaterializedView(infoTablas.nombreVistaDatosActuales());
+		String nombreVistaDatosActuales = infoTablas.nombreVistaDatosActuales();
+		if (infoTablas.procesarSoloCambiosMarcados()) {
+			nombreVistaDatosActuales = nombreVistaDatosActuales.concat(MARCADOR_CAMBIOS);
+		}
+		this.refreshMaterializedView(nombreVistaDatosActuales);
 	}
 
-	private void refreshMaterializedView(String nombreVista) throws CambiosBDDaoError{
+	private void refreshMaterializedView(String nombreVista) throws CambiosBDDaoError {
 		Session session = this.sesionFactoryFacade.getSession(this);
 		try {
 			String sqlRefreshViews = "BEGIN DBMS_SNAPSHOT.REFRESH( '" + nombreVista
 					+ "','C',atomic_refresh=>FALSE); end;";
 			queryExecutor.sqlRunExecuteUpdate(session, sqlRefreshViews);
 		} catch (Exception e) {
-			throw new CambiosBDDaoError(
-					"No se ha podido actualizar la vista materializada " + nombreVista);
+			throw new CambiosBDDaoError("No se ha podido actualizar la vista materializada " + nombreVista);
 		} finally {
 			if (session != null) {
 				if (session.isOpen()) {

@@ -15,6 +15,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioEnEjecucion;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
@@ -71,11 +72,11 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 		}
 	}
 
-	public void enviaInformacionCompleta(DetectorCambiosBD<?> handler) throws ErrorServicioWebcom {
+	public void enviaInformacionCompleta(DetectorCambiosBD<?> handler) throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		this.detectaCambios(handler, TIPO_ENVIO.COMPLETO);
 	}
 
-	public void detectaCambios() throws ErrorServicioWebcom {
+	public void detectaCambios() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		detectaCambios(null);
 	}
 
@@ -89,7 +90,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public void detectaCambios(DetectorCambiosBD handlerToExecute) throws ErrorServicioWebcom {
+	public void detectaCambios(DetectorCambiosBD handlerToExecute) throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		this.detectaCambios(handlerToExecute, TIPO_ENVIO.CAMBIOS);
 	}
 
@@ -97,13 +98,13 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	 * Inicia la detección de cambios en BD.
 	 * 
 	 * @param class1
+	 * @throws ErrorServicioEnEjecucion 
 	 * @throws Exception
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void detectaCambios(DetectorCambiosBD handlerToExecute, TIPO_ENVIO tipoEnvio) throws ErrorServicioWebcom {
+	public void detectaCambios(DetectorCambiosBD handlerToExecute, TIPO_ENVIO tipoEnvio) throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		if (running) {
-			logger.warn("El detector de cambios en BD ya se está ejecutando");
-			return;
+			throw new ErrorServicioEnEjecucion("El servicio ya se esta ejecutando");
 		}
 		synchronized (this) {
 			running = true;
@@ -157,7 +158,14 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 
 							logger.trace(handler.getClass().getSimpleName() + ": obtenemos los cambios de la BD");
 							Class control = handler.getDtoClass();
-							CambiosList listPendientes = new CambiosList(tamanyoBloque);
+							CambiosList listPendientes = null;
+							//si actualimos solo los registros marcados, deshabilitamos la paginacion
+							if(handler.procesarSoloCambiosMarcados()){
+								listPendientes = new CambiosList(null);
+							}else{
+								listPendientes = new CambiosList(tamanyoBloque);
+							}
+							
 							RestLlamada registro = new RestLlamada();
 							handler.actualizarVistaMaterializada(registro);
 							Boolean marcarComoEnviado = false;
@@ -250,7 +258,14 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 							if (marcarComoEnviado) {
 								logger.trace(handler.getClass().getName()
 										+ ": marcando los registros de la BD como enviados");
-								handler.marcaComoEnviados(control, llamadas);
+								if(!handler.procesarSoloCambiosMarcados()){
+									handler.marcaComoEnviados(control, llamadas);
+								}else{
+									//en caso de enviar solo los registros marcados solo hay un bloque
+									handler.marcarComoEnviadosMarcadosComun(listPendientes, control);
+									handler.marcarComoEnviadosMarcadosEspecifico(listPendientes);
+								}
+								
 							}
 						}
 					}

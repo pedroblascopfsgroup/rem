@@ -5,6 +5,7 @@ import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 import es.capgemini.devon.beans.Service;
+import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioEnEjecucion;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.restclient.schedule.DeteccionCambiosBDTask;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.DetectorWebcomActivosObrasNuevas;
@@ -71,9 +72,10 @@ public class RestLauncher {
 	/**
 	 * ENVIA TODOS LOS CAMBIOS A WEBCOM
 	 * @throws ErrorServicioWebcom
+	 * @throws ErrorServicioEnEjecucion 
 	 */
 	@ManagedOperation(description = "Envia todos los cambios a Webcom")
-	public void enviarCambios() throws ErrorServicioWebcom {
+	public void enviarCambios() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		task.detectaCambios();		
 	}
 	
@@ -86,13 +88,13 @@ public class RestLauncher {
 	
 	
 	@ManagedOperation(description = "Envia el stock de Activos completos a Webcom")
-	public void enviarCompletoStockWebcom() throws ErrorServicioWebcom {
+	public void enviarCompletoStockWebcom() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		task.enviaInformacionCompleta(cambiosStock);
 		
 	}
 	
 	@ManagedOperation(description = "Envia el stock de Activos  a Webcom")
-	public void enviarStockWebcom() throws ErrorServicioWebcom {
+	public void enviarStockWebcom() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		task.detectaCambios(cambiosStock);
 		
 	}
@@ -105,12 +107,12 @@ public class RestLauncher {
 	 */
 	
 	@ManagedOperation(description = "Envia la lista completa de Usuarios a Webcom")
-	public void enviarCompletoUsuariosWebcom() throws ErrorServicioWebcom {
+	public void enviarCompletoUsuariosWebcom() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		task.enviaInformacionCompleta(cambiosUsuarios);		
 	}
 	
 	@ManagedOperation(description = "Envia la lista de Usuarios a Webcom")
-	public void enviarUsuariosWebcom() throws ErrorServicioWebcom {
+	public void enviarUsuariosWebcom() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		task.detectaCambios(cambiosUsuarios);		
 	}
 	
@@ -122,13 +124,13 @@ public class RestLauncher {
 	 */
 	
 	@ManagedOperation(description = "Envia la lista completa de Proveedores a Webcom")
-	public void enviarCompletoProveedoresWebcom() throws ErrorServicioWebcom {
+	public void enviarCompletoProveedoresWebcom() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		task.enviaInformacionCompleta(cambiosProveedores);
 		
 	}
 	
     @ManagedOperation(description = "Envia la lista de Proveedores a Webcom")
-	public void enviarProveedoresWebcom() throws ErrorServicioWebcom {
+	public void enviarProveedoresWebcom() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		task.detectaCambios(cambiosProveedores);
 		
 	}
@@ -141,13 +143,13 @@ public class RestLauncher {
 	 */
 	
     @ManagedOperation(description = "Envia la lista completa de Activos de obra nueva")
-	public void enviarCompletoActivosObrasNuevas() throws ErrorServicioWebcom {
+	public void enviarCompletoActivosObrasNuevas() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		task.enviaInformacionCompleta(cambiosActivosObrasNuevas);
 		
 	}
     
 	@ManagedOperation(description = "Envia la lista de Activos de obra nueva")
-	public void enviarActivosObrasNuevas() throws ErrorServicioWebcom {
+	public void enviarActivosObrasNuevas() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		task.detectaCambios(cambiosActivosObrasNuevas);
 		
 	}
@@ -160,13 +162,13 @@ public class RestLauncher {
 	 */
 	
 	@ManagedOperation(description = "Envia la lista completa de cabeceras de obras nuevas")
-	public void enviarCompletoCabecerasObrasNuevas() throws ErrorServicioWebcom {
+	public void enviarCompletoCabecerasObrasNuevas() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		task.enviaInformacionCompleta(cambiosCabecerasObrasNuevas);
 		
 	}
 	
 	@ManagedOperation(description = "Envia la lista de cabeceras de obras nuevas")
-	public void enviarCabecerasObrasNuevas() throws ErrorServicioWebcom {
+	public void enviarCabecerasObrasNuevas() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		task.detectaCambios(cambiosCabecerasObrasNuevas);
 		
 	}
@@ -179,13 +181,13 @@ public class RestLauncher {
 	 */
 	
 	@ManagedOperation(description = "Envia la lista completa de cambios informe mediador")
-	public void enviarCompletoEstadosInformeMediador() throws ErrorServicioWebcom {
+	public void enviarCompletoEstadosInformeMediador() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		task.enviaInformacionCompleta(cambiosInformemediador);
 		
 	}
 	
 	@ManagedOperation(description = "Envia la lista de cambios informe mediador")
-	public void enviarEstadosInformeMediador() throws ErrorServicioWebcom {
+	public void enviarEstadosInformeMediador() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		task.detectaCambios(cambiosInformemediador);
 		
 	}
@@ -199,13 +201,13 @@ public class RestLauncher {
 	 */
 	
 	@ManagedOperation(description = "Envia la lista completa de cambios estado notificacion")
-	public void enviarCompletoEstadoNotificacion() throws ErrorServicioWebcom {
+	public void enviarCompletoEstadoNotificacion() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		task.enviaInformacionCompleta(cambiosEstadoNotificacion);
 		
 	}
 	
 	@ManagedOperation(description = "Envia la lista de cambios estado notificacion")
-	public void enviarEstadoNotificacion() throws ErrorServicioWebcom {
+	public void enviarEstadoNotificacion() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		task.detectaCambios(cambiosEstadoNotificacion);
 		
 	}
@@ -218,13 +220,13 @@ public class RestLauncher {
 	 */
 	
 	@ManagedOperation(description = "Envia la lista completa de cambios estado oferta")
-	public void enviarCompletoEstadoOferta() throws ErrorServicioWebcom {
+	public void enviarCompletoEstadoOferta() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		task.enviaInformacionCompleta(cambiosEstadoOferta);
 		
 	}
 	
 	@ManagedOperation(description = "Envia la lista de cambios estado oferta")
-	public void enviarEstadoOferta() throws ErrorServicioWebcom {
+	public void enviarEstadoOferta() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		task.detectaCambios(cambiosEstadoOferta);
 		
 	}
@@ -237,13 +239,13 @@ public class RestLauncher {
 	 */
 	
 	@ManagedOperation(description = "Envia la lista completa de cambios  peticion trabajo")
-	public void enviarCompletoPeticionTrabajo() throws ErrorServicioWebcom {
+	public void enviarCompletoPeticionTrabajo() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		task.enviaInformacionCompleta(cambiosPeticionTrabajo);
 		
 	}
 	
 	@ManagedOperation(description = "Envia la lista de cambios peticion trabajo")
-	public void enviarPeticionTrabajo() throws ErrorServicioWebcom {
+	public void enviarPeticionTrabajo() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		task.detectaCambios(cambiosPeticionTrabajo);
 		
 	}
@@ -256,13 +258,13 @@ public class RestLauncher {
 	 */
 	
 	@ManagedOperation(description = "Envia la lista completa de nuevas campanyas")
-	public void enviarCompletoObrasNuevasCampanyas() throws ErrorServicioWebcom {
+	public void enviarCompletoObrasNuevasCampanyas() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		task.enviaInformacionCompleta(cambiosObrasNuevasCampanyas);
 		
 	}
 	
 	@ManagedOperation(description = "Envia la lista de nuevas campanyas")
-	public void enviarObrasNuevasCampanyas() throws ErrorServicioWebcom {
+	public void enviarObrasNuevasCampanyas() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		task.detectaCambios(cambiosObrasNuevasCampanyas);
 		
 	}
@@ -275,13 +277,13 @@ public class RestLauncher {
 	 */
 	
 	@ManagedOperation(description = "Envia la lista completa de ventas y comisiones")
-	public void enviarCompletoVentasYcomisiones() throws ErrorServicioWebcom {
+	public void enviarCompletoVentasYcomisiones() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		task.enviaInformacionCompleta(cambiosVentasYcomisiones);
 		
 	}
 	
 	@ManagedOperation(description = "Envia la lista de ventas y comisiones")
-	public void enviarVentasYcomisiones() throws ErrorServicioWebcom {
+	public void enviarVentasYcomisiones() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		task.detectaCambios(cambiosVentasYcomisiones);
 		
 	}

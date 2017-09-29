@@ -33,6 +33,10 @@ public interface RestApi {
 	public enum ALGORITMO_FIRMA {
 		DEFAULT, NO_IP
 	}
+	
+	public enum ENTIDADES {
+		ACTIVO
+	}
 
 	public static final String CODE_ERROR = "ERROR";
 	public static final String CODE_OK = "OK";
@@ -264,5 +268,12 @@ public interface RestApi {
 	 * @param req
 	 */
 	public void simulateRestFilter(ServletRequest req) throws Exception;
+	
+	/**
+	 * Marca un registro como modificado
+	 * @param entidad
+	 * @param instanciaEntidad
+	 */
+	public void marcarRegistroParaEnvio(ENTIDADES entidad,Object instanciaEntidad);
 
 }

@@ -90,6 +90,13 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 	 * @throws ErrorServicioWebcom
 	 */
 	public abstract void invocaServicio(List<T> data, RestLlamada registro) throws ErrorServicioWebcom;
+	
+	
+	/**
+	 * Borra de la tabla de modificaciones aquellas que se han enviado
+	 * @param listPendientes
+	 */
+	public abstract void marcarComoEnviadosMarcadosEspecifico(CambiosList listPendientes);
 
 	/**
 	 * Devuelve la lisa de cambios detectados ya convertidos al DTO
@@ -175,6 +182,11 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 		}
 
 	}
+	
+	public void marcarComoEnviadosMarcadosComun(CambiosList listPendientes,Class<?> dtoClass){
+		dao.marcarComoEnviadosMarcadosComun(listPendientes, this, dtoClass);
+	}
+	
 
 	/**
 	 * Devuelve la clase que implementa el DTO asociado al detector de cambios.

@@ -6,6 +6,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
+import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioEnEjecucion;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 
 /**
@@ -34,6 +35,9 @@ public class DeteccionCambiosBDJob extends QuartzJobBean {
 			schedulerTask.detectaCambios();
 		} catch (ErrorServicioWebcom e) {
 			logger.error("error en el job DeteccionCambiosBDJob",e);
+		} catch (ErrorServicioEnEjecucion e) {
+			//esto no es un error, forma parte del flujo normal de ejecucion
+			logger.info(e.getMessage());
 		}
 
 	}

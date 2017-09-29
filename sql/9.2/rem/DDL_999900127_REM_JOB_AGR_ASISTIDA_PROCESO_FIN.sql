@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Kevin Fernández
---## FECHA_CREACION=20161102
+--## AUTOR=Daniel Albert Pérez
+--## FECHA_CREACION=20170929
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0

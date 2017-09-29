@@ -48,7 +48,7 @@ DECLARE
   DBMS_SCHEDULER.CREATE_JOB (
    job_name             => 'JOB_ACTUALIZA_BOLSAS',
    job_type             => 'PLSQL_BLOCK',
-   job_action           => V_ESQUEMA || '.ACTUALIZA_ACT_IND_PRECIOS;',
+   job_action           => 'DECLARE SALIDA VARCHAR2(4000 CHAR) BEGIN '||V_ESQUEMA||'.ACTUALIZA_ACT_IND_PRECIOS(NULL,NULL,SALIDA); END;',
    start_date           => to_date('09/08/2017 01:30:00','dd/mm/yyyy hh24:mi:ss'),
    repeat_interval      => 'FREQ=DAILY', 
    --end_date             => '15-SEP-08 1.00.00AM US/Pacific',

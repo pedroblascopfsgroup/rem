@@ -48,7 +48,7 @@ DECLARE
   DBMS_SCHEDULER.CREATE_JOB (
    job_name             => 'JOB_ACTIVO_PUBLICACION_PORTAL',
    job_type             => 'PLSQL_BLOCK',
-   job_action           => V_ESQUEMA || '.ACTIVO_PUBLICACION_PORTAL;',
+   job_action           => 'BEGIN '||V_ESQUEMA|| '.ACTIVO_PUBLICACION_PORTAL(NULL,NULL); END;',
    start_date           => to_date('26/04/2016 00:40:00','dd/mm/yyyy hh24:mi:ss'),
    repeat_interval      => 'FREQ=DAILY', 
    --end_date             => '15-SEP-08 1.00.00AM US/Pacific',

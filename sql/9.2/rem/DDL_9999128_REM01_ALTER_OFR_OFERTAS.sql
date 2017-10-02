@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSEVI JIMENEZ
---## FECHA_CREACION=20170927
+--## FECHA_CREACION=20171002
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-2814
@@ -36,7 +36,7 @@ DECLARE
  
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'OFR_OFERTAS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-	V_CREAR_FK VARCHAR2(2 CHAR) := 'SI'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
+	V_CREAR_FK VARCHAR2(2 CHAR) := 'NO'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
 
     
     /* -- ARRAY CON NUEVAS COLUMNAS */

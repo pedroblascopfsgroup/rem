@@ -223,9 +223,5 @@ Ext.define('HreRem.view.activos.comercial.ofertas.OfertasController', {
 		tabpanel.fireEvent('marcarfavorito', tabpanel, btn)
 		
 		
-	}
-    
-
-        
-    
+	}    
 });

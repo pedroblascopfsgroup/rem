@@ -94,7 +94,7 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 		mailsCC.add(this.getCorreoFrom());			
 		
 		
-		if(activoTramiteApi.getTareaValorByNombre(valores, "comboResolucion").equalsIgnoreCase(DDResolucionComite.CODIGO_CONTRAOFERTA)) {
+		if(DDResolucionComite.CODIGO_CONTRAOFERTA.equalsIgnoreCase(activoTramiteApi.getTareaValorByNombre(valores, "comboResolucion"))) {
 						
 			Activo activo = oferta.getActivoPrincipal();
 			Usuario preescriptor = ofertaApi.getUsuarioPreescriptor(oferta);

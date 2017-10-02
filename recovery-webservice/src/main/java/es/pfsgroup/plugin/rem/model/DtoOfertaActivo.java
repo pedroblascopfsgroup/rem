@@ -18,6 +18,9 @@ public class DtoOfertaActivo extends WebDto {
 	private Long idAgrupacion;
 	private String estadoOferta;
 	private String codigoEstadoOferta;
+	private String tipoRechazoCodigo;
+	private String motivoRechazoCodigo;
+	
 	
 	public Long getIdOferta() {
 		return idOferta;
@@ -49,6 +52,18 @@ public class DtoOfertaActivo extends WebDto {
 	}
 	public void setCodigoEstadoOferta(String codigoEstadoOferta) {
 		this.codigoEstadoOferta = codigoEstadoOferta;
+	}
+	public String getTipoRechazoCodigo() {
+		return tipoRechazoCodigo;
+	}
+	public void setTipoRechazoCodigo(String tipoRechazoCodigo) {
+		this.tipoRechazoCodigo = tipoRechazoCodigo;
+	}
+	public String getMotivoRechazoCodigo() {
+		return motivoRechazoCodigo;
+	}
+	public void setMotivoRechazoCodigo(String motivoRechazoCodigo) {
+		this.motivoRechazoCodigo = motivoRechazoCodigo;
 	}
 
 	

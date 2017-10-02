@@ -61,8 +61,13 @@ public class CedulaHabitabilidadUserAssigantionService implements UserAssigantio
 				if (CODIGO_T008_SOLICITUD_DOCUMENTO.equals(codTarea)
 						|| CODIGO_T008_OBTENCION_DOCUMENTO.equals(codTarea)) {
 
-					filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo",
-							GestorActivoApi.CODIGO_GESTORIA_CEDULAS);
+					if(gestorActivoApi.existeGestorEnActivo(tareaActivo.getActivo(), GestorActivoApi.CODIGO_GESTORIA_CEDULAS))
+						filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								GestorActivoApi.CODIGO_GESTORIA_CEDULAS);
+					else
+						filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								GestorActivoApi.CODIGO_GESTOR_ADMISION);
+					
 
 				} else {
 					filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo",

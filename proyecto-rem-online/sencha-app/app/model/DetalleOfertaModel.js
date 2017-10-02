@@ -19,6 +19,9 @@ Ext.define('HreRem.model.DetalleOfertaModel', {
 			name:'procedenciaVisita'
 		},
 		{
+			name:'motivoRechazoDesc'
+		},
+		{
 			name:'sucursal'
 		}
     ],

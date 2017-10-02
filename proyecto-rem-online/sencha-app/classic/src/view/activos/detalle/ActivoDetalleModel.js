@@ -10,6 +10,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     
     data: {
     	activo: null,
+    	ofertaRecord: null,
     	activoCondicionantesDisponibilidad: null
     },
     
@@ -936,7 +937,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'estadosOfertas'}
 			}   	
 	    },
-	    
+
 	    comboTipoOferta: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -944,6 +945,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tiposOfertas'}
 			}   	
+	    },
+
+	    comboTipoRechazoOferta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoRechazoOferta'}
+			},
+			autoLoad: true
+	    },
+	    
+	    comboMotivoRechazoOferta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboMotivoRechazoOferta',
+				extraParams: {tipoRechazoOfertaCodigo: '{ofertaRecord.tipoRechazoCodigo}'}
+			}
 	    },
 	    
 	    comboTipoDocumento: {

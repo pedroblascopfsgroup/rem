@@ -121,7 +121,18 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 		    				reference: 'sucursaldetalleofertaref',
 		    				colspan: 2
 		    			},
-		    		// Fila 2 - Solo Cajamar
+		    		// Fila 2
+						{
+							xtype: "textfield",
+							fieldLabel: HreRem.i18n('fieldlabel.oferta.detalle.motivo.rechazo'),
+							bind: {
+								value: '{detalleOfertaModel.motivoRechazoDesc}'
+							},
+		    				readOnly: true,
+		    				width: 410,
+		    				colspan: 3
+		    			},
+		    		// Fila 3 - Solo Cajamar
 		    			{
 		                    xtype: 'fieldsettable',
 		                    title: HreRem.i18n('title.comerical.oferta.detalle.cajamar'),

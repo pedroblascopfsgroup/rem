@@ -10,11 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -23,9 +25,12 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
 
 @Component
 public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterService {
@@ -44,6 +49,9 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionComite.class);
 	 
@@ -103,6 +111,21 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 	
 								// Rechaza la oferta y descongela el resto
 								ofertaApi.rechazarOferta(ofertaAceptada);
+								
+								// Tipo rechazo y motivo rechazo ofertas cajamar
+								DDTipoRechazoOferta tipoRechazo = (DDTipoRechazoOferta) utilDiccionarioApi
+										.dameValorDiccionarioByCod(DDTipoRechazoOferta.class,
+												DDTipoRechazoOferta.CODIGO_DENEGADA);
+								
+								DDMotivoRechazoOferta motivoRechazo = (DDMotivoRechazoOferta) utilDiccionarioApi
+										.dameValorDiccionarioByCod(DDMotivoRechazoOferta.class,
+												DDMotivoRechazoOferta.CODIGO_DECISION_COMITE);
+								
+								motivoRechazo.setTipoRechazo(tipoRechazo);
+								ofertaAceptada.setMotivoRechazo(motivoRechazo);
+								genericDao.save(Oferta.class, ofertaAceptada);
+								
+								
 								try {
 									ofertaApi.descongelarOfertas(expediente);
 								} catch (Exception e) {

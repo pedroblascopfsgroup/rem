@@ -2128,7 +2128,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Boolean permitirGenerarHoja = true;
 		//permitimos hoja de datos si el expediente está bloqueado
 		if(expediente.getBloqueado() == null || expediente.getBloqueado().equals(Integer.valueOf(0))){
-			if (!Checks.esNulo(expediente.getEstadoPbc()) && expediente.getEstadoPbc() == 0) {
+			permitirGenerarHoja = false;
+			/*if (!Checks.esNulo(expediente.getEstadoPbc()) && expediente.getEstadoPbc() == 0) {
 				permitirGenerarHoja = false;
 			}
 			
@@ -2198,7 +2199,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						&& (ocupado != 1 || conTitulo != 0)) {
 					permitirGenerarHoja = false;
 				}
-			}
+			}*/
 		}
 
 		formalizacionDto.setGeneracionHojaDatos(permitirGenerarHoja);
@@ -4019,8 +4020,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		ExpedienteComercial expediente = this.findOne(Long.parseLong(dto.getId()));
 		if (!Checks.esNulo(expediente)) {
-
+			if(Checks.esNulo(expediente.getCondicionante()))
+				expediente.setCondicionante(new CondicionanteExpediente());
+			
 			CondicionanteExpediente condiciones = expediente.getCondicionante();
+			
+				
 			if (!Checks.esNulo(condiciones)) {
 
 				if(!Checks.esNulo(dto.getSolicitaFinanciacion())){

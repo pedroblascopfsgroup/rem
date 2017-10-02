@@ -19,35 +19,38 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de estados de una autorizacion de un gasto por HAYA
+ * Modelo que gestiona el diccionario de motivos de anulacion de un expediente comercial
  * 
- * @author Jose Villel
+ * @author Bender
  *
  */
 @Entity
-@Table(name = "DD_EAP_ESTADOS_AUTORIZ_PROP", schema = "${entity.schema}")
+@Table(name = "DD_TRO_TIPO_RECHAZO_OFERTA", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDEstadoAutorizacionPropietario implements Auditable, Dictionary {
+public class DDTipoRechazoOferta implements Auditable, Dictionary {
 
+	public static final String CODIGO_TIPO_ANULADA = "A";
+	public static final String CODIGO_TIPO_DENEGADA = "D";
+			
 	private static final long serialVersionUID = 1L;
 	
-	public static final String CODIGO_PENDIENTE = "01";
-	public static final String CODIGO_RECHAZADO_CONTABILIDAD = "04";
+	public static final String CODIGO_ANULADA = "A";
+	public static final String CODIGO_DENEGADA = "D";
 
 	@Id
-	@Column(name = "DD_EAP_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEstadoAutorizacionPropGenerator")
-	@SequenceGenerator(name = "DDEstadoAutorizacionPropGenerator", sequenceName = "S_DD_EAP_ESTADOS_AUTORIZ_PROP")
+	@Column(name = "DD_TRO_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoRechazoOfertaGenerator")
+	@SequenceGenerator(name = "DDTipoRechazoOfertaGenerator", sequenceName = "S_DD_TRO_TIPO_RECHAZO_OFERTA")
 	private Long id;
 	    
-	@Column(name = "DD_EAP_CODIGO")   
+	@Column(name = "DD_TRO_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_EAP_DESCRIPCION")   
+	@Column(name = "DD_TRO_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_EAP_DESCRIPCION_LARGA")   
+	@Column(name = "DD_TRO_DESCRIPCION_LARGA")   
 	private String descripcionLarga;	    
 
 	@Version   

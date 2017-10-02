@@ -10,6 +10,7 @@ import static es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap.TAB_INF
 import static es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap.TAB_INFO_ADMINISTRATIVA;
 import static es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap.TAB_MEDIADOR_ACTIVO;
 import static es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap.TAB_SIT_POSESORIA;
+import static es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap.TAB_COMERCIAL;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,9 +24,13 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformacionAdministrativa;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
+
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
+
+import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
+
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 
 class ActivoControllerDispachableMethods {
@@ -182,6 +187,7 @@ class ActivoControllerDispachableMethods {
 		});
 		
 		/*
+<<<<<<< Updated upstream
 		 * TAB_ACTIVO_HISTORICO_ESTADO_PUBLICACION
 		 */
 		dispachableMethods.put(TAB_ACTIVO_HISTORICO_ESTADO_PUBLICACION, new DispachableMethod<DtoCambioEstadoPublicacion>() {
@@ -214,6 +220,25 @@ class ActivoControllerDispachableMethods {
 			public void execute(Long id, DtoCondicionantesDisponibilidad dto) {
 				if (dto != null ){
 					this.controller.saveCondicionantesDisponibilidad(id,dto, new ModelMap());
+				}
+			}
+		});
+/*
+		 * TAB_COMERCIAL
+		 */
+		dispachableMethods.put(TAB_COMERCIAL, new DispachableMethod<DtoComercialActivo>() {
+
+			@Override
+			public Class<DtoComercialActivo> getArgumentType() {
+				return DtoComercialActivo.class;
+			}
+
+			@Override
+			public void execute(Long id, DtoComercialActivo dto) {
+				if (dto != null ){
+					dto.setId(id.toString());
+					this.controller.saveComercialActivo(dto, new ModelMap());
+
 				}
 			}
 		});

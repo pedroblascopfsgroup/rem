@@ -55,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
@@ -474,6 +475,20 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "claseActivo.codigo", tipoClaseActivoCodigo);
 
 		return (List<DDSubtipoClaseActivoBancario>) genericDao.getListOrdered(DDSubtipoClaseActivoBancario.class, order,
+				filter);
+
+	}
+	
+	@Override
+	@BusinessOperationDefinition("genericManager.getComboMotivoRechazoOferta")
+	public List<DDMotivoRechazoOferta> getComboMotivoRechazoOferta(String tipoRechazoOfertaCodigo) {
+
+		// Generar una lista de todos los subtipos de clase bancarios
+		// relacionados con el tipo de clase bancario
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "tipoRechazo.codigo", tipoRechazoOfertaCodigo);
+
+		return (List<DDMotivoRechazoOferta>) genericDao.getListOrdered(DDMotivoRechazoOferta.class, order,
 				filter);
 
 	}

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.message.MessageService;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
@@ -224,6 +225,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			if (activo.getTitulo() == null) {
 				activo.setTitulo(new ActivoTitulo());
 				activo.getTitulo().setActivo(activo);
+				activo.getTitulo().setAuditoria(Auditoria.getNewInstance());				
 			}
 			
 			beanUtilNotNull.copyProperties(activo.getTitulo(), dto);
@@ -231,8 +233,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			
 			if (dto.getEstadoTitulo() != null) {
 				
-				DDEstadoTitulo estadoTituloNuevo = (DDEstadoTitulo) 
-						diccionarioApi.dameValorDiccionarioByCod(DDEstadoTitulo.class, dto.getEstadoTitulo());
+				DDEstadoTitulo estadoTituloNuevo = (DDEstadoTitulo) diccionarioApi.dameValorDiccionarioByCod(DDEstadoTitulo.class, dto.getEstadoTitulo());
 		
 				activo.getTitulo().setEstado(estadoTituloNuevo);
 			

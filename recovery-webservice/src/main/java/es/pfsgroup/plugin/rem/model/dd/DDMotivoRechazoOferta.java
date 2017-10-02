@@ -3,9 +3,12 @@ package es.pfsgroup.plugin.rem.model.dd;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -19,35 +22,39 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de estados de una autorizacion de un gasto por HAYA
+ * Modelo que gestiona el diccionario de motivos de anulacion de un expediente comercial
  * 
- * @author Jose Villel
+ * @author Bender
  *
  */
 @Entity
-@Table(name = "DD_EAP_ESTADOS_AUTORIZ_PROP", schema = "${entity.schema}")
+@Table(name = "DD_MRO_MOTIVO_RECHAZO_OFERTA", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDEstadoAutorizacionPropietario implements Auditable, Dictionary {
+public class DDMotivoRechazoOferta implements Auditable, Dictionary {
 
 	private static final long serialVersionUID = 1L;
 	
-	public static final String CODIGO_PENDIENTE = "01";
-	public static final String CODIGO_RECHAZADO_CONTABILIDAD = "04";
+	public static final String CODIGO_DECISION_COMITE = "18";
+	public static final String CODIGO_PBC_DENEGADO = "902";
 
 	@Id
-	@Column(name = "DD_EAP_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEstadoAutorizacionPropGenerator")
-	@SequenceGenerator(name = "DDEstadoAutorizacionPropGenerator", sequenceName = "S_DD_EAP_ESTADOS_AUTORIZ_PROP")
+	@Column(name = "DD_MRO_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDMotivoRechazoOfertaGenerator")
+	@SequenceGenerator(name = "DDMotivoRechazoOfertaGenerator", sequenceName = "S_DD_MRO_MOTIVO_RECHAZO_OFERTA")
 	private Long id;
+	
+	@JoinColumn(name = "DD_TRO_ID")  
+    @ManyToOne(fetch = FetchType.LAZY)
+	private DDTipoRechazoOferta tipoRechazo;
 	    
-	@Column(name = "DD_EAP_CODIGO")   
+	@Column(name = "DD_MRO_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_EAP_DESCRIPCION")   
+	@Column(name = "DD_MRO_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_EAP_DESCRIPCION_LARGA")   
+	@Column(name = "DD_MRO_DESCRIPCION_LARGA")   
 	private String descripcionLarga;	    
 
 	@Version   
@@ -63,7 +70,15 @@ public class DDEstadoAutorizacionPropietario implements Auditable, Dictionary {
 	public void setId(Long id) {
 		this.id = id;
 	}
+	
+	public DDTipoRechazoOferta getTipoRechazo() {
+		return tipoRechazo;
+	}
 
+	public void setTipoRechazo(DDTipoRechazoOferta tipoRechazo) {
+		this.tipoRechazo = tipoRechazo;
+	}
+	
 	public String getCodigo() {
 		return codigo;
 	}

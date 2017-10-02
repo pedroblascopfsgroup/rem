@@ -2128,7 +2128,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Boolean permitirGenerarHoja = true;
 		//permitimos hoja de datos si el expediente está bloqueado
 		if(expediente.getBloqueado() == null || expediente.getBloqueado().equals(Integer.valueOf(0))){
-			if (!Checks.esNulo(expediente.getEstadoPbc()) && expediente.getEstadoPbc() == 0) {
+			permitirGenerarHoja = false;
+			/*if (!Checks.esNulo(expediente.getEstadoPbc()) && expediente.getEstadoPbc() == 0) {
 				permitirGenerarHoja = false;
 			}
 			
@@ -2198,7 +2199,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						&& (ocupado != 1 || conTitulo != 0)) {
 					permitirGenerarHoja = false;
 				}
-			}
+			}*/
 		}
 
 		formalizacionDto.setGeneracionHojaDatos(permitirGenerarHoja);
@@ -4019,8 +4020,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		ExpedienteComercial expediente = this.findOne(Long.parseLong(dto.getId()));
 		if (!Checks.esNulo(expediente)) {
-
+			if(Checks.esNulo(expediente.getCondicionante()))
+				expediente.setCondicionante(new CondicionanteExpediente());
+			
 			CondicionanteExpediente condiciones = expediente.getCondicionante();
+			
+				
 			if (!Checks.esNulo(condiciones)) {
 
 				if(!Checks.esNulo(dto.getSolicitaFinanciacion())){
@@ -4953,8 +4958,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			// notificamos por correo a los interesados
 			Posicionamiento posicionamiento = expediente.getUltimoPosicionamiento();
 			ArrayList<String> mailsPara = this.obtnerEmailsBloqueoExpediente(expediente);
-			String asunto = "Bloqueo del expediente comercial ".concat(String.valueOf(expediente.getId()));
-			String cuerpo = "El expediente ".concat(String.valueOf(expediente.getId()))
+			String asunto = "Bloqueo del expediente comercial ".concat(String.valueOf(expediente.getNumExpediente()));
+			String cuerpo = "El expediente ".concat(String.valueOf(expediente.getNumExpediente()))
 					+ " se ha posicionado correctamente para su firma el"
 					+ " día #Fecha_posicionamiento a las #Hora_posicionamiento en la notaría #Notaria";
 			if(posicionamiento != null){
@@ -5016,9 +5021,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				// notificamos por correo a los interesados
 				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 				ArrayList<String> mailsPara = this.obtnerEmailsBloqueoExpediente(expediente);
-				String asunto = "Desbloqueo del expediente comercial ".concat(String.valueOf(expediente.getId()));
-				String cuerpo = "El expediente ".concat(String.valueOf(expediente.getId()))
-						+ "  se ha desbloqueado por el usuario #Usuario_logado por motivo: #Motivo";
+				String asunto = "Desbloqueo del expediente comercial ".concat(String.valueOf(expediente.getNumExpediente()));
+				String cuerpo = "El expediente ".concat(String.valueOf(expediente.getNumExpediente()))
+						+ " se ha desbloqueado por el usuario #Usuario_logado por motivo: #Motivo";
 				
 				cuerpo = cuerpo.replace("#Usuario_logado", usuarioLogado.getApellidoNombre());
 				cuerpo = cuerpo.replace("#Motivo", motivoDescLibre);

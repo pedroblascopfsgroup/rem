@@ -67,6 +67,12 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	@Column(name = "DD_TOF_CODIGO")  
 	private String codigoTipoOferta;
 	
+	@Column(name = "DD_TRO_CODIGO")  
+	private String tipoRechazoCodigo;
+	
+	@Column(name = "DD_MRO_CODIGO")  
+	private String motivoRechazoCodigo;
+	
 //	@Column(name = "ACTIVOS")  
 //	private String activos;
 	
@@ -381,6 +387,22 @@ public class VOfertasActivosAgrupacion implements Serializable {
 
 	public void setCarteraCodigo(String carteraCodigo) {
 		this.carteraCodigo = carteraCodigo;
+	}
+
+	public String getTipoRechazoCodigo() {
+		return tipoRechazoCodigo;
+	}
+
+	public void setTipoRechazoCodigo(String tipoRechazoCodigo) {
+		this.tipoRechazoCodigo = tipoRechazoCodigo;
+	}
+
+	public String getMotivoRechazoCodigo() {
+		return motivoRechazoCodigo;
+	}
+
+	public void setMotivoRechazoCodigo(String motivoRechazoCodigo) {
+		this.motivoRechazoCodigo = motivoRechazoCodigo;
 	}
 	
 	

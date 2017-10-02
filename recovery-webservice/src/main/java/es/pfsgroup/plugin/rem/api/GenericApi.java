@@ -15,6 +15,7 @@ import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
@@ -207,6 +208,13 @@ public interface GenericApi {
 	 * @return Devuelve una lista con las subcarteras
 	 */
 	public List<DDSubcartera> getComboSubcartera(String codigoCartera);
+
+	/**
+	 * Motivos de anulacion/denegacion de la Oferta
+	 * @param tipoRechazoOfertaCodigo
+	 * @return
+	 */
+	List<DDMotivoRechazoOferta> getComboMotivoRechazoOferta(String tipoRechazoOfertaCodigo);
 
 }
 

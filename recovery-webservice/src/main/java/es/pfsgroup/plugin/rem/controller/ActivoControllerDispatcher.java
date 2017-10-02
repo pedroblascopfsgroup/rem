@@ -99,6 +99,8 @@ public class ActivoControllerDispatcher {
 					value = Long.parseLong(object.toString());
 				} else if (Boolean.class.isAssignableFrom(type)) {
 					value = Boolean.parseBoolean(object.toString());
+				} else if (Double.class.isAssignableFrom(type)) {
+					value = Double.parseDouble(object.toString());
 				}
 			} catch (Exception e) {
 				logger.warn("No se va a setear el valor", e);

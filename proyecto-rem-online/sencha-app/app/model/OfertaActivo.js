@@ -49,6 +49,12 @@ Ext.define('HreRem.model.OfertaActivo', {
     		name : 'codigoEstadoOferta'
     	},
     	{
+    		name : 'tipoRechazoCodigo'
+    	},
+    	{
+    		name : 'motivoRechazoCodigo'
+    	},
+    	{
     		name : 'numExpediente'
     	},
     	{

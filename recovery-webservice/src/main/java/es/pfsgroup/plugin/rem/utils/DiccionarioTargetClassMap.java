@@ -183,6 +183,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("motivosAvisoGasto", DDMotivosAvisoGasto.class);
 		mapa.put("paises", DDPaises.class);
 		mapa.put("origenDato", DDOrigenDato.class);
+		mapa.put("tipoRechazoOferta", DDTipoRechazoOferta.class);
+		mapa.put("motivoRechazoOferta", DDMotivoRechazoOferta.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

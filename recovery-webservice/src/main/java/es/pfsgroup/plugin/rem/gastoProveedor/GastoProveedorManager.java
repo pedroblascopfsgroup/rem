@@ -53,7 +53,6 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.ConfigCuentaContable;
@@ -84,6 +83,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioPago;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionHaya;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionPropietario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionPropietario;
@@ -1761,7 +1761,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		if (!genericAdapter.tienePerfil("HAYASADM", usuario) && !Checks.esNulo(gasto.getEstadoGasto())) {			
 			if (!DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo()) && !DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo())
-					&& !DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo())) {
+					&& !DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo()) && !DDEstadoGasto.RECHAZADO_PROPIETARIO.equals(gasto.getEstadoGasto().getCodigo())) {
 				return false;
 			}
 		}
@@ -1835,6 +1835,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		GastoProveedor gasto = findOne(idGasto);
 		DDEstadoAutorizacionHaya estadoAutorizacionHaya = (DDEstadoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionHaya.class,
 				DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO);
+		
+		DDEstadoAutorizacionPropietario estadoAutorizacionPropietario= (DDEstadoAutorizacionPropietario) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionPropietario.class,
+				DDEstadoAutorizacionPropietario.CODIGO_PENDIENTE);
 
 		if (validarAutorizacion) {
 			String error = updaterStateApi.validarAutorizacionGasto(gasto);
@@ -1845,6 +1848,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		GastoGestion gastoGestion = gasto.getGastoGestion();
 		gastoGestion.setEstadoAutorizacionHaya(estadoAutorizacionHaya);
+		//Poner el estado autorizado propietario pendiente
+		gastoGestion.setEstadoAutorizacionPropietario(estadoAutorizacionPropietario);
 		gastoGestion.setUsuarioEstadoAutorizacionHaya(genericAdapter.getUsuarioLogado());
 		gastoGestion.setFechaEstadoAutorizacionHaya(new Date());
 		gastoGestion.setMotivoRechazoAutorizacionHaya(null);

@@ -172,8 +172,16 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 		// DESOCULTAR PRECIO
 		} else if(!Checks.esNulo(dtoCambioEstadoPublicacion.getDesOcultacionPrecio()) && dtoCambioEstadoPublicacion.getDesOcultacionPrecio()){
-			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO);
-			motivo = getMotivo(dtoCambioEstadoPublicacion);
+			if(!Checks.esNulo(activo.getEstadoPublicacion())){
+				if(activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO)){
+					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO);
+					motivo = getMotivo(dtoCambioEstadoPublicacion);
+				}else if(activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO_PRECIOOCULTO)){
+					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO);
+					motivo = getMotivo(dtoCambioEstadoPublicacion);
+				}
+			}
+			
 		// DESPUBLICACION FORZADA
 		} else if(!Checks.esNulo(dtoCambioEstadoPublicacion.getDespublicacionForzada()) && dtoCambioEstadoPublicacion.getDespublicacionForzada()) { // Despublicación forzada.
 			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_DESPUBLICADO);

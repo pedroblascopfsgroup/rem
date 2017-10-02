@@ -4,7 +4,7 @@ import java.util.Date;
 
 import es.capgemini.devon.dto.WebDto;
 
-public class DtoComercialActivo extends WebDto {
+public class DtoComercialActivo extends DtoTabActivo{
 
 	private static final long serialVersionUID = 1L;
 

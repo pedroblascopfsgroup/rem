@@ -159,6 +159,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenDato;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -177,6 +178,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
@@ -490,8 +492,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
 			genericDao.update(Oferta.class, oferta);
 
-			// si la oferta ha sido rechazada enviamos un email/notificacion.
+			// si la oferta ha sido rechazada guarda los motivos de rechazo y enviamos un email/notificacion.
 			if (DDEstadoOferta.CODIGO_RECHAZADA.equals(tipoOferta.getCodigo())) {
+				
+				if(!Checks.esNulo(dto.getMotivoRechazoCodigo())){
+					DDMotivoRechazoOferta motivoRechazoOferta = (DDMotivoRechazoOferta) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDMotivoRechazoOferta.class, dto.getMotivoRechazoCodigo());
+					oferta.setMotivoRechazo(motivoRechazoOferta);
+				}
+				
 				notificatorServiceSancionOfertaAceptacionYRechazo.notificatorFinSinTramite(oferta.getId());
 			}
 
@@ -704,17 +713,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					esFinanciero = true;
 				}
 				
-				if(activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_SINGULAR) ||
+				if(!esFinanciero && (activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_SINGULAR) ||
 						(activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_RETAIL) 
-								//&& activoBancario.getActivo().getTipoActivo().getCodigo().equals(DDTipoActivo.COD_COMERCIAL) 
-								&& (precioMinimoAutorizado>oferta.getImporteOferta()))
-						) {
+								&& (precioMinimoAutorizado > oferta.getImporteOferta())))) {
 					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "11")));//sareb
 					
 				}else if((esFinanciero && getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) || 
 						(activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_RETAIL) 
-						//&& (activoBancario.getActivo().getTipoActivo().getCodigo().equals(DDTipoActivo.COD_COMERCIAL) 
-						&& precioMinimoAutorizado<oferta.getImporteOferta())) {
+						&& precioMinimoAutorizado < oferta.getImporteOferta())) {
 					
 					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "12")));//haya-sareb
 					
@@ -3603,7 +3609,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		} catch (InvocationTargetException e) {
 			logger.error("Error en activoManager", e);
 		}
-
+		dto.setCamposPropagables(TabActivoService.TAB_COMERCIAL);
 		return dto;
 	}
 

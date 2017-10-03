@@ -164,9 +164,9 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 		                        var j = 0,
 		                        lenn = record.length;
 		                        for (; j < lenn; ++j) {
-		                           total = total + parseFloat(record[j].get(field));
+		                           total = total + (parseFloat(record[j].get(field))*100);
 		                        }
-		                        return total.toFixed(2);
+		                        return total/100;
 		                    };
 		                    if (this.isGrouped()) {
 		                        var groups = this.getGroups();
@@ -185,13 +185,13 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 		                        return Suma.apply(store, [records].concat(field));
 		                    }
 						},
-			            summaryRenderer: function(value, summaryData, dataIndex) {			            	
+			            summaryRenderer: function(value, summaryData, dataIndex) {		
 			            	value = parseFloat(value);
 			            	var msg = HreRem.i18n("fieldlabel.importe.participacion.igual")
 			            	var style = ""
 			            	if(value != parseFloat(this.lookupController().getViewModel().get('expediente.importe'))) {
 			            		msg = HreRem.i18n("fieldlabel.importe.participacion.desigual") + " " + 
-			            			(value - this.lookupController().getViewModel().get('expediente.importe')) + "&euro;"
+			            			(value*100 - (this.lookupController().getViewModel().get('expediente.importe'))*100)/100 + "&euro;"
 			            		style = "style= 'color: red'"
 			            	}
 			            	

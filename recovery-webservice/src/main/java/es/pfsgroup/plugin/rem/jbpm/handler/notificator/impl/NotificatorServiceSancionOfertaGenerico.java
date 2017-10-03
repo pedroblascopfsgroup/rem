@@ -35,6 +35,7 @@ import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.Comprador;
@@ -173,8 +174,14 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	}
 	private String getGestorComercial(Activo activo, Oferta ofertaAceptada) {
 		String comercial = getTipoGestorComercial(ofertaAceptada);
-		Map<String, String> gestores = getGestores(activo, ofertaAceptada, null, null, comercial);
-		return gestores.get(comercial);
+		if(!Checks.esNulo(ofertaAceptada.getAgrupacion())){
+			ActivoLoteComercial activoLoteComercial= genericDao.get(ActivoLoteComercial.class,
+					genericDao.createFilter(FilterType.EQUALS, "id", ofertaAceptada.getAgrupacion().getId()));
+			Map<String, String> gestores = getGestores(activo, ofertaAceptada, activoLoteComercial, null, comercial);
+			return gestores.get(comercial);
+		}
+		return null;
+		
 	}
 	private String getGestorFormalizacion(Activo activo, Oferta ofertaAceptada, ExpedienteComercial expediente) {
 		Map<String, String> gestores = getGestores(activo, ofertaAceptada, null, expediente, GESTOR_FORMALIZACION);

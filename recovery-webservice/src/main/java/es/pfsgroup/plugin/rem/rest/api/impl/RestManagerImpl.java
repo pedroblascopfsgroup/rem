@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.rest.api.impl;
 
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -648,5 +650,19 @@ public class RestManagerImpl implements RestApi {
 			activosModificadosDao.saveOrUpdate(actMod);
 		}
 
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public Object getValue(Object dto, Class claseDto, String methodName)
+			throws Exception {
+		Object obj = null;
+		for (PropertyDescriptor propertyDescriptor : Introspector.getBeanInfo(claseDto).getPropertyDescriptors()) {
+			if (propertyDescriptor.getReadMethod() != null
+					&& propertyDescriptor.getReadMethod().getName().equals(methodName)) {
+				obj = propertyDescriptor.getReadMethod().invoke(dto);
+				break;
+			}
+		}
+		return obj;
 	}
 }

@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.restclient.schedule;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -167,6 +168,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 							}
 							
 							RestLlamada registro = new RestLlamada();
+							Date fechaEjecucion = new Date();
 							handler.actualizarVistaMaterializada(registro);
 							Boolean marcarComoEnviado = false;
 							Integer contError = 0;
@@ -263,7 +265,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 								}else{
 									//en caso de enviar solo los registros marcados solo hay un bloque
 									handler.marcarComoEnviadosMarcadosComun(listPendientes, control);
-									handler.marcarComoEnviadosMarcadosEspecifico(listPendientes);
+									handler.marcarComoEnviadosMarcadosEspecifico(fechaEjecucion);
 								}
 								
 							}

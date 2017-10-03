@@ -68,12 +68,6 @@ public class DetectorWebcomProveedores extends DetectorCambiosBD<ProveedorDto> {
 	public Boolean procesarSoloCambiosMarcados() {
 		return false;
 	}
-
-	@Override
-	public void marcarComoEnviadosMarcadosEspecifico(CambiosList listPendientes) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 
 }

@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -59,5 +60,11 @@ public interface InfoTablasBD {
 	 * @return
 	 */
 	Boolean procesarSoloCambiosMarcados();
+	
+	/**
+	 * Borra de la tabla de modificaciones aquellas que se han enviado
+	 * @param listPendientes
+	 */
+	public void marcarComoEnviadosMarcadosEspecifico(Date fechaEjecucion) throws Exception;
 
 }

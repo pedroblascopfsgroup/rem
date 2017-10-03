@@ -21,8 +21,11 @@ import org.springframework.stereotype.Repository;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.dao.SessionFactoryFacade;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.MappedColumn;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ConstantesGenericas;
@@ -59,17 +62,21 @@ import es.pfsgroup.plugin.rem.restclient.webcom.definition.ConstantesGenericas;
 @Repository
 public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
-	private static final String MINUS = " MINUS ";
+	public static final String MINUS = " MINUS ";
 
-	private static final String WHERE = " WHERE ";
+	public static final String WHERE = " WHERE ";
 
-	private static final String FROM = " FROM ";
+	public static final String IN = " IN ";
 
-	private static final String SELECT = "SELECT ";
+	public static final String FROM = " FROM ";
 
-	private static final String INFO_TABLAS_NO_PUEDE_SER_NULL = "'infoTablas' no puede ser NULL";
+	public static final String SELECT = "SELECT ";
+	
+	public static final String AND = " AND ";
 
-	private static final String DTO_CLASS_NO_PUEDE_SER_NULL = "'dtoClass' no puede ser NULL";
+	public static final String INFO_TABLAS_NO_PUEDE_SER_NULL = "'infoTablas' no puede ser NULL";
+
+	public static final String DTO_CLASS_NO_PUEDE_SER_NULL = "'dtoClass' no puede ser NULL";
 
 	public static final String SEPARADOR_COLUMNAS = ",";
 
@@ -89,6 +96,9 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 	@Resource
 	private Properties appProperties;
+
+	@Autowired
+	private RestApi restApi;
 
 	/**
 	 * Devuelve los registros que han cambiado en la BD
@@ -372,13 +382,82 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		}
 	}
 
+	public void excuteQuery(String query) throws Exception {
+		Session session = this.sesionFactoryFacade.getSession(this);
+		try {
+			queryExecutor.sqlRunExecuteUpdate(session, query);
+		} finally {
+			if (logger.isDebugEnabled()) {
+				logger.trace("Cerrando sesión");
+			}
+			if (session != null) {
+				if (session.isOpen()) {
+					session.close();
+				}
+			}
+		}
+	}
+
 	@SuppressWarnings("rawtypes")
 	public void marcarComoEnviadosMarcadosComun(CambiosList listPendientes, DetectorCambiosBD infoTablas,
-			Class<?> dtoClass) {
-		for (int i = 0; i < listPendientes.size(); i++) {
-			CambioBD cambio = (CambioBD)listPendientes.get(i);
-			
+			Class<?> dtoClass) throws Exception {
+		if (listPendientes != null && listPendientes.size() > 0) {
+			String pkMdodificadas = "(";
+			FieldInfo[] fields = getDtoFields(dtoClass);
+			String columns = columns4Select(fields, infoTablas.clavePrimaria());
+
+			String[] tokens = infoTablas.clavePrimaria().toLowerCase().split("_");
+			String dtoPk = "get";
+			for (String token : tokens) {
+				dtoPk = dtoPk.concat(token.substring(0, 1).toUpperCase() + token.substring(1));
+			}
+
+			for (int i = 0; i < listPendientes.size(); i++) {
+				WebcomRESTDto cambio = (WebcomRESTDto) listPendientes.get(i);
+				Long id = ((LongDataType) restApi.getValue(cambio, dtoClass, dtoPk)).getValue();
+				if (i > 0) {
+					pkMdodificadas = pkMdodificadas.concat(",");
+				}
+				pkMdodificadas = pkMdodificadas.concat(String.valueOf(id));
+
+			}
+
+			pkMdodificadas = pkMdodificadas + ")";
+
+			Session session = this.sesionFactoryFacade.getSession(this);
+			Transaction tx = session.beginTransaction();
+
+			try {
+				// borramos del historico las filas modificadas
+				String querydelete = "DELETE FROM " + infoTablas.nombreTablaDatosHistoricos() + WHERE
+						+ infoTablas.clavePrimaria() + IN + pkMdodificadas;
+
+				queryExecutor.sqlRunExecuteUpdate(session, querydelete);
+
+				// insertamos en el historico las filas modificada
+				String queryInsert = "INSERT INTO " + infoTablas.nombreTablaDatosHistoricos() + "(" + columns + ")"
+						+ SELECT + columns + FROM + infoTablas.nombreVistaDatosActuales().concat(MARCADOR_CAMBIOS)
+						+ WHERE + infoTablas.clavePrimaria() + IN + pkMdodificadas;
+
+				queryExecutor.sqlRunExecuteUpdate(session, queryInsert);
+				tx.commit();
+			} catch (Exception e) {
+				logger.fatal(
+						"Error al marcar como enviados los registros de la BD. Realizando rollback de la transacción.");
+				tx.rollback();
+				throw e;
+			} finally {
+				if (logger.isDebugEnabled()) {
+					logger.trace("Cerrando sesión");
+				}
+				if (session != null) {
+					if (session.isOpen()) {
+						session.close();
+					}
+				}
+			}
 		}
+
 	}
 
 	/**

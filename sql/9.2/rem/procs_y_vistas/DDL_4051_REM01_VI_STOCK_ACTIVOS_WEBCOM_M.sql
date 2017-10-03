@@ -32,10 +32,8 @@ DECLARE
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
     V_TABLESPACE_IDX VARCHAR2(25 CHAR):= '#TABLESPACE_INDEX#'; -- Configuracion Tablespace de Indices
     V_TEXT_VISTA VARCHAR2(2400 CHAR) := 'VI_STOCK_ACTIVOS_WEBCOM_M'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'SWH_STOCK_ACT_WEBCOM_HIST'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_MSQL VARCHAR2(4000 CHAR); 
-	V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para almacentar el historico del stock de activos enviados a webcom.'; -- Vble. para los comentarios de las tablas
-
+	
     CUENTA NUMBER;
     
 BEGIN

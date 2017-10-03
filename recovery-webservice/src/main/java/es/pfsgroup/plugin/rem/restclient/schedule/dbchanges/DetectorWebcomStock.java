@@ -25,6 +25,8 @@ public class DetectorWebcomStock extends DetectorCambiosBD<StockDto> {
 
 	@Autowired
 	private CambiosBDDao dao;
+	
+	private boolean procesarSoloCambiosMarcados = false;
 
 	@Override
 	public StockDto createDtoInstance() {
@@ -84,7 +86,11 @@ public class DetectorWebcomStock extends DetectorCambiosBD<StockDto> {
 
 	@Override
 	public Boolean procesarSoloCambiosMarcados() {
-		return true;
+		return procesarSoloCambiosMarcados;
+	}
+	
+	public void setSoloCambiosMarcados(boolean procesar){
+		this.procesarSoloCambiosMarcados = procesar;
 	}
 
 	@Override
@@ -99,5 +105,6 @@ public class DetectorWebcomStock extends DetectorCambiosBD<StockDto> {
 		dao.excuteQuery(querydelete);
 
 	}
+	
 
 }

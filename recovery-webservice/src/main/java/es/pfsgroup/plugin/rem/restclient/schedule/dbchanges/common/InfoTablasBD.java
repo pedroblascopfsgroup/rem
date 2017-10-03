@@ -62,6 +62,12 @@ public interface InfoTablasBD {
 	Boolean procesarSoloCambiosMarcados();
 	
 	/**
+	 * Para forzar a trabajar en modo optimizado
+	 * @return
+	 */
+	public void setSoloCambiosMarcados(boolean procesar);
+	
+	/**
 	 * Borra de la tabla de modificaciones aquellas que se han enviado
 	 * @param listPendientes
 	 */

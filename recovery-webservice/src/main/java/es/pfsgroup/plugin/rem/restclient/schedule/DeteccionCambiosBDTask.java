@@ -22,6 +22,7 @@ import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosList;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
+import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.InfoTablasBD;
 
 /**
  * Task de Quartz que comprueba si ha habido algún cambio en BD que requiera de
@@ -94,6 +95,12 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	public void detectaCambios(DetectorCambiosBD handlerToExecute) throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		this.detectaCambios(handlerToExecute, TIPO_ENVIO.CAMBIOS);
 	}
+	
+	@SuppressWarnings("rawtypes")
+	public void detectaCambios(DetectorCambiosBD handlerToExecute,boolean optimizado) throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
+		((InfoTablasBD)handlerToExecute).setSoloCambiosMarcados(optimizado);
+		this.detectaCambios(handlerToExecute, TIPO_ENVIO.CAMBIOS);
+	}
 
 	/**
 	 * Inicia la detección de cambios en BD.
@@ -153,7 +160,9 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 				if (!registroCambiosHandlersAjecutar.get(0).isApiRestCerrada()) {
 					for (DetectorCambiosBD handler : registroCambiosHandlersAjecutar) {
 						if (handler.isActivo()) {
+							boolean optimizado = ((InfoTablasBD)handlerToExecute).procesarSoloCambiosMarcados();
 							logger.debug("[DETECCIÓN CAMBIOS] Ejecutando handler: " + handler.getClass().getName());
+							logger.debug("[DETECCIÓN CAMBIOS] Optimizado: " + optimizado);
 							ArrayList<RestLlamada> llamadas = new ArrayList<RestLlamada>();
 							long startTime = System.currentTimeMillis();
 

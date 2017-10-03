@@ -362,6 +362,10 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 	 * @param listPendientes
 	 */
 	public  void marcarComoEnviadosMarcadosEspecifico(Date fechaEjecucion) throws Exception{
-		
+		//para sobreescribir
+	}
+	
+	public void setSoloCambiosMarcados(boolean procesar){
+		//para sobreescribir
 	}
 }

@@ -160,7 +160,8 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 				}
 
 				if(valores != null && valores.size()>0){
-					Boolean tieneReserva = ofertaApi.checkReserva(valores.get(0).getTareaExterna());
+					Boolean tieneReserva = ofertaApi.checkReserva(valores.get(0).getTareaExterna()) && Checks.esNulo(expediente.getReserva()) && 
+							DDEstadosReserva.CODIGO_FIRMADA.equals(expediente.getReserva().getEstadoReserva().getCodigo());
 					// El expediente NO tiene reserva.
 					if(!tieneReserva) {
 						//Anula el expediente

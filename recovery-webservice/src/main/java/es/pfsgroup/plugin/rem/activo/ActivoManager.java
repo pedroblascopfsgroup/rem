@@ -835,7 +835,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorExpedienteNuevo.setTitularContratacion(1);
 				compradorExpedienteNuevo.setPorcionCompra(parteCompraPrincipal);
 				compradorExpedienteNuevo.setBorrado(false);
-				compradorExpedienteNuevo.setPorcionCompra(100.00);
 				
 				if(!Checks.esNulo(oferta.getCliente().getEstadoCivil())){
 					compradorExpedienteNuevo.setEstadoCivil(oferta.getCliente().getEstadoCivil());

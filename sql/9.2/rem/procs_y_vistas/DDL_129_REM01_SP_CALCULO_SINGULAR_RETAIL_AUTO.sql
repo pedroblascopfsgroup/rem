@@ -118,11 +118,13 @@ AUTHID CURRENT_USER IS
 	v_importe_max_cartera_1			NUMBER := 500000; -- Cte. almacena el importe máximo para cajamar
 	v_importe_max_cartera_2			NUMBER := 600000; -- Cte. almacena el importe máximo para sareb
 	v_importe_max_cartera_3			NUMBER := 600000; -- Cte. almacena el importe máximo para bankia
+    v_importe_max_cartera_4			NUMBER := 600000; -- Cte. almacena el importe máximo para HyT
 	v_cod_tipo_comercializar		VARCHAR2(10 CHAR); -- Vble. aux. para almacenar el codigo calculado
 	v_cod_cartera_activo			VARCHAR2(10 CHAR); -- Vble. aux. para almacenar el codigo cartera del activo
 	v_cod_cartera_1					VARCHAR2(10 CHAR) := '01';
 	v_cod_cartera_2					VARCHAR2(10 CHAR) := '02';
 	v_cod_cartera_3					VARCHAR2(10 CHAR) := '03';
+    v_cod_cartera_4                 VARCHAR2(10 CHAR) := '06';
 	v_cod_importe_vnc				VARCHAR2(10 CHAR) := '01';
 	v_cod_importe_aprobado_venta	VARCHAR2(10 CHAR) := '02';
 	v_cod_gestor_sing				VARCHAR2(10 CHAR) := 'GCOM';
@@ -252,12 +254,16 @@ BEGIN
 
 		END IF;
 
-		IF (v_is_retail = 0 AND (v_cod_cartera_activo = v_cod_cartera_2 OR v_cod_cartera_activo = v_cod_cartera_3) ) THEN
+		IF (v_is_retail = 0 AND (v_cod_cartera_activo = v_cod_cartera_2 OR v_cod_cartera_activo = v_cod_cartera_3 OR v_cod_cartera_activo = v_cod_cartera_4)) THEN
 			-- Es Activo cartera Sareb o Bankia con Aprobado venta <= 600000 --> RETAIL
 			IF(v_cod_cartera_activo = v_cod_cartera_2) THEN
 				v_importe_max := v_importe_max_cartera_2;
+			ELSE 
+                IF (v_cod_cartera_activo = v_cod_cartera_3) THEN
+                    v_importe_max := v_importe_max_cartera_3;
 			ELSE
-				v_importe_max := v_importe_max_cartera_3;
+				v_importe_max := v_importe_max_cartera_4;
+                END IF;
 			END IF;
 
 			OPEN crs_act_importe_limite (v_act_id, v_cod_importe_aprobado_venta, v_importe_max);
@@ -327,4 +333,4 @@ EXCEPTION
       RAISE;
 END CALCULO_SINGULAR_RETAIL_AUTO;
 /
-EXIT;
+EXIT

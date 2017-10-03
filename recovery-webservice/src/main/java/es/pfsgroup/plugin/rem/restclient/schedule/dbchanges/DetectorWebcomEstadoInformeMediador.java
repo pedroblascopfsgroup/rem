@@ -60,8 +60,12 @@ public class DetectorWebcomEstadoInformeMediador  extends DetectorCambiosBD<Info
 
 	@Override
 	public List<String> vistasAuxiliares() {
-		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public Boolean procesarSoloCambiosMarcados() {
+		return false;
+	}	
 
 }

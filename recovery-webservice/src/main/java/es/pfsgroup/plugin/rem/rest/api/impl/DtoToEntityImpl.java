@@ -1,8 +1,6 @@
 package es.pfsgroup.plugin.rem.rest.api.impl;
 
 import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -23,6 +21,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.EntityDefinition;
 import es.pfsgroup.plugin.rem.rest.api.DtoToEntityApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TRANSFORM_TYPE;
 import es.pfsgroup.plugin.rem.rest.dao.impl.GenericaRestDaoImp;
 import net.sf.json.JSONObject;
@@ -36,6 +35,9 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 	@Autowired
 	private GenericABMDao genericDao;
 
+	@Autowired
+	private RestApi restApi;
+	
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@SuppressWarnings("rawtypes")
@@ -55,12 +57,12 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 					if (annotation.classObj().equals(Object.class)) {
 						Class claseObjeto = f.getType();
 						claseObjeto = transformClass(annotation, claseObjeto);
-						Object object = this.getValue(dto, dto.getClass(), "get".concat(propertyName));
+						Object object = restApi.getValue(dto, dto.getClass(), "get".concat(propertyName));
 						this.setProperty(propertyEntityName, claseObjeto, annotation, null, object, objetoEntitys,jsonFields,f.getName());
 					} else {
 						Class claseObjeto = annotation.classObj();
 						claseObjeto = transformClass(annotation, claseObjeto);
-						Object oFiltro = this.getValue(dto, dto.getClass(), "get".concat(propertyName));
+						Object oFiltro = restApi.getValue(dto, dto.getClass(), "get".concat(propertyName));
 						this.setProperty(propertyEntityName, claseObjeto, annotation, oFiltro, null, objetoEntitys,jsonFields,f.getName());
 					}
 				} else {
@@ -68,7 +70,7 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 					String propertyEntityName = null;
 					propertyEntityName = f.getName().substring(0, 1).toUpperCase() + f.getName().substring(1);
 					this.setProperty(propertyEntityName, f.getType(), annotation, null,
-							this.getValue(dto, dto.getClass(), "get".concat(propertyEntityName)), objetoEntitys,jsonFields,f.getName());
+							restApi.getValue(dto, dto.getClass(), "get".concat(propertyEntityName)), objetoEntitys,jsonFields,f.getName());
 
 				}
 			}
@@ -341,29 +343,5 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 		return result;
 	}
 
-	/**
-	 * Obtiene el valor de un campo de un dto
-	 * 
-	 * @param dto
-	 * @param claseDto
-	 * @param methodName
-	 * @return
-	 * @throws IllegalAccessException
-	 * @throws IllegalArgumentException
-	 * @throws InvocationTargetException
-	 * @throws IntrospectionException
-	 */
-	@SuppressWarnings("rawtypes")
-	private Object getValue(Object dto, Class claseDto, String methodName)
-			throws Exception {
-		Object obj = null;
-		for (PropertyDescriptor propertyDescriptor : Introspector.getBeanInfo(claseDto).getPropertyDescriptors()) {
-			if (propertyDescriptor.getReadMethod() != null
-					&& propertyDescriptor.getReadMethod().getName().equals(methodName)) {
-				obj = propertyDescriptor.getReadMethod().invoke(dto);
-				break;
-			}
-		}
-		return obj;
-	}
+	
 }

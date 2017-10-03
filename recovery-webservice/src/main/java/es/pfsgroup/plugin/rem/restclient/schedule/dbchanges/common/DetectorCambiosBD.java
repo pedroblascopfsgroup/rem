@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -90,7 +91,8 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 	 * @throws ErrorServicioWebcom
 	 */
 	public abstract void invocaServicio(List<T> data, RestLlamada registro) throws ErrorServicioWebcom;
-
+	
+	
 	/**
 	 * Devuelve la lisa de cambios detectados ya convertidos al DTO
 	 * correspondiente.
@@ -175,6 +177,11 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 		}
 
 	}
+	
+	public void marcarComoEnviadosMarcadosComun(CambiosList listPendientes,Class<?> dtoClass) throws Exception{
+		dao.marcarComoEnviadosMarcadosComun(listPendientes, this, dtoClass);
+	}
+	
 
 	/**
 	 * Devuelve la clase que implementa el DTO asociado al detector de cambios.
@@ -348,5 +355,17 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 			restLocked = true;
 		}
 		return restLocked;
+	}
+	
+	/**
+	 * Borra de la tabla de modificaciones aquellas que se han enviado
+	 * @param listPendientes
+	 */
+	public  void marcarComoEnviadosMarcadosEspecifico(Date fechaEjecucion) throws Exception{
+		//para sobreescribir
+	}
+	
+	public void setSoloCambiosMarcados(boolean procesar){
+		//para sobreescribir
 	}
 }

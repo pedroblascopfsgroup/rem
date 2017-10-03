@@ -63,4 +63,10 @@ public class DetectorWebcomActivosObrasNuevas  extends DetectorCambiosBD<ActivoO
 		return null;
 	}
 
+	@Override
+	public Boolean procesarSoloCambiosMarcados() {
+		return false;
+	}
+
+
 }

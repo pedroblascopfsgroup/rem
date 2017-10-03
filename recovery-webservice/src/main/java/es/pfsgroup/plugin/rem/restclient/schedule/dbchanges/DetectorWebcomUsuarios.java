@@ -62,5 +62,10 @@ public class DetectorWebcomUsuarios  extends DetectorCambiosBD<UsuarioDto> {
 	public List<String> vistasAuxiliares() {
 		return null;
 	}
+	
+	@Override
+	public Boolean procesarSoloCambiosMarcados() {
+		return false;
+	}
 
 }

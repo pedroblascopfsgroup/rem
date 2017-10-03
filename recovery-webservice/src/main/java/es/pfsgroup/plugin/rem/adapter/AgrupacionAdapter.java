@@ -1250,7 +1250,7 @@ public class AgrupacionAdapter {
 			if (!Checks.esNulo(oferta.getAgrupacion()) && oferta.getAgrupacion().getTipoAgrupacion().getCodigo()
 					.equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
 				//En caso que la agrupación sea formalizable comprobamos tenga todos los gestores
-				if(oferta.getAgrupacion().getIsFormalizacion().equals(ES_FORMALIZABLE)){
+				if(ES_FORMALIZABLE.equals(oferta.getAgrupacion().getIsFormalizacion())){
 	//				// Comprobar si la agrupación tiene todos los gestores
 	//				// asignados.
 					if (!agrupacionLoteComercialGestoresAsignados(oferta.getAgrupacion())) {

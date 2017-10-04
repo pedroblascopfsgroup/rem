@@ -847,5 +847,56 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		    	callback: function(options, success, response){
 				}   		     
 		});		
+	},
+	
+    onClickBotonGuardarMotivoRechazo: function(btn){
+    	var me = this;
+    	
+    	var window = btn.up('window');
+    	
+    	var grid = window.gridOfertas;
+    	var record = window.getViewModel().get('ofertaRecord');
+    	
+		if (grid.isValidRecord(record)) {				
+			
+    		record.save({
+
+                params: {
+                    idEntidad: Ext.isEmpty(grid.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(grid.idPrincipal)
+                },
+                success: function (a, operation, c) {																			
+					grid.saveSuccessFn();
+				},
+                
+				failure: function (a, operation) {
+                	grid.saveFailureFn(operation);
+              	
+                },
+    			callback: function() {
+                	grid.unmask();
+                	grid.getStore().load();
+                }
+            });	                            
+    		grid.disableAddButton(false);
+    		grid.disablePagingToolBar(false);
+    		grid.getSelectionModel().deselectAll();
+// TODO: Encontrar la manera de realizar esto que me ha obligado a 
+// duplicar este save del record y en este punto "editor" es indefinido
+//    		editor.isNew = false;
+		} else {
+		   grid.getStore().load(); 	
+		}
+    	
+		window.close();
+    	
+    },
+	
+    onClickBotonCancelarMotivoRechazo: function(btn) {	
+		var me = this,
+		window = btn.up('window');
+
+		window.gridOfertas.getStore().load();
+    	window.close();
+
 	}
 });

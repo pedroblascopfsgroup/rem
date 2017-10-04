@@ -46,6 +46,12 @@ Ext.define('HreRem.model.OfertasAgrupacion', {
     		name : 'codigoEstadoOferta'
     	},
     	{
+    		name : 'tipoRechazoCodigo'
+    	},
+    	{
+    		name : 'motivoRechazoCodigo'
+    	},
+    	{
     		name : 'numExpediente'
     	},
     	{

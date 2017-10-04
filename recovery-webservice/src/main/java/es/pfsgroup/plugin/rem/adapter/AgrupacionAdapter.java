@@ -90,6 +90,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
@@ -1297,6 +1298,13 @@ public class AgrupacionAdapter {
 			
 			// si la oferta ha sido rechazada enviamos un email/notificacion.
 			if (DDEstadoOferta.CODIGO_RECHAZADA.equals(tipoOferta.getCodigo())) {
+				
+				if(!Checks.esNulo(dto.getMotivoRechazoCodigo())){
+					DDMotivoRechazoOferta motivoRechazoOferta = (DDMotivoRechazoOferta) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDMotivoRechazoOferta.class, dto.getMotivoRechazoCodigo());
+					oferta.setMotivoRechazo(motivoRechazoOferta);
+				}
+				
 				notificatorServiceSancionOfertaAceptacionYRechazo.notificatorFinSinTramite(oferta.getId());
 			}
 

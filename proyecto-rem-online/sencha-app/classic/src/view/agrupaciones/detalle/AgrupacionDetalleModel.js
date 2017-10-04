@@ -8,7 +8,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
     'HreRem.model.ActivoAgrupacionActivo'],
     
     data: {
-    	agrupacionficha: null
+    	agrupacionficha: null,
+    	ofertaRecord: null
     	
     },
     

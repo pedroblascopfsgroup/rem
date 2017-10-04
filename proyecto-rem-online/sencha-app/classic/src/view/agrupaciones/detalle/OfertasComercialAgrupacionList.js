@@ -194,36 +194,6 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 					}
 				});
 			}
-			else{
-				
-//				if (me.isValidRecord(context.record)) {				
-//			
-//	        		context.record.save({
-//	
-//	                    params: {
-//	                        idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal)
-//	                    },
-//	                    success: function (a, operation, c) {																	
-//							me.saveSuccessFn();											
-//							
-//	                    },
-//	                    
-//						failure: function (a, operation) {
-//	                    	me.saveFailureFn(operation);
-//	                    },
-//	                    callback: function() {
-//	                    	me.unmask();
-//	                    	me.getStore().load();
-//	                    }
-//	                });	                            
-//	        		me.disableAddButton(false);
-//	        		me.disablePagingToolBar(false);
-//	        		me.getSelectionModel().deselectAll();
-//	        		editor.isNew = false;
-//				} else {
-//					me.getStore().load();
-//				}
-			}
 			
 			//Si todos los estados de las Ofertas = Rechazada -> Se podran agregar activos a al agrupacion
 			// HREOS-2814 El cambio a anulada/denegada (rechazada) abre el formulario de motivos de rechazo

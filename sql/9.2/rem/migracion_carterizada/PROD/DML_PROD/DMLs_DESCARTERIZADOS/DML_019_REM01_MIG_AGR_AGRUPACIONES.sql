@@ -120,7 +120,7 @@ DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA|
 	MIG.AGR_FECHA_FIRMA										AGR_INI_VIGENCIA,
 	MIG.AGR_FECHA_VENCIMIENTO								AGR_FIN_VIGENCIA,
 	''0''                                                 	VERSION,
-	'''||V_USUARIO||'''                                	USUARIOCREAR,
+	'''||V_USUARIO||'''                                		USUARIOCREAR,
 	SYSDATE                                               	FECHACREAR,
 	0                                                     	BORRADO
 	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
@@ -305,14 +305,14 @@ WITH AGR_UVEM AS (
 			WHERE DD_LOC_CODIGO = MIG.LOC_AGRUP_OBRA_NUEVA)	DD_LOC_ID,
 			ONV_DIR_AGRUP_OBRA_NUEVA,
 			ONV_CP_AGRUP_OBRA_NUEVA,
-			(SELECT pve_id
-			FROM REM01.ACT_PVE_PROVEEDOR pve
-			WHERE ONV_ACR_PDV_AGRUP_OBRA_NUEVA = pve.PVE_COD_API_PROVEEDOR)	pve_id ,
-			ONV_ACR_PDV_AGRUP_OBRA_NUEVA
+			PVE.Pve_id,
+			ONV_ACR_PDV_AGRUP_OBRA_NUEVA,
+			ROW_NUMBER() OVER(PARTITION BY AGR.AGR_ID ORDER BY PVE.PVE_ID) RN
 			from REM01.MIG_AAG_AGRUPACIONES mig
 			inner join REM01.ACT_AGR_AGRUPACION agr on mig.AGR_UVEM = agr.AGR_NUM_AGRUP_UVEM
-			where tipo_agrupacion = ''13'' ) datos
-			on (asi.agr_id = datos.agr_id)
+			JOIN REM01.ACT_PVE_PROVEEDOR pve ON MIG.ONV_ACR_PDV_AGRUP_OBRA_NUEVA = pve.PVE_COD_API_PROVEEDOR
+			where tipo_agrupacion = ''13'') datos
+			on (asi.agr_id = datos.agr_id AND datos.RN = 1)
 			when matched then update
 			set 
 			asi.DD_PRV_ID = datos.DD_PRV_ID,

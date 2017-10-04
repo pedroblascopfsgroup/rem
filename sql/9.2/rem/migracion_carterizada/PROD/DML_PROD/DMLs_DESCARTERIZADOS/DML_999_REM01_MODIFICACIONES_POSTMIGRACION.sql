@@ -1,7 +1,7 @@
 --/*
 --#########################################
---## AUTOR=MANUEL RODRIGUEZ
---## FECHA_CREACION=20170705
+--## AUTOR=DAP
+--## FECHA_CREACION=201701004
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-2333
@@ -420,6 +420,61 @@ using ( select aca.ACT_NUMERO_ACTIVO, aca.ACT_NUMERO_UVEM from rem01.mig_aca_cab
                           SET PVE_OLD.DD_TPE_ID = PVE_NEW.DD_TPE_ID
                             , PVE_OLD.USUARIOMODIFICAR = ''MIG_SAREB''
                             , PVE_OLD.FECHAMODIFICAR = sysdate';
+
+
+    --###############################################################
+    --##### HREOS-2952 Actualizar checks de admisión y gestión
+    --###############################################################    
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE ACTUALIZACION SOBRE LA TABLA '||V_ESQUEMA||'.ACT_ACTIVO');
+    
+    V_MSQL := 'MERGE INTO REM01.ACT_ACTIVO T1
+        USING (SELECT T1.DD_CRA_ID, T2.DD_SCR_ID
+            FROM REM01.DD_CRA_CARTERA T1
+            JOIN REM01.DD_SCR_SUBCARTERA T2 ON T1.DD_CRA_ID = T2.DD_CRA_ID
+            WHERE (T1.DD_CRA_CODIGO, T2.DD_SCR_CODIGO) 
+                IN ((''01'', ''01''), (''02'', ''03''), (''03'', ''05''), (''04'', ''20''), (''05'', ''12''))) T2
+        ON (T1.DD_CRA_ID = T2.DD_CRA_ID AND T1.DD_SCR_ID = T2.DD_SCR_ID)
+        WHEN MATCHED THEN UPDATE SET
+            T1.ACT_GESTION = 1, T1.ACT_ADMISION = 1, T1.USUARIOMODIFICAR = '''||V_USUARIO||''', FECHAMODIFICAR = SYSDATE
+        WHERE T1.USUARIOCREAR = '''||V_USUARIO||''' AND (T1.ACT_GESTION <> 1 OR T1.ACT_ADMISION <> 1)';
+    EXECUTE IMMEDIATE V_MSQL;
+    V_REG_ACTUALIZADOS := SQL%ROWCOUNT;
+    V_REG_TOTAL := V_REG_TOTAL + V_REG_ACTUALIZADOS;
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.ACT_ACTIVO ACTUALIZADAS. '||V_REG_ACTUALIZADOS||' Filas. Check de admisión y gestión actualizados para AAFF.');
+    
+    V_MSQL := 'MERGE INTO REM01.ACT_ACTIVO T1
+        USING (SELECT T1.ACT_ID 
+            FROM REM01.ACT_ACTIVO T1
+            JOIN REM01.BIE_DATOS_REGISTRALES T2 ON T1.BIE_ID = T2.BIE_ID
+            JOIN REM01.ACT_SPS_SIT_POSESORIA T3 ON T3.ACT_ID = T1.ACT_ID
+            WHERE T2.BIE_DREG_FECHA_INSCRIPCION IS NOT NULL
+                AND T3.SPS_FECHA_TOMA_POSESION IS NOT NULL
+                AND T1.ACT_FECHA_REV_CARGAS IS NOT NULL
+                AND T1.ACT_ADMISION <> 1
+                AND T1.USUARIOCREAR = '''||V_USUARIO||''') T2
+        ON (T1.ACT_ID = T2.ACT_ID)
+        WHEN MATCHED THEN UPDATE SET
+            T1.ACT_ADMISION = 1, T1.USUARIOMODIFICAR = '''||V_USUARIO||''', FECHAMODIFICAR = SYSDATE';
+    EXECUTE IMMEDIATE V_MSQL;
+    V_REG_ACTUALIZADOS := SQL%ROWCOUNT;
+    V_REG_TOTAL := V_REG_TOTAL + V_REG_ACTUALIZADOS;
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.ACT_ACTIVO ACTUALIZADAS. '||V_REG_ACTUALIZADOS||' Filas. Check de admisión.');
+    
+    V_MSQL := 'MERGE INTO REM01.ACT_ACTIVO T1
+        USING (SELECT T1.ACT_ID 
+            FROM REM01.ACT_ACTIVO T1
+            JOIN REM01.ACT_SPS_SIT_POSESORIA T2 ON T2.ACT_ID = T1.ACT_ID
+            WHERE T2.SPS_FECHA_TOMA_POSESION IS NOT NULL
+                AND T1.ACT_GESTION <> 1
+                AND T1.USUARIOCREAR = '''||V_USUARIO||''') T2
+        ON (T1.ACT_ID = T2.ACT_ID)
+        WHEN MATCHED THEN UPDATE SET
+            T1.ACT_GESTION = 1, T1.USUARIOMODIFICAR = '''||V_USUARIO||''', FECHAMODIFICAR = SYSDATE';
+    EXECUTE IMMEDIATE V_MSQL;
+    V_REG_ACTUALIZADOS := SQL%ROWCOUNT;
+    V_REG_TOTAL := V_REG_TOTAL + V_REG_ACTUALIZADOS;
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.ACT_ACTIVO ACTUALIZADAS. '||V_REG_ACTUALIZADOS||' Filas. Check de gestión.');
     
 
     COMMIT;

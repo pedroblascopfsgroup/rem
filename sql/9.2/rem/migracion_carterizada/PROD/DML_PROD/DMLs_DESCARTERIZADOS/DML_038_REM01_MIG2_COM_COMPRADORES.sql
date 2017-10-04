@@ -37,7 +37,7 @@ BEGIN
       DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
       
       EXECUTE IMMEDIATE '
-        INSERT INTO '||V_ESQUEMA||'.COM_COMPRADOR (
+                INSERT INTO REM01.COM_COMPRADOR (
           COM_ID
           ,CLC_ID
           ,DD_TPE_ID
@@ -58,8 +58,10 @@ BEGIN
           ,DD_PRV_ID
         )
         SELECT
-          '||V_ESQUEMA||'.S_COM_COMPRADOR.NEXTVAL                                                 AS COM_ID,
-          AUX.*
+          REM01.S_COM_COMPRADOR.NEXTVAL                                                 AS COM_ID,
+          AUX.CLC_ID, AUX.DD_TPE_ID, AUX.COM_NOMBRE, AUX.COM_APELLIDOS, AUX.DD_TDI_ID, AUX.COM_DOCUMENTO
+          , AUX.COM_TELEFONO1, AUX.COM_TELEFONO2, AUX.COM_EMAIL, AUX.COM_DIRECCION, AUX.COM_CODIGO_POSTAL
+          , 0, '''||V_USUARIO||''', SYSDATE, 0, AUX.DD_LOC_ID, AUX.DD_PRV_ID
           FROM (
             SELECT DISTINCT
               CLC.CLC_ID                                                                AS CLC_ID,
@@ -73,25 +75,22 @@ BEGIN
               MIG2.COM_EMAIL                                                            AS COM_EMAIL,
               MIG2.COM_DIRECCION                                                        AS COM_DIRECCION,              
               MIG2.COM_CODIGO_POSTAL                                                    AS COM_CODIGO_POSTAL,
-              0                                                                         AS VERSION,
-              '''||V_USUARIO||'''                                                               AS USUARIOCREAR,
-              SYSDATE                                                                   AS FECHACREAR,
-              0                                                                         AS BORRADO,
               LOC.DD_LOC_ID                                                             AS DD_LOC_ID,
-              PRV.DD_PRV_ID                                                             AS DD_PRV_ID
-            FROM '||V_ESQUEMA||'.MIG2_COM_COMPRADORES MIG2
-              INNER JOIN '||V_ESQUEMA||'.CLC_CLIENTE_COMERCIAL CLC ON CLC.CLC_NUM_CLIENTE_HAYA = MIG2.COM_COD_COMPRADOR
-              INNER JOIN '||V_ESQUEMA||'.MIG2_CEX_COMPRADOR_EXPEDIENTE MCEX ON MCEX.CEX_COD_COMPRADOR = MIG2.COM_COD_COMPRADOR
-              LEFT JOIN '||V_ESQUEMA||'.DD_TPE_TIPO_PERSONA TPE ON TPE.DD_TPE_CODIGO = MIG2.COM_COD_TIPO_PERSONA AND TPE.BORRADO = 0
-              LEFT JOIN '||V_ESQUEMA||'.DD_TDI_TIPO_DOCUMENTO_ID TDI ON TDI.DD_TDI_CODIGO = MIG2.COM_COD_TIPO_DOCUMENTO AND TDI.BORRADO = 0
-              LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_CODIGO = MIG2.COM_COD_LOCALIDAD AND LOC.BORRADO = 0
-              LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_PRV_PROVINCIA  PRV ON PRV.DD_PRV_CODIGO = MIG2.COM_COD_PROVINCIA AND PRV.BORRADO = 0
+              PRV.DD_PRV_ID                                                             AS DD_PRV_ID,
+              ROW_NUMBER() OVER(PARTITION BY MIG2.COM_DOCUMENTO ORDER BY CLC.CLC_ID DESC) RN
+            FROM REM01.MIG2_COM_COMPRADORES MIG2
+              INNER JOIN REM01.CLC_CLIENTE_COMERCIAL CLC ON CLC.CLC_NUM_CLIENTE_HAYA = MIG2.COM_COD_COMPRADOR
+             LEFT JOIN REM01.DD_TPE_TIPO_PERSONA TPE ON TPE.DD_TPE_CODIGO = MIG2.COM_COD_TIPO_PERSONA AND TPE.BORRADO = 0
+              LEFT JOIN REM01.DD_TDI_TIPO_DOCUMENTO_ID TDI ON TDI.DD_TDI_CODIGO = MIG2.COM_COD_TIPO_DOCUMENTO AND TDI.BORRADO = 0
+             LEFT JOIN REMMASTER.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_CODIGO = MIG2.COM_COD_LOCALIDAD AND LOC.BORRADO = 0
+              LEFT JOIN REMMASTER.DD_PRV_PROVINCIA  PRV ON PRV.DD_PRV_CODIGO = MIG2.COM_COD_PROVINCIA AND PRV.BORRADO = 0
               WHERE MIG2.VALIDACION = 0 AND NOT EXISTS (
                 SELECT 1
-                FROM '||V_ESQUEMA||'.COM_COMPRADOR COMP
+                FROM REM01.COM_COMPRADOR COMP
                 WHERE COMP.COM_DOCUMENTO = MIG2.COM_DOCUMENTO
               )
-        ) AUX      
+        ) AUX
+        WHERE AUX.RN = 1
       '
       ;
       

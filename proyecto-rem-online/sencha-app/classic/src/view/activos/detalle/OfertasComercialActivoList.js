@@ -312,7 +312,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			return false;
 		}
 		
-		//Validacion si estado oferta = rechazada, tipo y motivo obligatorios.
+		//HREOS-2814 Validacion si estado oferta = rechazada, tipo y motivo obligatorios.
 		if(CONST.ESTADOS_OFERTA['RECHAZADA'] == codigoEstadoNuevo){
 			if (record.data.tipoRechazoCodigo == null || record.data.motivoRechazoCodigo == null){
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.rechazar.motivos"));

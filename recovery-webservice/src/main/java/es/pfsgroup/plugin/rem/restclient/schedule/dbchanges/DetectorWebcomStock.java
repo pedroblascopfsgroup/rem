@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.rem.restclient.schedule.dbchanges;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,14 +11,24 @@ import org.springframework.stereotype.Component;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
+import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosBDDao;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
 
 @Component
 public class DetectorWebcomStock extends DetectorCambiosBD<StockDto> {
-	
+
+	private static String TABLA_MODIFICADOS = "ACT_AMO_ACTIVOS_MOD";
+
 	@Autowired
 	private ServiciosWebcomManager serviciosWebcom;
+
+	@Autowired
+	private CambiosBDDao dao;
+	
+	private boolean procesarSoloCambiosMarcados = false;
+	
+	private Boolean forzarSoloCambiosMarcados = false;
 
 	@Override
 	public StockDto createDtoInstance() {
@@ -26,7 +38,7 @@ public class DetectorWebcomStock extends DetectorCambiosBD<StockDto> {
 	@Override
 	public void invocaServicio(List<StockDto> data, RestLlamada registro) throws ErrorServicioWebcom {
 		serviciosWebcom.webcomRestStock(data, registro);
-		
+
 	}
 
 	@Override
@@ -48,7 +60,7 @@ public class DetectorWebcomStock extends DetectorCambiosBD<StockDto> {
 	protected Integer getWeight() {
 		return 9995;
 	}
-	
+
 	@Override
 	public boolean isActivo() {
 		return true;
@@ -73,5 +85,37 @@ public class DetectorWebcomStock extends DetectorCambiosBD<StockDto> {
 		vistasAuxiliares.add("REM01.VI_STOCK_ACTIVO_GCOM");
 		return vistasAuxiliares;
 	}
+
+	@Override
+	public Boolean procesarSoloCambiosMarcados() {
+		if(forzarSoloCambiosMarcados){
+			return true;
+		}else{
+			return procesarSoloCambiosMarcados;
+		}
+		
+	}
+	
+	/**
+	 * Fuerza la ejecución del modo optimizado
+	 */
+	public void setSoloCambiosMarcados(boolean procesar){
+		this.forzarSoloCambiosMarcados = procesar;
+	}
+
+	@Override
+	public void marcarComoEnviadosMarcadosEspecifico(Date fechaEjecucion) throws Exception {
+		this.setSoloCambiosMarcados(false);
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+		String fechaEjecucionString = df.format(fechaEjecucion);
+
+		String querydelete = "DELETE FROM " + TABLA_MODIFICADOS + CambiosBDDao.WHERE + "FECHAMODIFICAR < TO_DATE('"
+				+ fechaEjecucionString + "','YYYY-MM-DD HH24:MI:SS')";
+
+		dao.excuteQuery(querydelete);
+
+	}
+	
 
 }

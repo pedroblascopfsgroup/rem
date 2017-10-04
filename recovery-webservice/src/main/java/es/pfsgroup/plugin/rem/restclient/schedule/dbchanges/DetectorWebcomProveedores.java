@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ProveedorDto;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
+import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosList;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
 
@@ -61,6 +62,11 @@ public class DetectorWebcomProveedores extends DetectorCambiosBD<ProveedorDto> {
 	@Override
 	public List<String> vistasAuxiliares() {
 		return null;
+	}
+	
+	@Override
+	public Boolean procesarSoloCambiosMarcados() {
+		return false;
 	}
 	
 

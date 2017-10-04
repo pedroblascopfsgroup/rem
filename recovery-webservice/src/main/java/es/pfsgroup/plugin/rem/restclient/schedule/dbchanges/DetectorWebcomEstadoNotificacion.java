@@ -62,5 +62,10 @@ public class DetectorWebcomEstadoNotificacion extends DetectorCambiosBD<Notifica
 	public List<String> vistasAuxiliares() {
 		return null;
 	}
+	
+	@Override
+	public Boolean procesarSoloCambiosMarcados() {
+		return false;
+	}
 
 }

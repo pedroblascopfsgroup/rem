@@ -62,5 +62,10 @@ public class DetectorWebcomObrasNuevasCampanyas  extends DetectorCambiosBD<Campa
 	public List<String> vistasAuxiliares() {
 		return null;
 	}
+	
+	@Override
+	public Boolean procesarSoloCambiosMarcados() {
+		return false;
+	}
 
 }

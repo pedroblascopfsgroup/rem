@@ -6,7 +6,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
         topBar: '{agrupacionficha.esEditable}',
 		editOnSelect: '{agrupacionficha.esEditable}'
     },
-    requires: ['HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaAgrupacion'],
+    requires: ['HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaAgrupacion', 'HreRem.view.activos.detalle.MotivoRechazoOfertaForm'],
     
    	removeButton: false,
     initComponent: function () {
@@ -185,32 +185,8 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 				   fn: function(buttonId) {
 				        if (buttonId == 'yes') {
 				            
-							if (me.isValidRecord(context.record)) {				
-								me.mask(HreRem.i18n("msg.mask.espere"));
-				        		context.record.save({
-				
-				                    params: {
-				                        idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal)
-				                    },
-				                    success: function (a, operation, c) {																
-										me.saveSuccessFn();
-				                    },
-				                    
-									failure: function (a, operation) {
-				                    	me.saveFailureFn(operation);				                    	                       	
-				                    },
-				                    callback: function() {
-				                    	me.unmask();
-				                    	me.getStore().load();
-				                    }
-				          		});	                            
-					        	me.disableAddButton(false);
-					        	me.disablePagingToolBar(false);
-					        	me.getSelectionModel().deselectAll();
-					        	editor.isNew = false;
-							} else {
-								me.getStore().load();
-							}
+				        	me.saveFn(editor, me, context);
+				        	
 						}
 				    	else{
 				    		me.getStore().load();	
@@ -220,36 +196,37 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 			}
 			else{
 				
-				if (me.isValidRecord(context.record)) {				
-			
-	        		context.record.save({
-	
-	                    params: {
-	                        idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal)
-	                    },
-	                    success: function (a, operation, c) {																	
-							me.saveSuccessFn();											
-							
-	                    },
-	                    
-						failure: function (a, operation) {
-	                    	me.saveFailureFn(operation);
-	                    },
-	                    callback: function() {
-	                    	me.unmask();
-	                    	me.getStore().load();
-	                    }
-	                });	                            
-	        		me.disableAddButton(false);
-	        		me.disablePagingToolBar(false);
-	        		me.getSelectionModel().deselectAll();
-	        		editor.isNew = false;
-				} else {
-					me.getStore().load();
-				}
+//				if (me.isValidRecord(context.record)) {				
+//			
+//	        		context.record.save({
+//	
+//	                    params: {
+//	                        idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal)
+//	                    },
+//	                    success: function (a, operation, c) {																	
+//							me.saveSuccessFn();											
+//							
+//	                    },
+//	                    
+//						failure: function (a, operation) {
+//	                    	me.saveFailureFn(operation);
+//	                    },
+//	                    callback: function() {
+//	                    	me.unmask();
+//	                    	me.getStore().load();
+//	                    }
+//	                });	                            
+//	        		me.disableAddButton(false);
+//	        		me.disablePagingToolBar(false);
+//	        		me.getSelectionModel().deselectAll();
+//	        		editor.isNew = false;
+//				} else {
+//					me.getStore().load();
+//				}
 			}
 			
 			//Si todos los estados de las Ofertas = Rechazada -> Se podran agregar activos a al agrupacion
+			// HREOS-2814 El cambio a anulada/denegada (rechazada) abre el formulario de motivos de rechazo
 			if(CONST.ESTADOS_OFERTA['RECHAZADA'] == estado) {
 				if(!Ext.isEmpty(me.lookupController().lookupReference('listadoactivosagrupacion'))) {
 					var arrayOfertas = me.getView().getStore();
@@ -263,9 +240,54 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 					
 					me.lookupController().lookupReference('listadoactivosagrupacion').setTopBar(mostrarTopBarListaActivos);
 				}
+				
+            	me.onCambioARechazoOfertaList(me, context.record);
+
+            } else {
+            	
+            	me.saveFn(editor, me, context);
 			}
 					
 	},
+	
+	saveFn: function (editor, grid, context) {
+		var me = grid;
+		if (me.isValidRecord(context.record)) {				
+			me.mask(HreRem.i18n("msg.mask.espere"));
+    		context.record.save({
+
+                params: {
+                    idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal)
+                },
+                success: function (a, operation, c) {																			
+					me.saveSuccessFn();
+				},
+                
+				failure: function (a, operation) {
+                	me.saveFailureFn(operation);
+              	
+                },
+                callback: function() {
+                	me.unmask();
+                	me.getStore().load();
+                }
+      		});	                            
+        	me.disableAddButton(false);
+        	me.disablePagingToolBar(false);
+        	me.getSelectionModel().deselectAll();
+        	editor.isNew = false;
+		} else {
+			me.getStore().load(); 	
+		}
+	},
+	
+    onCambioARechazoOfertaList: function (grid, record) {
+    	
+    	var me = this;
+    	var motivoForm = Ext.create("HreRem.view.activos.detalle.MotivoRechazoOfertaForm", {ofertaRecord: record, gridOfertas: grid});
+    	motivoForm.show();
+  	    	
+    },
 	
 	isValidRecord: function (record, context) {
 		
@@ -295,6 +317,14 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		} else if(!hayOfertaAceptada && CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['ACEPTADA'] != codigoEstadoNuevo ){
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.aceptar.rechazar"));
 			return false;
+		}
+		
+		//HREOS-2814 Validacion si estado oferta = rechazada, tipo y motivo obligatorios.
+		if(CONST.ESTADOS_OFERTA['RECHAZADA'] == codigoEstadoNuevo){
+			if (record.data.tipoRechazoCodigo == null || record.data.motivoRechazoCodigo == null){
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.rechazar.motivos"));
+				return false;
+			}
 		}
 		
 		return true;		

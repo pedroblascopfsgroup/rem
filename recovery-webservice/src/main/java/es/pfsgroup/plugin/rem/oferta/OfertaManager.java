@@ -1830,7 +1830,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			// con alguno de los siguientes estados..., para pasar la nueva
 			// oferta a Congelada.
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(of.getId());
-			if (!Checks.esNulo(expediente.getEstado()) && (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
+			if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getEstado()) && (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
 					|| DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())
 					|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo())
 					|| DDEstadosExpedienteComercial.FIRMADO.equals(expediente.getEstado().getCodigo())

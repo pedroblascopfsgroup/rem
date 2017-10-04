@@ -137,6 +137,7 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
@@ -696,14 +697,23 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			Double precioMinimoAutorizado = 0.0;
 			ActivoBancario activoBancario = getActivoBancarioByIdActivo(oferta.getActivoPrincipal().getId());
 			if(Checks.esNulo(oferta.getAgrupacion())) {
-				
-				precioMinimoAutorizado = activoDao.getListActivosPreciosFromListId(activoBancario.getActivo().getId().toString()).get(0).getPrecioMinimoAutorizado();
+				if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo())){
+					List<VBusquedaActivosPrecios> vBusquedaActivosPrecio= activoDao.getListActivosPreciosFromListId(activoBancario.getActivo().getId().toString());	
+					if(!Checks.estaVacio(vBusquedaActivosPrecio) && !Checks.esNulo(vBusquedaActivosPrecio.get(0).getPrecioMinimoAutorizado())){
+						precioMinimoAutorizado = vBusquedaActivosPrecio.get(0).getPrecioMinimoAutorizado();
+					}
+				}
 			}
 			else {
 				ActivoAgrupacion agrupacion = oferta.getAgrupacion();
 				List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
-				for(ActivoAgrupacionActivo activo : activos) {
-					precioMinimoAutorizado += activoDao.getListActivosPreciosFromListId(activo.getActivo().getId().toString()).get(0).getPrecioMinimoAutorizado();
+				if(!Checks.estaVacio(activos)){
+					for(ActivoAgrupacionActivo activo : activos) {
+						List<VBusquedaActivosPrecios> vBusquedaActivosPrecio= activoDao.getListActivosPreciosFromListId(activo.getActivo().getId().toString());			
+						if(!Checks.estaVacio(vBusquedaActivosPrecio) && !Checks.esNulo(vBusquedaActivosPrecio.get(0).getPrecioMinimoAutorizado())){
+							precioMinimoAutorizado += vBusquedaActivosPrecio.get(0).getPrecioMinimoAutorizado();
+						}
+					}
 				}
 			}
 
@@ -826,7 +836,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorExpedienteNuevo.setTitularContratacion(1);
 				compradorExpedienteNuevo.setPorcionCompra(parteCompraPrincipal);
 				compradorExpedienteNuevo.setBorrado(false);
-				compradorExpedienteNuevo.setPorcionCompra(100.00);
 				
 				if(!Checks.esNulo(oferta.getCliente().getEstadoCivil())){
 					compradorExpedienteNuevo.setEstadoCivil(oferta.getCliente().getEstadoCivil());

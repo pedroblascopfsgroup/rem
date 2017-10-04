@@ -476,7 +476,7 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 							
 							List<CompradorExpediente> compradoresNoBorrados= eco.getCompradoresAlta();
 								
-							if(listaAdjuntosExpediente.size() != compradoresNoBorrados.size()){
+							if(listaAdjuntosExpediente.size() < compradoresNoBorrados.size()){
 								Object[] obj = new Object[3];
 								obj[0] = tipoFicheroAdjuntoEC.getDescripcion();
 								obj[1] = compradoresNoBorrados.size();

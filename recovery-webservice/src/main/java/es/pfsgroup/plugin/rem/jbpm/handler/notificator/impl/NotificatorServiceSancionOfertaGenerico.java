@@ -35,6 +35,7 @@ import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.Comprador;
@@ -131,11 +132,6 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 						expediente,
 						destinatarios.toArray(new String[] {}));
 
-			}else if (permiteNotificarAprobacion && !Checks.esNulo(expediente)
-					&& DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())) {
-				
-				this.enviaNotificacionAceptar(tramite, oferta, expediente, getGestorFormalizacion(activo, oferta));
-				
 			}else if (permiteRechazar
 					&& DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) { // RECHAZO
 				String prescriptor = getPrescriptor(activo, oferta);
@@ -146,8 +142,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					return;
 				}
 				String gestorFormalizacion = null;
-				if(trabajoApi.checkReservaNecesariaNotNull(expediente)) {
-					gestorFormalizacion = getGestorFormalizacion(activo,oferta);
+				if(ofertaApi.checkReserva(oferta)) {
+					gestorFormalizacion = getGestorFormalizacion(activo,oferta, expediente);
 				}
 				if(Checks.esNulo(gestorFormalizacion))
 					this.enviaNotificacionRechazar(tramite, activo, oferta, prescriptor, gestorComercial);
@@ -178,11 +174,17 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	}
 	private String getGestorComercial(Activo activo, Oferta ofertaAceptada) {
 		String comercial = getTipoGestorComercial(ofertaAceptada);
-		Map<String, String> gestores = getGestores(activo, ofertaAceptada, null, null, comercial);
-		return gestores.get(comercial);
+		if(!Checks.esNulo(ofertaAceptada.getAgrupacion())){
+			ActivoLoteComercial activoLoteComercial= genericDao.get(ActivoLoteComercial.class,
+					genericDao.createFilter(FilterType.EQUALS, "id", ofertaAceptada.getAgrupacion().getId()));
+			Map<String, String> gestores = getGestores(activo, ofertaAceptada, activoLoteComercial, null, comercial);
+			return gestores.get(comercial);
+		}
+		return null;
+		
 	}
-	private String getGestorFormalizacion(Activo activo, Oferta ofertaAceptada) {
-		Map<String, String> gestores = getGestores(activo, ofertaAceptada, null, null, GESTOR_FORMALIZACION);
+	private String getGestorFormalizacion(Activo activo, Oferta ofertaAceptada, ExpedienteComercial expediente) {
+		Map<String, String> gestores = getGestores(activo, ofertaAceptada, null, expediente, GESTOR_FORMALIZACION);
 		return gestores.get(GESTOR_FORMALIZACION);
 	}
 

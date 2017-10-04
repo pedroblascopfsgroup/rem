@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Kevin Fernández
---## FECHA_CREACION=20161102
+--## AUTOR=DAP
+--## FECHA_CREACION=20170929
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
@@ -37,23 +37,23 @@ DECLARE
   BEGIN
   
    	-- Verificar si ya existe el JOB
-	V_MSQL := 'SELECT COUNT(1) FROM ALL_SCHEDULER_JOBS WHERE JOB_NAME = ''JOB_AGR_ASISTIDA_PROCESO_FIN''';
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_SCHEDULER_JOBS WHERE JOB_NAME = ''JOB_ACTIVO_PUBLICACION_PORTAL''';
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
 	IF V_NUM_TABLAS = 1 THEN
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.JOB_AGR_ASISTIDA_PROCESO_FIN... Ya existe. Se borrará.');
-		DBMS_SCHEDULER.DROP_JOB(JOB_NAME => 'JOB_AGR_ASISTIDA_PROCESO_FIN');
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.JOB_ACTIVO_PUBLICACION_PORTAL... Ya existe. Se borrará.');
+		DBMS_SCHEDULER.DROP_JOB(JOB_NAME => 'JOB_ACTIVO_PUBLICACION_PORTAL');
 	END IF;
 	
 	
   DBMS_SCHEDULER.CREATE_JOB (
-   job_name             => 'JOB_AGR_ASISTIDA_PROCESO_FIN',
+   job_name             => 'JOB_ACTIVO_PUBLICACION_PORTAL',
    job_type             => 'PLSQL_BLOCK',
-   job_action           => V_ESQUEMA || '.AGR_ASISTIDA_PROCESO_FIN;',
-   start_date           => to_date('26/04/2016 00:35:00','dd/mm/yyyy hh24:mi:ss'),
+   job_action           => 'BEGIN '||V_ESQUEMA|| '.ACTIVO_PUBLICACION_PORTAL(NULL,NULL); END;',
+   start_date           => to_date('26/04/2016 00:40:00','dd/mm/yyyy hh24:mi:ss'),
    repeat_interval      => 'FREQ=DAILY', 
    --end_date             => '15-SEP-08 1.00.00AM US/Pacific',
    enabled              =>  TRUE,
-   comments             => 'Job de procesado de datos para agrupaciones asistidas vencidas');
+   comments             => 'Job de cambio de portal en el histórico de publicación del activo');
   
 DBMS_OUTPUT.PUT_LINE('[INFO] Proceso ejecutado CORRECTAMENTE. Job creado.');
 	

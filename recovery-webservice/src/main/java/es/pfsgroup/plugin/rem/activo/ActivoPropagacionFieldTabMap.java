@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.activo;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,13 @@ public class ActivoPropagacionFieldTabMap {
     public static final String TAB_INFO_ADMINISTRATIVA = "infoadministrativa";
     public static final String TAB_CARGAS_ACTIVO = "cargasactivo";
     public static final String TAB_MEDIADOR_ACTIVO = "mediadoractivo";
+
+    public static final String TAB_DATOS_PUBLICACION = "datospublicacion";
+    public static final String TAB_ACTIVO_HISTORICO_ESTADO_PUBLICACION = "activohistoricoestadopublicacion";
+    public static final String TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD = "activocondicionantesdisponibilidad";
+
+    public static final String TAB_COMERCIAL = "comercial";
+
     
     static {
     	Map<String, List<String>> pmap = new HashMap<String, List<String>>();
@@ -441,6 +449,54 @@ public class ActivoPropagacionFieldTabMap {
     			Arrays.asList(
     				"fechaRevisionCarga",
     				"conCargas"
+    			));
+    	
+
+    	pmap.put(TAB_DATOS_PUBLICACION, 
+    			Arrays.asList(
+    				"idActivo",
+    				"totalDiasPublicado",
+    				"portalesExternos"
+    			));
+    	pmap.put(TAB_ACTIVO_HISTORICO_ESTADO_PUBLICACION, 
+    			Arrays.asList(
+    				"idActivo",
+    				"publicacionOrdinaria",
+    				"publicacionForzada",
+    				"ocultacionForzada",
+					"ocultacionPrecio",
+					"despublicacionForzada",
+					"motivoPublicacion",
+					"motivoOcultacionPrecio",
+					"motivoDespublicacionForzada",
+					"motivoOcultacionForzada",
+					"observaciones"
+    			));
+    	
+    	pmap.put(TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD, 
+    			Arrays.asList(
+    					"idActivo",
+    					"ruina",
+    					"pendienteInscripcion",
+    					"obraNuevaSinDeclarar",
+    					"sinTomaPosesionInicial",
+    					"proindiviso",
+    					"obraNuevaEnConstruccion",
+    					"ocupadoConTitulo",
+    					"tapiado",
+    					"otro",
+    					"ocupadoSinTitulo",
+    					"divHorizontalNoInscrita"
+    					));
+
+    	pmap.put(TAB_COMERCIAL,
+    			Arrays.asList(
+					"id", // ID de activo.
+					"situacionComercialCodigo",
+					"fechaVenta",
+					"expedienteComercialVivo",
+					"observaciones",
+					"importeVenta"
     			));
 
         map = Collections.unmodifiableMap(pmap);

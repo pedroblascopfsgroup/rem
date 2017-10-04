@@ -9,4 +9,8 @@ public interface ActivoCargasDao extends AbstractDao<ActivoCargas, Long>{
 	public static final String NAME_OF_ENTITY_ACT = "car";
 
 	public Boolean esActivoConCargasNoCanceladas(Long idActivo);
+	
+	public Boolean esActivoConCargasNoCanceladasRegistral(Long idActivo);
+	
+	public Boolean esActivoConCargasNoCanceladasEconomica(Long idActivo);
 }

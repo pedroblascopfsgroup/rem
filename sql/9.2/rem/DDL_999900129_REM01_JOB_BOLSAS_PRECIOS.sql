@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Daniel Gutiérrez
---## FECHA_CREACION=20170809
+--## AUTOR=DAP
+--## FECHA_CREACION=20170929
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
@@ -41,14 +41,14 @@ DECLARE
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
 	IF V_NUM_TABLAS = 1 THEN
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.JOB_ACTUALIZA_BOLSAS... Ya existe. Se borrará.');
-		DBMS_SCHEDULER.DROP_JOB(JOB_NAME => 'JOB_AVISO_VENCIMIENTO_RESERVA');
+		DBMS_SCHEDULER.DROP_JOB(JOB_NAME => 'JOB_ACTUALIZA_BOLSAS');
 	END IF;
 	
 	
   DBMS_SCHEDULER.CREATE_JOB (
    job_name             => 'JOB_ACTUALIZA_BOLSAS',
    job_type             => 'PLSQL_BLOCK',
-   job_action           => V_ESQUEMA || '.ACTUALIZA_ACT_IND_PRECIOS;',
+   job_action           => 'DECLARE SALIDA VARCHAR2(4000 CHAR) BEGIN '||V_ESQUEMA||'.ACTUALIZA_ACT_IND_PRECIOS(NULL,NULL,SALIDA); END;',
    start_date           => to_date('09/08/2017 01:30:00','dd/mm/yyyy hh24:mi:ss'),
    repeat_interval      => 'FREQ=DAILY', 
    --end_date             => '15-SEP-08 1.00.00AM US/Pacific',

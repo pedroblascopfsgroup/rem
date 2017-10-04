@@ -1,12 +1,13 @@
 package es.pfsgroup.plugin.rem.model;
 
-public class DtoCambioEstadoPublicacion {
+public class DtoCambioEstadoPublicacion extends DtoTabActivo {
 
 	private Long idActivo;
 	private Boolean publicacionOrdinaria = false;
 	private Boolean publicacionForzada = false;
 	private Boolean ocultacionForzada = false;
 	private Boolean ocultacionPrecio = false;
+	private Boolean desOcultacionPrecio = false;
 	private Boolean despublicacionForzada = false;
 	private String motivoPublicacion;
 	private String motivoOcultacionPrecio;
@@ -83,4 +84,11 @@ public class DtoCambioEstadoPublicacion {
 	public void setPublicacionOrdinaria(Boolean publicacionOrdinaria) {
 		this.publicacionOrdinaria = publicacionOrdinaria;
 	}
+	public Boolean getDesOcultacionPrecio() {
+		return desOcultacionPrecio;
+	}
+	public void setDesOcultacionPrecio(Boolean desOcultacionPrecio) {
+		this.desOcultacionPrecio = desOcultacionPrecio;
+	}
+	
 }

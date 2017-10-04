@@ -170,6 +170,18 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				//OkPublicacionSinPublicar= true;
 			}
 
+		// DESOCULTAR PRECIO
+		} else if(!Checks.esNulo(dtoCambioEstadoPublicacion.getDesOcultacionPrecio()) && dtoCambioEstadoPublicacion.getDesOcultacionPrecio()){
+			if(!Checks.esNulo(activo.getEstadoPublicacion())){
+				if(activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO)){
+					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO);
+					motivo = getMotivo(dtoCambioEstadoPublicacion);
+				}else if(activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO_PRECIOOCULTO)){
+					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO);
+					motivo = getMotivo(dtoCambioEstadoPublicacion);
+				}
+			}
+			
 		// DESPUBLICACION FORZADA
 		} else if(!Checks.esNulo(dtoCambioEstadoPublicacion.getDespublicacionForzada()) && dtoCambioEstadoPublicacion.getDespublicacionForzada()) { // Despublicación forzada.
 			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_DESPUBLICADO);
@@ -442,7 +454,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 								DDTipoPublicacion tipoPublicacion = genericDao.get(DDTipoPublicacion.class, filtroTpu);
 								beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "tipoPublicacion", tipoPublicacion);
 							}
-			
+							
+							genericDao.save(Activo.class, activo);
 							genericDao.save(ActivoHistoricoEstadoPublicacion.class, activoHistoricoEstadoPublicacion);
 	
 						//} // Cierra if ... CODIGO_PUBLICADO.equals

@@ -48,5 +48,17 @@ public class ActivoCargasManager extends BusinessOperationOverrider<ActivoCargas
 
 		return ActivoCargasDao.esActivoConCargasNoCanceladas(idActivo);
 	}
+	
+	@Override
+	public boolean esActivoConCargasNoCanceladasRegistral(Long idActivo) {
+
+		return ActivoCargasDao.esActivoConCargasNoCanceladasRegistral(idActivo);
+	}
+	
+	@Override
+	public boolean esActivoConCargasNoCanceladasEconomica(Long idActivo) {
+
+		return ActivoCargasDao.esActivoConCargasNoCanceladasEconomica(idActivo);
+	}
 
 }

@@ -154,13 +154,17 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						motivoRechazo.setTipoRechazo(tipoRechazo);
 						ofertaAceptada.setMotivoRechazo(motivoRechazo);
 						genericDao.save(Oferta.class, ofertaAceptada);
+						genericDao.save(ExpedienteComercial.class, expediente);
 						
 						
 					}
 				}
 
 				if(valores != null && valores.size()>0){
-					Boolean tieneReserva = ofertaApi.checkReserva(valores.get(0).getTareaExterna());
+					Boolean tieneReserva = ofertaApi.checkReserva(valores.get(0).getTareaExterna()) && !Checks.esNulo(expediente.getReserva()) && 
+							(DDEstadosReserva.CODIGO_FIRMADA.equals(expediente.getReserva().getEstadoReserva().getCodigo()) ||
+									DDEstadosReserva.CODIGO_RESUELTA_POSIBLE_REINTEGRO.equals(expediente.getReserva().getEstadoReserva().getCodigo()) || 
+									DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION.equals(expediente.getReserva().getEstadoReserva().getCodigo()));
 					// El expediente NO tiene reserva.
 					if(!tieneReserva) {
 						//Anula el expediente

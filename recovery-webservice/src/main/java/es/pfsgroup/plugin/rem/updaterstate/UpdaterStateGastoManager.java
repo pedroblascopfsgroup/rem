@@ -18,7 +18,9 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionHaya;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionPropietario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 
 @Service("updaterStateGastoManager")
 public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
@@ -151,6 +153,12 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 							&& genericAdapter.isProveedor(usuario)) {
 							codigo = DDEstadoGasto.SUBSANADO;					
 						}
+						if(DDEstadoGasto.RECHAZADO_PROPIETARIO.equals(gasto.getEstadoGasto().getCodigo()) 
+								&& DDEstadoAutorizacionPropietario.CODIGO_RECHAZADO_CONTABILIDAD.equals(gasto.getGastoGestion().getEstadoAutorizacionPropietario().getCodigo())){
+							codigo = DDEstadoGasto.SUBSANADO;
+							updateStatesGastosGestion(gasto);
+							
+						}
 					}
 					if((!gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.ANULADO) || !gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.RECHAZADO_ADMINISTRACION) || 
 							!gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.RECHAZADO_PROPIETARIO) || !gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.RETENIDO))
@@ -187,6 +195,26 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 		}
 		
 		return false;
+		
+	}
+	
+	private void updateStatesGastosGestion(GastoProveedor gasto){
+		
+		if(!Checks.esNulo(gasto.getGastoDetalleEconomico()) && !Checks.esNulo(gasto.getGastoDetalleEconomico().getImpuestoIndirectoTipo()) 
+				&& DDTiposImpuesto.TIPO_IMPUESTO_IVA.equals(gasto.getGastoDetalleEconomico().getImpuestoIndirectoTipo().getCodigo())){
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoAutorizacionHaya.CODIGO_PENDIENTE);
+			DDEstadoAutorizacionHaya estadoAutorizacionHaya= (DDEstadoAutorizacionHaya) genericDao.get(DDEstadoAutorizacionHaya.class, filtro);
+			if(!Checks.esNulo(gasto.getGastoGestion())){
+				gasto.getGastoGestion().setEstadoAutorizacionHaya(estadoAutorizacionHaya);
+			}
+		}
+		else{
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO);
+			DDEstadoAutorizacionHaya estadoAutorizacionHaya= (DDEstadoAutorizacionHaya) genericDao.get(DDEstadoAutorizacionHaya.class, filtro);
+			if(!Checks.esNulo(gasto.getGastoGestion())){
+				gasto.getGastoGestion().setEstadoAutorizacionHaya(estadoAutorizacionHaya);
+			}
+		}		
 		
 	}
 

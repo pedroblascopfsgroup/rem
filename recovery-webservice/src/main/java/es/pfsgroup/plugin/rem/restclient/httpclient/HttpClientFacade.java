@@ -57,6 +57,7 @@ public class HttpClientFacade {
 					method.addRequestHeader(e.getKey(), e.getValue());
 				}
 			}
+			method.addRequestHeader("Accept","text/html,application/xhtml+xml,application/xml");
 			// Below
 			method.setPath(serviceUrl);
 			logger.trace("http.protocol.version : " + HttpVersion.HTTP_1_1);

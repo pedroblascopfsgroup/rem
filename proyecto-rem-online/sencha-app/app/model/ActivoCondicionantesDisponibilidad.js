@@ -82,6 +82,9 @@ Ext.define('HreRem.model.ActivoCondicionantesDisponibilidad', {
     
 	proxy: {
 		type: 'uxproxy',
+		extraParams:{
+			tab: 'activocondicionantesdisponibilidad'
+		},
 		writeAll: true,
 		api: {
             read: 'activo/getCondicionantesDisponibilidad',

@@ -21,6 +21,10 @@ public interface ActivoCargasApi {
 	     * False si no posee cargas o están canceladas.
 	     */
 	    public boolean esActivoConCargasNoCanceladas(Long idActivo);
+
+		public boolean esActivoConCargasNoCanceladasRegistral(Long idActivo);
+		
+		public boolean esActivoConCargasNoCanceladasEconomica(Long idActivo);
 	    
     }
 

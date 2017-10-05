@@ -13,6 +13,7 @@ public class DtoActivoFilter extends WebDto {
 
 	private String numActivo;
 	private String numActivoRem;
+	private String idSareb;
 	private String idProp;
 	private String idUvem;
 	private String idRecovery;
@@ -571,5 +572,10 @@ public class DtoActivoFilter extends WebDto {
 	public void setCodigoPromocionPrinex(String codigoPromocionPrinex) {
 		this.codigoPromocionPrinex = codigoPromocionPrinex;
 	}	
-	
+	public String getIdSareb(){
+		return idSareb;
+	}
+	public void setIdSareb(String idSareb){
+		this.idSareb = idSareb;
+	}
 }

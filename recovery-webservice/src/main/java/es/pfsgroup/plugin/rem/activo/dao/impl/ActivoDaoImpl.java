@@ -94,8 +94,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		}
    		
    		//Parámteros para la búsqueda avanzada
-   		if (dto.getNumActivoRem() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoRem", dto.getNumActivoRem());
+   		if (dto.getIdSareb() != null)
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoSareb", dto.getIdSareb());
    		
    		if (dto.getIdProp() != null)
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoPrinex", Long.valueOf(dto.getIdProp()));

@@ -245,4 +245,6 @@ public interface ParticularValidatorApi {
 	public Boolean isGastoNoAsociadoTrabajo(String numGasto);
 	
 	public Boolean isGastoPermiteAnyadirActivo(String numGasto);
+
+	Boolean esActivosMismaCartera(String inSqlNumActivosRem, String agrupacion);
 }

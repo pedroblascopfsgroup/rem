@@ -499,6 +499,62 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean esActivosMismaCartera (String inSqlNumActivosRem, String agrupacion){
+		
+		String[] lista = inSqlNumActivosRem.split(",");
+		List<String> listaActivosAAnyadir = new ArrayList<String>();
+		
+		for(int i = 0; i<lista.length; i++){
+			listaActivosAAnyadir.add(lista[i]);
+		}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT DISTINCT act.dd_cra_id"
+				+" FROM ACT_AGR_AGRUPACION aaa"
+				+" JOIN ACT_AGA_AGRUPACION_ACTIVO aga ON aaa.AGR_ID = aga.AGR_ID AND aaa.AGR_NUM_AGRUP_REM = " + agrupacion
+				+" JOIN ACT_ACTIVO act ON aga.act_id = act.act_id"
+				+" JOIN DD_CRA_CARTERA cra ON cra.DD_CRA_ID = act.DD_CRA_ID"
+				+" AND aaa.BORRADO  = 0  AND act.BORRADO  = 0");
+		
+		if(!Checks.esNulo(resultado)){
+			for(String a: listaActivosAAnyadir){
+				String carteraActivo = rawDao.getExecuteSQL("SELECT dd_cra_id"
+						+" FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + a);
+				
+				if(!resultado.equals(carteraActivo)){
+					return false;
+				}
+			}
+		}else{
+			Boolean esPrimero = true;
+			String referencia = "";
+			for(String a: listaActivosAAnyadir){
+				String carteraActivo = rawDao.getExecuteSQL("SELECT dd_cra_id"
+						+" FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + a);
+				
+				if(!esPrimero){
+					if(!Checks.esNulo(resultado)){
+						if(!resultado.equals(carteraActivo)){
+							return false;
+						}
+					}else{
+						carteraActivo = rawDao.getExecuteSQL("SELECT dd_cra_id"
+						+" FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + a);
+						
+						if(!referencia.equals(carteraActivo)){
+							return false;
+						}
+					}	
+				}else{
+					esPrimero = false;
+					referencia = carteraActivo;
+				}
+			}
+		}
+		
+		return true;
+	}
+	
+	@Override
 	public Boolean esActivosOfertasAceptadas (String inSqlNumActivosRem, String numAgrupRem){
 		String sql =
 				"SELECT "

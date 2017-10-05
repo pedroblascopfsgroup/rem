@@ -59,9 +59,10 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 	
 	// Textos de validaciones para grupos de activos (de las agrupaciones), estas variables llevan aparejado un texto y un codigo. Necesario para metodo comun
 	public static final class AGRUPACION_ACTIVOS_SIN_OFERTAS_ACEPTADAS { static int codigoError = 1; static String mensajeError = "msg.error.masivo.agrupar.activos.asistida.activos.agrupacion.ofertas.aceptadas";};
-	public static final class AGRUPACION_ACTIVOS_NO_MISMO_PROPIETARIO { static int codigoError = 2; static String mensajeError = "msg.error.masivo.agrupar.activos.asistida.activos.agrupacion.diferente.propietario";};
-	public static final class AGRUPACIONES_CON_BAJA { static int codigoError = 3; static String mensajeError = "msg.error.masivo.agrupar.activos.asistida.activos.agrupacion.conBaja";};
+	//public static final class AGRUPACION_ACTIVOS_NO_MISMO_PROPIETARIO { static int codigoError = 2; static String mensajeError = "msg.error.masivo.agrupar.activos.asistida.activos.agrupacion.diferente.propietario";};
+	public static final class ACTIVOS_NO_MISMA_CARTERA { static int codigoError = 2; static String mensajeError = "msg.error.masivo.agrupar.activos.asistida.activos.agrupacion.diferente.cartera";};
 
+	public static final class AGRUPACIONES_CON_BAJA { static int codigoError = 3; static String mensajeError = "msg.error.masivo.agrupar.activos.asistida.activos.agrupacion.conBaja";};
 
 
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -128,7 +129,7 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 			
 			// Validaciones de grupo, para todos los activos de una agrupacion en el excel:
 			mapaErrores.put(messageServices.getMessage(AGRUPACIONES_CON_BAJA.mensajeError), activosAgrupMultipleValidacionRows(exc, AGRUPACIONES_CON_BAJA.codigoError));
-			mapaErrores.put(messageServices.getMessage(AGRUPACION_ACTIVOS_NO_MISMO_PROPIETARIO.mensajeError), activosAgrupMultipleValidacionRows(exc, AGRUPACION_ACTIVOS_NO_MISMO_PROPIETARIO.codigoError));
+			mapaErrores.put(messageServices.getMessage(ACTIVOS_NO_MISMA_CARTERA.mensajeError), activosAgrupMultipleValidacionRows(exc, ACTIVOS_NO_MISMA_CARTERA.codigoError));
 			mapaErrores.put(messageServices.getMessage(AGRUPACION_ACTIVOS_SIN_OFERTAS_ACEPTADAS.mensajeError), activosAgrupMultipleValidacionRows(exc, AGRUPACION_ACTIVOS_SIN_OFERTAS_ACEPTADAS.codigoError));
 			
 			
@@ -142,7 +143,7 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 						// !mapaErrores.get(messageServices.getMessage(ACTIVO_INCLUIDO_PERIMETRO)).isEmpty() ||
 						// !mapaErrores.get(messageServices.getMessage(ACTIVO_NO_FINANCIERO)).isEmpty() ||
 						!mapaErrores.get(messageServices.getMessage(AGRUPACIONES_CON_BAJA.mensajeError)).isEmpty() ||
-						!mapaErrores.get(messageServices.getMessage(AGRUPACION_ACTIVOS_NO_MISMO_PROPIETARIO.mensajeError)).isEmpty() ||
+						!mapaErrores.get(messageServices.getMessage(ACTIVOS_NO_MISMA_CARTERA.mensajeError)).isEmpty() ||
 						!mapaErrores.get(messageServices.getMessage(AGRUPACION_ACTIVOS_SIN_OFERTAS_ACEPTADAS.mensajeError)).isEmpty() ){
 					dtoValidacionContenido.setFicheroTieneErrores(true);
 					exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -328,7 +329,7 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 			for(i=1; i<this.numFilasHoja;i++){
 				numAgrupacion = Long.parseLong(exc.dameCelda(i, 0));
 				numActivo = Long.parseLong(exc.dameCelda(i, 1));
-				// Valida que el activo no esté actualmente en una agrupacion comercial(14).
+				// Valida que el activo no estï¿½ actualmente en una agrupacion comercial(14).
 				if(particularValidator.esActivoEnOtraAgrupacionNoCompatible(numActivo, numAgrupacion, "14"))
 					listaFilas.add(i);
 			}
@@ -513,9 +514,9 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 							particularValidator.esAgrupacionConBaja(String.valueOf(numAgrupacion)))
 						listaFilasError.add(getNumPrimeraFilaAgrupacionError(exc, numAgrupacion));
 					
-					// Validacion mismo propietario
-					if(codigoValidacionMultiple == AGRUPACION_ACTIVOS_NO_MISMO_PROPIETARIO.codigoError &&
-							!particularValidator.esActivosMismoPropietario(inSqlGrupoActivos))
+					// Validacion misma cartera
+					if(codigoValidacionMultiple == ACTIVOS_NO_MISMA_CARTERA.codigoError &&
+							!particularValidator.esActivosMismaCartera(inSqlGrupoActivos, numAgrupacion.toString()))
 						listaFilasError.add(getNumPrimeraFilaAgrupacionError(exc, numAgrupacion));
 
 					// Validacion agrupacion y activos sin ofertas aceptadas

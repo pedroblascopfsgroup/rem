@@ -158,5 +158,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 * @return Devuelve un objeto de tipo ActivoAgrupacionActivo.
 	 */
 	public ActivoAgrupacionActivo getActivoAgrupacionActivoAgrRestringidaPorActivoID(Long id);
+	
+	public void deleteActivoDistribucion(Long idActivoInfoComercial);
 
 }

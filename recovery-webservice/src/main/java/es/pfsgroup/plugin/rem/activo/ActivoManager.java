@@ -4085,5 +4085,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public List<VPreciosVigentes> getPreciosVigentesById(Long id) {
 		return activoAdapter.getPreciosVigentesById(id);
 	}
+	
+	@Override
+	public void deleteActivoDistribucion(Long idActivoInfoComercial){
+		activoDao.deleteActivoDistribucion(idActivoInfoComercial);
+	}
 
 }

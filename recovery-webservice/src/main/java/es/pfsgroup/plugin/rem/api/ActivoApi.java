@@ -1035,5 +1035,7 @@ public interface ActivoApi {
 	 * @return List<VPreciosVigentes>
 	 */
 	public List<VPreciosVigentes> getPreciosVigentesById(Long id);
+	
+	public void deleteActivoDistribucion(Long idActivoInfoComercial);
 
 }

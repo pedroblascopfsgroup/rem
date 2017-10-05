@@ -1391,16 +1391,15 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					// Si viene información de las plantas lo guardamos
 					List<PlantaDto> plantas = informe.getPlantas();
 					if (plantas != null) {
+						
+						if(!Checks.esNulo(informeEntity) && !Checks.esNulo(informeEntity.getId())){
+							Long idInfoComercial= informeEntity.getId();
+							activoApi.deleteActivoDistribucion(idInfoComercial);
+						}
+						
 						for (PlantaDto planta : plantas) {
-
-							ActivoDistribucion activoDistribucion = genericDao.get(ActivoDistribucion.class,
-									genericDao.createFilter(FilterType.EQUALS, "numPlanta", planta.getNumero()),
-									genericDao.createFilter(FilterType.EQUALS, "infoComercial", informeEntity),
-									genericDao.createFilter(FilterType.EQUALS, "tipoHabitaculo.codigo",
-											planta.getCodTipoEstancia()));
-							if (activoDistribucion == null) {
-								activoDistribucion = new ActivoDistribucion();
-							}
+							
+							ActivoDistribucion activoDistribucion = new ActivoDistribucion();
 							activoDistribucion.setNumPlanta(planta.getNumero());
 							activoDistribucion.setInfoComercial(informeEntity);
 							DDTipoHabitaculo tipoHabitaculo = null;
@@ -1418,15 +1417,9 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					// Si vienen campos anejos, meter en distribucion
 					if (!Checks.esNulo(informe.getAnejoGarage()) || !Checks.esNulo(informe.getNumeroPlazasGaraje())
 							|| !Checks.esNulo(informe.getSuperficiePlazasGaraje())) {
-						ActivoDistribucion activoDistribucion = genericDao.get(ActivoDistribucion.class,
-								genericDao.createFilter(FilterType.EQUALS, "numPlanta", Integer.valueOf(0)),
-								genericDao.createFilter(FilterType.EQUALS, "tipoHabitaculo.codigo",
-										DDTipoHabitaculo.TIPO_HABITACULO_GARAJE),
-								genericDao.createFilter(FilterType.EQUALS, "infoComercial.activo.numActivo",
-										informe.getIdActivoHaya()));
-						if (activoDistribucion == null) {
-							activoDistribucion = new ActivoDistribucion();
-						}
+						
+						ActivoDistribucion activoDistribucion = new ActivoDistribucion();
+						
 						activoDistribucion.setNumPlanta(Integer.valueOf(0));
 						activoDistribucion.setInfoComercial(informeEntity);
 						DDTipoHabitaculo tipoHabitaculo = (DDTipoHabitaculo) genericDao.get(DDTipoHabitaculo.class,
@@ -1441,15 +1434,9 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					}
 
 					if (!Checks.esNulo(informe.getAnejoTrastero())) {
-						ActivoDistribucion activoDistribucion = genericDao.get(ActivoDistribucion.class,
-								genericDao.createFilter(FilterType.EQUALS, "numPlanta", Integer.valueOf(0)),
-								genericDao.createFilter(FilterType.EQUALS, "tipoHabitaculo.codigo",
-										DDTipoHabitaculo.TIPO_HABITACULO_TRASTERO),
-								genericDao.createFilter(FilterType.EQUALS, "infoComercial.activo.numActivo",
-										informe.getIdActivoHaya()));
-						if (activoDistribucion == null) {
-							activoDistribucion = new ActivoDistribucion();
-						}
+						
+						ActivoDistribucion activoDistribucion = new ActivoDistribucion();
+						
 						activoDistribucion.setNumPlanta(Integer.valueOf(0));
 						activoDistribucion.setInfoComercial(informeEntity);
 						DDTipoHabitaculo tipoHabitaculo = (DDTipoHabitaculo) genericDao.get(DDTipoHabitaculo.class,

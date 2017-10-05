@@ -978,5 +978,11 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 		return HibernateQueryUtils.list(this, hb);
 	}
+	
+	public void deleteActivoDistribucion(Long idActivoInfoComercial){
+		StringBuilder sb = new StringBuilder("DELETE FROM ActivoDistribucion acd WHERE acd.infoComercial.id = " + idActivoInfoComercial);
+		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+		
+	}
 
 }

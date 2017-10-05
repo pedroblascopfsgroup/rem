@@ -697,9 +697,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			ActivoBancario activoBancario = getActivoBancarioByIdActivo(oferta.getActivoPrincipal().getId());
 			if(Checks.esNulo(oferta.getAgrupacion())) {
 				if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo())){
-					List<VBusquedaActivosPrecios> vBusquedaActivosPrecio= activoDao.getListActivosPreciosFromListId(activoBancario.getActivo().getId().toString());	
-					if(!Checks.estaVacio(vBusquedaActivosPrecio) && !Checks.esNulo(vBusquedaActivosPrecio.get(0).getPrecioMinimoAutorizado())){
-						precioMinimoAutorizado = vBusquedaActivosPrecio.get(0).getPrecioMinimoAutorizado();
+					List<VPreciosVigentes> vPreciosVigentes= activoAdapter.getPreciosVigentesById(activoBancario.getActivo().getId());	
+					if(!Checks.estaVacio(vPreciosVigentes)){
+						for(VPreciosVigentes precio : vPreciosVigentes) {
+							if(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(precio.getCodigoTipoPrecio())){
+								precioMinimoAutorizado = precio.getImporte();
+							}
+						}
 					}
 				}
 			}
@@ -708,9 +712,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
 				if(!Checks.estaVacio(activos)){
 					for(ActivoAgrupacionActivo activo : activos) {
-						List<VBusquedaActivosPrecios> vBusquedaActivosPrecio= activoDao.getListActivosPreciosFromListId(activo.getActivo().getId().toString());			
-						if(!Checks.estaVacio(vBusquedaActivosPrecio) && !Checks.esNulo(vBusquedaActivosPrecio.get(0).getPrecioMinimoAutorizado())){
-							precioMinimoAutorizado += vBusquedaActivosPrecio.get(0).getPrecioMinimoAutorizado();
+						List<VPreciosVigentes> vPreciosVigentes= activoAdapter.getPreciosVigentesById(activo.getId());	
+						if(!Checks.estaVacio(vPreciosVigentes)){
+							for(VPreciosVigentes precio : vPreciosVigentes) {
+								if(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(precio.getCodigoTipoPrecio())){
+									precioMinimoAutorizado += precio.getImporte();
+								}
+							}
 						}
 					}
 				}
@@ -723,17 +731,31 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					esFinanciero = true;
 				}
 				
-				if(!esFinanciero && (activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_SINGULAR) ||
-						(activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_RETAIL) 
-								&& (precioMinimoAutorizado > oferta.getImporteOferta())))) {
-					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "11")));//sareb
-					
-				}else if((esFinanciero && getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) || 
-						(activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_RETAIL) 
-						&& precioMinimoAutorizado < oferta.getImporteOferta())) {
-					
+//				if(activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_SINGULAR) ||
+//						(activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_RETAIL) 
+//								&& (precioMinimoAutorizado > oferta.getImporteOferta()))) {
+//					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "11")));//sareb
+//					
+//				}
+//				if((esFinanciero && getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) || 
+//						(activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_RETAIL) 
+//						&& precioMinimoAutorizado < oferta.getImporteOferta())) {
+//					
+//					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "12")));//haya-sareb
+//					
+//				}
+				
+				
+				
+				
+				if(esFinanciero && getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) { //1º Clase de activo (financiero/inmobiliario) y sin formalización
 					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "12")));//haya-sareb
-					
+				}else if(activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_SINGULAR)) { //2º Si es inmobiliario: Tipo de comercialización (singular/retail)
+					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "11")));//sareb
+				}else if(precioMinimoAutorizado > oferta.getImporteOferta()) { //3º Si es retail: Comparamos precio mínimo e importe oferta
+					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "11")));//sareb
+				}else {
+					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "12")));//haya-sareb
 				}
 			}
 		}

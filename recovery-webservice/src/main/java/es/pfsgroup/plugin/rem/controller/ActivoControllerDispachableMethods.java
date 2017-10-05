@@ -1,16 +1,5 @@
 package es.pfsgroup.plugin.rem.controller;
 
-import static es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap.TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD;
-import static es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap.TAB_ACTIVO_HISTORICO_ESTADO_PUBLICACION;
-import static es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap.TAB_CARGAS_ACTIVO;
-import static es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap.TAB_DATOS_BASICOS;
-import static es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap.TAB_DATOS_PUBLICACION;
-import static es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap.TAB_DATOS_REGISTRALES;
-import static es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap.TAB_INFORME_COMERCIAL;
-import static es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap.TAB_INFO_ADMINISTRATIVA;
-import static es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap.TAB_MEDIADOR_ACTIVO;
-import static es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap.TAB_SIT_POSESORIA;
-import static es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap.TAB_COMERCIAL;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +7,8 @@ import java.util.Map;
 
 import org.springframework.ui.ModelMap;
 
+import es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap;
+import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
@@ -27,7 +18,6 @@ import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
-import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 
 import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
 
@@ -45,6 +35,7 @@ class ActivoControllerDispachableMethods {
 		public abstract Class<T> getArgumentType();
 		public abstract void execute(Long id, T dto);
 	}
+
 	
 	
 	private static Map<String, DispachableMethod> dispachableMethods;
@@ -55,7 +46,7 @@ class ActivoControllerDispachableMethods {
 		/*
 		 * TAB DATOS BASICOS
 		 */
-		dispachableMethods.put(TAB_DATOS_BASICOS, new DispachableMethod<DtoActivoFichaCabecera>() {
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_DATOS_BASICOS, new DispachableMethod<DtoActivoFichaCabecera>() {
 
 			@Override
 			public Class<DtoActivoFichaCabecera> getArgumentType() {
@@ -74,7 +65,7 @@ class ActivoControllerDispachableMethods {
 		/*
 		 * TAB SITUACION POSESORIA
 		 */
-		dispachableMethods.put(TAB_SIT_POSESORIA, new DispachableMethod<DtoActivoSituacionPosesoria>() {
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_SIT_POSESORIA, new DispachableMethod<DtoActivoSituacionPosesoria>() {
 
 			@Override
 			public Class<DtoActivoSituacionPosesoria> getArgumentType() {
@@ -93,7 +84,7 @@ class ActivoControllerDispachableMethods {
 		/*
 		 * TAB INFORME COMERCIAL
 		 */
-		dispachableMethods.put(TAB_INFORME_COMERCIAL, new DispachableMethod<DtoActivoInformeComercial>() {
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_INFORME_COMERCIAL, new DispachableMethod<DtoActivoInformeComercial>() {
 
 			@Override
 			public Class<DtoActivoInformeComercial> getArgumentType() {
@@ -112,7 +103,7 @@ class ActivoControllerDispachableMethods {
 		/*
 		 * TAB DATOS REGISTRALES
 		 */
-		dispachableMethods.put(TAB_DATOS_REGISTRALES, new DispachableMethod<DtoActivoDatosRegistrales>() {
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_DATOS_REGISTRALES, new DispachableMethod<DtoActivoDatosRegistrales>() {
 
 			@Override
 			public Class<DtoActivoDatosRegistrales> getArgumentType() {
@@ -131,7 +122,7 @@ class ActivoControllerDispachableMethods {
 		/*
 		 * TAB INFO ADMINISTRATIVA
 		 */
-		dispachableMethods.put(TAB_INFO_ADMINISTRATIVA, new DispachableMethod<DtoActivoInformacionAdministrativa>() {
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_INFO_ADMINISTRATIVA, new DispachableMethod<DtoActivoInformacionAdministrativa>() {
 
 			@Override
 			public Class<DtoActivoInformacionAdministrativa> getArgumentType() {
@@ -150,7 +141,7 @@ class ActivoControllerDispachableMethods {
 		/*
 		 * TAB CARGAS ACTIVO
 		 */
-		dispachableMethods.put(TAB_CARGAS_ACTIVO, new DispachableMethod<DtoActivoCargasTab>() {
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_CARGAS_ACTIVO, new DispachableMethod<DtoActivoCargasTab>() {
 
 			@Override
 			public Class<DtoActivoCargasTab> getArgumentType() {
@@ -169,7 +160,7 @@ class ActivoControllerDispachableMethods {
 		/*
 		 * TAB_MEDIADOR_ACTIVO
 		 */
-		dispachableMethods.put(TAB_MEDIADOR_ACTIVO, new DispachableMethod<DtoHistoricoMediador>() {
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_MEDIADOR_ACTIVO, new DispachableMethod<DtoHistoricoMediador>() {
 
 			@Override
 			public Class<DtoHistoricoMediador> getArgumentType() {
@@ -187,10 +178,9 @@ class ActivoControllerDispachableMethods {
 		});
 		
 		/*
-<<<<<<< Updated upstream
 		 * TAB_ACTIVO_HISTORICO_ESTADO_PUBLICACION
 		 */
-		dispachableMethods.put(TAB_ACTIVO_HISTORICO_ESTADO_PUBLICACION, new DispachableMethod<DtoCambioEstadoPublicacion>() {
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_ACTIVO_HISTORICO_ESTADO_PUBLICACION, new DispachableMethod<DtoCambioEstadoPublicacion>() {
 
 			@Override
 			public Class<DtoCambioEstadoPublicacion> getArgumentType() {
@@ -209,7 +199,7 @@ class ActivoControllerDispachableMethods {
 		/*
 		 * TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD
 		 */
-		dispachableMethods.put(TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD, new DispachableMethod<DtoCondicionantesDisponibilidad>() {
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD, new DispachableMethod<DtoCondicionantesDisponibilidad>() {
 
 			@Override
 			public Class<DtoCondicionantesDisponibilidad> getArgumentType() {
@@ -223,10 +213,10 @@ class ActivoControllerDispachableMethods {
 				}
 			}
 		});
-/*
+		/*
 		 * TAB_COMERCIAL
 		 */
-		dispachableMethods.put(TAB_COMERCIAL, new DispachableMethod<DtoComercialActivo>() {
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_COMERCIAL, new DispachableMethod<DtoComercialActivo>() {
 
 			@Override
 			public Class<DtoComercialActivo> getArgumentType() {
@@ -238,6 +228,25 @@ class ActivoControllerDispachableMethods {
 				if (dto != null ){
 					dto.setId(id.toString());
 					this.controller.saveComercialActivo(dto, new ModelMap());
+
+				}
+			}
+		});
+		
+		/*
+		 * TAB_ADMINISTRACION
+		 */
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_ADMINISTRACION, new DispachableMethod<DtoActivoAdministracion>() {
+
+			@Override
+			public Class<DtoActivoAdministracion> getArgumentType() {
+				return DtoActivoAdministracion.class;
+			}
+
+			@Override
+			public void execute(Long id, DtoActivoAdministracion dto) {
+				if (dto != null ){
+					this.controller.saveActivoAdministracion(dto, id, new ModelMap());
 
 				}
 			}

@@ -53,6 +53,7 @@ import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 
 @Repository("ActivoDao")
 public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements ActivoDao{
@@ -979,9 +980,17 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		return HibernateQueryUtils.list(this, hb);
 	}
 	
+	/*Borra todos las distribuciones excelto las de tipo garaje y trastero*/
 	public void deleteActivoDistribucion(Long idActivoInfoComercial){
-		StringBuilder sb = new StringBuilder("DELETE FROM ActivoDistribucion acd WHERE acd.infoComercial.id = " + idActivoInfoComercial);
-		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+		Session session = this.getSessionFactory().getCurrentSession();
+		Query query= session.createSQLQuery("DELETE FROM ACT_DIS_DISTRIBUCION dis1 where dis1.DIS_ID IN"
+				+ " ( select dis2.DIS_ID from ACT_DIS_DISTRIBUCION dis2"
+				+ "	INNER JOIN DD_TPH_TIPO_HABITACULO tph ON dis2.dd_tph_id = tph.dd_tph_id"
+				+ "	WHERE dis2.ICO_ID = "+idActivoInfoComercial
+				+ "	AND tph.DD_TPH_CODIGO NOT IN ('"+DDTipoHabitaculo.TIPO_HABITACULO_TRASTERO + "','"+ DDTipoHabitaculo.TIPO_HABITACULO_GARAJE +"')"
+				+ "	)");
+		query.executeUpdate();
+		
 		
 	}
 

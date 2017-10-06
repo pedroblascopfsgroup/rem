@@ -271,15 +271,28 @@ public class MSVHojaExcel {
 		DecimalFormat df = new DecimalFormat();
 		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
 		
-		// Formato numerico compatible con notacion latina
-		if(!Checks.esNulo(cellValue) && cellValue.contains("."))
+		// Comprobación si es formato español o inglés de separar miles y decimales
+		if (!Checks.esNulo(cellValue)
+				&& cellValue.substring(cellValue.length() - 3, cellValue.length() - 2).equals(".")) {
 			symbols.setDecimalSeparator('.'); // Simbolo de decimales
+
+			if (cellValue.contains(",")) {
+				symbols.setGroupingSeparator(','); // Simbolo de miles
+			}
+
+		} else if (!Checks.esNulo(cellValue)
+				&& cellValue.substring(cellValue.length() - 3, cellValue.length() - 2).equals(",")) {
+			
+			symbols.setDecimalSeparator(','); // Simbolo de decimales
+			
+			if (cellValue.contains(".")) {
+
+				symbols.setGroupingSeparator('.'); // Simbolo de miles
+			}
+		}
 		
 		symbols.setMinusSign('-'); // Simbolo numero negativo
 
-		if(!Checks.esNulo(cellValue) && cellValue.contains(","))
-			symbols.setGroupingSeparator(','); // Simbolo de miles
-		
 		if(!Checks.esNulo(cellValue) && cellValue.contains("E"))
 			symbols.setExponentSeparator("E"); // Simbolo numero exponencial
 		

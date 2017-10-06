@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.api.impl;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -69,7 +70,7 @@ public class MSVActualizadorPreciosActivoImporte implements MSVLiberator {
 			
 		processAdapter.setStateProcessing(file.getProcesoMasivo().getId());
 		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);
-		DecimalFormat formato = new DecimalFormat("####.##");
+		
 		try {
 			Integer numFilas = exc.getNumeroFilasByHoja(0,file.getProcesoMasivo().getTipoOperacion());
 			for (int fila = 1; fila < numFilas; fila++) {
@@ -79,10 +80,8 @@ public class MSVActualizadorPreciosActivoImporte implements MSVLiberator {
 				
 				//Si hay Valoracion = Precio Aprobado venta para actualizar o crear
 				if(!Checks.esNulo(exc.dameCelda(fila, 1))){
-					
-					Number numero = formato.parse(exc.dameCelda(fila, 1));
-				    double valor = numero.doubleValue();
-						
+					double valor = Double.parseDouble(exc.dameCelda(fila, 1));
+
 					actualizarCrearValoresPrecios(activo,
 							DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA, 
 							valor,
@@ -94,10 +93,8 @@ public class MSVActualizadorPreciosActivoImporte implements MSVLiberator {
 				
 				//Si hay Valoracion = Precio Minimo para actualizar o crear
 				if(!Checks.esNulo(exc.dameCelda(fila, 4))){
-					
-					Number numero = formato.parse(exc.dameCelda(fila, 4));
-				    double valor = numero.doubleValue();
-				    
+					double valor = Double.parseDouble(exc.dameCelda(fila, 4));
+
 					actualizarCrearValoresPrecios(activo,
 							DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO, 
 							valor,
@@ -107,9 +104,8 @@ public class MSVActualizadorPreciosActivoImporte implements MSVLiberator {
 				
 				//Si hay Valoracion = Precio Aprobado renta para actualizar o crear
 				if(!Checks.esNulo(exc.dameCelda(fila, 7))){
-					
-					Number numero = formato.parse(exc.dameCelda(fila, 7));
-				    double valor = numero.doubleValue();
+					double valor = Double.parseDouble(exc.dameCelda(fila, 7));
+
 					
 					actualizarCrearValoresPrecios(activo,
 							DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA, 
@@ -120,10 +116,8 @@ public class MSVActualizadorPreciosActivoImporte implements MSVLiberator {
 				
 				//Si hay Valoracion = Precio de Descuento Aprobado para actualizar o crear
 				if(!Checks.esNulo(exc.dameCelda(fila, 10))){
-					
-					Number numero = formato.parse(exc.dameCelda(fila, 10));
-				    double valor = numero.doubleValue();
-				    
+					double valor = Double.parseDouble(exc.dameCelda(fila, 10));
+
 					actualizarCrearValoresPrecios(activo,
 							DDTipoPrecio.CODIGO_TPC_DESC_APROBADO, 
 							valor,
@@ -133,9 +127,7 @@ public class MSVActualizadorPreciosActivoImporte implements MSVLiberator {
 				
 				//Si hay Valoracion = Precio de Descuento Publicado para actualizar o crear
 				if(!Checks.esNulo(exc.dameCelda(fila, 13))){
-					
-					Number numero = formato.parse(exc.dameCelda(fila, 13));
-				    double valor = numero.doubleValue();
+					double valor = Double.parseDouble(exc.dameCelda(fila, 13));
 				    
 					actualizarCrearValoresPrecios(activo,
 							DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO, 

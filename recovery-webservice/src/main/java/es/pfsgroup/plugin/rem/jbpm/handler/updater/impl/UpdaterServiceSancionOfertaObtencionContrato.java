@@ -188,7 +188,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 				fechaFinTarea = addDays(new Date(), 30);
 			}
 			
-			tareaPBC.setFechaFin(fechaFinTarea);
+			tareaPBC.setFechaVenc(fechaFinTarea);
 		}
 		
 	}

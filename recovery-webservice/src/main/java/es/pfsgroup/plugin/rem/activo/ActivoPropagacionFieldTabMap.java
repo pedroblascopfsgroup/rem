@@ -24,6 +24,7 @@ public class ActivoPropagacionFieldTabMap {
     public static final String TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD = "activocondicionantesdisponibilidad";
 
     public static final String TAB_COMERCIAL = "comercial";
+    public static final String TAB_ADMINISTRACION = "administracion";
 
     
     static {
@@ -498,7 +499,11 @@ public class ActivoPropagacionFieldTabMap {
 					"observaciones",
 					"importeVenta"
     			));
-
+    	pmap.put(TAB_ADMINISTRACION,
+    			Arrays.asList(
+    				"numActivo",
+    				"ibiExento"
+    			));
         map = Collections.unmodifiableMap(pmap);
     }
 }

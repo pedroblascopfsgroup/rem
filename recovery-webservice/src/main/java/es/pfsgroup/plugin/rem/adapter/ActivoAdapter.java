@@ -117,6 +117,7 @@ import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
 import es.pfsgroup.plugin.rem.model.DtoPropietario;
+import es.pfsgroup.plugin.rem.model.DtoTabActivo;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoTramite;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;

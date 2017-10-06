@@ -45,21 +45,21 @@ BEGIN
 		BORRADO
 	)
 	SELECT 
-		'||V_ESQUEMA||'.S_ACT_ABA_ACTIVO_BANCARIO.NEXTVAL            ABA_ID,
-		ACT.ACT_ID                                         ACT_ID,
+		'||V_ESQUEMA||'.S_ACT_ABA_ACTIVO_BANCARIO.NEXTVAL   ABA_ID,
+		ACT.ACT_ID                                         	ACT_ID,
 	  (SELECT DD_CLA_ID
 	    FROM '||V_ESQUEMA||'.DD_CLA_CLASE_ACTIVO
-	    WHERE DD_CLA_CODIGO = ''01'')                      DD_CLA_ID,
+	    WHERE DD_CLA_CODIGO = ''01'')                      	DD_CLA_ID,
 	  (SELECT PDV_ACREEDOR_NUM_EXP 
 	    FROM '||V_ESQUEMA||'.ACT_PDV_PLAN_DIN_VENTAS PDV
 	    WHERE PDV.ACT_ID = ACT.ACT_ID
 	    AND PDV_ACREEDOR_NUM_EXP IS NOT NULL
 	    AND PDV.BORRADO = 0
-	    AND ROWNUM = 1)                                  PDV_ACREEDOR_NUM_EXP,
-	  ''0''                                                VERSION,
-	  '''||V_USUARIO||'''                                        USUARIOCREAR,
-	  SYSDATE                                            FECHACREAR,
-	  0                                                  BORRADO
+	    AND ROWNUM = 1)                                  	PDV_ACREEDOR_NUM_EXP,
+	  ''0''                                                	VERSION,
+	  '''||V_USUARIO||'''                                	USUARIOCREAR,
+	  SYSDATE                                            	FECHACREAR,
+	  0                                                  	BORRADO
 	FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
 	  INNER JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID AND CRA.BORRADO = 0
 	  INNER JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID AND SCR.BORRADO = 0
@@ -111,7 +111,7 @@ BEGIN
 	FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
 	  INNER JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID AND CRA.BORRADO = 0
 	  INNER JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID AND SCR.BORRADO = 0
-	WHERE ACT.BORRADO = 0 AND SCR.DD_SCR_CODIGO <> DECODE(CRA.DD_CRA_CODIGO, ''01'', ''01'',    ''02'', ''03'',     ''03'', ''05'',     ''04'', ''20'',     ''05'', ''12'')
+	WHERE ACT.BORRADO = 0 AND SCR.DD_SCR_CODIGO = DECODE(CRA.DD_CRA_CODIGO, ''01'', ''02'',    ''02'', ''04'',     ''03'', ''06'',    ''03'', ''07'', ''03'', ''08'',''03'', ''09'',''03'', ''14'',''03'', ''15'',''03'', ''19'',''04'', ''10'',     ''07'', ''17'',''08'', ''18'',''06'', ''16'')
 	  AND NOT EXISTS (
 	    SELECT 1
 	    FROM '||V_ESQUEMA||'.ACT_ABA_ACTIVO_BANCARIO ABA

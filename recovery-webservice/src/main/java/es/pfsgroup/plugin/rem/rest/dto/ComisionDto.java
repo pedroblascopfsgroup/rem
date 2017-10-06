@@ -25,10 +25,12 @@ public class ComisionDto implements Serializable {
 	private Long idHonorarioWebcom;
 	@NotNull
 	private Long idHonorarioRem;*/
+	@Diccionary(clase = Oferta.class, foreingField="numOferta",message = "El idOfertaRem no existe", groups = { Insert.class,
+			Update.class })
 	@NotNull(groups = { Insert.class, Update.class })
 	private Long idOfertaRem;
 	@NotNull(groups = { Insert.class, Update.class })
-	@Diccionary(clase = Oferta.class, foreingField="numOferta",message = "El idOfertaWebcom no existe", groups = { Insert.class,
+	@Diccionary(clase = Oferta.class, foreingField="idWebCom",message = "El idOfertaWebcom no existe", groups = { Insert.class,
 			Update.class })
 	private Long idOfertaWebcom;
 	@NotNull(groups = { Insert.class, Update.class })

@@ -2766,7 +2766,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		me.fireEvent("log", cambios);
 		
-    	if (opcionPropagacion != "1" &&  !activosSeleccionados.length>0) {
+    	if (opcionPropagacion == "4" &&  activosSeleccionados.length == 0) {
 	    	me.fireEvent("errorToast", HreRem.i18n("msg.no.activos.seleccionados"));
 	    	return false;
     	}

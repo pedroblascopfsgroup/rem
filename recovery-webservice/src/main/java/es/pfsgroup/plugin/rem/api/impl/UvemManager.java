@@ -881,6 +881,9 @@ public class UvemManager implements UvemManagerApi {
 			//el comite superior para el alta siempre es 0
 			servicioGMPDJB13_INS.setCodigoComiteSuperiorcocom3((short)0);
 			
+			//codigo uvem de la ofician prescriptora
+			servicioGMPDJB13_INS.setIdentificadorDelColaboradoridcola("C000");
+			
 			// Requeridos por el servicio
 			servicioGMPDJB13_INS.setnumeroCliente(0);
 			servicioGMPDJB13_INS.setnumeroUsuario("");

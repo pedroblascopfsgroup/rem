@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Correcciones para PDVs
 --##########################################
 --*/
 
@@ -66,7 +67,7 @@ BEGIN
 	          THEN ''12''
 	          ELSE
 	            CASE
-				  WHEN (SIN_TOMA_POSESION_INICIAL = 1)
+				  WHEN (SIN_TOMA_POSESION_INICIAL = 1  and dd_cla_id = 2)
 	      		  THEN ''02''	              
 	              ELSE
 	                CASE
@@ -82,7 +83,7 @@ BEGIN
 	                          THEN ''13''                         
 	                          ELSE
 	                            CASE
-								  WHEN (PENDIENTE_INSCRIPCION = 1)
+								  WHEN (PENDIENTE_INSCRIPCION = 1 and dd_cla_id = 2)
 	                  			  THEN ''05''	                              
 	                              ELSE
 	                                CASE
@@ -133,7 +134,7 @@ BEGIN
 	        END
 	    END AS ESTADO
 	  FROM
-	    (SELECT ACT.ACT_ID,CRA.DD_CRA_CODIGO,
+	    (SELECT ACT.ACT_ID,CRA.DD_CRA_CODIGO, aba.dd_cla_id, 
 		NVL2 (SPS.SPS_FECHA_TOMA_POSESION, 0, 1)                             AS SIN_TOMA_POSESION_INICIAL,
 		DECODE (SPS.SPS_OCUPADO, 1, DECODE (SPS.SPS_CON_TITULO, 1, 1, 0), 0) AS OCUPADO_CONTITULO,
 		NVL2 (BDR.BIE_DREG_FECHA_INSCRIPCION, 0, 1)                          AS PENDIENTE_INSCRIPCION,
@@ -161,7 +162,12 @@ BEGIN
 		LEFT JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO ON ICO.ACT_ID = ACT.ACT_ID 
 		LEFT JOIN '||V_ESQUEMA||'.VI_ESTADO_ACTUAL_INFMED VEI ON VEI.ICO_ID = ICO.ICO_ID
 		INNER JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
+<<<<<<< HEAD
 		where act.borrado = 0 AND sps.borrado = 0)';
+=======
+        left join '||V_ESQUEMA||'.act_aba_activo_bancario aba on aba.act_id = act.act_id
+		where act.borrado = 0)';
+>>>>>>> parche-2.0.7-170927-rem
 				
 
  	 DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'...Creada OK');

@@ -124,7 +124,9 @@ DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA|
 	SYSDATE                                               	FECHACREAR,
 	0                                                     	BORRADO
 	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+	LEFT JOIN '||V_ESQUEMA||'.'||V_TABLA||' TAB ON TAB.AGR_NUM_AGRUP_UVEM = MIG.AGR_UVEM
 	WHERE MIG.VALIDACION = 0 AND MIG.AGR_ELIMINADO IS NOT NULL AND MIG.AGR_PUBLICADO IS NOT NULL
+		AND TAB.AGR_ID IS NULL
 	')
 	;
 

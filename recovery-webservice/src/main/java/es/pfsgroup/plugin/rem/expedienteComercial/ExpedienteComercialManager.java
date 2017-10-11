@@ -1832,9 +1832,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				reserva.setAuditoria(Auditoria.getNewInstance());
 			}
 		}
-
-		genericDao.save(Reserva.class, reserva);
-
+		if (!Checks.esNulo(reserva))
+			genericDao.save(Reserva.class, reserva);
+		
 		// Actualiza la disponibilidad comercial del activo
 		ofertaApi.updateStateDispComercialActivosByOferta(expediente.getOferta());
 

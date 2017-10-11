@@ -1834,7 +1834,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		if (!Checks.esNulo(reserva))
 			genericDao.save(Reserva.class, reserva);
-		
+
 		// Actualiza la disponibilidad comercial del activo
 		ofertaApi.updateStateDispComercialActivosByOferta(expediente.getOferta());
 
@@ -4208,28 +4208,27 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				if (!Checks.esNulo(numExpedienteRiesgo) && !Checks.esNulo(tipoRiesgo)) {
 					Long capitalConcedido;
-					try {
-						capitalConcedido = uvemManagerApi.consultaDatosPrestamo(numExpedienteRiesgo,
-								Integer.parseInt(tipoRiesgo.getCodigo()));
+					capitalConcedido = uvemManagerApi.consultaDatosPrestamo(numExpedienteRiesgo,
+							Integer.parseInt(tipoRiesgo.getCodigo()));
 
-						if (!Checks.esNulo(capitalConcedido)) {
-							formalizacion.setCapitalConcedido(capitalConcedido.doubleValue() / 100);
+					if (!Checks.esNulo(capitalConcedido)) {
+						formalizacion.setCapitalConcedido(capitalConcedido.doubleValue() / 100);
 
-							formalizacion.setNumExpediente(numExpedienteRiesgo);
-							formalizacion.setTipoRiesgoClase(tipoRiesgo);
+						formalizacion.setNumExpediente(numExpedienteRiesgo);
+						formalizacion.setTipoRiesgoClase(tipoRiesgo);
 
-							genericDao.save(Formalizacion.class, formalizacion);
-							return true;
-						}
-					} catch (NumberFormatException e) {
-						logger.error("Error en la obtención de datos de préstamo.", e);
+						genericDao.save(Formalizacion.class, formalizacion);
+						return true;
 					}
-
+				} else {
+					throw new Exception("En número del expediente y el tipo de riesgo han de estar informados");
 				}
+			} else {
+				throw new Exception("Este expediente no tiene formalización");
 			}
 		} catch (Exception e) {
 			logger.error("Error en la obtención de datos de préstamo.", e);
-			throw e;
+			throw new JsonViewerException(e.getMessage());
 		}
 		return false;
 	}

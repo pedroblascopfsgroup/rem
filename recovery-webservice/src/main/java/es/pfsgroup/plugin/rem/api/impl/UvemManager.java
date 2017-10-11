@@ -878,6 +878,9 @@ public class UvemManager implements UvemManagerApi {
 			if (numeroOcurrencias != null) {
 				servicioGMPDJB13_INS.setNumeroDeOcurrenciasnumocu(numeroOcurrencias);
 			}
+			//el comite superior para el alta siempre es 0
+			servicioGMPDJB13_INS.setCodigoComiteSuperiorcocom3((short)0);
+			
 			// Requeridos por el servicio
 			servicioGMPDJB13_INS.setnumeroCliente(0);
 			servicioGMPDJB13_INS.setnumeroUsuario("");

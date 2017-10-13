@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
@@ -74,17 +75,19 @@ public class NotificacionManager extends BusinessOperationOverrider<Notificacion
 				Notificacion notifAdmisionKO = new Notificacion();
 				notifAdmisionKO.setIdActivo(activo.getId());
 				Usuario gestor = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ADMISION);
-				notifAdmisionKO.setDestinatario(gestor.getId());
-				notifAdmisionKO.setTitulo("Revisar el estado de un activo con oferta aprobada");
-				notifAdmisionKO.setDescripcion(
-						"Se ha aprobado una oferta de venta asociada a este activo y no consta la conformidad de su departamento. Verifique que se han cumplimentado todos los campos básicos de la pestaña \"checking de información\" del activo, así como el estado documental del mismo.");
-				notifAdmisionKO.setFecha(new Date());
+				if(!Checks.esNulo(gestor)){
+					notifAdmisionKO.setDestinatario(gestor.getId());
+					notifAdmisionKO.setTitulo("Revisar el estado de un activo con oferta aprobada");
+					notifAdmisionKO.setDescripcion(
+							"Se ha aprobado una oferta de venta asociada a este activo y no consta la conformidad de su departamento. Verifique que se han cumplimentado todos los campos básicos de la pestaña \"checking de información\" del activo, así como el estado documental del mismo.");
+					notifAdmisionKO.setFecha(new Date());
 
-				try {
-					// Se envía la notificación.
-					anotacionApi.saveNotificacion(notifAdmisionKO);
-				} catch (ParseException e) {
-					e.printStackTrace();
+					try {
+						// Se envía la notificación.
+						anotacionApi.saveNotificacion(notifAdmisionKO);
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
@@ -103,17 +106,19 @@ public class NotificacionManager extends BusinessOperationOverrider<Notificacion
 				Notificacion notifGestionKO = new Notificacion();
 				notifGestionKO.setIdActivo(activo.getId());
 				Usuario gestor = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
-				notifGestionKO.setDestinatario(gestor.getId());
-				notifGestionKO.setTitulo("Revisar el estado de un activo con oferta aprobada");
-				notifGestionKO.setDescripcion(
-						"Se ha aprobado una oferta de venta asociada a este activo y no consta la conformidad de su departamento. Verifique el estado documental del mismo.");
-				notifGestionKO.setFecha(new Date());
-				
-				try {
-					// Se envía la notificación.
-					anotacionApi.saveNotificacion(notifGestionKO);
-				} catch (ParseException e) {
-					e.printStackTrace();
+				if(!Checks.esNulo(gestor)){
+					notifGestionKO.setDestinatario(gestor.getId());
+					notifGestionKO.setTitulo("Revisar el estado de un activo con oferta aprobada");
+					notifGestionKO.setDescripcion(
+							"Se ha aprobado una oferta de venta asociada a este activo y no consta la conformidad de su departamento. Verifique el estado documental del mismo.");
+					notifGestionKO.setFecha(new Date());
+					
+					try {
+						// Se envía la notificación.
+						anotacionApi.saveNotificacion(notifGestionKO);
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}

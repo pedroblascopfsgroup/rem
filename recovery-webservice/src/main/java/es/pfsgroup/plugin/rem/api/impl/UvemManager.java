@@ -40,7 +40,9 @@ import es.cajamadrid.servicios.GM.GMPAJC93_INS.StructCabeceraAplicacionGMPAJC93_
 import es.cajamadrid.servicios.GM.GMPDJB13_INS.GMPDJB13_INS;
 import es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraAplicacionGMPDJB13_INS;
 import es.cajamadrid.servicios.GM.GMPDJB13_INS.StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu;
+import es.cajamadrid.servicios.GM.GMPDJB13_INS.StructGMPDJB13_INS_NumeroDeOcurrenciasnumocx;
 import es.cajamadrid.servicios.GM.GMPDJB13_INS.VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu;
+import es.cajamadrid.servicios.GM.GMPDJB13_INS.VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocx;
 import es.cajamadrid.servicios.GM.GMPETS07_INS.GMPETS07_INS;
 import es.cajamadrid.servicios.GM.GMPETS07_INS.StructCabeceraAplicacionGMPETS07_INS;
 import es.cajamadrid.servicios.GM.GMPETS07_INS.StructGMPETS07_INS_NumeroDeOcurrenciasnumog1;
@@ -62,6 +64,7 @@ import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDataDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
+import es.pfsgroup.plugin.rem.rest.dto.TitularDto;
 import es.pfsgroup.plugin.rem.restclient.registro.dao.RestLlamadaDao;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 
@@ -719,10 +722,35 @@ public class UvemManager implements UvemManagerApi {
 		String errorDesc = null;
 		ResultadoInstanciaDecisionDto result = new ResultadoInstanciaDecisionDto();
 		VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu numeroOcurrencias = new VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
+		VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocx vectorTitulares = new VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocx();
 
 		List<InstanciaDecisionDataDto> instanciaListData = instanciaDecisionDto.getData();
 		if (Checks.esNulo(instanciaListData) || (!Checks.esNulo(instanciaListData) && instanciaListData.size() == 0)) {
 			throw new WIException("El campo data de la instancia es obligatorio.");
+		}
+		
+		if (instanciaDecisionDto.getTitulares() != null && instanciaDecisionDto.getTitulares() != null) {
+			for (TitularDto titular : instanciaDecisionDto.getTitulares()) {
+				StructGMPDJB13_INS_NumeroDeOcurrenciasnumocx structTitular = new StructGMPDJB13_INS_NumeroDeOcurrenciasnumocx();
+				// tipo doc
+				structTitular.setClaseDeDocumentoIdentificadorcocldo(titular.getTipoDocumentoCliente());
+				// n documento
+				structTitular.setDniNifDelTitularDeLaOfertanudnio(titular.getNumeroDocumento());
+				// el conyuge
+				if (titular.getConyugeNumeroUrsus() != null) {
+					structTitular.setIdentClienteConyugeOfertaidclww((int) (long) titular.getConyugeNumeroUrsus());
+				}
+				//n ursus
+				if(titular.getNumeroUrsus() != null){
+					structTitular.setIdentificadorClienteOfertaidclow((int) (long) titular.getNumeroUrsus());
+				}
+				//nombre completo titular
+				structTitular.setNombreYApellidosTitularDeOfertanotiof(titular.getNombreCompletoCliente());
+				Porcentaje9 porcentajeCompra = new Porcentaje9();
+				structTitular.setPorcentajeCompraBISA(porcentajeCompra);
+
+				vectorTitulares.add(structTitular);
+			}
 		}
 
 		// Bucle para cargar el array numOcurrencias con la info de cada
@@ -850,6 +878,12 @@ public class UvemManager implements UvemManagerApi {
 			if (numeroOcurrencias != null) {
 				servicioGMPDJB13_INS.setNumeroDeOcurrenciasnumocu(numeroOcurrencias);
 			}
+			//el comite superior para el alta siempre es 0
+			servicioGMPDJB13_INS.setCodigoComiteSuperiorcocom3((short)0);
+			
+			//codigo uvem de la ofician prescriptora
+			servicioGMPDJB13_INS.setIdentificadorDelColaboradoridcola("C000");
+			
 			// Requeridos por el servicio
 			servicioGMPDJB13_INS.setnumeroCliente(0);
 			servicioGMPDJB13_INS.setnumeroUsuario("");

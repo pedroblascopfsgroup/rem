@@ -44,8 +44,7 @@ public class App {
 					for (DatosClienteDto cliente : clientes) {
 						System.out.println(
 								"Resultado llamada resultadoNumCliente: " + cliente.getNumeroClienteUrsus() + "\n");
-						System.out.println(
-								"Resultado llamada nif: " + cliente.getDniNifDelTitularDeLaOferta() + "\n");
+						System.out.println("Resultado llamada nif: " + cliente.getDniNifDelTitularDeLaOferta() + "\n");
 						System.out.println(
 								"Resultado llamada nombre: " + cliente.getNombreYApellidosTitularDeOferta() + "\n");
 					}
@@ -64,7 +63,7 @@ public class App {
 						DatosClienteDto datosClienteIns = uvemManager
 								.ejecutarDatosCliente(Integer.valueOf(cliente.getNumeroClienteUrsus()), args[3]);
 						System.out.println("Resultado llamada resultadoDatosCliente: "
-								+ datosClienteIns.getNombreComercialDeLaEmpresa() + "\n");
+								+ datosClienteIns.getNombreDelCliente() + "\n");
 					}
 
 				} else {
@@ -204,8 +203,7 @@ public class App {
 					System.exit(1);
 				}
 
-			}
-			if (args[0].equals("consultaDatosPrestamo")) {
+			} else if (args[0].equals("consultaDatosPrestamo")) {
 				System.out.println("Ejecutando servicio consultaDatosPrestamo");
 				if (args.length == 3) {
 					Long result = uvemManager.consultaDatosPrestamo(args[1], Integer.valueOf(args[2]));

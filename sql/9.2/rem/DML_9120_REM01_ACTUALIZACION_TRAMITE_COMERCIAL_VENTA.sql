@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=CARLOS PONS
---## FECHA_CREACION=20170125
+--## FECHA_CREACION=20171011
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.0-X
 --## INCIDENCIA_LINK=0
@@ -47,7 +47,7 @@ BEGIN
 
     DBMS_OUTPUT.PUT_LINE('[INICIO] ACTUALIZANDO TRAMITE DEFINICION OFERTA');   
     V_TAP_TABLA := 'TAP_TAREA_PROCEDIMIENTO';
-	  V_TAP_VALOR1 := 'valores[''''T013_DefinicionOferta''''][''''comboConflicto''''] == DDSiNo.SI || valores[''''T013_DefinicionOferta''''][''''comboRiesgo''''] == DDSiNo.SI ? ''''El estado de la responsabilidad corporativa no es el correcto para poder avanzar.'''' : definicionOfertaT013()';    
+	V_TAP_VALOR1 := 'valores[''''T013_DefinicionOferta''''][''''comboConflicto''''] == DDSiNo.SI || valores[''''T013_DefinicionOferta''''][''''comboRiesgo''''] == DDSiNo.SI ? ''''El estado de la responsabilidad corporativa no es el correcto para poder avanzar.'''' : definicionOfertaT013()';    
     V_TAP_VALOR2 := 'valores[''''T013_ResolucionComite''''][''''comboResolucion''''] != DDResolucionComite.CODIGO_APRUEBA ? (valores[''''T013_ResolucionComite''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_CONTRAOFERTA ? existeAdjuntoUGValidacion("22","E") : null) : resolucionComiteT013()';
     V_TAP_VALOR3 := 'valores[''''T013_RespuestaOfertante''''][''''comboRespuesta''''] == DDSiNo.NO ? null : respuestaOfertanteT013()';
     V_TAP_VALOR4 := 'ratificacionComiteT013()';

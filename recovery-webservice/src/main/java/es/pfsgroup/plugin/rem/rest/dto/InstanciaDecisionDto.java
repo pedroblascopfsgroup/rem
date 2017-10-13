@@ -10,6 +10,7 @@ public class InstanciaDecisionDto {
 	private String codigoDeOfertaHaya; //Campo OFR_NUM_OFERTA de la tabla OFR_OFERTAS
 	private char indicadorDeFinanciacionCliente; //'S' or 'N'
 	private List<InstanciaDecisionDataDto> data;
+	private List<TitularDto> titulares;
 
 	public String getCodigoDeOfertaHaya() {
 		return codigoDeOfertaHaya;
@@ -33,4 +34,11 @@ public class InstanciaDecisionDto {
 	public void setData(List<InstanciaDecisionDataDto> data) {
 		this.data = data;
 	}
+	public List<TitularDto> getTitulares() {
+		return titulares;
+	}
+	public void setTitulares(List<TitularDto> titulares) {
+		this.titulares = titulares;
+	}
+	
 }

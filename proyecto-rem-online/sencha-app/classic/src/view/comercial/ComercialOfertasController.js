@@ -45,6 +45,12 @@ Ext.define('HreRem.view.comercial.ComercialOfertasController', {
 		}
 	},
 	
+	controlErrorOfertas: function(a, records, success, operation, eOpts){
+		if(!success){
+			this.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		}
+	},
+	
 		// Funcion que se ejecuta al hacer click en el botón limpiar
 	onCleanFiltersClick: function(btn) {			
 		btn.up('form').getForm().reset();				

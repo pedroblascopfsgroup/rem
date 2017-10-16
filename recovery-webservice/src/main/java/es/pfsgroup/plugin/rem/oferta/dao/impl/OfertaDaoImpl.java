@@ -168,7 +168,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 			if(!Checks.esNulo(idActivo)){
 				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.idActivo", idActivo.getId().toString());
 			}else{
-				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.idActivo", " ");
+				HQLBuilder.addFiltroIsNull(hb, "voferta.idActivo");
 			}
 		}
 		

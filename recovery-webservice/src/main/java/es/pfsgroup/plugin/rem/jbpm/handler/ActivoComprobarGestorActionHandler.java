@@ -48,7 +48,7 @@ public class ActivoComprobarGestorActionHandler extends ActivoBaseActionHandler 
 			
 			Activo activo = tramite.getActivo();
 			if (DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
-				if (gestorActivoApi.isUsuarioGestorAdmision(usuario)) {
+				if (gestorActivoApi.isGestorAdmision(activo, usuario)) {
 					getExecutionContext().getToken().signal("SinAnalisisPeticion");
 				} else {
 					getExecutionContext().getToken().signal("ConAnalisisPeticion");

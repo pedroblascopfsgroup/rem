@@ -129,7 +129,7 @@ BEGIN
     COMMIT;
     
     LOOP
-        V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' T1
+        V_MSQL := 'MERGE INTO '||V_TABLA||' T1
             USING (SELECT T3.TBJ_ID, ROW_NUMBER() OVER(PARTITION BY T1.ACT_ID ORDER BY T3.FECHACREAR ASC) RN
               FROM REM01.ACT_AGA_AGRUPACION_ACTIVO T1
               JOIN REM01.ACT_TBJ T2 ON T1.ACT_ID = T2.ACT_ID
@@ -156,7 +156,7 @@ BEGIN
                 SIN_AUDITORIA EXCEPTION;
                 PRAGMA EXCEPTION_INIT(SIN_AUDITORIA, -904);
             BEGIN
-                V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.'||TABLA||' T1 
+                V_MSQL := 'MERGE INTO '||TABLA||' T1 
                     USING (SELECT '||CLAVE_REF||' 
                         FROM '||TABLA_REF||' T2 
                         WHERE T2.USUARIOBORRAR = ''HREOS-2878'' AND T2.BORRADO = 1) T2 

@@ -57,6 +57,8 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	
 	Boolean isGestorActivoYTipo(Usuario usuario, Activo activo, String codigoGestor);
 	
+	Boolean isUsuarioGestorAdmision(Usuario usuario);
+	
 	Boolean isGestorPrecios(Activo activo, Usuario usuario);
 	
 	Boolean isGestorMarketing(Activo activo, Usuario usuario);

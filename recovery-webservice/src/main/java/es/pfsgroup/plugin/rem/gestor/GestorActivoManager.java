@@ -13,6 +13,7 @@ import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -246,6 +247,13 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 		}
 	}
 	
+	public Boolean isUsuarioGestorAdmision(Usuario usuario){
+		 Perfil GESTOADM = genericDao.get(Perfil.class,
+		 genericDao.createFilter(FilterType.EQUALS, "codigo", "HAYAGESTADM"));
+
+		 return usuario.getPerfiles().contains(GESTOADM);
+	}
+
 	
 	// Comprobaciones para Gestores de Precios y Marketing ------------------------------------------------
 	

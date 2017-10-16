@@ -59,6 +59,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteUrsusRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDataDto;
@@ -94,7 +95,7 @@ public class UvemManager implements UvemManagerApi {
 
 	// 10. O-RB-DEVOL - servicio GMOE83
 	private GMPTOE83_INS servicioGMPTOE83_INS;
-	
+
 	// 11. 11. O-RB-ANULOF
 	private GMPAJC29_INS servicioGMPAJC29_INS;
 
@@ -128,17 +129,17 @@ public class UvemManager implements UvemManagerApi {
 
 		WIService.init(htInitParams);
 	}
-	
-	private void registrarLlamada(WIService servicio,String errorDesc){
+
+	private void registrarLlamada(WIService servicio, String errorDesc) {
 		String llamada = "";
 		String respuesta = "";
-		try{
+		try {
 			llamada = servicio.getInParams().toXMLGeneric(true);
 			respuesta = servicio.getOutParams().toXMLGeneric(true);
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Error obteniendo los datos del ws", e);
 		}
-		this.registrarLlamada(servicio.getClass().getName(),llamada,respuesta,errorDesc);		
+		this.registrarLlamada(servicio.getClass().getName(), llamada, respuesta, errorDesc);
 	}
 
 	private void registrarLlamada(String endPoint, String request, String result, String errorDesc) {
@@ -146,6 +147,10 @@ public class UvemManager implements UvemManagerApi {
 		registro.setMetodo("WEBSERVICE");
 		registro.setEndpoint(endPoint);
 		registro.setRequest(request);
+		// borrame
+		System.out.println(request);
+		System.out.println("-------------------");
+		System.out.println(result);
 		if (!Checks.esNulo(errorDesc)) {
 			registro.setErrorDesc(errorDesc);
 		}
@@ -296,7 +301,6 @@ public class UvemManager implements UvemManagerApi {
 			// recuperando resultado...
 			numeroIdentificadorTasacion = servicioGMPETS07_INS.getNumeroIdentificadorDeTasacionlnuita2();
 
-	
 		} catch (WIMetaServiceException e) {
 			logger.error("error en UvemManager", e);
 			errorDesc = e.getMessage();
@@ -342,10 +346,9 @@ public class UvemManager implements UvemManagerApi {
 		List<DatosClienteDto> listaClientes = null;
 		List<DatosClienteDto> listaClientesFinal = new ArrayList<DatosClienteDto>();
 		Boolean paginar = false;
-		
 
 		clienteUrsusRequestDto = this.ejecutarNumCliente(nDocumento, tipoDocumento, qcenre, String.valueOf(0));
-		
+
 		if (!Checks.esNulo(clienteUrsusRequestDto) && !Checks.esNulo(clienteUrsusRequestDto.getData())) {
 			listaClientes = clienteUrsusRequestDto.getData();
 			// Añadimos los clientes de la primera llamada
@@ -368,7 +371,7 @@ public class UvemManager implements UvemManagerApi {
 
 						clienteUrsusRequestDto = this.ejecutarNumCliente(nDocumento, tipoDocumento, qcenre,
 								String.valueOf(ultimoNumCliente));
-					
+
 						if (!Checks.esNulo(clienteUrsusRequestDto)
 								&& !Checks.esNulo(clienteUrsusRequestDto.getData())) {
 							listaClientes = clienteUrsusRequestDto.getData();
@@ -384,8 +387,6 @@ public class UvemManager implements UvemManagerApi {
 				}
 			}
 		}
-
-	
 
 		return listaClientesFinal;
 	}
@@ -457,7 +458,6 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPAJC11_INS.setAlias(ALIAS);
 			servicioGMPAJC11_INS.execute();
 
-			
 			if (servicioGMPAJC11_INS.getNumeroDeOcurrenciasnumocu().size() > 0) {
 				for (int i = 0; i < servicioGMPAJC11_INS.getNumeroDeOcurrenciasnumocu().size(); i++) {
 					StructGMPAJC11_INS_NumeroDeOcurrenciasnumocu struct = servicioGMPAJC11_INS
@@ -571,11 +571,9 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPAJC93_INS.setIdentificadorDiscriminadorFuncioniddsfu("DF01");
 			servicioGMPAJC93_INS.setCodEntidadRepresntClienteUrsusqcenre(qcenre);
 
-
 			servicioGMPAJC93_INS.setAlias(ALIAS);
 			servicioGMPAJC93_INS.execute();
 
-			
 			datos = new DatosClienteDto();
 			datos.setNumeroClienteUrsus(numcliente.toString());
 			datos.setClaseDeDocumentoIdentificador(servicioGMPAJC93_INS.getClaseDeDocumentoIdentificadorcocldo() + "");
@@ -634,7 +632,7 @@ public class UvemManager implements UvemManagerApi {
 			throw new JsonViewerException(e.getMessage());
 		} finally {
 			registrarLlamada(servicioGMPAJC93_INS, errorDesc);
-			
+
 		}
 		return datos;
 
@@ -721,6 +719,7 @@ public class UvemManager implements UvemManagerApi {
 		logger.info("------------ LLAMADA WS INSTANCIADECISION -----------------");
 		String errorDesc = null;
 		ResultadoInstanciaDecisionDto result = new ResultadoInstanciaDecisionDto();
+		servicioGMPDJB13_INS = new GMPDJB13_INS();
 		VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu numeroOcurrencias = new VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
 		VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocx vectorTitulares = new VectorGMPDJB13_INS_NumeroDeOcurrenciasnumocx();
 
@@ -728,33 +727,42 @@ public class UvemManager implements UvemManagerApi {
 		if (Checks.esNulo(instanciaListData) || (!Checks.esNulo(instanciaListData) && instanciaListData.size() == 0)) {
 			throw new WIException("El campo data de la instancia es obligatorio.");
 		}
-		
-		if (instanciaDecisionDto.getTitulares() != null && instanciaDecisionDto.getTitulares() != null) {
-			for (TitularDto titular : instanciaDecisionDto.getTitulares()) {
-				StructGMPDJB13_INS_NumeroDeOcurrenciasnumocx structTitular = new StructGMPDJB13_INS_NumeroDeOcurrenciasnumocx();
-				// tipo doc
-				structTitular.setClaseDeDocumentoIdentificadorcocldo(titular.getTipoDocumentoCliente());
-				// n documento
-				structTitular.setDniNifDelTitularDeLaOfertanudnio(titular.getNumeroDocumento());
-				// el conyuge
-				if (titular.getConyugeNumeroUrsus() != null) {
-					structTitular.setIdentClienteConyugeOfertaidclww((int) (long) titular.getConyugeNumeroUrsus());
-				}
-				//n ursus
-				if(titular.getNumeroUrsus() != null){
-					structTitular.setIdentificadorClienteOfertaidclow((int) (long) titular.getNumeroUrsus());
-				}
-				//nombre completo titular
-				structTitular.setNombreYApellidosTitularDeOfertanotiof(titular.getNombreCompletoCliente());
-				Porcentaje9 porcentajeCompra = new Porcentaje9();
-				structTitular.setPorcentajeCompraBISA(porcentajeCompra);
 
-				vectorTitulares.add(structTitular);
+		if (instanciaDecisionDto.getTitulares() != null) {
+			servicioGMPDJB13_INS
+					.setNumeroDeOcurrenciasEntrada1nuoce1((short) instanciaDecisionDto.getTitulares().size());
+			if (instanciaDecisionDto.getTitulares() != null && instanciaDecisionDto.getTitulares() != null) {
+				for (TitularDto titular : instanciaDecisionDto.getTitulares()) {
+					StructGMPDJB13_INS_NumeroDeOcurrenciasnumocx structTitular = new StructGMPDJB13_INS_NumeroDeOcurrenciasnumocx();
+					// tipo doc
+					structTitular.setClaseDeDocumentoIdentificadorcocldo(titular.getTipoDocumentoCliente());
+					// n documento
+					structTitular.setDniNifDelTitularDeLaOfertanudnio(titular.getNumeroDocumento());
+					// el conyuge
+					if (titular.getConyugeNumeroUrsus() != null) {
+						structTitular.setIdentClienteConyugeOfertaidclww((int) (long) titular.getConyugeNumeroUrsus());
+					}
+					// n ursus
+					if (titular.getNumeroUrsus() != null) {
+						structTitular.setIdentificadorClienteOfertaidclow((int) (long) titular.getNumeroUrsus());
+					}
+					// nombre completo titular
+					structTitular.setNombreYApellidosTitularDeOfertanotiof(titular.getNombreCompletoCliente());
+					Porcentaje9 porcentajeCompra = new Porcentaje9();
+					structTitular.setPorcentajeCompraBISA(porcentajeCompra);
+
+					vectorTitulares.add(structTitular);
+				}
 			}
+		}else{
+			servicioGMPDJB13_INS
+			.setNumeroDeOcurrenciasEntrada1nuoce1((short) 0);
 		}
+		servicioGMPDJB13_INS.setNumeroDeOcurrenciasnumocx(vectorTitulares);
 
 		// Bucle para cargar el array numOcurrencias con la info de cada
 		// activo
+		servicioGMPDJB13_INS.setNumeroDeOcurrenciasEntrada2nuoce2((short)instanciaListData.size());
 		for (int i = 0; i < instanciaListData.size(); i++) {
 			InstanciaDecisionDataDto instanciaData = instanciaListData.get(i);
 			StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu struct = new StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
@@ -838,7 +846,7 @@ public class UvemManager implements UvemManagerApi {
 			es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraTecnica cabeceraTecnica = new es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraTecnica();
 			StructCabeceraAplicacionGMPDJB13_INS cabeceraAplicacion = new StructCabeceraAplicacionGMPDJB13_INS();
 
-			servicioGMPDJB13_INS = new GMPDJB13_INS();
+			
 
 			// Seteamos cabeceras
 			servicioGMPDJB13_INS.setcabeceraAplicacion(cabeceraAplicacion);
@@ -878,22 +886,57 @@ public class UvemManager implements UvemManagerApi {
 			if (numeroOcurrencias != null) {
 				servicioGMPDJB13_INS.setNumeroDeOcurrenciasnumocu(numeroOcurrencias);
 			}
-			//el comite superior para el alta siempre es 0
-			servicioGMPDJB13_INS.setCodigoComiteSuperiorcocom3((short)0);
-			
-			//codigo uvem de la ofician prescriptora
+			// el comite superior para el alta siempre es 0
+			servicioGMPDJB13_INS.setCodigoComiteSuperiorcocom3((short) 0);
+
+			// codigo uvem de la ofician prescriptora
 			servicioGMPDJB13_INS.setIdentificadorDelColaboradoridcola("C000");
-			
+
+			// Importe de la reserva
+			ImporteMonetario importeMonetarioReserva = new ImporteMonetario();
+			if (instanciaDecisionDto.getImporteReserva() != null) {
+				importeMonetarioReserva.setImporteConSigno(instanciaDecisionDto.getImporteReserva().longValue());
+			} else {
+				importeMonetarioReserva.setImporteConSigno(new Long(0));
+			}
+			es.cajamadrid.servicios.ARQ.Moneda moneda = new es.cajamadrid.servicios.ARQ.Moneda();
+			moneda.setDivisa("D");
+			moneda.setDigitoControlDivisa('-');
+			importeMonetarioReserva.setMonedaBISA(moneda);
+			importeMonetarioReserva.setNumeroDecimalesImporte('-');
+
+			servicioGMPDJB13_INS.setImporteMonetarioDeLaReservaBISA(importeMonetarioReserva);
+			if (instanciaDecisionDto.getImporteReserva() == null
+					|| instanciaDecisionDto.getImporteReserva().compareTo(new Double(0)) == 0) {
+				servicioGMPDJB13_INS.setIndicadorCobroImpuestosReservabicirv(' ');
+			} else {
+				if (instanciaDecisionDto.getImpuestosReserva()) {
+					servicioGMPDJB13_INS.setIndicadorCobroImpuestosReservabicirv('S');
+				} else {
+					servicioGMPDJB13_INS.setIndicadorCobroImpuestosReservabicirv('N');
+				}
+			}
+
+			// tipo de arras
+			if (instanciaDecisionDto.getCodTipoArras() != null) {
+				if (instanciaDecisionDto.getCodTipoArras().equals(DDTiposArras.CONFIRMATORIAS)) {
+					servicioGMPDJB13_INS.setIndicadorTipoArrasReservabithrv('A');
+				} else {
+					servicioGMPDJB13_INS.setIndicadorTipoArrasReservabithrv('B');
+				}
+			} else {
+				servicioGMPDJB13_INS.setIndicadorTipoArrasReservabithrv(' ');
+			}
+
+			servicioGMPDJB13_INS.setCodEntidadRepresntClienteUrsusqcenre(instanciaDecisionDto.getQcenre());
 			// Requeridos por el servicio
 			servicioGMPDJB13_INS.setnumeroCliente(0);
 			servicioGMPDJB13_INS.setnumeroUsuario("");
 			servicioGMPDJB13_INS.setidSesionWL("");
 
-			
 			servicioGMPDJB13_INS.setAlias(ALIAS);
 			servicioGMPDJB13_INS.execute();
 
-			
 			result.setLongitudMensajeSalida(servicioGMPDJB13_INS.getLongitudMensajeDeSalidarcslon());
 			result.setCodigoComite(servicioGMPDJB13_INS.getCodigoComitecocom7() + "");
 			result.setCodigoDeOfertaHaya(servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx2());
@@ -951,7 +994,6 @@ public class UvemManager implements UvemManagerApi {
 			cabeceraFuncional.setNUPUAQ("00");
 			cabeceraTecnica.setCLORAQ("71");
 
-			
 			// seteamos parametros
 			servicioGMPAJC34_INS.setCodigoObjetoAccesocopace("PAHY0370");
 			numExpedienteRiesgo12 = StringUtils.leftPad(numExpedienteRiesgo12, 18, "0");
@@ -978,7 +1020,6 @@ public class UvemManager implements UvemManagerApi {
 			Fecha fecha2 = new Fecha();
 			servicioGMPAJC34_INS.setFechaSolicitudPrestamofesop2(fecha2);
 
-		
 			servicioGMPAJC34_INS.setAlias(ALIAS);
 			servicioGMPAJC34_INS.execute();
 
@@ -1159,19 +1200,17 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPTOE83_INS.setcabeceraAplicacion(cabeceraAplicacion);
 			servicioGMPTOE83_INS.setcabeceraFuncionalPeticion(cabeceraFuncional);
 			servicioGMPTOE83_INS.setcabeceraTecnica(cabeceraTecnica);
-			
-			
 
 			servicioGMPTOE83_INS.setnumeroUsuario("");
 			servicioGMPTOE83_INS.setidSesionWL("");
 			servicioGMPTOE83_INS.setnumeroCliente(0);
-			
+
 			HttpServletRequest request = null;
 			if (RequestContextHolder.getRequestAttributes() != null) {
 				request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 			}
 			servicioGMPTOE83_INS.setidSesionWL(request != null ? request.getSession().getId() : "");
-			
+
 			// COUSAE
 			servicioGMPTOE83_INS.setCodigoDeUsuariocousae("USRHAYA");
 			// COSEM1
@@ -1220,7 +1259,7 @@ public class UvemManager implements UvemManagerApi {
 		}
 
 	}
-	
+
 	@Override
 	public void anularOferta(String codigoDeOfertaHaya, MOTIVO_ANULACION_OFERTA motivoAnulacionOferta)
 			throws Exception {
@@ -1239,22 +1278,22 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPAJC29_INS.setcabeceraAplicacion(cabeceraAplicacion);
 			servicioGMPAJC29_INS.setcabeceraFuncionalPeticion(cabeceraFuncional);
 			servicioGMPAJC29_INS.setcabeceraTecnica(cabeceraTecnica);
-			
-			//Sets cabecera funcional
+
+			// Sets cabecera funcional
 			cabeceraFuncional.setCOOOAQ("1");
-			//cabeceraFuncional.setFXOPAQ(fechahoy);
-			//cabeceraFuncional.setPTROAQ(fechahoy);
-			
-			//Sets cabecera tecnica
+			// cabeceraFuncional.setFXOPAQ(fechahoy);
+			// cabeceraFuncional.setPTROAQ(fechahoy);
+
+			// Sets cabecera tecnica
 			cabeceraTecnica.setCOAPAQ("GM");
 			cabeceraTecnica.setCOSRAQ("PAJC29");
 			cabeceraTecnica.setNUVEAQ("01");
 			cabeceraTecnica.setCLORAQ("71");
 			cabeceraTecnica.setIDORAQ("20380000000000000000");
 			cabeceraTecnica.setCLIUAQ("55");
-			//cabeceraTecnica.setFEIUAQ(fechahoy);
-			//cabeceraTecnica.setIDUSAQ(fechahoy);
-			//cabeceraTecnica.setIDUTAQ(fechahoy);
+			// cabeceraTecnica.setFEIUAQ(fechahoy);
+			// cabeceraTecnica.setIDUSAQ(fechahoy);
+			// cabeceraTecnica.setIDUTAQ(fechahoy);
 			cabeceraTecnica.setXOB1AQ("S");
 			cabeceraTecnica.setCOPRAQ("P");
 			cabeceraTecnica.setBIEMAQ("1");
@@ -1265,7 +1304,7 @@ public class UvemManager implements UvemManagerApi {
 			cabeceraTecnica.setCONTAQ("global:ENTORNO_OPERATIVA_J2EE");
 			cabeceraTecnica.setCOAFAQ("GM");
 			cabeceraTecnica.setCOMLAQ("JC29");
-			
+
 			// Cual de los dos
 			servicioGMPAJC29_INS.setCOPACE("PAHY0150");
 			cabeceraAplicacion.setCodigoObjetoAccesocopace("PAHY0150");
@@ -1346,11 +1385,8 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPAJC29_INS.setidSesionWL("");
 			servicioGMPAJC29_INS.setnumeroCliente(0);
 
-			
-
 			servicioGMPAJC29_INS.setAlias(ALIAS);
 			servicioGMPAJC29_INS.execute();
-
 
 		} catch (WIException wie) {
 			logger.error("error en UvemManager", wie);

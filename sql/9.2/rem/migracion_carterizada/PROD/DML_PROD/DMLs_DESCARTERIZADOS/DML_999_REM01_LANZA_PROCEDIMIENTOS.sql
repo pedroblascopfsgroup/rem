@@ -49,7 +49,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('  ############################  CALCULO_SINGULAR_RETAIL_AUTO  ###################################### ');
     DBMS_OUTPUT.PUT_LINE(' ');
     
-    REM01.CALCULO_SINGULAR_RETAIL_AUTO(NULL, 'MIG_SAREB', NULL, NULL);
+    REM01.CALCULO_SINGULAR_RETAIL_AUTO(NULL, '#USUARIO_MIGRACION#', NULL, NULL);
     
     DBMS_OUTPUT.PUT_LINE(' ');
     DBMS_OUTPUT.PUT_LINE('  ############################  FIN LOG  ###################################### ');

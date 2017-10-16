@@ -418,7 +418,7 @@ using ( select aca.ACT_NUMERO_ACTIVO, aca.ACT_NUMERO_UVEM from rem01.mig_aca_cab
                           ON (PVE_OLD.pve_id = PVE_NEW.pve_id )
                           WHEN MATCHED THEN UPDATE
                           SET PVE_OLD.DD_TPE_ID = PVE_NEW.DD_TPE_ID
-                            , PVE_OLD.USUARIOMODIFICAR = ''MIG_SAREB''
+                            , PVE_OLD.USUARIOMODIFICAR = '''||V_USUARIO||'''
                             , PVE_OLD.FECHAMODIFICAR = sysdate';
 
 

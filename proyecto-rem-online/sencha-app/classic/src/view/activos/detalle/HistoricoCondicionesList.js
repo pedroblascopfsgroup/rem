@@ -38,7 +38,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoCondicionesList', {
 		            flex: 1,	            
 		       		editor: {
 		       			xtype:'textarea',
-		       			maxLength: 3000
+		       			maxLength: 4000
 		       		}
 		        },
 		        {

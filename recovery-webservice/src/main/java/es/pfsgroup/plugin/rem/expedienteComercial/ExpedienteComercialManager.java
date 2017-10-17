@@ -3479,9 +3479,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				titulares.add(titular);
 			}
 		}
+		instancia.setTitulares(titulares);
+		
 		// info de la reserva
 		if (!Checks.esNulo(expediente.getCondicionante())) {
-			if (expediente.getCondicionante().getImporteReserva() != null) {
+			if (expediente.getCondicionante().getImporteReserva() == null) {
 				instancia.setImporteReserva(new Double(0));
 			} else {
 				instancia.setImporteReserva(expediente.getCondicionante().getImporteReserva());
@@ -3498,12 +3500,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			instancia.setImporteReserva(new Double(0));
 			instancia.setImpuestosReserva(false);
 		}
-		if (instancia.getImporteReserva().compareTo(Double.valueOf(0)) != 0 && expediente.getReserva() != null
+		if (instancia.getImporteReserva() != null && instancia.getImporteReserva().compareTo(Double.valueOf(0)) != 0 && expediente.getReserva() != null
 				&& expediente.getReserva().getTipoArras() != null) {
 			instancia.setCodTipoArras(expediente.getReserva().getTipoArras().getCodigo());
 		}
 
-		instancia.setTitulares(titulares);
+		
 
 		return instancia;
 	}

@@ -756,7 +756,11 @@ public class UvemManager implements UvemManagerApi {
 					}
 					// nombre completo titular
 					structTitular.setNombreYApellidosTitularDeOfertanotiof(titular.getNombreCompletoCliente());
+					
+					//% de participación en la compra
 					Porcentaje9 porcentajeCompra = new Porcentaje9();
+					porcentajeCompra.setPorcentaje((int)titular.getPorcentajeCompra().longValue());
+					porcentajeCompra.setNumDecimales("BC");
 					structTitular.setPorcentajeCompraBISA(porcentajeCompra);
 
 					vectorTitulares.add(structTitular);

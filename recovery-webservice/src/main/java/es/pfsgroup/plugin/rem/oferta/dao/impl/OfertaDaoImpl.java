@@ -165,7 +165,11 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 			Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "numActivo", dtoOfertasFilter.getNumActivo());
 			Activo idActivo = genericDao.get(Activo.class, filtroIdActivo);
 			
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.idActivo", idActivo.getId().toString());
+			if(!Checks.esNulo(idActivo)){
+				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.idActivo", idActivo.getId().toString());
+			}else{
+				HQLBuilder.addFiltroIsNull(hb, "voferta.idActivo");
+			}
 		}
 		
 		//HREOS-2716

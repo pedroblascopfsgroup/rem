@@ -42,7 +42,8 @@ DECLARE
   ACTIVOS NUMBER(6);
   NUMERO_BORRAR NUMBER(6) := 1000;--Numero de activos a borrar en una pasada
   ORDEN NUMBER(2) := 2;
-  V_TABLA VARCHAR2(30 CHAR) := 'ACT_TBJ_TRABAJO'; -- Variable para tabla de salida para el borrado
+  V_TABLA VARCHAR2(30 CHAR) := 'ACT_TRA_TRAMITE'; -- Variable para tabla de salida para el borrado
+  COD_ITEM VARCHAR2(10 CHAR) := 'HREOS-3005';
 
   PROCEDURE BORRADO (ORDEN IN NUMBER, NUMERO_INSERTADO OUT NUMBER) IS
   BEGIN
@@ -76,7 +77,7 @@ BEGIN
     EXECUTE IMMEDIATE 'TRUNCATE TABLE REM01.ACTIVOS_A_BORRAR';
     EXECUTE IMMEDIATE 'TRUNCATE TABLE REM01.ACTIVOS_A_BORRAR_2';
     
-    DBMS_OUTPUT.PUT_LINE('[INICIO] Inicio del proceso de borrado lógico de trabajos duplicados.');
+    DBMS_OUTPUT.PUT_LINE('[INICIO] Inicio del proceso de borrado físico de trámites duplicados.');
     DBMS_OUTPUT.PUT_LINE('');
 
     V_STMT_VAL := '
@@ -114,12 +115,36 @@ BEGIN
       FROM REM01.ACTIVOS_A_BORRAR T1
       WHERE T1.TABLA_REF = ''REM01.ACT_TRA_TRAMITE'' AND T1.CLAVE_REF = ''T2.TRA_ID'' ';
     EXECUTE IMMEDIATE V_MSQL;
-
+    
+    BORRADO(ORDEN, CANTIDAD_INSERCIONES);
+    WHILE CANTIDAD_INSERCIONES > 0
+    LOOP
+       ORDEN := ORDEN + 2;
+       BORRADO(ORDEN, CANTIDAD_INSERCIONES);
+    END LOOP;
+    
     V_MSQL := 'INSERT INTO REM01.ACTIVOS_A_BORRAR
       SELECT S_ACTIVOS_A_BORRAR.NEXTVAL, ''REM01.TAR_TAREAS_NOTIFICACIONES'', ''T1.TAR_ID'', T1.ORDEN_TABLA + 2, T1.TABLA, ''T2.TAR_ID'', T1.ORDEN_TABLA_REF + 2
       FROM REM01.ACTIVOS_A_BORRAR T1
       WHERE T1.TABLA = ''REM01.TAC_TAREAS_ACTIVOS'' AND T1.CLAVE_TABLA = ''T1.TRA_ID'' ';
     EXECUTE IMMEDIATE V_MSQL;
+    
+    BORRADO(ORDEN, CANTIDAD_INSERCIONES);
+    WHILE CANTIDAD_INSERCIONES > 0
+    LOOP
+       ORDEN := ORDEN + 2;
+       BORRADO(ORDEN, CANTIDAD_INSERCIONES);
+    END LOOP;
+    
+    V_TABLA := 'TAR_TAREAS_NOTIFICACIONES';
+    EXECUTE IMMEDIATE V_STMT_VAL;
+    
+    BORRADO(ORDEN, CANTIDAD_INSERCIONES);
+    WHILE CANTIDAD_INSERCIONES > 0
+    LOOP
+       ORDEN := ORDEN + 2;
+       BORRADO(ORDEN, CANTIDAD_INSERCIONES);
+    END LOOP;
 
     V_MSQL := 'INSERT INTO REM01.ACTIVOS_A_BORRAR_2
       SELECT DISTINCT TABLA, ORDEN_TABLA FROM ACTIVOS_A_BORRAR
@@ -129,21 +154,25 @@ BEGIN
     COMMIT;
     
     LOOP
-        V_MSQL := 'MERGE INTO '||V_TABLA||' T1
-            USING (SELECT T3.TBJ_ID, ROW_NUMBER() OVER(PARTITION BY T1.ACT_ID ORDER BY T3.FECHACREAR ASC) RN
-              FROM REM01.ACT_AGA_AGRUPACION_ACTIVO T1
-              JOIN REM01.ACT_TBJ T2 ON T1.ACT_ID = T2.ACT_ID
-              JOIN '||V_ESQUEMA||'.'||V_TABLA||' T3 ON T3.TBJ_ID = T2.TBJ_ID
-              WHERE T1.AGR_ID = 2861 AND T3.USUARIOCREAR <> ''MIG_SAREB'' AND ROWNUM <= '||NUMERO_BORRAR||'
-                AND T3.BORRADO = 0) T2
-            ON (T1.TBJ_ID = T2.TBJ_ID AND T2.RN > 1)
+        V_MSQL := 'MERGE INTO REM01.ACT_TRA_TRAMITE T1
+            USING (SELECT ROW_NUMBER() OVER(PARTITION BY TRA.TBJ_ID ORDER BY TRA.FECHACREAR) RN, TRA.TRA_ID
+                FROM REM01.ACT_TRA_TRAMITE TRA 
+                JOIN (SELECT TBJ.TBJ_ID, TRA.DD_TPO_ID
+                    FROM REM01.ACT_TRA_TRAMITE TRA
+                    JOIN REM01.ACT_TBJ_TRABAJO TBJ ON TBJ.TBJ_ID = TRA.TBJ_ID AND TBJ.BORRADO = 0
+                    WHERE TRA.BORRADO = 0
+                    GROUP BY TBJ.TBJ_ID, TRA.DD_TPO_ID
+                    HAVING COUNT(1) > 1) AUX ON AUX.TBJ_ID = TRA.TBJ_ID
+                WHERE TRA.BORRADO = 0) T2
+            ON (T1.TRA_ID = T2.TRA_ID AND T2.RN > 1)
             WHEN MATCHED THEN UPDATE SET
-                T1.USUARIOBORRAR = ''HREOS-2878'', T1.BORRADO = 1, T1.FECHABORRAR = SYSDATE';
+                T1.USUARIOBORRAR = '''||COD_ITEM||''', T1.FECHABORRAR = SYSDATE, T1.BORRADO = 1';
             --DBMS_OUTPUT.PUT_LINE(V_MSQL);
         EXECUTE IMMEDIATE V_MSQL;
         EXIT WHEN SQL%ROWCOUNT = 0;
-
-        V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE USUARIOBORRAR = ''HREOS-2878'' AND BORRADO = 1';
+        
+        V_TABLA := 'ACT_TRA_TRAMITE';
+        V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE USUARIOBORRAR = '''||COD_ITEM||''' AND BORRADO = 1';
         EXECUTE IMMEDIATE V_MSQL INTO ACTIVOS;
         DBMS_OUTPUT.PUT_LINE('[CON_AUDITORIA {A   BORRAR}]: TABLA '||V_ESQUEMA||'.'||V_TABLA||' - '||ACTIVOS||' registros marcados para posterior borrado.');
     
@@ -156,14 +185,13 @@ BEGIN
                 SIN_AUDITORIA EXCEPTION;
                 PRAGMA EXCEPTION_INIT(SIN_AUDITORIA, -904);
             BEGIN
-
-                V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.'||TABLA||' T1 
+                V_MSQL := 'MERGE INTO '||TABLA||' T1 
                     USING (SELECT '||CLAVE_REF||' 
                         FROM '||TABLA_REF||' T2 
-                        WHERE T2.USUARIOBORRAR = ''HREOS-2878'' AND T2.BORRADO = 1) T2 
+                        WHERE T2.USUARIOBORRAR = '''||COD_ITEM||''' AND T2.BORRADO = 1) T2 
                     ON ('||CLAVE_TABLA||' = '||CLAVE_REF||')
                     WHEN MATCHED THEN UPDATE SET
-                        T1.USUARIOBORRAR = ''HREOS-2878'', T1.BORRADO = 1, t1.FECHABORRAR = SYSDATE';
+                        T1.USUARIOBORRAR = '''||COD_ITEM||''', T1.BORRADO = 1, T1.FECHABORRAR = SYSDATE';
                 EXECUTE IMMEDIATE V_MSQL;
                 DBMS_OUTPUT.PUT_LINE('[CON_AUDITORIA {A   BORRAR}]: TABLA '||TABLA||' - '||SQL%ROWCOUNT||' registros marcados para posterior borrado.');
             EXCEPTION
@@ -172,9 +200,9 @@ BEGIN
                     SIN_AUDITORIA EXCEPTION;
                     PRAGMA EXCEPTION_INIT(SIN_AUDITORIA, -904);
                 BEGIN
-                    V_MSQL := 'DELETE FROM '||TABLA||' T1 WHERE EXISTS (SELECT 1 FROM '||TABLA_REF||' T2 WHERE '||CLAVE_REF||' = '||CLAVE_TABLA||' AND T2.USUARIOBORRAR = ''HREOS-2878'' AND T2.BORRADO = 1)';
-                    --EXECUTE IMMEDIATE V_MSQL;
-                    --DBMS_OUTPUT.PUT_LINE('[SIN_AUDITORIA {A   BORRAR}]: TABLA '||TABLA||' - '||SQL%ROWCOUNT||' registros borrados directamente');
+                    V_MSQL := 'DELETE FROM '||TABLA||' T1 WHERE EXISTS (SELECT 1 FROM '||TABLA_REF||' T2 WHERE '||CLAVE_REF||' = '||CLAVE_TABLA||' AND T2.USUARIOBORRAR = '''||COD_ITEM||''' AND T2.BORRADO = 1)';
+                    EXECUTE IMMEDIATE V_MSQL;
+                    DBMS_OUTPUT.PUT_LINE('[SIN_AUDITORIA {A   BORRAR}]: TABLA '||TABLA||' - '||SQL%ROWCOUNT||' registros borrados directamente');
                 EXCEPTION
                     WHEN SIN_AUDITORIA THEN
                     V_MSQL := 'MERGE INTO '||TABLA||' T1
@@ -184,7 +212,7 @@ BEGIN
                             WHERE '||CLAVE_REF||' IS NULL) T2
                         ON ('||CLAVE_TABLA||' = ''T2.''||SUBSTR('||CLAVE_TABLA||',4) )
                         WHEN MATCHED THEN UPDATE SET
-                            T1.USUARIOBORRAR = ''HREOS-2878'', T1.BORRADO = 1, T1.FECHABORRAR = SYSDATE';
+                            T1.USUARIOBORRAR = '''||COD_ITEM||''', T1.BORRADO = 1, T1.FECHABORRAR = SYSDATE';
                     EXECUTE IMMEDIATE V_MSQL;
                     DBMS_OUTPUT.PUT_LINE('[SIN_AUDITORIA {REFERENCIA}]: TABLA '||TABLA_REF||' - '||SQL%ROWCOUNT||' registros huérfanos borrados directamente.');
                 END;
@@ -192,12 +220,38 @@ BEGIN
     
             END LOOP;
         CLOSE V_VAL_CURSOR;
-
+        
+        FOR I IN (SELECT TABLA FROM ACTIVOS_A_BORRAR_2 ORDER BY ORDEN_TABLA DESC)
+            LOOP
+            DECLARE
+                BORRADO_FK EXCEPTION;
+                PRAGMA EXCEPTION_INIT(BORRADO_FK, -1407);
+            BEGIN
+                  V_MSQL := 'DELETE FROM '||I.TABLA||' WHERE USUARIOBORRAR = '''||COD_ITEM||''' AND BORRADO = 1';
+                  TABLA := I.TABLA;
+                  EXECUTE IMMEDIATE V_MSQL;
+                  DBMS_OUTPUT.PUT_LINE('[BORRADA]: TABLA '||I.TABLA||' - '||SQL%ROWCOUNT||' registros eliminados.');
+                
+            EXCEPTION
+                WHEN BORRADO_FK THEN
+                    DBMS_OUTPUT.PUT_LINE('[NO BORRADA - PROBLEMA FK]: TABLA '||TABLA||'.');
+                WHEN SIN_AUDITORIA THEN
+                    NULL;
+            END;
+        END LOOP;
+        
         COMMIT;
         
     END LOOP;
+
+    EXECUTE IMMEDIATE 'UPDATE REM01.ACT_TRA_TRAMITE SET USUARIOCREAR = ''MIG_CAJAMAR'' WHERE USUARIOCREAR = ''MIG_SAREB'' AND FECHACREAR = ''06/10/2017''';
+    EXECUTE IMMEDIATE 'UPDATE REM01.TAR_TAREAS_NOTIFICACIONES SET USUARIOCREAR = ''MIG_CAJAMAR'' WHERE USUARIOCREAR = ''MIG_SAREB'' AND FECHACREAR = ''06/10/2017''';
+    EXECUTE IMMEDIATE 'UPDATE REM01.TEX_TAREA_EXTERNA SET USUARIOCREAR = ''MIG_CAJAMAR'' WHERE USUARIOCREAR = ''MIG_SAREB'' AND FECHACREAR = ''06/10/2017''';
+
+    COMMIT;
+
     DBMS_OUTPUT.PUT_LINE('');
-    DBMS_OUTPUT.PUT_LINE('[FIN] Borrado lógico de trabajos');
+    DBMS_OUTPUT.PUT_LINE('[FIN] Borrado físico de trámites');
 
 EXCEPTION
     WHEN OTHERS THEN

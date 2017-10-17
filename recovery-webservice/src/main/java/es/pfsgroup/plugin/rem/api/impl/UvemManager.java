@@ -77,6 +77,8 @@ public class UvemManager implements UvemManagerApi {
 	private final String INSTANCIA_DECISION_ALTA = "ALTA";
 	private final String INSTANCIA_DECISION_CONSULTA = "CONS";
 	private final String INSTANCIA_DECISION_MODIFICACION = "MODI";
+	
+	private final String COCGUS = "0562";
 
 	private String URL = "";
 	private String ALIAS = "";
@@ -218,6 +220,8 @@ public class UvemManager implements UvemManagerApi {
 			StructCabeceraAplicacionGMPETS07_INS cabeceraAplicacion = new StructCabeceraAplicacionGMPETS07_INS();
 
 			// Seteamos cabeceras
+			// COCGUS
+			cabeceraAplicacion.setCentroGestorUsuarioSsacocgus(COCGUS);
 			servicioGMPETS07_INS.setcabeceraAplicacion(cabeceraAplicacion);
 			servicioGMPETS07_INS.setcabeceraFuncionalPeticion(cabeceraFuncional);
 			servicioGMPETS07_INS.setcabeceraTecnica(cabeceraTecnica);
@@ -440,6 +444,8 @@ public class UvemManager implements UvemManagerApi {
 
 			// seteamos parametros
 			servicioGMPAJC11_INS.setCodigoObjetoAccesocopace("PAHY0270");
+			// COCGUS
+			cabeceraAplicacion.setCentroGestorUsuarioSsacocgus(COCGUS);
 			servicioGMPAJC11_INS.setClaseDeDocumentoIdentificadorcocldo(tipoDocumento.charAt(0));
 			servicioGMPAJC11_INS.setDniNifDelTitularDeLaOfertanudnio(nDocumento);
 			servicioGMPAJC11_INS.setnumeroCliente(0);
@@ -560,6 +566,8 @@ public class UvemManager implements UvemManagerApi {
 
 			// seteamos parametros
 			servicioGMPAJC93_INS.setCodigoObjetoAccesocopace("PAHY0272");
+			// COCGUS
+			cabeceraAplicacion.setCentroGestorUsuarioSsacocgus(COCGUS);
 			servicioGMPAJC93_INS.setIdentificadorClienteOfertaidclow(numcliente);// <--------?????
 			servicioGMPAJC93_INS.setnumeroUsuario("");// <--------????? Nos lo
 														// piden
@@ -864,9 +872,14 @@ public class UvemManager implements UvemManagerApi {
 			cabeceraFuncional.setCOSBAQ("00");
 			cabeceraFuncional.setNUPUAQ("00");
 			cabeceraTecnica.setCLORAQ("71");
+			
 
 			// seteamos parametros
 			servicioGMPDJB13_INS.setCodigoObjetoAccesocopace("PAHY0170");
+			// COCGUS
+			cabeceraAplicacion.setCentroGestorUsuarioSsacocgus(COCGUS);
+			
+			
 			servicioGMPDJB13_INS.setCodigoDeOfertaHayacoofhx(
 					StringUtils.leftPad(instanciaDecisionDto.getCodigoDeOfertaHaya(), 16, "0"));
 			if (instanciaDecisionDto.isFinanciacionCliente()) {
@@ -996,6 +1009,8 @@ public class UvemManager implements UvemManagerApi {
 
 			// seteamos parametros
 			servicioGMPAJC34_INS.setCodigoObjetoAccesocopace("PAHY0370");
+			// COCGUS
+			cabeceraAplicacion.setCentroGestorUsuarioSsacocgus(COCGUS);
 			numExpedienteRiesgo12 = StringUtils.leftPad(numExpedienteRiesgo12, 18, "0");
 			servicioGMPAJC34_INS.setNumeroExpedienteDeRiesgoNumericonuidow(numExpedienteRiesgo12);
 			servicioGMPAJC34_INS.setTipoRiesgoClaseProductoUrsusCotirx(tipoRiesgo);
@@ -1194,7 +1209,7 @@ public class UvemManager implements UvemManagerApi {
 			// COPACE
 			cabeceraAplicacion.setCodigoObjetoAccesocopace("PAHY0770");
 			// COCGUS
-			cabeceraAplicacion.setCentroGestorUsuarioSsacocgus("0562");
+			cabeceraAplicacion.setCentroGestorUsuarioSsacocgus(COCGUS);
 
 			// Seteamos cabeceras
 			servicioGMPTOE83_INS.setcabeceraAplicacion(cabeceraAplicacion);
@@ -1309,7 +1324,7 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPAJC29_INS.setCOPACE("PAHY0150");
 			cabeceraAplicacion.setCodigoObjetoAccesocopace("PAHY0150");
 
-			cabeceraAplicacion.setCentroGestorUsuarioSsacocgus("0562");
+			cabeceraAplicacion.setCentroGestorUsuarioSsacocgus(COCGUS);
 			servicioGMPAJC29_INS.setCOOFHX(codigoDeOfertaHaya);
 
 			if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.COMPRADOR_NO_INTERESADO_OPERACION)) {

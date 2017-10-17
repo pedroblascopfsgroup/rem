@@ -54,7 +54,8 @@ Ext.define('HreRem.view.comercial.ComercialModel', {
 	    	remoteSort: true,
 	    	remoteFilter: true,
 	        listeners : {
-	            beforeload : 'paramLoading'
+	            beforeload : 'paramLoading',
+	            load: 'controlErrorOfertas'
 	        }
     	},
     	

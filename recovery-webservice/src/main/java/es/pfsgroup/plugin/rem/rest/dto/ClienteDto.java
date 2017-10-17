@@ -51,9 +51,9 @@ public class ClienteDto implements Serializable{
 	private String codTipoDocumentoRepresentante;
 	@Size(max=14,groups = { Insert.class, Update.class })
 	private String documentoRepresentante;
-	@Size(max=14,groups = { Insert.class, Update.class })
+	@Size(max=20,groups = { Insert.class, Update.class })
 	private String telefono1;
-	@Size(max=14,groups = { Insert.class, Update.class })
+	@Size(max=20,groups = { Insert.class, Update.class })
 	private String telefono2;
 	@Size(max=50,groups = { Insert.class, Update.class })
 	private String email;

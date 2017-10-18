@@ -686,6 +686,7 @@ public class UvemManager implements UvemManagerApi {
 			// servicio.
 			instanciaDecisionDto.setCodigoDeOfertaHaya("0");
 			instanciaDecisionDto.setImporteReserva(null);
+			instanciaDecisionDto.setCodTipoArras(null);
 			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_CONSULTA);
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
@@ -782,8 +783,8 @@ public class UvemManager implements UvemManagerApi {
 					
 					//% de participación en la compra
 					Porcentaje9 porcentajeCompra = new Porcentaje9();
-					porcentajeCompra.setPorcentaje((int)titular.getPorcentajeCompra().longValue());
-					porcentajeCompra.setNumDecimales("BC");
+					porcentajeCompra.setPorcentaje((int)titular.getPorcentajeCompra().longValue()*100);
+					porcentajeCompra.setNumDecimales("02");
 					structTitular.setPorcentajeCompraBISA(porcentajeCompra);
 
 					vectorTitulares.add(structTitular);
@@ -828,8 +829,8 @@ public class UvemManager implements UvemManagerApi {
 			Porcentaje9 porcentajeImpuesto = null;
 			porcentajeImpuesto = new Porcentaje9();
 			if (!Checks.esNulo(instanciaData.getPorcentajeImpuesto())) {
-				porcentajeImpuesto.setPorcentaje(instanciaData.getPorcentajeImpuesto());
-				porcentajeImpuesto.setNumDecimales("BC");
+				porcentajeImpuesto.setPorcentaje(instanciaData.getPorcentajeImpuesto()*100);
+				porcentajeImpuesto.setNumDecimales("02");
 				struct.setPorcentajeImpuestoBISA(porcentajeImpuesto);
 			}
 

@@ -137,7 +137,6 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
-import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
@@ -175,7 +174,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
@@ -574,7 +572,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		nuevoExpediente.setOferta(oferta);
 		DDEstadosExpedienteComercial estadoExpediente = (DDEstadosExpedienteComercial) utilDiccionarioApi
-				.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class, "01");
+				.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class, DDEstadosExpedienteComercial.EN_TRAMITACION);
 		nuevoExpediente.setEstado(estadoExpediente);
 		nuevoExpediente.setNumExpediente(activoDao.getNextNumExpedienteComercial());
 		nuevoExpediente.setTrabajo(trabajo);
@@ -608,10 +606,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			//Obtiene las condiciones del activo con la misma logica que se aplica para calcularlas
 			// y mostrarlas en pantalla, para copiarlas en las condiciones al comprador
 			Activo activo = oferta.getActivoPrincipal();
-			
-			// Como estamos en la creacion del expediente crea directamente las condiciones, no busca si ya existen condiciones del Expediente-Activo
-//			CondicionesActivo condicionesActivo = new CondicionesActivo();
-//			condicionesActivo.
+
 			if (activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getFechaTomaPosesion() != null) {
 				nuevoCondicionante.setPosesionInicial(1);
 			} else {
@@ -643,17 +638,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		}
 
-		// Comprobamos si tiene derecho de tanteo
-		/*
-		boolean noCumple = false;
-		for (CondicionTanteoApi condicion : condiciones) {
-			if (!condicion.checkCondicion(oferta.getActivoPrincipal()))
-				noCumple = true;
-		}
-		if (!noCumple)
-			nuevoCondicionante.setSujetoTanteoRetracto(1);
-		*/
-
 		boolean noCumple = false;
 		List<ActivoOferta> activoOfertaList = oferta.getActivosOferta();
 		List<TanteoActivoExpediente> tanteosExpediente = new ArrayList<TanteoActivoExpediente>();
@@ -680,7 +664,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				DDAdministracion administracion = genericDao.get(DDAdministracion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "02"));
 				tanteoActivo.setAdminitracion(administracion);
 				nuevoCondicionante.setSujetoTanteoRetracto(1);
-				//genericDao.save(TanteoActivoExpediente.class, tanteoActivo);
 				tanteosExpediente.add(tanteoActivo);
 			}
 		}
@@ -731,32 +714,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						&& activoBancario.getClaseActivo().getCodigo().equals(DDClaseActivoBancario.CODIGO_FINANCIERO)) {
 					esFinanciero = true;
 				}
-				
-//				if(activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_SINGULAR) ||
-//						(activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_RETAIL) 
-//								&& (precioMinimoAutorizado > oferta.getImporteOferta()))) {
-//					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "11")));//sareb
-//					
-//				}
-//				if((esFinanciero && getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) || 
-//						(activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_RETAIL) 
-//						&& precioMinimoAutorizado < oferta.getImporteOferta())) {
-//					
-//					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "12")));//haya-sareb
-//					
-//				}
-				
-				
-				
-				
-				if(esFinanciero && getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) { //1º Clase de activo (financiero/inmobiliario) y sin formalización
-					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "12")));//haya-sareb
-				}else if(activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_SINGULAR)) { //2º Si es inmobiliario: Tipo de comercialización (singular/retail)
-					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "11")));//sareb
-				}else if(precioMinimoAutorizado > oferta.getImporteOferta()) { //3º Si es retail: Comparamos precio mínimo e importe oferta
-					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "11")));//sareb
-				}else {
-					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "12")));//haya-sareb
+
+				// 1º Clase de activo (financiero/inmobiliario) y sin formalización.
+				if(esFinanciero && !Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo()) && getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) {
+					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_SAREB)));
+				// 2º Si es inmobiliario: Tipo de comercialización (singular/retail).
+				} else if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo()) && activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_SINGULAR)) {
+					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_SAREB)));
+				// 3º Si es retail: Comparamos precio mínimo e importe oferta.
+				} else if(!Checks.esNulo(precioMinimoAutorizado) && precioMinimoAutorizado > oferta.getImporteOferta()) {
+					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_SAREB)));
+				} else {
+					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_SAREB)));
 				}
 			}
 		}
@@ -1400,6 +1369,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return !Checks.esNulo(activoDao.getPresupuestoActual(idActivo));
 	}
 
+	@SuppressWarnings("deprecation")
 	@BusinessOperationDefinition("activoManager.comprobarPestanaCheckingInformacion")
 	public Boolean comprobarPestanaCheckingInformacion(Long idActivo) {
 		Activo activo = this.get(idActivo);

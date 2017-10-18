@@ -3505,7 +3505,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			instancia.setCodTipoArras(expediente.getReserva().getTipoArras().getCodigo());
 		}
 
-		
+		//MOD3
+		if(!Checks.esNulo(oferta.getPrescriptor())){
+			instancia.setCodigoProveedorUvem(oferta.getPrescriptor().getCodProveedorUvem());
+		}		
 
 		return instancia;
 	}

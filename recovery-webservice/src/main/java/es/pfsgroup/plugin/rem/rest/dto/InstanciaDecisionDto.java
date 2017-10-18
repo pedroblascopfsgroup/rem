@@ -18,6 +18,8 @@ public class InstanciaDecisionDto {
 	private String codTipoArras;
 	//por defecto BANKIA, 
 	private String qcenre =DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA;
+	private short codigoCOTPRA;
+	private String codigoProveedorUvem;
 
 	public String getCodigoDeOfertaHaya() {
 		return codigoDeOfertaHaya;
@@ -71,6 +73,17 @@ public class InstanciaDecisionDto {
 	public void setQcenre(String qcenre) {
 		this.qcenre = qcenre;
 	}
-	
+	public short getCodigoCOTPRA() {
+		return codigoCOTPRA;
+	}
+	public void setCodigoCOTPRA(short codigoCOTPRA) {
+		this.codigoCOTPRA = codigoCOTPRA;
+	}
+	public String getCodigoProveedorUvem() {
+		return codigoProveedorUvem;
+	}
+	public void setCodigoProveedorUvem(String codigoProveedorUvem) {
+		this.codigoProveedorUvem = codigoProveedorUvem;
+	}
 	
 }

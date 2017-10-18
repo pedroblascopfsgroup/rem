@@ -194,5 +194,15 @@ public interface UvemManagerApi {
 			INDICADOR_DEVOLUCION_RESERVA indicadorDevolucionReserva,CODIGO_SERVICIO_MODIFICACION codigoServicioModificacion) throws Exception;
 	
 	public void anularOferta(String codigoDeOfertaHaya, MOTIVO_ANULACION_OFERTA motivoAnulacionOferta) throws Exception;
+	
+	/**
+	 * Invoca al servicio GMPDJB13_INS de BANKIA para modificar una instancia de
+	 * decisión de una oferta (MOD3)
+	 * 
+	 * @param instanciaDecisionDto
+	 * @return
+	 */
+	public ResultadoInstanciaDecisionDto modificarInstanciaDecisionTres(InstanciaDecisionDto instanciaDecisionDto)
+			throws Exception;
 
 }

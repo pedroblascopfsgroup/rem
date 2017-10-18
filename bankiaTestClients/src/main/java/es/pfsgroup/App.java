@@ -8,6 +8,7 @@ import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDataDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
+import es.pfsgroup.plugin.rem.rest.dto.TitularDto;
 
 /**
  * Test clientes bankia
@@ -89,6 +90,14 @@ public class App {
 							InstanciaDecisionDto instanciaDto = new InstanciaDecisionDto();
 							instanciaDto.setCodigoDeOfertaHaya(args[2]);
 							instanciaDto.setFinanciacionCliente(Boolean.getBoolean(args[3]));
+							
+							//añadimos un titular
+							List<TitularDto> titulares = new ArrayList<TitularDto>();
+							TitularDto titular = new TitularDto();
+							titular.setNumeroUrsus(Long.valueOf("970772"));
+							titular.setTipoDocumentoCliente('1');
+							titulares.add(titular);
+							instanciaDto.setTitulares(titulares);
 
 							// Metemos los datos del primer activo args[4],
 							// args[5], args[6], args[7]
@@ -107,6 +116,8 @@ public class App {
 								instanciaDataDto2.setImporteConSigno(Long.valueOf(args[9]));
 								instanciaDataDto2.setTipoDeImpuesto(Short.valueOf(args[10]));
 								instanciaDataDto2.setPorcentajeImpuesto(Integer.valueOf(args[11]));
+								
+								
 								instanciaList.add(instanciaDataDto2);
 							}
 

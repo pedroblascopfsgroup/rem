@@ -1761,7 +1761,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		if (!genericAdapter.tienePerfil("HAYASADM", usuario) && !Checks.esNulo(gasto.getEstadoGasto())) {			
 			if (!DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo()) && !DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo())
-					&& !DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo()) && !DDEstadoGasto.RECHAZADO_PROPIETARIO.equals(gasto.getEstadoGasto().getCodigo())) {
+					&& !DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo()) && !DDEstadoGasto.RECHAZADO_PROPIETARIO.equals(gasto.getEstadoGasto().getCodigo())
+					&& !DDEstadoGasto.RETENIDO.equals(gasto.getEstadoGasto().getCodigo())) {
 				return false;
 			}
 		}

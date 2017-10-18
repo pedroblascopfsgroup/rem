@@ -685,6 +685,7 @@ public class UvemManager implements UvemManagerApi {
 			// obteniendo el comité con los datos facilitados en la entrada al
 			// servicio.
 			instanciaDecisionDto.setCodigoDeOfertaHaya("0");
+			instanciaDecisionDto.setImporteReserva(null);
 			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_CONSULTA);
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
@@ -944,7 +945,7 @@ public class UvemManager implements UvemManagerApi {
 
 			// Importe de la reserva
 			ImporteMonetario importeMonetarioReserva = new ImporteMonetario();
-			if (instanciaDecisionDto.getImporteReserva() != null  && !accion.equals(INSTANCIA_DECISION_MODIFICACION)) {
+			if (instanciaDecisionDto.getImporteReserva() != null ) {
 				importeMonetarioReserva.setImporteConSigno(instanciaDecisionDto.getImporteReserva().longValue());
 			} else {
 				importeMonetarioReserva.setImporteConSigno(new Long(0));

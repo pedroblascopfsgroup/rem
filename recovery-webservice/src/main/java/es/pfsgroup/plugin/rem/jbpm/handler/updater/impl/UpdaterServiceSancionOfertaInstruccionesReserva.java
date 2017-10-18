@@ -75,10 +75,10 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 					}
 				}
 				genericDao.save(ExpedienteComercial.class, expediente);
-				//LLamada servicio web Bankia para modificaciones según tipo propuesta (MOD3) 
-				if(!Checks.estaVacio(valores)){
-					ofertaApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
-				}
+			}
+			//LLamada servicio web Bankia para modificaciones según tipo propuesta (MOD3) 
+			if(!Checks.estaVacio(valores)){
+				ofertaApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
 			}
 		}
 

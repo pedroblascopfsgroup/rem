@@ -170,8 +170,16 @@ Ext.define('HreRem.model.DetalleEconomicoGasto', {
 		},
 		{
 			name: 'optaCriterioCaja'
+		},
+		{
+			name: 'anticipo'
+		},
+		{
+			name : 'fechaAnticipo',
+			type : 'date',
+			dateFormat: 'c'
 		}
-    ],
+	],
     
 	proxy: {
 		type: 'uxproxy',

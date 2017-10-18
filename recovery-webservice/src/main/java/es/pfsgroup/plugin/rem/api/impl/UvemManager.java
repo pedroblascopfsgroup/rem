@@ -56,6 +56,7 @@ import es.cm.arq.tda.tiposdedatosbase.CantidadDecimal15;
 import es.cm.arq.tda.tiposdedatosbase.Fecha;
 import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
@@ -77,8 +78,8 @@ public class UvemManager implements UvemManagerApi {
 	private final String INSTANCIA_DECISION_ALTA = "ALTA";
 	private final String INSTANCIA_DECISION_CONSULTA = "CONS";
 	private final String INSTANCIA_DECISION_MODIFICACION = "MODI";
-	
 	private final String COCGUS = "0562";
+	private final String INSTANCIA_DECISION_MODIFICACION_3 = "MOD3";
 
 	private String URL = "";
 	private String ALIAS = "";
@@ -106,6 +107,9 @@ public class UvemManager implements UvemManagerApi {
 
 	@Autowired
 	private RestLlamadaDao llamadaDao;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 
 	private void iniciarServicio() throws WIException {
 		if (appProperties == null) {
@@ -711,6 +715,27 @@ public class UvemManager implements UvemManagerApi {
 		}
 		return instancia;
 	}
+	
+	/**
+	 * Invoca al servicio GMPDJB13_INS de BANKIA para modificar una instancia de
+	 * decisión de una oferta (MOD3)
+	 * Necesita pasarle el parametro codigoCOTPRA al dto.
+	 * 
+	 * @param instanciaDecisionDto
+	 * @return
+	 */
+	@Override
+	public ResultadoInstanciaDecisionDto modificarInstanciaDecisionTres(InstanciaDecisionDto instanciaDecisionDto)
+			throws Exception {
+		ResultadoInstanciaDecisionDto instancia = new ResultadoInstanciaDecisionDto();
+		try {
+			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_MODIFICACION_3);
+		} catch (WIException e) {
+			logger.error("error en UvemManager", e);
+			throw new JsonViewerException(e.getMessage());
+		}
+		return instancia;
+	}
 
 	/**
 	 * Invoca al servicio GMPDJB13_INS de BANKIA para realizar la accion pasada
@@ -899,15 +924,26 @@ public class UvemManager implements UvemManagerApi {
 			} else {
 				servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_VENTA);
 			}
+			
+			if(accion.equals(INSTANCIA_DECISION_MODIFICACION_3)) {
+				//Modificacion de honorarios prescriptor
+				if(instanciaDecisionDto.getCodigoCOTPRA() == InstanciaDecisionDataDto.PROPUESTA_HONORARIOS){
+					servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_HONORARIOS);		
+				}
+				//Modificación de titulares
+				if(instanciaDecisionDto.getCodigoCOTPRA() == InstanciaDecisionDataDto.PROPUESTA_TITULARES){
+					servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_TITULARES);				
+				}
+				//Modificación condicionantes económicos
+				if(instanciaDecisionDto.getCodigoCOTPRA() == InstanciaDecisionDataDto.PROPUESTA_CONDICIONANTES_ECONOMICOS){
+					servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_CONDICIONANTES_ECONOMICOS);
+				}
+				
+			}
 
 			if (numeroOcurrencias != null) {
 				servicioGMPDJB13_INS.setNumeroDeOcurrenciasnumocu(numeroOcurrencias);
 			}
-			// el comite superior para el alta siempre es 0
-			servicioGMPDJB13_INS.setCodigoComiteSuperiorcocom3((short) 0);
-
-			// codigo uvem de la ofician prescriptora
-			servicioGMPDJB13_INS.setIdentificadorDelColaboradoridcola("C000");
 
 			// Importe de la reserva
 			ImporteMonetario importeMonetarioReserva = new ImporteMonetario();
@@ -946,6 +982,18 @@ public class UvemManager implements UvemManagerApi {
 			}
 
 			servicioGMPDJB13_INS.setCodEntidadRepresntClienteUrsusqcenre(instanciaDecisionDto.getQcenre());
+
+			//el comite superior para el alta siempre es 0
+			servicioGMPDJB13_INS.setCodigoComiteSuperiorcocom3((short)0);
+			
+			//codigo uvem de la ofician prescriptora
+			if(Checks.esNulo(instanciaDecisionDto.getCodigoProveedorUvem())){
+				servicioGMPDJB13_INS.setIdentificadorDelColaboradoridcola("C000");
+			}
+			else{
+				servicioGMPDJB13_INS.setIdentificadorDelColaboradoridcola(instanciaDecisionDto.getCodigoProveedorUvem());
+			}
+			
 			// Requeridos por el servicio
 			servicioGMPDJB13_INS.setnumeroCliente(0);
 			servicioGMPDJB13_INS.setnumeroUsuario("");

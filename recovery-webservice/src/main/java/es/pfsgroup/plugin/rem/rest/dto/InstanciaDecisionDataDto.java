@@ -6,6 +6,9 @@ public class InstanciaDecisionDataDto {
 
 	public final static short PROPUESTA_VENTA = 1;
 	public final static short PROPUESTA_CONTRAOFERTA = 3;
+	public final static short PROPUESTA_HONORARIOS = 6;
+	public final static short PROPUESTA_TITULARES = 5;
+	public final static short PROPUESTA_CONDICIONANTES_ECONOMICOS = 4;
 	
 	public final static short TIPO_IMPUESTO_SIN_IMPUESTO = 0;
 	public final static short TIPO_IMPUESTO_ITP = 1;

@@ -20,6 +20,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 
 @Component
@@ -78,7 +79,11 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 			}
 			//LLamada servicio web Bankia para modificaciones según tipo propuesta (MOD3) 
 			if(!Checks.estaVacio(valores)){
-				ofertaApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
+				if(!Checks.esNulo(ofertaAceptada.getActivoPrincipal()) 
+						&& !Checks.esNulo(ofertaAceptada.getActivoPrincipal().getCartera())
+						&& ofertaAceptada.getActivoPrincipal().getCartera().equals(DDCartera.CODIGO_CARTERA_BANKIA)){
+					ofertaApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
+				}
 			}
 		}
 

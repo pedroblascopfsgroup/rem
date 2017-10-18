@@ -766,20 +766,23 @@ public class UvemManager implements UvemManagerApi {
 			if (instanciaDecisionDto.getTitulares() != null && instanciaDecisionDto.getTitulares() != null) {
 				for (TitularDto titular : instanciaDecisionDto.getTitulares()) {
 					StructGMPDJB13_INS_NumeroDeOcurrenciasnumocx structTitular = new StructGMPDJB13_INS_NumeroDeOcurrenciasnumocx();
-					// tipo doc
-					structTitular.setClaseDeDocumentoIdentificadorcocldo(titular.getTipoDocumentoCliente());
-					// n documento
-					structTitular.setDniNifDelTitularDeLaOfertanudnio(titular.getNumeroDocumento());
+					// n ursus
+					if (titular.getNumeroUrsus() != null) {
+						structTitular.setIdentificadorClienteOfertaidclow((int) (long) titular.getNumeroUrsus());
+					}else{
+						// tipo doc
+						structTitular.setClaseDeDocumentoIdentificadorcocldo(titular.getTipoDocumentoCliente());
+						// n documento
+						structTitular.setDniNifDelTitularDeLaOfertanudnio(titular.getNumeroDocumento());
+						// nombre completo titular
+						structTitular.setNombreYApellidosTitularDeOfertanotiof(titular.getNombreCompletoCliente());
+					}
+					
 					// el conyuge
 					if (titular.getConyugeNumeroUrsus() != null) {
 						structTitular.setIdentClienteConyugeOfertaidclww((int) (long) titular.getConyugeNumeroUrsus());
 					}
-					// n ursus
-					if (titular.getNumeroUrsus() != null) {
-						structTitular.setIdentificadorClienteOfertaidclow((int) (long) titular.getNumeroUrsus());
-					}
-					// nombre completo titular
-					structTitular.setNombreYApellidosTitularDeOfertanotiof(titular.getNombreCompletoCliente());
+					
 					
 					//% de participación en la compra
 					Porcentaje9 porcentajeCompra = new Porcentaje9();

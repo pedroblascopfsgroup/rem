@@ -199,10 +199,14 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var activo = me.lookupController().getViewModel().get('activo'),
 		idActivo= activo.get('id'),
 		numActivo= activo.get('numActivo');
-
+		
 		var parent= me.up('ofertascomercialactivo'),
 		oferta = Ext.create('HreRem.model.OfertaComercialActivo', {idActivo: idActivo, numActivo: numActivo});
-		Ext.create('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo',{oferta: oferta, parent: parent}).show();
+		
+		// HREOS-2930 Permitir acceso menú lateral con ventana Alta de oferta abierta
+		var ventana = Ext.create('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo',{oferta: oferta, parent: parent});
+		me.up('activosdetallemain').add(ventana);
+		ventana.show();
 	    				    	
 	},
 	

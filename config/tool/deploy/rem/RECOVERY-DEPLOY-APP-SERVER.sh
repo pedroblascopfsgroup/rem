@@ -9,7 +9,7 @@ if [ "$#" -lt 1 ]; then
     exit 1
 fi
 
-if [ $1 =! "val04" ] ; then
+if [ $1 != "val04" ] ; then
 if [[ ! -f config/$1/devon.properties ]] ; then
     echo ""
     echo "ERROR: no existe el fichero config/$1/devon.properties"
@@ -28,7 +28,7 @@ if [ "$1" == "val04" ] ; then
     BASE_DIR=/home/map019/	
 fi
 
-if [ $1 =! "val04" ] ; then
+if [ $1 != "val04" ] ; then
 echo "Copiando fichero de configuración ..."
 cp config/$1/devon.properties $BASE_DIR/
 fi

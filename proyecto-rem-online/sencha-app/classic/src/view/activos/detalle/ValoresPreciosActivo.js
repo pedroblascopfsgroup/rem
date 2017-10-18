@@ -131,7 +131,6 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 												editor: {
 						                            xtype: 'datefield',
 						                            formatText: "",
-						                            minValue: Ext.Date.format(new Date(),'d/m/Y'),
 						                            minText: HreRem.i18n('info.datefield.min.date.msg.validacion'),
 						                            validationEvent: 'change',
 						                            validator: function(value){

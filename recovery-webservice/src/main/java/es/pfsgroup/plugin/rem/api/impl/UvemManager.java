@@ -59,6 +59,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteUrsusRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
@@ -1277,6 +1278,27 @@ public class UvemManager implements UvemManagerApi {
 			registrarLlamada(servicioGMPTOE83_INS, errorDesc);
 		}
 
+	}
+
+	@Override
+	public MOTIVO_ANULACION obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(String codigoMotivoAnulacionReserva) {
+		if(DDMotivoAnulacionReserva.CODIGO_COMPRADOR_NO_INTERESADO_OPERACION.equals(codigoMotivoAnulacionReserva)) {
+			return MOTIVO_ANULACION.COMPRADOR_NO_INTERESADO;
+		} else if(DDMotivoAnulacionReserva.CODIGO_DECISION_DEL_AREA.equals(codigoMotivoAnulacionReserva)) {
+			return MOTIVO_ANULACION.DECISION_AREA;
+		} else if(DDMotivoAnulacionReserva.CODIGO_NO_DISPONE_DINERO_FINANCIACION.equals(codigoMotivoAnulacionReserva)) {
+			return MOTIVO_ANULACION.NO_DISPONE_DINERO_FINANCIACION;
+		} else if(DDMotivoAnulacionReserva.CODIGO_CIRCUNSTANCIAS_DISTINTAS_A_LAS_PACTADAS.equals(codigoMotivoAnulacionReserva)) {
+			return MOTIVO_ANULACION.CIRCUSTANCIAS_DISTINTAS_PACTADAS;
+		} else if(DDMotivoAnulacionReserva.CODIGO_NO_SE_CUMPLEN_CONDICIONANTES.equals(codigoMotivoAnulacionReserva)) {
+			return MOTIVO_ANULACION.NO_CUMPLEN_CONDICIONANTES;
+		} else if(DDMotivoAnulacionReserva.CODIGO_NO_DESEAN_ESCRITURAR.equals(codigoMotivoAnulacionReserva)) {
+			return MOTIVO_ANULACION.NO_DESEAN_ESCRITURAR;
+		} else if(DDMotivoAnulacionReserva.CODIGO_DECISION_HAYA.equals(codigoMotivoAnulacionReserva)) {
+			return MOTIVO_ANULACION.DECISION_HAYA;
+		} else {
+			return null;
+		}
 	}
 
 	@Override

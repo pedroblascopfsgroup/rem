@@ -4,7 +4,6 @@ import java.util.List;
 
 import es.cajamadrid.servicios.GM.GMPETS07_INS.GMPETS07_INS;
 import es.capgemini.pfs.users.domain.Usuario;
-import es.pfsgroup.plugin.rem.api.UvemManagerApi.MOTIVO_ANULACION_OFERTA;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
@@ -192,6 +191,8 @@ public interface UvemManagerApi {
 	 */
 	public void notificarDevolucionReserva(String codigoDeOfertaHaya, MOTIVO_ANULACION motivoAnulacionReserva,
 			INDICADOR_DEVOLUCION_RESERVA indicadorDevolucionReserva,CODIGO_SERVICIO_MODIFICACION codigoServicioModificacion) throws Exception;
+
+	public MOTIVO_ANULACION obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(String codigoMotivoAnulacionReserva);
 	
 	public void anularOferta(String codigoDeOfertaHaya, MOTIVO_ANULACION_OFERTA motivoAnulacionOferta) throws Exception;
 

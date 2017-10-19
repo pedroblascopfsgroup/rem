@@ -213,7 +213,7 @@ BEGIN
             END;
         END LOOP;
         
-        ROLLBACK;
+        COMMIT;
         
     END LOOP;
 

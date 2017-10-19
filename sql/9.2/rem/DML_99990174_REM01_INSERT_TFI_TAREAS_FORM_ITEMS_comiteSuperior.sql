@@ -62,6 +62,7 @@ BEGIN
 			  ''comboinied'' AS TFI_TIPO,
 			  ''comiteSuperior'' AS TFI_NOMBRE,
 			  ''Comité sancionador superior'' AS TFI_LABEL,
+			  ''DDComiteSancion'' AS TFI_BUSINESS_OPERATION,
 			  0 AS VERSION,
 			  ''HREOS-3018'' AS USUARIOCREAR,
 			  SYSDATE AS FECHACREAR,

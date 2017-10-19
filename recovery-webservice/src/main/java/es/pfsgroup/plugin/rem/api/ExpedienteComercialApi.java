@@ -509,9 +509,10 @@ public interface ExpedienteComercialApi {
 	 * 
 	 * @param expediente expedienteComercial de la oferta
 	 * @param porcentajeImpuesto del activo de la oferta.
+	 * @param codComiteSuperior del expediente.
 	 * @return
 	 */
-	public InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente, Long porcentajeImpuesto ) throws Exception;
+	public InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente, Long porcentajeImpuesto, String codComiteSuperior) throws Exception;
 
 	/**
 	 * Este método obtiene una lista de bloqueos formalización por el ID del expediente recibido.

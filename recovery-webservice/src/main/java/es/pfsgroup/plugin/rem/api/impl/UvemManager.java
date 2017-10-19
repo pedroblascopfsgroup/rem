@@ -985,8 +985,12 @@ public class UvemManager implements UvemManagerApi {
 
 			servicioGMPDJB13_INS.setCodEntidadRepresntClienteUrsusqcenre(instanciaDecisionDto.getQcenre());
 
-			//el comite superior para el alta siempre es 0
-			servicioGMPDJB13_INS.setCodigoComiteSuperiorcocom3((short)0);
+			if(instanciaDecisionDto.getCodComiteSuperior() != null) {
+				servicioGMPDJB13_INS.setCodigoComiteSuperiorcocom3(Short.valueOf(instanciaDecisionDto.getCodComiteSuperior()));
+			}else {
+				//el comite superior para el alta siempre es 0
+				servicioGMPDJB13_INS.setCodigoComiteSuperiorcocom3((short)0);
+			}
 			
 			//codigo uvem de la ofician prescriptora
 			if(Checks.esNulo(instanciaDecisionDto.getCodigoProveedorUvem())){

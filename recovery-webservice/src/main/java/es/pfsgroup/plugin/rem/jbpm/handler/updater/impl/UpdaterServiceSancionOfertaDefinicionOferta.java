@@ -22,6 +22,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 
@@ -46,6 +47,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 	private static final String FECHA_ENVIO_COMITE = "fechaEnvio";
 	private static final String COMBO_CONFLICTO = "comboConflicto";
 	private static final String COMBO_RIESGO = "comboRiesgo";
+	private static final String COMBO_COMITE_SUPERIOR = "comiteSuperior";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -113,6 +115,13 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 						if (DDSiNo.NO.equals(valor.getValor())) {
 							expediente.setConflictoIntereses(0);
 						}
+					}
+				}
+				if(COMBO_COMITE_SUPERIOR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "descripcion", valor.getValor());
+					DDComiteSancion comiteSuperior = genericDao.get(DDComiteSancion.class, filtro);
+					if(!Checks.esNulo(comiteSuperior)) {
+						expediente.setComiteSuperior(comiteSuperior);
 					}
 				}
 			}

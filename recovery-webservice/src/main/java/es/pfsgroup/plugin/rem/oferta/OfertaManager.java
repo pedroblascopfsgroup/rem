@@ -1247,7 +1247,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		try {
-			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto);
+			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto, null);
 			ResultadoInstanciaDecisionDto resultadoDto = uvemManagerApi.altaInstanciaDecision(instanciaDecisionDto);
 			String codigoComite = resultadoDto.getCodigoComite();
 			DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
@@ -1278,7 +1278,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		try {
-			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto);
+			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto, null);
 			uvemManagerApi.modificarInstanciaDecision(instanciaDecisionDto);
 			return true;
 		} catch (Exception e) {
@@ -1289,7 +1289,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
-	public String altaComiteProcess(TareaExterna tareaExterna) {
+	public String altaComiteProcess(TareaExterna tareaExterna, String codComiteSuperior) {
 
 		try {
 
@@ -1307,7 +1307,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 
-			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto);
+			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto, codComiteSuperior);
+
 			ResultadoInstanciaDecisionDto resultadoDto = uvemManagerApi.altaInstanciaDecision(instanciaDecisionDto);
 			String codigoComite = resultadoDto.getCodigoComite();
 			DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
@@ -1343,7 +1344,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 
-			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto);
+			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto, null);
 			uvemManagerApi.modificarInstanciaDecision(instanciaDecisionDto);
 			return null;
 		} catch (JsonViewerException jve) {
@@ -2067,7 +2068,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		
 		try {
-			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto);
+			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto, null);
 			instanciaDecisionDto.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_HONORARIOS);
 			uvemManagerApi.modificarInstanciaDecisionTres(instanciaDecisionDto);
 			instanciaDecisionDto.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_TITULARES);

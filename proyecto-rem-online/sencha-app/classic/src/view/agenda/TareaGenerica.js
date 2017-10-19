@@ -1157,8 +1157,15 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         var me = this;
         var tipoArras = me.down('[name=tipoArras]');
         var estadoReserva = me.down('[name=estadoReserva]');
+        var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+
         me.deshabilitarCampo(me.down('[name=comboProcede]'));
-        me.deshabilitarCampo(me.down('[name=comboMotivoAnulacionReserva]'));
+        if(CONST.CARTERA['BANKIA'] == codigoCartera) {
+        	me.deshabilitarCampo(me.down('[name=comboMotivoAnulacionReserva]'));
+        } else {
+        	me.campoNoObligatorio(me.down('[name=comboMotivoAnulacionReserva]'));
+        	me.down('[name=comboMotivoAnulacionReserva]').setHidden(true);
+        }
 
         if (!Ext.isEmpty(estadoReserva) && estadoReserva.value == 'Firmada') {
             me.habilitarCampo(me.down('[name=comboProcede]'));
@@ -1168,10 +1175,10 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             if (combo.value == '01' && tipoArras.value == 'Confirmatorias') {
                 me.down('[name=comboProcede]').blankText = HreRem.i18n('tarea.validacion.error.valor.no.permitido.by.tipo.arras');
                 me.down('[name=comboProcede]').reset();
-            } else if(combo.value == '01' || combo.value == '02') {
+            } else if((combo.value == '01' || combo.value == '02') && CONST.CARTERA['BANKIA'] == codigoCartera) {
             	me.habilitarCampo(me.down('[name=comboMotivoAnulacionReserva]'));
             	me.down('[name=comboMotivoAnulacionReserva]').reset();
-            } else if(combo.value == '03') {
+            } else if(combo.value == '03' && CONST.CARTERA['BANKIA'] == codigoCartera) {
             	me.deshabilitarCampo(me.down('[name=comboMotivoAnulacionReserva]'));
             	me.down('[name=comboMotivoAnulacionReserva]').reset();
             }

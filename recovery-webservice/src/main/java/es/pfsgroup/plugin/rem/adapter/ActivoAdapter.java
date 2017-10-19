@@ -1632,8 +1632,10 @@ public class ActivoAdapter {
 			if (!Checks.esNulo(tramite.getActivo().getSubtipoActivo()))
 				beanUtilNotNull.copyProperty(dtoTramite, "subtipoActivo",
 						tramite.getActivo().getSubtipoActivo().getDescripcion());
-			if (!Checks.esNulo(tramite.getActivo().getCartera()))
+			if (!Checks.esNulo(tramite.getActivo().getCartera())) {
 				beanUtilNotNull.copyProperty(dtoTramite, "cartera", tramite.getActivo().getCartera().getDescripcion());
+				beanUtilNotNull.copyProperty(dtoTramite, "codigoCartera", tramite.getActivo().getCartera().getCodigo());
+			}
 			if (!Checks.esNulo(tramite.getFechaInicio()))
 				beanUtilNotNull.copyProperty(dtoTramite, "fechaInicio", formato.format(tramite.getFechaInicio()));
 			if (!Checks.esNulo(tramite.getFechaFin()))

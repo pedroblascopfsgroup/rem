@@ -84,6 +84,9 @@ Ext.define('HreRem.model.Tramite', {
       		name : 'cartera'
     	},
     	{
+      		name : 'codigoCartera'
+    	},
+    	{
       		name : 'tipoActivo'
     	},
     	{

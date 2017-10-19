@@ -71,6 +71,7 @@ BEGIN
           ,USUARIOCREAR
           ,FECHACREAR
           ,BORRADO
+          ,CLC_WEBCOM_ID_OLD
         )
         SELECT 
           '||V_ESQUEMA||'.S_CLC_CLIENTE_COMERCIAL.NEXTVAL     AS CLC_ID,
@@ -107,7 +108,8 @@ BEGIN
           0                                                   AS VERSION,
           '''||V_USUARIO||'''                                 AS USUARIOCREAR,
           SYSDATE                                             AS FECHACREAR,
-          0                                                   AS BORRADO
+          0                                                   AS BORRADO,
+          MIG2.CLC_COD_CLIENTE_WEBCOM                         AS CLC_WEBCOM_ID_OLD
           FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG2
           LEFT JOIN '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU ON USU.USU_USERNAME = MIG2.CLC_COD_USUARIO_LDAP_ACCION AND USU.BORRADO = 0
           LEFT JOIN '||V_ESQUEMA||'.DD_TDI_TIPO_DOCUMENTO_ID TDI ON TDI.DD_TDI_CODIGO = MIG2.CLC_COD_TIPO_DOCUMENTO AND TDI.BORRADO = 0

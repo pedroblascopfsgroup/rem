@@ -565,14 +565,18 @@ public class AgendaAdapter {
 		
 		TareaActivo tareaActivo = tareaActivoApi.get(dto.getIdTarea());
 		
-		if(!Checks.esNulo(dto.getUsuarioGestor()) && !Checks.esNulo(dto.getUsuarioSupervisor())){
-			Filter filtroGestor = genericDao.createFilter(FilterType.EQUALS, "id", dto.getUsuarioGestor());
-			Usuario usuarioGestor = genericDao.get(Usuario.class, filtroGestor);
-			Filter filtroSupervisor = genericDao.createFilter(FilterType.EQUALS, "id", dto.getUsuarioSupervisor());
-			Usuario usuarioSupervisor = genericDao.get(Usuario.class, filtroSupervisor);
+		if(!Checks.esNulo(dto.getUsuarioGestor()) || !Checks.esNulo(dto.getUsuarioSupervisor())){
 			
-			tareaActivo.setUsuario(usuarioGestor);
-			tareaActivo.setSupervisorActivo(usuarioSupervisor);
+			if(!Checks.esNulo(dto.getUsuarioGestor())){
+				Filter filtroGestor = genericDao.createFilter(FilterType.EQUALS, "id", dto.getUsuarioGestor());
+				Usuario usuarioGestor = genericDao.get(Usuario.class, filtroGestor);
+				tareaActivo.setUsuario(usuarioGestor);
+			}
+			if(!Checks.esNulo(dto.getUsuarioSupervisor())){
+				Filter filtroSupervisor = genericDao.createFilter(FilterType.EQUALS, "id", dto.getUsuarioSupervisor());
+				Usuario usuarioSupervisor = genericDao.get(Usuario.class, filtroSupervisor);
+				tareaActivo.setSupervisorActivo(usuarioSupervisor);
+			}
 			genericDao.update(TareaActivo.class, tareaActivo);
 			
 			return true;

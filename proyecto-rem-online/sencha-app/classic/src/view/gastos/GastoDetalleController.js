@@ -915,90 +915,89 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		
 	},
 	
-	onChangeAbonoCuenta: function(field, value){
+	onChangeAbonoCuenta: function(field, checked){
 		var me= this;
-		if(value){
-			me.lookupReference('ibanRef').setDisabled(false);
-			me.lookupReference('titularCuentaRef').setDisabled(false);
-			me.lookupReference('nifTitularCuentaRef').setDisabled(false);
-//			
-			me.lookupReference('pagadoConexionBankiaRef').setValue(false);
-			me.lookupReference('incluirPagoProvisionRef').setValue(false);
-			me.lookupReference('oficinaRef').setDisabled(true);
-			me.lookupReference('numeroConexionRef').setDisabled(true);
-			
-			
-			
-		}
-		else{
-			me.lookupReference('titularCuentaRef').setDisabled(true);
-			me.lookupReference('nifTitularCuentaRef').setDisabled(true);
-			me.lookupReference('ibanRef').setDisabled(true);
+
+
+		// Habilitamos/deshabilitamos campos
+		me.lookupReference('ibanRef').setDisabled(!checked);
+		me.lookupReference('titularCuentaRef').setDisabled(!checked);
+		me.lookupReference('nifTitularCuentaRef').setDisabled(!checked);
+		
+		if(checked){			
+			// Desmarcamos el resto de opciones
+			me.lookupReference('pagadoConexionBankiaRef').setValue(!checked);
+			me.lookupReference('incluirPagoProvisionRef').setValue(!checked);
+			me.lookupReference('anticipoRef').setValue(!checked);
+			me.lookupReference('fechaPago').setAllowBlank(true);
+		} else {
+			me.lookupReference('iban1').setValue("");
+			me.lookupReference('iban2').setValue("");
+			me.lookupReference('iban3').setValue("");
+			me.lookupReference('iban4').setValue("");
+			me.lookupReference('iban5').setValue("");
+			me.lookupReference('iban6').setValue("");
+			me.lookupReference('titularCuentaRef').setValue("");
+			me.lookupReference('nifTitularCuentaRef').setValue("");
+			me.lookupReference('fechaPago').setAllowBlank(true);
 		}
 		
 	},
 	
-	onChangePagadoBankia: function(field, value){
+	onChangePagadoBankia: function(field, checked){
 		var me= this;
-		if(value){
-			me.lookupReference('oficinaRef').setDisabled(false);
-			me.lookupReference('numeroConexionRef').setDisabled(false);
-			me.lookupReference('fechaConexionRef').setDisabled(false);
+
+		// Habilitamos/deshabilitamos campos
+		me.lookupReference('oficinaRef').setDisabled(!checked);
+		me.lookupReference('numeroConexionRef').setDisabled(!checked);
+		me.lookupReference('fechaConexionRef').setDisabled(!checked);
 			
+		if(checked){
+			// Desmarcamos el resto de opciones
+			me.lookupReference('abonoCuentaRef').setValue(!checked);
+			me.lookupReference('incluirPagoProvisionRef').setValue(!checked);
+			me.lookupReference('anticipoRef').setValue(!checked);
+			me.lookupReference('fechaPago').setAllowBlank(false);
+		} else {
+			me.lookupReference('oficinaRef').setValue("");
+			me.lookupReference('numeroConexionRef').setValue("");
+			me.lookupReference('fechaConexionRef').setValue("");
+			me.lookupReference('fechaPago').setAllowBlank(true);
+		}
+	},
+	
+	onChangePagadoProvision: function(field, checked){
+		var me= this;
 		
-			me.lookupReference('abonoCuentaRef').setValue(false);
-			me.lookupReference('incluirPagoProvisionRef').setValue(false);
-			me.lookupReference('titularCuentaRef').setDisabled(true);
-			me.lookupReference('nifTitularCuentaRef').setDisabled(true);
-			me.lookupReference('ibanRef').setDisabled(true);
-			
-
-		}
-		else{
-			me.lookupReference('oficinaRef').setDisabled(true);
-			me.lookupReference('numeroConexionRef').setDisabled(true);
-			me.lookupReference('fechaConexionRef').setDisabled(true);
+		if(checked){
+			me.lookupReference('abonoCuentaRef').setValue(!checked);
+			me.lookupReference('pagadoConexionBankiaRef').setValue(!checked);
+			me.lookupReference('anticipoRef').setValue(!checked);
+			me.lookupReference('fechaPago').setAllowBlank(false);			
+		} else {
+			me.lookupReference('fechaPago').setAllowBlank(true);
 		}
 	},
 	
-	onChangePagadoProvision: function(field, value){
-		var me= this;
-		if(value){
-			me.lookupReference('abonoCuentaRef').setValue(false);
-			me.lookupReference('pagadoConexionBankiaRef').setValue(false);
-			me.lookupReference('titularCuentaRef').setDisabled(true);
-			me.lookupReference('nifTitularCuentaRef').setDisabled(true);
-			me.lookupReference('ibanRef').setDisabled(true);
-			me.lookupReference('oficinaRef').setDisabled(true);
-			me.lookupReference('numeroConexionRef').setDisabled(true);
+	onChangeAnticipo: function(field, checked) {
+		
+		var me = this;
+		
+		me.lookupReference('fechaAnticipoRef').setDisabled(!checked);
 			
+		if(checked){
+			// Desmarcamos el resto de opciones
+			me.lookupReference('abonoCuentaRef').setValue(!checked);
+			me.lookupReference('incluirPagoProvisionRef').setValue(!checked);
+			me.lookupReference('pagadoConexionBankiaRef').setValue(!checked);
+			me.lookupReference('fechaPago').setAllowBlank(false);
+		} else {
+			me.lookupReference('fechaAnticipoRef').setValue("");
+			me.lookupReference('fechaPago').setAllowBlank(true);
 		}
-		else{
-
-		}
+		
 	},
 	
-	onChangeReembolsarPagoTercero: function(field, value){
-		var me= this;
-
-		if((Ext.isString(value) && value == "true") || (Ext.isBoolean(value) && value)) {
-			me.lookupReference('incluirPagoProvisionRef').setDisabled(false);
-			me.lookupReference('abonoCuentaRef').setDisabled(false);
-			me.lookupReference('pagadoConexionBankiaRef').setDisabled(false);
-			me.lookupReference('fieldBankia').setDisabled(false);
-			me.lookupReference('fieldAbonar').setDisabled(false);
-			me.lookupReference('fieldGestoria').setDisabled(false);
-			
-		}
-		else{
-			me.lookupReference('abonoCuentaRef').setValue(false);
-			me.lookupReference('pagadoConexionBankiaRef').setValue(false);
-			me.lookupReference('incluirPagoProvisionRef').setValue(false);
-			me.lookupReference('fieldBankia').setDisabled(true);
-			me.lookupReference('fieldAbonar').setDisabled(true);
-			me.lookupReference('fieldGestoria').setDisabled(true);
-		}
-	},
 	
 	abrirFormularioAdjuntarDocumentos: function(grid) {
 		

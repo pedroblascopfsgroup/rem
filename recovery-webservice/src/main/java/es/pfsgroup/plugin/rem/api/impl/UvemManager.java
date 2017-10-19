@@ -78,8 +78,8 @@ public class UvemManager implements UvemManagerApi {
 	private final String INSTANCIA_DECISION_ALTA = "ALTA";
 	private final String INSTANCIA_DECISION_CONSULTA = "CONS";
 	private final String INSTANCIA_DECISION_MODIFICACION = "MODI";
-	
 	private final String COCGUS = "0562";
+	private final String INSTANCIA_DECISION_MODIFICACION_3 = "MOD3";
 
 	private String URL = "";
 	private String ALIAS = "";
@@ -107,7 +107,8 @@ public class UvemManager implements UvemManagerApi {
 
 	@Autowired
 	private RestLlamadaDao llamadaDao;
-
+	
+	
 	private void iniciarServicio() throws WIException {
 		if (appProperties == null) {
 			// esto solo se ejecuta desde el jar ejecutable de pruebas. No
@@ -685,6 +686,8 @@ public class UvemManager implements UvemManagerApi {
 			// obteniendo el comité con los datos facilitados en la entrada al
 			// servicio.
 			instanciaDecisionDto.setCodigoDeOfertaHaya("0");
+			instanciaDecisionDto.setImporteReserva(null);
+			instanciaDecisionDto.setCodTipoArras(null);
 			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_CONSULTA);
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
@@ -706,6 +709,27 @@ public class UvemManager implements UvemManagerApi {
 		ResultadoInstanciaDecisionDto instancia = new ResultadoInstanciaDecisionDto();
 		try {
 			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_MODIFICACION);
+		} catch (WIException e) {
+			logger.error("error en UvemManager", e);
+			throw new JsonViewerException(e.getMessage());
+		}
+		return instancia;
+	}
+	
+	/**
+	 * Invoca al servicio GMPDJB13_INS de BANKIA para modificar una instancia de
+	 * decisión de una oferta (MOD3)
+	 * Necesita pasarle el parametro codigoCOTPRA al dto.
+	 * 
+	 * @param instanciaDecisionDto
+	 * @return
+	 */
+	@Override
+	public ResultadoInstanciaDecisionDto modificarInstanciaDecisionTres(InstanciaDecisionDto instanciaDecisionDto)
+			throws Exception {
+		ResultadoInstanciaDecisionDto instancia = new ResultadoInstanciaDecisionDto();
+		try {
+			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_MODIFICACION_3);
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
 			throw new JsonViewerException(e.getMessage());
@@ -743,25 +767,28 @@ public class UvemManager implements UvemManagerApi {
 			if (instanciaDecisionDto.getTitulares() != null && instanciaDecisionDto.getTitulares() != null) {
 				for (TitularDto titular : instanciaDecisionDto.getTitulares()) {
 					StructGMPDJB13_INS_NumeroDeOcurrenciasnumocx structTitular = new StructGMPDJB13_INS_NumeroDeOcurrenciasnumocx();
-					// tipo doc
-					structTitular.setClaseDeDocumentoIdentificadorcocldo(titular.getTipoDocumentoCliente());
-					// n documento
-					structTitular.setDniNifDelTitularDeLaOfertanudnio(titular.getNumeroDocumento());
+					// n ursus
+					if (titular.getNumeroUrsus() != null) {
+						structTitular.setIdentificadorClienteOfertaidclow((int) (long) titular.getNumeroUrsus());
+					}else{
+						// tipo doc
+						structTitular.setClaseDeDocumentoIdentificadorcocldo(titular.getTipoDocumentoCliente());
+						// n documento
+						structTitular.setDniNifDelTitularDeLaOfertanudnio(titular.getNumeroDocumento());
+						// nombre completo titular
+						structTitular.setNombreYApellidosTitularDeOfertanotiof(titular.getNombreCompletoCliente());
+					}
+					
 					// el conyuge
 					if (titular.getConyugeNumeroUrsus() != null) {
 						structTitular.setIdentClienteConyugeOfertaidclww((int) (long) titular.getConyugeNumeroUrsus());
 					}
-					// n ursus
-					if (titular.getNumeroUrsus() != null) {
-						structTitular.setIdentificadorClienteOfertaidclow((int) (long) titular.getNumeroUrsus());
-					}
-					// nombre completo titular
-					structTitular.setNombreYApellidosTitularDeOfertanotiof(titular.getNombreCompletoCliente());
+					
 					
 					//% de participación en la compra
 					Porcentaje9 porcentajeCompra = new Porcentaje9();
-					porcentajeCompra.setPorcentaje((int)titular.getPorcentajeCompra().longValue());
-					porcentajeCompra.setNumDecimales("BC");
+					porcentajeCompra.setPorcentaje((int)titular.getPorcentajeCompra().longValue()*100);
+					porcentajeCompra.setNumDecimales("02");
 					structTitular.setPorcentajeCompraBISA(porcentajeCompra);
 
 					vectorTitulares.add(structTitular);
@@ -806,8 +833,8 @@ public class UvemManager implements UvemManagerApi {
 			Porcentaje9 porcentajeImpuesto = null;
 			porcentajeImpuesto = new Porcentaje9();
 			if (!Checks.esNulo(instanciaData.getPorcentajeImpuesto())) {
-				porcentajeImpuesto.setPorcentaje(instanciaData.getPorcentajeImpuesto());
-				porcentajeImpuesto.setNumDecimales("BC");
+				porcentajeImpuesto.setPorcentaje(instanciaData.getPorcentajeImpuesto()*100);
+				porcentajeImpuesto.setNumDecimales("02");
 				struct.setPorcentajeImpuestoBISA(porcentajeImpuesto);
 			}
 
@@ -900,19 +927,30 @@ public class UvemManager implements UvemManagerApi {
 			} else {
 				servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_VENTA);
 			}
+			
+			if(accion.equals(INSTANCIA_DECISION_MODIFICACION_3)) {
+				//Modificacion de honorarios prescriptor
+				if(instanciaDecisionDto.getCodigoCOTPRA() == InstanciaDecisionDataDto.PROPUESTA_HONORARIOS){
+					servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_HONORARIOS);		
+				}
+				//Modificación de titulares
+				if(instanciaDecisionDto.getCodigoCOTPRA() == InstanciaDecisionDataDto.PROPUESTA_TITULARES){
+					servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_TITULARES);				
+				}
+				//Modificación condicionantes económicos
+				if(instanciaDecisionDto.getCodigoCOTPRA() == InstanciaDecisionDataDto.PROPUESTA_CONDICIONANTES_ECONOMICOS){
+					servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_CONDICIONANTES_ECONOMICOS);
+				}
+				
+			}
 
 			if (numeroOcurrencias != null) {
 				servicioGMPDJB13_INS.setNumeroDeOcurrenciasnumocu(numeroOcurrencias);
 			}
-			// el comite superior para el alta siempre es 0
-			servicioGMPDJB13_INS.setCodigoComiteSuperiorcocom3((short) 0);
-
-			// codigo uvem de la ofician prescriptora
-			servicioGMPDJB13_INS.setIdentificadorDelColaboradoridcola("C000");
 
 			// Importe de la reserva
 			ImporteMonetario importeMonetarioReserva = new ImporteMonetario();
-			if (instanciaDecisionDto.getImporteReserva() != null) {
+			if (instanciaDecisionDto.getImporteReserva() != null ) {
 				importeMonetarioReserva.setImporteConSigno(instanciaDecisionDto.getImporteReserva().longValue());
 			} else {
 				importeMonetarioReserva.setImporteConSigno(new Long(0));
@@ -947,6 +985,22 @@ public class UvemManager implements UvemManagerApi {
 			}
 
 			servicioGMPDJB13_INS.setCodEntidadRepresntClienteUrsusqcenre(instanciaDecisionDto.getQcenre());
+
+			if(instanciaDecisionDto.getCodComiteSuperior() != null) {
+				servicioGMPDJB13_INS.setCodigoComiteSuperiorcocom3(Short.valueOf(instanciaDecisionDto.getCodComiteSuperior()));
+			}else {
+				//el comite superior para el alta siempre es 0
+				servicioGMPDJB13_INS.setCodigoComiteSuperiorcocom3((short)0);
+			}
+			
+			//codigo uvem de la ofician prescriptora
+			if(Checks.esNulo(instanciaDecisionDto.getCodigoProveedorUvem())){
+				servicioGMPDJB13_INS.setIdentificadorDelColaboradoridcola("C000");
+			}
+			else{
+				servicioGMPDJB13_INS.setIdentificadorDelColaboradoridcola(instanciaDecisionDto.getCodigoProveedorUvem());
+			}
+			
 			// Requeridos por el servicio
 			servicioGMPDJB13_INS.setnumeroCliente(0);
 			servicioGMPDJB13_INS.setnumeroUsuario("");

@@ -65,8 +65,8 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 			{
 					ActivoValoraciones val = activo.getValoracion().get(i);
 					
-					
-					if(!Checks.esNulo(val.getFechaFin()) && val.getFechaFin().before(new Date())) {
+					//HREOS-2933
+					if(!Checks.esNulo(val.getFechaFin()) && val.getFechaFin().before(val.getFechaInicio())) {
 						// FIXME Batch?
 						activoApi.deleteValoracionPrecio(val.getId());					
 					

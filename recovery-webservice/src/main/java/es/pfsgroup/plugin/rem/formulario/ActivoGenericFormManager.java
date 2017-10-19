@@ -283,25 +283,26 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             			if (!Checks.esNulo(ofertaAceptada)) {
             				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
             				if (!Checks.esNulo(expediente)){
-            					if(trabajoApi.checkFormalizacion(tareaExterna)){
-			            			if(trabajoApi.checkBankia(tareaExterna)){
-			            				String codigoComite = null;
-										try {
-											codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
-										} catch (Exception e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										}
-										if(!Checks.esNulo(codigoComite))
-											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getDescripcion());
-			            			}else{
-				            				if(!Checks.esNulo(expediente.getComiteSancion()))
-				            					item.setValue(expediente.getComiteSancion().getDescripcion());
-				            			}
-            					}else{
-            						item.setValue(NO_APLICA);
-            					}
-		            		}
+            					item.setValue(NO_APLICA);
+//            					if(trabajoApi.checkFormalizacion(tareaExterna)){
+//			            			if(trabajoApi.checkBankia(tareaExterna)){
+//			            				String codigoComite = null;
+//										try {
+//											codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
+//										} catch (Exception e) {
+//											// TODO Auto-generated catch block
+//											e.printStackTrace();
+//										}
+//										if(!Checks.esNulo(codigoComite))
+//											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getDescripcion());
+//			            			}else{
+//				            				if(!Checks.esNulo(expediente.getComiteSancion()))
+//				            					item.setValue(expediente.getComiteSancion().getDescripcion());
+//				            			}
+//            					}else{
+//            						item.setValue(NO_APLICA);
+//            					}
+            				}
             			}
             		}
             		if(item.getNombre().equals("cartera")){
@@ -533,7 +534,25 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 
             				}
             			}
-            		}  
+            		}
+	        		if(item.getNombre().equals("comiteSuperior"))
+	        		{
+	        			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
+	        			if (!Checks.esNulo(ofertaAceptada)) {
+	        				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+	        				if (!Checks.esNulo(expediente)){
+	        					if(trabajoApi.checkFormalizacion(tareaExterna)){
+			            			if(trabajoApi.checkBankia(tareaExterna)){
+
+			            				if(!Checks.esNulo(expediente.getComiteSancion()))
+			            					item.setValue(expediente.getComiteSancion().getDescripcion());
+			            			}
+	        					}else{
+	        						item.setValue(NO_APLICA);
+	        					}
+		            		}
+	            		}
+	            	}
             	}
             	if(item.getType().equals(TIPO_CAMPO_NUMBER))
             	{

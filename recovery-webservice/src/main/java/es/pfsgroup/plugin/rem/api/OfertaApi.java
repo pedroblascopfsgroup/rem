@@ -481,7 +481,7 @@ public interface OfertaApi {
 	 * @param tareaExterna
 	 * @return String Error o null
 	 */
-	String altaComiteProcess(TareaExterna tareaExterna);
+	String altaComiteProcess(TareaExterna tareaExterna, String codigo);
 	
 	public boolean updateOfertantesByOfertaId(DtoOfertantesOferta dtoOfertantesOferta);
 	
@@ -516,6 +516,13 @@ public interface OfertaApi {
 	public void ocultarActivoOferta(Oferta oferta) throws Exception;
 	
 	public void desocultarActivoOferta(Oferta oferta) throws Exception;
+
+	/**
+	 * LLamada servicio web Bankia para modificaciones según tipo propuesta (MOD3) 
+	 * @param tareaExterna
+	 * @return
+	 */
+	public boolean modificacionesSegunPropuesta(TareaExterna tareaExterna);
 
 }
 

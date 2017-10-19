@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gfi.webIntegrator.WIException;
+
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
@@ -93,6 +95,7 @@ import es.pfsgroup.plugin.rem.oferta.dao.VOfertaActivoDao;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
+import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDataDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
@@ -1244,7 +1247,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		try {
-			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto);
+			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto, null);
 			ResultadoInstanciaDecisionDto resultadoDto = uvemManagerApi.altaInstanciaDecision(instanciaDecisionDto);
 			String codigoComite = resultadoDto.getCodigoComite();
 			DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
@@ -1275,7 +1278,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		try {
-			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto);
+			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto, null);
 			uvemManagerApi.modificarInstanciaDecision(instanciaDecisionDto);
 			return true;
 		} catch (Exception e) {
@@ -1286,7 +1289,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
-	public String altaComiteProcess(TareaExterna tareaExterna) {
+	public String altaComiteProcess(TareaExterna tareaExterna, String codComiteSuperior) {
 
 		try {
 
@@ -1304,7 +1307,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 
-			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto);
+			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto, codComiteSuperior);
+
 			ResultadoInstanciaDecisionDto resultadoDto = uvemManagerApi.altaInstanciaDecision(instanciaDecisionDto);
 			String codigoComite = resultadoDto.getCodigoComite();
 			DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
@@ -1340,7 +1344,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 
-			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto);
+			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto, null);
 			uvemManagerApi.modificarInstanciaDecision(instanciaDecisionDto);
 			return null;
 		} catch (JsonViewerException jve) {
@@ -2044,6 +2048,39 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 		}
+	}
+	
+	/**
+	 * MOD3
+	 * 
+	 * 
+	 */
+	@Override
+	public boolean modificacionesSegunPropuesta(TareaExterna tareaExterna) {
+		
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+		Long porcentajeImpuesto = null;
+		if (!Checks.esNulo(expediente.getCondicionante())) {
+			if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
+				porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
+			} 
+		}
+		
+		try {
+			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto, null);
+			instanciaDecisionDto.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_HONORARIOS);
+			uvemManagerApi.modificarInstanciaDecisionTres(instanciaDecisionDto);
+			instanciaDecisionDto.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_TITULARES);
+			uvemManagerApi.modificarInstanciaDecisionTres(instanciaDecisionDto);
+			instanciaDecisionDto.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_CONDICIONANTES_ECONOMICOS);
+			uvemManagerApi.modificarInstanciaDecisionTres(instanciaDecisionDto);
+			return true;
+		} catch (Exception e) {
+			logger.error("error en OfertasManager", e);
+			return false;
+		}
+		
 	}
 }
 

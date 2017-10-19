@@ -1044,7 +1044,18 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             }
         })
     },
+	T013_DefinicionOfertaValidacion: function() {
+		var me = this;
 
+		var cartera = me.up('tramitesdetalle').getViewModel().get('tramite.cartera');
+		var comiteSuperior = me.down('[name=comiteSuperior]');
+		if(cartera == 'Bankia'){
+			me.desocultarCampo(comiteSuperior);
+		}else{
+			me.ocultarCampo(comiteSuperior);
+		}
+		
+	},
     T013_FirmaPropietarioValidacion: function() {
         var me = this;
 
@@ -1265,6 +1276,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     campoNoObligatorio: function(campo) {
         var me = this;
         campo.allowBlank = true;
+    },
+    ocultarCampo: function(campo) {
+        var me = this;
+        campo.setHidden(true);
+    },
+    desocultarCampo: function(campo) {
+        var me = this;
+        campo.setHidden(false);
     }
 
 });

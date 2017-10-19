@@ -3256,7 +3256,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
 				}
 			}
-			InstanciaDecisionDto instancia = expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto);
+			InstanciaDecisionDto instancia = expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto,null);
 			String codigoComite = null;
 
 			ResultadoInstanciaDecisionDto resultadoDto;
@@ -3333,7 +3333,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	public InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente,
-			Long porcentajeImpuesto) throws Exception {
+			Long porcentajeImpuesto, String codComiteSuperior) throws Exception {
 		String tipoImpuestoCodigo = null;
 		InstanciaDecisionDto instancia = new InstanciaDecisionDto();
 		Double importeXActivo = null;
@@ -3354,7 +3354,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (Checks.esNulo(porcentajeImpuesto)) {
 			throw new JsonViewerException("No se ha indicado el porcentaje de impuesto en el campo Tipo aplicable.");
 		}
-
+		
 		Double importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta()
 				: oferta.getImporteContraOferta();
 		Double sumatorioImporte = new Double(0);
@@ -3505,8 +3505,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			instancia.setCodTipoArras(expediente.getReserva().getTipoArras().getCodigo());
 		}
 
-		
+		//MOD3
+		if(!Checks.esNulo(oferta.getPrescriptor())){
+			instancia.setCodigoProveedorUvem(oferta.getPrescriptor().getCodProveedorUvem());
+		}		
 
+		if(!Checks.esNulo(codComiteSuperior)) {
+			instancia.setCodComiteSuperior(codComiteSuperior);
+		}
 		return instancia;
 	}
 

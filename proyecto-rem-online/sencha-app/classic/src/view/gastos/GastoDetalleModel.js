@@ -97,6 +97,17 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 
 	     },
 	     
+	     seleccionadoAnticipo: function(get)  {
+	     	var me= this;
+	     	if(get('detalleeconomico.anticipo')=="true" || get('detalleeconomico.anticipo')==true){
+	     		return true;
+	     	}
+	     	else{
+	     		return false;
+	     	}
+	     	
+	     },
+	     
 	     sumatorioConceptosgasto: function(get) {
 
 	     	var importePrincipalSujeto = get('detalleeconomico.importePrincipalSujeto');

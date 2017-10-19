@@ -60,6 +60,7 @@ Ext.define('HreRem.view.activos.tramites.ReasignarTarea', {
 					{
 						xtype : 'fieldset',
 						title : 'Nuevo Gestor',
+						reference: 'formNuevoGestor',
 						defaults:{
 				    		layout:'column',
 				    		width: '50%',
@@ -79,6 +80,7 @@ Ext.define('HreRem.view.activos.tramites.ReasignarTarea', {
 											chainedReference: 'usuarioGestor',
 							            	displayField: 'descripcion',
 				    						valueField: 'id',
+				    						//allowBlank: true,
 				    						emptyText: 'Introduzca un gestor',
 											listeners: {
 												select: 'onChangeChainedComboGestores'
@@ -98,7 +100,7 @@ Ext.define('HreRem.view.activos.tramites.ReasignarTarea', {
 			    						emptyText: 'Introduzca un usuario',
 			    						enableKeyEvents:true,
 			    						forceSelection: true,
-			    						allowBlank: false,
+			    						//allowBlank: false,
 		    						    listeners: {
 		    						     'keyup': function() {
 		    						    	   this.getStore().clearFilter();
@@ -147,6 +149,7 @@ Ext.define('HreRem.view.activos.tramites.ReasignarTarea', {
 											chainedReference: 'usuarioSupervisor',
 							            	displayField: 'descripcion',
 				    						valueField: 'id',
+				    						//allowBlank: true,
 				    						emptyText: 'Introduzca un gestor',
 											listeners: {
 												select: 'onChangeChainedComboGestores'
@@ -166,7 +169,7 @@ Ext.define('HreRem.view.activos.tramites.ReasignarTarea', {
 			    						valueNotFoundText: me.nombreUsuarioSupervisor,
 			    						enableKeyEvents:true,
 			    						forceSelection: true,
-			    						allowBlank: false,
+			    						//allowBlank: false,
 		    						    listeners: {
 		    						     'keyup': function() {
 		    						    	   this.getStore().clearFilter();

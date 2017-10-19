@@ -221,7 +221,7 @@ BEGIN
       -- UPDATE MIG2_TRA_TRAMITES_OFERTAS (USU_ID, SUP_ID) --
       ---------------------------------------------------------------------------------------------------------------
       
-      DBMS_OUTPUT.PUT_LINE('[INFO] ACTUALIZANDO USU_ID Y SUP_ID...');
+      /*DBMS_OUTPUT.PUT_LINE('[INFO] ACTUALIZANDO USU_ID Y SUP_ID...');
       
       EXECUTE IMMEDIATE '
             MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' MIG2
@@ -259,7 +259,7 @@ BEGIN
       '
       ;
       
-      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada. '||SQL%ROWCOUNT||' Filas.');
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada. '||SQL%ROWCOUNT||' Filas.');*/
       
       ---------------------------------------------------------------------------------------------------------------
       -- INSERT ACT_TBJ_TRABAJO --

@@ -41,23 +41,13 @@ BEGIN
       DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA_1||'.');
       
       V_SENTENCIA := '
-        INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_1||' (
-                GPV_ACT_ID,
-                GPV_ID,
-                ACT_ID,
-                VERSION
-                )
-                SELECT
-                '||V_ESQUEMA||'.S_'||V_TABLA_1||'.NEXTVAL                               GPV_ACT_ID, 
-                GPV.GPV_ID                                                                                                              GPV_ID,
-                ACT.ACT_ID                                                                              ACT_ID,
-                0                                                                               VERSION
-                FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-                INNER JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV 
-                        ON GPV.GPV_NUM_GASTO_HAYA = MIG.GPT_GPV_ID
-                INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT 
-                        ON ACT.ACT_NUM_ACTIVO = MIG.GPT_ACT_NUMERO_ACTIVO
-				WHERE MIG.VALIDACION = 0
+        INSERT INTO REM01.GPV_ACT (GPV_ACT_ID, GPV_ID, ACT_ID)
+SELECT REM01.S_GPV_ACT.NEXTVAL, T2.GPV_ID, T3.ACT_ID
+FROM REM01.MIG2_GPV_ACT_TBJ T1
+JOIN REM01.GPV_GASTOS_PROVEEDOR T2 ON T1.GPT_GPV_ID = T2.GPV_NUM_GASTO_HAYA
+JOIN REM01.ACT_ACTIVO T3 ON T1.GPT_ACT_NUMERO_ACTIVO = T3.ACT_NUM_ACTIVO
+LEFT JOIN REM01.GPV_ACT T4 ON T4.GPV_ID = T2.GPV_ID AND T3.ACT_ID = T4.ACT_ID
+WHERE T1.VALIDACION = 0 AND T4.GPV_ACT_ID IS NULL
                 '
                 ;
       EXECUTE IMMEDIATE V_SENTENCIA;
@@ -68,32 +58,20 @@ BEGIN
       DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA_2||'.');
       
       V_SENTENCIA := '
-        INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_2||' (
-                GPV_TBJ_ID,
-                GPV_ID,
-                TBJ_ID,
-                USUARIOCREAR,
-                VERSION
-                )
-                SELECT
-                '||V_ESQUEMA||'.S_'||V_TABLA_2||'.NEXTVAL                               GPV_TBJ_ID, 
-                GPV.GPV_ID                                                                                                              GPV_ID,
-                TBJ.TBJ_ID                                                                              TBJ_ID,
-                '''||V_USUARIO||''' AS USUARIOCREAR,
-                0                                                                               VERSION
-                
-                FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
-                INNER JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV 
-                        ON GPV.GPV_NUM_GASTO_HAYA = MIG.GPT_GPV_ID
-                INNER JOIN '||V_ESQUEMA||'.ACT_TBJ_TRABAJO TBJ 
-                        ON TBJ.TBJ_NUM_TRABAJO = MIG.GPT_TBJ_NUM_TRABAJO
-
-			     WHERE gpT_tbj_num_trabajo NOT IN 
-                   (select gpT_tbj_num_trabajo from '||V_ESQUEMA||'.'||V_TABLA_MIG||' 
-                     where gpT_tbj_num_trabajo is not null
-                     GROUP BY gpT_tbj_num_trabajo
-                     HAVING COUNT(1) > 1)
-					AND MIG.VALIDACION = 0
+        INSERT INTO REM01.GPV_TBJ (GPV_TBJ_ID, GPV_ID, TBJ_ID, USUARIOCREAR, FECHACREAR)
+WITH TBJ_DUP AS (
+    SELECT GPT_TBJ_NUM_TRABAJO
+    FROM REM01.MIG2_GPV_ACT_TBJ
+    WHERE GPT_TBJ_NUM_TRABAJO IS NOT NULL
+    GROUP BY GPT_TBJ_NUM_TRABAJO
+    HAVING COUNT(1) = 1)
+SELECT REM01.S_GPV_TBJ.NEXTVAL, T2.GPV_ID, T3.TBJ_ID, '''||V_USUARIO||''', SYSDATE
+FROM REM01.MIG2_GPV_ACT_TBJ T1
+JOIN REM01.GPV_GASTOS_PROVEEDOR T2 ON T2.GPV_NUM_GASTO_HAYA = T1.GPT_GPV_ID
+JOIN REM01.ACT_TBJ_TRABAJO T3 ON T3.TBJ_NUM_TRABAJO = T1.GPT_TBJ_NUM_TRABAJO
+JOIN TBJ_DUP T4 ON T4.GPT_TBJ_NUM_TRABAJO = T3.TBJ_NUM_TRABAJO
+LEFT JOIN REM01.GPV_TBJ T5 ON T5.GPV_ID = T2.GPV_ID AND T5.TBJ_ID = T3.TBJ_ID
+WHERE T1.VALIDACION = 0 AND T5.GPV_TBJ_ID IS NULL
 
                 '
                 ;
@@ -103,10 +81,10 @@ BEGIN
       
       COMMIT;
       
-      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA_1||''',''10''); END;';
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA_1||''',''1''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
 
-      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA_2||''',''10''); END;';
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA_2||''',''1''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
      
       
@@ -118,7 +96,7 @@ BEGIN
             FROM MIG2_GPV_ACT_TBJ
             WHERE VALIDACION = 0
             GROUP BY GPT_GPV_ID)
-          SELECT GPV.GPV_ID, ACT.ACT_ID, AUX.NUM_ACTIVOS, ROUND(100/AUX.NUM_ACTIVOS,4) AS PORCENTAJE
+          SELECT GPV.GPV_ID, ACT.ACT_ID, ROUND(100/AUX.NUM_ACTIVOS,4) AS PORCENTAJE
           FROM MIG2_GPV_ACT_TBJ MIG2
           JOIN NUM_ACTIVOS AUX ON MIG2.GPT_GPV_ID = AUX.GPT_GPV_ID
           JOIN REM01.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = MIG2.GPT_GPV_ID
@@ -141,7 +119,7 @@ BEGIN
                 FROM MIG2_GPV_ACT_TBJ
                 WHERE VALIDACION = 0)
             GROUP BY GPT_TBJ_NUM_TRABAJO)
-          SELECT DISTINCT TBJ.TBJ_ID, ACT.ACT_ID, AUX.NUM_ACTIVOS, ROUND(100/AUX.NUM_ACTIVOS,4) AS PORCENTAJE
+          SELECT DISTINCT TBJ.TBJ_ID, ACT.ACT_ID, ROUND(100/AUX.NUM_ACTIVOS,4) AS PORCENTAJE
           FROM MIG2_GPV_ACT_TBJ MIG2
           JOIN NUM_ACTIVOS AUX ON MIG2.GPT_TBJ_NUM_TRABAJO = AUX.GPT_TBJ_NUM_TRABAJO
           JOIN REM01.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = MIG2.GPT_ACT_NUMERO_ACTIVO

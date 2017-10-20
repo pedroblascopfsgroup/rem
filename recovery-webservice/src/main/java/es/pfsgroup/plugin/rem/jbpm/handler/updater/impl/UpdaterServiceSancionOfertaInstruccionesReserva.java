@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -86,10 +87,10 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 				if(!Checks.esNulo(ofertaAceptada.getActivoPrincipal()) 
 						&& !Checks.esNulo(ofertaAceptada.getActivoPrincipal().getCartera())
 						&& ofertaAceptada.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)){
-					try{
-						ofertaApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
-					}catch(Exception e){
-						logger.error("Error al invocar el servicio MOD3.", e);
+					boolean respuestaUvem= ofertaApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
+					if(!respuestaUvem){
+						throw new UserException("Error al invocar el servicio MOD3");
+						
 					}
 				}
 			}

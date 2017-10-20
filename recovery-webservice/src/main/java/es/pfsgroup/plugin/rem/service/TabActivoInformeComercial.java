@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,12 +25,14 @@ import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoLocalComercial;
 import es.pfsgroup.plugin.rem.model.ActivoPlazaAparcamiento;
+import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConstruccion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
 
 @Component
@@ -425,9 +428,26 @@ public class TabActivoInformeComercial implements TabActivoService {
 				if (!Checks.esNulo(activo.getInfoComercial().getZonaComun())) {
 					beanUtilNotNull.copyProperties(activo.getInfoComercial().getZonaComun(), activoInformeDto);
 				}
-
 				
+				//// HREOS-3025 Valor estimado del mediador: No se copia donde debe
+				List<ActivoValoraciones> valoraciones = activo.getValoracion();
+				if (!Checks.esNulo(valoraciones) || !Checks.estaVacio(valoraciones)) {
+					for (ActivoValoraciones valoracion : valoraciones) {
+						if (!Checks.esNulo(activoInformeDto.getValorEstimadoVenta())) {
+							if (DDTipoPrecio.CODIGO_TPC_ESTIMADO_VENTA.equals(valoracion.getTipoPrecio().getCodigo())) {
+								valoracion.setImporte(activoInformeDto.getValorEstimadoVenta());
+							}
+						}
+						if (!Checks.esNulo(activoInformeDto.getValorEstimadoRenta())) {
+							if (DDTipoPrecio.CODIGO_TPC_ESTIMADO_RENTA.equals(valoracion.getTipoPrecio().getCodigo())) {
+								valoracion.setImporte(activoInformeDto.getValorEstimadoRenta());
+							}
+						}
+					}
+				}
+				activo.setValoracion(valoraciones);
 				activo.setInfoComercial(genericDao.save(ActivoInfoComercial.class, activo.getInfoComercial()));
+				genericDao.save(Activo.class, activo);
 			}
 			
 

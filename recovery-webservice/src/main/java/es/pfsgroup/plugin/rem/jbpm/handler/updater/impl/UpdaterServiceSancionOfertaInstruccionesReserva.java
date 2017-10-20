@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -44,6 +46,8 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
+	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaInstruccionesReserva.class);
+	
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
@@ -81,8 +85,12 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 			if(!Checks.estaVacio(valores)){
 				if(!Checks.esNulo(ofertaAceptada.getActivoPrincipal()) 
 						&& !Checks.esNulo(ofertaAceptada.getActivoPrincipal().getCartera())
-						&& ofertaAceptada.getActivoPrincipal().getCartera().equals(DDCartera.CODIGO_CARTERA_BANKIA)){
-					ofertaApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
+						&& ofertaAceptada.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)){
+					try{
+						ofertaApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
+					}catch(Exception e){
+						logger.error("Error al invocar el servicio MOD3.", e);
+					}
 				}
 			}
 		}

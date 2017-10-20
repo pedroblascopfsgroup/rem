@@ -69,6 +69,11 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 
 			if(!Checks.esNulo(expediente)) {
 
+				Boolean tieneReserva = ofertaApi.checkReserva(valores.get(0).getTareaExterna()) && !Checks.esNulo(expediente.getReserva()) && 
+						(DDEstadosReserva.CODIGO_FIRMADA.equals(expediente.getReserva().getEstadoReserva().getCodigo()) ||
+								DDEstadosReserva.CODIGO_RESUELTA_POSIBLE_REINTEGRO.equals(expediente.getReserva().getEstadoReserva().getCodigo()) || 
+								DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION.equals(expediente.getReserva().getEstadoReserva().getCodigo()));
+
 				for(TareaExternaValor valor :  valores) {
 
 					if(COMBO_PROCEDE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -145,6 +150,15 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						DDMotivoAnulacionExpediente motivoAnulacion = genericDao.get(DDMotivoAnulacionExpediente.class, filtro);
 						expediente.setMotivoAnulacion(motivoAnulacion);
 
+						if(!tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
+							// Notificar del rechazo de la oferta a Bankia.
+							try {
+								uvemManagerApi.anularOferta(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionOfertaPorCodigoMotivoAnulacion(valor.getValor()));
+							} catch (Exception e) {
+								logger.error("Error al invocar el servicio de anular oferta de Uvem.", e);
+							}
+						}
+
 						//Tipo rechazo y motivo rechazo ofertas cajamar
 						DDTipoRechazoOferta tipoRechazo = (DDTipoRechazoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoRechazoOferta.class, DDTipoRechazoOferta.CODIGO_ANULADA);
 
@@ -156,34 +170,27 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 					}
 				}
 
-				if(valores != null && !valores.isEmpty()) {
-					Boolean tieneReserva = ofertaApi.checkReserva(valores.get(0).getTareaExterna()) && !Checks.esNulo(expediente.getReserva()) && 
-							(DDEstadosReserva.CODIGO_FIRMADA.equals(expediente.getReserva().getEstadoReserva().getCodigo()) ||
-									DDEstadosReserva.CODIGO_RESUELTA_POSIBLE_REINTEGRO.equals(expediente.getReserva().getEstadoReserva().getCodigo()) || 
-									DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION.equals(expediente.getReserva().getEstadoReserva().getCodigo()));
-					// El expediente NO tiene reserva.
-					if(!tieneReserva) {
-						//Anula el expediente
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
-						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-						expediente.setEstado(estado);
-						expediente.setFechaAnulacion(new Date());
+				if(valores != null && !valores.isEmpty() && !tieneReserva) {
+					// Anula el expediente si NO tiene reserva.
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
+					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+					expediente.setEstado(estado);
+					expediente.setFechaAnulacion(new Date());
 
-						//Finaliza el trámite
-						Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
-						tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
-						genericDao.save(ActivoTramite.class, tramite);
+					//Finaliza el trámite
+					Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
+					tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
+					genericDao.save(ActivoTramite.class, tramite);
 
-						//Rechaza la oferta y descongela el resto
-						ofertaApi.rechazarOferta(ofertaAceptada);
-						try {
-							ofertaApi.descongelarOfertas(expediente);
-						} catch (Exception e) {
-							logger.error("Error descongelando ofertas.", e);
-						}
-
-						genericDao.save(ExpedienteComercial.class, expediente);
+					//Rechaza la oferta y descongela el resto
+					ofertaApi.rechazarOferta(ofertaAceptada);
+					try {
+						ofertaApi.descongelarOfertas(expediente);
+					} catch (Exception e) {
+						logger.error("Error descongelando ofertas.", e);
 					}
+
+					genericDao.save(ExpedienteComercial.class, expediente);
 				}
 			}
 

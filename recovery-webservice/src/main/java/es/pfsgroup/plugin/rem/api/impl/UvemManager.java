@@ -1229,6 +1229,8 @@ public class UvemManager implements UvemManagerApi {
 	public void notificarDevolucionReserva(String codigoDeOfertaHaya, MOTIVO_ANULACION motivoAnulacionReserva,
 			INDICADOR_DEVOLUCION_RESERVA indicadorDevolucionReserva,
 			CODIGO_SERVICIO_MODIFICACION codigoServicioModificacion) throws Exception {
+		
+		logger.info("------------ LLAMADA WS NOTIFICAR DEV RESERVA -----------------");
 		servicioGMPTOE83_INS = new GMPTOE83_INS();
 		String errorDesc = null;
 		try {
@@ -1319,8 +1321,8 @@ public class UvemManager implements UvemManagerApi {
 				servicioGMPTOE83_INS.setIndicadorDevolucionReservabindre('N');
 			}
 
-			servicioGMPETS07_INS.setAlias(ALIAS);
-			servicioGMPETS07_INS.execute();
+			servicioGMPTOE83_INS.setAlias(ALIAS);
+			servicioGMPTOE83_INS.execute();
 
 		} catch (WIException wie) {
 			logger.error("error en UvemManager", wie);
@@ -1358,6 +1360,7 @@ public class UvemManager implements UvemManagerApi {
 	@Override
 	public void anularOferta(String codigoDeOfertaHaya, MOTIVO_ANULACION_OFERTA motivoAnulacionOferta)
 			throws Exception {
+		logger.info("------------ LLAMADA WS ANULAR RESERVA -----------------");
 		servicioGMPAJC29_INS = new GMPAJC29_INS();
 		String errorDesc = null;
 
@@ -1501,7 +1504,7 @@ public class UvemManager implements UvemManagerApi {
 			errorDesc = wie.getMessage();
 			throw new JsonViewerException(wie.getMessage());
 		} finally {
-			registrarLlamada(servicioGMPTOE83_INS, errorDesc);
+			registrarLlamada(servicioGMPAJC29_INS, errorDesc);
 		}
 	}
 

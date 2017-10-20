@@ -831,7 +831,7 @@ public class UvemManager implements UvemManagerApi {
 			Porcentaje9 porcentajeImpuesto = null;
 			porcentajeImpuesto = new Porcentaje9();
 			if (!Checks.esNulo(instanciaData.getPorcentajeImpuesto())) {
-				porcentajeImpuesto.setPorcentaje(instanciaData.getPorcentajeImpuesto() * 100);
+				porcentajeImpuesto.setPorcentaje(instanciaData.getPorcentajeImpuesto());
 				porcentajeImpuesto.setNumDecimales("02");
 				struct.setPorcentajeImpuestoBISA(porcentajeImpuesto);
 			}
@@ -1229,6 +1229,8 @@ public class UvemManager implements UvemManagerApi {
 	public void notificarDevolucionReserva(String codigoDeOfertaHaya, MOTIVO_ANULACION motivoAnulacionReserva,
 			INDICADOR_DEVOLUCION_RESERVA indicadorDevolucionReserva,
 			CODIGO_SERVICIO_MODIFICACION codigoServicioModificacion) throws Exception {
+		
+		logger.info("------------ LLAMADA WS NOTIFICAR DEV RESERVA -----------------");
 		servicioGMPTOE83_INS = new GMPTOE83_INS();
 		String errorDesc = null;
 		try {
@@ -1319,8 +1321,8 @@ public class UvemManager implements UvemManagerApi {
 				servicioGMPTOE83_INS.setIndicadorDevolucionReservabindre('N');
 			}
 
-			servicioGMPETS07_INS.setAlias(ALIAS);
-			servicioGMPETS07_INS.execute();
+			servicioGMPTOE83_INS.setAlias(ALIAS);
+			servicioGMPTOE83_INS.execute();
 
 		} catch (WIException wie) {
 			logger.error("error en UvemManager", wie);
@@ -1338,11 +1340,9 @@ public class UvemManager implements UvemManagerApi {
 			return MOTIVO_ANULACION.COMPRADOR_NO_INTERESADO;
 		} else if (DDMotivoAnulacionReserva.CODIGO_DECISION_DEL_AREA.equals(codigoMotivoAnulacionReserva)) {
 			return MOTIVO_ANULACION.DECISION_AREA;
-		} else if (DDMotivoAnulacionReserva.CODIGO_NO_DISPONE_DINERO_FINANCIACION
-				.equals(codigoMotivoAnulacionReserva)) {
+		} else if (DDMotivoAnulacionReserva.CODIGO_NO_DISPONE_DINERO_FINANCIACION.equals(codigoMotivoAnulacionReserva)) {
 			return MOTIVO_ANULACION.NO_DISPONE_DINERO_FINANCIACION;
-		} else if (DDMotivoAnulacionReserva.CODIGO_CIRCUNSTANCIAS_DISTINTAS_A_LAS_PACTADAS
-				.equals(codigoMotivoAnulacionReserva)) {
+		} else if (DDMotivoAnulacionReserva.CODIGO_CIRCUNSTANCIAS_DISTINTAS_A_LAS_PACTADAS.equals(codigoMotivoAnulacionReserva)) {
 			return MOTIVO_ANULACION.CIRCUSTANCIAS_DISTINTAS_PACTADAS;
 		} else if (DDMotivoAnulacionReserva.CODIGO_NO_SE_CUMPLEN_CONDICIONANTES.equals(codigoMotivoAnulacionReserva)) {
 			return MOTIVO_ANULACION.NO_CUMPLEN_CONDICIONANTES;
@@ -1358,6 +1358,7 @@ public class UvemManager implements UvemManagerApi {
 	@Override
 	public void anularOferta(String codigoDeOfertaHaya, MOTIVO_ANULACION_OFERTA motivoAnulacionOferta)
 			throws Exception {
+		logger.info("------------ LLAMADA WS ANULAR RESERVA -----------------");
 		servicioGMPAJC29_INS = new GMPAJC29_INS();
 		String errorDesc = null;
 
@@ -1501,7 +1502,7 @@ public class UvemManager implements UvemManagerApi {
 			errorDesc = wie.getMessage();
 			throw new JsonViewerException(wie.getMessage());
 		} finally {
-			registrarLlamada(servicioGMPTOE83_INS, errorDesc);
+			registrarLlamada(servicioGMPAJC29_INS, errorDesc);
 		}
 	}
 

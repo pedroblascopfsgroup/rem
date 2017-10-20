@@ -406,10 +406,12 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
  		if(combo.getName()=='tipoGestor' && !Ext.isEmpty(combo.getSelection())) {
  			me.getView().down("[reference=usuarioGestor]").setHidden(false);
  	 		me.getView().down("[reference=usuarioGestorText]").setHidden(true);
+ 	 		me.getView().down("[reference=usuarioGestorText]").allowBlank = false;
  		}
  		if(combo.getName()=='tipoGestorSupervisor' && !Ext.isEmpty(combo.getSelection())){
  			me.getView().down("[reference=usuarioSupervisor]").setHidden(false);
  			me.getView().down("[reference=usuarioSupervisorText]").setHidden(true);	
+ 			me.getView().down("[reference=usuarioSupervisorText]").allowBlank = false;
  		}
  		
 		
@@ -426,8 +428,10 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
  							chainedCombo.setSelection(1);
  						};
  						chainedCombo.setDisabled(false);
+ 						chainedCombo.allowBlank = false;
  					} else {
  						chainedCombo.setDisabled(true);
+ 						chainedCombo.allowBlank = true;
  					}
  			}
  		});
@@ -438,6 +442,7 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
  				chainedDos.clearValue();
  				chainedDos.getStore().removeAll();
  				chainedDos.setDisabled(true);
+ 				chainedDos.allowBlank = true;
  			}
  		}
  	},
@@ -446,35 +451,35 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
  		var me = this;
 		var formulario = me.getView().down('[reference=formReasignarTarea]');
 		if(formulario.getForm().isValid()) {
-			
 			button.up('window').mask("Guardando....");
-				var idTareaExterna = me.getView().down('[reference=listadoTareasTramite]').getSelectionModel().getSelection()[0].get("id");
-       			me.getView().mask(HreRem.i18n("msg.mask.loading"));
-    			var parametros = formulario.getValues();
-    			parametros.idTarea= idTareaExterna;
-    			
-    			var url = $AC.getRemoteUrl('agenda/reasignarTarea');
-    	    	var data;
-    	    	Ext.Ajax.request({
-    	    			url:url,
-    	    			params: parametros,
-    	    			success: function(response,opts){
-    	    				data = Ext.decode(response.responseText);
-    	    				if(data.success == 'true')
-    	    					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-    	    				else
-    	    					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.reasignacion")); 
-    	    			},
-    	    			failure: function(options, success, response){
-    	    				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.reasignacion")); 
-    	    			},
-    	    			callback: function(options, success, response){
-    	    				me.getView().unmask();
-    	    				button.up('window').unmask();
-    	    				button.up('window').destroy();
-    	    				me.getView().down('[reference=tareaslistref]').funcionRecargar()
-    	    			}
-    	    	});
+			var idTareaExterna = me.getView().down('[reference=listadoTareasTramite]').getSelectionModel().getSelection()[0].get("id");
+				me.getView().mask(HreRem.i18n("msg.mask.loading"));
+			var parametros = formulario.getValues();
+			parametros.idTarea= idTareaExterna;
+			
+			var url = $AC.getRemoteUrl('agenda/reasignarTarea');
+	    	var data;
+	    	Ext.Ajax.request({
+	    			url:url,
+	    			params: parametros,
+	    			success: function(response,opts){
+	    				data = Ext.decode(response.responseText);
+	    				if(data.success == 'true')
+	    					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	    				else
+	    					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.reasignacion")); 
+	    			},
+	    			failure: function(options, success, response){
+	    				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.reasignacion")); 
+	    			},
+	    			callback: function(options, success, response){
+	    				me.getView().unmask();
+	    				button.up('window').unmask();
+	    				button.up('window').destroy();
+	    				me.getView().down('[reference=tareaslistref]').funcionRecargar()
+	    			}
+	    	});
+			
 			
 			
 

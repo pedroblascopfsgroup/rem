@@ -1340,11 +1340,9 @@ public class UvemManager implements UvemManagerApi {
 			return MOTIVO_ANULACION.COMPRADOR_NO_INTERESADO;
 		} else if (DDMotivoAnulacionReserva.CODIGO_DECISION_DEL_AREA.equals(codigoMotivoAnulacionReserva)) {
 			return MOTIVO_ANULACION.DECISION_AREA;
-		} else if (DDMotivoAnulacionReserva.CODIGO_NO_DISPONE_DINERO_FINANCIACION
-				.equals(codigoMotivoAnulacionReserva)) {
+		} else if (DDMotivoAnulacionReserva.CODIGO_NO_DISPONE_DINERO_FINANCIACION.equals(codigoMotivoAnulacionReserva)) {
 			return MOTIVO_ANULACION.NO_DISPONE_DINERO_FINANCIACION;
-		} else if (DDMotivoAnulacionReserva.CODIGO_CIRCUNSTANCIAS_DISTINTAS_A_LAS_PACTADAS
-				.equals(codigoMotivoAnulacionReserva)) {
+		} else if (DDMotivoAnulacionReserva.CODIGO_CIRCUNSTANCIAS_DISTINTAS_A_LAS_PACTADAS.equals(codigoMotivoAnulacionReserva)) {
 			return MOTIVO_ANULACION.CIRCUSTANCIAS_DISTINTAS_PACTADAS;
 		} else if (DDMotivoAnulacionReserva.CODIGO_NO_SE_CUMPLEN_CONDICIONANTES.equals(codigoMotivoAnulacionReserva)) {
 			return MOTIVO_ANULACION.NO_CUMPLEN_CONDICIONANTES;

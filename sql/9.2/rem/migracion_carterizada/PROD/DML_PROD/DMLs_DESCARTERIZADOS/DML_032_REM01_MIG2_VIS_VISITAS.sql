@@ -76,13 +76,16 @@ BEGIN
                 MIG.VIS_IND_VISITA_API_CUSTODIO,
                 MIG.VIS_COD_FVD_UVEM,
                 MIG.VIS_IND_VISITA_FVD,
-                MIG.VIS_OBSERVACIONES
+                MIG.VIS_OBSERVACIONES,
+                row_number() over(partition by MIG.VIS_COD_VISITA_WEBCOM order by clc.clc_id asc) rn
                 FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
                 INNER JOIN '||V_ESQUEMA||'.CLC_CLIENTE_COMERCIAL CLC
                   ON CLC.CLC_WEBCOM_ID_OLD = MIG.VIS_COD_CLIENTE_WEBCOM
                 INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
                   ON ACT.ACT_NUM_ACTIVO = MIG.VIS_ACT_NUMERO_ACTIVO
-        WHERE MIG.VALIDACION = 0
+                  left join rem01.VIS_VISITAS vis on vis.VIS_WEBCOM_ID = mig.VIS_COD_VISITA_WEBCOM
+                  left join (SELECT VIS_COD_VISITA_WEBCOM FROM rem01.MIG2_VIS_VISITAS group by VIS_COD_VISITA_WEBCOM having count(1) > 1) aux on aux.VIS_COD_VISITA_WEBCOM = mig.VIS_COD_VISITA_WEBCOM
+        WHERE MIG.VALIDACION = 0 and vis.vis_id is null and aux.VIS_COD_VISITA_WEBCOM is null
           )
                 SELECT
                 '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                                                      VIS_ID, 
@@ -133,14 +136,15 @@ BEGIN
                 SYSDATE                                                                                     FECHACREAR,
                 0                                                                                           BORRADO,
                 REPLACE(VIS.VIS_COD_PROCEDENCIA, ''.'')                                 VIS_PROCEDENCIA
-                FROM INSERTAR VIS';
+                FROM INSERTAR VIS
+                where vis.rn = 1';
       EXECUTE IMMEDIATE V_SENTENCIA;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
       COMMIT;
 
-      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''1''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
       DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ANALIZADA.');
 

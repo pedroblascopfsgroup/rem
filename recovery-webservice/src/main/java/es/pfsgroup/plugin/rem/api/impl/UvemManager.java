@@ -897,7 +897,7 @@ public class UvemManager implements UvemManagerApi {
 			cabeceraFuncional.setCLCDAQ("0370");
 			cabeceraFuncional.setCOENAQ("0000");
 			cabeceraFuncional.setCOCDAQ("0551");
-			cabeceraFuncional.setCOSBAQ("00");
+			cabeceraFuncional.setCOSBAQ("00"); 
 			cabeceraFuncional.setNUPUAQ("00");
 			cabeceraTecnica.setCLORAQ("71");
 

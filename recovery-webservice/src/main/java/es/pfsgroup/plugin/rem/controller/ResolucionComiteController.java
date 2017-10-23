@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 //import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -33,6 +35,8 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
@@ -145,8 +149,13 @@ public class ResolucionComiteController {
 						resolucionComiteDto.setCodigoTipoResolucion(DDTipoResolucion.CODIGO_TIPO_RESOLUCION);
 					}
 					
-					resol = resolucionComiteApi.saveOrUpdateResolucionComite(resolucionComiteDto);				
-					
+					resol = resolucionComiteApi.saveOrUpdateResolucionComite(resolucionComiteDto);
+					if(!Checks.esNulo(resolucionComiteDto.getDevolucion()) && resolucionComiteDto.getDevolucion().equals("S")){
+						expedienteComercialApi.updateEstadoDevolucionReserva(eco, DDEstadoDevolucion.ESTADO_DEVUELTA);
+					}else if(!Checks.esNulo(resolucionComiteDto.getDevolucion()) && resolucionComiteDto.getDevolucion().equals("N")){
+						expedienteComercialApi.updateEstadoDevolucionReserva(eco, DDEstadoDevolucion.ESTADO_NO_PROCEDE);
+					}
+										
 					//Envío correo/notificación
 					if(!Checks.esNulo(resol) && !Checks.esNulo(usu)){
 							

@@ -2384,6 +2384,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = false)
+	public boolean updateEstadoDevolucionReserva(ExpedienteComercial expedienteComercial, String codEstadoDevolucionReserva)  throws Exception{
+		
+		DDEstadoDevolucion estadoDevolucionReserva = (DDEstadoDevolucion) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDEstadoDevolucion.class, codEstadoDevolucionReserva);
+		if(!Checks.esNulo(estadoDevolucionReserva)){
+			expedienteComercial.getReserva().setEstadoDevolucion(estadoDevolucionReserva);
+		}else{
+			throw new Exception("El codigo del estado de la dev no exite");
+		}
+		return this.update(expedienteComercial);
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
 	public boolean update(ExpedienteComercial expedienteComercial) {
 		try {
 			genericDao.update(ExpedienteComercial.class, expedienteComercial);
@@ -5461,6 +5475,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		return false;
-	}
+	}	
 
 }

@@ -738,6 +738,10 @@ public class UvemManager implements UvemManagerApi {
 				instanciaDecisionDtoCopia.setImporteReserva(null);
 				instanciaDecisionDtoCopia.setCodTipoArras(null);
 			}
+			if(instanciaDecisionDtoCopia
+					.getCodigoCOTPRA() != InstanciaDecisionDataDto.PROPUESTA_TITULARES){
+				instanciaDecisionDtoCopia.setTitulares(null);
+			}
 			instancia = instanciaDecision(instanciaDecisionDtoCopia, INSTANCIA_DECISION_MODIFICACION_3);
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);

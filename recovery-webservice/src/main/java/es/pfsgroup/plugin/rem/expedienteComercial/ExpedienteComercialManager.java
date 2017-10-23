@@ -153,6 +153,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedorHonorario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRiesgoClase;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
@@ -2385,6 +2386,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = false)
+	public boolean updateEstadoDevolucionReserva(ExpedienteComercial expedienteComercial, String codEstadoDevolucionReserva)  throws Exception{
+		
+		DDEstadoDevolucion estadoDevolucionReserva = (DDEstadoDevolucion) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDEstadoDevolucion.class, codEstadoDevolucionReserva);
+		if(!Checks.esNulo(estadoDevolucionReserva)){
+			expedienteComercial.getReserva().setEstadoDevolucion(estadoDevolucionReserva);
+		}else{
+			throw new Exception("El codigo del estado de la dev no exite");
+		}
+		return this.update(expedienteComercial);
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
 	public boolean update(ExpedienteComercial expedienteComercial) {
 		try {
 			genericDao.update(ExpedienteComercial.class, expedienteComercial);
@@ -3507,8 +3522,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		//MOD3
-		if(!Checks.esNulo(oferta.getPrescriptor())){
-			instancia.setCodigoProveedorUvem(oferta.getPrescriptor().getCodProveedorUvem());
+		if(!Checks.esNulo(oferta.getPrescriptor()) && DDTipoProveedor.COD_OFICINA_BANKIA.equals(oferta.getPrescriptor().getTipoProveedor().getCodigo())){
+			instancia.setCodigoProveedorUvem(oferta.getPrescriptor().getCodigoApiProveedor());
 		}		
 
 		if(!Checks.esNulo(codComiteSuperior) && DDSiNo.SI.equals(codComiteSuperior)) {
@@ -5462,6 +5477,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		return false;
-	}
+	}	
 
 }

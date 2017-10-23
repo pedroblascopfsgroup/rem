@@ -87,11 +87,7 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 				if(!Checks.esNulo(ofertaAceptada.getActivoPrincipal()) 
 						&& !Checks.esNulo(ofertaAceptada.getActivoPrincipal().getCartera())
 						&& ofertaAceptada.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)){
-					boolean respuestaUvem= ofertaApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
-					if(!respuestaUvem){
-						throw new UserException("Error al invocar el servicio MOD3");
-						
-					}
+					ofertaApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
 				}
 			}
 		}

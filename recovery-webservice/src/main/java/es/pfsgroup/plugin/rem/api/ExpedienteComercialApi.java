@@ -142,6 +142,17 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public boolean update(ExpedienteComercial expedienteComercial);
+	
+	
+	/**
+	 * Actualiza el estado de la reserva al codigo dado
+	 * 
+	 * @param expedienteComercial
+	 * @param codEstadoReserva
+	 * @return
+	 */
+	public boolean updateEstadoDevolucionReserva(ExpedienteComercial expedienteComercial, String codEstadoReserva) throws Exception;
+	
 
 	/**
 	 * Método que recupera las observaciones del expediente comercial

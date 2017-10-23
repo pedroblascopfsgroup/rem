@@ -56,6 +56,7 @@ import es.cm.arq.tda.tiposdedatosbase.CantidadDecimal15;
 import es.cm.arq.tda.tiposdedatosbase.Fecha;
 import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
@@ -727,9 +728,17 @@ public class UvemManager implements UvemManagerApi {
 	@Override
 	public ResultadoInstanciaDecisionDto modificarInstanciaDecisionTres(InstanciaDecisionDto instanciaDecisionDto)
 			throws Exception {
+		BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 		ResultadoInstanciaDecisionDto instancia = new ResultadoInstanciaDecisionDto();
+		InstanciaDecisionDto instanciaDecisionDtoCopia = new InstanciaDecisionDto();
+		beanUtilNotNull.copyProperties(instanciaDecisionDtoCopia, instanciaDecisionDto);
 		try {
-			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_MODIFICACION_3);
+			if (instanciaDecisionDtoCopia
+					.getCodigoCOTPRA() != InstanciaDecisionDataDto.PROPUESTA_CONDICIONANTES_ECONOMICOS){
+				instanciaDecisionDtoCopia.setImporteReserva(null);
+				instanciaDecisionDtoCopia.setCodTipoArras(null);
+			}
+			instancia = instanciaDecision(instanciaDecisionDtoCopia, INSTANCIA_DECISION_MODIFICACION_3);
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
 			throw new JsonViewerException(e.getMessage());
@@ -897,7 +906,7 @@ public class UvemManager implements UvemManagerApi {
 			cabeceraFuncional.setCLCDAQ("0370");
 			cabeceraFuncional.setCOENAQ("0000");
 			cabeceraFuncional.setCOCDAQ("0551");
-			cabeceraFuncional.setCOSBAQ("00");
+			cabeceraFuncional.setCOSBAQ("00"); 
 			cabeceraFuncional.setNUPUAQ("00");
 			cabeceraTecnica.setCLORAQ("71");
 

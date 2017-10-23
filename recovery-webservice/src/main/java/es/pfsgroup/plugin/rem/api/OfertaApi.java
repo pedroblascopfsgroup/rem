@@ -522,7 +522,7 @@ public interface OfertaApi {
 	 * @param tareaExterna
 	 * @return
 	 */
-	public boolean modificacionesSegunPropuesta(TareaExterna tareaExterna);
+	public void modificacionesSegunPropuesta(TareaExterna tareaExterna);
 
 }
 

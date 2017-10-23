@@ -58,7 +58,7 @@ BEGIN
       EXECUTE IMMEDIATE V_SQL;
       
       DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD cargada. '||SQL%ROWCOUNT||' Filas.');     
-
+      COMMIT;
       ------------------------------
       --INSERCION EN GAC_GESTOR_ADD_ACTIVO--
       -------------------------------------------------
@@ -76,7 +76,7 @@ BEGIN
       EXECUTE IMMEDIATE V_SQL;
       
       DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO cargada. '||SQL%ROWCOUNT||' Filas.'); 
-
+      COMMIT;
       -------------------------------------------------
       --INSERCION EN GEH_GESTOR_ENTIDAD_HIST--
       -------------------------------------------------
@@ -101,7 +101,7 @@ BEGIN
       EXECUTE IMMEDIATE V_SQL;
       
       DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.GEH_GESTOR_ENTIDAD_HIST cargada. '||SQL%ROWCOUNT||' Filas.'); 
-
+      COMMIT;
       -------------------------------------------------
       --INSERCION EN GAH_GESTOR_ACTIVO_HISTORICO--
       -------------------------------------------------
@@ -121,7 +121,7 @@ BEGIN
       DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.GAH_GESTOR_ACTIVO_HISTORICO cargada. '||SQL%ROWCOUNT||' Filas.');
       
       COMMIT;  
-      
+
       DBMS_OUTPUT.PUT_LINE('[FIN]');
       
 EXCEPTION

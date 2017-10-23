@@ -51,6 +51,8 @@ WHERE T1.VALIDACION = 0 AND T4.GPV_ACT_ID IS NULL
                 '
                 ;
       EXECUTE IMMEDIATE V_SENTENCIA;
+
+      V_SENTENCIA := '';
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_2||' cargada. '||SQL%ROWCOUNT||' Filas.'); 
       

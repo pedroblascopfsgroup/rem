@@ -73,8 +73,7 @@ WHERE GDE.VALIDACION = 0 AND GDE2.GDE_ID IS NULL
       
       V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''1''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
-
- 
+      
 EXCEPTION
       WHEN OTHERS THEN
             DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));

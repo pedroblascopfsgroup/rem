@@ -358,17 +358,6 @@ BEGIN
     --EXECUTE IMMEDIATE 'delete from ACT_ADO_ADMISION_DOCUMENTO where ado_id in ( select ado_id from ACT_ADO_ADMISION_DOCUMENTO where (act_id, cfd_id) in ( select act_id, cfd_id from ACT_ADO_ADMISION_DOCUMENTO group by act_id, cfd_id having count(1) > 1) and usuariocrear <> '''||V_USUARIO||''')';
 
 
-
-
-    EXECUTE IMMEDIATE 'update rem01.GGE_GASTOS_GESTION set dd_eah_id = (select dd_eah_id from rem01.DD_EAH_ESTADOS_AUTORIZ_HAYA where dd_eah_codigo = ''01'')
-             where GGE_ID in (SELECT GGE.GGE_ID 
-            FROM REM01.GPV_GASTOS_PROVEEDOR GPV
-            JOIN REM01.GGE_GASTOS_GESTION GGE ON GGE.GPV_ID = GPV.GPV_ID
-            JOIN REM01.GDE_GASTOS_DETALLE_ECONOMICO GDE ON GDE.GPV_ID = GPV.GPV_ID
-            JOIN REM01.GIC_GASTOS_INFO_CONTABILIDAD GIC ON GIC.GPV_ID = GPV.GPV_ID
-            WHERE GPV.DD_EGA_ID = (SELECT DD_EGA_ID FROM REM01.DD_EGA_ESTADOS_GASTO WHERE DD_EGA_CODIGO = ''08''))';
-
-
     EXECUTE IMMEDIATE 'update rem01.act_activo act 
         set act.ACT_NUM_ACTIVO_UVEM = (select ACT_NUMERO_UVEM from rem01.mig_aca_cabecera aca where aca.ACT_NUMERO_ACTIVO = act.ACT_NUM_ACTIVO)
         where ACT_NUM_ACTIVO_UVEM is null';

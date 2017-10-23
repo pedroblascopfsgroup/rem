@@ -1317,7 +1317,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						gestionGasto.setFechaRetencionPago(new Date());
 						gestionGasto.setUsuarioRetencionPago(usuario);
 						updaterStateApi.updaterStates(gasto, DDEstadoGasto.RETENIDO);
-					} else if (("").equals(dtoGestionGasto.getComboMotivoRetenerPago())) {
+					} else if (Checks.esNulo(dtoGestionGasto.getComboMotivoRetenerPago())) {
 						// Si borro el campo eliminamos los detalles de retencion y ponemos el gasto en estado incompleto o pendiente.
 						gestionGasto.setMotivoRetencionPago(null);
 						gestionGasto.setFechaRetencionPago(null);

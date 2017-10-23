@@ -118,7 +118,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 					}
 				}
 				if(COMBO_COMITE_SUPERIOR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "descripcion", valor.getValor());
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_BANKIA_DGVIER);
 					DDComiteSancion comiteSuperior = genericDao.get(DDComiteSancion.class, filtro);
 					if(!Checks.esNulo(comiteSuperior)) {
 						expediente.setComiteSuperior(comiteSuperior);

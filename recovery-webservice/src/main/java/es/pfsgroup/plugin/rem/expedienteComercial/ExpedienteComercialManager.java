@@ -38,6 +38,7 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -3524,8 +3525,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			instancia.setCodigoProveedorUvem(oferta.getPrescriptor().getCodProveedorUvem());
 		}		
 
-		if(!Checks.esNulo(codComiteSuperior)) {
-			instancia.setCodComiteSuperior(codComiteSuperior);
+		if(!Checks.esNulo(codComiteSuperior) && DDSiNo.SI.equals(codComiteSuperior)) {
+			instancia.setCodComiteSuperior(DDComiteSancion.CODIGO_BANKIA_DGVIER);
 		}
 		return instancia;
 	}

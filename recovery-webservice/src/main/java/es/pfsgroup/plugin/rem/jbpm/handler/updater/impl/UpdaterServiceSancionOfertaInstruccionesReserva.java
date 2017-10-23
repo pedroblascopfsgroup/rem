@@ -4,9 +4,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -43,6 +46,8 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
    	private static final String CODIGO_T013_INSTRUCCIONES_RESERVA = "T013_InstruccionesReserva";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+	
+	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaInstruccionesReserva.class);
 	
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		
@@ -81,8 +86,12 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 			if(!Checks.estaVacio(valores)){
 				if(!Checks.esNulo(ofertaAceptada.getActivoPrincipal()) 
 						&& !Checks.esNulo(ofertaAceptada.getActivoPrincipal().getCartera())
-						&& ofertaAceptada.getActivoPrincipal().getCartera().equals(DDCartera.CODIGO_CARTERA_BANKIA)){
-					ofertaApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
+						&& ofertaAceptada.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)){
+					boolean respuestaUvem= ofertaApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
+					if(!respuestaUvem){
+						throw new UserException("Error al invocar el servicio MOD3");
+						
+					}
 				}
 			}
 		}

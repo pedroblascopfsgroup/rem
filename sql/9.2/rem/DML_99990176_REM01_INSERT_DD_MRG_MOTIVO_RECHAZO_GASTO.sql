@@ -74,7 +74,7 @@ BEGIN
 			''Comprobar PAGADO_POR'', 
 			''El campo "pagado por" deberá estar informado obligatoriamente con el valor 01 o con el valor 02 del diccionario 8'',
 			1,
-			''WHERE AUX.FECHA_ANTICIPO IS NOT NULL AND (PAGADO_POR != "01" OR PAGADO_POR != "02") '',
+			''WHERE AUX.FECHA_ANTICIPO IS NOT NULL AND (PAGADO_POR != ''01'' OR PAGADO_POR != ''02'') '',
 			0, 
 			'''||V_USUARIO||''', 
 			SYSDATE, 

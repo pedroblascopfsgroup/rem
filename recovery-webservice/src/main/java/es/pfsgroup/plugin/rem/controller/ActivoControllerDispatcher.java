@@ -46,6 +46,7 @@ public class ActivoControllerDispatcher {
 		}
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void saveModels(Long id, JSONArray modelsArray) {
 		for (Object o : modelsArray) {
 			JSONObject model = (JSONObject) o;

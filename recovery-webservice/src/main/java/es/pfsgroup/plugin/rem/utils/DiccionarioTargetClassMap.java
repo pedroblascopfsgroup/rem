@@ -83,6 +83,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoAgrupacion", DDTipoAgrupacion.class);
 		mapa.put("tiposTrabajo", DDTipoTrabajo.class);
 		mapa.put("subtiposTrabajo", DDSubtipoTrabajo.class);
+		mapa.put("tipoTasacion", DDTipoTasacion.class);
 		mapa.put("estadoTrabajo", DDEstadoTrabajo.class);
 		mapa.put("valoracionTrabajo", DDTipoCalidad.class);
 		mapa.put("tiposDocumento", DDTipoDocumentoActivo.class);

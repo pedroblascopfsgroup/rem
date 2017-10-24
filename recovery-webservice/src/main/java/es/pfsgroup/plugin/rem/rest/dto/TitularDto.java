@@ -8,6 +8,7 @@ public class TitularDto {
 	private String nombreCompletoCliente;
 	private Double porcentajeCompra;
 	private Long conyugeNumeroUrsus;
+	private Integer titularContratacion;
 
 	
 	public Long getNumeroUrsus() {
@@ -57,5 +58,14 @@ public class TitularDto {
 	public void setConyugeNumeroUrsus(Long conyugeNumeroUrsus) {
 		this.conyugeNumeroUrsus = conyugeNumeroUrsus;
 	}
+
+	public Integer getTitularContratacion() {
+		return titularContratacion;
+	}
+
+	public void setTitularContratacion(Integer titularContratacion) {
+		this.titularContratacion = titularContratacion;
+	}
+	
 
 }

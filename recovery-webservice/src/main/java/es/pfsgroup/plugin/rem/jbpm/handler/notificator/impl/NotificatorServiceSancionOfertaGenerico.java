@@ -1,8 +1,5 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,10 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -35,7 +32,6 @@ import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.Comprador;
@@ -64,6 +60,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	private static final String GESTOR_FORMALIZACION = "gestor-formalizacion";
 	private static final String GESTOR_BACKOFFICE = "gestor-backoffice";
 	private static final String GESTOR_GESTORIA_FASE_3 = "gestoria-fase-3";
+	private static final String USUARIO_FICTICIO_OFERTA_CAJAMAR = "ficticioOfertaCajamar";
 
 	@Resource
 	private Properties appProperties;
@@ -94,6 +91,9 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	
 	@Autowired
 	private TrabajoApi trabajoApi;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
 
 	@Override
 	public final void notificator(ActivoTramite tramite) {
@@ -118,8 +118,9 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			if (permiteNotificarAprobacion && !Checks.esNulo(expediente)
 					&& DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) { // APROBACIÓN
 
-
 				ArrayList<String> destinatarios = getDestinatariosNotificacion(activo, oferta, expediente);
+				
+				destinatarios.add(usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR).getEmail());
 
 				if (destinatarios.isEmpty()) {
 					logger.warn(
@@ -347,7 +348,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	
 	
 
-	/* private String computeKey(String key) {
+	private String computeKey(String key) {
 
 		String result = "";
 		try {
@@ -367,45 +368,28 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			result  = hexString.toString();
 		} catch (Exception e) {
 			e.printStackTrace();
-<<<<<<< HEAD
-=======
 		}
 		return result;
 	}
 
-	private void enviaNotificacionAceptar(ActivoTramite tramite, Oferta oferta, Long idExpediente,
-			String... destinatarios) {
-		String asunto = "Notificación de aprobación provisional de la oferta " + oferta.getNumOferta();
-		String cuerpo = "<p>Nos complace comunicarle que la oferta " + oferta.getNumOferta()
-				+ " ha sido PROVISIONALMENTE ACEPTADA. Adjunto a este correo encotnrará el documento con las instrucciones a seguir para la formalización de la reserva.</p>";
-
-		if (idExpediente != null) {
-			String reservationKey = String.valueOf(idExpediente)
-					.concat(appProperties.getProperty("haya.reservation.pwd"));
-			reservationKey = this.computeKey(reservationKey);
-			String reservationUrl = appProperties.getProperty("haya.reservation.url");
-			cuerpo = cuerpo + "<p>Pinche <a href=\"" + reservationUrl + idExpediente + "/" + reservationKey
-					+ "/1\">aquí</a> para la descarga del contrato de reserva.</p>";
->>>>>>> vrem-produccion
-		}
-		return result;
-	} */
-
 	private void enviaNotificacionAceptar(ActivoTramite tramite, Oferta oferta, ExpedienteComercial expediente,
 			String... destinatarios) {
+		boolean tieneReserva = false;
 		String asunto = "Notificación de aprobación provisional de la oferta " + oferta.getNumOferta();
 		String cuerpo = "<p>Nos complace comunicarle que la oferta " + oferta.getNumOferta()
 				+ " a nombre de " + nombresOfertantes(expediente)
 				+ " ha sido PROVISIONALMENTE ACEPTADA. Adjunto a este correo encontrará el documento con las instrucciones a seguir para la reserva y formalización, así como la Ficha cliente a cumplimentar";
 
-		/* if (idExpediente != null) {
-			String reservationKey = String.valueOf(idExpediente)
+		if (!Checks.esNulo(expediente.getId()) && !Checks.esNulo(expediente.getReserva())) {
+			tieneReserva = true;
+			
+			String reservationKey = String.valueOf(expediente.getId())
 					.concat(appProperties.getProperty("haya.reservation.pwd"));
 			reservationKey = this.computeKey(reservationKey);
 			String reservationUrl = appProperties.getProperty("haya.reservation.url");
-			cuerpo = cuerpo + "<p>Pinche <a href=\"" + reservationUrl + idExpediente + "/" + reservationKey
+			cuerpo = cuerpo + "<p>Pinche <a href=\"" + reservationUrl + expediente.getId() + "/" + reservationKey
 					+ "/1\">aquí</a> para la descarga del contrato de reserva.</p>";
-		} */
+		}
 
 		cuerpo = cuerpo + "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
 
@@ -433,7 +417,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		dtoSendNotificator.setTitulo(asunto);
 
 		String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
-		enviaNotificacionGenerico(tramite.getActivo(), asunto, cuerpoCorreo, true, destinatarios);
+		enviaNotificacionGenerico(tramite.getActivo(), asunto, cuerpoCorreo, tieneReserva, destinatarios);
 	}
 
 	private String nombresOfertantes(ExpedienteComercial expediente) {

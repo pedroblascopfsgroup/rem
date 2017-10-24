@@ -379,9 +379,9 @@
             	def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.checkReservaNecesariaNotNull(tareaExterna);
             }
-            def definicionOfertaT013 = {
+            def definicionOfertaT013(String codigo) {
             	def validateJbpmManager = ctx.getBean("validateJbpmManager");
-            	return validateJbpmManager.definicionOfertaT013(tareaExterna);
+            	return validateJbpmManager.definicionOfertaT013(tareaExterna, codigo);
             }
             def respuestaOfertanteT013  = {
             	def validateJbpmManager = ctx.getBean("validateJbpmManager");

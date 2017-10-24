@@ -38,6 +38,7 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -152,6 +153,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedorHonorario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRiesgoClase;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
@@ -2384,6 +2386,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = false)
+	public boolean updateEstadoDevolucionReserva(ExpedienteComercial expedienteComercial, String codEstadoDevolucionReserva)  throws Exception{
+		
+		DDEstadoDevolucion estadoDevolucionReserva = (DDEstadoDevolucion) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDEstadoDevolucion.class, codEstadoDevolucionReserva);
+		if(!Checks.esNulo(estadoDevolucionReserva)){
+			expedienteComercial.getReserva().setEstadoDevolucion(estadoDevolucionReserva);
+		}else{
+			throw new Exception("El codigo del estado de la dev no exite");
+		}
+		return this.update(expedienteComercial);
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
 	public boolean update(ExpedienteComercial expedienteComercial) {
 		try {
 			genericDao.update(ExpedienteComercial.class, expedienteComercial);
@@ -3256,7 +3272,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
 				}
 			}
-			InstanciaDecisionDto instancia = expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto);
+			InstanciaDecisionDto instancia = expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto,null);
 			String codigoComite = null;
 
 			ResultadoInstanciaDecisionDto resultadoDto;
@@ -3333,7 +3349,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	public InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente,
-			Long porcentajeImpuesto) throws Exception {
+			Long porcentajeImpuesto, String codComiteSuperior) throws Exception {
 		String tipoImpuestoCodigo = null;
 		InstanciaDecisionDto instancia = new InstanciaDecisionDto();
 		Double importeXActivo = null;
@@ -3354,7 +3370,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (Checks.esNulo(porcentajeImpuesto)) {
 			throw new JsonViewerException("No se ha indicado el porcentaje de impuesto en el campo Tipo aplicable.");
 		}
-
+		
 		Double importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta()
 				: oferta.getImporteContraOferta();
 		Double sumatorioImporte = new Double(0);
@@ -3438,6 +3454,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			for (CompradorExpediente comprador : expediente.getCompradores()) {
 				TitularDto titular = new TitularDto();
 				titular.setNumeroUrsus(comprador.getPrimaryKey().getComprador().getIdCompradorUrsus());
+				titular.setTitularContratacion(comprador.getTitularContratacion());
 
 				if (comprador.getPrimaryKey().getComprador().getTipoDocumento() != null) {
 					DDTipoDocumento tipoDoc = comprador.getPrimaryKey().getComprador().getTipoDocumento();
@@ -3506,10 +3523,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		//MOD3
-		if(!Checks.esNulo(oferta.getPrescriptor())){
-			instancia.setCodigoProveedorUvem(oferta.getPrescriptor().getCodProveedorUvem());
+		if(!Checks.esNulo(oferta.getPrescriptor()) && DDTipoProveedor.COD_OFICINA_BANKIA.equals(oferta.getPrescriptor().getTipoProveedor().getCodigo())){
+			instancia.setCodigoProveedorUvem(oferta.getPrescriptor().getCodigoApiProveedor());
 		}		
 
+		if(!Checks.esNulo(codComiteSuperior) && DDSiNo.SI.equals(codComiteSuperior)) {
+			instancia.setCodComiteSuperior(DDComiteSancion.CODIGO_BANKIA_DGVIER);
+		}
 		return instancia;
 	}
 
@@ -5458,6 +5478,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		return false;
-	}
+	}	
 
 }

@@ -30,7 +30,9 @@ import es.pfsgroup.plugin.rem.model.ResolucionComiteBankiaDto;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoDenegacionResolucion;
+import es.pfsgroup.plugin.rem.model.dd.DDPenitenciales;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
 import es.pfsgroup.plugin.rem.resolucionComite.dao.ResolucionComiteDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -245,6 +247,20 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 			}
 		}
 		
+		if (!Checks.esNulo(resolucionComiteDto.getCodigoAnulacion())) {
+			DDMotivoAnulacionExpediente motivoAnulacion = (DDMotivoAnulacionExpediente) genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", resolucionComiteDto.getCodigoAnulacion()));
+			if (!Checks.esNulo(motivoAnulacion)) {
+				resolDto.setMotivoAnulacionExpediente(motivoAnulacion);
+			}
+		}
+		
+		if (!Checks.esNulo(resolucionComiteDto.getPenitenciales())) {
+			DDPenitenciales penitenciales = (DDPenitenciales) genericDao.get(DDPenitenciales.class, genericDao.createFilter(FilterType.EQUALS, "codigo", resolucionComiteDto.getPenitenciales()));
+			if (!Checks.esNulo(penitenciales)) {
+				resolDto.setPenitenciales(penitenciales);
+			}
+		}
+		
 		return resolDto;
 	}
 	
@@ -311,6 +327,15 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 		}	
 		if (!Checks.esNulo(resolDto.getTipoResolucion())) {
 			resol.setTipoResolucion(resolDto.getTipoResolucion());			
+		}
+		if(!Checks.esNulo(resolDto.getMotivoAnulacionExpediente())){
+			resol.setMotivoAnulacion(resolDto.getMotivoAnulacionExpediente());
+		}		
+		if(!Checks.esNulo(resolDto.getPenitenciales())){
+			resol.setPenitenciales(resolDto.getPenitenciales());
+		}
+		if(!Checks.esNulo(resolDto.getFechaComite())){
+			resol.setFechaResolucion(resolDto.getFechaComite());
 		}
 		
 		resol = genericDao.save(ResolucionComiteBankia.class, resol);

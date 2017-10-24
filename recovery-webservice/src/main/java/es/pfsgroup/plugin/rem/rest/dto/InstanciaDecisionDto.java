@@ -16,6 +16,7 @@ public class InstanciaDecisionDto {
 	private Double importeReserva = new Double(0);
 	private Boolean impuestosReserva;
 	private String codTipoArras;
+	private String codComiteSuperior;
 	//por defecto BANKIA, 
 	private String qcenre =DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA;
 	private short codigoCOTPRA;
@@ -84,6 +85,12 @@ public class InstanciaDecisionDto {
 	}
 	public void setCodigoProveedorUvem(String codigoProveedorUvem) {
 		this.codigoProveedorUvem = codigoProveedorUvem;
+	}
+	public String getCodComiteSuperior() {
+		return codComiteSuperior;
+	}
+	public void setCodComiteSuperior(String codComiteSuperior) {
+		this.codComiteSuperior = codComiteSuperior;
 	}
 	
 }

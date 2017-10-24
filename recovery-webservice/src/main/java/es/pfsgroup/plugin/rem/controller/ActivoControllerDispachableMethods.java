@@ -20,9 +20,10 @@ import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 
 import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
-
+import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 
+@SuppressWarnings("rawtypes")
 class ActivoControllerDispachableMethods {
 	
 	static abstract class DispachableMethod<T> {
@@ -37,7 +38,7 @@ class ActivoControllerDispachableMethods {
 	}
 
 	
-	
+
 	private static Map<String, DispachableMethod> dispachableMethods;
 	
 	static {
@@ -176,7 +177,25 @@ class ActivoControllerDispachableMethods {
 				}
 			}
 		});
-		
+
+		/*
+		 * TAB_CONDICIONES_ESPECIFICAS
+		 */
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_CONDICIONES_ESPECIFICAS, new DispachableMethod<DtoCondicionEspecifica>() {
+
+			@Override
+			public Class<DtoCondicionEspecifica> getArgumentType() {
+				return DtoCondicionEspecifica.class;
+			}
+
+			@Override
+			public void execute(Long idActivo, DtoCondicionEspecifica dto) {
+				if (dto != null){
+					this.controller.createCondicionEspecifica(dto, new ModelMap());
+				}
+			}
+		});
+
 		/*
 		 * TAB_ACTIVO_HISTORICO_ESTADO_PUBLICACION
 		 */

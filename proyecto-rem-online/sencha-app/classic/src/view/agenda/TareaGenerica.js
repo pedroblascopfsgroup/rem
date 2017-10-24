@@ -1044,7 +1044,18 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             }
         })
     },
+	T013_DefinicionOfertaValidacion: function() {
+		var me = this;
 
+		var cartera = me.up('tramitesdetalle').getViewModel().get('tramite.cartera');
+		var comiteSuperior = me.down('[name=comiteSuperior]');
+		if(cartera == 'Bankia'){
+			me.desocultarCampo(comiteSuperior);
+		}else{
+			me.ocultarCampo(comiteSuperior);
+		}
+		
+	},
     T013_FirmaPropietarioValidacion: function() {
         var me = this;
 
@@ -1146,15 +1157,30 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         var me = this;
         var tipoArras = me.down('[name=tipoArras]');
         var estadoReserva = me.down('[name=estadoReserva]');
-        me.deshabilitarCampo(me.down('[name=comboProcede]'));
+        var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 
-        if (!Ext.isEmpty(estadoReserva) && estadoReserva.value == 'Firmada') 
+        me.deshabilitarCampo(me.down('[name=comboProcede]'));
+        if(CONST.CARTERA['BANKIA'] == codigoCartera) {
+        	me.deshabilitarCampo(me.down('[name=comboMotivoAnulacionReserva]'));
+        } else {
+        	me.campoNoObligatorio(me.down('[name=comboMotivoAnulacionReserva]'));
+        	me.down('[name=comboMotivoAnulacionReserva]').setHidden(true);
+        }
+
+        if (!Ext.isEmpty(estadoReserva) && estadoReserva.value == 'Firmada') {
             me.habilitarCampo(me.down('[name=comboProcede]'));
-            
+        }
+
         me.down('[name=comboProcede]').addListener('change', function(combo) {
             if (combo.value == '01' && tipoArras.value == 'Confirmatorias') {
                 me.down('[name=comboProcede]').blankText = HreRem.i18n('tarea.validacion.error.valor.no.permitido.by.tipo.arras');
                 me.down('[name=comboProcede]').reset();
+            } else if((combo.value == '01' || combo.value == '02') && CONST.CARTERA['BANKIA'] == codigoCartera) {
+            	me.habilitarCampo(me.down('[name=comboMotivoAnulacionReserva]'));
+            	me.down('[name=comboMotivoAnulacionReserva]').reset();
+            } else if(combo.value == '03' && CONST.CARTERA['BANKIA'] == codigoCartera) {
+            	me.deshabilitarCampo(me.down('[name=comboMotivoAnulacionReserva]'));
+            	me.down('[name=comboMotivoAnulacionReserva]').reset();
             }
         });
     },
@@ -1257,6 +1283,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     campoNoObligatorio: function(campo) {
         var me = this;
         campo.allowBlank = true;
+    },
+    ocultarCampo: function(campo) {
+        var me = this;
+        campo.setHidden(true);
+    },
+    desocultarCampo: function(campo) {
+        var me = this;
+        campo.setHidden(false);
     }
 
 });

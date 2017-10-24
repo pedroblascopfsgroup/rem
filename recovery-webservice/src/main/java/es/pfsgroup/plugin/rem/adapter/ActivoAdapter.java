@@ -49,14 +49,14 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
-import es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
@@ -93,7 +93,6 @@ import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
-import es.pfsgroup.plugin.rem.model.DtoActivo;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
@@ -117,7 +116,6 @@ import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
 import es.pfsgroup.plugin.rem.model.DtoPropietario;
-import es.pfsgroup.plugin.rem.model.DtoTabActivo;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoTramite;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
@@ -150,9 +148,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
-import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
@@ -241,9 +239,6 @@ public class ActivoAdapter {
 	GestorDocumentalFotosApi gestorDocumentalFotos;
 
 	@Autowired
-	private AnotacionApi anotacionApi;
-
-	@Autowired
 	private OfertaApi ofertaApi;
 
 	@Autowired
@@ -251,9 +246,6 @@ public class ActivoAdapter {
 
 	@Autowired
 	private NotificationOfertaManager notificationOfertaManager;
-	
-	@Autowired
-	private ExpedienteComercialApi expedienteComercialApi;
 	
     @Autowired
     private NotificacionAdapter notificacionAdapter;
@@ -1230,6 +1222,8 @@ public class ActivoAdapter {
 				BeanUtils.copyProperties(dtoTasacion, tasacionSeleccionada);
 				BeanUtils.copyProperties(dtoTasacion, tasacionSeleccionada.getValoracionBien());
 				if (tasacionSeleccionada.getTipoTasacion() != null) {
+					BeanUtils.copyProperty(dtoTasacion, "tipoTasacionCodigo", 
+							tasacionSeleccionada.getTipoTasacion().getCodigo());
 					BeanUtils.copyProperty(dtoTasacion, "tipoTasacionDescripcion",
 							tasacionSeleccionada.getTipoTasacion().getDescripcion());
 				}
@@ -1643,8 +1637,10 @@ public class ActivoAdapter {
 			if (!Checks.esNulo(tramite.getActivo().getSubtipoActivo()))
 				beanUtilNotNull.copyProperty(dtoTramite, "subtipoActivo",
 						tramite.getActivo().getSubtipoActivo().getDescripcion());
-			if (!Checks.esNulo(tramite.getActivo().getCartera()))
+			if (!Checks.esNulo(tramite.getActivo().getCartera())) {
 				beanUtilNotNull.copyProperty(dtoTramite, "cartera", tramite.getActivo().getCartera().getDescripcion());
+				beanUtilNotNull.copyProperty(dtoTramite, "codigoCartera", tramite.getActivo().getCartera().getCodigo());
+			}
 			if (!Checks.esNulo(tramite.getFechaInicio()))
 				beanUtilNotNull.copyProperty(dtoTramite, "fechaInicio", formato.format(tramite.getFechaInicio()));
 			if (!Checks.esNulo(tramite.getFechaFin()))
@@ -2894,4 +2890,88 @@ public class ActivoAdapter {
 		}
 	}
 	
+	@Transactional(readOnly = false)
+	public boolean createTasacion(String importeTasacionFin, String tipoTasacionCodigo, String nomTasador, Date fechaValorTasacion, Long idActivo) {
+		Activo activo = activoApi.get(idActivo);
+		
+		NMBBien bienActivo = activo.getBien();
+		
+		NMBValoracionesBien valoracionBienActivo = new NMBValoracionesBien();
+		valoracionBienActivo.setBien(bienActivo);
+		
+		try {
+			beanUtilNotNull.copyProperty(valoracionBienActivo, "fechaValorTasacion", fechaValorTasacion);
+		} catch (IllegalAccessException e) {
+			logger.error(e.getMessage());
+		} catch (InvocationTargetException e) {
+			logger.error(e.getMessage());
+		}
+		
+		genericDao.save(NMBValoracionesBien.class, valoracionBienActivo);
+		
+		ActivoTasacion activoTasacion = new ActivoTasacion();
+		activoTasacion.setActivo(activo);
+		activoTasacion.setValoracionBien(valoracionBienActivo);
+		
+		Filter filtroTipoTasacion = genericDao.createFilter(FilterType.EQUALS, "codigo", tipoTasacionCodigo);
+		DDTipoTasacion tipoTasacion = genericDao.get(DDTipoTasacion.class, filtroTipoTasacion);
+		activoTasacion.setTipoTasacion(tipoTasacion);
+		
+		double importeTasacionFinDouble = 0;
+		if(!importeTasacionFin.isEmpty()){
+			importeTasacionFinDouble = Double.parseDouble(importeTasacionFin);
+		}
+		activoTasacion.setImporteTasacionFin(importeTasacionFinDouble);
+		
+		activoTasacion.setNomTasador(nomTasador);
+		
+		activoTasacion.setCodigoFirma(0L); //No se conoce la procedencia del campo codigoFirma
+					
+		ActivoTasacion activoTasacionNuevo = genericDao.save(ActivoTasacion.class, activoTasacion);
+
+		activo.getTasacion().add(activoTasacionNuevo);
+		activoApi.saveOrUpdate(activo);
+
+		return true;
+
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean saveTasacion(DtoTasacion dtoTasacion) {
+
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTasacion.getId());
+		ActivoTasacion activoTasacion = genericDao.get(ActivoTasacion.class, filtro);
+		
+		if(dtoTasacion.getTipoTasacionCodigo() != null){
+			Filter filtroTipoTasacion = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTasacion.getTipoTasacionCodigo());
+			DDTipoTasacion tipoTasacion = genericDao.get(DDTipoTasacion.class, filtroTipoTasacion);
+			activoTasacion.setTipoTasacion(tipoTasacion);
+		}
+		
+		double importeTasacionFinDouble = 0;
+		if(!dtoTasacion.getImporteTasacionFin().isEmpty()){
+			importeTasacionFinDouble = Double.parseDouble(dtoTasacion.getImporteTasacionFin());
+		}
+		activoTasacion.setImporteTasacionFin(importeTasacionFinDouble);
+		
+		NMBValoracionesBien valoracionActivoTasacion = activoTasacion.getValoracionBien();
+		
+		try {
+			beanUtilNotNull.copyProperty(valoracionActivoTasacion, "fechaValorTasacion", dtoTasacion.getFechaValorTasacion());
+		} catch (IllegalAccessException e) {
+			logger.error(e.getMessage());
+		} catch (InvocationTargetException e) {
+			logger.error(e.getMessage());
+		}
+		
+		genericDao.save(NMBValoracionesBien.class, valoracionActivoTasacion);
+		
+		activoTasacion.setNomTasador(dtoTasacion.getNomTasador());
+		
+		
+		genericDao.save(ActivoTasacion.class, activoTasacion);
+
+		return true;
+
+	}
 }

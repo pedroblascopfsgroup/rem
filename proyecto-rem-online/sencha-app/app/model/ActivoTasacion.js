@@ -19,6 +19,12 @@ Ext.define('HreRem.model.ActivoTasacion', {
     			name:'tipoTasacion'
     		},
     		{
+    			name:'tipoTasacionDescripcion'
+    		},
+    		{
+    			name:'tipoTasacionCodigo'
+    		},
+    		{
     			name:'fechaInicioTasacion',
     			convert: function(value) {
     				if (!Ext.isEmpty(value)) {
@@ -32,7 +38,8 @@ Ext.define('HreRem.model.ActivoTasacion', {
     		},
     		{
     			name:'fechaValorTasacion',
-    			type:'date'
+    			type:'date',
+    			dateFormat: 'c'
     			/* HREOS-628 Cambiado por [type:'date'] para poder ordenar correctamente
     			 
     			  convert: function(value) {
@@ -149,9 +156,8 @@ Ext.define('HreRem.model.ActivoTasacion', {
 		remoteUrl: 'activo/getActivoById',
 		api: {
             read: 'activo/getTasacionById',
-            create: 'activo/saveActivoValoracionesPrecios',
-            update: 'activo/saveActivoValoracionesPrecios',
-            destroy: 'activo/getActivoById'
+            create: 'activo/createTasacionActivo',
+            update: 'activo/saveTasacionActivo'
         },
 		extraParams: {pestana: '6'}
 		

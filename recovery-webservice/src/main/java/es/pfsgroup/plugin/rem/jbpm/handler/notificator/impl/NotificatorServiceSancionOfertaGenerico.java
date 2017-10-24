@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl;
 
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -347,7 +348,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	
 	
 
-	/* private String computeKey(String key) {
+	private String computeKey(String key) {
 
 		String result = "";
 		try {
@@ -367,45 +368,28 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			result  = hexString.toString();
 		} catch (Exception e) {
 			e.printStackTrace();
-<<<<<<< HEAD
-=======
 		}
 		return result;
 	}
 
-	private void enviaNotificacionAceptar(ActivoTramite tramite, Oferta oferta, Long idExpediente,
-			String... destinatarios) {
-		String asunto = "Notificación de aprobación provisional de la oferta " + oferta.getNumOferta();
-		String cuerpo = "<p>Nos complace comunicarle que la oferta " + oferta.getNumOferta()
-				+ " ha sido PROVISIONALMENTE ACEPTADA. Adjunto a este correo encotnrará el documento con las instrucciones a seguir para la formalización de la reserva.</p>";
-
-		if (idExpediente != null) {
-			String reservationKey = String.valueOf(idExpediente)
-					.concat(appProperties.getProperty("haya.reservation.pwd"));
-			reservationKey = this.computeKey(reservationKey);
-			String reservationUrl = appProperties.getProperty("haya.reservation.url");
-			cuerpo = cuerpo + "<p>Pinche <a href=\"" + reservationUrl + idExpediente + "/" + reservationKey
-					+ "/1\">aquí</a> para la descarga del contrato de reserva.</p>";
->>>>>>> vrem-produccion
-		}
-		return result;
-	} */
-
 	private void enviaNotificacionAceptar(ActivoTramite tramite, Oferta oferta, ExpedienteComercial expediente,
 			String... destinatarios) {
+		boolean tieneReserva = false;
 		String asunto = "Notificación de aprobación provisional de la oferta " + oferta.getNumOferta();
 		String cuerpo = "<p>Nos complace comunicarle que la oferta " + oferta.getNumOferta()
 				+ " a nombre de " + nombresOfertantes(expediente)
 				+ " ha sido PROVISIONALMENTE ACEPTADA. Adjunto a este correo encontrará el documento con las instrucciones a seguir para la reserva y formalización, así como la Ficha cliente a cumplimentar";
 
-		/* if (idExpediente != null) {
-			String reservationKey = String.valueOf(idExpediente)
+		if (!Checks.esNulo(expediente.getId()) && !Checks.esNulo(expediente.getReserva())) {
+			tieneReserva = true;
+			
+			String reservationKey = String.valueOf(expediente.getId())
 					.concat(appProperties.getProperty("haya.reservation.pwd"));
 			reservationKey = this.computeKey(reservationKey);
 			String reservationUrl = appProperties.getProperty("haya.reservation.url");
-			cuerpo = cuerpo + "<p>Pinche <a href=\"" + reservationUrl + idExpediente + "/" + reservationKey
+			cuerpo = cuerpo + "<p>Pinche <a href=\"" + reservationUrl + expediente.getId() + "/" + reservationKey
 					+ "/1\">aquí</a> para la descarga del contrato de reserva.</p>";
-		} */
+		}
 
 		cuerpo = cuerpo + "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
 
@@ -433,7 +417,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		dtoSendNotificator.setTitulo(asunto);
 
 		String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
-		enviaNotificacionGenerico(tramite.getActivo(), asunto, cuerpoCorreo, true, destinatarios);
+		enviaNotificacionGenerico(tramite.getActivo(), asunto, cuerpoCorreo, tieneReserva, destinatarios);
 	}
 
 	private String nombresOfertantes(ExpedienteComercial expediente) {

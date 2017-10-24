@@ -661,7 +661,28 @@ public class UvemManager implements UvemManagerApi {
 			throws Exception {
 		ResultadoInstanciaDecisionDto instancia = new ResultadoInstanciaDecisionDto();
 		try {
-			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_ALTA);
+			/**
+			 * Si hay más de un titular informamos solo uno. Elegimos el titular
+			 * de la contratación
+			 */
+			if(instanciaDecisionDto.getTitulares() != null && instanciaDecisionDto.getTitulares().size()>1){
+				TitularDto titularAux = null;
+				for(TitularDto titular : instanciaDecisionDto.getTitulares()){
+					if(titular.getTitularContratacion().equals(Integer.valueOf(1))){
+						titularAux = titular;
+						titularAux.setPorcentajeCompra(Double.valueOf(100));
+						break;
+					}
+				}
+				if(titularAux != null){
+					ArrayList<TitularDto> titulares = new ArrayList<TitularDto>();
+					titulares.add(titularAux);
+					instanciaDecisionDto.setTitulares(titulares);
+				}else{
+					new WIException("Al menos debe existir un titular de la contratación ");
+				}
+			}
+			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_ALTA);			
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
 			throw new JsonViewerException(e.getMessage());
@@ -737,6 +758,10 @@ public class UvemManager implements UvemManagerApi {
 					.getCodigoCOTPRA() != InstanciaDecisionDataDto.PROPUESTA_CONDICIONANTES_ECONOMICOS){
 				instanciaDecisionDtoCopia.setImporteReserva(null);
 				instanciaDecisionDtoCopia.setCodTipoArras(null);
+			}
+			if(instanciaDecisionDtoCopia
+					.getCodigoCOTPRA() != InstanciaDecisionDataDto.PROPUESTA_TITULARES){
+				instanciaDecisionDtoCopia.setTitulares(null);
 			}
 			instancia = instanciaDecision(instanciaDecisionDtoCopia, INSTANCIA_DECISION_MODIFICACION_3);
 		} catch (WIException e) {

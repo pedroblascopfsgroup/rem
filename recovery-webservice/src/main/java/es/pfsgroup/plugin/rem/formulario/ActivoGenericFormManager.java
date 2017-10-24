@@ -397,6 +397,47 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 	            		    	item.setValue(formatoFecha.format(fecha));
             			}
             		}
+            		if(item.getNombre().equals("fechaRespuesta"))
+            		{
+            			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
+            			if(!Checks.esNulo(ofertaAceptada)){
+            				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+            				if(!Checks.esNulo(expediente)){
+            					
+            					ResolucionComiteBankiaDto resolDto = new ResolucionComiteBankiaDto();
+            					resolDto.setExpediente(expediente);
+            					
+            					if("T013_ResolucionComite".equals(tareaExterna.getTareaProcedimiento().getCodigo())){
+            						Filter filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RESOLUCION);
+                					DDTipoResolucion tipoResolucion = genericDao.get(DDTipoResolucion.class, filtroTipoResolucion);
+                					resolDto.setTipoResolucion(tipoResolucion);
+            					}
+            					else if("T013_RatificacionComite".equals(tareaExterna.getTareaProcedimiento().getCodigo())){
+            						Filter filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RATIFICACION);
+                					DDTipoResolucion tipoResolucion = genericDao.get(DDTipoResolucion.class, filtroTipoResolucion);
+                					resolDto.setTipoResolucion(tipoResolucion);
+            					}   					
+            					
+            					
+								try {
+									List<ResolucionComiteBankia> listaResoluciones = resolucionComiteApi.getResolucionesComiteByExpedienteTipoRes(resolDto);
+									
+									if(!Checks.estaVacio(listaResoluciones)){
+										ResolucionComiteBankia resolucionComite = listaResoluciones.get(0);
+										
+										Date fecha = resolucionComite.getFechaResolucion();
+				            		    SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+				            		    if(!Checks.esNulo(fecha))
+				            		    	item.setValue(formatoFecha.format(fecha));
+									}
+								} catch (Exception e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+            				}
+            			}
+            		}
+            		
             	}
             	if(item.getType().equals(TIPO_CAMPO_FECHA_MAX_TO_DAY))
             	{

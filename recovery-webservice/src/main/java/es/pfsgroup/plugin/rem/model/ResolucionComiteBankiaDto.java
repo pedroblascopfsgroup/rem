@@ -29,6 +29,7 @@ public class ResolucionComiteBankiaDto implements Serializable{
 	private Double importeContraoferta;
 	private DDPenitenciales penitenciales;
 	private DDMotivoAnulacionExpediente motivoAnulacionExpediente;
+	private Date fechaComite;
 	
 	
 	public ExpedienteComercial getExpediente() {
@@ -84,6 +85,12 @@ public class ResolucionComiteBankiaDto implements Serializable{
 	}
 	public void setMotivoAnulacionExpediente(DDMotivoAnulacionExpediente motivoAnulacionExpediente) {
 		this.motivoAnulacionExpediente = motivoAnulacionExpediente;
+	}
+	public Date getFechaComite() {
+		return fechaComite;
+	}
+	public void setFechaComite(Date fechaComite) {
+		this.fechaComite = fechaComite;
 	}
 
 	

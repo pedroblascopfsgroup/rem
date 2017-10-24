@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
@@ -94,13 +95,14 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
 							} catch (Exception e) {
 								logger.error("Error descongelando ofertas.", e);
 							}
-
-							if(DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
+							
+							if(!ofertaApi.checkReserva(ofertaAceptada) && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
 								// Notificar del rechazo de la oferta a Bankia.
 								try {
 									uvemManagerApi.anularOferta(ofertaAceptada.getNumOferta().toString(), UvemManagerApi.MOTIVO_ANULACION_OFERTA.COMPRADOR_NO_INTERESADO_OPERACION);
 								} catch (Exception e) {
 									logger.error("Error al invocar el servicio de anular oferta de Uvem.", e);
+									throw new UserException(e.getMessage());
 								}
 							}
 

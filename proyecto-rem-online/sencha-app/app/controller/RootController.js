@@ -193,13 +193,7 @@ Ext.define('HreRem.controller.RootController', {
 				    break;				    
 			}
 		  
-		});	
-		
-		// Para interceptar cualquier petición con el servidor.
-		/*Ext.util.Observable.observe(Ext.data.Connection);
-		Ext.data.Connection.on('beforerequest', function(con, options) {
-		    console.log('Ajax request made to ' + options.url);
-		});*/
+		});
     },
     
     /**

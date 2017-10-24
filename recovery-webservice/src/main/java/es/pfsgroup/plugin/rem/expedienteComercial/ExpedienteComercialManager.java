@@ -3454,6 +3454,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			for (CompradorExpediente comprador : expediente.getCompradores()) {
 				TitularDto titular = new TitularDto();
 				titular.setNumeroUrsus(comprador.getPrimaryKey().getComprador().getIdCompradorUrsus());
+				titular.setTitularContratacion(comprador.getTitularContratacion());
 
 				if (comprador.getPrimaryKey().getComprador().getTipoDocumento() != null) {
 					DDTipoDocumento tipoDoc = comprador.getPrimaryKey().getComprador().getTipoDocumento();

@@ -79,17 +79,24 @@ Ext.define('HreRem.view.activos.detalle.HistoricoCondicionesList', {
 		            }
 		        }
 		    ];
-		    
-		    
+
 		    me.callParent();
    },
-   
-   //HREOS-846 Si NO esta dentro del perimetro, ocultamos los botones de agregar/quitar del grid
+
    evaluarEdicion: function() {    	
 		var me = this;
 		
 		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
 			me.setTopBar(false);
+		}
+
+		if(!me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionComercial') ||
+				!me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionRestringida') ||
+				!me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionAsistida') ||
+				!me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionObraNueva')) {
+			me.down('toolbar').items.items[2].setHidden(true);
+		} else {
+			me.down('toolbar').items.items[2].setHidden(false);
 		}
    }
 

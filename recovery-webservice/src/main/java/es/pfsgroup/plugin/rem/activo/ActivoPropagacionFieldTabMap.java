@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.rem.activo;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +17,7 @@ public class ActivoPropagacionFieldTabMap {
     public static final String TAB_INFO_ADMINISTRATIVA = "infoadministrativa";
     public static final String TAB_CARGAS_ACTIVO = "cargasactivo";
     public static final String TAB_MEDIADOR_ACTIVO = "mediadoractivo";
+    public static final String TAB_CONDICIONES_ESPECIFICAS = "condicionesespecificas";
 
     public static final String TAB_DATOS_PUBLICACION = "datospublicacion";
     public static final String TAB_ACTIVO_HISTORICO_ESTADO_PUBLICACION = "activohistoricoestadopublicacion";

@@ -1968,6 +1968,10 @@ public class ActivoController extends ParadiseJsonController {
 		return activoApi.getHistoricoMediadorByActivo(id);
 	}
 
+	public List<DtoCondicionEspecifica> getCondicionEspecificaByActivo(Long id) {
+		return activoApi.getCondicionEspecificaByActivo(id);
+	}
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createHistoricoMediador(DtoHistoricoMediador dto, ModelMap model) {

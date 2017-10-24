@@ -3,6 +3,8 @@ Ext.define('HreRem.view.activos.detalle.HistoricoCondicionesList', {
     xtype		: 'historicocondicioneslist',
 	topBar		: true,
 	idPrincipal : 'activo.id',
+	propagationButton: true,
+	targetGrid	: 'condicionesespecificas',
 	
     bind: {
         store: '{historicocondiciones}'

@@ -306,7 +306,7 @@ DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA
       (
         SELECT DD_COS_ID 
         FROM '||V_ESQUEMA||'.DD_COS_COMITES_SANCION 
-        WHERE DD_COS_CODIGO = MIG2.OFR_COMITE_SANCION AND BORRADO = 0
+        WHERE DD_COS_CODIGO = TRIM(LEADING ''0'' FROM MIG2.OFR_COMITE_SANCION) AND BORRADO = 0
       )                                                                                          AS DD_COS_ID,
       MIG2.OFR_FECHA_SANCION_COMITE                                                              AS ECO_FECHA_SANCION_COMITE
     FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR

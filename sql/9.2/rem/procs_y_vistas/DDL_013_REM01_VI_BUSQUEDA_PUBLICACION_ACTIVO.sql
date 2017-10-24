@@ -125,7 +125,24 @@ AS
 ) AND act.borrado = 0
 ';*/
 
-EXECUTE IMMEDIATE 'WITH VISTA_ACT_PUB AS (
+EXECUTE IMMEDIATE 'CREATE OR REPLACE FORCE VIEW ' || V_ESQUEMA || '.' || V_TEXT_VISTA || ' (act_id,
+                                                                  act_num_activo,
+                                                                  tipo_activo_codigo,
+                                                                  tipo_activo_descripcion,
+                                                                  subtipo_activo_codigo,
+                                                                  subtipo_activo_descripcion,
+                                                                  direccion,
+                                                                  cartera_codigo,
+                                                                  estado_publicacion_codigo,
+                                                                  estado_publicacion_descripcion,
+                                                                  admision,
+                                                                  gestion,
+                                                                  informe_comercial,
+                                                                  publicacion,
+                                                                  precio
+                                                                 )
+AS 
+  WITH VISTA_ACT_PUB AS (
   SELECT 
     ACT.ACT_ID    
     , ACT.ACT_NUM_ACTIVO AS ACT_NUM_ACTIVO

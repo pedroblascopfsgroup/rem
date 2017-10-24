@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
@@ -112,6 +113,7 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 									uvemManagerApi.anularOferta(ofertaAceptada.getNumOferta().toString(), UvemManagerApi.MOTIVO_ANULACION_OFERTA.NO_RATIFICADA);
 								} catch (Exception e) {
 									logger.error("Error al invocar el servicio de anular oferta de Uvem.", e);
+									throw new UserException(e.getMessage());
 								}
 							}
 

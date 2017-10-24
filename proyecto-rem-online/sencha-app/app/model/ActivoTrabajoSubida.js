@@ -29,7 +29,11 @@ Ext.define('HreRem.model.ActivoTrabajoSubida', {
     		},
     		{
     			name:'numFincaRegistral'
-    		}
+    		},
+			{
+				name : 'activoEnPropuestaEnTramitacion',
+				type: 'boolean'
+			}
 //    		,
 //    		{
 //    			name: 'situacionPosesoria',

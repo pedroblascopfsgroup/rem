@@ -334,6 +334,9 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 		if(!Checks.esNulo(resolDto.getPenitenciales())){
 			resol.setPenitenciales(resolDto.getPenitenciales());
 		}
+		if(!Checks.esNulo(resolDto.getFechaComite())){
+			resol.setFechaResolucion(resolDto.getFechaComite());
+		}
 		
 		resol = genericDao.save(ResolucionComiteBankia.class, resol);
 		

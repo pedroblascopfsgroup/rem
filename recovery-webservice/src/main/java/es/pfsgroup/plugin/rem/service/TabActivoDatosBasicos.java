@@ -265,7 +265,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "tipoAlquilerDescripcion", activo.getTipoAlquiler().getDescripcion());
 		}
 		
-		if(activo.getAgrupaciones().size() > 0){
+		if(!activo.getAgrupaciones().isEmpty()) {
 			Boolean pertenceAgrupacionRestringida = false;
 			for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
 				if(Checks.esNulo(agrupaciones.getAgrupacion().getFechaBaja())) {
@@ -284,9 +284,27 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 				}
 			}
+			Boolean pertenceAgrupacionAsistida = false;
+			for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
+				if(Checks.esNulo(agrupaciones.getAgrupacion().getFechaBaja()) && !Checks.esNulo(agrupaciones.getAgrupacion().getTipoAgrupacion()) &&
+						DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+					pertenceAgrupacionAsistida = true;
+					break;
+				}
+			}
+			Boolean pertenceAgrupacionObraNueva = false;
+			for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
+				if(Checks.esNulo(agrupaciones.getAgrupacion().getFechaBaja()) && !Checks.esNulo(agrupaciones.getAgrupacion().getTipoAgrupacion()) &&
+						DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(agrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+					pertenceAgrupacionObraNueva = true;
+					break;
+				}
+			}
 
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionRestringida", pertenceAgrupacionRestringida);
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionComercial", pertenceAgrupacionComercial);
+			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionAsistida", pertenceAgrupacionAsistida);
+			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionObraNueva", pertenceAgrupacionObraNueva);
 		}
 
 		// Obtener si el ultimo estado del informe comercial es ACEPTADO.

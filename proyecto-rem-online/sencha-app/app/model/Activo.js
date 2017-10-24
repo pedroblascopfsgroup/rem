@@ -553,6 +553,14 @@ Ext.define('HreRem.model.Activo', {
 				type: 'boolean'
 			},
 			{
+				name: 'pertenceAgrupacionAsistida',
+				type: 'boolean'
+			},
+			{
+				name: 'pertenceAgrupacionObraNueva',
+				type: 'boolean'
+			},
+			{
 				name: 'bloqueoTipoComercializacionAutomatico',
 				type: 'boolean'
 			},

@@ -578,6 +578,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					extraParams: {id: '{activo.id}'}
 				 }
     		},
+    		
+    		tipoTasacionStore: {    		
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tipoTasacion'}
+				},  		
+				autoLoad: true
+			},
 
     		storeTramites: {
     			 model: 'HreRem.model.Tramite',

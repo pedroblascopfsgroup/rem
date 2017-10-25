@@ -295,9 +295,9 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 										if(!Checks.esNulo(codigoComite))
 											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getDescripcion());
 			            			}else{
-				            				if(!Checks.esNulo(expediente.getComiteSancion()))
-				            					item.setValue(expediente.getComiteSancion().getDescripcion());
-				            			}
+			            				if(!Checks.esNulo(expediente.getComiteSancion()))
+			            					item.setValue(expediente.getComiteSancion().getDescripcion());
+				            		}
             					}else{
             						item.setValue(NO_APLICA);
             					}
@@ -353,7 +353,13 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             					}
             				}
             			}	
-            		} 
+            		}
+            		if(item.getNombre().equals("importeContraoferta")){
+            			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
+            			if(!Checks.esNulo(ofertaAceptada)){
+            				item.setValue(ofertaAceptada.getImporteContraOferta().toString());           				}
+            			}
+            		}
             	}
             	if(item.getType().equals(TIPO_CAMPO_TEXTFIELD))
             	{

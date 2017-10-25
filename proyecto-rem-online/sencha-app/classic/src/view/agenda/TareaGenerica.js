@@ -1097,6 +1097,41 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         })
     },
 
+    T013_RespuestaOfertanteValidacion: function(){
+    	var me = this;
+    	var cartera = me.up('tramitesdetalle').getViewModel().get('tramite.cartera');
+    	if(cartera == 'Bankia'){
+	    	if (me.down('[name=comboRespuesta]').getValue() != '03') {
+	            me.deshabilitarCampo(me.down('[name=importeOfertante]'));
+	        }
+	
+	        me.down('[name=comboRespuesta]').addListener('change', function(combo) {
+	            if (combo.value == '03') {
+	                me.habilitarCampo(me.down('[name=importeOfertante]'));
+	            } else {
+	                me.deshabilitarCampo(me.down('[name=importeOfertante]'));
+	            }
+	        });
+    	}else{
+    		me.deshabilitarCampo(me.down('[name=importeOfertante]'));
+    		me.down('[name=comboRespuesta]').addListener('focus', function(combo) {
+				me.down('[name=comboRespuesta]').getStore().removeAt(2); //Quitar Contraoferta
+			});
+    	}
+    },
+    
+    T013_RatificacionComiteValidacion: function(){
+    	var me = this;
+    	var cartera = me.up('tramitesdetalle').getViewModel().get('tramite.cartera');
+		var comboRatificacion = me.down('[name=comboRatificacion]');
+		if(cartera != 'Bankia'){
+			comboRatificacion.addListener('focus', function(combo) {
+				comboRatificacion.getStore().removeAt(2); //Quitar Contraoferta
+			});
+			
+		}
+    	
+    },
 
     T013_ResolucionTanteoValidacion: function() {
         var me = this;

@@ -30,6 +30,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
 
 @Component
 public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterService {
@@ -59,6 +60,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaRespuestaOfertante.class);
 
     private static final String COMBO_RESPUESTA = "comboRespuesta";
+    private static final String IMPORTE_OFERTANTE = "importeOfertante";
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
    	private static final String CODIGO_T013_RESPUESTA_OFERTANTE = "T013_RespuestaOfertante";
    	private static final String MOTIVO_COMPRADOR_NO_INTERES = "100"; //EL COMPRADOR NO ESTÁ INTERESADO EN LA OPERACIÓN
@@ -77,7 +79,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 
 					if(COMBO_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						Filter filtro;
-						if(DDSiNo.SI.equals(valor.getValor())){
+						if(DDRespuestaOfertante.CODIGO_ACEPTA.equals(valor.getValor()) || DDRespuestaOfertante.CODIGO_CONTRAOFERTA.equals(valor.getValor())){
 							//Si el activo es de Bankia, se ratifica el comité
 							if(!trabajoApi.checkBankia(expediente.getTrabajo())){
 								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
@@ -96,7 +98,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 							// Se comprueba si cada activo tiene KO de admisión o de gestión
 							// y se envía una notificación
 							notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
-						} else {
+						}else {
 							//Resuelve el expediente
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
 							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
@@ -132,6 +134,16 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 	
 						}
 	
+					}if (IMPORTE_OFERTANTE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						ofertaAceptada.setImporteContraOferta(Double.valueOf(valor.getValor()));
+						genericDao.save(Oferta.class, ofertaAceptada);
+	
+						// Actualizar honorarios para el nuevo importe de contraoferta.
+						expedienteComercialApi.actualizarHonorariosPorExpediente(expediente.getId());
+	
+						// Actualizamos la participación de los activos en la oferta;
+						expedienteComercialApi.updateParticipacionActivosOferta(ofertaAceptada);
+						expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
 					}
 					
 					genericDao.save(ExpedienteComercial.class, expediente);

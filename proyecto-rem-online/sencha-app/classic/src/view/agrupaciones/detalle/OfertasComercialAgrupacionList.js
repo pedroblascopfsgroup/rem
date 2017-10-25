@@ -175,25 +175,25 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 	editFuncion: function(editor, context){
 
 		var me= this;
-			var estado = context.record.get("codigoEstadoOferta");	
-			if(CONST.ESTADOS_OFERTA['ACEPTADA'] == estado){
+		var estado = context.record.get("codigoEstadoOferta");	
+		if(CONST.ESTADOS_OFERTA['ACEPTADA'] == estado){
 				
-				Ext.Msg.show({
-				   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
-				   msg: HreRem.i18n('msg.desea.aceptar.oferta'),
-				   buttons: Ext.MessageBox.YESNO,
-				   fn: function(buttonId) {
-				        if (buttonId == 'yes') {
-				            
-				        	me.saveFn(editor, me, context);
-				        	
-						}
-				    	else{
-				    		me.getStore().load();	
-				    	}
+			Ext.Msg.show({
+			   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
+			   msg: HreRem.i18n('msg.desea.aceptar.oferta'),
+			   buttons: Ext.MessageBox.YESNO,
+			   fn: function(buttonId) {
+			        if (buttonId == 'yes') {
+			            
+			        	me.saveFn(editor, me, context);
+			        	
 					}
-				});
-			}
+			    	else{
+			    		me.getStore().load();	
+			    	}
+				}
+			});
+		} else {
 			
 			//Si todos los estados de las Ofertas = Rechazada -> Se podran agregar activos a al agrupacion
 			// HREOS-2814 El cambio a anulada/denegada (rechazada) abre el formulario de motivos de rechazo
@@ -217,6 +217,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
             	
             	me.saveFn(editor, me, context);
 			}
+		}
 					
 	},
 	

@@ -11,6 +11,7 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import es.capgemini.devon.log.Log4JManager;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -155,6 +156,14 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		if (!Checks.esNulo(dtoOfertasFilter.getEstadosExpediente())) {
 			addFiltroWhereInSiNotNullConStrings(hb, "voferta.codigoEstadoExpediente", Arrays.asList(dtoOfertasFilter.getEstadosExpediente()));
 		}
+
+		if (!Checks.esNulo(dtoOfertasFilter.getTipoComercializacion())) {
+			addFiltroWhereInSiNotNullConStrings(hb, "voferta.tipoComercializacion", Arrays.asList(dtoOfertasFilter.getTipoComercializacion()));
+		}
+
+		if (!Checks.esNulo(dtoOfertasFilter.getClaseActivoBancario())) {
+			addFiltroWhereInSiNotNullConStrings(hb, "voferta.claseActivoBancario", Arrays.asList(dtoOfertasFilter.getClaseActivoBancario()));
+		}
 		
 		if (!Checks.esNulo(dtoOfertasFilter.getNumAgrupacion())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.numActivoAgrupacion",
@@ -235,8 +244,8 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		if(!Checks.esNulo(dtoOfertasFilter.getCarteraCodigo())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.carteraCodigo", dtoOfertasFilter.getCarteraCodigo());
 		}
-		Page pageVisitas = HibernateQueryUtils.page(this, hb, dtoOfertasFilter);
 
+		Page pageVisitas = HibernateQueryUtils.page(this, hb, dtoOfertasFilter);
 		List<VOfertasActivosAgrupacion> ofertas = (List<VOfertasActivosAgrupacion>) pageVisitas.getResults();
 
 		return new DtoPage(ofertas, pageVisitas.getTotalCount());

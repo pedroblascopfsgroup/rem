@@ -822,9 +822,16 @@ public class UvemManager implements UvemManagerApi {
 				instanciaDecisionDtoCopia.setCodTipoArras(null);
 			}
 			if(instanciaDecisionDtoCopia
+					.getCodigoCOTPRA() == InstanciaDecisionDataDto.PROPUESTA_CONDICIONANTES_ECONOMICOS){
+				for(InstanciaDecisionDataDto dto: instanciaDecisionDtoCopia.getData()){
+					dto.setImporteConSigno(0L);
+				}
+			}
+			if(instanciaDecisionDtoCopia
 					.getCodigoCOTPRA() != InstanciaDecisionDataDto.PROPUESTA_TITULARES){
 				instanciaDecisionDtoCopia.setTitulares(null);
 			}
+			
 			instancia = instanciaDecision(instanciaDecisionDtoCopia, INSTANCIA_DECISION_MODIFICACION_3);
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);

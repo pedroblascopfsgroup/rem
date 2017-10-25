@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -176,7 +176,6 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		beanUtilNotNull.copyProperty(localizacionBien, "puerta", dtoAAF.getPuerta());
 		beanUtilNotNull.copyProperty(localizacionBien, "unidadPoblacional",
 				utilDiccionarioApi.dameValorDiccionarioByCod(DDUnidadPoblacional.class, dtoAAF.getUnidadMunicipioCodigo()));
-		//beanUtilNotNull.copyProperty(localizacionBien, "provincia", utilDiccionarioApi.dameValorDiccionarioByCod(DDProvincia.class, dtoAAF.getProvinciaCodigo()));
 		if (!Checks.esNulo(dtoAAF.getMunicipioCodigo())) {
 			Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoAAF.getMunicipioCodigo());
 			Localidad localidad = genericDao.get(Localidad.class, f1);
@@ -260,6 +259,14 @@ public class AltaActivoFinanciero implements AltaActivoService {
 
 		// ActivoPropietarioActivo.
 		ActivoPropietario activoPropietario = genericDao.get(ActivoPropietario.class, genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAAF.getNifPropietario()));
+		if(Checks.esNulo(activoPropietario)) {
+			// Si el propietario no existe se crea uno nuevo con el NIF recibido.
+			activoPropietario = new ActivoPropietario();
+			activoPropietario.setDocIdentificativo(dtoAAF.getNifPropietario());
+			DDTipoDocumento tipoDocumento = genericDao.get(DDTipoDocumento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "15"));
+			activoPropietario.setTipoDocIdentificativo(tipoDocumento);
+			activoPropietario= genericDao.save(ActivoPropietario.class, activoPropietario);
+		}
 		ActivoPropietarioActivo activoPropietarioActivo = new ActivoPropietarioActivo();
 		activoPropietarioActivo.setActivo(activo);
 		activoPropietarioActivo.setPropietario(activoPropietario);

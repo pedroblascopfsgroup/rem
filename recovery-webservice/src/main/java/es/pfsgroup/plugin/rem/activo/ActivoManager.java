@@ -2267,6 +2267,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				perimetroActivo.getAuditoria().setUsuarioCrear(adapter.getUsuarioLogado().getUsername());
 				genericDao.save(PerimetroActivo.class, perimetroActivo);
 			}
+			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, perimetroActivo.getActivo());
 
 		} catch (Exception ex) {
 			logger.error("Error en activoManager", ex);
@@ -4080,7 +4081,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Override
 	public void deleteActivoDistribucion(Long idActivoInfoComercial){
-		activoDao.deleteActivoDistribucion(idActivoInfoComercial);
+		activoDao.deleteActivoDistribucion(idActivoInfoComercial);		
 	}
 
 }

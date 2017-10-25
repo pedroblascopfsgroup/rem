@@ -25,6 +25,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoRenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUbicaAparcamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVivienda;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 
 @Component
 public class TabActivoInformacionComercial implements TabActivoService {
@@ -34,6 +36,9 @@ public class TabActivoInformacionComercial implements TabActivoService {
 	
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
+	
+	@Autowired
+	private RestApi restApi;
 	
 	
 
@@ -261,7 +266,7 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				activo.setInfoComercial(plazaAparcamiento);
 				
 			} //No hace falta if para ActivoLocalComercial porque tiene diccionarios
-			
+			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {

@@ -14,7 +14,7 @@ echo " "
 echo "INICIO DEL SCRIPT $0"
 
 $ORACLE_HOME/bin/sqlplus "$1" << ETIQUETA
-	EXECUTE REM01.OPERACION_DDL.DDL_TABLE('ANALYZE','VALIDACIONES_MIGRACION','10');
+	EXECUTE REM01.OPERACION_DDL.DDL_TABLE('ANALYZE','VALIDACIONES_MIGRACION','1');
 ETIQUETA
 
 while read line
@@ -27,7 +27,7 @@ do
 		inicio=`date +%s`
 		$ORACLE_HOME/bin/sqlplus "$1" << ETIQUETA >> ./Logs/006_ejecuta_procedimientos_almacenados_$2.log
 			EXECUTE "$line";
-			EXECUTE REM01.OPERACION_DDL.DDL_TABLE('ANALYZE','VALIDACIONES_MIGRACION','10');
+			EXECUTE REM01.OPERACION_DDL.DDL_TABLE('ANALYZE','VALIDACIONES_MIGRACION','1');
 ETIQUETA
 		if [ $? != 0 ] ; then 
 		   echo -e "\n\n======>>> "Error en @"$line"

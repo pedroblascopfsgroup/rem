@@ -120,10 +120,15 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	
 	@Column(name="CANAL_DESCRIPCION")
 	private String canalDescripcion;
-	
+
 	@Column(name="CARTERA_CODIGO")
 	private String carteraCodigo;
 
+	@Column(name="TIPO_COMERCIALIZACION")
+	private String tipoComercializacion;
+	
+	@Column(name="CLASE_ACTIVO")
+	private String claseActivoBancario;
 
 	public Date getFechaModificar() {
 		return fechaModificar;
@@ -405,6 +410,19 @@ public class VOfertasActivosAgrupacion implements Serializable {
 		this.motivoRechazoCodigo = motivoRechazoCodigo;
 	}
 	
-	
-	 
+	public String getTipoComercializacion() {
+		return tipoComercializacion;
+	}
+
+	public void setTipoComercializacion(String tipoComercializacion) {
+		this.tipoComercializacion = tipoComercializacion;
+	}
+
+	public String getClaseActivoBancario() {
+		return claseActivoBancario;
+	}
+
+	public void setClaseActivoBancario(String claseActivoBancario) {
+		this.claseActivoBancario = claseActivoBancario;
+	} 
 }

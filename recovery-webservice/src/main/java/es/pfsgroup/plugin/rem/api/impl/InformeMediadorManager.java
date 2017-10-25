@@ -44,6 +44,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.rest.api.DtoToEntityApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dao.impl.GenericaRestDaoImp;
 import es.pfsgroup.plugin.rem.rest.dto.InformeMediadorDto;
@@ -1494,6 +1495,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 			}
 
 			listaRespuesta.add(map);
+			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 			i++;
 		}
 		return listaRespuesta;

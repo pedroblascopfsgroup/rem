@@ -108,7 +108,7 @@ import net.sf.json.JSONObject;
 @Service("ofertaManager")
 public class OfertaManager extends BusinessOperationOverrider<OfertaApi> implements OfertaApi {
 
-	protected static final Log logger = LogFactory.getLog(OfertaManager.class);
+	private final Log logger = LogFactory.getLog(OfertaManager.class);
 	SimpleDateFormat groovyft = new SimpleDateFormat("yyyy-MM-dd");
 
 	// private static final String HONORARIO_TIPO_COLABORACION = "C";

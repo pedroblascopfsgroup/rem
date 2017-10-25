@@ -54,7 +54,6 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 	public static final String TIPO_VIA_IS_NULL = "El tipo de vía no puede estar vacía.";
 	public static final String NOMBRE_VIA_IS_NULL = "El nombre de la vía no puede estar vacía.";
 	public static final String NUM_VIA_IS_NULL = "El número de la vía no puede estar vacía.";
-	//public static final String PROVINCIA_IS_NULL = "La provincia no puede estar vacía.";
 	public static final String UNIDAD_INFERIOR_MUNICIPIO_IS_NULL = "La unidad inferior al municipio no puede estar vacía.";
 	public static final String CODIGO_POSTAL_IS_NULL = "El código postal no puede estar vacío.";
 	public static final String DESTINO_COMERCIAL_IS_NULL = "El destino comercial no puede estar vacío.";
@@ -82,7 +81,6 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 	public static final String TRASTERO_ANEJO_NOT_BOOL = "El valor indicado en TRASTERO ANEJO no es un valor Si/No correcto";
 	public static final String FECHA_TASACION_DATE_FORMAT = "El valor indicado en FECHA TASACIÓN no cumple con el formato de fecha correcto (DD/MM/AAAA)";
 	public static final String SOCIEDAD_ACREEDORA_NOT_EXISTS = "El NIF indicado para la sociedad acreedora no se encuentra dado de alta";
-	public static final String PROPIETARIO_NOT_EXISTS = "El NIF indicado para el propietario no se encuentra dado de alta";
 	public static final String MEDIADOR_NOT_EXISTS = "El NIF indicado para el mediador no se encuentra dado de alta";
 	public static final String CODIGO_SOCIEDAD_ACREEDORA_IS_NAN = "El código de la sociedad acreedora no tiene un formato numérico válido";
 	public static final String NUM_ACTIVO_HAYA_IS_NAN = "El código haya del activo no tiene un formato numérico válido";
@@ -100,7 +98,6 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 	public static final String PORCENTAJE_IS_NAN = "El porcentaje de propiedad no tiene un formato numérico válido";
 	public static final String PORCENTAJE_SUPERIOR = "El porcentaje de propiedad no se encuentra en un rango válido";
 	public static final String CODIGO_POSTAL_IS_NAN = "El código postal no tiene un formato numérico válido o no contiene 5 posiciones";
-	//public static final String PROVINCIA_NOT_EXISTS = "El código de provincia especificado no existe";
 	public static final String MUNICIPIO_NOT_EXISTS = "El código de municipio especificado no existe";
 	public static final String UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS = "El código de la unidad inferior al municipio especificado no existe";
 
@@ -235,7 +232,6 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 			mapaErrores.put(TIPO_VIA_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_TIPO_VIA));
 			mapaErrores.put(NOMBRE_VIA_IS_NULL, isColumnNullByRows(exc, COL_NUM.NOMBRE_VIA));
 			mapaErrores.put(NUM_VIA_IS_NULL, isColumnNullByRows(exc, COL_NUM.NUM_VIA));
-			//mapaErrores.put(PROVINCIA_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_PROVINCIA));
 			mapaErrores.put(UNIDAD_INFERIOR_MUNICIPIO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_UNIDAD_MUNICIPIO));
 			mapaErrores.put(CODIGO_POSTAL_IS_NULL, isColumnNullByRows(exc, COL_NUM.CODPOSTAL));
 			mapaErrores.put(DESTINO_COMERCIAL_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_DESTINO_COMER));
@@ -263,7 +259,6 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 			mapaErrores.put(TRASTERO_ANEJO_NOT_BOOL, isColumnNotBoolByRows(exc, COL_NUM.TRASTERO_ANEJO));
 			mapaErrores.put(FECHA_TASACION_DATE_FORMAT, isColumnNotDateByRows(exc, COL_NUM.FECHA_TASACION));
 			mapaErrores.put(SOCIEDAD_ACREEDORA_NOT_EXISTS, sociedadAcreedoraNotExistsByRows(exc, COL_NUM.NIF_SOCIEDAD_ACREEDORA));
-			mapaErrores.put(PROPIETARIO_NOT_EXISTS, propietarioNotExistsByRows(exc, COL_NUM.NIF_PROPIETARIO));
 			mapaErrores.put(MEDIADOR_NOT_EXISTS, mediadorNotExistsByRows(exc, COL_NUM.NIF_MEDIADOR));
 			mapaErrores.put(NUM_ACTIVO_HAYA_IS_NAN, isColumnNANByRows(exc, COL_NUM.NUM_ACTIVO_HAYA));
 			mapaErrores.put(NUM_ACTIVO_CARTERA_IS_NAN, isColumnNANByRows(exc, COL_NUM.NUM_ACTIVO_CARTERA));
@@ -281,7 +276,6 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 			mapaErrores.put(PORCENTAJE_IS_NAN, isColumnFloatNANByRows(exc, COL_NUM.PERCENT_PROPIEDAD));
 			mapaErrores.put(PORCENTAJE_SUPERIOR, isColumnPorcentajeSuperiorByRows(exc, COL_NUM.PERCENT_PROPIEDAD));
 			mapaErrores.put(CODIGO_POSTAL_IS_NAN, isColumnCodigoPostalValido(exc, COL_NUM.CODPOSTAL));
-			//mapaErrores.put(PROVINCIA_NOT_EXISTS, isCodigoProvinciaValido(exc, COL_NUM.COD_PROVINCIA));
 			mapaErrores.put(MUNICIPIO_NOT_EXISTS, isCodigoMunicipioValido(exc, COL_NUM.COD_MUNICIPIO));
 			mapaErrores.put(UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS, isCodigoUnidadInferiorMunicipioValido(exc, COL_NUM.COD_UNIDAD_MUNICIPIO));
 
@@ -289,29 +283,30 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 				if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(CARTERA_IS_NULL).isEmpty() || !mapaErrores.get(SUBTIPO_TITULO_IS_NULL).isEmpty()
 						|| !mapaErrores.get(TIPO_ACTIVO_IS_NULL).isEmpty() || !mapaErrores.get(SUBTIPO_ACTIVO_IS_NULL).isEmpty()
 						|| !mapaErrores.get(ESTADO_FISICO_ACTIVO_IS_NULL).isEmpty() || !mapaErrores.get(USO_DOMINANTE_ACTIVO_IS_NULL).isEmpty()
-						|| !mapaErrores.get(DESC_ACTIVO_IS_NULL).isEmpty() || !mapaErrores.get(TIPO_VIA_IS_NULL).isEmpty() || !mapaErrores.get(NOMBRE_VIA_IS_NULL).isEmpty()
-						|| !mapaErrores.get(NUM_VIA_IS_NULL).isEmpty() //|| !mapaErrores.get(PROVINCIA_IS_NULL).isEmpty()
+						|| !mapaErrores.get(DESC_ACTIVO_IS_NULL).isEmpty() || !mapaErrores.get(TIPO_VIA_IS_NULL).isEmpty() 
+						|| !mapaErrores.get(NUM_VIA_IS_NULL).isEmpty() || !mapaErrores.get(NOMBRE_VIA_IS_NULL).isEmpty()
 						|| !mapaErrores.get(UNIDAD_INFERIOR_MUNICIPIO_IS_NULL).isEmpty() || !mapaErrores.get(CODIGO_POSTAL_IS_NULL).isEmpty()
 						|| !mapaErrores.get(DESTINO_COMERCIAL_IS_NULL).isEmpty() || !mapaErrores.get(TIPO_ALQUILER_IS_NULL).isEmpty()
 						|| !mapaErrores.get(NUM_PRESTAMO_IS_NULL).isEmpty() || !mapaErrores.get(NIF_SOCIEDAD_ACREEDORA_IS_NULL).isEmpty()
 						|| !mapaErrores.get(CODIGO_SOCIEDAD_ACREEDORA_IS_NULL).isEmpty() || !mapaErrores.get(NOMBRE_SOCIEDAD_ACREEDORA_IS_NULL).isEmpty()
-						|| !mapaErrores.get(POBL_REGISTRO_IS_NULL).isEmpty() || !mapaErrores.get(NUM_REGISTRO_IS_NULL).isEmpty() || !mapaErrores.get(FINCA_IS_NULL).isEmpty()
+						|| !mapaErrores.get(POBL_REGISTRO_IS_NULL).isEmpty() || !mapaErrores.get(NUM_REGISTRO_IS_NULL).isEmpty() 
 						|| !mapaErrores.get(NIF_PROPIETARIO_IS_NULL).isEmpty() || !mapaErrores.get(REFERENCIA_CATASTRAL_IS_NULL).isEmpty()
-						|| !mapaErrores.get(VPO_IS_NULL).isEmpty() || !mapaErrores.get(PRECIO_MINIMO_IS_NULL).isEmpty() || !mapaErrores.get(PRECIO_VENTA_WEB_IS_NULL).isEmpty()
+						|| !mapaErrores.get(VPO_IS_NULL).isEmpty() || !mapaErrores.get(PRECIO_MINIMO_IS_NULL).isEmpty() 
 						|| !mapaErrores.get(PRECIO_MINIMO_IS_NAN).isEmpty() || !mapaErrores.get(PRECIO_VENTA_WEB_IS_NAN).isEmpty()
 						|| !mapaErrores.get(VALOR_TASACION_IS_NAN).isEmpty() || !mapaErrores.get(PRECIO_MINIMO_IS_ZERO).isEmpty()
 						|| !mapaErrores.get(PRECIO_VENTA_WEB_IS_ZERO).isEmpty() || !mapaErrores.get(VALOR_TASACION_IS_ZERO).isEmpty()
 						|| !mapaErrores.get(GARAJE_ANEJO_NOT_BOOL).isEmpty() || !mapaErrores.get(TRASTERO_ANEJO_NOT_BOOL).isEmpty()
 						|| !mapaErrores.get(FECHA_TASACION_DATE_FORMAT).isEmpty() || !mapaErrores.get(SOCIEDAD_ACREEDORA_NOT_EXISTS).isEmpty()
-						|| !mapaErrores.get(PROPIETARIO_NOT_EXISTS).isEmpty() || !mapaErrores.get(MEDIADOR_NOT_EXISTS).isEmpty()
+						|| !mapaErrores.get(MEDIADOR_NOT_EXISTS).isEmpty() || !mapaErrores.get(PRECIO_VENTA_WEB_IS_NULL).isEmpty()
 						|| !mapaErrores.get(CODIGO_SOCIEDAD_ACREEDORA_IS_NAN).isEmpty() || !mapaErrores.get(NUM_ACTIVO_HAYA_IS_NAN).isEmpty()
 						|| !mapaErrores.get(NUM_ACTIVO_CARTERA_IS_NAN).isEmpty() || !mapaErrores.get(NUM_BIEN_RECOVERY_IS_NAN).isEmpty()
 						|| !mapaErrores.get(ID_ASUNTO_RECOVERY_IS_NAN).isEmpty() || !mapaErrores.get(ID_GARANTIA_IS_NAN).isEmpty()
 						|| !mapaErrores.get(TOMO_REGISTRO_IS_NAN).isEmpty() || !mapaErrores.get(LIBRO_REGISTRO_IS_NAN).isEmpty()
 						|| !mapaErrores.get(FOLIO_REGISTRO_IS_NAN).isEmpty() || !mapaErrores.get(SUPERFICIE_CONSTRUIDA_REGISTRO_IS_NAN).isEmpty()
 						|| !mapaErrores.get(SUPERFICIE_UTIL_REGISTRO_IS_NAN).isEmpty() || !mapaErrores.get(SUPERFICIE_REPERCUSION_EECC_REGISTRO_IS_NAN).isEmpty()
-						|| !mapaErrores.get(PARCELA_REGISTRO_IS_NAN).isEmpty() || !mapaErrores.get(PORCENTAJE_IS_NAN).isEmpty() || !mapaErrores.get(PORCENTAJE_SUPERIOR).isEmpty()
-						|| !mapaErrores.get(CODIGO_POSTAL_IS_NAN).isEmpty() || /*!mapaErrores.get(PROVINCIA_NOT_EXISTS).isEmpty() ||*/ !mapaErrores.get(MUNICIPIO_NOT_EXISTS).isEmpty()
+						|| !mapaErrores.get(PARCELA_REGISTRO_IS_NAN).isEmpty() || !mapaErrores.get(PORCENTAJE_IS_NAN).isEmpty() 
+						|| !mapaErrores.get(CODIGO_POSTAL_IS_NAN).isEmpty() || !mapaErrores.get(MUNICIPIO_NOT_EXISTS).isEmpty()
+						|| !mapaErrores.get(PORCENTAJE_SUPERIOR).isEmpty() || !mapaErrores.get(FINCA_IS_NULL).isEmpty()
 						|| !mapaErrores.get(UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS).isEmpty()) {
 
 					dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -626,36 +621,6 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 	}
 
 	/**
-	 * Este método comprueba si el NIF indicado en la excel para el propietario se encuentra dado de
-	 * alta en la DB.
-	 * 
-	 * @param exc : documento excel con los datos.
-	 * @param columnNumber : número de columna a comprobar.
-	 * @return Devuelve una lista con los errores econtrados. Tantos registros como errores.
-	 */
-	private List<Integer> propietarioNotExistsByRows(MSVHojaExcel exc, int columnNumber) {
-		List<Integer> listaFilas = new ArrayList<Integer>();
-
-		int i = 0;
-		try {
-			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
-				if (!particularValidator.existePropietario(exc.dameCelda(i, columnNumber))) listaFilas.add(i);
-			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (ParseException e) {
-			logger.error(e.getMessage());
-			listaFilas.add(i);
-		}
-
-		return listaFilas;
-	}
-
-	/**
 	 * Este método comprueba si el NIF indicado en la excel para el mediador se encuentra dado de
 	 * alta en la DB.
 	 * 
@@ -785,28 +750,6 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 				} else if (!Checks.esNulo(valor) && (valor.length() != 5)) {
 					listaFilas.add(i);
 				}
-			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (ParseException e) {
-			logger.error(e.getMessage());
-			listaFilas.add(i);
-		}
-
-		return listaFilas;
-	}
-
-	private List<Integer> isCodigoProvinciaValido(MSVHojaExcel exc, int columnNumber) {
-		List<Integer> listaFilas = new ArrayList<Integer>();
-
-		int i = 0;
-		try {
-			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
-				if (!particularValidator.existeProvinciaByCodigo(exc.dameCelda(i, columnNumber))) listaFilas.add(i);
 			}
 		} catch (IllegalArgumentException e) {
 			logger.error(e.getMessage());

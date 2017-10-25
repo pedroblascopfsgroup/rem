@@ -135,7 +135,8 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				
 					// Si estado es INCOMPLETO, comprobamos si ya no lo está para pasarlo a pendiente.
 					//if(DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo()) || DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo())) {
-					if(!Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionHaya())) {
+					if(!Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionHaya()) 
+							|| (Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionHaya()) && DDEstadoGasto.RETENIDO.equals(gasto.getEstadoGasto().getCodigo()))) {
 						String error = validarAutorizacionGasto(gasto);
 						if(Checks.esNulo(error)) {
 							if(DDEstadoAutorizacionHaya.CODIGO_RECHAZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())) {
@@ -148,10 +149,12 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 						}else {
 							codigo = DDEstadoGasto.INCOMPLETO;
 						}
-
-						if(DDEstadoAutorizacionHaya.CODIGO_RECHAZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())
-							&& genericAdapter.isProveedor(usuario)) {
-							codigo = DDEstadoGasto.SUBSANADO;					
+						
+						if(!Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionHaya())){
+							if(DDEstadoAutorizacionHaya.CODIGO_RECHAZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())
+								&& genericAdapter.isProveedor(usuario)) {
+								codigo = DDEstadoGasto.SUBSANADO;					
+							}
 						}
 						if(DDEstadoGasto.RECHAZADO_PROPIETARIO.equals(gasto.getEstadoGasto().getCodigo()) 
 								&& DDEstadoAutorizacionPropietario.CODIGO_RECHAZADO_CONTABILIDAD.equals(gasto.getGastoGestion().getEstadoAutorizacionPropietario().getCodigo())){
@@ -160,19 +163,28 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 							
 						}
 					}
-					if((!gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.ANULADO) || !gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.RECHAZADO_ADMINISTRACION) || 
-							!gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.RECHAZADO_PROPIETARIO) || !gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.RETENIDO))
-							&& !Checks.esNulo(gasto.getGastoDetalleEconomico().getFechaPago())) {
-						if(gasto.getGastoDetalleEconomico().getFechaPago().before(new Date())) {
-							if(!Checks.esNulo(gasto.getGastoDetalleEconomico().getReembolsoTercero())) {
-								if(gasto.getGastoDetalleEconomico().getReembolsoTercero() != 1) {
-									codigo = DDEstadoGasto.PAGADO;	
-								}
-							}else {
-								codigo = DDEstadoGasto.PAGADO;
-							}
-							
+					
+					
+					if(!DDEstadoGasto.INCOMPLETO.equals(codigo) 
+					&& !DDEstadoGasto.ANULADO.equals(gasto.getEstadoGasto().getCodigo()) 
+					&& !DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo()) 
+					&& !DDEstadoGasto.RECHAZADO_PROPIETARIO.equals(gasto.getEstadoGasto().getCodigo()) 
+					&& !DDEstadoGasto.RETENIDO.equals(gasto.getEstadoGasto().getCodigo())
+					&& !DDEstadoGasto.PAGADO.equals(gasto.getEstadoGasto().getCodigo())
+					&& !Checks.esNulo(gasto.getGastoDetalleEconomico().getFechaPago())) {
+
+						codigo = DDEstadoGasto.PAGADO;
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO);
+						DDEstadoAutorizacionHaya estadoAutorizacionHaya= (DDEstadoAutorizacionHaya) genericDao.get(DDEstadoAutorizacionHaya.class, filtro);
+						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoAutorizacionPropietario.CODIGO_PENDIENTE);
+						DDEstadoAutorizacionPropietario estadoAutorizacionPropietario= (DDEstadoAutorizacionPropietario) genericDao.get(DDEstadoAutorizacionPropietario.class, filtro);
+						if(!Checks.esNulo(gasto.getGastoGestion())){
+							gasto.getGastoGestion().setEstadoAutorizacionHaya(estadoAutorizacionHaya);
+							gasto.getGastoGestion().setFechaEstadoAutorizacionHaya(new Date());
+							gasto.getGastoGestion().setUsuarioEstadoAutorizacionHaya(usuario);
+							gasto.getGastoGestion().setEstadoAutorizacionPropietario(estadoAutorizacionPropietario);
 						}
+
 					}
 					
 				}

@@ -4,7 +4,6 @@ import java.util.List;
 
 import es.cajamadrid.servicios.GM.GMPETS07_INS.GMPETS07_INS;
 import es.capgemini.pfs.users.domain.Usuario;
-import es.pfsgroup.plugin.rem.api.UvemManagerApi.MOTIVO_ANULACION_OFERTA;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
@@ -35,7 +34,8 @@ public interface UvemManagerApi {
 		LOCALIZADO_SIN_INTERES_FIRMAR, FALTA_FINANCIACION, MAS_1_MES_FIRMAR_RESERVA, NO_TIENE_DINERO_SIN_FINANCIACION, CIRCURNSTANCIA_DISTINTAS_PACTADAS_DPT_COMERCIAL, NO_FIRMA_RESERVA_SIN_VISITA,
 		CAUSAS_FISCALES, CAUSAS_RELATIVAS_GASTOS, CAUSAS_RELATIVAS_ESTADO_FISICO, CARGAS_NO_PLANTEADAS, NO_CUMPLE_CONDICION_BANKIA, CLIENTE_NO_AMPLIACION_VALIDEZ, NO_CUMPLE_CONDICION, FUTURO_CUMPLIMIENTO_CONDICION,
 		SOLICITADA_AREA, DETECTADO_IRREGULARIDADES_DPTO_COMERCIAL, DETECTADO_IRREGULARIDADES_DPTO_ADM_TECNICO, DETECTADO_IRREGULARIDADES_DIRECCION, NO_RATIFICADA, MEJOR_OFERTA_POSTERIOR, SAREB_RETIRADA_OBRA_CURSO,
-		VENTA_SKY, VENTA_EXTERNA, ANULADAS_ESCRITURACION, NO_PRESENTADOS_FIRMA_REQUERIDOS, INCUMPLIMIENTO_PLAZOS_FORMA, ERROR_USUARIO_1, ERROR_USUARIO_2
+		VENTA_SKY, VENTA_EXTERNA, ANULADAS_ESCRITURACION, NO_PRESENTADOS_FIRMA_REQUERIDOS, INCUMPLIMIENTO_PLAZOS_FORMA, VENTA_ACTIVO, TRASPASADO_SOLVIA, ERROR_USUARIO_1, ERROR_USUARIO_2, VENCIDAS_POR_TIEMPO,
+		ANULADA_POR_VENCIMIENTO, ANULADA_ALTA_NUEVA_FACULTAD_HAYA, FINANCIACION_DENEGADA, PBC_DENEGADO
 	}
 
 	/******************************************* TASACIONES ***************************************************/
@@ -192,8 +192,24 @@ public interface UvemManagerApi {
 	 */
 	public void notificarDevolucionReserva(String codigoDeOfertaHaya, MOTIVO_ANULACION motivoAnulacionReserva,
 			INDICADOR_DEVOLUCION_RESERVA indicadorDevolucionReserva,CODIGO_SERVICIO_MODIFICACION codigoServicioModificacion) throws Exception;
+
+	/**
+	 * Este método obtiene un tipo de motivo anulación en base al código del diccionario de motivos de anulación de la reserva.
+	 * 
+	 * @param codigoMotivoAnulacionReserva: código del diccionario.
+	 * @return Devuelve un tipo ENUM relacionado con el tipo de anulación.
+	 */
+	public MOTIVO_ANULACION obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(String codigoMotivoAnulacionReserva);
 	
 	public void anularOferta(String codigoDeOfertaHaya, MOTIVO_ANULACION_OFERTA motivoAnulacionOferta) throws Exception;
+
+	/**
+	 * Este método obtiene un tipo de motivo anulación en base al código del diccionario de motivos de anulación.
+	 * 
+	 * @param codigoMotivoAnulacion: código del diccionario.
+	 * @return Devuelve un tipo ENUM relacionado con el tipo de anulación.
+	 */
+	public MOTIVO_ANULACION_OFERTA obtenerMotivoAnulacionOfertaPorCodigoMotivoAnulacion(String codigoMotivoAnulacion);
 	
 	/**
 	 * Invoca al servicio GMPDJB13_INS de BANKIA para modificar una instancia de

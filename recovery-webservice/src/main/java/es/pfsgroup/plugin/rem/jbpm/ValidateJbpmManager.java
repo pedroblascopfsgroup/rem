@@ -33,7 +33,7 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 	private ExpedienteComercialApi expedienteComercialApi;
 	
 	@Override
-	public String definicionOfertaT013(TareaExterna tareaExterna) {
+	public String definicionOfertaT013(TareaExterna tareaExterna, String codigo) {
 		//HREOS-2161
 		Trabajo trabajo = trabajoApi.tareaExternaToTrabajo(tareaExterna);
 		if (!trabajoApi.checkReservaNecesariaNotNull(tareaExterna) &&
@@ -46,7 +46,7 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 		if (trabajoApi.checkFormalizacion(tareaExterna)) {
 			if (ofertaApi.checkDeDerechoTanteo(tareaExterna) == false) {
 				if (trabajoApi.checkBankia(tareaExterna)) {
-					return ofertaApi.altaComiteProcess(tareaExterna);
+					return ofertaApi.altaComiteProcess(tareaExterna, codigo);
 				}
 			}
 		}		

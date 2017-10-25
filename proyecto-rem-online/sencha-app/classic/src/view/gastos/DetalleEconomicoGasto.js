@@ -24,9 +24,6 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
        
 	    						{   
 									xtype:'fieldsettable',
-//									bind: {
-//					        			disabled: '{conEmisor}'
-//			            			},
 									title: HreRem.i18n('title.gasto.detalle.economico'),
 									items :
 										[
@@ -93,8 +90,6 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 										        				},											                
 										        				change: function(){	
 										        					var field=me.up('gastodetallemain').lookupReference('tipoImpositivo');
-										        					//var principal=me.up('gastodetallemain').lookupReference('importePrincipalSujeto');
-										        					//field.clearInvalid();
 										        					if(this.getValue()!='' && this.getValue()>0){
 										        						if(field.getValue()!='' && field.getValue()>0)
 											        						field.validate();
@@ -151,7 +146,6 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 				        						margin: '0 10 10 0',
 				        						reference: 'impuestoindirecto',
 												title: HreRem.i18n('title.gasto.detalle.economico.impuesto.indirecto'),
-												//disabled: true,
 
 												listeners:{												
 													afterrender: function(){														
@@ -187,7 +181,6 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 										                	reference: 'cbOperacionExenta',
 										                	fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.operacion.exenta'),
 										                	bind: {
-//								        						disabled:'{!esOfertaVenta}',
 								        						value: '{detalleeconomico.impuestoIndirectoExento}'							        						
 						            						},
 						            						listeners:{
@@ -199,12 +192,9 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 					                					},
 					                					{		                
 										                	xtype: 'checkboxfieldbase',
-										                	//addUxReadOnlyEditFieldPlugin: false,
 										                	fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.renuncia.exencion'),
 										                	reference: 'cbRenunciaExencion',
 										                	bind: {
-										                		//disabled: '{!estaExento}',
-//								        						disabled:'{!esOfertaVenta}',
 								        						value: '{detalleeconomico.renunciaExencionImpuestoIndirecto}'
 						            						},
 						            						listeners:{
@@ -229,7 +219,6 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											                },
 											                //allowBlank: false,
 											                validator: function(v) {
-											                	var field=me.up('gastodetallemain').lookupReference('tipoImpositivo');
 											                	var principal=me.up('gastodetallemain').lookupReference('importePrincipalSujeto');											                	
 											                	if (Ext.isEmpty(this.getValue())){
 											                		this.clearInvalid();
@@ -247,9 +236,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 									                        },
 											                listeners:{
 										        				change: function(){	
-										        					var field=me.up('gastodetallemain').lookupReference('tipoImpositivo');
 										        					var principal=me.up('gastodetallemain').lookupReference('importePrincipalSujeto');
-										        					//this.clearInvalid();
 										        					if(this.getValue()=='' || this.getValue()==0){
 										        						if(principal.getValue()!='' && principal.getValue()>0)
 											        						this.markInvalid();
@@ -269,7 +256,6 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.cuota'),
 															reference: 'cbCuota',
 											                bind: {
-											                	//disabled: '{detalleeconomico.impuestoIndirectoExento}',
 											                	value: '{calcularImpuestoIndirecto}'
 											                },
 											                readOnly: true,
@@ -316,11 +302,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 												},
 												items :
 													[
-//														{
-//															xtype: 'textfieldbase',
-//															fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.tipo.impuesto.directo'),
-//											                bind:		'{detalleeconomico.tipoImpuestoDirecto}'
-//														},
+
 														{ 
 															xtype: 'numberfieldbase',
 															symbol: HreRem.i18n("symbol.porcentaje"),
@@ -329,7 +311,6 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											        		labelStyle: 'text-align:left;',
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.tipo.impositivo.irpf'),
 											                bind: '{detalleeconomico.irpfTipoImpositivo}',
-											                //allowBlank: false,
 											                listeners:{
 										        				edit: function(){
 										        					if(this.getValue()==0)
@@ -427,7 +408,6 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 										       	listeners: {
 										       		change: 'onChangeFechaTopePago'
 										       	}
-										       	//allowBlank: false
 										    },
 										    { 
 												xtype:'comboboxfieldbase',
@@ -502,44 +482,42 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 															{ 
 																xtype: 'comboboxfieldbase',
 															    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.responsable.pagado.por'),
+															    disabled: true,
 																bind: {
 																	store: '{comboPagadoPor}',
 																    value: '{detalleeconomico.tipoPagadorCodigo}'
+																    //,disabled: '{!detalleeconomico.fechaPago}'
 																}
 															}
 												]
 											},
 											
 											{
-					                			xtype: 'fieldsettable',					                			
+					                			xtype: 'fieldset',	
+					                			title: HreRem.i18n("title.supuestos.especiales"),	
+					                			padding: 10,
 					                			collapsible: false,
 												colspan: 3,
+											    layout: {
+											        type: 'table',
+											        columns: 2,
+											        trAttrs: {width: '100%'},
+											        tdAttrs: {width: '50%'},
+											        tableAttrs: {
+											            style: {
+											                width: '100%'
+															}
+											        }
+												},
+												defaults: {
+													margin: '0 10 10 0',																
+													height: 150
+												},
 												items: [
 												
-															{		                
-															    xtype: 'checkboxfieldbase',
-															    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.reembolsar.pago'),
-															    labelWidth: 200,
-															    bind: {
-														        	value: '{detalleeconomico.reembolsoTercero}'
-											            		},
-											            		listeners: {
-											            			
-											            			//afterbind: 'onChangeReembolsarPagoTercero'
-											            		},
-											            		reference: 'reembolsarPagoRef',
-											            		colspan: 3
-									                		},
 															{   
 																xtype:'fieldset',
-																defaultType: 'textfieldbase',
 																reference: 'fieldGestoria',
-																//disabled: true,
-																/*bind: {
-																	disabled: '{!esReembolsoPago}'
-																},*/
-																margin: '0 10 10 0',																
-																height: 175,
 																items : [
 																			{		                
 																			    xtype: 'checkboxfieldbase',
@@ -556,14 +534,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 															},
 															{   
 																xtype:'fieldset',
-																defaultType: 'textfieldbase',
-																reference: 'fieldAbonar',
-																//disabled: true,
-																/*bind: {
-																	disabled: '{!esReembolsoPago}'
-																},*/
-																margin: '0 10 10 0',
-																height: 175,																
+																reference: 'fieldAbonar',															
 																items :	[
 																			{		                
 																			    xtype: 'checkboxfieldbase',
@@ -580,6 +551,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 															                {				                	
 																				xtype      : 'fieldcontainer',
 																				fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.iban'),
+																				labelWidth: 150,
 																				name : 	'iban',
 																				reference: 'ibanRef',
 																				bind: {disabled: '{!seleccionadoAbonar}'},
@@ -601,14 +573,11 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																							{
 																								xtype: 'textfieldbase',
 																								reference: 'iban1',
-																								style: {
-																									backgroundColor: '#E5F6FE'
-																								},
-																								width: 55,
 																								maxLength: 4,
 																								minLengthText: 'Debe tener 4 digitos',
 																								bind: {
-																						        	value: '{detalleeconomico.iban1}'
+																						        	value: '{detalleeconomico.iban1}',
+																						        	allowBlank: '{!seleccionadoAbonar}'
 																			            		},
 																			            		listeners: {
 																			            			change: 'onChangeIban'
@@ -617,13 +586,10 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																							{
 																								xtype: 'textfieldbase',
 																								reference: 'iban2',
-																								style: {
-																									backgroundColor: '#E5F6FE'
-																								},
-																								width: 55,
 																								maxLength: 4,
 																								bind: {
-																						        	value: '{detalleeconomico.iban2}'
+																						        	value: '{detalleeconomico.iban2}',
+																						        	allowBlank: '{!seleccionadoAbonar}'
 																			            		},
 																			            		listeners: {
 																			            			change: 'onChangeIban'
@@ -632,13 +598,10 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																							{
 																								xtype: 'textfieldbase',
 																								reference: 'iban3',
-																								style: {
-																									backgroundColor: '#E5F6FE'
-																								},
-																								width: 55,
 																								maxLength: 4,
 																								bind: {
-																						        	value: '{detalleeconomico.iban3}'
+																						        	value: '{detalleeconomico.iban3}',
+																						        	allowBlank: '{!seleccionadoAbonar}'
 																			            		},
 																			            		listeners: {
 																			            			change: 'onChangeIban'
@@ -648,25 +611,19 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																							{
 																								xtype: 'textfieldbase',
 																								reference: 'iban4',
-																								style: {
-																									backgroundColor: '#E5F6FE'
-																								},
-																								width: 55,
 																								maxLength: 4,
 																								bind: {
-																						        	value: '{detalleeconomico.iban4}'
+																						        	value: '{detalleeconomico.iban4}',
+																						        	allowBlank: '{!seleccionadoAbonar}'
 																			            		}
 																							},
 																							{
 																								xtype: 'textfieldbase',
 																								reference: 'iban5',
-																								style: {
-																									backgroundColor: '#E5F6FE'
-																								},
-																								width: 55,
 																								maxLength: 4,
 																								bind: {
-																						        	value: '{detalleeconomico.iban5}'
+																						        	value: '{detalleeconomico.iban5}',
+																						        	allowBlank: '{!seleccionadoAbonar}'
 																			            		},
 																			            		listeners: {
 																			            			change: 'onChangeIban'
@@ -675,13 +632,10 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																							{
 																								xtype: 'textfieldbase',
 																								reference: 'iban6',
-																								style: {
-																									backgroundColor: '#E5F6FE'
-																								},
-																								width: 55,
 																								maxLength: 4,
 																								bind: {
-																						        	value: '{detalleeconomico.iban6}'
+																						        	value: '{detalleeconomico.iban6}',
+																						        	allowBlank: '{!seleccionadoAbonar}'
 																			            		},
 																			            		listeners: {
 																			            			change: 'onChangeIban'
@@ -694,7 +648,8 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																				fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.titular.cuenta'),
 																				bind: {
 																				  	value: '{detalleeconomico.titularCuenta}',
-																				  	disabled: '{!seleccionadoAbonar}'
+																				  	disabled: '{!seleccionadoAbonar}',
+																				  	allowBlank: '{!seleccionadoAbonar}'
 																	            },
 																	            reference: 'titularCuentaRef',
 																	            colspan: 3
@@ -704,7 +659,9 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																			    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.nif.titular.cuenta'),
 																			    bind: {
 																			       	value: '{detalleeconomico.nifTitularCuenta}',
-																			       	disabled: '{!seleccionadoAbonar}'
+																			       	disabled: '{!seleccionadoAbonar}',
+																			       	allowBlank: '{!seleccionadoAbonar}'
+																			       	
 																	        	},
 																	        	reference: 'nifTitularCuentaRef',
 																	        	colspan: 3
@@ -713,14 +670,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 															},
 															{   
 																xtype:'fieldset',
-																defaultType: 'textfieldbase',
-																reference: 'fieldBankia',
-																//disabled: true,
-																/*bind: {
-																	disabled: '{!esReembolsoPago}'
-																},*/
-																margin: '0 0 10 0',
-																height: 175,															
+																reference: 'fieldBankia',														
 																items :
 																		[
 																			{		                
@@ -741,7 +691,8 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																					    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.oficina'),
 																						bind: {
 																						    value: '{detalleeconomico.oficina}',
-																						    disabled: '{!seleccionadoPagadoBankia}'
+																						    disabled: '{!seleccionadoPagadoBankia}',
+																						    allowBlank: '{!seleccionadoPagadoBankia}'
 																						},
 																						reference: 'oficinaRef'
 																						
@@ -751,7 +702,8 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																					    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.numero.conexion'),
 																					    bind: {
 																				        	value: '{detalleeconomico.numeroConexion}',
-																				        	disabled: '{!seleccionadoPagadoBankia}'
+																				        	disabled: '{!seleccionadoPagadoBankia}',
+																				        	allowBlank: '{!seleccionadoPagadoBankia}'
 																	            		},
 																	            		reference: 'numeroConexionRef'
 															          		},
@@ -761,9 +713,42 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																				       	fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.fecha.conexion'),
 																				       	bind: {
 																				       		value: '{detalleeconomico.fechaConexion}',
-																				       		disabled: '{!seleccionadoPagadoBankia}'
+																				       		disabled: '{!seleccionadoPagadoBankia}',
+																				       		allowBlank: '{!seleccionadoPagadoBankia}'
 																				       	},
 																				       	reference: 'fechaConexionRef',
+																				       	maxValue: null
+																			}
+															    ]
+															},
+															{   
+																xtype:'fieldset',
+																reference: 'fieldAnticipo',														
+																items :
+																		[
+																			{		                
+																					    xtype: 'checkboxfieldbase',
+																					    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.anticipo'),
+																					    bind: {
+																				        	value: '{detalleeconomico.anticipo}'
+																	            		},
+																	            		listeners: {
+																	            			change: 'onChangeAnticipo'
+																	            			
+																	            		},
+																	            		reference: 'anticipoRef'
+															           		},
+															          		{
+																			        	xtype:'datefieldbase',
+																			        	
+																						formatter: 'date("d/m/Y")',
+																				       	fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.fecha.anticipo'),
+																				       	bind: {
+																				       		value: '{detalleeconomico.fechaAnticipo}',
+																				       		disabled: '{!seleccionadoAnticipo}',
+																				       		allowBlank: '{!seleccionadoAnticipo}'
+																				       	},
+																				       	reference: 'fechaAnticipoRef',
 																				       	maxValue: null
 																			}
 															    ]

@@ -396,21 +396,29 @@ Ext.define('HreRem.view.precios.PreciosController', {
    },
    
    onTabChangeGeneracionPropuestasTabPanel: function(tab) {
-   		var me = this;
-   		
-   		var activeTab = me.getView().down("generacionpropuestastabpanel").getActiveTab();
+   		var me = this,   		
+   		activeTab = me.getView().down("generacionpropuestastabpanel").getActiveTab(),
+   		activosList = me.lookupReference('generacionPropuestasActivosList');
    		
     	switch (activeTab.xtype) {
     		
     		case 'generacionpropuestasmanual':
-    			me.lookupReference('generacionPropuestasActivosList').getStore().loadPage(0); 
+    			activosList.getStore().loadPage(0); 
+    			activosList.getColumnManager().getHeaderByDataIndex("incluidoEnBolsa").setVisible(true);
+    			activosList.getColumnManager().getHeaderByDataIndex("activoEnPropuestaEnTramitacion").setVisible(true);
+    			
+    			
     			break;
     			
     		case 'generacionpropuestasautomatica':
+    		
+    			activosList.getColumnManager().getHeaderByDataIndex("incluidoEnBolsa").setVisible(false);
+    			activosList.getColumnManager().getHeaderByDataIndex("activoEnPropuestaEnTramitacion").setVisible(false);
+    			
     		   	if(Ext.isEmpty(me.entidadPropietariaCodigo)) {
-    		   		me.lookupReference('generacionPropuestasActivosList').getStore().loadPage(0); 
+    		   		activosList.getStore().loadPage(0); 
     		   	} else {
-    		   		me.lookupReference('generacionPropuestasActivosList').getStore().load();
+    		   		activosList.getStore().load();
     			}
     			break;
     	}	

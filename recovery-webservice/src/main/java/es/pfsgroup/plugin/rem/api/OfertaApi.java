@@ -481,7 +481,7 @@ public interface OfertaApi {
 	 * @param tareaExterna
 	 * @return String Error o null
 	 */
-	String altaComiteProcess(TareaExterna tareaExterna);
+	String altaComiteProcess(TareaExterna tareaExterna, String codigo);
 	
 	public boolean updateOfertantesByOfertaId(DtoOfertantesOferta dtoOfertantesOferta);
 	
@@ -522,7 +522,7 @@ public interface OfertaApi {
 	 * @param tareaExterna
 	 * @return
 	 */
-	public boolean modificacionesSegunPropuesta(TareaExterna tareaExterna);
+	public void modificacionesSegunPropuesta(TareaExterna tareaExterna);
 
 }
 

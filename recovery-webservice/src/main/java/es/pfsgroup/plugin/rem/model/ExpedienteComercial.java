@@ -212,6 +212,10 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @Column(name="ECO_MDE_OTROS")
     private String motivoDesbloqueoDescLibre;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_COS_ID_SUPERIOR")
+	private DDComiteSancion comiteSuperior;
+    
 	@Version   
 	private Long version;
 
@@ -635,6 +639,14 @@ public class ExpedienteComercial implements Serializable, Auditable {
 		}
 		
 		return compradoresAlta;
+	}
+
+	public DDComiteSancion getComiteSuperior() {
+		return comiteSuperior;
+	}
+
+	public void setComiteSuperior(DDComiteSancion comiteSuperior) {
+		this.comiteSuperior = comiteSuperior;
 	}
    
 }

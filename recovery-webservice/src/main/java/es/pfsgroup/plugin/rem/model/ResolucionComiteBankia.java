@@ -91,6 +91,10 @@ public class ResolucionComiteBankia implements Serializable, Auditable {
 	private DDPenitenciales penitenciales;
 	
 	
+	@Column(name = "RCB_FECHA_RESOLUCION")
+   	private Date fechaResolucion;
+	
+	
 
 	
 	@Version   
@@ -182,6 +186,14 @@ public class ResolucionComiteBankia implements Serializable, Auditable {
 
 	public void setPenitenciales(DDPenitenciales penitenciales) {
 		this.penitenciales = penitenciales;
+	}
+	
+	public Date getFechaResolucion() {
+		return fechaResolucion;
+	}
+
+	public void setFechaResolucion(Date fechaResolucion) {
+		this.fechaResolucion = fechaResolucion;
 	}
 
 	public Long getVersion() {

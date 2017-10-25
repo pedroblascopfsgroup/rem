@@ -42,7 +42,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
          	onClickRemove: 'onClickRemoveCarga',
          	onClickPropagation :  'onClickPropagation' 
          }
-         
     },
     
 	cargarTabData: function (form) {
@@ -2474,11 +2473,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                  grid.getStore().load();
             }
             
-        });	
-    	
+        });
     },
-  
-  
+
   onClickPropagation : function(btn) {
     var me = this;
 
@@ -2486,19 +2483,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo) {
               return activo.activoId == me.getViewModel().get("activo.id");
             }), 1)[0];
+    var grid = btn.up().up();
 
     // Abrimos la ventana de selección de activos
     var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {
           form : null,
           activoActual : activo,
           activos : activosPropagables,
-          tabData : null,
+          tabData : grid.getSelection()[0].data,
           propagableData : null,
-          targetGrid: 'mediadoractivo'
+          targetGrid: grid.targetGrid
         }).show();
 
-    me.getView().add(ventanaOpcionesPropagacionCambios);
-  },
+    	me.getView().add(ventanaOpcionesPropagacionCambios);
+  	},
 
 	onClickBotonCancelarCarga: function(btn) { 
 		var me = this;
@@ -2815,6 +2813,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
 		        };
 		        me.saveActivo(me.createTabDataHistoricoMediadores(activosSeleccionados), successFn);
+			} else if(targetGrid=='condicionesespecificas') {
+
+		        var successFn = function(record, operation) {
+		            window.destroy();
+		            me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		            me.getView().unmask();
+		            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+		        };
+		        me.saveActivo(me.createTabDataCondicionesEspecificas(activosSeleccionados, window.tabData), successFn);
 			}
 	    }
 	     window.mask("Guardando activos 1 de " + (activosSeleccionados.length + 1));
@@ -2925,6 +2932,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         });
     return tabData;
   },
+
+  	createTabDataCondicionesEspecificas : function(listadoActivos, data) {
+	    var me = this, tabData = {};
+	    tabData.id = me.getViewModel().get("activo.id");
+	    tabData.models = [];
+
+	    Ext.Array.each(listadoActivos, function(record, index) {
+	          var model = {};
+	          model.name = 'condicionesespecificas';
+	          model.type = 'activo';
+	          model.data = {texto: data.texto};
+	          model.data.idActivo = record.data.activoId;
+	          tabData.models.push(model);
+	        });
+	    return tabData;
+	},
 
     createModelToSave: function(record, type) {
     	

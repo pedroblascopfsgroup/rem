@@ -158,6 +158,12 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
     
     @Column(name="GDE_FECHA_CONEXION")
     private Date fechaConexion;
+    
+    @Column(name="GDE_ANTICIPO")
+    private Integer anticipo;
+    
+	@Column(name="GDE_FECHA_ANTICIPO")
+    private Date fechaAnticipo;
 
     
 	@Version   
@@ -455,6 +461,22 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
 
 	public void setFechaConexion(Date fechaConexion) {
 		this.fechaConexion = fechaConexion;
+	}
+	
+    public Integer getAnticipo() {
+		return anticipo;
+	}
+
+	public void setAnticipo(Integer anticipo) {
+		this.anticipo = anticipo;
+	}
+
+	public Date getFechaAnticipo() {
+		return fechaAnticipo;
+	}
+
+	public void setFechaAnticipo(Date fechaAnticipo) {
+		this.fechaAnticipo = fechaAnticipo;
 	}
 
 

@@ -30,6 +30,8 @@ public class DtoTramite extends WebDto {
 	private Long numTrabajo;
 	
 	private String cartera;
+
+	private String codigoCartera;
 	
 	private String fechaInicio;
 	
@@ -143,6 +145,14 @@ public class DtoTramite extends WebDto {
 	
 	public void setCartera(String cartera){
 		this.cartera = cartera;
+	}
+
+	public String getCodigoCartera(){
+		return codigoCartera;
+	}
+	
+	public void setCodigoCartera(String codigoCartera){
+		this.codigoCartera = codigoCartera;
 	}
 	
 	public String getFechaInicio(){

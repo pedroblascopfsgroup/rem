@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +32,7 @@ import es.cajamadrid.servicios.GM.GMPAJC11_INS.StructCabeceraAplicacionGMPAJC11_
 import es.cajamadrid.servicios.GM.GMPAJC11_INS.StructCabeceraFuncionalPeticion;
 import es.cajamadrid.servicios.GM.GMPAJC11_INS.StructCabeceraTecnica;
 import es.cajamadrid.servicios.GM.GMPAJC11_INS.StructGMPAJC11_INS_NumeroDeOcurrenciasnumocu;
+import es.cajamadrid.servicios.GM.GMPAJC11_INS.VectorGMPAJC11_INS_NumeroDeOcurrenciasnumocu;
 import es.cajamadrid.servicios.GM.GMPAJC29_INS.GMPAJC29_INS;
 import es.cajamadrid.servicios.GM.GMPAJC29_INS.StructCabeceraAplicacionGMPAJC29_INS;
 import es.cajamadrid.servicios.GM.GMPAJC34_INS.GMPAJC34_INS;
@@ -56,9 +58,12 @@ import es.cm.arq.tda.tiposdedatosbase.CantidadDecimal15;
 import es.cm.arq.tda.tiposdedatosbase.Fecha;
 import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteUrsusRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
@@ -107,7 +112,8 @@ public class UvemManager implements UvemManagerApi {
 	@Autowired
 	private RestLlamadaDao llamadaDao;
 	
-	
+	private static final int MASK = (-1) >>> 1; // all ones except the sign bit
+
 	private void iniciarServicio() throws WIException {
 		if (appProperties == null) {
 			// esto solo se ejecuta desde el jar ejecutable de pruebas. No
@@ -163,6 +169,55 @@ public class UvemManager implements UvemManagerApi {
 		} catch (Exception e) {
 			logger.error("Error al trazar la llamada al WS", e);
 		}
+	}
+	
+	/**
+	 * Ejecuta un servicio dado
+	 * @param servicio
+	 * @return
+	 * @throws WIException 
+	 */
+	private WIService executeService(WIService servicio) throws WIException{
+		
+		//boolean activo  = !Checks.esNulo(appProperties.getProperty("rest.client.uvem.activo"))
+				//? Boolean.valueOf(appProperties.getProperty("rest.client.uvem.activo")) : false;
+		boolean activo = true;
+		if(activo){
+			servicio.execute();
+		}else{
+			Random rand = new Random();
+			if(servicio instanceof GMPETS07_INS){
+				((GMPETS07_INS)servicio).setNumeroIdentificadorDeTasacionlnuita2(rand.nextInt() & MASK);
+			}else if(servicio instanceof GMPAJC11_INS){
+				//getNumeroDeOcurrenciasnumocu
+				VectorGMPAJC11_INS_NumeroDeOcurrenciasnumocu vector = new VectorGMPAJC11_INS_NumeroDeOcurrenciasnumocu();
+				StructGMPAJC11_INS_NumeroDeOcurrenciasnumocu struct = new StructGMPAJC11_INS_NumeroDeOcurrenciasnumocu();
+				struct.setIdentificadorClienteOfertaidclow2(rand.nextInt() & MASK);
+				struct.setDniNifDelTitularDeLaOfertanudnio2("00000000X");
+				struct.setNombreYApellidosTitularDeOfertanotiof("Dummy Dummy Dummy");
+				vector.add(struct);
+				
+				((GMPAJC11_INS)servicio).setNumeroDeOcurrenciasnumocu(vector);
+				
+			}else if(servicio instanceof GMPAJC93_INS){
+				((GMPAJC93_INS)servicio).setClaseDeDocumentoIdentificadorcocldo('1');
+				((GMPAJC93_INS)servicio).setDniNifDelTitularDeLaOfertanudnio("00000000X");
+				((GMPAJC93_INS)servicio).setNombreYApellidosTitularDeOfertanotiof("Dummy Dummy Dummy");
+				((GMPAJC93_INS)servicio).setNombreDelClientenoclie("Dummy");
+				((GMPAJC93_INS)servicio).setPrimerApellidonoape1("Dummy");
+				((GMPAJC93_INS)servicio).setSegundoApellidonoape2("Dummy");
+				((GMPAJC93_INS)servicio).setCodigoTipoDeViacotivw((short)1);
+				((GMPAJC93_INS)servicio).setDenominacionTipoDeViaTrabajoNotiv1("cl");
+				((GMPAJC93_INS)servicio).setNombreDeLaVianovisa("dummy");
+				
+			}else if(servicio instanceof GMPDJB13_INS){
+				((GMPDJB13_INS)servicio).setLongitudMensajeDeSalidarcslon(2);
+				((GMPDJB13_INS)servicio).setCodigoComitecocom7((short)2);
+				((GMPDJB13_INS)servicio).setCodigoDeOfertaHayacoofhx2("9");
+				
+			}
+		}
+		return servicio;
 	}
 
 	/**
@@ -301,7 +356,8 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPETS07_INS.setNumeroIdentificadorDeCerEnerlnuitr(1234567890);
 
 			servicioGMPETS07_INS.setAlias(ALIAS);
-			servicioGMPETS07_INS.execute();
+			executeService(servicioGMPETS07_INS);
+			//servicioGMPETS07_INS.execute();
 
 			// recuperando resultado...
 			numeroIdentificadorTasacion = servicioGMPETS07_INS.getNumeroIdentificadorDeTasacionlnuita2();
@@ -463,7 +519,8 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPAJC11_INS.setCodEntidadRepresntClienteUrsusqcenre(qcenre);
 
 			servicioGMPAJC11_INS.setAlias(ALIAS);
-			servicioGMPAJC11_INS.execute();
+			executeService(servicioGMPAJC11_INS);
+			//servicioGMPAJC11_INS.execute();
 
 			if (servicioGMPAJC11_INS.getNumeroDeOcurrenciasnumocu().size() > 0) {
 				for (int i = 0; i < servicioGMPAJC11_INS.getNumeroDeOcurrenciasnumocu().size(); i++) {
@@ -581,55 +638,62 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPAJC93_INS.setCodEntidadRepresntClienteUrsusqcenre(qcenre);
 
 			servicioGMPAJC93_INS.setAlias(ALIAS);
-			servicioGMPAJC93_INS.execute();
+			//servicioGMPAJC93_INS.execute();
+			executeService(servicioGMPAJC93_INS);
 
 			datos = new DatosClienteDto();
 			datos.setNumeroClienteUrsus(numcliente.toString());
 			datos.setClaseDeDocumentoIdentificador(servicioGMPAJC93_INS.getClaseDeDocumentoIdentificadorcocldo() + "");
-			datos.setDniNifDelTitularDeLaOferta(servicioGMPAJC93_INS.getDniNifDelTitularDeLaOfertanudnio().toString());
+			datos.setDniNifDelTitularDeLaOferta(servicioGMPAJC93_INS.getDniNifDelTitularDeLaOfertanudnio());
 			datos.setNombreYApellidosTitularDeOferta(
-					servicioGMPAJC93_INS.getNombreYApellidosTitularDeOfertanotiof().toString());
-			datos.setNombreDelCliente(servicioGMPAJC93_INS.getNombreDelClientenoclie().toString());
-			datos.setPrimerApellido(servicioGMPAJC93_INS.getPrimerApellidonoape1().toString());
-			datos.setSegundoApellido(servicioGMPAJC93_INS.getSegundoApellidonoape2().toString());
+					servicioGMPAJC93_INS.getNombreYApellidosTitularDeOfertanotiof());
+			datos.setNombreDelCliente(servicioGMPAJC93_INS.getNombreDelClientenoclie());
+			datos.setPrimerApellido(servicioGMPAJC93_INS.getPrimerApellidonoape1());
+			datos.setSegundoApellido(servicioGMPAJC93_INS.getSegundoApellidonoape2());
 			datos.setCodigoTipoDeVia(servicioGMPAJC93_INS.getCodigoTipoDeViacotivw() + "");
 			datos.setDenominacionTipoDeViaTrabajo(
-					servicioGMPAJC93_INS.getDenominacionTipoDeViaTrabajoNotiv1().toString());
-			datos.setNombreDeLaVia(servicioGMPAJC93_INS.getNombreDeLaVianovisa().toString());
-			datos.setPORTAL(servicioGMPAJC93_INS.getPORTALNUPORO().toString());
+					servicioGMPAJC93_INS.getDenominacionTipoDeViaTrabajoNotiv1());
+			datos.setNombreDeLaVia(servicioGMPAJC93_INS.getNombreDeLaVianovisa());
+			if(servicioGMPAJC93_INS.getPORTALNUPORO() != null)
+				datos.setPORTAL(servicioGMPAJC93_INS.getPORTALNUPORO());
 			datos.setESCALERA(servicioGMPAJC93_INS.getESCALERANUESCL() + "");
-			datos.setPISO(servicioGMPAJC93_INS.getPISONUPICL().toString());
+			datos.setPISO(servicioGMPAJC93_INS.getPISONUPICL());
 			datos.setNumeroDePuerta(servicioGMPAJC93_INS.getNumeroDePuertanupucl() + "");
 			datos.setCodigoPostal(servicioGMPAJC93_INS.getCodigoPostalcopoiw() + "");
-			datos.setNombreDelMunicipio(servicioGMPAJC93_INS.getNombreDelMunicipionomusa().toString());
-			datos.setNombreDeLaProvincia(servicioGMPAJC93_INS.getNombreDeLaProvincianoprsa().toString());
+			datos.setNombreDelMunicipio(servicioGMPAJC93_INS.getNombreDelMunicipionomusa());
+			datos.setNombreDeLaProvincia(servicioGMPAJC93_INS.getNombreDeLaProvincianoprsa());
 			datos.setCodigoDeProvincia(servicioGMPAJC93_INS.getCodigoDeProvinciacoprvw() + "");
-			datos.setNombreDePaisDelDomicilio(servicioGMPAJC93_INS.getNombreDePaisDelDomicilionopado().toString());
+			datos.setNombreDePaisDelDomicilio(servicioGMPAJC93_INS.getNombreDePaisDelDomicilionopado());
 			datos.setDatosComplementariosDelDomicilio(
-					servicioGMPAJC93_INS.getDatosComplementariosDelDomicilioobdom1().toString());
-			datos.setBarrioColoniaOApartado(servicioGMPAJC93_INS.getBarrioColoniaOApartadonobar2().toString());
+					servicioGMPAJC93_INS.getDatosComplementariosDelDomicilioobdom1());
+			datos.setBarrioColoniaOApartado(servicioGMPAJC93_INS.getBarrioColoniaOApartadonobar2());
 			datos.setEdadDelCliente(servicioGMPAJC93_INS.getEdadDelClientenuedaw() + "");
 			datos.setCodigoEstadoCivil(servicioGMPAJC93_INS.getCodigoEstadoCivilcoesci() + "");
-			datos.setEstadoCivilActual(servicioGMPAJC93_INS.getEstadoCivilActualcoesc1().toString());
+			datos.setEstadoCivilActual(servicioGMPAJC93_INS.getEstadoCivilActualcoesc1());
 			datos.setNumeroDeHijos(servicioGMPAJC93_INS.getNumeroDeHijosnuhijw() + "");
 			datos.setSEXO(servicioGMPAJC93_INS.getSEXOCOSEXO() + "");
-			datos.setNombreComercialDeLaEmpresa(servicioGMPAJC93_INS.getNombreComercialDeLaEmpresanocome().toString());
-			datos.setDELEGACION(servicioGMPAJC93_INS.getDELEGACIONXDELEG().toString());
-			datos.setTipoDeSociedad(servicioGMPAJC93_INS.getTipoDeSociedadcodem1().toString());
+			datos.setNombreComercialDeLaEmpresa(servicioGMPAJC93_INS.getNombreComercialDeLaEmpresanocome());
+			datos.setDELEGACION(servicioGMPAJC93_INS.getDELEGACIONXDELEG());
+			datos.setTipoDeSociedad(servicioGMPAJC93_INS.getTipoDeSociedadcodem1());
 			datos.setCodigoDeSituacionDelCliente(servicioGMPAJC93_INS.getCodigoDeSituacionDelClientecosicx() + "");
 			datos.setNombreDeLaSituacionDelCliente(
-					servicioGMPAJC93_INS.getNombreDeLaSituacionDelClientenosicl().toString());
-			datos.setFechaDeNacimientoOConstitucion(
-					servicioGMPAJC93_INS.getFechaDeNacimientoOConstitucionfenacw().toString());
-			datos.setNombreDelPaisDeNacimiento(servicioGMPAJC93_INS.getNombreDelPaisDeNacimientonopanc().toString());
+					servicioGMPAJC93_INS.getNombreDeLaSituacionDelClientenosicl());
+			try{
+				if(servicioGMPAJC93_INS.getFechaDeNacimientoOConstitucionfenacw() != null && !Checks.esNulo(servicioGMPAJC93_INS.getFechaDeNacimientoOConstitucionfenacw()))
+					datos.setFechaDeNacimientoOConstitucion(
+							servicioGMPAJC93_INS.getFechaDeNacimientoOConstitucionfenacw().toString());
+			}catch(Exception e){
+				datos.setFechaDeNacimientoOConstitucion(null);
+			}
+			datos.setNombreDelPaisDeNacimiento(servicioGMPAJC93_INS.getNombreDelPaisDeNacimientonopanc());
 			datos.setNombreDeLaProvinciaNacimiento(
-					servicioGMPAJC93_INS.getNombreDeLaProvinciaNacimientonoprnc().toString());
+					servicioGMPAJC93_INS.getNombreDeLaProvinciaNacimientonoprnc());
 			datos.setNombreDePoblacionDeNacimiento(
-					servicioGMPAJC93_INS.getNombreDePoblacionDeNacimientonopobn().toString());
-			datos.setNombreDePaisNacionalidad(servicioGMPAJC93_INS.getNombreDePaisNacionalidadnopana().toString());
-			datos.setNombreDePaisResidencia(servicioGMPAJC93_INS.getNombreDePaisResidencianopars().toString());
+					servicioGMPAJC93_INS.getNombreDePoblacionDeNacimientonopobn());
+			datos.setNombreDePaisNacionalidad(servicioGMPAJC93_INS.getNombreDePaisNacionalidadnopana());
+			datos.setNombreDePaisResidencia(servicioGMPAJC93_INS.getNombreDePaisResidencianopars());
 			datos.setSubsectorDeActividadEconomica(
-					servicioGMPAJC93_INS.getSubsectorDeActividadEconomicanossec().toString());
+					servicioGMPAJC93_INS.getSubsectorDeActividadEconomicanossec());
 			if (!Checks.esNulo(servicioGMPAJC93_INS.getIdentClienteConyugeOfertaidclww())) {
 				datos.setNumeroClienteUrsusConyuge(
 						Integer.valueOf(servicioGMPAJC93_INS.getIdentClienteConyugeOfertaidclww()).toString());
@@ -659,7 +723,28 @@ public class UvemManager implements UvemManagerApi {
 			throws Exception {
 		ResultadoInstanciaDecisionDto instancia = new ResultadoInstanciaDecisionDto();
 		try {
-			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_ALTA);
+			/**
+			 * Si hay más de un titular informamos solo uno. Elegimos el titular
+			 * de la contratación
+			 */
+			if(instanciaDecisionDto.getTitulares() != null && instanciaDecisionDto.getTitulares().size()>1){
+				TitularDto titularAux = null;
+				for(TitularDto titular : instanciaDecisionDto.getTitulares()){
+					if(titular.getTitularContratacion().equals(Integer.valueOf(1))){
+						titularAux = titular;
+						titularAux.setPorcentajeCompra(Double.valueOf(100));
+						break;
+					}
+				}
+				if(titularAux != null){
+					ArrayList<TitularDto> titulares = new ArrayList<TitularDto>();
+					titulares.add(titularAux);
+					instanciaDecisionDto.setTitulares(titulares);
+				}else{
+					new WIException("Al menos debe existir un titular de la contratación ");
+				}
+			}
+			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_ALTA);			
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
 			throw new JsonViewerException(e.getMessage());
@@ -714,11 +799,11 @@ public class UvemManager implements UvemManagerApi {
 		}
 		return instancia;
 	}
-	
+
 	/**
 	 * Invoca al servicio GMPDJB13_INS de BANKIA para modificar una instancia de
-	 * decisión de una oferta (MOD3)
-	 * Necesita pasarle el parametro codigoCOTPRA al dto.
+	 * decisión de una oferta (MOD3) Necesita pasarle el parametro codigoCOTPRA
+	 * al dto.
 	 * 
 	 * @param instanciaDecisionDto
 	 * @return
@@ -726,9 +811,28 @@ public class UvemManager implements UvemManagerApi {
 	@Override
 	public ResultadoInstanciaDecisionDto modificarInstanciaDecisionTres(InstanciaDecisionDto instanciaDecisionDto)
 			throws Exception {
+		BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 		ResultadoInstanciaDecisionDto instancia = new ResultadoInstanciaDecisionDto();
+		InstanciaDecisionDto instanciaDecisionDtoCopia = new InstanciaDecisionDto();
+		beanUtilNotNull.copyProperties(instanciaDecisionDtoCopia, instanciaDecisionDto);
 		try {
-			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_MODIFICACION_3);
+			if (instanciaDecisionDtoCopia
+					.getCodigoCOTPRA() != InstanciaDecisionDataDto.PROPUESTA_CONDICIONANTES_ECONOMICOS){
+				instanciaDecisionDtoCopia.setImporteReserva(null);
+				instanciaDecisionDtoCopia.setCodTipoArras(null);
+			}
+			if(instanciaDecisionDtoCopia
+					.getCodigoCOTPRA() == InstanciaDecisionDataDto.PROPUESTA_CONDICIONANTES_ECONOMICOS){
+				for(InstanciaDecisionDataDto dto: instanciaDecisionDtoCopia.getData()){
+					dto.setImporteConSigno(0L);
+				}
+			}
+			if(instanciaDecisionDtoCopia
+					.getCodigoCOTPRA() != InstanciaDecisionDataDto.PROPUESTA_TITULARES){
+				instanciaDecisionDtoCopia.setTitulares(null);
+			}
+			
+			instancia = instanciaDecision(instanciaDecisionDtoCopia, INSTANCIA_DECISION_MODIFICACION_3);
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
 			throw new JsonViewerException(e.getMessage());
@@ -769,7 +873,7 @@ public class UvemManager implements UvemManagerApi {
 					// n ursus
 					if (titular.getNumeroUrsus() != null) {
 						structTitular.setIdentificadorClienteOfertaidclow((int) (long) titular.getNumeroUrsus());
-					}else{
+					} else {
 						// tipo doc
 						structTitular.setClaseDeDocumentoIdentificadorcocldo(titular.getTipoDocumentoCliente());
 						// n documento
@@ -777,31 +881,29 @@ public class UvemManager implements UvemManagerApi {
 						// nombre completo titular
 						structTitular.setNombreYApellidosTitularDeOfertanotiof(titular.getNombreCompletoCliente());
 					}
-					
+
 					// el conyuge
 					if (titular.getConyugeNumeroUrsus() != null) {
 						structTitular.setIdentClienteConyugeOfertaidclww((int) (long) titular.getConyugeNumeroUrsus());
 					}
-					
-					
-					//% de participación en la compra
+
+					// % de participación en la compra
 					Porcentaje9 porcentajeCompra = new Porcentaje9();
-					porcentajeCompra.setPorcentaje((int)titular.getPorcentajeCompra().longValue()*100);
+					porcentajeCompra.setPorcentaje((int) titular.getPorcentajeCompra().longValue() * 100);
 					porcentajeCompra.setNumDecimales("02");
 					structTitular.setPorcentajeCompraBISA(porcentajeCompra);
 
 					vectorTitulares.add(structTitular);
 				}
 			}
-		}else{
-			servicioGMPDJB13_INS
-			.setNumeroDeOcurrenciasEntrada1nuoce1((short) 0);
+		} else {
+			servicioGMPDJB13_INS.setNumeroDeOcurrenciasEntrada1nuoce1((short) 0);
 		}
 		servicioGMPDJB13_INS.setNumeroDeOcurrenciasnumocx(vectorTitulares);
 
 		// Bucle para cargar el array numOcurrencias con la info de cada
 		// activo
-		servicioGMPDJB13_INS.setNumeroDeOcurrenciasEntrada2nuoce2((short)instanciaListData.size());
+		servicioGMPDJB13_INS.setNumeroDeOcurrenciasEntrada2nuoce2((short) instanciaListData.size());
 		for (int i = 0; i < instanciaListData.size(); i++) {
 			InstanciaDecisionDataDto instanciaData = instanciaListData.get(i);
 			StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu struct = new StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu();
@@ -832,7 +934,7 @@ public class UvemManager implements UvemManagerApi {
 			Porcentaje9 porcentajeImpuesto = null;
 			porcentajeImpuesto = new Porcentaje9();
 			if (!Checks.esNulo(instanciaData.getPorcentajeImpuesto())) {
-				porcentajeImpuesto.setPorcentaje(instanciaData.getPorcentajeImpuesto()*100);
+				porcentajeImpuesto.setPorcentaje(instanciaData.getPorcentajeImpuesto());
 				porcentajeImpuesto.setNumDecimales("02");
 				struct.setPorcentajeImpuestoBISA(porcentajeImpuesto);
 			}
@@ -885,8 +987,6 @@ public class UvemManager implements UvemManagerApi {
 			es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraTecnica cabeceraTecnica = new es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraTecnica();
 			StructCabeceraAplicacionGMPDJB13_INS cabeceraAplicacion = new StructCabeceraAplicacionGMPDJB13_INS();
 
-			
-
 			// Seteamos cabeceras
 			servicioGMPDJB13_INS.setcabeceraAplicacion(cabeceraAplicacion);
 			servicioGMPDJB13_INS.setcabeceraFuncionalPeticion(cabeceraFuncional);
@@ -900,17 +1000,15 @@ public class UvemManager implements UvemManagerApi {
 			cabeceraFuncional.setCLCDAQ("0370");
 			cabeceraFuncional.setCOENAQ("0000");
 			cabeceraFuncional.setCOCDAQ("0551");
-			cabeceraFuncional.setCOSBAQ("00");
+			cabeceraFuncional.setCOSBAQ("00"); 
 			cabeceraFuncional.setNUPUAQ("00");
 			cabeceraTecnica.setCLORAQ("71");
-			
 
 			// seteamos parametros
 			servicioGMPDJB13_INS.setCodigoObjetoAccesocopace("PAHY0170");
 			// COCGUS
 			cabeceraAplicacion.setCentroGestorUsuarioSsacocgus(COCGUS);
-			
-			
+
 			servicioGMPDJB13_INS.setCodigoDeOfertaHayacoofhx(
 					StringUtils.leftPad(instanciaDecisionDto.getCodigoDeOfertaHaya(), 16, "0"));
 			if (instanciaDecisionDto.isFinanciacionCliente()) {
@@ -926,21 +1024,23 @@ public class UvemManager implements UvemManagerApi {
 			} else {
 				servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_VENTA);
 			}
-			
-			if(accion.equals(INSTANCIA_DECISION_MODIFICACION_3)) {
-				//Modificacion de honorarios prescriptor
-				if(instanciaDecisionDto.getCodigoCOTPRA() == InstanciaDecisionDataDto.PROPUESTA_HONORARIOS){
-					servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_HONORARIOS);		
+
+			if (accion.equals(INSTANCIA_DECISION_MODIFICACION_3)) {
+				// Modificacion de honorarios prescriptor
+				if (instanciaDecisionDto.getCodigoCOTPRA() == InstanciaDecisionDataDto.PROPUESTA_HONORARIOS) {
+					servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_HONORARIOS);
 				}
-				//Modificación de titulares
-				if(instanciaDecisionDto.getCodigoCOTPRA() == InstanciaDecisionDataDto.PROPUESTA_TITULARES){
-					servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_TITULARES);				
+				// Modificación de titulares
+				if (instanciaDecisionDto.getCodigoCOTPRA() == InstanciaDecisionDataDto.PROPUESTA_TITULARES) {
+					servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_TITULARES);
 				}
-				//Modificación condicionantes económicos
-				if(instanciaDecisionDto.getCodigoCOTPRA() == InstanciaDecisionDataDto.PROPUESTA_CONDICIONANTES_ECONOMICOS){
-					servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_CONDICIONANTES_ECONOMICOS);
+				// Modificación condicionantes económicos
+				if (instanciaDecisionDto
+						.getCodigoCOTPRA() == InstanciaDecisionDataDto.PROPUESTA_CONDICIONANTES_ECONOMICOS) {
+					servicioGMPDJB13_INS
+							.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_CONDICIONANTES_ECONOMICOS);
 				}
-				
+
 			}
 
 			if (numeroOcurrencias != null) {
@@ -949,7 +1049,7 @@ public class UvemManager implements UvemManagerApi {
 
 			// Importe de la reserva
 			ImporteMonetario importeMonetarioReserva = new ImporteMonetario();
-			if (instanciaDecisionDto.getImporteReserva() != null ) {
+			if (instanciaDecisionDto.getImporteReserva() != null) {
 				importeMonetarioReserva.setImporteConSigno(instanciaDecisionDto.getImporteReserva().longValue());
 			} else {
 				importeMonetarioReserva.setImporteConSigno(new Long(0));
@@ -965,7 +1065,8 @@ public class UvemManager implements UvemManagerApi {
 					|| instanciaDecisionDto.getImporteReserva().compareTo(new Double(0)) == 0) {
 				servicioGMPDJB13_INS.setIndicadorCobroImpuestosReservabicirv(' ');
 			} else {
-				if (instanciaDecisionDto.getImpuestosReserva()) {
+				if (instanciaDecisionDto.getImporteReserva().compareTo(Double.valueOf(0)) > 0
+						&& instanciaListData.get(0).getPorcentajeImpuesto() > 0) {
 					servicioGMPDJB13_INS.setIndicadorCobroImpuestosReservabicirv('S');
 				} else {
 					servicioGMPDJB13_INS.setIndicadorCobroImpuestosReservabicirv('N');
@@ -985,24 +1086,30 @@ public class UvemManager implements UvemManagerApi {
 
 			servicioGMPDJB13_INS.setCodEntidadRepresntClienteUrsusqcenre(instanciaDecisionDto.getQcenre());
 
-			//el comite superior para el alta siempre es 0
-			servicioGMPDJB13_INS.setCodigoComiteSuperiorcocom3((short)0);
-			
-			//codigo uvem de la ofician prescriptora
-			if(Checks.esNulo(instanciaDecisionDto.getCodigoProveedorUvem())){
+			if (instanciaDecisionDto.getCodComiteSuperior() != null) {
+				servicioGMPDJB13_INS
+						.setCodigoComiteSuperiorcocom3(Short.valueOf(instanciaDecisionDto.getCodComiteSuperior()));
+			} else {
+				// el comite superior para el alta siempre es 0
+				servicioGMPDJB13_INS.setCodigoComiteSuperiorcocom3((short) 0);
+			}
+
+			// codigo uvem de la ofician prescriptora
+			if (Checks.esNulo(instanciaDecisionDto.getCodigoProveedorUvem())) {
 				servicioGMPDJB13_INS.setIdentificadorDelColaboradoridcola("C000");
+			} else {
+				servicioGMPDJB13_INS
+						.setIdentificadorDelColaboradoridcola(instanciaDecisionDto.getCodigoProveedorUvem());
 			}
-			else{
-				servicioGMPDJB13_INS.setIdentificadorDelColaboradoridcola(instanciaDecisionDto.getCodigoProveedorUvem());
-			}
-			
+
 			// Requeridos por el servicio
 			servicioGMPDJB13_INS.setnumeroCliente(0);
 			servicioGMPDJB13_INS.setnumeroUsuario("");
 			servicioGMPDJB13_INS.setidSesionWL("");
 
 			servicioGMPDJB13_INS.setAlias(ALIAS);
-			servicioGMPDJB13_INS.execute();
+			//servicioGMPDJB13_INS.execute();
+			executeService(servicioGMPDJB13_INS);
 
 			result.setLongitudMensajeSalida(servicioGMPDJB13_INS.getLongitudMensajeDeSalidarcslon());
 			result.setCodigoComite(servicioGMPDJB13_INS.getCodigoComitecocom7() + "");
@@ -1226,6 +1333,8 @@ public class UvemManager implements UvemManagerApi {
 	public void notificarDevolucionReserva(String codigoDeOfertaHaya, MOTIVO_ANULACION motivoAnulacionReserva,
 			INDICADOR_DEVOLUCION_RESERVA indicadorDevolucionReserva,
 			CODIGO_SERVICIO_MODIFICACION codigoServicioModificacion) throws Exception {
+		
+		logger.info("------------ LLAMADA WS NOTIFICAR DEV RESERVA -----------------");
 		servicioGMPTOE83_INS = new GMPTOE83_INS();
 		String errorDesc = null;
 		try {
@@ -1251,7 +1360,7 @@ public class UvemManager implements UvemManagerApi {
 			cabeceraTecnica.setCOFMAQ("B");
 			cabeceraTecnica.setCOFTAQ("0");
 			cabeceraTecnica.setNUVSAQ("01");
-			cabeceraTecnica.setCONTAQ("global:ENTORNO_OPERATIVA_J2EE");
+			//cabeceraTecnica.setCONTAQ("global:ENTORNO_OPERATIVA_J2EE");
 			cabeceraTecnica.setCOAFAQ("GM");
 			cabeceraTecnica.setCOMLAQ("OE83");
 
@@ -1316,8 +1425,8 @@ public class UvemManager implements UvemManagerApi {
 				servicioGMPTOE83_INS.setIndicadorDevolucionReservabindre('N');
 			}
 
-			servicioGMPETS07_INS.setAlias(ALIAS);
-			servicioGMPETS07_INS.execute();
+			servicioGMPTOE83_INS.setAlias(ALIAS);
+			servicioGMPTOE83_INS.execute();
 
 		} catch (WIException wie) {
 			logger.error("error en UvemManager", wie);
@@ -1330,8 +1439,30 @@ public class UvemManager implements UvemManagerApi {
 	}
 
 	@Override
+	public MOTIVO_ANULACION obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(String codigoMotivoAnulacionReserva) {
+		if (DDMotivoAnulacionReserva.CODIGO_COMPRADOR_NO_INTERESADO_OPERACION.equals(codigoMotivoAnulacionReserva)) {
+			return MOTIVO_ANULACION.COMPRADOR_NO_INTERESADO;
+		} else if (DDMotivoAnulacionReserva.CODIGO_DECISION_DEL_AREA.equals(codigoMotivoAnulacionReserva)) {
+			return MOTIVO_ANULACION.DECISION_AREA;
+		} else if (DDMotivoAnulacionReserva.CODIGO_NO_DISPONE_DINERO_FINANCIACION.equals(codigoMotivoAnulacionReserva)) {
+			return MOTIVO_ANULACION.NO_DISPONE_DINERO_FINANCIACION;
+		} else if (DDMotivoAnulacionReserva.CODIGO_CIRCUNSTANCIAS_DISTINTAS_A_LAS_PACTADAS.equals(codigoMotivoAnulacionReserva)) {
+			return MOTIVO_ANULACION.CIRCUSTANCIAS_DISTINTAS_PACTADAS;
+		} else if (DDMotivoAnulacionReserva.CODIGO_NO_SE_CUMPLEN_CONDICIONANTES.equals(codigoMotivoAnulacionReserva)) {
+			return MOTIVO_ANULACION.NO_CUMPLEN_CONDICIONANTES;
+		} else if (DDMotivoAnulacionReserva.CODIGO_NO_DESEAN_ESCRITURAR.equals(codigoMotivoAnulacionReserva)) {
+			return MOTIVO_ANULACION.NO_DESEAN_ESCRITURAR;
+		} else if (DDMotivoAnulacionReserva.CODIGO_DECISION_HAYA.equals(codigoMotivoAnulacionReserva)) {
+			return MOTIVO_ANULACION.DECISION_HAYA;
+		} else {
+			return null;
+		}
+	}
+
+	@Override
 	public void anularOferta(String codigoDeOfertaHaya, MOTIVO_ANULACION_OFERTA motivoAnulacionOferta)
 			throws Exception {
+		logger.info("------------ LLAMADA WS ANULAR RESERVA -----------------");
 		servicioGMPAJC29_INS = new GMPAJC29_INS();
 		String errorDesc = null;
 
@@ -1370,7 +1501,7 @@ public class UvemManager implements UvemManagerApi {
 			cabeceraTecnica.setCOFMAQ("B");
 			cabeceraTecnica.setCOFTAQ("0");
 			cabeceraTecnica.setNUVSAQ("01");
-			cabeceraTecnica.setCONTAQ("global:ENTORNO_OPERATIVA_J2EE");
+			//cabeceraTecnica.setCONTAQ("global:ENTORNO_OPERATIVA_J2EE");
 			cabeceraTecnica.setCOAFAQ("GM");
 			cabeceraTecnica.setCOMLAQ("JC29");
 
@@ -1401,8 +1532,7 @@ public class UvemManager implements UvemManagerApi {
 				servicioGMPAJC29_INS.setCOSANOW(new Short("301"));
 			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.NO_TIENE_DINERO_SIN_FINANCIACION)) {
 				servicioGMPAJC29_INS.setCOSANOW(new Short("302"));
-			} else if (motivoAnulacionOferta
-					.equals(MOTIVO_ANULACION_OFERTA.CIRCURNSTANCIA_DISTINTAS_PACTADAS_DPT_COMERCIAL)) {
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.CIRCURNSTANCIA_DISTINTAS_PACTADAS_DPT_COMERCIAL)) {
 				servicioGMPAJC29_INS.setCOSANOW(new Short("400"));
 			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.NO_FIRMA_RESERVA_SIN_VISITA)) {
 				servicioGMPAJC29_INS.setCOSANOW(new Short("401"));
@@ -1426,8 +1556,7 @@ public class UvemManager implements UvemManagerApi {
 				servicioGMPAJC29_INS.setCOSANOW(new Short("600"));
 			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.DETECTADO_IRREGULARIDADES_DPTO_COMERCIAL)) {
 				servicioGMPAJC29_INS.setCOSANOW(new Short("601"));
-			} else if (motivoAnulacionOferta
-					.equals(MOTIVO_ANULACION_OFERTA.DETECTADO_IRREGULARIDADES_DPTO_ADM_TECNICO)) {
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.DETECTADO_IRREGULARIDADES_DPTO_ADM_TECNICO)) {
 				servicioGMPAJC29_INS.setCOSANOW(new Short("602"));
 			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.DETECTADO_IRREGULARIDADES_DIRECCION)) {
 				servicioGMPAJC29_INS.setCOSANOW(new Short("603"));
@@ -1445,11 +1574,26 @@ public class UvemManager implements UvemManagerApi {
 				servicioGMPAJC29_INS.setCOSANOW(new Short("701"));
 			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.INCUMPLIMIENTO_PLAZOS_FORMA)) {
 				servicioGMPAJC29_INS.setCOSANOW(new Short("702"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.VENTA_ACTIVO)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("705"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.TRASPASADO_SOLVIA)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("706"));
 			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.ERROR_USUARIO_1)) {
 				servicioGMPAJC29_INS.setCOSANOW(new Short("800"));
 			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.ERROR_USUARIO_2)) {
 				servicioGMPAJC29_INS.setCOSANOW(new Short("801"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.VENCIDAS_POR_TIEMPO)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("802"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.ANULADA_POR_VENCIMIENTO)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("803"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.ANULADA_ALTA_NUEVA_FACULTAD_HAYA)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("804"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.FINANCIACION_DENEGADA)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("901"));
+			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.PBC_DENEGADO)) {
+				servicioGMPAJC29_INS.setCOSANOW(new Short("902"));
 			}
+
 			servicioGMPAJC29_INS.setnumeroUsuario("");
 			servicioGMPAJC29_INS.setidSesionWL("");
 			servicioGMPAJC29_INS.setnumeroCliente(0);
@@ -1462,8 +1606,97 @@ public class UvemManager implements UvemManagerApi {
 			errorDesc = wie.getMessage();
 			throw new JsonViewerException(wie.getMessage());
 		} finally {
-			registrarLlamada(servicioGMPTOE83_INS, errorDesc);
+			registrarLlamada(servicioGMPAJC29_INS, errorDesc);
 		}
-
 	}
+
+	@Override
+	public MOTIVO_ANULACION_OFERTA obtenerMotivoAnulacionOfertaPorCodigoMotivoAnulacion(String codigoMotivoAnulacion) {
+		if(DDMotivoAnulacionExpediente.CODIGO_COMPRADOR_NO_INTERESADO_OPERACION.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.COMPRADOR_NO_INTERESADO_OPERACION;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_INTERESADO_OTRO_INMUEBLE_AREA.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.INTERESADO_OTRO_INMUEBLE_AREA;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_INTERESADO_OTRO_INMUEBLE_OTRO_AREA.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.INTERESADO_OTRO_INMUEBLE_OTRO_AREA;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_COMPRADOR_NO_INTERESADO_NADA.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.COMPRADOR_NO_INTERESADO_NADA;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_EXCESIVO_TIEMPO_FIRMA_RESERVA.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.EXCESIVO_TIEMPO_FIRMA_RESERVA;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_NO_LOCALIZADO_CLIENTE.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.NO_LOCALIZADO_CLIENTE;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_LOCALIZADO_SIN_INTERES_FIRMAR.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.LOCALIZADO_SIN_INTERES_FIRMAR;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_FALTA_FINANCIACION.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.FALTA_FINANCIACION;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_MAS_1_MES_FIRMAR_RESERVA.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.MAS_1_MES_FIRMAR_RESERVA;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_NO_TIENE_DINERO_SIN_FINANCIACION.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.NO_TIENE_DINERO_SIN_FINANCIACION;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_CIRCUNSTANCIAS_DISTINTAS_PACTADAS_DPT_COMERCIAL.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.CIRCURNSTANCIA_DISTINTAS_PACTADAS_DPT_COMERCIAL;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_NO_FIRMA_RESERVA_SIN_VISITA.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.NO_FIRMA_RESERVA_SIN_VISITA;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_CAUSAS_FISCALES.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.CAUSAS_FISCALES;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_CAUSAS_RELATIVAS_GASTOS.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.CAUSAS_RELATIVAS_GASTOS;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_CAUSAS_RELATIVAS_ESTADO_FISICO.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.CAUSAS_RELATIVAS_ESTADO_FISICO;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_CARGAS_NO_PLANTEADAS.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.CARGAS_NO_PLANTEADAS;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_NO_CUMPLE_CONDICION_BANKIA.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.NO_CUMPLE_CONDICION_BANKIA;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_CLIENTE_NO_AMPLIACION_VALIDEZ.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.CLIENTE_NO_AMPLIACION_VALIDEZ;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_NO_CUMPLE_CONDICION.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.NO_CUMPLE_CONDICION;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_FUTURO_CUMPLIMIENTO_CONDICION.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.FUTURO_CUMPLIMIENTO_CONDICION;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_SOLICITADA_AREA.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.SOLICITADA_AREA;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_DETECTADO_IRREGULARIDADES_DPTO_COMERCIAL.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.DETECTADO_IRREGULARIDADES_DPTO_COMERCIAL;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_DETECTADO_IRREGULARIDADES_DPTO_ADM_TECNICO.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.DETECTADO_IRREGULARIDADES_DPTO_ADM_TECNICO;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_DETECTADO_IRREGULARIDADES_DIRECCION.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.DETECTADO_IRREGULARIDADES_DIRECCION;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_NO_RATIFICADA.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.NO_RATIFICADA;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_MEJOR_OFERTA_POSTERIOR.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.MEJOR_OFERTA_POSTERIOR;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_SAREB_RETIRADA_OBRA_CURSO.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.SAREB_RETIRADA_OBRA_CURSO;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_VENTA_SKY.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.VENTA_SKY;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_VENTA_EXTERNA.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.VENTA_EXTERNA;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_ANULADAS_ESCRITURACION.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.ANULADAS_ESCRITURACION;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_NO_PRESENTADOS_FIRMA_REQUERIDOS.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.NO_PRESENTADOS_FIRMA_REQUERIDOS;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_INCUMPLIMIENTO_PLAZOS_FORMA.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.INCUMPLIMIENTO_PLAZOS_FORMA;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_VENTA_ACTIVO.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.VENTA_ACTIVO;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_TRASPASADO_SOLVIA.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.TRASPASADO_SOLVIA;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_ERROR_USUARIO_1.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.ERROR_USUARIO_1;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_ERROR_USUARIO_2.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.ERROR_USUARIO_2;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_VENCIDAS_POR_TIEMPO.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.VENCIDAS_POR_TIEMPO;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_ANULADA_POR_VENCIMIENTO.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.ANULADA_POR_VENCIMIENTO;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_ANULADA_ALTA_NUEVA_FACULTAD_HAYA.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.ANULADA_ALTA_NUEVA_FACULTAD_HAYA;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_FINANCIACION_DENEGADA.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.FINANCIACION_DENEGADA;
+		} else if(DDMotivoAnulacionExpediente.CODIGO_PBC_DENEGADO.equals(codigoMotivoAnulacion)) {
+			return MOTIVO_ANULACION_OFERTA.PBC_DENEGADO;
+		} else {
+			return null;
+		}
+	}
+
 }

@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--## HREOS-2176 Se añade join con PRP_PROPUESTAS_PRECIOS para saber si el activo se encuentra en alguna propuesta de precios.
 --##########################################
 --*/
 
@@ -61,7 +62,13 @@ BEGIN
       STA.DD_SAC_DESCRIPCION AS SUBTIPO_ACTIVO,
       SCM.DD_SCM_DESCRIPCION AS SITUACION_COMERCIAL,
       BDR.BIE_DREG_NUM_FINCA AS NUM_FINCA_REGISTRAL,
-      PAC.PAC_CHECK_GESTIONAR AS PER_GESTION
+      PAC.PAC_CHECK_GESTIONAR AS PER_GESTION,
+	  (SELECT CASE WHEN (COUNT(1) > 0) THEN 1 ELSE 0 END
+		FROM ' || V_ESQUEMA || '.PRP_PROPUESTAS_PRECIOS prp
+		INNER JOIN ' || V_ESQUEMA || '.ACT_PRP ACP ON prp.PRP_ID = ACP.PRP_ID
+		INNER JOIN ' || V_ESQUEMA || '.DD_EPP_ESTADO_PROP_PRECIO epp ON prp.DD_EPP_ID = epp.DD_EPP_ID
+		WHERE epp.DD_EPP_CODIGO NOT IN (''03'',''04'',''05'')
+			AND acp.ACT_ID = act.ACT_ID ) AS IN_PRP_TRAMITACION
     
     FROM ' ||V_ESQUEMA|| '.ACT_ACTIVO ACT
       LEFT JOIN ' ||V_ESQUEMA|| '.DD_SAC_SUBTIPO_ACTIVO STA ON STA.DD_SAC_ID = ACT.DD_SAC_ID

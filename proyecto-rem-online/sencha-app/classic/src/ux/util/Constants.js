@@ -166,7 +166,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	CAJAMAR: '01',
     	SAREB: '02',
     	BANKIA: '03',
-    	TERCEROS: '04'
+    	TERCEROS: '04',
+    	HYT: '06'
     },
     
     IMAGENES_CARTERA: {
@@ -290,6 +291,13 @@ Ext.define('HreRem.ux.util.Constants', {
     CLASE_ACTIVO: {
     	FINANCIERO: '01',
     	INMOBILIARIO: '02'
+    },
+    
+    SUBTIPOS_TRABAJO: {
+
+		TRAMITAR_PROPUESTA_PRECIOS: '44',
+		TRAMITAR_PROPUESTA_DESCUENTO: '45'
+    	
     }
     
 });

@@ -656,6 +656,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setOficina(detalleGasto.getOficinaBankia());
 			dto.setNumeroConexion(detalleGasto.getNumeroConexionBankia());
 			dto.setFechaConexion(detalleGasto.getFechaConexion());
+			
+			if (!Checks.esNulo(detalleGasto.getAnticipo())) {
+				dto.setAnticipo(detalleGasto.getAnticipo() == 1 ? true : false);
+			}
+			dto.setFechaAnticipo(detalleGasto.getFechaAnticipo());			
 
 			if (!Checks.esNulo(gasto.getProveedor().getCriterioCajaIVA())) {
 				dto.setOptaCriterioCaja(BooleanUtils.toBooleanObject(gasto.getProveedor().getCriterioCajaIVA()));
@@ -675,105 +680,142 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		try {
 			if (!Checks.esNulo(detalleGasto)) {
-				try {
-					beanUtilNotNull.copyProperties(detalleGasto, dto);
+				
+				beanUtilNotNull.copyProperties(detalleGasto, dto);
 
-					if (!Checks.esNulo(dto.getImpuestoIndirectoExento())) {
-						if (dto.getImpuestoIndirectoExento()) {
-							detalleGasto.setImpuestoIndirectoExento(1);
-						}
-						if (!dto.getImpuestoIndirectoExento()) {
-							detalleGasto.setImpuestoIndirectoExento(0);
-						}
+				if (!Checks.esNulo(dto.getImpuestoIndirectoExento())) {
+					if (dto.getImpuestoIndirectoExento()) {
+						detalleGasto.setImpuestoIndirectoExento(1);
 					}
-
-					if (!Checks.esNulo(dto.getRenunciaExencionImpuestoIndirecto())) {
-						if (dto.getRenunciaExencionImpuestoIndirecto()) {
-							detalleGasto.setRenunciaExencionImpuestoIndirecto(1);
-						}
-						if (!dto.getRenunciaExencionImpuestoIndirecto()) {
-							detalleGasto.setRenunciaExencionImpuestoIndirecto(0);
-						}
+					if (!dto.getImpuestoIndirectoExento()) {
+						detalleGasto.setImpuestoIndirectoExento(0);
 					}
+				}
 
-					if (!Checks.esNulo(dto.getImpuestoIndirectoTipoCodigo())) {
-						DDTiposImpuesto tipoImpuesto = (DDTiposImpuesto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposImpuesto.class, dto.getImpuestoIndirectoTipoCodigo());
-						detalleGasto.setImpuestoIndirectoTipo(tipoImpuesto);
+				if (!Checks.esNulo(dto.getRenunciaExencionImpuestoIndirecto())) {
+					if (dto.getRenunciaExencionImpuestoIndirecto()) {
+						detalleGasto.setRenunciaExencionImpuestoIndirecto(1);
 					}
-
-					if (!Checks.esNulo(dto.getDestinatariosPagoCodigo())) {
-						DDDestinatarioPago destinatarioPago = (DDDestinatarioPago) utilDiccionarioApi.dameValorDiccionarioByCod(DDDestinatarioPago.class,
-								dto.getDestinatariosPagoCodigo());
-						detalleGasto.setDestinatariosPago(destinatarioPago);
+					if (!dto.getRenunciaExencionImpuestoIndirecto()) {
+						detalleGasto.setRenunciaExencionImpuestoIndirecto(0);
 					}
-					if (!Checks.esNulo(dto.getTipoPagadorCodigo())) {
-						DDTipoPagador tipoPagador = (DDTipoPagador) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPagador.class, dto.getTipoPagadorCodigo());
-						detalleGasto.setTipoPagador(tipoPagador);
-					}
+				}
 
-					if (!Checks.esNulo(dto.getReembolsoTercero()) && dto.getReembolsoTercero()) {
-						detalleGasto.setReembolsoTercero(1);
+				if (!Checks.esNulo(dto.getImpuestoIndirectoTipoCodigo())) {
+					DDTiposImpuesto tipoImpuesto = (DDTiposImpuesto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposImpuesto.class, dto.getImpuestoIndirectoTipoCodigo());
+					detalleGasto.setImpuestoIndirectoTipo(tipoImpuesto);
+				}
 
-						if (!Checks.esNulo(dto.getIncluirPagoProvision())) {
-							detalleGasto.setIncluirPagoProvision(dto.getIncluirPagoProvision() ? 1 : 0);
-						}
+				if (!Checks.esNulo(dto.getDestinatariosPagoCodigo())) {
+					DDDestinatarioPago destinatarioPago = (DDDestinatarioPago) utilDiccionarioApi.dameValorDiccionarioByCod(DDDestinatarioPago.class,
+							dto.getDestinatariosPagoCodigo());
+					detalleGasto.setDestinatariosPago(destinatarioPago);
+				}
+				if (!Checks.esNulo(dto.getTipoPagadorCodigo())) {
+					DDTipoPagador tipoPagador = (DDTipoPagador) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPagador.class, dto.getTipoPagadorCodigo());
+					detalleGasto.setTipoPagador(tipoPagador);
+				}
 
-						if (!Checks.esNulo(dto.getAbonoCuenta()) && dto.getAbonoCuenta()) {
-							detalleGasto.setAbonoCuenta(1);
-							if (!Checks.esNulo(dto.getIban())) {
-								detalleGasto.setIbanAbonar(dto.getIban());
-							}
-							if (!Checks.esNulo(dto.getTitularCuenta())) {
-								detalleGasto.setTitularCuentaAbonar(dto.getTitularCuenta());
-							}
-							if (!Checks.esNulo(dto.getNifTitularCuenta())) {
-								detalleGasto.setNifTitularCuentaAbonar(dto.getNifTitularCuenta());
-							}
-						} else {
-							detalleGasto.setAbonoCuenta(0);
-							detalleGasto.setIbanAbonar(null);
-							detalleGasto.setTitularCuentaAbonar(null);
-							detalleGasto.setNifTitularCuentaAbonar(null);
-						}
-
-						if (!Checks.esNulo(dto.getPagadoConexionBankia()) && dto.getPagadoConexionBankia()) {
-							detalleGasto.setPagadoConexionBankia(1);
-							if (!Checks.esNulo(dto.getOficina())) {
-								detalleGasto.setOficinaBankia(dto.getOficina());
-							}
-							if (!Checks.esNulo(dto.getNumeroConexion())) {
-								detalleGasto.setNumeroConexionBankia(dto.getNumeroConexion());
-							}
-
-						} else {
-							detalleGasto.setPagadoConexionBankia(0);
-							detalleGasto.setOficinaBankia(null);
-							detalleGasto.setNumeroConexionBankia(null);
-							detalleGasto.setFechaConexion(null);
-						}
-
-					} else if (!Checks.esNulo(dto.getReembolsoTercero()) && !dto.getReembolsoTercero()) {
-						detalleGasto.setReembolsoTercero(0);
+				if (!Checks.esNulo(dto.getIncluirPagoProvision())) {
+					detalleGasto.setIncluirPagoProvision(dto.getIncluirPagoProvision() ? 1 : 0);
+					if(dto.getIncluirPagoProvision()) {							
+						detalleGasto.setAbonoCuenta(0);
+						detalleGasto.setPagadoConexionBankia(0);
+						detalleGasto.setAnticipo(0);
+						
 						detalleGasto.setIbanAbonar(null);
 						detalleGasto.setTitularCuentaAbonar(null);
 						detalleGasto.setNifTitularCuentaAbonar(null);
 						detalleGasto.setOficinaBankia(null);
 						detalleGasto.setNumeroConexionBankia(null);
 						detalleGasto.setFechaConexion(null);
+						detalleGasto.setFechaAnticipo(null);
+					}
+				}
+
+				if (!Checks.esNulo(dto.getAbonoCuenta())) {
+						detalleGasto.setAbonoCuenta(dto.getAbonoCuenta() ? 1 : 0);
+						if (!Checks.esNulo(dto.getIban())) {
+							detalleGasto.setIbanAbonar(dto.getIban());
+						}
+						if (!Checks.esNulo(dto.getTitularCuenta())) {
+							detalleGasto.setTitularCuentaAbonar(dto.getTitularCuenta());
+						}
+						if (!Checks.esNulo(dto.getNifTitularCuenta())) {
+							detalleGasto.setNifTitularCuentaAbonar(dto.getNifTitularCuenta());
+						}
+						
+						if(dto.getAbonoCuenta()) {
+							
+							detalleGasto.setIncluirPagoProvision(0);
+							detalleGasto.setPagadoConexionBankia(0);
+							detalleGasto.setAnticipo(0);
+							detalleGasto.setOficinaBankia(null);
+							detalleGasto.setNumeroConexionBankia(null);
+							detalleGasto.setFechaConexion(null);
+							detalleGasto.setFechaAnticipo(null);							
+						} else {
+							detalleGasto.setIbanAbonar(null);					
+							detalleGasto.setTitularCuentaAbonar(null);
+							detalleGasto.setNifTitularCuentaAbonar(null);
+						}
+						
+				}
+				
+				if (!Checks.esNulo(dto.getPagadoConexionBankia())) {
+					detalleGasto.setPagadoConexionBankia(dto.getPagadoConexionBankia() ? 1 : 0);
+					if (!Checks.esNulo(dto.getOficina())) {
+						detalleGasto.setOficinaBankia(dto.getOficina());
+					}
+					if (!Checks.esNulo(dto.getNumeroConexion())) {
+						detalleGasto.setNumeroConexionBankia(dto.getNumeroConexion());
+					}
+					
+					if(dto.getPagadoConexionBankia()) {
+						
+						detalleGasto.setAbonoCuenta(0);
 						detalleGasto.setIncluirPagoProvision(0);
+						detalleGasto.setAnticipo(0);
+						
+						detalleGasto.setIbanAbonar(null);
+						detalleGasto.setTitularCuentaAbonar(null);
+						detalleGasto.setNifTitularCuentaAbonar(null);
+						detalleGasto.setFechaConexion(null);
+						detalleGasto.setFechaAnticipo(null);				
+					} else {
+						detalleGasto.setOficinaBankia(null);
+						detalleGasto.setNumeroConexionBankia(null);
+						detalleGasto.setFechaConexion(null);
+					}
+				}
+				
+				if(!Checks.esNulo(dto.getAnticipo())) {
+					
+					detalleGasto.setAnticipo(dto.getAnticipo() ? 1 : 0);
+					
+					if(dto.getAnticipo()) {							
+					
 						detalleGasto.setAbonoCuenta(0);
 						detalleGasto.setPagadoConexionBankia(0);
+						detalleGasto.setIncluirPagoProvision(0);
+						
+						detalleGasto.setIbanAbonar(null);
+						detalleGasto.setTitularCuentaAbonar(null);
+						detalleGasto.setNifTitularCuentaAbonar(null);
+						detalleGasto.setOficinaBankia(null);
+						detalleGasto.setNumeroConexionBankia(null);
+						detalleGasto.setFechaConexion(null);
+					} else {
+						detalleGasto.setFechaAnticipo(null);
 					}
-
-					updaterStateApi.updaterStates(gasto, null);
-
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					e.printStackTrace();
 				}
+					
+
+				updaterStateApi.updaterStates(gasto, null);
+
 				genericDao.update(GastoDetalleEconomico.class, detalleGasto);
 			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -1275,7 +1317,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						gestionGasto.setFechaRetencionPago(new Date());
 						gestionGasto.setUsuarioRetencionPago(usuario);
 						updaterStateApi.updaterStates(gasto, DDEstadoGasto.RETENIDO);
-					} else if (("").equals(dtoGestionGasto.getComboMotivoRetenerPago())) {
+					} else if (Checks.esNulo(dtoGestionGasto.getComboMotivoRetenerPago())) {
 						// Si borro el campo eliminamos los detalles de retencion y ponemos el gasto en estado incompleto o pendiente.
 						gestionGasto.setMotivoRetencionPago(null);
 						gestionGasto.setFechaRetencionPago(null);

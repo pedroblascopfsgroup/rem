@@ -358,7 +358,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             		if(item.getNombre().equals("importeContraoferta")){
             			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
             			if(!Checks.esNulo(ofertaAceptada)){
-            				item.setValue(ofertaAceptada.getImporteContraOferta().toString());           				}
+            				item.setValue(ofertaAceptada.getImporteContraOferta().toString());
             			}
             		}
             	}
@@ -647,6 +647,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             }
         }
     }
+    
 
     /** Obtiene el valor del elemento por nombre de la lista de valores
      * @param valores

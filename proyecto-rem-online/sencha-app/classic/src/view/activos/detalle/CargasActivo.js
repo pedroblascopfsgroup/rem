@@ -72,6 +72,10 @@ Ext.define('HreRem.view.activos.detalle.CargasActivo', {
                 type : 'checkboxmodel'
               },
               columns : [{
+                    text : HreRem.i18n('header.origen.dato'),
+                    dataIndex : 'origenDatoDescripcion',
+                    flex : 1
+                  },{
                     text : HreRem.i18n('header.tipo.carga'),
                     dataIndex : 'tipoCargaDescripcion',
                     flex : 1

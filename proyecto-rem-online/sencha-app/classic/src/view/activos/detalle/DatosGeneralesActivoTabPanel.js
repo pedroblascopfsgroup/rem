@@ -90,7 +90,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivoTabPanel', {
 
     initComponent: function() {
 		var me = this;
-		//HREOS-1964: Restringir los activos financieros (asistidos) para que solo puedan ser editables por los perfiles de IT y Gestoría PDV
+		//HREOS-1964: Restringir los activos financieros (asistidos) para que solo puedan ser editables por los perfiles de IT y Gestorï¿½a PDV
 		var ocultarDatosbasicosactivo = false;		
 	    if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
 	    	ocultarDatosbasicosactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
@@ -131,16 +131,16 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivoTabPanel', {
 	    	ocultarDatoscomunidadactivo = !$AU.userHasFunction('EDITAR_DATOS_COMUNIDAD_ACTIVO');
 	    }
 	    
-	    var edicionCargasCarteraCajamar= me.lookupController().getViewModel().get('activo').get('isCarteraCajamar');
+	    /* var edicionCargasCarteraCajamar= me.lookupController().getViewModel().get('activo').get('isCarteraCajamar');
 	    if(Ext.isEmpty(edicionCargasCarteraCajamar)){
 	    	edicionCargasCarteraCajamar= false;
-	    }
+	    } */
 
 		var items = [];
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datosbasicosactivo', ocultarBotonesEdicion:ocultarDatosbasicosactivo })}, ['TAB_DATOS_BASICOS_ACTIVO']);
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tituloinformacionregistralactivo', ocultarBotonesEdicion:ocultarTituloinformacionregistralactivo})}, ['TAB_ACTIVO_TITULO_INFO_REGISTRAL']);
     	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informacionadministrativaactivo', ocultarBotonesEdicion: ocultarInformacionadministrativaactivo})}, ['TAB_ACTIVO_INFO_ADMINISTRATIVA']);
-    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'cargasactivo',ocultarBotonesEdicion: !edicionCargasCarteraCajamar})}, ['TAB_ACTIVO_CARGAS']);
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'cargasactivo',ocultarBotonesEdicion: false})}, ['TAB_ACTIVO_CARGAS']);
     	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'situacionposesoriaactivo', ocultarBotonesEdicion: ocultarSituacionposesoriaactivo})}, ['TAB_ACTIVO_SITU_POSESORIA']);
     	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informacioncomercialactivo',ocultarBotonesEdicion: true})}, ['TAB_ACTIVO_INFO_COMERCIAL']);
     	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datoscomunidadactivo',ocultarBotonesEdicion: ocultarDatoscomunidadactivo})}, ['TAB_ACTIVO_DATOS_COMUNIDAD']);

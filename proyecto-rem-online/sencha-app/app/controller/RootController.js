@@ -193,7 +193,7 @@ Ext.define('HreRem.controller.RootController', {
 				    break;				    
 			}
 		  
-		});		
+		});
     },
     
     /**

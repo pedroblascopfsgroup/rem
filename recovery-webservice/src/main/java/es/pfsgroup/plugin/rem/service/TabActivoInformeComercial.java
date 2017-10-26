@@ -34,6 +34,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 
 @Component
 public class TabActivoInformeComercial implements TabActivoService {
@@ -45,6 +47,9 @@ public class TabActivoInformeComercial implements TabActivoService {
 
 	@Autowired
 	private TabActivoFactoryApi tabActivoFactory;
+	
+	@Autowired
+	private RestApi restApi;
 
 	@Override
 	public String[] getKeys() {
@@ -448,6 +453,7 @@ public class TabActivoInformeComercial implements TabActivoService {
 				activo.setValoracion(valoraciones);
 				activo.setInfoComercial(genericDao.save(ActivoInfoComercial.class, activo.getInfoComercial()));
 				genericDao.save(Activo.class, activo);
+				restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 			}
 			
 

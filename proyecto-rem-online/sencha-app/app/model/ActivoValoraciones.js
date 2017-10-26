@@ -124,6 +124,14 @@ Ext.define('HreRem.model.ActivoValoraciones', {
     		{
     			name:'vpo',
     			type: 'boolean'
+    		},
+    		{
+    			name:'incluidoBolsaPreciar',
+    			type: 'boolean'
+    		},
+    		{
+    			name:'incluidoBolsaRepreciar',
+    			type: 'boolean'
     		}
     		
     ],

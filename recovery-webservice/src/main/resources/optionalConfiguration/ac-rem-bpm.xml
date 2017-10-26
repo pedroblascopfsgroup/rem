@@ -561,6 +561,7 @@
 		      <value>es.pfsgroup.plugin.recovery.coreextension.model.DDTipoConcurso</value>   
 		      <value>es.pfsgroup.plugin.recovery.coreextension.model.DDMotivoConclusion</value>
 		      <value>es.pfsgroup.plugin.rem.model.dd.DDResolucionComite</value>
+		      <value>es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante</value>
         </list>
     </property>
    </bean>

@@ -42,6 +42,10 @@ public class DtoActivoValoraciones extends WebDto{
     private Date bloqueoPrecioFechaIni;
     private String gestorBloqueoPrecio;
     
+    private Boolean incluidoBolsaPreciar;
+    
+    private Boolean incluidoBolsaRepreciar;
+    
     private Boolean vpo = false;
 	
 	public String getNumeroActivo() {
@@ -184,6 +188,18 @@ public class DtoActivoValoraciones extends WebDto{
 	}
 	public void setVpo(Boolean vpo) {
 		this.vpo = vpo;
+	}
+	public Boolean getIncluidoBolsaRepreciar() {
+		return incluidoBolsaRepreciar;
+	}
+	public void setIncluidoBolsaRepreciar(Boolean incluidoBolsaRepreciar) {
+		this.incluidoBolsaRepreciar = incluidoBolsaRepreciar;
+	}
+	public Boolean getIncluidoBolsaPreciar() {
+		return incluidoBolsaPreciar;
+	}
+	public void setIncluidoBolsaPreciar(Boolean incluidoBolsaPreciar) {
+		this.incluidoBolsaPreciar = incluidoBolsaPreciar;
 	}
 	
 	

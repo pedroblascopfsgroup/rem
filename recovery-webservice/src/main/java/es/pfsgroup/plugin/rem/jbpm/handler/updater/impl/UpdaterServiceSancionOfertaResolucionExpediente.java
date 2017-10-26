@@ -135,7 +135,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						}
 					}
 
-					if(MOTIVO_ANULACION_RESERVA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()) && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
+					if(tieneReserva && MOTIVO_ANULACION_RESERVA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()) && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
 						// Si este campo contiene algún valor llamar al web-service para devolver la reserva (sólo Bankia).
 						try {
 							uvemManagerApi.notificarDevolucionReserva(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valor.getValor()),

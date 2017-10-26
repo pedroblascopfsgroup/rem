@@ -94,6 +94,15 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 					        		store: '{comboEstadoExpediente}'
 					        	}
 							},
+				        	{ 
+					        	xtype: 'comboboxfieldbase',
+					        	multiSelect: false,
+					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.comercializacion'),
+					        	name: 'tipoComercializacion',
+					        	bind: {
+					        		store: '{comboTipoComercializacion}'
+					        	}
+							},							
 							{
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.gestor'),
@@ -150,6 +159,15 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 				            		store: '{comboCanalOferta}'
 				            	}
 							},
+				        	{ 
+					        	xtype: 'comboboxfieldbase',
+					        	multiSelect: false,
+					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.clase.activo'),
+					        	name: 'claseActivoBancario',
+					        	bind: {
+					        		store: '{comboClaseActivo}'
+					        	}
+							},							
 							{
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel: HreRem.i18n('fieldlabel.gestor'),

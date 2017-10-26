@@ -137,7 +137,32 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasActivosList', {
 		            text: HreRem.i18n('header.precio.minimo.autorizado'),
 		            renderer: Utils.rendererCurrency,
 		            flex: 1
-		        }/*,
+		        },
+		        {
+		        	dataIndex: 'incluidoEnBolsa',
+		        	text: HreRem.i18n("header.incluido.en.bolsa.precios"),
+		        	hidden: true,
+		        	sortable: false,
+		        	renderer: function(value, metaData, record) {
+		        		var incluidoEnBolsa = !Ext.isEmpty(record.get('fechaPreciar')) || !Ext.isEmpty(record.get('fechaRepreciar'));		        		
+		        		return Utils.rendererBooleanToSiNo(incluidoEnBolsa);
+		        	},
+		        	flex: 1
+		        },
+		        {
+		        	dataIndex: 'activoEnPropuestaEnTramitacion',
+		        	text: HreRem.i18n("header.incluido.en.propuesta.tramite"),
+		        	hidden: true,
+		        	renderer: Utils.rendererBooleanToSiNo,
+		        	flex: 1
+		        }
+		        
+		        
+		        
+		        
+		        
+		        
+		        /*,
 		        {
 		        	dataIndex:'precioDescuentoAprobado',
 		            text: HreRem.i18n('header.precio.descuento.autorizado'),

@@ -40,6 +40,8 @@ import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TrabajoFoto;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 
 
 
@@ -203,50 +205,76 @@ public class TrabajoAdapter {
 		
 	}
 	
-	public String getAdvertenciaCrearTrabajo(List<ActivoTrabajo> listaActivoTrabajo){
-		
-		//Advertencia para avisar al usuario de que ya existe algún trabajo anterior del mismo subtipo que se quiere crear
-		String mensaje = new String();
-		
-		if (!listaActivoTrabajo.isEmpty()){
+	public String getAdvertenciaCrearTrabajo(Long idActivo, String codigoSubtipoTrabajo, List<ActivoTrabajo> listaActivoTrabajo ){
 
-			Integer countActivoTrabajos = listaActivoTrabajo.size();
-			String tipoTrabajoDescripcion = listaActivoTrabajo.get(0).getPrimaryKey().getTrabajo().getTipoTrabajo().getDescripcion();
-			String subTipoTrabajoDescripcion = listaActivoTrabajo.get(0).getPrimaryKey().getTrabajo().getSubtipoTrabajo().getDescripcion();
+		String mensaje = "";		
+		
+
+		// Al seleccionar tramitar propuesta de precios, avisa al usuario si existe una propuesta de precios en trámite para el activo.
+		if(DDSubtipoTrabajo.CODIGO_TRAMITAR_PROPUESTA_DESCUENTO.equals(codigoSubtipoTrabajo) ||  DDSubtipoTrabajo.CODIGO_TRAMITAR_PROPUESTA_PRECIOS.equals(codigoSubtipoTrabajo)) {
 			
-			if (countActivoTrabajos == 1){
-				mensaje = messageServices.getMessage("trabajo.advertencia.existenMismoSubtipo.uno.yaExiste").concat(" "); //"Advertencia: Para este activo ya existe un trabajo del tipo ";
-				mensaje = mensaje.concat(tipoTrabajoDescripcion);
-				mensaje = mensaje.concat(" / ");
-				mensaje = mensaje.concat(subTipoTrabajoDescripcion);
-				mensaje = mensaje.concat(" ").concat(messageServices.getMessage("trabajo.advertencia.existenMismoSubtipo.uno.conEstado")).concat(" "); //mensaje.concat(" y en estado ");
-				mensaje = mensaje.concat(listaActivoTrabajo.get(0).getPrimaryKey().getTrabajo().getEstado().getDescripcion()).concat(".");
-			}else {
-				String estados = new String();
-				//Se almacenan los estados de todos los trabajos encontrados en un objeto tipo HashSet para
-				//crear una colección de estados distintos
-				HashSet<String> listaEstadosTrabajos = new HashSet<String>();
+			List<VBusquedaActivosPrecios> listaActivos = activoDao.getListActivosPreciosFromListId(idActivo.toString());
+			
+			if(!Checks.estaVacio(listaActivos)) {
+				VBusquedaActivosPrecios activoPrecio = listaActivos.get(0);
 				
-				
-				for (ActivoTrabajo activoTrabajo : listaActivoTrabajo){
-					listaEstadosTrabajos.add(activoTrabajo.getPrimaryKey().getTrabajo().getEstado().getDescripcion());
+				if(activoPrecio.getActivoEnPropuestaEnTramitacion()) {
+					mensaje = messageServices.getMessage("trabajo.advertencia.existe.propuesta.precios.activa");
 				}
+			}
+			
+			
+		} else {
+			
+		
+			//Avisa al usuario de algún trabajo existente del mismo tipo/subtipo y que no sea de los anteriores
+			if(Checks.estaVacio(listaActivoTrabajo)) {
 				
-				for (String estadosTrabajos : listaEstadosTrabajos){
-					estados = estados.concat(estadosTrabajos).concat(", ");
+				listaActivoTrabajo = getListadoActivoTrabajos(idActivo, codigoSubtipoTrabajo);
+			}
+		
+		
+			if (!listaActivoTrabajo.isEmpty()){
+	
+				Integer countActivoTrabajos = listaActivoTrabajo.size();
+				String tipoTrabajoDescripcion = listaActivoTrabajo.get(0).getPrimaryKey().getTrabajo().getTipoTrabajo().getDescripcion();
+				String subTipoTrabajoDescripcion = listaActivoTrabajo.get(0).getPrimaryKey().getTrabajo().getSubtipoTrabajo().getDescripcion();
+				
+				if (countActivoTrabajos == 1){
+					mensaje = messageServices.getMessage("trabajo.advertencia.existenMismoSubtipo.uno.yaExiste").concat(" "); //"Advertencia: Para este activo ya existe un trabajo del tipo ";
+					mensaje = mensaje.concat(tipoTrabajoDescripcion);
+					mensaje = mensaje.concat(" / ");
+					mensaje = mensaje.concat(subTipoTrabajoDescripcion);
+					mensaje = mensaje.concat(" ").concat(messageServices.getMessage("trabajo.advertencia.existenMismoSubtipo.uno.conEstado")).concat(" "); //mensaje.concat(" y en estado ");
+					mensaje = mensaje.concat(listaActivoTrabajo.get(0).getPrimaryKey().getTrabajo().getEstado().getDescripcion()).concat(".");
+				}else {
+					String estados = new String();
+					//Se almacenan los estados de todos los trabajos encontrados en un objeto tipo HashSet para
+					//crear una colección de estados distintos
+					HashSet<String> listaEstadosTrabajos = new HashSet<String>();
+					
+					
+					for (ActivoTrabajo activoTrabajo : listaActivoTrabajo){
+						listaEstadosTrabajos.add(activoTrabajo.getPrimaryKey().getTrabajo().getEstado().getDescripcion());
+					}
+					
+					for (String estadosTrabajos : listaEstadosTrabajos){
+						estados = estados.concat(estadosTrabajos).concat(", ");
+					}
+					estados = estados.substring(0, estados.length()-2);
+					
+					mensaje = messageServices.getMessage("trabajo.advertencia.existenMismoSubtipo.varios.yaExiste").concat(" "); //"Advertencia: Para este activo ya existen ";
+					mensaje = mensaje.concat(String.valueOf(countActivoTrabajos));
+					mensaje = mensaje.concat(" ").concat(messageServices.getMessage("trabajo.advertencia.existenMismoSubtipo.varios.trabajosTipo")).concat(" "); //mensaje.concat(" trabajos del tipo ");
+					mensaje = mensaje.concat(tipoTrabajoDescripcion);
+					mensaje = mensaje.concat(" / ");
+					mensaje = mensaje.concat(subTipoTrabajoDescripcion);
+					mensaje = mensaje.concat(" ").concat(messageServices.getMessage("trabajo.advertencia.existenMismoSubtipo.varios.conEstado")).concat(" "); //mensaje.concat(" y en estados ");
+					mensaje = mensaje.concat(estados).concat(".");
 				}
-				estados = estados.substring(0, estados.length()-2);
-				
-				mensaje = messageServices.getMessage("trabajo.advertencia.existenMismoSubtipo.varios.yaExiste").concat(" "); //"Advertencia: Para este activo ya existen ";
-				mensaje = mensaje.concat(String.valueOf(countActivoTrabajos));
-				mensaje = mensaje.concat(" ").concat(messageServices.getMessage("trabajo.advertencia.existenMismoSubtipo.varios.trabajosTipo")).concat(" "); //mensaje.concat(" trabajos del tipo ");
-				mensaje = mensaje.concat(tipoTrabajoDescripcion);
-				mensaje = mensaje.concat(" / ");
-				mensaje = mensaje.concat(subTipoTrabajoDescripcion);
-				mensaje = mensaje.concat(" ").concat(messageServices.getMessage("trabajo.advertencia.existenMismoSubtipo.varios.conEstado")).concat(" "); //mensaje.concat(" y en estados ");
-				mensaje = mensaje.concat(estados).concat(".");
 			}
 		}
+			
 		return mensaje;
 	}
 	

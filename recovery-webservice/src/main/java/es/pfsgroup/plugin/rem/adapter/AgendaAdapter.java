@@ -445,7 +445,7 @@ public class AgendaAdapter {
 	
 			listaActivoTrabajo.remove(activoTrabajoTarea);
 	
-			mensaje = trabajoAdapter.getAdvertenciaCrearTrabajo(listaActivoTrabajo);
+			mensaje = trabajoAdapter.getAdvertenciaCrearTrabajo(null, null, listaActivoTrabajo);
 		}
 		
 		return mensaje;

@@ -77,6 +77,7 @@ public class UpdaterServiceCEEObtencionEtiqueta implements UpdaterService {
 
 		}
 		genericDao.save(ActivoAdmisionDocumento.class, documentoCEE);
+		
 
 	}
 

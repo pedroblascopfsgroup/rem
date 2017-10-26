@@ -180,7 +180,7 @@ public class UvemManager implements UvemManagerApi {
 	private WIService executeService(WIService servicio) throws WIException{
 		
 		//boolean activo  = !Checks.esNulo(appProperties.getProperty("rest.client.uvem.activo"))
-				//? Boolean.valueOf(appProperties.getProperty("rest.client.uvem.activo")) : false;
+		//		? Boolean.valueOf(appProperties.getProperty("rest.client.uvem.activo")) : false;
 		boolean activo = true;
 		if(activo){
 			servicio.execute();
@@ -189,7 +189,6 @@ public class UvemManager implements UvemManagerApi {
 			if(servicio instanceof GMPETS07_INS){
 				((GMPETS07_INS)servicio).setNumeroIdentificadorDeTasacionlnuita2(rand.nextInt() & MASK);
 			}else if(servicio instanceof GMPAJC11_INS){
-				//getNumeroDeOcurrenciasnumocu
 				VectorGMPAJC11_INS_NumeroDeOcurrenciasnumocu vector = new VectorGMPAJC11_INS_NumeroDeOcurrenciasnumocu();
 				StructGMPAJC11_INS_NumeroDeOcurrenciasnumocu struct = new StructGMPAJC11_INS_NumeroDeOcurrenciasnumocu();
 				struct.setIdentificadorClienteOfertaidclow2(rand.nextInt() & MASK);
@@ -215,6 +214,9 @@ public class UvemManager implements UvemManagerApi {
 				((GMPDJB13_INS)servicio).setCodigoComitecocom7((short)2);
 				((GMPDJB13_INS)servicio).setCodigoDeOfertaHayacoofhx2("9");
 				
+			}else if(servicio instanceof GMPAJC34_INS){
+				ImporteMonetario importe = new ImporteMonetario();
+				((GMPAJC34_INS)servicio).setImporteMonetarioConcedido(importe);
 			}
 		}
 		return servicio;
@@ -1198,6 +1200,7 @@ public class UvemManager implements UvemManagerApi {
 
 			servicioGMPAJC34_INS.setAlias(ALIAS);
 			servicioGMPAJC34_INS.execute();
+			executeService(servicioGMPAJC34_INS);
 
 			importe = servicioGMPAJC34_INS.getImporteMonetarioConcedido();
 

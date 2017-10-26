@@ -539,7 +539,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             					
             					if(DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
             							&& "T013_ResolucionComite".equals(tareaExterna.getTareaProcedimiento().getCodigo())){
-            						item.setType(TIPO_CAMPO_INFORMATIVO);
+            						item.setType("cbreadonly");
             					}
 								try {
 									List<ResolucionComiteBankia> listaResoluciones = resolucionComiteApi.getResolucionesComiteByExpedienteTipoRes(resolDto);

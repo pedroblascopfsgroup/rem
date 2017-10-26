@@ -956,7 +956,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				// Actualizar el tipoComercialización del activo
 				updaterState.updaterStateTipoComercializacion(activo);
 			}
-
+			if(!Checks.esNulo(activoValoracion.getActivo())){
+				restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoValoracion.getActivo());
+			}
 		} catch (Exception ex) {
 			logger.error("Error en activoManager", ex);
 			return false;
@@ -981,6 +983,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		historicoValoracion.setObservaciones(activoValoracion.getObservaciones());
 
 		genericDao.save(ActivoHistoricoValoraciones.class, historicoValoracion);
+		restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoValoracion.getActivo());
 
 		return true;
 	}
@@ -1020,9 +1023,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		} else {
 			// Al anular el precio vigente, se hace un borrado lógico, y no se
 			// inserta en el histórico
-			genericDao.deleteById(ActivoValoraciones.class, id);
+			genericDao.deleteById(ActivoValoraciones.class, id);			
 		}
-
+		restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoValoracion.getActivo());
 		return true;
 	}
 
@@ -1664,6 +1667,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				beanUtilNotNull.copyProperty(condicionAnterior, "fechaHasta", new Date());
 				condicionAnterior.setUsuarioBaja(adapter.getUsuarioLogado());
 				genericDao.save(ActivoCondicionEspecifica.class, condicionAnterior);
+				
 			}
 
 		} catch (IllegalAccessException e) {
@@ -1673,6 +1677,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		genericDao.save(ActivoCondicionEspecifica.class, condicionEspecifica);
+		restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, this.get(dtoCondicionEspecifica.getIdActivo()));
 
 		return true;
 	}
@@ -1693,6 +1698,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 
 			genericDao.save(ActivoCondicionEspecifica.class, condicionEspecifica);
+			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, condicionEspecifica.getActivo());
 
 			return true;
 		} else {
@@ -1717,6 +1723,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 
 			genericDao.save(ActivoCondicionEspecifica.class, condicionEspecifica);
+			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, condicionEspecifica.getActivo());
 
 			return true;
 		} else {
@@ -1965,6 +1972,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 
 			genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoMediador);
+			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
@@ -2343,6 +2351,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				activoBancario.getAuditoria().setUsuarioCrear(adapter.getUsuarioLogado().getUsername());
 				genericDao.save(ActivoBancario.class, activoBancario);
 			}
+			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoBancario.getActivo());
 
 		} catch (Exception ex) {
 			logger.error("Error en activoManager", ex);
@@ -3349,6 +3358,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 
 			genericDao.update(ActivoIntegrado.class, activoIntegrado);
+			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoIntegrado.getActivo());
+			
 			return true;
 
 		} catch (Exception e) {

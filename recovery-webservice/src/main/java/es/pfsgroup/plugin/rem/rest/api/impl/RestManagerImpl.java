@@ -630,31 +630,31 @@ public class RestManagerImpl implements RestApi {
 	@Override
 	public void marcarRegistroParaEnvio(ENTIDADES entidad, Object instanciaEntidad) {
 		if (entidad.equals(ENTIDADES.ACTIVO)) {
+			if (instanciaEntidad != null && instanciaEntidad instanceof Activo) {
+				ActivosModificados actMod = activosModificadosDao.getByActivo((Activo) instanciaEntidad);
+				Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+				if (Checks.esNulo(actMod)) {
+					actMod = new ActivosModificados();
+					Auditoria auditoria = new Auditoria();
+					auditoria.setFechaModificar(new Date());
 
-			ActivosModificados actMod = activosModificadosDao.getByActivo((Activo) instanciaEntidad);
-			Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-			if (Checks.esNulo(actMod)) {
-				actMod = new ActivosModificados();
-				Auditoria auditoria = new Auditoria();
-				auditoria.setFechaModificar(new Date());
-				
-				auditoria.setUsuarioModificar(usu.getUsername());
-				auditoria.setFechaCrear(new Date());
-				auditoria.setUsuarioCrear(usu.getUsername());
-				actMod.setAuditoria(auditoria);
-				actMod.setActivo((Activo) instanciaEntidad);
-			}else{
-				actMod.getAuditoria().setFechaModificar(new Date());
-				actMod.getAuditoria().setUsuarioModificar(usu.getUsername());
+					auditoria.setUsuarioModificar(usu.getUsername());
+					auditoria.setFechaCrear(new Date());
+					auditoria.setUsuarioCrear(usu.getUsername());
+					actMod.setAuditoria(auditoria);
+					actMod.setActivo((Activo) instanciaEntidad);
+				} else {
+					actMod.getAuditoria().setFechaModificar(new Date());
+					actMod.getAuditoria().setUsuarioModificar(usu.getUsername());
+				}
+				activosModificadosDao.saveOrUpdate(actMod);
 			}
-			activosModificadosDao.saveOrUpdate(actMod);
 		}
 
 	}
-	
+
 	@SuppressWarnings("rawtypes")
-	public Object getValue(Object dto, Class claseDto, String methodName)
-			throws Exception {
+	public Object getValue(Object dto, Class claseDto, String methodName) throws Exception {
 		Object obj = null;
 		for (PropertyDescriptor propertyDescriptor : Introspector.getBeanInfo(claseDto).getPropertyDescriptors()) {
 			if (propertyDescriptor.getReadMethod() != null

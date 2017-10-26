@@ -455,7 +455,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 								beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "tipoPublicacion", tipoPublicacion);
 							}
 							
-							genericDao.save(Activo.class, activo);
+							activoApi.saveOrUpdate(activo);
 							genericDao.save(ActivoHistoricoEstadoPublicacion.class, activoHistoricoEstadoPublicacion);
 	
 						//} // Cierra if ... CODIGO_PUBLICADO.equals

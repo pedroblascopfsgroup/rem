@@ -90,13 +90,13 @@ Ext.define('HreRem.view.activos.detalle.HistoricoCondicionesList', {
 			me.setTopBar(false);
 		}
 
-		if(!me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionComercial') ||
-				!me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionRestringida') ||
-				!me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionAsistida') ||
-				!me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionObraNueva')) {
-			me.down('toolbar').items.items[2].setHidden(true);
-		} else {
+		if(me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionComercial') ||
+				me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionRestringida') ||
+				me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionAsistida') ||
+				me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionObraNueva')) {
 			me.down('toolbar').items.items[2].setHidden(false);
+		} else {
+			me.down('toolbar').items.items[2].setHidden(true);
 		}
    }
 

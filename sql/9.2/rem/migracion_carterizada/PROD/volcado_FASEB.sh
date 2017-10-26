@@ -51,8 +51,8 @@ cd ../../../
 mv -f $ruta_descarterizada/$dml_list $ruta_carterizada
 
 fecha_ini=`date +%Y%m%d_%H%M%S`
-if [ -f PROD/Logs/* ] ; then
-	mv -f PROD/Logs/* PROD/Logs/backup
+if [ -f PROD/Logs/005_* ] ; then
+	mv -f PROD/Logs/*.log PROD/Logs/backup
 fi
 while read line
 do
@@ -78,7 +78,6 @@ do
 		echo >> PROD/Logs/005_volcado_"$usuario"_"$fecha_ini".log
 		echo Fin $line
 		mv -f $ruta_descarterizada/$line $ruta_noEjecutar
-		echo
 	else
 		echo No existe $line
 	fi

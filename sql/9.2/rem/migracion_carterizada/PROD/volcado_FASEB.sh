@@ -42,6 +42,7 @@ echo
 
 ruta_descarterizada="PROD/DML_PROD/DMLs_DESCARTERIZADOS"
 ruta_carterizada="PROD/DML_PROD/TMP"
+ruta_noEjecutar=$ruta_descarterizada"/NO_EJECUTAR"
 dml_list="DMLs.list"
 rm -f $ruta_carterizada/*.sql
 cd $ruta_descarterizada
@@ -50,8 +51,8 @@ cd ../../../
 mv -f $ruta_descarterizada/$dml_list $ruta_carterizada
 
 fecha_ini=`date +%Y%m%d_%H%M%S`
-if [ -f PROD/Logs/005_* ] ; then
-	mv -f PROD/Logs/005_* PROD/Logs/backup
+if [ -f PROD/Logs/* ] ; then
+	mv -f PROD/Logs/* PROD/Logs/backup
 fi
 while read line
 do
@@ -76,11 +77,14 @@ do
 		fi
 		echo >> PROD/Logs/005_volcado_"$usuario"_"$fecha_ini".log
 		echo Fin $line
+		mv -f $ruta_descarterizada/$line $ruta_noEjecutar
 		echo
 	else
 		echo No existe $line
 	fi
 done < "$ruta_carterizada"/"$dml_list"
+
+mv -f $ruta_noEjecutar/*.sql $ruta_descarterizada
 
 echo Revise log: PROD/Logs/005_volcado_"$usuario"_"$fecha_ini".log
 

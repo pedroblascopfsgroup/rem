@@ -418,9 +418,6 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             						Filter filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RESOLUCION);
                 					DDTipoResolucion tipoResolucion = genericDao.get(DDTipoResolucion.class, filtroTipoResolucion);
                 					resolDto.setTipoResolucion(tipoResolucion);
-                					if(DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())){
-                						item.setType(TIPO_CAMPO_INFORMATIVO);
-                					}
             					}
             					else if("T013_RatificacionComite".equals(tareaExterna.getTareaProcedimiento().getCodigo())){
             						Filter filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RATIFICACION);
@@ -537,10 +534,6 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             					
             					resolDto.setTipoResolucion(tipoResolucion);
             					
-            					if(DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
-            							&& "T013_ResolucionComite".equals(tareaExterna.getTareaProcedimiento().getCodigo())){
-            						item.setType("cbreadonly");
-            					}
 								try {
 									List<ResolucionComiteBankia> listaResoluciones = resolucionComiteApi.getResolucionesComiteByExpedienteTipoRes(resolDto);
 									
@@ -625,10 +618,6 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             					
             					resolDto.setTipoResolucion(tipoResolucion);
             					
-            					if("T013_ResolucionComite".equals(tareaExterna.getTareaProcedimiento().getCodigo())
-            							&& DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())){
-            						item.setType(TIPO_CAMPO_INFORMATIVO);
-            					}
             					try{
             						List<ResolucionComiteBankia> listaResoluciones = resolucionComiteApi.getResolucionesComiteByExpedienteTipoRes(resolDto);
             						

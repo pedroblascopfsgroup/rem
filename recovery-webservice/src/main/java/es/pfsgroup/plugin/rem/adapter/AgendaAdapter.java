@@ -295,8 +295,6 @@ public class AgendaAdapter {
     		return "comboboxinicial";
     	}else if(campoTfi.equals("comboinied")){
     	 	return "comboboxinicialedi";
-    	}else if(campoTfi.equals("cbreadonly")){
-    		return "comboboxreadonly";
     	}
 		return campoTfi;
     }    

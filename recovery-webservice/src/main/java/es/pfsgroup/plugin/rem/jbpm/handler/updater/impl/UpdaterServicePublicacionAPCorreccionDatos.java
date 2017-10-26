@@ -29,6 +29,7 @@ import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 
 @Component
 public class UpdaterServicePublicacionAPCorreccionDatos implements UpdaterService {
@@ -163,6 +164,7 @@ public class UpdaterServicePublicacionAPCorreccionDatos implements UpdaterServic
 			}
 			activoEstadosInformeComercialHistorico.setActivo(activo);
 			genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadosInformeComercialHistorico);
+			
 		}
 		
 		//Si han habido cambios en el activo, lo persistimos

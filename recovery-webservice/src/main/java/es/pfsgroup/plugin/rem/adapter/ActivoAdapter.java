@@ -153,6 +153,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
@@ -168,6 +170,9 @@ import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Service
 public class ActivoAdapter {
+	
+	@Autowired
+	private RestApi restApi;
 
 	@Autowired
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
@@ -313,6 +318,7 @@ public class ActivoAdapter {
 
 			beanUtilNotNull.copyProperties(activoCatastro, dtoCatastro);
 			genericDao.save(ActivoCatastro.class, activoCatastro);
+			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoCatastro.getActivo());
 
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
@@ -404,7 +410,13 @@ public class ActivoAdapter {
 	public boolean deleteCatastro(DtoActivoCatastro dtoCatastro, Long idCatastro) {
 
 		try {
-			genericDao.deleteById(ActivoCatastro.class, idCatastro);
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idCatastro);
+			ActivoCatastro activoCatastro = genericDao.get(ActivoCatastro.class, filtro);
+			if(activoCatastro != null){
+				genericDao.deleteById(ActivoCatastro.class, activoCatastro.getId());
+				restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoCatastro.getActivo());
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -512,6 +524,7 @@ public class ActivoAdapter {
 			activoCondicionEspecifica.setActivo(activo);
 
 			genericDao.save(ActivoCondicionEspecifica.class, activoCondicionEspecifica);
+			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO,activo);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -542,6 +555,7 @@ public class ActivoAdapter {
 			viviendaTemp.getDistribucion().add(distribucionNueva);
 			activo.setInfoComercial(viviendaTemp);
 			activoApi.saveOrUpdate(activo);
+			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
@@ -1858,21 +1872,21 @@ public class ActivoAdapter {
 	public Long crearTramitePublicacion(Long idActivo) {
 
 		TipoProcedimiento tprc = tipoProcedimiento.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_PUBLICACION);// Trámite
-																		// de
+		Activo activo =	activoApi.get(idActivo);															// de
 																		// publicación
 
 		ActivoTramite tramite = jbpmActivoTramiteManagerApi.creaActivoTramite(tprc, activoApi.get(idActivo));
 		
 		//Creación registro historial comercial con estado informe emision
 		ActivoEstadosInformeComercialHistorico estadoInformeComercialHistorico= new ActivoEstadosInformeComercialHistorico();
-		estadoInformeComercialHistorico.setActivo(activoApi.get(idActivo));
+		estadoInformeComercialHistorico.setActivo(activo);
 		DDEstadoInformeComercial estadoInformeComercial = (DDEstadoInformeComercial) proxyFactory.proxy(UtilDiccionarioApi.class)
 				.dameValorDiccionarioByCod(DDEstadoInformeComercial.class, DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_EMISION);
 		estadoInformeComercialHistorico.setEstadoInformeComercial(estadoInformeComercial);
 		estadoInformeComercialHistorico.setFecha(new Date());
 		
 		genericDao.save(ActivoEstadosInformeComercialHistorico.class, estadoInformeComercialHistorico);
-		
+		restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 		
 		Long idBpm = jbpmActivoTramiteManagerApi.lanzaBPMAsociadoATramite(tramite.getId());
 
@@ -1946,6 +1960,7 @@ public class ActivoAdapter {
 
 			rellenaCheckingDocumentoAdmision(activoAdmisionDocumento, dtoAdmisionDocumento);
 			genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);
+			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoAdmisionDocumento.getActivo());
 
 		}
 

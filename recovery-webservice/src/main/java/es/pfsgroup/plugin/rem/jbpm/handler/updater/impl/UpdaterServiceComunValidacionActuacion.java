@@ -28,6 +28,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 
 @Component
@@ -47,6 +49,9 @@ public class UpdaterServiceComunValidacionActuacion implements UpdaterService {
 	
 	@Autowired
 	private DiccionarioTargetClassMap diccionarioTargetClassMap;
+	
+	@Autowired
+	private RestApi restApi;
 	
 	@Transactional
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
@@ -100,6 +105,7 @@ public class UpdaterServiceComunValidacionActuacion implements UpdaterService {
 						situacionPosesoria.setFechaAccesoTapiado(trabajo.getFechaFin());
 						situacionPosesoria.setAccesoTapiado(1);
 						genericDao.save(ActivoSituacionPosesoria.class, situacionPosesoria);
+						restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 					}
 					
 					if(DDSubtipoTrabajo.CODIGO_AT_COLOCACION_PUERTAS.equals(trabajo.getSubtipoTrabajo().getCodigo())){
@@ -108,6 +114,7 @@ public class UpdaterServiceComunValidacionActuacion implements UpdaterService {
 						situacionPosesoria.setFechaAccesoAntiocupa(trabajo.getFechaFin());
 						situacionPosesoria.setAccesoAntiocupa(1);
 						genericDao.save(ActivoSituacionPosesoria.class, situacionPosesoria);
+						restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 					}
 					
 					/* Estado del trabajo: Un estado diferente, según si el trámite avanza o retrocede por la decisión de "Validación Actuación".

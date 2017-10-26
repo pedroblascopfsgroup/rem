@@ -24,6 +24,8 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 
 @Component
@@ -38,6 +40,9 @@ public class UpdaterServiceComunSolicitudGestor implements UpdaterService {
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private RestApi restApi;
 	
 	@Autowired
 	private ActivoAdapter activoAdapter;
@@ -77,6 +82,7 @@ public class UpdaterServiceComunSolicitudGestor implements UpdaterService {
 				
 				activoAdapter.saveAdmisionDocumento(dtoDocumento);
 				documento = genericDao.get(ActivoAdmisionDocumento.class, filtroTipo, filtroActivo);
+				restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 			}
 			
 			for(TareaExternaValor valor : valores){

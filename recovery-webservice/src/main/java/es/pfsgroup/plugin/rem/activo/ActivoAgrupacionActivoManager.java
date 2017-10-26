@@ -9,14 +9,11 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.users.FuncionManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoHistDao;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
@@ -28,6 +25,8 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivoHistorico;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Service("activoAgrupacionActivoManager")
@@ -38,12 +37,7 @@ public class ActivoAgrupacionActivoManager extends BusinessOperationOverrider<Ac
 
 	protected static final Log logger = LogFactory.getLog(ActivoAgrupacionActivoManager.class);
 
-	@Autowired
-	private Executor executor;
-
-	@Autowired
-	private GenericABMDao genericDao;
-
+	
 	@Autowired
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 
@@ -61,8 +55,9 @@ public class ActivoAgrupacionActivoManager extends BusinessOperationOverrider<Ac
 		return "activoAgrupacionActivoManager";
 	}
 
+	
 	@Autowired
-	private FuncionManager funcionManager;
+	private RestApi restApi;
 
 	@Override
 	@BusinessOperation(overrides = "activoAgrupacionActivoManager.get")
@@ -96,11 +91,14 @@ public class ActivoAgrupacionActivoManager extends BusinessOperationOverrider<Ac
 			//agrupacionActivoHistorico.setPrincipal(activoAgrupacionActivo.getPrincipal());
 			agrupacionActivoHistorico.setFechaDesde(new Date());
 			activoAgrupacionActivoHistDao.save(agrupacionActivoHistorico);
+			
 		} else {
 			//TODO: Si vamos a crear un activoAgrupHistorico desde cero y ya existe... que hacemos.
 		}
 
-		return activoAgrupacionActivoDao.save(activoAgrupacionActivo);
+		Long resultado = activoAgrupacionActivoDao.save(activoAgrupacionActivo);
+		restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoAgrupacionActivo.getActivo());
+		return resultado;
 	}
 	
 	@Override

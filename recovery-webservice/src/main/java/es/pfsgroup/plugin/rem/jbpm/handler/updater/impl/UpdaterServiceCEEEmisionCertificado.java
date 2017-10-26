@@ -22,6 +22,8 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 
 @Component
@@ -31,11 +33,15 @@ public class UpdaterServiceCEEEmisionCertificado implements UpdaterService {
     private GenericABMDao genericDao;
     
     @Autowired
+	private RestApi restApi;
+    
+    @Autowired
     private DiccionarioTargetClassMap diccionarioTargetClassMap;
     
     @Autowired
     private ActivoAdapter activoAdapter;
     
+        
 	private static final String CODIGO_T003_EMISION_CERTIFICADO = "T003_EmisionCertificado";
 	
 	private static final String FECHA_EMISION = "fechaEmision";
@@ -111,6 +117,7 @@ public class UpdaterServiceCEEEmisionCertificado implements UpdaterService {
 
 		}
 		genericDao.save(ActivoAdmisionDocumento.class, documentoCEE);
+		restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, tramite.getActivo());		
 
 	}
 

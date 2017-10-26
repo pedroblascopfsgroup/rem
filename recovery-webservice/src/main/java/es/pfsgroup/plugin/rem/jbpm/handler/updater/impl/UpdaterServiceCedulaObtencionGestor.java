@@ -21,6 +21,8 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 
 @Component
@@ -35,6 +37,9 @@ public class UpdaterServiceCedulaObtencionGestor implements UpdaterService {
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private RestApi restApi;
 	
 	@Autowired
 	private DiccionarioTargetClassMap diccionarioTargetClassMap;
@@ -74,6 +79,7 @@ public class UpdaterServiceCedulaObtencionGestor implements UpdaterService {
 						}
 					}
 				}
+				restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, tramite.getActivo());
 				
 			}
 			
@@ -88,6 +94,7 @@ public class UpdaterServiceCedulaObtencionGestor implements UpdaterService {
 						genericDao.save(ActivoAdmisionDocumento.class, documento);
 					}
 				}
+				restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, tramite.getActivo());
 			}
 			
 			//Imposible Obtencion documento

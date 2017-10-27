@@ -209,6 +209,20 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
                     combo.msgTarget = me.campos[i].msgTarget;
                     camposFiltrados.push(combo);
                     break;
+                    
+                case 'comboboxreadonly':
+                    var combo = {};
+                    combo.xtype = 'genericcombo';
+                    combo.name = me.campos[i].name;
+                    combo.diccionario = me.campos[i].store;
+                    combo.fieldLabel = me.campos[i].fieldLabel;
+                    combo.value = me.campos[i].value;
+                    combo.readOnly = true;
+                    combo.allowBlank = me.campos[i].noObligatorio;
+                    combo.blankText = me.campos[i].blankText;
+                    combo.msgTarget = me.campos[i].msgTarget;
+                    camposFiltrados.push(combo);
+                    break;
 
                 case 'numberfield':
                     me.campos[i].hideTrigger = true;
@@ -1084,10 +1098,22 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
     T013_ResolucionComiteValidacion: function() {
         var me = this;
+        var cartera = me.up('tramitesdetalle').getViewModel().get('tramite.cartera');
+        
         if (me.down('[name=comboResolucion]').getValue() != '03') {
             me.deshabilitarCampo(me.down('[name=numImporteContra]'));
         }
-
+        if(cartera == 'Bankia'){
+			me.down('[name=comboResolucion]').setReadOnly(true);
+			me.down('[name=numImporteContra]').setReadOnly(true);
+			me.down('[name=fechaRespuesta]').setReadOnly(true);
+        }
+        else{
+        	me.down('[name=comboResolucion]').setReadOnly(false);
+			me.down('[name=numImporteContra]').setReadOnly(false);
+			me.down('[name=fechaRespuesta]').setReadOnly(false);
+        }
+		
         me.down('[name=comboResolucion]').addListener('change', function(combo) {
             if (combo.value == '03') {
                 me.habilitarCampo(me.down('[name=numImporteContra]'));

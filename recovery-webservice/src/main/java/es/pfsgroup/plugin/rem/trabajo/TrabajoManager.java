@@ -2386,12 +2386,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						listaTiposProveedor.add(tipoProveedor);
 						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoProveedor.COD_ASEGURADORA);
 						tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
-						listaTiposProveedor.add(tipoProveedor);
-						
+						listaTiposProveedor.add(tipoProveedor);					
 					}else {
 						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoProveedor.COD_CERTIFICADORA);
 						tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
 						listaTiposProveedor.add(tipoProveedor);
+						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoProveedor.COD_MANTENIMIENTO_TECNICO);
+						tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
+						listaTiposProveedor.add(tipoProveedor);							
 					}
 				}
 				

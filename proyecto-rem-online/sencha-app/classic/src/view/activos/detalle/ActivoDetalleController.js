@@ -2435,10 +2435,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
 	onRenderCargasList: function(grid) {
 		var me = this,
-		isCarteraCajamar = me.getViewModel().get("activo.isCarteraCajamar"),
+		//isCarteraCajamar = me.getViewModel().get("activo.isCarteraCajamar"),
 		items = grid.getDockedItems('toolbar[dock=top]');
 		if (items.length > 0){
-			items[0].setVisible(isCarteraCajamar)
+			items[0].setVisible(true);
 		}
 	},
 

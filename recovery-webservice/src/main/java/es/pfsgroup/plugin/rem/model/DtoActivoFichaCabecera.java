@@ -3,8 +3,6 @@ package es.pfsgroup.plugin.rem.model;
 import java.util.Date;
 import java.util.List;
 
-import es.capgemini.devon.dto.WebDto;
-
 /**
  * Dto para la pestaña cabecera de la ficha de Activo
  * 
@@ -15,10 +13,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	private static final long serialVersionUID = 0L;
 
-	// private NMBLocalizacionesBienInfo localizacionActual;
 	private String descripcion;
 
-	// private NMBDDOrigenBien origen;
 	private String tipoTitulo;
 	private String poblacion;
 	private Date fechaDueD;
@@ -108,6 +104,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String tipoComercializarDescripcion;
 	private Boolean pertenceAgrupacionRestringida;
 	private Boolean pertenceAgrupacionComercial;
+	private Boolean pertenceAgrupacionAsistida;
+	private Boolean pertenceAgrupacionObraNueva;
 	private String situacionComercialCodigo;
 	private String situacionComercialDescripcion;
 	
@@ -1328,6 +1326,22 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setActivosPropagables(List<?> activosPropagables) {
 		this.activosPropagables = activosPropagables;
 
+	}
+
+	public Boolean getPertenceAgrupacionAsistida() {
+		return pertenceAgrupacionAsistida;
+	}
+
+	public void setPertenceAgrupacionAsistida(Boolean pertenceAgrupacionAsistida) {
+		this.pertenceAgrupacionAsistida = pertenceAgrupacionAsistida;
+	}
+
+	public Boolean getPertenceAgrupacionObraNueva() {
+		return pertenceAgrupacionObraNueva;
+	}
+
+	public void setPertenceAgrupacionObraNueva(Boolean pertenceAgrupacionObraNueva) {
+		this.pertenceAgrupacionObraNueva = pertenceAgrupacionObraNueva;
 	}
 	
 

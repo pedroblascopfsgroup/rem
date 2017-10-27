@@ -1245,11 +1245,6 @@ public class UvemManager implements UvemManagerApi {
 			cabeceraFuncional.setNUPUAQ("00");
 			cabeceraTecnica.setCLORAQ("71");
 
-			// campos cabecera funcional
-			//cabeceraFuncional.setCOOOAQ("1");
-			// FXOPAQ,PTROAQ
-
-			// campos cabecera aplicación
 			// COPACE
 			cabeceraAplicacion.setCodigoObjetoAccesocopace("PAHY0770");
 			// COCGUS
@@ -1376,11 +1371,10 @@ public class UvemManager implements UvemManagerApi {
 			cabeceraFuncional.setNUPUAQ("00");
 			cabeceraTecnica.setCLORAQ("71");
 
-			// Cual de los dos
-			servicioGMPAJC29_INS.setCOPACE("PAHY0150");
 			cabeceraAplicacion.setCodigoObjetoAccesocopace("PAHY0150");
 
 			cabeceraAplicacion.setCentroGestorUsuarioSsacocgus(COCGUS);
+			
 			servicioGMPAJC29_INS.setCOOFHX(codigoDeOfertaHaya);
 
 			if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.COMPRADOR_NO_INTERESADO_OPERACION)) {

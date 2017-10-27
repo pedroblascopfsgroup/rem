@@ -1798,18 +1798,26 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public boolean esGastoEditable(GastoProveedor gasto) {
 
 		Usuario usuario = genericAdapter.getUsuarioLogado();
+		
+		Boolean esGastoEditable = true;
 
-		// NO ES EDITABLE SI....
-
-		if (!genericAdapter.tienePerfil("HAYASADM", usuario) && !Checks.esNulo(gasto.getEstadoGasto())) {			
-			if (!DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo()) && !DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo())
+		if (!genericAdapter.tienePerfil("HAYASADM", usuario)) {			
+			if (!Checks.esNulo(gasto.getEstadoGasto()) && !DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo()) && !DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo())
 					&& !DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo()) && !DDEstadoGasto.RECHAZADO_PROPIETARIO.equals(gasto.getEstadoGasto().getCodigo())
 					&& !DDEstadoGasto.RETENIDO.equals(gasto.getEstadoGasto().getCodigo())) {
-				return false;
+				
+				esGastoEditable =  false;
+				
+				if (!Checks.esNulo(gasto.getEstadoGasto()) && !DDEstadoGasto.PAGADO.equals(gasto.getEstadoGasto().getCodigo()) 
+						&& !Checks.esNulo(gasto.getGastoGestion()) &&  !Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionPropietario()) && DDEstadoAutorizacionPropietario.CODIGO_RECHAZADO_CONTABILIDAD.equals(gasto.getGastoGestion().getEstadoAutorizacionPropietario().getCodigo())) {
+					esGastoEditable =  true;
+				}
 			}
+			
+
 		}
 
-		return true;
+		return esGastoEditable;
 	}
 
 	public Object searchProveedorCodigoByTipoEntidad(String codigoUnicoProveedor, String codigoTipoProveedor) {

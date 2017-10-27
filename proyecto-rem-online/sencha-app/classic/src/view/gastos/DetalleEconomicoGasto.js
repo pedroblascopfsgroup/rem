@@ -482,11 +482,10 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 															{ 
 																xtype: 'comboboxfieldbase',
 															    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.responsable.pagado.por'),
-															    disabled: true,
 																bind: {
 																	store: '{comboPagadoPor}',
-																    value: '{detalleeconomico.tipoPagadorCodigo}'
-																    //,disabled: '{!detalleeconomico.fechaPago}'
+																    value: '{detalleeconomico.tipoPagadorCodigo}',
+																    disabled: '{!detalleeconomico.fechaPago}'
 																}
 															}
 												]

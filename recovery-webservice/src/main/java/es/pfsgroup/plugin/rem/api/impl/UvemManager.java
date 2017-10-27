@@ -1302,6 +1302,19 @@ public class UvemManager implements UvemManagerApi {
 			}
 			
 			servicioGMPTOE83_INS.setCodigoDeOfertalcoofe(0);
+			servicioGMPTOE83_INS.setNumeroDeMovimientoCondicioneslnumvc((short)0);
+			servicioGMPTOE83_INS.setFechaEmisionAmpliacionlfeema(0);
+			servicioGMPTOE83_INS.setFechaAmplizacionFirmalfefam(0);
+			servicioGMPTOE83_INS.setFechaEnvioReservalfeenr(0);
+			servicioGMPTOE83_INS.setFechaRecepcionReservalferer(0);
+			servicioGMPTOE83_INS.setFechaFirmaReservalfefir(0);
+			servicioGMPTOE83_INS.setFechaLimiteReservalfemxr(0);
+			servicioGMPTOE83_INS.setFechaAnulacionReservalfeanr(0);
+			servicioGMPTOE83_INS.setFechaSubastalfesub(0);
+			servicioGMPTOE83_INS.setFechaNuevoVencimientolfecvt(0);
+			servicioGMPTOE83_INS.setIndicadorContratoReservaFirmadobioprf(' ');
+			servicioGMPTOE83_INS.setCodigoDeEntidadlcoett((short)0);
+			
 
 			servicioGMPTOE83_INS.setAlias(ALIAS);
 			// servicioGMPTOE83_INS.execute();

@@ -2012,6 +2012,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					
 					DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion= activoEstadoPublicacionApi.getState(activo.getId());
 					dtoCambioEstadoPublicacion.setOcultacionForzada(true);
+					dtoCambioEstadoPublicacion.setMotivoPublicacion("Ocultación automática por modificación del estado comercial.");
 					DtoPublicacionValidaciones dtoPublicacionValidaciones= new DtoPublicacionValidaciones();
 					dtoPublicacionValidaciones.setValidacionesNinguna();
 
@@ -2036,6 +2037,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 					dtoCambioEstadoPublicacion.setPublicacionOrdinaria(true);
 					dtoCambioEstadoPublicacion.setOcultacionForzada(false);
+					dtoCambioEstadoPublicacion.setMotivoPublicacion("Desocultación automática por modificación del estado comercial.");
 					DtoPublicacionValidaciones dtoPublicacionValidaciones= new DtoPublicacionValidaciones();
 					dtoPublicacionValidaciones.setValidacionesNinguna();
 					dtoPublicacionValidaciones.setActivo(activo);

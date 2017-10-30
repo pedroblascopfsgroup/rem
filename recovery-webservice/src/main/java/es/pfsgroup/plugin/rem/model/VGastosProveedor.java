@@ -106,15 +106,9 @@ public class VGastosProveedor implements Serializable {
 	@Column(name = "GPV_NUM_GASTO_GESTORIA")
 	private Long numGastoGestoria;
 	
-	@Column(name = "GGE_AUTORIZACION_PROPIETARIO")
-	private Boolean autorizacionPropietario;
-	
 	@Column(name = "GPV_CUBRE_SEGURO")
 	private Boolean cubreSeguro;
-	
-	@Column(name = "PRG_NUM_PROVISION")
-	private Long numProvision;
-	
+		
 	@Column(name = "PVE_DOCIDENTIF")
 	private String nifProveedor;
 	
@@ -139,27 +133,12 @@ public class VGastosProveedor implements Serializable {
 	@Column(name = "GGE_FECHA_RP")
 	private Date fechaRetencion;
 	
-	@Column(name="ACT_ID")
-	private Long idActivo;
-	
-	@Column(name="ACT_NUM_ACTIVO")
-	private Long numActivo;
-	
-	@Column(name="RANGO")
-	private Integer rango;
-	
 	@Column(name="DD_CRA_CODIGO")
 	private String entidadPropietariaCodigo;
 	
 	@Column(name="DD_CRA_DESCRIPCION")
 	private String entidadPropietariaDescripcion;
-	
-	@Column(name="DD_SCR_CODIGO")
-	private String subentidadPropietariaCodigo;
-	
-	@Column(name="DD_SCR_DESCRIPCION")
-	private String subentidadPropietariaDescripcion;
-	
+
 	@Column(name="PVE_ID_GESTORIA")
 	private String idGestoria;
 	
@@ -426,28 +405,12 @@ public class VGastosProveedor implements Serializable {
 		this.numGastoGestoria = numGastoGestoria;
 	}
 
-	public Boolean getAutorizacionPropietario() {
-		return autorizacionPropietario;
-	}
-
-	public void setAutorizacionPropietario(Boolean autorizacionPropietario) {
-		this.autorizacionPropietario = autorizacionPropietario;
-	}
-
 	public Boolean getCubreSeguro() {
 		return cubreSeguro;
 	}
 
 	public void setCubreSeguro(Boolean cubreSeguro) {
 		this.cubreSeguro = cubreSeguro;
-	}
-
-	public Long getNumProvision() {
-		return numProvision;
-	}
-
-	public void setNumProvision(Long numProvision) {
-		this.numProvision = numProvision;
 	}
 
 	public String getTipoProveedorCodigo() {
@@ -506,30 +469,6 @@ public class VGastosProveedor implements Serializable {
 		this.fechaRetencion = fechaRetencion;
 	}
 
-	public Long getIdActivo() {
-		return idActivo;
-	}
-
-	public void setIdActivo(Long idActivo) {
-		this.idActivo = idActivo;
-	}
-
-	public Long getNumActivo() {
-		return numActivo;
-	}
-
-	public void setNumActivo(Long numActivo) {
-		this.numActivo = numActivo;
-	}
-
-	public Integer getRango() {
-		return rango;
-	}
-
-	public void setRango(Integer rango) {
-		this.rango = rango;
-	}
-
 	public String getEntidadPropietariaCodigo() {
 		return entidadPropietariaCodigo;
 	}
@@ -545,23 +484,6 @@ public class VGastosProveedor implements Serializable {
 	public void setEntidadPropietariaDescripcion(
 			String entidadPropietariaDescripcion) {
 		this.entidadPropietariaDescripcion = entidadPropietariaDescripcion;
-	}
-
-	public String getSubentidadPropietariaCodigo() {
-		return subentidadPropietariaCodigo;
-	}
-
-	public void setSubentidadPropietariaCodigo(String subentidadPropietariaCodigo) {
-		this.subentidadPropietariaCodigo = subentidadPropietariaCodigo;
-	}
-
-	public String getSubentidadPropietariaDescripcion() {
-		return subentidadPropietariaDescripcion;
-	}
-
-	public void setSubentidadPropietariaDescripcion(
-			String subentidadPropietariaDescripcion) {
-		this.subentidadPropietariaDescripcion = subentidadPropietariaDescripcion;
 	}
 
 	public String getIdGestoria() {

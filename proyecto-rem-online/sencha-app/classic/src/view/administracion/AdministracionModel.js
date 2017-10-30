@@ -45,7 +45,7 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 	    	proxy: {
 		        type: 'uxproxy',
 		        localUrl: '/provision.json',
-		        remoteUrl: 'gastosproveedor/getListGastos',
+		        remoteUrl: 'gastosproveedor/getListGastosProvision',
 		        extraParams: {idProvision: '{provisionSeleccionada.id}'}
 	    	}
 

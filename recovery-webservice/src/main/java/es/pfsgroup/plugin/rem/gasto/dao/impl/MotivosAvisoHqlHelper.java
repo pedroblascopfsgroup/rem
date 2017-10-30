@@ -30,13 +30,24 @@ public class MotivosAvisoHqlHelper {
 	}
 	
 	public static final String ALIAS = "gastoAvisos";
-	public static final String FROM = ",GastoProveedorAvisos " + ALIAS + " where vgasto.id = gastoAvisos.gastoProveedor.id ";
+	public static final String FROM = ",GastoProveedorAvisos " + ALIAS;
+	public static final String WHERE_JOIN = " vgasto.id = gastoAvisos.gastoProveedor.id ";
+	
 
 	public static String getFrom(DtoGastosFilter dtoGastosFilter) {
 		if (Checks.esNulo(dtoGastosFilter) || Checks.esNulo(dtoGastosFilter.getCodigoMotivoAviso())){
 			return null;
 		} else {
 			return FROM;
+		}
+		
+	}
+	
+	public static String getWhereJoin(DtoGastosFilter dtoGastosFilter, Boolean hasWhere) {
+		if (Checks.esNulo(dtoGastosFilter) || Checks.esNulo(dtoGastosFilter.getCodigoMotivoAviso())){
+			return null;
+		} else {
+			return hasWhere ? " and" : " where" +  WHERE_JOIN;
 		}
 		
 	}

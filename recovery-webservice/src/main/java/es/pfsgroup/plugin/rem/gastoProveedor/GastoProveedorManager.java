@@ -2216,4 +2216,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			return null;
 		}
 	}
+	
+	@Override
+	public DtoPage getListGastosProvision(DtoGastosFilter dtoGastosFilter) {
+
+		return gastoDao.getListGastosProvision(dtoGastosFilter);
+	}
 }

@@ -56,7 +56,8 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 	@Override
 	public String resolucionComiteT013(TareaExterna tareaExterna) {
 		//HREOS-2161
-		if (!trabajoApi.checkReservaNecesariaNotNull(tareaExterna)) return FALTA_MARCAR_RESERVA_NECESARIA;		
+		if (!trabajoApi.checkReservaNecesariaNotNull(tareaExterna)) return FALTA_MARCAR_RESERVA_NECESARIA;
+		if(trabajoApi.checkBankia(tareaExterna)) return null;
 		return activoTramiteApi.existeAdjuntoUGValidacion(tareaExterna, "23","E");
 	}	
 	

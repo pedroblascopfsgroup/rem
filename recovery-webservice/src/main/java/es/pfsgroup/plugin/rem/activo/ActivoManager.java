@@ -1038,8 +1038,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Usuario grupoPublicacion= genericDao.get(Usuario.class, filtroUsuarioGrupoPublicacion,filtroUsuarioGrupoPublicacionBorrado);
 
 		if (guardadoEnHistorico) {
-			saveActivoValoracionHistorico(activoValoracion);
-			activoDao.deleteValoracionById(id);
+			if(activoDao.deleteValoracionSinDuplicarById(id)) saveActivoValoracionHistorico(activoValoracion);
 		} else if (!Checks.esNulo(activoValoracion.getGestor())
 				&& !adapter.getUsuarioLogado().equals(activoValoracion.getGestor()) 
 				&& !eXTGrupoUsuariosApi.usuarioPerteneceAGrupo(adapter.getUsuarioLogado(), grupoPrecio)

@@ -466,6 +466,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getComiteSancionadorCodigo());
 			DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filtro);
 			expedienteComercial.setComiteSancion(comiteSancion);
+			expedienteComercial.setComiteSuperior(comiteSancion);
 		}
 
 		if (!Checks.esNulo(dto.getNumVisita())) {

@@ -481,7 +481,7 @@ END IF;
     MIG.LCO_DIAFANO                                                                             LCO_DIAFANO,
     MIG.LCO_USO_IDONEO                                                                        LCO_USO_IDONEO,
     MIG.LCO_USO_ANTERIOR                                                                    LCO_USO_ANTERIOR,
-    MIG.VIV_DISTRIBUCION_TXT                                                                   LCO_OBSERVACIONES
+    SUBSTR(MIG.VIV_DISTRIBUCION_TXT,1,512)                                                                   LCO_OBSERVACIONES
     FROM ACT_NUM_ACTIVO MIG
   ')
   ;

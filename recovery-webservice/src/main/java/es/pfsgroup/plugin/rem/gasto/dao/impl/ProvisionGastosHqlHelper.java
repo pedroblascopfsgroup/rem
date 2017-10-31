@@ -25,7 +25,7 @@ public class ProvisionGastosHqlHelper {
 		if(Checks.esNulo(dtoGastosFilter) || Checks.esNulo(dtoGastosFilter.getNumProvision())){
 			return null;
 		} else {
-			return hasWhere ? " and" : " where" +  WHERE_JOIN;
+			return (hasWhere ? " and" : " where") +  WHERE_JOIN;
 		}
 		
 	}

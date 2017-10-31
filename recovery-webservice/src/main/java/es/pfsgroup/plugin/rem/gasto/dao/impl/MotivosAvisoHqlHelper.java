@@ -47,7 +47,7 @@ public class MotivosAvisoHqlHelper {
 		if (Checks.esNulo(dtoGastosFilter) || Checks.esNulo(dtoGastosFilter.getCodigoMotivoAviso())){
 			return null;
 		} else {
-			return hasWhere ? " and" : " where" +  WHERE_JOIN;
+			return (hasWhere ? " and" : " where") +  WHERE_JOIN;
 		}
 		
 	}

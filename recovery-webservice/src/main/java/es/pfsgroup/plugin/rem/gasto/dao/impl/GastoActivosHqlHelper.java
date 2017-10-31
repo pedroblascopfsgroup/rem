@@ -28,7 +28,7 @@ public class GastoActivosHqlHelper {
 				(Checks.esNulo(dtoGastosFilter.getNumActivo()) && Checks.esNulo(dtoGastosFilter.getSubentidadPropietariaCodigo()))){
 			return null;
 		} else {
-			return hasWhere ? " and" : " where" +  WHERE_JOIN;
+			return (hasWhere ? " and" : " where") +  WHERE_JOIN;
 		}
 		
 	}

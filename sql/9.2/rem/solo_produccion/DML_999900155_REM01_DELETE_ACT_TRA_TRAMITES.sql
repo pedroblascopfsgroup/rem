@@ -38,7 +38,7 @@ DECLARE
     V_TEXT_TABLA3 VARCHAR2(2400 CHAR) := 'TAR_TAREAS_NOTIFICACIONES'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_TEXT_TABLA4 VARCHAR2(2400 CHAR) := 'TEX_TAREA_EXTERNA'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_TEXT_TABLA5 VARCHAR2(2400 CHAR) := 'TAP_TAREA_PROCEDIMIENTO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_TEXT_TABLA5 VARCHAR2(2400 CHAR) := 'DD_TPO_TIPO_PROCEDIMIENTO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA6 VARCHAR2(2400 CHAR) := 'DD_TPO_TIPO_PROCEDIMIENTO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 	
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);

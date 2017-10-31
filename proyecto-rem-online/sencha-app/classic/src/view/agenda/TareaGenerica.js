@@ -1256,12 +1256,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             if (combo.value == '01' && tipoArras.value == 'Confirmatorias') {
                 me.down('[name=comboProcede]').blankText = HreRem.i18n('tarea.validacion.error.valor.no.permitido.by.tipo.arras');
                 me.down('[name=comboProcede]').reset();
-            } else if((combo.value == '01' || combo.value == '02') && CONST.CARTERA['BANKIA'] == codigoCartera) {
+            } else if((combo.value == '01' || combo.value == '02' || combo.value == '03') && CONST.CARTERA['BANKIA'] == codigoCartera) {
             	me.habilitarCampo(me.down('[name=comboMotivoAnulacionReserva]'));
             	me.down('[name=comboMotivoAnulacionReserva]').reset();
             } else if(combo.value == '03' && CONST.CARTERA['BANKIA'] == codigoCartera) {
-            	me.deshabilitarCampo(me.down('[name=comboMotivoAnulacionReserva]'));
-            	me.down('[name=comboMotivoAnulacionReserva]').reset();
+            	//me.deshabilitarCampo(me.down('[name=comboMotivoAnulacionReserva]'));
+            	//me.down('[name=comboMotivoAnulacionReserva]').reset();
             }
         });
     },

@@ -1268,34 +1268,36 @@ public class UvemManager implements UvemManagerApi {
 			// COUSAE
 			servicioGMPTOE83_INS.setCodigoDeUsuariocousae("USRHAYA");
 			// COSEM1
-			if (codigoServicioModificacion.equals(CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA)) {
+			if (CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA.equals(codigoServicioModificacion)) {
 				servicioGMPTOE83_INS.setCodigoServicioModificacionSolicitcosem1('4');
 			} else {
 				servicioGMPTOE83_INS.setCodigoServicioModificacionSolicitcosem1('5');
 			}
 
 			// LCOMOA
-			if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.COMPRADOR_NO_INTERESADO)) {
-				servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("1"));
-			} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.DECISION_AREA)) {
-				servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("2"));
-			} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.DECISION_HAYA)) {
-				servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("9"));
-			} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.NO_CUMPLEN_CONDICIONANTES)) {
-				servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("5"));
-			} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.NO_DESEAN_ESCRITURAR)) {
-				servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("6"));
-			} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.NO_DISPONE_DINERO_FINANCIACION)) {
-				servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("3"));
-			} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.CIRCUSTANCIAS_DISTINTAS_PACTADAS)) {
-				servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("4"));
-			} else {
-				throw new Exception("motivo anulacion no soportado");
+			if(!Checks.esNulo(motivoAnulacionReserva)){
+				if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.COMPRADOR_NO_INTERESADO)) {
+					servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("1"));
+				} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.DECISION_AREA)) {
+					servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("2"));
+				} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.DECISION_HAYA)) {
+					servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("9"));
+				} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.NO_CUMPLEN_CONDICIONANTES)) {
+					servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("5"));
+				} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.NO_DESEAN_ESCRITURAR)) {
+					servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("6"));
+				} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.NO_DISPONE_DINERO_FINANCIACION)) {
+					servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("3"));
+				} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.CIRCUSTANCIAS_DISTINTAS_PACTADAS)) {
+					servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("4"));
+				} else {
+					throw new Exception("motivo anulacion no soportado");
+				}
 			}
 			// COOFHX
 			servicioGMPTOE83_INS.setCodigoDeOfertaHayacoofhx(StringUtils.leftPad(codigoDeOfertaHaya, 16, "0"));
 			// BINDRE
-			if (indicadorDevolucionReserva.equals(INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA)) {
+			if (INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA.equals(indicadorDevolucionReserva)) {
 				servicioGMPTOE83_INS.setIndicadorDevolucionReservabindre('s');
 			} else {
 				servicioGMPTOE83_INS.setIndicadorDevolucionReservabindre('N');

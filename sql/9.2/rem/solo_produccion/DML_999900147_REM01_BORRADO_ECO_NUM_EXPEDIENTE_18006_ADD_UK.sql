@@ -43,9 +43,9 @@ DECLARE
   ORDEN NUMBER(2) := 2;
   V_TABLA VARCHAR2(30 CHAR) := 'ECO_EXPEDIENTE_COMERCIAL'; -- Variable para tabla de salida para el borrado
   COD_ITEM VARCHAR2(10 CHAR) := 'HREOS-3044';
-  V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
-  V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
-  V_TABLESPACE_IDX VARCHAR2(25 CHAR):= '#TABLESPACE_INDEX#'; -- Configuracion Tablespace de Indices
+  V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquema
+  V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquema Master
+  V_TABLESPACE_IDX VARCHAR2(25 CHAR):= 'REM_IDX'; -- Configuracion Tablespace de Indices
   V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
   V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.  
   V_COLUMN_NAME VARCHAR2(30 CHAR) := 'OFR_ID';
@@ -81,11 +81,11 @@ DECLARE
 
 BEGIN
     
-    EXECUTE IMMEDIATE 'TRUNCATE TABLE '||V_ESQUEMA||'.ACTIVOS_A_BORRAR';
-    EXECUTE IMMEDIATE 'TRUNCATE TABLE '||V_ESQUEMA||'.ACTIVOS_A_BORRAR_2';
-    
     DBMS_OUTPUT.PUT_LINE('[INICIO] Inicio del proceso de borrado físico del expediente comercial 18006');
     DBMS_OUTPUT.PUT_LINE('');
+    
+    EXECUTE IMMEDIATE 'TRUNCATE TABLE '||V_ESQUEMA||'.ACTIVOS_A_BORRAR';
+    EXECUTE IMMEDIATE 'TRUNCATE TABLE '||V_ESQUEMA||'.ACTIVOS_A_BORRAR_2';
 
     V_STMT_VAL := '
         INSERT INTO '||V_ESQUEMA||'.ACTIVOS_A_BORRAR
@@ -126,10 +126,12 @@ BEGIN
     
     LOOP
         V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' T1
-            USING (SELECT ECO.ECO_ID
-                FROM '||V_ESQUEMA||'.'||V_TABLA||' ECO 
-                WHERE ECO.ECO_NUM_EXPEDIENTE = 18006 AND ECO.BORRADO = 0) T2
-            ON (T1.ECO_ID = T2.ECO_ID)
+            USING (WITH DUPLICADOS AS 
+                    (SELECT OFR_ID FROM '||V_ESQUEMA||'.'||V_TABLA||' GROUP BY OFR_ID HAVING COUNT(1) > 1)
+                SELECT ECO.ECO_ID, ROW_NUMBER() OVER(PARTITION BY ECO.OFR_ID ORDER BY ECO.ECO_NUM_EXPEDIENTE) RN
+                FROM '||V_ESQUEMA||'.'||V_TABLA||' ECO
+                JOIN DUPLICADOS DUP ON DUP.OFR_ID = ECO.OFR_ID) T2
+            ON (T1.ECO_ID = T2.ECO_ID AND T2.RN > 1)
             WHEN MATCHED THEN UPDATE SET
                 T1.USUARIOBORRAR = '''||COD_ITEM||''', T1.FECHABORRAR = SYSDATE, T1.BORRADO = 1';
   

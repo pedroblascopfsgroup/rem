@@ -101,7 +101,7 @@ BEGIN
                               WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
                                     AND MIG2.OFR_COD_ESTADO_OFERTA = ''01-03''
                                     AND EEC.DD_EEC_CODIGO = ''11'' --Aprobado
-                                    AND RES.RES.ECO_ID IS NULL -- Sin reserva
+                                    AND RES.ECO_ID IS NULL -- Sin reserva
                                     AND ECO.ECO_FECHA_SANCION IS NOT NULL
                                     AND ECO.ECO_FECHA_ANULACION IS NULL
                                     AND PAC.PAC_CHECK_FORMALIZAR = 1
@@ -110,7 +110,7 @@ BEGIN
                               WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
                                     AND MIG2.OFR_COD_ESTADO_OFERTA = ''01-03''
                                     AND EEC.DD_EEC_CODIGO = ''11'' --Aprobado
-                                    AND RES.RES.ECO_ID IS NOT NULL -- Con reserva
+                                    AND RES.ECO_ID IS NOT NULL -- Con reserva
                                     AND ECO.ECO_FECHA_SANCION IS NOT NULL
                                     AND ECO.ECO_FECHA_ANULACION IS NULL
                                     AND PAC.PAC_CHECK_FORMALIZAR = 1

@@ -11,8 +11,8 @@ echo "########################################################"
 echo "#####    ACTUALIZANDO Secuencias PRE-MIGRACION"
 echo "########################################################"
 fecha_ini=`date +%Y%m%d_%H%M%S`
-if [ -f PROD/Logs/004_* ] ; then
-	mv -f PROD/Logs/004_* PROD/Logs/backup
+if [ -f PROD/Logs/*.log ] ; then
+	mv -f PROD/Logs/*.log PROD/Logs/backup
 fi
 ./PROD/DDL_PROD/DDL_sequences.sh $1 > PROD/Logs/004_actualizado_secuencias_PRE_$fecha_ini.log
 if [ $? != 0 ] ; then 
@@ -51,9 +51,6 @@ cd ../../../
 mv -f $ruta_descarterizada/$dml_list $ruta_carterizada
 
 fecha_ini=`date +%Y%m%d_%H%M%S`
-if [ -f PROD/Logs/005_* ] ; then
-	mv -f PROD/Logs/*.log PROD/Logs/backup
-fi
 while read line
 do
 	sed "s/#USUARIO_MIGRACION#/$usuario/g" $ruta_descarterizada/$line > $ruta_carterizada/$line
@@ -92,9 +89,6 @@ echo "########################################################"
 echo "#####    ACTUALIZANDO Secuencias POST-MIGRACION"
 echo "########################################################"
 fecha_ini=`date +%Y%m%d_%H%M%S`
-if [ -f PROD/Logs/004_* ] ; then
-	mv -f PROD/Logs/004_* PROD/Logs/backup
-fi
 ./PROD/DDL_PROD/DDL_sequences.sh $1 > PROD/Logs/006_actualizado_secuencias_POST_$fecha_ini.log
 if [ $? != 0 ] ; then 
    echo -e "\n\n======>>> "Error en actualización de secuencias. Consultar log: PROD/Logs/006_actualizado_secuencias_POST_$fecha_ini.log

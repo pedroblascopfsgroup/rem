@@ -132,14 +132,14 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 										
 									}else{
 									
-										for(int i=0;i< listaTareas.size(); i++){
-											TareaProcedimiento tarea = listaTareas.get(i);
-											if(!Checks.esNulo(tarea) && tarea.getCodigo().equalsIgnoreCase("T013_RatificacionComite") &&
-													resolucionComiteDto.getCodigoResolucion().equalsIgnoreCase(DDEstadoResolucion.CODIGO_ERE_CONTRAOFERTA)){
-												hashErrores.put("ofertaHRE", "La oferta no se puede volver a contraofertar.");
-												break;
-											}
-										}
+//										for(int i=0;i< listaTareas.size(); i++){
+//											TareaProcedimiento tarea = listaTareas.get(i);
+//											if(!Checks.esNulo(tarea) && tarea.getCodigo().equalsIgnoreCase("T013_RatificacionComite") &&
+//													resolucionComiteDto.getCodigoResolucion().equalsIgnoreCase(DDEstadoResolucion.CODIGO_ERE_CONTRAOFERTA)){
+//												hashErrores.put("ofertaHRE", "La oferta no se puede volver a contraofertar.");
+//												break;
+//											}
+//										}
 									}
 								}
 							}

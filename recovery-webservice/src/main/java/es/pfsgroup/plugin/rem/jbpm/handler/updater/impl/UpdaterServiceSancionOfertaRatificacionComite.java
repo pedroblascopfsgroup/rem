@@ -55,6 +55,7 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 
     private static final String COMBO_RESOLUCION = "comboResolucion";
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
+	private static final String IMPORTE_CONTRAOFERTA = "importeContraoferta";
    	private static final String CODIGO_T013_RATIFICACION_COMITE = "T013_RatificacionComite";
    	private static final String MOTIVO_NO_RATIFICADA = "604"; //NO RATIFICADA
 
@@ -121,6 +122,17 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 							DDMotivoAnulacionExpediente motivoAnulacionExpediente = 
 									(DDMotivoAnulacionExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoAnulacionExpediente.class, MOTIVO_NO_RATIFICADA);
 							expediente.setMotivoAnulacion(motivoAnulacionExpediente);
+						}
+						if (IMPORTE_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+							ofertaAceptada.setImporteContraOferta(Double.valueOf(valor.getValor()));
+							genericDao.save(Oferta.class, ofertaAceptada);
+		
+							// Actualizar honorarios para el nuevo importe de contraoferta.
+							expedienteComercialApi.actualizarHonorariosPorExpediente(expediente.getId());
+		
+							// Actualizamos la participación de los activos en la oferta;
+							expedienteComercialApi.updateParticipacionActivosOferta(ofertaAceptada);
+							expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
 						}
 
 						genericDao.save(ExpedienteComercial.class, expediente);

@@ -1098,12 +1098,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
     T013_ResolucionComiteValidacion: function() {
         var me = this;
-        var cartera = me.up('tramitesdetalle').getViewModel().get('tramite.cartera');
+        var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
         
         if (me.down('[name=comboResolucion]').getValue() != '03') {
             me.deshabilitarCampo(me.down('[name=numImporteContra]'));
         }
-        if(cartera == 'Bankia'){
+        if(CONST.CARTERA['BANKIA'] == codigoCartera) {
 			me.down('[name=comboResolucion]').setReadOnly(true);
 			me.down('[name=numImporteContra]').setReadOnly(true);
 			me.down('[name=fechaRespuesta]').setReadOnly(true);
@@ -1125,8 +1125,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
     T013_RespuestaOfertanteValidacion: function(){
     	var me = this;
-    	var cartera = me.up('tramitesdetalle').getViewModel().get('tramite.cartera');
-    	if(cartera == 'Bankia'){
+    	var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+    	if(CONST.CARTERA['BANKIA'] == codigoCartera) {
 	    	if (me.down('[name=comboRespuesta]').getValue() != '03') {
 	            me.deshabilitarCampo(me.down('[name=importeOfertante]'));
 	        }
@@ -1148,13 +1148,33 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     
     T013_RatificacionComiteValidacion: function(){
     	var me = this;
-    	var cartera = me.up('tramitesdetalle').getViewModel().get('tramite.cartera');
+    	var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		var comboRatificacion = me.down('[name=comboRatificacion]');
-		if(cartera != 'Bankia'){
+		var fechaRespuesta = me.down('[name=fechaRespuesta]');
+		var importeContraoferta = me.down('[name=importeContraoferta]');
+		if(CONST.CARTERA['BANKIA'] != codigoCartera) {
+			comboRatificacion.setReadOnly(false);
+			fechaRespuesta.setReadOnly(false);
+			me.ocultarCampo(importeContraoferta);
 			comboRatificacion.addListener('focus', function(combo) {
 				comboRatificacion.getStore().removeAt(2); //Quitar Contraoferta
 			});
-			
+		}else{
+			comboRatificacion.setReadOnly(true);
+			fechaRespuesta.setReadOnly(true);
+			me.desocultarCampo(importeContraoferta);
+			if(comboRatificacion.value == '03'){
+					me.habilitarCampo(importeContraoferta);
+				}else{
+					me.deshabilitarCampo(importeContraoferta);	
+				}
+			comboRatificacion.addListener('change', function(combo) {
+				if(combo.value == '03'){
+					me.habilitarCampo(importeContraoferta);
+				}else{
+					me.deshabilitarCampo(importeContraoferta);	
+				}	
+			});
 		}
     	
     },

@@ -945,7 +945,7 @@ public class UvemManager implements UvemManagerApi {
 				if (instanciaData.getTipoDeImpuesto() == InstanciaDecisionDataDto.TIPO_IMPUESTO_ITP
 						|| instanciaData.getTipoDeImpuesto() == InstanciaDecisionDataDto.TIPO_IMPUESTO_IGIC
 						|| instanciaData.getTipoDeImpuesto() == InstanciaDecisionDataDto.TIPO_IMPUESTO_IPSI) {
-					// struct.setIndicadorTratamientoImpuestobitrim(vacio);
+					 struct.setIndicadorTratamientoImpuestobitrim(' ');
 				} else if (instanciaData.getTipoDeImpuesto() == InstanciaDecisionDataDto.TIPO_IMPUESTO_IVA) {
 
 					if (Checks.esNulo(instanciaData.getRenunciaExencion())
@@ -1243,6 +1243,7 @@ public class UvemManager implements UvemManagerApi {
 			cabeceraFuncional.setCOCDAQ("0551");
 			cabeceraFuncional.setCOSBAQ("00");
 			cabeceraFuncional.setNUPUAQ("00");
+			cabeceraFuncional.setIDDSAQ(""); 
 			cabeceraTecnica.setCLORAQ("71");
 
 			// COPACE
@@ -1384,6 +1385,7 @@ public class UvemManager implements UvemManagerApi {
 			cabeceraFuncional.setCOCDAQ("0551");
 			cabeceraFuncional.setCOSBAQ("00");
 			cabeceraFuncional.setNUPUAQ("00");
+			cabeceraFuncional.setIDDSAQ ("BAJA");
 			cabeceraTecnica.setCLORAQ("71");
 
 			cabeceraAplicacion.setCodigoObjetoAccesocopace("PAHY0150");

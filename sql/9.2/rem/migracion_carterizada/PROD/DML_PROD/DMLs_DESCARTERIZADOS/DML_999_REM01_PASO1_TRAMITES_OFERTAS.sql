@@ -87,6 +87,13 @@ BEGIN
                         , CASE
                               WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
                                     AND MIG2.OFR_COD_ESTADO_OFERTA = ''01-01''
+                                    AND ECO.ECO_FECHA_SANCION IS NULL
+                                    AND ECO.DD_COD_IS IS NOT NULL
+                                    AND PAC.PAC_CHECK_FORMALIZAR = 1
+                                        THEN (SELECT TAP.TAP_ID FROM REM01.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_ResolucionComite'' AND BORRADO = 0)
+                             
+                              WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
+                                    AND MIG2.OFR_COD_ESTADO_OFERTA = ''01-01''
                                     AND EEC.DD_EEC_CODIGO = ''10'' --Pte. Sanción
                                     AND OFR.OFR_FECHA_NOTIFICACION IS NULL
                                         THEN (SELECT TAP.TAP_ID FROM REM01.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_DefinicionOferta'' AND BORRADO = 0)
@@ -94,8 +101,8 @@ BEGIN
                               WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
                                     AND MIG2.OFR_COD_ESTADO_OFERTA = ''01-02''
                                     AND EEC.DD_EEC_CODIGO = ''06'' --Reservado
-                                      AND RES.RES_FECHA_FIRMA IS NOT NULL                                      
-                                      AND PAC.PAC_CHECK_FORMALIZAR = 1
+                                    AND RES.RES_FECHA_FIRMA IS NOT NULL                                      
+                                    AND PAC.PAC_CHECK_FORMALIZAR = 1
                                         THEN (SELECT TAP.TAP_ID FROM REM01.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_ResultadoPBC'' AND BORRADO = 0)
                               
                               WHEN TOF.DD_TOF_CODIGO = ''01'' -- Venta
@@ -592,25 +599,25 @@ BEGIN
       
      COMMIT;
 
-      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ACT_TBJ_TRABAJO'',''10''); END;';
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ACT_TBJ_TRABAJO'',''1''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
 
-      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ACT_TBJ'',''10''); END;';
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ACT_TBJ'',''1''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
 
-      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ACT_TRA_TRAMITE'',''10''); END;';
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ACT_TRA_TRAMITE'',''1''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
 
-      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''TAR_TAREAS_NOTIFICACIONES'',''10''); END;';
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''TAR_TAREAS_NOTIFICACIONES'',''1''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
 
-      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ETN_EXTAREAS_NOTIFICACIONES'',''10''); END;';
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ETN_EXTAREAS_NOTIFICACIONES'',''1''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
 
-      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''TEX_TAREA_EXTERNA'',''10''); END;';
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''TEX_TAREA_EXTERNA'',''1''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
 
-      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''TAC_TAREAS_ACTIVOS'',''10''); END;';
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''TAC_TAREAS_ACTIVOS'',''1''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
       
 EXCEPTION

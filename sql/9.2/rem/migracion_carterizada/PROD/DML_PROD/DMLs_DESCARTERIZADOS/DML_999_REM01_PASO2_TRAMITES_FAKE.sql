@@ -27,7 +27,7 @@ DECLARE
       V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
       V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
       V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
-      V_TABLA VARCHAR2(40 CHAR) := 'MIG2_TRA_TRAMITES_OFERTAS'; -- Vble. Tabla pivote
+      V_TABLA VARCHAR2(40 CHAR) := 'MIG2_TRA_TRAMITES_FAKE'; -- Vble. Tabla pivote
       V_SENTENCIA VARCHAR2(2600 CHAR);
 
       -- Vbls. para el cursor
@@ -40,7 +40,7 @@ DECLARE
       
       -- Cursor que almacena las secuencias
       CURSOR CURSOR_OFERTAS IS
-      SELECT DISTINCT OFR_ID  FROM REM01.MIG2_TRA_TRAMITES_OFERTAS TRA
+      SELECT DISTINCT OFR_ID  FROM REM01.MIG2_TRA_TRAMITES_FAKE TRA
       ;
 
       -- Tablas de volcado
@@ -81,15 +81,15 @@ BEGIN
       DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------------------') ;
 
       ---------------------------------------------------------------------------------------------------------------
-      -- INSERT MIG2_TRA_TRAMITES_OFERTAS --
+      -- INSERT MIG2_TRA_TRAMITES_FAKE --
       ---------------------------------------------------------------------------------------------------------------
 
       DBMS_OUTPUT.PUT_LINE('[INFO] APROVISIONANDO LA TABLA AUXILIAR '||V_TABLA||'...');
       
-      EXECUTE IMMEDIATE 'TRUNCATE TABLE REM01.MIG2_TRA_TRAMITES_OFERTAS';
+      EXECUTE IMMEDIATE 'TRUNCATE TABLE REM01.MIG2_TRA_TRAMITES_FAKE';
 
       EXECUTE IMMEDIATE '
-            INSERT INTO MIG2_TRA_TRAMITES_OFERTAS (
+            INSERT INTO MIG2_TRA_TRAMITES_FAKE (
                   OFR_ID
                   ,ACT_ID
                   ,TPO_ID
@@ -150,7 +150,7 @@ BEGIN
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
       
       ---------------------------------------------------------------------------------------------------------------
-      -- UPDATE MIG2_TRA_TRAMITES_OFERTAS (TBJ_ID, TRA_ID, TAR_ID, TEX_ID) --
+      -- UPDATE MIG2_TRA_TRAMITES_FAKE (TBJ_ID, TRA_ID, TAR_ID, TEX_ID) --
       ---------------------------------------------------------------------------------------------------------------
       
       DBMS_OUTPUT.PUT_LINE('[INFO] GENERANDO TBJ_ID, TRA_ID, TAR_ID, TEX_ID...');
@@ -168,7 +168,7 @@ BEGIN
                   EXECUTE IMMEDIATE 'SELECT '||V_ESQUEMA||'.S_TEX_TAREA_EXTERNA.NEXTVAL FROM DUAL' INTO S_TEX;
                   
                   EXECUTE IMMEDIATE '
-                        UPDATE '||V_ESQUEMA||'.MIG2_TRA_TRAMITES_OFERTAS TRA
+                        UPDATE '||V_ESQUEMA||'.MIG2_TRA_TRAMITES_FAKE TRA
                         SET TRA.TBJ_ID = '||S_TBJ||'
                               , TRA.TBJ_NUM_TRABAJO = '||S_NUM||'
                               , TRA.TRA_ID = '||S_TRA||'
@@ -185,7 +185,7 @@ BEGIN
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada.');
       
       ---------------------------------------------------------------------------------------------------------------
-      -- UPDATE MIG2_TRA_TRAMITES_OFERTAS (USU_ID, SUP_ID) --
+      -- UPDATE MIG2_TRA_TRAMITES_FAKE (USU_ID, SUP_ID) --
       ---------------------------------------------------------------------------------------------------------------
       
       DBMS_OUTPUT.PUT_LINE('[INFO] ACTUALIZANDO USU_ID Y SUP_ID...');
@@ -281,7 +281,7 @@ BEGIN
                   , '''||V_USUARIO||'''                               AS USUARIOCREAR
                   , SYSDATE                                              AS FECHACREAR
                   , 0                                                           AS BORRADO
-            FROM '||V_ESQUEMA||'.MIG2_TRA_TRAMITES_OFERTAS MIG2
+            FROM '||V_ESQUEMA||'.MIG2_TRA_TRAMITES_FAKE MIG2
                   INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_ID = MIG2.OFR_ID
                   INNER JOIN '||V_ESQUEMA||'.DD_TOF_TIPOS_OFERTA TOF ON TOF.DD_TOF_ID = OFR.DD_TOF_ID 
       '
@@ -559,25 +559,25 @@ BEGIN
       
      COMMIT;
 
-      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ACT_TBJ_TRABAJO'',''10''); END;';
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ACT_TBJ_TRABAJO'',''1''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
 
-      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ACT_TBJ'',''10''); END;';
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ACT_TBJ'',''1''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
 
-      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ACT_TRA_TRAMITE'',''10''); END;';
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ACT_TRA_TRAMITE'',''1''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
 
-      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''TAR_TAREAS_NOTIFICACIONES'',''10''); END;';
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''TAR_TAREAS_NOTIFICACIONES'',''1''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
 
-      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ETN_EXTAREAS_NOTIFICACIONES'',''10''); END;';
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ETN_EXTAREAS_NOTIFICACIONES'',''1''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
 
-      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''TEX_TAREA_EXTERNA'',''10''); END;';
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''TEX_TAREA_EXTERNA'',''1''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
 
-      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''TAC_TAREAS_ACTIVOS'',''10''); END;';
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''TAC_TAREAS_ACTIVOS'',''1''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
       
 EXCEPTION

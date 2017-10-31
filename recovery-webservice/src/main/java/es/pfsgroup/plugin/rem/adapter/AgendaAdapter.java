@@ -402,7 +402,8 @@ public class AgendaAdapter {
 	public List<DtoNombreTarea> getComboNombreTarea(Long idTipoTramite) {
 
 		Filter filtroTipoTramite = genericDao.createFilter(FilterType.EQUALS, "tipoProcedimiento.id", idTipoTramite);
-		List<TareaProcedimiento> tareasProcedimiento = genericDao.getList(TareaProcedimiento.class, filtroTipoTramite);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		List<TareaProcedimiento> tareasProcedimiento = genericDao.getList(TareaProcedimiento.class, filtroTipoTramite, filtroBorrado);
 		List<DtoNombreTarea> listaNombreTarea = new ArrayList<DtoNombreTarea>();
 		
 		try {

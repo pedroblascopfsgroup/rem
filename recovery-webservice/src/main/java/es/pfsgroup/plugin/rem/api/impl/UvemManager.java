@@ -1385,6 +1385,10 @@ public class UvemManager implements UvemManagerApi {
 			cabeceraTecnica.setCLORAQ("71");
 
 			cabeceraAplicacion.setCodigoObjetoAccesocopace("PAHY0150");
+			servicioGMPAJC29_INS.setCOPACE("PAHY0150");
+			servicioGMPAJC29_INS.setBISEGU(' ');
+			servicioGMPAJC29_INS.setLIRESE("");
+			servicioGMPAJC29_INS.setRCSLON(0);
 
 			cabeceraAplicacion.setCentroGestorUsuarioSsacocgus(COCGUS);
 			

@@ -134,7 +134,8 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 							}
 						}
 					}
-
+					
+					//Si procede devolucion la tarea obliga a meter un motivo de anulacion reserva
 					if(tieneReserva && MOTIVO_ANULACION_RESERVA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()) && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
 						// Si este campo contiene algún valor llamar al web-service para devolver la reserva (sólo Bankia).
 						try {
@@ -142,6 +143,19 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 									UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA);
 						} catch (Exception e) {
 							logger.error("Error al invocar el servicio de devolucion de reserva de Uvem.", e);
+							throw new UserException(e.getMessage());
+						}
+					}
+					
+					//Si no procede devolución la tarea desactiva el motivo de anulación reserva
+					if(COMBO_PROCEDE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()) && valor.getValor().equals(DDDevolucionReserva.CODIGO_NO)){
+						// Si este campo contiene algún valor llamar al web-service para devolver la reserva (sólo Bankia).
+						try {
+							uvemManagerApi.notificarDevolucionReserva(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valor.getValor()),
+									UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.NO_DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA);
+						} catch (Exception e) {
+							logger.error("Error al invocar el servicio de devolucion de reserva de Uvem.", e);
+							throw new UserException(e.getMessage());
 						}
 					}
 

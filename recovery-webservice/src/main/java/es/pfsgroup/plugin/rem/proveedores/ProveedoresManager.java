@@ -23,6 +23,7 @@ import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
@@ -34,6 +35,7 @@ import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
@@ -79,16 +81,21 @@ import es.pfsgroup.plugin.rem.proveedores.mediadores.dao.MediadoresOfertasDao;
 
 @Service("proveedoresManager")
 public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresApi> implements  ProveedoresApi {
+
 	public static final String PROVEEDOR_EXISTS_EXCEPTION_CODE = "0001";
 	public static final String USUARIO_NOT_EXISTS_EXCEPTION_CODE = "0002";
 	public static final String ERROR_EVALUAR_MEDIADORES_CODE = "0003";
 	public static final String PROVEEDOR_EXISTS_EXCEPTION_MESSAGE = "Ya existe un proveedor con el NIF y características proporcionadas";
 	public static final String USUARIO_NOT_EXISTS_EXCEPTION_MESSAGE = "No se ha encontrado el usuario especificado";
 	public static final String ERROR_EVALUAR_MEDIADORES_MESSAGE = "Error al evaluar mediadores con calificaciones propuestas";
-	
+
 	public static final Integer comboOK = 1;
 	public static final Integer comboKO = 0;
-	
+
+	protected static final Log logger = LogFactory.getLog(ActivoManager.class);
+
+	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+
 	@Autowired
 	private GenericABMDao genericDao;
 	
@@ -119,14 +126,11 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	@Autowired
 	private ActivoApi activoApi;
 
-	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
-	
+
 	@Override
 	public String managerName() {
 		return "proveedoresManager";
 	}
-	
-	protected static final Log logger = LogFactory.getLog(ProveedoresManager.class);
 	
 	@Override
 	public List<DtoProveedorFilter> getProveedores(DtoProveedorFilter dtoProveedorFiltro) {		
@@ -255,9 +259,9 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				
 				
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 		
@@ -450,10 +454,10 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			}
 
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			return false;
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			return false;
 		}
 
@@ -516,9 +520,9 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 					beanUtilNotNull.copyProperty(dto, "observaciones", persona.getObservaciones());
 					beanUtilNotNull.copyProperty(dto, "totalCount", page.getTotalCount());
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+					logger.error(e.getMessage());
 				} catch (InvocationTargetException e) {
-					e.printStackTrace();
+					logger.error(e.getMessage());
 				}
 				
 				dtoList.add(dto);
@@ -584,10 +588,10 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			
 			genericDao.save(ActivoProveedorContacto.class, personaContacto);
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			return false;
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			return false;
 		}
 		
@@ -644,10 +648,10 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			
 			genericDao.save(ActivoProveedorContacto.class, personaContacto);
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			return false;
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			return false;
 		}
 		
@@ -744,9 +748,9 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 					beanUtilNotNull.copyProperty(dto, "email", delegacion.getEmail());
 					beanUtilNotNull.copyProperty(dto, "totalCount", page.getTotalCount());
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+					logger.error(e.getMessage());
 				} catch (InvocationTargetException e) {
-					e.printStackTrace();
+					logger.error(e.getMessage());
 				}
 				
 				dtoList.add(dto);
@@ -785,7 +789,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			}
 			if(!Checks.esNulo(dtoDireccionDelegacion.getLocalidadCodigo())) {
 				Filter filterLocalidad = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoDireccionDelegacion.getLocalidadCodigo());
-				Localidad localidad = (Localidad) genericDao.get(Localidad.class, filterLocalidad);
+				Localidad localidad = genericDao.get(Localidad.class, filterLocalidad);
 				beanUtilNotNull.copyProperty(direccionDelegacion, "localidad", localidad);
 			}
 			beanUtilNotNull.copyProperty(direccionDelegacion, "codigoPostal", dtoDireccionDelegacion.getCodigoPostal());
@@ -794,10 +798,10 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			
 			genericDao.save(ActivoProveedorDireccion.class, direccionDelegacion);
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			return false;
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			return false;
 		}
 		
@@ -834,7 +838,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			}
 			if(!Checks.esNulo(dtoDireccionDelegacion.getLocalidadCodigo())) {
 				Filter filterLocalidad = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoDireccionDelegacion.getLocalidadCodigo());
-				Localidad localidad = (Localidad) genericDao.get(Localidad.class, filterLocalidad);
+				Localidad localidad = genericDao.get(Localidad.class, filterLocalidad);
 				beanUtilNotNull.copyProperty(direccionDelegacion, "localidad", localidad);
 			}
 			beanUtilNotNull.copyProperty(direccionDelegacion, "codigoPostal", dtoDireccionDelegacion.getCodigoPostal());
@@ -843,10 +847,10 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			
 			genericDao.save(ActivoProveedorDireccion.class, direccionDelegacion);
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			return false;
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			return false;
 		}
 		
@@ -900,9 +904,9 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				beanUtilNotNull.copyProperty(dto, "motivoExclusion", activoIntegrado.getMotivoExclusion());
 				beanUtilNotNull.copyProperty(dto, "totalCount", page.getTotalCount());
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 			
 			dtoList.add(dto);
@@ -946,7 +950,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				}
 			}
 		}catch(Exception ex){
-			ex.printStackTrace();
+			logger.error(ex.getMessage());
 		}
 
 		return listaAdjuntos;
@@ -983,7 +987,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			adjuntoProveedor.setProveedor(proveedor);
 			
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
-			DDTipoDocumentoProveedor tipoDocumento = (DDTipoDocumentoProveedor) genericDao.get(DDTipoDocumentoProveedor.class, filtro);
+			DDTipoDocumentoProveedor tipoDocumento = genericDao.get(DDTipoDocumentoProveedor.class, filtro);
 			if(!Checks.esNulo(tipoDocumento)) {
 				adjuntoProveedor.setTipoDocumentoProveedor(tipoDocumento);
 			}
@@ -1054,10 +1058,10 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			
 			proveedoresDao.save(proveedor);
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			return false;
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			return false;
 		}
 		
@@ -1083,9 +1087,9 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 					
 					listaMapeada.add(nuevoDto);
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+					logger.error(e.getMessage());
 				} catch (InvocationTargetException e) {
-					e.printStackTrace();
+					logger.error(e.getMessage());
 				}
 			}
 		}
@@ -1219,29 +1223,36 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 
 	@Override
 	public ActivoProveedor searchProveedorCodigo(String codigoUnicoProveedor) {
-		List<ActivoProveedor> listaProveedores= new ArrayList<ActivoProveedor>();
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", Long.parseLong(codigoUnicoProveedor));
-		listaProveedores = genericDao.getList(ActivoProveedor.class, filtro);
+		List<ActivoProveedor> listaProveedores = genericDao.getList(ActivoProveedor.class, filtro);
 
 		if(!Checks.estaVacio(listaProveedores)){
 			return listaProveedores.get(0);
 		}
+
 		return null;
 	}
 	
 	@Override
 	public ActivoProveedor searchProveedorCodigoUvem(String codigoProveedorUvem) {
-		List<ActivoProveedor> listaProveedores= new ArrayList<ActivoProveedor>();
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codProveedorUvem", codigoProveedorUvem);
-		listaProveedores = genericDao.getList(ActivoProveedor.class, filtro);
+		List<ActivoProveedor> listaProveedores = genericDao.getList(ActivoProveedor.class, filtro);
 
 		if(!Checks.estaVacio(listaProveedores)){
 			return listaProveedores.get(0);
 		}
+
 		return null;
 	}
+
 	@Override
 	public List<ActivoProveedorContacto> getActivoProveedorContactoPorIdsUsuarioYCartera(List<Long> idUsuarios, Long idCartera) {
 		return proveedoresDao.getActivoProveedorContactoPorIdsUsuarioYCartera(idUsuarios, idCartera);
+	}
+
+	@Override
+	public Boolean esUsuarioConPerfilProveedor(Usuario usuario) {
+		Perfil perfilProveedorHaya = genericDao.get(Perfil.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "HAYAPROV"));
+		return usuario.getPerfiles().contains(perfilProveedorHaya);
 	}
 }

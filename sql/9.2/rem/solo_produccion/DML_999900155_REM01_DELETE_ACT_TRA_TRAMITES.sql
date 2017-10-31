@@ -56,7 +56,7 @@ BEGIN
 
 			DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando TAC_TAREAS_ACTIVOS');
 
-		    V_MSQL := 'UPDATE'||V_ESQUEMA||'.'||V_TEXT_TABLA2||' tac 
+		    V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA2||' tac 
 				set tac.borrado = 1, tac.fechaborrar = sysdate, tac.usuarioborrar = ''HREOS-2922'' 
 				where tac.tar_id in (SELECT tar.tar_id
 						     FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA2||' tac join REM01.ACT_ACTIVO act on tac.act_id = act.act_id
@@ -86,7 +86,7 @@ BEGIN
 
 			DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando TAC_TAREAS_NOTIFICACIONES');
 
-		    V_MSQL2 := 'UPDATE'||V_ESQUEMA||'.'||V_TEXT_TABLA3||' tar 
+		    V_MSQL2 := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA3||' tar 
 				set tar.borrado = 1, tar.fechaborrar = sysdate, tar.usuarioborrar = ''HREOS-2922'' 
 				where tar.tar_id in (SELECT tar.tar_id
 						     FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA2||' tac join REM01.ACT_ACTIVO act on tac.act_id = act.act_id

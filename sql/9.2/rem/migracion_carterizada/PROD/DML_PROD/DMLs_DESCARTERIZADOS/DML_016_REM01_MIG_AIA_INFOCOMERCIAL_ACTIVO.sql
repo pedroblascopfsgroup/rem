@@ -455,7 +455,7 @@ END IF;
         MIGW.LCO_DIAFANO,
         MIGW.LCO_USO_IDONEO,
         MIGW.LCO_USO_ANTERIOR,
-        MIGW.LCO_OBSERVACIONES
+        MIGW.VIV_DISTRIBUCION_TXT
       FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIGW
       INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACTW
         ON ACTW.ACT_NUM_ACTIVO = MIGW.ACT_NUMERO_ACTIVO
@@ -481,7 +481,7 @@ END IF;
     MIG.LCO_DIAFANO                                                                             LCO_DIAFANO,
     MIG.LCO_USO_IDONEO                                                                        LCO_USO_IDONEO,
     MIG.LCO_USO_ANTERIOR                                                                    LCO_USO_ANTERIOR,
-    MIG.LCO_OBSERVACIONES                                                                   LCO_OBSERVACIONES
+    MIG.VIV_DISTRIBUCION_TXT                                                                   LCO_OBSERVACIONES
     FROM ACT_NUM_ACTIVO MIG
   ')
   ;

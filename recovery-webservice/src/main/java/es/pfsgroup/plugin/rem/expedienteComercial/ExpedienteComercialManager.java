@@ -3963,6 +3963,35 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return listaTitularUVEM;
 	}
+	
+	
+	@Override
+	public boolean checkCompradoresTienenNumeroUrsus(Long idTramite) {
+
+		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
+		if (Checks.esNulo(activoTramite)) {
+			return false;
+		}
+
+		Trabajo trabajo = activoTramite.getTrabajo();
+		if (Checks.esNulo(trabajo)) {
+			return false;
+		}
+
+		ExpedienteComercial expedienteComercial = expedienteComercialDao
+				.getExpedienteComercialByTrabajo(trabajo.getId());
+		if (Checks.esNulo(expedienteComercial)) {
+			return false;
+		}
+
+		for (int k = 0; k < expedienteComercial.getCompradoresAlta().size(); k++) {
+			CompradorExpediente compradorExpediente = expedienteComercial.getCompradoresAlta().get(k);
+			if (Checks.esNulo(compradorExpediente.getPrimaryKey().getComprador().getIdCompradorUrsus())) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	@Transactional(readOnly = false)
 	public boolean deleteCompradorExpediente(Long idExpediente, Long idComprador) {

@@ -50,6 +50,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
@@ -185,11 +186,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "tipoActivoCodigo", activo.getTipoActivo().getCodigo());
 			BeanUtils.copyProperty(activoDto, "tipoActivoDescripcion", activo.getTipoActivo().getDescripcion());
 			
-			if(!Checks.esNulo(activo.getInfoComercial())) {
-				if(!Checks.esNulo(activo.getInfoComercial().getTipoActivo())) {
-					// Comprobar si el tipo de activo es el mismo tanto en el activo como en el informe comercial.
-					BeanUtils.copyProperty(activoDto, "tipoActivoAdmisionMediadorCorresponde", activo.getTipoActivo().getCodigo().equals(activo.getInfoComercial().getTipoActivo().getCodigo()));
-				}
+			if(!Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getTipoActivo())) {
+				// Comprobar si el tipo de activo es el mismo tanto en el activo como en el informe comercial.
+				BeanUtils.copyProperty(activoDto, "tipoActivoAdmisionMediadorCorresponde", activo.getTipoActivo().getCodigo().equals(activo.getInfoComercial().getTipoActivo().getCodigo()));
 			}
 		}
 		 
@@ -227,11 +226,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "tipoUsoDestinoCodigo", activo.getTipoUsoDestino().getCodigo());
 			BeanUtils.copyProperty(activoDto, "tipoUsoDestinoDescripcion", activo.getTipoUsoDestino().getDescripcion());
 		}
-		
-		/*if (activo.getComunidadPropietarios() != null) {
-			BeanUtils.copyProperties(activoDto, activo.getComunidadPropietarios());
-			BeanUtils.copyProperty(activoDto, "direccionComunidad", activo.getComunidadPropietarios().getDireccion());
-		}*/
 		
 		if (activo.getInfoComercial() != null && activo.getInfoComercial().getTipoInfoComercial() != null) {
 			BeanUtils.copyProperty(activoDto, "tipoInfoComercialCodigo", activo.getInfoComercial().getTipoInfoComercial().getCodigo());
@@ -345,15 +339,15 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		// Si no exite perimetro en BBDD, se crea una nueva instancia PerimetroActivo, con todas las condiciones marcadas
 		// y por tanto, por defecto se marcan los checkbox.
-//		if(Checks.esNulo(perimetroActivo.getActivo())) {
 		BeanUtils.copyProperty(activoDto,"aplicaTramiteAdmision", new Integer(1).equals( perimetroActivo.getAplicaTramiteAdmision())? true: false);
 		BeanUtils.copyProperty(activoDto,"aplicaGestion", new Integer(1).equals( perimetroActivo.getAplicaGestion())? true: false);
 		BeanUtils.copyProperty(activoDto,"aplicaAsignarMediador", new Integer(1).equals(perimetroActivo.getAplicaAsignarMediador())? true: false);
 		BeanUtils.copyProperty(activoDto,"aplicaComercializar", new Integer(1).equals(perimetroActivo.getAplicaComercializar())? true: false);
 		BeanUtils.copyProperty(activoDto,"aplicaFormalizar", new Integer(1).equals(perimetroActivo.getAplicaFormalizar())? true: false);
-//		}
+
+		// En la sección de perímetro pero no dependiente del mismo.
+		BeanUtils.copyProperty(activoDto, "numInmovilizadoBankia", activo.getNumInmovilizadoBnk());
 		// ----------
-		
 		
 		// Datos de activo bancario -----------------
 		// Datos de activo bancario del activo al Dto de datos basicos
@@ -392,6 +386,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "estadoExpIncorrienteCodigo", activoBancario.getEstadoExpIncorriente().getCodigo());
 			
 		}
+
+		// En la sección de activo bancario pero no dependiente del mismo.
+		if(!Checks.esNulo(activo.getEntradaActivoBankia())) {
+			BeanUtils.copyProperty(activoDto, "entradaActivoBankiaCodigo", activo.getEntradaActivoBankia().getCodigo());
+		}
+
 		// ------------
 		
 		//Activo integrado en agrupación asisitida
@@ -469,62 +469,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			beanUtilNotNull.copyProperties(activo.getLocalizacion().getLocalizacionBien(), dto);
 			
 			activo.setLocalizacion(genericDao.save(ActivoLocalizacion.class, activo.getLocalizacion()));
-
-			/*if (Checks.esNulo(activo.getComunidadPropietarios())) {	
-				activo.setComunidadPropietarios(new ActivoComunidadPropietarios());
-			}*/
-			
-			/*beanUtilNotNull.copyProperties(activo.getComunidadPropietarios(), dto);
-			beanUtilNotNull.copyProperty(activo.getComunidadPropietarios(), "direccion", dto.getDireccionComunidad());*/
-			
-			/*String cuentaUno = "";
-			String cuentaDos = "";
-			String cuentaTres = "";
-			String cuentaCuatro = "";
-			String cuentaCinco = "";
-			
-			if (!Checks.esNulo(dto.getNumCuentaUno()) || !Checks.esNulo(dto.getNumCuentaDos()) || !Checks.esNulo(dto.getNumCuentaTres()) || !Checks.esNulo(dto.getNumCuentaCuatro()) || !Checks.esNulo(dto.getNumCuentaCinco())) {
-				
-				String numCuentaTrim = "";
-				if (!Checks.esNulo(activo.getComunidadPropietarios().getNumCuenta())) {
-					numCuentaTrim = activo.getComunidadPropietarios().getNumCuenta().trim();
-				}
-
-				if (!Checks.esNulo(dto.getNumCuentaUno())) {
-					cuentaUno = dto.getNumCuentaUno();
-				} else if (!Checks.esNulo(activo.getComunidadPropietarios().getNumCuenta())) {
-					cuentaUno = numCuentaTrim.substring(0, 4);
-				}
-				
-				if (!Checks.esNulo(dto.getNumCuentaDos())) {
-					cuentaDos = dto.getNumCuentaDos();
-				} else if (!Checks.esNulo(activo.getComunidadPropietarios().getNumCuenta())) {
-					cuentaDos = numCuentaTrim.substring(4, 8);
-				}
-				
-				if (!Checks.esNulo(dto.getNumCuentaTres())) {
-					cuentaTres = dto.getNumCuentaTres();
-				} else if (!Checks.esNulo(activo.getComunidadPropietarios().getNumCuenta())) {
-					cuentaTres = numCuentaTrim.substring(8, 12);
-				}
-				
-				if (!Checks.esNulo(dto.getNumCuentaCuatro())) {
-					cuentaCuatro = dto.getNumCuentaCuatro();
-				} else if (!Checks.esNulo(activo.getComunidadPropietarios().getNumCuenta())) {
-					cuentaCuatro = numCuentaTrim.substring(12, 14);
-				}
-				
-				if (!Checks.esNulo(dto.getNumCuentaCinco())) {
-					cuentaCinco = dto.getNumCuentaCinco();
-				} else if (!Checks.esNulo(activo.getComunidadPropietarios().getNumCuenta())) {
-					cuentaCinco = numCuentaTrim.substring(14);
-				}
-				
-				beanUtilNotNull.copyProperty(activo.getComunidadPropietarios(), "numCuenta", cuentaUno + cuentaDos + cuentaTres + cuentaCuatro + cuentaCinco);
-				
-			}*/
-
-			/*activo.setComunidadPropietarios(genericDao.save(ActivoComunidadPropietarios.class, activo.getComunidadPropietarios()));*/
 
 			if (!Checks.esNulo(dto.getPaisCodigo())) {
 				DDCicCodigoIsoCirbeBKP pais = (DDCicCodigoIsoCirbeBKP) diccionarioApi.dameValorDiccionarioByCod(DDCicCodigoIsoCirbeBKP.class,  dto.getPaisCodigo());
@@ -707,6 +651,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				DDTipoAlquiler tipoAlquiler = (DDTipoAlquiler) diccionarioApi.dameValorDiccionarioByCod(DDTipoAlquiler.class,  dto.getTipoAlquilerCodigo());
 				activo.setTipoAlquiler(tipoAlquiler);
 			}
+
+			// --------- Perimetro --> Bloque Administración.
+			beanUtilNotNull.copyProperty(activo, "numInmovilizadoBnk", dto.getNumInmovilizadoBankia());
 			
 			//HREOS-1983 - Si marcan el check de sello de calidad, ponemos la fecha actual y el gestor logueado.
 			if((!Checks.esNulo(dto.getSelloCalidad()) && dto.getSelloCalidad()) || 
@@ -780,6 +727,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				
 				activoApi.saveOrUpdateActivoBancario(activoBancario);
 			
+			}
+
+			if(!Checks.esNulo(dto.getEntradaActivoBankiaCodigo())) {
+				DDEntradaActivoBankia entradaActivoBankia = (DDEntradaActivoBankia) diccionarioApi.dameValorDiccionarioByCod(DDEntradaActivoBankia.class, dto.getEntradaActivoBankiaCodigo());
+				activo.setEntradaActivoBankia(entradaActivoBankia);
 			}
 			// -----
 			

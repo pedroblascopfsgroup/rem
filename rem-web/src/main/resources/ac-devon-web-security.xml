@@ -51,10 +51,11 @@
         <beans:property name="authenticationDetailsSource" ref="webAuthenticationDetailsSource"/>
     </beans:bean> -->
     
-    <beans:bean id="authenticationProcessingFilter" class="es.pfsgroup.plugin.rem.security.AuthenticationJSONProcessingFilter">
+    <beans:bean id="authenticationProcessingFilter" class="es.pfsgroup.plugin.rem.security.AuthenticationSignatureProcessingFilter">
         <custom-filter position="AUTHENTICATION_PROCESSING_FILTER" />
         <beans:property name="authenticationManager" ref="authenticationManager"/>
         <beans:property name="defaultTargetUrl" value="${security.loginpage}"/>
+        <beans:property name="authenticationFailureUrl" value="${security.authenticationFailureUrl}"/>
         <beans:property name="alwaysUseDefaultTargetUrl" value="${security.alwaysUseDefaultTargetUrl}"/>
         <beans:property name="authenticationDetailsSource" ref="webAuthenticationDetailsSource"/>
     </beans:bean>

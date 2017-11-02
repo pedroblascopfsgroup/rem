@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -36,6 +35,9 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 
 	private List<AuthenticationFilter> preAuthenticationFilters = new ArrayList<AuthenticationFilter>();
 	private List<AuthenticationFilter> postAuthenticationFilters = new ArrayList<AuthenticationFilter>();
+	
+	private static final String AUTH_USERNAME_REGEX = "haya.auth.username.regex";
+	private static final String AUTH_KEY_SIGNATURE = "haya.auth.key.signature";
 
 	@Resource
 	private Properties appProperties;
@@ -46,13 +48,10 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 
 		HayaWebAuthenticationDetails authDetails = (HayaWebAuthenticationDetails) authentication.getDetails();
 
-		// Determine username -> CISA.0\\gc.flescano
+		// Determine username 
 		String username = "NONE_PROVIDED";
 		if (authDetails.getUserId() != null) {
-			String[] split = authDetails.getUserId().split(Pattern.quote("."));
-			if (split.length > 2) {
-				username = split[2];
-			}
+			username = authDetails.getUserId().replace(appProperties.getProperty(AUTH_USERNAME_REGEX), "");			
 		}
 
 		boolean cacheWasUsed = true;
@@ -134,7 +133,7 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 		 */
 
 		// TODO
-		String claveHashREM = "Hams18127!???18273gasfgkdagi1yula";
+		String claveHashREM = appProperties.getProperty(AUTH_KEY_SIGNATURE);
 		
 		String stringToHash = String.format("%s|%s|%3$tY%3$tm%3$td", claveHashREM, authDetails.getUserId(), new Date());
 

@@ -85,55 +85,55 @@ BEGIN
                                     THEN (SELECT DD_TPO_ID FROM '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = ''T014'' AND BORRADO = 0)
                         END AS TPO_ID
                         , CASE
-                              WHEN OFR.DD_EOF_ID =(SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO='01')
-                                AND TOF.DD_TOF_CODIGO = '01'
-                                AND EEC.DD_EEC_CODIGO IN ('10') -- Pte. Sanción 
+                              WHEN OFR.DD_EOF_ID =(SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO=''01'')
+                                AND TOF.DD_TOF_CODIGO = ''01''
+                                AND EEC.DD_EEC_CODIGO IN (''10'') -- Pte. Sanción 
                                 AND PAC.PAC_CHECK_FORMALIZAR = 1
-                                AND (ECO.DD_COS_ID IS NOT NULL AND  ECO.DD_COS_ID <> (SELECT DD_COS_ID FROM DD_COS_COMITES_SANCION WHERE DD_COS_COMITES_SANCION.DD_COS_CODIGO='3'))
+                                AND (ECO.DD_COS_ID IS NOT NULL AND  ECO.DD_COS_ID <> (SELECT DD_COS_ID FROM DD_COS_COMITES_SANCION WHERE DD_COS_COMITES_SANCION.DD_COS_CODIGO=''3''))
                                 AND ECO.ECO_FECHA_SANCION_COMITE IS NULL
                                         THEN (SELECT TAP.TAP_ID FROM REM01.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_ResolucionComite'' AND BORRADO = 0)
                              
-                              WHEN OFR.DD_EOF_ID =(SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO='01')
-                                AND TOF.DD_TOF_CODIGO = '01'
-                                AND EEC.DD_EEC_CODIGO IN ('10') -- Pte. Sanción 
+                              WHEN OFR.DD_EOF_ID =(SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO=''01'')
+                                AND TOF.DD_TOF_CODIGO = ''01''
+                                AND EEC.DD_EEC_CODIGO IN (''10'') -- Pte. Sanción 
                                 AND ECO.DD_COS_ID IS NULL 
                                 AND ECO.ECO_FECHA_SANCION_COMITE IS NULL
                                         THEN (SELECT TAP.TAP_ID FROM REM01.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_DefinicionOferta'' AND BORRADO = 0)
                              
-                              WHEN OFR.DD_EOF_ID =(SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO='01')
-                                AND TOF.DD_TOF_CODIGO = '01'        
+                              WHEN OFR.DD_EOF_ID =(SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO=''01'')
+                                AND TOF.DD_TOF_CODIGO = ''01''       
                                 AND PAC.PAC_CHECK_FORMALIZAR = 1
                                 AND (
                                 (
-                                EEC.DD_EEC_CODIGO IN ('06') -- Reservado 
+                                EEC.DD_EEC_CODIGO IN (''06'') -- Reservado 
                                 AND RES.RES_FECHA_FIRMA IS NOT NULL --Con reserva firmada
                                 )
                                 OR (
-                                EEC.DD_EEC_CODIGO IN ('11') -- Aprobado 
+                                EEC.DD_EEC_CODIGO IN (''11'') -- Aprobado 
                                 AND RES.ECO_ID IS NULL -- Sin reserva
                                 AND ECO.ECO_FECHA_SANCION_COMITE IS NOT NULL-- Con fecha comite
                                 AND ECO.ECO_FECHA_ANULACION IS NULL -- sin fecha anulacion
-                                AND (ECO.DD_COS_ID IS NOT NULL AND  ECO.DD_COS_ID <> (SELECT DD_COS_ID FROM DD_COS_COMITES_SANCION WHERE DD_COS_COMITES_SANCION.DD_COS_CODIGO='3'))--comite bankia
+                                AND (ECO.DD_COS_ID IS NOT NULL AND  ECO.DD_COS_ID <> (SELECT DD_COS_ID FROM DD_COS_COMITES_SANCION WHERE DD_COS_COMITES_SANCION.DD_COS_CODIGO=''3''))--comite bankia
                                 )
                                 OR (
-                                EEC.DD_EEC_CODIGO IN ('11') -- Aprobado 
+                                EEC.DD_EEC_CODIGO IN (''11'') -- Aprobado 
                                 AND RES.ECO_ID IS NULL -- Sin reserva
                                 AND ECO.ECO_FECHA_ANULACION IS NULL -- sin fecha anulacion
-                                AND (ECO.DD_COS_ID IS NOT NULL AND  ECO.DD_COS_ID = (SELECT DD_COS_ID FROM DD_COS_COMITES_SANCION WHERE DD_COS_COMITES_SANCION.DD_COS_CODIGO='3'))--comite plataforma
+                                AND (ECO.DD_COS_ID IS NOT NULL AND  ECO.DD_COS_ID = (SELECT DD_COS_ID FROM DD_COS_COMITES_SANCION WHERE DD_COS_COMITES_SANCION.DD_COS_CODIGO=''3''))--comite plataforma
                                 )
                                 )
                                         THEN (SELECT TAP.TAP_ID FROM REM01.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_ResultadoPBC'' AND BORRADO = 0)
                               
-                              WHEN OFR.DD_EOF_ID =(SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO='01')
-                                AND TOF.DD_TOF_CODIGO = '01'
+                              WHEN OFR.DD_EOF_ID =(SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO=''01'')
+                                AND TOF.DD_TOF_CODIGO = ''01''
                                 AND(
                                 (
-                                EEC.DD_EEC_CODIGO IN ('11')  -- Aprobado 
+                                EEC.DD_EEC_CODIGO IN (''11'')  -- Aprobado 
                                 AND RES.RES_ID IS NULL
                                 )
                                 OR 
                                 (
-                                EEC.DD_EEC_CODIGO IN ('06')  -- Reservado
+                                EEC.DD_EEC_CODIGO IN (''06'')  -- Reservado
                                 AND RES.RES_ID IS NOT NULL
                                 )
                                 )
@@ -143,28 +143,28 @@ BEGIN
                                 AND PAC.PAC_CHECK_FORMALIZAR = 1
                                         THEN (SELECT TAP.TAP_ID FROM REM01.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_ResultadoPBC'' AND BORRADO = 0)                            
                               
-                              WHEN OFR.DD_EOF_ID =(SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO='01')
-                                AND TOF.DD_TOF_CODIGO = '01'
-                                AND EEC.DD_EEC_CODIGO IN ('11') -- Aprobado 
+                              WHEN OFR.DD_EOF_ID =(SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO=''01'')
+                                AND TOF.DD_TOF_CODIGO = ''01''
+                                AND EEC.DD_EEC_CODIGO IN (''11'') -- Aprobado 
                                 AND RES.ECO_ID IS NOT NULL -- Con reserva
                                 AND(
                                 (ECO.ECO_FECHA_SANCION_COMITE IS NOT NULL
-                                AND (ECO.DD_COS_ID IS NOT NULL AND  ECO.DD_COS_ID <> (SELECT DD_COS_ID FROM DD_COS_COMITES_SANCION WHERE DD_COS_COMITES_SANCION.DD_COS_CODIGO='3'))--comite bankia
+                                AND (ECO.DD_COS_ID IS NOT NULL AND  ECO.DD_COS_ID <> (SELECT DD_COS_ID FROM DD_COS_COMITES_SANCION WHERE DD_COS_COMITES_SANCION.DD_COS_CODIGO=''3''))--comite bankia
                                 )
                                 OR 
                                 (
-                                 (ECO.DD_COS_ID IS NOT NULL AND  ECO.DD_COS_ID = (SELECT DD_COS_ID FROM DD_COS_COMITES_SANCION WHERE DD_COS_COMITES_SANCION.DD_COS_CODIGO='3'))--comite plataforma
+                                 (ECO.DD_COS_ID IS NOT NULL AND  ECO.DD_COS_ID = (SELECT DD_COS_ID FROM DD_COS_COMITES_SANCION WHERE DD_COS_COMITES_SANCION.DD_COS_CODIGO=''3''))--comite plataforma
                                 )
                                 )
                                 AND ECO.ECO_FECHA_ANULACION IS NULL
                                 AND PAC.PAC_CHECK_FORMALIZAR = 1
                                         THEN (SELECT TAP.TAP_ID FROM REM01.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_InstruccionesReserva'' AND BORRADO = 0)                            
 
-                              WHEN OFR.DD_EOF_ID =(SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO='01')
-                                AND EEC.DD_EEC_CODIGO IN ('04') -- Contraofertado 
+                              WHEN OFR.DD_EOF_ID =(SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO=''01'')
+                                AND EEC.DD_EEC_CODIGO IN (''04'') -- Contraofertado 
                                 AND OFR.OFR_FECHA_CONTRAOFERTA IS NOT NULL
                                 AND PAC.PAC_CHECK_FORMALIZAR = 1
-                                AND TOF.DD_TOF_CODIGO = '01'
+                                AND TOF.DD_TOF_CODIGO = ''01''
                                         THEN (SELECT TAP.TAP_ID FROM REM01.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = ''T013_RespuestaOfertante'' AND BORRADO = 0)  
                             
                               WHEN TOF.DD_TOF_CODIGO = ''02'' -- Alquiler

@@ -38,11 +38,11 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     --				TIPO_TARIFA_CODIGO		TIPO_TRABAJO_CODIGO		TIPO_SUBTRABAJO_CODIGO		CARTERA_CODIGO		PRECIO_UNITARIO		UNIDAD_MEDIDA
-        T_TIPO_DATA('SAB-CER1',				'03',					'57',						'02',				'75,4',				'unidad'),
-        T_TIPO_DATA('SAB-CER2',				'03',					'57',						'02',				'109,88',			'unidad'),
-        T_TIPO_DATA('SAB-CER3',				'03',					'57',						'02',				'123,21',			'unidad'),
+        T_TIPO_DATA('SAB-CER1',				'03',					'57',						'02',				'75.4',				'unidad'),
+        T_TIPO_DATA('SAB-CER2',				'03',					'57',						'02',				'109.88',			'unidad'),
+        T_TIPO_DATA('SAB-CER3',				'03',					'57',						'02',				'123.21',			'unidad'),
         T_TIPO_DATA('SAB-CER4',				'03',					'57',						'02',				'195',				'unidad'),
-        T_TIPO_DATA('SAB-CER5',				'03',					'57',						'02',				'87,15',			'unidad'),
+        T_TIPO_DATA('SAB-CER5',				'03',					'57',						'02',				'87.15',			'unidad'),
         T_TIPO_DATA('SAB-CER6',				'03',					'57',						'02',				'9',				'unidad'),
         T_TIPO_DATA('SAB-CER7',				'03',					'57',						'02',				'35',				'unidad')
     ); 
@@ -90,7 +90,7 @@ BEGIN
                       '(SELECT DD_TTR_ID FROM '||V_ESQUEMA||'.DD_TTR_TIPO_TRABAJO WHERE DD_TTR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''), '||
                       '(SELECT DD_STR_ID FROM '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO WHERE DD_STR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||'''), '||
                       '(SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||'''), '||
-                      ''''||TRIM(V_TMP_TIPO_DATA(5))||''', '''||TRIM(V_TMP_TIPO_DATA(6))||''', 0, '|| V_USU_MODIFICAR ||', SYSDATE, 0 FROM DUAL';
+                      ''||TRIM(V_TMP_TIPO_DATA(5))||', '''||TRIM(V_TMP_TIPO_DATA(6))||''', 0, '|| V_USU_MODIFICAR ||', SYSDATE, 0 FROM DUAL';
 			EXECUTE IMMEDIATE V_MSQL;
 			DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
 

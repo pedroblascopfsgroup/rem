@@ -945,7 +945,7 @@ public class UvemManager implements UvemManagerApi {
 				if (instanciaData.getTipoDeImpuesto() == InstanciaDecisionDataDto.TIPO_IMPUESTO_ITP
 						|| instanciaData.getTipoDeImpuesto() == InstanciaDecisionDataDto.TIPO_IMPUESTO_IGIC
 						|| instanciaData.getTipoDeImpuesto() == InstanciaDecisionDataDto.TIPO_IMPUESTO_IPSI) {
-					// struct.setIndicadorTratamientoImpuestobitrim(vacio);
+					 struct.setIndicadorTratamientoImpuestobitrim(' ');
 				} else if (instanciaData.getTipoDeImpuesto() == InstanciaDecisionDataDto.TIPO_IMPUESTO_IVA) {
 
 					if (Checks.esNulo(instanciaData.getRenunciaExencion())
@@ -1164,6 +1164,7 @@ public class UvemManager implements UvemManagerApi {
 			cabeceraFuncional.setCOSBAQ("00");
 			cabeceraFuncional.setNUPUAQ("00");
 			cabeceraTecnica.setCLORAQ("71");
+			cabeceraTecnica.setCOMLAQ("JC33");
 
 			// seteamos parametros
 			servicioGMPAJC34_INS.setCodigoObjetoAccesocopace("PAHY0370");
@@ -1243,6 +1244,7 @@ public class UvemManager implements UvemManagerApi {
 			cabeceraFuncional.setCOCDAQ("0551");
 			cabeceraFuncional.setCOSBAQ("00");
 			cabeceraFuncional.setNUPUAQ("00");
+			cabeceraFuncional.setIDDSAQ(""); 
 			cabeceraTecnica.setCLORAQ("71");
 
 			// COPACE
@@ -1384,6 +1386,7 @@ public class UvemManager implements UvemManagerApi {
 			cabeceraFuncional.setCOCDAQ("0551");
 			cabeceraFuncional.setCOSBAQ("00");
 			cabeceraFuncional.setNUPUAQ("00");
+			cabeceraFuncional.setIDDSAQ ("BAJA");
 			cabeceraTecnica.setCLORAQ("71");
 
 			cabeceraAplicacion.setCodigoObjetoAccesocopace("PAHY0150");
@@ -1394,7 +1397,7 @@ public class UvemManager implements UvemManagerApi {
 
 			cabeceraAplicacion.setCentroGestorUsuarioSsacocgus(COCGUS);
 			
-			servicioGMPAJC29_INS.setCOOFHX(codigoDeOfertaHaya);
+			servicioGMPAJC29_INS.setCOOFHX(StringUtils.leftPad(codigoDeOfertaHaya, 16, "0"));
 
 			if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.COMPRADOR_NO_INTERESADO_OPERACION)) {
 				servicioGMPAJC29_INS.setCOSANOW(new Short("100"));

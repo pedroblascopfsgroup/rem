@@ -3973,21 +3973,25 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			return false;
 		}
 
-		Trabajo trabajo = activoTramite.getTrabajo();
-		if (Checks.esNulo(trabajo)) {
-			return false;
-		}
+		if (!Checks.esNulo(activoTramite.getActivo())
+				&& activoTramite.getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)) {
 
-		ExpedienteComercial expedienteComercial = expedienteComercialDao
-				.getExpedienteComercialByTrabajo(trabajo.getId());
-		if (Checks.esNulo(expedienteComercial)) {
-			return false;
-		}
-
-		for (int k = 0; k < expedienteComercial.getCompradoresAlta().size(); k++) {
-			CompradorExpediente compradorExpediente = expedienteComercial.getCompradoresAlta().get(k);
-			if (Checks.esNulo(compradorExpediente.getPrimaryKey().getComprador().getIdCompradorUrsus())) {
+			Trabajo trabajo = activoTramite.getTrabajo();
+			if (Checks.esNulo(trabajo)) {
 				return false;
+			}
+
+			ExpedienteComercial expedienteComercial = expedienteComercialDao
+					.getExpedienteComercialByTrabajo(trabajo.getId());
+			if (Checks.esNulo(expedienteComercial)) {
+				return false;
+			}
+
+			for (int k = 0; k < expedienteComercial.getCompradoresAlta().size(); k++) {
+				CompradorExpediente compradorExpediente = expedienteComercial.getCompradoresAlta().get(k);
+				if (Checks.esNulo(compradorExpediente.getPrimaryKey().getComprador().getIdCompradorUrsus())) {
+					return false;
+				}
 			}
 		}
 		return true;

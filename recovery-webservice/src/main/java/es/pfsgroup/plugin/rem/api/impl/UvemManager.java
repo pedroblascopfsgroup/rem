@@ -1396,7 +1396,7 @@ public class UvemManager implements UvemManagerApi {
 
 			cabeceraAplicacion.setCentroGestorUsuarioSsacocgus(COCGUS);
 			
-			servicioGMPAJC29_INS.setCOOFHX(codigoDeOfertaHaya);
+			servicioGMPAJC29_INS.setCOOFHX(StringUtils.leftPad(codigoDeOfertaHaya, 16, "0"));
 
 			if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.COMPRADOR_NO_INTERESADO_OPERACION)) {
 				servicioGMPAJC29_INS.setCOSANOW(new Short("100"));

@@ -3375,7 +3375,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Double importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta()
 				: oferta.getImporteContraOferta();
 		Double sumatorioImporte = new Double(0);
-		Double sumatorioPorcentaje = new Double(0);
+
 		for (int i = 0; i < listaActivos.size(); i++) {
 			Activo activo = listaActivos.get(i).getPrimaryKey().getActivo();
 			if (Checks.esNulo(activo)) {
@@ -3386,16 +3386,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				throw new JsonViewerException("El activo no tiene número de UVEM.");
 			}
 
-			Double porcentajeParti = listaActivos.get(i).getPorcentajeParticipacion();
-			if (porcentajeParti != null && porcentajeParti > 0) {
-				importeXActivo = (importeTotal * porcentajeParti) / 100;
-			} else {
-				importeXActivo = new Double(0);
-				porcentajeParti = new Double(0);
+			importeXActivo = listaActivos.get(i).getImporteActivoOferta();
+			if(Checks.esNulo(importeXActivo)) {
+				importeXActivo = 0.00D;
 			}
-
 			sumatorioImporte += importeXActivo;
-			sumatorioPorcentaje += porcentajeParti;
+
 			InstanciaDecisionDataDto instData = new InstanciaDecisionDataDto();
 			// ImportePorActivo
 			instData.setImporteConSigno(importeXActivo.longValue());

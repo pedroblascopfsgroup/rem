@@ -42,7 +42,7 @@ public abstract class AbstractNotificatorService{
 				 		 + (!Checks.esNulo(activo.getLocalizacionActual().getEscalera())? activo.getLocalizacionActual().getEscalera() : "") + " "
 				 		 + (!Checks.esNulo(activo.getLocalizacionActual().getPiso())? activo.getLocalizacionActual().getPiso() : "") + " "
 				 		 + (!Checks.esNulo(activo.getLocalizacionActual().getPuerta())? activo.getLocalizacionActual().getPuerta() : "") + " "
-				 		 + (!Checks.esNulo(activo.getLocalizacionActual().getPoblacion())? activo.getLocalizacionActual().getPoblacion() : "") + " "
+				 		 + (!Checks.esNulo(activo.getLocalizacionActual().getCodPostal())? activo.getLocalizacionActual().getCodPostal() : "") + " "
 				 		 + (!Checks.esNulo(activo.getLocalizacionActual().getProvincia())? activo.getLocalizacionActual().getProvincia().getDescripcion() : "");
 		return (!Checks.esNulo(direccion)? direccion : "");
 	}

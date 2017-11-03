@@ -3375,7 +3375,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Double importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta()
 				: oferta.getImporteContraOferta();
 		Double sumatorioImporte = new Double(0);
-		Double sumatorioPorcentaje = new Double(0);
+
 		for (int i = 0; i < listaActivos.size(); i++) {
 			Activo activo = listaActivos.get(i).getPrimaryKey().getActivo();
 			if (Checks.esNulo(activo)) {
@@ -3386,16 +3386,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				throw new JsonViewerException("El activo no tiene número de UVEM.");
 			}
 
-			Double porcentajeParti = listaActivos.get(i).getPorcentajeParticipacion();
-			if (porcentajeParti != null && porcentajeParti > 0) {
-				importeXActivo = (importeTotal * porcentajeParti) / 100;
-			} else {
-				importeXActivo = new Double(0);
-				porcentajeParti = new Double(0);
+			importeXActivo = listaActivos.get(i).getImporteActivoOferta();
+			if(Checks.esNulo(importeXActivo)) {
+				importeXActivo = 0.00D;
 			}
-
 			sumatorioImporte += importeXActivo;
-			sumatorioPorcentaje += porcentajeParti;
+
 			InstanciaDecisionDataDto instData = new InstanciaDecisionDataDto();
 			// ImportePorActivo
 			instData.setImporteConSigno(importeXActivo.longValue());
@@ -5512,6 +5508,32 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		return false;
-	}	
+	}
+	
+	@Override
+	public void enviarTitularesUvem(Long idExpediente) throws Exception {
+		Long porcentajeImpuesto = null;
+		try {
+
+			ExpedienteComercial expediente = findOne(idExpediente);
+			if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getCondicionante())) {
+				if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
+					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
+				}
+			}
+			InstanciaDecisionDto instancia = expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto,null);
+			
+			instancia.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_TITULARES);
+			logger.info("------------ LLAMADA WS MOD3(TITULARES) -----------------");
+			uvemManagerApi.modificarInstanciaDecisionTres(instancia);
+
+		} catch (JsonViewerException jve) {
+			throw jve;
+		} catch (Exception e) {
+			logger.error("error en expedienteComercialManager", e);
+			throw e;
+		}
+
+	}
 
 }

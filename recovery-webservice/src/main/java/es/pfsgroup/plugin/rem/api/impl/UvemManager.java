@@ -1047,7 +1047,7 @@ public class UvemManager implements UvemManagerApi {
 			// Importe de la reserva
 			ImporteMonetario importeMonetarioReserva = new ImporteMonetario();
 			if (instanciaDecisionDto.getImporteReserva() != null) {
-				importeMonetarioReserva.setImporteConSigno(instanciaDecisionDto.getImporteReserva().longValue());
+				importeMonetarioReserva.setImporteConSigno(instanciaDecisionDto.getImporteReserva().longValue()*100);
 			} else {
 				importeMonetarioReserva.setImporteConSigno(new Long(0));
 			}
@@ -1058,12 +1058,12 @@ public class UvemManager implements UvemManagerApi {
 			importeMonetarioReserva.setNumeroDecimalesImporte('-');
 
 			servicioGMPDJB13_INS.setImporteMonetarioDeLaReservaBISA(importeMonetarioReserva);
-			if (instanciaDecisionDto.getImporteReserva() == null
-					|| instanciaDecisionDto.getImporteReserva().compareTo(new Double(0)) == 0) {
+			if (instanciaDecisionDto.getImporteReserva() == null || instanciaDecisionDto.getImporteReserva().compareTo(new Double(0)) == 0 
+					|| Checks.esNulo(instanciaListData.get(0).getPorcentajeImpuesto()) || instanciaListData.get(0).getPorcentajeImpuesto() == 0) {
 				servicioGMPDJB13_INS.setIndicadorCobroImpuestosReservabicirv(' ');
 			} else {
 				if (instanciaDecisionDto.getImporteReserva().compareTo(Double.valueOf(0)) > 0
-						&& instanciaListData.get(0).getPorcentajeImpuesto() > 0) {
+						&& instanciaListData.get(0).getPorcentajeImpuesto() > 0 && instanciaDecisionDto.getImpuestosReserva()) {
 					servicioGMPDJB13_INS.setIndicadorCobroImpuestosReservabicirv('S');
 				} else {
 					servicioGMPDJB13_INS.setIndicadorCobroImpuestosReservabicirv('N');

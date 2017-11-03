@@ -42,6 +42,15 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 				xtype: 'fieldset',
             	title:  HreRem.i18n('title.compradores'),
             	items : [
+            		{
+						xtype: 'button',
+						text: HreRem.i18n('btn.enviar.compradores'),
+						handler: 'enviarTitularesUvem',
+						margin: '10 40 5 10',
+						bind: {
+							hidden: '{!esCarteraBankia}'
+						}
+					},
                 	{
 					    xtype		: 'gridBase',
 					    topBar		: $AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES']),

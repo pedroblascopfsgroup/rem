@@ -193,7 +193,7 @@ BEGIN
       -- UPDATE MIG2_TRA_TRAMITES_FAKE (TBJ_ID, TRA_ID, TAR_ID, TEX_ID) --
       ---------------------------------------------------------------------------------------------------------------
       
-      DBMS_OUTPUT.PUT_LINE('[INFO] GENERANDO TBJ_ID, TRA_ID, TAR_ID, TEX_ID...');
+      /*DBMS_OUTPUT.PUT_LINE('[INFO] GENERANDO TBJ_ID, TRA_ID, TAR_ID, TEX_ID...');
       
       OPEN CURSOR_OFERTAS;
       
@@ -596,9 +596,9 @@ BEGIN
       ;
       
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TAC||' cargada. '||SQL%ROWCOUNT||' Filas.');
-      
+      */
      COMMIT;
-
+/*
       V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''ACT_TBJ_TRABAJO'',''1''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
 
@@ -618,7 +618,7 @@ BEGIN
       EXECUTE IMMEDIATE V_SENTENCIA;
 
       V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'',''TAC_TAREAS_ACTIVOS'',''1''); END;';
-      EXECUTE IMMEDIATE V_SENTENCIA;
+      EXECUTE IMMEDIATE V_SENTENCIA;*/
       
 EXCEPTION
       WHEN OTHERS THEN

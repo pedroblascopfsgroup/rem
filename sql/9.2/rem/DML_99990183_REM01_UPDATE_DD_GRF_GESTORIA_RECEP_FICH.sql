@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Isidro Sotoca
---## FECHA_CREACION=20171102
+--## FECHA_CREACION=20171103
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-3087
@@ -41,16 +41,17 @@ DECLARE
     -- FILAS A MODIFICAR O CREAR
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-                    --DD_GRF_CODIGO      --PVE_COD_REM         --BORRADO                             
-        T_TIPO_DATA('4',                 '10005592'	  	    ,0	), -- pinos
-        T_TIPO_DATA('3',                 '10004978'       	    ,0	), -- uniges
-        T_TIPO_DATA('2',                 '10004652'  	        ,0	), -- montalvo
-        T_TIPO_DATA('1',                 '10004484'	  	    ,0	), -- gutierrez_labrador
-        T_TIPO_DATA('5',                 '10004837'       	    ,0	), -- garsa
-        T_TIPO_DATA('8',                 '10006316'  	        ,0	), -- diagonal_company
-        T_TIPO_DATA('9',                 '10009469'          	,0	)  -- grupoBC
+                    --DD_GRF_CODIGO		--PVE_COD_REM
+        T_TIPO_DATA('4',             	'10005592'	), -- pinos
+        T_TIPO_DATA('3',              	'10004978'	), -- uniges
+        T_TIPO_DATA('2',              	'10004652'	), -- montalvo
+        T_TIPO_DATA('1',             	'10004484'	), -- gutierrez_labrador
+        T_TIPO_DATA('5',              	'10004837'	), -- garsa
+        T_TIPO_DATA('8',              	'10006316'	), -- diagonal_company
+        T_TIPO_DATA('9',             	'10009469'	)  -- grupoBC
     );
     V_TMP_TIPO_DATA T_TIPO_DATA;
+    V_BORRADO NUMBER(1,0) := 0;
     
 BEGIN	
 	
@@ -65,8 +66,10 @@ BEGIN
 	
         	DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
        	  	V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
-	            'SET PVE_COD_REM = '''||TRIM(V_TMP_TIPO_DATA(2))||''''||
-	            ', BORRADO = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
+	            'SET PVE_COD_REM = '''||TRIM(V_TMP_TIPO_DATA(2))||''' '||
+	            ', BORRADO = '''||V_BORRADO||''' '||
+	            ', USUARIOMODIFICAR = '''||TRIM(V_USUARIO)||'''
+	            , FECHAMODIFICAR = SYSDATE '||
 	            'WHERE DD_GRF_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
         	EXECUTE IMMEDIATE V_MSQL;
         	DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');

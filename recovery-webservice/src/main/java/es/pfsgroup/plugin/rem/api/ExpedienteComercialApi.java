@@ -855,4 +855,11 @@ public interface ExpedienteComercialApi {
 	 * @return boolean
 	 */
 	public boolean checkCompradoresTienenNumeroUrsus(Long idTramite);
+
+	/**
+	 * Envia todos los compradores(titulares) a UVEM
+	 * @param expedienteComercial
+	 * @return void
+	 */
+	public void enviarTitularesUvem(Long idExpediente) throws Exception;
 }

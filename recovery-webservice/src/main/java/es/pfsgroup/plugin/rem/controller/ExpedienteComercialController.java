@@ -1440,4 +1440,32 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView enviarTitularesUvem(ModelMap model, Long idExpediente) {
+		
+		try {
+			
+			expedienteComercialApi.enviarTitularesUvem(idExpediente);
+			model.put("success", true);			
+			
+		} catch (JsonViewerException jve) {
+			jve.printStackTrace();
+			model.put("errorUvem", true);
+			model.put("msg", jve.getMessage());
+			model.put("success", false);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			model.put("errorUvem", false);
+			model.put("msg", e.getMessage());
+			model.put("success", false);
+		}		
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	
+	
 }

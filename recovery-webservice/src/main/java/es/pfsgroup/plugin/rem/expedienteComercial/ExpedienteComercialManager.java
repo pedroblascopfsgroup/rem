@@ -5508,6 +5508,32 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		return false;
-	}	
+	}
+	
+	@Override
+	public void enviarTitularesUvem(Long idExpediente) throws Exception {
+		Long porcentajeImpuesto = null;
+		try {
+
+			ExpedienteComercial expediente = findOne(idExpediente);
+			if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getCondicionante())) {
+				if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
+					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
+				}
+			}
+			InstanciaDecisionDto instancia = expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto,null);
+			
+			instancia.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_TITULARES);
+			logger.info("------------ LLAMADA WS MOD3(TITULARES) -----------------");
+			uvemManagerApi.modificarInstanciaDecisionTres(instancia);
+
+		} catch (JsonViewerException jve) {
+			throw jve;
+		} catch (Exception e) {
+			logger.error("error en expedienteComercialManager", e);
+			throw e;
+		}
+
+	}
 
 }

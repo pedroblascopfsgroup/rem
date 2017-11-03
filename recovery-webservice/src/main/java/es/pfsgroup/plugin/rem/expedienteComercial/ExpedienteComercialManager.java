@@ -3318,8 +3318,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		numActivoEspecial = Checks.esNulo(activo.getNumActivoUvem()) ? 0 : activo.getNumActivoUvem().intValue();
-		importe = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta().longValue()
-				: oferta.getImporteContraOferta().longValue();
+		importe = Checks.esNulo(oferta.getImporteContraOferta()) ? Double.valueOf(oferta.getImporteOferta()*100).longValue()
+				: Double.valueOf(oferta.getImporteContraOferta()*100).longValue();
 
 		if (!Checks.esNulo(expediente.getCondicionante())
 				&& !Checks.esNulo(expediente.getCondicionante().getTipoImpuesto())) {
@@ -3394,7 +3394,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			InstanciaDecisionDataDto instData = new InstanciaDecisionDataDto();
 			// ImportePorActivo
-			instData.setImporteConSigno(importeXActivo.longValue());
+			instData.setImporteConSigno(Double.valueOf(importeXActivo*100).longValue());
 			// NumActivoUvem
 			instData.setIdentificadorActivoEspecial(Integer.valueOf(activo.getNumActivoUvem().toString()));
 

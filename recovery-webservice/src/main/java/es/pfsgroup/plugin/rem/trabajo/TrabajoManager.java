@@ -36,7 +36,6 @@ import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -286,7 +285,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		return dto;
@@ -330,7 +329,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoToTrabajo(dtoTrabajo, trabajo);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		trabajoDao.saveOrUpdate(trabajo);
@@ -350,7 +349,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoGestionEconomicaToTrabajo(dtoGestionEconomica, trabajo);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		actualizarImporteTotalTrabajo(trabajo.getId());
@@ -370,8 +369,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Trabajo trabajo = findOne(idTrabajo);
 
 		if (!Checks.esNulo(trabajo.getEsTarificado()) && trabajo.getEsTarificado()) {
-			List<TrabajoConfiguracionTarifa> cfgTarifas = (List<TrabajoConfiguracionTarifa>) genericDao
-					.getList(TrabajoConfiguracionTarifa.class, filtro);
+			List<TrabajoConfiguracionTarifa> cfgTarifas = genericDao.getList(TrabajoConfiguracionTarifa.class, filtro);
 
 			for (TrabajoConfiguracionTarifa tarifa : cfgTarifas) {
 
@@ -381,8 +379,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				}
 			}
 		} else if (!Checks.esNulo(trabajo.getEsTarificado()) && !trabajo.getEsTarificado()) {
-			List<PresupuestoTrabajo> presupuestos = (List<PresupuestoTrabajo>) genericDao
-					.getList(PresupuestoTrabajo.class, filtro);
+			List<PresupuestoTrabajo> presupuestos = genericDao.getList(PresupuestoTrabajo.class, filtro);
 
 			for (PresupuestoTrabajo presupuesto : presupuestos) {
 				if (!presupuesto.getAuditoria().isBorrado() && !Checks.esNulo(presupuesto.getImporte())
@@ -509,7 +506,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			logger.error("[ERROR] - Crear trabajo multiactivo: ".concat(e.getMessage()));
 		}
 
@@ -558,17 +555,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				trabajo = crearTrabajoPorActivo(activo, dtoTrabajo);
 				createTramiteTrabajo(trabajo);
 
-			} /*else if (!dtoTrabajo.getEsSolicitudConjunta()) { //Desde agrupacion y sin check
-				List<Trabajo> trabajos = crearTrabajoPorActivoAgrupacion(dtoTrabajo);
-
-				for (Trabajo trabajoActivoAgrupacion : trabajos) {
-					createTramiteTrabajo(trabajoActivoAgrupacion);
-				}
-
-			} else { //Desde agrupacion y con check
-				trabajo = crearTrabajoPorAgrupacion(dtoTrabajo);
-				createTramiteTrabajo(trabajo);
-			}*/
+			}
 			
 			else if(Checks.esNulo(dtoTrabajo.getIdsActivos())){ //Si no se selecciona ningun activo
 				if(!Checks.esNulo(dtoTrabajo.getEsSolicitudConjunta()) && dtoTrabajo.getEsSolicitudConjunta().equals(true)){ //Si se marca el check
@@ -694,17 +681,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			Boolean isFirstLoop = true;
 			for (VActivosAgrupacionTrabajo activoAgrupacion : activosAgrupacionTrabajo) {
 				Activo activo = activoDao.get(Long.valueOf(activoAgrupacion.getIdActivo()));
-				// En la tabla de activo-agrupación no aparece ningún valor para
-				// los importes netos contables
-				// Double participacion = (Double)
-				// (!(Double.isNaN((activoAgrupacion.getImporteNetoContable()/activoAgrupacion.getSumaAgrupacionNetoContable()
-				// * 100))) ?
-				// (activoAgrupacion.getImporteNetoContable()/activoAgrupacion.getSumaAgrupacionNetoContable()
-				// * 100) : 0.0D);
+
 				Double participacion = updaterStateApi.calcularParticipacionPorActivo(trabajo.getTipoTrabajo().getCodigo(), activosList, activo);
 				dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : participacion.toString());
-				// dtoTrabajo.setParticipacion(Double.toString(activoAgrupacion.getImporteNetoContable()/activoAgrupacion.getSumaAgrupacionNetoContable()
-				// * 100));
 
 				// FIXME: Datos del trabajo que se definen por un activo, en
 				// agrupación de activos están tomándose del primer activo del
@@ -751,7 +730,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajoDao.saveOrUpdate(trabajo);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		return trabajo;
@@ -775,13 +754,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				}
 			}
 		} catch (NumberFormatException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return listaActivos;
 	}
@@ -808,14 +787,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		try {
 			upload(webFileItem);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
-		// List<AdjuntoTrabajo> adjuntosTrabajo = new
-		// ArrayList<AdjuntoTrabajo>();
-		// AdjuntoTrabajo adjuntoMasivo = new AdjuntoTrabajo(fileItem);
-		// adjuntosTrabajo.add(adjuntoMasivo);
-		// trabajo.setAdjuntos(adjuntosTrabajo);
-		// trabajoDao.saveOrUpdate(trabajo);
 	}
 
 	private List<Trabajo> crearTrabajoPorSubidaActivos(DtoFichaTrabajo dtoTrabajo) {
@@ -892,9 +865,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		return listaTrabajos;
@@ -912,8 +885,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajo.setActivo(activo);
 			trabajo.setFechaSolicitud(new Date());
 			if (!Checks.esNulo(dtoTrabajo.getIdSolicitante())) {
-				Usuario user = (Usuario) genericDao.get(Usuario.class,
-						genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdSolicitante()));
+				Usuario user = genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdSolicitante()));
 				if (!Checks.esNulo(user)) {
 					trabajo.setSolicitante(user);
 				} else {
@@ -951,7 +923,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajoDao.saveOrUpdate(trabajo);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		return trabajo;
@@ -964,20 +936,18 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		 * TRAMITE Si es gestor activo (algunos trámites): EN TRAMITE El resto
 		 * de casos: SOLICITADO
 		 */
-		Filter filtroSolicitado = genericDao.createFilter(FilterType.EQUALS, "codigo",
-				DDEstadoTrabajo.ESTADO_SOLICITADO);
-		Filter filtroEnTramite = genericDao.createFilter(FilterType.EQUALS, "codigo",
-				DDEstadoTrabajo.ESTADO_EN_TRAMITE);
+		Filter filtroSolicitado = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_SOLICITADO);
+		Filter filtroEnTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_EN_TRAMITE);
 
 		// Por defecto: Solicitado
-		DDEstadoTrabajo estadoTrabajo = (DDEstadoTrabajo) genericDao.get(DDEstadoTrabajo.class, filtroSolicitado);
+		DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filtroSolicitado);
 		if (gestorActivoManager.isGestorActivo(activo, genericAdapter.getUsuarioLogado()) && (dtoTrabajo
 				.getTipoTrabajoCodigo().equals(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL)
 				|| dtoTrabajo.getTipoTrabajoCodigo().equals(DDTipoTrabajo.CODIGO_TASACION)
 				|| dtoTrabajo.getSubtipoTrabajoCodigo().equals(DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS))) {
 			// Es gestor activo + Obtención documental(menos Cédula) o
 			// Tasación: En Trámite
-			estadoTrabajo = (DDEstadoTrabajo) genericDao.get(DDEstadoTrabajo.class, filtroEnTramite);
+			estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filtroEnTramite);
 		}
 
 		return estadoTrabajo;
@@ -1010,49 +980,49 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		if (dtoTrabajo.getEstadoCodigo() != null) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getEstadoCodigo());
-			DDEstadoTrabajo estadoTrabajo = (DDEstadoTrabajo) genericDao.get(DDEstadoTrabajo.class, filtro);
+			DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filtro);
 
 			trabajo.setEstado(estadoTrabajo);
 		}
 
 		if (dtoTrabajo.getTipoCalidadCodigo() != null) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getTipoCalidadCodigo());
-			DDTipoCalidad tipoCalidad = (DDTipoCalidad) genericDao.get(DDTipoCalidad.class, filtro);
+			DDTipoCalidad tipoCalidad = genericDao.get(DDTipoCalidad.class, filtro);
 
 			trabajo.setTipoCalidad(tipoCalidad);
 		}
 
 		if (dtoTrabajo.getTipoTrabajoCodigo() != null) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getTipoTrabajoCodigo());
-			DDTipoTrabajo tipoTrabajo = (DDTipoTrabajo) genericDao.get(DDTipoTrabajo.class, filtro);
+			DDTipoTrabajo tipoTrabajo = genericDao.get(DDTipoTrabajo.class, filtro);
 
 			trabajo.setTipoTrabajo(tipoTrabajo);
 		}
 
 		if (dtoTrabajo.getSubtipoTrabajoCodigo() != null) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getSubtipoTrabajoCodigo());
-			DDSubtipoTrabajo subtipoTrabajo = (DDSubtipoTrabajo) genericDao.get(DDSubtipoTrabajo.class, filtro);
+			DDSubtipoTrabajo subtipoTrabajo = genericDao.get(DDSubtipoTrabajo.class, filtro);
 
 			trabajo.setSubtipoTrabajo(subtipoTrabajo);
 		}
 
 		if (dtoTrabajo.getIdMediador() != null) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdMediador());
-			ActivoProveedor mediador = (ActivoProveedor) genericDao.get(ActivoProveedor.class, filtro);
+			ActivoProveedor mediador = genericDao.get(ActivoProveedor.class, filtro);
 
 			trabajo.setMediador(mediador);
 		}
 		
 		if(!Checks.esNulo(dtoTrabajo.getIdGestorActivoResponsable())){
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdGestorActivoResponsable());
-			Usuario usuario = (Usuario) genericDao.get(Usuario.class, filtro);
+			Usuario usuario = genericDao.get(Usuario.class, filtro);
 			
 			trabajo.setUsuarioGestorActivoResponsable(usuario);
 		}
 		
 		if(!Checks.esNulo(dtoTrabajo.getIdSupervisorActivo())){
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdSupervisorActivo());
-			Usuario usuario = (Usuario) genericDao.get(Usuario.class, filtro);
+			Usuario usuario = genericDao.get(Usuario.class, filtro);
 			
 			trabajo.setSupervisorActivoResponsable(usuario);
 		}
@@ -1222,8 +1192,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	}
 
-	private DtoFichaTrabajo trabajoToDtoFichaTrabajo(Trabajo trabajo)
-			throws IllegalAccessException, InvocationTargetException {
+	private DtoFichaTrabajo trabajoToDtoFichaTrabajo(Trabajo trabajo) throws IllegalAccessException, InvocationTargetException {
 
 		DtoFichaTrabajo dtoTrabajo = new DtoFichaTrabajo();
 
@@ -1282,31 +1251,35 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setTipoAgrupacionDescripcion(trabajo.getAgrupacion().getTipoAgrupacion().getDescripcion());
 		}
 
-		// HREOS-860 Administracion
-		if (!Checks.esNulo(trabajo.getGastoTrabajo())) {
+		if (!Checks.esNulo(trabajo.getGastoTrabajo()) && !Checks.esNulo(trabajo.getGastoTrabajo().getGastoProveedor())) {
 			dtoTrabajo.setFechaEmisionFactura(trabajo.getGastoTrabajo().getGastoProveedor().getFechaEmision());
 		}
-		
+
 		if(!Checks.esNulo(trabajo.getUsuarioGestorActivoResponsable())){
 			dtoTrabajo.setGestorActivoResponsable(trabajo.getUsuarioGestorActivoResponsable().getApellidoNombre());
 			dtoTrabajo.setIdGestorActivoResponsable(trabajo.getUsuarioGestorActivoResponsable().getId());
-		//HREOS-2332
-		} else if(!Checks.esNulo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO))){
-			dtoTrabajo.setGestorActivoResponsable(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO).getApellidoNombre());
-			dtoTrabajo.setIdGestorActivoResponsable(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO).getId());
+
+		} else {
+			Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+			if(!Checks.esNulo(gestorActivo)) {
+				dtoTrabajo.setGestorActivoResponsable(gestorActivo.getApellidoNombre());
+				dtoTrabajo.setIdGestorActivoResponsable(gestorActivo.getId());
+			}
 		}
-		
+
 		if(!Checks.esNulo(trabajo.getSupervisorActivoResponsable())){
 			dtoTrabajo.setSupervisorActivo(trabajo.getSupervisorActivoResponsable().getApellidoNombre());
 			dtoTrabajo.setIdSupervisorActivo(trabajo.getSupervisorActivoResponsable().getId());
-		//HREOS-2332
-		} else if(!Checks.esNulo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS))){
-			dtoTrabajo.setSupervisorActivo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS).getApellidoNombre());
-			dtoTrabajo.setIdSupervisorActivo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS).getId());
+
+		} else {
+			Usuario supervisorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS);
+			if(!Checks.esNulo(supervisorActivo)){
+				dtoTrabajo.setSupervisorActivo(supervisorActivo.getApellidoNombre());
+				dtoTrabajo.setIdSupervisorActivo(supervisorActivo.getId());
+			}
 		}
 
 		return dtoTrabajo;
-
 	}
 
 	private DtoGestionEconomicaTrabajo trabajoToDtoGestionEconomicaTrabajo(Trabajo trabajo)
@@ -1382,7 +1355,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public boolean createTarifaTrabajo(DtoTarifaTrabajo tarifaDto, Long idTrabajo) {
 		Trabajo trabajo = trabajoDao.get(idTrabajo);
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", tarifaDto.getIdConfigTarifa());
-		ConfiguracionTarifa cfgTarifa = (ConfiguracionTarifa) genericDao.get(ConfiguracionTarifa.class, filtro);
+		ConfiguracionTarifa cfgTarifa = genericDao.get(ConfiguracionTarifa.class, filtro);
 
 		try {
 			TrabajoConfiguracionTarifa traCfgTarifa = new TrabajoConfiguracionTarifa();
@@ -1400,7 +1373,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			// grid
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		return true;
@@ -1412,9 +1385,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public boolean createPresupuestoTrabajo(DtoPresupuestosTrabajo presupuestoDto, Long idTrabajo) {
 		Trabajo trabajo = trabajoDao.get(idTrabajo);
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", presupuestoDto.getIdProveedor());
-		ActivoProveedor proveedor = (ActivoProveedor) genericDao.get(ActivoProveedor.class, filtro);
+		ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filtro);
 		filtro = genericDao.createFilter(FilterType.EQUALS, "id", presupuestoDto.getIdProveedorContacto());
-		ActivoProveedorContacto proveedorContacto = (ActivoProveedorContacto) genericDao.get(ActivoProveedorContacto.class, filtro);
+		ActivoProveedorContacto proveedorContacto = genericDao.get(ActivoProveedorContacto.class, filtro);
 		try {
 
 			PresupuestoTrabajo presupuesto = new PresupuestoTrabajo();
@@ -1427,7 +1400,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 																							// presupuesto:
 																							// en
 																							// estudio
-			DDEstadoPresupuesto estadoPresupuesto = (DDEstadoPresupuesto) genericDao.get(DDEstadoPresupuesto.class,
+			DDEstadoPresupuesto estadoPresupuesto = genericDao.get(DDEstadoPresupuesto.class,
 					filtro2);
 			presupuesto.setEstadoPresupuesto(estadoPresupuesto);
 			beanUtilNotNull.copyProperties(presupuesto, presupuestoDto);
@@ -1435,7 +1408,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return true;
 	}
@@ -1453,18 +1426,18 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			beanUtilNotNull.copyProperties(presupuestoTrabajo, presupuestoDto);
 			if (presupuestoDto.getIdProveedor() != null) {
 				Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "id", presupuestoDto.getIdProveedor());
-				ActivoProveedor proveedor = (ActivoProveedor) genericDao.get(ActivoProveedor.class, filtro2);
+				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filtro2);
 				presupuestoTrabajo.setProveedor(proveedor);
 			}
 			if (presupuestoDto.getIdProveedorContacto() != null) {
 				Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "id", presupuestoDto.getIdProveedorContacto());
-				ActivoProveedorContacto proveedorContacto = (ActivoProveedorContacto) genericDao.get(ActivoProveedorContacto.class, filtro2);
+				ActivoProveedorContacto proveedorContacto = genericDao.get(ActivoProveedorContacto.class, filtro2);
 				presupuestoTrabajo.setProveedorContacto(proveedorContacto);
 			}
 			if (presupuestoDto.getEstadoPresupuestoCodigo() != null) {
 				Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "codigo",
 						presupuestoDto.getEstadoPresupuestoCodigo());
-				DDEstadoPresupuesto estadoPresupuesto = (DDEstadoPresupuesto) genericDao.get(DDEstadoPresupuesto.class,
+				DDEstadoPresupuesto estadoPresupuesto = genericDao.get(DDEstadoPresupuesto.class,
 						filtro3);
 				presupuestoTrabajo.setEstadoPresupuesto(estadoPresupuesto);
 				// Si el nuevo estado del presupuesto es autorizado, el resto de
@@ -1486,7 +1459,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						if (presup.getId() != presupuestoTrabajo.getId()) {
 							Filter filtroRechazado = genericDao.createFilter(FilterType.EQUALS, "codigo", "01"); // Estado
 																													// rechazado
-							DDEstadoPresupuesto estadoPresupuestoRechazado = (DDEstadoPresupuesto) genericDao
+							DDEstadoPresupuesto estadoPresupuestoRechazado = genericDao
 									.get(DDEstadoPresupuesto.class, filtroRechazado);
 							presup.setEstadoPresupuesto(estadoPresupuestoRechazado);
 							genericDao.save(PresupuestoTrabajo.class, presup);
@@ -1499,7 +1472,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			actualizarImporteTotalTrabajo(trabajo.getId());
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return true;
 	}
@@ -1519,9 +1492,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			actualizarImporteTotalTrabajo(tarifaTrabajo.getTrabajo().getId());
 
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		return true;
@@ -1543,7 +1516,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajoDao.save(trabajo);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		return true;
@@ -1566,7 +1539,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajoDao.save(trabajo);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		return true;
@@ -1588,7 +1561,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		adjuntoTrabajo.setTrabajo(trabajo);
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
-		DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class,
+		DDTipoDocumentoActivo tipoDocumento = genericDao.get(DDTipoDocumentoActivo.class,
 				filtro);
 		adjuntoTrabajo.setTipoDocumentoActivo(tipoDocumento);
 
@@ -1663,7 +1636,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error(ex.getMessage());
 		}
 
 		return listaAdjuntos;
@@ -1712,9 +1685,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			genericDao.save(TrabajoObservacion.class, observacion);
 
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		return true;
@@ -1740,7 +1713,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			genericDao.save(TrabajoObservacion.class, observacion);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		return true;
@@ -1755,7 +1728,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			genericDao.deleteById(TrabajoObservacion.class, idObservacion);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		return true;
@@ -1790,7 +1763,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			observacionDto.setIdUsuario(idUsuario);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		return observacionDto;
@@ -1809,7 +1782,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		return tarifaDto;
@@ -1844,7 +1817,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		return tarifaDto;
@@ -1889,7 +1862,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		return presupuestoDto;
@@ -2019,7 +1992,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			DtoGestionEconomicaTrabajo filtroTarifas = new DtoGestionEconomicaTrabajo();
 			filtroTarifas.setLimit(5000000); // Limite de paginacion de resultados - Maximo soportado 5mill de tarifas por trabajo
 			filtroTarifas.setStart(0);
-			List<DtoTarifaTrabajo> listaTarifas = (List<DtoTarifaTrabajo>) getListDtoTarifaTrabajo(filtroTarifas, trabajo.getId());
+			List<DtoTarifaTrabajo> listaTarifas = getListDtoTarifaTrabajo(filtroTarifas, trabajo.getId());
 			
 			// Acumulado por tarifas
 			BigDecimal importeTotalTarifas = new BigDecimal(0);
@@ -2085,7 +2058,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
  		
 		if (!Checks.esNulo(idUltimoPresupuestoActivo)){
 			Filter filtroUltimoPresupuesto = genericDao.createFilter(FilterType.EQUALS, "id", idUltimoPresupuestoActivo.toString());
-			ultimoPresupuestoActivo = (VBusquedaPresupuestosActivo) genericDao.get(VBusquedaPresupuestosActivo.class, filtroUltimoPresupuesto);
+			ultimoPresupuestoActivo = genericDao.get(VBusquedaPresupuestosActivo.class, filtroUltimoPresupuesto);
 		}
  		
 		if (!Checks.esNulo(ultimoPresupuestoActivo) && !Checks.esNulo(ultimoPresupuestoActivo.getImporteInicial()))
@@ -2097,7 +2070,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		// Obtiene el acumulado de presupuestos de trabajos del activo, para el ejercicio actual
 		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", trabajo.getActivo().getId().toString());
 		Filter filtroEjercicioActual = genericDao.createFilter(FilterType.EQUALS, "ejercicio", ejercicioActual);
-		List<VBusquedaActivosTrabajoPresupuesto> listaTrabajosActivo = (List<VBusquedaActivosTrabajoPresupuesto>) genericDao.getList(VBusquedaActivosTrabajoPresupuesto.class, filtroActivo, filtroEjercicioActual);
+		List<VBusquedaActivosTrabajoPresupuesto> listaTrabajosActivo = genericDao.getList(VBusquedaActivosTrabajoPresupuesto.class, filtroActivo, filtroEjercicioActual);
 
 		BigDecimal importeParticipacionTrabajo = new BigDecimal(0);
 		for (VBusquedaActivosTrabajoPresupuesto trabajoActivo : listaTrabajosActivo) {
@@ -2114,68 +2087,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		return importeExcesoPresupuesto.floatValue();
 	}
-	
-/*****************
- * Es un intento de obtener el exceso de presupuesto de trabajos sobre el activo, utilizando solo datos de la vista
- * No se puede utilizar ya que la vista cambia dinamicamente los datos antes y despues de avanzar las tareas de 
- * "Analisis Peticion" de los tramites.
- * Se vuelve a utilizar una version mejorada de getExcesoPresupuestoActivo, volviendo a realizar los calculos
- * en lugar de obtener el exceso por el Saldo disponible de la vista.
-	@Override
-	@BusinessOperation(overrides = "trabajoManager.getExcesoPresupuestoActivo")
-	public Float getExcesoPresupuestoActivo(Trabajo trabajo) {
-		
-		SimpleDateFormat dfAnyo = new SimpleDateFormat("yyyy");
-		String ejercicioActual = dfAnyo.format(new Date());
-
-		// De la vista de presupuestos Activo - Trabajo, tomamos el "Saldo disponible del activo" del
-		// registro que encontremos buscando por trabajo y ejercicio. Supuestamente solo debe haber 1 registro
-		// buscando por la clave idTrabajo pero se controla recuperando una lista por si hubiera un caso no controlado
-		// En la vista, "Saldo disponible" se refiere al activo no al trabajo, por tanto sirve el de cualquier registro
-		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "idTrabajo", trabajo.getId().toString());
-		Filter filtroEjercicio = genericDao.createFilter(FilterType.EQUALS, "ejercicio", ejercicioActual);
-		List<VBusquedaActivosTrabajoPresupuesto> listaTrabajosActivo = (List<VBusquedaActivosTrabajoPresupuesto>) genericDao.getList(VBusquedaActivosTrabajoPresupuesto.class, filtroActivo, filtroEjercicio);
-		VBusquedaActivosTrabajoPresupuesto trabajoActivo = null;
-		BigDecimal saldoDisponibleActivo = new BigDecimal(0);
-		BigDecimal importeParticipadoTrabajo = new BigDecimal(0);
-		BigDecimal importeResultante = new BigDecimal(0);
-		BigDecimal importeExcesoPresupuesto = new BigDecimal(0);
-
-		// Se toma el primer registro de la lista Trabajo-Activo-Presupuesto
-		// Son los datos de presupuesto del trabajo pasado por parametro para el ejercicio actual
-		if (listaTrabajosActivo.size() > 0)
-			trabajoActivo = listaTrabajosActivo.get(0);
-		
-		// De este se extrae el "saldo disponible del activo"
-		if (!Checks.esNulo(trabajoActivo) && !Checks.esNulo(trabajoActivo.getSaldoDisponible()))
-			saldoDisponibleActivo = new BigDecimal(trabajoActivo.getSaldoDisponible());
-		
-		// Este saldo disponible NO esta teniendo en cuenta el coste de este trabajo, participado sobre el activo
-		// Por tanto el coste participado se descuenta del total disponible
-		if (!Checks.esNulo(trabajoActivo) && !Checks.esNulo(trabajoActivo.getImporteParticipa()))
-			importeParticipadoTrabajo = new BigDecimal(trabajoActivo.getImporteParticipa());
-
-//
-//		// Se valora si el saldo Disponible del Activo es positivo o negativo
-//		// saldoDisponibleActivo negativo - Es el exceso de presupuesto que acumulan los trabajos sobre el saldo del activo (incluido actual), para este ejercicio
-//		// saldoDisponibleActivo positivo - Saldo restante del activo, despues de descontar trabajos (incluido actual), para este ejercicio
-//		if (saldoDisponibleActivo.compareTo(new BigDecimal(0)) <= 0)
-//			importeExcesoPresupuesto = saldoDisponibleActivo.negate();
-//		
-		
-		// Resultante = Disponible - coste participado (trabajo actual)
-		importeResultante = saldoDisponibleActivo.subtract(importeParticipadoTrabajo);
-		
-		// Se valora si el importe Resultante es positivo o negativo
-		// importeResultante negativo - Es el exceso de presupuesto que acumulan los trabajos sobre el saldo del activo (incluido actual), para este ejercicio
-		// importeResultante positivo - Saldo restante del activo, despues de descontar trabajos (incluido actual), para este ejercicio
-		if (importeResultante.compareTo(new BigDecimal(0)) <= 0)
-			importeExcesoPresupuesto = importeResultante.negate();
-	
-		// Este metodo solo retorna importe distinto de cero cuando hay exceso (importe de exceso)
-		return importeExcesoPresupuesto.floatValue();			
-	}
-*****************/
 
 	@Override
 	@BusinessOperation(overrides = "trabajoManager.existeTarifaTrabajo")
@@ -2220,7 +2131,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		DtoPresupuestoTrabajo dtoPresupuesto = new DtoPresupuestoTrabajo();
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
-		PresupuestoTrabajo presupuestoSeleccionado = (PresupuestoTrabajo) genericDao.get(PresupuestoTrabajo.class,
+		PresupuestoTrabajo presupuestoSeleccionado = genericDao.get(PresupuestoTrabajo.class,
 				filtro);
 
 		try {
@@ -2265,9 +2176,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		return dtoPresupuesto;
@@ -2325,14 +2236,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Trabajo trabajo = findOne(idTrabajo);
 		Activo activo = trabajo.getActivo();
 		if(!Checks.esNulo(activo)){
-			if(!Checks.esNulo(activo.getCartera()) /*&& !Checks.esNulo(activo.getProvincia())*/) {
+			if(!Checks.esNulo(activo.getCartera())) {
 			
 				Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigoCartera", activo.getCartera().getCodigo());
-				//Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "codigoProvincia", activo.getProvincia());
 				Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "baja", 0);
 				Order orden = new Order(OrderType.ASC,"nombreComercial");
 				
-				return (List<VProveedores>) genericDao.getListOrdered(VProveedores.class, orden, filtro1, filtro3/*, filtro2*/);
+				return genericDao.getListOrdered(VProveedores.class, orden, filtro1, filtro3);
 			}
 		}
 		
@@ -2415,7 +2325,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}else{
 			
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", idProveedor);
-			//Order orden = new Order(OrderType.ASC,"nombre");
 			listaProveedorContacto = genericDao.getList(ActivoProveedorContacto.class, filtro1);
 						
 			for (ActivoProveedorContacto source: listaProveedorContacto ) {
@@ -2472,7 +2381,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				dtoRecargo.setIdRecargo(String.valueOf(recargo.getId()));
 				beanUtilNotNull.copyProperties(dtoRecargo, recargo);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 
 			dtoRecargo.setTipoCalculoCodigo(recargo.getTipoCalculo().getCodigo());
@@ -2498,11 +2407,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			recargo.setTrabajo(trabajo);
 
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", recargoDto.getTipoCalculoCodigo());
-			DDTipoCalculo tipoCalculo = (DDTipoCalculo) genericDao.get(DDTipoCalculo.class, filtro);
+			DDTipoCalculo tipoCalculo = genericDao.get(DDTipoCalculo.class, filtro);
 			recargo.setTipoCalculo(tipoCalculo);
 
 			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", recargoDto.getTipoRecargoCodigo());
-			DDTipoRecargoProveedor tipoRecargo = (DDTipoRecargoProveedor) genericDao.get(DDTipoRecargoProveedor.class,
+			DDTipoRecargoProveedor tipoRecargo = genericDao.get(DDTipoRecargoProveedor.class,
 					filtro);
 			recargo.setTipoRecargo(tipoRecargo);
 			beanUtilNotNull.copyProperties(recargo, recargoDto);
@@ -2513,7 +2422,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			actualizarImporteTotalTrabajo(idTrabajo);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return true;
 	}
@@ -2531,13 +2440,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 			if (!Checks.esNulo(recargoDto.getTipoCalculoCodigo())) {
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", recargoDto.getTipoCalculoCodigo());
-				DDTipoCalculo tipoCalculo = (DDTipoCalculo) genericDao.get(DDTipoCalculo.class, filtro);
+				DDTipoCalculo tipoCalculo = genericDao.get(DDTipoCalculo.class, filtro);
 				recargo.setTipoCalculo(tipoCalculo);
 			}
 
 			if (!Checks.esNulo(recargoDto.getTipoRecargoCodigo())) {
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", recargoDto.getTipoRecargoCodigo());
-				DDTipoRecargoProveedor tipoRecargo = (DDTipoRecargoProveedor) genericDao
+				DDTipoRecargoProveedor tipoRecargo = genericDao
 						.get(DDTipoRecargoProveedor.class, filtro);
 				recargo.setTipoRecargo(tipoRecargo);
 			}
@@ -2546,9 +2455,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			actualizarImporteTotalTrabajo(recargo.getTrabajo().getId());
 
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		return true;
@@ -2568,7 +2477,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			actualizarImporteTotalTrabajo(idTrabajo);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			return false;
 		}
 
@@ -2590,7 +2499,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				beanUtilNotNull.copyProperties(dtoProvisionSuplido, provisionSuplido);
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 
 			dtoProvisionSuplido.setTipoCodigo(provisionSuplido.getTipoAdelanto().getCodigo());
@@ -2614,7 +2523,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			provisionSuplido.setTrabajo(trabajo);
 
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", provisionSuplidoDto.getTipoCodigo());
-			DDTipoAdelanto tipoAdelanto = (DDTipoAdelanto) genericDao.get(DDTipoAdelanto.class, filtro);
+			DDTipoAdelanto tipoAdelanto = genericDao.get(DDTipoAdelanto.class, filtro);
 			provisionSuplido.setTipoAdelanto(tipoAdelanto);
 
 			beanUtilNotNull.copyProperties(provisionSuplido, provisionSuplidoDto);
@@ -2624,7 +2533,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			actualizarImporteTotalTrabajo(idTrabajo);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return true;
 	}
@@ -2643,16 +2552,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 			if (!Checks.esNulo(provisionSuplidoDto.getTipoCodigo())) {
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", provisionSuplidoDto.getTipoCodigo());
-				DDTipoAdelanto tipoAdelanto = (DDTipoAdelanto) genericDao.get(DDTipoAdelanto.class, filtro);
+				DDTipoAdelanto tipoAdelanto = genericDao.get(DDTipoAdelanto.class, filtro);
 				provisionSuplido.setTipoAdelanto(tipoAdelanto);
 			}
 
 			genericDao.save(TrabajoProvisionSuplido.class, provisionSuplido);
 
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		return true;
@@ -2665,7 +2574,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			genericDao.deleteById(TrabajoProvisionSuplido.class, id);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			return false;
 		}
 
@@ -2679,9 +2588,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Filter codigoDocumentoFilter = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.codigo",
 				codigoDocumento);
 
-		// AdjuntoTrabajo adjuntoTrabajo = (AdjuntoTrabajo)
-		// genericDao.get(AdjuntoTrabajo.class, idTrabajoFilter,
-		// codigoDocumentoFilter);
 		List<AdjuntoTrabajo> adjuntosTrabajo = genericDao.getList(AdjuntoTrabajo.class, idTrabajoFilter,
 				codigoDocumentoFilter);
 
@@ -2826,7 +2732,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error(ex.getMessage());
 		}
 
 		return existe;
@@ -2851,14 +2757,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			} else {
 
 				if (!Checks.esNulo(trabajoDto.getIdActivoHaya())) {
-					Activo activo = (Activo) genericDao.get(Activo.class,
+					Activo activo = genericDao.get(Activo.class,
 							genericDao.createFilter(FilterType.EQUALS, "numActivo", trabajoDto.getIdActivoHaya()));
 					if (Checks.esNulo(activo)) {
 						hashErrores.put("idActivoHaya", RestApi.REST_MSG_UNKNOWN_KEY);
 					}
 				}
 				if (!Checks.esNulo(trabajoDto.getCodTipoTrabajo())) {
-					DDTipoTrabajo tipotbj = (DDTipoTrabajo) genericDao.get(DDTipoTrabajo.class,
+					DDTipoTrabajo tipotbj = genericDao.get(DDTipoTrabajo.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", trabajoDto.getCodTipoTrabajo()));
 					if (Checks.esNulo(tipotbj)) {
 						hashErrores.put("codTipoTrabajo", RestApi.REST_MSG_UNKNOWN_KEY);
@@ -2868,7 +2774,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					}
 				}
 				if (!Checks.esNulo(trabajoDto.getCodSubtipoTrabajo())) {
-					DDSubtipoTrabajo subtipotbj = (DDSubtipoTrabajo) genericDao.get(DDSubtipoTrabajo.class,
+					DDSubtipoTrabajo subtipotbj =  genericDao.get(DDSubtipoTrabajo.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", trabajoDto.getCodSubtipoTrabajo()));
 					if (Checks.esNulo(subtipotbj)) {
 						hashErrores.put("codSubtipoTrabajo", RestApi.REST_MSG_UNKNOWN_KEY);
@@ -2878,25 +2784,18 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					}
 				}
 				if (!Checks.esNulo(trabajoDto.getIdUsuarioRemAccion())) {
-					Usuario user = (Usuario) genericDao.get(Usuario.class,
+					Usuario user = genericDao.get(Usuario.class,
 							genericDao.createFilter(FilterType.EQUALS, "id", trabajoDto.getIdUsuarioRemAccion()));
 					if (Checks.esNulo(user)) {
 						hashErrores.put("idUsuarioRem", RestApi.REST_MSG_UNKNOWN_KEY);
 					}
 				}
 				if (!Checks.esNulo(trabajoDto.getIdProveedorRem())) {
-					ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao
+					ActivoProveedor apiResp = genericDao.get(ActivoProveedor.class, genericDao
 							.createFilter(FilterType.EQUALS, "codigoProveedorRem", trabajoDto.getIdProveedorRem()));
 					if (Checks.esNulo(apiResp)) {
 						hashErrores.put("idProveedorRem", RestApi.REST_MSG_UNKNOWN_KEY);
 					} 
-					/*else {
-						//el proveedor tiene que ser custodio
-						if ((apiResp.getCustodio() != null && apiResp.getCustodio() != new Integer(1))
-								|| apiResp.getCustodio() == null) {
-							hashErrores.put("idProveedorRem", RestApi.REST_MSG_UNKNOWN_KEY);
-						}
-					}*/
 				}
 				
 				if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequirienteEsExacta())
@@ -2939,7 +2838,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					dtoFichaTrabajo.setIdTrabajoWebcom(trabajoDto.getIdTrabajoWebcom());
 				}
 				if (!Checks.esNulo(trabajoDto.getIdActivoHaya())) {
-					Activo activo = (Activo) genericDao.get(Activo.class,
+					Activo activo = genericDao.get(Activo.class,
 							genericDao.createFilter(FilterType.EQUALS, "numActivo", trabajoDto.getIdActivoHaya()));
 					if (!Checks.esNulo(activo)) {
 						dtoFichaTrabajo.setIdActivo(activo.getId());
@@ -2982,7 +2881,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					dtoFichaTrabajo.setDescripcion(descripcion);
 				}
 				if (!Checks.esNulo(trabajoDto.getIdProveedorRem())) {
-					ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao
+					ActivoProveedor apiResp = genericDao.get(ActivoProveedor.class, genericDao
 							.createFilter(FilterType.EQUALS, "codigoProveedorRem", trabajoDto.getIdProveedorRem()));
 					if (!Checks.esNulo(apiResp)) {
 						dtoFichaTrabajo.setIdMediador(apiResp.getId());
@@ -3032,7 +2931,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		return dtoFichaTrabajo;
@@ -3259,7 +3158,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -3301,10 +3200,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		
 		return supervisorGestor;
-		
-		
 	}
 
-	
-	
 }

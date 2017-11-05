@@ -14,6 +14,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -3858,14 +3859,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Usuario usuarioSupervisorReserva = null;
 		Usuario usuarioGestorMinuta = null;
 		Usuario usuarioSupervisorMinuta = null;
-		
+		ActivoAgrupacion agrupacion= null;
 		Activo activo= null;
 		if(!Checks.esNulo(oferta)){
 			/*Antes se diferenciaba entre agrupacion lote comercial y lote restringido
 			 * Comercial: Asignaba los gestores que hubiese en la ficha del activo
 			 * Restringida: Llama al procedimiento de balanceo (como si fuera un activo individual
 			 * Ahora se quieren todos iguales, la unica diferencia es que el lote comercial no tiene activo principal y el resto si (restringida y activo unico)*/
-			ActivoAgrupacion agrupacion = oferta.getAgrupacion();
+			agrupacion = oferta.getAgrupacion();
 			if(!Checks.esNulo(agrupacion)){				
 				if(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupacion.getTipoAgrupacion().getCodigo())){
 					if(!Checks.estaVacio(oferta.getActivosOferta())){
@@ -3910,18 +3911,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 			}
 		}
-		
-		if(!Checks.esNulo(usuarioGestorFormalizacion))
-			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION, usuarioGestorFormalizacion.getUsername(), dto);
-		else
-			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION, "GESTFORM", dto);
-		
-		
-		this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION, "SUPFORM",dto);
-		
-		if(!Checks.esNulo(usuarioGestoriaFormalizacion))
-			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION, usuarioGestoriaFormalizacion.getUsername(), dto);
-		
+		//HREOS-3024
+		if(!Checks.esNulo(agrupacion) && BooleanUtils.toBoolean(agrupacion.getIsFormalizacion())) {
+			if(!Checks.esNulo(usuarioGestorFormalizacion))
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION, usuarioGestorFormalizacion.getUsername(), dto);
+			else
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION, "GESTFORM", dto);
+			
+			
+			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION, "SUPFORM",dto);
+			
+			if(!Checks.esNulo(usuarioGestoriaFormalizacion))
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION, usuarioGestoriaFormalizacion.getUsername(), dto);
+		}
 		if(!Checks.esNulo(usuarioGestorComercial))
 			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_COMERCIAL, usuarioGestorComercial.getUsername(), dto);
 		

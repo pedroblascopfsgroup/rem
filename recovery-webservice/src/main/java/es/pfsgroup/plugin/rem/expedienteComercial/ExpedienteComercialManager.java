@@ -3318,8 +3318,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		numActivoEspecial = Checks.esNulo(activo.getNumActivoUvem()) ? 0 : activo.getNumActivoUvem().intValue();
-		importe = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta().longValue()
-				: oferta.getImporteContraOferta().longValue();
+		importe = Checks.esNulo(oferta.getImporteContraOferta()) ? Double.valueOf(oferta.getImporteOferta()*100).longValue()
+				: Double.valueOf(oferta.getImporteContraOferta()*100).longValue();
 
 		if (!Checks.esNulo(expediente.getCondicionante())
 				&& !Checks.esNulo(expediente.getCondicionante().getTipoImpuesto())) {
@@ -3394,7 +3394,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			InstanciaDecisionDataDto instData = new InstanciaDecisionDataDto();
 			// ImportePorActivo
-			instData.setImporteConSigno(importeXActivo.longValue());
+			instData.setImporteConSigno(Double.valueOf(importeXActivo*100).longValue());
 			// NumActivoUvem
 			instData.setIdentificadorActivoEspecial(Integer.valueOf(activo.getNumActivoUvem().toString()));
 
@@ -5508,6 +5508,32 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		return false;
-	}	
+	}
+	
+	@Override
+	public void enviarTitularesUvem(Long idExpediente) throws Exception {
+		Long porcentajeImpuesto = null;
+		try {
+
+			ExpedienteComercial expediente = findOne(idExpediente);
+			if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getCondicionante())) {
+				if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
+					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
+				}
+			}
+			InstanciaDecisionDto instancia = expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto,null);
+			
+			instancia.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_TITULARES);
+			logger.info("------------ LLAMADA WS MOD3(TITULARES) -----------------");
+			uvemManagerApi.modificarInstanciaDecisionTres(instancia);
+
+		} catch (JsonViewerException jve) {
+			throw jve;
+		} catch (Exception e) {
+			logger.error("error en expedienteComercialManager", e);
+			throw e;
+		}
+
+	}
 
 }

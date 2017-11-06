@@ -1195,7 +1195,6 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPAJC34_INS.setFechaSolicitudPrestamofesop2(fecha2);
 
 			servicioGMPAJC34_INS.setAlias(ALIAS);
-			servicioGMPAJC34_INS.execute();
 			executeService(servicioGMPAJC34_INS);
 
 			importe = servicioGMPAJC34_INS.getImporteMonetarioConcedido();

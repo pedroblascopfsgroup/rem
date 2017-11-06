@@ -92,6 +92,7 @@ public class ResolucionComiteController {
 		String cuerpo = "";
 		Long unidadGestion = null;
 		ActivoTramite tramite = null;
+		String mensajeDevolucion="";
 		
 		try {
 
@@ -148,12 +149,17 @@ public class ResolucionComiteController {
 						usu = gestorActivoApi.userFromTarea("T013_ResolucionComite", tramite.getId());
 						resolucionComiteDto.setCodigoTipoResolucion(DDTipoResolucion.CODIGO_TIPO_RESOLUCION);
 					}
-					
+
 					resol = resolucionComiteApi.saveOrUpdateResolucionComite(resolucionComiteDto);
 					if(!Checks.esNulo(resolucionComiteDto.getDevolucion()) && resolucionComiteDto.getDevolucion().equals("S")){
 						expedienteComercialApi.updateEstadoDevolucionReserva(eco, DDEstadoDevolucion.ESTADO_DEVUELTA);
+						usu= gestorActivoApi.getGestorComercialActual(ofr.getActivoPrincipal(), "GCOM");
+						mensajeDevolucion= "El comité sancionador de bankia ha resuelto la resolución "+resol.getEstadoResolucion().getDescripcion()+" devuelta con el importe de la reserva del expediente "+eco.getNumExpediente()+".\n";
 					}else if(!Checks.esNulo(resolucionComiteDto.getDevolucion()) && resolucionComiteDto.getDevolucion().equals("N")){
 						expedienteComercialApi.updateEstadoDevolucionReserva(eco, DDEstadoDevolucion.ESTADO_NO_PROCEDE);
+						usu= gestorActivoApi.getGestorComercialActual(ofr.getActivoPrincipal(), "GCOM");
+						mensajeDevolucion= "El comité sancionador de bankia ha resuelto la resolución "+resol.getEstadoResolucion().getDescripcion()+" retenida con el importe de la reserva del expediente "+eco.getNumExpediente()+".\n";
+
 					}
 										
 					//Envío correo/notificación
@@ -185,15 +191,20 @@ public class ResolucionComiteController {
 						   !Checks.esNulo(resol.getEstadoResolucion().getDescripcion())){
 							cuerpo +=  "Resolución: " + resol.getEstadoResolucion().getDescripcion() + ".\n";
 						}
-						if(!Checks.esNulo(resol.getMotivoDenegacion()) && 
-						   !Checks.esNulo(resol.getMotivoDenegacion().getDescripcion())){
-							cuerpo +=  "Motivo denegación: " + resol.getMotivoDenegacion().getDescripcion() + ".\n";
+						if(!Checks.esNulo(resolucionComiteDto.getDevolucion())){
+							cuerpo += mensajeDevolucion;
 						}
-						if(!Checks.esNulo(resol.getFechaAnulacion())){
-							cuerpo +=  "Fecha anulación: " + resol.getFechaAnulacion() + ".\n";
-						}
-						if(!Checks.esNulo(resol.getImporteContraoferta())){
-							cuerpo +=  "Importe contraoferta: " + resol.getImporteContraoferta() + ".\n";
+						else{
+							if(!Checks.esNulo(resol.getMotivoDenegacion()) && 
+							   !Checks.esNulo(resol.getMotivoDenegacion().getDescripcion())){
+								cuerpo +=  "Motivo denegación: " + resol.getMotivoDenegacion().getDescripcion() + ".\n";
+							}
+							if(!Checks.esNulo(resol.getFechaAnulacion())){
+								cuerpo +=  "Fecha anulación: " + resol.getFechaAnulacion() + ".\n";
+							}
+							if(!Checks.esNulo(resol.getImporteContraoferta())){
+								cuerpo +=  "Importe contraoferta: " + resol.getImporteContraoferta() + ".\n";
+							}
 						}
 						
 						cuerpo += ResolucionComiteApi.NOTIF_RESOL_COMITE_BODY_ENDMSG;

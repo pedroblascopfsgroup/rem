@@ -127,6 +127,11 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 											}
 										}
 									}
+									
+									if(Checks.esNulo(usu) && !Checks.esNulo(resolucionComiteDto.getDevolucion())){
+										usu = gestorActivoApi.getGestorComercialActual(ofr.getActivoPrincipal(), "GCOM");
+									}
+									
 									if(Checks.esNulo(usu)){
 										hashErrores.put("ofertaHRE", "No se ha podido obtener el usuario al que se enviará la notificación.");
 										

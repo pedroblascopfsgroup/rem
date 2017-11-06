@@ -37,6 +37,7 @@ DECLARE
     S_TRA NUMBER(16) := 0; -- Vble. para almacenar la secuencia generada para el TRA_ID
     S_TAR NUMBER(16) := 0; -- Vble. para almacenar la secuencia generada para el TAR_ID
     S_TEX NUMBER(16) := 0; -- Vble. para almacenar la secuencia generada para el TEX_ID
+    PL_OUTPUT VARCHAR2(32000 CHAR) := NULL;
     CURSOR CURSOR_OFERTAS IS
     SELECT DISTINCT OFR_ID  FROM REM01.MIG2_TRA_TRAMITES_OFERTAS TRA;
     V_TABLA_TBJ VARCHAR2(30 CHAR) := 'ACT_TBJ_TRABAJO';
@@ -555,6 +556,9 @@ BEGIN
     
     DBMS_OUTPUT.PUT_LINE('');
     DBMS_OUTPUT.PUT_LINE('[FIN] Reposicionamiento de tramites de ofertas.');
+
+    REM01.ALTA_BPM_INSTANCES(V_USUARIO,PL_OUTPUT);
+    DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
     
     COMMIT;
 

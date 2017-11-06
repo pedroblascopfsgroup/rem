@@ -153,10 +153,12 @@ public class ResolucionComiteController {
 					resol = resolucionComiteApi.saveOrUpdateResolucionComite(resolucionComiteDto);
 					if(!Checks.esNulo(resolucionComiteDto.getDevolucion()) && resolucionComiteDto.getDevolucion().equals("S")){
 						expedienteComercialApi.updateEstadoDevolucionReserva(eco, DDEstadoDevolucion.ESTADO_DEVUELTA);
+						expedienteComercialApi.updateEstadosResolucionDevolucion(eco, resolucionComiteDto);
 						usu= gestorActivoApi.getGestorComercialActual(ofr.getActivoPrincipal(), "GCOM");
 						mensajeDevolucion= "El comité sancionador de bankia ha resuelto la resolución "+resol.getEstadoResolucion().getDescripcion()+" devuelta con el importe de la reserva del expediente "+eco.getNumExpediente()+".\n";
 					}else if(!Checks.esNulo(resolucionComiteDto.getDevolucion()) && resolucionComiteDto.getDevolucion().equals("N")){
 						expedienteComercialApi.updateEstadoDevolucionReserva(eco, DDEstadoDevolucion.ESTADO_NO_PROCEDE);
+						expedienteComercialApi.updateEstadosResolucionNoDevolucion(eco, resolucionComiteDto);
 						usu= gestorActivoApi.getGestorComercialActual(ofr.getActivoPrincipal(), "GCOM");
 						mensajeDevolucion= "El comité sancionador de bankia ha resuelto la resolución "+resol.getEstadoResolucion().getDescripcion()+" retenida con el importe de la reserva del expediente "+eco.getNumExpediente()+".\n";
 

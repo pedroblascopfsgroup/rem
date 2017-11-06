@@ -817,4 +817,24 @@ public class GastosProveedorController extends ParadiseJsonController {
 		String formateado = "<div class='div-aviso'>" + descripcion + "</div>";
 		return formateado;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListGastosProvision(DtoGastosFilter dtoGastosFilter, ModelMap model) {
+		try {
+
+			DtoPage page = gastoProveedorApi.getListGastosProvision(dtoGastosFilter);
+
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("exception", e.getMessage());
+		}
+		
+		return createModelAndViewJson(model);
+	}
 }

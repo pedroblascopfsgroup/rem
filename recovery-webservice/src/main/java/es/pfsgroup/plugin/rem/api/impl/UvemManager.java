@@ -945,7 +945,7 @@ public class UvemManager implements UvemManagerApi {
 				if (instanciaData.getTipoDeImpuesto() == InstanciaDecisionDataDto.TIPO_IMPUESTO_ITP
 						|| instanciaData.getTipoDeImpuesto() == InstanciaDecisionDataDto.TIPO_IMPUESTO_IGIC
 						|| instanciaData.getTipoDeImpuesto() == InstanciaDecisionDataDto.TIPO_IMPUESTO_IPSI) {
-					// struct.setIndicadorTratamientoImpuestobitrim(vacio);
+					 struct.setIndicadorTratamientoImpuestobitrim(' ');
 				} else if (instanciaData.getTipoDeImpuesto() == InstanciaDecisionDataDto.TIPO_IMPUESTO_IVA) {
 
 					if (Checks.esNulo(instanciaData.getRenunciaExencion())
@@ -1047,7 +1047,7 @@ public class UvemManager implements UvemManagerApi {
 			// Importe de la reserva
 			ImporteMonetario importeMonetarioReserva = new ImporteMonetario();
 			if (instanciaDecisionDto.getImporteReserva() != null) {
-				importeMonetarioReserva.setImporteConSigno(instanciaDecisionDto.getImporteReserva().longValue());
+				importeMonetarioReserva.setImporteConSigno(instanciaDecisionDto.getImporteReserva().longValue()*100);
 			} else {
 				importeMonetarioReserva.setImporteConSigno(new Long(0));
 			}
@@ -1058,12 +1058,12 @@ public class UvemManager implements UvemManagerApi {
 			importeMonetarioReserva.setNumeroDecimalesImporte('-');
 
 			servicioGMPDJB13_INS.setImporteMonetarioDeLaReservaBISA(importeMonetarioReserva);
-			if (instanciaDecisionDto.getImporteReserva() == null
-					|| instanciaDecisionDto.getImporteReserva().compareTo(new Double(0)) == 0) {
+			if (instanciaDecisionDto.getImporteReserva() == null || instanciaDecisionDto.getImporteReserva().compareTo(new Double(0)) == 0 
+					|| Checks.esNulo(instanciaListData.get(0).getPorcentajeImpuesto()) || instanciaListData.get(0).getPorcentajeImpuesto() == 0) {
 				servicioGMPDJB13_INS.setIndicadorCobroImpuestosReservabicirv(' ');
 			} else {
 				if (instanciaDecisionDto.getImporteReserva().compareTo(Double.valueOf(0)) > 0
-						&& instanciaListData.get(0).getPorcentajeImpuesto() > 0) {
+						&& instanciaListData.get(0).getPorcentajeImpuesto() > 0 && instanciaDecisionDto.getImpuestosReserva()) {
 					servicioGMPDJB13_INS.setIndicadorCobroImpuestosReservabicirv('S');
 				} else {
 					servicioGMPDJB13_INS.setIndicadorCobroImpuestosReservabicirv('N');
@@ -1243,6 +1243,7 @@ public class UvemManager implements UvemManagerApi {
 			cabeceraFuncional.setCOCDAQ("0551");
 			cabeceraFuncional.setCOSBAQ("00");
 			cabeceraFuncional.setNUPUAQ("00");
+			cabeceraFuncional.setIDDSAQ(""); 
 			cabeceraTecnica.setCLORAQ("71");
 
 			// COPACE
@@ -1268,34 +1269,36 @@ public class UvemManager implements UvemManagerApi {
 			// COUSAE
 			servicioGMPTOE83_INS.setCodigoDeUsuariocousae("USRHAYA");
 			// COSEM1
-			if (codigoServicioModificacion.equals(CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA)) {
+			if (CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA.equals(codigoServicioModificacion)) {
 				servicioGMPTOE83_INS.setCodigoServicioModificacionSolicitcosem1('4');
 			} else {
 				servicioGMPTOE83_INS.setCodigoServicioModificacionSolicitcosem1('5');
 			}
 
 			// LCOMOA
-			if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.COMPRADOR_NO_INTERESADO)) {
-				servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("1"));
-			} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.DECISION_AREA)) {
-				servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("2"));
-			} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.DECISION_HAYA)) {
-				servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("9"));
-			} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.NO_CUMPLEN_CONDICIONANTES)) {
-				servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("5"));
-			} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.NO_DESEAN_ESCRITURAR)) {
-				servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("6"));
-			} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.NO_DISPONE_DINERO_FINANCIACION)) {
-				servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("3"));
-			} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.CIRCUSTANCIAS_DISTINTAS_PACTADAS)) {
-				servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("4"));
-			} else {
-				throw new Exception("motivo anulacion no soportado");
+			if(!Checks.esNulo(motivoAnulacionReserva)){
+				if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.COMPRADOR_NO_INTERESADO)) {
+					servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("1"));
+				} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.DECISION_AREA)) {
+					servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("2"));
+				} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.DECISION_HAYA)) {
+					servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("9"));
+				} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.NO_CUMPLEN_CONDICIONANTES)) {
+					servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("5"));
+				} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.NO_DESEAN_ESCRITURAR)) {
+					servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("6"));
+				} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.NO_DISPONE_DINERO_FINANCIACION)) {
+					servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("3"));
+				} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.CIRCUSTANCIAS_DISTINTAS_PACTADAS)) {
+					servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("4"));
+				} else {
+					throw new Exception("motivo anulacion no soportado");
+				}
 			}
 			// COOFHX
 			servicioGMPTOE83_INS.setCodigoDeOfertaHayacoofhx(StringUtils.leftPad(codigoDeOfertaHaya, 16, "0"));
 			// BINDRE
-			if (indicadorDevolucionReserva.equals(INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA)) {
+			if (INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA.equals(indicadorDevolucionReserva)) {
 				servicioGMPTOE83_INS.setIndicadorDevolucionReservabindre('s');
 			} else {
 				servicioGMPTOE83_INS.setIndicadorDevolucionReservabindre('N');
@@ -1382,13 +1385,18 @@ public class UvemManager implements UvemManagerApi {
 			cabeceraFuncional.setCOCDAQ("0551");
 			cabeceraFuncional.setCOSBAQ("00");
 			cabeceraFuncional.setNUPUAQ("00");
+			cabeceraFuncional.setIDDSAQ ("BAJA");
 			cabeceraTecnica.setCLORAQ("71");
 
 			cabeceraAplicacion.setCodigoObjetoAccesocopace("PAHY0150");
+			servicioGMPAJC29_INS.setCOPACE("PAHY0150");
+			servicioGMPAJC29_INS.setBISEGU(' ');
+			servicioGMPAJC29_INS.setLIRESE("");
+			servicioGMPAJC29_INS.setRCSLON(0);
 
 			cabeceraAplicacion.setCentroGestorUsuarioSsacocgus(COCGUS);
 			
-			servicioGMPAJC29_INS.setCOOFHX(codigoDeOfertaHaya);
+			servicioGMPAJC29_INS.setCOOFHX(StringUtils.leftPad(codigoDeOfertaHaya, 16, "0"));
 
 			if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.COMPRADOR_NO_INTERESADO_OPERACION)) {
 				servicioGMPAJC29_INS.setCOSANOW(new Short("100"));

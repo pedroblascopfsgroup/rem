@@ -543,6 +543,10 @@
             	def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.checkEsMultiactivo(tareaExterna);
             }
+            def checkCompradoresTienenNumeroUrsus = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkCompradoresTienenNumeroUrsus(idTramite);
+            }
   			 ]]></value>
   		</list>
   	</property>

@@ -55,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
@@ -358,7 +359,32 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             		if(item.getNombre().equals("importeContraoferta")){
             			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
             			if(!Checks.esNulo(ofertaAceptada)){
-            				item.setValue(ofertaAceptada.getImporteContraOferta().toString());
+            				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+            				if(!Checks.esNulo(expediente)){
+            					ResolucionComiteBankiaDto resolDto = new ResolucionComiteBankiaDto();
+            					resolDto.setExpediente(expediente);
+            					Filter filtroTipoResolucion = null;
+            					if(tareaExterna.getTareaProcedimiento().getCodigo().equals("T013_RespuestaOfertante")) {
+            						filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RESOLUCION);
+            					}else {
+            						filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RATIFICACION);
+            					}
+            					DDTipoResolucion tipoResolucion = genericDao.get(DDTipoResolucion.class, filtroTipoResolucion);
+            					
+            					resolDto.setTipoResolucion(tipoResolucion);
+            					
+            					try{
+            						List<ResolucionComiteBankia> listaResoluciones = resolucionComiteApi.getResolucionesComiteByExpedienteTipoRes(resolDto);
+            						
+            						if(!Checks.estaVacio(listaResoluciones)){
+            							ResolucionComiteBankia resolucionComite = listaResoluciones.get(0);
+            							if(!Checks.esNulo(resolucionComite.getImporteContraoferta()))
+            								item.setValue(resolucionComite.getImporteContraoferta().toString());
+            						}
+            					} catch (Exception e){
+            						e.printStackTrace();
+            					}
+            				}
             			}
             		}
             	}
@@ -518,7 +544,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             	}
             	if(item.getType().equals(TIPO_COMBOBOX_INICIAL_ED))
             	{
-            		if(item.getNombre().equals("comboResolucion"))
+            		if(item.getNombre().equals("comboResolucion") || item.getNombre().equals("comboRatificacion"))
             		{
             			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
             			if(!Checks.esNulo(ofertaAceptada)){
@@ -528,8 +554,12 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             					
             					ResolucionComiteBankiaDto resolDto = new ResolucionComiteBankiaDto();
             					resolDto.setExpediente(expediente);
-            					
-            					Filter filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RESOLUCION);
+            					Filter filtroTipoResolucion;
+            					if(item.getNombre().equals("comboResolucion")) {
+            						filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RESOLUCION);
+            					}else {
+            						filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RATIFICACION);
+            					}
             					DDTipoResolucion tipoResolucion = genericDao.get(DDTipoResolucion.class, filtroTipoResolucion);
             					
             					resolDto.setTipoResolucion(tipoResolucion);
@@ -551,38 +581,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             				}
             			}
             		}   
-            		if(item.getNombre().equals("comboRatificacion"))
-            		{
-            			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
-            			if(!Checks.esNulo(ofertaAceptada)){
-            				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
-            				if(!Checks.esNulo(expediente)){
-            					//Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId());
-            					
-            					ResolucionComiteBankiaDto resolDto = new ResolucionComiteBankiaDto();
-            					resolDto.setExpediente(expediente);
-            					
-            					Filter filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RATIFICACION);
-            					DDTipoResolucion tipoResolucion = genericDao.get(DDTipoResolucion.class, filtroTipoResolucion);
-            					
-            					resolDto.setTipoResolucion(tipoResolucion);
-								try {
-									List<ResolucionComiteBankia> listaResoluciones = resolucionComiteApi.getResolucionesComiteByExpedienteTipoRes(resolDto);
-									
-									ResolucionComiteBankia resolucionComite = listaResoluciones.get(0);
-									if(!Checks.esNulo(resolucionComite)){
-										item.setValue(this.getMapaEREtoSiNo().get(resolucionComite.getEstadoResolucion().getCodigo()));
-									}
-								} catch (Exception e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-            					
-            					//ResolucionComiteBankia resolucion = genericDao.get(ResolucionComiteBankia.class, filtroExpediente);
-
-            				}
-            			}
-            		}
+            		
 	        		if(item.getNombre().equals("comiteSuperior"))
 	        		{
 	        			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);

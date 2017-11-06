@@ -524,6 +524,31 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										readOnly	: true
 									}
 									]
+							},
+							// Bloque administración
+							{    
+								xtype:'fieldsettable',
+								defaultType: 'textfieldbase',
+								title: HreRem.i18n('title.perimetros.administracion'),
+								reference: 'bloqueadministracion',
+								bind:{hidden: '{!activo.isCarteraBankia}'},
+								border: true,
+								colapsible: true,
+								colspan: 3,
+								items :
+									[
+										{
+											xtype:'textfieldbase',
+											fieldLabel: HreRem.i18n('fieldlabel.perimetros.administracion.num.inmovilizado.bankia'),
+											maxLength: 9,
+											maskRe: /[0-9]/,
+											readOnly: true,
+											bind: {
+												hidden: '{!activo.isCarteraBankia}',
+												value: '{activo.numInmovilizadoBankia}'
+											}
+										}
+									]
 							}
 							
 						]
@@ -592,6 +617,15 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								bind: {
 									store: '{comboEstadoExpIncorrienteBancario}',
 									value: '{activo.estadoExpIncorrienteCodigo}'
+								}
+							},
+							{
+								xtype:'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.bancario.entrada.activo.bankia.coenae'),
+								bind: {
+									store: '{comboEntradaActivoBankia}',
+									hidden: '{!activo.isCarteraBankia}',
+									value: '{activo.entradaActivoBankiaCodigo}'
 								}
 							}
 						]

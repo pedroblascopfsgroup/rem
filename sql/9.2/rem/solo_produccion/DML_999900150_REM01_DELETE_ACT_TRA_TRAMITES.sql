@@ -48,7 +48,8 @@ BEGIN
 
 			DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando ACT_TRA_TRAMITE');
 
-		    V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' TRA
+		    V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' TRA
+				SET tra.borrado = 1, tra.fechaborrar = sysdate, tra.usuarioborrar = ''HREOS-2922''
 				WHERE TRA.TRA_ID IN (
 						  SELECT TRA1.TRA_ID 
 						  FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' TRA1

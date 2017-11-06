@@ -856,6 +856,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					throw new JsonViewerException("Este activo no existe");
 				} else {
 
+					if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo()) && Checks.esNulo(activo.getNumInmovilizadoBnk())) {
+						throw new JsonViewerException("El activo carece de nº inmovilizado Bankia");
+					}
+
 					Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
 					gasto = genericDao.get(GastoProveedor.class, filtroGasto);
 
@@ -2215,5 +2219,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		} else {
 			return null;
 		}
+	}
+	
+	@Override
+	public DtoPage getListGastosProvision(DtoGastosFilter dtoGastosFilter) {
+
+		return gastoDao.getListGastosProvision(dtoGastosFilter);
 	}
 }

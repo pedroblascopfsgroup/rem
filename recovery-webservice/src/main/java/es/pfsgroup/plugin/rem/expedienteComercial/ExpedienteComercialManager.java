@@ -466,6 +466,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getComiteSancionadorCodigo());
 			DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filtro);
 			expedienteComercial.setComiteSancion(comiteSancion);
+			expedienteComercial.setComiteSuperior(comiteSancion);
 		}
 
 		if (!Checks.esNulo(dto.getNumVisita())) {
@@ -3317,8 +3318,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		numActivoEspecial = Checks.esNulo(activo.getNumActivoUvem()) ? 0 : activo.getNumActivoUvem().intValue();
-		importe = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta().longValue()
-				: oferta.getImporteContraOferta().longValue();
+		importe = Checks.esNulo(oferta.getImporteContraOferta()) ? Double.valueOf(oferta.getImporteOferta()*100).longValue()
+				: Double.valueOf(oferta.getImporteContraOferta()*100).longValue();
 
 		if (!Checks.esNulo(expediente.getCondicionante())
 				&& !Checks.esNulo(expediente.getCondicionante().getTipoImpuesto())) {
@@ -3374,7 +3375,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Double importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta()
 				: oferta.getImporteContraOferta();
 		Double sumatorioImporte = new Double(0);
-		Double sumatorioPorcentaje = new Double(0);
+
 		for (int i = 0; i < listaActivos.size(); i++) {
 			Activo activo = listaActivos.get(i).getPrimaryKey().getActivo();
 			if (Checks.esNulo(activo)) {
@@ -3385,19 +3386,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				throw new JsonViewerException("El activo no tiene número de UVEM.");
 			}
 
-			Double porcentajeParti = listaActivos.get(i).getPorcentajeParticipacion();
-			if (porcentajeParti != null && porcentajeParti > 0) {
-				importeXActivo = (importeTotal * porcentajeParti) / 100;
-			} else {
-				importeXActivo = new Double(0);
-				porcentajeParti = new Double(0);
+			importeXActivo = listaActivos.get(i).getImporteActivoOferta();
+			if(Checks.esNulo(importeXActivo)) {
+				importeXActivo = 0.00D;
 			}
-
 			sumatorioImporte += importeXActivo;
-			sumatorioPorcentaje += porcentajeParti;
+
 			InstanciaDecisionDataDto instData = new InstanciaDecisionDataDto();
 			// ImportePorActivo
-			instData.setImporteConSigno(importeXActivo.longValue());
+			instData.setImporteConSigno(Double.valueOf(importeXActivo*100).longValue());
 			// NumActivoUvem
 			instData.setIdentificadorActivoEspecial(Integer.valueOf(activo.getNumActivoUvem().toString()));
 
@@ -3961,6 +3958,39 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			listaTitularUVEM.add(titularUVEM);
 		}
 		return listaTitularUVEM;
+	}
+	
+	
+	@Override
+	public boolean checkCompradoresTienenNumeroUrsus(Long idTramite) {
+
+		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
+		if (Checks.esNulo(activoTramite)) {
+			return false;
+		}
+
+		if (!Checks.esNulo(activoTramite.getActivo())
+				&& activoTramite.getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)) {
+
+			Trabajo trabajo = activoTramite.getTrabajo();
+			if (Checks.esNulo(trabajo)) {
+				return false;
+			}
+
+			ExpedienteComercial expedienteComercial = expedienteComercialDao
+					.getExpedienteComercialByTrabajo(trabajo.getId());
+			if (Checks.esNulo(expedienteComercial)) {
+				return false;
+			}
+
+			for (int k = 0; k < expedienteComercial.getCompradoresAlta().size(); k++) {
+				CompradorExpediente compradorExpediente = expedienteComercial.getCompradoresAlta().get(k);
+				if (Checks.esNulo(compradorExpediente.getPrimaryKey().getComprador().getIdCompradorUrsus())) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	@Transactional(readOnly = false)
@@ -5478,6 +5508,32 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		return false;
-	}	
+	}
+	
+	@Override
+	public void enviarTitularesUvem(Long idExpediente) throws Exception {
+		Long porcentajeImpuesto = null;
+		try {
+
+			ExpedienteComercial expediente = findOne(idExpediente);
+			if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getCondicionante())) {
+				if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
+					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
+				}
+			}
+			InstanciaDecisionDto instancia = expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto,null);
+			
+			instancia.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_TITULARES);
+			logger.info("------------ LLAMADA WS MOD3(TITULARES) -----------------");
+			uvemManagerApi.modificarInstanciaDecisionTres(instancia);
+
+		} catch (JsonViewerException jve) {
+			throw jve;
+		} catch (Exception e) {
+			logger.error("error en expedienteComercialManager", e);
+			throw e;
+		}
+
+	}
 
 }

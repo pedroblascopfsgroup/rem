@@ -122,6 +122,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 					DDComiteSancion comiteSuperior = genericDao.get(DDComiteSancion.class, filtro);
 					if(!Checks.esNulo(comiteSuperior)) {
 						expediente.setComiteSuperior(comiteSuperior);
+						expediente.setComiteSancion(comiteSuperior);
 					}
 				}
 			}

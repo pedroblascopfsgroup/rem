@@ -5,6 +5,7 @@ import java.util.List;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
@@ -276,4 +277,12 @@ public interface ProveedoresApi {
 	 * @return Devuelve una lista de proveedores contacto.
 	 */
 	public List<ActivoProveedorContacto> getActivoProveedorContactoPorIdsUsuarioYCartera(List<Long> idUsuarios, Long idCartera);
+
+	/**
+	 * Este método comprueba si el usuario pasado como parámetro tiene perfil de proveedor.
+	 * 
+	 * @param usuario: usuario a comprobar si tiene el perfil de proveedor.
+	 * @return Devuelve True si el usuario tiene el perfil de proveedor, False si no lo tiene.
+	 */
+	public Boolean esUsuarioConPerfilProveedor(Usuario usuario);
 }

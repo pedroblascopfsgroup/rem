@@ -187,18 +187,21 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 	}
 	
 	public Usuario getGestorByActivoYTipo(Activo activo, Long tipo){
-		if (((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipo, activo).size()>0)
-			return ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipo, activo).get(0);
-		else
+		List<Usuario> usuariosGestoresList = ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipo, activo);
+		
+		if(usuariosGestoresList != null && !usuariosGestoresList.isEmpty()) {
+			return usuariosGestoresList.get(0);
+		} else {
 			return null;
+		}
 	}
 	
 	public Usuario getGestorByActivoYTipo(Activo activo, String codigoTipo){
-		Usuario gestor= null;
+		Usuario gestor = null;
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoTipo);
-		Long id = genericDao.get(EXTDDTipoGestor.class, filtro).getId();
-		if(id != null){
-			gestor = this.getGestorByActivoYTipo(activo, genericDao.get(EXTDDTipoGestor.class, filtro).getId());
+		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtro);
+		if(tipoGestor != null){
+			gestor = this.getGestorByActivoYTipo(activo, tipoGestor.getId());
 		}
 		return gestor;		
 	}

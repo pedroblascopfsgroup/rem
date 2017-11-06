@@ -252,5 +252,12 @@ public interface GastoProveedorApi {
 		 */
 		public List<DtoActivoProveedor> searchProveedoresByNif(DtoProveedorFilter dto);
 		
+		/**
+		 * Devuelve una lista de gastos para una provision.
+		 * @param dtoGastosFilter con los parametros de filtro
+		 * @return DtoPage 
+		 */
+		public DtoPage getListGastosProvision(DtoGastosFilter dtoGastosFilter);
+		
 }
 

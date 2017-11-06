@@ -50,51 +50,46 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_BUSQUEDA_AGRUPACIONES...');
   EXECUTE IMMEDIATE 'CREATE VIEW ' || V_ESQUEMA || '.V_BUSQUEDA_AGRUPACIONES 
 	AS
+	SELECT 
+		agr.agr_id, 
+		agr.dd_tag_id, 
+		agr.agr_num_agrup_rem, 
+		agr.agr_nombre, 
+		agr.agr_descripcion, 
+		agr.agr_fecha_alta, 
+		agr.agr_fecha_baja, 
+		agr.agr_ini_vigencia, 
+		agr.agr_fin_vigencia, 
+		agr.agr_publicado,
+		nvl(agr_p.activos,0) AS activos, 
+		nvl(agr_p.publicados,0) AS publicados, 
+		COALESCE (obr.dd_prv_id, res.dd_prv_id, lco.dd_prv_id, asi.dd_prv_id) AS provincia,
+		COALESCE (obr.dd_loc_id, res.dd_loc_id, lco.dd_loc_id, asi.dd_loc_id) AS localidad, 
+		COALESCE (obr.onv_direccion, res.res_direccion, lco.lco_direccion, asi.asi_direccion) AS direccion,
+		agr_p.dd_cra_codigo cartera, 
+		agr.agr_is_formalizacion
+	FROM '||V_ESQUEMA||'.act_agr_agrupacion agr 
+	JOIN '||V_ESQUEMA||'.dd_tag_tipo_agrupacion tag ON tag.dd_tag_id = agr.dd_tag_id
+	left JOIN
+		(SELECT SUM (1) activos, SUM (CASE
+		WHEN dd_epu.dd_epu_codigo IN (''03'', ''05'', ''06'')
+		THEN 1
+		ELSE 0
+		END) publicados, 
+		aga.agr_id, 
+		cra.dd_cra_codigo
+		FROM '||V_ESQUEMA||'.act_aga_agrupacion_activo aga 
+		LEFT JOIN '||V_ESQUEMA||'.act_activo act ON act.act_id = aga.act_id
+		LEFT JOIN '||V_ESQUEMA||'.dd_epu_estado_publicacion dd_epu ON act.dd_epu_id = dd_epu.dd_epu_id
+		LEFT JOIN '||V_ESQUEMA||'.dd_cra_cartera cra ON cra.dd_cra_id = act.dd_cra_id
+		WHERE aga.borrado = 0 AND act.borrado = 0
+		GROUP BY aga.agr_id, cra.dd_cra_codigo) agr_p ON agr_p.agr_id = agr.agr_id
+	LEFT JOIN '||V_ESQUEMA||'.act_onv_obra_nueva obr ON (agr.agr_id = obr.agr_id)
+	LEFT JOIN '||V_ESQUEMA||'.act_res_restringida res ON (agr.agr_id = res.agr_id)
+	LEFT JOIN '||V_ESQUEMA||'.act_lco_lote_comercial lco ON (agr.agr_id = lco.agr_id)
+	LEFT JOIN '||V_ESQUEMA||'.act_asi_asistida asi ON (agr.agr_id = asi.agr_id)
+	WHERE agr.borrado = 0 AND tag.borrado = 0';
 
-SELECT DISTINCT AGR.AGR_ID,
-                AGR.DD_TAG_ID,
-                AGR.AGR_NUM_AGRUP_REM,
-                AGR.AGR_NOMBRE,
-                AGR.AGR_DESCRIPCION,
-                AGR.AGR_FECHA_ALTA,
-                AGR.AGR_FECHA_BAJA,
-                AGR.AGR_INI_VIGENCIA,
-                AGR.AGR_FIN_VIGENCIA,
-                AGR.AGR_PUBLICADO,
-
-  (SELECT COUNT(AGA.ACT_ID)
-   FROM ' || V_ESQUEMA || '.ACT_AGA_AGRUPACION_ACTIVO AGA
-   WHERE AGA.AGR_ID = AGR.AGR_ID
-     AND AGR.BORRADO = 0 AND ACT.BORRADO = 0) AS ACTIVOS,
-
-  (SELECT COUNT(AGA.ACT_ID)
-   FROM ' || V_ESQUEMA || '.ACT_AGA_AGRUPACION_ACTIVO AGA
-   INNER JOIN ' || V_ESQUEMA || '.ACT_ACTIVO ACT ON ACT.ACT_ID = AGA.ACT_ID
-   INNER JOIN ' || V_ESQUEMA || '.DD_EPU_ESTADO_PUBLICACION DD_EPU ON ACT.DD_EPU_ID = DD_EPU.DD_EPU_ID
-   WHERE AGA.AGR_ID = AGR.AGR_ID
-     AND ACT.DD_EPU_ID IS NOT NULL
-     AND DD_EPU.DD_EPU_CODIGO NOT IN (''03'',''05'',''06'')
-     AND DD_EPU.BORRADO = 0
-     AND AGA.BORRADO = 0 ) AS PUBLICADOS,
-
-                COALESCE(OBR.DD_PRV_ID, RES.DD_PRV_ID, LCO.DD_PRV_ID, ASI.DD_PRV_ID) AS PROVINCIA,
-                COALESCE(OBR.DD_LOC_ID, RES.DD_LOC_ID, LCO.DD_LOC_ID, ASI.DD_LOC_ID) AS LOCALIDAD,
-                COALESCE(OBR.ONV_DIRECCION, RES.RES_DIRECCION, LCO.LCO_DIRECCION, ASI.ASI_DIRECCION) AS DIRECCION,
-                CRA.DD_CRA_CODIGO CARTERA,
-                AGR.AGR_IS_FORMALIZACION
-
-FROM ' || V_ESQUEMA || '.ACT_AGR_AGRUPACION AGR
-JOIN ' || V_ESQUEMA || '.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID
-LEFT JOIN ' || V_ESQUEMA || '.ACT_ONV_OBRA_NUEVA OBR ON (AGR.AGR_ID=OBR.AGR_ID)
-LEFT JOIN ' || V_ESQUEMA || '.ACT_RES_RESTRINGIDA RES ON (AGR.AGR_ID=RES.AGR_ID)
-LEFT JOIN ' || V_ESQUEMA || '.ACT_LCO_LOTE_COMERCIAL LCO ON (AGR.AGR_ID=LCO.AGR_ID)
-LEFT JOIN ' || V_ESQUEMA || '.ACT_ASI_ASISTIDA ASI ON (AGR.AGR_ID=ASI.AGR_ID)
-LEFT JOIN ' || V_ESQUEMA || '.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID
-LEFT JOIN ' || V_ESQUEMA || '.ACT_ACTIVO ACT ON ACT.ACT_ID = AGA.ACT_ID
-LEFT JOIN ' || V_ESQUEMA || '.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
-
-WHERE AGR.BORRADO = 0
-  AND TAG.BORRADO = 0';
 SELECT COUNT(*) INTO CUENTA FROM ALL_OBJECTS WHERE OBJECT_NAME = 'ACT_AGA_IDX1' AND OWNER=V_ESQUEMA AND OBJECT_TYPE='INDEX';  
   IF CUENTA>0 THEN
   	EXECUTE IMMEDIATE 'DROP INDEX ' || V_ESQUEMA || '.ACT_AGA_IDX1';  

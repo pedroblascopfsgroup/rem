@@ -11,6 +11,7 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.CondicionesActivo;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -848,4 +849,17 @@ public interface ExpedienteComercialApi {
 	 */
 	CondicionesActivo crearCondicionesActivoExpediente(Activo activo, ExpedienteComercial expediente);
 
+	/**
+	 * Comprueba que todos los compradores tengan numero URSUS
+	 * @param expedienteComercial
+	 * @return boolean
+	 */
+	public boolean checkCompradoresTienenNumeroUrsus(Long idTramite);
+
+	/**
+	 * Envia todos los compradores(titulares) a UVEM
+	 * @param expedienteComercial
+	 * @return void
+	 */
+	public void enviarTitularesUvem(Long idExpediente) throws Exception;
 }

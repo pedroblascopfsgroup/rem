@@ -1253,6 +1253,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			String codigoComite = resultadoDto.getCodigoComite();
 			DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
 			expediente.setComiteSancion(comite);
+			expediente.setComiteSuperior(comite);
 			genericDao.save(ExpedienteComercial.class, expediente);
 
 			return true;
@@ -1314,6 +1315,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			String codigoComite = resultadoDto.getCodigoComite();
 			DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
 			expediente.setComiteSancion(comite);
+			expediente.setComiteSuperior(comite);
 			genericDao.save(ExpedienteComercial.class, expediente);
 
 			return null;

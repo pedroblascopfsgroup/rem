@@ -20,6 +20,7 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
         var items= [
             {
 				xtype:'fieldsettable',
+				hidden: true,
 				title: HreRem.i18n('title.ultima.tasacion'),
 				items :	[
 			   				{ 

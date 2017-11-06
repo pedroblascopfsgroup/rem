@@ -298,7 +298,7 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 		var me = this;
 		
 		Ext.Msg.show({
-		    title:'',
+		    title:'Avanzar a Resolución Expediente',
 		    message: 'Si confirma esta acción, el trámite avanzará a la tarea donde se anulará el expediente. ¿Desea continuar?',
 		    buttons: Ext.Msg.YESNO,
 		    fn: function(btn) {

@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=JUANJO ARBONA
---## FECHA_CREACION=20171025
+--## FECHA_CREACION=20171102
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-2922
+--## INCIDENCIA_LINK=HREOS-3110
 --## PRODUCTO=SI
 --##
---## Finalidad: Actualizar el ACT_TRA_TRAMITE.
+--## Finalidad: Actualizar ECO_EXPEDIENTE_COMERCIAL.
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
@@ -22,15 +22,19 @@ SET DEFINE OFF;
 
 
 DECLARE
-    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar
+    V_MSQL2 VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
-    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
+    V_SQL2 VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS2 NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     table_count number(3); -- Vble. para validar la existencia de las Tablas.
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_TRA_TRAMITE'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ECO_EXPEDIENTE_COMERCIAL'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA2 VARCHAR2(2400 CHAR) := 'DD_EEC_EST_EXP_COMERCIAL'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 	
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
@@ -46,18 +50,16 @@ BEGIN
         
 		IF V_NUM_TABLAS > 0 THEN
 
-			DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando ACT_TRA_TRAMITE');
+			DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando ECO_EXPEDIENTE_COMERCIAL');
 
-		    V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' TRA
-				SET tra.borrado = 1, tra.fechaborrar = sysdate, tra.usuarioborrar = ''HREOS-2922''
-				WHERE TRA.TRA_ID IN (
-						  SELECT TRA1.TRA_ID 
-						  FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' TRA1
-						  INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = TRA1.ACT_ID
-						  WHERE  ACT.ACT_ADMISION = 1
-						)';
+		    V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ECO 
+				SET ECO.ECO_ESTADO_PBC = 1, ECO.FECHAMODIFICAR = sysdate, ECO.USUARIOMODIFICAR = ''HREOS-3110''  
+				WHERE ECO.DD_EEC_ID = (SELECT EEC.DD_EEC_ID
+							FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA2||' EEC
+							WHERE EEC.DD_EEC_CODIGO = ''08'')
+				AND ECO.ECO_ESTADO_PBC IS NULL';
 		    EXECUTE IMMEDIATE V_MSQL;
-		    DBMS_OUTPUT.PUT_LINE('[INFO] Se han borrado '||sql%rowcount||' tramites en '||V_ESQUEMA||'.'||V_TEXT_TABLA||'');
+		    DBMS_OUTPUT.PUT_LINE('[INFO] Se han actualizado '||sql%rowcount||' registros en '||V_ESQUEMA||'.'||V_TEXT_TABLA||'');
 		   
 		 ELSE
 		 
@@ -66,6 +68,7 @@ BEGIN
 		END IF;
 
 		DBMS_OUTPUT.PUT_LINE('[FIN] El proceso de actualización de la tabla '||V_ESQUEMA||'.'||V_TEXT_TABLA||' a finalizado correctamente');
+
 		
     COMMIT;
 EXCEPTION

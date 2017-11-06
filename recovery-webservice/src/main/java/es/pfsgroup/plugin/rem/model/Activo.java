@@ -38,6 +38,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBDDOrigenBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadOrigen;
+import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
@@ -64,12 +65,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class Activo implements Serializable, Auditable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-    @Id
+	private static final long serialVersionUID = 4477763412715784465L;
+
+	@Id
     @Column(name = "ACT_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "ActivoGenerator")
     @SequenceGenerator(name = "ActivoGenerator", sequenceName = "S_ACT_ACTIVO")
@@ -188,33 +186,9 @@ public class Activo implements Serializable, Auditable {
     @Column(name = "ACT_BLOQUEO_PRECIO_FECHA_INI")
     private Date bloqueoPrecioFechaIni;
     
-    
-   /* @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_EPA_ADMISION_ID")
-	private DDEstadoProcesoActivo estadoAdminision;
-	
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_EPA_GESTION_ID")
-	private DDEstadoProcesoActivo estadoPrecio;
-	
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_EPA_PRECIO_ID")
-	private DDEstadoProcesoActivo estadoGestion;
-	
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_EPA_PUBLICACION_ID")
-	private DDEstadoProcesoActivo estadoPublicacion;
-	
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_EPA_COMERCIALIZAR_ID")
-	private DDEstadoProcesoActivo estadoComercializar;*/
-    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SDV_ID")
 	private ActivoSubdivision subdivision;
-    
-    /*@JoinColumn(name = "SDV_ID")
-	private BigDecimal subdivision;*/
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CPR_ID")
@@ -392,7 +366,11 @@ public class Activo implements Serializable, Auditable {
 
     @Column(name = "ACT_BLOQUEO_TIPO_COMERCIALIZAR")
     private Boolean bloqueoTipoComercializacionAutomatico;
-    
+
+    @ManyToOne
+	@JoinColumn(name = "DD_ENA_ID")
+	private DDEntradaActivoBankia entradaActivoBankia;
+
     @Column(name = "ACT_NUM_INMOVILIZADO_BNK")
     private Integer numInmovilizadoBnk;
     
@@ -413,7 +391,7 @@ public class Activo implements Serializable, Auditable {
     
     @Column(name = "ACT_COD_PROMOCION_PRINEX")
     private String codigoPromocionPrinex;
-    
+
 	@Version   
 	private Long version;
 
@@ -591,47 +569,6 @@ public class Activo implements Serializable, Auditable {
 	public void setGestion(Boolean gestion) {
 		this.gestion = gestion;
 	}
-
-	
-/*	public DDEstadoProcesoActivo getEstadoAdminision() {
-		return estadoAdminision;
-	}
-
-	public void setEstadoAdminision(DDEstadoProcesoActivo estadoAdminision) {
-		this.estadoAdminision = estadoAdminision;
-	}
-
-	public DDEstadoProcesoActivo getEstadoPrecio() {
-		return estadoPrecio;
-	}
-
-	public void setEstadoPrecio(DDEstadoProcesoActivo estadoPrecio) {
-		this.estadoPrecio = estadoPrecio;
-	}
-
-	public DDEstadoProcesoActivo getEstadoGestion() {
-		return estadoGestion;
-	}
-
-	public void setEstadoGestion(DDEstadoProcesoActivo estadoGestion) {
-		this.estadoGestion = estadoGestion;
-	}
-
-	public DDEstadoProcesoActivo getEstadoPublicacion() {
-		return estadoPublicacion;
-	}
-
-	public void setEstadoPublicacion(DDEstadoProcesoActivo estadoPublicacion) {
-		this.estadoPublicacion = estadoPublicacion;
-	}
-
-	public DDEstadoProcesoActivo getEstadoComercializar() {
-		return estadoComercializar;
-	}
-
-	public void setEstadoComercializar(DDEstadoProcesoActivo estadoComercializar) {
-		this.estadoComercializar = estadoComercializar;
-	}*/
 
 	public Boolean getSelloCalidad() {
 		return selloCalidad;
@@ -990,18 +927,6 @@ public class Activo implements Serializable, Auditable {
   			bien.getLocalizaciones().get(0).getProvincia().setCodigo(codProvincia);
   		}
   	}
-
-	// Getters pestaña 4: Cargas
-	//TODO Replantear el listado de cargas
-/*	public List<NMBBienCargas> getCargas() {
-		return this.bien.getBienCargas();
-	}
-
-
-	public void setCargas(List<ActivoCargas> cargas) {
-		this.cargas = cargas;
-	}
-*/
 
 	public Long getVersion() {
 		return version;
@@ -1637,6 +1562,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setCodigoPromocionPrinex(String codigoPromocionPrinex) {
 		this.codigoPromocionPrinex = codigoPromocionPrinex;
+	}
+
+	public DDEntradaActivoBankia getEntradaActivoBankia() {
+		return entradaActivoBankia;
+	}
+
+	public void setEntradaActivoBankia(DDEntradaActivoBankia entradaActivoBankia) {
+		this.entradaActivoBankia = entradaActivoBankia;
 	}
 	
 }

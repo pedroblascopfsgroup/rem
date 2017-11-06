@@ -591,6 +591,12 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'codigoPromocionPrinex'
+			},
+			{
+				name: 'entradaActivoBankiaCodigo'
+			},
+			{
+				name: 'numInmovilizadoBankia'
 			}
     ],
     

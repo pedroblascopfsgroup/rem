@@ -842,7 +842,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					extraParams: {diccionario: 'estadoExpIncorrienteBancario'}
 				}
     		},
-    		
+
+    		comboEntradaActivoBankia: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'entradaActivoBankia'}
+				}
+    		},
+
     		historicocondiciones: {    
     			pageSize: $AC.getDefaultPageSize(),
     			model: 'HreRem.model.CondicionEspecifica',

@@ -134,8 +134,9 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String tipoAlquilerCodigo;
 	private String tipoAlquilerDescripcion;
 	private Boolean bloqueoTipoComercializacionAutomatico;
+	private String numInmovilizadoBankia;
 
-	//Activo Bancarico datos:
+	//Activo Bancario datos:
 	private String claseActivoCodigo;
 	private String claseActivoDescripcion;
 	private String subtipoClaseActivoCodigo;
@@ -148,6 +149,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String estadoExpIncorrienteCodigo;
 	private String estadoExpIncorrienteDescripcion;
 	private String productoDescripcion;
+	private String entradaActivoBankiaCodigo;
 	
 	//Activo integrado en agrupación asistida
 	private Boolean integradoEnAgrupacionAsistida;
@@ -1342,6 +1344,22 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setPertenceAgrupacionObraNueva(Boolean pertenceAgrupacionObraNueva) {
 		this.pertenceAgrupacionObraNueva = pertenceAgrupacionObraNueva;
+	}
+
+	public String getEntradaActivoBankiaCodigo() {
+		return entradaActivoBankiaCodigo;
+	}
+
+	public void setEntradaActivoBankiaCodigo(String entradaActivoBankiaCodigo) {
+		this.entradaActivoBankiaCodigo = entradaActivoBankiaCodigo;
+	}
+
+	public String getNumInmovilizadoBankia() {
+		return numInmovilizadoBankia;
+	}
+
+	public void setNumInmovilizadoBankia(String numInmovilizadoBankia) {
+		this.numInmovilizadoBankia = numInmovilizadoBankia;
 	}
 	
 

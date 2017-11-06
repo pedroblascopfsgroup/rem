@@ -945,7 +945,7 @@ public class UvemManager implements UvemManagerApi {
 				if (instanciaData.getTipoDeImpuesto() == InstanciaDecisionDataDto.TIPO_IMPUESTO_ITP
 						|| instanciaData.getTipoDeImpuesto() == InstanciaDecisionDataDto.TIPO_IMPUESTO_IGIC
 						|| instanciaData.getTipoDeImpuesto() == InstanciaDecisionDataDto.TIPO_IMPUESTO_IPSI) {
-					// struct.setIndicadorTratamientoImpuestobitrim(vacio);
+					 struct.setIndicadorTratamientoImpuestobitrim(' ');
 				} else if (instanciaData.getTipoDeImpuesto() == InstanciaDecisionDataDto.TIPO_IMPUESTO_IVA) {
 
 					if (Checks.esNulo(instanciaData.getRenunciaExencion())
@@ -1047,7 +1047,7 @@ public class UvemManager implements UvemManagerApi {
 			// Importe de la reserva
 			ImporteMonetario importeMonetarioReserva = new ImporteMonetario();
 			if (instanciaDecisionDto.getImporteReserva() != null) {
-				importeMonetarioReserva.setImporteConSigno(instanciaDecisionDto.getImporteReserva().longValue());
+				importeMonetarioReserva.setImporteConSigno(instanciaDecisionDto.getImporteReserva().longValue()*100);
 			} else {
 				importeMonetarioReserva.setImporteConSigno(new Long(0));
 			}
@@ -1058,12 +1058,12 @@ public class UvemManager implements UvemManagerApi {
 			importeMonetarioReserva.setNumeroDecimalesImporte('-');
 
 			servicioGMPDJB13_INS.setImporteMonetarioDeLaReservaBISA(importeMonetarioReserva);
-			if (instanciaDecisionDto.getImporteReserva() == null
-					|| instanciaDecisionDto.getImporteReserva().compareTo(new Double(0)) == 0) {
+			if (instanciaDecisionDto.getImporteReserva() == null || instanciaDecisionDto.getImporteReserva().compareTo(new Double(0)) == 0 
+					|| Checks.esNulo(instanciaListData.get(0).getPorcentajeImpuesto()) || instanciaListData.get(0).getPorcentajeImpuesto() == 0) {
 				servicioGMPDJB13_INS.setIndicadorCobroImpuestosReservabicirv(' ');
 			} else {
 				if (instanciaDecisionDto.getImporteReserva().compareTo(Double.valueOf(0)) > 0
-						&& instanciaListData.get(0).getPorcentajeImpuesto() > 0) {
+						&& instanciaListData.get(0).getPorcentajeImpuesto() > 0 && instanciaDecisionDto.getImpuestosReserva()) {
 					servicioGMPDJB13_INS.setIndicadorCobroImpuestosReservabicirv('S');
 				} else {
 					servicioGMPDJB13_INS.setIndicadorCobroImpuestosReservabicirv('N');
@@ -1164,6 +1164,7 @@ public class UvemManager implements UvemManagerApi {
 			cabeceraFuncional.setCOSBAQ("00");
 			cabeceraFuncional.setNUPUAQ("00");
 			cabeceraTecnica.setCLORAQ("71");
+			cabeceraTecnica.setCOMLAQ("JC33");
 
 			// seteamos parametros
 			servicioGMPAJC34_INS.setCodigoObjetoAccesocopace("PAHY0370");
@@ -1194,7 +1195,6 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPAJC34_INS.setFechaSolicitudPrestamofesop2(fecha2);
 
 			servicioGMPAJC34_INS.setAlias(ALIAS);
-			servicioGMPAJC34_INS.execute();
 			executeService(servicioGMPAJC34_INS);
 
 			importe = servicioGMPAJC34_INS.getImporteMonetarioConcedido();
@@ -1243,6 +1243,7 @@ public class UvemManager implements UvemManagerApi {
 			cabeceraFuncional.setCOCDAQ("0551");
 			cabeceraFuncional.setCOSBAQ("00");
 			cabeceraFuncional.setNUPUAQ("00");
+			cabeceraFuncional.setIDDSAQ(""); 
 			cabeceraTecnica.setCLORAQ("71");
 
 			// COPACE
@@ -1384,6 +1385,7 @@ public class UvemManager implements UvemManagerApi {
 			cabeceraFuncional.setCOCDAQ("0551");
 			cabeceraFuncional.setCOSBAQ("00");
 			cabeceraFuncional.setNUPUAQ("00");
+			cabeceraFuncional.setIDDSAQ ("BAJA");
 			cabeceraTecnica.setCLORAQ("71");
 
 			cabeceraAplicacion.setCodigoObjetoAccesocopace("PAHY0150");
@@ -1394,7 +1396,7 @@ public class UvemManager implements UvemManagerApi {
 
 			cabeceraAplicacion.setCentroGestorUsuarioSsacocgus(COCGUS);
 			
-			servicioGMPAJC29_INS.setCOOFHX(codigoDeOfertaHaya);
+			servicioGMPAJC29_INS.setCOOFHX(StringUtils.leftPad(codigoDeOfertaHaya, 16, "0"));
 
 			if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.COMPRADOR_NO_INTERESADO_OPERACION)) {
 				servicioGMPAJC29_INS.setCOSANOW(new Short("100"));

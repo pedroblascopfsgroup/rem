@@ -1164,6 +1164,7 @@ public class UvemManager implements UvemManagerApi {
 			cabeceraFuncional.setCOSBAQ("00");
 			cabeceraFuncional.setNUPUAQ("00");
 			cabeceraTecnica.setCLORAQ("71");
+			cabeceraTecnica.setCOMLAQ("JC33");
 
 			// seteamos parametros
 			servicioGMPAJC34_INS.setCodigoObjetoAccesocopace("PAHY0370");
@@ -1194,7 +1195,6 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPAJC34_INS.setFechaSolicitudPrestamofesop2(fecha2);
 
 			servicioGMPAJC34_INS.setAlias(ALIAS);
-			servicioGMPAJC34_INS.execute();
 			executeService(servicioGMPAJC34_INS);
 
 			importe = servicioGMPAJC34_INS.getImporteMonetarioConcedido();

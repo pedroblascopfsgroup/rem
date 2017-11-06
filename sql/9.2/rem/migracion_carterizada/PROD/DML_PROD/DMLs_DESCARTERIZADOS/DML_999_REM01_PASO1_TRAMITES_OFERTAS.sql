@@ -184,7 +184,7 @@ BEGIN
                         LEFT JOIN '||V_ESQUEMA||'.POS_POSICIONAMIENTO POS ON POS.ECO_ID = ECO.ECO_ID
                   WHERE ECO.TBJ_ID IS NULL AND EEC.DD_EEC_CODIGO IN (''10'',''06'',''11'',''04'') -- Pte. Sanción || Reservado || Aprobado || Contraofertado
             )
-            SELECT
+            SELECT DISTINCT
                   OV.OFR_ID
                   , OV.ACT_ID
                   , OV.TPO_ID

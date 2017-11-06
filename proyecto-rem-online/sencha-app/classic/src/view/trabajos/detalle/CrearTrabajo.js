@@ -674,7 +674,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
      		me.down('[reference=fieldSetSubirFichero]').setVisible(true);
      		me.down('[reference=fieldsetListaActivosSubida]').setVisible(true);
      		me.down('[reference=supervisorActivoCombo]').setValue(me.idSupervisor);
-     		me.down('[reference=supervisorActivoCombo]').readOnly= true;    		
+     		//me.down('[reference=supervisorActivoCombo]').readOnly= true;    		
      	} else {
      		me.down('[reference=filefieldActivosRef]').allowBlank=true;
      		me.down('[reference=fieldSetSubirFichero]').setVisible(false);

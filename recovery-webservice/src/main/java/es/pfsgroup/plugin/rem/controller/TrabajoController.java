@@ -1161,8 +1161,9 @@ public class TrabajoController extends ParadiseJsonController {
 	public ModelAndView getSupervisorGestorTrabajo(Long idActivo, Long idAgrupacion, ModelMap model) {
 		Map<String,Long> mapaGestorSupervisor= new HashMap<String, Long>();
 		if(Checks.esNulo(idActivo) && Checks.esNulo(idAgrupacion)){
-			mapaGestorSupervisor.put("data", genericAdapter.getUsuarioLogado().getId());
-			model.put("data", genericAdapter.getUsuarioLogado());
+			mapaGestorSupervisor.put("GACT", genericAdapter.getUsuarioLogado().getId());
+			mapaGestorSupervisor.put("SUPACT", genericAdapter.getUsuarioLogado().getId());
+			model.put("data", mapaGestorSupervisor);
 		}
 		else{
 			if(Checks.esNulo(idActivo) && !Checks.esNulo(idAgrupacion)){

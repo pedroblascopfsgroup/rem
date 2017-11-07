@@ -229,7 +229,7 @@ BEGIN
       V_UPDATE := V_UPDATE + SQL%ROWCOUNT;
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada (Gestor comercial). '||V_UPDATE||' Filas.');
 
-      V_UPDATE := 0
+      V_UPDATE := 0;
       EXECUTE IMMEDIATE 'MERGE INTO REM01.MIG2_TRA_TRAMITES_OFERTAS T1
         USING (
             SELECT DISTINCT MIG.OFR_ID, GEE.USU_ID, TGE.DD_TGE_CODIGO
@@ -256,7 +256,7 @@ BEGIN
       V_UPDATE := V_UPDATE + SQL%ROWCOUNT;
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada (Supervisor comercial). '||V_UPDATE||' Filas.');
 
-      V_UPDATE := 0
+      V_UPDATE := 0;
       EXECUTE IMMEDIATE 'MERGE INTO REM01.MIG2_TRA_TRAMITES_OFERTAS T1
         USING (
             SELECT DISTINCT MIG.OFR_ID, GEE.USU_ID, TGE.DD_TGE_CODIGO
@@ -283,7 +283,7 @@ BEGIN
       V_UPDATE := V_UPDATE + SQL%ROWCOUNT;
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada (Gestor formalización). '||V_UPDATE||' Filas.');
 
-      V_UPDATE := 0
+      V_UPDATE := 0;
       EXECUTE IMMEDIATE 'MERGE INTO REM01.MIG2_TRA_TRAMITES_OFERTAS T1
         USING (
             SELECT DISTINCT MIG.OFR_ID, GEE.USU_ID

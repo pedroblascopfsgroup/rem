@@ -1061,9 +1061,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	T013_DefinicionOfertaValidacion: function() {
 		var me = this;
 
-		var cartera = me.up('tramitesdetalle').getViewModel().get('tramite.cartera');
+		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		var comiteSuperior = me.down('[name=comiteSuperior]');
-		if(cartera == 'Bankia'){
+		if(CONST.CARTERA['BANKIA'] == codigoCartera) {
 			me.desocultarCampo(comiteSuperior);
 		}else{
 			me.ocultarCampo(comiteSuperior);

@@ -55,6 +55,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public Page getHistoricoValoresPrecios(DtoHistoricoPreciosFilter dto);
 
 	public void deleteValoracionById(Long id);
+	
+	public boolean deleteValoracionSinDuplicarById(Long id);
 
 	public ActivoCondicionEspecifica getUltimaCondicion(Long idActivo);
 
@@ -160,5 +162,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public ActivoAgrupacionActivo getActivoAgrupacionActivoAgrRestringidaPorActivoID(Long id);
 	
 	public void deleteActivoDistribucion(Long idActivoInfoComercial);
+
 
 }

@@ -4,6 +4,7 @@ Ext.define('HreRem.view.activos.detalle.DistribucionPlantasActivoList', {
 	topBar		: false,
 	idPrincipal : 'activo.id',
 	scrollable	: 'y',
+	minHeight: 20,
 	
 	features: [{
         ftype: 'grouping',

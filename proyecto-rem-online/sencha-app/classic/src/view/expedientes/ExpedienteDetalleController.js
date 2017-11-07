@@ -1962,19 +1962,86 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				}   		     
 		});		
 	},
-	
+
 	onCambioTipoImpuesto: function(combo, value){
 		var me = this,
     	tipoAplicable = me.lookupReference('tipoAplicable'),
-    	esCajamar = CONST.CARTERA['CAJAMAR'] == me.getViewModel().get('expediente.entidadPropietariaCodigo');
-		
-    	if (esCajamar || Ext.isEmpty(value))
-    		tipoAplicable.allowBlank = true;
-    	else
-    		tipoAplicable.allowBlank = false;
+    	operacionExenta = me.lookupReference('chkboxOperacionExenta'),
+    	inversionSujetoPasivo = me.lookupReference('chkboxInversionSujetoPasivo'),
+    	renunciaExencion = me.lookupReference('chkboxRenunciaExencion');
 
+
+    	if(CONST.TIPO_IMPUESTO['ITP'] == value) {
+    		tipoAplicable.reset();
+    		tipoAplicable.setDisabled(true);
+    		tipoAplicable.allowBlank = true;
+    		operacionExenta.reset();
+    		operacionExenta.setReadOnly(true);
+    		inversionSujetoPasivo.reset();
+    		inversionSujetoPasivo.setReadOnly(true);
+    		renunciaExencion.reset();
+    		renunciaExencion.setReadOnly(true);
+    	} else {
+    		tipoAplicable.setDisabled(false);
+        	tipoAplicable.allowBlank = false;
+    		operacionExenta.setReadOnly(false);
+    		inversionSujetoPasivo.setReadOnly(false);
+    	}
 	},
-	
+
+	onCambioOperacionExenta: function(checkbox, newValue, oldValue, eOpts) {
+		var me = this,
+		renunciaExencion = me.lookupReference('chkboxRenunciaExencion'),
+		tipoAplicable = me.lookupReference('tipoAplicable');
+
+		if(newValue == true) {
+			tipoAplicable.reset();
+			tipoAplicable.allowBlank = true;
+			tipoAplicable.setDisabled(true);
+			renunciaExencion.setReadOnly(false);
+		} else {
+			tipoAplicable.setDisabled(false);
+			tipoAplicable.allowBlank = false;
+			renunciaExencion.reset();
+			renunciaExencion.setReadOnly(true);
+		}
+	},
+
+	onCambioRenunciaExencion: function(checkbox, newValue, oldValue, eOpts) {
+		var me = this,
+		tipoAplicable = me.lookupReference('tipoAplicable');
+
+		if(newValue == false) {
+			tipoAplicable.reset();
+			tipoAplicable.allowBlank = true;
+			tipoAplicable.setDisabled(true);
+		} else {
+			tipoAplicable.setDisabled(false);
+			tipoAplicable.allowBlank = false;
+		}
+	},
+
+	onCambioInversionSujetoPasivo: function(checkbox, newValue, oldValue, eOpts) {
+		var me = this,
+		operacionExenta = me.lookupReference('chkboxOperacionExenta'),
+    	renunciaExencion = me.lookupReference('chkboxRenunciaExencion'),
+    	tipoAplicable = me.lookupReference('tipoAplicable');
+
+		if(newValue == true) {
+			operacionExenta.reset();
+			operacionExenta.setReadOnly(true);
+			renunciaExencion.reset();
+    		renunciaExencion.setReadOnly(true);
+    		tipoAplicable.reset();
+    		tipoAplicable.allowBlank = true;
+    		tipoAplicable.setDisabled(true);
+		} else {
+			operacionExenta.setReadOnly(false);
+			tipoAplicable.allowBlank = false;
+			tipoAplicable.setDisabled(false);
+		}
+	},
+
 	onHaCambiadoFechaResolucion: function( field, newDate, oldDate, eOpts){
 		var me = this;
 		var resultado= me.lookupReference('comboResultadoTanteoForm');

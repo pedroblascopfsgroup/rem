@@ -213,7 +213,7 @@ public class UvemManager implements UvemManagerApi {
 
 			} else if (servicio instanceof GMPDJB13_INS) {
 				((GMPDJB13_INS) servicio).setLongitudMensajeDeSalidarcslon(2);
-				((GMPDJB13_INS) servicio).setCodigoComitecocom7((short) 2);
+				((GMPDJB13_INS) servicio).setCodigoComitecocom7((short) 3);
 				((GMPDJB13_INS) servicio).setCodigoDeOfertaHayacoofhx2("9");
 
 			} else if (servicio instanceof GMPAJC34_INS) {
@@ -789,6 +789,8 @@ public class UvemManager implements UvemManagerApi {
 	public ResultadoInstanciaDecisionDto modificarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto)
 			throws Exception {
 		ResultadoInstanciaDecisionDto instancia = new ResultadoInstanciaDecisionDto();
+		instanciaDecisionDto.setImporteReserva(null);
+		instanciaDecisionDto.setCodTipoArras(null);
 		try {
 			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_MODIFICACION);
 		} catch (WIException e) {
@@ -1085,12 +1087,14 @@ public class UvemManager implements UvemManagerApi {
 
 			servicioGMPDJB13_INS.setCodEntidadRepresntClienteUrsusqcenre(instanciaDecisionDto.getQcenre());
 
-			if (instanciaDecisionDto.getCodComiteSuperior() != null) {
+			if (!Checks.esNulo(instanciaDecisionDto.getCodComiteSuperior())) {
 				servicioGMPDJB13_INS
 						.setCodigoComiteSuperiorcocom3(Short.valueOf(instanciaDecisionDto.getCodComiteSuperior()));
+				result.setComiteSuperior(instanciaDecisionDto.getCodComiteSuperior());
 			} else {
 				// el comite superior para el alta siempre es 0
 				servicioGMPDJB13_INS.setCodigoComiteSuperiorcocom3((short) 0);
+				result.setComiteSuperior(null);
 			}
 
 			// codigo uvem de la ofician prescriptora

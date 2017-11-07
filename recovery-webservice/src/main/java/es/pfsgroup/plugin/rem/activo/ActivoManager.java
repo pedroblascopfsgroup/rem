@@ -977,9 +977,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		historicoValoracion.setTipoPrecio(activoValoracion.getTipoPrecio());
 		historicoValoracion.setImporte(activoValoracion.getImporte());
 		historicoValoracion.setFechaInicio(activoValoracion.getFechaInicio());
-		historicoValoracion.setFechaFin(new Date());
+		historicoValoracion.setFechaFin(activoValoracion.getFechaFin());
 		historicoValoracion.setFechaAprobacion(activoValoracion.getFechaAprobacion());
-		historicoValoracion.setFechaCarga(activoValoracion.getFechaCarga());
+		historicoValoracion.setFechaCarga((!Checks.esNulo(activoValoracion.getFechaCarga()) ? activoValoracion.getFechaCarga() : new Date()));
 		historicoValoracion.setGestor(activoValoracion.getGestor());
 		historicoValoracion.setObservaciones(activoValoracion.getObservaciones());
 
@@ -1012,8 +1012,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Usuario grupoPublicacion= genericDao.get(Usuario.class, filtroUsuarioGrupoPublicacion,filtroUsuarioGrupoPublicacionBorrado);
 
 		if (guardadoEnHistorico) {
-			saveActivoValoracionHistorico(activoValoracion);
-			activoDao.deleteValoracionById(id);
+			if(activoDao.deleteValoracionSinDuplicarById(id)) saveActivoValoracionHistorico(activoValoracion);
 		} else if (!Checks.esNulo(activoValoracion.getGestor())
 				&& !adapter.getUsuarioLogado().equals(activoValoracion.getGestor()) 
 				&& !eXTGrupoUsuariosApi.usuarioPerteneceAGrupo(adapter.getUsuarioLogado(), grupoPrecio)

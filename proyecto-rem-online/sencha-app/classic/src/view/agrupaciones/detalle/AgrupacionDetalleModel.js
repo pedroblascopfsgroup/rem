@@ -1,6 +1,5 @@
 Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
     extend: 'HreRem.view.common.GenericViewModel',
-    //extend: 'Ext.app.ViewModel',
     alias: 'viewmodel.agrupaciondetalle',
 
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.ActivoAgrupacion', 
@@ -265,14 +264,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 			}   	
 	    },
 
-	    comboGestorComercialBackOffice: {
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'agrupacion/getGestoresLoteComercial',
-				extraParams: {agrId: '{agrupacionficha.id}', codigoGestor: 'GCBO'}
-			}   	
-	    },
 	    comboTipoPersona: {
 	    	model: 'HreRem.model.ComboBase',
 			proxy: {

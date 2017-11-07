@@ -586,7 +586,18 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
 		
 	}
-    
+	
+	@Override
+	public boolean deleteValoracionSinDuplicarById(Long id) {
+
+		StringBuilder sb = new StringBuilder("delete from ActivoValoraciones val where val.id = " + id);
+		Query query = this.getSessionFactory().getCurrentSession().createQuery(sb.toString());
+		int afectado = query.executeUpdate();
+
+		return (afectado > 0) ? true : false;
+			
+	}
+
     @SuppressWarnings("unchecked")
 	@Override
     public ActivoCondicionEspecifica getUltimaCondicion(Long idActivo) {
@@ -979,7 +990,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 		return HibernateQueryUtils.list(this, hb);
 	}
-	
+
 	/*Borra todos las distribuciones excelto las de tipo garaje y trastero*/
 	public void deleteActivoDistribucion(Long idActivoInfoComercial){
 		Session session = this.getSessionFactory().getCurrentSession();
@@ -993,5 +1004,4 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 		
 	}
-
 }

@@ -1312,7 +1312,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto, codComiteSuperior);
 
 			ResultadoInstanciaDecisionDto resultadoDto = uvemManagerApi.altaInstanciaDecision(instanciaDecisionDto);
-			String codigoComite = resultadoDto.getCodigoComite();
+			String codigoComite = null;
+			if(!Checks.esNulo(resultadoDto.getCodigoComiteSuperior())) {
+				codigoComite = resultadoDto.getCodigoComiteSuperior();
+			}else {
+				codigoComite = resultadoDto.getCodigoComite();
+			}
 			DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
 			expediente.setComiteSancion(comite);
 			expediente.setComiteSuperior(comite);

@@ -300,6 +300,13 @@ Ext.define('HreRem.ux.util.Constants', {
 		TRAMITAR_PROPUESTA_PRECIOS: '44',
 		TRAMITAR_PROPUESTA_DESCUENTO: '45'
     	
+    },
+
+    TIPO_IMPUESTO: {
+    	IVA: '01',
+		ITP: '02',
+		IGIC: '03',
+		IPSI: '04'
     }
     
 });

@@ -45,12 +45,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 @Inheritance(strategy=InheritanceType.JOINED)
 public class CondicionanteExpediente implements Serializable, Auditable {
-	
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-		
+
+	private static final long serialVersionUID = -2333323398245528237L;
+
+
 	@Id
     @Column(name = "COE_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "CondicionantesExpedienteGenerator")
@@ -211,6 +209,12 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     
     @Column(name="COE_SOLICITA_RESERVA")
     private Integer solicitaReserva;
+
+    @Column(name="COE_OPERACION_EXENTA")
+    private Boolean operacionExenta;
+
+    @Column(name="COE_INVERSION_SUJETO_PASIVO")
+    private Boolean inversionDeSujetoPasivo;
     
     @Version   
 	private Long version;
@@ -615,6 +619,22 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 
 	public void setSolicitaReserva(Integer solicitaReserva) {
 		this.solicitaReserva = solicitaReserva;
+	}
+
+	public Boolean getOperacionExenta() {
+		return operacionExenta;
+	}
+
+	public void setOperacionExenta(Boolean operacionExenta) {
+		this.operacionExenta = operacionExenta;
+	}
+
+	public Boolean getInversionDeSujetoPasivo() {
+		return inversionDeSujetoPasivo;
+	}
+
+	public void setInversionDeSujetoPasivo(Boolean inversionDeSujetoPasivo) {
+		this.inversionDeSujetoPasivo = inversionDeSujetoPasivo;
 	}
 	
 

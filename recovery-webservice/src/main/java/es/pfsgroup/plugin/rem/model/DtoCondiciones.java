@@ -12,12 +12,7 @@ import es.capgemini.devon.dto.WebDto;
  *
  */
 public class DtoCondiciones extends WebDto {
-	
-	
-  
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 3574353502838449106L;
 	
 
@@ -69,7 +64,9 @@ public class DtoCondiciones extends WebDto {
 	private String ibiPorCuentaDe;
 	private String comunidadPorCuentaDe;
 	private String suministrosPorCuentaDe;
-	private Integer solicitaReserva; 
+	private Integer solicitaReserva;
+	private Boolean operacionExenta;
+	private Boolean inversionDeSujetoPasivo;
 	
 	
 
@@ -516,6 +513,22 @@ public class DtoCondiciones extends WebDto {
 
 	public void setSolicitaReserva(Integer solicitaReserva) {
 		this.solicitaReserva = solicitaReserva;
+	}
+
+	public Boolean getOperacionExenta() {
+		return operacionExenta;
+	}
+
+	public void setOperacionExenta(Boolean operacionExenta) {
+		this.operacionExenta = operacionExenta;
+	}
+
+	public Boolean getInversionDeSujetoPasivo() {
+		return inversionDeSujetoPasivo;
+	}
+
+	public void setInversionDeSujetoPasivo(Boolean inversionDeSujetoPasivo) {
+		this.inversionDeSujetoPasivo = inversionDeSujetoPasivo;
 	}  
    	
    	

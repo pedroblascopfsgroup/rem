@@ -132,8 +132,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 									defaultType: 'textfieldbase',
 									title: HreRem.i18n("fieldlabel.fiscales"),
 									items :
-										[								
-											 { 
+										[
+											 {
 									        	xtype: 'comboboxfieldbase',							        	
 									        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.impuesto'),
 									        	bind: {
@@ -146,7 +146,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 				                					change: 'onCambioTipoImpuesto'
 				                				}
 									        },	
-									        { 
+									        {
 												xtype: 'numberfieldbase',
 												reference: 'tipoAplicable',
 										 		symbol: HreRem.i18n("symbol.porcentaje"),
@@ -155,17 +155,45 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 				                					value: '{condiciones.tipoAplicable}'
 				                				}
 							                },
-									        {		                
+							                {
 							                	xtype: 'checkboxfieldbase',
+							                	reference: 'chkboxOperacionExenta',
+							                	fieldLabel:  HreRem.i18n('fieldlabel.operacion.exenta'),
+							                	bind: {
+					        						value: '{condiciones.operacionExenta}',
+							                		readOnly:'{!esOfertaVenta}'
+			            						},
+			            						listeners: {
+				                					change: 'onCambioOperacionExenta'
+				                				}
+		                					},
+									        {
+							                	xtype: 'checkboxfieldbase',
+							                	reference: 'chkboxInversionSujetoPasivo',
+							                	fieldLabel:  HreRem.i18n('fieldlabel.inversion.sujeto.pasivo'),
+							                	bind: {
+					        						value: '{condiciones.inversionDeSujetoPasivo}',
+							                		readOnly:'{!esOfertaVenta}'
+			            						},
+			            						listeners: {
+				                					change: 'onCambioInversionSujetoPasivo'
+				                				}
+		                					},
+		                					{		                
+							                	xtype: 'checkboxfieldbase',
+							                	reference: 'chkboxRenunciaExencion',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.renuncia.exencion'),
 							                	bind: {
 					        						value: '{condiciones.renunciaExencion}',
 							                		readOnly:'{!esOfertaVenta}'
-			            						}
+			            						},
+			            						listeners: {
+				                					change: 'onCambioRenunciaExencion'
+				                				}
 		                					},
-									        {		                
+									        {
 							                	xtype: 'checkboxfieldbase',
-							                	reference: 'mycheck',
+							                	reference: 'chkboxReservaConImpuesto',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.reserva.con.impuesto'),
 							                	bind: {
 							                		value: '{condiciones.reservaConImpuesto}',

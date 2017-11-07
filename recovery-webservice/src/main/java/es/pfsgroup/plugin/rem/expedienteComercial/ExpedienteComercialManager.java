@@ -1659,6 +1659,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					dto.setReservaConImpuesto(true);
 				}
 			}
+			dto.setOperacionExenta(condiciones.getOperacionExenta());
+			dto.setInversionDeSujetoPasivo(condiciones.getInversionDeSujetoPasivo());
 			// Economicas-Gastos Compraventa
 			dto.setGastosPlusvalia(condiciones.getGastosPlusvalia());
 			if (!Checks.esNulo(condiciones.getTipoPorCuentaPlusvalia())) {
@@ -1741,7 +1743,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		CondicionanteExpediente condiciones = expedienteComercial.getCondicionante();
 
 		if (!Checks.esNulo(condiciones)) {
-			// condiciones.setExpediente(expedienteComercial);
 			condiciones = dtoCondicionantestoCondicionante(condiciones, dto);
 		} else {
 			condiciones = new CondicionanteExpediente();
@@ -1888,6 +1889,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					|| !Checks.esNulo(dto.getTipoImpuestoCodigo()) || !Checks.esNulo(dto.getTipoAplicable())) {
 				// Si se cambia algún dato del apartado Fiscales.
 				ofertaApi.resetPBC(condiciones.getExpediente(), false);
+			}
+			if(!Checks.esNulo(dto.getOperacionExenta())) {
+				condiciones.setOperacionExenta(dto.getOperacionExenta());
+			}
+			if(!Checks.esNulo(dto.getInversionDeSujetoPasivo())) {
+				condiciones.setInversionDeSujetoPasivo(dto.getInversionDeSujetoPasivo());
 			}
 
 			// Gastos CompraVenta

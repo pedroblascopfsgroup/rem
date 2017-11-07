@@ -789,6 +789,8 @@ public class UvemManager implements UvemManagerApi {
 	public ResultadoInstanciaDecisionDto modificarInstanciaDecision(InstanciaDecisionDto instanciaDecisionDto)
 			throws Exception {
 		ResultadoInstanciaDecisionDto instancia = new ResultadoInstanciaDecisionDto();
+		instanciaDecisionDto.setImporteReserva(null);
+		instanciaDecisionDto.setCodTipoArras(null);
 		try {
 			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_MODIFICACION);
 		} catch (WIException e) {

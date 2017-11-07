@@ -63,14 +63,15 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 	
 	@Override
 	public String respuestaOfertanteT013(TareaExterna tareaExterna) {
+		String resultado = null;
 		//HREOS-2161
 		if (!trabajoApi.checkReservaNecesariaNotNull(tareaExterna) && !trabajoApi.checkBankia(tareaExterna)) return FALTA_MARCAR_RESERVA_NECESARIA;		
 		// SELECT TAP_SCRIPT_VALIDACION_JBPM FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = 'T013_RespuestaOfertante'
 		//  - (checkBankia() ? ratificacionComiteProcess() : null)
 		if (trabajoApi.checkBankia(tareaExterna)) {
-			ofertaApi.ratificacionComiteProcess(tareaExterna);
+			resultado = ofertaApi.ratificacionComiteProcess(tareaExterna);
 		}
-		return null;		
+		return resultado;		
 	}
 	
 	@Override

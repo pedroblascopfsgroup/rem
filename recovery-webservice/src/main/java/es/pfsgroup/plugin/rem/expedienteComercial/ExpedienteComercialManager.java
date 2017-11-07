@@ -131,6 +131,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDAreaBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
+import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -167,6 +168,7 @@ import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDataDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
+import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
@@ -5534,6 +5536,58 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			throw e;
 		}
 
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean updateEstadosResolucionDevolucion(ExpedienteComercial expedienteComercial,ResolucionComiteDto dto){
+		DDEstadosExpedienteComercial estadoExpedienteComercial = (DDEstadosExpedienteComercial) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class, DDEstadosExpedienteComercial.EN_DEVOLUCION);
+		DDEstadosReserva estadoReserva = (DDEstadosReserva) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDEstadosReserva.class, DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION);
+		
+		expedienteComercial.setEstado(estadoExpedienteComercial);
+		if(!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getReserva())){
+			Reserva reserva= expedienteComercial.getReserva();
+			reserva.setIndicadorDevolucionReserva(1);
+			if(dto.getPenitenciales().equals("3")){	
+				DDDevolucionReserva estadoDevolucionReserva = (DDDevolucionReserva) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDDevolucionReserva.class, DDDevolucionReserva.CODIGO_SI_SIMPLES);
+				reserva.setDevolucionReserva(estadoDevolucionReserva);
+			}
+			if(dto.getPenitenciales().equals("4")){
+				DDDevolucionReserva estadoDevolucionReserva = (DDDevolucionReserva) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDDevolucionReserva.class, DDDevolucionReserva.CODIGO_SI_DUPLICADOS);
+						reserva.setDevolucionReserva(estadoDevolucionReserva);
+			}
+			reserva.setEstadoReserva(estadoReserva);
+		}
+		
+		return this.update(expedienteComercial);
+		
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean updateEstadosResolucionNoDevolucion(ExpedienteComercial expedienteComercial,ResolucionComiteDto dto ){
+		
+		DDEstadosExpedienteComercial estadoExpedienteComercial = (DDEstadosExpedienteComercial) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class, DDEstadosExpedienteComercial.ANULADO);
+		DDEstadosReserva estadoReserva = (DDEstadosReserva) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDEstadosReserva.class, DDEstadosReserva.CODIGO_RESUELTA_POSIBLE_REINTEGRO);
+		
+		expedienteComercial.setEstado(estadoExpedienteComercial);
+		if(!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getReserva())){
+			Reserva reserva= expedienteComercial.getReserva();
+			reserva.setIndicadorDevolucionReserva(0);
+			DDDevolucionReserva estadoDevolucionReserva = (DDDevolucionReserva) utilDiccionarioApi
+					.dameValorDiccionarioByCod(DDDevolucionReserva.class, DDDevolucionReserva.CODIGO_NO);
+			reserva.setDevolucionReserva(estadoDevolucionReserva);
+			reserva.setEstadoReserva(estadoReserva);	
+		}
+		
+		return this.update(expedienteComercial);
+		
 	}
 
 }

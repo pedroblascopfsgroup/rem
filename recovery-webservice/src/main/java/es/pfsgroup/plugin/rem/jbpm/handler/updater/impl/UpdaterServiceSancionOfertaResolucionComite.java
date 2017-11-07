@@ -1,8 +1,10 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -141,7 +143,9 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 	
 					}
 					if (IMPORTE_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-						ofertaAceptada.setImporteContraOferta(Double.valueOf(valor.getValor()));
+						String doubleValue = valor.getValor();
+						doubleValue = doubleValue.replace(',', '.');
+						ofertaAceptada.setImporteContraOferta(Double.valueOf(doubleValue));
 						genericDao.save(Oferta.class, ofertaAceptada);
 	
 						// Actualizar honorarios para el nuevo importe de contraoferta.

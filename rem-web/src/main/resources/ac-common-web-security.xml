@@ -16,17 +16,24 @@
 		class="org.springframework.security.providers.ProviderManager">
 		<beans:property name="providers">
 			<beans:list>
-			  <beans:ref local="authenticationProviderRSA"/> 	
-			  <beans:ref local="authenticationProvider"/>
-			  <!-- <beans:ref local="authenticationProviderRSI"/> -->
+                <beans:ref local="hayaAuthenticationProvider"/>
+                <!--beans:ref local="authenticationProviderRSA"/--> 	
+                <beans:ref local="authenticationProvider"/>
+                <!-- <beans:ref local="authenticationProviderRSI"/> -->
 			</beans:list>
 		</beans:property>
 	</beans:bean>
-    
-  
-    
-    
-  
+
+    <beans:bean id="hayaAuthenticationProvider" class="es.pfsgroup.plugin.rem.security.HayaAuthenticationProvider">
+        <custom-authentication-provider />
+        <beans:property name="userDetailsService" ref="userService"/>
+        <beans:property name="postAuthenticationFilters">
+            <beans:list>
+                <beans:bean class="es.capgemini.pfs.security.CredentialsExpiredAuthenticationFilter"/>
+            </beans:list>
+        </beans:property>
+    </beans:bean>
+
      <beans:bean id="authenticationProvider" class="es.capgemini.devon.security.DevonAuthenticationProvider">
         <custom-authentication-provider />
         <beans:property name="userDetailsService" ref="userService"/>
@@ -37,7 +44,7 @@
         </beans:property>
     </beans:bean>
     
-    <beans:bean id="authenticationProviderRSI" class="es.capgemini.pfs.security.RSIAuthenticationProvider">
+    <!--beans:bean id="authenticationProviderRSI" class="es.capgemini.pfs.security.RSIAuthenticationProvider">
         <custom-authentication-provider />
         <beans:property name="userDetailsService" ref="userService"/>
         <beans:property name="preAuthenticationFilters">
@@ -55,7 +62,7 @@
                 <beans:bean class="es.capgemini.pfs.security.UpdateCentroRSIAuthenticationFilter"/>
             </beans:list>
         </beans:property>
-    </beans:bean>
+    </beans:bean-->
     
 	 <beans:bean id="authenticationProviderRSA" class="es.capgemini.pfs.security.RSAAutenticationProvider">
         <custom-authentication-provider />
@@ -83,7 +90,7 @@
     </beans:bean>-->
 	
 	<beans:bean id="webAuthenticationDetailsSource" class="org.springframework.security.ui.WebAuthenticationDetailsSource">
-        <beans:property name="clazz" value="es.capgemini.pfs.security.RSAWebAuthenticationDetails"/>
+        <beans:property name="clazz" value="es.pfsgroup.plugin.rem.security.HayaWebAuthenticationDetails"/>
     </beans:bean>
     
     <!-- Custom Hibernate UserDetailsService -->

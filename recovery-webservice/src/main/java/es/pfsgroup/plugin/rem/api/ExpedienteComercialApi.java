@@ -48,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
+import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
 
 public interface ExpedienteComercialApi {
@@ -862,4 +863,22 @@ public interface ExpedienteComercialApi {
 	 * @return void
 	 */
 	public void enviarTitularesUvem(Long idExpediente) throws Exception;
+	
+	/**
+	 * Actualiza la reserva y el expediente al recibir un resol de devolucion
+	 * 
+	 * @param expedienteComercial
+	 * @param ResolucionComiteDto dto
+	 * @return
+	 */
+	public boolean updateEstadosResolucionDevolucion(ExpedienteComercial expedienteComercial,ResolucionComiteDto dto);
+	
+	/**
+	 * Actualiza la reserva y el expediente al recibir un resol de no devolucion
+	 * 
+	 * @param expedienteComercial
+	 * @param ResolucionComiteDto dto
+	 * @return
+	 */
+	public boolean updateEstadosResolucionNoDevolucion(ExpedienteComercial expedienteComercial,ResolucionComiteDto dto);
 }

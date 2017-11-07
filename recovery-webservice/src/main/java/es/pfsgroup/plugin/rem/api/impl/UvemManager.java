@@ -1015,12 +1015,14 @@ public class UvemManager implements UvemManagerApi {
 				servicioGMPDJB13_INS
 						.setIndicadorDeFinanciacionClientebificl(instanciaDecisionDto.FINANCIACION_CLIENTE_NO);
 			}
-			// Según llamada telefonica con Antonio Rios Muñoz(Atos Origin)
+			/* Según llamada telefonica con Antonio Rios Muñoz(Atos Origin)
 			if (accion.equals(INSTANCIA_DECISION_MODIFICACION)) {
 				servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_CONTRAOFERTA);
 			} else {
 				servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_VENTA);
-			}
+			}*/
+			
+			servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_VENTA);
 
 			if (accion.equals(INSTANCIA_DECISION_MODIFICACION_3)) {
 				// Modificacion de honorarios prescriptor
@@ -1195,7 +1197,6 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPAJC34_INS.setFechaSolicitudPrestamofesop2(fecha2);
 
 			servicioGMPAJC34_INS.setAlias(ALIAS);
-			servicioGMPAJC34_INS.execute();
 			executeService(servicioGMPAJC34_INS);
 
 			importe = servicioGMPAJC34_INS.getImporteMonetarioConcedido();

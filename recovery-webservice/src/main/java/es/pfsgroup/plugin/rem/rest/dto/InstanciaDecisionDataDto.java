@@ -34,11 +34,7 @@ public class InstanciaDecisionDataDto {
 		return importeConSigno;
 	}
 	public void setImporteConSigno(Long importeConSigno) {
-		if(!Checks.esNulo(importeConSigno)){
-			this.importeConSigno = importeConSigno * 100;
-		}else{
-			this.importeConSigno = importeConSigno;
-		}
+		this.importeConSigno = importeConSigno;
 	}
 	public short getTipoDeImpuesto() {
 		return tipoDeImpuesto;

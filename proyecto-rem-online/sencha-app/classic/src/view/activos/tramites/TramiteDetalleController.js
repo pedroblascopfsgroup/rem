@@ -266,6 +266,7 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 	},
 	
 	anularTramite : function(button) {
+		
 		var me = this;
 		var idTramite = me.getViewModel().get("tramite.idTramite");
 		var url = $AC.getRemoteUrl('agenda/anularTramite');
@@ -293,32 +294,44 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 	},
 	
 	saltoResolucionExpediente: function(button){
+		
 		var me = this;
 		
-		var idExpediente = me.getViewModel().get("tramite.idExpediente");
-		me.getView().mask(HreRem.i18n("msg.mask.loading"));
-		var url = $AC.getRemoteUrl('agenda/saltoResolucionExpedienteByIdExp');
-		
-		var data;
-		Ext.Ajax.request({
-			url:url,
-			params: {idExpediente : idExpediente},
-			success: function(response, opts){
-				data = Ext.decode(response.responseText);
-				if(data.success == 'true') {
-					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-				} else {
-					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.saltoresolucion"));
-				}
-				me.onClickBotonRefrescar(button);
-			},
-			failure: function(options, success, response){
-				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.saltoresolucion"));
-			},
-			callback: function(options, success, response){
-				me.getView().unmask();
-			}
-		})
+		Ext.Msg.show({
+		    title:'Avanzar a Resolución Expediente',
+		    message: 'Si confirma esta acción, el trámite avanzará a la tarea donde se anulará el expediente. ¿Desea continuar?',
+		    buttons: Ext.Msg.YESNO,
+		    fn: function(btn) {
+		        if (btn == 'yes') {
+		        	
+		    		var idExpediente = me.getViewModel().get("tramite.idExpediente");
+		    		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		    		var url = $AC.getRemoteUrl('agenda/saltoResolucionExpedienteByIdExp');
+		    		
+		    		var data;
+		    		Ext.Ajax.request({
+		    			url:url,
+		    			params: {idExpediente : idExpediente},
+		    			success: function(response, opts){
+		    				data = Ext.decode(response.responseText);
+		    				if(data.success == 'true') {
+		    					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		    				} else {
+		    					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.saltoresolucion"));
+		    				}
+		    				me.onClickBotonRefrescar(button);
+		    			},
+		    			failure: function(options, success, response){
+		    				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.saltoresolucion"));
+		    			},
+		    			callback: function(options, success, response){
+		    				me.getView().unmask();
+		    			}
+		    		})
+		        } else if (btn === 'no') {
+		        }
+		    }
+		});
 		//me.getView().fireEvent('saltocierreeconomico', me.getView(), idTareaExterna);
 	},
 	

@@ -261,6 +261,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			if (esControlConsulta) {
 				dto.setCodigoTipo(CODIGO_OBTENCION_DOCUMENTACION);
 				dto.setCodigoTipo2(CODIGO_ACTUACION_TECNICA);
+				return trabajoDao.findAll(dto);
 			}
 			return trabajoDao.findAllFilteredByProveedorContacto(dto, usuarioLogado.getId());
 		}

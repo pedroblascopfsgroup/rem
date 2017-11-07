@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.procesosJudiciales.model.DDFavorable;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.pfsgroup.commons.utils.Checks;
@@ -24,6 +25,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicatari
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdjudicacionBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistralBien;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -72,6 +74,9 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	
 	@Autowired
 	private RestApi restApi;
+	
+	@Autowired
+	private ActivoApi activoApi;
 	
 	protected static final Log logger = LogFactory.getLog(TabActivoDatosRegistrales.class);
 	
@@ -157,9 +162,26 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			
 			if (activo.getAdjJudicial().getAdjudicacionBien() != null) {
 				BeanUtils.copyProperties(activoDto, activo.getAdjJudicial().getAdjudicacionBien());
+				
+				if(Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario())){
+					activoDto.setLanzamientoNecesario(null);
+				}else{
+					if(activo.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario()){
+						activoDto.setLanzamientoNecesario(1);
+						activoApi.calcularFechaTomaPosesion(activo);
+					}
+					else{
+						activoDto.setLanzamientoNecesario(0);
+						activoApi.calcularFechaTomaPosesion(activo);
+					}
+				}
 
 				if (activo.getAdjJudicial().getAdjudicacionBien().getEntidadAdjudicataria() != null) {
 					BeanUtils.copyProperty(activoDto, "entidadAdjudicatariaCodigo", activo.getAdjJudicial().getAdjudicacionBien().getEntidadAdjudicataria().getCodigo());
+				}
+				
+				if(activo.getAdjJudicial().getAdjudicacionBien().getResolucionMoratoria() != null){
+					BeanUtils.copyProperty(activoDto, "resolucionMoratoriaCodigo", activo.getAdjJudicial().getAdjudicacionBien().getResolucionMoratoria().getCodigo());
 				}
 					
 			}
@@ -318,7 +340,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 					beanUtilNotNull.copyProperties(activo.getAdjNoJudicial(), dto);
 					
 					activo.setAdjNoJudicial((genericDao.save(ActivoAdjudicacionNoJudicial.class, activo.getAdjNoJudicial())));
-					activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaTitulo());
+					activoApi.calcularFechaTomaPosesion(activo);
 					
 				} else if (activo.getTipoTitulo().getCodigo().equals(DDTipoTituloActivo.tipoTituloPDV)) {
 					ActivoPlanDinVentas pdv = null;
@@ -354,6 +376,11 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 					activo.getAdjJudicial().setAdjudicacionBien((genericDao.save(NMBAdjudicacionBien.class, activo.getAdjJudicial().getAdjudicacionBien())));
 
 
+					if(dto.getResolucionMoratoriaCodigo() != null){
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getResolucionMoratoriaCodigo());
+						DDFavorable favorableDesfavorable = (DDFavorable) genericDao.get(DDFavorable.class, filtro);
+						activo.getAdjJudicial().getAdjudicacionBien().setResolucionMoratoria(favorableDesfavorable);
+					}
 					
 					if (dto.getEntidadAdjudicatariaCodigo() != null) {
 						
@@ -399,7 +426,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 					
 					activo.getAdjJudicial().setAdjudicacionBien((genericDao.save(NMBAdjudicacionBien.class, activo.getAdjJudicial().getAdjudicacionBien())));
 					activo.setAdjJudicial((genericDao.save(ActivoAdjudicacionJudicial.class, activo.getAdjJudicial())));
-					activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getBien().getAdjudicacion().getFechaSenalamientoPosesion());
+					activoApi.calcularFechaTomaPosesion(activo);
 
 				}
 			

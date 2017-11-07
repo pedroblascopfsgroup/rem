@@ -16,6 +16,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String descripcion;
 
 	private String tipoTitulo;
+	private String tipoTituloCodigo;
 	private String poblacion;
 	private Date fechaDueD;
 	private String rating;
@@ -233,6 +234,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public String getTipoTitulo() {
 		return tipoTitulo;
+	}
+
+	public String getTipoTituloCodigo() {
+		return tipoTituloCodigo;
+	}
+
+	public void setTipoTituloCodigo(String tipoTituloCodigo) {
+		this.tipoTituloCodigo = tipoTituloCodigo;
 	}
 
 	public void setTipoTitulo(String tipoTitulo) {

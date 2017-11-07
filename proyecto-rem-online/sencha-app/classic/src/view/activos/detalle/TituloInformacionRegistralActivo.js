@@ -443,12 +443,69 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.firmeza.auto.adjudicacion'),			                	
 								bind: '{datosRegistrales.fechaDecretoFirme}'
 			                },
-			                { 
+//			                { 
+//			                	xtype: 'datefieldbase',
+//			                	reference: 'fechaTomaPosesionJudicial',
+//			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.toma.posesion'),
+//								bind: '{datosRegistrales.fechaSenalamientoPosesion}'
+//							},
+			                {
 			                	xtype: 'datefieldbase',
-			                	reference: 'fechaTomaPosesionJudicial',
-			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.toma.posesion'),
+			                	reference: 'fechaSenyalamientoPosesion',
+			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.senyalamiento.posesion'),			                	
 								bind: '{datosRegistrales.fechaSenalamientoPosesion}'
+			                },
+			                {
+			                	xtype: 'datefieldbase',
+			                	reference: 'fechaRealizacionPosesion',
+			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.realizacion.posesion'),			                	
+								bind: '{datosRegistrales.fechaRealizacionPosesion}'
+			                },
+			                {
+								xtype: 'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.lanzamiento.necesario'),								
+				            	bind: {
+				            		store: '{comboSiNoRem}',
+				            		value: '{datosRegistrales.lanzamientoNecesario}'
+				            	},
+				            	displayField: 'descripcion',
+								valueField: 'codigo'
 							},
+							{
+			                	xtype: 'datefieldbase',
+			                	reference: 'fechaSenyalamientoLanzamiento',
+			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.senyalamiento.lanzamiento'),			                	
+								bind: '{datosRegistrales.fechaSenalamientoLanzamiento}'
+			                },
+			                {
+			                	xtype: 'datefieldbase',
+			                	reference: 'fechaLanzamientoEfectuado',
+			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.lanzamiento.efectuado'),			                	
+								bind: '{datosRegistrales.fechaRealizacionLanzamiento}'
+			                },
+			                {
+			                	xtype: 'datefieldbase',
+			                	reference: 'fechaSolicitudMoratoria',
+			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.solicitud.moratoria'),			                	
+								bind: '{datosRegistrales.fechaSolicitudMoratoria}'
+			                },
+			                {
+								xtype: 'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.resolucion.moratoria'),								
+				            	bind: {
+				            		store: '{comboFavorableDesfavorable}',
+				            		value: '{datosRegistrales.resolucionMoratoriaCodigo}'
+				            	}
+							},
+							{
+			                	xtype: 'datefieldbase',
+			                	reference: 'fechaResolucionMoratoria',
+			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.resolucion.moratoria'),			                	
+								bind: '{datosRegistrales.fechaResolucionMoratoria}'
+			                },
+			                
+			                ////////
+			                
 							{ 
 								xtype: 'currencyfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.importe.adjudicacion'),

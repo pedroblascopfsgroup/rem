@@ -84,6 +84,14 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private Date fechaDecretoFirme;
 	private Date fechaSenalamientoPosesion;
 	private String importeAdjudicacion;
+	private Date fechaRealizacionPosesion;
+	private Integer lanzamientoNecesario;
+	private Date fechaSenalamientoLanzamiento;
+	private Date fechaRealizacionLanzamiento;
+	private Date fechaSolicitudMoratoria;
+	private String resolucionMoratoriaCodigo;
+	private Date fechaResolucionMoratoria;
+	
 	
 	// Mapeados a mano
 	private String tipoJuzgadoCodigo;
@@ -558,6 +566,48 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	}
 	public void setEntidadEjecutanteCodigo(String entidadEjecutanteCodigo) {
 		this.entidadEjecutanteCodigo = entidadEjecutanteCodigo;
+	}
+	public Date getFechaRealizacionPosesion() {
+		return fechaRealizacionPosesion;
+	}
+	public void setFechaRealizacionPosesion(Date fechaRealizacionPosesion) {
+		this.fechaRealizacionPosesion = fechaRealizacionPosesion;
+	}
+	public Integer getLanzamientoNecesario() {
+		return lanzamientoNecesario;
+	}
+	public void setLanzamientoNecesario(Integer lanzamientoNecesario) {
+		this.lanzamientoNecesario = lanzamientoNecesario;
+	}
+	public Date getFechaSenalamientoLanzamiento() {
+		return fechaSenalamientoLanzamiento;
+	}
+	public void setFechaSenalamientoLanzamiento(Date fechaSenalamientoLanzamiento) {
+		this.fechaSenalamientoLanzamiento = fechaSenalamientoLanzamiento;
+	}
+	public Date getFechaRealizacionLanzamiento() {
+		return fechaRealizacionLanzamiento;
+	}
+	public void setFechaRealizacionLanzamiento(Date fechaRealizacionLanzamiento) {
+		this.fechaRealizacionLanzamiento = fechaRealizacionLanzamiento;
+	}
+	public Date getFechaSolicitudMoratoria() {
+		return fechaSolicitudMoratoria;
+	}
+	public void setFechaSolicitudMoratoria(Date fechaSolicitudMoratoria) {
+		this.fechaSolicitudMoratoria = fechaSolicitudMoratoria;
+	}
+	public String getResolucionMoratoriaCodigo() {
+		return resolucionMoratoriaCodigo;
+	}
+	public void setResolucionMoratoriaCodigo(String resolucionMoratoriaCodigo) {
+		this.resolucionMoratoriaCodigo = resolucionMoratoriaCodigo;
+	}
+	public Date getFechaResolucionMoratoria() {
+		return fechaResolucionMoratoria;
+	}
+	public void setFechaResolucionMoratoria(Date fechaResolucionMoratoria) {
+		this.fechaResolucionMoratoria = fechaResolucionMoratoria;
 	}
 
 

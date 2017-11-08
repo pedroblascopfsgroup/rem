@@ -11,7 +11,6 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import es.capgemini.devon.log.Log4JManager;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -33,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
@@ -325,5 +325,16 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 			hb.appendWhere(nombreCampo.concat(" in (").concat(b.toString()).concat(")"));
 		}
 		
+	}
+	
+	public void deleteTitularesAdicionales(Long idOferta){
+		Filter f1 = genericDao.createFilter(FilterType.EQUALS, "id", idOferta);
+		Oferta oferta = genericDao.get(Oferta.class, f1);
+		
+		List<TitularesAdicionalesOferta> titularesAdicionales = oferta.getTitularesAdicionales();
+		
+		for(TitularesAdicionalesOferta titularAdicional : titularesAdicionales){
+			genericDao.deleteById(TitularesAdicionalesOferta.class, titularAdicional.getId());
+		}
 	}
 }

@@ -23,7 +23,11 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.direccion.model.DDProvincia;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 
 
 /**
@@ -56,6 +60,31 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
 	
 	@Column(name="TIA_NOMBRE")
     private String nombre;
+	
+	@Column(name="TIA_APELLIDOS")
+	private String apellidos;
+	
+	@Column(name="TIA_DIRECCION")
+	private String direccion;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_LOC_ID")
+	private Localidad localidad;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_PRV_ID")
+	private DDProvincia provincia;
+	
+	@Column(name="TIA_CODPOSTAL")
+	private String codPostal;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_ECV_ID")
+	private DDEstadosCiviles estadoCivil;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_REM_ID")
+	private DDRegimenesMatrimoniales regimenMatrimonial;
 	
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TDI_ID")
@@ -123,6 +152,62 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public String getApellidos() {
+		return apellidos;
+	}
+
+	public void setApellidos(String apellidos) {
+		this.apellidos = apellidos;
+	}
+
+	public String getDireccion() {
+		return direccion;
+	}
+
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
+	}
+
+	public Localidad getLocalidad() {
+		return localidad;
+	}
+
+	public void setLocalidad(Localidad localidad) {
+		this.localidad = localidad;
+	}
+
+	public DDProvincia getProvincia() {
+		return provincia;
+	}
+
+	public void setProvincia(DDProvincia provincia) {
+		this.provincia = provincia;
+	}
+
+	public String getCodPostal() {
+		return codPostal;
+	}
+
+	public void setCodPostal(String codPostal) {
+		this.codPostal = codPostal;
+	}
+
+	public DDEstadosCiviles getEstadoCivil() {
+		return estadoCivil;
+	}
+
+	public void setEstadoCivil(DDEstadosCiviles estadoCivil) {
+		this.estadoCivil = estadoCivil;
+	}
+
+	public DDRegimenesMatrimoniales getRegimenMatrimonial() {
+		return regimenMatrimonial;
+	}
+
+	public void setRegimenMatrimonial(DDRegimenesMatrimoniales regimenMatrimonial) {
+		this.regimenMatrimonial = regimenMatrimonial;
 	}
 
 }

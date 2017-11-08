@@ -21,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.direccion.model.DDProvincia;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.security.UsuarioSecurityManager;
@@ -79,7 +81,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
@@ -555,23 +559,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 			if (!Checks.esNulo(ofertaDto.getTitularesAdicionales())) {
-				List<TitularesAdicionalesOferta> listaTit = new ArrayList<TitularesAdicionalesOferta>();
-
-				for (int i = 0; i < ofertaDto.getTitularesAdicionales().size(); i++) {
-					OfertaTitularAdicionalDto titDto = ofertaDto.getTitularesAdicionales().get(i);
-					if (!Checks.esNulo(titDto)) {
-						TitularesAdicionalesOferta titAdi = new TitularesAdicionalesOferta();
-						titAdi.setNombre(titDto.getNombre());
-						titAdi.setDocumento(titDto.getDocumento());
-						titAdi.setOferta(oferta);
-						Auditoria auditoria = Auditoria.getNewInstance();
-						titAdi.setAuditoria(auditoria);
-						titAdi.setTipoDocumento((DDTipoDocumento) genericDao.get(DDTipoDocumento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodTipoDocumento())));
-						listaTit.add(titAdi);
-					}
-				}
-				oferta.setTitularesAdicionales(listaTit);
-
+				saveOrUpdateListaTitualesAdicionalesOferta(ofertaDto, oferta);
 			}
 
 			Long idOferta = ofertaDao.save(oferta);
@@ -585,6 +573,37 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return errorsList;
 
 	}
+	
+	private void saveOrUpdateListaTitualesAdicionalesOferta(OfertaDto ofertaDto, Oferta oferta){
+		List<TitularesAdicionalesOferta> listaTit = new ArrayList<TitularesAdicionalesOferta>();
+		
+		if(!Checks.esNulo(oferta.getId())){
+			ofertaDao.deleteTitularesAdicionales(oferta.getId());
+		}
+		
+		for (int i = 0; i < ofertaDto.getTitularesAdicionales().size(); i++) {
+			OfertaTitularAdicionalDto titDto = ofertaDto.getTitularesAdicionales().get(i);
+			if (!Checks.esNulo(titDto)) {
+				TitularesAdicionalesOferta titAdi = new TitularesAdicionalesOferta();
+				titAdi.setNombre(titDto.getNombre());
+				titAdi.setDocumento(titDto.getDocumento());
+				titAdi.setOferta(oferta);
+				Auditoria auditoria = Auditoria.getNewInstance();
+				titAdi.setAuditoria(auditoria);
+				titAdi.setTipoDocumento((DDTipoDocumento) genericDao.get(DDTipoDocumento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodTipoDocumento())));
+				titAdi.setApellidos(titDto.getApellidos());
+				titAdi.setDireccion(titDto.getDireccion());
+				titAdi.setLocalidad((Localidad) genericDao.get(Localidad.class, genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodigoMunicipio())));
+				titAdi.setProvincia((DDProvincia) genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodigoProvincia())));
+				titAdi.setCodPostal(titDto.getCodPostal());
+				titAdi.setEstadoCivil((DDEstadosCiviles) genericDao.get(DDEstadosCiviles.class, genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodigoEstadoCivil())));
+				titAdi.setRegimenMatrimonial((DDRegimenesMatrimoniales) genericDao.get(DDRegimenesMatrimoniales.class, genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodigoRegimenEconomico())));
+				
+				listaTit.add(titAdi);
+			}
+		}
+		oferta.setTitularesAdicionales(listaTit);
+	}
 
 	@Override
 	@Transactional(readOnly = false)
@@ -593,7 +612,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		// ValidateUpdate
 		errorsList = validateOfertaPostRequestData(ofertaDto, jsonFields, false);
 		if (errorsList.isEmpty()) {
-
+			
+			if (!Checks.esNulo(ofertaDto.getTitularesAdicionales())) {
+				saveOrUpdateListaTitualesAdicionalesOferta(ofertaDto, oferta);
+			}
+			
 			if (((JSONObject) jsonFields).containsKey("importeContraoferta")) {
 				oferta.setImporteContraOferta(ofertaDto.getImporteContraoferta());
 				ofertaDao.saveOrUpdate(oferta);

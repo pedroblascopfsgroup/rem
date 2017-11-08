@@ -33,6 +33,7 @@ public class ProvisionGastosManager extends BusinessOperationOverrider<Provision
 	private static final String COD_PEF_GESTORIA_ADMINISTRACION = "HAYAGESTADMT";
 	private static final String COD_PEF_GESTORIA_PLUSVALIA = "GESTOPLUS";
 	private static final String COD_PEF_USUARIO_CERTIFICADOR = "HAYACERTI";
+	private static final String COD_PEF_GESTOR_ADMINISTRACION = "HAYAADM";
 	
 	@Autowired
 	ProvisionGastosDao provisionGastosDao;
@@ -75,6 +76,10 @@ public class ProvisionGastosManager extends BusinessOperationOverrider<Provision
 			
 			if(isGestoria){
 				dto.setListaIdProveedor(proveedoresDao.getIdProveedoresByIdUsuario(usuarioLogado.getId()));
+			}
+			
+			if(genericAdapter.tienePerfil(COD_PEF_GESTOR_ADMINISTRACION, usuarioLogado)){
+				dto.setIsGestorAdministracion(true);
 			}
 		}
 		

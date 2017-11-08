@@ -330,7 +330,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 				ActivoOferta actOfe = listActOfe.get(0);
 				idSistemaOrigen = actOfe.getPrimaryKey().getActivo().getNumActivo().toString();
 				DDCartera cartera = actOfe.getPrimaryKey().getActivo().getCartera();
-				cliente = getClienteByCartera(DDCartera cartera);
+				cliente = getClienteByCartera(cartera);
 			}
 		}
 		String estadoExpediente = "Alta";

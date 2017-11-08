@@ -59,6 +59,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     	
 	     },
 	     
+	     esSituacionJudicial: function(get){
+	     	var judicial= Ext.isEmpty(get('activo.tipoTituloCodigo')) ? false : get('activo.tipoTituloCodigo') === CONST.TIPO_TITULO_ACTIVO['JUDICIAL'];
+	     	return judicial;
+	     	
+	     },
+	     
 	     esOcupacionIlegal: function(get) {
 	     	
 	     	var ocupado = get('situacionPosesoria.ocupado') == "1";

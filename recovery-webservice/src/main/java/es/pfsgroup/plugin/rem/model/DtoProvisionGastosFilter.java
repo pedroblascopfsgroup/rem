@@ -29,6 +29,7 @@ public class DtoProvisionGastosFilter extends WebDto {
 	private String nifPropietario;
 	private String nomPropietario;
 	private Boolean isExterno;
+	private Boolean isGestorAdministracion;
 	
 	
 	
@@ -128,6 +129,12 @@ public class DtoProvisionGastosFilter extends WebDto {
 	}
 	public void setIsExterno(Boolean isExterno) {
 		this.isExterno = isExterno;
+	}
+	public Boolean getIsGestorAdministracion() {
+		return isGestorAdministracion;
+	}
+	public void setIsGestorAdministracion(Boolean isGestorAdministracion) {
+		this.isGestorAdministracion = isGestorAdministracion;
 	}
 
 	

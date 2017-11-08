@@ -305,6 +305,12 @@ Ext.define('HreRem.ux.util.Constants', {
 		ITP: '02',
 		IGIC: '03',
 		IPSI: '04'
+    },
+    
+    TIPO_TITULO_ACTIVO: {
+    	JUDICIAL: '01',
+    	NO_JUDICIAL: '02',
+    	PDV: '03'
     }
     
 });

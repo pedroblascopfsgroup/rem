@@ -48,5 +48,5 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	 */
 	public BigDecimal getImporteCalculo(Long idOferta, String tipoComision, Long idActivo, Long idProveedor);
 
-
+	public void deleteTitularesAdicionales(Long idOferta);
 }

@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -20,6 +20,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
@@ -27,10 +28,14 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
+import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 
 @Component
 public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterService {
@@ -55,6 +60,9 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 
     @Autowired
     private UvemManagerApi uvemManagerApi;
+    
+	@Autowired
+	private ResolucionComiteApi resolucionComiteApi;
 
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaRespuestaOfertante.class);
@@ -134,8 +142,8 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 	
 						}
 	
-					}if (IMPORTE_OFERTANTE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-						ofertaAceptada.setImporteContraOferta(Double.valueOf(valor.getValor()));
+					}if (IMPORTE_OFERTANTE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {						
+						ofertaAceptada.setImporteContraOferta(Double.valueOf(valor.getValor().replace(',', '.')));
 						genericDao.save(Oferta.class, ofertaAceptada);
 	
 						// Actualizar honorarios para el nuevo importe de contraoferta.
@@ -144,6 +152,19 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 						// Actualizamos la participación de los activos en la oferta;
 						expedienteComercialApi.updateParticipacionActivosOferta(ofertaAceptada);
 						expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
+						
+						ResolucionComiteDto dto = new ResolucionComiteDto();
+						dto.setOfertaHRE(ofertaAceptada.getNumOferta());
+						dto.setCodigoTipoResolucion(DDTipoResolucion.CODIGO_TIPO_RESOLUCION);
+						dto.setImporteContraoferta(ofertaAceptada.getImporteContraOferta());
+						dto.setCodigoComite(expediente.getComiteSancion().getCodigo());
+						dto.setCodigoResolucion(DDEstadoResolucion.CODIGO_ERE_CONTRAOFERTA);
+						try {
+							resolucionComiteApi.saveOrUpdateResolucionComite(dto);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 					
 					genericDao.save(ExpedienteComercial.class, expediente);

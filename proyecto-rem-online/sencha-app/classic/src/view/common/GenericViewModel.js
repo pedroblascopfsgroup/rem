@@ -265,6 +265,15 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 				}
     		},
     		
+    		comboFavorableDesfavorable: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'favorableDesfavorable'}
+				}
+    		},
+    		
     		comboTiposJuzgado: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {

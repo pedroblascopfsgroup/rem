@@ -116,6 +116,9 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 	
 	@Column(name = "SPS_ESTADO_PORTAL_EXTERNO")
 	private Boolean publicadoPortalExterno;
+	
+	@Column(name = "SPS_EDITA_FECHA_TOMA_POSESION")
+	private Boolean editadoFechaTomaPosesion;
 
 	@Version   
 	private Long version;
@@ -312,6 +315,14 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 
 	public void setPublicadoPortalExterno(Boolean publicadoPortalExterno) {
 		this.publicadoPortalExterno = publicadoPortalExterno;
+	}
+
+	public Boolean getEditadoFechaTomaPosesion() {
+		return editadoFechaTomaPosesion;
+	}
+
+	public void setEditadoFechaTomaPosesion(Boolean editadoFechaTomaPosesion) {
+		this.editadoFechaTomaPosesion = editadoFechaTomaPosesion;
 	}
 
 }

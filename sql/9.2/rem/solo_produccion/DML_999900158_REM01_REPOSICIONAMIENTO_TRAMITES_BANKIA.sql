@@ -23,7 +23,7 @@ DECLARE
 
     V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01';-- '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER';-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
-    V_USUARIO VARCHAR2(50 CHAR) := 'MIG_CAJAMAR';
+    V_USUARIO VARCHAR2(50 CHAR) := 'MIG_BANKIA';
     ERR_NUM NUMBER;-- Numero de errores
     ERR_MSG VARCHAR2(2048);-- Mensaje de error
     V_MSQL VARCHAR2(4000 CHAR);

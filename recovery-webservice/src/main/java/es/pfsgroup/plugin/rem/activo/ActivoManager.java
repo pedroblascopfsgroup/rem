@@ -4095,5 +4095,40 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public void deleteActivoDistribucion(Long idActivoInfoComercial){
 		activoDao.deleteActivoDistribucion(idActivoInfoComercial);		
 	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void calcularFechaTomaPosesion(Activo activo){
+		if(!Checks.esNulo(activo.getTipoTitulo())){
+			if(DDTipoTituloActivo.tipoTituloJudicial.equals(activo.getTipoTitulo().getCodigo())){
+				
+				if(!Checks.esNulo(activo.getAdjJudicial()) && !Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien())){
+					if(!Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario())){
+						if(activo.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario()){
+							activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionLanzamiento());
+							//activoDto.setFechaTomaPosesion(activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionLanzamiento());
+						}else{
+							activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionPosesion());
+							//activoDto.setFechaTomaPosesion(activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionPosesion());
+						}
+					}
+					else{
+						activo.getSituacionPosesoria().setFechaTomaPosesion(null);
+						//activoDto.setFechaTomaPosesion(null);
+					}
+				}
+			}
+			else if(DDTipoTituloActivo.tipoTituloNoJudicial.equals(activo.getTipoTitulo().getCodigo())){
+				if(!Checks.esNulo(activo.getAdjNoJudicial())){
+					if(Checks.esNulo(activo.getSituacionPosesoria().getEditadoFechaTomaPosesion()) || !activo.getSituacionPosesoria().getEditadoFechaTomaPosesion()){
+						activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaTitulo());
+						//activoDto.setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaTitulo());
+					}
+				}
+			}
+		}
+		genericDao.save(ActivoSituacionPosesoria.class, activo.getSituacionPosesoria());
+		
+	}
 
 }

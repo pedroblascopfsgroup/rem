@@ -50,8 +50,12 @@ public class ProvisionAgrupacionGastosDaoImpl extends AbstractEntityDao<VBusqued
    			if((Checks.estaVacio(dto.getListaIdProveedor())) ||
    			   (!Checks.estaVacio(dto.getListaIdProveedor()) && !Checks.esNulo(dto.getIdGestoria()) && !dto.getListaIdProveedor().contains(dto.getIdGestoria()))){
    				
-   				//Si es externo, pero NO es gestoría de administración (listaIdProveedor vacio) no puede ver nada
-   				hb.appendWhere("vprg.id is null");
+   				//Si es externo, pero NO es gestoría de administración (listaIdProveedor vacio) o no es Gestor de Administración (isGestorAdministracion vacio) 
+   				//no puede ver nada
+   				if(Checks.esNulo(dto.getIsGestorAdministracion())){
+   					hb.appendWhere("vprg.id is null");
+   				}
+   				
    			}else{
    				//Si es externo y es gestoría de administración (listaIdProveedor no vacio), puede ver gastos en los que conste como gestoría
    				if(!Checks.esNulo(dto.getIdGestoria())){

@@ -10,6 +10,7 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.procesosJudiciales.model.DDFavorable;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
@@ -186,6 +187,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoRechazoOferta", DDTipoRechazoOferta.class);
 		mapa.put("motivoRechazoOferta", DDMotivoRechazoOferta.class);
 		mapa.put("entradaActivoBankia", DDEntradaActivoBankia.class);
+		mapa.put("favorableDesfavorable", DDFavorable.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

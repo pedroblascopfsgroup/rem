@@ -149,10 +149,12 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 		
 		// En el tramite, se busca tarea "Resultado PBC" y se reactiva
 		for (TareaActivo tarea : tareas) {
-			if (CODIGO_T013_RESULTADO_PBC.equals(tarea.getTareaExterna().getTareaProcedimiento().getCodigo())) {
-				if(!tarea.getTareaFinalizada() && tarea.getAuditoria().isBorrado()){
-					tarea.getAuditoria().setBorrado(false);
-					tareaPBC = tarea;
+			if (!Checks.esNulo(tarea.getTareaExterna())){
+				if (CODIGO_T013_RESULTADO_PBC.equals(tarea.getTareaExterna().getTareaProcedimiento().getCodigo())) {
+					if(!tarea.getTareaFinalizada() && tarea.getAuditoria().isBorrado()){
+						tarea.getAuditoria().setBorrado(false);
+						tareaPBC = tarea;
+					}
 				}
 			}
 

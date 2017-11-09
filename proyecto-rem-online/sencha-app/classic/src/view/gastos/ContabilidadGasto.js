@@ -42,7 +42,8 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 									            			value: '{contabilidad.ejercicioImputaGasto}'
 									            		},
 									            		displayField	: 'anyo',  
-														valueField		: 'id'
+														valueField		: 'id',
+														readOnly: true
 											        },
 													{ 
 														xtype: 'textfieldbase',

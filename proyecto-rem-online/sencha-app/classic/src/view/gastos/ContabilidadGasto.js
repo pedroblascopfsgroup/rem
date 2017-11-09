@@ -48,7 +48,8 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 													{ 
 														xtype: 'textfieldbase',
 														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable'),
-										                bind: '{contabilidad.cuentaContable}'											                
+										                bind: '{contabilidad.cuentaContable}',
+										                maskRe: /[0-9]/
 													},
 													{
 														xtype: 'datefieldbase',

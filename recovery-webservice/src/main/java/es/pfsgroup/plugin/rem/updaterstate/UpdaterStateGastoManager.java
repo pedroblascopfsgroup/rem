@@ -8,6 +8,8 @@ import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jamonapi.utils.Logger;
+
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -17,6 +19,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionHaya;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionPropietario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
@@ -86,7 +89,9 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			return error;
 		}
 		
-		if(Checks.esNulo(gasto.getGastoInfoContabilidad()) || Checks.esNulo(gasto.getGastoInfoContabilidad().getCuentaContable())) {
+		if (Checks.esNulo(gasto.getGastoInfoContabilidad())
+				|| (Checks.esNulo(gasto.getGastoInfoContabilidad().getCuentaContable())
+						&& !DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo()))) {
 			error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
 			return error;
 		}

@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.rem.gastoProveedor;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -480,11 +482,35 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		if (!Checks.esNulo(dto.getGastoSinActivos())) {
 			gastoProveedor.setGastoSinActivos(BooleanUtils.toIntegerObject(dto.getGastoSinActivos()));
 		}
+		
+		updateEjercicio(gastoProveedor);
 
 		updaterStateApi.updaterStates(gastoProveedor, null);
 		genericDao.update(GastoProveedor.class, gastoProveedor);
 
 		return true;
+	}
+	
+	private void updateEjercicio(GastoProveedor gasto) {
+		
+		Filter filtroGIC = genericDao.createFilter(FilterType.EQUALS, "GPV_ID", gasto.getId());
+		GastoInfoContabilidad gastoInfoContabilidad = genericDao.get(GastoInfoContabilidad.class, filtroGIC);
+		
+		
+		if(Checks.esNulo(gastoInfoContabilidad.getFechaDevengoEspecial())) {
+			if(!Checks.esNulo(gasto.getFechaEmision())){
+				SimpleDateFormat sdf  = new SimpleDateFormat("yyyy");
+				Filter filtroEjercicio = genericDao.createFilter(FilterType.EQUALS, "anyo", sdf.format(gasto.getFechaEmision()));
+				Ejercicio ejercicio = genericDao.get(Ejercicio.class, filtroEjercicio);
+				gastoInfoContabilidad.setEjercicio(ejercicio);
+			}
+		}else {
+			SimpleDateFormat sdf  = new SimpleDateFormat("yyyy");
+			Filter filtroEjercicio = genericDao.createFilter(FilterType.EQUALS, "anyo", sdf.format(gasto.getGastoInfoContabilidad().getFechaDevengoEspecial()));
+			Ejercicio ejercicio = genericDao.get(Ejercicio.class, filtroEjercicio);
+			gastoInfoContabilidad.setEjercicio(ejercicio);
+		}
+
 	}
 
 	public boolean existeGasto(DtoFichaGastoProveedor dto) {
@@ -1144,6 +1170,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 				gasto.setGastoInfoContabilidad(contabilidadGasto);
 			}
+			
+			updateEjercicio(gasto);
 
 			updaterStateApi.updaterStates(gasto, null);
 

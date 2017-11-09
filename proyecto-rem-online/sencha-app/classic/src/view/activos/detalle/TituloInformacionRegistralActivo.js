@@ -348,7 +348,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			        {
 						title: 'Listado de Propietarios',
 						itemId: 'listadoPropietarios',
-					    xtype		: 'gridBase',
+					    xtype: 'gridBaseEditableRow',
+					    topBar : true,
 						cls	: 'panel-base shadow-panel',
 						bind: {
 							store: '{storePropietario}'
@@ -357,6 +358,16 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							rowdblclick: 'onListadoPropietariosDobleClick'
 						},		
 						colspan: 4,
+						selModel : {
+			                type : 'checkboxmodel'
+			              },
+			              features: [{
+					            id: 'summary',
+					            ftype: 'summary',
+					            hideGroupedHeader: true,
+					            enableGroupingMenu: false,
+					            dock: 'bottom'
+						    }],
 						columns: [
 						    {   text: 'Nombre o raz&oacute;n social', 
 					        	dataIndex: 'nombreCompleto',
@@ -372,7 +383,29 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					        },	
 					        {   text: HreRem.i18n('fieldlabel.porcentaje.propiedad'), 
 					        	dataIndex: 'porcPropiedad',
-					        	flex:1
+					        	flex:1,
+					        	 summaryType: 'sum',
+						            summaryRenderer: function(value, summaryData, dataIndex) {
+						            	var suma = 0;
+						            	var store = this.up('grid').store;
+
+						            	for(var i=0; i< store.data.length; i++){
+						            		if(store.data.items[i].data.porcPropiedad != null){
+						            			suma += parseFloat(store.data.items[i].data.porcPropiedad);
+						            		}
+						            	}
+						            	suma = Ext.util.Format.number(suma, '0.00');
+						            	
+						            	var msg = HreRem.i18n("fieldlabel.porcentaje.propiedad") + " " + suma + "%";
+						            	var style = "" 
+						            	if(suma != Ext.util.Format.number(100.00,'0.00')) {
+						            		msg = HreRem.i18n("fieldlabel.porcentaje.compra.total.error");		
+						            		style = "style= 'color: red'" 
+						            	}	
+						            	
+						            	return "<span "+style+ ">"+msg+"</span>"
+						            	
+						            }
 					        },
 					        {   text: HreRem.i18n('fieldlabel.grado.propiedad'), 
 					        	dataIndex: 'tipoGradoPropiedadDescripcion',
@@ -389,6 +422,10 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					        {   text: 'E-mail', 
 					        	dataIndex: 'email',
 					        	flex:1 
+					        },
+					        {   text: 'Tipo propietario', 
+					        	dataIndex: 'tipoPropietario',
+					        	flex:1 
 					        }	               	        
 					    ],
 					    dockedItems : [
@@ -400,7 +437,56 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					                store: '{storePropietario}'
 					            }
 					        }
-					    ]
+					    ],
+
+					    onAddClick: function (btn) {
+					 		var me = this;
+					 		var activo = me.lookupController().getViewModel().get('activo'),
+					 		idActivo= activo.get('id'),
+					 		numActivo= activo.get('numActivo');
+					 		
+					 		var ventana = Ext.create("HreRem.view.activos.detalle.AnyadirPropietario", {activo: activo});
+					 		me.up('activosdetallemain').add(ventana);
+							ventana.show();
+					 	    				    	
+					 	},
+					 	onDeleteClick: function (btn) {					 		
+					 		var me = this;	
+							var url =  $AC.getRemoteUrl('activo/deleteActivoPropietarioTab');
+							var propietario = me.up('tabpanel').down('grid').getSelection();
+							var activo = me.lookupController().getViewModel().get('activo');
+							if (propietario[0].get('tipoPropietario') == "Principal"){
+								Ext.toast({
+									 html: 'No se puede eliminar el propietario principal',
+									 width: 400,
+									 height: 100,
+									 align: 't'									     
+								  });
+								
+							}else {
+								var params={};
+								params["idActivo"]=activo.get('id');
+								params["idPropietario"]= propietario[0].get('id');		
+								Ext.Ajax.request({
+								     url: url,
+								     params:params,
+								     success: function (a, operation, context) {
+								    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+								    	me.up('tabpanel').down('grid').getStore().load();
+						           },
+						           failure: function (a, operation, context) {
+						           	  Ext.toast({
+										 html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÓN',
+										 width: 360,
+										 height: 100,
+										 align: 't'									     
+									  });
+						           }
+							    });			
+							}
+							
+					 	    				    	
+					 	},
 					},
 					{
 						xtype:'fieldsettable',
@@ -741,6 +827,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
             
             
      ];
+        
 		me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();   	
 

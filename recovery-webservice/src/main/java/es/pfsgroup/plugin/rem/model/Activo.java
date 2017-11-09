@@ -267,6 +267,11 @@ public class Activo implements Serializable, Auditable {
     @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private List<ActivoCopropietarioActivo> copropietariosActivo;
+    
+    @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<ActivoAdmisionDocumento> admisionDocumento;
     
     @OneToMany(mappedBy = "activo", fetch = FetchType.LAZY)
@@ -1571,5 +1576,14 @@ public class Activo implements Serializable, Auditable {
 	public void setEntradaActivoBankia(DDEntradaActivoBankia entradaActivoBankia) {
 		this.entradaActivoBankia = entradaActivoBankia;
 	}
+
+	public List<ActivoCopropietarioActivo> getCopropietariosActivo() {
+		return copropietariosActivo;
+	}
+
+	public void setCopropietariosActivo(List<ActivoCopropietarioActivo> copropietariosActivo) {
+		this.copropietariosActivo = copropietariosActivo;
+	}
+	
 	
 }

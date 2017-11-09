@@ -158,7 +158,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 						dto.setCodigoTipoResolucion(DDTipoResolucion.CODIGO_TIPO_RESOLUCION);
 						dto.setImporteContraoferta(ofertaAceptada.getImporteContraOferta());
 						dto.setCodigoComite(expediente.getComiteSancion().getCodigo());
-						dto.setCodigoAnulacion(DDEstadoResolucion.CODIGO_ERE_CONTRAOFERTA);
+						dto.setCodigoResolucion(DDEstadoResolucion.CODIGO_ERE_CONTRAOFERTA);
 						try {
 							resolucionComiteApi.saveOrUpdateResolucionComite(dto);
 						} catch (Exception e) {

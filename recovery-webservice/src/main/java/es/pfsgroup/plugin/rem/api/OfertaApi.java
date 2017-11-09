@@ -472,9 +472,10 @@ public interface OfertaApi {
 	/**
 	 * Método que ratifica el comité de Bankia
 	 * @param tareaExterna
+	 * @param importeOfertante
 	 * @return String Error o null
 	 */
-	String ratificacionComiteProcess(TareaExterna tareaExterna);
+	String ratificacionComiteProcess(TareaExterna tareaExterna, String importeOfertante);
 
 	/**
 	 * Método que da de alta un comité

@@ -33,7 +33,7 @@ BEGIN
 		IF V_NUM_TABLAS > 0 THEN
 		
 			V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'
-            		SET TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''T013_RespuestaOfertante''''][''''comboRespuesta''''] == DDSiNo.NO ? null : respuestaOfertanteT013(valores[''''T013_RespuestaOfertante''''][''''importeOfertante''''])''
+            		SET TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''T013_RespuestaOfertante''''][''''comboRespuesta''''] == DDRespuestaOfertante.CODIGO_RECHAZA ? null : respuestaOfertanteT013(valores[''''T013_RespuestaOfertante''''][''''importeOfertante''''])''
 			, USUARIOMODIFICAR = ''HREOS-3098'', FECHAMODIFICAR = SYSDATE WHERE TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE TAP_CODIGO = ''T013_RespuestaOfertante'')';
             
 			EXECUTE IMMEDIATE V_MSQL;

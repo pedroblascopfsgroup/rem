@@ -155,7 +155,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 						
 						ResolucionComiteDto dto = new ResolucionComiteDto();
 						dto.setOfertaHRE(ofertaAceptada.getNumOferta());
-						dto.setCodigoTipoResolucion(DDTipoResolucion.CODIGO_TIPO_RESOLUCION);
+						dto.setCodigoTipoResolucion(DDTipoResolucion.CODIGO_TIPO_RESPUESTA_OFERTANTE);
 						dto.setImporteContraoferta(ofertaAceptada.getImporteContraOferta());
 						dto.setCodigoComite(expediente.getComiteSancion().getCodigo());
 						dto.setCodigoResolucion(DDEstadoResolucion.CODIGO_ERE_CONTRAOFERTA);
@@ -165,11 +165,9 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-					}
-					
-					genericDao.save(ExpedienteComercial.class, expediente);
-					
+					}					
 				}
+				genericDao.save(ExpedienteComercial.class, expediente);
 			}
 		}
 

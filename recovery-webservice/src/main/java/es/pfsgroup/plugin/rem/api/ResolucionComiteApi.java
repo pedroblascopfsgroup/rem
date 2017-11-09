@@ -52,5 +52,5 @@ public interface ResolucionComiteApi {
 	 * @param resolDto con la información de la resolucion a dar de alta
 	 * @return ResolucionComiteBankia
 	 */
-	public ResolucionComiteBankia saveResolucionComite(ResolucionComiteBankiaDto resolDto) throws Exception ;
+	public ResolucionComiteBankia saveResolucionComite(ResolucionComiteBankiaDto resolDto, Long numOferta) throws Exception ;
 }

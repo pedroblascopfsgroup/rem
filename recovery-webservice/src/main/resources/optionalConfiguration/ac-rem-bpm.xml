@@ -383,9 +383,9 @@
             	def validateJbpmManager = ctx.getBean("validateJbpmManager");
             	return validateJbpmManager.definicionOfertaT013(tareaExterna, codigo);
             }
-            def respuestaOfertanteT013  = {
+            def respuestaOfertanteT013(String importeOfertante) {
             	def validateJbpmManager = ctx.getBean("validateJbpmManager");
-            	return validateJbpmManager.respuestaOfertanteT013(tareaExterna);
+            	return validateJbpmManager.respuestaOfertanteT013(tareaExterna, importeOfertante);
             }  
             def resolucionComiteT013 = {
             	def validateJbpmManager = ctx.getBean("validateJbpmManager");

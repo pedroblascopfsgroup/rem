@@ -483,10 +483,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 									  });
 						           }
 							    });			
-							}
-							
-					 	    				    	
-					 	},
+							}					 	    				    	
+					 	}
 					},
 					{
 						xtype:'fieldsettable',
@@ -529,12 +527,6 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.firmeza.auto.adjudicacion'),			                	
 								bind: '{datosRegistrales.fechaDecretoFirme}'
 			                },
-//			                { 
-//			                	xtype: 'datefieldbase',
-//			                	reference: 'fechaTomaPosesionJudicial',
-//			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.toma.posesion'),
-//								bind: '{datosRegistrales.fechaSenalamientoPosesion}'
-//							},
 			                {
 			                	xtype: 'datefieldbase',
 			                	reference: 'fechaSenyalamientoPosesion',
@@ -590,13 +582,10 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 								bind: '{datosRegistrales.fechaResolucionMoratoria}'
 			                },
 			                
-			                ////////
-			                
 							{ 
 								xtype: 'currencyfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.importe.adjudicacion'),
-								bind: '{datosRegistrales.importeAdjudicacion}'/*,
-								allowBlank: false*/
+								bind: '{datosRegistrales.importeAdjudicacion}'
 			                },
 			                {
 								xtype: 'comboboxfieldbase',
@@ -886,15 +875,6 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 	   			fechaFirmezaAutoAdjudicacion.markInvalid(error);
    				
    			}
-   			
-   			/* Se elimina esta validaci�n a petici�n del cliente en HREOS-359
-   			 * 
-   			if(fechaTomaPosesion.getValue() < fechaAutoAdjudicacion.getValue()){
-   				error = HreRem.i18n("txt.validacion.fechaTomaPosesion.menor.fechaAutoAdjudicacion");
-	   			errores.push(error);
-	   			fechaTomaPosesion.markInvalid(error);
-   				
-   			}*/
    			
    			
    		}

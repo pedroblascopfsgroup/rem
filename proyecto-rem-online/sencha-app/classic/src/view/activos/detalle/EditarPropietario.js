@@ -64,10 +64,6 @@ Ext.define('HreRem.view.activos.detalle.EditarPropietario', {
 					collapsed: false,
 				 	scrollable	: 'y',
 					cls:'',	    				
-					/*
-					recordName: "propietario",
-					
-					recordClass: "HreRem.model.ActivoPropietario",*/
 					
 					items: [
 					
@@ -107,7 +103,7 @@ Ext.define('HreRem.view.activos.detalle.EditarPropietario', {
 												readOnly: true,
 			    					        	fieldLabel: HreRem.i18n('fieldlabel.tipo.propietario'),
 												name: 'tipoPropietario',
-			    					        	bind: '{propietario.tipoPropietario}',
+			    					        	bind: '{propietario.tipoPropietario}'
 			    					        	
 			    					        },
 			    					        {
@@ -336,7 +332,6 @@ Ext.define('HreRem.view.activos.detalle.EditarPropietario', {
 	    					        
 	    					        {
 	    				                	xtype: 'textareafieldbase',
-	    				                	//rowspan: 4,
 	    				                	fieldLabel: HreRem.i18n('fieldlabel.observaciones'),
 		    					        	bind: '{propietario.observaciones}'
 	    					        }

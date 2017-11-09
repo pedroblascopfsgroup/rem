@@ -3549,13 +3549,34 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		ExpedienteComercial expediente = findOne(idEntidad);
 		Posicionamiento posicionamiento = new Posicionamiento();
+		List<Posicionamiento> lista = expediente.getPosicionamientos();
+		if(lista.isEmpty()){
+			
+			posicionamiento = dtoToPosicionamiento(dto, posicionamiento);
+			posicionamiento.setExpediente(expediente);
 
-		posicionamiento = dtoToPosicionamiento(dto, posicionamiento);
-		posicionamiento.setExpediente(expediente);
+			genericDao.save(Posicionamiento.class, posicionamiento);
+			
+			return true;
+		}else{
+			boolean hayPosicionamientoVigente = false;
+			for(Posicionamiento p : lista){
+				if(Checks.esNulo(p.getFechaFinPosicionamiento()) && Checks.esNulo(p.getMotivoAplazamiento())){
+					hayPosicionamientoVigente = true;
+				}
+			}
+			
+			if(!hayPosicionamientoVigente){
+				posicionamiento = dtoToPosicionamiento(dto, posicionamiento);
+				posicionamiento.setExpediente(expediente);
+	
+				genericDao.save(Posicionamiento.class, posicionamiento);
+				return true;
+			}
+			
+			return false;
+		}
 
-		genericDao.save(Posicionamiento.class, posicionamiento);
-
-		return true;
 	}
 
 	@Override
@@ -3566,6 +3587,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Posicionamiento posicionamiento = genericDao.get(Posicionamiento.class, filtro);
 
 		posicionamiento = dtoToPosicionamiento(dto, posicionamiento);
+		
+		if(!Checks.esNulo(posicionamiento.getMotivoAplazamiento())){
+			posicionamiento.setFechaFinPosicionamiento(new Date());
+		}
 		genericDao.update(Posicionamiento.class, posicionamiento);
 
 		return true;

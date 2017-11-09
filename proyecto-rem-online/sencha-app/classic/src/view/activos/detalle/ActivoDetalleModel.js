@@ -360,6 +360,51 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				}
     		},
     		
+    		comboTiposPersona: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tipoPersona'}
+				}
+    		},
+    		
+    		comboProvincias: {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'provincias'}
+				}
+    		},
+    		
+    		comboPoblacion: {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboMunicipio',
+					extraParams: {codigoProvincia: '{propietario.provinciaCodigo}'}
+				}
+    		},
+    		
+    		comboTipoDocumento: {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tiposDocumentos'}
+				}
+    		},
+    		
+    		comboGradoPropiedad: {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tiposGradoPropiedad'}
+				}
+    		},
+    		
     		comboSubtiposCarga: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {

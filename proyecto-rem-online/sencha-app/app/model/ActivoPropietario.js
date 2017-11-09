@@ -84,6 +84,16 @@ Ext.define('HreRem.model.ActivoPropietario', {
     		},
     		{
     			name:'observaciones'
+    		},
+    		{
+    			name:'tipoPropietario'
+    		},
+    		{
+    			name: 'isPrincipal',
+    			calculate: function(data) { 
+    				return data.tipoPropietario == "Principal";
+    			},
+    			depends: 'tipoPropietario'
     		}
     ],
     
@@ -92,7 +102,10 @@ Ext.define('HreRem.model.ActivoPropietario', {
 		localUrl: 'activos.json',
 		remoteUrl: 'activo/getListPropietarioById',
 		api: {
-            read: 'activo/getListPropietarioById'
+            read: 'activo/getListPropietarioById',
+            create: 'activo/saveActivoPropietarioTab',
+            update: 'activo/updateActivoPropietarioTab',
+            destroy: 'activo/getListPropietarioById'
 
         }
     }

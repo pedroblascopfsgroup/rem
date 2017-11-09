@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--## HREOS-3118 Añadidos campos fechaCaducidad, fechaEtiqueta, y tipoCalificacionCodigo
 --##########################################
 --*/
 
@@ -64,7 +65,10 @@ BEGIN
 			    ADO.ADO_FECHA_VERIFICADO,
           		CTD.DD_TGE_ID,
 				TGE.DD_TGE_CODIGO,
-          		CTD.DD_STR_ID
+          		CTD.DD_STR_ID,
+				ADO.ADO_FECHA_CADUCIDAD,
+				ADO.ADO_FECHA_ETIQUETA,
+				TCE.DD_TCE_CODIGO
 		FROM ' || V_ESQUEMA || '.ACT_CFD_CONFIG_DOCUMENTO CFD
 		INNER JOIN ' || V_ESQUEMA || '.ACT_ACTIVO ACT ON ACT.DD_TPA_ID = CFD.DD_TPA_ID
     	INNER JOIN ' || V_ESQUEMA || '.DD_TPD_TIPO_DOCUMENTO TPD ON TPD.DD_TPD_ID = CFD.DD_TPD_ID
@@ -72,6 +76,7 @@ BEGIN
     	LEFT JOIN ' || V_ESQUEMA || '.DD_EDC_ESTADO_DOCUMENTO EDC ON EDC.DD_EDC_ID = ADO.DD_EDC_ID
     	LEFT JOIN ' || V_ESQUEMA || '.ACT_CTD_CONFIG_TDOCUMENTO CTD ON CTD.DD_TPD_ID = TPD.DD_TPD_ID
 		LEFT JOIN ' || V_ESQUEMA_M || '.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_ID = CTD.DD_TGE_ID
+		LEFT JOIN ' || V_ESQUEMA || '.DD_TCE_TIPO_CALIF_ENERGETICA TCE ON TCE.DD_TCE_ID = ADO.DD_TCE_ID
     where act.borrado = 0';
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_ADMISION_DOCUMENTOS...Creada OK');

@@ -186,6 +186,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("origenDato", DDOrigenDato.class);
 		mapa.put("tipoRechazoOferta", DDTipoRechazoOferta.class);
 		mapa.put("motivoRechazoOferta", DDMotivoRechazoOferta.class);
+		mapa.put("calificacionEnergetica", DDTipoCalificacionEnergetica.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

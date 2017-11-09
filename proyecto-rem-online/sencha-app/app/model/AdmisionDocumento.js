@@ -45,6 +45,22 @@ Ext.define('HreRem.model.AdmisionDocumento', {
     		{
     			name:'gestorCodigo',
     			hidden:true
+    		},
+    		{
+    				
+    		},
+    		{
+    			name:'fechaCaducidad',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name:'fechaEtiqueta',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name: 'tipoCalificacionCodigo'    			
     		}
     ],
     

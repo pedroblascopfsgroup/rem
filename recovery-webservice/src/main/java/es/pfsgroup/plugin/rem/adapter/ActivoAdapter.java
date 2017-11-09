@@ -141,6 +141,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
@@ -1964,6 +1965,10 @@ public class ActivoAdapter {
 					dtoAdmisionDocumento.getFechaSolicitud());
 			beanUtilNotNull.copyProperty(activoAdmisionDocumento, "fechaVerificado",
 					dtoAdmisionDocumento.getFechaVerificado());
+			beanUtilNotNull.copyProperty(activoAdmisionDocumento, "fechaCaducidad",
+					dtoAdmisionDocumento.getFechaCaducidad());
+			beanUtilNotNull.copyProperty(activoAdmisionDocumento, "fechaEtiqueta",
+					dtoAdmisionDocumento.getFechaEtiqueta());
 			beanUtilNotNull.copyProperty(activoAdmisionDocumento, "aplica",
 					BooleanUtils.toBoolean(dtoAdmisionDocumento.getAplica()));
 
@@ -1972,6 +1977,13 @@ public class ActivoAdapter {
 						.dameValorDiccionarioByCod(DDEstadoDocumento.class, dtoAdmisionDocumento.getEstadoDocumento());
 				activoAdmisionDocumento.setEstadoDocumento(estadoDocumento);
 			}
+			
+			if (dtoAdmisionDocumento.getTipoCalificacionCodigo() != null) {
+				DDTipoCalificacionEnergetica calificacion = (DDTipoCalificacionEnergetica) proxyFactory.proxy(UtilDiccionarioApi.class)
+						.dameValorDiccionarioByCod(DDTipoCalificacionEnergetica.class, dtoAdmisionDocumento.getTipoCalificacionCodigo());
+				activoAdmisionDocumento.setTipoCalificacionEnergetica(calificacion);
+			}
+			
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {

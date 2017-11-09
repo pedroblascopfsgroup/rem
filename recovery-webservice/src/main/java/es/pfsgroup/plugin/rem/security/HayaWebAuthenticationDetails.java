@@ -4,7 +4,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.security.ui.WebAuthenticationDetails;
 
-public class HayaWebAuthenticationDetails extends WebAuthenticationDetails {
+import es.capgemini.pfs.security.RSAWebAuthenticationDetails;
+
+public class HayaWebAuthenticationDetails extends RSAWebAuthenticationDetails {
 
 	private static final long serialVersionUID = 1L;
 	private static final String ID_TOKEN_KEY = "id_token";

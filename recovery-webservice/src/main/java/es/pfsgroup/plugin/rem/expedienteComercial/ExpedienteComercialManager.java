@@ -3484,6 +3484,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						titular.setTipoDocumentoCliente('F');
 					} else if (tipoDoc.getCodigo().equals("10")) {
 						titular.setTipoDocumentoCliente('J');
+					} else if (tipoDoc.getCodigo().equals("12")) {
+						titular.setTipoDocumentoCliente('J');
+					}else{
+						throw new Exception("Tipo de documento no soportado");
 					}
 				}
 

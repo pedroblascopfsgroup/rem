@@ -42,6 +42,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
+import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
@@ -1028,6 +1029,12 @@ public interface ActivoApi {
 	Usuario getUsuarioMediador(Activo activo);
 	
 	public Boolean saveActivoCargaTab(DtoActivoCargasTab cargaDto);
+	
+	public Boolean updateActivoPropietarioTab(DtoPropietario propietario);
+	
+	public Boolean createActivoPropietarioTab(DtoPropietario propietario);
+	
+	public Boolean deleteActivoPropietarioTab(DtoPropietario propietario);
 	
 	/**
 	 * Devuelve la lista de precios vigentes para un activo dado.

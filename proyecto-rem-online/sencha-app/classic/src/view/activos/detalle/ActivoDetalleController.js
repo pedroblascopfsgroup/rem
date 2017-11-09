@@ -139,10 +139,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 	
 	onListadoPropietariosDobleClick: function (grid, record) {
-    	var me = this;
-    	me.getView().fireEvent('openModalWindow',"HreRem.view.activos.detalle.EditarPropietario", {propietario: record});
-	},
-	
+    	var me = this
+    	var activo = me.getViewModel().get('activo'),
+ 		idActivo= activo.get('id');
+    	var ventana = Ext.create("HreRem.view.activos.detalle.EditarPropietario", {propietario: record, activo: activo});
+    	
+ 		grid.up('activosdetallemain').add(ventana);
+		ventana.show();
+	},	
 	
 	onTasacionListClick: function (grid, record) {
 		
@@ -377,7 +381,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	chainedCombo = me.lookupReference(combo.chainedReference);   
     	
     	me.getViewModel().notify();
-    	
     	if(!Ext.isEmpty(chainedCombo.getValue())) {
 			chainedCombo.clearValue();
     	}
@@ -682,7 +685,121 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 
 	onClickBotonCancelarPropietario: function(btn) {		
-		btn.up('window').hide();		
+		
+		var window = btn.up('window');
+		var padre = window.floatParent;
+		var tab = padre.down('tituloinformacionregistralactivo');
+		tab.funcionRecargar();
+		
+		btn.up('window').hide();
+	},
+	
+	onClickBotonGuardarPropietario: function(btn) {		
+		var me = this;	
+		var url =  $AC.getRemoteUrl('activo/updateActivoPropietarioTab');
+		form= btn.up('window').down('formBase').getForm();
+		var window = btn.up('window');
+		var padre = window.floatParent;
+		var tab = padre.down('tituloinformacionregistralactivo');
+		
+		var propietario = me.getViewModel().get('propietario');
+		var activo = me.getViewModel().get('activo');
+		
+		var params={};
+		params["idActivo"]=activo.get('id');
+		params["idPropietario"]= propietario.get('id');
+		params['porcPropiedad']=form.findField("porcPropiedad").getValue();
+		params['tipoGradoPropiedadCodigo']=form.findField("tipoGradoPropiedad").getValue();
+		params['tipoPersonaCodigo']=form.findField("tipoPersona").getValue();
+		params['nombre']=form.findField("nombre").getValue();
+		params['tipoDocIdentificativoCodigo']=form.findField("tipoDoc").getValue();
+		params['docIdentificativo']=form.findField("numDoc").getValue();
+		params['direccion']=form.findField("direccion").getValue();
+		params['provinciaCodigo']=form.findField("provincia").getValue();
+		params['localidadCodigo']=form.findField("localidad").getValue();
+		params['codigoPostal']=form.findField("codigoPostal").getValue();
+		params['telefono']=form.findField("telefono").getValue();
+		params['email']=form.findField("email").getValue();
+		params['tipoPropietario']=form.findField("tipoPropietario").getValue();
+		
+		Ext.Ajax.request({
+		     url: url,
+		     params:params,
+		     success: function (a, operation, context) {
+		    	 btn.up('window').hide();
+		    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		    	tab.funcionRecargar();
+           },
+           failure: function (a, operation, context) {
+           	  Ext.toast({
+				 html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÓN',
+				 width: 360,
+				 height: 100,
+				 align: 't'									     
+			  });
+           }
+	    });
+	},
+	
+	onClickBotonAnyadirPropietario: function(btn) {		
+		var me = this;	
+		var url =  $AC.getRemoteUrl('activo/createActivoPropietarioTab');
+		form= btn.up('window').down('formBase').getForm();
+		
+		var window = btn.up('window');
+		var padre = window.floatParent;
+		var tab = padre.down('tituloinformacionregistralactivo');
+		
+		var me = this;
+ 		var activo = me.getViewModel().get('activo'),
+ 		idActivo= activo.get('id');
+ 		
+		var params={"idActivo":activo.get('id')};
+		params['porcPropiedad']=form.findField("porcPropiedad").getValue();
+		params['tipoGradoPropiedadCodigo']=form.findField("tipoGradoPropiedad").getValue();
+		params['tipoPersonaCodigo']=form.findField("tipoPersona").getValue();
+		params['nombre']=form.findField("nombre").getValue();
+		params['tipoDocIdentificativoCodigo']=form.findField("tipoDoc").getValue();
+		params['docIdentificativo']=form.findField("numDoc").getValue();
+		params['direccion']=form.findField("direccion").getValue();
+		params['provinciaCodigo']=form.findField("provincia").getValue();
+		params['localidadCodigo']=form.findField("localidad").getValue();
+		params['codigoPostal']=form.findField("codigoPostal").getValue();
+		params['telefono']=form.findField("telefono").getValue();
+		params['email']=form.findField("email").getValue();
+		params['tipoPropietario']="Copropietario";
+
+		porc = params.porcPropiedad;
+		grado = params.tipoGradoPropiedadDescripcion;
+		nombre = params.nombre;
+		
+		if(porc != "" && porc != null && grado != "" && grado != null && nombre != "" && nombre != null){
+			Ext.Ajax.request({
+			     url: url,
+			     params:params,
+			     success: function (a, operation, context) {
+			    	 btn.up('window').hide();
+			    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			    	tab.funcionRecargar();
+	           },
+	           failure: function (a, operation, context) {
+	           	  Ext.toast({
+					 html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÓN',
+					 width: 360,
+					 height: 100,
+					 align: 't'									     
+				  });
+	           }
+		    });
+		}else  {
+			Ext.toast({
+				 html: 'Porfavor, revise los campos obligatorios',
+				 width: 360,
+				 height: 100,
+				 align: 't'									     
+			  });
+		}
+		
 	},
 	
 	onTramitesListDobleClick : function(grid,record) {

@@ -116,12 +116,15 @@ Ext.define('HreRem.view.activos.detalle.EditarPropietario', {
 			    					        {
 			    					        	fieldLabel: HreRem.i18n('fieldlabel.porcentaje.propiedad'),
 			    					        	name: 'porcPropiedad',
+			    					        	maskRe: /[0-9.]/,
+			    					        	allowBlank: false,
 			    					        	bind: '{propietario.porcPropiedad}'
 			    					        },
 			    					        {
 			    					        		xtype: 'comboboxfieldbase',
 			    					        	   fieldLabel: HreRem.i18n('fieldlabel.grado.propiedad'),
 			    					        	   name: 'tipoGradoPropiedad',
+			    					        	   allowBlank: false,
 												   displayField: 'descripcion',
 												   valueField: 'codigo',
 												   bind:{ 
@@ -164,6 +167,7 @@ Ext.define('HreRem.view.activos.detalle.EditarPropietario', {
 												fieldLabel: HreRem.i18n('header.nombre.razon.social'),
 												name: 'nombre',
 												readOnly: me.isPrincipal(),
+												allowBlank: false,
 			    					        	bind: {
 			    					        		value: '{propietario.nombreCompleto}'
 			    					        	}

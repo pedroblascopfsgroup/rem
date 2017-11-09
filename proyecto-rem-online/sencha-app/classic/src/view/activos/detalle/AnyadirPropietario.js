@@ -55,10 +55,6 @@ Ext.define('HreRem.view.activos.detalle.AnyadirPropietario', {
 					collapsed: false,
 				 	scrollable	: 'y',
 					cls:'',	    				
-					/*
-					recordName: "activo",
-					
-					recordClass: "HreRem.model.ActivoPropietario",*/
 					
 					items: [
 					
@@ -104,6 +100,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirPropietario', {
 			    					        {
 			    					        	fieldLabel: HreRem.i18n('fieldlabel.porcentaje.propiedad'),
 			    					        	name: 'porcPropiedad',
+			    					        	maskRe: /[0-9.]/,
 			    					        	allowBlank: false
 			    					        },
 			    					        {
@@ -173,6 +170,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirPropietario', {
 			    					        {
 												   xtype: 'comboboxfieldbase',
 												   fieldLabel: HreRem.i18n('fieldlabel.provincia'),
+												   reference: 'provincia',
 												   name: 'provincia',
 												   displayField: 'descripcion',
 												   valueField: 'codigo',
@@ -182,6 +180,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirPropietario', {
 														select: 'onChangeChainedCombo'
 						    						},
 												   bind:{ 
+													   	value: '{propietario.provinciaCodigo}',
 													   	store: '{comboProvincias}'													   	
 													   		} 
 											},
@@ -189,10 +188,12 @@ Ext.define('HreRem.view.activos.detalle.AnyadirPropietario', {
 			    					        {
 												   xtype: 'comboboxfieldbase',
 			    					        	   fieldLabel: HreRem.i18n('fieldlabel.poblacion'),
+			    					        	   reference: 'localidad',
 			    					        	   name: 'localidad',
 												   displayField: 'descripcion',
 												   valueField: 'codigo',
 												   bind:{ 
+													   	value: '{propietario.localidadCodigo}',
 													   	store: '{comboPoblacion}'													   	
 													   		} 
 											},
@@ -295,6 +296,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirPropietario', {
     
     resetWindow: function() {
     	var me = this;
+    	me.getViewModel().set('propietario', me.propietario);
     	me.getViewModel().set('activo', me.activo);
     }
 });

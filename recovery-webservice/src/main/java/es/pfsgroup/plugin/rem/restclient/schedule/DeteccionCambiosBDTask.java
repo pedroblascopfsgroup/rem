@@ -160,9 +160,8 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 				if (!registroCambiosHandlersAjecutar.get(0).isApiRestCerrada()) {
 					for (DetectorCambiosBD handler : registroCambiosHandlersAjecutar) {
 						if (handler.isActivo()) {
-							boolean optimizado = ((InfoTablasBD)handlerToExecute).procesarSoloCambiosMarcados();
 							logger.debug("[DETECCIÓN CAMBIOS] Ejecutando handler: " + handler.getClass().getName());
-							logger.debug("[DETECCIÓN CAMBIOS] Optimizado: " + optimizado);
+							logger.debug("[DETECCIÓN CAMBIOS] Optimizado: " + handler.procesarSoloCambiosMarcados());
 							ArrayList<RestLlamada> llamadas = new ArrayList<RestLlamada>();
 							long startTime = System.currentTimeMillis();
 

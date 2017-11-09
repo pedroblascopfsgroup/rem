@@ -29,7 +29,11 @@ import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.direccion.model.DDProvincia;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -76,6 +80,8 @@ import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoCargas;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.ActivoCopropietario;
+import es.pfsgroup.plugin.rem.model.ActivoCopropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
@@ -121,6 +127,7 @@ import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
+import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
@@ -173,6 +180,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
@@ -3826,6 +3834,207 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		return false;
 		
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean updateActivoPropietarioTab(DtoPropietario propietario) {
+		Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", Long.parseLong(propietario.getIdActivo()));
+		Filter proFilter = genericDao.createFilter(FilterType.EQUALS, "propietario.id", Long.parseLong(propietario.getIdPropietario()));
+		if (propietario.getTipoPropietario().equals("Principal")) {
+			
+			ActivoPropietarioActivo propietarioActivo = genericDao.get(ActivoPropietarioActivo.class, activoFilter, proFilter);
+			
+			propietarioActivo.setPorcPropiedad(propietario.getPorcPropiedad());
+			
+			Filter propiedadFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getTipoGradoPropiedadCodigo());
+			DDTipoGradoPropiedad tipoGrado = genericDao.get(DDTipoGradoPropiedad.class, propiedadFilter);
+			propietarioActivo.setTipoGradoPropiedad(tipoGrado);
+			
+			genericDao.update(ActivoPropietarioActivo.class, propietarioActivo);
+			return true;
+		} else if (propietario.getTipoPropietario().equals("Copropietario")){
+			Filter cproFilter = genericDao.createFilter(FilterType.EQUALS, "coPropietario.id", Long.parseLong(propietario.getIdPropietario()));
+			Filter idProFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(propietario.getIdPropietario()));
+			ActivoCopropietarioActivo copropietarioActivo = genericDao.get(ActivoCopropietarioActivo.class, activoFilter, cproFilter);
+			ActivoCopropietario copropietario = genericDao.get(ActivoCopropietario.class, idProFilter);
+			
+			if (!Checks.esNulo(propietario.getPorcPropiedad())){
+				copropietarioActivo.setPorcPropiedad(propietario.getPorcPropiedad());
+			} else {
+				return false;
+			}
+			
+			if (!Checks.esNulo(propietario.getTipoGradoPropiedadCodigo())){
+				Filter propiedadFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getTipoGradoPropiedadCodigo());
+				DDTipoGradoPropiedad tipoGrado = genericDao.get(DDTipoGradoPropiedad.class, propiedadFilter);
+				copropietarioActivo.setTipoGradoPropiedad(tipoGrado);
+			} else {
+				return false;
+			}
+			
+			if (!Checks.esNulo(propietario.getTipoPersonaCodigo())){
+			Filter personaFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getTipoPersonaCodigo());
+			DDTipoPersona tipoPersona = genericDao.get(DDTipoPersona.class, personaFilter);
+			copropietario.setTipoPersona(tipoPersona);
+			}
+			
+			if (!Checks.esNulo(propietario.getNombre())){
+				copropietario.setNombre(propietario.getNombre());
+			}else {
+				return false;
+			}
+			
+			if (!Checks.esNulo(propietario.getTipoDocIdentificativoCodigo())){
+				Filter docFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getTipoDocIdentificativoCodigo());
+				DDTipoDocumento tipoDocumento = genericDao.get(DDTipoDocumento.class, docFilter);
+				copropietario.setTipoDocIdentificativo(tipoDocumento);
+			}
+			
+			if (!Checks.esNulo(propietario.getDocIdentificativo())){
+				copropietario.setDocIdentificativo(propietario.getDocIdentificativo());
+			}
+			
+			if(!Checks.esNulo(propietario.getDireccion())){
+				copropietario.setDireccion(propietario.getDireccion());
+			}
+			
+			if (!Checks.esNulo(propietario.getProvinciaCodigo())){
+				Filter provFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getProvinciaCodigo());
+				DDProvincia provincia = genericDao.get(DDProvincia.class, provFilter);
+				copropietario.setProvincia(provincia);
+			}
+			
+			if (!Checks.esNulo(propietario.getLocalidadCodigo())){
+				Filter locFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getLocalidadCodigo());
+				Localidad localidad = genericDao.get(Localidad.class, locFilter);
+				copropietario.setLocalidad(localidad);
+			}
+			
+			if (!Checks.esNulo(propietario.getCodigoPostal())){
+				copropietario.setCodigoPostal(Integer.parseInt(propietario.getCodigoPostal()));
+			}
+			
+			if (!Checks.esNulo(propietario.getTelefono())){
+				copropietario.setTelefono(propietario.getTelefono());
+			}
+			
+			if (!Checks.esNulo(propietario.getEmail())){
+				copropietario.setEmail(propietario.getEmail());
+			}
+			
+			genericDao.update(ActivoCopropietario.class, copropietario);
+			genericDao.update(ActivoCopropietarioActivo.class, copropietarioActivo);			
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean createActivoPropietarioTab(DtoPropietario propietario) {
+		if (!Checks.esNulo(propietario.getIdActivo())){
+			ActivoCopropietarioActivo copropietarioActivo = new ActivoCopropietarioActivo();
+			ActivoCopropietario copropietario = new ActivoCopropietario();
+			
+			Filter actFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(propietario.getIdActivo()));
+			Activo activo = genericDao.get(Activo.class, actFilter);
+			copropietarioActivo.setActivo(activo);
+			
+			if (!Checks.esNulo(propietario.getPorcPropiedad())){
+				copropietarioActivo.setPorcPropiedad(propietario.getPorcPropiedad());
+			} else {
+				return false;
+			}
+			
+			if (!Checks.esNulo(propietario.getTipoGradoPropiedadCodigo())){
+				Filter propiedadFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getTipoGradoPropiedadCodigo());
+				DDTipoGradoPropiedad tipoGrado = genericDao.get(DDTipoGradoPropiedad.class, propiedadFilter);
+				copropietarioActivo.setTipoGradoPropiedad(tipoGrado);
+			} else {
+				return false;
+			}
+			
+			if (!Checks.esNulo(propietario.getTipoPersonaCodigo())){
+			Filter personaFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getTipoPersonaCodigo());
+			DDTipoPersona tipoPersona = genericDao.get(DDTipoPersona.class, personaFilter);
+			copropietario.setTipoPersona(tipoPersona);
+			}
+			
+			if (!Checks.esNulo(propietario.getNombre())){
+				copropietario.setNombre(propietario.getNombre());
+			}else {
+				return false;
+			}
+			
+			if (!Checks.esNulo(propietario.getTipoDocIdentificativoCodigo())){
+				Filter docFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getTipoDocIdentificativoCodigo());
+				DDTipoDocumento tipoDocumento = genericDao.get(DDTipoDocumento.class, docFilter);
+				copropietario.setTipoDocIdentificativo(tipoDocumento);
+			}
+			
+			if (!Checks.esNulo(propietario.getDocIdentificativo())){
+				copropietario.setDocIdentificativo(propietario.getDocIdentificativo());
+			}
+			
+			if(!Checks.esNulo(propietario.getDireccion())){
+				copropietario.setDireccion(propietario.getDireccion());
+			}
+			
+			if (!Checks.esNulo(propietario.getProvinciaCodigo())){
+				Filter provFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getProvinciaCodigo());
+				DDProvincia provincia = genericDao.get(DDProvincia.class, provFilter);
+				copropietario.setProvincia(provincia);
+			}
+			
+			if (!Checks.esNulo(propietario.getLocalidadCodigo())){
+				Filter locFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getLocalidadCodigo());
+				Localidad localidad = genericDao.get(Localidad.class, locFilter);
+				copropietario.setLocalidad(localidad);
+			}
+			
+			if (!Checks.esNulo(propietario.getCodigoPostal())){
+				copropietario.setCodigoPostal(Integer.parseInt(propietario.getCodigoPostal()));
+			}
+			
+			if (!Checks.esNulo(propietario.getTelefono())){
+				copropietario.setTelefono(propietario.getTelefono());
+			}
+			
+			if (!Checks.esNulo(propietario.getEmail())){
+				copropietario.setEmail(propietario.getEmail());
+			}
+			
+			genericDao.save(ActivoCopropietario.class, copropietario);
+			copropietarioActivo.setCoPropietario(copropietario);
+			
+			genericDao.save(ActivoCopropietarioActivo.class, copropietarioActivo);			
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean deleteActivoPropietarioTab(DtoPropietario propietario) {
+		if (!Checks.esNulo(propietario.getIdActivo()) && !Checks.esNulo(propietario.getIdPropietario())){
+			
+			Filter actFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", Long.parseLong(propietario.getIdActivo()));
+			Filter cprFilter = genericDao.createFilter(FilterType.EQUALS, "coPropietario.id", Long.parseLong(propietario.getIdPropietario()));
+			Filter coproFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(propietario.getIdPropietario()));
+			
+			ActivoCopropietarioActivo copropietarioActivo = genericDao.get(ActivoCopropietarioActivo.class, actFilter, cprFilter);
+			ActivoCopropietario copropietario = genericDao.get(ActivoCopropietario.class, coproFilter);
+			
+			genericDao.deleteById(ActivoCopropietarioActivo.class, copropietarioActivo.getId());
+			
+			genericDao.deleteById(ActivoCopropietario.class, copropietario.getId());	
+						
+			return true;
+		}else {
+			return false;
+		}
 	}
 
 	@Override

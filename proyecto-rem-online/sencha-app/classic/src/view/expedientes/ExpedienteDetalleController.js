@@ -1631,6 +1631,29 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		me.changeFecha(me.lookupReference('fechaPosicionamientoRef'));
 		me.changeHora(me.lookupReference('horaAvisoRef'));
 		me.changeHora(me.lookupReference('horaPosicionamientoRef'));
+		
+		me.lookupReference('fechaPosicionamientoRef').setDisabled(false);
+		me.lookupReference('horaPosicionamientoRef').setDisabled(false);
+		me.lookupReference('motivoAplazamientoRef').setDisabled(true);
+	},
+	
+	comprobacionesDobleClick: function(editor, gridNfo) {
+		var me = this;
+		
+		if(editor.isNew) {
+			me.lookupReference('fechaAvisoRef').setValue();
+			me.lookupReference('fechaPosicionamientoRef').setValue();
+			me.lookupReference('horaAvisoRef').setValue();
+			me.lookupReference('horaPosicionamientoRef').setValue();
+		}
+		me.changeFecha(me.lookupReference('fechaAvisoRef'));
+		me.changeFecha(me.lookupReference('fechaPosicionamientoRef'));
+		me.changeHora(me.lookupReference('horaAvisoRef'));
+		me.changeHora(me.lookupReference('horaPosicionamientoRef'));
+		
+		me.lookupReference('fechaPosicionamientoRef').setDisabled(true);
+		me.lookupReference('horaPosicionamientoRef').setDisabled(true);
+		me.lookupReference('motivoAplazamientoRef').setDisabled(false);
 	},
 
 	onRowClickPosicionamiento:  function(gridView, record) {

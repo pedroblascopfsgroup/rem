@@ -312,13 +312,12 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 							topBar : '{!esExpedienteBloqueado}'
 						},
 						listeners : {
-							rowdblclick : 'comprobarCamposFechas',
+							rowdblclick : 'comprobacionesDobleClick',
 							beforeedit : 'comprobarCamposFechas',
 							rowclick : 'onRowClickPosicionamiento'
 						},
 						columns : [{
-									text : HreRem
-											.i18n('fieldlabel.fecha.aviso'),
+									text : HreRem.i18n('fieldlabel.fecha.aviso'),
 									dataIndex : 'fechaAviso',
 									// formatter: 'date("d/m/Y")',
 									flex : 1,
@@ -358,8 +357,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 									flex : 1,
 									renderer : dateColoredRender
 								}, {
-									text : HreRem
-											.i18n('fieldlabel.fecha.posicionamiento'),
+									text : HreRem.i18n('fieldlabel.fecha.posicionamiento'),
 									dataIndex : 'fechaPosicionamiento',
 									// formatter: 'date("d/m/Y")',
 									flex : 1,
@@ -367,6 +365,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 										xtype : 'datefield',
 										reference : 'fechaPosicionamientoRef',
 										allowBlank : false,
+										minValue: Ext.Date.format(new Date(),'d/m/Y'),
 										listeners : {
 											change : 'changeFecha'
 										},
@@ -454,6 +453,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 											},
 											autoLoad : true
 										}),
+										reference : 'notariaRef',
 										displayField : 'descripcion',
 										valueField : 'id'
 									}
@@ -464,7 +464,8 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 									flex : 1,
 									editor : {
 										xtype : 'textarea',
-										allowBlank : false
+										reference : 'motivoAplazamientoRef'
+										//allowBlank : false
 									},
 									renderer : coloredRender
 								}, {

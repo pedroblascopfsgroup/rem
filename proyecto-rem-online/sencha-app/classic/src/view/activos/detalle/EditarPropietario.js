@@ -10,6 +10,8 @@ Ext.define('HreRem.view.activos.detalle.EditarPropietario', {
         type: 'activodetalle'
     },
     
+    modoEdicion: true,
+    
     propietario: null,
     
     listeners: {
@@ -17,17 +19,44 @@ Ext.define('HreRem.view.activos.detalle.EditarPropietario', {
 		show: function() {			
 			var me = this;
 			me.resetWindow();			
+		},
+		boxready: function(window) {
+			var me = this;
+			me.initWindow();
 		}
 		
 	},
+	
+	isPrincipal: function(){
+		var me = this;
+		if (me.propietario.data.tipoPropietario == "Principal"){
+			return true;
+		}else {
+			return false;
+		}
+	},
+	
+	initWindow: function() {
+    	var me = this;
+    	
+    	if(me.modoEdicion) {
+			Ext.Array.each(me.down('form').query('field[isReadOnlyEdit]'),
+				function (field, index) { 								
+					field.fireEvent('edit');
+					if(index == 0) field.focus();
+				}
+			);
+    	}
+    	
+    },
 
     initComponent: function() {
     	
     	var me = this;
-
+    	
     	me.setTitle("Datos del propietario");
     	
-    	me.buttons = [ { itemId: 'btnGuardar', text: 'Editar'}, { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickBotonCancelarPropietario'}];
+    	me.buttons = [ { itemId: 'btnGuardar', text: 'Guardar', handler: 'onClickBotonGuardarPropietario'}, { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickBotonCancelarPropietario'}];
     	
     	me.items = [
 				{
@@ -35,10 +64,6 @@ Ext.define('HreRem.view.activos.detalle.EditarPropietario', {
 					collapsed: false,
 				 	scrollable	: 'y',
 					cls:'',	    				
-					/*
-					recordName: "propietario",
-					
-					recordClass: "HreRem.model.ActivoPropietario",*/
 					
 					items: [
 					
@@ -72,24 +97,41 @@ Ext.define('HreRem.view.activos.detalle.EditarPropietario', {
 										defaultType: 'textfieldbase',
 										title: 'Relaci&oacute;n propietario-activo',
 										collapsed: false,
-											scrollable	: 'y',
-										cls:'',	    		
+										scrollable	: 'y',	    		
 										items: [
-			    					        {
-			    					        	fieldLabel: 'N&ordm; de activo propietario',
-			    					        	width: 300,
-			    					        	bind: '{propietario.idActivo}'
+											{
+												readOnly: true,
+			    					        	fieldLabel: HreRem.i18n('fieldlabel.tipo.propietario'),
+												name: 'tipoPropietario',
+			    					        	bind: '{propietario.tipoPropietario}'
+			    					        	
 			    					        },
 			    					        {
-			    					        	fieldLabel: 'Porcentaje de propiedad',
-			    					        	width: 300,
+			    					        	readOnly: true,
+			    					        	fieldLabel: HreRem.i18n('fieldlabel.numero.activo.propietario'),
+			    					        	name: 'id',
+			    					        	bind: '{propietario.idActivo}'
+			    					        	
+			    					        },
+			    					        {
+			    					        	fieldLabel: HreRem.i18n('fieldlabel.porcentaje.propiedad'),
+			    					        	name: 'porcPropiedad',
+			    					        	maskRe: /[0-9.]/,
+			    					        	allowBlank: false,
 			    					        	bind: '{propietario.porcPropiedad}'
 			    					        },
 			    					        {
-			    					        	fieldLabel: 'Grado de propiedad',
-			    					        	width: 300,
-			    					        	bind: '{propietario.tipoGradoPropiedadDescripcion}'
-			    					        }
+			    					        		xtype: 'comboboxfieldbase',
+			    					        	   fieldLabel: HreRem.i18n('fieldlabel.grado.propiedad'),
+			    					        	   name: 'tipoGradoPropiedad',
+			    					        	   allowBlank: false,
+												   displayField: 'descripcion',
+												   valueField: 'codigo',
+												   bind:{ 
+													   	value: '{propietario.tipoGradoPropiedadCodigo}',
+													   	store: '{comboGradoPropiedad}'
+													   		} 
+											}		    					        	
 			    					    ]
 									},
 	    					        {
@@ -108,55 +150,115 @@ Ext.define('HreRem.view.activos.detalle.EditarPropietario', {
 	    			   			 		scrollable	: 'y',
 	    			    				cls:'',	    		
 	    		    					items: [
+	    		    						{
+		    					        		xtype: 'comboboxfieldbase',
+		    					        	   fieldLabel: HreRem.i18n('fieldlabel.tipo.persona'),
+		    					        	   name: 'tipoPersona',
+											   displayField: 'descripcion',
+											   valueField: 'codigo',
+											   readOnly: me.isPrincipal(),
+											   bind:{ 
+												   	value: '{propietario.tipoPersonaCodigo}',
+												   	store: '{comboTiposPersona}'
+												   		} 
+	    		    						},
+											
 											{
-												fieldLabel: 'Tipo de persona',
-												width: 300,
-			    					        	bind: '{propietario.tipoPersonaDescripcion}'
+												fieldLabel: HreRem.i18n('header.nombre.razon.social'),
+												name: 'nombre',
+												readOnly: me.isPrincipal(),
+												allowBlank: false,
+			    					        	bind: {
+			    					        		value: '{propietario.nombreCompleto}'
+			    					        	}
 											},
 											{
-												fieldLabel: 'Nombre o raz&oacute;n social',
-												width: 300,
-			    					        	bind: '{propietario.nombreCompleto}'
-											},
+		    					        		xtype: 'comboboxfieldbase',
+		    					        	   fieldLabel: HreRem.i18n('fieldlabel.tipo.documento'),
+		    					        	   name: 'tipoDoc',
+											   displayField: 'descripcion',
+											   valueField: 'codigo',
+												readOnly: me.isPrincipal(),
+											   bind:{ 
+												   	value: '{propietario.tipoDocIdentificativoCodigo}',
+												   	store: '{comboTipoDocumento}'
+												   		} 
+	    		    						},
 											{
-												fieldLabel: 'Tipo de documento',
-												width: 300,
-			    					        	bind: '{propietario.tipoDocIdentificativoDesc}'
+												fieldLabel: HreRem.i18n('fieldlabel.numero.documento'),
+												name: 'numDoc',
+												readOnly: me.isPrincipal(),
+			    					        	bind: {
+			    					        		value: '{propietario.docIdentificativo}'			    					        		
+			    					        	}
+			    					        },
+			    					        {
+			    					        	fieldLabel: HreRem.i18n('fieldlabel.direccion'),
+			    					        	name: 'direccion',
+			    					        	readOnly: me.isPrincipal(),
+			    					        	bind: {
+			    					        		value: '{propietario.direccion}'			    					        		
+			    					        	}
+			    					        },
+			    					        
+			    					        {
+												   xtype: 'comboboxfieldbase',
+												   fieldLabel: HreRem.i18n('fieldlabel.provincia'),
+												   reference: 'provincia',
+												   name: 'provincia',
+												   displayField: 'descripcion',
+												   valueField: 'codigo',
+												   readOnly: me.isPrincipal(),
+												   chainedStore: 'comboPoblacion',
+												   chainedReference: 'localidad',
+												   listeners: {
+														select: 'onChangeChainedCombo'
+						    						},
+												   bind:{ 
+													   	value: '{propietario.provinciaCodigo}',
+													   	store: '{comboProvincias}'													   	
+													   		} 
 											},
-											{
-			    					        	fieldLabel: 'N&ordm; de documento',
-			    					        	width: 300,
-			    					        	bind: '{propietario.docIdentificativo}'
+											
+			    					        {
+												   xtype: 'comboboxfieldbase',
+			    					        	   fieldLabel: HreRem.i18n('fieldlabel.poblacion'),
+			    					        	   reference: 'localidad',
+			    					        	   name: 'localidad',
+												   displayField: 'descripcion',
+												   valueField: 'codigo',
+												   readOnly: me.isPrincipal(),
+												   bind:{ 
+													   	value: '{propietario.localidadCodigo}',
+													   	store: '{comboPoblacion}'													   	
+													   		} 
+											},
+			    					       
+											
+			    					        {
+			    					        	fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
+			    					        	name: 'codigoPostal',
+			    					        	readOnly: me.isPrincipal(),
+			    					        	bind: {
+			    					        		value: '{propietario.codigoPostal}'			    					        		
+			    					        	}
 			    					        },
 			    					        {
-			    					        	fieldLabel: 'Direcci&oacute;n',
-			    					        	width: 300,
-			    					        	bind: '{propietario.direccion}'
+			    					        	fieldLabel: HreRem.i18n('fieldlabel.telefono'),
+			    					        	name: 'telefono',
+			    					        	readOnly: me.isPrincipal(),
+			    					        	bind: {
+			    					        		value: '{propietario.telefono}'			    					        		
+			    					        	}
 			    					        },
 			    					        {
-			    					        	fieldLabel: 'Poblaci&oacute;n',
-			    					        	width: 300,
-			    					        	bind: '{propietario.localidadDescripcion}'
-			    					        },
-			    					        {
-			    					        	fieldLabel: 'Provincia',
-			    					        	width: 300,
-			    					        	bind: '{propietario.provinciaDescripcion}'
-			    					        },
-			    					        {
-			    					        	fieldLabel: 'CP',
-			    					        	width: 300,
-			    					        	bind: '{propietario.codigoPostal}'
-			    					        },
-			    					        {
-			    					        	fieldLabel: 'Tel&eacute;fono',
-			    					        	width: 300,
-			    					        	bind: '{propietario.telefono}'
-			    					        },
-			    					        {
-			    					        	fieldLabel: 'E-mail',
-			    					        	width: 300,
-			    					        	bind: '{propietario.email}'
+			    					        	vtype: 'email',
+			    					        	fieldLabel: HreRem.i18n('fieldlabel.email'),
+			    					        	name: 'email',
+			    					        	readOnly: me.isPrincipal(),
+			    					        	bind: {
+			    					        		value: '{propietario.email}'			    					        		
+			    					        	}
 			    					        }
 	    		    					]
 	    					        }
@@ -234,7 +336,6 @@ Ext.define('HreRem.view.activos.detalle.EditarPropietario', {
 	    					        
 	    					        {
 	    				                	xtype: 'textareafieldbase',
-	    				                	//rowspan: 4,
 	    				                	fieldLabel: HreRem.i18n('fieldlabel.observaciones'),
 		    					        	bind: '{propietario.observaciones}'
 	    					        }
@@ -252,6 +353,7 @@ Ext.define('HreRem.view.activos.detalle.EditarPropietario', {
     resetWindow: function() {
     	var me = this;
     	me.getViewModel().set('propietario', me.propietario);
+    	me.getViewModel().set('activo', me.activo);
     }
 });
     

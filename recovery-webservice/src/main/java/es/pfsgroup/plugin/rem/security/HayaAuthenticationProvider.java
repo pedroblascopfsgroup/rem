@@ -41,6 +41,21 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 
 	@Resource
 	private Properties appProperties;
+	
+	
+	public static void main(String[] args) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+		
+		if ((args == null) || (args.length <= 0)){
+			System.err.println("Por favor, indica el user_id como primer parámetro.");
+			System.exit(1);
+		}
+		
+		String stringToHash = String.format("%s|%s|%3$tY%3$tm%3$td", "Hams18127!???18273gasfgkdagi1yula", args[0], new Date());
+		MessageDigest md = MessageDigest.getInstance("SHA-256");
+		String hash = new String(Hex.encodeHex(md.digest(stringToHash.getBytes("UTF-8"))));
+		System.out.println(hash);
+	}
+	
 
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 

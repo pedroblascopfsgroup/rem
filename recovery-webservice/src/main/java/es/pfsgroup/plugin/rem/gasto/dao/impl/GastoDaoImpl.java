@@ -136,7 +136,7 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "provision.numProvision", Long.parseLong(dtoGastosFilter.getNumProvision()));
 		}
 		
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "provision.numProvision", dtoGastosFilter.getIdProvision());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.idProvision", dtoGastosFilter.getIdProvision());
 		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.entidadPropietariaCodigo", dtoGastosFilter.getEntidadPropietariaCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.codigoProveedorRem", dtoGastosFilter.getCodigoProveedorRem());

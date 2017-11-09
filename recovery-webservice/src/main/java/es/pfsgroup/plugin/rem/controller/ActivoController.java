@@ -94,6 +94,7 @@ import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
+import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
@@ -264,6 +265,57 @@ public class ActivoController extends ParadiseJsonController {
 
 		try {
 			boolean success = activoApi.saveActivoCargaTab(cargaDto);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateActivoPropietarioTab(DtoPropietario propietario, ModelMap model) {
+
+		try {
+			boolean success = activoApi.updateActivoPropietarioTab(propietario);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createActivoPropietarioTab(DtoPropietario propietario, ModelMap model) {
+
+		try {
+			boolean success = activoApi.createActivoPropietarioTab(propietario);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteActivoPropietarioTab(DtoPropietario propietario, ModelMap model) {
+
+		try {
+			boolean success = activoApi.deleteActivoPropietarioTab(propietario);
 			model.put("success", success);
 
 		} catch (Exception e) {

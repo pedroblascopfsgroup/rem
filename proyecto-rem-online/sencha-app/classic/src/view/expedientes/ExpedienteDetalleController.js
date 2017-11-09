@@ -1998,6 +1998,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     		tipoAplicable.reset();
     		tipoAplicable.setDisabled(true);
     		tipoAplicable.allowBlank = true;
+    		tipoAplicable.setValue(0);
     		operacionExenta.reset();
     		operacionExenta.setReadOnly(true);
     		inversionSujetoPasivo.reset();

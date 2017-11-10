@@ -359,53 +359,36 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             		if(item.getNombre().equals("importeContraoferta")){
             			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
             			if(!Checks.esNulo(ofertaAceptada)){
-//            				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
-//	            				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
-//	            				if(!Checks.esNulo(expediente)){
-//	            					ResolucionComiteBankiaDto resolDto = new ResolucionComiteBankiaDto();
-//	            					resolDto.setExpediente(expediente);
-//	            					Filter filtroTipoResolucion = null;
-//	            					if(tareaExterna.getTareaProcedimiento().getCodigo().equals("T013_RespuestaOfertante")) {
-//	            						filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RESPUESTA_OFERTANTE);
-//	            					}else {
-//	            						filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RATIFICACION);
-//	            					}
-//	            					DDTipoResolucion tipoResolucion = genericDao.get(DDTipoResolucion.class, filtroTipoResolucion);
-//	            					
-//	            					resolDto.setTipoResolucion(tipoResolucion);
-//	            					
-//	            					try{
-//	            						List<ResolucionComiteBankia> listaResoluciones = resolucionComiteApi.getResolucionesComiteByExpedienteTipoRes(resolDto);
-//	            						
-//	            						if(!Checks.estaVacio(listaResoluciones)){
-//	            							ResolucionComiteBankia resolucionComite = listaResoluciones.get(0);
-//	            							if(!Checks.esNulo(resolucionComite.getImporteContraoferta()))
-//	            								item.setValue(resolucionComite.getImporteContraoferta().toString());
-//	            						}
-//	            						if(Checks.esNulo(ofertaAceptada.getImporteContraOferta()) && (Checks.esNulo(item.getValue()) || item.getValue()!="")) {
-//	            							if(!tareaExterna.getTareaProcedimiento().getCodigo().equals("T013_RespuestaOfertante")) {
-//	    	            						filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RESPUESTA_OFERTANTE);
-//	    	            					}else {
-//	    	            						filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RATIFICACION);
-//	    	            					}
-//	    	            					tipoResolucion = genericDao.get(DDTipoResolucion.class, filtroTipoResolucion);
-//	    	            					
-//	    	            					resolDto.setTipoResolucion(tipoResolucion);
-//	    	            					listaResoluciones = resolucionComiteApi.getResolucionesComiteByExpedienteTipoRes(resolDto);
-//		            						
-//		            						if(!Checks.estaVacio(listaResoluciones)){
-//		            							ResolucionComiteBankia resolucionComite = listaResoluciones.get(0);
-//		            							if(!Checks.esNulo(resolucionComite.getImporteContraoferta()))
-//		            								item.setValue(resolucionComite.getImporteContraoferta().toString());
-//		            						}
-//	            						}
-//	            					} catch (Exception e){
-//	            						e.printStackTrace();
-//	            					}
-//	            				}
-//            				}else {
+            				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
+	            				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+	            				if(!Checks.esNulo(expediente)){
+	            					ResolucionComiteBankiaDto resolDto = new ResolucionComiteBankiaDto();
+	            					resolDto.setExpediente(expediente);
+	            					Filter filtroTipoResolucion = null;
+	            					if(tareaExterna.getTareaProcedimiento().getCodigo().equals("T013_RespuestaOfertante")) {
+	            						filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RESOLUCION);
+	            					}else {
+	            						filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RATIFICACION);
+	            					}
+	            					DDTipoResolucion tipoResolucion = genericDao.get(DDTipoResolucion.class, filtroTipoResolucion);
+	            					
+	            					resolDto.setTipoResolucion(tipoResolucion);
+	            					
+	            					try{
+	            						List<ResolucionComiteBankia> listaResoluciones = resolucionComiteApi.getResolucionesComiteByExpedienteTipoRes(resolDto);
+	            						
+	            						if(!Checks.estaVacio(listaResoluciones)){
+	            							ResolucionComiteBankia resolucionComite = listaResoluciones.get(0);
+	            							if(!Checks.esNulo(resolucionComite.getImporteContraoferta()))
+	            								item.setValue(resolucionComite.getImporteContraoferta().toString());
+	            						}
+	            					} catch (Exception e){
+	            						e.printStackTrace();
+	            					}
+	            				}
+            				}else {
             					item.setValue(ofertaAceptada.getImporteContraOferta().toString());
-            				//}
+            				}
             			}
             		}
             	}

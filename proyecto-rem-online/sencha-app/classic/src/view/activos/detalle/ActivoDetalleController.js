@@ -791,10 +791,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		params['codigoPostalContacto']=propietario.codigoPostalContacto;
 		params['direccionContacto']=propietario.direccionContacto;
 		params['observaciones']=propietario.observacionesContacto;
-
-		porc = params.porcPropiedad;
-		grado = params.tipoGradoPropiedadDescripcion;
-		nombre = params.nombre;
 		
 		if(formulario.isFormValid()){
 			Ext.Ajax.request({

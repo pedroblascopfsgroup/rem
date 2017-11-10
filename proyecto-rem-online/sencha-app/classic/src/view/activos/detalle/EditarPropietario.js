@@ -209,7 +209,7 @@ Ext.define('HreRem.view.activos.detalle.EditarPropietario', {
 												   displayField: 'descripcion',
 												   valueField: 'codigo',
 												   readOnly: me.isPrincipal(),
-												   chainedStore: 'comboPoblacion',
+												   chainedStore: 'comboPoblacionContacto',
 												   chainedReference: 'localidad',
 												   listeners: {
 														select: 'onChangeChainedCombo'
@@ -293,52 +293,98 @@ Ext.define('HreRem.view.activos.detalle.EditarPropietario', {
 	    		    					items: [
 											{
 												fieldLabel: 'Nombre y apellidos',
-												width: 300,
-			    					        	bind: '{propietario.nombreContacto}'
+												readOnly: me.isPrincipal(),
+												name: 'nombreContacto',
+												bind: {
+			    					        		value: '{propietario.nombreContacto}'			    					        		
+			    					        	}
 											},
 											{
 												fieldLabel: 'Tel&eacute;fono 1',
-												width: 300,
-			    					        	bind: '{propietario.telefono1Contacto}'
+												readOnly: me.isPrincipal(),
+												name: 'telefonoContacto1',
+												bind: {
+			    					        		value: '{propietario.telefono1Contacto}'			    					        		
+			    					        	}
 											},
 											{
 												fieldLabel: 'Tel&eacute;fono 2',
-												width: 300,
-			    					        	bind: '{propietario.telefono2Contacto}'
+												readOnly: me.isPrincipal(),
+												name: 'telefonoContacto2',
+												bind: {
+			    					        		value: '{propietario.telefono2Contacto}'			    					        		
+			    					        	}
 											},	
 											{
-												fieldLabel: 'E-mail',
-												width: 300,
-			    					        	bind: '{propietario.emailContacto}'
+									        	vtype: 'email',
+									        	fieldLabel: HreRem.i18n('fieldlabel.email'),
+									        	readOnly: me.isPrincipal(),
+									        	name: 'emailContacto',
+									        	bind: {
+			    					        		value: '{propietario.emailContacto}'			    					        		
+			    					        	}
+									        },
+											 {
+									        	fieldLabel: HreRem.i18n('fieldlabel.direccion'),
+									        	readOnly: me.isPrincipal(),
+									        	name: 'direccionContacto',
+									        	bind: {
+			    					        		value: '{propietario.direccionContacto}'			    					        		
+			    					        	}
+									        },	
+											{
+												   xtype: 'comboboxfieldbase',
+												   fieldLabel: HreRem.i18n('fieldlabel.provincia'),
+												   readOnly: me.isPrincipal(),
+												   reference: 'provinciaContacto',
+												   name: 'provinciaContacto',
+												   displayField: 'descripcion',
+												   valueField: 'codigo',
+												   chainedStore: 'comboPoblacionContacto',
+												   chainedReference: 'localidadContacto',
+												   listeners: {
+														select: 'onChangeChainedCombo'
+						    						},
+												   bind:{ 
+													   	value: '{propietario.provinciaContactoCodigo}',
+													   	store: '{comboProvinciasContacto}'													   	
+													   		} 
+											},
+											
+									        {
+												   xtype: 'comboboxfieldbase',
+									        	   fieldLabel: HreRem.i18n('fieldlabel.poblacion'),
+									        	   readOnly: me.isPrincipal(),
+									        	   reference: 'localidadContacto',
+									        	   name: 'localidadContacto',
+												   displayField: 'descripcion',
+												   valueField: 'codigo',
+												   bind:{ 
+													   	value: '{propietario.localidadContactoCodigo}',
+													   	store: '{comboPoblacionContacto}'													   	
+													   		} 
 											},
 											{
-												fieldLabel: 'Direcci&oacute;n',
-												width: 300,
-			    					        	bind: '{propietario.direccionContacto}'
-											},	
-											{
-												fieldLabel: 'Poblaci&oacute;n',
-												width: 300,
-			    					        	bind: '{propietario.localidadContactoDescripcion}'
-											},
-											{
-												fieldLabel: 'Provincia',
-												width: 300,
-			    					        	bind: '{propietario.provinciaContactoDescripcion}'
-											},	
-											{
-												fieldLabel: 'CP',
-												width: 300,
-			    					        	bind: '{propietario.codigoPostalContacto}'
-											}	
+									        	fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
+									        	readOnly: me.isPrincipal(),
+									        	name: 'codigoPostalContacto',
+									        	bind: {
+			    					        		value: '{propietario.codigoPostalContacto}'			    					        		
+			    					        	}
+									        }	
 										]
-	    					        },
-	    					        
-	    					        {
-	    				                	xtype: 'textareafieldbase',
-	    				                	fieldLabel: HreRem.i18n('fieldlabel.observaciones'),
-		    					        	bind: '{propietario.observaciones}'
-	    					        }
+							        },
+							        
+							        {
+						                	xtype: 'textareafieldbase',
+						                	rowspan: 6,
+						                	name: 'observacionesContacto',
+						                	readOnly: me.isPrincipal(),
+						                	fieldLabel: HreRem.i18n('fieldlabel.observaciones'),
+						                	bind: {
+		    					        		value: '{propietario.observaciones}'			    					        		
+		    					        	}
+							        }
 		    					]
 		    				}
 		    			]

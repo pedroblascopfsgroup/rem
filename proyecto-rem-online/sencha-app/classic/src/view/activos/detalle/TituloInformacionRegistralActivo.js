@@ -399,7 +399,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						            	var msg = HreRem.i18n("fieldlabel.porcentaje.propiedad") + " " + suma + "%";
 						            	var style = "" 
 						            	if(suma != Ext.util.Format.number(100.00,'0.00')) {
-						            		msg = HreRem.i18n("fieldlabel.porcentaje.compra.total.error");		
+						            		msg = HreRem.i18n("fieldlabel.porcentaje.propietarios.total.error");		
 						            		style = "style= 'color: red'" 
 						            	}	
 						            	

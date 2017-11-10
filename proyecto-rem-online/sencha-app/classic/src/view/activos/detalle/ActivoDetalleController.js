@@ -350,7 +350,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	
     	var me = this;
     	var idActivo = me.getViewModel().get("activo.id");
-
+		
     	me.getView().fireEvent('openModalWindow',"HreRem.view.activos.detalle.AnyadirPropietario");
   	    	
     },
@@ -385,7 +385,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	if(!Ext.isEmpty(chainedCombo.getValue())) {
 			chainedCombo.clearValue();
     	}
-		
 		chainedCombo.getStore().load({ 			
 			callback: function(records, operation, success) {
    				if(!Ext.isEmpty(records) && records.length > 0) {

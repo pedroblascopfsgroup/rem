@@ -111,7 +111,8 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	@Override
 	public void updaterStateDisponibilidadComercialAndSave(Activo activo) {
 		this.updaterStateDisponibilidadComercial(activo);
-		genericDao.update(Activo.class, activo);		
+		//genericDao.update(Activo.class, activo);	
+		activoApi.saveOrUpdate(activo);
 	}
 	
 	@Override

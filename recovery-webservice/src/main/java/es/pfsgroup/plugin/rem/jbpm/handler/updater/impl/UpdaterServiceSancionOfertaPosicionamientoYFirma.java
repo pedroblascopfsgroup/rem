@@ -112,7 +112,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 								e.printStackTrace();
 							}
 
-							genericDao.save(Activo.class, activo);
+							activoApi.saveOrUpdate(activo);
 						}
 						List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
 

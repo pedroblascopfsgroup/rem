@@ -428,16 +428,6 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					        	flex:1 
 					        }	               	        
 					    ],
-					    dockedItems : [
-					        {
-					            xtype: 'pagingtoolbar',
-					            dock: 'bottom',
-					            displayInfo: true,
-					            bind: {
-					                store: '{storePropietario}'
-					            }
-					        }
-					    ],
 
 					    onAddClick: function (btn) {
 					 		var me = this;

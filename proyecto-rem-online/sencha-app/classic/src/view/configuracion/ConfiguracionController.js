@@ -90,7 +90,7 @@ Ext.define('HreRem.view.configuracion.ConfiguracionController', {
 	},
     
     // Función que abre la pestaña de proveedor.
-	abrirPestañaProveedor: function(grid, record)  {
+	abrirPestanyaProveedor: function(grid, record)  {
 	   	 var me = this;
 	   	 me.getView().fireEvent('abrirDetalleProveedor', record);
    },

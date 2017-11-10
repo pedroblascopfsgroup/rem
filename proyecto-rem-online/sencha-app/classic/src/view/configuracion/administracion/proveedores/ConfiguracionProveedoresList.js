@@ -13,7 +13,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
      	var me = this;
 
      	me.listeners = {
-    			rowdblclick: 'abrirPestañaProveedor'
+    			rowdblclick: 'abrirPestanyaProveedor'
     	    };
 
 		me.columns = [

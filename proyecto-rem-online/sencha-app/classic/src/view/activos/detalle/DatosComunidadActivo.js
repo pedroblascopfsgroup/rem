@@ -51,7 +51,7 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 												            		//return 'ico-user'
 												            		return 'fa-user blue-medium-color'
 												            },
-												            handler: 'abrirPestañaProveedor'
+												            handler: 'abrirPestanyaProveedor'
 												        }],
 												        renderer: function(value, metadata, record) {
 												        	return '<div style="float:left; margin-top:3px; font-size: 11px; line-height: 1em;">'+ value+'</div>';

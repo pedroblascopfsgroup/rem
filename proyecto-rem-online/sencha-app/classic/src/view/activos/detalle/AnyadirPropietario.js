@@ -215,8 +215,8 @@ Ext.define('HreRem.view.activos.detalle.AnyadirPropietario', {
 	    		    					]
 	    					        }
 	    					    ]
-							},
-						 	{
+							}
+						 	,{
 						 		xtype: 'container',
 						 		width: '50%',
 						 		layout: {
@@ -243,46 +243,91 @@ Ext.define('HreRem.view.activos.detalle.AnyadirPropietario', {
 	    			   			 		scrollable	: 'y',
 	    			    				cls:'',	    		
 	    		    					items: [
-											{
+	    		    						{
 												fieldLabel: 'Nombre y apellidos',
-												width: 300
+												name: 'nombreContacto',
+												bind: {
+			    					        		value: '{propietario.nombreContacto}'			    					        		
+			    					        	}
 											},
 											{
 												fieldLabel: 'Tel&eacute;fono 1',
-												width: 300
+												name: 'telefonoContacto1',
+												bind: {
+			    					        		value: '{propietario.telefonoContacto1}'			    					        		
+			    					        	}
 											},
 											{
 												fieldLabel: 'Tel&eacute;fono 2',
-												width: 300
+												name: 'telefonoContacto2',
+												bind: {
+			    					        		value: '{propietario.telefonoContacto2}'			    					        		
+			    					        	}
 											},	
 											{
-												fieldLabel: 'E-mail',
-												width: 300
+									        	vtype: 'email',
+									        	fieldLabel: HreRem.i18n('fieldlabel.email'),
+									        	name: 'emailContacto',
+									        	bind: {
+			    					        		value: '{propietario.emailContacto}'			    					        		
+			    					        	}
+									        },
+											 {
+									        	fieldLabel: HreRem.i18n('fieldlabel.direccion'),
+									        	name: 'direccionContacto',
+									        	bind: {
+			    					        		value: '{propietario.direccionContacto}'			    					        		
+			    					        	}
+									        },	
+											{
+												   xtype: 'comboboxfieldbase',
+												   fieldLabel: HreRem.i18n('fieldlabel.provincia'),
+												   reference: 'provinciaContacto',
+												   name: 'provinciaContacto',
+												   displayField: 'descripcion',
+												   valueField: 'codigo',
+												   chainedStore: 'comboPoblacionContacto',
+												   chainedReference: 'localidadContacto',
+												   listeners: {
+														select: 'onChangeChainedCombo'
+						    						},
+												   bind:{ 
+													   	value: '{propietario.provinciaCodigoContacto}',
+													   	store: '{comboProvinciasContacto}'													   	
+													   		} 
+											},
+											
+									        {
+												   xtype: 'comboboxfieldbase',
+									        	   fieldLabel: HreRem.i18n('fieldlabel.poblacion'),
+									        	   reference: 'localidadContacto',
+									        	   name: 'localidadContacto',
+												   displayField: 'descripcion',
+												   valueField: 'codigo',
+												   bind:{ 
+													   	value: '{propietario.localidadCodigoContacto}',
+													   	store: '{comboPoblacionContacto}'													   	
+													   		} 
 											},
 											{
-												fieldLabel: 'Direcci&oacute;n',
-												width: 300
-											},	
-											{
-												fieldLabel: 'Poblaci&oacute;n',
-												width: 300
-											},
-											{
-												fieldLabel: 'Provincia',
-												width: 300
-											},	
-											{
-												fieldLabel: 'CP',
-												width: 300
-											}	
+									        	fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
+									        	name: 'codigoPostalContacto',
+									        	bind: {
+			    					        		value: '{propietario.codigoPostalContacto}'			    					        		
+			    					        	}
+									        }	
 										]
-	    					        },
-	    					        
-	    					        {
-	    				                	xtype: 'textareafieldbase',
-	    				                	//rowspan: 4,
-	    				                	fieldLabel: HreRem.i18n('fieldlabel.observaciones')
-	    					        }
+							        },
+							        
+							        {
+						                	xtype: 'textareafieldbase',						                	
+						                	name: 'observacionesContacto',
+						                	fieldLabel: HreRem.i18n('fieldlabel.observaciones'),
+						                	bind: {
+		    					        		value: '{propietario.observacionesContacto}'			    					        		
+		    					        	},
+		    					        	colspan: 2
+							        }
 		    					]
 		    				}
 		    			]

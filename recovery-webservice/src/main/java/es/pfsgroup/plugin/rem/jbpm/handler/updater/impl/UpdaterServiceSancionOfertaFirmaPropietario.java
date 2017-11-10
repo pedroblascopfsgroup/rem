@@ -20,7 +20,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -42,11 +41,10 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
     @Autowired
     private OfertaApi ofertaApi;
     
-    @Autowired
-    private TrabajoApi trabajoApi;
     
     @Autowired
     private ActivoApi activoApi;
+    
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
@@ -99,7 +97,8 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 							
 							activo.setBloqueoPrecioFechaIni(new Date());
 							
-							genericDao.save(Activo.class, activo);
+							//genericDao.save(Activo.class, activo);
+							activoApi.saveOrUpdate(activo);
 						}
 						
 						//Rechazamos el resto de ofertas

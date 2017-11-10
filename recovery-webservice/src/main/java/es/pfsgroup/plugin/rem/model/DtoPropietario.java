@@ -49,6 +49,8 @@ public class DtoPropietario extends WebDto {
 	private String provinciaCodigo;
 	private String tipoPersonaCodigo;
 	private String tipoDocIdentificativoCodigo;
+	private String provinciaContactoCodigo;
+	private String localidadContactoCodigo;
 	
 	
 	public long getId() {
@@ -255,6 +257,18 @@ public class DtoPropietario extends WebDto {
 	}
 	public void setTipoDocIdentificativoCodigo(String tipoDocIdentificativoCodigo) {
 		this.tipoDocIdentificativoCodigo = tipoDocIdentificativoCodigo;
+	}
+	public String getProvinciaContactoCodigo() {
+		return provinciaContactoCodigo;
+	}
+	public void setProvinciaContactoCodigo(String provinciaContactoCodigo) {
+		this.provinciaContactoCodigo = provinciaContactoCodigo;
+	}
+	public String getLocalidadContactoCodigo() {
+		return localidadContactoCodigo;
+	}
+	public void setLocalidadContactoCodigo(String localidadContactoCodigo) {
+		this.localidadContactoCodigo = localidadContactoCodigo;
 	}
 	
 	

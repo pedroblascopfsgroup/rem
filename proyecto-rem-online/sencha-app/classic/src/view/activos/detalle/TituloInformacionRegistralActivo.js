@@ -399,7 +399,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						            	var msg = HreRem.i18n("fieldlabel.porcentaje.propiedad") + " " + suma + "%";
 						            	var style = "" 
 						            	if(suma != Ext.util.Format.number(100.00,'0.00')) {
-						            		msg = HreRem.i18n("fieldlabel.porcentaje.compra.total.error");		
+						            		msg = HreRem.i18n("fieldlabel.porcentaje.propietarios.total.error");		
 						            		style = "style= 'color: red'" 
 						            	}	
 						            	
@@ -427,16 +427,6 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					        	dataIndex: 'tipoPropietario',
 					        	flex:1 
 					        }	               	        
-					    ],
-					    dockedItems : [
-					        {
-					            xtype: 'pagingtoolbar',
-					            dock: 'bottom',
-					            displayInfo: true,
-					            bind: {
-					                store: '{storePropietario}'
-					            }
-					        }
 					    ],
 
 					    onAddClick: function (btn) {

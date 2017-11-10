@@ -386,6 +386,23 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					extraParams: {codigoProvincia: '{propietario.provinciaCodigo}'}
 				}
     		},
+    		comboProvinciasContacto: {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'provincias'}
+				}
+    		},
+    		
+    		comboPoblacionContacto: {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboMunicipio',
+					extraParams: {codigoProvincia: '{propietario.provinciaContactoCodigo}'}
+				}
+    		},
     		
     		comboTipoDocumento: {
     			model: 'HreRem.model.ComboBase',

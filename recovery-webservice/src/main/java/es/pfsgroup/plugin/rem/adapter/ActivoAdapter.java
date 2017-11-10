@@ -1456,6 +1456,9 @@ public class ActivoAdapter {
 					BeanUtils.copyProperty(propietarioDto, "idActivo", propietario.getActivo().getId());
 					if (!Checks.esNulo(propietario.getTipoGradoPropiedad()))
 						BeanUtils.copyProperty(propietarioDto, "tipoGradoPropiedadCodigo",
+								propietario.getTipoGradoPropiedad().getCodigo());
+					if (!Checks.esNulo(propietario.getTipoGradoPropiedad()))
+						BeanUtils.copyProperty(propietarioDto, "tipoGradoPropiedadDescripcion",
 								propietario.getTipoGradoPropiedad().getDescripcion());
 					if (!Checks.esNulo(propietario.getPropietario().getLocalidad()))
 						BeanUtils.copyProperty(propietarioDto, "localidadCodigo",
@@ -1476,6 +1479,10 @@ public class ActivoAdapter {
 
 					if (!Checks.esNulo(propietario.getPropietario().getTipoDocIdentificativo())) {
 						BeanUtils.copyProperty(propietarioDto, "tipoDocIdentificativoCodigo",
+								propietario.getPropietario().getTipoDocIdentificativo().getCodigo());
+					}
+					if (!Checks.esNulo(propietario.getPropietario().getTipoDocIdentificativo())) {
+						BeanUtils.copyProperty(propietarioDto, "tipoDocIdentificativoDesc",
 								propietario.getPropietario().getTipoDocIdentificativo().getDescripcion());
 					}
 						BeanUtils.copyProperty(propietarioDto, "tipoPropietario",
@@ -1503,6 +1510,9 @@ public class ActivoAdapter {
 					if (!Checks.esNulo(copropietario.getTipoGradoPropiedad()))
 						BeanUtils.copyProperty(propietarioDto, "tipoGradoPropiedadCodigo",
 								copropietario.getTipoGradoPropiedad().getCodigo());
+					if (!Checks.esNulo(copropietario.getTipoGradoPropiedad()))
+						BeanUtils.copyProperty(propietarioDto, "tipoGradoPropiedadDescripcion",
+								copropietario.getTipoGradoPropiedad().getDescripcion());
 					if (!Checks.esNulo(copropietario.getCoPropietario().getLocalidad()))
 						BeanUtils.copyProperty(propietarioDto, "localidadCodigo",
 								copropietario.getCoPropietario().getLocalidad().getCodigo());
@@ -1513,16 +1523,20 @@ public class ActivoAdapter {
 						BeanUtils.copyProperty(propietarioDto, "tipoPersonaCodigo",
 								copropietario.getCoPropietario().getTipoPersona().getCodigo());
 					if (!Checks.esNulo(copropietario.getCoPropietario().getLocalidadContacto()))
-						BeanUtils.copyProperty(propietarioDto, "localidadContactoDescripcion",
-								copropietario.getCoPropietario().getLocalidadContacto().getDescripcion());
+						BeanUtils.copyProperty(propietarioDto, "localidadContactoCodigo",
+								copropietario.getCoPropietario().getLocalidadContacto().getCodigo());
 
 					if (!Checks.esNulo(copropietario.getCoPropietario().getProvinciaContacto()))
-						BeanUtils.copyProperty(propietarioDto, "provinciaContactoDescripcion",
-								copropietario.getCoPropietario().getProvinciaContacto().getDescripcion());
+						BeanUtils.copyProperty(propietarioDto, "provinciaContactoCodigo",
+								copropietario.getCoPropietario().getProvinciaContacto().getCodigo());
 
 					if (!Checks.esNulo(copropietario.getCoPropietario().getTipoDocIdentificativo())) {
 						BeanUtils.copyProperty(propietarioDto, "tipoDocIdentificativoCodigo",
 								copropietario.getCoPropietario().getTipoDocIdentificativo().getCodigo());
+					}
+					if (!Checks.esNulo(copropietario.getCoPropietario().getTipoDocIdentificativo())) {
+						BeanUtils.copyProperty(propietarioDto, "tipoDocIdentificativoDesc",
+								copropietario.getCoPropietario().getTipoDocIdentificativo().getDescripcion());
 					}
 						BeanUtils.copyProperty(propietarioDto, "tipoPropietario",
 							"Copropietario");

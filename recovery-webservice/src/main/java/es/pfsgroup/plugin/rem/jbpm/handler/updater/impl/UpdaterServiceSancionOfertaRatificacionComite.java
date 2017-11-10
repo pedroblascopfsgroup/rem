@@ -29,6 +29,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
 
 @Component
 public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterService {
@@ -53,7 +54,7 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaRatificacionComite.class);
 
-    private static final String COMBO_RESOLUCION = "comboResolucion";
+    private static final String COMBO_RATIFICACION = "comboRatificacion";
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
 	private static final String IMPORTE_CONTRAOFERTA = "importeContraoferta";
    	private static final String CODIGO_T013_RATIFICACION_COMITE = "T013_RatificacionComite";
@@ -71,9 +72,9 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 				
 				for(TareaExternaValor valor :  valores) {
 					
-					if(COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					if(COMBO_RATIFICACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						Filter filtro;
-						if(DDSiNo.SI.equals(valor.getValor())) {
+						if(DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 							expediente.setEstado(estado);
@@ -89,7 +90,7 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 							// y se envía una notificación
 							notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
 
-						} else {
+						} else if(DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
 							//Resuelve el expediente
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
 							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
@@ -108,36 +109,28 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 								logger.error("Error descongelando ofertas.", e);
 							}
 
-							if(DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
-								// Notificar del rechazo de la oferta a Bankia.
-								try {
-									uvemManagerApi.anularOferta(ofertaAceptada.getNumOferta().toString(), UvemManagerApi.MOTIVO_ANULACION_OFERTA.NO_RATIFICADA);
-								} catch (Exception e) {
-									logger.error("Error al invocar el servicio de anular oferta de Uvem.", e);
-									throw new UserException(e.getMessage());
-								}
-							}
-
 							// Motivo anulacion: NO RATIFICADA
 							DDMotivoAnulacionExpediente motivoAnulacionExpediente = 
 									(DDMotivoAnulacionExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoAnulacionExpediente.class, MOTIVO_NO_RATIFICADA);
 							expediente.setMotivoAnulacion(motivoAnulacionExpediente);
 						}
-						if (IMPORTE_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-							ofertaAceptada.setImporteContraOferta(Double.valueOf(valor.getValor()));
-							genericDao.save(Oferta.class, ofertaAceptada);
-		
-							// Actualizar honorarios para el nuevo importe de contraoferta.
-							expedienteComercialApi.actualizarHonorariosPorExpediente(expediente.getId());
-		
-							// Actualizamos la participación de los activos en la oferta;
-							expedienteComercialApi.updateParticipacionActivosOferta(ofertaAceptada);
-							expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
+						else {
+							
 						}
-
-						genericDao.save(ExpedienteComercial.class, expediente);
 					}
+					if (IMPORTE_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						ofertaAceptada.setImporteContraOferta(Double.valueOf(valor.getValor().replace(',', '.')));
+						genericDao.save(Oferta.class, ofertaAceptada);
+	
+						// Actualizar honorarios para el nuevo importe de contraoferta.
+						expedienteComercialApi.actualizarHonorariosPorExpediente(expediente.getId());
+	
+						// Actualizamos la participación de los activos en la oferta;
+						expedienteComercialApi.updateParticipacionActivosOferta(ofertaAceptada);
+						expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
+					}	
 				}
+				genericDao.save(ExpedienteComercial.class, expediente);
 			}
 		}
 	}

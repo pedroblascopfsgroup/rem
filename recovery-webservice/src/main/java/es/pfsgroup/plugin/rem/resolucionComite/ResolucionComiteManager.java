@@ -289,7 +289,7 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 		listaResol = this.getResolucionesComiteByExpedienteTipoRes(resolDto);
 		if(Checks.esNulo(listaResol) || (!Checks.esNulo(listaResol) && listaResol.size()==0)){
 			//Si no existen resoluciones por expediente y tipo, se crea nueva
-			resolucionBankia = this.saveResolucionComite(resolDto);
+			resolucionBankia = this.saveResolucionComite(resolDto, resolucionComiteDto.getOfertaHRE());
 		}else{
 			//Si ya existen resoluciones por expediente y tipo, se marcan como borradas
 			if(!Checks.esNulo(listaResol) && listaResol.size()>0){
@@ -298,7 +298,7 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 				}
 			}
 			//Si ya existe, se borra y se inserta una nueva
-			resolucionBankia = this.saveResolucionComite(resolDto);
+			resolucionBankia = this.saveResolucionComite(resolDto, resolucionComiteDto.getOfertaHRE());
 		}
 
 		return resolucionBankia;
@@ -310,11 +310,15 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 
 	@Override
 	@Transactional(readOnly = false)
-	public ResolucionComiteBankia saveResolucionComite(ResolucionComiteBankiaDto resolDto) throws Exception {
+	public ResolucionComiteBankia saveResolucionComite(ResolucionComiteBankiaDto resolDto, Long numOferta) throws Exception {
 		ResolucionComiteBankia resol = null;
 
 		
 		resol = new ResolucionComiteBankia();
+		Oferta ofr = null;
+		if(!Checks.esNulo(numOferta)) {
+			ofr = ofertaApi.getOfertaByNumOfertaRem(numOferta);
+		}
 		beanUtilNotNull.copyProperties(resol, resolDto);
 
 		
@@ -342,7 +346,17 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 		if(!Checks.esNulo(resolDto.getFechaComite())){
 			resol.setFechaResolucion(resolDto.getFechaComite());
 		}
-		
+		if(!Checks.esNulo(resol.getImporteContraoferta())) {
+			ofr.setImporteContraOferta(resol.getImporteContraoferta());
+			genericDao.save(Oferta.class, ofr);
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofr.getId());
+			// Actualizar honorarios para el nuevo importe de contraoferta.
+			expedienteComercialApi.actualizarHonorariosPorExpediente(expediente.getId());
+
+			// Actualizamos la participación de los activos en la oferta;
+			expedienteComercialApi.updateParticipacionActivosOferta(ofr);
+			expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
+		}
 		resol = genericDao.save(ResolucionComiteBankia.class, resol);
 		
 		return resol;

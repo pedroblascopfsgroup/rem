@@ -31,6 +31,7 @@ public class DDTipoResolucion implements Auditable, Dictionary {
 	
 	public static final String CODIGO_TIPO_RESOLUCION = "01";
 	public static final String CODIGO_TIPO_RATIFICACION = "02";
+	public static final String CODIGO_TIPO_RESPUESTA_OFERTANTE = "03";
 	
 	private static final long serialVersionUID = 1L;
 

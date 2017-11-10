@@ -57,7 +57,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionComite.class);
 	 
-	private static final String COMBO_RESPUESTA = "comboResolucion";
+	private static final String COMBO_RESOLUCION = "comboResolucion";
 	private static final String FECHA_RESPUESTA = "fechaRespuesta";
 	private static final String IMPORTE_CONTRAOFERTA = "numImporteContra";
 	private static final String CODIGO_TRAMITE_FINALIZADO = "11";
@@ -83,7 +83,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 						}
 	
 					}
-					if (COMBO_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					if (COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 						if (DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
@@ -155,9 +155,8 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 						expedienteComercialApi.updateParticipacionActivosOferta(ofertaAceptada);
 						expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
 					}
-	
-					genericDao.save(ExpedienteComercial.class, expediente);
 				}
+				genericDao.save(ExpedienteComercial.class, expediente);
 			}
 		}
 

@@ -3922,6 +3922,37 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (!Checks.esNulo(propietario.getEmail())){
 				copropietario.setEmail(propietario.getEmail());
 			}
+			if (!Checks.esNulo(propietario.getNombreContacto())){
+				copropietario.setNombreContacto(propietario.getNombreContacto());
+			}
+			if (!Checks.esNulo(propietario.getTelefono1Contacto())){
+				copropietario.setTelefono1Contacto(propietario.getTelefono1Contacto());
+			}
+			if (!Checks.esNulo(propietario.getTelefono2Contacto())){
+				copropietario.setTelefono2Contacto(propietario.getTelefono2Contacto());
+			}
+			if (!Checks.esNulo(propietario.getEmailContacto())){
+				copropietario.setEmailContacto(propietario.getEmailContacto());
+			}
+			if(!Checks.esNulo(propietario.getDireccionContacto())){
+				copropietario.setDireccionContacto(propietario.getDireccionContacto());
+			}
+			if (!Checks.esNulo(propietario.getProvinciaContactoCodigo())){
+				Filter provFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getProvinciaContactoCodigo());
+				DDProvincia provincia = genericDao.get(DDProvincia.class, provFilter);
+				copropietario.setProvinciaContacto(provincia);
+			}
+			if (!Checks.esNulo(propietario.getLocalidadContactoCodigo())){
+				Filter locFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getLocalidadContactoCodigo());
+				Localidad localidad = genericDao.get(Localidad.class, locFilter);
+				copropietario.setLocalidadContacto(localidad);
+			}
+			if (!Checks.esNulo(propietario.getCodigoPostalContacto())){
+				copropietario.setCodigoPostalContacto(Integer.parseInt(propietario.getCodigoPostalContacto()));
+			}
+			if (!Checks.esNulo(propietario.getObservaciones())){
+				copropietario.setObservaciones(propietario.getObservaciones());
+			}
 			
 			genericDao.update(ActivoCopropietario.class, copropietario);
 			genericDao.update(ActivoCopropietarioActivo.class, copropietarioActivo);			
@@ -4003,6 +4034,37 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			
 			if (!Checks.esNulo(propietario.getEmail())){
 				copropietario.setEmail(propietario.getEmail());
+			}
+			if (!Checks.esNulo(propietario.getNombreContacto())){
+				copropietario.setNombreContacto(propietario.getNombreContacto());
+			}
+			if (!Checks.esNulo(propietario.getTelefono1Contacto())){
+				copropietario.setTelefono2Contacto(propietario.getTelefono1Contacto());
+			}
+			if (!Checks.esNulo(propietario.getTelefono2Contacto())){
+				copropietario.setTelefono2Contacto(propietario.getTelefono2Contacto());
+			}
+			if (!Checks.esNulo(propietario.getEmailContacto())){
+				copropietario.setEmailContacto(propietario.getEmailContacto());
+			}
+			if(!Checks.esNulo(propietario.getDireccionContacto())){
+				copropietario.setDireccionContacto(propietario.getDireccionContacto());
+			}
+			if (!Checks.esNulo(propietario.getProvinciaContactoCodigo())){
+				Filter provFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getProvinciaContactoCodigo());
+				DDProvincia provincia = genericDao.get(DDProvincia.class, provFilter);
+				copropietario.setProvinciaContacto(provincia);
+			}
+			if (!Checks.esNulo(propietario.getLocalidadContactoCodigo())){
+				Filter locFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getLocalidadContactoCodigo());
+				Localidad localidad = genericDao.get(Localidad.class, locFilter);
+				copropietario.setLocalidadContacto(localidad);
+			}
+			if (!Checks.esNulo(propietario.getCodigoPostalContacto())){
+				copropietario.setCodigoPostalContacto(Integer.parseInt(propietario.getCodigoPostalContacto()));
+			}
+			if (!Checks.esNulo(propietario.getObservaciones())){
+				copropietario.setObservaciones(propietario.getObservaciones());
 			}
 			
 			genericDao.save(ActivoCopropietario.class, copropietario);

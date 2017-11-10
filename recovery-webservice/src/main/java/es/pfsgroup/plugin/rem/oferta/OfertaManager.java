@@ -1289,13 +1289,24 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
-	public String ratificacionComiteProcess(TareaExterna tareaExterna) {
+	public String ratificacionComiteProcess(TareaExterna tareaExterna, String importeOfertante) {
 
 		try {
 
 			Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 			Long porcentajeImpuesto = null;
+			if(!Checks.esNulo(importeOfertante) && importeOfertante != "") {
+				ofertaAceptada.setImporteContraOferta(Double.valueOf(importeOfertante.replace(',', '.')));
+				genericDao.save(Oferta.class, ofertaAceptada);
+				// Actualizar honorarios para el nuevo importe de contraoferta.
+				expedienteComercialApi.actualizarHonorariosPorExpediente(expediente.getId());
+
+				// Actualizamos la participación de los activos en la oferta;
+				expedienteComercialApi.updateParticipacionActivosOferta(ofertaAceptada);
+				expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
+				genericDao.save(ExpedienteComercial.class, expediente);
+			}
 			if (!Checks.esNulo(expediente.getCondicionante())) {
 				if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
 					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();

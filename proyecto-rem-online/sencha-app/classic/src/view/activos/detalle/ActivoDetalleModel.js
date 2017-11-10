@@ -400,7 +400,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getComboMunicipio',
-					extraParams: {codigoProvincia: '{propietario.provinciaContactoCodigo}'}
+					extraParams: {codigoProvincia: '{propietario.provinciaCodigoContacto}'}
 				}
     		},
     		

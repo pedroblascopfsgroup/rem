@@ -14,6 +14,8 @@ Ext.define('HreRem.view.activos.detalle.AnyadirPropietario', {
     
     activo: null,
     
+    propietario: null,
+    
     listeners: {
     	
 		show: function() {			
@@ -47,7 +49,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirPropietario', {
     	
     	me.setTitle("Datos del propietario");
     	
-    	me.buttons = [ { itemId: 'btnAnyadir', text: 'Añadir', handler: 'onClickBotonAnyadirPropietario'}, { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickBotonCancelarPropietario'}];
+    	me.buttons = [ { itemId: 'btnAnyadir', text: HreRem.i18n('itemSelector.btn.add.tooltip'), handler: 'onClickBotonAnyadirPropietario'}, { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickBotonCancelarPropietario'}];
     	
     	me.items = [
 				{

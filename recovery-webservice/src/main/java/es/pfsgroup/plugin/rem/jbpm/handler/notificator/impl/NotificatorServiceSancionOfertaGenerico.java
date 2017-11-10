@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.Comprador;
@@ -41,6 +42,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
@@ -379,8 +381,10 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		String cuerpo = "<p>Nos complace comunicarle que la oferta " + oferta.getNumOferta()
 				+ " a nombre de " + nombresOfertantes(expediente)
 				+ " ha sido PROVISIONALMENTE ACEPTADA. Adjunto a este correo encontrará el documento con las instrucciones a seguir para la reserva y formalización, así como la Ficha cliente a cumplimentar";
-
-		if (!Checks.esNulo(expediente.getId()) && !Checks.esNulo(expediente.getReserva())) {
+		ActivoBancario activoBancario = genericDao.get(ActivoBancario.class,
+				genericDao.createFilter(FilterType.EQUALS, "activo.id", tramite.getActivo().getId())); 
+		if (!Checks.esNulo(expediente.getId()) && !Checks.esNulo(expediente.getReserva()) 
+				&& !DDClaseActivoBancario.CODIGO_FINANCIERO.equals(activoBancario.getClaseActivo().getCodigo())) {
 			tieneReserva = true;
 			
 			String reservationKey = String.valueOf(expediente.getId())

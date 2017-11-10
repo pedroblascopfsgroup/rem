@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=20171110
+--## FECHA_CREACION=20171113
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-3108
@@ -40,7 +40,7 @@ BEGIN
         
 		IF V_NUM_TABLAS > 0 THEN
 
-		    V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' SET TAP_SCRIPT_VALIDACION = ''existeAdjuntoUGValidacion("","T")'', TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''T008_ObtencionDocumento''''][''''comboObtencion''''] == DDSiNo.SI ? ((existeAdjuntoUG("13","T") || existeAdjuntoUG("27","T")) ? null : "Es necesario adjuntar sobre el trabajo el documento Cédula de habitabilidad o bien el Certificado sustitutivo de Cédula de Habitabilidad") : (existeAdjuntoUGValidacion("27","T") ? (valores[''''T008_ObtencionDocumento''''][''''motivoNoObtencion''''] == DDMotivoNoObtencion.NO_CUMPLE_REQUISITOS ? null : null) : "Es necesario adjuntar sobre el trabajo el Certificado sustitutivo de Cédula de Habitabilidad")'', USUARIOMODIFICAR=''HREOS-3108'', FECHAMODIFICAR=SYSDATE WHERE TAP_CODIGO = ''T008_ObtencionDocumento'' ';
+		    V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' SET TAP_SCRIPT_VALIDACION = '''', TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''T008_ObtencionDocumento''''][''''comboObtencion''''] == DDSiNo.SI ? (existeAdjuntoUG("13","T") ? null : "Es necesario adjuntar sobre el trabajo el documento Cédula de habitabilidad") : (existeAdjuntoUG("27","T") ? (valores[''''T008_ObtencionDocumento''''][''''motivoNoObtencion''''] == DDMotivoNoObtencion.NO_CUMPLE_REQUISITOS ? existeAdjuntoUGValidacion("27","T") : null) : existeAdjuntoUGValidacion("27","T") )'' ';
 			DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando tarea T008_ObtencionDocumento.......');
 		    DBMS_OUTPUT.PUT_LINE(V_MSQL);
 		    EXECUTE IMMEDIATE V_MSQL;

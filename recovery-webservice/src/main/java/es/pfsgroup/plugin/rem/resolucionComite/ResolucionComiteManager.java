@@ -346,19 +346,22 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 		if(!Checks.esNulo(resolDto.getFechaComite())){
 			resol.setFechaResolucion(resolDto.getFechaComite());
 		}
-		if(!Checks.esNulo(resol.getImporteContraoferta())) {
-			ofr.setImporteContraOferta(resol.getImporteContraoferta());
-			genericDao.save(Oferta.class, ofr);
-			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofr.getId());
-			// Actualizar honorarios para el nuevo importe de contraoferta.
-			expedienteComercialApi.actualizarHonorariosPorExpediente(expediente.getId());
-
-			// Actualizamos la participación de los activos en la oferta;
-			expedienteComercialApi.updateParticipacionActivosOferta(ofr);
-			expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
-		}
-		resol = genericDao.save(ResolucionComiteBankia.class, resol);
+		if(!Checks.esNulo(ofr)) {
+			if(!Checks.esNulo(resol.getImporteContraoferta())) {
+				ofr.setImporteContraOferta(resol.getImporteContraoferta());
+				genericDao.save(Oferta.class, ofr);
+				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofr.getId());
+				if(!Checks.esNulo(expediente)) {
+					// Actualizar honorarios para el nuevo importe de contraoferta.
+					expedienteComercialApi.actualizarHonorariosPorExpediente(expediente.getId());
 		
+					// Actualizamos la participación de los activos en la oferta;
+					expedienteComercialApi.updateParticipacionActivosOferta(ofr);
+					expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
+				}
+			}
+			resol = genericDao.save(ResolucionComiteBankia.class, resol);
+		}
 		return resol;
 	}
 	

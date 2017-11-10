@@ -26,7 +26,7 @@ public class DetectorWebcomStock extends DetectorCambiosBD<StockDto> {
 	@Autowired
 	private CambiosBDDao dao;
 	
-	private boolean procesarSoloCambiosMarcados = true;
+	private boolean procesarSoloCambiosMarcados = false;
 	
 	private Boolean forzarSoloCambiosMarcados = false;
 

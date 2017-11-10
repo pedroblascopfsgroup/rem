@@ -140,6 +140,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
 	onListadoPropietariosDobleClick: function (grid, record) {
     	var me = this
+    	
     	var activo = me.getViewModel().get('activo'),
  		idActivo= activo.get('id');
     	var ventana = Ext.create("HreRem.view.activos.detalle.EditarPropietario", {propietario: record, activo: activo});
@@ -698,6 +699,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this;	
 		var url =  $AC.getRemoteUrl('activo/updateActivoPropietarioTab');
 		form= btn.up('window').down('formBase').getForm();
+		formulario= btn.up('window').down('formBase');
 		var window = btn.up('window');
 		var padre = window.floatParent;
 		var tab = padre.down('tituloinformacionregistralactivo');
@@ -721,7 +723,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		params['telefono']=form.findField("telefono").getValue();
 		params['email']=form.findField("email").getValue();
 		params['tipoPropietario']=form.findField("tipoPropietario").getValue();
+		params['nombreContacto']=propietario.get('nombreContacto');
+		params['telefono1Contacto']=propietario.get('telefono1Contacto');
+		params['telefono2Contacto']=propietario.get('telefono2Contacto');
+		params['emailContacto']=propietario.get('emailContacto');
+		params['provinciaContactoCodigo']=propietario.get('provinciaContactoCodigo');
+		params['localidadContactoCodigo']=propietario.get('localidadContactoCodigo');
+		params['codigoPostalContacto']=propietario.get('codigoPostalContacto');
+		params['direccionContacto']=propietario.get('direccionContacto');
+		params['observaciones']=propietario.get('observaciones');
 		
+		if(formulario.isFormValid()){
 		Ext.Ajax.request({
 		     url: url,
 		     params:params,
@@ -739,20 +751,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			  });
            }
 	    });
+		}else  {
+			me.fireEvent("errorToast", 'Porfavor, revise los campos obligatorios');
+		}
 	},
 	
 	onClickBotonAnyadirPropietario: function(btn) {		
 		var me = this;	
 		var url =  $AC.getRemoteUrl('activo/createActivoPropietarioTab');
 		form= btn.up('window').down('formBase').getForm();
-		
+		formulario= btn.up('window').down('formBase');
 		var window = btn.up('window');
 		var padre = window.floatParent;
 		var tab = padre.down('tituloinformacionregistralactivo');
 		
-		var me = this;
- 		var activo = me.getViewModel().get('activo'),
- 		idActivo= activo.get('id');
+ 		var activo = me.getViewModel().get('activo');	
+ 		var propietario = me.getViewModel().get('propietario');
  		
 		var params={"idActivo":activo.get('id')};
 		params['porcPropiedad']=form.findField("porcPropiedad").getValue();
@@ -768,12 +782,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		params['telefono']=form.findField("telefono").getValue();
 		params['email']=form.findField("email").getValue();
 		params['tipoPropietario']="Copropietario";
-
-		porc = params.porcPropiedad;
-		grado = params.tipoGradoPropiedadDescripcion;
-		nombre = params.nombre;
+		params['nombreContacto']=propietario.nombreContacto;
+		params['telefono1Contacto']=propietario.telefonoContacto1;
+		params['telefono2Contacto']=propietario.telefonoContacto2;
+		params['emailContacto']=propietario.emailContacto;
+		params['provinciaContactoCodigo']=propietario.provinciaContacto;
+		params['localidadContactoCodigo']=propietario.localidadContacto;
+		params['codigoPostalContacto']=propietario.codigoPostalContacto;
+		params['direccionContacto']=propietario.direccionContacto;
+		params['observaciones']=propietario.observacionesContacto;
 		
-		if(porc != "" && porc != null && grado != "" && grado != null && nombre != "" && nombre != null){
+		if(formulario.isFormValid()){
 			Ext.Ajax.request({
 			     url: url,
 			     params:params,
@@ -792,12 +811,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	           }
 		    });
 		}else  {
-			Ext.toast({
-				 html: 'Porfavor, revise los campos obligatorios',
-				 width: 360,
-				 height: 100,
-				 align: 't'									     
-			  });
+			me.fireEvent("errorToast", 'Porfavor, revise los campos obligatorios');
 		}
 		
 	},

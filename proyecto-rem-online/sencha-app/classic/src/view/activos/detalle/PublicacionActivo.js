@@ -108,14 +108,14 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
 			var visible = false;
 			if(tab.xtype=='informecomercialactivo'){
 				if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
-					visible = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
+					visible = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPREC']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
 						 && $AU.userHasFunction('EDITAR_TAB_INFO_COMERCIAL_PUBLICACION'));
 				}else{
 					visible = $AU.userHasFunction('EDITAR_TAB_INFO_COMERCIAL_PUBLICACION');
 				}
 			}else if(tab.xtype=='datospublicacionactivo'){
 				if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
-					visible = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
+					visible = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPREC']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
 						 && $AU.userHasFunction('EDITAR_TAB_DATOS_PUBLICACION'));
 				}else{
 					visible = $AU.userHasFunction('EDITAR_TAB_DATOS_PUBLICACION');

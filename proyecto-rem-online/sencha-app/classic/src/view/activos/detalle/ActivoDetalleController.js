@@ -839,9 +839,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	},
 	
-	refrescarActivo: function(refrescarPestañaActiva) {
+	refrescarActivo: function(refrescarPestanyaActiva) {
 		var me = this,
-		refrescarPestañaActiva = Ext.isEmpty(refrescarPestañaActiva) ? false: refrescarPestañaActiva,
+		refrescarPestanyaActiva = Ext.isEmpty(refrescarPestanyaActiva) ? false: refrescarPestanyaActiva,
 		activeTab = me.getView().down("tabpanel").getActiveTab();		
   		
 		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
@@ -852,7 +852,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
   		});
   		
   		// Actualizamos la pestaña actual si tiene funciÃ³n de recargar 
-		if(refrescarPestañaActiva && activeTab.funcionRecargar) {
+		if(refrescarPestanyaActiva && activeTab.funcionRecargar) {
   			activeTab.funcionRecargar();
 		}
 		
@@ -1701,7 +1701,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 	
 	// Función que abre la pestaña de proveedor.
-   abrirPestanyProveedor: function(tableView, indiceFila, indiceColumna){
+   abrirPestanyaProveedor: function(tableView, indiceFila, indiceColumna){
    		var me = this;
 		var grid = tableView.up('grid');
 	    var record = grid.store.getAt(indiceFila);

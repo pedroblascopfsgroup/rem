@@ -142,12 +142,12 @@ IF P_CLASE_ACTIVO = '01' THEN
 	V_TIPO_DATA_03 := V_TIPO_DATA_01;
 	V_CLASE_ACTIVO :=  'LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID 
 					    LEFT JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND SCR.DD_SCR_ID = ACT.DD_SCR_ID		    
-					    WHERE SCR.DD_SCR_CODIGO = DECODE (CRA.DD_CRA_CODIGO, ''01'', ''01'',     ''02'', ''03'',     ''03'', ''05'',     ''04'', ''10'',     ''05'', ''12'')';
+					    WHERE SCR.DD_SCR_CODIGO = DECODE (CRA.DD_CRA_CODIGO, ''01'', ''01'',     ''02'', ''03'',     ''03'', ''05'',     ''04'', ''10'',     ''05'', ''12'', ''09'',''21'')';
 ELSE
 	V_TIPO_DATA_03 := V_TIPO_DATA_02;
 	V_CLASE_ACTIVO := 'LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID 
 					   LEFT JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND SCR.DD_SCR_ID = ACT.DD_SCR_ID		    
-					   WHERE SCR.DD_SCR_CODIGO <> DECODE (CRA.DD_CRA_CODIGO, ''01'', ''01'',     ''02'', ''03'',     ''03'', ''05'',     ''04'', ''10'',     ''05'', ''12'')';
+					   WHERE SCR.DD_SCR_CODIGO <> DECODE (CRA.DD_CRA_CODIGO, ''01'', ''01'',     ''02'', ''03'',     ''03'', ''05'',     ''04'', ''10'',     ''05'', ''12'', ''09'',''21'')';
 END IF;
 
 --------------------------------------------------------------------

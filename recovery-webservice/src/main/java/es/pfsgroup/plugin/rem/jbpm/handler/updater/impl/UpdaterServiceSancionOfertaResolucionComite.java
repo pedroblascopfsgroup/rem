@@ -22,17 +22,24 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
+import es.pfsgroup.plugin.rem.model.ResolucionComiteBankiaDto;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
+import es.pfsgroup.plugin.rem.resolucionComite.dao.ResolucionComiteDao;
+import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 
 @Component
 public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterService {
@@ -54,6 +61,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 	
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
+
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionComite.class);
 	 
@@ -154,6 +162,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 						// Actualizamos la participación de los activos en la oferta;
 						expedienteComercialApi.updateParticipacionActivosOferta(ofertaAceptada);
 						expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
+						
 					}
 				}
 				genericDao.save(ExpedienteComercial.class, expediente);

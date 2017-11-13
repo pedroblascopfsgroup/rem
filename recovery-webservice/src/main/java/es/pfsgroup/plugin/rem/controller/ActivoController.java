@@ -909,7 +909,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListDocumentacionAdministrativaById(Long id, ModelMap model) {
+	public ModelAndView getListDocumentacionAdministrativaById(Long id, WebDto dto, ModelMap model) {
 
 		model.put("data", adapter.getListDocumentacionAdministrativaById(id));
 

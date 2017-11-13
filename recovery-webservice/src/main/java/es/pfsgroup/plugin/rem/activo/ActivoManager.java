@@ -4039,7 +4039,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				copropietario.setNombreContacto(propietario.getNombreContacto());
 			}
 			if (!Checks.esNulo(propietario.getTelefono1Contacto())){
-				copropietario.setTelefono2Contacto(propietario.getTelefono1Contacto());
+				copropietario.setTelefono1Contacto(propietario.getTelefono1Contacto());
 			}
 			if (!Checks.esNulo(propietario.getTelefono2Contacto())){
 				copropietario.setTelefono2Contacto(propietario.getTelefono2Contacto());

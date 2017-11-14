@@ -377,10 +377,22 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	private void enviaNotificacionAceptar(ActivoTramite tramite, Oferta oferta, ExpedienteComercial expediente,
 			String... destinatarios) {
 		boolean tieneReserva = false;
+		boolean adjuntarInstrucciones = false;
+		String codigoCartera = null;
+		if (!Checks.esNulo(tramite.getActivo()) && !Checks.esNulo(tramite.getActivo().getCartera())) {
+			codigoCartera = tramite.getActivo().getCartera().getCodigo();			
+		}
+		
 		String asunto = "Notificación de aprobación provisional de la oferta " + oferta.getNumOferta();
 		String cuerpo = "<p>Nos complace comunicarle que la oferta " + oferta.getNumOferta()
 				+ " a nombre de " + nombresOfertantes(expediente)
-				+ " ha sido PROVISIONALMENTE ACEPTADA. Adjunto a este correo encontrará el documento con las instrucciones a seguir para la reserva y formalización, así como la Ficha cliente a cumplimentar";
+				+ " ha sido PROVISIONALMENTE ACEPTADA. Adjunto a este correo encontrará el documento con las instrucciones a seguir para la reserva y formalización";
+		if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera)) {
+			cuerpo = cuerpo + ", así como la Ficha cliente a cumplimentar</p>";
+		}else {
+			cuerpo = cuerpo + ".</p>";
+		}
+		
 		ActivoBancario activoBancario = genericDao.get(ActivoBancario.class,
 				genericDao.createFilter(FilterType.EQUALS, "activo.id", tramite.getActivo().getId())); 
 		if (!Checks.esNulo(expediente.getId()) && !Checks.esNulo(expediente.getReserva()) 
@@ -421,7 +433,12 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		dtoSendNotificator.setTitulo(asunto);
 
 		String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
-		enviaNotificacionGenerico(tramite.getActivo(), asunto, cuerpoCorreo, tieneReserva, destinatarios);
+		
+		if (tieneReserva || DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera)) {
+			adjuntarInstrucciones = true;
+		}
+		
+		enviaNotificacionGenerico(tramite.getActivo(), asunto, cuerpoCorreo, adjuntarInstrucciones, destinatarios);
 	}
 
 	private String nombresOfertantes(ExpedienteComercial expediente) {

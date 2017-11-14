@@ -97,11 +97,16 @@ BEGIN
         ELSE MIG.OFR_FECHA_NOTIFICACION 
       END                                                         OFR_FECHA_NOTIFICACION,
       CASE 
-        WHEN MIG.OFR_IMPORTE_CONTRAOFERTA = 0 THEN null
-        ELSE MIG.OFR_IMPORTE_CONTRAOFERTA END                     OFR_IMPORTE_CONTRAOFERTA,
+        WHEN MIG.OFR_IMPORTE <> MIG.OFR_IMPORTE_APROBADO AND MIG.OFR_IMPORTE_APROBADO <> 0 
+          AND MIG.OFR_IMPORTE_APROBADO IS NOT NULL
+          THEN MIG.OFR_IMPORTE_APROBADO
+        WHEN MIG.OFR_IMPORTE_CONTRAOFERTA = 0
+          THEN NULL
+        ELSE MIG.OFR_IMPORTE_CONTRAOFERTA
+      END                                                         OFR_IMPORTE_CONTRAOFERTA,
       CASE 
-        WHEN MIG.OFR_IMPORTE_CONTRAOFERTA != 0 
-          AND MIG.OFR_FECHA_CONTRAOFERTA is null THEN SYSDATE
+        WHEN MIG.OFR_IMPORTE_CONTRAOFERTA != 0 AND MIG.OFR_FECHA_CONTRAOFERTA is null 
+          THEN SYSDATE
         ELSE MIG.OFR_FECHA_CONTRAOFERTA 
       END                                                         OFR_FECHA_CONTRAOFERTA,
       USU.USU_ID                                                  USU_ID,

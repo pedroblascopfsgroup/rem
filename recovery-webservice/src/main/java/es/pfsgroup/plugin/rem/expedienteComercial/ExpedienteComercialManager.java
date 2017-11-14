@@ -3464,31 +3464,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				if (comprador.getPrimaryKey().getComprador().getTipoDocumento() != null) {
 					DDTipoDocumento tipoDoc = comprador.getPrimaryKey().getComprador().getTipoDocumento();
-					if (tipoDoc.getCodigo().equals("01")) {
-						titular.setTipoDocumentoCliente('1');
-					} else if (tipoDoc.getCodigo().equals("02")) {
-						titular.setTipoDocumentoCliente('2');
-					} else if (tipoDoc.getCodigo().equals("03")) {
-						titular.setTipoDocumentoCliente('3');
-					} else if (tipoDoc.getCodigo().equals("04")) {
-						titular.setTipoDocumentoCliente('4');
-					} else if (tipoDoc.getCodigo().equals("05")) {
-						titular.setTipoDocumentoCliente('5');
-					} else if (tipoDoc.getCodigo().equals("06")) {
-						titular.setTipoDocumentoCliente('7');
-					} else if (tipoDoc.getCodigo().equals("07")) {
-						titular.setTipoDocumentoCliente('8');
-					} else if (tipoDoc.getCodigo().equals("08")) {
-						titular.setTipoDocumentoCliente('9');
-					} else if (tipoDoc.getCodigo().equals("09")) {
-						titular.setTipoDocumentoCliente('F');
-					} else if (tipoDoc.getCodigo().equals("10")) {
-						titular.setTipoDocumentoCliente('J');
-					} else if (tipoDoc.getCodigo().equals("12")) {
-						titular.setTipoDocumentoCliente('J');
-					}else{
-						throw new Exception("Tipo de documento no soportado");
-					}
+					titular.setTipoDocumentoCliente(traducitTipoDoc(tipoDoc.getCodigo()));
 				}
 
 				titular.setNombreCompletoCliente(comprador.getPrimaryKey().getComprador().getFullName());
@@ -3541,6 +3517,43 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			instancia.setCodComiteSuperior(DDComiteSancion.CODIGO_BANKIA_DGVIER);
 		}
 		return instancia;
+	}
+	
+	/**
+	 * Traduce el tipo de documente REM al char aceptado por los sw de BANKIA
+	 * 
+	 * @param codigoTipoDoc
+	 * @return
+	 * @throws Exception
+	 */
+	private char traducitTipoDoc(String codigoTipoDoc) throws Exception{
+		char result =' ';
+		if (codigoTipoDoc.equals("01")) {
+			result ='1';
+		} else if (codigoTipoDoc.equals("02")) {
+			result ='2';
+		} else if (codigoTipoDoc.equals("03")) {
+			result ='3';
+		} else if (codigoTipoDoc.equals("04")) {
+			result ='4';
+		} else if (codigoTipoDoc.equals("05")) {
+			result ='5';
+		} else if (codigoTipoDoc.equals("06")) {
+			result ='7';
+		} else if (codigoTipoDoc.equals("07")) {
+			result ='8';
+		} else if (codigoTipoDoc.equals("08")) {
+			result ='9';
+		} else if (codigoTipoDoc.equals("09")) {
+			result ='F';
+		} else if (codigoTipoDoc.equals("10")) {
+			result ='J';
+		} else if (codigoTipoDoc.equals("12")) {
+			result ='J';
+		}else{
+			throw new Exception("Tipo de documento no soportado");
+		}
+		return result;
 	}
 
 	@Override

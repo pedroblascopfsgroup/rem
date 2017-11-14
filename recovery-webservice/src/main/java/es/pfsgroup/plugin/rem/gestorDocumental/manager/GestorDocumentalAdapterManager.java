@@ -220,13 +220,15 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		String fechaGasto = !Checks.esNulo(gasto.getFechaEmision()) ? formatter.format(gasto.getFechaEmision()) : "";
-		String idReo = !Checks.estaVacio(gasto.getGastoProveedorActivos()) ?  gasto.getGastoProveedorActivos().get(0).getActivo().getNumActivo().toString() : "";
-		String cliente = !Checks.estaVacio(gasto.getGastoProveedorActivos()) ?  gasto.getGastoProveedorActivos().get(0).getActivo().getCartera().getDescripcion() : "";
+		String idReo = !Checks.estaVacio(gasto.getGastoProveedorActivos()) ?  gasto.getGastoProveedorActivos().get(0).getActivo().getNumActivo().toString() : "";		
+		DDCartera cartera = null;
+		if (gasto.getPropietario()!=null) {
+			cartera = gasto.getPropietario().getCartera();
+		}
+		String cliente = !Checks.estaVacio(gasto.getGastoProveedorActivos()) ?  getClienteByCartera(cartera) : "";
 		
-		if((Checks.esNulo(cliente) || cliente.isEmpty()) && gasto.esAutorizadoSinActivos()) {			
-			if(!Checks.esNulo(gasto.getPropietario())) {
-				cliente = getClienteByCartera(gasto.getPropietario().getCartera());			
-			}
+		if((Checks.esNulo(cliente) || cliente.isEmpty()) && !Checks.esNulo(gasto.getPropietario())) {			
+			cliente = getClienteByCartera(cartera);
 		}		
 		String descripcionExpediente =  !Checks.esNulo(gasto.getConcepto()) ? gasto.getConcepto() :  "";
 		

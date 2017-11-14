@@ -78,7 +78,8 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.principal.sujeto'),
 											                bind: '{detalleeconomico.importePrincipalSujeto}',
 											                reference: 'importePrincipalSujeto',
-											                //allowBlank: false,
+											                minValue: '0.01',
+											                allowBlank: false,
 											                listeners:{
 											                	edit: function(){
 											                		if(this.getValue()==0)

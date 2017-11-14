@@ -3454,21 +3454,24 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		instancia.setCodigoDeOfertaHaya(oferta.getNumOferta().toString());
 		instancia.setData(instanciaList);
 
+		TitularDto titularPrincipal = null;
+		Comprador compradorPrincipal = expediente.getCompradorPrincipal();
 		// seteamos la lista de titulares
 		List<TitularDto> titulares = new ArrayList<TitularDto>();
 		if (expediente.getCompradores() != null && expediente.getCompradores().size() > 0) {
 			for (CompradorExpediente comprador : expediente.getCompradores()) {
 				TitularDto titular = new TitularDto();
-				titular.setNumeroUrsus(comprador.getPrimaryKey().getComprador().getIdCompradorUrsus());
+				Comprador primaryKey = comprador.getPrimaryKey().getComprador();
+				titular.setNumeroUrsus(primaryKey.getIdCompradorUrsus());
 				titular.setTitularContratacion(comprador.getTitularContratacion());
 
-				if (comprador.getPrimaryKey().getComprador().getTipoDocumento() != null) {
-					DDTipoDocumento tipoDoc = comprador.getPrimaryKey().getComprador().getTipoDocumento();
+				if (primaryKey.getTipoDocumento() != null) {
+					DDTipoDocumento tipoDoc = primaryKey.getTipoDocumento();
 					titular.setTipoDocumentoCliente(traducitTipoDoc(tipoDoc.getCodigo()));
 				}
 
-				titular.setNombreCompletoCliente(comprador.getPrimaryKey().getComprador().getFullName());
-				titular.setNumeroDocumento(comprador.getPrimaryKey().getComprador().getDocumento());
+				titular.setNombreCompletoCliente(primaryKey.getFullName());
+				titular.setNumeroDocumento(primaryKey.getDocumento());
 				titular.setPorcentajeCompra(comprador.getPorcionCompra());
 				if (comprador.getDocumentoConyuge() != null && !comprador.getDocumentoConyuge().isEmpty()) {
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "documento",
@@ -3478,10 +3481,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						titular.setConyugeNumeroUrsus(compradorConyuge.getIdCompradorUrsus());
 					}
 				}
-
-				titulares.add(titular);
+				if(!primaryKey.equals(compradorPrincipal))
+					titulares.add(titular);
+				else
+					titularPrincipal = titular;
 			}
 		}
+		if(!Checks.esNulo(titularPrincipal))
+			titulares.add(0, titularPrincipal);
 		instancia.setTitulares(titulares);
 		
 		// info de la reserva

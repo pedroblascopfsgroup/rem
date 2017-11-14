@@ -132,16 +132,16 @@ public class ResolucionComiteController {
 					
 					
 					//Si existe la tarea T013_RatificacionComite, se trata de una ratificación
-					List<TareaProcedimiento> listaTareas = activoTramiteApi.getTareasByIdTramite(tramite.getId());
-					for(int i=0;i< listaTareas.size(); i++){
-						TareaProcedimiento tarea = listaTareas.get(i);						
-						if(!Checks.esNulo(tarea)){
-							if(tarea.getCodigo().equalsIgnoreCase("T013_RatificacionComite")){
-								ratificacion = true;
-								break;
-							}
-						}
-					}
+//					List<TareaProcedimiento> listaTareas = activoTramiteApi.getTareasByIdTramite(tramite.getId());
+//					for(int i=0;i< listaTareas.size(); i++){
+//						TareaProcedimiento tarea = listaTareas.get(i);						
+//						if(!Checks.esNulo(tarea)){
+//							if(tarea.getCodigo().equalsIgnoreCase("T013_RatificacionComite")){
+//								ratificacion = true;
+//								break;
+//							}
+//						}
+//					}
 					
 					if(ratificacion){
 						usu = gestorActivoApi.userFromTarea("T013_RatificacionComite", tramite.getId());

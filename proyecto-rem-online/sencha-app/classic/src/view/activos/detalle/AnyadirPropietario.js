@@ -294,7 +294,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirPropietario', {
 														select: 'onChangeChainedCombo'
 						    						},
 												   bind:{ 
-													   	value: '{propietario.provinciaCodigoContacto}',
+													   	value: '{propietario.provinciaContactoCodigo}',
 													   	store: '{comboProvinciasContacto}'													   	
 													   		} 
 											},
@@ -307,7 +307,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirPropietario', {
 												   displayField: 'descripcion',
 												   valueField: 'codigo',
 												   bind:{ 
-													   	value: '{propietario.localidadCodigoContacto}',
+													   	value: '{propietario.localidadContactoCodigo}',
 													   	store: '{comboPoblacionContacto}'													   	
 													   		} 
 											},

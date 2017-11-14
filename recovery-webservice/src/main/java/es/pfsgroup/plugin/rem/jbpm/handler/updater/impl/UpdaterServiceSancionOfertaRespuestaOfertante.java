@@ -27,6 +27,8 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
+import es.pfsgroup.plugin.rem.model.ResolucionComiteBankiaDto;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -35,6 +37,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
+import es.pfsgroup.plugin.rem.resolucionComite.dao.ResolucionComiteDao;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 
 @Component
@@ -63,7 +66,9 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
     
 	@Autowired
 	private ResolucionComiteApi resolucionComiteApi;
-
+    
+	@Autowired
+	private ResolucionComiteDao resolucionComiteDao;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaRespuestaOfertante.class);
 
@@ -153,14 +158,27 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 						expedienteComercialApi.updateParticipacionActivosOferta(ofertaAceptada);
 						expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
 						
+						ResolucionComiteBankiaDto resolDto = null;
+						List<ResolucionComiteBankia> listaResol = null;
 						ResolucionComiteDto dto = new ResolucionComiteDto();
 						dto.setOfertaHRE(ofertaAceptada.getNumOferta());
-						dto.setCodigoTipoResolucion(DDTipoResolucion.CODIGO_TIPO_RESPUESTA_OFERTANTE);
+						dto.setCodigoTipoResolucion(DDTipoResolucion.CODIGO_TIPO_RESOLUCION);						
 						dto.setImporteContraoferta(ofertaAceptada.getImporteContraOferta());
 						dto.setCodigoComite(expediente.getComiteSancion().getCodigo());
 						dto.setCodigoResolucion(DDEstadoResolucion.CODIGO_ERE_CONTRAOFERTA);
 						try {
-							resolucionComiteApi.saveOrUpdateResolucionComite(dto);
+							resolDto = resolucionComiteApi.getResolucionComiteBankiaDtoFromResolucionComiteDto(dto);
+							if(Checks.esNulo(resolDto)){
+								throw new Exception("Se ha producido un error en la búsqueda de resoluciones.");
+							}
+							
+							//Obtenemos la lista de resoluciones por expediente y tipo si existe
+							listaResol = resolucionComiteApi.getResolucionesComiteByExpedienteTipoRes(resolDto);
+							if(!Checks.esNulo(listaResol) && listaResol.size()>0){
+								for(int i = 0; i< listaResol.size(); i++){					
+									resolucionComiteDao.delete(listaResol.get(i));								
+								}
+							}
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();

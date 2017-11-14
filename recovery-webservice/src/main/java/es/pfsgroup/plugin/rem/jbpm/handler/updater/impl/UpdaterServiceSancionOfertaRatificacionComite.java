@@ -8,9 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -20,16 +18,22 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
+import es.pfsgroup.plugin.rem.model.ResolucionComiteBankiaDto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
+import es.pfsgroup.plugin.rem.resolucionComite.dao.ResolucionComiteDao;
+import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 
 @Component
 public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterService {
@@ -51,6 +55,12 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 
     @Autowired
     private UtilDiccionarioApi utilDiccionarioApi;
+    
+	@Autowired
+	private ResolucionComiteApi resolucionComiteApi;
+    
+	@Autowired
+	private ResolucionComiteDao resolucionComiteDao;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaRatificacionComite.class);
 
@@ -128,6 +138,33 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 						// Actualizamos la participación de los activos en la oferta;
 						expedienteComercialApi.updateParticipacionActivosOferta(ofertaAceptada);
 						expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
+						
+//						ResolucionComiteBankiaDto resolDto = null;
+//						List<ResolucionComiteBankia> listaResol = null;
+//						ResolucionComiteDto dto = new ResolucionComiteDto();
+//						dto.setOfertaHRE(ofertaAceptada.getNumOferta());
+//						dto.setCodigoTipoResolucion(DDTipoResolucion.CODIGO_TIPO_RESOLUCION);						
+//						dto.setImporteContraoferta(ofertaAceptada.getImporteContraOferta());
+//						dto.setCodigoComite(expediente.getComiteSancion().getCodigo());
+//						dto.setCodigoResolucion(DDEstadoResolucion.CODIGO_ERE_CONTRAOFERTA);
+//						try {
+//							resolDto = resolucionComiteApi.getResolucionComiteBankiaDtoFromResolucionComiteDto(dto);
+//							if(Checks.esNulo(resolDto)){
+//								throw new Exception("Se ha producido un error en la búsqueda de resoluciones.");
+//							}
+//							
+//							//Obtenemos la lista de resoluciones por expediente y tipo si existe
+//							listaResol = resolucionComiteApi.getResolucionesComiteByExpedienteTipoRes(resolDto);
+//							if(!Checks.esNulo(listaResol) && listaResol.size()>0){
+//								for(int i = 0; i< listaResol.size(); i++){					
+//									resolucionComiteDao.delete(listaResol.get(i));
+//								}
+//							}
+//							
+//						} catch (Exception e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
 					}	
 				}
 				genericDao.save(ExpedienteComercial.class, expediente);

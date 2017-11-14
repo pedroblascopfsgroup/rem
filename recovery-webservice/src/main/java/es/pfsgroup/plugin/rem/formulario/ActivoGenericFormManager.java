@@ -365,11 +365,11 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 	            					ResolucionComiteBankiaDto resolDto = new ResolucionComiteBankiaDto();
 	            					resolDto.setExpediente(expediente);
 	            					Filter filtroTipoResolucion = null;
-	            					if(tareaExterna.getTareaProcedimiento().getCodigo().equals("T013_RespuestaOfertante")) {
+	            					//if(tareaExterna.getTareaProcedimiento().getCodigo().equals("T013_RespuestaOfertante")) {
 	            						filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RESOLUCION);
-	            					}else {
-	            						filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RATIFICACION);
-	            					}
+//	            					}else {
+//	            						filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RATIFICACION);
+//	            					}
 	            					DDTipoResolucion tipoResolucion = genericDao.get(DDTipoResolucion.class, filtroTipoResolucion);
 	            					
 	            					resolDto.setTipoResolucion(tipoResolucion);
@@ -443,17 +443,10 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             					
             					ResolucionComiteBankiaDto resolDto = new ResolucionComiteBankiaDto();
             					resolDto.setExpediente(expediente);
-
-            					if("T013_RatificacionComite".equals(tareaExterna.getTareaProcedimiento().getCodigo())){
-            						Filter filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RATIFICACION);
-                					DDTipoResolucion tipoResolucion = genericDao.get(DDTipoResolucion.class, filtroTipoResolucion);
-                					resolDto.setTipoResolucion(tipoResolucion);
-            					} else {
-            						Filter filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RESOLUCION);
-                					DDTipoResolucion tipoResolucion = genericDao.get(DDTipoResolucion.class, filtroTipoResolucion);
-                					resolDto.setTipoResolucion(tipoResolucion);
-            					}
             					
+        						Filter filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RESOLUCION);
+            					DDTipoResolucion tipoResolucion = genericDao.get(DDTipoResolucion.class, filtroTipoResolucion);
+            					resolDto.setTipoResolucion(tipoResolucion);           					
             					
 								try {
 									List<ResolucionComiteBankia> listaResoluciones = resolucionComiteApi.getResolucionesComiteByExpedienteTipoRes(resolDto);
@@ -557,12 +550,8 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             					
             					ResolucionComiteBankiaDto resolDto = new ResolucionComiteBankiaDto();
             					resolDto.setExpediente(expediente);
-            					Filter filtroTipoResolucion;
-            					if(item.getNombre().equals("comboResolucion")) {
-            						filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RESOLUCION);
-            					}else {
-            						filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RATIFICACION);
-            					}
+            					Filter filtroTipoResolucion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoResolucion.CODIGO_TIPO_RESOLUCION);
+            					
             					DDTipoResolucion tipoResolucion = genericDao.get(DDTipoResolucion.class, filtroTipoResolucion);
             					
             					resolDto.setTipoResolucion(tipoResolucion);

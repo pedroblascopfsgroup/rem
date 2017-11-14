@@ -1280,7 +1280,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			return null;
 		} catch (JsonViewerException jve) {
-			return "Error alta comité: " + jve.getMessage();
+			return jve.getMessage();
 		} catch (Exception e) {
 			logger.error("error en OfertasManager", e);
 			return "No ha sido posible realizar la operación";
@@ -1320,7 +1320,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			uvemManagerApi.modificarInstanciaDecision(instanciaDecisionDto);
 			return null;
 		} catch (JsonViewerException jve) {
-			return "Error ratificación comité: " + jve.getMessage();
+			return jve.getMessage();
 		} catch (Exception e) {
 			logger.error("error en OfertasManager", e);
 			return "No ha sido posible realizar la operación";
@@ -2056,6 +2056,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			instanciaDecisionDto.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_CONDICIONANTES_ECONOMICOS);
 			uvemManagerApi.modificarInstanciaDecisionTres(instanciaDecisionDto);
 			logger.info("------------ LLAMADA WS MOD3(FIN) -----------------");
+		} catch (JsonViewerException jve) {
+			throw new UserException(jve.getMessage());
 		} catch (Exception e) {
 			logger.error("error en OfertasManager", e);
 			throw new UserException(e.getMessage());

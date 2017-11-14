@@ -186,6 +186,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
@@ -802,11 +803,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				Comprador nuevoComprador = new Comprador();
 				nuevoComprador.setClienteComercial(oferta.getCliente());
 				nuevoComprador.setDocumento(oferta.getCliente().getDocumento());
-				nuevoComprador.setNombre(oferta.getCliente().getNombre());
-				nuevoComprador.setApellidos(oferta.getCliente().getApellidos());
-				if(Checks.esNulo(nuevoComprador.getNombre()) && Checks.esNulo(nuevoComprador.getApellidos())){
+				
+				if (!Checks.esNulo(oferta.getCliente().getTipoPersona()) && DDTipoPersona.CODIGO_TIPO_PERSONA_JURIDICA
+						.equals(oferta.getCliente().getTipoPersona().getCodigo())) {
 					nuevoComprador.setNombre(oferta.getCliente().getRazonSocial());
+					compradorExpedienteNuevo.setNombreRepresentante(oferta.getCliente().getNombre());
+					compradorExpedienteNuevo.setApellidosRepresentante(oferta.getCliente().getApellidos());
+					compradorExpedienteNuevo.setTipoDocumentoRepresentante(oferta.getCliente().getTipoDocumentoRepresentante());
+					compradorExpedienteNuevo.setDocumentoRepresentante(oferta.getCliente().getDocumentoRepresentante());
+					
+				} else {
+					nuevoComprador.setNombre(oferta.getCliente().getNombre());
+					nuevoComprador.setApellidos(oferta.getCliente().getApellidos());
 				}
+				
 				nuevoComprador.setTipoDocumento(oferta.getCliente().getTipoDocumento());
 				nuevoComprador.setTelefono1(oferta.getCliente().getTelefono1());
 				nuevoComprador.setTelefono2(oferta.getCliente().getTelefono2());
@@ -4039,7 +4049,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				copropietario.setNombreContacto(propietario.getNombreContacto());
 			}
 			if (!Checks.esNulo(propietario.getTelefono1Contacto())){
-				copropietario.setTelefono2Contacto(propietario.getTelefono1Contacto());
+				copropietario.setTelefono1Contacto(propietario.getTelefono1Contacto());
 			}
 			if (!Checks.esNulo(propietario.getTelefono2Contacto())){
 				copropietario.setTelefono2Contacto(propietario.getTelefono2Contacto());

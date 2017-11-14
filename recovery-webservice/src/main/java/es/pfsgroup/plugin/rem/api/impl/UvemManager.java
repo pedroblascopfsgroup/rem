@@ -365,11 +365,11 @@ public class UvemManager implements UvemManagerApi {
 		} catch (WIMetaServiceException e) {
 			logger.error("error en UvemManager", e);
 			errorDesc = e.getMessage();
-			throw new JsonViewerException(e.getMessage());
+			throw new JsonViewerException("Error solicitud tasaciones (UVEM): " + e.getMessage());
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
 			errorDesc = e.getMessage();
-			throw new JsonViewerException(e.getMessage());
+			throw new JsonViewerException("Error solicitud tasaciones (UVEM): " + e.getMessage());
 		} catch (TipoDeDatoException e) {
 			logger.error("error en UvemManager", e);
 			errorDesc = e.getMessage();
@@ -551,7 +551,7 @@ public class UvemManager implements UvemManagerApi {
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
 			errorDesc = e.getMessage();
-			throw new JsonViewerException(e.getMessage());
+			throw new JsonViewerException("Error consulta URSUS (UVEM): " + e.getMessage());
 		} finally {
 			registrarLlamada(servicioGMPAJC11_INS, errorDesc);
 		}
@@ -696,7 +696,7 @@ public class UvemManager implements UvemManagerApi {
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
 			errorDesc = e.getMessage();
-			throw new JsonViewerException(e.getMessage());
+			throw new JsonViewerException("Error consulta URSUS (UVEM): " + e.getMessage());
 		} finally {
 			registrarLlamada(servicioGMPAJC93_INS, errorDesc);
 
@@ -741,7 +741,7 @@ public class UvemManager implements UvemManagerApi {
 			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_ALTA);
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
-			throw new JsonViewerException(e.getMessage());
+			throw new JsonViewerException("Error alta comité (UVEM): " + e.getMessage());
 		}
 		return instancia;
 	}
@@ -769,7 +769,7 @@ public class UvemManager implements UvemManagerApi {
 			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_CONSULTA);
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
-			throw new JsonViewerException(e.getMessage());
+			throw new JsonViewerException("Error consulta comité (UVEM): " + e.getMessage());
 		}
 		return instancia;
 	}
@@ -791,7 +791,7 @@ public class UvemManager implements UvemManagerApi {
 			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_MODIFICACION);
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
-			throw new JsonViewerException(e.getMessage());
+			throw new JsonViewerException("Error ratificación comité (UVEM): " + e.getMessage());
 		}
 		return instancia;
 	}
@@ -830,7 +830,7 @@ public class UvemManager implements UvemManagerApi {
 			instancia = instanciaDecision(instanciaDecisionDtoCopia, INSTANCIA_DECISION_MODIFICACION_3);
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
-			throw new JsonViewerException(e.getMessage());
+			throw new JsonViewerException("Error servicio de facultades (UVEM): " + e.getMessage());
 		}
 		return instancia;
 	}
@@ -1117,7 +1117,7 @@ public class UvemManager implements UvemManagerApi {
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
 			errorDesc = e.getMessage();
-			throw new JsonViewerException(e.getMessage());
+			throw new JsonViewerException("Error servicio de facultades (UVEM): " + e.getMessage());
 		} finally {
 			registrarLlamada(servicioGMPDJB13_INS, errorDesc);
 		}
@@ -1210,7 +1210,7 @@ public class UvemManager implements UvemManagerApi {
 		} catch (WIException wie) {
 			logger.error("error en UvemManager", wie);
 			errorDesc = wie.getMessage();
-			throw new JsonViewerException(wie.getMessage());
+			throw new JsonViewerException("Error consulta préstamo (UVEM): " + wie.getMessage());
 		} finally {
 			registrarLlamada(servicioGMPAJC34_INS, errorDesc);
 		}
@@ -1328,7 +1328,7 @@ public class UvemManager implements UvemManagerApi {
 		} catch (WIException wie) {
 			logger.error("error en UvemManager", wie);
 			errorDesc = wie.getMessage();
-			throw new JsonViewerException(wie.getMessage());
+			throw new JsonViewerException("Error notificación reserva (UVEM): " + wie.getMessage());
 		} finally {
 			registrarLlamada(servicioGMPTOE83_INS, errorDesc);
 		}
@@ -1495,7 +1495,7 @@ public class UvemManager implements UvemManagerApi {
 		} catch (WIException wie) {
 			logger.error("error en UvemManager", wie);
 			errorDesc = wie.getMessage();
-			throw new JsonViewerException(wie.getMessage());
+			throw new JsonViewerException("Error anulación oferta (UVEM): " + wie.getMessage());
 		} finally {
 			registrarLlamada(servicioGMPAJC29_INS, errorDesc);
 		}

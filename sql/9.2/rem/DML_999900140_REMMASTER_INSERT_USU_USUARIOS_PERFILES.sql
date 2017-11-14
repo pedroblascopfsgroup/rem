@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Kevin Fernández
---## FECHA_CREACION=20171110
+--## FECHA_CREACION=20171113
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-3207
@@ -40,7 +40,7 @@ DECLARE
   V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 		--	  	USER_NAME	   	NOMBRE_USU			APELL1			APELL2			EMAIL      						PASS		PEF_COD		 	USU GRUPO	DESPACHO_EXTERNO	
 	T_TIPO_DATA('evillarejo', 	'Eva', 				'Villarejo', 	'de la Torre', 	'evillarejo@externos.haya.es', 	'1234', 	'HAYACONSU', 	'', 		''),
-	T_TIPO_DATA('mmartinmart', 	'Maria Teresa', 	'Martin ', 		'Martin', 		'mmartinmart@haya.es', 			'1234', 	'HAYACONSU', 	'', 		''),
+	T_TIPO_DATA('mmartinmart', 	'Maria Teresa', 	'Martin ', 		'Martin', 		'mmartinmart@haya.es', 			'fCj3T4hP', 'HAYACONSU', 	'', 		''),
 	T_TIPO_DATA('mandujar', 	'Maria', 			'Andujar', 		'Gonzalez', 	'mandujar@haya.es', 			'TyK4@aPJ', 'HAYACAL', 		'', 		'')
   ); 
   V_TMP_TIPO_DATA T_TIPO_DATA;

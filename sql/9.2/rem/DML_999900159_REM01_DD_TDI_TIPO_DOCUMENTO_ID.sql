@@ -31,7 +31,7 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
-     TYPE T_TABLA IS TABLE OF VARCHAR2(150);
+    TYPE T_TABLA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_TABLAS IS TABLE OF T_TABLA;
     V_TABLAS T_ARRAY_TABLAS := T_ARRAY_TABLAS(
 	  T_TABLA('ACT_PVE_PROVEEDOR'),
@@ -72,7 +72,7 @@ DECLARE
 	--BORRAMOS EL TIPO NIE
 	V_MSQL:= 'UPDATE '||V_ESQUEMA||'.DD_TDI_TIPO_DOCUMENTO_ID SET BORRADO = 1 WHERE DD_TDI_CODIGO=''12''';
 	EXECUTE IMMEDIATE V_MSQL;
->>>>>>> version-2.0.8-rem
+
 
 	COMMIT;
 

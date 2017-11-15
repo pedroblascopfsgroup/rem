@@ -8,8 +8,6 @@ import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.jamonapi.utils.Logger;
-
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -155,17 +153,15 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 							codigo = DDEstadoGasto.INCOMPLETO;
 						}
 						
-						if(!Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionHaya())){
-							if(DDEstadoAutorizacionHaya.CODIGO_RECHAZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())
-								&& genericAdapter.isProveedor(usuario)) {
-								codigo = DDEstadoGasto.SUBSANADO;					
+						if(!Checks.esNulo(gasto.getEstadoGasto())){
+							if(DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo())){
+								codigo = DDEstadoGasto.SUBSANADO;	
+								updateStatesGastosGestionRechazoAdmin(gasto);
 							}
-						}
-						if(DDEstadoGasto.RECHAZADO_PROPIETARIO.equals(gasto.getEstadoGasto().getCodigo()) 
-								&& DDEstadoAutorizacionPropietario.CODIGO_RECHAZADO_CONTABILIDAD.equals(gasto.getGastoGestion().getEstadoAutorizacionPropietario().getCodigo())){
-							codigo = DDEstadoGasto.SUBSANADO;
-							updateStatesGastosGestion(gasto);
-							
+							if(DDEstadoGasto.RECHAZADO_PROPIETARIO.equals(gasto.getEstadoGasto().getCodigo())){
+								codigo = DDEstadoGasto.SUBSANADO;
+								updateStatesGastosGestion(gasto);
+							}
 						}
 					}
 					
@@ -216,8 +212,21 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	}
 	
 	private void updateStatesGastosGestion(GastoProveedor gasto){
-		
-		if(!Checks.esNulo(gasto.getGastoDetalleEconomico()) && !Checks.esNulo(gasto.getGastoDetalleEconomico().getImpuestoIndirectoTipo()) 
+		//Si no esta sujeto a impuesto indirecto
+		if(!Checks.esNulo(gasto.getGastoDetalleEconomico()) && Checks.esNulo(gasto.getGastoDetalleEconomico().getImpuestoIndirectoTipo())){
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO);
+			DDEstadoAutorizacionHaya estadoAutorizacionHaya= (DDEstadoAutorizacionHaya) genericDao.get(DDEstadoAutorizacionHaya.class, filtro);
+			if(!Checks.esNulo(gasto.getGastoGestion())){
+				gasto.getGastoGestion().setEstadoAutorizacionHaya(estadoAutorizacionHaya);
+			}
+			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoAutorizacionPropietario.CODIGO_PENDIENTE);
+			DDEstadoAutorizacionPropietario estadoAutorizacionPropietario= genericDao.get(DDEstadoAutorizacionPropietario.class, filtro2);
+			if(!Checks.esNulo(gasto.getGastoGestion())){
+				gasto.getGastoGestion().setEstadoAutorizacionPropietario(estadoAutorizacionPropietario);
+			}			
+		}
+		//Si esta sujeto a impuesto indirecto tipo IVA
+		else if(!Checks.esNulo(gasto.getGastoDetalleEconomico()) && !Checks.esNulo(gasto.getGastoDetalleEconomico().getImpuestoIndirectoTipo()) 
 				&& DDTiposImpuesto.TIPO_IMPUESTO_IVA.equals(gasto.getGastoDetalleEconomico().getImpuestoIndirectoTipo().getCodigo())){
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoAutorizacionHaya.CODIGO_PENDIENTE);
 			DDEstadoAutorizacionHaya estadoAutorizacionHaya= (DDEstadoAutorizacionHaya) genericDao.get(DDEstadoAutorizacionHaya.class, filtro);
@@ -225,14 +234,35 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				gasto.getGastoGestion().setEstadoAutorizacionHaya(estadoAutorizacionHaya);
 			}
 		}
-		else{
+		
+	}
+	
+	private void updateStatesGastosGestionRechazoAdmin(GastoProveedor gasto){
+		//Si no esta sujeto a impuesto indirecto
+		if(!Checks.esNulo(gasto.getGastoDetalleEconomico()) && Checks.esNulo(gasto.getGastoDetalleEconomico().getImpuestoIndirectoTipo())){
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO);
-			DDEstadoAutorizacionHaya estadoAutorizacionHaya= (DDEstadoAutorizacionHaya) genericDao.get(DDEstadoAutorizacionHaya.class, filtro);
+			DDEstadoAutorizacionHaya estadoAutorizacionHaya= genericDao.get(DDEstadoAutorizacionHaya.class, filtro);
 			if(!Checks.esNulo(gasto.getGastoGestion())){
 				gasto.getGastoGestion().setEstadoAutorizacionHaya(estadoAutorizacionHaya);
 			}
-		}		
-		
+			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoAutorizacionPropietario.CODIGO_PENDIENTE);
+			DDEstadoAutorizacionPropietario estadoAutorizacionPropietario= genericDao.get(DDEstadoAutorizacionPropietario.class, filtro2);
+			if(!Checks.esNulo(gasto.getGastoGestion())){
+				gasto.getGastoGestion().setEstadoAutorizacionPropietario(estadoAutorizacionPropietario);
+			}
+		}
+		//Si esta sujeto a impuesto indirecto tipo IVA
+		else if(!Checks.esNulo(gasto.getGastoDetalleEconomico()) && !Checks.esNulo(gasto.getGastoDetalleEconomico().getImpuestoIndirectoTipo()) 
+				&& DDTiposImpuesto.TIPO_IMPUESTO_IVA.equals(gasto.getGastoDetalleEconomico().getImpuestoIndirectoTipo().getCodigo())){
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoAutorizacionHaya.CODIGO_PENDIENTE);
+			DDEstadoAutorizacionHaya estadoAutorizacionHaya= genericDao.get(DDEstadoAutorizacionHaya.class, filtro);
+			if(!Checks.esNulo(gasto.getGastoGestion())){
+				gasto.getGastoGestion().setEstadoAutorizacionHaya(estadoAutorizacionHaya);
+			}
+			if(!Checks.esNulo(gasto.getGastoGestion())){
+				gasto.getGastoGestion().setEstadoAutorizacionPropietario(null);
+			}
+		}
 	}
 
 }

@@ -914,9 +914,9 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView buscarNumeroUrsus(@RequestParam String numeroDocumento,@RequestParam String tipoDocumento, ModelMap model) {
+	public ModelAndView buscarNumeroUrsus(@RequestParam String numeroDocumento,@RequestParam String tipoDocumento, String idExpediente, ModelMap model) {
 		try {		
-			model.put("data", expedienteComercialApi.buscarNumeroUrsus(numeroDocumento, tipoDocumento));
+			model.put("data", expedienteComercialApi.buscarNumeroUrsus(numeroDocumento, tipoDocumento, idExpediente));
 			model.put("success", true);
 			
 		} catch (JsonViewerException e) {
@@ -933,9 +933,9 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView buscarDatosClienteNumeroUrsus(@RequestParam String numeroUrsus, ModelMap model) {
+	public ModelAndView buscarDatosClienteNumeroUrsus(@RequestParam String numeroUrsus,@RequestParam String idExpediente, ModelMap model) {
 		try {		
-			model.put("data", expedienteComercialApi.buscarDatosClienteNumeroUrsus(numeroUrsus));
+			model.put("data", expedienteComercialApi.buscarDatosClienteNumeroUrsus(numeroUrsus,idExpediente));
 			model.put("success", true);
 			
 		} catch (JsonViewerException e) {
@@ -951,9 +951,9 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView buscarClientesUrsus(@RequestParam String numeroDocumento,@RequestParam String tipoDocumento, ModelMap model) {
+	public ModelAndView buscarClientesUrsus(@RequestParam String numeroDocumento,@RequestParam String tipoDocumento,String idExpediente, ModelMap model) {
 		try {		
-			model.put("data", expedienteComercialApi.buscarClientesUrsus(numeroDocumento, tipoDocumento));
+			model.put("data", expedienteComercialApi.buscarClientesUrsus(numeroDocumento, tipoDocumento, idExpediente));
 			model.put("success", true);
 			
 		}  catch (JsonViewerException e) {

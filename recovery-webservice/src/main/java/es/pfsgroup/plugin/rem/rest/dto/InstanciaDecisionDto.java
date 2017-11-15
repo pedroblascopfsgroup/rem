@@ -17,8 +17,8 @@ public class InstanciaDecisionDto {
 	private Boolean impuestosReserva;
 	private String codTipoArras;
 	private String codComiteSuperior;
-	//por defecto BANKIA, 
-	private String qcenre =DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA;
+	//Si la cartera no es BANKIA_HABITAD valdra BANKIA, 
+	private String qcenre;
 	private short codigoCOTPRA;
 	private String codigoProveedorUvem;
 

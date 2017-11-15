@@ -519,6 +519,13 @@ WHERE T1.ADN_FECHA_TITULO IS NULL';
     V_REG_TOTAL := V_REG_TOTAL + V_REG_ACTUALIZADOS;
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.ACT_ADN_ADJNOJUDICIAL ACTUALIZADAS. '||V_REG_ACTUALIZADOS||' Filas.');
 
+EXECUTE IMMEDIATE 'merge into rem01.act_activo act
+using pfsrem.LISTA_ACTIVOS_VENTA_EXTERNA shg
+on (shg.act_num_activo_uvem = act.act_num_activo_uvem)
+when matched then update
+set ACT_VENTA_DIRECTA_BANKIA = 1';
+DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.act_activo ACTUALIZADAS (ACT_VENTA_DIRECTA_BANKIA). '||SQL%ROWCOUNT||' Filas.');
+
     COMMIT;
 
 

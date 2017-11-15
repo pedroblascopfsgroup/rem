@@ -50,6 +50,7 @@ import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoCarga;
@@ -71,6 +72,7 @@ import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.condiciontanteo.CondicionTanteoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
+import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
@@ -186,7 +188,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
@@ -300,6 +301,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Autowired
 	private EXTGrupoUsuariosApi eXTGrupoUsuariosApi;
 	
+	@Autowired
+	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 	
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
@@ -529,6 +535,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			ExpedienteComercial expedienteComercial = crearExpedienteGuardado(oferta, trabajo);
 			expedienteComercial = crearExpedienteReserva(expedienteComercial);
 			expedienteComercialApi.crearCondicionesActivoExpediente(oferta.getActivoPrincipal(), expedienteComercial);
+			//cuando creamos el expediente, si procede, creamos el repositorio en el gestor documental
+			Integer idExpediente;
+			try{
+				idExpediente = gestorDocumentalAdapterApi.crearExpedienteComercial(expedienteComercial,genericAdapter.getUsuarioLogado().getUsername());
+				logger.debug("GESTOR DOCUMENTAL [ crearExpediente para " + expedienteComercial.getNumExpediente() + "]: ID EXPEDIENTE RECIBIDO " + idExpediente);
+			} catch (GestorDocumentalException gexc) {
+				logger.error("Error al crear el repositorio para el expediente comercial",gexc);
+			}			
 		} catch (Exception ex){
 			logger.error("Error en activoManager", ex);
 			return false;

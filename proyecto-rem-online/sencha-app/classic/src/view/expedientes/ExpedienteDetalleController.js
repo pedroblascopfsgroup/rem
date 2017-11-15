@@ -1443,15 +1443,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var parent = field.up('datoscompradorwindow');
 		var tipoDocumento= field.up('formBase').down('[reference=tipoDocumento]').getValue();
 		var numeroDocumento= field.up('formBase').down('[reference=numeroDocumento]').getValue();
+		var fichaComprador= field.up('[xtype=formBase]');
+		var idExpediente = fichaComprador.getBindRecord().get('idExpedienteComercial');
 		
-		if(!Ext.isEmpty(tipoDocumento) && !Ext.isEmpty(numeroDocumento)) {
+		if(!Ext.isEmpty(tipoDocumento) && !Ext.isEmpty(numeroDocumento) && !Ext.isEmpty(idExpediente)) {
 			var form = parent.down('formBase');
     	 	var fieldClientesUrsus = form.down('[reference=seleccionClienteUrsus]');
     	 	var store = fieldClientesUrsus.getStore();
     	 	
     	 	if(Ext.isEmpty(store.getData().items) || fieldClientesUrsus.recargarField) {
     	 		store.removeAll();
-    	 		store.getProxy().setExtraParams({numeroDocumento: numeroDocumento, tipoDocumento: tipoDocumento});    
+    	 		store.getProxy().setExtraParams({numeroDocumento: numeroDocumento, tipoDocumento: tipoDocumento, idExpediente: idExpediente});    
         	 	store.load({
         	 		callback: function(records, operation, success) {
 				        if(success) {
@@ -1490,13 +1492,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this;
 		var url =  $AC.getRemoteUrl('expedientecomercial/buscarDatosClienteNumeroUrsus');
 		var numeroUrsus = field.up('formBase').down('[reference=seleccionClienteUrsus]').getValue();
+		var fichaComprador= field.up('[xtype=formBase]');
+		var idExpediente = fichaComprador.getBindRecord().get('idExpedienteComercial');
 		var parent = field.up('datoscompradorwindow');
 
 		parent.mask(HreRem.i18n("msg.mask.loading"));
 		
 		Ext.Ajax.request({
 		     url: url,
-		     params: {numeroUrsus: numeroUrsus},
+		     params: {numeroUrsus: numeroUrsus, idExpediente: idExpediente},
 			 method: 'GET',
 		     success: function(response, opts) {
 		     	var data = {};

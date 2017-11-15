@@ -3105,7 +3105,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 								|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
 								|| DDEstadosExpedienteComercial.ALQUILADO.equals(expediente.getEstado().getCodigo())
 								|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo())
-								|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo()))
+								|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.FIRMADO.equals(expediente.getEstado().getCodigo()))
 							ofertaAceptada = ofertaAux;
 					}
 				}

@@ -146,6 +146,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
@@ -3454,21 +3455,29 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		instancia.setCodigoDeOfertaHaya(oferta.getNumOferta().toString());
 		instancia.setData(instanciaList);
 
+		TitularDto titularPrincipal = null;
+		Comprador compradorPrincipal = expediente.getCompradorPrincipal();
 		// seteamos la lista de titulares
 		List<TitularDto> titulares = new ArrayList<TitularDto>();
 		if (expediente.getCompradores() != null && expediente.getCompradores().size() > 0) {
 			for (CompradorExpediente comprador : expediente.getCompradores()) {
 				TitularDto titular = new TitularDto();
-				titular.setNumeroUrsus(comprador.getPrimaryKey().getComprador().getIdCompradorUrsus());
+				Comprador primaryKey = comprador.getPrimaryKey().getComprador();
+				titular.setNumeroUrsus(primaryKey.getIdCompradorUrsus());
 				titular.setTitularContratacion(comprador.getTitularContratacion());
 
-				if (comprador.getPrimaryKey().getComprador().getTipoDocumento() != null) {
-					DDTipoDocumento tipoDoc = comprador.getPrimaryKey().getComprador().getTipoDocumento();
+//<<<<<<< HEAD
+//				if (comprador.getPrimaryKey().getComprador().getTipoDocumento() != null) {
+//					DDTipoDocumento tipoDoc = comprador.getPrimaryKey().getComprador().getTipoDocumento();
+//=======
+				if (primaryKey.getTipoDocumento() != null) {
+					DDTipoDocumento tipoDoc = primaryKey.getTipoDocumento();
+//>>>>>>> version-2.0.8-rem
 					titular.setTipoDocumentoCliente(traducitTipoDoc(tipoDoc.getCodigo()));
 				}
 
-				titular.setNombreCompletoCliente(comprador.getPrimaryKey().getComprador().getFullName());
-				titular.setNumeroDocumento(comprador.getPrimaryKey().getComprador().getDocumento());
+				titular.setNombreCompletoCliente(primaryKey.getFullName());
+				titular.setNumeroDocumento(primaryKey.getDocumento());
 				titular.setPorcentajeCompra(comprador.getPorcionCompra());
 				if (comprador.getDocumentoConyuge() != null && !comprador.getDocumentoConyuge().isEmpty()) {
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "documento",
@@ -3478,10 +3487,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						titular.setConyugeNumeroUrsus(compradorConyuge.getIdCompradorUrsus());
 					}
 				}
-
-				titulares.add(titular);
+				if(!primaryKey.equals(compradorPrincipal))
+					titulares.add(titular);
+				else
+					titularPrincipal = titular;
 			}
 		}
+		if(!Checks.esNulo(titularPrincipal))
+			titulares.add(0, titularPrincipal);
 		instancia.setTitulares(titulares);
 		
 		// info de la reserva
@@ -3516,6 +3529,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if(!Checks.esNulo(codComiteSuperior) && DDSiNo.SI.equals(codComiteSuperior)) {
 			instancia.setCodComiteSuperior(DDComiteSancion.CODIGO_BANKIA_DGVIER);
 		}
+		
+		DDSubcartera subcartera= getCodigoSubCarteraExpediente(expediente.getId());
+		if(!Checks.esNulo(subcartera)){
+			if(DDSubcartera.CODIGO_BAN_BH.equals(subcartera.getCodigo())){
+				instancia.setQcenre(DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA_HABITAT);
+			}
+			else{
+				instancia.setQcenre(DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
+			}
+		}
+		
 		return instancia;
 	}
 	
@@ -3708,7 +3732,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return notarioContactoDto;
 	}
 
-	public DatosClienteDto buscarNumeroUrsus(String numeroDocumento, String tipoDocumento) throws Exception {
+	public DatosClienteDto buscarNumeroUrsus(String numeroDocumento, String tipoDocumento, String idExpediente) throws Exception {
 
 		DtoClienteUrsus compradorUrsus = new DtoClienteUrsus();
 		DatosClienteDto dtoDatosCliente = new DatosClienteDto();
@@ -3743,7 +3767,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			compradorUrsus.setNumDocumento(numeroDocumento.toString());
 		}
 		compradorUrsus.setTipoDocumento(tipoDoc);
-		compradorUrsus.setQcenre(DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
+		
+		if(!Checks.esNulo(idExpediente)){
+			DDSubcartera subcarteraExpediente= getCodigoSubCarteraExpediente(Long.parseLong(idExpediente));
+			if(!Checks.esNulo(subcarteraExpediente) && DDSubcartera.CODIGO_BAN_BH.equals(subcarteraExpediente.getCodigo())){
+				compradorUrsus.setQcenre(DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA_HABITAT);
+			}
+			else{
+				compradorUrsus.setQcenre(DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
+			}
+		}
 
 		try {
 			// dtoDatosCliente.rellenarDatosDummies();
@@ -3766,7 +3799,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	@Override
-	public List<DatosClienteDto> buscarClientesUrsus(String numeroDocumento, String tipoDocumento) throws Exception {
+	public List<DatosClienteDto> buscarClientesUrsus(String numeroDocumento, String tipoDocumento, String idExpediente) throws Exception {
 		List<DatosClienteDto> lista = new ArrayList<DatosClienteDto>();
 		String tipoDoc = null;
 
@@ -3800,9 +3833,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (DDTiposDocumentos.OTROS_PESONA_JURIDICA.equals(tipoDocumento))
 					tipoDoc = DtoClienteUrsus.OTROS_PESONA_JURIDICA;
 			}
-
-			lista = uvemManagerApi.ejecutarNumCliente(numeroDocumento, tipoDoc,
-					DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
+			
+			if(!Checks.esNulo(idExpediente)){
+				DDSubcartera subcarteraExpediente= getCodigoSubCarteraExpediente(Long.parseLong(idExpediente));
+				if(!Checks.esNulo(subcarteraExpediente) && DDSubcartera.CODIGO_BAN_BH.equals(subcarteraExpediente.getCodigo())){
+					lista = uvemManagerApi.ejecutarNumCliente(numeroDocumento, tipoDoc,
+							DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA_HABITAT);
+				}
+				else{
+					lista = uvemManagerApi.ejecutarNumCliente(numeroDocumento, tipoDoc,
+							DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
+				}
+			}
 
 		} catch (Exception e) {
 			logger.error("error en expedienteComercialManager", e);
@@ -3813,13 +3855,22 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	@Override
-	public DatosClienteDto buscarDatosClienteNumeroUrsus(String numeroUrsus) throws Exception {
+	public DatosClienteDto buscarDatosClienteNumeroUrsus(String numeroUrsus, String idExpediente) throws Exception {
 		Integer numURSUS = null;
 		DatosClienteDto datosClienteDto = null;
 		try {
 			numURSUS = Integer.parseInt(numeroUrsus);
-			datosClienteDto = uvemManagerApi.ejecutarDatosCliente(numURSUS,
-					DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
+			if(!Checks.esNulo(idExpediente)){
+				DDSubcartera subcarteraExpediente= getCodigoSubCarteraExpediente(Long.parseLong(idExpediente));
+				if(!Checks.esNulo(subcarteraExpediente) && DDSubcartera.CODIGO_BAN_BH.equals(subcarteraExpediente.getCodigo())){
+					datosClienteDto = uvemManagerApi.ejecutarDatosCliente(numURSUS,
+							DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA_HABITAT);
+				}
+				else{
+					datosClienteDto = uvemManagerApi.ejecutarDatosCliente(numURSUS,
+							DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
+				}
+			}
 		} catch (NumberFormatException nfe) {
 			logger.error("error en expedienteComercialManager", nfe);
 		} catch (Exception e) {
@@ -5636,6 +5687,26 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		return this.update(expedienteComercial);
+		
+	}
+	
+	@Override
+	public DDSubcartera getCodigoSubCarteraExpediente(Long idExpediente){
+		
+		DDSubcartera subcartera= null;
+		
+		if(!Checks.esNulo(idExpediente)){
+			DtoPage dto= this.getActivosExpediente(idExpediente);
+			List<DtoActivosExpediente> dtosActivos= (List<DtoActivosExpediente>) dto.getResults();
+			if(!Checks.estaVacio(dtosActivos)){
+				Activo primerActivo = activoApi.get(dtosActivos.get(0).getIdActivo());
+				if(!Checks.esNulo(primerActivo)){
+					subcartera= primerActivo.getSubcartera();
+				}
+			}				
+		}
+		
+		return subcartera;
 		
 	}
 

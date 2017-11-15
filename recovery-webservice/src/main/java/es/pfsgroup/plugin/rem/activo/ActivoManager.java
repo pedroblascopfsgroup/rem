@@ -4192,8 +4192,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 			}
 		}
-		//HREOS-3024
-		if(!Checks.esNulo(agrupacion) && BooleanUtils.toBoolean(agrupacion.getIsFormalizacion())) {
+		
+		PerimetroActivo perimetro = getPerimetroByIdActivo(activo.getId());
+
+		if((Checks.esNulo(agrupacion) && !Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaFormalizar()) && BooleanUtils.toBoolean(perimetro.getAplicaFormalizar())) || 
+				(!Checks.esNulo(agrupacion) && BooleanUtils.toBoolean(agrupacion.getIsFormalizacion()))) {
 			if(!Checks.esNulo(usuarioGestorFormalizacion))
 				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION, usuarioGestorFormalizacion.getUsername(), dto);
 			else
@@ -4205,6 +4208,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if(!Checks.esNulo(usuarioGestoriaFormalizacion))
 				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION, usuarioGestoriaFormalizacion.getUsername(), dto);
 		}
+		
 		if(!Checks.esNulo(usuarioGestorComercial))
 			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_COMERCIAL, usuarioGestorComercial.getUsername(), dto);
 		

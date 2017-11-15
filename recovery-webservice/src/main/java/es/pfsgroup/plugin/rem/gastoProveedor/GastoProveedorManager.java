@@ -3,7 +3,6 @@ package es.pfsgroup.plugin.rem.gastoProveedor;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -362,6 +361,17 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		gastoProveedor.setGastoDetalleEconomico(detalleEconomico);
 		gastoProveedor.setGastoGestion(gestion);
 		gastoProveedor.setGastoInfoContabilidad(contabilidad);
+		
+		//creamos el contenedor en el gestor documental
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			Integer idExpediente;
+			try {
+				idExpediente = gestorDocumentalAdapterApi.crearGasto(gastoProveedor, usuario.getUsername());
+				logger.debug("GESTOR DOCUMENTAL [ crearGasto para " + gastoProveedor.getNumGastoHaya() + "]: ID EXPEDIENTE RECIBIDO " + idExpediente);
+			} catch (GestorDocumentalException gexc) {
+				logger.error("error creando el contenedor del gasto",gexc);
+			}
+		}
 
 		return gastoProveedor;
 	}

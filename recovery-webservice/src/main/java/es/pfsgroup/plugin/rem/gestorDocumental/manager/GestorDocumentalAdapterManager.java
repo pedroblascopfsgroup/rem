@@ -53,6 +53,7 @@ import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 
 @Service("gestorDocumentalAdapterManager")
@@ -85,6 +86,9 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
     
     @Autowired
     private ActivoApi activoApi;
+    
+    @Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
     
     private final String GESTOR_DOCUMENTAL = "GESTOR_DOC";
     
@@ -224,12 +228,19 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		DDCartera cartera = null;
 		if (gasto.getPropietario()!=null) {
 			cartera = gasto.getPropietario().getCartera();
+		}else{
+			//si no hay propietario es sareb
+			cartera = (DDCartera) utilDiccionarioApi
+					.dameValorDiccionarioByCod(DDCartera.class, DDCartera.CODIGO_CARTERA_SAREB);
+			
 		}
 		String cliente = !Checks.estaVacio(gasto.getGastoProveedorActivos()) ?  getClienteByCartera(cartera) : "";
 		
-		if((Checks.esNulo(cliente) || cliente.isEmpty()) && !Checks.esNulo(gasto.getPropietario())) {			
+		if((Checks.esNulo(cliente) || cliente.isEmpty())) {			
 			cliente = getClienteByCartera(cartera);
-		}		
+		}	
+		
+		
 		String descripcionExpediente =  !Checks.esNulo(gasto.getConcepto()) ? gasto.getConcepto() :  "";
 		
 		RecoveryToGestorExpAssembler recoveryToGestorAssembler =  new RecoveryToGestorExpAssembler(appProperties);

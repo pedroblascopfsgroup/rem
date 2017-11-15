@@ -19,7 +19,7 @@ public class DtoClienteUrsus {
 	public final static String OTROS_PESONA_JURIDICA= "J";
 	
 	public final static String ENTIDAD_REPRESENTADA_BANKIA= "00000";
-	public final static String ENTIDAD_REPRESENTADA_BANKIA_HABITAT= "05021";
+	public final static String ENTIDAD_REPRESENTADA_BANKIA_HABITAT= "05051";
 	
 	
     public String numDocumento;

@@ -786,16 +786,20 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
      * @param idTarea
      * @param valores
      */
-    protected void enviaNotificacionFinTareaConValores(Long idTarea, List<TareaExternaValor> valores) {
-    	
-    	NotificatorService notificatorUpdaterService = getNotificatorService(idTarea);
-		ActivoTramite tramite = getActivoTramite(executionContext);
-		
-		if(!Checks.esNulo(notificatorUpdaterService))
-			notificatorUpdaterService.notificatorFinTareaConValores(tramite,valores);
-				
+	protected void enviaNotificacionFinTareaConValores(Long idTarea, List<TareaExternaValor> valores) {
+		try {
+
+			NotificatorService notificatorUpdaterService = getNotificatorService(idTarea);
+			ActivoTramite tramite = getActivoTramite(executionContext);
+
+			if (!Checks.esNulo(notificatorUpdaterService))
+				notificatorUpdaterService.notificatorFinTareaConValores(tramite, valores);
+		} catch (Exception e) {
+			logger.error("Error enviando la notificacion",e);
+		}
+
 		logger.debug("\tEnviamos correo en la tarea: " + getNombreNodo(executionContext));
-    }
+	}
     
     private NotificatorService getNotificatorService(Long idTarea) {
     	TareaExterna tareaExterna = activoTareaExternaManagerApi.get(idTarea);

@@ -432,7 +432,7 @@ public class AgendaAdapter {
 		TareaActivo tarea = tareaActivoApi.get(idTarea);
 		Long idActivo = tarea.getActivo().getId();
 		
-		if(!Checks.esNulo(tarea.getTramite().getTrabajo())){
+		if(!Checks.esNulo(tarea.getTramite().getTrabajo()) && !Checks.esNulo(idActivo)){
 			String codigoSubtipoTrabajo = tarea.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo();
 			
 			List<ActivoTrabajo> listaActivoTrabajo = trabajoAdapter.getListadoActivoTrabajos(idActivo, codigoSubtipoTrabajo);
@@ -471,11 +471,17 @@ public class AgendaAdapter {
 	}
 	
 	public String getCodigoTramiteTarea(Long idTarea){
-		return tareaActivoApi.get(idTarea).getTramite().getTipoTramite().getCodigo();
+		if (!Checks.esNulo(idTarea) && !Checks.esNulo(tareaActivoApi.get(idTarea))  && !Checks.esNulo(tareaActivoApi.get(idTarea).getTramite())) {
+			return tareaActivoApi.get(idTarea).getTramite().getTipoTramite().getCodigo();
+		}
+		return null;
 	}
 	
 	public String getCodigoTareaProcedimiento(Long idTarea){
-		return tareaActivoApi.get(idTarea).getTareaExterna().getTareaProcedimiento().getCodigo();
+		if (!Checks.esNulo(idTarea) && !Checks.esNulo(tareaActivoApi.get(idTarea))  && !Checks.esNulo(tareaActivoApi.get(idTarea).getTareaExterna())) {
+			return tareaActivoApi.get(idTarea).getTareaExterna().getTareaProcedimiento().getCodigo();
+		}
+		return null;
 
 	}
 	

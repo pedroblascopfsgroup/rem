@@ -5158,17 +5158,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							Calendar calendar = Calendar.getInstance();
 							calendar.setTime(fechaResolucionMayor);
 							calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO);
-							tanteoActivo.getExpediente().getReserva().setFechaVencimiento(calendar.getTime());
+							this.actualizaFechaVencimientoReserva(tanteoActivo.getExpediente().getReserva(), calendar.getTime());
 						} else {
-							tanteoActivo.getExpediente().getReserva().setFechaVencimiento(null);
+							this.actualizaFechaVencimientoReserva(tanteoActivo.getExpediente().getReserva(), null);
 						}
 					}
 				}
 			} else {
-				tanteoActivo.getExpediente().getReserva().setFechaVencimiento(null);
+				this.actualizaFechaVencimientoReserva(tanteoActivo.getExpediente().getReserva(), null);
 			}
 		} else if (!Checks.esNulo(tanteosActivo) && !Checks.estaVacio(tanteosActivo)) {
-			;
 			fechaResolucionMayor = tanteosActivo.get(0).getFechaResolucion();
 			for (TanteoActivoExpediente tanteo : tanteosActivo) {
 				if (!Checks.esNulo(tanteo.getResultadoTanteo())) {
@@ -5192,9 +5191,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(fechaResolucionMayor);
 				calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO);
-				expediente.getReserva().setFechaVencimiento(calendar.getTime());
+				this.actualizaFechaVencimientoReserva(expediente.getReserva(), calendar.getTime());
 			}
 
+		}
+	}
+	
+	private void actualizaFechaVencimientoReserva(Reserva reserva, Date fechaVencimiento) {
+		if (!Checks.esNulo(reserva)) {
+			reserva.setFechaVencimiento(fechaVencimiento);
 		}
 	}
 

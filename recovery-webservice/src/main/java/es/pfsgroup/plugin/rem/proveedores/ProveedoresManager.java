@@ -1223,7 +1223,15 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 
 	@Override
 	public ActivoProveedor searchProveedorCodigo(String codigoUnicoProveedor) {
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", Long.parseLong(codigoUnicoProveedor));
+		
+		long codigoProveedor;
+		try {
+			codigoProveedor = Long.parseLong(codigoUnicoProveedor);
+		}catch(NumberFormatException ex){
+			return null;
+		}
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", codigoProveedor);
 		List<ActivoProveedor> listaProveedores = genericDao.getList(ActivoProveedor.class, filtro);
 
 		if(!Checks.estaVacio(listaProveedores)){

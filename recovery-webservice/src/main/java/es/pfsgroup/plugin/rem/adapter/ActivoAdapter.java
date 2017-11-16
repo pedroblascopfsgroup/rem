@@ -2658,6 +2658,7 @@ public class ActivoAdapter {
 			notificationOfertaManager.sendNotification(oferta);
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);
+			ex.printStackTrace();
 			return false;
 		}
 

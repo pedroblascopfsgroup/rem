@@ -28,7 +28,6 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -90,9 +89,6 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 
 	@Autowired
 	private GestorActivoApi gestorActivoManager;
-	
-	@Autowired
-	private TrabajoApi trabajoApi;
 	
 	@Autowired
 	private UsuarioManager usuarioManager;
@@ -386,13 +382,19 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		String asunto = "Notificación de aprobación provisional de la oferta " + oferta.getNumOferta();
 		String cuerpo = "<p>Nos complace comunicarle que la oferta " + oferta.getNumOferta()
 				+ " a nombre de " + nombresOfertantes(expediente)
-				+ " ha sido PROVISIONALMENTE ACEPTADA. Adjunto a este correo encontrará el documento con las instrucciones a seguir para la reserva y formalización";
+				+ " ha sido PROVISIONALMENTE ACEPTADA";
+		
+		if (DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera)) {
+			cuerpo = cuerpo + " hasta la formalización de las arras/reserva";
+		}
+		
+		cuerpo = cuerpo + ". Adjunto a este correo encontrará el documento con las instrucciones a seguir para la reserva y formalización";
+		
 		if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera)) {
 			cuerpo = cuerpo + ", así como la Ficha cliente a cumplimentar</p>";
 		}else {
 			cuerpo = cuerpo + ".</p>";
 		}
-		
 		ActivoBancario activoBancario = genericDao.get(ActivoBancario.class,
 				genericDao.createFilter(FilterType.EQUALS, "activo.id", tramite.getActivo().getId())); 
 		if (!Checks.esNulo(expediente.getId()) && !Checks.esNulo(expediente.getReserva()) 
@@ -517,7 +519,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				}
 				//ADJUNTOS SI ES BANKIA
 				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)){
-					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_Bankia.docx");
+					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_Bankia_v6.docx");
 					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_Bankia.docx"));
 				}
 			}

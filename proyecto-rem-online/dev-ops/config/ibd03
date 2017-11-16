@@ -1,0 +1,5 @@
+export DB_PRODUCTO=ibd01:1527/ibd017
+export DB_BI=***
+export BASE_DIR_APP=***
+export BASE_DIR_BATCH=***
+export BASE_DIR_TRANSFERENCIA=***

@@ -32,6 +32,7 @@ public class DtoAgrupaciones extends WebDto {
 	private String tipoAgrupacionCodigo;
 	private String estadoObraNuevaCodigo;
 	private String cartera;
+	private String codigoCartera;
 	@SuppressWarnings("unused")
 	private Boolean existeFechaBaja;
 	private Date fechaInicioVigencia;
@@ -228,6 +229,12 @@ public class DtoAgrupaciones extends WebDto {
 	}
 	public void setIsFormalizacion(Integer isFormalizacion) {
 		this.isFormalizacion = isFormalizacion;
+	}
+	public String getCodigoCartera() {
+		return codigoCartera;
+	}
+	public void setCodigoCartera(String codigoCartera) {
+		this.codigoCartera = codigoCartera;
 	}
 
 

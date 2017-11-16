@@ -356,10 +356,14 @@ public class AgrupacionAdapter {
 				if (agrupacion.getActivoPrincipal() != null && agrupacion.getActivoPrincipal().getCartera() != null) {
 					BeanUtils.copyProperty(dtoAgrupacion, "cartera",
 							agrupacion.getActivoPrincipal().getCartera().getDescripcion());
+					BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera",
+							agrupacion.getActivoPrincipal().getCartera().getCodigo());
 				} else if (agrupacion.getActivos() != null && !agrupacion.getActivos().isEmpty()
 						&& agrupacion.getActivos().get(0).getActivo().getCartera() != null) {
 					BeanUtils.copyProperty(dtoAgrupacion, "cartera",
 							agrupacion.getActivos().get(0).getActivo().getCartera().getDescripcion());
+					BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera",
+							agrupacion.getActivos().get(0).getActivo().getCartera().getCodigo());
 				}
 				/*
 				 * if(activo.getTipoActivo() != null ) {

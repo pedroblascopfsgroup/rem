@@ -1098,4 +1098,142 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 	}
 	
+	@Override
+	public Boolean existeExpedienteComercial(String numExpediente){
+		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ECO_EXPEDIENTE_COMERCIAL WHERE"
+				+ "		 	ECO_NUM_EXPEDIENTE ="+numExpediente+" "
+				+ "		 	AND BORRADO = 0");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public Boolean existeAgrupacion(String numAgrupacion){
+		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_AGR_AGRUPACION WHERE"
+				+ "		 	AGR_NUM_AGRUP_REM ="+numAgrupacion+" "
+				+ "		 	AND BORRADO = 0");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public Boolean existeTipoGestor(String codigoTipoGestor){
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ${master.schema}.DD_TGE_TIPO_GESTOR WHERE"
+				+ "		 DD_TGE_CODIGO = '" + codigoTipoGestor + "'");
+		
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public Boolean existeUsuario(String username){
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ${master.schema}.USU_USUARIOS WHERE"
+				+ "		 USU_USERNAME = '" + username + "'");
+		
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public Boolean usuarioEsTipoGestor(String username, String codigoTipoGestor){
+		if(Checks.esNulo(username) || Checks.esNulo(codigoTipoGestor))
+			return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM TGP_TIPO_GESTOR_PROPIEDAD tgp "
+				+ "			INNER JOIN REMMASTER.DD_TDE_TIPO_DESPACHO tde on tgp.TGP_VALOR = tde.DD_TDE_CODIGO "
+				+ "			INNER JOIN REMMASTER.DD_TGE_TIPO_GESTOR tge on tde.DD_TDE_CODIGO = tge.DD_TGE_CODIGO "
+				+ "			INNER JOIN DES_DESPACHO_EXTERNO des on tde.DD_TDE_ID = des.DD_TDE_ID "
+				+ "			INNER JOIN USD_USUARIOS_DESPACHOS usd on usd.DES_ID = des.DES_ID "
+				+ "			INNER JOIN REMMASTER.USU_USUARIOS usu on usd.USU_ID = usu.USU_ID "
+				+ "			WHERE tge.DD_TGE_CODIGO ='"+codigoTipoGestor+"' AND usu.USU_USERNAME ='"+username+"'");
+		if(!"0".equals(resultado))
+			return true;
+		else
+			return false;
+		
+		
+	}
+	
+	@Override
+	public Boolean combinacionGestorCarteraAcagexValida(String codigoGestor, String numActivo, String numAgrupacion,String numExpediente){
+		String resultado= "0";
+		String cartera=null;
+		String query=null;
+		
+		if(!Checks.esNulo(numActivo) || !Checks.esNulo(numAgrupacion)){
+			query= ("SELECT DISTINCT(act.DD_CRA_ID) "
+				+ "		 FROM ACT_AGR_AGRUPACION agr "
+				+ "			INNER JOIN ACT_AGA_AGRUPACION_ACTIVO aga on agr.AGR_ID = aga.AGR_ID "
+				+ "			INNER JOIN ACT_ACTIVO act on aga.ACT_ID = act.ACT_ID ");
+			
+			if(!Checks.esNulo(numActivo)){
+				query= query.concat(" WHERE act.ACT_NUM_ACTIVO_REM ="+numActivo+" ");
+			}
+			else if(!Checks.esNulo(numAgrupacion)){
+				query= query.concat(" WHERE agr.AGR_NUM_AGRUP_REM ="+numAgrupacion+" ");
+			}
+			cartera= rawDao.getExecuteSQL(query);
+		}
+		
+		else if(!Checks.esNulo(numExpediente)){
+			cartera= rawDao.getExecuteSQL("SELECT DISTINCT(act.DD_CRA_ID) "
+					+ "		 FROM ECO_EXPEDIENTE_COMERCIAL eco "
+					+ "			INNER JOIN OFR_OFERTAS ofr on eco.OFR_ID = ofr.OFR_ID "
+					+ "			INNER JOIN ACT_OFR actofr on ofr.OFR_ID = actofr.OFR_ID "
+					+ "			INNER JOIN ACT_ACTIVO act on actofr.ACT_ID = act.ACT_ID "
+					+ " 		WHERE eco.ECO_NUM_EXPEDIENTE= "+numExpediente+" ");
+		}
+		
+		
+		if(!Checks.esNulo(cartera)){
+			query= ("SELECT COUNT(*) "
+					+ "		 FROM DD_GCM_GESTOR_CARGA_MASIVA gcm "
+					+ "			INNER JOIN ${master.schema}.DD_TGE_TIPO_GESTOR tge on gcm.DD_GCM_CODIGO = tge.DD_TGE_CODIGO "
+					+ "			INNER JOIN DD_CRA_CARTERA cra on gcm.DD_CRA_ID = cra.DD_CRA_ID "
+					+ "			WHERE gcm.DD_GCM_CODIGO ='"+codigoGestor+"' "
+					+ "		 	AND cra.DD_CRA_ID = "+cartera+" ");
+			
+			if(!Checks.esNulo(numActivo)){
+				query= query.concat(" AND gcm.DD_GCM_ACTIVO = 1");
+				resultado = rawDao.getExecuteSQL(query);
+			}
+			else if(!Checks.esNulo(numExpediente)){
+				query= query.concat(" AND gcm.DD_GCM_EXPEDIENTE = 1");
+				resultado = rawDao.getExecuteSQL(query);
+			}
+			else if(!Checks.esNulo(numAgrupacion)){
+				query= query.concat(" AND gcm.DD_GCM_AGRUPACION = 1");
+				resultado = rawDao.getExecuteSQL(query);
+			}
+		}
+		else{
+			resultado= "0";
+		}
+	
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+		
+	}	
+	
 }

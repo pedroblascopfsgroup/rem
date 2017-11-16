@@ -593,11 +593,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				titAdi.setTipoDocumento((DDTipoDocumento) genericDao.get(DDTipoDocumento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodTipoDocumento())));
 				titAdi.setApellidos(titDto.getApellidos());
 				titAdi.setDireccion(titDto.getDireccion());
-				titAdi.setLocalidad((Localidad) genericDao.get(Localidad.class, genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodigoMunicipio())));
-				titAdi.setProvincia((DDProvincia) genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodigoProvincia())));
+				if (titDto.getCodigoMunicipio() != null) {
+					titAdi.setLocalidad((Localidad) genericDao.get(Localidad.class, genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodigoMunicipio())));
+				}
+				if (titDto.getCodigoProvincia() != null) {
+					titAdi.setProvincia((DDProvincia) genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodigoProvincia())));
+				}
 				titAdi.setCodPostal(titDto.getCodPostal());
-				titAdi.setEstadoCivil((DDEstadosCiviles) genericDao.get(DDEstadosCiviles.class, genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodigoEstadoCivil())));
-				titAdi.setRegimenMatrimonial((DDRegimenesMatrimoniales) genericDao.get(DDRegimenesMatrimoniales.class, genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodigoRegimenEconomico())));
+				if (titDto.getCodigoEstadoCivil() != null) {
+					titAdi.setEstadoCivil((DDEstadosCiviles) genericDao.get(DDEstadosCiviles.class, genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodigoEstadoCivil())));
+				}
+				if (titDto.getCodigoRegimenEconomico() != null) {
+					titAdi.setRegimenMatrimonial((DDRegimenesMatrimoniales) genericDao.get(DDRegimenesMatrimoniales.class, genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodigoRegimenEconomico())));
+				}
 				
 				listaTit.add(titAdi);
 			}

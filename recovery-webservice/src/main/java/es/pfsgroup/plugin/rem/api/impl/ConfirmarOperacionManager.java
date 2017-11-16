@@ -246,7 +246,7 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 		// Actualizar fecha contabilizacionPropietario, fecha venta,
 		expedienteComercial.setFechaContabilizacionPropietario(fechaActual);
 		
-		if (Checks.esNulo(expedienteComercial.getFechaVenta())){
+		if (!Checks.esNulo(expedienteComercial.getFechaVenta())){
 			DDEstadosExpedienteComercial estadoExpCom = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.VENDIDO);
 			expedienteComercial.setEstado(estadoExpCom);
 		}

@@ -55,7 +55,6 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
@@ -405,6 +404,18 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             	}
             	if(item.getType().equals(TIPO_CAMPO_FECHA))
             	{
+            		if(item.getNombre().equals("fechaFirma") && tareaExterna.getTareaProcedimiento().getCodigo().equals("T013_ObtencionContratoReserva")){
+            			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
+            			if (!Checks.esNulo(ofertaAceptada)) {
+            				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+            				
+            				SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+                			if(!Checks.esNulo(expediente.getReserva().getFechaFirma())){
+                				item.setValue(formatoFecha.format(expediente.getReserva().getFechaFirma()));
+                			}
+            			}            			
+            		}
+            		
             		if(item.getNombre().equals("fechaTope"))
             		{
             			ActivoTramite tramite = ((TareaActivo) tareaExterna.getTareaPadre()).getTramite();
@@ -649,7 +660,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
      *
      * @param items
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unused", "rawtypes" })
     private void obtenerValoresDeLosCombos(List<GenericFormItem> items) {
         List values;
         for (GenericFormItem item : items) {
@@ -673,6 +684,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 		return mapa;
 	}
 	
+	@SuppressWarnings("unused")
 	private HashMap<String,String> getMapaEREtoSiNo() {
 		HashMap<String,String> mapa = new HashMap<String,String>();
 		

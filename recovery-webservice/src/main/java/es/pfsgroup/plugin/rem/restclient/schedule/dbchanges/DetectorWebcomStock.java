@@ -4,10 +4,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
+
+import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
@@ -26,7 +30,10 @@ public class DetectorWebcomStock extends DetectorCambiosBD<StockDto> {
 	@Autowired
 	private CambiosBDDao dao;
 	
-	private boolean procesarSoloCambiosMarcados = false;
+	@Resource
+	private Properties appProperties;
+	
+	private Boolean procesarSoloCambiosMarcados = null;
 	
 	private Boolean forzarSoloCambiosMarcados = false;
 
@@ -91,6 +98,10 @@ public class DetectorWebcomStock extends DetectorCambiosBD<StockDto> {
 		if(forzarSoloCambiosMarcados){
 			return true;
 		}else{
+			if(procesarSoloCambiosMarcados==null){
+				procesarSoloCambiosMarcados = !Checks.esNulo(appProperties.getProperty("rest.client.webcom.optimizado"))
+						? Boolean.valueOf(appProperties.getProperty("rest.client.webcom.optimizado")) : false;
+			}
 			return procesarSoloCambiosMarcados;
 		}
 		

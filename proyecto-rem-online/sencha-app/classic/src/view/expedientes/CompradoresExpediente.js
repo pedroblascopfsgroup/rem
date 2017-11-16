@@ -61,7 +61,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						},									
 						listeners : {
 					    	rowdblclick: 'onCompradoresListDobleClick',
-					    	render: 'esEditableCompradores'
+					    	beforerender: 'esEditableCompradores'
 					    },
 					    features: [{
 				            id: 'summary',
@@ -382,7 +382,6 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
             }*/
           
     	];
-    
 	    me.addPlugin({ptype: 'lazyitems', items: items });
 	    
 	    me.callParent(); 

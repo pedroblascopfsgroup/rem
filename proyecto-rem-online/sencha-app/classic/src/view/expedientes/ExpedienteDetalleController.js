@@ -669,12 +669,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	     	var me = this;
 	     	var viewModel = me.getViewModel();
 	     	if(viewModel.get('esCarteraBankia')){
-				if ((viewModel.get('expediente.estado') != CONST.ESTADOS_EXPEDIENTE['FIRMADO']
-						    && viewModel.get('expediente.estado') != CONST.ESTADOS_EXPEDIENTE['VENDIDO'] )
+				if ((viewModel.get('expediente.codigoEstado') != CONST.ESTADOS_EXPEDIENTE['FIRMADO']
+						    && viewModel.get('expediente.codigoEstado') != CONST.ESTADOS_EXPEDIENTE['VENDIDO'] )
 						    && $AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES'])){
-					field.topBar = false; 
+					field.topBar = true;
+					field.down('toolbar').show();
 				}else{
-					field.topBar = true; 
+					field.topBar = false;
+					field.down('toolbar').hide();
 				}
 	     	}
 		},

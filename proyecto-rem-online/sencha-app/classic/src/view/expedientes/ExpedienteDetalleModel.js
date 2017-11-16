@@ -71,8 +71,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     esEditableCompradores : function(get){
 	     	var me = this;
 	     	if(get('esCarteraBankia')){
-			return (get('expediente.estado') != CONST.ESTADOS_EXPEDIENTE['FIRMADO']
-					    && get('expediente.estado') != CONST.ESTADOS_EXPEDIENTE['VENDIDO'] )
+			return (get('expediente.codigoEstado') != CONST.ESTADOS_EXPEDIENTE['FIRMADO']
+					    && get('expediente.codigoEstado') != CONST.ESTADOS_EXPEDIENTE['VENDIDO'] )
 					    && $AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES']);
 	     	}else{
 	     		return false;

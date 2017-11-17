@@ -28,6 +28,8 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
@@ -45,6 +47,10 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	public static String TIPO_FECHA_ALTA = "01";
 	public static String TIPO_FECHA_FIRMA_RESERVA = "02";
 	public static String TIPO_FECHA_POSICIONAMIENTO = "03";
+	public static String CODIGO_NUM_ACTIVO_UVEM= "NUM_UVEM";
+	public static String CODIGO_NUM_ACTIVO_SAREB= "NUM_SAREB";
+	public static String CODIGO_NUM_ACTIVO_PRINEX= "NUM_PRINEX";
+	public static String CODIGO_NUM_ACTIVO= "NUM_ACTIVO";
 	
 
 	@Autowired
@@ -167,7 +173,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		
 		if (!Checks.esNulo(dtoOfertasFilter.getNumAgrupacion())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.numActivoAgrupacion",
-					dtoOfertasFilter.getNumAgrupacion().toString());
+					dtoOfertasFilter.getNumAgrupacion());
 		}
 
 		if (!Checks.esNulo(dtoOfertasFilter.getNumActivo())) {
@@ -179,6 +185,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 			}else{
 				HQLBuilder.addFiltroIsNull(hb, "voferta.idActivo");
 			}
+			
 		}
 		
 		//HREOS-2716
@@ -244,8 +251,33 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		if(!Checks.esNulo(dtoOfertasFilter.getCarteraCodigo())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.carteraCodigo", dtoOfertasFilter.getCarteraCodigo());
 		}
-
+		
+		if(!Checks.esNulo(dtoOfertasFilter.getNumActivoUvem())){
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.numActivoUvem", dtoOfertasFilter.getNumActivoUvem());
+		}
+		if(!Checks.esNulo(dtoOfertasFilter.getNumActivoSareb())){
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.numActivoSareb", dtoOfertasFilter.getNumActivoSareb());
+		}
+		if(!Checks.esNulo(dtoOfertasFilter.getNumPrinex())){
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.numActivoPrinex", dtoOfertasFilter.getNumPrinex());
+		}
+		
+		if(((
+				!Checks.esNulo(dtoOfertasFilter.getNumActivoUvem()) || 
+				!Checks.esNulo(dtoOfertasFilter.getNumActivoSareb()) || 
+				!Checks.esNulo(dtoOfertasFilter.getNumPrinex()) || 
+				!Checks.esNulo(dtoOfertasFilter.getNumActivo())
+			) && 
+				(Checks.esNulo(dtoOfertasFilter.getNumAgrupacion()) && 
+						(Checks.esNulo(dtoOfertasFilter.getAgrupacionesVinculadas()) || dtoOfertasFilter.getAgrupacionesVinculadas().equals(false))
+				)
+			)){
+			
+			HQLBuilder.addFiltroIsNull(hb, "idAgrupacion");
+		}
+		
 		Page pageVisitas = HibernateQueryUtils.page(this, hb, dtoOfertasFilter);
+
 		List<VOfertasActivosAgrupacion> ofertas = (List<VOfertasActivosAgrupacion>) pageVisitas.getResults();
 
 		return new DtoPage(ofertas, pageVisitas.getTotalCount());

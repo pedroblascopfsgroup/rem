@@ -3645,6 +3645,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (!Checks.esNulo(activo.getImporteVentaExterna())) {
 					beanUtilNotNull.copyProperty(dto, "importeVenta", activo.getImporteVentaExterna());
 				}
+				beanUtilNotNull.copyProperty(dto, "ventaExterna", !Checks.esNulo(activo.getFechaVentaExterna()));
+				
 			}
 
 			if (!Checks.esNulo(activo.getObservacionesVentaExterna())) {
@@ -3674,12 +3676,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			beanUtilNotNull.copyProperty(activo, "fechaVentaExterna", dto.getFechaVenta());
 			beanUtilNotNull.copyProperty(activo, "importeVentaExterna", dto.getImporteVenta());
 			beanUtilNotNull.copyProperty(activo, "observacionesVentaExterna", dto.getObservaciones());
+			dto.setVentaExterna(Checks.esNulo(activo.getFechaVentaExterna()));
 
 			// Si se ha introducido valores en fecha o importe de venta, se
 			// actualiza la situación comercial y estado publicación del activo.
 			// También son rechazadas las ofertas pendientes.
 			if (!Checks.esNulo(dto.getFechaVenta()) || !Checks.esNulo(dto.getImporteVenta())){
 				this.setSituacionComercialAndEstadoPublicacion(activo);
+				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
+					activo.setVentaDirectaBankia(true);
+				}
 
 				List<ActivoOferta> listaActivoOfertas = activo.getOfertas();
 				if(listaActivoOfertas != null && listaActivoOfertas.size() > 0) {

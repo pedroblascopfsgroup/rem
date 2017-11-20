@@ -43,7 +43,8 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				        	allowBlank: false,
 				        	bind : {
 				        		readOnly: '{activoPertenceAgrupacionComercialOrRestringida}',
-				        		value: '{comercial.fechaVenta}'
+				        		value: '{comercial.fechaVenta}',
+				        		disabled: '{!comercial.ventaExterna}'
 				        	}
 						},
 						{ 
@@ -56,13 +57,52 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				        	height: 80
 				        },
 					// Fila 1
+				        {
+						   xtype: 'checkboxfieldbase',
+						   fieldLabel: HreRem.i18n('fieldlabel.venta.externa'),
+						   reference: 'checkVentaExterna',
+						   allowBlank: false,
+						   bind : {
+				        		value: '{comercial.ventaExterna}'
+						   },
+						   listeners: {
+							change: function(checkbox, newVal, oldVal) {
+								
+								if (newVal && !oldVal) {
+									var val = true;
+								 	if(checkbox.up('activosdetallemain').getViewModel().get('comercial.expedienteComercialVivo')){
+								 		val = false;
+								 		me.fireEvent("errorToast", HreRem.i18n("msg.expediente.vivo"));
+								 	}
+								 	if(checkbox.up('activosdetallemain').getViewModel().get('comercial.situacionComercialCodigo') == CONST.SITUACION_COMERCIAL['NO_COMERCIALIZABLE']){
+								 		val = false;
+								 		me.fireEvent("errorToast", HreRem.i18n("msg.no.comercializable"));
+								 	}
+								 	if(checkbox.up('activosdetallemain').getViewModel().get('activoPerteneceAgrupacionComercial')){
+								 		val = false;
+								 		me.fireEvent("errorToast", HreRem.i18n("msg.activo.incluido.lote.comercial"));
+								 	}
+								 	if(checkbox.up('activosdetallemain').getViewModel().get('activoPerteneceAgrupacionRestringida')){
+								 		val = false;
+								 		me.fireEvent("errorToast", HreRem.i18n("msg.activo.incluido.agrupacion.restringida"));
+								 	}								 								 		
+								}
+								if(!newVal && oldVal && null != checkbox.up('activosdetallemain').getViewModel().get('comercial.fechaVenta')){
+									val = true;
+									me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.activo.vendido"));
+								}
+								checkbox.setValue(val);
+							}
+                          }
+						},
 						{
 						   xtype: 'currencyfieldbase',
 						   fieldLabel: HreRem.i18n('fieldlabel.importe.venta'),
 						   reference: 'cncyImporteVenta',
 						   allowBlank: false,
 						   bind : {
-				        		value: '{comercial.importeVenta}'
+				        		value: '{comercial.importeVenta}',
+				        		disabled: '{!comercial.ventaExterna}'
 						   }
 						}
 				]

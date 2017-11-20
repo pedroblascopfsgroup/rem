@@ -622,11 +622,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	onSaveFormularioCompletoTabComercial: function(btn, form){
 		var me = this;
-
-		// Se ha de confirmar la modificaciÃ³n.
-		Ext.Msg.show({
-			   title: HreRem.i18n('title.confirmar.modificar.venta.activo'),
-			   msg: HreRem.i18n('msg.confirmar.modificar.venta.activo'),
+		if(me.lookupReference('dtFechaVenta').value != null && (me.getViewModel().get('comercial.situacionComercialCodigo') != CONST.SITUACION_COMERCIAL['VENDIDO'])){
+			Ext.Msg.show({
+			   title: HreRem.i18n('title.confirmar.modificar.venta.externa.activo'),
+			   msg: HreRem.i18n('msg.confirmar.modificar.venta.externa.activo'),
 			   buttons: Ext.MessageBox.YESNO,
 			   fn: function(buttonId) {
 			        if (buttonId == 'yes') {
@@ -634,6 +633,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			        }
 			   }
 		});
+		}else{
+		// Se ha de confirmar la modificaciÃ³n.
+			Ext.Msg.show({
+				   title: HreRem.i18n('title.confirmar.modificar.venta.activo'),
+				   msg: HreRem.i18n('msg.confirmar.modificar.venta.activo'),
+				   buttons: Ext.MessageBox.YESNO,
+				   fn: function(buttonId) {
+				        if (buttonId == 'yes') {
+				        	me.onSaveFormularioCompleto(btn, form);
+				        }
+				   }
+			});
+		}
 	},
 
 	onClickBotonGuardar: function(btn) {

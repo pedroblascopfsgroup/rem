@@ -396,6 +396,9 @@ public class Activo implements Serializable, Auditable {
     
     @Column(name = "ACT_COD_PROMOCION_PRINEX")
     private String codigoPromocionPrinex;
+    
+    @Column(name = "ACT_VENTA_DIRECTA_BANKIA")
+    private Boolean ventaDirectaBankia;
 
 	@Version   
 	private Long version;
@@ -1583,6 +1586,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setCopropietariosActivo(List<ActivoCopropietarioActivo> copropietariosActivo) {
 		this.copropietariosActivo = copropietariosActivo;
+	}
+
+	public Boolean getVentaDirectaBankia() {
+		return ventaDirectaBankia;
+	}
+
+	public void setVentaDirectaBankia(Boolean ventaDirectaBankia) {
+		this.ventaDirectaBankia = ventaDirectaBankia;
 	}
 	
 	

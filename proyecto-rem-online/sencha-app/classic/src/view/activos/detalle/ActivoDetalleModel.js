@@ -264,6 +264,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 } else {
 				 return false;
 			 }
+		 },
+		 
+		 activoPerteneceAgrupacionComercial: function(get){
+		 	 return get('activo.pertenceAgrupacionComercial');
+		 },
+		 
+		 activoPerteneceAgrupacionRestringida: function(get){
+		 	 return get('activo.pertenceAgrupacionRestringida');
 		 }
 	 },
 

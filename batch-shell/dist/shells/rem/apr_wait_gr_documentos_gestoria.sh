@@ -115,7 +115,7 @@ do
     ficheroTxt=$INSTALL_DIR/control/etl/garsa/input/${fichero}_$1$extensionTxt
     echo "fichero .dat: $ficheroTxt"
     if [[ "$#" -eq 1 ]]; then
-        ./ftp/ftp_get_gestorias_tinsa_files.sh $1 ${fichero}_$1 $INSTALL_DIR/control/etl/garsa/input/
+        ./ftp/ftp_get_gestorias_garsa_files.sh $1 ${fichero}_$1 $INSTALL_DIR/control/etl/garsa/input/
 		echo "Fichero movido al destino $INSTALL_DIR/control/etl/garsa/input/"
     fi
 done
@@ -145,7 +145,7 @@ do
     ficheroTxt=$INSTALL_DIR/control/etl/gutierrez_labrador/input/${fichero}_$1$extensionTxt
     echo "fichero .dat: $ficheroTxt"
     if [[ "$#" -eq 1 ]]; then
-        ./ftp/ftp_get_gestorias_tinsa_files.sh $1 ${fichero}_$1 $INSTALL_DIR/control/etl/gutierrez_labrador/input/
+        ./ftp/ftp_get_gestorias_gutierrez_files.sh $1 ${fichero}_$1 $INSTALL_DIR/control/etl/gutierrez_labrador/input/
 		echo "Fichero movido al destino $INSTALL_DIR/control/etl/gutierrez_labrador/input/"
     fi
 done
@@ -175,7 +175,7 @@ do
     ficheroTxt=$INSTALL_DIR/control/etl/montalvo/input/${fichero}_$1$extensionTxt
     echo "fichero .dat: $ficheroTxt"
     if [[ "$#" -eq 1 ]]; then
-        ./ftp/ftp_get_gestorias_tinsa_files.sh $1 ${fichero}_$1 $INSTALL_DIR/control/etl/montalvo/input/
+        ./ftp/ftp_get_gestorias_montalvo_files.sh $1 ${fichero}_$1 $INSTALL_DIR/control/etl/montalvo/input/
 		echo "Fichero movido al destino $INSTALL_DIR/control/etl/montalvo/input/"
     fi
 done
@@ -205,7 +205,7 @@ do
     ficheroTxt=$INSTALL_DIR/control/etl/pinos/input/${fichero}_$1$extensionTxt
     echo "fichero .dat: $ficheroTxt"
     if [[ "$#" -eq 1 ]]; then
-        ./ftp/ftp_get_gestorias_tinsa_files.sh $1 ${fichero}_$1 $INSTALL_DIR/control/etl/pinos/input/
+        ./ftp/ftp_get_gestorias_pinos_files.sh $1 ${fichero}_$1 $INSTALL_DIR/control/etl/pinos/input/
 		echo "Fichero movido al destino $INSTALL_DIR/control/etl/pinos/input/"
     fi
 done
@@ -235,7 +235,7 @@ do
     ficheroTxt=$INSTALL_DIR/control/etl/uniges/input/${fichero}_$1$extensionTxt
     echo "fichero .dat: $ficheroTxt"
     if [[ "$#" -eq 1 ]]; then
-        ./ftp/ftp_get_gestorias_tinsa_files.sh $1 ${fichero}_$1 $INSTALL_DIR/control/etl/uniges/input/
+        ./ftp/ftp_get_gestorias_uniges_files.sh $1 ${fichero}_$1 $INSTALL_DIR/control/etl/uniges/input/
 		echo "Fichero movido al destino $INSTALL_DIR/control/etl/uniges/input/"
     fi
 done

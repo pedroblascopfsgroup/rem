@@ -1223,7 +1223,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (fileItem.getMetadata().containsKey("descripcion")) {
 					activoFoto.setDescripcion(fileItem.getMetadata().get("descripcion"));
 				}
-				if (fileItem.getMetadata().containsKey("principal")
+				if (fileItem.getMetadata().containsKey("principal") && fileItem.getMetadata().get("principal") != null
 						&& fileItem.getMetadata().get("principal").equals("1")) {
 					activoFoto.setPrincipal(Boolean.TRUE);
 				} else {
@@ -1232,7 +1232,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				Date fechaSubida = new Date();
 				if (fileItem.getMetadata().containsKey("fecha_subida")) {
 					try {
-						fechaSubida = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S")
+						fechaSubida = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 								.parse(fileItem.getMetadata().get("fecha_subida"));
 					} catch (Exception e) {
 						logger.error("El webservice del Gestor documental ha enviado una fecha sin formato");
@@ -1241,7 +1241,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 				activoFoto.setFechaDocumento(fechaSubida);
 
-				if (fileItem.getMetadata().containsKey("interior_exterior")) {
+				if (fileItem.getMetadata().containsKey("interior_exterior") && fileItem.getMetadata().get("interior_exterior") != null) {
 					if (fileItem.getMetadata().get("interior_exterior").equals("1")) {
 						activoFoto.setInteriorExterior(Boolean.TRUE);
 					} else {

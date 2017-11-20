@@ -254,7 +254,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				Date fechaSubida = new Date();
 				if (fileItem.getMetadata().containsKey("fecha_subida")) {
 					try {
-						fechaSubida = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S")
+						fechaSubida = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 								.parse(fileItem.getMetadata().get("fecha_subida"));
 					} catch (Exception e) {
 						logger.error("El webservice del Gestor documental ha enviado una fecha sin formato");
@@ -395,7 +395,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				Date fechaSubida = new Date();
 				if (fileItem.getMetadata().containsKey("fecha_subida")) {
 					try {
-						fechaSubida = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S")
+						fechaSubida = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 								.parse(fileItem.getMetadata().get("fecha_subida"));
 					} catch (Exception e) {
 						logger.error("El webservice del Gestor documental ha enviado una fecha sin formato");

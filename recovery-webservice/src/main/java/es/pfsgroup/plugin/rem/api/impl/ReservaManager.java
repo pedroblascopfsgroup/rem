@@ -229,10 +229,10 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 							} else if (Checks.esNulo(expedienteComercial.getTrabajo()) || (!Checks.esNulo(expedienteComercial.getTrabajo()) && tieneJustif)) {
 								hashErrores.put("activo", "Justificante de ingreso de la compraventa entregado. No se puede anular el cobro de la venta.");
 								
-							} else if(Checks.esNulo(expedienteComercial.getFechaVenta())){
+							} else if(Checks.esNulo(expedienteComercial.getFechaContabilizacionPropietario())){
 								hashErrores.put("activo", "No se ha realizado el cobro de la venta.");
 								
-							} else if(!isSameDay(expedienteComercial.getFechaVenta(), now)){					
+							} else if(!isSameDay(expedienteComercial.getFechaContabilizacionPropietario(), now)){					
 								hashErrores.put("activo", "Ha pasado más de 1 día desde el cobro de la venta.");
 							}
 						

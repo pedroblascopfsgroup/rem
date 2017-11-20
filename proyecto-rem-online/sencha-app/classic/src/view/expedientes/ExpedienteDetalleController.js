@@ -665,7 +665,21 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    Ext.create("HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: edicion, storeGrid:storeGrid, expediente: expediente }).show();
 		}
 	},
-
+	esEditableCompradores : function(field){
+	     	var me = this;
+	     	var viewModel = me.getViewModel();
+	     	if(viewModel.get('esCarteraBankia')){
+				if ((viewModel.get('expediente.codigoEstado') != CONST.ESTADOS_EXPEDIENTE['FIRMADO']
+						    && viewModel.get('expediente.codigoEstado') != CONST.ESTADOS_EXPEDIENTE['VENDIDO'] )
+						    && $AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES'])){
+					field.topBar = true;
+					field.down('toolbar').show();
+				}else{
+					field.topBar = false;
+					field.down('toolbar').hide();
+				}
+	     	}
+		},
 	onHaCambiadoSolicitaFinanciacion: function(combo, value){
 		var me = this,
     	disabled = value == 0,

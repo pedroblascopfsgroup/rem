@@ -11,7 +11,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
     initComponent: function () {
 
         var me = this;
-		me.setTitle(HreRem.i18n('title.compradores'));
+        me.setTitle(HreRem.i18n('title.compradores'));
 		
 		var coloredRender = function (value, meta, record) {
     		var borrado = record.get('borrado');
@@ -48,7 +48,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						handler: 'enviarTitularesUvem',
 						margin: '10 40 5 10',
 						bind: {
-							hidden: '{!esCarteraBankia}'
+							hidden: '{!esEditableCompradores}'
 						}
 					},
                 	{
@@ -60,7 +60,8 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 							store: '{storeCompradoresExpediente}'
 						},									
 						listeners : {
-					    	rowdblclick: 'onCompradoresListDobleClick'					    	
+					    	rowdblclick: 'onCompradoresListDobleClick',
+					    	beforerender: 'esEditableCompradores'
 					    },
 					    features: [{
 				            id: 'summary',
@@ -381,7 +382,6 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
             }*/
           
     	];
-    
 	    me.addPlugin({ptype: 'lazyitems', items: items });
 	    
 	    me.callParent(); 

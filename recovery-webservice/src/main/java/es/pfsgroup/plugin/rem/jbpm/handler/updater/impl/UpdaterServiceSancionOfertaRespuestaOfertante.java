@@ -158,32 +158,33 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 						expedienteComercialApi.updateParticipacionActivosOferta(ofertaAceptada);
 						expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
 						
-						ResolucionComiteBankiaDto resolDto = null;
-						List<ResolucionComiteBankia> listaResol = null;
-						ResolucionComiteDto dto = new ResolucionComiteDto();
-						dto.setOfertaHRE(ofertaAceptada.getNumOferta());
-						dto.setCodigoTipoResolucion(DDTipoResolucion.CODIGO_TIPO_RESOLUCION);						
-						dto.setImporteContraoferta(ofertaAceptada.getImporteContraOferta());
-						dto.setCodigoComite(expediente.getComiteSancion().getCodigo());
-						dto.setCodigoResolucion(DDEstadoResolucion.CODIGO_ERE_CONTRAOFERTA);
-						try {
-							resolDto = resolucionComiteApi.getResolucionComiteBankiaDtoFromResolucionComiteDto(dto);
-							if(Checks.esNulo(resolDto)){
-								throw new Exception("Se ha producido un error en la búsqueda de resoluciones.");
-							}
-							
-							//Obtenemos la lista de resoluciones por expediente y tipo si existe
-							listaResol = resolucionComiteApi.getResolucionesComiteByExpedienteTipoRes(resolDto);
-							if(!Checks.esNulo(listaResol) && listaResol.size()>0){
-								for(int i = 0; i< listaResol.size(); i++){					
-									resolucionComiteDao.delete(listaResol.get(i));								
-								}
-							}
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						
 					}					
+				}
+				ResolucionComiteBankiaDto resolDto = null;
+				List<ResolucionComiteBankia> listaResol = null;
+				ResolucionComiteDto dto = new ResolucionComiteDto();
+				dto.setOfertaHRE(ofertaAceptada.getNumOferta());
+				dto.setCodigoTipoResolucion(DDTipoResolucion.CODIGO_TIPO_RESOLUCION);						
+				dto.setImporteContraoferta(ofertaAceptada.getImporteContraOferta());
+				dto.setCodigoComite(expediente.getComiteSancion().getCodigo());
+				dto.setCodigoResolucion(DDEstadoResolucion.CODIGO_ERE_CONTRAOFERTA);
+				try {
+					resolDto = resolucionComiteApi.getResolucionComiteBankiaDtoFromResolucionComiteDto(dto);
+					if(Checks.esNulo(resolDto)){
+						throw new Exception("Se ha producido un error en la búsqueda de resoluciones.");
+					}
+					
+					//Obtenemos la lista de resoluciones por expediente y tipo si existe
+					listaResol = resolucionComiteApi.getResolucionesComiteByExpedienteTipoRes(resolDto);
+					if(!Checks.esNulo(listaResol) && listaResol.size()>0){
+						for(int i = 0; i< listaResol.size(); i++){					
+							resolucionComiteDao.delete(listaResol.get(i));								
+						}
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 				genericDao.save(ExpedienteComercial.class, expediente);
 			}

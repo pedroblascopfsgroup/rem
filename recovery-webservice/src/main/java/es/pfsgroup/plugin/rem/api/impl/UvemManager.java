@@ -156,6 +156,10 @@ public class UvemManager implements UvemManagerApi {
 		registro.setMetodo("WEBSERVICE");
 		registro.setEndpoint(endPoint);
 		registro.setRequest(request);
+		// borrame
+		logger.debug(request);
+		logger.debug("-------------------");
+		logger.debug(result);
 		if (!Checks.esNulo(errorDesc)) {
 			registro.setErrorDesc(errorDesc);
 		}
@@ -1473,15 +1477,15 @@ public class UvemManager implements UvemManagerApi {
 			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.ERROR_USUARIO_2)) {
 				servicioGMPAJC29_INS.setCOSANOW(new Short("801"));
 			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.VENCIDAS_POR_TIEMPO)) {
-				servicioGMPAJC29_INS.setCOSANOW(new Short("802"));
+				servicioGMPAJC29_INS.setCOSANOW(new Short("601"));
 			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.ANULADA_POR_VENCIMIENTO)) {
-				servicioGMPAJC29_INS.setCOSANOW(new Short("803"));
+				servicioGMPAJC29_INS.setCOSANOW(new Short("601"));
 			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.ANULADA_ALTA_NUEVA_FACULTAD_HAYA)) {
-				servicioGMPAJC29_INS.setCOSANOW(new Short("804"));
+				servicioGMPAJC29_INS.setCOSANOW(new Short("601"));
 			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.FINANCIACION_DENEGADA)) {
-				servicioGMPAJC29_INS.setCOSANOW(new Short("901"));
+				servicioGMPAJC29_INS.setCOSANOW(new Short("601"));
 			} else if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.PBC_DENEGADO)) {
-				servicioGMPAJC29_INS.setCOSANOW(new Short("902"));
+				servicioGMPAJC29_INS.setCOSANOW(new Short("601"));
 			}
 
 			servicioGMPAJC29_INS.setnumeroUsuario("");

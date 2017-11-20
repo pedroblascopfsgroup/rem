@@ -35,7 +35,7 @@ public class DetectorWebcomStock extends DetectorCambiosBD<StockDto> {
 	
 	private Boolean procesarSoloCambiosMarcados = null;
 	
-	private Boolean forzarSoloCambiosMarcados = false;
+	private Boolean forzarSoloCambiosMarcados = null;
 
 	@Override
 	public StockDto createDtoInstance() {
@@ -95,8 +95,8 @@ public class DetectorWebcomStock extends DetectorCambiosBD<StockDto> {
 
 	@Override
 	public Boolean procesarSoloCambiosMarcados() {
-		if(forzarSoloCambiosMarcados){
-			return true;
+		if(forzarSoloCambiosMarcados != null){
+			return forzarSoloCambiosMarcados;
 		}else{
 			if(procesarSoloCambiosMarcados==null){
 				procesarSoloCambiosMarcados = !Checks.esNulo(appProperties.getProperty("rest.client.webcom.optimizado"))
@@ -110,13 +110,12 @@ public class DetectorWebcomStock extends DetectorCambiosBD<StockDto> {
 	/**
 	 * Fuerza la ejecución del modo optimizado
 	 */
-	public void setSoloCambiosMarcados(boolean procesar){
+	public void setSoloCambiosMarcados(Boolean procesar){
 		this.forzarSoloCambiosMarcados = procesar;
 	}
 
 	@Override
 	public void marcarComoEnviadosMarcadosEspecifico(Date fechaEjecucion) throws Exception {
-		this.setSoloCambiosMarcados(false);
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 		String fechaEjecucionString = df.format(fechaEjecucion);

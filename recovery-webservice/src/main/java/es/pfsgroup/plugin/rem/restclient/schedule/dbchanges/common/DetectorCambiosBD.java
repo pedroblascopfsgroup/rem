@@ -365,7 +365,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 		//para sobreescribir
 	}
 	
-	public void setSoloCambiosMarcados(boolean procesar){
+	public void setSoloCambiosMarcados(Boolean procesar){
 		//para sobreescribir
 	}
 }

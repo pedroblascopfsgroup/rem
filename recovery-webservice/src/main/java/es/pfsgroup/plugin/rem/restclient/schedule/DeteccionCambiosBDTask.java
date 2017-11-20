@@ -97,9 +97,10 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public void detectaCambios(DetectorCambiosBD handlerToExecute,boolean optimizado) throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
+	public void detectaCambios(DetectorCambiosBD handlerToExecute,Boolean optimizado) throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		((InfoTablasBD)handlerToExecute).setSoloCambiosMarcados(optimizado);
 		this.detectaCambios(handlerToExecute, TIPO_ENVIO.CAMBIOS);
+		((InfoTablasBD)handlerToExecute).setSoloCambiosMarcados(null);
 	}
 
 	/**
@@ -168,12 +169,8 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 							logger.trace(handler.getClass().getSimpleName() + ": obtenemos los cambios de la BD");
 							Class control = handler.getDtoClass();
 							CambiosList listPendientes = null;
-							//si actualimos solo los registros marcados, deshabilitamos la paginacion
-							if(handler.procesarSoloCambiosMarcados()){
-								listPendientes = new CambiosList(null);
-							}else{
-								listPendientes = new CambiosList(tamanyoBloque);
-							}
+							CambiosList listPendientesTodosBloques = new CambiosList(tamanyoBloque);
+							listPendientes = new CambiosList(tamanyoBloque);
 							
 							RestLlamada registro = new RestLlamada();
 							Date fechaEjecucion = new Date();
@@ -187,6 +184,9 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 								try {
 									if (tipoEnvio.equals(TIPO_ENVIO.CAMBIOS)) {
 										listPendientes = handler.listPendientes(control, registro, listPendientes);
+										if(handler.procesarSoloCambiosMarcados()){
+											listPendientesTodosBloques.addAll(listPendientes);
+										}
 									} else {
 										listPendientes = handler.listDatosCompletos(control, registro, listPendientes);
 									}
@@ -271,8 +271,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 								if(!handler.procesarSoloCambiosMarcados()){
 									handler.marcaComoEnviados(control, llamadas);
 								}else{
-									//en caso de enviar solo los registros marcados solo hay un bloque
-									handler.marcarComoEnviadosMarcadosComun(listPendientes, control);
+									handler.marcarComoEnviadosMarcadosComun(listPendientesTodosBloques, control);
 									handler.marcarComoEnviadosMarcadosEspecifico(fechaEjecucion);
 								}
 								

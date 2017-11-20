@@ -5,6 +5,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
 	bind: {
        	store: '{gastosAdministracion}'
     },
+    loadAfterBind: false,    
     plugins: 'pagingselectpersist',
     listeners:{
        rowdblclick: 'onClickAbrirGastoProveedor'
@@ -24,7 +25,6 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
     		dock: 'top',
     		items: [configAddBtn, separador, configAutorizarBtn, configRechazarButton]
 		};
-
     	me.columns = [
 	 							{
 						        	dataIndex: 'id',

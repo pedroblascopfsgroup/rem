@@ -684,6 +684,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this,
     	disabled = value == 0,
     	entidadFinanciacion = me.lookupReference('entidadFinanciacion');
+		numExpedienteRiesgo = me.lookupReference('numExpedienteRiesgo');
+		comboTipoFinanciacion = me.lookupReference('comboTipoFinanciacion');
     	
     	entidadFinanciacion.setDisabled(disabled);
     	entidadFinanciacion.allowBlank = disabled;
@@ -691,6 +693,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	
     	if(disabled) {
     		entidadFinanciacion.setValue("");
+    		numExpedienteRiesgo.setValue("");
+    		comboTipoFinanciacion.setValue("");
     	}
 	},
 	

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=GUSTAVO MORA
---## FECHA_CREACION=20171113
+--## FECHA_CREACION=20171117
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-3166

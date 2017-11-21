@@ -105,6 +105,12 @@ public class RestLauncher {
 		
 	}
 	
+	@ManagedOperation(description = "Envia el stock de Activos  a Webcom")
+	public void enviarStockWebcomNoOpt() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
+		task.detectaCambios(cambiosStock,false);
+		
+	}
+	
 	/*
 	 * 
 	 * 

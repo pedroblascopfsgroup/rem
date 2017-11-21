@@ -85,7 +85,7 @@ do
     ficheroTxt=$INSTALL_DIR/control/etl/tinsa_certify/input/${fichero}_$1$extensionTxt
     echo "fichero .dat: $ficheroTxt"
     if [[ "$#" -eq 1 ]]; then
-        ./ftp/ftp_get_gestorias_tinsa_files.sh $1 ${fichero}_$1 $INSTALL_DIR/control/etl/tinsa_certify/input/
+        ./ftp/ftp_get_gestoria_tinsa_files.sh $1 ${fichero}_$1 $INSTALL_DIR/control/etl/tinsa_certify/input/
 		echo "Fichero movido al destino $INSTALL_DIR/control/etl/tinsa_certify/input/"
     fi
 done

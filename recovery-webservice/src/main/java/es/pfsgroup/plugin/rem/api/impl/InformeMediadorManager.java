@@ -1300,6 +1300,8 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				tieneInformeComercialAceptado = activoApi.isInformeComercialAceptado(activo);
 				ActivoInfoComercial informeEntity = null;
 				if (!tieneInformeComercialAceptado || autorizacionWebProveedor) {
+					ActivoEdificio edificioEntity = (ActivoEdificio) dtoToEntity.obtenerObjetoEntity(
+							informe.getIdActivoHaya(), ActivoEdificio.class, "infoComercial.activo.numActivo");
 					ArrayList<Serializable> entitys = new ArrayList<Serializable>();
 					if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_COMERCIAL)) {
 						informeEntity = (ActivoLocalComercial) dtoToEntity.obtenerObjetoEntity(
@@ -1384,8 +1386,6 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					if (informeEntity.getActivo() == null) {
 						informeEntity.setActivo(activo);
 					}
-					ActivoEdificio edificioEntity = (ActivoEdificio) dtoToEntity.obtenerObjetoEntity(
-							informe.getIdActivoHaya(), ActivoEdificio.class, "infoComercial.activo.numActivo");
 					entitys.add(edificioEntity);
 					
 					informeEntity = (ActivoInfoComercial) dtoToEntity.saveDtoToBbdd(informe, entitys,(JSONObject)jsonFields.getJSONArray("data").get(i));

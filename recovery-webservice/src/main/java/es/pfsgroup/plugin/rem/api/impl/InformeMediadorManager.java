@@ -288,7 +288,6 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		divisible.put(DDTipoActivo.COD_EDIFICIO_COMPLETO, true);
 		obligatorios.put("otrasreformasnecesarias", divisible);
 
-		
 		// numeroAscensores
 		HashMap<String, Boolean> numeroAscensores = new HashMap<String, Boolean>();
 		numeroAscensores.put(DDTipoActivo.COD_EDIFICIO_COMPLETO, true);
@@ -542,7 +541,6 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		numeroPlantasEdificio.put(DDTipoActivo.COD_COMERCIAL, true);
 		numeroPlantasEdificio.put(DDTipoActivo.COD_OTROS, true);
 		obligatorios.put("numeroplantasedificio", numeroPlantasEdificio);
-
 
 		// numeroAscensoresEdificio
 		HashMap<String, Boolean> numeroAscensoresEdificio = new HashMap<String, Boolean>();
@@ -1241,8 +1239,8 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						|| (infoAux.getId() != null && infoAux.getTipoActivo() == null)
 						|| ((ActivoInfoComercial) objeto).getId() == null) {
 					genericaRestDaoImp.deleteInformeMediador(infoAux);
-					((ActivoInfoComercial) objeto).setAuditoria(null);
-					((ActivoInfoComercial) objeto).setId(null);
+					//((ActivoInfoComercial) objeto).setAuditoria(null);
+					//((ActivoInfoComercial) objeto).setId(null);
 				}
 			}
 		}
@@ -1250,18 +1248,17 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 	@Override
 	@Transactional(readOnly = false)
-	public ArrayList<Map<String, Object>> saveOrUpdateInformeMediador(List<InformeMediadorDto> informes,JSONObject jsonFields)
-			throws Exception {
+	public ArrayList<Map<String, Object>> saveOrUpdateInformeMediador(List<InformeMediadorDto> informes,
+			JSONObject jsonFields) throws Exception {
 
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		Map<String, Object> map = null;
 
-		int i=0;
+		int i = 0;
 		for (InformeMediadorDto informe : informes) {
 			// proveedor de confianza, puede editar el informe, sin tramite de
 			// aceptacion
 			boolean autorizacionWebProveedor = false;
-			
 
 			map = new HashMap<String, Object>();
 			HashMap<String, String> errorsList = null;
@@ -1293,20 +1290,19 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					}
 				}
 			}
-			
 
 			if (errorsList.size() == 0) {
 				boolean tieneInformeComercialAceptado = false;
 				tieneInformeComercialAceptado = activoApi.isInformeComercialAceptado(activo);
 				ActivoInfoComercial informeEntity = null;
 				if (!tieneInformeComercialAceptado || autorizacionWebProveedor) {
-					ActivoEdificio edificioEntity = (ActivoEdificio) dtoToEntity.obtenerObjetoEntity(
-							informe.getIdActivoHaya(), ActivoEdificio.class, "infoComercial.activo.numActivo");
 					ArrayList<Serializable> entitys = new ArrayList<Serializable>();
 					if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_COMERCIAL)) {
 						informeEntity = (ActivoLocalComercial) dtoToEntity.obtenerObjetoEntity(
 								informe.getIdActivoHaya(), ActivoLocalComercial.class, "activo.numActivo");
 						parcheEspecificacionTablas(informeEntity, informe);
+						informeEntity = (ActivoLocalComercial) dtoToEntity.obtenerObjetoEntity(
+								informe.getIdActivoHaya(), ActivoLocalComercial.class, "activo.numActivo");
 						entitys.add(informeEntity);
 
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_EN_COSTRUCCION)) {
@@ -1321,6 +1317,8 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						informeEntity = (ActivoPlazaAparcamiento) dtoToEntity.obtenerObjetoEntity(
 								informe.getIdActivoHaya(), ActivoPlazaAparcamiento.class, "activo.numActivo");
 						parcheEspecificacionTablas(informeEntity, informe);
+						informeEntity = (ActivoPlazaAparcamiento) dtoToEntity.obtenerObjetoEntity(
+								informe.getIdActivoHaya(), ActivoPlazaAparcamiento.class, "activo.numActivo");
 						entitys.add(informeEntity);
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_SUELO)) {
 						informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
@@ -1330,8 +1328,8 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						informeEntity = (ActivoVivienda) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
 								ActivoVivienda.class, "activo.numActivo");
 						parcheEspecificacionTablas(informeEntity, informe);
-
-						
+						informeEntity = (ActivoVivienda) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
+								ActivoVivienda.class, "activo.numActivo");
 
 						ActivoInfraestructura activoInfraestructura = (ActivoInfraestructura) dtoToEntity
 								.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoInfraestructura.class,
@@ -1376,30 +1374,47 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_EDIFICIO_COMPLETO)) {
 						informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
 								ActivoInfoComercial.class, "activo.numActivo");
-						//ActivoEdificio edificioEntity = (ActivoEdificio) dtoToEntity.obtenerObjetoEntity(
-						//		informe.getIdActivoHaya(), ActivoEdificio.class, "infoComercial.activo.numActivo");
-						//edificioEntity.setInfoComercial(informeEntity);
+						// ActivoEdificio edificioEntity = (ActivoEdificio)
+						// dtoToEntity.obtenerObjetoEntity(
+						// informe.getIdActivoHaya(), ActivoEdificio.class,
+						// "infoComercial.activo.numActivo");
+						// edificioEntity.setInfoComercial(informeEntity);
 						entitys.add(informeEntity);
-						//entitys.add(edificioEntity);
+						// entitys.add(edificioEntity);
 
-					} 
+					}
+					ActivoEdificio edificioEntity = null;
+					if(informeEntity.getId() != null){
+						edificioEntity = (ActivoEdificio) dtoToEntity.obtenerObjetoEntity(
+								informe.getIdActivoHaya(), ActivoEdificio.class, "infoComercial.activo.numActivo");
+					}else{
+						edificioEntity = new ActivoEdificio();
+					}
+					entitys.add(edificioEntity);
+
 					if (informeEntity.getActivo() == null) {
 						informeEntity.setActivo(activo);
 					}
-					entitys.add(edificioEntity);
-					
-					informeEntity = (ActivoInfoComercial) dtoToEntity.saveDtoToBbdd(informe, entitys,(JSONObject)jsonFields.getJSONArray("data").get(i));
+
+					informeEntity = (ActivoInfoComercial) dtoToEntity.saveDtoToBbdd(informe, entitys,
+							(JSONObject) jsonFields.getJSONArray("data").get(i));
 					// Si viene información de las plantas lo guardamos
 					List<PlantaDto> plantas = informe.getPlantas();
 					if (plantas != null) {
-						
-						if(!Checks.esNulo(informeEntity) && !Checks.esNulo(informeEntity.getId())){
-							Long idInfoComercial= informeEntity.getId();
+
+						if (!Checks.esNulo(informeEntity) && !Checks.esNulo(informeEntity.getId())) {
+							Long idInfoComercial = informeEntity.getId();
 							activoApi.deleteActivoDistribucion(idInfoComercial);
 						}
-						
+
 						for (PlantaDto planta : plantas) {
-							
+							//los anejos vienen informados a parte
+							if (planta.getCodTipoEstancia() != null && !planta.getCodTipoEstancia().isEmpty()
+									&& (planta.getCodTipoEstancia().equals(DDTipoHabitaculo.TIPO_HABITACULO_GARAJE)
+											|| planta.getCodTipoEstancia()
+													.equals(DDTipoHabitaculo.TIPO_HABITACULO_TRASTERO))) {
+								continue;
+							}
 							ActivoDistribucion activoDistribucion = new ActivoDistribucion();
 							activoDistribucion.setNumPlanta(planta.getNumero());
 							activoDistribucion.setInfoComercial(informeEntity);
@@ -1413,14 +1428,15 @@ public class InformeMediadorManager implements InformeMediadorApi {
 							activoDistribucion.setSuperficie(planta.getEstancias());
 							activoDistribucion.setDescripcion(planta.getDescripcionEstancias());
 							genericDao.save(ActivoDistribucion.class, activoDistribucion);
+
 						}
 					}
 					// Si vienen campos anejos, meter en distribucion
 					if (!Checks.esNulo(informe.getAnejoGarage()) || !Checks.esNulo(informe.getNumeroPlazasGaraje())
 							|| !Checks.esNulo(informe.getSuperficiePlazasGaraje())) {
-						
+
 						ActivoDistribucion activoDistribucion = new ActivoDistribucion();
-						
+
 						activoDistribucion.setNumPlanta(Integer.valueOf(0));
 						activoDistribucion.setInfoComercial(informeEntity);
 						DDTipoHabitaculo tipoHabitaculo = (DDTipoHabitaculo) genericDao.get(DDTipoHabitaculo.class,
@@ -1435,9 +1451,9 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					}
 
 					if (!Checks.esNulo(informe.getAnejoTrastero())) {
-						
+
 						ActivoDistribucion activoDistribucion = new ActivoDistribucion();
-						
+
 						activoDistribucion.setNumPlanta(Integer.valueOf(0));
 						activoDistribucion.setInfoComercial(informeEntity);
 						DDTipoHabitaculo tipoHabitaculo = (DDTipoHabitaculo) genericDao.get(DDTipoHabitaculo.class,
@@ -1447,28 +1463,32 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						activoDistribucion.setDescripcion(informe.getAnejoTrastero());
 
 						genericDao.save(ActivoDistribucion.class, activoDistribucion);
-					}					
+					}
 				}
 				if (!tieneInformeComercialAceptado) {
 					adapter.crearTramitePublicacion(activo.getId());
 				} else {
 					ActivoEstadosInformeComercialHistorico activoEstadoInfComercialHistorico = new ActivoEstadosInformeComercialHistorico();
 					activoEstadoInfComercialHistorico.setActivo(activo);
-					Filter filtroDDInfComercial = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_MODIFICACION);
-					DDEstadoInformeComercial ddInfComercial = genericDao.get(DDEstadoInformeComercial.class, filtroDDInfComercial);
+					Filter filtroDDInfComercial = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_MODIFICACION);
+					DDEstadoInformeComercial ddInfComercial = genericDao.get(DDEstadoInformeComercial.class,
+							filtroDDInfComercial);
 					activoEstadoInfComercialHistorico.setEstadoInformeComercial(ddInfComercial);
 					activoEstadoInfComercialHistorico.setFecha(new Date());
 					if (autorizacionWebProveedor) {
 						// se inserta una fila en el histórico de estados
 						// del informe comercial de tipo 'Modificación',
 						// 'Modificación del proveedor'
-						activoEstadoInfComercialHistorico.setMotivo(DtoEstadosInformeComercialHistorico.ESTADO_MOTIVO_MODIFICACION_PROVEEDOR);
+						activoEstadoInfComercialHistorico
+								.setMotivo(DtoEstadosInformeComercialHistorico.ESTADO_MOTIVO_MODIFICACION_PROVEEDOR);
 					} else {
 						// se inserta una fila en el histórico de estados
 						// del informe comercial de tipo 'Modificación',
 						// 'Modificación rechazada. El proveedor no tiene
 						// permisos para editar'
-						activoEstadoInfComercialHistorico.setMotivo(DtoEstadosInformeComercialHistorico.ESTADO_MOTIVO_MODIFICACION_RECHAZADA);
+						activoEstadoInfComercialHistorico
+								.setMotivo(DtoEstadosInformeComercialHistorico.ESTADO_MOTIVO_MODIFICACION_RECHAZADA);
 					}
 					genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadoInfComercialHistorico);
 				}
@@ -1479,11 +1499,12 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				updaterState.updaterStateDisponibilidadComercialAndSave(activo);
 
 				map.put("idInformeMediadorWebcom", informe.getIdInformeMediadorWebcom());
-				if(!Checks.esNulo(informeEntity)){
+				if (!Checks.esNulo(informeEntity)) {
 					map.put("idInformeMediadorRem", informeEntity.getId());
-				}else{
-					informeEntity = genericDao.get(ActivoInfoComercial.class, genericDao.createFilter(FilterType.EQUALS, "idWebcom", informe.getIdInformeMediadorWebcom()));
-					if(!Checks.esNulo(informeEntity)){
+				} else {
+					informeEntity = genericDao.get(ActivoInfoComercial.class, genericDao.createFilter(FilterType.EQUALS,
+							"idWebcom", informe.getIdInformeMediadorWebcom()));
+					if (!Checks.esNulo(informeEntity)) {
 						map.put("idInformeMediadorRem", informeEntity.getId());
 					}
 				}

@@ -998,7 +998,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				+ " ( select dis2.DIS_ID from ACT_DIS_DISTRIBUCION dis2"
 				+ "	INNER JOIN DD_TPH_TIPO_HABITACULO tph ON dis2.dd_tph_id = tph.dd_tph_id"
 				+ "	WHERE dis2.ICO_ID = "+idActivoInfoComercial
-				+ "	AND tph.DD_TPH_CODIGO NOT IN ('"+DDTipoHabitaculo.TIPO_HABITACULO_TRASTERO + "','"+ DDTipoHabitaculo.TIPO_HABITACULO_GARAJE +"')"
+				//+ "	AND tph.DD_TPH_CODIGO NOT IN ('"+DDTipoHabitaculo.TIPO_HABITACULO_TRASTERO + "','"+ DDTipoHabitaculo.TIPO_HABITACULO_GARAJE +"')"
 				+ "	)");
 		query.executeUpdate();
 		

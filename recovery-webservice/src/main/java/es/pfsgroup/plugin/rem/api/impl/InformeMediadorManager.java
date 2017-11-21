@@ -1409,12 +1409,12 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 						for (PlantaDto planta : plantas) {
 							//los anejos vienen informados a parte
-							if (planta.getCodTipoEstancia() != null && !planta.getCodTipoEstancia().isEmpty()
+							/*if (planta.getCodTipoEstancia() != null && !planta.getCodTipoEstancia().isEmpty()
 									&& (planta.getCodTipoEstancia().equals(DDTipoHabitaculo.TIPO_HABITACULO_GARAJE)
 											|| planta.getCodTipoEstancia()
 													.equals(DDTipoHabitaculo.TIPO_HABITACULO_TRASTERO))) {
 								continue;
-							}
+							}*/
 							ActivoDistribucion activoDistribucion = new ActivoDistribucion();
 							activoDistribucion.setNumPlanta(planta.getNumero());
 							activoDistribucion.setInfoComercial(informeEntity);
@@ -1431,7 +1431,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 						}
 					}
-					// Si vienen campos anejos, meter en distribucion
+					/*
 					if (!Checks.esNulo(informe.getAnejoGarage()) || !Checks.esNulo(informe.getNumeroPlazasGaraje())
 							|| !Checks.esNulo(informe.getSuperficiePlazasGaraje())) {
 
@@ -1463,7 +1463,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						activoDistribucion.setDescripcion(informe.getAnejoTrastero());
 
 						genericDao.save(ActivoDistribucion.class, activoDistribucion);
-					}
+					}*/
 				}
 				if (!tieneInformeComercialAceptado) {
 					adapter.crearTramitePublicacion(activo.getId());

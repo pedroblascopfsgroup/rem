@@ -126,8 +126,10 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 							if(!Checks.estaVacio(valores)){
 								if(!Checks.esNulo(ofertaAceptada.getActivoPrincipal()) 
 										&& !Checks.esNulo(ofertaAceptada.getActivoPrincipal().getCartera())
-										&& ofertaAceptada.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)){
+										&& ofertaAceptada.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA) && 
+										!DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())){
 									ofertaApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
+									
 								}
 							}
 						}

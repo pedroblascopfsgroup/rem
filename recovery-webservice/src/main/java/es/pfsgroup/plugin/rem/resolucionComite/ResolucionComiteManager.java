@@ -216,6 +216,11 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 		ResolucionComiteBankiaDto resolDto = null;
 		
 		resolDto = new ResolucionComiteBankiaDto();
+		/**
+		 * esta fallando al copiar penitenciales String a DDPenitenciales
+		 */
+		String codigoPenitenciales = resolucionComiteDto.getPenitenciales();
+		resolucionComiteDto.setPenitenciales(null);
 		beanUtilNotNull.copyProperties(resolDto, resolucionComiteDto);
 		
 		if (!Checks.esNulo(resolucionComiteDto.getOfertaHRE())) {
@@ -260,7 +265,7 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 		}
 		
 		if (!Checks.esNulo(resolucionComiteDto.getPenitenciales())) {
-			DDPenitenciales penitenciales = (DDPenitenciales) genericDao.get(DDPenitenciales.class, genericDao.createFilter(FilterType.EQUALS, "codigo", resolucionComiteDto.getPenitenciales()));
+			DDPenitenciales penitenciales = (DDPenitenciales) genericDao.get(DDPenitenciales.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoPenitenciales));
 			if (!Checks.esNulo(penitenciales)) {
 				resolDto.setPenitenciales(penitenciales);
 			}

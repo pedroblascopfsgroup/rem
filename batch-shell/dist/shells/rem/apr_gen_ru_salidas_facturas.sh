@@ -23,6 +23,24 @@ if [ -f $MAINSH ]; then
     CLASEINICIO="$(cat $MAINSH | grep "^ java" | cut -f11 -d" ")"
     java -Xms512M -Xmx1536M -Dconfig.dir=$DIR_CONFIG -Dconfig.file.mask=$CFG_FILE -Duser.country=ES -Duser.language=es -cp $CLASS2 $CLASEINICIO --context=Default "$@"
     exit $?
+    
+    
+if [ $? = 0 ]; then
+
+   lftp -c "open -u rm02,R@95pr12 sftp://10.126.128.130; ls /$1"
+   if [ $? -ne 0 ]; then
+      lftp -c "open -u rm02,R@95pr12 sftp://10.126.128.130; mkdir /$1"
+   fi
+
+  lftp -u rm02,R@95pr12 sftp://10.126.128.130 <<EOF
+  cd /home/input/
+  mput $DIR_SALIDA/RUFACTUCP.txt
+  mput $DIR_SALIDA/RUFACTUSP.txt 
+  bye
+EOF
+
+  exit 0    
+    
 else
     echo "$(basename $0) Error en $filename: no se ha encontrado  $MAINSH"
     exit 1

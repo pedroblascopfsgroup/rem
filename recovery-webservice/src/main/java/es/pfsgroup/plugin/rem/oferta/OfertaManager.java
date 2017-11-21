@@ -1750,11 +1750,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			List<CompradorExpediente> listaComp = eco.getCompradores();
 			for (int i = 0; i < listaComp.size(); i++) {
 				ClienteComercial cc = listaComp.get(i).getPrimaryKey().getComprador().getClienteComercial();
-				ofertaDto = new OfertaDto();
-				ofertaDto.setIdClienteComercial(cc.getId());
-				listaOfertas = getListaOfertas(ofertaDto);
+				if (!Checks.esNulo(cc)) {
+					ofertaDto = new OfertaDto();
+					ofertaDto.setIdClienteComercial(cc.getId());
+					listaOfertas = getListaOfertas(ofertaDto);
 
-				listaOfertasTotales.addAll(listaOfertas);
+					listaOfertasTotales.addAll(listaOfertas);
+				}
 			}
 
 			for (int i = 0; i < listaOfertasTotales.size(); i++) {

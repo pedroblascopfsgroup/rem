@@ -503,7 +503,9 @@ public class TabActivoInformeComercial implements TabActivoService {
 					if (!Checks.esNulo(otros.getSubtipoPlazagaraje()))
 						beanUtilNotNull.copyProperty(activoInformeDto, "subtipoPlazagarajeCodigo", otros.getSubtipoPlazagaraje().getCodigo());
 					// Instalaciones
-					beanUtilNotNull.copyProperties(activoInformeDto, activo.getInfoComercial().getInstalacion());
+					if(activo.getInfoComercial().getInstalacion()!=null){
+						beanUtilNotNull.copyProperties(activoInformeDto, activo.getInfoComercial().getInstalacion());
+					}
 					break;
 				default:
 					break;

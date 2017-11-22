@@ -3466,13 +3466,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				titular.setNumeroUrsus(primaryKey.getIdCompradorUrsus());
 				titular.setTitularContratacion(comprador.getTitularContratacion());
 
-//<<<<<<< HEAD
-//				if (comprador.getPrimaryKey().getComprador().getTipoDocumento() != null) {
-//					DDTipoDocumento tipoDoc = comprador.getPrimaryKey().getComprador().getTipoDocumento();
-//=======
 				if (primaryKey.getTipoDocumento() != null) {
 					DDTipoDocumento tipoDoc = primaryKey.getTipoDocumento();
-//>>>>>>> version-2.0.8-rem
 					titular.setTipoDocumentoCliente(traducitTipoDoc(tipoDoc.getCodigo()));
 				}
 
@@ -4042,6 +4037,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public ArrayList<TitularUVEMDto> obtenerListaTitularesUVEM(ExpedienteComercial expedienteComercial)
 			throws Exception {
 		ArrayList<TitularUVEMDto> listaTitularUVEM = new ArrayList<TitularUVEMDto>();
+		TitularUVEMDto titularPrincipal = null;
+		Comprador compradorPrincipal = expedienteComercial.getCompradorPrincipal();
 		for (int k = 0; k < expedienteComercial.getCompradores().size(); k++) {
 			CompradorExpediente compradorExpediente = expedienteComercial.getCompradores().get(k);
 			TitularUVEMDto titularUVEM = new TitularUVEMDto();
@@ -4052,13 +4049,24 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 			if (compradorExpediente.getPorcionCompra() != null) {
 				titularUVEM.setPorcentaje(compradorExpediente.getPorcionCompra().toString());
-			}
+			}			
+			
 			if (compradorExpediente.getDocumentoConyuge() != null) {
-				titularUVEM.setConyuge(compradorExpediente.getDocumentoConyuge().toString());
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "documento", compradorExpediente.getDocumentoConyuge());
+				Comprador conyuge = genericDao.get(Comprador.class, filtro);
+				if(!Checks.esNulo(conyuge)) {
+					titularUVEM.setConyuge(conyuge.getIdCompradorUrsus().toString());
+				}
 			}
-
-			listaTitularUVEM.add(titularUVEM);
+			if(!compradorPrincipal.equals(compradorExpediente.getPrimaryKey().getComprador())){
+				listaTitularUVEM.add(titularUVEM);
+			}else {
+				titularPrincipal = titularUVEM;
+			}
+			
 		}
+		if(!Checks.esNulo(titularPrincipal))
+			listaTitularUVEM.add(0, titularPrincipal);
 		return listaTitularUVEM;
 	}
 	

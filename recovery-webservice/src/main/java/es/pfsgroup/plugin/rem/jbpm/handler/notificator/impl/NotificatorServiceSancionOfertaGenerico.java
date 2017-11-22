@@ -118,8 +118,10 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 
 				ArrayList<String> destinatarios = getDestinatariosNotificacion(activo, oferta, expediente);
 				
-				destinatarios.add(usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR).getEmail());
-
+				if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)){
+					destinatarios.add(usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR).getEmail());
+				}
+				
 				if (destinatarios.isEmpty()) {
 					logger.warn(
 							"No se han encontrado destinatarios para la notificación. No se va a enviar la notificación [oferta.id="
@@ -191,24 +193,26 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		boolean formalizacion = checkFormalizar(activo.getId());
 		ArrayList<String> clavesGestores = new ArrayList<String>();
 		String claveGestorComercial = this.getTipoGestorComercial(ofertaAceptada);
-		
-		//DESTINATARIOS SI ES SAREB
-		if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)) {
+
+		// DESTINATARIOS SI ES SAREB O BANKIA
+		if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)
+				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)) {
 			clavesGestores.addAll(Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial));
 			if (formalizacion) {
 				clavesGestores.add(GESTOR_FORMALIZACION);
 				clavesGestores.add(GESTOR_GESTORIA_FASE_3);
 			}
-			
-		//DESTINATARIOS SI ES CAJAMAR
-		}else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
-			clavesGestores.addAll(Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial, GESTOR_BACKOFFICE));
+
+			// DESTINATARIOS SI ES CAJAMAR
+		} else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
+			clavesGestores.addAll(
+					Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial, GESTOR_BACKOFFICE));
 			if (formalizacion) {
 				clavesGestores.add(GESTOR_FORMALIZACION);
 			}
 		}
 
-		return clavesGestores.toArray(new String[]{});
+		return clavesGestores.toArray(new String[] {});
 	}
 
 	private ArrayList<String> getDestinatariosNotificacion(Activo activo, Oferta ofertaAceptada,

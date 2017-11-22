@@ -206,29 +206,23 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
-	public Oferta getOfertaByIdOfertaWebcom(Long idOfertaWebcom) {
+	public Oferta getOfertaByIdOfertaWebcom(Long idOfertaWebcom) throws Exception {
 		Oferta oferta = null;
 		List<Oferta> lista = null;
 		OfertaDto ofertaDto = null;
 
-		try {
+		if (Checks.esNulo(idOfertaWebcom)) {
+			throw new Exception("El parámetro idOfertaWebcom es obligatorio.");
 
-			if (Checks.esNulo(idOfertaWebcom)) {
-				throw new Exception("El parámetro idOfertaWebcom es obligatorio.");
+		} else {
 
-			} else {
+			ofertaDto = new OfertaDto();
+			ofertaDto.setIdOfertaWebcom(idOfertaWebcom);
 
-				ofertaDto = new OfertaDto();
-				ofertaDto.setIdOfertaWebcom(idOfertaWebcom);
-
-				lista = ofertaDao.getListaOfertas(ofertaDto);
-				if (!Checks.esNulo(lista) && !lista.isEmpty()) {
-					oferta = lista.get(0);
-				}
+			lista = ofertaDao.getListaOfertas(ofertaDto);
+			if (!Checks.esNulo(lista) && !lista.isEmpty()) {
+				oferta = lista.get(0);
 			}
-
-		} catch (Exception ex) {
-			logger.error("error en OfertasManager", ex);
 		}
 
 		return oferta;

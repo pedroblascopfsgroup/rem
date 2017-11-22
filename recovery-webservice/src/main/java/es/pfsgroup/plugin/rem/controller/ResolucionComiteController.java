@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 //import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
@@ -37,7 +36,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
-import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteRequestDto;
@@ -74,10 +72,7 @@ public class ResolucionComiteController {
 	@Autowired
 	private NotificatorServiceResolucionComite notificatorApi;
 	
-    @Autowired
-    private OfertaDao ofertaDao;
-    
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/resolucioncomite")
 	public void resolucionComite(ModelMap model, RestRequestWrapper request,HttpServletResponse response) {
 
@@ -243,12 +238,15 @@ public class ResolucionComiteController {
 		} catch (JsonMappingException e3) {
 			logger.error("Error json resolucion comite", e3);
 			model.put("id", jsonFields.get("id"));
-			model.put("error", "Los datos enviados en la petición no están correctamente formateados. Comprueba que las fecha sean 'yyyy-MM-dd'T'HH:mm:ss'. ");			
+			model.put("error", "Los datos enviados en la petición no están correctamente formateados. Comprueba que las fecha sean 'yyyy-MM-dd'T'HH:mm:ss'. ");
+			request.getPeticionRest().setErrorDesc(e3.getMessage());
 		
 		} catch (Exception e2) {	
 			logger.error("Error resolucion comite", e2);
 			model.put("id", jsonFields.get("id"));	
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+			request.getPeticionRest().setErrorDesc(e2.getMessage());
+			
 			
 		}
 

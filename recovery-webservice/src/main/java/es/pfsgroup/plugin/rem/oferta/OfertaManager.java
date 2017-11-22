@@ -205,7 +205,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return oferta;
 	}
 
+	/**
+	 * usa el metdodo ofertaDao.getOfertaByIdwebcom
+	 */
 	@Override
+	@Deprecated
 	public Oferta getOfertaByIdOfertaWebcom(Long idOfertaWebcom) throws Exception {
 		Oferta oferta = null;
 		List<Oferta> lista = null;
@@ -1097,7 +1101,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		for (int i = 0; i < listaOfertaDto.size(); i++) {
 
-			Oferta ofr = null;
 			map = new HashMap<String, Object>();
 			ofertaDto = listaOfertaDto.get(i);
 
@@ -1111,9 +1114,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 
 			if (!Checks.esNulo(errorsList) && errorsList.isEmpty()) {
-				ofr = this.getOfertaByIdOfertaWebcom(ofertaDto.getIdOfertaWebcom());
-				map.put("idOfertaWebcom", ofr.getIdWebCom());
-				map.put("idOfertaRem", ofr.getNumOferta());
+				if(oferta == null || oferta.getNumOferta() == null){
+					oferta = ofertaDao.getOfertaByIdwebcom(ofertaDto.getIdOfertaWebcom());
+				}
+				map.put("idOfertaWebcom", ofertaDto.getIdOfertaWebcom());
+				if(oferta != null){
+					map.put("idOfertaRem", oferta.getNumOferta());
+				}else{
+					map.put("idOfertaRem", null);
+				}
+				
 				map.put("success", true);
 			} else {
 				map.put("idOfertaWebcom", ofertaDto.getIdOfertaWebcom());

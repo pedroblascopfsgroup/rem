@@ -41,7 +41,7 @@ BEGIN
 		join rem01.act_ofr actofr on actofr.ofr_id = ofr.ofr_id
 		join rem01.act_activo act on act.act_id = actofr.act_id
 		join rem01.dd_scr_subcartera scr on scr.dd_scr_id = act.dd_scr_id
-		where com.id_comprador_ursus is null and clc.clc_cod_cliente_uvem is not null and clc.clc_cod_cliente_uvem <> 0 and scr.dd_scr_codigo <> '06') T2
+		where com.id_comprador_ursus is null and clc.clc_cod_cliente_uvem is not null and clc.clc_cod_cliente_uvem <> 0 and scr.dd_scr_codigo <> ''06'') T2
 		ON (T1.COM_ID = T2.COM_ID and t2.rn = 1)
 		WHEN MATCHED THEN UPDATE SET
 		T1.ID_COMPRADOR_URSUS = T2.CLC_COD_CLIENTE_UVEM, T1.USUARIOMODIFICAR = ''HREOS-3294'', T1.FECHAMODIFICAR = SYSDATE';

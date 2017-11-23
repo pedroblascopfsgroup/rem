@@ -5668,12 +5668,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if(!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getReserva())){
 			Reserva reserva= expedienteComercial.getReserva();
 			reserva.setIndicadorDevolucionReserva(1);
-			if(dto.getPenitenciales().equals("3")){	
+			if(dto.getPenitenciales() != null && dto.getPenitenciales().equals("3")){	
 				DDDevolucionReserva estadoDevolucionReserva = (DDDevolucionReserva) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDDevolucionReserva.class, DDDevolucionReserva.CODIGO_SI_SIMPLES);
 				reserva.setDevolucionReserva(estadoDevolucionReserva);
 			}
-			if(dto.getPenitenciales().equals("4")){
+			if(dto.getPenitenciales() != null && dto.getPenitenciales().equals("4")){
 				DDDevolucionReserva estadoDevolucionReserva = (DDDevolucionReserva) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDDevolucionReserva.class, DDDevolucionReserva.CODIGO_SI_DUPLICADOS);
 						reserva.setDevolucionReserva(estadoDevolucionReserva);

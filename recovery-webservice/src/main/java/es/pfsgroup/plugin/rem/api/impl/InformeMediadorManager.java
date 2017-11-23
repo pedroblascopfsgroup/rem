@@ -1279,6 +1279,25 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					errorsList.putAll(errorsListPlanta);
 				}
 			}
+			
+			//validamos que no existan plantas repetidas
+			if (informe.getPlantas() != null) {
+				for (PlantaDto planta : informe.getPlantas()) {
+					if(planta.getNumero() != null && planta.getCodTipoEstancia() != null){
+						int contOcurrencias = 0;
+						for (PlantaDto plantaAux : informe.getPlantas()) {
+							if(plantaAux.getNumero() != null && plantaAux.getCodTipoEstancia() != null 
+									&& plantaAux.getNumero().equals(planta.getNumero()) 
+									&& plantaAux.getCodTipoEstancia().equals(planta.getCodTipoEstancia())){
+								contOcurrencias++;
+							}
+						}
+						if(contOcurrencias > 1){
+							errorsList.put("plantas", RestApi.REST_UNIQUE_VIOLATED);
+						}
+					}
+				}
+			}
 
 			if (informe.getIdProveedorRem() != null) {
 				ActivoProveedor mediador = genericDao.get(ActivoProveedor.class,

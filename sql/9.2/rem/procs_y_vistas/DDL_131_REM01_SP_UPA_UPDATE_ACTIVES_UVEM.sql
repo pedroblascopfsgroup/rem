@@ -466,10 +466,7 @@ BEGIN
               ON ACT.ACT_NUM_ACTIVO_UVEM = TEMP.ACT_NUMERO_UVEM
             WHERE
               TEMP.REM = 1
-               AND
-             (ACT.ACT_NUM_INMOVILIZADO_BNK IS NULL
-              AND
-              TEMP.NUINMU IS NOT NULL)
+               AND ACT.ACT_NUM_INMOVILIZADO_BNK <> TEMP.NUINMU
                and act.borrado = 0
           ) TMP
           ON (TMP.ACT_ID = ACT.ACT_ID)

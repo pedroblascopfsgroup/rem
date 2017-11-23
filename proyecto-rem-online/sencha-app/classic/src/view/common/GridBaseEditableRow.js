@@ -230,7 +230,6 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
     onDeleteClick: function(btn){
     	
     	var me = this;
-
         Ext.Msg.show({
 			   title: HreRem.i18n('title.confirmar.eliminacion'),
 			   msg: HreRem.i18n('msg.desea.eliminar'),

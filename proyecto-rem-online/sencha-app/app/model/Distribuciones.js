@@ -1,5 +1,5 @@
 /**
- *  Modelo para el grid de distribuciones de Información comercial
+ *  Modelo para el grid de distribuciones de Informaciï¿½n comercial
  */
 Ext.define('HreRem.model.Distribuciones', {
     extend: 'HreRem.model.Base',

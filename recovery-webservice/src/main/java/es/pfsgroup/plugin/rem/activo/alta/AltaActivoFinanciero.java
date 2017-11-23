@@ -315,6 +315,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 			ActivoVivienda vivienda = new ActivoVivienda();
 			vivienda.setActivo(activo);
 			vivienda.setTipoActivo(activo.getTipoActivo());
+			vivienda.setNumPlantasInter(dtoAAF.getNumPlantasVivienda());
 			if (!Checks.esNulo(dtoAAF.getNifMediador())) {
 				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAAF.getNifMediador());
 				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_MEDIADOR);
@@ -450,7 +451,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 			garajeAnejo.setTipoHabitaculo((DDTipoHabitaculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoHabitaculo.class, DDTipoHabitaculo.TIPO_HABITACULO_GARAJE));
 			genericDao.save(ActivoDistribucion.class, garajeAnejo);
 		}
-
+		
 		// Trastero Anejo.
 		if (!Checks.esNulo(dtoAAF.getTrasteroAnejo()) && dtoAAF.getTrasteroAnejo()) {
 			ActivoDistribucion trasteroAnejo = new ActivoDistribucion();

@@ -103,6 +103,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
@@ -471,6 +472,25 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getNumeroPlantasActivo(Long idActivo, ModelMap model) {
+
+		model.put("data", adapter.getNumeroPlantasActivo(idActivo));
+		return createModelAndViewJson(model);
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getTipoHabitaculoByNumPlanta(Long idActivo, Integer numPlanta, ModelMap model) {
+
+		model.put("data", adapter.getTipoHabitaculoByNumPlanta(idActivo, numPlanta));
+		return createModelAndViewJson(model);
+
+	}
+	
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -714,6 +734,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	}
 
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createDistribucion(DtoDistribucion distribucionDto, @RequestParam Long idEntidad,
@@ -721,6 +742,32 @@ public class ActivoController extends ParadiseJsonController {
 
 		try {
 			boolean success = adapter.createDistribucion(distribucionDto, idEntidad);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createDistribucionFromRem(String numPlanta, String cantidad, String superficie, Long idActivo, String tipoHabitaculoCodigo, ModelMap model) {
+
+		DtoDistribucion distribucionDto = new DtoDistribucion();
+		DDTipoHabitaculo habitaculo = (DDTipoHabitaculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoHabitaculo.class, tipoHabitaculoCodigo);
+		distribucionDto.setNumPlanta(numPlanta);
+		distribucionDto.setCantidad(cantidad);
+		distribucionDto.setSuperficie(superficie);
+		distribucionDto.setTipoHabitaculoCodigo(tipoHabitaculoCodigo);
+		distribucionDto.setTipoHabitaculoDescripcion(habitaculo.getDescripcion());
+		
+		try {
+			boolean success = adapter.createDistribucion(distribucionDto, idActivo);
 			model.put("success", success);
 
 		} catch (Exception e) {

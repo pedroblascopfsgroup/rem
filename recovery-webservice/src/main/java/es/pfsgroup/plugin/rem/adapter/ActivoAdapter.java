@@ -113,6 +113,7 @@ import es.pfsgroup.plugin.rem.model.DtoListadoTareas;
 import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoMovimientoLlave;
+import es.pfsgroup.plugin.rem.model.DtoNumPlantas;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
@@ -142,6 +143,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -155,11 +157,11 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.rest.dto.OperationResultResponse;
@@ -934,22 +936,77 @@ public class ActivoAdapter {
 		return dtoCarga;
 
 	}
+	
+	public List<DtoNumPlantas> getNumeroPlantasActivo(Long idActivo) {
+		List<DtoNumPlantas> listaPlantas = new ArrayList<DtoNumPlantas>();
+		Activo activo = activoApi.get(Long.valueOf(idActivo));
+		if (activo.getInfoComercial().getTipoActivo().getCodigo().equals(DDTipoActivo.COD_VIVIENDA)) {
+			ActivoVivienda vivienda = (ActivoVivienda) activo.getInfoComercial();
+			List<ActivoDistribucion> distribuciones = vivienda.getDistribucion();
+
+				DtoNumPlantas dtoSotano = new DtoNumPlantas();
+				dtoSotano.setNumPlanta(-1L);
+				dtoSotano.setDescripcionPlanta("Planta - 1");
+				dtoSotano.setIdActivo(idActivo);
+				listaPlantas.add(dtoSotano);
+
+			for (int i = 0; i < vivienda.getNumPlantasInter(); i++) {
+				DtoNumPlantas dto = new DtoNumPlantas();
+				dto.setNumPlanta(Long.valueOf(i));
+				dto.setDescripcionPlanta("Planta " + i );
+				dto.setIdActivo(idActivo);
+				listaPlantas.add(dto);
+			}
+
+		}
+		return listaPlantas;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<DtoDistribucion> getTipoHabitaculoByNumPlanta(Long idActivo, Integer numPlanta) {
+		List<String> listaDistribucionesExistentes = new ArrayList<String>();
+		List<DtoDistribucion> listaNoExistentes = new ArrayList<DtoDistribucion>();
+		Activo activo = activoApi.get(Long.valueOf(idActivo));
+		if (activo.getInfoComercial().getTipoActivo().getCodigo().equals(DDTipoActivo.COD_VIVIENDA)) {
+			Filter filter = genericDao.createFilter(FilterType.EQUALS, "id", activo.getInfoComercial().getId());
+			ActivoVivienda vivienda = genericDao.get(ActivoVivienda.class, filter);
+			for (int q = 0; q < vivienda.getDistribucion().size(); q++) {
+				ActivoDistribucion activoDistribucion = vivienda.getDistribucion().get(q);
+				Integer numPlantaDistro = activoDistribucion.getNumPlanta();
+
+				if ((numPlantaDistro + 1) == (numPlanta + 1)) {
+					listaDistribucionesExistentes.add(activoDistribucion.getTipoHabitaculo().getCodigo());
+				}
+			}
+
+			List<DDTipoHabitaculo> habitaculos = (List<DDTipoHabitaculo>) utilDiccionarioApi.dameValoresDiccionario(DDTipoHabitaculo.class);
+			for (DDTipoHabitaculo habitaculo : habitaculos) {
+				if (!listaDistribucionesExistentes.contains(habitaculo.getCodigo())) {
+					DtoDistribucion dto = new DtoDistribucion();
+					DDTipoHabitaculo tipoHabitaculo = habitaculo;
+					dto.setTipoHabitaculoCodigo(habitaculo.getCodigo());
+					dto.setTipoHabitaculoDescripcion(tipoHabitaculo.getDescripcion());
+					listaNoExistentes.add(dto);
+				}
+			}
+		}
+		return listaNoExistentes;
+	}
 
 	public List<DtoDistribucion> getListDistribucionesById(Long id) {
 		Activo activo = activoApi.get(id);
 		List<DtoDistribucion> listaDtoDistribucion = new ArrayList<DtoDistribucion>();
 
-		// if (activo.getInfoComercial() instanceof ActivoVivienda) {
 		ActivoInfoComercial infoComercial = (ActivoInfoComercial) activo.getInfoComercial();
 
-		if (infoComercial.getDistribucion() != null) {
+		if (!Checks.esNulo(infoComercial.getDistribucion())) {
 			for (int i = 0; i < infoComercial.getDistribucion().size(); i++) {
 				DtoDistribucion distribucionDto = new DtoDistribucion();
 				try {
 					ActivoDistribucion distribucion = infoComercial.getDistribucion().get(i);
 					BeanUtils.copyProperties(distribucionDto, distribucion);
 					BeanUtils.copyProperty(distribucionDto, "idDistribucion", distribucion.getId());
-					if (distribucion.getTipoHabitaculo() != null) {
+					if (!Checks.esNulo(distribucion.getTipoHabitaculo())) {
 						distribucionDto.setTipoHabitaculoCodigo(distribucion.getTipoHabitaculo().getCodigo());
 						distribucionDto.setTipoHabitaculoDescripcion(distribucion.getTipoHabitaculo().getDescripcion());
 					}
@@ -961,7 +1018,6 @@ public class ActivoAdapter {
 				listaDtoDistribucion.add(distribucionDto);
 			}
 		}
-		// }
 
 		return listaDtoDistribucion;
 	}

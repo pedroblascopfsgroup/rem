@@ -169,7 +169,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 	    
    	onSaveFormularioCompleto: function(btn, form) {
-
 		var me = this;
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones.
@@ -219,6 +218,64 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
 			}
 			me.saveActivo(tabData, successFn);
+			
+		} else {
+			me.getView().unmask();
+			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
+			
+		}
+		
+	},
+	
+   	onSaveFormularioCompletoDistribuciones: function(btn, form) {
+		var me = this;
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones.
+		if(form.isFormValid() || form.disableValidation) {
+	
+			Ext.Array.each(form.query('field[isReadOnlyEdit]'),
+				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
+			);
+
+			// Obtener jsondata para guardar activo
+			var numPlanta =  me.lookupReference('comboNumeroPlantas').getValue();
+			var tipoHabitaculoCodigo =  me.lookupReference('comboTipoHabitaculo').getValue();
+			var superficie =  me.lookupReference('superficie').getValue();
+			var cantidad =  me.lookupReference('cantidad').getValue();
+			var idActivo = me.getViewModel().get("activo.id");
+
+			var jsonData = {idEntidad: idActivo, numPlanta : numPlanta, tipoHabitaculoCodigo : tipoHabitaculoCodigo, superficie : superficie, cantidad : cantidad};
+			
+			var activosPropagables = me.getViewModel().get("activo.activosPropagables") || [];
+			var tabPropagableData = null;
+
+			if(activosPropagables.length > 0) {
+				
+				tabPropagableData = me.createFormPropagableData(form, tabData);	
+				if (!Ext.isEmpty(tabPropagableData)) {
+					// sacamos el activo actual del listado
+					var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
+					
+					// Abrimos la ventana de selección de activos
+					var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {form: form, activoActual: activo, activos: activosPropagables, tabData: tabData, propagableData: tabPropagableData}).show();
+   					me.getView().add(ventanaOpcionesPropagacionCambios);
+   					me.getView().unmask();
+   					return false;
+				}
+			}
+				
+			var successFn = function(response, eOpts) {
+				if(Ext.decode(response.responseText).success == "false") {
+					me.fireEvent("errorToast", HreRem.i18n("msg.error.anyadir.distribucion.vivienda"));
+				}
+				else {
+					storeTemp.load();
+					me.refrescarActivo(true);
+					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				}
+								
+			}
+			me.saveDistribucion(jsonData, successFn);
 			
 		} else {
 			me.getView().unmask();
@@ -2897,6 +2954,30 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 	
+	saveDistribucion: function(jsonData, successFn) {
+		
+		var me = this,
+		url =  $AC.getRemoteUrl('activo/createDistribucionFromRem');
+		
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		
+		successFn = successFn || Ext.emptyFn
+			
+		if(Ext.isEmpty(jsonData)) {
+			me.fireEvent("log", "Obligatorio jsonData para guardar el activo");
+		} else {
+			Ext.Ajax.request({
+				method : 'POST',
+				url: url,
+				params: {numPlanta: jsonData.numPlanta, cantidad: jsonData.cantidad, superficie: jsonData.superficie, idActivo: jsonData.idEntidad, tipoHabitaculoCodigo: jsonData.tipoHabitaculoCodigo},
+				success: successFn,
+			 	failure: function(response, opts) {
+			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			    }			    
+			});
+		}
+	},
+
 	onClickGuardarPropagarCambios: function(btn) {
     	var me = this,
     	window = btn.up("window"),
@@ -3098,9 +3179,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     createModelToSave: function(record, type) {
     	
     	var me = this;
-    	
     	var model = null;
-
     	if (Ext.isDefined(record.getProxy().getApi().update)) { 
     		model = {};
     		model.name= record.getProxy().getExtraParams().tab;
@@ -3208,6 +3287,23 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		window.gridOfertas.getStore().load();
     	window.close();
 
-	}
-	    	
+	},
+    
+	onClickBotonCancelarDistribucion: function(btn){
+    	var me = this,
+		window = btn.up('window');
+    	window.gridDistribuciones.getStore().load();
+    	window.close();	
+    },
+	
+	onClickBotonGuardarDistribucion: function(btn){
+    	var me = this,
+		window = btn.up('window');
+    	var form = window.down('formBase');
+    	me.onSaveFormularioCompletoDistribuciones(null, form);
+		window.gridDistribuciones.up('informecomercialactivo').funcionRecargar()
+    	window.close();
+    	
+    },
+    
 });

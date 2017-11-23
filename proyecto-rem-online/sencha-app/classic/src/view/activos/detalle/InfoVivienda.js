@@ -181,7 +181,7 @@ Ext.define('HreRem.view.activos.detalle.InfoVivienda', {
 												xtype: 'numberfieldbase',
 												fieldLabel: HreRem.i18n('fieldlabel.numero.plantas.interiores'),
 												bind:		'{infoComercial.numPlantasInter}',
-												readOnly: true
+												readOnly: false
 											},
 											{
 								        	    xtype:'fieldset',

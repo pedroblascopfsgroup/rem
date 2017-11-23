@@ -1257,8 +1257,33 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'tipoObservacionActivo'}
 			},
 			autoLoad: true
+		},
+		
+		storeNumeroPlantas: {
+			 model: 'HreRem.model.Distribuciones',
+			 proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'activo/getNumeroPlantasActivo',
+					extraParams: {
+						idActivo: '{activo.id}'
+							}
+
+				}
+		},
+		storeTipoHabitaculo: {
+			 model: 'HreRem.model.Distribuciones',
+			 proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'activo/getTipoHabitaculoByNumPlanta',
+					extraParams: {
+						idActivo: '{activo.id}',
+						numPlanta: '{comboNumeroPlantas.selection.numPlanta}'
+							}
+
+				}
 		}
-//		,
+		
+
 //		
 //		filtroComboPrescriptor: {
 //			//pageSize: $AC.getDefaultPageSize(),

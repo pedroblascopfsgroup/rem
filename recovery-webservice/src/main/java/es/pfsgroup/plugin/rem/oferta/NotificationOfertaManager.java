@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
@@ -33,7 +31,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 @Service
 public class NotificationOfertaManager extends AbstractNotificatorService {
 
-	private final Log logger = LogFactory.getLog(this.getClass());
 	private static final String USUARIO_FICTICIO_OFERTA_CAJAMAR = "ficticioOfertaCajamar";
 
 	@Autowired

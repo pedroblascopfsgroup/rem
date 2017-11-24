@@ -133,7 +133,7 @@ public class PropuestaresolucionController {
 
 		} catch (Exception e) {
 			logger.error("Error al generar el informe.", e);
-			request.getPeticionRest().setErrorDesc(RestApi.REST_MSG_UNEXPECTED_ERROR);
+			request.getPeticionRest().setErrorDesc(e.getMessage());
 			model.put("id", jsonFields.get("id"));
 			model.put("data", listaRespuesta);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);

@@ -106,7 +106,6 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 	
 	
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<Visita> getListaVisitasOrdenada(DtoVisitasFilter dtoVisitasFilter) {
 		HQLBuilder hb = new HQLBuilder(" from Visita v");
@@ -155,5 +154,21 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 		}
 
 		return null;
+	}
+
+	@Override
+	public Visita getVisitaByIdwebcom(Long idWebcom) {
+		Visita resultado = null;
+		HQLBuilder hql = new HQLBuilder("from Visita");
+		if(idWebcom != null){
+			HQLBuilder.addFiltroIgualQueSiNotNull(hql, "idVisitaWebcom",idWebcom);
+		}
+		try{
+			resultado = HibernateQueryUtils.uniqueResult(this, hql);
+		}catch(Exception e){
+			logger.error("Error obteniendo visita por idwebcom");
+		}
+		
+		return resultado;
 	}
 }

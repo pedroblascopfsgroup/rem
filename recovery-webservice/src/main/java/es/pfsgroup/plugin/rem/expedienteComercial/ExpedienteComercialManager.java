@@ -4053,8 +4053,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			
 			if (compradorExpediente.getDocumentoConyuge() != null) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "documento", compradorExpediente.getDocumentoConyuge());
-				Comprador conyuge = genericDao.get(Comprador.class, filtro);
-				if(!Checks.esNulo(conyuge)) {
+				Filter filtro2 = genericDao.createFilter(FilterType.NOTNULL, "idCompradorUrsus");
+				List<Comprador> conyuges = genericDao.getList(Comprador.class, filtro,filtro2);
+				Comprador conyuge = null;
+				if(conyuges != null && conyuges.size()>0){
+					conyuge = conyuges.get(0);
+				}
+				if(!Checks.esNulo(conyuge) && !Checks.esNulo(conyuge.getIdCompradorUrsus())) {
 					titularUVEM.setConyuge(conyuge.getIdCompradorUrsus().toString());
 				}
 			}
@@ -5663,12 +5668,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if(!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getReserva())){
 			Reserva reserva= expedienteComercial.getReserva();
 			reserva.setIndicadorDevolucionReserva(1);
-			if(dto.getPenitenciales().equals("3")){	
+			if(dto.getPenitenciales() != null && dto.getPenitenciales().equals("3")){	
 				DDDevolucionReserva estadoDevolucionReserva = (DDDevolucionReserva) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDDevolucionReserva.class, DDDevolucionReserva.CODIGO_SI_SIMPLES);
 				reserva.setDevolucionReserva(estadoDevolucionReserva);
 			}
-			if(dto.getPenitenciales().equals("4")){
+			if(dto.getPenitenciales() != null && dto.getPenitenciales().equals("4")){
 				DDDevolucionReserva estadoDevolucionReserva = (DDDevolucionReserva) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDDevolucionReserva.class, DDDevolucionReserva.CODIGO_SI_DUPLICADOS);
 						reserva.setDevolucionReserva(estadoDevolucionReserva);

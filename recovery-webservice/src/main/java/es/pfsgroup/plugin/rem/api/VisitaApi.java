@@ -27,7 +27,7 @@ public interface VisitaApi {
      * @param idVisitaWebcom a consultar
      * @return Visita
      */
-    public Visita getVisitaByIdVisitaWebcom(Long idVisitaWebcom) ;
+    public Visita getVisitaByIdVisitaWebcom(Long idVisitaWebcom) throws Exception;
     
     
 	/**

@@ -56,14 +56,15 @@ public class RestSecurityFilter implements Filter {
 		PeticionRest peticion = null;
 		RestRequestWrapper restRequest = null;
 		JSONObject jsonFields = null;
-
+		String nombreServicio = "";
 		try {
 
 			restRequest = new RestRequestWrapper((HttpServletRequest) request);
 			restRequest.setTiempoInicio(System.currentTimeMillis());
 			peticion = restApi.crearPeticionObj(restRequest);
 			RequestDto datajson = (RequestDto) restRequest.getRequestData(RequestDto.class);
-			logger.debug("[REST API] Ejecutando request servicio=".concat(restApi.obtenerNombreServicio(request))
+			nombreServicio = restApi.obtenerNombreServicio(request);
+			logger.debug("[REST API] Ejecutando request servicio=".concat(nombreServicio)
 					.concat(" id=[").concat(datajson.getId()).concat("]. Datos:"));
 			logger.debug(restRequest.getBody());
 
@@ -131,15 +132,15 @@ public class RestSecurityFilter implements Filter {
 				}
 			}
 		} catch (Exception e) {
-			peticion.setResult("ERROR");
+			peticion.setResult("ERROR SERVICIO ".concat(nombreServicio));
 			peticion.setErrorDesc(e.getMessage());
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			restApi.throwRestException(response, RestApi.REST_MSG_UNEXPECTED_ERROR, jsonFields, restRequest);
 
 		} catch (Throwable t) {
-			peticion.setResult("ERROR");
+			peticion.setResult("ERROR SERVICIO ".concat(nombreServicio));
 			peticion.setErrorDesc(t.getMessage());
-			logger.error(t.getMessage());
+			logger.error(t.getMessage(),t);
 			restApi.throwRestException(response, RestApi.REST_MSG_UNEXPECTED_ERROR, jsonFields, restRequest);
 		} finally {
 			SecurityContextHolder.clearContext();

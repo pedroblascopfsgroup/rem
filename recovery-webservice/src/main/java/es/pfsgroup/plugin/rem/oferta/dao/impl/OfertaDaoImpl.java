@@ -369,4 +369,19 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 			genericDao.deleteById(TitularesAdicionalesOferta.class, titularAdicional.getId());
 		}
 	}
+
+	@Override
+	public Oferta getOfertaByIdwebcom(Long idWebcom) {
+		Oferta resultado = null;
+		HQLBuilder hql = new HQLBuilder("from Oferta ");
+		if (idWebcom != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hql, "idWebCom", idWebcom);
+			try {
+				resultado = HibernateQueryUtils.uniqueResult(this, hql);
+			} catch (Exception e) {
+				logger.error("error obtienendo oferta por idWebcom",e);
+			}
+		}
+		return resultado;
+	}
 }

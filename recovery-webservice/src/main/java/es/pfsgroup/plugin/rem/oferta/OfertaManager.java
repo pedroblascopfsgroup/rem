@@ -205,30 +205,28 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return oferta;
 	}
 
+	/**
+	 * usa el metdodo ofertaDao.getOfertaByIdwebcom
+	 */
 	@Override
-	public Oferta getOfertaByIdOfertaWebcom(Long idOfertaWebcom) {
+	@Deprecated
+	public Oferta getOfertaByIdOfertaWebcom(Long idOfertaWebcom) throws Exception {
 		Oferta oferta = null;
 		List<Oferta> lista = null;
 		OfertaDto ofertaDto = null;
 
-		try {
+		if (Checks.esNulo(idOfertaWebcom)) {
+			throw new Exception("El parámetro idOfertaWebcom es obligatorio.");
 
-			if (Checks.esNulo(idOfertaWebcom)) {
-				throw new Exception("El parámetro idOfertaWebcom es obligatorio.");
+		} else {
 
-			} else {
+			ofertaDto = new OfertaDto();
+			ofertaDto.setIdOfertaWebcom(idOfertaWebcom);
 
-				ofertaDto = new OfertaDto();
-				ofertaDto.setIdOfertaWebcom(idOfertaWebcom);
-
-				lista = ofertaDao.getListaOfertas(ofertaDto);
-				if (!Checks.esNulo(lista) && !lista.isEmpty()) {
-					oferta = lista.get(0);
-				}
+			lista = ofertaDao.getListaOfertas(ofertaDto);
+			if (!Checks.esNulo(lista) && !lista.isEmpty()) {
+				oferta = lista.get(0);
 			}
-
-		} catch (Exception ex) {
-			logger.error("error en OfertasManager", ex);
 		}
 
 		return oferta;
@@ -1103,7 +1101,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		for (int i = 0; i < listaOfertaDto.size(); i++) {
 
-			Oferta ofr = null;
 			map = new HashMap<String, Object>();
 			ofertaDto = listaOfertaDto.get(i);
 
@@ -1117,9 +1114,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 
 			if (!Checks.esNulo(errorsList) && errorsList.isEmpty()) {
-				ofr = this.getOfertaByIdOfertaWebcom(ofertaDto.getIdOfertaWebcom());
-				map.put("idOfertaWebcom", ofr.getIdWebCom());
-				map.put("idOfertaRem", ofr.getNumOferta());
+				if(oferta == null || oferta.getNumOferta() == null){
+					oferta = ofertaDao.getOfertaByIdwebcom(ofertaDto.getIdOfertaWebcom());
+				}
+				map.put("idOfertaWebcom", ofertaDto.getIdOfertaWebcom());
+				if(oferta != null){
+					map.put("idOfertaRem", oferta.getNumOferta());
+				}else{
+					map.put("idOfertaRem", null);
+				}
+				
 				map.put("success", true);
 			} else {
 				map.put("idOfertaWebcom", ofertaDto.getIdOfertaWebcom());

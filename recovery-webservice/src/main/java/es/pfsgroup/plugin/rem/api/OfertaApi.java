@@ -43,7 +43,7 @@ public interface OfertaApi {
 	 *            a consultar
 	 * @return Oferta
 	 */
-	public Oferta getOfertaByIdOfertaWebcom(Long idOfertaWebcom);
+	public Oferta getOfertaByIdOfertaWebcom(Long idOfertaWebcom) throws Exception;
 
 	/**
 	 * Devuelve una Oferta por numOfertaRem

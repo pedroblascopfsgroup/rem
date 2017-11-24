@@ -397,8 +397,8 @@ public class Activo implements Serializable, Auditable {
     @Column(name = "ACT_COD_PROMOCION_PRINEX")
     private String codigoPromocionPrinex;
     
-    @Column(name = "ACT_VENTA_DIRECTA_BANKIA")
-    private Boolean ventaDirectaBankia;
+    @Column(name = "ACT_VENTA_DIRECTA_BANKIA", columnDefinition = "tinyint default false")
+    private boolean ventaDirectaBankia;
 
 	@Version   
 	private Long version;

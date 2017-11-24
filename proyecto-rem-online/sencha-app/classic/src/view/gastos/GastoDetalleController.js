@@ -539,9 +539,17 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var form= window.down('formBase');
     	var detalle= btn.up().up().down('anyadirnuevogastoactivodetalle');
     	var idGasto = detalle.up().idGasto;
-    	window.mask(HreRem.i18n("msg.mask.loading"));;
+    	var url =  $AC.getRemoteUrl('gastosproveedor/fechaDevengoPosteriorFechaTraspaso');
+    	window.mask(HreRem.i18n("msg.mask.loading"));
+
     	if(!Ext.isEmpty(detalle.getBindRecord())){
-	    	
+    		
+    		var  viewModelDetalle = btn.up("[xtype=gastodetalle]").lookupViewModel();
+    		if(!Ext.isEmpty(viewModelDetalle)){
+    			//var gasto_fechaDevengo = viewModelDetalle.data.gasto.get('fechaEmision');
+    			var gasto_codigoImpuestoIndirecto = viewModelDetalle.data.gasto.get('codigoImpuestoIndirecto');
+    		}
+    		
 	    	var numeroActivo= detalle.getBindRecord().numActivo;
 	    	var numeroAgrupacion= detalle.getBindRecord().numAgrupacion;
 	    	
@@ -550,63 +558,127 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	    	}
 	    	else if(!Ext.isEmpty(numeroActivo)){
 	    		if(Ext.isDefined(detalle.getModelInstance().getProxy().getApi().create)){
-	    			detalle.getModelInstance().getProxy().extraParams.idGasto = idGasto;
-	    			detalle.getModelInstance().getProxy().extraParams.numActivo = numeroActivo;
-	    			detalle.getModelInstance().getProxy().extraParams.numAgrupacion = null;
-	    			detalle.getModelInstance().save({
-	    				success: function(a, operation, c){
-	    					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-	    				},
-	    				failure: function(a, operation){
-	    					var data = {};
-			                try {
-			                	data = Ext.decode(operation._response.responseText);
-			                }
-			                catch (e){ };
-			                if (!Ext.isEmpty(data.msg)) {
-			                	me.fireEvent("errorToast", data.msg);
-			                } else {
-			                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-			                }
-	    				},
-	    				callback: function(records, operation, success) {
-	    					form.reset();
-	    					window.unmask();
-	    					window.parent.funcionRecargar();
-	    					window.close();
-	    				}
-	    				
-	    			})
+	    			
+	    			Ext.Ajax.request({		    			
+	    		 		url: url,
+	    		   		params: {
+	    		   			idGasto: idGasto, 
+	    		   			idActivo: numeroActivo,
+	    		   			idAgrupacion: -1
+    		   			},	    		
+	    		    	success: function(response, opts) {
+	    		    		
+	    		    		var data = {};
+	    		            try {
+	    		            	data = Ext.decode(response.responseText);
+	    		            }
+	    		            catch (e){ };
+	    		    		
+	    		    		if (CONST.TIPO_IMPUESTO['IVA'] == gasto_codigoImpuestoIndirecto) {
+	    		    			
+	    		    			if(!Ext.isEmpty(data) && data.fechaDevengoSuperior == "true") {
+	    		    				
+	    		    				Ext.Msg.show({
+		    		         			   title: HreRem.i18n('title.permitir.asociacion.gastoactivo'),
+		    		         			   msg: HreRem.i18n('msg.asociar.gastoactivo'),
+		    		         			   buttons: Ext.MessageBox.YESNO,
+		    		         			   fn: function(buttonId) {
+		    		         			        if (buttonId == 'yes') {
+		    		         			        	me.asociarGastoConActivos(idGasto, numeroActivo, null, detalle, form, window);
+		    		         			        }
+		    		         			        else {
+		    		         			        	form.reset();
+		    	     		    					window.unmask();
+		    	     		    					window.parent.funcionRecargar();
+		    	     		    					window.close();
+		    		         			        }
+		    		         			   }
+		    		     			});
+		    		            }
+	    		    			else {
+	    		    				me.asociarGastoConActivos(idGasto, numeroActivo, null, detalle, form, window);
+	    		    				
+	    		    			}
+	    	    				
+	    	    			}
+	    	    			else {
+	    	    				
+	    	    				if(!Ext.isEmpty(data) && !(data.fechaDevengoSuperior == "true")) {
+	    	    					
+	    	    					me.asociarGastoConActivos(idGasto, numeroActivo, null, detalle, form, window);
+	    	    					
+	    	    				}
+	    	    				else {
+	    	    					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	    	    					form.reset();
+    		    					window.unmask();
+    		    					window.parent.funcionRecargar();
+    		    					window.close();
+	    	    				}
+	    	    				
+	    	    				
+	    	    			}
+	    		    		
+	    		    	},
+    		   			failure: function(response) {
+							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    		    }
+	    			});
 	    		}
 	    	}
 	    	else if(!Ext.isEmpty(numeroAgrupacion)){
 	    		if(Ext.isDefined(detalle.getModelInstance().getProxy().getApi().create)){
-	    			detalle.getModelInstance().getProxy().extraParams.idGasto = idGasto;
-	    			detalle.getModelInstance().getProxy().extraParams.numActivo = null;
-	    			detalle.getModelInstance().getProxy().extraParams.numAgrupacion = numeroAgrupacion;
-	    			detalle.getModelInstance().save({
-	    				success: function(a, operation, c){
-	    					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-	    				},
-	    				failure: function(a, operation){
-	    					var data = {};
-			                try {
-			                	data = Ext.decode(operation._response.responseText);
-			                }
-			                catch (e){ };
-			                if (!Ext.isEmpty(data.msg)) {
-			                	me.fireEvent("errorToast", data.msg);
-			                } else {
-			                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-			                }
-	    				},
-	    				callback: function(records, operation, success) {
-	    					form.reset();
-	    					window.parent.funcionRecargar();
-	    					window.close();
-	    				}
+	    			
+	    			Ext.Ajax.request({
 	    				
-	    			})
+	    		 		url: url,
+	    		   		params: {
+	    		   			idGasto: idGasto, 
+	    		   			idActivo: -1,
+	    		   			idAgrupacion: numeroAgrupacion
+    		   			},	    		
+	    		    	success: function(response, opts) {
+	    		    		
+	    		    		var data = {};
+	    		            try {
+	    		            	data = Ext.decode(response.responseText);
+	    		            }
+	    		            catch (e){ };
+	    		    			
+    		    			if(!Ext.isEmpty(data) && data.fechaDevengoSuperior == "true") {
+    		    				
+    		    				Ext.Msg.show({
+	    		         			   title: HreRem.i18n('title.permitir.asociacion.gastoactivo'),
+	    		         			   msg: HreRem.i18n('msg.asociar.gastoagrupacion'),
+	    		         			   buttons: Ext.MessageBox.YESNO,
+	    		         			   fn: function(buttonId) {
+	    		         				   
+	    		         			        if (buttonId == 'yes') {
+	    		         			        	
+	    		         			        	me.asociarGastoConActivos(idGasto, null, numeroAgrupacion, detalle, form, window);
+	    		         			        	
+	    		         			        }
+	    		         			        else {
+	    		         			        	form.reset();
+		         		    					window.parent.funcionRecargar();
+		         		    					window.close(); 
+	    		         			        }
+	    		         			        
+	    		         			        
+	    		         			   }
+	    		     			});
+    		    				
+	    		            }
+    		    			else {
+    		    				
+    		    				me.asociarGastoConActivos(idGasto, null, numeroAgrupacion, detalle, form, window);
+    		    				
+    		    			}
+	    		    	},
+    		   			failure: function(response) {
+							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    		    }
+	    			});
 	    		}
 	    	}
     	}
@@ -615,6 +687,41 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	}
     	
     	
+    	
+    },
+    
+    asociarGastoConActivos: function(idGasto, numeroActivo, numeroAgrupacion, detalle, form, window) {
+    	
+    	var me = this;
+    	
+    	detalle.getModelInstance().getProxy().extraParams.idGasto = idGasto;
+		detalle.getModelInstance().getProxy().extraParams.numActivo = numeroActivo;
+		detalle.getModelInstance().getProxy().extraParams.numAgrupacion = numeroAgrupacion;
+		detalle.getModelInstance().save({
+			
+			success: function(a, operation, c){
+				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			},
+			failure: function(a, operation){
+				var data = {};
+                try {
+                	data = Ext.decode(operation._response.responseText);
+                }
+                catch (e){ };
+                if (!Ext.isEmpty(data.msg)) {
+                	me.fireEvent("errorToast", data.msg);
+                } else {
+                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                }
+			},
+			callback: function(records, operation, success) {
+				form.reset();
+				if (numeroActivo != null) window.unmask();
+				window.parent.funcionRecargar();
+				window.close();
+			}
+			
+		});
     	
     },
     
@@ -1049,7 +1156,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	me.getView().up("tabpanel").fireEvent("cerrarTodas", me.getView().up("tabpanel"));    	
 
     },
-   
+       
 	buscarGasto: function(field, e){
 		var me= this;
 		var url =  $AC.getRemoteUrl('gastosproveedor/searchGastoNumHaya');

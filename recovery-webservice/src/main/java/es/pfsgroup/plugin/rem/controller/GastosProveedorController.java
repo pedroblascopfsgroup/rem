@@ -31,6 +31,8 @@ import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.GestionGastosExcelReport;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
@@ -835,6 +837,31 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("exception", e.getMessage());
 		}
 		
+		return createModelAndViewJson(model);
+	}
+	
+	/**
+	 * Este método recibe el activo o la agrupación de activos que se quiere asociar con el gasto
+	 * y valida que no haya ningún activo que tenga una fecha de traspaso posterior a la fecha de 
+	 * devengo del gasto.
+	 * 
+	 * @param gasto: Gasto que se asociará con los activos.
+	 * @param activo: El activo que se va a asociar con el gasto anterior.
+	 * @param ActivoAgrupacion: La agrupación de activos que se quiere asociar con el gasto
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView fechaDevengoPosteriorFechaTraspaso(Long idGasto, Long idActivo, Long idAgrupacion, ModelMap model) {
+
+		try {
+			boolean success = gastoProveedorApi.fechaDevengoPosteriorFechaTraspaso(idGasto, idActivo, idAgrupacion);
+			model.put("fechaDevengoSuperior", success);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("fechaDevengoSuperior", false);
+			model.put("error", e.getMessage());
+		}
+
 		return createModelAndViewJson(model);
 	}
 }

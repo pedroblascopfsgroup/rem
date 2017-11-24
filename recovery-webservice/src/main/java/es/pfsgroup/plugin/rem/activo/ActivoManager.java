@@ -3585,7 +3585,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	public DtoComercialActivo getComercialActivo(DtoComercialActivo dto) {
-
+		Date fechaVenta = null;
 		if (Checks.esNulo(dto.getId())) {
 			return dto;
 		}
@@ -3610,7 +3610,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				// Obtener datos de venta en REM.
 				if (!Checks.esNulo(exp)) {
 					beanUtilNotNull.copyProperty(dto, "fechaVenta", exp.getFechaVenta());
-
+					fechaVenta = exp.getFechaVenta();
 					Double importe = null;
 					
 					if(!Checks.esNulo(activo.getSituacionComercial()) &&
@@ -3646,8 +3646,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (!Checks.esNulo(activo.getImporteVentaExterna())) {
 					beanUtilNotNull.copyProperty(dto, "importeVenta", activo.getImporteVentaExterna());
 				}
-				beanUtilNotNull.copyProperty(dto, "ventaExterna", !Checks.esNulo(activo.getFechaVentaExterna()));
 				
+			}
+			if(!Checks.esNulo(fechaVenta)){
+				beanUtilNotNull.copyProperty(dto, "ventaExterna", true);
+			}else{
+				beanUtilNotNull.copyProperty(dto, "ventaExterna", !Checks.esNulo(activo.getFechaVentaExterna()));
 			}
 
 			if (!Checks.esNulo(activo.getObservacionesVentaExterna())) {

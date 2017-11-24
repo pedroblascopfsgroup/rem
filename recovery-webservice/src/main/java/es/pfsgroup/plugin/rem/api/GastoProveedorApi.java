@@ -2,11 +2,16 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
+import org.springframework.ui.ModelMap;
+import org.springframework.web.servlet.ModelAndView;
+
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -258,6 +263,15 @@ public interface GastoProveedorApi {
 		 * @return DtoPage 
 		 */
 		public DtoPage getListGastosProvision(DtoGastosFilter dtoGastosFilter);
+		
+		/**
+		 * Método que valida la fecha devengo de un gasto
+		 * 
+		 * @param gasto: Gasto que se asociará con los activos.
+		 * @param activo: El activo que se va a asociar con el gasto anterior.
+		 * @param ActivoAgrupacion: La agrupación de activos que se quiere asociar con el gasto
+		 */
+		public boolean fechaDevengoPosteriorFechaTraspaso(Long idGasto, Long idActivo, Long idAgrupacion);
 		
 }
 

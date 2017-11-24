@@ -41,7 +41,10 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
@@ -69,6 +72,7 @@ import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
 import es.pfsgroup.plugin.rem.model.GastoImpugnacion;
@@ -76,6 +80,7 @@ import es.pfsgroup.plugin.rem.model.GastoInfoContabilidad;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoProveedorActivo;
 import es.pfsgroup.plugin.rem.model.GastoProveedorTrabajo;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
@@ -91,6 +96,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionPropietario;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAutorizacionHaya;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencionPago;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoImpugnacionGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
@@ -143,6 +149,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
+	
+	@Autowired
+	private ActivoApi activoApi;
+	
+	@Autowired
+	private ActivoAgrupacionApi activoAgrupacionApi;
 
 	@Autowired
 	private GestorActivoDao gestorActivoDao;
@@ -310,6 +322,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 			if (!Checks.esNulo(gasto.getGestoria())) {
 				dto.setNombreGestoria(gasto.getGestoria().getNombre());
+			}
+			
+			if (!Checks.esNulo(gasto.getGastoDetalleEconomico().getImpuestoIndirectoTipo())) {
+				dto.setCodigoImpuestoIndirecto(gasto.getGastoDetalleEconomico().getImpuestoIndirectoTipo().getCodigo());
 			}
 
 		}
@@ -993,6 +1009,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 							}
 						}
 					}
+					
+					
 				}
 			}
 		} else {
@@ -1011,6 +1029,97 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 
 		return true;
+	}
+	
+	/**
+	 * Este método recibe el activo o la agrupación de activos que se quiere asociar con el gasto
+	 * y valida que no haya ningún activo de la cartera de BANKIA y de las subcarteras de
+	 * Solvia, Sareb y SAREB Pre-IBERO que tenga una fecha de traspaso posterior a la fecha de 
+	 * devengo del gasto.
+	 * 
+	 * @param idGasto: ID del gasto que se asociará con los activos.
+	 * @param activo: El activo que se va a asociar con el gasto anterior.
+	 * @param ActivoAgrupacion: La agrupación de activos que se quiere asociar con el gasto
+	 */
+	public boolean fechaDevengoPosteriorFechaTraspaso(Long idGasto, Long idActivo, Long idAgrupacion) {
+		
+		boolean fechaDevengoSuperior = false;
+		
+		GastoProveedor gasto = findOne(idGasto);
+		Date gasto_fechaDevengo = gasto.getFechaEmision();
+		
+		if (idActivo != -1) {
+			
+			Activo activo = activoApi.getByNumActivo(idActivo);
+			String cartera_activo = activo.getSubcartera().getCarteraCodigo();
+			String subcartera_activo = activo.getSubcartera().getCodigo();
+			
+			if (	DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera_activo) &&
+					(DDSubcartera.CODIGO_BANKIA_SOLVIA.equals(subcartera_activo) ||
+					DDSubcartera.CODIGO_BANKIA_SAREB.equals(subcartera_activo) ||
+					DDSubcartera.CODIGO_BANKIA_SAREB_PRE_IBERO.equals(subcartera_activo))) {
+				
+				Date activo_fechaTraspaso = activo.getFechaVentaExterna();
+				
+				if(gasto_fechaDevengo.before(activo_fechaTraspaso)){
+					fechaDevengoSuperior = true;
+	            }
+				
+			}
+			
+		}
+		else {
+			
+			ActivoAgrupacion agrupacion = activoAgrupacionApi.get(activoAgrupacionApi.getAgrupacionIdByNumAgrupRem(idAgrupacion));
+			List <ActivoAgrupacionActivo> activos = agrupacion.getActivos();
+			
+			String cartera_activo = activos.get(0).getActivo().getSubcartera().getCarteraCodigo();
+			String subcartera_activo = activos.get(0).getActivo().getSubcartera().getCodigo();
+			
+			if (	DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera_activo) &&
+					(DDSubcartera.CODIGO_BANKIA_SOLVIA.equals(subcartera_activo) ||
+					DDSubcartera.CODIGO_BANKIA_SAREB.equals(subcartera_activo) ||
+					DDSubcartera.CODIGO_BANKIA_SAREB_PRE_IBERO.equals(subcartera_activo))) {
+				
+				Date activo_fechaTraspaso = null;
+				if(Checks.esNulo(activos.get(0).getActivo().getFechaVentaExterna())){
+					// Obtener oferta aceptada. Si tiene, establecer expediente
+					// comercial vivo a true.
+					Oferta oferta = activoApi.tieneOfertaAceptada(activos.get(0).getActivo());
+					if (!Checks.esNulo(oferta)) {
+						// Obtener expediente comercial de la oferta aprobado.
+						ExpedienteComercial exp = genericDao.get(ExpedienteComercial.class,
+								genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
+						// Obtener datos de venta en REM.
+						if (!Checks.esNulo(exp)) {
+							activo_fechaTraspaso = exp.getFechaVenta();
+						}
+					}
+				
+				}else{
+						
+					for (int i = 0 ; i < activos.size() ; i++) {
+						
+						Activo act = activos.get(i).getActivo();	
+						activo_fechaTraspaso = act.getFechaVentaExterna();
+						
+						if(gasto_fechaDevengo.before(activo_fechaTraspaso)){
+							break;
+			            }
+						
+					}
+				}
+				if(!Checks.esNulo(activo_fechaTraspaso) && gasto_fechaDevengo.before(activo_fechaTraspaso)){
+					fechaDevengoSuperior = true;
+
+	            }
+				
+			}
+			
+		}
+		
+		return fechaDevengoSuperior;
+		
 	}
 
 	/**

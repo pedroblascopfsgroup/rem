@@ -82,7 +82,7 @@ preparaConfigEntorno
 cp sql/pitertul/templates/set*.sh .
 
 echo "Empaquetando APP..."
-./sql/pitertul/package-scripts-from-tag.sh ${VERSION_ANTERIOR} REEM
+./sql/pitertul/package-scripts-from-tag.sh ${VERSION_ANTERIOR} REM
 moverScriptsAWorkingDir app
 
 #Empaqueta el archivo de deploy

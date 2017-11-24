@@ -40,11 +40,11 @@ DECLARE
   V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 		--	  USER_NAME	   	NOMBRE_USU		APELL1			APELL2			EMAIL      			PASS	grupo	PEF_COD		USU GRUPO	DESPACHO_EXTERNO	
 		
-	  T_TIPO_DATA('jcasabosca', 'Judit', 'Casabosca', 'Casals', 'jcasabosca@externos.haya.es', '', '0','HAYAGESTCOM', '', ''),
-	  T_TIPO_DATA('X8488826D', 'Krasimira', 'Terzieva', '', 'kterzieva@gesvalt.es', '', '0','HAYAPROV', '', ''),
-	  T_TIPO_DATA('05202942C', 'Jesús', 'Fernández', 'Diaz', 'jfernandez@gesvaltservices.es', '', '0', 'HAYAPROV', '', ''),
-	  T_TIPO_DATA('43751940Y', 'Inmaculada', 'Cano', 'Sánchez', 'bankia@gesvalt.es', '', '0', 'HAYAPROV', '', ''),
-	  T_TIPO_DATA('80063260F', 'Belen', 'Salguero', 'Monago', 'bankia@gesvalt.es', '', '0', 'HAYAPROV', '', '')
+	  T_TIPO_DATA('jcasabosca', 'Judit', 'Casabosca', 'Casals', 'jcasabosca@externos.haya.es', '3Tm&]M', '0','HAYAGESTCOM', '', ''),
+	  T_TIPO_DATA('X8488826D', 'Krasimira', 'Terzieva', '', 'kterzieva@gesvalt.es', '6w.Yn.', '0','HAYAPROV', '', ''),
+	  T_TIPO_DATA('05202942C', 'Jesús', 'Fernández', 'Diaz', 'jfernandez@gesvaltservices.es', '}FK9b@', '0', 'HAYAPROV', '', ''),
+	  T_TIPO_DATA('43751940Y', 'Inmaculada', 'Cano', 'Sánchez', 'bankia@gesvalt.es', 'dfF>5e', '0', 'HAYAPROV', '', ''),
+	  T_TIPO_DATA('80063260F', 'Belen', 'Salguero', 'Monago', 'bankia@gesvalt.es', 'wb`D6~', '0', 'HAYAPROV', '', '')
 
   ); 
   V_TMP_TIPO_DATA T_TIPO_DATA;

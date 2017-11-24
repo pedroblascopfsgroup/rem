@@ -272,7 +272,7 @@ public class MSVHojaExcel {
 		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
 		
 		// Comprobación si es formato español o inglés de separar miles y decimales
-		if (!Checks.esNulo(cellValue)
+		if (!Checks.esNulo(cellValue) && cellValue.length() > 3
 				&& cellValue.substring(cellValue.length() - 3, cellValue.length() - 2).equals(".")) {
 			symbols.setDecimalSeparator('.'); // Simbolo de decimales
 
@@ -280,7 +280,7 @@ public class MSVHojaExcel {
 				symbols.setGroupingSeparator(','); // Simbolo de miles
 			}
 
-		} else if (!Checks.esNulo(cellValue)
+		} else if (!Checks.esNulo(cellValue)  && cellValue.length() > 3
 				&& cellValue.substring(cellValue.length() - 3, cellValue.length() - 2).equals(",")) {
 			
 			symbols.setDecimalSeparator(','); // Simbolo de decimales

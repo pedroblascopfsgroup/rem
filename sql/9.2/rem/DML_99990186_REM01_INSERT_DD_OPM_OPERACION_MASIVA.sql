@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Luis Caballero
---## FECHA_CREACION=20171113
+--## FECHA_CREACION=20171124
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-3116
@@ -36,7 +36,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	  T_FUNCION('CMG', 'Carga Masiva Gestores', 'Carga Masiva Gestores','SUBIR_CARGA_GESTORES','s*,s*,nD,nD,nD')
+	  T_FUNCION('CMG', 'Carga Masiva Gestores', 'Carga Masiva Gestores','SUBIR_CARGA_GESTORES','s*,s*,D,D,D')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_PERFILES VARCHAR2(100 CHAR) := '%';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.

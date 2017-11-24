@@ -1988,7 +1988,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		gastoGestion.setMotivoRechazoAutorizacionHaya(motivo);
 
 		gasto.setGastoGestion(gastoGestion);
-		updaterStateApi.updaterStates(gasto, DDEstadoGasto.RECHAZADO_ADMINISTRACION);
+		
+		if(Checks.esNulo(gastoGestion.getEstadoAutorizacionPropietario())){
+			updaterStateApi.updaterStates(gasto, DDEstadoGasto.RECHAZADO_ADMINISTRACION);
+		}
+		else{
+			updaterStateApi.updaterStates(gasto, DDEstadoGasto.RECHAZADO_PROPIETARIO);
+		}
+		
 		gasto.setProvision(null);
 
 		genericDao.update(GastoProveedor.class, gasto);

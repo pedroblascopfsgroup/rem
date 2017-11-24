@@ -182,9 +182,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	var estaAnulado = CONST.ESTADOS_GASTO['ANULADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaEnviado = get('gasto.enviado');
 	     	var estaRetenido = CONST.ESTADOS_GASTO['RETENIDO'] == get('gasto.estadoGastoCodigo');
-	     	
+	     	var estaSubsanadoYAutorizado = get('gasto.autorizado') && CONST.ESTADOS_GASTO['SUBSANADO'] == get('gasto.estadoGastoCodigo');
 
-	     	return  !estaEnviado && !estaRechazado && !estaContabilizado && !estaPagado && !estaAnulado && !estaRetenido;
+	     	return  !estaEnviado && !estaRechazado && !estaContabilizado && !estaPagado && !estaAnulado && !estaRetenido && !estaSubsanadoYAutorizado;
 	     },
 	     
 	     getSrcCartera: function(get) {

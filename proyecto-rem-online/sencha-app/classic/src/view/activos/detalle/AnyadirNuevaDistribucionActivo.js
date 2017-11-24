@@ -31,7 +31,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaDistribucionActivo', {
 						if(index == 0) field.focus();
 					}
 			);
-		},
+		}
 	
 	},
 
@@ -49,7 +49,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaDistribucionActivo', {
     	
     	me.callParent();
     	me.setTitle(HreRem.i18n('label.anyadir.distribucion'));
-    },
+    }
     
     
 });

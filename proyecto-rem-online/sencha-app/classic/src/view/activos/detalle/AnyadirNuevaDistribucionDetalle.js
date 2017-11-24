@@ -43,7 +43,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaDistribucionDetalle', {
 								chainedReference: 'comboTipoHabitaculo',
 								chainedStore: 'comboNumeroPlantas',
 								bind:{
-									store: '{storeNumeroPlantas}',
+									store: '{storeNumeroPlantas}'
 								},
 					        	allowBlank: false,
 								displayField: 'descripcionPlanta',
@@ -72,8 +72,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaDistribucionDetalle', {
 								reference: 'superficie',
 								maskRe: /^(\d*\,?)\d*$/,
 								itemId: 'superficie',
-		            	    	allowBlank: true,
-								
+		            	    	allowBlank: true
 		            	    },
 		            	    {
 								xtype: 'textfieldbase',
@@ -81,7 +80,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaDistribucionDetalle', {
 								reference: 'cantidad',
 								maskRe: /^\d*$/,
 					        	itemId: 'cantidad',
-					        	allowBlank: false,
+					        	allowBlank: false
 		            	    }
 		            	]
     			   

@@ -127,6 +127,6 @@ Ext.define('HreRem.view.activos.detalle.DistribucionPlantasActivoList', {
 			   }
 		});
 
-    },
+    }
 
 })

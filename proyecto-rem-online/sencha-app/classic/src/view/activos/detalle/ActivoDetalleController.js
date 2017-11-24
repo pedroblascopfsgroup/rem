@@ -3304,6 +3304,5 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		window.gridDistribuciones.up('informecomercialactivo').funcionRecargar()
     	window.close();
     	
-    },
-    
+    }
 });

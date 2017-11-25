@@ -4384,6 +4384,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		return null;	
 	}
+	
+	@Override
+	public ActivoProveedor getMediador(Activo activo){
+		ActivoInfoComercial infoComercial = activo.getInfoComercial();
+		if(!Checks.esNulo(infoComercial)){
+			return infoComercial.getMediadorInforme();
+		}
+		return null;
+	}
 
 	@Override
 	public List<VPreciosVigentes> getPreciosVigentesById(Long id) {

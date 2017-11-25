@@ -11,6 +11,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
@@ -513,6 +514,13 @@ public interface OfertaApi {
 	 * @return Usuario
 	 */
 	Usuario getUsuarioPreescriptor(Oferta oferta);
+	
+	/**
+	 * Devuelve el ActivoProveedor asociado al preescritor de la oferta. En caso de no existir devuelve null.
+	 * @param oferta
+	 * @return ActivoProveedor
+	 */
+	public ActivoProveedor getPreescriptor(Oferta oferta);
 	
 	public void ocultarActivoOferta(Oferta oferta) throws Exception;
 	

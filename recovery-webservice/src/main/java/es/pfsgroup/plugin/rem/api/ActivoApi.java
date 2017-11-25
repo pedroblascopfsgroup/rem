@@ -22,6 +22,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
@@ -1027,6 +1028,13 @@ public interface ActivoApi {
 	 * @return Usuario
 	 */
 	Usuario getUsuarioMediador(Activo activo);
+	
+	/**
+	 * Devuelve el ActivoProveedor del activo. En caso de no existir devuelve null.
+	 * @param oferta
+	 * @return ActivoProveedor
+	 */
+	public ActivoProveedor getMediador(Activo activo);
 	
 	public Boolean saveActivoCargaTab(DtoActivoCargasTab cargaDto);
 	

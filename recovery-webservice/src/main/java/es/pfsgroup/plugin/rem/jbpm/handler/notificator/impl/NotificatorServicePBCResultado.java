@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorServic
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -111,7 +112,7 @@ public class NotificatorServicePBCResultado extends AbstractNotificatorService i
 	}
 
 	private List<String> getEmailsToSend(ExpedienteComercial expediente, Oferta oferta) {
-		Usuario preescriptor = ofertaApi.getUsuarioPreescriptor(oferta);
+		ActivoProveedor preescriptor= ofertaApi.getPreescriptor(oferta);
 		Usuario gestoriaFormalizacion = gestorExpedienteComercialManager.getGestorByExpedienteComercialYTipo(expediente, "GIAFORM");
 
 		Usuario gestorComercial = null;

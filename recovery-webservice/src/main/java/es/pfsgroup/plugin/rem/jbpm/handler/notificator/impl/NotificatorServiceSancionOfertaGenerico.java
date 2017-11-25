@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
@@ -296,9 +297,9 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		for (String s : claves) {
 			String email = null;
 			if (GESTOR_PRESCRIPTOR.equals(s)) {
-				addMail(s, extractEmail(ofertaApi.getUsuarioPreescriptor(oferta)), gestores);				
+				addMail(s, extractEmailProveedor(ofertaApi.getPreescriptor(oferta)), gestores);	
 			} else if (GESTOR_MEDIADOR.equals(s)) {
-				addMail(s, extractEmail(activoApi.getUsuarioMediador(activo)), gestores);
+				addMail(s, extractEmailProveedor(activoApi.getMediador(activo)), gestores);
 			} else if (GESTOR_COMERCIAL_ACTIVO.equals(s) || GESTOR_COMERCIAL_LOTE_RESTRINGIDO.equals(s)) {
 				addMail(s, extractEmail(gestorActivoApi.getGestorByActivoYTipo(activo, "GCOM")), gestores);
 			} else if (GESTOR_COMERCIAL_LOTE_COMERCIAL.equals(s)) {
@@ -333,6 +334,20 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		}
 		return eMail;
 	}
+	
+	private String extractEmailProveedor(ActivoProveedor activoProveedor){
+		String eMail= null;
+		if(activoProveedor != null){
+			if(activoProveedor.getEmail() != null && !activoProveedor.getEmail().isEmpty()){
+				Matcher mather = pattern.matcher(activoProveedor.getEmail());
+				if( mather.find() == true){
+					eMail = activoProveedor.getEmail();
+				}
+			}
+		}
+		return eMail;
+	}
+	
 
 	private void compruebaRequisitos(Activo activo, Oferta oferta, ActivoLoteComercial loteComercial,
 			ExpedienteComercial expediente, List<String> claves) {

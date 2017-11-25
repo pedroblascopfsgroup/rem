@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorServic
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -141,8 +142,8 @@ public class NotificatorServiceDesbloqExpCambioSitJuridica extends AbstractNotif
 
 		Activo activo = oferta.getActivoPrincipal();
 		
-		Usuario preescriptor = ofertaApi.getUsuarioPreescriptor(oferta);
-		Usuario mediador = activoApi.getUsuarioMediador(activo);
+		ActivoProveedor preescriptor= ofertaApi.getPreescriptor(oferta);
+		ActivoProveedor mediador= activoApi.getMediador(activo);
 		
 		Usuario gestorComercial = null;
 		if (!Checks.esNulo(oferta.getAgrupacion()) 

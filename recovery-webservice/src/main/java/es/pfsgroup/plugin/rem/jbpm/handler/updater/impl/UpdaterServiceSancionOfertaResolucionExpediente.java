@@ -67,6 +67,10 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		if(!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			String estadoOriginal = null;
+			if (!Checks.esNulo(expediente.getEstado())){
+				estadoOriginal = expediente.getEstado().getCodigo();
+			}
 			String valorComboProcede= null;
 			String valorComboMotivoAnularReserva= null;
 
@@ -151,7 +155,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						DDMotivoAnulacionExpediente motivoAnulacion = genericDao.get(DDMotivoAnulacionExpediente.class, filtro);
 						expediente.setMotivoAnulacion(motivoAnulacion);
 
-						if(!tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
+						if(!tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) && !DDEstadosExpedienteComercial.EN_TRAMITACION.equals(estadoOriginal)) {
 							// Notificar del rechazo de la oferta a Bankia.
 							try {
 								uvemManagerApi.anularOferta(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionOfertaPorCodigoMotivoAnulacion(valor.getValor()));

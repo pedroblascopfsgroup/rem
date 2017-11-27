@@ -61,7 +61,7 @@ BEGIN
 					,(SELECT ACT_ID FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA2||' WHERE ACT_NUM_ACTIVO = '||V_NUM_ACTIVO||' )
 					,(SELECT EJE_ID FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA3||' WHERE EJE_ANYO = ''2016'' )
 					,50000
-					,to_date(''04/10/16'')
+					,to_date(''04/10/16'',''dd/mm/yy'')
 					,0
 					,'''||V_USUARIOCREAR||'''
 					,SYSDATE

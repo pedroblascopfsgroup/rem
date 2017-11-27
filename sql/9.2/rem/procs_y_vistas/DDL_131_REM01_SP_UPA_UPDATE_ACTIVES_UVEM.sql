@@ -91,6 +91,7 @@ V_NOT_UPDATE VARCHAR2(2000 CHAR) := '';
   --[12]TABLA ACT_MLV_MOVIMIENTO_LLAVE
                       --MLV_FECHA_ENTREGA
   --[13]¿¿TABLA ACT_PAC_PROPIETARIO_ACTIVO??
+                      --GOGRAP (GRADO_PROPIEDAD)
   --[14]TABLA ACT_EDI_EDIFICIO
                       --ASCEMSPRES
   --[15]TABLA ACT_VIV_VIVIENDA
@@ -1153,6 +1154,8 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
           END IF;
 
 
+                      
+
 ---------------------------------------
 ---- [12] ACT_MLV_MOVIMIENTO_LLAVE ----
 ---------------------------------------
@@ -1212,7 +1215,42 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
 
           END IF;
 
+          
+---------------------------------------          
+--[13] TABLA ACT_PAC_PROPIETARIO_ACTIVO 
+---------------------------------------
+--[13.1]--GOGRAP (GRADO_PROPIEDAD) HREOS-3364
+          EXECUTE IMMEDIATE '
+           MERGE INTO '||V_ESQUEMA||'.ACT_PAC_PROPIETARIO_ACTIVO PAC_OLD
+          USING
+          (
+              SELECT    ACT.ACT_ID,  TGP.DD_TGP_ID
+              FROM '||V_ESQUEMA||'.APR_AUX_STOCK_UVEM_TO_REM APR
+              INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT                  ON ACT.ACT_NUM_ACTIVO_UVEM = APR.ACT_NUMERO_UVEM      
+               LEFT JOIN '||V_ESQUEMA||'.DD_TGP_TIPO_GRADO_PROPIEDAD TGP ON TGP.DD_TGP_CODIGO       = APR.GRADO_PROPIEDAD
+              where APR.REM=1
+              and ACT.borrado = 0
+            ) PAC_NEW  ON (PAC_OLD.ACT_ID = PAC_NEW.ACT_ID)
+          WHEN MATCHED THEN UPDATE SET
+             PAC_OLD.DD_TGP_ID = PAC_NEW.DD_TGP_ID,
+             PAC_OLD.USUARIOMODIFICAR = '''||V_USUARIO||''',
+             PAC_OLD.FECHAMODIFICAR = SYSDATE
+          WHERE PAC_OLD.DD_TGP_ID <> PAC_NEW.DD_TGP_ID
+          '
+       
+          ;
+          V_NUM_TABLAS := SQL%ROWCOUNT;
 
+          IF V_NUM_TABLAS != 0 THEN
+
+            DBMS_OUTPUT.PUT_LINE('[INFO] REGISTROS ACTUALIZADOS EN '||V_ESQUEMA||'.ACT_PAC_PROPIETARIO_ACTIVO '||V_NUM_TABLAS||' Registros.');
+            PL_OUTPUT := PL_OUTPUT||'[INFO] REGISTROS ACTUALIZADOS EN '||V_ESQUEMA||'.ACT_PAC_PROPIETARIO_ACTIVO '||V_NUM_TABLAS||' Registros. '||CHR(10)||CHR(10);
+            DBMS_OUTPUT.PUT_LINE('----------------------------------------------------------------');
+
+            COMMIT;
+
+          END IF;          
+          
 ---------------------------------
 ---- [14] ACT_EDI_EDIFICIO ----
 ---------------------------------

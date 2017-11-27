@@ -1881,26 +1881,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	public boolean isInformeComercialAceptado(Activo activo) {
-		boolean resultado = false;
-		if(activo != null){
+		if(!Checks.esNulo(activo)){
 			Filter filter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-			Order order = new Order(OrderType.DESC, "id");
+			Order order = new Order(OrderType.DESC, "fecha");
 			List<ActivoEstadosInformeComercialHistorico> activoEstadoInfComercialHistoricoList = genericDao
 					.getListOrdered(ActivoEstadosInformeComercialHistorico.class, order, filter);
 			if (!Checks.estaVacio(activoEstadoInfComercialHistoricoList)) {
-				//ActivoEstadosInformeComercialHistorico historico = activoEstadoInfComercialHistoricoList.get(0);
-				for(ActivoEstadosInformeComercialHistorico historico : activoEstadoInfComercialHistoricoList) {
-					if (historico.getEstadoInformeComercial().getCodigo()
-							.equals(DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION))
-						resultado = true;
-					else if(historico.getEstadoInformeComercial().getCodigo()
-							.equals(DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_RECHAZO))
-						resultado = false;
-				}
-			}
+				ActivoEstadosInformeComercialHistorico historico = null;
+				int i = 0;				
+				do {
+					historico = activoEstadoInfComercialHistoricoList.get(i);
+					if (historico.getEstadoInformeComercial().getCodigo().equals(DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION))
+						return true;
+					i++;
+				}while((i <= activoEstadoInfComercialHistoricoList.size()) && Checks.esNulo(historico.getFecha()));
+								
+			}			
 		}
 
-		return resultado;
+		return false;
 	}
 
 	@Override
@@ -4395,6 +4394,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 		}
 		return null;	
+	}
+	
+	@Override
+	public ActivoProveedor getMediador(Activo activo){
+		ActivoInfoComercial infoComercial = activo.getInfoComercial();
+		if(!Checks.esNulo(infoComercial)){
+			return infoComercial.getMediadorInforme();
+		}
+		return null;
 	}
 
 	@Override

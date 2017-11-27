@@ -1996,6 +1996,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	@Override
+	public ActivoProveedor getPreescriptor(Oferta oferta){
+		return oferta.getPrescriptor();
+	}
+	
+	@Override
 	public void ocultarActivoOferta(Oferta oferta) throws Exception{
 		
 		if (oferta.getActivosOferta() != null && !oferta.getActivosOferta().isEmpty()) {

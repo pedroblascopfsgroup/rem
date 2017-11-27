@@ -22,6 +22,7 @@ import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -97,7 +98,7 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 		if(DDResolucionComite.CODIGO_CONTRAOFERTA.equalsIgnoreCase(activoTramiteApi.getTareaValorByNombre(valores, "comboResolucion"))) {
 						
 			Activo activo = oferta.getActivoPrincipal();
-			Usuario preescriptor = ofertaApi.getUsuarioPreescriptor(oferta);
+			ActivoProveedor preescriptor= ofertaApi.getPreescriptor(oferta);
 			
 			Usuario gestor = null;
 			Usuario supervisor = null;
@@ -113,11 +114,13 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 
 			
 			List<Usuario> usuarios = new ArrayList<Usuario>();
-			usuarios.add(preescriptor);
 			usuarios.add(gestor);
 			usuarios.add(supervisor);
 			
 		    mailsPara = getEmailsNotificacionContraoferta(usuarios);
+		    if(!Checks.esNulo(preescriptor) && !Checks.esNulo(preescriptor.getEmail())){
+		    	mailsPara.add(preescriptor.getEmail());
+		    }
 			mailsCC.add(this.getCorreoFrom());
 		
 		    

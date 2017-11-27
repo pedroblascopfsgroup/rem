@@ -1260,7 +1260,11 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 
 	@Override
 	public Boolean esUsuarioConPerfilProveedor(Usuario usuario) {
+		Boolean resultado = false;
 		Perfil perfilProveedorHaya = genericDao.get(Perfil.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "HAYAPROV"));
-		return usuario.getPerfiles().contains(perfilProveedorHaya);
+		if(usuario.getPerfiles() != null && usuario.getPerfiles().size()>0){
+			resultado = usuario.getPerfiles().contains(perfilProveedorHaya);
+		}
+		return resultado;
 	}
 }

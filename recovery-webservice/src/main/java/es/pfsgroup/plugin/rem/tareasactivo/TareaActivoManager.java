@@ -131,7 +131,7 @@ public class TareaActivoManager implements TareaActivoApi {
 		if (tareaAsociada != null) {
 			tareaAsociada.setAlerta(false);
 			Date fechaVencOriginal = tareaAsociada.getFechaVenc();
-			tareaAsociada.setVencimiento(VencimientoUtils.getFecha(dto.getFechaPropuesta(), TipoCalculo.PRORROGA));
+			tareaAsociada.setVencimiento(VencimientoUtils.getFecha(dto.getFechaPropuesta(), TipoCalculo.PRORROGA,genericDao));
 //			if (tareaAsociada instanceof TareaActivo){
 //				TareaActivo tarea = (TareaActivo) tareaAsociada;
 //				tareaAsociada.setVencimiento(VencimientoUtils.getFecha(dto.getFechaPropuesta(), TipoCalculo.PRORROGA));

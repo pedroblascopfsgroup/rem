@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
@@ -46,6 +47,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNotificatorService
 		implements NotificatorService {
@@ -62,6 +65,11 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	private static final String GESTOR_BACKOFFICE = "gestor-backoffice";
 	private static final String GESTOR_GESTORIA_FASE_3 = "gestoria-fase-3";
 	private static final String USUARIO_FICTICIO_OFERTA_CAJAMAR = "ficticioOfertaCajamar";
+	
+	// Patrón para validar el email
+    Pattern pattern = Pattern
+            .compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                    + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
 
 	@Resource
 	private Properties appProperties;
@@ -287,35 +295,59 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		HashMap<String, String> gestores = new HashMap<String, String>();
 
 		for (String s : claves) {
+			String email = null;
 			if (GESTOR_PRESCRIPTOR.equals(s)) {
-				gestores.put(s, extractEmail(ofertaApi.getUsuarioPreescriptor(oferta)));
+				addMail(s, extractEmailProveedor(ofertaApi.getPreescriptor(oferta)), gestores);	
 			} else if (GESTOR_MEDIADOR.equals(s)) {
-				gestores.put(s, extractEmail(activoApi.getUsuarioMediador(activo)));
+				addMail(s, extractEmailProveedor(activoApi.getMediador(activo)), gestores);
 			} else if (GESTOR_COMERCIAL_ACTIVO.equals(s) || GESTOR_COMERCIAL_LOTE_RESTRINGIDO.equals(s)) {
-				gestores.put(s, extractEmail(gestorActivoApi.getGestorByActivoYTipo(activo, "GCOM")));
+				addMail(s, extractEmail(gestorActivoApi.getGestorByActivoYTipo(activo, "GCOM")), gestores);
 			} else if (GESTOR_COMERCIAL_LOTE_COMERCIAL.equals(s)) {
-				gestores.put(s, extractEmail(loteComercial.getUsuarioGestorComercial()));
+				addMail(s, extractEmail(loteComercial.getUsuarioGestorComercial()), gestores);
 			} else if (GESTOR_FORMALIZACION.equals(s)) {
-				gestores.put(s, extractEmail(
-						gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GFORM")));
+				addMail(s,extractEmail(gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GFORM")), gestores);
 			} else if (GESTOR_BACKOFFICE.equals(s)) {
-				gestores.put(s, extractEmail(gestorActivoApi.getGestorByActivoYTipo(activo, "GBO")));
+				addMail(s,gestores.put(s, extractEmail(gestorActivoApi.getGestorByActivoYTipo(activo, "GBO"))), gestores);
 			} else if (GESTOR_GESTORIA_FASE_3.equals(s)) {
-				gestores.put(s, extractEmail(
-						gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GIAFORM")));
+				addMail(s,gestores.put(s, extractEmail(gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GIAFORM"))), gestores);				
 			}
 		}
 		
 		return gestores;
 	}
-
-	private String extractEmail(Usuario u) {
-		if (u != null) {
-			return u.getEmail();
-		} else {
-			return null;
+	
+	private void addMail(String key, String email,HashMap<String, String> coleccion){
+		if(email != null && !email.isEmpty()){
+			coleccion.put(key, email);
 		}
 	}
+
+	private String extractEmail(Usuario u) {
+		String eMail = null;
+		if (u != null) {
+			if(u.getEmail() != null && !u.getEmail().isEmpty()){
+				Matcher mather = pattern.matcher(u.getEmail());
+				if( mather.find() == true){
+					eMail = u.getEmail();
+				}
+			}
+		}
+		return eMail;
+	}
+	
+	private String extractEmailProveedor(ActivoProveedor activoProveedor){
+		String eMail= null;
+		if(activoProveedor != null){
+			if(activoProveedor.getEmail() != null && !activoProveedor.getEmail().isEmpty()){
+				Matcher mather = pattern.matcher(activoProveedor.getEmail());
+				if( mather.find() == true){
+					eMail = activoProveedor.getEmail();
+				}
+			}
+		}
+		return eMail;
+	}
+	
 
 	private void compruebaRequisitos(Activo activo, Oferta oferta, ActivoLoteComercial loteComercial,
 			ExpedienteComercial expediente, List<String> claves) {

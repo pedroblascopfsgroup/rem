@@ -72,8 +72,8 @@ BEGIN
     
         DBMS_OUTPUT.PUT_LINE('[FIN] ... UPDATE BIE_BIEN');
     
-    ROLLBACK;
-    --COMMIT;	
+    --ROLLBACK;
+    COMMIT;	
     
 EXCEPTION
      WHEN OTHERS THEN

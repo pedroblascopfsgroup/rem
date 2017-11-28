@@ -1236,4 +1236,47 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 	}	
 	
+	@Override
+	public Boolean isFechaTraspasoPosteriorAFechaDevengo(String numActivo, String numGasto) {
+		String resultado = "0";
+		String enAgrupacion = null;
+		
+		if(Checks.esNulo(numActivo) || Checks.esNulo(numGasto))
+			return false;
+		
+		else {
+			enAgrupacion = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_ACTIVO ACT "
+						+ "						JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID "
+						+ "						WHERE ACT_NUM_ACTIVO = '"+numActivo+"'");
+		}
+		
+		//El activo NO pertenece a una agrupacion
+		if("0".equals(enAgrupacion)){
+			
+			resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM GPV_GASTOS_PROVEEDOR GPV "
+							+ "						JOIN ACT_ACTIVO ACT ON ACT_NUM_ACTIVO = '"+numActivo+"' "
+							+ "						WHERE GPV.GPV_NUM_GASTO_HAYA = '"+numGasto+"' "
+							+ "						AND GPV.GPV_FECHA_EMISION > ACT.ACT_VENTA_EXTERNA_FECHA");
+			
+		}
+		//El activo pertenece a una agrupacion
+		else {
+			
+			resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM GPV_GASTOS_PROVEEDOR GPV "
+							+ "						JOIN ACT_ACTIVO ACT ON ACT_NUM_ACTIVO = '"+numActivo+"' "
+							+ "						JOIN ACT_AGA_AGRUPACION_ACTIVO ACT_AGA ON ACT_AGA.ACT_ID = ACT.ACT_ID "
+							+ "						JOIN OFR_OFERTAS OFR ON OFR.AGR_ID = ACT_AGA.AGR_ID "
+							+ "						JOIN ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID "
+							+ "						WHERE GPV.GPV_NUM_GASTO_HAYA = '"+numGasto+"' AND GPV.GPV_FECHA_EMISION > ECO.ECO_FECHA_VENTA");
+			
+		}
+		
+		if(!"0".equals(resultado))
+			return true;
+		else
+			return false;
+		
+		
+	}
+	
 }

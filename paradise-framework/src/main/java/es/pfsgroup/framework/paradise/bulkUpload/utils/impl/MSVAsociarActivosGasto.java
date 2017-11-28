@@ -46,6 +46,7 @@ public class MSVAsociarActivosGasto extends MSVExcelValidatorAbstract {
 	public static final String ESTADO_NO_PERMITE_ADICION_ACTIVO = "El estado del gasto no permite adición";
 	public static final String GASTO_AUTORIZADO = "El gasto esta autorizado";
 	public static final String GASTO_ASOCIADO_TRABAJO = "El gasto esta asociado a un trabajo";
+	public static final String GASTO_FECHA_TRASPASO_ANTERIOR = "La fecha de traspaso del activo o agrupacion no puede ser posterior a la fecha devengo del gasto";
 
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -106,6 +107,7 @@ public class MSVAsociarActivosGasto extends MSVExcelValidatorAbstract {
 				mapaErrores.put(ACTIVO_ASIGNADO, isActivoAsignado(exc));
 				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
 				mapaErrores.put(GASTO_NOT_EXISTS, isGastoNotExistsRows(exc));
+				mapaErrores.put(GASTO_FECHA_TRASPASO_ANTERIOR, isFechaTraspasoPosteriorAFechaDevengo(exc));
 				
 				try{
 					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() ||
@@ -114,7 +116,8 @@ public class MSVAsociarActivosGasto extends MSVExcelValidatorAbstract {
 						!mapaErrores.get(PROPIETARIO_DIFERENTE).isEmpty() ||
 						!mapaErrores.get(ACTIVO_ASIGNADO).isEmpty() ||
 						!mapaErrores.get(GASTO_AUTORIZADO).isEmpty() ||
-						!mapaErrores.get(GASTO_ASOCIADO_TRABAJO).isEmpty()){
+						!mapaErrores.get(GASTO_ASOCIADO_TRABAJO).isEmpty() ||
+						!mapaErrores.get(GASTO_FECHA_TRASPASO_ANTERIOR).isEmpty()){
 							dtoValidacionContenido.setFicheroTieneErrores(true);
 							exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 							String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
@@ -341,6 +344,28 @@ public class MSVAsociarActivosGasto extends MSVExcelValidatorAbstract {
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
 					if(!particularValidator.isGastoPermiteAnyadirActivo(exc.dameCelda(i, 1)))
+						listaFilas.add(i);
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+			} catch (IllegalArgumentException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			} catch (IOException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			}
+		return listaFilas;
+	}
+	
+	private List<Integer> isFechaTraspasoPosteriorAFechaDevengo(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(!particularValidator.isFechaTraspasoPosteriorAFechaDevengo(exc.dameCelda(i, 0), exc.dameCelda(i, 1)))
 						listaFilas.add(i);
 				} catch (ParseException e) {
 					listaFilas.add(i);

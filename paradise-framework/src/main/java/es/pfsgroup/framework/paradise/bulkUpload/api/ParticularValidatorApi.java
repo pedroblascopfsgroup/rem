@@ -57,6 +57,8 @@ public interface ParticularValidatorApi {
 	public Boolean esActivoIncluidoPerimetro(String numActivo);
 
 	public Boolean esActivoAsistido(String numActivo);
+	
+	public Boolean isFechaTraspasoPosteriorAFechaDevengo(String numActivo, String numGasto);
 
 	/**
 	 * Validacion para las agrupaciones de la lista excel. Valida si estan dadas de baja

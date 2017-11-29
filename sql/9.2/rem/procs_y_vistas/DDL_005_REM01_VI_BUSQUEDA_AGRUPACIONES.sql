@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Kevin Fernández
---## FECHA_CREACION=20171127
+--## AUTOR=Sergio Ortuño
+--## FECHA_CREACION=20171129
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-3338
+--## INCIDENCIA_LINK=HREOS-3302
 --## PRODUCTO=NO
 --## Finalidad: Vista para la búsqueda de agrupaciones.
 --##  
@@ -14,6 +14,7 @@
 --##		0.2 No contar publicados oculto.
 --##		0.3 Modificación.
 --##		0.4 Corrección activos publicados.
+--##		0.5 Nuevo campo en select
 --##########################################
 --*/
 
@@ -52,7 +53,8 @@ BEGIN
 		SELECT 
 			agr.agr_id, 
 			agr.dd_tag_id, 
-			agr.agr_num_agrup_rem, 
+			agr.agr_num_agrup_rem,
+			agr.agr_num_agrup_uvem, 
 			agr.agr_nombre, 
 			agr.agr_descripcion, 
 			agr.agr_fecha_alta, 

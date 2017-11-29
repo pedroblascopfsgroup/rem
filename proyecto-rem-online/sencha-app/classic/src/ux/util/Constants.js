@@ -169,7 +169,13 @@ Ext.define('HreRem.ux.util.Constants', {
     	TERCEROS: '04',
     	HYT: '06'
     },
-    
+    NOMBRE_CARTERA:	{
+    	'01': 'CAJAMAR',
+    	'02': 'SAREB',
+    	'03': 'BANKIA',
+    	'04': 'TERCEROS',
+    	'06': 'HYT'
+    },
     IMAGENES_CARTERA: {
     	CAJAMAR: 'logo_cajamar.svg',
     	SAREB: 'logo_sareb.svg',

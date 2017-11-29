@@ -66,7 +66,39 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesSearch', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo'
+							        },
+							        { 
+										xtype: 'combo',
+							        	fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
+							        	name: 'codCartera',
+							        	displayField: 'descripcion',
+			    						valueField: 'codigo',
+							        	bind: {
+						            		store: '{comboEntidadPropietaria}'
+						            	},
+						            	reference: 'comboCarteraActivoSearch',
+						            	chainedStore: 'comboSubcarteraFiltered',
+										chainedReference: 'comboSubcarteraActivoSearch',
+										listeners: {
+											select: 'onChangeChainedCombo'
+										}
+							        },
+							        { 
+										xtype: 'combo',
+							        	fieldLabel: HreRem.i18n('fieldlabel.subcartera'),
+							        	name: 'subcarteraCodigo',
+							        	bind: {
+						            		store: '{comboSubcarteraFiltered}'
+						            	},
+						            	reference: 'comboSubcarteraActivoSearch',
+						            	valueField: 'codigo',
+			    						displayField: 'descripcion'
+							        },
+							        {
+							        	fieldLabel: HreRem.i18n('fieldlabel.numero.agrupacion.uvem'),
+							        	name: 'numAgrUVEM'
 							        }
+							        
 			        			]
 			        	},
 			        	{
@@ -92,35 +124,121 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesSearch', {
 					            	},
 					            	displayField: 'descripcion',
 									valueField: 'codigo'
+						        },
+						        {
+						        	fieldLabel: HreRem.i18n('fieldlabel.nif.propietario'),
+						        	name: 'nif'
+						        },
+						        {
+						        	xtype: 'combo',
+						        	fieldLabel: HreRem.i18n('fieldlabel.provincia'),
+						        	name: 'codProvincia',
+						        	bind: {
+						        		store: '{comboFiltroProvincias}'
+						        	},
+						        	displayField: 'descripcion',
+						        	valueField: 'codigo'
+						        	
+						        },
+						        {
+						        	fieldLabel: HreRem.i18n('fieldlabel.municipio'),
+						        	name: 'localidadDescripcion',
+						        	valueField: 'descripcion'
 						        }
 						     ]
 						},
 							{
 			        			items: [
-							        { 
-					                	xtype:'datefield',
-								 		fieldLabel: HreRem.i18n('fieldlabel.fecha.creacion.desde'),
-								 		width: 		275,
-								 		name: 		'fechaCreacionDesde',
-						            	bind:		'{fechaCreacionDesde}',
-						            	formatter: 'date("d/m/Y")',
-						            	listeners : {
-							            	change: function () {
-							            		//Eliminar la fechaHasta e instaurar
-							            		//como minValue a su campo el velor de fechaDesde
-							            		var me = this;
-							            		me.next().reset();
-							            		me.next().setMinValue(me.getValue());
-							                }
-						            	}
-									},
-									{ 
-					                	xtype:'datefield',
-								 		fieldLabel: HreRem.i18n('fieldlabel.fecha.creacion.hasta'),
-								 		width: 		275,
-								 		name: 'fechaCreacionHasta',
-						            	bind:		'{fechaCreacionHasta}'
+			        				{
+							        	fieldLabel: HreRem.i18n('fieldlabel.id.activo.haya'),
+							        	name: 'numActHaya'
+							        },
+							        {
+							        	fieldLabel: HreRem.i18n('fieldlabel.id.activo.prinex'),
+							        	name: 'numActPrinex'
+							        },
+							        {
+							        	fieldLabel: HreRem.i18n('fieldlabel.id.activo.sareb'),
+							        	name: 'numActSareb'
+							        },
+							        {
+							        	fieldLabel: HreRem.i18n('fieldlabel.id.activo.uvem'),
+							        	name: 'numActUVEM'
+							        },
+							        {
+										fieldLabel: HreRem.i18n('fieldlabel.id.activo.recovery'),
+							        	name: 'numActReco'
 									}
+								]
+							},
+							{
+								items: [
+									 { 
+						                	xtype:'datefield',
+									 		fieldLabel: HreRem.i18n('fieldlabel.fecha.creacion.desde'),
+									 		width: 		275,
+									 		name: 		'fechaCreacionDesde',
+							            	bind:		'{fechaCreacionDesde}',
+							            	formatter: 'date("d/m/Y")',
+							            	listeners : {
+								            	change: function () {
+								            		//Eliminar la fechaHasta e instaurar
+								            		//como minValue a su campo el velor de fechaDesde
+								            		var me = this;
+								            		me.next().reset();
+								            		me.next().setMinValue(me.getValue());
+								                }
+							            	}
+										},
+										{ 
+						                	xtype:'datefield',
+									 		fieldLabel: HreRem.i18n('fieldlabel.fecha.creacion.hasta'),
+									 		width: 		275,
+									 		name: 'fechaCreacionHasta',
+							            	bind:		'{fechaCreacionHasta}'
+										},
+										{
+											xtype:'datefield',
+									 		fieldLabel: HreRem.i18n('header.fecha.inicio.vigencia.desde'),
+									 		width: 		275,
+									 		name: 'fechaInicioVigenciaDesde',
+							            	bind:		'{fechaInicioVigenciaDesde}',
+							            	listeners: {
+							            		change: function () {
+							            			var me = this;
+							            			me.next().reset();
+							            			me.next().setMinValue(me.getValue());
+							            		}
+							            	}
+										},
+										{
+											xtype:'datefield',
+									 		fieldLabel: HreRem.i18n('header.fecha.inicio.vigencia.hasta'),
+									 		width: 		275,
+									 		name: 'fechaInicioVigenciaHasta',
+							            	bind:		'{fechaInicioVigenciaHasta}'
+										},
+										{
+											xtype:'datefield',
+									 		fieldLabel: HreRem.i18n('header.fecha.fin.vigencia.desde'),
+									 		width: 		275,
+									 		name: 'fechaFinVigenciaDesde',
+							            	bind:		'{fechaFinVigenciaDesde}',
+							            	listeners: {
+							            		change: function () {
+							            			var me = this;
+							            			me.next().reset();
+							            			me.next().setMinValue(me.getValue());
+							            		}
+							            	}
+										},
+										{
+											xtype:'datefield',
+									 		fieldLabel: HreRem.i18n('header.fecha.fin.vigencia.hasta'),
+									 		width: 		275,
+									 		name: 'fechaFinVigenciaHasta',
+							            	bind:		'{fechaFinVigenciaHasta}'
+										}
 								]
 							}
 			        ]

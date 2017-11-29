@@ -27,6 +27,10 @@ Ext.define('HreRem.model.BusquedaAgrupacion', {
     		{
     			name:'publicado',
     			reference: 'HreRem.model.DDBase'
+    		},
+    		{
+    			name:'codCartera',
+    			reference: 'HreRem.model.DDBase'
     		}
     		
         

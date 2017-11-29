@@ -137,13 +137,13 @@ public class ResolucionComiteController {
 //							}
 //						}
 //					}
-					
-					if(ratificacion){
+					resolucionComiteDto.setCodigoTipoResolucion(DDTipoResolucion.CODIGO_TIPO_RESOLUCION);
+					usu = gestorActivoApi.userFromTarea("T013_ResolucionComite", tramite.getId());					
+					if(usu == null){
 						usu = gestorActivoApi.userFromTarea("T013_RatificacionComite", tramite.getId());
-						resolucionComiteDto.setCodigoTipoResolucion(DDTipoResolucion.CODIGO_TIPO_RATIFICACION);
-					}else{
-						usu = gestorActivoApi.userFromTarea("T013_ResolucionComite", tramite.getId());
-						resolucionComiteDto.setCodigoTipoResolucion(DDTipoResolucion.CODIGO_TIPO_RESOLUCION);
+						if(usu == null){
+							usu = gestorActivoApi.userFromTarea("T013_RespuestaOfertante", tramite.getId());
+						}
 					}
 
 					resol = resolucionComiteApi.saveOrUpdateResolucionComite(resolucionComiteDto);
@@ -222,6 +222,9 @@ public class ResolucionComiteController {
 							notificatorApi.notificarResolucionBankia(resol,notif);
 							logger.debug("\tEnviando correo a: " + notif.getPara());
 						}
+					}else{
+						request.getPeticionRest().setErrorDesc("Se ha guardado la resolución pero no se ha podido notificar al usuario");
+						logger.error("Se ha guardado la resolución pero no se ha podido notificar al usuario");
 					}
 				}
 				
@@ -229,10 +232,15 @@ public class ResolucionComiteController {
 			
 			if(!Checks.esNulo(notifrem)){
 				model.put("id", jsonFields.get("id"));
-				model.put("error", "");
+				model.put("error", null);
 			}else{
 				model.put("id", jsonFields.get("id"));
-				model.put("error", errorsList);
+				if(errorsList != null && errorsList.size()>0){
+					model.put("error", errorsList);
+				}else{
+					model.put("error", null);
+				}
+				
 			}
 			
 		} catch (JsonMappingException e3) {

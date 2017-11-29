@@ -1,20 +1,20 @@
 --/*
 --##########################################
---## AUTOR=Jose Villel
---## FECHA_CREACION=20161004
+--## AUTOR=Kevin Fernández
+--## FECHA_CREACION=20171129
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=0
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-3327
 --## PRODUCTO=NO
---## Finalidad: DDL
+--## Finalidad: Crear la vista VI_BUSQUEDA_GASTO_TRABAJOS.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Sin borrado en asociación gasto-trabajo.
 --##########################################
 --*/
 
---Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
@@ -69,6 +69,7 @@ BEGIN
 		LEFT JOIN ' || V_ESQUEMA || '.ACT_TBJ_TRABAJO TBJ ON GPVTBJ.TBJ_ID = TBJ.TBJ_ID and tbj.borrado = 0
 		LEFT JOIN ' || V_ESQUEMA || '.DD_TTR_TIPO_TRABAJO TTR ON TTR.DD_TTR_ID = TBJ.DD_TTR_ID
 		LEFT JOIN ' || V_ESQUEMA || '.DD_STR_SUBTIPO_TRABAJO STR ON STR.DD_STR_ID = TBJ.DD_STR_ID
+		WHERE GPVTBJ.BORRADO = 0
     ';
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.VI_BUSQUEDA_GASTO_TRABAJOS...Creada OK');

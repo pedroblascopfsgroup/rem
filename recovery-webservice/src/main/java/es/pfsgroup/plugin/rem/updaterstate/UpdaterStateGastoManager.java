@@ -21,7 +21,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionHaya;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionPropietario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 
 @Service("updaterStateGastoManager")
 public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
@@ -75,11 +74,9 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			error = messageServices.getMessage(VALIDACION_TIPO_OPERACION);
 			return error;
 		}
-		if(!Checks.esNulo(gasto.getGestoria())) {
-			if(Checks.esNulo(gasto.getTipoPeriocidad())) {
-				error = messageServices.getMessage(VALIDACION_TIPO_PERIODICIDAD);
-				return error;
-			}
+		if(!Checks.esNulo(gasto.getGestoria()) && Checks.esNulo(gasto.getTipoPeriocidad())) {
+			error = messageServices.getMessage(VALIDACION_TIPO_PERIODICIDAD);
+			return error;
 		}
 		
 		if(Checks.esNulo(gasto.getGastoDetalleEconomico()) || Checks.esNulo(gasto.getGastoDetalleEconomico().getImporteTotal())) {
@@ -87,9 +84,9 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			return error;
 		}
 		
-		if (Checks.esNulo(gasto.getGastoInfoContabilidad())
-				|| (Checks.esNulo(gasto.getGastoInfoContabilidad().getCuentaContable())
-						&& !DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo()))) {
+		if (Checks.esNulo(gasto.getGastoInfoContabilidad()) ||
+				(Checks.esNulo(gasto.getGastoInfoContabilidad().getCuentaContable()) &&
+						(!Checks.esNulo(gasto.getPropietario()) && !DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())))) {
 			error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
 			return error;
 		}
@@ -135,9 +132,6 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				
 			// Si el pago sigue retenido, ningún cambio en el gasto implica cambio de estado.
 				if(Checks.esNulo(gastoGestion.getMotivoRetencionPago())) {
-				
-					// Si estado es INCOMPLETO, comprobamos si ya no lo está para pasarlo a pendiente.
-					//if(DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo()) || DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo())) {
 					if(!Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionHaya()) 
 							|| (Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionHaya()) && DDEstadoGasto.RETENIDO.equals(gasto.getEstadoGasto().getCodigo()))) {
 						String error = validarAutorizacionGasto(gasto);
@@ -172,9 +166,9 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 
 						codigo = DDEstadoGasto.PAGADO;
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO);
-						DDEstadoAutorizacionHaya estadoAutorizacionHaya= (DDEstadoAutorizacionHaya) genericDao.get(DDEstadoAutorizacionHaya.class, filtro);
+						DDEstadoAutorizacionHaya estadoAutorizacionHaya= genericDao.get(DDEstadoAutorizacionHaya.class, filtro);
 						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoAutorizacionPropietario.CODIGO_PENDIENTE);
-						DDEstadoAutorizacionPropietario estadoAutorizacionPropietario= (DDEstadoAutorizacionPropietario) genericDao.get(DDEstadoAutorizacionPropietario.class, filtro);
+						DDEstadoAutorizacionPropietario estadoAutorizacionPropietario= genericDao.get(DDEstadoAutorizacionPropietario.class, filtro);
 						if(!Checks.esNulo(gasto.getGastoGestion())){
 							gasto.getGastoGestion().setEstadoAutorizacionHaya(estadoAutorizacionHaya);
 							gasto.getGastoGestion().setFechaEstadoAutorizacionHaya(new Date());
@@ -198,7 +192,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 		// Si tenemos definido un estado, lo búscamos y modificamos en el gasto
 		if(!Checks.esNulo(codigo)) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
-			DDEstadoGasto estadoGasto = (DDEstadoGasto) genericDao.get(DDEstadoGasto.class, filtro);
+			DDEstadoGasto estadoGasto = genericDao.get(DDEstadoGasto.class, filtro);
 			gasto.setEstadoGasto(estadoGasto);
 			return true;
 		}
@@ -211,7 +205,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 		DDEstadoAutorizacionHaya estadoAutorizacionHaya = null;
 		if(!Checks.esNulo(codigoEstadoAutorizacionHaya)){
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstadoAutorizacionHaya);
-			estadoAutorizacionHaya= (DDEstadoAutorizacionHaya) genericDao.get(DDEstadoAutorizacionHaya.class, filtro);
+			estadoAutorizacionHaya= genericDao.get(DDEstadoAutorizacionHaya.class, filtro);
 		}
 		if(!Checks.esNulo(gasto.getGastoGestion())){
 			gasto.getGastoGestion().setEstadoAutorizacionHaya(estadoAutorizacionHaya);

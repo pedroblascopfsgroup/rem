@@ -52,7 +52,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	    	 
 	    	 if(codigoEstadoCodigo==CONST.ESTADOS_GASTO['INCOMPLETO'] ||
 	    			 codigoEstadoCodigo==CONST.ESTADOS_GASTO['RECHAZADO'] ||
-	    			 codigoEstadoCodigo==CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']) {
+	    			 codigoEstadoCodigo==CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO'] ||
+	    			 codigoEstadoCodigo==CONST.ESTADOS_GASTO['PENDIENTE']) {
 	    		 return false;
 	    	 } else {
 	    		 return true;

@@ -231,7 +231,6 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 			} else if ("0".equals(dtoGastosFilter.getCubreSeguro())) {
 				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.cubreSeguro", false);
 			}
-			// HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.cubreSeguro",dtoGastosFilter.getCubreSeguro());
 		}
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.periodicidadCodigo", dtoGastosFilter.getPeriodicidad());
@@ -301,4 +300,5 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		
 		return new DtoPage(gastos, page.getTotalCount());
 	}
+
 }

@@ -41,7 +41,6 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -112,11 +111,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	private final Log logger = LogFactory.getLog(getClass());
 
-	public final String PESTANA_FICHA = "ficha";
-	public final String PESTANA_DETALLE_ECONOMICO = "detalleEconomico";
-	public final String PESTANA_CONTABILIDAD = "contabilidad";
-	public final String PESTANA_GESTION = "gestion";
-	public final String PESTANA_IMPUGNACION = "impugnacion";
+	private static final String PESTANA_FICHA = "ficha";
+	private static final String PESTANA_DETALLE_ECONOMICO = "detalleEconomico";
+	private static final String PESTANA_CONTABILIDAD = "contabilidad";
+	private static final String PESTANA_GESTION = "gestion";
+	private static final String PESTANA_IMPUGNACION = "impugnacion";
 
 	private static final String EXCEPTION_EXPEDIENT_NOT_FOUND_COD = "ExceptionExp";
 	private static final String COD_PEF_GESTORIA_ADMINISTRACION = "HAYAGESTADMT";
@@ -162,15 +161,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
 	@Resource
-	MessageService messageServices;
+	private MessageService messageServices;
 
 	@Override
 	public GastoProveedor findOne(Long id) {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
-		GastoProveedor gasto = genericDao.get(GastoProveedor.class, filtro);
 
-		return gasto;
+		return genericDao.get(GastoProveedor.class, filtro);
 	}
 
 	@Override
@@ -1888,9 +1886,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public List<VBusquedaGastoTrabajos> getListTrabajosGasto(Long idGasto) {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idGasto", idGasto);
-		List<VBusquedaGastoTrabajos> gastoTrabajos = genericDao.getList(VBusquedaGastoTrabajos.class, filtro);
 
-		return gastoTrabajos;
+		return genericDao.getList(VBusquedaGastoTrabajos.class, filtro);
 	}
 
 	private GastoProveedor calcularImportesDetalleEconomicoGasto(GastoProveedor gasto) {
@@ -2379,5 +2376,21 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public DtoPage getListGastosProvision(DtoGastosFilter dtoGastosFilter) {
 
 		return gastoDao.getListGastosProvision(dtoGastosFilter);
+	}
+
+	@Override
+	public void actualizarPorcentajeParticipacionGastoProveedorActivo(Long idActivo, Long idGasto, Float porcentajeParticipacion) {
+		if(idActivo == null || idGasto == null) {
+			return;
+		}
+
+		Filter filterActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		Filter filterGastoId = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
+		GastoProveedorActivo gpa = genericDao.get(GastoProveedorActivo.class, filterActivoId, filterGastoId);
+		if(gpa != null) {
+			gpa.setParticipacionGasto(porcentajeParticipacion);
+		}
+
+		genericDao.save(GastoProveedorActivo.class, gpa);
 	}
 }

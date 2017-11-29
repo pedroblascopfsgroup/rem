@@ -2,16 +2,11 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
-import org.springframework.ui.ModelMap;
-import org.springframework.web.servlet.ModelAndView;
-
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -272,6 +267,14 @@ public interface GastoProveedorApi {
 		 * @param ActivoAgrupacion: La agrupación de activos que se quiere asociar con el gasto
 		 */
 		public boolean fechaDevengoPosteriorFechaTraspaso(Long idGasto, Long idActivo, Long idAgrupacion);
-		
+
+		/**
+		 * Este método actualiza el porcentaje de participación de un activo en un gasto.
+		 * 
+		 * @param idActivo: ID del activo dentro del gasto.
+		 * @param idGasto: ID del gasto que contiene el activo.
+		 * @param porcentajeParticipacion: indica el porcentaje de participacion del activo en el gasto.
+		 */
+		public void actualizarPorcentajeParticipacionGastoProveedorActivo(Long idActivo, Long idGasto, Float porcentajeParticipacion);
 }
 

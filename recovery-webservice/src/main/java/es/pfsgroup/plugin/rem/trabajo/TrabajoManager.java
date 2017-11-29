@@ -67,6 +67,7 @@ import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
@@ -137,19 +138,18 @@ import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 @Service("trabajoManager")
 public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> implements TrabajoApi {
 
-	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-	SimpleDateFormat groovyft = new SimpleDateFormat("yyyy-MM-dd");
+	private SimpleDateFormat groovyft = new SimpleDateFormat("yyyy-MM-dd");
 
 	protected static final Log logger = LogFactory.getLog(TrabajoManager.class);
 
-	public final String PESTANA_FICHA = "ficha";
-	public final String PESTANA_GESTION_ECONOMICA = "gestionEconomica";
+	private static final String PESTANA_FICHA = "ficha";
+	private static final String PESTANA_GESTION_ECONOMICA = "gestionEconomica";
 	
-	public final String PERFIL_CAPA_CONTROL_BANKIA="PERFGCCBANKIA";
-	public final String PERFIL_USUARIOS_DE_CONSULTA="HAYACONSU";
+	private static final String PERFIL_CAPA_CONTROL_BANKIA="PERFGCCBANKIA";
+	private static final String PERFIL_USUARIOS_DE_CONSULTA="HAYACONSU";
 	
-	public final String CODIGO_OBTENCION_DOCUMENTACION="02";
-	public final String CODIGO_ACTUACION_TECNICA="03";
+	private static final String CODIGO_OBTENCION_DOCUMENTACION="02";
+	private static final String CODIGO_ACTUACION_TECNICA="03";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -212,7 +212,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	private ProcessAdapter processAdapter;
 	
 	@Resource
-	MessageService messageServices;
+	private MessageService messageServices;
 	
 	@Autowired
 	private ProveedoresDao proveedoresDao;
@@ -228,6 +228,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
+
+	@Autowired
+	private GastoProveedorApi gastoProveedorApi;
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -1872,14 +1875,20 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Override
 	@Transactional(readOnly = false)
 	public boolean saveActivoTrabajo(DtoActivoTrabajo dtoActivoTrabajo) {
-		ActivoTrabajo activoTrabajo = activoTrabajoDao.findOne(Long.valueOf(dtoActivoTrabajo.getIdActivo()),
-				Long.valueOf(dtoActivoTrabajo.getIdTrabajo()));
+		Float porcentajeParticipacion = 0f;
+		if(dtoActivoTrabajo.getParticipacion() != null) {
+			porcentajeParticipacion = Float.valueOf(dtoActivoTrabajo.getParticipacion());
+		}
 
-		activoTrabajo.setParticipacion(Float.valueOf(dtoActivoTrabajo.getParticipacion()));
+		ActivoTrabajo activoTrabajo = activoTrabajoDao.findOne(Long.valueOf(dtoActivoTrabajo.getIdActivo()),Long.valueOf(dtoActivoTrabajo.getIdTrabajo()));
+		activoTrabajo.setParticipacion(porcentajeParticipacion);
 		genericDao.update(ActivoTrabajo.class, activoTrabajo);
 
-		return true;
+		// Si el trabajo está asociado a un gasto actualizar el porcentaje en el mismo.
+		gastoProveedorApi.actualizarPorcentajeParticipacionGastoProveedorActivo(activoTrabajo.getPrimaryKey().getActivo().getId(), 
+				activoTrabajo.getPrimaryKey().getTrabajo().getGastoTrabajo().getGastoProveedor().getId(), porcentajeParticipacion);
 
+		return true;
 	}
 
 	@Override

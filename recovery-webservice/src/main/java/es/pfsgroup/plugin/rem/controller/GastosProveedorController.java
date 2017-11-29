@@ -1,11 +1,14 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -31,8 +34,6 @@ import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.GestionGastosExcelReport;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
@@ -52,6 +53,7 @@ import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 @Controller
 public class GastosProveedorController extends ParadiseJsonController {
 
+	private final Log logger = LogFactory.getLog(getClass());
 	
 	@Autowired
 	private GastoProveedorApi gastoProveedorApi;
@@ -71,58 +73,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 	@Autowired
 	private ExcelReportGeneratorApi excelReportGeneratorApi;
 
-	
-	/**
-	 * Método para modificar la plantilla de JSON utilizada en el servlet.
-	 * 
-	 * @param request
-	 * @param binder
-	 * @throws Exception
-	 */
-	 /*******************************************************
-	 * NOTA FASE II : Se refactoriza en ParadiseJsonController.java
-	 * *******************************************************/
-	/*@InitBinder
-	protected void initBinder(HttpServletRequest request,  ServletRequestDataBinder binder) throws Exception{
-        
-	    JsonWriterConfiguratorTemplateRegistry registry = JsonWriterConfiguratorTemplateRegistry.load(request);             
-	    registry.registerConfiguratorTemplate(new SojoJsonWriterConfiguratorTemplate(){
-	                
-	        	 	@Override
-	                public SojoConfig getJsonConfig() {
-	                    SojoConfig config= new SojoConfig();
-                        config.setIgnoreNullValues(true);
-                        return config;
-	        	 	}
-	         }
-	   );
 
-
-	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        dateFormat.setLenient(false);
-        dateFormat.setTimeZone(TimeZone.getDefault());
-        binder.registerCustomEditor(Date.class, new ParadiseCustomDateEditor(dateFormat, true));
-        
-        binder.registerCustomEditor(boolean.class, new CustomBooleanEditor("true", "false", true));
-        binder.registerCustomEditor(Boolean.class, new CustomBooleanEditor("true", "false", true));
-        binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));
-        NumberFormat f = NumberFormat.getInstance(Locale.ENGLISH);
-    	f.setGroupingUsed(false);
-    	f.setMaximumFractionDigits(2);
-        f.setMinimumFractionDigits(2);
-        binder.registerCustomEditor(double.class, new CustomNumberEditor(Double.class, f, true));
-        binder.registerCustomEditor(Double.class, new CustomNumberEditor(Double.class, f, true));
-       
-        
-        /*binder.registerCustomEditor(Float.class, new CustomNumberEditor(Float.class, true));
-        binder.registerCustomEditor(Long.class, new CustomNumberEditor(Long.class, true));
-        binder.registerCustomEditor(Integer.class, new CustomNumberEditor(Integer.class, true));
-
-        
-        
-	}*/
-	
-	
 	/**
 	 * Método que recupera un conjunto de datos del gasto según su id 
 	 * @param id Id del gasto
@@ -138,7 +89,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("data", gastoProveedorApi.getTabGasto(id, tab));
 			model.put("success", true);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);
 			model.put("error", e.getMessage());
 		}
@@ -174,7 +125,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("success", true);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);
 			model.put("exception", e.getMessage());
 		}
@@ -198,7 +149,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("msg", ex.getMessage());
 			model.put("success", false);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);
 		}		
 		
@@ -220,7 +171,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("msg", ex.getMessage());
 			model.put("success", false);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);
 		}		
 		
@@ -241,7 +192,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("msg", ex.getMessage());
 			model.put("success", false);
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);
 		}	
 		
@@ -258,7 +209,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("success", success);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);
 		}
 		
@@ -274,7 +225,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("data", gastoProveedorApi.searchProveedoresByNif(dto));
 			model.put("success", true);			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);		
 		}
 		
@@ -292,7 +243,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("data", gastoProveedorApi.searchProveedorCodigo(codigoUnicoProveedor));
 			model.put("success", true);			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);		
 		}
 		
@@ -309,13 +260,11 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("data", gastoProveedorApi.searchPropietarioNif(nifPropietario));
 			model.put("success", true);			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);		
 		}
 		
 		return createModelAndViewJson(model);
-		//return JsonViewer.createModelAndViewJson(new ModelMap("data", adapter.abreTarea(idTarea, subtipoTarea)));
-		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -327,7 +276,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("success", true);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);
 		}	
 		
@@ -347,7 +296,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 		model.put("success", true);
 		
 	} catch (Exception e) {
-		e.printStackTrace();
+		logger.error(e.getMessage());
 		model.put("success", false);
 	}
 
@@ -366,7 +315,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("data", lista);
 			model.put("success", true);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);
 		}
 
@@ -388,7 +337,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("msg", ex.getMessage());
 			model.put("success", false);	
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);
 		}	
 		
@@ -405,7 +354,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("success", success);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);
 		}	
 		
@@ -422,7 +371,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("success", success);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);
 		}	
 		
@@ -439,7 +388,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("success", success);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);
 		}	
 		
@@ -459,7 +408,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("msg", ex.getMessage());
 			model.put("success", false);	
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);
 		}	
 		
@@ -476,7 +425,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("success", success);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);
 		}	
 		
@@ -493,7 +442,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("success", success);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);
 		}
 		
@@ -510,7 +459,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 		} catch (Exception e) {
 			model.put("msg", e.getMessage());
 			model.put("success", false);
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		
 		return createModelAndViewJson(model);
@@ -526,7 +475,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("success", success);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);
 		}	
 		
@@ -558,13 +507,11 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("success", errores==null);
 		
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);
 			model.put("errores", e.getCause());
 		}
 		return createModelAndViewJson(model);
-		//return JsonViewer.createModelAndViewJson(model);
-
 	}
 	
 	/**
@@ -580,7 +527,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 		try {
 			success = gastoProveedorApi.deleteAdjunto(dtoAdjunto);
 		} catch(Exception ex) {
-			ex.printStackTrace();
+			logger.error(ex.getMessage());
 		}
     	
     	return createModelAndViewJson(new ModelMap("success", success));
@@ -624,7 +571,7 @@ public class GastosProveedorController extends ParadiseJsonController {
        		}
        		
        	} catch (Exception e) { 
-       		e.printStackTrace();
+       		logger.error(e.getMessage());
        	}
 
 	}
@@ -649,7 +596,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);
 		}
 
@@ -665,13 +612,11 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("data", gastoProveedorApi.searchProveedorCodigoByTipoEntidad(codigoUnicoProveedor,codigoTipoProveedor));
 			model.put("success", true);			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);		
 		}
 		
 		return createModelAndViewJson(model);
-		//return JsonViewer.createModelAndViewJson(new ModelMap("data", adapter.abreTarea(idTarea, subtipoTarea)));
-		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -683,13 +628,11 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("data", gastoProveedorApi.searchGastoNumHaya(numeroGastoHaya,proveedorEmisor,destinatario));
 			model.put("success", true);			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);		
 		}
 		
 		return createModelAndViewJson(model);
-		//return JsonViewer.createModelAndViewJson(new ModelMap("data", adapter.abreTarea(idTarea, subtipoTarea)));
-		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -704,7 +647,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("msg", ex.getMessage());
 			model.put("success", false);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);
 		}
 		
@@ -723,7 +666,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("msg", ex.getMessage());
 			model.put("success", false);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);
 		}
 		
@@ -742,7 +685,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("msg", ex.getMessage());
 			model.put("success", false);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);
 		}
 		
@@ -762,7 +705,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("success", false);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);
 		}
 		
@@ -798,12 +741,11 @@ public class GastosProveedorController extends ParadiseJsonController {
 		model.put("data", avisosFormateados);
 		
 		return createModelAndViewJson(model);
-		
 	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public void generateExcelGestionGastos(DtoGastosFilter dtoGastosFilter, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public void generateExcelGestionGastos(DtoGastosFilter dtoGastosFilter, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		dtoGastosFilter.setStart(excelReportGeneratorApi.getStart());
 		dtoGastosFilter.setLimit(excelReportGeneratorApi.getLimit());
 
@@ -816,8 +758,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 	}
 	
 	private String formateaAviso(String descripcion) {
-		String formateado = "<div class='div-aviso'>" + descripcion + "</div>";
-		return formateado;
+		return  "<div class='div-aviso'>" + descripcion + "</div>";
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -832,7 +773,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("success", true);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);
 			model.put("exception", e.getMessage());
 		}
@@ -857,7 +798,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			boolean success = gastoProveedorApi.fechaDevengoPosteriorFechaTraspaso(idGasto, idActivo, idAgrupacion);
 			model.put("fechaDevengoSuperior", success);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("fechaDevengoSuperior", false);
 			model.put("error", e.getMessage());
 		}

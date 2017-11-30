@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-03-23T16:56:49 -->
+<!-- 2017-11-30T13:26:14 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PropuestaResolucionActivoLote" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3f9d9c98-ef90-4951-9c7c-762743430c71">
 	<property name="ireport.zoom" value="0.9090909090909093"/>
 	<property name="ireport.x" value="0"/>
@@ -1707,7 +1707,7 @@ TIPO DE PROPUESTA VENTA]]></text>
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{listaFotosWebPrimera})]]></dataSourceExpression>
 					</datasetRun>
 					<jr:listContents height="130" width="186">
-						<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle">
+						<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle" onErrorType="Blank">
 							<reportElement x="0" y="0" width="185" height="130" uuid="e7a45540-aeca-4e4f-b6a0-383f2115ee5c">
 								<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 							</reportElement>
@@ -1735,7 +1735,7 @@ TIPO DE PROPUESTA VENTA]]></text>
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{listaFotosWebSegunda})]]></dataSourceExpression>
 					</datasetRun>
 					<jr:listContents height="130" width="186">
-						<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle">
+						<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle" onErrorType="Blank">
 							<reportElement x="0" y="0" width="184" height="130" uuid="62461d3a-e1cd-4d9c-82ba-c3ec0f4fd5c1">
 								<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 							</reportElement>
@@ -1762,7 +1762,7 @@ TIPO DE PROPUESTA VENTA]]></text>
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{listaFotosWebTercera})]]></dataSourceExpression>
 					</datasetRun>
 					<jr:listContents height="130" width="186">
-						<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle">
+						<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle" onErrorType="Blank">
 							<reportElement x="0" y="0" width="186" height="130" uuid="86416765-516e-4793-885c-123145150953">
 								<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 							</reportElement>
@@ -1801,7 +1801,7 @@ TIPO DE PROPUESTA VENTA]]></text>
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{listaFotosTecnicasPrimera})]]></dataSourceExpression>
 					</datasetRun>
 					<jr:listContents height="130" width="186">
-						<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle">
+						<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle" onErrorType="Blank">
 							<reportElement x="0" y="0" width="185" height="130" uuid="8bf8de1c-22c4-4a06-8183-b22c932528b2">
 								<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 							</reportElement>
@@ -1829,7 +1829,7 @@ TIPO DE PROPUESTA VENTA]]></text>
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{listaFotosTecnicasSegunda})]]></dataSourceExpression>
 					</datasetRun>
 					<jr:listContents height="130" width="186">
-						<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle">
+						<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle" onErrorType="Blank">
 							<reportElement x="0" y="0" width="184" height="130" uuid="af169875-fb2d-432e-b41b-e876bde56aeb">
 								<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 							</reportElement>
@@ -1856,7 +1856,7 @@ TIPO DE PROPUESTA VENTA]]></text>
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{listaFotosTecnicasTercera})]]></dataSourceExpression>
 					</datasetRun>
 					<jr:listContents height="130" width="186">
-						<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle">
+						<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle" onErrorType="Blank">
 							<reportElement x="0" y="0" width="186" height="130" uuid="d155c829-9723-46ab-9e30-1638123aa524">
 								<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 							</reportElement>

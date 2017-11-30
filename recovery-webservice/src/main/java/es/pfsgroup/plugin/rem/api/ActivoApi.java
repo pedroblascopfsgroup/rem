@@ -120,6 +120,22 @@ public interface ActivoApi {
 
 	@BusinessOperationDefinition("activoManager.isIntegradoAgrupacionRestringida")
 	public boolean isIntegradoAgrupacionRestringida(Long id, Usuario usuarioLogado);
+	
+	/**
+	 * Este método comprueba si el ID de activo pertenece a una agrupación de tipo restringida.
+	 * 
+	 * @param idActivo: ID del activo a comprobar.
+	 * @return Devuelve True si el activo pertenece a una agruapción restringida, false si no.
+	 */
+	public boolean isActivoIntegradoAgrupacionRestringida(Long idActivo);
+
+	/**
+	 * Este método comprueba si el ID de activo pertenece a una agrupación de tipo comercial.
+	 * 
+	 * @param idActivo: ID del activo a comprobar.
+	 * @return Devuelve True si el activo pertenece a una agruapción comercial, false si no.
+	 */
+	public boolean isActivoIntegradoAgrupacionComercial(Long idActivo);
 
 	@BusinessOperationDefinition("activoManager.isIntegradoAgrupacionObraNueva")
 	public boolean isIntegradoAgrupacionObraNueva(Long id, Usuario usuarioLogado);

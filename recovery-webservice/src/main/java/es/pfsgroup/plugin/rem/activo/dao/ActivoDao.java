@@ -35,6 +35,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public List<Activo> getListActivosLista(DtoActivoFilter dto, Usuario usuLogado);
 	
 	public Integer isIntegradoAgrupacionRestringida(Long id, Usuario usuLogado);
+
+	public Integer isIntegradoAgrupacionComercial(Long idActivo);
 	
 	public List<DDUnidadPoblacional> getComboInferiorMunicipio(String codigoMunicipio);
 	

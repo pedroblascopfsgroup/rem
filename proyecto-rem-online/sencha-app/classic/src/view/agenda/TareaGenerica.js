@@ -244,6 +244,18 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
                     camposFiltrados.push(me.campos[i]);
                     break;
 
+                case 'checkbox':
+                    var checkbox = {};
+                    checkbox.xtype = 'checkboxfield';
+                    checkbox.name = me.campos[i].name;
+                    checkbox.fieldLabel = me.campos[i].fieldLabel;
+                    checkbox.readOnly = false;
+                    checkbox.allowBlank = me.campos[i].noObligatorio;
+                    checkbox.inputValue = true;
+                    checkbox.uncheckedValue = false;
+                    camposFiltrados.push(checkbox);
+                    break;
+
                 default:
                     camposFiltrados.push(me.campos[i]);
                     break;
@@ -1069,6 +1081,30 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.ocultarCampo(comiteSuperior);
 		}
 		
+	},
+	T013_DocumentosPostVentaValidacion: function() {
+		var me = this;
+		var fechaIngreso = me.down('[name=fechaIngreso]');
+
+		if(!Ext.isEmpty(fechaIngreso.getValue())) {
+			me.deshabilitarCampo(me.down('[name=checkboxVentaDirecta]'));
+			me.bloquearCampo(me.down('[name=fechaIngreso]'));
+		} else {
+			me.habilitarCampo(me.down('[name=checkboxVentaDirecta]'));
+			me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
+		}
+
+		me.down('[name=checkboxVentaDirecta]').addListener('change', function(checkbox, newValue, oldValue, eOpts) {
+            if (newValue) {
+            	me.habilitarCampo(me.down('[name=fechaIngreso]'));
+            	me.down('[name=fechaIngreso]').allowBlank = false;
+            	me.down('[name=fechaIngreso]').validate();
+            } else {
+            	me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
+            	me.campoNoObligatorio(me.down('[name=fechaIngreso]'));
+            	me.down('[name=fechaIngreso]').reset();
+            }
+        })
 	},
     T013_FirmaPropietarioValidacion: function() {
         var me = this;

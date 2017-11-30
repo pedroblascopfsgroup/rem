@@ -15,6 +15,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -34,6 +35,7 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaDocumentosPostVenta.class);
     
     private static final String FECHA_INGRESO = "fechaIngreso";
+    private static final String CHECKBOX_VENTA_DIRECTA = "checkboxVentaDirecta";
    	private static final String CODIGO_T013_DOCUMENTOS_POST_VENTA = "T013_DocumentosPostVenta";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -43,8 +45,7 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 		for(TareaExternaValor valor :  valores){
 
 			// fecha ingreso cheque
-			if(FECHA_INGRESO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
-			{
+			if(FECHA_INGRESO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				Oferta oferta = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 
@@ -58,6 +59,13 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 				}
 
 				genericDao.save(ExpedienteComercial.class, expediente);
+			}
+
+			if(CHECKBOX_VENTA_DIRECTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				Oferta oferta = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+				Activo activo = oferta.getActivoPrincipal();
+				activo.setVentaDirectaBankia("true".equals(valor.getValor()) ? true : false);
+				genericDao.save(Activo.class, activo);
 			}
 		}
 	}

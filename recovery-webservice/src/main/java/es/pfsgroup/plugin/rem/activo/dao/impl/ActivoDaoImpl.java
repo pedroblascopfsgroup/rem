@@ -53,7 +53,6 @@ import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 
 @Repository("ActivoDao")
 public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements ActivoDao{
@@ -351,6 +350,13 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
    		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
 	}
+
+    @Override
+    public Integer isIntegradoAgrupacionComercial(Long idActivo) {
+    	HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + idActivo + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL);
+
+   		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
+    }
 
     @Override
 	public Integer isActivoPrincipalAgrupacionRestringida(Long id) {

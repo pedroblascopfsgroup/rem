@@ -11,7 +11,6 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.CondicionesActivo;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -895,4 +894,13 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public DDSubcartera getCodigoSubCarteraExpediente(Long idExpediente);
+
+	/**
+	 * Este método comprueba, desde un ID de trámite, si el expediente comercial se encuentra en un estado
+	 * distinto a anulado.
+	 * 
+	 * @param idTramite: ID del trámite desde el cual se realiza la consulta.
+	 * @return Devuelve True si el estado del expdiente comercial es distinto a anulado, False si no lo es.
+	 */
+	public boolean checkEstadoExpedienteDistintoAnulado(Long idTramite);
 }

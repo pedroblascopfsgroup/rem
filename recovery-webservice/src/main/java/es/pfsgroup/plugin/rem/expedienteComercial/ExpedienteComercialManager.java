@@ -5596,6 +5596,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	@Override
+	public boolean checkEstadoExpedienteDistintoAnulado(Long idTramite) {
+		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
+		if (!Checks.esNulo(activoTramite)) {
+			Trabajo trabajo = activoTramite.getTrabajo();
+			if (!Checks.esNulo(trabajo)) {
+				ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByTrabajo(trabajo.getId());
+				if(!Checks.esNulo(expediente.getEstado())) {
+					return DDEstadosExpedienteComercial.ANULADO.equals(expediente.getEstado().getCodigo()) ? true : false;
+				}
+			}
+		}
+		return false;
+	}
+
+	@Override
 	public boolean importeExpedienteMenorPreciosMinimosActivos(Long idTramite) {
 		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
 		if (!Checks.esNulo(activoTramite)) {
@@ -5708,6 +5723,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public DDSubcartera getCodigoSubCarteraExpediente(Long idExpediente){
 		

@@ -1,4 +1,6 @@
 def notifyEmail(boolean error) {
+    def proyecto="REM"
+
     def recipientProviders = (error) ? [[$class: 'DevelopersRecipientProvider'], [$class: 'UpstreamComitterRecipientProvider']] : [];
     def toStr = (error) ? env.EMAILS_DESARROLLO_KO : env.EMAILS_DESARROLLO_OK;
     recipientProviders=[]
@@ -86,6 +88,7 @@ def deployPitertul(String host, int port) {
             if (fileExists('pitertul.zip')) {
                 echo "Desplegando PITERTUL..."
                 sh script: "bash ../proyecto-rem-online/dev-ops/common-upload-SSH.sh -host:"+host+" -cliente:rem -componente:pitertul -custom-dir:${entorno}"
+
                 withCredentials([string(credentialsId: 'password-BBDD-producto', variable: 'PASSWORD')]) {
                     echo "Running scripts [${entorno}]... DEFECTO - ejecutamos script de todo"
                     sh script: "ssh -o StrictHostKeyChecking=no "+host+" \"cd deploy/rem/${entorno}/pitertul;bash ./deploy-pitertul.sh -entorno:${entorno} -Xapp:si -Xbi:si -Xgrants:si -Pmaster:${PASSWORD} -Pentity01:${PASSWORD} -Pdwh:${PASSWORD} -Psystempfs:${PASSWORD}\""
@@ -150,6 +153,7 @@ pipeline {
                      sh "mvn install:install-file -Dpackaging=pom -Dfile=pom.xml -DpomFile=pom.xml"
                      sh "mvn org.codehaus.mojo:versions-maven-plugin:2.4:set -DnewVersion=${version}"
                     }
+
                 sh "bash ./proyecto-rem-online/dev-ops/common-sencha6-build.sh"
                 withMaven(
                     mavenSettingsConfig: 'pfs-recovery-settings.xml'
@@ -168,6 +172,8 @@ pipeline {
                         sh script: "bash ./proyecto-rem-online/dev-ops/package-config.sh -out-dir:${DIR_SALIDA} -entorno:${entorno}"
                     }, "package-pitertul" : {
                         sh script: "bash ./proyecto-rem-online/dev-ops/package-pitertul.sh -tagAnterior:${tagReferencia} -out-dir:${DIR_SALIDA} -entornos:${entorno}"
+//                    }, "package-springBatch" : {
+//                        sh script: "bash ./proyecto-rem-online/dev-ops/package-spring-batch.sh -version:${version} -out-dir:${DIR_SALIDA} -entorno:${entorno}"
                     }, "package-online" : {
                         sh script: "bash ./proyecto-rem-online/dev-ops/package-online.sh -version:${version} -out-dir:${DIR_SALIDA} -entorno:${entorno}"
                     }, "package-procesos" : {
@@ -182,17 +188,21 @@ pipeline {
         stage('Update-DB') {
             steps {
                 deployPitertul("ops-bd@iap03", 22)
+                build job: 'rem-DC-bd-auxiliares', wait: false
             }
         }
 
         stage('Deploy') {
             steps {
-
+/*                
                 timeout (time:6, unit:'MINUTES') {
-                    deployFrontal("recovecp@iap04", 2228)
+                    deploySpringBatch("iba018@ibd03",22)
+                }*/
+                timeout (time:6, unit:'MINUTES') {
+                    deployFrontal("iap018@iap01", 22)
                 }
                 timeout (time:2, unit:'MINUTES') {
-                    deployProcesos("recovecb@iap04", 2228)
+                    deployProcesos("iba018@ibd03", 22)
                 }
             }
             

@@ -68,7 +68,7 @@ def deployPitertul(String host, int port) {
 pipeline {
     
     agent { 
-        label 'JNK02-ACTITUD'
+        label env.NODO_JNK
     }
 
     tools {

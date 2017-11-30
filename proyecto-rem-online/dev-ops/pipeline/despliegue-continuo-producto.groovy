@@ -118,7 +118,7 @@ pipeline {
             steps {
 
                 echo """PARAMETROS: tagReferencia: ${env.tagReferencia}
-                    tag/version/rama: ${env.versionGit}
+                    tag/version/rama: ${env.version}
                     hito Link: ${env.hito}
                     entorno: ${entorno}
                     """

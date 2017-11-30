@@ -18,6 +18,21 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesList', {
      	var me = this;
 
      	me.setTitle(HreRem.i18n('title.listado.agrupaciones'));
+     	
+     	var carteraRenderer =  function(value) {
+     		var temp = CONST.NOMBRE_CARTERA[value];
+     		if (temp != null){
+     		var src = CONST.IMAGENES_CARTERA[temp.toUpperCase()];
+     		}
+        	alt = temp;
+        	if(Ext.isEmpty(src)) {
+        		if(temp != null){
+        			return '<div class="min-text-logo-cartera">'+temp.toUpperCase()+'</div>';
+        		}
+        	}else {
+        		return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="50px"></div>';        		
+        	}
+        };
 
      	me.listeners = {
      			rowdblclick: 'onAgrupacionesListDobleClick',
@@ -163,7 +178,13 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesList', {
 			            	text	 : HreRem.i18n('header.numero.activos.publicados'),
 			                flex	 : 1,
 			                dataIndex: 'publicados'
-			            }
+			            },
+			            {
+				            dataIndex: 'cartera',
+				            text: HreRem.i18n('header.entidad.propietaria'),
+				            width: 70,
+				            renderer: carteraRenderer
+				        }
 		
 			        ];
 			        

@@ -31,7 +31,10 @@ public class VBusquedaAgrupaciones implements Serializable {
     private DDTipoAgrupacion tipoAgrupacion;
 
     @Column(name = "AGR_NUM_AGRUP_REM")
-	private String numAgrupacionRem;	
+	private String numAgrupacionRem;
+    
+    @Column(name = "AGR_NUM_AGRUP_UVEM")
+    private String numAgrupacionUvem;
     
     @ManyToOne
     @JoinColumn(name = "provincia")
@@ -99,6 +102,14 @@ public class VBusquedaAgrupaciones implements Serializable {
 
 	public void setNumAgrupacionRem(String numAgrupacionRem) {
 		this.numAgrupacionRem = numAgrupacionRem;
+	}
+	
+	public String getNumAgrupacionUvem() {
+		return numAgrupacionUvem;
+	}
+
+	public void setNumAgrupacionUvem(String numAgrupacionUvem) {
+		this.numAgrupacionUvem = numAgrupacionUvem;
 	}
 
 	public String getNombre() {

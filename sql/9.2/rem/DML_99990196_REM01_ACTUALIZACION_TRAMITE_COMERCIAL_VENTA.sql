@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Kevin Fernández
---## FECHA_CREACION=20170523
+--## FECHA_CREACION=20171201
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-2032
+--## INCIDENCIA_LINK=HREOS-3328
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que actualiza el trámite T013 Trámite comercial venta.
@@ -30,7 +30,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     --				TAP_CODIGO						TAP_SCRIPT_VALIDACION_JBPM
-		T_TIPO_DATA('T013_DocumentosPostVenta',		'valores[''''T013_DocumentosPostVenta''''][''''fechaIngreso''''] == null ? (valores[''''T013_DocumentosPostVenta''''][''''checkboxVentaDirecta''''] == null ? ''''No es posible avanzar la tarea por ausencia de fecha ingreso cheque'''': null) : (valores[''''T013_DocumentosPostVenta''''][''''checkboxVentaDirecta''''] == null ? existeAdjuntoUGValidacion("19,E;17,E") : (checkEstadoExpedienteDistintoAnulado() ? ''''Para este activo existe un trámite comercial en curso. Debe cerrarlo previamente'''' : (comprobarActivoComercializable() ? (checkActivoEnAgrupacionRestringida() ? ''''El activo forma parte a una agrupación restringida'''' : (checkActivoEnAgrupacionComercial() ? ''''El activo forma parte de una agrupación comercial'''' : null)) : ''''El activo no es comercializable'''')))')
+		T_TIPO_DATA('T013_DocumentosPostVenta',		'valores[''''T013_DocumentosPostVenta''''][''''fechaIngreso''''] == null ? (valores[''''T013_DocumentosPostVenta''''][''''checkboxVentaDirecta''''] == ''''false'''' ? ''''No es posible avanzar la tarea por ausencia de fecha ingreso cheque'''' : null) : (valores[''''T013_DocumentosPostVenta''''][''''checkboxVentaDirecta''''] == ''''false'''' ? existeAdjuntoUGValidacion("19,E;17,E") : (checkEstadoExpedienteDistintoAnulado() ? ''''Para este activo existe un trámite comercial en curso. Debe cerrarlo previamente'''' : (comprobarActivoComercializable() ? (checkActivoEnAgrupacionRestringida() ? ''''El activo forma parte a una agrupación restringida'''' : (checkActivoEnAgrupacionComercial() ? ''''El activo forma parte de una agrupación comercial'''' : existeAdjuntoUGValidacion("19,E;17,E"))) : ''''El activo no es comercializable'''')))')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 

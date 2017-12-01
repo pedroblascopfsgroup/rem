@@ -39,7 +39,7 @@ BEGIN
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO]: INSERCION EN '||V_TABLA||'] ');
 	
-	V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE DD_MRG_CODIGO =  ''F32'' ';
+	V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE DD_MRG_CODIGO =  ''F33'' ';
 	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 	
 	-- Si existe la FILA
@@ -54,7 +54,7 @@ BEGIN
 			(DD_MRG_ID, DD_MRG_CODIGO, DD_MRG_DESCRIPCION, DD_MRG_DESCRIPCION_LARGA, PROCESO_VALIDAR, QUERY_ITER, VERSION, 
 				USUARIOCREAR, FECHACREAR, BORRADO)' || 
 			' SELECT '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL' || ',
-			''F32'', 
+			''F33'', 
 			''No pueden darse alta gastos con el valor 8 (varios periodos) del diccionario periodicidad'', 
 			''No pueden darse alta gastos con el valor 8 (varios periodos) del diccionario periodicidad'',
 			1,

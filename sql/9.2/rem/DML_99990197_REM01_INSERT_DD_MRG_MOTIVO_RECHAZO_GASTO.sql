@@ -39,7 +39,7 @@ BEGIN
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO]: INSERCION EN '||V_TABLA||'] ');
 	
-	V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE DD_MRG_CODIGO =  ''F33'' ';
+	V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE DD_MRG_CODIGO =  ''F33''';
 	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 	
 	-- Si existe la FILA
@@ -58,15 +58,14 @@ BEGIN
 			''No pueden darse alta gastos con el valor 8 (varios periodos) del diccionario periodicidad'', 
 			''No pueden darse alta gastos con el valor 8 (varios periodos) del diccionario periodicidad'',
 			1,
-			''INNER JOIN DD_TPE_TIPOS_PERIOCIDAD TPE ON TPE.DD_TPE_CODIGO = AUX.PERIO_REAL AND TPE.DD_TPE_CODIGO IN (''08'',''00'')'',
+			''INNER JOIN DD_TPE_TIPOS_PERIOCIDAD TPE ON TPE.DD_TPE_CODIGO = AUX.PERIO_REAL AND TPE.DD_TPE_CODIGO IN ("08","00") '',
 			0, 
 			'''||V_USUARIO||''', 
 			SYSDATE, 
 			0 
 			FROM DUAL';
 		EXECUTE IMMEDIATE V_MSQL;
-	 
-		EXECUTE IMMEDIATE V_MSQL;
+		
 		DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.'||V_TABLA||' insertados correctamente.');
 		
     END IF;

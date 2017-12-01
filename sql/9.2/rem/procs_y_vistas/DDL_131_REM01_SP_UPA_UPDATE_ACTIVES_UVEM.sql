@@ -30,8 +30,8 @@ AS
 --27-09-2016
 --V0.1
 
-V_ESQUEMA VARCHAR2(15 CHAR) := 'REM01';
-V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_ESQUEMA VARCHAR2(15 CHAR) := '#ESQUEMA#';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
 V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
 V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
 V_NOT_UPDATE VARCHAR2(2000 CHAR) := '';

@@ -37,7 +37,7 @@ public interface RestApi {
 	}
 	
 	public enum ENTIDADES {
-		ACTIVO
+		ACTIVO,INFORME
 	}
 
 	public static final String CODE_ERROR = "ERROR";

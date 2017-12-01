@@ -51,14 +51,17 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.UniqueKey;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dao.ActivosModificadosDao;
 import es.pfsgroup.plugin.rem.rest.dao.BrokerDao;
+import es.pfsgroup.plugin.rem.rest.dao.InformesModificadosDao;
 import es.pfsgroup.plugin.rem.rest.dao.PeticionDao;
 import es.pfsgroup.plugin.rem.rest.filter.AuthenticationRestService;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.rest.model.ActivosModificados;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
+import es.pfsgroup.plugin.rem.rest.model.InformesModificados;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
@@ -91,6 +94,9 @@ public class RestManagerImpl implements RestApi {
 
 	@Autowired
 	private ActivosModificadosDao activosModificadosDao;
+	
+	@Autowired
+	private InformesModificadosDao informesModificadosDao;
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -629,10 +635,10 @@ public class RestManagerImpl implements RestApi {
 
 	@Override
 	public void marcarRegistroParaEnvio(ENTIDADES entidad, Object instanciaEntidad) {
+		Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		if (entidad.equals(ENTIDADES.ACTIVO)) {
 			if (instanciaEntidad != null && instanciaEntidad instanceof Activo) {
 				ActivosModificados actMod = activosModificadosDao.getByActivo((Activo) instanciaEntidad);
-				Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 				if (Checks.esNulo(actMod)) {
 					actMod = new ActivosModificados();
 					Auditoria auditoria = new Auditoria();
@@ -648,6 +654,25 @@ public class RestManagerImpl implements RestApi {
 					actMod.getAuditoria().setUsuarioModificar(usu.getUsername());
 				}
 				activosModificadosDao.saveOrUpdate(actMod);
+			}
+		}else if(entidad.equals(ENTIDADES.INFORME)){
+			if (instanciaEntidad != null && instanciaEntidad instanceof ActivoInfoComercial) {
+				InformesModificados informeMod = informesModificadosDao.getByInforme((ActivoInfoComercial)instanciaEntidad);
+				if (Checks.esNulo(informeMod)) {
+					informeMod = new InformesModificados();
+					Auditoria auditoria = new Auditoria();
+					auditoria.setFechaModificar(new Date());
+
+					auditoria.setUsuarioModificar(usu.getUsername());
+					auditoria.setFechaCrear(new Date());
+					auditoria.setUsuarioCrear(usu.getUsername());
+					informeMod.setAuditoria(auditoria);
+					informeMod.setInforme((ActivoInfoComercial)instanciaEntidad);
+				}else{
+					informeMod.getAuditoria().setFechaModificar(new Date());
+					informeMod.getAuditoria().setUsuarioModificar(usu.getUsername());
+				}
+				informesModificadosDao.saveOrUpdate(informeMod);
 			}
 		}
 

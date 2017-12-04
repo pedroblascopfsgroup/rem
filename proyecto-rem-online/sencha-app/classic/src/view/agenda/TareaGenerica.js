@@ -1085,6 +1085,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	T013_DocumentosPostVentaValidacion: function() {
 		var me = this;
 		var fechaIngreso = me.down('[name=fechaIngreso]');
+		fechaIngreso.setMaxValue($AC.getCurrentDate());
 
 		if(!Ext.isEmpty(fechaIngreso.getValue())) {
 			me.deshabilitarCampo(me.down('[name=checkboxVentaDirecta]'));

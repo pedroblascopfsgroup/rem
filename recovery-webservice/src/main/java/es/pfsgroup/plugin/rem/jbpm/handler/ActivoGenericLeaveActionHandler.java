@@ -70,11 +70,14 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 		// una reentrada en el PROGenericEnterActionHandler
 		setVariable(ConstantesBPMPFS.NOMBRE_NODO_SALIENTE, getNombreNodo(executionContext), executionContext);
 		
-		// Guardado adicional de datos de la tarea
-		guardadoAdicionalTarea(executionContext);
-		
-		// Actualizamos los check de admisión y gestión
-		actualizarEstados(executionContext);
+		//HREOS-3393
+		if(!SALTO_RESOLUCION_EXPEDIENTE.equals(getTransitionName(executionContext))) {
+			// Guardado adicional de datos de la tarea
+			guardadoAdicionalTarea(executionContext);
+			
+			// Actualizamos los check de admisión y gestión
+			actualizarEstados(executionContext);
+		}
 	}
 
 	/**

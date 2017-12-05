@@ -78,7 +78,6 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.principal.sujeto'),
 											                bind: '{detalleeconomico.importePrincipalSujeto}',
 											                reference: 'importePrincipalSujeto',
-											                minValue: '0.01',
 											                allowBlank: false,
 											                listeners:{
 											                	edit: function(){
@@ -92,13 +91,24 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 										        				change: function(){	
 										        					var field=me.up('gastodetallemain').lookupReference('tipoImpositivo');
 										        					if(this.getValue()!='' && this.getValue()>0){
-										        						if(field.getValue()!='' && field.getValue()>0)
+										        						
+										        						if(field.getValue()!='' && field.getValue()>0){
 											        						field.validate();
-										        						else
+										        						}
+										        						else {
 										        							field.clearInvalid();
+										        						}
+										        						me.up('gastodetallemain').lookupReference('impuestoindirecto').setDisabled(false);
+											                			me.up('gastodetallemain').lookupReference('impuestodirecto').setDisabled(false);
 											        				}
-										        					else
+										        					else{
 										        						field.clearInvalid();
+										        						me.up('gastodetallemain').lookupReference('cbOperacionExenta').setValue(0);
+										        						me.up('gastodetallemain').lookupReference('impuestoindirecto').setDisabled(true);
+										        						me.up('gastodetallemain').lookupReference('impuestodirecto').setDisabled(true);
+										        						field.setValue(0);
+										        						me.up('gastodetallemain').lookupReference('tipoImpositivoIRPF').setValue('');
+										        					}
 										        				},																		        						
 								        						afterrender: function(){							        					
 										        					if(me.up('gastodetallemain').getViewModel().get('gasto').get('asignadoATrabajos'))
@@ -109,6 +119,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																update: function(){
 																	if(Ext.isEmpty(this.getValue()))
 																		this.setValue(0);
+																	
 																}
 											                }
 														},
@@ -216,9 +227,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 															reference: 'tipoImpositivo',
 											                bind: {
 											                	value: '{detalleeconomico.impuestoIndirectoTipoImpositivo}'
-												                //disabled: '{detalleeconomico.impuestoIndirectoExento}'
 											                },
-											                //allowBlank: false,
 											                validator: function(v) {
 											                	var principal=me.up('gastodetallemain').lookupReference('importePrincipalSujeto');											                	
 											                	if (Ext.isEmpty(this.getValue())){
@@ -310,6 +319,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 															style: 'text-align: right',
 											        		fieldStyle:'text-align:right;',
 											        		labelStyle: 'text-align:left;',
+											        		reference: 'tipoImpositivoIRPF',
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.tipo.impositivo.irpf'),
 											                bind: '{detalleeconomico.irpfTipoImpositivo}',
 											                listeners:{

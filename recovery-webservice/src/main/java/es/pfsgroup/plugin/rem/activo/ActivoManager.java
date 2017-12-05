@@ -2408,7 +2408,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	public boolean isActivoConReservaByEstado(Activo activo, String codEstado) {
 
-		for (Reserva reserva : this.getReservasByActivo(activo)) {
+		for (Reserva reserva : this.getReservasByActivoOfertaAceptada(activo)) {
 
 			if (!Checks.esNulo(reserva.getEstadoReserva())
 					&& reserva.getEstadoReserva().getCodigo().equals(codEstado)) {
@@ -2420,18 +2420,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
-	public List<Reserva> getReservasByActivo(Activo activo) {
+	public List<Reserva> getReservasByActivoOfertaAceptada(Activo activo) {
 
 		List<Reserva> reservas = new ArrayList<Reserva>();
 
 		if (!Checks.estaVacio(activo.getOfertas())) {
 			for (ActivoOferta activoOferta : activo.getOfertas()) {
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id",
-						activoOferta.getPrimaryKey().getOferta().getId());
-				ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
-
-				if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getReserva())) {
-					reservas.add(expediente.getReserva());
+				if(!Checks.esNulo(activoOferta.getPrimaryKey().getOferta()) && DDEstadoOferta.CODIGO_ACEPTADA.equals(activoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo())){
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id",
+							activoOferta.getPrimaryKey().getOferta().getId());
+					ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
+	
+					if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getReserva())) {
+						reservas.add(expediente.getReserva());
+					}
 				}
 			}
 		}

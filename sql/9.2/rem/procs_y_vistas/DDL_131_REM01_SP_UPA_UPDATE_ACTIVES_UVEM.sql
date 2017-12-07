@@ -720,9 +720,6 @@ BEGIN
           
           V_NUM_TABLAS := V_NUM_TABLAS + SQL%ROWCOUNT;
 
-
-          
-          
           
           
 
@@ -822,6 +819,29 @@ BEGIN
 	    ;         
           
           V_NUM_TABLAS := V_NUM_TABLAS + SQL%ROWCOUNT;
+          
+          
+
+         EXECUTE IMMEDIATE '
+         MERGE INTO '||V_ESQUEMA||'.ACT_ADN_ADJNOJUDICIAL ADN_OLD USING (
+                 SELECT ADN.ADN_FECHA_TITULO AS FECHA_ADN_REM, APR.FEC_ADJUDICACION AS FECHA_ADN_UVEM
+                      , ACT.ACT_ID
+                      , ACT.ACT_NUM_ACTIVO_UVEM AS REM_NUM_UVEM, APR.ACT_NUMERO_UVEM AS NUM_UVEM
+                 FROM '||V_ESQUEMA||'.APR_AUX_STOCK_UVEM_TO_REM APR
+                 JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON  ACT.ACT_NUM_ACTIVO_UVEM = APR.ACT_NUMERO_UVEM
+                 JOIN '||V_ESQUEMA||'.ACT_ADN_ADJNOJUDICIAL ADN ON ACT.ACT_ID = ADN.ACT_ID
+                 WHERE (ADN.ADN_FECHA_TITULO <> APR.FEC_ADJUDICACION OR ADN.ADN_FECHA_TITULO IS NULL OR APR.FEC_ADJUDICACION IS NULL)
+                   AND APR.REM = 1
+                   AND ACT.BORRADO = 0
+        ) ADN_NEW ON (ADN_OLD.ACT_ID = ADN_NEW.ACT_ID)
+            WHEN MATCHED THEN UPDATE SET
+            ADN_OLD.ADN_FECHA_TITULO = ADN_NEW.FECHA_ADN_UVEM,
+            ADN_OLD.USUARIOMODIFICAR = '''||V_USUARIO||''',
+            ADN_OLD.FECHAMODIFICAR = SYSDATE
+            '          
+            ;
+            
+                 V_NUM_TABLAS := V_NUM_TABLAS + SQL%ROWCOUNT;             
 
           IF V_NUM_TABLAS != 0 THEN
 

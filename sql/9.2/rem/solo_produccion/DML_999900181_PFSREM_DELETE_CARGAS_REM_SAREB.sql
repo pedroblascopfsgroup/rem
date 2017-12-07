@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Pablo Meseguer
---## FECHA_CREACION=20171205
+--## FECHA_CREACION=20171207
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-3410
@@ -78,19 +78,7 @@ BEGIN
 	END IF;
 	
 	
-    V_SQL := 'select count(1) from '||V_ESQUEMA||'.'||V_TABLA_1||' car
-			join '||V_ESQUEMA||'.ACT_CRG_CARGAS crg on CRG.BIE_CAR_ID=CAR.BIE_CAR_ID
-			join '||V_ESQUEMA||'.ACT_ACTIVO act on act.act_id=CRG.ACT_ID
-			join '||V_ESQUEMA||'.DD_CRA_CARTERA cra on cra.dd_cra_id=act.dd_cra_id
-			left join '||V_ESQUEMA||'.DD_ODT_ORIGEN_DATO odt on odt.dd_odt_id=crg.dd_odt_id
-			where 
-			CRA.DD_CRA_CODIGO=''02''
-			and 
-			(dd_odt_codigo=''02'' or dd_odt_codigo is null)
-			and crg.usuariocrear<>''MIG_SAREB''
-			and crg.usuariocrear <>''ALT_PRINEX''
-			and crg.borrado=0
-			and car.borrado=0';
+    V_SQL := 'select count(1) from PFSREM.AUX_CARGAS_BORRAR car';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     
     -- Si existen los campos lo indicamos sino los creamos

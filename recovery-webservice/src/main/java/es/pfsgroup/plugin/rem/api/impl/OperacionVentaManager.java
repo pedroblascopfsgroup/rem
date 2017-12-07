@@ -21,7 +21,6 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.ParamReportsApi;
@@ -33,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
+import es.pfsgroup.plugin.rem.model.CondicionesActivo;
 import es.pfsgroup.plugin.rem.model.DtoComprador;
 import es.pfsgroup.plugin.rem.model.DtoDataSource;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -158,17 +158,6 @@ public class OperacionVentaManager implements ParamReportsApi{
 				mapaValores.put("SociedadPatrimonial",FileUtilsREM.stringify(null));
 				mapaValores.put("PorcentajePropiedad",FileUtilsREM.stringify(null));
 			}
-			
-			NMBBien bien =  activo.getBien();
-//			if (bien!=null) {
-//				if (bien.getDatosRegistrales()!=null) {
-//					mapaValores.put("FincaRegistral",FileUtilsREM.stringify(bien.getDatosRegistrales()));
-//				} else {
-//					mapaValores.put("FincaRegistral",FileUtilsREM.stringify(null));
-//				}
-//			} else {
-//				mapaValores.put("FincaRegistral",FileUtilsREM.stringify(null));
-//			}
 
 //			Oferta ofertaAceptada = ofertaApi.getOfertaAceptadaByActivo(activo);
 //			if (ofertaAceptada==null) {
@@ -188,28 +177,41 @@ public class OperacionVentaManager implements ParamReportsApi{
 //			Si con situación posesoria "vacío": El ofertante acepta cualquier situación posesoria.
 //			Si con situación posesoria "libre": El ofertante requiere que el activo esté libre de ocupantes.
 //			Si con situación posesoria "ocupado con título": El ofertante acepta que el activo esté arrendado.
-			Integer poseInicial = condExp.getPosesionInicial();
-			DDSituacionesPosesoria sitaPosesion = condExp.getSituacionPosesoria();
-			String txtPosesion = "";
-			if (poseInicial==null) {
-				txtPosesion += "";
-			} else {
-				if (poseInicial.equals(new Integer(1))) {
-					txtPosesion += "El ofertante requiere que haya posesión inicial.";
-				} else {
-					txtPosesion += "El ofertante acepta que no haya posesión inicial.";
+			CondicionesActivo condicionesActivo = null;
+			condicionesActivo = (CondicionesActivo) genericDao.get(CondicionesActivo.class,
+					genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()),
+					genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId()));
+			if(!Checks.esNulo(condicionesActivo)){
+				Integer poseInicial= condicionesActivo.getPosesionInicial();
+				DDSituacionesPosesoria sitaPosesion = condicionesActivo.getSituacionPosesoria();
+				String txtPosesion = "";
+				
+				if(!Checks.esNulo(condicionesActivo.getEstadoTitulo())){
+					mapaValores.put("Inscripcion", condicionesActivo.getEstadoTitulo().getDescripcion());
 				}
-			}
-			if (sitaPosesion==null) {
-				txtPosesion += "El ofertante acepta cualquier situación posesoria.";
-			} else {
-				if (sitaPosesion.getCodigo().equals(DDSituacionesPosesoria.SITUACION_POSESORIA_LIBRE)) {
-					txtPosesion += "El ofertante requiere que el activo esté libre de ocupantes.";
-				} else if (sitaPosesion.getCodigo().equals(DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_CON_TITULO)) {
-					txtPosesion += "El ofertante acepta que el activo esté arrendado.";
+				else{
+					mapaValores.put("Inscripcion", FileUtilsREM.stringify(null));
 				}
+				
+				if(!Checks.esNulo(poseInicial)){
+					if(poseInicial.equals(new Integer(1))){
+						txtPosesion= txtPosesion + "Si. ";
+					}
+					else{
+						txtPosesion= txtPosesion + "No. ";
+					}
+				}
+				
+				if(!Checks.esNulo(sitaPosesion)){
+					txtPosesion= txtPosesion + sitaPosesion.getDescripcion();
+				}
+				mapaValores.put("Posesion", txtPosesion);
+				
 			}
-			mapaValores.put("Posesion", txtPosesion);
+			else{
+				mapaValores.put("Posesion", " ");
+			}
+			
 			
 //			Si hay contenido en impuestos y en el combo "por cuenta de" pone "comprador": El comprador asume el pago de los impuestos pendientes.
 //			Si hay contenido en comunidades y en el combo "por cuenta de" pone "vendedor": El comprador no asume el pago de los impuestos pendientes.
@@ -217,6 +219,11 @@ public class OperacionVentaManager implements ParamReportsApi{
 			DDTiposPorCuenta porCuentaImpuestos = condExp.getTipoPorCuentaImpuestos();
 			DDTiposPorCuenta porCuentaComunidad = condExp.getTipoPorCuentaComunidad();
 			DDTiposPorCuenta porCuentaOtros = condExp.getTipoPorCuentaCargasOtros();
+			Boolean reservaConImpuesto= false;
+			if(!Checks.esNulo(condExp.getReservaConImpuesto())){
+				reservaConImpuesto= condExp.getReservaConImpuesto().equals(new Integer(1));
+			}
+			
 			String txtCargas = "";
 			if (condExp.getCargasImpuestos()!=null && porCuentaImpuestos!=null && porCuentaImpuestos.getCodigo().equals(DDTiposPorCuenta.TIPOS_POR_CUENTA_COMPRADOR)) {
 				txtCargas += "El comprador asume el pago de los impuestos pendientes. ";
@@ -227,15 +234,12 @@ public class OperacionVentaManager implements ParamReportsApi{
 			if (condExp.getCargasOtros()!=null && porCuentaOtros!=null && porCuentaOtros.getCodigo().equals(DDTiposPorCuenta.TIPOS_POR_CUENTA_SEGUN_LEY)) {
 				txtCargas += "El comprador requiere que los gastos sean asumidos por quien corresponda según ley. ";
 			}
-			mapaValores.put("Tratamientodecargas", txtCargas);
+			mapaValores.put("Tratamientodecargas", FileUtilsREM.stringify(null));
 
 			if (activo.getInfoRegistral()!=null && activo.getInfoRegistral().getInfoRegistralBien()!=null) {
-				if (activo.getInfoRegistral().getInfoRegistralBien().getFechaInscripcion()==null) {
-					mapaValores.put("Inscripcion", "SI");
-				} else {
-					mapaValores.put("Inscripcion", "NO");
-				}				
-				mapaValores.put("Registro",FileUtilsREM.stringify(activo.getInfoRegistral().getInfoRegistralBien().getCodigoRegistro()));
+				if(!Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien().getLocalidad())){
+					mapaValores.put("Registro",FileUtilsREM.stringify(activo.getInfoRegistral().getInfoRegistralBien().getLocalidad().getDescripcion()));
+				}
 				mapaValores.put("RegistroNo",FileUtilsREM.stringify(activo.getInfoRegistral().getInfoRegistralBien().getNumRegistro()));
 				mapaValores.put("Tomo",FileUtilsREM.stringify(activo.getInfoRegistral().getInfoRegistralBien().getTomo()));
 				mapaValores.put("Libro",FileUtilsREM.stringify(activo.getInfoRegistral().getInfoRegistralBien().getLibro()));
@@ -255,16 +259,21 @@ public class OperacionVentaManager implements ParamReportsApi{
 
 			Double participacion = activoOferta.getPorcentajeParticipacion()/100;
 			
-			Double importeA;
+			Double importeA=new Double(0);
 			if(oferta.getImporteContraOferta() != null) {
 				importeA = oferta.getImporteContraOferta()*participacion;
 			} else {
-				importeA = oferta.getImporteOferta()*participacion;
+				List<ActivoOferta> activoOfertaList= expediente.getOferta().getActivosOferta();
+				if(!Checks.estaVacio(activoOfertaList)){
+					for(ActivoOferta actofr: activoOfertaList){
+						if(actofr.getPrimaryKey().getActivo().getId().equals(activo.getId())){
+							importeA= actofr.getImporteActivoOferta();
+							break;
+						}
+					}
+				}
 			}
 
-			if (importeA==null) {
-				importeA = new Double(0);
-			}
 			Double impuestoB = new Double(0);
 			if (condExp.getTipoAplicable()!=null) {
 				impuestoB = condExp.getTipoAplicable()/100*importeA;
@@ -281,10 +290,23 @@ public class OperacionVentaManager implements ParamReportsApi{
 			}
 			if(!Checks.esNulo(condExp.getTipoCalculoReserva())){
 				if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(condExp.getTipoCalculoReserva().getCodigo())) {
-					mapaValores.put("cobrada", FileUtilsREM.stringify(condExp.getPorcentajeReserva()/100*importeA));
-					cobrada = condExp.getPorcentajeReserva()/100*importeA;
+					if((Checks.esNulo(condExp.getInversionDeSujetoPasivo()) || !condExp.getInversionDeSujetoPasivo()) &&
+							(reservaConImpuesto)){
+						cobrada = (condExp.getPorcentajeReserva()/100*importeA)+((condExp.getPorcentajeReserva()/100*importeA)*(condExp.getTipoAplicable()/100));
+					}
+					else{
+						cobrada= (condExp.getPorcentajeReserva()/100*importeA);
+					}
+					mapaValores.put("cobrada", FileUtilsREM.stringify(cobrada));
+					
 				} else {
-					Double importeReserva = condExp.getImporteReserva();
+					Double importeReserva= new Double(0);
+					if((Checks.esNulo(condExp.getInversionDeSujetoPasivo()) || !condExp.getInversionDeSujetoPasivo()) && (reservaConImpuesto)){
+						importeReserva = (condExp.getImporteReserva()+(condExp.getImporteReserva()*(condExp.getTipoAplicable()/100)))*participacion;
+					}
+					else{
+						importeReserva = condExp.getImporteReserva()*participacion;
+					}
 					if (importeReserva!=null ) {
 						mapaValores.put("cobrada", FileUtilsREM.stringify(importeReserva));
 						cobrada = importeReserva;
@@ -312,7 +334,7 @@ public class OperacionVentaManager implements ParamReportsApi{
 			} else {
 				mapaValores.put("tipoImpuesto",FileUtilsREM.stringify(null));
 			}
-			if(!Checks.esNulo(condExp.getTipoAplicable())){
+			if(!Checks.esNulo(condExp.getTipoAplicable()) && (Checks.esNulo(condExp.getInversionDeSujetoPasivo()) || !condExp.getInversionDeSujetoPasivo())){
 				mapaValores.put("porcentajeImp",FileUtilsREM.stringify(condExp.getTipoAplicable()).concat("%"));
 			}else {						
 				mapaValores.put("porcentajeImp", FileUtilsREM.stringify(null));
@@ -331,49 +353,66 @@ public class OperacionVentaManager implements ParamReportsApi{
 				mapaValores.put("fechaTasacion",FileUtilsREM.stringify(null));
 			}
 			
-			mapaValores.put("ImporteImpuestos", FileUtilsREM.stringify(condExp.getCargasImpuestos()));
-			mapaValores.put("ImporteComunidades", FileUtilsREM.stringify(condExp.getCargasComunidad()));
-			mapaValores.put("ImporteOtros", FileUtilsREM.stringify(condExp.getCargasOtros()));
-			
-			mapaValores.put("ImporteNotaria", FileUtilsREM.stringify(condExp.getGastosNotaria()));
-			mapaValores.put("ImportePlusvalia", FileUtilsREM.stringify(condExp.getGastosPlusvalia()));
-			mapaValores.put("ImporteCVOtros", FileUtilsREM.stringify(condExp.getGastosOtros()));
-			
-			DDTiposPorCuenta tipoImpuestos = condExp.getTipoPorCuentaImpuestos();
-			if (tipoImpuestos!=null) {
-				mapaValores.put("Impuestos", FileUtilsREM.stringify(tipoImpuestos.getDescripcionLarga()));
-			} else {
+			if(oferta.getActivosOferta().size()>1){
+				mapaValores.put("ImporteImpuestos", FileUtilsREM.stringify(null));
+				mapaValores.put("ImporteComunidades", FileUtilsREM.stringify(null));
+				mapaValores.put("ImporteOtros", FileUtilsREM.stringify(null));
+				mapaValores.put("ImporteNotaria", FileUtilsREM.stringify(null));
+				mapaValores.put("ImportePlusvalia", FileUtilsREM.stringify(null));
+				mapaValores.put("ImporteCVOtros", FileUtilsREM.stringify(null));
 				mapaValores.put("Impuestos", FileUtilsREM.stringify(null));
-			}
-			DDTiposPorCuenta tipoComunidades = condExp.getTipoPorCuentaComunidad();
-			if (tipoComunidades!=null) {
-				mapaValores.put("Comunidades", FileUtilsREM.stringify(tipoComunidades.getDescripcionLarga()));
-			} else {
 				mapaValores.put("Comunidades", FileUtilsREM.stringify(null));
-			}
-			DDTiposPorCuenta tipoOtros = condExp.getTipoPorCuentaGastosOtros();
-			if (tipoOtros!=null) {
-				mapaValores.put("Otros", FileUtilsREM.stringify(tipoOtros.getDescripcionLarga()));
-			} else {
 				mapaValores.put("Otros", FileUtilsREM.stringify(null));
-			}
-			DDTiposPorCuenta tipoPlusValia = condExp.getTipoPorCuentaPlusvalia();
-			if (tipoPlusValia!=null) {
-				mapaValores.put("Plusvalia", FileUtilsREM.stringify(tipoPlusValia.getDescripcionLarga()));
-			} else {
 				mapaValores.put("Plusvalia", FileUtilsREM.stringify(null));
-			}
-			DDTiposPorCuenta tipoNotaria = condExp.getTipoPorCuentaNotaria();
-			if (tipoNotaria!=null) {
-				mapaValores.put("Notaria", FileUtilsREM.stringify(tipoNotaria.getDescripcionLarga()));
-			} else {
 				mapaValores.put("Notaria", FileUtilsREM.stringify(null));
-			}
-			DDTiposPorCuenta tipoOtrosCV = condExp.getTipoPorCuentaGastosOtros();
-			if (tipoOtrosCV!=null) {
-				mapaValores.put("OtrosImporteOferta",  FileUtilsREM.stringify(tipoOtrosCV.getDescripcionLarga()));
-			} else {
 				mapaValores.put("OtrosImporteOferta", FileUtilsREM.stringify(null));
+			}
+			else{
+			
+				mapaValores.put("ImporteImpuestos", FileUtilsREM.stringify(condExp.getCargasImpuestos()));
+				mapaValores.put("ImporteComunidades", FileUtilsREM.stringify(condExp.getCargasComunidad()));
+				mapaValores.put("ImporteOtros", FileUtilsREM.stringify(condExp.getCargasOtros()));
+				
+				mapaValores.put("ImporteNotaria", FileUtilsREM.stringify(condExp.getGastosNotaria()));
+				mapaValores.put("ImportePlusvalia", FileUtilsREM.stringify(condExp.getGastosPlusvalia()));
+				mapaValores.put("ImporteCVOtros", FileUtilsREM.stringify(condExp.getGastosOtros()));
+				
+				DDTiposPorCuenta tipoImpuestos = condExp.getTipoPorCuentaImpuestos();
+				if (tipoImpuestos!=null) {
+					mapaValores.put("Impuestos", FileUtilsREM.stringify(tipoImpuestos.getDescripcionLarga()));
+				} else {
+					mapaValores.put("Impuestos", FileUtilsREM.stringify(null));
+				}
+				DDTiposPorCuenta tipoComunidades = condExp.getTipoPorCuentaComunidad();
+				if (tipoComunidades!=null) {
+					mapaValores.put("Comunidades", FileUtilsREM.stringify(tipoComunidades.getDescripcionLarga()));
+				} else {
+					mapaValores.put("Comunidades", FileUtilsREM.stringify(null));
+				}
+				DDTiposPorCuenta tipoOtros = condExp.getTipoPorCuentaGastosOtros();
+				if (tipoOtros!=null) {
+					mapaValores.put("Otros", FileUtilsREM.stringify(tipoOtros.getDescripcionLarga()));
+				} else {
+					mapaValores.put("Otros", FileUtilsREM.stringify(null));
+				}
+				DDTiposPorCuenta tipoPlusValia = condExp.getTipoPorCuentaPlusvalia();
+				if (tipoPlusValia!=null) {
+					mapaValores.put("Plusvalia", FileUtilsREM.stringify(tipoPlusValia.getDescripcionLarga()));
+				} else {
+					mapaValores.put("Plusvalia", FileUtilsREM.stringify(null));
+				}
+				DDTiposPorCuenta tipoNotaria = condExp.getTipoPorCuentaNotaria();
+				if (tipoNotaria!=null) {
+					mapaValores.put("Notaria", FileUtilsREM.stringify(tipoNotaria.getDescripcionLarga()));
+				} else {
+					mapaValores.put("Notaria", FileUtilsREM.stringify(null));
+				}
+				DDTiposPorCuenta tipoOtrosCV = condExp.getTipoPorCuentaGastosOtros();
+				if (tipoOtrosCV!=null) {
+					mapaValores.put("OtrosImporteOferta",  FileUtilsREM.stringify(tipoOtrosCV.getDescripcionLarga()));
+				} else {
+					mapaValores.put("OtrosImporteOferta", FileUtilsREM.stringify(null));
+				}
 			}
 
 		} catch (Exception e) {
@@ -448,25 +487,8 @@ public class OperacionVentaManager implements ParamReportsApi{
 //			Si con situación posesoria "ocupado con título": El ofertante acepta que el activo esté arrendado.
 			Integer poseInicial = condExp.getPosesionInicial();
 			DDSituacionesPosesoria sitaPosesion = condExp.getSituacionPosesoria();
-			String txtPosesion = "";
-			if (poseInicial==null) {
-				txtPosesion += "";
-			} else {
-				if (poseInicial.equals(new Integer(1))) {
-					txtPosesion += "El ofertante requiere que haya posesión inicial.";
-				} else {
-					txtPosesion += "El ofertante acepta que no haya posesión inicial.";
-				}
-			}
-			if (sitaPosesion==null) {
-				txtPosesion += "El ofertante acepta cualquier situación posesoria.";
-			} else {
-				if (sitaPosesion.getCodigo().equals(DDSituacionesPosesoria.SITUACION_POSESORIA_LIBRE)) {
-					txtPosesion += "El ofertante requiere que el activo esté libre de ocupantes.";
-				} else if (sitaPosesion.getCodigo().equals(DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_CON_TITULO)) {
-					txtPosesion += "El ofertante acepta que el activo esté arrendado.";
-				}
-			}
+			String txtPosesion = "Ver hoja de datos individual de cada activo";
+			//Para la parte de la agrupacion el texto es fijo
 			mapaValores.put("Posesion", txtPosesion);
 			
 //			Si hay contenido en impuestos y en el combo "por cuenta de" pone "comprador": El comprador asume el pago de los impuestos pendientes.
@@ -475,6 +497,11 @@ public class OperacionVentaManager implements ParamReportsApi{
 			DDTiposPorCuenta porCuentaImpuestos = condExp.getTipoPorCuentaImpuestos();
 			DDTiposPorCuenta porCuentaComunidad = condExp.getTipoPorCuentaComunidad();
 			DDTiposPorCuenta porCuentaOtros = condExp.getTipoPorCuentaCargasOtros();
+			Boolean reservaConImpuesto= false;
+			if(!Checks.esNulo(condExp.getReservaConImpuesto())){
+				reservaConImpuesto= condExp.getReservaConImpuesto().equals(new Integer(1));
+			}
+			//HREOS-3402 Las cargas se dejan vacia hasta el siguiente trabajo
 			String txtCargas = "";
 			if (condExp.getCargasImpuestos()!=null && porCuentaImpuestos!=null && porCuentaImpuestos.getCodigo().equals(DDTiposPorCuenta.TIPOS_POR_CUENTA_COMPRADOR)) {
 				txtCargas += "El comprador asume el pago de los impuestos pendientes. ";
@@ -485,7 +512,7 @@ public class OperacionVentaManager implements ParamReportsApi{
 			if (condExp.getCargasOtros()!=null && porCuentaOtros!=null && porCuentaOtros.getCodigo().equals(DDTiposPorCuenta.TIPOS_POR_CUENTA_SEGUN_LEY)) {
 				txtCargas += "El comprador requiere que los gastos sean asumidos por quien corresponda según ley. ";
 			}
-			mapaValores.put("Tratamientodecargas", txtCargas);
+			mapaValores.put("Tratamientodecargas", FileUtilsREM.stringify(null));
 			
 			mapaValores.put("TipoPropiedad",FileUtilsREM.stringify(this.getTipoPropiedadActivo(activo)));
 
@@ -515,10 +542,21 @@ public class OperacionVentaManager implements ParamReportsApi{
 			}
 			if(!Checks.esNulo(condExp.getTipoCalculoReserva())) {
 				if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(condExp.getTipoCalculoReserva().getCodigo()) ) {
-					mapaValores.put("cobrada", FileUtilsREM.stringify(condExp.getPorcentajeReserva()/100*importeA));
-					cobrada = condExp.getPorcentajeReserva()/100*importeA;
+					if((Checks.esNulo(condExp.getInversionDeSujetoPasivo()) || !condExp.getInversionDeSujetoPasivo()) && reservaConImpuesto){
+						cobrada = (condExp.getPorcentajeReserva()/100*importeA)+((condExp.getPorcentajeReserva()/100*importeA)*(condExp.getTipoAplicable()/100));
+					}
+					else{
+						cobrada= condExp.getPorcentajeReserva()/100*importeA;
+					}
+					mapaValores.put("cobrada", FileUtilsREM.stringify(cobrada));
 				} else {
-					Double importeReserva = condExp.getImporteReserva();
+					Double importeReserva = new Double(0);
+					if((Checks.esNulo(condExp.getInversionDeSujetoPasivo()) || !condExp.getInversionDeSujetoPasivo()) && reservaConImpuesto){
+						importeReserva = condExp.getImporteReserva()+(condExp.getImporteReserva()*(condExp.getTipoAplicable()/100));
+					}
+					else{
+						importeReserva = condExp.getImporteReserva();
+					}
 					if (importeReserva!=null ) {
 						mapaValores.put("cobrada", FileUtilsREM.stringify(importeReserva));
 						cobrada = importeReserva;
@@ -547,7 +585,12 @@ public class OperacionVentaManager implements ParamReportsApi{
 				mapaValores.put("tipoImpuesto",FileUtilsREM.stringify(null));
 			}
 			
-			mapaValores.put("porcentajeImp",FileUtilsREM.stringify(condExp.getTipoAplicable()).concat("%"));
+			if(!Checks.esNulo(condExp.getTipoAplicable()) && (Checks.esNulo(condExp.getInversionDeSujetoPasivo()) || !condExp.getInversionDeSujetoPasivo())){
+				mapaValores.put("porcentajeImp",FileUtilsREM.stringify(condExp.getTipoAplicable()).concat("%"));
+			}
+			else{
+				mapaValores.put("porcentajeImp", FileUtilsREM.stringify(null));
+			}
 			
 			if (activo!=null) {
 				List<ActivoTasacion> listActivoTasacion = activoDao.getListActivoTasacionByIdActivo(activo.getId());

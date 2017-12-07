@@ -95,7 +95,7 @@ pipeline {
                     // requires SonarQube Scanner 2.8+
                     def scannerHome = tool 'SonarQube Scanner 2.9.0.6';
                     withSonarQubeEnv('Sonar PFS') {
-                        sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=dev-ops/qa/sonar.properties -Dsonar.projectVersion=${hito}"
+                        sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=dev-ops/qa/sonar-rem.properties -Dsonar.projectVersion=${hito}"
                     }
                 }
             }

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20170505
+--## AUTOR=GUILLEM REY
+--## FECHA_CREACION=20171201
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1945
+--## INCIDENCIA_LINK=HREOS-3403
 --## PRODUCTO=NO
 --## Finalidad: Vista para la búsqueda de provisiones de gastos.
 --##           
@@ -65,58 +65,40 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] Crear nueva vista : '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'..');
   	EXECUTE IMMEDIATE 'CREATE VIEW ' || V_ESQUEMA || '.'|| V_TEXT_VISTA ||' 
 	AS
-		SELECT
-		PRG.PRG_ID,  
-		PRG.PRG_NUM_PROVISION,
-		EPR.DD_EPR_CODIGO,
-		EPR.DD_EPR_DESCRIPCION,
-		PRG.PRG_FECHA_ALTA,
-		PVE.PVE_ID,
-		PVE.PVE_COD_REM,
-		PVE.PVE_NOMBRE,
-		PRG.PRG_FECHA_ENVIO,
-		PRG.PRG_FECHA_RESPUESTA,
-		PRG.PRG_FECHA_ANULACION,
-		PRO.PRO_NOMBRE,
-		PRO.PRO_DOCIDENTIF,
-		CRA.DD_CRA_CODIGO,
-		CRA.DD_CRA_DESCRIPCION,
-		SCR.DD_SCR_CODIGO,
-		SCR.DD_SCR_DESCRIPCION,
-		(SELECT SUM(GDE2.GDE_IMPORTE_TOTAL) 
-			FROM '||V_ESQUEMA||'.PRG_PROVISION_GASTOS PRG2 
-			LEFT JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV2 ON GPV2.PRG_ID = PRG2.PRG_ID
-			INNER JOIN '||V_ESQUEMA||'.GDE_GASTOS_DETALLE_ECONOMICO GDE2 ON GDE2.GPV_ID = GPV2.GPV_ID
-			WHERE PRG2.PRG_ID = PRG.PRG_ID) AS IMPORTE_TOTAL 
-		FROM '||V_ESQUEMA||'.PRG_PROVISION_GASTOS PRG 
-		LEFT JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.PRG_ID = PRG.PRG_ID AND GPV.BORRADO = 0
-		LEFT JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID 
-		LEFT JOIN '||V_ESQUEMA||'.GPV_ACT GPVA ON GPVA.GPV_ID = GPV.GPV_ID
-		LEFT JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = GPVA.ACT_ID and act.borrado = 0
-		LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
-		LEFT JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID
-		LEFT JOIN '||V_ESQUEMA||'.DD_EPR_ESTADOS_PROVISION_GASTO EPR ON EPR.DD_EPR_ID = PRG.DD_EPR_ID
-		LEFT JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_ID = PRG.PVE_ID_GESTORIA
-		WHERE PRG.BORRADO = 0 
-		GROUP BY  
-		PRG.PRG_ID,  
-		PRG.PRG_NUM_PROVISION,
-		EPR.DD_EPR_CODIGO,
-		EPR.DD_EPR_DESCRIPCION,
-		PRG.PRG_FECHA_ALTA,
-		PVE.PVE_ID,
-		PVE.PVE_COD_REM,
-		PVE.PVE_NOMBRE,
-		PRG.PRG_FECHA_ENVIO,
-		PRG.PRG_FECHA_RESPUESTA,
-		PRG.PRG_FECHA_ANULACION,
-		PRO.PRO_NOMBRE,
-		PRO.PRO_DOCIDENTIF,
-		CRA.DD_CRA_CODIGO,
-		CRA.DD_CRA_DESCRIPCION,
-		SCR.DD_SCR_CODIGO,
-		SCR.DD_SCR_DESCRIPCION
-		ORDER BY PRG.PRG_NUM_PROVISION ASC';
+		SELECT   
+		prg.prg_id,
+		prg.prg_num_provision,
+		epr.dd_epr_codigo,
+		epr.dd_epr_descripcion,
+		prg.prg_fecha_alta,
+		pve.pve_id,
+		pve.pve_cod_rem,
+		pve.pve_nombre,
+		prg.prg_fecha_envio,
+		prg.prg_fecha_respuesta,
+		prg.prg_fecha_anulacion,
+		pro.pro_nombre,
+		pro.pro_docidentif,
+		cra.dd_cra_codigo,
+		cra.dd_cra_descripcion,
+		NULL dd_scr_codigo,
+		NULL dd_scr_descripcion,
+		gpv.importe AS importe_total
+		FROM '||V_ESQUEMA||'.prg_provision_gastos prg
+		JOIN (SELECT SUM (gde2.gde_importe_total) importe,
+				prg2.prg_id,
+		 		gpv2.pro_id
+			FROM '||V_ESQUEMA||'.prg_provision_gastos prg2 
+			JOIN '||V_ESQUEMA||'.gpv_gastos_proveedor gpv2 ON gpv2.prg_id = prg2.prg_id
+			INNER JOIN '||V_ESQUEMA||'.gde_gastos_detalle_economico gde2 ON gde2.gpv_id = gpv2.gpv_id
+		    GROUP BY prg2.prg_id,
+		 gpv2.pro_id) gpv ON gpv.prg_id = prg.prg_id
+		JOIN '||V_ESQUEMA||'.act_pro_propietario pro ON pro.pro_id = gpv.pro_id
+		JOIN '||V_ESQUEMA||'.dd_cra_cartera cra ON cra.dd_cra_id = pro.dd_cra_id
+		JOIN '||V_ESQUEMA||'.dd_epr_estados_provision_gasto epr ON epr.dd_epr_id = prg.dd_epr_id
+		JOIN '||V_ESQUEMA||'.act_pve_proveedor pve ON pve.pve_id = prg.pve_id_gestoria
+		WHERE prg.borrado = 0
+		ORDER BY prg.prg_num_provision ASC';
 
  	DBMS_OUTPUT.PUT_LINE('[INFO] Vista : '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'... creada');
  		

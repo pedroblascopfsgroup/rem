@@ -1136,7 +1136,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     T013_ObtencionContratoReservaValidacion: function(){
     	var me = this;
     	if(me.down('[name=fechaFirma]').getValue()!=null && me.down('[name=fechaFirma]').getValue()!=""){
-    		me.deshabilitarCampo(me.down('[name=fechaFirma]'));
+    		me.bloquearCampo(me.down('[name=fechaFirma]'));
     	}
     },
 

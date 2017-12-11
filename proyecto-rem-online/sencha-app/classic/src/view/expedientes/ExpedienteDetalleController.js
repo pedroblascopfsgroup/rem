@@ -2008,83 +2008,91 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		});		
 	},
 
-	onCambioTipoImpuesto: function(combo, value){
-		var me = this,
-    	tipoAplicable = me.lookupReference('tipoAplicable'),
-    	operacionExenta = me.lookupReference('chkboxOperacionExenta'),
-    	inversionSujetoPasivo = me.lookupReference('chkboxInversionSujetoPasivo'),
-    	renunciaExencion = me.lookupReference('chkboxRenunciaExencion');
-
-
-    	if(CONST.TIPO_IMPUESTO['ITP'] == value) {
-    		tipoAplicable.reset();
-    		tipoAplicable.setDisabled(true);
-    		tipoAplicable.allowBlank = true;
-    		tipoAplicable.setValue(0);
-    		operacionExenta.reset();
-    		operacionExenta.setReadOnly(true);
-    		inversionSujetoPasivo.reset();
-    		inversionSujetoPasivo.setReadOnly(true);
-    		renunciaExencion.reset();
-    		renunciaExencion.setReadOnly(true);
-    	} else {
-    		tipoAplicable.setDisabled(false);
-        	tipoAplicable.allowBlank = false;
-    		operacionExenta.setReadOnly(false);
-    		inversionSujetoPasivo.setReadOnly(false);
-    	}
+	onCambioTipoImpuesto: function(combo, value,oldValue, eOpts){
+		if(!Ext.isEmpty(oldValue)){
+			var me = this,
+	    	tipoAplicable = me.lookupReference('tipoAplicable'),
+	    	operacionExenta = me.lookupReference('chkboxOperacionExenta'),
+	    	inversionSujetoPasivo = me.lookupReference('chkboxInversionSujetoPasivo'),
+	    	renunciaExencion = me.lookupReference('chkboxRenunciaExencion');
+	
+	
+	    	if(CONST.TIPO_IMPUESTO['ITP'] == value) {
+	    		tipoAplicable.reset();
+	    		tipoAplicable.setDisabled(true);
+	    		tipoAplicable.allowBlank = true;
+	    		tipoAplicable.setValue(0);
+	    		operacionExenta.reset();
+	    		operacionExenta.setReadOnly(true);
+	    		inversionSujetoPasivo.reset();
+	    		inversionSujetoPasivo.setReadOnly(true);
+	    		renunciaExencion.reset();
+	    		renunciaExencion.setReadOnly(true);
+	    	} else {
+	    		tipoAplicable.setDisabled(false);
+	        	tipoAplicable.allowBlank = false;
+	    		operacionExenta.setReadOnly(false);
+	    		inversionSujetoPasivo.setReadOnly(false);
+	    	}
+		}
 	},
 
 	onCambioOperacionExenta: function(checkbox, newValue, oldValue, eOpts) {
-		var me = this,
-		renunciaExencion = me.lookupReference('chkboxRenunciaExencion'),
-		tipoAplicable = me.lookupReference('tipoAplicable');
-
-		if(newValue == true) {
-			tipoAplicable.reset();
-			tipoAplicable.allowBlank = true;
-			tipoAplicable.setDisabled(true);
-			renunciaExencion.setReadOnly(false);
-		} else {
-			tipoAplicable.setDisabled(false);
-			tipoAplicable.allowBlank = false;
-			renunciaExencion.reset();
-			renunciaExencion.setReadOnly(true);
+		if(!Ext.isEmpty(oldValue)){
+			var me = this,
+			renunciaExencion = me.lookupReference('chkboxRenunciaExencion'),
+			tipoAplicable = me.lookupReference('tipoAplicable');
+	
+			if(newValue == true) {
+				tipoAplicable.reset();
+				tipoAplicable.allowBlank = true;
+				tipoAplicable.setDisabled(true);
+				renunciaExencion.setReadOnly(false);
+			} else {
+				tipoAplicable.setDisabled(false);
+				tipoAplicable.allowBlank = false;
+				renunciaExencion.reset();
+				renunciaExencion.setReadOnly(true);
+			}
 		}
 	},
 
 	onCambioRenunciaExencion: function(checkbox, newValue, oldValue, eOpts) {
-		var me = this,
-		tipoAplicable = me.lookupReference('tipoAplicable');
-
-		if(newValue == false) {
-			tipoAplicable.reset();
-			tipoAplicable.allowBlank = true;
-			tipoAplicable.setDisabled(true);
-		} else {
-			tipoAplicable.setDisabled(false);
-			tipoAplicable.allowBlank = false;
+		if(!Ext.isEmpty(oldValue)){
+			var me = this,
+			tipoAplicable = me.lookupReference('tipoAplicable');
+	
+			if(newValue == false) {
+				tipoAplicable.reset();
+				tipoAplicable.allowBlank = true;
+				tipoAplicable.setDisabled(true);
+			} else {
+				tipoAplicable.setDisabled(false);
+				tipoAplicable.allowBlank = false;
+			}
 		}
 	},
 
 	onCambioInversionSujetoPasivo: function(checkbox, newValue, oldValue, eOpts) {
-		var me = this,
-		operacionExenta = me.lookupReference('chkboxOperacionExenta'),
-    	renunciaExencion = me.lookupReference('chkboxRenunciaExencion'),
-    	tipoAplicable = me.lookupReference('tipoAplicable');
-
-		if(newValue == true) {
-			operacionExenta.reset();
-			operacionExenta.setReadOnly(true);
-			renunciaExencion.reset();
-    		renunciaExencion.setReadOnly(true);
-    		tipoAplicable.reset();
-    		tipoAplicable.allowBlank = true;
-    		tipoAplicable.setDisabled(true);
-		} else {
-			operacionExenta.setReadOnly(false);
-			tipoAplicable.allowBlank = false;
-			tipoAplicable.setDisabled(false);
+		if(!Ext.isEmpty(oldValue)){
+			var me = this,
+			operacionExenta = me.lookupReference('chkboxOperacionExenta'),
+	    	renunciaExencion = me.lookupReference('chkboxRenunciaExencion'),
+	    	tipoAplicable = me.lookupReference('tipoAplicable');
+	
+			if(newValue == true) {
+				operacionExenta.reset();
+				operacionExenta.setReadOnly(true);
+				renunciaExencion.reset();
+	    		renunciaExencion.setReadOnly(true);
+	    		tipoAplicable.reset();
+	    		tipoAplicable.allowBlank = true;
+	    		tipoAplicable.setDisabled(true);
+			} else {
+				operacionExenta.setReadOnly(false);
+				tipoAplicable.allowBlank = false;
+				tipoAplicable.setDisabled(false);
+			}
 		}
 	},
 

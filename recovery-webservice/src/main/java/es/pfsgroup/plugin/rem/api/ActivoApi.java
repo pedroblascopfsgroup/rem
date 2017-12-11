@@ -598,7 +598,7 @@ public interface ActivoApi {
 	 * @param activo
 	 * @return
 	 */
-	public List<Reserva> getReservasByActivo(Activo activo);
+	public List<Reserva> getReservasByActivoOfertaAceptada(Activo activo);
 
 	/**
 	 * HREOS-843. Comrpueba si el activo esta vendido, viendo si tiene fecha de

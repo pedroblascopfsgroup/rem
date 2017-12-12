@@ -2536,9 +2536,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				boolean reiniciarPBC = false;
 
-				if (!Checks.esNulo(dto.getNumeroClienteUrsus())) {
+				//if (!Checks.esNulo(dto.getNumeroClienteUrsus())) {
 					comprador.setIdCompradorUrsus(dto.getNumeroClienteUrsus());
-				}
+				//}
 
 				if (!Checks.esNulo(dto.getCodTipoPersona())) {
 					DDTiposPersona tipoPersona = (DDTiposPersona) utilDiccionarioApi

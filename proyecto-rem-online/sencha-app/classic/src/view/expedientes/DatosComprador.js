@@ -318,7 +318,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										            	value: '{comprador.numeroClienteUrsus}',
 										            	hidden: '{!esCarteraBankia}'
 										            },
-										            editable: false
+										            editable: true
 					                            }
 //										        {
 //													xtype: 'textfieldbase',

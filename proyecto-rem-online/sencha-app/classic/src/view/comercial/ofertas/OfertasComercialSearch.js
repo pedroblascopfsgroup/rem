@@ -114,10 +114,10 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 				        	{ 
 					        	xtype: 'comboboxfieldbase',
 					        	multiSelect: false,
-					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.comercializacion'),
-					        	name: 'tipoComercializacion',
+					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.comercializar'),
+					        	name: 'tipoComercializar',
 					        	bind: {
-					        		store: '{comboTipoComercializacion}'
+					        		store: '{comboTiposComercializarActivo}'
 					        	}
 							},							
 							{

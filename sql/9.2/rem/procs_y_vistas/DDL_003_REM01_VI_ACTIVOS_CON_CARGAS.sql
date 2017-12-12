@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20170515
+--## FECHA_CREACION=20171212
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1954
+--## INCIDENCIA_LINK=HREOS-3334
 --## PRODUCTO=NO
 --## Finalidad: Vista que indica si un activo tiene cargas o no.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 20161006 Versión inicial 
+--##        0.1 20161006 Versión inicial
+--##		0.2 20171212 HREOS-3334 Disclaimer con cargas aparece sin que el activo tenga cargas
 --##########################################
 --*/
 
@@ -63,11 +64,13 @@ BEGIN
 		  FROM '||V_ESQUEMA||'.ACT_CRG_CARGAS CRG
 		  INNER JOIN '||V_ESQUEMA||'.BIE_CAR_CARGAS BCG ON BCG.BIE_CAR_ID = CRG.BIE_CAR_ID
 		  INNER JOIN '||V_ESQUEMA||'.DD_SIC_SITUACION_CARGA DDSIC ON DDSIC.DD_SIC_ID = BCG.DD_SIC_ID AND DDSIC.DD_SIC_CODIGO IN(''VIG'' , ''NCN'', ''SAN'')
+			WHERE CRG.BORRADO=0
       UNION
       SELECT CRG.CRG_ID, CRG.ACT_ID
       FROM '||V_ESQUEMA||'.ACT_CRG_CARGAS CRG
       INNER JOIN '||V_ESQUEMA||'.BIE_CAR_CARGAS BCG ON BCG.BIE_CAR_ID = CRG.BIE_CAR_ID
 		  INNER JOIN '||V_ESQUEMA||'.DD_SIC_SITUACION_CARGA DDSIC2 ON DDSIC2.DD_SIC_ID = BCG.DD_SIC_ID2 AND DDSIC2.DD_SIC_CODIGO IN(''VIG'' , ''NCN'', ''SAN'')
+			WHERE CRG.BORRADO=0
 		) AUX ON AUX.ACT_ID =ACT.ACT_ID
     where act.borrado = 0
 		GROUP BY ACT.ACT_ID, AUX.ACT_ID';      

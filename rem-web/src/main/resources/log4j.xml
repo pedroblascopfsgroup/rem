@@ -57,12 +57,26 @@
 			<param name="LevelMax" value="fatal" />
 		</filter>
 	</appender>
+	
+	<appender name="syslog" class="es.capgemini.pfs.utils.log4j.CustomRollingFileAppender">
+        <param name="file" value="{DEVON_HOME}/syslog.log"/>
+        <param name="MaxFileSize" value="2MB"/>
+        <param name="MaxBackupIndex" value="10"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="&lt;${syslogCode}&gt; %d ${syslogMachine} ${syslogProgram}: %p - %m%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.StringMatchFilter">
+            <param name="StringToMatch" value="JBPM_" />
+            <param name="AcceptOnMatch" value="false" />
+        </filter>
+    </appender>
 
 	<!-- DEVON -->
 	<logger name="es.capgemini.devon" additivity="false">
 		<level value="info" />
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />
+		<appender-ref ref="syslog" />
 		<appender-ref ref="email" />
 	</logger>
 	<!-- PFS -->
@@ -70,6 +84,7 @@
 		<level value="info" />
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />
+		<appender-ref ref="syslog" />
 		<appender-ref ref="email" />
 	</logger>
 
@@ -79,18 +94,20 @@
 		<level value="error" />
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />
+		<appender-ref ref="syslog" />
 		<appender-ref ref="email" />
 	</logger>
 	<!-- <logger name="org.springframework" additivity="false"> <level value="warn"/> 
-		<appender-ref ref="console" /> <appender-ref ref="file" /> </logger> <logger 
+		<appender-ref ref="console" /> <appender-ref ref="file" /> <appender-ref ref="syslog" /> </logger> <logger 
 		name="org.springframework.binding.mapping" additivity="false"> <level value="warn"/> 
-		<appender-ref ref="console" /> <appender-ref ref="file" /> </logger> <logger 
+		<appender-ref ref="console" /> <appender-ref ref="file" /> <appender-ref ref="syslog" /> </logger> <logger 
 		name="org.springframework.webflow" additivity="false"> <level value="warn"/> 
-		<appender-ref ref="console" /> <appender-ref ref="file" /> </logger> -->
+		<appender-ref ref="console" /> <appender-ref ref="file" /> <appender-ref ref="syslog" /> </logger> -->
 	<logger name="org.springframework.security.ldap" additivity="false">
 		<level value="warn" />
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />
+		<appender-ref ref="syslog" />
 	</logger>
 
 	<!-- Hibernate -->
@@ -99,6 +116,7 @@
 		<level value="fatal" />
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />
+		<appender-ref ref="syslog" />
 		<appender-ref ref="email" />
 	</logger>
 
@@ -106,18 +124,21 @@
 		<level value="warn" />
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />
+		<appender-ref ref="syslog" />
 		<appender-ref ref="email" />
 	</logger>
 	<logger name="org.hibernate.cache.CacheFactory" additivity="false">
 		<level value="error" />
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />
+		<appender-ref ref="syslog" />
 		<appender-ref ref="email" />
 	</logger>
 	<logger name="org.hibernate.cache.EhCacheProvider" additivity="false">
 		<level value="error" />
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />
+		<appender-ref ref="syslog" />
 		<appender-ref ref="email" />
 	</logger>
 	<logger name="org.hibernate.engine.StatefulPersistenceContext"
@@ -125,18 +146,21 @@
 		<level value="error" />
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />
+		<appender-ref ref="syslog" />
 		<appender-ref ref="email" />
 	</logger>
 	<logger name="org.jbpm" additivity="false">
 		<level value="warn" />
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />
+		<appender-ref ref="syslog" />
 		<appender-ref ref="email" />
 	</logger>
 	<logger name="es.pfsgroup.plugin.gestorDocumental" additivity="false">
 		<level value="debug" />
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />
+		<appender-ref ref="syslog" />
 		<appender-ref ref="email" />
 	</logger>
 
@@ -144,6 +168,7 @@
 		<level value="error" />
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />
+		<appender-ref ref="syslog" />
 		<appender-ref ref="email" />
 	</logger>
 	
@@ -243,6 +268,7 @@
 		<level value="debug" />
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />
+		<appender-ref ref="syslog" />
 	</logger>
 	<logger name="es.pfsgroup.plugin.rem.rest.api.impl.GestorDocumentalFotos"
 		additivity="false">
@@ -263,9 +289,9 @@
 	<!-- Descomentar para Ver las SQL que ejecuta la aplicacion, el Thread, 
 		la session y la transaccion en al que se ejecutan -->
 	<!-- <logger name="es.capgemini.pfs.utils.hibernate.HibernateEntitySqlInterceptor" 
-		additivity="false"> <level value="debug"/> <appender-ref ref="file" /> <appender-ref 
+		additivity="false"> <level value="debug"/> <appender-ref ref="file" /> <appender-ref ref="syslog" /> <appender-ref 
 		ref="console" /> </logger> <logger name="es.capgemini.pfs.utils.hibernate.HibernateMasterSqlInterceptor" 
-		additivity="false"> <level value="debug"/> <appender-ref ref="file" /> <appender-ref 
+		additivity="false"> <level value="debug"/> <appender-ref ref="file" /> <appender-ref ref="syslog" /> <appender-ref 
 		ref="console" /> </logger> -->
 
 	<!-- root -->
@@ -273,6 +299,7 @@
 		<priority value="warn" />
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />
+		<appender-ref ref="syslog" />
 		<appender-ref ref="email" />
 	</root>
 

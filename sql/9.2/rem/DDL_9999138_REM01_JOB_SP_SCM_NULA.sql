@@ -42,7 +42,7 @@ BEGIN
     DBMS_SCHEDULER.CREATE_JOB (
         job_name             => ''||V_JOB_NAME||'',
         job_type             => 'PLSQL_BLOCK',
-        job_action           => 'BEGIN '||V_ESQUEMA||'.SP_ASC_ACT_SIT_COM_VACIOS(0,0); END;',
+        job_action           => 'BEGIN '||V_ESQUEMA||'.SP_ASC_ACT_SIT_COM_VACIOS(0,1); END;',
         start_date           => to_date('29/12/2017 00:00:00','dd/mm/yyyy hh24:mi:ss'),
         repeat_interval      => 'FREQ=DAILY; BYHOUR=06,14,22;',
         enabled              =>  TRUE,

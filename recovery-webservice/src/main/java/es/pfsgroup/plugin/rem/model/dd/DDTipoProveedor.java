@@ -50,6 +50,7 @@ public class DDTipoProveedor implements Auditable, Dictionary {
 	public static final String COD_CAT = "31";
 	public static final String COD_HAYA = "35";
 	public static final String COD_GESTIONDIRECTA = "37";
+	public static final String COD_SALESFORCE = "33";
 
 	@Id
 	@Column(name = "DD_TPR_ID")

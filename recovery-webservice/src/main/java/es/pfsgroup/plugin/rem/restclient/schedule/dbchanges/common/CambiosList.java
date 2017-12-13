@@ -44,7 +44,9 @@ public class CambiosList extends ArrayList<Object> {
 
 	@Override
 	public int size() {
-		if (! this.isEmpty()) {
+		int i = super.size();
+		return i;
+		/*if (! this.isEmpty()) {
 			int count = 0;
 			for (Object o : this.toArray()) {
 				if (o instanceof WebcomRESTDto) {
@@ -56,7 +58,8 @@ public class CambiosList extends ArrayList<Object> {
 			return count;
 		} else {
 			return 0;
-		}
+		}*/
+		
 	}
 
 	private int calculateSize(WebcomRESTDto dto) {

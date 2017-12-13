@@ -79,6 +79,19 @@ public class RestLauncher {
 		task.detectaCambios();		
 	}
 	
+	/**
+	 * Ejecuta el envio de los handlers optimizados usando el  modo no optimizado
+	 * 
+	 * @throws ErrorServicioWebcom
+	 * @throws ErrorServicioEnEjecucion
+	 */
+	@ManagedOperation(description = "Envia el stock de Activos  a Webcom")
+	public void enviarCambiosHandlersOptimizados() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
+		task.detectaCambios(cambiosStock,false);
+		task.detectaCambios(cambiosInformemediador,false);
+		
+	}
+	
 	/*
 	 * 
 	 * 

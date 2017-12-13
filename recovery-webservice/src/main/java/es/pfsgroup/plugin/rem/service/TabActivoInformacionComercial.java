@@ -267,6 +267,7 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				
 			} //No hace falta if para ActivoLocalComercial porque tiene diccionarios
 			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
+			restApi.marcarRegistroParaEnvio(ENTIDADES.INFORME, activo.getInfoComercial());
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {

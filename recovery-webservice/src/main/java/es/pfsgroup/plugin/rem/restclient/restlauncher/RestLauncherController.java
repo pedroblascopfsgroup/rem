@@ -70,6 +70,24 @@ public class RestLauncherController {
 
 		restApi.sendResponse(response, model, null);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public void enviarCambiosNoOptimizados(HttpServletRequest req, ModelMap model, HttpServletResponse response)
+			throws ErrorServicioWebcom {
+
+		try {
+			restApi.simulateRestFilter(req);
+			launcher.enviarCambiosHandlersOptimizados();
+			model.put("result", "Servicio ejecutado correctamente");
+		} catch (Exception e) {
+			model.put("result", e.getMessage());
+			logger.error("Error en restLauncher", e);
+			SecurityContextHolder.clearContext();
+		}
+
+		restApi.sendResponse(response, model, null);
+	}
 
 	/*
 	 * 

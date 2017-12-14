@@ -1256,7 +1256,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM GPV_GASTOS_PROVEEDOR GPV "
 							+ "						JOIN ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = '"+numActivo+"' "
 							+ "						WHERE GPV.GPV_NUM_GASTO_HAYA = '"+numGasto+"' "
-							+ "						AND GPV.GPV_FECHA_EMISION > ACT.ACT_VENTA_EXTERNA_FECHA "
+							+ "						AND GPV.GPV_FECHA_EMISION < ACT.ACT_VENTA_EXTERNA_FECHA "
 							+ "						AND ACT.DD_SCR_ID IN (SELECT DD_SCR_ID FROM DD_SCR_SUBCARTERA WHERE "
 							+ "							DD_CRA_ID = (SELECT DD_CRA_ID FROM DD_CRA_CARTERA WHERE DD_CRA_CODIGO = 3)"
 							+ "							AND DD_SCR_CODIGO IN (14, 15, 19) ) ");
@@ -1271,7 +1271,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 							+ "						JOIN OFR_OFERTAS OFR ON OFR.AGR_ID = ACT_AGA.AGR_ID "
 							+ "						JOIN ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID "
 							+ "						WHERE GPV.GPV_NUM_GASTO_HAYA = '"+numGasto+"' "
-							+ "						AND GPV.GPV_FECHA_EMISION > ECO.ECO_FECHA_VENTA "
+							+ "						AND GPV.GPV_FECHA_EMISION < ECO.ECO_FECHA_VENTA "
 							+ "						AND ACT.DD_SCR_ID IN (SELECT DD_SCR_ID FROM DD_SCR_SUBCARTERA WHERE "
 							+ "							DD_CRA_ID = (SELECT DD_CRA_ID FROM DD_CRA_CARTERA WHERE DD_CRA_CODIGO = 3)"
 							+ "							AND DD_SCR_CODIGO IN (14, 15, 19) ) ");

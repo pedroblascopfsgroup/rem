@@ -46,7 +46,7 @@ public class MSVAsociarActivosGasto extends MSVExcelValidatorAbstract {
 	public static final String ESTADO_NO_PERMITE_ADICION_ACTIVO = "El estado del gasto no permite adición";
 	public static final String GASTO_AUTORIZADO = "El gasto esta autorizado";
 	public static final String GASTO_ASOCIADO_TRABAJO = "El gasto esta asociado a un trabajo";
-	public static final String GASTO_FECHA_TRASPASO_ANTERIOR = "La fecha de traspaso del activo o agrupacion no puede ser posterior a la fecha devengo del gasto";
+	public static final String GASTO_FECHA_TRASPASO_ANTERIOR = "La fecha de traspaso del activo o agrupacion no puede ser anterior a la fecha devengo del gasto";
 
 	@Autowired
 	private MSVExcelParser excelParser;

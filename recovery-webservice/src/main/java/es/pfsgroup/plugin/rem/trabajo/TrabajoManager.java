@@ -1885,8 +1885,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		genericDao.update(ActivoTrabajo.class, activoTrabajo);
 
 		// Si el trabajo está asociado a un gasto actualizar el porcentaje en el mismo.
+		if(activoTrabajo.getPrimaryKey().getTrabajo().getGastoTrabajo() != null) {
 		gastoProveedorApi.actualizarPorcentajeParticipacionGastoProveedorActivo(activoTrabajo.getPrimaryKey().getActivo().getId(), 
 				activoTrabajo.getPrimaryKey().getTrabajo().getGastoTrabajo().getGastoProveedor().getId(), porcentajeParticipacion);
+		}
 
 		return true;
 	}

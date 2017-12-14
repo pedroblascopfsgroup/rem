@@ -457,7 +457,11 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			if (!Checks.esNulo(oferta)
 					&& !Checks.esNulo(oferta.getPrescriptor())
 					&& !Checks.esNulo(oferta.getPrescriptor().getTipoProveedor())) {
-				if (oferta.getPrescriptor().getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA) 
+				if ((oferta.getPrescriptor().getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA) 
+						|| oferta.getPrescriptor().getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_WEB_HAYA)
+						|| oferta.getPrescriptor().getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_CAT)
+						|| oferta.getPrescriptor().getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_SALESFORCE)
+						|| oferta.getPrescriptor().getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_HAYA))
 						&& !carteraCajaMar && !esFinanciero && !esSingular) {
 					esFdv = true;
 				}

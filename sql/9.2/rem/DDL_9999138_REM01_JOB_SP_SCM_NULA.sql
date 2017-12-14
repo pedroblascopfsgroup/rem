@@ -43,7 +43,7 @@ BEGIN
         job_name             => ''||V_JOB_NAME||'',
         job_type             => 'PLSQL_BLOCK',
         job_action           => 'BEGIN '||V_ESQUEMA||'.SP_ASC_ACT_SIT_COM_VACIOS(0,1); END;',
-        start_date           => to_date('29/12/2017 00:00:00','dd/mm/yyyy hh24:mi:ss'),
+        start_date           => to_date('13/12/2017 00:00:00','dd/mm/yyyy hh24:mi:ss'),
         repeat_interval      => 'FREQ=DAILY; BYHOUR=06,14,22;',
         enabled              =>  TRUE,
         comments             => 'Job que ejecuta el SP que pone situacion comercial a los activos que no la tengan.');

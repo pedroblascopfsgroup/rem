@@ -97,7 +97,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	
 
 	@Override
-	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) {
+	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) throws Exception {
 		if (dtoFile.getIdTipoOperacion() == null){
 			throw new IllegalArgumentException("idTipoOperacion no puede ser null");
 		}
@@ -134,32 +134,30 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				mapaErrores.put(VALID_PERIMETRO_FORMALIZAR_ACTIVO_COMERCIALIZABLE, getFormalizarActivoNoComercializable(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS), getComercializarConOfertasVivas(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_PERIMETRO_FORMALIZACION_EXPEDIENTE_VIVO), getFormalizarConExpedienteVivo(exc));
-				
-				try{
-					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() 								||
-							!mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_TIPO_COMERCIALIZACION)).isEmpty() 		||
-							!mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_MOTIVO_CON_COMERCIAL)).isEmpty()  		||
-//							!mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_MOTIVO_SIN_COMERCIAL)).isEmpty()  		||
-							!mapaErrores.get(VALID_PERIMETRO_RESPUESTA_SN).isEmpty() 		  		||
-							!mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_FUERA_RESTO_CHECKS_NO)).isEmpty() 		||
-							!mapaErrores.get(VALID_PERIMETRO_FORMALIZAR_SEGUN_COMERCIAL).isEmpty() 	|| 
-							!mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_DESTINO_COMERCIAL)).isEmpty()			||
-							!mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_TIPO_ALQUILER)).isEmpty() 				||
-							!mapaErrores.get(VALID_PERIMETRO_FORMALIZAR_ACTIVO_COMERCIALIZABLE).isEmpty()						||
-							!mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS)).isEmpty() ||
-							!mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_FORMALIZACION_EXPEDIENTE_VIVO)).isEmpty() ) {
-						
-						dtoValidacionContenido.setFicheroTieneErrores(true);
-						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-						String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
-						FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-						dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
-					}
-				} catch (Exception e) {
-					logger.error(e.getMessage());
-					e.printStackTrace();
-				}
-//			}
+
+			if (!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_TIPO_COMERCIALIZACION)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_MOTIVO_CON_COMERCIAL)).isEmpty() ||
+					// !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_MOTIVO_SIN_COMERCIAL)).isEmpty()
+					// ||
+					!mapaErrores.get(VALID_PERIMETRO_RESPUESTA_SN).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_FUERA_RESTO_CHECKS_NO)).isEmpty()
+					|| !mapaErrores.get(VALID_PERIMETRO_FORMALIZAR_SEGUN_COMERCIAL).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_DESTINO_COMERCIAL)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_TIPO_ALQUILER)).isEmpty()
+					|| !mapaErrores.get(VALID_PERIMETRO_FORMALIZAR_ACTIVO_COMERCIALIZABLE).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS))
+							.isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_FORMALIZACION_EXPEDIENTE_VIVO))
+							.isEmpty()) {
+
+				dtoValidacionContenido.setFicheroTieneErrores(true);
+				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
+				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
+				FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
+				dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
+			}
+			
 		}
 		exc.cerrar();
 		

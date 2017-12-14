@@ -1059,7 +1059,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				
 				Date activo_fechaTraspaso = activo.getFechaVentaExterna();
 				
-				if(gasto_fechaDevengo.before(activo_fechaTraspaso)){
+				if(gasto_fechaDevengo.after(activo_fechaTraspaso)){
 					fechaDevengoSuperior = true;
 	            }
 				
@@ -1101,13 +1101,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						Activo act = activos.get(i).getActivo();	
 						activo_fechaTraspaso = act.getFechaVentaExterna();
 						
-						if(gasto_fechaDevengo.before(activo_fechaTraspaso)){
+						if(gasto_fechaDevengo.after(activo_fechaTraspaso)){
 							break;
 			            }
 						
 					}
 				}
-				if(!Checks.esNulo(activo_fechaTraspaso) && gasto_fechaDevengo.before(activo_fechaTraspaso)){
+				if(!Checks.esNulo(activo_fechaTraspaso) && gasto_fechaDevengo.after(activo_fechaTraspaso)){
 					fechaDevengoSuperior = true;
 
 	            }

@@ -1,6 +1,7 @@
 package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,6 +33,8 @@ import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
+import jxl.write.WriteException;
+import jxl.write.biff.RowsExceededException;
 
 @Component
 public class MSVActualizarPropuestaPreciosActivoEntidad03 extends MSVExcelValidatorAbstract {
@@ -102,7 +105,7 @@ public class MSVActualizarPropuestaPreciosActivoEntidad03 extends MSVExcelValida
 	private Integer numFilasHoja;
 
 	@Override
-	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) {
+	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) throws RowsExceededException, IllegalArgumentException, WriteException, IOException {
 		if (dtoFile.getIdTipoOperacion() == null){
 			throw new IllegalArgumentException("idTipoOperacion no puede ser null");
 		}
@@ -144,29 +147,23 @@ public class MSVActualizarPropuestaPreciosActivoEntidad03 extends MSVExcelValida
 					mapaErrores.put(ACTIVE_VRF_DATE_INIT_FORMAT, getFechaVRFIncorrectaRows(exc));
 					mapaErrores.put(ACTIVE_FSV_DATE_INIT_FORMAT, getFechaFSVIncorrectaRows(exc));
 				}
-
-				try{
-					if(!mapaErrores.get(PROPUESTA_YA_CARGADA).isEmpty() ||
-							!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() ||
-							!mapaErrores.get(ACTIVE_NOT_INCLUDED_IN_PROPUESTA).isEmpty() ||
-							!mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZE_NAN)).isEmpty() ||
-							!mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEEDED)).isEmpty() ||
-							!mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZES_NOT_GREATER_EQUAL_ZERO)).isEmpty() ||
-							!mapaErrores.get(ACTIVE_PAV_DATE_INIT_EXCEEDED).isEmpty() ||
-							!mapaErrores.get(ACTIVE_PAR_DATE_INIT_EXCEEDED).isEmpty() ||
-							!mapaErrores.get(messageServices.getMessage(ACTIVE_PMA_DATE_INIT_EXCEEDED)).isEmpty() ||
-							!mapaErrores.get(ACTIVE_VEV_DATE_INIT_FORMAT).isEmpty() ||
-							!mapaErrores.get(ACTIVE_VRF_DATE_INIT_FORMAT).isEmpty() ||
-							!mapaErrores.get(ACTIVE_FSV_DATE_INIT_FORMAT).isEmpty() ){
-						dtoValidacionContenido.setFicheroTieneErrores(true);
-						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-						String nomFicheroErrores = exc.crearExcelErroresMejoradoByHojaAndFilaCabecera(mapaErrores,1,7);
-						FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-						dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			if (!mapaErrores.get(PROPUESTA_YA_CARGADA).isEmpty() || !mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(ACTIVE_NOT_INCLUDED_IN_PROPUESTA).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZE_NAN)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEEDED)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZES_NOT_GREATER_EQUAL_ZERO)).isEmpty()
+					|| !mapaErrores.get(ACTIVE_PAV_DATE_INIT_EXCEEDED).isEmpty()
+					|| !mapaErrores.get(ACTIVE_PAR_DATE_INIT_EXCEEDED).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVE_PMA_DATE_INIT_EXCEEDED)).isEmpty()
+					|| !mapaErrores.get(ACTIVE_VEV_DATE_INIT_FORMAT).isEmpty()
+					|| !mapaErrores.get(ACTIVE_VRF_DATE_INIT_FORMAT).isEmpty()
+					|| !mapaErrores.get(ACTIVE_FSV_DATE_INIT_FORMAT).isEmpty()) {
+				dtoValidacionContenido.setFicheroTieneErrores(true);
+				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
+				String nomFicheroErrores = exc.crearExcelErroresMejoradoByHojaAndFilaCabecera(mapaErrores, 1, 7);
+				FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
+				dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
+			}
 		}
 		exc.cerrar();
 		

@@ -74,7 +74,7 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	@Override
-	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) {
+	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) throws Exception {
 		if (dtoFile.getIdTipoOperacion() == null){
 			throw new IllegalArgumentException("idTipoOperacion no puede ser null");
 		}
@@ -97,36 +97,30 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 		}
 		
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
-//			if (!isActiveExists(exc)){
-				Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
-				mapaErrores.put(ACTIVO_NO_EXISTE, isActiveNotExistsRows(exc));
-				mapaErrores.put(AGRUPACION_NO_EXISTE, isAgrupacionNotExistsRows(exc));
-				mapaErrores.put(EXPEDIENTE_COMERCIAL_NO_EXISTE, isExpedienteNotExistsRows(exc));
-				mapaErrores.put(TIPO_GESTOR_NO_EXISTE, isTipoGestorNotExistsRows(exc));
-				mapaErrores.put(USERNAME_NO_EXISTE, isUsuarioNotExistsRows(exc));
-				mapaErrores.put(SOLO_UN_CAMPO_RELLENO, soloUnCampoRelleno(exc));
-				mapaErrores.put(USUARIO_NO_ES_TIPO_GESTOR, usuarioEsTipoGestor(exc));
-				mapaErrores.put(COMBINACION_GESTOR_CARTERA_ACAGEX_INVALIDA, combinacionGestorCarteraAcagexValida(exc));
-				
-				try{
-					if(!mapaErrores.get(ACTIVO_NO_EXISTE).isEmpty() ||
-							!mapaErrores.get(AGRUPACION_NO_EXISTE).isEmpty() ||
-							!mapaErrores.get(EXPEDIENTE_COMERCIAL_NO_EXISTE).isEmpty() ||
-							!mapaErrores.get(TIPO_GESTOR_NO_EXISTE).isEmpty() ||
-							!mapaErrores.get(USERNAME_NO_EXISTE).isEmpty() ||
-							!mapaErrores.get(SOLO_UN_CAMPO_RELLENO).isEmpty() ||
-							!mapaErrores.get(USUARIO_NO_ES_TIPO_GESTOR).isEmpty() ||
-							!mapaErrores.get(COMBINACION_GESTOR_CARTERA_ACAGEX_INVALIDA).isEmpty()){
-						dtoValidacionContenido.setFicheroTieneErrores(true);
-						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-						String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
-						FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-						dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-//			}
+			// if (!isActiveExists(exc)){
+			Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();
+			mapaErrores.put(ACTIVO_NO_EXISTE, isActiveNotExistsRows(exc));
+			mapaErrores.put(AGRUPACION_NO_EXISTE, isAgrupacionNotExistsRows(exc));
+			mapaErrores.put(EXPEDIENTE_COMERCIAL_NO_EXISTE, isExpedienteNotExistsRows(exc));
+			mapaErrores.put(TIPO_GESTOR_NO_EXISTE, isTipoGestorNotExistsRows(exc));
+			mapaErrores.put(USERNAME_NO_EXISTE, isUsuarioNotExistsRows(exc));
+			mapaErrores.put(SOLO_UN_CAMPO_RELLENO, soloUnCampoRelleno(exc));
+			mapaErrores.put(USUARIO_NO_ES_TIPO_GESTOR, usuarioEsTipoGestor(exc));
+			mapaErrores.put(COMBINACION_GESTOR_CARTERA_ACAGEX_INVALIDA, combinacionGestorCarteraAcagexValida(exc));
+
+			if (!mapaErrores.get(ACTIVO_NO_EXISTE).isEmpty() || !mapaErrores.get(AGRUPACION_NO_EXISTE).isEmpty()
+					|| !mapaErrores.get(EXPEDIENTE_COMERCIAL_NO_EXISTE).isEmpty()
+					|| !mapaErrores.get(TIPO_GESTOR_NO_EXISTE).isEmpty()
+					|| !mapaErrores.get(USERNAME_NO_EXISTE).isEmpty()
+					|| !mapaErrores.get(SOLO_UN_CAMPO_RELLENO).isEmpty()
+					|| !mapaErrores.get(USUARIO_NO_ES_TIPO_GESTOR).isEmpty()
+					|| !mapaErrores.get(COMBINACION_GESTOR_CARTERA_ACAGEX_INVALIDA).isEmpty()) {
+				dtoValidacionContenido.setFicheroTieneErrores(true);
+				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
+				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
+				FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
+				dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
+			}
 		}
 		exc.cerrar();
 		

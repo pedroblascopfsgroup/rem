@@ -71,7 +71,7 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	@Override
-	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) {
+	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) throws Exception {
 		if (dtoFile.getIdTipoOperacion() == null){
 			throw new IllegalArgumentException("idTipoOperacion no puede ser null");
 		}
@@ -106,23 +106,18 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 					mapaErrores.put(messageServices.getMessage(ACTIVE_NOT_PREPUBLICABLE), isActiveSinCondicionesPublicableRows(exc));					
 				}
 
-				
-				try{
-					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() || 
-							!mapaErrores.get(ACTIVE_NOT_ACTUALIZABLE).isEmpty() ||
-							!mapaErrores.get(ACTIVO_VENDIDO).isEmpty() ||
-							!mapaErrores.get(ACTIVO_NO_COMERCIALIZABLE).isEmpty() ||
-							(!Checks.esNulo(mapaErrores.get(ACTIVE_NOT_PREPUBLICABLE)) && !mapaErrores.get(ACTIVE_NOT_PREPUBLICABLE).isEmpty()) ){
-						dtoValidacionContenido.setFicheroTieneErrores(true);
-						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-						String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
-						FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-						dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-//			}
+			if (!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() || !mapaErrores.get(ACTIVE_NOT_ACTUALIZABLE).isEmpty()
+					|| !mapaErrores.get(ACTIVO_VENDIDO).isEmpty()
+					|| !mapaErrores.get(ACTIVO_NO_COMERCIALIZABLE).isEmpty()
+					|| (!Checks.esNulo(mapaErrores.get(ACTIVE_NOT_PREPUBLICABLE))
+							&& !mapaErrores.get(ACTIVE_NOT_PREPUBLICABLE).isEmpty())) {
+				dtoValidacionContenido.setFicheroTieneErrores(true);
+				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
+				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
+				FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
+				dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
+			}
+			
 		}
 		exc.cerrar();
 		

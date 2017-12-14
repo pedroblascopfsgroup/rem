@@ -71,9 +71,10 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 	 * @return MSVDtoValidacionFormato: contiene la informaci�n de la validacion
 	 * 
 	 * @author pedro
+	 * @throws Exception 
 	 */
 	@Override
-	public MSVDtoValidacion validarFormatoFichero(MSVExcelFileItemDto dtoFile) {
+	public MSVDtoValidacion validarFormatoFichero(MSVExcelFileItemDto dtoFile) throws Exception {
 
 		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
 		symbols.setDecimalSeparator(',');
@@ -124,9 +125,10 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 	 * @return MSVDtoValidacion contiene la informaci�n de la validacion
 	 * 
 	 * @author pedro
+	 * @throws Exception 
 	 */
 	public MSVDtoValidacion recorrerFichero(MSVHojaExcel exc, MSVHojaExcel excPlantilla, List<String> listaValidacion, MSVBusinessValidators contentValidators, 
-			MSVBusinessCompositeValidators compositeValidators, boolean validacionFormato) {
+			MSVBusinessCompositeValidators compositeValidators, boolean validacionFormato) throws Exception {
 
 		try {
 			MSVDtoValidacion dto = new MSVDtoValidacion();
@@ -249,7 +251,7 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 		} catch (ValidationError ve) {
 			throw ve;
 		} catch (Exception e) {
-			throw new RuntimeException("Error inesperado al recorrer el fichero", e);
+			throw new Exception("Error inesperado al recorrer el fichero", e);
 		}
 	}
 

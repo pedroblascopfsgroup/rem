@@ -67,7 +67,7 @@ public class MSVListadoActivosExcelValidator extends MSVExcelValidatorAbstract {
 	private Integer numFilasHoja;
 
 	@Override
-	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) {
+	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) throws Exception {
 		if (dtoFile.getIdTipoOperacion() == null){
 			throw new IllegalArgumentException("idTipoOperacion no puede ser null");
 		}
@@ -94,14 +94,10 @@ public class MSVListadoActivosExcelValidator extends MSVExcelValidatorAbstract {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				List<String> listaErrores = new ArrayList<String>();
 				listaErrores.add(messageServices.getMessage(ACTIVE_NOT_EXISTS));
-				try{
-					exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-					String nomFicheroErrores = exc.crearExcelErrores(listaErrores);
-					FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-					dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
+				String nomFicheroErrores = exc.crearExcelErrores(listaErrores);
+				FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
+				dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
 			}
 		}
 		exc.cerrar();

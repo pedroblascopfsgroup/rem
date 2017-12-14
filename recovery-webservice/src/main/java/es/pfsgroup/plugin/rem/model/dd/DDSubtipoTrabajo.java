@@ -71,6 +71,7 @@ public class DDSubtipoTrabajo implements Auditable, Dictionary {
 	public static final String CODIGO_SANCION_OFERTA_VENTA = "56";
 
 	public static final String CODIGO_TOMA_DE_POSESION = "57";
+	public static final String CODIGO_ALQUILER_PUERTAS_ANTIOCUPA = "58";
 
 
 	@Id

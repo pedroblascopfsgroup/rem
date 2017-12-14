@@ -56,7 +56,8 @@ public class MSVFileUploadParadise {
 
 	
 	@Transactional(readOnly = false, noRollbackFor=RuntimeException.class)
-	public String upload(WebFileItem uploadForm) {
+	public Boolean upload(WebFileItem uploadForm) {
+		Boolean result = false;
 		try {
 			if (uploadForm != null) {
 
@@ -67,13 +68,13 @@ public class MSVFileUploadParadise {
 				dto.setProcessId(Long.parseLong(uploadForm.getParameter("idProceso")));
 				dto.setIdTipoOperacion(Long.parseLong(uploadForm.getParameter("idTipoOperacion")));
 				dto.setExcelFile(efb);
-				excelManagerApi.uploadOnly(dto);
+				result = excelManagerApi.uploadOnly(dto);
 
 			}
 		}catch (Exception e) {
 			throw new BusinessOperationException(e);
 		}
-		return null;
+		return result;
 	}
 	
 	/**

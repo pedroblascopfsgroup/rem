@@ -97,6 +97,6 @@ public interface ExcelManagerApi {
 	MSVProcesoMasivo validateFormat(MSVDocumentoMasivo document) throws Exception;
 	
 	@BusinessOperationDefinition(MSV_BO_IS_VALID_PROCESS)
-	Boolean isValidProcess(Long idProceso);
+	Boolean isValidProcess(Long idProceso) throws Exception;
 
 }

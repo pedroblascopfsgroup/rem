@@ -74,7 +74,7 @@ public class MSVAsociarActivosGasto extends MSVExcelValidatorAbstract {
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	@Override
-	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) {
+	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) throws Exception {
 		if (dtoFile.getIdTipoOperacion() == null){
 			throw new IllegalArgumentException("idTipoOperacion no puede ser null");
 		}
@@ -97,7 +97,6 @@ public class MSVAsociarActivosGasto extends MSVExcelValidatorAbstract {
 		}
 		
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
-//			if (!isActiveExists(exc)){
 				Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
 				mapaErrores.put(PROPIETARIO_SIN_DOCUMENTO, isPropietarioGastoSinDocumento(exc));
 				mapaErrores.put(PROPIETARIO_DIFERENTE, isPropietarioGastoDiferenteActivo(exc));
@@ -109,25 +108,19 @@ public class MSVAsociarActivosGasto extends MSVExcelValidatorAbstract {
 				mapaErrores.put(GASTO_NOT_EXISTS, isGastoNotExistsRows(exc));
 				mapaErrores.put(GASTO_FECHA_TRASPASO_ANTERIOR, isFechaTraspasoPosteriorAFechaDevengo(exc));
 				
-				try{
-					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() ||
-						!mapaErrores.get(GASTO_NOT_EXISTS).isEmpty() ||
-						!mapaErrores.get(PROPIETARIO_SIN_DOCUMENTO).isEmpty() ||
-						!mapaErrores.get(PROPIETARIO_DIFERENTE).isEmpty() ||
-						!mapaErrores.get(ACTIVO_ASIGNADO).isEmpty() ||
-						!mapaErrores.get(GASTO_AUTORIZADO).isEmpty() ||
-						!mapaErrores.get(GASTO_ASOCIADO_TRABAJO).isEmpty() ||
-						!mapaErrores.get(GASTO_FECHA_TRASPASO_ANTERIOR).isEmpty()){
-							dtoValidacionContenido.setFicheroTieneErrores(true);
-							exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-							String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
-							FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-							dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-//			}
+			if (!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() || !mapaErrores.get(GASTO_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(PROPIETARIO_SIN_DOCUMENTO).isEmpty()
+					|| !mapaErrores.get(PROPIETARIO_DIFERENTE).isEmpty() || !mapaErrores.get(ACTIVO_ASIGNADO).isEmpty()
+					|| !mapaErrores.get(GASTO_AUTORIZADO).isEmpty()
+					|| !mapaErrores.get(GASTO_ASOCIADO_TRABAJO).isEmpty()
+					|| !mapaErrores.get(GASTO_FECHA_TRASPASO_ANTERIOR).isEmpty()) {
+				dtoValidacionContenido.setFicheroTieneErrores(true);
+				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
+				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
+				FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
+				dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
+			}
+
 		}
 		exc.cerrar();
 		

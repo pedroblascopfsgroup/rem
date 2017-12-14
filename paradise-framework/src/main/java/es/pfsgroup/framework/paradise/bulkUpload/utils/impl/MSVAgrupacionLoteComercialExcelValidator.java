@@ -91,7 +91,7 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 	private Integer numFilasHoja;
 
 	@Override
-	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) {
+	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) throws Exception {
 		if (dtoFile.getIdTipoOperacion() == null){
 			throw new IllegalArgumentException("idTipoOperacion no puede ser null");
 		}
@@ -131,29 +131,27 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 			mapaErrores.put(messageServices.getMessage(AGRUPACIONES_CON_BAJA.mensajeError), activosAgrupMultipleValidacionRows(exc, AGRUPACIONES_CON_BAJA.codigoError));
 			mapaErrores.put(messageServices.getMessage(ACTIVOS_NO_MISMA_CARTERA.mensajeError), activosAgrupMultipleValidacionRows(exc, ACTIVOS_NO_MISMA_CARTERA.codigoError));
 			mapaErrores.put(messageServices.getMessage(AGRUPACION_ACTIVOS_SIN_OFERTAS_ACEPTADAS.mensajeError), activosAgrupMultipleValidacionRows(exc, AGRUPACION_ACTIVOS_SIN_OFERTAS_ACEPTADAS.codigoError));
-			
-			
-			try{
-				if(!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty() ||
-						!mapaErrores.get(messageServices.getMessage(ACTIVO_EN_OTRA_AGRUPACION)).isEmpty() ||
-						!mapaErrores.get(messageServices.getMessage(ACTIVO_OFERTAS_ACEPTADAS)).isEmpty() ||
-						!mapaErrores.get(messageServices.getMessage(ACTIVO_VENDIDO)).isEmpty() ||
-						!mapaErrores.get(messageServices.getMessage(ACTIVO_SIN_PROPIETARIO)).isEmpty() ||
-						!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_COMERCIALIZABLE)).isEmpty() ||
-						// !mapaErrores.get(messageServices.getMessage(ACTIVO_INCLUIDO_PERIMETRO)).isEmpty() ||
-						// !mapaErrores.get(messageServices.getMessage(ACTIVO_NO_FINANCIERO)).isEmpty() ||
-						!mapaErrores.get(messageServices.getMessage(AGRUPACIONES_CON_BAJA.mensajeError)).isEmpty() ||
-						!mapaErrores.get(messageServices.getMessage(ACTIVOS_NO_MISMA_CARTERA.mensajeError)).isEmpty() ||
-						!mapaErrores.get(messageServices.getMessage(AGRUPACION_ACTIVOS_SIN_OFERTAS_ACEPTADAS.mensajeError)).isEmpty() ){
-					dtoValidacionContenido.setFicheroTieneErrores(true);
-					exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-					String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
-					FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-					dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
-				}
-			} catch (Exception e) {
-				logger.error(e.getMessage());
-				e.printStackTrace();
+
+			if (!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_EN_OTRA_AGRUPACION)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_OFERTAS_ACEPTADAS)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_VENDIDO)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_SIN_PROPIETARIO)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_NO_COMERCIALIZABLE)).isEmpty() ||
+					// !mapaErrores.get(messageServices.getMessage(ACTIVO_INCLUIDO_PERIMETRO)).isEmpty()
+					// ||
+					// !mapaErrores.get(messageServices.getMessage(ACTIVO_NO_FINANCIERO)).isEmpty()
+					// ||
+					!mapaErrores.get(messageServices.getMessage(AGRUPACIONES_CON_BAJA.mensajeError)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVOS_NO_MISMA_CARTERA.mensajeError)).isEmpty()
+					|| !mapaErrores
+							.get(messageServices.getMessage(AGRUPACION_ACTIVOS_SIN_OFERTAS_ACEPTADAS.mensajeError))
+							.isEmpty()) {
+				dtoValidacionContenido.setFicheroTieneErrores(true);
+				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
+				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
+				FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
+				dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
 			}
 
 		}

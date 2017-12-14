@@ -23,9 +23,9 @@ public interface MSVExcelValidator {
 	
 	public static final String KEY_NUMERO_MAXIMO_FILAS = "masivo.cargaExcel.maxFilas";
 	
-	MSVDtoValidacion validarFormatoFichero(MSVExcelFileItemDto dtoFile);
+	MSVDtoValidacion validarFormatoFichero(MSVExcelFileItemDto dtoFile) throws Exception;
 	
-	MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile);
+	MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile)  throws Exception;
 	
 	
 

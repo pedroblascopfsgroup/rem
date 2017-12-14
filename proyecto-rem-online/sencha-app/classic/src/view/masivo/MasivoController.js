@@ -19,11 +19,10 @@ Ext.define('HreRem.view.masivo.MasivoController', {
                 	if(!Ext.isEmpty(o.response.responseText)) {
                 		var response = Ext.JSON.decode(o.response.responseText);
                 		if(response.success == "false")  {
-                			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));                			
+                			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));  
+                			me.getView().lookupReference("listadoCargamasiva").getStore().load();
                 		} else {		                			                	
 		                    me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-		                    
-		                    
 		                    me.getView().lookupReference("listadoCargamasiva").getSelectionModel().deselectAll();
                         	me.getView().lookupReference("listadoCargamasiva").getSelectionModel().clearSelections();
 		                    me.getView().lookupReference("listadoCargamasiva").getStore().load();

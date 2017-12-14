@@ -127,31 +127,33 @@ public class ExcelManager implements ExcelManagerApi {
 	@SuppressWarnings("unused")
 	@Override
 	public Boolean uploadOnly(MSVExcelFileItemDto excelFileItemDto) throws Exception {
-
+		Boolean resultado = false;
 		MSVDocumentoMasivo document = null;
 		MSVProcesoMasivo process = null;
-		try {
-			document = upload(excelFileItemDto);
-			process = validateFormat(document);
-		} catch (Exception e) {
-			return false;
+		document = upload(excelFileItemDto);
+		process = validateFormat(document);
+		if(process.getEstadoProceso() != null && process.getEstadoProceso().getCodigo().equals(MSVDDEstadoProceso.CODIGO_ERROR)){
+			resultado = false;
+		}else{
+			resultado = true;
 		}
-		return true;
+		return resultado;
 	}
 	
 	@SuppressWarnings("unused")
 	@Override
-	public Boolean validateContentOnly(Long idProcess){
+	public Boolean validateContentOnly(Long idProcess) throws Exception{
 		
 		MSVDocumentoMasivo document = ficheroDao.findByIdProceso(idProcess);
 		MSVProcesoMasivo process = null;
-		        
-        try {
-        	process = validateContent(document);
-        } catch (Exception e) {
-        	return false;
-        }
-        return true;
+		Boolean resultado = false;
+		process = validateContent(document);
+		if(process.getEstadoProceso() != null && process.getEstadoProceso().getCodigo().equals(MSVDDEstadoProceso.CODIGO_ERROR)){
+			resultado = false;
+		}else{
+			resultado = true;
+		}
+		return resultado;
 		
 	}
 		
@@ -181,6 +183,7 @@ public class ExcelManager implements ExcelManagerApi {
 		excelFileDto.setProcessId(document.getProcesoMasivo().getId());
 
 		MSVDtoValidacion dtoValidacionFormato = null;
+		MSVProcesoMasivo resultado = null;
 		try {
 			String codigoOPM = document.getProcesoMasivo().getTipoOperacion().getCodigo();
 			
@@ -204,14 +207,20 @@ public class ExcelManager implements ExcelManagerApi {
 				dtoModifProceso.setCodigoEstadoProceso(MSVDDEstadoProceso.CODIGO_PTE_VALIDAR);
 				document.setErroresFichero(document.getContenidoFichero());
 			}
-		} catch (RuntimeException err) {
+		} catch (Exception err) {
 			logger.error("Ha fallado el validador de formato del fichero Excel", err);
 			dtoModifProceso.setCodigoEstadoProceso(MSVDDEstadoProceso.CODIGO_ERROR);
-			document.setErroresFichero(dtoValidacionFormato.getExcelErroresFormato());
-			throw err;
+			//document.setErroresFichero(dtoValidacionFormato.getExcelErroresFormato());
+			//throw err;
 		}
 		
-		return proxyFactory.proxy(MSVProcesoApi.class).modificarProcesoMasivo(dtoModifProceso);
+		try{
+			resultado = proxyFactory.proxy(MSVProcesoApi.class).modificarProcesoMasivo(dtoModifProceso);
+		}catch(Exception e){
+			logger.error("Ha fallado el guardado del proceso", e);
+		}
+		
+		return resultado;
 		
 	}
 	
@@ -226,11 +235,11 @@ public class ExcelManager implements ExcelManagerApi {
 				dtoModifProceso.setCodigoEstadoProceso(MSVDDEstadoProceso.CODIGO_ERROR);
 			}
 
-		} catch (RuntimeException err) {
+		} catch (Exception err) {
 			logger.error("Ha fallado el validador de contenido del fichero Excel", err);
 			dtoModifProceso.setCodigoEstadoProceso(MSVDDEstadoProceso.CODIGO_ERROR);
 			document.setErroresFichero(document.getContenidoFichero());
-			throw err;
+		//	throw err;
 		}
 		
 		return proxyFactory.proxy(MSVProcesoApi.class).modificarProcesoMasivo(dtoModifProceso);
@@ -256,7 +265,7 @@ public class ExcelManager implements ExcelManagerApi {
 
 	@Override
 	@BusinessOperation(MSV_BO_VALIDAR_ARCHIVO)
-	public Boolean isValidProcess(Long idProceso) {
+	public Boolean isValidProcess(Long idProceso) throws Exception {
 
 		Boolean resultadoValidacion = true;
 

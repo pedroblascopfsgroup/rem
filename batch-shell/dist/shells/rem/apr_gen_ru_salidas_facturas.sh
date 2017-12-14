@@ -38,7 +38,10 @@ echo "Inicio de transferencia ficheros RUFACTUCP.txt/RUFACTUSP.txt"
   bye
 EOF
 
-  exit 0    
+  exit 0
+else
+	echo "$(basename $0) Error en la ejecución del proceso"
+    exit 1
 fi    
 else
     echo "$(basename $0) Error en $filename: no se ha encontrado  $MAINSH"

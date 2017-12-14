@@ -5566,11 +5566,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			mailsPara.add(correoMediador);
 		}
 		if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null) {
-			Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(expediente.getOferta().getActivoPrincipal(),
-					GestorActivoApi.CODIGO_GESTOR_ACTIVO);
-			if (gestorActivo != null && gestorActivo.getEmail() != null) {
-				mailsPara.add(gestorActivo.getEmail());
-			}
 			Usuario gestorActivoBackoffice = gestorActivoApi.getGestorByActivoYTipo(
 					expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_BACKOFFICE);
 			if (gestorActivoBackoffice != null && gestorActivoBackoffice.getEmail() != null) {

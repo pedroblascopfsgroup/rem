@@ -783,7 +783,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	/**
 	 * Este método recibe el activo o la agrupación de activos que se quiere asociar con el gasto
-	 * y valida que no haya ningún activo que tenga una fecha de traspaso posterior a la fecha de 
+	 * y valida que no haya ningún activo que tenga una fecha de traspaso anterior a la fecha de 
 	 * devengo del gasto.
 	 * 
 	 * @param gasto: Gasto que se asociará con los activos.

@@ -149,7 +149,20 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckDocActivo', {
 								        	tdCls: 'grid-no-seleccionable-td',
 								        	editor: {
 								        		xtype: 'datefield',
-								        		cls: 'grid-no-seleccionable-field-editor'
+								        		action: 'update',
+								        		cls: 'grid-no-seleccionable-field-editor',
+								        		reference: 'fechaObtencionEdit',
+								        		listeners:{
+								        			change: function(field, newVal, oldVal){
+								        				var me = this,
+								        				caducidad = field.up().items.get(6);
+								        				if(newVal != null || newVal != ""){
+								        					caducidad.allowBlank = false;
+								        				}else{
+								        					caducidad.allowBlank = true;
+								        				}
+								        			}
+								        		}
 								        	}
 								        },
 								        {   
@@ -173,7 +186,8 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckDocActivo', {
 								        	tdCls: 'grid-no-seleccionable-td',
 								        	editor: {
 								        		xtype: 'datefield',
-								        		cls: 'grid-no-seleccionable-field-editor'
+								        		cls: 'grid-no-seleccionable-field-editor',
+								        		reference: 'fechaCaducidadEdit'
 								        	}
 								        },
 								        {   

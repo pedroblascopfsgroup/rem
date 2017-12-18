@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoConfigDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -81,14 +84,25 @@ public class UpdaterServiceCEEEmisionCertificado implements UpdaterService {
 		for(TareaExternaValor valor :  valores){
 
 			if(FECHA_EMISION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+				Date f = null;
 				try {
-					documentoCEE.setFechaEmision(ft.parse(valor.getValor())); // Información administrativa
-					documentoCEE.setFechaSolicitud(ft.parse(valor.getValor())); // Checking información
-					documentoCEE.setFechaObtencion(ft.parse(valor.getValor())); // Fecha de obtención
-					documentoCEE.setFechaVerificado(ft.parse(valor.getValor())); // Fecha de validación
+					f = ft.parse(valor.getValor());
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				}
+				if(!Checks.esNulo(f)) {
+					documentoCEE.setFechaEmision(f); // Información administrativa
+					documentoCEE.setFechaSolicitud(f); // Checking información
+					documentoCEE.setFechaObtencion(f); // Fecha de obtención
+					documentoCEE.setFechaVerificado(f); // Fecha de validación
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(f);
+					cal.add(Calendar.YEAR, 10); 
+					f = cal.getTime();
+					documentoCEE.setFechaCaducidad(f); // Fecha caducidad (Fecha emisión + 10 años)
+					documentoCEE.setAplica(true);
+					documentoCEE.setEstadoDocumento(genericDao.get(DDEstadoDocumento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO )));
 				}
 			}
 			

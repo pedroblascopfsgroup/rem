@@ -208,6 +208,7 @@ public class AgrupacionAdapter {
 
 	private static final Integer NO_ES_FORMALIZABLE = new Integer(0);
 	private static final Integer ES_FORMALIZABLE = new Integer(1);
+	private static final String TIPO_AGRUPACION_RESTRINGIDA = "02";
 
 	public DtoAgrupaciones getAgrupacionById(Long id) {
 
@@ -1453,6 +1454,24 @@ public class AgrupacionAdapter {
 			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
 
 			notificationOfertaManager.sendNotification(oferta);
+			
+			if(TIPO_AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())){
+				Activo activoPrincipal = agrupacion.getActivoPrincipal();
+				PerimetroActivo perActivo = genericDao.get(PerimetroActivo.class, genericDao.createFilter(FilterType.EQUALS,"activo.id", activoPrincipal.getId()), genericDao.createFilter(FilterType.EQUALS,"auditoria.borrado", false));
+				if(!Checks.esNulo(perActivo.getAplicaFormalizar())){
+					if(perActivo.getAplicaFormalizar().toString().equals(ES_FORMALIZABLE.toString())){
+						if(!Checks.esNulo(agrupacion.getIsFormalizacion())){
+							if(agrupacion.getIsFormalizacion().toString().equals(NO_ES_FORMALIZABLE.toString())){
+								agrupacion.setIsFormalizacion(1);
+								activoAgrupacionApi.saveOrUpdate(agrupacion);
+							}
+						}else{
+							agrupacion.setIsFormalizacion(1);
+							activoAgrupacionApi.saveOrUpdate(agrupacion);
+						}
+					}
+				}
+			}
 
 		} catch (Exception ex) {
 			logger.error("error en agrupacionAdapter", ex);

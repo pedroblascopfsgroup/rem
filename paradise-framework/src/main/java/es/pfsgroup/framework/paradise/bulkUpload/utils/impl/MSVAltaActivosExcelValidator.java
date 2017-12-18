@@ -430,21 +430,20 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 	private List<Integer> isColumnNullByRows(MSVHojaExcel exc, int columnNumber) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 
-		int i = 0;
-		try {
-			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
 				if (Checks.esNulo(exc.dameCelda(i, columnNumber)))
 					listaFilas.add(i);
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (ParseException e) {
-			logger.error(e.getMessage());
-			listaFilas.add(i);
 		}
 
 		return listaFilas;
@@ -465,9 +464,8 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 	private List<Integer> isTipoAlquilerNullConDestinoComercialAlquilerByRows(MSVHojaExcel exc, int columnNumber) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 
-		int i = 0;
-		try {
-			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
 				String codDestinoComercial = exc.dameCelda(i, COL_NUM.COD_DESTINO_COMER);
 				if (codDestinoComercial.equals(DESTINO_COMERCIAL_CODIGO_ALQUILER_OPCION_COMPRA)
 						|| codDestinoComercial.equals(DESTINO_COMERCIAL_CODIGO_ALQUILER_VENTA)
@@ -476,16 +474,16 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 					if (Checks.esNulo(exc.dameCelda(i, columnNumber)))
 						listaFilas.add(i);
 				}
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (ParseException e) {
-			logger.error(e.getMessage());
-			listaFilas.add(i);
 		}
 
 		return listaFilas;
@@ -506,28 +504,35 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		Double precio = null;
 
-		int i = 0;
-		try {
-			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
-				precio = !Checks.esNulo(exc.dameCelda(i, columnNumber))
-						? Double.parseDouble(exc.dameCelda(i, columnNumber)) : null;
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
+				
+				String value = exc.dameCelda(i, columnNumber);
+				if(value != null && !value.isEmpty()){
+					if(value.contains(",")){
+						value = value.replace(",", ".");
+					}
+				}
+				
+				precio = !Checks.esNulo(value)
+						? Double.parseDouble(value) : null;
 
 				// Si el precio no es un número válido.
 				if ((!Checks.esNulo(precio) && precio.isNaN()))
 					listaFilas.add(i);
+			} catch (NumberFormatException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
 			}
-		} catch (NumberFormatException e) {
-			logger.error(e.getMessage());
-			listaFilas.add(i);
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (ParseException e) {
-			logger.error(e.getMessage());
-			listaFilas.add(i);
 		}
 
 		return listaFilas;
@@ -548,29 +553,27 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		Double precio = null;
 
-		int i = 0;
-		try {
-			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
 				precio = !Checks.esNulo(exc.dameCelda(i, columnNumber))
 						? Double.parseDouble(exc.dameCelda(i, columnNumber)) : null;
 
 				// Si el precio no se encuentra por encima de 0.
 				if ((!Checks.esNulo(precio) && precio.compareTo(0.0D) <= 0))
 					listaFilas.add(i);
+			} catch (NumberFormatException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
 			}
-		} catch (NumberFormatException e) {
-			logger.error(e.getMessage());
-			listaFilas.add(i);
-		} 
-		catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			listaFilas.add(i);
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			listaFilas.add(i);
-		} catch (ParseException e) {
-			logger.error(e.getMessage());
-			listaFilas.add(i);
 		}
 
 		return listaFilas;
@@ -592,9 +595,8 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		String valorBool = null;
 
-		int i = 0;
-		try {
-			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
 				valorBool = exc.dameCelda(i, columnNumber);
 
 				// Si el valor Boolean no se corresponde con el estándar.
@@ -602,16 +604,16 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 						&& !valorBool.equalsIgnoreCase("si") && !valorBool.equalsIgnoreCase("no"))) {
 					listaFilas.add(i);
 				}
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (ParseException e) {
-			logger.error(e.getMessage());
-			listaFilas.add(i);
 		}
 
 		return listaFilas;
@@ -633,9 +635,8 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 		SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
 		String valorDate = null;
 
-		int i = 0;
-		try {
-			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
 				valorDate = exc.dameCelda(i, columnNumber);
 
 				// Si el valor Date no se puede obtener adecuadamente se lanza
@@ -643,16 +644,16 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 				if (!Checks.esNulo(valorDate)) {
 					ft.parse(valorDate);
 				}
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (ParseException e) {
-			logger.error(e.getMessage());
-			listaFilas.add(i);
 		}
 
 		return listaFilas;
@@ -672,21 +673,20 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 	private List<Integer> sociedadAcreedoraNotExistsByRows(MSVHojaExcel exc, int columnNumber) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 
-		int i = 0;
-		try {
-			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
 				if (!particularValidator.existeSociedadAcreedora(exc.dameCelda(i, columnNumber)))
 					listaFilas.add(i);
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (ParseException e) {
-			logger.error(e.getMessage());
-			listaFilas.add(i);
 		}
 
 		return listaFilas;
@@ -706,21 +706,20 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 	private List<Integer> mediadorNotExistsByRows(MSVHojaExcel exc, int columnNumber) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 
-		int i = 0;
-		try {
-			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
 				if (!particularValidator.existeProveedorMediadorByNIF(exc.dameCelda(i, columnNumber)))
 					listaFilas.add(i);
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (ParseException e) {
-			logger.error(e.getMessage());
-			listaFilas.add(i);
 		}
 
 		return listaFilas;
@@ -740,23 +739,22 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 	private List<Integer> isColumnNANByRows(MSVHojaExcel exc, int columnNumber) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 
-		int i = 0;
-		try {
-			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
 				String valor = exc.dameCelda(i, columnNumber);
 				if (Checks.esNulo(valor) || !StringUtils.isNumeric(valor)) {
 					listaFilas.add(i);
 				}
+			} catch (NumberFormatException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
 			}
-		} catch (NumberFormatException e) {
-			logger.error(e.getMessage());
-			listaFilas.add(i);
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (ParseException e) {
-			logger.error(e.getMessage());
-			listaFilas.add(i);
 		}
 
 		return listaFilas;
@@ -764,53 +762,56 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 
 	private List<Integer> isColumnFloatNANByRows(MSVHojaExcel exc, int columnNumber) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
-
-		int i = 0;
-		try {
-			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
 				String valor = exc.dameCelda(i, columnNumber);
 				if (!Checks.esNulo(valor)) {
+					if(valor.contains("%")){
+						valor = valor.replace("%", "");
+					}
 					Float f = Float.valueOf(valor);
 					if (f.isNaN()) {
 						listaFilas.add(i);
 					}
 				}
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (ParseException e) {
-			logger.error(e.getMessage());
-			listaFilas.add(i);
 		}
 
 		return listaFilas;
 	}
 
-	private List<Integer> isColumnPorcentajeSuperiorByRows(MSVHojaExcel exc, int columnNumber) throws IllegalArgumentException, IOException {
+	private List<Integer> isColumnPorcentajeSuperiorByRows(MSVHojaExcel exc, int columnNumber)
+			throws IllegalArgumentException, IOException {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 
-		int i = 0;
-		try {
-			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
 				String valor = exc.dameCelda(i, columnNumber);
 				if (!Checks.esNulo(valor)) {
-					
+					if(valor.contains("%")){
+						valor = valor.replace("%", "");
+					}
 					Float f = Float.valueOf(valor);
 					if (f < 0 || f > 100) {
 						listaFilas.add(i);
 					}
 				}
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			} catch (NumberFormatException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
 			}
-		} catch (ParseException e) {
-			logger.error(e.getMessage());
-			listaFilas.add(i);
-		} catch (NumberFormatException e){
-			logger.error(e.getMessage());
-			listaFilas.add(i);
 		}
 
 		return listaFilas;
@@ -819,25 +820,24 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 	private List<Integer> isColumnCodigoPostalValido(MSVHojaExcel exc, int columnNumber) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 
-		int i = 0;
-		try {
-			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
 				String valor = exc.dameCelda(i, columnNumber);
 				if (Checks.esNulo(valor) || !StringUtils.isNumeric(valor)) {
 					listaFilas.add(i);
 				} else if (!Checks.esNulo(valor) && (valor.length() != 5)) {
 					listaFilas.add(i);
 				}
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (ParseException e) {
-			logger.error(e.getMessage());
-			listaFilas.add(i);
 		}
 
 		return listaFilas;
@@ -846,21 +846,20 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 	private List<Integer> isCodigoMunicipioValido(MSVHojaExcel exc, int columnNumber) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 
-		int i = 0;
-		try {
-			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
 				if (!particularValidator.existeMunicipioByCodigo(exc.dameCelda(i, columnNumber)))
 					listaFilas.add(i);
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (ParseException e) {
-			logger.error(e.getMessage());
-			listaFilas.add(i);
 		}
 
 		return listaFilas;
@@ -869,21 +868,20 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 	private List<Integer> isCodigoUnidadInferiorMunicipioValido(MSVHojaExcel exc, int columnNumber) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 
-		int i = 0;
-		try {
-			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
 				if (!particularValidator.existeUnidadInferiorMunicipioByCodigo(exc.dameCelda(i, columnNumber)))
 					listaFilas.add(i);
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
 			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (ParseException e) {
-			logger.error(e.getMessage());
-			listaFilas.add(i);
 		}
 
 		return listaFilas;

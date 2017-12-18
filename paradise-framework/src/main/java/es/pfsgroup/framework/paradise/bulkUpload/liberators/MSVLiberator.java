@@ -11,6 +11,6 @@ public interface MSVLiberator {
 	
 	Boolean isValidFor(MSVDDOperacionMasiva tipoOperacion);
 
-	Boolean liberaFichero(MSVDocumentoMasivo fichero) throws IllegalArgumentException, IOException, SQLException, ParseException;
+	Boolean liberaFichero(MSVDocumentoMasivo fichero) throws Exception;
 	
 }

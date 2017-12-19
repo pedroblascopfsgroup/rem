@@ -1864,7 +1864,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	public List<DtoEstadosInformeComercialHistorico> getEstadoInformeComercialByActivo(Long idActivo) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
-		Order order = new Order(OrderType.ASC, "id");
+		Order order = new Order(OrderType.DESC, "fecha");
 		List<ActivoEstadosInformeComercialHistorico> listaEstadoInfoComercial = genericDao
 				.getListOrdered(ActivoEstadosInformeComercialHistorico.class, order, filtro);
 
@@ -1906,7 +1906,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					if (historico.getEstadoInformeComercial().getCodigo().equals(DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION))
 						return true;
 					i++;
-				}while((i <= activoEstadoInfComercialHistoricoList.size()) && Checks.esNulo(historico.getFecha()));
+				}while(i <= activoEstadoInfComercialHistoricoList.size());
 								
 			}			
 		}

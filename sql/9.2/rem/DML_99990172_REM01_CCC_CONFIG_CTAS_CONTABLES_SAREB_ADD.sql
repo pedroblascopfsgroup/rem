@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carlos López
---## FECHA_CREACION=20171218
+--## FECHA_CREACION=20171219
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.11
 --## INCIDENCIA_LINK=HREOS-3469
@@ -58,7 +58,7 @@ BEGIN
     FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
       LOOP
       
-        FOR anyo IN 2012 .. 2017
+        FOR anyo IN 2010 .. 2017
          LOOP
                 V_TMP_TIPO_DATA := V_TIPO_DATA(I);
                 

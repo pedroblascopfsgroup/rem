@@ -3,6 +3,8 @@ Ext.define('HreRem.view.activos.detalle.HistoricoCondicionesList', {
     xtype		: 'historicocondicioneslist',
 	topBar		: true,
 	idPrincipal : 'activo.id',
+	propagationButton: true,
+	targetGrid	: 'condicionesespecificas',
 	
     bind: {
         store: '{historicocondiciones}'
@@ -38,7 +40,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoCondicionesList', {
 		            flex: 1,	            
 		       		editor: {
 		       			xtype:'textarea',
-		       			maxLength: 3000
+		       			maxLength: 4000
 		       		}
 		        },
 		        {
@@ -77,17 +79,24 @@ Ext.define('HreRem.view.activos.detalle.HistoricoCondicionesList', {
 		            }
 		        }
 		    ];
-		    
-		    
+
 		    me.callParent();
    },
-   
-   //HREOS-846 Si NO esta dentro del perimetro, ocultamos los botones de agregar/quitar del grid
+
    evaluarEdicion: function() {    	
 		var me = this;
 		
 		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
 			me.setTopBar(false);
+		}
+
+		if(me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionComercial') ||
+				me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionRestringida') ||
+				me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionAsistida') ||
+				me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionObraNueva')) {
+			me.down('toolbar').items.items[2].setHidden(false);
+		} else {
+			me.down('toolbar').items.items[2].setHidden(true);
 		}
    }
 

@@ -146,7 +146,7 @@ public class EXTActivoTareaNotificacionManager extends EXTAbstractTareaNotificac
             if (tipoCalculo == null) {
                 tipoCalculo = TIPO_CALCULO_FECHA_POR_DEFECTO;
             }
-            notificacionTarea.setVencimiento(VencimientoUtils.getFecha(fin, tipoCalculo));
+            notificacionTarea.setVencimiento(VencimientoUtils.getFecha(fin, tipoCalculo,genericDao));
         }
         // Seteo la entidad en el campo que corresponda
         decodificarEntidadInformacion(idEntidad, codigoTipoEntidad, notificacionTarea);

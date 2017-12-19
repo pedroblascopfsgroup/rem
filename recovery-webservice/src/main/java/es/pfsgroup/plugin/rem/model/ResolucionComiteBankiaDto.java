@@ -5,7 +5,9 @@ import java.sql.Date;
 
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoDenegacionResolucion;
+import es.pfsgroup.plugin.rem.model.dd.DDPenitenciales;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
 
 public class ResolucionComiteBankiaDto implements Serializable{
@@ -25,6 +27,9 @@ public class ResolucionComiteBankiaDto implements Serializable{
 	private DDMotivoDenegacionResolucion motivoDenegacion;
 	private Date fechaAnulacion;
 	private Double importeContraoferta;
+	private DDPenitenciales penitenciales;
+	private DDMotivoAnulacionExpediente motivoAnulacionExpediente;
+	private Date fechaComite;
 	
 	
 	public ExpedienteComercial getExpediente() {
@@ -68,6 +73,24 @@ public class ResolucionComiteBankiaDto implements Serializable{
 	}
 	public void setImporteContraoferta(Double importeContraoferta) {
 		this.importeContraoferta = importeContraoferta;
+	}
+	public DDPenitenciales getPenitenciales() {
+		return penitenciales;
+	}
+	public void setPenitenciales(DDPenitenciales penitenciales) {
+		this.penitenciales = penitenciales;
+	}
+	public DDMotivoAnulacionExpediente getMotivoAnulacionExpediente() {
+		return motivoAnulacionExpediente;
+	}
+	public void setMotivoAnulacionExpediente(DDMotivoAnulacionExpediente motivoAnulacionExpediente) {
+		this.motivoAnulacionExpediente = motivoAnulacionExpediente;
+	}
+	public Date getFechaComite() {
+		return fechaComite;
+	}
+	public void setFechaComite(Date fechaComite) {
+		this.fechaComite = fechaComite;
 	}
 
 	

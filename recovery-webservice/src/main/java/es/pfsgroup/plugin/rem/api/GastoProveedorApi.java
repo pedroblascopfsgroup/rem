@@ -252,5 +252,29 @@ public interface GastoProveedorApi {
 		 */
 		public List<DtoActivoProveedor> searchProveedoresByNif(DtoProveedorFilter dto);
 		
+		/**
+		 * Devuelve una lista de gastos para una provision.
+		 * @param dtoGastosFilter con los parametros de filtro
+		 * @return DtoPage 
+		 */
+		public DtoPage getListGastosProvision(DtoGastosFilter dtoGastosFilter);
+		
+		/**
+		 * Método que valida la fecha devengo de un gasto
+		 * 
+		 * @param gasto: Gasto que se asociará con los activos.
+		 * @param activo: El activo que se va a asociar con el gasto anterior.
+		 * @param ActivoAgrupacion: La agrupación de activos que se quiere asociar con el gasto
+		 */
+		public boolean fechaDevengoPosteriorFechaTraspaso(Long idGasto, Long idActivo, Long idAgrupacion);
+
+		/**
+		 * Este método actualiza el porcentaje de participación de un activo en un gasto.
+		 * 
+		 * @param idActivo: ID del activo dentro del gasto.
+		 * @param idGasto: ID del gasto que contiene el activo.
+		 * @param porcentajeParticipacion: indica el porcentaje de participacion del activo en el gasto.
+		 */
+		public void actualizarPorcentajeParticipacionGastoProveedorActivo(Long idActivo, Long idGasto, Float porcentajeParticipacion);
 }
 

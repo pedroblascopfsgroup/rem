@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.pfs.auditoria.Auditable;
+import es.capgemini.pfs.diccionarios.Dictionary;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -38,6 +40,8 @@ import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDo
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosExpedientes;
 import es.pfsgroup.plugin.gestorDocumental.model.servicios.RespuestaCrearExpediente;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.dto.documentos.GestorDocToRecoveryAssembler;
@@ -46,6 +50,10 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 
 @Service("gestorDocumentalAdapterManager")
@@ -64,6 +72,9 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
     @Autowired 
     private GestorDocumentalApi gestorDocumentalApi;
     
+    @Autowired
+    private GastoProveedorApi gastoProveedorApi;
+    
     @Autowired 
     private GestorDocumentalExpedientesApi gestorDocumentalExpedientesApi;
     
@@ -72,6 +83,12 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
     
     @Autowired
     private GenericABMDao genericDao;
+    
+    @Autowired
+    private ActivoApi activoApi;
+    
+    @Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
     
     private final String GESTOR_DOCUMENTAL = "GESTOR_DOC";
     
@@ -87,9 +104,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		} else {
 			codigoEstado = "03";
 		}
-
-		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
-				activo.getNumActivo().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO, codigoEstado);
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(activo.getNumActivo().toString(), getTipoExpediente(activo), codigoEstado);
 		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto();
 		RespuestaDocumentosExpedientes respuesta = null;
 		respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
@@ -118,8 +133,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		}else{
 			codigoEstado = "03";
 		}
-		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
-				activo.getNumActivo().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO, codigoEstado);
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(activo.getNumActivo().toString(), getTipoExpediente(activo), codigoEstado);		
 		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDto(webFileItem, userLogin,
 				matricula);
 		RespuestaCrearDocumento respuestaCrearDocumento = gestorDocumentalApi.crearDocumento(cabecera, crearDoc);
@@ -147,8 +161,12 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	public Long uploadDocumentoGasto(GastoProveedor gasto, WebFileItem webFileItem, String userLogin, String matricula) throws GestorDocumentalException {
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler =  new RecoveryToGestorDocAssembler(appProperties);
 		Long respuesta = null;
-
+		
+		//List<VBusquedaGastoActivo> listActivosGastos = gastoProveedorApi.getListActivosGastos(gasto.getId());
+		//CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(gasto.getNumGastoHaya().toString(), getTipoExpediente(activo), GestorDocumentalConstants.CODIGO_CLASE_GASTO);
+		
 		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(gasto.getNumGastoHaya().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO, GestorDocumentalConstants.CODIGO_CLASE_GASTO);
+		
 		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDto(webFileItem, userLogin, matricula);
 		RespuestaCrearDocumento respuestaCrearDocumento = gestorDocumentalApi.crearDocumento(cabecera, crearDoc);
 		
@@ -206,13 +224,23 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		String fechaGasto = !Checks.esNulo(gasto.getFechaEmision()) ? formatter.format(gasto.getFechaEmision()) : "";
-		String idReo = !Checks.estaVacio(gasto.getGastoProveedorActivos()) ?  gasto.getGastoProveedorActivos().get(0).getActivo().getNumActivo().toString() : "";
-		String cliente = !Checks.estaVacio(gasto.getGastoProveedorActivos()) ?  gasto.getGastoProveedorActivos().get(0).getActivo().getCartera().getDescripcion() : "";
-		if((Checks.esNulo(cliente) || cliente.isEmpty()) && gasto.esAutorizadoSinActivos()) {			
-			if(!Checks.esNulo(gasto.getPropietario())) {
-				cliente = gasto.getPropietario().getCartera().getDescripcion();				
-			}
-		}		
+		String idReo = !Checks.estaVacio(gasto.getGastoProveedorActivos()) ?  gasto.getGastoProveedorActivos().get(0).getActivo().getNumActivo().toString() : "";		
+		DDCartera cartera = null;
+		if (gasto.getPropietario()!=null) {
+			cartera = gasto.getPropietario().getCartera();
+		}else{
+			//si no hay propietario es sareb
+			cartera = (DDCartera) utilDiccionarioApi
+					.dameValorDiccionarioByCod(DDCartera.class, DDCartera.CODIGO_CARTERA_SAREB);
+			
+		}
+		String cliente = !Checks.estaVacio(gasto.getGastoProveedorActivos()) ?  getClienteByCartera(cartera) : "";
+		
+		if((Checks.esNulo(cliente) || cliente.isEmpty())) {			
+			cliente = getClienteByCartera(cartera);
+		}	
+		
+		
 		String descripcionExpediente =  !Checks.esNulo(gasto.getConcepto()) ? gasto.getConcepto() :  "";
 		
 		RecoveryToGestorExpAssembler recoveryToGestorAssembler =  new RecoveryToGestorExpAssembler(appProperties);
@@ -314,7 +342,8 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 			if(!Checks.estaVacio(listActOfe)){
 				ActivoOferta actOfe = listActOfe.get(0);
 				idSistemaOrigen = actOfe.getPrimaryKey().getActivo().getNumActivo().toString();
-				cliente = actOfe.getPrimaryKey().getActivo().getCartera().getDescripcion();
+				DDCartera cartera = actOfe.getPrimaryKey().getActivo().getCartera();
+				cliente = getClienteByCartera(cartera);
 			}
 		}
 		String estadoExpediente = "Alta";
@@ -348,14 +377,27 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		return idExpediente;	
 	}
 	
+	// Obtiene en nombre del Cliente tal y como se va a utilizar en el GD
+	private String getClienteByCartera(DDCartera cartera) {
+		if (cartera!=null) {
+			if (DDCartera.CODIGO_CARTERA_HYT.equals(cartera.getCodigo())) {
+				return DDCartera.DESCRIPCION_CARTERA_HYT;
+			} else {
+				return cartera.getDescripcion();
+			}
+		}
+		return "";
+	}
+	
 	public void crearRelacionActivosExpediente(ExpedienteComercial expedienteComercial, Long idDocRestClient, String[] listaActivos, String login) throws GestorDocumentalException {	
 		
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
 		
 		CredencialesUsuarioDto credUsu = recoveryToGestorDocAssembler.getCredencialesDto(login);
 		String codigoEstado = "03"; //Hablado con Manuel Pardo
-			
-		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(expedienteComercial.getNumExpediente().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO, codigoEstado);
+		
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(expedienteComercial.getNumExpediente().toString(), getTipoExpediente(expedienteComercial.getOferta().getActivoPrincipal()), codigoEstado);		
+		
 		cabecera.setIdDocumento(idDocRestClient);
 
 		//Un vez adjuntado el documento al expediente, y obtenido el id del mismo, cread un bucle sobre el listado de activos seleccionados.
@@ -367,13 +409,24 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 				gestorDocumentalApi.crearRelacionExpediente(cabecera,credUsu);
 			} catch (GestorDocumentalException gex) {
 				logger.debug(gex.getMessage());
-				errorMessage = errorMessage + "["+listaActivos[x]+"] "+gex.getMessage() + "\n";
-			}
+				errorMessage = errorMessage + "["+listaActivos[x]+"] "+gex.getMessage() + "\n"; }
 		}
 		if (errorMessage.length()!=0) {
 			GestorDocumentalException gex = new GestorDocumentalException(errorMessage);
 			throw gex;
 		}
+	}
+	
+	private String getTipoExpediente (Activo activo) {
+		String tipoExp = GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO;
+		String codigoClaseActivo = null;
+		if (activoApi.getActivoBancarioByIdActivo(activo.getId())!=null && activoApi.getActivoBancarioByIdActivo(activo.getId()).getClaseActivo()!=null) {
+			codigoClaseActivo = activoApi.getActivoBancarioByIdActivo(activo.getId()).getClaseActivo().getCodigo();
+		}
+		if (DDClaseActivoBancario.CODIGO_FINANCIERO.equals(codigoClaseActivo)) {
+			tipoExp = GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_GARANTIAS;
+		}
+		return tipoExp;
 	}
 
 }

@@ -92,7 +92,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		} 
 		else {
 			me.lookupReference("fieldSetMomentoRealizacionRef").setVisible(true);
-		} 
+		}
+		
+		me.lookupReference("listaActivosSubidaRef").getColumnManager().getHeaderByDataIndex("activoEnPropuestaEnTramitacion").setVisible(false);
     	
 		
     },
@@ -110,7 +112,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	var idActivo = combo.up("window").idActivo;
     	var codigoSubtipoTrabajo = combo.getValue();
     	var advertencia;
-    	
     	if (Ext.isDefined(idActivo) && idActivo != null){
 		    var url = $AC.getRemoteUrl('trabajo/getAdvertenciaCrearTrabajo');
 		    Ext.Ajax.request({
@@ -119,21 +120,28 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			  			codigoSubtipoTrabajo : combo.getValue()},
 			  success: function(response,opts){
 			  
-				  //TODO: Aqui debe mostrarse el mensaje de alerta para existencia de otros subtipos de trabajo
 				  advertencia = Ext.JSON.decode(response.responseText).advertencia;
 				  me.lookupReference("textAdvertenciaCrearTrabajo").setText(advertencia);
 			  }
 		    });
 		}
     	
-    	if(combo.getValue() == "44" || combo.getValue() == "45") {
+    	if(combo.getValue() == CONST.SUBTIPOS_TRABAJO['TRAMITAR_PROPUESTA_PRECIOS'] 
+    		|| combo.getValue() == CONST.SUBTIPOS_TRABAJO['TRAMITAR_PROPUESTA_DESCUENTO']) {
     		me.lookupReference("checkEnglobaTodosActivosAgrRef").setValue(true);
     		me.lookupReference("checkEnglobaTodosActivosRef").setValue(true);
     		me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(true);
     		me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(true);
+    		
+    		me.lookupReference("listaActivosSubidaRef").getColumnManager().getHeaderByDataIndex("activoEnPropuestaEnTramitacion").setVisible(true);
+    		
+    		
     	}
     	else {
-    		if(me.lookupReference("tipoTrabajo").getValue() != "02"){
+    		
+    		me.lookupReference("listaActivosSubidaRef").getColumnManager().getHeaderByDataIndex("activoEnPropuestaEnTramitacion").setVisible(false);
+    		
+    		if(me.lookupReference("tipoTrabajo").getValue() != CONST.TIPOS_TRABAJO['OBTENCION_DOCUMENTACION']){
     			me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(false);
     			me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(false);
     		}

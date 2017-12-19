@@ -52,7 +52,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	    	 
 	    	 if(codigoEstadoCodigo==CONST.ESTADOS_GASTO['INCOMPLETO'] ||
 	    			 codigoEstadoCodigo==CONST.ESTADOS_GASTO['RECHAZADO'] ||
-	    			 codigoEstadoCodigo==CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']) {
+	    			 codigoEstadoCodigo==CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO'] ||
+	    			 codigoEstadoCodigo==CONST.ESTADOS_GASTO['PENDIENTE']) {
 	    		 return false;
 	    	 } else {
 	    		 return true;
@@ -95,6 +96,17 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     		return false;
 	     	}
 
+	     },
+	     
+	     seleccionadoAnticipo: function(get)  {
+	     	var me= this;
+	     	if(get('detalleeconomico.anticipo')=="true" || get('detalleeconomico.anticipo')==true){
+	     		return true;
+	     	}
+	     	else{
+	     		return false;
+	     	}
+	     	
 	     },
 	     
 	     sumatorioConceptosgasto: function(get) {
@@ -171,9 +183,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	var estaAnulado = CONST.ESTADOS_GASTO['ANULADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaEnviado = get('gasto.enviado');
 	     	var estaRetenido = CONST.ESTADOS_GASTO['RETENIDO'] == get('gasto.estadoGastoCodigo');
-	     	
+	     	var estaSubsanadoYAutorizado = get('gasto.autorizado') && CONST.ESTADOS_GASTO['SUBSANADO'] == get('gasto.estadoGastoCodigo');
 
-	     	return  !estaEnviado && !estaRechazado && !estaContabilizado && !estaPagado && !estaAnulado && !estaRetenido;
+	     	return  !estaEnviado && !estaRechazado && !estaContabilizado && !estaPagado && !estaAnulado && !estaRetenido && !estaSubsanadoYAutorizado;
 	     },
 	     
 	     getSrcCartera: function(get) {

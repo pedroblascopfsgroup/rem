@@ -15,9 +15,9 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceDesbloqExpCambioSitJuridica;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -25,8 +25,10 @@ import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 
 @Component
 public class TabActivoSitPosesoriaLlaves implements TabActivoService {
@@ -37,9 +39,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
 	
-	@Autowired
-	private OfertaApi ofertaApi;
-	
+		
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;    
     
@@ -52,6 +52,11 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 	@Autowired
 	private NotificatorServiceDesbloqExpCambioSitJuridica notificatorServiceDesbloqueoExpediente;
 	
+	@Autowired
+	private RestApi restApi;
+	
+	@Autowired
+	private ActivoApi activoApi;
 	
 	protected static final Log logger = LogFactory.getLog(TabActivoSitPosesoriaLlaves.class);
 	
@@ -79,7 +84,11 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 		}
 		
 		if (activo.getSituacionPosesoria() != null) {
+			
+			//fecha toma posesion
+			activoApi.calcularFechaTomaPosesion(activo);
 			beanUtilNotNull.copyProperties(activoDto, activo.getSituacionPosesoria());
+			
 			if (activo.getSituacionPosesoria().getTipoTituloPosesorio() != null) {
 				BeanUtils.copyProperty(activoDto, "tipoTituloPosesorioCodigo", activo.getSituacionPosesoria().getTipoTituloPosesorio().getCodigo());
 			}
@@ -130,6 +139,9 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			}
 				
 			beanUtilNotNull.copyProperties(activo.getSituacionPosesoria(), dto);
+			if(!Checks.esNulo(dto.getFechaTomaPosesion())){
+				activo.getSituacionPosesoria().setEditadoFechaTomaPosesion(true);
+			}
 			
 			activo.setSituacionPosesoria(genericDao.save(ActivoSituacionPosesoria.class, activo.getSituacionPosesoria()));
 			
@@ -159,7 +171,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			{
 				activo.setNumJuegosLlaves(Integer.valueOf(dto.getNumJuegos()));
 			}
-
+			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {

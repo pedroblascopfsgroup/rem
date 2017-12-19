@@ -48,5 +48,12 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	 */
 	public BigDecimal getImporteCalculo(Long idOferta, String tipoComision, Long idActivo, Long idProveedor);
 
-
+	public void deleteTitularesAdicionales(Long idOferta);
+	
+	/**
+	 * Obtiene una oferta dado su idWebcom
+	 * @param idWebcom
+	 * @return
+	 */
+	public Oferta getOfertaByIdwebcom(Long idWebcom);
 }

@@ -43,7 +43,6 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.TrabajoExcelReport;
 import es.pfsgroup.plugin.rem.factory.GenerarPropuestaPreciosFactoryApi;
-import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
@@ -110,47 +109,6 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	private final Log logger = LogFactory.getLog(getClass());
 
-	/**
-	 * Método para modificar la plantilla de JSON utilizada en el servlet.
-	 * @param request
-	 * @param binder
-	 * @throws Exception
-	 */
-	 /*******************************************************
-	 * NOTA FASE II : Se refactoriza en ParadiseJsonController.java
-	 * *******************************************************/
-	/*@InitBinder
-	protected void initBinder(HttpServletRequest request,  ServletRequestDataBinder binder) throws Exception{
-        
-	    JsonWriterConfiguratorTemplateRegistry registry = JsonWriterConfiguratorTemplateRegistry.load(request);             
-	    registry.registerConfiguratorTemplate(
-	         new SojoJsonWriterConfiguratorTemplate(){
-	                
-	        	 	@Override
-	                public SojoConfig getJsonConfig() {
-	                    SojoConfig config= new SojoConfig();
-                        config.setIgnoreNullValues(true);
-                        return config;
-	        	 	}
-	         }
-	   );
-
-	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-	    //SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        dateFormat.setLenient(false);
-        
-        binder.registerCustomEditor(Date.class, new ParadiseCustomDateEditor(dateFormat, true));
-        binder.registerCustomEditor(boolean.class, new CustomBooleanEditor("true", "false", true));
-        binder.registerCustomEditor(Boolean.class, new CustomBooleanEditor("true", "false", true));
-        binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));
-        NumberFormat f = NumberFormat.getInstance(Locale.ENGLISH);
-    	f.setGroupingUsed(false);
-    	f.setMaximumFractionDigits(2);
-        f.setMinimumFractionDigits(2);
-        binder.registerCustomEditor(double.class, new CustomNumberEditor(Double.class, f, true));
-        binder.registerCustomEditor(Double.class, new CustomNumberEditor(Double.class, f, true));
-        
-	}*/
 		
 	/**
 	 * Método que recupera un trabajo según su id y lo mapea a un DTO
@@ -192,7 +150,7 @@ public class TrabajoController extends ParadiseJsonController {
 			success = trabajoApi.saveFichaTrabajo(dtoTrabajo, id);
 			
 		} catch(Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		
 		return createModelAndViewJson(new ModelMap("success", success));
@@ -209,7 +167,7 @@ public class TrabajoController extends ParadiseJsonController {
 			success = trabajoApi.saveGestionEconomicaTrabajo(dtoGestionEconomica, id);
 			
 		} catch(Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		
 		return createModelAndViewJson(new ModelMap("success", success));
@@ -228,7 +186,7 @@ public class TrabajoController extends ParadiseJsonController {
 			success = true;
 			
 		} catch (Exception e) {			
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		
 		
@@ -265,8 +223,6 @@ public class TrabajoController extends ParadiseJsonController {
 			model.put("errores", e.getCause());
 		}
 		return createModelAndViewJson(model);
-		//return JsonViewer.createModelAndViewJson(model);
-
 	}
 	/**
 	 * 
@@ -301,7 +257,7 @@ public class TrabajoController extends ParadiseJsonController {
        		salida.close();
        		
        	} catch (Exception e) { 
-       		e.printStackTrace();
+       		logger.error(e.getMessage());
        	}
 
 	}
@@ -320,7 +276,7 @@ public class TrabajoController extends ParadiseJsonController {
 		try {
 			success = trabajoApi.deleteAdjunto(dtoAdjunto);
 		} catch(Exception ex) {
-			ex.printStackTrace();
+			logger.error(ex.getMessage());
 		}
     	
     	return createModelAndViewJson(new ModelMap("success", success));
@@ -403,7 +359,7 @@ public class TrabajoController extends ParadiseJsonController {
 			model.put("success", success);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);		
 		}
 		
@@ -422,7 +378,7 @@ public class TrabajoController extends ParadiseJsonController {
 			model.put("success", success);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);		
 		}
 		
@@ -442,7 +398,7 @@ public class TrabajoController extends ParadiseJsonController {
 			model.put("success", success);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);		
 		}
 		
@@ -465,7 +421,7 @@ public class TrabajoController extends ParadiseJsonController {
 		
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);		
 		}
 		
@@ -484,7 +440,7 @@ public class TrabajoController extends ParadiseJsonController {
 			model.put("success", success);			
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);		
 		}
 		
@@ -503,7 +459,7 @@ public class TrabajoController extends ParadiseJsonController {
 			model.put("success", success);			
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);		
 		}
 		
@@ -590,7 +546,7 @@ public class TrabajoController extends ParadiseJsonController {
 			model.put("success", success);			
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);		
 		}
 		
@@ -610,7 +566,7 @@ public class TrabajoController extends ParadiseJsonController {
 			model.put("success", success);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);		
 		}
 		
@@ -628,7 +584,7 @@ public class TrabajoController extends ParadiseJsonController {
 			model.put("success", success);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);		
 		}
 		
@@ -649,19 +605,13 @@ public class TrabajoController extends ParadiseJsonController {
 			model.put("success", success);			
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);		
 		}
 		
 		return createModelAndViewJson(model);
 		
 	}
-	
-	
-	/*private ModelAndView createModelAndViewJson(ModelMap model) {
-		
-		return new ModelAndView("jsonView", model);
-	}*/
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -680,36 +630,29 @@ public class TrabajoController extends ParadiseJsonController {
 				{
 					
 					DtoFoto fotoDto = new DtoFoto();
-					
-					//if (listaTrabajoFoto.get(i).getTipoFoto() != null && listaTrabajoFoto.get(i).getTipoFoto().getCodigo().equals(tipoFoto)) {
-					
+
 					try {
 	
 						BeanUtils.copyProperty(fotoDto, "path", "/pfs/trabajo/getFotoTrabajoById.htm?idFoto=" + listaTrabajoFoto.get(i).getId());
-						
-						/*if (listaTrabajoFoto.get(i).getSubdivision() != null) {
-							BeanUtils.copyProperty(fotoDto, "subdivisionDescripcion", listaTrabajoFoto.get(i).getSubdivision().getNombre());
-						}*/
-						
+
 						BeanUtils.copyProperties(fotoDto, listaTrabajoFoto.get(i));
 	
 					} catch (IllegalAccessException e) {
-						e.printStackTrace();
+						logger.error(e.getMessage());
 					} catch (InvocationTargetException e) {
-						e.printStackTrace();
+						logger.error(e.getMessage());
 					}
 					
 					listaFotos.add(fotoDto);
 					
 				}
-			
-				//}
+
 			}
 			
 			model.put("data", listaFotos);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			return null;
 		}
 		
@@ -743,13 +686,11 @@ public class TrabajoController extends ParadiseJsonController {
 			model.put("success", errores!=null);
 		
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);
 			model.put("errores", e.getCause());
 		}
 		return createModelAndViewJson(model);
-		//return JsonViewer.createModelAndViewJson(model);
-
 	} 
 	
 	@RequestMapping(method = RequestMethod.GET)
@@ -780,7 +721,7 @@ public class TrabajoController extends ParadiseJsonController {
        		salida.close();
        		
        	} catch (Exception e) { 
-       		e.printStackTrace();
+       		logger.error(e.getMessage());
        	}
 
 	}
@@ -797,7 +738,7 @@ public class TrabajoController extends ParadiseJsonController {
 			model.put("success", success);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);		
 		}
 		
@@ -817,7 +758,7 @@ public class TrabajoController extends ParadiseJsonController {
 			
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);		
 		}
 		
@@ -829,12 +770,11 @@ public class TrabajoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getAdvertenciaCrearTrabajo(@RequestParam Long idActivo, @RequestParam String codigoSubtipoTrabajo, ModelMap model){
 		
-		//TODO: Aquí se generan los distintos textos de avisos para la existencia de otros subtipos de trabajo
-
-		//Advertencia 1: Avisa al usuario de algún trabajo existente del mismo tipo/subtipo
-		List<ActivoTrabajo> listaActivoTrabajo = trabajoAdapter.getListadoActivoTrabajos(idActivo, codigoSubtipoTrabajo);
-		String advertencia = trabajoAdapter.getAdvertenciaCrearTrabajo(listaActivoTrabajo);
+		String advertencia="";
 		
+		
+		advertencia = trabajoAdapter.getAdvertenciaCrearTrabajo(idActivo, codigoSubtipoTrabajo, null);			
+
 		model.put("advertencia", advertencia);
 		model.put("success", true);
 		
@@ -920,7 +860,7 @@ public class TrabajoController extends ParadiseJsonController {
 			model.put("success", success);
 		
 	} catch (Exception e) {
-		e.printStackTrace();
+		logger.error(e.getMessage());
 		model.put("success", false);		
 	}
 	
@@ -939,7 +879,7 @@ public class TrabajoController extends ParadiseJsonController {
 			boolean success = trabajoApi.saveRecargoProveedor(recargoDto);
 			model.put("success", success);	
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);		
 		}
 	
@@ -959,7 +899,7 @@ public class TrabajoController extends ParadiseJsonController {
 			model.put("success", success);	
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);		
 		}
 		
@@ -987,7 +927,7 @@ public class TrabajoController extends ParadiseJsonController {
 			model.put("success", success);
 		
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);		
 		}
 	
@@ -1006,7 +946,7 @@ public class TrabajoController extends ParadiseJsonController {
 			boolean success = trabajoApi.saveProvisionSuplido(provisionSuplidoDto);
 			model.put("success", success);	
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);		
 		}
 	
@@ -1026,7 +966,7 @@ public class TrabajoController extends ParadiseJsonController {
 			model.put("success", success);	
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);		
 		}
 		
@@ -1062,15 +1002,13 @@ public class TrabajoController extends ParadiseJsonController {
 				model.put("success", true);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			model.put("success", false);
 		}
 
 		return createModelAndViewJson(model);
 	}
-	
-	
-	
+
 	
 	/**
 	 * Inserta una lista de Trabajos Ejem: IP:8080/pfs/rest/trabajo
@@ -1223,8 +1161,9 @@ public class TrabajoController extends ParadiseJsonController {
 	public ModelAndView getSupervisorGestorTrabajo(Long idActivo, Long idAgrupacion, ModelMap model) {
 		Map<String,Long> mapaGestorSupervisor= new HashMap<String, Long>();
 		if(Checks.esNulo(idActivo) && Checks.esNulo(idAgrupacion)){
-			mapaGestorSupervisor.put("data", genericAdapter.getUsuarioLogado().getId());
-			model.put("data", genericAdapter.getUsuarioLogado());
+			mapaGestorSupervisor.put("GACT", genericAdapter.getUsuarioLogado().getId());
+			mapaGestorSupervisor.put("SUPACT", genericAdapter.getUsuarioLogado().getId());
+			model.put("data", mapaGestorSupervisor);
 		}
 		else{
 			if(Checks.esNulo(idActivo) && !Checks.esNulo(idAgrupacion)){

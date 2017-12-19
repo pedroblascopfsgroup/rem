@@ -348,7 +348,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			        {
 						title: 'Listado de Propietarios',
 						itemId: 'listadoPropietarios',
-					    xtype		: 'gridBase',
+					    xtype: 'gridBaseEditableRow',
+					    topBar : true,
 						cls	: 'panel-base shadow-panel',
 						bind: {
 							store: '{storePropietario}'
@@ -357,6 +358,16 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							rowdblclick: 'onListadoPropietariosDobleClick'
 						},		
 						colspan: 4,
+						selModel : {
+			                type : 'checkboxmodel'
+			              },
+			              features: [{
+					            id: 'summary',
+					            ftype: 'summary',
+					            hideGroupedHeader: true,
+					            enableGroupingMenu: false,
+					            dock: 'bottom'
+						    }],
 						columns: [
 						    {   text: 'Nombre o raz&oacute;n social', 
 					        	dataIndex: 'nombreCompleto',
@@ -372,7 +383,29 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					        },	
 					        {   text: HreRem.i18n('fieldlabel.porcentaje.propiedad'), 
 					        	dataIndex: 'porcPropiedad',
-					        	flex:1
+					        	flex:1,
+					        	 summaryType: 'sum',
+						            summaryRenderer: function(value, summaryData, dataIndex) {
+						            	var suma = 0;
+						            	var store = this.up('grid').store;
+
+						            	for(var i=0; i< store.data.length; i++){
+						            		if(store.data.items[i].data.porcPropiedad != null){
+						            			suma += parseFloat(store.data.items[i].data.porcPropiedad);
+						            		}
+						            	}
+						            	suma = Ext.util.Format.number(suma, '0.00');
+						            	
+						            	var msg = HreRem.i18n("fieldlabel.porcentaje.propiedad") + " " + suma + "%";
+						            	var style = "" 
+						            	if(suma != Ext.util.Format.number(100.00,'0.00')) {
+						            		msg = HreRem.i18n("fieldlabel.porcentaje.propietarios.total.error");		
+						            		style = "style= 'color: red'" 
+						            	}	
+						            	
+						            	return "<span "+style+ ">"+msg+"</span>"
+						            	
+						            }
 					        },
 					        {   text: HreRem.i18n('fieldlabel.grado.propiedad'), 
 					        	dataIndex: 'tipoGradoPropiedadDescripcion',
@@ -389,18 +422,59 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					        {   text: 'E-mail', 
 					        	dataIndex: 'email',
 					        	flex:1 
+					        },
+					        {   text: 'Tipo propietario', 
+					        	dataIndex: 'tipoPropietario',
+					        	flex:1 
 					        }	               	        
 					    ],
-					    dockedItems : [
-					        {
-					            xtype: 'pagingtoolbar',
-					            dock: 'bottom',
-					            displayInfo: true,
-					            bind: {
-					                store: '{storePropietario}'
-					            }
-					        }
-					    ]
+
+					    onAddClick: function (btn) {
+					 		var me = this;
+					 		var activo = me.lookupController().getViewModel().get('activo'),
+					 		idActivo= activo.get('id'),
+					 		numActivo= activo.get('numActivo');
+					 		
+					 		var ventana = Ext.create("HreRem.view.activos.detalle.AnyadirPropietario", {activo: activo});
+					 		me.up('activosdetallemain').add(ventana);
+							ventana.show();
+					 	    				    	
+					 	},
+					 	onDeleteClick: function (btn) {					 		
+					 		var me = this;	
+							var url =  $AC.getRemoteUrl('activo/deleteActivoPropietarioTab');
+							var propietario = me.up('tabpanel').down('grid').getSelection();
+							var activo = me.lookupController().getViewModel().get('activo');
+							if (propietario[0].get('tipoPropietario') == "Principal"){
+								Ext.toast({
+									 html: 'No se puede eliminar el propietario principal',
+									 width: 400,
+									 height: 100,
+									 align: 't'									     
+								  });
+								
+							}else {
+								var params={};
+								params["idActivo"]=activo.get('id');
+								params["idPropietario"]= propietario[0].get('id');		
+								Ext.Ajax.request({
+								     url: url,
+								     params:params,
+								     success: function (a, operation, context) {
+								    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+								    	me.up('tabpanel').down('grid').getStore().load();
+						           },
+						           failure: function (a, operation, context) {
+						           	  Ext.toast({
+										 html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÓN',
+										 width: 360,
+										 height: 100,
+										 align: 't'									     
+									  });
+						           }
+							    });			
+							}					 	    				    	
+					 	}
 					},
 					{
 						xtype:'fieldsettable',
@@ -443,17 +517,65 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.firmeza.auto.adjudicacion'),			                	
 								bind: '{datosRegistrales.fechaDecretoFirme}'
 			                },
-			                { 
+			                {
 			                	xtype: 'datefieldbase',
-			                	reference: 'fechaTomaPosesionJudicial',
-			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.toma.posesion'),
+			                	reference: 'fechaSenyalamientoPosesion',
+			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.senyalamiento.posesion'),			                	
 								bind: '{datosRegistrales.fechaSenalamientoPosesion}'
+			                },
+			                {
+			                	xtype: 'datefieldbase',
+			                	reference: 'fechaRealizacionPosesion',
+			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.realizacion.posesion'),			                	
+								bind: '{datosRegistrales.fechaRealizacionPosesion}'
+			                },
+			                {
+								xtype: 'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.lanzamiento.necesario'),								
+				            	bind: {
+				            		store: '{comboSiNoRem}',
+				            		value: '{datosRegistrales.lanzamientoNecesario}'
+				            	},
+				            	displayField: 'descripcion',
+								valueField: 'codigo'
 							},
+							{
+			                	xtype: 'datefieldbase',
+			                	reference: 'fechaSenyalamientoLanzamiento',
+			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.senyalamiento.lanzamiento'),			                	
+								bind: '{datosRegistrales.fechaSenalamientoLanzamiento}'
+			                },
+			                {
+			                	xtype: 'datefieldbase',
+			                	reference: 'fechaLanzamientoEfectuado',
+			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.lanzamiento.efectuado'),			                	
+								bind: '{datosRegistrales.fechaRealizacionLanzamiento}'
+			                },
+			                {
+			                	xtype: 'datefieldbase',
+			                	reference: 'fechaSolicitudMoratoria',
+			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.solicitud.moratoria'),			                	
+								bind: '{datosRegistrales.fechaSolicitudMoratoria}'
+			                },
+			                {
+								xtype: 'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.resolucion.moratoria'),								
+				            	bind: {
+				            		store: '{comboFavorableDesfavorable}',
+				            		value: '{datosRegistrales.resolucionMoratoriaCodigo}'
+				            	}
+							},
+							{
+			                	xtype: 'datefieldbase',
+			                	reference: 'fechaResolucionMoratoria',
+			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.resolucion.moratoria'),			                	
+								bind: '{datosRegistrales.fechaResolucionMoratoria}'
+			                },
+			                
 							{ 
 								xtype: 'currencyfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.importe.adjudicacion'),
-								bind: '{datosRegistrales.importeAdjudicacion}'/*,
-								allowBlank: false*/
+								bind: '{datosRegistrales.importeAdjudicacion}'
 			                },
 			                {
 								xtype: 'comboboxfieldbase',
@@ -684,6 +806,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
             
             
      ];
+        
 		me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();   	
 
@@ -742,15 +865,6 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 	   			fechaFirmezaAutoAdjudicacion.markInvalid(error);
    				
    			}
-   			
-   			/* Se elimina esta validaci�n a petici�n del cliente en HREOS-359
-   			 * 
-   			if(fechaTomaPosesion.getValue() < fechaAutoAdjudicacion.getValue()){
-   				error = HreRem.i18n("txt.validacion.fechaTomaPosesion.menor.fechaAutoAdjudicacion");
-	   			errores.push(error);
-	   			fechaTomaPosesion.markInvalid(error);
-   				
-   			}*/
    			
    			
    		}

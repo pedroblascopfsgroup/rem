@@ -27,10 +27,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 
 @Service("updaterStateManager")
 public class UpdaterStateManager implements UpdaterStateApi{
@@ -113,7 +111,8 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	@Override
 	public void updaterStateDisponibilidadComercialAndSave(Activo activo) {
 		this.updaterStateDisponibilidadComercial(activo);
-		genericDao.update(Activo.class, activo);		
+		//genericDao.update(Activo.class, activo);	
+		activoApi.saveOrUpdate(activo);
 	}
 	
 	@Override

@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.rest.api.impl;
 
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -39,18 +41,27 @@ import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.utils.DbIdContextHolder;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.dsm.dao.EntidadDao;
 import es.capgemini.pfs.dsm.model.Entidad;
 import es.capgemini.pfs.security.model.UsuarioSecurity;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.UniqueKey;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.dao.ActivosModificadosDao;
 import es.pfsgroup.plugin.rem.rest.dao.BrokerDao;
+import es.pfsgroup.plugin.rem.rest.dao.InformesModificadosDao;
 import es.pfsgroup.plugin.rem.rest.dao.PeticionDao;
 import es.pfsgroup.plugin.rem.rest.filter.AuthenticationRestService;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import es.pfsgroup.plugin.rem.rest.model.ActivosModificados;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
+import es.pfsgroup.plugin.rem.rest.model.InformesModificados;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
@@ -58,6 +69,7 @@ import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.webcom.WebcomRESTDevonProperties;
 import es.pfsgroup.plugin.rem.utils.WebcomSignatureUtils;
+import es.pfsgroup.recovery.api.UsuarioApi;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -79,6 +91,15 @@ public class RestManagerImpl implements RestApi {
 	private final Log logger = LogFactory.getLog(getClass());
 
 	private String NOMBRE_SERVICIO_WEBHOOK = "fotos";
+
+	@Autowired
+	private ActivosModificadosDao activosModificadosDao;
+	
+	@Autowired
+	private InformesModificadosDao informesModificadosDao;
+
+	@Autowired
+	private ApiProxyFactory proxyFactory;
 
 	@Override
 	public boolean validateSignature(Broker broker, String signature, RestRequestWrapper restRequest)
@@ -198,7 +219,7 @@ public class RestManagerImpl implements RestApi {
 		}
 		if (!constraintViolations.isEmpty()) {
 			for (ConstraintViolation<Serializable> visitaFailure : constraintViolations) {
-				logger.error("Error en el dto: "+visitaFailure.getMessage());
+				logger.error("Error en el dto: " + visitaFailure.getMessage());
 				if (visitaFailure.getConstraintDescriptor().getAnnotation().annotationType().equals(NotNull.class)) {
 					error.put(visitaFailure.getPropertyPath().toString(), RestApi.REST_MSG_MISSING_REQUIRED);
 				} else if (visitaFailure.getConstraintDescriptor().getAnnotation().annotationType()
@@ -610,5 +631,63 @@ public class RestManagerImpl implements RestApi {
 			throw new AuthorizationServiceException("No tiene permisos para ejecutar este servicio");
 		}
 
+	}
+
+	@Override
+	public void marcarRegistroParaEnvio(ENTIDADES entidad, Object instanciaEntidad) {
+		Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		if (entidad.equals(ENTIDADES.ACTIVO)) {
+			if (instanciaEntidad != null && instanciaEntidad instanceof Activo) {
+				ActivosModificados actMod = activosModificadosDao.getByActivo((Activo) instanciaEntidad);
+				if (Checks.esNulo(actMod)) {
+					actMod = new ActivosModificados();
+					Auditoria auditoria = new Auditoria();
+					auditoria.setFechaModificar(new Date());
+
+					auditoria.setUsuarioModificar(usu.getUsername());
+					auditoria.setFechaCrear(new Date());
+					auditoria.setUsuarioCrear(usu.getUsername());
+					actMod.setAuditoria(auditoria);
+					actMod.setActivo((Activo) instanciaEntidad);
+				} else {
+					actMod.getAuditoria().setFechaModificar(new Date());
+					actMod.getAuditoria().setUsuarioModificar(usu.getUsername());
+				}
+				activosModificadosDao.saveOrUpdate(actMod);
+			}
+		}else if(entidad.equals(ENTIDADES.INFORME)){
+			if (instanciaEntidad != null && instanciaEntidad instanceof ActivoInfoComercial) {
+				InformesModificados informeMod = informesModificadosDao.getByInforme((ActivoInfoComercial)instanciaEntidad);
+				if (Checks.esNulo(informeMod)) {
+					informeMod = new InformesModificados();
+					Auditoria auditoria = new Auditoria();
+					auditoria.setFechaModificar(new Date());
+
+					auditoria.setUsuarioModificar(usu.getUsername());
+					auditoria.setFechaCrear(new Date());
+					auditoria.setUsuarioCrear(usu.getUsername());
+					informeMod.setAuditoria(auditoria);
+					informeMod.setInforme((ActivoInfoComercial)instanciaEntidad);
+				}else{
+					informeMod.getAuditoria().setFechaModificar(new Date());
+					informeMod.getAuditoria().setUsuarioModificar(usu.getUsername());
+				}
+				informesModificadosDao.saveOrUpdate(informeMod);
+			}
+		}
+
+	}
+
+	@SuppressWarnings("rawtypes")
+	public Object getValue(Object dto, Class claseDto, String methodName) throws Exception {
+		Object obj = null;
+		for (PropertyDescriptor propertyDescriptor : Introspector.getBeanInfo(claseDto).getPropertyDescriptors()) {
+			if (propertyDescriptor.getReadMethod() != null
+					&& propertyDescriptor.getReadMethod().getName().equals(methodName)) {
+				obj = propertyDescriptor.getReadMethod().invoke(dto);
+				break;
+			}
+		}
+		return obj;
 	}
 }

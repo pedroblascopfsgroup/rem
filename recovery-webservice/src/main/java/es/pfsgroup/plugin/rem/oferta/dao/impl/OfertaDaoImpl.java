@@ -28,10 +28,13 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
@@ -44,6 +47,10 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	public static String TIPO_FECHA_ALTA = "01";
 	public static String TIPO_FECHA_FIRMA_RESERVA = "02";
 	public static String TIPO_FECHA_POSICIONAMIENTO = "03";
+	public static String CODIGO_NUM_ACTIVO_UVEM= "NUM_UVEM";
+	public static String CODIGO_NUM_ACTIVO_SAREB= "NUM_SAREB";
+	public static String CODIGO_NUM_ACTIVO_PRINEX= "NUM_PRINEX";
+	public static String CODIGO_NUM_ACTIVO= "NUM_ACTIVO";
 	
 
 	@Autowired
@@ -155,10 +162,18 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		if (!Checks.esNulo(dtoOfertasFilter.getEstadosExpediente())) {
 			addFiltroWhereInSiNotNullConStrings(hb, "voferta.codigoEstadoExpediente", Arrays.asList(dtoOfertasFilter.getEstadosExpediente()));
 		}
+
+		if (!Checks.esNulo(dtoOfertasFilter.getTipoComercializacion())) {
+			addFiltroWhereInSiNotNullConStrings(hb, "voferta.tipoComercializacion", Arrays.asList(dtoOfertasFilter.getTipoComercializacion()));
+		}
+
+		if (!Checks.esNulo(dtoOfertasFilter.getClaseActivoBancario())) {
+			addFiltroWhereInSiNotNullConStrings(hb, "voferta.claseActivoBancario", Arrays.asList(dtoOfertasFilter.getClaseActivoBancario()));
+		}
 		
 		if (!Checks.esNulo(dtoOfertasFilter.getNumAgrupacion())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.numActivoAgrupacion",
-					dtoOfertasFilter.getNumAgrupacion().toString());
+					dtoOfertasFilter.getNumAgrupacion());
 		}
 
 		if (!Checks.esNulo(dtoOfertasFilter.getNumActivo())) {
@@ -168,8 +183,9 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 			if(!Checks.esNulo(idActivo)){
 				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.idActivo", idActivo.getId().toString());
 			}else{
-				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.idActivo", " ");
+				HQLBuilder.addFiltroIsNull(hb, "voferta.idActivo");
 			}
+			
 		}
 		
 		//HREOS-2716
@@ -235,6 +251,31 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		if(!Checks.esNulo(dtoOfertasFilter.getCarteraCodigo())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.carteraCodigo", dtoOfertasFilter.getCarteraCodigo());
 		}
+		
+		if(!Checks.esNulo(dtoOfertasFilter.getNumActivoUvem())){
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.numActivoUvem", dtoOfertasFilter.getNumActivoUvem());
+		}
+		if(!Checks.esNulo(dtoOfertasFilter.getNumActivoSareb())){
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.numActivoSareb", dtoOfertasFilter.getNumActivoSareb());
+		}
+		if(!Checks.esNulo(dtoOfertasFilter.getNumPrinex())){
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.numActivoPrinex", dtoOfertasFilter.getNumPrinex());
+		}
+		
+		if(((
+				!Checks.esNulo(dtoOfertasFilter.getNumActivoUvem()) || 
+				!Checks.esNulo(dtoOfertasFilter.getNumActivoSareb()) || 
+				!Checks.esNulo(dtoOfertasFilter.getNumPrinex()) || 
+				!Checks.esNulo(dtoOfertasFilter.getNumActivo())
+			) && 
+				(Checks.esNulo(dtoOfertasFilter.getNumAgrupacion()) && 
+						(Checks.esNulo(dtoOfertasFilter.getAgrupacionesVinculadas()) || dtoOfertasFilter.getAgrupacionesVinculadas().equals(false))
+				)
+			)){
+			
+			HQLBuilder.addFiltroIsNull(hb, "idAgrupacion");
+		}
+		
 		Page pageVisitas = HibernateQueryUtils.page(this, hb, dtoOfertasFilter);
 
 		List<VOfertasActivosAgrupacion> ofertas = (List<VOfertasActivosAgrupacion>) pageVisitas.getResults();
@@ -316,5 +357,31 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 			hb.appendWhere(nombreCampo.concat(" in (").concat(b.toString()).concat(")"));
 		}
 		
+	}
+	
+	public void deleteTitularesAdicionales(Long idOferta){
+		Filter f1 = genericDao.createFilter(FilterType.EQUALS, "id", idOferta);
+		Oferta oferta = genericDao.get(Oferta.class, f1);
+		
+		List<TitularesAdicionalesOferta> titularesAdicionales = oferta.getTitularesAdicionales();
+		
+		for(TitularesAdicionalesOferta titularAdicional : titularesAdicionales){
+			genericDao.deleteById(TitularesAdicionalesOferta.class, titularAdicional.getId());
+		}
+	}
+
+	@Override
+	public Oferta getOfertaByIdwebcom(Long idWebcom) {
+		Oferta resultado = null;
+		HQLBuilder hql = new HQLBuilder("from Oferta ");
+		if (idWebcom != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hql, "idWebCom", idWebcom);
+			try {
+				resultado = HibernateQueryUtils.uniqueResult(this, hql);
+			} catch (Exception e) {
+				logger.error("error obtienendo oferta por idWebcom",e);
+			}
+		}
+		return resultado;
 	}
 }

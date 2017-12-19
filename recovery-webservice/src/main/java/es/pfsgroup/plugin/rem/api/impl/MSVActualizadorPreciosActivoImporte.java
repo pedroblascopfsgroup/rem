@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -12,10 +14,10 @@ import org.springframework.stereotype.Component;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelManagerApi;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
@@ -68,7 +70,7 @@ public class MSVActualizadorPreciosActivoImporte implements MSVLiberator {
 			
 		processAdapter.setStateProcessing(file.getProcesoMasivo().getId());
 		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);
-
+		
 		try {
 			Integer numFilas = exc.getNumeroFilasByHoja(0,file.getProcesoMasivo().getTipoOperacion());
 			for (int fila = 1; fila < numFilas; fila++) {
@@ -78,9 +80,11 @@ public class MSVActualizadorPreciosActivoImporte implements MSVLiberator {
 				
 				//Si hay Valoracion = Precio Aprobado venta para actualizar o crear
 				if(!Checks.esNulo(exc.dameCelda(fila, 1))){
+					double valor = Double.parseDouble(exc.dameCelda(fila, 1));
+
 					actualizarCrearValoresPrecios(activo,
 							DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA, 
-							Double.parseDouble(exc.dameCelda(fila, 1)),
+							valor,
 							exc.dameCelda(fila, 2),
 							exc.dameCelda(fila, 3));
 					//Actualizar el tipoComercialización del activo
@@ -89,36 +93,45 @@ public class MSVActualizadorPreciosActivoImporte implements MSVLiberator {
 				
 				//Si hay Valoracion = Precio Minimo para actualizar o crear
 				if(!Checks.esNulo(exc.dameCelda(fila, 4))){
+					double valor = Double.parseDouble(exc.dameCelda(fila, 4));
+
 					actualizarCrearValoresPrecios(activo,
 							DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO, 
-							Double.parseDouble(exc.dameCelda(fila, 4)),
+							valor,
 							exc.dameCelda(fila, 5),
 							exc.dameCelda(fila, 6));
 				}
 				
 				//Si hay Valoracion = Precio Aprobado renta para actualizar o crear
 				if(!Checks.esNulo(exc.dameCelda(fila, 7))){
+					double valor = Double.parseDouble(exc.dameCelda(fila, 7));
+
+					
 					actualizarCrearValoresPrecios(activo,
 							DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA, 
-							Double.parseDouble(exc.dameCelda(fila, 7)),
+							valor,
 							exc.dameCelda(fila, 8),
 							exc.dameCelda(fila, 9));
 				}
 				
 				//Si hay Valoracion = Precio de Descuento Aprobado para actualizar o crear
 				if(!Checks.esNulo(exc.dameCelda(fila, 10))){
+					double valor = Double.parseDouble(exc.dameCelda(fila, 10));
+
 					actualizarCrearValoresPrecios(activo,
 							DDTipoPrecio.CODIGO_TPC_DESC_APROBADO, 
-							Double.parseDouble(exc.dameCelda(fila, 10)),
+							valor,
 							exc.dameCelda(fila, 11),
 							exc.dameCelda(fila, 12));
 				}
 				
 				//Si hay Valoracion = Precio de Descuento Publicado para actualizar o crear
 				if(!Checks.esNulo(exc.dameCelda(fila, 13))){
+					double valor = Double.parseDouble(exc.dameCelda(fila, 13));
+				    
 					actualizarCrearValoresPrecios(activo,
 							DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO, 
-							Double.parseDouble(exc.dameCelda(fila, 13)),
+							valor,
 							exc.dameCelda(fila, 14),
 							exc.dameCelda(fila, 15));
 				}

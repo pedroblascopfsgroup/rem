@@ -358,8 +358,14 @@ public class AgrupacionController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView procesarMasivo(Long idProcess, Long idOperation, ModelMap model) {
 
-		model.put("data", adapter.procesarMasivo(idProcess, idOperation));
+		Boolean result = false;
+		try {
+			result =  adapter.procesarMasivo(idProcess, idOperation);
+		} catch (Exception e) {
+			logger.error("error procesando masivo",e);
+		}
 
+		model.put("data",result);
 		return createModelAndViewJson(model);
 	}
 

@@ -66,6 +66,9 @@ public class MSVExcelValidatorFactoryImpl {
 	@Autowired
 	private MSVAsociarActivosGasto asociarActivosGasto;
 	
+	@Autowired
+	private MSVActualizarGestores actualizarGestores;
+	
 	
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 		
@@ -117,6 +120,9 @@ public class MSVExcelValidatorFactoryImpl {
 			}
 			else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ASOCIAR_ACTIVOS_GASTO.equals(codTipoOperacion)){
 				return asociarActivosGasto;
+			}
+			else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_GESTORES.equals(codTipoOperacion)){
+				return actualizarGestores;
 			}
 		return null;
 	}

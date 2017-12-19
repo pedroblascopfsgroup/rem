@@ -40,13 +40,14 @@ import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.TIPO;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
@@ -79,6 +80,9 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private RestApi restApi;
 
 	// @Override
 	// public String managerName() {
@@ -103,6 +107,12 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	@Transactional
 	public boolean saveOrUpdate(ActivoAgrupacion activoAgrupacion) {
 		activoAgrupacionDao.saveOrUpdate(activoAgrupacion);
+		if(activoAgrupacion.getActivos() != null && activoAgrupacion.getActivos().size()>0){
+			for(ActivoAgrupacionActivo activo : activoAgrupacion.getActivos()){
+				restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo.getActivo());
+			}
+		}
+		
 		return true;
 	}
 
@@ -111,6 +121,8 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	@Transactional
 	public boolean deleteById(Long id) {
 		activoAgrupacionDao.deleteById(id);
+		ActivoAgrupacion activoAgrupacion = this.get(id);
+		restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoAgrupacion.getActivoPrincipal());
 		return true;
 	}
 
@@ -242,7 +254,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				Date fechaSubida = new Date();
 				if (fileItem.getMetadata().containsKey("fecha_subida")) {
 					try {
-						fechaSubida = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S")
+						fechaSubida = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 								.parse(fileItem.getMetadata().get("fecha_subida"));
 					} catch (Exception e) {
 						logger.error("El webservice del Gestor documental ha enviado una fecha sin formato");
@@ -383,7 +395,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				Date fechaSubida = new Date();
 				if (fileItem.getMetadata().containsKey("fecha_subida")) {
 					try {
-						fechaSubida = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S")
+						fechaSubida = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 								.parse(fileItem.getMetadata().get("fecha_subida"));
 					} catch (Exception e) {
 						logger.error("El webservice del Gestor documental ha enviado una fecha sin formato");

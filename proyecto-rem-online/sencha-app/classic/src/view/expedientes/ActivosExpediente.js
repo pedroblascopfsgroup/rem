@@ -164,6 +164,7 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 		                        var j = 0,
 		                        lenn = record.length;
 		                        for (; j < lenn; ++j) {
+
 		                           total = total + (parseFloat(record[j].get(field))*100);
 		                        }
 		                        return total/100;

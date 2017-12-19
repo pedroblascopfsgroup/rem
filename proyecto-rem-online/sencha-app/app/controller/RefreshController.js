@@ -18,7 +18,7 @@ Ext.define('HreRem.controller.RefreshController', {
    		var me = this,
    		cmp, resultQuery;   		
 		resultQuery = Ext.ComponentQuery.query(query);
-
+		
 		if(resultQuery.length==1) {			
 			cmp = resultQuery[0];
 			cmp.fireEvent("refrescar", cmp);

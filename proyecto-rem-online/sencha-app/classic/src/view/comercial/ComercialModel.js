@@ -83,7 +83,22 @@ Ext.define('HreRem.view.comercial.ComercialModel', {
 				extraParams: {diccionario: 'estadosExpediente'}
 			}
     	},
-    	
+    	comboTiposComercializarActivo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposComercializarActivo'}
+			}
+    	},
+    	comboClaseActivo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'claseActivoBancario'}
+			}
+    	},    	
     	comboTiposFechaOfertas: {
 	    	data : [
 				        {"codigo":"01", "descripcion": "Fecha de alta"},

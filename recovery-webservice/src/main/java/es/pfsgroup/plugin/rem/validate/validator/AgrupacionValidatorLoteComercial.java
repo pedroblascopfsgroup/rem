@@ -118,12 +118,12 @@ public class AgrupacionValidatorLoteComercial extends AgrupacionValidatorCommonI
 		Activo primerActivo = primerActivoAgrupacion.getActivo();
 		if (primerActivo == null) return "";
 
-		// Validación Propietario.
-		if (Checks.esNulo(activo.getPropietariosActivo())) {
-			return ERROR_PROPIETARIO_NULL;
-		} else if(!isValidOwner(activo, primerActivo)) {	
-			return ERROR_PROPIETARIO_NOT_EQUAL;
-		}
+//		// Validación Propietario.
+//		if (Checks.esNulo(activo.getPropietariosActivo())) {
+//			return ERROR_PROPIETARIO_NULL;
+//		} else if(!isValidOwner(activo, primerActivo)) {	
+//			return ERROR_PROPIETARIO_NOT_EQUAL;
+//		}
 		
 		// Validación cartera.
 		if (Checks.esNulo(activo.getCartera())) {

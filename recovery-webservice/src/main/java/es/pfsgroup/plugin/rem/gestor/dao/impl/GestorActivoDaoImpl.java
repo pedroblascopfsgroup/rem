@@ -69,10 +69,16 @@ public class GestorActivoDaoImpl extends GestorEntidadDaoImpl implements GestorA
 	@Override
 	public Boolean isUsuarioGestorExternoProveedor(Long idUsuario) {
 		
-		String resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ZON_PEF_USU zpu "
-				+ "	JOIN PEF_PERFILEs pef ON zpu.pef_id = pef.pef_id "
-				+ " WHERE zpu.usu_id = " + idUsuario
-				+ " AND pef.pef_codigo IN ('GESTOADM','GESTIAFORM','GESTOCED','GESTOPLUS','GESTOPDV','HAYAPROV','HAYACERTI')");
+		String resultado = rawDao.getExecuteSQL("select count(1) from  " + 
+				"remmaster.usu_usuarios usu " + 
+				"join ACT_PVC_PROVEEDOR_CONTACTO pvc on usu.usu_id=pvc.usu_id " + 
+				"join ACT_PVE_PROVEEDOR pve on pve.pve_id=pvc.pve_id " + 
+				"join DD_TPR_TIPO_PROVEEDOR tpr on TPR.DD_TPR_ID=PVE.DD_TPR_ID " + 
+				"join zon_pef_usu zpu on zpu.usu_id=USU.USU_ID " + 
+				"join PEF_PERFILES pef on pef.pef_id=ZPU.PEF_ID " + 
+				"WHERE pef.pef_codigo IN ('GESTOADM','GESTIAFORM','GESTOCED', 'HAYAGESTADMT', 'GESTOPLUS','GESTOPDV','HAYAPROV','HAYACERTI') " + //tecnotramit y ogf
+				"and usu.usu_id = " + idUsuario +
+				"AND PVE.PVE_DOCIDENTIF not in ('B65737322', 'B82802075')");
 		
 		if("0".equals(resultado)) {
 			return false;

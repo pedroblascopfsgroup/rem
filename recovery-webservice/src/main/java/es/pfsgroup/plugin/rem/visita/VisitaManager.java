@@ -72,29 +72,12 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 	}
 
 	@Override
-	public Visita getVisitaByIdVisitaWebcom(Long idVisitaWebcom) {
+	public Visita getVisitaByIdVisitaWebcom(Long idVisitaWebcom) throws Exception {
 		Visita visita = null;
-		List<Visita> lista = null;
-		VisitaDto visitaDto = null;
-
-		try {
-
-			if (Checks.esNulo(idVisitaWebcom)) {
-				throw new Exception("El parámetro idVisitaWebcom es obligatorio.");
-
-			} else {
-
-				visitaDto = new VisitaDto();
-				visitaDto.setIdVisitaWebcom(idVisitaWebcom);
-
-				lista = visitaDao.getListaVisitas(visitaDto);
-				if (!Checks.esNulo(lista) && lista.size() > 0) {
-					visita = lista.get(0);
-				}
-			}
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		if (Checks.esNulo(idVisitaWebcom)) {
+			throw new Exception("El parámetro idVisitaWebcom es obligatorio.");
+		} else {
+			visita = visitaDao.getVisitaByIdwebcom(idVisitaWebcom);
 		}
 
 		return visita;
@@ -592,7 +575,6 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 		Visita visita = null;
 		for (int i = 0; i < listaVisitaDto.size(); i++) {
 
-			Visita vis = null;
 			errorsList = new HashMap<String, String>();
 			map = new HashMap<String, Object>();
 			visitaDto = listaVisitaDto.get(i);
@@ -607,9 +589,11 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			}
 
 			if (!Checks.esNulo(errorsList) && errorsList.isEmpty()) {
-				vis = this.getVisitaByIdVisitaWebcom(visitaDto.getIdVisitaWebcom());
-				map.put("idVisitaWebcom", vis.getIdVisitaWebcom());
-				map.put("idVisitaRem", vis.getNumVisitaRem());
+				if(visita == null || visita.getId() == null){
+					visita = this.getVisitaByIdVisitaWebcom(visitaDto.getIdVisitaWebcom());
+				}
+				map.put("idVisitaWebcom", visita.getIdVisitaWebcom());
+				map.put("idVisitaRem", visita.getNumVisitaRem());
 				map.put("success", true);
 			} else {
 				map.put("idVisitaWebcom", visitaDto.getIdVisitaWebcom());

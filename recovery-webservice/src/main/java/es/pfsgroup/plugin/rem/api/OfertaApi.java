@@ -11,6 +11,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
@@ -43,7 +44,7 @@ public interface OfertaApi {
 	 *            a consultar
 	 * @return Oferta
 	 */
-	public Oferta getOfertaByIdOfertaWebcom(Long idOfertaWebcom);
+	public Oferta getOfertaByIdOfertaWebcom(Long idOfertaWebcom) throws Exception;
 
 	/**
 	 * Devuelve una Oferta por numOfertaRem
@@ -472,16 +473,17 @@ public interface OfertaApi {
 	/**
 	 * Método que ratifica el comité de Bankia
 	 * @param tareaExterna
+	 * @param importeOfertante
 	 * @return String Error o null
 	 */
-	String ratificacionComiteProcess(TareaExterna tareaExterna);
+	String ratificacionComiteProcess(TareaExterna tareaExterna, String importeOfertante);
 
 	/**
 	 * Método que da de alta un comité
 	 * @param tareaExterna
 	 * @return String Error o null
 	 */
-	String altaComiteProcess(TareaExterna tareaExterna);
+	String altaComiteProcess(TareaExterna tareaExterna, String codigo);
 	
 	public boolean updateOfertantesByOfertaId(DtoOfertantesOferta dtoOfertantesOferta);
 	
@@ -513,9 +515,23 @@ public interface OfertaApi {
 	 */
 	Usuario getUsuarioPreescriptor(Oferta oferta);
 	
+	/**
+	 * Devuelve el ActivoProveedor asociado al preescritor de la oferta. En caso de no existir devuelve null.
+	 * @param oferta
+	 * @return ActivoProveedor
+	 */
+	public ActivoProveedor getPreescriptor(Oferta oferta);
+	
 	public void ocultarActivoOferta(Oferta oferta) throws Exception;
 	
 	public void desocultarActivoOferta(Oferta oferta) throws Exception;
+
+	/**
+	 * LLamada servicio web Bankia para modificaciones según tipo propuesta (MOD3) 
+	 * @param tareaExterna
+	 * @return
+	 */
+	public void modificacionesSegunPropuesta(TareaExterna tareaExterna);
 
 }
 

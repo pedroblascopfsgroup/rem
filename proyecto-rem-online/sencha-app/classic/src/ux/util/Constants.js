@@ -166,9 +166,16 @@ Ext.define('HreRem.ux.util.Constants', {
     	CAJAMAR: '01',
     	SAREB: '02',
     	BANKIA: '03',
-    	TERCEROS: '04'
+    	TERCEROS: '04',
+    	HYT: '06'
     },
-    
+    NOMBRE_CARTERA:	{
+    	'01': 'CAJAMAR',
+    	'02': 'SAREB',
+    	'03': 'BANKIA',
+    	'04': 'TERCEROS',
+    	'06': 'HYT'
+    },
     IMAGENES_CARTERA: {
     	CAJAMAR: 'logo_cajamar.svg',
     	SAREB: 'logo_sareb.svg',
@@ -183,7 +190,9 @@ Ext.define('HreRem.ux.util.Constants', {
     	GESTOPDV: 'GESTOPDV',
     	SUPERVISOR_ACTIVO: 'HAYASUPACT',
     	HAYACAL: 'HAYACAL',
-    	HAYASUPCAL: 'HAYASUPCAL'
+    	HAYASUPCAL: 'HAYASUPCAL',
+    	HAYAGESTPREC: 'HAYAGESTPREC',
+    	HAYAGESTPUBL: 'HAYAGESTPUBL'
     },
     
     TIPOS_OFERTA: {
@@ -290,6 +299,26 @@ Ext.define('HreRem.ux.util.Constants', {
     CLASE_ACTIVO: {
     	FINANCIERO: '01',
     	INMOBILIARIO: '02'
+    },
+    
+    SUBTIPOS_TRABAJO: {
+
+		TRAMITAR_PROPUESTA_PRECIOS: '44',
+		TRAMITAR_PROPUESTA_DESCUENTO: '45'
+    	
+    },
+
+    TIPO_IMPUESTO: {
+    	IVA: '01',
+		ITP: '02',
+		IGIC: '03',
+		IPSI: '04'
+    },
+    
+    TIPO_TITULO_ACTIVO: {
+    	JUDICIAL: '01',
+    	NO_JUDICIAL: '02',
+    	PDV: '03'
     }
     
 });

@@ -245,7 +245,12 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 
 		// Actualizar fecha contabilizacionPropietario, fecha venta,
 		expedienteComercial.setFechaContabilizacionPropietario(fechaActual);
-		expedienteComercial.setFechaVenta(fechaActual);
+		
+		if (!Checks.esNulo(expedienteComercial.getFechaVenta())){
+			DDEstadosExpedienteComercial estadoExpCom = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.VENDIDO);
+			expedienteComercial.setEstado(estadoExpCom);
+		}
+		//expedienteComercial.setFechaVenta(fechaActual);
 		if (!expedienteComercialApi.update(expedienteComercial)) {
 			throw new Exception("Error al actualizar el expediente comercial.");
 		}
@@ -528,7 +533,12 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 
 		// Borrar fecha contabilizacionPropietario y fecha venta. Poner a null
 		expedienteComercial.setFechaContabilizacionPropietario(null);
-		expedienteComercial.setFechaVenta(null);
+		//expedienteComercial.setFechaVenta(null);
+		if (Checks.esNulo(expedienteComercial.getFechaVenta())){
+			DDEstadosExpedienteComercial estadoExpCom = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.FIRMADO);
+			expedienteComercial.setEstado(estadoExpCom);
+		}
+		
 		if (!expedienteComercialApi.update(expedienteComercial)) {
 			throw new Exception("Error al actualizar el expediente comercial.");
 		}

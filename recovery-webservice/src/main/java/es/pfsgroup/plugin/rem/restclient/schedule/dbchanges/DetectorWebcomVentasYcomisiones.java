@@ -62,5 +62,9 @@ public class DetectorWebcomVentasYcomisiones extends DetectorCambiosBD<Comisione
 	public List<String> vistasAuxiliares() {
 		return null;
 	}
-
+	
+	@Override
+	public Boolean procesarSoloCambiosMarcados() {
+		return false;
+	}
 }

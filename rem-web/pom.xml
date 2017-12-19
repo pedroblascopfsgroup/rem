@@ -1469,6 +1469,10 @@
 							<artifactId>sojo-optional</artifactId>
 							<groupId>net.sf.sojo</groupId>
 						</exclusion>
+						<exclusion>
+							<artifactId>cglib-full</artifactId>
+							<groupId>cglib</groupId>
+						</exclusion>
 					</exclusions>
 				</dependency>
 				<dependency>

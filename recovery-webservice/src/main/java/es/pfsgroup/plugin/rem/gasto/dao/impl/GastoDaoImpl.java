@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
+import es.pfsgroup.plugin.rem.model.VGastosProvision;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 
@@ -91,38 +92,53 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 	}
 
 	private HQLBuilder rellenarFiltrosBusquedaGasto(DtoGastosFilter dtoGastosFilter) {
-		String from = "select vgasto from VGastosProveedor vgasto";
+		String select = "select vgasto ";
+		String from = "from VGastosProveedor vgasto";
+		String where = "";
 		boolean hasWhere = false;
 		HQLBuilder hb = null;
-
-		if (!Checks.esNulo(dtoGastosFilter.getNumActivo())
-				|| !Checks.esNulo(dtoGastosFilter.getEntidadPropietariaCodigo())
-				|| !Checks.esNulo(dtoGastosFilter.getSubentidadPropietariaCodigo())) {
-
-			from = from + ",GastoProveedorActivo gastoActivo where vgasto.id = gastoActivo.gastoProveedor.id ";
-			
+		
+		// Por si es necesario filtrar por datos de los activos del gasto
+		String fromGastoActivos = GastoActivosHqlHelper.getFrom(dtoGastosFilter);
+		if (!Checks.esNulo(fromGastoActivos)) {
+			select = "select distinct vgasto ";
+			from =  from + fromGastoActivos;
+			where = where + GastoActivosHqlHelper.getWhereJoin(dtoGastosFilter, hasWhere);
 			hasWhere = true;
-
-		}
+			
+		}	
+		
+		// Por si es necesario filtrar por datos de la provision de gastos
+		String fromProvisiongastos = ProvisionGastosHqlHelper.getFrom(dtoGastosFilter);
+		if (!Checks.esNulo(fromProvisiongastos)) {
+			from = from + fromProvisiongastos;
+			where = where + ProvisionGastosHqlHelper.getWhereJoin(dtoGastosFilter, hasWhere);
+			hasWhere = true;
+		}		
+		
 		// Por si es necesario filtrar por motivos de gasto
 		String fromMotivos = MotivosAvisoHqlHelper.getFrom(dtoGastosFilter);
 		if (!Checks.esNulo(fromMotivos)) {
-			from = from + MotivosAvisoHqlHelper.getFrom(dtoGastosFilter);
+			from = from + fromMotivos;
+			where = where + MotivosAvisoHqlHelper.getWhereJoin(dtoGastosFilter, hasWhere);
 			hasWhere = true;
 		}
 		
-		hb = new HQLBuilder(from);
+		hb = new HQLBuilder(select + from + where);
 		if (hasWhere) {
 			hb.setHasWhere(true);
 		}
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gastoActivo.activo.numActivo", dtoGastosFilter.getNumActivo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gastoActivo.activo.cartera.codigo",
-				dtoGastosFilter.getEntidadPropietariaCodigo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gastoActivo.activo.subcartera.codigo",
-				dtoGastosFilter.getSubentidadPropietariaCodigo());
-
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gastoActivo.activo.subcartera.codigo", dtoGastosFilter.getSubentidadPropietariaCodigo());
+		
+		if (!Checks.esNulo(dtoGastosFilter.getNumProvision())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "provision.numProvision", Long.parseLong(dtoGastosFilter.getNumProvision()));
+		}
+		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.idProvision", dtoGastosFilter.getIdProvision());
+		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.entidadPropietariaCodigo", dtoGastosFilter.getEntidadPropietariaCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.codigoProveedorRem", dtoGastosFilter.getCodigoProveedorRem());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.nifProveedor", dtoGastosFilter.getNifProveedor());
 
@@ -215,19 +231,12 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 			} else if ("0".equals(dtoGastosFilter.getCubreSeguro())) {
 				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.cubreSeguro", false);
 			}
-			// HQLBuilder.addFiltroIgualQueSiNotNull(hb,"vgasto.cubreSeguro",dtoGastosFilter.getCubreSeguro());
 		}
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.periodicidadCodigo", dtoGastosFilter.getPeriodicidad());
 
-		if (!Checks.esNulo(dtoGastosFilter.getNumProvision())) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.numProvision",
-					Long.parseLong(dtoGastosFilter.getNumProvision()));
-		}
-
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgasto.nombrePropietario", dtoGastosFilter.getNombrePropietario(), true);
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.docIdentifPropietario",
-				dtoGastosFilter.getDocIdentifPropietario());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.docIdentifPropietario", dtoGastosFilter.getDocIdentifPropietario());
 
 		
 
@@ -237,8 +246,6 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 				dtoGastosFilter.getCodigoSubtipoProveedor());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.tipoEntidadCodigo", dtoGastosFilter.getCodigoTipoProveedor());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgasto.nombreProveedor", dtoGastosFilter.getNombreProveedor(), true);
-
-		HQLBuilder.addFiltroIgualQue(hb, "vgasto.rango", 1);
 		
 		//////////////////////// Motivos de Aviso 
 		String motivosAvisoWhere = MotivosAvisoHqlHelper.getWhere(dtoGastosFilter);
@@ -276,6 +283,22 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 			resultado = Arrays.toString(lista.toArray()).replace("[", "").replace("]", "");
 
 		return resultado;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public DtoPage getListGastosProvision(DtoGastosFilter dtoGastosFilter) {
+
+		String from = "select vgastosprovision from VGastosProvision vgastosprovision";
+		
+		HQLBuilder hb = new HQLBuilder(from);		
+		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgastosprovision.idProvision", dtoGastosFilter.getIdProvision());
+
+		Page page = HibernateQueryUtils.page(this, hb, dtoGastosFilter);
+		List<VGastosProvision> gastos = (List<VGastosProvision>) page.getResults();
+		
+		return new DtoPage(gastos, page.getTotalCount());
 	}
 
 }

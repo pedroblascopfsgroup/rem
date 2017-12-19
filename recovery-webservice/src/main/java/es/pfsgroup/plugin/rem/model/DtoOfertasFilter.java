@@ -57,7 +57,12 @@ public class DtoOfertasFilter extends WebDto {
 	private String tipoPersona;
 	private String estadoCivil;
 	private String regimenMatrimonial;
-	
+	private String tipoComercializacion;
+	private String claseActivoBancario;
+	private Long numActivoUvem;
+	private Long numActivoSareb;
+	private Long numPrinex;
+	private Boolean agrupacionesVinculadas;		
 	
 	public Long getNumOferta() {
 		return numOferta;
@@ -334,6 +339,42 @@ public class DtoOfertasFilter extends WebDto {
 	}
 	public void setRegimenMatrimonial(String regimenMatrimonial) {
 		this.regimenMatrimonial = regimenMatrimonial;
+	}
+	public String getTipoComercializacion() {
+		return tipoComercializacion;
+	}
+	public void setTipoComercializacion(String tipoComercializacion) {
+		this.tipoComercializacion = tipoComercializacion;
+	}
+	public String getClaseActivoBancario() {
+		return claseActivoBancario;
+	}
+	public void setClaseActivoBancario(String claseActivoBancario) {
+		this.claseActivoBancario = claseActivoBancario;
+	}	
+	public Long getNumActivoUvem() {
+		return numActivoUvem;
+	}
+	public void setNumActivoUvem(Long numActivoUvem) {
+		this.numActivoUvem = numActivoUvem;
+	}
+	public Long getNumActivoSareb() {
+		return numActivoSareb;
+	}
+	public void setNumActivoSareb(Long numActivoSareb) {
+		this.numActivoSareb = numActivoSareb;
+	}
+	public Long getNumPrinex() {
+		return numPrinex;
+	}
+	public void setNumPrinex(Long numPrinex) {
+		this.numPrinex = numPrinex;
+	}
+	public Boolean getAgrupacionesVinculadas() {
+		return agrupacionesVinculadas;
+	}
+	public void setAgrupacionesVinculadas(Boolean agrupacionesVinculadas) {
+		this.agrupacionesVinculadas = agrupacionesVinculadas;
 	}
 		
 }

@@ -68,7 +68,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	return false;
 	     	
 	     },
-	     
+	     esEditableCompradores : function(get){
+	     	var me = this;
+	     	if(get('esCarteraBankia')){
+			return (get('expediente.codigoEstado') != CONST.ESTADOS_EXPEDIENTE['FIRMADO']
+					    && get('expediente.codigoEstado') != CONST.ESTADOS_EXPEDIENTE['VENDIDO'] )
+					    && $AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES']);
+	     	}else{
+	     		return false;
+	     	}
+					    
+		},
 	     esComunidadesMayorQueCero: function(get){
 	     	var comunidades= get('condiciones.comunidades');
 	     	if(comunidades > 0){

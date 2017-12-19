@@ -94,7 +94,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckDocActivo', {
 								        	}
 								        },	
 										{
-								            text: 'Estado',
+								            text: HreRem.i18n('fieldlabel.estado'),
 								            dataIndex: 'estadoDocumento',
 								            flex: 2,
 								            cls: 'grid-no-seleccionable-col',
@@ -149,7 +149,20 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckDocActivo', {
 								        	tdCls: 'grid-no-seleccionable-td',
 								        	editor: {
 								        		xtype: 'datefield',
-								        		cls: 'grid-no-seleccionable-field-editor'
+								        		action: 'update',
+								        		cls: 'grid-no-seleccionable-field-editor',
+								        		reference: 'fechaObtencionEdit',
+								        		listeners:{
+								        			change: function(field, newVal, oldVal){
+								        				var me = this,
+								        				caducidad = field.up().items.get(6);
+								        				if(newVal != null || newVal != ""){
+								        					caducidad.allowBlank = false;
+								        				}else{
+								        					caducidad.allowBlank = true;
+								        				}
+								        			}
+								        		}
 								        	}
 								        },
 								        {   
@@ -163,6 +176,67 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckDocActivo', {
 								        		xtype: 'datefield',
 								        		cls: 'grid-no-seleccionable-field-editor'
 								        	}
+								        },
+								        {   
+								        	text: HreRem.i18n('header.fecha.caducidad'),
+								        	dataIndex: 'fechaCaducidad',
+								        	formatter: 'date("d/m/Y")',
+								        	flex: 2,
+								        	cls: 'grid-no-seleccionable-col',
+								        	tdCls: 'grid-no-seleccionable-td',
+								        	editor: {
+								        		xtype: 'datefield',
+								        		cls: 'grid-no-seleccionable-field-editor',
+								        		reference: 'fechaCaducidadEdit'
+								        	}
+								        },
+								        {   
+								        	text: HreRem.i18n('header.fecha.etiqueta'),
+								        	dataIndex: 'fechaEtiqueta',
+								        	formatter: 'date("d/m/Y")',
+								        	flex: 2,
+								        	cls: 'grid-no-seleccionable-col',
+								        	tdCls: 'grid-no-seleccionable-td',
+								        	editor: {
+								        		xtype: 'datefield',
+								        		cls: 'grid-no-seleccionable-field-editor'
+								        	}
+								        },
+								        										{
+								            text: HreRem.i18n('header.calificacion'),
+								            dataIndex: 'tipoCalificacionCodigo',
+								            flex: 1,
+								            align: 'center',
+								            cls: 'grid-no-seleccionable-col',
+								            tdCls: 'grid-no-seleccionable-td',
+								            editor: {
+								        		xtype: 'combobox',
+								        		cls: 'grid-no-seleccionable-field-editor',
+								        		store: Ext.create('Ext.data.Store',{								        		
+								        			model: 'HreRem.model.ComboBase',
+													proxy: {
+														type: 'uxproxy',
+														remoteUrl: 'generic/getDiccionario',
+														extraParams: {diccionario: 'calificacionEnergetica'}
+													},
+													autoLoad: true
+												}),								            	
+								            	displayField: 'descripcion',
+    											valueField: 'codigo'    											
+								        	},
+								        	renderer: function(value) {								        		
+								        		var me = this,
+								        		comboEditor = me.columns && me.columns[8].getEditor ? me.columns[8].getEditor() : me.getEditor ? me.getEditor():null;
+								        		if(!Ext.isEmpty(comboEditor)) {
+									        		store = comboEditor.getStore(),							        		
+									        		record = store.findRecord("codigo", value);
+									        		if(!Ext.isEmpty(record)) {								        			
+									        			return record.get("descripcion");								        		
+									        		} else {
+									        			comboEditor.setValue(value);								        			
+									        		}
+								        		}
+								        	}
 								        }
 			       	        
 			    				],
@@ -170,23 +244,14 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckDocActivo', {
 			    					menuDisabled: true,
 			    					sortable: false
 			    				}
-				}/*
+				},
 				
-				selModel: 'cellmodel',
-			    plugins: {
-			        ptype: 'cellediting',
-			        clicksToEdit: 1
-			    },*/
-			    /*dockedItems : [
-						        {
-						            xtype: 'pagingtoolbar',
-						            dock: 'bottom',
-						            displayInfo: false,
-						            bind: {
-						                store: '{storeAdmisionCheckDocumentos}'
-						            }
-						        }
-			    ]*/
+				saveSuccessFn: function() {
+					
+					var me = this;					
+					me.fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], this.up('{viewModel}').getViewModel().get('activo.id') )
+					
+				}
 			    
 			    
 			},{

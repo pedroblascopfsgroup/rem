@@ -56,9 +56,9 @@
 			<version>3.7.12</version>
 		</dependency>
 		<dependency>
-			<groupId>es.bankia</groupId>
+			<groupId>com.gfi</groupId>
 			<artifactId>bisa-commons</artifactId>
-			<version>3.7.12</version>
+			<version>3.12.5</version>
 		</dependency>
 		<dependency>
 			<groupId>es.bankia</groupId>
@@ -102,17 +102,27 @@
 		</dependency>
 		<dependency>
 			<groupId>es.bankia</groupId>
-			<artifactId>GMJC11_INS</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>es.bankia</groupId>
 			<artifactId>GMPAJC34_INS</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>es.bankia</groupId>
 			<artifactId>GMPDJB13_INS</artifactId>
+			<version>1.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>es.bankia</groupId>
+			<artifactId>GMPTOE83_INS</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>es.bankia</groupId>
+			<artifactId>GMJC11_INS</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>es.bankia</groupId>
+			<artifactId>GMPAJC29_INS</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 		<dependency>
@@ -150,6 +160,7 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.7.5</version>
 		</dependency>
+		<!-- Fin dependencias UVEM BANKIA -->
 		<dependency>
 			<groupId>javax.ejb</groupId>
 			<artifactId>ejb-api</artifactId>

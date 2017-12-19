@@ -2,7 +2,7 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesModel', {
     extend: 'HreRem.view.common.DDViewModel',
     alias: 'viewmodel.agrupaciones',
     
-    requires: ['HreRem.ux.data.Proxy', 'HreRem.model.Agrupaciones'],
+    requires: ['HreRem.ux.data.Proxy', 'HreRem.model.Agrupaciones','HreRem.model.ComboBase'],
     
  	stores: {
         
@@ -32,7 +32,15 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesModel', {
 				extraParams: {diccionario: 'tipoAgrupacion'}
 	    	},
 	    	autoLoad: true
-    	}    	        
+    	},
+    	
+    	comboSubcarteraFiltered: {
+			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboSubcartera'
+				}
+		}
         
     }
     

@@ -539,9 +539,17 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var form= window.down('formBase');
     	var detalle= btn.up().up().down('anyadirnuevogastoactivodetalle');
     	var idGasto = detalle.up().idGasto;
-    	window.mask(HreRem.i18n("msg.mask.loading"));;
+    	var url =  $AC.getRemoteUrl('gastosproveedor/fechaDevengoPosteriorFechaTraspaso');
+    	window.mask(HreRem.i18n("msg.mask.loading"));
+
     	if(!Ext.isEmpty(detalle.getBindRecord())){
-	    	
+    		
+    		var  viewModelDetalle = btn.up("[xtype=gastodetalle]").lookupViewModel();
+    		if(!Ext.isEmpty(viewModelDetalle)){
+    			//var gasto_fechaDevengo = viewModelDetalle.data.gasto.get('fechaEmision');
+    			var gasto_codigoImpuestoIndirecto = viewModelDetalle.data.gasto.get('codigoImpuestoIndirecto');
+    		}
+    		
 	    	var numeroActivo= detalle.getBindRecord().numActivo;
 	    	var numeroAgrupacion= detalle.getBindRecord().numAgrupacion;
 	    	
@@ -550,63 +558,127 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	    	}
 	    	else if(!Ext.isEmpty(numeroActivo)){
 	    		if(Ext.isDefined(detalle.getModelInstance().getProxy().getApi().create)){
-	    			detalle.getModelInstance().getProxy().extraParams.idGasto = idGasto;
-	    			detalle.getModelInstance().getProxy().extraParams.numActivo = numeroActivo;
-	    			detalle.getModelInstance().getProxy().extraParams.numAgrupacion = null;
-	    			detalle.getModelInstance().save({
-	    				success: function(a, operation, c){
-	    					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-	    				},
-	    				failure: function(a, operation){
-	    					var data = {};
-			                try {
-			                	data = Ext.decode(operation._response.responseText);
-			                }
-			                catch (e){ };
-			                if (!Ext.isEmpty(data.msg)) {
-			                	me.fireEvent("errorToast", data.msg);
-			                } else {
-			                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-			                }
-	    				},
-	    				callback: function(records, operation, success) {
-	    					form.reset();
-	    					window.unmask();
-	    					window.parent.funcionRecargar();
-	    					window.close();
-	    				}
-	    				
-	    			})
+	    			
+	    			Ext.Ajax.request({		    			
+	    		 		url: url,
+	    		   		params: {
+	    		   			idGasto: idGasto, 
+	    		   			idActivo: numeroActivo,
+	    		   			idAgrupacion: -1
+    		   			},	    		
+	    		    	success: function(response, opts) {
+	    		    		
+	    		    		var data = {};
+	    		            try {
+	    		            	data = Ext.decode(response.responseText);
+	    		            }
+	    		            catch (e){ };
+	    		    		
+	    		    		if (CONST.TIPO_IMPUESTO['IVA'] == gasto_codigoImpuestoIndirecto) {
+	    		    			
+	    		    			if(!Ext.isEmpty(data) && data.fechaDevengoSuperior == "true") {
+	    		    				
+	    		    				Ext.Msg.show({
+		    		         			   title: HreRem.i18n('title.permitir.asociacion.gastoactivo'),
+		    		         			   msg: HreRem.i18n('msg.asociar.gastoactivo'),
+		    		         			   buttons: Ext.MessageBox.YESNO,
+		    		         			   fn: function(buttonId) {
+		    		         			        if (buttonId == 'yes') {
+		    		         			        	me.asociarGastoConActivos(idGasto, numeroActivo, null, detalle, form, window);
+		    		         			        }
+		    		         			        else {
+		    		         			        	form.reset();
+		    	     		    					window.unmask();
+		    	     		    					window.parent.funcionRecargar();
+		    	     		    					window.close();
+		    		         			        }
+		    		         			   }
+		    		     			});
+		    		            }
+	    		    			else {
+	    		    				me.asociarGastoConActivos(idGasto, numeroActivo, null, detalle, form, window);
+	    		    				
+	    		    			}
+	    	    				
+	    	    			}
+	    	    			else {
+	    	    				
+	    	    				if(!Ext.isEmpty(data) && !(data.fechaDevengoSuperior == "true")) {
+	    	    					
+	    	    					me.asociarGastoConActivos(idGasto, numeroActivo, null, detalle, form, window);
+	    	    					
+	    	    				}
+	    	    				else {
+	    	    					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	    	    					form.reset();
+    		    					window.unmask();
+    		    					window.parent.funcionRecargar();
+    		    					window.close();
+	    	    				}
+	    	    				
+	    	    				
+	    	    			}
+	    		    		
+	    		    	},
+    		   			failure: function(response) {
+							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    		    }
+	    			});
 	    		}
 	    	}
 	    	else if(!Ext.isEmpty(numeroAgrupacion)){
 	    		if(Ext.isDefined(detalle.getModelInstance().getProxy().getApi().create)){
-	    			detalle.getModelInstance().getProxy().extraParams.idGasto = idGasto;
-	    			detalle.getModelInstance().getProxy().extraParams.numActivo = null;
-	    			detalle.getModelInstance().getProxy().extraParams.numAgrupacion = numeroAgrupacion;
-	    			detalle.getModelInstance().save({
-	    				success: function(a, operation, c){
-	    					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-	    				},
-	    				failure: function(a, operation){
-	    					var data = {};
-			                try {
-			                	data = Ext.decode(operation._response.responseText);
-			                }
-			                catch (e){ };
-			                if (!Ext.isEmpty(data.msg)) {
-			                	me.fireEvent("errorToast", data.msg);
-			                } else {
-			                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-			                }
-	    				},
-	    				callback: function(records, operation, success) {
-	    					form.reset();
-	    					window.parent.funcionRecargar();
-	    					window.close();
-	    				}
+	    			
+	    			Ext.Ajax.request({
 	    				
-	    			})
+	    		 		url: url,
+	    		   		params: {
+	    		   			idGasto: idGasto, 
+	    		   			idActivo: -1,
+	    		   			idAgrupacion: numeroAgrupacion
+    		   			},	    		
+	    		    	success: function(response, opts) {
+	    		    		
+	    		    		var data = {};
+	    		            try {
+	    		            	data = Ext.decode(response.responseText);
+	    		            }
+	    		            catch (e){ };
+	    		    			
+    		    			if(!Ext.isEmpty(data) && data.fechaDevengoSuperior == "true") {
+    		    				
+    		    				Ext.Msg.show({
+	    		         			   title: HreRem.i18n('title.permitir.asociacion.gastoactivo'),
+	    		         			   msg: HreRem.i18n('msg.asociar.gastoagrupacion'),
+	    		         			   buttons: Ext.MessageBox.YESNO,
+	    		         			   fn: function(buttonId) {
+	    		         				   
+	    		         			        if (buttonId == 'yes') {
+	    		         			        	
+	    		         			        	me.asociarGastoConActivos(idGasto, null, numeroAgrupacion, detalle, form, window);
+	    		         			        	
+	    		         			        }
+	    		         			        else {
+	    		         			        	form.reset();
+		         		    					window.parent.funcionRecargar();
+		         		    					window.close(); 
+	    		         			        }
+	    		         			        
+	    		         			        
+	    		         			   }
+	    		     			});
+    		    				
+	    		            }
+    		    			else {
+    		    				
+    		    				me.asociarGastoConActivos(idGasto, null, numeroAgrupacion, detalle, form, window);
+    		    				
+    		    			}
+	    		    	},
+    		   			failure: function(response) {
+							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    		    }
+	    			});
 	    		}
 	    	}
     	}
@@ -615,6 +687,41 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	}
     	
     	
+    	
+    },
+    
+    asociarGastoConActivos: function(idGasto, numeroActivo, numeroAgrupacion, detalle, form, window) {
+    	
+    	var me = this;
+    	
+    	detalle.getModelInstance().getProxy().extraParams.idGasto = idGasto;
+		detalle.getModelInstance().getProxy().extraParams.numActivo = numeroActivo;
+		detalle.getModelInstance().getProxy().extraParams.numAgrupacion = numeroAgrupacion;
+		detalle.getModelInstance().save({
+			
+			success: function(a, operation, c){
+				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			},
+			failure: function(a, operation){
+				var data = {};
+                try {
+                	data = Ext.decode(operation._response.responseText);
+                }
+                catch (e){ };
+                if (!Ext.isEmpty(data.msg)) {
+                	me.fireEvent("errorToast", data.msg);
+                } else {
+                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                }
+			},
+			callback: function(records, operation, success) {
+				form.reset();
+				if (numeroActivo != null) window.unmask();
+				window.parent.funcionRecargar();
+				window.close();
+			}
+			
+		});
     	
     },
     
@@ -915,90 +1022,89 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		
 	},
 	
-	onChangeAbonoCuenta: function(field, value){
+	onChangeAbonoCuenta: function(field, checked){
 		var me= this;
-		if(value){
-			me.lookupReference('ibanRef').setDisabled(false);
-			me.lookupReference('titularCuentaRef').setDisabled(false);
-			me.lookupReference('nifTitularCuentaRef').setDisabled(false);
-//			
-			me.lookupReference('pagadoConexionBankiaRef').setValue(false);
-			me.lookupReference('incluirPagoProvisionRef').setValue(false);
-			me.lookupReference('oficinaRef').setDisabled(true);
-			me.lookupReference('numeroConexionRef').setDisabled(true);
-			
-			
-			
-		}
-		else{
-			me.lookupReference('titularCuentaRef').setDisabled(true);
-			me.lookupReference('nifTitularCuentaRef').setDisabled(true);
-			me.lookupReference('ibanRef').setDisabled(true);
+
+
+		// Habilitamos/deshabilitamos campos
+		me.lookupReference('ibanRef').setDisabled(!checked);
+		me.lookupReference('titularCuentaRef').setDisabled(!checked);
+		me.lookupReference('nifTitularCuentaRef').setDisabled(!checked);
+		
+		if(checked){			
+			// Desmarcamos el resto de opciones
+			me.lookupReference('pagadoConexionBankiaRef').setValue(!checked);
+			me.lookupReference('incluirPagoProvisionRef').setValue(!checked);
+			me.lookupReference('anticipoRef').setValue(!checked);
+			me.lookupReference('fechaPago').setAllowBlank(true);
+		} else {
+			me.lookupReference('iban1').setValue("");
+			me.lookupReference('iban2').setValue("");
+			me.lookupReference('iban3').setValue("");
+			me.lookupReference('iban4').setValue("");
+			me.lookupReference('iban5').setValue("");
+			me.lookupReference('iban6').setValue("");
+			me.lookupReference('titularCuentaRef').setValue("");
+			me.lookupReference('nifTitularCuentaRef').setValue("");
+			me.lookupReference('fechaPago').setAllowBlank(true);
 		}
 		
 	},
 	
-	onChangePagadoBankia: function(field, value){
+	onChangePagadoBankia: function(field, checked){
 		var me= this;
-		if(value){
-			me.lookupReference('oficinaRef').setDisabled(false);
-			me.lookupReference('numeroConexionRef').setDisabled(false);
-			me.lookupReference('fechaConexionRef').setDisabled(false);
+
+		// Habilitamos/deshabilitamos campos
+		me.lookupReference('oficinaRef').setDisabled(!checked);
+		me.lookupReference('numeroConexionRef').setDisabled(!checked);
+		me.lookupReference('fechaConexionRef').setDisabled(!checked);
 			
+		if(checked){
+			// Desmarcamos el resto de opciones
+			me.lookupReference('abonoCuentaRef').setValue(!checked);
+			me.lookupReference('incluirPagoProvisionRef').setValue(!checked);
+			me.lookupReference('anticipoRef').setValue(!checked);
+			me.lookupReference('fechaPago').setAllowBlank(false);
+		} else {
+			me.lookupReference('oficinaRef').setValue("");
+			me.lookupReference('numeroConexionRef').setValue("");
+			me.lookupReference('fechaConexionRef').setValue("");
+			me.lookupReference('fechaPago').setAllowBlank(true);
+		}
+	},
+	
+	onChangePagadoProvision: function(field, checked){
+		var me= this;
 		
-			me.lookupReference('abonoCuentaRef').setValue(false);
-			me.lookupReference('incluirPagoProvisionRef').setValue(false);
-			me.lookupReference('titularCuentaRef').setDisabled(true);
-			me.lookupReference('nifTitularCuentaRef').setDisabled(true);
-			me.lookupReference('ibanRef').setDisabled(true);
-			
-
-		}
-		else{
-			me.lookupReference('oficinaRef').setDisabled(true);
-			me.lookupReference('numeroConexionRef').setDisabled(true);
-			me.lookupReference('fechaConexionRef').setDisabled(true);
+		if(checked){
+			me.lookupReference('abonoCuentaRef').setValue(!checked);
+			me.lookupReference('pagadoConexionBankiaRef').setValue(!checked);
+			me.lookupReference('anticipoRef').setValue(!checked);
+			me.lookupReference('fechaPago').setAllowBlank(false);			
+		} else {
+			me.lookupReference('fechaPago').setAllowBlank(true);
 		}
 	},
 	
-	onChangePagadoProvision: function(field, value){
-		var me= this;
-		if(value){
-			me.lookupReference('abonoCuentaRef').setValue(false);
-			me.lookupReference('pagadoConexionBankiaRef').setValue(false);
-			me.lookupReference('titularCuentaRef').setDisabled(true);
-			me.lookupReference('nifTitularCuentaRef').setDisabled(true);
-			me.lookupReference('ibanRef').setDisabled(true);
-			me.lookupReference('oficinaRef').setDisabled(true);
-			me.lookupReference('numeroConexionRef').setDisabled(true);
+	onChangeAnticipo: function(field, checked) {
+		
+		var me = this;
+		
+		me.lookupReference('fechaAnticipoRef').setDisabled(!checked);
 			
+		if(checked){
+			// Desmarcamos el resto de opciones
+			me.lookupReference('abonoCuentaRef').setValue(!checked);
+			me.lookupReference('incluirPagoProvisionRef').setValue(!checked);
+			me.lookupReference('pagadoConexionBankiaRef').setValue(!checked);
+			me.lookupReference('fechaPago').setAllowBlank(false);
+		} else {
+			me.lookupReference('fechaAnticipoRef').setValue("");
+			me.lookupReference('fechaPago').setAllowBlank(true);
 		}
-		else{
-
-		}
+		
 	},
 	
-	onChangeReembolsarPagoTercero: function(field, value){
-		var me= this;
-
-		if((Ext.isString(value) && value == "true") || (Ext.isBoolean(value) && value)) {
-			me.lookupReference('incluirPagoProvisionRef').setDisabled(false);
-			me.lookupReference('abonoCuentaRef').setDisabled(false);
-			me.lookupReference('pagadoConexionBankiaRef').setDisabled(false);
-			me.lookupReference('fieldBankia').setDisabled(false);
-			me.lookupReference('fieldAbonar').setDisabled(false);
-			me.lookupReference('fieldGestoria').setDisabled(false);
-			
-		}
-		else{
-			me.lookupReference('abonoCuentaRef').setValue(false);
-			me.lookupReference('pagadoConexionBankiaRef').setValue(false);
-			me.lookupReference('incluirPagoProvisionRef').setValue(false);
-			me.lookupReference('fieldBankia').setDisabled(true);
-			me.lookupReference('fieldAbonar').setDisabled(true);
-			me.lookupReference('fieldGestoria').setDisabled(true);
-		}
-	},
 	
 	abrirFormularioAdjuntarDocumentos: function(grid) {
 		
@@ -1050,7 +1156,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	me.getView().up("tabpanel").fireEvent("cerrarTodas", me.getView().up("tabpanel"));    	
 
     },
-   
+       
 	buscarGasto: function(field, e){
 		var me= this;
 		var url =  $AC.getRemoteUrl('gastosproveedor/searchGastoNumHaya');

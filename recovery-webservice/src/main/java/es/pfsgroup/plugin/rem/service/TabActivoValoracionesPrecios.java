@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,12 +11,14 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 
 @Component
 public class TabActivoValoracionesPrecios implements TabActivoService {
@@ -25,6 +28,9 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private ActivoDao activoDao;
 	
 
 	@Override
@@ -65,11 +71,8 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 			{
 					ActivoValoraciones val = activo.getValoracion().get(i);
 					
-					
 					if(!Checks.esNulo(val.getFechaFin()) && val.getFechaFin().before(new Date())) {
-						// FIXME Batch?
-						activoApi.deleteValoracionPrecio(val.getId());					
-					
+						activoApi.deleteValoracionPrecio(val.getId());
 					} else {		
 						
 						
@@ -150,6 +153,14 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 				beanUtilNotNull.copyProperty(valoracionesDto, "tipoTasacionDescripcion", tasacionMasReciente.getTipoTasacion().getDescripcion());
 			}
 			
+		}
+		
+		List<VBusquedaActivosPrecios> listaActivos = activoDao.getListActivosPreciosFromListId(activo.getId().toString());
+		
+		if(!Checks.estaVacio(listaActivos)) {
+			VBusquedaActivosPrecios activoPrecio = listaActivos.get(0);
+			valoracionesDto.setIncluidoBolsaPreciar(Checks.esNulo(activoPrecio.getFechaRepreciar()));
+			valoracionesDto.setIncluidoBolsaRepreciar(!Checks.esNulo(activoPrecio.getFechaRepreciar()));
 		}
 
 		return valoracionesDto;	

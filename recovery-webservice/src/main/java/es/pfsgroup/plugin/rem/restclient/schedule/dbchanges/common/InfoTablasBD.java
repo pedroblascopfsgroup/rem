@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -10,6 +11,8 @@ import java.util.List;
  *
  */
 public interface InfoTablasBD {
+	
+	
 
 	/**
 	 * Es necesario implementar este método para indicar el nombre de la vistas
@@ -50,5 +53,24 @@ public interface InfoTablasBD {
 	 * @return
 	 */
 	String clavePrimariaJson();
+	
+	/**
+	 * Solo proceara los registros que esten marcados como modificados
+	 * 
+	 * @return
+	 */
+	Boolean procesarSoloCambiosMarcados();
+	
+	/**
+	 * Para forzar a trabajar en modo optimizado
+	 * @return
+	 */
+	public void setSoloCambiosMarcados(Boolean procesar);
+	
+	/**
+	 * Borra de la tabla de modificaciones aquellas que se han enviado
+	 * @param listPendientes
+	 */
+	public void marcarComoEnviadosMarcadosEspecifico(Date fechaEjecucion) throws Exception;
 
 }

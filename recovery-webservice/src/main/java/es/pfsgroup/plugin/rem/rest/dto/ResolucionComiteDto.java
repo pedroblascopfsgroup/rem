@@ -10,6 +10,8 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoDenegacionResolucion;
+import es.pfsgroup.plugin.rem.model.dd.DDPenitenciales;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 
@@ -31,7 +33,7 @@ public class ResolucionComiteDto implements Serializable{
 	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDEstadoResolucion.class, message = "El codigoResolucion no existe", groups = { Insert.class, Update.class })
 	private String codigoResolucion;
-	@Diccionary(clase = DDEstadoResolucion.class, message = "El codigoDenegacion no existe", groups = { Insert.class, Update.class })
+	@Diccionary(clase = DDMotivoDenegacionResolucion.class, message = "El codigoDenegacion no existe", groups = { Insert.class, Update.class })
 	private String codigoDenegacion;
 	private Date fechaAnulacion;
 	private Double importeContraoferta;
@@ -39,6 +41,7 @@ public class ResolucionComiteDto implements Serializable{
 	private String devolucion;
 	@Diccionary(clase = DDMotivoAnulacionExpediente.class, message = "El codigoAnulacion no existe", groups = { Insert.class, Update.class })
 	private String codigoAnulacion;
+	@Diccionary(clase = DDPenitenciales.class, message = "penitenciales no existe", groups = { Insert.class, Update.class })
 	private String penitenciales;
 	
 	

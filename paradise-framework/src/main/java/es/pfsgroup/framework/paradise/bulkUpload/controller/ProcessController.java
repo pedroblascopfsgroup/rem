@@ -82,7 +82,7 @@ public class ProcessController {
 
 	
 	/**
-	 * Función que sube el fichero
+	 * Funciï¿½n que sube el fichero
 	 * @param request
 	 * @param response
 	 * @return
@@ -93,7 +93,7 @@ public class ProcessController {
 	public ModelAndView upload(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
 		ModelMap model = new ModelMap();
-		String result = null;
+		Boolean result = null;
 		Long idProceso = null;
 		
 		try {			
@@ -111,7 +111,10 @@ public class ProcessController {
 			fileItem.setParameters(parameters);
 			
 			result = processAdapter.subirFichero(fileItem);
-			model.put("success", true);
+			model.put("success", result);
+			if(!result){
+				model.put("errorMessage", "Error subiendo el fichero");
+			}
 		
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -126,14 +129,14 @@ public class ProcessController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView validar(Long idProcess, ModelMap model) {
-
+		Boolean resultado = false;
 		try {
-			model.put("data", processAdapter.validarMasivo(idProcess));
+			resultado = processAdapter.validarMasivo(idProcess);
+			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		model.put("data", resultado);
 		return JsonViewer.createModelAndViewJson(model);
 	}
 	

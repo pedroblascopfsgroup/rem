@@ -44,9 +44,11 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
+import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
 
 public interface ExpedienteComercialApi {
@@ -142,6 +144,17 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public boolean update(ExpedienteComercial expedienteComercial);
+	
+	
+	/**
+	 * Actualiza el estado de la reserva al codigo dado
+	 * 
+	 * @param expedienteComercial
+	 * @param codEstadoReserva
+	 * @return
+	 */
+	public boolean updateEstadoDevolucionReserva(ExpedienteComercial expedienteComercial, String codEstadoReserva) throws Exception;
+	
 
 	/**
 	 * Método que recupera las observaciones del expediente comercial
@@ -458,9 +471,10 @@ public interface ExpedienteComercialApi {
 	/**
 	 * Método que devuelve los datos de un comprador de Bankia (WebService Ursus) por número de comprador
 	 * @param numCompradorUrsus
+	 * @param idExpediente
 	 * @return DatosClienteDto
 	 */
-	public DatosClienteDto buscarNumeroUrsus(String numCompradorUrsus, String tipoDocumento) throws Exception;
+	public DatosClienteDto buscarNumeroUrsus(String numCompradorUrsus, String tipoDocumento, String idExpediente) throws Exception;
 	
 	/**
 	 * Método que devuelve los proveedores filtrados por su tipo de proveedor
@@ -509,9 +523,10 @@ public interface ExpedienteComercialApi {
 	 * 
 	 * @param expediente expedienteComercial de la oferta
 	 * @param porcentajeImpuesto del activo de la oferta.
+	 * @param codComiteSuperior del expediente.
 	 * @return
 	 */
-	public InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente, Long porcentajeImpuesto ) throws Exception;
+	public InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente, Long porcentajeImpuesto, String codComiteSuperior) throws Exception;
 
 	/**
 	 * Este método obtiene una lista de bloqueos formalización por el ID del expediente recibido.
@@ -652,18 +667,20 @@ public interface ExpedienteComercialApi {
 	 * 
 	 * @param numeroDocumento : número de documento del cliente.
 	 * @param tipoDocumento : tipo de documento del cliente.
+	 * @param idExpediente : idExpediente
 	 * @return Devuelve una lista con los clientes encontrados por el servicio.
 	 */
-	public List<DatosClienteDto> buscarClientesUrsus(String numeroDocumento, String tipoDocumento) throws Exception;
+	public List<DatosClienteDto> buscarClientesUrsus(String numeroDocumento, String tipoDocumento, String idExpediente) throws Exception;
 
 	/**
 	 * Este método obtiene los detalles de cliente en base al número URSUS recibido.
 	 * 
 	 * @param numeroUrsus : número URSUS del cliente.
+	 * @param idExpediente : idExpediente
 	 * @return Devuelve todos los detalles del cliente encontrados por el servicio.
 	 * @throws Exception Devuelve excepcion si la conexion no ha sido satisfactoria.
 	 */
-	public DatosClienteDto buscarDatosClienteNumeroUrsus(String numeroUrsus) throws Exception;
+	public DatosClienteDto buscarDatosClienteNumeroUrsus(String numeroUrsus, String idExpediente) throws Exception;
 	
 	/**
 	 * Este método calcula el importe de reserva para un expediente si se dan las condiciones:
@@ -836,4 +853,54 @@ public interface ExpedienteComercialApi {
 	 */
 	CondicionesActivo crearCondicionesActivoExpediente(Activo activo, ExpedienteComercial expediente);
 
+	/**
+	 * Comprueba que todos los compradores tengan numero URSUS
+	 * @param expedienteComercial
+	 * @return boolean
+	 */
+	public boolean checkCompradoresTienenNumeroUrsus(Long idTramite);
+
+	/**
+	 * Envia todos los compradores(titulares) a UVEM
+	 * @param expedienteComercial
+	 * @return void
+	 */
+	public void enviarTitularesUvem(Long idExpediente) throws Exception;
+	
+	/**
+	 * Actualiza la reserva y el expediente al recibir un resol de devolucion
+	 * 
+	 * @param expedienteComercial
+	 * @param ResolucionComiteDto dto
+	 * @return
+	 */
+	public boolean updateEstadosResolucionDevolucion(ExpedienteComercial expedienteComercial,ResolucionComiteDto dto);
+	
+	/**
+	 * Actualiza la reserva y el expediente al recibir un resol de no devolucion
+	 * 
+	 * @param expedienteComercial
+	 * @param ResolucionComiteDto dto
+	 * @return
+	 */
+	public boolean updateEstadosResolucionNoDevolucion(ExpedienteComercial expedienteComercial,ResolucionComiteDto dto);
+	
+	/**
+	 * Devuelve la subcartera del expediente
+	 * Lo hace a través del primer activo del expediente
+	 * 
+	 * @param expedienteComercial
+	 * @param ResolucionComiteDto dto
+	 * @return
+	 */
+	public DDSubcartera getCodigoSubCarteraExpediente(Long idExpediente);
+
+	/**
+	 * Este método comprueba, desde un ID de trámite, si el expediente comercial se encuentra en un estado
+	 * distinto a anulado.
+	 * 
+	 * @param idTramite: ID del trámite desde el cual se realiza la consulta.
+	 * @return Devuelve True si el estado del expdiente comercial es distinto a anulado, False si no lo es.
+	 */
+	public boolean checkEstadoExpedienteDistintoAnulado(Long idTramite);
 }

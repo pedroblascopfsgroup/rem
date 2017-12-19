@@ -10,6 +10,7 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.procesosJudiciales.model.DDFavorable;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
@@ -83,6 +84,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoAgrupacion", DDTipoAgrupacion.class);
 		mapa.put("tiposTrabajo", DDTipoTrabajo.class);
 		mapa.put("subtiposTrabajo", DDSubtipoTrabajo.class);
+		mapa.put("tipoTasacion", DDTipoTasacion.class);
 		mapa.put("estadoTrabajo", DDEstadoTrabajo.class);
 		mapa.put("valoracionTrabajo", DDTipoCalidad.class);
 		mapa.put("tiposDocumento", DDTipoDocumentoActivo.class);
@@ -153,7 +155,6 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposColaborador", DDTiposColaborador.class);
 		mapa.put("canalesPrescripcion", DDCanalPrescripcion.class);
 		mapa.put("estadoGasto", DDEstadoGasto.class);
-//		mapa.put("propietariosGasto", DDTipoActivosCartera.class);
 		mapa.put("estadosPublicacion", DDEstadoPublicacion.class);
 		mapa.put("comitesSancion", DDComiteSancion.class);
 		mapa.put("tiposProveedorHonorario", DDTipoProveedorHonorario.class);
@@ -185,6 +186,9 @@ public class DiccionarioTargetClassMap{
 		mapa.put("origenDato", DDOrigenDato.class);
 		mapa.put("tipoRechazoOferta", DDTipoRechazoOferta.class);
 		mapa.put("motivoRechazoOferta", DDMotivoRechazoOferta.class);
+		mapa.put("entradaActivoBankia", DDEntradaActivoBankia.class);
+		mapa.put("favorableDesfavorable", DDFavorable.class);
+		mapa.put("calificacionEnergetica", DDTipoCalificacionEnergetica.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}
@@ -197,14 +201,8 @@ public class DiccionarioTargetClassMap{
     public String getSubtipoTrabajo(String codigoDocumento){
     	
     	Map<String,String> mapa = new HashMap<String,String>();
-    	
-    	//mapa.put(DDTipoDocumentoActivo.CODIGO_INFORME_COMERCIAL, DDSubtipoTrabajo.CODIGO_INFORME_COMERCIAL);
-    	//mapa.put(DDTipoDocumentoActivo.CODIGO_DECRETO_ADJUDICACION, DDSubtipoTrabajo.CODIGO_DECRETO_ADJUDICACION);
-    	//mapa.put(DDTipoDocumentoActivo.CODIGO_ESCRITURA_PUBLICA, DDSubtipoTrabajo.CODIGO_ESCRITURA_PUBLICA);
-    	//mapa.put(DDTipoDocumentoActivo.CODIGO_DILIGENCIA_TOMA_POSESION, DDSubtipoTrabajo.CODIGO_DILIGENCIA_TOMA_POSESION);
-    	//mapa.put(DDTipoDocumentoActivo.CODIGO_NOTA_SIMPLE_SIN_CARGAS, DDSubtipoTrabajo.CODIGO_NOTA_SIMPLE_SIN_CARGAS);
+
     	mapa.put(DDTipoDocumentoActivo.CODIGO_NOTA_SIMPLE_ACTUALIZADA, DDSubtipoTrabajo.CODIGO_NOTA_SIMPLE_ACTUALIZADA);
-    	//mapa.put(DDTipoDocumentoActivo.CODIGO_TASACION_ADJUDICACION, DDSubtipoTrabajo.CODIGO_TASACION_ADJUDICACION);
     	mapa.put(DDTipoDocumentoActivo.CODIGO_VPO_SOLICITUD_AUTORIZACION, DDSubtipoTrabajo.CODIGO_VPO_AUTORIZACION_VENTA);
     	mapa.put(DDTipoDocumentoActivo.CODIGO_VPO_NOTIFICACION_ADJUDICACION, DDSubtipoTrabajo.CODIGO_VPO_NOTIFICACION_ADJUDICACION);
     	mapa.put(DDTipoDocumentoActivo.CODIGO_VPO_SOLICITUD_IMPORTE, DDSubtipoTrabajo.CODIGO_VPO_SOLICITUD_DEVOLUCION);
@@ -223,14 +221,8 @@ public class DiccionarioTargetClassMap{
     public String getTipoDocumento(String codigoSubtipoTrabajo){
     	
     	Map<String,String> mapa = new HashMap<String,String>();
-    	
-    	//mapa.put(DDSubtipoTrabajo.CODIGO_INFORME_COMERCIAL, DDTipoDocumentoActivo.CODIGO_INFORME_COMERCIAL);
-    	//mapa.put(DDSubtipoTrabajo.CODIGO_DECRETO_ADJUDICACION, DDTipoDocumentoActivo.CODIGO_DECRETO_ADJUDICACION);
-    	//mapa.put(DDSubtipoTrabajo.CODIGO_ESCRITURA_PUBLICA, DDTipoDocumentoActivo.CODIGO_ESCRITURA_PUBLICA);
-    	//mapa.put(DDSubtipoTrabajo.CODIGO_DILIGENCIA_TOMA_POSESION, DDTipoDocumentoActivo.CODIGO_DILIGENCIA_TOMA_POSESION);
-    	//mapa.put(DDSubtipoTrabajo.CODIGO_NOTA_SIMPLE_SIN_CARGAS, DDTipoDocumentoActivo.CODIGO_NOTA_SIMPLE_SIN_CARGAS);
+
     	mapa.put(DDSubtipoTrabajo.CODIGO_NOTA_SIMPLE_ACTUALIZADA, DDTipoDocumentoActivo.CODIGO_NOTA_SIMPLE_ACTUALIZADA);
-    	//mapa.put(DDSubtipoTrabajo.CODIGO_TASACION_ADJUDICACION, DDTipoDocumentoActivo.CODIGO_TASACION_ADJUDICACION);
     	mapa.put(DDSubtipoTrabajo.CODIGO_VPO_AUTORIZACION_VENTA, DDTipoDocumentoActivo.CODIGO_VPO_SOLICITUD_AUTORIZACION);
     	mapa.put(DDSubtipoTrabajo.CODIGO_VPO_NOTIFICACION_ADJUDICACION, DDTipoDocumentoActivo.CODIGO_VPO_NOTIFICACION_ADJUDICACION);
     	mapa.put(DDSubtipoTrabajo.CODIGO_VPO_SOLICITUD_DEVOLUCION, DDTipoDocumentoActivo.CODIGO_VPO_SOLICITUD_IMPORTE);
@@ -244,8 +236,5 @@ public class DiccionarioTargetClassMap{
     	
 		return mapa.get(codigoSubtipoTrabajo);
     }
-	
-	
-	
-	
+
 }

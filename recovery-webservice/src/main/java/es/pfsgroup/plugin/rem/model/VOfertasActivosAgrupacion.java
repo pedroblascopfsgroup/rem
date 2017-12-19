@@ -120,10 +120,24 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	
 	@Column(name="CANAL_DESCRIPCION")
 	private String canalDescripcion;
-	
+
 	@Column(name="CARTERA_CODIGO")
 	private String carteraCodigo;
+	
+	@Column(name="NUM_ACTIVO_UVEM")
+	private Long numActivoUvem;
+	
+	@Column(name="NUM_ACTIVO_SAREB")
+	private Long numActivoSareb;
+	
+	@Column(name="NUM_ACTIVO_PRINEX")
+	private Long numActivoPrinex;
 
+	@Column(name="TIPO_COMERCIALIZACION")
+	private String tipoComercializacion;
+	
+	@Column(name="CLASE_ACTIVO")
+	private String claseActivoBancario;
 
 	public Date getFechaModificar() {
 		return fechaModificar;
@@ -404,7 +418,44 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	public void setMotivoRechazoCodigo(String motivoRechazoCodigo) {
 		this.motivoRechazoCodigo = motivoRechazoCodigo;
 	}
+
+	public Long getNumActivoUvem() {
+		return numActivoUvem;
+	}
+
+	public void setNumActivoUvem(Long numActivoUvem) {
+		this.numActivoUvem = numActivoUvem;
+	}
+
+	public Long getNumActivoSareb() {
+		return numActivoSareb;
+	}
+
+	public void setNumActivoSareb(Long numActivoSareb) {
+		this.numActivoSareb = numActivoSareb;
+	}
+
+	public Long getNumActivoPrinex() {
+		return numActivoPrinex;
+	}
+
+	public void setNumActivoPrinex(Long numActivoPrinex) {
+		this.numActivoPrinex = numActivoPrinex;
+	}
 	
-	
-	 
+	public String getTipoComercializacion() {
+		return tipoComercializacion;
+	}
+
+	public void setTipoComercializacion(String tipoComercializacion) {
+		this.tipoComercializacion = tipoComercializacion;
+	}
+
+	public String getClaseActivoBancario() {
+		return claseActivoBancario;
+	}
+
+	public void setClaseActivoBancario(String claseActivoBancario) {
+		this.claseActivoBancario = claseActivoBancario;
+	} 
 }

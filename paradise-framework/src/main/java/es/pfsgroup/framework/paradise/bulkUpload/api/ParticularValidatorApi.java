@@ -57,6 +57,8 @@ public interface ParticularValidatorApi {
 	public Boolean esActivoIncluidoPerimetro(String numActivo);
 
 	public Boolean esActivoAsistido(String numActivo);
+	
+	public Boolean isFechaTraspasoPosteriorAFechaDevengo(String numActivo, String numGasto);
 
 	/**
 	 * Validacion para las agrupaciones de la lista excel. Valida si estan dadas de baja
@@ -245,4 +247,18 @@ public interface ParticularValidatorApi {
 	public Boolean isGastoNoAsociadoTrabajo(String numGasto);
 	
 	public Boolean isGastoPermiteAnyadirActivo(String numGasto);
+
+	Boolean esActivosMismaCartera(String inSqlNumActivosRem, String agrupacion);
+	
+	public Boolean existeExpedienteComercial(String numExpediente);
+	
+	public Boolean existeAgrupacion(String numAgrupacion);
+	
+	public Boolean existeTipoGestor(String tipoGestor);
+	
+	public Boolean existeUsuario(String username);
+	
+	public Boolean usuarioEsTipoGestor(String username, String codigoTipoGestor);
+	
+	public Boolean combinacionGestorCarteraAcagexValida(String codigoGestor, String numActivo, String numAgrupacion,String numExpediente);
 }

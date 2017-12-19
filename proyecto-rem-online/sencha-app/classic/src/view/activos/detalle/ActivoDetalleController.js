@@ -42,7 +42,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
          	onClickRemove: 'onClickRemoveCarga',
          	onClickPropagation :  'onClickPropagation' 
          }
-         
     },
     
 	cargarTabData: function (form) {
@@ -140,10 +139,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 	
 	onListadoPropietariosDobleClick: function (grid, record) {
-    	var me = this;
-    	me.getView().fireEvent('openModalWindow',"HreRem.view.activos.detalle.EditarPropietario", {propietario: record});
-	},
-	
+    	var me = this
+    	
+    	var activo = me.getViewModel().get('activo'),
+ 		idActivo= activo.get('id');
+    	var ventana = Ext.create("HreRem.view.activos.detalle.EditarPropietario", {propietario: record, activo: activo});
+    	
+ 		grid.up('activosdetallemain').add(ventana);
+		ventana.show();
+	},	
 	
 	onTasacionListClick: function (grid, record) {
 		
@@ -165,7 +169,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 	    
    	onSaveFormularioCompleto: function(btn, form) {
-
 		var me = this;
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones.
@@ -215,6 +218,64 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
 			}
 			me.saveActivo(tabData, successFn);
+			
+		} else {
+			me.getView().unmask();
+			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
+			
+		}
+		
+	},
+	
+   	onSaveFormularioCompletoDistribuciones: function(btn, form) {
+		var me = this;
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones.
+		if(form.isFormValid() || form.disableValidation) {
+	
+			Ext.Array.each(form.query('field[isReadOnlyEdit]'),
+				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
+			);
+
+			// Obtener jsondata para guardar activo
+			var numPlanta =  me.lookupReference('comboNumeroPlantas').getValue();
+			var tipoHabitaculoCodigo =  me.lookupReference('comboTipoHabitaculo').getValue();
+			var superficie =  me.lookupReference('superficie').getValue();
+			var cantidad =  me.lookupReference('cantidad').getValue();
+			var idActivo = me.getViewModel().get("activo.id");
+
+			var jsonData = {idEntidad: idActivo, numPlanta : numPlanta, tipoHabitaculoCodigo : tipoHabitaculoCodigo, superficie : superficie, cantidad : cantidad};
+			
+			var activosPropagables = me.getViewModel().get("activo.activosPropagables") || [];
+			var tabPropagableData = null;
+
+			if(activosPropagables.length > 0) {
+				
+				tabPropagableData = me.createFormPropagableData(form, tabData);	
+				if (!Ext.isEmpty(tabPropagableData)) {
+					// sacamos el activo actual del listado
+					var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
+					
+					// Abrimos la ventana de selección de activos
+					var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {form: form, activoActual: activo, activos: activosPropagables, tabData: tabData, propagableData: tabPropagableData}).show();
+   					me.getView().add(ventanaOpcionesPropagacionCambios);
+   					me.getView().unmask();
+   					return false;
+				}
+			}
+				
+			var successFn = function(response, eOpts) {
+				if(Ext.decode(response.responseText).success == "false") {
+					me.fireEvent("errorToast", HreRem.i18n("msg.error.anyadir.distribucion.vivienda"));
+				}
+				else {
+					storeTemp.load();
+					me.refrescarActivo(true);
+					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				}
+								
+			}
+			me.saveDistribucion(jsonData, successFn);
 			
 		} else {
 			me.getView().unmask();
@@ -346,7 +407,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	
     	var me = this;
     	var idActivo = me.getViewModel().get("activo.id");
-
+		
     	me.getView().fireEvent('openModalWindow',"HreRem.view.activos.detalle.AnyadirPropietario");
   	    	
     },
@@ -378,11 +439,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	chainedCombo = me.lookupReference(combo.chainedReference);   
     	
     	me.getViewModel().notify();
-    	
     	if(!Ext.isEmpty(chainedCombo.getValue())) {
 			chainedCombo.clearValue();
     	}
-		
 		chainedCombo.getStore().load({ 			
 			callback: function(records, operation, success) {
    				if(!Ext.isEmpty(records) && records.length > 0) {
@@ -620,11 +679,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	onSaveFormularioCompletoTabComercial: function(btn, form){
 		var me = this;
-
-		// Se ha de confirmar la modificaciÃ³n.
-		Ext.Msg.show({
-			   title: HreRem.i18n('title.confirmar.modificar.venta.activo'),
-			   msg: HreRem.i18n('msg.confirmar.modificar.venta.activo'),
+		if(me.lookupReference('dtFechaVenta').value != null && (me.getViewModel().get('comercial.situacionComercialCodigo') != CONST.SITUACION_COMERCIAL['VENDIDO'])){
+			Ext.Msg.show({
+			   title: HreRem.i18n('title.confirmar.modificar.venta.externa.activo'),
+			   msg: HreRem.i18n('msg.confirmar.modificar.venta.externa.activo'),
 			   buttons: Ext.MessageBox.YESNO,
 			   fn: function(buttonId) {
 			        if (buttonId == 'yes') {
@@ -632,6 +690,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			        }
 			   }
 		});
+		}else{
+		// Se ha de confirmar la modificaciÃ³n.
+			Ext.Msg.show({
+				   title: HreRem.i18n('title.confirmar.modificar.venta.activo'),
+				   msg: HreRem.i18n('msg.confirmar.modificar.venta.activo'),
+				   buttons: Ext.MessageBox.YESNO,
+				   fn: function(buttonId) {
+				        if (buttonId == 'yes') {
+				        	me.onSaveFormularioCompleto(btn, form);
+				        }
+				   }
+			});
+		}
 	},
 
 	onClickBotonGuardar: function(btn) {
@@ -683,7 +754,138 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 
 	onClickBotonCancelarPropietario: function(btn) {		
-		btn.up('window').hide();		
+		
+		var window = btn.up('window');
+		var padre = window.floatParent;
+		var tab = padre.down('tituloinformacionregistralactivo');
+		tab.funcionRecargar();
+		
+		btn.up('window').hide();
+	},
+	
+	onClickBotonGuardarPropietario: function(btn) {		
+		var me = this;	
+		var url =  $AC.getRemoteUrl('activo/updateActivoPropietarioTab');
+		form= btn.up('window').down('formBase').getForm();
+		formulario= btn.up('window').down('formBase');
+		var window = btn.up('window');
+		var padre = window.floatParent;
+		var tab = padre.down('tituloinformacionregistralactivo');
+		
+		var propietario = me.getViewModel().get('propietario');
+		var activo = me.getViewModel().get('activo');
+		
+		var params={};
+		params["idActivo"]=activo.get('id');
+		params["idPropietario"]= propietario.get('id');
+		params['porcPropiedad']=form.findField("porcPropiedad").getValue();
+		params['tipoGradoPropiedadCodigo']=form.findField("tipoGradoPropiedad").getValue();
+		params['tipoPersonaCodigo']=form.findField("tipoPersona").getValue();
+		params['nombre']=form.findField("nombre").getValue();
+		params['tipoDocIdentificativoCodigo']=form.findField("tipoDoc").getValue();
+		params['docIdentificativo']=form.findField("numDoc").getValue();
+		params['direccion']=form.findField("direccion").getValue();
+		params['provinciaCodigo']=form.findField("provincia").getValue();
+		params['localidadCodigo']=form.findField("localidad").getValue();
+		params['codigoPostal']=form.findField("codigoPostal").getValue();
+		params['telefono']=form.findField("telefono").getValue();
+		params['email']=form.findField("email").getValue();
+		params['tipoPropietario']=form.findField("tipoPropietario").getValue();
+		params['nombreContacto']=propietario.get('nombreContacto');
+		params['telefono1Contacto']=propietario.get('telefono1Contacto');
+		params['telefono2Contacto']=propietario.get('telefono2Contacto');
+		params['emailContacto']=propietario.get('emailContacto');
+		params['provinciaContactoCodigo']=propietario.get('provinciaContactoCodigo');
+		params['localidadContactoCodigo']=propietario.get('localidadContactoCodigo');
+		params['codigoPostalContacto']=propietario.get('codigoPostalContacto');
+		params['direccionContacto']=propietario.get('direccionContacto');
+		params['observaciones']=propietario.get('observaciones');
+		
+		if(formulario.isFormValid()){
+		Ext.Ajax.request({
+		     url: url,
+		     params:params,
+		     success: function (a, operation, context) {
+		    	 btn.up('window').hide();
+		    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		    	tab.funcionRecargar();
+           },
+           failure: function (a, operation, context) {
+           	  Ext.toast({
+				 html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÓN',
+				 width: 360,
+				 height: 100,
+				 align: 't'									     
+			  });
+           }
+	    });
+		}else  {
+			me.fireEvent("errorToast", 'Porfavor, revise los campos obligatorios');
+		}
+	},
+	
+	onClickBotonAnyadirPropietario: function(btn) {		
+		var me = this;	
+		var url =  $AC.getRemoteUrl('activo/createActivoPropietarioTab');
+		form= btn.up('window').down('formBase').getForm();
+		formulario= btn.up('window').down('formBase');
+		var window = btn.up('window');
+		var padre = window.floatParent;
+		var tab = padre.down('tituloinformacionregistralactivo');
+		
+ 		var activo = me.getViewModel().get('activo');	
+ 		var propietario = me.getViewModel().get('propietario');
+ 		
+		var params={"idActivo":activo.get('id')};
+		params['porcPropiedad']=form.findField("porcPropiedad").getValue();
+		params['tipoGradoPropiedadCodigo']=form.findField("tipoGradoPropiedad").getValue();
+		params['tipoPersonaCodigo']=form.findField("tipoPersona").getValue();
+		params['nombre']=form.findField("nombre").getValue();
+		params['tipoDocIdentificativoCodigo']=form.findField("tipoDoc").getValue();
+		params['docIdentificativo']=form.findField("numDoc").getValue();
+		params['direccion']=form.findField("direccion").getValue();
+		params['provinciaCodigo']=form.findField("provincia").getValue();
+		params['localidadCodigo']=form.findField("localidad").getValue();
+		params['codigoPostal']=form.findField("codigoPostal").getValue();
+		params['telefono']=form.findField("telefono").getValue();
+		params['email']=form.findField("email").getValue();
+		params['tipoPropietario']="Copropietario";
+
+		porc = params.porcPropiedad;
+		grado = params.tipoGradoPropiedadDescripcion;
+		nombre = params.nombre;
+		params['nombreContacto']=propietario.nombreContacto;
+		params['telefono1Contacto']=propietario.telefonoContacto1;
+		params['telefono2Contacto']=propietario.telefonoContacto2;
+		params['emailContacto']=propietario.emailContacto;
+		params['provinciaContactoCodigo']=propietario.provinciaContactoCodigo;
+		params['localidadContactoCodigo']=propietario.localidadContactoCodigo;
+		params['codigoPostalContacto']=propietario.codigoPostalContacto;
+		params['direccionContacto']=propietario.direccionContacto;
+		params['observaciones']=propietario.observacionesContacto;
+		
+		if(formulario.isFormValid()){
+			Ext.Ajax.request({
+			     url: url,
+			     params:params,
+			     success: function (a, operation, context) {
+			    	 btn.up('window').hide();
+			    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			    	tab.funcionRecargar();
+	           },
+	           failure: function (a, operation, context) {
+	           	  Ext.toast({
+					 html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÓN',
+					 width: 360,
+					 height: 100,
+					 align: 't'									     
+				  });
+	           }
+		    });
+		}else  {
+			me.fireEvent("errorToast", 'Porfavor, revise los campos obligatorios');
+		}
+		
 	},
 	
 	onTramitesListDobleClick : function(grid,record) {
@@ -724,9 +926,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	},
 	
-	refrescarActivo: function(refrescarPestañaActiva) {
+	refrescarActivo: function(refrescarPestanyaActiva) {
 		var me = this,
-		refrescarPestañaActiva = Ext.isEmpty(refrescarPestañaActiva) ? false: refrescarPestañaActiva,
+		refrescarPestanyaActiva = Ext.isEmpty(refrescarPestanyaActiva) ? false: refrescarPestanyaActiva,
 		activeTab = me.getView().down("tabpanel").getActiveTab();		
   		
 		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
@@ -737,7 +939,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
   		});
   		
   		// Actualizamos la pestaña actual si tiene funciÃ³n de recargar 
-		if(refrescarPestañaActiva && activeTab.funcionRecargar) {
+		if(refrescarPestanyaActiva && activeTab.funcionRecargar) {
   			activeTab.funcionRecargar();
 		}
 		
@@ -1586,7 +1788,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 	
 	// Función que abre la pestaña de proveedor.
-   abrirPestañaProveedor: function(tableView, indiceFila, indiceColumna){
+   abrirPestanyaProveedor: function(tableView, indiceFila, indiceColumna){
    		var me = this;
 		var grid = tableView.up('grid');
 	    var record = grid.store.getAt(indiceFila);
@@ -2436,10 +2638,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
 	onRenderCargasList: function(grid) {
 		var me = this,
-		isCarteraCajamar = me.getViewModel().get("activo.isCarteraCajamar"),
+		//isCarteraCajamar = me.getViewModel().get("activo.isCarteraCajamar"),
 		items = grid.getDockedItems('toolbar[dock=top]');
 		if (items.length > 0){
-			items[0].setVisible(isCarteraCajamar)
+			items[0].setVisible(true);
 		}
 	},
 
@@ -2474,11 +2676,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                  grid.getStore().load();
             }
             
-        });	
-    	
+        });
     },
-  
-  
+
   onClickPropagation : function(btn) {
     var me = this;
 
@@ -2486,19 +2686,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo) {
               return activo.activoId == me.getViewModel().get("activo.id");
             }), 1)[0];
+    var grid = btn.up().up();
 
     // Abrimos la ventana de selección de activos
     var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {
           form : null,
           activoActual : activo,
           activos : activosPropagables,
-          tabData : null,
+          tabData : grid.getSelection()[0].data,
           propagableData : null,
-          targetGrid: 'mediadoractivo'
+          targetGrid: grid.targetGrid
         }).show();
 
-    me.getView().add(ventanaOpcionesPropagacionCambios);
-  },
+    	me.getView().add(ventanaOpcionesPropagacionCambios);
+  	},
 
 	onClickBotonCancelarCarga: function(btn) { 
 		var me = this;
@@ -2753,6 +2954,30 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 	
+	saveDistribucion: function(jsonData, successFn) {
+		
+		var me = this,
+		url =  $AC.getRemoteUrl('activo/createDistribucionFromRem');
+		
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		
+		successFn = successFn || Ext.emptyFn
+			
+		if(Ext.isEmpty(jsonData)) {
+			me.fireEvent("log", "Obligatorio jsonData para guardar el activo");
+		} else {
+			Ext.Ajax.request({
+				method : 'POST',
+				url: url,
+				params: {numPlanta: jsonData.numPlanta, cantidad: jsonData.cantidad, superficie: jsonData.superficie, idActivo: jsonData.idEntidad, tipoHabitaculoCodigo: jsonData.tipoHabitaculoCodigo},
+				success: successFn,
+			 	failure: function(response, opts) {
+			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			    }			    
+			});
+		}
+	},
+
 	onClickGuardarPropagarCambios: function(btn) {
     	var me = this,
     	window = btn.up("window"),
@@ -2766,7 +2991,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		me.fireEvent("log", cambios);
 		
-    	if (opcionPropagacion != "1" &&  !activosSeleccionados.length>0) {
+    	if (opcionPropagacion == "4" &&  activosSeleccionados.length == 0) {
 	    	me.fireEvent("errorToast", HreRem.i18n("msg.no.activos.seleccionados"));
 	    	return false;
     	}
@@ -2815,6 +3040,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
 		        };
 		        me.saveActivo(me.createTabDataHistoricoMediadores(activosSeleccionados), successFn);
+			} else if(targetGrid=='condicionesespecificas') {
+
+		        var successFn = function(record, operation) {
+		            window.destroy();
+		            me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		            me.getView().unmask();
+		            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+		        };
+		        me.saveActivo(me.createTabDataCondicionesEspecificas(activosSeleccionados, window.tabData), successFn);
 			}
 	    }
 	     window.mask("Guardando activos 1 de " + (activosSeleccionados.length + 1));
@@ -2926,12 +3160,26 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     return tabData;
   },
 
+  	createTabDataCondicionesEspecificas : function(listadoActivos, data) {
+	    var me = this, tabData = {};
+	    tabData.id = me.getViewModel().get("activo.id");
+	    tabData.models = [];
+
+	    Ext.Array.each(listadoActivos, function(record, index) {
+	          var model = {};
+	          model.name = 'condicionesespecificas';
+	          model.type = 'activo';
+	          model.data = {texto: data.texto};
+	          model.data.idActivo = record.data.activoId;
+	          tabData.models.push(model);
+	        });
+	    return tabData;
+	},
+
     createModelToSave: function(record, type) {
     	
     	var me = this;
-    	
     	var model = null;
-
     	if (Ext.isDefined(record.getProxy().getApi().update)) { 
     		model = {};
     		model.name= record.getProxy().getExtraParams().tab;
@@ -3039,6 +3287,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		window.gridOfertas.getStore().load();
     	window.close();
 
-	}
-	    	
+	},
+    
+	onClickBotonCancelarDistribucion: function(btn){
+    	var me = this,
+		window = btn.up('window');
+    	window.gridDistribuciones.getStore().load();
+    	window.close();	
+    },
+	
+	onClickBotonGuardarDistribucion: function(btn){
+    	var me = this,
+		window = btn.up('window');
+    	var form = window.down('formBase');
+    	me.onSaveFormularioCompletoDistribuciones(null, form);
+		window.gridDistribuciones.up('informecomercialactivo').funcionRecargar()
+    	window.close();
+    	
+    }
 });

@@ -278,7 +278,14 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 						        	   									    dataIndex: 'situacionPosesoria',
 						        	   									    text: HreRem.i18n('header.situacion.posesoria'),
 						        	   									    flex: 1													            
-						        	   									}
+						        	   									},
+																        {
+																        	dataIndex: 'activoEnPropuestaEnTramitacion',
+																        	text: HreRem.i18n("header.incluido.en.propuesta.tramite"),
+																        	hidden: true,
+																        	renderer: Utils.rendererBooleanToSiNo,
+																        	flex: 1
+																        }
 						        	   										         	        
 						        	   									],
 						        	   							dockedItems : [
@@ -628,7 +635,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 		form.reset();
 
 		me.getViewModel().set('idActivo', me.idActivo);
-		me.getViewModel().notify();
+		//me.getViewModel().notify();
 		    	
     	me.down("[reference=checkFechaConcreta]").setValue(false);
     	me.down("[reference=checkFechaTope]").setValue(false);
@@ -636,6 +643,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
     	
     	me.lookupReference('listaActivosSubidaRef').getStore().getProxy().extraParams = {'idProceso':null};
     	me.lookupReference('listaActivosSubidaRef').getStore().loadPage(1);
+    	me.lookupReference('listaActivosSubidaRef').getColumnManager().getHeaderByDataIndex("activoEnPropuestaEnTramitacion").setVisible(false);
 
     	if(!Ext.isEmpty(me.idAgrupacion)) {
     		me.lookupReference('activosagrupaciontrabajo').getStore().load();
@@ -666,7 +674,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
      		me.down('[reference=fieldSetSubirFichero]').setVisible(true);
      		me.down('[reference=fieldsetListaActivosSubida]').setVisible(true);
      		me.down('[reference=supervisorActivoCombo]').setValue(me.idSupervisor);
-     		me.down('[reference=supervisorActivoCombo]').readOnly= true;    		
+     		//me.down('[reference=supervisorActivoCombo]').readOnly= true;    		
      	} else {
      		me.down('[reference=filefieldActivosRef]').allowBlank=true;
      		me.down('[reference=fieldSetSubirFichero]').setVisible(false);

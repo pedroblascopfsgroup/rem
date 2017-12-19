@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.gastoProveedor;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -41,6 +42,8 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
@@ -68,6 +71,7 @@ import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
 import es.pfsgroup.plugin.rem.model.GastoImpugnacion;
@@ -75,6 +79,7 @@ import es.pfsgroup.plugin.rem.model.GastoInfoContabilidad;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoProveedorActivo;
 import es.pfsgroup.plugin.rem.model.GastoProveedorTrabajo;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
@@ -90,6 +95,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionPropietario;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAutorizacionHaya;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencionPago;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoImpugnacionGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
@@ -105,11 +111,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	private final Log logger = LogFactory.getLog(getClass());
 
-	public final String PESTANA_FICHA = "ficha";
-	public final String PESTANA_DETALLE_ECONOMICO = "detalleEconomico";
-	public final String PESTANA_CONTABILIDAD = "contabilidad";
-	public final String PESTANA_GESTION = "gestion";
-	public final String PESTANA_IMPUGNACION = "impugnacion";
+	private static final String PESTANA_FICHA = "ficha";
+	private static final String PESTANA_DETALLE_ECONOMICO = "detalleEconomico";
+	private static final String PESTANA_CONTABILIDAD = "contabilidad";
+	private static final String PESTANA_GESTION = "gestion";
+	private static final String PESTANA_IMPUGNACION = "impugnacion";
 
 	private static final String EXCEPTION_EXPEDIENT_NOT_FOUND_COD = "ExceptionExp";
 	private static final String COD_PEF_GESTORIA_ADMINISTRACION = "HAYAGESTADMT";
@@ -142,6 +148,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
+	
+	@Autowired
+	private ActivoApi activoApi;
+	
+	@Autowired
+	private ActivoAgrupacionApi activoAgrupacionApi;
 
 	@Autowired
 	private GestorActivoDao gestorActivoDao;
@@ -149,15 +161,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
 	@Resource
-	MessageService messageServices;
+	private MessageService messageServices;
 
 	@Override
 	public GastoProveedor findOne(Long id) {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
-		GastoProveedor gasto = genericDao.get(GastoProveedor.class, filtro);
 
-		return gasto;
+		return genericDao.get(GastoProveedor.class, filtro);
 	}
 
 	@Override
@@ -310,6 +321,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if (!Checks.esNulo(gasto.getGestoria())) {
 				dto.setNombreGestoria(gasto.getGestoria().getNombre());
 			}
+			
+			if (!Checks.esNulo(gasto.getGastoDetalleEconomico().getImpuestoIndirectoTipo())) {
+				dto.setCodigoImpuestoIndirecto(gasto.getGastoDetalleEconomico().getImpuestoIndirectoTipo().getCodigo());
+			}
 
 		}
 
@@ -360,6 +375,17 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		gastoProveedor.setGastoDetalleEconomico(detalleEconomico);
 		gastoProveedor.setGastoGestion(gestion);
 		gastoProveedor.setGastoInfoContabilidad(contabilidad);
+		
+		//creamos el contenedor en el gestor documental
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			Integer idExpediente;
+			try {
+				idExpediente = gestorDocumentalAdapterApi.crearGasto(gastoProveedor, usuario.getUsername());
+				logger.debug("GESTOR DOCUMENTAL [ crearGasto para " + gastoProveedor.getNumGastoHaya() + "]: ID EXPEDIENTE RECIBIDO " + idExpediente);
+			} catch (GestorDocumentalException gexc) {
+				logger.error("error creando el contenedor del gasto",gexc);
+			}
+		}
 
 		return gastoProveedor;
 	}
@@ -480,11 +506,35 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		if (!Checks.esNulo(dto.getGastoSinActivos())) {
 			gastoProveedor.setGastoSinActivos(BooleanUtils.toIntegerObject(dto.getGastoSinActivos()));
 		}
+		
+		updateEjercicio(gastoProveedor);
 
 		updaterStateApi.updaterStates(gastoProveedor, null);
 		genericDao.update(GastoProveedor.class, gastoProveedor);
 
 		return true;
+	}
+	
+	private void updateEjercicio(GastoProveedor gasto) {
+		
+		Filter filtroGIC = genericDao.createFilter(FilterType.EQUALS, "GPV_ID", gasto.getId());
+		GastoInfoContabilidad gastoInfoContabilidad = genericDao.get(GastoInfoContabilidad.class, filtroGIC);
+		
+		
+		if(Checks.esNulo(gastoInfoContabilidad.getFechaDevengoEspecial())) {
+			if(!Checks.esNulo(gasto.getFechaEmision())){
+				SimpleDateFormat sdf  = new SimpleDateFormat("yyyy");
+				Filter filtroEjercicio = genericDao.createFilter(FilterType.EQUALS, "anyo", sdf.format(gasto.getFechaEmision()));
+				Ejercicio ejercicio = genericDao.get(Ejercicio.class, filtroEjercicio);
+				gastoInfoContabilidad.setEjercicio(ejercicio);
+			}
+		}else {
+			SimpleDateFormat sdf  = new SimpleDateFormat("yyyy");
+			Filter filtroEjercicio = genericDao.createFilter(FilterType.EQUALS, "anyo", sdf.format(gasto.getGastoInfoContabilidad().getFechaDevengoEspecial()));
+			Ejercicio ejercicio = genericDao.get(Ejercicio.class, filtroEjercicio);
+			gastoInfoContabilidad.setEjercicio(ejercicio);
+		}
+
 	}
 
 	public boolean existeGasto(DtoFichaGastoProveedor dto) {
@@ -656,6 +706,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setOficina(detalleGasto.getOficinaBankia());
 			dto.setNumeroConexion(detalleGasto.getNumeroConexionBankia());
 			dto.setFechaConexion(detalleGasto.getFechaConexion());
+			
+			if (!Checks.esNulo(detalleGasto.getAnticipo())) {
+				dto.setAnticipo(detalleGasto.getAnticipo() == 1 ? true : false);
+			}
+			dto.setFechaAnticipo(detalleGasto.getFechaAnticipo());			
 
 			if (!Checks.esNulo(gasto.getProveedor().getCriterioCajaIVA())) {
 				dto.setOptaCriterioCaja(BooleanUtils.toBooleanObject(gasto.getProveedor().getCriterioCajaIVA()));
@@ -675,105 +730,142 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		try {
 			if (!Checks.esNulo(detalleGasto)) {
-				try {
-					beanUtilNotNull.copyProperties(detalleGasto, dto);
+				
+				beanUtilNotNull.copyProperties(detalleGasto, dto);
 
-					if (!Checks.esNulo(dto.getImpuestoIndirectoExento())) {
-						if (dto.getImpuestoIndirectoExento()) {
-							detalleGasto.setImpuestoIndirectoExento(1);
-						}
-						if (!dto.getImpuestoIndirectoExento()) {
-							detalleGasto.setImpuestoIndirectoExento(0);
-						}
+				if (!Checks.esNulo(dto.getImpuestoIndirectoExento())) {
+					if (dto.getImpuestoIndirectoExento()) {
+						detalleGasto.setImpuestoIndirectoExento(1);
 					}
-
-					if (!Checks.esNulo(dto.getRenunciaExencionImpuestoIndirecto())) {
-						if (dto.getRenunciaExencionImpuestoIndirecto()) {
-							detalleGasto.setRenunciaExencionImpuestoIndirecto(1);
-						}
-						if (!dto.getRenunciaExencionImpuestoIndirecto()) {
-							detalleGasto.setRenunciaExencionImpuestoIndirecto(0);
-						}
+					if (!dto.getImpuestoIndirectoExento()) {
+						detalleGasto.setImpuestoIndirectoExento(0);
 					}
+				}
 
-					if (!Checks.esNulo(dto.getImpuestoIndirectoTipoCodigo())) {
-						DDTiposImpuesto tipoImpuesto = (DDTiposImpuesto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposImpuesto.class, dto.getImpuestoIndirectoTipoCodigo());
-						detalleGasto.setImpuestoIndirectoTipo(tipoImpuesto);
+				if (!Checks.esNulo(dto.getRenunciaExencionImpuestoIndirecto())) {
+					if (dto.getRenunciaExencionImpuestoIndirecto()) {
+						detalleGasto.setRenunciaExencionImpuestoIndirecto(1);
 					}
-
-					if (!Checks.esNulo(dto.getDestinatariosPagoCodigo())) {
-						DDDestinatarioPago destinatarioPago = (DDDestinatarioPago) utilDiccionarioApi.dameValorDiccionarioByCod(DDDestinatarioPago.class,
-								dto.getDestinatariosPagoCodigo());
-						detalleGasto.setDestinatariosPago(destinatarioPago);
+					if (!dto.getRenunciaExencionImpuestoIndirecto()) {
+						detalleGasto.setRenunciaExencionImpuestoIndirecto(0);
 					}
-					if (!Checks.esNulo(dto.getTipoPagadorCodigo())) {
-						DDTipoPagador tipoPagador = (DDTipoPagador) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPagador.class, dto.getTipoPagadorCodigo());
-						detalleGasto.setTipoPagador(tipoPagador);
-					}
+				}
 
-					if (!Checks.esNulo(dto.getReembolsoTercero()) && dto.getReembolsoTercero()) {
-						detalleGasto.setReembolsoTercero(1);
+				if (!Checks.esNulo(dto.getImpuestoIndirectoTipoCodigo())) {
+					DDTiposImpuesto tipoImpuesto = (DDTiposImpuesto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposImpuesto.class, dto.getImpuestoIndirectoTipoCodigo());
+					detalleGasto.setImpuestoIndirectoTipo(tipoImpuesto);
+				}
 
-						if (!Checks.esNulo(dto.getIncluirPagoProvision())) {
-							detalleGasto.setIncluirPagoProvision(dto.getIncluirPagoProvision() ? 1 : 0);
-						}
+				if (!Checks.esNulo(dto.getDestinatariosPagoCodigo())) {
+					DDDestinatarioPago destinatarioPago = (DDDestinatarioPago) utilDiccionarioApi.dameValorDiccionarioByCod(DDDestinatarioPago.class,
+							dto.getDestinatariosPagoCodigo());
+					detalleGasto.setDestinatariosPago(destinatarioPago);
+				}
+				if (!Checks.esNulo(dto.getTipoPagadorCodigo())) {
+					DDTipoPagador tipoPagador = (DDTipoPagador) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPagador.class, dto.getTipoPagadorCodigo());
+					detalleGasto.setTipoPagador(tipoPagador);
+				}
 
-						if (!Checks.esNulo(dto.getAbonoCuenta()) && dto.getAbonoCuenta()) {
-							detalleGasto.setAbonoCuenta(1);
-							if (!Checks.esNulo(dto.getIban())) {
-								detalleGasto.setIbanAbonar(dto.getIban());
-							}
-							if (!Checks.esNulo(dto.getTitularCuenta())) {
-								detalleGasto.setTitularCuentaAbonar(dto.getTitularCuenta());
-							}
-							if (!Checks.esNulo(dto.getNifTitularCuenta())) {
-								detalleGasto.setNifTitularCuentaAbonar(dto.getNifTitularCuenta());
-							}
-						} else {
-							detalleGasto.setAbonoCuenta(0);
-							detalleGasto.setIbanAbonar(null);
-							detalleGasto.setTitularCuentaAbonar(null);
-							detalleGasto.setNifTitularCuentaAbonar(null);
-						}
-
-						if (!Checks.esNulo(dto.getPagadoConexionBankia()) && dto.getPagadoConexionBankia()) {
-							detalleGasto.setPagadoConexionBankia(1);
-							if (!Checks.esNulo(dto.getOficina())) {
-								detalleGasto.setOficinaBankia(dto.getOficina());
-							}
-							if (!Checks.esNulo(dto.getNumeroConexion())) {
-								detalleGasto.setNumeroConexionBankia(dto.getNumeroConexion());
-							}
-
-						} else {
-							detalleGasto.setPagadoConexionBankia(0);
-							detalleGasto.setOficinaBankia(null);
-							detalleGasto.setNumeroConexionBankia(null);
-							detalleGasto.setFechaConexion(null);
-						}
-
-					} else if (!Checks.esNulo(dto.getReembolsoTercero()) && !dto.getReembolsoTercero()) {
-						detalleGasto.setReembolsoTercero(0);
+				if (!Checks.esNulo(dto.getIncluirPagoProvision())) {
+					detalleGasto.setIncluirPagoProvision(dto.getIncluirPagoProvision() ? 1 : 0);
+					if(dto.getIncluirPagoProvision()) {							
+						detalleGasto.setAbonoCuenta(0);
+						detalleGasto.setPagadoConexionBankia(0);
+						detalleGasto.setAnticipo(0);
+						
 						detalleGasto.setIbanAbonar(null);
 						detalleGasto.setTitularCuentaAbonar(null);
 						detalleGasto.setNifTitularCuentaAbonar(null);
 						detalleGasto.setOficinaBankia(null);
 						detalleGasto.setNumeroConexionBankia(null);
 						detalleGasto.setFechaConexion(null);
+						detalleGasto.setFechaAnticipo(null);
+					}
+				}
+
+				if (!Checks.esNulo(dto.getAbonoCuenta())) {
+						detalleGasto.setAbonoCuenta(dto.getAbonoCuenta() ? 1 : 0);
+						if (!Checks.esNulo(dto.getIban())) {
+							detalleGasto.setIbanAbonar(dto.getIban());
+						}
+						if (!Checks.esNulo(dto.getTitularCuenta())) {
+							detalleGasto.setTitularCuentaAbonar(dto.getTitularCuenta());
+						}
+						if (!Checks.esNulo(dto.getNifTitularCuenta())) {
+							detalleGasto.setNifTitularCuentaAbonar(dto.getNifTitularCuenta());
+						}
+						
+						if(dto.getAbonoCuenta()) {
+							
+							detalleGasto.setIncluirPagoProvision(0);
+							detalleGasto.setPagadoConexionBankia(0);
+							detalleGasto.setAnticipo(0);
+							detalleGasto.setOficinaBankia(null);
+							detalleGasto.setNumeroConexionBankia(null);
+							detalleGasto.setFechaConexion(null);
+							detalleGasto.setFechaAnticipo(null);							
+						} else {
+							detalleGasto.setIbanAbonar(null);					
+							detalleGasto.setTitularCuentaAbonar(null);
+							detalleGasto.setNifTitularCuentaAbonar(null);
+						}
+						
+				}
+				
+				if (!Checks.esNulo(dto.getPagadoConexionBankia())) {
+					detalleGasto.setPagadoConexionBankia(dto.getPagadoConexionBankia() ? 1 : 0);
+					if (!Checks.esNulo(dto.getOficina())) {
+						detalleGasto.setOficinaBankia(dto.getOficina());
+					}
+					if (!Checks.esNulo(dto.getNumeroConexion())) {
+						detalleGasto.setNumeroConexionBankia(dto.getNumeroConexion());
+					}
+					
+					if(dto.getPagadoConexionBankia()) {
+						
+						detalleGasto.setAbonoCuenta(0);
 						detalleGasto.setIncluirPagoProvision(0);
+						detalleGasto.setAnticipo(0);
+						
+						detalleGasto.setIbanAbonar(null);
+						detalleGasto.setTitularCuentaAbonar(null);
+						detalleGasto.setNifTitularCuentaAbonar(null);
+						detalleGasto.setFechaConexion(null);
+						detalleGasto.setFechaAnticipo(null);				
+					} else {
+						detalleGasto.setOficinaBankia(null);
+						detalleGasto.setNumeroConexionBankia(null);
+						detalleGasto.setFechaConexion(null);
+					}
+				}
+				
+				if(!Checks.esNulo(dto.getAnticipo())) {
+					
+					detalleGasto.setAnticipo(dto.getAnticipo() ? 1 : 0);
+					
+					if(dto.getAnticipo()) {							
+					
 						detalleGasto.setAbonoCuenta(0);
 						detalleGasto.setPagadoConexionBankia(0);
+						detalleGasto.setIncluirPagoProvision(0);
+						
+						detalleGasto.setIbanAbonar(null);
+						detalleGasto.setTitularCuentaAbonar(null);
+						detalleGasto.setNifTitularCuentaAbonar(null);
+						detalleGasto.setOficinaBankia(null);
+						detalleGasto.setNumeroConexionBankia(null);
+						detalleGasto.setFechaConexion(null);
+					} else {
+						detalleGasto.setFechaAnticipo(null);
 					}
-
-					updaterStateApi.updaterStates(gasto, null);
-
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					e.printStackTrace();
 				}
+					
+
+				updaterStateApi.updaterStates(gasto, null);
+
 				genericDao.update(GastoDetalleEconomico.class, detalleGasto);
 			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -813,6 +905,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				if (Checks.esNulo(activo)) {
 					throw new JsonViewerException("Este activo no existe");
 				} else {
+
+					if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo()) && Checks.esNulo(activo.getNumInmovilizadoBnk())) {
+						throw new JsonViewerException("El activo carece de nº inmovilizado Bankia");
+					}
 
 					Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
 					gasto = genericDao.get(GastoProveedor.class, filtroGasto);
@@ -911,6 +1007,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 							}
 						}
 					}
+					
+					
 				}
 			}
 		} else {
@@ -929,6 +1027,97 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 
 		return true;
+	}
+	
+	/**
+	 * Este método recibe el activo o la agrupación de activos que se quiere asociar con el gasto
+	 * y valida que no haya ningún activo de la cartera de BANKIA y de las subcarteras de
+	 * Solvia, Sareb y SAREB Pre-IBERO que tenga una fecha de traspaso posterior a la fecha de 
+	 * devengo del gasto.
+	 * 
+	 * @param idGasto: ID del gasto que se asociará con los activos.
+	 * @param activo: El activo que se va a asociar con el gasto anterior.
+	 * @param ActivoAgrupacion: La agrupación de activos que se quiere asociar con el gasto
+	 */
+	public boolean fechaDevengoPosteriorFechaTraspaso(Long idGasto, Long idActivo, Long idAgrupacion) {
+		
+		boolean fechaDevengoSuperior = false;
+		
+		GastoProveedor gasto = findOne(idGasto);
+		Date gasto_fechaDevengo = gasto.getFechaEmision();
+		
+		if (idActivo != -1) {
+			
+			Activo activo = activoApi.getByNumActivo(idActivo);
+			String cartera_activo = activo.getSubcartera().getCarteraCodigo();
+			String subcartera_activo = activo.getSubcartera().getCodigo();
+			
+			if (	DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera_activo) &&
+					(DDSubcartera.CODIGO_BANKIA_SOLVIA.equals(subcartera_activo) ||
+					DDSubcartera.CODIGO_BANKIA_SAREB.equals(subcartera_activo) ||
+					DDSubcartera.CODIGO_BANKIA_SAREB_PRE_IBERO.equals(subcartera_activo))) {
+				
+				Date activo_fechaTraspaso = activo.getFechaVentaExterna();
+				
+				if(gasto_fechaDevengo.after(activo_fechaTraspaso)){
+					fechaDevengoSuperior = true;
+	            }
+				
+			}
+			
+		}
+		else {
+			
+			ActivoAgrupacion agrupacion = activoAgrupacionApi.get(activoAgrupacionApi.getAgrupacionIdByNumAgrupRem(idAgrupacion));
+			List <ActivoAgrupacionActivo> activos = agrupacion.getActivos();
+			
+			String cartera_activo = activos.get(0).getActivo().getSubcartera().getCarteraCodigo();
+			String subcartera_activo = activos.get(0).getActivo().getSubcartera().getCodigo();
+			
+			if (	DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera_activo) &&
+					(DDSubcartera.CODIGO_BANKIA_SOLVIA.equals(subcartera_activo) ||
+					DDSubcartera.CODIGO_BANKIA_SAREB.equals(subcartera_activo) ||
+					DDSubcartera.CODIGO_BANKIA_SAREB_PRE_IBERO.equals(subcartera_activo))) {
+				
+				Date activo_fechaTraspaso = null;
+				if(Checks.esNulo(activos.get(0).getActivo().getFechaVentaExterna())){
+					// Obtener oferta aceptada. Si tiene, establecer expediente
+					// comercial vivo a true.
+					Oferta oferta = activoApi.tieneOfertaAceptada(activos.get(0).getActivo());
+					if (!Checks.esNulo(oferta)) {
+						// Obtener expediente comercial de la oferta aprobado.
+						ExpedienteComercial exp = genericDao.get(ExpedienteComercial.class,
+								genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
+						// Obtener datos de venta en REM.
+						if (!Checks.esNulo(exp)) {
+							activo_fechaTraspaso = exp.getFechaVenta();
+						}
+					}
+				
+				}else{
+						
+					for (int i = 0 ; i < activos.size() ; i++) {
+						
+						Activo act = activos.get(i).getActivo();	
+						activo_fechaTraspaso = act.getFechaVentaExterna();
+						
+						if(gasto_fechaDevengo.after(activo_fechaTraspaso)){
+							break;
+			            }
+						
+					}
+				}
+				if(!Checks.esNulo(activo_fechaTraspaso) && gasto_fechaDevengo.after(activo_fechaTraspaso)){
+					fechaDevengoSuperior = true;
+
+	            }
+				
+			}
+			
+		}
+		
+		return fechaDevengoSuperior;
+		
 	}
 
 	/**
@@ -1098,6 +1287,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 				gasto.setGastoInfoContabilidad(contabilidadGasto);
 			}
+			
+			updateEjercicio(gasto);
 
 			updaterStateApi.updaterStates(gasto, null);
 
@@ -1275,7 +1466,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						gestionGasto.setFechaRetencionPago(new Date());
 						gestionGasto.setUsuarioRetencionPago(usuario);
 						updaterStateApi.updaterStates(gasto, DDEstadoGasto.RETENIDO);
-					} else if (("").equals(dtoGestionGasto.getComboMotivoRetenerPago())) {
+					} else if (Checks.esNulo(dtoGestionGasto.getComboMotivoRetenerPago())) {
 						// Si borro el campo eliminamos los detalles de retencion y ponemos el gasto en estado incompleto o pendiente.
 						gestionGasto.setMotivoRetencionPago(null);
 						gestionGasto.setFechaRetencionPago(null);
@@ -1695,9 +1886,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public List<VBusquedaGastoTrabajos> getListTrabajosGasto(Long idGasto) {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idGasto", idGasto);
-		List<VBusquedaGastoTrabajos> gastoTrabajos = genericDao.getList(VBusquedaGastoTrabajos.class, filtro);
 
-		return gastoTrabajos;
+		return genericDao.getList(VBusquedaGastoTrabajos.class, filtro);
 	}
 
 	private GastoProveedor calcularImportesDetalleEconomicoGasto(GastoProveedor gasto) {
@@ -1756,17 +1946,26 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public boolean esGastoEditable(GastoProveedor gasto) {
 
 		Usuario usuario = genericAdapter.getUsuarioLogado();
+		
+		Boolean esGastoEditable = true;
 
-		// NO ES EDITABLE SI....
-
-		if (!genericAdapter.tienePerfil("HAYASADM", usuario) && !Checks.esNulo(gasto.getEstadoGasto())) {			
-			if (!DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo()) && !DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo())
-					&& !DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo()) && !DDEstadoGasto.RECHAZADO_PROPIETARIO.equals(gasto.getEstadoGasto().getCodigo())) {
-				return false;
+		if (!genericAdapter.tienePerfil("HAYASADM", usuario)) {			
+			if (!Checks.esNulo(gasto.getEstadoGasto()) && !DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo()) && !DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo())
+					&& !DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo()) && !DDEstadoGasto.RECHAZADO_PROPIETARIO.equals(gasto.getEstadoGasto().getCodigo())
+					&& !DDEstadoGasto.RETENIDO.equals(gasto.getEstadoGasto().getCodigo())) {
+				
+				esGastoEditable =  false;
+				
+				if (!Checks.esNulo(gasto.getEstadoGasto()) && !DDEstadoGasto.PAGADO.equals(gasto.getEstadoGasto().getCodigo()) 
+						&& !Checks.esNulo(gasto.getGastoGestion()) &&  !Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionPropietario()) && DDEstadoAutorizacionPropietario.CODIGO_RECHAZADO_CONTABILIDAD.equals(gasto.getGastoGestion().getEstadoAutorizacionPropietario().getCodigo())) {
+					esGastoEditable =  true;
+				}
 			}
+			
+
 		}
 
-		return true;
+		return esGastoEditable;
 	}
 
 	public Object searchProveedorCodigoByTipoEntidad(String codigoUnicoProveedor, String codigoTipoProveedor) {
@@ -1895,7 +2094,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		gastoGestion.setMotivoRechazoAutorizacionHaya(motivo);
 
 		gasto.setGastoGestion(gastoGestion);
-		updaterStateApi.updaterStates(gasto, DDEstadoGasto.RECHAZADO_ADMINISTRACION);
+		
+		if(Checks.esNulo(gastoGestion.getEstadoAutorizacionPropietario())){
+			updaterStateApi.updaterStates(gasto, DDEstadoGasto.RECHAZADO_ADMINISTRACION);
+		}
+		else{
+			updaterStateApi.updaterStates(gasto, DDEstadoGasto.RECHAZADO_PROPIETARIO);
+		}
+		
 		gasto.setProvision(null);
 
 		genericDao.update(GastoProveedor.class, gasto);
@@ -2164,5 +2370,27 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		} else {
 			return null;
 		}
+	}
+	
+	@Override
+	public DtoPage getListGastosProvision(DtoGastosFilter dtoGastosFilter) {
+
+		return gastoDao.getListGastosProvision(dtoGastosFilter);
+	}
+
+	@Override
+	public void actualizarPorcentajeParticipacionGastoProveedorActivo(Long idActivo, Long idGasto, Float porcentajeParticipacion) {
+		if(idActivo == null || idGasto == null) {
+			return;
+		}
+
+		Filter filterActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		Filter filterGastoId = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
+		GastoProveedorActivo gpa = genericDao.get(GastoProveedorActivo.class, filterActivoId, filterGastoId);
+		if(gpa != null) {
+			gpa.setParticipacionGasto(porcentajeParticipacion);
+		}
+
+		genericDao.save(GastoProveedorActivo.class, gpa);
 	}
 }

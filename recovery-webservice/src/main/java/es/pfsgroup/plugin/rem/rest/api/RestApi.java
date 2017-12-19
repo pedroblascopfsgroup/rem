@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.rem.rest.api;
 
+import java.beans.IntrospectionException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
@@ -32,6 +34,10 @@ public interface RestApi {
 
 	public enum ALGORITMO_FIRMA {
 		DEFAULT, NO_IP
+	}
+	
+	public enum ENTIDADES {
+		ACTIVO,INFORME
 	}
 
 	public static final String CODE_ERROR = "ERROR";
@@ -264,5 +270,29 @@ public interface RestApi {
 	 * @param req
 	 */
 	public void simulateRestFilter(ServletRequest req) throws Exception;
+	
+	/**
+	 * Marca un registro como modificado
+	 * @param entidad
+	 * @param instanciaEntidad
+	 */
+	public void marcarRegistroParaEnvio(ENTIDADES entidad,Object instanciaEntidad);
+	
+	
+	/**
+	 * Obtiene el valor de un campo de un dto
+	 * 
+	 * @param dto
+	 * @param claseDto
+	 * @param methodName
+	 * @return
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 * @throws IntrospectionException
+	 */
+	@SuppressWarnings("rawtypes")
+	public Object getValue(Object dto, Class claseDto, String methodName)
+			throws Exception;
 
 }

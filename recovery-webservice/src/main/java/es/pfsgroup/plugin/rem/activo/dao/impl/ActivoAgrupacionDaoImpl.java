@@ -31,16 +31,36 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 	
 	@Override
 	public Page getListAgrupaciones(DtoAgrupacionFilter dto, Usuario usuLogado) {
-
-		HQLBuilder hb = new HQLBuilder(" from VBusquedaAgrupaciones agr");
+		String from = " select distinct agr from VBusquedaAgrupaciones agr"; 
+		boolean activos = dto.getNif() != null || dto.getSubcarteraCodigo() != null || dto.getNumActHaya() != null || dto.getNumActPrinex() != null || dto.getNumActReco() != null || dto.getNumActSareb() != null || dto.getNumActUVEM() != null;
+		if(activos){
+			from = from + ActivoAgrupacionHqlHelper.getFromActivos();
+		}
+		
+		if(dto.getNif() != null){
+			from = from + ActivoAgrupacionHqlHelper.getFromPropietarios();
+		}
+		
+		HQLBuilder hb = new HQLBuilder(from);
+		if(activos){
+			hb.appendWhere("agr.id = aaa.agrupacion.id");
+			hb.appendWhere("ac.id = aaa.activo.id");
+			
+		}
+		
+		if(dto.getNif() != null){
+			hb.appendWhere("ap.id = apa.propietario.id");
+			hb.appendWhere("ac.id = apa.activo.id");
+		}
 		
    		HQLBuilder.addFiltroLikeSiNotNull(hb, "agr.nombre", dto.getNombre(), true);
    		//HQLBuilder.addFiltroLikeSiNotNull(hb, "agr.publicado", dto.getPublicado(), true);
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agr.tipoAgrupacion.codigo", dto.getTipoAgrupacion());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agr.numAgrupacionRem",dto.getNumAgrupacionRem());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agr.cartera", dto.getCodCartera());
-   		
-   		
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agr.provincia.codigo", dto.getCodProvincia());
+   		HQLBuilder.addFiltroLikeSiNotNull(hb, "agr.localidad.descripcion", dto.getLocalidadDescripcion(), true);
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agr.numAgrupacionUvem", dto.getNumAgrUVEM());
    		if (dto.getAgrupacionId() != null) {
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agr.id", Long.valueOf(dto.getAgrupacionId()));
    		}
@@ -69,6 +89,87 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+   		
+   		
+   		try {
+   			
+
+			if (dto.getFechaInicioVigenciaDesde() != null) {
+				Date fechaInicioVigenciaDesde = DateFormat.toDate(dto.getFechaInicioVigenciaDesde()); //aqui
+				HQLBuilder.addFiltroBetweenSiNotNull(hb, "agr.fechaInicioVigencia", fechaInicioVigenciaDesde, null);
+			}
+			
+			if (dto.getFechaInicioVigenciaHasta() != null) {
+				Date fechaInicioVigenciaHasta = DateFormat.toDate(dto.getFechaInicioVigenciaHasta());
+		
+				// Se le añade un día para que encuentre las fechas del día anterior hasta las 23:59
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(fechaInicioVigenciaHasta); // Configuramos la fecha que se recibe
+				calendar.add(Calendar.DAY_OF_YEAR, 1);  // numero de días a añadir, o restar en caso de días<0
+
+				HQLBuilder.addFiltroBetweenSiNotNull(hb, "agr.fechaInicioVigencia", null, calendar.getTime());
+			}
+			
+   		} catch (ParseException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+   		
+   		
+   		
+   		try {
+   			
+
+			if (dto.getFechaFinVigenciaDesde()!= null) {
+				Date fechaFinVigenciaDesde = DateFormat.toDate(dto.getFechaFinVigenciaDesde()); //aqui
+				HQLBuilder.addFiltroBetweenSiNotNull(hb, "agr.fechaFinVigencia", fechaFinVigenciaDesde, null);
+			}
+			
+			if (dto.getFechaFinVigenciaHasta() != null) {
+				Date fechaFinVigenciaHasta = DateFormat.toDate(dto.getFechaFinVigenciaHasta());
+		
+				// Se le añade un día para que encuentre las fechas del día anterior hasta las 23:59
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(fechaFinVigenciaHasta); // Configuramos la fecha que se recibe
+				calendar.add(Calendar.DAY_OF_YEAR, 1);  // numero de días a añadir, o restar en caso de días<0
+
+				HQLBuilder.addFiltroBetweenSiNotNull(hb, "agr.fechaFinVigencia", null, calendar.getTime());
+			}
+			
+   		} catch (ParseException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+   		
+   		if(dto.getNumActHaya() != null){
+   			hb.appendWhere(ActivoAgrupacionHqlHelper.getWhereAndNumActHaya(dto.getNumActHaya()));
+   		} 
+   		
+   		if(dto.getNumActUVEM() != null){
+   			hb.appendWhere(ActivoAgrupacionHqlHelper.getWhereAndNumActUvem(dto.getNumActUVEM()));
+   		}
+   		
+   		if(dto.getNumActSareb() != null){
+   			hb.appendWhere(ActivoAgrupacionHqlHelper.getWhereAndNumActSareb(dto.getNumActSareb()));
+   		}
+   		
+   		if(dto.getNumActPrinex() != null){
+   			hb.appendWhere(ActivoAgrupacionHqlHelper.getWhereAndNumActPrinex(dto.getNumActPrinex()));
+   		}
+   		
+   		if(dto.getNumActReco() != null){
+   			hb.appendWhere(ActivoAgrupacionHqlHelper.getWhereAndNumActRecovery(dto.getNumActReco()));
+   		}
+   		
+   		if(dto.getSubcarteraCodigo() != null){
+   			hb.appendWhere(ActivoAgrupacionHqlHelper.getWhereAndSubcarteraCodigo(dto.getSubcarteraCodigo()));
+   		}
+   		
+   		if(dto.getNif() != null){
+   			hb.appendWhere(ActivoAgrupacionHqlHelper.getWhereAndNif(dto.getNif()));
+   		}
 
 		return HibernateQueryUtils.page(this, hb, dto);
 

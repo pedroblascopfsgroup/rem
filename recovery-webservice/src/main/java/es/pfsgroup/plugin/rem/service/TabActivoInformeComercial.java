@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,6 +18,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoComunidadPropietarios;
@@ -24,13 +26,17 @@ import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoLocalComercial;
 import es.pfsgroup.plugin.rem.model.ActivoPlazaAparcamiento;
+import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConstruccion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 
 @Component
 public class TabActivoInformeComercial implements TabActivoService {
@@ -42,6 +48,12 @@ public class TabActivoInformeComercial implements TabActivoService {
 
 	@Autowired
 	private TabActivoFactoryApi tabActivoFactory;
+	
+	@Autowired
+	private ActivoApi activoApi;
+	
+	@Autowired
+	private RestApi restApi;
 
 	@Override
 	public String[] getKeys() {
@@ -330,7 +342,7 @@ public class TabActivoInformeComercial implements TabActivoService {
 					}
 
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "numPlantas", activoInformeDto.getNumPlantas());
-					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "ascensor", activoInformeDto.getAscensor());
+					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "ascensorEdificio", activoInformeDto.getAscensor());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "numAscensores", activoInformeDto.getNumAscensores());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "ediDescripcion", activoInformeDto.getEdiDescripcion());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "entornoInfraestructura", activoInformeDto.getEntornoInfraestructuras());
@@ -425,9 +437,27 @@ public class TabActivoInformeComercial implements TabActivoService {
 				if (!Checks.esNulo(activo.getInfoComercial().getZonaComun())) {
 					beanUtilNotNull.copyProperties(activo.getInfoComercial().getZonaComun(), activoInformeDto);
 				}
-
 				
+				//// HREOS-3025 Valor estimado del mediador: No se copia donde debe
+				List<ActivoValoraciones> valoraciones = activo.getValoracion();
+				if (!Checks.esNulo(valoraciones) || !Checks.estaVacio(valoraciones)) {
+					for (ActivoValoraciones valoracion : valoraciones) {
+						if (!Checks.esNulo(activoInformeDto.getValorEstimadoVenta())) {
+							if (DDTipoPrecio.CODIGO_TPC_ESTIMADO_VENTA.equals(valoracion.getTipoPrecio().getCodigo())) {
+								valoracion.setImporte(activoInformeDto.getValorEstimadoVenta());
+							}
+						}
+						if (!Checks.esNulo(activoInformeDto.getValorEstimadoRenta())) {
+							if (DDTipoPrecio.CODIGO_TPC_ESTIMADO_RENTA.equals(valoracion.getTipoPrecio().getCodigo())) {
+								valoracion.setImporte(activoInformeDto.getValorEstimadoRenta());
+							}
+						}
+					}
+				}
+				activo.setValoracion(valoraciones);
 				activo.setInfoComercial(genericDao.save(ActivoInfoComercial.class, activo.getInfoComercial()));
+				restApi.marcarRegistroParaEnvio(ENTIDADES.INFORME, activo.getInfoComercial());
+				activoApi.saveOrUpdate(activo);				
 			}
 			
 
@@ -479,7 +509,9 @@ public class TabActivoInformeComercial implements TabActivoService {
 					if (!Checks.esNulo(otros.getSubtipoPlazagaraje()))
 						beanUtilNotNull.copyProperty(activoInformeDto, "subtipoPlazagarajeCodigo", otros.getSubtipoPlazagaraje().getCodigo());
 					// Instalaciones
-					beanUtilNotNull.copyProperties(activoInformeDto, activo.getInfoComercial().getInstalacion());
+					if(activo.getInfoComercial().getInstalacion()!=null){
+						beanUtilNotNull.copyProperties(activoInformeDto, activo.getInfoComercial().getInstalacion());
+					}
 					break;
 				default:
 					break;

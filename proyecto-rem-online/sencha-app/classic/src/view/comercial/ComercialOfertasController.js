@@ -190,6 +190,24 @@ Ext.define('HreRem.view.comercial.ComercialOfertasController', {
     	});
         
     	
+    },
+    
+    activarCheckAgrupacionesVinculadas: function(field, newValue, oldValue, eOpts){
+    	var me= this;
+    	var numActivo= me.lookupReference('numActivoOfertaComercial');
+    	var numActivoUvem= me.lookupReference('numActivoUvemOfertaComercial');
+    	var numActivoSareb= me.lookupReference('numActivoSarebOfertaComercial');
+    	var numPrinex= me.lookupReference('numPrinexOfertaComercial');
+    	var agrupacionesVinculadas= me.lookupReference('agrupacionesVinculadasOfertaComercial');
+    	
+    	if(!Ext.isEmpty(agrupacionesVinculadas) && (!Ext.isEmpty(numActivo.getValue()) 
+    			|| !Ext.isEmpty(numActivoUvem.getValue()) || !Ext.isEmpty(numActivoSareb.getValue()) || !Ext.isEmpty(numPrinex.getValue()))){
+    		agrupacionesVinculadas.setDisabled(false);
+    	}
+    	else{
+    		agrupacionesVinculadas.setDisabled(true);
+    		agrupacionesVinculadas.setValue("");
+    	}
     }
 
 });

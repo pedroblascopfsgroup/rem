@@ -30,7 +30,9 @@ import es.pfsgroup.plugin.rem.model.ResolucionComiteBankiaDto;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoDenegacionResolucion;
+import es.pfsgroup.plugin.rem.model.dd.DDPenitenciales;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
 import es.pfsgroup.plugin.rem.resolucionComite.dao.ResolucionComiteDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -125,19 +127,24 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 											}
 										}
 									}
+									
+									if(Checks.esNulo(usu) && !Checks.esNulo(resolucionComiteDto.getDevolucion())){
+										usu = gestorActivoApi.getGestorComercialActual(ofr.getActivoPrincipal(), "GCOM");
+									}
+									
 									if(Checks.esNulo(usu)){
 										hashErrores.put("ofertaHRE", "No se ha podido obtener el usuario al que se enviará la notificación.");
 										
 									}else{
 									
-										for(int i=0;i< listaTareas.size(); i++){
-											TareaProcedimiento tarea = listaTareas.get(i);
-											if(!Checks.esNulo(tarea) && tarea.getCodigo().equalsIgnoreCase("T013_RatificacionComite") &&
-													resolucionComiteDto.getCodigoResolucion().equalsIgnoreCase(DDEstadoResolucion.CODIGO_ERE_CONTRAOFERTA)){
-												hashErrores.put("ofertaHRE", "La oferta no se puede volver a contraofertar.");
-												break;
-											}
-										}
+//										for(int i=0;i< listaTareas.size(); i++){
+//											TareaProcedimiento tarea = listaTareas.get(i);
+//											if(!Checks.esNulo(tarea) && tarea.getCodigo().equalsIgnoreCase("T013_RatificacionComite") &&
+//													resolucionComiteDto.getCodigoResolucion().equalsIgnoreCase(DDEstadoResolucion.CODIGO_ERE_CONTRAOFERTA)){
+//												hashErrores.put("ofertaHRE", "La oferta no se puede volver a contraofertar.");
+//												break;
+//											}
+//										}
 									}
 								}
 							}
@@ -209,6 +216,11 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 		ResolucionComiteBankiaDto resolDto = null;
 		
 		resolDto = new ResolucionComiteBankiaDto();
+		/**
+		 * esta fallando al copiar penitenciales String a DDPenitenciales
+		 */
+		String codigoPenitenciales = resolucionComiteDto.getPenitenciales();
+		resolucionComiteDto.setPenitenciales(null);
 		beanUtilNotNull.copyProperties(resolDto, resolucionComiteDto);
 		
 		if (!Checks.esNulo(resolucionComiteDto.getOfertaHRE())) {
@@ -245,6 +257,20 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 			}
 		}
 		
+		if (!Checks.esNulo(resolucionComiteDto.getCodigoAnulacion())) {
+			DDMotivoAnulacionExpediente motivoAnulacion = (DDMotivoAnulacionExpediente) genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", resolucionComiteDto.getCodigoAnulacion()));
+			if (!Checks.esNulo(motivoAnulacion)) {
+				resolDto.setMotivoAnulacionExpediente(motivoAnulacion);
+			}
+		}
+		
+		if (!Checks.esNulo(resolucionComiteDto.getPenitenciales())) {
+			DDPenitenciales penitenciales = (DDPenitenciales) genericDao.get(DDPenitenciales.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoPenitenciales));
+			if (!Checks.esNulo(penitenciales)) {
+				resolDto.setPenitenciales(penitenciales);
+			}
+		}
+		
 		return resolDto;
 	}
 	
@@ -268,7 +294,7 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 		listaResol = this.getResolucionesComiteByExpedienteTipoRes(resolDto);
 		if(Checks.esNulo(listaResol) || (!Checks.esNulo(listaResol) && listaResol.size()==0)){
 			//Si no existen resoluciones por expediente y tipo, se crea nueva
-			resolucionBankia = this.saveResolucionComite(resolDto);
+			resolucionBankia = this.saveResolucionComite(resolDto, resolucionComiteDto.getOfertaHRE());
 		}else{
 			//Si ya existen resoluciones por expediente y tipo, se marcan como borradas
 			if(!Checks.esNulo(listaResol) && listaResol.size()>0){
@@ -277,7 +303,7 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 				}
 			}
 			//Si ya existe, se borra y se inserta una nueva
-			resolucionBankia = this.saveResolucionComite(resolDto);
+			resolucionBankia = this.saveResolucionComite(resolDto, resolucionComiteDto.getOfertaHRE());
 		}
 
 		return resolucionBankia;
@@ -289,11 +315,15 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 
 	@Override
 	@Transactional(readOnly = false)
-	public ResolucionComiteBankia saveResolucionComite(ResolucionComiteBankiaDto resolDto) throws Exception {
+	public ResolucionComiteBankia saveResolucionComite(ResolucionComiteBankiaDto resolDto, Long numOferta) throws Exception {
 		ResolucionComiteBankia resol = null;
 
 		
 		resol = new ResolucionComiteBankia();
+		Oferta ofr = null;
+		if(!Checks.esNulo(numOferta)) {
+			ofr = ofertaApi.getOfertaByNumOfertaRem(numOferta);
+		}
 		beanUtilNotNull.copyProperties(resol, resolDto);
 
 		
@@ -312,9 +342,31 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 		if (!Checks.esNulo(resolDto.getTipoResolucion())) {
 			resol.setTipoResolucion(resolDto.getTipoResolucion());			
 		}
+		if(!Checks.esNulo(resolDto.getMotivoAnulacionExpediente())){
+			resol.setMotivoAnulacion(resolDto.getMotivoAnulacionExpediente());
+		}		
+		if(!Checks.esNulo(resolDto.getPenitenciales())){
+			resol.setPenitenciales(resolDto.getPenitenciales());
+		}
+		if(!Checks.esNulo(resolDto.getFechaComite())){
+			resol.setFechaResolucion(resolDto.getFechaComite());
+		}
+		if(!Checks.esNulo(ofr)) {
+			if(!Checks.esNulo(resol.getImporteContraoferta())) {
+				ofr.setImporteContraOferta(resol.getImporteContraoferta());
+				genericDao.save(Oferta.class, ofr);
+				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofr.getId());
+				if(!Checks.esNulo(expediente)) {
+					// Actualizar honorarios para el nuevo importe de contraoferta.
+					expedienteComercialApi.actualizarHonorariosPorExpediente(expediente.getId());
 		
-		resol = genericDao.save(ResolucionComiteBankia.class, resol);
-		
+					// Actualizamos la participación de los activos en la oferta;
+					expedienteComercialApi.updateParticipacionActivosOferta(ofr);
+					expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
+				}
+			}
+			resol = genericDao.save(ResolucionComiteBankia.class, resol);
+		}
 		return resol;
 	}
 	

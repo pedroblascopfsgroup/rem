@@ -162,9 +162,8 @@ BEGIN
 		LEFT JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO ON ICO.ACT_ID = ACT.ACT_ID 
 		LEFT JOIN '||V_ESQUEMA||'.VI_ESTADO_ACTUAL_INFMED VEI ON VEI.ICO_ID = ICO.ICO_ID
 		INNER JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
-        left join '||V_ESQUEMA||'.act_aba_activo_bancario aba on aba.act_id = act.act_id
-		where act.borrado = 0)';
-				
+		left join '||V_ESQUEMA||'.act_aba_activo_bancario aba on aba.act_id = act.act_id
+		where act.borrado = 0 AND sps.borrado = 0)';
 
  	 DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'...Creada OK');
   

@@ -84,7 +84,7 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 					            getClass: function(v, metadata, record ) {
 					            		return 'fa-user blue-medium-color'
 					            },
-					            handler: 'abrirPestañaProveedor'
+					            handler: 'abrirPestanyaProveedor'
 					        }],
 					        renderer: function(value, metadata, record) {
 					        	return '<div style="float:left; margin-top:3px; font-size: 11px; line-height: 1em;">'+ value+'</div>';

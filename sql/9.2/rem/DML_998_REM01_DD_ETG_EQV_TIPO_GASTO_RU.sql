@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Gustavo Mora
---## FECHA_CREACION=20170404
+--## FECHA_CREACION=20171123
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1832
+--## INCIDENCIA_LINK=HREOS-3310
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que carga la tabla DD_ETG_EQV_TIPO_GASTO_RU
@@ -120,7 +120,17 @@ DECLARE
     T_TIPO_DATA('Publicidad','Publicidad','82','COMERCIALIZACIÓN INMUEBLES',3,48,2,'',null,null,null),
     T_TIPO_DATA('Otros gastos','Mensajería/correos/copias','83','EXTRAS COMUNIDAD',2,2,2,'',null,null,null),
     T_TIPO_DATA('Otros gastos','Costas judiciales (demanda comunidad propietarios)','84','COSTAS DEMANDA COMUNIDAD',2,2,6,'DEVOLUCIÓN COSTAS DEMANDA COM.',2,2,56),
-    T_TIPO_DATA('Otros gastos','Costas judiciales (otras demandas)','85','OBRAS MENORES',3,42,4,'',null,null,null));
+    T_TIPO_DATA('Otros gastos','Costas judiciales (otras demandas)','85','OBRAS MENORES',3,42,4,'',null,null,null),
+    
+    T_TIPO_DATA('Servicios profesionales independientes','Gestión de suelo','94','Gestión de suelo',3,44,3,'',null,null,null),
+    T_TIPO_DATA('Servicios profesionales independientes','Abogado (Ocupacional)','95','Abogado (Ocupacional)',3,21,10,'',null,null,null),
+    T_TIPO_DATA('Servicios profesionales independientes','Abogado (Asuntos generales)','96','Abogado (Asuntos generales)',3,21,10,'',null,null,null),
+    T_TIPO_DATA('Servicios profesionales independientes','Abogado (Asistencia jurídica)','97','Abogado (Asistencia jurídica)',3,21,10,'',null,null,null),    
+    
+    T_TIPO_DATA('Otros gastos','Costas judiciales (demanda comunidad propietarios)','98','Costas judiciales (demanda comunidad propietarios)',2,2,6,'DEVOLUCIÓN Costas judiciales (demanda comunidad propietarios)',2,2,56),
+    T_TIPO_DATA('Otros gastos','Costas judiciales (otras demandas)','99','Costas judiciales (otras demandas)',3,42,4,'',null,null,null)        
+        
+    );
 
   V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -162,7 +172,7 @@ BEGIN
           ,'''||TRIM(V_TMP_TIPO_DATA(5))||''', '''||TRIM(V_TMP_TIPO_DATA(6))||''', '''||TRIM(V_TMP_TIPO_DATA(7))||'''
           ,'''||TRIM(V_TMP_TIPO_DATA(8))||''', '''||TRIM(V_TMP_TIPO_DATA(8))||''' 
           ,'''||TRIM(V_TMP_TIPO_DATA(9))||''', '''||TRIM(V_TMP_TIPO_DATA(10))||''', '''||TRIM(V_TMP_TIPO_DATA(11))||'''
-          ,0, ''HREOS-1832'',SYSDATE,0)';
+          ,0, ''HREOS-3310'',SYSDATE,0)';
         EXECUTE IMMEDIATE V_MSQL;
       EXCEPTION
         WHEN NO_DATA_FOUND THEN
@@ -187,4 +197,4 @@ EXCEPTION
 
 END;
 /
-EXIT
+EXIT;

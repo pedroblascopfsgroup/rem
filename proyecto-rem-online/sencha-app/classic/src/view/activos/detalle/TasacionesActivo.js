@@ -14,12 +14,13 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
     },
 	
     initComponent: function () {
-
+    	
         var me = this;
         me.setTitle(HreRem.i18n('title.tasaciones'));
         var items= [
             {
 				xtype:'fieldsettable',
+				hidden: true,
 				title: HreRem.i18n('title.ultima.tasacion'),
 				items :	[
 			   				{ 
@@ -100,20 +101,50 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 				title: HreRem.i18n('title.historico.tasaciones'),
 				items :	[
 							{
-								xtype: 'gridBase',
+								xtype: 'gridBaseEditableRow',
+								idPrincipal: 'activo.id',
+								topBar: true,
+								removeButton: false,
 			   					cls	: 'panel-base shadow-panel',
 			   					bind: {
-			   						store: '{storeTasacionesGrid}'
+			   						store: '{storeTasacionesGrid}',
+			   						topBar: '{activo.isCarteraHyT}',
+				   					editOnSelect: '{activo.isCarteraHyT}'
 			   					},
 			   					colspan: 3,
 			   					columns: [
 			   					    {   text: HreRem.i18n('header.listado.tasacion.id'), 
 			   				        	dataIndex: 'id',
+			   				        	renderer: function(value){
+			   				        		if(isNaN(value)){
+			   				        			return '';
+			   				        		}
+			   				        		return value;
+			   				        	},
 			   				        	flex:1 
 			   				        },
 			   				        {   text: HreRem.i18n('header.listado.tasacion.tipoTasacion'),
-			   				        	dataIndex: 'tipoTasacionDescripcion',
-			   				        	flex:4
+			   				        	dataIndex: 'tipoTasacionCodigo',
+			   				        	editor: {
+			   				        		xtype:'comboboxfieldbase',
+			   				        		reference: 'comboTipoDescripcionCodigo',
+			   				        		bind:{
+			   				        			store: '{tipoTasacionStore}'
+			   				        		},
+			   								addUxReadOnlyEditFieldPlugin: false,
+			   								displayField: 'descripcion',
+			   		    					valueField: 'codigo',
+			   		    					allowBlank: false
+			   				        	},
+			   				        	renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
+			   					            var foundedRecord = this.up('activosdetallemain').getViewModel().getStore('tipoTasacionStore').findRecord('codigo', value);
+			   					            var descripcion;
+			   					        	if(!Ext.isEmpty(foundedRecord)) {
+			   					        		descripcion = foundedRecord.getData().descripcion;
+			   					        	}
+			   					        	return descripcion;
+			   					        },
+			   				        	flex:2
 			   				        },	
 			   				        {   
 			   				        	text: HreRem.i18n('header.listado.tasacion.importe'),
@@ -121,17 +152,32 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 			   				        	renderer: function(value) {
 			   				        		return Ext.util.Format.currency(value);
 			   				        	},
+			   				        	editor: {
+			   				        		xtype:'numberfield', 
+			   				        		hideTrigger: true,
+			   				        		keyNavEnable: false,
+			   				        		mouseWheelEnable: false,
+			   		    					allowBlank: false	
+			   				        	},
 			   				        	flex:2 
 			   				        },
 			   				        {   
 			   				        	text: HreRem.i18n('fieldlabel.fecha'),
 			   				        	dataIndex:	'fechaValorTasacion',
+			   				        	editor: {
+			   			                    xtype: 'datefield',
+			   		    					allowBlank: false
+			   			                },
 			   				        	flex:2,
 			   				        	formatter: 'date("d/m/Y")'	
 			   				        },
 			   				        {   
 			   				        	text: HreRem.i18n('header.listado.tasacion.nomTasadora'),
 			   				        	dataIndex:	'nomTasador',
+			   				        	editor: {
+			   				        		xtype:'textfield',
+			   		    					allowBlank: false			   				        		
+			   				        	},
 			   				        	flex:3
 			   				        }
 							    	        

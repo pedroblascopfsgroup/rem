@@ -23,6 +23,10 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 		},
 		{
 			name: 'importeVenta'
+		},
+		{
+			name: 'ventaExterna',
+			type: 'boolean'
 		}
     ],
     

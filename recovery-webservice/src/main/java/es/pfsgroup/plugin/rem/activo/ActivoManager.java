@@ -14,6 +14,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,11 @@ import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.direccion.model.DDProvincia;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -45,6 +50,7 @@ import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoCarga;
@@ -66,6 +72,7 @@ import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.condiciontanteo.CondicionTanteoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
+import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
@@ -75,6 +82,8 @@ import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoCargas;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.ActivoCopropietario;
+import es.pfsgroup.plugin.rem.model.ActivoCopropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
@@ -83,7 +92,6 @@ import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoInformeComercialHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.ActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.ActivoLlave;
-import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
@@ -98,7 +106,6 @@ import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
-import es.pfsgroup.plugin.rem.model.CondicionesActivo;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
@@ -111,7 +118,6 @@ import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
-import es.pfsgroup.plugin.rem.model.DtoCondicionesActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
@@ -123,6 +129,7 @@ import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
+import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
@@ -140,7 +147,6 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
-import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
@@ -156,7 +162,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
@@ -177,9 +182,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
@@ -189,6 +194,7 @@ import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.TIPO;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
@@ -294,6 +300,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Autowired
 	private EXTGrupoUsuariosApi eXTGrupoUsuariosApi;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
+	
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -326,6 +339,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Transactional
 	public boolean saveOrUpdate(Activo activo) {
 		activoDao.saveOrUpdate(activo);
+		
+		restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 
 		// Actualiza los check de Admisión, Gestión y Situacion Comercial del
 		// activo
@@ -355,6 +370,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public boolean isActivoIntegradoAgrupacionRestringida(Long idActivo) {
+
+		return activoDao.isIntegradoAgrupacionRestringida(idActivo, null) >= 1 ? true : false;
+	}
+
+	@Override
+	public boolean isActivoIntegradoAgrupacionComercial(Long idActivo) {
+
+		return activoDao.isIntegradoAgrupacionComercial(idActivo) >= 1 ? true : false;
 	}
 
 	@Override
@@ -520,6 +547,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			ExpedienteComercial expedienteComercial = crearExpedienteGuardado(oferta, trabajo);
 			expedienteComercial = crearExpedienteReserva(expedienteComercial);
 			expedienteComercialApi.crearCondicionesActivoExpediente(oferta.getActivoPrincipal(), expedienteComercial);
+			//cuando creamos el expediente, si procede, creamos el repositorio en el gestor documental
+			Integer idExpediente;
+			try{
+				idExpediente = gestorDocumentalAdapterApi.crearExpedienteComercial(expedienteComercial,genericAdapter.getUsuarioLogado().getUsername());
+				logger.debug("GESTOR DOCUMENTAL [ crearExpediente para " + expedienteComercial.getNumExpediente() + "]: ID EXPEDIENTE RECIBIDO " + idExpediente);
+			} catch (GestorDocumentalException gexc) {
+				logger.error("Error al crear el repositorio para el expediente comercial",gexc);
+			}			
 		} catch (Exception ex){
 			logger.error("Error en activoManager", ex);
 			return false;
@@ -573,7 +608,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		nuevoExpediente.setOferta(oferta);
 		DDEstadosExpedienteComercial estadoExpediente = (DDEstadosExpedienteComercial) utilDiccionarioApi
-				.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class, "01");
+				.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class, DDEstadosExpedienteComercial.EN_TRAMITACION);
 		nuevoExpediente.setEstado(estadoExpediente);
 		nuevoExpediente.setNumExpediente(activoDao.getNextNumExpedienteComercial());
 		nuevoExpediente.setTrabajo(trabajo);
@@ -607,10 +642,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			//Obtiene las condiciones del activo con la misma logica que se aplica para calcularlas
 			// y mostrarlas en pantalla, para copiarlas en las condiciones al comprador
 			Activo activo = oferta.getActivoPrincipal();
-			
-			// Como estamos en la creacion del expediente crea directamente las condiciones, no busca si ya existen condiciones del Expediente-Activo
-//			CondicionesActivo condicionesActivo = new CondicionesActivo();
-//			condicionesActivo.
+
 			if (activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getFechaTomaPosesion() != null) {
 				nuevoCondicionante.setPosesionInicial(1);
 			} else {
@@ -642,17 +674,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		}
 
-		// Comprobamos si tiene derecho de tanteo
-		/*
-		boolean noCumple = false;
-		for (CondicionTanteoApi condicion : condiciones) {
-			if (!condicion.checkCondicion(oferta.getActivoPrincipal()))
-				noCumple = true;
-		}
-		if (!noCumple)
-			nuevoCondicionante.setSujetoTanteoRetracto(1);
-		*/
-
 		boolean noCumple = false;
 		List<ActivoOferta> activoOfertaList = oferta.getActivosOferta();
 		List<TanteoActivoExpediente> tanteosExpediente = new ArrayList<TanteoActivoExpediente>();
@@ -679,7 +700,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				DDAdministracion administracion = genericDao.get(DDAdministracion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "02"));
 				tanteoActivo.setAdminitracion(administracion);
 				nuevoCondicionante.setSujetoTanteoRetracto(1);
-				//genericDao.save(TanteoActivoExpediente.class, tanteoActivo);
 				tanteosExpediente.add(tanteoActivo);
 			}
 		}
@@ -730,32 +750,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						&& activoBancario.getClaseActivo().getCodigo().equals(DDClaseActivoBancario.CODIGO_FINANCIERO)) {
 					esFinanciero = true;
 				}
-				
-//				if(activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_SINGULAR) ||
-//						(activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_RETAIL) 
-//								&& (precioMinimoAutorizado > oferta.getImporteOferta()))) {
-//					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "11")));//sareb
-//					
-//				}
-//				if((esFinanciero && getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) || 
-//						(activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_RETAIL) 
-//						&& precioMinimoAutorizado < oferta.getImporteOferta())) {
-//					
-//					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "12")));//haya-sareb
-//					
-//				}
-				
-				
-				
-				
-				if(esFinanciero && getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) { //1º Clase de activo (financiero/inmobiliario) y sin formalización
-					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "12")));//haya-sareb
-				}else if(activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_SINGULAR)) { //2º Si es inmobiliario: Tipo de comercialización (singular/retail)
-					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "11")));//sareb
-				}else if(precioMinimoAutorizado > oferta.getImporteOferta()) { //3º Si es retail: Comparamos precio mínimo e importe oferta
-					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "11")));//sareb
-				}else {
-					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "12")));//haya-sareb
+
+				// 1º Clase de activo (financiero/inmobiliario) y sin formalización.
+				if(esFinanciero && !Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo()) && getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) {
+					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_SAREB)));
+				// 2º Si es inmobiliario: Tipo de comercialización (singular/retail).
+				} else if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo()) && activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_SINGULAR)) {
+					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_SAREB)));
+				// 3º Si es retail: Comparamos precio mínimo e importe oferta.
+				} else if(!Checks.esNulo(precioMinimoAutorizado) && precioMinimoAutorizado > oferta.getImporteOferta()) {
+					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_SAREB)));
+				} else {
+					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_SAREB)));
 				}
 			}
 		}
@@ -823,11 +829,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				Comprador nuevoComprador = new Comprador();
 				nuevoComprador.setClienteComercial(oferta.getCliente());
 				nuevoComprador.setDocumento(oferta.getCliente().getDocumento());
-				nuevoComprador.setNombre(oferta.getCliente().getNombre());
-				nuevoComprador.setApellidos(oferta.getCliente().getApellidos());
-				if(Checks.esNulo(nuevoComprador.getNombre()) && Checks.esNulo(nuevoComprador.getApellidos())){
+				
+				if (!Checks.esNulo(oferta.getCliente().getTipoPersona()) && DDTipoPersona.CODIGO_TIPO_PERSONA_JURIDICA
+						.equals(oferta.getCliente().getTipoPersona().getCodigo())) {
 					nuevoComprador.setNombre(oferta.getCliente().getRazonSocial());
+					compradorExpedienteNuevo.setNombreRepresentante(oferta.getCliente().getNombre());
+					compradorExpedienteNuevo.setApellidosRepresentante(oferta.getCliente().getApellidos());
+					compradorExpedienteNuevo.setTipoDocumentoRepresentante(oferta.getCliente().getTipoDocumentoRepresentante());
+					compradorExpedienteNuevo.setDocumentoRepresentante(oferta.getCliente().getDocumentoRepresentante());
+					
+				} else {
+					nuevoComprador.setNombre(oferta.getCliente().getNombre());
+					nuevoComprador.setApellidos(oferta.getCliente().getApellidos());
 				}
+				
 				nuevoComprador.setTipoDocumento(oferta.getCliente().getTipoDocumento());
 				nuevoComprador.setTelefono1(oferta.getCliente().getTelefono1());
 				nuevoComprador.setTelefono2(oferta.getCliente().getTelefono2());
@@ -986,7 +1001,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				// Actualizar el tipoComercialización del activo
 				updaterState.updaterStateTipoComercializacion(activo);
 			}
-
+			if(!Checks.esNulo(activoValoracion.getActivo())){
+				restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoValoracion.getActivo());
+			}
 		} catch (Exception ex) {
 			logger.error("Error en activoManager", ex);
 			return false;
@@ -1004,13 +1021,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		historicoValoracion.setTipoPrecio(activoValoracion.getTipoPrecio());
 		historicoValoracion.setImporte(activoValoracion.getImporte());
 		historicoValoracion.setFechaInicio(activoValoracion.getFechaInicio());
-		historicoValoracion.setFechaFin(new Date());
+		historicoValoracion.setFechaFin(activoValoracion.getFechaFin());
 		historicoValoracion.setFechaAprobacion(activoValoracion.getFechaAprobacion());
-		historicoValoracion.setFechaCarga(activoValoracion.getFechaCarga());
+		historicoValoracion.setFechaCarga((!Checks.esNulo(activoValoracion.getFechaCarga()) ? activoValoracion.getFechaCarga() : new Date()));
 		historicoValoracion.setGestor(activoValoracion.getGestor());
 		historicoValoracion.setObservaciones(activoValoracion.getObservaciones());
 
 		genericDao.save(ActivoHistoricoValoraciones.class, historicoValoracion);
+		restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoValoracion.getActivo());
 
 		return true;
 	}
@@ -1038,8 +1056,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Usuario grupoPublicacion= genericDao.get(Usuario.class, filtroUsuarioGrupoPublicacion,filtroUsuarioGrupoPublicacionBorrado);
 
 		if (guardadoEnHistorico) {
-			saveActivoValoracionHistorico(activoValoracion);
-			activoDao.deleteValoracionById(id);
+			if(activoDao.deleteValoracionSinDuplicarById(id)) saveActivoValoracionHistorico(activoValoracion);
 		} else if (!Checks.esNulo(activoValoracion.getGestor())
 				&& !adapter.getUsuarioLogado().equals(activoValoracion.getGestor()) 
 				&& !eXTGrupoUsuariosApi.usuarioPerteneceAGrupo(adapter.getUsuarioLogado(), grupoPrecio)
@@ -1050,9 +1067,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		} else {
 			// Al anular el precio vigente, se hace un borrado lógico, y no se
 			// inserta en el histórico
-			genericDao.deleteById(ActivoValoraciones.class, id);
+			genericDao.deleteById(ActivoValoraciones.class, id);			
 		}
-
+		restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoValoracion.getActivo());
 		return true;
 	}
 
@@ -1218,7 +1235,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (fileItem.getMetadata().containsKey("descripcion")) {
 					activoFoto.setDescripcion(fileItem.getMetadata().get("descripcion"));
 				}
-				if (fileItem.getMetadata().containsKey("principal")
+				if (fileItem.getMetadata().containsKey("principal") && fileItem.getMetadata().get("principal") != null
 						&& fileItem.getMetadata().get("principal").equals("1")) {
 					activoFoto.setPrincipal(Boolean.TRUE);
 				} else {
@@ -1227,7 +1244,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				Date fechaSubida = new Date();
 				if (fileItem.getMetadata().containsKey("fecha_subida")) {
 					try {
-						fechaSubida = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S")
+						fechaSubida = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 								.parse(fileItem.getMetadata().get("fecha_subida"));
 					} catch (Exception e) {
 						logger.error("El webservice del Gestor documental ha enviado una fecha sin formato");
@@ -1236,7 +1253,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 				activoFoto.setFechaDocumento(fechaSubida);
 
-				if (fileItem.getMetadata().containsKey("interior_exterior")) {
+				if (fileItem.getMetadata().containsKey("interior_exterior") && fileItem.getMetadata().get("interior_exterior") != null) {
 					if (fileItem.getMetadata().get("interior_exterior").equals("1")) {
 						activoFoto.setInteriorExterior(Boolean.TRUE);
 					} else {
@@ -1399,6 +1416,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return !Checks.esNulo(activoDao.getPresupuestoActual(idActivo));
 	}
 
+	@SuppressWarnings("deprecation")
 	@BusinessOperationDefinition("activoManager.comprobarPestanaCheckingInformacion")
 	public Boolean comprobarPestanaCheckingInformacion(Long idActivo) {
 		Activo activo = this.get(idActivo);
@@ -1693,6 +1711,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				beanUtilNotNull.copyProperty(condicionAnterior, "fechaHasta", new Date());
 				condicionAnterior.setUsuarioBaja(adapter.getUsuarioLogado());
 				genericDao.save(ActivoCondicionEspecifica.class, condicionAnterior);
+				
 			}
 
 		} catch (IllegalAccessException e) {
@@ -1702,6 +1721,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		genericDao.save(ActivoCondicionEspecifica.class, condicionEspecifica);
+		restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, this.get(dtoCondicionEspecifica.getIdActivo()));
 
 		return true;
 	}
@@ -1722,6 +1742,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 
 			genericDao.save(ActivoCondicionEspecifica.class, condicionEspecifica);
+			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, condicionEspecifica.getActivo());
 
 			return true;
 		} else {
@@ -1746,6 +1767,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 
 			genericDao.save(ActivoCondicionEspecifica.class, condicionEspecifica);
+			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, condicionEspecifica.getActivo());
 
 			return true;
 		} else {
@@ -1871,26 +1893,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	public boolean isInformeComercialAceptado(Activo activo) {
-		boolean resultado = false;
-		if(activo != null){
+		if(!Checks.esNulo(activo)){
 			Filter filter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-			Order order = new Order(OrderType.DESC, "id");
+			Order order = new Order(OrderType.DESC, "fecha");
 			List<ActivoEstadosInformeComercialHistorico> activoEstadoInfComercialHistoricoList = genericDao
 					.getListOrdered(ActivoEstadosInformeComercialHistorico.class, order, filter);
 			if (!Checks.estaVacio(activoEstadoInfComercialHistoricoList)) {
-				//ActivoEstadosInformeComercialHistorico historico = activoEstadoInfComercialHistoricoList.get(0);
-				for(ActivoEstadosInformeComercialHistorico historico : activoEstadoInfComercialHistoricoList) {
-					if (historico.getEstadoInformeComercial().getCodigo()
-							.equals(DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION))
-						resultado = true;
-					else if(historico.getEstadoInformeComercial().getCodigo()
-							.equals(DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_RECHAZO))
-						resultado = false;
-				}
-			}
+				ActivoEstadosInformeComercialHistorico historico = null;
+				int i = 0;				
+				do {
+					historico = activoEstadoInfComercialHistoricoList.get(i);
+					if (historico.getEstadoInformeComercial().getCodigo().equals(DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION))
+						return true;
+					i++;
+				}while((i <= activoEstadoInfComercialHistoricoList.size()) && Checks.esNulo(historico.getFecha()));
+								
+			}			
 		}
 
-		return resultado;
+		return false;
 	}
 
 	@Override
@@ -1994,6 +2015,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 
 			genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoMediador);
+			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
@@ -2296,6 +2318,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				perimetroActivo.getAuditoria().setUsuarioCrear(adapter.getUsuarioLogado().getUsername());
 				genericDao.save(PerimetroActivo.class, perimetroActivo);
 			}
+			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, perimetroActivo.getActivo());
 
 		} catch (Exception ex) {
 			logger.error("Error en activoManager", ex);
@@ -2371,6 +2394,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				activoBancario.getAuditoria().setUsuarioCrear(adapter.getUsuarioLogado().getUsername());
 				genericDao.save(ActivoBancario.class, activoBancario);
 			}
+			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoBancario.getActivo());
 
 		} catch (Exception ex) {
 			logger.error("Error en activoManager", ex);
@@ -2396,7 +2420,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	public boolean isActivoConReservaByEstado(Activo activo, String codEstado) {
 
-		for (Reserva reserva : this.getReservasByActivo(activo)) {
+		for (Reserva reserva : this.getReservasByActivoOfertaAceptada(activo)) {
 
 			if (!Checks.esNulo(reserva.getEstadoReserva())
 					&& reserva.getEstadoReserva().getCodigo().equals(codEstado)) {
@@ -2408,18 +2432,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
-	public List<Reserva> getReservasByActivo(Activo activo) {
+	public List<Reserva> getReservasByActivoOfertaAceptada(Activo activo) {
 
 		List<Reserva> reservas = new ArrayList<Reserva>();
 
 		if (!Checks.estaVacio(activo.getOfertas())) {
 			for (ActivoOferta activoOferta : activo.getOfertas()) {
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id",
-						activoOferta.getPrimaryKey().getOferta().getId());
-				ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
-
-				if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getReserva())) {
-					reservas.add(expediente.getReserva());
+				if(!Checks.esNulo(activoOferta.getPrimaryKey().getOferta()) && DDEstadoOferta.CODIGO_ACEPTADA.equals(activoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo())){
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id",
+							activoOferta.getPrimaryKey().getOferta().getId());
+					ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
+	
+					if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getReserva())) {
+						reservas.add(expediente.getReserva());
+					}
 				}
 			}
 		}
@@ -3106,7 +3132,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 								|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
 								|| DDEstadosExpedienteComercial.ALQUILADO.equals(expediente.getEstado().getCodigo())
 								|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo())
-								|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo()))
+								|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.FIRMADO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo()))
 							ofertaAceptada = ofertaAux;
 					}
 				}
@@ -3377,6 +3405,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 
 			genericDao.update(ActivoIntegrado.class, activoIntegrado);
+			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoIntegrado.getActivo());
+			
 			return true;
 
 		} catch (Exception e) {
@@ -3568,7 +3598,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	public DtoComercialActivo getComercialActivo(DtoComercialActivo dto) {
-
+		Date fechaVenta = null;
 		if (Checks.esNulo(dto.getId())) {
 			return dto;
 		}
@@ -3593,7 +3623,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				// Obtener datos de venta en REM.
 				if (!Checks.esNulo(exp)) {
 					beanUtilNotNull.copyProperty(dto, "fechaVenta", exp.getFechaVenta());
-
+					fechaVenta = exp.getFechaVenta();
 					Double importe = null;
 					
 					if(!Checks.esNulo(activo.getSituacionComercial()) &&
@@ -3629,6 +3659,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (!Checks.esNulo(activo.getImporteVentaExterna())) {
 					beanUtilNotNull.copyProperty(dto, "importeVenta", activo.getImporteVentaExterna());
 				}
+				
+			}
+			if(!Checks.esNulo(fechaVenta)){
+				beanUtilNotNull.copyProperty(dto, "ventaExterna", true);
+			}else{
+				beanUtilNotNull.copyProperty(dto, "ventaExterna", !Checks.esNulo(activo.getFechaVentaExterna()));
 			}
 
 			if (!Checks.esNulo(activo.getObservacionesVentaExterna())) {
@@ -3658,12 +3694,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			beanUtilNotNull.copyProperty(activo, "fechaVentaExterna", dto.getFechaVenta());
 			beanUtilNotNull.copyProperty(activo, "importeVentaExterna", dto.getImporteVenta());
 			beanUtilNotNull.copyProperty(activo, "observacionesVentaExterna", dto.getObservaciones());
+			dto.setVentaExterna(Checks.esNulo(activo.getFechaVentaExterna()));
 
 			// Si se ha introducido valores en fecha o importe de venta, se
 			// actualiza la situación comercial y estado publicación del activo.
 			// También son rechazadas las ofertas pendientes.
 			if (!Checks.esNulo(dto.getFechaVenta()) || !Checks.esNulo(dto.getImporteVenta())){
 				this.setSituacionComercialAndEstadoPublicacion(activo);
+				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
+					activo.setVentaDirectaBankia(true);
+				}
 
 				List<ActivoOferta> listaActivoOfertas = activo.getOfertas();
 				if(listaActivoOfertas != null && listaActivoOfertas.size() > 0) {
@@ -3844,6 +3884,269 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return false;
 		
 	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean updateActivoPropietarioTab(DtoPropietario propietario) {
+		Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", Long.parseLong(propietario.getIdActivo()));
+		Filter proFilter = genericDao.createFilter(FilterType.EQUALS, "propietario.id", Long.parseLong(propietario.getIdPropietario()));
+		if (propietario.getTipoPropietario().equals("Principal")) {
+			
+			ActivoPropietarioActivo propietarioActivo = genericDao.get(ActivoPropietarioActivo.class, activoFilter, proFilter);
+			
+			propietarioActivo.setPorcPropiedad(propietario.getPorcPropiedad());
+			
+			Filter propiedadFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getTipoGradoPropiedadCodigo());
+			DDTipoGradoPropiedad tipoGrado = genericDao.get(DDTipoGradoPropiedad.class, propiedadFilter);
+			propietarioActivo.setTipoGradoPropiedad(tipoGrado);
+			
+			genericDao.update(ActivoPropietarioActivo.class, propietarioActivo);
+			return true;
+		} else if (propietario.getTipoPropietario().equals("Copropietario")){
+			Filter cproFilter = genericDao.createFilter(FilterType.EQUALS, "coPropietario.id", Long.parseLong(propietario.getIdPropietario()));
+			Filter idProFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(propietario.getIdPropietario()));
+			ActivoCopropietarioActivo copropietarioActivo = genericDao.get(ActivoCopropietarioActivo.class, activoFilter, cproFilter);
+			ActivoCopropietario copropietario = genericDao.get(ActivoCopropietario.class, idProFilter);
+			
+			if (!Checks.esNulo(propietario.getPorcPropiedad())){
+				copropietarioActivo.setPorcPropiedad(propietario.getPorcPropiedad());
+			} else {
+				return false;
+			}
+			
+			if (!Checks.esNulo(propietario.getTipoGradoPropiedadCodigo())){
+				Filter propiedadFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getTipoGradoPropiedadCodigo());
+				DDTipoGradoPropiedad tipoGrado = genericDao.get(DDTipoGradoPropiedad.class, propiedadFilter);
+				copropietarioActivo.setTipoGradoPropiedad(tipoGrado);
+			} else {
+				return false;
+			}
+			
+			if (!Checks.esNulo(propietario.getTipoPersonaCodigo())){
+			Filter personaFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getTipoPersonaCodigo());
+			DDTipoPersona tipoPersona = genericDao.get(DDTipoPersona.class, personaFilter);
+			copropietario.setTipoPersona(tipoPersona);
+			}
+			
+			if (!Checks.esNulo(propietario.getNombre())){
+				copropietario.setNombre(propietario.getNombre());
+			}else {
+				return false;
+			}
+			
+			if (!Checks.esNulo(propietario.getTipoDocIdentificativoCodigo())){
+				Filter docFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getTipoDocIdentificativoCodigo());
+				DDTipoDocumento tipoDocumento = genericDao.get(DDTipoDocumento.class, docFilter);
+				copropietario.setTipoDocIdentificativo(tipoDocumento);
+			}
+			
+			if (!Checks.esNulo(propietario.getDocIdentificativo())){
+				copropietario.setDocIdentificativo(propietario.getDocIdentificativo());
+			}
+			
+			if(!Checks.esNulo(propietario.getDireccion())){
+				copropietario.setDireccion(propietario.getDireccion());
+			}
+			
+			if (!Checks.esNulo(propietario.getProvinciaCodigo())){
+				Filter provFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getProvinciaCodigo());
+				DDProvincia provincia = genericDao.get(DDProvincia.class, provFilter);
+				copropietario.setProvincia(provincia);
+			}
+			
+			if (!Checks.esNulo(propietario.getLocalidadCodigo())){
+				Filter locFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getLocalidadCodigo());
+				Localidad localidad = genericDao.get(Localidad.class, locFilter);
+				copropietario.setLocalidad(localidad);
+			}
+			
+			if (!Checks.esNulo(propietario.getCodigoPostal())){
+				copropietario.setCodigoPostal(Integer.parseInt(propietario.getCodigoPostal()));
+			}
+			
+			if (!Checks.esNulo(propietario.getTelefono())){
+				copropietario.setTelefono(propietario.getTelefono());
+			}
+			
+			if (!Checks.esNulo(propietario.getEmail())){
+				copropietario.setEmail(propietario.getEmail());
+			}
+			if (!Checks.esNulo(propietario.getNombreContacto())){
+				copropietario.setNombreContacto(propietario.getNombreContacto());
+			}
+			if (!Checks.esNulo(propietario.getTelefono1Contacto())){
+				copropietario.setTelefono1Contacto(propietario.getTelefono1Contacto());
+			}
+			if (!Checks.esNulo(propietario.getTelefono2Contacto())){
+				copropietario.setTelefono2Contacto(propietario.getTelefono2Contacto());
+			}
+			if (!Checks.esNulo(propietario.getEmailContacto())){
+				copropietario.setEmailContacto(propietario.getEmailContacto());
+			}
+			if(!Checks.esNulo(propietario.getDireccionContacto())){
+				copropietario.setDireccionContacto(propietario.getDireccionContacto());
+			}
+			if (!Checks.esNulo(propietario.getProvinciaContactoCodigo())){
+				Filter provFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getProvinciaContactoCodigo());
+				DDProvincia provincia = genericDao.get(DDProvincia.class, provFilter);
+				copropietario.setProvinciaContacto(provincia);
+			}
+			if (!Checks.esNulo(propietario.getLocalidadContactoCodigo())){
+				Filter locFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getLocalidadContactoCodigo());
+				Localidad localidad = genericDao.get(Localidad.class, locFilter);
+				copropietario.setLocalidadContacto(localidad);
+			}
+			if (!Checks.esNulo(propietario.getCodigoPostalContacto())){
+				copropietario.setCodigoPostalContacto(Integer.parseInt(propietario.getCodigoPostalContacto()));
+			}
+			if (!Checks.esNulo(propietario.getObservaciones())){
+				copropietario.setObservaciones(propietario.getObservaciones());
+			}
+			
+			genericDao.update(ActivoCopropietario.class, copropietario);
+			genericDao.update(ActivoCopropietarioActivo.class, copropietarioActivo);			
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean createActivoPropietarioTab(DtoPropietario propietario) {
+		if (!Checks.esNulo(propietario.getIdActivo())){
+			ActivoCopropietarioActivo copropietarioActivo = new ActivoCopropietarioActivo();
+			ActivoCopropietario copropietario = new ActivoCopropietario();
+			
+			Filter actFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(propietario.getIdActivo()));
+			Activo activo = genericDao.get(Activo.class, actFilter);
+			copropietarioActivo.setActivo(activo);
+			
+			if (!Checks.esNulo(propietario.getPorcPropiedad())){
+				copropietarioActivo.setPorcPropiedad(propietario.getPorcPropiedad());
+			} else {
+				return false;
+			}
+			
+			if (!Checks.esNulo(propietario.getTipoGradoPropiedadCodigo())){
+				Filter propiedadFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getTipoGradoPropiedadCodigo());
+				DDTipoGradoPropiedad tipoGrado = genericDao.get(DDTipoGradoPropiedad.class, propiedadFilter);
+				copropietarioActivo.setTipoGradoPropiedad(tipoGrado);
+			} else {
+				return false;
+			}
+			
+			if (!Checks.esNulo(propietario.getTipoPersonaCodigo())){
+			Filter personaFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getTipoPersonaCodigo());
+			DDTipoPersona tipoPersona = genericDao.get(DDTipoPersona.class, personaFilter);
+			copropietario.setTipoPersona(tipoPersona);
+			}
+			
+			if (!Checks.esNulo(propietario.getNombre())){
+				copropietario.setNombre(propietario.getNombre());
+			}else {
+				return false;
+			}
+			
+			if (!Checks.esNulo(propietario.getTipoDocIdentificativoCodigo())){
+				Filter docFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getTipoDocIdentificativoCodigo());
+				DDTipoDocumento tipoDocumento = genericDao.get(DDTipoDocumento.class, docFilter);
+				copropietario.setTipoDocIdentificativo(tipoDocumento);
+			}
+			
+			if (!Checks.esNulo(propietario.getDocIdentificativo())){
+				copropietario.setDocIdentificativo(propietario.getDocIdentificativo());
+			}
+			
+			if(!Checks.esNulo(propietario.getDireccion())){
+				copropietario.setDireccion(propietario.getDireccion());
+			}
+			
+			if (!Checks.esNulo(propietario.getProvinciaCodigo())){
+				Filter provFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getProvinciaCodigo());
+				DDProvincia provincia = genericDao.get(DDProvincia.class, provFilter);
+				copropietario.setProvincia(provincia);
+			}
+			
+			if (!Checks.esNulo(propietario.getLocalidadCodigo())){
+				Filter locFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getLocalidadCodigo());
+				Localidad localidad = genericDao.get(Localidad.class, locFilter);
+				copropietario.setLocalidad(localidad);
+			}
+			
+			if (!Checks.esNulo(propietario.getCodigoPostal())){
+				copropietario.setCodigoPostal(Integer.parseInt(propietario.getCodigoPostal()));
+			}
+			
+			if (!Checks.esNulo(propietario.getTelefono())){
+				copropietario.setTelefono(propietario.getTelefono());
+			}
+			
+			if (!Checks.esNulo(propietario.getEmail())){
+				copropietario.setEmail(propietario.getEmail());
+			}
+			if (!Checks.esNulo(propietario.getNombreContacto())){
+				copropietario.setNombreContacto(propietario.getNombreContacto());
+			}
+			if (!Checks.esNulo(propietario.getTelefono1Contacto())){
+				copropietario.setTelefono1Contacto(propietario.getTelefono1Contacto());
+			}
+			if (!Checks.esNulo(propietario.getTelefono2Contacto())){
+				copropietario.setTelefono2Contacto(propietario.getTelefono2Contacto());
+			}
+			if (!Checks.esNulo(propietario.getEmailContacto())){
+				copropietario.setEmailContacto(propietario.getEmailContacto());
+			}
+			if(!Checks.esNulo(propietario.getDireccionContacto())){
+				copropietario.setDireccionContacto(propietario.getDireccionContacto());
+			}
+			if (!Checks.esNulo(propietario.getProvinciaContactoCodigo())){
+				Filter provFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getProvinciaContactoCodigo());
+				DDProvincia provincia = genericDao.get(DDProvincia.class, provFilter);
+				copropietario.setProvinciaContacto(provincia);
+			}
+			if (!Checks.esNulo(propietario.getLocalidadContactoCodigo())){
+				Filter locFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", propietario.getLocalidadContactoCodigo());
+				Localidad localidad = genericDao.get(Localidad.class, locFilter);
+				copropietario.setLocalidadContacto(localidad);
+			}
+			if (!Checks.esNulo(propietario.getCodigoPostalContacto())){
+				copropietario.setCodigoPostalContacto(Integer.parseInt(propietario.getCodigoPostalContacto()));
+			}
+			if (!Checks.esNulo(propietario.getObservaciones())){
+				copropietario.setObservaciones(propietario.getObservaciones());
+			}
+			
+			genericDao.save(ActivoCopropietario.class, copropietario);
+			copropietarioActivo.setCoPropietario(copropietario);
+			
+			genericDao.save(ActivoCopropietarioActivo.class, copropietarioActivo);			
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean deleteActivoPropietarioTab(DtoPropietario propietario) {
+		if (!Checks.esNulo(propietario.getIdActivo()) && !Checks.esNulo(propietario.getIdPropietario())){
+			
+			Filter actFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", Long.parseLong(propietario.getIdActivo()));
+			Filter cprFilter = genericDao.createFilter(FilterType.EQUALS, "coPropietario.id", Long.parseLong(propietario.getIdPropietario()));
+			Filter coproFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(propietario.getIdPropietario()));
+			
+			ActivoCopropietarioActivo copropietarioActivo = genericDao.get(ActivoCopropietarioActivo.class, actFilter, cprFilter);
+			ActivoCopropietario copropietario = genericDao.get(ActivoCopropietario.class, coproFilter);
+			
+			genericDao.deleteById(ActivoCopropietarioActivo.class, copropietarioActivo.getId());
+			
+			genericDao.deleteById(ActivoCopropietario.class, copropietario.getId());	
+						
+			return true;
+		}else {
+			return false;
+		}
+	}
 
 	@Override
 	@Transactional(readOnly = false)
@@ -3875,14 +4178,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Usuario usuarioSupervisorReserva = null;
 		Usuario usuarioGestorMinuta = null;
 		Usuario usuarioSupervisorMinuta = null;
-		
+		ActivoAgrupacion agrupacion= null;
 		Activo activo= null;
 		if(!Checks.esNulo(oferta)){
 			/*Antes se diferenciaba entre agrupacion lote comercial y lote restringido
 			 * Comercial: Asignaba los gestores que hubiese en la ficha del activo
 			 * Restringida: Llama al procedimiento de balanceo (como si fuera un activo individual
 			 * Ahora se quieren todos iguales, la unica diferencia es que el lote comercial no tiene activo principal y el resto si (restringida y activo unico)*/
-			ActivoAgrupacion agrupacion = oferta.getAgrupacion();
+			agrupacion = oferta.getAgrupacion();
 			if(!Checks.esNulo(agrupacion)){				
 				if(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupacion.getTipoAgrupacion().getCodigo())){
 					if(!Checks.estaVacio(oferta.getActivosOferta())){
@@ -3928,16 +4231,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 		}
 		
-		if(!Checks.esNulo(usuarioGestorFormalizacion))
-			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION, usuarioGestorFormalizacion.getUsername(), dto);
-		else
-			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION, "GESTFORM", dto);
-		
-		
-		this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION, "SUPFORM",dto);
-		
-		if(!Checks.esNulo(usuarioGestoriaFormalizacion))
-			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION, usuarioGestoriaFormalizacion.getUsername(), dto);
+		PerimetroActivo perimetro = getPerimetroByIdActivo(activo.getId());
+
+		if((Checks.esNulo(agrupacion) && !Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaFormalizar()) && BooleanUtils.toBoolean(perimetro.getAplicaFormalizar())) || 
+				(!Checks.esNulo(agrupacion) && BooleanUtils.toBoolean(agrupacion.getIsFormalizacion()))) {
+			if(!Checks.esNulo(usuarioGestorFormalizacion))
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION, usuarioGestorFormalizacion.getUsername(), dto);
+			else
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION, "GESTFORM", dto);
+			
+			
+			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION, "SUPFORM",dto);
+			
+			if(!Checks.esNulo(usuarioGestoriaFormalizacion))
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION, usuarioGestoriaFormalizacion.getUsername(), dto);
+		}
 		
 		if(!Checks.esNulo(usuarioGestorComercial))
 			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_COMERCIAL, usuarioGestorComercial.getUsername(), dto);
@@ -4101,10 +4409,59 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		return null;	
 	}
+	
+	@Override
+	public ActivoProveedor getMediador(Activo activo){
+		ActivoInfoComercial infoComercial = activo.getInfoComercial();
+		if(!Checks.esNulo(infoComercial)){
+			return infoComercial.getMediadorInforme();
+		}
+		return null;
+	}
 
 	@Override
 	public List<VPreciosVigentes> getPreciosVigentesById(Long id) {
 		return activoAdapter.getPreciosVigentesById(id);
+	}
+	
+	@Override
+	public void deleteActivoDistribucion(Long idActivoInfoComercial){
+		activoDao.deleteActivoDistribucion(idActivoInfoComercial);		
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void calcularFechaTomaPosesion(Activo activo){
+		if(!Checks.esNulo(activo.getTipoTitulo())){
+			if(DDTipoTituloActivo.tipoTituloJudicial.equals(activo.getTipoTitulo().getCodigo())){
+				
+				if(!Checks.esNulo(activo.getAdjJudicial()) && !Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien())){
+					if(!Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario())){
+						if(activo.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario()){
+							activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionLanzamiento());
+							//activoDto.setFechaTomaPosesion(activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionLanzamiento());
+						}else{
+							activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionPosesion());
+							//activoDto.setFechaTomaPosesion(activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionPosesion());
+						}
+					}
+					else{
+						activo.getSituacionPosesoria().setFechaTomaPosesion(null);
+						//activoDto.setFechaTomaPosesion(null);
+					}
+				}
+			}
+			else if(DDTipoTituloActivo.tipoTituloNoJudicial.equals(activo.getTipoTitulo().getCodigo())){
+				if(!Checks.esNulo(activo.getAdjNoJudicial())){
+					if(Checks.esNulo(activo.getSituacionPosesoria().getEditadoFechaTomaPosesion()) || !activo.getSituacionPosesoria().getEditadoFechaTomaPosesion()){
+						activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaTitulo());
+						//activoDto.setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaTitulo());
+					}
+				}
+			}
+		}
+		genericDao.save(ActivoSituacionPosesoria.class, activo.getSituacionPosesoria());
+		
 	}
 
 }

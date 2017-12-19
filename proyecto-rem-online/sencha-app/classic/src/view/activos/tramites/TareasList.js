@@ -45,7 +45,7 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
              {
 	           	 name: 'btnSaltoRE',
 	           	 itemId: 'btnSaltoRE',
-	           	 text: 'Anular trámite comercial',
+	           	 text: 'Anulación del expediente',
 	           	 secFunPermToShow: 'BOTON_RESOLUCION_EXPEDIENTE',
 	          	 handler: 'saltoResolucionExpediente',
 	          	 bind: {

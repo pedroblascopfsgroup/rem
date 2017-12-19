@@ -22,6 +22,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
@@ -42,6 +43,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
+import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
@@ -118,6 +120,22 @@ public interface ActivoApi {
 
 	@BusinessOperationDefinition("activoManager.isIntegradoAgrupacionRestringida")
 	public boolean isIntegradoAgrupacionRestringida(Long id, Usuario usuarioLogado);
+	
+	/**
+	 * Este método comprueba si el ID de activo pertenece a una agrupación de tipo restringida.
+	 * 
+	 * @param idActivo: ID del activo a comprobar.
+	 * @return Devuelve True si el activo pertenece a una agruapción restringida, false si no.
+	 */
+	public boolean isActivoIntegradoAgrupacionRestringida(Long idActivo);
+
+	/**
+	 * Este método comprueba si el ID de activo pertenece a una agrupación de tipo comercial.
+	 * 
+	 * @param idActivo: ID del activo a comprobar.
+	 * @return Devuelve True si el activo pertenece a una agruapción comercial, false si no.
+	 */
+	public boolean isActivoIntegradoAgrupacionComercial(Long idActivo);
 
 	@BusinessOperationDefinition("activoManager.isIntegradoAgrupacionObraNueva")
 	public boolean isIntegradoAgrupacionObraNueva(Long id, Usuario usuarioLogado);
@@ -580,7 +598,7 @@ public interface ActivoApi {
 	 * @param activo
 	 * @return
 	 */
-	public List<Reserva> getReservasByActivo(Activo activo);
+	public List<Reserva> getReservasByActivoOfertaAceptada(Activo activo);
 
 	/**
 	 * HREOS-843. Comrpueba si el activo esta vendido, viendo si tiene fecha de
@@ -1027,7 +1045,20 @@ public interface ActivoApi {
 	 */
 	Usuario getUsuarioMediador(Activo activo);
 	
+	/**
+	 * Devuelve el ActivoProveedor del activo. En caso de no existir devuelve null.
+	 * @param oferta
+	 * @return ActivoProveedor
+	 */
+	public ActivoProveedor getMediador(Activo activo);
+	
 	public Boolean saveActivoCargaTab(DtoActivoCargasTab cargaDto);
+	
+	public Boolean updateActivoPropietarioTab(DtoPropietario propietario);
+	
+	public Boolean createActivoPropietarioTab(DtoPropietario propietario);
+	
+	public Boolean deleteActivoPropietarioTab(DtoPropietario propietario);
 	
 	/**
 	 * Devuelve la lista de precios vigentes para un activo dado.
@@ -1035,5 +1066,9 @@ public interface ActivoApi {
 	 * @return List<VPreciosVigentes>
 	 */
 	public List<VPreciosVigentes> getPreciosVigentesById(Long id);
+	
+	public void deleteActivoDistribucion(Long idActivoInfoComercial);
+	
+	public void calcularFechaTomaPosesion(Activo activo);
 
 }

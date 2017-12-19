@@ -28,4 +28,55 @@ mput $INSTALL_DIR/control/etl/tinsa_certify/output/TINSACERTIFY_STOCK_GASTOS_RG_
 bye
 EOF
 echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/garsa/output
+
+echo "Gestoria GARSA - GARSA_STOCK_GASTOS_RG_${1}.dat"
+lftp -u sftp_garsa,bMqBKpiL sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/garsa/output/GARSA_STOCK_GASTOS_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/gutierrez_labrador/output
+
+echo "Gestoria GUTIERREZ_LABRADOR - GUTIERREZL_STOCK_GASTOS_RG_${1}.dat"
+lftp -u sftp_gutierrez,xWySWrwQ sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/gutierrez_labrador/output/GUTIERREZL_STOCK_GASTOS_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/montalvo/output
+
+echo "Gestoria MONTALVO - MONTALVO_STOCK_GASTOS_RG_${1}.dat"
+lftp -u sftp_montalvo,ghBTFtDz sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/montalvo/output/MONTALVO_STOCK_GASTOS_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/pinos/output
+
+echo "Gestoria PINOS - PINOS_STOCK_GASTOS_RG_${1}.dat"
+lftp -u sftp_pinos,leChDHxh sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/pinos/output/PINOS_STOCK_GASTOS_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/uniges/output
+
+echo "Gestoria UNIGES - UNIGES_STOCK_GASTOS_RG_${1}.dat"
+lftp -u sftp_uniges,IOViuMTI sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/uniges/output/UNIGES_STOCK_GASTOS_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
 echo "Fin del proceso de volcado de los ficheros de errores de gastos a las gestorias"

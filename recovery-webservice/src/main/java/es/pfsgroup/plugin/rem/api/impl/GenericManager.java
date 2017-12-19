@@ -456,7 +456,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		for (DDSubtipoTrabajo subtipo : subtipos) {
 			if (!subtipo.getCodigo().equalsIgnoreCase(DDSubtipoTrabajo.CODIGO_AT_OBRA_MENOR_NO_TARIFICADA)
 					&& !subtipo.getCodigo().equalsIgnoreCase(DDSubtipoTrabajo.CODIGO_AT_CONTROL_ACTUACIONES)
-					&& !subtipo.getCodigo().equalsIgnoreCase(DDSubtipoTrabajo.CODIGO_AT_COLOCACION_PUERTAS)
 					&& !subtipo.getCodigo().equalsIgnoreCase(DDSubtipoTrabajo.CODIGO_AT_MOBILIARIO)) {
 				subtiposTarificados.add(subtipo);
 			}

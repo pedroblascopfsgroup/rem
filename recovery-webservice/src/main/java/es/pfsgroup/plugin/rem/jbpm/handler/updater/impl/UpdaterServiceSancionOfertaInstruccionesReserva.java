@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,12 +16,12 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 
 @Component
@@ -32,9 +34,6 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
     private OfertaApi ofertaApi;
     
     @Autowired
-    private TrabajoApi trabajoApi;
-    
-    @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
     
     private static final String FECHA_ENVIO = "fechaEnvio";
@@ -42,6 +41,8 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
    	private static final String CODIGO_T013_INSTRUCCIONES_RESERVA = "T013_InstruccionesReserva";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+	
+	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaInstruccionesReserva.class);
 	
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		
@@ -75,6 +76,14 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 					}
 				}
 				genericDao.save(ExpedienteComercial.class, expediente);
+			}
+			//LLamada servicio web Bankia para modificaciones según tipo propuesta (MOD3) 
+			if(!Checks.estaVacio(valores)){
+				if(!Checks.esNulo(ofertaAceptada.getActivoPrincipal()) 
+						&& !Checks.esNulo(ofertaAceptada.getActivoPrincipal().getCartera())
+						&& ofertaAceptada.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)){
+					ofertaApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
+				}
 			}
 		}
 

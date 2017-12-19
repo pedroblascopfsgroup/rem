@@ -41,6 +41,9 @@ public class DDSubcartera implements Auditable, Dictionary {
 	public static final String CODIGO_BAN_BH = "06";
 	public static final String CODIGO_BAN_BFA = "07";
 	public static final String CODIGO_BAN_BK = "08";
+	public static final String CODIGO_BANKIA_SOLVIA = "14";
+	public static final String CODIGO_BANKIA_SAREB = "15";
+	public static final String CODIGO_BANKIA_SAREB_PRE_IBERO = "19";
 	
 
 	@Id

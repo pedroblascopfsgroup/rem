@@ -74,7 +74,7 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasManual', {
 		            	allowBlank: true,
 						bind: {
 							disabled: '{!entidadPropietariaCodigoRef.value}',
-		            		store: '{comboTiposPropuesta}'
+		            		store: '{comboTiposPropuestaManual}'
 		            	}
 					},
 					{ 

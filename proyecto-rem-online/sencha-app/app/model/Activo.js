@@ -37,6 +37,13 @@ Ext.define('HreRem.model.Activo', {
     			depends: 'entidadPropietariaCodigo'
     		},
     		{
+    			name: 'isCarteraHyT',
+    			calculate: function(data) { 
+    				return data.entidadPropietariaCodigo == CONST.CARTERA['HYT'];
+    			},
+    			depends: 'entidadPropietariaCodigo'
+    		},
+    		{
     			name: 'subcarteraCodigo'
     		},
     		{
@@ -546,6 +553,14 @@ Ext.define('HreRem.model.Activo', {
 				type: 'boolean'
 			},
 			{
+				name: 'pertenceAgrupacionAsistida',
+				type: 'boolean'
+			},
+			{
+				name: 'pertenceAgrupacionObraNueva',
+				type: 'boolean'
+			},
+			{
 				name: 'bloqueoTipoComercializacionAutomatico',
 				type: 'boolean'
 			},
@@ -576,6 +591,12 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'codigoPromocionPrinex'
+			},
+			{
+				name: 'entradaActivoBankiaCodigo'
+			},
+			{
+				name: 'numInmovilizadoBankia'
 			}
     ],
     

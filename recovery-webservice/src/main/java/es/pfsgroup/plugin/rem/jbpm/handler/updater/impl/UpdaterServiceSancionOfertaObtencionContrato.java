@@ -105,10 +105,9 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 				if (FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					Reserva reserva = expediente.getReserva();
 					if (!Checks.esNulo(reserva)) {
-						try {
-							//Si hay reserva y firma, se desbloquea la tarea ResultadoPBC
-							reactivarTareaResultadoPBC(valor.getTareaExterna(), expediente);
-							
+						//Si hay reserva y firma, se desbloquea la tarea ResultadoPBC
+						reactivarTareaResultadoPBC(valor.getTareaExterna(), expediente);
+						try {			
 							reserva.setFechaFirma(ft.parse(valor.getValor()));
 							genericDao.save(Reserva.class, reserva);
 						} catch (ParseException e) {
@@ -149,10 +148,12 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 		
 		// En el tramite, se busca tarea "Resultado PBC" y se reactiva
 		for (TareaActivo tarea : tareas) {
-			if (CODIGO_T013_RESULTADO_PBC.equals(tarea.getTareaExterna().getTareaProcedimiento().getCodigo())) {
-				if(!tarea.getTareaFinalizada() && tarea.getAuditoria().isBorrado()){
-					tarea.getAuditoria().setBorrado(false);
-					tareaPBC = tarea;
+			if (!Checks.esNulo(tarea.getTareaExterna())){
+				if (CODIGO_T013_RESULTADO_PBC.equals(tarea.getTareaExterna().getTareaProcedimiento().getCodigo())) {
+					if(!tarea.getTareaFinalizada() && tarea.getAuditoria().isBorrado()){
+						tarea.getAuditoria().setBorrado(false);
+						tareaPBC = tarea;
+					}
 				}
 			}
 

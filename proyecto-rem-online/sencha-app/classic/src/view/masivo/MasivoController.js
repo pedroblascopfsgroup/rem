@@ -19,11 +19,10 @@ Ext.define('HreRem.view.masivo.MasivoController', {
                 	if(!Ext.isEmpty(o.response.responseText)) {
                 		var response = Ext.JSON.decode(o.response.responseText);
                 		if(response.success == "false")  {
-                			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));                			
+                			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));  
+                			me.getView().lookupReference("listadoCargamasiva").getStore().load();
                 		} else {		                			                	
 		                    me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-		                    
-		                    
 		                    me.getView().lookupReference("listadoCargamasiva").getSelectionModel().deselectAll();
                         	me.getView().lookupReference("listadoCargamasiva").getSelectionModel().clearSelections();
 		                    me.getView().lookupReference("listadoCargamasiva").getStore().load();
@@ -149,9 +148,34 @@ Ext.define('HreRem.view.masivo.MasivoController', {
 		     params: parameters,
 		     timeout: 120000,  // 2 min
 		     success: function(response, opts) {
-			     Ext.Ajax.request({
-			     	 method: 'GET',
-				     url:$AC.getRemoteUrl('process/setStateProcessed'),
+		     	 var data = {};
+		         try {
+		         	data = Ext.decode(response.responseText);
+		         } catch (e){ };
+		         if(data.data=="true"){
+				     Ext.Ajax.request({
+				     	 method: 'GET',
+					     url:$AC.getRemoteUrl('process/setStateProcessed'),
+					     params: parameters,
+					     success: function(response, opts) {
+					     	me.getView().unmask();
+					     	btn.up('grid').getStore().load();
+					     	btn.up('grid').getSelectionModel().deselectAll();
+	                        btn.up('grid').getSelectionModel().clearSelections();
+	                        btn.up('grid').down('#procesarButton').setDisabled(true);
+	    					btn.up('grid').down('#downloadButton').setDisabled(true);
+					     	
+					     	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					     },
+					     failure: function(response, opts) {
+					     	me.getView().unmask();
+					     	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					     }
+				     });
+		         }else{
+		         	 Ext.Ajax.request({
+		         	 method: 'GET',
+				     url:$AC.getRemoteUrl('process/setStateError'),
 				     params: parameters,
 				     success: function(response, opts) {
 				     	me.getView().unmask();
@@ -160,7 +184,6 @@ Ext.define('HreRem.view.masivo.MasivoController', {
                         btn.up('grid').getSelectionModel().clearSelections();
                         btn.up('grid').down('#procesarButton').setDisabled(true);
     					btn.up('grid').down('#downloadButton').setDisabled(true);
-				     	
 				     	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 				     },
 				     failure: function(response, opts) {
@@ -168,6 +191,7 @@ Ext.define('HreRem.view.masivo.MasivoController', {
 				     	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 				     }
 			     });
+		         }
 		     },
 		     failure: function(response, opts) {
 		         Ext.Ajax.request({

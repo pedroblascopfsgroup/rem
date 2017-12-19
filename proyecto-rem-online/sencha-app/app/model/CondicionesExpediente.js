@@ -199,8 +199,13 @@ Ext.define('HreRem.model.CondicionesExpediente', {
 	    },
 	    {
 	    	name: 'licenciaPorCuentaDe'
+	    },
+	    {
+	    	name: 'operacionExenta'
+	    },
+	    {
+	    	name: 'inversionDeSujetoPasivo'
 	    }
-	    
 
     ],
     

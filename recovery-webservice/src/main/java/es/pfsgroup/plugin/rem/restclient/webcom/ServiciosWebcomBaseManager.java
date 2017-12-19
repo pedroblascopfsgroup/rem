@@ -282,6 +282,7 @@ public abstract class ServiciosWebcomBaseManager {
 		ParamsList paramsList = new ParamsList();
 		if (dtoList != null) {
 			logger.trace("Convirtiendo dtoList -> ParamsList");
+			try{
 			for (WebcomRESTDto dto : dtoList) {
 				HashMap<String, Object> params = createParametersMap(dto);
 				params.putAll(Converter.dtoToMap(dto));
@@ -289,6 +290,9 @@ public abstract class ServiciosWebcomBaseManager {
 				// obligatorios. Dejamos que falle webcom.
 				// compruebaObligatorios(dto.getClass(), params);
 				paramsList.add(params);
+			}
+			}catch(Exception e){
+				
 			}
 		} else {
 			logger.trace("'dtoList' es NULL");

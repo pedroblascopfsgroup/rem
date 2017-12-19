@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 //import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
@@ -33,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
@@ -72,7 +72,7 @@ public class ResolucionComiteController {
 	@Autowired
 	private NotificatorServiceResolucionComite notificatorApi;
 	
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/resolucioncomite")
 	public void resolucionComite(ModelMap model, RestRequestWrapper request,HttpServletResponse response) {
 
@@ -88,6 +88,7 @@ public class ResolucionComiteController {
 		String cuerpo = "";
 		Long unidadGestion = null;
 		ActivoTramite tramite = null;
+		String mensajeDevolucion="";
 		
 		try {
 
@@ -126,27 +127,40 @@ public class ResolucionComiteController {
 					
 					
 					//Si existe la tarea T013_RatificacionComite, se trata de una ratificación
-					List<TareaProcedimiento> listaTareas = activoTramiteApi.getTareasByIdTramite(tramite.getId());
-					for(int i=0;i< listaTareas.size(); i++){
-						TareaProcedimiento tarea = listaTareas.get(i);						
-						if(!Checks.esNulo(tarea)){
-							if(tarea.getCodigo().equalsIgnoreCase("T013_RatificacionComite")){
-								ratificacion = true;
-								break;
-							}
+//					List<TareaProcedimiento> listaTareas = activoTramiteApi.getTareasByIdTramite(tramite.getId());
+//					for(int i=0;i< listaTareas.size(); i++){
+//						TareaProcedimiento tarea = listaTareas.get(i);						
+//						if(!Checks.esNulo(tarea)){
+//							if(tarea.getCodigo().equalsIgnoreCase("T013_RatificacionComite")){
+//								ratificacion = true;
+//								break;
+//							}
+//						}
+//					}
+					resolucionComiteDto.setCodigoTipoResolucion(DDTipoResolucion.CODIGO_TIPO_RESOLUCION);
+					usu = gestorActivoApi.userFromTarea("T013_ResolucionComite", tramite.getId());					
+					if(usu == null){
+						usu = gestorActivoApi.userFromTarea("T013_RatificacionComite", tramite.getId());
+						if(usu == null){
+							usu = gestorActivoApi.userFromTarea("T013_RespuestaOfertante", tramite.getId());
 						}
 					}
+
+					resol = resolucionComiteApi.saveOrUpdateResolucionComite(resolucionComiteDto);
 					
-					if(ratificacion){
-						usu = gestorActivoApi.userFromTarea("T013_RatificacionComite", tramite.getId());
-						resolucionComiteDto.setCodigoTipoResolucion(DDTipoResolucion.CODIGO_TIPO_RATIFICACION);
-					}else{
-						usu = gestorActivoApi.userFromTarea("T013_ResolucionComite", tramite.getId());
-						resolucionComiteDto.setCodigoTipoResolucion(DDTipoResolucion.CODIGO_TIPO_RESOLUCION);
+					if(!Checks.esNulo(resolucionComiteDto.getDevolucion()) && resolucionComiteDto.getDevolucion().equals("S")){
+						expedienteComercialApi.updateEstadoDevolucionReserva(eco, DDEstadoDevolucion.ESTADO_DEVUELTA);
+						expedienteComercialApi.updateEstadosResolucionDevolucion(eco, resolucionComiteDto);
+						usu= gestorActivoApi.getGestorComercialActual(ofr.getActivoPrincipal(), "GCOM");
+						mensajeDevolucion= "El comité sancionador de bankia ha resuelto la resolución "+resol.getEstadoResolucion().getDescripcion()+" devuelta con el importe de la reserva del expediente "+eco.getNumExpediente()+".\n";
+					}else if(!Checks.esNulo(resolucionComiteDto.getDevolucion()) && resolucionComiteDto.getDevolucion().equals("N")){
+						expedienteComercialApi.updateEstadoDevolucionReserva(eco, DDEstadoDevolucion.ESTADO_NO_PROCEDE);
+						expedienteComercialApi.updateEstadosResolucionNoDevolucion(eco, resolucionComiteDto);
+						usu= gestorActivoApi.getGestorComercialActual(ofr.getActivoPrincipal(), "GCOM");
+						mensajeDevolucion= "El comité sancionador de bankia ha resuelto la resolución "+resol.getEstadoResolucion().getDescripcion()+" retenida con el importe de la reserva del expediente "+eco.getNumExpediente()+".\n";
+
 					}
-					
-					resol = resolucionComiteApi.saveOrUpdateResolucionComite(resolucionComiteDto);				
-					
+										
 					//Envío correo/notificación
 					if(!Checks.esNulo(resol) && !Checks.esNulo(usu)){
 							
@@ -176,15 +190,20 @@ public class ResolucionComiteController {
 						   !Checks.esNulo(resol.getEstadoResolucion().getDescripcion())){
 							cuerpo +=  "Resolución: " + resol.getEstadoResolucion().getDescripcion() + ".\n";
 						}
-						if(!Checks.esNulo(resol.getMotivoDenegacion()) && 
-						   !Checks.esNulo(resol.getMotivoDenegacion().getDescripcion())){
-							cuerpo +=  "Motivo denegación: " + resol.getMotivoDenegacion().getDescripcion() + ".\n";
+						if(!Checks.esNulo(resolucionComiteDto.getDevolucion())){
+							cuerpo += mensajeDevolucion;
 						}
-						if(!Checks.esNulo(resol.getFechaAnulacion())){
-							cuerpo +=  "Fecha anulación: " + resol.getFechaAnulacion() + ".\n";
-						}
-						if(!Checks.esNulo(resol.getImporteContraoferta())){
-							cuerpo +=  "Importe contraoferta: " + resol.getImporteContraoferta() + ".\n";
+						else{
+							if(!Checks.esNulo(resol.getMotivoDenegacion()) && 
+							   !Checks.esNulo(resol.getMotivoDenegacion().getDescripcion())){
+								cuerpo +=  "Motivo denegación: " + resol.getMotivoDenegacion().getDescripcion() + ".\n";
+							}
+							if(!Checks.esNulo(resol.getFechaAnulacion())){
+								cuerpo +=  "Fecha anulación: " + resol.getFechaAnulacion() + ".\n";
+							}
+							if(!Checks.esNulo(resol.getImporteContraoferta())){
+								cuerpo +=  "Importe contraoferta: " + resol.getImporteContraoferta() + ".\n";
+							}
 						}
 						
 						cuerpo += ResolucionComiteApi.NOTIF_RESOL_COMITE_BODY_ENDMSG;
@@ -203,6 +222,9 @@ public class ResolucionComiteController {
 							notificatorApi.notificarResolucionBankia(resol,notif);
 							logger.debug("\tEnviando correo a: " + notif.getPara());
 						}
+					}else{
+						request.getPeticionRest().setErrorDesc("Se ha guardado la resolución pero no se ha podido notificar al usuario");
+						logger.error("Se ha guardado la resolución pero no se ha podido notificar al usuario");
 					}
 				}
 				
@@ -210,21 +232,29 @@ public class ResolucionComiteController {
 			
 			if(!Checks.esNulo(notifrem)){
 				model.put("id", jsonFields.get("id"));
-				model.put("error", "");
+				model.put("error", null);
 			}else{
 				model.put("id", jsonFields.get("id"));
-				model.put("error", errorsList);
+				if(errorsList != null && errorsList.size()>0){
+					model.put("error", errorsList);
+				}else{
+					model.put("error", null);
+				}
+				
 			}
 			
 		} catch (JsonMappingException e3) {
 			logger.error("Error json resolucion comite", e3);
 			model.put("id", jsonFields.get("id"));
-			model.put("error", "Los datos enviados en la petición no están correctamente formateados. Comprueba que las fecha sean 'yyyy-MM-dd'T'HH:mm:ss'. ");			
+			model.put("error", "Los datos enviados en la petición no están correctamente formateados. Comprueba que las fecha sean 'yyyy-MM-dd'T'HH:mm:ss'. ");
+			request.getPeticionRest().setErrorDesc(e3.getMessage());
 		
 		} catch (Exception e2) {	
 			logger.error("Error resolucion comite", e2);
 			model.put("id", jsonFields.get("id"));	
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+			request.getPeticionRest().setErrorDesc(e2.getMessage());
+			
 			
 		}
 

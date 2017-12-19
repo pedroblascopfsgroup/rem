@@ -59,6 +59,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     	
 	     },
 	     
+	     esSituacionJudicial: function(get){
+	     	var judicial= Ext.isEmpty(get('activo.tipoTituloCodigo')) ? false : get('activo.tipoTituloCodigo') === CONST.TIPO_TITULO_ACTIVO['JUDICIAL'];
+	     	return judicial;
+	     	
+	     },
+	     
 	     esOcupacionIlegal: function(get) {
 	     	
 	     	var ocupado = get('situacionPosesoria.ocupado') == "1";
@@ -258,6 +264,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 } else {
 				 return false;
 			 }
+		 },
+		 
+		 activoPerteneceAgrupacionComercial: function(get){
+		 	 return get('activo.pertenceAgrupacionComercial');
+		 },
+		 
+		 activoPerteneceAgrupacionRestringida: function(get){
+		 	 return get('activo.pertenceAgrupacionRestringida');
 		 }
 	 },
 
@@ -351,6 +365,68 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tiposCarga'}
+				}
+    		},
+    		
+    		comboTiposPersona: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tipoPersona'}
+				}
+    		},
+    		
+    		comboProvincias: {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'provincias'}
+				}
+    		},
+    		
+    		comboPoblacion: {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboMunicipio',
+					extraParams: {codigoProvincia: '{propietario.provinciaCodigo}'}
+				}
+    		},
+    		comboProvinciasContacto: {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'provincias'}
+				}
+    		},
+    		
+    		comboPoblacionContacto: {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboMunicipio',
+					extraParams: {codigoProvincia: '{propietario.provinciaContactoCodigo}'}
+				}
+    		},
+    		
+    		comboTipoDocumento: {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tiposDocumentos'}
+				}
+    		},
+    		
+    		comboGradoPropiedad: {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tiposGradoPropiedad'}
 				}
     		},
     		
@@ -578,6 +654,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					extraParams: {id: '{activo.id}'}
 				 }
     		},
+    		
+    		tipoTasacionStore: {    		
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tipoTasacion'}
+				},  		
+				autoLoad: true
+			},
 
     		storeTramites: {
     			 model: 'HreRem.model.Tramite',
@@ -832,7 +918,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					extraParams: {diccionario: 'estadoExpIncorrienteBancario'}
 				}
     		},
-    		
+
+    		comboEntradaActivoBankia: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'entradaActivoBankia'}
+				}
+    		},
+
     		historicocondiciones: {    
     			pageSize: $AC.getDefaultPageSize(),
     			model: 'HreRem.model.CondicionEspecifica',
@@ -1162,8 +1257,33 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'tipoObservacionActivo'}
 			},
 			autoLoad: true
+		},
+		
+		storeNumeroPlantas: {
+			 model: 'HreRem.model.Distribuciones',
+			 proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'activo/getNumeroPlantasActivo',
+					extraParams: {
+						idActivo: '{activo.id}'
+							}
+
+				}
+		},
+		storeTipoHabitaculo: {
+			 model: 'HreRem.model.Distribuciones',
+			 proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'activo/getTipoHabitaculoByNumPlanta',
+					extraParams: {
+						idActivo: '{activo.id}',
+						numPlanta: '{comboNumeroPlantas.selection.numPlanta}'
+							}
+
+				}
 		}
-//		,
+		
+
 //		
 //		filtroComboPrescriptor: {
 //			//pageSize: $AC.getDefaultPageSize(),

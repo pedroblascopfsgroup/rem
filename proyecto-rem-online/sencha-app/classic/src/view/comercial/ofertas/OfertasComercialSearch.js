@@ -53,7 +53,17 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 							},
 							{
 								fieldLabel: HreRem.i18n('fieldlabel.num.activo'),
-							    name: 'numActivo'        	
+							    name: 'numActivo'  ,
+							    reference: 'numActivoOfertaComercial',
+							    listeners: {
+							    	change: 'activarCheckAgrupacionesVinculadas'
+							    }
+							    
+							},
+							{
+								fieldLabel: HreRem.i18n('fieldlabel.num.agrupacion'),
+							    name: 'numAgrupacion',
+							    reference: 'numAgrupacionOfertaComercial'
 							},
 							{
 								fieldLabel: HreRem.i18n('fieldlabel.ofertante'),
@@ -67,7 +77,14 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 								bind: {
 									store: '{comboTiposFechaOfertas}'
 								}
-							}															
+							},
+							{ 
+					        	xtype: 'checkboxfield',
+					        	boxLabel: HreRem.i18n('fieldlabel.check.agrupaciones.vinculadas'),
+					        	name: 'agrupacionesVinculadas',
+					        	reference: 'agrupacionesVinculadasOfertaComercial',
+					        	disabled: true
+					        }
 							
 						]
 		            },
@@ -94,6 +111,15 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 					        		store: '{comboEstadoExpediente}'
 					        	}
 							},
+				        	{ 
+					        	xtype: 'comboboxfieldbase',
+					        	multiSelect: false,
+					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.comercializar'),
+					        	name: 'tipoComercializar',
+					        	bind: {
+					        		store: '{comboTiposComercializarActivo}'
+					        	}
+							},							
 							{
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.gestor'),
@@ -109,6 +135,14 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 								listeners: {
 									select: 'onChangeChainedCombo'
 								}
+							},
+							{
+								fieldLabel: HreRem.i18n('fieldlabel.num.activo.uvem'),
+							    name: 'numActivoUvem',
+							    reference: 'numActivoUvemOfertaComercial',
+							    listeners: {
+							    	change: 'activarCheckAgrupacionesVinculadas'
+							    }
 							},
 							{
 								fieldLabel: HreRem.i18n('fieldlabel.num.documento'),
@@ -150,6 +184,15 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 				            		store: '{comboCanalOferta}'
 				            	}
 							},
+				        	{ 
+					        	xtype: 'comboboxfieldbase',
+					        	multiSelect: false,
+					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.clase.activo'),
+					        	name: 'claseActivoBancario',
+					        	bind: {
+					        		store: '{comboClaseActivo}'
+					        	}
+							},							
 							{
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel: HreRem.i18n('fieldlabel.gestor'),
@@ -180,6 +223,14 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
     						     }
     						    }
 						    },
+						    {
+								fieldLabel: HreRem.i18n('fieldlabel.num.activo.sareb'),
+							    name: 'numActivoSareb' ,
+							    reference: 'numActivoSarebOfertaComercial',
+							    listeners: {
+							    	change: 'activarCheckAgrupacionesVinculadas'
+							    }
+							},
 						    {
 						    	fieldLabel: HreRem.i18n('fieldlabel.telefono'),
 						 		name: 'telefonoOfertante'
@@ -238,6 +289,14 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 								fieldLabel:  HreRem.i18n('fieldlabel.email'),
 								name: 'emailOfertante'
 								
+							},
+							{
+								fieldLabel: HreRem.i18n('fieldlabel.num.prinex'),
+							    name: 'numPrinex',
+							    reference: 'numPrinexOfertaComercial',
+							    listeners: {
+							    	change: 'activarCheckAgrupacionesVinculadas'
+							    }
 							},
 							{
 	            	    		fieldLabel: HreRem.i18n('fieldlabel.activosearch.codigo.promocion'),

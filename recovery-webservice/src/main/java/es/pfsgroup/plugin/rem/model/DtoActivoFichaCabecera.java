@@ -3,8 +3,6 @@ package es.pfsgroup.plugin.rem.model;
 import java.util.Date;
 import java.util.List;
 
-import es.capgemini.devon.dto.WebDto;
-
 /**
  * Dto para la pestaña cabecera de la ficha de Activo
  * 
@@ -15,11 +13,10 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	private static final long serialVersionUID = 0L;
 
-	// private NMBLocalizacionesBienInfo localizacionActual;
 	private String descripcion;
 
-	// private NMBDDOrigenBien origen;
 	private String tipoTitulo;
+	private String tipoTituloCodigo;
 	private String poblacion;
 	private Date fechaDueD;
 	private String rating;
@@ -108,6 +105,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String tipoComercializarDescripcion;
 	private Boolean pertenceAgrupacionRestringida;
 	private Boolean pertenceAgrupacionComercial;
+	private Boolean pertenceAgrupacionAsistida;
+	private Boolean pertenceAgrupacionObraNueva;
 	private String situacionComercialCodigo;
 	private String situacionComercialDescripcion;
 	
@@ -136,8 +135,9 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String tipoAlquilerCodigo;
 	private String tipoAlquilerDescripcion;
 	private Boolean bloqueoTipoComercializacionAutomatico;
+	private String numInmovilizadoBankia;
 
-	//Activo Bancarico datos:
+	//Activo Bancario datos:
 	private String claseActivoCodigo;
 	private String claseActivoDescripcion;
 	private String subtipoClaseActivoCodigo;
@@ -150,6 +150,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String estadoExpIncorrienteCodigo;
 	private String estadoExpIncorrienteDescripcion;
 	private String productoDescripcion;
+	private String entradaActivoBankiaCodigo;
 	
 	//Activo integrado en agrupación asistida
 	private Boolean integradoEnAgrupacionAsistida;
@@ -233,6 +234,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public String getTipoTitulo() {
 		return tipoTitulo;
+	}
+
+	public String getTipoTituloCodigo() {
+		return tipoTituloCodigo;
+	}
+
+	public void setTipoTituloCodigo(String tipoTituloCodigo) {
+		this.tipoTituloCodigo = tipoTituloCodigo;
 	}
 
 	public void setTipoTitulo(String tipoTitulo) {
@@ -1328,6 +1337,38 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setActivosPropagables(List<?> activosPropagables) {
 		this.activosPropagables = activosPropagables;
 
+	}
+
+	public Boolean getPertenceAgrupacionAsistida() {
+		return pertenceAgrupacionAsistida;
+	}
+
+	public void setPertenceAgrupacionAsistida(Boolean pertenceAgrupacionAsistida) {
+		this.pertenceAgrupacionAsistida = pertenceAgrupacionAsistida;
+	}
+
+	public Boolean getPertenceAgrupacionObraNueva() {
+		return pertenceAgrupacionObraNueva;
+	}
+
+	public void setPertenceAgrupacionObraNueva(Boolean pertenceAgrupacionObraNueva) {
+		this.pertenceAgrupacionObraNueva = pertenceAgrupacionObraNueva;
+	}
+
+	public String getEntradaActivoBankiaCodigo() {
+		return entradaActivoBankiaCodigo;
+	}
+
+	public void setEntradaActivoBankiaCodigo(String entradaActivoBankiaCodigo) {
+		this.entradaActivoBankiaCodigo = entradaActivoBankiaCodigo;
+	}
+
+	public String getNumInmovilizadoBankia() {
+		return numInmovilizadoBankia;
+	}
+
+	public void setNumInmovilizadoBankia(String numInmovilizadoBankia) {
+		this.numInmovilizadoBankia = numInmovilizadoBankia;
 	}
 	
 

@@ -17,6 +17,7 @@ public class DtoPropietario extends WebDto {
 	
 	private long id;
 	private String idActivo;
+	private String idPropietario;
 	private Float porcPropiedad;
 	private String tipoGradoPropiedadDescripcion;
 	private String localidadDescripcion;
@@ -42,6 +43,14 @@ public class DtoPropietario extends WebDto {
 	private String codigoPostalContacto;
 	private String observaciones;
 	private String tipoDocIdentificativoDesc;
+	private String tipoPropietario;
+	private String localidadCodigo;
+	private String tipoGradoPropiedadCodigo;
+	private String provinciaCodigo;
+	private String tipoPersonaCodigo;
+	private String tipoDocIdentificativoCodigo;
+	private String provinciaContactoCodigo;
+	private String localidadContactoCodigo;
 	
 	
 	public long getId() {
@@ -55,6 +64,12 @@ public class DtoPropietario extends WebDto {
 	}
 	public void setIdActivo(String idActivo) {
 		this.idActivo = idActivo;
+	}
+	public String getIdPropietario() {
+		return idPropietario;
+	}
+	public void setIdPropietario(String idPropietario) {
+		this.idPropietario = idPropietario;
 	}
 	public Float getPorcPropiedad() {
 		return porcPropiedad;
@@ -207,5 +222,54 @@ public class DtoPropietario extends WebDto {
 	public void setNombreCompleto(String nombreCompleto) {
 		this.nombreCompleto = nombreCompleto;
 	}
+	public String getTipoPropietario() {
+		return tipoPropietario;
+	}
+	public void setTipoPropietario(String tipoPropietario) {
+		this.tipoPropietario = tipoPropietario;
+	}
+	public String getLocalidadCodigo() {
+		return localidadCodigo;
+	}
+	public void setLocalidadCodigo(String localidadCodigo) {
+		this.localidadCodigo = localidadCodigo;
+	}
+	public String getTipoGradoPropiedadCodigo() {
+		return tipoGradoPropiedadCodigo;
+	}
+	public void setTipoGradoPropiedadCodigo(String tipoGradoPropiedadCodigo) {
+		this.tipoGradoPropiedadCodigo = tipoGradoPropiedadCodigo;
+	}
+	public String getProvinciaCodigo() {
+		return provinciaCodigo;
+	}
+	public void setProvinciaCodigo(String provinciaCodigo) {
+		this.provinciaCodigo = provinciaCodigo;
+	}
+	public String getTipoPersonaCodigo() {
+		return tipoPersonaCodigo;
+	}
+	public void setTipoPersonaCodigo(String tipoPersonaCodigo) {
+		this.tipoPersonaCodigo = tipoPersonaCodigo;
+	}
+	public String getTipoDocIdentificativoCodigo() {
+		return tipoDocIdentificativoCodigo;
+	}
+	public void setTipoDocIdentificativoCodigo(String tipoDocIdentificativoCodigo) {
+		this.tipoDocIdentificativoCodigo = tipoDocIdentificativoCodigo;
+	}
+	public String getProvinciaContactoCodigo() {
+		return provinciaContactoCodigo;
+	}
+	public void setProvinciaContactoCodigo(String provinciaContactoCodigo) {
+		this.provinciaContactoCodigo = provinciaContactoCodigo;
+	}
+	public String getLocalidadContactoCodigo() {
+		return localidadContactoCodigo;
+	}
+	public void setLocalidadContactoCodigo(String localidadContactoCodigo) {
+		this.localidadContactoCodigo = localidadContactoCodigo;
+	}
+	
 	
 }

@@ -57,6 +57,15 @@ public class VAdmisionDocumentos implements Serializable {
 	
 	@Column(name = "DD_STR_ID")
 	private String subtipoTrabajo;
+	
+	@Column(name= "ADO_FECHA_CADUCIDAD")
+	private Date fechaCaducidad;
+	
+	@Column(name="ADO_FECHA_ETIQUETA")
+	private Date fechaEtiqueta;
+	
+	@Column(name="DD_TCE_CODIGO")
+	private String tipoCalificacionCodigo;
 
 	public String getId() {
 		return id;
@@ -160,6 +169,30 @@ public class VAdmisionDocumentos implements Serializable {
 
 	public void setSubtipoTrabajo(String subtipoTrabajo) {
 		this.subtipoTrabajo = subtipoTrabajo;
+	}
+
+	public Date getFechaCaducidad() {
+		return fechaCaducidad;
+	}
+
+	public void setFechaCaducidad(Date fechaCaducidad) {
+		this.fechaCaducidad = fechaCaducidad;
+	}
+
+	public Date getFechaEtiqueta() {
+		return fechaEtiqueta;
+	}
+
+	public void setFechaEtiqueta(Date fechaEtiqueta) {
+		this.fechaEtiqueta = fechaEtiqueta;
+	}
+
+	public String getTipoCalificacionCodigo() {
+		return tipoCalificacionCodigo;
+	}
+
+	public void setTipoCalificacionCodigo(String tipoCalificacionCodigo) {
+		this.tipoCalificacionCodigo = tipoCalificacionCodigo;
 	}
 	 
 }

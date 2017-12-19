@@ -42,12 +42,14 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 									            			value: '{contabilidad.ejercicioImputaGasto}'
 									            		},
 									            		displayField	: 'anyo',  
-														valueField		: 'id'
+														valueField		: 'id',
+														readOnly: true
 											        },
 													{ 
 														xtype: 'textfieldbase',
 														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable'),
-										                bind: '{contabilidad.cuentaContable}'											                
+										                bind: '{contabilidad.cuentaContable}',
+										                maskRe: /[0-9]/
 													},
 													{
 														xtype: 'datefieldbase',

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=2017072017
+--## AUTOR=Ivan Rubio
+--## FECHA_CREACION=20171128
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1591
+--## INCIDENCIA_LINK=HREOS-3344
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -18,6 +18,7 @@
 --##		0.5 Correcciones pre arranque REM
 --##		0.6	HREOS-2628
 --##		0.7 HREOS-2992 - Correcciones para PDVs
+--##		0.8 HREOS-3344 - Cambio check obra nueva en construcción
 --##########################################
 --*/
 
@@ -101,7 +102,7 @@ AS
                   0 AS borrado
              FROM '||V_ESQUEMA||'.act_activo act LEFT JOIN '||V_ESQUEMA||'.act_aba_activo_bancario aba2 ON aba2.act_id = act.act_id 
 				  LEFT JOIN '||V_ESQUEMA||'.dd_eac_estado_activo eac1 ON eac1.dd_eac_id = act.dd_eac_id AND eac1.dd_eac_codigo = ''05''                                                -- RUINA
-                  LEFT JOIN '||V_ESQUEMA||'.dd_eac_estado_activo eac2 ON eac2.dd_eac_id = act.dd_eac_id AND eac2.dd_eac_codigo = ''02''                                                -- OBRA NUEVA EN CONSTRUCCIÓN
+                  LEFT JOIN '||V_ESQUEMA||'.dd_eac_estado_activo eac2 ON eac2.dd_eac_id = act.dd_eac_id AND (eac2.dd_eac_codigo = ''02''  OR   eac2.dd_eac_codigo = ''06'')                                               -- OBRA NUEVA EN CONSTRUCCIÓN
                   LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps1 ON sps1.act_id = act.act_id AND sps1.sps_acc_tapiado = 1                                                                         -- TAPIADO
                   LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps2 ON sps2.act_id = act.act_id AND sps2.sps_ocupado = 1 AND sps2.sps_con_titulo = 0                                      -- OCUPADO SIN TITULO
                   LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps3 ON sps3.act_id = act.act_id AND sps3.sps_ocupado = 1 AND sps3.sps_con_titulo = 1                                      -- OCUPADO CON TITULO

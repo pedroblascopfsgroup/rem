@@ -13,6 +13,7 @@ import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -186,18 +187,21 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 	}
 	
 	public Usuario getGestorByActivoYTipo(Activo activo, Long tipo){
-		if (((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipo, activo).size()>0)
-			return ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipo, activo).get(0);
-		else
+		List<Usuario> usuariosGestoresList = ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipo, activo);
+		
+		if(usuariosGestoresList != null && !usuariosGestoresList.isEmpty()) {
+			return usuariosGestoresList.get(0);
+		} else {
 			return null;
+		}
 	}
 	
 	public Usuario getGestorByActivoYTipo(Activo activo, String codigoTipo){
-		Usuario gestor= null;
+		Usuario gestor = null;
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoTipo);
-		Long id = genericDao.get(EXTDDTipoGestor.class, filtro).getId();
-		if(id != null){
-			gestor = this.getGestorByActivoYTipo(activo, genericDao.get(EXTDDTipoGestor.class, filtro).getId());
+		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtro);
+		if(tipoGestor != null){
+			gestor = this.getGestorByActivoYTipo(activo, tipoGestor.getId());
 		}
 		return gestor;		
 	}
@@ -246,7 +250,13 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 		}
 	}
 	
-	
+	public Boolean isUsuarioGestorAdmision(Usuario usuario){
+		 Perfil GESTOADM = genericDao.get(Perfil.class,
+		 genericDao.createFilter(FilterType.EQUALS, "codigo", "HAYAGESTADM"));
+
+		 return usuario.getPerfiles().contains(GESTOADM);
+	}
+
 	// Comprobaciones para Gestores de Precios y Marketing ------------------------------------------------
 	
 	public Boolean isGestorPrecios(Activo activo, Usuario usuario){

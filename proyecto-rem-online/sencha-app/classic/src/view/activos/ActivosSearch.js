@@ -170,7 +170,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 									 { 
 							        	fieldLabel: HreRem.i18n('fieldlabel.numero.activo.sareb'),
 										labelWidth:	150,
-							        	name: 'numActivoRem'
+							        	name: 'idSareb'
 							         },
 									 {
 										fieldLabel: HreRem.i18n('fieldlabel.id.activo.prinex'),

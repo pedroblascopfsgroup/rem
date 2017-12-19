@@ -33,7 +33,7 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 	private ExpedienteComercialApi expedienteComercialApi;
 	
 	@Override
-	public String definicionOfertaT013(TareaExterna tareaExterna) {
+	public String definicionOfertaT013(TareaExterna tareaExterna, String codigo) {
 		//HREOS-2161
 		Trabajo trabajo = trabajoApi.tareaExternaToTrabajo(tareaExterna);
 		if (!trabajoApi.checkReservaNecesariaNotNull(tareaExterna) &&
@@ -46,7 +46,7 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 		if (trabajoApi.checkFormalizacion(tareaExterna)) {
 			if (ofertaApi.checkDeDerechoTanteo(tareaExterna) == false) {
 				if (trabajoApi.checkBankia(tareaExterna)) {
-					return ofertaApi.altaComiteProcess(tareaExterna);
+					return ofertaApi.altaComiteProcess(tareaExterna, codigo);
 				}
 			}
 		}		
@@ -56,20 +56,22 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 	@Override
 	public String resolucionComiteT013(TareaExterna tareaExterna) {
 		//HREOS-2161
-		if (!trabajoApi.checkReservaNecesariaNotNull(tareaExterna)) return FALTA_MARCAR_RESERVA_NECESARIA;		
+		if (!trabajoApi.checkReservaNecesariaNotNull(tareaExterna)) return FALTA_MARCAR_RESERVA_NECESARIA;
+		if(trabajoApi.checkBankia(tareaExterna)) return null;
 		return activoTramiteApi.existeAdjuntoUGValidacion(tareaExterna, "23","E");
 	}	
 	
 	@Override
-	public String respuestaOfertanteT013(TareaExterna tareaExterna) {
+	public String respuestaOfertanteT013(TareaExterna tareaExterna, String importeOfertante) {
+		String resultado = null;
 		//HREOS-2161
 		if (!trabajoApi.checkReservaNecesariaNotNull(tareaExterna) && !trabajoApi.checkBankia(tareaExterna)) return FALTA_MARCAR_RESERVA_NECESARIA;		
 		// SELECT TAP_SCRIPT_VALIDACION_JBPM FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = 'T013_RespuestaOfertante'
 		//  - (checkBankia() ? ratificacionComiteProcess() : null)
 		if (trabajoApi.checkBankia(tareaExterna)) {
-			ofertaApi.ratificacionComiteProcess(tareaExterna);
+			resultado = ofertaApi.ratificacionComiteProcess(tareaExterna, importeOfertante);
 		}
-		return null;		
+		return resultado;		
 	}
 	
 	@Override

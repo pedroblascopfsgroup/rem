@@ -60,7 +60,7 @@ public class MSVActualizarPreciosActivoBloqueo extends MSVExcelValidatorAbstract
 	private Integer numFilasHoja;
 
 	@Override
-	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) {
+	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) throws Exception {
 		if (dtoFile.getIdTipoOperacion() == null){
 			throw new IllegalArgumentException("idTipoOperacion no puede ser null");
 		}
@@ -83,25 +83,18 @@ public class MSVActualizarPreciosActivoBloqueo extends MSVExcelValidatorAbstract
 		}		
 		
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
-//			if (!isActiveExists(exc)){
-				Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
-				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
+			Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();
+			mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
 
-				try{
-					if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty()){
-						dtoValidacionContenido.setFicheroTieneErrores(true);
-						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-						String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
-						FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-						dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-//			}
+			if (!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty()) {
+				dtoValidacionContenido.setFicheroTieneErrores(true);
+				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
+				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
+				FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
+				dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
+			}
 		}
-		exc.cerrar();
-		
+		exc.cerrar();		
 		
 		return dtoValidacionContenido;
 	}

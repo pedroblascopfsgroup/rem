@@ -131,7 +131,6 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 												editor: {
 						                            xtype: 'datefield',
 						                            formatText: "",
-						                            minValue: Ext.Date.format(new Date(),'d/m/Y'),
 						                            minText: HreRem.i18n('info.datefield.min.date.msg.validacion'),
 						                            validationEvent: 'change',
 						                            validator: function(value){
@@ -183,51 +182,92 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 						},
 						items: [
 								{
-									xtype: 'checkboxfieldbase',						
-									bind:		'{valoraciones.bloqueoPrecio}',
-									listeners: {
-										change: 'onChangeBloqueo'
-									},
-									width: 40
-								},
+									xtype: 'container',
+									layout: 'hbox',
+									flex: 0.8,
+									items: [
+								
+												{
+													xtype: 'checkboxfieldbase',						
+													bind:		'{valoraciones.bloqueoPrecio}',
+													listeners: {
+														change: 'onChangeBloqueo'
+													},
+													width: 40
+												},
+												{
+													xtype: 'label',
+													cls: 'label-read-only-formulario-completo',
+													html: '<span style="font-weight: bold;">' + HreRem.i18n('fieldlabel.bloqueo') + ': </span>' + '<span>' + HreRem.i18n('fieldlabel.txt.precios.bloqueado') + '&nbsp;</span>',
+													hidden: true,
+													bind: {
+														hidden: '{!valoraciones.bloqueoPrecioFechaIni}'
+													}
+													
+												},
+												{
+													xtype: 'label',
+													cls: 'label-read-only-formulario-completo',
+													html: '<span style="font-weight: bold;">' + HreRem.i18n('fieldlabel.bloqueo') + ': </span>' + '<span>' + HreRem.i18n('fieldlabel.txt.precios.bloquear') + '&nbsp;</span>',
+													hidden: true,
+													bind: {
+														hidden: '{valoraciones.bloqueoPrecioFechaIni}'
+													}
+												},
+											
+												{
+													xtype: 'datefieldbase',
+													readOnly: true,
+													reference: 'bloqueoPrecioFechaIni',
+													bind:  '{valoraciones.bloqueoPrecioFechaIni}',
+													width: 65
+												},
+												{
+													xtype: 'label',
+													cls: 'label-read-only-formulario-completo',
+													html: HreRem.i18n('fieldlabel.por.gestor') + '&nbsp;',
+													hidden: true,
+													bind: {
+														hidden: '{!valoraciones.gestorBloqueoPrecio}'
+													}
+												},
+												{
+													xtype: 'textfieldbase',
+													readOnly: true,
+													reference: 'gestorBloqueoPrecio',
+													bind: '{valoraciones.gestorBloqueoPrecio}'
+												}
+									]
+								}, 
 								{
-									xtype: 'label',
-									cls: 'label-read-only-formulario-completo',
-									html: '<span style="font-weight: bold;">' + HreRem.i18n('fieldlabel.bloqueo') + ': </span>' + '<span>' + HreRem.i18n('fieldlabel.txt.precios.bloqueado') + '&nbsp;</span>',
-									bind: {
-										hidden: '{!valoraciones.bloqueoPrecioFechaIni}'
-									}
+									xtype: 'container',
+									layout: 'hbox',
+									flex: 0.2,
+									items: [
+												{
+													xtype: 'label',
+													width: 175,
+													cls: 'label-read-only-formulario-completo',
+													html: '<span style="font-weight: bold; color:#d60a3a">' + HreRem.i18n('msg.activo.en.bolsa.preciar') + '</span>',
+													hidden: true, // para evitar que se vea mientras se actualiza el bind
+													bind: {
+														hidden: '{!valoraciones.incluidoBolsaPreciar}'
+													}
+													
+												},
+												{
+													xtype: 'label',
+													width: 175,
+													cls: 'label-read-only-formulario-completo',
+													html: '<span style="font-weight: bold; color:#d60a3a">' + HreRem.i18n('msg.activo.en.bolsa.repreciar') + '</span>',
+													hidden: true, // para evitar que se vea mientras se actualiza el bind
+													bind: {
+														hidden: '{!valoraciones.incluidoBolsaRepreciar}'
+													}
+													
+												}
+									]
 									
-								},
-								{
-									xtype: 'label',
-									cls: 'label-read-only-formulario-completo',
-									html: '<span style="font-weight: bold;">' + HreRem.i18n('fieldlabel.bloqueo') + ': </span>' + '<span>' + HreRem.i18n('fieldlabel.txt.precios.bloquear') + '&nbsp;</span>',
-									bind: {
-										hidden: '{valoraciones.bloqueoPrecioFechaIni}'
-									}
-								},
-							
-								{
-									xtype: 'datefieldbase',
-									readOnly: true,
-									reference: 'bloqueoPrecioFechaIni',
-									bind:  '{valoraciones.bloqueoPrecioFechaIni}',
-									width: 65
-								},
-								{
-									xtype: 'label',
-									cls: 'label-read-only-formulario-completo',
-									html: HreRem.i18n('fieldlabel.por.gestor') + '&nbsp;',
-									bind: {
-										hidden: '{!valoraciones.gestorBloqueoPrecio}'
-									}
-								},
-								{
-									xtype: 'textfieldbase',
-									readOnly: true,
-									reference: 'gestorBloqueoPrecio',
-									bind: '{valoraciones.gestorBloqueoPrecio}'
 								}
 						]
 					}

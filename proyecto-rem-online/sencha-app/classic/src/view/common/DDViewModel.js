@@ -68,6 +68,13 @@ Ext.define('HreRem.view.common.DDViewModel', {
 			        {"codigo":"03", "descripcion": "De descuento"}
 			    ]
     		},
+    		
+    		comboTiposPropuestaManual: {
+    			data : [
+			        {"codigo":"01", "descripcion": "Preciar"},
+			        {"codigo":"02", "descripcion": "Repreciar"}
+			    ]
+    		},
 
     		comboTiposFecha: {
     			data : [

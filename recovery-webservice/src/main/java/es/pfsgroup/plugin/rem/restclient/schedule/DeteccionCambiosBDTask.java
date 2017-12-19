@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.restclient.schedule;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -15,12 +16,13 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioEnEjecucion;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
-import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosBDDaoError;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosList;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
+import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.InfoTablasBD;
 
 /**
  * Task de Quartz que comprueba si ha habido algún cambio en BD que requiera de
@@ -72,11 +74,11 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 		}
 	}
 
-	public void enviaInformacionCompleta(DetectorCambiosBD<?> handler) {
+	public void enviaInformacionCompleta(DetectorCambiosBD<?> handler) throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		this.detectaCambios(handler, TIPO_ENVIO.COMPLETO);
 	}
 
-	public void detectaCambios() {
+	public void detectaCambios() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		detectaCambios(null);
 	}
 
@@ -90,20 +92,28 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public void detectaCambios(DetectorCambiosBD handlerToExecute) {
+	public void detectaCambios(DetectorCambiosBD handlerToExecute) throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		this.detectaCambios(handlerToExecute, TIPO_ENVIO.CAMBIOS);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public void detectaCambios(DetectorCambiosBD handlerToExecute,Boolean optimizado) throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
+		((InfoTablasBD)handlerToExecute).setSoloCambiosMarcados(optimizado);
+		this.detectaCambios(handlerToExecute, TIPO_ENVIO.CAMBIOS);
+		((InfoTablasBD)handlerToExecute).setSoloCambiosMarcados(null);
 	}
 
 	/**
 	 * Inicia la detección de cambios en BD.
 	 * 
 	 * @param class1
+	 * @throws ErrorServicioEnEjecucion 
+	 * @throws Exception
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void detectaCambios(DetectorCambiosBD handlerToExecute, TIPO_ENVIO tipoEnvio) {
+	public void detectaCambios(DetectorCambiosBD handlerToExecute, TIPO_ENVIO tipoEnvio) throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		if (running) {
-			logger.warn("El detector de cambios en BD ya se está ejecutando");
-			return;
+			throw new ErrorServicioEnEjecucion("El servicio ya se esta ejecutando");
 		}
 		synchronized (this) {
 			running = true;
@@ -152,23 +162,31 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 					for (DetectorCambiosBD handler : registroCambiosHandlersAjecutar) {
 						if (handler.isActivo()) {
 							logger.debug("[DETECCIÓN CAMBIOS] Ejecutando handler: " + handler.getClass().getName());
+							logger.debug("[DETECCIÓN CAMBIOS] Optimizado: " + handler.procesarSoloCambiosMarcados());
 							ArrayList<RestLlamada> llamadas = new ArrayList<RestLlamada>();
 							long startTime = System.currentTimeMillis();
 
 							logger.trace(handler.getClass().getSimpleName() + ": obtenemos los cambios de la BD");
 							Class control = handler.getDtoClass();
-							CambiosList listPendientes = new CambiosList(tamanyoBloque);
+							CambiosList listPendientes = null;
+							CambiosList listPendientesTodosBloques = new CambiosList(tamanyoBloque);
+							listPendientes = new CambiosList(tamanyoBloque);
+							
 							RestLlamada registro = new RestLlamada();
+							Date fechaEjecucion = new Date();
 							handler.actualizarVistaMaterializada(registro);
 							Boolean marcarComoEnviado = false;
 							Integer contError = 0;
-						
+
 							do {
 								boolean somethingdone = false;
 								registro.setIteracion(iteracion);
 								try {
 									if (tipoEnvio.equals(TIPO_ENVIO.CAMBIOS)) {
 										listPendientes = handler.listPendientes(control, registro, listPendientes);
+										if(handler.procesarSoloCambiosMarcados()){
+											listPendientesTodosBloques.addAll(listPendientes);
+										}
 									} else {
 										listPendientes = handler.listDatosCompletos(control, registro, listPendientes);
 									}
@@ -226,26 +244,23 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 										marcarComoEnviado = false;
 										contError++;
 									}
-								} catch (CambiosBDDaoError e) {
-									marcarComoEnviado = false;
-									logger.error("Detección de cambios [" + handler.getClass().getSimpleName()
-											+ "], no se han podido obtener los cambios", e);
-									break;
 								} finally {
 									if (somethingdone && (registroLlamadas != null)) {
 										registro.logTiempoBorrarHistorico();
 										registro.logTiempoInsertarHistorico();
-										if(marcarComoEnviado){
-											registroLlamadas.guardaRegistroLlamada(registro, handler, DeteccionCambiosBDTask.MAXIMO_INTENTOS_DEFAULT);
-										}else{
+										if (marcarComoEnviado) {
+											registroLlamadas.guardaRegistroLlamada(registro, handler,
+													DeteccionCambiosBDTask.MAXIMO_INTENTOS_DEFAULT);
+										} else {
 											registroLlamadas.guardaRegistroLlamada(registro, handler, contError);
 										}
-										
+
 										llamadas.add(registro);
 									}
 								}
 								registro = new RestLlamada();
-								//en la segunda pagina el tiempo de refresco es 0
+								// en la segunda pagina el tiempo de refresco es
+								// 0
 								registro.setMsRefrescoVista(new Long(0));
 							} while ((listPendientes != null && listPendientes.getPaginacion().getHasMore())
 									|| (contError > 0 && contError < MAXIMO_INTENTOS));
@@ -253,11 +268,17 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 							if (marcarComoEnviado) {
 								logger.trace(handler.getClass().getName()
 										+ ": marcando los registros de la BD como enviados");
-								handler.marcaComoEnviados(control, llamadas);
+								if(!handler.procesarSoloCambiosMarcados()){
+									handler.marcaComoEnviados(control, llamadas);
+								}else{
+									handler.marcarComoEnviadosMarcadosComun(listPendientesTodosBloques, control);
+									handler.marcarComoEnviadosMarcadosEspecifico(fechaEjecucion);
+								}
+								
 							}
 						}
 					}
-				}else{
+				} else {
 					logger.error("La API REST esta cerrada no se ejecutará");
 				}
 				registroCambiosHandlersAjecutar.get(0).closeSession();
@@ -266,8 +287,8 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			}
 
 		} catch (Exception e) {
-			running = false;
-			logger.error("Imposible ejecutar el detector de cambios", e);
+			logger.error(e.getMessage(),e);
+			throw new ErrorServicioWebcom(e.getMessage());
 		} finally {
 			running = false;
 			logger.debug("[DETECCIÓN CAMBIOS] Fin [it=" + iteracion + "]");

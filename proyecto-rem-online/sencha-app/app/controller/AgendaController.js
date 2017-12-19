@@ -111,78 +111,15 @@ Ext.define('HreRem.controller.AgendaController', {
     
     abrirtarea: function(record, grid, target, idTrabajo, idActivo, idExpediente, numEC) {	
     		var me = this;
-			// Abrimos primero el activo para evitar problemas de carga
-//			var me = this;
-//			
-//			var arbolActivos = me.getMenuApp();
-//			
-//			var viewPortController = arbolActivos.lookupController();
-//			viewPortController.redirectTo('activos' , true);
-//			var listaActivos = viewPortController.getView().down('activoslist');
-//			var activo = listaActivos.getStore().findRecord('id', record.get('idActivo'));
-//			var tabActivos = viewPortController.getView().down('activosmain');
-//			
-//			tabActivos.lookupController().createTab('activo', activo, {
-//		    title: 'Activo ' + activo.get('numActivoRem'),
-//			closable: true,
-//			idActivo: activo.get("id")
-//		
-//			}, listaActivos, "activostabdetalle");   
-//			
-//			var task = new Ext.util.DelayedTask(function(){    
-//											
-//			// Abrimos el tab de actuaciones
-//	
-//				var actuacionDef = tabActivos.lookupController().getViewModel().get('actuaciones').findRecord('idActuacion', record.get('idActuacion'));
-//				
-//			var prefix = 'actuacion';
-//			var cfg  = {
-//			      	title: 'Actuacion ' + actuacionDef.get('idActuacion'),
-//			       	closable: true,
-//			       	session: true,
-//			       	idActuacion: actuacionDef.get("idActuacion"),
-//			       	codigoTareaActiva: actuacionDef.get("codigoTareaActiva")
-//			       	/*,
-//			       	pintarfavorito: false*/	
-//			    };
-//			
-//			
-//			var id = prefix + '_' + actuacionDef.getId(),
-//	        tab = tabActivos.items.getByKey(id);
-//	
-//			 if (!tab) {
-//			 	cfg.itemId = id;
-//			     cfg.xtype = 'actuaciontabmain';
-//			     cfg.closable = true;
-//			     cfg.session= true;
-//			     //cfg.pintarfavorito = false;
-//			     tab = tabActivos.add(cfg);
-//			 }
-//			 // Inyectamos los datos del record al form destino
-//			 tab.down('cabeceratabmain').loadRecord(actuacionDef);
-//			 tab.down('cabeceraactivo').loadRecord(actuacionDef);
-//			 
-//			 tab.down('tabpanel').setActiveTab(1)
-//			 tabActivos.setActiveTab(tab);
-//			 
-//			 tabActivos.down('actuaciontabmain').fireEvent("pintarfav", tabActivos.down('actuaciontabmain'), tabActivos.down('actuaciontabmain').idActuacion);
-//	
-//			// Funcion que abre la ventana de resolver tarea
-//			var tarea = record;
-//	
-//				
-//	        var me = this;
 	        var window;
-//	        
-//	        
-//	        if(tarea.get("idTipoTarea") == "sp300"){
-	        //debugger;
 	        var tarea = record;
+	        grid.mask(HreRem.i18n("msg.mask.loading"));
 	        if(tarea.get("subtipoTareaCodigoSubtarea") == "700" || tarea.get("subtipoTareaCodigoSubtarea") == "701"){
 	        	var url =  $AC.getRemoteUrl('agenda/detalleTarea');
 	        	var idTarea = record.get("id");
 	        	var sta = record.get("subtipoTareaCodigoSubtarea");
 	        	var data;
+	        	
 	    		Ext.Ajax.request({
 	    			
 	    		     url: url,
@@ -201,10 +138,12 @@ Ext.define('HreRem.controller.AgendaController', {
 	    		     },
 	    		     failure: function(response) {
 	    		    	 window = Ext.create('HreRem.view.agenda.TareaGenerica');
+	    		    	 grid.unmask();
 	    		     },
 	    		     callback: function(options, success, response){
 	    		    	 target.add(window);
 	    		    	 window.show();
+	    		    	 grid.unmask();
 	    		     }
 	    		     
 	    		 });
@@ -229,42 +168,14 @@ Ext.define('HreRem.controller.AgendaController', {
 	        			callback: function(options, success, response){
 	        				target.add(window);
 	        				window.show();
-	        			}
+	        				grid.unmask();
+	        			},
+	        			 failure: function(response) {
+	    		    	 grid.unmask();
+	    		     }
 	        	});
 	        }
-	        /*else{
-	        	
-	        }*/
-//	
-//	        }else if(tarea.get("idTipoTarea") == "sp303"){
-//	        	window = Ext.create('HreReos.view.activos.actuacion.tareas.forms.PropuestaComite');
-//	        	
-//	        }else if(tarea.get("idTipoTarea") == "sp304"){
-//	        	window = Ext.create('HreReos.view.activos.actuacion.tareas.forms.ResolucionComite');
-//	        
-//	        }else if(tarea.get("idTipoTarea") == "sp306"){
-//	        	window = Ext.create('HreReos.view.activos.actuacion.tareas.forms.ContraofertarCliente');
-//	        
-//	        }else{
-//	        	Ext.Msg.show({
-//				    message: 'Tarea no implementada.',
-//				    buttons: Ext.Msg.YES,
-//				    icon: Ext.Msg.WARNING}); 
-//	        }
-//	
-//	        if(window){
-//		        window.down('form').loadRecord(tarea);
-		        
-//	        }
-//	
-//	    });                                                
-//	    task.delay(500);
-		
-//    	Ext.Msg.show({
-//		    message: 'Tarea no implementada.',
-//		    buttons: Ext.Msg.YES,
-//		    icon: Ext.Msg.WARNING}); 
-	
+
 	},
     
     abrirtareahistorico: function(record) {	
@@ -314,7 +225,6 @@ Ext.define('HreRem.controller.AgendaController', {
 	        			params: {idTarea : idTarea, subtipoTarea: sta},
 	        			success: function(response,opts){
 	
-	        				//debugger;
 	        				window = Ext.create('HreRem.view.agenda.TareaHistorico',{idTarea : idTarea, titulo : record.get("tipoTarea"), campos:response.responseText});
 	        			},
 	        			callback: function(options, success, response){

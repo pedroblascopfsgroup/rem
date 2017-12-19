@@ -43,6 +43,9 @@ public class VBusquedaActivosCrearTrabajo implements Serializable {
 
 	@Column(name="PER_GESTION")
 	private String tienePerimetroGestion;
+	
+	@Column(name="IN_PRP_TRAMITACION")
+	private Boolean activoEnPropuestaEnTramitacion;
 
 	public String getIdActivo() {
 		return idActivo;
@@ -114,6 +117,14 @@ public class VBusquedaActivosCrearTrabajo implements Serializable {
 
 	public void setTienePerimetroGestion(String tienePerimetroGestion) {
 		this.tienePerimetroGestion = tienePerimetroGestion;
+	}
+
+	public Boolean getActivoEnPropuestaEnTramitacion() {
+		return activoEnPropuestaEnTramitacion;
+	}
+
+	public void setActivoEnPropuestaEnTramitacion(Boolean activoEnPropuestaEnTramitacion) {
+		this.activoEnPropuestaEnTramitacion = activoEnPropuestaEnTramitacion;
 	}
 	
 	

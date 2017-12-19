@@ -1,8 +1,10 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,17 +22,24 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
+import es.pfsgroup.plugin.rem.model.ResolucionComiteBankiaDto;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
+import es.pfsgroup.plugin.rem.resolucionComite.dao.ResolucionComiteDao;
+import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 
 @Component
 public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterService {
@@ -53,9 +62,10 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
 
+
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionComite.class);
 	 
-	private static final String COMBO_RESPUESTA = "comboResolucion";
+	private static final String COMBO_RESOLUCION = "comboResolucion";
 	private static final String FECHA_RESPUESTA = "fechaRespuesta";
 	private static final String IMPORTE_CONTRAOFERTA = "numImporteContra";
 	private static final String CODIGO_TRAMITE_FINALIZADO = "11";
@@ -81,7 +91,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 						}
 	
 					}
-					if (COMBO_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					if (COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 						if (DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
@@ -141,7 +151,9 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 	
 					}
 					if (IMPORTE_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-						ofertaAceptada.setImporteContraOferta(Double.valueOf(valor.getValor()));
+						String doubleValue = valor.getValor();
+						doubleValue = doubleValue.replace(',', '.');
+						ofertaAceptada.setImporteContraOferta(Double.valueOf(doubleValue));
 						genericDao.save(Oferta.class, ofertaAceptada);
 	
 						// Actualizar honorarios para el nuevo importe de contraoferta.
@@ -150,10 +162,10 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 						// Actualizamos la participación de los activos en la oferta;
 						expedienteComercialApi.updateParticipacionActivosOferta(ofertaAceptada);
 						expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
+						
 					}
-	
-					genericDao.save(ExpedienteComercial.class, expediente);
 				}
+				genericDao.save(ExpedienteComercial.class, expediente);
 			}
 		}
 

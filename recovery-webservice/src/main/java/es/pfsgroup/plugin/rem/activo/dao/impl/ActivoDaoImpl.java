@@ -94,8 +94,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		}
    		
    		//Parámteros para la búsqueda avanzada
-   		if (dto.getNumActivoRem() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoRem", dto.getNumActivoRem());
+   		if (dto.getIdSareb() != null)
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoSareb", dto.getIdSareb());
    		
    		if (dto.getIdProp() != null)
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoPrinex", Long.valueOf(dto.getIdProp()));
@@ -352,6 +352,13 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 
     @Override
+    public Integer isIntegradoAgrupacionComercial(Long idActivo) {
+    	HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + idActivo + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL);
+
+   		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
+    }
+
+    @Override
 	public Integer isActivoPrincipalAgrupacionRestringida(Long id) {
     	HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.agrupacion.activoPrincipal.id = " + id + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
 
@@ -585,7 +592,18 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
 		
 	}
-    
+	
+	@Override
+	public boolean deleteValoracionSinDuplicarById(Long id) {
+
+		StringBuilder sb = new StringBuilder("delete from ActivoValoraciones val where val.id = " + id);
+		Query query = this.getSessionFactory().getCurrentSession().createQuery(sb.toString());
+		int afectado = query.executeUpdate();
+
+		return (afectado > 0) ? true : false;
+			
+	}
+
     @SuppressWarnings("unchecked")
 	@Override
     public ActivoCondicionEspecifica getUltimaCondicion(Long idActivo) {
@@ -979,4 +997,17 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		return HibernateQueryUtils.list(this, hb);
 	}
 
+	/*Borra todos las distribuciones excelto las de tipo garaje y trastero*/
+	public void deleteActivoDistribucion(Long idActivoInfoComercial){
+		Session session = this.getSessionFactory().getCurrentSession();
+		Query query= session.createSQLQuery("DELETE FROM ACT_DIS_DISTRIBUCION dis1 where dis1.DIS_ID IN"
+				+ " ( select dis2.DIS_ID from ACT_DIS_DISTRIBUCION dis2"
+				+ "	INNER JOIN DD_TPH_TIPO_HABITACULO tph ON dis2.dd_tph_id = tph.dd_tph_id"
+				+ "	WHERE dis2.ICO_ID = "+idActivoInfoComercial
+				//+ "	AND tph.DD_TPH_CODIGO NOT IN ('"+DDTipoHabitaculo.TIPO_HABITACULO_TRASTERO + "','"+ DDTipoHabitaculo.TIPO_HABITACULO_GARAJE +"')"
+				+ "	)");
+		query.executeUpdate();
+		
+		
+	}
 }

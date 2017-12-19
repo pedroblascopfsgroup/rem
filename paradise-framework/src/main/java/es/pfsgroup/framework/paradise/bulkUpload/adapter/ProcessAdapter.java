@@ -75,7 +75,7 @@ public class ProcessAdapter {
 		
 	}
 	
-	public String subirFichero(WebFileItem fileItem) {
+	public Boolean subirFichero(WebFileItem fileItem) {
 		
 		return fileUploadParadise.upload(fileItem);
 		

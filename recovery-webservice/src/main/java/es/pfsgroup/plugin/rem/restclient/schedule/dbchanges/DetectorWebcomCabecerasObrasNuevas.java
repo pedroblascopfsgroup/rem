@@ -63,4 +63,8 @@ public class DetectorWebcomCabecerasObrasNuevas  extends DetectorCambiosBD<Cabec
 		return null;
 	}
 
+	@Override
+	public Boolean procesarSoloCambiosMarcados() {
+		return false;
+	}	
 }

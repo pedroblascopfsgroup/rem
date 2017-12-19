@@ -1,0 +1,75 @@
+--/*
+--##########################################
+--## AUTOR= ISIDRO SOTOCA ESTRUCH
+--## FECHA_CREACION=20171016
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-2988
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Crear la tabla auxiliar de la relación entre valoraciones y tasaciones
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+
+DECLARE
+
+TABLE_COUNT NUMBER(1,0) := 0;
+V_ESQUEMA VARCHAR2(20 CHAR) := '#ESQUEMA#';
+V_TABLA VARCHAR2(40 CHAR) := 'APR_AUX_REL_VAL_TAS';
+
+BEGIN
+
+SELECT COUNT(1) INTO TABLE_COUNT FROM ALL_TABLES WHERE TABLE_NAME = ''||V_TABLA||'' AND OWNER= ''||V_ESQUEMA||'';
+
+IF TABLE_COUNT > 0 THEN
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] TABLA '||V_ESQUEMA||'.'||V_TABLA||' YA EXISTENTE. SE PROCEDE A BORRAR Y CREAR DE NUEVO.');
+
+    EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.'||V_TABLA||'';
+    
+END IF;
+
+EXECUTE IMMEDIATE '
+CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||'
+	(
+	TAS_ID 				NUMBER(16,0) 		NOT NULL ENABLE, 
+	ACT_ID 				NUMBER(16,0) 		NOT NULL ENABLE, 
+	BIE_VAL_ID 			NUMBER(16,0) 		NOT NULL ENABLE, 
+	VERSION 			NUMBER(38,0) 		DEFAULT 0 NOT NULL ENABLE, 
+	USUARIOCREAR 		VARCHAR2(50 CHAR) 	NOT NULL ENABLE, 
+	FECHACREAR 			TIMESTAMP (6) 		NOT NULL ENABLE, 
+	USUARIOMODIFICAR 	VARCHAR2(50 CHAR), 
+	FECHAMODIFICAR 		TIMESTAMP (6), 
+	USUARIOBORRAR 		VARCHAR2(50 CHAR), 
+	FECHABORRAR 		TIMESTAMP (6), 
+	BORRADO 			NUMBER(1,0) 		DEFAULT 0 NOT NULL ENABLE, 
+	TAS_ID_EXTERNO 		NUMBER(16,0)
+   )
+	TABLESPACE '||V_ESQUEMA||'
+'
+;
+
+DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' CREADA');  
+
+EXCEPTION
+
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(SQLERRM);
+        ROLLBACK;
+        RAISE;
+END;
+/
+
+EXIT;

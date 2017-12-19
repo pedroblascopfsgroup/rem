@@ -11,8 +11,8 @@ echo "########################################################"
 echo "#####    ACTUALIZANDO Secuencias PRE-MIGRACION"
 echo "########################################################"
 fecha_ini=`date +%Y%m%d_%H%M%S`
-if [ -f PROD/Logs/004_* ] ; then
-	mv -f PROD/Logs/004_* PROD/Logs/backup
+if [ -f PROD/Logs/*.log ] ; then
+	mv -f PROD/Logs/*.log PROD/Logs/backup
 fi
 ./PROD/DDL_PROD/DDL_sequences.sh $1 > PROD/Logs/004_actualizado_secuencias_PRE_$fecha_ini.log
 if [ $? != 0 ] ; then 
@@ -42,6 +42,7 @@ echo
 
 ruta_descarterizada="PROD/DML_PROD/DMLs_DESCARTERIZADOS"
 ruta_carterizada="PROD/DML_PROD/TMP"
+ruta_noEjecutar=$ruta_descarterizada"/NO_EJECUTAR"
 dml_list="DMLs.list"
 rm -f $ruta_carterizada/*.sql
 cd $ruta_descarterizada
@@ -50,9 +51,6 @@ cd ../../../
 mv -f $ruta_descarterizada/$dml_list $ruta_carterizada
 
 fecha_ini=`date +%Y%m%d_%H%M%S`
-if [ -f PROD/Logs/005_* ] ; then
-	mv -f PROD/Logs/005_* PROD/Logs/backup
-fi
 while read line
 do
 	sed "s/#USUARIO_MIGRACION#/$usuario/g" $ruta_descarterizada/$line > $ruta_carterizada/$line
@@ -76,11 +74,13 @@ do
 		fi
 		echo >> PROD/Logs/005_volcado_"$usuario"_"$fecha_ini".log
 		echo Fin $line
-		echo
+		mv -f $ruta_descarterizada/$line $ruta_noEjecutar
 	else
 		echo No existe $line
 	fi
 done < "$ruta_carterizada"/"$dml_list"
+
+mv -f $ruta_noEjecutar/*.sql $ruta_descarterizada
 
 echo Revise log: PROD/Logs/005_volcado_"$usuario"_"$fecha_ini".log
 
@@ -89,9 +89,6 @@ echo "########################################################"
 echo "#####    ACTUALIZANDO Secuencias POST-MIGRACION"
 echo "########################################################"
 fecha_ini=`date +%Y%m%d_%H%M%S`
-if [ -f PROD/Logs/004_* ] ; then
-	mv -f PROD/Logs/004_* PROD/Logs/backup
-fi
 ./PROD/DDL_PROD/DDL_sequences.sh $1 > PROD/Logs/006_actualizado_secuencias_POST_$fecha_ini.log
 if [ $? != 0 ] ; then 
    echo -e "\n\n======>>> "Error en actualización de secuencias. Consultar log: PROD/Logs/006_actualizado_secuencias_POST_$fecha_ini.log

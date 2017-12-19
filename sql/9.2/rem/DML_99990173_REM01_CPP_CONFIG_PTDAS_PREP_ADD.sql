@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carlos López
---## FECHA_CREACION=20171215
+--## FECHA_CREACION=20171218
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.11
 --## INCIDENCIA_LINK=HREOS-3469
@@ -71,6 +71,20 @@ BEGIN
         
         IF V_NUM_TABLAS > 0 THEN
                         DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO ['|| I ||'] YA EXISTE - EJECICIO '''||anyo||''' ');
+								V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.CPP_CONFIG_PTDAS_PREP ' ||
+											' SET CPP_PARTIDA_PRESUPUESTARIA = '''||TRIM(V_TMP_TIPO_ANTERIOR(6))||'''
+											    , USUARIOMODIFICAR = ''HREOS-3469''
+											    , FECHAMODIFICAR = SYSDATE
+											' ||
+											  'WHERE DD_STG_ID =  (SELECT DD_STG_ID FROM '||V_ESQUEMA ||'.DD_STG_SUBTIPOS_GASTO WHERE DD_STG_CODIGO = '''||V_TMP_TIPO_ANTERIOR(1)||''')
+											     AND DD_CRA_ID =  (SELECT DD_CRA_ID FROM '||V_ESQUEMA ||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||V_TMP_TIPO_ANTERIOR(2)||''')
+											     AND CPP_ARRENDAMIENTO =  '''||TRIM(V_TMP_TIPO_ANTERIOR(7))||'''  
+												 AND EJE_ID =   (SELECT EJE_ID FROM '||V_ESQUEMA ||'.ACT_EJE_EJERCICIO WHERE EJE_ANYO = '''||anyo||''')
+												';
+								EXECUTE IMMEDIATE V_MSQL; 
+        EXECUTE IMMEDIATE V_MSQL;                        
+                        
+                        
         ELSE     
       
                     DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '||I);   

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Sergio Belenguer Gadea
---## FECHA_CREACION=20171205
+--## FECHA_CREACION=20171218
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HRNIVDOS-7154
@@ -38,7 +38,7 @@ DECLARE
     -- Comprobamos si existe la tabla   
     V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''TMP_APROV_DACIONES'' and owner = '''||V_ESQUEMA||'''';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-    -- Si existe la tabla no hacemos nada
+    -- Si existe la tabla la vaciamos
     IF V_NUM_TABLAS = 1 THEN
 	V_SQL := 'TRUNCATE TABLE '||V_ESQUEMA||'.TMP_APROV_DACIONES';
 	EXECUTE IMMEDIATE V_SQL;

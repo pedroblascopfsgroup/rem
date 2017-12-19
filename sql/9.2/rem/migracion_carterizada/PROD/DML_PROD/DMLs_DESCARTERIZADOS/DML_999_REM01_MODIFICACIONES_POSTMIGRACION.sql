@@ -136,7 +136,6 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('[INFO] CLC_CLIENTE_COMERCIAL creada columna CLC_WEBCOM_ID_OLD');       
     END IF; 
   
-    EXECUTE IMMEDIATE('update '||V_ESQUEMA||'.CLC_CLIENTE_COMERCIAL set CLC_WEBCOM_ID_OLD = CLC_WEBCOM_ID where usuariocrear = '''||V_USUARIO||'''');
     EXECUTE IMMEDIATE('update '||V_ESQUEMA||'.CLC_CLIENTE_COMERCIAL set CLC_WEBCOM_ID = CLC_REM_ID where usuariocrear = '''||V_USUARIO||'''');
 
 
@@ -359,17 +358,6 @@ BEGIN
     --EXECUTE IMMEDIATE 'delete from ACT_ADO_ADMISION_DOCUMENTO where ado_id in ( select ado_id from ACT_ADO_ADMISION_DOCUMENTO where (act_id, cfd_id) in ( select act_id, cfd_id from ACT_ADO_ADMISION_DOCUMENTO group by act_id, cfd_id having count(1) > 1) and usuariocrear <> '''||V_USUARIO||''')';
 
 
-
-
-    EXECUTE IMMEDIATE 'update rem01.GGE_GASTOS_GESTION set dd_eah_id = (select dd_eah_id from rem01.DD_EAH_ESTADOS_AUTORIZ_HAYA where dd_eah_codigo = ''01'')
-             where GGE_ID in (SELECT GGE.GGE_ID 
-            FROM REM01.GPV_GASTOS_PROVEEDOR GPV
-            JOIN REM01.GGE_GASTOS_GESTION GGE ON GGE.GPV_ID = GPV.GPV_ID
-            JOIN REM01.GDE_GASTOS_DETALLE_ECONOMICO GDE ON GDE.GPV_ID = GPV.GPV_ID
-            JOIN REM01.GIC_GASTOS_INFO_CONTABILIDAD GIC ON GIC.GPV_ID = GPV.GPV_ID
-            WHERE GPV.DD_EGA_ID = (SELECT DD_EGA_ID FROM REM01.DD_EGA_ESTADOS_GASTO WHERE DD_EGA_CODIGO = ''08''))';
-
-
     EXECUTE IMMEDIATE 'update rem01.act_activo act 
         set act.ACT_NUM_ACTIVO_UVEM = (select ACT_NUMERO_UVEM from rem01.mig_aca_cabecera aca where aca.ACT_NUMERO_ACTIVO = act.ACT_NUM_ACTIVO)
         where ACT_NUM_ACTIVO_UVEM is null';
@@ -418,7 +406,7 @@ using ( select aca.ACT_NUMERO_ACTIVO, aca.ACT_NUMERO_UVEM from rem01.mig_aca_cab
                           ON (PVE_OLD.pve_id = PVE_NEW.pve_id )
                           WHEN MATCHED THEN UPDATE
                           SET PVE_OLD.DD_TPE_ID = PVE_NEW.DD_TPE_ID
-                            , PVE_OLD.USUARIOMODIFICAR = ''MIG_SAREB''
+                            , PVE_OLD.USUARIOMODIFICAR = '''||V_USUARIO||'''
                             , PVE_OLD.FECHAMODIFICAR = sysdate';
 
 
@@ -475,22 +463,6 @@ using ( select aca.ACT_NUMERO_ACTIVO, aca.ACT_NUMERO_UVEM from rem01.mig_aca_cab
     V_REG_ACTUALIZADOS := SQL%ROWCOUNT;
     V_REG_TOTAL := V_REG_TOTAL + V_REG_ACTUALIZADOS;
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.ACT_ACTIVO ACTUALIZADAS. '||V_REG_ACTUALIZADOS||' Filas. Check de gestión.');
-    
-
-
-
-    V_MSQL := 'MERGE INTO REM01.BIE_DATOS_REGISTRALES T1
-USING (SELECT T1.BIE_ID
-    FROM REM01.ACT_ACTIVO T1
-    JOIN REM01.DD_SCM_SITUACION_COMERCIAL T2 ON T1.DD_SCM_ID = T2.DD_SCM_ID AND T2.DD_SCM_CODIGO = ''02'') T2
-ON (T1.BIE_ID = T2.BIE_ID)
-WHEN MATCHED THEN UPDATE SET
-    T1.BIE_DREG_FECHA_INSCRIPCION = SYSDATE, T1.USUARIOMODIFICAR = '''||V_USUARIO||''', T1.FECHAMODIFICAR = SYSDATE
-WHERE T1.BIE_DREG_FECHA_INSCRIPCION IS NULL';
-    EXECUTE IMMEDIATE V_MSQL;
-    V_REG_ACTUALIZADOS := SQL%ROWCOUNT;
-    V_REG_TOTAL := V_REG_TOTAL + V_REG_ACTUALIZADOS;
-    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.BIE_DATOS_REGISTRALES ACTUALIZADAS. '||V_REG_ACTUALIZADOS||' Filas.');
 
 V_MSQL := 'MERGE INTO REM01.ACT_ACTIVO T1
 USING (SELECT T1.ACT_ID
@@ -531,8 +503,21 @@ WHERE T1.ADN_FECHA_TITULO IS NULL';
     V_REG_TOTAL := V_REG_TOTAL + V_REG_ACTUALIZADOS;
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.ACT_ADN_ADJNOJUDICIAL ACTUALIZADAS. '||V_REG_ACTUALIZADOS||' Filas.');
 
-    COMMIT;
+EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''LISTA_ACTIVOS_VENTA_EXTERNA'' AND OWNER = ''PFSREM'' ' INTO V_EXISTE;
 
+IF V_EXISTE = 1 THEN
+
+EXECUTE IMMEDIATE 'merge into rem01.act_activo act
+using pfsrem.LISTA_ACTIVOS_VENTA_EXTERNA shg
+on (shg.act_num_activo_uvem = act.act_num_activo_uvem)
+when matched then update
+set ACT_VENTA_DIRECTA_BANKIA = 1';
+DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.act_activo ACTUALIZADAS (ACT_VENTA_DIRECTA_BANKIA). '||SQL%ROWCOUNT||' Filas.');
+
+END IF;
+
+    COMMIT;
+DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  FIN MODIFICACIONES POST_MIGRACION.');
 
 EXCEPTION
 

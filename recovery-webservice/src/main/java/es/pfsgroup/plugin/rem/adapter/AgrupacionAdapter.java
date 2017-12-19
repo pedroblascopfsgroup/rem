@@ -153,7 +153,7 @@ public class AgrupacionAdapter {
 
 	@Autowired
 	protected TipoProcedimientoManager tipoProcedimiento;
-	
+
 	@Autowired
 	private ProveedoresApi proveedoresApi;
 
@@ -179,7 +179,7 @@ public class AgrupacionAdapter {
 
 	@Autowired
 	private OfertaApi ofertaApi;
-	
+
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
 
@@ -191,7 +191,7 @@ public class AgrupacionAdapter {
 
 	@Autowired
 	private NotificatorServiceSancionOfertaAceptacionYRechazo notificatorServiceSancionOfertaAceptacionYRechazo;
-	
+
 	@Autowired
 	private RestApi restApi;
 
@@ -205,11 +205,11 @@ public class AgrupacionAdapter {
 	public static final String AGRUPACION_BAJA_ERROR_OFERTAS_VIVAS = "No ha sido posible dar de baja la agrupación. Existen ofertas vivas";
 	private static final String AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO = "activo.motivo.oferta.tipo.numero.documento";
 	private static final String AVISO_MENSAJE_CLIENTE_OBLIGATORIO = "activo.motivo.oferta.cliente";
-	
+
 	private static final Integer NO_ES_FORMALIZABLE = new Integer(0);
 	private static final Integer ES_FORMALIZABLE = new Integer(1);
 	private static final String TIPO_AGRUPACION_RESTRINGIDA = "02";
-	
+
 	public DtoAgrupaciones getAgrupacionById(Long id) {
 
 		DtoAgrupaciones dtoAgrupacion = new DtoAgrupaciones();
@@ -255,7 +255,7 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "provinciaCodigo",
 								agrupacionTemp.getProvincia().getCodigo());
 					}
-					
+
 					if (!Checks.esNulo(agrupacionTemp.getUsuarioGestoriaFormalizacion())) {
 						BeanUtils.copyProperty(dtoAgrupacion, "codigoGestoriaFormalizacion",
 								agrupacionTemp.getUsuarioGestoriaFormalizacion().getId());
@@ -389,9 +389,9 @@ public class AgrupacionAdapter {
 				// anyadir activos
 				BeanUtils.copyProperty(dtoAgrupacion, "existenOfertasVivas",
 						this.existenOfertasActivasEnAgrupacion(id));
-				
+
 				// Para permitir un nulo en isFormalizacion
-				if (agrupacion.getIsFormalizacion()==null) {
+				if (agrupacion.getIsFormalizacion() == null) {
 					dtoAgrupacion.setIsFormalizacion(null);
 				}
 
@@ -528,17 +528,23 @@ public class AgrupacionAdapter {
 					&& activoApi.isActivoAsistido(activo)) {
 				throw new JsonViewerException(AgrupacionValidator.ERROR_OBRANUEVA_NO_ASISTIDA);
 			}
-			
-			// Si la agrupación es de tipo comercial y contiene ofertas, en cualquier estado, rechazar el activo.
+
+			// Si la agrupación es de tipo comercial y contiene ofertas, en
+			// cualquier estado, rechazar el activo.
 			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 				List<Oferta> ofertasAgrupacion = agrupacion.getOfertas();
-				if(!Checks.estaVacio(ofertasAgrupacion)) {
-					throw new JsonViewerException("No se puede alterar el listado de activos cuando la agrupación tiene ofertas");
+				if (!Checks.estaVacio(ofertasAgrupacion)) {
+					throw new JsonViewerException(
+							"No se puede alterar el listado de activos cuando la agrupación tiene ofertas");
 				}
-				// Si el activo es de tipo Formalizable, pero la agrupación en la que lo vamos a meter NO lo es, lanzamos una Excepcion
-				// Si el activo es no Formalizable, pero la agrupación en la que lo vamos a meter SI que lo es, también lanzamos una Excepcion
-				if (activoApi.esActivoFormalizable(activo.getNumActivo()) && agrupacion.getIsFormalizacion().equals(NO_ES_FORMALIZABLE) ||
-					!activoApi.esActivoFormalizable(activo.getNumActivo()) && agrupacion.getIsFormalizacion().equals(ES_FORMALIZABLE)) {
+				// Si el activo es de tipo Formalizable, pero la agrupación en
+				// la que lo vamos a meter NO lo es, lanzamos una Excepcion
+				// Si el activo es no Formalizable, pero la agrupación en la que
+				// lo vamos a meter SI que lo es, también lanzamos una Excepcion
+				if (activoApi.esActivoFormalizable(activo.getNumActivo())
+						&& agrupacion.getIsFormalizacion().equals(NO_ES_FORMALIZABLE)
+						|| !activoApi.esActivoFormalizable(activo.getNumActivo())
+								&& agrupacion.getIsFormalizacion().equals(ES_FORMALIZABLE)) {
 					throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_NO_COMPARTE_FORMALIZACION);
 				}
 			}
@@ -549,8 +555,7 @@ public class AgrupacionAdapter {
 				agrupacion = updateAgrupacionPrimerActivo(activo, agrupacion);
 				activoAgrupacionApi.saveOrUpdate(agrupacion);
 			}
-			
-			
+
 			// Validaciones de agrupación
 			agrupacionValidate(activo, agrupacion);
 
@@ -572,7 +577,7 @@ public class AgrupacionAdapter {
 
 			// Actualizar el tipoComercialización del activo
 			updaterState.updaterStateTipoComercializacion(activo);
-			
+
 			// Actualizar el activo principal de la agrupación
 			if (activoPrincipal == 1) {
 				agrupacion.setActivoPrincipal(activo);
@@ -777,11 +782,13 @@ public class AgrupacionAdapter {
 				idAgrupacion);
 		ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(idActivo);
 		if (!Checks.esNulo(activoAgrupacionActivo)) {
-			// Para los activos pertenecientes a una agrupación de tipo lote comercial.
-			if (activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
+			// Para los activos pertenecientes a una agrupación de tipo lote
+			// comercial.
+			if (activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo()
+					.equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
 				// Solo continuar si la agrupación no contiene ofetas vivas.
 				List<Oferta> ofertasAgrupacion = activoAgrupacionActivo.getAgrupacion().getOfertas();
-				if(Checks.estaVacio(ofertasAgrupacion)) {
+				if (Checks.estaVacio(ofertasAgrupacion)) {
 					List<ActivoOferta> ofertasActivo = activoAgrupacionActivo.getActivo().getOfertas();
 					if (!Checks.estaVacio(ofertasActivo)) {
 						// En cada oferta asignada al activo.
@@ -789,41 +796,45 @@ public class AgrupacionAdapter {
 							if (!Checks.esNulo(ofertaActivo.getPrimaryKey())
 									&& !Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta())
 									&& !Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta())) {
-								// Si tiene expediente poner oferta ACEPTADA. Si no
+								// Si tiene expediente poner oferta ACEPTADA. Si
+								// no
 								// tiene poner oferta PENDIENTE
-								try{
+								try {
 									if (ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta().getCodigo()
 											.equals(DDEstadoOferta.CODIGO_CONGELADA)) {
-										ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(ofertaActivo.getPrimaryKey().getOferta());
+										ExpedienteComercial exp = expedienteComercialApi
+												.findOneByOferta(ofertaActivo.getPrimaryKey().getOferta());
 										if (!Checks.esNulo(exp)) {
 											ofertaApi.descongelarOfertas(exp);
 										} else {
-											ofertaActivo.getPrimaryKey().getOferta().setEstadoOferta( genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo",
-													DDEstadoOferta.CODIGO_PENDIENTE)));
+											ofertaActivo.getPrimaryKey().getOferta()
+													.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
+															genericDao.createFilter(FilterType.EQUALS, "codigo",
+																	DDEstadoOferta.CODIGO_PENDIENTE)));
 											genericDao.save(Oferta.class, ofertaActivo.getPrimaryKey().getOferta());
 										}
 									}
-								}catch(Exception e){
-									logger.error("error descongelando ofertas",e);
-								}								
+								} catch (Exception e) {
+									logger.error("error descongelando ofertas", e);
+								}
 							}
 						}
 					}
 					activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
 				} else {
-					throw new JsonViewerException("No se puede alterar el listado de activos cuando la agrupación tiene ofertas");
+					throw new JsonViewerException(
+							"No se puede alterar el listado de activos cuando la agrupación tiene ofertas");
 				}
-			}
-			else if(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)
-					&& !Checks.esNulo(activoBancario) && DDClaseActivoBancario.CODIGO_FINANCIERO.equals(activoBancario.getClaseActivo().getCodigo())){
+			} else if (activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo()
+					.equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA) && !Checks.esNulo(activoBancario)
+					&& DDClaseActivoBancario.CODIGO_FINANCIERO.equals(activoBancario.getClaseActivo().getCodigo())) {
 				PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(idActivo);
-				if(!Checks.esNulo(perimetro)) {
+				if (!Checks.esNulo(perimetro)) {
 					perimetro.setIncluidoEnPerimetro(BooleanUtils.toInteger(false));
 					genericDao.save(PerimetroActivo.class, perimetro);
 				}
 				activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
-			}
-			else {			
+			} else {
 				activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
 			}
 			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoAgrupacionActivo.getActivo());
@@ -1263,14 +1274,15 @@ public class AgrupacionAdapter {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
 		Oferta oferta = genericDao.get(Oferta.class, filtro);
 
-		if(!Checks.esNulo(oferta.getCliente())){
-			if(Checks.esNulo(oferta.getCliente().getDocumento()) || Checks.esNulo(oferta.getCliente().getTipoDocumento())){
+		if (!Checks.esNulo(oferta.getCliente())) {
+			if (Checks.esNulo(oferta.getCliente().getDocumento())
+					|| Checks.esNulo(oferta.getCliente().getTipoDocumento())) {
 				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO));
 			}
-		}else{
+		} else {
 			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_CLIENTE_OBLIGATORIO));
 		}
-		
+
 		DDEstadoOferta tipoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class,
 				dto.getCodigoEstadoOferta());
 
@@ -1279,10 +1291,11 @@ public class AgrupacionAdapter {
 		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())) {
 			if (!Checks.esNulo(oferta.getAgrupacion()) && oferta.getAgrupacion().getTipoAgrupacion().getCodigo()
 					.equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
-				//En caso que la agrupación sea formalizable comprobamos tenga todos los gestores
-				if(ES_FORMALIZABLE.equals(oferta.getAgrupacion().getIsFormalizacion())){
-	//				// Comprobar si la agrupación tiene todos los gestores
-	//				// asignados.
+				// En caso que la agrupación sea formalizable comprobamos tenga
+				// todos los gestores
+				if (ES_FORMALIZABLE.equals(oferta.getAgrupacion().getIsFormalizacion())) {
+					// // Comprobar si la agrupación tiene todos los gestores
+					// // asignados.
 					if (!agrupacionLoteComercialGestoresAsignados(oferta.getAgrupacion())) {
 						throw new Exception(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
 					}
@@ -1290,58 +1303,59 @@ public class AgrupacionAdapter {
 			}
 		}
 
-//		try {
-			oferta.setEstadoOferta(tipoOferta);
+		// try {
+		oferta.setEstadoOferta(tipoOferta);
 
-			// Si el estado de la oferta cambia a Aceptada cambiamos el resto de
-			// estados a Congelada excepto los que ya estuvieran en Rechazada
-			if (DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())) {
-				// Comprobar si la agrupación de la oferta es de tipo 'Lote
-				// comercial'.
-				if (!Checks.esNulo(oferta.getAgrupacion()) && oferta.getAgrupacion().getTipoAgrupacion().getCodigo()
-						.equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
-					//En caso que la agrupación sea formalizable comprobamos tenga todos los gestores
-					if(oferta.getAgrupacion().getIsFormalizacion().equals(ES_FORMALIZABLE)){
-						// Comprobar si la agrupación tiene todos los gestores
-						// asignados.
-						if (!agrupacionLoteComercialGestoresAsignados(oferta.getAgrupacion())) {
-							throw new Exception(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
-						}
+		// Si el estado de la oferta cambia a Aceptada cambiamos el resto de
+		// estados a Congelada excepto los que ya estuvieran en Rechazada
+		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())) {
+			// Comprobar si la agrupación de la oferta es de tipo 'Lote
+			// comercial'.
+			if (!Checks.esNulo(oferta.getAgrupacion()) && oferta.getAgrupacion().getTipoAgrupacion().getCodigo()
+					.equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
+				// En caso que la agrupación sea formalizable comprobamos tenga
+				// todos los gestores
+				if (oferta.getAgrupacion().getIsFormalizacion().equals(ES_FORMALIZABLE)) {
+					// Comprobar si la agrupación tiene todos los gestores
+					// asignados.
+					if (!agrupacionLoteComercialGestoresAsignados(oferta.getAgrupacion())) {
+						throw new Exception(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
 					}
 				}
-
-				List<Activo> listaActivos = new ArrayList<Activo>();
-
-				for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
-					listaActivos.add(activoOferta.getPrimaryKey().getActivo());
-				}
-
-				DDSubtipoTrabajo subtipoTrabajo = (DDSubtipoTrabajo) utilDiccionarioApi
-						.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, activoApi.getSubtipoTrabajoByOferta(oferta));
-				Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null);
-
-				activoManager.crearExpediente(oferta, trabajo);
 			}
 
-			genericDao.update(Oferta.class, oferta);
-			
-			// si la oferta ha sido rechazada enviamos un email/notificacion.
-			if (DDEstadoOferta.CODIGO_RECHAZADA.equals(tipoOferta.getCodigo())) {
-				
-				if(!Checks.esNulo(dto.getMotivoRechazoCodigo())){
-					DDMotivoRechazoOferta motivoRechazoOferta = (DDMotivoRechazoOferta) utilDiccionarioApi
+			List<Activo> listaActivos = new ArrayList<Activo>();
+
+			for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
+				listaActivos.add(activoOferta.getPrimaryKey().getActivo());
+			}
+
+			DDSubtipoTrabajo subtipoTrabajo = (DDSubtipoTrabajo) utilDiccionarioApi
+					.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, activoApi.getSubtipoTrabajoByOferta(oferta));
+			Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null);
+
+			activoManager.crearExpediente(oferta, trabajo);
+		}
+
+		genericDao.update(Oferta.class, oferta);
+
+		// si la oferta ha sido rechazada enviamos un email/notificacion.
+		if (DDEstadoOferta.CODIGO_RECHAZADA.equals(tipoOferta.getCodigo())) {
+
+			if (!Checks.esNulo(dto.getMotivoRechazoCodigo())) {
+				DDMotivoRechazoOferta motivoRechazoOferta = (DDMotivoRechazoOferta) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDMotivoRechazoOferta.class, dto.getMotivoRechazoCodigo());
-					oferta.setMotivoRechazo(motivoRechazoOferta);
-				}
-				
-				notificatorServiceSancionOfertaAceptacionYRechazo.notificatorFinSinTramite(oferta.getId());
+				oferta.setMotivoRechazo(motivoRechazoOferta);
 			}
 
-//		} 
-//		catch (Exception ex) {
-//			logger.error("error en agrupacionAdapter", ex);
-//			return false;
-//		}
+			notificatorServiceSancionOfertaAceptacionYRechazo.notificatorFinSinTramite(oferta.getId());
+		}
+
+		// }
+		// catch (Exception ex) {
+		// logger.error("error en agrupacionAdapter", ex);
+		// return false;
+		// }
 
 		return true;
 	}
@@ -1393,7 +1407,7 @@ public class AgrupacionAdapter {
 			clienteComercial.setTipoDocumento(tipoDocumento);
 			clienteComercial.setRazonSocial(dto.getRazonSocialCliente());
 			clienteComercial.setIdClienteRem(clcremid);
-			
+
 			if (!Checks.esNulo(dto.getTipoPersona())) {
 				DDTiposPersona tipoPersona = (DDTiposPersona) genericDao.get(DDTiposPersona.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoPersona()));
@@ -1401,7 +1415,7 @@ public class AgrupacionAdapter {
 					clienteComercial.setTipoPersona(tipoPersona);
 				}
 			}
-			
+
 			if (!Checks.esNulo(dto.getEstadoCivil())) {
 				DDEstadosCiviles estadoCivil = (DDEstadosCiviles) genericDao.get(DDEstadosCiviles.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoCivil()));
@@ -1409,9 +1423,10 @@ public class AgrupacionAdapter {
 					clienteComercial.setEstadoCivil(estadoCivil);
 				}
 			}
-			
+
 			if (!Checks.esNulo(dto.getRegimenMatrimonial())) {
-				DDRegimenesMatrimoniales regimen = (DDRegimenesMatrimoniales) genericDao.get(DDRegimenesMatrimoniales.class,
+				DDRegimenesMatrimoniales regimen = (DDRegimenesMatrimoniales) genericDao.get(
+						DDRegimenesMatrimoniales.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getRegimenMatrimonial()));
 				if (!Checks.esNulo(regimen)) {
 					clienteComercial.setRegimenMatrimonial(regimen);
@@ -1491,26 +1506,16 @@ public class AgrupacionAdapter {
 
 	}
 
-	public Object procesarMasivo(Long idProcess, Long idOperation) {
+	public Boolean procesarMasivo(Long idProcess, Long idOperation) throws Exception {
 
 		MSVDocumentoMasivo document = ficheroDao.findByIdProceso(idProcess);
 
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "id", idOperation);
 		MSVDDOperacionMasiva tipoOperacion = genericDao.get(MSVDDOperacionMasiva.class, filter);
 
-		try {
-			MSVLiberator lib = factoriaLiberators.dameLiberator(tipoOperacion);
-			if (!Checks.esNulo(lib))
-				lib.liberaFichero(document);
-		} catch (IllegalArgumentException e) {
-			logger.error("error en agrupacionAdapter", e);
-		} catch (IOException e) {
-			logger.error("error en agrupacionAdapter", e);
-		} catch (SQLException e) {
-			logger.error("error en agrupacionAdapter", e);
-		} catch (ParseException e) {
-			logger.error("error en agrupacionAdapter", e);
-		}
+		MSVLiberator lib = factoriaLiberators.dameLiberator(tipoOperacion);
+		if (!Checks.esNulo(lib))
+			lib.liberaFichero(document);
 
 		// TODO: Cambiar estado DocumentoMasivo
 
@@ -1585,7 +1590,7 @@ public class AgrupacionAdapter {
 	public boolean saveAgrupacion(DtoAgrupaciones dto, Long id) {
 
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
-		
+
 		// Primero comprobamos si estamos dandola de baja y se cumplen todos los
 		// requisitos para poder hacerlo
 
@@ -1646,7 +1651,7 @@ public class AgrupacionAdapter {
 
 			try {
 				beanUtilNotNull.copyProperties(loteComercial, dto);
-				
+
 				if (dto.getMunicipioCodigo() != null) {
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMunicipioCodigo());
 					Localidad municipioNuevo = (Localidad) genericDao.get(Localidad.class, filtro);
@@ -1660,7 +1665,7 @@ public class AgrupacionAdapter {
 
 					loteComercial.setProvincia(provinciaNueva);
 				}
-				
+
 				if (!Checks.esNulo(dto.getCodigoGestoriaFormalizacion())) {
 					Usuario usuario = proxyFactory.proxy(UsuarioApi.class).get(dto.getCodigoGestoriaFormalizacion());
 					loteComercial.setUsuarioGestoriaFormalizacion(usuario);
@@ -1674,12 +1679,12 @@ public class AgrupacionAdapter {
 					loteComercial.setUsuarioGestorFormalizacion(usuario);
 				}
 				if (!Checks.esNulo(dto.getCodigoGestorComercialBackOffice())) {
-					Usuario usuario = proxyFactory.proxy(UsuarioApi.class).get(dto.getCodigoGestorComercialBackOffice());
+					Usuario usuario = proxyFactory.proxy(UsuarioApi.class)
+							.get(dto.getCodigoGestorComercialBackOffice());
 					loteComercial.setUsuarioGestorComercialBackOffice(usuario);
-				}				
-				//TODO: 1er comprovar si es pot canviar "formalizacion"
-				
-				
+				}
+				// TODO: 1er comprovar si es pot canviar "formalizacion"
+
 				activoAgrupacionApi.saveOrUpdate(loteComercial);
 
 			} catch (Exception e) {
@@ -1843,7 +1848,8 @@ public class AgrupacionAdapter {
 			Activo activo = activoDao.get(Long.parseLong(idActivo));
 			if (!Checks.esNulo(activo.getEstadoPublicacion())) {
 				if (DDEstadoPublicacion.CODIGO_NO_PUBLICADO.equals(activo.getEstadoPublicacion().getCodigo())) {
-					if(activo.getSituacionComercial().getCodigo().equals(DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE)
+					if (activo.getSituacionComercial().getCodigo()
+							.equals(DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE)
 							|| activo.getSituacionComercial().getCodigo().equals(DDSituacionComercial.CODIGO_TRASPASADO)
 							|| activo.getSituacionComercial().getCodigo().equals(DDSituacionComercial.CODIGO_VENDIDO)) {
 						throw new Exception(AgrupacionAdapter.PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG);
@@ -2095,11 +2101,13 @@ public class AgrupacionAdapter {
 	}
 
 	/**
-	 * Este método obtiene una lista de usuarios filtrados por el tipo de gestor que recibe
-	 * y por la cartera a la que pertenece la agrupación.
+	 * Este método obtiene una lista de usuarios filtrados por el tipo de gestor
+	 * que recibe y por la cartera a la que pertenece la agrupación.
 	 * 
-	 * @param agrId: ID de la agrupación.
-	 * @param codigoGestor: código del tipo de gestor.
+	 * @param agrId:
+	 *            ID de la agrupación.
+	 * @param codigoGestor:
+	 *            código del tipo de gestor.
 	 * @return Devuelve una lista de usuarios.
 	 */
 	public List<DtoUsuario> getUsuariosPorTipoGestorYCarteraDelLoteComercial(Long agrId, String codigoGestor) {
@@ -2109,7 +2117,8 @@ public class AgrupacionAdapter {
 		ActivoAgrupacion activoAgrupacion = activoAgrupacionApi.get(agrId);
 
 		if (!Checks.esNulo(tipoGestor) && !Checks.esNulo(activoAgrupacion)) {
-			return activoAdapter.getComboUsuariosPorTipoGestorYCarteraDelLoteComercial(activoAgrupacion, tipoGestor.getId());
+			return activoAdapter.getComboUsuariosPorTipoGestorYCarteraDelLoteComercial(activoAgrupacion,
+					tipoGestor.getId());
 		}
 
 		return null;

@@ -164,7 +164,21 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 					&& !DDEstadoGasto.PAGADO.equals(gasto.getEstadoGasto().getCodigo())
 					&& !Checks.esNulo(gasto.getGastoDetalleEconomico().getFechaPago())) {
 
-						codigo = DDEstadoGasto.PAGADO;
+						//HREOS-3456:  hay supuestos en los que, aunque se haga constar una fecha de pago,
+						//el gasto no debe posicionarse en estado pagado: 
+						//1) Cuando se marque el check de "pagado por conexión Bankia"; 
+						//2) Cuando se marque el check de "anticipo".
+						if (gasto.getGastoDetalleEconomico() != null) {
+							if ((gasto.getGastoDetalleEconomico().getAnticipo() == null
+									|| gasto.getGastoDetalleEconomico().getAnticipo().equals(Integer.valueOf(0)))
+									&& (gasto.getGastoDetalleEconomico().getPagadoConexionBankia() == null
+											|| gasto.getGastoDetalleEconomico().getPagadoConexionBankia()
+													.equals(Integer.valueOf(0)))) {
+
+								codigo = DDEstadoGasto.PAGADO;
+							}
+						}
+						
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO);
 						DDEstadoAutorizacionHaya estadoAutorizacionHaya= genericDao.get(DDEstadoAutorizacionHaya.class, filtro);
 						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoAutorizacionPropietario.CODIGO_PENDIENTE);

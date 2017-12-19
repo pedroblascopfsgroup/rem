@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ "$#" -ne 3 ]; then
    echo "[INFO] Parametros: <entidad> [SAREB, CAJAMAR, BANKIA]"
-   echo "[INFO] Parametros: <informe> [CONTRASTE, KPIS]"
+   echo "[INFO] Parametros: <informe> [CONTRASTE, KPIS, PARES]"
    echo "[INFO] Parametros: <cadena_conexion> <pass@host:puerto/ORACLE_SID>"
    exit 1
 fi
@@ -12,9 +12,9 @@ if [[ "$1" != "SAREB" ]] && [[ "$1" != "CAJAMAR" ]] && [[ "$1" != "BANKIA" ]];  
     exit 1
 fi
 
-if [[ "$2" != "CONTRASTE" ]] && [[ "$2" != "KPIS" ]];  then
+if [[ "$2" != "CONTRASTE" ]] && [[ "$2" != "KPIS" ]] && [[ "$2" != "PARES" ]];  then
     echo "[INFO] Tipo de informe no válido."
-    echo "[INFO] Valores aceptados [CONTRASTE, KPIS]"
+    echo "[INFO] Valores aceptados [CONTRASTE, KPIS, PARES]"
     exit 1
 fi
 

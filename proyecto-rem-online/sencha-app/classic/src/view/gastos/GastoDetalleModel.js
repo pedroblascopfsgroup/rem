@@ -64,6 +64,16 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	
 	     	return get('gasto.autorizado') || get('gasto.asignadoATrabajos');
 	     },
+	     
+	     asignadoAActivosPropietarioSareb: function(get) {
+	    	 
+	    	 var me = this;
+	    	 var gasto = me.getData().gasto;
+	    	 var esSareb = gasto.data.nombrePropietario == CONST.NOMBRE_CARTERA['SAREB'];
+	    	 
+	    	 return get('gasto.asignadoAActivos') && esSareb;
+	    	 
+	     },
 
 
 	     esReembolsoPago: function(get){

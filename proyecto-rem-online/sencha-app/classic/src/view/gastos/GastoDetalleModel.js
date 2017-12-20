@@ -69,7 +69,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	    	 
 	    	 var me = this;
 	    	 var gasto = me.getData().gasto;
-	    	 var esSareb = gasto.data.nombrePropietario == CONST.NOMBRE_CARTERA['SAREB'];
+	    	 var esSareb = gasto.data.nombrePropietario == CONST.NOMBRE_CARTERA2['SAREB'];
 	    	 
 	    	 return get('gasto.asignadoAActivos') && esSareb;
 	    	 

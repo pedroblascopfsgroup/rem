@@ -169,7 +169,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	TERCEROS: '04',
     	HYT: '06'
     },
-<<<<<<< Updated upstream
+
     NOMBRE_CARTERA:	{
     	'01': 'CAJAMAR',
     	'02': 'SAREB',
@@ -177,15 +177,15 @@ Ext.define('HreRem.ux.util.Constants', {
     	'04': 'TERCEROS',
     	'06': 'HYT'
     },
-=======
+
     
-    NOMBRE_CARTERA: {
+    NOMBRE_CARTERA2: {
     	CAJAMAR: 'CAJAMAR',
     	SAREB: 'SAREB',
     	BANKIA: 'BANKIA'
     },
     
->>>>>>> Stashed changes
+
     IMAGENES_CARTERA: {
     	CAJAMAR: 'logo_cajamar.svg',
     	SAREB: 'logo_sareb.svg',

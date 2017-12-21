@@ -13,17 +13,34 @@ Ext.define('HreRem.view.activos.gestores.ComboGestores', {
     },
     
 	initComponent: function() {
-	
 		var me = this;
 		me.setTitle(HreRem.i18n('title.anyadir.gestor'));
     	me.buttonAlign = 'left';
     	
     	me.items = [
-                   	 {
+			    		{
+			            	xtype:'container',
+			            	collapsible: false,
+			            	defaultType: 'toolfieldset',
+			            	margin: '5 0 0 0',
+			            	layout: 'hbox',
+			            	items: [
+			            		{			
+					            	xtype: 'toolfieldset',
+					            	border: false,
+					            	style: 'background: none; margin-left: -13px',
+					            	bind:{
+					            		hidden: '{!activo.isCarteraBankia}',
+					            		title: 'Gestoría de Recovery: {activo.acbCoreaeTexto}'
+					            	}
+					            }
+			            	]
+			            },
+			            {
 			                	xtype:'container',
 								collapsible: false,
 								defaultType: 'textfield',
-								margin: '0 0 20 0',
+								margin: '0 0 0 0',
 								layout: 'hbox',							
 								items :
 									[											
@@ -44,14 +61,15 @@ Ext.define('HreRem.view.activos.gestores.ComboGestores', {
 											listeners: {
 												select: 'onChangeChainedCombo'
 											}
-									}
+									}							
 					                ]
 			                },	
+			               
 			                {
 			                	xtype:'container',
 								collapsible: false,
 								defaultType: 'textfield',
-								margin: '0 0 20 0',
+								margin: '0 0 0 0',
 								layout: 'hbox',							
 								items :	[
 								  {
@@ -84,13 +102,18 @@ Ext.define('HreRem.view.activos.gestores.ComboGestores', {
 		    						    }
 								  }
 					          ]
-			                }
+			                }			                
     	            ];
-	    me.buttons = [
+    	
+    	me.buttons = [
 	    	{ 
-	    		text: 'Agregar', handler: 'onAgregarGestoresClick', bind: { disabled: '{!usuarioGestor.selection}'} 
+	    		text: 'Agregar',
+	    		handler: 'onAgregarGestoresClick',
+	    		bind: { disabled: '{!usuarioGestor.selection}'}
 	    	}
 	    ];
+    	
+	    
 
 	    me.callParent();
 	}

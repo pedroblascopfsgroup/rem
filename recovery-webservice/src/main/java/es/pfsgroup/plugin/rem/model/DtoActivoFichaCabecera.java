@@ -182,6 +182,9 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private int page;
 	private int start;
 	private int limit;
+	
+	//HREOS-3415
+	private String acbCoreaeTexto;
 
 	public int getPage() {
 		return page;
@@ -1370,6 +1373,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setNumInmovilizadoBankia(String numInmovilizadoBankia) {
 		this.numInmovilizadoBankia = numInmovilizadoBankia;
 	}
-	
 
+	public String getAcbCoreaeTexto() {
+		return acbCoreaeTexto;
+	}
+
+	public void setAcbCoreaeTexto(String acbCoreaeTexto) {
+		this.acbCoreaeTexto = acbCoreaeTexto;
+	}
+
+	
 }

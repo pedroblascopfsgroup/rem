@@ -171,6 +171,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				BeanUtils.copyProperty(activoDto, "provinciaDescripcion", activo.getLocalizacion().getLocalizacionBien().getProvincia().getDescripcion());
 
 			}
+			
 		}
 		
 		if (activo.getCartera() != null) {
@@ -437,6 +438,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		if(activo.getCodigoPromocionPrinex() != null ) {
 			BeanUtils.copyProperty(activoDto, "codigoPromocionPrinex", activo.getCodigoPromocionPrinex());
+		}
+		
+		if(activo.getActivoBNK() != null && activo.getActivoBNK().getAcbCoreaeTexto() != null && activo.getActivoBNK().getAcbCoreaeTexto() != ""){
+			BeanUtils.copyProperty(activoDto, "acbCoreaeTexto", activo.getActivoBNK().getAcbCoreaeTexto());
 		}
 
 		// HREOS-2761: Buscamos si existen activos candidatos para propagar cambios. Llamada única para el activo

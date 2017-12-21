@@ -720,22 +720,9 @@ BEGIN
 				
 				--Sacamos del perímetro de comercialización.
 				V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO PAC SET
-							PAC.PAC_INCLUIDO = 0, 
-							PAC.PAC_CHECK_TRA_ADMISION = 0, 
-							PAC.PAC_CHECK_GESTIONAR = 0, 
-							PAC.PAC_CHECK_ASIGNAR_MEDIADOR = 0, 
 							PAC.PAC_CHECK_COMERCIALIZAR = 0, 
-							PAC.PAC_CHECK_FORMALIZAR = 0, 
-							PAC.PAC_FECHA_ASIGNAR_MEDIADOR = SYSDATE, 
 							PAC.PAC_FECHA_COMERCIALIZAR = SYSDATE, 
-							PAC.PAC_FECHA_FORMALIZAR = SYSDATE, 
-							PAC.PAC_FECHA_GESTIONAR= SYSDATE, 
-							PAC.PAC_FECHA_TRA_ADMISION= SYSDATE, 
-							PAC.PAC_MOT_EXCL_COMERCIALIZAR = ''Salida de perímetro por petición'', 
-							PAC.PAC_MOTIVO_ASIGNAR_MEDIADOR = ''Salida de perímetro por petición'', 
-							PAC.PAC_MOTIVO_FORMALIZAR = ''Salida de perímetro por petición'', 
-							PAC.PAC_MOTIVO_GESTIONAR = ''Salida de perímetro por petición'', 
-							PAC.PAC_MOTIVO_TRA_ADMISION = ''Salida de perímetro por petición'', 
+							PAC.PAC_MOT_EXCL_COMERCIALIZAR = ''Salida de perímetro por petición'',
 							PAC.FECHAMODIFICAR = SYSDATE, 
 							PAC.USUARIOMODIFICAR = ''HREOS-3460''
 							WHERE PAC.ACT_ID = (SELECT ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE ACT.ACT_NUM_ACTIVO = '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''')';

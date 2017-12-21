@@ -597,6 +597,9 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'numInmovilizadoBankia'
+			},
+			{
+				name: 'activoBNK'
 			}
     ],
     

@@ -406,6 +406,10 @@ public class Activo implements Serializable, Auditable {
 	@Embedded
 	private Auditoria auditoria;
 	
+    @OneToOne(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    private ActivoBNK activoBNK;
+	
 	
 	
     // Getters del activo --------------------------------------------
@@ -1595,6 +1599,16 @@ public class Activo implements Serializable, Auditable {
 	public void setVentaDirectaBankia(Boolean ventaDirectaBankia) {
 		this.ventaDirectaBankia = ventaDirectaBankia;
 	}
+
+	public ActivoBNK getActivoBNK() {
+		return activoBNK;
+	}
+
+	public void setActivoBNK(ActivoBNK activoBNK) {
+		this.activoBNK = activoBNK;
+	}
+	
+	
 	
 	
 }

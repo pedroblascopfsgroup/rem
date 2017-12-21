@@ -228,25 +228,6 @@ public class UvemManager implements UvemManagerApi {
 	 * Invoca al servicio GMPETS07_INS de BANKIA para solicitar una Tasación
 	 * 
 	 * @param numActivoUvem
-	 * @param userName
-	 * @param email
-	 * @param telefono
-	 * @return
-	 * @throws Exception
-	 */
-	public Integer ejecutarSolicitarTasacionTest(Long numActivoUvem, String userName, String email, String telefono)
-			throws Exception {
-		Usuario usuario = new Usuario();
-		usuario.setUsername(userName);
-		usuario.setEmail(email);
-		usuario.setTelefono(telefono);
-		return ejecutarSolicitarTasacion(numActivoUvem, usuario);
-	}
-
-	/**
-	 * Invoca al servicio GMPETS07_INS de BANKIA para solicitar una Tasación
-	 * 
-	 * @param numActivoUvem
 	 * @param nombreGestor
 	 * @param gestion
 	 * @return
@@ -383,10 +364,6 @@ public class UvemManager implements UvemManagerApi {
 		}
 
 		return numeroIdentificadorTasacion;
-	}
-
-	public GMPETS07_INS resultadoSolicitarTasacion() {
-		return servicioGMPETS07_INS;
 	}
 
 	/**

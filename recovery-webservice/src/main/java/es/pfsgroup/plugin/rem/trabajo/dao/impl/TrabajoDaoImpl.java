@@ -97,8 +97,10 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
    		hb.addFiltroIgualQueSiNotNull(hb, "tbj.conCierreEconomico", dto.getConCierreEconomico());
    		hb.addFiltroIgualQueSiNotNull(hb, "tbj.facturado", dto.getFacturado());
    		hb.addFiltroIgualQueSiNotNull(hb, "tbj.numActivo", dto.getNumActivo());
-   		hb.appendWhere("tbj.importeTotal > " +BigDecimal.ZERO);
-   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.codigoEstado", "05");
+   		if(!Checks.esNulo(dto.getIdProveedor())) {
+   			hb.appendWhere("tbj.importeTotal > " +BigDecimal.ZERO);
+   	   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.codigoEstado", "05");
+   		}
 
    		if(Checks.esNulo(dto.getNumActivo()) && Checks.esNulo(dto.getIdActivo())) {
    			hb.addFiltroIgualQueSiNotNull(hb, "tbj.rango", 1);

@@ -99,6 +99,29 @@ public class HQLBuilder {
 		}
 
 	}
+	
+	/**
+	 * Ayuda a crear una cláusula WHERE campo > valor en dónde valor se
+	 * referencia a través de un parámetro con nombre. <strong>sólo en el caso
+	 * que el valor no sea null</strong>
+	 * 
+	 * @param hqlBuilder
+	 *            Constructor de la sentencia
+	 * @param nombreCampo
+	 *            Nombre del campo
+	 * @param valor
+	 *            valor del parámetro
+	 */
+	public static void addFiltroMayorQueSiNotNull(final HQLBuilder hqlBuilder, final String nombreCampo,
+			final Object valor) {
+		final String nombreParametro = nombraParametro(nombreCampo);
+
+		if (!Checks.esNulo(valor)) {
+			hqlBuilder.appendWhere(nombreCampo.concat(" > :").concat(nombreParametro));
+			hqlBuilder.getParametros().putObject(nombreParametro, valor);
+		}
+
+	}
 
 	/**
 	 * Ayuda a crear una cláusula WHERE campo = valor en dónde valor se

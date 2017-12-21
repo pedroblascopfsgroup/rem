@@ -18,6 +18,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionEconomicaTrabajo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -32,13 +33,15 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	@Autowired
 	ProveedoresDao proveedorDao;
 	
+	@Autowired
+	GenericABMDao genericAbmDao;
+	
 	@Override
 	public Page findAll(DtoTrabajoFilter dto) {
-
 		HQLBuilder hb = new HQLBuilder(" from VBusquedaTrabajos tbj");
 		
 		this.rellenarFiltrosBusquedaTrabajos(dto, hb);
-
+		
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "tbj.proveedor", dto.getProveedor(), true);
 		
    		return HibernateQueryUtils.page(this, hb, dto);
@@ -93,6 +96,8 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.conCierreEconomico", dto.getConCierreEconomico());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.facturado", dto.getFacturado());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numActivo", dto.getNumActivo());
+   		HQLBuilder.addFiltroMayorQueSiNotNull(hb, "tbj.importeTotal", 0.0);
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoEstado", "05");
 
    		if(Checks.esNulo(dto.getNumActivo()) && Checks.esNulo(dto.getIdActivo())) {
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.rango", 1);

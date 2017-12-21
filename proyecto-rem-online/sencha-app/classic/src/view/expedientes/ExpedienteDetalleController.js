@@ -1001,12 +1001,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}; 
 		
 		if(form.isFormValid()) {
-			var idExpedienteComercial = record.get("idExpedienteComercial");
-
+			var idExpedienteComercial = record.get("idExpedienteComercial");			
+			var numeroClienteUrsus = record.get("numeroClienteUrsus");
+			
 			form.mask(HreRem.i18n("msg.mask.espere"));
 			
 			record.save({
-				params: {idExpedienteComercial: idExpedienteComercial},
+				params: {idExpedienteComercial: idExpedienteComercial,
+						 numeroClienteUrsus:		numeroClienteUrsus},
 			    success: success,
 			 	failure: failure,
 			    callback: function(record, operation) {

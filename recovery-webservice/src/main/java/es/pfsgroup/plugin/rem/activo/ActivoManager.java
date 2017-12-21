@@ -1906,7 +1906,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					if (historico.getEstadoInformeComercial().getCodigo().equals(DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION))
 						return true;
 					i++;
-				}while(i <= activoEstadoInfComercialHistoricoList.size());
+				}while(i < activoEstadoInfComercialHistoricoList.size());
 								
 			}			
 		}

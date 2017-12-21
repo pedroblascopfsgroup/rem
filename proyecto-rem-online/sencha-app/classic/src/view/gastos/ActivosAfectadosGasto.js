@@ -26,7 +26,7 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGasto', {
 					layout: 'hbox',
 					collapsible: false,
 					bind: {
-						hidden: '{gasto.asignadoAActivos}'
+						hidden: '{asignadoAActivosPropietarioSareb}'
 					},
 					items :	[
 				                {

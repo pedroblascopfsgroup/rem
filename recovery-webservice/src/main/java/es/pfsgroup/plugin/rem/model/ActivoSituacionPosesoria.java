@@ -26,6 +26,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionJuridica;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 
 
@@ -119,7 +120,11 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 	
 	@Column(name = "SPS_EDITA_FECHA_TOMA_POSESION")
 	private Boolean editadoFechaTomaPosesion;
-
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_SIJ_ID")
+    private DDSituacionJuridica sitaucionJuridica;
+	
 	@Version   
 	private Long version;
 
@@ -323,6 +328,14 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 
 	public void setEditadoFechaTomaPosesion(Boolean editadoFechaTomaPosesion) {
 		this.editadoFechaTomaPosesion = editadoFechaTomaPosesion;
+	}
+
+	public DDSituacionJuridica getSitaucionJuridica() {
+		return sitaucionJuridica;
+	}
+
+	public void setSitaucionJuridica(DDSituacionJuridica sitaucionJuridica) {
+		this.sitaucionJuridica = sitaucionJuridica;
 	}
 
 }

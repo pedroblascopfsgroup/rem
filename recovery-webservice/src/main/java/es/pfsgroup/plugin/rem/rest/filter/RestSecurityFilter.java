@@ -132,13 +132,13 @@ public class RestSecurityFilter implements Filter {
 				}
 			}
 		} catch (Exception e) {
-			peticion.setResult("ERROR SERVICIO ".concat(nombreServicio));
+			peticion.setResult(RestApi.CODE_ERROR);
 			peticion.setErrorDesc(e.getMessage());
 			logger.error(e.getMessage(),e);
 			restApi.throwRestException(response, RestApi.REST_MSG_UNEXPECTED_ERROR, jsonFields, restRequest);
 
 		} catch (Throwable t) {
-			peticion.setResult("ERROR SERVICIO ".concat(nombreServicio));
+			peticion.setResult(RestApi.CODE_ERROR);
 			peticion.setErrorDesc(t.getMessage());
 			logger.error(t.getMessage(),t);
 			restApi.throwRestException(response, RestApi.REST_MSG_UNEXPECTED_ERROR, jsonFields, restRequest);

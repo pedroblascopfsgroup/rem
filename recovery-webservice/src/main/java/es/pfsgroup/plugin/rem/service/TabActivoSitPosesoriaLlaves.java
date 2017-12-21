@@ -92,6 +92,9 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			if (activo.getSituacionPosesoria().getTipoTituloPosesorio() != null) {
 				BeanUtils.copyProperty(activoDto, "tipoTituloPosesorioCodigo", activo.getSituacionPosesoria().getTipoTituloPosesorio().getCodigo());
 			}
+			if(!Checks.esNulo(activo.getSituacionPosesoria().getSitaucionJuridica())) {
+				BeanUtils.copyProperty(activoDto, "situacionJuridica", activo.getSituacionPosesoria().getSitaucionJuridica().getDescripcion());
+			}
 		}
 		/*
 		//Añadir al DTO los atributos de llaves también

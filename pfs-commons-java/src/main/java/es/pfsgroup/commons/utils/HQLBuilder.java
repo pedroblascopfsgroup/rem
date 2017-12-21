@@ -99,6 +99,7 @@ public class HQLBuilder {
 		}
 
 	}
+	
 
 	/**
 	 * Ayuda a crear una cláusula WHERE campo = valor en dónde valor se

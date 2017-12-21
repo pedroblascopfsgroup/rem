@@ -18,6 +18,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionEconomicaTrabajo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -32,13 +33,15 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	@Autowired
 	ProveedoresDao proveedorDao;
 	
+	@Autowired
+	GenericABMDao genericAbmDao;
+	
 	@Override
 	public Page findAll(DtoTrabajoFilter dto) {
-
 		HQLBuilder hb = new HQLBuilder(" from VBusquedaTrabajos tbj");
 		
 		this.rellenarFiltrosBusquedaTrabajos(dto, hb);
-
+		
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "tbj.proveedor", dto.getProveedor(), true);
 		
    		return HibernateQueryUtils.page(this, hb, dto);
@@ -65,10 +68,11 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	}
 	
 	//Prepara lso filtros de la consulta 
+	@SuppressWarnings("static-access")
 	private void rellenarFiltrosBusquedaTrabajos(DtoTrabajoFilter dto, HQLBuilder hb) {
 		
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numTrabajo", dto.getNumTrabajo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.idTrabajoWebcom", dto.getIdTrabajoWebcom());
+		hb.addFiltroIgualQueSiNotNull(hb, "tbj.numTrabajo", dto.getNumTrabajo());
+		hb.addFiltroIgualQueSiNotNull(hb, "tbj.idTrabajoWebcom", dto.getIdTrabajoWebcom());
    		Collection<String> listaTipo = new ArrayList<String>();
    		if (dto!=null && dto.getCodigoTipo()!=null) {
    			listaTipo.add(dto.getCodigoTipo());
@@ -76,26 +80,30 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
    		if (dto!=null && dto.getCodigoTipo2()!=null) {
    			listaTipo.add(dto.getCodigoTipo2());
    		}
-		HQLBuilder.addFiltroWhereInSiNotNull(hb, "tbj.codigoTipo", listaTipo);   		
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoSubtipo", dto.getCodigoSubtipo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoEstado", dto.getCodigoEstado());
-   		HQLBuilder.addFiltroLikeSiNotNull(hb, "tbj.descripcionPoblacion", dto.getDescripcionPoblacion(), true);
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoProvincia", dto.getCodigoProvincia());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codPostal", dto.getCodPostal());
-   		HQLBuilder.addFiltroLikeSiNotNull(hb, "tbj.solicitante", dto.getSolicitante(), true);
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numActivoRem", dto.getNumActivoRem());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numAgrupacionRem", dto.getNumAgrupacionRem());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.idActivo", dto.getIdActivo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.cartera", dto.getCartera());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.gestorActivo", dto.getGestorActivo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.cubreSeguro", dto.getCubreSeguro());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.idProveedor", dto.getIdProveedor());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.conCierreEconomico", dto.getConCierreEconomico());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.facturado", dto.getFacturado());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numActivo", dto.getNumActivo());
+   		hb.addFiltroWhereInSiNotNull(hb, "tbj.codigoTipo", listaTipo);   		
+   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.codigoSubtipo", dto.getCodigoSubtipo());
+   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.codigoEstado", dto.getCodigoEstado());
+   		hb.addFiltroLikeSiNotNull(hb, "tbj.descripcionPoblacion", dto.getDescripcionPoblacion(), true);
+   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.codigoProvincia", dto.getCodigoProvincia());
+   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.codPostal", dto.getCodPostal());
+   		hb.addFiltroLikeSiNotNull(hb, "tbj.solicitante", dto.getSolicitante(), true);
+   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.numActivoRem", dto.getNumActivoRem());
+   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.numAgrupacionRem", dto.getNumAgrupacionRem());
+   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.idActivo", dto.getIdActivo());
+   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.cartera", dto.getCartera());
+   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.gestorActivo", dto.getGestorActivo());
+   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.cubreSeguro", dto.getCubreSeguro());
+   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.idProveedor", dto.getIdProveedor());
+   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.conCierreEconomico", dto.getConCierreEconomico());
+   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.facturado", dto.getFacturado());
+   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.numActivo", dto.getNumActivo());
+   		if(!Checks.esNulo(dto.getIdProveedor())) {
+   			hb.appendWhere("tbj.importeTotal > " +BigDecimal.ZERO);
+   	   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.codigoEstado", "05");
+   		}
 
    		if(Checks.esNulo(dto.getNumActivo()) && Checks.esNulo(dto.getIdActivo())) {
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.rango", 1);
+   			hb.addFiltroIgualQueSiNotNull(hb, "tbj.rango", 1);
    		} 
    		
    		try {
@@ -103,7 +111,7 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 
 			if (dto.getFechaPeticionDesde() != null) {
 				Date fechaDesde = DateFormat.toDate(dto.getFechaPeticionDesde());
-				HQLBuilder.addFiltroBetweenSiNotNull(hb, "tbj.fechaSolicitud", fechaDesde, null);
+				hb.addFiltroBetweenSiNotNull(hb, "tbj.fechaSolicitud", fechaDesde, null);
 			}
 			
 			if (dto.getFechaPeticionHasta() != null) {
@@ -114,7 +122,7 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 				calendar.setTime(fechaHasta); // Configuramos la fecha que se recibe
 				calendar.add(Calendar.DAY_OF_YEAR, 1);  // numero de días a añadir, o restar en caso de días<0
 
-				HQLBuilder.addFiltroBetweenSiNotNull(hb, "tbj.fechaSolicitud", null, calendar.getTime());
+				hb.addFiltroBetweenSiNotNull(hb, "tbj.fechaSolicitud", null, calendar.getTime());
 			}
 			
    		} catch (ParseException e) {

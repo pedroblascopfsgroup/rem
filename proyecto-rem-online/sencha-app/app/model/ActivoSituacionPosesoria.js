@@ -99,6 +99,9 @@ Ext.define('HreRem.model.ActivoSituacionPosesoria', {
     			name:'fechaTomaPosesion',
     			type:'date',
     			dateFormat: 'c'
+    		},
+    		{
+    			name: 'situacionJuridica'
     		}
     		
     ],

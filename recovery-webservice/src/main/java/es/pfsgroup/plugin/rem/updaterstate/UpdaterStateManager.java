@@ -83,7 +83,8 @@ public class UpdaterStateManager implements UpdaterStateApi{
 				TareaActivo tareaInfo = (TareaActivo) tareaExternaInfo.getTareaPadre();
 		
 				Boolean tareasAdmision = (!Checks.esNulo(tareaDocAdmision.getFechaFin()) && !Checks.esNulo(tareaInfo.getFechaFin()));
-				Boolean fechasAdmision = (!Checks.esNulo(activo.getTitulo()) && !Checks.esNulo(activo.getTitulo().getFechaInscripcionReg()) && !Checks.esNulo(activo.getSituacionPosesoria().getFechaTomaPosesion()) && !Checks.esNulo(activo.getFechaRevisionCarga()));
+				Boolean fechasAdmision = (!Checks.esNulo(activo.getSituacionPosesoria()) && !Checks.esNulo(activo.getSituacionPosesoria().getSitaucionJuridica()) && activo.getSituacionPosesoria().getSitaucionJuridica().getIndicaPosesion()) 
+										 || (!Checks.esNulo(activo.getTitulo()) && !Checks.esNulo(activo.getTitulo().getFechaInscripcionReg()) && !Checks.esNulo(activo.getSituacionPosesoria().getFechaTomaPosesion()) && !Checks.esNulo(activo.getFechaRevisionCarga()));
 				activo.setAdmision(tareasAdmision && fechasAdmision);
 			}
 		}

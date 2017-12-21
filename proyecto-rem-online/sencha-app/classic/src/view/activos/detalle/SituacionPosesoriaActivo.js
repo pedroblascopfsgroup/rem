@@ -145,12 +145,20 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						},
 				        { 
 				        	xtype: 'comboboxfieldbase',				        	
-				        	rowspan: 2,
+				        	//rowspan: 2,
 				        	allowBlank: false,
 				        	fieldLabel: HreRem.i18n('fieldlabel.riesgo.ocupacion'),
 				        	bind: {
 			            		store: '{comboSiNoRem}',
 			            		value: '{situacionPosesoria.riesgoOcupacion}'
+			            	},
+			            	listeners: {
+			            		afterbind: function(combo){
+			            			var me=this;
+			            			if(!me.up('activosdetallemain').getViewModel().get('activo.isCarteraBankia')){
+			            				me.rowspan = 2;
+			            			}
+			            		}
 			            	}
 				        },
 		                { 
@@ -173,6 +181,15 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            			}
 			            			
 			            		}
+			            	}
+				        },
+				        { 
+				        	reference: 'disponibilidadJuridicaRef',
+							fieldLabel: HreRem.i18n('fieldlabel.disponibilidad.juridica.bankia'),
+							readOnly: true,
+				        	bind: {
+				        		hidden: '{!activo.isCarteraBankia}',
+			            		value: '{situacionPosesoria.situacionJuridica}'
 			            	}
 				        },
 				        { 

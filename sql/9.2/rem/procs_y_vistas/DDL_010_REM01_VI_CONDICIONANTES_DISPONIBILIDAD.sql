@@ -75,7 +75,7 @@ AS
    SELECT act_id, sin_toma_posesion_inicial, ocupado_contitulo, pendiente_inscripcion, proindiviso, tapiado, obranueva_sindeclarar, obranueva_enconstruccion, divhorizontal_noinscrita, ruina, otro,
           sin_informe_aprobado, revision, procedimiento_judicial, con_cargas, ocupado_sintitulo, estado_portal_externo, DECODE (est_disp_com_codigo, ''01'', 1, 0) AS es_condicionado,
           est_disp_com_codigo, borrado
-     FROM (SELECT act.act_id, NVL2 (sps4.sps_id, 1, 0) AS sin_toma_posesion_inicial, NVL2 (sps3.sps_id, 1, 0) AS ocupado_contitulo, NVL2 (tit.act_id, 0, 1) AS pendiente_inscripcion,
+     FROM (SELECT act.act_id, NVL2 (sps7.sps_id, 1, NVL2 (sps4.sps_id, 1, 0)) AS sin_toma_posesion_inicial, NVL2 (sps3.sps_id, 1, 0) AS ocupado_contitulo, NVL2 (tit.act_id, 0, 1) AS pendiente_inscripcion,
                   NVL2 (npa.act_id, 1, 0) AS proindiviso, NVL2 (sps1.sps_id, 1, 0) AS tapiado, NVL2 (eon.dd_eon_id, 1, 0) AS obranueva_sindeclarar,
                   NVL2 (eac2.dd_eac_id, 1, 0) AS obranueva_enconstruccion, NVL2 (reg2.reg_id, 1, 0) AS divhorizontal_noinscrita, NVL2 (eac1.dd_eac_id, 1, 0) AS ruina, sps5.sps_otro AS otro,
                   DECODE (vei.dd_aic_codigo, ''02'', 0, 1) AS sin_informe_aprobado, 0 AS revision,                                                                                      --NO EXISTE EN REM
@@ -109,7 +109,9 @@ AS
                   LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps4 ON sps4.act_id = act.act_id AND (sps4.sps_fecha_toma_posesion IS NULL AND aba2.dd_cla_id = 2)                         -- SIN TOMA POSESION INICIAL
                   LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps5 ON sps5.act_id = act.act_id                                                                                                -- OTROS MOTIVOS
                   LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps6 ON sps6.act_id = act.act_id AND sps6.sps_estado_portal_externo = 1                                  -- ESTADO PUBLICACION PORTALES EXTERNOS
-                  LEFT JOIN
+				  LEFT JOIN '||V_ESQUEMA||'.DD_SIJ_SITUACION_JURIDICA sij on sps5.dd_sij_id = sij.dd_sij_id 
+                  LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps7 ON sps7.act_id = act.act_id and (sps7.dd_sij_id is not null and sij.DD_SIJ_INDICA_POSESION = 0)                  
+				  LEFT JOIN
                   (SELECT ACT_REG.act_id
                      FROM '||V_ESQUEMA||'.act_reg_info_registral act_reg JOIN '||V_ESQUEMA||'.act_aba_activo_bancario aba ON aba.act_id = act_reg.act_id
                      join '||V_ESQUEMA||'.BIE_DATOS_REGISTRALES BDR ON BDR.BIE_DREG_ID = act_REG.BIE_DREG_ID

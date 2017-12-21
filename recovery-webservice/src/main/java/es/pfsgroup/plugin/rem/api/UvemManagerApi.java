@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
-import es.cajamadrid.servicios.GM.GMPETS07_INS.GMPETS07_INS;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
@@ -44,32 +43,12 @@ public interface UvemManagerApi {
 	 * Solicitar tasación de un bien
 	 * 
 	 * @param numActivoUvem
-	 * @param userName
-	 * @param email
-	 * @param telefono
-	 * @return
-	 * @throws Exception
-	 */
-	public Integer ejecutarSolicitarTasacionTest(Long numActivoUvem, String userName, String email, String telefono)
-			throws Exception;
-
-	/**
-	 * Solicitar tasación de un bien
-	 * 
-	 * @param numActivoUvem
 	 * @param nombreGestor
 	 * @param gestion
 	 * @return
 	 * @throws Exception
 	 */
 	public Integer ejecutarSolicitarTasacion(Long numActivoUvem, Usuario usuarioGestor) throws Exception;
-
-	/**
-	 * Obtiene el identificador de la tasacion
-	 * 
-	 * @return
-	 */
-	public GMPETS07_INS resultadoSolicitarTasacion();
 
 	/*******************************************
 	 * CLIENTES URSUS
@@ -195,6 +174,13 @@ public interface UvemManagerApi {
 	 */
 	public MOTIVO_ANULACION obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(String codigoMotivoAnulacionReserva);
 	
+	/**
+	 * Invoca al servicio GMPAJC29 para anular una oferta
+	 * 
+	 * @param codigoDeOfertaHaya
+	 * @param motivoAnulacionOferta
+	 * @throws Exception
+	 */
 	public void anularOferta(String codigoDeOfertaHaya, MOTIVO_ANULACION_OFERTA motivoAnulacionOferta) throws Exception;
 
 	/**

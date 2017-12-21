@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TrabajoFoto;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoParticipa;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 
 
@@ -71,9 +72,6 @@ public class TrabajoAdapter {
     
     @Autowired
     private ActivoDao activoDao;
-    	
-//    @Autowired
-//    private ActivoApi activoApi;
     
     BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -87,12 +85,14 @@ public class TrabajoAdapter {
 	public List<DtoListadoTramites> getListadoTramitesTareasTrabajo(Long idTrabajo, WebDto webDto){		
 		
 		List<DtoListadoTramites> tramites = new ArrayList<DtoListadoTramites>();
-
+		
 		try {
 			
+			@SuppressWarnings("unchecked")
 			List<ActivoTramite> tramitesActivo = (List<ActivoTramite>) activoTramiteApi.getTramitesActivoTrabajo(idTrabajo, webDto).getResults();
 	
-				
+			List<VBusquedaActivosTrabajoParticipa> listaActivosTrabajo =  genericDao.getList(VBusquedaActivosTrabajoParticipa.class, genericDao.createFilter(FilterType.EQUALS,"idTrabajo", idTrabajo.toString()));
+			
 			for(ActivoTramite tramite : tramitesActivo){
 				
 				DtoListadoTramites dtoTramite = new DtoListadoTramites();
@@ -102,7 +102,8 @@ public class TrabajoAdapter {
 					beanUtilNotNull.copyProperty(dtoTramite, "tipoTramite", tramite.getTipoTramite().getDescripcion());
 					if(!Checks.esNulo(tramite.getTramitePadre()))
 					beanUtilNotNull.copyProperty(dtoTramite, "idTramitePadre", tramite.getTramitePadre().getId());
-					beanUtilNotNull.copyProperty(dtoTramite, "idActivo", tramite.getActivo().getId());
+					if(!Checks.estaVacio(listaActivosTrabajo))
+					beanUtilNotNull.copyProperty(dtoTramite, "idActivo", listaActivosTrabajo.get(0).getIdActivo());
 					beanUtilNotNull.copyProperty(dtoTramite, "nombre", tramite.getTipoTramite().getDescripcion());
 					beanUtilNotNull.copyProperty(dtoTramite, "estado", tramite.getEstadoTramite().getDescripcion());
 					

@@ -10,16 +10,18 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizaciones
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoRestringida;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidator;
-import es.pfsgroup.plugin.rem.validate.BusinessValidators;
 import es.pfsgroup.plugin.rem.validate.impl.AgrupacionValidatorCommonImpl;
-import es.pfsgroup.plugin.rem.validate.impl.BusinessCommonValidatorsImpl;
 
 @Component
 public class AgrupacionValidatorRestringida extends AgrupacionValidatorCommonImpl implements AgrupacionValidator  {
@@ -33,6 +35,8 @@ public class AgrupacionValidatorRestringida extends AgrupacionValidatorCommonImp
     @Autowired 
     private ActivoApi activoApi;
     
+    @Autowired
+    private OfertaApi ofertaApi;
 
 	@Override
 	public String[] getKeys() {
@@ -49,18 +53,26 @@ public class AgrupacionValidatorRestringida extends AgrupacionValidatorCommonImp
 	@Override
 	public String getValidationError(Activo activo, ActivoAgrupacion agrupacion) {
 
-		// Aplicado en AgrupacionValidatorActivoDuplicado
-		//Este activo ya esta dentro de esta agrupación
-		/*if (this.existsActiveInAgrupation(activo, agrupacion)) {
-			return ERROR_ACTIVE_DUPLICATED;
-		}*/		
-		
-		// Aplicado en AgrupacionValidatorActivoDuplicadoOtras
-		//Este activo ya esta incluido dentro de otra agrupacion de OBRA NUEVA
-		//(omitir cuando la agrupación esté en alguna agrupación dada de baja)
-		/*if (!activoAgrupacionActivoApi.isUniqueRestrictedActive(activo) && !activoAgrupacionActivoApi.estaAgrupacionActivoConFechaBaja(activo)) {
-			return ERROR_ACTIVE_DUPLICATED_OTHER_GROUP;
-		}*/
+		// Validación ofertas agrupación restringida del activo.
+		boolean incluidoAgrupacionRestringida = false;
+		List<ActivoOferta> ofertasActivo = activo.getOfertas();
+		if(!Checks.estaVacio(ofertasActivo)) {
+			for(ActivoOferta ofertaActivo : ofertasActivo) {
+				if(!Checks.esNulo(ofertaActivo)) {
+					if(agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
+						incluidoAgrupacionRestringida = true;
+						Oferta oferta = ofertaActivo.getPrimaryKey().getOferta();
+						if(!Checks.esNulo(oferta.getEstadoOferta())){
+							if(ofertaApi.isOfertaAceptadaConExpedienteBlocked(oferta)) {
+								return ERROR_OFERTA_AGRUPACION_ACTIVO_ACEPTADA;
+							} else if(oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_PENDIENTE)|| oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_ACEPTADA)) {
+								ofertaApi.congelarOferta(oferta);
+							}
+						}
+					}
+				}
+			}
+		}
 
 		ActivoAgrupacionActivo primerActivoAgrupacion = activoAgrupacionActivoApi.primerActivoPorActivoAgrupacion(agrupacion.getId());
 		if (primerActivoAgrupacion == null) return "";

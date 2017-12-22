@@ -1528,6 +1528,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 
 			beanUtilNotNull.copyProperties(gastoImpugnacion, dto);
+			
+			if(Checks.esNulo(gastoImpugnacion.getGastoProveedor())){
+				Filter filtroGasto= genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
+				GastoProveedor gasto= genericDao.get(GastoProveedor.class, filtroGasto);
+				gastoImpugnacion.setGastoProveedor(gasto);
+			}
+			
 
 			if (!Checks.esNulo(dto.getResultadoCodigo())) {
 				DDResultadoImpugnacionGasto resultado = (DDResultadoImpugnacionGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoImpugnacionGasto.class,
@@ -1949,19 +1956,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		Boolean esGastoEditable = true;
 
-		if (!genericAdapter.tienePerfil("HAYASADM", usuario)) {			
-			if (!Checks.esNulo(gasto.getEstadoGasto()) && !DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo()) && !DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo())
-					&& !DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo()) && !DDEstadoGasto.RECHAZADO_PROPIETARIO.equals(gasto.getEstadoGasto().getCodigo())
-					&& !DDEstadoGasto.RETENIDO.equals(gasto.getEstadoGasto().getCodigo())) {
+		if (!genericAdapter.tienePerfil("HAYASADM", usuario)) {	
+			
+			if(!Checks.esNulo(gasto.getEstadoGasto()) && (
+					DDEstadoGasto.RETENIDO.equals(gasto.getEstadoGasto().getCodigo()) ||
+					DDEstadoGasto.ANULADO.equals(gasto.getEstadoGasto().getCodigo()) )){
 				
 				esGastoEditable =  false;
-				
-				if (!Checks.esNulo(gasto.getEstadoGasto()) && !DDEstadoGasto.PAGADO.equals(gasto.getEstadoGasto().getCodigo()) 
-						&& !Checks.esNulo(gasto.getGastoGestion()) &&  !Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionPropietario()) && DDEstadoAutorizacionPropietario.CODIGO_RECHAZADO_CONTABILIDAD.equals(gasto.getGastoGestion().getEstadoAutorizacionPropietario().getCodigo())) {
-					esGastoEditable =  true;
-				}
-			}
-			
+			}		
 
 		}
 

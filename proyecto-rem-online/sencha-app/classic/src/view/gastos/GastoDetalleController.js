@@ -263,7 +263,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	},
 	
 	refrescarGasto: function(refrescarPestañaActiva) {	
-		
 		var me = this,
 		refrescarPestañaActiva = Ext.isEmpty(refrescarPestañaActiva) ? false: refrescarPestañaActiva,
 		tabPanel = me.getView().down("tabpanel");
@@ -1362,6 +1361,40 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	    	fechaField.setMinValue(fechaMin);
 	    	fechaField.setMaxValue(fechaActual);
     	}
+    },
+    
+    botonesEdicionGasto: function(estadoGasto, tabSeleccionada){
+    	var me = this;
+		if(tabSeleccionada.xtype=='datosgeneralesgasto' && $AU.userHasFunction('EDITAR_TAB_DATOS_GENERALES_GASTOS') && (
+	    	CONST.ESTADOS_GASTO['INCOMPLETO']==estadoGasto || CONST.ESTADOS_GASTO['PENDIENTE']==estadoGasto || CONST.ESTADOS_GASTO['RECHAZADO']==estadoGasto || 
+	    	CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']==estadoGasto || CONST.ESTADOS_GASTO['SUBSANADO']==estadoGasto)){
+	    		return true;
+    	}
+    	
+    	if(tabSeleccionada.xtype=='detalleeconomicogasto' && $AU.userHasFunction('EDITAR_TAB_DETALLE_ECONOMICO_GASTOS') && (CONST.ESTADOS_GASTO['AUTORIZADO']==estadoGasto || CONST.ESTADOS_GASTO['AUTORIZADO_PROPIETARIO']==estadoGasto || 
+    		CONST.ESTADOS_GASTO['CONTABILIZADO']==estadoGasto || CONST.ESTADOS_GASTO['INCOMPLETO']==estadoGasto || CONST.ESTADOS_GASTO['PENDIENTE']==estadoGasto || 
+    		CONST.ESTADOS_GASTO['RECHAZADO']==estadoGasto || CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']==estadoGasto)){
+    			
+    			return true;
+    	}
+    	
+    	if(tabSeleccionada.xtype=='activosafectadosgasto' && $AU.userHasFunction('EDITAR_TAB_ACTIVOS_AFECTADOS_GASTOS') && (
+	    	CONST.ESTADOS_GASTO['INCOMPLETO']==estadoGasto || CONST.ESTADOS_GASTO['PENDIENTE']==estadoGasto || CONST.ESTADOS_GASTO['RECHAZADO']==estadoGasto || 
+	    	CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']==estadoGasto || CONST.ESTADOS_GASTO['SUBSANADO']==estadoGasto)){
+	    		return true;
+    	}
+    	
+    	if(tabSeleccionada.xtype=='contabilidadgasto' && $AU.userHasFunction('EDITAR_TAB_CONTABILIDAD_GASTOS') && (
+	    	CONST.ESTADOS_GASTO['INCOMPLETO']==estadoGasto || CONST.ESTADOS_GASTO['PENDIENTE']==estadoGasto || CONST.ESTADOS_GASTO['RECHAZADO']==estadoGasto || 
+	    	CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']==estadoGasto || CONST.ESTADOS_GASTO['SUBSANADO']==estadoGasto)){
+    			return true;
+    	}
+    	
+    	if(tabSeleccionada.xtype=='gestiongasto' && $AU.userHasFunction('EDITAR_TAB_GESTION_GASTOS') && ((CONST.ESTADOS_GASTO['ANULADO']!=estadoGasto && CONST.ESTADOS_GASTO['RETENIDO']!=estadoGasto))){
+    			return true;
+    	}
+    	
+    	return false;
     }
 
 });

@@ -13,7 +13,33 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
     requires: ['HreRem.model.GestionGasto'],
     
     listeners: {
-		boxready:'cargarTabData'
+		boxready:'cargarTabData',
+		
+		activate: function(me, eOpts) {
+			var estadoGasto= me.lookupController().getViewModel().get('gasto').get('estadoGastoCodigo');
+			if(this.lookupController().botonesEdicionGasto(estadoGasto,this)){
+				this.up('tabpanel').down('tabbar').down('button[itemId=botoneditar]').setVisible(true);
+			}
+			else{
+				this.up('tabpanel').down('tabbar').down('button[itemId=botoneditar]').setVisible(false);
+			}
+			
+			var soloAnulacion= me.editableSoloAnulacion();
+			this.down("[reference=gestionNecesarioAutorizacion]").setReadOnly(me.editableSoloAnulacion());
+			this.down("[reference=gestionAutorizacionPropietario]").setReadOnly(me.editableSoloAnulacion());
+			this.down("[reference=gestionObservaciones]").setReadOnly(me.editableSoloAnulacion());
+			
+		}
+	},
+	
+	editableSoloAnulacion: function(){
+		var me= this;
+		var estadoGasto= me.lookupController().getViewModel().get('gasto').get('estadoGastoCodigo');
+		if(CONST.ESTADOS_GASTO['PAGADO']==estadoGasto || CONST.ESTADOS_GASTO['PAGADO_SIN_JUSTIFICANTE']==estadoGasto || 
+			CONST.ESTADOS_GASTO['AUTORIZADO']==estadoGasto || CONST.ESTADOS_GASTO['AUTORIZADO_PROPIETARIO']==estadoGasto || CONST.ESTADOS_GASTO['CONTABILIZADO']==estadoGasto){
+			return true;
+		}
+		return false;
 	},
     
     initComponent: function () {
@@ -41,8 +67,9 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 								[
 									{ 
 										xtype:'comboboxfieldbase',
+										reference: 'gestionNecesarioAutorizacion',
 										fieldLabel:  HreRem.i18n('fieldlabel.gasto.gestion.necesaria.autorizacion'),
-										//readOnly:true,
+										readOnly: me.editableSoloAnulacion(),
 									    bind: {
 								        	store: '{comboSiNoRem}',
 								            value: '{gestion.necesariaAutorizacionPropietario}'
@@ -50,8 +77,9 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 									},
 									{ 
 										xtype:'comboboxfieldbase',
+										reference: 'gestionAutorizacionPropietario',
 										fieldLabel:  HreRem.i18n('fieldlabel.gasto.gestion.motivo.autorizacion.propietario'),
-										editable: true,
+										readOnly: me.editableSoloAnulacion(),
 									    bind: {
 								        	store: '{comboMotivoAutorizacion}',
 								            value: '{gestion.comboMotivoAutorizacionPropietario}'
@@ -98,6 +126,8 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 									{ 
 					                	xtype: 'textareafieldbase',
 					                	labelAlign: 'top',
+					                	reference: 'gestionObservaciones',
+					                	readOnly: me.editableSoloAnulacion(),
 					                	height: 110,
 					                	fieldLabel: HreRem.i18n('fieldlabel.gasto.gestion.observaciones'),
 					                	bind:		'{gestion.observaciones}'

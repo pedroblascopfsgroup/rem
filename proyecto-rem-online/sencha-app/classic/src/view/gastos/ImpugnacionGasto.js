@@ -14,6 +14,7 @@ Ext.define('HreRem.view.gastos.ImpugnacionGasto', {
     
     listeners: {
 		boxready:'cargarTabData'
+		
 	},
     
     initComponent: function () {

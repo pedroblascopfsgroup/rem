@@ -13,7 +13,26 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
     requires: ['HreRem.model.DetalleEconomicoGasto'],
     
     listeners: {
-		boxready:'cargarTabData'
+		boxready:'cargarTabData',
+		
+		activate: function(me, eOpts) {
+			var estadoGasto= me.lookupController().getViewModel().get('gasto').get('estadoGastoCodigo');
+			if(this.lookupController().botonesEdicionGasto(estadoGasto,this)){
+				this.up('tabpanel').down('tabbar').down('button[itemId=botoneditar]').setVisible(true);
+			}
+			else{
+				this.up('tabpanel').down('tabbar').down('button[itemId=botoneditar]').setVisible(false);
+			}
+		}
+	},
+	
+	editableSoloPago: function(){
+		var me= this;
+		var estadoGasto= me.lookupController().getViewModel().get('gasto').get('estadoGastoCodigo');
+		if(CONST.ESTADOS_GASTO['AUTORIZADO']==estadoGasto || CONST.ESTADOS_GASTO['AUTORIZADO_PROPIETARIO']==estadoGasto || CONST.ESTADOS_GASTO['CONTABILIZADO']==estadoGasto){
+			return true;
+		}
+		return false;
 	},
     
     initComponent: function () {
@@ -44,7 +63,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 								        					if(!me.up('gastodetallemain').getViewModel().get('gasto').get('asignadoATrabajos'))
 									        					if(this.getValue()==0)
 									        						this.setValue('');
-								        					if(me.up('gastodetallemain').getViewModel().get('gasto').get('asignadoATrabajos'))
+								        					if(me.up('gastodetallemain').getViewModel().get('gasto').get('asignadoATrabajos') || me.editableSoloPago())
 								        						this.setReadOnly(true);
 								        					else
 								        						this.setReadOnly(false);
@@ -79,11 +98,12 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											                bind: '{detalleeconomico.importePrincipalSujeto}',
 											                reference: 'importePrincipalSujeto',
 											                allowBlank: false,
+											                readOnly: me.editableSoloPago(),
 											                listeners:{
 											                	edit: function(){
 											                		if(this.getValue()==0)
 											                			this.setValue('');
-											                		if(me.up('gastodetallemain').getViewModel().get('gasto').get('asignadoATrabajos'))
+											                		if(me.up('gastodetallemain').getViewModel().get('gasto').get('asignadoATrabajos') || me.editableSoloPago())
 										        						this.setReadOnly(true);
 										        					else
 										        						this.setReadOnly(false);
@@ -178,6 +198,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											               	fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.tipo.impuesto.indirecto'),
 													      	reference: 'cbTipoImpuesto',
 													      	allowBlank: false,
+													      	readOnly: me.editableSoloPago(),
 											               	bind: {
 												           		store: '{comboTipoImpuesto}',
 												           		value: '{detalleeconomico.impuestoIndirectoTipoCodigo}'
@@ -192,6 +213,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 										                	xtype: 'checkboxfieldbase',
 										                	reference: 'cbOperacionExenta',
 										                	fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.operacion.exenta'),
+										                	readOnly: me.editableSoloPago(),
 										                	bind: {
 								        						value: '{detalleeconomico.impuestoIndirectoExento}'							        						
 						            						},
@@ -205,6 +227,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 					                					{		                
 										                	xtype: 'checkboxfieldbase',
 										                	fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.renuncia.exencion'),
+										                	readOnly: me.editableSoloPago(),
 										                	reference: 'cbRenunciaExencion',
 										                	bind: {
 								        						value: '{detalleeconomico.renunciaExencionImpuestoIndirecto}'
@@ -224,6 +247,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											        		fieldStyle:'text-align:right;',
 											        		labelStyle: 'text-align:left;',
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.tipo.impositivo'),
+															readOnly: me.editableSoloPago(),
 															reference: 'tipoImpositivo',
 											                bind: {
 											                	value: '{detalleeconomico.impuestoIndirectoTipoImpositivo}'
@@ -264,6 +288,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											        		fieldStyle:'text-align:right;',
 											        		labelStyle: 'text-align:left;',
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.cuota'),
+															readOnly: me.editableSoloPago(),
 															reference: 'cbCuota',
 											                bind: {
 											                	value: '{calcularImpuestoIndirecto}'
@@ -321,6 +346,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											        		labelStyle: 'text-align:left;',
 											        		reference: 'tipoImpositivoIRPF',
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.tipo.impositivo.irpf'),
+															readOnly: me.editableSoloPago(),
 											                bind: '{detalleeconomico.irpfTipoImpositivo}',
 											                listeners:{
 										        				edit: function(){
@@ -782,6 +808,6 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
     	var me = this; 
 		me.recargar = false;		
 		me.lookupController().cargarTabData(me);
-    	
+		//me.lookupController().refrescarGasto(true);    	
     }
 });

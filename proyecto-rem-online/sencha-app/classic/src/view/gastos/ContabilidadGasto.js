@@ -13,7 +13,17 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
     requires: ['HreRem.model.GastoContabilidad'],
     
     listeners: {
-		boxready:'cargarTabData'
+		boxready:'cargarTabData',
+		
+		activate: function(me, eOpts) {
+			var estadoGasto= me.lookupController().getViewModel().get('gasto').get('estadoGastoCodigo');
+			if(this.lookupController().botonesEdicionGasto(estadoGasto,this)){
+				this.up('tabpanel').down('tabbar').down('button[itemId=botoneditar]').setVisible(true);
+			}
+			else{
+				this.up('tabpanel').down('tabbar').down('button[itemId=botoneditar]').setVisible(false);
+			}
+		}
 	},
     
     initComponent: function () {

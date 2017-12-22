@@ -9,6 +9,18 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 	recordName		: "gasto",
 	recordClass		: "HreRem.model.GastoProveedor",
     requires		: ['HreRem.model.GastoProveedor'],
+    
+    listeners: {
+		activate: function(me, eOpts) {
+			var estadoGasto= me.lookupController().getViewModel().get('gasto').get('estadoGastoCodigo');
+			if(this.lookupController().botonesEdicionGasto(estadoGasto,this)){
+				this.up('tabpanel').down('tabbar').down('button[itemId=botoneditar]').show();
+			}
+			else{
+				this.up('tabpanel').down('tabbar').down('button[itemId=botoneditar]').hide();
+			}
+		}
+	},
 
     initComponent: function () {
 

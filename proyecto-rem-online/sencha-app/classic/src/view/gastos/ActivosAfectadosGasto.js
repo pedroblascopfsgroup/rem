@@ -13,6 +13,18 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGasto', {
     
     requires: ['HreRem.model.GastoProveedor', 'HreRem.view.gastos.ActivosAfectadosGastoList'],
 
+    listeners: {
+		activate: function(me, eOpts) {
+			var estadoGasto= me.lookupController().getViewModel().get('gasto').get('estadoGastoCodigo');
+			if(this.lookupController().botonesEdicionGasto(estadoGasto,this)){
+				this.up('tabpanel').down('tabbar').down('button[itemId=botoneditar]').setVisible(true);
+			}
+			else{
+				this.up('tabpanel').down('tabbar').down('button[itemId=botoneditar]').setVisible(false);
+			}
+		}
+	},
+    
 	initComponent : function() {
 
 		var me = this;
@@ -67,7 +79,8 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGasto', {
 		Ext.Array.each(me.query('grid'), function(grid) {
   			grid.getStore().load();
   		});
-  		me.lookupController().refrescarGasto(false);
+  		me.lookupController().cargarTabData(me);
+  		//me.lookupController().refrescarGasto(false);
 
 	}
 });

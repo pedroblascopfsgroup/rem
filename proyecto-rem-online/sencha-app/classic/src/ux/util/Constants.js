@@ -239,6 +239,7 @@ Ext.define('HreRem.ux.util.Constants', {
     },
     
     ESTADOS_GASTO: {
+    	PAGADO_SIN_JUSTIFICANTE: '13',
     	INCOMPLETO: '12',
     	SUBSANADO_GESTOR: '11',
     	SUBSANADO: '10',

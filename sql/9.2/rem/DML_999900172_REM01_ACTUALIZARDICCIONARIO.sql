@@ -1,126 +1,127 @@
 --/*
 --##########################################
---## AUTOR=Sergio Ortuño Gigante
---## FECHA_CREACION=20171219
+--## AUTOR=Sergio Ortuño
+--## FECHA_CREACION=20171223
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK= HREOS-3468
+--## VERSION_ARTEFACTO=2.0.11
+--## INCIDENCIA_LINK=HREOS-3468
 --## PRODUCTO=NO
 --##
---## Finalidad: Adaptar el diccionario del campo Situación del Título de REM al de UVEM (COSTIT)
---## INSTRUCCIONES: 
+--## Finalidad: Script que añade en DD_ETI_ESTADO_TITULO los datos añadidos en T_ARRAY_DATA
+--## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Version inicial
+--##        0.1 Versión inicial
 --##########################################
 --*/
 
---Para permitir la visualizaciÃ³n de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
-SET SERVEROUTPUT ON;
+SET SERVEROUTPUT ON; 
 SET DEFINE OFF;
 
 
 DECLARE
-    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar   
-    V_MSQL2 VARCHAR2(32000 CHAR); -- Sentencia a ejecutar
-    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
-    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
-    V_DD_TVI_ID NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    
-    VAR_TABLENAME VARCHAR2(50 CHAR); -- Nombre de la tabla a crear
-
-BEGIN 
-
-	V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.DD_ETI_ESTADO_TITULO (DD_ETI_ID, DD_ETI_CODIGO, DD_ETI_DESCRIPCION, DD_ETI_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
-	VALUES (
-	5,
-	''05'',
-	''Inmatriculados'',
-	''Inmatriculados'',
-	0,
-	''HREOS-3468'',
-	SYSDATE,
-	0
-	)';
-
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('Insertados '|| sql%rowcount ||' registros.');
-
-
-	V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.DD_ETI_ESTADO_TITULO (DD_ETI_ID, DD_ETI_CODIGO, DD_ETI_DESCRIPCION, DD_ETI_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
-	VALUES (
-	6,
-	''06'',
-	''Subsanar'',
-	''Subsanar'',
-	0,
-	''HREOS-3468'',
-	SYSDATE,
-	0
-	)';
-
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('Insertados '|| sql%rowcount ||' registros.');
-
-
-
-	V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.DD_ETI_ESTADO_TITULO (DD_ETI_ID, DD_ETI_CODIGO, DD_ETI_DESCRIPCION, DD_ETI_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
-	VALUES (
-	7,
-	''07'',
-	''Nulo'',
-	''Nulo'',
-	0,
-	''HREOS-3468'',
-	SYSDATE,
-	0
-	)';
-
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('Insertados '|| sql%rowcount ||' registros.');
-
-
-	COMMIT;
-	DBMS_OUTPUT.PUT_LINE('[FIN] - INSERTADOS EN EL DICCIONARIO');
-
-
-
-
-	V_MSQL := 'UPDATE '||V_ESQUEMA||'.DD_EQV_BANKIA_REM SET DD_CODIGO_REM = ''07'' WHERE DD_CODIGO_BANKIA = ''1'' AND DD_NOMBRE_BANKIA = ''DD_SITUACION_TITULO'' ';
-
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('Updateados '|| sql%rowcount ||' registros.');
-
-
-	V_MSQL := 'UPDATE '||V_ESQUEMA||'.DD_EQV_BANKIA_REM SET DD_CODIGO_REM = ''06'' WHERE DD_CODIGO_BANKIA = ''3'' AND DD_NOMBRE_BANKIA = ''DD_SITUACION_TITULO'' ';
-
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('Updateados '|| sql%rowcount ||' registros.');
-
-
-	V_MSQL := 'UPDATE '||V_ESQUEMA||'.DD_EQV_BANKIA_REM SET DD_CODIGO_REM = ''05'' WHERE DD_CODIGO_BANKIA = ''5'' AND DD_NOMBRE_BANKIA = ''DD_SITUACION_TITULO'' ';
-
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('Updateados '|| sql%rowcount ||' registros.');
-
-	COMMIT;
-	DBMS_OUTPUT.PUT_LINE('[FIN] - MAPEADO');
-
+	
+    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
+    V_ENTIDAD_ID NUMBER(16);
+    V_ID NUMBER(16);
 
     
+    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+        T_TIPO_DATA('05','Inmatriculados','Inmatriculados','01'),
+        T_TIPO_DATA('06','Subsanar','Subsanar','07'),
+        T_TIPO_DATA('07','Nulo','Nulo','05')
+    ); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+    
+BEGIN	
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
+
+	 
+    -- LOOP para insertar los valores en DD_TVP_TIPO_VPO -----------------------------------------------------------------
+    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN DD_TVP_TIPO_VPO] ');
+    FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+      LOOP
+      
+        V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+    
+        --Comprobamos el dato a insertar
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_ETI_ESTADO_TITULO WHERE DD_ETI_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+        
+        --Si existe lo modificamos
+        IF V_NUM_TABLAS > 0 THEN				
+          
+          DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
+       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.DD_ETI_ESTADO_TITULO '||
+                    'SET DD_ETI_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
+					', DD_ETI_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
+					', USUARIOMODIFICAR = ''HREOS-3468'' 
+					 , FECHAMODIFICAR = SYSDATE '||
+					'WHERE DD_ETI_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+          EXECUTE IMMEDIATE V_MSQL;
+          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
+          
+       --Si no existe, lo insertamos   
+       ELSE
+       
+          DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
+          V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_DD_ETI_ESTADO_TITULO.NEXTVAL FROM DUAL';
+          EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
+          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.DD_ETI_ESTADO_TITULO (' ||'DD_ETI_ID, DD_ETI_CODIGO, DD_ETI_DESCRIPCION, DD_ETI_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
+                      'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''', 0, ''HREOS-3468'',SYSDATE,0 FROM DUAL';
+          EXECUTE IMMEDIATE V_MSQL;
+          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
+        
+       END IF;
+       
+          DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
+       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.DD_EQV_BANKIA_REM '||
+                    'SET DD_CODIGO_REM = '''||TRIM(V_TMP_TIPO_DATA(1))||''''|| 
+					',   DD_DESCRIPCION_REM = '''||TRIM(V_TMP_TIPO_DATA(2))||''''||
+					',   DD_DESCRIPCION_LARGA_REM = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
+					',   USUARIOMODIFICAR = ''HREOS-3468'' , FECHAMODIFICAR = SYSDATE '||
+					'WHERE DD_NOMBRE_BANKIA = ''DD_SITUACION_TITULO''
+					   AND DD_CODIGO_BANKIA = '''||TRIM(V_TMP_TIPO_DATA(4))||'''
+					';
+
+          EXECUTE IMMEDIATE V_MSQL;
+          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
+                 
+      END LOOP;
+    COMMIT;
+    DBMS_OUTPUT.PUT_LINE('[FIN]: DICCIONARIO DD_TVP_TIPO_VPO ACTUALIZADO CORRECTAMENTE ');
+   
+
 EXCEPTION
      WHEN OTHERS THEN
-          ERR_NUM := SQLCODE;
-          ERR_MSG := SQLERRM;
-          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(ERR_NUM));
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
           DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
-          DBMS_OUTPUT.put_line(ERR_MSG);
+          DBMS_OUTPUT.put_line(err_msg);
+
           ROLLBACK;
-          RAISE;   
+          RAISE;          
+
 END;
+
 /
-EXIT;
-	
+
+EXIT
+
+
+
+   
+

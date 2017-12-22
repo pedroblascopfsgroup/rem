@@ -17,6 +17,9 @@ fi
 
 LOCAL_PATH=`pwd`
 BASE_DIR=/recovery/rem/batch-server
+if [[ "$1" == "val03" ]] ; then
+BASE_DIR=/recovery/rem/batch-server-val03
+fi
 
 cp config/$1/config.ini $BASE_DIR/programas/etl/config/
 cd $LOCAL_PATH

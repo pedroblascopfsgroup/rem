@@ -11,6 +11,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import es.capgemini.devon.hibernate.pagination.PageHibernate;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -19,8 +20,10 @@ import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionEconomicaTrabajo;
+import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
@@ -34,16 +37,22 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	ProveedoresDao proveedorDao;
 	
 	@Autowired
-	GenericABMDao genericAbmDao;
+	GenericABMDao genericDao;
 	
 	@Override
 	public Page findAll(DtoTrabajoFilter dto) {
+		GastoProveedor gasto = null;
+		if (!Checks.esNulo(dto.getNumGasto())) {
+			gasto = genericDao.get(GastoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", dto.getNumGasto()));
+		}
+		
 		HQLBuilder hb = new HQLBuilder(" from VBusquedaTrabajos tbj");
-		
-		this.rellenarFiltrosBusquedaTrabajos(dto, hb);
-		
+			
+		this.rellenarFiltrosBusquedaTrabajos(dto, hb, gasto);
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "tbj.proveedor", dto.getProveedor(), true);
-		
+		if(!Checks.esNulo(dto.getIdProveedor()) && Checks.esNulo(gasto.getPropietario())){
+			return new PageHibernate();
+		}
    		return HibernateQueryUtils.page(this, hb, dto);
 
 	}
@@ -53,7 +62,7 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 
 		HQLBuilder hb = new HQLBuilder(" from VBusquedaTrabajos tbj");
 		
-		this.rellenarFiltrosBusquedaTrabajos(dto, hb);
+		this.rellenarFiltrosBusquedaTrabajos(dto, hb, null);
 
 		List<String> nombresProveedor = proveedorDao.getNombreProveedorByIdUsuario(idUsuario);
 		if(!Checks.estaVacio(nombresProveedor)) {
@@ -69,10 +78,10 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	
 	//Prepara lso filtros de la consulta 
 	@SuppressWarnings("static-access")
-	private void rellenarFiltrosBusquedaTrabajos(DtoTrabajoFilter dto, HQLBuilder hb) {
+	private void rellenarFiltrosBusquedaTrabajos(DtoTrabajoFilter dto, HQLBuilder hb, GastoProveedor gasto) {
 		
-		hb.addFiltroIgualQueSiNotNull(hb, "tbj.numTrabajo", dto.getNumTrabajo());
-		hb.addFiltroIgualQueSiNotNull(hb, "tbj.idTrabajoWebcom", dto.getIdTrabajoWebcom());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numTrabajo", dto.getNumTrabajo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.idTrabajoWebcom", dto.getIdTrabajoWebcom());
    		Collection<String> listaTipo = new ArrayList<String>();
    		if (dto!=null && dto.getCodigoTipo()!=null) {
    			listaTipo.add(dto.getCodigoTipo());
@@ -80,30 +89,33 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
    		if (dto!=null && dto.getCodigoTipo2()!=null) {
    			listaTipo.add(dto.getCodigoTipo2());
    		}
-   		hb.addFiltroWhereInSiNotNull(hb, "tbj.codigoTipo", listaTipo);   		
-   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.codigoSubtipo", dto.getCodigoSubtipo());
-   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.codigoEstado", dto.getCodigoEstado());
-   		hb.addFiltroLikeSiNotNull(hb, "tbj.descripcionPoblacion", dto.getDescripcionPoblacion(), true);
-   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.codigoProvincia", dto.getCodigoProvincia());
-   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.codPostal", dto.getCodPostal());
-   		hb.addFiltroLikeSiNotNull(hb, "tbj.solicitante", dto.getSolicitante(), true);
-   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.numActivoRem", dto.getNumActivoRem());
-   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.numAgrupacionRem", dto.getNumAgrupacionRem());
-   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.idActivo", dto.getIdActivo());
-   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.cartera", dto.getCartera());
-   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.gestorActivo", dto.getGestorActivo());
-   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.cubreSeguro", dto.getCubreSeguro());
-   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.idProveedor", dto.getIdProveedor());
-   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.conCierreEconomico", dto.getConCierreEconomico());
-   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.facturado", dto.getFacturado());
-   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.numActivo", dto.getNumActivo());
+   		HQLBuilder.addFiltroWhereInSiNotNull(hb, "tbj.codigoTipo", listaTipo);   		
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoSubtipo", dto.getCodigoSubtipo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoEstado", dto.getCodigoEstado());
+   		HQLBuilder.addFiltroLikeSiNotNull(hb, "tbj.descripcionPoblacion", dto.getDescripcionPoblacion(), true);
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoProvincia", dto.getCodigoProvincia());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codPostal", dto.getCodPostal());
+   		HQLBuilder.addFiltroLikeSiNotNull(hb, "tbj.solicitante", dto.getSolicitante(), true);
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numActivoRem", dto.getNumActivoRem());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numAgrupacionRem", dto.getNumAgrupacionRem());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.idActivo", dto.getIdActivo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.cartera", dto.getCartera());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.gestorActivo", dto.getGestorActivo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.cubreSeguro", dto.getCubreSeguro());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.idProveedor", dto.getIdProveedor());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.conCierreEconomico", dto.getConCierreEconomico());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.facturado", dto.getFacturado());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numActivo", dto.getNumActivo());
    		if(!Checks.esNulo(dto.getIdProveedor())) {
    			hb.appendWhere("tbj.importeTotal > " +BigDecimal.ZERO);
-   	   		hb.addFiltroIgualQueSiNotNull(hb, "tbj.codigoEstado", "05");
+   	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoEstado", "05");
+   	   		if(!Checks.esNulo(gasto.getPropietario())) {
+   	   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.propietario", gasto.getPropietario().getId());
+   	   		}
    		}
 
    		if(Checks.esNulo(dto.getNumActivo()) && Checks.esNulo(dto.getIdActivo())) {
-   			hb.addFiltroIgualQueSiNotNull(hb, "tbj.rango", 1);
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.rango", 1);
    		} 
    		
    		try {
@@ -111,7 +123,7 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 
 			if (dto.getFechaPeticionDesde() != null) {
 				Date fechaDesde = DateFormat.toDate(dto.getFechaPeticionDesde());
-				hb.addFiltroBetweenSiNotNull(hb, "tbj.fechaSolicitud", fechaDesde, null);
+				HQLBuilder.addFiltroBetweenSiNotNull(hb, "tbj.fechaSolicitud", fechaDesde, null);
 			}
 			
 			if (dto.getFechaPeticionHasta() != null) {
@@ -122,7 +134,7 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 				calendar.setTime(fechaHasta); // Configuramos la fecha que se recibe
 				calendar.add(Calendar.DAY_OF_YEAR, 1);  // numero de días a añadir, o restar en caso de días<0
 
-				hb.addFiltroBetweenSiNotNull(hb, "tbj.fechaSolicitud", null, calendar.getTime());
+				HQLBuilder.addFiltroBetweenSiNotNull(hb, "tbj.fechaSolicitud", null, calendar.getTime());
 			}
 			
    		} catch (ParseException e) {

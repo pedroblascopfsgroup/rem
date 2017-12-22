@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20170308
+--## AUTOR=JUAN TORRELLA
+--## FECHA_CREACION=20171222
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1619
---## PRODUCTO=NO
+--## INCIDENCIA_LINK=HREOS-3462
+--## PRODUCTO=SI
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
@@ -71,6 +71,7 @@ BEGIN
 			est.dd_est_codigo, 
 			est.dd_est_descripcion, 
 			pve.pve_nombre AS proveedor, 
+			actpro.pro_id AS propietario,
 			pve.pve_id,
           	NVL2 (solic.usu_nombre, INITCAP (solic.usu_nombre) || NVL2 (solic.usu_apellido1, '' '' || INITCAP (solic.usu_apellido1), '''') || 
 				NVL2 (solic.usu_apellido2, '' '' || INITCAP (solic.usu_apellido2), ''''), INITCAP (pve2.pve_nombre)) AS solicitante,
@@ -89,6 +90,7 @@ BEGIN
 
      FROM ' || V_ESQUEMA || '.act_tbj_trabajo tbj JOIN ' || V_ESQUEMA || '.act_tbj atj ON atj.tbj_id = tbj.tbj_id
           LEFT JOIN ' || V_ESQUEMA || '.act_activo act ON act.act_id = atj.act_id and act.borrado = 0
+		LEFT JOIN ' || V_ESQUEMA || '.act_pac_propietario_activo actpro ON act.act_id = actpro.act_id
           LEFT JOIN ' || V_ESQUEMA || '.act_agr_agrupacion agr ON agr.agr_id = tbj.agr_id and agr.borrado = 0
           LEFT JOIN ' || V_ESQUEMA || '.gac_gestor_add_activo gac ON gac.act_id = act.act_id
           LEFT JOIN ' || V_ESQUEMA || '.gee_gestor_entidad gee ON gac.gee_id = gee.gee_id

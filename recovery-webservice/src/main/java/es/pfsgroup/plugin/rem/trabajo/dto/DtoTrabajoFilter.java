@@ -68,6 +68,8 @@ public class DtoTrabajoFilter extends WebDto {
 	private Integer anulado;
 	
 	private Integer filtrar;
+	
+	private Long numGasto;
 
 	public String getIdTrabajo() {
 		return idTrabajo;
@@ -283,6 +285,14 @@ public class DtoTrabajoFilter extends WebDto {
 
 	public void setCodigoTipo2(String codigoTipo2) {
 		this.codigoTipo2 = codigoTipo2;
+	}
+
+	public Long getNumGasto() {
+		return numGasto;
+	}
+
+	public void setNumGasto(Long numGasto) {
+		this.numGasto = numGasto;
 	}
 
 }

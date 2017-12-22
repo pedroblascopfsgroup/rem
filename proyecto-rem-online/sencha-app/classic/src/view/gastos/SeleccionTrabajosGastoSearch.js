@@ -61,6 +61,11 @@ Ext.define('HreRem.view.gastos.SeleccionTrabajosGastoSearch', {
 												name: 'facturado',
 												value: 0,
 												hidden: true
+											},
+											{
+												name: 'numGasto',
+												bind: '{gasto.numGastoHaya}',
+												hidden: true
 											}
 							]
 				    },

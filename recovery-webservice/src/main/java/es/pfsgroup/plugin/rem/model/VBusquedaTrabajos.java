@@ -117,6 +117,9 @@ public class VBusquedaTrabajos implements Serializable {
 	@Column(name="DD_TTR_FILTRAR")
 	private Integer filtrar;
 	
+	@Column(name="PROPIETARIO")
+	private Long propietario;
+	
 
 	public Integer getCubreSeguro() {
 		return cubreSeguro;
@@ -364,6 +367,14 @@ public class VBusquedaTrabajos implements Serializable {
 
 	public void setFiltrar(Integer filtrar) {
 		this.filtrar = filtrar;
+	}
+
+	public Long getPropietario() {
+		return propietario;
+	}
+
+	public void setPropietario(Long propietario) {
+		this.propietario = propietario;
 	}
 
 }

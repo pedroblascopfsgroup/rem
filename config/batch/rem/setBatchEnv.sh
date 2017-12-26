@@ -1,6 +1,6 @@
 export JAVA_HOME=/usr/java/jdk1.6.0_07
 export PATH=$JAVA_HOME/bin:$PATH
-export DEVON_HOME=recovery/DIRECTORY_NAME_VALUE/batch-server
+export DEVON_HOME=recovery/DIRECTORY_NAME_VALUE/DIRECTORIO_BATCH
 export INSTALL_DIR=/$DEVON_HOME
 export LANG=es_ES.UTF-8
 export ORACLE_HOME=ORACLE_HOME_VALUE

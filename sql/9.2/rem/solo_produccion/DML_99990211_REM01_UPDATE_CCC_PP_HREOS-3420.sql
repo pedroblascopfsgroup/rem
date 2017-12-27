@@ -1,0 +1,68 @@
+--/*
+--##########################################
+--## AUTOR=DAP
+--## FECHA_CREACION=20171227
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=2.0.11
+--## INCIDENCIA_LINK=HREOS-3420
+--## PRODUCTO=NO
+--##
+--## Finalidad: Update GIC
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+DECLARE
+
+    V_ESQUEMA VARCHAR2(30 CHAR) := '#ESQUEMA#';
+    V_ESQUEMA_M VARCHAR2(30 CHAR) := '#ESQUEMA_MASTER#';
+    V_MSQL VARCHAR2(2048 CHAR);
+    ERR_NUM NUMBER(25); 
+    ERR_MSG VARCHAR2(1024 CHAR);
+    
+BEGIN
+
+    DBMS_OUTPUT.PUT_LINE('[INICIO] Cambio CCC y PP');
+    
+    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD T1
+        USING (SELECT GIC.GIC_ID, GIC.GIC_CUENTA_CONTABLE, GIC.GIC_PTDA_PRESUPUESTARIA
+            FROM '||V_ESQUEMA||'.PRG_PROVISION_GASTOS PRG
+            JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.PRG_ID = PRG.PRG_ID AND GPV.BORRADO = 0
+            JOIN '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD GIC ON GIC.GPV_ID = GPV.GPV_ID AND GIC.BORRADO = 0
+            WHERE PRG.PRG_NUM_PROVISION = ''20600000934'' AND GPV.GPV_NUM_GASTO_HAYA IN (9418507,
+                9418009,
+                9418587,
+                9418023,
+                9418007,
+                9417993,
+                9417991)) T2
+        ON (T1.GIC_ID = T2.GIC_ID)
+        WHEN MATCHED THEN UPDATE SET
+            T1.GIC_CUENTA_CONTABLE = T2.GIC_PTDA_PRESUPUESTARIA, T1.GIC_PTDA_PRESUPUESTARIA = T2.GIC_CUENTA_CONTABLE
+            , T1.USUARIOMODIFICAR = ''HREOS-3420'', FECHAMODIFICAR = SYSDATE
+        WHERE T1.GIC_CUENTA_CONTABLE <> T2.GIC_PTDA_PRESUPUESTARIA AND T1.GIC_PTDA_PRESUPUESTARIA <> T2.GIC_CUENTA_CONTABLE
+            AND NVL(T1.USUARIOMODIFICAR,''0'') <> ''HREOS-3420''';
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('[INFO] Se han intercambiado '||SQL%ROWCOUNT||' CCC y PP');
+    
+    COMMIT;
+    
+    DBMS_OUTPUT.PUT_LINE('[FIN] Cambio CCC y PP');
+
+EXCEPTION
+    WHEN OTHERS THEN
+        err_num := SQLCODE;
+        err_msg := SQLERRM;
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+        DBMS_OUTPUT.put_line(err_msg);
+        ROLLBACK;
+        RAISE;          
+END;
+/
+EXIT

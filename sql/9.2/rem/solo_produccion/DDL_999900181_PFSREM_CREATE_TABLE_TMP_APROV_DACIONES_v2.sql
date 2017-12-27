@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Sergio Belenguer Gadea
---## FECHA_CREACION=20171218
+--## AUTOR=Sergio Ortuño Gigante
+--## FECHA_CREACION=20171227
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HRNIVDOS-7154
+--## INCIDENCIA_LINK=HRNIVDOS-7431
 --## PRODUCTO=SI
 --## Finalidad: DDL Creación de la tabla TMP_APROV_DACIONES
 --##           

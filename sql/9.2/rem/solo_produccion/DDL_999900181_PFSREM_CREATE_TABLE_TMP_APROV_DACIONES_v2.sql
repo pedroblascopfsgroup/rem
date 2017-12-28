@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Sergio Ortuño Gigante
---## FECHA_CREACION=20171227
+--## FECHA_CREACION=20171228
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HRNIVDOS-7431

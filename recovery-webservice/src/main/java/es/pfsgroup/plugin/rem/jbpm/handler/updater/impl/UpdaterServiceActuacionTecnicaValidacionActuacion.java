@@ -106,6 +106,7 @@ public class UpdaterServiceActuacionTecnicaValidacionActuacion implements Update
 					Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_EN_TRAMITE);
 					DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filter);
 					trabajo.setEstado(estadoTrabajo);
+					trabajo.setFechaEjecucionReal(null);
 				}
 			}
 			

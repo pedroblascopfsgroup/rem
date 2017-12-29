@@ -604,8 +604,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			oferta.setEstadoVisitaOferta(estadoVisitaOferta);
 		}
 
-		genericDao.save(Oferta.class, oferta);
-
 		nuevoExpediente.setOferta(oferta);
 		DDEstadosExpedienteComercial estadoExpediente = (DDEstadosExpedienteComercial) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class, DDEstadosExpedienteComercial.EN_TRAMITACION);
@@ -720,7 +718,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					List<VPreciosVigentes> vPreciosVigentes= activoAdapter.getPreciosVigentesById(activoBancario.getActivo().getId());	
 					if(!Checks.estaVacio(vPreciosVigentes)){
 						for(VPreciosVigentes precio : vPreciosVigentes) {
-							if(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(precio.getCodigoTipoPrecio())){
+							if(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(precio.getCodigoTipoPrecio()) && !Checks.esNulo(precio.getImporte())){
 								precioMinimoAutorizado = precio.getImporte();
 							}
 						}
@@ -735,7 +733,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						List<VPreciosVigentes> vPreciosVigentes= activoAdapter.getPreciosVigentesById(activo.getId());	
 						if(!Checks.estaVacio(vPreciosVigentes)){
 							for(VPreciosVigentes precio : vPreciosVigentes) {
-								if(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(precio.getCodigoTipoPrecio())){
+								if(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(precio.getCodigoTipoPrecio()) && !Checks.esNulo(precio.getImporte())){
 									precioMinimoAutorizado += precio.getImporte();
 								}
 							}
@@ -773,8 +771,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		crearCompradores(oferta, nuevoExpediente);
 		
-		
 		genericDao.save(ExpedienteComercial.class, nuevoExpediente);
+		genericDao.save(Oferta.class, oferta);
 		
 		crearGastosExpediente(oferta, nuevoExpediente);
 

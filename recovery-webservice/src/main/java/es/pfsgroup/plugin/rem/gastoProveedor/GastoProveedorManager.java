@@ -1635,7 +1635,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				if (listaAdjuntos.isEmpty()) {
 					updateExisteDocumentoGasto(gasto, 0);
 				} else {
-
+					
+					updateExisteDocumentoGasto(gasto, 1);
+					
 					for (DtoAdjunto adj : listaAdjuntos) {
 
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "matricula", adj.getMatricula());
@@ -2354,9 +2356,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	@Transactional(readOnly = false)
 	private void updateExisteDocumentoGasto(GastoProveedor gasto, Integer i) {
-
-		gasto.setExisteDocumento(i);
-		genericDao.update(GastoProveedor.class, gasto);
+		
+		Integer existeDocumento = gasto.getExisteDocumento();
+		
+		if (existeDocumento != i || Checks.esNulo(existeDocumento)) {
+			gasto.setExisteDocumento(i);
+			genericDao.update(GastoProveedor.class, gasto);
+		}
 	}
 	
 	public String checkReglaCambioEstado(String codigoEstado, boolean coniva, String matriculaTipoDoc) {

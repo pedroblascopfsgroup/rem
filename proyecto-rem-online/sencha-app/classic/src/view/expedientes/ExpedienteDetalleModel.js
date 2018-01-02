@@ -32,6 +32,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	return CONST.CARTERA['BANKIA'] == carteraCodigo;
 	     },
 	     
+	     fechaIngresoChequeReadOnly: function(get) {
+	    	 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+	    	 var subCartera = get('expediente.propietario');
+	    	 return CONST.CARTERA['BANKIA'] == carteraCodigo && CONST.NOMBRE_SUBCARTERA['BANKIA_HABITAT'] != subCartera;
+	     },
+	     
 	     comiteSancionadorNoEditable: function(get) {
 	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 	     	return CONST.CARTERA['BANKIA'] == carteraCodigo || CONST.CARTERA['CAJAMAR'] == carteraCodigo;	

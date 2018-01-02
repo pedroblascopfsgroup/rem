@@ -661,7 +661,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			var idCliente = record.get("id"),
 			expediente= me.getViewModel().get("expediente");
 			var storeGrid= gridView.store;
-			var edicion = $AU.userHasFunction(['TAB_COMPRADORES_EXP_DETALLES_COMPRADOR']);
+			var edicion = me.getViewModel().get("puedeAnyadirEliminarOModificarCompradores");
 		    Ext.create("HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: edicion, storeGrid:storeGrid, expediente: expediente }).show();
 		}
 	},

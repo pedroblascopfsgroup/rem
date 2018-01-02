@@ -167,6 +167,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		     	var bloqueado = get('expediente.bloqueado');
 		     	return bloqueado;
 		     	
+		 },
+		 
+		 puedeAnyadirEliminarOModificarCompradores: function(get) {
+			var me = this;
+			
+			if(get('esCarteraBankia') && 
+					(get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['APROBADO'] || get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['RESERVADO'])){
+				return false;
+	     	}
+	     	return $AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES']);	
 		 }
 	     
 		

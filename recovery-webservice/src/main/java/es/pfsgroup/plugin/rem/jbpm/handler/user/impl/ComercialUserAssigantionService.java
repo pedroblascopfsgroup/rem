@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.user.impl;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +26,7 @@ import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -92,6 +94,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		TareaActivo tareaActivo = (TareaActivo)tareaExterna.getTareaPadre();
 		boolean isFuerzaVentaDirecta = this.isFuerzaVentaDirecta(tareaExterna);
 		boolean isActivoFinanciero = this.isFinanciero(tareaExterna);
+		boolean isActivoConFormalizacion = this.isConFormalizacion(tareaExterna);
 		String codigoTarea = tareaExterna.getTareaProcedimiento().getCodigo();
 		String codigoGestor = null;
 		ActivoLoteComercial loteComercial = this.obtenerLoteComercial(tareaActivo);
@@ -106,7 +109,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 				codigoGestor = this.getMapCodigoTipoGestorActivoAndLoteRestEntidad01Formalizacion(formalizacion).get(codigoTarea);
 			}
 		} else {
-			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta).get(codigoTarea);
+			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion).get(codigoTarea);
 		}
 				
 		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoGestor);
@@ -188,28 +191,34 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	}
 
 	//  --- Mapas con la relación Tarea - Tipo Gestor/supervisor  -------------------------------------------------
-	private HashMap<String,String> getMapCodigoTipoGestor(boolean isFdv) {
+	private HashMap<String,String> getMapCodigoTipoGestor(boolean isFdv, boolean isConFormalizacion) {
 		
 		HashMap<String,String> mapa = new HashMap<String,String>();
 		
-		if(!isFdv){
-			mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		if(!isFdv){			
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);				
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_COMITE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_OFERTANTE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RATIFICACION_COMITE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 		}else{
-			mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_FVD_BKOFERTA);
-			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_COMITE, GestorActivoApi.CODIGO_FVD_BKOFERTA);
-			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_OFERTANTE, GestorActivoApi.CODIGO_FVD_BKOFERTA);
-			mapa.put(ComercialUserAssigantionService.CODIGO_T013_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_FVD_BKVENTA);
+			if(isConFormalizacion)
+				mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_FVD_NEGOCIO);
+			else
+				mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RATIFICACION_COMITE, GestorActivoApi.CODIGO_FVD_NEGOCIO);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_COMITE, GestorActivoApi.CODIGO_FVD_NEGOCIO);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_OFERTANTE, GestorActivoApi.CODIGO_FVD_NEGOCIO);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_FVD_NEGOCIO);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_FVD_BKOFERTA);
 		}
 		
 		
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_EXPEDIENTE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_FIRMA_PROPIETARIO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RATIFICACION_COMITE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_OBTENCION_CONTRATO_RESERVA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DOCUMENTOS_POSTVENTA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESULTADO_PBC, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_INFORME_JURIDICO, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
@@ -502,5 +511,20 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		return false;
 	}
 	
-	
+	//Comprobar si el activo es Con Formalización
+		private boolean isConFormalizacion(TareaExterna tareaExterna) {
+			boolean esConFormalizacion = false;
+			TareaActivo tareaActivo = (TareaActivo) tareaExterna.getTareaPadre();
+			if (!Checks.esNulo(tareaActivo) && !Checks.esNulo(tareaActivo.getTramite())
+					&& !Checks.esNulo(tareaActivo.getTramite().getTrabajo())) {
+
+				PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(tareaActivo.getActivo().getId());
+				
+				if (!Checks.esNulo(perimetro) && BooleanUtils.toBoolean(perimetro.getAplicaFormalizar())) {
+					esConFormalizacion = true;
+				}
+			
+			}
+			return esConFormalizacion;
+		}
 }

@@ -142,8 +142,10 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 				nombreVistaDatosActuales = nombreVistaDatosActuales.concat(MARCADOR_CAMBIOS);
 			}
 			String columIdUsuarioRemAccion = field2column(ConstantesGenericas.ID_USUARIO_REM_ACCION);
-			String selectFromDatosActuales = SELECT + columns + FROM + nombreVistaDatosActuales + WHERE
-					+ columIdUsuarioRemAccion + " <> " + getIdRestUser(session);
+			String selectFromDatosActuales = SELECT + columns + FROM + nombreVistaDatosActuales; 
+			//HREOS-3505 - Añadir estas lineas comentadas si se quiere filtrar por REST-USER
+					//+ WHERE
+					//+ columIdUsuarioRemAccion + " <> " + getIdRestUser(session);
 			String selectFromDatosHistoricos = SELECT + columns + FROM + infoTablas.nombreTablaDatosHistoricos();
 			String queryString = selectFromDatosActuales + MINUS + selectFromDatosHistoricos;
 

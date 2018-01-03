@@ -1,7 +1,7 @@
 cd $DIR_INPUT_AUX
 rm -f $2_$1.*
 
-lftp -u rm01,R@59rp21 sftp://10.126.128.130 <<EOF
+lftp -u rm01,R@59rp21 sftp://192.168.126.2 <<EOF
 cd /$1/
 mget $2_$1.*
 bye
@@ -11,7 +11,7 @@ check_integrity_1=`md5sum $2_$1.dat`
 rm -f $2_$1.*
 sleep 30
 
-lftp -u rm01,R@59rp21 sftp://10.126.128.130 <<EOF
+lftp -u rm01,R@59rp21 sftp://192.168.126.2 <<EOF
 cd /$1/
 mget $2_$1.*
 bye

@@ -182,7 +182,6 @@ public class UvemManager implements UvemManagerApi {
 
 		boolean activo = !Checks.esNulo(appProperties.getProperty("rest.client.uvem.activo"))
 				? Boolean.valueOf(appProperties.getProperty("rest.client.uvem.activo")) : false;
-		// boolean activo = true;
 		if (activo && !Checks.esNulo(this.URL)&& !Checks.esNulo(this.ALIAS)) {
 			servicio.execute();
 		} else {
@@ -342,8 +341,6 @@ public class UvemManager implements UvemManagerApi {
 
 			servicioGMPETS07_INS.setAlias(ALIAS);
 			executeService(servicioGMPETS07_INS);
-			// servicioGMPETS07_INS.execute();
-
 			// recuperando resultado...
 			numeroIdentificadorTasacion = servicioGMPETS07_INS.getNumeroIdentificadorDeTasacionlnuita2();
 
@@ -864,8 +861,14 @@ public class UvemManager implements UvemManagerApi {
 					}
 
 					// % de participación en la compra
+					Double porcentajeCompraValor = titular.getPorcentajeCompra();
+					if(porcentajeCompraValor != null){
+						porcentajeCompraValor = porcentajeCompraValor * 100;
+					}else{
+						porcentajeCompraValor = 0.0;
+					}
 					Porcentaje9 porcentajeCompra = new Porcentaje9();
-					porcentajeCompra.setPorcentaje((int) titular.getPorcentajeCompra().longValue() * 100);
+					porcentajeCompra.setPorcentaje((int) porcentajeCompraValor.longValue());
 					porcentajeCompra.setNumDecimales("02");
 					structTitular.setPorcentajeCompraBISA(porcentajeCompra);
 

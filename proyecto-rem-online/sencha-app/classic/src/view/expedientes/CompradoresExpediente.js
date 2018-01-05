@@ -58,7 +58,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						cls	: 'panel-base shadow-panel',
 						bind: {
 							store: '{storeCompradoresExpediente}'
-							,topBar: '{puedeAnyadirEliminarOModificarCompradores}'
+							,topBar: '{puedeModificarCompradores}'
 						},									
 						listeners : {
 					    	rowdblclick: 'onCompradoresListDobleClick',

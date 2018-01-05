@@ -661,7 +661,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			var idCliente = record.get("id"),
 			expediente= me.getViewModel().get("expediente");
 			var storeGrid= gridView.store;
-			var edicion = me.getViewModel().get("puedeAnyadirEliminarOModificarCompradores");
+			var edicion = me.getViewModel().get("puedeModificarCompradores");
 		    Ext.create("HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: edicion, storeGrid:storeGrid, expediente: expediente }).show();
 		}
 	},

@@ -1140,7 +1140,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		Float porcentaje = 100f / numActivos;
 		
 		//truncamos a dos decimales
-		porcentaje = Float.valueOf(df.format(porcentaje));
+		porcentaje = Float.valueOf(df.format(porcentaje).replace(',', '.'));
 		
 		
 		Float resto = 100f - (porcentaje * numActivos);

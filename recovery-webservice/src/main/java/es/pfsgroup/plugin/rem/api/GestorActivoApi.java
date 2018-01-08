@@ -30,6 +30,7 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_GESTOR_BACKOFFICE = "GCBO";
 	public static final String CODIGO_FVD_BKOFERTA = "FVDBACKOFR";
 	public static final String CODIGO_FVD_BKVENTA = "FVDBACKVNT";
+	public static final String CODIGO_FVD_NEGOCIO = "FVDNEG";
 	public static final String CODIGO_SUPERVISOR_FVD = "SUPFVD";
 	public static final String CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO = "HAYAGBOINM";
 	public static final String CODIGO_GESTOR_COMERCIAL_BACKOFFICE_FINANCIERO = "HAYAGBOFIN";

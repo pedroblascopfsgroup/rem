@@ -246,7 +246,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 											xtype: 'comboboxfieldbase',
 							               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.periodicidad'),
 							               	reference: 'cboxPeriodicidad',
-							               	editable: true,
+							               	//editable: true,
 									      	bind: {
 								           		store: '{comboPeriodicidad}',
 								           		value: '{gasto.periodicidad}'

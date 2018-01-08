@@ -54,7 +54,7 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private Date fechaEnvioAuto;
 	private Date fechaPres1Registro;
 	private Date fechaPres2Registro;
-	private Date fechaInscripcion;
+	private Date fechaInscripcionReg;
 	private Date fechaRetiradaReg;
 	private Date fechaNotaSimple;
 	
@@ -434,12 +434,12 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	}
 	public void setFechaPres2Registro(Date fechaPres2Registro) {
 		this.fechaPres2Registro = fechaPres2Registro;
+	}	
+	public Date getFechaInscripcionReg() {
+		return fechaInscripcionReg;
 	}
-	public Date getFechaInscripcion() {
-		return fechaInscripcion;
-	}
-	public void setFechaInscripcion(Date fechaInscripcionReg) {
-		this.fechaInscripcion = fechaInscripcionReg;
+	public void setFechaInscripcionReg(Date fechaInscripcionReg) {
+		this.fechaInscripcionReg = fechaInscripcionReg;
 	}
 	public Date getFechaRetiradaReg() {
 		return fechaRetiradaReg;

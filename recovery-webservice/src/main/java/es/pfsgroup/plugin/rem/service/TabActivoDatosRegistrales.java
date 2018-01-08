@@ -252,7 +252,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			
 			}
 			
-			if (activo.getDivHorizontal() != 0) {
+			if (!Checks.esNulo(activo.getDivHorizontal()) && activo.getDivHorizontal() != 0) {
 				
 				DDEstadoDivHorizontal estadoDivHorizontal = null;
 				

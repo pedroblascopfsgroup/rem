@@ -787,7 +787,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						{
 							xtype:'datefieldbase',
 		                	fieldLabel: HreRem.i18n('fieldlabel.fecha.inscripcion.registro'),
-					 		bind: '{datosRegistrales.fechaInscripcion}'	            	
+					 		bind: '{datosRegistrales.fechaInscripcionReg}'	            	
 						},
 						{
 							xtype:'datefieldbase',

@@ -799,10 +799,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Oferta oferta = null;
 		Activo activo = null;
 		Reserva reserva = null;
+		CondicionanteExpediente condiciones = null;
 
 		if (!Checks.esNulo(expediente)) {
 			reserva = expediente.getReserva();
 			oferta = expediente.getOferta();
+			condiciones = expediente.getCondicionante();
+			
+			if(!Checks.esNulo(condiciones)){
+				dto.setSolicitaReserva(condiciones.getSolicitaReserva());
+			}
 
 			if (!Checks.esNulo(oferta)) {
 				activo = oferta.getActivoPrincipal();

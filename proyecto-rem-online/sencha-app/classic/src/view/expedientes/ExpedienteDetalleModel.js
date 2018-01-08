@@ -12,6 +12,22 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     
     formulas: {   
 
+    	puedeModificarCompradores: function(get) {
+			if(get('esCarteraBankia')){
+				if(get('esExpedienteSinReserva')){
+					if(get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['APROBADO'] || get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['FIRMADO'] || get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['ANULADO'] || get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['VENDIDO']){
+						return false;
+					}
+				}
+				else{
+					if(get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['RESERVADO'] || get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['FIRMADO'] || get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['ANULADO'] || get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['VENDIDO']){
+						return false;
+					}
+				}
+			}	
+			return $AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES']);
+		 },
+    		
 	     getSrcCartera: function(get) {
 	     	
 	     	var cartera = get('expediente.entidadPropietariaDescripcion');
@@ -30,6 +46,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	
 	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 	     	return CONST.CARTERA['BANKIA'] == carteraCodigo;
+	     },
+	     
+	     fechaIngresoChequeReadOnly: function(get) {
+	    	 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+	    	 var subCartera = get('expediente.propietario');
+	    	 return CONST.CARTERA['BANKIA'] == carteraCodigo && CONST.NOMBRE_SUBCARTERA['BANKIA_HABITAT'] != subCartera;
 	     },
 	     
 	     comiteSancionadorNoEditable: function(get) {
@@ -119,8 +141,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     esExpedienteSinReserva: function(get) {
 	     	
 	     	
-	     	if(!Ext.isEmpty(get('condiciones.solicitaReserva'))) {
-	    	 	return get('condiciones.solicitaReserva') == "0";
+	     	if(!Ext.isEmpty(get('expediente.solicitaReserva'))) {
+	    	 	return get('expediente.solicitaReserva') == "0";
 	     	} else {
 	    	 	return !get('expediente.tieneReserva');
 	    	}
@@ -168,8 +190,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		     	return bloqueado;
 		     	
 		 }
-	     
-		
 	 },
 
 

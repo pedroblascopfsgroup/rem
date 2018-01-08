@@ -77,6 +77,7 @@ Ext.define('HreRem.view.common.GridBase', {
 			me.tbar = {
 	    		xtype: 'toolbar',
 	    		dock: 'top',
+	    		tipo: 'toolbarañadireliminar',
 	    		items: [configAddButton, configRemoveButton] //, configPropagationButton] <- HREOS-2775 Este item se queda es standby
     		};
 
@@ -140,6 +141,26 @@ Ext.define('HreRem.view.common.GridBase', {
     	}else{
     		me.disableRemoveButton(true);
     	}
+    },
+    
+    getTopBar: function()
+    {
+    	var me = this;
+    	return me.topBar;
+    },
+    
+    setTopBar: function(topBar)
+    {
+    	var me = this;
+    	me.topBar = topBar;
+		var toolbarDockItem = me.dockedItems.filterBy(
+    		function (item, key) {
+    			return item.tipo == "toolbarañadireliminar";
+    		}
+    	);
+		if(!Ext.isEmpty(toolbarDockItem) && toolbarDockItem.items.length > 0 ) {
+			toolbarDockItem.items[0].setVisible(topBar);
+		}
     },
 
 	privates: {

@@ -99,6 +99,8 @@ public class DtoFichaExpediente extends WebDto {
 	private String codDevolucionReserva;
 	
 	private Boolean bloqueado;
+	
+	private Integer solicitaReserva; 
 
 	public Long getId() {
 		return id;
@@ -499,6 +501,14 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setEstadoReserva(String estadoReserva) {
 		this.estadoReserva = estadoReserva;
+	}
+
+	public Integer getSolicitaReserva() {
+		return solicitaReserva;
+	}
+
+	public void setSolicitaReserva(Integer solicitaReserva) {
+		this.solicitaReserva = solicitaReserva;
 	}
 	
 }

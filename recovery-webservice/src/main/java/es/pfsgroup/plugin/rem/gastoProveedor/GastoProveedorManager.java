@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.gastoProveedor;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -13,7 +14,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
-
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
@@ -27,6 +28,7 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
+//import es.capgemini.devon.utils.PropertyUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -442,9 +444,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
 		GastoProveedor gastoProveedor = genericDao.get(GastoProveedor.class, filtro);
+		DtoFichaGastoProveedor dtoIni = gastoToDtoFichaGasto(gastoProveedor);
 
 		try {
-
 			beanUtilNotNull.copyProperties(gastoProveedor, dto);
 
 		} catch (Exception ex) {
@@ -510,8 +512,32 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 		
 		updateEjercicio(gastoProveedor);
+		
+		DtoFichaGastoProveedor dtoFin = gastoToDtoFichaGasto(gastoProveedor);
 
-		updaterStateApi.updaterStates(gastoProveedor, null);
+		boolean cambios = false;
+		PropertyDescriptor[] objDescriptors = PropertyUtils.getPropertyDescriptors(dto);
+		for (PropertyDescriptor objDescriptor : objDescriptors) {
+            try {
+                String propertyName = objDescriptor.getName();
+                Object propType = PropertyUtils.getPropertyType(dtoIni, propertyName);
+                Object propValueIni = PropertyUtils.getProperty(dtoIni, propertyName);
+                Object propValueFin = PropertyUtils.getProperty(dtoFin, propertyName);
+                
+                if(!Checks.esNulo(propValueIni) && !propValueIni.equals(propValueFin))
+                	cambios = true;
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+		if(!cambios && (DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gastoProveedor.getEstadoGasto().getCodigo()) 
+				|| DDEstadoGasto.RECHAZADO_PROPIETARIO.equals(gastoProveedor.getEstadoGasto().getCodigo()) 
+				|| DDEstadoGasto.SUBSANADO.equals(gastoProveedor.getEstadoGasto().getCodigo()))) {
+			updaterStateApi.updaterStates(gastoProveedor, gastoProveedor.getEstadoGasto().getCodigo());
+		}else {
+			updaterStateApi.updaterStates(gastoProveedor, null);
+		}
 		genericDao.update(GastoProveedor.class, gastoProveedor);
 
 		return true;
@@ -1749,9 +1775,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			String nuevoEstado = checkReglaCambioEstado(gasto.getEstadoGasto().getCodigo(), tieneIva,
   					tipoDocumento.getMatricula());
 			updateExisteDocumentoGasto(gasto, 1);
-  			if (!Checks.esNulo(nuevoEstado)) {
+  			//if (!Checks.esNulo(nuevoEstado)) {
   				updaterStateApi.updaterStates(gasto, nuevoEstado);
-  			}
+  			//}
 			
 			// TODO Falta definir que tipo de documento provoca marcar el campo existeDocumento.
 			

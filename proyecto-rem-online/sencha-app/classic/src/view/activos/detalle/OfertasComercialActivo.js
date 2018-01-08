@@ -40,6 +40,28 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 				items :
 					[
 					// Fila 0
+						{
+		    				xtype: "textfield",
+		    				fieldLabel: HreRem.i18n('header.evaluacion.mediadores.detail.ofertasvivas.usuAlta'),
+							bind: {
+								value: '{detalleOfertaModel.usuAlta}'
+							},
+							readOnly: true,
+							width: 410,
+		    				reference: 'usualtadetalleofertaref'
+		    			},
+		    			{
+		    				xtype: "textfield",
+		    				fieldLabel: HreRem.i18n('header.evaluacion.mediadores.detail.ofertasvivas.usuBaja'),
+							bind: {
+								value: '{detalleOfertaModel.usuBaja}'
+							},
+							readOnly: true,
+							width: 410,
+		    				reference: 'usubajadetalleofertaref',
+		    				colspan: 2
+		    			},
+		    		//Fila 1
 		    			{
 		    				xtype: "textfield",
 		    				fieldLabel: HreRem.i18n('header.evaluacion.mediadores.detail.ofertasvivas.numOferta'),
@@ -61,7 +83,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 		    				reference: 'intencionfinanciardetalleofertaref',
 		    				colspan: 2
 		    			},
-		    		// Fila 1
+		    		// Fila 2
 		    			{
 							xtype:'fieldsettable',
 							defaultType: 'textfieldbase',
@@ -121,7 +143,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 		    				reference: 'sucursaldetalleofertaref',
 		    				colspan: 2
 		    			},
-		    		// Fila 2
+		    		// Fila 3
 						{
 							xtype: "textfield",
 							fieldLabel: HreRem.i18n('fieldlabel.oferta.detalle.motivo.rechazo'),
@@ -132,7 +154,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 		    				width: 410,
 		    				colspan: 3
 		    			},
-		    		// Fila 3 - Solo Cajamar
+		    		// Fila 4 - Solo Cajamar
 		    			{
 		                    xtype: 'fieldsettable',
 		                    title: HreRem.i18n('title.comerical.oferta.detalle.cajamar'),

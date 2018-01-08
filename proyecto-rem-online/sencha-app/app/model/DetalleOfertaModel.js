@@ -7,6 +7,12 @@ Ext.define('HreRem.model.DetalleOfertaModel', {
 
     fields: [    
  		{
+			name:'usuAlta'
+		},
+		{
+			name:'usuBaja'
+		},
+ 		{
 			name:'numOferta'
 		},
 		{

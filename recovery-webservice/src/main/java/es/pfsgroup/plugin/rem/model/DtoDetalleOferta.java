@@ -5,6 +5,8 @@ public class DtoDetalleOferta {
 
 
 	private String id;
+	private String usuAlta;
+	private String usuBaja;
 	private String numOferta;
 	private String intencionFinanciar;
 	private String numVisitaRem;
@@ -55,5 +57,18 @@ public class DtoDetalleOferta {
 	public void setMotivoRechazoDesc(String motivoRechazoDesc) {
 		this.motivoRechazoDesc = motivoRechazoDesc;
 	}
+	public String getUsuAlta() {
+		return usuAlta;
+	}
+	public void setUsuAlta(String usuAlta) {
+		this.usuAlta = usuAlta;
+	}
+	public String getUsuBaja() {
+		return usuBaja;
+	}
+	public void setUsuBaja(String usuBaja) {
+		this.usuBaja = usuBaja;
+	}
+	
 	
 }

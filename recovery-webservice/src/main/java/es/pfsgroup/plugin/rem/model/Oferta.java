@@ -108,6 +108,9 @@ public class Oferta implements Serializable, Auditable {
     @Column(name = "OFR_FECHA_ACCION")
     private Date fechaAccion;
     
+    @Column(name = "OFR_USUARIO_BAJA")
+    private String usuarioBaja;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USU_ID")
     private Usuario usuarioAccion;
@@ -561,5 +564,14 @@ public class Oferta implements Serializable, Auditable {
 	public void setSucursal(ActivoProveedor sucursal) {
 		this.sucursal = sucursal;
 	}
+
+	public String getUsuarioBaja() {
+		return usuarioBaja;
+	}
+
+	public void setUsuarioBaja(String usuarioBaja) {
+		this.usuarioBaja = usuarioBaja;
+	}
+	
 
 }

@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
@@ -29,6 +30,7 @@ import es.capgemini.pfs.security.UsuarioSecurityManager;
 import es.capgemini.pfs.security.model.UsuarioSecurity;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -178,6 +180,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Autowired
 	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
 
 	@Override
 	public String managerName() {
@@ -811,6 +816,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA);
 			DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
 			oferta.setEstadoOferta(estado);
+			Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+			oferta.setUsuarioBaja(usu.getApellidoNombre());
 			updateStateDispComercialActivosByOferta(oferta);
 			genericDao.save(Oferta.class, oferta);
 
@@ -1385,6 +1392,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 			if (!Checks.esNulo(oferta)) {
 				dtoResponse.setNumOferta(oferta.getNumOferta().toString());
+				Filter filter = genericDao.createFilter(FilterType.EQUALS, "username", oferta.getAuditoria().getUsuarioCrear());
+				Usuario usu = genericDao.get(Usuario.class, filter);
+				if (usu != null){
+					dtoResponse.setUsuAlta(usu.getApellidoNombre());
+				} else {
+					dtoResponse.setUsuAlta(oferta.getAuditoria().getUsuarioCrear());
+				}
+				dtoResponse.setUsuBaja(oferta.getUsuarioBaja());
 				if (!Checks.esNulo(oferta.getVisita())) {
 					dtoResponse.setNumVisitaRem(oferta.getVisita().getNumVisitaRem().toString());
 				}

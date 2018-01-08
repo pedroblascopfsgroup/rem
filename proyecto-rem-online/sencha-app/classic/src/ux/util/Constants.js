@@ -185,6 +185,9 @@ Ext.define('HreRem.ux.util.Constants', {
     	BANKIA: 'BANKIA'
     },
     
+    NOMBRE_SUBCARTERA: {
+    	BANKIA_HABITAT: 'BANKIA HABITAT'
+    },
 
     IMAGENES_CARTERA: {
     	CAJAMAR: 'logo_cajamar.svg',

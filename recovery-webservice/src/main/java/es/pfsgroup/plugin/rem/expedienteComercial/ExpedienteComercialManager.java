@@ -3467,31 +3467,34 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		List<TitularDto> titulares = new ArrayList<TitularDto>();
 		if (expediente.getCompradores() != null && expediente.getCompradores().size() > 0) {
 			for (CompradorExpediente comprador : expediente.getCompradores()) {
-				TitularDto titular = new TitularDto();
-				Comprador primaryKey = comprador.getPrimaryKey().getComprador();
-				titular.setNumeroUrsus(primaryKey.getIdCompradorUrsus());
-				titular.setTitularContratacion(comprador.getTitularContratacion());
+				//si no esta de baja
+				if (comprador.getFechaBaja() == null) {
+					TitularDto titular = new TitularDto();
+					Comprador primaryKey = comprador.getPrimaryKey().getComprador();
+					titular.setNumeroUrsus(primaryKey.getIdCompradorUrsus());
+					titular.setTitularContratacion(comprador.getTitularContratacion());
 
-				if (primaryKey.getTipoDocumento() != null) {
-					DDTipoDocumento tipoDoc = primaryKey.getTipoDocumento();
-					titular.setTipoDocumentoCliente(traducitTipoDoc(tipoDoc.getCodigo()));
-				}
-
-				titular.setNombreCompletoCliente(primaryKey.getFullName());
-				titular.setNumeroDocumento(primaryKey.getDocumento());
-				titular.setPorcentajeCompra(comprador.getPorcionCompra());
-				if (comprador.getDocumentoConyuge() != null && !comprador.getDocumentoConyuge().isEmpty()) {
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "documento",
-							comprador.getDocumentoConyuge());
-					Comprador compradorConyuge = genericDao.get(Comprador.class, filtro);
-					if (compradorConyuge != null && compradorConyuge.getIdCompradorUrsus() != null) {
-						titular.setConyugeNumeroUrsus(compradorConyuge.getIdCompradorUrsus());
+					if (primaryKey.getTipoDocumento() != null) {
+						DDTipoDocumento tipoDoc = primaryKey.getTipoDocumento();
+						titular.setTipoDocumentoCliente(traducitTipoDoc(tipoDoc.getCodigo()));
 					}
+
+					titular.setNombreCompletoCliente(primaryKey.getFullName());
+					titular.setNumeroDocumento(primaryKey.getDocumento());
+					titular.setPorcentajeCompra(comprador.getPorcionCompra());
+					if (comprador.getDocumentoConyuge() != null && !comprador.getDocumentoConyuge().isEmpty()) {
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "documento",
+								comprador.getDocumentoConyuge());
+						Comprador compradorConyuge = genericDao.get(Comprador.class, filtro);
+						if (compradorConyuge != null && compradorConyuge.getIdCompradorUrsus() != null) {
+							titular.setConyugeNumeroUrsus(compradorConyuge.getIdCompradorUrsus());
+						}
+					}
+					if (!primaryKey.equals(compradorPrincipal))
+						titulares.add(titular);
+					else
+						titularPrincipal = titular;
 				}
-				if(!primaryKey.equals(compradorPrincipal))
-					titulares.add(titular);
-				else
-					titularPrincipal = titular;
 			}
 		}
 		if(!Checks.esNulo(titularPrincipal))

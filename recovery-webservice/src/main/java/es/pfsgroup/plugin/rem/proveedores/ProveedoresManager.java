@@ -256,7 +256,9 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				}else{
 					beanUtilNotNull.copyProperty(dto, "autorizacionWeb", "false");
 				}
-				
+				if(!Checks.esNulo(proveedor.getCodProveedorUvem())) {
+					beanUtilNotNull.copyProperty(dto, "codProveedorUvem", proveedor.getCodProveedorUvem());
+				}
 				
 			} catch (IllegalAccessException e) {
 				logger.error(e.getMessage());
@@ -451,6 +453,9 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			// Si viene estado de proveedor como 'baja como proveedor', establecer fecha de baja a hoy.
 			if(!Checks.esNulo(dto.getEstadoProveedorCodigo()) && dto.getEstadoProveedorCodigo().equals(DDEstadoProveedor.ESTADO_BAJA_PROVEEDOR)) {
 				beanUtilNotNull.copyProperty(proveedor, "fechaBaja", new Date());
+			}
+			if(!Checks.esNulo(dto.getCodProveedorUvem())) {
+				beanUtilNotNull.copyProperty(proveedor, "codProveedorUvem", dto.getCodProveedorUvem());
 			}
 
 		} catch (IllegalAccessException e) {

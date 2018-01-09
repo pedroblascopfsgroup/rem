@@ -164,6 +164,9 @@ Ext.define('HreRem.model.FichaProveedorModel', {
             	name: 'fechaEjercicioOpcion',
     			type:'date',
     			dateFormat: 'c'
+            },
+            {
+            	name: 'codProveedorUvem'
             }
     ],
 

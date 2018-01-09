@@ -69,6 +69,8 @@ public class DtoActivoProveedor extends WebDto {
 	
 	private String subtipoProveedorDescripcion;
 	
+	private String codProveedorUvem;
+	
 	
 	
 	
@@ -331,5 +333,12 @@ public class DtoActivoProveedor extends WebDto {
 	public void setAutorizacionWeb(String autorizacionWeb) {
 		this.autorizacionWeb = autorizacionWeb;
 	}
+	public String getCodProveedorUvem() {
+		return codProveedorUvem;
+	}
+	public void setCodProveedorUvem(String codProveedorUvem) {
+		this.codProveedorUvem = codProveedorUvem;
+	}
+	
 	
 }

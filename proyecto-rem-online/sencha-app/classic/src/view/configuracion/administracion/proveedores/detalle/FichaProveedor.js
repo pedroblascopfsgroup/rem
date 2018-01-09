@@ -184,18 +184,40 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 			        				xtype: 'datefieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.proveedor.fecha.constitucion'),
 									reference: 'dateConstitucionProveedor',
-									colspan: 3,
+									
+									//colspan: 2,
 									bind: {
 										disabled: '{!proveedor.isEntidad}',
 										value: '{proveedor.fechaConstitucionProveedor}'
 									}
 					            },
+						        {
+									xtype: 'textfieldbase',
+						        	fieldLabel:  HreRem.i18n('fieldlabel.numero.ursus.bankia'),	
+						        	reference: 'numUrsusRef',
+						        	bind: '{proveedor.codProveedorUvem}',
+						        	listeners:{
+						        		render: function(){
+						        			var me = this;						        			
+						        			var codigoCartera = me.up('proveedoresdetallemain').getViewModel().get('proveedor.carteraCodigo');
+						        			if(Ext.isDefined(codigoCartera) && codigoCartera != null && codigoCartera.includes(CONST.CARTERA["BANKIA"])){						        				
+						        				me.allowBlank = false;
+						        				me.setReadOnly(false);
+						        				
+						        			}else{						        				
+						        				me.allowBlank = true;
+						        				me.setReadOnly(true);
+						        			}
+						        		}
+						        	}
+						        },
 					         // Fila 6 (Ámbito)
 					            {
 									xtype:'fieldsettable',
 									defaultType: 'textfieldbase',						
 									title: HreRem.i18n('title.proveedor.ambito'),
 									collapsible: true,
+									width: "100%", 
 									bind: {
 										disabled: '{!proveedor.isProveedor}'
 									},
@@ -226,6 +248,21 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 									            },
 									            bind: {
 									            	value: '{proveedor.carteraCodigo}'
+									            },
+									            listeners:{
+									            	change: function(){
+									            		var me = this;									            		
+									            		var campoUrsus = me.lookupController('proveedordetalle').lookupReference('numUrsusRef');
+									            		if(me.getValue().includes(CONST.CARTERA["BANKIA"])){									            			
+									            			campoUrsus.allowBlank = false;
+									            			campoUrsus.setReadOnly(false);
+									            			campoUrsus.fireEvent('edit');
+									            		}else{									            			
+									            			campoUrsus.allowBlank = true;
+									            			campoUrsus.setReadOnly(true);
+									            			campoUrsus.fireEvent('cancel');
+									            		}
+									            	}
 									            }
 									        },
 											{

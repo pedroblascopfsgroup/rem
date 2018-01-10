@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.updaterstate;
 
 
 import java.util.Date;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -16,12 +17,14 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionHaya;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionPropietario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGasto;
 
 @Service("updaterStateGastoManager")
 public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
@@ -174,8 +177,10 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				
 			// Si el pago sigue retenido, ningún cambio en el gasto implica cambio de estado.
 				if(Checks.esNulo(gastoGestion.getMotivoRetencionPago())) {
-					if(!Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionHaya()) 
-							|| (Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionHaya()) && DDEstadoGasto.RETENIDO.equals(gasto.getEstadoGasto().getCodigo()))) {
+					if(!DDEstadoGasto.PAGADO.equals(gasto.getEstadoGasto().getCodigo()) 
+							&& (!Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionHaya()) 
+									|| (Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionHaya()) 
+											&& DDEstadoGasto.RETENIDO.equals(gasto.getEstadoGasto().getCodigo()))) ){
 						String error = validarAutorizacionGasto(gasto);
 						if(Checks.esNulo(error)) {
 							if(DDEstadoAutorizacionHaya.CODIGO_RECHAZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())) {
@@ -211,14 +216,42 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 						//el gasto no debe posicionarse en estado pagado: 
 						//1) Cuando se marque el check de "pagado por conexión Bankia"; 
 						//2) Cuando se marque el check de "anticipo".
-						if (gasto.getGastoDetalleEconomico() != null) {
-							if ((gasto.getGastoDetalleEconomico().getAnticipo() == null
-									|| gasto.getGastoDetalleEconomico().getAnticipo().equals(Integer.valueOf(0)))
-									&& (gasto.getGastoDetalleEconomico().getPagadoConexionBankia() == null
-											|| gasto.getGastoDetalleEconomico().getPagadoConexionBankia()
-													.equals(Integer.valueOf(0)))) {
-
-								codigo = DDEstadoGasto.PAGADO;
+						if(Checks.esNulo(gasto.getGestoria())) {
+							if (gasto.getGastoDetalleEconomico() != null) {
+								if ((gasto.getGastoDetalleEconomico().getAnticipo() == null
+										|| gasto.getGastoDetalleEconomico().getAnticipo().equals(Integer.valueOf(0)))
+										&& (gasto.getGastoDetalleEconomico().getPagadoConexionBankia() == null
+												|| gasto.getGastoDetalleEconomico().getPagadoConexionBankia()
+														.equals(Integer.valueOf(0)))) {
+	
+									codigo = DDEstadoGasto.PAGADO;
+								}else {
+									codigo = null;
+								}
+							}
+						}else {
+							Pattern justPattern = Pattern.compile(".*-CERA-.*");
+							if (gasto.getGastoDetalleEconomico() != null) {
+								if ((gasto.getGastoDetalleEconomico().getAnticipo() == null
+										|| gasto.getGastoDetalleEconomico().getAnticipo().equals(Integer.valueOf(0)))
+										&& (gasto.getGastoDetalleEconomico().getIncluirPagoProvision() == null
+												|| gasto.getGastoDetalleEconomico().getIncluirPagoProvision()
+														.equals(Integer.valueOf(0)))) {
+									if(!Checks.estaVacio(gasto.getAdjuntos())) {
+										for(AdjuntoGasto adjunto : gasto.getAdjuntos()) {
+											if(justPattern.matcher(adjunto.getTipoDocumentoGasto().getMatricula()).matches()){
+												codigo = DDEstadoGasto.PAGADO;
+											}else {
+												codigo = DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC;
+											}
+										}
+									}else {
+										codigo = DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC;
+									}
+									
+								}else {
+									codigo = null;
+								}
 							}
 						}
 						

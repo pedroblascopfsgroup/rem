@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=HREOS-3648
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que duplica las cuentas contables y las partidas presupuestarias para el ejercicio 2018
+--## Finalidad: Script que duplica la configuracion del tarifario de la cartera Tango
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial

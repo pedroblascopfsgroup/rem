@@ -382,6 +382,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		gastoProveedor.setGastoGestion(gestion);
 		gastoProveedor.setGastoInfoContabilidad(contabilidad);
 		
+		gastoProveedor = asignarCuentaContableYPartidaGasto(gastoProveedor);
+		updaterStateApi.updaterStates(gastoProveedor, null);
+		genericDao.save(GastoProveedor.class, gastoProveedor);
+		
 		//creamos el contenedor en el gestor documental
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			Integer idExpediente;
@@ -2230,53 +2234,88 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		return gasto;
 	}
+	
+	private boolean estanTodosActivosAlquilados(GastoProveedor gasto){
+		boolean todosActivoAlquilados = false;
+		
+		Filter filtroGastoActivo= genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
+		List<GastoProveedorActivo> gastosActivos= genericDao.getList(GastoProveedorActivo.class,filtroGastoActivo);
+		for(GastoProveedorActivo gastoActivo: gastosActivos){
+			Activo activo= gastoActivo.getActivo();
+			
+			if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getSituacionPosesoria())){
+				if(activo.getSituacionPosesoria().getOcupado()==1 && activo.getSituacionPosesoria().getConTitulo()==1){
+					if(!Checks.esNulo(activo.getSituacionPosesoria().getTipoTituloPosesorio()) &&
+							activo.getSituacionPosesoria().getTipoTituloPosesorio().getCodigo().equals(DDTipoTituloPosesorio.CODIGO_ARRENDAMIENTO)){
+						todosActivoAlquilados= true;								
+					}
+					else{
+						todosActivoAlquilados= false;
+						break;
+					}
+				}
+				else{
+					todosActivoAlquilados= false;
+					break;
+				}
+			}
+		}
+		return todosActivoAlquilados;
+	}
 
 	public GastoProveedor asignarCuentaContableYPartidaGasto(GastoProveedor gasto) {
 
 		//ConfigCuentaContable cuenta = buscarCuentaContable(gasto);		
-		ConfigPdaPresupuestaria partida = buscarPartidaPresupuestaria(gasto);
+		//ConfigPdaPresupuestaria partida = buscarPartidaPresupuestaria(gasto);
 		GastoInfoContabilidad gastoInfoContabilidad = gasto.getGastoInfoContabilidad();
 		boolean todosActivoAlquilados= false;
-
-		if (!Checks.esNulo(partida) && !Checks.esNulo(gastoInfoContabilidad)) {
+		DDCartera cartera = null;
+		
+		if (!Checks.esNulo(gasto.getPropietario())) {
+			cartera = gasto.getPropietario().getCartera();
+		}else{
+			//si no hay propietario es sareb
+			cartera = (DDCartera) utilDiccionarioApi.dameValorDiccionarioByCod(DDCartera.class, DDCartera.CODIGO_CARTERA_SAREB);
+		}
+		
+		if (!Checks.esNulo(gastoInfoContabilidad) && !Checks.esNulo(cartera)) {
 
 			Ejercicio ejercicio = gastoInfoContabilidad.getEjercicio();
 			
 			Filter filtroBorrado= genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 			Filter filtroEjercicioCuentaContable= genericDao.createFilter(FilterType.EQUALS, "ejercicio.id", ejercicio.getId());
 			Filter filtroSubtipoGasto= genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.id", gasto.getSubtipoGasto().getId());
-			Filter filtroCartera= genericDao.createFilter(FilterType.EQUALS, "cartera.id", gasto.getPropietario().getCartera().getId());
+			Filter filtroCartera= genericDao.createFilter(FilterType.EQUALS, "cartera.id", cartera.getId());
 			Filter filtroCuentaArrendamiento= genericDao.createFilter(FilterType.EQUALS, "cuentaArrendamiento", 1);
 			Filter filtroCuentaNoArrendamiento= genericDao.createFilter(FilterType.EQUALS, "cuentaArrendamiento", 0);
 			
+			todosActivoAlquilados = estanTodosActivosAlquilados(gasto);
+			
+			//Obtener la configuracion de la Partida Presupuestaria
+			ConfigPdaPresupuestaria partidaArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaArrendamiento,filtroBorrado);
+			ConfigPdaPresupuestaria partidaNoArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaNoArrendamiento,filtroBorrado);
+			
+			if(!Checks.esNulo(partidaArrendada) || !Checks.esNulo(partidaNoArrendada)){
+				if(!todosActivoAlquilados){
+					if(!Checks.esNulo(partidaNoArrendada)){
+						gastoInfoContabilidad.setPartidaPresupuestaria(partidaNoArrendada.getPartidaPresupuestaria());
+					}
+				}
+				else{
+					if(!Checks.esNulo(partidaArrendada)){
+						gastoInfoContabilidad.setPartidaPresupuestaria(partidaArrendada.getPartidaPresupuestaria());
+					}
+					else{
+						gastoInfoContabilidad.setPartidaPresupuestaria(partidaNoArrendada.getPartidaPresupuestaria());
+					}
+				}
+			}
+			
+			//Obtener la configuracion de la Cuenta Contable
 			ConfigCuentaContable cuentaArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaArrendamiento,filtroBorrado);
 			ConfigCuentaContable cuentaNoArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaNoArrendamiento,filtroBorrado);
 			
 			if(!Checks.esNulo(cuentaArrendada) || !Checks.esNulo(cuentaNoArrendada)){
-				
-				Filter filtroGastoActivo= genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
-				List<GastoProveedorActivo> gastosActivos= genericDao.getList(GastoProveedorActivo.class,filtroGastoActivo);
-				for(GastoProveedorActivo gastoActivo: gastosActivos){
-					Activo activo= gastoActivo.getActivo();
-					
-					if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getSituacionPosesoria())){
-						if(activo.getSituacionPosesoria().getOcupado()==1 && activo.getSituacionPosesoria().getConTitulo()==1){
-							if(!Checks.esNulo(activo.getSituacionPosesoria().getTipoTituloPosesorio()) &&
-									activo.getSituacionPosesoria().getTipoTituloPosesorio().getCodigo().equals(DDTipoTituloPosesorio.CODIGO_ARRENDAMIENTO)){
-								todosActivoAlquilados= true;								
-							}
-							else{
-								todosActivoAlquilados= false;
-								break;
-							}
-						}
-						else{
-							todosActivoAlquilados= false;
-							break;
-						}
-					}
-				}
-				
 				if(!todosActivoAlquilados){
 					if(!Checks.esNulo(cuentaNoArrendada)){
 						gastoInfoContabilidad.setCuentaContable(cuentaNoArrendada.getCuentaContable());
@@ -2290,10 +2329,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						gastoInfoContabilidad.setCuentaContable(cuentaNoArrendada.getCuentaContable());
 					}
 				}
-				
 			}
 
-			gastoInfoContabilidad.setPartidaPresupuestaria(partida.getPartidaPresupuestaria());
 			gasto.setGastoInfoContabilidad(gastoInfoContabilidad);
 
 		} else if (!Checks.esNulo(gastoInfoContabilidad)) {

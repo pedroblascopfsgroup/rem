@@ -1204,7 +1204,7 @@ public class ActivoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView insertarGestorAdicional(Long idActivo, Long usuarioGestor, Long tipoGestor, WebDto webDto,
-			ModelMap model) {
+			ModelMap model){
 
 		try {
 			GestorEntidadDto dto = new GestorEntidadDto();
@@ -1214,10 +1214,14 @@ public class ActivoController extends ParadiseJsonController {
 
 			boolean success = adapter.insertarGestorAdicional(dto);
 			model.put("success", success);
+			if(!success){
+				model.put("errorCode", "msg.activo.gestores.noasignar.tramite.multiactivo");
+			}
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put("success", false);
+			model.put("errorCode", "msg.operacion.ko");
 		}
 		return new ModelAndView("jsonView", model);
 	}

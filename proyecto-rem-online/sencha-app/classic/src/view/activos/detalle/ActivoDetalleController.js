@@ -651,9 +651,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	         btn.up("gestoresactivo").down("form").reset();
     	         
     	         if(Ext.decode(response.responseText).success == "false") {
-					me.fireEvent("errorToast", HreRem.i18n("msg.activo.gestores.noasignar.tramite.multiactivo"));
+					me.fireEvent("errorToast", HreRem.i18n(Ext.decode(response.responseText).errorCode));
+					//me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
     	         }
-    	     }
+    	     },
+    	     failure: function (a, operation, context) {
+           	  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+           }
     	 });
     },
 	

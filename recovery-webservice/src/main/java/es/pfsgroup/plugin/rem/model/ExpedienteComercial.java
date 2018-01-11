@@ -245,6 +245,9 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setEstado(DDEstadosExpedienteComercial estado) {
 		this.estado = estado;
+		if (estado != null && estado.getCodigo().equals(DDEstadosExpedienteComercial.ANULADO)){
+			this.fechaAnulacion = new Date();
+		}
 	}
 
 	public Date getFechaAlta() {

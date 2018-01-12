@@ -47,7 +47,7 @@ DECLARE
   NUMERO_BORRAR NUMBER(6) := 1000;--Numero de activos a borrar en una pasada
   ORDEN NUMBER(2) := 2;
   V_TABLA VARCHAR2(30 CHAR) := 'BIE_BIEN'; -- Variable para tabla de salida para el borrado
-  V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-????';
+  V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-3661';
 
   PROCEDURE BORRADO (ORDEN IN NUMBER, NUMERO_INSERTADO OUT NUMBER) IS
   BEGIN

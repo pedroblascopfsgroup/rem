@@ -12,8 +12,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     
     formulas: {   
 
-    	puedeModificarCompradores: function(get) {
-			/*if(get('esCarteraBankia')){
+    	 comprobacionCreacionModificacionCompradores: function(get){
+    		if(get('esCarteraBankia')){
 				if(get('esExpedienteSinReserva')){
 					if(get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['APROBADO'] || get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['FIRMADO'] || get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['ANULADO'] || get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['VENDIDO']){
 						return false;
@@ -24,8 +24,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 						return false;
 					}
 				}
-			}	*/
-			return $AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES']);
+			}
+    		return true;
+    	 },
+    	
+		 puedeCrearEliminarCompradores: function(get) {
+    		return get('comprobacionCreacionModificacionCompradores') && $AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES']);
+		 },
+    	
+		 puedeModificarCompradores: function(get) {
+    		return $AU.userHasFunction(['TAB_COMPRADORES_EXP_DETALLES_COMPRADOR']);
 		 },
     		
 	     getSrcCartera: function(get) {

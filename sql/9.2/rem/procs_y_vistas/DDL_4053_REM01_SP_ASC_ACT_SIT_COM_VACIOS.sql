@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=GUILLEM REY
---## FECHA_CREACION=20171211
+--## AUTOR=Vicente Martinez
+--## FECHA_CREACION=20180109
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-3404
+--## INCIDENCIA_LINK=HREOS-3523
 --## PRODUCTO=NO
 --## Finalidad: Stored Procedure que actualiza la situacion comercial VACIA de los activos en REM.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - HREOS-3404 - Guillem Rey
+--##        0.2 Segunda version - HREOS-3523 - Vicente Martinez
 --##########################################
 --*/
 
@@ -26,10 +27,15 @@ create or replace PROCEDURE SP_ASC_ACT_SIT_COM_VACIOS (
       ACTUALIZAR      IN NUMBER DEFAULT 0
 )
 AS
---David González
---HREOS-1936
---08-05-2017
+--Guillem Rey
+--HREOS-3404
+--11-12-2017
 --V0.1
+
+--Vicente Martinez
+--HREOS-3523
+--08-01-2018
+--v0.2
 
 --PROCEDIMIENTO ALMACENADO QUE INFORMA O INFORMA/ACTUALIZA LA SITUACION COMERCIAL (ACT_ACTIVO.DD_SCM_ID)
 --DE UN ACTIVO PASADO POR PARÁMETRO O DE TODOS LOS ACTIVOS (NO BORRADOS)
@@ -73,6 +79,7 @@ TIPOCOM_ALQUILER_VENTA VARCHAR2(2 CHAR) := '02';
 TIPOCOM_ALQUILER VARCHAR2(2 CHAR) := '03';
 ESTADORES_FIRMADA VARCHAR2(2 CHAR) := '02';
 ESTADOOFE_ACEPTADA VARCHAR2(2 CHAR) := '01';
+EXPEDIENTE_ANULADO VARCHAR2(2 CHAR) := '02';
 
 BEGIN
 
@@ -244,6 +251,7 @@ BEGIN
         ON RES.ECO_ID = ECO.ECO_ID
         AND RES.BORRADO=0
         WHERE RES.DD_ERE_ID = (SELECT DD_ERE_ID FROM '||V_ESQUEMA||'.DD_ERE_ESTADOS_RESERVA WHERE DD_ERE_CODIGO = '''||ESTADORES_FIRMADA||''')
+        AND ECO.DD_EEC_ID <> (SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = '''||EXPEDIENTE_ANULADO||''')
         and act.borrado = 0
       ) TMP
       ON (ACT.ACT_ID = TMP.ACT_ID)

@@ -382,10 +382,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		gastoProveedor.setGastoGestion(gestion);
 		gastoProveedor.setGastoInfoContabilidad(contabilidad);
 		
-		gastoProveedor = asignarCuentaContableYPartidaGasto(gastoProveedor);
-		updaterStateApi.updaterStates(gastoProveedor, null);
-		genericDao.save(GastoProveedor.class, gastoProveedor);
-		
 		//creamos el contenedor en el gestor documental
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			Integer idExpediente;

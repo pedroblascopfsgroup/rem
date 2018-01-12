@@ -75,6 +75,9 @@ public class ConfigPdaPresupuestaria implements Serializable, Auditable {
     
     @Column(name = "CPP_PARTIDA_PRESUPUESTARIA")
 	private String partidaPresupuestaria;
+    
+    @Column(name="CPP_ARRENDAMIENTO")
+    private Integer cuentaArrendamiento;
 
     
 	@Version   
@@ -149,6 +152,14 @@ public class ConfigPdaPresupuestaria implements Serializable, Auditable {
 
 	public void setPartidaPresupuestaria(String partidaPresupuestaria) {
 		this.partidaPresupuestaria = partidaPresupuestaria;
+	}
+
+	public Integer getCuentaArrendamiento() {
+		return cuentaArrendamiento;
+	}
+
+	public void setCuentaArrendamiento(Integer cuentaArrendamiento) {
+		this.cuentaArrendamiento = cuentaArrendamiento;
 	}
 
 	public Long getVersion() {

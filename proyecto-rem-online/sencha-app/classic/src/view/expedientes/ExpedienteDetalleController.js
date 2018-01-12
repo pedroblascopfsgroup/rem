@@ -1003,12 +1003,49 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		if(form.isFormValid()) {
 			var idExpedienteComercial = record.get("idExpedienteComercial");			
 			var numeroClienteUrsus = record.get("numeroClienteUrsus");
+			var nombreRazonSocial = record.get("nombreRazonSocial");
+			var apellidos = record.get("apellidos");
+			var direccion = record.get("direccion");
+			var telefono1 = record.get("telefono1");
+			var telefono2 = record.get("telefono2");
+			var codigoPostal = record.get("codigoPostal");
+			var email = record.get("email");
+			
+			var documentoConyuge = record.get("documentoConyuge");
+			var relacionHre = record.get("relacionHre");
+			
+			var numDocumentoRte = record.get("numDocumentoRte");
+			var nombreRazonSocialRte = record.get("nombreRazonSocialRte");
+			var apellidosRte = record.get("apellidosRte");
+			var direccionRte = record.get("direccionRte");
+			var telefono1Rte = record.get("telefono1Rte");
+			var telefono2Rte = record.get("telefono2Rte");
+			var codigoPostalRte = record.get("codigoPostalRte");
+			var emailRte = record.get("emailRte");
+			
 			
 			form.mask(HreRem.i18n("msg.mask.espere"));
 			
 			record.save({
 				params: {idExpedienteComercial: idExpedienteComercial,
-						 numeroClienteUrsus:		numeroClienteUrsus},
+						 numeroClienteUrsus:		numeroClienteUrsus,
+						 direccion: direccion,
+						 nombreRazonSocial: nombreRazonSocial,
+						 apellidos: apellidos,
+						 telefono1: telefono1,
+						 telefono2: telefono2,
+						 codigoPostal: codigoPostal,
+						 email: email,
+						 documentoConyuge: documentoConyuge,
+						 relacionHre: relacionHre,
+						 numDocumentoRte: numDocumentoRte,
+						 nombreRazonSocialRte: nombreRazonSocialRte,
+						 apellidosRte: apellidosRte,
+						 direccionRte: direccionRte,
+						 telefono1Rte: telefono1Rte,
+						 telefono2Rte: telefono2Rte,
+						 codigoPostalRte: codigoPostalRte,
+						 emailRte: emailRte},
 			    success: success,
 			 	failure: failure,
 			    callback: function(record, operation) {

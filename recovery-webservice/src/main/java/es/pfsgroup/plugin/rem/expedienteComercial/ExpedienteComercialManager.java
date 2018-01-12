@@ -2555,9 +2555,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				// Datos de identificación
 				// Faltaria un campo para el apellido
 				if (!Checks.esNulo(dto.getApellidos())) {
-					comprador.setApellidos(dto.getApellidos());
 					reiniciarPBC = true;
 				}
+				comprador.setApellidos(dto.getApellidos());
 
 				if (!Checks.esNulo(dto.getCodTipoDocumento())) {
 					DDTipoDocumento tipoDocumentoComprador = (DDTipoDocumento) utilDiccionarioApi
@@ -2565,9 +2565,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					comprador.setTipoDocumento(tipoDocumentoComprador);
 				}
 				if (!Checks.esNulo(dto.getNombreRazonSocial())) {
-					comprador.setNombre(dto.getNombreRazonSocial());
 					reiniciarPBC = true;
 				}
+				comprador.setNombre(dto.getNombreRazonSocial());
 
 				if (!Checks.esNulo(dto.getProvinciaCodigo())) {
 					DDProvincia provincia = (DDProvincia) utilDiccionarioApi
@@ -2584,26 +2584,30 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					reiniciarPBC = true;
 				}
 				if (!Checks.esNulo(dto.getCodigoPostal())) {
-					comprador.setCodigoPostal(dto.getCodigoPostal());
 					reiniciarPBC = true;
 				}
+				comprador.setCodigoPostal(dto.getCodigoPostal());
+				
 				if (!Checks.esNulo(dto.getNumDocumento())) {
 					comprador.setDocumento(dto.getNumDocumento());
 					reiniciarPBC = true;
 				}
 				if (!Checks.esNulo(dto.getDireccion())) {
-					comprador.setDireccion(dto.getDireccion());
 					reiniciarPBC = true;
 				}
+				comprador.setDireccion(dto.getDireccion());
+				
 				if (!Checks.esNulo(dto.getTelefono1())) {
-					comprador.setTelefono1(dto.getTelefono1());
 				}
+				comprador.setTelefono1(dto.getTelefono1());
+				
 				if (!Checks.esNulo(dto.getTelefono2())) {
-					comprador.setTelefono2(dto.getTelefono2());
 				}
+				comprador.setTelefono2(dto.getTelefono2());
+				
 				if (!Checks.esNulo(dto.getEmail())) {
-					comprador.setEmail(dto.getEmail());
 				}
+				comprador.setEmail(dto.getEmail());
 
 				Filter filtroExpedienteComercial = genericDao.createFilter(FilterType.EQUALS, "id",
 						Long.parseLong(dto.getIdExpedienteComercial()));
@@ -2636,15 +2640,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							compradorExpediente.setEstadoCivil(estadoCivil);
 							reiniciarPBC = true;
 						}
-						if (!Checks.esNulo(dto.getDocumentoConyuge())) {
+
 							compradorExpediente.setDocumentoConyuge(dto.getDocumentoConyuge());
-						}
+						
 						if (!Checks.esNulo(dto.getRelacionAntDeudor())) {
 							compradorExpediente.setRelacionAntDeudor(dto.getRelacionAntDeudor());
 						}
-						if (!Checks.esNulo(dto.getRelacionHre())) {
 							compradorExpediente.setRelacionHre(dto.getRelacionHre());
-						}
+						
 						if (!Checks.esNulo(dto.getCodigoRegimenMatrimonial())) {
 							DDRegimenesMatrimoniales regimenMatrimonial = (DDRegimenesMatrimoniales) utilDiccionarioApi
 									.dameValorDiccionarioByCod(DDRegimenesMatrimoniales.class,
@@ -2663,12 +2666,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 									.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getCodTipoDocumentoRte());
 							compradorExpediente.setTipoDocumentoRepresentante(tipoDocumento);
 						}
-						if (!Checks.esNulo(dto.getNombreRazonSocialRte())) {
 							compradorExpediente.setNombreRepresentante(dto.getNombreRazonSocialRte());
-						}
-						if (!Checks.esNulo(dto.getApellidosRte())) {
+						
 							compradorExpediente.setApellidosRepresentante(dto.getApellidosRte());
-						}
+						
 
 						if (!Checks.esNulo(dto.getProvinciaRteCodigo())) {
 							DDProvincia provinciaRte = (DDProvincia) utilDiccionarioApi
@@ -2682,24 +2683,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							Localidad localidadRte = (Localidad) genericDao.get(Localidad.class, filtroLocalidadRte);
 							compradorExpediente.setLocalidadRepresentante(localidadRte);
 						}
-						if (!Checks.esNulo(dto.getCodigoPostalRte())) {
 							compradorExpediente.setCodigoPostalRepresentante(dto.getCodigoPostalRte());
-						}
-						if (!Checks.esNulo(dto.getNumDocumentoRte())) {
+						
 							compradorExpediente.setDocumentoRepresentante(dto.getNumDocumentoRte());
-						}
-						if (!Checks.esNulo(dto.getDireccionRte())) {
+						
 							compradorExpediente.setDireccionRepresentante(dto.getDireccionRte());
-						}
-						if (!Checks.esNulo(dto.getTelefono1Rte())) {
+						
 							compradorExpediente.setTelefono1Representante(dto.getTelefono1Rte());
-						}
-						if (!Checks.esNulo(dto.getTelefono2Rte())) {
+						
 							compradorExpediente.setTelefono2Representante(dto.getTelefono2Rte());
-						}
-						if (!Checks.esNulo(dto.getEmailRte())) {
+						
 							compradorExpediente.setEmailRepresentante(dto.getEmailRte());
-						}
+						
 						if (!Checks.esNulo(dto.getCodigoPais())) {
 							Filter filtroPais = genericDao.createFilter(FilterType.EQUALS, "codigo",
 									dto.getCodigoPais());

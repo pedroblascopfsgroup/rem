@@ -256,7 +256,11 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 									            		if(me.getValue().includes(CONST.CARTERA["BANKIA"])){									            			
 									            			campoUrsus.allowBlank = false;
 									            			campoUrsus.setReadOnly(false);
-									            			campoUrsus.fireEvent('edit');
+									            			if(me.up('proveedoresdetallemain').getViewModel().get("editing")){
+									            				campoUrsus.fireEvent('edit');
+									            			}else{
+									            				campoUrsus.fireEvent('cancel');
+									            			}
 									            		}else{									            			
 									            			campoUrsus.allowBlank = true;
 									            			campoUrsus.setReadOnly(true);

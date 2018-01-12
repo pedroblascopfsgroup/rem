@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Diego Crespo
---## FECHA_CREACION=20180111
+--## FECHA_CREACION=20180112
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-3639
@@ -1336,8 +1336,8 @@ BEGIN
          	V_TMP_TIPO_DATA := V_TIPO_DATA(I);
 
             V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||
-            			' SET '||V_CAMPO_SET||' = '||V_TMP_TIPO_DATA(2)||
-            			' WHERE '||V_CAMPO_WHERE||' = '||V_TMP_TIPO_DATA(1)||'';	
+            			' SET '||V_CAMPO_SET||' = '||V_TMP_TIPO_DATA(2)||', USUARIOMODIFICAR = ''HREOS-3639'', FECHAMODIFICAR = sysdate
+            			  WHERE '||V_CAMPO_WHERE||' = '||V_TMP_TIPO_DATA(1)||'';	
             EXECUTE IMMEDIATE V_MSQL;
   
       	END LOOP;

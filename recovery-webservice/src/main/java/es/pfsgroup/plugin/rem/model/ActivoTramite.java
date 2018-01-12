@@ -141,7 +141,7 @@ public class ActivoTramite implements Serializable, Auditable{
 			listaActivos.add(activo);
 		else
 			for(ActivoTrabajo activotrabajo : trabajo.getActivosTrabajo())
-				listaActivos.add(activotrabajo.getPrimaryKey().getActivo());
+				listaActivos.add(activotrabajo.getActivo());
 			
 		return listaActivos;
 	}	

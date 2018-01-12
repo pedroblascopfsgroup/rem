@@ -505,10 +505,14 @@ public class Trabajo implements Serializable, Auditable {
 	}
 
 	public Activo getActivo() {
-		if(!Checks.estaVacio(getActivosTrabajo()))
-			return getActivosTrabajo().get(0).getPrimaryKey().getActivo();
-		else
-			return null;
+		if(this.activo==null){
+			if(!Checks.estaVacio(getActivosTrabajo()))
+				return getActivosTrabajo().get(0).getActivo();
+			else
+				return null;
+		}else{
+			return this.activo;
+		}
 	}
 
 	public void setActivo(Activo activo) {

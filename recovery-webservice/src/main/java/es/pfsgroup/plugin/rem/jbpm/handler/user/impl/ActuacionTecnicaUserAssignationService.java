@@ -62,17 +62,18 @@ public class ActuacionTecnicaUserAssignationService implements UserAssigantionSe
 			return trabajo.getSolicitante();
 
 		} else {
-			return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+			return gestorActivoApi.getGestorByActivoYTipo(trabajo.getActivo(), GestorActivoApi.CODIGO_GESTOR_ACTIVO);
 		}
 	}
 
 	@Override
 	public Usuario getSupervisor(TareaExterna tareaExterna) {
 		TareaActivo tareaActivo = (TareaActivo)tareaExterna.getTareaPadre();
+		Trabajo trabajo = tareaActivo.getTramite().getTrabajo();
 		if(!Checks.esNulo(tareaActivo.getTramite().getTrabajo().getSupervisorActivoResponsable())){
 			return tareaActivo.getTramite().getTrabajo().getSupervisorActivoResponsable();
 		} else {
-			return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS);
+			return gestorActivoApi.getGestorByActivoYTipo(trabajo.getActivo(), GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS);
 		}
 	}
 

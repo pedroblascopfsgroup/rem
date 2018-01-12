@@ -186,7 +186,7 @@ public class TrabajoController extends ParadiseJsonController {
 			success = true;
 			
 		} catch (Exception e) {			
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 		}
 		
 		

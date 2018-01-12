@@ -501,6 +501,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				trabajo.setPropuestaPrecio(propuestaPrecio);
 			}
 
+			if(listaActivos != null && listaActivos.size() == 1){
+				trabajo.setActivo(listaActivos.get(0));
+			}
+			
 			trabajoDao.saveOrUpdate(trabajo);
 
 			// Crea el trámite relacionado con el nuevo trabajo generado
@@ -959,12 +963,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Override
 	public ActivoTrabajo createActivoTrabajo(Activo activo, Trabajo trabajo, String participacion) {
-		ActivoTrabajoPk pk = new ActivoTrabajoPk();
+		if(trabajo.getId() == null){
+			trabajo =genericDao.save(Trabajo.class, trabajo);
+		}		
 		ActivoTrabajo activoTrabajo = new ActivoTrabajo();
-		pk.setActivo(activo);
-		pk.setTrabajo(trabajo);
-
-		activoTrabajo.setPrimaryKey(pk);
+		//activoTrabajo.setActivo(activo);
+		//activoTrabajo.setTrabajo(trabajo);
+		activoTrabajo.setPrimaryKey(new ActivoTrabajoPk(activo.getId(),trabajo.getId()));
 		activoTrabajo.setParticipacion(new Float(participacion));
 		return activoTrabajo;
 	}
@@ -1190,6 +1195,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			return null;
 		}
 		ActivoTramite tramite = jbpmActivoTramiteManager.createActivoTramiteTrabajo(tipoTramite, trabajo);
+		tramite.setActivo(trabajo.getActivo());
 
 		jbpmActivoTramiteManager.lanzaBPMAsociadoATramite(tramite.getId());
 		return tramite;
@@ -1885,9 +1891,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		genericDao.update(ActivoTrabajo.class, activoTrabajo);
 
 		// Si el trabajo está asociado a un gasto actualizar el porcentaje en el mismo.
-		if(activoTrabajo.getPrimaryKey().getTrabajo().getGastoTrabajo() != null) {
-		gastoProveedorApi.actualizarPorcentajeParticipacionGastoProveedorActivo(activoTrabajo.getPrimaryKey().getActivo().getId(), 
-				activoTrabajo.getPrimaryKey().getTrabajo().getGastoTrabajo().getGastoProveedor().getId(), porcentajeParticipacion);
+		if(activoTrabajo.getTrabajo().getGastoTrabajo() != null) {
+		gastoProveedorApi.actualizarPorcentajeParticipacionGastoProveedorActivo(activoTrabajo.getActivo().getId(), 
+				activoTrabajo.getTrabajo().getGastoTrabajo().getGastoProveedor().getId(), porcentajeParticipacion);
 		}
 
 		return true;

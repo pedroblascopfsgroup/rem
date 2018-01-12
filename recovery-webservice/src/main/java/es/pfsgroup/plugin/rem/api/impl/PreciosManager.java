@@ -853,7 +853,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		Trabajo trabajo = trabajoApi.findOne(idTrabajo);
 		String cadenaId = "";
 		for(ActivoTrabajo activoTrabajo : trabajo.getActivosTrabajo()) {
-			cadenaId = cadenaId + activoTrabajo.getPrimaryKey().getActivo().getId() +",";
+			cadenaId = cadenaId + activoTrabajo.getActivo().getId() +",";
 		}
 		
 		List<VBusquedaActivosPrecios> listaActivos = new ArrayList<VBusquedaActivosPrecios>();

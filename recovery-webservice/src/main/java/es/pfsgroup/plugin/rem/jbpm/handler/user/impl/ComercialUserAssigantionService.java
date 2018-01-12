@@ -433,10 +433,11 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	private boolean isFuerzaVentaDirecta(TareaExterna tareaExterna) {
 		boolean esFdv = false;
 		TareaActivo tareaActivo = (TareaActivo) tareaExterna.getTareaPadre();
-
+		Activo activo = tareaActivo.getTramite().getTrabajo().getActivo();
+		
 		if (!Checks.esNulo(tareaActivo) && !Checks.esNulo(tareaActivo.getTramite())
 				&& !Checks.esNulo(tareaActivo.getTramite().getTrabajo())) {
-			String codCarteraActivo = !Checks.esNulo(tareaActivo.getActivo())
+			String codCarteraActivo = !Checks.esNulo(activo)
 					? (!Checks.esNulo(tareaActivo.getActivo().getCartera())
 							? tareaActivo.getActivo().getCartera().getCodigo() : null)
 					: null;
@@ -449,7 +450,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 										.getAgrupacion().getTipoAgrupacion().getCodigo())))
 					carteraCajaMar = true;
 			}
-			ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(tareaActivo.getActivo().getId());
+			ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());
 
 			boolean esFinanciero = false;
 			if (!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getClaseActivo())
@@ -457,7 +458,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 				esFinanciero = true;
 			}
 			boolean esSingular = false;
-			String tipoFormalizacion = activoApi.getCodigoTipoComercializacionFromActivo(tareaActivo.getActivo());
+			String tipoFormalizacion = activoApi.getCodigoTipoComercializacionFromActivo(activo);
 			if(!Checks.esNulo(tipoFormalizacion) && tipoFormalizacion.equals(DDTipoComercializar.CODIGO_SINGULAR)){
 				esSingular = true;
 			}

@@ -238,8 +238,8 @@ public class TrabajoAdapter {
 			if (!listaActivoTrabajo.isEmpty()){
 	
 				Integer countActivoTrabajos = listaActivoTrabajo.size();
-				String tipoTrabajoDescripcion = listaActivoTrabajo.get(0).getPrimaryKey().getTrabajo().getTipoTrabajo().getDescripcion();
-				String subTipoTrabajoDescripcion = listaActivoTrabajo.get(0).getPrimaryKey().getTrabajo().getSubtipoTrabajo().getDescripcion();
+				String tipoTrabajoDescripcion = listaActivoTrabajo.get(0).getTrabajo().getTipoTrabajo().getDescripcion();
+				String subTipoTrabajoDescripcion = listaActivoTrabajo.get(0).getTrabajo().getSubtipoTrabajo().getDescripcion();
 				
 				if (countActivoTrabajos == 1){
 					mensaje = messageServices.getMessage("trabajo.advertencia.existenMismoSubtipo.uno.yaExiste").concat(" "); //"Advertencia: Para este activo ya existe un trabajo del tipo ";
@@ -247,7 +247,7 @@ public class TrabajoAdapter {
 					mensaje = mensaje.concat(" / ");
 					mensaje = mensaje.concat(subTipoTrabajoDescripcion);
 					mensaje = mensaje.concat(" ").concat(messageServices.getMessage("trabajo.advertencia.existenMismoSubtipo.uno.conEstado")).concat(" "); //mensaje.concat(" y en estado ");
-					mensaje = mensaje.concat(listaActivoTrabajo.get(0).getPrimaryKey().getTrabajo().getEstado().getDescripcion()).concat(".");
+					mensaje = mensaje.concat(listaActivoTrabajo.get(0).getTrabajo().getEstado().getDescripcion()).concat(".");
 				}else {
 					String estados = new String();
 					//Se almacenan los estados de todos los trabajos encontrados en un objeto tipo HashSet para
@@ -256,7 +256,7 @@ public class TrabajoAdapter {
 					
 					
 					for (ActivoTrabajo activoTrabajo : listaActivoTrabajo){
-						listaEstadosTrabajos.add(activoTrabajo.getPrimaryKey().getTrabajo().getEstado().getDescripcion());
+						listaEstadosTrabajos.add(activoTrabajo.getTrabajo().getEstado().getDescripcion());
 					}
 					
 					for (String estadosTrabajos : listaEstadosTrabajos){

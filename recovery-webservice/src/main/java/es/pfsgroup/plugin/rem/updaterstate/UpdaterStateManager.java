@@ -466,12 +466,12 @@ public class UpdaterStateManager implements UpdaterStateApi{
 
 			List<Activo> activosLista = new ArrayList<Activo>();
 			for(ActivoTrabajo activoTrabajo : activosTrabajoLista){
-				activosLista.add(activoTrabajo.getPrimaryKey().getActivo());
+				activosLista.add(activoTrabajo.getActivo());
 			}
 
 			Double participacion = null; 
 			for(ActivoTrabajo activoTrabajo : activosTrabajoLista){
-				participacion = calcularParticipacionPorActivo(codigoTipoTrabajo, activosLista, activoTrabajo.getPrimaryKey().getActivo());
+				participacion = calcularParticipacionPorActivo(codigoTipoTrabajo, activosLista, activoTrabajo.getActivo());
 
 				if(participacion == null){
 					participacion = (100d / activosLista.size());

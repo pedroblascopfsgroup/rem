@@ -148,9 +148,9 @@ public class PresupuestoActivo implements Serializable, Auditable {
 					Iterator<ActivoTrabajo> it = activo.getActivoTrabajos().iterator();
 					while (it.hasNext()) {
 						ActivoTrabajo activoTrabajo = (ActivoTrabajo) it.next();
-						if(activoTrabajo.getPrimaryKey().getTrabajo()!= null && activoTrabajo.getPrimaryKey().getTrabajo().getEstado() != null){
-							if(activoTrabajo.getPrimaryKey().getTrabajo().getEstado().getCodigo().equalsIgnoreCase(DDEstadoTrabajo.ESTADO_PAGADO)){
-								total += activoTrabajo.getPrimaryKey().getTrabajo().getImporteTotal();
+						if(activoTrabajo.getTrabajo()!= null && activoTrabajo.getTrabajo().getEstado() != null){
+							if(activoTrabajo.getTrabajo().getEstado().getCodigo().equalsIgnoreCase(DDEstadoTrabajo.ESTADO_PAGADO)){
+								total += activoTrabajo.getTrabajo().getImporteTotal();
 							}
 						}
 					}		
@@ -177,13 +177,13 @@ public class PresupuestoActivo implements Serializable, Auditable {
 					Iterator<ActivoTrabajo> it = activo.getActivoTrabajos().iterator();
 					while (it.hasNext()) {
 						ActivoTrabajo activoTrabajo = (ActivoTrabajo) it.next();
-						if(activoTrabajo.getPrimaryKey().getTrabajo()!= null && activoTrabajo.getPrimaryKey().getTrabajo().getEstado() != null){
-							if(activoTrabajo.getPrimaryKey().getTrabajo().getEstado().getCodigo().equalsIgnoreCase(DDEstadoTrabajo.ESTADO_EN_TRAMITE) ||
-								activoTrabajo.getPrimaryKey().getTrabajo().getEstado().getCodigo().equalsIgnoreCase(DDEstadoTrabajo.ESTADO_PENDIENTE_PAGO) ||
-								activoTrabajo.getPrimaryKey().getTrabajo().getEstado().getCodigo().equalsIgnoreCase(DDEstadoTrabajo.ESTADO_IMPOSIBLE_OBTENCION) ||
-								activoTrabajo.getPrimaryKey().getTrabajo().getEstado().getCodigo().equalsIgnoreCase(DDEstadoTrabajo.ESTADO_FALLIDO) ||
-								activoTrabajo.getPrimaryKey().getTrabajo().getEstado().getCodigo().equalsIgnoreCase(DDEstadoTrabajo.ESTADO_CEE_PENDIENTE_ETIQUETA)){
-								total += activoTrabajo.getPrimaryKey().getTrabajo().getImporteTotal();
+						if(activoTrabajo.getPrimaryKey().getTrabajo()!= null && activoTrabajo.getTrabajo().getEstado() != null){
+							if(activoTrabajo.getTrabajo().getEstado().getCodigo().equalsIgnoreCase(DDEstadoTrabajo.ESTADO_EN_TRAMITE) ||
+								activoTrabajo.getTrabajo().getEstado().getCodigo().equalsIgnoreCase(DDEstadoTrabajo.ESTADO_PENDIENTE_PAGO) ||
+								activoTrabajo.getTrabajo().getEstado().getCodigo().equalsIgnoreCase(DDEstadoTrabajo.ESTADO_IMPOSIBLE_OBTENCION) ||
+								activoTrabajo.getTrabajo().getEstado().getCodigo().equalsIgnoreCase(DDEstadoTrabajo.ESTADO_FALLIDO) ||
+								activoTrabajo.getTrabajo().getEstado().getCodigo().equalsIgnoreCase(DDEstadoTrabajo.ESTADO_CEE_PENDIENTE_ETIQUETA)){
+								total += activoTrabajo.getTrabajo().getImporteTotal();
 							}
 						}
 					}		

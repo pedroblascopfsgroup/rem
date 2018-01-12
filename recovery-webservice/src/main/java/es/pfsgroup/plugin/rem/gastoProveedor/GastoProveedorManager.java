@@ -1640,14 +1640,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		for (ActivoTrabajo activo : trabajo.getActivosTrabajo()) {
 
-			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getPrimaryKey().getActivo().getId());
+			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getActivo().getId());
 			Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
 			GastoProveedorActivo gastoActivo = genericDao.get(GastoProveedorActivo.class, filtroActivo, filtroGasto);
 
 			// Si no existe ya
 			if (Checks.esNulo(gastoActivo)) {
 				gastoActivo = new GastoProveedorActivo();
-				gastoActivo.setActivo(activo.getPrimaryKey().getActivo());
+				gastoActivo.setActivo(activo.getActivo());
 				gastoActivo.setGastoProveedor(gasto);
 				gastoActivo.setParticipacionGasto(activo.getParticipacion());
 
@@ -1972,7 +1972,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			Double importeTrabajo = gastoTrabajo.getTrabajo().getImporteTotal();
 			if (!Checks.esNulo(importeTrabajo)) {
 				for (ActivoTrabajo activoTrabajo : gastoTrabajo.getTrabajo().getActivosTrabajo()) {
-					Activo activo = activoTrabajo.getPrimaryKey().getActivo();
+					Activo activo = activoTrabajo.getActivo();
 					Float participacion = activoTrabajo.getParticipacion();
 					if (mapa.containsKey(activo.getId())) {
 						Double importe = mapa.get(activo.getId());

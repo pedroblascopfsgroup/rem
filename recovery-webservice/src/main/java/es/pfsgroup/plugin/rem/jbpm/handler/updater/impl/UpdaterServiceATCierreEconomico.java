@@ -15,7 +15,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
@@ -32,9 +31,6 @@ public class UpdaterServiceATCierreEconomico implements UpdaterService {
 	
 	@Autowired
 	ActivoManager activoApi;
-	
-	@Autowired
-	private TrabajoApi trabajoApi;
 	
 	@Autowired
     private GenericABMDao genericDao;
@@ -78,7 +74,7 @@ public class UpdaterServiceATCierreEconomico implements UpdaterService {
 		int numActivos = trabajo.getActivosTrabajo().size();
 		if(numActivos>1){
 			for(ActivoTrabajo acttrabajo: trabajo.getActivosTrabajo()){
-				Activo activo = acttrabajo.getPrimaryKey().getActivo();
+				Activo activo = acttrabajo.getActivo();
 				if(!Checks.esNulo(trabajo)){
 
 					SimpleDateFormat dfAnyo = new SimpleDateFormat("yyyy");

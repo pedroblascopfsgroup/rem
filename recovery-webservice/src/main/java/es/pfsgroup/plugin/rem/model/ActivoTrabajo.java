@@ -4,7 +4,9 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -26,23 +28,38 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 public class ActivoTrabajo implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Id
+    @EmbeddedId
     private ActivoTrabajoPk primaryKey = new ActivoTrabajoPk();
 
-    @Column(name = "ACT_ID", nullable = false, updatable = false, insertable = false)
-    private Long activo;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="ACT_ID",nullable = false, updatable = false, insertable = false)
+    private Activo activo;
 
-    @Column(name = "TBJ_ID", nullable = false, updatable = false, insertable = false)
-    private Long trabajo;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="TBJ_ID",nullable = false, updatable = false, insertable = false)
+    private Trabajo trabajo;
     
     @Column(name="ACT_TBJ_PARTICIPACION")
     private Float participacion;
 
     
-    
-    
-    
-    public Float getParticipacion() {
+    public Activo getActivo() {
+		return activo;
+	}
+
+	public void setActivo(Activo activo) {
+		this.activo = activo;
+	}
+
+	public Trabajo getTrabajo() {
+		return trabajo;
+	}
+
+	public void setTrabajo(Trabajo trabajo) {
+		this.trabajo = trabajo;
+	}
+
+	public Float getParticipacion() {
 		return participacion;
 	}
     
@@ -113,13 +130,11 @@ public class ActivoTrabajo implements Serializable {
          */
         private static final long serialVersionUID = 1L;
 
-        @ManyToOne
-        @JoinColumn(name = "ACT_ID")
-        private Activo activo;
+        @Column(name = "ACT_ID")
+        private Long activo;
 
-        @ManyToOne
-        @JoinColumn(name = "TBJ_ID")
-        private Trabajo trabajo;
+        @Column(name = "TBJ_ID")
+        private Long trabajo;
 
         /**
          * default contructor.
@@ -127,20 +142,25 @@ public class ActivoTrabajo implements Serializable {
         public ActivoTrabajoPk() {
 
         }
+        
+        public ActivoTrabajoPk(Long activo, Long trabajo) {
+        	this.trabajo = trabajo;
+        	this.activo = activo;
+        }
 
-		public Activo getActivo() {
+		public Long getActivo() {
 			return activo;
 		}
 
-		public void setActivo(Activo activo) {
+		public void setActivo(Long activo) {
 			this.activo = activo;
 		}
 
-		public Trabajo getTrabajo() {
+		public Long getTrabajo() {
 			return trabajo;
 		}
 
-		public void setTrabajo(Trabajo trabajo) {
+		public void setTrabajo(Long trabajo) {
 			this.trabajo = trabajo;
 		}
         

@@ -59,10 +59,13 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 
 	@Override
 	public Page findAllFilteredByProveedorContacto(DtoTrabajoFilter dto, Long idUsuario) {
-
+		GastoProveedor gasto = null;
+		if (!Checks.esNulo(dto.getNumGasto())) {
+			gasto = genericDao.get(GastoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", dto.getNumGasto()));
+		}
 		HQLBuilder hb = new HQLBuilder(" from VBusquedaTrabajos tbj");
 		
-		this.rellenarFiltrosBusquedaTrabajos(dto, hb, null);
+		this.rellenarFiltrosBusquedaTrabajos(dto, hb, gasto);
 
 		List<String> nombresProveedor = proveedorDao.getNombreProveedorByIdUsuario(idUsuario);
 		if(!Checks.estaVacio(nombresProveedor)) {

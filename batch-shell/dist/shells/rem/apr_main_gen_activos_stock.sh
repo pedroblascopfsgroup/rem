@@ -30,6 +30,8 @@ echo "Comienzo transferencia fichero RUSTOCK.txt"
    lftp -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.235.59 <<EOF
   cd /datos/usuarios/socpart/CISA/in/
   mput $DIR_SALIDA/RUSTOCK.txt
+  cd /datos/usuarios/socpart/CISA/out/
+  mput $DIR_SALIDA/RUSTOCK.txt
   bye
 EOF
 

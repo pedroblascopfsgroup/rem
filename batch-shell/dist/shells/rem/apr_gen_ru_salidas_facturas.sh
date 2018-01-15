@@ -33,6 +33,9 @@ echo "Inicio de transferencia ficheros RUFACTUCP.txt/RUFACTUSP.txt"
   cd /datos/usuarios/socpart/CISA/out/
   mput $DIR_SALIDA/RUFACTUCP.txt
   mput $DIR_SALIDA/RUFACTUSP.txt 
+  cd /datos/usuarios/socpart/CISA/in/
+  mput $DIR_SALIDA/RUFACTUCP.txt
+  mput $DIR_SALIDA/RUFACTUSP.txt 
   bye
 EOF
 

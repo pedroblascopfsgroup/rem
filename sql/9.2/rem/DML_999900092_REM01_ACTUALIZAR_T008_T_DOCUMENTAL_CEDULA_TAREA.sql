@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=BRUNO ANGLÉS ROLBES
---## FECHA_CREACION=20170518
+--## AUTOR=Pablo Sánchez
+--## FECHA_CREACION=20180116
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-2052
+--## INCIDENCIA_LINK=HREOS-3665
 --## PRODUCTO=NO
 --##
 --## Finalidad: Realiza modificaciones del trámite documental cédula de habitabilidad.
@@ -68,7 +68,7 @@ DECLARE
                 '3*24*60*60*1000L',
                 'NULL',
                 '',
-                'valores[''''T008_AnalisisPeticion''''][''''comboTramitar''''] == DDSiNo.NO ? null : (checkSareb() || checkBankia() || comprobarExisteProveedorTrabajo()) ? null : ''''Debe asignar un proveedo al trabajo.'''' ',
+                'valores[''''T008_AnalisisPeticion''''][''''comboTramitar''''] == DDSiNo.NO ? null : (checkSareb() || checkBankia() || checkTango() || comprobarExisteProveedorTrabajo()) ? null : ''''Debe asignar un proveedo al trabajo.'''' ',
                 'valores[''''T008_AnalisisPeticion''''][''''comboTramitar''''] == DDSiNo.NO ? ''''Fin'''' : ''''TramitarPeticion'''' '
             )
     );

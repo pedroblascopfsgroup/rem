@@ -197,7 +197,7 @@ Ext.define('HreRem.view.precios.PreciosController', {
 			me.lookupReference('generacionPropuestasActivosList').expand();	
 			this.lookupReference('generacionPropuestasActivosList').getStore().loadPage(1);	
 		}else{
-			if(record.getData().entidadPropietariaDescripcion=="Sareb"){
+			if(record.getData().entidadPropietariaDescripcion=="Sareb" || record.getData().entidadPropietariaDescripcion=="Tango"){
 				me.lookupReference('generacionPropuestasAutomaticaContadoresAmpliada').setDisabled(false);
 			}else{
 				me.lookupReference('generacionPropuestasAutomaticaContadoresAmpliada').setDisabled(true);

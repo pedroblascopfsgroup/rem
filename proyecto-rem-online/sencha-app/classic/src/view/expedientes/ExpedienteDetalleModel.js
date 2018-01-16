@@ -73,6 +73,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	return CONST.CARTERA['SAREB'] == carteraCodigo;
 	     },
 	     
+	     esCarteraTango: function(get) {
+		     	
+	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+	     	return CONST.CARTERA['TANGO'] == carteraCodigo;
+	     },
+	     
 	     esCarteraCajamar: function(get) {
 		     	
 	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');

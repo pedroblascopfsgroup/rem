@@ -58,7 +58,8 @@ function descomprimeETLs() {
 	rm -f $DIR_SHELLS/*.sh
 	cp -r $DIR_SRC/shells/* $DIR_SHELLS
 	chmod a+rx $DIR_SHELLS/*.sh
-
+	find $DIR_CONTROL_ETL -type d -exec chmod -fR a+rwx {} \;
+	
 	rm -rf $DIR_ETLS/apr_*
 	rm -rf $DIR_ETLS/APR_*
 	cp -r $DIR_SRC/etls/* $DIR_ETLS

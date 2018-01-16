@@ -3030,6 +3030,29 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 	
 	@Override
+	public boolean checkTango(TareaExterna tareaExterna) {
+		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
+		if (!Checks.esNulo(trabajo)) {
+			Activo primerActivo = trabajo.getActivo();
+			if (!Checks.esNulo(primerActivo)) {
+				return (DDCartera.CODIGO_CARTERA_TANGO.equals(primerActivo.getCartera().getCodigo()));
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean checkTango(Trabajo trabajo) {
+		if (!Checks.esNulo(trabajo)) {
+			Activo primerActivo = trabajo.getActivo();
+			if (!Checks.esNulo(primerActivo)) {
+				return (DDCartera.CODIGO_CARTERA_TANGO.equals(primerActivo.getCartera().getCodigo()));
+			}
+		}
+		return false;
+	}
+	
+	@Override
 	public boolean checkBankia(TareaExterna tareaExterna) {
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
 		if (!Checks.esNulo(trabajo)) {

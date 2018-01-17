@@ -734,6 +734,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 				 } else {
 					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 				 }
+				 me.onClickBotonRefrescar();
 				 menuItem.up('activosagrupacionlist').unmask();
             },
 

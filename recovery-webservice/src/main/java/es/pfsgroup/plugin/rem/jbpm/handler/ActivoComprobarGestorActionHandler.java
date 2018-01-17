@@ -47,7 +47,7 @@ public class ActivoComprobarGestorActionHandler extends ActivoBaseActionHandler 
 		} else if (ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEDULA.equals(tramite.getTipoTramite().getCodigo())) {
 			
 			Activo activo = tramite.getActivo();
-			if (DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
+			if (DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo()) || DDCartera.CODIGO_CARTERA_TANGO.equals(activo.getCartera().getCodigo())) {
 				if (gestorActivoApi.isUsuarioGestorAdmision(usuario)) {
 					getExecutionContext().getToken().signal("SinAnalisisPeticion");
 				} else {

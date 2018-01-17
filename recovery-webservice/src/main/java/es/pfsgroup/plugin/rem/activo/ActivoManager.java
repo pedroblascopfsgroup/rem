@@ -717,7 +717,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		nuevoExpediente.setFechaAlta(new Date());
 		
 		//HREOS-2511 El combo "Comité seleccionado" vendrá informado para cartera Sareb
-		if(oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)) {
+		if(oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)
+				|| oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)) {
 			Double precioMinimoAutorizado = 0.0;
 			ActivoBancario activoBancario = getActivoBancarioByIdActivo(oferta.getActivoPrincipal().getId());
 			if(Checks.esNulo(oferta.getAgrupacion())) {
@@ -4374,7 +4375,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 			} 
 			else if(DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo()) ||
-					DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) 
+					DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo()) ||
+					DDCartera.CODIGO_CARTERA_TANGO.equals(activo.getCartera().getCodigo())) 
 			{
 				importeLimite += 100000;
 				Double valorActivo = this.getImporteValoracionActivoByCodigo(activo, DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);

@@ -12,7 +12,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -55,7 +54,8 @@ public class CedulaHabitabilidadUserAssigantionService implements UserAssigantio
 			String codTarea = tareaExterna.getTareaProcedimiento().getCodigo();
 
 			if (DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo())
-					|| DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo())) {
+					|| DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo())
+					|| DDCartera.CODIGO_CARTERA_TANGO.equals(cartera.getCodigo())) {
 
 				Filter filtroTipoGestor = null;
 				if (CODIGO_T008_SOLICITUD_DOCUMENTO.equals(codTarea)

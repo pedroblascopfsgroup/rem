@@ -57,7 +57,7 @@ public class ValidacionActuacionUserAssignationService implements UserAssigantio
 				tipoGestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);	
 			}
 			if (tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_VPO_SOLICITUD_DEVOLUCION) &&
-					DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo())	) {
+					(DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_TANGO.equals(cartera.getCodigo()))) {
 					
 				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_ADMISION);
 				tipoGestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);	
@@ -101,7 +101,7 @@ public class ValidacionActuacionUserAssignationService implements UserAssigantio
 				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_SUPERVISOR_ADMISION);
 				tipoGestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);					 
 			}
-			if (DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()) &&
+			if ((DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_TANGO.equals(cartera.getCodigo())) &&
 					tareaActivo.getTramite().getTrabajo().getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_VPO_SOLICITUD_DEVOLUCION)) {
 					
 					Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_SUPERVISOR_ADMISION);

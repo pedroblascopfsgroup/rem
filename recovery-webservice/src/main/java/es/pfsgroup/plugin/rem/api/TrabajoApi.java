@@ -661,7 +661,7 @@ public interface TrabajoApi {
 	public boolean checkSareb(Trabajo trabajo);
 	
 	/**
-	 * Método que comprueba si el activo pertenece a la cartera Sareb.
+	 * Método que comprueba si el activo pertenece a la cartera Tango.
 	 * 
 	 * @param tareaExterna
 	 * @return true si pertenece a la cartera, false si no.
@@ -669,7 +669,7 @@ public interface TrabajoApi {
 	public boolean checkTango(TareaExterna tareaExterna);
 
 	/**
-	 * Método que comprueba si el activo pertenece a la cartera Sareb.
+	 * Método que comprueba si el activo pertenece a la cartera Tango.
 	 * 
 	 * @param trabajo
 	 * @return true si pertenece a la cartera, false si no

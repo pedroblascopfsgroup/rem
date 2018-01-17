@@ -1067,8 +1067,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 																			// obtención
 																			// documental
 																			// CEE
-				//Si el trabajo es Bankia/Sareb asignamos proveedorContacto
-				if(this.checkBankia(trabajo) || this.checkSareb(trabajo)) {
+				//Si el trabajo es Bankia/Sareb/Tango asignamos proveedorContacto
+				if(this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo)) {
 					Filter filtroUsuProveedorBankiaSareb = genericDao.createFilter(FilterType.EQUALS, "username", GestorActivoApi.CIF_PROVEEDOR_BANKIA_SAREB_TINSA);
 					Usuario usuProveedorBankiaSareb = genericDao.get(Usuario.class, filtroUsuProveedorBankiaSareb);
 					if(!Checks.esNulo(usuProveedorBankiaSareb)) {
@@ -1089,8 +1089,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 																			// obtención
 																			// de
 																			// cédula
-				//Si el trabajo es Bankia/Sareb asignamos proveedorContacto
-				if(this.checkBankia(trabajo) || this.checkSareb(trabajo)) {
+				//Si el trabajo es Bankia/Sareb/Tango asignamos proveedorContacto
+				if(this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo)) {
 					Usuario usuario = gestorActivoManager.getGestorByActivoYTipo(trabajo.getActivo(), GestorActivoApi.CODIGO_GESTORIA_CEDULAS);
 					if(!Checks.esNulo(usuario)) {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario",usuario);
@@ -1114,8 +1114,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 																													// obtención
 																													// documental
 
-				//Si el trabajo es Bankia/Sareb asignamos proveedorContacto
-				if(this.checkBankia(trabajo) || this.checkSareb(trabajo)) {
+				//Si el trabajo es Bankia/Sareb/Tango asignamos proveedorContacto
+				if(this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo)) {
 
 					Usuario gestorAdmision = gestorActivoManager.getGestorByActivoYTipo(trabajo.getActivo(), GestorActivoApi.CODIGO_GESTOR_ADMISION);
 

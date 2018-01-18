@@ -1,7 +1,7 @@
 --/*
 --###########################################
 --## AUTOR=JUANJO ARBONA
---## FECHA_CREACION=20180117
+--## FECHA_CREACION=20180118
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-3607
@@ -78,8 +78,8 @@ IF V_USU_NUEVO > 0 THEN
 		WHERE ACT.BORRADO = 0
 		AND SCM.DD_SCM_CODIGO NOT IN (''05'', ''06'')
 		AND TGE.DD_TGE_CODIGO = ''GACT''
-		AND CRA.DD_CRA_CODIGO = ''02''
-		AND BIE.BIE_LOC_PROVINCIA IN (''5'', ''9'', ''24'', ''34'', ''37'', ''40'', ''42'', ''47'', ''49'')
+		AND CRA.DD_CRA_CODIGO = ''01''
+		AND BIE.BIE_LOC_PROVINCIA = ''46''
 		AND USU.USU_USERNAME = ''ndelaossa''))';
 	EXECUTE IMMEDIATE V_MSQL;
 	
@@ -123,8 +123,8 @@ IF V_USU_NUEVO > 0 THEN
 					 AND SCM.DD_SCM_CODIGO NOT IN (''05'', ''06'')
 					 AND GEH.GEH_FECHA_HASTA IS NULL
 					 AND TGE.DD_TGE_CODIGO = ''GACT''
-					 AND CRA.DD_CRA_CODIGO = ''02''
-					 AND BIE.BIE_LOC_PROVINCIA IN (''5'', ''9'', ''24'', ''34'', ''37'', ''40'', ''42'', ''47'', ''49'')
+					 AND CRA.DD_CRA_CODIGO = ''01''
+					 AND BIE.BIE_LOC_PROVINCIA = ''46''
 					 AND USU.USU_USERNAME = ''ndelaossa'')';
 			
 			EXECUTE IMMEDIATE V_MSQL;

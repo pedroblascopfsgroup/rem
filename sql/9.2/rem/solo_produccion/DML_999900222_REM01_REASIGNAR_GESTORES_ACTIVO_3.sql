@@ -28,6 +28,7 @@ DECLARE
   V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
   V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
   V_NUM NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+  V_USU_NUEVO NUMBER(16); -- Vble. para validar la existencia de un usuario.
   ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
   ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 

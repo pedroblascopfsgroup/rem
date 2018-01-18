@@ -403,11 +403,12 @@ public class AgrupacionController extends ParadiseJsonController {
 			model.put("success", false);
 			model.put("msg", jvex.getMessage());
 		}catch (Exception e) {
+			logger.error("error actualizando oferta",e);
 			if (e.getMessage().equals(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG)) {
 				model.put("msg", AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
 				model.put("success", false);
 			} else {
-				logger.error(e);
+				logger.error("error actualizando oferta",e);
 				model.put("success", false);
 			}
 		}

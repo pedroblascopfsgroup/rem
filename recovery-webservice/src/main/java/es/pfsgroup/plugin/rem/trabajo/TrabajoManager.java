@@ -514,8 +514,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 
 		} catch (Exception e) {
-			logger.error(e.getMessage());
-			logger.error("[ERROR] - Crear trabajo multiactivo: ".concat(e.getMessage()));
+			String mensaje="";
+			if(e.getMessage()!=null){
+				mensaje = e.getMessage();
+			}
+			logger.error("[ERROR] - Crear trabajo multiactivo: ".concat(mensaje));
 		}
 
 		return trabajo;
@@ -967,8 +970,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajo =genericDao.save(Trabajo.class, trabajo);
 		}		
 		ActivoTrabajo activoTrabajo = new ActivoTrabajo();
-		//activoTrabajo.setActivo(activo);
-		//activoTrabajo.setTrabajo(trabajo);
+		activoTrabajo.setActivo(activo);
+		activoTrabajo.setTrabajo(trabajo);
 		activoTrabajo.setPrimaryKey(new ActivoTrabajoPk(activo.getId(),trabajo.getId()));
 		activoTrabajo.setParticipacion(new Float(participacion));
 		return activoTrabajo;

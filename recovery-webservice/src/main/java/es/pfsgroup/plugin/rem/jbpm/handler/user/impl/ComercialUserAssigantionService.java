@@ -434,6 +434,9 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		boolean esFdv = false;
 		TareaActivo tareaActivo = (TareaActivo) tareaExterna.getTareaPadre();
 		Activo activo = tareaActivo.getTramite().getTrabajo().getActivo();
+		if(activo==null && tareaActivo.getTramite().getActivos().size()>0){
+			activo = tareaActivo.getTramite().getActivos().get(0);
+		}
 		
 		if (!Checks.esNulo(tareaActivo) && !Checks.esNulo(tareaActivo.getTramite())
 				&& !Checks.esNulo(tareaActivo.getTramite().getTrabajo())) {
@@ -450,7 +453,10 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 										.getAgrupacion().getTipoAgrupacion().getCodigo())))
 					carteraCajaMar = true;
 			}
-			ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());
+			ActivoBancario activoBancario = null;
+			if(!Checks.esNulo(activo)){
+				activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());
+			}
 
 			boolean esFinanciero = false;
 			if (!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getClaseActivo())
@@ -458,7 +464,10 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 				esFinanciero = true;
 			}
 			boolean esSingular = false;
-			String tipoFormalizacion = activoApi.getCodigoTipoComercializacionFromActivo(activo);
+			String tipoFormalizacion = null;
+			if(!Checks.esNulo(activo)){
+				tipoFormalizacion = activoApi.getCodigoTipoComercializacionFromActivo(activo);
+			}
 			if(!Checks.esNulo(tipoFormalizacion) && tipoFormalizacion.equals(DDTipoComercializar.CODIGO_SINGULAR)){
 				esSingular = true;
 			}
@@ -498,7 +507,15 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 										.getAgrupacion().getTipoAgrupacion().getCodigo())))
 					carteraCajaMar = true;
 			}
-			ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(tareaActivo.getActivo().getId());
+			Activo activo = tareaActivo.getActivo();
+			if(activo==null && tareaActivo.getTramite().getActivos().size()>0){
+				activo = tareaActivo.getTramite().getActivos().get(0);
+			}
+			ActivoBancario activoBancario = null;
+			if(activo != null){
+				activoBancario = activoApi.getActivoBancarioByIdActivo(tareaActivo.getActivo().getId());
+			}
+			
 			boolean esFinanciero = false;
 			if (!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getClaseActivo())
 					&& activoBancario.getClaseActivo().getCodigo().equals(DDClaseActivoBancario.CODIGO_FINANCIERO)) {
@@ -518,8 +535,15 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			TareaActivo tareaActivo = (TareaActivo) tareaExterna.getTareaPadre();
 			if (!Checks.esNulo(tareaActivo) && !Checks.esNulo(tareaActivo.getTramite())
 					&& !Checks.esNulo(tareaActivo.getTramite().getTrabajo())) {
-
-				PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(tareaActivo.getActivo().getId());
+				
+				Activo activo = tareaActivo.getActivo();
+				if(activo==null && tareaActivo.getTramite().getActivos().size()>0){
+					activo = tareaActivo.getTramite().getActivos().get(0);
+				}
+				PerimetroActivo perimetro = null;
+				if(activo != null){
+					perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
+				}
 				
 				if (!Checks.esNulo(perimetro) && BooleanUtils.toBoolean(perimetro.getAplicaFormalizar())) {
 					esConFormalizacion = true;

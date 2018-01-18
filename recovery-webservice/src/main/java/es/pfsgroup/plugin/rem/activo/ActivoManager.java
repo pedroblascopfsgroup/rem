@@ -4240,7 +4240,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		PerimetroActivo perimetro = getPerimetroByIdActivo(activo.getId());
 
 		if((Checks.esNulo(agrupacion) && !Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaFormalizar()) && BooleanUtils.toBoolean(perimetro.getAplicaFormalizar())) || 
-				(!Checks.esNulo(agrupacion) && BooleanUtils.toBoolean(agrupacion.getIsFormalizacion()))) {
+				(!Checks.esNulo(agrupacion) && agrupacion.getIsFormalizacion()!= null && BooleanUtils.toBoolean(agrupacion.getIsFormalizacion()))) {
 			if(!Checks.esNulo(usuarioGestorFormalizacion))
 				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION, usuarioGestorFormalizacion.getUsername(), dto);
 			else

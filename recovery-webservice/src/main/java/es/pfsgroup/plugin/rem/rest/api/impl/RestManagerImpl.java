@@ -100,7 +100,7 @@ public class RestManagerImpl implements RestApi {
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
-
+	
 	@Override
 	public boolean validateSignature(Broker broker, String signature, RestRequestWrapper restRequest)
 			throws NoSuchAlgorithmException, UnsupportedEncodingException {
@@ -340,10 +340,10 @@ public class RestManagerImpl implements RestApi {
 	}
 
 	@Override
-	public UsuarioSecurity loadUserRest(Entidad entidad) {
+	public UsuarioSecurity loadUser(Entidad entidad, String userName) {
 		UsuarioSecurity user = new UsuarioSecurity();
 		user.setId(-1L);
-		user.setUsername(RestApi.REST_LOGGED_USER_USERNAME);
+		user.setUsername(userName);
 		user.setAccountNonExpired(true);
 		user.setAccountNonLocked(true);
 		user.setEnabled(true);
@@ -547,9 +547,17 @@ public class RestManagerImpl implements RestApi {
 
 		return jsonResp;
 	}
+	
+	public void doSessionConfig(String userName) throws Exception {
+		Entidad entidad =this.loadEntidad();
+		this.doLogin(this.loadUser(entidad, userName));
+	}
 
 	public void doSessionConfig() throws Exception {
-
+		this.doSessionConfig(RestApi.REST_LOGGED_USER_USERNAME);
+	}
+	
+	private Entidad loadEntidad() throws Exception{
 		String workingCode = WebcomRESTDevonProperties.extractDevonProperty(appProperties,
 				WebcomRESTDevonProperties.REST_WORKINGCODE, "2038");
 		// Obtenemos la entidad partiendo del working code y establecemos el
@@ -567,15 +575,14 @@ public class RestManagerImpl implements RestApi {
 		} else {
 			throw new Exception(RestApi.REST_MSG_INVALID_WORKINGCODE);
 		}
-
-		// Realizamos login en la plataforma
-		this.doLogin(this.loadUserRest(entidad));
-
+		return entidad;
 	}
+	
+	
 
 	@Override
+	@Deprecated
 	public RestLlamada getLlamadaByToken(String token) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

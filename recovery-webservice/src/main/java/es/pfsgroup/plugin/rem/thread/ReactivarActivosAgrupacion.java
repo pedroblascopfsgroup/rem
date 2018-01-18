@@ -25,10 +25,13 @@ public class ReactivarActivosAgrupacion implements Runnable {
 	private final Log logger = LogFactory.getLog(getClass());
 
 	private ActivoAgrupacion agrupacion = null;
+	
+	private String userName = null;
 
-	public ReactivarActivosAgrupacion(ActivoAgrupacion agrupacion) {
+	public ReactivarActivosAgrupacion(ActivoAgrupacion agrupacion,String userName) {
 		// imprescindible para poder inyectar componentes
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+		this.userName = userName;
 		this.agrupacion = agrupacion;
 	}
 
@@ -36,11 +39,10 @@ public class ReactivarActivosAgrupacion implements Runnable {
 	public void run() {
 
 		try {
-			restApi.doSessionConfig();
+			restApi.doSessionConfig(this.userName);
 			for (ActivoAgrupacionActivo activo : agrupacion.getActivos()) {
-				activoApi.updateActivoAsistida(activo.getActivo());
 				updaterState.updaterStateDisponibilidadComercial(activo.getActivo());
-				activoApi.saveOrUpdate(activo.getActivo());				
+				activoApi.updateActivoAsistida(activo.getActivo());					
 			}
 		} catch (Exception e) {
 			logger.error("error hilo reactivar activos de la agrupacion",e);

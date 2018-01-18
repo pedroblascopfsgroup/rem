@@ -296,6 +296,10 @@
             	def ofertaManager = ctx.getBean("ofertaManager");
             	return ofertaManager.checkReserva(tareaExterna);
             }
+            def checkTango = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+            	return trabajoManager.checkTango(tareaExterna);
+            }
             def checkSareb = {
             	def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.checkSareb(tareaExterna);

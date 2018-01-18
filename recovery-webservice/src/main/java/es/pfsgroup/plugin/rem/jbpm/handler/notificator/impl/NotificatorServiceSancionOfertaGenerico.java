@@ -202,9 +202,10 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		ArrayList<String> clavesGestores = new ArrayList<String>();
 		String claveGestorComercial = this.getTipoGestorComercial(ofertaAceptada);
 
-		// DESTINATARIOS SI ES SAREB O BANKIA
+		// DESTINATARIOS SI ES SAREB, BANKIA o TANGO
 		if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)
-				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)) {
+				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)
+				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)) {
 			clavesGestores.addAll(Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial));
 			if (formalizacion) {
 				clavesGestores.add(GESTOR_FORMALIZACION);

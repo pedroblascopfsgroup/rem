@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=BRUNO ANGLÉS ROLBES
---## FECHA_CREACION=20170518
+--## AUTOR=Pablo Sánchez
+--## FECHA_CREACION=20180116
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-2052
+--## INCIDENCIA_LINK=HREOS-3665
 --## PRODUCTO=NO
 --##
 --## Finalidad: Realiza modificaciones del trámite documental cédula de habitabilidad.
@@ -68,7 +68,7 @@ DECLARE
                 '3*24*60*60*1000L',
                 'NULL',
                 '',
-                'valores[''''T008_AnalisisPeticion''''][''''comboTramitar''''] == DDSiNo.NO ? null : (checkSareb() || checkBankia() || comprobarExisteProveedorTrabajo()) ? null : ''''Debe asignar un proveedo al trabajo.'''' ',
+                'valores[''''T008_AnalisisPeticion''''][''''comboTramitar''''] == DDSiNo.NO ? null : (checkSareb() || checkBankia() || checkTango() || comprobarExisteProveedorTrabajo()) ? null : ''''Debe asignar un proveedor al trabajo.'''' ',
                 'valores[''''T008_AnalisisPeticion''''][''''comboTramitar''''] == DDSiNo.NO ? ''''Fin'''' : ''''TramitarPeticion'''' '
             )
     );
@@ -95,7 +95,8 @@ DECLARE
     --                  TAP_CODIGO                    TAP_CAMPO                          TAP_VALOR
         T_TAP_UPDATE(' ''T008_SolicitudDocumento'' ',   'TAP_DESCRIPCION',             'Solicitud Cédula por gestoría'),
         T_TAP_UPDATE(' ''T008_ObtencionDocumento'' ',   'TAP_DESCRIPCION',             'Finalización gestión'),
-        T_TAP_UPDATE(' ''T008_ObtencionDocumento'' ',   'TAP_SCRIPT_VALIDACION_JBPM',  'valores[''''T008_ObtencionDocumento''''][''''comboObtencion''''] == DDSiNo.SI ? (esFechaMenor(valores[''''T008_ObtencionDocumento''''][''''fechaEmision''''], fechaAprobacionTrabajo()) ? ''''Fecha emisi&oacute;n debe ser posterior o igual a fecha de aprobaci&oacute;n del trabajo'''' : existeAdjuntoUGValidacion("13","T")) : (valores[''''T008_ObtencionDocumento''''][''''motivoNoObtencion''''] == DDMotivoNoObtencion.NO_CUMPLE_REQUISITOS ? null : null)')
+        T_TAP_UPDATE(' ''T008_ObtencionDocumento'' ',   'TAP_SCRIPT_VALIDACION_JBPM',  'valores[''''T008_ObtencionDocumento''''][''''comboObtencion''''] == DDSiNo.SI ? (esFechaMenor(valores[''''T008_ObtencionDocumento''''][''''fechaEmision''''], fechaAprobacionTrabajo()) ? ''''Fecha emisi&oacute;n debe ser posterior o igual a fecha de aprobaci&oacute;n del trabajo'''' : existeAdjuntoUGValidacion("13","T")) : (valores[''''T008_ObtencionDocumento''''][''''motivoNoObtencion''''] == DDMotivoNoObtencion.NO_CUMPLE_REQUISITOS ? null : null)'),
+        T_TAP_UPDATE(' ''T008_AnalisisPeticion'' ', 'TAP_SCRIPT_VALIDACION_JBPM', 'valores[''''T008_AnalisisPeticion''''][''''comboTramitar''''] == DDSiNo.NO ? null : (checkSareb() || checkBankia() || checkTango() || comprobarExisteProveedorTrabajo()) ? null : ''''Debe asignar un proveedor al trabajo.'''' ')
     );
     V_TMP_T_TAP_UPDATE T_TAP_UPDATE;
 

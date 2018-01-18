@@ -1843,7 +1843,8 @@ public class AgrupacionAdapter {
 		//si modificamos la vigencia ejecutamos reactivación activos
 		if(vigenciaModificada && agrupacion.getActivos() != null){
 			// lo ejecutamos de forma asincrona, si hay muchos tarda em completar
-			Thread hiloReactivar = new Thread( new ReactivarActivosAgrupacion(agrupacion));
+			Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+			Thread hiloReactivar = new Thread( new ReactivarActivosAgrupacion(agrupacion,usu.getUsername()));
 			hiloReactivar.start();				
 		}
 

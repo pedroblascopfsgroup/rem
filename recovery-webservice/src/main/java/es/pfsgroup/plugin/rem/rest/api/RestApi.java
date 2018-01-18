@@ -196,14 +196,15 @@ public interface RestApi {
 	public void sendResponse(HttpServletResponse response, String jsonResp);
 
 	/**
+	 * 
 	 * Crea un usuario ficticio. Los datos del usuario ficticio deberán existir
 	 * en base de datos ya que en posteriores ejecuciones se accederá a ésta
-	 * para login.
-	 * 
+	 * para login. 
 	 * @param entidad
+	 * @param user
 	 * @return
 	 */
-	public UsuarioSecurity loadUserRest(Entidad entidad);
+	public UsuarioSecurity loadUser(Entidad entidad, String userName);
 
 	/**
 	 * Realiza el login de un usuario ficticio en una entidad de base de datos
@@ -264,6 +265,14 @@ public interface RestApi {
 	 * @throws Exception
 	 */
 	public void doSessionConfig() throws Exception;
+	
+	/**
+	 * Realiza la configuracion de la sesión usando el usuario dado
+	 * 
+	 * @param usuario
+	 * @throws Exception
+	 */
+	public void doSessionConfig(String usuario) throws Exception;
 	
 	/**
 	 * 

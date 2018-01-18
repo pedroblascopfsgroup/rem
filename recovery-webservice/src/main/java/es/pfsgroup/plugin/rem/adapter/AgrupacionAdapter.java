@@ -1,9 +1,7 @@
 package es.pfsgroup.plugin.rem.adapter;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -68,6 +66,7 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoRestringida;
+import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
@@ -97,7 +96,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -106,6 +104,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
+import es.pfsgroup.plugin.rem.thread.ReactivarActivosAgrupacion;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidator;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidatorFactoryApi;
@@ -384,6 +383,8 @@ public class AgrupacionAdapter {
 				if (!Checks.esNulo(agrupacion.getFechaBaja())) {
 					dtoAgrupacion.setEsEditable(false);
 				}
+				
+				
 
 				// Si tiene alguna oferta != Estado.Rechazada ==> No se pueden
 				// anyadir activos
@@ -519,9 +520,14 @@ public class AgrupacionAdapter {
 
 			// Si la agrupación es asistida, el activo además de existir tiene
 			// que ser asistido.
-			if (DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
-					&& !activoApi.isActivoAsistido(activo)) {
-				throw new JsonViewerException(AgrupacionValidator.ERROR_NOT_ASISTIDA);
+			if (DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+				if(!activoApi.isActivoAsistido(activo)){
+					throw new JsonViewerException(AgrupacionValidator.ERROR_NOT_ASISTIDA);
+				}
+				//el activo no puede estar en otra agrupación asistida vigente
+				if(activoAgrupacionApi.estaActivoEnOtraAgrupacionVigente(agrupacion,activo)){
+					throw new JsonViewerException(AgrupacionValidator.ERROR_EN_OTRA_ASISTIDA);
+				}
 			}
 
 			if (DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(agrupacion.getTipoAgrupacion().getCodigo())
@@ -1042,13 +1048,12 @@ public class AgrupacionAdapter {
 	}
 
 	@Transactional(readOnly = false)
-	public boolean createAgrupacion(DtoAgrupacionesCreateDelete dtoAgrupacion) {
+	public boolean createAgrupacion(DtoAgrupacionesCreateDelete dtoAgrupacion) throws Exception {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoAgrupacion.getTipoAgrupacion());
 		DDTipoAgrupacion tipoAgrupacion = (DDTipoAgrupacion) genericDao.get(DDTipoAgrupacion.class, filtro);
 
 		Long numAgrupacionRem = activoAgrupacionApi.getNextNumAgrupacionRemManual();
-
 		// Si es OBRA NUEVA
 		if (dtoAgrupacion.getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA)) {
 
@@ -1060,7 +1065,7 @@ public class AgrupacionAdapter {
 			obraNueva.setFechaAlta(new Date());
 			obraNueva.setNumAgrupRem(numAgrupacionRem);
 
-			genericDao.save(ActivoObraNueva.class, obraNueva);
+		    genericDao.save(ActivoObraNueva.class, obraNueva);
 
 			// Si es RESTRINGIDA
 		} else if (dtoAgrupacion.getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
@@ -1088,7 +1093,11 @@ public class AgrupacionAdapter {
 			asistida.setFechaFinVigencia(dtoAgrupacion.getFechaFinVigencia());
 			asistida.setNumAgrupRem(numAgrupacionRem);
 
-			genericDao.save(ActivoAsistida.class, asistida);
+			ActivoAsistida nuevaAgr = genericDao.save(ActivoAsistida.class, asistida);
+			// metemos la traza en el historico de vigencias
+			if(nuevaAgr != null){
+				this.trazarCambioVigencia(nuevaAgr.getId(), dtoAgrupacion.getFechaInicioVigencia(), dtoAgrupacion.getFechaFinVigencia());
+			}
 
 			// Si es LOTE COMERCIAL
 		} else if (dtoAgrupacion.getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
@@ -1103,6 +1112,9 @@ public class AgrupacionAdapter {
 
 			genericDao.save(ActivoLoteComercial.class, loteComercial);
 		}
+		
+		
+		
 
 		return true;
 	}
@@ -1585,11 +1597,55 @@ public class AgrupacionAdapter {
 		return true;
 
 	}
+	
+	@Transactional(readOnly = false)
+	public void trazarCambioVigencia(Long id,Date fechaInicioVigencia,Date fechaFinVigencia) throws Exception{
+		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
+		if(agrupacion == null){
+			throw new Exception("No existe la agrupacion");
+		}
+		AgrupacionesVigencias agrVigencia = new AgrupacionesVigencias();
+		agrVigencia.setAgrupacion(agrupacion);
+		agrVigencia.setFechaInicio(fechaInicioVigencia);
+		agrVigencia.setFechaFin(fechaFinVigencia);
+		genericDao.save(AgrupacionesVigencias.class, agrVigencia);
+		
+		
+	}
+	
+	/**
+	 * Valida un periodo de vigencia
+	 * @param dto
+	 * @param id
+	 * @return 0 si es correcto, 1 faltan datos para validar, 2 fecha fin mayor que fecha inicio, 3 el inicio de la vigencia 
+	 * es menor que el fin del periodo anterior, 4  alguno de los activos ya está incluido en otra agrupación asistida vigente
+	 */
+	public int validateVigencia(DtoAgrupaciones dto, Long id){
+		int res = 0;
+		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
+		
+		if(agrupacion != null && dto.getFechaFinVigencia() != null || dto.getFechaInicioVigencia() != null){
+			if(dto.getFechaFinVigencia().compareTo(dto.getFechaInicioVigencia())<0){
+				res = 2;
+			}else{
+				if(dto.getFechaInicioVigencia().compareTo(agrupacion.getFechaFinVigencia())<0){
+					res = 3;
+				}else if(activoAgrupacionApi.estaActivoEnOtraAgrupacionVigente(agrupacion,null)){
+					res = 4;
+				}
+			}
+		}else{
+			res = 1;
+		}
+		
+		return res;
+	}
 
 	@Transactional(readOnly = false)
-	public boolean saveAgrupacion(DtoAgrupaciones dto, Long id) {
+	public boolean saveAgrupacion(DtoAgrupaciones dto, Long id) throws Exception {
 
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
+		boolean vigenciaModificada = false;
 
 		// Primero comprobamos si estamos dandola de baja y se cumplen todos los
 		// requisitos para poder hacerlo
@@ -1599,6 +1655,32 @@ public class AgrupacionAdapter {
 
 			if (!Checks.esNulo(error)) {
 				throw new JsonViewerException(error);
+			}
+		}
+		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
+			// si modificamos la vigencia nos guardamos la traza
+			if (dto.getFechaInicioVigencia() != null) {
+				if (agrupacion.getFechaInicioVigencia() == null
+						|| !agrupacion.getFechaInicioVigencia().equals(dto.getFechaInicioVigencia())) {
+					vigenciaModificada = true;
+				}
+			}
+			if (dto.getFechaFinVigencia() != null) {
+				if (agrupacion.getFechaFinVigencia() == null
+						|| !agrupacion.getFechaFinVigencia().equals(dto.getFechaFinVigencia())) {
+					vigenciaModificada = true;
+				}
+			}
+			if (vigenciaModificada) {
+				Date fechaInicioAux = dto.getFechaInicioVigencia();
+				if (fechaInicioAux == null) {
+					fechaInicioAux = agrupacion.getFechaInicioVigencia();
+				}
+				Date fechaFinAux = dto.getFechaFinVigencia();
+				if (fechaFinAux == null) {
+					fechaFinAux = agrupacion.getFechaFinVigencia();
+				}
+				this.trazarCambioVigencia(id, fechaInicioAux, fechaFinAux);
 			}
 		}
 
@@ -1699,6 +1781,9 @@ public class AgrupacionAdapter {
 
 			try {
 				beanUtilNotNull.copyProperties(asistida, dto);
+				if(vigenciaModificada){
+					asistida.setFechaBaja(null);
+				}
 
 				if (dto.getMunicipioCodigo() != null) {
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMunicipioCodigo());
@@ -1754,6 +1839,12 @@ public class AgrupacionAdapter {
 				logger.error("error en agrupacionAdapter", e);
 				return false;
 			}
+		}
+		//si modificamos la vigencia ejecutamos reactivación activos
+		if(vigenciaModificada && agrupacion.getActivos() != null){
+			// lo ejecutamos de forma asincrona, si hay muchos tarda em completar
+			Thread hiloReactivar = new Thread( new ReactivarActivosAgrupacion(agrupacion));
+			hiloReactivar.start();				
 		}
 
 		try {

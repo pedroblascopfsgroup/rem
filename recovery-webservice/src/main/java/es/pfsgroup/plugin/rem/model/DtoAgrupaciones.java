@@ -44,8 +44,15 @@ public class DtoAgrupaciones extends WebDto {
 	private Long codigoGestorFormalizacion;
 	private Long codigoGestorComercialBackOffice;
 	private Integer isFormalizacion;
+	private Boolean estaCaducada;
 
 
+	public Boolean getEstaCaducada() {
+		return estaCaducada;
+	}
+	public void setEstaCaducada(Boolean estaCaducada) {
+		this.estaCaducada = estaCaducada;
+	}
 	public String getNombre() {
 		return nombre;
 	}

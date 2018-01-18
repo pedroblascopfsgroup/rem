@@ -117,6 +117,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	}
 	
 	@Override
+	@Transactional(readOnly = false)
 	public void updaterStateDisponibilidadComercial(Activo activo) {
 		
 		String codigoSituacion = this.getCodigoSituacionComercialFromActivo(activo);

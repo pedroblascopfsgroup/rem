@@ -150,7 +150,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 		                	fieldLabel	: HreRem.i18n('header.fecha.inicio.vigencia'),
 			            	bind		: {
 			            		value: '{agrupacionficha.fechaInicioVigencia}',
-			            		readOnly: '{agrupacionficha.existeFechaBaja}',
+			            		readOnly: true,
 			            		hidden: '{!esAgrupacionAsistida}',
 			            		maxValue: '{agrupacionficha.fechaFinVigencia}'
 			            	}		
@@ -161,10 +161,21 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 		                	maxValue	: null,
 			            	bind		: {
 			            		value: '{agrupacionficha.fechaFinVigencia}',
-			            		readOnly: '{agrupacionficha.existeFechaBaja}',
+			            		readOnly: true,
 				        		hidden: '{!esAgrupacionAsistida}',
 				        		minValue: '{agrupacionficha.fechaInicioVigencia}'
 			            	}		
+						}, 
+						{
+							xtype : 'button',
+							text : HreRem.i18n('label.reactivar'),
+							handler : 'onClickReactivarAgr',
+							disabled : false,
+							bind : {
+								hidden: '{!esAgrupacionAsistida}',
+								disabled: '{!agrupacionficha.existeFechaBaja}'
+								
+							}
 						},
 						{
 		                    xtype		: 'comboboxfieldbase',                    
@@ -201,6 +212,47 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 						}
 				]
           },
+          {
+				xtype: 'gridBase',
+				title: HreRem.i18n('title.historico.vigencias'),
+			    minHeight: 100,
+				cls	: 'panel-base shadow-panel',
+				reference: 'listadoSubdivisionesAgrupacion',
+				
+				bind: {
+					store: '{storeHistoricoVigencias}',
+					hidden: '{!esAgrupacionAsistida}'
+				},
+				listeners : [
+				],
+				columns: [
+				
+				    {   
+						text: HreRem.i18n('header.fecha.inicio.vigencia'),
+			        	dataIndex: 'fechaInicioVigencia',
+			        	formatter: 'date("d/m/Y H:i:s")',
+						flex: 1
+			        },
+			        {   
+						text: HreRem.i18n('header.fecha.fin.vigencia'),
+			        	dataIndex: 'fechaFinVigencia',
+			        	formatter: 'date("d/m/Y H:i:s")',
+						flex: 1
+			        },
+			        {   
+						text: HreRem.i18n('header.fecha.creacion'),
+			        	dataIndex: 'fechaCrear',
+			        	formatter: 'date("d/m/Y  H:i:s")',
+						flex: 1
+			        },
+			        {   
+						text: HreRem.i18n('fieldlabel.usuario'),
+			        	dataIndex: 'usuarioModificacion',
+			        	flex: 1
+			        }
+			       	        
+			    ]
+			},
           {
         	  xtype			:'fieldsettable',
         	  collapsible	: true,
@@ -262,5 +314,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
     	var me = this;
 		me.recargar = false;
 		me.lookupController().cargarTabData(me);
+		
+		Ext.Array.each(me.query('grid'), function(grid) {
+  			grid.getStore().load();
+  		});
     }
 });

@@ -4,7 +4,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.ActivoAgrupacion', 
     'HreRem.model.ActivoSubdivision', 'HreRem.model.Subdivisiones', 'HreRem.model.VisitasAgrupacion','HreRem.model.OfertasAgrupacion','HreRem.model.OfertaComercial',
-    'HreRem.model.ActivoAgrupacionActivo'],
+    'HreRem.model.ActivoAgrupacionActivo','HreRem.model.VigenciaAgrupacion'],
     
     data: {
     	agrupacionficha: null,
@@ -190,6 +190,17 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		        property: 'dormitorios',
 		        direction: 'ASC'
 		     }]
+    	},
+    	
+    	storeHistoricoVigencias: {    			
+    		 model: 'HreRem.model.VigenciaAgrupacion',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'agrupacion/getHistoricoVigencias',
+		        extraParams: {agrId: '{agrupacionficha.id}'}
+	    	 },
+	    	 remoteSort: true,
+		     remoteFilter: true
     	},
     	
     	storeActivosSubdivision: {    			

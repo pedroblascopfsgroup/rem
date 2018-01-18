@@ -25,6 +25,7 @@ public interface AgrupacionValidator extends GenericService{
 	public static final String ERROR_TIPO_NULL = "El tipo (alquiler/venta) está vacío y no se puede comparar con la agrupación.";
 	public static final String ERROR_TIPO_NOT_EQUAL = "El tipo (alquiler/venta) del activo y la agrupación no coinciden.";
 	public static final String ERROR_NOT_ASISTIDA = "El activo no pertenece a la subcartera asistida.";
+	public static final String ERROR_EN_OTRA_ASISTIDA = "El activo pertenece a otra agrupación asistida vigente";
 	public static final String ERROR_IS_PERIMETRO = "El activo no debe estar incluido en perímetro.";
 	public static final String ERROR_NOT_FINANCIERO = "El activo no es financiero";
 	public static final String ERROR_FINANCIERO_NULL = "La clase del activo bancario no está definida";

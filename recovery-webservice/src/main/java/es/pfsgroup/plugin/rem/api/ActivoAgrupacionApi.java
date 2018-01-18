@@ -7,12 +7,15 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
+import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
+import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 
 public interface ActivoAgrupacionApi {
@@ -102,5 +105,20 @@ public interface ActivoAgrupacionApi {
 	 * @return
 	 */
 	public boolean descongelarOfertasActivoAgrupacion(ActivoAgrupacion agrupacion) throws Exception;
+	
+	/**
+	 * Devuelve el historico de vigencias de la agrupacion
+	 * @param agrupacionFilter
+	 * @return
+	 */
+	public  List<AgrupacionesVigencias> getHistoricoVigenciaAgrupaciones(DtoVigenciaAgrupacion agrupacionFilter);
+	
+	/**
+	 * 
+	 * @param activo
+	 * @param agrupacion
+	 * @return
+	 */
+	public Boolean estaActivoEnOtraAgrupacionVigente(ActivoAgrupacion agrupacion,Activo activo);
 		
 }

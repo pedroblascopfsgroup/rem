@@ -34,14 +34,17 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
+import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
+import es.pfsgroup.plugin.rem.model.DtoAgrupacionesActivo;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
+import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
@@ -834,6 +837,82 @@ public class AgrupacionController extends ParadiseJsonController {
 			}
 		}
 
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView reactivar(DtoAgrupacionesActivo agrupacion, ModelMap model) {
+
+		try {
+			if (agrupacion != null && agrupacion.getIdAgrupacion() != null
+					&& agrupacion.getFechaInicioVigencia() != null && agrupacion.getFechaFinVigencia() != null) {
+				DtoAgrupaciones agr = new DtoAgrupaciones();
+				agr.setFechaInicioVigencia(agrupacion.getFechaInicioVigencia());
+				agr.setFechaFinVigencia(agrupacion.getFechaFinVigencia());
+				// validamos el periodo de vigencia
+				int validacionVigencia = adapter.validateVigencia(agr, Long.valueOf(agrupacion.getIdAgrupacion()));
+				if (validacionVigencia == 0) {
+					// guardamos los datos de vigencia
+					adapter.saveAgrupacion(agr, Long.valueOf(agrupacion.getIdAgrupacion()));
+				} else {
+					model.put("success", true);
+					switch (validacionVigencia) {
+					case 2:
+						model.put("errorCode", "reactivar.error.desc.fecha.fin.mayor.fecha.inicio");
+						break;
+					case 3:
+						model.put("errorCode", "reactivar.error.desc.fecha.inicio.mayor.anterior");
+						break;
+					case 4:
+						model.put("errorCode", "reactivar.error.desc.activo.otra.agrupacion.vigente");
+						break;
+					default:
+						break;
+					}
+
+				}
+
+				
+			} else {
+				logger.error("Parametros incorrectos al reactivar agrupacion");
+				model.put("success", false);
+			}
+
+		} catch (Exception e) {
+			logger.error("error reactivando la agrupación ", e);
+			model.put("success", false);
+		}
+		model.put("data", agrupacion);
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoVigencias(DtoVigenciaAgrupacion agrupacionFilter, ModelMap model) {
+
+		try{
+			List<AgrupacionesVigencias> vigencias = activoAgrupacionApi.getHistoricoVigenciaAgrupaciones(agrupacionFilter);
+			List<DtoVigenciaAgrupacion> dtoVigenciasList = new ArrayList<DtoVigenciaAgrupacion>();
+			if(vigencias != null){
+				for(AgrupacionesVigencias vigencia : vigencias){
+					DtoVigenciaAgrupacion dtoAux = new DtoVigenciaAgrupacion();
+					dtoAux.setAgrId(vigencia.getId());
+					dtoAux.setFechaInicioVigencia(vigencia.getFechaInicio());
+					dtoAux.setFechaFinVigencia(vigencia.getFechaFin());
+					dtoAux.setUsuarioModificacion(vigencia.getAuditoria().getUsuarioCrear());
+					dtoAux.setFechaCrear(vigencia.getAuditoria().getFechaCrear());
+					dtoVigenciasList.add(dtoAux);
+				}
+			}
+
+			model.put("data", dtoVigenciasList);
+			model.put("success", true);
+		}catch(Exception e){
+			logger.error("error obteniendo vigencias agrupacion ", e);
+			model.put("success", false);
+		}
+		
 		return createModelAndViewJson(model);
 	}
 }

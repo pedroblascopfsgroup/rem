@@ -54,7 +54,7 @@ public class ActivoAgrupacion implements Serializable, Auditable {
     @SequenceGenerator(name = "ActivoAgrupacionGenerator", sequenceName = "S_ACT_AGR_AGRUPACION")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TAG_ID")
     private DDTipoAgrupacion tipoAgrupacion;
         
@@ -94,15 +94,15 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 	@Column(name = "AGR_TEXTO_WEB")
 	private String textoWeb;
 	
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "AGR_ACT_PRINCIPAL")
     private Activo activoPrincipal;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "AGR_GESTOR_ID")
     private GestorActivo gestorAgrupacion;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "AGR_MEDIADOR_ID")
     private GestorActivo mediadorAgrupacion;
 	

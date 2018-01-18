@@ -28,15 +28,18 @@ import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
+import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -597,6 +600,17 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 			}
 		}
 		return true;
+	}
+	
+	@Override
+	public  List<AgrupacionesVigencias> getHistoricoVigenciaAgrupaciones(DtoVigenciaAgrupacion agrupacionFilter) {
+		return activoAgrupacionDao.getHistoricoVigenciasAgrupacionById(agrupacionFilter);
+	}
+
+	@Override
+	public Boolean estaActivoEnOtraAgrupacionVigente(ActivoAgrupacion agrupacion,Activo activo) {
+		
+		return activoAgrupacionDao.estaActivoEnOtraAgrupacionVigente(agrupacion,activo);
 	}
 
 }

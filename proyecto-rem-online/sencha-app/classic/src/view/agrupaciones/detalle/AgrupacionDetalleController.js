@@ -85,7 +85,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 
 	},
 	
-	refrescarAgrupacion: function(refrescarPestañaActiva) {
+	refrescarAgrupacion: function(refrescarPestanyaActiva) {
 		
 		var me = this,
 		activeTab = me.getView().down("tabpanel").getActiveTab();		
@@ -96,8 +96,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
   			}
   		});
   		
-  		// Actualizamos la pestaña actual si tiene función de recargar
-		if(refrescarPestañaActiva && activeTab.funcionRecargar) {
+  		// Actualizamos la pestanya actual si tiene función de recargar
+		if(refrescarPestanyaActiva && activeTab.funcionRecargar) {
   			activeTab.funcionRecargar();
 		};
 		
@@ -898,5 +898,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		window.gridOfertas.getStore().load();
     	window.close();
 
-	}
+	},
+	
+	onClickReactivarAgr: function(btn) {
+    	var me = this
+    	btn.up('form');
+    	Ext.create("HreRem.view.agrupaciones.detalle.ReactivarAgrupacionWindow", {
+    		idAgrupacion: me.getViewModel().get("agrupacionficha.id"),
+    		fechaFinVigenciaActual: me.getViewModel().get("agrupacionficha.fechaFinVigencia"),
+    		parent: btn
+    	}).show();  	
+    }
 });

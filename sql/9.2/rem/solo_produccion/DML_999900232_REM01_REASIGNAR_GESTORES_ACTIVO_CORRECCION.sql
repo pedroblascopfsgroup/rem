@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=HREOS-3607
 --## PRODUCTO=NO
 --## 
---## Finalidad: Re-asignar activos de mgarciade a ndelaossa
+--## Finalidad: Re-asignar activos de ndelaossa a mgarciade
 --##			
 --## INSTRUCCIONES:  
 --## VERSIONES:
@@ -27,14 +27,13 @@ DECLARE
   V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
   V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
   V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
-  V_NUM NUMBER(16); -- Vble. para validar la existencia de una tabla.  
-  V_USU_NUEVO NUMBER(16); -- Vble. para validar la existencia de un usuario.
+  V_NUM NUMBER(16); -- Vble. para validar la existencia de una tabla.   
   ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
   ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
 BEGIN	
 
-	DBMS_OUTPUT.PUT_LINE('[INICIO] COMIENZA EL PROCESO PARA LA RE-ASIGNACIÓN DE ACTIVOS DE mgarciade A ndelaossa');
+	DBMS_OUTPUT.PUT_LINE('[INICIO] COMIENZA EL PROCESO PARA LA RE-ASIGNACIÓN DE ACTIVOS DE ndelaossa A mgarciade');
 	
 	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''TMP_GEST_ACT'' AND OWNER = '''||V_ESQUEMA||'''';
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM;
@@ -49,7 +48,7 @@ BEGIN
 		
 	END IF;
 
-V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU WHERE USU.USU_USERNAME = ''ndelaossa''';
+V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU WHERE USU.USU_USERNAME = ''mgarciade''';
 	EXECUTE IMMEDIATE V_MSQL INTO V_USU_NUEVO;
 	
 IF V_USU_NUEVO > 0 THEN
@@ -79,8 +78,8 @@ IF V_USU_NUEVO > 0 THEN
 		AND SCM.DD_SCM_CODIGO NOT IN (''05'', ''06'')
 		AND TGE.DD_TGE_CODIGO = ''GACT''
 		AND CRA.DD_CRA_CODIGO = ''01''
-		AND BIE.BIE_LOC_PROVINCIA IN ('8', '17', '25', '43')
-		AND USU.USU_USERNAME = ''mgarciade''))';
+		AND BIE.BIE_LOC_PROVINCIA IN (''35'', ''38'')
+		AND USU.USU_USERNAME = ''ndelaossa''))';
 	EXECUTE IMMEDIATE V_MSQL;
 	
 	V_NUM := SQL%ROWCOUNT;
@@ -92,7 +91,7 @@ IF V_USU_NUEVO > 0 THEN
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE
 			  SET GEE.USU_ID = (SELECT USU.USU_ID
 					     FROM '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU
-					     WHERE USU.USU_USERNAME = ''ndelaossa''),
+					     WHERE USU.USU_USERNAME = ''mgarciade''),
 				GEE.USUARIOMODIFICAR = ''HREOS-3607'',
 				GEE.FECHAMODIFICAR = SYSDATE
 			  WHERE GEE.GEE_ID IN (SELECT TMP.GEE_ID
@@ -124,8 +123,8 @@ IF V_USU_NUEVO > 0 THEN
 					 AND GEH.GEH_FECHA_HASTA IS NULL
 					 AND TGE.DD_TGE_CODIGO = ''GACT''
 					 AND CRA.DD_CRA_CODIGO = ''01''
-					 AND BIE.BIE_LOC_PROVINCIA IN ('8', '17', '25', '43')
-					 AND USU.USU_USERNAME = ''mgarciade'')';
+					 AND BIE.BIE_LOC_PROVINCIA IN (''35'', ''38'')
+					 AND USU.USU_USERNAME = ''ndelaossa'')';
 			
 			EXECUTE IMMEDIATE V_MSQL;
 	
@@ -147,7 +146,7 @@ IF V_USU_NUEVO > 0 THEN
 	)
 	SELECT
 	GEH_ID,
-	(SELECT USU_ID FROM '||V_ESQUEMA_MASTER||'.USU_USUARIOS WHERE USU_USERNAME = ''ndelaossa'' ) AS USU_ID, 
+	(SELECT USU_ID FROM '||V_ESQUEMA_MASTER||'.USU_USUARIOS WHERE USU_USERNAME = ''mgarciade'' ) AS USU_ID, 
 	DD_TGE_ID,
 	SYSDATE AS GEH_FECHA_DESDE,
 	''HREOS-3607'' AS USUARIOCREAR,
@@ -233,8 +232,8 @@ IF V_USU_NUEVO > 0 THEN
 	
 	DBMS_OUTPUT.PUT_LINE('[INFO] TAREAS ACTUALIZADAS.'||CHR(10));
 
-END IF;
-	 
+END IF;	
+ 
  	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''TMP_GEST_ACT'' AND OWNER = '''||V_ESQUEMA||'''';
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM;
 	

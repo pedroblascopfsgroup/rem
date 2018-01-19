@@ -113,7 +113,8 @@ public class MSVAsociarActivosGasto extends MSVExcelValidatorAbstract {
 					|| !mapaErrores.get(PROPIETARIO_DIFERENTE).isEmpty() || !mapaErrores.get(ACTIVO_ASIGNADO).isEmpty()
 					|| !mapaErrores.get(GASTO_AUTORIZADO).isEmpty()
 					|| !mapaErrores.get(GASTO_ASOCIADO_TRABAJO).isEmpty()
-					|| !mapaErrores.get(GASTO_FECHA_TRASPASO_ANTERIOR).isEmpty()) {
+//					|| !mapaErrores.get(GASTO_FECHA_TRASPASO_ANTERIOR).isEmpty()
+					) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);

@@ -8,6 +8,7 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
@@ -21,14 +22,14 @@ public class ReactivarActivosAgrupacion implements Runnable {
 
 	@Autowired
 	private RestApi restApi;
-	
+
 	private final Log logger = LogFactory.getLog(getClass());
 
 	private ActivoAgrupacion agrupacion = null;
-	
+
 	private String userName = null;
 
-	public ReactivarActivosAgrupacion(ActivoAgrupacion agrupacion,String userName) {
+	public ReactivarActivosAgrupacion(ActivoAgrupacion agrupacion, String userName) {
 		// imprescindible para poder inyectar componentes
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 		this.userName = userName;
@@ -41,11 +42,15 @@ public class ReactivarActivosAgrupacion implements Runnable {
 		try {
 			restApi.doSessionConfig(this.userName);
 			for (ActivoAgrupacionActivo activo : agrupacion.getActivos()) {
-				updaterState.updaterStateDisponibilidadComercial(activo.getActivo());
-				activoApi.updateActivoAsistida(activo.getActivo());					
+				if (activo.getActivo().getSituacionComercial() != null && !DDSituacionComercial.CODIGO_VENDIDO
+						.equals(activo.getActivo().getSituacionComercial().getCodigo())) {
+					activoApi.updateActivoAsistida(activo.getActivo());
+					updaterState.updaterStateDisponibilidadComercial(activo.getActivo());
+					activoApi.saveOrUpdate(activo.getActivo());
+				}
 			}
 		} catch (Exception e) {
-			logger.error("error hilo reactivar activos de la agrupacion",e);
+			logger.error("error hilo reactivar activos de la agrupacion", e);
 		}
 
 	}

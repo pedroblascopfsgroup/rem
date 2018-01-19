@@ -106,7 +106,7 @@ public class MSVAsociarActivosGasto extends MSVExcelValidatorAbstract {
 				mapaErrores.put(ACTIVO_ASIGNADO, isActivoAsignado(exc));
 				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
 				mapaErrores.put(GASTO_NOT_EXISTS, isGastoNotExistsRows(exc));
-				mapaErrores.put(GASTO_FECHA_TRASPASO_ANTERIOR, isFechaTraspasoPosteriorAFechaDevengo(exc));
+				//mapaErrores.put(GASTO_FECHA_TRASPASO_ANTERIOR, isFechaTraspasoPosteriorAFechaDevengo(exc));
 				
 			if (!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() || !mapaErrores.get(GASTO_NOT_EXISTS).isEmpty()
 					|| !mapaErrores.get(PROPIETARIO_SIN_DOCUMENTO).isEmpty()

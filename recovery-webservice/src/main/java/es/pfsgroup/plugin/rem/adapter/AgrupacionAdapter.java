@@ -1628,7 +1628,7 @@ public class AgrupacionAdapter {
 			if(dto.getFechaFinVigencia().compareTo(dto.getFechaInicioVigencia())<0){
 				res = 2;
 			}else{
-				if(dto.getFechaInicioVigencia().compareTo(agrupacion.getFechaFinVigencia())<0){
+				if(agrupacion.getFechaFinVigencia() != null && dto.getFechaInicioVigencia().compareTo(agrupacion.getFechaFinVigencia())<0){
 					res = 3;
 				}else if(activoAgrupacionApi.estaActivoEnOtraAgrupacionVigente(agrupacion,null)){
 					res = 4;

@@ -63,6 +63,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
@@ -311,6 +312,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+	
+	@Autowired
+	private ActivoAgrupacionApi activoAgrupacionApi;
 	
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
@@ -4468,6 +4472,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 		}
 		genericDao.save(ActivoSituacionPosesoria.class, activo.getSituacionPosesoria());
+		
+	}
+
+	@Override
+	@Transactional
+	public void reactivarActivosPorAgrupacion(Long idAgrupacion) {
+		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idAgrupacion);
+		for (ActivoAgrupacionActivo activo : agrupacion.getActivos()) {
+			if (activo.getActivo().getSituacionComercial() != null && !DDSituacionComercial.CODIGO_VENDIDO
+					.equals(activo.getActivo().getSituacionComercial().getCodigo())) {
+				this.updateActivoAsistida(activo.getActivo());
+				updaterState.updaterStateDisponibilidadComercial(activo.getActivo());
+				this.saveOrUpdate(activo.getActivo());
+			}
+		}
 		
 	}
 

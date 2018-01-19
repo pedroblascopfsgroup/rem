@@ -1070,5 +1070,11 @@ public interface ActivoApi {
 	public void deleteActivoDistribucion(Long idActivoInfoComercial);
 	
 	public void calcularFechaTomaPosesion(Activo activo);
+	
+	/**
+	 * Reactiva los activos de una agrupacion
+	 * @param idAgrupacion
+	 */
+	public void reactivarActivosPorAgrupacion(Long idAgrupacion);
 
 }

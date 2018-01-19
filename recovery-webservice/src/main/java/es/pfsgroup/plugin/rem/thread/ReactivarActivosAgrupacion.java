@@ -5,13 +5,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 public class ReactivarActivosAgrupacion implements Runnable {
 
@@ -19,13 +14,7 @@ public class ReactivarActivosAgrupacion implements Runnable {
 	private ActivoApi activoApi;
 
 	@Autowired
-	private UpdaterStateApi updaterState;
-
-	@Autowired
 	private RestApi restApi;
-	
-	@Autowired
-	private ActivoAgrupacionApi activoAgrupacionApi;
 
 	private final Log logger = LogFactory.getLog(getClass());
 

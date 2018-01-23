@@ -57,7 +57,7 @@ public class ActuacionTecnicaUserAssignationService implements UserAssigantionSe
 		if(!Checks.esNulo(tareaActivo.getTramite().getTrabajo().getUsuarioGestorActivoResponsable())){
 			return trabajo.getUsuarioGestorActivoResponsable();
 
-		} else if((CODIGO_T004_ANALISIS_PETICION.equals(codigoTarea) || CODIGO_T004_FIJACION_PLAZO.equals(codigoTarea)) && proveedoresApi.esUsuarioConPerfilProveedor(trabajo.getSolicitante()) && 
+		} else if((CODIGO_T004_ANALISIS_PETICION.equals(codigoTarea) || CODIGO_T004_FIJACION_PLAZO.equals(codigoTarea) || CODIGO_T004_ELECCION_PROVEEDOR_Y_TARIFA.equals(codigoTarea)) && proveedoresApi.esUsuarioConPerfilProveedor(trabajo.getSolicitante()) && 
 				DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo()) && DDSubtipoTrabajo.CODIGO_TOMA_DE_POSESION.equals(trabajo.getSubtipoTrabajo().getCodigo())) {
 			return trabajo.getSolicitante();
 

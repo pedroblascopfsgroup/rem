@@ -59,7 +59,7 @@
 	</appender>
 	
 	<appender name="syslog" class="es.capgemini.pfs.utils.log4j.CustomRollingFileAppender">
-        <param name="file" value="{DEVON_HOME}/syslog.log"/>
+        <param name="file" value="${syslogLocation}/syslog.log"/>
         <param name="MaxFileSize" value="2MB"/>
         <param name="MaxBackupIndex" value="10"/>
         <layout class="org.apache.log4j.PatternLayout">

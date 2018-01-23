@@ -106,14 +106,15 @@ public class MSVAsociarActivosGasto extends MSVExcelValidatorAbstract {
 				mapaErrores.put(ACTIVO_ASIGNADO, isActivoAsignado(exc));
 				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
 				mapaErrores.put(GASTO_NOT_EXISTS, isGastoNotExistsRows(exc));
-				mapaErrores.put(GASTO_FECHA_TRASPASO_ANTERIOR, isFechaTraspasoPosteriorAFechaDevengo(exc));
+				//mapaErrores.put(GASTO_FECHA_TRASPASO_ANTERIOR, isFechaTraspasoPosteriorAFechaDevengo(exc));
 				
 			if (!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() || !mapaErrores.get(GASTO_NOT_EXISTS).isEmpty()
 					|| !mapaErrores.get(PROPIETARIO_SIN_DOCUMENTO).isEmpty()
 					|| !mapaErrores.get(PROPIETARIO_DIFERENTE).isEmpty() || !mapaErrores.get(ACTIVO_ASIGNADO).isEmpty()
 					|| !mapaErrores.get(GASTO_AUTORIZADO).isEmpty()
 					|| !mapaErrores.get(GASTO_ASOCIADO_TRABAJO).isEmpty()
-					|| !mapaErrores.get(GASTO_FECHA_TRASPASO_ANTERIOR).isEmpty()) {
+//					|| !mapaErrores.get(GASTO_FECHA_TRASPASO_ANTERIOR).isEmpty()
+					) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);

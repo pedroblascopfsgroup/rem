@@ -632,7 +632,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('');
     DBMS_OUTPUT.PUT_LINE('[FIN] Reposicionamiento de trámites de activos.');
 
-    ROLLBACK;
+    COMMIT;
 
     /*'||V_ESQUEMA||'.ALTA_BPM_INSTANCES(V_USUARIO,PL_OUTPUT);
     DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);*/

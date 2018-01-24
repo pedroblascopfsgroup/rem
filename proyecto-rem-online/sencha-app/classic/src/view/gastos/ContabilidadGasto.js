@@ -7,7 +7,7 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
     reference: 'contabilidadgastoref',
     scrollable	: 'y',
 	recordName: "contabilidad",
-	
+	refreshAfterSave: true,
 	recordClass: "HreRem.model.GastoContabilidad",
     
     requires: ['HreRem.model.GastoContabilidad'],

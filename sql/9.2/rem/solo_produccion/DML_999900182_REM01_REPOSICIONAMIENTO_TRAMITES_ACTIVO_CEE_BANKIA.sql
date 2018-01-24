@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Sergio Belenguer Gadea
---## FECHA_CREACION=20180125
+--## FECHA_CREACION=20180126
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.10
 --## INCIDENCIA_LINK=HREOS-3391
@@ -3295,8 +3295,8 @@ EXECUTE IMMEDIATE 'update rem01.ACT_ADT_ADJUNTO_TRABAJO aux
     
     DBMS_OUTPUT.PUT_LINE('');
     DBMS_OUTPUT.PUT_LINE('[FIN] Reposicionamiento de trámites de activos.');
-    ROLLBACK;
-    --commit;
+
+    COMMIT;
 
     /*'||V_ESQUEMA||'.ALTA_BPM_INSTANCES(V_USUARIO,PL_OUTPUT);
     DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);*/

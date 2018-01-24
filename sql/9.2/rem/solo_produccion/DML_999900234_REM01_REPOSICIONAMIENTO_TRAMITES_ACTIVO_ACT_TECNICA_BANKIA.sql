@@ -1,7 +1,7 @@
 --/*
 --#########################################
---## AUTOR=SIMEON SHOPOV
---## FECHA_CREACION=20180124
+--## AUTOR=Sergio Belenguer Gadea
+--## FECHA_CREACION=20180125
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.10
 --## INCIDENCIA_LINK=HREOS-3391
@@ -27,7 +27,7 @@ DECLARE
     ERR_NUM NUMBER;-- Numero de errores
     ERR_MSG VARCHAR2(2048);-- Mensaje de error
     V_MSQL VARCHAR2(4000 CHAR);
-    COUNTER NUMBER(2);
+    COUNTER NUMBER(5);
     COD_ITEM VARCHAR2(50 CHAR) := 'HREOS-3731';
     V_TABLA_REP VARCHAR2(30 CHAR) := 'OFERTAS_REPOSICIONAR';
     V_TABLA VARCHAR2(40 CHAR) := 'MIG2_TRAMITES_OFERTAS_REP'; -- Vble. Tabla pivote

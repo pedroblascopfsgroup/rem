@@ -10,6 +10,8 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Webco
 
 public class ComisionesDto implements WebcomRESTDto {
 	@WebcomRequired
+	private LongDataType idComisionRem;
+	@WebcomRequired
 	private DateDataType fechaAccion;
 	@WebcomRequired
 	private LongDataType idUsuarioRemAccion;
@@ -38,6 +40,8 @@ public class ComisionesDto implements WebcomRESTDto {
 	@DecimalDataTypeFormat(decimals = 2)
 	@WebcomRequired
 	private DoubleDataType porcentaje;
+	
+	private LongDataType baja;
 
 	public DateDataType getFechaAccion() {
 		return fechaAccion;
@@ -142,5 +146,22 @@ public class ComisionesDto implements WebcomRESTDto {
 	public void setPorcentaje(DoubleDataType porcentaje) {
 		this.porcentaje = porcentaje;
 	}
+
+	public LongDataType getIdComisionRem() {
+		return idComisionRem;
+	}
+
+	public void setIdComisionRem(LongDataType idComisionRem) {
+		this.idComisionRem = idComisionRem;
+	}
+
+	public LongDataType getBaja() {
+		return baja;
+	}
+
+	public void setBaja(LongDataType baja) {
+		this.baja = baja;
+	}
+	
 
 }

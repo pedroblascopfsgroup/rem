@@ -1,7 +1,7 @@
 --/*
 --#########################################
---## AUTOR=SIMEON SHOPOV
---## FECHA_CREACION=20180124
+--## AUTOR=Sergio Belenguer Gadea
+--## FECHA_CREACION=20180125
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.10
 --## INCIDENCIA_LINK=HREOS-3391

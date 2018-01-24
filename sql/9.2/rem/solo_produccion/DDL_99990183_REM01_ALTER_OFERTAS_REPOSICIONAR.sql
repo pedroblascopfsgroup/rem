@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=Sergio Belenguer Gadea
---## FECHA_CREACION=20180118
+--## FECHA_CREACION=20180125
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=HREOS-3587
+--## INCIDENCIA_LINK=HREOS-3391
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Modificar tabla

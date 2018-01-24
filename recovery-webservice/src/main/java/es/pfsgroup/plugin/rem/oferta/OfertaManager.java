@@ -283,9 +283,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ofertaDto = new OfertaDto();
 			if (numOfertaRem != null) {
 				ofertaDto.setIdOfertaRem(numOfertaRem);
-			}
-
-			if (idOfertaWebcom != null) {
+			}else if (idOfertaWebcom != null) {
 				ofertaDto.setIdOfertaWebcom(idOfertaWebcom);
 			}
 
@@ -461,6 +459,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (errorsList.isEmpty()) {
 
 			oferta = new Oferta();
+			oferta.setOrigen(OfertaApi.ORIGEN_WEBCOM);
 			beanUtilNotNull.copyProperties(oferta, ofertaDto);
 			if (!Checks.esNulo(ofertaDto.getIdOfertaWebcom())) {
 				oferta.setIdWebCom(ofertaDto.getIdOfertaWebcom());
@@ -623,15 +622,27 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		// ValidateUpdate
 		errorsList = validateOfertaPostRequestData(ofertaDto, jsonFields, false);
 		if (errorsList.isEmpty()) {
-			
+			boolean modificado = false;
 			if (!Checks.esNulo(ofertaDto.getTitularesAdicionales())) {
 				saveOrUpdateListaTitualesAdicionalesOferta(ofertaDto, oferta);
+				modificado = true;
 			}
 			
 			if (((JSONObject) jsonFields).containsKey("importeContraoferta")) {
 				oferta.setImporteContraOferta(ofertaDto.getImporteContraoferta());
+				modificado = true;				
+			}
+			
+			if(ofertaDto.getIdOfertaWebcom() != null && !ofertaDto.getIdOfertaWebcom().equals(oferta.getIdWebCom())){
+				oferta.setIdWebCom(ofertaDto.getIdOfertaWebcom());
+				modificado = true;
+			}
+			
+			if(modificado){
 				ofertaDao.saveOrUpdate(oferta);
-
+			}
+			
+			if (((JSONObject) jsonFields).containsKey("importeContraoferta")) {
 				// Actualizar honorarios para el nuevo importe de contraoferta.
 				ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 				if (!Checks.esNulo(expedienteComercial)) {
@@ -1111,7 +1122,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			map = new HashMap<String, Object>();
 			ofertaDto = listaOfertaDto.get(i);
 
-			oferta = this.getOfertaByIdOfertaWebcom(ofertaDto.getIdOfertaWebcom());
+			//idrem puede venir o no, el idWebcom es obligatorio
+			if(!Checks.esNulo(ofertaDto.getIdOfertaRem())){
+				oferta = ofertaDao.getOfertaByIdRem(ofertaDto.getIdOfertaRem());
+			}else{
+				oferta = ofertaDao.getOfertaByIdwebcom(ofertaDto.getIdOfertaWebcom());
+			}
+			
 			if (Checks.esNulo(oferta)) {
 				errorsList = this.saveOferta(ofertaDto);
 

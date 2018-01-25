@@ -1496,12 +1496,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	buscarClientesUrsus: function(field, e){
 		var me = this;
-		var url =  $AC.getRemoteUrl('expedientecomercial/buscarClientesUrsus');
 		var parent = field.up('datoscompradorwindow');
 		var tipoDocumento= field.up('formBase').down('[reference=tipoDocumento]').getValue();
 		var numeroDocumento= field.up('formBase').down('[reference=numeroDocumento]').getValue();
 		var fichaComprador= field.up('[xtype=formBase]');
-		var idExpediente = fichaComprador.getBindRecord().get('idExpedienteComercial');
+		var idExpediente = me.getViewModel().get("expediente.id");
 		
 		if(!Ext.isEmpty(tipoDocumento) && !Ext.isEmpty(numeroDocumento) && !Ext.isEmpty(idExpediente)) {
 			var form = parent.down('formBase');

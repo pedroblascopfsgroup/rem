@@ -144,6 +144,9 @@ public class Oferta implements Serializable, Auditable {
     @OneToMany(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "OFR_ID")
     private List<ActivoOferta> activosOferta;
+    
+    @Column(name = "OFR_ORIGEN")
+    private String origen;
    
     
     @Column(name = "OFR_FECHA_ALTA")
@@ -571,6 +574,14 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setUsuarioBaja(String usuarioBaja) {
 		this.usuarioBaja = usuarioBaja;
+	}
+
+	public String getOrigen() {
+		return origen;
+	}
+
+	public void setOrigen(String origen) {
+		this.origen = origen;
 	}
 	
 

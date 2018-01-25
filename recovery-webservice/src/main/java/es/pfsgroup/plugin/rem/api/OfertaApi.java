@@ -27,6 +27,9 @@ import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import net.sf.json.JSONObject;
 
 public interface OfertaApi {
+	
+	public static String ORIGEN_REM ="REM";
+	public static String ORIGEN_WEBCOM ="WEBCOM";
 
 	/**
 	 * Devuelve una Oferta por id.

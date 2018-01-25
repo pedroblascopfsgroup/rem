@@ -384,4 +384,19 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		}
 		return resultado;
 	}
+
+	@Override
+	public Oferta getOfertaByIdRem(Long idRem) {
+		Oferta resultado = null;
+		HQLBuilder hql = new HQLBuilder("from Oferta ");
+		if (idRem != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hql, "numOferta", idRem);
+			try {
+				resultado = HibernateQueryUtils.uniqueResult(this, hql);
+			} catch (Exception e) {
+				logger.error("error obtienendo oferta por idWebcom",e);
+			}
+		}
+		return resultado;
+	}
 }

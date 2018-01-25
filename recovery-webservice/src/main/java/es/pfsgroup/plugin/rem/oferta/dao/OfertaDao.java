@@ -56,4 +56,11 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	 * @return
 	 */
 	public Oferta getOfertaByIdwebcom(Long idWebcom);
+	
+	/**
+	 * Obtiene la oferta por su id rem
+	 * @param idRem
+	 * @return
+	 */
+	public Oferta getOfertaByIdRem(Long idRem);
 }

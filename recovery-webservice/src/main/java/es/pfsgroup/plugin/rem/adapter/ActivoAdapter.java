@@ -2630,6 +2630,7 @@ public class ActivoAdapter {
 
 		try {
 			Oferta oferta = new Oferta();
+			oferta.setOrigen(OfertaApi.ORIGEN_REM);
 			ClienteComercial clienteComercial = new ClienteComercial();
 
 			/*

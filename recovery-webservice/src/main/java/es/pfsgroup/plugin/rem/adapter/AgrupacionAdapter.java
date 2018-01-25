@@ -1447,6 +1447,9 @@ public class AgrupacionAdapter {
 			genericDao.save(ClienteComercial.class, clienteComercial);
 
 			Oferta oferta = new Oferta();
+			if(TIPO_AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())){
+				oferta.setOrigen(OfertaApi.ORIGEN_REM);
+			}
 
 			oferta.setNumOferta(numOferta);
 			oferta.setAgrupacion(agrupacion);

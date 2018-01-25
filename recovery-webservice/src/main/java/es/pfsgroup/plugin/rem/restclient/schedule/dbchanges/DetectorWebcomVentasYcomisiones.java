@@ -29,7 +29,7 @@ public class DetectorWebcomVentasYcomisiones extends DetectorCambiosBD<Comisione
 
 	@Override
 	public String clavePrimaria() {
-		return "ID_HONORARIO_REM";
+		return "ID_COMISION_REM";
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class DetectorWebcomVentasYcomisiones extends DetectorCambiosBD<Comisione
 
 	@Override
 	public String clavePrimariaJson() {
-		return "ID_OFERTA_REM";
+		return "ID_COMISION_REM";
 	}
 
 	@Override

@@ -1,0 +1,130 @@
+--/*
+--###########################################
+--## AUTOR=Jessica Sampere
+--## FECHA_CREACION=20180125
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=2.0.12
+--## INCIDENCIA_LINK=REMNIVDOS-3271
+--## PRODUCTO=NO
+--## 
+--## Finalidad: asignar usuarios a grupos
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--###########################################
+----*/
+
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+
+DECLARE
+  V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+  V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+  V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+  V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+  V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+  V_NUM_TABLAS_2 NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+
+
+  ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+  ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+  
+  TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+  TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+  V_TICKET VARCHAR2(50 CHAR) := 'SREC-92'; 
+  V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+		--	  USER_NAME	   	NOMBRE_USU		APELL1			APELL2			EMAIL      			PASS		PEF_COD		USU GRUPO	DESPACHO_EXTERNO	
+
+			
+	T_TIPO_DATA('avila'	,'usugrupre'),
+	T_TIPO_DATA('avila'	,'usugrupub')
+
+
+
+  ); 
+  V_TMP_TIPO_DATA T_TIPO_DATA;
+  
+BEGIN	
+	DBMS_OUTPUT.PUT_LINE('[INI]');	
+	FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+	LOOP
+    V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+
+		--comprobamos que existe el grupo
+		DBMS_OUTPUT.PUT_LINE('[INFO] COMPROBAMOS QUE EXSTE EL GRUPO '||V_TMP_TIPO_DATA(2));
+
+		V_SQL := '
+		SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.GRU_GRUPOS_USUARIOS
+		where USU_ID_GRUPO = (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS USU WHERE USU.USU_USERNAME = '''||V_TMP_TIPO_DATA(2)||''')';
+		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+        
+        DBMS_OUTPUT.PUT_LINE('[INFO] COMPROBAMOS QUE EXSTE EL USUARIO '||V_TMP_TIPO_DATA(1));
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||V_TMP_TIPO_DATA(1)||'''';
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS_2;
+
+            IF V_NUM_TABLAS > 0 AND V_NUM_TABLAS_2 > 0 THEN
+            DBMS_OUTPUT.PUT_LINE('[OK]');	
+
+
+			V_SQL := '
+			SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.GRU_GRUPOS_USUARIOS
+			WHERE USU_ID_USUARIO = (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||V_TMP_TIPO_DATA(1)||''')
+			AND USU_ID_GRUPO = (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS USU WHERE USU.USU_USERNAME = '''||V_TMP_TIPO_DATA(2)||''')';
+
+			EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+			-- Si existe no se modifica
+			IF V_NUM_TABLAS > 0 THEN	  
+				DBMS_OUTPUT.PUT_LINE('[INFO] YA EXISTE EL USUARIO '||V_TMP_TIPO_DATA(1)||' EN EL GRUPO '||V_TMP_TIPO_DATA(2)||' NO SE MODIFICA ');
+
+			ELSE
+            DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION DE USUARIO '||V_TMP_TIPO_DATA(1)||' EN GRUPO '||V_TMP_TIPO_DATA(2));	
+				V_MSQL := '
+				INSERT INTO '||V_ESQUEMA_M||'.GRU_GRUPOS_USUARIOS
+				(GRU_ID, USU_ID_GRUPO, USU_ID_USUARIO, USUARIOCREAR, FECHACREAR, BORRADO) 
+				SELECT '||V_ESQUEMA_M||'.S_GRU_GRUPOS_USUARIOS.NEXTVAL,
+				(SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS USU WHERE USU.USU_USERNAME = '''||V_TMP_TIPO_DATA(2)||'''),
+				(SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||V_TMP_TIPO_DATA(1)||'''),
+				'''|| V_TICKET ||''',
+				SYSDATE,
+				0 
+				FROM DUAL';
+
+				EXECUTE IMMEDIATE V_MSQL;
+
+				DBMS_OUTPUT.PUT_LINE('[INFO]: USUARIO '''|| V_TMP_TIPO_DATA(1) ||''' INSERTADO CORRECTAMENTE EN GRUPO: '||V_TMP_TIPO_DATA(2));
+				
+
+			END IF;
+		ELSE
+			DBMS_OUTPUT.PUT_LINE('[KO]: NO EXISTE EL USUARIO O EL GRUPO' );
+		END IF;
+
+	END LOOP;
+	
+	COMMIT;
+
+	DBMS_OUTPUT.PUT_LINE('[FIN]: USUARIOS ASOCIADOS A GRUPOS CORRECTAMENTE');
+
+	EXCEPTION
+
+	WHEN OTHERS THEN
+		err_num := SQLCODE;
+		err_msg := SQLERRM;
+
+		DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+		DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+		DBMS_OUTPUT.put_line(err_msg);
+
+	ROLLBACK;
+	RAISE;          
+
+END;
+
+/
+
+EXIT

@@ -693,6 +693,17 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		 
 		 return !Checks.estaVacio(historicoLista)?historicoLista.get(0):null;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public ActivoHistoricoEstadoPublicacion getPenultimoHistoricoEstadoPublicacion(Long activoID) {
+		
+		String hql = "from ActivoHistoricoEstadoPublicacion historico where historico.activo.id = ? and auditoria.borrado = false order by historico.id desc";
+		
+		List<ActivoHistoricoEstadoPublicacion> historicoLista = getHibernateTemplate().find(hql, new Object[] { activoID });
+		 
+		return (!Checks.estaVacio(historicoLista) && historicoLista.size() > 1)?historicoLista.get(1):null;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override

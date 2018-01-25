@@ -212,6 +212,20 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				OkPublicacionSinPublicar= true;
 			}
 			
+			//HREOS-3710
+			//Si el campo del dto Ocultacion Forzada llega a false es que viene del metodo desocultarActivoOferta
+			if(!Checks.esNulo(dtoCambioEstadoPublicacion.getOcultacionForzada()) && !dtoCambioEstadoPublicacion.getOcultacionForzada()){
+				ActivoHistoricoEstadoPublicacion ultimoHistoricoPublicacion = activoApi.getUltimoHistoricoEstadoPublicacion(dtoCambioEstadoPublicacion.getIdActivo());
+				if(DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO.equals(activo.getEstadoPublicacion().getCodigo()) 
+						&& ActivoHistoricoEstadoPublicacion.MOTIVO_OCULTACION_AUTOMATICA.equals(ultimoHistoricoPublicacion.getMotivo())){
+					ActivoHistoricoEstadoPublicacion penultimoHistoricoPublicacion = activoApi.getPenultimoHistoricoEstadoPublicacion(dtoCambioEstadoPublicacion.getIdActivo());
+					
+					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", penultimoHistoricoPublicacion.getEstadoPublicacion().getCodigo());
+					motivo = getMotivo(dtoCambioEstadoPublicacion);
+				}
+			}
+			else{
+			
 			if(DDEstadoPublicacion.CODIGO_DESPUBLICADO.equals(activo.getEstadoPublicacion().getCodigo())){
 			// Si se publica por primera vez (no historico) o el estado anterior
 			// no era ya "publicado ordinario"
@@ -309,6 +323,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					
 				}				
 				
+			}
 			}
 		} else {
 			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_NO_PUBLICADO);

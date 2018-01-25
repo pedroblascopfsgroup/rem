@@ -54,6 +54,7 @@ import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -2042,7 +2043,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					
 					DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion= activoEstadoPublicacionApi.getState(activo.getId());
 					dtoCambioEstadoPublicacion.setOcultacionForzada(true);
-					dtoCambioEstadoPublicacion.setMotivoPublicacion("Ocultación automática por modificación del estado comercial.");
+					dtoCambioEstadoPublicacion.setMotivoPublicacion(ActivoHistoricoEstadoPublicacion.MOTIVO_OCULTACION_AUTOMATICA);
 					DtoPublicacionValidaciones dtoPublicacionValidaciones= new DtoPublicacionValidaciones();
 					dtoPublicacionValidaciones.setValidacionesNinguna();
 
@@ -2067,7 +2068,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 					dtoCambioEstadoPublicacion.setPublicacionOrdinaria(true);
 					dtoCambioEstadoPublicacion.setOcultacionForzada(false);
-					dtoCambioEstadoPublicacion.setMotivoPublicacion("Desocultación automática por modificación del estado comercial.");
+					dtoCambioEstadoPublicacion.setMotivoPublicacion(ActivoHistoricoEstadoPublicacion.MOTIVO_DESOCULTACION_AUTOMATICA);
 					DtoPublicacionValidaciones dtoPublicacionValidaciones= new DtoPublicacionValidaciones();
 					dtoPublicacionValidaciones.setValidacionesNinguna();
 					dtoPublicacionValidaciones.setActivo(activo);

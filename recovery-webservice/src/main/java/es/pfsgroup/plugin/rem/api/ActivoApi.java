@@ -396,6 +396,16 @@ public interface ActivoApi {
 	 * @return Devuelve el último histórico por ID para el ID del activo.
 	 */
 	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicacion(Long activoID);
+	
+	/**
+	 * Este método obtiene el penúltimo HistoricoEstadoPublicacion por el ID de
+	 * activo.
+	 * 
+	 * @param activoID
+	 *            : ID del activo para buscar el HistoricoEstadoPublicacion.
+	 * @return Devuelve el último histórico por ID para el ID del activo.
+	 */
+	public ActivoHistoricoEstadoPublicacion getPenultimoHistoricoEstadoPublicacion(Long activoID);
 
 	/**
 	 * Obtiene el último estado de publicacion ordinaria en el que estuvo un activo (ordinaria, oculto, precio oculto)
@@ -403,6 +413,7 @@ public interface ActivoApi {
 	 * @return
 	 */
 	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicado(Long activoID);
+	
 	
 	/**
 	 * Ejecuta los pasos necesarios para publicar activos de forma ordinaria

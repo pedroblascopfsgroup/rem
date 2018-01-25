@@ -2064,10 +2064,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Override
+	public ActivoHistoricoEstadoPublicacion getPenultimoHistoricoEstadoPublicacion(Long activoID) {
+
+		return activoDao.getPenultimoHistoricoEstadoPublicacion(activoID);
+	}
+	
+	@Override
 	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicado(Long activoID) {
 
 		return activoDao.getUltimoHistoricoEstadoPublicado(activoID);
 	}
+	
 
 	@Override
 	public boolean publicarActivo(Long idActivo) throws SQLException, JsonViewerException {

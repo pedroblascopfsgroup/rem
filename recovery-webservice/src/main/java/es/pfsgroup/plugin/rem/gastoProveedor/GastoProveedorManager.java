@@ -1653,7 +1653,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 			Trabajo trabajo = trabajoApi.findOne(idTrabajo);
 			// Marcamos la fecha de emisión de factura en el trabajo
-			trabajo.setFechaEmisionFactura(new Date());
+			trabajo.setFechaEmisionFactura(gasto.getFechaEmision());
 			genericDao.save(Trabajo.class, trabajo);
 
 			// Asignamos el trabajo al gasto

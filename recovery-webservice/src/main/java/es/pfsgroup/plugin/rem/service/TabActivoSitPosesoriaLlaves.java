@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -92,8 +93,20 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			if (activo.getSituacionPosesoria().getTipoTituloPosesorio() != null) {
 				BeanUtils.copyProperty(activoDto, "tipoTituloPosesorioCodigo", activo.getSituacionPosesoria().getTipoTituloPosesorio().getCodigo());
 			}
-			if(!Checks.esNulo(activo.getSituacionPosesoria().getSitaucionJuridica())) {
-				BeanUtils.copyProperty(activoDto, "situacionJuridica", activo.getSituacionPosesoria().getSitaucionJuridica().getDescripcion());
+			
+			if(!Checks.esNulo(activo.getCartera())) {
+				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
+					if(!Checks.esNulo(activo.getSituacionPosesoria().getSitaucionJuridica())) {
+						BeanUtils.copyProperty(activoDto, "situacionJuridica", activo.getSituacionPosesoria().getSitaucionJuridica().getDescripcion());
+						BeanUtils.copyProperty(activoDto, "indicaPosesion", activo.getSituacionPosesoria().getSitaucionJuridica().getIndicaPosesion());
+					}					
+				} else {
+					if(!Checks.esNulo(activo.getSituacionPosesoria().getFechaRevisionEstado())) {
+						BeanUtils.copyProperty(activoDto, "indicaPosesion", 1);
+					} else {
+						BeanUtils.copyProperty(activoDto, "indicaPosesion", 0);
+					}
+				}
 			}
 		}
 		/*

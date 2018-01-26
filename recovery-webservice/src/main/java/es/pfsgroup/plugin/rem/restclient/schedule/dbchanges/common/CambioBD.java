@@ -9,7 +9,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
-import es.pfsgroup.plugin.rem.restclient.webcom.definition.ConstantesGenericas;
 
 public class CambioBD implements Serializable {
 
@@ -51,23 +50,27 @@ public class CambioBD implements Serializable {
 
 		HashMap<String, Object> cambios = new HashMap<String, Object>();
 
+		/**
+		 * Comentamos la parte de excluir cambios fecha_accion. 
+		 * Causa un problema que se solucionara en el evolutivo
+		 */
 		if (datosActuales != null) {
-			boolean algunCambioEnviable = false;
+			//boolean algunCambioEnviable = false;
 			for (int i = 0; i < datosActuales.length; i++) {
 				if (i < configCambios.length) {
 					Object datoActual = datosActuales[i];
 					if ((datosHistoricos == null) || (!sonIguales(datoActual, datosHistoricos[i]))) {
-						if (configCambios[i] != null && !configCambios[i].equals(ConstantesGenericas.ID_USUARIO_REM_ACCION)
+						/* if (configCambios[i] != null && !configCambios[i].equals(ConstantesGenericas.ID_USUARIO_REM_ACCION)
 								&& configCambios[i] != null && !configCambios[i].equals(ConstantesGenericas.FECHA_ACCION)) {
 							algunCambioEnviable = true;
-						}
+						} */
 						cambios.put(configCambios[i], datoActual);
 					}
 				}
 			}
-			if (!algunCambioEnviable) {
+			/* if (!algunCambioEnviable) {
 				cambios = new HashMap<String, Object>();
-			}
+			} */
 		} else {
 			logger.debug("'datosActuales' es nulo, devolvemos un Map vacío");
 		}

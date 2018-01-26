@@ -39,6 +39,7 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	private Date fechaRecepcionLlave;
 	private String numJuegos;
 	private String situacionJuridica;
+	private Integer indicaPosesion;
 		
 	public String getNumeroActivo() {
 		return numeroActivo;
@@ -171,6 +172,12 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	}
 	public void setSituacionJuridica(String situacionJuridica) {
 		this.situacionJuridica = situacionJuridica;
+	}
+	public Integer getIndicaPosesion() {
+		return indicaPosesion;
+	}
+	public void setIndicaPosesion(Integer indicaPosesion) {
+		this.indicaPosesion = indicaPosesion;
 	}
 
 	

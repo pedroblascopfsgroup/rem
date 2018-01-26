@@ -17,7 +17,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
     requires: ['HreRem.model.ActivoSituacionPosesoria', 'HreRem.model.OcupantesLegales', 'HreRem.view.activos.detalle.LlavesList', 'HreRem.view.activos.detalle.MovimientosLlaveList'],
 	
     initComponent: function () {
-
+    	
         var me = this;
         me.setTitle(HreRem.i18n('title.situacion.posesoria.llaves'));
         var items= [
@@ -33,19 +33,20 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 
 					
 						{ 	// Este campo es necesario para corregir lo que parece un BUG. 
-							// TODO Investigar porqué al quitar este campo, el valor del siguiente campo se manda siempre al guardar, aunque no se haya modificado.
+							// TODO Investigar porquï¿½ al quitar este campo, el valor del siguiente campo se manda siempre al guardar, aunque no se haya modificado.
 			            	hidden: true
 						},
-						{ 
-							xtype:'datefieldbase',
-							reference: 'fechaTomaPosesion',
-							allowBlank: false,
-							fieldLabel: HreRem.i18n('fieldlabel.fecha.obtencion.posesion'),
-		                	bind:	{
-		                		value: '{situacionPosesoria.fechaTomaPosesion}',
-		                		readOnly: '{esSituacionJudicial}'
-		                	}
-		                },
+				        { 
+							xtype: 'comboboxfieldbase',
+							reference: 'conPosesion',
+							fieldLabel: HreRem.i18n('fieldlabel.con.posesion'),
+							readOnly: true,
+				        	bind: {				        		
+				        		store: '{comboSiNoRem}',
+			            		value: '{situacionPosesoria.indicaPosesion}'
+			            	}
+				        },
+						
 		                { 
 							xtype:'datefieldbase',
 							reference: 'fechaRevisionEstadoPosesorio',
@@ -143,24 +144,16 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        }
 							]
 						},
-				        { 
-				        	xtype: 'comboboxfieldbase',				        	
-				        	//rowspan: 2,
-				        	allowBlank: false,
-				        	fieldLabel: HreRem.i18n('fieldlabel.riesgo.ocupacion'),
-				        	bind: {
-			            		store: '{comboSiNoRem}',
-			            		value: '{situacionPosesoria.riesgoOcupacion}'
-			            	},
-			            	listeners: {
-			            		afterbind: function(combo){
-			            			var me=this;
-			            			if(!me.up('activosdetallemain').getViewModel().get('activo.isCarteraBankia')){
-			            				me.rowspan = 2;
-			            			}
-			            		}
-			            	}
-				        },
+						{ 
+							xtype:'datefieldbase',
+							reference: 'fechaTomaPosesion',
+							allowBlank: false,
+							fieldLabel: HreRem.i18n('fieldlabel.fecha.obtencion.posesion'),
+		                	bind:	{
+		                		value: '{situacionPosesoria.fechaTomaPosesion}',
+		                		readOnly: '{esSituacionJudicial}'
+		                	}
+		                },				        
 		                { 
 
 				        	xtype: 'comboboxfieldbase',
@@ -182,14 +175,23 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            			
 			            		}
 			            	}
-				        },
+				        },				      
 				        { 
-				        	reference: 'disponibilidadJuridicaRef',
-							fieldLabel: HreRem.i18n('fieldlabel.disponibilidad.juridica.bankia'),
-							readOnly: true,
+				        	xtype: 'comboboxfieldbase',				        	
+				        	//rowspan: 2,
+				        	allowBlank: false,
+				        	fieldLabel: HreRem.i18n('fieldlabel.riesgo.ocupacion'),
 				        	bind: {
-				        		hidden: '{!activo.isCarteraBankia}',
-			            		value: '{situacionPosesoria.situacionJuridica}'
+			            		store: '{comboSiNoRem}',
+			            		value: '{situacionPosesoria.riesgoOcupacion}'
+			            	},
+			            	listeners: {
+			            		afterbind: function(combo){
+			            			var me=this;
+			            			if(!me.up('activosdetallemain').getViewModel().get('activo.isCarteraBankia')){
+			            				me.rowspan = 2;
+			            			}
+			            		}
 			            	}
 				        },
 				        { 
@@ -199,6 +201,16 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 				        	bind: {
 			            		store: '{comboSiNoRem}',
 			            		value: '{situacionPosesoria.conTitulo}'
+			            	}
+				        },
+				        { 
+							xtype: 'textfieldbase',
+							reference: 'disponibilidadJuridicaRef',
+							fieldLabel: HreRem.i18n('fieldlabel.disponibilidad.juridica.bankia'),
+							readOnly: true,
+				        	bind: {
+				        		hidden: '{!activo.isCarteraBankia}',				   
+			            		value: '{situacionPosesoria.situacionJuridica}'
 			            	}
 				        }
 					

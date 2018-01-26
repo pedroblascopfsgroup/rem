@@ -12,9 +12,9 @@ public class DtoClienteUrsus {
 	public final static String TARJETA_RESIDENTE= "3";
 	public final static String PASAPORTE= "4";
 	public final static String CIF_EXTRANJERO= "5";
-	public final static String DNI_EXTRANJERO= "6";
-	public final static String TARJETA_DIPLOMATICA= "7";
-	public final static String MENOR= "8";
+	public final static String DNI_EXTRANJERO= "7";
+	public final static String TARJETA_DIPLOMATICA= "8";
+	public final static String MENOR= "9";
 	public final static String OTROS_PERSONA_FISICA= "F";
 	public final static String OTROS_PESONA_JURIDICA= "J";
 	

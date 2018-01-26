@@ -1093,11 +1093,8 @@ public class AgrupacionAdapter {
 			asistida.setFechaFinVigencia(dtoAgrupacion.getFechaFinVigencia());
 			asistida.setNumAgrupRem(numAgrupacionRem);
 
-			ActivoAsistida nuevaAgr = genericDao.save(ActivoAsistida.class, asistida);
-			// metemos la traza en el historico de vigencias
-			if(nuevaAgr != null){
-				this.trazarCambioVigencia(nuevaAgr.getId(), dtoAgrupacion.getFechaInicioVigencia(), dtoAgrupacion.getFechaFinVigencia());
-			}
+			genericDao.save(ActivoAsistida.class, asistida);
+			
 
 			// Si es LOTE COMERCIAL
 		} else if (dtoAgrupacion.getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
@@ -1607,11 +1604,14 @@ public class AgrupacionAdapter {
 		if(agrupacion == null){
 			throw new Exception("No existe la agrupacion");
 		}
-		AgrupacionesVigencias agrVigencia = new AgrupacionesVigencias();
-		agrVigencia.setAgrupacion(agrupacion);
-		agrVigencia.setFechaInicio(fechaInicioVigencia);
-		agrVigencia.setFechaFin(fechaFinVigencia);
-		genericDao.save(AgrupacionesVigencias.class, agrVigencia);
+		
+		if(fechaInicioVigencia != null && fechaFinVigencia != null){
+			AgrupacionesVigencias agrVigencia = new AgrupacionesVigencias();
+			agrVigencia.setAgrupacion(agrupacion);
+			agrVigencia.setFechaInicio(fechaInicioVigencia);
+			agrVigencia.setFechaFin(fechaFinVigencia);
+			genericDao.save(AgrupacionesVigencias.class, agrVigencia);
+		}
 		
 		
 	}
@@ -1675,14 +1675,8 @@ public class AgrupacionAdapter {
 				}
 			}
 			if (vigenciaModificada) {
-				Date fechaInicioAux = dto.getFechaInicioVigencia();
-				if (fechaInicioAux == null) {
-					fechaInicioAux = agrupacion.getFechaInicioVigencia();
-				}
-				Date fechaFinAux = dto.getFechaFinVigencia();
-				if (fechaFinAux == null) {
-					fechaFinAux = agrupacion.getFechaFinVigencia();
-				}
+				Date fechaInicioAux = agrupacion.getFechaInicioVigencia();
+				Date fechaFinAux = agrupacion.getFechaFinVigencia();
 				this.trazarCambioVigencia(id, fechaInicioAux, fechaFinAux);
 			}
 		}

@@ -397,9 +397,11 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 	public Boolean estaActivoEnOtraAgrupacionVigente(ActivoAgrupacion agrupacion, Activo activo) {
 		String activos = "(";
 		Boolean resultado = false;
+		int contActivos = 0;
 		// si pasamos el parametro activo buscamos solo en ese
 		if (activo != null) {
 			activos = activos.concat(activo.getId().toString());
+			contActivos++;
 		} else {
 			if (agrupacion.getActivos() != null && agrupacion.getActivos().size() > 0) {
 				for (int i = 0; i < agrupacion.getActivos().size(); i++) {
@@ -408,21 +410,24 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 						activos = activos.concat(",");
 					}
 					activos = activos.concat(aux.getId().toString());
+					contActivos++;
 				}
 			}
 		}
 		activos = activos.concat(")");
 
-		HQLBuilder hb = new HQLBuilder(
-				"from ActivoAgrupacionActivo agrActivo where agrActivo.auditoria.borrado != 1 and agrActivo.activo.id in "
-						+ activos + " and agrActivo.agrupacion.id != " + agrupacion.getId()
-						+ " and agrActivo.agrupacion.fechaFinVigencia >= sysdate and agrActivo.agrupacion.fechaBaja is null");
+		if (contActivos > 0) {
+			HQLBuilder hb = new HQLBuilder(
+					"from ActivoAgrupacionActivo agrActivo where agrActivo.auditoria.borrado != 1 and agrActivo.activo.id in "
+							+ activos + " and agrActivo.agrupacion.id != " + agrupacion.getId()
+							+ " and agrActivo.agrupacion.fechaFinVigencia >= sysdate and agrActivo.agrupacion.fechaBaja is null");
 
-		List<ActivoAgrupacionActivo> agrActivoList = (List<ActivoAgrupacionActivo>) getHibernateTemplate()
-				.find(hb.toString());
+			List<ActivoAgrupacionActivo> agrActivoList = (List<ActivoAgrupacionActivo>) getHibernateTemplate()
+					.find(hb.toString());
 
-		if (agrActivoList != null && agrActivoList.size() > 0) {
-			resultado = true;
+			if (agrActivoList != null && agrActivoList.size() > 0) {
+				resultado = true;
+			}
 		}
 
 		return resultado;

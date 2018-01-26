@@ -102,6 +102,9 @@ Ext.define('HreRem.model.ActivoSituacionPosesoria', {
     		},
     		{
     			name: 'situacionJuridica'
+    		},
+    		{
+    			name:'indicaPosesion'
     		}
     		
     ],

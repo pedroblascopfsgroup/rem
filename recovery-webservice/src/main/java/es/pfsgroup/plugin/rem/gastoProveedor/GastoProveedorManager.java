@@ -368,9 +368,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		genericDao.save(GastoGestion.class, gestion);
 
 		GastoInfoContabilidad contabilidad = new GastoInfoContabilidad();
-		Filter filtroEjercicio = genericDao.createFilter(FilterType.EQUALS, "anyo", String.valueOf(new GregorianCalendar().get(GregorianCalendar.YEAR)));
+		Filter filtroEjercicio = genericDao.createFilter(FilterType.EQUALS, "anyo", String.valueOf(gastoProveedor.getFechaEmision().getYear() + 1900));
 		Ejercicio ejercicio = genericDao.get(Ejercicio.class, filtroEjercicio);
-		contabilidad.setEjercicio(ejercicio);
+		
+		contabilidad.setEjercicio(ejercicio);	
 		contabilidad.setGastoProveedor(gastoProveedor);
 		genericDao.save(GastoInfoContabilidad.class, contabilidad);
 
@@ -1269,6 +1270,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if (!Checks.esNulo(contabilidadGasto)) {
 				if (!Checks.esNulo(contabilidadGasto.getEjercicio())) {
 					dto.setEjercicioImputaGasto(contabilidadGasto.getEjercicio().getId());
+					if(!Checks.esNulo(contabilidadGasto.getFechaDevengoEspecial())) {
+						Filter filtroFecha = genericDao.createFilter(FilterType.EQUALS, "anyo", String.valueOf(contabilidadGasto.getFechaDevengoEspecial().getYear() + 1900));
+						Ejercicio ej = genericDao.get(Ejercicio.class, filtroFecha);
+						dto.setEjercicioImputaGasto(ej.getId());
+					}
 				}
 				if (!Checks.esNulo(gasto.getTipoPeriocidad())) {
 					dto.setPeriodicidadDescripcion(gasto.getTipoPeriocidad().getDescripcion());

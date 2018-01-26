@@ -63,7 +63,7 @@ public class DDSituacionJuridica implements Auditable, Dictionary {
 	private String descripcionLarga;
 	
 	@Column(name = "DD_SIJ_INDICA_POSESION")   
-	private Boolean indicaPosesion;
+	private Integer indicaPosesion;
 
 	@Version   
 	private Long version;
@@ -103,11 +103,11 @@ public class DDSituacionJuridica implements Auditable, Dictionary {
 		this.descripcionLarga = descripcionLarga;
 	}
 
-	public Boolean getIndicaPosesion() {
+	public Integer getIndicaPosesion() {
 		return indicaPosesion;
 	}
 
-	public void setIndicaPosesion(Boolean indicaPosesion) {
+	public void setIndicaPosesion(Integer indicaPosesion) {
 		this.indicaPosesion = indicaPosesion;
 	}
 

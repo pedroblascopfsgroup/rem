@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.updaterstate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,7 +84,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 				TareaActivo tareaInfo = (TareaActivo) tareaExternaInfo.getTareaPadre();
 		
 				Boolean tareasAdmision = (!Checks.esNulo(tareaDocAdmision.getFechaFin()) && !Checks.esNulo(tareaInfo.getFechaFin()));
-				Boolean fechasAdmision = (!Checks.esNulo(activo.getSituacionPosesoria()) && !Checks.esNulo(activo.getSituacionPosesoria().getSitaucionJuridica()) && activo.getSituacionPosesoria().getSitaucionJuridica().getIndicaPosesion()) 
+				Boolean fechasAdmision = (!Checks.esNulo(activo.getSituacionPosesoria()) && !Checks.esNulo(activo.getSituacionPosesoria().getSitaucionJuridica()) && BooleanUtils.toBoolean(activo.getSituacionPosesoria().getSitaucionJuridica().getIndicaPosesion())) 
 										 || (!Checks.esNulo(activo.getTitulo()) && !Checks.esNulo(activo.getTitulo().getFechaInscripcionReg()) && !Checks.esNulo(activo.getSituacionPosesoria().getFechaTomaPosesion()) && !Checks.esNulo(activo.getFechaRevisionCarga()));
 				activo.setAdmision(tareasAdmision && fechasAdmision);
 			}

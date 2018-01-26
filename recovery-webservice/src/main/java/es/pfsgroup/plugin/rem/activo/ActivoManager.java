@@ -4459,12 +4459,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionLanzamiento());
 							//activoDto.setFechaTomaPosesion(activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionLanzamiento());
 						}else{
-							activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionPosesion());
+							if(!Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionPosesion())) {
+								activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionPosesion());
+							} else {
+								activo.getSituacionPosesoria().setFechaTomaPosesion(null);
+							}
 							//activoDto.setFechaTomaPosesion(activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionPosesion());
+						}					
+					} else {
+						if(!Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionPosesion())) {
+							activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionPosesion());
+						} else {
+							activo.getSituacionPosesoria().setFechaTomaPosesion(null);
 						}
-					}
-					else{
-						activo.getSituacionPosesoria().setFechaTomaPosesion(null);
 						//activoDto.setFechaTomaPosesion(null);
 					}
 				}

@@ -258,5 +258,13 @@ public interface ActivoTramiteApi {
 	 * @return
 	 */
 	String existeAdjuntoUGCarteraValidacion(TareaExterna tareaExterna, String codigoDocAdjunto, String uGestion, String cartera);
+	
+	/**
+	 * Devuelve true si el activo con el tipo de procedimiento tiene un tramite vigente
+	 * @param idActivo
+	 * @param codigoTipoProcedimiento
+	 * @return 
+	 */
+	public Boolean tieneTramiteVigenteByActivoYProcedimiento(Long idActivo, String codigoTipoProcedimiento);
 }
 

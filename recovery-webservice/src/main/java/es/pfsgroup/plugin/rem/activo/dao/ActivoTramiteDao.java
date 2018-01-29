@@ -58,5 +58,13 @@ public interface ActivoTramiteDao extends AbstractDao<ActivoTramite, Long>{
 	 * @return
 	 */
 	public List<ActivoTramite> getTramitesByTipoAndTrabajo(Long idTrabajo, String codigoTramite);
+	
+	/**
+	 * Devuelve true si el activo con el tipo de procedimiento tiene un tramite vigente
+	 * @param idActivo
+	 * @param codigoTipoProcedimiento
+	 * @return
+	 */
+	public Boolean tieneTramiteVigenteByActivoYProcedimiento(Long idActivo, String codigoTipoProcedimiento);
 
 }

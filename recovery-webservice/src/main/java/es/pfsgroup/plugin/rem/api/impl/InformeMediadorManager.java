@@ -1450,39 +1450,6 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 						}
 					}
-					/*
-					if (!Checks.esNulo(informe.getAnejoGarage()) || !Checks.esNulo(informe.getNumeroPlazasGaraje())
-							|| !Checks.esNulo(informe.getSuperficiePlazasGaraje())) {
-
-						ActivoDistribucion activoDistribucion = new ActivoDistribucion();
-
-						activoDistribucion.setNumPlanta(Integer.valueOf(0));
-						activoDistribucion.setInfoComercial(informeEntity);
-						DDTipoHabitaculo tipoHabitaculo = (DDTipoHabitaculo) genericDao.get(DDTipoHabitaculo.class,
-								genericDao.createFilter(FilterType.EQUALS, "codigo",
-										DDTipoHabitaculo.TIPO_HABITACULO_GARAJE));
-						activoDistribucion.setTipoHabitaculo(tipoHabitaculo);
-						activoDistribucion.setCantidad(informe.getNumeroPlazasGaraje());
-						activoDistribucion.setSuperficie(informe.getSuperficiePlazasGaraje());
-						activoDistribucion.setDescripcion(informe.getAnejoGarage());
-
-						genericDao.save(ActivoDistribucion.class, activoDistribucion);
-					}
-
-					if (!Checks.esNulo(informe.getAnejoTrastero())) {
-
-						ActivoDistribucion activoDistribucion = new ActivoDistribucion();
-
-						activoDistribucion.setNumPlanta(Integer.valueOf(0));
-						activoDistribucion.setInfoComercial(informeEntity);
-						DDTipoHabitaculo tipoHabitaculo = (DDTipoHabitaculo) genericDao.get(DDTipoHabitaculo.class,
-								genericDao.createFilter(FilterType.EQUALS, "codigo",
-										DDTipoHabitaculo.TIPO_HABITACULO_TRASTERO));
-						activoDistribucion.setTipoHabitaculo(tipoHabitaculo);
-						activoDistribucion.setDescripcion(informe.getAnejoTrastero());
-
-						genericDao.save(ActivoDistribucion.class, activoDistribucion);
-					}*/
 				}
 				if (!tieneInformeComercialAceptado) {
 					adapter.crearTramitePublicacion(activo.getId());

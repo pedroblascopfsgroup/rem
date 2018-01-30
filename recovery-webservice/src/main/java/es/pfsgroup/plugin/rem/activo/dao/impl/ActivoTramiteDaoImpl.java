@@ -12,6 +12,7 @@ import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
+import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManager;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 
 /**
@@ -94,6 +95,17 @@ public class ActivoTramiteDaoImpl extends AbstractEntityDao<ActivoTramite, Long>
 		
 		return HibernateQueryUtils.list(this, hb);
 		
+	}
+	
+	public Boolean tieneTramiteVigenteByActivoYProcedimiento(Long idActivo, String codigoTipoProcedimiento){
+		
+		HQLBuilder hb = new HQLBuilder(" from ActivoTramite tra");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.activo.id", idActivo);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.tipoTramite.codigo", codigoTipoProcedimiento);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.estadoTramite.codigo", JBPMActivoTramiteManager.ESTADO_PROCEDIMIENTO_EN_TRAMITE);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.auditoria.borrado", false);
+		
+		return !HibernateQueryUtils.list(this, hb).isEmpty();
 	}
 	
 }

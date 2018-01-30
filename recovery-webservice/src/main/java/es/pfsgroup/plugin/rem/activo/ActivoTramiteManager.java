@@ -702,7 +702,9 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		return listaTareasProc;
 	}
 	
-	
+	public Boolean tieneTramiteVigenteByActivoYProcedimiento(Long idActivo, String codigoTipoProcedimiento){
+		return activoTramiteDao.tieneTramiteVigenteByActivoYProcedimiento(idActivo, codigoTipoProcedimiento);
+	}
 	
 	
 }

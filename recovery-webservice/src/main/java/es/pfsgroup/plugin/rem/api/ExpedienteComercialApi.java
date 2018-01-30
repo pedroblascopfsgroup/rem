@@ -868,6 +868,13 @@ public interface ExpedienteComercialApi {
 	public void enviarTitularesUvem(Long idExpediente) throws Exception;
 	
 	/**
+	 * Envia todos los honorarios a UVEM
+	 * @param idExpediente
+	 * @return void
+	 */
+	public void enviarHonorariosUvem(Long idExpediente) throws Exception;
+	
+	/**
 	 * Actualiza la reserva y el expediente al recibir un resol de devolucion
 	 * 
 	 * @param expedienteComercial

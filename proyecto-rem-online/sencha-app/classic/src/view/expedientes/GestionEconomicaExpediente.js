@@ -6,7 +6,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
     disableValidation: true,
     reference: 'gestionEconomicaExpediente',
     scrollable	: 'y',
-    layout: 'fit',
+    
 
     initComponent: function () {
         var me = this;
@@ -20,11 +20,17 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 			{
 				
             	xtype: 'fieldset',
-            	flex: 1,
-            	layout: 'fit',
             	title:  HreRem.i18n('title.horonarios'),
             	items : [
-            	
+            		{
+						xtype: 'button',
+						text: HreRem.i18n('btn.enviar.honorarios'),
+						handler: 'enviarHonorariosUvem',
+						margin: '10 40 5 10',
+						bind:{
+							hidden: '{!esCarteraBankia}'
+						}
+					},
                 	{
 					    xtype: 'gridBaseEditableRow',
 					    topBar: $AU.userHasFunction(['EDITAR_TAB_GESTION_ECONOMICA_EXPEDIENTES']),

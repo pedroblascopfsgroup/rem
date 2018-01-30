@@ -5644,11 +5644,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return false;
 	}
 	
-	@Override
-	public void enviarTitularesUvem(Long idExpediente) throws Exception {
+	private InstanciaDecisionDto creaInstanciaDecisionDto(Long idExpediente) throws Exception{
 		Long porcentajeImpuesto = null;
 		try {
-
 			ExpedienteComercial expediente = findOne(idExpediente);
 			if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getCondicionante())) {
 				if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
@@ -5656,18 +5654,30 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 			}
 			InstanciaDecisionDto instancia = expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto,null);
-			
-			instancia.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_TITULARES);
-			logger.info("------------ LLAMADA WS MOD3(TITULARES) -----------------");
-			uvemManagerApi.modificarInstanciaDecisionTres(instancia);
-
+			return instancia;
 		} catch (JsonViewerException jve) {
 			throw jve;
 		} catch (Exception e) {
 			logger.error("error en expedienteComercialManager", e);
 			throw e;
 		}
-
+	}
+	
+	@Override
+	public void enviarTitularesUvem(Long idExpediente) throws Exception {
+		InstanciaDecisionDto instancia = creaInstanciaDecisionDto(idExpediente);
+		instancia.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_TITULARES);
+		logger.info("------------ LLAMADA WS MOD3(TITULARES) -----------------");
+		uvemManagerApi.modificarInstanciaDecisionTres(instancia);
+	}
+	
+	
+	@Override
+	public void enviarHonorariosUvem(Long idExpediente) throws Exception {
+		InstanciaDecisionDto instancia = creaInstanciaDecisionDto(idExpediente);
+		instancia.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_HONORARIOS);
+		logger.info("------------ LLAMADA WS MOD3(HONORARIOS) -----------------");
+		uvemManagerApi.modificarInstanciaDecisionTres(instancia);
 	}
 	
 	@Override

@@ -384,6 +384,7 @@ public class RestLauncherController {
 			logger.error("Error en restLauncher", e);
 			SecurityContextHolder.clearContext();
 		}
+		restApi.sendResponse(response, model, null);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -399,6 +400,7 @@ public class RestLauncherController {
 			logger.error("Error en restLauncher", e);
 			SecurityContextHolder.clearContext();
 		}
+		restApi.sendResponse(response, model, null);
 	}
 
 	/*
@@ -420,6 +422,7 @@ public class RestLauncherController {
 			logger.error("Error en restLauncher", e);
 			SecurityContextHolder.clearContext();
 		}
+		restApi.sendResponse(response, model, null);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -435,6 +438,7 @@ public class RestLauncherController {
 			logger.error("Error en restLauncher", e);
 			SecurityContextHolder.clearContext();
 		}
+		restApi.sendResponse(response, model, null);
 	}
 
 	/*
@@ -456,6 +460,7 @@ public class RestLauncherController {
 			logger.error("Error en restLauncher", e);
 			SecurityContextHolder.clearContext();
 		}
+		restApi.sendResponse(response, model, null);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -471,6 +476,7 @@ public class RestLauncherController {
 			logger.error("Error en restLauncher", e);
 			SecurityContextHolder.clearContext();
 		}
+		restApi.sendResponse(response, model, null);
 	}
 
 	/*
@@ -492,6 +498,7 @@ public class RestLauncherController {
 			logger.error("Error en restLauncher", e);
 			SecurityContextHolder.clearContext();
 		}
+		restApi.sendResponse(response, model, null);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -507,6 +514,7 @@ public class RestLauncherController {
 			logger.error("Error en restLauncher", e);
 			SecurityContextHolder.clearContext();
 		}
+		restApi.sendResponse(response, model, null);
 	}
 
 	/*
@@ -528,6 +536,7 @@ public class RestLauncherController {
 			logger.error("Error en restLauncher", e);
 			SecurityContextHolder.clearContext();
 		}
+		restApi.sendResponse(response, model, null);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -543,6 +552,7 @@ public class RestLauncherController {
 			logger.error("Error en restLauncher", e);
 			SecurityContextHolder.clearContext();
 		}
+		restApi.sendResponse(response, model, null);
 	}
 
 }

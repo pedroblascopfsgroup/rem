@@ -18,10 +18,10 @@ public class CambiosList extends ArrayList<Object> {
 	private transient final Log logger = LogFactory.getLog(getClass());
 	private transient Paginacion paginacion = null;
 
-	public CambiosList(Integer tamanyoBloque){
+	public CambiosList(Integer tamanyoBloque) {
 		setPaginacion(new Paginacion(tamanyoBloque));
 	}
-	
+
 	public Paginacion getPaginacion() {
 		return paginacion;
 	}
@@ -29,24 +29,10 @@ public class CambiosList extends ArrayList<Object> {
 	public void setPaginacion(Paginacion paginacion) {
 		this.paginacion = paginacion;
 	}
-	
-	
-	
-	@Override
-	public boolean equals(Object o) {
-		return super.equals(o);
-	}
-
-	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
 
 	@Override
 	public int size() {
-		int i = super.size();
-		return i;
-		/*if (! this.isEmpty()) {
+		if (!this.isEmpty()) {
 			int count = 0;
 			for (Object o : this.toArray()) {
 				if (o instanceof WebcomRESTDto) {
@@ -58,13 +44,13 @@ public class CambiosList extends ArrayList<Object> {
 			return count;
 		} else {
 			return 0;
-		}*/
-		
+		}
+
 	}
 
 	private int calculateSize(WebcomRESTDto dto) {
 		List<Collection<Object>> nested = findNestedCollections(dto);
-		
+
 		if (!nested.isEmpty()) {
 			int count = 1;
 			for (Collection<Object> col : nested) {
@@ -81,7 +67,7 @@ public class CambiosList extends ArrayList<Object> {
 		ArrayList<Collection<Object>> collections = new ArrayList<Collection<Object>>();
 		for (Field field : dto.getClass().getDeclaredFields()) {
 			field.setAccessible(true);
-			if (field.isAnnotationPresent(NestedDto.class) && (Collection.class.isAssignableFrom(field.getType()))){
+			if (field.isAnnotationPresent(NestedDto.class) && (Collection.class.isAssignableFrom(field.getType()))) {
 				Collection<Object> value = null;
 				try {
 					value = (Collection<Object>) field.get(dto);

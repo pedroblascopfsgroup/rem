@@ -41,6 +41,7 @@ public class WebcomController {
 	 * @return
 	 * @throws ErrorServicioWebcom 
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String notificaciones(Long idUsuarioRemAccion, String descripcion, Long idActivoHaya, Long idNotificacionRem,
 			Long idNotificacionWebcom) throws ErrorServicioWebcom {
@@ -80,6 +81,7 @@ public class WebcomController {
 	 * @return
 	 * @throws ErrorServicioWebcom 
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String comisiones(Long idUsuarioRemAccion, Boolean esColaboracion, Boolean esDoblePrescripcion,
 			Boolean esFdv, Boolean esPrescripcion, Boolean esResponsable, Long idOfertaRem, Long idOfertaWebcom,
@@ -121,6 +123,7 @@ public class WebcomController {
 	 * @return
 	 * @throws ErrorServicioWebcom 
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String stock(Long idActivoHaya, String codTipoVia, String nombreCalle, String numeroCalle, String escalera,
 			String planta, String puerta, Long idUsuarioRemAccion) throws ErrorServicioWebcom {
@@ -159,6 +162,7 @@ public class WebcomController {
 	 * @return
 	 * @throws ErrorServicioWebcom 
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String ofertas(Long idUsuarioRemAccion, Long idOfertaWebcom, Long idOfertaRem, Long idActivoHaya,
 			String codEstadoOferta, String codEstadoExpediente, Boolean vendido) throws ErrorServicioWebcom {
@@ -167,7 +171,6 @@ public class WebcomController {
 		dto.setIdUsuarioRemAccion(LongDataType.longDataType(idUsuarioRemAccion));
 		dto.setIdOfertaWebcom(LongDataType.longDataType(idOfertaWebcom));
 		dto.setIdOfertaRem(LongDataType.longDataType(idOfertaRem));
-		dto.setIdActivoHaya(LongDataType.longDataType(idActivoHaya));
 		dto.setCodEstadoOferta(StringDataType.stringDataType(codEstadoOferta));
 		dto.setCodEstadoExpediente(StringDataType.stringDataType(codEstadoExpediente));
 		dto.setVendido(BooleanDataType.booleanDataType(vendido));
@@ -192,6 +195,7 @@ public class WebcomController {
 	 * @return
 	 * @throws ErrorServicioWebcom 
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String trabajos(Long idUsuarioRemAccion, Long idTrabajoWebcom, Long idTrabajoRem, String codEstadoTrabajo,
 			String motivoRechazo) throws ErrorServicioWebcom {

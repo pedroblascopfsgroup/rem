@@ -74,7 +74,8 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 		}
 	}
 
-	public void enviaInformacionCompleta(DetectorCambiosBD<?> handler) throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
+	public void enviaInformacionCompleta(DetectorCambiosBD<?> handler)
+			throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		this.detectaCambios(handler, TIPO_ENVIO.COMPLETO);
 	}
 
@@ -92,26 +93,29 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public void detectaCambios(DetectorCambiosBD handlerToExecute) throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
+	public void detectaCambios(DetectorCambiosBD handlerToExecute)
+			throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		this.detectaCambios(handlerToExecute, TIPO_ENVIO.CAMBIOS);
 	}
-	
+
 	@SuppressWarnings("rawtypes")
-	public void detectaCambios(DetectorCambiosBD handlerToExecute,Boolean optimizado) throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
-		((InfoTablasBD)handlerToExecute).setSoloCambiosMarcados(optimizado);
+	public void detectaCambios(DetectorCambiosBD handlerToExecute, Boolean optimizado)
+			throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
+		((InfoTablasBD) handlerToExecute).setSoloCambiosMarcados(optimizado);
 		this.detectaCambios(handlerToExecute, TIPO_ENVIO.CAMBIOS);
-		((InfoTablasBD)handlerToExecute).setSoloCambiosMarcados(null);
+		((InfoTablasBD) handlerToExecute).setSoloCambiosMarcados(null);
 	}
 
 	/**
 	 * Inicia la detección de cambios en BD.
 	 * 
 	 * @param class1
-	 * @throws ErrorServicioEnEjecucion 
+	 * @throws ErrorServicioEnEjecucion
 	 * @throws Exception
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void detectaCambios(DetectorCambiosBD handlerToExecute, TIPO_ENVIO tipoEnvio) throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
+	public void detectaCambios(DetectorCambiosBD handlerToExecute, TIPO_ENVIO tipoEnvio)
+			throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		if (running) {
 			throw new ErrorServicioEnEjecucion("El servicio ya se esta ejecutando");
 		}
@@ -171,7 +175,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 							CambiosList listPendientes = null;
 							CambiosList listPendientesTodosBloques = new CambiosList(tamanyoBloque);
 							listPendientes = new CambiosList(tamanyoBloque);
-							
+
 							RestLlamada registro = new RestLlamada();
 							Date fechaEjecucion = new Date();
 							handler.actualizarVistaMaterializada(registro);
@@ -184,7 +188,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 								try {
 									if (tipoEnvio.equals(TIPO_ENVIO.CAMBIOS)) {
 										listPendientes = handler.listPendientes(control, registro, listPendientes);
-										if(handler.procesarSoloCambiosMarcados()){
+										if (handler.procesarSoloCambiosMarcados()) {
 											listPendientesTodosBloques.addAll(listPendientes);
 										}
 									} else {
@@ -202,18 +206,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 									}
 									ejecutaTarea(handler, listPendientes, control, registro);
 									// pasamos de bloque
-									if (listPendientes != null
-											&& listPendientes.getPaginacion().getTamanyoBloque() != null) {
-										if (listPendientes.size() == listPendientes.getPaginacion()
-												.getTamanyoBloque()) {
-											listPendientes.getPaginacion().setHasMore(true);
-											listPendientes.getPaginacion().setNumeroBloque(
-													listPendientes.getPaginacion().getNumeroBloque() + 1);
-
-										} else {
-											listPendientes.getPaginacion().setHasMore(false);
-										}
-									}
+									pasarDeBloque(listPendientes);
 									marcarComoEnviado = true;
 									contError = 0;
 									logger.trace(
@@ -266,15 +259,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 									|| (contError > 0 && contError < MAXIMO_INTENTOS));
 
 							if (marcarComoEnviado) {
-								logger.trace(handler.getClass().getName()
-										+ ": marcando los registros de la BD como enviados");
-								if(!handler.procesarSoloCambiosMarcados()){
-									handler.marcaComoEnviados(control, llamadas);
-								}else{
-									handler.marcarComoEnviadosMarcadosComun(listPendientesTodosBloques, control);
-									handler.marcarComoEnviadosMarcadosEspecifico(fechaEjecucion);
-								}
-								
+								marcarComoEnviado(handler, control, llamadas, listPendientesTodosBloques, fechaEjecucion);
 							}
 						}
 					}
@@ -287,13 +272,52 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			}
 
 		} catch (Exception e) {
-			logger.error(e.getMessage(),e);
+			logger.error(e.getMessage(), e);
 			throw new ErrorServicioWebcom(e.getMessage());
 		} finally {
 			running = false;
 			logger.debug("[DETECCIÓN CAMBIOS] Fin [it=" + iteracion + "]");
 		}
 
+	}
+
+	/**
+	 * Pasa al siguiente bloque, si procede
+	 * 
+	 * @param listPendientes
+	 */
+	private void pasarDeBloque(CambiosList listPendientes) {
+		if (listPendientes != null && listPendientes.getPaginacion().getTamanyoBloque() != null) {
+			if (listPendientes.getPaginacion().getTotalFilas()
+					.equals(listPendientes.getPaginacion().getTamanyoBloque())) {
+				listPendientes.getPaginacion().setHasMore(true);
+				listPendientes.getPaginacion().setNumeroBloque(listPendientes.getPaginacion().getNumeroBloque() + 1);
+
+			} else {
+				listPendientes.getPaginacion().setHasMore(false);
+			}
+		}
+	}
+
+	/**
+	 * Marcar los registros como enviados
+	 * @param handler
+	 * @param control
+	 * @param llamadas
+	 * @param listPendientesTodosBloques
+	 * @param fechaEjecucion
+	 * @throws Exception
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void marcarComoEnviado(DetectorCambiosBD handler, Class control, ArrayList<RestLlamada> llamadas,
+			CambiosList listPendientesTodosBloques, Date fechaEjecucion) throws Exception {
+		logger.trace(handler.getClass().getName() + ": marcando los registros de la BD como enviados");
+		if (!handler.procesarSoloCambiosMarcados()) {
+			handler.marcaComoEnviados(control, llamadas);
+		} else {
+			handler.marcarComoEnviadosMarcadosComun(listPendientesTodosBloques, control);
+			handler.marcarComoEnviadosMarcadosEspecifico(fechaEjecucion);
+		}
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

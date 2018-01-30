@@ -10,16 +10,13 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.dao.SessionFactoryFacade;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
@@ -29,7 +26,6 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Neste
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
-import es.pfsgroup.plugin.rem.restclient.webcom.definition.ConstantesGenericas;
 
 /**
  * Esta clase es un DAO genéfico para obtener registros que han cambiado en BD.
@@ -67,6 +63,8 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 	public static final String WHERE = " WHERE ";
 
+	public static final String OR = " OR ";
+
 	public static final String IN = " IN ";
 
 	public static final String FROM = " FROM ";
@@ -81,8 +79,6 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 	public static final String SEPARADOR_COLUMNAS = ",";
 
-	private static final String REST_USER = "REST-USER";
-
 	private static final String MARCADOR_CAMBIOS = "_M";
 
 	private final Log logger = LogFactory.getLog(getClass());
@@ -92,8 +88,6 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 	@Autowired
 	private HibernateExecutionFacade queryExecutor;
-
-	private Long restUserId;
 
 	@Resource
 	private Properties appProperties;
@@ -120,7 +114,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	 * @return
 	 */
 	public CambiosList listCambios(Class<?> dtoClass, InfoTablasBD infoTablas, RestLlamada registro,
-			CambiosList cambios) {
+			CambiosList cambios) throws CambiosBDDaoError {
 		if (dtoClass == null) {
 			throw new IllegalArgumentException(DTO_CLASS_NO_PUEDE_SER_NULL);
 		}
@@ -141,77 +135,46 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			if (infoTablas.procesarSoloCambiosMarcados()) {
 				nombreVistaDatosActuales = nombreVistaDatosActuales.concat(MARCADOR_CAMBIOS);
 			}
-			String columIdUsuarioRemAccion = field2column(ConstantesGenericas.ID_USUARIO_REM_ACCION);
-			String selectFromDatosActuales = SELECT + columns + FROM + nombreVistaDatosActuales; 
-			//HREOS-3505 - Añadir estas lineas comentadas si se quiere filtrar por REST-USER
-					//+ WHERE
-					//+ columIdUsuarioRemAccion + " <> " + getIdRestUser(session);
+
+			String selectFromDatosActuales = SELECT + columns + FROM + nombreVistaDatosActuales;
 			String selectFromDatosHistoricos = SELECT + columns + FROM + infoTablas.nombreTablaDatosHistoricos();
 			String queryString = selectFromDatosActuales + MINUS + selectFromDatosHistoricos;
 
-			if (cambios.getPaginacion().getTamanyoBloque() != null) {
-				queryString = "SELECT " + columns + " FROM (SELECT ROWNUM AS CONTADOR,CONSULTA.* FROM(" + queryString
-						+ ") CONSULTA) WHERE CONTADOR >"
-						+ String.valueOf(
-								cambios.getPaginacion().getTamanyoBloque() * cambios.getPaginacion().getNumeroBloque())
-						+ " AND CONTADOR <" + String.valueOf(((cambios.getPaginacion().getNumeroBloque() + 1)
-								* cambios.getPaginacion().getTamanyoBloque()) + 1);
-			}
+			queryString = this.paginarConsulta(cambios, columns, queryString);
 
 			List<Object[]> resultado = null;
 
-			try {
-				if (logger.isDebugEnabled()) {
-					logger.trace("Ejecutando: " + queryString);
-				}
-				resultado = queryExecutor.sqlRunList(session, queryString);
-			} catch (Throwable t) {
-				throw new CambiosBDDaoError("Ha ocurrido un error al obtener los registros que difieren", queryString,
-						infoTablas, t);
-			}
+			resultado = queryExecutor.sqlRunList(session, queryString, infoTablas);
 
 			if (resultado != null && resultado.size() > 0) {
-				String selectDatoHistorico = null;
-				int posPk = posicionColumna(columns, infoTablas.clavePrimaria());
-				try {
-					for (Object[] r : resultado) {
-						CambioBD cambio = new CambioBD(fields);
-						cambio.setDatosActuales(r);
-						selectDatoHistorico = selectFromDatosHistoricos + WHERE + infoTablas.clavePrimaria() + " = "
-								+ r[posPk];
-						if (logger.isDebugEnabled()) {
-							logger.trace("Ejecutando: " + selectDatoHistorico);
-						}
-						Object[] historico = queryExecutor.sqlRunUniqueResult(session, selectDatoHistorico);
-						if (historico != null) {
-							cambio.setDatosHistoricos(historico);
-						}
-						if(cambio.getCambios()!= null && cambio.getCambios().size() > 0){
-							cambios.add(cambio);
-						}
-
-					}
-				} catch (Throwable t) {
-					throw new CambiosBDDaoError("Ha ocurrido un error al obtener el registro en 'datos historicos'",
-							selectDatoHistorico, infoTablas, t);
+				if (cambios.getPaginacion().getTamanyoBloque() != null) {
+					cambios.getPaginacion().setTotalFilas(resultado.size());
 				}
+				List<Object[]> historicos = obtenerHistoricosBloque(session, columns, infoTablas, resultado);
+				int posPk = posicionColumna(columns, infoTablas.clavePrimaria());
+				for (Object[] r : resultado) {
+					CambioBD cambio = new CambioBD(fields);
+					cambio.setDatosActuales(r);
+					Object[] historico = obtenerRegistroHistorico(historicos, posPk,  r[posPk]);
+					if (historico != null) {
+						cambio.setDatosHistoricos(historico);
+					}
+					if (cambio.getCambios() != null && cambio.getCambios().size() > 0) {
+						cambios.add(cambio);
+					}
+
+				}
+
 			} else {
 				if (cambios.getPaginacion().getTamanyoBloque() != null) {
 					cambios.getPaginacion().setHasMore(false);
 				}
 			}
 		} finally {
-			if (logger.isDebugEnabled()) {
-				logger.trace("Cerrando sesión");
-			}
-			if (session != null) {
-				if (session.isOpen()) {
-					session.close();
-				}
-			}
 			if (registro != null) {
 				registro.logTiempoSelectCambios();
 			}
+			cerrarSesionBbdd(session);
 		}
 
 		return cambios;
@@ -219,7 +182,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	}
 
 	public CambiosList listDatosActuales(Class<?> dtoClass, InfoTablasBD infoTablas, RestLlamada registro,
-			CambiosList cambios) {
+			CambiosList cambios) throws CambiosBDDaoError {
 		if (dtoClass == null) {
 			throw new IllegalArgumentException(DTO_CLASS_NO_PUEDE_SER_NULL);
 		}
@@ -236,50 +199,28 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		String columns = columns4Select(fields, infoTablas.clavePrimaria());
 
 		String queryString = SELECT + columns + FROM + infoTablas.nombreVistaDatosActuales();
-		if (cambios.getPaginacion().getTamanyoBloque() != null) {
-			queryString = "SELECT " + columns + " FROM (SELECT ROWNUM AS CONTADOR,CONSULTA.* FROM(" + queryString
-					+ ") CONSULTA) WHERE CONTADOR >"
-					+ String.valueOf(
-							cambios.getPaginacion().getTamanyoBloque() * cambios.getPaginacion().getNumeroBloque())
-					+ " AND CONTADOR <" + String.valueOf(((cambios.getPaginacion().getNumeroBloque() + 1)
-							* cambios.getPaginacion().getTamanyoBloque()) + 1);
-		}
+		queryString = this.paginarConsulta(cambios, columns, queryString);
 		try {
 			List<Object[]> resultado = null;
 
-			try {
-				if (logger.isDebugEnabled()) {
-					logger.trace("Ejecutando: " + queryString);
+			resultado = queryExecutor.sqlRunList(session, queryString, infoTablas);
+			if (resultado != null && resultado.size() > 0) {
+				for (Object[] r : resultado) {
+					CambioBD cambio = new CambioBD(fields);
+					cambio.setDatosActuales(r);
+					cambios.add(cambio);
 				}
-				resultado = queryExecutor.sqlRunList(session, queryString);
-				if (resultado != null && resultado.size() > 0) {
-					for (Object[] r : resultado) {
-						CambioBD cambio = new CambioBD(fields);
-						cambio.setDatosActuales(r);
-						cambios.add(cambio);
-					}
-				} else {
-					if (cambios.getPaginacion().getTamanyoBloque() != null) {
-						cambios.getPaginacion().setHasMore(false);
-					}
+			} else {
+				if (cambios.getPaginacion().getTamanyoBloque() != null) {
+					cambios.getPaginacion().setHasMore(false);
 				}
-			} catch (Throwable t) {
-				throw new CambiosBDDaoError("Ha ocurrido un error al obtener los registros que difieren", queryString,
-						infoTablas, t);
 			}
 
 		} finally {
-			if (logger.isDebugEnabled()) {
-				logger.trace("Cerrando sesión");
-			}
-			if (session != null) {
-				if (session.isOpen()) {
-					session.close();
-				}
-			}
 			if (registro != null) {
 				registro.logTiempoSelectTodosDatos();
 			}
+			cerrarSesionBbdd(session);
 		}
 
 		return cambios;
@@ -310,7 +251,8 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	 *            ejecución. Puede ser NULL si no queremos dejar ninguna traza.
 	 */
 	@SuppressWarnings("rawtypes")
-	public void marcaComoEnviados(Class<?> dtoClass, DetectorCambiosBD infoTablas, List<RestLlamada> registro) {
+	public void marcaComoEnviados(Class<?> dtoClass, DetectorCambiosBD infoTablas, List<RestLlamada> registro)
+			throws CambiosBDDaoError {
 		long startTime = System.currentTimeMillis();
 
 		if (dtoClass == null) {
@@ -331,36 +273,20 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		Transaction tx = session.beginTransaction();
 		try {
 			String queryDelete = "TRUNCATE TABLE " + infoTablas.nombreTablaDatosHistoricos();
-			try {
-				if (logger.isDebugEnabled()) {
-					logger.trace("Ejecutando: " + queryDelete);
+			queryExecutor.sqlRunExecuteUpdate(session, queryDelete, infoTablas);
+			if (registro != null) {
+				for (RestLlamada llamada : registro) {
+					llamada.logTiempoBorrarHistorico();
 				}
-				queryExecutor.sqlRunExecuteUpdate(session, queryDelete);
-				if (registro != null) {
-					for (RestLlamada llamada : registro) {
-						llamada.logTiempoBorrarHistorico();
-					}
-				}
-			} catch (Throwable t) {
-				throw new CambiosBDDaoError("Ha ocurrido un error al borrar la tabla de 'datos históricos'",
-						queryDelete, infoTablas, t);
 			}
 
 			String queryInsert = "INSERT INTO " + infoTablas.nombreTablaDatosHistoricos() + "(" + columns + ")" + SELECT
 					+ columns + FROM + infoTablas.nombreVistaDatosActuales();
-			try {
-				if (logger.isDebugEnabled()) {
-					logger.trace("Ejecutando: " + queryInsert);
+			queryExecutor.sqlRunExecuteUpdate(session, queryInsert, infoTablas);
+			if (registro != null) {
+				for (RestLlamada llamada : registro) {
+					llamada.logTiempoInsertarHistorico();
 				}
-				queryExecutor.sqlRunExecuteUpdate(session, queryInsert);
-				if (registro != null) {
-					for (RestLlamada llamada : registro) {
-						llamada.logTiempoInsertarHistorico();
-					}
-				}
-			} catch (Throwable t) {
-				throw new CambiosBDDaoError("Ha ocurrido un error al insertar registros en 'datos históricos'",
-						queryInsert, infoTablas, t);
 			}
 			if (logger.isDebugEnabled()) {
 				logger.trace("Comiteando transacción");
@@ -372,14 +298,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			tx.rollback();
 			throw e;
 		} finally {
-			if (logger.isDebugEnabled()) {
-				logger.trace("Cerrando sesión");
-			}
-			if (session != null) {
-				if (session.isOpen()) {
-					session.close();
-				}
-			}
+			cerrarSesionBbdd(session);
 		}
 
 		if (logger.isDebugEnabled()) {
@@ -387,19 +306,12 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		}
 	}
 
-	public void excuteQuery(String query) throws Exception {
+	public void excuteQuery(String query) throws CambiosBDDaoError {
 		Session session = this.sesionFactoryFacade.getSession(this);
 		try {
 			queryExecutor.sqlRunExecuteUpdate(session, query);
 		} finally {
-			if (logger.isDebugEnabled()) {
-				logger.trace("Cerrando sesión");
-			}
-			if (session != null) {
-				if (session.isOpen()) {
-					session.close();
-				}
-			}
+			cerrarSesionBbdd(session);
 		}
 	}
 
@@ -423,17 +335,17 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 				if (restApi.getValue(cambio, dtoClass, dtoPk) == null) {
 					continue;
 				}
-				
+
 				String id = null;
-				if(restApi.getValue(cambio, dtoClass, dtoPk) instanceof LongDataType){
+				if (restApi.getValue(cambio, dtoClass, dtoPk) instanceof LongDataType) {
 					Long idAux = ((LongDataType) restApi.getValue(cambio, dtoClass, dtoPk)).getValue();
 					id = String.valueOf(idAux);
-				} else if(restApi.getValue(cambio, dtoClass, dtoPk) instanceof StringDataType){
+				} else if (restApi.getValue(cambio, dtoClass, dtoPk) instanceof StringDataType) {
 					id = ((StringDataType) restApi.getValue(cambio, dtoClass, dtoPk)).getValue();
-				} else{
+				} else {
 					throw new Exception("La clave primaria ha de ser LongDataType O StringDataType");
 				}
-				
+
 				if (pkMdodificadas != null && !pkMdodificadas.equals("(")) {
 					pkMdodificadas = pkMdodificadas.concat(",");
 				}
@@ -453,7 +365,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 					String querydelete = "DELETE FROM " + infoTablas.nombreTablaDatosHistoricos() + WHERE
 							+ infoTablas.clavePrimariaJson() + IN + pkMdodificadas;
 
-					queryExecutor.sqlRunExecuteUpdate(session, querydelete);
+					queryExecutor.sqlRunExecuteUpdate(session, querydelete, infoTablas);
 
 					// insertamos en el historico las filas modificada
 					String queryInsert = "INSERT INTO " + infoTablas.nombreTablaDatosHistoricos() + "(" + columns + ")"
@@ -469,14 +381,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 					tx.rollback();
 					throw e;
 				} finally {
-					if (logger.isDebugEnabled()) {
-						logger.trace("Cerrando sesión");
-					}
-					if (session != null) {
-						if (session.isOpen()) {
-							session.close();
-						}
-					}
+					cerrarSesionBbdd(session);
 				}
 			}
 		}
@@ -581,37 +486,6 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		super.setSessionFactory(entitySessionFactory);
 	}
 
-	private Long getIdRestUser(Session session) {
-		if (logger.isDebugEnabled()) {
-			logger.trace("Obteniendo el ID para el usuario: " + REST_USER);
-		}
-		if (restUserId == null) {
-			try {
-				if (logger.isDebugEnabled()) {
-					logger.trace("Buscando " + REST_USER + " con criteria");
-				}
-				Criteria criteria = queryExecutor.createCriteria(session, Usuario.class)
-						.add(Restrictions.eq("username", REST_USER));
-				Usuario restUser = (Usuario) queryExecutor.criteriaRunUniqueResult(criteria);
-				if (restUser == null) {
-					throw new CambiosBDDaoError("No se ha podido obtener el usuario: " + REST_USER);
-				}
-				if (logger.isDebugEnabled()) {
-					logger.trace("Guardando restUserId en caché");
-				}
-				this.restUserId = restUser.getId();
-
-			} catch (Throwable e) {
-				throw new CambiosBDDaoError("No se ha podido obtener el usuario: " + REST_USER, e);
-			}
-		}
-		if (logger.isDebugEnabled()) {
-			logger.trace("Devolviendo restUserId=" + this.restUserId + " de la caché");
-		}
-		return this.restUserId;
-
-	}
-
 	/**
 	 * Refresca la vista materializada
 	 * 
@@ -644,15 +518,86 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			String sqlRefreshViews = "BEGIN DBMS_SNAPSHOT.REFRESH( '" + nombreVista
 					+ "','C',atomic_refresh=>FALSE); end;";
 			queryExecutor.sqlRunExecuteUpdate(session, sqlRefreshViews);
-		} catch (Exception e) {
-			throw new CambiosBDDaoError("No se ha podido actualizar la vista materializada " + nombreVista);
 		} finally {
-			if (session != null) {
-				if (session.isOpen()) {
-					session.close();
-				}
+			cerrarSesionBbdd(session);
+		}
+	}
+
+	private String paginarConsulta(CambiosList cambios, String columns, String queryString) {
+		if (cambios.getPaginacion().getTamanyoBloque() != null) {
+			queryString = "SELECT " + columns + " FROM (SELECT ROWNUM AS CONTADOR,CONSULTA.* FROM(" + queryString
+					+ ") CONSULTA) WHERE CONTADOR >"
+					+ String.valueOf(
+							cambios.getPaginacion().getTamanyoBloque() * cambios.getPaginacion().getNumeroBloque())
+					+ " AND CONTADOR <" + String.valueOf(((cambios.getPaginacion().getNumeroBloque() + 1)
+							* cambios.getPaginacion().getTamanyoBloque()) + 1);
+		}
+		return queryString;
+	}
+
+	private void cerrarSesionBbdd(Session session) {
+		if (logger.isDebugEnabled()) {
+			logger.trace("Cerrando sesión");
+		}
+		if (session != null) {
+			if (session.isOpen()) {
+				session.close();
 			}
 		}
+	}
+	
+	/**
+	 * Obtiene el historico del bloque
+	 * 
+	 * @param session
+	 * @param columns
+	 * @param infoTablas
+	 * @param resultado
+	 * @return
+	 * @throws CambiosBDDaoError
+	 */
+	private List<Object[]> obtenerHistoricosBloque(Session session, String columns, InfoTablasBD infoTablas,
+			List<Object[]> resultado) throws CambiosBDDaoError{
+		List<Object[]> historicos = null;
+
+		if (resultado != null && resultado.size() > 0) {
+			String selectDatoHistorico = SELECT + columns + FROM + infoTablas.nombreTablaDatosHistoricos() + WHERE;
+			int posPk = posicionColumna(columns, infoTablas.clavePrimaria());
+			boolean primeraIteracion = true;
+			for (Object[] r : resultado) {
+				String condicion = infoTablas.clavePrimaria() + " = " + r[posPk];
+				if (!primeraIteracion) {
+					selectDatoHistorico = selectDatoHistorico.concat(OR);
+				} else {
+					primeraIteracion = false;
+				}
+				selectDatoHistorico = selectDatoHistorico.concat(condicion);
+			}
+			historicos = queryExecutor.sqlRunList(session, selectDatoHistorico, infoTablas);
+			
+		}
+
+		return historicos;
+	}
+	
+	/**
+	 * Obtiene un registro del bloque de historicos
+	 * 
+	 * @param historicos
+	 * @param posPk
+	 * @param calveaBuscar
+	 * @return
+	 */
+	private Object[] obtenerRegistroHistorico(List<Object[]> historicos,int posPk,Object calveaBuscar){
+		if (historicos != null && historicos.size() > 0) {
+			for (Object[] r : historicos) {
+				if(calveaBuscar.equals(r[posPk])){
+					return r;
+				}
+			}
+			
+		}
+		return null;
 	}
 
 }

@@ -10,7 +10,13 @@ public class CambiosBDDaoError extends RuntimeException {
 		super(message + "-> QUERY ERROR [ " + queryString + "] ", t);
 		this.infoTablas = infoTablas;
 	}
-
+	
+	public CambiosBDDaoError(String message, String queryString, Throwable t) {
+		super(message + "-> QUERY ERROR [ " + queryString + "] ", t);
+		this.infoTablas = null;
+	}
+	
+	
 	public CambiosBDDaoError(String string) {
 		super(string);
 	}
@@ -34,7 +40,13 @@ public class CambiosBDDaoError extends RuntimeException {
 
 	@Override
 	public String getMessage() {
-		return super.getMessage() + " " + stringIze(infoTablas);
+		String result = null;
+		if(this.infoTablas!= null){
+			result = super.getMessage() + " " + stringIze(infoTablas);
+		}else{
+			result = super.getMessage();
+		}
+		return result;
 	}
 
 }

@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface NestedDto {
 
+	@SuppressWarnings("rawtypes")
 	Class type();
 
 	String groupBy();

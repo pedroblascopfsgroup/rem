@@ -5,7 +5,7 @@
 --## FECHA_CREACION=20180130
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.12
---## INCIDENCIA_LINK=REMNIVDOS-3601
+--## INCIDENCIA_LINK=REMNIVDOS-3675
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Creacion de Usuarios REM
@@ -58,12 +58,13 @@ DECLARE
 	T_TIPO_DATA( 'fsamper' ,'' ,''  ,''  ,''  , ''  ,'HAYAGESTCOM'  ,''  ,'REMGCOM'),
 	T_TIPO_DATA( 'ralvarez' ,'' ,''  ,''  ,''  , ''  ,'HAYASUPACT'  ,''  ,'REMSUPACT'),
 	T_TIPO_DATA( 'ralvarez' ,'' ,''  ,''  ,''  , ''  ,'HAYASUPCOM'  ,''  ,'REMSUPCOM'),
-	T_TIPO_DATA( 'fmartinc' ,'Francisco Javier ' ,'Martin '  ,'Calvo'  ,'fmartinc@haya.es'  , ''  ,'HAYASUPACT'  ,''  ,'REMSUPACT'),
+	T_TIPO_DATA( 'fmartinc' ,'Francisco Javier ' ,'Martin '  ,'Calvo'  ,'fmartinc@haya.es'  , 'XBZSIWUFRN'  ,'HAYASUPACT'  ,''  ,'REMSUPACT'),
 	T_TIPO_DATA( 'fmartinc' ,'Francisco Javier ' ,'Martin '  ,'Calvo'  ,'fmartinc@haya.es'  , ''  ,'HAYASUPCOM'  ,''  ,'REMSUPCOM'),
-	T_TIPO_DATA( 'ddelcura' ,'David ' ,'Del Cura '  ,'Calle'  ,'ddelcura@externos.haya.es'  , ''  ,'HAYASUPACT'  ,''  ,'REMSUPACT'),
+	T_TIPO_DATA( 'ddelcura' ,'David ' ,'Del Cura '  ,'Calle'  ,'ddelcura@externos.haya.es'  , 'BMBUCBLDFO'  ,'HAYASUPACT'  ,''  ,'REMSUPACT'),
 	T_TIPO_DATA( 'ddelcura' ,'David ' ,'Del Cura '  ,'Calle'  ,'ddelcura@externos.haya.es'  , ''  ,'HAYASUPCOM'  ,''  ,'REMSUPCOM'),
 	T_TIPO_DATA( 'psm' ,'' ,''  ,''  ,''  , ''  ,'HAYASUPCOM'  ,''  ,'REMSUPCOM'),
 	T_TIPO_DATA( 'rsanchez' ,'' ,''  ,''  ,''  , ''  ,'HAYASUPCOM'  ,''  ,'REMSUPCOM')
+
 
 
   ); 

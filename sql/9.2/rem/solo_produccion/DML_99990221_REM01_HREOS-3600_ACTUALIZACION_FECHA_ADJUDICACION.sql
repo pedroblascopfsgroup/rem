@@ -1,7 +1,7 @@
 /*
 --##########################################
 --## AUTOR=Dean Ibañez Viño
---## FECHA_CREACION=20180125
+--## FECHA_CREACION=20180129
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HRNIVDOS-5827
@@ -37,33 +37,30 @@ BEGIN
     
     V_SQL := 'merge into '||V_ESQUEMA||'.ACT_AJD_ADJJUDICIAL ajd
     using
-    (select num_act, fecha_adjudicacion
-    from PFSREM.TMP_ACT_FEC_ADJ tmp
-    inner join '||V_ESQUEMA||'.act_activo act
-    on tmp.num_act = act.ACT_NUM_ACTIVO ) tmp
-    on (ajd.act_id = tmp.num_act)
+    (select act.act_id, tmp.fecha_adjudicacion
+    from '||V_ESQUEMA||'.TMP_ACT_FEC_ADJ tmp
+    inner join '||V_ESQUEMA||'.act_activo act on (tmp.num_act = act.ACT_NUM_ACTIVO )) mrg
+    on (ajd.act_id = mrg.act_id)
     when matched then update
-    set ajd.AJD_FECHA_ADJUDICACION = tmp.fecha_adjudicacion';
+    set ajd.AJD_FECHA_ADJUDICACION = TO_DATE(mrg.fecha_adjudicacion,''YYYYMMDD'')';
     
     EXECUTE IMMEDIATE V_SQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] ACTUALIZADO DEL '||V_ESQUEMA||'.ACT_AJD_ADJJUDICIAL: '|| sql%rowcount ||' registros');
     
     -------------------------------------------------------------------------------------------------------------------
     
-    V_SQL := 'merge into '||V_ESQUEMA||'.ACT_ADN_ADJNOJUDICIAL ajd
+    /*V_SQL := 'merge into '||V_ESQUEMA||'.ACT_ADN_ADJNOJUDICIAL ajd
     using
-    (select num_act, fecha_adjudicacion_firme
-    from PFSREM.TMP_ACT_FEC_ADJ tmp
-    inner join '||V_ESQUEMA||'.act_activo act
-    on tmp.num_act = act.ACT_NUM_ACTIVO ) tmp
-    on (ajd.act_id = tmp.num_act)
+    (select act.act_id, tmp.fecha_adjudicacion_firme
+    from '||V_ESQUEMA||'.TMP_ACT_FEC_ADJ tmp
+    inner join '||V_ESQUEMA||'.act_activo act on (tmp.num_act = act.ACT_NUM_ACTIVO )) mrg
+    on (ajd.act_id = mrg.act_id)
     when matched then update
-    set ajd.ADN_FECHA_TITULO = tmp.fecha_adjudicacion_firme'; 
+    set ajd.ADN_FECHA_TITULO = TO_DATE(mrg.fecha_adjudicacion_firme,''YYYYMMDD'')'; 
     
     EXECUTE IMMEDIATE V_SQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] ACTUALIZADO DEL '||V_ESQUEMA||'.ACT_ADNADJNOJUDICIAL: '|| sql%rowcount ||' registros');
-
-    
+*/
 
     DBMS_OUTPUT.PUT_LINE('[FIN] ...');
     

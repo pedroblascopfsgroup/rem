@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=Sergio Belenguer Gadea
---## FECHA_CREACION=20180125
+--## FECHA_CREACION=20180130
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=HREOS-3391
+--## INCIDENCIA_LINK=HREOS-3731
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Modificar tabla
@@ -22,7 +22,7 @@ SET DEFINE OFF;
 
 DECLARE
 
-  V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01';-- '#ESQUEMA#'; -- Configuracion Esquema
+  V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#';-- '#ESQUEMA#'; -- Configuracion Esquema
   V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#';-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
   ERR_NUM NUMBER;-- Numero de errores
   ERR_MSG VARCHAR2(2048);-- Mensaje de error
@@ -40,12 +40,33 @@ BEGIN
     	DBMS_OUTPUT.PUT_LINE('[INICIO] Añadir columna a la tabla '||V_ESQUEMA||'.'||V_TABLA_REP||'.');
    	V_MSQL := 'select COUNT(1) from all_tab_columns where TABLE_NAME='''||V_TABLA_REP||''' AND COLUMN_NAME=''PVC_ID''';
     	EXECUTE IMMEDIATE V_MSQL INTO COUNTER;
-	DBMS_OUTPUT.PUT_LINE(COUNTER);
     	IF (COUNTER = 0) THEN
     		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA_REP||'
            		ADD PVC_ID NUMBER(16,0)';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('Tabla '||V_TABLA_REP||' modificada.');
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('YA EXISTE en la tabla '||V_TABLA_REP||' la columna PVC_ID');
+	END IF;
+	V_MSQL := 'select COUNT(1) from all_tab_columns where TABLE_NAME='''||V_TABLA_REP||''' AND COLUMN_NAME=''SOLOTRAMITE''';
+    	EXECUTE IMMEDIATE V_MSQL INTO COUNTER;
+    	IF (COUNTER = 0) THEN
+    		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA_REP||'
+			ADD SOLOTRAMITE NUMBER(1,0)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('Tabla '||V_TABLA_REP||' modificada.');
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('YA EXISTE en la tabla '||V_TABLA_REP||' la columna SOLOTRAMITE');
+	END IF;
+	V_MSQL := 'select COUNT(1) from all_tab_columns where TABLE_NAME='''||V_TABLA_REP||''' AND COLUMN_NAME=''USU_ID''';
+    	EXECUTE IMMEDIATE V_MSQL INTO COUNTER;
+    	IF (COUNTER = 0) THEN
+    		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA_REP||'           		
+			ADD USU_ID NUMBER(16,0)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('Tabla '||V_TABLA_REP||' modificada.');
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('YA EXISTE en la tabla '||V_TABLA_REP||' la columna USU_ID');
 	END IF;
 	
     END IF;

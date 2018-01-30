@@ -1994,23 +1994,28 @@ public class ActivoAdapter {
 		TipoProcedimiento tprc = tipoProcedimiento.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_PUBLICACION);// Trámite
 		Activo activo =	activoApi.get(idActivo);															// de
 																		// publicación
-
-		ActivoTramite tramite = jbpmActivoTramiteManagerApi.creaActivoTramite(tprc, activoApi.get(idActivo));
+		Long idBpm = 0L;
+		Boolean tieneTramiteVigente = activoTramiteApi.tieneTramiteVigenteByActivoYProcedimiento(activo.getId(), tprc.getCodigo());
 		
-		//Creación registro historial comercial con estado informe emision
+		if(!tieneTramiteVigente){
+			ActivoTramite tramite = jbpmActivoTramiteManagerApi.creaActivoTramite(tprc, activoApi.get(idActivo));
+			idBpm = jbpmActivoTramiteManagerApi.lanzaBPMAsociadoATramite(tramite.getId());
+		}
+		crearRegistroHistorialComercialConCodigoEstado(activo, DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_EMISION);
+
+		return idBpm;
+	}
+	
+	public void crearRegistroHistorialComercialConCodigoEstado(Activo activo, String codigoEstado){
 		ActivoEstadosInformeComercialHistorico estadoInformeComercialHistorico= new ActivoEstadosInformeComercialHistorico();
 		estadoInformeComercialHistorico.setActivo(activo);
 		DDEstadoInformeComercial estadoInformeComercial = (DDEstadoInformeComercial) proxyFactory.proxy(UtilDiccionarioApi.class)
-				.dameValorDiccionarioByCod(DDEstadoInformeComercial.class, DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_EMISION);
+				.dameValorDiccionarioByCod(DDEstadoInformeComercial.class, codigoEstado);
 		estadoInformeComercialHistorico.setEstadoInformeComercial(estadoInformeComercial);
 		estadoInformeComercialHistorico.setFecha(new Date());
 		
 		genericDao.save(ActivoEstadosInformeComercialHistorico.class, estadoInformeComercialHistorico);
-		restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
-		
-		Long idBpm = jbpmActivoTramiteManagerApi.lanzaBPMAsociadoATramite(tramite.getId());
-
-		return idBpm;
+		restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);		
 	}
 
 	public List<VAdmisionDocumentos> getListAdmisionCheckDocumentos(Long idActivo) {

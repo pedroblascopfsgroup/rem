@@ -23,6 +23,7 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	private StringDataType codEstadoOferta;
 	private StringDataType codEstadoExpediente;
 	private BooleanDataType vendido;
+	private LongDataType idAgrupacionRem;
 	
 	@NestedDto(groupBy="idOfertaRem", type=ActivoVinculadoDto.class)
 	private List<ActivoVinculadoDto> activosVinculados;
@@ -74,6 +75,12 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	}
 	public void setActivosVinculados(List<ActivoVinculadoDto> activosVinculados) {
 		this.activosVinculados = activosVinculados;
+	}
+	public LongDataType getIdAgrupacionRem() {
+		return idAgrupacionRem;
+	}
+	public void setIdAgrupacionRem(LongDataType idAgrupacionRem) {
+		this.idAgrupacionRem = idAgrupacionRem;
 	}
 	
 

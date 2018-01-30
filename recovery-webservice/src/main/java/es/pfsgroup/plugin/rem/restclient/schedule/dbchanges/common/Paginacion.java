@@ -11,7 +11,7 @@ public class Paginacion {
 	private Boolean hasMore = false;
 	private Integer numeroBloque = 0;
 	private Integer tamanyoBloque = null;
-	private Integer totalFilas = null;
+	private Integer totalFilas = 0;
 
 	public Paginacion(Integer tamanyoBloque) {
 		this.tamanyoBloque = tamanyoBloque;

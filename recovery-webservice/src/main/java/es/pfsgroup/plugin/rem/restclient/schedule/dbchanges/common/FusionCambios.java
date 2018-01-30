@@ -55,6 +55,19 @@ public class FusionCambios implements Iterable<Map<String, Object>> {
 			this.containers.add(container.getName());
 		}
 	}
+	
+	private boolean containsKeyContenedor(Map<String, Object> datos,String container) {
+		boolean resultado = false;
+		if (datos != null) {
+			for (Entry<String, Object> e : datos.entrySet()) {
+				if(e.getKey().contains(container)){
+					resultado = true;
+					break;
+				}
+			}
+		}
+		return resultado;
+	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void addDataMap(Map<String, Object> datos) {
@@ -72,7 +85,9 @@ public class FusionCambios implements Iterable<Map<String, Object>> {
 			if (globalMainMap == null) {
 				globalMainMap = new HashMap<String, Object>();
 				for (String container : containers) {
-					globalMainMap.put(container, new ArrayList<Map<String, Object>>());
+					if(containsKeyContenedor(datos, container)){
+						globalMainMap.put(container, new ArrayList<Map<String, Object>>());
+					}
 				}
 				this.data.put(groupValue.hashCode(), globalMainMap);
 			}
@@ -98,7 +113,7 @@ public class FusionCambios implements Iterable<Map<String, Object>> {
 			// están vacíos
 			for (Entry<String, Map<String, Object>> e : localNestedMaps.entrySet()) {
 				Map<String, Object> localNestedMap = e.getValue();
-				if (!localNestedMap.isEmpty()) {
+				if (!localNestedMap.isEmpty() && globalMainMap.containsKey(e.getKey())) {
 					((List) globalMainMap.get(e.getKey())).add(localNestedMap);
 				}
 			}

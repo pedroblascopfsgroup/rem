@@ -43,6 +43,10 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 
 	private boolean running = false;
 
+	private Integer tamanyoBloque = null;
+
+	private Integer MAXIMO_INTENTOS = MAXIMO_INTENTOS_DEFAULT;
+
 	private RegistroLlamadasManager registroLlamadas;
 
 	public static Integer MAXIMO_INTENTOS_DEFAULT = 5;
@@ -124,28 +128,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			this.notifyAll();
 		}
 
-		Integer tamanyoBloque = null;
-		String tamanyoBloqueProperties = !Checks.esNulo(appProperties.getProperty("rest.client.webcom.tamanyobloque"))
-				? appProperties.getProperty("rest.client.webcom.tamanyobloque") : "500";
-		try {
-			if (tamanyoBloqueProperties != null) {
-				tamanyoBloque = Integer.parseInt(tamanyoBloqueProperties);
-			}
-		} catch (Exception e) {
-			tamanyoBloque = null;
-		}
-
-		Integer MAXIMO_INTENTOS = MAXIMO_INTENTOS_DEFAULT;
-		String maximoIntentosProperties = !Checks
-				.esNulo(appProperties.getProperty("rest.client.webcom.maximo.intentos"))
-						? appProperties.getProperty("rest.client.webcom.maximo.intentos") : null;
-		try {
-			if (maximoIntentosProperties != null) {
-				MAXIMO_INTENTOS = Integer.parseInt(maximoIntentosProperties);
-			}
-		} catch (Exception e) {
-			MAXIMO_INTENTOS = MAXIMO_INTENTOS_DEFAULT;
-		}
+		obtenerProperties();
 
 		long iteracion = System.currentTimeMillis();
 		logger.debug("[DETECCIÓN CAMBIOS] Inicio [it=" + iteracion + "]");
@@ -259,7 +242,8 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 									|| (contError > 0 && contError < MAXIMO_INTENTOS));
 
 							if (marcarComoEnviado) {
-								marcarComoEnviado(handler, control, llamadas, listPendientesTodosBloques, fechaEjecucion);
+								marcarComoEnviado(handler, control, llamadas, listPendientesTodosBloques,
+										fechaEjecucion);
 							}
 						}
 					}
@@ -300,26 +284,13 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	}
 
 	/**
-	 * Marcar los registros como enviados
+	 * Ejecuta una tarea del detector
 	 * @param handler
+	 * @param listPendientes
 	 * @param control
-	 * @param llamadas
-	 * @param listPendientesTodosBloques
-	 * @param fechaEjecucion
-	 * @throws Exception
+	 * @param registro
+	 * @throws ErrorServicioWebcom
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private void marcarComoEnviado(DetectorCambiosBD handler, Class control, ArrayList<RestLlamada> llamadas,
-			CambiosList listPendientesTodosBloques, Date fechaEjecucion) throws Exception {
-		logger.trace(handler.getClass().getName() + ": marcando los registros de la BD como enviados");
-		if (!handler.procesarSoloCambiosMarcados()) {
-			handler.marcaComoEnviados(control, llamadas);
-		} else {
-			handler.marcarComoEnviadosMarcadosComun(listPendientesTodosBloques, control);
-			handler.marcarComoEnviadosMarcadosEspecifico(fechaEjecucion);
-		}
-	}
-
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void ejecutaTarea(DetectorCambiosBD<?> handler, List listPendientes, Class control, RestLlamada registro)
 			throws ErrorServicioWebcom {
@@ -373,6 +344,20 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 
 	}
 
+	/**
+	 * Obtiene el registro de handlers
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	public List<DetectorCambiosBD> getRegistroCambiosHandlers() {
+		return registroCambiosHandlers;
+	}
+
+	/**
+	 * Configura el registro de llamadas
+	 * @param applicationContext
+	 * @param registros
+	 */
 	private void configuraRegistroLlamadas(ApplicationContext applicationContext, String[] registros) {
 		registroLlamadas = (RegistroLlamadasManager) applicationContext.getBean(registros[0]);
 		if (registros.length > 1) {
@@ -381,6 +366,11 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 		}
 	}
 
+	/**
+	 * Configura los handlers
+	 * @param applicationContext
+	 * @param beanNames
+	 */
 	@SuppressWarnings("rawtypes")
 	private void configuraHandlers(ApplicationContext applicationContext, String[] beanNames) {
 		for (String name : beanNames) {
@@ -389,9 +379,52 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
-	public List<DetectorCambiosBD> getRegistroCambiosHandlers() {
-		return registroCambiosHandlers;
+	/**
+	 * Obtiene las properties basicas
+	 */
+	private void obtenerProperties() {
+		String tamanyoBloqueProperties = !Checks.esNulo(appProperties.getProperty("rest.client.webcom.tamanyobloque"))
+				? appProperties.getProperty("rest.client.webcom.tamanyobloque") : "500";
+		try {
+			if (tamanyoBloqueProperties != null) {
+				this.tamanyoBloque = Integer.parseInt(tamanyoBloqueProperties);
+			}
+		} catch (Exception e) {
+			logger.error("No se ha podido obtener el tamaño de bloque", e);
+		}
+
+		String maximoIntentosProperties = !Checks
+				.esNulo(appProperties.getProperty("rest.client.webcom.maximo.intentos"))
+						? appProperties.getProperty("rest.client.webcom.maximo.intentos") : null;
+		try {
+			if (maximoIntentosProperties != null) {
+				this.MAXIMO_INTENTOS = Integer.parseInt(maximoIntentosProperties);
+			}
+		} catch (Exception e) {
+			logger.error("No se ha podido obtener el maximo de intentos", e);
+		}
+	}
+
+	/**
+	 * Marcar los registros como enviados
+	 * 
+	 * @param handler
+	 * @param control
+	 * @param llamadas
+	 * @param listPendientesTodosBloques
+	 * @param fechaEjecucion
+	 * @throws Exception
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void marcarComoEnviado(DetectorCambiosBD handler, Class control, ArrayList<RestLlamada> llamadas,
+			CambiosList listPendientesTodosBloques, Date fechaEjecucion) throws Exception {
+		logger.trace(handler.getClass().getName() + ": marcando los registros de la BD como enviados");
+		if (!handler.procesarSoloCambiosMarcados()) {
+			handler.marcaComoEnviados(control, llamadas);
+		} else {
+			handler.marcarComoEnviadosMarcadosComun(listPendientesTodosBloques, control);
+			handler.marcarComoEnviadosMarcadosEspecifico(fechaEjecucion);
+		}
 	}
 
 }

@@ -1461,6 +1461,7 @@ public class AgrupacionAdapter {
 			oferta.setActivosOferta(listaActOfr);
 			oferta.setCliente(clienteComercial);
 			oferta.setPrescriptor((ActivoProveedor) proveedoresApi.searchProveedorCodigo(dto.getCodigoPrescriptor()));
+			oferta.setOrigen("REM");
 			genericDao.save(Oferta.class, oferta);
 			// Actualizamos la situacion comercial de los activos de la oferta
 			ofertaApi.updateStateDispComercialActivosByOferta(oferta);

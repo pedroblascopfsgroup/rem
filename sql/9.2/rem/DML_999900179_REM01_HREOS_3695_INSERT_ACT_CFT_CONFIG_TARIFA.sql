@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Diego Crespo
---## FECHA_CREACION=20180125
+--## AUTOR=Pablo Sánchez
+--## FECHA_CREACION=20180131
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-3695
@@ -52,22 +52,22 @@ DECLARE
     
     --(DD_TTF_CODIGO , DD_TTR_DESCRIPCION , DD_STR_DESCRIPCION , DD_CRA_DESCRIPCION , PRECIO_UNITARIO , UNIDAD_MEDIDA)
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('BK-OM470' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '40.13' ,	'unidad'),
-		T_TIPO_DATA('BK-OM471' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '59.79' , 	'unidad'),
-		T_TIPO_DATA('BK-OM472' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '35.99' , 	'unidad'),
-		T_TIPO_DATA('BK-OM473' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '55.06' ,	'unidad'),
-		T_TIPO_DATA('BK-OM474' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '38.13' ,	'unidad'),
-		T_TIPO_DATA('BK-OM475' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '46.27' ,	'unidad'),
-		T_TIPO_DATA('BK-OM476' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '33.97' ,	'unidad'),
-		T_TIPO_DATA('BK-OM477' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '41.55' ,	'unidad'),
-		T_TIPO_DATA('BK-OM478' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '37.76' ,	'unidad'),
-		T_TIPO_DATA('BK-OM479' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '43.88' ,	'unidad'),
-		T_TIPO_DATA('BK-OM480' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '33.62' ,	'unidad'),
-		T_TIPO_DATA('BK-OM481' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '39.17' ,	'unidad'),
-		T_TIPO_DATA('BK-OM482' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '37.15' ,	'unidad'),
-		T_TIPO_DATA('BK-OM483' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '42.53' ,	'unidad'),
-		T_TIPO_DATA('BK-OM484' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '32.99' ,	'unidad'),
-		T_TIPO_DATA('BK-OM485' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '37.82' ,	'unidad'),
+        T_TIPO_DATA('BK-OM470' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '40.13' ,	'm2'),
+		T_TIPO_DATA('BK-OM471' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '59.79' , 	'm2'),
+		T_TIPO_DATA('BK-OM472' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '35.99' , 	'm2'),
+		T_TIPO_DATA('BK-OM473' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '55.06' ,	'm2'),
+		T_TIPO_DATA('BK-OM474' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '38.13' ,	'm2'),
+		T_TIPO_DATA('BK-OM475' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '46.27' ,	'm2'),
+		T_TIPO_DATA('BK-OM476' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '33.97' ,	'm2'),
+		T_TIPO_DATA('BK-OM477' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '41.55' ,	'm2'),
+		T_TIPO_DATA('BK-OM478' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '37.76' ,	'm2'),
+		T_TIPO_DATA('BK-OM479' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '43.88' ,	'm2'),
+		T_TIPO_DATA('BK-OM480' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '33.62' ,	'm2'),
+		T_TIPO_DATA('BK-OM481' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '39.17' ,	'm2'),
+		T_TIPO_DATA('BK-OM482' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '37.15' ,	'm2'),
+		T_TIPO_DATA('BK-OM483' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '42.53' ,	'm2'),
+		T_TIPO_DATA('BK-OM484' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '32.99' ,	'm2'),
+		T_TIPO_DATA('BK-OM485' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '37.82' ,	'm2'),
 		T_TIPO_DATA('BK-OM486' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '42.40' ,	'unidad'),
 		T_TIPO_DATA('BK-OM487' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '150.48' , 	'unidad'),
 		T_TIPO_DATA('BK-OM488' , 'Actuación técnica' , 'Obra menor tarificada' , 'Bankia' , '139.20' , 	'unidad'),

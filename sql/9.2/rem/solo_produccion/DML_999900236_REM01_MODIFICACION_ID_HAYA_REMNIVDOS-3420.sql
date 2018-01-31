@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Sergio Belenguer Gadea
---## FECHA_CREACION=20180129
+--## FECHA_CREACION=20180131
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMNIVDOS-3420
@@ -31,6 +31,7 @@ DECLARE
 	
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
+    V_RESUL_ID NUMBER(16);
     V_ID NUMBER(16);
     V_SEQ_GEH NUMBER(16);
 	V_TIPO_ID NUMBER(16); --Vle para el id DD_TTR_TIPO_TRABAJO
@@ -96,11 +97,17 @@ BEGIN
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
 
-	--MODIFICAMOS EL ACT_NUM_ACTIVO AÑADIENDO EL PREFIJO 999 
+	--MODIFICAMOS EL ACT_NUM_ACTIVO AÑADIENDO EL PREFIJO 999 Y EL BIE_NUMERO_ACTIVO AÑADIENDO EL PREFIJO 9
     FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
       LOOP
       
 		V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+		V_MSQL := 'update '||V_ESQUEMA||'.act_activo
+			  set BIE_NUMERO_ACTIVO = 9||BIE_NUMERO_ACTIVO,
+				USUARIOMODIFICAR = ''REMNIVDOS-3420'',
+				FECHAMODIFICAR = SYSDATE
+		where act_num_activo ='||V_TMP_TIPO_DATA(1)|| 'AND BIE_NUMERO_ACTIVO IS NOT NULL';
+		EXECUTE IMMEDIATE V_MSQL;
     
    		V_MSQL := 'update '||V_ESQUEMA||'.act_activo
 			  set act_num_activo = 999||act_num_activo,
@@ -109,8 +116,12 @@ BEGIN
 		where act_num_activo ='||V_TMP_TIPO_DATA(1);
 		EXECUTE IMMEDIATE V_MSQL;
         	V_SQL := 'select act_num_activo from '||V_ESQUEMA||'.act_activo where act_num_activo =999'|| V_TMP_TIPO_DATA(1);
-        	EXECUTE IMMEDIATE V_SQL;
-		DBMS_OUTPUT.PUT_LINE('Actualizado el activo '||V_TMP_TIPO_DATA(1)||' con el ACT_NUM_ACTIVO: ' || V_SQL);
+        	EXECUTE IMMEDIATE V_SQL INTO V_RESUL_ID;
+		DBMS_OUTPUT.PUT_LINE('Actualizado el activo '||V_TMP_TIPO_DATA(1)||' con el ACT_NUM_ACTIVO: ' || V_RESUL_ID);
+
+		V_SQL := 'select BIE_NUMERO_ACTIVO from '||V_ESQUEMA||'.act_activo where act_num_activo =999'|| V_TMP_TIPO_DATA(1);
+        	EXECUTE IMMEDIATE V_SQL INTO V_RESUL_ID;
+		DBMS_OUTPUT.PUT_LINE('Actualizado el activo '||V_TMP_TIPO_DATA(1)||' con el ACT_NUM_ACTIVO: ' || V_RESUL_ID);
 		
     END LOOP;
     --ROLLBACK;

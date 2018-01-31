@@ -1,9 +1,9 @@
 --/*
 --##########################################
---## AUTOR=LUIS TARIK LORCA GASCÓ
---## FECHA_CREACION=20180124
+--## AUTOR=Sergio Belenguer Gadea
+--## FECHA_CREACION=20180131
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=2.0.12
+--## VERSION_ARTEFACTO=2.0.13
 --## INCIDENCIA_LINK=REMNIVDOS-3420
 --## PRODUCTO=SI
 --## Finalidad: DDL Creación de la tabla TMP_APROV_DACIONES
@@ -51,8 +51,9 @@ DECLARE
                )';
     		EXECUTE IMMEDIATE V_MSQL;
     		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.TMP_APROV_DACIONES... Tabla creada');
-    		
+		EXECUTE IMMEDIATE 'GRANT SELECT ON ' ||V_ESQUEMA||'.TMP_APROV_DACIONES  TO PFSREM ';    		
     END IF;
+    
     commit;
 EXCEPTION
   WHEN OTHERS THEN

@@ -103,10 +103,10 @@ BEGIN
       
 		V_TMP_TIPO_DATA := V_TIPO_DATA(I);
 		V_MSQL := 'update '||V_ESQUEMA||'.act_activo
-			  set BIE_NUMERO_ACTIVO = 9||BIE_NUMERO_ACTIVO,
+			  set ACT_RECOVERY_ID = 9||ACT_RECOVERY_ID,
 				USUARIOMODIFICAR = ''REMNIVDOS-3420'',
 				FECHAMODIFICAR = SYSDATE
-		where act_num_activo ='||V_TMP_TIPO_DATA(1)|| 'AND BIE_NUMERO_ACTIVO IS NOT NULL';
+		where act_num_activo ='||V_TMP_TIPO_DATA(1)|| 'AND ACT_RECOVERY_ID IS NOT NULL';
 		EXECUTE IMMEDIATE V_MSQL;
     
    		V_MSQL := 'update '||V_ESQUEMA||'.act_activo
@@ -119,9 +119,9 @@ BEGIN
         	EXECUTE IMMEDIATE V_SQL INTO V_RESUL_ID;
 		DBMS_OUTPUT.PUT_LINE('Actualizado el activo '||V_TMP_TIPO_DATA(1)||' con el ACT_NUM_ACTIVO: ' || V_RESUL_ID);
 
-		V_SQL := 'select BIE_NUMERO_ACTIVO from '||V_ESQUEMA||'.act_activo where act_num_activo =999'|| V_TMP_TIPO_DATA(1);
+		V_SQL := 'select ACT_RECOVERY_ID from '||V_ESQUEMA||'.act_activo where act_num_activo =999'|| V_TMP_TIPO_DATA(1);
         	EXECUTE IMMEDIATE V_SQL INTO V_RESUL_ID;
-		DBMS_OUTPUT.PUT_LINE('Actualizado el activo '||V_TMP_TIPO_DATA(1)||' con el ACT_NUM_ACTIVO: ' || V_RESUL_ID);
+		DBMS_OUTPUT.PUT_LINE('Actualizado el activo '||V_TMP_TIPO_DATA(1)||' con el ACT_RECOVERY_ID: ' || V_RESUL_ID);
 		
     END LOOP;
     --ROLLBACK;

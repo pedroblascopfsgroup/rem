@@ -2,10 +2,10 @@
 --/*
 --###########################################
 --## AUTOR=Jessica Sampere
---## FECHA_CREACION=20180130
+--## FECHA_CREACION=20180125
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.12
---## INCIDENCIA_LINK=REMNIVDOS-3675
+--## INCIDENCIA_LINK=REMNIVDOS-3533
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Creacion de Usuarios REM

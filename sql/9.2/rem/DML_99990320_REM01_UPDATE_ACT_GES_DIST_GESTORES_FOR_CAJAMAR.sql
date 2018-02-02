@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=SIMEON SHOPOV
---## FECHA_CREACION=20180125
+--## FECHA_CREACION=20180202
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=v2.0.14-rem
 --## INCIDENCIA_LINK=HREOS-3703
@@ -42,15 +42,15 @@ DECLARE
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 
 	--		TIPO_GESTOR	COD_CARTERA	COD_PROVINCIA USERNAME			  NOMBRE_USUARIO
-	T_TIPO_DATA('GACT',		'1'		,'1'		,'ndelaoa'			,'Nuria de la Ossa'),
-	T_TIPO_DATA('GACT',		'1'		,'2'		,'ndelaoa'			,'Nuria de la Ossa'),
-	T_TIPO_DATA('GACT',		'1'		,'3'		,'mgarcie'			,'Maria del Mar Garcia Delgado'),
+	T_TIPO_DATA('GACT',		'1'		,'1'		,'ndelaossa'		,'Nuria de la Ossa'),
+	T_TIPO_DATA('GACT',		'1'		,'2'		,'ndelaossa'		,'Nuria de la Ossa'),
+	T_TIPO_DATA('GACT',		'1'		,'3'		,'mgarciade'		,'Maria del Mar Garcia Delgado'),
 	T_TIPO_DATA('GACT',		'1'		,'4'		,'mperez'			,'Maria Perez Alonso'),
-	T_TIPO_DATA('GACT',		'1'		,'5'		,'ndelaoa'			,'Nuria de la Ossa'),
-	T_TIPO_DATA('GACT',		'1'		,'6'		,'ndelaoa'			,'Nuria de la Ossa'),
-	T_TIPO_DATA('GACT',		'1'		,'7'		,'ndelaoa'			,'Nuria de la Ossa'),
-	T_TIPO_DATA('GACT',		'1'		,'8'		,'ndelaoa'			,'Nuria de la Ossa'),
-	T_TIPO_DATA('GACT',		'1'		,'9'		,'ndelaoa'			,'Nuria de la Ossa'),
+	T_TIPO_DATA('GACT',		'1'		,'5'		,'ndelaossa'		,'Nuria de la Ossa'),
+	T_TIPO_DATA('GACT',		'1'		,'6'		,'ndelaossa'		,'Nuria de la Ossa'),
+	T_TIPO_DATA('GACT',		'1'		,'7'		,'ndelaossa'		,'Nuria de la Ossa'),
+	T_TIPO_DATA('GACT',		'1'		,'8'		,'ndelaossa'		,'Nuria de la Ossa'),
+	T_TIPO_DATA('GACT',		'1'		,'9'		,'ndelaossa'		,'Nuria de la Ossa'),
 	T_TIPO_DATA('GACT',		'1'		,'10'		,'ndelaossa'		,'Nuria de la Ossa'),
 	T_TIPO_DATA('GACT',		'1'		,'11'		,'rguirado' 		,'Rosa Fernanda Guirado'),
 	T_TIPO_DATA('GACT',		'1'		,'12'		,'mgarciade'		,'Maria del Mar Garcia Delgado'),
@@ -76,7 +76,7 @@ DECLARE
 	T_TIPO_DATA('GACT',		'1'		,'32'		,'ndelaossa'		,'Nuria de la Ossa'),
 	T_TIPO_DATA('GACT',		'1'		,'33'		,'ndelaossa'		,'Nuria de la Ossa'),
 	T_TIPO_DATA('GACT',		'1'		,'34'		,'ndelaossa'		,'Nuria de la Ossa'),
-	T_TIPO_DATA('GACT',		'1'		,'35'		,'maranda'  		,'Maria del Mar Garcia Delgado'),
+	T_TIPO_DATA('GACT',		'1'		,'35'		,'mgarciade'  		,'Maria del Mar Garcia Delgado'),
 	T_TIPO_DATA('GACT',		'1'		,'36'		,'ndelaossa'		,'Nuria de la Ossa'),
 	T_TIPO_DATA('GACT',		'1'		,'37'		,'ndelaossa'		,'Nuria de la Ossa'),
 	T_TIPO_DATA('GACT',		'1'		,'38'		,'mgarciade'		,'Maria del Mar Garcia Delgado'),

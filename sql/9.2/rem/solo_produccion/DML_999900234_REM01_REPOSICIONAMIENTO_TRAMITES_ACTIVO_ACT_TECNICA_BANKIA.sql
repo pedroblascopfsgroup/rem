@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Sergio Belenguer Gadea
---## FECHA_CREACION=20180130
+--## FECHA_CREACION=20180202
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.10
 --## INCIDENCIA_LINK=HREOS-3731

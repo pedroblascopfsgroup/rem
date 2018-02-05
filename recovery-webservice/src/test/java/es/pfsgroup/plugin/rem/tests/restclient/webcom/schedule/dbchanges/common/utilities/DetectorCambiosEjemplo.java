@@ -34,10 +34,7 @@ public class DetectorCambiosEjemplo extends DetectorCambiosBD<ExampleDto>{
 		return new ExampleDto();
 	}
 
-	@Override
-	public void invocaServicio(List<ExampleDto> data, RestLlamada registro) throws ErrorServicioWebcom {
-	}
-
+	
 	@Override
 	public String clavePrimariaJson() {
 		return null;
@@ -57,6 +54,18 @@ public class DetectorCambiosEjemplo extends DetectorCambiosBD<ExampleDto>{
 	public List<String> vistasAuxiliares() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public Boolean procesarSoloCambiosMarcados() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void invocaServicio(List<ExampleDto> data, RestLlamada registro) throws ErrorServicioWebcom {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -556,7 +556,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	 * @return
 	 * @throws CambiosBDDaoError
 	 */
-	private List<Object[]> obtenerHistoricosBloque(Session session, String columns, InfoTablasBD infoTablas,
+	public List<Object[]> obtenerHistoricosBloque(Session session, String columns, InfoTablasBD infoTablas,
 			List<Object[]> resultado) throws CambiosBDDaoError{
 		List<Object[]> historicos = null;
 

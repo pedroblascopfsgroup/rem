@@ -99,8 +99,8 @@ public class DetectorCambiosBDTests {
 		 */
 		// Comprobamos que los dos listados están vacíos
 		dto = (ExampleDto) lista.get(1);
-		assertEquals("La cantidad de sub-dtos no es la esperada", 0,dto.getListado1().size());
-		assertEquals("La cantidad de sub-dtos no es la esperada", 0,dto.getListado2().size());
+		assertEquals("La cantidad de sub-dtos no es la esperada", null,dto.getListado1());
+		assertEquals("La cantidad de sub-dtos no es la esperada", null,dto.getListado2());
 
 	}
 

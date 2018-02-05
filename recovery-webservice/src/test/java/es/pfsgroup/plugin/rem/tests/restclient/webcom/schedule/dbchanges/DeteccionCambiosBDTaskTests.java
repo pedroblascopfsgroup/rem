@@ -27,6 +27,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioEnEjecucion;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ComisionesDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
@@ -96,7 +97,7 @@ public class DeteccionCambiosBDTaskTests {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
-	public void testDeteccionCambiosStock() throws ErrorServicioWebcom {
+	public void testDeteccionCambiosStock() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 			
 		Map<String, Object> data1 = new HashMap<String, Object>();
 		data1.put(ServicioStockConstantes.ID_ACTIVO_HAYA, "1");
@@ -147,7 +148,7 @@ public class DeteccionCambiosBDTaskTests {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
-	public void testDeteccionCambioEstadoPeticionTrabajo() throws ErrorServicioWebcom {
+	public void testDeteccionCambioEstadoPeticionTrabajo() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put(EstadoTrabajoConstantes.ID_TRABAJO_REM, 1L);
@@ -179,7 +180,7 @@ public class DeteccionCambiosBDTaskTests {
 	}
 
 	@Test
-	public void testDeteccionDeCambios_ValoresNullados() throws ErrorServicioWebcom {
+	public void testDeteccionDeCambios_ValoresNullados() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		
 		// Simularemos que el detector de cambios nos devuelve campos nullados
 		// para distintos tipos de datos y nos aseguraremos que se ha seteado el
@@ -232,7 +233,7 @@ public class DeteccionCambiosBDTaskTests {
 	}
 
 	@Test
-	public void testDeteccionDeCambios_mandarSiempreCamposObligatorios() throws ErrorServicioWebcom {
+	public void testDeteccionDeCambios_mandarSiempreCamposObligatorios() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
 		/*
 		 * Cogemos por ejemplo el servicio de ventas y comisiones, para el cual
 		 * hay varios datos oblitatorios.

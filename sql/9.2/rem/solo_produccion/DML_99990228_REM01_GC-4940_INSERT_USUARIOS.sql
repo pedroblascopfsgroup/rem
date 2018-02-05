@@ -1,11 +1,10 @@
 --/*
---/*
 --###########################################
 --## AUTOR=Jessica Sampere
---## FECHA_CREACION=20180125
+--## FECHA_CREACION=20180205
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.12
---## INCIDENCIA_LINK=REMNIVDOS-3533
+--## INCIDENCIA_LINK=REMNIVDOS-3660, REMNIVDOS-3642
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Creacion de Usuarios REM
@@ -41,29 +40,13 @@ DECLARE
   TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
   V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 		--	  USER_NAME	   	NOMBRE_USU		APELL1			APELL2			EMAIL      			PASS		PEF_COD		USU GRUPO	DESPACHO_EXTERNO	
-	T_TIPO_DATA( 'ateruel' ,'' ,''  ,''  ,''  , ''  ,'HAYAGESTCOM'  ,''  ,'REMGCOM'),
-	T_TIPO_DATA( 'acebrianm' ,'' ,''  ,''  ,''  , ''  ,'HAYAGESTCOM'  ,''  ,'REMGCOM'),
-	T_TIPO_DATA( 'asalag' ,'' ,''  ,''  ,''  , ''  ,'HAYAGESTCOM'  ,''  ,'REMGCOM'),
-	T_TIPO_DATA( 'dgonzalezq' ,'' ,''  ,''  ,''  , ''  ,'HAYAGESTCOM'  ,''  ,'REMGCOM'),
-	T_TIPO_DATA( 'gmarting' ,'' ,''  ,''  ,''  , ''  ,'HAYAGESTCOM'  ,''  ,'REMGCOM'),
-	T_TIPO_DATA( 'gcarbonell' ,'' ,''  ,''  ,''  , ''  ,'HAYAGESTCOM'  ,''  ,'REMGCOM'),
-	T_TIPO_DATA( 'igomezr' ,'' ,''  ,''  ,''  , ''  ,'HAYAGESTCOM'  ,''  ,'REMGCOM'),
-	T_TIPO_DATA( 'maguilar' ,'' ,''  ,''  ,''  , ''  ,'HAYAGESTCOM'  ,''  ,'REMGCOM'),
-	T_TIPO_DATA( 'mvgonzalez' ,'' ,''  ,''  ,''  , ''  ,'HAYAGESTCOM'  ,''  ,'REMGCOM'),
-	T_TIPO_DATA( 'mmartinma' ,'' ,''  ,''  ,''  , ''  ,'HAYAGESTCOM'  ,''  ,'REMGCOM'),
-	T_TIPO_DATA( 'mmaldonado' ,'' ,''  ,''  ,''  , ''  ,'HAYAGESTCOM'  ,''  ,'REMGCOM'),
-	T_TIPO_DATA( 'montanon' ,'' ,''  ,''  ,''  , ''  ,'HAYAGESTCOM'  ,''  ,'REMGCOM'),
-	T_TIPO_DATA( 'mpoblet' ,'' ,''  ,''  ,''  , ''  ,'HAYAGESTCOM'  ,''  ,'REMGCOM'),
-	T_TIPO_DATA( 'mfuentes' ,'' ,''  ,''  ,''  , ''  ,'HAYAGESTCOM'  ,''  ,'REMGCOM'),
-	T_TIPO_DATA( 'fsamper' ,'' ,''  ,''  ,''  , ''  ,'HAYAGESTCOM'  ,''  ,'REMGCOM'),
-	T_TIPO_DATA( 'ralvarez' ,'' ,''  ,''  ,''  , ''  ,'HAYASUPACT'  ,''  ,'REMSUPACT'),
-	T_TIPO_DATA( 'ralvarez' ,'' ,''  ,''  ,''  , ''  ,'HAYASUPCOM'  ,''  ,'REMSUPCOM'),
-	T_TIPO_DATA( 'fmartinc' ,'Francisco Javier ' ,'Martin '  ,'Calvo'  ,'fmartinc@haya.es'  , 'XBZSIWUFRN'  ,'HAYASUPACT'  ,''  ,'REMSUPACT'),
-	T_TIPO_DATA( 'fmartinc' ,'Francisco Javier ' ,'Martin '  ,'Calvo'  ,'fmartinc@haya.es'  , ''  ,'HAYASUPCOM'  ,''  ,'REMSUPCOM'),
-	T_TIPO_DATA( 'ddelcura' ,'David ' ,'Del Cura '  ,'Calle'  ,'ddelcura@externos.haya.es'  , 'BMBUCBLDFO'  ,'HAYASUPACT'  ,''  ,'REMSUPACT'),
-	T_TIPO_DATA( 'ddelcura' ,'David ' ,'Del Cura '  ,'Calle'  ,'ddelcura@externos.haya.es'  , ''  ,'HAYASUPCOM'  ,''  ,'REMSUPCOM'),
-	T_TIPO_DATA( 'psm' ,'' ,''  ,''  ,''  , ''  ,'HAYASUPCOM'  ,''  ,'REMSUPCOM'),
-	T_TIPO_DATA( 'rsanchez' ,'' ,''  ,''  ,''  , ''  ,'HAYASUPCOM'  ,''  ,'REMSUPCOM')
+	T_TIPO_DATA( 'dejeda' ,'David ' ,'Ejeda '  ,'Menendez'  ,'dejeda@haya.es'  , 'IVGLCVHSHA'  ,'HAYASUPACT'  ,'REMSUPACT'  ,''),
+	T_TIPO_DATA( 'lcarrillo' ,'Lorena ' ,'Carrillo '  ,'Martinez'  ,'lcarrillo@externos.haya.es'  , 'HCWVDXLOZU'  ,'HAYACONSU'  ,''  ,''),
+	T_TIPO_DATA( 'biglesias' ,'Begoña ' ,'Iglesias '  ,'Benito'  ,'biglesias@haya.es'  , 'HQBEXTDIYJ'  ,'HAYACONSU'  ,''  ,''),
+	T_TIPO_DATA( '47224934T' ,'Alejandro ' ,'de Anastasio'  ,''  ,'alejandro@cad3servicios.com'  , 'TJDIHEVZDC'  ,'HAYAPROV'  ,'REMPROV'  ,''),
+	T_TIPO_DATA( '51385966X' ,'Javier ' ,'Martínez '  ,'Durán'  ,'javier@cad3servicios.com'  , 'QWSCPRDQYS'  ,'HAYAPROV'  ,'REMPROV'  ,''),
+	T_TIPO_DATA( '51647662N' ,'José María ' ,'Escribano '  ,'Cañamero'  ,'jm.escribano@cad3servicios.com'  , 'CGSOHLYATY'  ,'HAYAPROV'  ,'REMPROV'  ,''),
+	T_TIPO_DATA( '36931546D' ,'Maria Teresa ' ,'Borras '  ,'Peña'  ,'administración@psagroup.es'  , 'XJWHBYHRDJ'  ,'HAYAPROV'  ,'REMPROV'  ,'')
 
 
 

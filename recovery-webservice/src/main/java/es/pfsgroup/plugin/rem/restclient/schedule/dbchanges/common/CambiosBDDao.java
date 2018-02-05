@@ -205,6 +205,9 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 			resultado = queryExecutor.sqlRunList(session, queryString, infoTablas);
 			if (resultado != null && resultado.size() > 0) {
+				if (cambios.getPaginacion().getTamanyoBloque() != null) {
+					cambios.getPaginacion().setTotalFilas(resultado.size());
+				}
 				for (Object[] r : resultado) {
 					CambioBD cambio = new CambioBD(fields);
 					cambio.setDatosActuales(r);

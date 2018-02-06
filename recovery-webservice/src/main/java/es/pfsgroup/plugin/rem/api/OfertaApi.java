@@ -528,13 +528,7 @@ public interface OfertaApi {
 	public void ocultarActivoOferta(Oferta oferta) throws Exception;
 	
 	public void desocultarActivoOferta(Oferta oferta) throws Exception;
-
-	/**
-	 * LLamada servicio web Bankia para modificaciones según tipo propuesta (MOD3) 
-	 * @param tareaExterna
-	 * @return
-	 */
-	public void modificacionesSegunPropuesta(TareaExterna tareaExterna);
+	
 
 }
 

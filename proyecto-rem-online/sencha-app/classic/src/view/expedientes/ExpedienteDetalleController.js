@@ -1546,6 +1546,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var numeroDocumento= field.up('formBase').down('[reference=numeroDocumento]').getValue();
 		var fichaComprador= field.up('[xtype=formBase]');
 		var idExpediente = me.getViewModel().get("expediente.id");
+		if(idExpediente == null){
+			idExpediente = fichaComprador.getBindRecord().get('idExpedienteComercial');
+		}
 		
 		if(!Ext.isEmpty(tipoDocumento) && !Ext.isEmpty(numeroDocumento) && !Ext.isEmpty(idExpediente)) {
 			var form = parent.down('formBase');

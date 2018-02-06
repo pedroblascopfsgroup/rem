@@ -5752,5 +5752,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return subcartera;
 		
 	}
+	
 
 }

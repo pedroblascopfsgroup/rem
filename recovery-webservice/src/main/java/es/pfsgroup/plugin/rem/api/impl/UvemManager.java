@@ -53,6 +53,8 @@ import es.cajamadrid.servicios.GM.GMPETS07_INS.VectorGMPETS07_INS_NumeroDeOcurre
 import es.cajamadrid.servicios.GM.GMPETS07_INS.VectorGMPETS07_INS_NumeroDeOcurrenciasnumogt;
 import es.cajamadrid.servicios.GM.GMPTOE83_INS.GMPTOE83_INS;
 import es.cajamadrid.servicios.GM.GMPTOE83_INS.StructCabeceraAplicacionGMPTOE83_INS;
+import es.capgemini.devon.exception.UserException;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.cm.arq.tda.tiposdedatosbase.CantidadDecimal15;
 import es.cm.arq.tda.tiposdedatosbase.Fecha;
@@ -60,8 +62,14 @@ import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.updater.impl.UpdaterServiceSancionOfertaInstruccionesReserva;
+import es.pfsgroup.plugin.rem.jbpm.handler.updater.impl.UpdaterServiceSancionOfertaResultadoPBC;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
@@ -111,6 +119,12 @@ public class UvemManager implements UvemManagerApi {
 
 	@Autowired
 	private RestLlamadaDao llamadaDao;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private OfertaApi ofertaApi;
 
 	private static final int MASK = (-1) >>> 1; // all ones except the sign bit
 
@@ -1578,5 +1592,60 @@ public class UvemManager implements UvemManagerApi {
 			return null;
 		}
 	}
+	
+	@Override
+	public void modificacionesSegunPropuesta(TareaExterna tareaExterna) {
+		
+		Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
+		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+		Long porcentajeImpuesto = null;
+		if (!Checks.esNulo(expediente.getCondicionante())) {
+			if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
+				porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
+			} 
+		}
+		
+		try {
+			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto, null);
+			instanciaDecisionDto.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_HONORARIOS);
+			logger.info("------------ LLAMADA WS MOD3(HONORARIOS) -----------------");
+			this.modificarInstanciaDecisionTres(instanciaDecisionDto);
+			instanciaDecisionDto.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_TITULARES);
+			logger.info("------------ LLAMADA WS MOD3(TITULARES) -----------------");
+			this.modificarInstanciaDecisionTres(instanciaDecisionDto);
+			logger.info("------------ LLAMADA WS MOD3(CONDICIONANTES ECONOMICOS) -----------------");
+			instanciaDecisionDto.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_CONDICIONANTES_ECONOMICOS);
+			this.modificarInstanciaDecisionTres(instanciaDecisionDto);
+			logger.info("------------ LLAMADA WS MOD3(FIN) -----------------");
+		} catch (JsonViewerException jve) {
+			throw new UserException(jve.getMessage());
+		} catch (Exception e) {
+			logger.error("error en OfertasManager", e);
+			throw new UserException(e.getMessage());
+		}
+		
+	}
+	
+	@Override
+	public boolean esTramiteOffline(String codigoTarea,ExpedienteComercial expediente) {
+		boolean esOffline = false;
+		boolean tieneFechaFirmaReserva = false;
+		if(!Checks.esNulo(expediente.getReserva())){
+			if (!Checks.esNulo(expediente.getReserva().getFechaFirma())){
+				tieneFechaFirmaReserva = true;
+			}
+		}
+		boolean tieneFechaIngresoChequeVenta = false;
+		if (!Checks.esNulo(expediente.getFechaContabilizacionPropietario())) {
+			tieneFechaIngresoChequeVenta = true;
+		}
+		if(codigoTarea.equals(UpdaterServiceSancionOfertaInstruccionesReserva.CODIGO_T013_INSTRUCCIONES_RESERVA)){
+			esOffline = tieneFechaFirmaReserva || tieneFechaIngresoChequeVenta;			
+		}else if(codigoTarea.equals(UpdaterServiceSancionOfertaResultadoPBC.CODIGO_T013_RESULTADO_PBC)){
+			esOffline = tieneFechaIngresoChequeVenta;
+		}
+		return esOffline;
+	}	
+	
 
 }

@@ -437,11 +437,16 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		if (!Checks.esNulo(expediente.getId()) && !Checks.esNulo(expediente.getReserva()) 
 				&& !DDClaseActivoBancario.CODIGO_FINANCIERO.equals(activoBancario.getClaseActivo().getCodigo())) {
 			tieneReserva = true;
-			
-			String reservationKey = String.valueOf(expediente.getId())
-					.concat(appProperties.getProperty("haya.reservation.pwd"));
-			reservationKey = this.computeKey(reservationKey);
-			String reservationUrl = appProperties.getProperty("haya.reservation.url");
+			String reservationKey = "";
+			if(!Checks.esNulo(appProperties.getProperty("haya.reservation.pwd"))){
+				reservationKey = String.valueOf(expediente.getId())
+						.concat(appProperties.getProperty("haya.reservation.pwd"));
+				reservationKey = this.computeKey(reservationKey);
+			}
+			String reservationUrl ="";
+			if(!Checks.esNulo(appProperties.getProperty("haya.reservation.url"))){
+				reservationUrl = appProperties.getProperty("haya.reservation.url");
+			}
 			cuerpo = cuerpo + "<p>Pinche <a href=\"" + reservationUrl + expediente.getId() + "/" + reservationKey
 					+ "/1\">aquí</a> para la descarga del contrato de reserva.</p>";
 		}

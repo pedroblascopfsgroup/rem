@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
@@ -100,7 +99,6 @@ import es.pfsgroup.plugin.rem.oferta.dao.VOfertaActivoDao;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
-import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDataDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
@@ -2077,44 +2075,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 		}
-	}
-	
-	/**
-	 * MOD3
-	 * 
-	 * 
-	 */
-	@Override
-	public void modificacionesSegunPropuesta(TareaExterna tareaExterna) {
-		
-		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
-		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
-		Long porcentajeImpuesto = null;
-		if (!Checks.esNulo(expediente.getCondicionante())) {
-			if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
-				porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
-			} 
-		}
-		
-		try {
-			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto, null);
-			instanciaDecisionDto.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_HONORARIOS);
-			logger.info("------------ LLAMADA WS MOD3(HONORARIOS) -----------------");
-			uvemManagerApi.modificarInstanciaDecisionTres(instanciaDecisionDto);
-			instanciaDecisionDto.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_TITULARES);
-			logger.info("------------ LLAMADA WS MOD3(TITULARES) -----------------");
-			uvemManagerApi.modificarInstanciaDecisionTres(instanciaDecisionDto);
-			logger.info("------------ LLAMADA WS MOD3(CONDICIONANTES ECONOMICOS) -----------------");
-			instanciaDecisionDto.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_CONDICIONANTES_ECONOMICOS);
-			uvemManagerApi.modificarInstanciaDecisionTres(instanciaDecisionDto);
-			logger.info("------------ LLAMADA WS MOD3(FIN) -----------------");
-		} catch (JsonViewerException jve) {
-			throw new UserException(jve.getMessage());
-		} catch (Exception e) {
-			logger.error("error en OfertasManager", e);
-			throw new UserException(e.getMessage());
-		}
-		
 	}
 }
 

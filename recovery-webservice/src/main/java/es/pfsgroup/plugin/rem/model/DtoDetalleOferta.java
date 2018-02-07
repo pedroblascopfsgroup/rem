@@ -13,6 +13,9 @@ public class DtoDetalleOferta {
 	private String procedenciaVisita;
 	private String sucursal;
 	private String motivoRechazoDesc;
+	private String ofertaExpress;
+	private String necesitaFinanciacion;
+	private String observaciones;
 
 
 	public String getId() {
@@ -68,6 +71,24 @@ public class DtoDetalleOferta {
 	}
 	public void setUsuBaja(String usuBaja) {
 		this.usuBaja = usuBaja;
+	}
+	public String getOfertaExpress() {
+		return ofertaExpress;
+	}
+	public void setOfertaExpress(String ofertaExpress) {
+		this.ofertaExpress = ofertaExpress;
+	}
+	public String getNecesitaFinanciacion() {
+		return necesitaFinanciacion;
+	}
+	public void setNecesitaFinanciacion(String necesitaFinanciacion) {
+		this.necesitaFinanciacion = necesitaFinanciacion;
+	}
+	public String getObservaciones() {
+		return observaciones;
+	}
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
 	}
 	
 	

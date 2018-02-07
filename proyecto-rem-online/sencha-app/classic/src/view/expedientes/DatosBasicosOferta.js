@@ -199,7 +199,48 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                	]
 		                		
 		                	
-		                }
+		                },
+		    			{
+		                    xtype: 'fieldsettable',
+		                    title: HreRem.i18n('title.comerical.oferta.detalle.oferta.express'),
+		                    bind: {
+		                        hidden: '{!esCarteraCajamar}'
+		                    },
+		                    colspan: 3,
+		                    items: [
+		                    		{
+										xtype: "textfield",
+										fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.ofertaExpress'),
+										bind: {
+											value: '{datosbasicosoferta.ofertaExpress}'
+										},
+					    				readOnly: true,
+					    				width: 410
+					    			},
+					    			{
+										xtype: "textarea",
+										fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.observaciones'),
+										bind: {
+											value: '{datosbasicosoferta.observaciones}'
+										},
+										height: 30,
+					    				readOnly: true,
+					    				width: 410,
+					    				colspan: 2
+					    			},
+					    			{
+										xtype: "textfield",
+										fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.necesitaFinanciacion'),
+										bind: {
+											value: '{datosbasicosoferta.necesitaFinanciacion}'
+										},
+					    				readOnly: true,
+					    				width: 410
+					    			}
+					    			
+					    			
+		                    ]
+                		}
 		        ]
 			},
 			{

@@ -29,6 +29,15 @@ Ext.define('HreRem.model.DetalleOfertaModel', {
 		},
 		{
 			name:'sucursal'
+		},
+		{
+			name:'ofertaExpress'
+		},
+		{
+			name:'necesitaFinanciacion'
+		},
+		{
+			name:'observaciones'
 		}
     ],
 

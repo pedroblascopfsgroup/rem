@@ -1027,6 +1027,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		} else {
 			dto.setCanalPrescripcionDescripcion(null);
 		}
+		if(!Checks.esNulo(oferta.getOfertaExpress())){
+			dto.setOfertaExpress(oferta.getOfertaExpress() ? "Si" : "No");
+		}
+		if(!Checks.esNulo(oferta.getNecesitaFinanciacion())){
+			dto.setNecesitaFinanciacion(oferta.getNecesitaFinanciacion() ? "Si" : "No");
+		}
+		dto.setObservaciones(oferta.getObservaciones());
+		
 		return dto;
 	}
 

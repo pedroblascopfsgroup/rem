@@ -204,6 +204,17 @@ public class Oferta implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PVE_ID_SUCURSAL")
 	private ActivoProveedor sucursal;
+    
+    @Column(name="OFR_OFERTA_EXPRESS")
+	private Boolean ofertaExpress;	
+    
+    @Column(name="OFR_NECESITA_FINANCIACION")
+	private Boolean necesitaFinanciacion;	
+    
+    @Column(name="OFR_OBSERVACIONES")
+	private String observaciones;	
+    
+    
 	
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -582,6 +593,30 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setOrigen(String origen) {
 		this.origen = origen;
+	}
+
+	public Boolean getOfertaExpress() {
+		return ofertaExpress;
+	}
+
+	public void setOfertaExpress(Boolean ofertaExpress) {
+		this.ofertaExpress = ofertaExpress;
+	}
+
+	public Boolean getNecesitaFinanciacion() {
+		return necesitaFinanciacion;
+	}
+
+	public void setNecesitaFinanciacion(Boolean necesitaFinanciacion) {
+		this.necesitaFinanciacion = necesitaFinanciacion;
+	}
+
+	public String getObservaciones() {
+		return observaciones;
+	}
+
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
 	}
 	
 

@@ -44,6 +44,10 @@ public class ResolucionComiteDto implements Serializable{
 	@Diccionary(clase = DDPenitenciales.class, message = "penitenciales no existe", groups = { Insert.class, Update.class })
 	private String penitenciales;
 	
+	//HREOS-3793: Postacordado Bankia 4: Nueva opción del RESOL para indicar anulación de aprobación de comité
+	private String codigoAccion;
+	
+	
 	
 	public Long getOfertaHRE() {
 		return ofertaHRE;
@@ -110,6 +114,12 @@ public class ResolucionComiteDto implements Serializable{
 	}
 	public void setPenitenciales(String penitenciales) {
 		this.penitenciales = penitenciales;
+	}
+	public String getCodigoAccion() {
+		return codigoAccion;
+	}
+	public void setCodigoAccion(String codigoAccion) {
+		this.codigoAccion = codigoAccion;
 	}
 
 	

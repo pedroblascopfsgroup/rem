@@ -2408,7 +2408,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		DDEstadoDevolucion estadoDevolucionReserva = (DDEstadoDevolucion) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDEstadoDevolucion.class, codEstadoDevolucionReserva);
 		if(!Checks.esNulo(estadoDevolucionReserva)){
-			expedienteComercial.getReserva().setEstadoDevolucion(estadoDevolucionReserva);
+			if(expedienteComercial.getReserva() != null){
+				expedienteComercial.getReserva().setEstadoDevolucion(estadoDevolucionReserva);
+			}
 		}else{
 			throw new Exception("El codigo del estado de la dev no exite");
 		}

@@ -1432,6 +1432,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if(!Checks.esNulo(oferta.getMotivoRechazo())) {
 					dtoResponse.setMotivoRechazoDesc(oferta.getMotivoRechazo().getTipoRechazo().getDescripcion() + " - " + oferta.getMotivoRechazo().getDescripcion());
 				}
+				if(!Checks.esNulo(oferta.getOfertaExpress())){
+					dtoResponse.setOfertaExpress(oferta.getOfertaExpress() ? "Si" : "No");
+				}
+				if(!Checks.esNulo(oferta.getNecesitaFinanciacion())){
+					dtoResponse.setNecesitaFinanciacion(oferta.getNecesitaFinanciacion() ? "Si" : "No");
+				}
+				dtoResponse.setObservaciones(oferta.getObservaciones());
+				
 			}
 		}
 

@@ -138,6 +138,16 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	
 	@Column(name="CLASE_ACTIVO")
 	private String claseActivoBancario;
+	
+	@Column(name="OFERTA_EXPRESS")
+	private Boolean ofertaExpress;	
+    
+    @Column(name="NECESITA_FINANCIACION")
+	private Boolean necesitaFinanciacion;	
+    
+    @Column(name="OBSERVACIONES")
+	private String observaciones;	
+	
 
 	public Date getFechaModificar() {
 		return fechaModificar;
@@ -457,5 +467,29 @@ public class VOfertasActivosAgrupacion implements Serializable {
 
 	public void setClaseActivoBancario(String claseActivoBancario) {
 		this.claseActivoBancario = claseActivoBancario;
+	}
+
+	public Boolean getOfertaExpress() {
+		return ofertaExpress;
+	}
+
+	public void setOfertaExpress(Boolean ofertaExpress) {
+		this.ofertaExpress = ofertaExpress;
+	}
+
+	public Boolean getNecesitaFinanciacion() {
+		return necesitaFinanciacion;
+	}
+
+	public void setNecesitaFinanciacion(Boolean necesitaFinanciacion) {
+		this.necesitaFinanciacion = necesitaFinanciacion;
+	}
+
+	public String getObservaciones() {
+		return observaciones;
+	}
+
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
 	} 
 }

@@ -183,20 +183,32 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	var estaAnulado = CONST.ESTADOS_GASTO['ANULADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaEnviado = get('gasto.enviado');
 	     	var estaRetenido = CONST.ESTADOS_GASTO['RETENIDO'] == get('gasto.estadoGastoCodigo');
+	     	var estaIncompleto = CONST.ESTADOS_GASTO['INCOMPLETO'] == get('gasto.estadoGastoCodigo');
+	     	var estaRechazadoPropietario = CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO'] == get('gasto.estadoGastoCodigo');
+	     	var estaAutorizadoAdministracion = CONST.ESTADOS_GASTO['AUTORIZADO'] == get('gasto.estadoGastoCodigo');
+	     	var estaAutorizadoPropietario = CONST.ESTADOS_GASTO['AUTORIZADO_PROPIETARIO'] == get('gasto.estadoGastoCodigo');
 	     	
-	     	return !estaEnviado && !estaAutorizado && !estaContabilizado && !estaPagado && !estaAnulado && !estaRetenido;
+	     	return !estaEnviado && !estaAutorizado && !estaContabilizado && !estaPagado && !estaAnulado && !estaRetenido && !estaIncompleto 
+	     			&& !estaRechazadoPropietario && !estaAutorizadoAdministracion && !estaAutorizadoPropietario;
 	     },
 	     
 	     esRechazable: function(get) {	     
 	     	var estaRechazado = get('gasto.rechazado');
 	     	var estaContabilizado = CONST.ESTADOS_GASTO['CONTABILIZADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaPagado = CONST.ESTADOS_GASTO['PAGADO'] == get('gasto.estadoGastoCodigo');
+	     	var estaPagadoSinJustificante = CONST.ESTADOS_GASTO['PAGADO_SIN_JUSTIFICANTE'] == get('gasto.estadoGastoCodigo');
 	     	var estaAnulado = CONST.ESTADOS_GASTO['ANULADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaEnviado = get('gasto.enviado');
 	     	var estaRetenido = CONST.ESTADOS_GASTO['RETENIDO'] == get('gasto.estadoGastoCodigo');
 	     	var estaSubsanadoYAutorizado = get('gasto.autorizado') && CONST.ESTADOS_GASTO['SUBSANADO'] == get('gasto.estadoGastoCodigo');
-
-	     	return  !estaEnviado && !estaRechazado && !estaContabilizado && !estaPagado && !estaAnulado && !estaRetenido && !estaSubsanadoYAutorizado;
+	     	var estaIncompleto = CONST.ESTADOS_GASTO['INCOMPLETO'] == get('gasto.estadoGastoCodigo');
+	     	var estaRechazadoAdministracion = CONST.ESTADOS_GASTO['RECHAZADO'] == get('gasto.estadoGastoCodigo');
+	     	var estaRechazadoPropietario = CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO'] == get('gasto.estadoGastoCodigo');
+	     	var estaAutorizadoAdministracion = CONST.ESTADOS_GASTO['AUTORIZADO'] == get('gasto.estadoGastoCodigo');
+	     	var estaAutorizadoPropietario = CONST.ESTADOS_GASTO['AUTORIZADO_PROPIETARIO'] == get('gasto.estadoGastoCodigo');
+	     	
+	     	return  !estaEnviado && !estaRechazado && !estaContabilizado && !estaPagado && !estaAnulado && !estaRetenido && !estaSubsanadoYAutorizado && !estaIncompleto 
+	     			&& !estaRechazadoAdministracion && !estaRechazadoPropietario && !estaAutorizadoAdministracion && !estaAutorizadoPropietario && !estaPagadoSinJustificante;
 	     },
 	     
 	     getSrcCartera: function(get) {

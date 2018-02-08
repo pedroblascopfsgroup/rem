@@ -17,7 +17,11 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 		
 		activate: function(me, eOpts) {
 			var estadoGasto= me.lookupController().getViewModel().get('gasto').get('estadoGastoCodigo');
-			if(this.lookupController().botonesEdicionGasto(estadoGasto,this)){
+			var autorizado = me.lookupController().getViewModel().get('gasto').get('autorizado');
+	    	var rechazado = me.lookupController().getViewModel().get('gasto').get('rechazado');
+	    	var agrupado = me.lookupController().getViewModel().get('gasto').get('esGastoAgrupado');
+	    	var gestoria = me.lookupController().getViewModel().get('gasto').get('nombreGestoria')!=null;
+			if(this.lookupController().botonesEdicionGasto(estadoGasto,autorizado,rechazado,agrupado,gestoria,this)){
 				this.up('tabpanel').down('tabbar').down('button[itemId=botoneditar]').setVisible(true);
 			}
 			else{
@@ -28,6 +32,8 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 			this.down("[reference=gestionNecesarioAutorizacion]").setReadOnly(me.editableSoloAnulacion());
 			this.down("[reference=gestionAutorizacionPropietario]").setReadOnly(me.editableSoloAnulacion());
 			this.down("[reference=gestionObservaciones]").setReadOnly(me.editableSoloAnulacion());
+			this.down("[reference=gestionMotivoRetenerGasto]").setReadOnly(me.editableSoloAnulacion());
+			this.down("[reference=gestionMotivoRechazoPropietario]").setReadOnly(me.editableSoloAnulacion());
 			
 		}
 	},
@@ -170,11 +176,13 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 						{ 
 							xtype: 'comboboxfieldbase',
 							readOnly: true,
+							reference: 'comboMotivoRechazoHayaRef',
 							fieldLabel:  HreRem.i18n('fieldlabel.motivo.rechazo'),
 							bind: {
 								store: '{comboMotivoRechazoHaya}',
 								value: '{gestion.comboMotivoRechazoHaya}'
 							}
+								
 						},
 						
 						////////////////////////
@@ -197,10 +205,11 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 						
 						{
 							xtype: 'textfieldbase',
+							reference: 'gestionMotivoRechazoPropietario',
 							fieldLabel: HreRem.i18n('fieldlabel.motivo.rechazo'),
 							bind:		{
-								value: '{gestion.motivoRechazoAutorizacionPropietario}',
-								readOnly: '{esGastoAnulado}'
+								value: '{gestion.motivoRechazoAutorizacionPropietario}'/*,
+								readOnly: '{esGastoAnulado}'*/
 							}
 							
 						},
@@ -243,11 +252,12 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 						
 						{ 
 							xtype: 'comboboxfieldbase',
+							reference: 'gestionMotivoRetenerGasto',
 							fieldLabel:  HreRem.i18n('fieldlabel.gasto.motivo'),
 							bind: {
 								store: '{comboMotivoRetenerPago}',
-								value: '{gestion.comboMotivoRetenerPago}',
-								readOnly: '{esGastoAnulado}'
+								value: '{gestion.comboMotivoRetenerPago}'/*,
+								readOnly: '{esGastoAnulado}'*/
 							},
 							editable: true
 						}

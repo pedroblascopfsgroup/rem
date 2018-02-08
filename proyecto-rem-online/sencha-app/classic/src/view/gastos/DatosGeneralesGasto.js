@@ -13,7 +13,11 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
     listeners: {
 		activate: function(me, eOpts) {
 			var estadoGasto= me.lookupController().getViewModel().get('gasto').get('estadoGastoCodigo');
-			if(this.lookupController().botonesEdicionGasto(estadoGasto,this)){
+			var autorizado = me.lookupController().getViewModel().get('gasto').get('autorizado');
+	    	var rechazado = me.lookupController().getViewModel().get('gasto').get('rechazado');
+	    	var agrupado = me.lookupController().getViewModel().get('gasto').get('esGastoAgrupado');
+	    	var gestoria = me.lookupController().getViewModel().get('gasto').get('nombreGestoria')!=null;
+			if(this.lookupController().botonesEdicionGasto(estadoGasto,autorizado,rechazado,agrupado,gestoria,this)){
 				this.up('tabpanel').down('tabbar').down('button[itemId=botoneditar]').show();
 			}
 			else{

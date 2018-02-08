@@ -18,6 +18,6 @@ public interface UpdaterStateGastoApi {
 	 * @param gasto
 	 * @return
 	 */
-	String validarAutorizacionGasto(GastoProveedor gasto);
+	String validarCamposMinimos(GastoProveedor gasto);
 	
 }

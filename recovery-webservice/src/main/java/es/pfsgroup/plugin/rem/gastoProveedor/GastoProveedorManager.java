@@ -359,9 +359,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		genericDao.save(GastoDetalleEconomico.class, detalleEconomico);
 
 		GastoGestion gestion = new GastoGestion();
-		DDEstadoAutorizacionHaya estadoAutorizacionHaya = (DDEstadoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionHaya.class,
-				DDEstadoAutorizacionHaya.CODIGO_PENDIENTE);
-		gestion.setEstadoAutorizacionHaya(estadoAutorizacionHaya);
+		//DDEstadoAutorizacionHaya estadoAutorizacionHaya = (DDEstadoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionHaya.class,
+		//		DDEstadoAutorizacionHaya.CODIGO_PENDIENTE);
+		//gestion.setEstadoAutorizacionHaya(estadoAutorizacionHaya);
 		gestion.setGastoProveedor(gastoProveedor);
 		gestion.setFechaAlta(new Date());
 		gestion.setUsuarioAlta(usuario);
@@ -523,7 +523,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		if(!cambios && (DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gastoProveedor.getEstadoGasto().getCodigo()) 
 				|| DDEstadoGasto.RECHAZADO_PROPIETARIO.equals(gastoProveedor.getEstadoGasto().getCodigo()) 
 				|| DDEstadoGasto.SUBSANADO.equals(gastoProveedor.getEstadoGasto().getCodigo()))) {
-			updaterStateApi.updaterStates(gastoProveedor, gastoProveedor.getEstadoGasto().getCodigo());
+			//updaterStateApi.updaterStates(gastoProveedor, gastoProveedor.getEstadoGasto().getCodigo());
 		}else {
 			updaterStateApi.updaterStates(gastoProveedor, null);
 		}
@@ -882,7 +882,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				if(!cambios && (DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo()) 
 						|| DDEstadoGasto.RECHAZADO_PROPIETARIO.equals(gasto.getEstadoGasto().getCodigo()) 
 						|| DDEstadoGasto.SUBSANADO.equals(gasto.getEstadoGasto().getCodigo()))) {
-					updaterStateApi.updaterStates(gasto, gasto.getEstadoGasto().getCodigo());
+					//updaterStateApi.updaterStates(gasto, gasto.getEstadoGasto().getCodigo());
 				}else {
 					updaterStateApi.updaterStates(gasto, null);
 				}
@@ -1335,14 +1335,15 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			DtoInfoContabilidadGasto dtoFin = infoContabilidadToDtoInfoContabilidad(gasto);
 			
 			boolean cambios = hayCambiosGasto(dtoIni, dtoFin, gasto);
-			
+		
 			if(!cambios && (DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo()) 
 					|| DDEstadoGasto.RECHAZADO_PROPIETARIO.equals(gasto.getEstadoGasto().getCodigo()) 
 					|| DDEstadoGasto.SUBSANADO.equals(gasto.getEstadoGasto().getCodigo()))) {
-				updaterStateApi.updaterStates(gasto, gasto.getEstadoGasto().getCodigo());
+				//updaterStateApi.updaterStates(gasto, gasto.getEstadoGasto().getCodigo());
 			}else {
 				updaterStateApi.updaterStates(gasto, null);
 			}
+			
 			genericDao.update(GastoProveedor.class, gasto);
 
 			return true;
@@ -1423,19 +1424,20 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				if (!Checks.esNulo(gastoGestion.getUsuarioEstadoAutorizacionHaya())) {
 					dtoGestion.setGestorAutorizacionHaya(gastoGestion.getUsuarioEstadoAutorizacionHaya().getApellidoNombre());
 				}
-				if (!Checks.esNulo(gastoGestion.getMotivoRechazoAutorizacionHaya())) {
+				if (!Checks.esNulo(gastoGestion.getMotivoRechazoAutorizacionHaya()) && gastoGestion.getEstadoAutorizacionHaya().getCodigo().equals(DDEstadoAutorizacionHaya.CODIGO_RECHAZADO)) {
 					dtoGestion.setComboMotivoRechazoHaya(gastoGestion.getMotivoRechazoAutorizacionHaya().getCodigo());
-					;
 				}
 				////
 
 				if (!Checks.esNulo(gastoGestion.getEstadoAutorizacionPropietario())) {
 					dtoGestion.setComboEstadoAutorizacionPropietario(gastoGestion.getEstadoAutorizacionPropietario().getCodigo());
 				}
-
-				dtoGestion.setFechaAutorizacionPropietario(gastoGestion.getFechaEstadoAutorizacionPropietario());
-
-				if (!Checks.esNulo(gastoGestion.getMotivoRechazoAutorizacionPropietario())) {
+				
+				if(!DDEstadoAutorizacionPropietario.CODIGO_PENDIENTE.equals(gastoGestion.getEstadoAutorizacionPropietario().getCodigo())) {
+					dtoGestion.setFechaAutorizacionPropietario(gastoGestion.getFechaEstadoAutorizacionPropietario());
+				}
+				
+				if (!Checks.esNulo(gastoGestion.getMotivoRechazoAutorizacionPropietario()) && !DDEstadoAutorizacionPropietario.CODIGO_PENDIENTE.equals(gastoGestion.getEstadoAutorizacionPropietario().getCodigo())) {
 					dtoGestion.setMotivoRechazoAutorizacionPropietario(gastoGestion.getMotivoRechazoAutorizacionPropietario());
 				}
 
@@ -2133,7 +2135,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				DDEstadoAutorizacionPropietario.CODIGO_PENDIENTE);
 
 		if (validarAutorizacion) {
-			String error = updaterStateApi.validarAutorizacionGasto(gasto);
+			String error = updaterStateApi.validarCamposMinimos(gasto);
 			if (!Checks.esNulo(error)) {
 				throw new JsonViewerException("El gasto " + gasto.getNumGastoHaya() + " no se puede autorizar: " + error);
 			}
@@ -2176,6 +2178,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			motivo = (DDMotivoRechazoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoRechazoAutorizacionHaya.class, motivoRechazo);
 		}
 		GastoProveedor gasto = findOne(idGasto);
+		
+		String error = updaterStateApi.validarCamposMinimos(gasto);
+		if (!Checks.esNulo(error)) {
+			throw new JsonViewerException("El gasto " + gasto.getNumGastoHaya() + " no se puede rechazar: " + error);
+		}
+		
 
 		// Se activa el borrado de los gastos-trabajo, y dejamos el trabajo como diponible para un
 		// futuro nuevo gasto

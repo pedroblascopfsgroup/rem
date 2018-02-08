@@ -46,6 +46,7 @@ public class DDEstadoGasto implements Auditable, Dictionary {
 	public static final String SUBSANADO = "10";
 	public static final String PAGADO = "05";
 	public static final String PAGADO_SIN_JUSTIFICACION_DOC = "13";
+	public static final String CONTABILIZADO = "04";
 	
 
 	@Id

@@ -584,7 +584,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		for (int i = 0; i < ofertaDto.getTitularesAdicionales().size(); i++) {
 			OfertaTitularAdicionalDto titDto = ofertaDto.getTitularesAdicionales().get(i);
-			if (!Checks.esNulo(titDto)) {
+			if (!Checks.esNulo(titDto) && !titDto.getDocumento().equals(oferta.getCliente().getDocumento())) {
 				TitularesAdicionalesOferta titAdi = new TitularesAdicionalesOferta();
 				titAdi.setNombre(titDto.getNombre());
 				titAdi.setDocumento(titDto.getDocumento());

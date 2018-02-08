@@ -805,16 +805,29 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			Comprador compradorBusqueda = genericDao.get(Comprador.class, filtroComprador);
 			List<CompradorExpediente> listaCompradoresExpediente = new ArrayList<CompradorExpediente>();
 			CompradorExpediente compradorExpedienteNuevo = new CompradorExpediente();
+			List<TitularesAdicionalesOferta> listaTitularesAdicionalesSinRepetirDocumento= new ArrayList<TitularesAdicionalesOferta>();
 			
 			Double parteCompra= 0.00;
 			Double parteCompraAdicionales= 0.00;
 			Double totalParteCompraAdicional= 0.00;
 			Double parteCompraPrincipal= 100.00;
+			/*
+			 * HREOS-3779 Problema al crear las relaciones entre comprador-expediente
+			 * Desde webcom mandan clientes comerciales y titulares adiciones con el mismo documento para la misma oferta. Esto hace que en el listado de compradores
+			 * se creen varios con la misma relacion comprador-expediente. Se ha añadido comprobacion en el metodo que crea la oferta desde webcom (webservice) 
+			 * pero hay muchos que ya estan creado, para estos creamos esta comprobacion. Quita del listado de titulares adicionales los que tengan el mismo documento 
+			 * que el cliente de la oferta
+			 */
+			for (TitularesAdicionalesOferta titularAdicional : oferta.getTitularesAdicionales()) {
+				if(!titularAdicional.getDocumento().equals(oferta.getCliente().getDocumento())){
+					listaTitularesAdicionalesSinRepetirDocumento.add(titularAdicional);
+				}
+			}
 			
-			if(!Checks.estaVacio(oferta.getTitularesAdicionales())){
-				parteCompra= 100.00/(oferta.getTitularesAdicionales().size()+1);
+			if(!Checks.estaVacio(listaTitularesAdicionalesSinRepetirDocumento)){
+				parteCompra= 100.00/(listaTitularesAdicionalesSinRepetirDocumento.size()+1);
 				parteCompraAdicionales=(double)((int)(parteCompra*100.00)/100.00);
-				totalParteCompraAdicional= parteCompraAdicionales * oferta.getTitularesAdicionales().size();
+				totalParteCompraAdicional= parteCompraAdicionales * listaTitularesAdicionalesSinRepetirDocumento.size();
 				parteCompraPrincipal= 100 - totalParteCompraAdicional;
 			}
 			
@@ -898,7 +911,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			// diferencia de que los campos
 			// TitularReserva y TitularContratacion estan al contrario. Por
 			// decirlo de alguna forma son "Compradores secundarios"
-			for (TitularesAdicionalesOferta titularAdicional : oferta.getTitularesAdicionales()) {
+			for (TitularesAdicionalesOferta titularAdicional : listaTitularesAdicionalesSinRepetirDocumento) {
 				
 				//TODO: Dani: Si el comprador adicional viene sin documento, lo descartamos
 				if(!Checks.esNulo(titularAdicional.getDocumento())){
@@ -910,14 +923,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					if (!Checks.esNulo(compradorBusquedaAdicional)) {
 						CompradorExpediente compradorExpedienteAdicionalNuevo = new CompradorExpediente();
 						CompradorExpedientePk pk = new CompradorExpedientePk();
-	
+		
 						pk.setComprador(compradorBusquedaAdicional);
 						pk.setExpediente(nuevoExpediente);
 						compradorExpedienteAdicionalNuevo.setPrimaryKey(pk);
 						compradorExpedienteAdicionalNuevo.setTitularReserva(1);
 						compradorExpedienteAdicionalNuevo.setTitularContratacion(0);
 						compradorExpedienteAdicionalNuevo.setPorcionCompra(parteCompraAdicionales);
-	
+		
 						listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
 					} else {
 						Comprador nuevoCompradorAdicional = new Comprador();

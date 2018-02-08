@@ -1,12 +1,9 @@
 package es.pfsgroup.plugin.rem.api.services.webcom.dto;
 
-import java.util.List;
-
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.BooleanDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
 
 public class EstadoOfertaDto implements WebcomRESTDto{
@@ -25,9 +22,7 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	private BooleanDataType vendido;
 	@WebcomRequired
 	private LongDataType idAgrupacionRem;
-	
-	@NestedDto(groupBy="idOfertaRem", type=ActivoVinculadoDto.class)
-	private List<ActivoVinculadoOfertaDto> activosVinculados;
+	private LongDataType idActivoHaya;
 	
 	public LongDataType getIdUsuarioRemAccion() {
 		return idUsuarioRemAccion;
@@ -71,17 +66,17 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	public void setVendido(BooleanDataType vendido) {
 		this.vendido = vendido;
 	}
-	public List<ActivoVinculadoOfertaDto> getActivosVinculados() {
-		return activosVinculados;
-	}
-	public void setActivosVinculados(List<ActivoVinculadoOfertaDto> activosVinculados) {
-		this.activosVinculados = activosVinculados;
-	}
 	public LongDataType getIdAgrupacionRem() {
 		return idAgrupacionRem;
 	}
 	public void setIdAgrupacionRem(LongDataType idAgrupacionRem) {
 		this.idAgrupacionRem = idAgrupacionRem;
+	}
+	public LongDataType getIdActivoHaya() {
+		return idActivoHaya;
+	}
+	public void setIdActivoHaya(LongDataType idActivoHaya) {
+		this.idActivoHaya = idActivoHaya;
 	}
 	
 

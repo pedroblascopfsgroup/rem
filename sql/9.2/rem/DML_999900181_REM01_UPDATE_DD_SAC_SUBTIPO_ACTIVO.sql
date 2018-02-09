@@ -39,6 +39,8 @@ DECLARE
  WHERE DD_SAC_CODIGO IN (''07'', ''11'', ''12'', ''19'', ''23'')';
  
  EXECUTE IMMEDIATE V_SQL;
+ 
+  DBMS_OUTPUT.put_line('[INFO] Se han puesto a null '||SQL%ROWCOUNT||' codigos de la tabla '||V_TABLA);
 
  COMMIT;
 

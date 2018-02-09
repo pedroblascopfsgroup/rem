@@ -162,7 +162,7 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
 		var me = this; 
 		me.recargar = false;
 		var listadoTareasTramite= me.down("[reference=listadoTareasTramite]");
-
+		
 		// FIXME ¿¿Deberiamos cargar la primera página??
 		listadoTareasTramite.getStore().load();
     }

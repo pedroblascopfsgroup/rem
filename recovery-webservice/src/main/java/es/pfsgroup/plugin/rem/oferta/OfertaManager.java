@@ -584,7 +584,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		for (int i = 0; i < ofertaDto.getTitularesAdicionales().size(); i++) {
 			OfertaTitularAdicionalDto titDto = ofertaDto.getTitularesAdicionales().get(i);
-			if (!Checks.esNulo(titDto)) {
+			if (!Checks.esNulo(titDto) && !titDto.getDocumento().equals(oferta.getCliente().getDocumento())) {
 				TitularesAdicionalesOferta titAdi = new TitularesAdicionalesOferta();
 				titAdi.setNombre(titDto.getNombre());
 				titAdi.setDocumento(titDto.getDocumento());
@@ -1432,6 +1432,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if(!Checks.esNulo(oferta.getMotivoRechazo())) {
 					dtoResponse.setMotivoRechazoDesc(oferta.getMotivoRechazo().getTipoRechazo().getDescripcion() + " - " + oferta.getMotivoRechazo().getDescripcion());
 				}
+				if(!Checks.esNulo(oferta.getOfertaExpress())){
+					dtoResponse.setOfertaExpress(oferta.getOfertaExpress() ? "Si" : "No");
+				}
+				if(!Checks.esNulo(oferta.getNecesitaFinanciacion())){
+					dtoResponse.setNecesitaFinanciacion(oferta.getNecesitaFinanciacion() ? "Si" : "No");
+				}
+				dtoResponse.setObservaciones(oferta.getObservaciones());
+				
 			}
 		}
 
@@ -1944,6 +1952,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		codigos.add(DDTipoProveedor.COD_CAT);
 		codigos.add(DDTipoProveedor.COD_HAYA);
 		codigos.add(DDTipoProveedor.COD_GESTIONDIRECTA);
+		codigos.add(DDTipoProveedor.COD_SALESFORCE);
 		
 		List<DDTipoProveedor> listaTipoProveedor = proveedoresDao.getSubtiposProveedorByCodigos(codigos);		
 

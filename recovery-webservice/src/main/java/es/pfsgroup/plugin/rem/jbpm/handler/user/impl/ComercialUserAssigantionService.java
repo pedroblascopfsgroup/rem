@@ -480,7 +480,8 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 						|| oferta.getPrescriptor().getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_WEB_HAYA)
 						|| oferta.getPrescriptor().getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_CAT)
 						|| oferta.getPrescriptor().getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_SALESFORCE)
-						|| oferta.getPrescriptor().getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_HAYA))
+						|| oferta.getPrescriptor().getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_HAYA)
+						|| oferta.getPrescriptor().getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_PORTAL_WEB))
 						&& !carteraCajaMar && !esFinanciero && !esSingular) {
 					esFdv = true;
 				}

@@ -29,7 +29,7 @@ import net.sf.json.JSONObject;
 public interface OfertaApi {
 	
 	public static String ORIGEN_REM ="REM";
-	public static String ORIGEN_WEBCOM ="WEBCOM";
+	public static String ORIGEN_WEBCOM ="WCOM";
 
 	/**
 	 * Devuelve una Oferta por id.

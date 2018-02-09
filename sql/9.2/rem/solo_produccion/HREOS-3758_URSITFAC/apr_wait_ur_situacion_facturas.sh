@@ -20,9 +20,8 @@ hora_actual=`date +%Y%m%d%H%M%S`
 echo "Hora actual: $hora_actual - Hora limite: $hora_limite"
 
 for fichero in $arrayfichero
-do
-     ficheroTxt=$DIR_INPUT_AUX$fichero$extensionTxt
-
+do	
+    ficheroTxt=$DIR_INPUT_AUX$1/$fichero$extensionTxt	
     echo "$ficheroTxt"
     if [[ "$#" -eq 1 ]]; then
         ./ftp_get_URSITFAC_files.sh $1 $fichero
@@ -36,8 +35,8 @@ then
 else
    for fichero in $arrayfichero
    do
-            ficheroTxt=$DIR_INPUT_AUX$fichero$extensionTxt
-
+            ficheroTxt=$DIR_INPUT_AUX$1/$fichero$extensionTxt
+	    echo "$ficheroTxt"
             mv $ficheroTxt $DIR_DESTINO
 
    done

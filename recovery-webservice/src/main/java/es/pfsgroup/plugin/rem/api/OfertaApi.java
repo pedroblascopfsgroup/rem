@@ -529,6 +529,13 @@ public interface OfertaApi {
 	
 	public void desocultarActivoOferta(Oferta oferta) throws Exception;
 	
+	/**
+	 * Método que comprueba para Bankia (excepto subcartera BH) si el estado de la reserva es firmada.
+	 * @param tareaExterna
+	 * @return true si el valor es NO en ambos combos, false en caso de que no estén rellenos o alguno tenga SI.
+	 */
+	public boolean checkReservaFirmada(TareaExterna tareaExterna);
+	
 
 }
 

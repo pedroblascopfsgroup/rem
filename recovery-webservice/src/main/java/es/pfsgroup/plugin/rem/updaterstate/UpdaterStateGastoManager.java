@@ -74,7 +74,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	}
 	
 	@Override
-	public String validarAutorizacionGasto(GastoProveedor gasto) {
+	public String validarCamposMinimos(GastoProveedor gasto) {
 		
 		String error = null;
 		
@@ -169,7 +169,58 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 		
 		// Si no recibimos un estado
 		if(Checks.esNulo(codigo)) {
+			if(!Checks.esNulo(gasto.getEstadoGasto())) {
+				if(DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo())) {
+					codigo = estadoGastoDesdeIncompleto(gasto);
+					
+				}else if(DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo())) {
+					codigo = estadoGastoDesdePendiente(gasto);
+					
+				}else if(DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo())) {
+					codigo = estadoGastoDesdeRechazadoAdmin(gasto);
+					
+				}else if(DDEstadoGasto.RECHAZADO_PROPIETARIO.equals(gasto.getEstadoGasto().getCodigo())) {
+					codigo = estadoGastoDesdeRechazadoProp(gasto);
+					
+				}else if(DDEstadoGasto.SUBSANADO.equals(gasto.getEstadoGasto().getCodigo())) {
+					codigo = estadoGastoDesdeSubsanado(gasto);
+					
+				}else if(DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo())) {
+					codigo = estadoGastoDesdeAutorizadoAdmin(gasto);
+					
+				}else if(DDEstadoGasto.AUTORIZADO_PROPIETARIO.equals(gasto.getEstadoGasto().getCodigo())) {
+					codigo = estadoGastoDesdeAutorizadoProp(gasto);
+					
+				}else if(DDEstadoGasto.ANULADO.equals(gasto.getEstadoGasto().getCodigo())) {
+					codigo = estadoGastoDesdeAnulado(gasto);
+					
+				}else if(DDEstadoGasto.PAGADO.equals(gasto.getEstadoGasto().getCodigo())) {
+					codigo = estadoGastoDesdePagado(gasto);
+					
+				}else if(DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC.equals(gasto.getEstadoGasto().getCodigo())) {
+					codigo = estadoGastoDesdeSinJusti(gasto);
+					
+				}else if(DDEstadoGasto.RETENIDO.equals(gasto.getEstadoGasto().getCodigo())) {
+					codigo = estadoGastoDesdeRetenido(gasto);
+				}else if(DDEstadoGasto.CONTABILIZADO.equals(gasto.getEstadoGasto().getCodigo())) {
+					codigo = estadoGastoDesdeContabilizado(gasto);
+				}
+				
+				
+			}else {
+				codigo = DDEstadoGasto.INCOMPLETO;
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
+				DDEstadoGasto estadoGasto = genericDao.get(DDEstadoGasto.class, filtro);
+				gasto.setEstadoGasto(estadoGasto);
+				updaterStateGastoProveedor(gasto, null);
+			}
 			
+			
+			
+			
+			
+			
+			/*
 		// Comprobamos la situación del gasto y determinamos el próximo código de estado
 			GastoGestion gastoGestion = gasto.getGastoGestion();
 			if(!Checks.esNulo(gasto.getEstadoGasto())){
@@ -181,7 +232,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 							&& (!Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionHaya()) 
 									|| (Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionHaya()) 
 											&& DDEstadoGasto.RETENIDO.equals(gasto.getEstadoGasto().getCodigo()))) ){
-						String error = validarAutorizacionGasto(gasto);
+						String error = validarCamposMinimos(gasto);
 						if(Checks.esNulo(error)) {
 							if(DDEstadoAutorizacionHaya.CODIGO_RECHAZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())) {
 								codigo = DDEstadoGasto.RECHAZADO_ADMINISTRACION;
@@ -212,48 +263,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 					&& !DDEstadoGasto.PAGADO.equals(gasto.getEstadoGasto().getCodigo())
 					&& !Checks.esNulo(gasto.getGastoDetalleEconomico().getFechaPago())) {
 
-						//HREOS-3456:  hay supuestos en los que, aunque se haga constar una fecha de pago,
-						//el gasto no debe posicionarse en estado pagado: 
-						//1) Cuando se marque el check de "pagado por conexión Bankia"; 
-						//2) Cuando se marque el check de "anticipo".
-						if(Checks.esNulo(gasto.getGestoria())) {
-							if (gasto.getGastoDetalleEconomico() != null) {
-								if ((gasto.getGastoDetalleEconomico().getAnticipo() == null
-										|| gasto.getGastoDetalleEconomico().getAnticipo().equals(Integer.valueOf(0)))
-										&& (gasto.getGastoDetalleEconomico().getPagadoConexionBankia() == null
-												|| gasto.getGastoDetalleEconomico().getPagadoConexionBankia()
-														.equals(Integer.valueOf(0)))) {
-	
-									codigo = DDEstadoGasto.PAGADO;
-								}else {
-									codigo = null;
-								}
-							}
-						}else {
-							Pattern justPattern = Pattern.compile(".*-CERA-.*");
-							if (gasto.getGastoDetalleEconomico() != null) {
-								if ((gasto.getGastoDetalleEconomico().getAnticipo() == null
-										|| gasto.getGastoDetalleEconomico().getAnticipo().equals(Integer.valueOf(0)))
-										&& (gasto.getGastoDetalleEconomico().getIncluirPagoProvision() == null
-												|| gasto.getGastoDetalleEconomico().getIncluirPagoProvision()
-														.equals(Integer.valueOf(0)))) {
-									if(!Checks.estaVacio(gasto.getAdjuntos())) {
-										for(AdjuntoGasto adjunto : gasto.getAdjuntos()) {
-											if(justPattern.matcher(adjunto.getTipoDocumentoGasto().getMatricula()).matches()){
-												codigo = DDEstadoGasto.PAGADO;
-											}else {
-												codigo = DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC;
-											}
-										}
-									}else {
-										codigo = DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC;
-									}
-									
-								}else {
-									codigo = null;
-								}
-							}
-						}
+						
 						
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO);
 						DDEstadoAutorizacionHaya estadoAutorizacionHaya= genericDao.get(DDEstadoAutorizacionHaya.class, filtro);
@@ -270,17 +280,27 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 					
 				}
 				
-			}				
-		}
+			}	*/			
+		}/*
 		else {
-			String valido = validarAutorizacionGasto(gasto);
+			String valido = validarCamposMinimos(gasto);
 			if(!codigo.equals(DDEstadoGasto.INCOMPLETO) && !codigo.equals(DDEstadoGasto.ANULADO) && !codigo.equals(DDEstadoGasto.RETENIDO) && !Checks.esNulo(valido)) {
 				codigo = null;
 			}
 		}
-		
+		*/
 		// Si tenemos definido un estado, lo búscamos y modificamos en el gasto
+		
 		if(!Checks.esNulo(codigo)) {
+			if(codigo.equals(DDEstadoGasto.RETENIDO)) {
+				if(gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.INCOMPLETO)) {
+					cambiarEstadosAutorizacionGasto(gasto,null,null);
+				}else if(gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.PENDIENTE)) {
+					cambiarEstadosAutorizacionGasto(gasto,DDEstadoAutorizacionHaya.CODIGO_PENDIENTE,null);
+				}else if(gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.SUBSANADO)) {
+					cambiarEstadosAutorizacionGasto(gasto,DDEstadoAutorizacionHaya.CODIGO_RECHAZADO,null);
+				}
+			}
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
 			DDEstadoGasto estadoGasto = genericDao.get(DDEstadoGasto.class, filtro);
 			gasto.setEstadoGasto(estadoGasto);
@@ -289,6 +309,199 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 		
 		return false;
 		
+	}
+
+
+	private boolean validacionMinima(GastoProveedor gasto) {
+			// Comprobamos la situación del gasto y determinamos el próximo código de estado
+		GastoGestion gastoGestion = gasto.getGastoGestion();
+		if(!Checks.esNulo(gasto.getEstadoGasto())){				
+			
+		// Si el pago sigue retenido, ningún cambio en el gasto implica cambio de estado.
+			if(Checks.esNulo(gastoGestion.getMotivoRetencionPago())) {
+				String error = validarCamposMinimos(gasto);
+				if(Checks.esNulo(error)) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			}		
+		}
+		return false;
+	}
+	
+	private String validacionEstadoAutorizacionHaya(GastoProveedor gasto) {
+		if(!Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionHaya())) {			
+			if(DDEstadoAutorizacionHaya.CODIGO_PENDIENTE.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())) {
+				return gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.SUBSANADO)? DDEstadoGasto.SUBSANADO : DDEstadoGasto.PENDIENTE;
+			}else if(DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())) {
+				return DDEstadoGasto.AUTORIZADO_ADMINISTRACION;
+			}else if(DDEstadoAutorizacionHaya.CODIGO_RECHAZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())){
+				return DDEstadoGasto.SUBSANADO;
+			}else {
+				return DDEstadoGasto.PENDIENTE;
+			}
+		}else {
+			return DDEstadoGasto.PENDIENTE;
+		}
+	}
+	
+	private String validarSiTieneFechaPago(GastoProveedor gasto) {
+		//HREOS-3456:  hay supuestos en los que, aunque se haga constar una fecha de pago,
+		//el gasto no debe posicionarse en estado pagado: 
+		//1) Cuando se marque el check de "pagado por conexión Bankia"; 
+		//2) Cuando se marque el check de "anticipo".
+		if (!Checks.esNulo(gasto.getGastoDetalleEconomico().getFechaPago())) {
+			if(Checks.esNulo(gasto.getGestoria())) {
+				if (!Checks.esNulo(gasto.getGastoDetalleEconomico())) {
+					if ((Checks.esNulo(gasto.getGastoDetalleEconomico().getAnticipo())
+							|| gasto.getGastoDetalleEconomico().getAnticipo().equals(Integer.valueOf(0)))
+							&& (Checks.esNulo(gasto.getGastoDetalleEconomico().getPagadoConexionBankia())
+									|| gasto.getGastoDetalleEconomico().getPagadoConexionBankia()
+											.equals(Integer.valueOf(0)))) {
+	
+						return DDEstadoGasto.PAGADO;
+					}
+				}
+			}else {
+				Pattern justPattern = Pattern.compile(".*-CERA-.*");
+				if (!Checks.esNulo(gasto.getGastoDetalleEconomico())) {
+					if ((Checks.esNulo(gasto.getGastoDetalleEconomico().getAnticipo())
+							|| gasto.getGastoDetalleEconomico().getAnticipo().equals(Integer.valueOf(0)))
+							&& (Checks.esNulo(gasto.getGastoDetalleEconomico().getIncluirPagoProvision())
+									|| gasto.getGastoDetalleEconomico().getIncluirPagoProvision()
+											.equals(Integer.valueOf(0)))) {
+						if(!Checks.estaVacio(gasto.getAdjuntos())) {
+							for(AdjuntoGasto adjunto : gasto.getAdjuntos()) {
+								if(justPattern.matcher(adjunto.getTipoDocumentoGasto().getMatricula()).matches()){
+									return DDEstadoGasto.PAGADO;
+								}else {
+									return DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC;
+								}
+							}
+						}else {
+							return DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC;
+						}
+						
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	private String estadoGastoDesdeIncompleto(GastoProveedor gasto) {
+		if (validacionMinima(gasto)) {		
+			String estado = validacionEstadoAutorizacionHaya(gasto);
+			if(DDEstadoGasto.PENDIENTE.equals(estado) || DDEstadoGasto.SUBSANADO.equals(estado)) {
+				if(!Checks.esNulo(gasto.getGestoria())){
+					if(DDEstadoGasto.SUBSANADO.equals(estado)) {
+						cambiarEstadosAutorizacionGasto(gasto, DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO, DDEstadoAutorizacionPropietario.CODIGO_PENDIENTE);
+						return estado;
+					}
+				}
+				cambiarEstadosAutorizacionGasto(gasto, DDEstadoAutorizacionHaya.CODIGO_PENDIENTE, null);
+			}
+			return estado;
+			
+		}
+		cambiarEstadosAutorizacionGasto(gasto, null, null);
+		return null;
+	}
+	
+	private String estadoGastoDesdePendiente(GastoProveedor gasto) {
+		if (validacionMinima(gasto)) {
+			String codigo = validarSiTieneFechaPago(gasto);
+			if(Checks.esNulo(codigo)) {
+				String estado = validacionEstadoAutorizacionHaya(gasto);
+				return estado.equals(DDEstadoGasto.PENDIENTE)? null : estado;
+			}else {
+				return codigo;
+			}
+		}
+		cambiarEstadosAutorizacionGasto(gasto, null, null);
+		return DDEstadoGasto.INCOMPLETO;
+	}
+
+	private String estadoGastoDesdeRechazadoAdmin(GastoProveedor gasto) {
+		if (validacionMinima(gasto)) {
+			String estado = validacionEstadoAutorizacionHaya(gasto);
+			if(!Checks.esNulo(gasto.getGestoria())){
+				if(DDEstadoGasto.SUBSANADO.equals(estado)) {
+					cambiarEstadosAutorizacionGasto(gasto, DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO, DDEstadoAutorizacionPropietario.CODIGO_PENDIENTE);
+				}
+			}else {
+				cambiarEstadosAutorizacionGasto(gasto, DDEstadoAutorizacionHaya.CODIGO_PENDIENTE, null);
+			}
+			return estado;
+		}
+		return DDEstadoGasto.INCOMPLETO;
+	}
+	
+	private String estadoGastoDesdeRechazadoProp(GastoProveedor gasto) {
+		if (validacionMinima(gasto)) {
+			String estado = validacionEstadoAutorizacionHaya(gasto);
+			if(DDEstadoGasto.SUBSANADO.equals(estado)) {
+				cambiarEstadosAutorizacionGasto(gasto, DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO, DDEstadoAutorizacionPropietario.CODIGO_PENDIENTE);
+			}
+			return estado;
+		}
+		return DDEstadoGasto.INCOMPLETO;
+	}
+	
+	private String estadoGastoDesdeSubsanado(GastoProveedor gasto) {
+		if (validacionMinima(gasto)) {
+			String codigo = validarSiTieneFechaPago(gasto);
+			if(Checks.esNulo(codigo)) {
+				String estado = validacionEstadoAutorizacionHaya(gasto);
+				return estado;
+			}else {
+				return codigo;
+			}
+		}
+		cambiarEstadosAutorizacionGasto(gasto, DDEstadoAutorizacionHaya.CODIGO_RECHAZADO, null);
+		return DDEstadoGasto.INCOMPLETO;
+	}
+	
+	private String estadoGastoDesdeAutorizadoAdmin(GastoProveedor gasto) {
+		return validarSiTieneFechaPago(gasto);
+	}
+	
+	private String estadoGastoDesdeAutorizadoProp(GastoProveedor gasto) {
+		return validarSiTieneFechaPago(gasto);
+	}
+
+	private String estadoGastoDesdeAnulado(GastoProveedor gasto) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private String estadoGastoDesdePagado(GastoProveedor gasto) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private String estadoGastoDesdeSinJusti(GastoProveedor gasto) {
+		return validarSiTieneFechaPago(gasto);
+	}
+	
+	private String estadoGastoDesdeRetenido(GastoProveedor gasto) {
+		if(Checks.esNulo(gasto.getGastoGestion().getMotivoRetencionPago())) {
+			if (validacionMinima(gasto)) {
+				String estado = validacionEstadoAutorizacionHaya(gasto);
+				if(DDEstadoGasto.SUBSANADO.equals(estado)) {
+					cambiarEstadosAutorizacionGasto(gasto, DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO, DDEstadoAutorizacionPropietario.CODIGO_PENDIENTE);
+				}
+				return estado;
+			}
+			return DDEstadoGasto.INCOMPLETO;
+		}
+		return null;
+	}
+	
+	private String estadoGastoDesdeContabilizado(GastoProveedor gasto) {
+		return validarSiTieneFechaPago(gasto);
 	}
 	
 	private void cambiarEstadosAutorizacionGasto(GastoProveedor gasto, String codigoEstadoAutorizacionHaya, String codigoEstadoAutorizacionPropietario){
@@ -310,19 +523,29 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			gasto.getGastoGestion().setEstadoAutorizacionPropietario(estadoAutorizacionPropietario);
 		}
 	}
-	
+	/*
 	private void updateStatesGastosGestion(GastoProveedor gasto){
 		//Si no esta sujeto a impuesto indirecto
 		if(!Checks.esNulo(gasto.getGastoGestion().getGastoProveedor().getGestoria())){
 			cambiarEstadosAutorizacionGasto(gasto, DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO, DDEstadoAutorizacionPropietario.CODIGO_PENDIENTE);
 		}
 		//Si esta sujeto a impuesto indirecto tipo IVA
-		else if(DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo())){
+		else if(DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo())
+				|| DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo())
+				|| (DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo()) 
+						&& (Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionHaya()) 
+						|| DDEstadoAutorizacionHaya.CODIGO_RECHAZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())))){
 			cambiarEstadosAutorizacionGasto(gasto, DDEstadoAutorizacionHaya.CODIGO_PENDIENTE, null);
+		}else if(DDEstadoGasto.SUBSANADO.equals(gasto.getEstadoGasto().getCodigo())) {
+			cambiarEstadosAutorizacionGasto(gasto, DDEstadoAutorizacionHaya.CODIGO_RECHAZADO, null);
+		}else if((DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo()) 
+				|| DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo())) 
+				&& DDEstadoAutorizacionHaya.CODIGO_PENDIENTE.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())) {
+			return;
 		}
 		else{
 			cambiarEstadosAutorizacionGasto(gasto, DDEstadoAutorizacionHaya.CODIGO_PENDIENTE, DDEstadoAutorizacionPropietario.CODIGO_RECHAZADO_CONTABILIDAD);
 		}
 		
-	}
+	}*/
 }

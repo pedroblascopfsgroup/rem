@@ -196,7 +196,7 @@ public class UvemManager implements UvemManagerApi {
 
 		boolean activo = !Checks.esNulo(appProperties.getProperty("rest.client.uvem.activo"))
 				? Boolean.valueOf(appProperties.getProperty("rest.client.uvem.activo")) : false;
-		if (activo && !Checks.esNulo(this.URL)&& !Checks.esNulo(this.ALIAS)) {
+		if (activo && !Checks.esNulo(this.URL) && !Checks.esNulo(this.ALIAS)) {
 			servicio.execute();
 		} else {
 			logger.error("UVEM: Servicios desactividos");
@@ -876,9 +876,9 @@ public class UvemManager implements UvemManagerApi {
 
 					// % de participación en la compra
 					Double porcentajeCompraValor = titular.getPorcentajeCompra();
-					if(porcentajeCompraValor != null){
+					if (porcentajeCompraValor != null) {
 						porcentajeCompraValor = porcentajeCompraValor * 100;
-					}else{
+					} else {
 						porcentajeCompraValor = 0.0;
 					}
 					Porcentaje9 porcentajeCompra = new Porcentaje9();
@@ -941,7 +941,7 @@ public class UvemManager implements UvemManagerApi {
 				if (instanciaData.getTipoDeImpuesto() == InstanciaDecisionDataDto.TIPO_IMPUESTO_ITP
 						|| instanciaData.getTipoDeImpuesto() == InstanciaDecisionDataDto.TIPO_IMPUESTO_IGIC
 						|| instanciaData.getTipoDeImpuesto() == InstanciaDecisionDataDto.TIPO_IMPUESTO_IPSI) {
-					 struct.setIndicadorTratamientoImpuestobitrim(' ');
+					struct.setIndicadorTratamientoImpuestobitrim(' ');
 				} else if (instanciaData.getTipoDeImpuesto() == InstanciaDecisionDataDto.TIPO_IMPUESTO_IVA) {
 
 					if (Checks.esNulo(instanciaData.getRenunciaExencion())
@@ -1011,13 +1011,15 @@ public class UvemManager implements UvemManagerApi {
 				servicioGMPDJB13_INS
 						.setIndicadorDeFinanciacionClientebificl(instanciaDecisionDto.FINANCIACION_CLIENTE_NO);
 			}
-			/* Según llamada telefonica con Antonio Rios Muñoz(Atos Origin)
-			if (accion.equals(INSTANCIA_DECISION_MODIFICACION)) {
-				servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_CONTRAOFERTA);
-			} else {
-				servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_VENTA);
-			}*/
-			
+			/*
+			 * Según llamada telefonica con Antonio Rios Muñoz(Atos Origin) if
+			 * (accion.equals(INSTANCIA_DECISION_MODIFICACION)) {
+			 * servicioGMPDJB13_INS.setTipoPropuestacotprw(
+			 * InstanciaDecisionDataDto.PROPUESTA_CONTRAOFERTA); } else {
+			 * servicioGMPDJB13_INS.setTipoPropuestacotprw(
+			 * InstanciaDecisionDataDto.PROPUESTA_VENTA); }
+			 */
+
 			servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_VENTA);
 
 			if (accion.equals(INSTANCIA_DECISION_MODIFICACION_3)) {
@@ -1036,6 +1038,8 @@ public class UvemManager implements UvemManagerApi {
 							.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_CONDICIONANTES_ECONOMICOS);
 				}
 
+			} else if (accion.equals(INSTANCIA_DECISION_ALTA)) {
+				servicioGMPDJB13_INS.setCodigoDeAgrupacionDeInmueblecoagiw(0);
 			}
 
 			if (numeroOcurrencias != null) {
@@ -1045,7 +1049,8 @@ public class UvemManager implements UvemManagerApi {
 			// Importe de la reserva
 			ImporteMonetario importeMonetarioReserva = new ImporteMonetario();
 			if (instanciaDecisionDto.getImporteReserva() != null) {
-				importeMonetarioReserva.setImporteConSigno(Double.valueOf(instanciaDecisionDto.getImporteReserva()*100).longValue());
+				importeMonetarioReserva
+						.setImporteConSigno(Double.valueOf(instanciaDecisionDto.getImporteReserva() * 100).longValue());
 			} else {
 				importeMonetarioReserva.setImporteConSigno(new Long(0));
 			}
@@ -1056,12 +1061,15 @@ public class UvemManager implements UvemManagerApi {
 			importeMonetarioReserva.setNumeroDecimalesImporte('-');
 
 			servicioGMPDJB13_INS.setImporteMonetarioDeLaReservaBISA(importeMonetarioReserva);
-			if (instanciaDecisionDto.getImporteReserva() == null || instanciaDecisionDto.getImporteReserva().compareTo(new Double(0)) == 0 
-					|| Checks.esNulo(instanciaListData.get(0).getPorcentajeImpuesto()) || instanciaListData.get(0).getPorcentajeImpuesto() == 0) {
+			if (instanciaDecisionDto.getImporteReserva() == null
+					|| instanciaDecisionDto.getImporteReserva().compareTo(new Double(0)) == 0
+					|| Checks.esNulo(instanciaListData.get(0).getPorcentajeImpuesto())
+					|| instanciaListData.get(0).getPorcentajeImpuesto() == 0) {
 				servicioGMPDJB13_INS.setIndicadorCobroImpuestosReservabicirv(' ');
 			} else {
 				if (instanciaDecisionDto.getImporteReserva().compareTo(Double.valueOf(0)) > 0
-						&& instanciaListData.get(0).getPorcentajeImpuesto() > 0 && instanciaDecisionDto.getImpuestosReserva()) {
+						&& instanciaListData.get(0).getPorcentajeImpuesto() > 0
+						&& instanciaDecisionDto.getImpuestosReserva()) {
 					servicioGMPDJB13_INS.setIndicadorCobroImpuestosReservabicirv('S');
 				} else {
 					servicioGMPDJB13_INS.setIndicadorCobroImpuestosReservabicirv('N');
@@ -1233,7 +1241,6 @@ public class UvemManager implements UvemManagerApi {
 			es.cajamadrid.servicios.GM.GMPTOE83_INS.StructCabeceraTecnica cabeceraTecnica = new es.cajamadrid.servicios.GM.GMPTOE83_INS.StructCabeceraTecnica();
 			StructCabeceraAplicacionGMPTOE83_INS cabeceraAplicacion = new StructCabeceraAplicacionGMPTOE83_INS();
 
-			
 			cabeceraFuncional.setCOFRAQ("168");
 			cabeceraFuncional.setCOSFAQ("00");
 			cabeceraFuncional.setCOAQAQ("AQ");
@@ -1243,7 +1250,7 @@ public class UvemManager implements UvemManagerApi {
 			cabeceraFuncional.setCOCDAQ("0551");
 			cabeceraFuncional.setCOSBAQ("00");
 			cabeceraFuncional.setNUPUAQ("00");
-			cabeceraFuncional.setIDDSAQ(""); 
+			cabeceraFuncional.setIDDSAQ("");
 			cabeceraTecnica.setCLORAQ("71");
 
 			// COPACE
@@ -1276,7 +1283,7 @@ public class UvemManager implements UvemManagerApi {
 			}
 
 			// LCOMOA
-			if(!Checks.esNulo(motivoAnulacionReserva)){
+			if (!Checks.esNulo(motivoAnulacionReserva)) {
 				if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.COMPRADOR_NO_INTERESADO)) {
 					servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("1"));
 				} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.DECISION_AREA)) {
@@ -1303,9 +1310,9 @@ public class UvemManager implements UvemManagerApi {
 			} else {
 				servicioGMPTOE83_INS.setIndicadorDevolucionReservabindre('N');
 			}
-			
+
 			servicioGMPTOE83_INS.setCodigoDeOfertalcoofe(0);
-			servicioGMPTOE83_INS.setNumeroDeMovimientoCondicioneslnumvc((short)0);
+			servicioGMPTOE83_INS.setNumeroDeMovimientoCondicioneslnumvc((short) 0);
 			servicioGMPTOE83_INS.setFechaEmisionAmpliacionlfeema(0);
 			servicioGMPTOE83_INS.setFechaAmplizacionFirmalfefam(0);
 			servicioGMPTOE83_INS.setFechaEnvioReservalfeenr(0);
@@ -1316,8 +1323,7 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPTOE83_INS.setFechaSubastalfesub(0);
 			servicioGMPTOE83_INS.setFechaNuevoVencimientolfecvt(0);
 			servicioGMPTOE83_INS.setIndicadorContratoReservaFirmadobioprf(' ');
-			servicioGMPTOE83_INS.setCodigoDeEntidadlcoett((short)0);
-			
+			servicioGMPTOE83_INS.setCodigoDeEntidadlcoett((short) 0);
 
 			servicioGMPTOE83_INS.setAlias(ALIAS);
 			// servicioGMPTOE83_INS.execute();
@@ -1375,7 +1381,7 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPAJC29_INS.setcabeceraAplicacion(cabeceraAplicacion);
 			servicioGMPAJC29_INS.setcabeceraFuncionalPeticion(cabeceraFuncional);
 			servicioGMPAJC29_INS.setcabeceraTecnica(cabeceraTecnica);
-			
+
 			cabeceraFuncional.setCOFRAQ("168");
 			cabeceraFuncional.setCOSFAQ("00");
 			cabeceraFuncional.setCOAQAQ("AQ");
@@ -1385,7 +1391,7 @@ public class UvemManager implements UvemManagerApi {
 			cabeceraFuncional.setCOCDAQ("0551");
 			cabeceraFuncional.setCOSBAQ("00");
 			cabeceraFuncional.setNUPUAQ("00");
-			cabeceraFuncional.setIDDSAQ ("BAJA");
+			cabeceraFuncional.setIDDSAQ("BAJA");
 			cabeceraTecnica.setCLORAQ("71");
 
 			cabeceraAplicacion.setCodigoObjetoAccesocopace("PAHY0150");
@@ -1395,7 +1401,7 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPAJC29_INS.setRCSLON(0);
 
 			cabeceraAplicacion.setCentroGestorUsuarioSsacocgus(COCGUS);
-			
+
 			servicioGMPAJC29_INS.setCOOFHX(StringUtils.leftPad(codigoDeOfertaHaya, 16, "0"));
 
 			if (motivoAnulacionOferta.equals(MOTIVO_ANULACION_OFERTA.COMPRADOR_NO_INTERESADO_OPERACION)) {

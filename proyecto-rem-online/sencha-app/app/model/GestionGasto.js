@@ -62,19 +62,21 @@ Ext.define('HreRem.model.GestionGasto', {
     		name: 'fechaYGestorAutorizacionHaya',
     		calculate: function(record){
    				var res='';
-   				if(!Ext.isEmpty(record.fechaAutorizacionHaya)){
-   					var date= new Date(record.fechaAutorizacionHaya);
-   					res= res + date.getDate() + "/"+ (date.getMonth()+1) + "/" + date.getFullYear();
-   				}
-   				if(!Ext.isEmpty(record.gestorAutorizacionHaya)){
-   					res= res + " - " + record.gestorAutorizacionHaya;
+   				if(CONST.ESTADOS_AUTORIZACION_HAYA['PENDIENTE'] != record.comboEstadoAutorizacionHaya){
+	   				if(!Ext.isEmpty(record.fechaAutorizacionHaya)){
+	   					var date= new Date(record.fechaAutorizacionHaya);
+	   					res= res + date.getDate() + "/"+ (date.getMonth()+1) + "/" + date.getFullYear();
+	   				}
+	   				if(!Ext.isEmpty(record.gestorAutorizacionHaya)){
+	   					res= res + " - " + record.gestorAutorizacionHaya;
+	   				}
    				}
    				return res;
    			}
    			,depends: ['gestorAutorizacionHaya', 'fechaAutorizacionHaya']
     	},
     	{
-    		name: 'comboMotivoAutorizacionHaya'
+    		name: 'comboMotivoAutorizadoHaya'
     	},
     	////////////////
     	{

@@ -15,7 +15,8 @@ Ext.define('HreRem.controller.WindowsController', {
     	global: {
     			infoToast: 'infoToast',
 	    		warnToast: 'warnToast',
-	    		errorToast: 'errorToast'
+	    		errorToast: 'errorToast',
+	    		errorToastLong: 'errorToastLong'
     	},
 
     	
@@ -25,6 +26,7 @@ Ext.define('HreRem.controller.WindowsController', {
 	    		infoToast: 'infoToast',
 	    		warnToast: 'warnToast',
 	    		errorToast: 'errorToast',
+	    		errorToastLong: 'errorToastLong',
 	    		downloadFile: 'downloadFile'
     		}
     	},
@@ -33,7 +35,8 @@ Ext.define('HreRem.controller.WindowsController', {
     		'*': {
     			infoToast: 'infoToast',
 	    		warnToast: 'warnToast',
-	    		errorToast: 'errorToast'  
+	    		errorToast: 'errorToast',
+	    		errorToastLong: 'errorToastLong'
     		}
     	}
    	},

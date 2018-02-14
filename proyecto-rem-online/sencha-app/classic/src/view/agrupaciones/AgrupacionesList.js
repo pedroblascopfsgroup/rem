@@ -187,6 +187,71 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesList', {
 				        }
 		
 			        ];
+			
+			me.onDeleteClick= function (btn) {
+				var me= this;
+				var numAgrupacionRem= me.getSelection()[0].get('numAgrupacionRem');
+				Ext.Ajax.request({
+		    		url: $AC.getRemoteUrl('agrupacion/permiteEliminarAgrupacion'),
+		    		params: {numAgrupacionRem: numAgrupacionRem},
+		    		success: function(response, opts){
+		    			var record = JSON.parse(response.responseText);
+		    			if(record.success === 'true') {
+		    				if(record.data == 'true'){
+		    					Ext.Msg.show({
+								   title: HreRem.i18n('title.confirmar.eliminacion'),
+								   msg: HreRem.i18n('msg.desea.eliminar'),
+								   buttons: Ext.MessageBox.YESNO,
+								   fn: function(buttonId) {
+								        if (buttonId == 'yes') {
+								        	me.mask(HreRem.i18n("msg.mask.espere"));
+								    		me.rowEditing.cancelEdit();
+								            var sm = me.getSelectionModel();
+								            sm.getSelection()[0].erase({
+								            	success: function (a, operation, c) {
+					                                me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+													me.unmask();
+													me.deleteSuccessFn();
+					                            },
+					                            
+					                            failure: function (a, operation) {
+					                            	var data = {};
+					                            	try {
+					                            		data = Ext.decode(operation._response.responseText);
+					                            	}
+					                            	catch (e){ };
+					                            	if (!Ext.isEmpty(data.msg)) {
+					                            		me.fireEvent("errorToast", data.msg);
+					                            	} else {
+					                            		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					                            	}
+													me.unmask();
+													me.deleteFailureFn();
+					                            }
+					                        }
+								            	
+								            	
+								            );
+								            if (me.getStore().getCount() > 0) {
+								                sm.select(0);
+								            }
+								        }
+								   }
+							});
+		    				}
+		    				else {
+		    					me.fireEvent("errorToastLong", HreRem.i18n("activo.aviso.agrupacion.con.trabajo.oferta"));
+		    				}
+		    			}
+		    			else{
+		    				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    			}
+		    		},
+				 	failure: function(record, operation) {
+				 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				    }
+		    	});
+			};
 			        
 			me.dockedItems = [
 			        {

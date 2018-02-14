@@ -567,6 +567,15 @@ public class AgendaAdapter {
 		return true;
 	}
 	
+	public Boolean saltoPBC(Long idProcesBpm){
+		try{
+			tareaActivoApi.saltoPBC(idProcesBpm);
+		}catch(Exception ex){
+			return false;
+		}
+		return true;
+	}
+	
 	@Transactional(readOnly = false)
 	public Boolean reasignarTarea(DtoReasignarTarea dto){
 		

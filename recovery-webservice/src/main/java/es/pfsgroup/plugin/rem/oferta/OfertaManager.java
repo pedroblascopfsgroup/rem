@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.oferta;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,6 +12,8 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+
+import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,14 +44,17 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
+import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
+import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -90,6 +96,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -107,7 +114,6 @@ import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
-import net.sf.json.JSONObject;
 
 @Service("ofertaManager")
 public class OfertaManager extends BusinessOperationOverrider<OfertaApi> implements OfertaApi {
@@ -184,6 +190,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+	
+	@Autowired
+	private ActivoApi activoApi;
+	
+	@Autowired
+	private ExpedienteComercialDao expedienteComercialDao;
+	
+	@Autowired
+	private AgendaAdapter adapter;
 
 	@Override
 	public String managerName() {
@@ -564,6 +579,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(ofertaDto.getTitularesAdicionales())) {
 				saveOrUpdateListaTitualesAdicionalesOferta(ofertaDto, oferta);
 			}
+			
+			if(!Checks.esNulo(ofertaDto.getObservaciones())){
+				oferta.setObservaciones(ofertaDto.getObservaciones());
+			}
+			
+			if(!Checks.esNulo(ofertaDto.getFinanciacion())){
+				oferta.setNecesitaFinanciacion(ofertaDto.getFinanciacion());
+			}
+			
+			if(!Checks.esNulo(ofertaDto.getIsExpress())){
+				oferta.setOfertaExpress(ofertaDto.getIsExpress());
+			}
 
 			Long idOferta = ofertaDao.save(oferta);
 			oferta.setId(idOferta);
@@ -639,6 +666,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				modificado = true;
 			}
 			
+			if(!Checks.esNulo(ofertaDto.getObservaciones()) && !ofertaDto.getObservaciones().equals(oferta.getObservaciones())){
+				oferta.setObservaciones(ofertaDto.getObservaciones());
+			}
+			
+			if(!Checks.esNulo(ofertaDto.getFinanciacion()) && ofertaDto.getFinanciacion().equals(oferta.getNecesitaFinanciacion())){
+				oferta.setNecesitaFinanciacion(ofertaDto.getFinanciacion());
+			}
+			
+			if(!Checks.esNulo(ofertaDto.getIsExpress()) && ofertaDto.getIsExpress().equals(oferta.getOfertaExpress())){
+				oferta.setOfertaExpress(ofertaDto.getIsExpress());
+			}
+			
 			if(modificado){
 				ofertaDao.saveOrUpdate(oferta);
 			}
@@ -658,7 +697,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return errorsList;
 	}
 
-	private void updateEstadoOferta(Oferta oferta, Date fechaAccion) {
+	private void updateEstadoOferta(Oferta oferta, Date fechaAccion) throws JsonViewerException, SQLException {
 
 		Oferta ofertaAcepted = null;
 		Boolean inLoteComercial = false;
@@ -704,10 +743,56 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		if (!Checks.esNulo(ofertaAcepted) || inLoteComercial) {
-			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA)));
+			if(inLoteComercial){
+				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));
+			}else{
+				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA)));	
+			}
 		} else {
-			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));
-
+			if(oferta.getOfertaExpress()){
+				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_ACEPTADA)));
+				
+				//Congelar resto de ofertas
+				for(ActivoOferta actOfer : oferta.getActivoPrincipal().getOfertas()){
+					
+					if(!Checks.esNulo(actOfer.getPrimaryKey().getOferta()) && !actOfer.getPrimaryKey().getOferta().equals(oferta) && DDEstadoOferta.CODIGO_PENDIENTE.equals(actOfer.getPrimaryKey().getOferta().getEstadoOferta().getCodigo())){
+						Oferta ofercongelada = actOfer.getPrimaryKey().getOferta();
+						ofercongelada.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA)));
+						ofertaDao.saveOrUpdate(ofercongelada);
+					}
+					
+				}
+				
+				//Se creará un expediente comercial asociado y se colocará el trámite en la tarea Resultado PBC
+				List<Activo> listaActivos = new ArrayList<Activo>();
+				for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
+					listaActivos.add(activoOferta.getPrimaryKey().getActivo());
+				}
+				
+				DDSubtipoTrabajo subtipoTrabajo = (DDSubtipoTrabajo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, activoApi.getSubtipoTrabajoByOferta(oferta));
+				
+				Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null,false);
+				activoApi.crearExpediente(oferta, trabajo);
+				ActivoTramite activoTramite = trabajoApi.createTramiteTrabajo(trabajo);
+				
+				adapter.saltoPBC(activoTramite.getProcessBPM());
+				
+				//Se copiará el valor del campo necesita financiación al campo asociado del expediente comercial
+				ExpedienteComercial expComercial = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
+				CondicionanteExpediente coe = expComercial.getCondicionante();
+				if(!Checks.esNulo(coe)){
+					coe.setSolicitaFinanciacion(oferta.getNecesitaFinanciacion()?1:0);
+				}
+				genericDao.update(CondicionanteExpediente.class, coe);
+				
+				//Se ocultará el activo con el motivo “Oferta Express Cajamar”
+				Activo activo = oferta.getActivoPrincipal();			
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO);
+				activoEstadoPublicacionApi.cambiarEstadoPublicacionAndRegistrarHistorico(activo, ActivoHistoricoEstadoPublicacion.MOTIVO_OFERTA_EXPRES, filtro,activo.getEstadoPublicacion(), null, null);
+				
+			}else{
+				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));	
+			}
 		}
 
 		oferta.setFechaAlta(fechaAccion);

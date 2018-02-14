@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.jbpm.graph.exe.Token;
 import org.jbpm.svc.Service;
 
 public interface JBPMProcessManagerApi {
@@ -33,7 +34,7 @@ public interface JBPMProcessManagerApi {
 	public abstract void signalProcess(Long idProcess, String transitionName);
 
 	/**
-	 * Devuelve cierto o falso en funci√≥n de si existe o no la transiciÛn en el token activo.
+	 * Devuelve cierto o falso en funci√≥n de si existe o no la transici√≥n en el token activo.
 	 * @param idToken id del token
 	 * @param transitionName nombre de la transicion
 	 * @return tiene o no
@@ -105,20 +106,20 @@ public interface JBPMProcessManagerApi {
 	public abstract void determinarBBDD();
 
 	/**
-	 * Aplaza las tareas del BPM hasta una determinada fecha que arrancar·n.
+	 * Aplaza las tareas del BPM hasta una determinada fecha que arrancar√°n.
 	 * @param idProcess ID del Proceso BPM que se desea aplazar
-	 * @param fechaActivacion Fecha en la que se activar·n las tareas de nuevo
+	 * @param fechaActivacion Fecha en la que se activar√°n las tareas de nuevo
 	 */
 	public abstract void aplazarProcesosBPM(Long idProcess, Date fechaActivacion);
 
 	/**
-	 * Paraliza los procesos de un BPM. Lo ˙nico que har· este mÈtodo es mandar una transiciÛn "TRANSICION_PARALIZAR_TAREAS" a los tokens activos
+	 * Paraliza los procesos de un BPM. Lo √∫nico que har√° este m√©todo es mandar una transici√≥n "TRANSICION_PARALIZAR_TAREAS" a los tokens activos
 	 * @param idProcess id del proceso
 	 */
 	public abstract void paralizarProcesosBPM(Long idProcess);
 
 	/**
-	 * Activa los procesos de un BPM paralizados. Lo ˙nico que har· este mÈtodo es mandar una transiciÛn "TRANSICION_ACTIVAR_TAREAS" a los tokens activos.
+	 * Activa los procesos de un BPM paralizados. Lo √∫nico que har√° este m√©todo es mandar una transici√≥n "TRANSICION_ACTIVAR_TAREAS" a los tokens activos.
 	 * @param idProcess id del proceso
 	 */
 	public abstract void activarProcesosBPM(Long idProcess);
@@ -126,17 +127,17 @@ public interface JBPMProcessManagerApi {
 
 
 	/**
-	 * SeÒaliza una transiciÛn sobre un proceso o sobre sus tokens activos.
-	 * El propio mÈtodo buscar· todos los tokens activos y lanzar· un signal por cada uno de ellos
+	 * Se√±aliza una transici√≥n sobre un proceso o sobre sus tokens activos.
+	 * El propio m√©todo buscar√° todos los tokens activos y lanzar√° un signal por cada uno de ellos
 	 * @param idProcess ID del proceso BPM
-	 * @param nombreTransicion Nombre de la transiciÛn que se desea lanzar
+	 * @param nombreTransicion Nombre de la transici√≥n que se desea lanzar
 	 */
 	public abstract void signalProcessOrTokens(Long idProcess,
 			String nombreTransicion);
 
 
 	/**
-	 * Recupera una variable est·tica del contexto del BPM.
+	 * Recupera una variable est√°tica del contexto del BPM.
 	 * @param idToken Id del token del que queremos recuperar
 	 * @param variable Nombre de la variable
 	 * @return Devuelve la variable del contexto BPM
@@ -158,5 +159,7 @@ public interface JBPMProcessManagerApi {
 	public void setContextScripts(List<String> contextScript);
 	
 	void generaTransicionesSalto(Long idToken, String tipoSalto);
+	
+	public Token getActualToken(final Long idProcess);
 
 }

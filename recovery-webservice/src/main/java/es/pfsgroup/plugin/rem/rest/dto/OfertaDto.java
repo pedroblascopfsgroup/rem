@@ -50,6 +50,13 @@ public class OfertaDto implements Serializable {
 		Update.class },foreingField="id")
 	private Long idUsuarioRemAccion;
 	private Long idClienteComercial;
+	@NotNull(groups = {Insert.class})
+	@Size(max=1000)
+	private String observaciones;
+	@NotNull(groups = {Insert.class})
+	private Boolean financiacion;
+	@NotNull(groups = {Insert.class})
+	private Boolean isExpress;
 	
 	
 	public Long getIdOfertaWebcom() {
@@ -155,8 +162,22 @@ public class OfertaDto implements Serializable {
 	public void setIdClienteComercial(Long idClienteComercial) {
 		this.idClienteComercial = idClienteComercial;
 	}
-	
-	
-	
-	
+	public String getObservaciones() {
+		return observaciones;
+	}
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
+	}
+	public Boolean getFinanciacion() {
+		return financiacion;
+	}
+	public void setFinanciacion(Boolean financiacion) {
+		this.financiacion = financiacion;
+	}
+	public Boolean getIsExpress() {
+		return isExpress;
+	}
+	public void setIsExpress(Boolean isExpress) {
+		this.isExpress = isExpress;
+	}
 }

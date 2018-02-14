@@ -43,6 +43,7 @@ public class ActivoHistoricoEstadoPublicacion implements Serializable, Auditable
 	private static final long serialVersionUID = 1L;
 	public static final String MOTIVO_OCULTACION_AUTOMATICA = "Ocultación automática por modificación del estado comercial.";
 	public static final String MOTIVO_DESOCULTACION_AUTOMATICA = "Desocultación automática por modificación del estado comercial.";
+	public static final String MOTIVO_OFERTA_EXPRES = "Oferta Express Cajamar";
 	
 	@Id
     @Column(name = "HEP_ID")

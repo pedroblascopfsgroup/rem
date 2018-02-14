@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -16,17 +17,23 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
@@ -51,6 +58,12 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 
     @Autowired
     private UtilDiccionarioApi utilDiccionarioApi;
+    
+    @Autowired
+    private ActivoApi activoApi;
+    
+	@Autowired
+	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionExpediente.class);
 
@@ -162,6 +175,35 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 							} catch (Exception e) {
 								logger.error("Error al invocar el servicio de anular oferta de Uvem.", e);
 								throw new UserException(e.getMessage());
+							}
+						}
+						
+						Activo activoPrincipal = expediente.getOferta().getActivoPrincipal();
+						ActivoHistoricoEstadoPublicacion histEstado = activoApi.getUltimoHistoricoEstadoPublicacion(activoPrincipal.getId());
+						ActivoHistoricoEstadoPublicacion histEstadoAnterior = activoApi.getPenultimoHistoricoEstadoPublicacion(activoPrincipal.getId());
+						
+						if(!Checks.esNulo(histEstado) && !Checks.esNulo(histEstado.getEstadoPublicacion()) && expediente.getOferta().getOfertaExpress() && DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO.equals(histEstado.getEstadoPublicacion().getCodigo()) && ActivoHistoricoEstadoPublicacion.MOTIVO_OFERTA_EXPRES.equals(histEstado.getMotivo())){
+							
+							String antEstadoPublicacion = null;
+							String antMotivo = null;
+							
+							if(!Checks.esNulo(histEstadoAnterior) && !Checks.esNulo(histEstadoAnterior.getEstadoPublicacion())){
+								antEstadoPublicacion = histEstadoAnterior.getEstadoPublicacion().getCodigo();
+							}else{
+								antEstadoPublicacion = DDEstadoPublicacion.CODIGO_PUBLICADO;
+							}
+							
+							if(!Checks.esNulo(histEstadoAnterior) && !Checks.esNulo(histEstadoAnterior.getMotivo())){
+								antMotivo = histEstadoAnterior.getMotivo();
+							}
+							
+							Filter filtroMostrar = genericDao.createFilter(FilterType.EQUALS, "codigo",antEstadoPublicacion);
+							try {
+								activoEstadoPublicacionApi.cambiarEstadoPublicacionAndRegistrarHistorico(activoPrincipal, antMotivo, filtroMostrar,histEstado.getEstadoPublicacion(), null, null);
+							} catch (JsonViewerException e) {
+								logger.error("Error al cambiar el estado de publicación ", e);
+							} catch (SQLException e) {
+								logger.error("Error al cambiar el estado de publicación ", e);
 							}
 						}
 

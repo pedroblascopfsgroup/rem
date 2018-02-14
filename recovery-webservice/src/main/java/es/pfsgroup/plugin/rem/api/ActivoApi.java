@@ -51,6 +51,7 @@ import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
@@ -1087,5 +1088,10 @@ public interface ActivoApi {
 	 * @param idAgrupacion
 	 */
 	public void reactivarActivosPorAgrupacion(Long idAgrupacion);
+	
+	/**
+	 * Crea un expediente comercial
+	 * */
+	public boolean crearExpediente(Oferta oferta, Trabajo trabajo);
 
 }

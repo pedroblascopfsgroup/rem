@@ -552,6 +552,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return resultado;
 	}
 	
+	@Override
 	public boolean crearExpediente(Oferta oferta, Trabajo trabajo) {
 		
 		try{
@@ -800,9 +801,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		if (!Checks.esNulo(oferta.getCliente())) {
 			// Busca un comprador con el mismo dni que el cliente de la oferta
-			Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS, "documento",
-					oferta.getCliente().getDocumento());
-			Comprador compradorBusqueda = genericDao.get(Comprador.class, filtroComprador);
+			Comprador compradorBusqueda = null; 
+			if(!Checks.esNulo(oferta.getCliente().getDocumento())){
+				Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS, "documento",oferta.getCliente().getDocumento());
+				compradorBusqueda = genericDao.get(Comprador.class, filtroComprador);
+			}
 			List<CompradorExpediente> listaCompradoresExpediente = new ArrayList<CompradorExpediente>();
 			CompradorExpediente compradorExpedienteNuevo = new CompradorExpediente();
 			List<TitularesAdicionalesOferta> listaTitularesAdicionalesSinRepetirDocumento= new ArrayList<TitularesAdicionalesOferta>();
@@ -818,9 +821,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			 * pero hay muchos que ya estan creado, para estos creamos esta comprobacion. Quita del listado de titulares adicionales los que tengan el mismo documento 
 			 * que el cliente de la oferta
 			 */
-			for (TitularesAdicionalesOferta titularAdicional : oferta.getTitularesAdicionales()) {
-				if(!titularAdicional.getDocumento().equals(oferta.getCliente().getDocumento())){
-					listaTitularesAdicionalesSinRepetirDocumento.add(titularAdicional);
+			if(!Checks.estaVacio(oferta.getTitularesAdicionales())){
+				for (TitularesAdicionalesOferta titularAdicional : oferta.getTitularesAdicionales()) {
+					if(!titularAdicional.getDocumento().equals(oferta.getCliente().getDocumento())){
+						listaTitularesAdicionalesSinRepetirDocumento.add(titularAdicional);
+					}
 				}
 			}
 			

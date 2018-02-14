@@ -216,6 +216,9 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @JoinColumn(name = "DD_COS_ID_SUPERIOR")
 	private DDComiteSancion comiteSuperior;
     
+    @Column(name="ECO_NECESITA_FINANCIACION")
+    private Boolean necesitaFinanciacion;
+    
 	@Version   
 	private Long version;
 
@@ -650,6 +653,14 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setComiteSuperior(DDComiteSancion comiteSuperior) {
 		this.comiteSuperior = comiteSuperior;
+	}
+
+	public Boolean getNecesitaFinanciacion() {
+		return necesitaFinanciacion;
+	}
+
+	public void setNecesitaFinanciacion(Boolean necesitaFinanciacion) {
+		this.necesitaFinanciacion = necesitaFinanciacion;
 	}
    
 }

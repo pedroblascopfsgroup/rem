@@ -40,7 +40,7 @@ DECLARE
 		  
   EXECUTE IMMEDIATE V_SQL;
   
-    DBMS_OUTPUT.PUT_LINE('[INFO] Se han cambiado '||SQL%ROWCOUNT||' registros en la tabla GEE_GESTOR_ENTIDAD');
+    DBMS_OUTPUT.PUT_LINE('[INFO] Se han cambiado '||SQL%ROWCOUNT||' registros en la tabla TAC_TAREAS_ACTIVOS');
   
  COMMIT;
  

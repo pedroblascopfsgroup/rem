@@ -1024,9 +1024,10 @@ public class UvemManager implements UvemManagerApi {
 							.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_CONDICIONANTES_ECONOMICOS);
 				}
 
-			} else if (accion.equals(INSTANCIA_DECISION_ALTA)) {
+			} else 
+			/*if (accion.equals(INSTANCIA_DECISION_ALTA)) {
 				servicioGMPDJB13_INS.setCodigoDeAgrupacionDeInmueblecoagiw(0);
-			}
+			}*/
 
 			if (numeroOcurrencias != null) {
 				servicioGMPDJB13_INS.setNumeroDeOcurrenciasnumocu(numeroOcurrencias);

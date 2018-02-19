@@ -365,15 +365,8 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 										xtype : 'datefield',
 										reference : 'fechaPosicionamientoRef',
 										allowBlank : false,
-										minValue: Ext.Date.format(new Date(),'d/m/Y'),
 										listeners : {
 											change : 'changeFecha'
-										},
-										validator : function(value) {
-											return this
-													.up('expedientedetallemain')
-													.getController()
-													.validarFechaPosicionamiento(value);
 										}
 									},
 									renderer : dateColoredRender

@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.type.TrueFalseType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -228,6 +229,12 @@ public class UvemManager implements UvemManagerApi {
 				((GMPDJB13_INS) servicio).setLongitudMensajeDeSalidarcslon(2);
 				((GMPDJB13_INS) servicio).setCodigoComitecocom7((short) 2);
 				((GMPDJB13_INS) servicio).setCodigoDeOfertaHayacoofhx2("9");
+				if(((GMPDJB13_INS) servicio).getCodigoDeAgrupacionDeInmueblecoagiw() > 0){
+					((GMPDJB13_INS) servicio).setCodigoDeAgrupacionDeInmueblecoagiw2(((GMPDJB13_INS) servicio).getCodigoDeAgrupacionDeInmueblecoagiw());
+				}else{
+					((GMPDJB13_INS) servicio).setCodigoDeAgrupacionDeInmueblecoagiw2(rand.nextInt() & MASK);
+				}
+				
 
 			} else if (servicio instanceof GMPAJC34_INS) {
 				ImporteMonetario importe = new ImporteMonetario();
@@ -837,7 +844,7 @@ public class UvemManager implements UvemManagerApi {
 	 * @return
 	 * @throws WIException
 	 */
-	public ResultadoInstanciaDecisionDto instanciaDecision(InstanciaDecisionDto instanciaDecisionDto, String accion)
+	private ResultadoInstanciaDecisionDto instanciaDecision(InstanciaDecisionDto instanciaDecisionDto, String accion)
 			throws WIException {
 		logger.info("------------ LLAMADA WS INSTANCIADECISION -----------------");
 		String errorDesc = null;
@@ -1038,9 +1045,18 @@ public class UvemManager implements UvemManagerApi {
 							.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_CONDICIONANTES_ECONOMICOS);
 				}
 
-			} else if (accion.equals(INSTANCIA_DECISION_ALTA)) {
+			}
+			
+			if(Boolean.TRUE.equals(instanciaDecisionDto.getOfertaAgrupacion())){
+				if(instanciaDecisionDto.getCodigoAgrupacionInmueble() != null && instanciaDecisionDto.getCodigoAgrupacionInmueble() > 0){
+					servicioGMPDJB13_INS.setCodigoDeAgrupacionDeInmueblecoagiw(instanciaDecisionDto.getCodigoAgrupacionInmueble());
+				}else{
+					servicioGMPDJB13_INS.setCodigoDeAgrupacionDeInmueblecoagiw(0);
+				}
+			}else{
 				servicioGMPDJB13_INS.setCodigoDeAgrupacionDeInmueblecoagiw(0);
 			}
+			
 
 			if (numeroOcurrencias != null) {
 				servicioGMPDJB13_INS.setNumeroDeOcurrenciasnumocu(numeroOcurrencias);
@@ -1119,7 +1135,8 @@ public class UvemManager implements UvemManagerApi {
 			result.setLongitudMensajeSalida(servicioGMPDJB13_INS.getLongitudMensajeDeSalidarcslon());
 			result.setCodigoComite(servicioGMPDJB13_INS.getCodigoComitecocom7() + "");
 			result.setCodigoDeOfertaHaya(servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx2());
-
+			//HREOS-3844: Postacordado Bankia 2: Añadir código de la oferta en FFDD
+			result.setCodigoAgrupacionInmueble(servicioGMPDJB13_INS.getCodigoDeAgrupacionDeInmueblecoagiw2());
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
 			errorDesc = e.getMessage();

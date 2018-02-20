@@ -134,6 +134,9 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 	
 	@Column(name = "AGR_IS_FORMALIZACION")
 	private Integer isFormalizacion;
+	
+	@Column(name = "AGR_UVEM_COAGIW")
+	private Integer uvemCodigoAgrupacionInmueble;
 
 	@Version   
 	private Long version;
@@ -342,6 +345,14 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 
 	public void setIsFormalizacion(Integer isFormalizacion) {
 		this.isFormalizacion = isFormalizacion;
+	}
+
+	public Integer getUvemCodigoAgrupacionInmueble() {
+		return uvemCodigoAgrupacionInmueble;
+	}
+
+	public void setUvemCodigoAgrupacionInmueble(Integer uvemCodigoAgrupacionInmueble) {
+		this.uvemCodigoAgrupacionInmueble = uvemCodigoAgrupacionInmueble;
 	}
 
 

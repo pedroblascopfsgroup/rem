@@ -6,6 +6,7 @@ public class ResultadoInstanciaDecisionDto {
 	private String codigoDeOfertaHaya;
 	private String codigoComite; //ver ResolucionComiteApi
 	private String codigoComiteSuperior;
+	private Integer codigoAgrupacionInmueble;
 	
 	public Integer getLongitudMensajeSalida() {
 		return longitudMensajeSalida;
@@ -30,6 +31,12 @@ public class ResultadoInstanciaDecisionDto {
 	}
 	public void setComiteSuperior(String comiteSuperior) {
 		this.codigoComiteSuperior = comiteSuperior;
+	}
+	public Integer getCodigoAgrupacionInmueble() {
+		return codigoAgrupacionInmueble;
+	}
+	public void setCodigoAgrupacionInmueble(Integer codigoAgrupacionInmueble) {
+		this.codigoAgrupacionInmueble = codigoAgrupacionInmueble;
 	}
 	
 }

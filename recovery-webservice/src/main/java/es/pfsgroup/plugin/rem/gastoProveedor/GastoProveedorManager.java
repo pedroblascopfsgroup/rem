@@ -1433,7 +1433,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					dtoGestion.setComboEstadoAutorizacionPropietario(gastoGestion.getEstadoAutorizacionPropietario().getCodigo());
 				}
 				
-				if(!DDEstadoAutorizacionPropietario.CODIGO_PENDIENTE.equals(gastoGestion.getEstadoAutorizacionPropietario().getCodigo())) {
+				if(!Checks.esNulo(gastoGestion.getEstadoAutorizacionPropietario()) && !DDEstadoAutorizacionPropietario.CODIGO_PENDIENTE.equals(gastoGestion.getEstadoAutorizacionPropietario().getCodigo())) {
 					dtoGestion.setFechaAutorizacionPropietario(gastoGestion.getFechaEstadoAutorizacionPropietario());
 				}
 				

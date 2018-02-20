@@ -1,12 +1,9 @@
 package es.pfsgroup.plugin.rem.api.services.webcom.dto;
 
-import java.util.List;
-
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.BooleanDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
 
 public class EstadoOfertaDto implements WebcomRESTDto{
@@ -27,8 +24,6 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	private LongDataType idAgrupacionRem;
 	private LongDataType idActivoHaya;
 	private StringDataType motivoRechazo;
-	@NestedDto(groupBy="idOfertaRem", type=ActivoVinculadoDto.class)
-	private List<ActivoVinculadoOfertaDto> activosVinculados;
 	
 	public LongDataType getIdUsuarioRemAccion() {
 		return idUsuarioRemAccion;

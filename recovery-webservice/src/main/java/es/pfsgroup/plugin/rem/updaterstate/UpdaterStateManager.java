@@ -1,7 +1,10 @@
 package es.pfsgroup.plugin.rem.updaterstate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -486,6 +489,101 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public Double calcularParticipacionValorPorActivo(String codigoTipoTrabajo, Activo activo){
+		Double valor= 0d;
+
+		if ((DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(codigoTipoTrabajo)) || 
+				(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(codigoTipoTrabajo))) {
+
+			Filter filtroActivoId = null, filtroValorNeto = null, filtroValorMinimo = null, filtroFSV = null, filtroVACBE = null, filtroPrecioTransferencia = null, filtroValorReferencia = null, filtroBorrado = null;
+			ActivoValoraciones valorNeto = null, valorMinimo = null, fsv = null, vacbe = null, precioTransferencia = null, valorReferencia = null;		
+			Double valorNeto_act = 0d, valorMinimo_act = 0d, fsv_act = 0d, vacbe_act = 0d, precioTransferencia_act = 0d, valorReferencia_act = 0d;
+
+			//Checkeamos la información de todos los activos en la lista.
+			
+				filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+				filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+				filtroValorNeto = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT);
+				filtroValorMinimo = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
+				filtroFSV = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_FSV_VENTA);
+				filtroVACBE = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_VACBE);
+				filtroPrecioTransferencia = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_PT);
+				filtroValorReferencia = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_VALOR_REFERENCIA);
+
+				// En este punto se deberían obtener un solo objeto de cada tipo, pero por adecuarlo a problemas de datos se prepara para varios.
+				List<ActivoValoraciones> listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroValorNeto, filtroBorrado);
+				valorNeto = Checks.estaVacio(listado) ? null : listado.get(0);
+				listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroValorMinimo, filtroBorrado);
+				valorMinimo = Checks.estaVacio(listado) ? null : listado.get(0);
+				listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroFSV, filtroBorrado);
+				fsv = Checks.estaVacio(listado) ? null : listado.get(0);
+				listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroVACBE, filtroBorrado);
+				vacbe = Checks.estaVacio(listado) ? null : listado.get(0);
+				listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroPrecioTransferencia, filtroBorrado);
+				precioTransferencia = Checks.estaVacio(listado) ? null : listado.get(0);
+				listado = genericDao.getList(ActivoValoraciones.class, filtroActivoId, filtroValorReferencia, filtroBorrado);
+				valorReferencia = Checks.estaVacio(listado) ? null : listado.get(0);
+
+				//Cuando se encuentre el activo que se va a checkear, se guarda su información para calcular luego la regla de tres.
+					if(valorNeto == null){
+						valorNeto_act = 0d;
+					}else{
+						valorNeto_act = valorNeto.getImporte();
+					}
+					if(valorMinimo == null){
+						valorMinimo_act = 0d;
+					}else{
+						valorMinimo_act = valorMinimo.getImporte();
+					}
+					if(fsv == null){
+						fsv_act = 0d;
+					}else{
+						fsv_act = fsv.getImporte();
+					}
+					if(vacbe == null){
+						vacbe_act = 0d;
+					}else{
+						vacbe_act = vacbe.getImporte();
+					}
+					if(precioTransferencia == null){
+						precioTransferencia_act = 0d;
+					}else{
+						precioTransferencia_act = precioTransferencia.getImporte();
+					}
+					if(valorReferencia == null){
+						valorReferencia_act = 0d;
+					}else{
+						valorReferencia_act = valorReferencia.getImporte();
+					}
+					
+					
+					if(!valorNeto_act.equals(0d)){
+						valor = valorNeto_act;
+					}
+					else if(!valorMinimo_act.equals(0d)){
+						valor = valorMinimo_act;
+					}
+					else if(!fsv_act.equals(0d)){
+						valor = fsv_act;
+					}
+					else if(!vacbe_act.equals(0d)){
+						valor = vacbe_act;
+					}
+					else if(!precioTransferencia_act.equals(0d)){
+						valor = precioTransferencia_act;
+					}
+					else if(!valorReferencia_act.equals(0d)){
+						valor = valorReferencia_act;
+					}else{
+						valor= 0d;
+					}
+			}
+		
+		return valor;
+		
+		
 	}
 
 }

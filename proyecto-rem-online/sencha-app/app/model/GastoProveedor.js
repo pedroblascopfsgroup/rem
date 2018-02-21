@@ -166,6 +166,7 @@ Ext.define('HreRem.model.GastoProveedor', {
 	proxy: {
 		type: 'uxproxy',
 		localUrl: 'gastosproveedor.json',
+		timeout: 120000,
 		api: {
             read: 'gastosproveedor/getTabGasto',
             update: 'gastosproveedor/saveGastosProveedor',

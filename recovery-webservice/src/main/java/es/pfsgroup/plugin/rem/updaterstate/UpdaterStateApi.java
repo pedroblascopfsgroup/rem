@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.updaterstate;
 
 import java.util.List;
+import java.util.Map;
 
 import es.pfsgroup.plugin.rem.model.Activo;
 
@@ -65,6 +66,6 @@ public interface UpdaterStateApi {
 	 * @param idTrabajo : se pasan el codigo del trabajo.
 	 */
 	public void recalcularParticipacion(Long idTrabajo);
-
 	
+	public Double calcularParticipacionValorPorActivo(String codigoTipoTrabajo, Activo activo);
 }

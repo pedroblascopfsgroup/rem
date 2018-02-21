@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
@@ -803,16 +804,33 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 
 	private List<Trabajo> crearTrabajoPorSubidaActivos(DtoFichaTrabajo dtoTrabajo) {
-
 		List<Activo> listaActivos = this.getListaActivosProceso(dtoTrabajo.getIdProceso());
 		Trabajo trabajo = new Trabajo();
 		List<Trabajo> listaTrabajos = new ArrayList<Trabajo>();
-
 		try {
 
 			Boolean isFirstLoop = true;
+			Double total= 0d;
+			Boolean algunoSinPrecio= false;
+			Map<Long,Double> mapaValores= new HashMap<Long,Double>();
+			for(Activo activo:listaActivos){
+				Double valor= updaterStateApi.calcularParticipacionValorPorActivo(dtoTrabajo.getTipoTrabajoCodigo(), activo);
+				total= total+valor;
+				if(valor.equals(0d)){
+					algunoSinPrecio= true;
+					break;
+				}
+				mapaValores.put(activo.getId(), valor);
+			}
 			for (Activo activo : listaActivos) {
-				Double participacion = updaterStateApi.calcularParticipacionPorActivo(dtoTrabajo.getTipoTrabajoCodigo(), listaActivos, activo);
+				Double participacion = null;
+				if(algunoSinPrecio){
+					participacion= (100d/listaActivos.size());
+				}
+				else{
+					participacion= (mapaValores.get(activo.getId())/total)*100;
+				}
+
 				dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : participacion.toString());
 				
 				if (isFirstLoop || !dtoTrabajo.getEsSolicitudConjunta()) {

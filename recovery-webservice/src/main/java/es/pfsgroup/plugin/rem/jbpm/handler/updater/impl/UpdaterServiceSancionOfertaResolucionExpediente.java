@@ -182,7 +182,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						ActivoHistoricoEstadoPublicacion histEstado = activoApi.getUltimoHistoricoEstadoPublicacion(activoPrincipal.getId());
 						ActivoHistoricoEstadoPublicacion histEstadoAnterior = activoApi.getPenultimoHistoricoEstadoPublicacion(activoPrincipal.getId());
 						
-						if(!Checks.esNulo(histEstado) && !Checks.esNulo(histEstado.getEstadoPublicacion()) && expediente.getOferta().getOfertaExpress() && DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO.equals(histEstado.getEstadoPublicacion().getCodigo()) && ActivoHistoricoEstadoPublicacion.MOTIVO_OFERTA_EXPRES.equals(histEstado.getMotivo())){
+						if(!Checks.esNulo(histEstado) && !Checks.esNulo(histEstado.getEstadoPublicacion()) && expediente.getOferta().getOfertaExpress() != null && expediente.getOferta().getOfertaExpress() && DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO.equals(histEstado.getEstadoPublicacion().getCodigo()) && ActivoHistoricoEstadoPublicacion.MOTIVO_OFERTA_EXPRES.equals(histEstado.getMotivo())){
 							
 							String antEstadoPublicacion = null;
 							String antMotivo = null;

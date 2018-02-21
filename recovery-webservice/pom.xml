@@ -766,6 +766,12 @@
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-gestordocumentalREM-plugin</artifactId>
 		</dependency>
+		
+		<dependency>
+		    <groupId>com.nimbusds</groupId>
+		    <artifactId>nimbus-jose-jwt</artifactId>
+		    <version>4.11.2</version>
+		</dependency>
 
 	</dependencies>
 

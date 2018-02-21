@@ -12,10 +12,12 @@ public class HayaWebAuthenticationDetails extends RSAWebAuthenticationDetails {
 	private static final String ID_TOKEN_KEY = "id_token";
 	private static final String ID_USER_KEY = "user_id";
 	private static final String SIGNATURE_KEY = "signature";
+	private static final String CODE_KEY = "code";
 
 	private String userId;
 	private String signature;
 	private String idToken;
+	private String code;
 
 	/**
 	 * @param request
@@ -32,6 +34,7 @@ public class HayaWebAuthenticationDetails extends RSAWebAuthenticationDetails {
 		userId = request.getParameter(ID_USER_KEY);
 		signature = request.getParameter(SIGNATURE_KEY);
 		idToken = request.getParameter(ID_TOKEN_KEY);
+		code = request.getParameter(CODE_KEY);
 	}
 	
 	public String getUserId() {
@@ -45,4 +48,13 @@ public class HayaWebAuthenticationDetails extends RSAWebAuthenticationDetails {
 	public String getIdToken() {
 		return idToken;
 	}
+	
+	public String getCode() {
+		return code;
+	}
+
+	public void setIdToken(String idToken) {
+		this.idToken = idToken;
+	}
+	
 }

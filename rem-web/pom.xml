@@ -1250,6 +1250,13 @@
 		</dependency>
 		<!-- Fin dependencias UVEM BANKIA -->
 
+		
+		<!-- 0Auth2 compatibility -->
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>4.11.2</version>
+        </dependency>
 
 	</dependencies>
 	<build>

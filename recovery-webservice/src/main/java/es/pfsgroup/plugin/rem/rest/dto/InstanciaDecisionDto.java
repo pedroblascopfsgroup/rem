@@ -2,8 +2,6 @@ package es.pfsgroup.plugin.rem.rest.dto;
 
 import java.util.List;
 
-import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
-
 public class InstanciaDecisionDto {
 	
 	public final char FINANCIACION_CLIENTE_SI = 'S';

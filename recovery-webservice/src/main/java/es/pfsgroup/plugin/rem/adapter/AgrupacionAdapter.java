@@ -540,7 +540,7 @@ public class AgrupacionAdapter {
 			// cualquier estado, rechazar el activo.
 			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 				List<Oferta> ofertasAgrupacion = agrupacion.getOfertas();
-				if (!Checks.estaVacio(ofertasAgrupacion)) {
+				if (tieneOfertasNoAnuladas(ofertasAgrupacion)) {
 					throw new JsonViewerException(
 							"No se puede alterar el listado de activos cuando la agrupación tiene ofertas");
 				}
@@ -795,7 +795,7 @@ public class AgrupacionAdapter {
 					.equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
 				// Solo continuar si la agrupación no contiene ofetas vivas.
 				List<Oferta> ofertasAgrupacion = activoAgrupacionActivo.getAgrupacion().getOfertas();
-				if (Checks.estaVacio(ofertasAgrupacion)) {
+				if (!tieneOfertasNoAnuladas(ofertasAgrupacion)) {
 					List<ActivoOferta> ofertasActivo = activoAgrupacionActivo.getActivo().getOfertas();
 					if (!Checks.estaVacio(ofertasActivo)) {
 						// En cada oferta asignada al activo.
@@ -849,6 +849,19 @@ public class AgrupacionAdapter {
 		} else {
 			throw new JsonViewerException("No ha sido posible eliminar el activo de la agrupación");
 		}
+	}
+	
+	private boolean tieneOfertasNoAnuladas(List<Oferta> ofertas){
+		boolean resultado = false;
+		if(ofertas != null && ofertas.size()>0){
+			for(Oferta oferta : ofertas){
+				if(oferta.getEstadoOferta() == null || !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())){
+					resultado = true;
+					break;
+				}
+			}
+		}
+		return resultado;
 	}
 
 	@Transactional(readOnly = false)

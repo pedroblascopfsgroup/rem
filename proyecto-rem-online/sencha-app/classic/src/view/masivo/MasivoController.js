@@ -152,7 +152,7 @@ Ext.define('HreRem.view.masivo.MasivoController', {
 		         try {
 		         	data = Ext.decode(response.responseText);
 		         } catch (e){ };
-		         if(data.data=="true"){
+		         /*if(data.data=="true"){
 				     Ext.Ajax.request({
 				     	 method: 'GET',
 					     url:$AC.getRemoteUrl('process/setStateProcessed'),
@@ -172,6 +172,8 @@ Ext.define('HreRem.view.masivo.MasivoController', {
 					     	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 					     }
 				     });
+		         	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		         	me.getView().lookupReference("listadoCargamasiva").getStore().load();
 		         }else{
 		         	 Ext.Ajax.request({
 		         	 method: 'GET',
@@ -191,7 +193,10 @@ Ext.define('HreRem.view.masivo.MasivoController', {
 				     	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 				     }
 			     });
-		         }
+		         }*/
+		         me.getView().unmask();
+		         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		         me.getView().lookupReference("listadoCargamasiva").getStore().load();
 		     },
 		     failure: function(response, opts) {
 		         Ext.Ajax.request({

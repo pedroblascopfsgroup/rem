@@ -118,7 +118,7 @@ public class ProcessAdapter {
 		
 		return fileItem;
 	}
-	
+	@Transactional
 	public void setStateProcessing(Long idProcess) {
 		MSVProcesoMasivo document = procesoDao.get(idProcess);
 		MSVDDEstadoProceso processing = genericDao.get(MSVDDEstadoProceso.class, genericDao.createFilter(FilterType.EQUALS, "codigo", MSVDDEstadoProceso.CODIGO_EN_PROCESO));
@@ -126,6 +126,7 @@ public class ProcessAdapter {
 		procesoDao.mergeAndUpdate(document);
 	}
 	
+	@Transactional
 	public void setStateProcessed(Long idProcess) {
 		MSVProcesoMasivo document = procesoDao.get(idProcess);
 		MSVDDEstadoProceso processed = genericDao.get(MSVDDEstadoProceso.class, genericDao.createFilter(FilterType.EQUALS, "codigo", MSVDDEstadoProceso.CODIGO_PROCESADO));
@@ -133,6 +134,7 @@ public class ProcessAdapter {
 		procesoDao.mergeAndUpdate(document);
 	}
 	
+	@Transactional
 	public void setStateError(Long idProcess) {
 		MSVProcesoMasivo document = procesoDao.get(idProcess);
 		MSVDDEstadoProceso errorProcess = genericDao.get(MSVDDEstadoProceso.class, genericDao.createFilter(FilterType.EQUALS, "codigo", MSVDDEstadoProceso.CODIGO_ERROR));

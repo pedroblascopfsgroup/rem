@@ -134,6 +134,7 @@ public class MSVAltaActivosProcesar implements MSVLiberator {
 
 		// Recorre y procesa todas las filas de datos del fichero excel
 		for (int fila = COL_NUM.DATOS_PRIMERA_FILA; fila < exc.getNumeroFilas(); fila++) {
+			System.out.println("procesando fila "+fila);
 
 			// Carga los datos de activo de la Fila excel al DTO
 			dtoAAF = filaExcelToDtoAltaActivoFinanciero(exc, dtoAAF, fila);

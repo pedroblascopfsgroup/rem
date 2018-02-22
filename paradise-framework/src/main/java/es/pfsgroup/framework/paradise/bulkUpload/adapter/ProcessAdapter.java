@@ -12,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -25,12 +26,14 @@ import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
 import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVProcesoDao;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.DtoMSVProcesoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoAltaProceso;
+import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoFiltroProcesos;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ExcelFileBean;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDEstadoProceso;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVProcesoMasivo;
 import es.pfsgroup.framework.paradise.utils.JsonViewer;
+
 
 @Service
 @Transactional(readOnly = false)
@@ -63,6 +66,10 @@ public class ProcessAdapter {
 	
 	public List<DtoMSVProcesoMasivo> mostrarProcesos() {
 		return procesoManager.mostrarProcesos();
+	}
+	
+	public Page mostrarProcesosPaginados(MSVDtoFiltroProcesos dto) {
+		return apiProxyFactory.proxy(MSVProcesoApi.class).mostrarProcesosPaginated(dto);
 	}
 	
 	public MSVProcesoMasivo liberarFichero(Long idProceso) throws Exception {

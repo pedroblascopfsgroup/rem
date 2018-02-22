@@ -13,7 +13,7 @@ Ext.define('HreRem.view.masivo.MasivoModel', {
 	    	proxy: {
 		        type: 'uxproxy',
 		        localUrl: '/procesos.json',
-		        remoteUrl: 'process/mostrarProcesos'
+		        remoteUrl: 'process/mostrarProcesosPaginados'
 	    	},  	
 	    	autoLoad: true
     	},

@@ -1,7 +1,9 @@
 package es.pfsgroup.framework.paradise.bulkUpload.controller;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
@@ -23,14 +25,20 @@ import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfi
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
+import es.pfsgroup.framework.paradise.bulkUpload.dto.DtoMSVProcesoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoAltaProceso;
+import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoFiltroProcesos;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDEstadoProceso;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVProcesoMasivo;
+import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.JsonViewer;
 
 @Controller
-public class ProcessController {
+public class ProcessController extends ParadiseJsonController{
 	
 	@Autowired
 	ProcessAdapter processAdapter;
@@ -195,6 +203,44 @@ public class ProcessController {
 	
 		return JsonViewer.createModelAndViewJson(new ModelMap("data", processAdapter.mostrarProcesos()));
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView mostrarProcesosPaginados(MSVDtoFiltroProcesos dto,ModelMap model){
+		Page page = processAdapter.mostrarProcesosPaginados(dto);
+		List<DtoMSVProcesoMasivo> listProcesosmasivos = new ArrayList<DtoMSVProcesoMasivo>();
+		for(int i=0; i < page.getResults().size();i++){
+			boolean sePuedeProcesar = false;
+			boolean conErrores = false;
+			boolean validable = false;
+			MSVProcesoMasivo procesomasivo =  (MSVProcesoMasivo)page.getResults().get(i);
+			DtoMSVProcesoMasivo masivoDto = new DtoMSVProcesoMasivo();
+			masivoDto.setEstadoProceso(procesomasivo.getEstadoProceso().getDescripcion());
+			masivoDto.setUsuario(procesomasivo.getAuditoria().getUsuarioCrear());
+			masivoDto.setTipoOperacionId(procesomasivo.getTipoOperacion().getId());
+			masivoDto.setId(procesomasivo.getId().toString());
+			masivoDto.setNombre(procesomasivo.getDescripcion());
+			if(MSVDDEstadoProceso.CODIGO_VALIDADO.equals(procesomasivo.getEstadoProceso().getCodigo())) {
+				sePuedeProcesar = true;
+			} else if (MSVDDEstadoProceso.CODIGO_ERROR.equals(procesomasivo.getEstadoProceso().getCodigo())){
+				conErrores = true;
+			} else if (MSVDDEstadoProceso.CODIGO_PTE_VALIDAR.equals(procesomasivo.getEstadoProceso().getCodigo())){
+				validable = true;
+			}
+			masivoDto.setSePuedeProcesar(sePuedeProcesar);
+			masivoDto.setConErrores(conErrores);
+			masivoDto.setValidable(validable);
+			masivoDto.setTipoOperacion(procesomasivo.getTipoOperacion().getDescripcion());
+			masivoDto.setFechaCrear(procesomasivo.getAuditoria().getFechaCrear());
+			
+		
+			listProcesosmasivos.add(masivoDto);
+		}
+		model.put("data", listProcesosmasivos);
+		model.put("totalCount", page.getTotalCount());
+		model.put("success", true);
+		return createModelAndViewJson(model);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)

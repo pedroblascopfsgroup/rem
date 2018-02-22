@@ -48,6 +48,18 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     	}
 	     },
 	     
+	     esAgrupacionAsistidaAndFechaVigenciaNotNull: function(get) {
+	    	 
+	     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+	     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['ASISTIDA'])
+	     	&& (get('agrupacionficha.fechaInicioVigencia') == null 
+	     	|| get('agrupacionficha.fechaFinVigencia') == null)) {
+	     		return true;
+	     	} else {
+	     		return false;
+	     	}
+	     },
+	     
 	     esAgrupacionObraNueva: function(get) {
 	    	 
 	     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');

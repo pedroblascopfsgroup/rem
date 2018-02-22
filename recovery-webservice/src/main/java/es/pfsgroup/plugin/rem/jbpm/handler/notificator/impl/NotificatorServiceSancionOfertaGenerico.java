@@ -559,6 +559,11 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_Bankia_v6.docx");
 					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_Bankia.docx"));
 				}
+				//ADJUNTOS SI ES TANGO
+				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)){
+					f1 = FileItemUtils.fromResource("docs/contrato_reserva_Tango.docx");
+					adjuntos.add(createAdjunto(f1, "contrato_reserva_Tango.docx"));
+				}
 			}
 			genericAdapter.sendMail(Arrays.asList(destinatarios), mailsCC, asunto, cuerpoCorreo, adjuntos);
 		}finally {

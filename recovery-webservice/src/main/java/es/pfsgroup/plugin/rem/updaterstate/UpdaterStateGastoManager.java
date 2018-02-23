@@ -120,7 +120,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				return error;
 			}
 			
-			if(Checks.esNulo(gasto.getGastoDetalleEconomico()) || Checks.esNulo(gasto.getGastoDetalleEconomico().getImporteTotal()) || gasto.getGastoDetalleEconomico().getImporteTotal() <= 0.0D) {
+			if(Checks.esNulo(gasto.getGastoDetalleEconomico()) || Checks.esNulo(gasto.getGastoDetalleEconomico().getImporteTotal())) {
 				error = messageServices.getMessage(VALIDACION_IMPORTE_TOTAL);
 				return error;
 			}

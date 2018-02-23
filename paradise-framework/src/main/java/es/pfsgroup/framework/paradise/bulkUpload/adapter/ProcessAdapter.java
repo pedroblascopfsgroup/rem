@@ -136,7 +136,32 @@ public class ProcessAdapter {
 		MSVProcesoMasivo document = procesoDao.get(idProcess);
 		MSVDDEstadoProceso processing = genericDao.get(MSVDDEstadoProceso.class, genericDao.createFilter(FilterType.EQUALS, "codigo", MSVDDEstadoProceso.CODIGO_EN_PROCESO));
 		document.setEstadoProceso(processing);
+		document.setTotalFilasKo(0L);
+		document.setTotalFilasOk(0L);
 		document.setTotalFilas(totalFilas);
+		procesoDao.mergeAndUpdate(document);
+	}
+	@Transactional
+	public void addFilaProcesada(Long idProcess, boolean esOk){
+		MSVProcesoMasivo document = procesoDao.get(idProcess);
+		Long nFilas = 0L;
+		if(esOk){
+			nFilas = document.getTotalFilasOk();
+			if(nFilas != null){
+				nFilas = nFilas +1;
+			}else{
+				nFilas = 1L;
+			}
+			document.setTotalFilasOk(nFilas);
+		}else{
+			nFilas = document.getTotalFilasKo();
+			if(nFilas != null){
+				nFilas = nFilas +1;
+			}else{
+				nFilas = 1L;
+			}
+			document.setTotalFilasKo(nFilas);
+		}
 		procesoDao.mergeAndUpdate(document);
 	}
 	

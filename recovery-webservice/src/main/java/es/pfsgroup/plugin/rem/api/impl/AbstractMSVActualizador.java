@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +29,8 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 		
 	@Autowired
 	ProcessAdapter processAdapter;
+	
+	private final Log logger = LogFactory.getLog(getClass());
 
 	public static final int EXCEL_FILA_DEFECTO = 1;
 	
@@ -49,7 +53,6 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 	}
 
 	@Override
-	@Transactional(readOnly = false)
 	public Boolean liberaFichero(MSVDocumentoMasivo file) throws IllegalArgumentException, IOException, JsonViewerException, SQLException, Exception {
 			
 		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);
@@ -60,7 +63,13 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 			
 			Integer numFilas = this.getNumFilas(file, exc);
 			for (int fila = this.getFilaInicial(); fila < numFilas; fila++) {
-				this.procesaFila(exc, fila);
+				try{
+					this.procesaFila(exc, fila);
+					processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), true);
+				}catch(Exception e){
+					logger.error("error procesando fila "+fila+" del proceso "+file.getProcesoMasivo().getId(),e);
+					processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), false);
+				}
 			}
 			
 			this.postProcesado(exc);

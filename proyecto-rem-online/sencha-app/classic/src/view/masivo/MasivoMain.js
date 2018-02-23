@@ -126,6 +126,24 @@ Ext.define('HreRem.view.masivo.MasivoMain', {
 				        	sortable: true,
 				        	flex: 1,
 				            formatter: 'date("d/m/Y H:i:s")'
+				        },
+				        {
+				        	text: "Total filas",
+				        	dataIndex: 'totalFilas',
+				        	sortable: true,
+				        	flex: 0.3
+				        },
+				        {
+				        	text: "Total filas OK",
+				        	dataIndex: 'totalFilasOk',
+				        	sortable: true,
+				        	flex: 0.3
+				        },
+				        {
+				        	text: "Total filas KO",
+				        	dataIndex: 'totalFilasKo',
+				        	sortable: true,
+				        	flex: 0.3
 				        }
 					],
 

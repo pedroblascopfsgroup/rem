@@ -51,13 +51,18 @@ public class MSVAgruparActivosLoteComercial implements MSVLiberator {
 		Long numAgrupRem;
 		Long agrupacionId;
 		Integer numFilas = exc.getNumeroFilasByHoja(0,file.getProcesoMasivo().getTipoOperacion());
-		for (int fila = 1; fila < numFilas; fila++) {
+		for (int fila = getFilaInicial(); fila < numFilas; fila++) {
 			numAgrupRem = new Long(exc.dameCelda(fila, 0));
 			agrupacionId = agrupacionAdapter.getAgrupacionIdByNumAgrupRem(numAgrupRem);
 			agrupacionAdapter.createActivoAgrupacion(new Long(exc.dameCelda(fila, 1)), agrupacionId, null);		
 		}
 
 		return true;
+	}
+
+	@Override
+	public int getFilaInicial() {
+		return 1;
 	}
 
 }

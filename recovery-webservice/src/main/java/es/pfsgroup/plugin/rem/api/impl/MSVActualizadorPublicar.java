@@ -52,11 +52,13 @@ public class MSVActualizadorPublicar implements MSVLiberator {
 	@Override
 	public Boolean liberaFichero(MSVDocumentoMasivo file) throws IllegalArgumentException, IOException, SQLException, JsonViewerException, ParseException {
 			
-		processAdapter.setStateProcessing(file.getProcesoMasivo().getId());
+		
 		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);
 	
-		Integer numFilas = exc.getNumeroFilasByHoja(0,file.getProcesoMasivo().getTipoOperacion());
-		for (int fila = 1; fila < numFilas; fila++) {
+		//Integer numFilas = exc.getNumeroFilasByHoja(0,file.getProcesoMasivo().getTipoOperacion());
+		
+		Long numFilas = file.getProcesoMasivo().getTotalFilas();
+		for (int fila = getFilaInicial(); fila < numFilas; fila++) {
 			Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 			String motivo = exc.dameCelda(fila, 1);
 			if(Checks.esNulo(motivo)) {
@@ -72,6 +74,11 @@ public class MSVActualizadorPublicar implements MSVLiberator {
 		}
 
 		return true;
+	}
+
+	@Override
+	public int getFilaInicial() {
+		return 1;
 	}
 
 }

@@ -56,7 +56,7 @@ public class MSVActualizadorAutorizarEdicion implements MSVLiberator {
 		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);
 		
 		Integer numFilas = exc.getNumeroFilasByHoja(0,file.getProcesoMasivo().getTipoOperacion());
-		for (int fila = 1; fila < numFilas; fila++) {
+		for (int fila = getFilaInicial(); fila < numFilas; fila++) {
 			Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 			DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = activoEstadoPublicacionApi.getState(activo.getId());
 			//TODO: Pendiente de saber que rellenar en el DTO. Probablemente no se use el mismo actualizador.
@@ -64,6 +64,11 @@ public class MSVActualizadorAutorizarEdicion implements MSVLiberator {
 		}
 
 		return true;
+	}
+
+	@Override
+	public int getFilaInicial() {
+		return 1;
 	}
 
 }

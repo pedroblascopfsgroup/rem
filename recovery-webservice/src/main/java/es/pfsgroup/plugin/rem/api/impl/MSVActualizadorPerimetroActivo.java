@@ -114,7 +114,7 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 		try{
 			// Recorre y procesa todas las filas del fichero excel
 			Integer numFilas = exc.getNumeroFilasByHoja(0,file.getProcesoMasivo().getTipoOperacion());
-			for (int fila = 1; fila < numFilas; fila++) {
+			for (int fila = getFilaInicial(); fila < numFilas; fila++) {
 				
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 				
@@ -253,6 +253,11 @@ public class MSVActualizadorPerimetroActivo implements MSVLiberator {
 			perimetro.setFechaAplicaTramiteAdmision(new Date());
 		}
 		
+	}
+
+	@Override
+	public int getFilaInicial() {
+		return 1;
 	}
 
 }

@@ -233,6 +233,9 @@ public class ProcessController extends ParadiseJsonController{
 			masivoDto.setValidable(validable);
 			masivoDto.setTipoOperacion(procesomasivo.getTipoOperacion().getDescripcion());
 			masivoDto.setFechaCrear(procesomasivo.getAuditoria().getFechaCrear());
+			masivoDto.setTotalFilas(procesomasivo.getTotalFilas());
+			masivoDto.setTotalFilasOk(procesomasivo.getTotalFilasOk());
+			masivoDto.setTotalFilasKo(procesomasivo.getTotalFilasKo());
 			
 		
 			listProcesosmasivos.add(masivoDto);

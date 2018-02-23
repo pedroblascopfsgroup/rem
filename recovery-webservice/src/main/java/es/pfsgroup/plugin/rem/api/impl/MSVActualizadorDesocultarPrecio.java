@@ -20,7 +20,6 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 
 @Component
 public class MSVActualizadorDesocultarPrecio implements MSVLiberator {
@@ -57,7 +56,7 @@ public class MSVActualizadorDesocultarPrecio implements MSVLiberator {
 		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);
 	
 		Integer numFilas = exc.getNumeroFilasByHoja(0,file.getProcesoMasivo().getTipoOperacion());
-		for (int fila = 1; fila < numFilas; fila++) {
+		for (int fila = getFilaInicial(); fila < numFilas; fila++) {
 			Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 			String motivo = exc.dameCelda(fila, 1);
 			if(Checks.esNulo(motivo)) {
@@ -74,6 +73,11 @@ public class MSVActualizadorDesocultarPrecio implements MSVLiberator {
 		}
 
 		return true;
+	}
+
+	@Override
+	public int getFilaInicial() {
+		return 1;
 	}
 
 }

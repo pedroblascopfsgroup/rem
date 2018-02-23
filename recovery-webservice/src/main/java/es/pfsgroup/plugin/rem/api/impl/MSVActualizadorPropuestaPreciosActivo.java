@@ -33,7 +33,6 @@ import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 @Component
 public class MSVActualizadorPropuestaPreciosActivo implements MSVLiberator {
 
-	public static final int EXCEL_FILA_INICIAL = 8;
 	public static final int EXCEL_COL_NUMACTIVO = 5;
 	
 	@Autowired
@@ -77,7 +76,7 @@ public class MSVActualizadorPropuestaPreciosActivo implements MSVLiberator {
 			activoApi.actualizarFechaYEstadoCargaPropuesta(Long.parseLong(exc.dameCelda(1, 2)));
 				
 			Integer numFilas = exc.getNumeroFilasByHoja(0,file.getProcesoMasivo().getTipoOperacion());
-			for (int fila = EXCEL_FILA_INICIAL; fila < numFilas; fila++) {
+			for (int fila = getFilaInicial(); fila < numFilas; fila++) {
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, EXCEL_COL_NUMACTIVO)));
 				Boolean actualizatTipoComercializacionActivo = false;
 				
@@ -232,6 +231,11 @@ public class MSVActualizadorPropuestaPreciosActivo implements MSVLiberator {
 		// o crea uno nuevo si no existia ningun precio del tipo indicado.
 		//El metodo se encarga tambien de actualizar el historico de precios
 		activoApi.saveActivoValoracion(activo, activoValoracion, dtoActivoValoracion);
+	}
+
+	@Override
+	public int getFilaInicial() {
+		return 8;
 	}
 
 }

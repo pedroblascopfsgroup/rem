@@ -65,7 +65,7 @@ public class MSVActualizadorAsociarActivosGasto implements MSVLiberator {
 
 		try {
 			Integer numFilas = exc.getNumeroFilasByHoja(0,file.getProcesoMasivo().getTipoOperacion());
-			for (int fila = 1; fila < numFilas; fila++) {
+			for (int fila = getFilaInicial(); fila < numFilas; fila++) {
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 				GastoProveedor gasto= gastoApi.getByNumGasto(Long.parseLong(exc.dameCelda(fila, 1)));
 				
@@ -82,6 +82,11 @@ public class MSVActualizadorAsociarActivosGasto implements MSVLiberator {
 		}
 		
 		return true;
+	}
+
+	@Override
+	public int getFilaInicial() {
+		return 1;
 	}
 
 }

@@ -81,7 +81,7 @@ public class MSVActualizadorGestor implements MSVLiberator {
 
 		try {
 			Integer numFilas = exc.getNumeroFilasByHoja(0,file.getProcesoMasivo().getTipoOperacion());
-			for (int fila = 1; fila < numFilas; fila++) {
+			for (int fila = getFilaInicial(); fila < numFilas; fila++) {
 				
 				Activo activo= null;
 				ActivoAgrupacion agrupacion= null;
@@ -148,6 +148,11 @@ public class MSVActualizadorGestor implements MSVLiberator {
 		}
 		
 		return true;
+	}
+
+	@Override
+	public int getFilaInicial() {
+		return 1;
 	}
 
 }

@@ -128,12 +128,12 @@ public class MSVAltaActivosProcesar implements MSVLiberator {
 	@Override
 	public Boolean liberaFichero(MSVDocumentoMasivo file) throws Exception {
 
-		processAdapter.setStateProcessing(file.getProcesoMasivo().getId());
+		//processAdapter.setStateProcessing(file.getProcesoMasivo().getId());
 		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);
 		DtoAltaActivoFinanciero dtoAAF = new DtoAltaActivoFinanciero();
 
 		// Recorre y procesa todas las filas de datos del fichero excel
-		for (int fila = COL_NUM.DATOS_PRIMERA_FILA; fila < exc.getNumeroFilas(); fila++) {
+		for (int fila = getFilaInicial(); fila < exc.getNumeroFilas(); fila++) {
 			System.out.println("procesando fila "+fila);
 
 			// Carga los datos de activo de la Fila excel al DTO
@@ -376,6 +376,11 @@ public class MSVAltaActivosProcesar implements MSVLiberator {
 		}
 
 		return Long.valueOf(celdaExcel);
+	}
+
+	@Override
+	public int getFilaInicial() {
+		return 3;
 	}
 
 }

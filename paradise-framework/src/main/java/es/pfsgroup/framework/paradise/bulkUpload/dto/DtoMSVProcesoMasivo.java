@@ -19,6 +19,9 @@ public class DtoMSVProcesoMasivo extends WebDto{
 	private boolean sePuedeProcesar;
 	private boolean conErrores;
 	private boolean validable;
+	private Long totalFilas;
+	private Long totalFilasOk;
+	private Long totalFilasKo;
 
 
 	public String getId() {
@@ -87,4 +90,24 @@ public class DtoMSVProcesoMasivo extends WebDto{
 	public void setValidable(boolean validable){
 		this.validable = validable;
 	}
+	public Long getTotalFilas() {
+		return totalFilas;
+	}
+	public void setTotalFilas(Long totalFilas) {
+		this.totalFilas = totalFilas;
+	}
+	public Long getTotalFilasOk() {
+		return totalFilasOk;
+	}
+	public void setTotalFilasOk(Long totalFilasOk) {
+		this.totalFilasOk = totalFilasOk;
+	}
+	public Long getTotalFilasKo() {
+		return totalFilasKo;
+	}
+	public void setTotalFilasKo(Long totalFilasKo) {
+		this.totalFilasKo = totalFilasKo;
+	}
+	
+	
 }

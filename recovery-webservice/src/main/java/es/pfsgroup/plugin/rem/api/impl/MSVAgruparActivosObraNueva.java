@@ -51,12 +51,18 @@ public class MSVAgruparActivosObraNueva implements MSVLiberator {
 		Long agrupacionId = agrupacionAdapter.getAgrupacionIdByNumAgrupRem(numAgrupRem);
 		
 		Integer numFilas = exc.getNumeroFilasByHoja(0,file.getProcesoMasivo().getTipoOperacion());
-		for (int fila = 1; fila < numFilas; fila++) {
+		for (int fila = getFilaInicial(); fila < numFilas; fila++) {
 			agrupacionAdapter.createActivoAgrupacion(new Long(exc.dameCelda(fila, 1)), agrupacionId, null);		
 		}
 
 		return true;
 		
+	}
+
+	@Override
+	public int getFilaInicial() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

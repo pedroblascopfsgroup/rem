@@ -73,7 +73,7 @@ public class MSVActualizadorPreciosActivoImporte implements MSVLiberator {
 		
 		try {
 			Integer numFilas = exc.getNumeroFilasByHoja(0,file.getProcesoMasivo().getTipoOperacion());
-			for (int fila = 1; fila < numFilas; fila++) {
+			for (int fila = getFilaInicial(); fila < numFilas; fila++) {
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 				
 				// Si alguno de los precios está vacío, comprobar si existe anterior y pasarlo al histórico sin crear o actualizar ningún otro.
@@ -180,6 +180,11 @@ public class MSVActualizadorPreciosActivoImporte implements MSVLiberator {
 		// o crea uno nuevo si no existia ningun precio del tipo indicado.
 		//El metodo se encarga tambien de actualizar el historico de precios
 		activoApi.saveActivoValoracion(activo, activoValoracion, dtoActivoValoracion);
+	}
+
+	@Override
+	public int getFilaInicial() {
+		return 1;
 	}
 
 }

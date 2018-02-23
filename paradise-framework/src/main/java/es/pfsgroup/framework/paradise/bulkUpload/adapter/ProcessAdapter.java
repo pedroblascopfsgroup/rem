@@ -125,11 +125,18 @@ public class ProcessAdapter {
 		
 		return fileItem;
 	}
+	
 	@Transactional
 	public void setStateProcessing(Long idProcess) {
+		this.setStateProcessing(idProcess, null);
+	}
+	
+	@Transactional
+	public void setStateProcessing(Long idProcess,Long totalFilas) {
 		MSVProcesoMasivo document = procesoDao.get(idProcess);
 		MSVDDEstadoProceso processing = genericDao.get(MSVDDEstadoProceso.class, genericDao.createFilter(FilterType.EQUALS, "codigo", MSVDDEstadoProceso.CODIGO_EN_PROCESO));
 		document.setEstadoProceso(processing);
+		document.setTotalFilas(totalFilas);
 		procesoDao.mergeAndUpdate(document);
 	}
 	

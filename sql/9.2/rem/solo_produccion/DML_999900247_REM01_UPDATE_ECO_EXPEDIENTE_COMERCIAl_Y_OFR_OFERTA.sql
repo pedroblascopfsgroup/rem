@@ -26,15 +26,15 @@ DECLARE
     --V_COUNT NUMBER(16); -- Vble. para contar.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_TABLA VARCHAR2(27 CHAR) := 'ECO_EXPEDIENTE_COMERCIAL'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-	V_USUARIO VARCHAR2(32 CHAR) := 'REMVIP-124';
+    V_TABLA VARCHAR2(27 CHAR):= 'ECO_EXPEDIENTE_COMERCIAL'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+	V_USUARIO VARCHAR2(32 CHAR):= 'REMVIP-124';
 
  BEGIN
   
-  REPOSICIONAMIENTO_TRAMITE('17451','T013_ResultadoPBC');
+  REPOSICIONAMIENTO_TRAMITE('17451','T013_PosicionamientoYFirma');
   
   EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET
-	  					   DD_EEC_ID = (SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''11'')
+	  					   DD_EEC_ID = (SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''06'')
 						 , USUARIOMODIFICAR = '''||V_USUARIO||'''
 						 , FECHAMODIFICAR = SYSDATE
 					 WHERE ECO_NUM_EXPEDIENTE = 17451
@@ -42,13 +42,14 @@ DECLARE
   					
   EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.OFR_OFERTAS SET
 	  					   DD_EOF_ID = (SELECT DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = ''01'')
+						 , AGR_ID = NULL
 						 , USUARIOMODIFICAR = '''||V_USUARIO||'''
 						 , FECHAMODIFICAR = SYSDATE
 					 WHERE OFR_ID = (SELECT OFR_ID FROM '||V_ESQUEMA||'.'||V_TABLA||'
 					 WHERE ECO_NUM_EXPEDIENTE = 17451)
   					';
   					
-            DBMS_OUTPUT.put_line('[INFO] Cancelada la venta por error del activo 6077839');
+  DBMS_OUTPUT.PUT_LINE('[INFO] Cancelada la venta por error del activo 6077839 y reposicionado a Posicionamiento y firma');
  
  COMMIT;
  
@@ -56,9 +57,9 @@ EXCEPTION
      WHEN OTHERS THEN
           ERR_NUM := SQLCODE;
           ERR_MSG := SQLERRM;
-          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
-          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
-          DBMS_OUTPUT.put_line(ERR_MSG);
+          DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.PUT_LINE(ERR_MSG);
           ROLLBACK;
           RAISE;   
 END;

@@ -6,9 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
@@ -23,9 +20,6 @@ public class LiberarFichero implements Runnable{
 	@Autowired
 	private RestApi restApi;
 	
-	@Autowired
-	private GenericABMDao genericDao;
-
 	@Autowired
 	private MSVFicheroDao ficheroDao;
 	
@@ -56,20 +50,20 @@ public class LiberarFichero implements Runnable{
 		try {
 			Boolean resultado = false;
 			restApi.doSessionConfig(this.userName);
-			
-			MSVDocumentoMasivo document = ficheroDao.findByIdProceso(idProcess);
 
 			MSVDDOperacionMasiva tipoOperacion = msvProcesoApi.getOperacionMasiva(idOperation);
 			
 			MSVLiberator lib = factoriaLiberators.dameLiberator(tipoOperacion);
-			if (!Checks.esNulo(lib))
+			if (!Checks.esNulo(lib)) {
+				MSVDocumentoMasivo document = ficheroDao.findByIdProceso(idProcess);
 				resultado = lib.liberaFichero(document);
+			}
+				
 			if(resultado){
 				processAdapter.setStateProcessed(idProcess);
 			}else{
 				processAdapter.setStateError(idProcess);
 			}
-
 			
 		} catch (Exception e) {
 			logger.error("error liberando fichero", e);

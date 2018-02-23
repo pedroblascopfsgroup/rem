@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -33,11 +34,8 @@ import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 
 @Component
-public class MSVActualizadorPreciosActivoImporte implements MSVLiberator {
+public class MSVActualizadorPreciosActivoImporte extends AbstractMSVActualizador implements MSVLiberator {
 
-	@Autowired
-	private ApiProxyFactory proxyFactory;
-		
 	@Autowired
 	ProcessAdapter processAdapter;
 	
@@ -53,95 +51,75 @@ public class MSVActualizadorPreciosActivoImporte implements MSVLiberator {
 	SimpleDateFormat simpleDate = new SimpleDateFormat("dd/MM/yyyy");
 	
 	@Override
-	public Boolean isValidFor(MSVDDOperacionMasiva tipoOperacion) {
-		if (!Checks.esNulo(tipoOperacion)){
-			if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PRECIOS_ACTIVO_IMPORTE.equals(tipoOperacion.getCodigo())){
-				return true;
-			}else {
-				return false;
-			}
-		}else{
-			return false;
-		}
+	public String getValidOperation() {
+		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PRECIOS_ACTIVO_IMPORTE;
 	}
-
+	
 	@Override
-	public Boolean liberaFichero(MSVDocumentoMasivo file) throws IllegalArgumentException, IOException {
-			
-		processAdapter.setStateProcessing(file.getProcesoMasivo().getId());
-		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);
+	@Transactional(readOnly = false)	
+	public void procesaFila(MSVHojaExcel exc, int fila) throws IOException, ParseException {
+		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 		
-		try {
-			Integer numFilas = exc.getNumeroFilasByHoja(0,file.getProcesoMasivo().getTipoOperacion());
-			for (int fila = getFilaInicial(); fila < numFilas; fila++) {
-				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
-				
-				// Si alguno de los precios está vacío, comprobar si existe anterior y pasarlo al histórico sin crear o actualizar ningún otro.
-				
-				//Si hay Valoracion = Precio Aprobado venta para actualizar o crear
-				if(!Checks.esNulo(exc.dameCelda(fila, 1))){
-					double valor = Double.parseDouble(exc.dameCelda(fila, 1));
+		// Si alguno de los precios está vacío, comprobar si existe anterior y pasarlo al histórico sin crear o actualizar ningún otro.
+		
+		//Si hay Valoracion = Precio Aprobado venta para actualizar o crear
+		if(!Checks.esNulo(exc.dameCelda(fila, 1))){
+			double valor = Double.parseDouble(exc.dameCelda(fila, 1));
 
-					actualizarCrearValoresPrecios(activo,
-							DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA, 
-							valor,
-							exc.dameCelda(fila, 2),
-							exc.dameCelda(fila, 3));
-					//Actualizar el tipoComercialización del activo
-					updaterState.updaterStateTipoComercializacion(activo);
-				}
-				
-				//Si hay Valoracion = Precio Minimo para actualizar o crear
-				if(!Checks.esNulo(exc.dameCelda(fila, 4))){
-					double valor = Double.parseDouble(exc.dameCelda(fila, 4));
-
-					actualizarCrearValoresPrecios(activo,
-							DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO, 
-							valor,
-							exc.dameCelda(fila, 5),
-							exc.dameCelda(fila, 6));
-				}
-				
-				//Si hay Valoracion = Precio Aprobado renta para actualizar o crear
-				if(!Checks.esNulo(exc.dameCelda(fila, 7))){
-					double valor = Double.parseDouble(exc.dameCelda(fila, 7));
-
-					
-					actualizarCrearValoresPrecios(activo,
-							DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA, 
-							valor,
-							exc.dameCelda(fila, 8),
-							exc.dameCelda(fila, 9));
-				}
-				
-				//Si hay Valoracion = Precio de Descuento Aprobado para actualizar o crear
-				if(!Checks.esNulo(exc.dameCelda(fila, 10))){
-					double valor = Double.parseDouble(exc.dameCelda(fila, 10));
-
-					actualizarCrearValoresPrecios(activo,
-							DDTipoPrecio.CODIGO_TPC_DESC_APROBADO, 
-							valor,
-							exc.dameCelda(fila, 11),
-							exc.dameCelda(fila, 12));
-				}
-				
-				//Si hay Valoracion = Precio de Descuento Publicado para actualizar o crear
-				if(!Checks.esNulo(exc.dameCelda(fila, 13))){
-					double valor = Double.parseDouble(exc.dameCelda(fila, 13));
-				    
-					actualizarCrearValoresPrecios(activo,
-							DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO, 
-							valor,
-							exc.dameCelda(fila, 14),
-							exc.dameCelda(fila, 15));
-				}
-			}
-
-		} catch (ParseException e) {
-			e.printStackTrace();
+			actualizarCrearValoresPrecios(activo,
+					DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA, 
+					valor,
+					exc.dameCelda(fila, 2),
+					exc.dameCelda(fila, 3));
+			//Actualizar el tipoComercialización del activo
+			updaterState.updaterStateTipoComercializacion(activo);
 		}
 		
-		return true;
+		//Si hay Valoracion = Precio Minimo para actualizar o crear
+		if(!Checks.esNulo(exc.dameCelda(fila, 4))){
+			double valor = Double.parseDouble(exc.dameCelda(fila, 4));
+
+			actualizarCrearValoresPrecios(activo,
+					DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO, 
+					valor,
+					exc.dameCelda(fila, 5),
+					exc.dameCelda(fila, 6));
+		}
+		
+		//Si hay Valoracion = Precio Aprobado renta para actualizar o crear
+		if(!Checks.esNulo(exc.dameCelda(fila, 7))){
+			double valor = Double.parseDouble(exc.dameCelda(fila, 7));
+
+			
+			actualizarCrearValoresPrecios(activo,
+					DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA, 
+					valor,
+					exc.dameCelda(fila, 8),
+					exc.dameCelda(fila, 9));
+		}
+		
+		//Si hay Valoracion = Precio de Descuento Aprobado para actualizar o crear
+		if(!Checks.esNulo(exc.dameCelda(fila, 10))){
+			double valor = Double.parseDouble(exc.dameCelda(fila, 10));
+
+			actualizarCrearValoresPrecios(activo,
+					DDTipoPrecio.CODIGO_TPC_DESC_APROBADO, 
+					valor,
+					exc.dameCelda(fila, 11),
+					exc.dameCelda(fila, 12));
+		}
+		
+		//Si hay Valoracion = Precio de Descuento Publicado para actualizar o crear
+		if(!Checks.esNulo(exc.dameCelda(fila, 13))){
+			double valor = Double.parseDouble(exc.dameCelda(fila, 13));
+		    
+			actualizarCrearValoresPrecios(activo,
+					DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO, 
+					valor,
+					exc.dameCelda(fila, 14),
+					exc.dameCelda(fila, 15));
+		}
+		
 	}
 	
 	private void actualizarCrearValoresPrecios(Activo activo, String codigoTipoPrecio,
@@ -182,9 +160,6 @@ public class MSVActualizadorPreciosActivoImporte implements MSVLiberator {
 		activoApi.saveActivoValoracion(activo, activoValoracion, dtoActivoValoracion);
 	}
 
-	@Override
-	public int getFilaInicial() {
-		return 1;
-	}
+	
 
 }

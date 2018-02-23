@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -8,20 +9,19 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
-import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelManagerApi;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
-import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
@@ -30,10 +30,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 
 
 @Component
-public class MSVActualizadorPreciosFSVActivoImporte implements MSVLiberator {
-
-	@Autowired
-	private ApiProxyFactory proxyFactory;
+public class MSVActualizadorPreciosFSVActivoImporte extends AbstractMSVActualizador implements MSVLiberator {
 		
 	@Autowired
 	ProcessAdapter processAdapter;
@@ -47,57 +44,35 @@ public class MSVActualizadorPreciosFSVActivoImporte implements MSVLiberator {
 	SimpleDateFormat simpleDate = new SimpleDateFormat("dd/MM/yyyy");
 	
 	@Override
-	public Boolean isValidFor(MSVDDOperacionMasiva tipoOperacion) {
-		if (!Checks.esNulo(tipoOperacion)){
-			if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PRECIOS_FSV_ACTIVO_IMPORTE.equals(tipoOperacion.getCodigo())){
-				return true;
-			}else {
-				return false;
-			}
-		}else{
-			return false;
-		}
+	public String getValidOperation() {
+		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PRECIOS_FSV_ACTIVO_IMPORTE;
 	}
 
 	@Override
-	public Boolean liberaFichero(MSVDocumentoMasivo file) throws IllegalArgumentException, IOException {
-			
-		processAdapter.setStateProcessing(file.getProcesoMasivo().getId());
-		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);
-
-		try {
-			Integer numFilas = exc.getNumeroFilasByHoja(0,file.getProcesoMasivo().getTipoOperacion());
-			for (int fila = getFilaInicial(); fila < numFilas; fila++) {
-				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
-				
-				//Si hay Valoracion = Precio FSV Venta
-				if(!Checks.esNulo(exc.dameCelda(fila, 1))){
-					actualizarCrearValoresPrecios(activo,
-							DDTipoPrecio.CODIGO_TPC_FSV_VENTA, 
-							Double.parseDouble(exc.dameCelda(fila, 1)),
-							null,
-							null);
-				}
-				
-				//Si hay Valoracion = Precio FSV Renta
-				if(!Checks.esNulo(exc.dameCelda(fila, 2))){
-					actualizarCrearValoresPrecios(activo,
-							DDTipoPrecio.CODIGO_TPC_FSV_RENTA, 
-							Double.parseDouble(exc.dameCelda(fila, 2)),
-							null,
-							null);
-				}
-				
-			}
-
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	@Transactional(readOnly = false)
+	public void procesaFila(MSVHojaExcel exc, int fila) throws IOException, ParseException, JsonViewerException, SQLException {
+		
+		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
+		
+		//Si hay Valoracion = Precio FSV Venta
+		if(!Checks.esNulo(exc.dameCelda(fila, 1))){
+			actualizarCrearValoresPrecios(activo,
+					DDTipoPrecio.CODIGO_TPC_FSV_VENTA, 
+					Double.parseDouble(exc.dameCelda(fila, 1)),
+					null,
+					null);
 		}
 		
-		return true;
+		//Si hay Valoracion = Precio FSV Renta
+		if(!Checks.esNulo(exc.dameCelda(fila, 2))){
+			actualizarCrearValoresPrecios(activo,
+					DDTipoPrecio.CODIGO_TPC_FSV_RENTA, 
+					Double.parseDouble(exc.dameCelda(fila, 2)),
+					null,
+					null);
+		}
 	}
-	
+
 	private void actualizarCrearValoresPrecios(Activo activo, String codigoTipoPrecio,
 			Double importe, String fechaInicioExcel, String fechaFinExcel) throws ParseException{
 		
@@ -134,11 +109,6 @@ public class MSVActualizadorPreciosFSVActivoImporte implements MSVLiberator {
 		// o crea uno nuevo si no existia ningun precio del tipo indicado.
 		//El metodo se encarga tambien de actualizar el historico de precios
 		activoApi.saveActivoValoracion(activo, activoValoracion, dtoActivoValoracion);
-	}
-
-	@Override
-	public int getFilaInicial() {
-		return 1;
 	}
 
 }

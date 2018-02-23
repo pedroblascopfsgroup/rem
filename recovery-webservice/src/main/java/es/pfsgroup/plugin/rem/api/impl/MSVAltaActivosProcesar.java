@@ -9,26 +9,21 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
-import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelManagerApi;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
-import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.plugin.rem.factory.AltaActivoFactoryApi;
 import es.pfsgroup.plugin.rem.model.DtoAltaActivoFinanciero;
 import es.pfsgroup.plugin.rem.service.AltaActivoService;
 
 @Component
-public class MSVAltaActivosProcesar implements MSVLiberator {
+public class MSVAltaActivosProcesar extends AbstractMSVActualizador implements MSVLiberator {
 
 	protected final Log logger = LogFactory.getLog(getClass());
-
-	@Autowired
-	private ApiProxyFactory proxyFactory;
 
 	@Autowired
 	ProcessAdapter processAdapter;
@@ -113,44 +108,24 @@ public class MSVAltaActivosProcesar implements MSVLiberator {
 	};
 
 	@Override
-	public Boolean isValidFor(MSVDDOperacionMasiva tipoOperacion) {
-		if (!Checks.esNulo(tipoOperacion)) {
-			if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ALTA_ACTIVOS_FINANCIEROS.equals(tipoOperacion.getCodigo())) {
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return false;
-		}
+	public String getValidOperation() {
+		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ALTA_ACTIVOS_FINANCIEROS;
 	}
 
 	@Override
-	public Boolean liberaFichero(MSVDocumentoMasivo file) throws Exception {
-
-		//processAdapter.setStateProcessing(file.getProcesoMasivo().getId());
-		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);
+	@Transactional(readOnly = false)
+	public void procesaFila(MSVHojaExcel exc, int fila) throws Exception {
+		
+		// Carga los datos de activo de la Fila excel al DTO
 		DtoAltaActivoFinanciero dtoAAF = new DtoAltaActivoFinanciero();
+		dtoAAF = filaExcelToDtoAltaActivoFinanciero(exc, dtoAAF, fila);
 
-		// Recorre y procesa todas las filas de datos del fichero excel
-		for (int fila = getFilaInicial(); fila < exc.getNumeroFilas(); fila++) {
-			System.out.println("procesando fila "+fila);
+		// Factoria de alta de activos
+		// -------------------------------------------------
 
-			// Carga los datos de activo de la Fila excel al DTO
-			dtoAAF = filaExcelToDtoAltaActivoFinanciero(exc, dtoAAF, fila);
-
-			// Factoria de alta de activos
-			// -------------------------------------------------
-
-			// FINANCIEROS
-			AltaActivoService altaActivoService = altaActivoFactoryApi
-					.getService(AltaActivoService.CODIGO_ALTA_ACTIVO_FINANCIERO);
-			altaActivoService.procesarAlta(dtoAAF);
-
-		}
-
-		return true;
-
+		// FINANCIEROS
+		AltaActivoService altaActivoService = altaActivoFactoryApi.getService(AltaActivoService.CODIGO_ALTA_ACTIVO_FINANCIERO);
+		altaActivoService.procesarAlta(dtoAAF);
 	}
 
 	/**
@@ -377,7 +352,7 @@ public class MSVAltaActivosProcesar implements MSVLiberator {
 
 		return Long.valueOf(celdaExcel);
 	}
-
+	
 	@Override
 	public int getFilaInicial() {
 		return 3;

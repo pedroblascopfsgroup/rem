@@ -33,8 +33,8 @@ create or replace PROCEDURE REPOSICIONAMIENTO_TRAMITE (USUARIO VARCHAR2
 	LIST_EXP_EEC es la lista de números de expediente comerciales, separados por comas, que queramos cambiar su estado. No es obligatorio, si se deja vacío no hará ese paso.
 	EEC_DESTINO es el estado en el que se quiere poner el expediente o expedientes comerciales que se pasen en la lista anterior. No es obligatorio, si se deja vacío no hará ese paso.
 	*/
-    V_ESQUEMA VARCHAR2(25 CHAR) := 'REM01';			-- '#ESQUEMA#'; -- Configuracion Esquema
-    V_ESQUEMA_M VARCHAR2(25 CHAR) := 'REMMASTER';	-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_ESQUEMA VARCHAR2(25 CHAR) := '#ESQUEMA#';			-- '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR) := '#ESQUEMA_MASTER#';	-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_USUARIO VARCHAR2(50 CHAR);
     ERR_NUM NUMBER;-- Numero de errores
     ERR_MSG VARCHAR2(2048);-- Mensaje de error
@@ -668,7 +668,7 @@ BEGIN
     		ON (T2.DD_EEC_CODIGO = '''||EEC_DESTINO||''')
     		WHEN MATCHED THEN UPDATE SET
     			T1.DD_EEC_ID = T2.DD_EEC_ID, T1.USUARIOMODIFICAR = '''||V_USUARIO||''', T1.FECHAMODIFICAR = SYSDATE
-    		WHERE T1.ECO_EXPEDIENTE_COMERCIAL IN ('||LIST_EXP_EEC||')';
+    		WHERE T1.ECO_NUM_EXPEDIENTE IN ('||LIST_EXP_EEC||')';
     	EXECUTE IMMEDIATE V_MSQL;
     	PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_ECO||' actualizada. '||SQL%ROWCOUNT||' Filas.';
 

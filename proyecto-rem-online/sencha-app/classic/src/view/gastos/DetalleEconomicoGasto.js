@@ -128,9 +128,9 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 										        					else{
 										        						field.clearInvalid();
 										        						me.up('gastodetallemain').lookupReference('cbOperacionExenta').setValue(0);
-										        						me.up('gastodetallemain').lookupReference('impuestoindirecto').setDisabled(true);
+										        						//me.up('gastodetallemain').lookupReference('impuestoindirecto').setDisabled(true);
 										        						me.up('gastodetallemain').lookupReference('impuestodirecto').setDisabled(true);
-										        						field.setValue(0);
+										        						//field.setValue(0);
 										        						me.up('gastodetallemain').lookupReference('tipoImpositivoIRPF').setValue('');
 										        					}
 										        				},																		        						

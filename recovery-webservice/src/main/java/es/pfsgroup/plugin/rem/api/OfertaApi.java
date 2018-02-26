@@ -250,6 +250,14 @@ public interface OfertaApi {
 	public boolean checkReserva(TareaExterna tareaExterna);
 	
 	/**
+	 * Es express??
+	 * 
+	 * @param tareaExterna
+	 * @return
+	 */
+	public boolean checkEsExpress(TareaExterna tareaExterna);
+	
+	/**
 	 * Método que comprueba si un activo tiene reserva.
 	 * 
 	 * @param tareaExterna

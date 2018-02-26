@@ -777,6 +777,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				adapter.saltoPBC(activoTramite.getProcessBPM());
 				
+				
+				
 				//Se copiará el valor del campo necesita financiación al campo asociado del expediente comercial
 				ExpedienteComercial expComercial = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
 				CondicionanteExpediente coe = expComercial.getCondicionante();
@@ -2195,6 +2197,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		
 		return result;
+	}
+
+	@Override
+	public boolean checkEsExpress(TareaExterna tareaExterna) {
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		if (!Checks.esNulo(ofertaAceptada)) {
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			if (!Checks.esNulo(expediente)){
+				return expediente.getOferta().getOfertaExpress();
+			}
+				
+		}
+		return false;
 	}
 }
 

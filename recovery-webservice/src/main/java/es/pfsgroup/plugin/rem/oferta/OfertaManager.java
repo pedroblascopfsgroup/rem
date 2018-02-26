@@ -783,7 +783,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if(!Checks.esNulo(coe)){
 					coe.setSolicitaFinanciacion(oferta.getNecesitaFinanciacion()?1:0);
 				}
-				genericDao.update(CondicionanteExpediente.class, coe);
+				DDEstadosExpedienteComercial estadoExpCom = expedienteComercialApi
+						.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.APROBADO);
+				expComercial.setEstado(estadoExpCom);
+				
+				genericDao.update(ExpedienteComercial.class, expComercial);
+				
+				//genericDao.update(CondicionanteExpediente.class, coe);
 				
 				//Se ocultará el activo con el motivo “Oferta Express Cajamar”
 				Activo activo = oferta.getActivoPrincipal();			

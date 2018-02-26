@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
 
@@ -31,7 +32,7 @@ public class ResolucionExpedienteEnterActionHandler extends ActivoGenericEnterAc
 			TareaActivo tareaActivo = (TareaActivo) tareaExterna.getTareaPadre();
 
 			for (TareaActivo ta : tareaActivo.getTramite().getTareas()) {
-				if (!ta.getTareaFinalizada() && !TA_RESOLUCION_EXPEDIENTE.equals(ta.getTarea())) {
+				if ((Checks.esNulo(ta.getTareaFinalizada()) || !ta.getTareaFinalizada()) && !TA_RESOLUCION_EXPEDIENTE.equals(ta.getTarea())) {
 
 					Auditoria.delete(ta);
 					ta.setFechaFin(new Date());

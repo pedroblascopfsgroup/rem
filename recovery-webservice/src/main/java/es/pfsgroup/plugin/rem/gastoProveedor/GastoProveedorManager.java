@@ -847,7 +847,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						detalleGasto.setIbanAbonar(null);
 						detalleGasto.setTitularCuentaAbonar(null);
 						detalleGasto.setNifTitularCuentaAbonar(null);
-						detalleGasto.setFechaConexion(null);
 						detalleGasto.setFechaAnticipo(null);				
 					} else {
 						detalleGasto.setOficinaBankia(null);

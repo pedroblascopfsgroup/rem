@@ -851,7 +851,6 @@ public class AgrupacionController extends ParadiseJsonController {
 				DtoAgrupaciones agr = new DtoAgrupaciones();
 				agr.setFechaInicioVigencia(agrupacion.getFechaInicioVigencia());
 				agr.setFechaFinVigencia(agrupacion.getFechaFinVigencia());
-				agr.setAgrupacionEliminada(false);
 				// validamos el periodo de vigencia
 				int validacionVigencia = adapter.validateVigencia(agr, Long.valueOf(agrupacion.getIdAgrupacion()));
 				if (validacionVigencia == 0) {

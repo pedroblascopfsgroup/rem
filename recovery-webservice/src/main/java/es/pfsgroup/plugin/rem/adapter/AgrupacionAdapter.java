@@ -1685,9 +1685,6 @@ public class AgrupacionAdapter {
 				Date fechaFinAux = agrupacion.getFechaFinVigencia();
 				this.trazarCambioVigencia(id, fechaInicioAux, fechaFinAux);
 			}
-			if(!Checks.esNulo(dto.getAgrupacionEliminada())){
-				agrupacion.setEliminado(BooleanUtils.toInteger(dto.getAgrupacionEliminada()));
-			}
 		}
 
 		// SI ES TIPO OBRA NUEVA

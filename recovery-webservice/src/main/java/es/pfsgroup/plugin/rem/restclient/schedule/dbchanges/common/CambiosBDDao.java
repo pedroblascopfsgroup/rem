@@ -205,6 +205,9 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 			resultado = queryExecutor.sqlRunList(session, queryString, infoTablas);
 			if (resultado != null && resultado.size() > 0) {
+				if (cambios.getPaginacion().getTamanyoBloque() != null) {
+					cambios.getPaginacion().setTotalFilas(resultado.size());
+				}
 				for (Object[] r : resultado) {
 					CambioBD cambio = new CambioBD(fields);
 					cambio.setDatosActuales(r);
@@ -556,7 +559,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	 * @return
 	 * @throws CambiosBDDaoError
 	 */
-	private List<Object[]> obtenerHistoricosBloque(Session session, String columns, InfoTablasBD infoTablas,
+	public List<Object[]> obtenerHistoricosBloque(Session session, String columns, InfoTablasBD infoTablas,
 			List<Object[]> resultado) throws CambiosBDDaoError{
 		List<Object[]> historicos = null;
 

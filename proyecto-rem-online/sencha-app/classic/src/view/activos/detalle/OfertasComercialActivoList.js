@@ -163,7 +163,20 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            dataIndex: 'descripcionEstadoExpediente',
 		            text: HreRem.i18n('header.oferta.estadoExpediente'),
 		            flex: 1
-		        }
+		        },
+		        {
+		        	text: HreRem.i18n('header.oferta.express'),
+					dataIndex: 'ofertaExpress',
+					align	 : 'center',
+					hideable: false,
+					renderer: function(data) {
+	                	if(data == 'true'){
+	                		var data = 'resources/images/green_16x16.png';
+	                		return '<div> <img src="'+ data +'"></div>';
+					    }
+	                }
+						
+				}
 		        
         ];
         

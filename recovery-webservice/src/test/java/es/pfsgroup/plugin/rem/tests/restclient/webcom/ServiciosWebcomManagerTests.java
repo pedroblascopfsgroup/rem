@@ -57,7 +57,7 @@ import es.pfsgroup.plugin.rem.restclient.webcom.definition.ServicioStockConstant
 import es.pfsgroup.plugin.rem.tests.restclient.webcom.examples.ExampleDto;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
+public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase{
 
 	@Mock
 	private HttpClientFacade httpClient;
@@ -120,8 +120,6 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		dto.setIdOfertaWebcom(LongDataType.longDataType(idWebcom));
 		String codEstadoOferta = "ABC";
 		dto.setCodEstadoOferta(StringDataType.stringDataType(codEstadoOferta));
-		Long idActivoHaya = 4L;
-		dto.setIdActivoHaya(LongDataType.longDataType(idActivoHaya));
 		String codEstadoExpediente = "DEF";
 		dto.setCodEstadoExpediente(StringDataType.stringDataType(codEstadoExpediente));
 		Boolean vendido = Boolean.TRUE;
@@ -136,7 +134,6 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		assertDataBasicContent(requestData, 0);
 		assertDataEquals(requestData, 0, EstadoOfertaConstantes.ID_OFERTA_WEBCOM, idWebcom.toString());
 		assertDataEquals(requestData, 0, EstadoOfertaConstantes.ID_OFERTA_REM, idRem.toString());
-		assertDataEquals(requestData, 0, EstadoOfertaConstantes.ID_ACTIVO_HAYA, idActivoHaya.toString());
 		assertDataEquals(requestData, 0, EstadoOfertaConstantes.COD_ESTADO_OFERTA, codEstadoOferta);
 		assertDataEquals(requestData, 0, EstadoOfertaConstantes.COD_ESTADO_EXPEDIENTE, codEstadoExpediente);
 		assertDataEquals(requestData, 0, EstadoOfertaConstantes.VENDIDO, vendido);

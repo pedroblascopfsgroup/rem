@@ -436,6 +436,10 @@
             	def activoManager = ctx.getBean("activoManager");
             	return activoManager.isActivoIntegradoAgrupacionComercial(idActivo);
             }
+            def checkReservaFirmada = {
+				def ofertaManager = ctx.getBean("ofertaManager");
+				return ofertaManager.checkReservaFirmada(tareaExterna);
+			}
   			 ]]></value>
   		</list>
   	</property>

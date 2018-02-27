@@ -2,8 +2,10 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
@@ -200,5 +202,21 @@ public interface UvemManagerApi {
 	 */
 	public ResultadoInstanciaDecisionDto modificarInstanciaDecisionTres(InstanciaDecisionDto instanciaDecisionDto)
 			throws Exception;
+	
+	/**
+	 * LLamada servicio web Bankia para modificaciones según tipo propuesta (MOD3) 
+	 * 
+	 * @param tareaExterna
+	 */
+	public void modificacionesSegunPropuesta(TareaExterna tareaExterna);
+	
+	/**
+	 * Tiene fecha firma reserva
+	 * 
+	 * @param clase
+	 * @param expediente
+	 * @return
+	 */
+	public boolean esTramiteOffline(String codigoTarea,ExpedienteComercial expediente);
 
 }

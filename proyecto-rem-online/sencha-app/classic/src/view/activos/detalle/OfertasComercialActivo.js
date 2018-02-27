@@ -154,6 +154,47 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 		    				width: 410,
 		    				colspan: 3
 		    			},
+		    			{
+		                    xtype: 'fieldsettable',
+		                    title: HreRem.i18n('title.comerical.oferta.detalle.oferta.express'),
+		                    bind: {
+		                        hidden: '{!activo.isCarteraCajamar}'
+		                    },
+		                    colspan: 3,
+		                    items: [
+		                    		{
+										xtype: "textfield",
+										fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.ofertaExpress'),
+										bind: {
+											value: '{detalleOfertaModel.ofertaExpress}'
+										},
+					    				readOnly: true,
+					    				width: 410
+					    			},
+					    			{
+										xtype: "textarea",
+										fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.observaciones'),
+										bind: {
+											value: '{detalleOfertaModel.observaciones}'
+										},
+										height: 30,
+					    				readOnly: true,
+					    				width: 410,
+					    				colspan: 2
+					    			},
+					    			{
+										xtype: "textfield",
+										fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.necesitaFinanciacion'),
+										bind: {
+											value: '{detalleOfertaModel.necesitaFinanciacion}'
+										},
+					    				readOnly: true,
+					    				width: 410
+					    			}
+					    			
+					    			
+		                    ]
+                		},
 		    		// Fila 4 - Solo Cajamar
 		    			{
 		                    xtype: 'fieldsettable',
@@ -218,7 +259,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 									    bind: '{activo.valorUltimaTasacion}',
 									    width: 410,
 									    readOnly: true
-									}		                        
+									}
+					    			
 		                    ]
                 		},
 		    		// Lista ofertantes

@@ -56,7 +56,10 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                {
 		                	xtype:'datefieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.firma'),
-		                	bind:		'{reserva.fechaFirma}'		                		
+		                	bind: {
+		                		value: '{reserva.fechaFirma}',
+		                		readOnly: '{fechaIngresoChequeReadOnly}'
+	                		}
 		                },
 		                {		                
 		                	xtype: 'checkboxfieldbase',

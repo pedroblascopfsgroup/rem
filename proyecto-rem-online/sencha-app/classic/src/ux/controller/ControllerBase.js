@@ -110,7 +110,6 @@ Ext.define('HreRem.ux.controller.ControllerBase', {
 	 * @param {} info
 	 */
 	errorToast: function(text) {
-		
 		Ext.toast({
 		     html: text,
 		     width: 320,
@@ -118,6 +117,22 @@ Ext.define('HreRem.ux.controller.ControllerBase', {
 		     align: 't',
 		     cls: 'x-toast-error',
 		     autoCloseDelay: 4000
+		 });
+		
+	},
+	
+	/**
+	 * Muestra ventana error (más grande) tipo toast con el mensaje que recibe.
+	 * @param {} info
+	 */
+	errorToastLong: function(text) {
+		Ext.toast({
+		     html: text,
+		     width: 350,
+		     height: 130,
+		     align: 't',
+		     cls: 'x-toast-error',
+		     autoCloseDelay: 5000
 		 });
 		
 	}

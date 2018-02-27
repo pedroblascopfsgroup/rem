@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jbpm.graph.exe.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,6 +82,9 @@ public class TareaActivoManager implements TareaActivoApi {
 	
 	@Autowired
 	private VTareaActivoCountDao vTareaActivoCountDao;
+	
+	@Autowired
+	private JBPMProcessManagerApi processManagerApi;
 	
 	@Override
 	public TareaActivo get(Long id) {
@@ -182,6 +186,16 @@ public class TareaActivoManager implements TareaActivoApi {
 	@Transactional(readOnly=false)
 	public void saltoFin(Long idTareaExterna){
 		saltoTarea(idTareaExterna,ActivoGenerarSaltoImpl.CODIGO_FIN);
+	}
+	
+	@Override
+	@Transactional(readOnly=false)
+	public void saltoPBC(Long idProcesBpm){
+		Token token = processManagerApi.getActualToken(idProcesBpm);
+		if(!Checks.esNulo(token)){
+			jbpmManager.generaTransicionesSalto(token.getId(), ActivoGenerarSaltoImpl.CODIGO_SALTO_PBC);
+			jbpmManager.signalToken(token.getId(), "salto"+ActivoGenerarSaltoImpl.CODIGO_SALTO_PBC);
+		}
 	}
 			
 	@Override

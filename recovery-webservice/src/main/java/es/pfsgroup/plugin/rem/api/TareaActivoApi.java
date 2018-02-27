@@ -31,5 +31,6 @@ public interface TareaActivoApi {
 		public void saltoResolucionExpediente(Long idTareaExterna);
 		
 		public void saltoFin(Long idTareaExterna);
-		
+
+		public void saltoPBC(Long idTareaExterna);
     }

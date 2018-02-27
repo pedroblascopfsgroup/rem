@@ -66,6 +66,7 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoRestringida;
+import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
@@ -2216,5 +2217,23 @@ public class AgrupacionAdapter {
 		}
 
 		return null;
+	}
+
+	public boolean permiteEliminarAgrupacion(Long numAgrupacion) {
+		
+		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(getAgrupacionIdByNumAgrupRem(numAgrupacion));
+		List<ActivoTrabajo> listActivoTrabajo= new ArrayList<ActivoTrabajo>();
+		List<Oferta> listOfertasAgrupacion= new ArrayList<Oferta>();
+		if(!Checks.esNulo(agrupacion)){
+			listOfertasAgrupacion= agrupacion.getOfertas();
+			for(ActivoAgrupacionActivo activoAgrupacion: agrupacion.getActivos()){
+				listActivoTrabajo.addAll(activoAgrupacion.getActivo().getActivoTrabajos());
+			}			
+		}
+		
+		if(!Checks.estaVacio(listOfertasAgrupacion) || !Checks.estaVacio(listActivoTrabajo)){
+			return false;
+		}
+		return true;		
 	}
 }

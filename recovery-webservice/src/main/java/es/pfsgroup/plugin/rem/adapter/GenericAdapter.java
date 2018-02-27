@@ -2,7 +2,12 @@ package es.pfsgroup.plugin.rem.adapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
+import javax.annotation.Resource;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
@@ -43,8 +48,16 @@ public class GenericAdapter {
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Resource
+	private Properties appProperties;
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+	
+	protected final Log logger = LogFactory.getLog(getClass());
+	
+	private static final String SERVIDOR_CORREO = "agendaMultifuncion.mail.server";
+	private static final String PUERTO_CORREO = "agendaMultifuncion.mail.port";
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<Dictionary> getDiccionario(String diccionario) {
@@ -115,10 +128,15 @@ public class GenericAdapter {
 		try {
 			// AgendaMultifuncionCorreoUtils.dameInstancia(executor).enviarCorreoConAdjuntos(null,
 			// mailsPara, mailsCC, asunto, cuerpo, null);
-			agendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, adjuntos);
+			//añado comprobacion para que no falle en local
+			String servidorCorreo = appProperties.getProperty(SERVIDOR_CORREO);
+			String puertoCorreo =appProperties.getProperty(PUERTO_CORREO);
+			if(!Checks.esNulo(servidorCorreo) && !Checks.esNulo(puertoCorreo)){
+				agendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, adjuntos);
+			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("error enviando correo",e);
+			
 		}
 	}
 	

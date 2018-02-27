@@ -8,6 +8,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -81,6 +82,23 @@ public class CambioBDDaoTests {
 			return null;
 		}
 
+		@Override
+		public Boolean procesarSoloCambiosMarcados() {
+			return false;
+		}
+
+		@Override
+		public void setSoloCambiosMarcados(Boolean procesar) {
+			
+			
+		}
+
+		@Override
+		public void marcarComoEnviadosMarcadosEspecifico(Date fechaEjecucion) throws Exception {
+			// TODO Auto-generated method stub
+			
+		}
+
 	}
 
 	@Mock
@@ -94,13 +112,14 @@ public class CambioBDDaoTests {
 
 	private ArrayList<Object[]> resultadoMinus;
 
-	private String[] datosHistoricos;
+	private ArrayList<Object[]> datosHistoricos;
 
 	private ArgumentCaptor<String> uniqueQueryCaptor;
 
 	@Before
 	public void setup() {
 		resultadoMinus = new ArrayList<Object[]>();
+		datosHistoricos = new ArrayList<Object[]>();
 		when(sessionFactory.getSession(any(HibernateDaoSupport.class))).thenReturn(mock(Session.class));
 
 	}
@@ -109,7 +128,7 @@ public class CambioBDDaoTests {
 	public void listCambios_datosActuales_primaryKey_noEsPrimeraColumna() {
 
 		resultadoMinus.add(new String[] { "7", "2016-10-10T00:00:00", "1", "1", "1", "AAA", "12345", null });
-		datosHistoricos = new String[] { "7", "2016-10-10T00:00:00", "1", "1", "1", "AAA", "777", null };
+		datosHistoricos.add (new String[] { "7", "2016-10-10T00:00:00", "1", "1", "1", "AAA", "777", null });
 		hibernateExecutionFacadeBehaviour();
 
 		Integer tamanyoBloque = Integer.valueOf(1000);
@@ -128,7 +147,7 @@ public class CambioBDDaoTests {
 		// hibernateExecutorFacade devolvería ese nuevo campo al final.
 
 		resultadoMinus.add(new String[] { "7", "2016-10-10T00:00:00", "1", "1", "1", "AAA", "12345", null, "42" });
-		datosHistoricos = new String[] { "7", "2016-10-10T00:00:00", "1", "1", "1", "AAA", "777", null, "42" };
+		datosHistoricos.add(new String[] { "7", "2016-10-10T00:00:00", "1", "1", "1", "AAA", "777", null, "42" });
 		hibernateExecutionFacadeBehaviour();
 
 		TestInfoTabla infoTablas = new TestInfoTabla();
@@ -200,6 +219,7 @@ public class CambioBDDaoTests {
 
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void getDtoFiends_and_colum4select_nombresLargosDeColumna() {
 		/*
@@ -223,14 +243,18 @@ public class CambioBDDaoTests {
 				columnList.contains("LISTADO2_" + ExampleSubDto.SHORT_COLUMN_NAME));
 
 	}
-
+	//InfoTablasBD infoTablas
+	@SuppressWarnings("unchecked")
 	private void hibernateExecutionFacadeBehaviour() {
+		
+		when(dao.obtenerHistoricosBloque(any(Session.class),  anyString(), any(InfoTablasBD.class), any(List.class))).thenReturn(datosHistoricos);
 		when(facade.createCriteria(any(Session.class), any(Class.class))).thenReturn(mock(Criteria.class));
 		when(facade.criteriaRunUniqueResult(any(Criteria.class))).thenReturn(mock(Usuario.class));
 
 		when(facade.sqlRunList(any(Session.class), anyString())).thenReturn(resultadoMinus);
+		when(facade.sqlRunList(any(Session.class), anyString(),any(InfoTablasBD.class))).thenReturn(resultadoMinus);
 		uniqueQueryCaptor = ArgumentCaptor.forClass(String.class);
-		when(facade.sqlRunUniqueResult(any(Session.class), uniqueQueryCaptor.capture())).thenReturn(datosHistoricos);
+		//when(facade.sqlRunUniqueResult(any(Session.class), uniqueQueryCaptor.capture())).thenReturn(datosHistoricos);
 	}
 
 	private List<String> listOfStrings(FieldInfo[] dtoFields) {

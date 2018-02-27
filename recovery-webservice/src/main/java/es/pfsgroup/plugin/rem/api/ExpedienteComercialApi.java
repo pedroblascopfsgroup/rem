@@ -909,5 +909,6 @@ public interface ExpedienteComercialApi {
 	 * @param idTramite: ID del trámite desde el cual se realiza la consulta.
 	 * @return Devuelve True si el estado del expdiente comercial es distinto a anulado, False si no lo es.
 	 */
-	public boolean checkEstadoExpedienteDistintoAnulado(Long idTramite);
+	public boolean checkEstadoExpedienteDistintoAnulado(Long idTramite);	
+	
 }

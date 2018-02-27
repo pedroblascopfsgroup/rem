@@ -16,6 +16,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -36,9 +37,12 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
     
+    @Autowired
+    private UvemManagerApi uvemManagerApi;
+    
     private static final String FECHA_ENVIO = "fechaEnvio";
     private static final String TIPO_ARRAS = "tipoArras";
-   	private static final String CODIGO_T013_INSTRUCCIONES_RESERVA = "T013_InstruccionesReserva";
+   	public static final String CODIGO_T013_INSTRUCCIONES_RESERVA = "T013_InstruccionesReserva";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -77,18 +81,22 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 				}
 				genericDao.save(ExpedienteComercial.class, expediente);
 			}
-			//LLamada servicio web Bankia para modificaciones según tipo propuesta (MOD3) 
-			if(!Checks.estaVacio(valores)){
-				if(!Checks.esNulo(ofertaAceptada.getActivoPrincipal()) 
+			// LLamada servicio web Bankia para modificaciones según tipo
+			// propuesta (MOD3)
+			if (!Checks.estaVacio(valores) && !uvemManagerApi.esTramiteOffline(
+					UpdaterServiceSancionOfertaInstruccionesReserva.CODIGO_T013_INSTRUCCIONES_RESERVA, expediente)) {
+				if (!Checks.esNulo(ofertaAceptada.getActivoPrincipal())
 						&& !Checks.esNulo(ofertaAceptada.getActivoPrincipal().getCartera())
-						&& ofertaAceptada.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)){
-					ofertaApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
+						&& ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()
+								.equals(DDCartera.CODIGO_CARTERA_BANKIA)) {
+					uvemManagerApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
 				}
 			}
 		}
 
 	}
-
+	
+	
 	public String[] getCodigoTarea() {
 		return new String[]{CODIGO_T013_INSTRUCCIONES_RESERVA};
 	}

@@ -92,7 +92,7 @@ public class AgendaAdapterTest {
 
     }
 
-	@Test
+	/*@Test
 	public void testAgendaAdapterUsoSinGestores() {
     	DtoReasignarTarea dto = prepararDto(ID_TAREA);
     	dto.setUsuarioGestor(null);
@@ -112,10 +112,9 @@ public class AgendaAdapterTest {
     	assertEquals(false, b);
 
     	//Mockito: Verifica que NUNCA llamamos al método update pasandole cualquier (any) instancia de la clase TareaActivo
-    	verify(genericDao, never())
-    		.update(TareaActivo.class, tareaActivo);
+    	//verify(genericDao, never()).update(TareaActivo.class, tareaActivo);
     	
-	}
+	}*/
 	
 	
 }

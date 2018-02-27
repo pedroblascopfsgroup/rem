@@ -23,6 +23,7 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	@WebcomRequired
 	private LongDataType idAgrupacionRem;
 	private LongDataType idActivoHaya;
+	private StringDataType motivoRechazo;
 	
 	public LongDataType getIdUsuarioRemAccion() {
 		return idUsuarioRemAccion;
@@ -77,6 +78,12 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	}
 	public void setIdActivoHaya(LongDataType idActivoHaya) {
 		this.idActivoHaya = idActivoHaya;
+	}
+	public StringDataType getMotivoRechazo() {
+		return motivoRechazo;
+	}
+	public void setMotivoRechazo(StringDataType motivoRechazo) {
+		this.motivoRechazo = motivoRechazo;
 	}
 	
 

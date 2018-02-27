@@ -14,6 +14,11 @@ import org.springframework.stereotype.Component;
 public class HibernateExecutionFacade {
 
 	private final Log logger = LogFactory.getLog(getClass());
+	
+	public List<Object[]> sqlRunList(Session session, String queryString)
+			throws CambiosBDDaoError {
+		return this.sqlRunList(session, queryString, null);
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<Object[]> sqlRunList(Session session, String queryString, InfoTablasBD infoTablas)
@@ -32,6 +37,11 @@ public class HibernateExecutionFacade {
 		return resultado;
 	}
 
+	public Object[] sqlRunUniqueResult(Session session, String queryString)
+			throws CambiosBDDaoError {
+		return this.sqlRunUniqueResult(session, queryString, null);
+	}
+	
 	public Object[] sqlRunUniqueResult(Session session, String queryString, InfoTablasBD infoTablas)
 			throws CambiosBDDaoError {
 		Object[] resultado = null;

@@ -437,11 +437,16 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		if (!Checks.esNulo(expediente.getId()) && !Checks.esNulo(expediente.getReserva()) 
 				&& !DDClaseActivoBancario.CODIGO_FINANCIERO.equals(activoBancario.getClaseActivo().getCodigo())) {
 			tieneReserva = true;
-			
-			String reservationKey = String.valueOf(expediente.getId())
-					.concat(appProperties.getProperty("haya.reservation.pwd"));
-			reservationKey = this.computeKey(reservationKey);
-			String reservationUrl = appProperties.getProperty("haya.reservation.url");
+			String reservationKey = "";
+			if(!Checks.esNulo(appProperties.getProperty("haya.reservation.pwd"))){
+				reservationKey = String.valueOf(expediente.getId())
+						.concat(appProperties.getProperty("haya.reservation.pwd"));
+				reservationKey = this.computeKey(reservationKey);
+			}
+			String reservationUrl ="";
+			if(!Checks.esNulo(appProperties.getProperty("haya.reservation.url"))){
+				reservationUrl = appProperties.getProperty("haya.reservation.url");
+			}
 			cuerpo = cuerpo + "<p>Pinche <a href=\"" + reservationUrl + expediente.getId() + "/" + reservationKey
 					+ "/1\">aquí</a> para la descarga del contrato de reserva.</p>";
 		}
@@ -537,17 +542,20 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		
 		FileItem f1 = null;
 		FileItem f2 = null;
+		FileItem f3 = null;
 
 		try {
 
 			if (adjuntaInstrucciones) {
 				//ADJUNTOS SI ES CAJAMAR
 				if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
-					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_formalizacion.pdf");
+					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_formalizacion_cajamar.pdf");
 					f2 = FileItemUtils.fromResource("docs/ficha_cliente.xlsx");
+					f3 = FileItemUtils.fromResource("docs/manif_titular_real.doc");
 					
-					adjuntos.add(createAdjunto(f1, "Instrucciones_Reserva_Formalizacion.pdf"));
+					adjuntos.add(createAdjunto(f1, "Instrucciones_Reserva_Formalizacion_Cajamar.pdf"));
 					adjuntos.add(createAdjunto(f2, "Ficha_cliente.xlsx"));
+					adjuntos.add(createAdjunto(f3, "Manif_Titular_Real.doc"));
 				}
 				//ADJUNTOS SI ES SAREB
 				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)) {

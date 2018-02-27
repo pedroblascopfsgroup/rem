@@ -62,6 +62,11 @@ public class DtoDatosBasicosOferta extends WebDto {
     
     private String comitePropuestoCodigo;
    
+	private String ofertaExpress;
+	
+	private String necesitaFinanciacion;
+	
+	private String observaciones;
 
 	public Long getIdOferta() {
 		return idOferta;
@@ -222,8 +227,31 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setComitePropuestoCodigo(String comitePropuestoCodigo) {
 		this.comitePropuestoCodigo = comitePropuestoCodigo;
-	} 	
-   	
+	}
+
+	public String getOfertaExpress() {
+		return ofertaExpress;
+	}
+
+	public void setOfertaExpress(String ofertaExpress) {
+		this.ofertaExpress = ofertaExpress;
+	}
+
+	public String getNecesitaFinanciacion() {
+		return necesitaFinanciacion;
+	}
+
+	public void setNecesitaFinanciacion(String necesitaFinanciacion) {
+		this.necesitaFinanciacion = necesitaFinanciacion;
+	}
+
+	public String getObservaciones() {
+		return observaciones;
+	}
+
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
+	}    	
    	
    	
 }

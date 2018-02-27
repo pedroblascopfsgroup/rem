@@ -250,6 +250,14 @@ public interface OfertaApi {
 	public boolean checkReserva(TareaExterna tareaExterna);
 	
 	/**
+	 * Es express??
+	 * 
+	 * @param tareaExterna
+	 * @return
+	 */
+	public boolean checkEsExpress(TareaExterna tareaExterna);
+	
+	/**
 	 * Método que comprueba si un activo tiene reserva.
 	 * 
 	 * @param tareaExterna
@@ -528,13 +536,14 @@ public interface OfertaApi {
 	public void ocultarActivoOferta(Oferta oferta) throws Exception;
 	
 	public void desocultarActivoOferta(Oferta oferta) throws Exception;
-
+	
 	/**
-	 * LLamada servicio web Bankia para modificaciones según tipo propuesta (MOD3) 
+	 * Método que comprueba para Bankia (excepto subcartera BH) si el estado de la reserva es firmada.
 	 * @param tareaExterna
-	 * @return
+	 * @return true si el valor es NO en ambos combos, false en caso de que no estén rellenos o alguno tenga SI.
 	 */
-	public void modificacionesSegunPropuesta(TareaExterna tareaExterna);
+	public boolean checkReservaFirmada(TareaExterna tareaExterna);
+	
 
 }
 

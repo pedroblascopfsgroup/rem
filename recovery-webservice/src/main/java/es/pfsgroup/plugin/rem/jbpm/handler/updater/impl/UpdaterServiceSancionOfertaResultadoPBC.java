@@ -53,7 +53,7 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 
     private static final String COMBO_RESULTADO = "comboResultado";
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
-    private static final String CODIGO_T013_RESULTADO_PBC = "T013_ResultadoPBC";
+    public static final String CODIGO_T013_RESULTADO_PBC = "T013_ResultadoPBC";
     private static final String CODIGO_ANULACION_IRREGULARIDADES = "601";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -93,10 +93,14 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 									logger.error("Error descongelando ofertas.", e);
 								}
 
-								if(DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
-									// Notificar del rechazo de la oferta a Bankia.
+								if (DDCartera.CODIGO_CARTERA_BANKIA
+										.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
+										&& !uvemManagerApi.esTramiteOffline(UpdaterServiceSancionOfertaResultadoPBC.CODIGO_T013_RESULTADO_PBC,expediente)) {
+									// Notificar del rechazo de la oferta a
+									// Bankia.
 									try {
-										uvemManagerApi.anularOferta(ofertaAceptada.getNumOferta().toString(), UvemManagerApi.MOTIVO_ANULACION_OFERTA.PBC_DENEGADO);
+										uvemManagerApi.anularOferta(ofertaAceptada.getNumOferta().toString(),
+												UvemManagerApi.MOTIVO_ANULACION_OFERTA.PBC_DENEGADO);
 									} catch (Exception e) {
 										logger.error("Error al invocar el servicio de anular oferta de Uvem.", e);
 										throw new UserException(e.getMessage());
@@ -125,10 +129,11 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 							//LLamada servicio web Bankia para modificaciones según tipo propuesta (MOD3) 
 							if(!Checks.estaVacio(valores)){
 								if(!Checks.esNulo(ofertaAceptada.getActivoPrincipal()) 
+										&& !uvemManagerApi.esTramiteOffline(UpdaterServiceSancionOfertaResultadoPBC.CODIGO_T013_RESULTADO_PBC,expediente)
 										&& !Checks.esNulo(ofertaAceptada.getActivoPrincipal().getCartera())
 										&& ofertaAceptada.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA) && 
 										!DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())){
-									ofertaApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
+									uvemManagerApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
 									
 								}
 							}

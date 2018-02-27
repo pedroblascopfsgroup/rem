@@ -876,8 +876,8 @@ public class JBPMProcessManager implements BPMContants, JBPMProcessManagerApi {
     }
     
     /**
-     * Genera transiciones autom�ticamente de salto en los nodos, s�lo si no existen.
-     * Para crear una transici�n implementar la interfaz {@link GenerarTransicionSaltoListener}
+     * Genera transiciones automáticamente de salto en los nodos, sólo si no existen.
+     * Para crear una transición implementar la interfaz {@link GenerarTransicionSaltoListener}
      * 
      * @param executionContext ExecutionContext
      */
@@ -897,5 +897,21 @@ public class JBPMProcessManager implements BPMContants, JBPMProcessManagerApi {
                }
            });
        }
+    
+    @Override
+    public Token getActualToken(final Long idProcess) {
+        return (Token) processManager.execute(new JbpmCallback() {
+            @Override
+            public Object doInJbpm(JbpmContext context) {
+                // Obtener la última instancia conocida
+                ProcessInstance processInstance = context.getGraphSession().getProcessInstance(idProcess);
+                if (processInstance == null) return null;
+
+                // Asegurarse que está donde corresponde
+                Token token = processInstance.getRootToken();
+                return token;
+            }
+        });
+    }
     
 }

@@ -140,8 +140,6 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			}
 
 			if ((registroCambiosHandlersAjecutar != null) && (!registroCambiosHandlersAjecutar.isEmpty())) {
-				// ordenamos los handlers por peso
-				Collections.sort(registroCambiosHandlersAjecutar);
 				// importante: Si no hacemos esto no se pueden actualizar las
 				// vistas materializadas
 				registroCambiosHandlersAjecutar.get(0).setdbContext();
@@ -371,12 +369,14 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	 * @param applicationContext
 	 * @param beanNames
 	 */
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void configuraHandlers(ApplicationContext applicationContext, String[] beanNames) {
 		for (String name : beanNames) {
 			DetectorCambiosBD handler = (DetectorCambiosBD) applicationContext.getBean(name);
 			this.addRegistroCambiosBDHandler(handler);
 		}
+		// ordenamos los handlers por peso
+		Collections.sort(registroCambiosHandlers);
 	}
 
 	/**

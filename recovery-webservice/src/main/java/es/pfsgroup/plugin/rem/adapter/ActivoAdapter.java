@@ -942,7 +942,6 @@ public class ActivoAdapter {
 		Activo activo = activoApi.get(Long.valueOf(idActivo));
 		if (activo.getInfoComercial().getTipoActivo().getCodigo().equals(DDTipoActivo.COD_VIVIENDA)) {
 			ActivoVivienda vivienda = (ActivoVivienda) activo.getInfoComercial();
-			List<ActivoDistribucion> distribuciones = vivienda.getDistribucion();
 
 				DtoNumPlantas dtoSotano = new DtoNumPlantas();
 				dtoSotano.setNumPlanta(-1L);
@@ -1789,8 +1788,11 @@ public class ActivoAdapter {
 			beanUtilNotNull.copyProperty(dtoTramite, "esMultiActivo", tramite.getActivos().size() > 1 ? true : false);
 			beanUtilNotNull.copyProperty(dtoTramite, "countActivos", tramite.getActivos().size());
 			if (!Checks.esNulo(tramite.getTipoTramite())){
+				
+				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+				Boolean isProveedor = genericAdapter.isProveedor(usuarioLogado);
 				if (!ActivoTramiteApi.CODIGO_TRAMITE_ACTUACION_TECNICA.equals(tramite.getTipoTramite().getCodigo())
-						&& !ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC.equals(tramite.getTipoTramite().getCodigo())) {
+						&& !ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC.equals(tramite.getTipoTramite().getCodigo()) || isProveedor) {
 					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonCierre", true);
 				}
 				if (!ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA.equals(tramite.getTipoTramite().getCodigo())) {

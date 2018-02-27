@@ -141,6 +141,23 @@ public class ProcessAdapter {
 		document.setTotalFilas(totalFilas);
 		procesoDao.mergeAndUpdate(document);
 	}
+	
+	@Transactional(readOnly = false)
+	public void setStateValidando(Long idProcess){
+		MSVProcesoMasivo document = procesoDao.get(idProcess);
+		MSVDDEstadoProceso validando = genericDao.get(MSVDDEstadoProceso.class, genericDao.createFilter(FilterType.EQUALS, "codigo", MSVDDEstadoProceso.CODIGO_VALIDANDO));
+		document.setEstadoProceso(validando);
+		procesoDao.mergeAndUpdate(document);
+	}
+	
+	@Transactional
+	public void setStateValidado(Long idProcess){
+		MSVProcesoMasivo document = procesoDao.get(idProcess);
+		MSVDDEstadoProceso validado = genericDao.get(MSVDDEstadoProceso.class, genericDao.createFilter(FilterType.EQUALS, "codigo", MSVDDEstadoProceso.CODIGO_VALIDADO));
+		document.setEstadoProceso(validado);
+		procesoDao.mergeAndUpdate(document);
+	}
+	
 	@Transactional
 	public void addFilaProcesada(Long idProcess, boolean esOk){
 		MSVProcesoMasivo document = procesoDao.get(idProcess);

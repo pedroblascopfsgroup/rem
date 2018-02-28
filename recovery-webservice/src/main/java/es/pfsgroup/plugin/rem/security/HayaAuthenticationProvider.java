@@ -17,6 +17,8 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.Authentication;
 import org.springframework.security.AuthenticationCredentialsNotFoundException;
@@ -58,7 +60,9 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 
 	private static final String AUTH2_ERROR_BAD_CREDENTIALS = "AbstractUserDetailsAuthenticationProvider.badCredentials";
 	private static final String AUTH2_ERROR_INVALID_TOKEN = "AbstractUserDetailsAuthenticationProvider.invalidToken";
-	//private static final String AUTH2_ERROR_MALFORMED_URL = "AbstractUserDetailsAuthenticationProvider.malformedURL";
+	// private static final String AUTH2_ERROR_MALFORMED_URL = "AbstractUserDetailsAuthenticationProvider.malformedURL";
+	
+	private static final Log logger = LogFactory.getLog(HayaAuthenticationProvider.class);
 	
 	@Resource
 	private Properties appProperties;
@@ -86,6 +90,8 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 		// Determine username 
 		String username = "NONE_PROVIDED";
 		String idToken = null;
+		
+		logger.info("code >" + authDetails.getCode() + "<");
 				
 		if (authDetails.getCode() != null) {
 			
@@ -105,6 +111,7 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 		    try {
 		    	
 		    	int statusCode = httpClient.executeMethod(postMethod);
+		    	logger.info("statusCode >" + statusCode + "<");
 
 		        if (statusCode != HttpStatus.SC_OK) {
 		        	throw new ParseException(messages.getMessage(AUTH2_ERROR_BAD_CREDENTIALS),0);
@@ -115,9 +122,11 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 		        JSONObject response = JSONObject.fromObject(stringBody);
 		    	
 				idToken = (String) response.get("id_token");
+				logger.info("idToken >" + idToken + "<");
 				authDetails.setIdToken(idToken);
 				JWT jwt = JWTParser.parse(idToken);
 	            String upn = (String) jwt.getJWTClaimsSet().getClaims().get("upn");
+	            logger.info("upn >" + upn + "<");
 	            username = upn.split("@")[0];
 				
 			} catch (ParseException e) {

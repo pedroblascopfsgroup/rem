@@ -599,9 +599,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 
 			Long idOferta = this.saveOferta(oferta);
-			if (!Checks.esNulo(ofertaDto.getTitularesAdicionales())) {
-				saveOrUpdateListaTitualesAdicionalesOferta(ofertaDto, oferta);
-			}
+
 			oferta = updateEstadoOferta(idOferta, ofertaDto.getFechaAccion());
 			this.updateStateDispComercialActivosByOferta(oferta);
 

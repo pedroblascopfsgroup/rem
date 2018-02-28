@@ -39,10 +39,16 @@ public interface UpdaterStateApi {
 	public void updaterStateDisponibilidadComercialAndSave(Long idActivo);
 	
 	/**
-	 * Actualiza el estado de disponibilidad comercial del activo, guarda el cambio en bddd
+	 * 
 	 * @param activo
 	 */
 	public void updaterStateDisponibilidadComercialAndSave(Activo activo);
+	
+	/**
+	 * Actualiza el estado de disponibilidad comercial del activo, guarda el cambio en bddd
+	 * @param activo
+	 */
+	public void updaterStateDisponibilidadComercialAndSave(Activo activo, Boolean express);
 	
 	/**
 	 * Actualiza el tipo de comercialización del activo (Singular / Retail)

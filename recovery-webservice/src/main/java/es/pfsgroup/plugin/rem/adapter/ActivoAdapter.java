@@ -2717,7 +2717,7 @@ public class ActivoAdapter {
 			}
 			genericDao.save(Oferta.class, oferta);
 			// Actualizamos la situacion comercial del activo
-			updaterState.updaterStateDisponibilidadComercialAndSave(activo);
+			updaterState.updaterStateDisponibilidadComercialAndSave(activo,false);
 
 			notificationOfertaManager.sendNotification(oferta);
 		} catch (Exception ex) {

@@ -599,6 +599,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 
 			Long idOferta = this.saveOferta(oferta);
+			if (!Checks.esNulo(ofertaDto.getTitularesAdicionales())) {
+				saveOrUpdateListaTitualesAdicionalesOferta(ofertaDto, oferta);
+			}
 			oferta = updateEstadoOferta(idOferta, ofertaDto.getFechaAccion());
 			this.updateStateDispComercialActivosByOferta(oferta);
 
@@ -726,9 +729,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Boolean inLoteComercial = false;
 		Boolean incompatible = false;
 		Oferta oferta = this.getOfertaById(idOferta);
-
-		UsuarioSecurity usuarioSecurity = usuarioSecurityManager.getByUsername(RestApi.REM_LOGGED_USER_USERNAME);
-		restApi.doLogin(usuarioSecurity);
 
 		List<ActivoOferta> listaActivoOferta = oferta.getActivosOferta();
 
@@ -865,8 +865,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			oferta.setFechaRechazoOferta(fechaAccion);
 		}
 		ofertaDao.saveOrUpdate(oferta);
-		usuarioSecurity = usuarioSecurityManager.getByUsername(RestApi.REST_LOGGED_USER_USERNAME);
-		restApi.doLogin(usuarioSecurity);
+		//usuarioSecurity = usuarioSecurityManager.getByUsername(RestApi.REST_LOGGED_USER_USERNAME);
+		//restApi.doLogin(usuarioSecurity);
 		return oferta;
 	}
 
@@ -938,7 +938,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (oferta.getActivosOferta() != null && !oferta.getActivosOferta().isEmpty()) {
 			for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
 				Activo activo = activoOferta.getPrimaryKey().getActivo();
-				updaterState.updaterStateDisponibilidadComercialAndSave(activo);
+				if(oferta.getOfertaExpress() && DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())){
+					updaterState.updaterStateDisponibilidadComercialAndSave(activo,true);
+				}else{
+					updaterState.updaterStateDisponibilidadComercialAndSave(activo,false);
+				}
+				
 			}
 		}
 	}

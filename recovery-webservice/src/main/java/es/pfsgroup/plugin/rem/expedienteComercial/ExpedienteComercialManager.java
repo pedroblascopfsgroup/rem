@@ -3549,6 +3549,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		
+		if(oferta.getAgrupacion() != null){
+			instancia.setOfertaAgrupacion(true);
+			instancia.setCodigoAgrupacionInmueble(oferta.getAgrupacion().getUvemCodigoAgrupacionInmueble());
+		}
+		
+		
 		return instancia;
 	}
 	

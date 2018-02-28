@@ -228,6 +228,12 @@ public class UvemManager implements UvemManagerApi {
 				((GMPDJB13_INS) servicio).setLongitudMensajeDeSalidarcslon(2);
 				((GMPDJB13_INS) servicio).setCodigoComitecocom7((short) 2);
 				((GMPDJB13_INS) servicio).setCodigoDeOfertaHayacoofhx2("9");
+				if(((GMPDJB13_INS) servicio).getCodigoDeAgrupacionDeInmueblecoagiw() > 0){
+					((GMPDJB13_INS) servicio).setCodigoDeAgrupacionDeInmueblecoagiw2(((GMPDJB13_INS) servicio).getCodigoDeAgrupacionDeInmueblecoagiw());
+				}else{
+					((GMPDJB13_INS) servicio).setCodigoDeAgrupacionDeInmueblecoagiw2(rand.nextInt() & MASK);
+				}
+				
 
 			} else if (servicio instanceof GMPAJC34_INS) {
 				ImporteMonetario importe = new ImporteMonetario();
@@ -837,7 +843,7 @@ public class UvemManager implements UvemManagerApi {
 	 * @return
 	 * @throws WIException
 	 */
-	public ResultadoInstanciaDecisionDto instanciaDecision(InstanciaDecisionDto instanciaDecisionDto, String accion)
+	private ResultadoInstanciaDecisionDto instanciaDecision(InstanciaDecisionDto instanciaDecisionDto, String accion)
 			throws WIException {
 		logger.info("------------ LLAMADA WS INSTANCIADECISION -----------------");
 		String errorDesc = null;
@@ -1040,6 +1046,15 @@ public class UvemManager implements UvemManagerApi {
 
 			}
 			
+			if(Boolean.TRUE.equals(instanciaDecisionDto.getOfertaAgrupacion())){
+				if(instanciaDecisionDto.getCodigoAgrupacionInmueble() != null && instanciaDecisionDto.getCodigoAgrupacionInmueble() > 0){
+					servicioGMPDJB13_INS.setCodigoDeAgrupacionDeInmueblecoagiw(instanciaDecisionDto.getCodigoAgrupacionInmueble());
+				}else{
+					servicioGMPDJB13_INS.setCodigoDeAgrupacionDeInmueblecoagiw(0);
+				}
+			}else{
+				servicioGMPDJB13_INS.setCodigoDeAgrupacionDeInmueblecoagiw(0);
+			}
 			
 
 			if (numeroOcurrencias != null) {
@@ -1122,7 +1137,8 @@ public class UvemManager implements UvemManagerApi {
 			result.setLongitudMensajeSalida(servicioGMPDJB13_INS.getLongitudMensajeDeSalidarcslon());
 			result.setCodigoComite(servicioGMPDJB13_INS.getCodigoComitecocom7() + "");
 			result.setCodigoDeOfertaHaya(servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx2());
-
+			//HREOS-3844: Postacordado Bankia 2: Añadir código de la oferta en FFDD
+			result.setCodigoAgrupacionInmueble(servicioGMPDJB13_INS.getCodigoDeAgrupacionDeInmueblecoagiw2());
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
 			errorDesc = e.getMessage();

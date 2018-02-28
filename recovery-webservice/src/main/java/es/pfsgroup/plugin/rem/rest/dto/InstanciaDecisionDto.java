@@ -2,8 +2,6 @@ package es.pfsgroup.plugin.rem.rest.dto;
 
 import java.util.List;
 
-import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
-
 public class InstanciaDecisionDto {
 	
 	public final char FINANCIACION_CLIENTE_SI = 'S';
@@ -21,6 +19,11 @@ public class InstanciaDecisionDto {
 	private String qcenre;
 	private short codigoCOTPRA;
 	private String codigoProveedorUvem;
+	private Boolean ofertaAgrupacion;
+	private Integer codigoAgrupacionInmueble;
+	
+	
+	
 
 	public String getCodigoDeOfertaHaya() {
 		return codigoDeOfertaHaya;
@@ -91,6 +94,18 @@ public class InstanciaDecisionDto {
 	}
 	public void setCodComiteSuperior(String codComiteSuperior) {
 		this.codComiteSuperior = codComiteSuperior;
+	}
+	public Boolean getOfertaAgrupacion() {
+		return ofertaAgrupacion;
+	}
+	public void setOfertaAgrupacion(Boolean ofertaAgrupacion) {
+		this.ofertaAgrupacion = ofertaAgrupacion;
+	}
+	public Integer getCodigoAgrupacionInmueble() {
+		return codigoAgrupacionInmueble;
+	}
+	public void setCodigoAgrupacionInmueble(Integer codigoAgrupacionInmueble) {
+		this.codigoAgrupacionInmueble = codigoAgrupacionInmueble;
 	}
 	
 }

@@ -39,9 +39,9 @@ public class ResultadoPBCEnterActionHandler extends ActivoGenericEnterActionHand
 		// Si hay reserva, se bloquea (borra) la tarea en espera de que el estado de la reserva este firmada
 		//(avanzando tarea "Obtencion contrato reserva")
 		if(!Checks.esNulo(tareaExterna)){
-			if (ofertaApi.checkReserva(tareaExterna)) {
+			if (ofertaApi.checkReserva(tareaExterna) && !ofertaApi.checkEsExpress(tareaExterna)) {
+				
 				tareaExterna.getTareaPadre().getAuditoria().setBorrado(true);
-//				tareaExternaManager.borrar(tareaExterna);
 			}
 		};
 

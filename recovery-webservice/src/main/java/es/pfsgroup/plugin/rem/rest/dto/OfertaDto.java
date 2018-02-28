@@ -50,7 +50,6 @@ public class OfertaDto implements Serializable {
 		Update.class },foreingField="id")
 	private Long idUsuarioRemAccion;
 	private Long idClienteComercial;
-	@NotNull(groups = {Insert.class})
 	@Size(max=1000)
 	private String observaciones;
 	@NotNull(groups = {Insert.class})

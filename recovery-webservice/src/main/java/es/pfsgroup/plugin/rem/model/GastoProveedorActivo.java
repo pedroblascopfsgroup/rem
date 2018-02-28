@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -38,11 +39,11 @@ public class GastoProveedorActivo implements Serializable {
     @SequenceGenerator(name = "GastoProveedorActivoGenerator", sequenceName = "S_GPV_ACT")
     private Long id;
 	
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "GPV_ID")
     private GastoProveedor gastoProveedor; 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
     private Activo activo;
     

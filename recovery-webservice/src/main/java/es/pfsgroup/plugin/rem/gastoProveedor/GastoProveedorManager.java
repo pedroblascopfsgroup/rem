@@ -847,7 +847,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						detalleGasto.setIbanAbonar(null);
 						detalleGasto.setTitularCuentaAbonar(null);
 						detalleGasto.setNifTitularCuentaAbonar(null);
-						detalleGasto.setFechaConexion(null);
 						detalleGasto.setFechaAnticipo(null);				
 					} else {
 						detalleGasto.setOficinaBankia(null);
@@ -1433,7 +1432,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					dtoGestion.setComboEstadoAutorizacionPropietario(gastoGestion.getEstadoAutorizacionPropietario().getCodigo());
 				}
 				
-				if(!DDEstadoAutorizacionPropietario.CODIGO_PENDIENTE.equals(gastoGestion.getEstadoAutorizacionPropietario().getCodigo())) {
+				if(!Checks.esNulo(gastoGestion.getEstadoAutorizacionPropietario()) && !DDEstadoAutorizacionPropietario.CODIGO_PENDIENTE.equals(gastoGestion.getEstadoAutorizacionPropietario().getCodigo())) {
 					dtoGestion.setFechaAutorizacionPropietario(gastoGestion.getFechaEstadoAutorizacionPropietario());
 				}
 				

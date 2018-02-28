@@ -48,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
 import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
+import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
@@ -220,7 +221,14 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 		} else {
 			mapaValores.put("Gestor", FileUtilsREM.stringify(null));
 		}
-		mapaValores.put("FPublWeb", FileUtilsREM.stringify(activo.getFechaPublicable()));
+
+		ActivoHistoricoEstadoPublicacion historicoPublicacion= activoApi.getUltimoHistoricoEstadoPublicado(activo.getId());
+		if(!Checks.esNulo(historicoPublicacion)){
+			mapaValores.put("FPublWeb", FileUtilsREM.stringify(historicoPublicacion.getFechaDesde()));
+		}
+		else{
+			mapaValores.put("FPublWeb", FileUtilsREM.stringify(null));
+		}
 		mapaValores.put("NumVisitasWeb", FileUtilsREM.stringify(activo.getVisitas().size()));
 
 		// CARACTERISTICAS INMUEBLE

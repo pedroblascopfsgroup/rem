@@ -549,9 +549,9 @@ public class AgrupacionAdapter {
 				// Si el activo es no Formalizable, pero la agrupación en la que
 				// lo vamos a meter SI que lo es, también lanzamos una Excepcion
 				if (activoApi.esActivoFormalizable(activo.getNumActivo())
-						&& agrupacion.getIsFormalizacion().equals(NO_ES_FORMALIZABLE)
+						&& NO_ES_FORMALIZABLE.equals(agrupacion.getIsFormalizacion())
 						|| !activoApi.esActivoFormalizable(activo.getNumActivo())
-								&& agrupacion.getIsFormalizacion().equals(ES_FORMALIZABLE)) {
+								&& ES_FORMALIZABLE.equals(agrupacion.getIsFormalizacion())) {
 					throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_NO_COMPARTE_FORMALIZACION);
 				}
 			}
@@ -586,15 +586,19 @@ public class AgrupacionAdapter {
 			updaterState.updaterStateTipoComercializacion(activo);
 
 			// Actualizar el activo principal de la agrupación
-			if (activoPrincipal == 1) {
-				agrupacion.setActivoPrincipal(activo);
-				activoAgrupacionApi.saveOrUpdate(agrupacion);
+			
+			if (!Checks.esNulo(activoPrincipal)) {
+				if (activoPrincipal == 1) {
+					agrupacion.setActivoPrincipal(activo);
+					activoAgrupacionApi.saveOrUpdate(agrupacion);
+				}
 			}
 
 		} catch (JsonViewerException jve) {
 			throw jve;
 		} catch (Exception e) {
 			logger.error(e);
+			e.printStackTrace();
 		}
 	}
 

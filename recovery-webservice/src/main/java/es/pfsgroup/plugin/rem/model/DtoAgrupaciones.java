@@ -45,6 +45,7 @@ public class DtoAgrupaciones extends WebDto {
 	private Long codigoGestorComercialBackOffice;
 	private Integer isFormalizacion;
 	private Boolean estaCaducada;
+	private Boolean agrupacionEliminada;
 
 
 	public Boolean getEstaCaducada() {
@@ -242,6 +243,12 @@ public class DtoAgrupaciones extends WebDto {
 	}
 	public void setCodigoCartera(String codigoCartera) {
 		this.codigoCartera = codigoCartera;
+	}
+	public Boolean getAgrupacionEliminada() {
+		return agrupacionEliminada;
+	}
+	public void setAgrupacionEliminada(Boolean agrupacionEliminada) {
+		this.agrupacionEliminada = agrupacionEliminada;
 	}
 
 

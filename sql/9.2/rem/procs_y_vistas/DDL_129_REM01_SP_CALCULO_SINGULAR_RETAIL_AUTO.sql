@@ -84,6 +84,8 @@ V_MSQL :=
             WHERE 
                   (ACT.BORRADO = 0)                                                        AND                                          --ACTIVOS NO BORRADOS
                   (PAC.PAC_CHECK_COMERCIALIZAR IS NULL OR PAC.PAC_CHECK_COMERCIALIZAR = 1) AND                                          --ACTIVOS QUE APLICAN COMERCIALIZAR
+                  (TPA.DD_TPA_CODIGO NOT IN (''02''))                                      AND                                          --ACTIVOS QUE NO SON VIVIENDAS
+                  (SAC.DD_SAC_CODIGO NOT IN (''24'',''25''))                               AND                                          --ACTIVOS QUE NO SON GARAJES NI TRASTEROS
                   (
                    (EAC.DD_EAC_CODIGO IN (''01'',''02'')) OR                                                                                      --TODOS LOS ACTIVOS QUE SON SUELOS Y OBRAS EN CURSO
                    (TPA.DD_TPA_CODIGO IN (''01''))        OR                                                                                      --TODOS LOS ACTIVOS QUE SON SUELOS
@@ -147,6 +149,8 @@ V_MSQL :=
             WHERE 
                   (ACT.BORRADO = 0)                                                        AND                                          --ACTIVOS NO BORRADOS
                   (PAC.PAC_CHECK_COMERCIALIZAR IS NULL OR PAC.PAC_CHECK_COMERCIALIZAR = 1) AND                                          --ACTIVOS QUE APLICAN COMERCIALIZAR
+                  (EAC.DD_EAC_CODIGO NOT IN (''01'',''02''))                               AND                                          --ACTIVOS QUE NO SON SUELO NI OBRA EN CURSO
+                  (TPA.DD_TPA_CODIGO NOT IN (''01''))                                      AND                                          --ACTIVOS QUE NO SON SUELO
                   (
                    (TPA.DD_TPA_CODIGO IN (''02''))             OR                                                                                 --TODOS LOS ACTIVOS QUE SON VIVIENDAS
                    (SAC.DD_SAC_CODIGO IN (''24'',''25''))      OR                                                                                 --TODOS LOS ACTIVOS QUE SON GARAJES O TRASTEROS

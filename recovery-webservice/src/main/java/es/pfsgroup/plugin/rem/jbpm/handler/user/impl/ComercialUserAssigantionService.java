@@ -546,7 +546,8 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 					perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
 				}
 				
-				if (!Checks.esNulo(perimetro) && BooleanUtils.toBoolean(perimetro.getAplicaFormalizar())) {
+			if (!Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaFormalizar())
+					&& BooleanUtils.toBoolean(perimetro.getAplicaFormalizar())) {
 					esConFormalizacion = true;
 				}
 			

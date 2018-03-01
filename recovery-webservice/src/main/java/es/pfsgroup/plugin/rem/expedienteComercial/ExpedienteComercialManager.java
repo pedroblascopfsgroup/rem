@@ -5442,7 +5442,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 									.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
 								if (!genericAdapter.tienePerfil(PERFIL_GESTOR_MINUTAS, usuarioLogado)
 										&& !genericAdapter.tienePerfil(PERFIL_SUPERVISOR_MINUTAS, usuarioLogado)
-										&& !genericAdapter.isSuper(usuarioLogado)) {
+										&& !genericAdapter.isSuper(usuarioLogado)
+										&& !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, usuarioLogado)) {
 									codigoError = "imposible.bloquear.expediente.cajamar";
 								} else {
 									// la financiación tiene que estar informada

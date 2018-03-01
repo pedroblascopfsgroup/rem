@@ -19,6 +19,8 @@ public class ValidarFichero implements Runnable{
 	@Autowired
 	ProcessAdapter processAdapter;
 	
+	
+	
 	public ValidarFichero(Long idProcess,String userName){
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 		this.userName = userName;
@@ -29,8 +31,8 @@ public class ValidarFichero implements Runnable{
 	public void run() {
 		try {
 			restApi.doSessionConfig(this.userName);
-			
 			processAdapter.validarMasivo(idProcess);
+			
 			
 			
 		} catch (Exception e) {

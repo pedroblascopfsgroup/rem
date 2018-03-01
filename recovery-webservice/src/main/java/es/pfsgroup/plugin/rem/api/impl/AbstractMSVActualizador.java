@@ -4,11 +4,16 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -29,6 +34,9 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 		
 	@Autowired
 	ProcessAdapter processAdapter;
+	
+	@Resource(name = "entityTransactionManager")
+    private PlatformTransactionManager transactionManager;
 	
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -60,22 +68,26 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 		try {
 			
 			this.preProcesado(exc);
-			
+			TransactionStatus transaction = null;
 			Integer numFilas = this.getNumFilas(file, exc);
 			for (int fila = this.getFilaInicial(); fila < numFilas; fila++) {
 				try{
+					transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 					this.procesaFila(exc, fila);
+					transactionManager.commit(transaction);
 					processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), true);
 				}catch(Exception e){
 					logger.error("error procesando fila "+fila+" del proceso "+file.getProcesoMasivo().getId(),e);
+					transactionManager.rollback(transaction);
 					processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), false);
+					
 				}
 			}
 			
 			this.postProcesado(exc);
 
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.error("Error procesando fichero",e);
 			return false;
 		}
 

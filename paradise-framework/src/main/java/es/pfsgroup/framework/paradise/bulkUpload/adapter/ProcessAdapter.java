@@ -2,12 +2,13 @@ package es.pfsgroup.framework.paradise.bulkUpload.adapter;
 
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.files.FileItem;
@@ -32,7 +33,6 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDEstadoProceso;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVProcesoMasivo;
-import es.pfsgroup.framework.paradise.utils.JsonViewer;
 
 
 @Service
@@ -59,6 +59,9 @@ public class ProcessAdapter {
 	
 	@Autowired
 	private ExcelManagerApi excelManagerApi;
+	
+	@Resource(name = "entityTransactionManager")
+    private PlatformTransactionManager transactionManager;
 	
 	public Long initProcess(MSVDtoAltaProceso dto) throws Exception {
 		return apiProxyFactory.proxy(MSVProcesoApi.class).iniciarProcesoMasivo(dto);
@@ -89,7 +92,18 @@ public class ProcessAdapter {
 	}
 	
 	public Boolean validarMasivo(Long idProceso) throws Exception {
-		return excelManagerApi.validateContentOnly(idProceso);
+		Boolean resultado = false;
+		TransactionStatus transaction = null;
+		try{
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			resultado =  excelManagerApi.validateContentOnly(idProceso);
+			transactionManager.commit(transaction);
+		}catch(Exception e){
+			transactionManager.rollback(transaction);
+			throw e;
+		}
+		
+		return resultado;
 	}
 
 	public List<MSVDDOperacionMasiva> getTiposOperacion() {

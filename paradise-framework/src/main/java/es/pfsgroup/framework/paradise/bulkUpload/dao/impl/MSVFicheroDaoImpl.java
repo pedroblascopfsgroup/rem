@@ -2,6 +2,7 @@ package es.pfsgroup.framework.paradise.bulkUpload.dao.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.dao.AbstractEntityDao;
@@ -55,6 +56,7 @@ public class MSVFicheroDaoImpl extends AbstractEntityDao<MSVDocumentoMasivo, Lon
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public MSVDocumentoMasivo findByIdProceso(long idProceso) {
 		HQLBuilder hb = new HQLBuilder("from MSVDocumentoMasivo doc");
 		hb.appendWhere(Auditoria.UNDELETED_RESTICTION);

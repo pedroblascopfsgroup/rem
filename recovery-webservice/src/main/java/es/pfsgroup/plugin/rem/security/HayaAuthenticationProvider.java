@@ -87,11 +87,11 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 
 		HayaWebAuthenticationDetails authDetails = (HayaWebAuthenticationDetails) authentication.getDetails();
 				
+		logger.debug("0Auth2: code >" + authDetails.getCode() + "<");
+		
 		// Determine username 
 		String username = "NONE_PROVIDED";
 		String idToken = null;
-		
-		logger.info("code >" + authDetails.getCode() + "<");
 				
 		if (authDetails.getCode() != null) {
 			
@@ -107,12 +107,11 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 
 			//Seteamos el máximo de reintentos a tres
 			postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(3, false));
-			
-		    try {
-		    	
-		    	int statusCode = httpClient.executeMethod(postMethod);
-		    	logger.info("statusCode >" + statusCode + "<");
 
+			try {
+		    	int statusCode = httpClient.executeMethod(postMethod);
+		    	logger.debug("0Auth2: statusCode >" + statusCode + "<");
+		    	
 		        if (statusCode != HttpStatus.SC_OK) {
 		        	throw new ParseException(messages.getMessage(AUTH2_ERROR_BAD_CREDENTIALS),0);
 		        }
@@ -122,12 +121,15 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 		        JSONObject response = JSONObject.fromObject(stringBody);
 		    	
 				idToken = (String) response.get("id_token");
-				logger.info("idToken >" + idToken + "<");
+				logger.debug("0Auth2: idToken >" + idToken + "<");
+				
 				authDetails.setIdToken(idToken);
 				JWT jwt = JWTParser.parse(idToken);
 	            String upn = (String) jwt.getJWTClaimsSet().getClaims().get("upn");
-	            logger.info("upn >" + upn + "<");
+	            logger.debug("0Auth2: upn >" + upn + "<");
+	            
 	            username = upn.split("@")[0];
+	            logger.debug("0Auth2: username >" + username + "<");
 				
 			} catch (ParseException e) {
 				throw new AuthenticationCredentialsNotFoundException(messages.getMessage(AUTH2_ERROR_INVALID_TOKEN));
@@ -142,7 +144,7 @@ public class HayaAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 		}
 
 		boolean cacheWasUsed = true;
-		UserDetails user = getUserCache().getUserFromCache(username);		
+		UserDetails user = getUserCache().getUserFromCache(username);	
 
 		if (user == null) {
 			cacheWasUsed = false;

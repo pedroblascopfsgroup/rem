@@ -101,7 +101,8 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 						BeanUtils.copyProperty(activoDto, "indicaPosesion", activo.getSituacionPosesoria().getSitaucionJuridica().getIndicaPosesion());
 					}					
 				} else {
-					if(!Checks.esNulo(activo.getSituacionPosesoria().getFechaRevisionEstado())) {
+					if (!Checks.esNulo(activo.getSituacionPosesoria().getFechaRevisionEstado())
+							|| !Checks.esNulo(activo.getSituacionPosesoria().getFechaTomaPosesion())) {
 						BeanUtils.copyProperty(activoDto, "indicaPosesion", 1);
 					} else {
 						BeanUtils.copyProperty(activoDto, "indicaPosesion", 0);

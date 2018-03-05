@@ -938,7 +938,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (oferta.getActivosOferta() != null && !oferta.getActivosOferta().isEmpty()) {
 			for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
 				Activo activo = activoOferta.getPrimaryKey().getActivo();
-				if(oferta.getOfertaExpress() && DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())){
+				if(!Checks.esNulo(oferta.getOfertaExpress()) && oferta.getOfertaExpress() && DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())){
 					updaterState.updaterStateDisponibilidadComercialAndSave(activo,true);
 				}else{
 					updaterState.updaterStateDisponibilidadComercialAndSave(activo,false);
@@ -2360,7 +2360,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 			if (!Checks.esNulo(expediente)){
-				return expediente.getOferta().getOfertaExpress();
+				if(!Checks.esNulo(expediente.getOferta().getOfertaExpress())){
+					return expediente.getOferta().getOfertaExpress();
+				}
+				else{
+					return false;
+				}
 			}
 				
 		}

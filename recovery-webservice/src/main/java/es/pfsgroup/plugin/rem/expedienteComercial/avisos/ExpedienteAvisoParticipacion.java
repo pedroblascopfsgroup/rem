@@ -41,9 +41,9 @@ public class ExpedienteAvisoParticipacion implements ExpedienteAvisadorApi {
 				//suma = suma.replace(',', '.');
 				//sumaTotal = sumaTotal.add(new BigDecimal(suma));
 				
-				suma += activoOferta.getImporteActivoOferta();
+				suma += 100*activoOferta.getImporteActivoOferta();
 			}
-			if(suma != importeOferta) {
+			if((suma/100) != importeOferta) {
 				dto.setId(String.valueOf(expediente.getId()));
 				dto.setDescripcion("% participación de activos incorrecto");
 			}

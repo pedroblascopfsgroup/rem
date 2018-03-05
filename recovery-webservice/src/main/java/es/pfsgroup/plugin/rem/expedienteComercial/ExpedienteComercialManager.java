@@ -4834,11 +4834,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		for (ActivoOferta activoOferta : activosExpediente) {
 			if (!Checks.esNulo(activoOferta.getImporteActivoOferta())) {
 				totalImporteParticipacionActivos = totalImporteParticipacionActivos
-						+ activoOferta.getImporteActivoOferta();
+						+ (100*activoOferta.getImporteActivoOferta());
 			}
 		}
 
-		return importeExpediente.equals(totalImporteParticipacionActivos);
+		return importeExpediente.equals(totalImporteParticipacionActivos/100);
 	}
 
 	public DtoCondicionesActivoExpediente getCondicionesActivoExpediete(Long idExpediente, Long idActivo) {

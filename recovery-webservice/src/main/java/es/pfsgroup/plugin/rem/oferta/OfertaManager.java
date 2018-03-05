@@ -1146,14 +1146,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				Oferta oferta = activoOferta.getPrimaryKey().getOferta();
 				if (oferta.getEstadoOferta() != null && DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
 					ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
-					if (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
-							|| DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())
-							|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
-							|| DDEstadosExpedienteComercial.ALQUILADO.equals(expediente.getEstado().getCodigo())
-							|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo())
-							|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo()))
-						return oferta;
-				}
+					if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getEstado())){
+						if (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.ALQUILADO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo()))
+							return oferta;
+						}
+					}
 
 			}
 		}

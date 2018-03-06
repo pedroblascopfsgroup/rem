@@ -32,6 +32,7 @@ public class LiberarFichero implements Runnable{
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
 	
+	
 	private final Log logger = LogFactory.getLog(getClass());
 	
 	private String userName = null;

@@ -56,7 +56,7 @@ public class MSVFicheroDaoImpl extends AbstractEntityDao<MSVDocumentoMasivo, Lon
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = false)
 	public MSVDocumentoMasivo findByIdProceso(long idProceso) {
 		HQLBuilder hb = new HQLBuilder("from MSVDocumentoMasivo doc");
 		hb.appendWhere(Auditoria.UNDELETED_RESTICTION);

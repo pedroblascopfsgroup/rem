@@ -45,7 +45,7 @@ Ext.define('HreRem.view.masivo.MasivoController', {
     	var parameters = {};
     	parameters.idProcess = this.getView().down('grid').selection.data.id;
         parameters.idOperation = this.getView().down('grid').selection.data.tipoOperacionId;
-    	var url =  $AC.getRemoteUrl('process/validar');
+    	var url =  $AC.getRemoteUrl('masivo/validar');
     	me.getView().mask(HreRem.i18n('msg.mask.loading'));
 		Ext.Ajax.request({
 			 method: 'GET',
@@ -53,7 +53,7 @@ Ext.define('HreRem.view.masivo.MasivoController', {
 		     params: parameters,
 		     timeout: 120000,  // 2 min
 		     success: function(response, opts) {
-		    	 me.getView().unmask();
+		     	 me.getView().unmask();
 			     btn.up('grid').getStore().load();
 			     btn.up('grid').getSelectionModel().deselectAll();
                  btn.up('grid').getSelectionModel().clearSelections();
@@ -61,47 +61,10 @@ Ext.define('HreRem.view.masivo.MasivoController', {
                  btn.up('grid').down('#downloadButton').setDisabled(true);
                  btn.up('grid').down('#downloadButton').setDisabled(true);
 			     me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-//			     Ext.Ajax.request({
-//			     	 method: 'GET',
-//				     url:$AC.getRemoteUrl('process/setStateProcessed'),
-//				     params: parameters,
-//				     success: function(response, opts) {
-//				     	me.getView().unmask();
-//				     	btn.up('grid').getStore().load();
-//				     	btn.up('grid').getSelectionModel().deselectAll();
-//                        btn.up('grid').getSelectionModel().clearSelections();
-//                        btn.up('grid').down('#procesarButton').setDisabled(true);
-//    					btn.up('grid').down('#downloadButton').setDisabled(true);
-//				     	
-//				     	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-//				     },
-//				     failure: function(response, opts) {
-//				     	me.getView().unmask();
-//				     	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-//				     }
-//			     });
 		     },
 		     failure: function(response, opts) {
 			     	me.getView().unmask();
 			     	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-//		         Ext.Ajax.request({
-//		         	 method: 'GET',
-//				     url:$AC.getRemoteUrl('process/setStateError'),
-//				     params: parameters,
-//				     success: function(response, opts) {
-//				     	me.getView().unmask();
-//				     	btn.up('grid').getStore().load();
-//				     	btn.up('grid').getSelectionModel().deselectAll();
-//                        btn.up('grid').getSelectionModel().clearSelections();
-//                        btn.up('grid').down('#procesarButton').setDisabled(true);
-//    					btn.up('grid').down('#downloadButton').setDisabled(true);
-//				     	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-//				     },
-//				     failure: function(response, opts) {
-//				     	me.getView().unmask();
-//				     	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-//				     }
-//			     });
 		     }
 		 });
 
@@ -140,7 +103,7 @@ Ext.define('HreRem.view.masivo.MasivoController', {
     	var parameters = {};
     	parameters.idProcess = this.getView().down('grid').selection.data.id;
         parameters.idOperation = this.getView().down('grid').selection.data.tipoOperacionId;
-    	var url =  $AC.getRemoteUrl('agrupacion/procesarMasivo');
+    	var url =  $AC.getRemoteUrl('masivo/procesarMasivo');
     	me.getView().mask(HreRem.i18n('msg.mask.loading'));
 		Ext.Ajax.request({
 			 method: 'GET',
@@ -148,57 +111,18 @@ Ext.define('HreRem.view.masivo.MasivoController', {
 		     params: parameters,
 		     timeout: 120000,  // 2 min
 		     success: function(response, opts) {
+		     	 
 		     	 var data = {};
 		         try {
 		         	data = Ext.decode(response.responseText);
 		         } catch (e){ };
-		         /*if(data.data=="true"){
-				     Ext.Ajax.request({
-				     	 method: 'GET',
-					     url:$AC.getRemoteUrl('process/setStateProcessed'),
-					     params: parameters,
-					     success: function(response, opts) {
-					     	me.getView().unmask();
-					     	btn.up('grid').getStore().load();
-					     	btn.up('grid').getSelectionModel().deselectAll();
-	                        btn.up('grid').getSelectionModel().clearSelections();
-	                        btn.up('grid').down('#procesarButton').setDisabled(true);
-	    					btn.up('grid').down('#downloadButton').setDisabled(true);
-					     	
-					     	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-					     },
-					     failure: function(response, opts) {
-					     	me.getView().unmask();
-					     	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-					     }
-				     });
-		         	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-		         	me.getView().lookupReference("listadoCargamasiva").getStore().load();
-		         }else{
-		         	 Ext.Ajax.request({
-		         	 method: 'GET',
-				     url:$AC.getRemoteUrl('process/setStateError'),
-				     params: parameters,
-				     success: function(response, opts) {
-				     	me.getView().unmask();
-				     	btn.up('grid').getStore().load();
-				     	btn.up('grid').getSelectionModel().deselectAll();
-                        btn.up('grid').getSelectionModel().clearSelections();
-                        btn.up('grid').down('#procesarButton').setDisabled(true);
-    					btn.up('grid').down('#downloadButton').setDisabled(true);
-				     	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-				     },
-				     failure: function(response, opts) {
-				     	me.getView().unmask();
-				     	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-				     }
-			     });
-		         }*/
+		       
 		         me.getView().unmask();
 		         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 		         me.getView().lookupReference("listadoCargamasiva").getStore().load();
 		     },
 		     failure: function(response, opts) {
+		     	
 		         Ext.Ajax.request({
 		         	 method: 'GET',
 				     url:$AC.getRemoteUrl('process/setStateError'),

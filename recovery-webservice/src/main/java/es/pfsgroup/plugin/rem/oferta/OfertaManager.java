@@ -846,8 +846,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			for (ActivoOferta activoOferta : listaActivoOferta) {
 				Activo activo = activoOferta.getPrimaryKey().getActivo();
 				if (incompatible
-						|| (activo.getEstadoPublicacion() != null && activo.getEstadoPublicacion().getCodigo()
-								.equals(DDEstadoPublicacion.CODIGO_NO_PUBLICADO))
 						|| (activo.getSituacionComercial() != null && activo.getSituacionComercial().getCodigo()
 								.equals(DDSituacionComercial.CODIGO_VENDIDO))
 						|| (activo.getSituacionComercial() != null && activo.getSituacionComercial().getCodigo()

@@ -28,6 +28,8 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_USUARIOMOD VARCHAR2(50 CHAR):= 'REMVIP-177';
+    V_TABLA1  VARCHAR2(50 CHAR):= 'TMP_REMVIP177_BIE_VALORACIONES';
+    V_TABLA2  VARCHAR2(50 CHAR):= 'TMP_REMVIP177_ACT_TAS_TASACION';    
 
     
 BEGIN 
@@ -36,12 +38,35 @@ BEGIN
   
   DBMS_OUTPUT.PUT_LINE('[INFO]: Se crean las tablas backup');
   
-          
-  EXECUTE IMMEDIATE 'CREATE TABLE REM01.TMP_REMVIP177_BIE_VALORACIONES as
-                     select * from REM01.BIE_VALORACIONES';          
 
-  EXECUTE IMMEDIATE 'CREATE TABLE REM01.TMP_REMVIP177_ACT_TAS_TASACION as
-                     select * from REM01.ACT_TAS_TASACION';                     
+  V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA1||''' AND OWNER = '''||V_ESQUEMA||''' ';
+    EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+    
+    IF V_NUM_TABLAS = 1 THEN
+       
+       V_MSQL := 'DROP TABLE '||V_ESQUEMA||'.'||V_TABLA1||' PURGE';
+
+                                         
+    END IF;
+  
+
+    V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA2||''' AND OWNER = '''||V_ESQUEMA||''' ';
+    EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+    
+    IF V_NUM_TABLAS = 1 THEN
+       
+       V_MSQL := 'DROP TABLE '||V_ESQUEMA||'.'||V_TABLA2||' PURGE';
+  
+    
+    END IF;
+  
+       
+       EXECUTE IMMEDIATE 'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA2||' as
+                     select * from REM01.ACT_TAS_TASACION';     
+                     
+       
+       EXECUTE IMMEDIATE 'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA1||' as
+                     select * from REM01.BIE_VALORACIONES';                     
     
   DBMS_OUTPUT.PUT_LINE('[INFO]: Tablas backup creadas');
   

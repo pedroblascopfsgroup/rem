@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=SIMEON SHOPOV
---## FECHA_CREACION=20180305
+--## FECHA_CREACION=20180306
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-132

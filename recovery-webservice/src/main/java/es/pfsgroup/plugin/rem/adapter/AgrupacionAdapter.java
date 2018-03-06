@@ -30,11 +30,15 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
+import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelManagerApi;
+import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberatorsFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
+import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -105,6 +109,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
+import es.pfsgroup.plugin.rem.thread.LiberarFichero;
 import es.pfsgroup.plugin.rem.thread.ReactivarActivosAgrupacion;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidator;
@@ -194,6 +199,12 @@ public class AgrupacionAdapter {
 
 	@Autowired
 	private RestApi restApi;
+	
+	@Autowired
+	ProcessAdapter processAdapter;
+	
+	@Autowired
+	private MSVProcesoApi msvProcesoApi;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -1540,15 +1551,15 @@ public class AgrupacionAdapter {
 	public Boolean procesarMasivo(Long idProcess, Long idOperation) throws Exception {
 
 		MSVDocumentoMasivo document = ficheroDao.findByIdProceso(idProcess);
-
-		Filter filter = genericDao.createFilter(FilterType.EQUALS, "id", idOperation);
-		MSVDDOperacionMasiva tipoOperacion = genericDao.get(MSVDDOperacionMasiva.class, filter);
-
+		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(document);
+		MSVDDOperacionMasiva tipoOperacion = msvProcesoApi.getOperacionMasiva(idOperation);
 		MSVLiberator lib = factoriaLiberators.dameLiberator(tipoOperacion);
-		if (!Checks.esNulo(lib))
-			lib.liberaFichero(document);
-
-		// TODO: Cambiar estado DocumentoMasivo
+		Integer numFilas = exc.getNumeroFilasByHoja(0,document.getProcesoMasivo().getTipoOperacion())-lib.getFilaInicial();
+		processAdapter.setStateProcessing(document.getProcesoMasivo().getId(),new Long(numFilas));
+		Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		
+		Thread liberarFicheroThread = new Thread(new LiberarFichero(idProcess, idOperation, usu.getUsername()));
+		liberarFicheroThread.start();
 
 		return true;
 	}

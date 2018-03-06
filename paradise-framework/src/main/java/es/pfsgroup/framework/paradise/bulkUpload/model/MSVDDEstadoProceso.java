@@ -25,6 +25,7 @@ public class MSVDDEstadoProceso implements Serializable, Auditable {
 	
 	public static final String CODIGO_CARGANDO 				= "CRG";
 	public static final String CODIGO_PTE_VALIDAR 			= "PTV";
+	public static final String CODIGO_VALIDANDO			= "EVA";
 	public static final String CODIGO_VALIDADO 				= "VAL";
 	public static final String CODIGO_PTE_PROCESAR 			= "PTP";
 	public static final String CODIGO_EN_PROCESO 				= "EPR";

@@ -193,7 +193,7 @@ public class MSVAltaActivosTPProcesar extends AbstractMSVActualizador implements
 		dtoAATP.setSuperficieUtilRegistro(this.obtenerFloatExcel(exc.dameCelda(fila, COL_NUM.SUPERFICIE_UTIL_M2)));
 		dtoAATP.setSuperficieRepercusionEECCRegistro(this.obtenerFloatExcel(exc.dameCelda(fila, COL_NUM.SUPERFICIE_REPERCUSION_EE_CC)));
 		dtoAATP.setParcelaRegistro(this.obtenerFloatExcel(exc.dameCelda(fila, COL_NUM.PARCELA)));
-		dtoAATP.setEsIntegradoDivHorizontalRegistro(this.obtenerBooleanExcel(exc.dameCelda(fila, COL_NUM.ES_INTEGRADO_DIV_HORIZONTAL)));
+		dtoAATP.setEsIntegradoDivHorizontalRegistro(exc.dameCelda(fila, COL_NUM.ES_INTEGRADO_DIV_HORIZONTAL));
 		
 		dtoAATP.setNifPropietario(exc.dameCelda(fila, COL_NUM.NIF_PROPIETARIO));
 		dtoAATP.setGradoPropiedadCodigo(exc.dameCelda(fila, COL_NUM.GRADO_PROPIEDAD));
@@ -201,18 +201,18 @@ public class MSVAltaActivosTPProcesar extends AbstractMSVActualizador implements
 		
 		dtoAATP.setPropiedadAnterior(exc.dameCelda(fila, COL_NUM.PROP_ANTERIOR));
 		dtoAATP.setReferenciaCatastral(exc.dameCelda(fila, COL_NUM.REF_CATASTRAL));
-		dtoAATP.setEsVPO(this.obtenerBooleanExcel(exc.dameCelda(fila, COL_NUM.VPO)));
+		dtoAATP.setEsVPO(exc.dameCelda(fila, COL_NUM.VPO));
 		dtoAATP.setCalificacionCeeCodigo(exc.dameCelda(fila, COL_NUM.CALIFICACION_CEE));
-		dtoAATP.setCedudaHabitabilidad(this.obtenerBooleanExcel(exc.dameCelda(fila, COL_NUM.CED_HABITABILIDAD)));
+		dtoAATP.setCedudaHabitabilidad(exc.dameCelda(fila, COL_NUM.CED_HABITABILIDAD));
 		
 		dtoAATP.setNifMediador(exc.dameCelda(fila, COL_NUM.NIF_MEDIADOR));
 		dtoAATP.setNumPlantasVivienda(this.obtenerIntegerExcel(exc.dameCelda(fila, COL_NUM.VIVIENDA_NUM_PLANTAS)));
 		dtoAATP.setNumBanyosVivienda(this.obtenerIntegerExcel(exc.dameCelda(fila, COL_NUM.VIVIENDA_NUM_BANYOS)));
 		dtoAATP.setNumAseosVivienda(this.obtenerIntegerExcel(exc.dameCelda(fila, COL_NUM.VIVIENDA_NUM_ASEOS)));
 		dtoAATP.setNumDormitoriosVivienda(this.obtenerIntegerExcel(exc.dameCelda(fila, COL_NUM.VIVIENDA_NUM_DORMITORIOS)));
-		dtoAATP.setTrasteroAnejo(this.obtenerBooleanExcel(exc.dameCelda(fila, COL_NUM.TRASTERO_ANEJO)));
-		dtoAATP.setGarajeAnejo(this.obtenerBooleanExcel(exc.dameCelda(fila, COL_NUM.GARAJE_ANEJO)));
-		dtoAATP.setAscensor(this.obtenerBooleanExcel(exc.dameCelda(fila, COL_NUM.ASCENSOR)));
+		dtoAATP.setTrasteroAnejo(exc.dameCelda(fila, COL_NUM.TRASTERO_ANEJO));
+		dtoAATP.setGarajeAnejo(exc.dameCelda(fila, COL_NUM.GARAJE_ANEJO));
+		dtoAATP.setAscensor(exc.dameCelda(fila, COL_NUM.ASCENSOR));
 		
 		dtoAATP.setPrecioMinimo(this.obtenerDoubleExcel(exc.dameCelda(fila, COL_NUM.PRECIO_MINIMO)));
 		dtoAATP.setPrecioVentaWeb(this.obtenerDoubleExcel(exc.dameCelda(fila, COL_NUM.PRECIO_VENTA_WEB)));
@@ -231,13 +231,13 @@ public class MSVAltaActivosTPProcesar extends AbstractMSVActualizador implements
 		dtoAATP.setFechaObtencionTitulo(this.obtenerDateExcel(exc.dameCelda(fila, COL_NUM.FECHA_OBT_TITULO)));
 		dtoAATP.setFechaTomaPosesion(this.obtenerDateExcel(exc.dameCelda(fila, COL_NUM.FECHA_TOMA_POSESION)));
 		dtoAATP.setFechaLanzamiento(this.obtenerDateExcel(exc.dameCelda(fila, COL_NUM.FECHA_LANZAMIENTO)));
-		dtoAATP.setOcupado(this.obtenerBooleanExcel(exc.dameCelda(fila, COL_NUM.OCUPADO)));
-		dtoAATP.setTieneTitulo(this.obtenerBooleanExcel(exc.dameCelda(fila, COL_NUM.TIENE_TITULO)));
-		dtoAATP.setLlave(this.obtenerBooleanExcel(exc.dameCelda(fila, COL_NUM.LLAVES)));
-		dtoAATP.setCargas(this.obtenerBooleanExcel(exc.dameCelda(fila, COL_NUM.CARGAS)));
+		dtoAATP.setOcupado(exc.dameCelda(fila, COL_NUM.OCUPADO));
+		dtoAATP.setTieneTitulo(exc.dameCelda(fila, COL_NUM.TIENE_TITULO));
+		dtoAATP.setLlave(exc.dameCelda(fila, COL_NUM.LLAVES));
+		dtoAATP.setCargas(exc.dameCelda(fila, COL_NUM.CARGAS));
 		
 		dtoAATP.setTipoActivo(exc.dameCelda(fila, COL_NUM.TIPO_ACTIVO));
-		dtoAATP.setFormalizacion(this.obtenerBooleanExcel(exc.dameCelda(fila, COL_NUM.FORMALIZACION)));
+		dtoAATP.setFormalizacion(exc.dameCelda(fila, COL_NUM.FORMALIZACION));
 		
 		dtoAATP.setNombrePropietario(exc.dameCelda(fila, COL_NUM.NOMBRE_PROPIETARIO));
 		dtoAATP.setApellidoPropietario1(exc.dameCelda(fila, COL_NUM.APELLIDO1_PROPIETARIO));
@@ -312,5 +312,10 @@ public class MSVAltaActivosTPProcesar extends AbstractMSVActualizador implements
 		}
 
 		return fecha;
+	}
+	
+	@Override
+	public int getFilaInicial() {
+		return COL_NUM.DATOS_PRIMERA_FILA;
 	}
 }

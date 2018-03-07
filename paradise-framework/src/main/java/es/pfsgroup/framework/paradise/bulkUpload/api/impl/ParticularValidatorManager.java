@@ -926,7 +926,23 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 	}
 	
-	//flag
+	public boolean existeCarteraByCod(String codCartera){
+		if (Checks.esNulo(codCartera)){
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+"		FROM DD_CRA_CARTERA WHERE"
+				+"		DD_CRA_CODIGO = '" + codCartera + "'"
+				+" 		AND BORRADO = 0");
+		
+		if("0".equals(resultado)){
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
 	public boolean existeGestorComercialByUsername(String gestorUsername){
 		if(Checks.esNulo(gestorUsername)){
 			return false;

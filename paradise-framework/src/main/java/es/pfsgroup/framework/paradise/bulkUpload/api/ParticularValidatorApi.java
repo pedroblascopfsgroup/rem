@@ -275,4 +275,6 @@ public interface ParticularValidatorApi {
 	public boolean existeGestorActivosByUsername(String gestorUsername);
 	
 	public boolean existeGestoriaDeFormalizacionByUsername(String username);
+
+	public boolean existeCarteraByCod(String codCartera);
 }

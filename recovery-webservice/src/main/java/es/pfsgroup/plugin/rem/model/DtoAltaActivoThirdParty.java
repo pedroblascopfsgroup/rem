@@ -42,7 +42,7 @@ public class DtoAltaActivoThirdParty {
 	private Float superficieUtilRegistro;
 	private Float superficieRepercusionEECCRegistro;
 	private Float parcelaRegistro;
-	private Boolean esIntegradoDivHorizontalRegistro;
+	private String esIntegradoDivHorizontalRegistro;
 	
 	//titulo
 	private String nifPropietario;
@@ -52,9 +52,9 @@ public class DtoAltaActivoThirdParty {
 	//
 	private String propiedadAnterior;
 	private String referenciaCatastral;
-	private Boolean esVPO;
+	private String esVPO;
 	private String calificacionCeeCodigo;
-	private Boolean cedudaHabitabilidad;
+	private String cedudaHabitabilidad;
 	
 	
 	//informacion_publicacion
@@ -63,9 +63,9 @@ public class DtoAltaActivoThirdParty {
 	private Integer numBanyosVivienda;
 	private Integer numAseosVivienda;
 	private Integer numDormitoriosVivienda;
-	private Boolean trasteroAnejo;
-	private Boolean garajeAnejo;
-	private Boolean ascensor;
+	private String trasteroAnejo;
+	private String garajeAnejo;
+	private String ascensor;
 	
 	//informacion_precios
 	private Double precioMinimo;
@@ -87,14 +87,14 @@ public class DtoAltaActivoThirdParty {
 	private Date fechaObtencionTitulo;
 	private Date fechaTomaPosesion;
 	private Date fechaLanzamiento;
-	private Boolean ocupado;
-	private Boolean tieneTitulo;
-	private Boolean llave;
-	private Boolean cargas;
+	private String ocupado;
+	private String tieneTitulo;
+	private String llave;
+	private String cargas;
 
 	//
 	private String tipoActivo;
-	private Boolean formalizacion;
+	private String formalizacion;
 	
 	//datos propietario
 	private String nombrePropietario;
@@ -300,10 +300,10 @@ public class DtoAltaActivoThirdParty {
 	public void setParcelaRegistro(Float parcelaRegistro) {
 		this.parcelaRegistro = parcelaRegistro;
 	}
-	public Boolean getEsIntegradoDivHorizontalRegistro() {
+	public String getEsIntegradoDivHorizontalRegistro() {
 		return esIntegradoDivHorizontalRegistro;
 	}
-	public void setEsIntegradoDivHorizontalRegistro(Boolean esIntegradoDivHorizontalRegistro) {
+	public void setEsIntegradoDivHorizontalRegistro(String esIntegradoDivHorizontalRegistro) {
 		this.esIntegradoDivHorizontalRegistro = esIntegradoDivHorizontalRegistro;
 	}
 	public String getNifPropietario() {
@@ -336,10 +336,10 @@ public class DtoAltaActivoThirdParty {
 	public void setReferenciaCatastral(String referenciaCatastral) {
 		this.referenciaCatastral = referenciaCatastral;
 	}
-	public Boolean getEsVPO() {
+	public String getEsVPO() {
 		return esVPO;
 	}
-	public void setEsVPO(Boolean esVPO) {
+	public void setEsVPO(String esVPO) {
 		this.esVPO = esVPO;
 	}
 	public String getCalificacionCeeCodigo() {
@@ -348,10 +348,10 @@ public class DtoAltaActivoThirdParty {
 	public void setCalificacionCeeCodigo(String calificacionCeeCodigo) {
 		this.calificacionCeeCodigo = calificacionCeeCodigo;
 	}
-	public Boolean getCedudaHabitabilidad() {
+	public String getCedudaHabitabilidad() {
 		return cedudaHabitabilidad;
 	}
-	public void setCedudaHabitabilidad(Boolean cedudaHabitabilidad) {
+	public void setCedudaHabitabilidad(String cedudaHabitabilidad) {
 		this.cedudaHabitabilidad = cedudaHabitabilidad;
 	}
 	public String getNifMediador() {
@@ -384,22 +384,22 @@ public class DtoAltaActivoThirdParty {
 	public void setNumDormitoriosVivienda(Integer numDormitoriosVivienda) {
 		this.numDormitoriosVivienda = numDormitoriosVivienda;
 	}
-	public Boolean getTrasteroAnejo() {
+	public String getTrasteroAnejo() {
 		return trasteroAnejo;
 	}
-	public void setTrasteroAnejo(Boolean trasteroAnejo) {
+	public void setTrasteroAnejo(String trasteroAnejo) {
 		this.trasteroAnejo = trasteroAnejo;
 	}
-	public Boolean getGarajeAnejo() {
+	public String getGarajeAnejo() {
 		return garajeAnejo;
 	}
-	public void setGarajeAnejo(Boolean garajeAnejo) {
+	public void setGarajeAnejo(String garajeAnejo) {
 		this.garajeAnejo = garajeAnejo;
 	}
-	public Boolean getAscensor() {
+	public String getAscensor() {
 		return ascensor;
 	}
-	public void setAscensor(Boolean ascensor) {
+	public void setAscensor(String ascensor) {
 		this.ascensor = ascensor;
 	}
 	public Double getPrecioMinimo() {
@@ -492,28 +492,28 @@ public class DtoAltaActivoThirdParty {
 	public void setFechaLanzamiento(Date fechaLanzamiento) {
 		this.fechaLanzamiento = fechaLanzamiento;
 	}
-	public Boolean getOcupado() {
+	public String getOcupado() {
 		return ocupado;
 	}
-	public void setOcupado(Boolean ocupado) {
+	public void setOcupado(String ocupado) {
 		this.ocupado = ocupado;
 	}
-	public Boolean getTieneTitulo() {
+	public String getTieneTitulo() {
 		return tieneTitulo;
 	}
-	public void setTieneTitulo(Boolean tieneTitulo) {
+	public void setTieneTitulo(String tieneTitulo) {
 		this.tieneTitulo = tieneTitulo;
 	}
-	public Boolean getLlave() {
+	public String getLlave() {
 		return llave;
 	}
-	public void setLlave(Boolean llave) {
+	public void setLlave(String llave) {
 		this.llave = llave;
 	}
-	public Boolean getCargas() {
+	public String getCargas() {
 		return cargas;
 	}
-	public void setCargas(Boolean cargas) {
+	public void setCargas(String cargas) {
 		this.cargas = cargas;
 	}
 	public String getTipoActivo() {
@@ -522,10 +522,10 @@ public class DtoAltaActivoThirdParty {
 	public void setTipoActivo(String tipoActivo) {
 		this.tipoActivo = tipoActivo;
 	}
-	public Boolean getFormalizacion() {
+	public String getFormalizacion() {
 		return formalizacion;
 	}
-	public void setFormalizacion(Boolean formalizacion) {
+	public void setFormalizacion(String formalizacion) {
 		this.formalizacion = formalizacion;
 	}
 	public String getNombrePropietario() {

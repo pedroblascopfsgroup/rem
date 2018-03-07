@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
@@ -214,6 +215,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		genericDao.save(ActivoBancario.class, activoBancario);
 
 		// ActivoPlanDinVentas.
+		//ActivoAdjudicacionJudicial
 		ActivoPlanDinVentas planDinVentas = new ActivoPlanDinVentas();
 		planDinVentas.setActivo(activo);
 		beanUtilNotNull.copyProperty(planDinVentas, "acreedorNif", dtoAAF.getNifSociedadAcreedora());

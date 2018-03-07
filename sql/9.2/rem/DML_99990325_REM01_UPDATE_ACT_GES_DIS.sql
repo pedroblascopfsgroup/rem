@@ -30,11 +30,19 @@ BEGIN
 
    DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
-   V_MSQL := 'DELETE FROM REM01.ACT_GES_DIST_GESTORES
-		WHERE USERNAME IN (''cmartinez'',''zmartin'')
+   V_MSQL := 'UPDATE REM01.ACT_GES_DIST_GESTORES
+   		SET USERNAME = ''acampos''
+		WHERE USERNAME = ''zmartin''
 		    AND TIPO_GESTOR = ''GFORM''';
    EXECUTE IMMEDIATE V_MSQL;
-   DBMS_OUTPUT.PUT_LINE('  [INFO] '||SQL%ROWCOUNT||' filas eliminadas de la tabla de configuración de gestores');
+   DBMS_OUTPUT.PUT_LINE('  [INFO] '||SQL%ROWCOUNT||' filas actualizadas de la tabla de configuración de gestores');
+
+   V_MSQL := 'UPDATE REM01.ACT_GES_DIST_GESTORES
+   		SET USERNAME = ''nbertran''
+		WHERE USERNAME = ''cmartinez''
+		    AND TIPO_GESTOR = ''GFORM''';
+   EXECUTE IMMEDIATE V_MSQL;
+   DBMS_OUTPUT.PUT_LINE('  [INFO] '||SQL%ROWCOUNT||' filas actualizadas de la tabla de configuración de gestores');
    
    COMMIT;
    DBMS_OUTPUT.PUT_LINE('[FIN]');

@@ -39,23 +39,23 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE('[INFO]: Se crean las tablas backup');
   
 
-  V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA1||''' AND OWNER = '''||V_ESQUEMA||''' ';
+  V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA1||''' AND OWNER = '''||V_ESQUEMA||''' ';
     EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
     
     IF V_NUM_TABLAS = 1 THEN
        
-       V_MSQL := 'DROP TABLE '||V_ESQUEMA||'.'||V_TABLA1||' PURGE';
+       V_SQL := 'DROP TABLE '||V_ESQUEMA||'.'||V_TABLA1||' PURGE';
 
                                          
     END IF;
   
 
-    V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA2||''' AND OWNER = '''||V_ESQUEMA||''' ';
+    V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA2||''' AND OWNER = '''||V_ESQUEMA||''' ';
     EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
     
     IF V_NUM_TABLAS = 1 THEN
        
-       V_MSQL := 'DROP TABLE '||V_ESQUEMA||'.'||V_TABLA2||' PURGE';
+       V_SQL := 'DROP TABLE '||V_ESQUEMA||'.'||V_TABLA2||' PURGE';
   
     
     END IF;

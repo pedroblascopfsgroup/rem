@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=JIN LI HU
---## FECHA_CREACION=20180306
+--## AUTOR=Carlos López
+--## FECHA_CREACION=20180307
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-3897
@@ -31,7 +31,6 @@ DECLARE
     V_TABLA VARCHAR2(30 CHAR) := 'DD_MTO_MOTIVOS_OCULTACION';  -- Tabla a modificar
     V_TABLA_SEQ VARCHAR2(30 CHAR) := 'S_DD_MTO_MOTIVOS_OCULTACION';  -- Tabla a modificar    
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
     V_USR VARCHAR2(30 CHAR) := 'HREOS-3890'; -- USUARIOCREAR/USUARIOMODIFICAR
        
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
@@ -62,38 +61,42 @@ BEGIN
       LOOP
       
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
-    
-        --Insertar datos
-        DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
-	EXECUTE IMMEDIATE '
-            INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
-               DD_MTO_ID
-              ,DD_MTO_CODIGO
-              ,DD_MTO_DESCRIPCION
-	      ,DD_MTO_DESCRIPCION_LARGA
-	      ,DD_TCO_ID
-	      ,MANUAL
-              ,VERSION
-              ,USUARIOCREAR
-              ,FECHACREAR
-              ,BORRADO
-            )   
-            SELECT
-              '||V_ESQUEMA||'.'||V_TABLA_SEQ||'.NEXTVAL
-              , '''||V_TMP_TIPO_DATA(1)||'''
-              , '''||V_TMP_TIPO_DATA(2)||'''
-              , '''||V_TMP_TIPO_DATA(2)||'''
-	      , '''||V_TMP_TIPO_DATA(4)||'''
-	      , '''||V_TMP_TIPO_DATA(3)||'''
-              , 0
-              , '''||V_USR||'''
-              , SYSDATE
-	      , 0
-            FROM DUAL
-            '
-            ;
-        DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
-
+ 
+		V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE DD_MTO_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0';
+		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;    
+		
+		IF V_NUM_TABLAS = 0 THEN
+			--Insertar datos
+			DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
+			EXECUTE IMMEDIATE '
+				INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
+				   DD_MTO_ID
+				  ,DD_MTO_CODIGO
+				  ,DD_MTO_DESCRIPCION
+			  ,DD_MTO_DESCRIPCION_LARGA
+			  ,DD_TCO_ID
+			  ,MANUAL
+				  ,VERSION
+				  ,USUARIOCREAR
+				  ,FECHACREAR
+				  ,BORRADO
+				)   
+				SELECT
+				  '||V_ESQUEMA||'.'||V_TABLA_SEQ||'.NEXTVAL
+				  , '''||V_TMP_TIPO_DATA(1)||'''
+				  , '''||V_TMP_TIPO_DATA(2)||'''
+				  , '''||V_TMP_TIPO_DATA(2)||'''
+			  , '''||V_TMP_TIPO_DATA(4)||'''
+			  , '''||V_TMP_TIPO_DATA(3)||'''
+				  , 0
+				  , '''||V_USR||'''
+				  , SYSDATE
+			  , 0
+				FROM DUAL
+				'
+				;
+			DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
+        END IF;
       END LOOP;
     COMMIT;
     DBMS_OUTPUT.PUT_LINE('[FIN]: DICCIONARIO DD_MTO_MOTIVOS_OCULTACION ACTUALIZADO CORRECTAMENTE ');

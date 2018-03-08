@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JIN LI HU
---## FECHA_CREACION=20180306
+--## FECHA_CREACION=20180308
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-3897
@@ -124,10 +124,17 @@ BEGIN
         	EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] FK_DD_MTO_A_ID creada.');
 	
-		-- Creamos sequence
-		V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';		
-		EXECUTE IMMEDIATE V_MSQL;		
-		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
+		-- Comprobamos si existe la secuencia
+		V_MSQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_'||V_TEXT_TABLA||''' and sequence_owner = '''||V_ESQUEMA||'''';
+		  
+		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+		
+		IF V_NUM_TABLAS = 0 THEN
+			-- Creamos sequence
+			V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';		
+			EXECUTE IMMEDIATE V_MSQL;		
+			DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
+		END IF;
 
 		COMMIT;
 	END IF;

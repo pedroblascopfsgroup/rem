@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carlos López
---## FECHA_CREACION=20180307
+--## FECHA_CREACION=20180308
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-3897
@@ -75,7 +75,7 @@ BEGIN
 				  ,DD_MTO_DESCRIPCION
 			  ,DD_MTO_DESCRIPCION_LARGA
 			  ,DD_TCO_ID
-			  ,MANUAL
+			  ,DD_MTO_MANUAL
 				  ,VERSION
 				  ,USUARIOCREAR
 				  ,FECHACREAR

@@ -350,7 +350,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		BeanUtils.copyProperty(activoDto,"aplicaAsignarMediador", new Integer(1).equals(perimetroActivo.getAplicaAsignarMediador())? true: false);
 		BeanUtils.copyProperty(activoDto,"aplicaComercializar", new Integer(1).equals(perimetroActivo.getAplicaComercializar())? true: false);
 		BeanUtils.copyProperty(activoDto,"aplicaFormalizar", new Integer(1).equals(perimetroActivo.getAplicaFormalizar())? true: false);
-
+		if(!Checks.esNulo(perimetroActivo.getAplicaPublicar()))
+			BeanUtils.copyProperty(activoDto,"aplicaPublicar", new Integer(1).equals(perimetroActivo.getAplicaPublicar()? 1 : 0)? true: false);
+		
 		// En la sección de perímetro pero no dependiente del mismo.
 		BeanUtils.copyProperty(activoDto, "numInmovilizadoBankia", activo.getNumInmovilizadoBnk());
 		// ----------
@@ -579,7 +581,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				dto.getFechaAplicaGestion() != null || dto.getMotivoAplicaGestion() != null || dto.getAplicaAsignarMediador() != null ||
 				dto.getFechaAplicaAsignarMediador() != null || dto.getMotivoAplicaAsignarMediador() != null || dto.getAplicaComercializar() != null || 
 				dto.getFechaAplicaComercializar() != null || dto.getMotivoAplicaComercializarCodigo() != null || dto.getMotivoAplicaComercializarDescripcion() != null ||
-				dto.getMotivoNoAplicaComercializar() != null || dto.getAplicaFormalizar() != null || dto.getFechaAplicaFormalizar() != null || dto.getMotivoAplicaFormalizar() != null)
+				dto.getMotivoNoAplicaComercializar() != null || dto.getAplicaFormalizar() != null || dto.getFechaAplicaFormalizar() != null || dto.getMotivoAplicaFormalizar() != null ||
+				dto.getAplicaPublicar() != null || dto.getFechaAplicaPublicar() != null || dto.getMotivoAplicaPublicar() != null) 
 				 
 			{
 				
@@ -638,6 +641,17 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				if (!Checks.esNulo(dto.getMotivoAplicaComercializarCodigo())) {
 					DDMotivoComercializacion motivoAplicaComercializar = (DDMotivoComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDMotivoComercializacion.class,  dto.getMotivoAplicaComercializarCodigo());
 					perimetroActivo.setMotivoAplicaComercializar(motivoAplicaComercializar);
+				}
+				
+				if(!Checks.esNulo(dto.getAplicaPublicar())) {
+					perimetroActivo.setAplicaPublicar(dto.getAplicaPublicar() ? true : false);
+					perimetroActivo.setFechaAplicaPublicar(new Date());
+					
+					//Validacion al marcar/desmarcar check publicacion
+					
+					/*if(!dto.getAplicaFormalizar()) {
+						this.validarPerimetroActivo(activo,2);
+					}*/
 				}
 				
 				beanUtilNotNull.copyProperty(perimetroActivo, "motivoNoAplicaComercializar", dto.getMotivoNoAplicaComercializar());
@@ -815,6 +829,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}
 
 				break;
+			}
+			case 4: {
+				
 			}
 			default:
 				break;

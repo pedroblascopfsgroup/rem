@@ -521,6 +521,19 @@ Ext.define('HreRem.model.Activo', {
 				name: 'motivoAplicaFormalizar'
 			},
 			{
+				name: 'aplicaPublicar',
+				type: 'boolean'
+			},
+			{
+				name: 'fechaAplicaPublicar',
+    			type:'date',
+    			dateFormat: 'c'
+			},
+			{
+				name: 'motivoAplicaPublicar'
+			},
+			
+			{
 				name: 'claseActivoCodigo'
 			},
 			{

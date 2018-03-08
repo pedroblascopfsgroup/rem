@@ -5,7 +5,6 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -65,6 +64,15 @@ public class MSVProcesoMasivo implements Auditable, Serializable {
     @SequenceGenerator(name = "MSVProcesoMasivoGenerator", sequenceName = "S_BPM_PROCESO_TOKEN")
     private Long token;
     
+    @Column(name = "PRM_TOTAL_FILAS")
+    private Long totalFilas;
+    
+    @Column(name = "PRM_TOTAL_FILAS_KO")
+    private Long totalFilasOk;
+    
+    @Column(name = "PRM_TOTAL_FILAS_OK")
+    private Long totalFilasKo;
+    
 	public Long getId() {
 		return id;
 	}
@@ -120,4 +128,30 @@ public class MSVProcesoMasivo implements Auditable, Serializable {
 	public void setToken(Long token) {
 		this.token = token;
 	}
+
+	public Long getTotalFilas() {
+		return totalFilas;
+	}
+
+	public void setTotalFilas(Long totalFilas) {
+		this.totalFilas = totalFilas;
+	}
+
+	public Long getTotalFilasOk() {
+		return totalFilasOk;
+	}
+
+	public void setTotalFilasOk(Long totalFilasOk) {
+		this.totalFilasOk = totalFilasOk;
+	}
+
+	public Long getTotalFilasKo() {
+		return totalFilasKo;
+	}
+
+	public void setTotalFilasKo(Long totalFilasKo) {
+		this.totalFilasKo = totalFilasKo;
+	}
+	
+	
 }

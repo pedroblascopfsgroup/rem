@@ -403,13 +403,13 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 					listaFilas.add(i);
 			}
 		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			e.printStackTrace();
 		} catch (IOException e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			e.printStackTrace();
 		} catch (ParseException e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			listaFilas.add(i);
 		}
 
@@ -435,13 +435,13 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 				if (Checks.esNulo(exc.dameCelda(i, columnNumber)))
 					listaFilas.add(i);
 			} catch (IllegalArgumentException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				e.printStackTrace();
 			} catch (IOException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				e.printStackTrace();
 			} catch (ParseException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				listaFilas.add(i);
 			}
 		}
@@ -475,13 +475,13 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 						listaFilas.add(i);
 				}
 			} catch (IllegalArgumentException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				e.printStackTrace();
 			} catch (IOException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				e.printStackTrace();
 			} catch (ParseException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				listaFilas.add(i);
 			}
 		}
@@ -521,16 +521,16 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 				if ((!Checks.esNulo(precio) && precio.isNaN()))
 					listaFilas.add(i);
 			} catch (NumberFormatException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				listaFilas.add(i);
 			} catch (IllegalArgumentException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				e.printStackTrace();
 			} catch (IOException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				e.printStackTrace();
 			} catch (ParseException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				listaFilas.add(i);
 			}
 		}
@@ -565,13 +565,13 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 				logger.error(e.getMessage());
 				listaFilas.add(i);
 			} catch (IllegalArgumentException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				listaFilas.add(i);
 			} catch (IOException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				listaFilas.add(i);
 			} catch (ParseException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				listaFilas.add(i);
 			}
 		}
@@ -605,13 +605,13 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 					listaFilas.add(i);
 				}
 			} catch (IllegalArgumentException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				e.printStackTrace();
 			} catch (IOException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				e.printStackTrace();
 			} catch (ParseException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				listaFilas.add(i);
 			}
 		}
@@ -645,13 +645,13 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 					ft.parse(valorDate);
 				}
 			} catch (IllegalArgumentException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				e.printStackTrace();
 			} catch (IOException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				e.printStackTrace();
 			} catch (ParseException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				listaFilas.add(i);
 			}
 		}
@@ -678,13 +678,13 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 				if (!particularValidator.existeSociedadAcreedora(exc.dameCelda(i, columnNumber)))
 					listaFilas.add(i);
 			} catch (IllegalArgumentException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				e.printStackTrace();
 			} catch (IOException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				e.printStackTrace();
 			} catch (ParseException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				listaFilas.add(i);
 			}
 		}
@@ -711,13 +711,13 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 				if (!particularValidator.existeProveedorMediadorByNIF(exc.dameCelda(i, columnNumber)))
 					listaFilas.add(i);
 			} catch (IllegalArgumentException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				e.printStackTrace();
 			} catch (IOException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				e.printStackTrace();
 			} catch (ParseException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				listaFilas.add(i);
 			}
 		}
@@ -746,13 +746,13 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 					listaFilas.add(i);
 				}
 			} catch (NumberFormatException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				listaFilas.add(i);
 			} catch (IOException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				e.printStackTrace();
 			} catch (ParseException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				listaFilas.add(i);
 			}
 		}
@@ -775,13 +775,13 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 					}
 				}
 			} catch (IllegalArgumentException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				e.printStackTrace();
 			} catch (IOException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				e.printStackTrace();
 			} catch (ParseException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				listaFilas.add(i);
 			}
 		}
@@ -806,10 +806,10 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 					}
 				}
 			} catch (ParseException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				listaFilas.add(i);
 			} catch (NumberFormatException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				listaFilas.add(i);
 			}
 		}
@@ -829,13 +829,13 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 					listaFilas.add(i);
 				}
 			} catch (IllegalArgumentException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				e.printStackTrace();
 			} catch (IOException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				e.printStackTrace();
 			} catch (ParseException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				listaFilas.add(i);
 			}
 		}
@@ -851,13 +851,13 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 				if (!particularValidator.existeMunicipioByCodigo(exc.dameCelda(i, columnNumber)))
 					listaFilas.add(i);
 			} catch (IllegalArgumentException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				e.printStackTrace();
 			} catch (IOException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				e.printStackTrace();
 			} catch (ParseException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				listaFilas.add(i);
 			}
 		}
@@ -873,13 +873,13 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 				if (!particularValidator.existeUnidadInferiorMunicipioByCodigo(exc.dameCelda(i, columnNumber)))
 					listaFilas.add(i);
 			} catch (IllegalArgumentException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				e.printStackTrace();
 			} catch (IOException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				e.printStackTrace();
 			} catch (ParseException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(),e);
 				listaFilas.add(i);
 			}
 		}

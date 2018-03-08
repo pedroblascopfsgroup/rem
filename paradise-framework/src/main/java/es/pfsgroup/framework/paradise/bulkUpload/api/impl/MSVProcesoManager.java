@@ -96,6 +96,7 @@ public class MSVProcesoManager implements MSVProcesoApi {
 
 	@Override
 	@BusinessOperation(MSV_BO_MODIFICACION_PROCESO_MASIVO)
+	@Transactional(readOnly = false)
 	public MSVProcesoMasivo modificarProcesoMasivo(MSVDtoAltaProceso dto) throws Exception {
 		MSVProcesoMasivo procesoMasivo;
 		if (Checks.esNulo(dto.getIdProceso())) {
@@ -355,6 +356,7 @@ public class MSVProcesoManager implements MSVProcesoApi {
 		return procesoDao.get(idProcess);
 	}	
 	
+	@Transactional
 	public MSVDDOperacionMasiva getOperacionMasiva(Long idTipoOperacion){
 		return genericDao.get(MSVDDOperacionMasiva.class, genericDao.createFilter(FilterType.EQUALS, "id", idTipoOperacion));
 	}

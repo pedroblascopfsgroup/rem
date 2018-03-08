@@ -576,6 +576,15 @@ public class AgendaAdapter {
 		return true;
 	}
 	
+	public Boolean saltoInstruccionesReserva(Long idProcesBpm){
+		try{
+			tareaActivoApi.saltoInstruccionesReserva(idProcesBpm);
+		}catch(Exception ex){
+			return false;
+		}
+		return true;
+	}
+	
 	@Transactional(readOnly = false)
 	public Boolean reasignarTarea(DtoReasignarTarea dto){
 		

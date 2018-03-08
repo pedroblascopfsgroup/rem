@@ -599,7 +599,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 
 			Long idOferta = this.saveOferta(oferta);
-			if (!Checks.esNulo(ofertaDto.getTitularesAdicionales())) {
+			if (!Checks.esNulo(ofertaDto.getTitularesAdicionales()) && !Checks.estaVacio(ofertaDto.getTitularesAdicionales())) {
 				saveOrUpdateListaTitualesAdicionalesOferta(ofertaDto, oferta);
 			}
 			oferta = updateEstadoOferta(idOferta, ofertaDto.getFechaAccion());
@@ -810,7 +810,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				activoApi.crearExpediente(oferta, trabajo);
 				ActivoTramite activoTramite = trabajoApi.createTramiteTrabajo(trabajo);
 
-				adapter.saltoPBC(activoTramite.getProcessBPM());
+				adapter.saltoInstruccionesReserva(activoTramite.getProcessBPM());
 
 				// Se copiará el valor del campo necesita financiación al campo
 				// asociado del expediente comercial

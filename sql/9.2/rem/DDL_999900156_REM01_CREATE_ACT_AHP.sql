@@ -57,16 +57,16 @@ BEGIN
 			DD_TCO_ID                               NUMBER(1,0) NOT NULL,
 			DD_MTO_V_ID				NUMBER(16,0),
 			AHP_MOT_OCULTACION_MANUAL_V		VARCHAR2(250 CHAR),
-			AHP_CHECK_PUBLICAR_V			NUMBER(1,0),
-			AHP_CHECK_OCULTAR_V			NUMBER(1,0),
-			AHP_CHECK_OCULT_PRECIO_V		NUMBER(1,0),
-			AHP_CHECK_PUB_SIN_PRECIO_V		NUMBER(1,0),
+			AHP_CHECK_PUBLICAR_V			NUMBER(1,0) DEFAULT 0 NOT NULL ENABLE,
+			AHP_CHECK_OCULTAR_V			NUMBER(1,0) DEFAULT 0 NOT NULL ENABLE,
+			AHP_CHECK_OCULT_PRECIO_V		NUMBER(1,0) DEFAULT 0 NOT NULL ENABLE,
+			AHP_CHECK_PUB_SIN_PRECIO_V		NUMBER(1,0) DEFAULT 0 NOT NULL ENABLE,
 			DD_MTO_A_ID				NUMBER(16,0),
 			AHP_MOT_OCULTACION_MANUAL_A		VARCHAR2(250 CHAR),
-			AHP_CHECK_PUBLICAR_A			NUMBER(1,0),
-			AHP_CHECK_OCULTAR_A			NUMBER(1,0),
-			AHP_CHECK_OCULT_PRECIO_A		NUMBER(1,0),
-			AHP_CHECK_PUB_SIN_PRECIO_A		NUMBER(1,0),
+			AHP_CHECK_PUBLICAR_A			NUMBER(1,0) DEFAULT 0 NOT NULL ENABLE,
+			AHP_CHECK_OCULTAR_A			NUMBER(1,0) DEFAULT 0 NOT NULL ENABLE,
+			AHP_CHECK_OCULT_PRECIO_A		NUMBER(1,0) DEFAULT 0 NOT NULL ENABLE,
+			AHP_CHECK_PUB_SIN_PRECIO_A		NUMBER(1,0) DEFAULT 0 NOT NULL ENABLE,
 			AHP_FECHA_INI_VENTA			DATE,
 			AHP_FECHA_FIN_VENTA			DATE,
 			AHP_FECHA_INI_ALQUILER			DATE,
@@ -128,6 +128,131 @@ BEGIN
 		V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';		
 		EXECUTE IMMEDIATE V_MSQL;		
 		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
+
+		-- Creamos comentarios
+		V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS ''Tabla de la publicación histórica de los activos.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la tabla creado.');		
+		
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.AHP_ID IS ''Código identificador único de la publicación histórica.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna AHP_ID creado.');
+		
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ACT_ID IS ''Código identificador único del activo.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna ACT_ID creado.');	
+		
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TPU_ID IS ''Código identificador único de la tabla tipo de publicación.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_TPU_ID creado.');	
+		
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_EPV_ID IS ''Código identificador único de la venta.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_EPV_ID creado.');	
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_EPA_ID IS ''Código identificador único del alquiler.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_EPA_ID creado.');	
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TCO_ID IS ''Código identificador único de la comercialización.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_TCO_ID creado.');
+		
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_MTO_V_ID IS ''Código identificador único del motivo de la ocultación.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_MTO_V_ID creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.AHP_MOT_OCULTACION_MANUAL_V IS ''Descripción del motivo de la ocultación.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna AHP_MOT_OCULTACION_MANUAL_V creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.AHP_CHECK_PUBLICAR_V IS ''Check de publicar la venta.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna AHP_CHECK_PUBLICAR_V creado.');	
+		
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.AHP_CHECK_OCULTAR_V IS ''Check de ocultar la venta.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna AHP_CHECK_OCULTAR_V creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.AHP_CHECK_OCULT_PRECIO_V IS ''Check de publicar precio de la venta.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna AHP_CHECK_OCULT_PRECIO_V creado.');
+		
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.AHP_CHECK_PUB_SIN_PRECIO_V IS ''Check de publicación sin precio de la venta.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna AHP_CHECK_PUB_SIN_PRECIO_V creado.');	
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_MTO_A_ID IS ''Código identificador único del motivo de la ocultación.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_MTO_A_ID creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.AHP_MOT_OCULTACION_MANUAL_A IS ''Descripción del motivo de la ocultación.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna AHP_MOT_OCULTACION_MANUAL_A creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.AHP_CHECK_PUBLICAR_A IS ''Check de publicar el alquiler.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna AHP_CHECK_PUBLICAR_A creado.');	
+		
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.AHP_CHECK_OCULTAR_A IS ''Check de ocultar el alquiler.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna AHP_CHECK_OCULTAR_A creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.AHP_CHECK_OCULT_PRECIO_A IS ''Check de publicar precio del alquilera.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna AHP_CHECK_OCULT_PRECIO_A creado.');
+		
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.AHP_CHECK_PUB_SIN_PRECIO_A IS ''Check de publicación sin precio del alquiler.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna AHP_CHECK_PUB_SIN_PRECIO_A creado.');	
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.AHP_FECHA_INI_VENTA IS ''Fecha inicio de la venta.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna AHP_FECHA_INI_VENTA creado.');
+		
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.AHP_FECHA_FIN_VENTA IS ''Fecha fin de la venta.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna AHP_FECHA_FIN_VENTA creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.AHP_FECHA_INI_ALQUILER IS ''Fecha inicio del alquiler.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna AHP_FECHA_INI_ALQUILER creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.AHP_FECHA_FIN_ALQUILER IS ''Fecha fin del alquiler.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna AHP_FECHA_INI_ALQUILER creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.VERSION IS ''Indica la versión del registro.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna VERSION creado.');
+		
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOCREAR IS ''Indica el usuario que creó el registro.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna USUARIOCREAR creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHACREAR IS ''Indica la fecha en la que se creó el registro.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna FECHACREAR creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOMODIFICAR IS ''Indica el usuario que modificó el registro.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna USUARIOMODIFICAR creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHAMODIFICAR IS ''Indica la fecha en la que se modificó el registro.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna FECHAMODIFICAR creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOBORRAR IS ''Indica el usuario que borró el registro.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna USUARIOBORRAR creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHABORRAR IS ''Indica la fecha en la que se borró el registro.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna FECHABORRAR creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BORRADO IS ''Indicador de borrado.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna BORRADO creado.');
 
 		COMMIT;
 	END IF;

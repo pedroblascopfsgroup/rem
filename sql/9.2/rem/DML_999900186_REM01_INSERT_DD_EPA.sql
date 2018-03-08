@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carlos López
---## FECHA_CREACION=20180307
+--## FECHA_CREACION=20180308
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-3897
@@ -39,7 +39,7 @@ DECLARE
         T_TIPO_DATA('01', 'No Publicado Alquiler', 'No Publicado Alquiler'),
         T_TIPO_DATA('02', 'Pre Publicado Alquiler', 'No tiene precio aprobado de publicación. No tiene CEE. No tiene check de adecuación.'),
         T_TIPO_DATA('03', 'Publicado Alquiler', 'Publicado Alquiler'),
-        T_TIPO_DATA('04', 'Oculto Alquiler', 'Publicado Alquiler')
+        T_TIPO_DATA('04', 'Oculto Alquiler', 'Oculto Alquiler')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

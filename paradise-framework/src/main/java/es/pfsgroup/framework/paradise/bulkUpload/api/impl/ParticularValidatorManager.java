@@ -929,14 +929,14 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 	}
 	
-	public boolean existeCarteraByCod(String codCartera){
-		if (Checks.esNulo(codCartera)){
+	public boolean existeSubCarteraByCod(String codSubCartera){
+		if (Checks.esNulo(codSubCartera)){
 			return false;
 		}
 		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
-				+"		FROM DD_CRA_CARTERA WHERE"
-				+"		DD_CRA_CODIGO = '" + codCartera + "'"
+				+"		FROM DD_SCR_SUBCARTERA WHERE"
+				+"		DD_SCR_CODIGO = '" + codSubCartera + "'"
 				+" 		AND BORRADO = 0");
 		
 		if("0".equals(resultado)){

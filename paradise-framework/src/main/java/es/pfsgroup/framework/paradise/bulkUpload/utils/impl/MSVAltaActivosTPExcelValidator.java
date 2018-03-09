@@ -47,8 +47,8 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 
 	// Textos con errores de validacion
 	public static final String ACTIVE_EXISTS = "El activo existe.";
-	public static final String CARTERA_IS_NULL = "La cartera del activo no puede estar vacío.";
-	public static final String CARTERA_NOT_EXISTS = "La cartera no existe";
+	public static final String SUBCARTERA_IS_NULL = "La subcartera del activo no puede estar vacío.";
+	public static final String SUBCARTERA_NOT_EXISTS = "La subcartera no existe";
 	public static final String SUBTIPO_TITULO_IS_NULL = "El subtipo de título del activo no puede estar vacío.";
 	public static final String NUM_ACT_EXTERNO_IS_NULL = "El número de activo externo no puede estar vacío";
 	public static final String TIPO_ACTIVO_IS_NULL = "El tipo de activo no puede estar vacío.";
@@ -110,7 +110,7 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 	public static final String SUPERVISOR_COMERCIAL_IS_NULL = "El supervisor comercial no puede estar vacío";
 	public static final String SUPERVISOR_COMERCIAL_NOT_EXISTS = "El supervisor comercial no existe";
 	public static final String GESTOR_FORMALIZACION_IS_NULL = "El gestor de formalización no puede estar vacío";
-	public static final String GESTOR_FORMALIZACION_NOT_EXISTS = "El supervisor de formalización no existe";
+	public static final String GESTOR_FORMALIZACION_NOT_EXISTS = "El gestor de formalización no existe";
 	public static final String SUPERVISOR_FORMALIZACION_IS_NULL = "El supervisor de formalización no puede estar vacío";
 	public static final String SUPERVISOR_FORMALIZACION_NOT_EXISTS = "El supervisor de formalización no existe";
 	public static final String GESTOR_ADMISION_IS_NULL = "El gestor de admisión no puede estar vacío";
@@ -270,8 +270,8 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 			Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();
 			mapaErrores.put(ACTIVE_EXISTS, isActiveExistsRows(exc));
-			mapaErrores.put(CARTERA_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_CARTERA));
-			mapaErrores.put(CARTERA_NOT_EXISTS, carteraNotExistsByRows(exc,COL_NUM.COD_CARTERA));
+			mapaErrores.put(SUBCARTERA_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_CARTERA));
+			mapaErrores.put(SUBCARTERA_NOT_EXISTS, subCarteraNotExistsByRows(exc,COL_NUM.COD_CARTERA));
 			mapaErrores.put(SUBTIPO_TITULO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_SUBTIPO_TITULO));
 			mapaErrores.put(NUM_ACT_EXTERNO_IS_NULL, isColumnNullByRows(exc,COL_NUM.NUM_ACTIVO_EXTERNO));
 			mapaErrores.put(TIPO_ACTIVO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_TIPO_ACTIVO));
@@ -321,15 +321,15 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 			mapaErrores.put(GESTOR_COMERCIAL_NOT_EXISTS, gestorNotExistsByRows(exc, COL_NUM.GESTOR_COMERCIAL));
 			mapaErrores.put(SUPERVISOR_COMERCIAL_IS_NULL, isColumnNullByRows(exc,COL_NUM.SUPER_GESTOR_COMERCIAL));
 			mapaErrores.put(SUPERVISOR_COMERCIAL_NOT_EXISTS, gestorNotExistsByRows(exc,COL_NUM.SUPER_GESTOR_COMERCIAL));
-			mapaErrores.put(GESTOR_FORMALIZACION_IS_NULL, isColumnNullByRows(exc,COL_NUM.GESTOR_FORMALIZACION));
-			mapaErrores.put(GESTORIA_FORMALIZACION_NOT_EXISTS, gestorNotExistsByRows(exc,COL_NUM.GESTOR_FORMALIZACION));
+			//mapaErrores.put(GESTOR_FORMALIZACION_IS_NULL, isColumnNullByRows(exc,COL_NUM.GESTOR_FORMALIZACION));
+			mapaErrores.put(GESTOR_FORMALIZACION_NOT_EXISTS, gestorNotExistsByRows(exc,COL_NUM.GESTOR_FORMALIZACION));
 			mapaErrores.put(SUPERVISOR_FORMALIZACION_IS_NULL, isColumnNullByRows(exc,COL_NUM.SUPER_GESTOR_FORMALIZACION));
 			mapaErrores.put(SUPERVISOR_FORMALIZACION_NOT_EXISTS, gestorNotExistsByRows(exc,COL_NUM.SUPER_GESTOR_FORMALIZACION));
 			mapaErrores.put(GESTOR_ADMISION_IS_NULL, isColumnNullByRows(exc, COL_NUM.GESTOR_ADMISION));
 			mapaErrores.put(GESTOR_ADMISION_NOT_EXISTS, gestorNotExistsByRows(exc,COL_NUM.GESTOR_ADMISION));
 			mapaErrores.put(GESTOR_ACTIVOS_IS_NULL, isColumnNullByRows(exc,COL_NUM.GESTOR_ACTIVOS));
 			mapaErrores.put(GESTOR_ACTIVOS_NOT_EXISTS, gestorNotExistsByRows(exc,COL_NUM.GESTOR_ACTIVOS));
-			mapaErrores.put(GESTORIA_FORMALIZACION_IS_NULL, isColumnNullByRows(exc,COL_NUM.GESTORIA_DE_FORMALIZACION));
+			//mapaErrores.put(GESTORIA_FORMALIZACION_IS_NULL, isColumnNullByRows(exc,COL_NUM.GESTORIA_DE_FORMALIZACION));
 			mapaErrores.put(GESTORIA_FORMALIZACION_NOT_EXISTS, gestorNotExistsByRows(exc,COL_NUM.GESTORIA_DE_FORMALIZACION));
 			
 			mapaErrores.put(PARCELA_REGISTRO_IS_NAN, isColumnFloatNANByRows(exc, COL_NUM.PARCELA));
@@ -340,8 +340,8 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 			mapaErrores.put(UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS,
 					isCodigoUnidadInferiorMunicipioValido(exc, COL_NUM.COD_UNIDAD_MUNICIPIO));
 
-			if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(CARTERA_IS_NULL).isEmpty() //ok
-					|| !mapaErrores.get(CARTERA_NOT_EXISTS).isEmpty()
+			if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(SUBCARTERA_IS_NULL).isEmpty() //ok
+					|| !mapaErrores.get(SUBCARTERA_NOT_EXISTS).isEmpty()
 					|| !mapaErrores.get(SUBTIPO_TITULO_IS_NULL).isEmpty() //ok
 					|| !mapaErrores.get(NUM_ACT_EXTERNO_IS_NULL).isEmpty()
 					|| !mapaErrores.get(TIPO_ACTIVO_IS_NULL).isEmpty() //ok 
@@ -403,15 +403,15 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 					|| !mapaErrores.get(GESTOR_COMERCIAL_NOT_EXISTS).isEmpty()
 					|| !mapaErrores.get(SUPERVISOR_COMERCIAL_IS_NULL).isEmpty()
 					|| !mapaErrores.get(SUPERVISOR_COMERCIAL_NOT_EXISTS).isEmpty()
-					|| !mapaErrores.get(GESTOR_FORMALIZACION_IS_NULL).isEmpty()
-					|| !mapaErrores.get(GESTORIA_FORMALIZACION_NOT_EXISTS).isEmpty()
+					//|| !mapaErrores.get(GESTOR_FORMALIZACION_IS_NULL).isEmpty()
+					|| !mapaErrores.get(GESTOR_FORMALIZACION_NOT_EXISTS).isEmpty()
 					|| !mapaErrores.get(SUPERVISOR_FORMALIZACION_IS_NULL).isEmpty()
 					|| !mapaErrores.get(SUPERVISOR_FORMALIZACION_NOT_EXISTS).isEmpty()
 					|| !mapaErrores.get(GESTOR_ADMISION_IS_NULL).isEmpty()
 					|| !mapaErrores.get(GESTOR_ADMISION_NOT_EXISTS).isEmpty()
 					|| !mapaErrores.get(GESTOR_ACTIVOS_IS_NULL).isEmpty()
 					|| !mapaErrores.get(GESTOR_ACTIVOS_NOT_EXISTS).isEmpty()
-					|| !mapaErrores.get(GESTORIA_FORMALIZACION_IS_NULL).isEmpty()
+					//|| !mapaErrores.get(GESTORIA_FORMALIZACION_IS_NULL).isEmpty()
 					|| !mapaErrores.get(GESTORIA_FORMALIZACION_NOT_EXISTS).isEmpty()					
 					|| !mapaErrores.get(UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS).isEmpty())//ok 
 				{
@@ -773,12 +773,12 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 	 * @return Devuelve una lista con los errores encontrados. Tantos registros como errores
 	 * */
 	
-	private List<Integer> carteraNotExistsByRows(MSVHojaExcel exc, int columnNumber){
+	private List<Integer> subCarteraNotExistsByRows(MSVHojaExcel exc, int columnNumber){
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
 		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i< numFilasHoja; i++){
 			try {
-				if (!particularValidator.existeCarteraByCod(exc.dameCelda(i, columnNumber)))
+				if (!particularValidator.existeSubCarteraByCod(exc.dameCelda(i, columnNumber)))
 					listaFilas.add(i);
 			} catch (IllegalArgumentException e){
 				logger.error(e.getMessage());
@@ -824,8 +824,10 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 												}
 												break;
 				case COL_NUM.GESTOR_FORMALIZACION:
-												if (!particularValidator.existeGestorFormalizacionByUsername(exc.dameCelda(i, columnNumber))){
-													listaFilas.add(i);
+												if (!Checks.esNulo(exc.dameCelda(i, columnNumber))){
+													if (!particularValidator.existeGestorFormalizacionByUsername(exc.dameCelda(i, columnNumber))){
+														listaFilas.add(i);
+													}
 												}
 												break;
 				case COL_NUM.SUPER_GESTOR_FORMALIZACION:
@@ -844,8 +846,11 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 												}
 												break;
 				case COL_NUM.GESTORIA_DE_FORMALIZACION:
-												if (!particularValidator.existeGestoriaDeFormalizacionByUsername(exc.dameCelda(i, columnNumber))){
-													listaFilas.add(i);
+												if (!Checks.esNulo(exc.dameCelda(i, columnNumber))){
+													if (!particularValidator.existeGestoriaDeFormalizacionByUsername(exc.dameCelda(i, columnNumber))){
+														listaFilas.add(i);
+													}
+													
 												}
 												break;
 				}

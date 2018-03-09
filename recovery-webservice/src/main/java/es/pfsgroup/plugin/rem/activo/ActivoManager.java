@@ -4235,10 +4235,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				activo = oferta.getActivoPrincipal();
 			}
 			if(!Checks.esNulo(activo)){
-				Long idUsuarioGestorFormalizacion = gestorExpedienteComercialDao.getUsuarioGestorFormalizacion(activo.getId());
+				Long idUsuarioGestorFormalizacion;
+				if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_THIRD_PARTY)){
+					Filter f1 = genericDao.createFilter(FilterType.EQUALS, "idEntidad", activo.getId());
+					Filter f2 = genericDao.createFilter(FilterType.EQUALS, "idTipoGestor", "GFORM");
+					GestorEntidadDto gEDto = genericDao.get(GestorEntidadDto.class, f1,f2);
+					idUsuarioGestorFormalizacion = gEDto.getIdUsuario();
+				}else{
+					 idUsuarioGestorFormalizacion = gestorExpedienteComercialDao.getUsuarioGestorFormalizacion(activo.getId());
+				}
 				if(!Checks.esNulo(idUsuarioGestorFormalizacion))
 					usuarioGestorFormalizacion = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", idUsuarioGestorFormalizacion));
-
+				
+				
 				Long idUsuarioGestoriaFormalizacion = gestorExpedienteComercialDao.getUsuarioGestoriaFormalizacion(activo.getId());
 				if(!Checks.esNulo(idUsuarioGestoriaFormalizacion))
 					usuarioGestoriaFormalizacion = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", idUsuarioGestoriaFormalizacion));
@@ -4276,7 +4285,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION, "GESTFORM", dto);
 			
 			
-			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION, "SUPFORM",dto);
+			if (!activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_THIRD_PARTY)){
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION, "SUPFORM",dto);
+			} else {
+				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "idEntidad", activo.getId());
+				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "idTipoGestor", "GIAFORM");
+				GestorEntidadDto gEDto = genericDao.get(GestorEntidadDto.class, f1,f2);
+				Usuario usuarioSuperorFormalizacion = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", gEDto.getIdUsuario()));
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION, usuarioSuperorFormalizacion.getUsername(), dto);
+			}
 			
 			if(!Checks.esNulo(usuarioGestoriaFormalizacion))
 				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION, usuarioGestoriaFormalizacion.getUsername(), dto);

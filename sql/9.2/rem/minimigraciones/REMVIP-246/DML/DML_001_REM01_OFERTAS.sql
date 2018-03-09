@@ -47,15 +47,14 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('	[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||SQL%ROWCOUNT||' ofertas duplicadas eliminados.');
 
     EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' T1
-        USING (SELECT OFR.OFR_ID, PVE.PVE_ID
+        USING (SELECT OFR.OFR_ID
         	FROM '||V_ESQUEMA||'.'||V_AUX||' AUX
-        	JOIN '||V_ESQUEMA||'.'||V_TABLA||' OFR ON AUX.OFR = OFR.OFR_NUM_OFERTA
-        	JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_COD_REM = AUX.PVE
-        	WHERE OFR.PVE_ID_PRESCRIPTOR <> PVE.PVE_ID OR OFR.PVE_ID_PRESCRIPTOR IS NULL) T2
+        	JOIN '||V_ESQUEMA||'.'||V_TABLA||' OFR ON AUX.OFR = OFR.OFR_NUM_OFERTA) T2
         ON (T1.OFR_ID = T2.OFR_ID)
         WHEN MATCHED THEN UPDATE SET
-            T1.PVE_ID_PRESCRIPTOR = T2.PVE_ID, T1.USUARIOMODIFICAR = '''||V_USUARIO||''', T1.FECHAMODIFICAR = SYSDATE';
-	DBMS_OUTPUT.PUT_LINE('	[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||SQL%ROWCOUNT||' prescriptores de ofertas actualizadas.');
+            T1.DD_CAP_ID = (SELECT DD_CAP_ID FROM '||V_ESQUEMA||'.DD_CAP_CANAL_PRESCRIPCION WHERE DD_CAP_CODIGO = ''02'')
+            , T1.USUARIOMODIFICAR = '''||V_USUARIO||''', T1.FECHAMODIFICAR = SYSDATE';
+	DBMS_OUTPUT.PUT_LINE('	[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||SQL%ROWCOUNT||' canal de prescripción de ofertas actualizado.');
 
     DBMS_OUTPUT.PUT_LINE('[FIN]');
 

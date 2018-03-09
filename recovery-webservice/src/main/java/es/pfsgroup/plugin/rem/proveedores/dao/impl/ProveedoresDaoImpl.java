@@ -270,6 +270,20 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		return this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 	}
 	
+	@Override
+	public Long activosAsignadosProveedorMediador(Long idProveedor){
+		
+		try {
+
+			HQLBuilder hb = new HQLBuilder(
+					"select count(*) from ActivoInfoComercial where mediadorInforme.id = "+idProveedor);
+			return ((Long) getHibernateTemplate().find(hb.toString()).get(0));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
 	
 	

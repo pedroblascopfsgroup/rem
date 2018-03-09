@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20180221
+--## FECHA_CREACION=20180309
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.15
 --## INCIDENCIA_LINK=REMVIP-96

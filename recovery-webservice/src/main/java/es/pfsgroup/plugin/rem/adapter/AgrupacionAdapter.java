@@ -522,9 +522,13 @@ public class AgrupacionAdapter {
 		Activo activo = genericDao.get(Activo.class, filter);
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idAgrupacion);
 
-		int num = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(agrupacion.getId());
-
 		try {
+			
+			if (Checks.esNulo(agrupacion)) {
+				throw new JsonViewerException("La agrupación no existe");
+			}
+			
+			int num = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(agrupacion.getId());
 
 			if (Checks.esNulo(activo)) {
 				throw new JsonViewerException("El activo no existe");

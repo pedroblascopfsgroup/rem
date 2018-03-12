@@ -3572,13 +3572,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numPropuesta", idPropuesta);
 		PropuestaPrecio propuesta = genericDao.get(PropuestaPrecio.class, filtro);
 
-		propuesta.setFechaCarga(new Date());
-
-		DDEstadoPropuestaPrecio estado = (DDEstadoPropuestaPrecio) utilDiccionarioApi
-				.dameValorDiccionarioByCod(DDEstadoPropuestaPrecio.class, DDEstadoPropuestaPrecio.ESTADO_SANCIONADA);
-		propuesta.setEstado(estado);
-
-		genericDao.update(PropuestaPrecio.class, propuesta);
+		if (!Checks.esNulo(propuesta)) {
+			propuesta.setFechaCarga(new Date());
+	
+			DDEstadoPropuestaPrecio estado = (DDEstadoPropuestaPrecio) utilDiccionarioApi
+					.dameValorDiccionarioByCod(DDEstadoPropuestaPrecio.class, DDEstadoPropuestaPrecio.ESTADO_SANCIONADA);
+			propuesta.setEstado(estado);
+	
+			genericDao.update(PropuestaPrecio.class, propuesta);
+		}
 	}
 
 	@Override

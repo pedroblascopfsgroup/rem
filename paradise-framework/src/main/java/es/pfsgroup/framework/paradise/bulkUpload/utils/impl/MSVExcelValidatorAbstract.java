@@ -389,7 +389,10 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 					isFound = true; 
 				}
 				fila++;
-				set.add(tmp);
+				if (!Checks.esNulo(tmp) || validacion.contains(MSVExcelValidator.CODIGO_NO_NULO)) {
+					set.add(tmp);
+				}
+				
 			}
 		}
 			

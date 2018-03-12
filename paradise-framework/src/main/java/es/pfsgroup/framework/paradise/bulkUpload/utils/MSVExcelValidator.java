@@ -9,7 +9,8 @@ public interface MSVExcelValidator {
 	static final String CODIFICACION_IMPORTE = "i";
 	static final String CODIFICACION_STRING = "s";
 	static final String CODIFICACION_FECHA ="f";
-	static final String CODIGO_BOOLEAN="b";
+	static final String CODIGO_BOOLEAN = "b";
+	static final String CODIGO_NO_NULO = "*";
 	
 	static final String VALIDAR_COLUMNA_TODOS_IGUALES="T";
 	static final String VALIDAR_COLUMNA_NINGUN_REPETIDO="D";

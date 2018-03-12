@@ -52,7 +52,9 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 	public static final String SUBTIPO_TITULO_IS_NULL = "El subtipo de título del activo no puede estar vacío.";
 	public static final String NUM_ACT_EXTERNO_IS_NULL = "El número de activo externo no puede estar vacío";
 	public static final String TIPO_ACTIVO_IS_NULL = "El tipo de activo no puede estar vacío.";
+	public static final String TIPO_ACTIVO_NOT_EXISTS = "El tipo de activo no existe";
 	public static final String SUBTIPO_ACTIVO_IS_NULL = "El subtipo de activo no puede estar vacío.";
+	public static final String SUBTIPO_ACTIVO_NOT_EXISTS = "El subtipo de activo no existe";
 	public static final String ESTADO_FISICO_ACTIVO_IS_NULL = "El estado físico del activo no puede estar vacío.";
 	public static final String USO_DOMINANTE_ACTIVO_IS_NULL = "El uso dominante del activo no puede estar vacío.";
 	public static final String DESC_ACTIVO_IS_NULL = "La descripción del activo no puede estar vacío.";
@@ -275,7 +277,9 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 			mapaErrores.put(SUBTIPO_TITULO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_SUBTIPO_TITULO));
 			mapaErrores.put(NUM_ACT_EXTERNO_IS_NULL, isColumnNullByRows(exc,COL_NUM.NUM_ACTIVO_EXTERNO));
 			mapaErrores.put(TIPO_ACTIVO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_TIPO_ACTIVO));
+			mapaErrores.put(TIPO_ACTIVO_NOT_EXISTS, tipoActivoNotExistsByRows(exc,COL_NUM.COD_TIPO_ACTIVO));
 			mapaErrores.put(SUBTIPO_ACTIVO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_SUBTIPO_ACTIVO));
+			mapaErrores.put(SUBTIPO_ACTIVO_NOT_EXISTS, tipoSubActivoNotExistsByRows(exc, COL_NUM.COD_SUBTIPO_ACTIVO));
 			mapaErrores.put(ESTADO_FISICO_ACTIVO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_ESTADO_FISICO));
 			mapaErrores.put(USO_DOMINANTE_ACTIVO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_USO_DOMINANTE));
 			mapaErrores.put(DESC_ACTIVO_IS_NULL, isColumnNullByRows(exc, COL_NUM.DESC_ACTIVO));
@@ -321,7 +325,6 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 			mapaErrores.put(GESTOR_COMERCIAL_NOT_EXISTS, gestorNotExistsByRows(exc, COL_NUM.GESTOR_COMERCIAL));
 			mapaErrores.put(SUPERVISOR_COMERCIAL_IS_NULL, isColumnNullByRows(exc,COL_NUM.SUPER_GESTOR_COMERCIAL));
 			mapaErrores.put(SUPERVISOR_COMERCIAL_NOT_EXISTS, gestorNotExistsByRows(exc,COL_NUM.SUPER_GESTOR_COMERCIAL));
-			//mapaErrores.put(GESTOR_FORMALIZACION_IS_NULL, isColumnNullByRows(exc,COL_NUM.GESTOR_FORMALIZACION));
 			mapaErrores.put(GESTOR_FORMALIZACION_NOT_EXISTS, gestorNotExistsByRows(exc,COL_NUM.GESTOR_FORMALIZACION));
 			mapaErrores.put(SUPERVISOR_FORMALIZACION_IS_NULL, isColumnNullByRows(exc,COL_NUM.SUPER_GESTOR_FORMALIZACION));
 			mapaErrores.put(SUPERVISOR_FORMALIZACION_NOT_EXISTS, gestorNotExistsByRows(exc,COL_NUM.SUPER_GESTOR_FORMALIZACION));
@@ -329,7 +332,6 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 			mapaErrores.put(GESTOR_ADMISION_NOT_EXISTS, gestorNotExistsByRows(exc,COL_NUM.GESTOR_ADMISION));
 			mapaErrores.put(GESTOR_ACTIVOS_IS_NULL, isColumnNullByRows(exc,COL_NUM.GESTOR_ACTIVOS));
 			mapaErrores.put(GESTOR_ACTIVOS_NOT_EXISTS, gestorNotExistsByRows(exc,COL_NUM.GESTOR_ACTIVOS));
-			//mapaErrores.put(GESTORIA_FORMALIZACION_IS_NULL, isColumnNullByRows(exc,COL_NUM.GESTORIA_DE_FORMALIZACION));
 			mapaErrores.put(GESTORIA_FORMALIZACION_NOT_EXISTS, gestorNotExistsByRows(exc,COL_NUM.GESTORIA_DE_FORMALIZACION));
 			
 			mapaErrores.put(PARCELA_REGISTRO_IS_NAN, isColumnFloatNANByRows(exc, COL_NUM.PARCELA));
@@ -342,68 +344,46 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 
 			if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(SUBCARTERA_IS_NULL).isEmpty() //ok
 					|| !mapaErrores.get(SUBCARTERA_NOT_EXISTS).isEmpty()
-					|| !mapaErrores.get(SUBTIPO_TITULO_IS_NULL).isEmpty() //ok
+					|| !mapaErrores.get(SUBTIPO_TITULO_IS_NULL).isEmpty()
 					|| !mapaErrores.get(NUM_ACT_EXTERNO_IS_NULL).isEmpty()
-					|| !mapaErrores.get(TIPO_ACTIVO_IS_NULL).isEmpty() //ok 
-					|| !mapaErrores.get(SUBTIPO_ACTIVO_IS_NULL).isEmpty() //ok 
-					|| !mapaErrores.get(ESTADO_FISICO_ACTIVO_IS_NULL).isEmpty() //ok
-					|| !mapaErrores.get(USO_DOMINANTE_ACTIVO_IS_NULL).isEmpty()//ok
-					|| !mapaErrores.get(DESC_ACTIVO_IS_NULL).isEmpty() //ok
+					|| !mapaErrores.get(TIPO_ACTIVO_IS_NULL).isEmpty() 
+					|| !mapaErrores.get(TIPO_ACTIVO_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(SUBTIPO_ACTIVO_IS_NULL).isEmpty() 
+					|| !mapaErrores.get(SUBTIPO_ACTIVO_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(ESTADO_FISICO_ACTIVO_IS_NULL).isEmpty()
+					|| !mapaErrores.get(USO_DOMINANTE_ACTIVO_IS_NULL).isEmpty()
+					|| !mapaErrores.get(DESC_ACTIVO_IS_NULL).isEmpty()
 					
-					|| !mapaErrores.get(TIPO_VIA_IS_NULL).isEmpty()//ok
-					|| !mapaErrores.get(NUM_VIA_IS_NULL).isEmpty() //ok
-					|| !mapaErrores.get(NOMBRE_VIA_IS_NULL).isEmpty()//ok
+					|| !mapaErrores.get(TIPO_VIA_IS_NULL).isEmpty()
+					|| !mapaErrores.get(NUM_VIA_IS_NULL).isEmpty()
+					|| !mapaErrores.get(NOMBRE_VIA_IS_NULL).isEmpty()
 					//provincia
-					|| !mapaErrores.get(UNIDAD_INFERIOR_MUNICIPIO_IS_NULL).isEmpty()//ok
-					|| !mapaErrores.get(CODIGO_POSTAL_IS_NULL).isEmpty()//ok
+					|| !mapaErrores.get(UNIDAD_INFERIOR_MUNICIPIO_IS_NULL).isEmpty()
+					|| !mapaErrores.get(CODIGO_POSTAL_IS_NULL).isEmpty()
 					
-					|| !mapaErrores.get(DESTINO_COMERCIAL_IS_NULL).isEmpty()//ok
-					//|| !mapaErrores.get(TIPO_ALQUILER_IS_NULL).isEmpty()
-					//|| !mapaErrores.get(NUM_PRESTAMO_IS_NULL).isEmpty()
-					//|| !mapaErrores.get(NIF_SOCIEDAD_ACREEDORA_IS_NULL).isEmpty()
-					//|| !mapaErrores.get(CODIGO_SOCIEDAD_ACREEDORA_IS_NULL).isEmpty()
-					//|| !mapaErrores.get(NOMBRE_SOCIEDAD_ACREEDORA_IS_NULL).isEmpty()
-					|| !mapaErrores.get(POBL_REGISTRO_IS_NULL).isEmpty()//ok
-					|| !mapaErrores.get(NUM_REGISTRO_IS_NULL).isEmpty()//ok
-					|| !mapaErrores.get(NIF_PROPIETARIO_IS_NULL).isEmpty()//ok
-					|| !mapaErrores.get(REFERENCIA_CATASTRAL_IS_NULL).isEmpty()//ok
-					|| !mapaErrores.get(VPO_IS_NULL).isEmpty() //ok
-					|| !mapaErrores.get(PRECIO_MINIMO_IS_NULL).isEmpty()//ok
-					|| !mapaErrores.get(PRECIO_MINIMO_IS_NAN).isEmpty()//ok
-					//|| !mapaErrores.get(PRECIO_VENTA_WEB_IS_NAN).isEmpty()
-					//|| !mapaErrores.get(VALOR_TASACION_IS_NAN).isEmpty()
-					|| !mapaErrores.get(PRECIO_MINIMO_IS_ZERO).isEmpty()//ok
-				//	|| !mapaErrores.get(PRECIO_VENTA_WEB_IS_ZERO).isEmpty()
-					//|| !mapaErrores.get(VALOR_TASACION_IS_ZERO).isEmpty()
-					|| !mapaErrores.get(GARAJE_ANEJO_NOT_BOOL).isEmpty()//ok
-					|| !mapaErrores.get(TRASTERO_ANEJO_NOT_BOOL).isEmpty()//ok
-					//|| !mapaErrores.get(FECHA_TASACION_DATE_FORMAT).isEmpty()
-					//|| !mapaErrores.get(SOCIEDAD_ACREEDORA_NOT_EXISTS).isEmpty()
-					|| !mapaErrores.get(MEDIADOR_NOT_EXISTS).isEmpty()//ok
-					//|| !mapaErrores.get(PRECIO_VENTA_WEB_IS_NULL).isEmpty()
-					//|| !mapaErrores.get(CODIGO_SOCIEDAD_ACREEDORA_IS_NAN).isEmpty()
-					//|| !mapaErrores.get(NUM_ACTIVO_HAYA_IS_NAN).isEmpty()
-					//|| !mapaErrores.get(NUM_ACTIVO_CARTERA_IS_NAN).isEmpty()
-					//|| !mapaErrores.get(NUM_BIEN_RECOVERY_IS_NAN).isEmpty()
-					//|| !mapaErrores.get(ID_ASUNTO_RECOVERY_IS_NAN).isEmpty()
-					//|| !mapaErrores.get(ID_GARANTIA_IS_NAN).isEmpty()
-					|| !mapaErrores.get(TOMO_REGISTRO_IS_NAN).isEmpty()//ok
-					|| !mapaErrores.get(LIBRO_REGISTRO_IS_NAN).isEmpty()//ok
-					|| !mapaErrores.get(FOLIO_REGISTRO_IS_NAN).isEmpty()//ok
-					//|| !mapaErrores.get(SUPERFICIE_CONSTRUIDA_REGISTRO_IS_NAN).isEmpty()
-					//|| !mapaErrores.get(SUPERFICIE_UTIL_REGISTRO_IS_NAN).isEmpty()
-					//|| !mapaErrores.get(SUPERFICIE_REPERCUSION_EECC_REGISTRO_IS_NAN).isEmpty()
-					//|| !mapaErrores.get(PARCELA_REGISTRO_IS_NAN).isEmpty()
+					|| !mapaErrores.get(DESTINO_COMERCIAL_IS_NULL).isEmpty()
+					|| !mapaErrores.get(POBL_REGISTRO_IS_NULL).isEmpty()
+					|| !mapaErrores.get(NUM_REGISTRO_IS_NULL).isEmpty()
+					|| !mapaErrores.get(NIF_PROPIETARIO_IS_NULL).isEmpty()
+					|| !mapaErrores.get(REFERENCIA_CATASTRAL_IS_NULL).isEmpty()
+					|| !mapaErrores.get(VPO_IS_NULL).isEmpty()
+					|| !mapaErrores.get(PRECIO_MINIMO_IS_NULL).isEmpty()
+					|| !mapaErrores.get(PRECIO_MINIMO_IS_NAN).isEmpty()
+					|| !mapaErrores.get(PRECIO_MINIMO_IS_ZERO).isEmpty()
+					|| !mapaErrores.get(GARAJE_ANEJO_NOT_BOOL).isEmpty()
+					|| !mapaErrores.get(TRASTERO_ANEJO_NOT_BOOL).isEmpty()
+					|| !mapaErrores.get(MEDIADOR_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(TOMO_REGISTRO_IS_NAN).isEmpty()
+					|| !mapaErrores.get(LIBRO_REGISTRO_IS_NAN).isEmpty()
+					|| !mapaErrores.get(FOLIO_REGISTRO_IS_NAN).isEmpty()
 					|| !mapaErrores.get(PORCENTAJE_IS_NAN).isEmpty() 
-					|| !mapaErrores.get(CODIGO_POSTAL_IS_NAN).isEmpty()//ok
-					|| !mapaErrores.get(MUNICIPIO_NOT_EXISTS).isEmpty()//ok
-					//|| !mapaErrores.get(PORCENTAJE_SUPERIOR).isEmpty() 
-					|| !mapaErrores.get(FINCA_IS_NULL).isEmpty() //ok
+					|| !mapaErrores.get(CODIGO_POSTAL_IS_NAN).isEmpty()
+					|| !mapaErrores.get(MUNICIPIO_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(FINCA_IS_NULL).isEmpty()
 					|| !mapaErrores.get(GESTOR_COMERCIAL_IS_NULL).isEmpty()
 					|| !mapaErrores.get(GESTOR_COMERCIAL_NOT_EXISTS).isEmpty()
 					|| !mapaErrores.get(SUPERVISOR_COMERCIAL_IS_NULL).isEmpty()
 					|| !mapaErrores.get(SUPERVISOR_COMERCIAL_NOT_EXISTS).isEmpty()
-					//|| !mapaErrores.get(GESTOR_FORMALIZACION_IS_NULL).isEmpty()
 					|| !mapaErrores.get(GESTOR_FORMALIZACION_NOT_EXISTS).isEmpty()
 					|| !mapaErrores.get(SUPERVISOR_FORMALIZACION_IS_NULL).isEmpty()
 					|| !mapaErrores.get(SUPERVISOR_FORMALIZACION_NOT_EXISTS).isEmpty()
@@ -411,9 +391,8 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 					|| !mapaErrores.get(GESTOR_ADMISION_NOT_EXISTS).isEmpty()
 					|| !mapaErrores.get(GESTOR_ACTIVOS_IS_NULL).isEmpty()
 					|| !mapaErrores.get(GESTOR_ACTIVOS_NOT_EXISTS).isEmpty()
-					//|| !mapaErrores.get(GESTORIA_FORMALIZACION_IS_NULL).isEmpty()
 					|| !mapaErrores.get(GESTORIA_FORMALIZACION_NOT_EXISTS).isEmpty()					
-					|| !mapaErrores.get(UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS).isEmpty())//ok 
+					|| !mapaErrores.get(UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS).isEmpty())
 				{
 
 				dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -791,6 +770,52 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 				listaFilas.add(i);
 			}
 		}
+		return listaFilas;
+	}
+	
+	/**
+	 * */
+	private List<Integer> tipoActivoNotExistsByRows(MSVHojaExcel exc, int columnNumber){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++){
+			try{
+				if (!particularValidator.existeTipoActivoByCod(exc.dameCelda(i, columnNumber)))
+					listaFilas.add(i);
+			} catch (IllegalArgumentException e){
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (IOException e){
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (ParseException e){
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			}
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> tipoSubActivoNotExistsByRows(MSVHojaExcel exc, int columnNumber){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++){
+			try{
+				if(!particularValidator.existeSubtipoActivoByCod(exc.dameCelda(i, columnNumber)))
+					listaFilas.add(i);
+			} catch (IllegalArgumentException e){
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (IOException e){
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (ParseException e){
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			}
+		}
+		
 		return listaFilas;
 	}
 	

@@ -946,6 +946,40 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 	}
 	
+	public boolean existeTipoActivoByCod(String codTipoActivo){
+		if (Checks.esNulo(codTipoActivo)){
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+"		FROM DD_TPA_TIPO_ACTIVO WHERE"
+				+"		DD_TPA_CODIGO = '" + codTipoActivo + "'"
+				+"		AND BORRADO = 0");
+		
+		if("0".equals(resultado)){
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	public boolean existeSubtipoActivoByCod(String codSubtipoActivo){
+		if (Checks.esNulo(codSubtipoActivo)){
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+"		FROM DD_SAC_SUBTIPO_ACTIVO WHERE"
+				+"		DD_SAC_CODIGO = '" + codSubtipoActivo + "'"
+				+"		AND BORRADO = 0");
+		
+		if("0".equals(resultado)){
+			return false;
+		}else{
+			return true;
+		}
+	}
+	
 	public boolean existeGestorComercialByUsername(String gestorUsername){
 		if(Checks.esNulo(gestorUsername)){
 			return false;

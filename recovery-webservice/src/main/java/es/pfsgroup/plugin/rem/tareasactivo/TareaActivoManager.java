@@ -181,6 +181,12 @@ public class TareaActivoManager implements TareaActivoApi {
 	public void saltoResolucionExpediente(Long idTareaExterna){
 		saltoTarea(idTareaExterna,ActivoGenerarSaltoImpl.CODIGO_SALTO_RESOLUCION);
 	}
+	
+	@Override
+	@Transactional(readOnly=false)
+	public void saltoRespuestaBankiaAnulacionDevolucion(Long idTareaExterna){
+		saltoTarea(idTareaExterna,ActivoGenerarSaltoImpl.CODIGO_SALTO_RESPUESTA_BANKIA_DEVOLUCION);
+	}
 		
 	@Override
 	@Transactional(readOnly=false)

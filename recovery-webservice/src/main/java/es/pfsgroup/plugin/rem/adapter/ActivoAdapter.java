@@ -29,6 +29,7 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -272,6 +273,9 @@ public class ActivoAdapter {
 	public static final String OFERTA_INCOMPATIBLE_MSG = "El tipo de oferta es incompatible con el destino comercial del activo";
 	public static final String AVISO_TITULO_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.titulo.modificadas.condiciones.juridicas";
 	public static final String AVISO_DESCRIPCION_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.descripcion.modificadas.condiciones.juridicas";
+	
+	public static final String CODIGO_TAREA_SOLICITAR_ANULACION_DEVOLUCION = "T013_RespuestaBankiaDevolucion";
+	public static final String CODIGO_TAREA_SOLICITAR_ANULACION_DEVOLUCION_RESPUESTA = "T013_RespuestaBankiaAnulacionDevolucion";
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -1746,6 +1750,7 @@ public class ActivoAdapter {
 		DtoTramite dtoTramite = new DtoTramite();
 		ActivoTramite tramite = activoTramiteApi.get(idTramite);
 		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+		List<TareaProcedimiento> listaTareas = activoTramiteApi.getTareasActivasByIdTramite(idTramite);
 
 		try {
 			beanUtilNotNull.copyProperty(dtoTramite, "idTramite", tramite.getId());
@@ -1817,6 +1822,20 @@ public class ActivoAdapter {
 					beanUtilNotNull.copyProperty(dtoTramite, "descripcionEstadoEC",
 							expedienteComercial.getEstado().getDescripcion());
 					beanUtilNotNull.copyProperty(dtoTramite, "numEC", expedienteComercial.getNumExpediente());
+				}
+			}
+			
+			beanUtilNotNull.copyProperty(dtoTramite, "tieneTareaSolicitarAnulacionDevolucion", false);
+			beanUtilNotNull.copyProperty(dtoTramite, "estaEnTareaSiguienteResolucionExpediente", false);
+			if(!Checks.estaVacio(listaTareas)){
+				for(TareaProcedimiento tarea : listaTareas){
+					if(CODIGO_TAREA_SOLICITAR_ANULACION_DEVOLUCION.equals(tarea.getCodigo())){
+						beanUtilNotNull.copyProperty(dtoTramite, "tieneTareaSolicitarAnulacionDevolucion", true);
+						beanUtilNotNull.copyProperty(dtoTramite, "estaEnTareaSiguienteResolucionExpediente", true);
+					}
+					else if(CODIGO_TAREA_SOLICITAR_ANULACION_DEVOLUCION_RESPUESTA.equals(tarea.getCodigo())){
+						beanUtilNotNull.copyProperty(dtoTramite, "estaEnTareaSiguienteResolucionExpediente", true);
+					}
 				}
 			}
 

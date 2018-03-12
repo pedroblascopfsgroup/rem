@@ -567,6 +567,15 @@ public class AgendaAdapter {
 		return true;
 	}
 	
+	public Boolean saltoRespuestaBankiaAnulacionDevolucion(Long idTareaExterna){
+		try{
+			tareaActivoApi.saltoRespuestaBankiaAnulacionDevolucion(idTareaExterna);
+		}catch(Exception ex){
+			return false;
+		}
+		return true;
+	}
+	
 	public Boolean saltoPBC(Long idProcesBpm){
 		try{
 			tareaActivoApi.saltoPBC(idProcesBpm);

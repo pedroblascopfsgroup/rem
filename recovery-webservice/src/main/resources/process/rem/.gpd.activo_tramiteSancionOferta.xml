@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="activo_tramiteSancionOferta" width="1421" height="1021">
+<root-container name="activo_tramiteSancionOferta" width="1424" height="1024">
   <node name="inicio" x="313" y="23" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -26,6 +26,15 @@
     </edge>
     <edge>
       <label x="-138" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -74,6 +83,15 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
   </node>
   <node name="T013_RespuestaOfertante" x="670" y="464" width="217" height="36">
     <edge>
@@ -96,6 +114,15 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
   </node>
   <node name="T013_RatificacionComite" x="0" y="0" width="132" height="36">
     <edge>
@@ -103,6 +130,9 @@
     </edge>
   </node>
   <node name="T013_RatificacionComiteDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -139,6 +169,24 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="forkReservaCajamar" x="0" y="0" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="forkSinReservaConTanteoCajamar" x="0" y="0" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="forkSinReservaSinTanteoCajamar" x="0" y="0" width="252" height="24">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -235,12 +283,23 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
+  <node name="T013_ResolucionExpedienteDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
   <node name="T013_DevolucionLlaves" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
   <node name="T013_DevolucionLlavesDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -255,11 +314,8 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
-  </node>
-  <node name="T013_DocumentosPostVenta" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Fin" x="0" y="0" width="132" height="36"/>
 </root-container>

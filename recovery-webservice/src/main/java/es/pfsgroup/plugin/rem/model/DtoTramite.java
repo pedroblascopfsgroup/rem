@@ -65,7 +65,9 @@ public class DtoTramite extends WebDto {
 	
 	private Long idExpediente;
 
+	private Boolean tieneTareaSolicitarAnulacionDevolucion;
 	
+	private Boolean estaEnTareaSiguienteResolucionExpediente;
 
 	public Long getIdTramite() {
 		return idTramite;
@@ -281,6 +283,22 @@ public class DtoTramite extends WebDto {
 
 	public void setOcultarBotonAnular(Boolean ocultarBotonAnular) {
 		this.ocultarBotonAnular = ocultarBotonAnular;
+	}
+
+	public Boolean getTieneTareaSolicitarAnulacionDevolucion() {
+		return tieneTareaSolicitarAnulacionDevolucion;
+	}
+
+	public void setTieneTareaSolicitarAnulacionDevolucion(Boolean tieneTareaSolicitarAnulacionDevolucion) {
+		this.tieneTareaSolicitarAnulacionDevolucion = tieneTareaSolicitarAnulacionDevolucion;
+	}
+
+	public Boolean getEstaEnTareaSiguienteResolucionExpediente() {
+		return estaEnTareaSiguienteResolucionExpediente;
+	}
+
+	public void setEstaEnTareaSiguienteResolucionExpediente(Boolean estaEnTareaSiguienteResolucionExpediente) {
+		this.estaEnTareaSiguienteResolucionExpediente = estaEnTareaSiguienteResolucionExpediente;
 	}
 	
 }

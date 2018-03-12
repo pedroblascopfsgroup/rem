@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.rem.model.ResolucionComiteBankiaDto;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
@@ -64,6 +65,7 @@ public class ResolucionComiteController {
 	private OfertaApi ofertaApi;
 
 	private static String ACCION_ANULACION_RESOLUCION = "2";
+	private final static String ACCION_RESOLUCION_DEVOLUCION = 	"3";
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/resolucioncomite")
@@ -151,7 +153,19 @@ public class ResolucionComiteController {
 								errorsList.put("ofertaHRE", "No se ha podido notificar la anulación de la resolución");
 							}
 						}
-					} else {
+					}
+					else if(ResolucionComiteController.ACCION_RESOLUCION_DEVOLUCION.equals(resolucionComiteDto.getCodigoAccion())){
+						if(DDEstadoResolucion.CODIGO_ERE_APROBADA.equals(resolucionComiteDto.getCodigoResolucion())){
+							// SALTO A TAREA ANTERIOR de RESOLUCION EXPEDIENTE
+						}
+						else if(DDEstadoResolucion.CODIGO_ERE_DENEGADA.equals(resolucionComiteDto.getCodigoResolucion())){
+							// SALTO A TAREA 1
+						}
+						else{
+							errorsList.put("ofertaHRE", "Resolución no soportada");
+						}
+					}
+					else {
 						//guardamos la notficacion
 						Usuario usu  = gestorActivoApi.userFromTarea("T013_ResolucionComite", tramite.getId());
 						if (usu == null) {

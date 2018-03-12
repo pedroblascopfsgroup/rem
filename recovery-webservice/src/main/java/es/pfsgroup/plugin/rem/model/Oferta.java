@@ -596,7 +596,7 @@ public class Oferta implements Serializable, Auditable {
 	}
 
 	public Boolean getOfertaExpress() {
-		return ofertaExpress;
+		return ofertaExpress == null ? false : ofertaExpress;
 	}
 
 	public void setOfertaExpress(Boolean ofertaExpress) {

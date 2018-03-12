@@ -37,6 +37,7 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
 	           	 text: 'AnularTrámite',
 	           	 secFunPermToShow: 'BOTON_ANULAR_TRAMITE',
 	          	 handler: 'anularTramite',
+	          	 disabled: true,
 	          	 bind: {
 	          		 hidden: '{tramite.ocultarBotonAnular}',
 	          		 disabled: '{!esEnTramite}'
@@ -49,7 +50,8 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
 	           	 secFunPermToShow: 'BOTON_RESOLUCION_EXPEDIENTE',
 	          	 handler: 'saltoResolucionExpediente',
 	          	 bind: {
-	          		hidden: '{tramite.ocultarBotonResolucion}'
+	          		 hidden: '{tramite.ocultarBotonResolucion}',
+	          		 disabled: '{tramite.estaEnTareaSiguienteResolucionExpediente}'
 	          	 }
              },
              {
@@ -60,6 +62,16 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
 	          	 handler: 'reasignarTarea',
 	          	 bind: {
 	          		 disabled: '{!listadoTareasTramite.selection}'
+	          	 }
+             },
+             {
+	           	 name: 'solicitarAnulacionDevolucion',
+	           	 itemId: 'solicitarAnulacionDevolucion',
+	           	 text: HreRem.i18n('btn.solicitar.anulacion.devolucion'),
+	          	 handler: 'solicitarAnulacionDevolucion',
+	          	 disabled: true,
+	          	 bind: {
+	          		 disabled: '{!tramite.tieneTareaSolicitarAnulacionDevolucion}'
 	          	 }
              }
    		];
@@ -165,5 +177,6 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
 		
 		// FIXME ¿¿Deberiamos cargar la primera página??
 		listadoTareasTramite.getStore().load();
+		me.up("tramitesdetalle").fireEvent("refrescarTramite", me.up("tramitesdetalle"));
     }
 });

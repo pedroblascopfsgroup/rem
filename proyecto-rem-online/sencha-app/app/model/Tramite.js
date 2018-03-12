@@ -107,6 +107,14 @@ Ext.define('HreRem.model.Tramite', {
     	{
     		name: 'ocultarBotonCierre',
     		type: 'boolean'
+    	},
+    	{
+    		name: 'tieneTareaSolicitarAnulacionDevolucion',
+    		type: 'boolean'
+    	},
+    	{
+    		name: 'estaEnTareaSiguienteResolucionExpediente',
+    		type: 'boolean'
     	}
     ],
 

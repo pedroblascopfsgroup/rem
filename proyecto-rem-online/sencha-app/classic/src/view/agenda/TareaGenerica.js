@@ -35,7 +35,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     numExpediente: null,
 
     initComponent: function() {
-
         var me = this;
 
         me.width = 800;
@@ -1309,6 +1308,22 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             }
         });
     },
+    
+//    T013_RespuestaBankiaDevolucion: function() {
+//    	var me = this;
+//    	var fecha = me.down('[name=fecha]');
+//    	var comboRespuesta = me.down('[name=comboRespuesta]');
+//    	fecha.setReadOnly(true);
+//    	comboRespuesta.setReadOnly(true);
+//    },
+//    
+//    T013_RespuestaBankiaAnulacionDevolucion: function() {
+//    	var me = this;
+//    	var fecha = me.down('[name=fecha]');
+//    	var comboRespuesta = me.down('[name=comboRespuesta]');
+//    	fecha.setReadOnly(true);
+//    	comboRespuesta.setReadOnly(true);
+//    },
 
     T014_PosicionamientoFirmaValidacion: function() {
         var me = this;

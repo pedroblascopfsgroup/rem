@@ -83,6 +83,7 @@ import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDistribucion;
 import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
@@ -1913,8 +1914,15 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getEstadoPublicacionByActivo(Long id, ModelMap model) {
-		model.put("data", activoApi.getEstadoPublicacionByActivo(id));
+	public ModelAndView getHistoricoEstadosPublicacionVentaByIdActivo(DtoHistoricoEstadoPublicacion dto, ModelMap model) {
+		model.put("data", activoApi.getHistoricoEstadosPublicacionVentaByIdActivo(dto));
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoEstadosPublicacionAlquilerByIdActivo(DtoHistoricoEstadoPublicacion dto, ModelMap model) {
+		model.put("data", activoApi.getHistoricoEstadosPublicacionAlquilerByIdActivo(dto));
 		return createModelAndViewJson(model);
 	}
 
@@ -1998,7 +2006,7 @@ public class ActivoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView setHistoricoEstadoPublicacion(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion,
-			ModelMap model) {
+			ModelMap model) {// TODO: eliminar.
 
 		try {
 			model.put("success", activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion));
@@ -2016,12 +2024,35 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getHistoricoEstadoPublicacion(Long id, ModelMap model) {
+	public ModelAndView getHistoricoEstadoPublicacion(Long id, ModelMap model) {// TODO: eliminar.
 
 		model.put("data", activoEstadoPublicacionApi.getHistoricoEstadoPublicacionByActivo(id));
 
 		return createModelAndViewJson(model);
 	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDatosPublicacionActivo(Long id, ModelMap model) {
+		//model.put("data", activoEstadoPublicacionApi.getDatosPublicacionActivo(id));
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView setDatosPublicacionActivo(ModelMap model) {
+		try {
+			//model.put("success", activoEstadoPublicacionApi.setDatosPublicacionActivo());
+		} catch (Exception e) {
+				model.put("msg", "Error al guardar los datos de publicacion del activo");
+				model.put("success", false);
+				logger.error("Error al guardar los datos de publicacion del activo", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+		
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)

@@ -1307,3 +1307,9 @@ body.x-masked > .x-mask {
 .x-datepicker.x-layer{
 position:fixed !important;
 }
+
+.panel-fieldset-base {
+	.x-panel-body-default {
+		background: #f5f5f5 !important;
+	}
+}

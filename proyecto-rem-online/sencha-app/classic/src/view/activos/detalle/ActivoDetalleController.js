@@ -1399,139 +1399,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	}
     },
     
-    // Esta funcion es llamada cuando algÃºn checkbox del apartado de 'Estados de publicaciÃ³n' es activado
-    // y se encarga de permitir tener sÃ³lo un checkbox de estado activado. AdemÃ¡s, reinicia el estado de
-    // los componentes de cada secciÃ³n que no estÃ© seleccionada.
-    onchkbxEstadoPublicacionChange: function(chkbx) {
-    	var me = this;
-    	var id = chkbx.getReference();
-    	var view = me.getView();
-
-    	if(!chkbx.getValue()){
-    		// Si el checkbox esta siendo desactivado, tan sÃ³lo resetear conenido textbox de la propia secciÃ³n del checkbox.
-    		// Si el checkbox es de la secciÃ³n de publicaciÃ³n, no hacer nada.
-    		switch (id){
-    		case "chkbxpublicacionordinaria":
-    			view.lookupReference('textfieldpublicacionpublicar').reset();
-    			view.lookupReference('textfieldpublicacionpublicar').setAllowBlank(true);
-    			break;
-    		case "chkbxpublicacionforzada":
-    			view.lookupReference('textfieldpublicacionpublicar').reset();
-    			view.lookupReference('textfieldpublicacionpublicar').setAllowBlank(true);
-    			break;
-        	case "chkbxpublicacionocultarprecio":
-        		// textfield.
-        		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
-    			view.lookupReference('textfieldpublicacionocultacionprecio').setAllowBlank(true);
-        		// textarea.
-        		view.lookupReference('textareapublicacionocultacionprecio').reset();
-        		break;
-        	case "chkbxpublicaciondespublicar":
-        		// checkbox.
-        		view.lookupReference('chkbxpublicacionforzada').setValue(me.chkbxPublicacionForzadaLastState);
-        		view.lookupReference('chkbxpublicacionordinaria').setValue(me.chkbxPublicacionOrdinariaLastState);
-        		// textfield.
-        		view.lookupReference('textfieldpublicaciondespublicar').reset();
-        		view.lookupReference('textfieldpublicaciondespublicar').setAllowBlank(true);
-        		break;
-        	case "chkbxpublicacionocultacionforzada":
-        		// textfield.
-        		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
-				view.lookupReference('textfieldpublicacionocultacionforzada').setAllowBlank(true);
-        		break;
-        	default:
-        		break;
-        	}
-    		return;
-    	}
-
-    	switch (id){
-    	case "chkbxpublicacionordinaria":
-    		// checkbox.
-    		//view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
-    		view.lookupReference('chkbxpublicaciondespublicar').setValue(false);
-    		view.lookupReference('chkbxpublicacionocultacionforzada').setValue(false);
-    		//view.lookupReference('chkbxpublicacionforzada').setValue(false);
-    		// textfield.
-    		//view.lookupReference('textfieldpublicacionocultacionprecio').reset();
-    		view.lookupReference('textfieldpublicaciondespublicar').reset();
-    		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
-    		view.lookupReference('textfieldpublicacionpublicar').reset();
-    		//view.lookupReference('textfieldpublicacionocultacionprecio').setAllowBlank(true);
-    		view.lookupReference('textfieldpublicaciondespublicar').setAllowBlank(true);
-    		view.lookupReference('textfieldpublicacionocultacionforzada').setAllowBlank(true);
-    		view.lookupReference('textfieldpublicacionpublicar').setAllowBlank(false);
-    		// textarea.
-    		view.lookupReference('textareapublicacionocultacionprecio').reset();
-    		break;
-    	case "chkbxpublicacionforzada":
-    		// checkbox.
-    		view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
-    		view.lookupReference('chkbxpublicaciondespublicar').setValue(false);
-    		view.lookupReference('chkbxpublicacionocultacionforzada').setValue(false);
-    		//view.lookupReference('chkbxpublicacionordinaria').setValue(false);
-    		// textfield.
-    		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
-    		view.lookupReference('textfieldpublicaciondespublicar').reset();
-    		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
-    		view.lookupReference('textfieldpublicacionocultacionprecio').setAllowBlank(true);
-    		view.lookupReference('textfieldpublicaciondespublicar').setAllowBlank(true);
-    		view.lookupReference('textfieldpublicacionocultacionforzada').setAllowBlank(true);
-    		view.lookupReference('textfieldpublicacionpublicar').setAllowBlank(false);
-    		// textarea.
-    		view.lookupReference('textareapublicacionocultacionprecio').reset();
-    		break;
-    	case "chkbxpublicacionocultarprecio":
-    		// checkbox.
-    		view.lookupReference('chkbxpublicaciondespublicar').setValue(false);
-    		view.lookupReference('chkbxpublicacionocultacionforzada').setValue(false);
-    		// textfield.
-    		view.lookupReference('textfieldpublicacionpublicar').reset();
-    		view.lookupReference('textfieldpublicaciondespublicar').reset();
-    		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
-    		view.lookupReference('textfieldpublicacionocultacionprecio').setAllowBlank(false);
-    		view.lookupReference('textfieldpublicaciondespublicar').setAllowBlank(true);
-    		view.lookupReference('textfieldpublicacionocultacionforzada').setAllowBlank(true);
-    		view.lookupReference('textfieldpublicacionpublicar').setAllowBlank(true);
-    		break;
-    	case "chkbxpublicaciondespublicar":
-    		me.chkbxPublicacionForzadaLastState = view.lookupReference('chkbxpublicacionforzada').getValue();
-    		view.lookupReference('chkbxpublicacionforzada').setValue(false);
-    		me.chkbxPublicacionOrdinariaLastState = view.lookupReference('chkbxpublicacionordinaria').getValue();
-    		view.lookupReference('chkbxpublicacionordinaria').setValue(false);
-    		view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
-    		view.lookupReference('chkbxpublicacionocultacionforzada').setValue(false);
-    		// textfield.
-    		view.lookupReference('textfieldpublicacionpublicar').reset();
-    		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
-    		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
-    		view.lookupReference('textfieldpublicacionocultacionprecio').setAllowBlank(true);
-    		view.lookupReference('textfieldpublicaciondespublicar').setAllowBlank(false);
-    		view.lookupReference('textfieldpublicacionocultacionforzada').setAllowBlank(true);
-    		view.lookupReference('textfieldpublicacionpublicar').setAllowBlank(true);
-    		// textarea.
-    		view.lookupReference('textareapublicacionocultacionprecio').reset();
-    		break;
-    	case "chkbxpublicacionocultacionforzada":
-    		// checkbox.
-    		view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
-    		view.lookupReference('chkbxpublicaciondespublicar').setValue(false);
-    		// textfield.
-    		view.lookupReference('textfieldpublicacionpublicar').reset();
-    		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
-    		view.lookupReference('textfieldpublicaciondespublicar').reset();
-    		view.lookupReference('textfieldpublicacionocultacionprecio').setAllowBlank(true);
-    		view.lookupReference('textfieldpublicaciondespublicar').setAllowBlank(true);
-    		view.lookupReference('textfieldpublicacionocultacionforzada').setAllowBlank(false);
-    		view.lookupReference('textfieldpublicacionpublicar').setAllowBlank(true);
-    		// textarea.
-    		view.lookupReference('textareapublicacionocultacionprecio').reset();
-    		break;
-    	default:
-    		break;
-    	}
-    },
-    
     // Esta funciÃ³n es llamada cuando cambia el estado del combo 'otro' en los
     // condicionantes de la publicaciÃ³n del activo. Muestra u oculta el Ã¡rea de
     // texto que muestra el condicionante 'otro'.
@@ -2386,14 +2253,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			field.setValue('');
 		}
 	},
-    
-    ocultarChkPublicacionOrdinaria: function(record) {
-    	var me = this,
-    	ocultar = !me.getViewModel().get('activo').get('isPublicable'),
-    	chkbxpublicacionordinaria = me.lookupReference('chkbxpublicacionordinaria');
-
-    	chkbxpublicacionordinaria.setHidden(ocultar);
-    },
     
     valdacionesEdicionLlavesList: function(editor, grid) {
     	var me = this,
@@ -3305,8 +3164,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		window = btn.up('window');
     	var form = window.down('formBase');
     	me.onSaveFormularioCompletoDistribuciones(null, form);
-		window.gridDistribuciones.up('informecomercialactivo').funcionRecargar()
+		window.gridDistribuciones.up('informecomercialactivo').funcionRecargar();
     	window.close();
-    	
+    },
+
+    onChangeComboMotivoOcultacion: function(combo) {
+    	var me = this;
+    	var record = combo.findRecord(combo.valueField, combo.getValue());
+    	var textArea = me.lookupReference(combo.textareaRefChained);
+
+    	if(record.data.esMotivoManual === 'true') {
+    		textArea.setDisabled(false);
+    	} else {
+    		textArea.setDisabled(true);
+    	}
     }
 });

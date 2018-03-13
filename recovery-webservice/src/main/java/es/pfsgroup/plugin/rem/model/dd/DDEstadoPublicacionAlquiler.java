@@ -19,42 +19,37 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de tipos comerciales.
- * 
- * @author Daniel Gutiérrez
- *
+ * Modelo que gestiona el diccionario de estados de publicación para el destino comercial alquiler.
  */
 @Entity
-@Table(name = "DD_TCO_TIPO_COMERCIALIZACION", schema = "${entity.schema}")
+@Table(name = "DD_EPA_ESTADO_PUB_ALQUILER", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-@Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDTipoComercializacion implements Auditable, Dictionary {
-	
-    public static final String CODIGO_VENTA = "01";
-    public static final String CODIGO_ALQUILER_VENTA = "02";
-    public static final String CODIGO_SOLO_ALQUILER = "03";
-    public static final String CODIGO_ALQUILER_OPCION_COMPRA = "04";
-    public static final String[] CODIGOS_ALQUILER = {CODIGO_ALQUILER_VENTA, CODIGO_SOLO_ALQUILER, CODIGO_ALQUILER_OPCION_COMPRA};
-    public static final String[] CODIGOS_VENTA = {CODIGO_VENTA, CODIGO_ALQUILER_VENTA, CODIGO_ALQUILER_OPCION_COMPRA};
+@Where(clause = Auditoria.UNDELETED_RESTICTION)
+public class DDEstadoPublicacionAlquiler implements Auditable, Dictionary {
 
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@Column(name = "DD_TCO_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoComercialGenerator")
-	@SequenceGenerator(name = "DDTipoComercialGenerator", sequenceName = "S_DD_TCO_TIPO_COMERCIAL")
-	private Long id;
-	    
-	@Column(name = "DD_TCO_CODIGO")   
-	private String codigo;
-	 
-	@Column(name = "DD_TCO_DESCRIPCION")   
-	private String descripcion;
-	    
-	@Column(name = "DD_TCO_DESCRIPCION_LARGA")   
-	private String descripcionLarga;	    
+	public static final String CODIGO_NO_PUBLICADO_ALQUILER = "01";
+	public static final String CODIGO_PRE_PUBLICADO_ALQUILER = "02";
+	public static final String CODIGO_PUBLICADO_ALQUILER = "03";
+	public static final String CODIGO_OCULTO_ALQUILER = "04";
 
-	@Version   
+	@Id
+	@Column(name = "DD_EPA_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEstadoPublicacionAlquilerGenerator")
+	@SequenceGenerator(name = "DDEstadoPublicacionAlquilerGenerator", sequenceName = "S_DD_EPA_ESTADO_PUB_ALQUILER")
+	private Long id;
+
+	@Column(name = "DD_EPA_CODIGO")
+	private String codigo;
+
+	@Column(name = "DD_EPA_DESCRIPCION")
+	private String descripcion;
+
+	@Column(name = "DD_EPA_DESCRIPCION_LARGA")
+	private String descripcionLarga;
+
+	@Version
 	private Long version;
 
 	@Embedded

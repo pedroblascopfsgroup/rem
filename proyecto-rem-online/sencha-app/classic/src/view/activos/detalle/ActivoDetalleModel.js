@@ -938,14 +938,33 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     			}
     		},
     		
-    		historicoEstados:{
+    		historicoEstadosPublicacionVenta: {
     			pageSize: $AC.getDefaultPageSize(),
     			model: 'HreRem.model.EstadoPublicacion',
     			proxy: {
     				type: 'uxproxy',
-    				remoteUrl: 'activo/getEstadoPublicacionByActivo',
-    				extraParams: {id: '{activo.id}'}
+    				remoteUrl: 'activo/getHistoricoEstadosPublicacionVentaByIdActivo',
+    				extraParams: {idActivo: '{activo.id}'}
     			}
+    		},
+
+    		historicoEstadosPublicacionAlquiler: {
+    			pageSize: $AC.getDefaultPageSize(),
+    			model: 'HreRem.model.EstadoPublicacion',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'activo/getHistoricoEstadosPublicacionAlquilerByIdActivo',
+    				extraParams: {idActivo: '{activo.id}'}
+    			}
+    		},
+
+    		comboMotivosOcultacion: {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'motivosOcultacion'}
+				}
     		},
     		
     		historicoInformeComercial:{

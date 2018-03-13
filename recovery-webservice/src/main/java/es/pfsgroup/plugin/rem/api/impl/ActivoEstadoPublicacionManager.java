@@ -493,7 +493,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
     }
 
 	@Override
-	public DtoCambioEstadoPublicacion getHistoricoEstadoPublicacionByActivo(Long id) {
+	public DtoCambioEstadoPublicacion getHistoricoEstadoPublicacionByActivo(Long id) {// TODO:
 		DtoCambioEstadoPublicacion dto = new DtoCambioEstadoPublicacion();
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", id);

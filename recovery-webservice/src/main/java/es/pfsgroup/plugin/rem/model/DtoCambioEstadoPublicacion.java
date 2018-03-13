@@ -1,7 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 public class DtoCambioEstadoPublicacion extends DtoTabActivo {
-
+// TODO: eliminar este archivo.
 	private Long idActivo;
 	private Boolean publicacionOrdinaria = false;
 	private Boolean publicacionForzada = false;

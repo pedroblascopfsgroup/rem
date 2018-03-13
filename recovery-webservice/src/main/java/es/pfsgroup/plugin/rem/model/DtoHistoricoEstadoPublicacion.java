@@ -2,76 +2,95 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
+import es.capgemini.devon.dto.WebDto;
+
 /**
- * Dto para el histórico de estados de las publicaciones de los activos
- * @author Daniel Gutiérrez
- *
+ * Dto para el histórico de estados, venta y alquiler, de las publicaciones de los activos.
  */
-public class DtoEstadoPublicacion {
+public class DtoHistoricoEstadoPublicacion extends WebDto {
+
+	private static final long serialVersionUID = 1104979537467093933L;
+
 	private Long idActivo;
 	private Date fechaDesde;
 	private Date fechaHasta;
-	private String portal;
+	private Boolean oculto;
 	private String tipoPublicacion;
-	private String estadoPublicacion;
-	private String usuario;
 	private String motivo;
+	private String usuario;
+	private String estadoPublicacion;
 	private Long diasPeriodo;
-
 
 	public Long getIdActivo() {
 		return idActivo;
 	}
+
 	public void setIdActivo(Long idActivo) {
 		this.idActivo = idActivo;
 	}
+
 	public Date getFechaDesde() {
 		return fechaDesde;
 	}
+
 	public void setFechaDesde(Date fechaDesde) {
 		this.fechaDesde = fechaDesde;
 	}
+
 	public Date getFechaHasta() {
 		return fechaHasta;
 	}
+
 	public void setFechaHasta(Date fechaHasta) {
 		this.fechaHasta = fechaHasta;
 	}
-	public String getPortal() {
-		return portal;
+
+	public Boolean getOculto() {
+		return oculto;
 	}
-	public void setPortal(String portal) {
-		this.portal = portal;
+
+	public void setOculto(Boolean oculto) {
+		this.oculto = oculto;
 	}
+
 	public String getTipoPublicacion() {
 		return tipoPublicacion;
 	}
+
 	public void setTipoPublicacion(String tipoPublicacion) {
 		this.tipoPublicacion = tipoPublicacion;
 	}
-	public String getEstadoPublicacion() {
-		return estadoPublicacion;
-	}
-	public void setEstadoPublicacion(String estadoPublicacion) {
-		this.estadoPublicacion = estadoPublicacion;
-	}
+
 	public String getMotivo() {
 		return motivo;
 	}
+
 	public void setMotivo(String motivo) {
 		this.motivo = motivo;
 	}
-	public Long getDiasPeriodo() {
-		return diasPeriodo;
-	}
-	public void setDiasPeriodo(Long diasPeriodo) {
-		this.diasPeriodo = diasPeriodo;
-	}
+
 	public String getUsuario() {
 		return usuario;
 	}
+
 	public void setUsuario(String usuario) {
 		this.usuario = usuario;
+	}
+
+	public String getEstadoPublicacion() {
+		return estadoPublicacion;
+	}
+
+	public void setEstadoPublicacion(String estadoPublicacion) {
+		this.estadoPublicacion = estadoPublicacion;
+	}
+
+	public Long getDiasPeriodo() {
+		return diasPeriodo;
+	}
+
+	public void setDiasPeriodo(Long diasPeriodo) {
+		this.diasPeriodo = diasPeriodo;
 	}
 
 }

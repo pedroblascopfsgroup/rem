@@ -35,7 +35,7 @@ DECLARE
 	    
 	 -- Creacion Tabla TMP_APROV_DACIONES
     
-    -- Comprobamos si existe la tabla   
+     -- Comprobamos si existe la tabla   
     V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''TMP_APROV_DACIONES'' and owner = '''||V_ESQUEMA||'''';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     -- Si existe la tabla la vaciamos

@@ -453,6 +453,33 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								}
 							},
 							
+							//Fila publicacion
+							{
+								xtype:'checkboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.publicacion'),
+								reference: 'chkbxPerimetroPublicar',
+								bind: {
+									value: '{activo.aplicaPublicar}'
+									
+								},
+								listeners: {
+									change: 'onChkbxPerimetroChange'
+								}
+							},
+							{
+								xtype: 'datefieldbase',
+								bind: '{activo.fechaAplicaPublicar}',
+								reference: 'datefieldPerimetroPublicar',
+								readOnly: true
+							},
+							{
+								xtype: 'textfieldbase',
+								reference: 'textFieldPerimetroPublicar',
+								bind: {
+									value: '{activo.motivoAplicaPublicar}'
+								}
+							},
+							
 							//Bloque Comercialización
 							{    
 								xtype:'fieldsettable',

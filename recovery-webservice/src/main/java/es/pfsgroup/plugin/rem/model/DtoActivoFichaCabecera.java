@@ -136,6 +136,10 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String tipoAlquilerDescripcion;
 	private Boolean bloqueoTipoComercializacionAutomatico;
 	private String numInmovilizadoBankia;
+	//HREOS-3890
+	private Boolean aplicaPublicar;
+	private Date fechaAplicaPublicar;
+	private String motivoAplicaPublicar;
 
 	//Activo Bancario datos:
 	private String claseActivoCodigo;
@@ -1380,6 +1384,30 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setAcbCoreaeTexto(String acbCoreaeTexto) {
 		this.acbCoreaeTexto = acbCoreaeTexto;
+	}
+
+	public Boolean getAplicaPublicar() {
+		return aplicaPublicar;
+	}
+
+	public void setAplicaPublicar(Boolean aplicaPublicar) {
+		this.aplicaPublicar = aplicaPublicar;
+	}
+
+	public Date getFechaAplicaPublicar() {
+		return fechaAplicaPublicar;
+	}
+
+	public void setFechaAplicaPublicar(Date fechaAplicaPublicar) {
+		this.fechaAplicaPublicar = fechaAplicaPublicar;
+	}
+
+	public String getMotivoAplicaPublicar() {
+		return motivoAplicaPublicar;
+	}
+
+	public void setMotivoAplicaPublicar(String motivoAplicaPublicar) {
+		this.motivoAplicaPublicar = motivoAplicaPublicar;
 	}
 
 	

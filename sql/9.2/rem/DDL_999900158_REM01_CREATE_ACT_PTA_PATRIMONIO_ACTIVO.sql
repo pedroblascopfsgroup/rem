@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=JIN LI HU
---## FECHA_CREACION=20180306
+--## AUTOR=DANIEL ALGABA
+--## FECHA_CREACION=20180312
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
---## INCIDENCIA_LINK=HREOS-3897
---## PRODUCTO=NO
+--## INCIDENCIA_LINK=HREOS-3890
+--## PRODUCTO=NO 
 --##
---## Finalidad:            
+--## Finalidad:           
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -33,7 +33,7 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_MTO_MOTIVOS_OCULTACION'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_PTA_PATRIMONIO_ACTIVO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 
 BEGIN
 
@@ -49,26 +49,24 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
 		V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
 		(
-			DD_MTO_ID           			NUMBER(16, 0) NOT NULL,
-			DD_MTO_CODIGO        			VARCHAR2(20 CHAR) NOT NULL,
-			DD_MTO_DESCRIPCION			VARCHAR2(100 CHAR),
-			DD_MTO_DESCRIPCION_LARGA		VARCHAR2(250 CHAR),
-			DD_TCO_ID                               NUMBER(16,0) NOT NULL,
-			DD_MTO_MANUAL                           NUMBER(1,0) NOT NULL,
-			VERSION 				NUMBER(38,0) DEFAULT 0 NOT NULL ENABLE, 
+			ACT_PTA_ID           		NUMBER(16, 0) NOT NULL,
+			ACT_ID        				NUMBER(16, 0) NOT NULL,
+			DD_ADA_ID					NUMBER(16, 0),
+			CHECK_HPM					NUMBER(1, 0),
+			VERSION 					NUMBER(38,0) DEFAULT 0 NOT NULL ENABLE, 
 			USUARIOCREAR 				VARCHAR2(50 CHAR) NOT NULL ENABLE, 
-			FECHACREAR 				TIMESTAMP (6) NOT NULL ENABLE, 
+			FECHACREAR 					TIMESTAMP (6) NOT NULL ENABLE, 
 			USUARIOMODIFICAR 			VARCHAR2(50 CHAR), 
 			FECHAMODIFICAR 				TIMESTAMP (6), 
 			USUARIOBORRAR 				VARCHAR2(50 CHAR), 
 			FECHABORRAR 				TIMESTAMP (6), 
-			BORRADO 				NUMBER(1,0) DEFAULT 0 NOT NULL ENABLE
+			BORRADO 					NUMBER(1,0) DEFAULT 0 NOT NULL ENABLE
 		)';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');
 	
 		-- Creamos primary key
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (DD_MTO_ID))';
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (ACT_PTA_ID))';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
 	
@@ -84,34 +82,36 @@ BEGIN
 			DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
 		END IF;
 		
+		-- Creamos foreign key ACT_ID
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_PTA_ACT_ACTIVO FOREIGN KEY (ACT_ID) REFERENCES '||V_ESQUEMA||'.ACT_ACTIVO (ACT_ID) ON DELETE SET NULL)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_PTA_ACT_ACTIVO... Foreign key creada.');
+		
+		-- Creamos foreign key DD_ADA_ID
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_PTA_DD_ADA FOREIGN KEY (DD_ADA_ID) REFERENCES '||V_ESQUEMA||'.DD_ADA_ADECUACION_ALQUILER (DD_ADA_ID) ON DELETE SET NULL)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_PTA_DD_ADA_ADECUACION_ALQUILER... Foreign key creada.');
+		
 		-- Creamos el comentario de las columnas
-		V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS ''Tabla de motivo de ocultación.''';
+		V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS ''Tabla de patrimonio activo.''';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la tabla creado.');		
 
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_MTO_ID IS ''Código identificador único del motivo''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ACT_PTA_ID IS ''Código identificador único del patrimonio activo''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_MTO_ID creado.');
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna ACT_PTA_ID creado.');
 
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_MTO_CODIGO IS ''Código identificador único del motivo''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ACT_ID IS ''Código identificador único del activo''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_MTO_CODIGO creado.');	
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna ACT_ID creado.');	
 
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_MTO_DESCRIPCION IS ''Descripción del motivo''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_ADA_ID IS ''Código identificador único del diccionario de adecuación alquiler''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_MTO_DESCRIPCION creado.');
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_ADA_ID creado.');
 
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_MTO_DESCRIPCION_LARGA IS ''Descripción larga del motivo''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CHECK_HPM IS ''Incida si tiene el check HPM''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_MTO_DESCRIPCION_LARGA creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TCO_ID IS ''Código identificador único del tipo de comercialización''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_TCO_ID creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_MTO_MANUAL IS ''Indicador de Manual/Automático''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_MTO_MANUAL creado.');	
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna CHECK_HPM creado.');	
 
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.VERSION IS ''Indica la versión del registro.''';
 		EXECUTE IMMEDIATE V_MSQL;

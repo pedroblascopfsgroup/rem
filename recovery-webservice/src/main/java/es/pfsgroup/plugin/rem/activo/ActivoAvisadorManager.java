@@ -24,6 +24,8 @@ import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 
 
 @Service("activoAvisadorManager")
@@ -195,6 +197,33 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			listaAvisos.add(dtoAviso);	
 		}
 		
+		PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
+		
+		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getAplicaPublicar()) 
+				&& !perimetroActivo.getAplicaPublicar() && !Checks.esNulo(activo.getEstadoPublicacion()) 
+				&& DDEstadoPublicacion.CODIGO_NO_PUBLICADO.equals(activo.getEstadoPublicacion().getCodigo())) {
+			
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("No publicable");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
+		
+		}
+		if(!Checks.esNulo(perimetroActivo)&& !Checks.esNulo(perimetroActivo.getAplicaPublicar()) && perimetroActivo.getAplicaPublicar()) {
+			
+			if(DDEstadoPublicacion.CODIGO_PUBLICADO.equals(!Checks.esNulo(activo.getEstadoPublicacion()) ? activo.getEstadoPublicacion().getCodigo() : null) 
+					&& BooleanUtils.toBoolean(!Checks.esNulo(perimetroActivo.getAplicaComercializar()) ? perimetroActivo.getAplicaComercializar() : null) 
+					&& !DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo()) 
+					/* TODO &&  (DDEstadoPublicacion.CODIGO_NO_PUBLICADO.equals(activo.getEstadoPublicacion() || activo.prePublicado() )
+					 * FALTA POR PONER LAS 2 ULTIMAS COMPROBACIONES */  ) {
+				DtoAviso dtoAviso = new DtoAviso();
+				dtoAviso.setDescripcion("Publicable");
+				dtoAviso.setId(String.valueOf(id));
+				listaAvisos.add(dtoAviso);
+			}
+		}
+		
+		 
 		
 		return listaAvisos;
 		//activoDao.getListActivos(id, usuarioLogado);

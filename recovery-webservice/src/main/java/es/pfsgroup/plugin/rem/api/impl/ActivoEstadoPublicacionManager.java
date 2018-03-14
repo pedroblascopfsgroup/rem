@@ -221,7 +221,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 						&& ActivoHistoricoEstadoPublicacion.MOTIVO_OCULTACION_AUTOMATICA.equals(ultimoHistoricoPublicacion.getMotivo())){
 					ActivoHistoricoEstadoPublicacion penultimoHistoricoPublicacion = activoApi.getPenultimoHistoricoEstadoPublicacion(dtoCambioEstadoPublicacion.getIdActivo());
 					
-					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", penultimoHistoricoPublicacion.getEstadoPublicacion().getCodigo());
+					if(!Checks.esNulo(penultimoHistoricoPublicacion)){
+						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", penultimoHistoricoPublicacion.getEstadoPublicacion().getCodigo());
+					}
 					motivo = getMotivo(dtoCambioEstadoPublicacion);
 				}
 			}

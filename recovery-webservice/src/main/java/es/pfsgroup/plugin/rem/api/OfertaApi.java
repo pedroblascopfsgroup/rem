@@ -543,9 +543,7 @@ public interface OfertaApi {
 	 * @return true si el valor es NO en ambos combos, false en caso de que no estén rellenos o alguno tenga SI.
 	 */
 	public boolean checkReservaFirmada(TareaExterna tareaExterna);
-
-	public void congelarExpedientesPorOfertaExpress(Long numActivo) throws Exception;
-
+	
 
 }
 

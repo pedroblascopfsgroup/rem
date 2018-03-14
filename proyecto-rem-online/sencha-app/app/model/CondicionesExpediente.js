@@ -212,6 +212,7 @@ Ext.define('HreRem.model.CondicionesExpediente', {
     proxy: {
 		type: 'uxproxy',
 		localUrl: 'condicionesExpediente.json',
+		timeout: 60000,
 		
 		api: {
             read: 'expedientecomercial/getTabExpediente',

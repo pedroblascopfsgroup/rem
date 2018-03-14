@@ -133,9 +133,18 @@ public class ProcessAdapter {
 		
 		//Si el fichero original y el fichero de errores son iguales entonces NO hay errores.
 		if(document != null) {
-			fileItem = document.getErroresFichero();
-			fileItem.setFileName("ERROR_"+document.getNombre());
-			fileItem.setContentType(ExcelRepoApi.TIPO_EXCEL);
+			
+			if(!Checks.esNulo(document.getProcesoMasivo()) && !Checks.esNulo(document.getProcesoMasivo().getTotalFilasKo()) && 
+					document.getProcesoMasivo().getTotalFilasKo()>0){
+				fileItem = document.getErroresFicheroProcesar();
+				fileItem.setFileName("ERROR_PROCESAR_"+document.getNombre());
+				fileItem.setContentType(ExcelRepoApi.TIPO_EXCEL);
+			}
+			else{
+				fileItem = document.getErroresFichero();
+				fileItem.setFileName("ERROR_"+document.getNombre());
+				fileItem.setContentType(ExcelRepoApi.TIPO_EXCEL);
+			}
 		}	
 		
 		return fileItem;
@@ -225,6 +234,12 @@ public class ProcessAdapter {
 	
 	public MSVProcesoMasivo get(Long idProcess){
 		return procesoManager.get(idProcess);
+	}
+	
+	@Transactional
+	public void setExcelErroresProcesado(MSVDocumentoMasivo document, FileItem fileItemErrores)	{	
+		document.setErroresFicheroProcesar(fileItemErrores);
+		genericDao.update(MSVDocumentoMasivo.class, document);
 	}
 		
 	

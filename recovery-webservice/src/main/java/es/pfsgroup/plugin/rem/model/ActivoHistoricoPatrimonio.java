@@ -64,10 +64,10 @@ public class ActivoHistoricoPatrimonio implements Serializable, Auditable {
 	private Date fechaFinAdecuacionAlquiler;
 
 	@Column(name = "FECHA_INI_HPM")
-	private Boolean fechaInicioHPM;
+	private Date fechaInicioHPM;
 
 	@Column(name = "FECHA_FIN_HPM")
-	private Boolean fechaFinHPM;
+	private Date fechaFinHPM;
 
 	@Version
 	private Long version;
@@ -123,19 +123,19 @@ public class ActivoHistoricoPatrimonio implements Serializable, Auditable {
 		this.fechaFinAdecuacionAlquiler = fechaFinAdecuacionAlquiler;
 	}
 
-	public Boolean getFechaInicioHPM() {
+	public Date getFechaInicioHPM() {
 		return fechaInicioHPM;
 	}
 
-	public void setFechaInicioHPM(Boolean fechaInicioHPM) {
+	public void setFechaInicioHPM(Date fechaInicioHPM) {
 		this.fechaInicioHPM = fechaInicioHPM;
 	}
 
-	public Boolean getFechaFinHPM() {
+	public Date getFechaFinHPM() {
 		return fechaFinHPM;
 	}
 
-	public void setFechaFinHPM(Boolean fechaFinHPM) {
+	public void setFechaFinHPM(Date fechaFinHPM) {
 		this.fechaFinHPM = fechaFinHPM;
 	}
 

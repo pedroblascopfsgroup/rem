@@ -188,7 +188,16 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 						idTipoGestor: '{tipoGestor.selection.id}'
 					}
 				}
-			}
+			},
+			
+			comboAdecuaciones: {
+				model: 'HreRem.model.ComboBase',
+					proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'adecuaciones'}
+					}
+    		}
      }
 
 });

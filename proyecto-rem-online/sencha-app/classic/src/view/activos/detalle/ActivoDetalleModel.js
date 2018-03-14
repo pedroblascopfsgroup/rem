@@ -6,7 +6,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.IncrementoPresupuesto', 'HreRem.model.Distribuciones', 'HreRem.model.Observaciones',
     'HreRem.model.Carga', 'HreRem.model.Llaves', 'HreRem.model.PreciosVigentes','HreRem.model.VisitasActivo',
     'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel',
-    'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave'],
+    'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave','HreRem.model.HistoricoAdecuacionesPatrimonioModel','HreRem.model.ActivoPatrimonio'],
     
     data: {
     	activo: null,
@@ -272,7 +272,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		 
 		 activoPerteneceAgrupacionRestringida: function(get){
 		 	 return get('activo.pertenceAgrupacionRestringida');
-		 }
+		 },
+		 
+		 enableComboTipoAlquiler: function(get){
+				debugger;
+				var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
+				return true;
+		}
 	 },
 
     stores: {
@@ -1300,26 +1306,26 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 							}
 
 				}
+		},
+		
+		comboAdecuacionAlquiler: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'comboAdecuacionAlquiler'}
+			}
+		},
+		
+		storeHistoricoAdecuacionesAlquiler:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.HistoricoAdecuacionesPatrimonioModel',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getHistoricoAdecuacionesAlquilerByActivo',
+				extraParams: {id: '{activo.id}'}
+			}
 		}
 		
-
-//		
-//		filtroComboPrescriptor: {
-//			//pageSize: $AC.getDefaultPageSize(),
-//   		 	model: 'HreRem.model.ComboBase',
-//       		proxy: {
-//		        type: 'uxproxy',
-//		        remoteUrl: 'proveedores/getProveedores',
-//		        actionMethods: {read: 'POST'},
-//		        extraParams: {codigoTipoProveedor: '03', codigoSubtipoProveedor: '{tipoProveedorCodigo.selection.codigo}'}
-//	    	},	    	
-//	    autoLoad: true/*,
-//	    	session: true,
-//	    	remoteSort: true,
-//	    	remoteFilter: true,
-//	    	listeners : {
-//	            beforeload : 'paramLoading'
-//	        }*/
-//		}
      }    
 });

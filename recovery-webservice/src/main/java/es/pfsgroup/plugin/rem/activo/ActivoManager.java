@@ -32,6 +32,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
@@ -140,6 +141,7 @@ import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Formalizacion;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
+import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
@@ -3572,13 +3574,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numPropuesta", idPropuesta);
 		PropuestaPrecio propuesta = genericDao.get(PropuestaPrecio.class, filtro);
 
-		propuesta.setFechaCarga(new Date());
-
-		DDEstadoPropuestaPrecio estado = (DDEstadoPropuestaPrecio) utilDiccionarioApi
-				.dameValorDiccionarioByCod(DDEstadoPropuestaPrecio.class, DDEstadoPropuestaPrecio.ESTADO_SANCIONADA);
-		propuesta.setEstado(estado);
-
-		genericDao.update(PropuestaPrecio.class, propuesta);
+		if (!Checks.esNulo(propuesta)) {
+			propuesta.setFechaCarga(new Date());
+	
+			DDEstadoPropuestaPrecio estado = (DDEstadoPropuestaPrecio) utilDiccionarioApi
+					.dameValorDiccionarioByCod(DDEstadoPropuestaPrecio.class, DDEstadoPropuestaPrecio.ESTADO_SANCIONADA);
+			propuesta.setEstado(estado);
+	
+			genericDao.update(PropuestaPrecio.class, propuesta);
+		}
 	}
 
 	@Override
@@ -4208,6 +4212,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Usuario usuarioGestorFormalizacion = null;
 		Usuario usuarioGestoriaFormalizacion = null;
 		Usuario usuarioGestorComercial = null;
+		Usuario usuarioSupervisorComercial = null;
 		Usuario usuarioGestorComercialBack = null;
 		Usuario usuarioGestorReserva = null;
 		Usuario usuarioSupervisorReserva = null;
@@ -4235,10 +4240,26 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				activo = oferta.getActivoPrincipal();
 			}
 			if(!Checks.esNulo(activo)){
-				Long idUsuarioGestorFormalizacion = gestorExpedienteComercialDao.getUsuarioGestorFormalizacion(activo.getId());
+				Long idUsuarioGestorFormalizacion;
+				if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_THIRD_PARTY)){
+					Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", "GFORM");
+					EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, f1);
+					Filter f2 = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
+					Filter f3 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor",tipoGestor);
+					idUsuarioGestorFormalizacion = genericDao.get(GestorActivo.class, f2,f3).getUsuario().getId();//flag
+					
+					f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", "GCOM");
+					tipoGestor = genericDao.get(EXTDDTipoGestor.class, f1);
+					f3 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor", tipoGestor);
+					usuarioGestorComercial = genericDao.get(GestorActivo.class, f2,f3).getUsuario();
+					
+				}else{
+					 idUsuarioGestorFormalizacion = gestorExpedienteComercialDao.getUsuarioGestorFormalizacion(activo.getId());
+				}
 				if(!Checks.esNulo(idUsuarioGestorFormalizacion))
 					usuarioGestorFormalizacion = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", idUsuarioGestorFormalizacion));
-
+				
+				
 				Long idUsuarioGestoriaFormalizacion = gestorExpedienteComercialDao.getUsuarioGestoriaFormalizacion(activo.getId());
 				if(!Checks.esNulo(idUsuarioGestoriaFormalizacion))
 					usuarioGestoriaFormalizacion = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", idUsuarioGestoriaFormalizacion));
@@ -4276,18 +4297,40 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION, "GESTFORM", dto);
 			
 			
-			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION, "SUPFORM",dto);
+			if (!activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_THIRD_PARTY)){
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION, "SUPFORM",dto);
+			} else {
+				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", "SFORM");
+				EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, f1);
+				
+				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
+				Filter f3 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor",tipoGestor);
+				GestorActivo supervisorFormalzacion = genericDao.get(GestorActivo.class,f2,f3);
+				
+				f1 = genericDao.createFilter(FilterType.EQUALS, "codigo","SCOM");
+				tipoGestor = genericDao.get(EXTDDTipoGestor.class,f1);
+				
+				f3 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor", tipoGestor);
+				usuarioSupervisorComercial = genericDao.get(GestorActivo.class, f2,f3).getUsuario();
+				if (!Checks.esNulo(supervisorFormalzacion)) {
+					this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION, supervisorFormalzacion.getUsuario().getUsername(),dto);
+				}
+				if(!Checks.esNulo(usuarioSupervisorComercial)){
+					this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_COMERCIAL, usuarioSupervisorComercial.getUsername(), dto);
+				}
+			}
 			
 			if(!Checks.esNulo(usuarioGestoriaFormalizacion))
 				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION, usuarioGestoriaFormalizacion.getUsername(), dto);
 		}
+		
+		
 		
 		if(!Checks.esNulo(usuarioGestorComercial))
 			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_COMERCIAL, usuarioGestorComercial.getUsername(), dto);
 		
 		if(!Checks.esNulo(usuarioGestorComercialBack))
 			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE, usuarioGestorComercialBack.getUsername(), dto);
-		
 		//HREOS-2827
 		if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
 			if(!Checks.esNulo(usuarioGestorReserva))

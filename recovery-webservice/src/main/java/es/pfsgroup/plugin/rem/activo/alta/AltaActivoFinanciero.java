@@ -214,6 +214,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		genericDao.save(ActivoBancario.class, activoBancario);
 
 		// ActivoPlanDinVentas.
+		//ActivoAdjudicacionJudicial
 		ActivoPlanDinVentas planDinVentas = new ActivoPlanDinVentas();
 		planDinVentas.setActivo(activo);
 		beanUtilNotNull.copyProperty(planDinVentas, "acreedorNif", dtoAAF.getNifSociedadAcreedora());
@@ -311,7 +312,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		ActivoPlazaAparcamiento activoPlazaAparcamiento= new ActivoPlazaAparcamiento();
 		ActivoInfoComercial activoInfoComercialDos= new ActivoInfoComercial();
 		
-		if(DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
+		if(!Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
 			ActivoVivienda vivienda = new ActivoVivienda();
 			vivienda.setActivo(activo);
 			vivienda.setTipoActivo(activo.getTipoActivo());
@@ -325,7 +326,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 			beanUtilNotNull.copyProperty(vivienda, "planta", dtoAAF.getNumPlantasVivienda());
 			activoVivienda= vivienda;
 			genericDao.save(ActivoVivienda.class, vivienda);
-		} else if(DDTipoActivo.COD_COMERCIAL.equals(activo.getTipoActivo().getCodigo())){
+		} else if(!Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_COMERCIAL.equals(activo.getTipoActivo().getCodigo())){
 			ActivoLocalComercial localComercial = new ActivoLocalComercial();
 			localComercial.setActivo(activo);
 			localComercial.setTipoActivo(activo.getTipoActivo());
@@ -338,7 +339,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 			beanUtilNotNull.copyProperty(localComercial, "planta", dtoAAF.getNumPlantasVivienda());
 			activoLocalComercial= localComercial;
 			genericDao.save(ActivoLocalComercial.class, localComercial);
-		} else if(DDTipoActivo.COD_OTROS.equals(activo.getTipoActivo().getCodigo())){
+		} else if(!Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_OTROS.equals(activo.getTipoActivo().getCodigo())){
 			ActivoPlazaAparcamiento aparcamiento = new ActivoPlazaAparcamiento();
 			aparcamiento.setActivo(activo);
 			aparcamiento.setTipoActivo(activo.getTipoActivo());
@@ -390,7 +391,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		}
 
 		// Aseos.
-		if (!Checks.esNulo(dtoAAF.getNumAseosVivienda()) && dtoAAF.getNumAseosVivienda() > 0) {
+		if (!Checks.esNulo(activo.getTipoActivo()) && !Checks.esNulo(dtoAAF.getNumAseosVivienda()) && dtoAAF.getNumAseosVivienda() > 0) {
 			ActivoDistribucion aseos = new ActivoDistribucion();
 			if(DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
 				aseos.setInfoComercial(activoVivienda);
@@ -411,7 +412,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		}
 
 		// Dormitorios.
-		if (!Checks.esNulo(dtoAAF.getNumDormitoriosVivienda()) && dtoAAF.getNumDormitoriosVivienda() > 0) {
+		if (!Checks.esNulo(activo.getTipoActivo()) && !Checks.esNulo(dtoAAF.getNumDormitoriosVivienda()) && dtoAAF.getNumDormitoriosVivienda() > 0) {
 			ActivoDistribucion dormitorio = new ActivoDistribucion();
 			if(DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
 				dormitorio.setInfoComercial(activoVivienda);
@@ -432,7 +433,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		}
 
 		// Garaje Anejo.
-		if (!Checks.esNulo(dtoAAF.getGarajeAnejo()) && dtoAAF.getGarajeAnejo()) {
+		if (!Checks.esNulo(activo.getTipoActivo()) && !Checks.esNulo(dtoAAF.getGarajeAnejo()) && dtoAAF.getGarajeAnejo()) {
 			ActivoDistribucion garajeAnejo = new ActivoDistribucion();
 			if(DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
 				garajeAnejo.setInfoComercial(activoVivienda);
@@ -453,7 +454,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		}
 		
 		// Trastero Anejo.
-		if (!Checks.esNulo(dtoAAF.getTrasteroAnejo()) && dtoAAF.getTrasteroAnejo()) {
+		if (!Checks.esNulo(activo.getTipoActivo()) && !Checks.esNulo(dtoAAF.getTrasteroAnejo()) && dtoAAF.getTrasteroAnejo()) {
 			ActivoDistribucion trasteroAnejo = new ActivoDistribucion();
 			if(DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
 				trasteroAnejo.setInfoComercial(activoVivienda);
@@ -475,13 +476,13 @@ public class AltaActivoFinanciero implements AltaActivoService {
 
 		// ActivoEdificio.
 		ActivoEdificio activoEdificio = new ActivoEdificio();
-		if(DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
+		if(!Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
 			activoEdificio.setInfoComercial(activoVivienda);
 		}
-		else if(DDTipoActivo.COD_COMERCIAL.equals(activo.getTipoActivo().getCodigo())){
+		else if(!Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_COMERCIAL.equals(activo.getTipoActivo().getCodigo())){
 			activoEdificio.setInfoComercial(activoLocalComercial);
 		}
-		else if(DDTipoActivo.COD_OTROS.equals(activo.getTipoActivo().getCodigo())){
+		else if(!Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_OTROS.equals(activo.getTipoActivo().getCodigo())){
 			activoEdificio.setInfoComercial(activoPlazaAparcamiento);
 		}
 		else{

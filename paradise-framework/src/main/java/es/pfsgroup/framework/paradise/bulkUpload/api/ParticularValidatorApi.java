@@ -261,4 +261,24 @@ public interface ParticularValidatorApi {
 	public Boolean usuarioEsTipoGestor(String username, String codigoTipoGestor);
 	
 	public Boolean combinacionGestorCarteraAcagexValida(String codigoGestor, String numActivo, String numAgrupacion,String numExpediente);
+
+	public boolean existeGestorComercialByUsername(String gestorUsername);
+	
+	public boolean existeSupervisorComercialByUsername (String supervisorUsername);
+	
+	public boolean existeGestorFormalizacionByUsername(String gestorUsername);
+	
+	public boolean existeSupervisorFormalizacionByUsername(String supervisorUsername);
+	
+	public boolean existeGestorAdmisionByUsername(String gestorUsername);
+	
+	public boolean existeGestorActivosByUsername(String gestorUsername);
+	
+	public boolean existeGestoriaDeFormalizacionByUsername(String username);
+
+	public boolean existeSubCarteraByCod(String codSubCartera);
+
+	public boolean existeTipoActivoByCod(String codTipoActivo);
+	
+	public boolean existeSubtipoActivoByCod(String codSubtipoActivo);
 }

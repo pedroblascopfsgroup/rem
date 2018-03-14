@@ -176,6 +176,7 @@ public class TareaActivoManager implements TareaActivoApi {
 			saltoTarea(idTareaExterna,ActivoGenerarSaltoImpl.CODIGO_SALTO_CIERRE);
 	}
 	
+	
 	@Override
 	@Transactional(readOnly=false)
 	public void saltoResolucionExpediente(Long idTareaExterna){
@@ -195,6 +196,16 @@ public class TareaActivoManager implements TareaActivoApi {
 		if(!Checks.esNulo(token)){
 			jbpmManager.generaTransicionesSalto(token.getId(), ActivoGenerarSaltoImpl.CODIGO_SALTO_PBC);
 			jbpmManager.signalToken(token.getId(), "salto"+ActivoGenerarSaltoImpl.CODIGO_SALTO_PBC);
+		}
+	}
+	
+	@Override
+	@Transactional(readOnly=false)
+	public void saltoInstruccionesReserva(Long idProcesBpm){
+		Token token = processManagerApi.getActualToken(idProcesBpm);
+		if(!Checks.esNulo(token)){
+			jbpmManager.generaTransicionesSalto(token.getId(), ActivoGenerarSaltoImpl.CODIGO_SALTO_INSTRUCCIONES_RESERVA);
+			jbpmManager.signalToken(token.getId(), "salto"+ActivoGenerarSaltoImpl.CODIGO_SALTO_INSTRUCCIONES_RESERVA);
 		}
 	}
 			

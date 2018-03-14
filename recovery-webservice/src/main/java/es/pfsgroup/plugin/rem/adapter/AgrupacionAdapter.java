@@ -522,9 +522,13 @@ public class AgrupacionAdapter {
 		Activo activo = genericDao.get(Activo.class, filter);
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idAgrupacion);
 
-		int num = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(agrupacion.getId());
-
 		try {
+			
+			if (Checks.esNulo(agrupacion)) {
+				throw new JsonViewerException("La agrupación no existe");
+			}
+			
+			int num = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(agrupacion.getId());
 
 			if (Checks.esNulo(activo)) {
 				throw new JsonViewerException("El activo no existe");
@@ -1491,6 +1495,7 @@ public class AgrupacionAdapter {
 			oferta.setCliente(clienteComercial);
 			oferta.setPrescriptor((ActivoProveedor) proveedoresApi.searchProveedorCodigo(dto.getCodigoPrescriptor()));
 			oferta.setOrigen("REM");
+			oferta.setOfertaExpress(false);
 			genericDao.save(Oferta.class, oferta);
 			// Actualizamos la situacion comercial de los activos de la oferta
 			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
@@ -1708,6 +1713,9 @@ public class AgrupacionAdapter {
 				Date fechaInicioAux = agrupacion.getFechaInicioVigencia();
 				Date fechaFinAux = agrupacion.getFechaFinVigencia();
 				this.trazarCambioVigencia(id, fechaInicioAux, fechaFinAux);
+			}
+			if(!Checks.esNulo(dto.getAgrupacionEliminada())){
+				agrupacion.setEliminado(BooleanUtils.toInteger(dto.getAgrupacionEliminada()));
 			}
 		}
 

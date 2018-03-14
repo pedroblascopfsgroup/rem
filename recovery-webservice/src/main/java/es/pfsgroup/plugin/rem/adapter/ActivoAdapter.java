@@ -2715,9 +2715,10 @@ public class ActivoAdapter {
 				if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA) || activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR))
 					oferta.setSucursal((ActivoProveedor) proveedoresApi.searchProveedorCodigoUvem(codigoOficina+dto.getCodigoSucursal()));
 			}
+			oferta.setOfertaExpress(false);
 			genericDao.save(Oferta.class, oferta);
 			// Actualizamos la situacion comercial del activo
-			updaterState.updaterStateDisponibilidadComercialAndSave(activo);
+			updaterState.updaterStateDisponibilidadComercialAndSave(activo,false);
 
 			notificationOfertaManager.sendNotification(oferta);
 		} catch (Exception ex) {

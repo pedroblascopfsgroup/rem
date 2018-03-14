@@ -530,27 +530,31 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		return false;
 	}
 	
-	//Comprobar si el activo es Con Formalización
-		private boolean isConFormalizacion(TareaExterna tareaExterna) {
-			boolean esConFormalizacion = false;
-			TareaActivo tareaActivo = (TareaActivo) tareaExterna.getTareaPadre();
-			if (!Checks.esNulo(tareaActivo) && !Checks.esNulo(tareaActivo.getTramite())
-					&& !Checks.esNulo(tareaActivo.getTramite().getTrabajo())) {
-				
-				Activo activo = tareaActivo.getActivo();
-				if(activo==null && !tareaActivo.getTramite().getActivos().isEmpty()){
-					activo = tareaActivo.getTramite().getActivos().get(0);
-				}
-				PerimetroActivo perimetro = null;
-				if(activo != null){
-					perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
-				}
-				
-				if (!Checks.esNulo(perimetro) && BooleanUtils.toBoolean(perimetro.getAplicaFormalizar())) {
-					esConFormalizacion = true;
-				}
-			
+	// Comprobar si el activo es Con Formalización
+	private boolean isConFormalizacion(TareaExterna tareaExterna) {
+		boolean esConFormalizacion = false;
+		TareaActivo tareaActivo = (TareaActivo) tareaExterna.getTareaPadre();
+		if (!Checks.esNulo(tareaActivo) && !Checks.esNulo(tareaActivo.getTramite())
+				&& !Checks.esNulo(tareaActivo.getTramite().getTrabajo())) {
+
+			Activo activo = tareaActivo.getActivo();
+			if (activo == null && !tareaActivo.getTramite().getActivos().isEmpty()) {
+				activo = tareaActivo.getTramite().getActivos().get(0);
 			}
-			return esConFormalizacion;
+			PerimetroActivo perimetro = null;
+			if (activo != null) {
+				perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
+			}
+
+			if (!Checks.esNulo(perimetro)) {
+				if (!Checks.esNulo(perimetro.getAplicaFormalizar())) {
+					if (BooleanUtils.toBoolean(perimetro.getAplicaFormalizar())) {
+						esConFormalizacion = true;
+					}
+				}
+			}
+
 		}
+		return esConFormalizacion;
+	}
 }

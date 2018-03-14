@@ -599,7 +599,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 
 			Long idOferta = this.saveOferta(oferta);
-			if (!Checks.esNulo(ofertaDto.getTitularesAdicionales())) {
+			if (!Checks.esNulo(ofertaDto.getTitularesAdicionales()) && !Checks.estaVacio(ofertaDto.getTitularesAdicionales())) {
 				saveOrUpdateListaTitualesAdicionalesOferta(ofertaDto, oferta);
 			}
 			oferta = updateEstadoOferta(idOferta, ofertaDto.getFechaAccion());
@@ -730,9 +730,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Boolean incompatible = false;
 		Oferta oferta = this.getOfertaById(idOferta);
 
-		UsuarioSecurity usuarioSecurity = usuarioSecurityManager.getByUsername(RestApi.REM_LOGGED_USER_USERNAME);
-		restApi.doLogin(usuarioSecurity);
-
 		List<ActivoOferta> listaActivoOferta = oferta.getActivosOferta();
 
 		if (listaActivoOferta != null && listaActivoOferta.size() > 0) {
@@ -813,7 +810,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				activoApi.crearExpediente(oferta, trabajo);
 				ActivoTramite activoTramite = trabajoApi.createTramiteTrabajo(trabajo);
 
-				adapter.saltoPBC(activoTramite.getProcessBPM());
+				adapter.saltoInstruccionesReserva(activoTramite.getProcessBPM());
 
 				// Se copiará el valor del campo necesita financiación al campo
 				// asociado del expediente comercial
@@ -849,8 +846,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			for (ActivoOferta activoOferta : listaActivoOferta) {
 				Activo activo = activoOferta.getPrimaryKey().getActivo();
 				if (incompatible
-						|| (activo.getEstadoPublicacion() != null && activo.getEstadoPublicacion().getCodigo()
-								.equals(DDEstadoPublicacion.CODIGO_NO_PUBLICADO))
 						|| (activo.getSituacionComercial() != null && activo.getSituacionComercial().getCodigo()
 								.equals(DDSituacionComercial.CODIGO_VENDIDO))
 						|| (activo.getSituacionComercial() != null && activo.getSituacionComercial().getCodigo()
@@ -868,8 +863,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			oferta.setFechaRechazoOferta(fechaAccion);
 		}
 		ofertaDao.saveOrUpdate(oferta);
-		usuarioSecurity = usuarioSecurityManager.getByUsername(RestApi.REST_LOGGED_USER_USERNAME);
-		restApi.doLogin(usuarioSecurity);
+		//usuarioSecurity = usuarioSecurityManager.getByUsername(RestApi.REST_LOGGED_USER_USERNAME);
+		//restApi.doLogin(usuarioSecurity);
 		return oferta;
 	}
 
@@ -941,7 +936,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (oferta.getActivosOferta() != null && !oferta.getActivosOferta().isEmpty()) {
 			for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
 				Activo activo = activoOferta.getPrimaryKey().getActivo();
-				updaterState.updaterStateDisponibilidadComercialAndSave(activo);
+				if(!Checks.esNulo(oferta.getOfertaExpress()) && oferta.getOfertaExpress() && DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())){
+					updaterState.updaterStateDisponibilidadComercialAndSave(activo,true);
+				}else{
+					updaterState.updaterStateDisponibilidadComercialAndSave(activo,false);
+				}
+				
 			}
 		}
 	}
@@ -1144,14 +1144,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				Oferta oferta = activoOferta.getPrimaryKey().getOferta();
 				if (oferta.getEstadoOferta() != null && DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
 					ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
-					if (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
-							|| DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())
-							|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
-							|| DDEstadosExpedienteComercial.ALQUILADO.equals(expediente.getEstado().getCodigo())
-							|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo())
-							|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo()))
-						return oferta;
-				}
+					if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getEstado())){
+						if (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.ALQUILADO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo()))
+							return oferta;
+						}
+					}
 
 			}
 		}
@@ -2358,7 +2360,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 			if (!Checks.esNulo(expediente)){
-				return expediente.getOferta().getOfertaExpress();
+				if(!Checks.esNulo(expediente.getOferta().getOfertaExpress())){
+					return expediente.getOferta().getOfertaExpress();
+				}
+				else{
+					return false;
+				}
 			}
 				
 		}

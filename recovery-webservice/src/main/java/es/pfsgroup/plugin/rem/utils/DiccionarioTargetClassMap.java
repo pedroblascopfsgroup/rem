@@ -189,6 +189,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("entradaActivoBankia", DDEntradaActivoBankia.class);
 		mapa.put("favorableDesfavorable", DDFavorable.class);
 		mapa.put("calificacionEnergetica", DDTipoCalificacionEnergetica.class);
+		mapa.put("tareaDestinoSalto", DDTareaDestinoSalto.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

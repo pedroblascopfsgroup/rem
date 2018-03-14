@@ -1,0 +1,23 @@
+
+§"squid:SwitchLastCaseIsDefaultCheckÍ"YComplete cases by adding the missing enum constants or add a default case to this switch.(Ì¬úûÿÿÿÿHòçRCRITICALZ
+CODE_SMELL
+wsquid:S1192‡"FDefine a constant instead of duplicating this literal "from " 3 times.(Éå‹DHóçRCRITICALZ
+CODE_SMELL
+squid:S1301Í"KReplace this "switch" statement by "if" statements to increase readability.(Ì¬úûÿÿÿÿHôçRMINORZ
+CODE_SMELL
+~squid:CommentedOutCodeLine7"<This block of commented-out lines of code should be removed.(Ñ¾ñ£úÿÿÿÿHõçRMAJORZ
+CODE_SMELL
+squid:S1488â"[Immediately return this expression instead of assigning it to the temporary variable "dao".(íİ¹ªûÿÿÿÿHöçRMINORZ
+CODE_SMELL
+bsquid:S1905¡".Remove this unnecessary cast to "ExtendedDao".(¥ªã’úÿÿÿÿH÷çRMINORZ
+CODE_SMELL
+bsquid:S1905¨".Remove this unnecessary cast to "ExtendedDao".(¥ªã’úÿÿÿÿHøçRMINORZ
+CODE_SMELL
+bsquid:S1905®".Remove this unnecessary cast to "ExtendedDao".(¥ªã’úÿÿÿÿHùçRMINORZ
+CODE_SMELL
+bsquid:S1905´".Remove this unnecessary cast to "ExtendedDao".(¥ªã’úÿÿÿÿHúçRMINORZ
+CODE_SMELL
+dsquid:S2388;"6Prefix this call to "setSessionFactory" with "super.".( ï²óHûçRMAJORZ
+CODE_SMELL
+‚squid:MaximumInheritanceDepthâ"<This class has 6 parents which is greater than 5 authorized.(íİ¹ªûÿÿÿÿHüçRMAJORZ
+CODE_SMELL

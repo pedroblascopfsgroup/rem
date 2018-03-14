@@ -1,0 +1,60 @@
+
+csquid:S1066À"/Merge this if statement with the enclosing one.(¦¿èÿÿÿÿÿHƒ˜RMAJORZ
+CODE_SMELL
+isquid:S1141³"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿH„˜RMAJORZ
+CODE_SMELL
+ysquid:S1226‹"JIntroduce a new variable instead of reusing the parameter "idPresupuesto".(—«ÊÓH…˜RMINORZ
+CODE_SMELL
+|squid:S1192‡"JDefine a constant instead of duplicating this literal "max-age=0" 5 times.(Ä’ÈáH†˜RCRITICALZ
+CODE_SMELL
+{squid:S00112ˆ"FDefine and throw a dedicated exception instead of using a generic one.(èÝÎÑþÿÿÿÿH‡˜RMAJORZ
+CODE_SMELL
+xsquid:S1192‰"GDefine a constant instead of duplicating this literal "Pragma" 5 times.(ÒŠ†THˆ˜RCRITICALZ
+CODE_SMELL
+squid:S1192†"ODefine a constant instead of duplicating this literal "Cache-Control" 10 times.(”¥¤ŸH‰˜RCRITICALZ
+CODE_SMELL
+€squid:S1192ˆ"IDefine a constant instead of duplicating this literal "Expires" 10 times.(‰ªÕÉûÿÿÿÿHŠ˜RCRITICALZ
+CODE_SMELL
+x
+squid:S899ù"BDo something with the "boolean" value returned by "createNewFile".(Ð’ÍùÿÿÿÿH‹˜RMINORZVULNERABILITY
+~squid:S1192…"GDefine a constant instead of duplicating this literal "inline" 3 times.(ßƒÀèûÿÿÿÿHŒ˜RCRITICALZ
+CODE_SMELL
+€squid:S1192Ù"IDefine a constant instead of duplicating this literal "msgError" 4 times.(ä‡„‹üÿÿÿÿH˜RCRITICALZ
+CODE_SMELL
+xsquid:S1192‰"GDefine a constant instead of duplicating this literal "public" 5 times.(ÒŠ†THŽ˜RCRITICALZ
+CODE_SMELL
+~squid:S1192¸"LDefine a constant instead of duplicating this literal "totalCount" 15 times.(‡‰¹§H˜RCRITICALZ
+CODE_SMELL
+œsquid:S1192†"jDefine a constant instead of duplicating this literal "must-revalidate, post-check=0,pre-check=0" 5 times.(”¥¤ŸH˜RCRITICALZ
+CODE_SMELL
+isquid:S1141‡	"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿH‘˜RMAJORZ
+CODE_SMELL
+|squid:S1192¨"JDefine a constant instead of duplicating this literal "success" 173 times.(· ™´H’˜RCRITICALZ
+CODE_SMELL
+{squid:S1192á"JDefine a constant instead of duplicating this literal "jsonView" 11 times.(­øËyH“˜RCRITICALZ
+CODE_SMELL
+squid:S00117Á"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(°”¥H”˜RMINORZ
+CODE_SMELL
+x
+squid:S899ß"BDo something with the "boolean" value returned by "createNewFile".(Ð’ÍùÿÿÿÿH•˜RMINORZVULNERABILITY
+rsquid:S2259Û"EA "NullPointerException" could be thrown; "URLconn" is nullable here.(ÑÕÖ±ûÿÿÿÿH–˜RMAJORZBUG
+squid:S1192"YDefine a constant instead of duplicating this literal "Content-type: image/jpeg" 4 times.(àÇóŸùÿÿÿÿH—˜RCRITICALZ
+CODE_SMELL
+„squid:S1192Ü"MDefine a constant instead of duplicating this literal "errorMessage" 6 times.(ñ¼—ñýÿÿÿÿH˜˜RCRITICALZ
+CODE_SMELL
+‹squid:S1192…"TDefine a constant instead of duplicating this literal "Content-disposition" 5 times.(ßƒÀèûÿÿÿÿH™˜RCRITICALZ
+CODE_SMELL
+squid:S00117Â"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(é‘ŒÖHš˜RMINORZ
+CODE_SMELL
+isquid:S1141Ã"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿH›˜RMAJORZ
+CODE_SMELL
+‰squid:S3776£"RRefactor this method to reduce its Cognitive Complexity from 38 to the 15 allowed.(àð¯ÿøÿÿÿÿHœ˜RCRITICALZ
+CODE_SMELL
+Usquid:S1148É"#Use a logger to log this exception.(‰†æ†H˜RMINORZVULNERABILITY
+vsquid:S00112À"FDefine and throw a dedicated exception instead of using a generic one.(×‰üáHž˜RMAJORZ
+CODE_SMELL
+’squid:S1192§"[Define a constant instead of duplicating this literal "error en activoController" 90 times.(ªÜóÎùÿÿÿÿHŸ˜RCRITICALZ
+CODE_SMELL
+usquid:S00112À"FDefine and throw a dedicated exception instead of using a generic one.(À’>H ˜RMAJORZ
+CODE_SMELL
+Zsquid:S1148Ì"#Use a logger to log this exception.(ŽÚ¸ÿÿÿÿÿH¡˜RMINORZVULNERABILITY

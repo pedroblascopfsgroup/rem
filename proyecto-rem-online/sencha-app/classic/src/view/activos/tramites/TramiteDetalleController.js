@@ -293,6 +293,35 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 		})
 	},
 	
+	lanzarTareaAdministrativa : function(button) {
+		
+		var me = this;
+     	//var idTareaExterna = me.getView().down('[reference=listadoTareasTramite]').getSelectionModel().getSelection()[0].get("idTareaExterna");
+
+  		var salto_tarea = Ext.create('HreRem.view.activos.tramites.LanzarTareaAdministrativa',{});
+  		salto_tarea.show();
+  		me.getView().add(salto_tarea);
+		
+	},
+	
+	reactivarTramite : function(button) {
+		
+		var me = this;
+		console.log("TODO");
+		
+	},
+	
+	saltoTarea : function(button) {
+		
+		var me = this;
+		console.log("TODO");
+		
+	},
+	
+	cancelarSaltoTarea : function(button) {
+		button.up('window').destroy();
+	},
+	
 	saltoResolucionExpediente: function(button){
 		
 		var me = this;

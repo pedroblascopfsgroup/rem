@@ -64,8 +64,12 @@ public class DtoTramite extends WebDto {
 	private Long numEC;
 	
 	private Long idExpediente;
-
 	
+	private Boolean ocultarBotonLanzarTareaAdministrativa;
+
+	private Boolean ocultarBotonReactivarTramite;
+	
+	private Boolean desactivarBotonLanzarTareaAdministrativa;
 
 	public Long getIdTramite() {
 		return idTramite;
@@ -281,6 +285,30 @@ public class DtoTramite extends WebDto {
 
 	public void setOcultarBotonAnular(Boolean ocultarBotonAnular) {
 		this.ocultarBotonAnular = ocultarBotonAnular;
+	}
+	
+	public Boolean getOcultarBotonLanzarTareaAdministrativa() {
+		return ocultarBotonLanzarTareaAdministrativa;
+	}
+
+	public void setOcultarBotonLanzarTareaAdministrativa(Boolean ocultarBotonLanzarTareaAdministrativa) {
+		this.ocultarBotonLanzarTareaAdministrativa = ocultarBotonLanzarTareaAdministrativa;
+	}
+
+	public Boolean getOcultarBotonReactivarTramite() {
+		return ocultarBotonReactivarTramite;
+	}
+
+	public void setOcultarBotonReactivarTramite(Boolean ocultarBotonReactivarTramite) {
+		this.ocultarBotonReactivarTramite = ocultarBotonReactivarTramite;
+	}
+	
+	public Boolean getDesactivarBotonLanzarTareaAdministrativa() {
+		return desactivarBotonLanzarTareaAdministrativa;
+	}
+
+	public void setDesactivarBotonLanzarTareaAdministrativa(Boolean desactivarBotonLanzarTareaAdministrativa) {
+		this.desactivarBotonLanzarTareaAdministrativa = desactivarBotonLanzarTareaAdministrativa;
 	}
 	
 }

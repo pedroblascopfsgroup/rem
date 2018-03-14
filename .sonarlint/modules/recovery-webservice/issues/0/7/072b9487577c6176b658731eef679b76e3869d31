@@ -1,0 +1,4 @@
+
+¤"squid:ClassVariableVisibilityCheck"\Make mapaDiccionarios a static final constant or non-public and provide accessors if needed.(ÇÃö…Hã™RMINORZVULNERABILITY
+Nsquid:S2386"Make this member "protected".(ÇÃö…Hä™RMINORZVULNERABILITY
+gsquid:S1444"6Make this "public static mapaDiccionarios" field final(ÇÃö…Hâ™RMINORZVULNERABILITY

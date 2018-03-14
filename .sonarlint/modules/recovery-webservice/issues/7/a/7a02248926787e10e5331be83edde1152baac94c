@@ -1,0 +1,149 @@
+
+squid:CommentedOutCodeLineø"<This block of commented-out lines of code should be removed.(½“À›øÿÿÿÿHü˜RMAJORZ
+CODE_SMELL
+^squid:S1066«"/Merge this if statement with the enclosing one.(¨€ÏÛHı˜RMAJORZ
+CODE_SMELL
+squid:S1192Ÿ"HDefine a constant instead of duplicating this literal "codigo" 21 times.(šıœùÿÿÿÿHş˜RCRITICALZ
+CODE_SMELL
+psquid:S2230è"CMake this method "public" or remove the "@Transactional" annotation(ÕàùÔÿÿÿÿÿHÿ˜RMAJORZBUG
+„squid:S3776İ"RRefactor this method to reduce its Cognitive Complexity from 45 to the 15 allowed.(—ÊÎÎH€™RCRITICALZ
+CODE_SMELL
+Šsquid:S1192¦"SDefine a constant instead of duplicating this literal "codigoProveedorRem" 8 times.(·¤ŒûÿÿÿÿH™RCRITICALZ
+CODE_SMELL
+ksquid:S2230Ö"CMake this method "public" or remove the "@Transactional" annotation(Ñ¬÷‰H‚™RMAJORZBUG
+^squid:S1066¶	"/Merge this if statement with the enclosing one.(¹µÁHƒ™RMAJORZ
+CODE_SMELL
+]squid:S1066²
+"/Merge this if statement with the enclosing one.(ç½Ó|H„™RMAJORZ
+CODE_SMELL
+‰squid:S3776"RRefactor this method to reduce its Cognitive Complexity from 19 to the 15 allowed.(Á¯×ºùÿÿÿÿH…™RCRITICALZ
+CODE_SMELL
+Œsquid:S1171~"YMove the contents of this initializer to a standard constructor or to field initializers.(ÒÌâ–øÿÿÿÿH†™RMAJORZ
+CODE_SMELL
+ˆsquid:S3923Ÿ"[Remove this conditional structure or edit its code blocks so that they're not all the same.(ë¢•øùÿÿÿÿH‡™RMAJORZBUG
+psquid:S1126È"AReplace this if-then-else statement by a single return statement.(»¨®¶Hˆ™RMINORZ
+CODE_SMELL
+{squid:S00112ì"FDefine and throw a dedicated exception instead of using a generic one.(ÉÙÜòøÿÿÿÿH‰™RMAJORZ
+CODE_SMELL
+Tsquid:S2129ç	" Remove this "Double" constructor(¨Ÿœ†úÿÿÿÿHŠ™RMAJORZ
+CODE_SMELL
+Tsquid:S2129ã	" Remove this "Double" constructor(à‹Ÿ”üÿÿÿÿH‹™RMAJORZ
+CODE_SMELL
+^squid:S1066Â	"/Merge this if statement with the enclosing one.(¹µÁHŒ™RMAJORZ
+CODE_SMELL
+‰squid:S3776ç"RRefactor this method to reduce its Cognitive Complexity from 36 to the 15 allowed.(¦Ì™ÎùÿÿÿÿH™RCRITICALZ
+CODE_SMELL
+^squid:S1066ª"/Merge this if statement with the enclosing one.(–Óç×H™RMAJORZ
+CODE_SMELL
+psquid:S2230í"CMake this method "public" or remove the "@Transactional" annotation(÷òÉşÿÿÿÿH™RMAJORZBUG
+~squid:S1192š
+"LDefine a constant instead of duplicating this literal "idOfertaRem" 3 times.(å§ÉH™RCRITICALZ
+CODE_SMELL
+¤squid:S1319ù	"pThe return type of this method should be an interface such as "List" rather than the implementation "ArrayList".(ëæ×¬ÿÿÿÿÿH‘™RMINORZ
+CODE_SMELL
+¡squid:S1319Ö"mThe return type of this method should be an interface such as "Map" rather than the implementation "HashMap".(´ÏÔıøÿÿÿÿH’™RMINORZ
+CODE_SMELL
+`squid:S1135"2Complete the task associated to this TODO comment.(šÏíÇH“™RINFOZ
+CODE_SMELL
+¡squid:S1192£"jDefine a constant instead of duplicating this literal "No ha sido posible realizar la operaciÃ³n" 4 times.(ùÚÊüÿÿÿÿH”™RCRITICALZ
+CODE_SMELL
+œsquid:S1319è"mThe return type of this method should be an interface such as "Map" rather than the implementation "HashMap".(œæ¸¿H•™RMINORZ
+CODE_SMELL
+„squid:S3776·"RRefactor this method to reduce its Cognitive Complexity from 41 to the 15 allowed.(”ÈöÎH–™RCRITICALZ
+CODE_SMELL
+{squid:S00112ö"FDefine and throw a dedicated exception instead of using a generic one.(©ı‚¢ùÿÿÿÿH—™RMAJORZ
+CODE_SMELL
+‰squid:S3776ë"RRefactor this method to reduce its Cognitive Complexity from 25 to the 15 allowed.(‰ñ”ìşÿÿÿÿH˜™RCRITICALZ
+CODE_SMELL
+squid:S1488Œ"jImmediately return this expression instead of assigning it to the temporary variable "listaTipoProveedor".(öÓéíşÿÿÿÿH™™RMINORZ
+CODE_SMELL
+‰squid:S3776Ö"RRefactor this method to reduce its Cognitive Complexity from 78 to the 15 allowed.(´ÏÔıøÿÿÿÿHš™RCRITICALZ
+CODE_SMELL
+vsquid:S00112â"FDefine and throw a dedicated exception instead of using a generic one.(ıÚØ¼H›™RMAJORZ
+CODE_SMELL
+hsquid:S1133»"5Do not forget to remove this deprecated code someday.(òç±òüÿÿÿÿHœ™RINFOZ
+CODE_SMELL
+‰squid:S3776í"RRefactor this method to reduce its Cognitive Complexity from 17 to the 15 allowed.(÷òÉşÿÿÿÿH™RCRITICALZ
+CODE_SMELL
+asquid:S1068Æ"-Remove this unused "ofertaApi" private field.(ãµÒˆıÿÿÿÿH™RMAJORZ
+CODE_SMELL
+squid:CommentedOutCodeLineÀ"<This block of commented-out lines of code should be removed.(ú“ÜûùÿÿÿÿHŸ™RMAJORZ
+CODE_SMELL
+squid:S1192‰"MDefine a constant instead of duplicating this literal "idClienteRem" 3 times.(Â‹­H ™RCRITICALZ
+CODE_SMELL
+msquid:S1155â">Use isEmpty() to check whether the collection is empty or not.( ç°ğH¡™RMINORZ
+CODE_SMELL
+csquid:S1066¨	"/Merge this if statement with the enclosing one.(í–•ÓûÿÿÿÿH¢™RMAJORZ
+CODE_SMELL
+hsquid:MissingDeprecatedCheckæ"(Add the missing @deprecated Javadoc tag.(‰ÕêH£™RMAJORZ
+CODE_SMELL
+nsquid:S1854û"?Remove this useless assignment to local variable "listaActOfr".(æ„„±H¤™RMAJORZ
+CODE_SMELL
+psquid:S1126£"AReplace this if-then-else statement by a single return statement.(à¢ÎËH¥™RMINORZ
+CODE_SMELL
+^squid:S1066	"/Merge this if statement with the enclosing one.(¹µÁH¦™RMAJORZ
+CODE_SMELL
+psquid:S1126Ñ"AReplace this if-then-else statement by a single return statement.(»¨®¶H§™RMINORZ
+CODE_SMELL
+usquid:S1126™"AReplace this if-then-else statement by a single return statement.(‰·ÂıÿÿÿÿH¨™RMINORZ
+CODE_SMELL
+„squid:S3776è"RRefactor this method to reduce its Cognitive Complexity from 49 to the 15 allowed.(œæ¸¿H©™RCRITICALZ
+CODE_SMELL
+„squid:S3776“"RRefactor this method to reduce its Cognitive Complexity from 24 to the 15 allowed.(ö÷ä²Hª™RCRITICALZ
+CODE_SMELL
+‰squid:S3776ù	"RRefactor this method to reduce its Cognitive Complexity from 19 to the 15 allowed.(ëæ×¬ÿÿÿÿÿH«™RCRITICALZ
+CODE_SMELL
+vsquid:S00112ò"FDefine and throw a dedicated exception instead of using a generic one.(Ä›¦H¬™RMAJORZ
+CODE_SMELL
+squid:CommentedOutCodeLineÑ"<This block of commented-out lines of code should be removed.(¯»ó¹ûÿÿÿÿH­™RMAJORZ
+CODE_SMELL
+‰squid:S3776ä"RRefactor this method to reduce its Cognitive Complexity from 22 to the 15 allowed.(ïãÆûøÿÿÿÿH®™RCRITICALZ
+CODE_SMELL
+^squid:S1066‘	"/Merge this if statement with the enclosing one.(¹µÁH¯™RMAJORZ
+CODE_SMELL
+rsquid:S1226Î"CIntroduce a new variable instead of reusing the parameter "oferta".(¿çÃ§H°™RMINORZ
+CODE_SMELL
+›squid:S1488Î"gImmediately return this expression instead of assigning it to the temporary variable "listaHonorarios".(ª ÁÿüÿÿÿÿH±™RMINORZ
+CODE_SMELL
+„squid:S3776í"RRefactor this method to reduce its Cognitive Complexity from 16 to the 15 allowed.(“Ë’€H²™RCRITICALZ
+CODE_SMELL
+„squid:S3776µ"RRefactor this method to reduce its Cognitive Complexity from 22 to the 15 allowed.(ˆŠêËH³™RCRITICALZ
+CODE_SMELL
+‹squid:S1192Û"YDefine a constant instead of duplicating this literal "error en OfertasManager" 12 times.(êĞ×–H´™RCRITICALZ
+CODE_SMELL
+‰squid:S3776“"RRefactor this method to reduce its Cognitive Complexity from 22 to the 15 allowed.(ùÅÌôşÿÿÿÿHµ™RCRITICALZ
+CODE_SMELL
+‰squid:S3776¿"RRefactor this method to reduce its Cognitive Complexity from 17 to the 15 allowed.(üó¨ûÿÿÿÿH¶™RCRITICALZ
+CODE_SMELL
+^squid:S1066ı"/Merge this if statement with the enclosing one.(´Ç•H·™RMAJORZ
+CODE_SMELL
+{squid:S00112…"FDefine and throw a dedicated exception instead of using a generic one.(ê¦¯ øÿÿÿÿH¸™RMAJORZ
+CODE_SMELL
+„squid:S3776Ø
+"RRefactor this method to reduce its Cognitive Complexity from 26 to the 15 allowed.(®˜±­H¹™RCRITICALZ
+CODE_SMELL
+Í%squid:RedundantThrowsDeclarationCheckÖ"ƒRemove the declaration of thrown exception 'es.pfsgroup.framework.paradise.utils.JsonViewerException' which is a runtime exception.(Ñ¬÷‰Hº™RMINORZ
+CODE_SMELL
+„squid:S3776œ"RRefactor this method to reduce its Cognitive Complexity from 24 to the 15 allowed.(ú‰ù²H»™RCRITICALZ
+CODE_SMELL
+vsquid:S00112˜"FDefine and throw a dedicated exception instead of using a generic one.(ıÚØ¼H¼™RMAJORZ
+CODE_SMELL
+usquid:S00112´"FDefine and throw a dedicated exception instead of using a generic one.(õÁ¥IH½™RMAJORZ
+CODE_SMELL
+rsquid:S1854…"CRemove this useless assignment to local variable "valoresTasacion".(ë“ò‰H¾™RMAJORZ
+CODE_SMELL
+squid:S1192õ"ODefine a constant instead of duplicating this literal "idOfertaWebcom" 4 times.(ñÀúÁH¿™RCRITICALZ
+CODE_SMELL
+msquid:MissingDeprecatedCheck»"(Add the missing @deprecated Javadoc tag.(òç±òüÿÿÿÿHÀ™RMAJORZ
+CODE_SMELL
+œsquid:S1319œ"mThe return type of this method should be an interface such as "Map" rather than the implementation "HashMap".(ú‰ù²HÁ™RMINORZ
+CODE_SMELL
+csquid:S1133æ"5Do not forget to remove this deprecated code someday.(‰ÕêHÂ™RINFOZ
+CODE_SMELL
+^squid:S1066­"/Merge this if statement with the enclosing one.(†ÔĞòHÃ™RMAJORZ
+CODE_SMELL
+„squid:S3776Ö"RRefactor this method to reduce its Cognitive Complexity from 72 to the 15 allowed.(Ñ¬÷‰HÄ™RCRITICALZ
+CODE_SMELL
+„squid:S3776»
+"RRefactor this method to reduce its Cognitive Complexity from 26 to the 15 allowed.(¤¢‚ŒHÅ™RCRITICALZ
+CODE_SMELL

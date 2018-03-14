@@ -61,7 +61,29 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
 	          	 bind: {
 	          		 disabled: '{!listadoTareasTramite.selection}'
 	          	 }
-             }
+             },
+             {
+	           	 name: 'btnLanzarTareaAdministrativa',
+	           	 itemId: 'btnLanzarTareaAdministrativa',
+	           	 text: HreRem.i18n('btn.lanzar.tarea.administrativa'),
+	           	 //secFunPermToShow: 'BOTON_RESOLUCION_EXPEDIENTE',
+	          	 handler: 'lanzarTareaAdministrativa',
+	          	 bind: {
+	          		hidden: '{tramite.ocultarBotonLanzarTareaAdministrativa}',
+	          		disabled: '{tramite.desactivarBotonLanzarTareaAdministrativa}'
+	          	 }
+             },
+             {
+	           	 name: 'btnReactivarTramite',
+	           	 itemId: 'btnReactivarTramite',
+	           	 text: HreRem.i18n('btn.reactivar.tramite'),
+	           	 //secFunPermToShow: 'BOTON_RESOLUCION_EXPEDIENTE',
+	          	 handler: 'reactivarTramite',
+	          	 bind: {
+	          		hidden: '{tramite.ocultarBotonReactivarTramite}',
+	          		disabled: true
+	          	 }
+             },
    		];
 
    		me.buttonAlign = 'left';

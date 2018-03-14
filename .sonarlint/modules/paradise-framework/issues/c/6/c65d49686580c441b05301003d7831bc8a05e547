@@ -1,0 +1,51 @@
+
+isquid:S1141¾"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿH²üRMAJORZ
+CODE_SMELL
+Zsquid:S1148¶"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿH³üRMINORZVULNERABILITY
+„squid:UnusedPrivateMethodÔ"BRemove this unused private "isGastoNoPermiteAnyadirActivo" method.(“Á×ÚøÿÿÿÿH´üRMAJORZ
+CODE_SMELL
+squid:CommentedOutCodeLine‚"<This block of commented-out lines of code should be removed.(éØ»ÚûÿÿÿÿHµüRMAJORZ
+CODE_SMELL
+isquid:S1141Ã"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿH¶üRMAJORZ
+CODE_SMELL
+Zsquid:S1148Ì"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿH·üRMINORZVULNERABILITY
+Zsquid:S1148å"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿH¹üRMINORZVULNERABILITY
+~squid:CommentedOutCodeLinei"<This block of commented-out lines of code should be removed.(üÙŸ¸üÿÿÿÿH»üRMAJORZ
+CODE_SMELL
+Zsquid:S1148¹"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿH¼üRMINORZVULNERABILITY
+isquid:S1141—"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿH¾üRMAJORZ
+CODE_SMELL
+isquid:S1141­"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿHÀüRMAJORZ
+CODE_SMELL
+Zsquid:S1148à"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿHÂüRMINORZVULNERABILITY
+Zsquid:S1148 "#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿHÄüRMINORZVULNERABILITY
+Zsquid:S1148û"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿHÆüRMINORZVULNERABILITY
+Zsquid:S1148Ê"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿHÈüRMINORZVULNERABILITY
+isquid:S1141"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿHÊüRMAJORZ
+CODE_SMELL
+Zsquid:S1148â"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿHÌüRMINORZVULNERABILITY
+Zsquid:S1148Š"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿHÎüRMINORZVULNERABILITY
+Zsquid:S1148€"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿHÐüRMINORZVULNERABILITY
+isquid:S1141Ù"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿHÒüRMAJORZ
+CODE_SMELL
+Zsquid:S1148´"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿHÔüRMINORZVULNERABILITY
+Zsquid:S1148Ý"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿHÕüRMINORZVULNERABILITY
+isquid:S1141ï"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿHÖüRMAJORZ
+CODE_SMELL
+†squid:S00120"WRename this package name to match the regular expression '^[a-z]+(\.[a-z][a-z0-9]*)*$'.(¡¿ÁÜH×üRMINORZ
+CODE_SMELL
+Zsquid:S1148Ç"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿHØüRMINORZVULNERABILITY
+Zsquid:S1148ô"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿHÙüRMINORZVULNERABILITY
+squid:S2177¯"WRename this method; there is a "private" method in the parent class with the same name.(Ó¤²ÊHÚüRMAJORZBUG
+Zsquid:S1148Ï"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿHÛüRMINORZVULNERABILITY
+Zsquid:S1148£"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿHÜüRMINORZVULNERABILITY
+isquid:S1141Ô"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿHÝüRMAJORZ
+CODE_SMELL
+~squid:CommentedOutCodeLined"<This block of commented-out lines of code should be removed.(­˜± üÿÿÿÿHÞüRMAJORZ
+CODE_SMELL
+Zsquid:S1148ø"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿHßüRMINORZVULNERABILITY
+isquid:S1141ë"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿHàüRMAJORZ
+CODE_SMELL
+Ysquid:S1148`"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿHáüRMINORZVULNERABILITY
+Zsquid:S1148÷"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿHâüRMINORZVULNERABILITY
+Zsquid:S1148"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿHãüRMINORZVULNERABILITY

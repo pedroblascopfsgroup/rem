@@ -1,0 +1,21 @@
+
+njavascript:S1854µ"5Remove this useless assignment to local variable "me"(§ÉÑ¥øÿÿÿÿ8±ñßŸ,H›RMAJORZBUG
+|javascript:UnusedVariableµ"3Remove the declaration of the unused 'me' variable.(§ÉÑ¥øÿÿÿÿ8±ñßŸ,H‚›RMINORZ
+CODE_SMELL
+tjavascript:UnusedVariableZ"3Remove the declaration of the unused 'me' variable.(§ÉÑ¥øÿÿÿÿHƒ›RMINORZ
+CODE_SMELL
+–javascript:S2703Ÿ"[Add the "let", "const" or "var" keyword to this declaration of "numEC" to make it explicit.(ˆé²ıÿÿÿÿH„›RBLOCKERZ
+CODE_SMELL
+”javascript:S2703"^Add the "let", "const" or "var" keyword to this declaration of "idActivo" to make it explicit.(£”…H…›RBLOCKERZ
+CODE_SMELL
+˜javascript:S2703"bAdd the "let", "const" or "var" keyword to this declaration of "idExpediente" to make it explicit.(úÄÑŒH†›RBLOCKERZ
+CODE_SMELL
+njavascript:S1854¼"5Remove this useless assignment to local variable "me"(§ÉÑ¥øÿÿÿÿ8ß†ğßŸ,H‡›RMAJORZBUG
+gjavascript:EmptyBlockè")Either remove or fill this block of code.(ë½‚ºúÿÿÿÿHˆ›RMAJORZ
+CODE_SMELL
+fjavascript:S1854C"5Remove this useless assignment to local variable "me"(§ÉÑ¥øÿÿÿÿH‰›RMAJORZBUG
+|javascript:UnusedVariable¼"3Remove the declaration of the unused 'me' variable.(§ÉÑ¥øÿÿÿÿ8ß†ğßŸ,HŠ›RMINORZ
+CODE_SMELL
+fjavascript:S1854Z"5Remove this useless assignment to local variable "me"(§ÉÑ¥øÿÿÿÿH‹›RMAJORZBUG
+tjavascript:UnusedVariableC"3Remove the declaration of the unused 'me' variable.(§ÉÑ¥øÿÿÿÿHŒ›RMINORZ
+CODE_SMELL

@@ -1,0 +1,133 @@
+
+‰squid:S3776Ç	"RRefactor this method to reduce its Cognitive Complexity from 27 to the 15 allowed.(€Éö³üÿÿÿÿHŠüRCRITICALZ
+CODE_SMELL
+squid:CommentedOutCodeLine¸"<This block of commented-out lines of code should be removed.(¾’ÉäÿÿÿÿÿHûûRMAJORZ
+CODE_SMELL
+†squid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ä‡§°øÿÿÿÿHœüRMINORZ
+CODE_SMELL
+‚squid:S1192ï"PDefine a constant instead of duplicating this literal "subtipoGasto.id" 3 times.(¼–•HñûRCRITICALZ
+CODE_SMELL
+zsquid:CommentedOutCodeLineÇ"<This block of commented-out lines of code should be removed.(ÔüæªHùûRMAJORZ
+CODE_SMELL
+…squid:S1192Å"SDefine a constant instead of duplicating this literal "codigoProveedorRem" 3 times.(ÉØÓôHïûRCRITICALZ
+CODE_SMELL
+^squid:S1066ş"/Merge this if statement with the enclosing one.(²²öÜHöûRMAJORZ
+CODE_SMELL
+ƒsquid:S3776ê
+"RRefactor this method to reduce its Cognitive Complexity from 37 to the 15 allowed.(—ßúHŒüRCRITICALZ
+CODE_SMELL
+„squid:S3776Ô"RRefactor this method to reduce its Cognitive Complexity from 69 to the 15 allowed.(†şßšH†üRCRITICALZ
+CODE_SMELL
+Psquid:S1643¯"Use a StringBuilder instead.(óÚàûÿÿÿÿHëûRMINORZ
+CODE_SMELL
+squid:S00117œ"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ğ ‚H›üRMINORZ
+CODE_SMELL
+„squid:S3776’"RRefactor this method to reduce its Cognitive Complexity from 39 to the 15 allowed.(“ÕÈH‰üRCRITICALZ
+CODE_SMELL
+‰squid:S3776é"RRefactor this method to reduce its Cognitive Complexity from 40 to the 15 allowed.(ÍÚÖÔûÿÿÿÿH„üRCRITICALZ
+CODE_SMELL
+†squid:S00120"WRename this package name to match the regular expression '^[a-z]+(\.[a-z][a-z0-9]*)*$'.(·ÓêàH¢üRMINORZ
+CODE_SMELL
+squid:CommentedOutCodeLineı"<This block of commented-out lines of code should be removed.(­ˆ©ıÿÿÿÿHøûRMAJORZ
+CODE_SMELL
+ksquid:S1905ã"7Remove this unnecessary cast to "DDTipoDocumentoGasto".(ıƒƒœşÿÿÿÿHüRMINORZ
+CODE_SMELL
+squid:S00117—"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¥½ùéHšüRMINORZ
+CODE_SMELL
+psquid:S1854ğ"ARemove this useless assignment to local variable "gastosActivos".(Ö—£ÃH–üRMAJORZ
+CODE_SMELL
+†squid:S00117¤"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(òƒÓğşÿÿÿÿHüRMINORZ
+CODE_SMELL
+esquid:S1135º	"2Complete the task associated to this TODO comment.(È¼ÛíÿÿÿÿÿHÿûRINFOZ
+CODE_SMELL
+Zsquid:S1148ø"#Use a logger to log this exception.(ş“ëŒüÿÿÿÿH¤üRMINORZVULNERABILITY
+csquid:S1066È"/Merge this if statement with the enclosing one.(†ÅàÿÿÿÿÿÿHóûRMAJORZ
+CODE_SMELL
+{squid:S1192¡"JDefine a constant instead of duplicating this literal "activo.id" 4 times.(­Ş7HíûRCRITICALZ
+CODE_SMELL
+Zsquid:S1148æ"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH£üRMINORZVULNERABILITY
+Ksquid:S1643«"Use a StringBuilder instead.(½ÇÆÜHéûRMINORZ
+CODE_SMELL
+‰squid:S3776â"RRefactor this method to reduce its Cognitive Complexity from 42 to the 15 allowed.(¨›ÑãûÿÿÿÿHüRCRITICALZ
+CODE_SMELL
+rsquid:S1155ê">Use isEmpty() to check whether the collection is empty or not.(©¾Ø¿úÿÿÿÿH§üRMINORZ
+CODE_SMELL
+‡
+squid:S135û"YReduce the total number of break and continue statements in this loop to use at most one.(û¯ÃŸH÷ûRMINORZ
+CODE_SMELL
+^squid:S1066Ø"/Merge this if statement with the enclosing one.(£ßÃHõûRMAJORZ
+CODE_SMELL
+Jsquid:S1643¥"Use a StringBuilder instead.(½´ŒDHæûRMINORZ
+CODE_SMELL
+„squid:S3776Ğ"RRefactor this method to reduce its Cognitive Complexity from 30 to the 15 allowed.(™Š”¸HüRCRITICALZ
+CODE_SMELL
+squid:S00117²"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÒÖû HüRMINORZ
+CODE_SMELL
+}squid:S1192ğ"KDefine a constant instead of duplicating this literal "cartera.id" 3 times.(É–ÖîHòûRCRITICALZ
+CODE_SMELL
+tsquid:S2259Û"GA "NullPointerException" could be thrown; "ejercicio" is nullable here.(–û¿ÈùÿÿÿÿH‘üRMAJORZBUG
+{squid:S00112É"FDefine and throw a dedicated exception instead of using a generic one.(ŒÚ„§ÿÿÿÿÿH’üRMAJORZ
+CODE_SMELL
+isquid:S1141©"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿHıûRMAJORZ
+CODE_SMELL
+ksquid:S1905¤"7Remove this unnecessary cast to "DDTipoDocumentoGasto".(ıƒƒœşÿÿÿÿH‚üRMINORZ
+CODE_SMELL
+nsquid:S1854å"?Remove this useless assignment to local variable "listaGastos".(—‰ª¹H“üRMAJORZ
+CODE_SMELL
+esquid:S1135Ã"2Complete the task associated to this TODO comment.(Ù­üıúÿÿÿÿH€üRINFOZ
+CODE_SMELL
+squid:S00117º"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¢ùê“H üRMINORZ
+CODE_SMELL
+Ksquid:S1643©"Use a StringBuilder instead.(êÚ‚¾HèûRMINORZ
+CODE_SMELL
+~squid:S1192Ş"GDefine a constant instead of duplicating this literal "codigo" 3 times.(±€äªûÿÿÿÿHğûRCRITICALZ
+CODE_SMELL
+ksquid:S2230²"CMake this method "public" or remove the "@Transactional" annotation(çÚÁˆHşûRMAJORZBUG
+ksquid:S1905Û"7Remove this unnecessary cast to "DDTipoDocumentoGasto".(ıƒƒœşÿÿÿÿHƒüRMINORZ
+CODE_SMELL
+csquid:EmptyStatementUsageCheckÁ
+"Remove this empty statement.(Åñ­õşÿÿÿÿHìûRMINORZ
+CODE_SMELL
+zsquid:CommentedOutCodeLineä"<This block of commented-out lines of code should be removed.(Ş®ÆÎHüûRMAJORZ
+CODE_SMELL
+‰squid:S3776ú"RRefactor this method to reduce its Cognitive Complexity from 77 to the 15 allowed.(ÿŸ‘ıÿÿÿÿHˆüRCRITICALZ
+CODE_SMELL
+„squid:S3776·"RRefactor this method to reduce its Cognitive Complexity from 23 to the 15 allowed.(”¼ë´H…üRCRITICALZ
+CODE_SMELL
+xsquid:S1854µ"DRemove this useless assignment to local variable "listaProveedores".(‘°¾ùÿÿÿÿH˜üRMAJORZ
+CODE_SMELL
+Osquid:S2129è" Remove this "Double" constructor(Õë³¦H¦üRMAJORZ
+CODE_SMELL
+…squid:S1192Ø"SDefine a constant instead of duplicating this literal "gastoProveedor.id" 11 times.(Õ×¾HîûRCRITICALZ
+CODE_SMELL
+„squid:S3776™
+"RRefactor this method to reduce its Cognitive Complexity from 42 to the 15 allowed.(ƒÏ–H‹üRCRITICALZ
+CODE_SMELL
+osquid:S1854ú";Remove this useless assignment to local variable "borrado".(½şÚÅüÿÿÿÿH—üRMAJORZ
+CODE_SMELL
+‰squid:S3776ğ"RRefactor this method to reduce its Cognitive Complexity from 16 to the 15 allowed.(³»ëıÿÿÿÿHüRCRITICALZ
+CODE_SMELL
+^squid:S1066¡"/Merge this if statement with the enclosing one.(¶²›şHôûRMAJORZ
+CODE_SMELL
+Psquid:S1643­"Use a StringBuilder instead.(ÁÏ…üÿÿÿÿHêûRMINORZ
+CODE_SMELL
+Tsquid:S2129ç" Remove this "Double" constructor(‡õİíùÿÿÿÿH¥üRMAJORZ
+CODE_SMELL
+xsquid:S1854¼"DRemove this useless assignment to local variable "listaProveedores".(‘°¾ùÿÿÿÿH”üRMAJORZ
+CODE_SMELL
+Jsquid:S1643§"Use a StringBuilder instead.(¨•ì;HçûRMINORZ
+CODE_SMELL
+„squid:S3776Ö"RRefactor this method to reduce its Cognitive Complexity from 74 to the 15 allowed.(˜µ»ĞH‡üRCRITICALZ
+CODE_SMELL
+ysquid:S1854É"ERemove this useless assignment to local variable "listaPropietarios".(—Ù§¢ùÿÿÿÿH•üRMAJORZ
+CODE_SMELL
+zsquid:CommentedOutCodeLine›"<This block of commented-out lines of code should be removed.(ÁîâíHúûRMAJORZ
+CODE_SMELL
+‰squid:S3776‰"RRefactor this method to reduce its Cognitive Complexity from 20 to the 15 allowed.(×ÃÆªûÿÿÿÿHüRCRITICALZ
+CODE_SMELL
+nsquid:S1854Ï"?Remove this useless assignment to local variable "listaGastos".(—‰ª¹H™üRMAJORZ
+CODE_SMELL
+squid:S00117³"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(”±¹¬HŸüRMINORZ
+CODE_SMELL
+wsquid:S1858’"I"getCodigoEmisor" returns a string, there's no need to call "toString()".(Ä±Ù%H¡üRMINORZ
+CODE_SMELL

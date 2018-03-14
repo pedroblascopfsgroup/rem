@@ -69,6 +69,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoInformacionComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
+import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
@@ -2541,4 +2542,41 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	/**
+	 *  Guarda los datos de la pestaña patrimonio de un activo
+	 * @param patrimonioDto dto de patrimonio
+	 * @param id
+	 * @param model
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveDatosPatrimonio(DtoActivoPatrimonio patrimonioDto, @RequestParam Long id, ModelMap model) {
+
+		try {
+
+			boolean success = adapter.saveTabActivo(patrimonioDto, id, TabActivoService.TAB_PATRIMONIO);
+			model.put("success", success);
+
+		} catch (JsonViewerException jvex) {
+			model.put("success", false);
+			model.put("msgError", jvex.getMessage());
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put("success", false);
+		}
+		return createModelAndViewJson(model);
+
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoAdecuacionesAlquilerByActivo(Long id, ModelMap model) {
+		model.put("data", activoApi.getHistoricoAdecuacionesAlquilerByActivo(id));
+		return createModelAndViewJson(model);
+	}
+	
+	
 }

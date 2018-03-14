@@ -29,6 +29,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
+import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
@@ -1066,5 +1067,12 @@ public interface ActivoApi {
 	 * Crea un expediente comercial
 	 */
 	public boolean crearExpediente(Oferta oferta, Trabajo trabajo);
+	
+	/**
+	 * Devuelve una lista de adecuaciones alquiler para el grid de adecuaciones en la pestaña patrimonio de un activo
+	 * @param idActivo
+	 * @return
+	 */
+	public List<DtoActivoPatrimonio> getHistoricoAdecuacionesAlquilerByActivo(Long idActivo);
 
 }

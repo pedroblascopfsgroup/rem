@@ -7,7 +7,7 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     			'HreRem.view.activos.detalle.ObservacionesActivo', 'HreRem.view.activos.detalle.AgrupacionesActivo', 'HreRem.view.activos.detalle.GestoresActivo', 
     			'HreRem.view.activos.detalle.FotosActivo','HreRem.view.activos.detalle.DocumentosActivo','HreRem.view.activos.detalle.GestionActivo',
     			'HreRem.view.activos.detalle.PreciosActivo','HreRem.view.activos.detalle.Publicacion','HreRem.view.activos.detalle.ComercialActivo',
-    			'HreRem.view.activos.detalle.AdministracionActivo'],
+    			'HreRem.view.activos.detalle.AdministracionActivo','HreRem.view.activos.detalle.PatrimonioActivo'],
 
 	listeners: {
     	boxready: function (tabPanel) {
@@ -125,6 +125,7 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'publicacionactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PUBLICACION');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'comercialactivo', ocultarBotonesEdicion: editable/*funPermEdition: ['EDITAR_TAB_ACTIVO_COMERCIAL']*/})}, 'TAB_ACTIVO_COMERCIAL');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'administracionactivo', ocultarBotonesEdicion: false})}, 'TAB_ACTIVO_ADMINISTRACION');
+    	me.add({xtype: 'patrimonioactivo', ocultarBotonesEdicion: false});
     },
 
     evaluarBotonesEdicion: function(tab) {

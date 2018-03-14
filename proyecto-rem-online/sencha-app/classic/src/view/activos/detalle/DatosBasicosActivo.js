@@ -390,6 +390,33 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								hidden: true
 							},
 							
+							//Fila publicacion
+							{
+								xtype:'checkboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.publicacion'),
+								reference: 'chkbxPerimetroPublicar',
+								bind: {
+									value: '{activo.aplicaPublicar}'
+									
+								},
+								listeners: {
+									change: 'onChkbxPerimetroChange'
+								}
+							},
+							{
+								xtype: 'datefieldbase',
+								bind: '{activo.fechaAplicaPublicar}',
+								reference: 'datefieldPerimetroPublicar',
+								readOnly: true
+							},
+							{
+								xtype: 'textfieldbase',
+								reference: 'textFieldPerimetroPublicar',
+								bind: {
+									value: '{activo.motivoAplicaPublicar}'
+								}
+							},
+							
 							//Fila comercializar
 							{
 								xtype:'checkboxfieldbase',
@@ -452,34 +479,6 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									value: '{activo.motivoAplicaFormalizar}'
 								}
 							},
-							
-							//Fila publicacion
-							{
-								xtype:'checkboxfieldbase',
-								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.publicacion'),
-								reference: 'chkbxPerimetroPublicar',
-								bind: {
-									value: '{activo.aplicaPublicar}'
-									
-								},
-								listeners: {
-									change: 'onChkbxPerimetroChange'
-								}
-							},
-							{
-								xtype: 'datefieldbase',
-								bind: '{activo.fechaAplicaPublicar}',
-								reference: 'datefieldPerimetroPublicar',
-								readOnly: true
-							},
-							{
-								xtype: 'textfieldbase',
-								reference: 'textFieldPerimetroPublicar',
-								bind: {
-									value: '{activo.motivoAplicaPublicar}'
-								}
-							},
-							
 							//Bloque Comercialización
 							{    
 								xtype:'fieldsettable',
@@ -506,15 +505,6 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										bind: {
 											store: '{comboTipoDestinoComercialCreaFiltered}',
 											value: '{activo.tipoComercializacionCodigo}'
-										}
-									},
-									{
-										xtype: 'comboboxfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.perimetro.tipo.alquiler'),
-										bind: {
-											store: '{comboTipoAlquiler}',
-											disabled: '{!activo.isDestinoComercialAlquiler}',
-											value: '{activo.tipoAlquilerCodigo}'
 										}
 									},
 									{

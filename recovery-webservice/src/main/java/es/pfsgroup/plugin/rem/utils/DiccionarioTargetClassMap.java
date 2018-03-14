@@ -190,6 +190,9 @@ public class DiccionarioTargetClassMap{
 		mapa.put("favorableDesfavorable", DDFavorable.class);
 		mapa.put("calificacionEnergetica", DDTipoCalificacionEnergetica.class);
 		mapa.put("motivosOcultacion", DDMotivosOcultacion.class);
+		mapa.put("comboAdecuacionAlquiler", DDAdecuacionAlquiler.class);
+		mapa.put("comboAdecuacionAlquiler", DDAdecuacionAlquiler.class);
+
 		
 		return Collections.unmodifiableMap(mapa);
 	}

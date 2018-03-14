@@ -46,6 +46,15 @@ Ext.define('HreRem.model.Proceso', {
     		{
     			name: 'validable',
     			type: 'boolean'
+    		},
+    		{
+    			name:'totalFilas'
+    		},
+    		{
+    			name:'totalFilasOk'
+    		},
+    		{
+    			name:'totalFilasKo'
     		}
     		
     ] 

@@ -1129,7 +1129,6 @@ public class UvemManager implements UvemManagerApi {
 
 			servicioGMPDJB13_INS.setAlias(ALIAS);
 			
-			servicioGMPDJB13_INS.setCodigoDeAgrupacionDeInmueblecoagiw(0);
 			
 			// servicioGMPDJB13_INS.execute();
 			executeService(servicioGMPDJB13_INS);

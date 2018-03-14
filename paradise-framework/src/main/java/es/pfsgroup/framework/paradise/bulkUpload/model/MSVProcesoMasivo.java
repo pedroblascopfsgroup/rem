@@ -68,10 +68,10 @@ public class MSVProcesoMasivo implements Auditable, Serializable {
     private Long totalFilas;
     
     @Column(name = "PRM_TOTAL_FILAS_KO")
-    private Long totalFilasOk;
+    private Long totalFilasKo;
     
     @Column(name = "PRM_TOTAL_FILAS_OK")
-    private Long totalFilasKo;
+    private Long totalFilasOk;
     
 	public Long getId() {
 		return id;

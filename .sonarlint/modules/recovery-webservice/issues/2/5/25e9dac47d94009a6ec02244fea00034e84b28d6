@@ -1,39 +1,0 @@
-
-Rsquid:S2131["Use "Integer.toString" instead.(â¼áÿÿÿÿÿHÏ™RMAJORZ
-CODE_SMELL
-squid:S00117Ù"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ì¢ŞHĞ™RMINORZ
-CODE_SMELL
-squid:S00117ú"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¸Ó§¥HÑ™RMINORZ
-CODE_SMELL
-zsquid:CommentedOutCodeLine‚"<This block of commented-out lines of code should be removed.(ÿ ™ëHÒ™RMAJORZ
-CODE_SMELL
-†squid:S00117Ó"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Òƒˆ…ÿÿÿÿÿHÓ™RMINORZ
-CODE_SMELL
-^squid:S1135D"2Complete the task associated to this TODO comment.(Î°òOHÔ™RINFOZ
-CODE_SMELL
-†squid:S00117€"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ÿ™ÔçşÿÿÿÿHÕ™RMINORZ
-CODE_SMELL
-squid:S00117†"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¯‰ê§HÖ™RMINORZ
-CODE_SMELL
-dsquid:S1135~"2Complete the task associated to this TODO comment.(É‘”ùÿÿÿÿH×™RINFOZ
-CODE_SMELL
-squid:S1192¥"HDefine a constant instead of duplicating this literal "codigo" 15 times.(ä¢õ¤øÿÿÿÿHØ™RCRITICALZ
-CODE_SMELL
-†squid:S00117Ê"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(˜èÉ€üÿÿÿÿHÙ™RMINORZ
-CODE_SMELL
-squid:S1488o"_Immediately return this expression instead of assigning it to the temporary variable "usuario".(œç®»HÚ™RMINORZ
-CODE_SMELL
-~squid:CommentedOutCodeLineE"<This block of commented-out lines of code should be removed.(ñ¥ùšøÿÿÿÿHÛ™RMAJORZ
-CODE_SMELL
-†squid:S00117ı"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ä¥­¢øÿÿÿÿHÜ™RMINORZ
-CODE_SMELL
-†squid:S00117Ö"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ØİñÜşÿÿÿÿHİ™RMINORZ
-CODE_SMELL
-†squid:S00117ƒ"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ñô„œüÿÿÿÿHŞ™RMINORZ
-CODE_SMELL
-_squid:S1135O"2Complete the task associated to this TODO comment.(öÂÍĞHß™RINFOZ
-CODE_SMELL
-†squid:S00117Ğ"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ò¯‹™ùÿÿÿÿHà™RMINORZ
-CODE_SMELL
-squid:S00117Í"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¥ãµéHá™RMINORZ
-CODE_SMELL

@@ -1,285 +1,0 @@
-
-Psquid:S1643–"Use a StringBuilder instead.(Ç™‚üÿÿÿÿH–RMINORZ
-CODE_SMELL
-Zsquid:S1148Ğ"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH–RMINORZVULNERABILITY
-rsquid:S1155á">Use isEmpty() to check whether the collection is empty or not.(Ç±İ·ûÿÿÿÿH–RMINORZ
-CODE_SMELL
-squid:S1192Ã"VDefine a constant instead of duplicating this literal "estadoEconomicaCodigo" 4 times.(”—òşûÿÿÿÿH‘–RCRITICALZ
-CODE_SMELL
-Zsquid:S1148ø	"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH’–RMINORZVULNERABILITY
-Šsquid:S1192“
-"XDefine a constant instead of duplicating this literal "tipoTasacionDescripcion" 3 times.(äª—ÌH“–RCRITICALZ
-CODE_SMELL
-Šsquid:S1192‚"SDefine a constant instead of duplicating this literal "fechaValorTasacion" 4 times.(Æ±¹àùÿÿÿÿH”–RCRITICALZ
-CODE_SMELL
-hsquid:S1854†"9Remove this useless assignment to local variable "llave".(‹˜À¡H•–RMAJORZ
-CODE_SMELL
-Tsquid:S2129Ä" Remove this "Double" constructor(ÂÂğüÿÿÿÿH––RMAJORZ
-CODE_SMELL
-Zsquid:S1148˜"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH—–RMINORZVULNERABILITY
-Zsquid:S1168"+Return an empty collection instead of null.(¥¹ïH˜–RMAJORZ
-CODE_SMELL
-Zsquid:S1148µ"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH™–RMINORZVULNERABILITY
-Zsquid:S1148ß"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHš–RMINORZVULNERABILITY
-Zsquid:S1148è"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH›–RMINORZVULNERABILITY
-Â%squid:RedundantThrowsDeclarationCheckÚ"yRemove the declaration of thrown exception 'java.lang.IllegalAccessException', as it cannot be thrown from method's body.(İô¥çHœ–RMINORZ
-CODE_SMELL
-zsquid:CommentedOutCodeLineß"<This block of commented-out lines of code should be removed.(Ç¿øH–RMAJORZ
-CODE_SMELL
-Zsquid:S1148ø"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH–RMINORZVULNERABILITY
-squid:S1192Ê"JDefine a constant instead of duplicating this literal "tipoTarea" 3 times.(ƒÎÙÙÿÿÿÿÿHŸ–RCRITICALZ
-CODE_SMELL
-squid:CommentedOutCodeLine¹"<This block of commented-out lines of code should be removed.(ó¢ó”ùÿÿÿÿH –RMAJORZ
-CODE_SMELL
-usquid:S1854¸"ARemove this useless assignment to local variable "tareasTramite".(á“®ÒıÿÿÿÿH¡–RMAJORZ
-CODE_SMELL
-Zsquid:S1148ª"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH¢–RMINORZVULNERABILITY
-squid:CommentedOutCodeLine»"<This block of commented-out lines of code should be removed.(–„Á§øÿÿÿÿH£–RMAJORZ
-CODE_SMELL
-Nsquid:S2129Á" Remove this "Double" constructor(˜ÎŠpH¤–RMAJORZ
-CODE_SMELL
-„squid:S1192"RDefine a constant instead of duplicating this literal "estadoDescripcion" 4 times.(³—öH¥–RCRITICALZ
-CODE_SMELL
-Zsquid:S1148¢"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH¦–RMINORZVULNERABILITY
-„squid:S3776¯
-"RRefactor this method to reduce its Cognitive Complexity from 16 to the 15 allowed.(åéâôH§–RCRITICALZ
-CODE_SMELL
-{squid:S00112•"FDefine and throw a dedicated exception instead of using a generic one.(ıö‡òÿÿÿÿÿH¨–RMAJORZ
-CODE_SMELL
-Zsquid:S1148¤"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH©–RMINORZVULNERABILITY
-Zsquid:S1148"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHª–RMINORZVULNERABILITY
-zsquid:CommentedOutCodeLine„"<This block of commented-out lines of code should be removed.(ÿŸıÕH«–RMAJORZ
-CODE_SMELL
-Zsquid:S1148ê"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH¬–RMINORZVULNERABILITY
-Zsquid:S1148—
-"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH­–RMINORZVULNERABILITY
-vsquid:S00112…"FDefine and throw a dedicated exception instead of using a generic one.(’ß¤ÊH®–RMAJORZ
-CODE_SMELL
-rsquid:S1155–">Use isEmpty() to check whether the collection is empty or not.(¥ÿ¯àûÿÿÿÿH¯–RMINORZ
-CODE_SMELL
-zsquid:CommentedOutCodeLineÍ"<This block of commented-out lines of code should be removed.(üØÁÊH°–RMAJORZ
-CODE_SMELL
-squid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(êñÉŠıÿÿÿÿH±–RMAJORZ
-CODE_SMELL
-Zsquid:S1148³"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH²–RMINORZVULNERABILITY
-Zsquid:S1148Ó"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH³–RMINORZVULNERABILITY
-}squid:S1192ó"LDefine a constant instead of duplicating this literal "fechaInicio" 3 times.(¢·‰^H´–RCRITICALZ
-CODE_SMELL
-squid:CommentedOutCodeLineÆ"<This block of commented-out lines of code should be removed.(°˜‚ŒûÿÿÿÿHµ–RMAJORZ
-CODE_SMELL
-Zsquid:S1148Œ"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH¶–RMINORZVULNERABILITY
-Zsquid:S1148®"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH·–RMINORZVULNERABILITY
-Tsquid:S2129Õ" Remove this "Double" constructor(àãİÃúÿÿÿÿH¸–RMAJORZ
-CODE_SMELL
-squid:CommentedOutCodeLineû
-"<This block of commented-out lines of code should be removed.(²¹ƒÃüÿÿÿÿH¹–RMAJORZ
-CODE_SMELL
-„squid:S1192Ÿ"MDefine a constant instead of duplicating this literal "estadoCodigo" 4 times.(œÅ¼ıÿÿÿÿHº–RCRITICALZ
-CODE_SMELL
-Zsquid:S1148ú"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH»–RMINORZVULNERABILITY
-csquid:S1066Ğ	"/Merge this if statement with the enclosing one.(¦İÒùÿÿÿÿH¼–RMAJORZ
-CODE_SMELL
-Zsquid:S1148¤"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH½–RMINORZVULNERABILITY
-Zsquid:S1148¦"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH¾–RMINORZVULNERABILITY
-Zsquid:S1148ø"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH¿–RMINORZVULNERABILITY
-vsquid:S00112›"FDefine and throw a dedicated exception instead of using a generic one.(›Ê¡›HÀ–RMAJORZ
-CODE_SMELL
-Zsquid:S1148±"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHÁ–RMINORZVULNERABILITY
-squid:CommentedOutCodeLine½"<This block of commented-out lines of code should be removed.(¿€ ÙıÿÿÿÿHÂ–RMAJORZ
-CODE_SMELL
-zsquid:CommentedOutCodeLineş"<This block of commented-out lines of code should be removed.(¡ÔË¤HÃ–RMAJORZ
-CODE_SMELL
-„squid:S3776Å"RRefactor this method to reduce its Cognitive Complexity from 29 to the 15 allowed.(Š¯º£HÄ–RCRITICALZ
-CODE_SMELL
-Zsquid:S1148Ë"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHÅ–RMINORZVULNERABILITY
-Zsquid:S1148ú	"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHÆ–RMINORZVULNERABILITY
-Zsquid:S1148‰"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHÇ–RMINORZVULNERABILITY
-Zsquid:S1148Œ"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHÈ–RMINORZVULNERABILITY
-Zsquid:S1148Ä"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHÉ–RMINORZVULNERABILITY
-Zsquid:S1148Ñ"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHÊ–RMINORZVULNERABILITY
-’squid:S1192Á"[Define a constant instead of duplicating this literal "estadoEconomicaDescripcion" 4 times.(×âØØıÿÿÿÿHË–RCRITICALZ
-CODE_SMELL
-Zsquid:S1148á"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHÌ–RMINORZVULNERABILITY
-squid:CommentedOutCodeLineÂ"<This block of commented-out lines of code should be removed.(Ôéƒ±şÿÿÿÿHÍ–RMAJORZ
-CODE_SMELL
-squid:CommentedOutCodeLineÅ"<This block of commented-out lines of code should be removed.(¿–ÓƒÿÿÿÿÿHÎ–RMAJORZ
-CODE_SMELL
-jsquid:S1905è"6Remove this unnecessary cast to "ActivoInfoComercial".(ÉÈ¼¡üÿÿÿÿHÏ–RMINORZ
-CODE_SMELL
-Zsquid:S1148ï
-"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHĞ–RMINORZVULNERABILITY
-csquid:S1066¸
-"/Merge this if statement with the enclosing one.(âÜÖçüÿÿÿÿHÑ–RMAJORZ
-CODE_SMELL
-xsquid:S3358¨"DExtract this nested ternary operation into an independent statement.(“œ»÷üÿÿÿÿHÒ–RMAJORZ
-CODE_SMELL
-csquid:S1066Ç"/Merge this if statement with the enclosing one.(‰¸ø³üÿÿÿÿHÓ–RMAJORZ
-CODE_SMELL
-Zsquid:S1148İ"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHÔ–RMINORZVULNERABILITY
-„squid:S3776–"RRefactor this method to reduce its Cognitive Complexity from 18 to the 15 allowed.(§„µHÕ–RCRITICALZ
-CODE_SMELL
-Zsquid:S1148Ğ"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHÖ–RMINORZVULNERABILITY
-Zsquid:S1148ñ
-"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH×–RMINORZVULNERABILITY
-Zsquid:S1148²"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHØ–RMINORZVULNERABILITY
-Zsquid:S1148ß"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHÙ–RMINORZVULNERABILITY
-gsquid:S1905›"8Remove this unnecessary cast to "DDTipoDocumentoActivo".(ƒÆİ¹HÚ–RMINORZ
-CODE_SMELL
-Zsquid:S1148‰"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHÛ–RMINORZVULNERABILITY
-Tsquid:S2129”" Remove this "Double" constructor(¸¾ÿÓÿÿÿÿÿHÜ–RMAJORZ
-CODE_SMELL
-Nsquid:S2129Ÿ" Remove this "Double" constructor(˜ÎŠpHİ–RMAJORZ
-CODE_SMELL
-zsquid:CommentedOutCodeLineé"<This block of commented-out lines of code should be removed.(­ç¹âHŞ–RMAJORZ
-CODE_SMELL
-zsquid:CommentedOutCodeLineì"<This block of commented-out lines of code should be removed.(ÿŸıÕHß–RMAJORZ
-CODE_SMELL
-Usquid:S1148³"#Use a logger to log this exception.(Ç’ÇêHà–RMINORZVULNERABILITY
-`squid:S1905ı"1Remove this unnecessary cast to "DDTiposPersona".(®¤ˆ¥Há–RMINORZ
-CODE_SMELL
-~squid:S1192™"GDefine a constant instead of duplicating this literal "codigo" 7 times.(ğîÍÿÿÿÿÿHâ–RCRITICALZ
-CODE_SMELL
-Zsquid:S1148Ä"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHã–RMINORZVULNERABILITY
-squid:CommentedOutCodeLineâ"<This block of commented-out lines of code should be removed.(®²µúÿÿÿÿHä–RMAJORZ
-CODE_SMELL
-Zsquid:S1148Ó"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHå–RMINORZVULNERABILITY
-Osquid:S2129¿" Remove this "Double" constructor(½ˆôæHæ–RMAJORZ
-CODE_SMELL
-vsquid:S00112Ò"FDefine and throw a dedicated exception instead of using a generic one.(ôÔÎ½Hç–RMAJORZ
-CODE_SMELL
-vsquid:S00112Ø"FDefine and throw a dedicated exception instead of using a generic one.(ôÔÎ½Hè–RMAJORZ
-CODE_SMELL
-Zsquid:S1148‹"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHé–RMINORZVULNERABILITY
-zsquid:CommentedOutCodeLineÀ"<This block of commented-out lines of code should be removed.(ÜîæİHê–RMAJORZ
-CODE_SMELL
-‰squid:S3776³"RRefactor this method to reduce its Cognitive Complexity from 22 to the 15 allowed.(¬³×ÈüÿÿÿÿHë–RCRITICALZ
-CODE_SMELL
-Zsquid:S1148¶"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHì–RMINORZVULNERABILITY
-Ksquid:S1643“"Use a StringBuilder instead.(Õ»©šHí–RMINORZ
-CODE_SMELL
-Zsquid:S1148Ì"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHî–RMINORZVULNERABILITY
-Usquid:S1905İ
-"'Remove this unnecessary cast to "Page".(ëºÉHï–RMINORZ
-CODE_SMELL
-Zsquid:S1148–"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHğ–RMINORZVULNERABILITY
-Zsquid:S1148ö"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHñ–RMINORZVULNERABILITY
-gsquid:S1905¨"8Remove this unnecessary cast to "DDTipoDocumentoActivo".(ƒÆİ¹Hò–RMINORZ
-CODE_SMELL
-Tsquid:S2129Â" Remove this "Double" constructor(¸¾ÿÓÿÿÿÿÿHó–RMAJORZ
-CODE_SMELL
-Zsquid:S1148"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHô–RMINORZVULNERABILITY
-squid:CommentedOutCodeLineŸ"<This block of commented-out lines of code should be removed.(Ì£ŠÿÿÿÿÿHõ–RMAJORZ
-CODE_SMELL
-ƒsquid:S3776Ó"RRefactor this method to reduce its Cognitive Complexity from 17 to the 15 allowed.(ñµéHö–RCRITICALZ
-CODE_SMELL
-Zsquid:S1148"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH÷–RMINORZVULNERABILITY
-xsquid:S1134Ñ"DTake the required action to fix the issue indicated by this comment.(›ûıÿÿÿÿHø–RMAJORZ
-CODE_SMELL
-_squid:S1905Š
-"1Remove this unnecessary cast to "ActivoTasacion".(´Ù–RHù–RMINORZ
-CODE_SMELL
-Zsquid:S1148è"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHú–RMINORZVULNERABILITY
-isquid:S1905";Remove this unnecessary cast to "DDRegimenesMatrimoniales".(ãçúuHû–RMINORZ
-CODE_SMELL
-Zsquid:S1148"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHü–RMINORZVULNERABILITY
-‰squid:S3776á"RRefactor this method to reduce its Cognitive Complexity from 17 to the 15 allowed.(ŠóÆÑşÿÿÿÿHı–RCRITICALZ
-CODE_SMELL
-Tsquid:S2129Ñ" Remove this "Double" constructor(Ÿ÷ÿ˜üÿÿÿÿHş–RMAJORZ
-CODE_SMELL
-Zsquid:S1148É"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHÿ–RMINORZVULNERABILITY
-Î%squid:RedundantThrowsDeclarationCheckÚ"„Remove the declaration of thrown exception 'java.lang.reflect.InvocationTargetException', as it cannot be thrown from method's body.(İô¥çH€—RMINORZ
-CODE_SMELL
-Zsquid:S1148›	"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH—RMINORZVULNERABILITY
-Tsquid:S2129Ã" Remove this "Double" constructor(úÆ‘ŒøÿÿÿÿH‚—RMAJORZ
-CODE_SMELL
-Zsquid:S1148	"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHƒ—RMINORZVULNERABILITY
-‰squid:S3776ñ"RRefactor this method to reduce its Cognitive Complexity from 80 to the 15 allowed.(Ô·áÛÿÿÿÿÿH„—RCRITICALZ
-CODE_SMELL
-Zsquid:S1148ä"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH…—RMINORZVULNERABILITY
-‰squid:S3776Û"RRefactor this method to reduce its Cognitive Complexity from 74 to the 15 allowed.(¥†„ÂùÿÿÿÿH†—RCRITICALZ
-CODE_SMELL
-Zsquid:S1148æ"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH‡—RMINORZVULNERABILITY
-Nsquid:S2129¨" Remove this "Double" constructor(˜ÎŠpHˆ—RMAJORZ
-CODE_SMELL
-\squid:S1172Ã"-Remove this unused method parameter "webDto".(ÚˆòH‰—RMAJORZ
-CODE_SMELL
-…squid:S1192‘
-"SDefine a constant instead of duplicating this literal "tipoTasacionCodigo" 3 times.(Œ ±ÁHŠ—RCRITICALZ
-CODE_SMELL
-Zsquid:S1148Î"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH‹—RMINORZVULNERABILITY
-Zsquid:S1148á"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHŒ—RMINORZVULNERABILITY
-•squid:S1192å"^Define a constant instead of duplicating this literal "situacionCargaCodigoEconomica" 4 times.(¼‚ù´øÿÿÿÿH—RCRITICALZ
-CODE_SMELL
-Zsquid:S1148Ù	"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH—RMINORZVULNERABILITY
-zsquid:CommentedOutCodeLineæ"<This block of commented-out lines of code should be removed.(ë•ê¹H—RMAJORZ
-CODE_SMELL
-€squid:S1192á"IDefine a constant instead of duplicating this literal "idActivo" 7 times.(ØÙá×ûÿÿÿÿH—RCRITICALZ
-CODE_SMELL
-Zsquid:S1148Û	"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH‘—RMINORZVULNERABILITY
-Zsquid:S1148­"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH’—RMINORZVULNERABILITY
-Zsquid:S1148Î"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH“—RMINORZVULNERABILITY
-‰squid:S3776œ"RRefactor this method to reduce its Cognitive Complexity from 32 to the 15 allowed.(Æ©®“ıÿÿÿÿH”—RCRITICALZ
-CODE_SMELL
-Zsquid:S1148¸"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH•—RMINORZVULNERABILITY
-Zsquid:S1148Ò"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH–—RMINORZVULNERABILITY
-Zsquid:S1148ÿ"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH——RMINORZVULNERABILITY
-Zsquid:S1148’"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH˜—RMINORZVULNERABILITY
-Zsquid:S1148™
-"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH™—RMINORZVULNERABILITY
-Zsquid:S1148°"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHš—RMINORZVULNERABILITY
-Zsquid:S1148²	"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH›—RMINORZVULNERABILITY
-‘squid:S1192¥"ZDefine a constant instead of duplicating this literal "fechaCancelacionRegistral" 8 times.(³¦È£şÿÿÿÿHœ—RCRITICALZ
-CODE_SMELL
-zsquid:CommentedOutCodeLine‚"<This block of commented-out lines of code should be removed.(üØÁÊH—RMAJORZ
-CODE_SMELL
-‰squid:S3776¿	"RRefactor this method to reduce its Cognitive Complexity from 16 to the 15 allowed.(ªÂ§®ıÿÿÿÿH—RCRITICALZ
-CODE_SMELL
-{squid:S00112Ÿ"FDefine and throw a dedicated exception instead of using a generic one.(ŒÚ„§ÿÿÿÿÿHŸ—RMAJORZ
-CODE_SMELL
-nsquid:S1854Æ"?Remove this useless assignment to local variable "listaActOfr".(æ„„±H —RMAJORZ
-CODE_SMELL
-squid:CommentedOutCodeLine¦"<This block of commented-out lines of code should be removed.(Ã¸Ä­şÿÿÿÿH¡—RMAJORZ
-CODE_SMELL
-csquid:S1905¡"/Remove this unnecessary cast to "ActivoCargas".(œ•Ù¸şÿÿÿÿH¢—RMINORZ
-CODE_SMELL
-bsquid:S1905…"3Remove this unnecessary cast to "DDEstadosCiviles".(ä»Ÿ‹H£—RMINORZ
-CODE_SMELL
-‰squid:S3776Ò"RRefactor this method to reduce its Cognitive Complexity from 29 to the 15 allowed.(®—¾ôøÿÿÿÿH¤—RCRITICALZ
-CODE_SMELL
-‡squid:S1192É"UDefine a constant instead of duplicating this literal "situacionCargaCodigo" 3 times.(Äšà«H¥—RCRITICALZ
-CODE_SMELL
-Tsquid:S2129È" Remove this "Double" constructor(Ÿ÷ÿ˜üÿÿÿÿH¦—RMAJORZ
-CODE_SMELL
-Zsquid:S1148ª"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH§—RMINORZVULNERABILITY
-Œsquid:S1192Ê"ZDefine a constant instead of duplicating this literal "fechaCancelacionEconomica" 8 times.(ÈÊ H¨—RCRITICALZ
-CODE_SMELL
-{squid:S00112î"FDefine and throw a dedicated exception instead of using a generic one.(¯Õÿ«ûÿÿÿÿH©—RMAJORZ
-CODE_SMELL
-xsquid:S1134ğ"DTake the required action to fix the issue indicated by this comment.(›ûıÿÿÿÿHª—RMAJORZ
-CODE_SMELL
-‰squid:S3776"RRefactor this method to reduce its Cognitive Complexity from 25 to the 15 allowed.(¹ç§îıÿÿÿÿH«—RCRITICALZ
-CODE_SMELL
-Zsquid:S1148Š"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH¬—RMINORZVULNERABILITY
-Zsquid:S1148Ú"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH­—RMINORZVULNERABILITY
-Zsquid:S1148â"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH®—RMINORZVULNERABILITY
-squid:CommentedOutCodeLineğ"<This block of commented-out lines of code should be removed.(ãÿ“ÊùÿÿÿÿH¯—RMAJORZ
-CODE_SMELL
-Zsquid:S1148¶"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH°—RMINORZVULNERABILITY
-Zsquid:S1148´	"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH±—RMINORZVULNERABILITY
-Tsquid:S2129‹" Remove this "Double" constructor(¸¾ÿÓÿÿÿÿÿH²—RMAJORZ
-CODE_SMELL
-Zsquid:S1148Õ"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH³—RMINORZVULNERABILITY
-Zsquid:S1148³"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH´—RMINORZVULNERABILITY
-ƒsquid:S1192£"RDefine a constant instead of duplicating this literal "fechaCancelacion" 12 times.(÷öä&Hµ—RCRITICALZ
-CODE_SMELL
-Zsquid:S1148ã"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH¶—RMINORZVULNERABILITY
-Zsquid:S1148Â"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿH·—RMINORZVULNERABILITY
-zsquid:CommentedOutCodeLineÀ"<This block of commented-out lines of code should be removed.(½®ıÏH¸—RMAJORZ
-CODE_SMELL
-squid:S1192"ODefine a constant instead of duplicating this literal "nombreCompleto" 3 times.(àãˆH¹—RCRITICALZ
-CODE_SMELL
-Zsquid:S1148’"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿHº—RMINORZVULNERABILITY
-ssquid:S1134ê"DTake the required action to fix the issue indicated by this comment.(—Í¾ÏH»—RMAJORZ
-CODE_SMELL
-rsquid:S1155×">Use isEmpty() to check whether the collection is empty or not.(¢şèšıÿÿÿÿH¼—RMINORZ
-CODE_SMELL

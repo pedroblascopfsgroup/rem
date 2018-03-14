@@ -1,9 +1,0 @@
-
-{squid:S1192М"IDefine a constant instead of duplicating this literal "jsonView" 8 times.( бяёH╦ЩRCRITICALZ
-CODE_SMELL
-ysquid:S1192Э"HDefine a constant instead of duplicating this literal "success" 3 times.(╗Ш╡H╠ЩRCRITICALZ
-CODE_SMELL
-Тsquid:UselessImportCheck"RRemove this unused import 'es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta'.(╥╔╠Т¤    H═ЩRMINORZ
-CODE_SMELL
-msquid:S1155Ъ">Use isEmpty() to check whether the collection is empty or not.(ъ┤■БH╬ЩRMINORZ
-CODE_SMELL

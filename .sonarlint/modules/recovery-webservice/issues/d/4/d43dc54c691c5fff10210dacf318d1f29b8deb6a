@@ -1,9 +1,0 @@
-
-ˆsquid:S3008 "URename this field "OPE_ACTIVA" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(·‹áüÿÿÿÿH÷™RMINORZ
-CODE_SMELL
-†squid:S3008!"XRename this field "OPE_BLOQUEADO" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(’’Hø™RMINORZ
-CODE_SMELL
-fsquid:S1444 "0Make this "public static OPE_ACTIVA" field final(·‹áüÿÿÿÿHù™RMINORZVULNERABILITY
-dsquid:S1444!"3Make this "public static OPE_BLOQUEADO" field final(’’Hú™RMINORZVULNERABILITY
-£"squid:ClassVariableVisibilityCheck "VMake OPE_ACTIVA a static final constant or non-public and provide accessors if needed.(·‹áüÿÿÿÿHû™RMINORZVULNERABILITY
-¡"squid:ClassVariableVisibilityCheck!"YMake OPE_BLOQUEADO a static final constant or non-public and provide accessors if needed.(’’Hü™RMINORZVULNERABILITY

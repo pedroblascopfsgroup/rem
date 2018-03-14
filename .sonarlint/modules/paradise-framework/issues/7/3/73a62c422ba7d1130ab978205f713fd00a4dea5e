@@ -1,216 +1,0 @@
-
-squid:S11924"WDefine a constant instead of duplicating this literal " 		AND ACT.BORRADO = 0" 4 times.(’ºÒıÿÿÿÿH³şRCRITICALZ
-CODE_SMELL
-¥squid:S1192ş"sDefine a constant instead of duplicating this literal "		(SELECT VAL_FECHA_INICIO FROM V_PRECIOS_VIGENTES" 4 times.(ø£şH´şRCRITICALZ
-CODE_SMELL
-Ísquid:S1192é"šDefine a constant instead of duplicating this literal "		WHERE DD_TPC_ID = (SELECT DD_TPC_ID FROM DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO = '13')" 3 times.(û­ëÙHµşRCRITICALZ
-CODE_SMELL
-Ísquid:S1192æ"šDefine a constant instead of duplicating this literal "		WHERE DD_TPC_ID = (SELECT DD_TPC_ID FROM DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO = '07')" 3 times.(¬æê¸H¶şRCRITICALZ
-CODE_SMELL
-squid:S1192ó"XDefine a constant instead of duplicating this literal "		FROM ACT_ACTIVO WHERE" 9 times.(®­ƒ»øÿÿÿÿH·şRCRITICALZ
-CODE_SMELL
-psquid:S1126Æ"AReplace this if-then-else statement by a single return statement.(¬¯º…H¸şRMINORZ
-CODE_SMELL
-Òsquid:S1192İ"šDefine a constant instead of duplicating this literal "		WHERE DD_TPC_ID = (SELECT DD_TPC_ID FROM DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO = '02')" 3 times.(Òé¤üÿÿÿÿH¹şRCRITICALZ
-CODE_SMELL
-ƒsquid:S1192Ë"QDefine a constant instead of duplicating this literal "SELECT COUNT(1) " 7 times.(Ì™ùĞHºşRCRITICALZ
-CODE_SMELL
-psquid:S1126‰"AReplace this if-then-else statement by a single return statement.(¬¯º…H»şRMINORZ
-CODE_SMELL
-squid:S1192Ç"\Define a constant instead of duplicating this literal "      AND aga1.borrado = 0 " 3 times.(ó’¼H¼şRCRITICALZ
-CODE_SMELL
-psquid:S1126ã"AReplace this if-then-else statement by a single return statement.(¬¯º…H½şRMINORZ
-CODE_SMELL
-‹squid:S00120"WRename this package name to match the regular expression '^[a-z]+(\.[a-z][a-z0-9]*)*$'.(’í‘©ÿÿÿÿÿH¾şRMINORZ
-CODE_SMELL
-psquid:S1126§"AReplace this if-then-else statement by a single return statement.(¬¯º…H¿şRMINORZ
-CODE_SMELL
-¡squid:S1192’"jDefine a constant instead of duplicating this literal "			WHERE scm.dd_scm_id   = act.dd_scm_id " 3 times.(´’ØğÿÿÿÿÿHÀşRCRITICALZ
-CODE_SMELL
-Äsquid:S1192Ş"’Define a constant instead of duplicating this literal " 	AND ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_ACTIVO.ACT_NUM_ACTIVO = " 16 times.(ÚªÍHÁşRCRITICALZ
-CODE_SMELL
-squid:S1192‡"]Define a constant instead of duplicating this literal "			    AND agr.BORRADO  = 0 " 4 times.(ÑÅ‹tHÂşRCRITICALZ
-CODE_SMELL
-psquid:S1126Õ"AReplace this if-then-else statement by a single return statement.(¬¯º…HÃşRMINORZ
-CODE_SMELL
- squid:S1192‰"iDefine a constant instead of duplicating this literal " FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " 3 times.(€úÿÄıÿÿÿÿHÄşRCRITICALZ
-CODE_SMELL
-psquid:S1126¸"AReplace this if-then-else statement by a single return statement.(¬¯º…HÅşRMINORZ
-CODE_SMELL
-psquid:S1126ı"AReplace this if-then-else statement by a single return statement.(¬¯º…HÆşRMINORZ
-CODE_SMELL
-Šsquid:S1192-"YDefine a constant instead of duplicating this literal "         AND ROWNUM = 1 " 6 times.(×©†ÊHÇşRCRITICALZ
-CODE_SMELL
-psquid:S1126®"AReplace this if-then-else statement by a single return statement.(¬¯º…HÈşRMINORZ
-CODE_SMELL
-psquid:S1126Ñ"AReplace this if-then-else statement by a single return statement.(¬¯º…HÉşRMINORZ
-CODE_SMELL
-psquid:S1126ú"AReplace this if-then-else statement by a single return statement.(¬¯º…HÊşRMINORZ
-CODE_SMELL
-psquid:S1126Õ"AReplace this if-then-else statement by a single return statement.(¬¯º…HËşRMINORZ
-CODE_SMELL
-psquid:S1126´"AReplace this if-then-else statement by a single return statement.(–ˆ·ÊHÌşRMINORZ
-CODE_SMELL
-ˆsquid:S1192t"RDefine a constant instead of duplicating this literal "SELECT COUNT(*) " 32 times.(¬»ÈæıÿÿÿÿHÍşRCRITICALZ
-CODE_SMELL
-psquid:S1126Á"AReplace this if-then-else statement by a single return statement.(¬¯º…HÎşRMINORZ
-CODE_SMELL
-psquid:S1126ï"AReplace this if-then-else statement by a single return statement.(¬¯º…HÏşRMINORZ
-CODE_SMELL
-squid:S1192‡"gDefine a constant instead of duplicating this literal "				FROM DD_EPU_ESTADO_PUBLICACION EPU" 7 times.(¢øÖùÿÿÿÿHĞşRCRITICALZ
-CODE_SMELL
-usquid:S1126õ"AReplace this if-then-else statement by a single return statement.(³Ì›äşÿÿÿÿHÑşRMINORZ
-CODE_SMELL
-‹squid:S1192~"ZDefine a constant instead of duplicating this literal "SELECT COUNT(aga.AGR_ID) " 4 times.( ÖªƒHÒşRCRITICALZ
-CODE_SMELL
-psquid:S1126˜"AReplace this if-then-else statement by a single return statement.(¬¯º…HÓşRMINORZ
-CODE_SMELL
-™squid:S1192–"bDefine a constant instead of duplicating this literal "			WHERE gpv.GPV_NUM_GASTO_HAYA =" 4 times.(ŒœÄÄúÿÿÿÿHÔşRCRITICALZ
-CODE_SMELL
-usquid:S1126‡"AReplace this if-then-else statement by a single return statement.(—ÔšÍøÿÿÿÿHÕşRMINORZ
-CODE_SMELL
-psquid:S1126Ğ	"AReplace this if-then-else statement by a single return statement.(¬¯º…HÖşRMINORZ
-CODE_SMELL
-½squid:S1192Á"…Define a constant instead of duplicating this literal "    INNER JOIN ACT_AGR_AGRUPACION agr1 on aga1.agr_id = agr1.agr_id " 3 times.(ùË„…øÿÿÿÿH×şRCRITICALZ
-CODE_SMELL
-squid:S1192³"[Define a constant instead of duplicating this literal "    FROM OFR_OFERTAS ofr1 " 4 times.(´™ãHØşRCRITICALZ
-CODE_SMELL
-usquid:S1126ï"AReplace this if-then-else statement by a single return statement.(¾ç¤ıÿÿÿÿHÙşRMINORZ
-CODE_SMELL
-psquid:S1126ê"AReplace this if-then-else statement by a single return statement.(¬¯º…HÚşRMINORZ
-CODE_SMELL
-œsquid:S1192 "fDefine a constant instead of duplicating this literal "			    AND act.act_id   = aga.act_id " 5 times.(±»í³øÿÿÿÿHÛşRCRITICALZ
-CODE_SMELL
-ˆsquid:S1192"WDefine a constant instead of duplicating this literal "			    ACT_ACTIVO act " 4 times.(¼ª®¤HÜşRCRITICALZ
-CODE_SMELL
-–squid:S1192”"_Define a constant instead of duplicating this literal "			  AND act.ACT_NUM_ACTIVO = " 3 times.(¾§²ÊùÿÿÿÿHİşRCRITICALZ
-CODE_SMELL
-psquid:S1126ğ"AReplace this if-then-else statement by a single return statement.(¬¯º…HŞşRMINORZ
-CODE_SMELL
-Œsquid:S1192"ZDefine a constant instead of duplicating this literal "SELECT COUNT(act.act_id) " 3 times.(Îé¦HßşRCRITICALZ
-CODE_SMELL
-„squid:S1192ë"MDefine a constant instead of duplicating this literal "		FROM DUAL " 3 times.(ş–îİÿÿÿÿÿHàşRCRITICALZ
-CODE_SMELL
-psquid:S1126¬"AReplace this if-then-else statement by a single return statement.(¬¯º…HáşRMINORZ
-CODE_SMELL
-‹squid:S1192»"TDefine a constant instead of duplicating this literal "		 	AND BORRADO = 0" 7 times.(¦ÌõõúÿÿÿÿHâşRCRITICALZ
-CODE_SMELL
-psquid:S1126Ç"AReplace this if-then-else statement by a single return statement.(¬¯º…HãşRMINORZ
-CODE_SMELL
-psquid:S1126¥"AReplace this if-then-else statement by a single return statement.(¬¯º…HäşRMINORZ
-CODE_SMELL
-tsquid:S1126l"AReplace this if-then-else statement by a single return statement.(¾ç¤ıÿÿÿÿHåşRMINORZ
-CODE_SMELL
-psquid:S1126é"AReplace this if-then-else statement by a single return statement.(¬¯º…HæşRMINORZ
-CODE_SMELL
-Ìsquid:S1192ã"šDefine a constant instead of duplicating this literal "		WHERE DD_TPC_ID = (SELECT DD_TPC_ID FROM DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO = '03')" 3 times.(¼ ÂHçşRCRITICALZ
-CODE_SMELL
-‹squid:S1192ô"TDefine a constant instead of duplicating this literal "			ACT_NUM_ACTIVO =" 9 times.(˜µÇˆûÿÿÿÿHèşRCRITICALZ
-CODE_SMELL
-€squid:S1192±"IDefine a constant instead of duplicating this literal "		WHERE " 4 times.(È¾íåıÿÿÿÿHéşRCRITICALZ
-CODE_SMELL
- squid:S1192ß"nDefine a constant instead of duplicating this literal "		(SELECT VAL_IMPORTE FROM V_PRECIOS_VIGENTES" 4 times.(ˆ‰ª»HêşRCRITICALZ
-CODE_SMELL
-usquid:S1126‡"AReplace this if-then-else statement by a single return statement.(³Ì›äşÿÿÿÿHëşRMINORZ
-CODE_SMELL
-usquid:S1126½"AReplace this if-then-else statement by a single return statement.(³Ì›äşÿÿÿÿHìşRMINORZ
-CODE_SMELL
-psquid:S1126Ş"AReplace this if-then-else statement by a single return statement.(¬¯º…HíşRMINORZ
-CODE_SMELL
-psquid:S1126¼"AReplace this if-then-else statement by a single return statement.(¬¯º…HîşRMINORZ
-CODE_SMELL
-§squid:S1192û"pDefine a constant instead of duplicating this literal "		(SELECT VAL_FECHA_FIN FROM V_PRECIOS_VIGENTES" 5 times.(¾û»ûÿÿÿÿHïşRCRITICALZ
-CODE_SMELL
-psquid:S1126–"AReplace this if-then-else statement by a single return statement.(¬¯º…HğşRMINORZ
-CODE_SMELL
-psquid:S1126õ"AReplace this if-then-else statement by a single return statement.(¬¯º…HñşRMINORZ
-CODE_SMELL
-psquid:S1126‡"AReplace this if-then-else statement by a single return statement.(¬¯º…HòşRMINORZ
-CODE_SMELL
-psquid:S1126²"AReplace this if-then-else statement by a single return statement.(¬¯º…HóşRMINORZ
-CODE_SMELL
-psquid:S1126Î"AReplace this if-then-else statement by a single return statement.(¬¯º…HôşRMINORZ
-CODE_SMELL
-”squid:S1192†"]Define a constant instead of duplicating this literal "			    AND aga.BORRADO  = 0 " 4 times.(„ÎÜ§ÿÿÿÿÿHõşRCRITICALZ
-CODE_SMELL
-psquid:S1126Ã"AReplace this if-then-else statement by a single return statement.(¬¯º…HöşRMINORZ
-CODE_SMELL
-usquid:S1126ß"AReplace this if-then-else statement by a single return statement.(¾ç¤ıÿÿÿÿH÷şRMINORZ
-CODE_SMELL
-˜squid:S1192¸"aDefine a constant instead of duplicating this literal "      eof1.dd_eof_codigo = '01' " 4 times.(ã®âşÿÿÿÿHøşRCRITICALZ
-CODE_SMELL
-‰squid:S3776ö"RRefactor this method to reduce its Cognitive Complexity from 29 to the 15 allowed.(Èú¯¦şÿÿÿÿHùşRCRITICALZ
-CODE_SMELL
-Æsquid:S1192¶"Define a constant instead of duplicating this literal "    INNER JOIN DD_EOF_ESTADOS_OFERTA eof1 on ofr1.dd_eof_id = eof1.dd_eof_id " 4 times.(ªùŞ—ûÿÿÿÿHúşRCRITICALZ
-CODE_SMELL
-psquid:S1126ã"AReplace this if-then-else statement by a single return statement.(¬¯º…HûşRMINORZ
-CODE_SMELL
-˜squid:S1192†"fDefine a constant instead of duplicating this literal "			AND DD_EPU_ID IN (SELECT DD_EPU_ID" 7 times.(Óù™ÀHüşRCRITICALZ
-CODE_SMELL
-›squid:S1192"jDefine a constant instead of duplicating this literal "			  FROM ACT_AGA_AGRUPACION_ACTIVO aga, " 5 times.(èÙ­’HışRCRITICALZ
-CODE_SMELL
-usquid:S1126š"AReplace this if-then-else statement by a single return statement.(³Ì›äşÿÿÿÿHşşRMINORZ
-CODE_SMELL
-psquid:S1126©"AReplace this if-then-else statement by a single return statement.(¬¯º…HÿşRMINORZ
-CODE_SMELL
-usquid:S1126Ä"AReplace this if-then-else statement by a single return statement.(ˆß£·üÿÿÿÿH€ÿRMINORZ
-CODE_SMELL
-psquid:S1126Ğ"AReplace this if-then-else statement by a single return statement.(¬¯º…HÿRMINORZ
-CODE_SMELL
-usquid:S1126ü"AReplace this if-then-else statement by a single return statement.(¾ç¤ıÿÿÿÿH‚ÿRMINORZ
-CODE_SMELL
-ƒsquid:S1192ˆ"QDefine a constant instead of duplicating this literal "SELECT dd_cra_id" 3 times.(µ¿HƒÿRCRITICALZ
-CODE_SMELL
-squid:S1192ˆ"]Define a constant instead of duplicating this literal "			    AND act.BORRADO  = 0 " 4 times.(‹€õúH„ÿRCRITICALZ
-CODE_SMELL
-…squid:S1192,"TDefine a constant instead of duplicating this literal "			AND BORRADO = 0" 10 times.(ßÂÅH…ÿRCRITICALZ
-CODE_SMELL
-”squid:S1192é"bDefine a constant instead of duplicating this literal "		 FROM GPV_GASTOS_PROVEEDOR gpv " 5 times.(—áø¾H†ÿRCRITICALZ
-CODE_SMELL
-usquid:S1126Ï"AReplace this if-then-else statement by a single return statement.(³Ì›äşÿÿÿÿH‡ÿRMINORZ
-CODE_SMELL
-“squid:S1192È"\Define a constant instead of duplicating this literal "      AND agr1.borrado = 0 " 3 times.(¿…µºşÿÿÿÿHˆÿRCRITICALZ
-CODE_SMELL
-‡squid:S1192‘"UDefine a constant instead of duplicating this literal "			  ACT_ACTIVO act " 3 times.(¼ª®¤H‰ÿRCRITICALZ
-CODE_SMELL
-psquid:S1126™"AReplace this if-then-else statement by a single return statement.(¬¯º…HŠÿRMINORZ
-CODE_SMELL
-lsquid:S1854Ù	"=Remove this useless assignment to local variable "resultado".(¤ÔÔ‘H‹ÿRMAJORZ
-CODE_SMELL
-usquid:S1126¬"AReplace this if-then-else statement by a single return statement.(³Ì›äşÿÿÿÿHŒÿRMINORZ
-CODE_SMELL
-zsquid:S1192»"HDefine a constant instead of duplicating this literal "  )  + " 3 times.(øæ‡ØHÿRCRITICALZ
-CODE_SMELL
-psquid:S1126Ó"AReplace this if-then-else statement by a single return statement.(¬¯º…HÿRMINORZ
-CODE_SMELL
-Šsquid:S1192˜"SDefine a constant instead of duplicating this literal "		 AND BORRADO = 0" 3 times.(¦ÌõõúÿÿÿÿHÿRCRITICALZ
-CODE_SMELL
-‘squid:S1192"`Define a constant instead of duplicating this literal "			    ACT_AGR_AGRUPACION agr, " 5 times.( í¤½HÿRCRITICALZ
-CODE_SMELL
-usquid:S1126
-"AReplace this if-then-else statement by a single return statement.(›ó¯”ıÿÿÿÿH‘ÿRMINORZ
-CODE_SMELL
-’squid:S11923"\Define a constant instead of duplicating this literal " 		AGR.AGR_NUM_AGRUP_REM = " 3 times.(—ÿ±¥øÿÿÿÿH’ÿRCRITICALZ
-CODE_SMELL
-psquid:S1126¶"AReplace this if-then-else statement by a single return statement.(¬¯º…H“ÿRMINORZ
-CODE_SMELL
-psquid:S1126–"AReplace this if-then-else statement by a single return statement.(¬¯º…H”ÿRMINORZ
-CODE_SMELL
-squid:S1192º"\Define a constant instead of duplicating this literal "      AND ofr1.borrado = 0 " 4 times.(·™ğ—H•ÿRCRITICALZ
-CODE_SMELL
-›squid:S1192"iDefine a constant instead of duplicating this literal "			FROM DD_SCM_SITUACION_COMERCIAL scm, " 3 times.(ÄĞ³îH–ÿRCRITICALZ
-CODE_SMELL
-•squid:S1192"dDefine a constant instead of duplicating this literal "			  WHERE aga.AGR_ID = agr.AGR_ID " 5 times.(ü©À¼H—ÿRCRITICALZ
-CODE_SMELL
-psquid:S1126ä"AReplace this if-then-else statement by a single return statement.(¬¯º…H˜ÿRMINORZ
-CODE_SMELL
-Ísquid:S1192à"šDefine a constant instead of duplicating this literal "		WHERE DD_TPC_ID = (SELECT DD_TPC_ID FROM DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO = '04')" 4 times.(à•¿öH™ÿRCRITICALZ
-CODE_SMELL
-psquid:S1126‰"AReplace this if-then-else statement by a single return statement.(¬¯º…HšÿRMINORZ
-CODE_SMELL
-usquid:S1126	"AReplace this if-then-else statement by a single return statement.(›ó¯”ıÿÿÿÿH›ÿRMINORZ
-CODE_SMELL
-‚squid:S1192·"KDefine a constant instead of duplicating this literal "    WHERE " 4 times.(È¾íåıÿÿÿÿHœÿRCRITICALZ
-CODE_SMELL
-˜squid:S1192„"aDefine a constant instead of duplicating this literal "			    AND act.ACT_NUM_ACTIVO = " 4 times.(¾§²ÊùÿÿÿÿHÿRCRITICALZ
-CODE_SMELL

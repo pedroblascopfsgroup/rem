@@ -1761,14 +1761,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if (!Checks.esNulo(condiciones)) {
 			condiciones = dtoCondicionantestoCondicionante(condiciones, dto);
+			expedienteComercial.setCondicionante(condiciones);
 		} else {
 			condiciones = new CondicionanteExpediente();
 			condiciones.setExpediente(expedienteComercial);
 			condiciones = dtoCondicionantestoCondicionante(condiciones, dto);
+			expedienteComercial.setCondicionante(condiciones);
 		}
 
 		genericDao.save(CondicionanteExpediente.class, condiciones);
-
+		
 		createReservaExpediente(expedienteComercial);
 
 		return true;

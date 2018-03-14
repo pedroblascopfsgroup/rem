@@ -14,6 +14,7 @@ import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -199,7 +200,13 @@ public class ProcessAdapter {
 	@Transactional
 	public void setStateProcessed(Long idProcess) {
 		MSVProcesoMasivo document = procesoDao.get(idProcess);
-		MSVDDEstadoProceso processed = genericDao.get(MSVDDEstadoProceso.class, genericDao.createFilter(FilterType.EQUALS, "codigo", MSVDDEstadoProceso.CODIGO_PROCESADO));
+		String estadoProceso = MSVDDEstadoProceso.CODIGO_PROCESADO;
+		
+		if (!Checks.esNulo(document) && document.getTotalFilasKo() != 0) {
+			estadoProceso = MSVDDEstadoProceso.CODIGO_PROCESADO_CON_ERRORES;
+		}
+		
+		MSVDDEstadoProceso processed = genericDao.get(MSVDDEstadoProceso.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoProceso));
 		document.setEstadoProceso(processed);
 		procesoDao.mergeAndUpdate(document);
 	}

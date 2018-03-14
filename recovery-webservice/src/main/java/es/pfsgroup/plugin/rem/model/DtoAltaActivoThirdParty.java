@@ -5,7 +5,7 @@ import java.util.Date;
 public class DtoAltaActivoThirdParty {
 	//llaves
 	private Long numActivoHaya;
-	private String codCartera;
+	private String codSubCartera;
 	private String subtipoTituloCodigo;
 	private Long numActivoExterno;
 	private String tipoActivoCodigo;
@@ -114,11 +114,11 @@ public class DtoAltaActivoThirdParty {
 	public void setNumActivoHaya(Long numActivoHaya) {
 		this.numActivoHaya = numActivoHaya;
 	}
-	public String getCodCartera() {
-		return codCartera;
+	public String getCodSubCartera() {
+		return codSubCartera;
 	}
-	public void setCodCartera(String codCartera) {
-		this.codCartera = codCartera;
+	public void setCodSubCartera(String codCartera) {
+		this.codSubCartera = codCartera;
 	}
 	public String getSubtipoTituloCodigo() {
 		return subtipoTituloCodigo;

@@ -276,5 +276,9 @@ public interface ParticularValidatorApi {
 	
 	public boolean existeGestoriaDeFormalizacionByUsername(String username);
 
-	public boolean existeCarteraByCod(String codCartera);
+	public boolean existeSubCarteraByCod(String codSubCartera);
+
+	public boolean existeTipoActivoByCod(String codTipoActivo);
+	
+	public boolean existeSubtipoActivoByCod(String codSubtipoActivo);
 }

@@ -1,14 +1,11 @@
 package es.pfsgroup.plugin.rem.activo.alta;
 
-import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.log4j.helpers.UtilLoggingLevel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -23,6 +20,7 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdjudicacionBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistralBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
@@ -30,7 +28,6 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.controller.ActivoController;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
@@ -53,17 +50,11 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
-import es.pfsgroup.plugin.rem.model.DtoAltaActivoFinanciero;
 import es.pfsgroup.plugin.rem.model.DtoAltaActivoThirdParty;
-import es.pfsgroup.plugin.rem.model.Ejercicio;
-import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
-import es.pfsgroup.plugin.rem.model.PresupuestoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
@@ -90,9 +81,6 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
 	@Autowired
-	private GenericAdapter adapter;
-	
-	@Autowired
 	private ActivoAdapter activoAdapter;
 
 	@Autowired
@@ -117,7 +105,6 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 	
 	@Override
 	public String[] getTipoAltaActivoThirdParty() {
-		//flag aqui veriamos si llamo a financiero o inmueble 
 		return new String[] { AltaActivoThirdPartyService.CODIGO_ALTA_ACTIVO_THIRD_PARTY };
 	}
 
@@ -143,14 +130,16 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 	private Activo dtoToEntityActivo(DtoAltaActivoThirdParty dtoAATP) throws Exception{
 		DDSubtipoTituloActivo subTipoTitulo = (DDSubtipoTituloActivo) diccionarioApi.dameValorDiccionarioByCod(DDSubtipoTituloActivo.class, dtoAATP.getSubtipoTituloCodigo());
 		DDTipoTituloActivo tipoTitulo = subTipoTitulo.getTipoTituloActivo();
+		DDSubcartera subcartera = (DDSubcartera) diccionarioApi.dameValorDiccionarioByCod(DDSubcartera.class, dtoAATP.getCodSubCartera());
+		DDCartera cartera = subcartera.getCartera();
 		Activo activo = new Activo();
 		
 		beanUtilNotNull.copyProperty(activo, "numActivo", dtoAATP.getNumActivoHaya());
 		activo.setNumActivoRem(activoApi.getNextNumActivoRem());
 		beanUtilNotNull.copyProperty(activo, "tipoTitulo", tipoTitulo);
 		beanUtilNotNull.copyProperty(activo, "subtipoTitulo", utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoTituloActivo.class, dtoAATP.getSubtipoTituloCodigo()));
-		beanUtilNotNull.copyProperty(activo, "cartera", utilDiccionarioApi.dameValorDiccionarioByCod(DDCartera.class, dtoAATP.getCodCartera()));
-		//aqui ira o no el numero externo ese
+		beanUtilNotNull.copyProperty(activo, "subcartera", subcartera);
+		activo.setCartera(cartera);
 		beanUtilNotNull.copyProperty(activo, "tipoActivo", utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoActivo.class, dtoAATP.getTipoActivoCodigo()));
 		beanUtilNotNull.copyProperty(activo, "subtipoActivo", utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoActivo.class, dtoAATP.getSubtipoActivoCodigo()));
 		beanUtilNotNull.copyProperty(activo, "estadoActivo", utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoActivo.class, dtoAATP.getEstadoFisicoCodigo()));
@@ -202,7 +191,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 		// PerimetroActivo
 		PerimetroActivo perimetroActivo = new PerimetroActivo();
 		perimetroActivo.setActivo(activo);
-		perimetroActivo.setAplicaGestion(0);//0?
+		perimetroActivo.setAplicaGestion(0);
 		perimetroActivo.setAplicaComercializar(1);
 		if(!Checks.esNulo(dtoAATP.getFormalizacion())){
 			perimetroActivo.setAplicaFormalizar(dtoAATP.getFormalizacion().equalsIgnoreCase("si") ? 1 : 0);
@@ -505,15 +494,16 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				activoAdapter.insertarGestorAdicional(dto2);
 				
 				
-				EXTDDTipoGestor tipoGestorFormalizacion = new EXTDDTipoGestor();
-				tipoGestorFormalizacion = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GFORM");
-				Filter f3 = genericDao.createFilter(FilterType.EQUALS, "username", dtoAATP.getGestorFormalizacion());
-				Usuario usu3 = genericDao.get(Usuario.class, f3);
-				GestorEntidadDto dto3 = new GestorEntidadDto();
-				dto3.setIdEntidad(activo.getId());
-				dto3.setIdUsuario(usu3.getId());
-				dto3.setIdTipoGestor(tipoGestorFormalizacion.getId());
-				activoAdapter.insertarGestorAdicional(dto3);
+				if (!Checks.esNulo(dtoAATP.getGestorFormalizacion())){
+					EXTDDTipoGestor tipoGestorFormalizacion = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GFORM");
+					Filter f3 = genericDao.createFilter(FilterType.EQUALS, "username", dtoAATP.getGestorFormalizacion());
+					Usuario usu3 = genericDao.get(Usuario.class, f3);
+					GestorEntidadDto dto3 = new GestorEntidadDto();
+					dto3.setIdEntidad(activo.getId());
+					dto3.setIdUsuario(usu3.getId());
+					dto3.setIdTipoGestor(tipoGestorFormalizacion.getId());
+					activoAdapter.insertarGestorAdicional(dto3);
+				}
 				
 				
 				EXTDDTipoGestor tipoSupervisorFormalizacion = new EXTDDTipoGestor();
@@ -546,15 +536,17 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				dto6.setIdTipoGestor(tipoGestorActivos.getId());
 				activoAdapter.insertarGestorAdicional(dto6);
 				
-				EXTDDTipoGestor tipoGestoriaFormalizacion= new EXTDDTipoGestor();
-				tipoGestoriaFormalizacion = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");
-				Filter f7 = genericDao.createFilter(FilterType.EQUALS, "username", dtoAATP.getGestoriaDeFormalizacion());
-				Usuario usu7 = genericDao.get(Usuario.class, f7);
-				GestorEntidadDto dto7 = new GestorEntidadDto();
-				dto7.setIdEntidad(activo.getId());
-				dto7.setIdUsuario(usu7.getId());
-				dto7.setIdTipoGestor(tipoGestoriaFormalizacion.getId());
-				activoAdapter.insertarGestorAdicional(dto7);
+				if (!Checks.esNulo(dtoAATP.getGestoriaDeFormalizacion())){
+					EXTDDTipoGestor tipoGestoriaFormalizacion= new EXTDDTipoGestor();
+					tipoGestoriaFormalizacion = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");
+					Filter f7 = genericDao.createFilter(FilterType.EQUALS, "username", dtoAATP.getGestoriaDeFormalizacion());
+					Usuario usu7 = genericDao.get(Usuario.class, f7);
+					GestorEntidadDto dto7 = new GestorEntidadDto();
+					dto7.setIdEntidad(activo.getId());
+					dto7.setIdUsuario(usu7.getId());
+					dto7.setIdTipoGestor(tipoGestoriaFormalizacion.getId());
+					activoAdapter.insertarGestorAdicional(dto7);
+				}
 				
 				//ActivoValoracion - Precio mínimo
 				ActivoValoraciones activoValoracionPrecioMinimo = new ActivoValoraciones();
@@ -591,36 +583,30 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				beanUtilNotNull.copyProperty(activoTasacion, "importeTasacionFin", dtoAATP.getValorTasacion());
 				genericDao.save(ActivoTasacion.class, activoTasacion);
 				
+				
+				//ActivoBancario
+				String str = dtoAATP.getTipoActivo();
+				String claseActivo = str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
+				ActivoBancario activoBancario = new ActivoBancario();
+				activoBancario.setActivo(activo);
+				beanUtilNotNull.copyProperty(activoBancario, "claseActivo", utilDiccionarioApi.dameValorDiccionarioByDes(DDClaseActivoBancario.class, claseActivo));
+				genericDao.save(ActivoBancario.class, activoBancario);	
 				if (activo.getTipoTitulo().getCodigo().equals(DDTipoTituloActivo.tipoTituloPDV)){
-					//ActivoBancario.
-					ActivoBancario activoBancario = new ActivoBancario();
-					activoBancario.setActivo(activo);
-					beanUtilNotNull.copyProperty(activoBancario, "claseActivo", utilDiccionarioApi.dameValorDiccionarioByCod(DDClaseActivoBancario.class, DDClaseActivoBancario.CODIGO_FINANCIERO));
-					genericDao.save(ActivoBancario.class, activoBancario);					
-					
-					//ActivoPlanDinVentas
 					ActivoPlanDinVentas planDinVentas = new ActivoPlanDinVentas();
 					planDinVentas.setActivo(activo);
 					genericDao.save(ActivoPlanDinVentas.class, planDinVentas);
 				}else if (activo.getTipoTitulo().getCodigo().equals(DDTipoTituloActivo.tipoTituloJudicial)) {
-					//ActivoBancario
-					ActivoBancario activoBancario = new ActivoBancario();
-					activoBancario.setActivo(activo);
-					beanUtilNotNull.copyProperty(activoBancario, "claseActivo", utilDiccionarioApi.dameValorDiccionarioByCod(DDClaseActivoBancario.class, DDClaseActivoBancario.CODIGO_INMOBILIARIO));
-					genericDao.save(ActivoBancario.class, activoBancario);
+					NMBAdjudicacionBien adjudicacionBien = new NMBAdjudicacionBien();
+					adjudicacionBien.setBien(bien);
+					genericDao.save(NMBAdjudicacionBien.class, adjudicacionBien);
 					
 					//ActivoAdjudicacionJudicial
 					ActivoAdjudicacionJudicial activoAdjudicacionJudicial = new ActivoAdjudicacionJudicial();
 					activoAdjudicacionJudicial.setActivo(activo);
+					activoAdjudicacionJudicial.setAdjudicacionBien(adjudicacionBien);
 					genericDao.save(ActivoAdjudicacionJudicial.class,activoAdjudicacionJudicial);
 				}else if (activo.getTipoTitulo().getCodigo().equals(DDTipoTituloActivo.tipoTituloNoJudicial)) {
-					//ActivoBancario
-					ActivoBancario activoBancario = new ActivoBancario();
-					activoBancario.setActivo(activo);
-					beanUtilNotNull.copyProperty(activoBancario, "claseActivo", utilDiccionarioApi.dameValorDiccionarioByCod(DDClaseActivoBancario.class, DDClaseActivoBancario.CODIGO_INMOBILIARIO));
-					genericDao.save(ActivoBancario.class, activoBancario);
-					
-					//ActivoAdjudicacionNoJudicial3
+					//ActivoAdjudicacionNoJudicial
 					ActivoAdjudicacionNoJudicial activoAdjudicacionNoJudicial = new ActivoAdjudicacionNoJudicial();
 					activoAdjudicacionNoJudicial.setActivo(activo);
 					genericDao.save(ActivoAdjudicacionNoJudicial.class, activoAdjudicacionNoJudicial);

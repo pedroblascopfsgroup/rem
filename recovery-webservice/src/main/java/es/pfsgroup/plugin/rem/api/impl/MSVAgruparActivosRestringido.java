@@ -14,6 +14,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 
 @Component
 public class MSVAgruparActivosRestringido extends AbstractMSVActualizador implements MSVLiberator {
@@ -24,6 +25,9 @@ public class MSVAgruparActivosRestringido extends AbstractMSVActualizador implem
 	@Autowired
 	ProcessAdapter processAdapter;
 
+	@Autowired
+	ActivoAgrupacionApi activoAgrupacionApi;
+	
 	@Override
 	public String getValidOperation() {
 		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPATION_RESTRICTED;
@@ -33,7 +37,7 @@ public class MSVAgruparActivosRestringido extends AbstractMSVActualizador implem
 	@Transactional(readOnly = false)
 	public void procesaFila(MSVHojaExcel exc, int fila) throws IOException, ParseException, JsonViewerException, SQLException {
 		
-		Long agrupationId = new Long(exc.dameCelda(1, 0));
+		Long agrupationId = activoAgrupacionApi.getAgrupacionIdByNumAgrupRem(new Long(exc.dameCelda(fila, 0)));
 		agrupacionAdapter.createActivoAgrupacion(new Long(exc.dameCelda(fila, 1)), agrupationId, new Integer(exc.dameCelda(fila, 2)));
 	}
 

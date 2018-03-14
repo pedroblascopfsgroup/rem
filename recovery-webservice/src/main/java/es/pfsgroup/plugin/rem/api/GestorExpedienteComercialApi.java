@@ -19,6 +19,7 @@ public interface GestorExpedienteComercialApi {
 	public static final String CODIGO_SUPERVISOR_COMERCIAL_RETAIL = "SCOMRET";
 	public static final String CODIGO_SUPERVISOR_COMERCIAL_SINGULAR = "SCOMSIN";
 	public static final String CODIGO_SUPERVISOR_FORMALIZACION = "SFORM";
+	public static final String CODIGO_SUPERVISOR_COMERCIAL = "SCOM";
 	
 	public static final String CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO = "HAYAGBOINM";
 	public static final String CODIGO_GESTOR_COMERCIAL_BACKOFFICE_FINANCIERO = "HAYAGBOFIN";

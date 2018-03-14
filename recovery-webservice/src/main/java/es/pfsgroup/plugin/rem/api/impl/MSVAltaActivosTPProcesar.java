@@ -37,7 +37,7 @@ public class MSVAltaActivosTPProcesar extends AbstractMSVActualizador implements
 		
 		//lalves
 		static final int NUM_ACTIVO_HAYA = 0;
-		static final int COD_CARTERA = 1;
+		static final int COD_SUBCARTERA = 1;
 		static final int COD_SUBTIPO_TITULO = 2;
 		static final int NUM_ACTIVO_EXTERNO = 3;
 		static final int COD_TIPO_ACTIVO = 4;
@@ -157,9 +157,9 @@ public class MSVAltaActivosTPProcesar extends AbstractMSVActualizador implements
 	
 	private DtoAltaActivoThirdParty filaExcelToDtoAltaActivoThirdParty (MSVHojaExcel exc,DtoAltaActivoThirdParty dtoAATP, int fila) throws IllegalArgumentException, IOException, ParseException
 	{
-		
+	
 		dtoAATP.setNumActivoHaya(this.obtenerLongExcel(exc.dameCelda(fila, COL_NUM.NUM_ACTIVO_HAYA)));
-		dtoAATP.setCodCartera(exc.dameCelda(fila, COL_NUM.COD_CARTERA));
+		dtoAATP.setCodSubCartera(exc.dameCelda(fila, COL_NUM.COD_SUBCARTERA));
 		dtoAATP.setSubtipoTituloCodigo(exc.dameCelda(fila, COL_NUM.COD_SUBTIPO_TITULO));
 		dtoAATP.setNumActivoExterno(this.obtenerLongExcel(exc.dameCelda(fila, COL_NUM.NUM_ACTIVO_EXTERNO)));
 		dtoAATP.setTipoActivoCodigo(exc.dameCelda(fila, COL_NUM.COD_TIPO_ACTIVO));

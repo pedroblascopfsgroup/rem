@@ -1138,6 +1138,7 @@ public class UvemManager implements UvemManagerApi {
 			result.setCodigoDeOfertaHaya(servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx2());
 			//HREOS-3844: Postacordado Bankia 2: Añadir código de la oferta en FFDD
 			result.setCodigoAgrupacionInmueble(servicioGMPDJB13_INS.getCodigoDeAgrupacionDeInmueblecoagiw2());
+			result.setCodigoOfertaUvem(servicioGMPDJB13_INS.getCodigoDeOfertacoofew());
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
 			errorDesc = e.getMessage();

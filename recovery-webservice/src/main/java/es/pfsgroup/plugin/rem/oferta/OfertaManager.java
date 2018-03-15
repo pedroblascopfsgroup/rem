@@ -1417,6 +1417,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			expediente.setComiteSancion(comite);
 			expediente.setComiteSuperior(comite);
 			this.guardarUvemCodigoAgrupacionInmueble(expediente, resultadoDto);
+			if(!Checks.esNulo(resultadoDto.getCodigoOfertaUvem())){
+				if(!Checks.esNulo(expediente.getOferta())){
+					expediente.getOferta().setIdUvem(resultadoDto.getCodigoOfertaUvem().longValue());
+				}
+			}
 			genericDao.save(ExpedienteComercial.class, expediente);
 
 			return true;
@@ -1460,6 +1465,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
 			expediente.setComiteSancion(comite);
 			expediente.setComiteSuperior(comite);
+			
+			if(!Checks.esNulo(resultadoDto.getCodigoOfertaUvem())){
+				if(!Checks.esNulo(expediente.getOferta())){
+					expediente.getOferta().setIdUvem(resultadoDto.getCodigoOfertaUvem().longValue());
+				}
+			}
 			genericDao.save(ExpedienteComercial.class, expediente);
 
 			return null;

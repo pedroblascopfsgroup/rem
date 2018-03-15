@@ -165,7 +165,8 @@ public class MSVProcesoManager implements MSVProcesoApi {
 					beanUtilNotNull.copyProperty(nuevoDto, "estadoProceso",	proceso.getEstadoProceso().getDescripcion());					
 					if(MSVDDEstadoProceso.CODIGO_VALIDADO.equals(proceso.getEstadoProceso().getCodigo())) {
 						sePuedeProcesar = true;
-					} else if (MSVDDEstadoProceso.CODIGO_ERROR.equals(proceso.getEstadoProceso().getCodigo())){
+					} else if (MSVDDEstadoProceso.CODIGO_ERROR.equals(proceso.getEstadoProceso().getCodigo()) ||
+							MSVDDEstadoProceso.CODIGO_PROCESADO_CON_ERRORES.equals(proceso.getEstadoProceso().getCodigo())){
 						conErrores = true;
 					} else if (MSVDDEstadoProceso.CODIGO_PTE_VALIDAR.equals(proceso.getEstadoProceso().getCodigo())){
 						validable = true;

@@ -1,8 +1,13 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -15,6 +20,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import es.capgemini.devon.files.FileItem;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
@@ -70,6 +76,8 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 			this.preProcesado(exc);
 			TransactionStatus transaction = null;
 			Integer numFilas = this.getNumFilas(file, exc);
+			List<Integer> listaFilas = new ArrayList<Integer>();
+			Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
 			for (int fila = this.getFilaInicial(); fila < numFilas; fila++) {
 				try{
 					transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
@@ -77,11 +85,17 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 					transactionManager.commit(transaction);
 					processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), true);
 				}catch(Exception e){
+					listaFilas.add(fila);
+					mapaErrores.put("KO", listaFilas);
 					logger.error("error procesando fila "+fila+" del proceso "+file.getProcesoMasivo().getId(),e);
 					transactionManager.rollback(transaction);
-					processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), false);
-					
+					processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), false);					
 				}
+			}
+			if(!mapaErrores.isEmpty()){
+				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
+				FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
+				processAdapter.setExcelErroresProcesado(file, fileItemErrores);
 			}
 			
 			this.postProcesado(exc);

@@ -73,7 +73,13 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 				
 			    success: success,
 			 	failure: function(record, operation) {
-			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+			 		data = Ext.decode(operation._response.responseText);
+			 		if (!Ext.isEmpty(data.msg)) {
+			 			me.fireEvent("errorToast", data.msg);
+			 		}
+			 		else{
+			 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			 		}
 			    },
 			    callback: function(record, operation) {
 			    	form.unmask();

@@ -90,7 +90,8 @@ public class MasivoController extends ParadiseJsonController {
 				if (procesomasivo.getEstadoProceso() != null) {
 					if (MSVDDEstadoProceso.CODIGO_VALIDADO.equals(procesomasivo.getEstadoProceso().getCodigo())) {
 						sePuedeProcesar = true;
-					} else if (MSVDDEstadoProceso.CODIGO_ERROR.equals(procesomasivo.getEstadoProceso().getCodigo())) {
+					} else if (MSVDDEstadoProceso.CODIGO_ERROR.equals(procesomasivo.getEstadoProceso().getCodigo()) || 
+							MSVDDEstadoProceso.CODIGO_PROCESADO_CON_ERRORES.equals(procesomasivo.getEstadoProceso().getCodigo())) {
 						conErrores = true;
 					} else if (MSVDDEstadoProceso.CODIGO_PTE_VALIDAR
 							.equals(procesomasivo.getEstadoProceso().getCodigo())) {

@@ -322,6 +322,7 @@ public class ExcelManager implements ExcelManagerApi {
 		document.setContenidoFichero(uploadForm.getExcelFile().getFileItem());
 		//ErroresFichero inicialmente igual que el fichero base
 		document.setErroresFichero(document.getContenidoFichero());
+		document.setErroresFicheroProcesar(document.getContenidoFichero());
 
 		return document;
 	}

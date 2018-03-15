@@ -596,6 +596,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			if (!Checks.esNulo(ofertaDto.getIsExpress())) {
 				oferta.setOfertaExpress(ofertaDto.getIsExpress());
+
+				if (ofertaDto.getIsExpress())
+					congelarExpedientesPorOfertaExpress(ofertaDto.getIdActivoHaya());
+
 			}
 
 			Long idOferta = this.saveOferta(oferta);
@@ -2381,5 +2385,50 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 		}
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see es.pfsgroup.plugin.rem.api.OfertaApi#congelarExpedientesPorOfertaExpress(java.lang.Long)
+	 */
+	@Transactional(readOnly = false)
+	@Override
+	public void congelarExpedientesPorOfertaExpress(Long numActivo) throws Exception {
+
+		Activo activo = activoApi.getByNumActivo(numActivo);
+		List<ActivoOferta> actofr = activo.getOfertas();
+
+		for (int i = 0; i < actofr.size(); i++) {
+			ActivoOferta activoOferta = actofr.get(i);
+			Oferta oferta = activoOferta.getPrimaryKey().getOferta();
+
+			if (!Checks.esNulo(oferta)) {
+				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
+
+					ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(oferta);
+
+					String estadoExpediente = exp.getEstado().getCodigo();
+
+					if (DDEstadosExpedienteComercial.EN_TRAMITACION.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.ANULADO.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.FIRMADO.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.POSICIONADO.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.RESUELTO.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.PTE_SANCION.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.DENEGADO.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.DOBLE_FIRMA.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.RPTA_OFERTANTE.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(estadoExpediente)) {
+
+						oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
+								genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA)));
+
+						genericDao.update(Oferta.class, oferta);
+
+					}
+				}
+			}
+		}
 	}
 }

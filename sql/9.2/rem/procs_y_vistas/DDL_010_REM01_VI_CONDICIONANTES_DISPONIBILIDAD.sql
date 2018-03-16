@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Ivan Rubio
---## FECHA_CREACION=20171128
+--## AUTOR=Pier Gotta
+--## FECHA_CREACION=20180316
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-3344
+--## INCIDENCIA_LINK=HREOS-3890
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -19,6 +19,7 @@
 --##		0.6	HREOS-2628
 --##		0.7 HREOS-2992 - Correcciones para PDVs
 --##		0.8 HREOS-3344 - Cambio check obra nueva en construcción
+--##		0.9 HREOS-3890 - Vandalizado añadido
 --##########################################
 --*/
 
@@ -60,6 +61,7 @@ BEGIN
                                                           obranueva_enconstruccion,
                                                           divhorizontal_noinscrita,
                                                           ruina,
+                                                          vandalizado, 
                                                           otro,
                                                           sin_informe_aprobado,
                                                           revision,
@@ -72,12 +74,12 @@ BEGIN
                                                           borrado
                                                          )
 AS
-   SELECT act_id, sin_toma_posesion_inicial, ocupado_contitulo, pendiente_inscripcion, proindiviso, tapiado, obranueva_sindeclarar, obranueva_enconstruccion, divhorizontal_noinscrita, ruina, otro,
+   SELECT act_id, sin_toma_posesion_inicial, ocupado_contitulo, pendiente_inscripcion, proindiviso, tapiado, obranueva_sindeclarar, obranueva_enconstruccion, divhorizontal_noinscrita, ruina, vandalizado, otro,
           sin_informe_aprobado, revision, procedimiento_judicial, con_cargas, ocupado_sintitulo, estado_portal_externo, DECODE (est_disp_com_codigo, ''01'', 1, 0) AS es_condicionado,
           est_disp_com_codigo, borrado
      FROM (SELECT act.act_id, NVL2 (sps7.sps_id, 1, NVL2 (sps4.sps_id, 1, 0)) AS sin_toma_posesion_inicial, NVL2 (sps3.sps_id, 1, 0) AS ocupado_contitulo, NVL2 (tit.act_id, 0, 1) AS pendiente_inscripcion,
                   NVL2 (npa.act_id, 1, 0) AS proindiviso, NVL2 (sps1.sps_id, 1, 0) AS tapiado, NVL2 (eon.dd_eon_id, 1, 0) AS obranueva_sindeclarar,
-                  NVL2 (eac2.dd_eac_id, 1, 0) AS obranueva_enconstruccion, NVL2 (reg2.reg_id, 1, 0) AS divhorizontal_noinscrita, NVL2 (eac1.dd_eac_id, 1, 0) AS ruina, sps5.sps_otro AS otro,
+                  NVL2 (eac2.dd_eac_id, 1, 0) AS obranueva_enconstruccion, NVL2 (reg2.reg_id, 1, 0) AS divhorizontal_noinscrita, NVL2 (eac1.dd_eac_id, 1, 0) AS ruina, NVL2 (eac3.dd_eac_id, 1, 0) as vandalizado, sps5.sps_otro AS otro,
                   DECODE (vei.dd_aic_codigo, ''02'', 0, 1) AS sin_informe_aprobado, 0 AS revision,                                                                                      --NO EXISTE EN REM
                                                                                                 0 AS procedimiento_judicial,                                                          --NO EXISTE EN REM
                                                                                                                             NVL2 (vcg.con_cargas, vcg.con_cargas, 0) AS con_cargas,
@@ -94,6 +96,7 @@ AS
                            OR NVL2 (sps2.sps_id, 1, 0) = 1
                            OR NVL2 (reg2.reg_id, 1, 0) = 1
                            OR NVL2 (sps5.sps_otro, 1, 0) = 1
+                           OR NVL2 (eac3.dd_eac_id, 1, 0) = 1
                           )                                                                                                                              --OR DECODE(VEI.DD_AIC_CODIGO ,''02'' ,0 , 1) = 1
                       OR NVL2 (vcg.con_cargas, vcg.con_cargas, 0) = 1
                         THEN ''01''
@@ -103,6 +106,7 @@ AS
              FROM '||V_ESQUEMA||'.act_activo act LEFT JOIN '||V_ESQUEMA||'.act_aba_activo_bancario aba2 ON aba2.act_id = act.act_id 
 				  LEFT JOIN '||V_ESQUEMA||'.dd_eac_estado_activo eac1 ON eac1.dd_eac_id = act.dd_eac_id AND eac1.dd_eac_codigo = ''05''                                                -- RUINA
                   LEFT JOIN '||V_ESQUEMA||'.dd_eac_estado_activo eac2 ON eac2.dd_eac_id = act.dd_eac_id AND (eac2.dd_eac_codigo = ''02''  OR   eac2.dd_eac_codigo = ''06'')                                               -- OBRA NUEVA EN CONSTRUCCIÓN
+                  LEFT JOIN '||V_ESQUEMA||'.dd_eac_estado_activo eac3 ON eac3.dd_eac_id = act.dd_eac_id AND eac3.dd_eac_codigo = ''07''                                                -- VANDALIZADO
                   LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps1 ON sps1.act_id = act.act_id AND sps1.sps_acc_tapiado = 1                                                                         -- TAPIADO
                   LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps2 ON sps2.act_id = act.act_id AND sps2.sps_ocupado = 1 AND sps2.sps_con_titulo = 0                                      -- OCUPADO SIN TITULO
                   LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps3 ON sps3.act_id = act.act_id AND sps3.sps_ocupado = 1 AND sps3.sps_con_titulo = 1                                      -- OCUPADO CON TITULO
@@ -128,11 +132,11 @@ AS
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD...Creada OK');
   
-  	EXECUTE IMMEDIATE 'GRANT SELECT ON '||V_ESQUEMA||'.V_COND_DISPONIBILIDAD TO PFSREM';
+  	/*EXECUTE IMMEDIATE 'GRANT SELECT ON '||V_ESQUEMA||'.V_COND_DISPONIBILIDAD TO PFSREM';
 
 	EXECUTE IMMEDIATE 'GRANT SELECT ON '||V_ESQUEMA||'.V_COND_DISPONIBILIDAD TO REM_QUERY';
 
-	EXECUTE IMMEDIATE 'GRANT SELECT ON '||V_ESQUEMA||'.V_COND_DISPONIBILIDAD TO REMWS';
+	EXECUTE IMMEDIATE 'GRANT SELECT ON '||V_ESQUEMA||'.V_COND_DISPONIBILIDAD TO REMWS';*/
   
 END;
 /

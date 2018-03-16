@@ -1,48 +1,41 @@
 package es.pfsgroup.plugin.rem.activo.publicacion.dao;
 
-import java.util.List;
-
-import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.DtoPaginadoHistoricoEstadoPublicacion;
 
 public interface ActivoPublicacionHistoricoDao extends AbstractDao<ActivoPublicacionHistorico, Long> {
 
 	/**
-	 * Este método devuelve un listado de histórico de estados de publicaciones de un activo por
-	 * el ID de activo que recibe.
-	 * 
+	 * Este método devuelve un listado paginado de histórico de estados de publicaciones de un activo por el ID de activo que recibe.
+	 *
 	 * @param dto : dto con el ID de activo para filtrar el listado.
-	 * @return Devuelve un listado con los resultados obtenidos.
+	 * @return Devuelve un listado paginado con los resultados obtenidos.
 	 */
-	public List<ActivoPublicacionHistorico> getListadoHistoricoEstadosPublicacionVentaByIdActivo(DtoHistoricoEstadoPublicacion dto);
+	DtoPaginadoHistoricoEstadoPublicacion getListadoPaginadoHistoricoEstadosPublicacionVentaByIdActivo(DtoPaginadoHistoricoEstadoPublicacion dto);
 
 	/**
-	 * Este método devuelve un listado de histórico de estados de publicaciones de un activo por
-	 * el ID de activo que recibe.
-	 * 
+	 * Este método devuelve un listado paginado de histórico de estados de publicaciones de un activo por el ID de activo que recibe.
+	 *
 	 * @param dto : dto con el ID de activo para filtrar el listado.
-	 * @return Devuelve un listado con los resultados obtenidos.
+	 * @return Devuelve un listado paginado con los resultados obtenidos.
 	 */
-	public List<ActivoPublicacionHistorico> getListadoHistoricoEstadosPublicacionAlquilerByIdActivo(DtoHistoricoEstadoPublicacion dto);
-	
+	DtoPaginadoHistoricoEstadoPublicacion getListadoHistoricoEstadosPublicacionAlquilerByIdActivo(DtoPaginadoHistoricoEstadoPublicacion dto);
 
 	/**
-	 * Este método convierte una entidad de tipo venta DtoHistoricoEstadoPublicacion a un pojo.
-	 * 
-	 * @param entidad: entidad a convertir en un objeto plano.
-	 * @return Devuelve un obeto DtoHistoricoEstadoPublicacion relleno con la información de
-	 * la entidad.
+	 * Este método obtiene la suma de días, para un ID de activo, que ha estado un activo publicado para el tipo comercial venta.
+	 *
+	 * @param idActivo: ID del activo para obtener los días publicados.
+	 * @return Devuelve el número de días que ha estado el activo publicado.
 	 */
-	public DtoHistoricoEstadoPublicacion convertirEntidadTipoVentaToDto(ActivoPublicacionHistorico entidad);
+	Integer getTotalDeDiasEnEstadoPublicadoVentaPorIdActivo(Long idActivo);
 
 	/**
-	 * Este método convierte una entidad de tipo alquiler DtoHistoricoEstadoPublicacion a un pojo.
-	 * 
-	 * @param entidad: entidad a convertir en un objeto plano.
-	 * @return Devuelve un obeto DtoHistoricoEstadoPublicacion relleno con la información de
-	 * la entidad.
+	 * Este método obtiene la suma de días, para un ID de activo, que ha estado un activo publicado para el tipo comercial alquiler.
+	 *
+	 * @param idActivo: ID del activo para obtener los días publicados.
+	 * @return Devuelve el número de días que ha estado el activo publicado.
 	 */
-	public DtoHistoricoEstadoPublicacion convertirEntidadTipoAlquilerToDto(ActivoPublicacionHistorico entidad);
+	Integer getTotalDeDiasEnEstadoPublicadoAlquilerPorIdActivo(Long idActivo);
 }

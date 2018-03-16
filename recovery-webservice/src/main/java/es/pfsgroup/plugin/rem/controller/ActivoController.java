@@ -18,6 +18,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -55,58 +56,8 @@ import es.pfsgroup.plugin.rem.excel.ActivoExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.PublicacionExcelReport;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoFoto;
-import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
-import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
-import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
-import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
-import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
-import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
-import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
-import es.pfsgroup.plugin.rem.model.DtoActivoInformacionAdministrativa;
-import es.pfsgroup.plugin.rem.model.DtoActivoInformacionComercial;
-import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
-import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
-import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
-import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
-import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
-import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
-import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
-import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
-import es.pfsgroup.plugin.rem.model.DtoAdjunto;
-import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
-import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
-import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
-import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
-import es.pfsgroup.plugin.rem.model.DtoCondicionHistorico;
-import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
-import es.pfsgroup.plugin.rem.model.DtoDistribucion;
-import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
-import es.pfsgroup.plugin.rem.model.DtoFoto;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoEstadoPublicacion;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
-import es.pfsgroup.plugin.rem.model.DtoIncrementoPresupuestoActivo;
-import es.pfsgroup.plugin.rem.model.DtoLlaves;
-import es.pfsgroup.plugin.rem.model.DtoMovimientoLlave;
-import es.pfsgroup.plugin.rem.model.DtoObservacion;
-import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
-import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
-import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
-import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
-import es.pfsgroup.plugin.rem.model.DtoPropietario;
-import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
-import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
-import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
-import es.pfsgroup.plugin.rem.model.DtoTasacion;
-import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
-import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
-import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
-import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
@@ -143,16 +94,13 @@ public class ActivoController extends ParadiseJsonController {
 	@Autowired
 	private ActivoPropagacionApi activoPropagacionApi;
 	
-	@Autowired
-	GestorDocumentalFotosApi gestorDocumentalFotos;
-	
 
 	/**
 	 * Método que recupera un conjunto de datos del Activo según su id
 	 * 
 	 * @param id
 	 *            Id del activo
-	 * @param pestana
+	 * @param tab
 	 *            Pestaña del activo a cargar
 	 * @param model
 	 * @return
@@ -1334,7 +1282,7 @@ public class ActivoController extends ParadiseJsonController {
 	/**
 	 * Método que recupera las tareas activas de un trámite.
 	 * 
-	 * @param id
+	 * @param idTramite
 	 *            Id del trámite
 	 * @return Listado de tareas asociadas al trámite y activas
 	 * 
@@ -1351,7 +1299,7 @@ public class ActivoController extends ParadiseJsonController {
 	/**
 	 * Método que recupera las tareas de un trámite.
 	 * 
-	 * @param id
+	 * @param idTramite
 	 *            Id del trámite
 	 * @return Listado de tareas asociadas al trámite y activas
 	 */
@@ -1367,7 +1315,7 @@ public class ActivoController extends ParadiseJsonController {
 	/**
 	 * Método que recupera los activos de un trámite.
 	 * 
-	 * @param id
+	 * @param idTramite
 	 *            Id del trámite
 	 * @return Listado de activos del tramite, tomando de cada activo un grupo
 	 *         de datos reducido
@@ -1387,7 +1335,7 @@ public class ActivoController extends ParadiseJsonController {
 	/**
 	 * Método que crea un nuevo trámite a partir de un activo
 	 * 
-	 * @param id
+	 * @param idActivo
 	 *            Id del activo
 	 * @return
 	 */
@@ -1442,7 +1390,7 @@ public class ActivoController extends ParadiseJsonController {
 	/**
 	 * Método que crea un nuevo trábajo a partir de un activo
 	 * 
-	 * @param id
+	 * @param idActivo
 	 *            : ID del activo
 	 * @return
 	 */
@@ -1456,8 +1404,7 @@ public class ActivoController extends ParadiseJsonController {
 	}
 
 	/**
-	 * 
-	 * @param idActivo
+	 *
 	 * @param model
 	 * @return
 	 */
@@ -1482,7 +1429,6 @@ public class ActivoController extends ParadiseJsonController {
 	 * Recibe y guarda un adjunto
 	 * 
 	 * @param request
-	 * @param response
 	 * @return
 	 * @throws Exception
 	 */
@@ -1542,10 +1488,7 @@ public class ActivoController extends ParadiseJsonController {
 	/**
 	 * delete un adjunto.
 	 * 
-	 * @param asuntoId
-	 *            long
-	 * @param adjuntoId
-	 *            long
+	 * @param dtoAdjunto
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -1915,15 +1858,21 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getHistoricoEstadosPublicacionVentaByIdActivo(DtoHistoricoEstadoPublicacion dto, ModelMap model) {
-		model.put("data", activoApi.getHistoricoEstadosPublicacionVentaByIdActivo(dto));
+	public ModelAndView getHistoricoEstadosPublicacionVentaByIdActivo(DtoPaginadoHistoricoEstadoPublicacion dto, ModelMap model) {
+		DtoPaginadoHistoricoEstadoPublicacion listadoPaginado = activoEstadoPublicacionApi.getHistoricoEstadosPublicacionVentaByIdActivo(dto);
+		model.put("data", listadoPaginado.getListado());
+		model.put("totalCount", listadoPaginado.getTotalCount());
+		model.put("success", true);
 		return createModelAndViewJson(model);
 	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getHistoricoEstadosPublicacionAlquilerByIdActivo(DtoHistoricoEstadoPublicacion dto, ModelMap model) {
-		model.put("data", activoApi.getHistoricoEstadosPublicacionAlquilerByIdActivo(dto));
+	public ModelAndView getHistoricoEstadosPublicacionAlquilerByIdActivo(DtoPaginadoHistoricoEstadoPublicacion dto, ModelMap model) {
+		DtoPaginadoHistoricoEstadoPublicacion listadoPaginado = activoEstadoPublicacionApi.getHistoricoEstadosPublicacionAlquilerByIdActivo(dto);
+		model.put("data", listadoPaginado.getListado());
+		model.put("totalCount", listadoPaginado.getTotalCount());
+		model.put("success", true);
 		return createModelAndViewJson(model);
 	}
 
@@ -1931,13 +1880,6 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getEstadoInformeComercialByActivo(Long id, ModelMap model) {
 		model.put("data", activoApi.getEstadoInformeComercialByActivo(id));
-		return createModelAndViewJson(model);
-	}
-
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getDatosPublicacionByActivo(Long id, ModelMap model) {
-		model.put("data", activoApi.getDatosPublicacionByActivo(id));
 		return createModelAndViewJson(model);
 	}
 
@@ -2035,18 +1977,19 @@ public class ActivoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getDatosPublicacionActivo(Long id, ModelMap model) {
-		//model.put("data", activoEstadoPublicacionApi.getDatosPublicacionActivo(id));
+		model.put("data", activoEstadoPublicacionApi.getDatosPublicacionActivo(id));
+		model.put("success", true);
 
 		return createModelAndViewJson(model);
 	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView setDatosPublicacionActivo(ModelMap model) {
+	public ModelAndView setDatosPublicacionActivo(DtoDatosPublicacionActivo dto, ModelMap model) {
 		try {
-			//model.put("success", activoEstadoPublicacionApi.setDatosPublicacionActivo());
-		} catch (Exception e) {
-				model.put("msg", "Error al guardar los datos de publicacion del activo");
+			model.put("success", activoEstadoPublicacionApi.setDatosPublicacionActivo(dto));
+		} catch (JsonViewerException e) {
+				model.put("msg", e.getMessage());
 				model.put("success", false);
 				logger.error("Error al guardar los datos de publicacion del activo", e);
 		}

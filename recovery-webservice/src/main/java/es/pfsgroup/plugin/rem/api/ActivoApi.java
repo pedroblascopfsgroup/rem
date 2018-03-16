@@ -338,33 +338,6 @@ public interface ActivoApi {
 	public Boolean saveCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica);
 
 	/**
-	 * Este método obtiene el histórico de estados de publicación por los que ha pasado un activo
-	 * con tipo de comercialización venta.
-	 * 
-	 * @param dto: dto con el ID del activo para filtrar los datos.
-	 * @return Devuleve un listado de DtoEstadoPublicacion con los datos obtenidos.
-	 */
-	public List<DtoHistoricoEstadoPublicacion> getHistoricoEstadosPublicacionVentaByIdActivo(DtoHistoricoEstadoPublicacion dto);
-
-	/**
-	 * Este método obtiene el histórico de estados de publicación por los que ha pasado un activo
-	 * con tipo de comercialización alquiler.
-	 * 
-	 * @param dto: dto con el ID del activo para filtrar los datos.
-	 * @return Devuleve un listado de DtoEstadoPublicacion con los datos obtenidos.
-	 */
-	public List<DtoHistoricoEstadoPublicacion> getHistoricoEstadosPublicacionAlquilerByIdActivo(DtoHistoricoEstadoPublicacion dto);
-
-	/**
-	 * Este método obtiene los datos del apartado 'datos publicación' de la tab 'publicacion' de un
-	 * activo.
-	 * 
-	 * @param idActivo: ID del activo a filtrar los datos.
-	 * @return Devuelve un dto con los datos obtenidos.
-	 */
-	public DtoDatosPublicacion getDatosPublicacionByActivo(Long idActivo);
-
-	/**
 	 * Recupera una página de propuestas según el filtro recibido
 	 * 
 	 * @param dtoPropuestaFiltro

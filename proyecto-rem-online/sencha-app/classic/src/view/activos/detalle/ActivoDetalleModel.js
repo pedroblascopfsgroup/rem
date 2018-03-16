@@ -275,7 +275,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		 },
 		 
 		 enableComboTipoAlquiler: function(get){
-				debugger;
 				var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
 				return true;
 		}

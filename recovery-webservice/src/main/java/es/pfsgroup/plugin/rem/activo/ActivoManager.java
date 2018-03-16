@@ -1788,30 +1788,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
-	public List<DtoHistoricoEstadoPublicacion> getHistoricoEstadosPublicacionVentaByIdActivo(DtoHistoricoEstadoPublicacion dto) {
-		List<ActivoPublicacionHistorico> listaEstadosPublicacion = activoPublicacionHistoricoDao.getListadoHistoricoEstadosPublicacionVentaByIdActivo(dto);
-		List<DtoHistoricoEstadoPublicacion> listaDtoHistoricoEstadosPublicacion = new ArrayList<DtoHistoricoEstadoPublicacion>();
-
-		for (ActivoPublicacionHistorico historicoPublicacion : listaEstadosPublicacion) {
-			listaDtoHistoricoEstadosPublicacion.add(activoPublicacionHistoricoDao.convertirEntidadTipoVentaToDto(historicoPublicacion));
-		}
-
-		return listaDtoHistoricoEstadosPublicacion;
-	}
-
-	@Override
-	public List<DtoHistoricoEstadoPublicacion> getHistoricoEstadosPublicacionAlquilerByIdActivo(DtoHistoricoEstadoPublicacion dto) {
-		List<ActivoPublicacionHistorico> listaEstadosPublicacion = activoPublicacionHistoricoDao.getListadoHistoricoEstadosPublicacionAlquilerByIdActivo(dto);
-		List<DtoHistoricoEstadoPublicacion> listaDtoHistoricoEstadosPublicacion = new ArrayList<DtoHistoricoEstadoPublicacion>();
-
-		for (ActivoPublicacionHistorico historicoPublicacion : listaEstadosPublicacion) {
-			listaDtoHistoricoEstadosPublicacion.add(activoPublicacionHistoricoDao.convertirEntidadTipoAlquilerToDto(historicoPublicacion));
-		}
-
-		return listaDtoHistoricoEstadosPublicacion;
-	}
-
-	@Override
 	public List<DtoEstadosInformeComercialHistorico> getEstadoInformeComercialByActivo(Long idActivo) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 		Order order = new Order(OrderType.DESC, "fecha");
@@ -2042,63 +2018,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			visitasDao.update(toUpdate);
 		}
 		return visita;
-	}
-
-	@Override
-	public DtoDatosPublicacion getDatosPublicacionByActivo(Long idActivo) {// TODO:
-		// Obtener los estados y sumar los dias de cada fase aplicando criterio
-		// de funcional además comprobar
-		// si alguno de ellos es de publicación/publicación forzada.
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
-		Order order = new Order(OrderType.ASC, "id");
-		List<ActivoHistoricoEstadoPublicacion> listaEstadosPublicacion = genericDao.getListOrdered(ActivoHistoricoEstadoPublicacion.class, order, filtro);
-
-		int dias = 0;
-		boolean despublicado = false;
-
-		for (ActivoHistoricoEstadoPublicacion estado : listaEstadosPublicacion) {
-			if (!Checks.esNulo(estado.getEstadoPublicacion())) {
-				if (despublicado && (DDEstadoPublicacion.CODIGO_PUBLICADO.equals(estado.getEstadoPublicacion().getCodigo())
-						|| DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO.equals(estado.getEstadoPublicacion().getCodigo()))) {
-					// Si el estado anterior es despublicado y el actual es
-					// publicado, se reinicia el contador de días.
-					despublicado = false;
-					dias = 0;
-
-				} else if (DDEstadoPublicacion.CODIGO_DESPUBLICADO.equals(estado.getEstadoPublicacion().getCodigo())) {
-					// Si el estado es despublicado se marca para la siguiente
-					// iteración.
-					despublicado = true;
-
-				} else if (!DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO.equals(estado.getEstadoPublicacion().getCodigo())
-						&& !DDEstadoPublicacion.CODIGO_NO_PUBLICADO.equals(estado.getEstadoPublicacion().getCodigo())) {
-					if (!Checks.esNulo(estado.getFechaDesde())) {
-						// Cualquier otro estado distinto a publicado oculto
-						// sumará días de publicación.
-						try {
-							SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-							Date fechaHastaSinTiempo = new Date();
-							if (!Checks.esNulo(estado.getFechaHasta())) {
-								fechaHastaSinTiempo = sdf.parse(sdf.format(estado.getFechaHasta()));
-							}
-							Date fechaDesdeSinTiempo = sdf.parse(sdf.format(estado.getFechaDesde()));
-							Long diferenciaMilis = fechaHastaSinTiempo.getTime() - fechaDesdeSinTiempo.getTime();
-							Long diferenciaDias = diferenciaMilis / (1000 * 60 * 60 * 24);
-							dias += Integer.valueOf(diferenciaDias.intValue());
-						} catch (ParseException e) {
-							logger.error("Error en activoManager", e);
-						}
-					}
-				}
-			}
-		}
-
-		// Rellenar dto.
-		DtoDatosPublicacion dto = new DtoDatosPublicacion();
-		dto.setIdActivo(idActivo);
-		dto.setTotalDiasPublicado(dias);
-
-		return dto;
 	}
 
 	@SuppressWarnings("unchecked")

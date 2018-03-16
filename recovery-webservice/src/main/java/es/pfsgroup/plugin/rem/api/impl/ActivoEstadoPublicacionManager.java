@@ -2,15 +2,22 @@ package es.pfsgroup.plugin.rem.api.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
+import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionHistoricoDao;
+import es.pfsgroup.plugin.rem.activo.valoracion.dao.ActivoValoracionDao;
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,25 +27,14 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
-import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
-import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
-import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
-import es.pfsgroup.plugin.rem.model.dd.DDPortal;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
 import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
 
 @Service("activoEstadoPublicacionManager")
@@ -57,6 +53,15 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	
 	@Autowired 
 	private ActivoDao activoDao;
+
+	@Autowired
+	private ActivoPublicacionDao activoPublicacionDao;
+
+	@Autowired
+	private ActivoPublicacionHistoricoDao activoPublicacionHistoricoDao;
+
+	@Autowired
+	private ActivoValoracionDao activoValoracionDao;
 	
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
@@ -64,9 +69,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	@Autowired
 	private GenericAdapter genericAdapter;
 	
-    BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
-    
-    public DtoCambioEstadoPublicacion getState(Long idActivo){
+    private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+
+    public DtoCambioEstadoPublicacion getState(Long idActivo){  // TODO: eliminar.
     	DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = new DtoCambioEstadoPublicacion();
     	Activo activo = activoApi.get(idActivo);
     	dtoCambioEstadoPublicacion.setActivo(idActivo);
@@ -102,18 +107,16 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
     	
     	return dtoCambioEstadoPublicacion;
     }
-    
+
     @Override
     @Transactional(readOnly = false)
-
-    
-    public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion) throws SQLException, JsonViewerException {
+    public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion) throws SQLException, JsonViewerException { // TODO: eliminar.
     	return publicacionChangeState(dtoCambioEstadoPublicacion, null);
     }
-    		
+
     @Override
     @Transactional(readOnly = false)
-    public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion, DtoPublicacionValidaciones dtoValidacionesPublicacion) throws SQLException, JsonViewerException{
+    public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion, DtoPublicacionValidaciones dtoValidacionesPublicacion) throws SQLException, JsonViewerException{  // TODO: eliminar.
     	Boolean OkPublicacionSinPublicar= false;
     	Boolean publicacionForzadaSinOrdinario= false;
 		Activo activo = activoApi.get(dtoCambioEstadoPublicacion.getIdActivo());
@@ -363,7 +366,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
     }
     
     
-    private String getMotivo(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion) {
+    private String getMotivo(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion) {  // TODO: eliminar.
     	String motivo = null;
     	if(!Checks.esNulo(dtoCambioEstadoPublicacion.getMotivoPublicacion())) {
 			motivo = dtoCambioEstadoPublicacion.getMotivoPublicacion();
@@ -384,7 +387,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
     @Override
     @Transactional(readOnly = false)
     public boolean cambiarEstadoPublicacionAndRegistrarHistorico(Activo activo, String motivo, Filter filtro, DDEstadoPublicacion estadoPublicacionActual,
-    			Boolean isPublicacionForzada, Boolean isPublicacionOrdinaria) throws SQLException, JsonViewerException{
+    			Boolean isPublicacionForzada, Boolean isPublicacionOrdinaria) throws SQLException, JsonViewerException{  // TODO: eliminar.
     	
 		// 1.) Comprueba si hay NUEVO ESTADO al que cambiar (filtro != null)
 		if(!Checks.esNulo(filtro)){
@@ -493,11 +496,161 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
     }
 
 	@Override
-	public DtoCambioEstadoPublicacion getHistoricoEstadoPublicacionByActivo(Long id) {// TODO:
+	public DtoDatosPublicacionActivo getDatosPublicacionActivo(Long idActivo) {
+    	ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(idActivo);
+    	DtoDatosPublicacionActivo dto = activoPublicacionDao.convertirEntidadTipoToDto(activoPublicacion);
+		dto.setPrecioWebVenta(activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(idActivo));
+		dto.setPrecioWebAlquiler(activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(idActivo));
+		dto.setTotalDiasPublicadoVenta(this.obtenerTotalDeDiasEnEstadoPublicadoVenta(idActivo));
+		dto.setTotalDiasPublicadoAlquiler(this.obtenerTotalDeDiasEnEstadoPublicadoAlquiler(idActivo));
+		//dto.setDeshabilitarCheckPublicarVenta();// TODO: llamar al calculo de permisos para la interfaz.
+		//dto.setDeshabilitarCheckOcultarVenta();
+		//dto.setDeshabilitarCheckPublicarSinPrecioVenta();
+		//dto.setDeshabilitarCheckNoMostrarPrecioVenta();
+		//dto.setDeshabilitarCheckPublicarAlquiler();
+		//dto.setDeshabilitarCheckOcultarAlquiler();
+		//dto.setDeshabilitarCheckPublicarSinPrecioAlquiler();
+		//dto.setDeshabilitarCheckNoMostrarPrecioAlquiler();
+
+    	return dto;
+	}
+
+	@Override
+	@Transactional
+	public Boolean setDatosPublicacionActivo(DtoDatosPublicacionActivo dto) throws JsonViewerException{
+		ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(dto.getIdActivo());
+
+		if(this.registrarHistoricoPublicacion(activoPublicacion)) {
+			if(this.actualizarDatosEstadoActualPublicacion(dto, activoPublicacion)) {
+				// FIXME: descomentar la línea de abajo para llevar a cabo el proceso del SP cuando se adapte a lo nuevo.
+				return true;
+				//return this.publicarActivoProcedure(dto.getIdActivo(), genericAdapter.getUsuarioLogado().getNombre());
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Este método actualiza el registro del estado actual de publicación del activo con los datos del dto
+	 * que se recibe.
+	 *
+	 * @param dto : dto con los datos a guardar en el estado actual de publicación.
+	 * @param activoPublicacion : entidad del estado actual de publicación en la que persistir los datos nuevos.
+	 * @return Devuelve True si el proceso ha sido satisfactorio, False si no lo ha sido.
+	 */
+	private Boolean actualizarDatosEstadoActualPublicacion(DtoDatosPublicacionActivo dto, ActivoPublicacion activoPublicacion) {
+		try {
+			if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo())) {
+				beanUtilNotNull.copyProperty(activoPublicacion, "motivoOcultacionVenta", utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivosOcultacion.class,
+						dto.getMotivoOcultacionVentaCodigo()));
+			}
+			if(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo())) {
+				beanUtilNotNull.copyProperty(activoPublicacion, "motivoOcultacionAlquiler", utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivosOcultacion.class,
+						dto.getMotivoOcultacionAlquilerCodigo()));
+			}
+			beanUtilNotNull.copyProperty(activoPublicacion, "motivoOcultacionManualVenta", dto.getMotivoOcultacionManualVenta());
+			beanUtilNotNull.copyProperty(activoPublicacion, "checkPublicarVenta", dto.getPublicarVenta());
+			beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarVenta", dto.getOcultarVenta());
+			beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarPrecioVenta", dto.getNoMostrarPrecioVenta());
+			beanUtilNotNull.copyProperty(activoPublicacion, "checkSinPrecioVenta", dto.getPublicarSinPrecioVenta());
+			beanUtilNotNull.copyProperty(activoPublicacion, "motivoOcultacionManualAlquiler", dto.getMotivoOcultacionManualAlquiler());
+			beanUtilNotNull.copyProperty(activoPublicacion, "checkPublicarAlquiler", dto.getPublicarAlquiler());
+			beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarAlquiler", dto.getOcultarAlquiler());
+			beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarPrecioAlquiler", dto.getNoMostrarPrecioAlquiler());
+			beanUtilNotNull.copyProperty(activoPublicacion, "checkSinPrecioAlquiler", dto.getPublicarSinPrecioAlquiler());
+		} catch (IllegalAccessException e) {
+			logger.error("Error al actualizar el estado actual de publicacion, error: ", e);
+			return false;
+		} catch (InvocationTargetException e) {
+			logger.error("Error al actualizar el estado actual de publicacion, error: ", e);
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Este método coge los datos de publicación actuales del activo y los copia en el histórico.
+	 * Añade la fecha de fin para el tipo de comercialización en la cual se encuentre el activo.
+	 *
+	 * @param activoPublicacion: registro de publicación actual del activo.
+	 * @return Devuelve True si el proceso ha sido satisfactorio, False si no lo ha sido.
+	 */
+	private Boolean registrarHistoricoPublicacion(ActivoPublicacion activoPublicacion) {
+		ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
+
+		try {
+			beanUtilNotNull.copyProperties(activoPublicacionHistorico, activoPublicacion);
+			if(Arrays.asList(DDTipoComercializacion.CODIGOS_VENTA).contains(activoPublicacion.getTipoComercializacion().getCodigo())) {
+				activoPublicacionHistorico.setFechaFinVenta(new Date());
+			} else if(Arrays.asList(DDTipoComercializacion.CODIGOS_ALQUILER).contains(activoPublicacion.getTipoComercializacion().getCodigo())) {
+				activoPublicacionHistorico.setFechaFinAlquiler(new Date());
+			}
+		} catch (IllegalAccessException e) {
+			logger.error("Error al registrar en el historico el estado actual de publicacion, error: ", e);
+			return false;
+		} catch (InvocationTargetException e) {
+			logger.error("Error al registrar en el historico el estado actual de publicacion, error: ", e);
+			return false;
+		}
+		activoPublicacionHistoricoDao.save(activoPublicacionHistorico);
+
+		return true;
+	}
+
+	/**
+	 * Este método suma el total de días que ha estado un activo publicado para el tipo comercial venta.
+	 * Los días obtenidos son referentes a los periodos que ha estado el activo en el estado publicado.
+	 * La suma incluye los días de estados anteriores, histórico, y el estado actual, si éste es publicado.
+	 *
+	 * @param idActivo: ID del activo para obtener los días.
+	 * @return Devuelve el total de días que ha estado el activo publicado.
+	 */
+	private Integer obtenerTotalDeDiasEnEstadoPublicadoVenta(Long idActivo) {
+		Integer dias = 0;
+
+		dias = dias + activoPublicacionHistoricoDao.getTotalDeDiasEnEstadoPublicadoVentaPorIdActivo(idActivo);
+		dias = dias + activoPublicacionDao.getDiasEnEstadoActualPublicadoVentaPorIdActivo(idActivo);
+
+		return dias;
+	}
+
+	/**
+	 * Este método suma el total de días que ha estado un activo publicado para el tipo comercial alquiler.
+	 * Los días obtenidos son referentes a los periodos que ha estado el activo en el estado publicado.
+	 * La suma incluye los días de estados anteriores, histórico, y el estado actual, si éste es publicado.
+	 *
+	 * @param idActivo: ID del activo para obtener los días.
+	 * @return Devuelve el total de días que ha estado el activo publicado.
+	 */
+	private Integer obtenerTotalDeDiasEnEstadoPublicadoAlquiler(Long idActivo) {
+		Integer dias = 0;
+
+		dias = dias + activoPublicacionHistoricoDao.getTotalDeDiasEnEstadoPublicadoAlquilerPorIdActivo(idActivo);
+		dias = dias + activoPublicacionDao.getDiasEnEstadoActualPublicadoAlquilerPorIdActivo(idActivo);
+
+		return dias;
+	}
+
+	@Override
+	public DtoPaginadoHistoricoEstadoPublicacion getHistoricoEstadosPublicacionVentaByIdActivo(DtoPaginadoHistoricoEstadoPublicacion dto) {
+
+		return activoPublicacionHistoricoDao.getListadoPaginadoHistoricoEstadosPublicacionVentaByIdActivo(dto);
+	}
+
+	@Override
+	public DtoPaginadoHistoricoEstadoPublicacion getHistoricoEstadosPublicacionAlquilerByIdActivo(DtoPaginadoHistoricoEstadoPublicacion dto) {
+
+		return activoPublicacionHistoricoDao.getListadoHistoricoEstadosPublicacionAlquilerByIdActivo(dto);
+	}
+
+	@Override
+	public DtoCambioEstadoPublicacion getHistoricoEstadoPublicacionByActivo(Long id) { // TODO: eliminar primero del dispatcher.
 		DtoCambioEstadoPublicacion dto = new DtoCambioEstadoPublicacion();
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", id);
-		Order order = new Order(OrderType.DESC, "id");
+		Order order = new Order(GenericABMDao.OrderType.DESC, "id");
 		Activo activo = activoApi.get(id);
 		List<ActivoHistoricoEstadoPublicacion> list = genericDao.getListOrdered(ActivoHistoricoEstadoPublicacion.class, order, filtroActivo, filtroBorrado);
 		if(!Checks.estaVacio(list)){
@@ -516,9 +669,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					tipoPublicacionInicial = DDEstadoPublicacion.CODIGO_PUBLICADO;
 					break;
 				}
-				
+
 			}
-			
+
 			if(!Checks.esNulo(activoHistoricoEstadoPublicacion)){
 				dto.setActivo(id);
 				if(!Checks.esNulo(activoHistoricoEstadoPublicacion.getEstadoPublicacion())){
@@ -531,7 +684,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					} else if(DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO.equals(activoHistoricoEstadoPublicacion.getEstadoPublicacion().getCodigo()) ||
 							DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO_PRECIOOCULTO.equals(activoHistoricoEstadoPublicacion.getEstadoPublicacion().getCodigo())) {
 						dto.setOcultacionPrecio(true);
-						
+
 						if(DDEstadoPublicacion.CODIGO_PUBLICADO.equals(tipoPublicacionInicial)){
 							dto.setPublicacionOrdinaria(true); // Se marca este check para indicar de que estado inicial viene.
 						} else {
@@ -541,18 +694,18 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 								dto.setPublicacionOrdinaria(true);
 							}
 						}
-						
+
 						if(!Checks.esNulo(activoHistoricoEstadoPublicacion.getMotivo())){
 							dto.setMotivoOcultacionPrecio(activoHistoricoEstadoPublicacion.getMotivo());
 						}
 						// El campo observaciones está en el funcional pero no en la DDBB.
 						//if(!Checks.esNulo(activoHistoricoEstadoPublicacion.getObservaciones())) {
-							//dto.setObservaciones(activoHistoricoEstadoPublicacion.getObservaciones());
+						//dto.setObservaciones(activoHistoricoEstadoPublicacion.getObservaciones());
 						//}
 					} else if(DDEstadoPublicacion.CODIGO_DESPUBLICADO.equals(activoHistoricoEstadoPublicacion.getEstadoPublicacion().getCodigo())) {
 						dto.setDespublicacionForzada(true);
 						dto.setPublicacionOrdinaria(true); // Se marca este check para indicar de que estado inicial viene.
-						
+
 					} else if(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO.equals(activoHistoricoEstadoPublicacion.getEstadoPublicacion().getCodigo())) {
 						dto.setPublicacionForzada(true);
 						if(!Checks.esNulo(activoHistoricoEstadoPublicacion.getMotivo())){
@@ -571,52 +724,39 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				}
 			}
 		}// else {
-			// Si la lista de historico viene vacia, aun así, comprobar la fecha de publicación del activo. Si está rellena poner estado publicación ordinaria.
-			if(!Checks.esNulo(activo.getFechaPublicable())) {
-				dto.setPublicacionOrdinaria(true);
-			}
+		// Si la lista de historico viene vacia, aun así, comprobar la fecha de publicación del activo. Si está rellena poner estado publicación ordinaria.
+		if(!Checks.esNulo(activo.getFechaPublicable())) {
+			dto.setPublicacionOrdinaria(true);
+		}
 		//}
 
 		return dto;
 	}
-	
-	private boolean publicarActivoProcedure(Long idActivo, String username) throws SQLException, JsonViewerException{
 
+	/**
+	 * Este método actualiza el estado de publicación del activo llamando a un Procedure, el cual, realiza
+	 * unos cálculos para determinar el nuevo estado de publicación del activo indicado en base a sus nuevos
+	 * datos de publicación. La operación se registra con el nombre de usuario que recibe.
+	 *
+	 * @param idActivo: Id del activo sobre el que realizar la actualización del estado de publicación.
+	 * @param username: Nombre del usuario que realiza la acción de guardar el nuevo estado de publicación.
+	 * @return Devuelve True si la operación ha sido satisfactoria.
+	 * @throws JsonViewerException Provoca una excepción cuando el proceso del SP ha tenido algún error. De
+	 * este modo, se informa hacia la interfaz.
+	 */
+	private Boolean publicarActivoProcedure(Long idActivo, String username) throws JsonViewerException{
 		int esError = activoDao.publicarActivo(idActivo, username);
+
 		if (esError != 1){
 			logger.error(messageServices.getMessage("activo.publicacion.error.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
-			throw new SQLException(messageServices.getMessage("activo.publicacion.error.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
+			throw new JsonViewerException(messageServices.getMessage("activo.publicacion.error.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
 		}
-		
+
 		logger.info(messageServices.getMessage("activo.publicacion.OK.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
 		return true;
-		
 	}
 	
-	@Override
-	public String getMensajeExceptionProcedure(InvalidDataAccessResourceUsageException e){
-		
-		// En este tipo de excepción se pueden esconder errores del procedure de BBDD de publicacion ACTIVO_PUBLICACION_AUTO
-		// Hay que mostrar un mensaje de error concreto para uno de los errores (no cumplir condiciones para publicar)
-		Throwable causa = e.getCause();
-		String mensajeError = null;
-		int contador = 0;
-		while (!Checks.esNulo(causa) && Checks.esNulo(mensajeError) && contador < 100){
-			if(causa.getMessage().contains("ACTIVO_PUBLICACION_AUTO") && causa.getMessage().contains("ORA-06510")){
-				mensajeError = messageServices.getMessage("activo.publicacion.KO.condiciones.publicar.ordinario.server"); 
-			}
-			causa = causa.getCause();
-			contador++;
-		}
-
-		// Para el resto de errores, se muestra un mensaje generico
-		if(Checks.esNulo(mensajeError))
-			mensajeError = messageServices.getMessage("activo.publicacion.error.publicar.ordinario");
-
-		return mensajeError;
-	}
-	
-	public boolean verificaValidacionesPublicacion(DtoPublicacionValidaciones dtoPublicacionValidaciones){
+	private boolean verificaValidacionesPublicacion(DtoPublicacionValidaciones dtoPublicacionValidaciones){  // TODO: eliminar.
 
 		if(!Checks.esNulo(dtoPublicacionValidaciones) && !Checks.esNulo(dtoPublicacionValidaciones.getActivo())){			
 			boolean tieneOkAdmision = Checks.esNulo(dtoPublicacionValidaciones.getActivo().getAdmision()) ? false :  dtoPublicacionValidaciones.getActivo().getAdmision(); // Tiene OK de admision

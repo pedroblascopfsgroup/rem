@@ -10,8 +10,11 @@ Ext.define('HreRem.model.DatosPublicacionActivo', {
 			name: 'estadoPublicacionAlquiler'
 		},
 		{
-			name: 'precioWeb'
+			name: 'precioWebVenta'
 		},
+		{
+        	name: 'precioWebAlquiler'
+        },
 		{
 			name:'totalDiasPublicadoVenta',
 			type: 'number'
@@ -63,16 +66,48 @@ Ext.define('HreRem.model.DatosPublicacionActivo', {
 		},
 		{
 			name:'motivoOcultacionManualAlquiler'
-		}
+		},
+		{
+            name:'deshabilitarCheckPublicarVenta',
+            type: 'boolean'
+        },
+        {
+            name:'deshabilitarCheckOcultarVenta',
+            type: 'boolean'
+        },
+        {
+            name:'deshabilitarCheckPublicarSinPrecioVenta',
+            type: 'boolean'
+        },
+        {
+            name:'deshabilitarCheckNoMostrarPrecioVenta',
+            type: 'boolean'
+        },
+        {
+            name:'deshabilitarCheckPublicarAlquiler',
+            type: 'boolean'
+        },
+        {
+            name:'deshabilitarCheckOcultarAlquiler',
+            type: 'boolean'
+        },
+        {
+            name:'deshabilitarCheckPublicarSinPrecioAlquiler',
+            type: 'boolean'
+        },
+        {
+            name:'deshabilitarCheckNoMostrarPrecioAlquiler',
+            type: 'boolean'
+        }
 	],
 
 	proxy: {
 		type: 'uxproxy',
-		//writeAll: true,
 		api: {
 			create: 'activo/setDatosPublicacionActivo',
 			read: 'activo/getDatosPublicacionActivo',
 			update: 'activo/setDatosPublicacionActivo'
-		}
+		},
+		extraParams: {tab: 'datospublicacion'}
 	}
 });

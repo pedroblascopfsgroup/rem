@@ -1,60 +1,96 @@
 package es.pfsgroup.plugin.rem.activo.publicacion.dao.impl;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Repository;
-
-import edu.emory.mathcs.backport.java.util.Arrays;
-import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.HQLBuilder;
-import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionHistoricoDao;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.DtoPaginadoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.type.Type;
+import org.springframework.stereotype.Repository;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Repository("ActivoPublicacionHistoricoDao")
 public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoPublicacionHistorico, Long> implements ActivoPublicacionHistoricoDao {
 
 	private static final String SEPARADOR_VACIO = "-";
-	protected static final Log mLogger = LogFactory.getLog(ActivoPublicacionHistoricoDaoImpl.class);
+	private static final Log mLogger = LogFactory.getLog(ActivoPublicacionHistoricoDaoImpl.class);
+	private static final Integer MILLISECONDS = 1000;
+	private static final Integer SECONDS = 60;
+	private static final Integer MINUTES = 60;
+	private static final Integer HOURS = 24;
 	private SimpleDateFormat sdfFecha = new SimpleDateFormat("dd-MM-yyyy");
 
 	@Override
-	public List<ActivoPublicacionHistorico> getListadoHistoricoEstadosPublicacionVentaByIdActivo(DtoHistoricoEstadoPublicacion dto) {
-		HQLBuilder hql = new HQLBuilder("from ActivoPublicacionHistorico");
-		HQLBuilder.addFiltroIgualQue(hql, "activo.id", dto.getIdActivo());
-		HQLBuilder.addFiltroWhereInSiNotNull(hql, "tipoComercializacion.codigo", Arrays.asList(DDTipoComercializacion.CODIGOS_VENTA));
-		hql.orderBy("id", HQLBuilder.ORDER_DESC);
-		Page p = HibernateQueryUtils.page(this, hql, dto);
+	public DtoPaginadoHistoricoEstadoPublicacion getListadoPaginadoHistoricoEstadosPublicacionVentaByIdActivo(DtoPaginadoHistoricoEstadoPublicacion dto) {
+		Criteria criteria = getSession().createCriteria(ActivoPublicacionHistorico.class);
+		criteria.add(Restrictions.eq("activo.id", dto.getIdActivo())).createCriteria("tipoComercializacion").add(Restrictions.in("codigo", DDTipoComercializacion.CODIGOS_VENTA))
+				.setMaxResults(dto.getLimit()).setFirstResult(dto.getStart());
+		List<ActivoPublicacionHistorico> listadoEntidades = HibernateUtils.castList(ActivoPublicacionHistorico.class, criteria.list());
 
-		return HibernateUtils.castList(ActivoPublicacionHistorico.class, p.getResults());
+		List<DtoHistoricoEstadoPublicacion> listaDto = new ArrayList<DtoHistoricoEstadoPublicacion>();
+		for (ActivoPublicacionHistorico historicoPublicacion : listadoEntidades) {
+			listaDto.add(this.convertirEntidadTipoVentaToDto(historicoPublicacion));
+		}
 
+		Criteria criteriaCount = getSession().createCriteria(ActivoPublicacionHistorico.class);
+		criteriaCount.setProjection(Projections.rowCount());
+		criteriaCount.add(Restrictions.eq("activo.id", dto.getIdActivo())).createCriteria("tipoComercializacion").add(Restrictions.in("codigo", DDTipoComercializacion.CODIGOS_VENTA));
+		Integer totalCount = HibernateUtils.castObject(Integer.class, criteriaCount.uniqueResult());
+
+		DtoPaginadoHistoricoEstadoPublicacion dtoPaginado = new DtoPaginadoHistoricoEstadoPublicacion();
+		dtoPaginado.setIdActivo(dto.getIdActivo());
+		dtoPaginado.setListado(listaDto);
+		dtoPaginado.setTotalCount(totalCount);
+		return dtoPaginado;
 	}
 
 	@Override
-	public List<ActivoPublicacionHistorico> getListadoHistoricoEstadosPublicacionAlquilerByIdActivo(DtoHistoricoEstadoPublicacion dto) {
-		HQLBuilder hql = new HQLBuilder("from ActivoPublicacionHistorico");
-		HQLBuilder.addFiltroIgualQue(hql, "activo.id", dto.getIdActivo());
-		HQLBuilder.addFiltroWhereInSiNotNull(hql, "tipoComercializacion.codigo", Arrays.asList(DDTipoComercializacion.CODIGOS_ALQUILER));
-		hql.orderBy("id", HQLBuilder.ORDER_DESC);
-		Page p = HibernateQueryUtils.page(this, hql, dto);
+	public DtoPaginadoHistoricoEstadoPublicacion getListadoHistoricoEstadosPublicacionAlquilerByIdActivo(DtoPaginadoHistoricoEstadoPublicacion dto) {
+		Criteria criteria = getSession().createCriteria(ActivoPublicacionHistorico.class);
+		criteria.add(Restrictions.eq("activo.id", dto.getIdActivo())).createCriteria("tipoComercializacion").add(Restrictions.in("codigo", DDTipoComercializacion.CODIGOS_ALQUILER))
+				.setMaxResults(dto.getLimit()).setFirstResult(dto.getStart());
+		List<ActivoPublicacionHistorico> listadoEntidades = HibernateUtils.castList(ActivoPublicacionHistorico.class, criteria.list());
 
-		return HibernateUtils.castList(ActivoPublicacionHistorico.class, p.getResults());
+		List<DtoHistoricoEstadoPublicacion> listaDto = new ArrayList<DtoHistoricoEstadoPublicacion>();
+		for (ActivoPublicacionHistorico historicoPublicacion : listadoEntidades) {
+			listaDto.add(this.convertirEntidadTipoAlquilerToDto(historicoPublicacion));
+		}
+
+		Criteria criteriaCount = getSession().createCriteria(ActivoPublicacionHistorico.class);
+		criteriaCount.setProjection(Projections.rowCount());
+		criteriaCount.add(Restrictions.eq("activo.id", dto.getIdActivo())).createCriteria("tipoComercializacion").add(Restrictions.in("codigo", DDTipoComercializacion.CODIGOS_ALQUILER));
+		Integer totalCount = HibernateUtils.castObject(Integer.class, criteriaCount.uniqueResult());
+
+		DtoPaginadoHistoricoEstadoPublicacion dtoPaginado = new DtoPaginadoHistoricoEstadoPublicacion();
+		dtoPaginado.setIdActivo(dto.getIdActivo());
+		dtoPaginado.setListado(listaDto);
+		dtoPaginado.setTotalCount(totalCount);
+		return dtoPaginado;
 	}
 
-	@Override
-	public DtoHistoricoEstadoPublicacion convertirEntidadTipoVentaToDto(ActivoPublicacionHistorico entidad) {
+	/**
+	 * Este método convierte una entidad HistoricoEstadoPublicacion de tipo venta a un pojo.
+	 *
+	 * @param entidad: entidad a convertir en un objeto plano.
+	 * @return Devuelve un objeto DtoHistoricoEstadoPublicacion relleno con la información de la entidad.
+	 */
+	private DtoHistoricoEstadoPublicacion convertirEntidadTipoVentaToDto(ActivoPublicacionHistorico entidad) {
 		DtoHistoricoEstadoPublicacion dto = new DtoHistoricoEstadoPublicacion();
 		if (Checks.esNulo(entidad)) {
 			return dto;
@@ -89,8 +125,13 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 		return dto;
 	}
 
-	@Override
-	public DtoHistoricoEstadoPublicacion convertirEntidadTipoAlquilerToDto(ActivoPublicacionHistorico entidad) {
+	/**
+	 * Este método convierte una entidad HistoricoEstadoPublicacion de tipo alquiler a un pojo.
+	 *
+	 * @param entidad: entidad a convertir en un objeto plano.
+	 * @return Devuelve un obeto DtoHistoricoEstadoPublicacion relleno con la información de la entidad.
+	 */
+	private DtoHistoricoEstadoPublicacion convertirEntidadTipoAlquilerToDto(ActivoPublicacionHistorico entidad) {
 		DtoHistoricoEstadoPublicacion dto = new DtoHistoricoEstadoPublicacion();
 		if (Checks.esNulo(entidad)) {
 			return dto;
@@ -125,14 +166,33 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 		return dto;
 	}
 
+	@Override
+	public Integer getTotalDeDiasEnEstadoPublicadoVentaPorIdActivo(Long idActivo) {
+		Criteria criteria = getSession().createCriteria(ActivoPublicacionHistorico.class);
+		criteria.setProjection(Projections.sqlProjection("NVL(sum(round({alias}.AHP_FECHA_FIN_VENTA - {alias}.AHP_FECHA_INI_VENTA)), 0) as totalDias", new String[]{ "totalDias" }, new Type[]{
+				Hibernate.INTEGER }));
+		criteria.add(Restrictions.eq("activo.id", idActivo)).createCriteria("estadoPublicacionVenta").add(Restrictions.eq("codigo", DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA));
+
+		return HibernateUtils.castObject(Integer.class, criteria.uniqueResult());
+	}
+
+	@Override
+	public Integer getTotalDeDiasEnEstadoPublicadoAlquilerPorIdActivo(Long idActivo) {
+		Criteria criteria = getSession().createCriteria(ActivoPublicacionHistorico.class);
+		criteria.setProjection(Projections.sqlProjection("NVL(sum(round({alias}.AHP_FECHA_FIN_ALQUILER - {alias}.AHP_FECHA_INI_ALQUILER)), 0) as totalDias", new String[]{ "totalDias" }, new Type[]{
+				Hibernate.INTEGER }));
+		criteria.add(Restrictions.eq("activo.id", idActivo)).createCriteria("estadoPublicacionVenta").add(Restrictions.eq("codigo", DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER));
+
+		return HibernateUtils.castObject(Integer.class, criteria.uniqueResult());
+	}
+
 	/**
-	 * Este método obtiene el conteo de días que se pasa un activo en un mismo estado de publicacion
-	 * para el tipo destino comercial venta. Se limita al estado de 'Publicado'. Para el resto de
-	 * estados devuelve 0.
-	 * 
+	 * Este método obtiene el conteo de días que se pasa un activo en un mismo estado de publicación para el tipo destino comercial venta. Se limita al estado de 'Publicado'. Para el resto de estados
+	 * devuelve 0.
+	 *
 	 * @param estadoActivo: estado del activo del cual calcular sus días.
 	 * @return Devuelve el número de días que ha estado un activo en un mismo estado.
-	 * @throws ParseException
+	 * @throws ParseException: Puede lanzar un error al convertir la fecha para los cálculos
 	 */
 	private Long obtenerDiasPorEstadoPublicacionVentaActivo(ActivoPublicacionHistorico estadoActivo) throws ParseException {
 		Long dias = 0L;
@@ -144,20 +204,19 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 				fechaHastaSinTiempo = this.sdfFecha.parse(this.sdfFecha.format(estadoActivo.getFechaFinVenta()));
 			}
 			Long diferenciaMilis = fechaHastaSinTiempo.getTime() - fechaDesdeSinTiempo.getTime();
-			dias = diferenciaMilis / (1000 * 60 * 60 * 24);
+			dias = diferenciaMilis / (MILLISECONDS * SECONDS * MINUTES * HOURS);
 		}
 
 		return dias;
 	}
 
 	/**
-	 * Este método obtiene el conteo de días que se pasa un activo en un mismo estado de publicacion
-	 * para el tipo destino comercial alquiler. Se limita al estado de 'Publicado'. Para el resto de
+	 * Este método obtiene el conteo de días que se pasa un activo en un mismo estado de publicación para el tipo destino comercial alquiler. Se limita al estado de 'Publicado'. Para el resto de
 	 * estados devuelve 0.
-	 * 
+	 *
 	 * @param estadoActivo: estado del activo del cual calcular sus días.
 	 * @return Devuelve el número de días que ha estado un activo en un mismo estado.
-	 * @throws ParseException
+	 * @throws ParseException: Puede lanzar un error al convertir la fecha para los cálculos.
 	 */
 	private Long obtenerDiasPorEstadoPublicacionAlquilerActivo(ActivoPublicacionHistorico estadoActivo) throws ParseException {
 		Long dias = 0L;
@@ -169,7 +228,7 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 				fechaHastaSinTiempo = this.sdfFecha.parse(this.sdfFecha.format(estadoActivo.getFechaFinAlquiler()));
 			}
 			Long diferenciaMilis = fechaHastaSinTiempo.getTime() - fechaDesdeSinTiempo.getTime();
-			dias = diferenciaMilis / (1000 * 60 * 60 * 24);
+			dias = diferenciaMilis / (MILLISECONDS * SECONDS * MINUTES * HOURS);
 		}
 
 		return dias;

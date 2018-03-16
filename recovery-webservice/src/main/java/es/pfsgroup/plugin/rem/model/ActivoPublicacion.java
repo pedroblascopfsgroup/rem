@@ -1,32 +1,15 @@
 package es.pfsgroup.plugin.rem.model;
 
-import java.io.Serializable;
-
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Version;
-
+import es.capgemini.pfs.auditoria.Auditable;
+import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
-import es.capgemini.pfs.auditoria.Auditable;
-import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivosOcultacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Modelo que gestiona los distintos estados de publicación por los que pasa el activo.
@@ -103,11 +86,33 @@ public class ActivoPublicacion implements Serializable, Auditable {
 	@Column(name = "APU_CHECK_PUB_SIN_PRECIO_A")
 	private Boolean checkSinPrecioAlquiler;
 
+	@Column(name = "APU_FECHA_INI_VENTA")
+	private Date fechaInicioVenta;
+
+	@Column(name = "APU_FECHA_INI_ALQUILER")
+	private Date fechaInicioAlquiler;
+
 	@Version
 	private Long version;
 
 	@Embedded
 	private Auditoria auditoria;
+
+	public Date getFechaInicioVenta() {
+		return fechaInicioVenta;
+	}
+
+	public void setFechaInicioVenta(Date fechaInicioVenta) {
+		this.fechaInicioVenta = fechaInicioVenta;
+	}
+
+	public Date getFechaInicioAlquiler() {
+		return fechaInicioAlquiler;
+	}
+
+	public void setFechaInicioAlquiler(Date fechaInicioAlquiler) {
+		this.fechaInicioAlquiler = fechaInicioAlquiler;
+	}
 
 	public Long getId() {
 		return id;

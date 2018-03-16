@@ -5,23 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.pfsgroup.plugin.rem.model.*;
 import org.springframework.ui.ModelMap;
 
 import es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap;
-import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
-import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
-import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
-import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
-import es.pfsgroup.plugin.rem.model.DtoActivoInformacionAdministrativa;
-import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
-import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
-
-import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
-import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
-
-import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
-import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 
 @SuppressWarnings("rawtypes")
 class ActivoControllerDispachableMethods {
@@ -266,6 +253,26 @@ class ActivoControllerDispachableMethods {
 			public void execute(Long id, DtoActivoAdministracion dto) {
 				if (dto != null ){
 					this.controller.saveActivoAdministracion(dto, id, new ModelMap());
+
+				}
+			}
+		});
+
+		/*
+		 * TAB_DATOS_PUBLICACION
+		 */
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_DATOS_PUBLICACION, new DispachableMethod<DtoDatosPublicacionActivo>() {
+
+			@Override
+			public Class<DtoDatosPublicacionActivo> getArgumentType() {
+				return DtoDatosPublicacionActivo.class;
+			}
+
+			@Override
+			public void execute(Long id, DtoDatosPublicacionActivo dto) {
+				if (dto != null ){
+					dto.setIdActivo(id);
+					this.controller.setDatosPublicacionActivo(dto, new ModelMap());
 
 				}
 			}

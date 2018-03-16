@@ -1,6 +1,6 @@
-Ext.define('HreRem.view.activos.detalle.HistoricoEstadosList', {
+Ext.define('HreRem.view.activos.detalle.HistoricoEstadosPublicacionList', {
 	extend		: 'HreRem.view.common.GridBase',
-	xtype		: 'historicoestadoslist',
+	xtype		: 'historicoestadospublicacionlist',
 	topBar		: false,
 	allowDeselect: true,
 	allowBlank	: true,

@@ -10,7 +10,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 	records		: ['datospublicacionactivo', 'activoCondicionantesDisponibilidad'],
 	recordsClass: ['HreRem.model.DatosPublicacionActivo', 'HreRem.model.ActivoCondicionantesDisponibilidad'],
 	requires	: ['HreRem.model.ActivoCondicionantesDisponibilidad', 'HreRem.model.DatosPublicacionActivo', 'HreRem.model.CondicionEspecifica',
-					'HreRem.view.activos.detalle.HistoricoCondicionesList', 'HreRem.model.EstadoPublicacion', 'HreRem.view.activos.detalle.HistoricoEstadosList'],
+					'HreRem.view.activos.detalle.HistoricoCondicionesList', 'HreRem.model.EstadoPublicacion', 'HreRem.view.activos.detalle.HistoricoEstadosPublicacionList'],
 	listeners	: {
 		boxready:'cargarTabData'
 	},
@@ -76,11 +76,16 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												readOnly: true
 											},
 											{
+												xtype: 'currencyfieldbase',
 												fieldLabel:  HreRem.i18n('fieldlabel.datos.publicacion.estados.precio.web'),
-												bind: '{datospublicacionactivo.precioWeb}',
+												bind: '{datospublicacionactivo.precioWebVenta}',
 												readOnly: true
 											}
 										]
+								},
+								{
+									xtype: 'label',
+									colspan: 3
 								},
 								{
 									xtype: 'panel',
@@ -103,22 +108,34 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.publicar'),
 												reference: 'chkbxpublicarventa',
-												bind: '{datospublicacionactivo.publicarVenta}'
+												bind: {
+													disabled: '{datospublicacionactivo.deshabilitarCheckPublicarVenta}',
+													value: '{datospublicacionactivo.publicarVenta}'
+												}
 											},
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.ocultar'),
 												reference: 'chkbxocultarventa',
-												bind: '{datospublicacionactivo.ocultarVenta}'
+												bind: {
+													disabled: '{datospublicacionactivo.deshabilitarCheckOcultarVenta}',
+													value: '{datospublicacionactivo.ocultarVenta}'
+												}
 											},
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.publicar.sin.precio'),
 												reference: 'chkbxpublicarsinprecioventa',
-												bind: '{datospublicacionactivo.publicarSinPrecioVenta}'
+												bind: {
+													disabled: '{datospublicacionactivo.deshabilitarCheckPublicarSinPrecioVenta}',
+													value: '{datospublicacionactivo.publicarSinPrecioVenta}'
+												}
 											},
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.no.mostrar.precio'),
 												reference: 'chkbxnomostrarprecioventa',
-												bind: '{datospublicacionactivo.noMostrarPrecioVenta}'
+												bind: {
+													disabled: '{datospublicacionactivo.deshabilitarCheckNoMostrarPrecioVenta}',
+													value: '{datospublicacionactivo.noMostrarPrecioVenta}'
+												}
 											},
 											{
 												xtype: 'label',
@@ -190,12 +207,17 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												readOnly: true
 											},
 											{
+												xtype: 'currencyfieldbase',
 												fieldLabel:  HreRem.i18n('fieldlabel.datos.publicacion.estados.precio.web'),
-												bind: '{datospublicacionactivo.precioWeb}',
+												bind: '{datospublicacionactivo.precioWebAlquiler}',
 												readOnly: true
 											}
 										]
 								},
+								{
+	                                xtype: 'label',
+	                                colspan: 3
+	                            },
 								{
 									xtype: 'fieldsettable',
 									defaultType: 'checkboxfieldbase',
@@ -219,22 +241,34 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 											{
 												fieldLabel: HreRem.i18n('title.datos.publicacion.estados.publicar'),
 												reference: 'chkbxpublicaralquiler',
-												bind: '{datospublicacionactivo.publicacionOrdinaria}'
+												bind: {
+													disabled: '{datospublicacionactivo.deshabilitarCheckPublicarAlquiler}',
+													value: '{datospublicacionactivo.publicacionOrdinaria}'
+												}
 											},
 											{
 												fieldLabel: HreRem.i18n('title.datos.publicacion.estados.ocultar'),
 												reference: 'chkbxocultaralquiler',
-												bind: '{datospublicacionactivo.publicacionOrdinaria}'
+												bind: {
+													disabled: '{datospublicacionactivo.deshabilitarCheckOcultarAlquiler}',
+													value: '{datospublicacionactivo.publicacionOrdinaria}'
+												}
 											},
 											{
 												fieldLabel: HreRem.i18n('title.datos.publicacion.estados.publicar.sin.precio'),
 												reference: 'chkbxpublicarsinprecioalquiler',
-												bind: '{datospublicacionactivo.publicacionOrdinaria}'
+												bind: {
+													disabled: '{datospublicacionactivo.deshabilitarCheckPublicarSinPrecioAlquiler}',
+													value: '{datospublicacionactivo.publicacionOrdinaria}'
+												}
 											},
 											{
 												fieldLabel: HreRem.i18n('title.datos.publicacion.estados.no.mostrar.precio'),
 												reference: 'chkbxnomostrarprecioalquiler',
-												bind: '{datospublicacionactivo.publicacionOrdinaria}'
+												bind: {
+													disabled: '{datospublicacionactivo.deshabilitarCheckNoMostrarPrecioAlquiler}',
+													value: '{datospublicacionactivo.publicacionOrdinaria}'
+												}
 											},
 											{
 												xtype: 'label',
@@ -459,8 +493,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 						items:
 							[
 								{
-									xtype: "historicoestadoslist",
-									reference: "historicoestadosventalist",
+									xtype: "historicoestadospublicacionlist",
+									reference: "historicoestadospublicacionventalist",
 									colspan: 3,
 									bind:{store: '{historicoEstadosPublicacionVenta}'},
 									dockedItems: [
@@ -499,8 +533,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 						items:
 							[
 								{
-									xtype: "historicoestadoslist",
-									reference: "historicoestadosalquilerlist",
+									xtype: "historicoestadospublicacionlist",
+									reference: "historicoestadospublicacionalquilerlist",
 									colspan: 3,
 									bind:{store: '{historicoEstadosPublicacionAlquiler}'},
 									dockedItems: [

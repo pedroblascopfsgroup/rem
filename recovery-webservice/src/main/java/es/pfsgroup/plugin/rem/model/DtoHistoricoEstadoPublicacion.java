@@ -5,11 +5,9 @@ import java.util.Date;
 import es.capgemini.devon.dto.WebDto;
 
 /**
- * Dto para el histórico de estados, venta y alquiler, de las publicaciones de los activos.
+ * Pojo para el histórico de estados, venta y alquiler, de las publicaciones de los activos.
  */
-public class DtoHistoricoEstadoPublicacion extends WebDto {
-
-	private static final long serialVersionUID = 1104979537467093933L;
+public class DtoHistoricoEstadoPublicacion {
 
 	private Long idActivo;
 	private Date fechaDesde;

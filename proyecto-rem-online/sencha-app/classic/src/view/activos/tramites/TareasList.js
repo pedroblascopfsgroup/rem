@@ -65,13 +65,33 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
 	          	 }
              },
              {
+	           	 name: 'anularDevolucion',
+	           	 itemId: 'anularDevolucion',
+	           	 text: HreRem.i18n('btn.solicitar.anulacion.devolucion'),
+	          	 handler: 'anularDevolucion',
+	          	 hidden: true,
+	          	 bind: {
+	          		 hidden: '{!tramite.estaTareaRespuestaBankiaDevolucion}'
+	          	 }
+             },
+             {
 	           	 name: 'solicitarAnulacionDevolucion',
 	           	 itemId: 'solicitarAnulacionDevolucion',
 	           	 text: HreRem.i18n('btn.solicitar.anulacion.devolucion'),
 	          	 handler: 'solicitarAnulacionDevolucion',
-	          	 disabled: true,
+	          	 hidden: true,
 	          	 bind: {
-	          		 disabled: '{!tramite.tieneTareaSolicitarAnulacionDevolucion}'
+	          		 hidden: '{!tramite.estaTareaPendienteDevolucion}'
+	          	 }
+             },
+             {
+	           	 name: 'anularSolicitudAnulacionDevolucion',
+	           	 itemId: 'anularSolicitudAnulacionDevolucion',
+	           	 text: HreRem.i18n('btn.anular.solicitud.anulacion.devolucion'),
+	          	 handler: 'anularSolicitudAnulacionDevolucion',
+	          	 hidden: true,
+	          	 bind: {
+	          		 hidden: '{!tramite.estaTareaRespuestaBankiaAnulacionDevolucion}'
 	          	 }
              }
    		];

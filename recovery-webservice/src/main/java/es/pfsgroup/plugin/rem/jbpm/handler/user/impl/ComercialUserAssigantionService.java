@@ -38,24 +38,25 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 @Component
 public class ComercialUserAssigantionService implements UserAssigantionService  {
 
-	private static final String CODIGO_T013_DEFINICION_OFERTA = "T013_DefinicionOferta";
-	private static final String CODIGO_T013_FIRMA_PROPIETARIO = "T013_FirmaPropietario";
-	private static final String CODIGO_T013_CIERRE_ECONOMICO = "T013_CierreEconomico";
-	private static final String CODIGO_T013_RESOLUCION_COMITE = "T013_ResolucionComite";
-	private static final String CODIGO_T013_RESPUESTA_OFERTANTE = "T013_RespuestaOfertante";
-	private static final String CODIGO_T013_DOBLE_FIRMA = "T013_DobleFirma";
-	private static final String CODIGO_T013_INFORME_JURIDICO = "T013_InformeJuridico";
-	private static final String CODIGO_T013_INSTRUCCIONES_RESERVA = "T013_InstruccionesReserva";
-	private static final String CODIGO_T013_OBTENCION_CONTRATO_RESERVA = "T013_ObtencionContratoReserva";
-	private static final String CODIGO_T013_RESOLUCION_TANTEO = "T013_ResolucionTanteo";
-	private static final String CODIGO_T013_RESULTADO_PBC = "T013_ResultadoPBC";
-	private static final String CODIGO_T013_POSICIONAMIENTO_FIRMA = "T013_PosicionamientoYFirma";
-	private static final String CODIGO_T013_DEVOLUCION_LLAVES = "T013_DevolucionLlaves";
-	private static final String CODIGO_T013_DOCUMENTOS_POSTVENTA = "T013_DocumentosPostVenta";
-	private static final String CODIGO_T013_RESOLUCION_EXPEDIENTE = "T013_ResolucionExpediente";
-	private static final String CODIGO_T013_RATIFICACION_COMITE = "T013_RatificacionComite";
-
-	
+	public static final String CODIGO_T013_DEFINICION_OFERTA = "T013_DefinicionOferta";
+	public static final String CODIGO_T013_FIRMA_PROPIETARIO = "T013_FirmaPropietario";
+	public static final String CODIGO_T013_CIERRE_ECONOMICO = "T013_CierreEconomico";
+	public static final String CODIGO_T013_RESOLUCION_COMITE = "T013_ResolucionComite";
+	public static final String CODIGO_T013_RESPUESTA_OFERTANTE = "T013_RespuestaOfertante";
+	public static final String CODIGO_T013_DOBLE_FIRMA = "T013_DobleFirma";
+	public static final String CODIGO_T013_INFORME_JURIDICO = "T013_InformeJuridico";
+	public static final String CODIGO_T013_INSTRUCCIONES_RESERVA = "T013_InstruccionesReserva";
+	public static final String CODIGO_T013_OBTENCION_CONTRATO_RESERVA = "T013_ObtencionContratoReserva";
+	public static final String CODIGO_T013_RESOLUCION_TANTEO = "T013_ResolucionTanteo";
+	public static final String CODIGO_T013_RESULTADO_PBC = "T013_ResultadoPBC";
+	public static final String CODIGO_T013_POSICIONAMIENTO_FIRMA = "T013_PosicionamientoYFirma";
+	public static final String CODIGO_T013_DEVOLUCION_LLAVES = "T013_DevolucionLlaves";
+	public static final String CODIGO_T013_DOCUMENTOS_POSTVENTA = "T013_DocumentosPostVenta";
+	public static final String CODIGO_T013_RESOLUCION_EXPEDIENTE = "T013_ResolucionExpediente";
+	public static final String CODIGO_T013_RATIFICACION_COMITE = "T013_RatificacionComite";
+	public static final String CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION = "T013_RespuestaBankiaDevolucion";
+	public static final String CODIGO_T013_PENDIENTE_DEVOLUCION = "T013_PendienteDevolucion";
+	public static final String CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION = "T013_RespuestaBankiaAnulacionDevolucion";
 
 	@Autowired
 	private ActivoApi activoApi;

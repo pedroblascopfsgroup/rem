@@ -1297,9 +1297,16 @@ public class UvemManager implements UvemManagerApi {
 			// COSEM1
 			if (CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA.equals(codigoServicioModificacion)) {
 				servicioGMPTOE83_INS.setCodigoServicioModificacionSolicitcosem1('4');
-			} else {
+			} else if (CODIGO_SERVICIO_MODIFICACION.ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA.equals(codigoServicioModificacion)){
 				servicioGMPTOE83_INS.setCodigoServicioModificacionSolicitcosem1('5');
+			} else if (CODIGO_SERVICIO_MODIFICACION.SOLICITUD_ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA.equals(codigoServicioModificacion)){
+				servicioGMPTOE83_INS.setCodigoServicioModificacionSolicitcosem1('6');
+			} else if (CODIGO_SERVICIO_MODIFICACION.ANULAR_SOLICITUD_ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA.equals(codigoServicioModificacion)){
+				servicioGMPTOE83_INS.setCodigoServicioModificacionSolicitcosem1('7');
+			} else{
+				throw new JsonViewerException("Error, opción no soportada");
 			}
+			
 
 			// LCOMOA
 			if (!Checks.esNulo(motivoAnulacionReserva)) {
@@ -1317,6 +1324,8 @@ public class UvemManager implements UvemManagerApi {
 					servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("3"));
 				} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.CIRCUSTANCIAS_DISTINTAS_PACTADAS)) {
 					servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("4"));
+				} else if (motivoAnulacionReserva.equals(MOTIVO_ANULACION.NO_APLICA)) {
+					servicioGMPTOE83_INS.setCodigoMotivoAnulacionReservalcomoa(new Short("0"));
 				} else {
 					throw new Exception("motivo anulacion no soportado");
 				}
@@ -1326,8 +1335,12 @@ public class UvemManager implements UvemManagerApi {
 			// BINDRE
 			if (INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA.equals(indicadorDevolucionReserva)) {
 				servicioGMPTOE83_INS.setIndicadorDevolucionReservabindre('s');
-			} else {
+			} else if (INDICADOR_DEVOLUCION_RESERVA.NO_DEVOLUCION_RESERVA.equals(indicadorDevolucionReserva)){
 				servicioGMPTOE83_INS.setIndicadorDevolucionReservabindre('N');
+			} else if (INDICADOR_DEVOLUCION_RESERVA.NO_APLICA.equals(indicadorDevolucionReserva)){
+				servicioGMPTOE83_INS.setIndicadorDevolucionReservabindre(' ');
+			} else{
+				throw new Exception("indicador devolución no soportado");
 			}
 
 			servicioGMPTOE83_INS.setCodigoDeOfertalcoofe(0);

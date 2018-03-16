@@ -1309,21 +1309,34 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         });
     },
     
-//    T013_RespuestaBankiaDevolucion: function() {
-//    	var me = this;
-//    	var fecha = me.down('[name=fecha]');
-//    	var comboRespuesta = me.down('[name=comboRespuesta]');
-//    	fecha.setReadOnly(true);
-//    	comboRespuesta.setReadOnly(true);
-//    },
-//    
-//    T013_RespuestaBankiaAnulacionDevolucion: function() {
-//    	var me = this;
-//    	var fecha = me.down('[name=fecha]');
-//    	var comboRespuesta = me.down('[name=comboRespuesta]');
-//    	fecha.setReadOnly(true);
-//    	comboRespuesta.setReadOnly(true);
-//    },
+    T013_RespuestaBankiaDevolucionValidacion: function() {
+    	var me = this;
+    	var fecha = me.down('[name=fecha]');
+    	var comboRespuesta = me.down('[name=comboRespuesta]');
+    	var observaciones = me.down('[name=observaciones]');
+    	fecha.setReadOnly(true);
+    	comboRespuesta.setReadOnly(true);
+    	observaciones.setReadOnly(true);
+    },
+    T013_PendienteDevolucionValidacion: function() {
+    	var me = this;
+    	var fecha = me.down('[name=fecha]');
+    	var comboRespuesta = me.down('[name=comboRespuesta]');
+    	var observaciones = me.down('[name=observaciones]');
+    	fecha.setReadOnly(true);
+    	comboRespuesta.setReadOnly(true);
+    	observaciones.setReadOnly(true);
+    },
+    
+    T013_RespuestaBankiaAnulacionDevolucionValidacion: function() {
+    	var me = this;
+    	var fecha = me.down('[name=fecha]');
+    	var comboRespuesta = me.down('[name=comboRespuesta]');
+    	var observaciones = me.down('[name=observaciones]');
+    	fecha.setReadOnly(true);
+    	comboRespuesta.setReadOnly(true);
+    	observaciones.setReadOnly(true);
+    },
 
     T014_PosicionamientoFirmaValidacion: function() {
         var me = this;

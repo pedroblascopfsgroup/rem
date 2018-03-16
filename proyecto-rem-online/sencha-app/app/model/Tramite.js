@@ -109,7 +109,15 @@ Ext.define('HreRem.model.Tramite', {
     		type: 'boolean'
     	},
     	{
-    		name: 'tieneTareaSolicitarAnulacionDevolucion',
+    		name: 'estaTareaRespuestaBankiaDevolucion',
+    		type: 'boolean'
+    	},
+    	{
+    		name: 'estaTareaPendienteDevolucion',
+    		type: 'boolean'
+    	},
+    	{
+    		name: 'estaTareaRespuestaBankiaAnulacionDevolucion',
     		type: 'boolean'
     	},
     	{

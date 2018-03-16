@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 //import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
@@ -25,6 +26,9 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
+import es.pfsgroup.plugin.rem.api.TareaActivoApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.listener.ActivoGenerarSaltoImpl;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -34,6 +38,8 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
@@ -63,9 +69,13 @@ public class ResolucionComiteController {
 
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private TareaActivoApi tareaActivoApi;
 
-	private static String ACCION_ANULACION_RESOLUCION = "2";
-	private final static String ACCION_RESOLUCION_DEVOLUCION = 	"3";
+	public static final String ACCION_ANULACION_RESOLUCION = "2";
+	public static final String ACCION_RESOLUCION_DEVOLUCION = "3";
+	public static final String ACCION_PROPUESTA_ANULACION_RESERVA_FIRMADA = "4";
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/resolucioncomite")
@@ -155,11 +165,55 @@ public class ResolucionComiteController {
 						}
 					}
 					else if(ResolucionComiteController.ACCION_RESOLUCION_DEVOLUCION.equals(resolucionComiteDto.getCodigoAccion())){
+						//Respuesta de Bankia para avanzar la tarea Respuesta Bankia
 						if(DDEstadoResolucion.CODIGO_ERE_APROBADA.equals(resolucionComiteDto.getCodigoResolucion())){
-							// SALTO A TAREA ANTERIOR de RESOLUCION EXPEDIENTE
+							List<TareaExterna> listaTareas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
+							for (TareaExterna tarea : listaTareas) {
+								if (!Checks.esNulo(tarea)) {
+									tareaActivoApi.guardarDatosResolucion(tarea.getId(), resolucionComiteDto.getFechaComite(), resolucionComiteDto.getCodigoResolucion());
+									tareaActivoApi.saltoPendienteDevolucion(tarea.getId());
+									break;
+								}
+							}
 						}
 						else if(DDEstadoResolucion.CODIGO_ERE_DENEGADA.equals(resolucionComiteDto.getCodigoResolucion())){
-							// SALTO A TAREA 1
+							List<TareaExterna> listaTareas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
+							for (TareaExterna tarea : listaTareas) {
+								if (!Checks.esNulo(tarea)) {
+									tareaActivoApi.guardarDatosResolucion(tarea.getId(), resolucionComiteDto.getFechaComite(), resolucionComiteDto.getCodigoResolucion());
+									tareaActivoApi.saltoFin(tarea.getId());
+									break;
+								}
+							}
+						}
+						else{
+							errorsList.put("ofertaHRE", "Resolución no soportada");
+						}
+					}
+					else if(ResolucionComiteController.ACCION_PROPUESTA_ANULACION_RESERVA_FIRMADA.equals(resolucionComiteDto.getCodigoAccion())){
+						if(DDEstadoResolucion.CODIGO_ERE_APROBADA.equals(resolucionComiteDto.getCodigoResolucion())){
+							// SALTO A TAREA ANTERIOR de RESOLUCION EXPEDIENTE
+							TareaExterna tareaAnterior = activoTramiteApi.getTareaAnteriorByCodigoTarea(tramite.getId(), ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_EXPEDIENTE);
+							
+							List<TareaExterna> listaTareas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
+							for (TareaExterna tarea : listaTareas) {
+								if (!Checks.esNulo(tarea)) {
+									tareaActivoApi.guardarDatosResolucion(tarea.getId(), resolucionComiteDto.getFechaComite(), resolucionComiteDto.getCodigoResolucion());
+									tareaActivoApi.saltoTarea(tarea.getId(), tareaAnterior.getTareaProcedimiento().getCodigo());
+									expedienteComercialApi.updateExpedienteComercialEstadoPrevioResolucionExpediente(eco, ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION);
+									break;
+								}
+							}
+						}
+						else if(DDEstadoResolucion.CODIGO_ERE_DENEGADA.equals(resolucionComiteDto.getCodigoResolucion())){
+							List<TareaExterna> listaTareas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
+							for (TareaExterna tarea : listaTareas) {
+								if (!Checks.esNulo(tarea)) {
+									tareaActivoApi.guardarDatosResolucion(tarea.getId(), resolucionComiteDto.getFechaComite(), resolucionComiteDto.getCodigoResolucion());
+									tareaActivoApi.saltoPendienteDevolucion(tarea.getId());
+									break;
+								}
+							}
 						}
 						else{
 							errorsList.put("ofertaHRE", "Resolución no soportada");

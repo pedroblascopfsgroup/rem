@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="activo_tramiteSancionOferta" width="1424" height="1024">
+<root-container name="activo_tramiteSancionOferta" width="1559" height="1024">
   <node name="inicio" x="313" y="23" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -287,6 +287,21 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T013_RespuestaBankiaDevolucion" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T013_PendienteDevolucion" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T013_RespuestaBankiaAnulacionDevolucion" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=HREOS-3891
 --## PRODUCTO=SI
 --##
---## Finalidad: BPM - Trámite de...
+--## Finalidad: BPM - Modificación del Trámite comercial venta
 --## INSTRUCCIONES:  Ejecutar y definir las variables.
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -46,7 +46,8 @@ DECLARE
 
     --Insertando valores en TAP_TAREA_PROCEDIMIENTO
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
-    	T_TIPO_TAP('T013','T013_RespuestaBankiaDevolucion','','','','','','0','Respuesta Bankia sobre la devolución','0','HREOS-3891','0','','',null,'0','EXTTareaProcedimiento','3','','811','','SUPER','')
+	T_TIPO_TAP('T013','T013_RespuestaBankiaDevolucion','','','','','','0','Respuesta Bankia sobre la devolución','0','HREOS-3891','0','','',null,'0','EXTTareaProcedimiento','3','','811','','SUPER','')
+    	,T_TIPO_TAP('T013','T013_PendienteDevolucion','','','','','','0','Pendiente de la devolución','0','HREOS-3891','0','','',null,'0','EXTTareaProcedimiento','3','','811','','SUPER','')
         ,T_TIPO_TAP('T013','T013_RespuestaBankiaAnulacionDevolucion','','','','','','0','Respuesta Bankia sobre la anulación de la devolución','0','HREOS-3891','0','','',null,'0','EXTTareaProcedimiento','3','','811','','SUPER','')
     ); 
     V_TMP_TIPO_TAP T_TIPO_TAP;
@@ -56,6 +57,7 @@ DECLARE
     TYPE T_ARRAY_PLAZAS IS TABLE OF T_TIPO_PLAZAS;
     V_TIPO_PLAZAS T_ARRAY_PLAZAS := T_ARRAY_PLAZAS(
         T_TIPO_PLAZAS('','','T013_RespuestaBankiaDevolucion','3*24*60*60*1000L','0','0','HREOS-3891')
+	,T_TIPO_PLAZAS('','','T013_PendienteDevolucion','3*24*60*60*1000L','0','0','HREOS-3891')
         ,T_TIPO_PLAZAS('','','T013_RespuestaBankiaAnulacionDevolucion','3*24*60*60*1000L','0','0','HREOS-3891')
 	); 
 	V_TMP_TIPO_PLAZAS T_TIPO_PLAZAS;
@@ -65,12 +67,16 @@ DECLARE
     TYPE T_ARRAY_TFI IS TABLE OF T_TIPO_TFI;
     V_TIPO_TFI T_ARRAY_TFI := T_ARRAY_TFI(
         T_TIPO_TFI('T013_RespuestaBankiaDevolucion','0','label','titulo','<p style="margin-bottom: 10px"></p>','','','','','0','HREOS-3891')
-	,T_TIPO_TFI('T013_RespuestaBankiaDevolucion','1','date','fecha','Fecha respuesta','','','','','0','HREOS-3891')
-        ,T_TIPO_TFI('T013_RespuestaBankiaDevolucion','2','combo','comboRespuesta','Respuesta de la devolución','',null,'','DDSiNo','0','HREOS-3891')
+	,T_TIPO_TFI('T013_RespuestaBankiaDevolucion','1','date','fecha','Fecha respuesta','','false','','','0','HREOS-3891')
+        ,T_TIPO_TFI('T013_RespuestaBankiaDevolucion','2','combo','comboRespuesta','Respuesta de la devolución','','false','','DDSiNo','0','HREOS-3891')
 	,T_TIPO_TFI('T013_RespuestaBankiaDevolucion','3','textarea','observaciones','Observaciones','','','','','0','HREOS-3891')
+	,T_TIPO_TFI('T013_PendienteDevolucion','0','label','titulo','<p style="margin-bottom: 10px"></p>','','','','','0','HREOS-3891')
+	,T_TIPO_TFI('T013_PendienteDevolucion','1','date','fecha','Fecha respuesta','','false','','','0','HREOS-3891')
+        ,T_TIPO_TFI('T013_PendienteDevolucion','2','combo','comboRespuesta','Respuesta de la devolución','','false','','DDSiNo','0','HREOS-3891')
+	,T_TIPO_TFI('T013_PendienteDevolucion','3','textarea','observaciones','Observaciones','','','','','0','HREOS-3891')
 	,T_TIPO_TFI('T013_RespuestaBankiaAnulacionDevolucion','0','label','titulo','<p style="margin-bottom: 10px"></p>','','','','','0','HREOS-3891')
-        ,T_TIPO_TFI('T013_RespuestaBankiaAnulacionDevolucion','1','date','fecha','Fecha respuesta','','','','','0','HREOS-3891')
-	,T_TIPO_TFI('T013_RespuestaBankiaAnulacionDevolucion','2','combo','comboRespuesta','Respuesta anulación de la devolución','',null,'','DDSiNo','0','HREOS-3891')
+        ,T_TIPO_TFI('T013_RespuestaBankiaAnulacionDevolucion','1','date','fecha','Fecha respuesta','','false','','','0','HREOS-3891')
+	,T_TIPO_TFI('T013_RespuestaBankiaAnulacionDevolucion','2','combo','comboRespuesta','Respuesta anulación de la devolución','','false','','DDSiNo','0','HREOS-3891')
 	,T_TIPO_TFI('T013_RespuestaBankiaAnulacionDevolucion','3','textarea','observaciones','Observaciones','','','','','0','HREOS-3891')
 	); 
     V_TMP_TIPO_TFI T_TIPO_TFI;

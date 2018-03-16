@@ -22,6 +22,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
+import es.pfsgroup.plugin.rem.controller.ResolucionComiteController;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceResolucionComite;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -148,26 +149,11 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 												"GCOM");
 									}
 
-									if (Checks.esNulo(usu)) {
+									if (Checks.esNulo(usu) && !resolucionComiteDto.getCodigoAccion().equals(ResolucionComiteController.ACCION_RESOLUCION_DEVOLUCION) 
+											&& !resolucionComiteDto.getCodigoAccion().equals(ResolucionComiteController.ACCION_PROPUESTA_ANULACION_RESERVA_FIRMADA)) {
 										hashErrores.put("ofertaHRE",
 												"No se ha podido obtener el usuario al que se enviará la notificación.");
 
-									} else {
-
-										// for(int i=0;i< listaTareas.size();
-										// i++){
-										// TareaProcedimiento tarea =
-										// listaTareas.get(i);
-										// if(!Checks.esNulo(tarea) &&
-										// tarea.getCodigo().equalsIgnoreCase("T013_RatificacionComite")
-										// &&
-										// resolucionComiteDto.getCodigoResolucion().equalsIgnoreCase(DDEstadoResolucion.CODIGO_ERE_CONTRAOFERTA)){
-										// hashErrores.put("ofertaHRE", "La
-										// oferta no se puede volver a
-										// contraofertar.");
-										// break;
-										// }
-										// }
 									}
 								}
 							}
@@ -175,7 +161,8 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 					}
 				}
 			}
-			if (!Checks.esNulo(estadoResol)) {
+			if (!Checks.esNulo(estadoResol) && !ResolucionComiteController.ACCION_PROPUESTA_ANULACION_RESERVA_FIRMADA.equals(resolucionComiteDto.getCodigoAccion()) 
+													&&  !ResolucionComiteController.ACCION_RESOLUCION_DEVOLUCION.equals(resolucionComiteDto.getCodigoAccion())) {
 				if (estadoResol.getCodigo().equalsIgnoreCase(DDEstadoResolucion.CODIGO_ERE_CONTRAOFERTA)
 						&& Checks.esNulo(resolucionComiteDto.getImporteContraoferta())) {
 					hashErrores.put("importeContraoferta",

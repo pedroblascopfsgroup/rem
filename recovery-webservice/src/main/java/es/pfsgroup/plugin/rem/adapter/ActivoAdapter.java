@@ -69,6 +69,7 @@ import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManagerApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
@@ -273,9 +274,6 @@ public class ActivoAdapter {
 	public static final String OFERTA_INCOMPATIBLE_MSG = "El tipo de oferta es incompatible con el destino comercial del activo";
 	public static final String AVISO_TITULO_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.titulo.modificadas.condiciones.juridicas";
 	public static final String AVISO_DESCRIPCION_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.descripcion.modificadas.condiciones.juridicas";
-	
-	public static final String CODIGO_TAREA_SOLICITAR_ANULACION_DEVOLUCION = "T013_RespuestaBankiaDevolucion";
-	public static final String CODIGO_TAREA_SOLICITAR_ANULACION_DEVOLUCION_RESPUESTA = "T013_RespuestaBankiaAnulacionDevolucion";
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -1825,15 +1823,22 @@ public class ActivoAdapter {
 				}
 			}
 			
-			beanUtilNotNull.copyProperty(dtoTramite, "tieneTareaSolicitarAnulacionDevolucion", false);
+			beanUtilNotNull.copyProperty(dtoTramite, "estaTareaRespuestaBankiaDevolucion", false);
+			beanUtilNotNull.copyProperty(dtoTramite, "estaTareaPendienteDevolucion", false);
 			beanUtilNotNull.copyProperty(dtoTramite, "estaEnTareaSiguienteResolucionExpediente", false);
+			beanUtilNotNull.copyProperty(dtoTramite, "estaTareaRespuestaBankiaAnulacionDevolucion", false);
 			if(!Checks.estaVacio(listaTareas)){
 				for(TareaProcedimiento tarea : listaTareas){
-					if(CODIGO_TAREA_SOLICITAR_ANULACION_DEVOLUCION.equals(tarea.getCodigo())){
-						beanUtilNotNull.copyProperty(dtoTramite, "tieneTareaSolicitarAnulacionDevolucion", true);
+					if(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION.equals(tarea.getCodigo())){
+						beanUtilNotNull.copyProperty(dtoTramite, "estaTareaRespuestaBankiaDevolucion", true);
 						beanUtilNotNull.copyProperty(dtoTramite, "estaEnTareaSiguienteResolucionExpediente", true);
 					}
-					else if(CODIGO_TAREA_SOLICITAR_ANULACION_DEVOLUCION_RESPUESTA.equals(tarea.getCodigo())){
+					else if(ComercialUserAssigantionService.CODIGO_T013_PENDIENTE_DEVOLUCION.equals(tarea.getCodigo())){
+						beanUtilNotNull.copyProperty(dtoTramite, "estaTareaPendienteDevolucion", true);
+						beanUtilNotNull.copyProperty(dtoTramite, "estaEnTareaSiguienteResolucionExpediente", true);
+					}
+					else if(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION.equals(tarea.getCodigo())){
+						beanUtilNotNull.copyProperty(dtoTramite, "estaTareaRespuestaBankiaAnulacionDevolucion", true);
 						beanUtilNotNull.copyProperty(dtoTramite, "estaEnTareaSiguienteResolucionExpediente", true);
 					}
 				}

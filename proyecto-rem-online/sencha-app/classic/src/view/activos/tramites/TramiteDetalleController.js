@@ -412,9 +412,47 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
           	
      },
      
+     anularDevolucion: function(button){
+     	var me = this;
+ 		
+ 		Ext.Msg.show({
+ 		    title:'Solicitar anulación de la devolución de la reserva',
+ 		    message: 'Si confirma esta acción, la devolución se anulará y el trámite volverá a la tarea anterior a Resolución Expediente. ¿Desea continuar?',
+ 		    buttons: Ext.Msg.YESNO,
+ 		    fn: function(btn) {
+ 		        if (btn == 'yes') {
+ 		        	
+ 		    		var idExpediente = me.getViewModel().get("tramite.idExpediente");
+ 		    		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+ 		    		var url = $AC.getRemoteUrl('agenda/anulacionDevolucionReservaByIdExp');
+ 		    		
+ 		    		var data;
+ 		    		Ext.Ajax.request({
+ 		    			url:url,
+ 		    			params: {idExpediente : idExpediente},
+ 		    			success: function(response, opts){
+ 		    				data = Ext.decode(response.responseText);
+ 		    				if(data.success == 'true') {
+ 		    					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+ 		    				} else {
+ 		    					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.anular.devolucion.reserva"));
+ 		    				}
+ 		    				me.onClickBotonRefrescar(button);
+ 		    			},
+ 		    			failure: function(options, success, response){
+ 		    				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.anular.devolucion.reserva"));
+ 		    			},
+ 		    			callback: function(options, success, response){
+ 		    				me.getView().unmask();
+ 		    			}
+ 		    		})
+ 		        } else if (btn === 'no') {
+ 		        }
+ 		    }
+ 		});
+      },
+     
      solicitarAnulacionDevolucion: function(button){
-    	var me = this;
-		//HREOS-3891 Terminar metodo que avanza a la tarea 'Respuesta Bankia Anulación Devolución'
     	var me = this;
 		
 		Ext.Msg.show({
@@ -426,7 +464,7 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 		        	
 		    		var idExpediente = me.getViewModel().get("tramite.idExpediente");
 		    		me.getView().mask(HreRem.i18n("msg.mask.loading"));
-		    		var url = $AC.getRemoteUrl('agenda/anulacionDevolucionReservaByIdExp');
+		    		var url = $AC.getRemoteUrl('agenda/solicitarAnulacionDevolucionReservaByIdExp');
 		    		
 		    		var data;
 		    		Ext.Ajax.request({
@@ -453,6 +491,46 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 		    }
 		});
      },
+     
+     anularSolicitudAnulacionDevolucion: function(button){
+     	var me = this;
+ 		
+ 		Ext.Msg.show({
+ 		    title:'Solicitar anulación de la solicitud de devolución de la reserva',
+ 		    message: 'Si confirma esta acción, se anulará la petición de anulación de la devolución de la reserva y el tramite volverá a la tarea anterior a Resolución Expediente. ¿Desea continuar?',
+ 		    buttons: Ext.Msg.YESNO,
+ 		    fn: function(btn) {
+ 		        if (btn == 'yes') {
+ 		        	
+ 		    		var idExpediente = me.getViewModel().get("tramite.idExpediente");
+ 		    		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+ 		    		var url = $AC.getRemoteUrl('agenda/anularSolicitudAnulacionDevolucionReservaByIdExp');
+ 		    		
+ 		    		var data;
+ 		    		Ext.Ajax.request({
+ 		    			url:url,
+ 		    			params: {idExpediente : idExpediente},
+ 		    			success: function(response, opts){
+ 		    				data = Ext.decode(response.responseText);
+ 		    				if(data.success == 'true') {
+ 		    					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+ 		    				} else {
+ 		    					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.anular.peticion.anulacion.devolucion.reserva"));
+ 		    				}
+ 		    				me.onClickBotonRefrescar(button);
+ 		    			},
+ 		    			failure: function(options, success, response){
+ 		    				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.anular.peticion.anulacion.devolucion.reserva"));
+ 		    			},
+ 		    			callback: function(options, success, response){
+ 		    				me.getView().unmask();
+ 		    			}
+ 		    		})
+ 		        } else if (btn === 'no') {
+ 		        }
+ 		    }
+ 		});
+      },
      
      onChangeChainedCombo: function(combo) {
     	    	

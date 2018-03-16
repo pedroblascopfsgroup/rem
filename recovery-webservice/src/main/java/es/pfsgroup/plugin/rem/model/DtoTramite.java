@@ -64,8 +64,12 @@ public class DtoTramite extends WebDto {
 	private Long numEC;
 	
 	private Long idExpediente;
-
-	private Boolean tieneTareaSolicitarAnulacionDevolucion;
+	
+	private Boolean estaTareaRespuestaBankiaDevolucion;
+	
+	private Boolean estaTareaPendienteDevolucion;
+	
+	private Boolean estaTareaRespuestaBankiaAnulacionDevolucion;
 	
 	private Boolean estaEnTareaSiguienteResolucionExpediente;
 
@@ -285,12 +289,28 @@ public class DtoTramite extends WebDto {
 		this.ocultarBotonAnular = ocultarBotonAnular;
 	}
 
-	public Boolean getTieneTareaSolicitarAnulacionDevolucion() {
-		return tieneTareaSolicitarAnulacionDevolucion;
+	public Boolean getEstaTareaPendienteDevolucion() {
+		return estaTareaPendienteDevolucion;
 	}
 
-	public void setTieneTareaSolicitarAnulacionDevolucion(Boolean tieneTareaSolicitarAnulacionDevolucion) {
-		this.tieneTareaSolicitarAnulacionDevolucion = tieneTareaSolicitarAnulacionDevolucion;
+	public void setEstaTareaPendienteDevolucion(Boolean estaTareaPendienteDevolucion) {
+		this.estaTareaPendienteDevolucion = estaTareaPendienteDevolucion;
+	}
+
+	public Boolean getEstaTareaRespuestaBankiaDevolucion() {
+		return estaTareaRespuestaBankiaDevolucion;
+	}
+
+	public void setEstaTareaRespuestaBankiaDevolucion(Boolean estaTareaRespuestaBankiaDevolucion) {
+		this.estaTareaRespuestaBankiaDevolucion = estaTareaRespuestaBankiaDevolucion;
+	}
+
+	public Boolean getEstaTareaRespuestaBankiaAnulacionDevolucion() {
+		return estaTareaRespuestaBankiaAnulacionDevolucion;
+	}
+
+	public void setEstaTareaRespuestaBankiaAnulacionDevolucion(Boolean estaTareaRespuestaBankiaAnulacionDevolucion) {
+		this.estaTareaRespuestaBankiaAnulacionDevolucion = estaTareaRespuestaBankiaAnulacionDevolucion;
 	}
 
 	public Boolean getEstaEnTareaSiguienteResolucionExpediente() {

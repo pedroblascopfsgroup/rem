@@ -597,9 +597,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(ofertaDto.getIsExpress())) {
 				oferta.setOfertaExpress(ofertaDto.getIsExpress());
 
-				if (ofertaDto.getIsExpress())
-					congelarExpedientesPorOfertaExpress(ofertaDto.getIdActivoHaya());
-
+				
 			}
 
 			Long idOferta = this.saveOferta(oferta);
@@ -609,6 +607,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			oferta = updateEstadoOferta(idOferta, ofertaDto.getFechaAccion());
 			this.updateStateDispComercialActivosByOferta(oferta);
 
+			if (ofertaDto.getIsExpress())
+				congelarExpedientesPorOfertaExpress(oferta);
+			
 			notificationOfertaManager.sendNotification(oferta);
 
 		}
@@ -783,6 +784,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		} else {
 			if (oferta.getOfertaExpress()) {
+				
 				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_ACEPTADA)));
 
@@ -2387,46 +2389,66 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see es.pfsgroup.plugin.rem.api.OfertaApi#congelarExpedientesPorOfertaExpress(java.lang.Long)
-	 */
 	@Transactional(readOnly = false)
 	@Override
-	public void congelarExpedientesPorOfertaExpress(Long numActivo) throws Exception {
+	public void congelarExpedientesPorOfertaExpress(Oferta ofertaExpress) throws Exception {
 
-		Activo activo = activoApi.getByNumActivo(numActivo);
+		Boolean tramitar = true;
+
+		Activo activo = activoApi.getByNumActivo(ofertaExpress.getActivoPrincipal().getNumActivo());
 		List<ActivoOferta> actofr = activo.getOfertas();
 
 		for (int i = 0; i < actofr.size(); i++) {
 			ActivoOferta activoOferta = actofr.get(i);
-			Oferta oferta = activoOferta.getPrimaryKey().getOferta();
+			Oferta ofr = activoOferta.getPrimaryKey().getOferta();
 
-			if (!Checks.esNulo(oferta)) {
-				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
+			if (!Checks.esNulo(ofr)) {
+				ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(ofr);
 
-					ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(oferta);
+				if (!Checks.esNulo(exp)) {
 
 					String estadoExpediente = exp.getEstado().getCodigo();
 
-					if (DDEstadosExpedienteComercial.EN_TRAMITACION.equals(estadoExpediente)
-							|| DDEstadosExpedienteComercial.ANULADO.equals(estadoExpediente)
-							|| DDEstadosExpedienteComercial.FIRMADO.equals(estadoExpediente)
+					if (DDEstadosExpedienteComercial.FIRMADO.equals(estadoExpediente)
 							|| DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(estadoExpediente)
 							|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(estadoExpediente)
-							|| DDEstadosExpedienteComercial.POSICIONADO.equals(estadoExpediente)
-							|| DDEstadosExpedienteComercial.RESUELTO.equals(estadoExpediente)
-							|| DDEstadosExpedienteComercial.PTE_SANCION.equals(estadoExpediente)
-							|| DDEstadosExpedienteComercial.DENEGADO.equals(estadoExpediente)
-							|| DDEstadosExpedienteComercial.DOBLE_FIRMA.equals(estadoExpediente)
-							|| DDEstadosExpedienteComercial.RPTA_OFERTANTE.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.RESERVADO.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.VENDIDO.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.APROBADO.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.ALQUILADO.equals(estadoExpediente)
 							|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(estadoExpediente)) {
 
-						oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
-								genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA)));
-
-						genericDao.update(Oferta.class, oferta);
-
+						tramitar = false;
 					}
+				}
+			}
+		}
+
+		if (tramitar) {
+			for (int i = 0; i < actofr.size(); i++) {
+				ActivoOferta activoOferta = actofr.get(i);
+				Oferta ofr = activoOferta.getPrimaryKey().getOferta();
+
+				if (!Checks.esNulo(ofr)) {
+					ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(ofr);
+
+					if (!Checks.esNulo(exp)) {
+
+						String estadoExpediente = exp.getEstado().getCodigo();
+
+						if (DDEstadosExpedienteComercial.EN_TRAMITACION.equals(estadoExpediente)
+								// || DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(estadoExpediente)
+								// || DDEstadosExpedienteComercial.RESUELTO.equals(estadoExpediente)
+								|| DDEstadosExpedienteComercial.PTE_SANCION.equals(estadoExpediente)
+								|| DDEstadosExpedienteComercial.RPTA_OFERTANTE.equals(estadoExpediente)) {
+
+							congelarOferta(ofr);
+
+						}
+					} else if (DDEstadoOferta.CODIGO_PENDIENTE.equals(ofr.getEstadoOferta().getCodigo())) {
+						congelarOferta(ofr);
+					}
+
 				}
 			}
 		}

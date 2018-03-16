@@ -544,7 +544,7 @@ public interface OfertaApi {
 	 */
 	public boolean checkReservaFirmada(TareaExterna tareaExterna);
 
-	public void congelarExpedientesPorOfertaExpress(Long numActivo) throws Exception;
+	public void congelarExpedientesPorOfertaExpress(Oferta ofertaExpress) throws Exception;
 
 
 }

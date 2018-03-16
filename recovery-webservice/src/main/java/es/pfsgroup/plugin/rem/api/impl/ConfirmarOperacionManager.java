@@ -9,7 +9,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
@@ -31,6 +30,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -356,8 +356,8 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 		List<TareaExterna> listaTareas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
 		for (TareaExterna tarea : listaTareas) {
 			if (!Checks.esNulo(tarea)) {
-				tareaActivoApi.guardarDatosResolucion(tarea.getId(), new java.sql.Date(System.currentTimeMillis()) , DDSiNo.SI);
-				tareaActivoApi.saltoPendienteDevolucion(tarea.getId());
+				tareaActivoApi.guardarDatosResolucion(tarea.getId(), new java.sql.Date(System.currentTimeMillis()), DDEstadoResolucion.CODIGO_ERE_APROBADA);
+				tareaActivoApi.saltoFin(tarea.getId());
 				break;
 			}
 		}

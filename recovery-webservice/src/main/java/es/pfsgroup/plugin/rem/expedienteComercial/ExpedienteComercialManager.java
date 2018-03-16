@@ -3533,21 +3533,19 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		//MOD3
-		if(!Checks.esNulo(oferta.getPrescriptor()) && DDTipoProveedor.COD_OFICINA_BANKIA.equals(oferta.getPrescriptor().getTipoProveedor().getCodigo())){
-			//instancia.setCodigoProveedorUvem(oferta.getPrescriptor().getCodigoApiProveedor());
 			List<GastosExpediente> gastosExpediente = expediente.getHonorarios();
 			
 			if(!Checks.estaVacio(gastosExpediente)){
 				for(GastosExpediente gastoExp: gastosExpediente){				
 					if(!Checks.esNulo(gastoExp.getAccionGastos()) && DDAccionGastos.CODIGO_PRESCRIPCION.equals(gastoExp.getAccionGastos().getCodigo())){
-						if(!Checks.esNulo(gastoExp.getProveedor())){
+						if(!Checks.esNulo(gastoExp.getProveedor()) && !Checks.esNulo(gastoExp.getProveedor().getTipoProveedor()) &&
+								DDTipoProveedor.COD_OFICINA_BANKIA.equals(gastoExp.getProveedor().getTipoProveedor().getCodigo())){
 							instancia.setCodigoProveedorUvem(gastoExp.getProveedor().getCodigoApiProveedor());
 							break;
 						}
 					}
 				}
 			}
-		}		
 
 		if(!Checks.esNulo(codComiteSuperior) && DDSiNo.SI.equals(codComiteSuperior)) {
 			instancia.setCodComiteSuperior(DDComiteSancion.CODIGO_BANKIA_DGVIER);

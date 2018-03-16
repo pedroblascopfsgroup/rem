@@ -456,8 +456,8 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			Date fechaEnBlanco = new Date();
 			fechaEnBlanco.setTime(0);
 			
-			if(!Checks.esNulo(dto.getFechaBajaProveedor()) || dto.getEstadoProveedorCodigo().equals(DDEstadoProveedor.ESTADO_BAJA_PROVEEDOR)){
-				if(!Checks.esNulo(proveedor.getTipoProveedor()) && proveedor.getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_MEDIADOR)){
+			if(!Checks.esNulo(dto.getFechaBajaProveedor()) || DDEstadoProveedor.ESTADO_BAJA_PROVEEDOR.equals(dto.getEstadoProveedorCodigo())){
+				if(!Checks.esNulo(proveedor.getTipoProveedor()) && DDTipoProveedor.COD_MEDIADOR.equals(proveedor.getTipoProveedor().getCodigo())){
 					
 					Long activosAsignadosProveedor= proveedoresDao.activosAsignadosProveedorMediador(dto.getId());
 					

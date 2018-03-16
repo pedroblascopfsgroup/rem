@@ -596,6 +596,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			if (!Checks.esNulo(ofertaDto.getIsExpress())) {
 				oferta.setOfertaExpress(ofertaDto.getIsExpress());
+
+				
 			}
 
 			Long idOferta = this.saveOferta(oferta);
@@ -605,6 +607,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			oferta = updateEstadoOferta(idOferta, ofertaDto.getFechaAccion());
 			this.updateStateDispComercialActivosByOferta(oferta);
 
+			if (ofertaDto.getIsExpress())
+				congelarExpedientesPorOfertaExpress(oferta);
+			
 			notificationOfertaManager.sendNotification(oferta);
 
 		}
@@ -779,6 +784,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		} else {
 			if (oferta.getOfertaExpress()) {
+				
 				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_ACEPTADA)));
 
@@ -1417,6 +1423,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			expediente.setComiteSancion(comite);
 			expediente.setComiteSuperior(comite);
 			this.guardarUvemCodigoAgrupacionInmueble(expediente, resultadoDto);
+			if(!Checks.esNulo(resultadoDto.getCodigoOfertaUvem())){
+				if(!Checks.esNulo(expediente.getOferta())){
+					expediente.getOferta().setIdUvem(resultadoDto.getCodigoOfertaUvem().longValue());
+				}
+			}
 			genericDao.save(ExpedienteComercial.class, expediente);
 
 			return true;
@@ -1460,6 +1471,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
 			expediente.setComiteSancion(comite);
 			expediente.setComiteSuperior(comite);
+			
+			if(!Checks.esNulo(resultadoDto.getCodigoOfertaUvem())){
+				if(!Checks.esNulo(expediente.getOferta())){
+					expediente.getOferta().setIdUvem(resultadoDto.getCodigoOfertaUvem().longValue());
+				}
+			}
 			genericDao.save(ExpedienteComercial.class, expediente);
 
 			return null;
@@ -2370,5 +2387,70 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 		}
 		return false;
+	}
+
+	@Transactional(readOnly = false)
+	@Override
+	public void congelarExpedientesPorOfertaExpress(Oferta ofertaExpress) throws Exception {
+
+		Boolean tramitar = true;
+
+		Activo activo = activoApi.getByNumActivo(ofertaExpress.getActivoPrincipal().getNumActivo());
+		List<ActivoOferta> actofr = activo.getOfertas();
+
+		for (int i = 0; i < actofr.size(); i++) {
+			ActivoOferta activoOferta = actofr.get(i);
+			Oferta ofr = activoOferta.getPrimaryKey().getOferta();
+
+			if (!Checks.esNulo(ofr)) {
+				ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(ofr);
+
+				if (!Checks.esNulo(exp)) {
+
+					String estadoExpediente = exp.getEstado().getCodigo();
+
+					if (DDEstadosExpedienteComercial.FIRMADO.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.RESERVADO.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.VENDIDO.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.APROBADO.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.ALQUILADO.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(estadoExpediente)) {
+
+						tramitar = false;
+					}
+				}
+			}
+		}
+
+		if (tramitar) {
+			for (int i = 0; i < actofr.size(); i++) {
+				ActivoOferta activoOferta = actofr.get(i);
+				Oferta ofr = activoOferta.getPrimaryKey().getOferta();
+
+				if (!Checks.esNulo(ofr)) {
+					ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(ofr);
+
+					if (!Checks.esNulo(exp)) {
+
+						String estadoExpediente = exp.getEstado().getCodigo();
+
+						if (DDEstadosExpedienteComercial.EN_TRAMITACION.equals(estadoExpediente)
+								// || DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(estadoExpediente)
+								// || DDEstadosExpedienteComercial.RESUELTO.equals(estadoExpediente)
+								|| DDEstadosExpedienteComercial.PTE_SANCION.equals(estadoExpediente)
+								|| DDEstadosExpedienteComercial.RPTA_OFERTANTE.equals(estadoExpediente)) {
+
+							congelarOferta(ofr);
+
+						}
+					} else if (DDEstadoOferta.CODIGO_PENDIENTE.equals(ofr.getEstadoOferta().getCodigo())) {
+						congelarOferta(ofr);
+					}
+
+				}
+			}
+		}
 	}
 }

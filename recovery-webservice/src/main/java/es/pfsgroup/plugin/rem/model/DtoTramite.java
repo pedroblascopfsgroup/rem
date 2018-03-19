@@ -64,8 +64,14 @@ public class DtoTramite extends WebDto {
 	private Long numEC;
 	
 	private Long idExpediente;
-
 	
+	private Boolean estaTareaRespuestaBankiaDevolucion;
+	
+	private Boolean estaTareaPendienteDevolucion;
+	
+	private Boolean estaTareaRespuestaBankiaAnulacionDevolucion;
+	
+	private Boolean estaEnTareaSiguienteResolucionExpediente;
 
 	public Long getIdTramite() {
 		return idTramite;
@@ -281,6 +287,38 @@ public class DtoTramite extends WebDto {
 
 	public void setOcultarBotonAnular(Boolean ocultarBotonAnular) {
 		this.ocultarBotonAnular = ocultarBotonAnular;
+	}
+
+	public Boolean getEstaTareaPendienteDevolucion() {
+		return estaTareaPendienteDevolucion;
+	}
+
+	public void setEstaTareaPendienteDevolucion(Boolean estaTareaPendienteDevolucion) {
+		this.estaTareaPendienteDevolucion = estaTareaPendienteDevolucion;
+	}
+
+	public Boolean getEstaTareaRespuestaBankiaDevolucion() {
+		return estaTareaRespuestaBankiaDevolucion;
+	}
+
+	public void setEstaTareaRespuestaBankiaDevolucion(Boolean estaTareaRespuestaBankiaDevolucion) {
+		this.estaTareaRespuestaBankiaDevolucion = estaTareaRespuestaBankiaDevolucion;
+	}
+
+	public Boolean getEstaTareaRespuestaBankiaAnulacionDevolucion() {
+		return estaTareaRespuestaBankiaAnulacionDevolucion;
+	}
+
+	public void setEstaTareaRespuestaBankiaAnulacionDevolucion(Boolean estaTareaRespuestaBankiaAnulacionDevolucion) {
+		this.estaTareaRespuestaBankiaAnulacionDevolucion = estaTareaRespuestaBankiaAnulacionDevolucion;
+	}
+
+	public Boolean getEstaEnTareaSiguienteResolucionExpediente() {
+		return estaEnTareaSiguienteResolucionExpediente;
+	}
+
+	public void setEstaEnTareaSiguienteResolucionExpediente(Boolean estaEnTareaSiguienteResolucionExpediente) {
+		this.estaEnTareaSiguienteResolucionExpediente = estaEnTareaSiguienteResolucionExpediente;
 	}
 	
 }

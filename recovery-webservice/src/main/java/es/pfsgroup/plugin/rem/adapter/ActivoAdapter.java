@@ -29,6 +29,7 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -68,6 +69,7 @@ import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManagerApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
@@ -1746,6 +1748,7 @@ public class ActivoAdapter {
 		DtoTramite dtoTramite = new DtoTramite();
 		ActivoTramite tramite = activoTramiteApi.get(idTramite);
 		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+		List<TareaProcedimiento> listaTareas = activoTramiteApi.getTareasActivasByIdTramite(idTramite);
 
 		try {
 			beanUtilNotNull.copyProperty(dtoTramite, "idTramite", tramite.getId());
@@ -1817,6 +1820,27 @@ public class ActivoAdapter {
 					beanUtilNotNull.copyProperty(dtoTramite, "descripcionEstadoEC",
 							expedienteComercial.getEstado().getDescripcion());
 					beanUtilNotNull.copyProperty(dtoTramite, "numEC", expedienteComercial.getNumExpediente());
+				}
+			}
+			
+			beanUtilNotNull.copyProperty(dtoTramite, "estaTareaRespuestaBankiaDevolucion", false);
+			beanUtilNotNull.copyProperty(dtoTramite, "estaTareaPendienteDevolucion", false);
+			beanUtilNotNull.copyProperty(dtoTramite, "estaEnTareaSiguienteResolucionExpediente", false);
+			beanUtilNotNull.copyProperty(dtoTramite, "estaTareaRespuestaBankiaAnulacionDevolucion", false);
+			if(!Checks.estaVacio(listaTareas)){
+				for(TareaProcedimiento tarea : listaTareas){
+					if(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION.equals(tarea.getCodigo())){
+						beanUtilNotNull.copyProperty(dtoTramite, "estaTareaRespuestaBankiaDevolucion", true);
+						beanUtilNotNull.copyProperty(dtoTramite, "estaEnTareaSiguienteResolucionExpediente", true);
+					}
+					else if(ComercialUserAssigantionService.CODIGO_T013_PENDIENTE_DEVOLUCION.equals(tarea.getCodigo())){
+						beanUtilNotNull.copyProperty(dtoTramite, "estaTareaPendienteDevolucion", true);
+						beanUtilNotNull.copyProperty(dtoTramite, "estaEnTareaSiguienteResolucionExpediente", true);
+					}
+					else if(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION.equals(tarea.getCodigo())){
+						beanUtilNotNull.copyProperty(dtoTramite, "estaTareaRespuestaBankiaAnulacionDevolucion", true);
+						beanUtilNotNull.copyProperty(dtoTramite, "estaEnTareaSiguienteResolucionExpediente", true);
+					}
 				}
 			}
 

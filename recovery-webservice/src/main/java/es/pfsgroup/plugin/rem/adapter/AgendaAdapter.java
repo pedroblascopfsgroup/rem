@@ -39,7 +39,6 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.web.dto.factory.DTOFactory;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.mejoras.web.tareas.BuzonTareasViewHandler;
 import es.pfsgroup.plugin.recovery.mejoras.web.tareas.BuzonTareasViewHandlerFactory;
@@ -49,6 +48,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoCampo;
@@ -77,9 +77,6 @@ public class AgendaAdapter {
     @Resource
     MessageService messageServices;
     
-    @Autowired
-    private DTOFactory dtoFactory;
-	
     @Autowired
     private ApiProxyFactory proxyFactory;
     
@@ -548,6 +545,15 @@ public class AgendaAdapter {
 		}
 		return true;
 	}
+	
+	public Boolean saltoTareaByCodigo(Long idTareaExterna, String codigoTarea){
+		try{
+			tareaActivoApi.saltoTarea(idTareaExterna, codigoTarea);
+		}catch(Exception ex){
+			return false;
+		}
+		return true;
+	}
 		
 	public Boolean saltoCierreEconomico(Long idTareaExterna){
 		try{
@@ -561,6 +567,24 @@ public class AgendaAdapter {
 	public Boolean saltoResolucionExpediente(Long idTareaExterna){
 		try{
 			tareaActivoApi.saltoResolucionExpediente(idTareaExterna);
+		}catch(Exception ex){
+			return false;
+		}
+		return true;
+	}
+	
+	public Boolean saltoRespuestaBankiaAnulacionDevolucion(Long idTareaExterna){
+		try{
+			tareaActivoApi.saltoRespuestaBankiaAnulacionDevolucion(idTareaExterna);
+		}catch(Exception ex){
+			return false;
+		}
+		return true;
+	}
+	
+	public Boolean saltoPendienteDevolucion(Long idTareaExterna){
+		try{
+			tareaActivoApi.saltoPendienteDevolucion(idTareaExterna);
 		}catch(Exception ex){
 			return false;
 		}

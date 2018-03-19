@@ -35,7 +35,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     numExpediente: null,
 
     initComponent: function() {
-
         var me = this;
 
         me.width = 800;
@@ -1308,6 +1307,35 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             	//me.down('[name=comboMotivoAnulacionReserva]').reset();
             }
         });
+    },
+    
+    T013_RespuestaBankiaDevolucionValidacion: function() {
+    	var me = this;
+    	var fecha = me.down('[name=fecha]');
+    	var comboRespuesta = me.down('[name=comboRespuesta]');
+    	var observaciones = me.down('[name=observaciones]');
+    	fecha.setReadOnly(true);
+    	comboRespuesta.setReadOnly(true);
+    	observaciones.setReadOnly(true);
+    },
+    T013_PendienteDevolucionValidacion: function() {
+    	var me = this;
+    	var fecha = me.down('[name=fecha]');
+    	var comboRespuesta = me.down('[name=comboRespuesta]');
+    	var observaciones = me.down('[name=observaciones]');
+    	fecha.setReadOnly(true);
+    	comboRespuesta.setReadOnly(true);
+    	observaciones.setReadOnly(true);
+    },
+    
+    T013_RespuestaBankiaAnulacionDevolucionValidacion: function() {
+    	var me = this;
+    	var fecha = me.down('[name=fecha]');
+    	var comboRespuesta = me.down('[name=comboRespuesta]');
+    	var observaciones = me.down('[name=observaciones]');
+    	fecha.setReadOnly(true);
+    	comboRespuesta.setReadOnly(true);
+    	observaciones.setReadOnly(true);
     },
 
     T014_PosicionamientoFirmaValidacion: function() {

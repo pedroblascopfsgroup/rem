@@ -29,14 +29,18 @@ import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.TareaExcelReport;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoReasignarTarea;
 import es.pfsgroup.plugin.rem.model.DtoSolicitarProrrogaTarea;
 import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzones;
 
 @Controller
@@ -59,6 +63,9 @@ public class AgendaController extends TareaController {
 
 	@Autowired
 	private ActivoTramiteApi activoTramiteApi;
+	
+	@Autowired
+	private UvemManagerApi uvemManagerApi;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -306,6 +313,192 @@ public class AgendaController extends TareaController {
 
 		} catch (JsonViewerException e) {
 			logger.error("Error al saltar a resolución expediente", e);
+			model.put("success", salto);
+			model.put("msgError", e.getMessage());
+
+		} catch (Exception e) {
+			model.put("success", salto);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView anulacionDevolucionReservaByIdExp(Long idExpediente, ModelMap model) {
+
+		ExpedienteComercial eco = null;
+		List<ActivoTramite> listaTramites = null;
+		Boolean salto = false;
+
+		try {
+
+			if (Checks.esNulo(idExpediente)) {
+				throw new JsonViewerException("No se ha informado el expediente comercial.");
+
+			} else {
+				eco = expedienteComercialApi.findOne(idExpediente);
+				if (Checks.esNulo(eco)) {
+					throw new JsonViewerException("No existe el expediente comercial.");
+				}
+
+				listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(eco.getTrabajo().getId());
+				if (Checks.esNulo(listaTramites)
+						|| (!Checks.esNulo(listaTramites) && listaTramites.isEmpty() || (!Checks.esNulo(listaTramites)
+								&& !listaTramites.isEmpty() && Checks.esNulo(listaTramites.get(0))))) {
+					throw new JsonViewerException("No se ha podido recuperar el trámite del expediente comercial.");
+				}
+
+				List<TareaExterna> listaTareas = activoTramiteApi
+						.getListaTareaExternaActivasByIdTramite(listaTramites.get(0).getId());
+				for (int i = 0; i < listaTareas.size(); i++) {
+					TareaExterna tarea = listaTareas.get(i);
+					if (!Checks.esNulo(tarea) && ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION.equals(tarea.getTareaProcedimiento().getCodigo())) {
+						//Salto a tarea anterior y llamada a UVEM cosem1: 4
+						TareaExterna tareaSalto = activoTramiteApi.getTareaAnteriorByCodigoTarea(listaTramites.get(0).getId(), ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_EXPEDIENTE);
+						salto = adapter.saltoTareaByCodigo(tarea.getId(), tareaSalto.getTareaProcedimiento().getCodigo());
+						if(salto){
+							//Se entiende que cuando salta a la tarea anterior a Resolución Expendiente, la reserva y el expediente han llegado en los siguientes estados
+							expedienteComercialApi.updateExpedienteComercialEstadoPrevioResolucionExpediente(eco, ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION);
+							uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(), UvemManagerApi.MOTIVO_ANULACION.NO_APLICA,
+									UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.NO_APLICA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA);
+						}
+						else{
+							logger.error("Error al saltar a tarea anterior a Resolución Expediente");
+							throw new Exception();
+						}
+						break;
+					}
+					else{
+						throw new JsonViewerException("No se encuentra en la tarea para realizar esta acción");
+					}
+				}
+			}
+			model.put("success", salto);
+
+		} catch (JsonViewerException e) {
+			logger.error("Error al saltar a tarea anterior a Resolución Expediente", e);
+			model.put("success", salto);
+			model.put("msgError", e.getMessage());
+
+		} catch (Exception e) {
+			model.put("success", salto);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView solicitarAnulacionDevolucionReservaByIdExp(Long idExpediente, ModelMap model) {
+
+		ExpedienteComercial eco = null;
+		List<ActivoTramite> listaTramites = null;
+		Boolean salto = false;
+
+		try {
+
+			if (Checks.esNulo(idExpediente)) {
+				throw new JsonViewerException("No se ha informado el expediente comercial.");
+
+			} else {
+				eco = expedienteComercialApi.findOne(idExpediente);
+				if (Checks.esNulo(eco)) {
+					throw new JsonViewerException("No existe el expediente comercial.");
+				}
+
+				listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(eco.getTrabajo().getId());
+				if (Checks.esNulo(listaTramites)
+						|| (!Checks.esNulo(listaTramites) && listaTramites.isEmpty() || (!Checks.esNulo(listaTramites)
+								&& !listaTramites.isEmpty() && Checks.esNulo(listaTramites.get(0))))) {
+					throw new JsonViewerException("No se ha podido recuperar el trámite del expediente comercial.");
+				}
+
+				List<TareaExterna> listaTareas = activoTramiteApi
+						.getListaTareaExternaActivasByIdTramite(listaTramites.get(0).getId());
+				for (int i = 0; i < listaTareas.size(); i++) {
+					TareaExterna tarea = listaTareas.get(i);
+					if (!Checks.esNulo(tarea) && ComercialUserAssigantionService.CODIGO_T013_PENDIENTE_DEVOLUCION.equals(tarea.getTareaProcedimiento().getCodigo())) {
+						//Salto a la tarea Respuesta Bankia Anulacion Devolucion y llamada UVEM cosem1: 6
+						salto = adapter.saltoRespuestaBankiaAnulacionDevolucion(tarea.getId());
+						if(salto){
+							uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(), UvemManagerApi.MOTIVO_ANULACION.NO_APLICA,
+									UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.NO_APLICA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.SOLICITUD_ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA);
+						}
+						else{
+							logger.error("Error al saltar a tarea anterior a Resolución Expediente");
+							throw new Exception();
+						}
+						break;
+					}
+					else{
+						throw new JsonViewerException("No se encuentra en la tarea para realizar esta acción");
+					}
+				}
+			}
+			model.put("success", salto);
+
+		} catch (JsonViewerException e) {
+			logger.error("Error al saltar a la tarea Respuesta Bankia Anulacion Devolucion", e);
+			model.put("success", salto);
+			model.put("msgError", e.getMessage());
+
+		} catch (Exception e) {
+			model.put("success", salto);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView anularSolicitudAnulacionDevolucionReservaByIdExp(Long idExpediente, ModelMap model) {
+
+		ExpedienteComercial eco = null;
+		List<ActivoTramite> listaTramites = null;
+		Boolean salto = false;
+
+		try {
+
+			if (Checks.esNulo(idExpediente)) {
+				throw new JsonViewerException("No se ha informado el expediente comercial.");
+
+			} else {
+				eco = expedienteComercialApi.findOne(idExpediente);
+				if (Checks.esNulo(eco)) {
+					throw new JsonViewerException("No existe el expediente comercial.");
+				}
+
+				listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(eco.getTrabajo().getId());
+				if (Checks.esNulo(listaTramites)
+						|| (!Checks.esNulo(listaTramites) && listaTramites.isEmpty() || (!Checks.esNulo(listaTramites)
+								&& !listaTramites.isEmpty() && Checks.esNulo(listaTramites.get(0))))) {
+					throw new JsonViewerException("No se ha podido recuperar el trámite del expediente comercial.");
+				}
+
+				List<TareaExterna> listaTareas = activoTramiteApi
+						.getListaTareaExternaActivasByIdTramite(listaTramites.get(0).getId());
+				for (int i = 0; i < listaTareas.size(); i++) {
+					TareaExterna tarea = listaTareas.get(i);
+					if (!Checks.esNulo(tarea) && ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION.equals(tarea.getTareaProcedimiento().getCodigo())) {
+						//Salto a la tarea Pendiente Devolucion y llamada UVEM cosem1: 7
+						salto = adapter.saltoPendienteDevolucion(tarea.getId());
+						if(salto){
+							uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(), UvemManagerApi.MOTIVO_ANULACION.NO_APLICA,
+									UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.NO_APLICA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.ANULAR_SOLICITUD_ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA);
+						}
+						else{
+							logger.error("Error al saltar a tarea anterior a Resolución Expediente");
+							throw new Exception();
+						}
+						break;
+					}
+					else{
+						throw new JsonViewerException("No se encuentra en la tarea para realizar esta acción");
+					}
+				}
+			}
+			model.put("success", salto);
+
+		} catch (JsonViewerException e) {
+			logger.error("Error al saltar a la tarea Pendiente Devolución", e);
 			model.put("success", salto);
 			model.put("msgError", e.getMessage());
 

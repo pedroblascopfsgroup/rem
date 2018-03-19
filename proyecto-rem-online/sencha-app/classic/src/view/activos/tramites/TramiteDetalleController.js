@@ -6,7 +6,16 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 
          'tareaslist gridBase': {
              aftersaveTarea: function(grid) {
-             	grid.getStore().load();
+             	//grid.getStore().load();
+            	var tabActivo = grid.up("tabpanel").getActiveTab();
+            	var tabHistorico = grid.up("tramitesdetalle").lookupReference("historicoTareasTramite");
+            	
+            	if(tabActivo.funcionRecargar){
+            		tabActivo.funcionRecargar();
+            	}
+            	if(tabHistorico.funcionRecargar){
+            		tabHistorico.funcionRecargar();
+            	}
              }
          }
          
@@ -402,6 +411,126 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
      	button.up('window').destroy();
           	
      },
+     
+     anularDevolucion: function(button){
+     	var me = this;
+ 		
+ 		Ext.Msg.show({
+ 		    title:'Solicitar anulación de la devolución de la reserva',
+ 		    message: 'Si confirma esta acción, la devolución se anulará y el trámite volverá a la tarea anterior a Resolución Expediente. ¿Desea continuar?',
+ 		    buttons: Ext.Msg.YESNO,
+ 		    fn: function(btn) {
+ 		        if (btn == 'yes') {
+ 		        	
+ 		    		var idExpediente = me.getViewModel().get("tramite.idExpediente");
+ 		    		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+ 		    		var url = $AC.getRemoteUrl('agenda/anulacionDevolucionReservaByIdExp');
+ 		    		
+ 		    		var data;
+ 		    		Ext.Ajax.request({
+ 		    			url:url,
+ 		    			params: {idExpediente : idExpediente},
+ 		    			success: function(response, opts){
+ 		    				data = Ext.decode(response.responseText);
+ 		    				if(data.success == 'true') {
+ 		    					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+ 		    				} else {
+ 		    					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.anular.devolucion.reserva"));
+ 		    				}
+ 		    				me.onClickBotonRefrescar(button);
+ 		    			},
+ 		    			failure: function(options, success, response){
+ 		    				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.anular.devolucion.reserva"));
+ 		    			},
+ 		    			callback: function(options, success, response){
+ 		    				me.getView().unmask();
+ 		    			}
+ 		    		})
+ 		        } else if (btn === 'no') {
+ 		        }
+ 		    }
+ 		});
+      },
+     
+     solicitarAnulacionDevolucion: function(button){
+    	var me = this;
+		
+		Ext.Msg.show({
+		    title:'Solicitar anulación de la solicitud de devolución de la reserva',
+		    message: 'Si confirma esta acción, el trámite avanzará a la tarea donde se pedirá la anulación de la solicitud de devolución de la reserva. ¿Desea continuar?',
+		    buttons: Ext.Msg.YESNO,
+		    fn: function(btn) {
+		        if (btn == 'yes') {
+		        	
+		    		var idExpediente = me.getViewModel().get("tramite.idExpediente");
+		    		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		    		var url = $AC.getRemoteUrl('agenda/solicitarAnulacionDevolucionReservaByIdExp');
+		    		
+		    		var data;
+		    		Ext.Ajax.request({
+		    			url:url,
+		    			params: {idExpediente : idExpediente},
+		    			success: function(response, opts){
+		    				data = Ext.decode(response.responseText);
+		    				if(data.success == 'true') {
+		    					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		    				} else {
+		    					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.solicitar.anulacion.devolucion.reserva"));
+		    				}
+		    				me.onClickBotonRefrescar(button);
+		    			},
+		    			failure: function(options, success, response){
+		    				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.solicitar.anulacion.devolucion.reserva"));
+		    			},
+		    			callback: function(options, success, response){
+		    				me.getView().unmask();
+		    			}
+		    		})
+		        } else if (btn === 'no') {
+		        }
+		    }
+		});
+     },
+     
+     anularSolicitudAnulacionDevolucion: function(button){
+     	var me = this;
+ 		
+ 		Ext.Msg.show({
+ 		    title:'Solicitar anulación de la solicitud de devolución de la reserva',
+ 		    message: 'Si confirma esta acción, se anulará la petición de anulación de la devolución de la reserva y el tramite volverá a la tarea anterior a Resolución Expediente. ¿Desea continuar?',
+ 		    buttons: Ext.Msg.YESNO,
+ 		    fn: function(btn) {
+ 		        if (btn == 'yes') {
+ 		        	
+ 		    		var idExpediente = me.getViewModel().get("tramite.idExpediente");
+ 		    		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+ 		    		var url = $AC.getRemoteUrl('agenda/anularSolicitudAnulacionDevolucionReservaByIdExp');
+ 		    		
+ 		    		var data;
+ 		    		Ext.Ajax.request({
+ 		    			url:url,
+ 		    			params: {idExpediente : idExpediente},
+ 		    			success: function(response, opts){
+ 		    				data = Ext.decode(response.responseText);
+ 		    				if(data.success == 'true') {
+ 		    					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+ 		    				} else {
+ 		    					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.anular.peticion.anulacion.devolucion.reserva"));
+ 		    				}
+ 		    				me.onClickBotonRefrescar(button);
+ 		    			},
+ 		    			failure: function(options, success, response){
+ 		    				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.anular.peticion.anulacion.devolucion.reserva"));
+ 		    			},
+ 		    			callback: function(options, success, response){
+ 		    				me.getView().unmask();
+ 		    			}
+ 		    		})
+ 		        } else if (btn === 'no') {
+ 		        }
+ 		    }
+ 		});
+      },
      
      onChangeChainedCombo: function(combo) {
     	    	

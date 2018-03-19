@@ -14,14 +14,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.BusinessOperationException;
-import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.eventfactory.EventFactory;
+import es.capgemini.pfs.procesosJudiciales.dao.TareaExternaValorDao;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.EXTTareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.prorroga.dto.DtoSolicitarProrroga;
 import es.capgemini.pfs.tareaNotificacion.VencimientoUtils;
@@ -45,8 +47,10 @@ import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJDDTipoRegistro;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.listener.ActivoGenerarSaltoImpl;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.VTareaActivoCount;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.VTareaActivoCountDao;
 import es.pfsgroup.recovery.ext.impl.multigestor.model.EXTGrupoUsuarios;
@@ -56,8 +60,12 @@ import es.pfsgroup.recovery.ext.impl.multigestor.model.EXTGrupoUsuarios;
 public class TareaActivoManager implements TareaActivoApi {
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+	SimpleDateFormat formatoFechaTEV = new SimpleDateFormat("yyyy-MM-dd");
 	
 	protected static final Log logger = LogFactory.getLog(TareaActivoManager.class);
+	
+	private static final String NOMBRE_CAMPO_FECHA = "fecha";
+	private static final String NOMBRE_CAMPO_RESPUESTA = "comboRespuesta";
 	
     @Autowired
     private ActivoTareaExternaApi activoTareaExternaManagerApi;	
@@ -66,9 +74,6 @@ public class TareaActivoManager implements TareaActivoApi {
 	private TareaActivoDao tareaActivoDao;
 
     @Autowired
-	private Executor executor;
-
-	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
     @Autowired
@@ -85,6 +90,9 @@ public class TareaActivoManager implements TareaActivoApi {
 	
 	@Autowired
 	private JBPMProcessManagerApi processManagerApi;
+	
+	@Autowired
+    private TareaExternaValorDao tareaExternaValorDao;
 	
 	@Override
 	public TareaActivo get(Long id) {
@@ -182,6 +190,24 @@ public class TareaActivoManager implements TareaActivoApi {
 	public void saltoResolucionExpediente(Long idTareaExterna){
 		saltoTarea(idTareaExterna,ActivoGenerarSaltoImpl.CODIGO_SALTO_RESOLUCION);
 	}
+	
+	@Override
+	@Transactional(readOnly=false)
+	public void saltoRespuestaBankiaAnulacionDevolucion(Long idTareaExterna){
+		saltoTarea(idTareaExterna,ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION);
+	}
+	
+	@Override
+	@Transactional(readOnly=false)
+	public void saltoRespuestaBankiaDevolucion(Long idTareaExterna){
+		saltoTarea(idTareaExterna,ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION);
+	}
+	
+	@Override
+	@Transactional(readOnly=false)
+	public void saltoPendienteDevolucion(Long idTareaExterna){
+		saltoTarea(idTareaExterna,ComercialUserAssigantionService.CODIGO_T013_PENDIENTE_DEVOLUCION);
+	}
 		
 	@Override
 	@Transactional(readOnly=false)
@@ -218,6 +244,11 @@ public class TareaActivoManager implements TareaActivoApi {
 			tareaAsociada = (TareaActivo) tareaExterna.getTareaPadre();
 		}
 		if(!Checks.esNulo(tareaAsociada.getTareaExterna())){
+			if(ComercialUserAssigantionService.CODIGO_T013_RESULTADO_PBC.equals(tareaDestino)){
+				Map<String, Object> variables = new HashMap<String, Object>();
+				variables.put("saltando", true);
+				jbpmManager.addVariablesToProcess(tareaAsociada.getTramite().getProcessBPM(), variables);
+			}
 			jbpmManager.generaTransicionesSalto(tareaAsociada.getTareaExterna().getTokenIdBpm(), tareaDestino);
 			jbpmManager.signalToken(tareaAsociada.getTareaExterna().getTokenIdBpm(), "salto"+tareaDestino);
 		}
@@ -334,6 +365,24 @@ public class TareaActivoManager implements TareaActivoApi {
 		return contadores;
 	}
 
+	@Override
+	@Transactional
+	public void guardarDatosResolucion(Long idTareaExterna,java.sql.Date fecha, String resolucion) {
+		TareaExterna tareaExterna = proxyFactory.proxy(TareaExternaApi.class).get(idTareaExterna);
+        TareaExternaValor valorFecha = new TareaExternaValor();
+        TareaExternaValor valorResolucion = new TareaExternaValor();
+        
+        valorFecha.setTareaExterna(tareaExterna);
+        valorFecha.setNombre(NOMBRE_CAMPO_FECHA);
+        valorFecha.setValor(formatoFechaTEV.format(fecha));
+        
+        valorResolucion.setTareaExterna(tareaExterna);
+        valorResolucion.setNombre(NOMBRE_CAMPO_RESPUESTA);
+        valorResolucion.setValor(DDEstadoResolucion.CODIGO_ERE_APROBADA.equals(resolucion) ? DDSiNo.SI : DDSiNo.NO);
+        
+	    tareaExternaValorDao.saveOrUpdate(valorFecha);
+	    tareaExternaValorDao.saveOrUpdate(valorResolucion);
+	}
 }
 
 

@@ -9,18 +9,19 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ConfirmarOperacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ReintegroApi;
 import es.pfsgroup.plugin.rem.api.ReservaApi;
+import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
@@ -29,6 +30,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -62,7 +64,10 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 	private ExpedienteComercialApi expedienteComercialApi;
 
 	@Autowired
-	private GenericABMDao genericDao;
+	private ActivoTramiteApi activoTramiteApi;
+	
+	@Autowired
+	private TareaActivoApi tareaActivoApi;
 
 	@Override
 	public String managerName() {
@@ -336,7 +341,27 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 		// Actualiza fecha de devolución e importe devuelto
 		expedienteComercial.setFechaDevolucionEntregas(fechaActual);
 		expedienteComercial.setImporteDevolucionEntregas(importeReserva);
-
+		
+		// HREOS-3891
+		ActivoTramite tramite = null;
+		List<ActivoTramite> listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(expedienteComercial.getTrabajo().getId());
+		if (Checks.estaVacio(listaTramites)) {
+			throw new Exception("No se ha podido recuperar el trámite de la oferta.");
+		} else {
+			tramite = listaTramites.get(0);
+			if (Checks.esNulo(tramite)) {
+				throw new Exception("No se ha podido recuperar el trámite de la oferta.");
+			}
+		}
+		List<TareaExterna> listaTareas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
+		for (TareaExterna tarea : listaTareas) {
+			if (!Checks.esNulo(tarea)) {
+				tareaActivoApi.guardarDatosResolucion(tarea.getId(), new java.sql.Date(System.currentTimeMillis()), DDEstadoResolucion.CODIGO_ERE_APROBADA);
+				tareaActivoApi.saltoFin(tarea.getId());
+				break;
+			}
+		}
+		
 		if (!expedienteComercialApi.update(expedienteComercial)) {
 			throw new Exception("Error al actualizar el expediente comercial.");
 		}

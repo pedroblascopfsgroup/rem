@@ -67,7 +67,7 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
              {
 	           	 name: 'anularDevolucion',
 	           	 itemId: 'anularDevolucion',
-	           	 text: HreRem.i18n('btn.solicitar.anulacion.devolucion'),
+	           	 text: HreRem.i18n('btn.anulacion.devolucion'),
 	          	 handler: 'anularDevolucion',
 	          	 hidden: true,
 	          	 bind: {

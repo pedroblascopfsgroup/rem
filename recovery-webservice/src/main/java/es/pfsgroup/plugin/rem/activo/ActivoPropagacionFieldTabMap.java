@@ -25,6 +25,7 @@ public class ActivoPropagacionFieldTabMap {
 
     public static final String TAB_COMERCIAL = "comercial";
     public static final String TAB_ADMINISTRACION = "administracion";
+    public static final String TAB_PATRIMONIO = "patrimonio";
 
     
     static {

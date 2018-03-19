@@ -1,19 +1,16 @@
 package es.pfsgroup.plugin.rem.activo.dao;
 
-import java.util.List;
-
 import es.capgemini.pfs.dao.AbstractDao;
-import es.pfsgroup.plugin.rem.model.ActivoHistoricoPatrimonio;
-import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 
-public interface ActivoPatrimonioDao extends AbstractDao<ActivoHistoricoPatrimonio, Long>{
+public interface ActivoPatrimonioDao extends AbstractDao<ActivoPatrimonio, Long>{
 	
 	/**
-	 * Metodo que devuelve un objeto ActivoHistoricoPatrimonio a partir de un id Activo
+	 * Devuelve un objeto ActivoPatrimonio a partir del id de un activo
 	 * @param idActivo
-	 * @return ActivoHistoricoPatrimonio
+	 * @return ActivoPatrimonio
 	 */
-	public List<ActivoHistoricoPatrimonio> getHistoricoAdecuacionesAlquilerByActivo(long idActivo);
+	public ActivoPatrimonio getActivoPatrimonioByActivo(Long idActivo);
 
 	
 }

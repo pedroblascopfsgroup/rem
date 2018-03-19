@@ -6,7 +6,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.IncrementoPresupuesto', 'HreRem.model.Distribuciones', 'HreRem.model.Observaciones',
     'HreRem.model.Carga', 'HreRem.model.Llaves', 'HreRem.model.PreciosVigentes','HreRem.model.VisitasActivo',
     'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel',
-    'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave','HreRem.model.HistoricoAdecuacionesPatrimonioModel','HreRem.model.ActivoPatrimonio'],
+    'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave','HreRem.model.ActivoPatrimonio','HreRem.model.HistoricoAdecuacionesPatrimonioModel'],
     
     data: {
     	activo: null,
@@ -276,6 +276,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		 
 		 enableComboTipoAlquiler: function(get){
 				var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
+				var tipoComercializacion = get('activo.tipoComercializacionCodigo');
+				
+				
 				return true;
 		}
 	 },

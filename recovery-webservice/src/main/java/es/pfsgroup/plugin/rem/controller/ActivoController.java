@@ -2516,7 +2516,7 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getHistoricoAdecuacionesAlquilerByActivo(Long id, ModelMap model) {
+	public ModelAndView getHistoricoAdecuacionesAlquilerByActivo(DtoActivoPatrimonio dto, @RequestParam Long id, ModelMap model) {
 		model.put("data", activoApi.getHistoricoAdecuacionesAlquilerByActivo(id));
 		return createModelAndViewJson(model);
 	}

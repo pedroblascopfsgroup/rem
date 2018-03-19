@@ -20,6 +20,8 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	private String descripcionAdecuacion;
 	private String descripcionAdecuacionLarga;
 	private Boolean checkPerimetroAlquiler;
+	private Boolean chkPerimetroAlquiler;
+	private String tipoAlquilerCodigo;
 	
 	//Grid historico adecuaciones patrimonio activo
 	private Date fechaInicioAdecuacion;
@@ -88,6 +90,18 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	}
 	public void setDescripcionAdecuacionLarga(String descripcionAdecuacionLarga) {
 		this.descripcionAdecuacionLarga = descripcionAdecuacionLarga;
+	}
+	public Boolean getChkPerimetroAlquiler() {
+		return chkPerimetroAlquiler;
+	}
+	public void setChkPerimetroAlquiler(Boolean chkPerimetroAlquiler) {
+		this.chkPerimetroAlquiler = chkPerimetroAlquiler;
+	}
+	public String getTipoAlquilerCodigo() {
+		return tipoAlquilerCodigo;
+	}
+	public void setTipoAlquilerCodigo(String tipoAlquilerCodigo) {
+		this.tipoAlquilerCodigo = tipoAlquilerCodigo;
 	}
    
     

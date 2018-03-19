@@ -3,23 +3,19 @@ Ext.define('HreRem.view.activos.detalle.PatrimonioActivo', {
     xtype		: 'patrimonioactivo',   
     cls			: 'panel-base shadow-panel',
     collapsed	: false,
-    reference	: 'patrimonioactivoref',
+    reference	: 'patrimonioactivo',
 	scrollable	: 'y',
-	
-	recordName: "patrimonio",
-
-	recordClass: ['HreRem.model.ActivoPatrimonio'],
-	
+	recordName	: 'patrimonio',
+	recordClass : 'HreRem.model.ActivoPatrimonio',
 	requires: ['HreRem.model.ActivoPatrimonio','HreRem.view.activos.detalle.HistoricoAdecuacionesGrid'],
-	
+
 	listeners: {
-    	/*boxready: function() {
+    	boxready: function() {
     		var me = this;
     		me.lookupController().cargarTabData(me);
-    	}*/
+    	}
     },
     
-
     initComponent: function () {
         var me = this;
         
@@ -44,7 +40,7 @@ Ext.define('HreRem.view.activos.detalle.PatrimonioActivo', {
 							bind: {
 								store: '{comboTipoAlquiler}',
 								disabled: '{enableComboTipoAlquiler}',
-								value: '{activo.tipoAlquilerCodigo}'
+								value: '{patrimonio.tipoAlquilerCodigo}'
 							}
 						},
 						{
@@ -53,7 +49,7 @@ Ext.define('HreRem.view.activos.detalle.PatrimonioActivo', {
 							bind: {
 								store: '{comboAdecuacionAlquiler}',
 								disabled: '{!patrimonio.chkPerimetroAlquiler}',
-								value: '{patrimonio.descripcionAdecuacion}'
+								value: '{patrimonio.codigoAdecuacion}'
 							}
 						},
 						//Fila 2
@@ -64,7 +60,7 @@ Ext.define('HreRem.view.activos.detalle.PatrimonioActivo', {
 							colspan: 3,
 							items :
 								[
-									{xtype: "historicoadecuacionesgrid", reference: "historicoadecuacionesgrid", colspan: 3}
+									{xtype: 'historicoadecuacionesgrid', reference: 'historicoadecuacionesgrid', colspan: 3}
 								]
 						}
 				]

@@ -84,7 +84,8 @@ public class VCondicionantesDisponibilidad  implements Serializable {
 	@Column(name = "CON_CARGAS")
 	private Boolean conCargas;
 	
-	
+	@Column(name = "VANDALIZADO")
+	private Boolean vandalizado;
 	
 	
 
@@ -223,6 +224,14 @@ public class VCondicionantesDisponibilidad  implements Serializable {
 
 	public void setConCargas(Boolean conCargas) {
 		this.conCargas = conCargas;
+	}
+
+	public Boolean getVandalizado() {
+		return vandalizado;
+	}
+
+	public void setVandalizado(Boolean vandalizado) {
+		this.vandalizado = vandalizado;
 	}
 	
 

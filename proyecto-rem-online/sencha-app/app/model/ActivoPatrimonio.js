@@ -11,7 +11,9 @@ Ext.define('HreRem.model.ActivoPatrimonio', {
     		{
     			name:'chkPerimetroAlquiler'
     		},
-    		
+    		{
+    			name:'tipoAlquilerCodigo'
+    		},
     		{
     			name:'codigoAdecuacion'
     		},
@@ -23,11 +25,11 @@ Ext.define('HreRem.model.ActivoPatrimonio', {
     
 	proxy: {
 		type: 'uxproxy',
-		remoteUrl: 'activo/getTabActivo',
 		api: {
             read: 'activo/getTabActivo',
             create: 'activo/saveDatosPatrimonio',
-            update: 'activo/saveDatosPatrimonio'
+            update: 'activo/saveDatosPatrimonio',
+            destroy: 'activo/getTabActivo'
         },
         extraParams: {tab: 'patrimonio'}
     }

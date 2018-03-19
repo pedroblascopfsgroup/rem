@@ -1,27 +1,23 @@
 package es.pfsgroup.plugin.rem.activo.dao.impl;
 
-import java.util.List;
-
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
-import es.pfsgroup.plugin.rem.model.ActivoHistoricoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 
 @Repository("ActivoPatrimonioDao")
-public class ActivoPatrimonioDaoImpl extends AbstractEntityDao<ActivoHistoricoPatrimonio, Long> implements ActivoPatrimonioDao{
+public class ActivoPatrimonioDaoImpl extends AbstractEntityDao<ActivoPatrimonio, Long>  implements ActivoPatrimonioDao{
 
 	@Override
-	public List<ActivoHistoricoPatrimonio> getHistoricoAdecuacionesAlquilerByActivo(long idActivo) {
-		
-		HQLBuilder hb = new HQLBuilder(" from ActivoHistoricoPatrimonio ahp");
-		
-   	  	HQLBuilder.addFiltroLikeSiNotNull(hb, "ahp.activo.id", idActivo, true);
-   	  	hb.appendWhere("ahp.auditoria.borrado is not null");
+	public ActivoPatrimonio getActivoPatrimonioByActivo(Long idActivo) {
+		HQLBuilder hb = new HQLBuilder(" from ActivoPatrimonio ap");
+   	  	HQLBuilder.addFiltroLikeSiNotNull(hb, "ap.activo.id", idActivo, true);
+   	  	hb.appendWhere("ap.auditoria.borrado is not null");
 
-		return HibernateQueryUtils.list(this, hb);
+		return HibernateQueryUtils.uniqueResult(this, hb);
 	}
 
 }

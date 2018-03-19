@@ -41,5 +41,11 @@ public interface TareaActivoApi {
 		
 		public void saltoPendienteDevolucion(Long idTareaExterna);
 		
+		/**
+		 * Guarda los datos de la resolución en la TEV_TAREA_EXTERNA_VALOR dado el id de la tarea externa, la fecha de la resolución y el código de la resolución del diccionario DDEstadoResolucion
+		 * @param idTareaExterna
+		 * @param fecha
+		 * @param resolucion
+		 */
 		public void guardarDatosResolucion(Long idTareaExterna, Date fecha, String resolucion);
     }

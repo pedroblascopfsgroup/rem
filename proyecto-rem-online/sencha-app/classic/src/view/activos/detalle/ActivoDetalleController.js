@@ -1914,20 +1914,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						// No puede estar vacÃ­a
 						return HreRem.i18n('info.fecha.precios.msg.validacion');
 					}
-					if(!Ext.isEmpty(fechaFinExistenteAprobadoVentaWeb) && fechaFinDescuentoAprobado > fechaFinExistenteAprobadoVentaWeb) {
-						// Ha de ser menor o igual que la fecha fin aprobado venta web
-						return HreRem.i18n('info.datefield.end.date.pda.msg.validacion');
-					}
+//					if(!Ext.isEmpty(fechaFinExistenteAprobadoVentaWeb) && fechaFinDescuentoAprobado > fechaFinExistenteAprobadoVentaWeb) {
+//						// Ha de ser menor o igual que la fecha fin aprobado venta web
+//						return HreRem.i18n('info.datefield.end.date.pda.msg.validacion');
+//					}
 				} else {
 					// La fecha de inicio
 					if(Ext.isEmpty(fechaInicioDescuentoAprobado)) {
 						// No puede estar vacÃ­a
 						return HreRem.i18n('info.fecha.precios.msg.validacion');
 					}
-					if(!Ext.isEmpty(fechaInicioExistenteAprobadoVentaWeb) && fechaInicioDescuentoAprobado < fechaInicioExistenteAprobadoVentaWeb) {
-						// Ha de ser mayor o igual que la fecha inicio aprobado venta web
-						return HreRem.i18n('info.datefield.begin.date.pda.msg.validacion');
-					}
+//					if(!Ext.isEmpty(fechaInicioExistenteAprobadoVentaWeb) && fechaInicioDescuentoAprobado < fechaInicioExistenteAprobadoVentaWeb) {
+//						// Ha de ser mayor o igual que la fecha inicio aprobado venta web
+//						return HreRem.i18n('info.datefield.begin.date.pda.msg.validacion');
+//					}
 				}
 				return true;
 			case tipoDescuentoPublicadoWeb:
@@ -1951,14 +1951,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						// No puede estar vacÃ­a
 						return HreRem.i18n('info.fecha.precios.msg.validacion');
 					}
-					if(!Ext.isEmpty(fechaFinExistenteDescuentoAprobado) && fechaInicioDescuentoPublicadoWeb > fechaFinExistenteDescuentoAprobado) {
+					if(!Ext.isEmpty(fechaFinExistenteDescuentoAprobado) && fechaInicioDescuentoPublicadoWeb < fechaInicioExistenteDescuentoAprobado) {
 						// Ha de ser menor o igual que la fecha inicio descuento aprobado, si existe
 						return HreRem.i18n('info.datefield.begin.date.pdw.msg.validacion');
 					}
-					if(!Ext.isEmpty(fechaFinExistenteAprobadoVentaWeb) && fechaInicioDescuentoPublicadoWeb > fechaFinExistenteAprobadoVentaWeb) {
-						// Ha de ser menor o igual que la fecha inicio aprobado venta web, si existe
-						return HreRem.i18n('info.datefield.begin.date.pdw.msg.validacion.dos');
-					}
+//					if(!Ext.isEmpty(fechaFinExistenteAprobadoVentaWeb) && fechaInicioDescuentoPublicadoWeb > fechaFinExistenteAprobadoVentaWeb) {
+//						// Ha de ser menor o igual que la fecha inicio aprobado venta web, si existe
+//						return HreRem.i18n('info.datefield.begin.date.pdw.msg.validacion.dos');
+//					}
 				}
 				return true;
 			default:

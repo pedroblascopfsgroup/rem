@@ -308,11 +308,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		 },
 		 
 		 enableComboTipoAlquiler: function(get){
-				var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
-				var tipoComercializacion = get('activo.tipoComercializacionCodigo');
-				
-				
+			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
+			var tipoComercializacion = get('activo.tipoComercializacionCodigo');
+			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" ) && CONST.TIPOS_COMERCIALIZACION['VENTA'] != tipoComercializacion){
+				return false;
+			}else{
 				return true;
+			}
+		},
+		 
+		 enableComboAdecuacion: function(get){
+			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
+			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" )){
+				return false;
+			}else{
+				return true;
+			}
 		}
 	 },
 

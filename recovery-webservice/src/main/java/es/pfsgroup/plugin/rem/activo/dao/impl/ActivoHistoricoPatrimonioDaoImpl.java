@@ -18,8 +18,7 @@ public class ActivoHistoricoPatrimonioDaoImpl extends AbstractEntityDao<ActivoHi
 		HQLBuilder hb = new HQLBuilder(" from ActivoHistoricoPatrimonio ahp");
 		
    	  	HQLBuilder.addFiltroLikeSiNotNull(hb, "ahp.activo.id", idActivo, true);
-   	  	hb.appendWhere("ahp.auditoria.borrado is not null");
-
+   	  	hb.orderBy("id", "desc");
 		return HibernateQueryUtils.list(this, hb);
 
 	}

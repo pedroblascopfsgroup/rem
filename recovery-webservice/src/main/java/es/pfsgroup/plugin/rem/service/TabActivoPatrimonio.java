@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,7 @@ public class TabActivoPatrimonio implements TabActivoService {
 	@Transactional(readOnly=false)
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto dto) {
+		List<ActivoHistoricoPatrimonio> listHistPatrimonio = activoHistoricoPatrimonioDao.getHistoricoAdecuacionesAlquilerByActivo(activo.getId());
 		
 		DtoActivoPatrimonio activoPatrimonioDto = (DtoActivoPatrimonio) dto;
 		ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
@@ -109,18 +111,23 @@ public class TabActivoPatrimonio implements TabActivoService {
 				
 				activoPatrimonio.setAdecuacionAlquiler(adecuacionAlquiler);
 			}
+			if(!Checks.estaVacio(listHistPatrimonio)) {
+				activoHistPatrimonio.setFechaInicioAdecuacionAlquiler(listHistPatrimonio.get(0).getFechaFinAdecuacionAlquiler());
+				activoHistPatrimonio.setFechaInicioHPM(listHistPatrimonio.get(0).getFechaFinHPM());
+			}
 			
-			activoHistPatrimonio.setFechaInicioAdecuacionAlquiler(activoPatrimonio.getAuditoria().getFechaCrear());
 			activoHistPatrimonio.setFechaFinAdecuacionAlquiler(new Date());
+			activoHistPatrimonio.setFechaFinHPM(new Date());
+			activoHistPatrimonio.setActivo(activo);
 			
 			if(!Checks.esNulo(activoPatrimonioDto.getChkPerimetroAlquiler())) {
 				activoHistPatrimonio.setCheckHPM(activoPatrimonio.getCheckHPM());
 				activoPatrimonio.setCheckHPM(activoPatrimonioDto.getChkPerimetroAlquiler());
+			}else {
+				if(!Checks.esNulo(activoPatrimonio.getCheckHPM())) {
+					activoHistPatrimonio.setCheckHPM(activoPatrimonio.getCheckHPM());
+				}
 			}
-			activoHistPatrimonio.setFechaInicioHPM(activoPatrimonio.getAuditoria().getFechaCrear());
-			activoHistPatrimonio.setFechaFinHPM(new Date());
-
-			activoHistPatrimonio.setActivo(activo);
 			
 			activoHistoricoPatrimonioDao.save(activoHistPatrimonio);
 		}

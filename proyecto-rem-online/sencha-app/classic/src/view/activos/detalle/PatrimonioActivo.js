@@ -32,11 +32,21 @@ Ext.define('HreRem.view.activos.detalle.PatrimonioActivo', {
 						{ 	
 							xtype: 'checkboxfieldbase',
 							fieldLabel: HreRem.i18n('title.patrimonio.perimetroAlquiler'),
-							bind: '{patrimonio.chkPerimetroAlquiler}'
+							bind: '{patrimonio.chkPerimetroAlquiler}',
+							listeners:{
+									change: function(me){
+										var padre = me.up();
+										if(!me.checked){
+											padre.down('comboboxfieldbase[reference=comboTipoAlquilerRef]').reset();
+											padre.down('comboboxfieldbase[reference=comboAdecuacionRef]').reset();
+										}
+									}
+								}
 						},
 						{
 							xtype: 'comboboxfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.perimetro.tipo.alquiler'),
+							reference: 'comboTipoAlquilerRef',
 							bind: {
 								store: '{comboTipoAlquiler}',
 								disabled: '{enableComboTipoAlquiler}',
@@ -46,9 +56,10 @@ Ext.define('HreRem.view.activos.detalle.PatrimonioActivo', {
 						{
 							xtype: 'comboboxfieldbase',
 							fieldLabel: HreRem.i18n('title.patrimonio.adecuacion'),
+							reference: 'comboAdecuacionRef',
 							bind: {
 								store: '{comboAdecuacionAlquiler}',
-								disabled: '{!patrimonio.chkPerimetroAlquiler}',
+								disabled: '{enableComboAdecuacion}',
 								value: '{patrimonio.codigoAdecuacion}'
 							}
 						},

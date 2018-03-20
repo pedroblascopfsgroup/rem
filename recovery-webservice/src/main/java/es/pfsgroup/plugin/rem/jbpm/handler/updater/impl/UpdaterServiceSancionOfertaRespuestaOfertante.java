@@ -115,6 +115,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 							//Resuelve el expediente
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
 							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+							expediente.setFechaVenta(null);
 							expediente.setEstado(estado);
 
 							//Finaliza el trámite

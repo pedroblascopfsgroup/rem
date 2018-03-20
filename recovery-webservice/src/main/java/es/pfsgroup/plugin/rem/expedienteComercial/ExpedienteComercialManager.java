@@ -2923,6 +2923,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							expedienteComercial.setEstado(
 									(DDEstadosExpedienteComercial) utilDiccionarioApi.dameValorDiccionarioByCod(
 											DDEstadosExpedienteComercial.class, DDEstadosExpedienteComercial.ANULADO));
+							expedienteComercial.setFechaVenta(null);
 							expedienteComercial.getReserva()
 									.setEstadoReserva((DDEstadosReserva) utilDiccionarioApi.dameValorDiccionarioByCod(
 											DDEstadosReserva.class, DDEstadosReserva.CODIGO_RESUELTA_DEVUELTA));
@@ -5734,6 +5735,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		DDEstadosExpedienteComercial estadoExpedienteComercial = (DDEstadosExpedienteComercial) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class, DDEstadosExpedienteComercial.ANULADO);
+		expedienteComercial.setFechaVenta(null);
 		DDEstadosReserva estadoReserva = (DDEstadosReserva) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDEstadosReserva.class, DDEstadosReserva.CODIGO_RESUELTA_POSIBLE_REINTEGRO);
 		

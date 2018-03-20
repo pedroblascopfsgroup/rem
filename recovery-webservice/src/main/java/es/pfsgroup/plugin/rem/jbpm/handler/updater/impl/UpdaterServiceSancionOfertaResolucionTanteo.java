@@ -124,6 +124,9 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
 						}
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expediente.setEstado(estado);
+						if(DDEstadosExpedienteComercial.ANULADO.equals(estado)){
+							expediente.setFechaVenta(null);
+						}
 						valorCampoEjerce = resultadoTanteo.getDescripcion();
 					}
 

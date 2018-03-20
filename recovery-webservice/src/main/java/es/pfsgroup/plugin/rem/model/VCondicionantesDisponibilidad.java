@@ -87,7 +87,6 @@ public class VCondicionantesDisponibilidad  implements Serializable {
 	@Column(name = "VANDALIZADO")
 	private Boolean vandalizado;
 	
-	
 
 	
 	public Long getIdActivo() {

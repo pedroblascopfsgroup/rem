@@ -16,6 +16,7 @@ public class DtoCondicionantesDisponibilidad extends DtoTabActivo {
 	private Boolean obraNuevaEnConstruccion;
 	private Boolean ocupadoConTitulo;
 	private Boolean tapiado;
+	private Boolean vandalizado;
 	private String otro;
 	private Boolean ocupadoSinTitulo;
 	private Boolean divHorizontalNoInscrita;
@@ -91,6 +92,14 @@ public class DtoCondicionantesDisponibilidad extends DtoTabActivo {
 
 	public void setTapiado(Boolean tapiado) {
 		this.tapiado = tapiado;
+	}
+	
+	public Boolean getVandalizado() {
+		return vandalizado;
+	}
+
+	public void setVandalizado(Boolean vandalizado) {
+		this.vandalizado = vandalizado;
 	}
 
 	public String getOtro() {

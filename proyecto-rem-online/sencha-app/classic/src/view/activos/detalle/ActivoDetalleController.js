@@ -50,7 +50,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		models = null,
 		nameModels = null,
 		id = me.getViewModel().get("activo.id");
-
+		
 		form.mask(HreRem.i18n("msg.mask.loading"));
 		if(!form.saveMultiple) {	
 			model = form.getModelInstance(),

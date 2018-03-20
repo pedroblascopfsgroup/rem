@@ -293,6 +293,9 @@ Ext.define('HreRem.model.Activo', {
     			type: 'boolean'
     		},
     		{
+    			name: 'estadoVenta'
+    		},
+    		{
     			name: 'gestion',
     			type: 'boolean'
     		},
@@ -438,6 +441,12 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'estadoPublicacionCodigo'
+    		},
+    		{
+    			name: 'estadoVentaDescripcion'
+    		},
+    		{
+    			name: 'estadoAlquilerDescripcion'
     		},
 			{
 				name: 'incluidoEnPerimetro'

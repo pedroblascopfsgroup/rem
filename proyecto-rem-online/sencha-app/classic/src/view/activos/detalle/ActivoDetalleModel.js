@@ -85,6 +85,31 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     	}
 	     },
 	     
+	     getIconClsEstadoVenta: function(get) {
+		     	
+		     	var estadoVenta = get('activo.estadoVenta');
+		     	if(estadoVenta == 0) {
+		     		return 'app-tbfiedset-ico icono-ko'
+		     	} else if (estadoVenta == 1){
+		     		return 'app-tbfiedset-ico icono-ok'
+		     	}else if (estadoVenta == 2){
+		     		return 'app-tbfiedset-ico icono-okn'
+		     	}
+		 },
+		 
+		 getIconClsestadoAlquiler : function(get) {
+
+				var estadoAlquiler = get('activo.estadoAlquiler');
+
+				if (estadoAlquiler == 0) {
+					return 'app-tbfiedset-ico icono-ko'
+				} else if (estadoAlquiler == 1) {
+					return 'app-tbfiedset-ico icono-ok'
+				} else if (estadoAlquiler == 2) {
+					return 'app-tbfiedset-ico icono-okn'
+					}
+		 },
+	     
 	     getIconClsEstadoGestion: function(get) {
 	     	
 	     	var estadoAdmision = get('activo.gestion');
@@ -213,6 +238,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			   		return 'app-tbfiedset-ico icono-ko'
 			   	}
 			 },
+			 getIconClsCondicionantesVandalizado: function(get) {
+					var condicion = get('activoCondicionantesDisponibilidad.vandalizado');
+					   	if(!eval(condicion)) {
+					   		return 'app-tbfiedset-ico'
+					   	} else {
+					   		return 'app-tbfiedset-ico icono-ko'
+					   	}
+			},
 		 getSiNoFromOtro: function(get) {
 				var condicion = get('activoCondicionantesDisponibilidad.otro');
 

@@ -443,6 +443,16 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												iconAlign: 'left'
 											},
 											{
+						                		xtype: 'button',
+						                		cls: 'no-pointer',
+									    		html : '<div style="color: #000;">'+HreRem.i18n('title.publicaciones.condicion.vandalizado')+'</div>',
+									    		style : 'background: transparent; border: none;',
+						                		bind: {
+						                			iconCls: '{getIconClsCondicionantesVandalizado}'
+						                		},
+						                		iconAlign: 'left'
+						                	},
+											{
 												xtype: 'comboboxfieldbase',
 												fieldLabel:  HreRem.i18n('title.publicaciones.condicion.otro'),
 												reference: 'comboCondicionanteOtro',

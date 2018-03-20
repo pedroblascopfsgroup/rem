@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Carlos López
---## FECHA_CREACION=20180307
+--## AUTOR=JIN LI HU
+--## FECHA_CREACION=20180320
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-3897
@@ -179,7 +179,7 @@ BEGIN
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna APU_CHECK_OCULTAR_V creado.');
 
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.APU_CHECK_OCULT_PRECIO_V IS ''Check de publicar precio de la venta.''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.APU_CHECK_OCULTAR_PRECIO_V IS ''Check de publicar precio de la venta.''';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna APU_CHECK_OCULT_PRECIO_V creado.');
 		
@@ -203,7 +203,7 @@ BEGIN
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna APU_CHECK_OCULTAR_A creado.');
 
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.APU_CHECK_OCULT_PRECIO_A IS ''Check de publicar precio del alquilera.''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.APU_CHECK_OCULTAR_PRECIO_A IS ''Check de publicar precio del alquilera.''';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna APU_CHECK_OCULT_PRECIO_A creado.');
 		

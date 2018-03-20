@@ -1,4 +1,3 @@
-
 Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.activodetalle',  
@@ -3173,10 +3172,34 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var record = combo.findRecord(combo.valueField, combo.getValue());
     	var textArea = me.lookupReference(combo.textareaRefChained);
 
-    	if(record.data.esMotivoManual === 'true') {
+    	if(record && record.data.codigo === CONST.MOTIVO_OCULTACION['OTROS']) {
     		textArea.setDisabled(false);
     	} else {
     		textArea.setDisabled(true);
     	}
+    },
+
+    onChangeCheckboxOcultar: function(checkbox, isDirty) {
+        var me = this;
+        var combobox = me.lookupReference(checkbox.comboRefChained);
+
+        if(checkbox.getValue()) {
+            combobox.setDisabled(false);
+        } else {
+            combobox.setDisabled(true);
+            combobox.clearValue();
+            var textarea = me.lookupReference(combobox.textareaRefChained);
+            textarea.reset();
+        }
+
+		if (isDirty) {
+	        combobox.getStore().clearFilter();
+	        combobox.getStore().filter([{
+	            filterFn: function(rec){
+	                return rec.getData().esMotivoManual === 'true';
+	            }
+	        }]);
+        }
     }
+
 });

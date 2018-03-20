@@ -38,7 +38,7 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 		dto.setPublicarSinPrecioVenta(entidad.getCheckSinPrecioVenta());
 		dto.setNoMostrarPrecioVenta(entidad.getCheckOcultarPrecioVenta());
 		if (!Checks.esNulo(entidad.getMotivoOcultacionVenta())) {
-			dto.setMotivoOcultacionVentaCodigo(entidad.getMotivoOcultacionVenta().getDescripcion());
+			dto.setMotivoOcultacionVentaCodigo(entidad.getMotivoOcultacionVenta().getCodigo());
 		}
 		dto.setMotivoOcultacionManualVenta(entidad.getMotivoOcultacionManualVenta());
 		dto.setPublicarAlquiler(entidad.getCheckPublicarAlquiler());
@@ -46,7 +46,7 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 		dto.setPublicarSinPrecioAlquiler(entidad.getCheckSinPrecioAlquiler());
 		dto.setNoMostrarPrecioAlquiler(entidad.getCheckOcultarPrecioAlquiler());
 		if (!Checks.esNulo(entidad.getMotivoOcultacionAlquiler())) {
-			dto.setMotivoOcultacionAlquilerCodigo(entidad.getMotivoOcultacionAlquiler().getDescripcion());
+			dto.setMotivoOcultacionAlquilerCodigo(entidad.getMotivoOcultacionAlquiler().getCodigo());
 		}
 		dto.setMotivoOcultacionManualAlquiler(entidad.getMotivoOcultacionManualAlquiler());
 

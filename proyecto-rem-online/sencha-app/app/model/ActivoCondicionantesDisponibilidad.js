@@ -74,6 +74,10 @@ Ext.define('HreRem.model.ActivoCondicionantesDisponibilidad', {
     			type: 'boolean'
     		},
     		{
+    			name: 'vandalizado',
+    			type: 'boolean'
+    		},
+    		{
     			name: 'conCargas',
     			type: 'boolean'
     		}

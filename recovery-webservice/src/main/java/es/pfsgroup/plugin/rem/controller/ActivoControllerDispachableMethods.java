@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.controller;
 
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -215,7 +214,7 @@ class ActivoControllerDispachableMethods {
 				}
 			}
 		});
-		
+
 		/*
 		 * TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD
 		 */
@@ -233,6 +232,7 @@ class ActivoControllerDispachableMethods {
 				}
 			}
 		});
+
 		/*
 		 * TAB_COMERCIAL
 		 */
@@ -252,7 +252,7 @@ class ActivoControllerDispachableMethods {
 				}
 			}
 		});
-		
+
 		/*
 		 * TAB_ADMINISTRACION
 		 */
@@ -290,7 +290,7 @@ class ActivoControllerDispachableMethods {
 				}
 			}
 		});
-		
+
 		/*
 		 * TAB_PATRIMONIO
 		 */
@@ -311,14 +311,13 @@ class ActivoControllerDispachableMethods {
 			}
 		});
 	}
-	
-	
+
 	private ActivoController controller;
-	
+
 	public ActivoControllerDispachableMethods(ActivoController c) {
 		this.controller = c;
 	}
-	
+
 	public DispachableMethod findDispachableMethod(String modelName) {
 		return configure(dispachableMethods.get(modelName));
 	}

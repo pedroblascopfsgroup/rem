@@ -12,6 +12,7 @@ public class DtoDatosPublicacionActivo extends WebDto {
 	private String estadoPublicacionAlquiler;
 	private Double precioWebVenta;
 	private Double precioWebAlquiler;
+	private String adecuacionAlquilerCodigo;
 	private Integer totalDiasPublicadoVenta;
 	private Integer totalDiasPublicadoAlquiler;
 	private Boolean publicarVenta;
@@ -34,6 +35,14 @@ public class DtoDatosPublicacionActivo extends WebDto {
 	private Boolean deshabilitarCheckOcultarAlquiler;
 	private Boolean deshabilitarCheckPublicarSinPrecioAlquiler;
 	private Boolean deshabilitarCheckNoMostrarPrecioAlquiler;
+
+	public String getAdecuacionAlquilerCodigo() {
+		return adecuacionAlquilerCodigo;
+	}
+
+	public void setAdecuacionAlquilerCodigo(String adecuacionAlquilerCodigo) {
+		this.adecuacionAlquilerCodigo = adecuacionAlquilerCodigo;
+	}
 
 	public Double getPrecioWebVenta() {
 		return precioWebVenta;

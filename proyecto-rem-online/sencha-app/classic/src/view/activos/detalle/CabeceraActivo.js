@@ -80,7 +80,7 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 						        type: 'hbox'
 						    },
 						    tools: [
-						    
+						    	
 						    	{
 						    		xtype: 'button',						    		
 				                    cls: 'btn-tbfieldset delete-focus-bg no-pointer',
@@ -108,6 +108,24 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 				                    iconAlign: 'right',
 				                    text: 'PRECIOS'	                    
 			                	},
+			                	{
+			                        xtype: 'button',
+			                        cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+			                        bind: {
+			                            iconCls: '{getIconClsEstadoVenta}'
+			                        },
+			                        iconAlign: 'right',
+			                        text: 'VENTA' 
+			                    },
+			                    {
+			                        xtype: 'button',
+			                        cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+			                        bind: {
+			                            iconCls: '{getIconClsestadoAlquiler}'
+			                        },
+			                        iconAlign: 'right', 
+			                        text: 'ALQUILER'
+			                    },
 						    	{	xtype: 'tbfill'},
 						    	{
 						    		xtype: 'button',
@@ -191,11 +209,16 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 											},
 											cls: 'cabecera-apartado cabecera-info',
 											items: [
+														
 														{
-															fieldLabel: HreRem.i18n('title.publicaciones.publicacion'),
+															fieldLabel: HreRem.i18n('title.publicaciones.venta'),
 															cls: 'cabecera-info-field',
-															bind: '{activo.estadoPublicacionDescripcion}',
-															colspan: 2
+															bind: '{activo.estadoVentaDescripcion}'
+														},
+														{
+															fieldLabel: HreRem.i18n('title.publicaciones.alquiler'),
+															cls: 'cabecera-info-field',
+															bind: '{activo.estadoAlquilerDescripcion}'
 														},
 														{
 															fieldLabel: HreRem.i18n('fieldlabel.id.activo.haya'),

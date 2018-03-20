@@ -30,6 +30,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
+import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
@@ -43,8 +44,10 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -56,7 +59,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
@@ -120,6 +126,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	@Autowired
 	private RestApi restApi;
 	
+	@Autowired
+	private ActivoPublicacionDao activoPublicacionDao;
+	
 	@Resource
     MessageService messageServices;
 	
@@ -141,6 +150,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		DtoActivoFichaCabecera activoDto = new DtoActivoFichaCabecera();
 
 		BeanUtils.copyProperties(activoDto, activo);
+		
+		
+		
+		activoDto.setEstadoVenta(1);
 		
 		if (activo.getLocalizacion() != null) {
 			BeanUtils.copyProperties(activoDto, activo.getLocalizacion().getLocalizacionBien());
@@ -357,6 +370,50 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		BeanUtils.copyProperty(activoDto, "numInmovilizadoBankia", activo.getNumInmovilizadoBnk());
 		// ----------
 		
+		//comprobar los condicionantes del indicador Venta y Alquiler
+		BeanUtils.copyProperties(activoDto, perimetroActivo);
+		
+		DtoDatosPublicacion dtoP = new DtoDatosPublicacion();
+		
+		dtoP.setIdActivo(activo.getId());
+		
+		List<ActivoPublicacion> activoP = activoPublicacionDao.getPublicacionActivoByIdActivo(dtoP);
+		
+		if(DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo())){
+			activoDto.setEstadoVenta(0);
+		}else if(!(DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo())) 
+				&& activoDto.getAplicaPublicar() 
+				&& activoDto.getAplicaComercializar()
+				&& (DDEstadoPublicacionVenta.CODIGO_PRE_PUBLICADO_VENTA.equals(!Checks.estaVacio(activoP) ? activoP.get(activoP.size()-1).getEstadoPublicacionVenta().getCodigo(): null) 
+						|| !activoP.get(activoP.size()-1).getCheckPublicarVenta()))
+		{
+			activoDto.setEstadoVenta(1);
+		}else if(!(DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo())) 
+				|| activoDto.getAplicaPublicar() 
+				|| activoDto.getAplicaComercializar()
+				|| (DDEstadoPublicacionVenta.CODIGO_PRE_PUBLICADO_VENTA.equals(!Checks.estaVacio(activoP) ? activoP.get(activoP.size()-1).getEstadoPublicacionVenta().getCodigo(): null) 
+						|| !activoP.get(activoP.size()-1).getCheckPublicarVenta())){
+			activoDto.setEstadoVenta(2);
+		}
+		
+		if(DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo())){
+			activoDto.setEstadoAlquiler(0);
+		}else if(!(DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo())) 
+				&& activoDto.getAplicaPublicar()
+				&& activoDto.getAplicaComercializar()
+				&& (DDEstadoPublicacionAlquiler.CODIGO_PRE_PUBLICADO_ALQUILER.equals(!Checks.estaVacio(activoP) ? activoP.get(activoP.size()-1).getEstadoPublicacionAlquiler().getCodigo(): null) 
+						|| !activoP.get(activoP.size()-1).getCheckPublicarAlquiler()))
+		{
+			activoDto.setEstadoAlquiler(1);
+		}else if(!(DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo())) 
+				|| activoDto.getAplicaPublicar() 
+				|| activoDto.getAplicaComercializar()
+				|| (DDEstadoPublicacionAlquiler.CODIGO_PRE_PUBLICADO_ALQUILER.equals(!Checks.estaVacio(activoP) ? activoP.get(activoP.size()-1).getEstadoPublicacionAlquiler().getCodigo(): null) 
+						|| !activoP.get(activoP.size()-1).getCheckPublicarAlquiler())){
+			activoDto.setEstadoAlquiler(2);
+		}
+		//--------------------
+		
 		// Datos de activo bancario -----------------
 		// Datos de activo bancario del activo al Dto de datos basicos
 		// - Puede no existir registro de activo bancario en la tabla. Esto no producira errores de carga/guardado
@@ -444,6 +501,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		if(activo.getActivoBNK() != null && activo.getActivoBNK().getAcbCoreaeTexto() != null && activo.getActivoBNK().getAcbCoreaeTexto() != ""){
 			BeanUtils.copyProperty(activoDto, "acbCoreaeTexto", activo.getActivoBNK().getAcbCoreaeTexto());
+		}
+		
+		if(!Checks.esNulo(activo.getActivoPublicacion())){
+			BeanUtils.copyProperty(activoDto, "estadoAlquilerDescripcion", activo.getActivoPublicacion().getEstadoPublicacionAlquiler().getDescripcion());
+			BeanUtils.copyProperty(activoDto, "estadoVentaDescripcion", activo.getActivoPublicacion().getEstadoPublicacionVenta().getDescripcion());
 		}
 
 		// HREOS-2761: Buscamos si existen activos candidatos para propagar cambios. Llamada única para el activo

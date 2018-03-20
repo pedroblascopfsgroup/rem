@@ -298,6 +298,10 @@ public class Activo implements Serializable, Auditable {
     /*@Where(clause = Auditoria.UNDELETED_RESTICTION)*/
     private List<ActivoAgrupacionActivo> agrupaciones;
     
+    @OneToOne(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    private ActivoPublicacion activoPublicacion;
+    
     @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
@@ -1606,6 +1610,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setActivoBNK(ActivoBNK activoBNK) {
 		this.activoBNK = activoBNK;
+	}
+
+	public ActivoPublicacion getActivoPublicacion() {
+		return activoPublicacion;
+	}
+
+	public void setActivoPublicacion(ActivoPublicacion activoPublicacion) {
+		this.activoPublicacion = activoPublicacion;
 	}
 	
 	

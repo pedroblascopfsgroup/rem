@@ -5,9 +5,13 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
+
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.Projections;
@@ -38,7 +42,7 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 		dto.setPublicarSinPrecioVenta(entidad.getCheckSinPrecioVenta());
 		dto.setNoMostrarPrecioVenta(entidad.getCheckOcultarPrecioVenta());
 		if (!Checks.esNulo(entidad.getMotivoOcultacionVenta())) {
-			dto.setMotivoOcultacionVentaCodigo(entidad.getMotivoOcultacionVenta().getDescripcion());
+			dto.setMotivoOcultacionVentaCodigo(entidad.getMotivoOcultacionVenta().getCodigo());
 		}
 		dto.setMotivoOcultacionManualVenta(entidad.getMotivoOcultacionManualVenta());
 		dto.setPublicarAlquiler(entidad.getCheckPublicarAlquiler());
@@ -46,7 +50,7 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 		dto.setPublicarSinPrecioAlquiler(entidad.getCheckSinPrecioAlquiler());
 		dto.setNoMostrarPrecioAlquiler(entidad.getCheckOcultarPrecioAlquiler());
 		if (!Checks.esNulo(entidad.getMotivoOcultacionAlquiler())) {
-			dto.setMotivoOcultacionAlquilerCodigo(entidad.getMotivoOcultacionAlquiler().getDescripcion());
+			dto.setMotivoOcultacionAlquilerCodigo(entidad.getMotivoOcultacionAlquiler().getCodigo());
 		}
 		dto.setMotivoOcultacionManualAlquiler(entidad.getMotivoOcultacionManualAlquiler());
 
@@ -77,5 +81,13 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 		criteria.add(Restrictions.eq("activo.id", idActivo));
 
 		return HibernateUtils.castObject(ActivoPublicacion.class, criteria.uniqueResult());
+	}
+	
+	@Override
+	public List<ActivoPublicacion> getPublicacionActivoByIdActivo(DtoDatosPublicacion dto) {		
+		String hql2 = "from ActivoPublicacion ap where ap.activo.id= ?";
+		List<ActivoPublicacion> list = getHibernateTemplate().find(hql2, new Object[] { dto.getIdActivo() });
+		
+		return list;
 	}
 }

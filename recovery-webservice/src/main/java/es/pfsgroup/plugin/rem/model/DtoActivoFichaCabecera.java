@@ -97,6 +97,10 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean certificadoIte;
 	private String observaciones;
 	private Boolean admision;
+	private Integer estadoVenta;
+	private Integer estadoAlquiler;
+	private String estadoVentaDescripcion;
+	private String estadoAlquilerDescripcion;
 	private Boolean gestion;
 	private String tipoInfoComercialCodigo;
 	private String estadoPublicacionDescripcion;
@@ -835,6 +839,38 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setAdmision(Boolean admision) {
 		this.admision = admision;
+	}
+
+	public Integer getEstadoVenta() {
+		return estadoVenta;
+	}
+
+	public void setEstadoVenta(Integer estadoVenta) {
+		this.estadoVenta = estadoVenta;
+	}
+
+	public Integer getEstadoAlquiler() {
+		return estadoAlquiler;
+	}
+
+	public void setEstadoAlquiler(Integer estadoAlquiler) {
+		this.estadoAlquiler = estadoAlquiler;
+	}
+
+	public String getEstadoVentaDescripcion() {
+		return estadoVentaDescripcion;
+	}
+
+	public void setEstadoVentaDescripcion(String estadoVentaDescripcion) {
+		this.estadoVentaDescripcion = estadoVentaDescripcion;
+	}
+
+	public String getEstadoAlquilerDescripcion() {
+		return estadoAlquilerDescripcion;
+	}
+
+	public void setEstadoAlquilerDescripcion(String estadoAlquilerDescripcion) {
+		this.estadoAlquilerDescripcion = estadoAlquilerDescripcion;
 	}
 
 	public Boolean getGestion() {

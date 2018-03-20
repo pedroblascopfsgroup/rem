@@ -507,6 +507,20 @@ Ext.define('HreRem.model.Activo', {
     			depends: 'tipoComercializacionCodigo'
 			},
 			{
+                name: 'incluyeDestinoComercialAlquiler',
+                calculate: function(data) {
+                    return data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] || data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'];
+                },
+                depends: 'tipoComercializacionCodigo'
+            },
+            {
+                name: 'incluyeDestinoComercialVenta',
+                calculate: function(data) {
+                    return data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['VENTA'] || data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'];
+                },
+                depends: 'tipoComercializacionCodigo'
+            },
+			{
 				name: 'fechaAplicaComercializar',
     			type:'date',
     			dateFormat: 'c'

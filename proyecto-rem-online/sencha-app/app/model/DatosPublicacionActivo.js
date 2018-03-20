@@ -15,6 +15,9 @@ Ext.define('HreRem.model.DatosPublicacionActivo', {
 		{
         	name: 'precioWebAlquiler'
         },
+        {
+            name: 'adecuacionAlquilerCodigo'
+        },
 		{
 			name:'totalDiasPublicadoVenta',
 			type: 'number'

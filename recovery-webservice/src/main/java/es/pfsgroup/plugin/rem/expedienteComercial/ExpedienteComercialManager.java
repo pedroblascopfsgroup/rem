@@ -3414,7 +3414,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(Checks.esNulo(importeXActivo)) {
 				importeXActivo = 0.00D;
 			}
-			sumatorioImporte += importeXActivo;
+			sumatorioImporte += importeXActivo*100;
 
 			InstanciaDecisionDataDto instData = new InstanciaDecisionDataDto();
 			// ImportePorActivo
@@ -3455,7 +3455,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			instanciaList.add(instData);
 		}
 
-		if (!sumatorioImporte.equals(importeTotal)) {
+		if (!importeTotal.equals(sumatorioImporte/100)) {
 			throw new JsonViewerException("La suma de los importes es diferente al importe de la oferta");
 		}
 

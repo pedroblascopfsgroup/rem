@@ -19,13 +19,17 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 
 
@@ -53,6 +57,9 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 
 	@Autowired
 	private FuncionManager funcionManager;
+	
+	@Autowired
+	private ActivoPublicacionDao activoPublicacionDao;
 
 	@Override
 	@BusinessOperation(overrides = "activoAvisadorManager.get")
@@ -69,6 +76,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		
 		List<DtoAviso> listaAvisos = new ArrayList<DtoAviso>();
 		Activo activo = activoApi.get(id);
+		ActivoPublicacion activopublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(id);
 		List<Perfil> perfilesUsuario = usuarioLogado.getPerfiles();
 		boolean esGestorActivo = false;
 		for (int i=0;i<perfilesUsuario.size();i++) {
@@ -202,9 +210,9 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		
 		PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
 		
+		//  Aviso 12: Activo no publicable
 		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getAplicaPublicar()) 
-				&& !perimetroActivo.getAplicaPublicar() && !Checks.esNulo(activo.getEstadoPublicacion()) 
-				&& DDEstadoPublicacion.CODIGO_NO_PUBLICADO.equals(activo.getEstadoPublicacion().getCodigo())) {
+				&& !perimetroActivo.getAplicaPublicar() && !Checks.esNulo(activo.getEstadoPublicacion())) {
 			
 			DtoAviso dtoAviso = new DtoAviso();
 			dtoAviso.setDescripcion("No publicable");
@@ -212,22 +220,17 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			listaAvisos.add(dtoAviso);
 		
 		}
-		if(!Checks.esNulo(perimetroActivo)&& !Checks.esNulo(perimetroActivo.getAplicaPublicar()) && perimetroActivo.getAplicaPublicar()) {
-			
-			if(DDEstadoPublicacion.CODIGO_PUBLICADO.equals(!Checks.esNulo(activo.getEstadoPublicacion()) ? activo.getEstadoPublicacion().getCodigo() : null) 
-					&& BooleanUtils.toBoolean(!Checks.esNulo(perimetroActivo.getAplicaComercializar()) ? perimetroActivo.getAplicaComercializar() : null) 
-					&& !DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo()) 
-					/* TODO &&  (DDEstadoPublicacion.CODIGO_NO_PUBLICADO.equals(activo.getEstadoPublicacion() || activo.prePublicado() )
-					 * FALTA POR PONER LAS 2 ULTIMAS COMPROBACIONES */  ) {
-				DtoAviso dtoAviso = new DtoAviso();
-				dtoAviso.setDescripcion("Publicable");
-				dtoAviso.setId(String.valueOf(id));
-				listaAvisos.add(dtoAviso);
-			}
+		
+		// Aviso 13: Activo publicable
+		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getAplicaPublicar()) && perimetroActivo.getAplicaPublicar()) {			
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Publicable");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
 		}
 		
 		
-		// Aviso 12: Estado activo vandalizado
+		// Aviso 14: Estado activo vandalizado
 		if(!Checks.esNulo(activo.getEstadoActivo())) {
 			if(DDEstadoActivo.ESTADO_ACTIVO_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())) {
 				DtoAviso dtoAviso = new DtoAviso();

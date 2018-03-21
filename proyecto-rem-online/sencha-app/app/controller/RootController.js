@@ -174,26 +174,38 @@ Ext.define('HreRem.controller.RootController', {
     /**
      * Configuración global de peticiones Ajax
      */
-    initAjaxConfig: function() {
-    	
+    initAjaxConfig: function () {
+
     	var me = this;
-    	
+
     	Ext.Ajax.setTimeout($AC.getDefaultTimeout());
-    	
-		Ext.Ajax.on('requestexception', function(con, response, op, e) {
-			switch (response.status) {
-				
-				case me.errorCodes['SC_UNAUTHORIZED']:					
-					con.abortAll(); // Si hay más peticiones pendientes van a dar el mismo error. Las cancelamos.			
-					me.showLogin();
-					me.log(HreRem.i18n('msg.error.usuario.no.identificado'));
-					break;
-				case me.errorCodes['COMMUNICATION_FAILURE']:
-				    me.log(HreRem.i18n('msg.error.perdida.comunicacion'));
-				    break;				    
-			}
-		  
-		});
+
+    	Ext.Ajax.on('requestexception', function (con, response, op, e) {
+    		switch (response.status) {
+
+    			case me.errorCodes['SC_UNAUTHORIZED']:
+    				con.abortAll(); // Si hay más peticiones pendientes van a dar el mismo error. Las cancelamos.
+    				var s = location.search;
+    				if (s.match(/\blogout\b/)) {
+
+    					Ext.create("Ext.window.Window", {
+    						header: false,
+    						closable: false,
+    						maximized: true,
+    						html: '<span style="font-size: 16px;padding: 100px;"><center>La sesión ha sido cerrada</center></span>'
+    					}).show();
+
+    				} else {
+    					me.showLogin();
+    				}
+    				me.log(HreRem.i18n('msg.error.usuario.no.identificado'));
+    				break;
+    			case me.errorCodes['COMMUNICATION_FAILURE']:
+    				me.log(HreRem.i18n('msg.error.perdida.comunicacion'));
+    				break;
+    		}
+
+    	});
     },
     
     /**

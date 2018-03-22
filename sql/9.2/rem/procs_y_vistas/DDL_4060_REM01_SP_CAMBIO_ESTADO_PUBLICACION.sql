@@ -415,21 +415,40 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
       /***********/
       /*Publicado*/
       /***********/
-      IF (vCODIGO_ESTADO_A = '03' AND vCHECK_PUBLICAR_A = 1)
-       OR (vCODIGO_ESTADO_V = '03' AND vCHECK_PUBLICAR_V = 1) THEN
-       
-        #ESQUEMA#.SP_MOTIVO_OCULTACION (pACT_ID, OutOCULTAR, OutMOTIVO);
-       
-        IF OutOCULTAR = 1 THEN
-          PLP$CAMBIO_OCULTO_MOTIVO(vDD_TCO_CODIGO, OutOCULTAR);       
-        END IF;
-        
-        IF OutOCULTAR = 0 THEN
-          IF vCHECK_OCULTAR_A = 1 AND vDD_MTO_MANUAL_A = 0 THEN
-            PLP$CAMBIO_OCULTO_MOTIVO(vDD_TCO_CODIGO, OutOCULTAR); 
+      
+      IF vDD_TCO_CODIGO IN ('02','03','04') THEN
+        IF (vCODIGO_ESTADO_A = '03' AND vCHECK_PUBLICAR_A = 1) THEN
+          REM01.SP_MOTIVO_OCULTACION (pACT_ID, OutOCULTAR, OutMOTIVO);
+  
+          IF OutOCULTAR = 1 THEN
+            PLP$CAMBIO_OCULTO_MOTIVO(vDD_TCO_CODIGO, OutOCULTAR);
+            PLP$CAMBIO_ESTADO_ALQUILER('04');
           END IF;
+  
+          IF OutOCULTAR = 0 THEN
+            IF vCHECK_OCULTAR_A = 1 AND vDD_MTO_MANUAL_A = 0 THEN
+              PLP$CAMBIO_OCULTO_MOTIVO(vDD_TCO_CODIGO, OutOCULTAR);
+            END IF; 
+          END IF;  
         END IF;
-        
+
+      END IF;
+      
+      IF vDD_TCO_CODIGO IN ('01','02') THEN
+        IF (vCODIGO_ESTADO_V = '03' AND vCHECK_PUBLICAR_V = 1) THEN
+          REM01.SP_MOTIVO_OCULTACION (pACT_ID, OutOCULTAR, OutMOTIVO);
+  
+          IF OutOCULTAR = 1 THEN
+            PLP$CAMBIO_OCULTO_MOTIVO(vDD_TCO_CODIGO, OutOCULTAR);
+            PLP$CAMBIO_ESTADO_VENTA('04');
+          END IF;
+  
+          IF OutOCULTAR = 0 THEN
+            IF vCHECK_OCULTAR_V = 1 AND vDD_MTO_MANUAL_V = 0 THEN
+              PLP$CAMBIO_OCULTO_MOTIVO(vDD_TCO_CODIGO, OutOCULTAR);
+            END IF;  
+          END IF;  
+        END IF;      
       END IF;
 
 

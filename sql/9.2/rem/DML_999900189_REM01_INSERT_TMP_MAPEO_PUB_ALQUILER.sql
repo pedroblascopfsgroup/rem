@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DANIEL ALGABA
---## FECHA_CREACION=20180313
+--## FECHA_CREACION=20180321
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-3890
@@ -36,13 +36,13 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('01', '03', 0, 0, NULL, NULL),
-        T_TIPO_DATA('02', '03', 0, 0, '02', NULL),
-        T_TIPO_DATA('03', '03', 1, 0, NULL, NULL),
-        T_TIPO_DATA('04', '03', 0, 1, NULL, NULL),
-        T_TIPO_DATA('05', '03', 1, 0, NULL, NULL),
-        T_TIPO_DATA('06', '01', 0, 0, NULL, NULL),
-        T_TIPO_DATA('07', '03', 0, 1, '02', NULL)
+        T_TIPO_DATA('01', '03', 1, 0, 0, 0, '01', NULL, NULL),
+        T_TIPO_DATA('02', '03', 1, 0, 0, 0, '02', NULL, NULL),
+        T_TIPO_DATA('03', '03', 1, 1, 0, 0, NULL, '12', 'Migración'),
+        T_TIPO_DATA('04', '03', 1, 0, 1, 0, NULL, NULL, NULL),
+        T_TIPO_DATA('05', '03', 1, 1, 0, 0, NULL, NULL, NULL),
+        T_TIPO_DATA('06', '03', 1, 1, 0, 0, NULL, '12', 'Migración'),
+        T_TIPO_DATA('07', '03', 1, 0, 1, 0, '02', NULL, NULL)
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -67,12 +67,15 @@ BEGIN
           
           DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
        	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.TMP_MAPEO_PUB_ALQUILER '||
-                    'SET DD_EPA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
-					          ', APU_CHECK_OCULTAR_A = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
-                    ', APU_CHECK_OCULT_PRECIO_A = '''||TRIM(V_TMP_TIPO_DATA(4))||''''||
-                    ', DD_TPU_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(5))||''''||
-                    ', DD_MTO_A_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(6))||''''||
-					          'WHERE DD_EPU_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+                    'SET DD_EPA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||''''||
+                    ', APU_CHECK_PUBLICAR_A = '''||TRIM(V_TMP_TIPO_DATA(3))||''''|| 
+					          ', APU_CHECK_OCULTAR_A = '''||TRIM(V_TMP_TIPO_DATA(4))||''''||
+                    ', APU_CHECK_OCULT_PRECIO_A = '''||TRIM(V_TMP_TIPO_DATA(5))||''''||
+                    ', APU_CHECK_PUB_SIN_PRECIO_A = '''||TRIM(V_TMP_TIPO_DATA(6))||''''||
+                    ', DD_TPU_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(7))||''''||
+                    ', DD_MTO_A_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(8))||''''||
+                    ', MTO_OCULTACION = '''||TRIM(V_TMP_TIPO_DATA(9))||''''||
+					          ' WHERE DD_EPU_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
           
@@ -80,8 +83,8 @@ BEGIN
        ELSE
        
           DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO  '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
-          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.TMP_MAPEO_PUB_ALQUILER (DD_EPU_CODIGO, DD_EPA_CODIGO, APU_CHECK_OCULTAR_A, APU_CHECK_OCULT_PRECIO_A, DD_TPU_CODIGO, DD_MTO_A_CODIGO)'|| 
-          'VALUES ('''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''','''||TRIM(V_TMP_TIPO_DATA(4))||''','''||TRIM(V_TMP_TIPO_DATA(5))||''','''||TRIM(V_TMP_TIPO_DATA(6))||''')';
+          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.TMP_MAPEO_PUB_ALQUILER (DD_EPU_CODIGO, DD_EPA_CODIGO, APU_CHECK_PUBLICAR_A, APU_CHECK_OCULTAR_A, APU_CHECK_OCULT_PRECIO_A, APU_CHECK_PUB_SIN_PRECIO_A, DD_TPU_CODIGO, DD_MTO_A_CODIGO, MTO_OCULTACION)'|| 
+          'VALUES ('''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''','''||TRIM(V_TMP_TIPO_DATA(4))||''','''||TRIM(V_TMP_TIPO_DATA(5))||''','''||TRIM(V_TMP_TIPO_DATA(6))||''','''||TRIM(V_TMP_TIPO_DATA(7))||''','''||TRIM(V_TMP_TIPO_DATA(8))||''','''||TRIM(V_TMP_TIPO_DATA(9))||''')';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
         

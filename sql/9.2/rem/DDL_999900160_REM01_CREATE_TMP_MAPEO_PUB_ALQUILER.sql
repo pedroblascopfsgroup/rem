@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DANIEL ALGABA
---## FECHA_CREACION=20180312
+--## FECHA_CREACION=20180321
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-3890
@@ -51,10 +51,13 @@ BEGIN
 		(
 			DD_EPU_CODIGO           	VARCHAR2(20 CHAR),
 			DD_EPA_CODIGO           	VARCHAR2(20 CHAR),
+			APU_CHECK_PUBLICAR_A		NUMBER(1, 0),
 			APU_CHECK_OCULTAR_A			NUMBER(1, 0),
 			APU_CHECK_OCULT_PRECIO_A	NUMBER(1, 0),
+			APU_CHECK_PUB_SIN_PRECIO_A	NUMBER(1, 0),
 			DD_TPU_CODIGO				VARCHAR2(20 CHAR),
-			DD_MTO_A_CODIGO				VARCHAR2(20 CHAR)
+			DD_MTO_A_CODIGO				VARCHAR2(20 CHAR),
+			MTO_OCULTACION				VARCHAR2(100 CHAR)
 		)';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');
@@ -70,7 +73,11 @@ BEGIN
 
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_EPA_CODIGO IS ''Código identificador único del estado publicación alquiler''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_EPA_CODIGO creado.');	
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_EPA_CODIGO creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.APU_CHECK_PUBLICAR_A IS ''Check publicar de la tabla de publicación del activo''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna APU_CHECK_PUBLICAR_A creado.');	
 
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.APU_CHECK_OCULTAR_A IS ''Check ocultar de la tabla de publicación del activo''';
 		EXECUTE IMMEDIATE V_MSQL;
@@ -80,13 +87,21 @@ BEGIN
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna APU_CHECK_OCULT_PRECIO_A creado.');
 
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.APU_CHECK_PUB_SIN_PRECIO_A IS ''Check publicar sin precio de la tabla de publicación del activo''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna APU_CHECK_PUB_SIN_PRECIO_A creado.');
+
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TPU_CODIGO IS ''Código identificador único del tipo de publicación''';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_TPU_CODIGO creado.');
 
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_MTO_A_CODIGO IS ''Código identificador único del motivo publicación alquiler''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_MTO_A_CODIGO creado.');		
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_MTO_A_CODIGO creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.MTO_OCULTACION IS ''Motivo ocultación publicación alquiler''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna MTO_OCULTACION creado.');				
 
 		COMMIT;
 	END IF;

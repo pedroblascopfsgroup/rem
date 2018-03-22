@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DANIEL ALGABA
---## FECHA_CREACION=20180312
+--## FECHA_CREACION=20180321
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-3890
@@ -51,10 +51,13 @@ BEGIN
 		(
 			DD_EPU_CODIGO           	VARCHAR2(20 CHAR),
 			DD_EPV_CODIGO           	VARCHAR2(20 CHAR),
+			APU_CHECK_PUBLICAR_V		NUMBER(1, 0),
 			APU_CHECK_OCULTAR_V			NUMBER(1, 0),
 			APU_CHECK_OCULT_PRECIO_V	NUMBER(1, 0),
+			APU_CHECK_PUB_SIN_PRECIO_V	NUMBER(1, 0),
 			DD_TPU_CODIGO				VARCHAR2(20 CHAR),
-			DD_MTO_V_CODIGO				VARCHAR2(20 CHAR)
+			DD_MTO_V_CODIGO				VARCHAR2(20 CHAR),
+			MTO_OCULTACION				VARCHAR2(100 CHAR)
 		)';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');
@@ -72,6 +75,10 @@ BEGIN
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_EPV_CODIGO creado.');	
 
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.APU_CHECK_PUBLICAR_V IS ''Check publicar de la tabla de publicación del activo''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna APU_CHECK_PUBLICAR_V creado.');
+
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.APU_CHECK_OCULTAR_V IS ''Check ocultar de la tabla de publicación del activo''';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna APU_CHECK_OCULTAR_V creado.');
@@ -80,13 +87,21 @@ BEGIN
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna APU_CHECK_OCULT_PRECIO_V creado.');
 
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.APU_CHECK_PUB_SIN_PRECIO_V IS ''Check publicar sin precio de la tabla de publicación del activo''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna APU_CHECK_PUB_SIN_PRECIO_V creado.');
+
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TPU_CODIGO IS ''Código identificador único del tipo de publicación''';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_TPU_CODIGO creado.');
 
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_MTO_V_CODIGO IS ''Código identificador único del motivo publicación venta''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_MTO_V_CODIGO IS ''Código identificador único del motivo ocultación publicación venta''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_MTO_V_CODIGO creado.');		
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_MTO_V_CODIGO creado.');	
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.MTO_OCULTACION IS ''Motivo ocultación publicación venta''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna MTO_OCULTACION creado.');		
 
 		COMMIT;
 	END IF;

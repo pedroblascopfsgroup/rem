@@ -77,8 +77,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public int publicarActivoPortal(Long idActivo, String username);
 	
     public Long getNextNumOferta();
-    
-    public Long getNextNumExpedienteComercial();
+
+	public Long getNextNumExpedienteComercial();
     
     public Long getNextClienteRemId();
 
@@ -164,8 +164,27 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 * @return Devuelve un objeto de tipo ActivoAgrupacionActivo.
 	 */
 	public ActivoAgrupacionActivo getActivoAgrupacionActivoAgrRestringidaPorActivoID(Long id);
-	
+
 	public void deleteActivoDistribucion(Long idActivoInfoComercial);
 
+	/**
+	 * Este método lanza el procedimiento de cambio de estado de publicación y realiza la operación de generar un
+	 * histórico para los movimientos realizados.
+	 *
+	 * @param idActivo: ID del activo para el cual se desea realizar la operación.
+	 * @param username: nombre del usuario, si la llamada es desde la web, que realiza la operación.
+	 * @return Devuelve True si la operación ha sido satisfactorio, False si no ha sido satisfactoria.
+	 */
+	Boolean publicarActivoConHistorico(Long idActivo, String username);
+
+	/**
+	 * Este método lanza el procedimiento de cambio de estado de publicación sin generar un histórico para los
+	 * movimientos realizados.
+	 *
+	 * @param idActivo: ID del activo para el cual se desea realizar la operación.
+	 * @param username: nombre del usuario, si la llamada es desde la web, que realiza la operación.
+	 * @return Devuelve True si la operación ha sido satisfactorio, False si no ha sido satisfactoria.
+	 */
+	Boolean publicarActivoSinHistorico(Long idActivo, String username);
 
 }

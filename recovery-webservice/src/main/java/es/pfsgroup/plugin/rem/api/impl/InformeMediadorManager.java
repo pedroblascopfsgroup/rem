@@ -1233,7 +1233,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 			ActivoInfoComercial infoAux = (ActivoInfoComercial) dtoToEntity
 					.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoInfoComercial.class, "activo.numActivo");
 
-			if (infoAux != null) {
+			if (infoAux != null && infoAux.getId() != null) {
 				if ((infoAux.getId() != null && infoAux.getTipoActivo() != null && informe.getCodTipoActivo() != null
 						&& !infoAux.getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()))
 						|| (infoAux.getId() != null && infoAux.getTipoActivo() == null)

@@ -3414,7 +3414,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(Checks.esNulo(importeXActivo)) {
 				importeXActivo = 0.00D;
 			}
-			sumatorioImporte += importeXActivo;
+			sumatorioImporte += importeXActivo*100;
 
 			InstanciaDecisionDataDto instData = new InstanciaDecisionDataDto();
 			// ImportePorActivo
@@ -3455,7 +3455,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			instanciaList.add(instData);
 		}
 
-		if (!sumatorioImporte.equals(importeTotal)) {
+		if (!importeTotal.equals(sumatorioImporte/100)) {
 			throw new JsonViewerException("La suma de los importes es diferente al importe de la oferta");
 		}
 
@@ -3534,9 +3534,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		//MOD3
-		if(!Checks.esNulo(oferta.getPrescriptor()) && DDTipoProveedor.COD_OFICINA_BANKIA.equals(oferta.getPrescriptor().getTipoProveedor().getCodigo())){
-			instancia.setCodigoProveedorUvem(oferta.getPrescriptor().getCodigoApiProveedor());
-		}		
+		List<GastosExpediente> gastosExpediente = expediente.getHonorarios();
+			
+		if(!Checks.estaVacio(gastosExpediente)){
+			for(GastosExpediente gastoExp: gastosExpediente){				
+				if(!Checks.esNulo(gastoExp.getAccionGastos()) && DDAccionGastos.CODIGO_PRESCRIPCION.equals(gastoExp.getAccionGastos().getCodigo())){
+					if(!Checks.esNulo(gastoExp.getProveedor()) && DDTipoProveedor.COD_OFICINA_BANKIA.equals(gastoExp.getProveedor().getTipoProveedor().getCodigo())){
+						instancia.setCodigoProveedorUvem(gastoExp.getProveedor().getCodigoApiProveedor());
+						break;
+					}
+				}
+			}
+		}
 
 		if(!Checks.esNulo(codComiteSuperior) && DDSiNo.SI.equals(codComiteSuperior)) {
 			instancia.setCodComiteSuperior(DDComiteSancion.CODIGO_BANKIA_DGVIER);

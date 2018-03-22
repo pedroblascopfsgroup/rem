@@ -237,12 +237,10 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 	                                colspan: 3
 	                            },
 								{
-									xtype: 'fieldsettable',
+									xtype: 'panel',
 									defaultType: 'checkboxfieldbase',
-									title: HreRem.i18n('title.datos.publicacion.estados.alquiler'),
-									bind: {
-										hidden: '{!activo.isDestinoComercialAlquiler}'
-									},
+									cls: 'panel-fieldset-base',
+									colspan: 3,
 									layout: {
 										type: 'table',
 										columns: 4,

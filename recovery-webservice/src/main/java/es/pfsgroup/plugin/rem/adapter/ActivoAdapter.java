@@ -2561,7 +2561,7 @@ public class ActivoAdapter {
 	}
 	
 	@Transactional(readOnly = false)
-	public boolean updatePortalPublicacion(Long id) {
+	public boolean updatePortalPublicacion(Long id) { // TODO: eliminar.
 		Activo activo = activoApi.get(id);
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		activoDao.publicarActivoPortal(activo.getId(), usuarioLogado.getUsername());

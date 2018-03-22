@@ -524,10 +524,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		dto.setTotalDiasPublicadoAlquiler(this.obtenerTotalDeDiasEnEstadoPublicadoAlquiler(idActivo));
 		dto.setDeshabilitarCheckPublicarVenta(this.deshabilitarCheckPublicarVenta(idActivo));
 		dto.setDeshabilitarCheckOcultarVenta(this.deshabilitarCheckOcultarVenta(idActivo));
-		dto.setDeshabilitarCheckPublicarSinPrecioVenta(this.deshabilitarCheckPublicarSinPrecioVenta(idActivo));
 		dto.setDeshabilitarCheckPublicarAlquiler(this.deshabilitarCheckPublicarAlquiler(idActivo));
 		dto.setDeshabilitarCheckOcultarAlquiler(this.deshabilitarCheckOcultarAlquiler(idActivo));
-		dto.setDeshabilitarCheckPublicarSinPrecioAlquiler(this.deshabilitarCheckPublicarSinPrecioAlquiler(idActivo));
 
     	return dto;
 	}
@@ -540,7 +538,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 */
 	private Boolean deshabilitarCheckPublicarVenta(Long idActivo) {
 		return !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || isReservado(idActivo) || isPublicadoVenta(idActivo) || isOcultoVenta(idActivo) ||
-				isFueraDePerimetro(idActivo) || !isPrePublicadoVenta(idActivo) || !isInformeAprobado(idActivo) || !tienePrecioVenta(idActivo);
+				isFueraDePerimetro(idActivo) || (!isInformeAprobado(idActivo) && (!tienePrecioVenta(idActivo) || !isPublicarSinPrecioVentaActivado(idActivo)));
 	}
 
 	/**
@@ -554,17 +552,6 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	}
 
 	/**
-	 * Este método calcula si el check de publicar activo venta se ha de deshabilitar en base a unas reglas.
-	 *
-	 * @param idActivo: ID del activo del que obtener los datos para verificar las reglas.
-	 * @return Devuelve True si el check de publicar activo para la venta debe estar deshabilitado.
-	 */
-	private Boolean deshabilitarCheckPublicarSinPrecioVenta(Long idActivo) {
-		return !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || isReservado(idActivo) || isPublicadoVenta(idActivo) || isOcultoVenta(idActivo) ||
-				isFueraDePerimetro(idActivo) || !isPrePublicadoVenta(idActivo) || !isInformeAprobado(idActivo);
-	}
-
-	/**
 	 * Este método calcula si el check de publicar activo alquiler se ha de deshabilitar en base a unas reglas.
 	 *
 	 * @param idActivo: ID del activo del que obtener los datos para verificar las reglas.
@@ -572,7 +559,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 */
 	private Boolean deshabilitarCheckPublicarAlquiler(Long idActivo) {
 		return !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || isReservado(idActivo) || isPublicadoAlquiler(idActivo) || isOcultoAlquiler(idActivo) ||
-				isFueraDePerimetro(idActivo) || !isPrePublicadoAlquiler(idActivo) || !isInformeAprobado(idActivo) || !tienePrecioRenta(idActivo);
+				isFueraDePerimetro(idActivo) || !isPrePublicadoAlquiler(idActivo) || (!isInformeAprobado(idActivo) && (!tienePrecioRenta(idActivo)) || !isPublicarSinPrecioAlquilerActivado(idActivo));
 	}
 
 	/**
@@ -583,17 +570,6 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 */
 	private Boolean deshabilitarCheckOcultarAlquiler(Long idActivo) {
 		return !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || !isPublicadoAlquiler(idActivo) || isOcultoAutomaticoAlquiler(idActivo) || isFueraDePerimetro(idActivo);
-	}
-
-	/**
-	 * Este método calcula si el check de publicar activo alquiler se ha de deshabilitar en base a unas reglas.
-	 *
-	 * @param idActivo: ID del activo del que obtener los datos para verificar las reglas.
-	 * @return Devuelve True si el check de publicar activo para el alquiler debe estar deshabilitado.
-	 */
-	private Boolean deshabilitarCheckPublicarSinPrecioAlquiler(Long idActivo) {
-		return !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || isReservado(idActivo) || isPublicadoAlquiler(idActivo) || isOcultoAlquiler(idActivo) ||
-				isFueraDePerimetro(idActivo) || !isPrePublicadoAlquiler(idActivo) || !isInformeAprobado(idActivo);
 	}
 
 	// Comprobación mínima.
@@ -664,19 +640,25 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	}
 
 	// Comprobación mínima.
+	private Boolean isPublicarSinPrecioVentaActivado(Long idActivo) {
+		ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(idActivo);
+
+		return !Checks.esNulo(activoPublicacion) && activoPublicacion.getCheckSinPrecioVenta();
+	}
+
+	// Comprobación mínima.
+	private Boolean isPublicarSinPrecioAlquilerActivado(Long idActivo) {
+		ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(idActivo);
+
+		return !Checks.esNulo(activoPublicacion) && activoPublicacion.getCheckSinPrecioAlquiler();
+	}
+
+	// Comprobación mínima.
 	private Boolean isPublicadoVenta(Long idActivo) {
 		ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(idActivo);
 
 		return !Checks.esNulo(activoPublicacion) && !Checks.esNulo(activoPublicacion.getEstadoPublicacionVenta()) &&
 				DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA.equals(activoPublicacion.getEstadoPublicacionVenta().getCodigo());
-	}
-
-	// Comprobación mínima.
-	private Boolean isPrePublicadoVenta(Long idActivo) {
-		ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(idActivo);
-
-		return !Checks.esNulo(activoPublicacion) && !Checks.esNulo(activoPublicacion.getEstadoPublicacionVenta()) &&
-				DDEstadoPublicacionVenta.CODIGO_PRE_PUBLICADO_VENTA.equals(activoPublicacion.getEstadoPublicacionVenta().getCodigo());
 	}
 
 	// Comprobación mínima.
@@ -692,7 +674,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(idActivo);
 
 		return !Checks.esNulo(activoPublicacion) && !Checks.esNulo(activoPublicacion.getEstadoPublicacionVenta()) &&
-				DDEstadoPublicacionVenta.CODIGO_OCULTO_VENTA.equals(activoPublicacion.getEstadoPublicacionVenta().getCodigo()) && !activoPublicacion.getMotivoOcultacionVenta().getEsMotivoManual();
+				DDEstadoPublicacionVenta.CODIGO_OCULTO_VENTA.equals(activoPublicacion.getEstadoPublicacionVenta().getCodigo()) && !Checks.esNulo(activoPublicacion.getMotivoOcultacionVenta()) &&
+				!activoPublicacion.getMotivoOcultacionVenta().getEsMotivoManual();
 	}
 
 	// Comprobación mínima.
@@ -725,7 +708,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 		return !Checks.esNulo(activoPublicacion) && !Checks.esNulo(activoPublicacion.getEstadoPublicacionAlquiler()) &&
 				DDEstadoPublicacionAlquiler.CODIGO_OCULTO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo()) &&
-				!activoPublicacion.getMotivoOcultacionAlquiler().getEsMotivoManual();
+				!Checks.esNulo(activoPublicacion.getMotivoOcultacionAlquiler()) && !activoPublicacion.getMotivoOcultacionAlquiler().getEsMotivoManual();
 	}
 
 	@Override
@@ -735,9 +718,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 		if(this.registrarHistoricoPublicacion(activoPublicacion)) {
 			if(this.actualizarDatosEstadoActualPublicacion(dto, activoPublicacion)) {
-				// FIXME: descomentar la línea de abajo para llevar a cabo el proceso del SP cuando se adapte a lo nuevo.
-				return true;
-				//return this.publicarActivoProcedure(dto.getIdActivo(), genericAdapter.getUsuarioLogado().getNombre());
+				return this.publicarActivoProcedure(dto.getIdActivo(), genericAdapter.getUsuarioLogado().getNombre());
 			}
 		}
 
@@ -772,6 +753,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarAlquiler", dto.getOcultarAlquiler());
 			beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarPrecioAlquiler", dto.getNoMostrarPrecioAlquiler());
 			beanUtilNotNull.copyProperty(activoPublicacion, "checkSinPrecioAlquiler", dto.getPublicarSinPrecioAlquiler());
+
+			activoPublicacionDao.save(activoPublicacion);
 		} catch (IllegalAccessException e) {
 			logger.error("Error al actualizar el estado actual de publicacion, error: ", e);
 			return false;
@@ -958,15 +941,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 * este modo, se informa hacia la interfaz.
 	 */
 	private Boolean publicarActivoProcedure(Long idActivo, String username) throws JsonViewerException{
-		int esError = activoDao.publicarActivo(idActivo, username);
-
-		if (esError != 1){
+		if(activoDao.publicarActivoSinHistorico(idActivo, username)) {
+			logger.info(messageServices.getMessage("activo.publicacion.OK.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
+			return true;
+		} else {
 			logger.error(messageServices.getMessage("activo.publicacion.error.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
 			throw new JsonViewerException(messageServices.getMessage("activo.publicacion.error.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
 		}
-
-		logger.info(messageServices.getMessage("activo.publicacion.OK.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
-		return true;
 	}
 	
 	private boolean verificaValidacionesPublicacion(DtoPublicacionValidaciones dtoPublicacionValidaciones){  // TODO: eliminar.

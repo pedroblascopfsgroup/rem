@@ -721,7 +721,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 	
 	@Override
-	public int publicarActivo(Long idActivo, String username){
+	public int publicarActivo(Long idActivo, String username){ // TODO: eliminar.
 		StringBuilder procedureHQL = new StringBuilder(
 							" BEGIN ");
 		procedureHQL.append("   ACTIVO_PUBLICACION_AUTO(:idActivoParam, :usernameParam); ");
@@ -735,7 +735,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 	
 	@Override
-	public int publicarActivoPortal(Long idActivo, String username){
+	public int publicarActivoPortal(Long idActivo, String username){ // TODO: eliminar.
 		StringBuilder procedureHQL = new StringBuilder(
 							" BEGIN ");
 		procedureHQL.append("   ACTIVO_PUBLICACION_PORTAL(:idActivoParam, :usernameParam); ");
@@ -746,6 +746,37 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		callProcedureSql.setParameter("usernameParam", username);
 		
 		return callProcedureSql.executeUpdate();
+	}
+
+	@Override
+	public Boolean publicarActivoConHistorico(Long idActivo, String username) {
+    	return this.publicarActivo(idActivo, username, true);
+	}
+
+	@Override
+	public Boolean publicarActivoSinHistorico(Long idActivo, String username) {
+		return this.publicarActivo(idActivo, username, false);
+	}
+
+	/**
+	 * Este método lanza el procedimiento de cambio de estado de publicación
+	 *
+	 * @param idActivo: ID del activo para el cual se desea realizar la operación.
+	 * @param username: nombre del usuario, si la llamada es desde la web, que realiza la operación.
+	 * @param historificar: indica si la operación ha de realizar un histórico de los movimientos realizados.
+	 * @return Devuelve True si la operación ha sido satisfactorio, False si no ha sido satisfactoria.
+	 */
+	private Boolean publicarActivo(Long idActivo, String username, Boolean historificar) {
+		String procedureHQL = "BEGIN SP_CAMBIO_ESTADO_PUBLICACION(:idActivoParam, :usernameParam, :historificarParam);  END;";
+
+		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
+		callProcedureSql.setParameter("idActivoParam", idActivo);
+		callProcedureSql.setParameter("usernameParam", username);
+		callProcedureSql.setParameter("historificarParam", historificar ? "S" : "N");
+
+		Integer resultado = callProcedureSql.executeUpdate();
+
+    	return resultado == 1;
 	}
 	
     public Long getNextNumExpedienteComercial() {

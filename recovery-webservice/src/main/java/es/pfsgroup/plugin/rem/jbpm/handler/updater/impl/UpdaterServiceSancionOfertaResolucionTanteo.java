@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 
 @Component
@@ -112,12 +113,19 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
 							ofertaAceptada.setResultadoTanteo(resultadoTanteo);
 						} else {
 							Reserva reserva = expediente.getReserva();
-							if(!Checks.esNulo(reserva)) {
-								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RESERVADO);
+							if (!Checks.esNulo(reserva)) {
+								if (DDEstadosReserva.CODIGO_FIRMADA.equals(reserva.getEstadoReserva().getCodigo())) {
+									filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
+											DDEstadosExpedienteComercial.RESERVADO);
+								} else {
+									filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
+											DDEstadosExpedienteComercial.APROBADO);
+								}
 							} else {
-								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
+								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
+										DDEstadosExpedienteComercial.APROBADO);
 							}
-							
+
 							Filter filtroTanteo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoTanteo.CODIGO_RENUNCIADO);
 							resultadoTanteo = genericDao.get(DDResultadoTanteo.class, filtroTanteo);
 							ofertaAceptada.setResultadoTanteo(resultadoTanteo);

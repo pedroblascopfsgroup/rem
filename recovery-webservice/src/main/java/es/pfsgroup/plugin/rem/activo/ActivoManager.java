@@ -1992,6 +1992,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Transactional(readOnly = false)
 	public Boolean createHistoricoMediador(DtoHistoricoMediador dto) throws JsonViewerException {
 		ActivoInformeComercialHistoricoMediador historicoMediador = new ActivoInformeComercialHistoricoMediador();
+		ActivoInformeComercialHistoricoMediador historicoMediadorPrimero = new ActivoInformeComercialHistoricoMediador();
 		Activo activo = null;
 
 		if (!Checks.esNulo(dto.getIdActivo())) {
@@ -2020,6 +2021,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 																														// último).
 					beanUtilNotNull.copyProperty(historicoAnteriorMediador, "fechaHasta", new Date());
 					genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoAnteriorMediador);
+				}
+				else{
+					//Si la lista esta vacia es porque es el la primera vez que se modifica el historico de mediadores, por lo que tenemos que introducir el que
+					//habia antes. La fecha desde se deja vacia por ahora.
+					if(!Checks.esNulo(activo.getInfoComercial().getMediadorInforme())){
+						beanUtilNotNull.copyProperty(historicoMediadorPrimero, "fechaHasta", new Date());
+						beanUtilNotNull.copyProperty(historicoMediadorPrimero, "activo", activo);
+						beanUtilNotNull.copyProperty(historicoMediadorPrimero, "mediadorInforme", activo.getInfoComercial().getMediadorInforme());
+						genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoMediadorPrimero);
+					}
+
 				}
 			}
 

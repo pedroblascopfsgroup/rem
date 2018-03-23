@@ -3381,6 +3381,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		short tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_SIN_IMPUESTO;
 		List<InstanciaDecisionDataDto> instanciaList = new ArrayList<InstanciaDecisionDataDto>();
 		boolean solicitaFinanciacion = false;
+		DecimalFormat num = new DecimalFormat("###.##");
 
 		Oferta oferta = expediente.getOferta();
 		if (Checks.esNulo(oferta)) {
@@ -3418,7 +3419,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			InstanciaDecisionDataDto instData = new InstanciaDecisionDataDto();
 			// ImportePorActivo
-			instData.setImporteConSigno(Double.valueOf(importeXActivo*100).longValue());
+			instData.setImporteConSigno(Double.valueOf(num.format(importeXActivo*100)).longValue());
 			// NumActivoUvem
 			instData.setIdentificadorActivoEspecial(Integer.valueOf(activo.getNumActivoUvem().toString()));
 

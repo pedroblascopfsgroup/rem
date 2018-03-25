@@ -37,10 +37,6 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
       
       pOCULTAR := 0; 
       pMOTIVO  := 0;
-      
-      IF pACT_ID IS NOT NULL THEN
-        vWHERE := ' WHERE V.ACT_ID'||pACT_ID;
-      END IF;
 
       V_MSQL := '
             SELECT OCULTO, DD_MTO_CODIGO
@@ -116,7 +112,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                                                 FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER DDEPA 
                                                                WHERE DDEPA.BORRADO = 0
                                                                  AND DDEPA.DD_EPA_CODIGO = ''04'')/*Oculto Alquiler*/
-                                    LEFT JOIN DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''04'' AND MTO.BORRADO = 0 /*Revisión adecuación*/
+                                    LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''04'' AND MTO.BORRADO = 0 /*Revisión adecuación*/
                                    WHERE APU.BORRADO = 0.
                                      AND (SPS.SPS_OCUPADO = 0
                                        OR SPS.SPS_CON_TITULO = 0

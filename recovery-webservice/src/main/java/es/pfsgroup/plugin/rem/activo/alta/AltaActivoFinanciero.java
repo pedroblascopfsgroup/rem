@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
@@ -41,7 +42,9 @@ import es.pfsgroup.plugin.rem.model.ActivoPlazaAparcamiento;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.DtoAltaActivoFinanciero;
@@ -113,6 +116,25 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		if (!Checks.esNulo(activo)) {
 			this.dtoToEntitiesOtras(dtoAAF, activo);
 			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
+			
+			Auditoria auditoria = new Auditoria();
+			auditoria.setBorrado(false);
+			auditoria.setFechaCrear(new Date());
+			auditoria.setUsuarioCrear("CARGA_MASIVA");
+			
+			ActivoSituacionPosesoria actSit = new ActivoSituacionPosesoria();
+			actSit.setActivo(activo);
+			actSit.setVersion(new Long(0));
+			actSit.setAuditoria(auditoria);
+			
+			genericDao.save(ActivoSituacionPosesoria.class, actSit);
+			
+			ActivoTitulo actTit = new ActivoTitulo();
+			actTit.setActivo(activo);
+			actTit.setVersion(new Long(0));
+			actTit.setAuditoria(auditoria);
+			
+			genericDao.save(ActivoTitulo.class, actTit);
 		} else {
 			return false;
 		}

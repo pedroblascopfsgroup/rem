@@ -727,6 +727,88 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	@Override
+	public Boolean isActivoNoPublicable(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(act.act_id) "
+				+ "			FROM ACT_PAC_PERIMETRO_ACTIVO pac, ACT_ACTIVO act "
+				+ "			WHERE pac.act_id = act.act_id "
+				+ "			AND pac.PAC_CHECK_PUBLICAR <> 1 "
+				+ "			AND act.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "			AND act.borrado = 0");
+		return !"0".equals(resultado);
+	}
+
+	@Override
+	public Boolean isActivoDestinoComercialNoVenta(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(act.act_id) "
+				+ "			FROM ACT_ACTIVO act "
+				+ "			WHERE act.dd_tco_id in (select dd_tco_id from DD_TCO_TIPO_COMERCIALIZACION where dd_tco_codigo in('01', '02')) "
+				+ "			AND act.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "			AND act.borrado = 0");
+		return "0".equals(resultado);
+	}
+
+	@Override
+	public Boolean isActivoDestinoComercialNoAlquiler(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(act.act_id) "
+				+ "			FROM ACT_ACTIVO act "
+				+ "			WHERE act.dd_tco_id in (select dd_tco_id from DD_TCO_TIPO_COMERCIALIZACION where dd_tco_codigo in('03', '02')) "
+				+ "			AND act.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "			AND act.borrado = 0");
+		return "0".equals(resultado);
+	}
+
+	@Override
+	public Boolean isActivoSinPrecioVentaWeb(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(act.act_id) "
+				+ "			FROM ACT_ACTIVO act,  ACT_VAL_VALORACIONES val "
+				+ "			WHERE act.act_id = val.act_id "
+				+ "         AND val.DD_TPC_ID in (select DD_TPC_ID from DD_TPC_TIPO_PRECIO where dd_tpc_codigo in ('02')) "
+				+ "			AND act.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "			AND act.borrado = 0");
+		return "0".equals(resultado);
+	}
+
+	@Override
+	public Boolean isActivoSinPrecioRentaWeb(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(act.act_id) "
+				+ "			FROM ACT_ACTIVO act,  ACT_VAL_VALORACIONES val "
+				+ "			WHERE act.act_id = val.act_id "
+				+ "         AND val.DD_TPC_ID in (select DD_TPC_ID from DD_TPC_TIPO_PRECIO where dd_tpc_codigo in ('03')) "
+				+ "			AND act.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "			AND act.borrado = 0");
+		return "0".equals(resultado);
+	}
+
+	@Override
+	public Boolean isActivoSinInformeAprobado(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(act.act_id) "
+				+ "			FROM ACT_ACTIVO act,  V_COND_DISPONIBILIDAD cond "
+				+ "			WHERE act.act_id = cond.act_id "
+				+ "         AND cond.SIN_INFORME_APROBADO = 1 "
+				+ "			AND act.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "			AND act.borrado = 0");
+		return !"0".equals(resultado);
+	}
+
+	@Override
 	public List<BigDecimal> getImportesActualesActivo(String numActivo) {
 		Object[] resultados = rawDao.getExecuteSQLArray(
 				"		SELECT (SELECT VAL_IMPORTE FROM V_PRECIOS_VIGENTES"

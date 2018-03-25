@@ -719,34 +719,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		 
 		 return !Checks.estaVacio(historicoLista)?historicoLista.get(0):null;
 	}
-	
-	@Override
-	public int publicarActivo(Long idActivo, String username){ // TODO: eliminar.
-		StringBuilder procedureHQL = new StringBuilder(
-							" BEGIN ");
-		procedureHQL.append("   ACTIVO_PUBLICACION_AUTO(:idActivoParam, :usernameParam); ");
-		procedureHQL.append(" END; ");
-		
-		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL.toString());
-		callProcedureSql.setParameter("idActivoParam", idActivo);
-		callProcedureSql.setParameter("usernameParam", username);
-		
-		return callProcedureSql.executeUpdate();
-	}
-	
-	@Override
-	public int publicarActivoPortal(Long idActivo, String username){ // TODO: eliminar.
-		StringBuilder procedureHQL = new StringBuilder(
-							" BEGIN ");
-		procedureHQL.append("   ACTIVO_PUBLICACION_PORTAL(:idActivoParam, :usernameParam); ");
-		procedureHQL.append(" END; ");
-		
-		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL.toString());
-		callProcedureSql.setParameter("idActivoParam", idActivo);
-		callProcedureSql.setParameter("usernameParam", username);
-		
-		return callProcedureSql.executeUpdate();
-	}
 
 	@Override
 	public Boolean publicarActivoConHistorico(Long idActivo, String username) {

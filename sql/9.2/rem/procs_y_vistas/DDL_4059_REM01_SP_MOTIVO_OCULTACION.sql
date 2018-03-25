@@ -33,45 +33,105 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
     vWHERE VARCHAR2(4000 CHAR);
     nORDEN NUMBER;
   BEGIN
-	    DBMS_OUTPUT.PUT_LINE('[INICIO]');
-
-      IF pACT_ID IS NOT NULL THEN
-        vWHERE := ' WHERE V.ACT_ID'||pACT_ID;
-      END IF;
+	    /*DBMS_OUTPUT.PUT_LINE('[INICIO]');*/
+      
+      pOCULTAR := 0; 
+      pMOTIVO  := 0;
 
       V_MSQL := '
             SELECT OCULTO, DD_MTO_CODIGO
               FROM (
                   SELECT OCULTO, DD_MTO_CODIGO, ROW_NUMBER () OVER (PARTITION BY ACT_ID ORDER BY ORDEN DESC) ROWNUMBER
                     FROM(
-                          SELECT APU.ACT_ID
+                          SELECT ACT.ACT_ID
+                               /*, DECODE(SCM.DD_SCM_CODIGO,''05'',1,0)OCULTO*/ /*Vendido*/
+                               , 1 OCULTO /*Vendido*/
+                               , MTO.DD_MTO_CODIGO
+                               , MTO.DD_MTO_ORDEN ORDEN
+                                    FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
+                                    JOIN '|| V_ESQUEMA ||'.DD_SCM_SITUACION_COMERCIAL SCM ON SCM.DD_SCM_ID = ACT.DD_SCM_ID AND  SCM.BORRADO = 0
+                                    LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''02'' AND MTO.BORRADO = 0 /*Vendido*/
+                                   WHERE ACT.BORRADO = 0
+                                     AND ACT.ACT_ID= '||pACT_ID||                               
+                         ' UNION
+                          SELECT PAC.ACT_ID
                                , DECODE(PAC.PAC_CHECK_PUBLICAR,0,1,1,0,0)OCULTO
                                , MTO.DD_MTO_CODIGO
-                               , 1 ORDEN
-                                    FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU
-                                    JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = APU.ACT_ID AND PAC.BORRADO = 0
+                               , MTO.DD_MTO_ORDEN ORDEN
+                                    FROM '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''01'' AND MTO.BORRADO = 0 /*No Publicable*/
-                                   WHERE APU.BORRADO = 0
-                                     AND APU.ACT_ID= '||pACT_ID||
-                         ' UNION           
-                          SELECT APU.ACT_ID
-                               , DECODE(SCM.DD_SCM_CODIGO,''01'',1,0)OCULTO /*No comercializable*/
+                                   WHERE PAC.BORRADO = 0
+                                     AND PAC.ACT_ID= '||pACT_ID||
+                         ' UNION
+                          SELECT ACT.ACT_ID
+                               /*, DECODE(SCM.DD_SCM_CODIGO,''01'',1,0)OCULTO*/ /*No comercializable*/
+                               , 1 OCULTO /*No comercializable*/
                                , MTO.DD_MTO_CODIGO
-                               , 2 ORDEN
-                                    FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU
-                                    JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_ID = APU.ACT_ID AND ACT.BORRADO = 0
-                                    LEFT JOIN '|| V_ESQUEMA ||'.DD_SCM_SITUACION_COMERCIAL SCM ON SCM.DD_SCM_ID = ACT.DD_SCM_ID AND  SCM.BORRADO = 0
+                               , MTO.DD_MTO_ORDEN ORDEN
+                                    FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
+                                    JOIN '|| V_ESQUEMA ||'.DD_SCM_SITUACION_COMERCIAL SCM ON SCM.DD_SCM_ID = ACT.DD_SCM_ID AND  SCM.BORRADO = 0
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''02'' AND MTO.BORRADO = 0 /*No Comercializable*/
-                                   WHERE APU.BORRADO = 0
-                                     AND APU.ACT_ID= '||pACT_ID||
-                       ') 
-                    )AUX WHERE AUX.ROWNUMBER = 1 
+                                   WHERE ACT.BORRADO = 0
+                                     AND ACT.ACT_ID= '||pACT_ID||    
+                         ' UNION
+                          SELECT ACT.ACT_ID
+                               /*, DECODE(SCM.DD_SCM_CODIGO,''04'',1,0)OCULTO*/ /*Reservado*/
+                               , 1 OCULTO /*Reservado*/
+                               , MTO.DD_MTO_CODIGO
+                               , MTO.DD_MTO_ORDEN ORDEN
+                                    FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
+                                    JOIN '|| V_ESQUEMA ||'.DD_SCM_SITUACION_COMERCIAL SCM ON SCM.DD_SCM_ID = ACT.DD_SCM_ID AND  SCM.BORRADO = 0
+                                    LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''07'' AND MTO.BORRADO = 0 /*Reservado*/
+                                   WHERE ACT.BORRADO = 0
+                                     AND ACT.ACT_ID= '||pACT_ID||
+                         ' UNION
+                          SELECT APU.ACT_ID
+                               , 1 OCULTO
+                               , MTO.DD_MTO_CODIGO
+                               , MTO.DD_MTO_ORDEN ORDEN
+                                    FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU
+                                    JOIN '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA SPS ON SPS.ACT_ID = APU.ACT_ID AND SPS.BORRADO = 0
+                                    JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION DDTCO ON DDTCO.DD_TCO_ID = APU.DD_TCO_ID 
+                                          AND DDTCO.DD_TCO_CODIGO IN (''02'',''03'',''04'') 
+                                          AND DDTCO.BORRADO = 0
+                                    LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''03'' AND MTO.BORRADO = 0 /*Alquilado*/
+                                   WHERE APU.BORRADO = 0.
+                                     AND SPS.SPS_OCUPADO = 1 
+                                     AND SPS.SPS_CON_TITULO = 1 
+                                     AND SPS.SPS_FECHA_VENC_TITULO > sysdate
+                                     AND SPS.ACT_ID= '||pACT_ID||    
+                         ' UNION                                     
+                          SELECT SPS.ACT_ID
+                               , 1 OCULTO
+                               , MTO.DD_MTO_CODIGO
+                               , MTO.DD_MTO_ORDEN ORDEN
+                                    FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU
+                                    JOIN '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA SPS ON SPS.ACT_ID = APU.ACT_ID 
+                                         AND SPS.BORRADO = 0
+                                         AND APU.DD_EPA_ID = (SELECT DDEPA.DD_EPA_ID 
+                                                                FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER DDEPA 
+                                                               WHERE DDEPA.BORRADO = 0
+                                                                 AND DDEPA.DD_EPA_CODIGO = ''04'')/*Oculto Alquiler*/
+                                    LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''04'' AND MTO.BORRADO = 0 /*Revisión adecuación*/
+                                   WHERE APU.BORRADO = 0.
+                                     AND (SPS.SPS_OCUPADO = 0
+                                       OR SPS.SPS_CON_TITULO = 0
+                                       OR SPS.SPS_FECHA_VENC_TITULO <= sysdate)
+                                     AND SPS.ACT_ID= '||pACT_ID||                                        
+                       ')
+                    )AUX WHERE AUX.ROWNUMBER = 1
                  '
        ;
-      /*DBMS_OUTPUT.PUT_LINE(V_MSQL);*/
-      EXECUTE IMMEDIATE V_MSQL INTO pOCULTAR, pMOTIVO;
+      
+      BEGIN
+        EXECUTE IMMEDIATE V_MSQL INTO pOCULTAR, pMOTIVO;
+      EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+          pOCULTAR := 0; 
+          pMOTIVO  := 0;          
+      END;
 
-	  DBMS_OUTPUT.PUT_LINE('[FIN]');
+	  /*DBMS_OUTPUT.PUT_LINE('[FIN]');*/
 
 	  COMMIT;
 

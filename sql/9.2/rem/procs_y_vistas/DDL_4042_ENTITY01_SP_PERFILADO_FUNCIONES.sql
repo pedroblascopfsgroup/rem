@@ -1,21 +1,19 @@
 --/*
 --######################################### 
---## AUTOR=SERGIO ORTUÑO
---## FECHA_CREACION=2018012
+--## AUTOR=Kevin Fernández
+--## FECHA_CREACION=20180324
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-3697
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-3956
 --## PRODUCTO=NO
 --## 
---## Finalidad: Procedimiento encargado de perfilar las funciones
+--## Finalidad: Procedimiento encargado de perfilar las funciones.
 --##      
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
 --#########################################
 --*/
-
---Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
@@ -232,7 +230,8 @@ T_VAR( 'ASISTIDAPDV_CARGA','N','N','N','N','N','N','S','S','S','S','N','N','N','
 T_VAR( 'MASIVO_LOTE_COMERCIAL','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','N','N','N','N'),
 T_VAR( 'MASIVO_DESPUBLICAR_FORZADO','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'SUBIR_LISTA_ACTIVOS_IBI','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','N','N','N','S','S','S','S','S','S','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
-
+T_VAR( 'MASIVO_PUBLICACION_VENTA','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
+T_VAR( 'MASIVO_PUBLICACION_ALQUILER','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
 
 T_VAR( 'MENU_DASHBOARD','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'MENU_AGENDA','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S'),

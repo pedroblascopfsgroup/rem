@@ -583,7 +583,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
                                                   ,SYSDATE APU_FECHA_FIN_VENTA
                                                   ,SYSDATE APU_FECHA_FIN_ALQUILER
                                                   ,VERSION
-                                                  ,'''||pUSUARIOMODIFICAR||''' USUARIOCREAR, SYSDATE FECHACREAR
+                                                  ,NVL('''||pUSUARIOMODIFICAR||''',''SP_CAMBIO_EST_PUB'') USUARIOCREAR, SYSDATE FECHACREAR
                                                   ,USUARIOMODIFICAR,FECHAMODIFICAR
                                                   ,USUARIOBORRAR,FECHABORRAR,BORRADO
               FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION

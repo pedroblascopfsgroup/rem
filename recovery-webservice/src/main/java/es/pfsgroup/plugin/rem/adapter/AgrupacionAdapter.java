@@ -554,6 +554,10 @@ public class AgrupacionAdapter {
 			// Si la agrupación es de tipo comercial y contiene ofertas, en
 			// cualquier estado, rechazar el activo.
 			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+				
+				//Comprobamos no mezclar activos canarios y peninsulares
+				distintosTiposImpuesto(agrupacion, activo);
+				
 				List<Oferta> ofertasAgrupacion = agrupacion.getOfertas();
 				if (tieneOfertasNoAnuladas(ofertasAgrupacion)) {
 					throw new JsonViewerException(
@@ -2267,5 +2271,42 @@ public class AgrupacionAdapter {
 			return false;
 		}
 		return true;		
+	}
+	
+	public void distintosTiposImpuesto(ActivoAgrupacion agrupacion, Activo activo) {
+		List<ActivoAgrupacionActivo> lista = agrupacion.getActivos();
+
+		Boolean canarias = false;
+/*
+		ArrayList<String> codProvinciasCanarias = new ArrayList<String>();
+
+		// Las palmas
+		codProvinciasCanarias.add("35");
+		// Santa cruz
+		codProvinciasCanarias.add("38");
+		*/
+
+		String codProvinciasCanarias[] = {"35", "38"};
+		
+		for (int i = 0; i < lista.size(); i++) {
+			ActivoAgrupacionActivo aga = lista.get(i);
+
+			for (int j = 0; j < lista.size(); j++) {
+				Activo act = aga.getActivo();
+				String codProvincia = act.getProvincia();
+
+				if (Arrays.asList(codProvinciasCanarias).contains(codProvincia)) {
+					canarias = true;
+				}
+			}
+		}
+
+		if (canarias) {
+			if (!Arrays.asList(codProvinciasCanarias).contains(activo.getProvincia()))
+				throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_NO_CANARIAS);
+		} else {
+			if (Arrays.asList(codProvinciasCanarias).contains(activo.getProvincia()))
+				throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_CANARIAS);
+		}
 	}
 }

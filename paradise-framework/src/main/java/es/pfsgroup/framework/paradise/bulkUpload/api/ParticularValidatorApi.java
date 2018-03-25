@@ -135,6 +135,54 @@ public interface ParticularValidatorApi {
 	public Boolean isActivoNoComercializable(String numActivo);
 
 	/**
+	 * Este método comprueba si un activo es publicable por su perímetro de publicación.
+	 *
+	 * @param numActivo: Numero del activo para realizar las comprobaciones.
+	 * @return Devuelve True si un activo no es publicable por su perímetro, False si no lo es.
+	 */
+	Boolean isActivoNoPublicable(String numActivo);
+
+	/**
+	 * Este método comprueba si un activo no se encuentra en el destino comercial de venta.
+	 *
+	 * @param numActivo: Numero del activo para realizar las comprobaciones.
+	 * @return Devuelve True si un activo no se encuentra en el destino comercial de venta, False si se encuentra.
+	 */
+	Boolean isActivoDestinoComercialNoVenta(String numActivo);
+
+	/**
+	 * Este método comprueba si un activo no se encuentra en el destino comercial de alquiler.
+	 *
+	 * @param numActivo: Numero del activo para realizar las comprobaciones.
+	 * @return Devuelve True si un activo no se encuentra en el destino comercial de alquiler, False si se encuentra.
+	 */
+	Boolean isActivoDestinoComercialNoAlquiler(String numActivo);
+
+	/**
+	 * Este método comprueba si un activo no dispone de precio de venta web asignado.
+	 *
+	 * @param numActivo: Numero del activo para realizar las comprobaciones.
+	 * @return Devuelve True si un activo no tiene precio de venta web, False si se lo tiene.
+	 */
+	Boolean isActivoSinPrecioVentaWeb(String numActivo);
+
+	/**
+	 * Este método comprueba si un activo no dispone de precio de renta web asignado.
+	 *
+	 * @param numActivo: Numero del activo para realizar las comprobaciones.
+	 * @return Devuelve True si un activo no tiene precio de renta web, False si se lo tiene.
+	 */
+	Boolean isActivoSinPrecioRentaWeb(String numActivo);
+
+	/**
+	 * Este método comprueba si un activo no tiene el informe aprobado.
+	 *
+	 * @param numActivo: Numero del activo para realizar las comprobaciones.
+	 * @return Devuelve True si un activo no tiene el informe aprobado, False si lo tiene  aprobado.
+	 */
+	Boolean isActivoSinInformeAprobado(String numActivo);
+
+	/**
 	 * Este método obtiene una lista de importes actuales por el número de activo.
 	 * 
 	 * @param numActivo : número haya del activo.

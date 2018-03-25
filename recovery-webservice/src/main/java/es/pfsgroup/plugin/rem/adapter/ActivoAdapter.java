@@ -2554,7 +2554,7 @@ public class ActivoAdapter {
 				|| !activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO)
 				|| !activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_DESPUBLICADO))) {
 			Usuario usuario = genericAdapter.getUsuarioLogado();
-			activoDao.publicarActivo(activo.getId(), usuario.getUsername());
+			activoDao.publicarActivoConHistorico(activo.getId(), usuario.getUsername());
 		}
 		
 		return true;
@@ -2564,7 +2564,7 @@ public class ActivoAdapter {
 	public boolean updatePortalPublicacion(Long id) { // TODO: eliminar.
 		Activo activo = activoApi.get(id);
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		activoDao.publicarActivoPortal(activo.getId(), usuarioLogado.getUsername());
+		activoDao.publicarActivoConHistorico(activo.getId(), usuarioLogado.getUsername());
 		return true;
 	}
 	

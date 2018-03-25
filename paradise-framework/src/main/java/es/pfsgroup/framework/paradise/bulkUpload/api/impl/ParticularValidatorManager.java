@@ -716,7 +716,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(act.act_id) "
 				+ "			FROM DD_SCM_SITUACION_COMERCIAL scm, "
 				+ "			  ACT_ACTIVO act "
-				+ "			WHERE scm.dd_scm_id   = act.dd_scm_id "
+				+ "			  WHERE scm.dd_scm_id   = act.dd_scm_id "
 				+ "			  AND scm.dd_scm_codigo = '01' "
 				+ "			  AND act.ACT_NUM_ACTIVO = "+numActivo+" "
 				+ "			  AND act.borrado = 0");
@@ -725,7 +725,117 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		else
 			return true;
 	}
-
+	
+	@Override
+	public Boolean isActivoNoPublicable(String numActivo) {
+		if(Checks.esNulo(numActivo)) return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "				FROM ACT_ACTIVO act"
+				+ "				WHERE act.ACT_ID IN ( "
+				+ "					SELECT pac.ACT_ID "
+				+ "					FROM ACT_PAC_PERIMETRO_ACTIVO pac "
+				+ "					WHERE pac.PAC_CHECK_PUBLICAR = 0 "
+				+ "					AND pac.BORRADO = 0) "
+				+ "				AND act.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "				AND act.BORRADO = 0");
+		
+		if("0".equals(resultado)){
+			return false;
+		}else {
+			return true;
+		}
+	}
+	
+	
+	@Override
+	public Boolean destinoFinalNoVenta(String numActivo){
+		if(Checks.esNulo(numActivo)) return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "			FROM ACT_ACTIVO act "
+				+ "			WHERE act.DD_TCO_ID IN ( "
+				+ "				SELECT tco.DD_TCO_ID "
+				+ "				FROM DD_TCO_TIPO_COMERCIALIZACION tco"
+				+ "				where tco.DD_TCO_CODIGO NOT IN ('01','02')) "
+				+ "			AND act.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "			AND act.BORRADO = 0");
+		if("0".equals(resultado)){
+			return false;
+		}else{
+			return true;
+		}
+	}
+	
+	@Override
+	public Boolean destinoFinalNoAlquiler(String numActivo){
+		if(Checks.esNulo(numActivo)) return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "			FROM ACT_ACTIVO act "
+				+ "			WHERE act.DD_TCO_ID IN ( "
+				+ "				SELECT tco.DD_TCO_ID "
+				+ "				FROM DD_TCO_TIPO_COMERCIALIZACION "
+				+ "				where tco.DD_TCO_CODIGO NOT IN ('02','03')) "
+				+ "			AND act.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "			AND act.BORRADO = 0");
+		if("0".equals(resultado)){
+			return false;
+		}else{
+			return true;
+		}
+	}
+	
+	@Override
+	public Boolean activoNoPublicado(String numActivo){
+		if(Checks.esNulo(numActivo)) return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "			FROM ACT_ACTIVO act "
+				+ "			WHERE act.ACT_ID NOT IN ( "
+				+ "				SELECT apu.ACT_ID FROM ACT_APU_ACTIVO_PUBLICACION apu WHERE apu.BORRADO = 0 "
+				+ "				UNION ALL "
+				+ "				SELECT ahp.ACT_ID FROM ACT_AHP_HIST_PUBLICACION ahp WHERE ahp.BORRADO = 0) "
+				+ "			AND act.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "			AND act.BORRADO = 0");
+		if("0".equals(resultado)){
+			return false;
+		}else {
+			return true;
+		}
+	}
+	
+	@Override
+	public Boolean activoOculto(String numActivo){
+		if (Checks.esNulo(numActivo)) return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "			FROM ACT_APU_ACTIVO_PUBLICACION apu "
+				+ "			WHERE apu.APU_CHECK_OCULTAR_V = 1 "
+				+ "			AND apu.BORRADO = 0"
+				+ "			AND apu.ACT_ID = "+numActivo+" ");
+		if("0".equals(resultado)){
+			return false;
+		}else {
+			return true;
+		}
+	}
+	
+	@Override
+	public Boolean motivoNotExistsByCod(String codigoMotivo){
+		if (Checks.esNulo(codigoMotivo)) return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "				FROM DD_MTO_MOTIVOS_OCULTACION mto "
+				+ "				WHERE mto.DD_MTO_CODIGO = '"+codigoMotivo+"' "
+				+ "				AND mto.BORRADO = 0");
+		if(!"0".equals(resultado)){
+			return false;
+		}else {
+			return true;
+		}
+	}
+		
 	@Override
 	public List<BigDecimal> getImportesActualesActivo(String numActivo) {
 		Object[] resultados = rawDao.getExecuteSQLArray(

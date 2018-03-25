@@ -1,8 +1,9 @@
 package es.pfsgroup.plugin.rem.activo.publicacion.dao;
 
+
+
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoPaginadoHistoricoEstadoPublicacion;
 
 public interface ActivoPublicacionHistoricoDao extends AbstractDao<ActivoPublicacionHistorico, Long> {
@@ -38,4 +39,5 @@ public interface ActivoPublicacionHistoricoDao extends AbstractDao<ActivoPublica
 	 * @return Devuelve el número de días que ha estado el activo publicado.
 	 */
 	Integer getTotalDeDiasEnEstadoPublicadoAlquilerPorIdActivo(Long idActivo);
+	
 }

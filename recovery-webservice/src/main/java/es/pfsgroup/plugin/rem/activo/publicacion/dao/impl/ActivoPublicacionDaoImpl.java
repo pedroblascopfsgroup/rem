@@ -4,6 +4,7 @@ import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
@@ -79,6 +80,18 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 	public ActivoPublicacion getActivoPublicacionPorIdActivo(Long idActivo) {
 		Criteria criteria = getSession().createCriteria(ActivoPublicacion.class);
 		criteria.add(Restrictions.eq("activo.id", idActivo));
+
+		return HibernateUtils.castObject(ActivoPublicacion.class, criteria.uniqueResult());
+	}
+	
+	@Override
+	public ActivoPublicacion getActivoPublicacionPorNumActivo(Long numActivo){
+		Criteria criteria = getSession().createCriteria(Activo.class);
+		criteria.add(Restrictions.eq("activo.numActivo", numActivo));
+		Activo act = HibernateUtils.castObject(Activo.class, criteria);
+		
+		Criteria criteria2 = getSession().createCriteria(ActivoPublicacion.class);
+		criteria2.add(Restrictions.eq("activo.id", act.getId()));
 
 		return HibernateUtils.castObject(ActivoPublicacion.class, criteria.uniqueResult());
 	}

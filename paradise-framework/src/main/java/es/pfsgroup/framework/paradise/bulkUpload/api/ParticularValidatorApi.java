@@ -261,4 +261,16 @@ public interface ParticularValidatorApi {
 	public Boolean usuarioEsTipoGestor(String username, String codigoTipoGestor);
 	
 	public Boolean combinacionGestorCarteraAcagexValida(String codigoGestor, String numActivo, String numAgrupacion,String numExpediente);
+
+	public Boolean destinoFinalNoVenta(String numActivo);
+	
+	public Boolean destinoFinalNoAlquiler(String numActivo);
+	
+	public Boolean activoNoPublicado(String numActivo);
+
+	public Boolean isActivoNoPublicable(String numActivo);
+	
+	public Boolean activoOculto(String numActivo);
+	
+	public Boolean motivoNotExistsByCod(String codigoMotivo);
 }

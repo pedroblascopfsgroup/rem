@@ -35,8 +35,8 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
   BEGIN
 	    /*DBMS_OUTPUT.PUT_LINE('[INICIO]');*/
       
-      pOCULTAR := -1; 
-      pMOTIVO  := -1;
+      pOCULTAR := 0; 
+      pMOTIVO  := 0;
       
       IF pACT_ID IS NOT NULL THEN
         vWHERE := ' WHERE V.ACT_ID'||pACT_ID;

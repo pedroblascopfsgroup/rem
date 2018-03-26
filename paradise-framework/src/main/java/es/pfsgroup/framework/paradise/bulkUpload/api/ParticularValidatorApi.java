@@ -316,8 +316,6 @@ public interface ParticularValidatorApi {
 	
 	public Boolean activoNoPublicado(String numActivo);
 
-	public Boolean isActivoNoPublicable(String numActivo);
-	
 	public Boolean activoOculto(String numActivo);
 	
 	public Boolean motivoNotExistsByCod(String codigoMotivo);

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=CARLOS LOPEZ
---## FECHA_CREACION=20180315
+--## FECHA_CREACION=20180326
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-3936
@@ -41,7 +41,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
       V_MSQL := '
             SELECT OCULTO, DD_MTO_CODIGO
               FROM (
-                  SELECT OCULTO, DD_MTO_CODIGO, ROW_NUMBER () OVER (PARTITION BY ACT_ID ORDER BY ORDEN DESC) ROWNUMBER
+                  SELECT OCULTO, DD_MTO_CODIGO, ROW_NUMBER () OVER (PARTITION BY ACT_ID ORDER BY ORDEN ASC) ROWNUMBER
                     FROM(
                           SELECT ACT.ACT_ID
                                /*, DECODE(SCM.DD_SCM_CODIGO,''05'',1,0)OCULTO*/ /*Vendido*/

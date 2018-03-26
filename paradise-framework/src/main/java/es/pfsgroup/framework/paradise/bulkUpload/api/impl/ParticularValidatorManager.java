@@ -727,28 +727,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
-	public Boolean isActivoNoPublicable(String numActivo) {
-		if(Checks.esNulo(numActivo)) return false;
-		
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
-				+ "				FROM ACT_ACTIVO act"
-				+ "				WHERE act.ACT_ID IN ( "
-				+ "					SELECT pac.ACT_ID "
-				+ "					FROM ACT_PAC_PERIMETRO_ACTIVO pac "
-				+ "					WHERE pac.PAC_CHECK_PUBLICAR = 0 "
-				+ "					AND pac.BORRADO = 0) "
-				+ "				AND act.ACT_NUM_ACTIVO = "+numActivo+" "
-				+ "				AND act.BORRADO = 0");
-		
-		if("0".equals(resultado)){
-			return false;
-		}else {
-			return true;
-		}
-	}
-	
-	
-	@Override
 	public Boolean destinoFinalNoVenta(String numActivo){
 		if(Checks.esNulo(numActivo)) return false;
 		

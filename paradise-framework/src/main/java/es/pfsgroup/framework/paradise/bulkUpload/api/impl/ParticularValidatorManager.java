@@ -772,8 +772,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			FROM ACT_ACTIVO act "
 				+ "			WHERE act.ACT_ID NOT IN ( "
 				+ "				SELECT apu.ACT_ID FROM ACT_APU_ACTIVO_PUBLICACION apu WHERE apu.BORRADO = 0 "
-				+ "				UNION ALL "
-				+ "				SELECT ahp.ACT_ID FROM ACT_AHP_HIST_PUBLICACION ahp WHERE ahp.BORRADO = 0) "
 				+ "			AND act.ACT_NUM_ACTIVO = "+numActivo+" "
 				+ "			AND act.BORRADO = 0");
 		if("0".equals(resultado)){

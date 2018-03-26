@@ -16,6 +16,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.message.MessageService;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
@@ -28,6 +31,7 @@ import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionHistoricoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -55,6 +59,9 @@ public class MSVActualizadorOcultarActivosVenta extends AbstractMSVActualizador 
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 	
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -118,7 +125,10 @@ public class MSVActualizadorOcultarActivosVenta extends AbstractMSVActualizador 
 	@Transactional(readOnly = false)
 	public void procesaFila(MSVHojaExcel exc, int fila) throws IOException, ParseException, JsonViewerException, SQLException {
 		Long numActivo = Long.parseLong(exc.dameCelda(fila, COL_NUM.NUM_ACTIVO_HAYA),10);
-		ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorNumActivo(numActivo);
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
+		Activo act = genericDao.get(Activo.class, filtro);
+		
+		ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(act.getId());
 		if(this.registrarHistoricoPublicacion(activoPublicacion)) {
 			activoPublicacion.setCheckOcultarVenta(true);
 			activoPublicacionDao.save(activoPublicacion);

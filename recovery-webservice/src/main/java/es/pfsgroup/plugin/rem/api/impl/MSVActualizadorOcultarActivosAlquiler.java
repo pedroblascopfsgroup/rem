@@ -16,6 +16,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.message.MessageService;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
@@ -28,6 +31,7 @@ import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionHistoricoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -54,6 +58,9 @@ public class MSVActualizadorOcultarActivosAlquiler extends AbstractMSVActualizad
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 	
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -116,12 +123,14 @@ public class MSVActualizadorOcultarActivosAlquiler extends AbstractMSVActualizad
 		@Override
 		@Transactional(readOnly = false)
 		public void procesaFila(MSVHojaExcel exc, int fila) throws IOException, ParseException, JsonViewerException, SQLException {
-			Long idActivo = Long.parseLong(exc.dameCelda(fila, COL_NUM.NUM_ACTIVO_HAYA),10);
-			ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(idActivo);
+			Long numActivo = Long.parseLong(exc.dameCelda(fila, COL_NUM.NUM_ACTIVO_HAYA),10);
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
+			Activo act = genericDao.get(Activo.class, filtro);
+			ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(act.getId());
 			if(this.registrarHistoricoPublicacion(activoPublicacion)) {
 				activoPublicacion.setCheckOcultarAlquiler(true);
 				activoPublicacionDao.save(activoPublicacion);
-				this.publicarActivoProcedure(idActivo, genericAdapter.getUsuarioLogado().getNombre());
+				this.publicarActivoProcedure(activoPublicacion.getActivo().getId(), genericAdapter.getUsuarioLogado().getNombre());
 			}
 		}
 }

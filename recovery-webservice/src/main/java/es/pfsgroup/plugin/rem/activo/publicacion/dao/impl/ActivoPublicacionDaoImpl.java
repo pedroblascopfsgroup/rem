@@ -83,19 +83,7 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 
 		return HibernateUtils.castObject(ActivoPublicacion.class, criteria.uniqueResult());
 	}
-	
-	@Override
-	public ActivoPublicacion getActivoPublicacionPorNumActivo(Long numActivo){
-		Criteria criteria = getSession().createCriteria(Activo.class);
-		criteria.add(Restrictions.eq("activo.numActivo", numActivo));
-		Activo act = HibernateUtils.castObject(Activo.class, criteria);
 		
-		Criteria criteria2 = getSession().createCriteria(ActivoPublicacion.class);
-		criteria2.add(Restrictions.eq("activo.id", act.getId()));
-
-		return HibernateUtils.castObject(ActivoPublicacion.class, criteria.uniqueResult());
-	}
-	
 	@Override
 	public List<ActivoPublicacion> getPublicacionActivoByIdActivo(DtoDatosPublicacion dto) {		
 		String hql2 = "from ActivoPublicacion ap where ap.activo.id= ?";

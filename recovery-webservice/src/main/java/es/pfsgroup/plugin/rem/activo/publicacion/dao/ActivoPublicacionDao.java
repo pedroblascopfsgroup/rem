@@ -52,4 +52,5 @@ public interface ActivoPublicacionDao extends AbstractDao<ActivoPublicacion, Lon
 	 * @return Devuelve un listado con los resultados obtenidos.
 	 */
 	public List<ActivoPublicacion> getPublicacionActivoByIdActivo(DtoDatosPublicacion dto);
+
 }

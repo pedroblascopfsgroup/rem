@@ -59,8 +59,11 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 	public static final String CODE_FILE_BULKUPLOAD_DESMARCAR_IBI_EXENTO_ACTIVO="ADIE";
 	public static final String CODE_FILE_BULKUPLOAD_ASOCIAR_ACTIVOS_GASTO="ACGA";
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_GESTORES="CMG";
+	public static final String CODE_FILE_BULKUPLOAD_OCULTACION_VENTA = "CMOV";
+	public static final String CODE_FILE_BULKUPLOAD_OCULTACION_ALQUILER = "CMOA";
 	public static final String CODE_FILE_BULKUPLOAD_PUBLICAR_ACTIVOS_VENTA="APV";
 	public static final String CODE_FILE_BULKUPLOAD_PUBLICAR_ACTIVOS_ALQUILER="APA";
+
 
 		  
 	private static final long serialVersionUID = 5938440720826995243L;

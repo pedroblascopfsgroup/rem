@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=CARLOS LOPEZ
---## FECHA_CREACION=20180315
+--## FECHA_CREACION=20180326
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-3936
@@ -37,15 +37,11 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
       
       pOCULTAR := 0; 
       pMOTIVO  := 0;
-      
-      IF pACT_ID IS NOT NULL THEN
-        vWHERE := ' WHERE V.ACT_ID'||pACT_ID;
-      END IF;
 
       V_MSQL := '
             SELECT OCULTO, DD_MTO_CODIGO
               FROM (
-                  SELECT OCULTO, DD_MTO_CODIGO, ROW_NUMBER () OVER (PARTITION BY ACT_ID ORDER BY ORDEN DESC) ROWNUMBER
+                  SELECT OCULTO, DD_MTO_CODIGO, ROW_NUMBER () OVER (PARTITION BY ACT_ID ORDER BY ORDEN ASC) ROWNUMBER
                     FROM(
                           SELECT ACT.ACT_ID
                                /*, DECODE(SCM.DD_SCM_CODIGO,''05'',1,0)OCULTO*/ /*Vendido*/
@@ -116,7 +112,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                                                 FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER DDEPA 
                                                                WHERE DDEPA.BORRADO = 0
                                                                  AND DDEPA.DD_EPA_CODIGO = ''04'')/*Oculto Alquiler*/
-                                    LEFT JOIN DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''04'' AND MTO.BORRADO = 0 /*Revisión adecuación*/
+                                    LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''04'' AND MTO.BORRADO = 0 /*Revisión adecuación*/
                                    WHERE APU.BORRADO = 0.
                                      AND (SPS.SPS_OCUPADO = 0
                                        OR SPS.SPS_CON_TITULO = 0

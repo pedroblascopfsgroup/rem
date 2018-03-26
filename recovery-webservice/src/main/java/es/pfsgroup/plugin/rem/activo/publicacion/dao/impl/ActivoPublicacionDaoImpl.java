@@ -4,6 +4,7 @@ import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
@@ -82,7 +83,7 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 
 		return HibernateUtils.castObject(ActivoPublicacion.class, criteria.uniqueResult());
 	}
-	
+		
 	@Override
 	public List<ActivoPublicacion> getPublicacionActivoByIdActivo(DtoDatosPublicacion dto) {		
 		String hql2 = "from ActivoPublicacion ap where ap.activo.id= ?";

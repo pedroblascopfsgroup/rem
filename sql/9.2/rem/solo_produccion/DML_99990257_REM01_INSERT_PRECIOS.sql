@@ -20,25 +20,25 @@ SET DEFINE OFF;
 
 
 DECLARE
-    V_SQL 					   VARCHAR2(32000 CHAR); -- Sentencia a ejecutar         
-    V_ESQUEMA 				   VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
-    V_ESQUEMA_M 			   VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
-    V_TABLA 				   VARCHAR2(25 CHAR):= 'ACT_VAL_VALORACIONES';
-    V_TABLA_HIST 			   VARCHAR2(25 CHAR):= 'ACT_HVA_HIST_VALORACIONES';
-    V_DD 					   VARCHAR2(25 CHAR):= 'DD_TPC_TIPO_PRECIO';
-    V_COUNT 				   NUMBER(16); -- Vble. para contar.
-    --V_KOUNT 				   NUMBER(16); -- Vble. para kontar.
-    V_COUNT_INSERT 		   	   NUMBER(16):= 0; -- Vble. para contar inserts
-    ERR_NUM 				   NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
-    ERR_MSG 				   VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-	V_USUARIO 				   VARCHAR2(32 CHAR):= 'REMVIP-223';
+    V_SQL 		       VARCHAR2(32000 CHAR); -- Sentencia a ejecutar         
+    V_ESQUEMA 		       VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M                VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_TABLA 	               VARCHAR2(25 CHAR):= 'ACT_VAL_VALORACIONES';
+    V_TABLA_HIST               VARCHAR2(25 CHAR):= 'ACT_HVA_HIST_VALORACIONES';
+    V_DD 		       VARCHAR2(25 CHAR):= 'DD_TPC_TIPO_PRECIO';
+    V_COUNT 	               NUMBER(16); -- Vble. para contar.
+    --V_KOUNT 	               NUMBER(16); -- Vble. para kontar.
+    V_COUNT_INSERT             NUMBER(16):= 0; -- Vble. para contar inserts
+    ERR_NUM 		       NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG 		       VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_USUARIO 	       	       VARCHAR2(32 CHAR):= 'REMVIP-223';
     
-    ACT_NUM_ACTIVO 			   NUMBER(16);
-    ACT_ID					   NUMBER(16);
-    APROBADO_VENTA 			   NUMBER(16);
-    MINIMO_AUTORIZADO 		   NUMBER(16);
+    ACT_NUM_ACTIVO 	       NUMBER(16);
+    ACT_ID		       NUMBER(16);
+    APROBADO_VENTA 	       NUMBER(16);
+    MINIMO_AUTORIZADO 	       NUMBER(16);
     
-    DESCUENTO_APROBADO 		   NUMBER(16);
+    DESCUENTO_APROBADO 	       NUMBER(16);
     F_INI_DESCUENTO_APROBADO   DATE;
     F_FIN_DESCUENTO_APROBADO   DATE;
     
@@ -46,7 +46,7 @@ DECLARE
     F_INI_DESCUENTO_PUBLICADO  DATE;
     F_FIN_DESCUENTO_PUBLICADO  DATE;
     
-    ID_APROBADO_VENTA      	   NUMBER(16);
+    ID_APROBADO_VENTA          NUMBER(16);
     ID_MINIMO_AUTORIZADO       NUMBER(16);
     ID_DESCUENTO_APROBADO      NUMBER(16);
     ID_DESCUENTO_PUBLICADO     NUMBER(16);
@@ -200,7 +200,7 @@ DECLARE
     
  BEGIN
  
-  	EXECUTE IMMEDIATE 'SELECT DD_TPC_ID FROM '||V_ESQUEMA||'.'||V_DD||' WHERE DD_TPC_CODIGO = ''02''' INTO ID_APROBADO_VENTA;
+    EXECUTE IMMEDIATE 'SELECT DD_TPC_ID FROM '||V_ESQUEMA||'.'||V_DD||' WHERE DD_TPC_CODIGO = ''02''' INTO ID_APROBADO_VENTA;
     EXECUTE IMMEDIATE 'SELECT DD_TPC_ID FROM '||V_ESQUEMA||'.'||V_DD||' WHERE DD_TPC_CODIGO = ''04''' INTO ID_MINIMO_AUTORIZADO;
     EXECUTE IMMEDIATE 'SELECT DD_TPC_ID FROM '||V_ESQUEMA||'.'||V_DD||' WHERE DD_TPC_CODIGO = ''07''' INTO ID_DESCUENTO_APROBADO;
     EXECUTE IMMEDIATE 'SELECT DD_TPC_ID FROM '||V_ESQUEMA||'.'||V_DD||' WHERE DD_TPC_CODIGO = ''13''' INTO ID_DESCUENTO_PUBLICADO;
@@ -212,7 +212,7 @@ DECLARE
     
     ACT_NUM_ACTIVO 	  := V_TMP_JBV(1);
     APROBADO_VENTA 	  := V_TMP_JBV(2);
-    MINIMO_AUTORIZADO := V_TMP_JBV(3);
+    MINIMO_AUTORIZADO     := V_TMP_JBV(3);
     
 	EXECUTE IMMEDIATE 'SELECT ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '||ACT_NUM_ACTIVO||'' INTO ACT_ID;
     

@@ -67,5 +67,19 @@ public class BeanUtilNotNull extends BeanUtilsBean{
 			}
 	        super.copyProperty(dest, name, value);
 	    }
+		
+		@Override
+	    public void copyProperties(Object dest, Object orig)
+	            throws IllegalAccessException, InvocationTargetException {
+		  
+			 if (dest == null) {
+		            return;
+		      }
+			 if (orig == null) {
+		        	return;
+		     }
+			 super.copyProperties(dest, orig);
+	        
+	    }
 }
 

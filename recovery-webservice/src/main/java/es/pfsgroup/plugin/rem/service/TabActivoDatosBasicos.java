@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.service;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +31,9 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
@@ -44,10 +47,10 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
-import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
-import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
+import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -59,10 +62,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
@@ -112,6 +112,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private OfertaApi ofertaApi;
 	
 	@Autowired
+	private ActivoAdapter activoAdapter;
+	
+	@Autowired
 	private GestorActivoApi gestorActivoApi;
 	
 	@Autowired
@@ -128,6 +131,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private ActivoPublicacionDao activoPublicacionDao;
+	
+	@Autowired
+	private ActivoPatrimonioDao activoPatrimonioDao;
 	
 	@Resource
     MessageService messageServices;
@@ -366,52 +372,66 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		BeanUtils.copyProperty(activoDto, "numInmovilizadoBankia", activo.getNumInmovilizadoBnk());
 		// ----------
 		
-		//comprobar los condicionantes del indicador Venta y Alquiler
+		//Comprobar los condicionantes del indicador Venta y Alquiler
 		BeanUtils.copyProperties(activoDto, perimetroActivo);
 		
-		DtoDatosPublicacion dtoP = new DtoDatosPublicacion();
+		ActivoPatrimonio activoPatrimonio = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
 		
-		dtoP.setIdActivo(activo.getId());
+		//Comprobar si el activo tiene el CEE
+		List<DtoAdmisionDocumento> listDtoAdmisionDocumento = new ArrayList<DtoAdmisionDocumento>();
 		
-		List<ActivoPublicacion> activoP = activoPublicacionDao.getPublicacionActivoByIdActivo(dtoP);
-		if(!Checks.estaVacio(activoP)) {
-			if(DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo())){
-				activoDto.setEstadoVenta(0);
-			}else if(!(DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo())) 
-					&& activoDto.getAplicaPublicar() 
-					&& activoDto.getAplicaComercializar()
-					&& (DDEstadoPublicacionVenta.CODIGO_PRE_PUBLICADO_VENTA.equals(!Checks.estaVacio(activoP) ? activoP.get(activoP.size()-1).getEstadoPublicacionVenta().getCodigo() : null) 
-							|| !Checks.estaVacio(activoP) ? !activoP.get(activoP.size()-1).getCheckPublicarVenta() : null))
-			{
-				activoDto.setEstadoVenta(1);
-			}else if(!(DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo())) 
-					|| activoDto.getAplicaPublicar() 
-					|| activoDto.getAplicaComercializar()
-					|| (DDEstadoPublicacionVenta.CODIGO_PRE_PUBLICADO_VENTA.equals(!Checks.estaVacio(activoP) ? activoP.get(activoP.size()-1).getEstadoPublicacionVenta().getCodigo() : null) 
-							|| !Checks.estaVacio(activoP) ? !activoP.get(activoP.size()-1).getCheckPublicarVenta() : null)){
-				activoDto.setEstadoVenta(2);
+		listDtoAdmisionDocumento = activoAdapter.getListDocumentacionAdministrativaById(activo.getId());
+		
+		Boolean conCee = false;
+		
+		if(!Checks.esNulo(listDtoAdmisionDocumento)){
+			int listSize = listDtoAdmisionDocumento.size();
+			for(int i=0; i<listSize; i++){
+				if(listDtoAdmisionDocumento.get(i).getDescripcionTipoDocumentoActivo().equals("CEE (Certificado de eficiencia energética)")){
+					conCee = true;
+				}
 			}
-			
-			if(DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo())){
-				activoDto.setEstadoAlquiler(0);
-			}else if(!(DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo())) 
-					&& activoDto.getAplicaPublicar()
-					&& activoDto.getAplicaComercializar()
-					&& (DDEstadoPublicacionAlquiler.CODIGO_PRE_PUBLICADO_ALQUILER.equals(!Checks.estaVacio(activoP) ? activoP.get(activoP.size()-1).getEstadoPublicacionAlquiler().getCodigo(): null) 
-							|| !Checks.estaVacio(activoP) ? !activoP.get(activoP.size()-1).getCheckPublicarAlquiler() : null))
-			{
-				activoDto.setEstadoAlquiler(1);
-			}else if(!(DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo())) 
-					|| activoDto.getAplicaPublicar() 
-					|| activoDto.getAplicaComercializar()
-					|| (DDEstadoPublicacionAlquiler.CODIGO_PRE_PUBLICADO_ALQUILER.equals(!Checks.estaVacio(activoP) ? activoP.get(activoP.size()-1).getEstadoPublicacionAlquiler().getCodigo(): null) 
-							|| !Checks.estaVacio(activoP) ? !activoP.get(activoP.size()-1).getCheckPublicarAlquiler() : null)){
-				activoDto.setEstadoAlquiler(2);
-			}
-		}else {
-			activoDto.setEstadoVenta(0);
-			activoDto.setEstadoAlquiler(0);
 		}
+		//------------
+		
+		//Indicador Venta
+		if(activoDto.getAdmision()
+				&& activoDto.getGestion()
+				&& activoDto.getInformeComercialAceptado()
+				&& ((!Checks.esNulo(activoDto.getAprobadoVentaWeb()) || !Checks.esNulo(activoDto.getAprobadoRentaWeb())) || activoDto.getAplicaPublicar()) 
+				){
+			activoDto.setEstadoVenta(1);
+		}else if(!activoDto.getAdmision()
+				&& !activoDto.getGestion()
+				&& !activoDto.getInformeComercialAceptado()
+				&& !((!Checks.esNulo(activoDto.getAprobadoVentaWeb()) || !Checks.esNulo(activoDto.getAprobadoRentaWeb())) || activoDto.getAplicaPublicar()) 
+				){
+			activoDto.setEstadoVenta(0);
+		}else{
+			activoDto.setEstadoVenta(2);
+		}
+		
+		//Indicador Alquiler
+		if(activoDto.getAdmision()
+				&& activoDto.getGestion()
+				&& activoDto.getInformeComercialAceptado()
+				&& (activoPatrimonio.getAdecuacionAlquiler().getCodigo().equals("01") || activoPatrimonio.getAdecuacionAlquiler().getCodigo().equals("03"))
+				&& conCee
+				&& ((!Checks.esNulo(activoDto.getAprobadoVentaWeb()) || !Checks.esNulo(activoDto.getAprobadoRentaWeb())) || activoDto.getAplicaPublicar()) 
+				){
+			activoDto.setEstadoAlquiler(1);
+		}else if(!activoDto.getAdmision()
+				&& !activoDto.getGestion()
+				&& !activoDto.getInformeComercialAceptado()
+				&& !(activoPatrimonio.getAdecuacionAlquiler().getCodigo().equals("01") || activoPatrimonio.getAdecuacionAlquiler().getCodigo().equals("03"))
+				&& conCee
+				&& !((!Checks.esNulo(activoDto.getAprobadoVentaWeb()) || !Checks.esNulo(activoDto.getAprobadoRentaWeb())) || activoDto.getAplicaPublicar()) 
+				){
+			activoDto.setEstadoAlquiler(0);
+		}else{
+			activoDto.setEstadoAlquiler(2);
+		}
+		
 		//--------------------
 		
 		// Datos de activo bancario -----------------

@@ -1,0 +1,61 @@
+--/*
+--#########################################
+--## AUTOR=Luis Caballero
+--## FECHA_CREACION=20180327
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=2.0.15
+--## INCIDENCIA_LINK=REMVIP-399
+--## PRODUCTO=NO
+--## 
+--## Finalidad: 
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+
+    V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+    V_ESQUEMA_M VARCHAR2(10 CHAR) := 'REMMASTER';
+    V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-399';
+
+BEGIN
+
+    DBMS_OUTPUT.PUT_LINE('[INICIO]');
+    
+
+	EXECUTE IMMEDIATE 'INSERT INTO '||V_ESQUEMA||'.ACT_HVA_HIST_VALORACIONES (HVA_ID,ACT_ID,DD_TPC_ID,
+	HVA_IMPORTE,HVA_FECHA_INICIO,HVA_FECHA_FIN,HVA_FECHA_APROBACION,HVA_FECHA_CARGA,USU_ID,HVA_OBSERVACIONES,
+            VERSION,USUARIOCREAR,FECHACREAR,BORRADO)
+        SELECT '||V_ESQUEMA||'.S_ACT_HVA_HIST_VALORACIONES.NEXTVAL,ACT_ID,DD_TPC_ID,VAL_IMPORTE,VAL_FECHA_INICIO,
+	VAL_FECHA_FIN,VAL_FECHA_APROBACION,VAL_FECHA_CARGA,USU_ID,VAL_OBSERVACIONES,0,'''||V_USUARIO||''',SYSDATE,0
+        FROM '||V_ESQUEMA||'.ACT_VAL_VALORACIONES  
+        WHERE ACT_VAL_VALORACIONES.VAL_ID IN (select VAL_ID from '||V_ESQUEMA||'.AUX_VALORACIONES)';
+
+	DBMS_OUTPUT.PUT_LINE('	[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||SQL%ROWCOUNT||' valoraciones insertadas en el histórico.');
+
+	EXECUTE IMMEDIATE 'DELETE '||V_ESQUEMA||'.ACT_VAL_VALORACIONES where VAL_ID IN (select VAL_ID from '||V_ESQUEMA||'.AUX_VALORACIONES)';
+
+	DBMS_OUTPUT.PUT_LINE('	[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||SQL%ROWCOUNT||' valoraciones borradas.');
+
+
+    DBMS_OUTPUT.PUT_LINE('[FIN]');
+
+    COMMIT;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(SQLERRM);
+        ROLLBACK;
+        RAISE;
+END;
+/
+EXIT;

@@ -24,32 +24,42 @@ DECLARE
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_TABLA VARCHAR2(25 CHAR):= 'COM_COMPRADOR';
-    --V_COUNT NUMBER(16); -- Vble. para contar.
+    V_COUNT NUMBER(16); -- Vble. para contar.
     --V_COUNT_INSERT NUMBER(16):= 0; -- Vble. para contar inserts
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_USUARIO VARCHAR2(32 CHAR):= 'REMVIP-???';
-     BEGIN
+BEGIN
 
-   
+ V_SQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = '''||V_TABLA||'''
+           AND COLUMN_NAME = ''ID_COMPRADOR_URSUS_BH''';
+           
+ EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
+ 
+ IF V_COUNT = 0 THEN    
+    
+     V_SQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD
+                  ID_COMPRADOR_URSUS_BH NUMBER(16,0) ';
+    
+     EXECUTE IMMEDIATE V_SQL;
+    
+    
+    
+     V_SQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.ID_COMPRADOR_URSUS_BH 
+       IS ''Id del comprador de Bankia Habitat devuelto por el WebService de Bankia.''';
+    
+      EXECUTE IMMEDIATE V_SQL;
+    
+     V_SQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.ID_COMPRADOR_URSUS 
+       IS ''Id del comprador de Bankia devuelto por el WebService de Bankia.''';
+    
+      EXECUTE IMMEDIATE V_SQL;
+    
+     DBMS_OUTPUT.PUT_LINE('[INFO] Añadido el campo ID_COMPRADOR_URSUS_BH');
 
- V_SQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD
- 			  ID_COMPRADOR_URSUS_BH NUMBER(16,0) ';
-
- EXECUTE IMMEDIATE V_SQL;
-
-
-
- V_SQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.ID_COMPRADOR_URSUS_BH 
-   IS ''Id del comprador de Bankia Habitat devuelto por el WebService de Bankia.'''
-
-  EXECUTE IMMEDIATE V_SQL;
-
- V_SQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.ID_COMPRADOR_URSUS 
-   IS ''Id del comprador de Bankia devuelto por el WebService de Bankia.''';
-
-  EXECUTE IMMEDIATE V_SQL;
-
+ELSE
+     DBMS_OUTPUT.PUT_LINE('[INFO] Ya existe ID_COMPRADOR_URSUS_BH');
+END IF;
  
  COMMIT;
  

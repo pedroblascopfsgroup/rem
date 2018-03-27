@@ -1,10 +1,10 @@
 --/*
 --######################################### 
---## AUTOR=Kevin Fernández
---## FECHA_CREACION=20180324
+--## AUTOR=Sergio Ortuño
+--## FECHA_CREACION=20180327
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-3956
+--## INCIDENCIA_LINK=HREOS-3957
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Procedimiento encargado de perfilar las funciones.
@@ -232,6 +232,8 @@ T_VAR( 'MASIVO_DESPUBLICAR_FORZADO','N','N','N','N','N','N','S','S','S','S','N',
 T_VAR( 'SUBIR_LISTA_ACTIVOS_IBI','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','N','N','N','S','S','S','S','S','S','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'MASIVO_PUBLICACION_VENTA','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'MASIVO_PUBLICACION_ALQUILER','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
+T_VAR( 'MASIVO_OCULTACION_VENTA','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
+T_VAR( 'MASIVO_OCULTACION_ALQUILER','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
 
 T_VAR( 'MENU_DASHBOARD','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'MENU_AGENDA','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S'),

@@ -116,12 +116,17 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
                                          FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION
                                         WHERE BORRADO = 0
                                           AND DD_MTO_CODIGO = '''||pDD_MTO_CODIGO||''')
-                      , APU_CHECK_OCULTAR_A = '||OutOCULTAR||'
+                      , APU_CHECK_OCULTAR_A = '||pOCULTAR||'
                       , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                       , FECHAMODIFICAR = SYSDATE
                   WHERE ACT_ID = '||nACT_ID||'
                     AND BORRADO = 0
-                    AND APU_CHECK_OCULTAR_A <> '||pOCULTAR
+                    AND (APU_CHECK_OCULTAR_A <> '||pOCULTAR||'
+                      OR DD_MTO_A_ID <> (SELECT DD_MTO_ID
+                                          FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION
+                                         WHERE BORRADO = 0
+                                           AND DD_MTO_CODIGO = '''||pDD_MTO_CODIGO||'''))
+                '  
                 ;
       
       EXECUTE IMMEDIATE V_MSQL;
@@ -136,12 +141,17 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
                                          FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION
                                         WHERE BORRADO = 0
                                           AND DD_MTO_CODIGO = '''||pDD_MTO_CODIGO||''')
-                      , APU_CHECK_OCULTAR_V = '||OutOCULTAR||'
+                      , APU_CHECK_OCULTAR_V = '||pOCULTAR||'
                       , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                       , FECHAMODIFICAR = SYSDATE
                   WHERE ACT_ID = '||nACT_ID||'
                     AND BORRADO = 0
-                    AND APU_CHECK_OCULTAR_V <> '||pOCULTAR
+                    AND (APU_CHECK_OCULTAR_V <> '||pOCULTAR||'
+                      OR DD_MTO_V_ID <> (SELECT DD_MTO_ID
+                                          FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION
+                                         WHERE BORRADO = 0
+                                           AND DD_MTO_CODIGO = '''||pDD_MTO_CODIGO||'''))
+                '  
                 ;
 
       EXECUTE IMMEDIATE V_MSQL;
@@ -380,6 +390,8 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
 
 	  IF pUSUARIOMODIFICAR IS NULL THEN
 	    vUSUARIOMODIFICAR := 'SP_CAMBIO_EST_PUB';
+	  ELSE
+	    vUSUARIOMODIFICAR := pUSUARIOMODIFICAR;
 	  END IF;
 
       V_MSQL := '

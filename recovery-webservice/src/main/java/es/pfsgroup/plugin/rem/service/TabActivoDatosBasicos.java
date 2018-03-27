@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -55,25 +56,6 @@ import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
-import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
-import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoProductoBancario;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
@@ -360,13 +342,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		// Si no exite perimetro en BBDD, se crea una nueva instancia PerimetroActivo, con todas las condiciones marcadas
 		// y por tanto, por defecto se marcan los checkbox.
-		BeanUtils.copyProperty(activoDto,"aplicaTramiteAdmision", new Integer(1).equals( perimetroActivo.getAplicaTramiteAdmision())? true: false);
-		BeanUtils.copyProperty(activoDto,"aplicaGestion", new Integer(1).equals( perimetroActivo.getAplicaGestion())? true: false);
-		BeanUtils.copyProperty(activoDto,"aplicaAsignarMediador", new Integer(1).equals(perimetroActivo.getAplicaAsignarMediador())? true: false);
-		BeanUtils.copyProperty(activoDto,"aplicaComercializar", new Integer(1).equals(perimetroActivo.getAplicaComercializar())? true: false);
-		BeanUtils.copyProperty(activoDto,"aplicaFormalizar", new Integer(1).equals(perimetroActivo.getAplicaFormalizar())? true: false);
+		BeanUtils.copyProperty(activoDto,"aplicaTramiteAdmision", new Integer(1).equals(perimetroActivo.getAplicaTramiteAdmision()));
+		BeanUtils.copyProperty(activoDto,"aplicaGestion", new Integer(1).equals(perimetroActivo.getAplicaGestion()));
+		BeanUtils.copyProperty(activoDto,"aplicaAsignarMediador", new Integer(1).equals(perimetroActivo.getAplicaAsignarMediador()));
+		BeanUtils.copyProperty(activoDto,"aplicaComercializar", new Integer(1).equals(perimetroActivo.getAplicaComercializar()));
+		BeanUtils.copyProperty(activoDto,"aplicaFormalizar", new Integer(1).equals(perimetroActivo.getAplicaFormalizar()));
 		if(!Checks.esNulo(perimetroActivo.getAplicaPublicar()))
-			BeanUtils.copyProperty(activoDto,"aplicaPublicar", new Integer(1).equals(perimetroActivo.getAplicaPublicar()? 1 : 0)? true: false);
+			BeanUtils.copyProperty(activoDto,"aplicaPublicar", new Integer(1).equals(perimetroActivo.getAplicaPublicar() ? 1 : 0));
 		
 		// En la sección de perímetro pero no dependiente del mismo.
 		BeanUtils.copyProperty(activoDto, "numInmovilizadoBankia", activo.getNumInmovilizadoBnk());
@@ -378,16 +360,14 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		ActivoPatrimonio activoPatrimonio = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
 		
 		//Comprobar si el activo tiene el CEE
-		List<DtoAdmisionDocumento> listDtoAdmisionDocumento = new ArrayList<DtoAdmisionDocumento>();
-		
-		listDtoAdmisionDocumento = activoAdapter.getListDocumentacionAdministrativaById(activo.getId());
+		List<DtoAdmisionDocumento> listDtoAdmisionDocumento = activoAdapter.getListDocumentacionAdministrativaById(activo.getId());
 		
 		Boolean conCee = false;
 		
 		if(!Checks.esNulo(listDtoAdmisionDocumento)){
 			int listSize = listDtoAdmisionDocumento.size();
 			for(int i=0; i<listSize; i++){
-				if(listDtoAdmisionDocumento.get(i).getDescripcionTipoDocumentoActivo().equals("CEE (Certificado de eficiencia energética)")){
+				if(listDtoAdmisionDocumento.get(i).getDescripcionTipoDocumentoActivo().equals("CEE (Certificado de eficiencia energética)")){ // TODO: utilizar código, no descripción.
 					conCee = true;
 				}
 			}
@@ -415,7 +395,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(activoDto.getAdmision()
 				&& activoDto.getGestion()
 				&& activoDto.getInformeComercialAceptado()
-				&& (activoPatrimonio.getAdecuacionAlquiler().getCodigo().equals("01") || activoPatrimonio.getAdecuacionAlquiler().getCodigo().equals("03"))
+				&& (!Checks.esNulo(activoPatrimonio)
+				&& (DDAdecuacionAlquiler.CODIGO_ADA_SI.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())
+				|| DDAdecuacionAlquiler.CODIGO_ADA_NO_APLICA.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())))
 				&& conCee
 				&& ((!Checks.esNulo(activoDto.getAprobadoVentaWeb()) || !Checks.esNulo(activoDto.getAprobadoRentaWeb())) || activoDto.getAplicaPublicar()) 
 				){
@@ -423,7 +405,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}else if(!activoDto.getAdmision()
 				&& !activoDto.getGestion()
 				&& !activoDto.getInformeComercialAceptado()
-				&& !(activoPatrimonio.getAdecuacionAlquiler().getCodigo().equals("01") || activoPatrimonio.getAdecuacionAlquiler().getCodigo().equals("03"))
+				&& (!Checks.esNulo(activoPatrimonio)
+				&& !(DDAdecuacionAlquiler.CODIGO_ADA_SI.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())
+				|| DDAdecuacionAlquiler.CODIGO_ADA_NO_APLICA.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())))
 				&& conCee
 				&& !((!Checks.esNulo(activoDto.getAprobadoVentaWeb()) || !Checks.esNulo(activoDto.getAprobadoRentaWeb())) || activoDto.getAplicaPublicar()) 
 				){

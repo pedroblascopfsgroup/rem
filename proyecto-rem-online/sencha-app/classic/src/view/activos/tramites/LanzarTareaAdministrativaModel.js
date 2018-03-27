@@ -48,21 +48,16 @@ Ext.define('HreRem.view.activos.tramites.LanzarTareaAdministrativaModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tareaDestinoSalto'}
 			}
-		}
+		},
 		
-		
-		/*,
-		comboComiteSancionador: {
-			model: 'HreRem.model.Distribuciones',
+		comboResolucionComite: {
+			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'activo/getTipoHabitaculoByNumPlanta',
-				extraParams: {
-					idActivo: '{activo.id}',
-					numPlanta: '{comboNumeroPlantas.selection.numPlanta}'
-				}
+				remoteUrl: 'generic/getDiccionarioTareas',
+				extraParams: {diccionario: 'DDResolucionComite'}
 			}
-		}*/
+		}		
     	
     }
     

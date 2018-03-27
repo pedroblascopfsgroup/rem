@@ -43,8 +43,10 @@ import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJRegistroApi;
 import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJTrazaDto;
 import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJDDTipoRegistro;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.listener.ActivoGenerarSaltoImpl;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.VTareaActivoCount;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
@@ -61,6 +63,9 @@ public class TareaActivoManager implements TareaActivoApi {
 	
     @Autowired
     private ActivoTareaExternaApi activoTareaExternaManagerApi;	
+    
+    @Autowired
+    private ActivoTramiteApi activoTramiteApi;
 	
 	@Autowired
 	private TareaActivoDao tareaActivoDao;
@@ -173,44 +178,61 @@ public class TareaActivoManager implements TareaActivoApi {
 	@Override
 	@Transactional(readOnly=false)
 	public void saltoCierreEconomico(Long idTareaExterna){
-			saltoTarea(idTareaExterna,ActivoGenerarSaltoImpl.CODIGO_SALTO_CIERRE);
+			saltoDesdeTareaExterna(idTareaExterna,ActivoGenerarSaltoImpl.CODIGO_SALTO_CIERRE);
 	}
 	
 	@Override
 	@Transactional(readOnly=false)
 	public void saltoResolucionExpediente(Long idTareaExterna){
-		saltoTarea(idTareaExterna,ActivoGenerarSaltoImpl.CODIGO_SALTO_RESOLUCION);
+		saltoDesdeTareaExterna(idTareaExterna,ActivoGenerarSaltoImpl.CODIGO_SALTO_RESOLUCION);
 	}
 		
 	@Override
 	@Transactional(readOnly=false)
 	public void saltoFin(Long idTareaExterna){
-		saltoTarea(idTareaExterna,ActivoGenerarSaltoImpl.CODIGO_FIN);
+		saltoDesdeTareaExterna(idTareaExterna,ActivoGenerarSaltoImpl.CODIGO_FIN);
 	}
 	
 	@Override
 	@Transactional(readOnly=false)
-	public void saltoPBC(Long idProcesBpm){
-		Token token = processManagerApi.getActualToken(idProcesBpm);
-		if(!Checks.esNulo(token)){
-			jbpmManager.generaTransicionesSalto(token.getId(), ActivoGenerarSaltoImpl.CODIGO_SALTO_PBC);
-			jbpmManager.signalToken(token.getId(), "salto"+ActivoGenerarSaltoImpl.CODIGO_SALTO_PBC);
-		}
+	public void saltoPBC(Long idProcesBpm){		
+		saltoTarea(idProcesBpm, ActivoGenerarSaltoImpl.CODIGO_SALTO_PBC);
 	}
 			
 	@Override
 	@Transactional(readOnly=false)
-	public void saltoTarea(Long idTareaExterna, String tareaDestino){
+	public void saltoDesdeTareaExterna(Long idTareaExterna, String tareaDestino){
 		TareaActivo tareaAsociada = null;
 		TareaExterna tareaExterna = proxyFactory.proxy(TareaExternaApi.class).get(idTareaExterna);
 		if (!Checks.esNulo(tareaExterna)) {
 			tareaAsociada = (TareaActivo) tareaExterna.getTareaPadre();
 		}
 		if(!Checks.esNulo(tareaAsociada.getTareaExterna())){
-			jbpmManager.generaTransicionesSalto(tareaAsociada.getTareaExterna().getTokenIdBpm(), tareaDestino);
-			jbpmManager.signalToken(tareaAsociada.getTareaExterna().getTokenIdBpm(), "salto"+tareaDestino);
+			saltoTarea(tareaAsociada.getTareaExterna().getTokenIdBpm(), tareaDestino);
 		}
 	}
+	
+	@Override
+	@Transactional(readOnly=false)
+	public void saltoDesdeTramite(Long idTramite, String tareaDestino){
+		
+		ActivoTramite tramite = activoTramiteApi.get(Long.valueOf(idTramite));
+		saltoTarea(tramite.getProcessBPM(), tareaDestino);
+	}
+	
+	@Override
+	@Transactional(readOnly=false)
+	public void saltoTarea(Long idProcesBpm, String tareaDestino){
+		Token token = processManagerApi.getActualToken(idProcesBpm);
+
+		if(!Checks.esNulo(token)){
+			logger.debug("SALTO TAREA --> BPM: "+ idProcesBpm + "TAREA DESTINO:" + tareaDestino);
+			jbpmManager.generaTransicionesSalto(token.getId(), tareaDestino);
+			jbpmManager.signalToken(token.getId(), "salto"+tareaDestino);
+		}
+	}
+	
+
 		
 	
 	private MEJTrazaDto generaTrazaAutoProrroga(DtoSolicitarProrroga dto, Date fechaVencimientoOriginal, Long idTareaActivo) {

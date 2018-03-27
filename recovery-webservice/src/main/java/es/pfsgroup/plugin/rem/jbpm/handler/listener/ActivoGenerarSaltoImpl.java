@@ -53,7 +53,7 @@ public class ActivoGenerarSaltoImpl extends ActivoBaseActionHandler implements G
 		Iterator it = mapaNodos.keySet().iterator();
 		while(it.hasNext()){
 		  String key = (String) it.next();
-		  if(key.contains(tipoSalto))
+		  if(key.equals(tipoSalto))
 			  node = mapaNodos.get(key);
 		}
 		if (!existeTransicion("salto"+tipoSalto, executionContext)) {

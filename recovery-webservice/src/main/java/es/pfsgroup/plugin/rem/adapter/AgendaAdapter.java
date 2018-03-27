@@ -49,11 +49,13 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
+import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoCampo;
 import es.pfsgroup.plugin.rem.model.DtoNombreTarea;
 import es.pfsgroup.plugin.rem.model.DtoReasignarTarea;
+import es.pfsgroup.plugin.rem.model.DtoSaltoTarea;
 import es.pfsgroup.plugin.rem.model.DtoSolicitarProrrogaTarea;
 import es.pfsgroup.plugin.rem.model.DtoTarea;
 import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
@@ -63,6 +65,8 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.service.UpdaterTransitionService;
 import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
 
@@ -114,6 +118,9 @@ public class AgendaAdapter {
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
+    
+    @Autowired 
+    private UpdaterTransitionService updaterTransitionService;
     
 	SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
     
@@ -657,6 +664,22 @@ public class AgendaAdapter {
 				genericDao.save(PropuestaPrecio.class, propuesta);
 			}
 		}
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean lanzarTareaAdministrativa(DtoSaltoTarea dto) {
+		
+		// TODO VALIDACIONES.SI HAY ERROR LANZAR EXCEPCION CON EL MENSAJE.	
+		//updaterTransitionService.validateFrom(dto);
+
+		// Creamos el salto a la tarea indicada.
+		tareaActivoApi.saltoDesdeTramite(dto.getIdTramite(), dto.getCodigoTareaDestino());
+		
+		// Guardamos campos en expediente, oferta, y reserva, y actualizamos estado de expediente
+		// TODO Pendientes de definir muchos campos.
+		updaterTransitionService.updateFrom(dto);
+
+		return true;
 	}
 	
 	

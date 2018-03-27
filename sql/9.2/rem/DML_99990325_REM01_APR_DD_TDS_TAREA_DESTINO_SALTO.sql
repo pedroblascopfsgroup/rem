@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=ISIDRO SOTOCA
---## FECHA_CREACION=20180312
+--## FECHA_CREACION=20180326
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-3893
@@ -38,16 +38,16 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('01' ,'Definición oferta'				,'Definición oferta'),
-        T_TIPO_DATA('02' ,'Firma propietario'				,'Firma propietario'),
-        T_TIPO_DATA('03' ,'Cierre económico'				,'Cierre económico'),
-        T_TIPO_DATA('04' ,'Resolución comité'				,'Resolución comité'),
-        T_TIPO_DATA('05' ,'Respuesta ofertante'				,'Respuesta ofertante'),
-        T_TIPO_DATA('06' ,'Instrucciones Reserva'			,'Instrucciones Reserva'),
-        T_TIPO_DATA('07' ,'Obtención contrato reserva'		,'Obtención contrato reserva'),
-        T_TIPO_DATA('08' ,'Resultado PBC'					,'Resultado PBC'),
-        T_TIPO_DATA('09' ,'Posicionamiento y firma'			,'Posicionamiento y firma'),
-        T_TIPO_DATA('10' ,'Ratificación comité'				,'Ratificación comité')
+        T_TIPO_DATA('T013_DefinicionOferta' 		,'Definición oferta'				,'Definición oferta'),
+        T_TIPO_DATA('T013_FirmaPropietario' 		,'Firma propietario'				,'Firma propietario'),
+        T_TIPO_DATA('T013_CierreEconomico' 			,'Cierre económico'					,'Cierre económico'),
+        T_TIPO_DATA('T013_ResolucionComite' 		,'Resolución comité'				,'Resolución comité'),
+        T_TIPO_DATA('T013_RespuestaOfertante' 		,'Respuesta ofertante'				,'Respuesta ofertante'),
+        T_TIPO_DATA('T013_InstruccionesReserva' 	,'Instrucciones Reserva'			,'Instrucciones Reserva'),
+        T_TIPO_DATA('T013_ObtencionContratoReserva' ,'Obtención contrato reserva'		,'Obtención contrato reserva'),
+        T_TIPO_DATA('T013_ResultadoPBC' 			,'Resultado PBC'					,'Resultado PBC'),
+        T_TIPO_DATA('T013_PosicionamientoYFirma' 	,'Posicionamiento y firma'			,'Posicionamiento y firma'),
+        T_TIPO_DATA('T013_RatificacionComite' 		,'Ratificación comité'				,'Ratificación comité')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

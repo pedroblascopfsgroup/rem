@@ -32,16 +32,16 @@ public class DDTareaDestinoSalto implements Auditable, Dictionary {
 	
 	private static final long serialVersionUID = 1L;
 	
-	public static final String CODIGO_DEFINICION_OFERTA = "01";
-	public static final String CODIGO_FIRMA_PROPIETARIO = "02";
-	public static final String CODIGO_CIERRE_ECONOMICO = "03";
-	public static final String CODIGO_RESOLUCION_COMITE = "04";
-	public static final String CODIGO_RESPUESTA_OFERTANTE = "05";
-	public static final String CODIGO_INSTRUCCIONES_RESERVA = "06";
-	public static final String CODIGO_OBTENCION_CONTRATO_RESERVA = "07";
-	public static final String CODIGO_RESULTADO_PBC = "08";
-	public static final String CODIGO_POSICIONAMIENTO_Y_FIRMAS = "09";
-	public static final String CODIGO_RATIFICACION_COMITE = "10";
+	public static final String CODIGO_DEFINICION_OFERTA = "T013_DefinicionOferta";
+	public static final String CODIGO_FIRMA_PROPIETARIO = "T013_FirmaPropietario";
+	public static final String CODIGO_CIERRE_ECONOMICO = "T013_CierreEconomico";
+	public static final String CODIGO_RESOLUCION_COMITE = "T013_ResolucionComite";
+	public static final String CODIGO_RESPUESTA_OFERTANTE = "T013_RespuestaOfertante";
+	public static final String CODIGO_INSTRUCCIONES_RESERVA = "T013_InstruccionesReserva";
+	public static final String CODIGO_OBTENCION_CONTRATO_RESERVA = "T013_ObtencionContratoReserva";
+	public static final String CODIGO_RESULTADO_PBC = "T013_ResultadoPBC";
+	public static final String CODIGO_POSICIONAMIENTO_Y_FIRMAS = "T013_PosicionamientoYFirma";
+	public static final String CODIGO_RATIFICACION_COMITE = "T013_RatificacionComite";
 	
 	@Id
 	@Column(name = "DD_TDS_ID")

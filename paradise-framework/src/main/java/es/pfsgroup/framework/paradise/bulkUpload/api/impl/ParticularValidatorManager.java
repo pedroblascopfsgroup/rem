@@ -753,7 +753,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			FROM ACT_ACTIVO act "
 				+ "			WHERE act.DD_TCO_ID IN ( "
 				+ "				SELECT tco.DD_TCO_ID "
-				+ "				FROM DD_TCO_TIPO_COMERCIALIZACION "
+				+ "				FROM DD_TCO_TIPO_COMERCIALIZACION tco"
 				+ "				where tco.DD_TCO_CODIGO NOT IN ('02','03')) "
 				+ "			AND act.ACT_NUM_ACTIVO = "+numActivo+" "
 				+ "			AND act.BORRADO = 0");
@@ -771,7 +771,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 				+ "			FROM ACT_ACTIVO act "
 				+ "			WHERE act.ACT_ID NOT IN ( "
-				+ "				SELECT apu.ACT_ID FROM ACT_APU_ACTIVO_PUBLICACION apu WHERE apu.BORRADO = 0 "
+				+ "				SELECT apu.ACT_ID FROM ACT_APU_ACTIVO_PUBLICACION apu WHERE apu.BORRADO = 0) "
 				+ "			AND act.ACT_NUM_ACTIVO = "+numActivo+" "
 				+ "			AND act.BORRADO = 0");
 		if("0".equals(resultado)){

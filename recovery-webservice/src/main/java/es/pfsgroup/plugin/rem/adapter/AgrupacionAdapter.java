@@ -2277,14 +2277,6 @@ public class AgrupacionAdapter {
 		List<ActivoAgrupacionActivo> lista = agrupacion.getActivos();
 
 		Boolean canarias = false;
-/*
-		ArrayList<String> codProvinciasCanarias = new ArrayList<String>();
-
-		// Las palmas
-		codProvinciasCanarias.add("35");
-		// Santa cruz
-		codProvinciasCanarias.add("38");
-		*/
 
 		String codProvinciasCanarias[] = {"35", "38"};
 		

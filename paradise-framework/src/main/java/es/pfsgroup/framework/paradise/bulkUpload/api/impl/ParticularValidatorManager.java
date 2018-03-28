@@ -1425,4 +1425,37 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 	}
 	
+	@Override
+	public Boolean distintosTiposImpuesto(String numActivo, String numAgrupacion) {
+		
+		Boolean agrCanarias = false;
+		Boolean actCanarias = false;
+				
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_AGR_AGRUPACION AGR " + 
+				"JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID " + 
+				"JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AGA.ACT_ID " + 
+				"JOIN BIE_BIEN BIE ON BIE.BIE_ID = ACT.BIE_ID " + 
+				"JOIN BIE_LOCALIZACION LOC ON LOC.BIE_ID = BIE.BIE_ID " + 
+				"JOIN REMMASTER.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_ID = LOC.DD_PRV_ID AND DD_PRV_CODIGO IN ('35', '38') " + 
+				"WHERE AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+" ");
+		
+		if(Integer.valueOf(resultado) > 0) agrCanarias = true;
+		
+		
+		resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_ACTIVO ACT " + 
+				"JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID " + 
+				"JOIN ACT_AGR_AGRUPACION AGR ON AGA.AGR_ID = AGR.AGR_ID " + 
+				"JOIN BIE_BIEN BIE ON BIE.BIE_ID = ACT.BIE_ID " + 
+				"JOIN BIE_LOCALIZACION LOC ON LOC.BIE_ID = BIE.BIE_ID " + 
+				"JOIN REMMASTER.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_ID = LOC.DD_PRV_ID AND DD_PRV_CODIGO IN ('35', '38') " + 
+				"WHERE ACT.ACT_NUM_ACTIVO = "+numActivo+" ");
+		
+		if(Integer.valueOf(resultado) > 0) actCanarias = true;
+
+		
+		if(actCanarias == agrCanarias) return false;
+				else return true;
+		
+	}
+	
 }

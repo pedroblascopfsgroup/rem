@@ -37,8 +37,8 @@ public interface AgrupacionValidator extends GenericService{
 	public static final String ERROR_OFERTA_AGRUPACION_ACTIVO_ACEPTADA = "La agrupación restringida a la que pertenece el activo tiene al menos una oferta aprobada y no puede ser incluido";
 	public static final String ERROR_OBRANUEVA_NO_ASISTIDA = "Un activo financiero no puede añadirse a una agrupación de Obra Nueva";
 	public static final String ERROR_ACTIVO_NO_COMPARTE_FORMALIZACION = "No se puede añadir un activo en una agrupación con un tipo de formalización distinta a los demás";
-	public static final String ERROR_ACTIVO_NO_CANARIAS = "El activo que se intenta añadir a la agrupación canária no es de Canarias";
-	public static final String ERROR_ACTIVO_CANARIAS = "El activo es de Canarias, no se puede añadir a una agrupación que no sea canária";
+	public static final String ERROR_ACTIVO_NO_CANARIAS = "El activo que se intenta añadir a la agrupación canaria no es de Canarias";
+	public static final String ERROR_ACTIVO_CANARIAS = "El activo es de Canarias, no se puede añadir a una agrupación que no sea canaria";
 
 
 	/**

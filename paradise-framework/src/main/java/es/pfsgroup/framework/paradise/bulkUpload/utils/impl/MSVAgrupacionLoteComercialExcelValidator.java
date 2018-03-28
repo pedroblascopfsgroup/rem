@@ -48,6 +48,7 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 	public static final String ACTIVO_VENDIDO = "msg.error.masivo.agrupar.activos.asistida.activo.vendido";
 	public static final String ACTIVO_SIN_PROPIETARIO = "msg.error.masivo.agrupar.activos.asistida.activo.sinPropietario";
 	public static final String ACTIVO_NO_COMERCIALIZABLE = "msg.error.masivo.agrupar.activos.no.comercializables";
+	public static final String ERROR_ACTIVO_CANARIAS = "msg.error.masivo.agrupar.activos.agr.canaria.act.canaria";
 
 	// Validaciones de activo NO utilizadas porque no esta definido como validar en esos casos al incluir en lotes comerciales
 	/*
@@ -124,6 +125,8 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 			mapaErrores.put(messageServices.getMessage(ACTIVO_VENDIDO), activosVendidosRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_SIN_PROPIETARIO), activosSinPropietariosRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_COMERCIALIZABLE), activosNoComercializablesRows(exc));
+			mapaErrores.put(messageServices.getMessage(ERROR_ACTIVO_CANARIAS), distintosTiposImpuesto(exc));
+
 			// mapaErrores.put(messageServices.getMessage(ACTIVO_INCLUIDO_PERIMETRO), activosIncluidosPerimetroRows(exc));
 			// mapaErrores.put(messageServices.getMessage(ACTIVO_NO_FINANCIERO),activosFinancierosRows(exc));
 			
@@ -132,21 +135,22 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 			mapaErrores.put(messageServices.getMessage(ACTIVOS_NO_MISMA_CARTERA.mensajeError), activosAgrupMultipleValidacionRows(exc, ACTIVOS_NO_MISMA_CARTERA.codigoError));
 			mapaErrores.put(messageServices.getMessage(AGRUPACION_ACTIVOS_SIN_OFERTAS_ACEPTADAS.mensajeError), activosAgrupMultipleValidacionRows(exc, AGRUPACION_ACTIVOS_SIN_OFERTAS_ACEPTADAS.codigoError));
 
+
 			if (!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_EN_OTRA_AGRUPACION)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_OFERTAS_ACEPTADAS)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_VENDIDO)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_SIN_PROPIETARIO)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_NO_COMERCIALIZABLE)).isEmpty() ||
-					// !mapaErrores.get(messageServices.getMessage(ACTIVO_INCLUIDO_PERIMETRO)).isEmpty()
-					// ||
-					// !mapaErrores.get(messageServices.getMessage(ACTIVO_NO_FINANCIERO)).isEmpty()
-					// ||
-					!mapaErrores.get(messageServices.getMessage(AGRUPACIONES_CON_BAJA.mensajeError)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_NO_COMERCIALIZABLE)).isEmpty() 
+				 // || !mapaErrores.get(messageServices.getMessage(ACTIVO_INCLUIDO_PERIMETRO)).isEmpty()
+				 // || !mapaErrores.get(messageServices.getMessage(ACTIVO_NO_FINANCIERO)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(AGRUPACIONES_CON_BAJA.mensajeError)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVOS_NO_MISMA_CARTERA.mensajeError)).isEmpty()
 					|| !mapaErrores
 							.get(messageServices.getMessage(AGRUPACION_ACTIVOS_SIN_OFERTAS_ACEPTADAS.mensajeError))
-							.isEmpty()) {
+							.isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ERROR_ACTIVO_CANARIAS)).isEmpty()
+					) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
@@ -534,5 +538,26 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 		return listaFilasError;
 	}
 
+	
+	private List<Integer> distintosTiposImpuesto(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
 
+		int i = 0;
+		try {
+			for (i = 1; i < this.numFilasHoja; i++) {
+				String numAgrupacion = String.valueOf(Long.parseLong(exc.dameCelda(i, 0)));
+				String numActivo = String.valueOf(Long.parseLong(exc.dameCelda(i, 1)));
+				if (particularValidator.distintosTiposImpuesto(numActivo, numAgrupacion))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0)
+				listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+
+		return listaFilas;
+	}
+	
 }

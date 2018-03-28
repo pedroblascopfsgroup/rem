@@ -281,4 +281,7 @@ public interface ParticularValidatorApi {
 	public boolean existeTipoActivoByCod(String codTipoActivo);
 	
 	public boolean existeSubtipoActivoByCod(String codSubtipoActivo);
+
+	public Boolean distintosTiposImpuesto(String numActivo, String numAgrupacion);
+
 }

@@ -12,8 +12,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -73,6 +71,7 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
+import es.pfsgroup.plugin.rem.historicotarifaplana.dao.HistoricoTarifaPlanaDao;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
@@ -232,6 +231,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Autowired
 	private GastoProveedorApi gastoProveedorApi;
+	
+	@Autowired
+	private HistoricoTarifaPlanaDao historicoTarifaPlanaDao;
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -506,6 +508,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				trabajo.setActivo(listaActivos.get(0));
 			}
 			
+			// Seteo del flag esTarifaPlana
+			trabajo.setEsTarifaPlana(historicoTarifaPlanaDao.subtipoTrabajoTieneTarifaPlanaVigente(subtipoTrabajo.getId(), trabajo.getFechaSolicitud()));
+			
 			trabajoDao.saveOrUpdate(trabajo);
 
 			// Crea el trámite relacionado con el nuevo trabajo generado
@@ -672,7 +677,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Trabajo trabajo = new Trabajo();
 
 		try {
-
 			dtoToTrabajo(dtoTrabajo, trabajo);
 
 			trabajo.setFechaSolicitud(new Date());
@@ -1034,6 +1038,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			DDSubtipoTrabajo subtipoTrabajo = genericDao.get(DDSubtipoTrabajo.class, filtro);
 
 			trabajo.setSubtipoTrabajo(subtipoTrabajo);
+			
+			// Seteo del flag esTarifaPlana
+			trabajo.setEsTarifaPlana(historicoTarifaPlanaDao.subtipoTrabajoTieneTarifaPlanaVigente(subtipoTrabajo.getId(), new Date()));
 		}
 
 		if (dtoTrabajo.getIdMediador() != null) {
@@ -1938,7 +1945,20 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		filtro.setCarteraCodigo(cartera);
 		filtro.setTipoTrabajoCodigo(tipoTrabajo);
 		filtro.setSubtipoTrabajoCodigo(subtipoTrabajo);
+		
+		if(!Checks.esNulo(filtro.getIdTrabajo())){
+			Trabajo trabajo = findOne(filtro.getIdTrabajo());
+			if(!Checks.esNulo(trabajo.getProveedorContacto()) && !Checks.esNulo(trabajo.getProveedorContacto().getProveedor())){
+				filtro.setIdProveedor(trabajo.getProveedorContacto().getProveedor().getId());
+			}
+		}
+
 		Page page = trabajoDao.getSeleccionTarifasTrabajo(filtro, usuarioLogado);
+		//Si no existen tarifas para un Proveedor, se recuperan las tarifas sin el filtro del Proveedor
+		if(page.getTotalCount() == 0){
+			filtro.setIdProveedor(null);
+			page = trabajoDao.getSeleccionTarifasTrabajo(filtro, usuarioLogado);
+		}
 
 		List<ConfiguracionTarifa> lista = (List<ConfiguracionTarifa>) page.getResults();
 		List<DtoConfiguracionTarifa> tarifas = new ArrayList<DtoConfiguracionTarifa>();

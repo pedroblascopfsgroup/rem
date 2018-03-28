@@ -62,5 +62,12 @@ public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
 	 * @return Devuelve una lista de proveedores contacto.
 	 */
 	public List<ActivoProveedorContacto> getActivoProveedorContactoPorIdsUsuarioYCartera(List<Long> idUsuarios, Long idCartera);
+	
+	/** Este método obtiene un proveedor contacto en base a un ID de usuario.
+	 * 
+	 * @param idUsuario: ID de contacto que han de coincidir con los proveedores contacto.
+	 * @return Devuelve un proveedor contacto.
+	 */
+	public ActivoProveedorContacto getActivoProveedorContactoPorIdsUsuario(Long idUsuario);
 
 }

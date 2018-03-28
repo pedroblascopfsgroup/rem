@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.pagination.Page;
@@ -18,7 +17,6 @@ import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
-import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
@@ -33,9 +31,6 @@ import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long> implements ProveedoresDao {
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
-
-	@Autowired
-	private GenericAdapter adapter;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -245,6 +240,23 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 				.createQuery(hb.toString()).list();
 
 		return listaProveedoresContacto;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public ActivoProveedorContacto getActivoProveedorContactoPorIdsUsuario(Long idUsuario) {
+
+		HQLBuilder hb = new HQLBuilder("from ActivoProveedorContacto pvc");
+		hb.appendWhere("pvc.usuario.id = " + idUsuario);
+		hb.appendWhere("pvc.fechaBaja IS NULL");
+		hb.appendWhere("pvc.auditoria.borrado = 0");
+		
+		List<ActivoProveedorContacto> listaProveedoresContacto = (List<ActivoProveedorContacto>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		
+		if(!listaProveedoresContacto.isEmpty()){
+			return listaProveedoresContacto.get(0);
+		}
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")

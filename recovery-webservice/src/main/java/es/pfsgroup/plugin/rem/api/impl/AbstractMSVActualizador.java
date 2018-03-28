@@ -91,11 +91,13 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 					transactionManager.rollback(transaction);
 					processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), false);					
 				}
-			}
-			if(!mapaErrores.isEmpty()){
-				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
-				FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-				processAdapter.setExcelErroresProcesado(file, fileItemErrores);
+				
+				if((!mapaErrores.isEmpty() && mapaErrores.containsValue(fila)) || fila%100==0){
+					File fileFile= exc.getFile();
+					exc.introducirErroresExcel(fileFile, mapaErrores, 0, 0);
+					FileItem fileItemErrores = new FileItem(fileFile);
+					processAdapter.setExcelErroresProcesado(file, fileItemErrores);
+				}
 			}
 			
 			this.postProcesado(exc);

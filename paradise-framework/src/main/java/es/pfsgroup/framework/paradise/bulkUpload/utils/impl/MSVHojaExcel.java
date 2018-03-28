@@ -192,6 +192,38 @@ public class MSVHojaExcel {
 
 		return nombreFicheroErrores;
 	}
+	
+	public void introducirErroresExcel(File file,Map<String, List<Integer>> mapaErrores,int numHoja,
+			int numFilaCabeceras) throws BiffException, IOException, RowsExceededException, WriteException{
+		
+		if (!isOpen) {
+			abrir();
+		}
+
+		WritableWorkbook copy = Workbook.createWorkbook(file);
+		try {
+
+			WritableSheet hoja = copy.getSheet(numHoja);
+			int numColumnas = this.getNumeroColumnasByHojaAndFila(numHoja, numFilaCabeceras);
+
+			Iterator<String> it = mapaErrores.keySet().iterator();
+			int columna = numColumnas;
+			while (it.hasNext()) {
+				String error = (String) it.next();
+				addTexto(hoja, columna, 0, "ERRORES");
+				for (int i = 0; i < mapaErrores.get(error).size(); i++) {
+					addTextoErrores(hoja, columna, mapaErrores.get(error).get(i), error);
+				}
+				if (!mapaErrores.get(error).isEmpty()) {
+					// columna++;
+				}
+			}
+			copy.write();
+		} finally {
+			copy.close();
+		}
+		
+	}
 
 	public String crearExcelErroresMejorado(Map<String, List<Integer>> mapaErrores)
 			throws IllegalArgumentException, IOException, RowsExceededException, WriteException {

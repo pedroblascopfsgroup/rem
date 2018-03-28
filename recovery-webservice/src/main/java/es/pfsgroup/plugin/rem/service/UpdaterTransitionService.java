@@ -2,11 +2,14 @@ package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.Method;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -22,12 +25,17 @@ import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 
 @Component
 public class UpdaterTransitionService {
 	
 	protected static final Log logger = LogFactory.getLog(UpdaterTransitionService.class);
+	
+	@Resource
+    MessageService messageServices;
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -42,8 +50,7 @@ public class UpdaterTransitionService {
 	private ActivoTramiteApi activoTramiteApi;
 	
 	
-	
-	public void updateFrom(DtoSaltoTarea dto) {
+	public void updateFrom(DtoSaltoTarea dto) throws Exception {
 		
 		
 		/*if(DDTareaDestinoSalto.CODIGO_DEFINICION_OFERTA.equals(dto.getCodigoTareaDestino())) {
@@ -64,9 +71,26 @@ public class UpdaterTransitionService {
 		} 
 		
 	}
-	
-	public void updateT013_DefinicionOferta(DtoSaltoTarea dto) {
+
+	public boolean validarContratoYJustificanteReserva(DtoSaltoTarea dto) throws Exception{
+		ActivoTramite activoTramite = activoTramiteApi.get(dto.getIdTramite());
+		
+		if(DDTareaDestinoSalto.CODIGO_RESULTADO_PBC.equals(dto.getCodigoTareaDestino()) ||
+				DDTareaDestinoSalto.CODIGO_POSICIONAMIENTO_Y_FIRMAS.equals(dto.getCodigoTareaDestino())){
+			if(dto.getSolicitaReserva() == 1 && !Checks.esNulo(activoTramite.getTrabajo())){
+				boolean tieneContratoReserva = expedienteComercialApi.comprobarExisteAdjuntoExpedienteComercial(activoTramite.getTrabajo().getId(), DDSubtipoDocumentoExpediente.CODIGO_CONTRATO_RESERVA);
+				boolean tieneJustificanteReserva = expedienteComercialApi.comprobarExisteAdjuntoExpedienteComercial(activoTramite.getTrabajo().getId(), DDSubtipoDocumentoExpediente.CODIGO_JUSTIFICANTE_RESERVA);
 				
+				if(!tieneContratoReserva || !tieneJustificanteReserva)
+					throw new Exception(messageServices.getMessage("ecomercial.adjuntos.validacion.advertencia.saltoTareas.docsReservaNecesarios"));
+			}
+		}
+		return true;
+	}
+	
+	// Update de datos por tarea (llamadas a metodos desde updateForm)
+	public void updateT013_DefinicionOferta(DtoSaltoTarea dto) {
+		//En Trámite
 		Filter filtro;
 		DDEstadosExpedienteComercial estado;
 
@@ -76,6 +100,105 @@ public class UpdaterTransitionService {
 		update(estado, dto);
 		
 	}
+	public void updateT013_FirmaPropietario(DtoSaltoTarea dto) {
+		//Aprobado
+		Filter filtro;
+		DDEstadosExpedienteComercial estado;
+
+		filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
+		estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+		
+		update(estado, dto);
+	}
+	public void updateT013_CierreEconomico(DtoSaltoTarea dto) {
+		//Firmado
+		Filter filtro;
+		DDEstadosExpedienteComercial estado;
+
+		filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.FIRMADO);
+		estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+		
+		update(estado, dto);
+	}
+	public void updateT013_ResolucionComite(DtoSaltoTarea dto) {
+		//Pte sanción
+		Filter filtro;
+		DDEstadosExpedienteComercial estado;
+
+		filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_SANCION);
+		estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+		
+		update(estado, dto);
+	}
+	public void updateT013_RespuestaOfertante(DtoSaltoTarea dto) {
+		//Contraofertado
+		Filter filtro;
+		DDEstadosExpedienteComercial estado;
+
+		filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.CONTRAOFERTADO);
+		estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+		
+		update(estado, dto);
+	}
+	public void updateT013_InstruccionesReserva(DtoSaltoTarea dto) {
+		//Aprobado
+		Filter filtro;
+		DDEstadosExpedienteComercial estado;
+
+		filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
+		estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+		
+		update(estado, dto);
+	}
+	public void updateT013_ObtencionContratoReserva(DtoSaltoTarea dto) {
+		//Aprobado
+		Filter filtro;
+		DDEstadosExpedienteComercial estado;
+
+		filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
+		estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+		
+		update(estado, dto);
+	}
+	public void updateT013_ResultadoPBC(DtoSaltoTarea dto) throws Exception{
+		//Si (Solicita Reserva) está relleno con SÍ entonces Reservado sino Aprobado
+		Filter filtro;
+		DDEstadosExpedienteComercial estado;
+
+		if (!Checks.esNulo(dto.getSolicitaReserva()) && dto.getSolicitaReserva() == 1)
+			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RESERVADO);
+		else
+			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
+		
+		estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+		
+		update(estado, dto);
+	}
+	public void updateT013_PosicionamientoYFirma(DtoSaltoTarea dto) throws Exception {
+		//Si (Solicita Reserva) está relleno con SÍ entonces Reservado sino Aprobado
+		Filter filtro;
+		DDEstadosExpedienteComercial estado;
+
+		if (!Checks.esNulo(dto.getSolicitaReserva()) && dto.getSolicitaReserva() == 1)
+			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RESERVADO);
+		else
+			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
+		
+		estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+		
+		update(estado, dto);
+	}
+	public void updateT013_RatificacionComite(DtoSaltoTarea dto) {
+		//Contraofertado
+		Filter filtro;
+		DDEstadosExpedienteComercial estado;
+
+		filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.CONTRAOFERTADO);
+		estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+		
+		update(estado, dto);
+	}
+
 
 	private void update(DDEstadosExpedienteComercial estado, DtoSaltoTarea dto) {
 		
@@ -91,47 +214,11 @@ public class UpdaterTransitionService {
 		
 		updateOferta(ofertaAceptada, dto);
 		
+		if(Checks.esNulo(reserva))
+			expedienteComercialApi.createReservaExpediente(expediente);
+			
 		updateReserva(reserva, dto);
 		
-		
-		
-		//TODO NO está definido donde guardar esta información.
-		/*
-		if(!Checks.esNulo(dto.getFirmaEscritura())) {
-			
-		}
-		
-		if(!Checks.esNulo(dto.getFechaFirmaPropietario())) {
-			
-		}
-		
-		if(!Checks.esNulo(dto.getNotario())) {
-			
-		}
-		
-		if(!Checks.esNulo(dto.getNumProtocolo())) {
-			
-		}
-		
-		if(!Checks.esNulo(dto.getPrecioEscrituracion())) {
-			
-		}
-		
-		if(!Checks.esNulo(dto.getResolucion())) {
-			
-		}
-		
-		if(!Checks.esNulo(dto.getAceptaContraoferta())) {
-			
-		}
-		
-		if(!Checks.esNulo(dto.getFechaRespuestaOfertante())) {
-			
-		}
-		
-		if(!Checks.esNulo(dto.getSolicitaReserva())) {
-			
-		}*/
 		
 	}
 
@@ -218,6 +305,13 @@ public class UpdaterTransitionService {
 		
 		if(!Checks.esNulo(dto.getFechaRespuestaComite())) {
 			expediente.setFechaSancion(dto.getFechaRespuestaComite());
+		}
+		
+		if(!Checks.esNulo(dto.getSolicitaReserva())) {
+			//COE_CONDICIONANTES_EXPEDIENTE.COE_SOLICITA_RESERVA, cuando se pone un SÍ tenemos que crear un registro en la tabla de RES_RESERVAS para evitar que falle la ventana.
+			if(Checks.esNulo(expediente.getReserva()))
+				expedienteComercialApi.createReservaExpediente(expediente);
+			
 		}
 		
 		genericDao.save(ExpedienteComercial.class, expediente);

@@ -667,10 +667,10 @@ public class AgendaAdapter {
 	}
 	
 	@Transactional(readOnly = false)
-	public boolean lanzarTareaAdministrativa(DtoSaltoTarea dto) {
+	public boolean lanzarTareaAdministrativa(DtoSaltoTarea dto) throws Exception {
 		
-		// TODO VALIDACIONES.SI HAY ERROR LANZAR EXCEPCION CON EL MENSAJE.	
-		//updaterTransitionService.validateFrom(dto);
+		//Validacion de documentos de reserva si salta con reserva a ResultadoPBC o Posicionamiento y firma
+		updaterTransitionService.validarContratoYJustificanteReserva(dto);
 
 		// Creamos el salto a la tarea indicada.
 		tareaActivoApi.saltoDesdeTramite(dto.getIdTramite(), dto.getCodigoTareaDestino());

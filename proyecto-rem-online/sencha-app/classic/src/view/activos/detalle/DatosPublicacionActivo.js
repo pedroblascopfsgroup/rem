@@ -222,8 +222,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 											},
 											{
                                                 xtype: 'comboboxfieldbase',
-                                                fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.adecuacion'),
-                                                reference: 'comboAdecuacionAlquiler',
+                                                fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.adecuacion'),                                                
                                                 bind: {
                                                     store: '{comboAdecuacionAlquiler}',
                                                     value: '{datospublicacionactivo.adecuacionAlquilerCodigo}'

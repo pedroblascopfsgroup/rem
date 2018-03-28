@@ -306,7 +306,7 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 		int i = 0;
 		try{
 			for(i=1;i<this.numFilasHoja;i++){
-				if(particularValidator.activoOculto(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA))){
+				if(particularValidator.activoOcultoVenta(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA))){
 					listaFilas.add(i);
 				}
 			} 

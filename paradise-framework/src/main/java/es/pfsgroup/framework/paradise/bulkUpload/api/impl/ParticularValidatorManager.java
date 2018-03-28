@@ -782,14 +782,30 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
-	public Boolean activoOculto(String numActivo){
+	public Boolean activoOcultoVenta(String numActivo){
 		if (Checks.esNulo(numActivo)) return false;
 		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 				+ "			FROM ACT_APU_ACTIVO_PUBLICACION apu "
 				+ "			WHERE apu.APU_CHECK_OCULTAR_V = 1 "
 				+ "			AND apu.BORRADO = 0"
-				+ "			AND apu.ACT_ID = "+numActivo+" ");
+				+ "			AND apu.ACT_ID = (SELECT act.ACT_ID FROM ACT_ACTIVO act WHERE act.ACT_NUM_ACTIVO = "+numActivo+") ");
+		if("0".equals(resultado)){
+			return false;
+		}else {
+			return true;
+		}
+	}
+	
+	@Override
+	public Boolean activoOcultoAlquiler(String numActivo){
+		if (Checks.esNulo(numActivo)) return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "			FROM ACT_APU_ACTIVO_PUBLICACION apu "
+				+ "			WHERE apu.APU_CHECK_OCULTAR_A = 1 "
+				+ "			AND apu.BORRADO = 0"
+				+ "			AND apu.ACT_ID = (SELECT act.ACT_ID FROM ACT_ACTIVO act WHERE act.ACT_NUM_ACTIVO = "+numActivo+") ");
 		if("0".equals(resultado)){
 			return false;
 		}else {

@@ -62,12 +62,18 @@ public class UpdaterServiceATCierreEconomico implements UpdaterService {
 				}
 				
 				Filter filter = null;
-				if(Checks.esNulo(trabajo.getFechaPago())){
-					//Por finalizar la tarea "Cierre Económico", SIN fecha pago en trabajo, estado trabajo a "PENDIENTE PAGO"
-					filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_PENDIENTE_PAGO);
-				}else{
-					//Por finalizar la tarea "Cierre Económico", CON fecha pago en trabajo, estado trabajo a "PAGADO"
-					filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_PAGADO);
+				if(!trabajo.getEsTarifaPlana()){
+					if(Checks.esNulo(trabajo.getFechaPago())){
+						//Por finalizar la tarea "Cierre Económico", SIN fecha pago en trabajo, estado trabajo a "PENDIENTE PAGO"
+						filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_PENDIENTE_PAGO);
+					}else{
+						//Por finalizar la tarea "Cierre Económico", CON fecha pago en trabajo, estado trabajo a "PAGADO"
+						filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_PAGADO);
+					}
+				}
+				else{
+					//Si el trabajo es de tarifa plana, estado trabajo a "PAGADO CON TARIFA PLANA"
+					filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_PAGADO_TARIFA_PLANA);
 				}
 				DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filter);
 				trabajo.setEstado(estadoTrabajo);

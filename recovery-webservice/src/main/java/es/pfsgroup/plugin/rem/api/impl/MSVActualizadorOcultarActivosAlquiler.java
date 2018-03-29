@@ -34,6 +34,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivosOcultacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 
 @Component
@@ -126,9 +127,15 @@ public class MSVActualizadorOcultarActivosAlquiler extends AbstractMSVActualizad
 			Long numActivo = Long.parseLong(exc.dameCelda(fila, COL_NUM.NUM_ACTIVO_HAYA),10);
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
 			Activo act = genericDao.get(Activo.class, filtro);
+			
+			String codigo = exc.dameCelda(fila, COL_NUM.MOTIVO_OCULTACION);
+			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "codigo",codigo);
+			DDMotivosOcultacion motivo = genericDao.get(DDMotivosOcultacion.class, filtro2);
+			
 			ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(act.getId());
 			if(this.registrarHistoricoPublicacion(activoPublicacion)) {
 				activoPublicacion.setCheckOcultarAlquiler(true);
+				activoPublicacion.setMotivoOcultacionAlquiler(motivo);
 				activoPublicacionDao.save(activoPublicacion);
 				this.publicarActivoProcedure(activoPublicacion.getActivo().getId(), genericAdapter.getUsuarioLogado().getNombre());
 			}

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=SIMEON SHOPOV
---## FECHA_CREACION=20180329
+--## FECHA_CREACION=20180330
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-132
+--## INCIDENCIA_LINK=REMVIP-384
 --## PRODUCTO=NO
 --##
 --## Finalidad: Insercion en la TMP_APROV_DACIONES

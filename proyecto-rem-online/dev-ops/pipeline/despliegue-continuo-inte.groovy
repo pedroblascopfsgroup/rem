@@ -184,7 +184,9 @@ pipeline {
 
         stage('Update-DB') {
             steps {
-                deployPitertul("ops-bd@iap03", 22)
+                timeout (time:2, unit:'HOURS') {
+                    deployPitertul("ops-bd@iap03", 22)
+                }
             }
         }
 

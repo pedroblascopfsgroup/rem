@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.utils.FormatUtils;
 import es.pfsgroup.commons.utils.Checks;
 
@@ -193,35 +194,32 @@ public class MSVHojaExcel {
 		return nombreFicheroErrores;
 	}
 	
-	public void introducirErroresExcel(File file,Map<String, List<Integer>> mapaErrores,int numHoja,
-			int numFilaCabeceras) throws BiffException, IOException, RowsExceededException, WriteException{
+	public FileItem insertarErroresExcel(FileItem fileitem,Map<String, List<Integer>> mapaErrores, int numHoja,
+			int numFilaCabeceras, int fila) throws IOException, RowsExceededException, WriteException, BiffException{
 		
-		if (!isOpen) {
-			abrir();
-		}
-
-		WritableWorkbook copy = Workbook.createWorkbook(file);
+		Workbook excel=  Workbook.getWorkbook(fileitem.getFile());
+		
+		WritableWorkbook copy = Workbook.createWorkbook(fileitem.getFile(),excel);
+		
 		try {
 
 			WritableSheet hoja = copy.getSheet(numHoja);
 			int numColumnas = this.getNumeroColumnasByHojaAndFila(numHoja, numFilaCabeceras);
 
-			Iterator<String> it = mapaErrores.keySet().iterator();
 			int columna = numColumnas;
-			while (it.hasNext()) {
-				String error = (String) it.next();
+			if(mapaErrores.get("KO").size()==1){
 				addTexto(hoja, columna, 0, "ERRORES");
-				for (int i = 0; i < mapaErrores.get(error).size(); i++) {
-					addTextoErrores(hoja, columna, mapaErrores.get(error).get(i), error);
-				}
-				if (!mapaErrores.get(error).isEmpty()) {
-					// columna++;
-				}
+				addTexto(hoja, columna, fila, "KO");
+			}
+			else{
+				addTexto(hoja, columna, fila, "KO");
 			}
 			copy.write();
 		} finally {
 			copy.close();
 		}
+		
+		return fileitem;
 		
 	}
 

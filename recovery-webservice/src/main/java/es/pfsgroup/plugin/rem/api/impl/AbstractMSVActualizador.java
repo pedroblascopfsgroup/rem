@@ -92,17 +92,17 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 					processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), false);					
 				}
 				
-				if((!mapaErrores.isEmpty() && mapaErrores.containsValue(fila)) || fila%100==0){
-					File fileFile= exc.getFile();
-					exc.introducirErroresExcel(fileFile, mapaErrores, 0, 0);
-					FileItem fileItemErrores = new FileItem(fileFile);
+				if(!mapaErrores.isEmpty() && mapaErrores.get("KO").contains(fila)){
+					FileItem fileItemBBDD = file.getErroresFicheroProcesar();
+					FileItem fileItemErrores= exc.insertarErroresExcel(fileItemBBDD,mapaErrores,0,0,fila);
 					processAdapter.setExcelErroresProcesado(file, fileItemErrores);
 				}
 			}
 			
 			this.postProcesado(exc);
 
-		} catch (ParseException e) {
+		}
+		catch (Exception e) {
 			logger.error("Error procesando fichero",e);
 			return false;
 		}

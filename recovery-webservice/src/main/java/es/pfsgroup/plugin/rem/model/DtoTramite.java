@@ -41,6 +41,8 @@ public class DtoTramite extends WebDto {
 	
 	private String subtipoTrabajo;
 	
+	private String codigoSubtipoTrabajo;
+	
 	private String tipoActivo;
 	
 	private String subtipoActivo;
@@ -187,6 +189,14 @@ public class DtoTramite extends WebDto {
 		this.subtipoTrabajo = subtipoTrabajo;
 	}	
 	
+	public String getCodigoSubtipoTrabajo() {
+		return codigoSubtipoTrabajo;
+	}
+
+	public void setCodigoSubtipoTrabajo(String codigoSubtipoTrabajo) {
+		this.codigoSubtipoTrabajo = codigoSubtipoTrabajo;
+	}
+
 	public String getTipoActivo() {
 		return tipoActivo;
 	}

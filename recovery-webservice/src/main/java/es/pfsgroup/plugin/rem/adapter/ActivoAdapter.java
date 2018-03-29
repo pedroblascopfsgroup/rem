@@ -1763,6 +1763,8 @@ public class ActivoAdapter {
 						tramite.getTrabajo().getTipoTrabajo().getDescripcion());
 				beanUtilNotNull.copyProperty(dtoTramite, "subtipoTrabajo",
 						tramite.getTrabajo().getSubtipoTrabajo().getDescripcion());
+				beanUtilNotNull.copyProperty(dtoTramite, "codigoSubtipoTrabajo",
+						tramite.getTrabajo().getSubtipoTrabajo().getCodigo());
 			}
 			if (!Checks.esNulo(tramite.getActivo().getTipoActivo()))
 				beanUtilNotNull.copyProperty(dtoTramite, "tipoActivo",

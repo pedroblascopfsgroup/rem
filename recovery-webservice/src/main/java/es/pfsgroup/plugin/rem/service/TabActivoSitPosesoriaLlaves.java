@@ -26,7 +26,6 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
@@ -82,6 +81,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "llaveHre", activo.getLlavesHre());
 			BeanUtils.copyProperty(activoDto, "fechaRecepcionLlave", activo.getFechaRecepcionLlaves());
 			BeanUtils.copyProperty(activoDto, "numJuegos", activo.getLlaves().size());
+			BeanUtils.copyProperty(activoDto, "tieneOkTecnico", activo.getTieneOkTecnico());
 		}
 		
 		if (activo.getSituacionPosesoria() != null) {
@@ -187,6 +187,9 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			if (dto.getNumJuegos()!=null)
 			{
 				activo.setNumJuegosLlaves(Integer.valueOf(dto.getNumJuegos()));
+			}
+			if (!Checks.esNulo(dto.getTieneOkTecnico())){
+				activo.setTieneOkTecnico(dto.getTieneOkTecnico());
 			}
 			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 		} catch (IllegalAccessException e) {

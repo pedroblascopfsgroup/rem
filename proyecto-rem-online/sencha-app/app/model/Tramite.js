@@ -53,6 +53,9 @@ Ext.define('HreRem.model.Tramite', {
       		name : 'subtipoTrabajo'
       	},
       	{
+      		name: 'codigoSubtipoTrabajo'
+      	},
+      	{
       		name : 'idExpediente'
       	},
       	{

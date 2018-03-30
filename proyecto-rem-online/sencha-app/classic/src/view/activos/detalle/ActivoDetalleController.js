@@ -3173,9 +3173,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var textArea = me.lookupReference(combo.textareaRefChained);
 
     	if(record && record.data.codigo === CONST.MOTIVO_OCULTACION['OTROS']) {
-    		textArea.setDisabled(false);
+    		textArea.setReadOnly(false);
     	} else {
-    		textArea.setDisabled(true);
+    		textArea.setReadOnly(true);
     	}
     },
 
@@ -3200,6 +3200,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	            }
 	        }]);
         }
+    },
+
+    onActivateTabDatosPublicacion: function(tab, eOpts) {
+        var me = this;
+
+        me.getViewModel().get('filtrarComboMotivosOcultacion');
     }
 
 });

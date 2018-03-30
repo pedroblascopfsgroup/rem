@@ -324,6 +324,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}else{
 				return true;
 			}
+		},
+
+		filtrarComboMotivosOcultacion: function(get) {
+			var bloqueoCheckOcultar = get('datospublicacionactivo.deshabilitarCheckOcultarVenta');
+
+			if(!Ext.isEmpty(bloqueoCheckOcultar) && !bloqueoCheckOcultar) {
+				 this.getData().comboMotivosOcultacion.filter([{
+                     filterFn: function(rec){
+                         return rec.getData().esMotivoManual === 'true';
+                     }
+                 }]);
+			} else {
+				this.getData().comboMotivosOcultacion.clearFilter();
+			}
 		}
 	 },
 

@@ -396,6 +396,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				&& activoDto.getGestion()
 				&& activoDto.getInformeComercialAceptado()
 				&& (!Checks.esNulo(activoPatrimonio)
+				&& !Checks.esNulo(activoPatrimonio.getAdecuacionAlquiler())
 				&& (DDAdecuacionAlquiler.CODIGO_ADA_SI.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())
 				|| DDAdecuacionAlquiler.CODIGO_ADA_NO_APLICA.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())))
 				&& conCee
@@ -406,6 +407,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				&& !activoDto.getGestion()
 				&& !activoDto.getInformeComercialAceptado()
 				&& (!Checks.esNulo(activoPatrimonio)
+				&& !Checks.esNulo(activoPatrimonio.getAdecuacionAlquiler())
 				&& !(DDAdecuacionAlquiler.CODIGO_ADA_SI.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())
 				|| DDAdecuacionAlquiler.CODIGO_ADA_NO_APLICA.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())))
 				&& conCee

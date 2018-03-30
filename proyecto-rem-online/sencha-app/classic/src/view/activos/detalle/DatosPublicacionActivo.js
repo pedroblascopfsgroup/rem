@@ -12,7 +12,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 	requires	: ['HreRem.model.ActivoCondicionantesDisponibilidad', 'HreRem.model.DatosPublicacionActivo', 'HreRem.model.CondicionEspecifica',
 					'HreRem.view.activos.detalle.HistoricoCondicionesList', 'HreRem.model.EstadoPublicacion', 'HreRem.view.activos.detalle.HistoricoEstadosPublicacionList'],
 	listeners	: {
-		boxready:'cargarTabData'
+		boxready:'cargarTabData',
+        activate:'onActivateTabDatosPublicacion'
 	},
 
 	initComponent: function () {

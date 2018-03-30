@@ -32,6 +32,7 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
 			}
 			if(pestanyaDatosPublicacion != null){
 				pestanyaDatosPublicacion.ocultarBotonesEdicion = !muestraEdicion;
+				me.up('activosdetallemain').getViewModel().get('filtrarComboMotivosOcultacion');
 			}
 		},
 

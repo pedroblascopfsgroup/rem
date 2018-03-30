@@ -7,6 +7,7 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,10 +43,13 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
     private static final String MOTIVO_ACTIVO_NO_PUBLICADO = "activo.motivo.desmarcar.comercializar.no.publicar";
 		
 	@Autowired
-	ProcessAdapter processAdapter;
+	private ProcessAdapter processAdapter;
 	
 	@Autowired
 	private ActivoApi activoApi;
+
+	@Autowired
+	private ActivoDao activoDao;
 	
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
@@ -54,7 +58,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 	private UpdaterStateApi updaterState;
 	
 	@Resource
-    MessageService messageServices;
+    private MessageService messageServices;
 	
 	@Override
 	public String getValidOperation() {
@@ -161,7 +165,9 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 		//Actualizar disponibilidad comercial del activo
 		updaterState.updaterStateDisponibilidadComercial(activo);
 		activoApi.saveOrUpdate(activo);
-		
+
+		// Actualizar estado publicación activo a través del procedure.
+		activoDao.publicarActivoConHistorico(activo.getId(), "masivo - perímetro");
 	}
 	
 	/**

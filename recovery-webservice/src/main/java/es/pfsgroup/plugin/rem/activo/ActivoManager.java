@@ -2000,7 +2000,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		if (activo==null) return false;
-
+		
+		if (Checks.esNulo(activo.getInfoComercial())){
+			ActivoInfoComercial infoComercial = new ActivoInfoComercial();
+			infoComercial.setActivo(activo);
+			Auditoria auditoria = new Auditoria();
+			auditoria.setUsuarioCrear(proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado().getUsername());
+			auditoria.setFechaCrear(new Date());
+			auditoria.setBorrado(false);
+			infoComercial.setAuditoria(auditoria);
+			genericDao.save(ActivoInfoComercial.class, infoComercial);
+			activo.setInfoComercial(infoComercial);
+		}
+		
 		try {
 			// Terminar periodo de vigencia del último proveedor (fecha hasta).
 			if (!Checks.esNulo(activo)) {

@@ -197,9 +197,15 @@ public class MSVHojaExcel {
 	public FileItem insertarErroresExcel(FileItem fileitem,Map<String, List<Integer>> mapaErrores, int numHoja,
 			int numFilaCabeceras, int fila) throws IOException, RowsExceededException, WriteException, BiffException{
 		
-		Workbook excel=  Workbook.getWorkbook(fileitem.getFile());
+		WorkbookSettings workbookSettings = new WorkbookSettings();
+		workbookSettings.setEncoding("Cp1252");
+		workbookSettings.setSuppressWarnings(true);
+		libroExcel = Workbook.getWorkbook(file, workbookSettings);
 		
-		WritableWorkbook copy = Workbook.createWorkbook(fileitem.getFile(),excel);
+		Workbook excel=  Workbook.getWorkbook(fileitem.getFile());
+		libroExcel=excel;
+		
+		WritableWorkbook copy = Workbook.createWorkbook(fileitem.getFile(),libroExcel);
 		
 		try {
 

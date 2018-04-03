@@ -36,9 +36,12 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 	private static final String USUARIO_PATH = "usuario=";
 	private static final String PASSWORD_PATH = "password=";
 	private static final String COD_CLASE_PATH = "codClase=";
+	private static final String CLASE_EXPEDIENTE_PATH = "clase_expediente=";
+	private static final String TIPO_EXPEDIENTE_PATH = "tipo_expediente=";
 	private static final String DESCRIPCION_EXPEDIENTE_PATH = "descripcionExpediente=";
 	private static final String GASTO_METADATOS_PATH = "gastoMetadatos=";
-	private static final String EXPEDIENTE_COMERCIAL_METADATOS_PATH = "operacionMetadatos=";
+	private static final String EXPEDIENTE_COMERCIAL_METADATOS_PATH = "metadata=";
+	private static final String USUARIO_OPERACIONAL_PATH = "usuarioOperacional=";
 	
 	private static final String USUARIO = "usuario";
 	private static final String PASSWORD = "password";
@@ -160,12 +163,13 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 
 	private String getPathCrearExpedienteComercial(CrearExpedienteComercialDto crearExpedienteComercialDto) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("/crearOperacion");
+		sb.append("/CrearContenedor");
 		sb.append("?").append(USUARIO_PATH).append(crearExpedienteComercialDto.getUsuario());
 		sb.append("&").append(PASSWORD_PATH).append(crearExpedienteComercialDto.getPassword());
-		sb.append("&").append(DESCRIPCION_EXPEDIENTE_PATH).append(UriComponent.encode(crearExpedienteComercialDto.getDescripcionExpediente(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
-		sb.append("&").append(COD_CLASE_PATH).append(crearExpedienteComercialDto.getCodClase());
+		sb.append("&").append(USUARIO_OPERACIONAL_PATH).append(crearExpedienteComercialDto.getUsuarioOperacional());
 		sb.append("&").append(EXPEDIENTE_COMERCIAL_METADATOS_PATH).append(UriComponent.encode(crearExpedienteComercialDto.getOperacionMetadatos(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
+		sb.append("&").append(TIPO_EXPEDIENTE_PATH).append(crearExpedienteComercialDto.getTipoClase());
+		sb.append("&").append(CLASE_EXPEDIENTE_PATH).append(crearExpedienteComercialDto.getCodClase());
 		return sb.toString();
 	}
 	

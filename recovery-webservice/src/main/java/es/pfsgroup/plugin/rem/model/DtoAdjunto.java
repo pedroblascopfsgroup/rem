@@ -35,6 +35,17 @@ public class DtoAdjunto implements Serializable{
 	
 	private String matricula;
 	
+	private Date createDate;
+	
+	private String fileSize;
+	
+	private String id_activo;
+	
+	private Boolean rel;
+	
+	private String tdn2_desc;
+	
+	private String tipoExpediente;	
 
 	public Long getId() {
 		return id;
@@ -130,5 +141,53 @@ public class DtoAdjunto implements Serializable{
 
 	public void setMatricula(String matricula) {
 		this.matricula = matricula;
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
+	public String getFileSize() {
+		return fileSize;
+	}
+
+	public void setFileSize(String fileSize) {
+		this.fileSize = fileSize;
+	}
+
+	public String getId_activo() {
+		return id_activo;
+	}
+
+	public void setId_activo(String id_activo) {
+		this.id_activo = id_activo;
+	}
+
+	public Boolean getRel() {
+		return rel;
+	}
+
+	public void setRel(Boolean rel) {
+		this.rel = rel;
+	}
+
+	public String getTdn2_desc() {
+		return tdn2_desc;
+	}
+
+	public void setTdn2_desc(String tdn2_desc) {
+		this.tdn2_desc = tdn2_desc;
+	}
+
+	public String getTipoExpediente() {
+		return tipoExpediente;
+	}
+
+	public void setTipoExpediente(String tipoExpediente) {
+		this.tipoExpediente = tipoExpediente;
 	}
 }

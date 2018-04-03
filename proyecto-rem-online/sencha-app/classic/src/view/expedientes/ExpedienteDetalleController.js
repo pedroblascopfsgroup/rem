@@ -640,7 +640,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		config.params = {};
 		config.params.id=record.get('id');
 		config.params.idExpediente=record.get("idExpediente");
-		
+		config.params.nombreDocumento=record.get("nombre");
 		me.fireEvent("downloadFile", config);
 	},
 	

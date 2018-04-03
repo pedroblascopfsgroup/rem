@@ -110,14 +110,21 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 					// Fila 4
 						{ 
 							fieldLabel: HreRem.i18n('fieldlabel.codigo.proveedor'),
-							bind: '{infoComercial.codigoProveedor}',
-							readOnly: true
+							readOnly: true,
+							bind: {
+				        		disabled: '{!infoComercial.tieneProveedorTecnico}',
+				        		value: '{infoComercial.codigoProveedor}'
+				        	}					
+							
 						},
 						{ 
 							fieldLabel: HreRem.i18n('fieldlabel.nombre.proveedor'),
-							bind: '{infoComercial.nombreProveedor}',
 							readOnly: true,
-							colspan: 2
+							colspan: 2,
+							bind: {
+				        		disabled: '{!infoComercial.tieneProveedorTecnico}',
+				        		value: '{infoComercial.nombreProveedor}'
+				        	}
 						},
 					// Fila 5
 						{

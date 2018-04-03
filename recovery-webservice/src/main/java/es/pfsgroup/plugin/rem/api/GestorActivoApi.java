@@ -4,6 +4,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.gestorEntidad.api.GestorEntidadApi;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 
 public interface GestorActivoApi extends GestorEntidadApi {
 
@@ -104,4 +105,12 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	 * @return
 	 */
 	public Usuario getGestorComercialActual(Activo activo, String codGestor);
+	
+	
+	/**
+	 * Obtiene el proveedor técnico del activo dado
+	 * @param idActivo
+	 * @return
+	 */
+	public ActivoProveedor obtenerProveedorTecnico(Long idActivo);
 }

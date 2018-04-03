@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=CARLOS LOPEZ
---## FECHA_CREACION=20180315
+--## FECHA_CREACION=20180402
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-3936
@@ -495,10 +495,13 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
             END IF;
     
             IF OutOCULTAR = 0 THEN
-              IF vCHECK_OCULTAR_A = 1 AND vDD_MTO_MANUAL_A = 0 THEN
-                PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
-              END IF; 
-            END IF;  
+              IF vCHECK_OCULTAR_A = 1 THEN
+                PLP$CAMBIO_ESTADO_ALQUILER(nACT_ID, '04', vUSUARIOMODIFICAR);
+                IF vDD_MTO_MANUAL_A = 0 THEN
+                  PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
+                END IF;  
+              END IF;
+            END IF;
           END IF;
   
         END IF;
@@ -513,11 +516,15 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
             END IF;
     
             IF OutOCULTAR = 0 THEN
-              IF vCHECK_OCULTAR_V = 1 AND vDD_MTO_MANUAL_V = 0 THEN
-                PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
-              END IF;  
-            END IF;  
-          END IF;      
+              IF vCHECK_OCULTAR_V = 1 then
+                PLP$CAMBIO_ESTADO_VENTA(nACT_ID, '04', vUSUARIOMODIFICAR);
+                
+                IF vDD_MTO_MANUAL_V = 0 THEN
+                  PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
+                END IF;
+              END IF;
+            END IF;
+          END IF;     
         END IF;
   
         /***********/
@@ -622,10 +629,10 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
     CLOSE v_cursor;
     DBMS_OUTPUT.PUT_LINE('[FIN]');
 
-	BEGIN
+	/*BEGIN
 	  #ESQUEMA#.OPERACION_DDL.DDL_TABLE('ANALYZE','ACT_APU_ACTIVO_PUBLICACION');
 	  #ESQUEMA#.OPERACION_DDL.DDL_TABLE('ANALYZE','ACT_AHP_HIST_PUBLICACION');
-	END;
+	END;*/
     
 	COMMIT;
 

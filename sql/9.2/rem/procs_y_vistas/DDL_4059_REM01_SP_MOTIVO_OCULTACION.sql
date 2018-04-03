@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=CARLOS LOPEZ
---## FECHA_CREACION=20180327
+--## FECHA_CREACION=20180402
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-3936
@@ -114,10 +114,28 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                                                WHERE DDEPA.BORRADO = 0
                                                                  AND DDEPA.DD_EPA_CODIGO = ''04'')/*Oculto Alquiler*/
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''04'' AND MTO.BORRADO = 0 /*Revisión adecuación*/
-                                   WHERE APU.BORRADO = 0.
-                                     AND (SPS.SPS_OCUPADO = 0
-                                       OR SPS.SPS_CON_TITULO = 0
-                                       OR SPS.SPS_FECHA_VENC_TITULO <= sysdate)
+                                   WHERE APU.BORRADO = 0
+                                     AND ((EXISTS (SELECT 1 
+                                                     FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO2 
+                                                    WHERE MTO2.DD_MTO_CODIGO = ''03'' /*Alquilado*/
+                                                      AND MTO2.BORRADO = 0
+                                                      AND MTO2.DD_MTO_ID = APU.DD_MTO_A_ID) 
+                                         AND (SPS.SPS_OCUPADO = 0
+                                           OR SPS.SPS_CON_TITULO = 0
+                                           OR SPS.SPS_FECHA_VENC_TITULO <= sysdate)
+                                          ) 
+                                     OR (EXISTS (SELECT 1 
+                                                   FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO2 
+                                                  WHERE MTO2.DD_MTO_CODIGO = ''04'' /*Revisión adecuación*/
+                                                    AND MTO2.BORRADO = 0
+                                                    AND MTO2.DD_MTO_ID = APU.DD_MTO_A_ID) 
+                                         AND EXISTS (SELECT 1 
+                                                       FROM '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO PTA
+                                                       JOIN '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA ON DDADA.DD_ADA_ID = PTA.DD_ADA_ID AND DDADA.BORRADO = 0
+                                                      WHERE DDADA.DD_ADA_CODIGO IN (''02'',''03'')
+                                                        AND PTA.BORRADO = 0
+                                                        AND PTA.ACT_ID = APU.ACT_ID)
+                                          ))   
                                      AND SPS.ACT_ID= '||pACT_ID||                                        
                        ')
                     )AUX WHERE AUX.ROWNUMBER = 1

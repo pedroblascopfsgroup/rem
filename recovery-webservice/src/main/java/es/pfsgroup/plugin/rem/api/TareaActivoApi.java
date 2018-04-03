@@ -6,6 +6,7 @@ import java.util.List;
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.pfs.prorroga.dto.DtoSolicitarProrroga;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.plugin.rem.model.DtoSaltoTarea;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 
 
@@ -17,7 +18,9 @@ public interface TareaActivoApi {
 
 		public void generarAutoprorroga(DtoSolicitarProrroga dto)  throws BusinessOperationException;
 
-		public void saltoTarea(Long idTareaExterna, String tareaDestino);
+		public void saltoDesdeTareaExterna(Long idTareaExterna, String tareaDestino);
+		
+		public void saltoDesdeTramite(Long idTamite, String tareaDestino);
 		
 		public List<TareaActivo> getTareasActivoByIdTramite(Long idTramite);
 		
@@ -50,4 +53,7 @@ public interface TareaActivoApi {
 		 * @param resolucion
 		 */
 		public void guardarDatosResolucion(Long idTareaExterna, Date fecha, String resolucion);
+
+		void saltoTarea(Long idProcesBpm, String tareaDestino);
+
     }

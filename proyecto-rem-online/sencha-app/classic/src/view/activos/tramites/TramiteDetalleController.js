@@ -1,6 +1,8 @@
 Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.tramitedetalle', 
+    
+    requires: ['HreRem.view.activos.tramites.LanzarTareaAdministrativa'],
 
     control: {
 
@@ -300,6 +302,22 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 				me.getView().unmask();
 			}
 		})
+	},
+	
+	lanzarTareaAdministrativa : function(button) {
+		
+		var me = this;
+  		var salto_tarea_window = Ext.create('HreRem.view.activos.tramites.LanzarTareaAdministrativa',{idTramite: me.getViewModel().get("tramite.idTramite"), idExpediente: me.getViewModel().get("tramite.idExpediente")});
+  		salto_tarea_window.show();
+  		me.getView().add(salto_tarea_window);
+		
+	},
+	
+	reactivarTramite : function(button) {
+		
+		var me = this;
+		console.log("TODO");
+		
 	},
 	
 	saltoResolucionExpediente: function(button){

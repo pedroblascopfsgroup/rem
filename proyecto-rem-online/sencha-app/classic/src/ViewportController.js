@@ -347,4 +347,5 @@ Ext.define('HreRem.view.ViewportController', {
 	        }
         });
     }
+	
 });

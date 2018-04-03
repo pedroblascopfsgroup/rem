@@ -6,16 +6,18 @@ Ext.define('HreRem.view.common.TareaBase', {
     requires : ['HreRem.view.common.TareaController'],
     controller: 'tarea',
     
+    btn_guardar_txt: "**Guardar",
 
     tareaEditable: true,
     tareaFinalizable: false,
     
     initComponent: function() {
     	var me = this;
-	    
+    	
     	me.buttonAlign = 'left';
+    	
     	if(me.tareaEditable){
-    		me.buttons = [ { itemId: 'btnGuardar', text: 'Guardar', handler: 'guardarTarea', bind: { hidden: '{errorValidacion}'}},{ itemId: 'btnCancelar', text: 'Cancelar', handler: 'cancelarTarea'}];
+    		me.buttons = [ { itemId: 'btnGuardar', text:  me.btn_guardar_txt, handler: 'guardarTarea', bind: { hidden: '{errorValidacion}'}},{ itemId: 'btnCancelar', text: 'Cancelar', handler: 'cancelarTarea'}];
     	}else{
     		if(me.tareaFinalizable){
     			me.buttons = [{ itemId: 'btnFinalizar', text: 'Marcar como leido', handler: 'finalizarTarea'}, { itemId: 'btnCancelar', text: 'Cerrar', handler: 'cancelarTarea'}];

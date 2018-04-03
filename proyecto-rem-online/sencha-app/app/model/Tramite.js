@@ -123,6 +123,18 @@ Ext.define('HreRem.model.Tramite', {
     	{
     		name: 'estaEnTareaSiguienteResolucionExpediente',
     		type: 'boolean'
+    	},
+    	{
+    		name: 'ocultarBotonLanzarTareaAdministrativa',
+    		type: 'boolean'
+    	},
+    	{
+    		name: 'ocultarBotonReactivarTramite',
+    		type: 'boolean'
+    	},
+    	{
+    		name: 'desactivarBotonLanzarTareaAdministrativa',
+    		type: 'boolean'
     	}
     ],
 

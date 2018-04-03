@@ -137,11 +137,15 @@ public class ActivoTramite implements Serializable, Auditable{
 	
 	public List<Activo> getActivos(){
 		List<Activo> listaActivos = new ArrayList<Activo>();
-		if(!Checks.esNulo(activo))
+		if(!Checks.esNulo(activo)) {
 			listaActivos.add(activo);
-		else
-			for(ActivoTrabajo activotrabajo : trabajo.getActivosTrabajo())
-				listaActivos.add(activotrabajo.getActivo());
+		} else {
+			
+			if(!Checks.esNulo(trabajo)) {
+				for(ActivoTrabajo activotrabajo : trabajo.getActivosTrabajo())
+					listaActivos.add(activotrabajo.getActivo());
+			}
+		}
 			
 		return listaActivos;
 	}	

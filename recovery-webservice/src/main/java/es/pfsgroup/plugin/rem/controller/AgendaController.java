@@ -36,6 +36,7 @@ import es.pfsgroup.plugin.rem.excel.TareaExcelReport;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoReasignarTarea;
+import es.pfsgroup.plugin.rem.model.DtoSaltoTarea;
 import es.pfsgroup.plugin.rem.model.DtoSolicitarProrrogaTarea;
 import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -560,6 +561,23 @@ public class AgendaController extends TareaController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView reasignarTarea(DtoReasignarTarea dtoReasignarTarea, ModelMap model) {
 		model.put("success", adapter.reasignarTarea(dtoReasignarTarea));
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView lanzarTareaAdministrativa(DtoSaltoTarea dto, ModelMap model) {
+
+		boolean success = false;
+		try {
+			
+			success = adapter.lanzarTareaAdministrativa(dto);
+
+		} catch (Exception e) {
+			model.put("errorValidacionGuardado", e.getMessage());
+		}
+
+		model.put("success", success);
+
 		return createModelAndViewJson(model);
 	}
 

@@ -24,6 +24,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
@@ -1805,6 +1806,18 @@ public class ActivoAdapter {
 				if (!ActivoTramiteApi.CODIGO_TRAMITE_PROPUESTA_PRECIOS.equals(tramite.getTipoTramite().getCodigo())) {
 					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonAnular", true);
 				}
+				
+				if ((!genericAdapter.isSuper(usuarioLogado)) || !(tramite.getTipoTramite().getCodigo().equals("T013"))) {
+					dtoTramite.setOcultarBotonLanzarTareaAdministrativa(true);
+					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonLanzarTareaAdministrativa", true);
+					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonReactivarTramite", true);
+				}
+				
+				if(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(tramite.getEstadoTramite().getCodigo())) {
+					beanUtilNotNull.copyProperty(dtoTramite, "desactivarBotonLanzarTareaAdministrativa", true);
+				}
+				
+				
 			}
 				
 				

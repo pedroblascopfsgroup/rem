@@ -36,6 +36,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
     initComponent: function() {
         var me = this;
+        
+        me. btn_guardar_txt = HreRem.i18n("btn.saveBtnText");
 
         me.width = 800;
         me.title = me.titulo;

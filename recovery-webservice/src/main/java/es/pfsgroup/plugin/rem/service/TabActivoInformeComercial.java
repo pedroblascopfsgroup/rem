@@ -12,6 +12,7 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -26,9 +27,12 @@ import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoLocalComercial;
 import es.pfsgroup.plugin.rem.model.ActivoPlazaAparcamiento;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
+import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConstruccion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -135,6 +139,34 @@ public class TabActivoInformeComercial implements TabActivoService {
 					}
 				}else{
 					informeComercial.setAutorizacionWeb(0);
+				}
+				
+				// Datos del proveedor tecnico.
+				Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+				Filter filterAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+				List<GestorActivo> gestoresActivo = genericDao.getList(GestorActivo.class, filterActivo, filterAuditoria);
+				GestorActivo proveedorTecnico = null;
+				for (GestorActivo gestorActivo : gestoresActivo){
+					if ("PTEC".equals(gestorActivo.getTipoGestor().getCodigo())) {
+						proveedorTecnico = gestorActivo;
+						break;
+					}
+				}
+				if (!Checks.esNulo(proveedorTecnico)) {
+					Filter filterGee = genericDao.createFilter(FilterType.EQUALS, "id", proveedorTecnico.getId());
+					GestorEntidad gestorEntidad = genericDao.get(GestorEntidad.class, filterGee, filterAuditoria);
+					Filter filterPvc = genericDao.createFilter(FilterType.EQUALS, "usuario.id", gestorEntidad.getUsuario().getId());
+					ActivoProveedorContacto pvc = genericDao.get(ActivoProveedorContacto.class, filterAuditoria, filterPvc);
+					if (!Checks.esNulo(pvc)) {
+						ActivoProveedor pve = pvc.getProveedor();
+						if (!Checks.esNulo(pve)) {
+							beanUtilNotNull.copyProperty(informeComercial, "codigoProveedor", pve.getCodigoProveedorRem());
+							beanUtilNotNull.copyProperty(informeComercial, "nombreProveedor", pve.getNombre());
+							beanUtilNotNull.copyProperty(informeComercial, "tieneProveedorTecnico", false);
+						}
+					}
+				}else{
+					beanUtilNotNull.copyProperty(informeComercial, "tieneProveedorTecnico", true);
 				}
 				
 				// Datos de la Comunidad de vecinos al Dto.

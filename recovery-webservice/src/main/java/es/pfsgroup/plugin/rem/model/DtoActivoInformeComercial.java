@@ -51,7 +51,10 @@ public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
 	private Boolean despensa;
 	private Boolean lavadero;
 	private Boolean azotea;
-	private String descOtras;	
+	private String descOtras;
+	private Boolean tieneProveedorTecnico;
+	private String codigoProveedor;
+	private String nombreProveedor;
 	
 	public String getInferiorMunicipioCodigo() {
 		return inferiorMunicipioCodigo;
@@ -299,6 +302,23 @@ public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
 	public void setDescOtras(String descOtras) {
 		this.descOtras = descOtras;
 	}
-	
+	public Boolean getTieneProveedorTecnico() {
+		return tieneProveedorTecnico;
+	}
+	public void setTieneProveedorTecnico(Boolean tieneProveedorTecnico) {
+		this.tieneProveedorTecnico = tieneProveedorTecnico;
+	}
+	public String getCodigoProveedor() {
+		return codigoProveedor;
+	}
+	public void setCodigoProveedor(String codigoProveedor) {
+		this.codigoProveedor = codigoProveedor;
+	}
+	public String getNombreProveedor() {
+		return nombreProveedor;
+	}
+	public void setNombreProveedor(String nombreProveedor) {
+		this.nombreProveedor = nombreProveedor;
+	}
 	
 }

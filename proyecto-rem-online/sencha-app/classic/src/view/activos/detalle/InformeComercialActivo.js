@@ -108,6 +108,18 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 							colspan: 2
 						},
 					// Fila 4
+						{ 
+							fieldLabel: HreRem.i18n('fieldlabel.codigo.proveedor'),
+							bind: '{infoComercial.codigoProveedor}',
+							readOnly: true
+						},
+						{ 
+							fieldLabel: HreRem.i18n('fieldlabel.nombre.proveedor'),
+							bind: '{infoComercial.nombreProveedor}',
+							readOnly: true,
+							colspan: 2
+						},
+					// Fila 5
 						{
 							xtype:'fieldsettable',
 							title:HreRem.i18n('title.grid.historico.mediador.info.comercial'),
@@ -117,7 +129,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 								[
 									{xtype: "historicomediadorgrid", reference: "historicomediadorgrid", colspan: 3}
 								]
-						}
+						}						
 				]
 			},
 

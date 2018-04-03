@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DANIEL ALGABA
---## FECHA_CREACION=20180329
+--## FECHA_CREACION=20180403
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-3975
@@ -140,7 +140,7 @@ BEGIN
                           , 0 BORRADO    
                         FROM (SELECT ACT_ID, DD_TCO_ID
                               FROM ACT_ACTIVO
-                              WHERE BORRADO = 0 AND ACT_ID NOT IN (SELECT DISTINCT ACT_ID FROM ACT_HEP_HIST_EST_PUBLICACION WHERE BORRADO = 0)
+                              WHERE BORRADO = 0
                               AND ACT_ID NOT IN (SELECT ACT_ID FROM ACT_APU_ACTIVO_PUBLICACION WHERE BORRADO = 0)
                              )
                         )';

@@ -22,9 +22,9 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_MSQL VARCHAR2(2048 CHAR);
-    V_TABLA VARCHAR2(30 CHAR) := 'AUX_ACTIVOS_TRASP_PRINEX';
-    V_COLUMN VARCHAR2(30 CHAR) := 'ACT_NUM_ACTIVO_NUEVO';
-    V_COLUMN1 VARCHAR2(30 CHAR) := 'ACT_NUM_ACTIVO';
+    V_TABLA VARCHAR2(30 CHAR) := 'AUX_ACTIVOS_TRASPASADOS';
+    V_COLUMN VARCHAR2(30 CHAR) := 'ACT_NUM_ACTIVO_VIEJO';
+    V_COLUMN1 VARCHAR2(30 CHAR) := 'ACT_NUM_ACTIVO_NUEVO';
     V_COLUMN2 VARCHAR2(30 CHAR) := 'CODIGO_CARTERA';
     V_COLUMN3 VARCHAR2(30 CHAR) := 'CODIGO_SUBCARTERA';
     V_ESQUEMA VARCHAR2(15 CHAR) := 'REM01';
@@ -300,25 +300,20 @@ BEGIN
                 LOOP
                     V_TMP_TIPO_DATA := V_TIPO_DATA(I);
                     V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' T1
-                        USING (SELECT '''||V_TMP_TIPO_DATA(1)||''' ACT_NUM_ACTIVO_PRINEX
-                                , '''||V_TMP_TIPO_DATA(2)||''' '||V_COLUMN||'
+                        USING (SELECT '''||V_TMP_TIPO_DATA(1)||''' '||V_COLUMN||'
+                                , '''||V_TMP_TIPO_DATA(2)||''' '||V_COLUMN1||'
                                 , '''||V_TMP_TIPO_DATA(3)||''' '||V_COLUMN2||'
                                 , '''||V_TMP_TIPO_DATA(4)||''' '||V_COLUMN3||'
                             FROM DUAL) T2
-                        ON (T1.ACT_NUM_ACTIVO_PRINEX = T2.ACT_NUM_ACTIVO_PRINEX)
+                        ON (T1.'||V_COLUMN||' = T2.'||V_COLUMN||')
                         WHEN MATCHED THEN UPDATE SET
-                            T1.'||V_COLUMN||' = T2.'||V_COLUMN||'
+                            T1.'||V_COLUMN1||' = T2.'||V_COLUMN1||'
                             , T1.'||V_COLUMN2||' = T2.'||V_COLUMN2||'
                             , T1.'||V_COLUMN3||' = T2.'||V_COLUMN3||'
-                        WHEN NOT MATCHED THEN INSERT (T1.ACT_NUM_ACTIVO_PRINEX, T1.'||V_COLUMN||', T1.'||V_COLUMN2||', T1.'||V_COLUMN3||') VALUES
-                            (T2.ACT_NUM_ACTIVO_PRINEX, T2.'||V_COLUMN||', T2.'||V_COLUMN2||', T2.'||V_COLUMN3||')';
+                        WHEN NOT MATCHED THEN INSERT (T1.'||V_COLUMN||', T1.'||V_COLUMN1||', T1.'||V_COLUMN2||', T1.'||V_COLUMN3||') 
+                        VALUES (T2.'||V_COLUMN||', T2.'||V_COLUMN1||', T2.'||V_COLUMN2||', T2.'||V_COLUMN3||')';
                     EXECUTE IMMEDIATE V_MSQL;
                 END LOOP;
-            EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' T1
-                USING '||V_ESQUEMA||'.ACT_ACTIVO T2
-                ON (T1.ACT_NUM_ACTIVO_PRINEX = T2.ACT_NUM_ACTIVO_PRINEX)
-                WHEN MATCHED THEN UPDATE SET
-                    T1.'||V_COLUMN1||' = T2.'||V_COLUMN1||'';  
 
             DBMS_OUTPUT.PUT_LINE('  [INFO] TABLA RELLENA');
         ELSE

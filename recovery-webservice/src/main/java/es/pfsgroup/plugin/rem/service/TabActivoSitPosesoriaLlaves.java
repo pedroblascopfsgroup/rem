@@ -159,7 +159,9 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			if(!Checks.esNulo(dto.getFechaTomaPosesion())){
 				activo.getSituacionPosesoria().setEditadoFechaTomaPosesion(true);
 			}
-			
+			if(!Checks.esNulo(dto.getIndicaPosesion())){
+				activo.getSituacionPosesoria().getSitaucionJuridica().setIndicaPosesion(dto.getIndicaPosesion());
+			}
 			activo.setSituacionPosesoria(genericDao.save(ActivoSituacionPosesoria.class, activo.getSituacionPosesoria()));
 			
 			if (dto.getTipoTituloPosesorioCodigo() != null) {

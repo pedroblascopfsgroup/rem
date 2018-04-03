@@ -26,11 +26,14 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelManagerApi;
 import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
+import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVProcesoDao;
+import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ExcelFileBean;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVProcesoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -50,6 +53,9 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 	
 	@Autowired
 	private MSVExcelParser excelParser;
+	
+	@Autowired
+	private MSVProcesoDao procesoDao;
 	
 	@Resource(name = "entityTransactionManager")
     private PlatformTransactionManager transactionManager;
@@ -106,13 +112,12 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 			}
 			if(!mapaErrores.isEmpty()){
 				MSVDocumentoMasivo archivo = ficheroDao.findByIdProceso(file.getProcesoMasivo().getId());
-				ExcelFileBean excelFile = new ExcelFileBean();
 				if (!Checks.esNulo(archivo)) {
-					excelFile.setFileItem(archivo.getContenidoFichero());
 					exc = excelParser.getExcel(archivo.getContenidoFichero().getFile());
 					String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
 					FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-					processAdapter.setExcelErroresProcesado(file, fileItemErrores);
+					
+					processAdapter.setExcelErroresProcesado(archivo, fileItemErrores);
 				}
 			}
 			

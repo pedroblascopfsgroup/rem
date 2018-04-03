@@ -38,8 +38,6 @@ BEGIN
         SET
         BIE_VAL_ID = S_BIE_VALORACIONES.NEXTVAL,
         TAS_ID = S_ACT_TAS_TASACION.NEXTVAL
-        WHERE BIE_VAL_ID IS NULL
-        OR TAS_ID IS NULL
     ');
   
     DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_MIG||' actualizada. '||SQL%ROWCOUNT||' Filas.');

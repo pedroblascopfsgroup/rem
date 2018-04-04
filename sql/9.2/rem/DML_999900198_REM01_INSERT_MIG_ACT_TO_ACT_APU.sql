@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DANIEL ALGABA
---## FECHA_CREACION=20180403
+--## FECHA_CREACION=20180404
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-3975
@@ -113,8 +113,8 @@ BEGIN
                         SELECT  
                           ACT_ID
                           , NULL DD_TPU_ID
-                          , 2 DD_EPV_ID
-                          , 2 DD_EPA_ID
+                          , (SELECT DDEPV.DD_EPV_ID FROM '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA DDEPV WHERE DDEPV.DD_EPV_CODIGO = ''01'') DD_EPV_ID
+                          , (SELECT DDEPA.DD_EPA_ID FROM '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER DDEPA WHERE DDEPA.DD_EPA_CODIGO = ''01'') DD_EPA_ID
                           , NVL(DD_TCO_ID, (SELECT DD_TCO_ID FROM DD_TCO_TIPO_COMERCIALIZACION WHERE DD_TCO_CODIGO = ''02'')) DD_TCO_ID
                           , NULL DD_MTO_V_ID
                           , NULL APU_MOT_OCULTACION_MANUAL_V

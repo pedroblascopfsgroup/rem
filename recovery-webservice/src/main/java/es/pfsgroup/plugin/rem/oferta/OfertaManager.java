@@ -1385,7 +1385,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					if (DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(codigoComiteSancion)
 							|| DDComiteSancion.CODIGO_HAYA_SAREB.equals(codigoComiteSancion)
 							|| DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComiteSancion)
-							|| DDComiteSancion.CODIGO_HAYA_TANGO.equals(codigoComiteSancion))
+							|| DDComiteSancion.CODIGO_HAYA_TANGO.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_HAYA_HYT.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_HAYA_THIRD_PARTIES.equals(codigoComiteSancion))
 						return true;
 				} else {
 					if (trabajoApi.checkBankia(trabajo)) {

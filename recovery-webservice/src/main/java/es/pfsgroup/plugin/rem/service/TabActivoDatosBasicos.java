@@ -37,12 +37,14 @@ import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.impl.ActivoEstadoPublicacionManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
@@ -52,6 +54,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -116,6 +119,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private ActivoPatrimonioDao activoPatrimonioDao;
+	
+	@Autowired
+	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
 	
 	@Resource
     MessageService messageServices;
@@ -374,17 +380,19 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		//------------
 		
+		DtoDatosPublicacionActivo dtoPa = activoEstadoPublicacionApi.getPublicarSinPrecioVentaAlquilerByIdActivo(activo.getId());
+		
 		//Indicador Venta
 		if(activoDto.getAdmision()
 				&& activoDto.getGestion()
 				&& activoDto.getInformeComercialAceptado()
-				&& ((!Checks.esNulo(activoDto.getAprobadoVentaWeb()) || !Checks.esNulo(activoDto.getAprobadoRentaWeb())) || activoDto.getAplicaPublicar()) 
+				&& ((!Checks.esNulo(activoDto.getAprobadoVentaWeb()) || !Checks.esNulo(activoDto.getAprobadoRentaWeb())) || (!Checks.esNulo(dtoPa.getPublicarSinPrecioVenta()) && dtoPa.getPublicarSinPrecioVenta())) 
 				){
 			activoDto.setEstadoVenta(1);
 		}else if(!activoDto.getAdmision()
 				&& !activoDto.getGestion()
 				&& !activoDto.getInformeComercialAceptado()
-				&& !((!Checks.esNulo(activoDto.getAprobadoVentaWeb()) || !Checks.esNulo(activoDto.getAprobadoRentaWeb())) || activoDto.getAplicaPublicar()) 
+				&& !((!Checks.esNulo(activoDto.getAprobadoVentaWeb()) || !Checks.esNulo(activoDto.getAprobadoRentaWeb())) || (!Checks.esNulo(dtoPa.getPublicarSinPrecioVenta()) && dtoPa.getPublicarSinPrecioVenta())) 
 				){
 			activoDto.setEstadoVenta(0);
 		}else{
@@ -400,7 +408,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				&& (DDAdecuacionAlquiler.CODIGO_ADA_SI.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())
 				|| DDAdecuacionAlquiler.CODIGO_ADA_NO_APLICA.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())))
 				&& conCee
-				&& ((!Checks.esNulo(activoDto.getAprobadoVentaWeb()) || !Checks.esNulo(activoDto.getAprobadoRentaWeb())) || activoDto.getAplicaPublicar()) 
+				&& ((!Checks.esNulo(activoDto.getAprobadoVentaWeb()) || !Checks.esNulo(activoDto.getAprobadoRentaWeb())) || (!Checks.esNulo(dtoPa.getPublicarSinPrecioAlquiler()) && dtoPa.getPublicarSinPrecioAlquiler())) 
 				){
 			activoDto.setEstadoAlquiler(1);
 		}else if(!activoDto.getAdmision()
@@ -411,7 +419,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				&& !(DDAdecuacionAlquiler.CODIGO_ADA_SI.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())
 				|| DDAdecuacionAlquiler.CODIGO_ADA_NO_APLICA.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())))
 				&& conCee
-				&& !((!Checks.esNulo(activoDto.getAprobadoVentaWeb()) || !Checks.esNulo(activoDto.getAprobadoRentaWeb())) || activoDto.getAplicaPublicar()) 
+				&& !((!Checks.esNulo(activoDto.getAprobadoVentaWeb()) || !Checks.esNulo(activoDto.getAprobadoRentaWeb())) || (!Checks.esNulo(dtoPa.getPublicarSinPrecioAlquiler()) && dtoPa.getPublicarSinPrecioAlquiler())) 
 				){
 			activoDto.setEstadoAlquiler(0);
 		}else{

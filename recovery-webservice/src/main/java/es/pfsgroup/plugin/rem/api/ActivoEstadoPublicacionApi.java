@@ -97,4 +97,11 @@ public interface ActivoEstadoPublicacionApi {
 	 * @return Devuleve un listado de DtoEstadoPublicacion con los datos obtenidos.
 	 */
 	DtoPaginadoHistoricoEstadoPublicacion getHistoricoEstadosPublicacionAlquilerByIdActivo(DtoPaginadoHistoricoEstadoPublicacion dto);
+	
+	/**
+	 * Este método obtiene el estado de publicar sin precio para venta y alquiler dado un id de activo
+	 * @param idActivo: id del activo para obtener su publicar sin precio
+	 * @return devuelve un dto con los datos
+	 */
+	DtoDatosPublicacionActivo getPublicarSinPrecioVentaAlquilerByIdActivo(Long idActivo);
 }

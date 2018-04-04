@@ -972,4 +972,17 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}
 		return false;
 	}
+	
+	@Override
+	public DtoDatosPublicacionActivo getPublicarSinPrecioVentaAlquilerByIdActivo(Long idActivo){
+		ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(idActivo);
+		DtoDatosPublicacionActivo dto = new DtoDatosPublicacionActivo();
+		
+		if(!Checks.esNulo(activoPublicacion)){
+			dto.setPublicarSinPrecioVenta(activoPublicacion.getCheckSinPrecioVenta());
+			dto.setPublicarSinPrecioAlquiler(activoPublicacion.getCheckSinPrecioAlquiler());
+		}
+		
+		return dto;
+	}
 }

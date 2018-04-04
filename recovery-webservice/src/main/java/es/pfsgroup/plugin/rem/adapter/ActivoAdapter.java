@@ -2273,10 +2273,10 @@ public class ActivoAdapter {
 		// return null;
 	}
 
-	public FileItem download(Long id) throws Exception {
+	public FileItem download(Long id,String nombreDocumento) throws Exception {
 		String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
 		Downloader dl = downloaderFactoryApi.getDownloader(key);
-		return dl.getFileItem(id);
+		return dl.getFileItem(id,nombreDocumento);
 	}
 
 	public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {

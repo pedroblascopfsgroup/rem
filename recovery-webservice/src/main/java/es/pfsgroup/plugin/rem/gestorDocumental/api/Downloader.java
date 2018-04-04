@@ -4,7 +4,7 @@ import es.capgemini.devon.files.FileItem;
 
 public interface Downloader {
 	
-	FileItem getFileItem(Long id) throws Exception;
+	FileItem getFileItem(Long id, String nombreDocumento) throws Exception;
 	
 	String[] getKeys();
 

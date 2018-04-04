@@ -19,7 +19,7 @@ public class DbDownloader implements Downloader {
 	private static final String BASE_DE_DATOS = "DB";
 	
 	@Override
-	public FileItem getFileItem(Long id) {
+	public FileItem getFileItem(Long id,String nombreDocumento) {
 		ActivoAdjuntoActivo adjuntoActivo = genericDao.get(ActivoAdjuntoActivo.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
 
 		FileItem fileItem = adjuntoActivo.getAdjunto().getFileItem();

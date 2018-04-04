@@ -1917,7 +1917,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			try {
 				// adjuntoGasto= gasto.getAdjuntoGD(dtoAdjunto.getId());
-				fileItem = gestorDocumentalAdapterApi.getFileItem(dtoAdjunto.getId());
+				fileItem = gestorDocumentalAdapterApi.getFileItem(dtoAdjunto.getId(),dtoAdjunto.getNombre());//MODIFICAR
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 			}

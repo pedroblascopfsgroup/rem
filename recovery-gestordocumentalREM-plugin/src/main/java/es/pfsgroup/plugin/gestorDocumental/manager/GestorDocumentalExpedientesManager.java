@@ -77,12 +77,15 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 	
 	private String getPathCrearGasto(CrearGastoDto crearGasto) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("/crearGasto");
+		sb.append("/CrearContenedor");
 		sb.append("?").append(USUARIO_PATH).append(crearGasto.getUsuario());
 		sb.append("&").append(PASSWORD_PATH).append(crearGasto.getPassword());
 		sb.append("&").append(DESCRIPCION_EXPEDIENTE_PATH).append(UriComponent.encode(crearGasto.getDescripcionExpediente(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
-		sb.append("&").append(COD_CLASE_PATH).append(crearGasto.getCodClase());
-		sb.append("&").append(GASTO_METADATOS_PATH).append(UriComponent.encode(crearGasto.getGastoMetadatos(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
+		sb.append("&").append(CLASE_EXPEDIENTE_PATH).append(crearGasto.getCodClase());
+		sb.append("&").append(TIPO_EXPEDIENTE_PATH).append("AI");
+		sb.append("&").append(EXPEDIENTE_COMERCIAL_METADATOS_PATH).append(UriComponent.encode(crearGasto.getGastoMetadatos(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
+		sb.append("&").append(USUARIO_OPERACIONAL_PATH).append("pfs.dgutierrez");
+
 		return sb.toString();
 	}
 	

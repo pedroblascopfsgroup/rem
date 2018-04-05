@@ -21,6 +21,7 @@ public class GestorDocumentalConstants {
 	public static final String TIPO_CONSULTA_RELACION_GLOBAL = "Global";
 	public static final String OPERACION = "\"Operación\":";
 	public static final String ENTIDAD = "\"Entidad\":";
+	public static final String GASTOS = "\"Gastos\":";
 	
 	public static final String[] generalDocumento = {"Número Registro:", "Fecha Documento:", "Fecha Baja Lógica:", "Fecha Caducidad:", "Fecha Expurgo:", "Proceso Carga:", "LOPD:", "Serie Documental:", "TDN1:", "TDN2:"};
 	public static final String[] generalDocumentoModif = {"Número Registro:", "Fecha Baja Lógica:", "Fecha Caducidad:", "Fecha Expurgo:", "Proceso Carga:", "LOPD:", "Serie Documental:", "TDN1:", "TDN2:"};

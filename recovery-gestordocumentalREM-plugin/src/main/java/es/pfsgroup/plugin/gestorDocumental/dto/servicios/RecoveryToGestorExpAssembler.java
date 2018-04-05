@@ -55,11 +55,12 @@ public class RecoveryToGestorExpAssembler {
 	private static String rellenarGastoMetadatos (String id, String numGasto, String idReo, String fechaGasto, String cliente) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
-		sb.append(GestorDocumentalConstants.gastoMetadatos[0]).append("'"+id+"'").append(",");
-		sb.append(GestorDocumentalConstants.gastoMetadatos[1]).append("'"+numGasto+"'").append(",");
-		sb.append(GestorDocumentalConstants.gastoMetadatos[2]).append("'"+idReo+"'").append(",");
-		sb.append(GestorDocumentalConstants.gastoMetadatos[3]).append("'"+fechaGasto+"'").append(",");
-		sb.append(GestorDocumentalConstants.gastoMetadatos[4]).append("'"+cliente+"'");
+			sb.append(GestorDocumentalConstants.GASTOS).append("{");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[0]).append("\"").append(id).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[1]).append("\"").append(numGasto).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[2]).append("\"").append(idReo).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[3]).append("\"").append(cliente).append("\"");
+			sb.append("}");
 		sb.append("}");
 		return sb.toString();
 	}

@@ -2976,6 +2976,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							expedienteComercial.setEstado(
 									(DDEstadosExpedienteComercial) utilDiccionarioApi.dameValorDiccionarioByCod(
 											DDEstadosExpedienteComercial.class, DDEstadosExpedienteComercial.ANULADO));
+							expedienteComercial.setFechaVenta(null);
 							expedienteComercial.getReserva()
 									.setEstadoReserva((DDEstadosReserva) utilDiccionarioApi.dameValorDiccionarioByCod(
 											DDEstadosReserva.class, DDEstadosReserva.CODIGO_RESUELTA_DEVUELTA));
@@ -3433,6 +3434,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		short tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_SIN_IMPUESTO;
 		List<InstanciaDecisionDataDto> instanciaList = new ArrayList<InstanciaDecisionDataDto>();
 		boolean solicitaFinanciacion = false;
+		DecimalFormat num = new DecimalFormat("###.##");
 
 		Oferta oferta = expediente.getOferta();
 		if (Checks.esNulo(oferta)) {
@@ -3466,11 +3468,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(Checks.esNulo(importeXActivo)) {
 				importeXActivo = 0.00D;
 			}
-			sumatorioImporte += importeXActivo;
+			sumatorioImporte += importeXActivo*100;
 
 			InstanciaDecisionDataDto instData = new InstanciaDecisionDataDto();
 			// ImportePorActivo
-			instData.setImporteConSigno(Double.valueOf(importeXActivo*100).longValue());
+			instData.setImporteConSigno(Double.valueOf(num.format(importeXActivo*100)).longValue());
 			// NumActivoUvem
 			instData.setIdentificadorActivoEspecial(Integer.valueOf(activo.getNumActivoUvem().toString()));
 
@@ -3507,7 +3509,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			instanciaList.add(instData);
 		}
 
-		if (!sumatorioImporte.equals(importeTotal)) {
+		if (!importeTotal.equals(sumatorioImporte/100)) {
 			throw new JsonViewerException("La suma de los importes es diferente al importe de la oferta");
 		}
 
@@ -3586,9 +3588,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		//MOD3
-		if(!Checks.esNulo(oferta.getPrescriptor()) && DDTipoProveedor.COD_OFICINA_BANKIA.equals(oferta.getPrescriptor().getTipoProveedor().getCodigo())){
-			instancia.setCodigoProveedorUvem(oferta.getPrescriptor().getCodigoApiProveedor());
-		}		
+		List<GastosExpediente> gastosExpediente = expediente.getHonorarios();
+			
+		if(!Checks.estaVacio(gastosExpediente)){
+			for(GastosExpediente gastoExp: gastosExpediente){				
+				if(!Checks.esNulo(gastoExp.getAccionGastos()) && DDAccionGastos.CODIGO_PRESCRIPCION.equals(gastoExp.getAccionGastos().getCodigo())){
+					if(!Checks.esNulo(gastoExp.getProveedor()) && DDTipoProveedor.COD_OFICINA_BANKIA.equals(gastoExp.getProveedor().getTipoProveedor().getCodigo())){
+						instancia.setCodigoProveedorUvem(gastoExp.getProveedor().getCodigoApiProveedor());
+						break;
+					}
+				}
+			}
+		}
 
 		if(!Checks.esNulo(codComiteSuperior) && DDSiNo.SI.equals(codComiteSuperior)) {
 			instancia.setCodComiteSuperior(DDComiteSancion.CODIGO_BANKIA_DGVIER);
@@ -3645,7 +3656,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		} else if (codigoTipoDoc.equals("12")) {
 			result ='J';
 		}else{
-			throw new Exception("Tipo de documento no soportado");
+			throw new JsonViewerException("Tipo de documento no soportado");
 		}
 		return result;
 	}
@@ -5787,6 +5798,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		DDEstadosExpedienteComercial estadoExpedienteComercial = (DDEstadosExpedienteComercial) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class, DDEstadosExpedienteComercial.ANULADO);
+		expedienteComercial.setFechaVenta(null);
 		DDEstadosReserva estadoReserva = (DDEstadosReserva) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDEstadosReserva.class, DDEstadosReserva.CODIGO_RESUELTA_POSIBLE_REINTEGRO);
 		

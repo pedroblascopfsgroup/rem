@@ -239,7 +239,7 @@ public class ProcessAdapter {
 	@Transactional
 	public void setExcelErroresProcesado(MSVDocumentoMasivo document, FileItem fileItemErrores)	{	
 		document.setErroresFicheroProcesar(fileItemErrores);
-		genericDao.update(MSVDocumentoMasivo.class, document);
+		ficheroDao.saveOrUpdate(document);
 	}
 		
 	

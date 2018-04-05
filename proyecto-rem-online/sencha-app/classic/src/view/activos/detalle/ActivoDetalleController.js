@@ -1867,6 +1867,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var fechaFinExistenteDescuentoAprobado = grid.getStore().findRecord('codigoTipoPrecio', tipoDescuentoAprobado).getData().fechaFin;
 		var fechaInicioDescuentoPublicadoWeb = fechaInicioActualRow.getEditor().value;
 		var fechaFinDescuentoPublicadoWeb = fechaFinActualRow.getEditor().value;
+		var fechaInicioExistenteDescuentoPublicadoWeb= grid.getStore().findRecord('codigoTipoPrecio', tipoDescuentoPublicadoWeb).getData().fechaInicio;
+		var fechaFinExistenteDescuentoPublicadoWeb= grid.getStore().findRecord('codigoTipoPrecio', tipoDescuentoPublicadoWeb).getData().fechaFin;
 
 		var codTipoPrecio = grid.codTipoPrecio;
 
@@ -1914,9 +1916,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						// No puede estar vacÃ­a
 						return HreRem.i18n('info.fecha.precios.msg.validacion');
 					}
-					if(!Ext.isEmpty(fechaFinExistenteAprobadoVentaWeb) && fechaFinDescuentoAprobado > fechaFinExistenteAprobadoVentaWeb) {
+					if(!Ext.isEmpty(fechaFinExistenteDescuentoPublicadoWeb) && fechaFinExistenteDescuentoPublicadoWeb > fechaFinDescuentoAprobado) {
 						// Ha de ser menor o igual que la fecha fin aprobado venta web
-						return HreRem.i18n('info.datefield.end.date.pda.msg.validacion');
+						return HreRem.i18n('info.datefield.end.date.pdw2.msg.validacion');
 					}
 				} else {
 					// La fecha de inicio
@@ -1924,9 +1926,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						// No puede estar vacÃ­a
 						return HreRem.i18n('info.fecha.precios.msg.validacion');
 					}
-					if(!Ext.isEmpty(fechaInicioExistenteAprobadoVentaWeb) && fechaInicioDescuentoAprobado < fechaInicioExistenteAprobadoVentaWeb) {
+					if(!Ext.isEmpty(fechaInicioExistenteDescuentoPublicadoWeb) && fechaInicioExistenteDescuentoPublicadoWeb < fechaInicioDescuentoAprobado) {
 						// Ha de ser mayor o igual que la fecha inicio aprobado venta web
-						return HreRem.i18n('info.datefield.begin.date.pda.msg.validacion');
+						return HreRem.i18n('info.datefield.begin.date.pdw2.msg.validacion');
 					}
 				}
 				return true;
@@ -1951,14 +1953,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						// No puede estar vacÃ­a
 						return HreRem.i18n('info.fecha.precios.msg.validacion');
 					}
-					if(!Ext.isEmpty(fechaFinExistenteDescuentoAprobado) && fechaInicioDescuentoPublicadoWeb > fechaFinExistenteDescuentoAprobado) {
+					if(!Ext.isEmpty(fechaFinExistenteDescuentoAprobado) && fechaInicioDescuentoPublicadoWeb < fechaInicioExistenteDescuentoAprobado) {
 						// Ha de ser menor o igual que la fecha inicio descuento aprobado, si existe
 						return HreRem.i18n('info.datefield.begin.date.pdw.msg.validacion');
 					}
-					if(!Ext.isEmpty(fechaFinExistenteAprobadoVentaWeb) && fechaInicioDescuentoPublicadoWeb > fechaFinExistenteAprobadoVentaWeb) {
-						// Ha de ser menor o igual que la fecha inicio aprobado venta web, si existe
-						return HreRem.i18n('info.datefield.begin.date.pdw.msg.validacion.dos');
-					}
+//					if(!Ext.isEmpty(fechaFinExistenteAprobadoVentaWeb) && fechaInicioDescuentoPublicadoWeb > fechaFinExistenteAprobadoVentaWeb) {
+//						// Ha de ser menor o igual que la fecha inicio aprobado venta web, si existe
+//						return HreRem.i18n('info.datefield.begin.date.pdw.msg.validacion.dos');
+//					}
 				}
 				return true;
 			default:

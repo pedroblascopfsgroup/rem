@@ -107,7 +107,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 
 							//Anula el expediente
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
-
+							expediente.setFechaVenta(null);
 							expediente.setFechaAnulacion(new Date());
 
 							//Finaliza el trámite
@@ -246,6 +246,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 					// Anula el expediente si NO tiene reserva.
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
 					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+					expediente.setFechaVenta(null);
 					expediente.setEstado(estado);
 					expediente.setFechaAnulacion(new Date());
 

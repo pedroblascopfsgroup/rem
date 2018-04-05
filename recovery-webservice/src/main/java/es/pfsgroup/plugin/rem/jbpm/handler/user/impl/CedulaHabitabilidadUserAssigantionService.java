@@ -55,7 +55,8 @@ public class CedulaHabitabilidadUserAssigantionService implements UserAssigantio
 
 			if (DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo())
 					|| DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo())
-					|| DDCartera.CODIGO_CARTERA_TANGO.equals(cartera.getCodigo())) {
+					|| DDCartera.CODIGO_CARTERA_TANGO.equals(cartera.getCodigo())
+					|| DDCartera.CODIGO_CARTERA_HYT.equals(cartera.getCodigo())) {
 
 				Filter filtroTipoGestor = null;
 				if (CODIGO_T008_SOLICITUD_DOCUMENTO.equals(codTarea)

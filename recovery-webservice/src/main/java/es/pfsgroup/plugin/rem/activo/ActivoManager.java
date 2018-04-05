@@ -765,18 +765,22 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						&& activoBancario.getClaseActivo().getCodigo().equals(DDClaseActivoBancario.CODIGO_FINANCIERO)) {
 					esFinanciero = true;
 				}
-
-				// 1º Clase de activo (financiero/inmobiliario) y sin formalización.
-				if(esFinanciero && !Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo()) && getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) {
-					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_SAREB)));
-				// 2º Si es inmobiliario: Tipo de comercialización (singular/retail).
-				} else if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo()) && activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_SINGULAR)) {
-					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_SAREB)));
-				// 3º Si es retail: Comparamos precio mínimo e importe oferta.
-				} else if(!Checks.esNulo(precioMinimoAutorizado) && precioMinimoAutorizado > oferta.getImporteOferta()) {
-					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_SAREB)));
-				} else {
-					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_SAREB)));
+				if(oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)){
+					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_TANGO)));
+				}
+				else{
+					// 1º Clase de activo (financiero/inmobiliario) y sin formalización.
+					if(esFinanciero && !Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo()) && getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) {
+						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_SAREB)));
+					// 2º Si es inmobiliario: Tipo de comercialización (singular/retail).
+					} else if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo()) && activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_SINGULAR)) {
+						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_SAREB)));
+					// 3º Si es retail: Comparamos precio mínimo e importe oferta.
+					} else if(!Checks.esNulo(precioMinimoAutorizado) && precioMinimoAutorizado > oferta.getImporteOferta()) {
+						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_SAREB)));
+					} else {
+						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_SAREB)));
+					}
 				}
 			}
 		}
@@ -1988,6 +1992,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Transactional(readOnly = false)
 	public Boolean createHistoricoMediador(DtoHistoricoMediador dto) throws JsonViewerException {
 		ActivoInformeComercialHistoricoMediador historicoMediador = new ActivoInformeComercialHistoricoMediador();
+		ActivoInformeComercialHistoricoMediador historicoMediadorPrimero = new ActivoInformeComercialHistoricoMediador();
 		Activo activo = null;
 
 		if (!Checks.esNulo(dto.getIdActivo())) {
@@ -1995,7 +2000,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		if (activo==null) return false;
-
+		
+		if (Checks.esNulo(activo.getInfoComercial())){
+			ActivoInfoComercial infoComercial = new ActivoInfoComercial();
+			infoComercial.setActivo(activo);
+			Auditoria auditoria = new Auditoria();
+			auditoria.setUsuarioCrear(proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado().getUsername());
+			auditoria.setFechaCrear(new Date());
+			auditoria.setBorrado(false);
+			infoComercial.setAuditoria(auditoria);
+			genericDao.save(ActivoInfoComercial.class, infoComercial);
+			activo.setInfoComercial(infoComercial);
+		}
+		
 		try {
 			// Terminar periodo de vigencia del último proveedor (fecha hasta).
 			if (!Checks.esNulo(activo)) {
@@ -2016,6 +2033,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 																														// último).
 					beanUtilNotNull.copyProperty(historicoAnteriorMediador, "fechaHasta", new Date());
 					genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoAnteriorMediador);
+				}
+				else{
+					//Si la lista esta vacia es porque es el la primera vez que se modifica el historico de mediadores, por lo que tenemos que introducir el que
+					//habia antes. La fecha desde se deja vacia por ahora.
+					if(!Checks.esNulo(activo.getInfoComercial().getMediadorInforme())){
+						beanUtilNotNull.copyProperty(historicoMediadorPrimero, "fechaHasta", new Date());
+						beanUtilNotNull.copyProperty(historicoMediadorPrimero, "activo", activo);
+						beanUtilNotNull.copyProperty(historicoMediadorPrimero, "mediadorInforme", activo.getInfoComercial().getMediadorInforme());
+						genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoMediadorPrimero);
+					}
+
 				}
 			}
 

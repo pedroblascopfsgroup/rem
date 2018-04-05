@@ -2245,29 +2245,44 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		return gasto;
 	}
 	
-	private boolean estanTodosActivosAlquilados(GastoProveedor gasto){
+	private boolean estanTodosActivosAlquilados(GastoProveedor gasto) {
 		boolean todosActivoAlquilados = false;
-		
-		Filter filtroGastoActivo= genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
-		List<GastoProveedorActivo> gastosActivos= genericDao.getList(GastoProveedorActivo.class,filtroGastoActivo);
-		for(GastoProveedorActivo gastoActivo: gastosActivos){
-			Activo activo= gastoActivo.getActivo();
+		boolean salir = false;
+		Filter filtroGastoActivo = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
+		List<GastoProveedorActivo> gastosActivos = genericDao.getList(GastoProveedorActivo.class, filtroGastoActivo);
+		for (GastoProveedorActivo gastoActivo : gastosActivos) {
+			Activo activo = gastoActivo.getActivo();
+
+			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getSituacionPosesoria())) {
+				if (!Checks.esNulo(activo.getSituacionPosesoria())) {
+					if (!Checks.esNulo(activo.getSituacionPosesoria().getOcupado())
+							&& !Checks.esNulo(activo.getSituacionPosesoria().getConTitulo())) {
+						if (activo.getSituacionPosesoria().getOcupado() == 1
+								&& activo.getSituacionPosesoria().getConTitulo() == 1) {
+							if (!Checks.esNulo(activo.getSituacionPosesoria().getTipoTituloPosesorio())) {
+								if (activo.getSituacionPosesoria().getTipoTituloPosesorio().getCodigo()
+										.equals(DDTipoTituloPosesorio.CODIGO_ARRENDAMIENTO)) {
+									todosActivoAlquilados = true;
+								} else {
+									salir = true;
+								}
+							} else {
+								salir = true;
+							}
+						} else {
+							salir = true;
+						}
+					} else {
+						salir = true;
+					}
+				} else {
+					salir = true;
+				}
+			}
 			
-			if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getSituacionPosesoria())){
-				if(activo.getSituacionPosesoria().getOcupado()==1 && activo.getSituacionPosesoria().getConTitulo()==1){
-					if(!Checks.esNulo(activo.getSituacionPosesoria().getTipoTituloPosesorio()) &&
-							activo.getSituacionPosesoria().getTipoTituloPosesorio().getCodigo().equals(DDTipoTituloPosesorio.CODIGO_ARRENDAMIENTO)){
-						todosActivoAlquilados= true;								
-					}
-					else{
-						todosActivoAlquilados= false;
-						break;
-					}
-				}
-				else{
-					todosActivoAlquilados= false;
-					break;
-				}
+			if (salir) {
+				todosActivoAlquilados = false;
+				break;
 			}
 		}
 		return todosActivoAlquilados;

@@ -255,6 +255,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 					beanUtilNotNull.copyProperty(dto, "motivoRetencionCodigo", proveedor.getMotivoRetencion().getCodigo());
 				}
 				beanUtilNotNull.copyProperty(dto, "fechaProceso", proveedor.getFechaProcesoBlanqueo());
+				beanUtilNotNull.copyProperty(dto, "email", proveedor.getEmail());
 				if(!Checks.esNulo(proveedor.getResultadoProcesoBlanqueo())) {
 					beanUtilNotNull.copyProperty(dto, "resultadoBlanqueoCodigo", proveedor.getResultadoProcesoBlanqueo().getCodigo());
 				}
@@ -340,6 +341,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			beanUtilNotNull.copyProperty(proveedor, "paginaWeb", dto.getWebUrlProveedor());
 			beanUtilNotNull.copyProperty(proveedor, "fechaConstitucion", dto.getFechaConstitucionProveedor());
 			beanUtilNotNull.copyProperty(proveedor, "homologado", dto.getHomologadoCodigo());
+			beanUtilNotNull.copyProperty(proveedor, "email", dto.getEmail());
 			
 			if(!Checks.esNulo(dto.getOperativaCodigo())) {
 				DDOperativa operativa = (DDOperativa) utilDiccionarioApi.dameValorDiccionarioByCod(DDOperativa.class, dto.getOperativaCodigo());

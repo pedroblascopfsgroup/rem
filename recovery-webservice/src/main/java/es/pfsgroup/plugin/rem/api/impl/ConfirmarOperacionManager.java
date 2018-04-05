@@ -332,6 +332,8 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 		if (Checks.esNulo(estadoExpCom)) {
 			throw new Exception("Error al actualizar el estado del expediente comercial.");
 		}
+		
+		expedienteComercial.setFechaVenta(null);
 		expedienteComercial.setEstado(estadoExpCom);
 
 		// Descongela el resto de ofertas del activo

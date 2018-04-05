@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=CARLOS LOPEZ
---## FECHA_CREACION=20180403
+--## FECHA_CREACION=20180404
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
---## INCIDENCIA_LINK=HREOS-3936
+--## INCIDENCIA_LINK=HREOS-3995
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -20,6 +20,7 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 
 create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
+												, pTIPO IN VARCHAR2 /*ALQUILER/VENTA*/
                                                 , pOCULTAR OUT NUMBER
                                                 , pMOTIVO OUT VARCHAR2) IS
 
@@ -72,6 +73,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                     JOIN '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA ON DDADA.DD_ADA_ID = PTA.DD_ADA_ID AND DDADA.BORRADO = 0 AND DDADA.DD_ADA_CODIGO = ''02''
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''05'' AND MTO.BORRADO = 0 /*No adecuado*/
                                    WHERE PTA.BORRADO = 0
+                                     AND ''A'' = '''||pTIPO||'''
                                      AND PTA.ACT_ID= '||pACT_ID||                                                                  
                          ' UNION
                           SELECT PAC.ACT_ID
@@ -135,6 +137,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                                                  AND DDEPA.DD_EPA_CODIGO = ''04'')/*Oculto Alquiler*/
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''04'' AND MTO.BORRADO = 0 /*Revisión adecuación*/
                                    WHERE APU.BORRADO = 0
+									 AND ''A'' = '''||pTIPO||'''
                                      AND ((EXISTS (SELECT 1 
                                                      FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO2 
                                                     WHERE MTO2.DD_MTO_CODIGO = ''03'' /*Alquilado*/

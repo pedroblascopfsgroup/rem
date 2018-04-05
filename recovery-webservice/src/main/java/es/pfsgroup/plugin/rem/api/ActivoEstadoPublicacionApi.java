@@ -104,4 +104,20 @@ public interface ActivoEstadoPublicacionApi {
 	 * @return devuelve un dto con los datos
 	 */
 	DtoDatosPublicacionActivo getPublicarSinPrecioVentaAlquilerByIdActivo(Long idActivo);
+
+	/**
+	 * Este método comprueba si un activo consta de precio de venta web.
+	 *
+	 * @param idActivo: ID del activo a comprobar.
+	 * @return Devuelve True si el activo tiene precio de venta web, False si no tiene el precio establecido.
+	 */
+	Boolean tienePrecioVentaByIdActivo(Long idActivo);
+
+	/**
+	 * Este método comprueba si un activo consta de precio de renta web.
+	 *
+	 * @param idActivo: ID del activo a comprobar.
+	 * @return Devuelve True si el activo tiene precio de renta web, False si no tiene el precio establecido.
+	 */
+	Boolean tienePrecioRentaByIdActivo(Long idActivo);
 }

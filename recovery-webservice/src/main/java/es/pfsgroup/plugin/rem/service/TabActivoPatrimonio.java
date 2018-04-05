@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,9 @@ public class TabActivoPatrimonio implements TabActivoService {
 	
 	@Autowired
 	private ActivoDao activoDao;
+
+	@Autowired
+	private ActivoAdapter activoAdapterApi;
 
 	@Autowired
 	private GenericAdapter genericAdapter;
@@ -144,7 +148,7 @@ public class TabActivoPatrimonio implements TabActivoService {
 		activoPatrimonioDao.save(activoPatrimonio);
 
 		// Actualizar estado publicación activo a través del procedure.
-		activoDao.publicarActivoConHistorico(activo.getId(), genericAdapter.getUsuarioLogado().getUsername());
+		activoAdapterApi.updatePortalPublicacion(activo.getId());
 
 		return activo;
 	}

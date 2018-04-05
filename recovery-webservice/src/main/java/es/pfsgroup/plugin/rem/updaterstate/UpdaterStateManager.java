@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,10 +43,13 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	public static final String CODIGO_CHECKING_GESTION = "T001_CheckingDocumentacionGestion";
 	
 	@Autowired
-	ActivoTareaExternaApi activoTareaExternaApi;
+	private ActivoTareaExternaApi activoTareaExternaApi;
 	
 	@Autowired
 	private GenericABMDao genericDao;
+
+	@Autowired
+	private ActivoAdapter activoAdapterApi;
 	
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
@@ -116,8 +120,8 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	@Override
 	public void updaterStateDisponibilidadComercialAndSave(Activo activo) {
 		this.updaterStateDisponibilidadComercial(activo);
-		//genericDao.update(Activo.class, activo);	
 		activoApi.saveOrUpdate(activo);
+		activoAdapterApi.updatePortalPublicacion(activo.getId());
 	}
 	
 	@Override

@@ -171,7 +171,6 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 											{
 												xtype: 'textareafieldbase',
 												reference: 'textareaMotivoOcultacionManualVenta',
-												disabled: true,
 												bind: {
 													readOnly: '{datospublicacionactivo.deshabilitarCheckOcultarVenta}',
 													value: '{datospublicacionactivo.motivoOcultacionManualVenta}'
@@ -319,7 +318,6 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 											{
 												xtype: 'textareafieldbase',
 												reference: 'textareaMotivoOcultacionManualAlquiler',
-												disabled: true,
 												bind: {
 													readOnly: '{datospublicacionactivo.deshabilitarCheckOcultarAlquiler}',
 													value: '{datospublicacionactivo.motivoOcultacionManualAlquiler}'

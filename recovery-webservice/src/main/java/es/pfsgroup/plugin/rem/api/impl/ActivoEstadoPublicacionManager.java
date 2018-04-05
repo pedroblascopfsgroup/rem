@@ -124,6 +124,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
     }
 
     @Override
+    @Deprecated
     @Transactional(readOnly = false)
     public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion) throws SQLException, JsonViewerException { // TODO: eliminar.
     	return publicacionChangeState(dtoCambioEstadoPublicacion, null);
@@ -538,7 +539,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 */
 	private Boolean deshabilitarCheckPublicarVenta(Long idActivo) {
 		return !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || isReservado(idActivo) || isPublicadoVenta(idActivo) || isOcultoVenta(idActivo) ||
-				isFueraDePerimetro(idActivo) || (!isInformeAprobado(idActivo) && (!tienePrecioVenta(idActivo) || !isPublicarSinPrecioVentaActivado(idActivo)));
+				isFueraDePerimetro(idActivo) || (!isInformeAprobado(idActivo) && (!tienePrecioVenta(idActivo) && !isPublicarSinPrecioVentaActivado(idActivo)));
 	}
 
 	/**
@@ -559,7 +560,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 */
 	private Boolean deshabilitarCheckPublicarAlquiler(Long idActivo) {
 		return !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || isReservado(idActivo) || isPublicadoAlquiler(idActivo) || isOcultoAlquiler(idActivo) ||
-				isFueraDePerimetro(idActivo) || !isPrePublicadoAlquiler(idActivo) || (!isInformeAprobado(idActivo) && (!tienePrecioRenta(idActivo)) || !isPublicarSinPrecioAlquilerActivado(idActivo));
+				isFueraDePerimetro(idActivo) || (!isInformeAprobado(idActivo) && (!tienePrecioRenta(idActivo) && !isPublicarSinPrecioAlquilerActivado(idActivo)));
 	}
 
 	/**
@@ -746,13 +747,23 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 						dto.getMotivoOcultacionAlquilerCodigo()));
 			}
 			beanUtilNotNull.copyProperty(activoPublicacion, "motivoOcultacionManualVenta", dto.getMotivoOcultacionManualVenta());
+			beanUtilNotNull.copyProperty(activoPublicacion, "motivoOcultacionManualAlquiler", dto.getMotivoOcultacionManualAlquiler());
 			beanUtilNotNull.copyProperty(activoPublicacion, "checkPublicarVenta", dto.getPublicarVenta());
 			beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarVenta", dto.getOcultarVenta());
+			if(!Checks.esNulo(dto.getOcultarVenta()) && !dto.getOcultarVenta()) {
+				// Si el check de ocultar viene implícitamente a false vaciar motivos de ocultación.
+				activoPublicacion.setMotivoOcultacionVenta(null);
+				activoPublicacion.setMotivoOcultacionManualVenta(null);
+			}
 			beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarPrecioVenta", dto.getNoMostrarPrecioVenta());
 			beanUtilNotNull.copyProperty(activoPublicacion, "checkSinPrecioVenta", dto.getPublicarSinPrecioVenta());
-			beanUtilNotNull.copyProperty(activoPublicacion, "motivoOcultacionManualAlquiler", dto.getMotivoOcultacionManualAlquiler());
 			beanUtilNotNull.copyProperty(activoPublicacion, "checkPublicarAlquiler", dto.getPublicarAlquiler());
 			beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarAlquiler", dto.getOcultarAlquiler());
+			if(!Checks.esNulo(dto.getOcultarAlquiler()) && !dto.getOcultarAlquiler()) {
+				// Si el check de ocultar viene implícitamente a false vaciar motivos de ocultación.
+				activoPublicacion.setMotivoOcultacionAlquiler(null);
+				activoPublicacion.setMotivoOcultacionManualAlquiler(null);
+			}
 			beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarPrecioAlquiler", dto.getNoMostrarPrecioAlquiler());
 			beanUtilNotNull.copyProperty(activoPublicacion, "checkSinPrecioAlquiler", dto.getPublicarSinPrecioAlquiler());
 
@@ -984,5 +995,15 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}
 		
 		return dto;
+	}
+
+	@Override
+	public Boolean tienePrecioVentaByIdActivo(Long idActivo) {
+		return this.tienePrecioVenta(idActivo);
+	}
+
+	@Override
+	public Boolean tienePrecioRentaByIdActivo(Long idActivo) {
+		return this.tienePrecioRenta(idActivo);
 	}
 }

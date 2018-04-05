@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
@@ -45,20 +46,6 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.impl.ActivoEstadoPublicacionManager;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
-import es.pfsgroup.plugin.rem.model.ActivoBancario;
-import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
-import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
-import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
-import es.pfsgroup.plugin.rem.model.ActivoTasacion;
-import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
-import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
-import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
-import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.PerimetroActivo;
-import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
@@ -258,9 +245,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "tipoComercializarDescripcion", activo.getTipoComercializar().getDescripcion());
 		}
 		//Hace referencia a Destino Comercial (Si te lía el nombre, habla con Fernando)
-		if(activo.getTipoComercializacion() != null){
-			BeanUtils.copyProperty(activoDto, "tipoComercializacionCodigo", activo.getTipoComercializacion().getCodigo());
-			BeanUtils.copyProperty(activoDto, "tipoComercializacionDescripcion", activo.getTipoComercializacion().getDescripcion());
+		if(!Checks.esNulo(activo.getActivoPublicacion()) && !Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion())){
+			BeanUtils.copyProperty(activoDto, "tipoComercializacionCodigo", activo.getActivoPublicacion().getTipoComercializacion().getCodigo());
+			BeanUtils.copyProperty(activoDto, "tipoComercializacionDescripcion", activo.getActivoPublicacion().getTipoComercializacion().getDescripcion());
 		}
 		
 		if(activo.getTipoAlquiler() != null){
@@ -386,13 +373,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(activoDto.getAdmision()
 				&& activoDto.getGestion()
 				&& activoDto.getInformeComercialAceptado()
-				&& ((!Checks.esNulo(activoDto.getAprobadoVentaWeb()) || !Checks.esNulo(activoDto.getAprobadoRentaWeb())) || (!Checks.esNulo(dtoPa.getPublicarSinPrecioVenta()) && dtoPa.getPublicarSinPrecioVenta())) 
+				&& (activoEstadoPublicacionApi.tienePrecioVentaByIdActivo(activo.getId()) || (!Checks.esNulo(dtoPa.getPublicarSinPrecioVenta()) && dtoPa.getPublicarSinPrecioVenta()))
 				){
 			activoDto.setEstadoVenta(1);
 		}else if(!activoDto.getAdmision()
 				&& !activoDto.getGestion()
 				&& !activoDto.getInformeComercialAceptado()
-				&& !((!Checks.esNulo(activoDto.getAprobadoVentaWeb()) || !Checks.esNulo(activoDto.getAprobadoRentaWeb())) || (!Checks.esNulo(dtoPa.getPublicarSinPrecioVenta()) && dtoPa.getPublicarSinPrecioVenta())) 
+				&& !(activoEstadoPublicacionApi.tienePrecioVentaByIdActivo(activo.getId()) || (!Checks.esNulo(dtoPa.getPublicarSinPrecioVenta()) && dtoPa.getPublicarSinPrecioVenta()))
 				){
 			activoDto.setEstadoVenta(0);
 		}else{
@@ -408,9 +395,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				&& (DDAdecuacionAlquiler.CODIGO_ADA_SI.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())
 				|| DDAdecuacionAlquiler.CODIGO_ADA_NO_APLICA.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())))
 				&& conCee
-				&& ((!Checks.esNulo(activoDto.getAprobadoVentaWeb()) || !Checks.esNulo(activoDto.getAprobadoRentaWeb())) || (!Checks.esNulo(dtoPa.getPublicarSinPrecioAlquiler()) && dtoPa.getPublicarSinPrecioAlquiler())) 
+				&& (activoEstadoPublicacionApi.tienePrecioRentaByIdActivo(activo.getId()) || (!Checks.esNulo(dtoPa.getPublicarSinPrecioAlquiler()) && dtoPa.getPublicarSinPrecioAlquiler()))
 				){
-			activoDto.setEstadoAlquiler(1);
+			activoDto.setEstadoAlquiler(1); // azul
 		}else if(!activoDto.getAdmision()
 				&& !activoDto.getGestion()
 				&& !activoDto.getInformeComercialAceptado()
@@ -419,11 +406,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				&& !(DDAdecuacionAlquiler.CODIGO_ADA_SI.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())
 				|| DDAdecuacionAlquiler.CODIGO_ADA_NO_APLICA.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())))
 				&& conCee
-				&& !((!Checks.esNulo(activoDto.getAprobadoVentaWeb()) || !Checks.esNulo(activoDto.getAprobadoRentaWeb())) || (!Checks.esNulo(dtoPa.getPublicarSinPrecioAlquiler()) && dtoPa.getPublicarSinPrecioAlquiler())) 
+				&& !(activoEstadoPublicacionApi.tienePrecioRentaByIdActivo(activo.getId()) || (!Checks.esNulo(dtoPa.getPublicarSinPrecioAlquiler()) && dtoPa.getPublicarSinPrecioAlquiler()))
 				){
-			activoDto.setEstadoAlquiler(0);
+			activoDto.setEstadoAlquiler(0); // naranja
 		}else{
-			activoDto.setEstadoAlquiler(2);
+			activoDto.setEstadoAlquiler(2); // amarillo
 		}
 		
 		//--------------------
@@ -736,9 +723,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				activo.setTipoComercializar(tipoComercializar);
 			}
 			//Hace referencia a Destino Comercial (Si te lía el nombre, habla con Fernando)
-			if (!Checks.esNulo(dto.getTipoComercializacionCodigo())) {
+			if (!Checks.esNulo(dto.getTipoComercializacionCodigo()) && !Checks.esNulo(activo.getActivoPublicacion())) {
 				DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class,  dto.getTipoComercializacionCodigo());
-				activo.setTipoComercializacion(tipoComercializacion);
+				activo.getActivoPublicacion().setTipoComercializacion(tipoComercializacion);
 			}
 			
 			if (!Checks.esNulo(dto.getTipoAlquilerCodigo())) {

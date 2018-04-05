@@ -3171,6 +3171,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var me = this;
     	var record = combo.findRecord(combo.valueField, combo.getValue());
     	var textArea = me.lookupReference(combo.textareaRefChained);
+    	textArea.reset();
 
     	if(record && record.data.codigo === CONST.MOTIVO_OCULTACION['OTROS']) {
     		textArea.setReadOnly(false);
@@ -3182,13 +3183,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     onChangeCheckboxOcultar: function(checkbox, isDirty) {
         var me = this;
         var combobox = me.lookupReference(checkbox.comboRefChained);
+        var textarea = me.lookupReference(combobox.textareaRefChained);
 
         if(checkbox.getValue()) {
             combobox.setDisabled(false);
+            textarea.setDisabled(false);
         } else {
             combobox.setDisabled(true);
             combobox.clearValue();
-            var textarea = me.lookupReference(combobox.textareaRefChained);
+            textarea.setDisabled(true);
             textarea.reset();
         }
 

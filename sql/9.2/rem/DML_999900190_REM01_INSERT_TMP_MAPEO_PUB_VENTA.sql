@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DANIEL ALGABA
---## FECHA_CREACION=20180321
+--## FECHA_CREACION=20180405
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-3890
@@ -42,7 +42,7 @@ DECLARE
         T_TIPO_DATA('04', '03', 1, 0, 1, 0, NULL, NULL, NULL),
         T_TIPO_DATA('05', '03', 1, 1, 0, 0, NULL, NULL, NULL),
         T_TIPO_DATA('06', '03', 1, 1, 0, 0, NULL, '12', 'Migración'),
-        T_TIPO_DATA('07', '03', 1, 0, 1, 0, '02', NULL, NULL)
+        T_TIPO_DATA('07', '03', 1, 1, 1, 0, '02', NULL, NULL)
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

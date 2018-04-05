@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=CARLOS LOPEZ
---## FECHA_CREACION=20180315
+--## FECHA_CREACION=20180404
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
---## INCIDENCIA_LINK=HHREOS-3936
+--## INCIDENCIA_LINK=HREOS-3995
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -64,7 +64,8 @@ BEGIN
              , APU.APU_CHECK_OCULTAR_V CHECK_OCULTAR_V 
              , MTO2.DD_MTO_CODIGO DD_MTO_CODIGO_V   
              , NVL(MTO2.DD_MTO_MANUAL,0) DD_MTO_MANUAL_V 
-             , TPU.DD_TPU_CODIGO DD_TPU_CODIGO      
+             , TPU.DD_TPU_CODIGO DD_TPU_CODIGO 
+             , TAL.DD_TAL_CODIGO DD_TAL_CODIGO     
              , ACT.ACT_ADMISION AS ADMISION
              , ACT.ACT_GESTION AS GESTION
              , nvl(HIC.INFORME_COMERCIAL,0)INFORME_COMERCIAL
@@ -87,6 +88,8 @@ BEGIN
           LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO2 ON APU.DD_MTO_V_ID = MTO2.DD_MTO_ID AND MTO2.BORRADO = 0
           
           LEFT JOIN '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION TPU ON APU.DD_TPU_ID = TPU.DD_TPU_ID AND TPU.BORRADO = 0
+          
+          LEFT JOIN '|| V_ESQUEMA ||'.DD_TAL_TIPO_ALQUILER TAL ON TAL.DD_TAL_ID = ACT.DD_TAL_ID AND TAL.BORRADO = 0
           
           LEFT JOIN (SELECT act_id, informe_comercial
                        FROM (SELECT hic.act_id, DECODE (aic.dd_aic_codigo, ''02'', 1, 0)/*Aceptado*/ informe_comercial,
@@ -182,6 +185,9 @@ BEGIN
     V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.V_CAMBIO_ESTADO_PUBLI.DD_TPU_CODIGO IS ''Código del tipo de publicación (DD_TPU_TIPO_PUBLICACION)'' ';      
     EXECUTE IMMEDIATE V_MSQL;
 
+    V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.V_CAMBIO_ESTADO_PUBLI.DD_TAL_CODIGO IS ''Código del tipo de de alquiler (DD_TAL_TIPO_ALQUILER)'' ';      
+    EXECUTE IMMEDIATE V_MSQL;
+    
     V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.V_CAMBIO_ESTADO_PUBLI.ADMISION IS ''Admisión 0/1'' ';      
     EXECUTE IMMEDIATE V_MSQL;
     

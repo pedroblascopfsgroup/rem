@@ -67,6 +67,8 @@ BEGIN
           UPDATE SET
            APU.APU_CHECK_PUBLICAR_V = 0
           ,APU.APU_CHECK_OCULTAR_V = 0
+          ,APU.APU_MOT_OCULTACION_MANUAL_V = NULL
+          ,APU.DD_MTO_V_ID = NULL
           ,APU.USUARIOMODIFICAR = ''HREOS-3995''
           ,APU.FECHAMODIFICAR = SYSDATE
           
@@ -90,6 +92,8 @@ BEGIN
           UPDATE SET
            APU.APU_CHECK_PUBLICAR_A = 0
           ,APU.APU_CHECK_OCULTAR_A = 0
+          ,APU.APU_MOT_OCULTACION_MANUAL_A = NULL
+          ,APU.DD_MTO_A_ID = NULL
           ,APU.USUARIOMODIFICAR = ''HREOS-3995''
           ,APU.FECHAMODIFICAR = SYSDATE
            

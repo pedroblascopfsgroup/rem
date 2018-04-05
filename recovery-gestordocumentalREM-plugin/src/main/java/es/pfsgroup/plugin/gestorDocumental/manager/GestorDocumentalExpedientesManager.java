@@ -84,7 +84,7 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 		sb.append("&").append(CLASE_EXPEDIENTE_PATH).append(crearGasto.getCodClase());
 		sb.append("&").append(TIPO_EXPEDIENTE_PATH).append("AI");
 		sb.append("&").append(EXPEDIENTE_COMERCIAL_METADATOS_PATH).append(UriComponent.encode(crearGasto.getGastoMetadatos(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
-		sb.append("&").append(USUARIO_OPERACIONAL_PATH).append("pfs.dgutierrez");
+		sb.append("&").append(USUARIO_OPERACIONAL_PATH).append(crearGasto.getUsuarioOperacional());
 
 		return sb.toString();
 	}

@@ -2500,6 +2500,8 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 
 			boolean success = adapter.saveTabActivo(patrimonioDto, id, TabActivoService.TAB_PATRIMONIO);
+			if (success)
+				adapter.updatePortalPublicacion(id); // TODO: eliminar.
 			model.put("success", success);
 
 		} catch (JsonViewerException jvex) {

@@ -107,60 +107,64 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
 
   END;
 
-  PROCEDURE PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID NUMBER, pDD_TCO_CODIGO VARCHAR2, pOCULTAR NUMBER, pDD_MTO_CODIGO VARCHAR2, pUSUARIOMODIFICAR VARCHAR2) IS
+  PROCEDURE PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID NUMBER
+									, pTIPO VARCHAR2 /*ALQUILER/VENTA*/
+									, pDD_TCO_CODIGO VARCHAR2, pOCULTAR NUMBER, pDD_MTO_CODIGO VARCHAR2, pUSUARIOMODIFICAR VARCHAR2) IS
 
   BEGIN
+	IF pTIPO = 'A' THEN
+		IF pDD_TCO_CODIGO IN ('02','03','04') THEN
+		  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+						SET DD_MTO_A_ID = (SELECT DD_MTO_ID
+											 FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION
+											WHERE BORRADO = 0
+											  AND DD_MTO_CODIGO = '''||pDD_MTO_CODIGO||''')
+						  , APU_CHECK_OCULTAR_A = '||pOCULTAR||'
+						  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+						  , FECHAMODIFICAR = SYSDATE
+					  WHERE ACT_ID = '||nACT_ID||'
+						AND BORRADO = 0
+						AND (APU_CHECK_OCULTAR_A <> '||pOCULTAR||'
+						  OR DD_MTO_A_ID <> (SELECT DD_MTO_ID
+											  FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION
+											 WHERE BORRADO = 0
+											   AND DD_MTO_CODIGO = '''||pDD_MTO_CODIGO||'''))
+					'  
+					;
+		  
+		  EXECUTE IMMEDIATE V_MSQL;
+		  IF SQL%ROWCOUNT > 0 THEN
+			vACTUALIZADO := 'S';
+		  END IF;
+		END IF;
+	END IF;
+	IF pTIPO = 'V' THEN
+		IF pDD_TCO_CODIGO IN ('01','02') THEN
+		  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+						SET DD_MTO_V_ID = (SELECT DD_MTO_ID
+											 FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION
+											WHERE BORRADO = 0
+											  AND DD_MTO_CODIGO = '''||pDD_MTO_CODIGO||''')
+						  , APU_CHECK_OCULTAR_V = '||pOCULTAR||'
+						  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+						  , FECHAMODIFICAR = SYSDATE
+					  WHERE ACT_ID = '||nACT_ID||'
+						AND BORRADO = 0
+						AND (APU_CHECK_OCULTAR_V <> '||pOCULTAR||'
+						  OR DD_MTO_V_ID <> (SELECT DD_MTO_ID
+											  FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION
+											 WHERE BORRADO = 0
+											   AND DD_MTO_CODIGO = '''||pDD_MTO_CODIGO||'''))
+					'  
+					;
 
-    IF pDD_TCO_CODIGO IN ('02','03','04') THEN
-      V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
-                    SET DD_MTO_A_ID = (SELECT DD_MTO_ID
-                                         FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION
-                                        WHERE BORRADO = 0
-                                          AND DD_MTO_CODIGO = '''||pDD_MTO_CODIGO||''')
-                      , APU_CHECK_OCULTAR_A = '||pOCULTAR||'
-                      , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
-                      , FECHAMODIFICAR = SYSDATE
-                  WHERE ACT_ID = '||nACT_ID||'
-                    AND BORRADO = 0
-                    AND (APU_CHECK_OCULTAR_A <> '||pOCULTAR||'
-                      OR DD_MTO_A_ID <> (SELECT DD_MTO_ID
-                                          FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION
-                                         WHERE BORRADO = 0
-                                           AND DD_MTO_CODIGO = '''||pDD_MTO_CODIGO||'''))
-                '  
-                ;
-      
-      EXECUTE IMMEDIATE V_MSQL;
-      IF SQL%ROWCOUNT > 0 THEN
-        vACTUALIZADO := 'S';
-      END IF;
-    END IF;
-
-    IF pDD_TCO_CODIGO IN ('01','02') THEN
-      V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
-                    SET DD_MTO_V_ID = (SELECT DD_MTO_ID
-                                         FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION
-                                        WHERE BORRADO = 0
-                                          AND DD_MTO_CODIGO = '''||pDD_MTO_CODIGO||''')
-                      , APU_CHECK_OCULTAR_V = '||pOCULTAR||'
-                      , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
-                      , FECHAMODIFICAR = SYSDATE
-                  WHERE ACT_ID = '||nACT_ID||'
-                    AND BORRADO = 0
-                    AND (APU_CHECK_OCULTAR_V <> '||pOCULTAR||'
-                      OR DD_MTO_V_ID <> (SELECT DD_MTO_ID
-                                          FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION
-                                         WHERE BORRADO = 0
-                                           AND DD_MTO_CODIGO = '''||pDD_MTO_CODIGO||'''))
-                '  
-                ;
-
-      EXECUTE IMMEDIATE V_MSQL;
-      IF SQL%ROWCOUNT > 0 THEN
-        vACTUALIZADO := 'S';
-      END IF;
-    END IF;
-
+		  EXECUTE IMMEDIATE V_MSQL;
+		  IF SQL%ROWCOUNT > 0 THEN
+			vACTUALIZADO := 'S';
+		  END IF;
+		END IF;
+	END IF;
+	
     IF pDD_MTO_CODIGO IN ('04') THEN /*04	Revisión adecuación*/
       V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO PTA
                     SET DD_ADA_ID = (SELECT DDADA.DD_ADA_ID
@@ -174,7 +178,10 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
                 ;
 
       EXECUTE IMMEDIATE V_MSQL;
-    
+	  IF SQL%ROWCOUNT > 0 THEN
+		vACTUALIZADO := 'S';
+	  END IF;   
+	   
     END IF;
   END;
 
@@ -491,7 +498,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
             #ESQUEMA#.SP_MOTIVO_OCULTACION (nACT_ID, 'A', OutOCULTAR, OutMOTIVO);
     
             IF OutOCULTAR = 1 THEN
-              PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
+              PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'A', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
               PLP$CAMBIO_ESTADO_ALQUILER(nACT_ID, '04', vUSUARIOMODIFICAR);
             END IF;
     
@@ -499,7 +506,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
               IF vCHECK_OCULTAR_A = 1 THEN
                 PLP$CAMBIO_ESTADO_ALQUILER(nACT_ID, '04', vUSUARIOMODIFICAR);
                 IF vDD_MTO_MANUAL_A = 0 THEN
-                  PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
+                  PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'A', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
                 END IF;  
               END IF;
             END IF;
@@ -515,7 +522,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
               IF OutMOTIVO = '03' AND vDD_TAL_CODIGO = '01' THEN /*SI MOTIVO ES ALQUILADO Y TIPO ALQUILER ORDINARIO, NO OCULTAR*/
                 NULL;
               ELSE
-                PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
+                PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'V', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
                 PLP$CAMBIO_ESTADO_VENTA(nACT_ID, '04', vUSUARIOMODIFICAR);
               END IF;
             END IF;
@@ -525,7 +532,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
                 PLP$CAMBIO_ESTADO_VENTA(nACT_ID, '04', vUSUARIOMODIFICAR);
                 
                 IF vDD_MTO_MANUAL_V = 0 THEN
-                  PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
+                  PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'V', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
                 END IF;
               END IF;
             END IF;
@@ -545,13 +552,13 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
             END IF;
     
             IF OutOCULTAR = 1 THEN
-              PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
+              PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'A', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
             END IF; 
             
             /*Si el activo está oculto por un motivo automático y el proceso 
             no encuentra ningún motivo automático hay que quitar la ocultación del activo.*/
             IF vDD_MTO_MANUAL_A = 0 AND OutOCULTAR = 0 THEN
-              PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
+              PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'A', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
             END IF;
           END IF;
   
@@ -566,13 +573,13 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
             END IF;
     
             IF OutOCULTAR = 1 THEN
-                PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
+                PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'V', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
             END IF;
             
             /*Si el activo está oculto por un motivo automático y el proceso 
             no encuentra ningún motivo automático hay que quitar la ocultación del activo.*/
             IF vDD_MTO_MANUAL_V = 0 AND OutOCULTAR = 0 THEN
-              PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
+              PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'V', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
             END IF;            
           END IF;      
         END IF;
@@ -609,7 +616,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
                                                   ,APU_MOT_OCULTACION_MANUAL_A,APU_CHECK_PUBLICAR_A
                                                   ,'''||vCHECK_OCULTAR_A||''' APU_CHECK_OCULTAR_A,APU_CHECK_OCULTAR_PRECIO_A
                                                   ,APU_CHECK_PUB_SIN_PRECIO_A
-                                                  ,APU_FECHA_INI_VENTA,APU_FECHA_INI_ALQUILER
+                                                  ,FECHAMODIFICAR,FECHAMODIFICAR
                                                   ,SYSDATE APU_FECHA_FIN_VENTA
                                                   ,SYSDATE APU_FECHA_FIN_ALQUILER
                                                   ,VERSION

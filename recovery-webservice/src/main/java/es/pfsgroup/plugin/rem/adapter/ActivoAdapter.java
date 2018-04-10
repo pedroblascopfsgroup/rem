@@ -1820,7 +1820,11 @@ public class ActivoAdapter {
 							expedienteComercial.getEstado().getDescripcion());
 					beanUtilNotNull.copyProperty(dtoTramite, "numEC", expedienteComercial.getNumExpediente());
 				}
+				
+				beanUtilNotNull.copyProperty(dtoTramite, "esTarifaPlana", tramite.getTrabajo().getEsTarifaPlana());
 			}
+			
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();

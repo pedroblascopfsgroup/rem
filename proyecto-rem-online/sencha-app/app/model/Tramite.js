@@ -110,6 +110,10 @@ Ext.define('HreRem.model.Tramite', {
     	{
     		name: 'ocultarBotonCierre',
     		type: 'boolean'
+    	},
+    	{
+    		name: 'esTarifaPlana',
+    		type: 'boolean'
     	}
     ],
 

@@ -66,6 +66,8 @@ public class DtoTramite extends WebDto {
 	private Long numEC;
 	
 	private Long idExpediente;
+	
+	private Boolean esTarifaPlana;
 
 	
 
@@ -292,5 +294,15 @@ public class DtoTramite extends WebDto {
 	public void setOcultarBotonAnular(Boolean ocultarBotonAnular) {
 		this.ocultarBotonAnular = ocultarBotonAnular;
 	}
+
+	public Boolean getEsTarifaPlana() {
+		return esTarifaPlana;
+	}
+
+	public void setEsTarifaPlana(Boolean esTarifaPlana) {
+		this.esTarifaPlana = esTarifaPlana;
+	}
+	
+	
 	
 }

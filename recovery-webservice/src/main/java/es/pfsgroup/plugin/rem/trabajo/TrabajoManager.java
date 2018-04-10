@@ -34,6 +34,7 @@ import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.domain.Perfil;
@@ -1316,6 +1317,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				dtoTrabajo.setIdSupervisorActivo(supervisorActivo.getId());
 			}
 		}
+		
+		if(trabajo.getEsTarifaPlana()){
+			dtoTrabajo.setEsTarifaPlana(1);
+		}else{
+			dtoTrabajo.setEsTarifaPlana(0);
+		}
+		
 
 		return dtoTrabajo;
 	}

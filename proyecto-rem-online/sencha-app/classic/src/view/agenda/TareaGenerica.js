@@ -678,12 +678,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
     T004_AnalisisPeticionValidacion: function() {
         var me = this;
-
+		var esTarifaPlana = me.up('tramitesdetalle').getViewModel().get('tramite.esTarifaPlana');
         me.deshabilitarCampo(me.down('[name=comboAseguradoras]'));
         me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
-//        if (me.down('[name=comboTarifa]').value == '02') {
-//            me.bloquearCampo(me.down('[name=comboTarifa]'));
-//        }
+        if (esTarifaPlana) {
+            me.bloquearCampo(me.down('[name=comboTarifa]'));
+        }
 
 
         me.down('[name=comboTramitar]').addListener('change', function(combo) {

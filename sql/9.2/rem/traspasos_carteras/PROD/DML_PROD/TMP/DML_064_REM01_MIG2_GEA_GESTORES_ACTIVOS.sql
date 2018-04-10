@@ -30,7 +30,7 @@ DECLARE
   V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
   ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
   ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-  USUARIO_MIGRACION VARCHAR2(50 CHAR):= 'TRASPASO_TANGO';
+  USUARIO_MIGRACION VARCHAR2(50 CHAR):= 'TRASPASO_GIANTS';
 
 BEGIN
       

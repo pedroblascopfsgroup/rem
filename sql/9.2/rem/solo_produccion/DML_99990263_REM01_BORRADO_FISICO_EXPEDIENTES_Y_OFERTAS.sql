@@ -1,0 +1,93 @@
+--/*
+--##########################################
+--## AUTOR=SIMEON SHOPOV 
+--## FECHA_CREACION=20180305
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=REMVIP-202
+--## PRODUCTO=NO
+--##
+--## Finalidad: Poner a 0 el precio minimo de venta y el precio aprobado de venta de los activos de la lista
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+
+DECLARE
+
+	V_SQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar         
+    V_LISTA_OFERTAS VARCHAR2(32000 CHAR); -- Sentencia a ejecutar	
+    V_OFR_NUM_OFERTA VARCHAR2(32000 CHAR); -- Sentencia a ejecutar
+    V_OFR_ID VARCHAR2(32000 CHAR); -- Sentencia a ejecutar                  
+    V_ECO VARCHAR2(32000 CHAR); -- Sentencia a ejecutar         
+    V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquema Master
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+ BEGIN
+ 
+	 	V_LISTA_OFERTAS := '(90025141)';
+	 	V_OFR_NUM_OFERTA := 'WHERE OFR_NUM_OFERTA IN '||V_LISTA_OFERTAS||'';
+		V_OFR_ID := 'WHERE OFR_ID IN (SELECT OFR_ID FROM OFR_OFERTAS '||V_OFR_NUM_OFERTA||')';
+		V_ECO    := 'WHERE ECO_ID IN (SELECT ECO_ID FROM ECO_EXPEDIENTE_COMERCIAL '||V_OFR_ID||')';
+
+		
+		V_SQL :=  'DELETE FROM '||V_ESQUEMA||'.ECO_TAN_TANTEO_ACTIVO '||V_ECO;
+		--DBMS_OUTPUT.PUT_LINE(V_SQL);
+		EXECUTE IMMEDIATE V_SQL;
+		V_SQL :=  'DELETE FROM '||V_ESQUEMA||'.GCO_GESTOR_ADD_ECO '||V_ECO;
+		--DBMS_OUTPUT.PUT_LINE(V_SQL);
+		EXECUTE IMMEDIATE V_SQL;
+		V_SQL :=  'DELETE FROM '||V_ESQUEMA||'.GCO_GESTOR_ADD_ECO '||V_ECO;
+		--DBMS_OUTPUT.PUT_LINE(V_SQL);
+		EXECUTE IMMEDIATE V_SQL;
+		V_SQL :=  'DELETE FROM '||V_ESQUEMA||'.CEX_COMPRADOR_EXPEDIENTE '||V_ECO;
+		--DBMS_OUTPUT.PUT_LINE(V_SQL);
+		EXECUTE IMMEDIATE V_SQL;
+		V_SQL :=  'DELETE FROM '||V_ESQUEMA||'.GCH_GESTOR_ECO_HISTORICO '||V_ECO;
+		--DBMS_OUTPUT.PUT_LINE(V_SQL);
+		EXECUTE IMMEDIATE V_SQL;
+		V_SQL :=  'DELETE FROM '||V_ESQUEMA||'.FOR_FORMALIZACION '||V_ECO;
+		--DBMS_OUTPUT.PUT_LINE(V_SQL);
+		EXECUTE IMMEDIATE V_SQL;
+		V_SQL :=  'DELETE FROM '||V_ESQUEMA||'.GEX_GASTOS_EXPEDIENTE '||V_ECO;
+		--DBMS_OUTPUT.PUT_LINE(V_SQL);
+		EXECUTE IMMEDIATE V_SQL;
+		V_SQL :=  'DELETE FROM '||V_ESQUEMA||'.RES_RESERVAS '||V_ECO;
+		--DBMS_OUTPUT.PUT_LINE(V_SQL);
+		EXECUTE IMMEDIATE V_SQL;
+		V_SQL :=  'DELETE FROM '||V_ESQUEMA||'.COE_CONDICIONANTES_EXPEDIENTE '||V_ECO;
+		--DBMS_OUTPUT.PUT_LINE(V_SQL);
+		EXECUTE IMMEDIATE V_SQL;
+		V_SQL :=  'DELETE FROM '||V_ESQUEMA||'.ACT_OFR '||V_OFR_ID;
+		--DBMS_OUTPUT.PUT_LINE(V_SQL);
+		EXECUTE IMMEDIATE V_SQL;
+		V_SQL :=  'DELETE FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL '||V_OFR_ID;
+		--DBMS_OUTPUT.PUT_LINE(V_SQL);
+		EXECUTE IMMEDIATE V_SQL;
+		V_SQL :=  'DELETE FROM '||V_ESQUEMA||'.OFR_OFERTAS '||V_OFR_NUM_OFERTA;
+		--DBMS_OUTPUT.PUT_LINE(V_SQL);
+		EXECUTE IMMEDIATE V_SQL;
+	 	
+        DBMS_OUTPUT.PUT_LINE('Borrados todos los expedientes y ofertas relacionadas con las ofertas: '||V_LISTA_OFERTAS);
+	
+ COMMIT;
+ 
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.PUT_LINE(ERR_MSG);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;

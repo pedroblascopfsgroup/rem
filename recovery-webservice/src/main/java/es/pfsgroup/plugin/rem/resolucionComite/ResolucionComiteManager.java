@@ -125,8 +125,8 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 								List<TareaProcedimiento> listaTareasActivas = activoTramiteApi
 										.getTareasActivasByIdTramite(tramite.getId());
 								if (Checks.esNulo(listaTareasActivas) || listaTareasActivas.size() == 0) {
-									hashErrores.put("ofertaHRE",
-											"El expediente asociado a la oferta se encuentra finalizado.");
+									//hashErrores.put("ofertaHRE",
+									//		"El expediente asociado a la oferta se encuentra finalizado.");
 
 								} else {
 

@@ -25,6 +25,7 @@ public class ActivoGenerarSaltoImpl extends ActivoBaseActionHandler implements G
 	public static final String CODIGO_SALTO_RESOLUCION = "ResolucionExpediente";
 	public static final String CODIGO_FIN = "Fin";
 	public static final String CODIGO_SALTO_PBC = "T013_ResultadoPBC";
+	public static final String CODIGO_SALTO_INSTRUCCIONES_RESERVA= "InstruccionesReserva";
 
 
 	@Override
@@ -54,7 +55,8 @@ public class ActivoGenerarSaltoImpl extends ActivoBaseActionHandler implements G
 		while(it.hasNext()){
 		  String key = (String) it.next();
 		  if(key.contains(tipoSalto))
-			  node = mapaNodos.get(key);
+			  if(!key.contains("Decision"))
+				  node = mapaNodos.get(key);
 		}
 		if (!existeTransicion("salto"+tipoSalto, executionContext)) {
 			nuevaTransicionConDestino("salto"+tipoSalto, executionContext, node);

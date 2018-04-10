@@ -33,4 +33,6 @@ public interface TareaActivoApi {
 		public void saltoFin(Long idTareaExterna);
 
 		public void saltoPBC(Long idTareaExterna);
+
+		public void saltoInstruccionesReserva(Long idTareaExterna);
     }

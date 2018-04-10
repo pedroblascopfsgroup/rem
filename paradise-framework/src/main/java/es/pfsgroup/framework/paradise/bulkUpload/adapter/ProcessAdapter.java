@@ -14,6 +14,7 @@ import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -132,9 +133,18 @@ public class ProcessAdapter {
 		
 		//Si el fichero original y el fichero de errores son iguales entonces NO hay errores.
 		if(document != null) {
-			fileItem = document.getErroresFichero();
-			fileItem.setFileName("ERROR_"+document.getNombre());
-			fileItem.setContentType(ExcelRepoApi.TIPO_EXCEL);
+			
+			if(!Checks.esNulo(document.getProcesoMasivo()) && !Checks.esNulo(document.getProcesoMasivo().getTotalFilasKo()) && 
+					document.getProcesoMasivo().getTotalFilasKo()>0){
+				fileItem = document.getErroresFicheroProcesar();
+				fileItem.setFileName("ERROR_PROCESAR_"+document.getNombre());
+				fileItem.setContentType(ExcelRepoApi.TIPO_EXCEL);
+			}
+			else{
+				fileItem = document.getErroresFichero();
+				fileItem.setFileName("ERROR_"+document.getNombre());
+				fileItem.setContentType(ExcelRepoApi.TIPO_EXCEL);
+			}
 		}	
 		
 		return fileItem;
@@ -199,7 +209,13 @@ public class ProcessAdapter {
 	@Transactional
 	public void setStateProcessed(Long idProcess) {
 		MSVProcesoMasivo document = procesoDao.get(idProcess);
-		MSVDDEstadoProceso processed = genericDao.get(MSVDDEstadoProceso.class, genericDao.createFilter(FilterType.EQUALS, "codigo", MSVDDEstadoProceso.CODIGO_PROCESADO));
+		String estadoProceso = MSVDDEstadoProceso.CODIGO_PROCESADO;
+		
+		if (!Checks.esNulo(document) && document.getTotalFilasKo() != 0) {
+			estadoProceso = MSVDDEstadoProceso.CODIGO_PROCESADO_CON_ERRORES;
+		}
+		
+		MSVDDEstadoProceso processed = genericDao.get(MSVDDEstadoProceso.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoProceso));
 		document.setEstadoProceso(processed);
 		procesoDao.mergeAndUpdate(document);
 	}
@@ -218,6 +234,12 @@ public class ProcessAdapter {
 	
 	public MSVProcesoMasivo get(Long idProcess){
 		return procesoManager.get(idProcess);
+	}
+	
+	@Transactional
+	public void setExcelErroresProcesado(MSVDocumentoMasivo document, FileItem fileItemErrores)	{	
+		document.setErroresFicheroProcesar(fileItemErrores);
+		ficheroDao.saveOrUpdate(document);
 	}
 		
 	

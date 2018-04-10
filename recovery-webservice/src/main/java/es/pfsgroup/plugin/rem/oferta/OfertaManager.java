@@ -596,15 +596,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			if (!Checks.esNulo(ofertaDto.getIsExpress())) {
 				oferta.setOfertaExpress(ofertaDto.getIsExpress());
+
+				
 			}
 
 			Long idOferta = this.saveOferta(oferta);
-			if (!Checks.esNulo(ofertaDto.getTitularesAdicionales())) {
+			if (!Checks.esNulo(ofertaDto.getTitularesAdicionales()) && !Checks.estaVacio(ofertaDto.getTitularesAdicionales())) {
 				saveOrUpdateListaTitualesAdicionalesOferta(ofertaDto, oferta);
 			}
 			oferta = updateEstadoOferta(idOferta, ofertaDto.getFechaAccion());
 			this.updateStateDispComercialActivosByOferta(oferta);
 
+			if (ofertaDto.getIsExpress())
+				congelarExpedientesPorOfertaExpress(oferta);
+			
 			notificationOfertaManager.sendNotification(oferta);
 
 		}
@@ -730,9 +735,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Boolean incompatible = false;
 		Oferta oferta = this.getOfertaById(idOferta);
 
-		UsuarioSecurity usuarioSecurity = usuarioSecurityManager.getByUsername(RestApi.REM_LOGGED_USER_USERNAME);
-		restApi.doLogin(usuarioSecurity);
-
 		List<ActivoOferta> listaActivoOferta = oferta.getActivosOferta();
 
 		if (listaActivoOferta != null && listaActivoOferta.size() > 0) {
@@ -782,6 +784,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		} else {
 			if (oferta.getOfertaExpress()) {
+				
 				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_ACEPTADA)));
 
@@ -813,7 +816,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				activoApi.crearExpediente(oferta, trabajo);
 				ActivoTramite activoTramite = trabajoApi.createTramiteTrabajo(trabajo);
 
-				adapter.saltoPBC(activoTramite.getProcessBPM());
+				adapter.saltoInstruccionesReserva(activoTramite.getProcessBPM());
 
 				// Se copiará el valor del campo necesita financiación al campo
 				// asociado del expediente comercial
@@ -849,8 +852,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			for (ActivoOferta activoOferta : listaActivoOferta) {
 				Activo activo = activoOferta.getPrimaryKey().getActivo();
 				if (incompatible
-						|| (activo.getEstadoPublicacion() != null && activo.getEstadoPublicacion().getCodigo()
-								.equals(DDEstadoPublicacion.CODIGO_NO_PUBLICADO))
 						|| (activo.getSituacionComercial() != null && activo.getSituacionComercial().getCodigo()
 								.equals(DDSituacionComercial.CODIGO_VENDIDO))
 						|| (activo.getSituacionComercial() != null && activo.getSituacionComercial().getCodigo()
@@ -868,8 +869,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			oferta.setFechaRechazoOferta(fechaAccion);
 		}
 		ofertaDao.saveOrUpdate(oferta);
-		usuarioSecurity = usuarioSecurityManager.getByUsername(RestApi.REST_LOGGED_USER_USERNAME);
-		restApi.doLogin(usuarioSecurity);
+		//usuarioSecurity = usuarioSecurityManager.getByUsername(RestApi.REST_LOGGED_USER_USERNAME);
+		//restApi.doLogin(usuarioSecurity);
 		return oferta;
 	}
 
@@ -941,7 +942,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (oferta.getActivosOferta() != null && !oferta.getActivosOferta().isEmpty()) {
 			for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
 				Activo activo = activoOferta.getPrimaryKey().getActivo();
-				updaterState.updaterStateDisponibilidadComercialAndSave(activo);
+				if(!Checks.esNulo(oferta.getOfertaExpress()) && oferta.getOfertaExpress() && DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())){
+					updaterState.updaterStateDisponibilidadComercialAndSave(activo,true);
+				}else{
+					updaterState.updaterStateDisponibilidadComercialAndSave(activo,false);
+				}
+				
 			}
 		}
 	}
@@ -1144,14 +1150,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				Oferta oferta = activoOferta.getPrimaryKey().getOferta();
 				if (oferta.getEstadoOferta() != null && DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
 					ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
-					if (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
-							|| DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())
-							|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
-							|| DDEstadosExpedienteComercial.ALQUILADO.equals(expediente.getEstado().getCodigo())
-							|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo())
-							|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo()))
-						return oferta;
-				}
+					if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getEstado())){
+						if (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.ALQUILADO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo()))
+							return oferta;
+						}
+					}
 
 			}
 		}
@@ -1345,7 +1353,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					String codigoComiteSancion = expediente.getComiteSancion().getCodigo();
 					if (DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(codigoComiteSancion)
 							|| DDComiteSancion.CODIGO_HAYA_SAREB.equals(codigoComiteSancion)
-							|| DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComiteSancion))
+							|| DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_HAYA_TANGO.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_TANGO_TANGO.equals(codigoComiteSancion))
 						return true;
 				} else {
 					if (trabajoApi.checkBankia(tareaExterna)) {
@@ -1374,7 +1384,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					String codigoComiteSancion = expediente.getComiteSancion().getCodigo();
 					if (DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(codigoComiteSancion)
 							|| DDComiteSancion.CODIGO_HAYA_SAREB.equals(codigoComiteSancion)
-							|| DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComiteSancion))
+							|| DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_HAYA_TANGO.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_HAYA_HYT.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_HAYA_THIRD_PARTIES.equals(codigoComiteSancion))
 						return true;
 				} else {
 					if (trabajoApi.checkBankia(trabajo)) {
@@ -1415,6 +1428,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			expediente.setComiteSancion(comite);
 			expediente.setComiteSuperior(comite);
 			this.guardarUvemCodigoAgrupacionInmueble(expediente, resultadoDto);
+			if(!Checks.esNulo(resultadoDto.getCodigoOfertaUvem())){
+				if(!Checks.esNulo(expediente.getOferta())){
+					expediente.getOferta().setIdUvem(resultadoDto.getCodigoOfertaUvem().longValue());
+				}
+			}
 			genericDao.save(ExpedienteComercial.class, expediente);
 
 			return true;
@@ -1458,6 +1476,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
 			expediente.setComiteSancion(comite);
 			expediente.setComiteSuperior(comite);
+			
+			if(!Checks.esNulo(resultadoDto.getCodigoOfertaUvem())){
+				if(!Checks.esNulo(expediente.getOferta())){
+					expediente.getOferta().setIdUvem(resultadoDto.getCodigoOfertaUvem().longValue());
+				}
+			}
 			genericDao.save(ExpedienteComercial.class, expediente);
 
 			return null;
@@ -2358,10 +2382,80 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 			if (!Checks.esNulo(expediente)){
-				return expediente.getOferta().getOfertaExpress();
+				if(!Checks.esNulo(expediente.getOferta().getOfertaExpress())){
+					return expediente.getOferta().getOfertaExpress();
+				}
+				else{
+					return false;
+				}
 			}
 				
 		}
 		return false;
+	}
+
+	@Transactional(readOnly = false)
+	@Override
+	public void congelarExpedientesPorOfertaExpress(Oferta ofertaExpress) throws Exception {
+
+		Boolean tramitar = true;
+
+		Activo activo = activoApi.getByNumActivo(ofertaExpress.getActivoPrincipal().getNumActivo());
+		List<ActivoOferta> actofr = activo.getOfertas();
+
+		for (int i = 0; i < actofr.size(); i++) {
+			ActivoOferta activoOferta = actofr.get(i);
+			Oferta ofr = activoOferta.getPrimaryKey().getOferta();
+
+			if (!Checks.esNulo(ofr)) {
+				ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(ofr);
+
+				if (!Checks.esNulo(exp)) {
+
+					String estadoExpediente = exp.getEstado().getCodigo();
+
+					if (DDEstadosExpedienteComercial.FIRMADO.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.RESERVADO.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.VENDIDO.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.APROBADO.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.ALQUILADO.equals(estadoExpediente)
+							|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(estadoExpediente)) {
+
+						tramitar = false;
+					}
+				}
+			}
+		}
+
+		if (tramitar) {
+			for (int i = 0; i < actofr.size(); i++) {
+				ActivoOferta activoOferta = actofr.get(i);
+				Oferta ofr = activoOferta.getPrimaryKey().getOferta();
+
+				if (!Checks.esNulo(ofr)) {
+					ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(ofr);
+
+					if (!Checks.esNulo(exp)) {
+
+						String estadoExpediente = exp.getEstado().getCodigo();
+
+						if (DDEstadosExpedienteComercial.EN_TRAMITACION.equals(estadoExpediente)
+								// || DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(estadoExpediente)
+								// || DDEstadosExpedienteComercial.RESUELTO.equals(estadoExpediente)
+								|| DDEstadosExpedienteComercial.PTE_SANCION.equals(estadoExpediente)
+								|| DDEstadosExpedienteComercial.RPTA_OFERTANTE.equals(estadoExpediente)) {
+
+							congelarOferta(ofr);
+
+						}
+					} else if (DDEstadoOferta.CODIGO_PENDIENTE.equals(ofr.getEstadoOferta().getCodigo())) {
+						congelarOferta(ofr);
+					}
+
+				}
+			}
+		}
 	}
 }

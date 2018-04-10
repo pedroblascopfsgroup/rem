@@ -178,10 +178,11 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 									editable: false,
 									allowBlank: false,
 									displayField: 'descripcion',
-    								valueField: 'codigo',
-    								listeners: {
+    								valueField: 'codigo'
+/*    								REMVIP-254. Se prevee que se tenga que volver a modificar
+ * 									listeners: {
     									select: 'changeComboTipoProveedor'
-    								}
+    								}*/
 								},
 								renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
 									var me = this,				        		

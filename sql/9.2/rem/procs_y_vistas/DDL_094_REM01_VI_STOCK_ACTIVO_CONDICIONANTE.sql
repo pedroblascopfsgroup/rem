@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20170612
+--## AUTOR=Vicente Martinez
+--## FECHA_CREACION=20180305
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1787, HREOS-2142
+--## INCIDENCIA_LINK=HREOS-1787, HREOS-2142, REMVIP-205
 --## PRODUCTO=NO
 --## Finalidad: Vista Materializada exclusiva para Stock que contiene la relación de activos con los condicionantes de venta
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##		0.2 Correcciones para PDVs
+--##		0.3 REMVIP-205 - Cambio de la forma de cálculo de el campo "Pendiente de inscripción"
 --##########################################
 --*/
 
@@ -137,7 +138,7 @@ BEGIN
 	    (SELECT ACT.ACT_ID,CRA.DD_CRA_CODIGO, aba.dd_cla_id, 
 		NVL2 (SPS2.SPS_ID, 0, NVL2 (SPS.SPS_FECHA_TOMA_POSESION, 0, 1))      AS SIN_TOMA_POSESION_INICIAL,
 		DECODE (SPS.SPS_OCUPADO, 1, DECODE (SPS.SPS_CON_TITULO, 1, 1, 0), 0) AS OCUPADO_CONTITULO,
-		NVL2 (BDR.BIE_DREG_FECHA_INSCRIPCION, 0, 1)                          AS PENDIENTE_INSCRIPCION,
+		NVL2 (TIT.TIT_FECHA_INSC_REG, 0, 1)                          AS PENDIENTE_INSCRIPCION,
 		NVL2 (NPA.ACT_ID, 1, 0)                                              AS PROINDIVISO,
 		DECODE (SPS.SPS_ACC_TAPIADO, 1, 1, 0)                                AS TAPIADO,
 		DECODE (EON.DD_EON_CODIGO, ''02'', 1, ''04'', 1, ''05'', 1, 0)       AS OBRANUEVA_SINDECLARAR,
@@ -156,7 +157,7 @@ BEGIN
 	    LEFT JOIN '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA SPS ON SPS.ACT_ID = ACT.ACT_ID
 		LEFT JOIN '||V_ESQUEMA||'.DD_SIJ_SITUACION_JURIDICA SIJ ON SPS.DD_SIJ_ID = SIJ.DD_SIJ_ID
       	LEFT JOIN '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA SPS2 ON ACT.ACT_ID = SPS2.ACT_ID AND (SPS2.DD_SIJ_ID IS NOT NULL AND SIJ.DD_SIJ_INDICA_POSESION = 1)
-	    INNER JOIN '||V_ESQUEMA||'.BIE_DATOS_REGISTRALES BDR ON BDR.BIE_ID = ACT.BIE_ID
+	    INNER JOIN '||V_ESQUEMA||'.ACT_TIT_TITULO TIT ON TIT.ACT_ID = ACT.ACT_ID
 	    INNER JOIN '||V_ESQUEMA||'.ACT_REG_INFO_REGISTRAL REG ON REG.ACT_ID = ACT.ACT_ID
 	    LEFT JOIN '||V_ESQUEMA||'.DD_EON_ESTADO_OBRA_NUEVA EON ON EON.DD_EON_ID = REG.DD_EON_ID
 	    LEFT JOIN '||V_ESQUEMA||'.V_NUM_PROPIETARIOSACTIVO NPA ON NPA.ACT_ID = ACT.ACT_ID

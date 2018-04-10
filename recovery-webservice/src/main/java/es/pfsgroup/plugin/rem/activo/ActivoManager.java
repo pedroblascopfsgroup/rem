@@ -32,6 +32,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
@@ -145,6 +146,7 @@ import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Formalizacion;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
+import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
@@ -169,6 +171,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
@@ -332,7 +335,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String MOTIVO_NO_PUBLICADO_POR_ACTIVO_VENDIDO = "activo.motivo.vendido.no.publicar";
 	private static final String AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO = "activo.motivo.oferta.tipo.numero.documento";
 	private static final String AVISO_MENSAJE_CLIENTE_OBLIGATORIO = "activo.motivo.oferta.cliente";
-	private static final String AVISO_MEDIADOR_NO_EXISTE = "activo.aviso.mediador.no.existe";
+	private static final String AVISO_MEDIADOR_NO_EXISTE= "activo.aviso.mediador.no.existe";
+	private static final String AVISO_MEDIADOR_BAJA= "activo.aviso.mediador.baja";
 
 	@Override
 	@BusinessOperation(overrides = "activoManager.get")
@@ -768,20 +772,22 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (!Checks.esNulo(activoBancario.getClaseActivo()) && activoBancario.getClaseActivo().getCodigo().equals(DDClaseActivoBancario.CODIGO_FINANCIERO)) {
 					esFinanciero = true;
 				}
-
-				// 1º Clase de activo (financiero/inmobiliario) y sin formalización.
-				if (esFinanciero && !Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo())
-						&& getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) {
-					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_SAREB)));
+				if(oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)){
+					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_TANGO)));
+				}
+				else{
+					// 1º Clase de activo (financiero/inmobiliario) y sin formalización.
+					if(esFinanciero && !Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo()) && getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) {
+						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_SAREB)));
 					// 2º Si es inmobiliario: Tipo de comercialización (singular/retail).
-				} else if (!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo())
-						&& activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_SINGULAR)) {
-					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_SAREB)));
+					} else if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo()) && activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_SINGULAR)) {
+						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_SAREB)));
 					// 3º Si es retail: Comparamos precio mínimo e importe oferta.
-				} else if (!Checks.esNulo(precioMinimoAutorizado) && precioMinimoAutorizado > oferta.getImporteOferta()) {
-					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_SAREB)));
-				} else {
-					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_SAREB)));
+					} else if(!Checks.esNulo(precioMinimoAutorizado) && precioMinimoAutorizado > oferta.getImporteOferta()) {
+						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_SAREB)));
+					} else {
+						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_SAREB)));
+					}
 				}
 			}
 		}
@@ -1873,14 +1879,27 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Transactional(readOnly = false)
 	public Boolean createHistoricoMediador(DtoHistoricoMediador dto) throws JsonViewerException {
 		ActivoInformeComercialHistoricoMediador historicoMediador = new ActivoInformeComercialHistoricoMediador();
+		ActivoInformeComercialHistoricoMediador historicoMediadorPrimero = new ActivoInformeComercialHistoricoMediador();
 		Activo activo = null;
 
 		if (!Checks.esNulo(dto.getIdActivo())) {
 			activo = activoDao.get(dto.getIdActivo());
 		}
-
-		if (activo == null) return false;
-
+		
+		if (activo==null) return false;
+		
+		if (Checks.esNulo(activo.getInfoComercial())){
+			ActivoInfoComercial infoComercial = new ActivoInfoComercial();
+			infoComercial.setActivo(activo);
+			Auditoria auditoria = new Auditoria();
+			auditoria.setUsuarioCrear(proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado().getUsername());
+			auditoria.setFechaCrear(new Date());
+			auditoria.setBorrado(false);
+			infoComercial.setAuditoria(auditoria);
+			genericDao.save(ActivoInfoComercial.class, infoComercial);
+			activo.setInfoComercial(infoComercial);
+		}
+		
 		try {
 			// Terminar periodo de vigencia del último proveedor (fecha hasta).
 			if (!Checks.esNulo(activo)) {
@@ -1900,6 +1919,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 																														// último).
 					beanUtilNotNull.copyProperty(historicoAnteriorMediador, "fechaHasta", new Date());
 					genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoAnteriorMediador);
+				}
+				else{
+					//Si la lista esta vacia es porque es el la primera vez que se modifica el historico de mediadores, por lo que tenemos que introducir el que
+					//habia antes. La fecha desde se deja vacia por ahora.
+					if(!Checks.esNulo(activo.getInfoComercial().getMediadorInforme())){
+						beanUtilNotNull.copyProperty(historicoMediadorPrimero, "fechaHasta", new Date());
+						beanUtilNotNull.copyProperty(historicoMediadorPrimero, "activo", activo);
+						beanUtilNotNull.copyProperty(historicoMediadorPrimero, "mediadorInforme", activo.getInfoComercial().getMediadorInforme());
+						genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoMediadorPrimero);
+					}
+
 				}
 			}
 
@@ -1922,6 +1952,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					throw new JsonViewerException(messageServices.getMessage(AVISO_MEDIADOR_NO_EXISTE));
 				}
 
+				if(!Checks.esNulo(proveedor.getFechaBaja()) || 
+						(!Checks.esNulo(proveedor.getEstadoProveedor()) && DDEstadoProveedor.ESTADO_BAJA_PROVEEDOR.equals(proveedor.getEstadoProveedor().getCodigo()))){
+					throw new JsonViewerException(messageServices.getMessage(AVISO_MEDIADOR_BAJA));
+				}
+				
 				beanUtilNotNull.copyProperty(historicoMediador, "mediadorInforme", proveedor);
 
 				// Asignar el nuevo proveedor de tipo mediador al activo,
@@ -3253,12 +3288,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numPropuesta", idPropuesta);
 		PropuestaPrecio propuesta = genericDao.get(PropuestaPrecio.class, filtro);
 
-		propuesta.setFechaCarga(new Date());
-
-		DDEstadoPropuestaPrecio estado = (DDEstadoPropuestaPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPropuestaPrecio.class, DDEstadoPropuestaPrecio.ESTADO_SANCIONADA);
-		propuesta.setEstado(estado);
-
-		genericDao.update(PropuestaPrecio.class, propuesta);
+		if (!Checks.esNulo(propuesta)) {
+			propuesta.setFechaCarga(new Date());
+	
+			DDEstadoPropuestaPrecio estado = (DDEstadoPropuestaPrecio) utilDiccionarioApi
+					.dameValorDiccionarioByCod(DDEstadoPropuestaPrecio.class, DDEstadoPropuestaPrecio.ESTADO_SANCIONADA);
+			propuesta.setEstado(estado);
+	
+			genericDao.update(PropuestaPrecio.class, propuesta);
+		}
 	}
 
 	@Override
@@ -3872,6 +3910,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Usuario usuarioGestorFormalizacion = null;
 		Usuario usuarioGestoriaFormalizacion = null;
 		Usuario usuarioGestorComercial = null;
+		Usuario usuarioSupervisorComercial = null;
 		Usuario usuarioGestorComercialBack = null;
 		Usuario usuarioGestorReserva = null;
 		Usuario usuarioSupervisorReserva = null;
@@ -3899,11 +3938,27 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			} else {
 				activo = oferta.getActivoPrincipal();
 			}
-			if (!Checks.esNulo(activo)) {
-				Long idUsuarioGestorFormalizacion = gestorExpedienteComercialDao.getUsuarioGestorFormalizacion(activo.getId());
-				if (!Checks.esNulo(idUsuarioGestorFormalizacion))
+			if(!Checks.esNulo(activo)){
+				Long idUsuarioGestorFormalizacion;
+				if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_THIRD_PARTY)){
+					Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", "GFORM");
+					EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, f1);
+					Filter f2 = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
+					Filter f3 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor",tipoGestor);
+					idUsuarioGestorFormalizacion = genericDao.get(GestorActivo.class, f2,f3).getUsuario().getId();//flag
+					
+					f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", "GCOM");
+					tipoGestor = genericDao.get(EXTDDTipoGestor.class, f1);
+					f3 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor", tipoGestor);
+					usuarioGestorComercial = genericDao.get(GestorActivo.class, f2,f3).getUsuario();
+					
+				}else{
+					 idUsuarioGestorFormalizacion = gestorExpedienteComercialDao.getUsuarioGestorFormalizacion(activo.getId());
+				}
+				if(!Checks.esNulo(idUsuarioGestorFormalizacion))
 					usuarioGestorFormalizacion = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", idUsuarioGestorFormalizacion));
-
+				
+				
 				Long idUsuarioGestoriaFormalizacion = gestorExpedienteComercialDao.getUsuarioGestoriaFormalizacion(activo.getId());
 				if (!Checks.esNulo(idUsuarioGestoriaFormalizacion))
 					usuarioGestoriaFormalizacion = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", idUsuarioGestoriaFormalizacion));
@@ -3939,22 +3994,46 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION, usuarioGestorFormalizacion.getUsername(), dto);
 			else
 				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION, "GESTFORM", dto);
-
-			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION, "SUPFORM", dto);
-
-			if (!Checks.esNulo(usuarioGestoriaFormalizacion))
+			
+			if (!activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_THIRD_PARTY)){
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION, "SUPFORM",dto);
+			} else {
+				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", "SFORM");
+				EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, f1);
+				
+				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
+				Filter f3 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor",tipoGestor);
+				GestorActivo supervisorFormalzacion = genericDao.get(GestorActivo.class,f2,f3);
+				
+				f1 = genericDao.createFilter(FilterType.EQUALS, "codigo","SCOM");
+				tipoGestor = genericDao.get(EXTDDTipoGestor.class,f1);
+				
+				f3 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor", tipoGestor);
+				usuarioSupervisorComercial = genericDao.get(GestorActivo.class, f2,f3).getUsuario();
+				if (!Checks.esNulo(supervisorFormalzacion)) {
+					this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION, supervisorFormalzacion.getUsuario().getUsername(),dto);
+				}
+				if(!Checks.esNulo(usuarioSupervisorComercial)){
+					this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_COMERCIAL, usuarioSupervisorComercial.getUsername(), dto);
+				}
+			}
+			
+			if(!Checks.esNulo(usuarioGestoriaFormalizacion))
 				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION, usuarioGestoriaFormalizacion.getUsername(), dto);
 		}
-
-		if (!Checks.esNulo(usuarioGestorComercial)) this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_COMERCIAL, usuarioGestorComercial.getUsername(), dto);
-
-		if (!Checks.esNulo(usuarioGestorComercialBack))
+		
+		
+		
+		if(!Checks.esNulo(usuarioGestorComercial))
+			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_COMERCIAL, usuarioGestorComercial.getUsername(), dto);
+		
+		if(!Checks.esNulo(usuarioGestorComercialBack))
 			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE, usuarioGestorComercialBack.getUsername(), dto);
-
-		// HREOS-2827
-		if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
-			if (!Checks.esNulo(usuarioGestorReserva)) this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_RESERVA_CAJAMAR, usuarioGestorReserva.getUsername(), dto);
-			if (!Checks.esNulo(usuarioSupervisorReserva))
+		//HREOS-2827
+		if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
+			if(!Checks.esNulo(usuarioGestorReserva))
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_RESERVA_CAJAMAR, usuarioGestorReserva.getUsername(), dto);
+			if(!Checks.esNulo(usuarioSupervisorReserva))
 				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_RESERVA_CAJAMAR, usuarioSupervisorReserva.getUsername(), dto);
 			if (!Checks.esNulo(usuarioGestorMinuta)) this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_MINUTA_CAJAMAR, usuarioGestorMinuta.getUsername(), dto);
 			if (!Checks.esNulo(usuarioSupervisorMinuta)) this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_MINUTA_CAJAMAR, usuarioSupervisorMinuta.getUsername(), dto);

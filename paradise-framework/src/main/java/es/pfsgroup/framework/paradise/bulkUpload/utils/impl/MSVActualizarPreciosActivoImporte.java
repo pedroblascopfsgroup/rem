@@ -45,7 +45,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 	public static final String ACTIVE_PRIZE_NAN = "Uno de los importes indicados no es un valor numérico correcto";
 	public static final String ACTIVE_PRIZES_DESCUENTOS_LIMIT_EXCEEDED = "El precio de descuento aprobado no puede ser mayor al precio de descuento publicado (P.Descuento <= P.Descuento Pub.) o uno de estos precios no tiene un formato correcto";
 	public static final String ACTIVE_PRIZES_VENTA_MINIMO_LIMIT_EXCEEDED = "El precio aprobado de venta no puede ser menor al precio mínimo autorizado (P.Minimo <= P.Aprobado Venta) o uno de estos precios no tiene un formato correcto";
-	public static final String ACTIVE_PRIZES_VENTA_DESCUENTOWEB_LIMIT_EXCEEDED = "El precio de descuento publicado no puede ser mayor al precio aprobado de venta (P.Descuento Pub. <= P.Aprobado Venta) o uno de estos precios no tiene un formato correcto";
+	//public static final String ACTIVE_PRIZES_VENTA_DESCUENTOWEB_LIMIT_EXCEEDED = "El precio de descuento publicado no puede ser mayor al precio aprobado de venta (P.Descuento Pub. <= P.Aprobado Venta) o uno de estos precios no tiene un formato correcto";
 	public static final String ACTIVE_PRIZES_NOT_GREATER_ZERO = "msg.error.masivo.comunes.importe.no.mayor.cero";
 	public static final String ACTIVE_PAV_DATE_INIT_EXCEEDED = "La fecha de inicio del precio aprobado de venta no puede ser posterior a la fecha de fin (F.inicio <= F.Fin) o una de estas fechas no tiene un formato correcto (DD/MM/AAAA)";
 	public static final String ACTIVE_PMA_DATE_INIT_EXCEEDED = "La fecha de inicio del precio mínimo autorizado no puede ser posterior a la fecha de fin (F.inicio <= F.Fin) o una de estas fechas no tiene un formato correcto (DD/MM/AAAA)";
@@ -63,12 +63,12 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 	public static final String ACTIVE_NOT_ACTUALIZABLE = "El estado del activo no puede actualizarse al indicado.";
 	public static final String ACTIVE_PRECIOS_BLOQUEO = "El activo tiene habilitado el bloqueo de precios. No se pueden actualizar precios";
 	public static final String ACTIVE_OFERTA_APROBADA = "El activo tiene ofertas aprobadas. No se pueden actualizar precios";
-	public static final String ACTIVE_PDA_END_DATE_GREATER_PMA_END_DATE = "La fecha de fin del precio de descuento aprobado no puede ser posterior a la fecha fin del precio mínimo";
-	public static final String ACTIVE_PDA_BEGIN_DATE_LESS_PMA_BEGIN_DATE = "La fecha de inicio del precio de descuento aprobado no puede ser anterior a la fecha inicio del precio mínimo";
+	//public static final String ACTIVE_PDA_END_DATE_GREATER_PMA_END_DATE = "La fecha de fin del precio de descuento aprobado no puede ser posterior a la fecha fin del precio mínimo";
+	//public static final String ACTIVE_PDA_BEGIN_DATE_LESS_PMA_BEGIN_DATE = "La fecha de inicio del precio de descuento aprobado no puede ser anterior a la fecha inicio del precio mínimo";
 	public static final String ACTIVE_PDW_BEGIN_DATE_LESS_PDA_BEGIN_DATE = "La fecha de inicio del precio descuento publicado no puede ser anterior a la fecha inicio del precio descuento aprovado";
-	public static final String ACTIVE_PDW_BEGIN_DATE_LESS_PAV_BEGIN_DATE = "La fecha de inicio del precio descuento publicado no puede ser anterior a la fecha inicio del precio aprobado venta";
+	//public static final String ACTIVE_PDW_BEGIN_DATE_LESS_PAV_BEGIN_DATE = "La fecha de inicio del precio descuento publicado no puede ser anterior a la fecha inicio del precio aprobado venta";
 	public static final String ACTIVE_PDW_END_DATE_MORE_PDA_END_DATE = "La fecha de fin del precio descuento publicado no puede ser posterior a la fecha fin del precio descuento aprobado";
-	public static final String ACTIVE_PDW_END_DATE_MORE_PAV_END_DATE = "La fecha de fin del precio descuento publicado no puede ser posterior a la fecha fin del precio aprobado venta";
+	//public static final String ACTIVE_PDW_END_DATE_MORE_PAV_END_DATE = "La fecha de fin del precio descuento publicado no puede ser posterior a la fecha fin del precio aprobado venta";
 	public static final String ACTIVE_COMPARE_PRICES_EXCEL_TO_DDBB = "Los precios especificados no cumplen las reglas al ser introducidos junto con los actuales precios";
 	public static final String ACTIVE_COMPARE_DATES_EXCEL_TO_DDBB = "Las fechas especificadas no cumplen las reglas al ser introducidas junto con las actuales fechas";
 
@@ -145,12 +145,12 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 			mapaErrores.put(ACTIVE_PDP_END_DATE_NOT_EXISTS, getFechaFinDescuentoPubNoEstablecida(exc));
 			mapaErrores.put(ACTIVE_PAV_END_DATE_LESS_PMA_END_DATE, getFechaFinAprovadoVentaMenorFechaFinMinimoAutorizado(exc));
 			mapaErrores.put(ACTIVE_PAV_BEGIN_DATE_GREATER_PMA_BEGIN_DATE, getFechaInicioAprovadoVentaMayorFechaInicioMinimoAutorizado(exc));
-			mapaErrores.put(ACTIVE_PDA_END_DATE_GREATER_PMA_END_DATE, getFechaFinDescuentoAprobadoMayorFechaFinMinimoAutorizado(exc));
-			mapaErrores.put(ACTIVE_PDA_BEGIN_DATE_LESS_PMA_BEGIN_DATE, getFechaInicioDescuentoAprobadoMenorFechaInicioMinimoAutorizado(exc));
+			//mapaErrores.put(ACTIVE_PDA_END_DATE_GREATER_PMA_END_DATE, getFechaFinDescuentoAprobadoMayorFechaFinMinimoAutorizado(exc));
+			//mapaErrores.put(ACTIVE_PDA_BEGIN_DATE_LESS_PMA_BEGIN_DATE, getFechaInicioDescuentoAprobadoMenorFechaInicioMinimoAutorizado(exc));
 			mapaErrores.put(ACTIVE_PDW_BEGIN_DATE_LESS_PDA_BEGIN_DATE, getFechaInicioDescuentoWebMenorFechaInicioDescuentoAprobado(exc));
-			mapaErrores.put(ACTIVE_PDW_BEGIN_DATE_LESS_PAV_BEGIN_DATE, getFechaInicioDescuentoWebMenorFechaInicioAprovadoVenta(exc));
+			//mapaErrores.put(ACTIVE_PDW_BEGIN_DATE_LESS_PAV_BEGIN_DATE, getFechaInicioDescuentoWebMenorFechaInicioAprovadoVenta(exc));
 			mapaErrores.put(ACTIVE_PDW_END_DATE_MORE_PDA_END_DATE, getFechaFinDescuentoWebMayorFechaFinDescuentoAprobado(exc));
-			mapaErrores.put(ACTIVE_PDW_END_DATE_MORE_PAV_END_DATE, getFechaFinDescuentoWebMayorFechaFinAprovadoVenta(exc));
+			//mapaErrores.put(ACTIVE_PDW_END_DATE_MORE_PAV_END_DATE, getFechaFinDescuentoWebMayorFechaFinAprovadoVenta(exc));
 		// Comprobaciones para contrastar datos del excel con los datos actuales en la DB.
 			mapaErrores.put(ACTIVE_COMPARE_PRICES_EXCEL_TO_DDBB, getComparacionDePreciosExcelDDBB(exc));
 			mapaErrores.put(ACTIVE_COMPARE_DATES_EXCEL_TO_DDBB, getComparacionDeFechasExcelDDBB(exc));
@@ -172,12 +172,12 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 					|| !mapaErrores.get(ACTIVE_PDP_END_DATE_NOT_EXISTS).isEmpty()
 					|| !mapaErrores.get(ACTIVE_PAV_END_DATE_LESS_PMA_END_DATE).isEmpty()
 					|| !mapaErrores.get(ACTIVE_PAV_BEGIN_DATE_GREATER_PMA_BEGIN_DATE).isEmpty()
-					|| !mapaErrores.get(ACTIVE_PDA_END_DATE_GREATER_PMA_END_DATE).isEmpty()
-					|| !mapaErrores.get(ACTIVE_PDA_BEGIN_DATE_LESS_PMA_BEGIN_DATE).isEmpty()
+					//|| !mapaErrores.get(ACTIVE_PDA_END_DATE_GREATER_PMA_END_DATE).isEmpty()
+					//|| !mapaErrores.get(ACTIVE_PDA_BEGIN_DATE_LESS_PMA_BEGIN_DATE).isEmpty()
 					|| !mapaErrores.get(ACTIVE_PDW_BEGIN_DATE_LESS_PDA_BEGIN_DATE).isEmpty()
-					|| !mapaErrores.get(ACTIVE_PDW_BEGIN_DATE_LESS_PAV_BEGIN_DATE).isEmpty()
+					//|| !mapaErrores.get(ACTIVE_PDW_BEGIN_DATE_LESS_PAV_BEGIN_DATE).isEmpty()
 					|| !mapaErrores.get(ACTIVE_PDW_END_DATE_MORE_PDA_END_DATE).isEmpty()
-					|| !mapaErrores.get(ACTIVE_PDW_END_DATE_MORE_PAV_END_DATE).isEmpty()
+					//|| !mapaErrores.get(ACTIVE_PDW_END_DATE_MORE_PAV_END_DATE).isEmpty()
 					|| !mapaErrores.get(ACTIVE_COMPARE_PRICES_EXCEL_TO_DDBB).isEmpty()
 					|| !mapaErrores.get(ACTIVE_COMPARE_DATES_EXCEL_TO_DDBB).isEmpty()) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -268,17 +268,17 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 						}
 					}
 					// Fecha fechaFinPMA < fechaFinPDA.
-					if(!Checks.esNulo(fechaFinPDA) && !Checks.esNulo(fechaFinPMA) && (fechaFinPDA.after(fechaFinPMA))){
-						if(!listaFilas.contains(i)) {
-							listaFilas.add(i);
-						}
-					}
+//					if(!Checks.esNulo(fechaFinPDA) && !Checks.esNulo(fechaFinPMA) && (fechaFinPDA.after(fechaFinPMA))){
+//						if(!listaFilas.contains(i)) {
+//							listaFilas.add(i);
+//						}
+//					}
 					// Fecha fechaInicioPDA < fechaInicioPMA.
-					if(!Checks.esNulo(fechaInicioPDA) && !Checks.esNulo(fechaInicioPMA) && (fechaInicioPMA.after(fechaInicioPDA))){
-						if(!listaFilas.contains(i)) {
-							listaFilas.add(i);
-						}
-					}
+//					if(!Checks.esNulo(fechaInicioPDA) && !Checks.esNulo(fechaInicioPMA) && (fechaInicioPMA.after(fechaInicioPDA))){
+//						if(!listaFilas.contains(i)) {
+//							listaFilas.add(i);
+//						}
+//					}
 					// Fecha fechaInicioPDP < fechaInicioPDA.
 					if(!Checks.esNulo(fechaInicioPDP) && !Checks.esNulo(fechaInicioPDA) && (fechaInicioPDA.after(fechaInicioPDP))){
 						if(!listaFilas.contains(i)) {
@@ -286,11 +286,11 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 						}
 					}
 					// Fecha fechaInicioPDP < fechaInicioPAV.
-					if(!Checks.esNulo(fechaInicioPDP) && !Checks.esNulo(fechaInicioPAV) && (fechaInicioPAV.after(fechaInicioPDP))){
-						if(!listaFilas.contains(i)) {
-							listaFilas.add(i);
-						}
-					}
+//					if(!Checks.esNulo(fechaInicioPDP) && !Checks.esNulo(fechaInicioPAV) && (fechaInicioPAV.after(fechaInicioPDP))){
+//						if(!listaFilas.contains(i)) {
+//							listaFilas.add(i);
+//						}
+//					}
 					// Fecha fechaFinPDA < fechaFinPDP.
 					if(!Checks.esNulo(fechaFinPDP) && !Checks.esNulo(fechaFinPDA) && (fechaFinPDP.after(fechaFinPDA))){
 						if(!listaFilas.contains(i)) {
@@ -298,23 +298,23 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 						}
 					}
 					// Fecha fechaFinPAV < fechaFinPDP.
-					if(!Checks.esNulo(fechaFinPDP) && !Checks.esNulo(fechaFinPAV) && (fechaFinPDP.after(fechaFinPAV))){
-						if(!listaFilas.contains(i)) {
-							listaFilas.add(i);
-						}
-					}
+//					if(!Checks.esNulo(fechaFinPDP) && !Checks.esNulo(fechaFinPAV) && (fechaFinPDP.after(fechaFinPAV))){
+//						if(!listaFilas.contains(i)) {
+//							listaFilas.add(i);
+//						}
+//					}
 					// Fecha fechaFinPAV < fechaFinPAV.
-					if(!Checks.esNulo(fechaFinPDA) && !Checks.esNulo(fechaFinPAV) && (fechaFinPDA.after(fechaFinPAV))){
-						if(!listaFilas.contains(i)) {
-							listaFilas.add(i);
-						}
-					}
+//					if(!Checks.esNulo(fechaFinPDA) && !Checks.esNulo(fechaFinPAV) && (fechaFinPDA.after(fechaFinPAV))){
+//						if(!listaFilas.contains(i)) {
+//							listaFilas.add(i);
+//						}
+//					}
 					// Fecha fechaInicioPDA < fechaInicioPAV.
-					if(!Checks.esNulo(fechaInicioPDA) && !Checks.esNulo(fechaInicioPAV) && (fechaInicioPAV.after(fechaInicioPDA))){
-						if(!listaFilas.contains(i)) {
-							listaFilas.add(i);
-						}
-					}
+//					if(!Checks.esNulo(fechaInicioPDA) && !Checks.esNulo(fechaInicioPAV) && (fechaInicioPAV.after(fechaInicioPDA))){
+//						if(!listaFilas.contains(i)) {
+//							listaFilas.add(i);
+//						}
+//					}
 				} catch (ParseException e) {
 					listaFilas.add(i);
 					logger.error(e.getMessage());

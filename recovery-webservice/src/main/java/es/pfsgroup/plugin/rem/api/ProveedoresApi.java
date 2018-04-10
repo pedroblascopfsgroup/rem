@@ -50,8 +50,9 @@ public interface ProveedoresApi {
 	 * 
 	 * @param dto: dto con los datos del proveedor a almacenar.
 	 * @return Devuelve si la operación ha sido satisfactoria, o no.
+	 * @throws Exception 
 	 */
-	public boolean saveProveedorById(DtoActivoProveedor dto);
+	public boolean saveProveedorById(DtoActivoProveedor dto) throws Exception;
 
 	/**
 	 * Este método obtiene las personas de contacto según el ID de proveedor y/o el ID

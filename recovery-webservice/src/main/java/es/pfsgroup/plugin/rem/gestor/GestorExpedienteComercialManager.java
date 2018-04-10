@@ -106,7 +106,10 @@ public class GestorExpedienteComercialManager implements GestorExpedienteComerci
 					gestorEntidadDao.saveOrUpdate(gec);
 					
 					//Actualizamos usuarios de las tareas
-					actualizarTareas(expediente.getTrabajo().getId());
+					if (!Checks.esNulo(expediente.getTrabajo())) {
+						actualizarTareas(expediente.getTrabajo().getId());
+					}
+					
 				}
 			}
 		}

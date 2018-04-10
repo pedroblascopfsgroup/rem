@@ -214,6 +214,9 @@ public class Oferta implements Serializable, Auditable {
     @Column(name="OFR_OBSERVACIONES")
 	private String observaciones;	
     
+    @Column(name = "OFR_UVEM_ID")
+    private Long idUvem;
+    
     
 	
 	public Date getFechaAlta() {
@@ -617,6 +620,14 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
+	}
+
+	public Long getIdUvem() {
+		return idUvem;
+	}
+
+	public void setIdUvem(Long idUvem) {
+		this.idUvem = idUvem;
 	}
 	
 

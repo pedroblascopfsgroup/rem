@@ -26,8 +26,8 @@ public class ComisionDto implements Serializable {
 	@Diccionary(clase = Oferta.class, foreingField = "numOferta", message = "El idOfertaRem no existe", groups = {
 			Insert.class, Update.class })
 	private Long idOfertaRem;
-	@Diccionary(clase = Oferta.class, foreingField = "idWebCom", message = "El idOfertaWebcom no existe", groups = {
-			Insert.class, Update.class })
+/*	@Diccionary(clase = Oferta.class, foreingField = "idWebCom", message = "El idOfertaWebcom no existe", groups = {
+			Insert.class, Update.class })*/
 	private Long idOfertaWebcom;
 	@Diccionary(clase = ActivoProveedor.class, foreingField = "codigoProveedorRem", message = "El idProveedorRem no existe", groups = {
 			Insert.class, Update.class })

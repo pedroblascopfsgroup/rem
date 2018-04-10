@@ -523,9 +523,19 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		for (ActivoAgrupacionActivo activo : activos) {
 			Double valor = null;
 			ActivoTasacion tasacion = activoApi.getTasacionMasReciente(activo.getActivo());
-			if (!Checks.esNulo(tasacion) && !Checks.esNulo(tasacion.getImporteTasacionFin())) {
-				valor = Double.parseDouble(tasacion.getImporteTasacionFin().toString());
+			Boolean sinTasacion = false;
+			
+			if (!Checks.esNulo(tasacion)) {
+				if (!Checks.esNulo(tasacion.getImporteTasacionFin())) {
+					valor = Double.parseDouble(tasacion.getImporteTasacionFin().toString());
+				} else {
+					sinTasacion = true;
+				}
 			} else {
+				sinTasacion = true;
+			}
+			
+			if(sinTasacion) {
 				ActivoValoraciones valoracion = activoApi.getValoracionAprobadoVenta(activo.getActivo());
 				if (!Checks.esNulo(valoracion)) {
 					valor = valoracion.getImporte();
@@ -535,8 +545,11 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 					return asignarValoresCero(activos);
 				}
 			}
-			valores.put(activo.getActivo().getId().toString(), valor);
-			total = total + valor;
+			
+			if(!Checks.esNulo(valor)) {
+				valores.put(activo.getActivo().getId().toString(), valor);
+				total = total + valor;
+			}
 		}
 
 		valores.put("total", total);
@@ -560,13 +573,15 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	public Float asignarPorcentajeParticipacionEntreActivos(ActivoAgrupacionActivo activo, Map<String, Double> valores,
 			Double total) throws Exception {
 
-		if (total <= 0)
+		if (total <= 0) return (float) 0;
+		
+		if (!Checks.esNulo(valores.get(activo.getActivo().getId().toString()))) {
+			Float porcentaje = (float) (valores.get(activo.getActivo().getId().toString()) * 100);
+			return (float) (porcentaje / total);
+		} else {
 			return (float) 0;
+		}
 
-		Float porcentaje = (float) (valores.get(activo.getActivo().getId().toString()) * 100);
-		porcentaje = (float) (porcentaje / total);
-
-		return porcentaje;
 	}
 
 	@Override

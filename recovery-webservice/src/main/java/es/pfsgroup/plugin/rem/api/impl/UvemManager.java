@@ -1046,7 +1046,7 @@ public class UvemManager implements UvemManagerApi {
 
 			}
 			
-			if(Boolean.TRUE.equals(instanciaDecisionDto.getOfertaAgrupacion())){
+			if(Boolean.TRUE.equals(instanciaDecisionDto.getOfertaAgrupacion()) && INSTANCIA_DECISION_ALTA.equals(accion)){
 				if(instanciaDecisionDto.getCodigoAgrupacionInmueble() != null && instanciaDecisionDto.getCodigoAgrupacionInmueble() > 0){
 					servicioGMPDJB13_INS.setCodigoDeAgrupacionDeInmueblecoagiw(instanciaDecisionDto.getCodigoAgrupacionInmueble());
 				}else{
@@ -1129,7 +1129,6 @@ public class UvemManager implements UvemManagerApi {
 
 			servicioGMPDJB13_INS.setAlias(ALIAS);
 			
-			servicioGMPDJB13_INS.setCodigoDeAgrupacionDeInmueblecoagiw(0);
 			
 			// servicioGMPDJB13_INS.execute();
 			executeService(servicioGMPDJB13_INS);
@@ -1139,6 +1138,7 @@ public class UvemManager implements UvemManagerApi {
 			result.setCodigoDeOfertaHaya(servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx2());
 			//HREOS-3844: Postacordado Bankia 2: Añadir código de la oferta en FFDD
 			result.setCodigoAgrupacionInmueble(servicioGMPDJB13_INS.getCodigoDeAgrupacionDeInmueblecoagiw2());
+			result.setCodigoOfertaUvem(servicioGMPDJB13_INS.getCodigoDeOfertacoofew());
 		} catch (WIException e) {
 			logger.error("error en UvemManager", e);
 			errorDesc = e.getMessage();

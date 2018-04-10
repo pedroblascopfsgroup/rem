@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.utils.FormatUtils;
 import es.pfsgroup.commons.utils.Checks;
 
@@ -191,6 +192,41 @@ public class MSVHojaExcel {
 		copy.close();
 
 		return nombreFicheroErrores;
+	}
+	
+	public FileItem insertarErroresExcel(FileItem fileitem,Map<String, List<Integer>> mapaErrores, int numHoja,
+			int numFilaCabeceras, int fila) throws IOException, RowsExceededException, WriteException, BiffException{
+		
+		WorkbookSettings workbookSettings = new WorkbookSettings();
+		workbookSettings.setEncoding("Cp1252");
+		workbookSettings.setSuppressWarnings(true);
+		libroExcel = Workbook.getWorkbook(file, workbookSettings);
+		
+		Workbook excel=  Workbook.getWorkbook(fileitem.getFile());
+		libroExcel=excel;
+		
+		WritableWorkbook copy = Workbook.createWorkbook(fileitem.getFile(),libroExcel);
+		
+		try {
+
+			WritableSheet hoja = copy.getSheet(numHoja);
+			int numColumnas = this.getNumeroColumnasByHojaAndFila(numHoja, numFilaCabeceras);
+
+			int columna = numColumnas;
+			if(mapaErrores.get("KO").size()==1){
+				addTexto(hoja, columna, 0, "ERRORES");
+				addTexto(hoja, columna, fila, "KO");
+			}
+			else{
+				addTexto(hoja, columna, fila, "KO");
+			}
+			copy.write();
+		} finally {
+			copy.close();
+		}
+		
+		return fileitem;
+		
 	}
 
 	public String crearExcelErroresMejorado(Map<String, List<Integer>> mapaErrores)

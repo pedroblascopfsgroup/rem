@@ -22,6 +22,7 @@ import es.capgemini.devon.utils.FileUtils;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
@@ -114,9 +115,13 @@ public class ProveedoresController extends ParadiseJsonController {
 		try{
 			boolean success = proveedoresApi.saveProveedorById(dto);
 			model.put("success", success);
-		} catch(Exception e) {
-			e.printStackTrace();
+		} 
+		catch (JsonViewerException jvex) {
 			model.put("success", false);
+			model.put("msg", jvex.getMessage());
+		}catch(Exception e) {
+				e.printStackTrace();
+				model.put("success", false);
 		}
 		
 		return createModelAndViewJson(model);

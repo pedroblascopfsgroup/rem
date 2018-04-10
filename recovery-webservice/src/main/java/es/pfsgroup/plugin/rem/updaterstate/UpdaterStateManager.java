@@ -113,15 +113,29 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	@Override
 	public void updaterStateDisponibilidadComercialAndSave(Long idActivo) {
 		Activo activo = activoApi.get(idActivo);
-		this.updaterStateDisponibilidadComercialAndSave(activo);
+		this.updaterStateDisponibilidadComercialAndSave(activo,false);
 		
 	}
-
+	
 	@Override
 	public void updaterStateDisponibilidadComercialAndSave(Activo activo) {
 		this.updaterStateDisponibilidadComercial(activo);
 		activoApi.saveOrUpdate(activo);
 		activoAdapterApi.updatePortalPublicacion(activo.getId());
+		this.updaterStateDisponibilidadComercialAndSave(activo,false);
+	}
+
+	@Override
+	public void updaterStateDisponibilidadComercialAndSave(Activo activo, Boolean express) {
+		if(express){
+			String codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA;
+			activo.setSituacionComercial((DDSituacionComercial)utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class,codigo));
+		}else{
+			this.updaterStateDisponibilidadComercial(activo);
+			//genericDao.update(Activo.class, activo);	
+			activoApi.saveOrUpdate(activo);
+		}
+		
 	}
 	
 	@Override

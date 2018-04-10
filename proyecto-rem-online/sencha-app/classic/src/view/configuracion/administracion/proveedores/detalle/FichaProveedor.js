@@ -119,7 +119,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 									maxLength: 20
 				                },
 				             // Fila 3
-				                {
+				                	{
 									xtype : 'comboboxfieldbase',
 								    fieldLabel : HreRem.i18n('fieldlabel.proveedor.localizada'),
 								    reference: 'cbLocalizada',
@@ -130,15 +130,12 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								    }
 								},
 								{ 
-									xtype: 'comboboxfieldbase',
-						        	fieldLabel:  HreRem.i18n('fieldlabel.estado'),
-						        	reference: 'cbEstadoProveedor',
-						        	bind: {
-									      store: '{comboEstadoProveedor}',
-									      value: '{proveedor.estadoProveedorCodigo}'
-						        	}
-						        },
-								{ 
+				                	xtype: 'textfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.proveedor.email'),
+									bind: '{proveedor.email}',
+									maxLength: 50
+				                },
+						        { 
 									xtype: 'textareafieldbase',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.observaciones'),						        	
 						        	bind: '{proveedor.observacionesProveedor}',
@@ -147,6 +144,15 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 						        	height: 80
 						        },
 						     // Fila 4
+						        { 
+									xtype: 'comboboxfieldbase',
+						        	fieldLabel:  HreRem.i18n('fieldlabel.estado'),
+						        	reference: 'cbEstadoProveedor',
+						        	bind: {
+									      store: '{comboEstadoProveedor}',
+									      value: '{proveedor.estadoProveedorCodigo}'
+						        	}
+						        },
 						        {
 									xtype : 'comboboxfieldbase',
 								    fieldLabel : HreRem.i18n('fieldlabel.proveedores.tipopersona'),
@@ -157,6 +163,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								      value : '{proveedor.tipoPersonaProveedorCodigo}'
 								    }
 								},
+								 // Fila 5
 						        {
 									xtype: 'textfieldbase',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.url.web'),						        	
@@ -169,7 +176,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 									bind: '{proveedor.autorizacionWeb}',
 									readOnly: false
 								},
-					         // Fila 5
+					        
 					            {// Siempre oculto por el momento.
 					            	xtype: 'comboboxfieldbase',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.proveedores.operativa'),
@@ -191,10 +198,12 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 										value: '{proveedor.fechaConstitucionProveedor}'
 									}
 					            },
+					             // Fila 6
 						        {
 									xtype: 'textfieldbase',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.numero.ursus.bankia'),	
 						        	reference: 'numUrsusRef',
+						        	colspan: 3,
 						        	bind: '{proveedor.codProveedorUvem}',
 						        	listeners:{
 						        		render: function(){
@@ -211,7 +220,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 						        		}
 						        	}
 						        },
-					         // Fila 6 (Ámbito)
+					         // Fila 7 (Ámbito)
 					            {
 									xtype:'fieldsettable',
 									defaultType: 'textfieldbase',						
@@ -281,7 +290,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 											}
 										]
 					            },
-					         // Fila 7 (Mediador)
+					         // Fila 8 (Mediador)
 					            {
 									xtype:'fieldsettable',
 									defaultType: 'textfieldbase',						

@@ -31,7 +31,7 @@ DECLARE
   ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
   ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
-  USUARIO_MIGRACION VARCHAR2(50 CHAR):= 'TRASPASO_TANGO';
+  USUARIO_MIGRACION VARCHAR2(50 CHAR):= 'TRASPASO_GIANTS';
 
 BEGIN
       

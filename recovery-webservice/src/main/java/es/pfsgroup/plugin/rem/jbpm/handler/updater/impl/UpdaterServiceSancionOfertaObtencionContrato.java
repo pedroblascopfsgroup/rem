@@ -42,7 +42,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	@Autowired
 	private TareaActivoManager tareaActivoManager;
 
-	private static int NUMERO_DIAS_VENCIMIENTO = 40;
+	private static int NUMERO_DIAS_VENCIMIENTO = 45;
 
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
@@ -61,6 +61,26 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 		Filter filtro;
+		
+		for (TareaExternaValor valor : valores) {
+
+			if (FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				Reserva reserva = expediente.getReserva();
+				if (!Checks.esNulo(reserva)) {
+					//Si hay reserva y firma, se desbloquea la tarea ResultadoPBC
+					reactivarTareaResultadoPBC(valor.getTareaExterna(), expediente);
+					try {			
+						reserva.setFechaFirma(ft.parse(valor.getValor()));
+						genericDao.save(Reserva.class, reserva);
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			
+			genericDao.save(ExpedienteComercial.class, expediente);
+		
+		
 		if (!Checks.esNulo(ofertaAceptada)) {
 			if (ofertaApi.checkDerechoTanteo(tramite.getTrabajo()))
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.BLOQUEO_ADM);
@@ -97,26 +117,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 			}
 			
 		
-
 			genericDao.save(ExpedienteComercial.class, expediente);
-
-			for (TareaExternaValor valor : valores) {
-
-				if (FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-					Reserva reserva = expediente.getReserva();
-					if (!Checks.esNulo(reserva)) {
-						//Si hay reserva y firma, se desbloquea la tarea ResultadoPBC
-						reactivarTareaResultadoPBC(valor.getTareaExterna(), expediente);
-						try {			
-							reserva.setFechaFirma(ft.parse(valor.getValor()));
-							genericDao.save(Reserva.class, reserva);
-						} catch (ParseException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-				genericDao.save(ExpedienteComercial.class, expediente);
-				
 				
 			}
 			

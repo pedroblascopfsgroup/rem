@@ -20,7 +20,6 @@ Ext.define('HreRem.view.ViewportController', {
     },
 
     setCurrentView: function(hashTag) {
-    	//debugger;
         hashTag = (hashTag || '').toLowerCase();
         var me = this,
         refs = me.getReferences(),
@@ -347,4 +346,5 @@ Ext.define('HreRem.view.ViewportController', {
 	        }
         });
     }
+	
 });

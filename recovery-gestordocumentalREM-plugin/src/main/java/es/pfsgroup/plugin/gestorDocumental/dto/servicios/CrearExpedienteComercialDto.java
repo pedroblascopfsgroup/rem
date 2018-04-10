@@ -20,6 +20,11 @@ public class CrearExpedienteComercialDto {
 	/**
 	 * Clase de expediente 
 	 */
+	private String tipoClase;
+	
+	/**
+	 * Clase de expediente 
+	 */
 	private String codClase;
 	
 	/**
@@ -55,6 +60,14 @@ public class CrearExpedienteComercialDto {
 
 	public void setUsuarioOperacional(String usuarioOperacional) {
 		this.usuarioOperacional = usuarioOperacional;
+	}
+
+	public String getTipoClase() {
+		return tipoClase;
+	}
+
+	public void setTipoClase(String tipoClase) {
+		this.tipoClase = tipoClase;
 	}
 
 	public String getCodClase() {

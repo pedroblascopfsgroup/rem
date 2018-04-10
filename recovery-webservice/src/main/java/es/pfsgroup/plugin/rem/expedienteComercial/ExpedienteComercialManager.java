@@ -67,6 +67,7 @@ import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -104,6 +105,7 @@ import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
+import es.pfsgroup.plugin.rem.model.DtoSaltoTarea;
 import es.pfsgroup.plugin.rem.model.DtoSubsanacion;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
@@ -148,6 +150,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
@@ -2425,6 +2428,56 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			throw new Exception("El codigo del estado de la dev no exite");
 		}
 		return this.update(expedienteComercial);
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean updateEstadoReserva(ExpedienteComercial expedienteComercial, String codEstadoReserva) throws Exception{
+		DDEstadosReserva estadoReserva = (DDEstadosReserva) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosReserva.class, codEstadoReserva);
+		if(!Checks.esNulo(estadoReserva)){
+			if(!Checks.esNulo(expedienteComercial.getReserva())){
+				expedienteComercial.getReserva().setEstadoReserva(estadoReserva);
+			}
+		}else{
+			throw new Exception("El codigo del estado de la reserva no existe");
+		}
+		return this.update(expedienteComercial);
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean updateEstadoExpedienteComercial(ExpedienteComercial expedienteComercial, String codEstadoExpedienteComercial) throws Exception{
+		DDEstadosExpedienteComercial estadoExpedienteComercial = (DDEstadosExpedienteComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class, codEstadoExpedienteComercial);
+		if(!Checks.esNulo(estadoExpedienteComercial)){
+			if(!Checks.esNulo(expedienteComercial)){
+				expedienteComercial.setEstado(estadoExpedienteComercial);
+			}
+		}else{
+			throw new Exception("El codigo del estado del expediente comercial no existe");
+		}
+		return this.update(expedienteComercial);
+	}
+	
+	@Transactional(readOnly = false)
+	private void resetReservaEstadoPrevioResolucionExpediente(ExpedienteComercial expedienteComercial) throws Exception{
+		Reserva reserva = expedienteComercial.getReserva();
+		reserva.setIndicadorDevolucionReserva(null);
+		reserva.setDevolucionReserva(null);
+		this.updateEstadoReserva(expedienteComercial, DDEstadosReserva.CODIGO_FIRMADA);
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean updateExpedienteComercialEstadoPrevioResolucionExpediente(ExpedienteComercial expedienteComercial, String codigoTareaActual) throws Exception{
+		if(codigoTareaActual.equals(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION) 
+				|| codigoTareaActual.equals(ComercialUserAssigantionService.CODIGO_T013_PENDIENTE_DEVOLUCION)
+				|| codigoTareaActual.equals(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION)){
+			this.resetReservaEstadoPrevioResolucionExpediente(expedienteComercial);
+			this.updateEstadoExpedienteComercial(expedienteComercial, DDEstadosExpedienteComercial.RESERVADO);
+			
+			return this.update(expedienteComercial);
+		}
+		return false;
 	}
 	
 	@Override
@@ -5783,6 +5836,5 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return subcartera;
 		
 	}
-	
 
 }

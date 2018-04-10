@@ -25,12 +25,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.transaction.annotation.Transactional;
 import org.springmodules.workflow.jbpm31.JbpmCallback;
 
-import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.bpm.ProcessManager;
 import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.BPMContants;
-import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.dsm.DataSourceManager;
 import es.capgemini.pfs.security.model.UsuarioSecurity;
 import es.pfsgroup.framework.paradise.genericlistener.GenerarTransicionSaltoListener;
@@ -56,8 +54,6 @@ public class JBPMProcessManager implements BPMContants, JBPMProcessManagerApi {
 //    private List<String> clasesDiccionarioAnotadas;
 //
 //    private Map<String, Object> clasesDiccionario;
-
-    private List<String> contextScripts;
 
     @Autowired
     private ProcessManager processManager;
@@ -680,7 +676,6 @@ public class JBPMProcessManager implements BPMContants, JBPMProcessManagerApi {
 	 */
     @Override
 	public void setContextScripts(List<String> contextScript) {
-        this.contextScripts = contextScript;
     }
 //
 //    /* (non-Javadoc)

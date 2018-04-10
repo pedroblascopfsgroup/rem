@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.gestorDocumental.api;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.BajaDocumentoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CabeceraPeticionRestClientDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearDocumentoDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearVersionDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearVersionMetadatosDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CredencialesUsuarioDto;
@@ -46,7 +47,7 @@ public interface GestorDocumentalApi {
 	 * @return RespuestaDescargarDocumento
 	 * @throws GestorDocumentalException 
 	 */
-	RespuestaDescargarDocumento descargarDocumento(Long idDocumento, BajaDocumentoDto login) throws GestorDocumentalException;
+	RespuestaDescargarDocumento descargarDocumento(Long idDocumento, BajaDocumentoDto login, String nombreDocumento) throws GestorDocumentalException;
 
 	/**
 	 * Permite obtener un listado de documentos dentro de un expediente (con o sin relaciones)
@@ -102,11 +103,12 @@ public interface GestorDocumentalApi {
 	 * Permite introducir una relación entre un documento y un expediente
 	 * 
 	 * @param cabecera
+	 * @param crearRelacionExpedienteDto 
 	 * @param credencialesUsuario
 	 * @return RespuestaGeneral
 	 * @throws GestorDocumentalException 
 	 */
-	RespuestaGeneral crearRelacionExpediente(CabeceraPeticionRestClientDto cabecera, CredencialesUsuarioDto credUsuDto) throws GestorDocumentalException;
+	RespuestaGeneral crearRelacionExpediente(CabeceraPeticionRestClientDto cabecera, CredencialesUsuarioDto credUsuDto, CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException;
 
 	/**
 	 * Permite consultar todo el conjunto de serie documentales, TDN1s y TDN2s

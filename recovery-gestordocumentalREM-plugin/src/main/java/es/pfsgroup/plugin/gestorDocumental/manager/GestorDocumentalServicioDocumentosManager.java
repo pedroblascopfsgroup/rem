@@ -1,8 +1,11 @@
 package es.pfsgroup.plugin.gestorDocumental.manager;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
+import org.glassfish.jersey.uri.UriComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +13,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalServicioDocumentosApi;
 import es.pfsgroup.plugin.gestorDocumental.api.RestClientApi;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CabeceraPeticionRestClientDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearContenedorDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearDocumentoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearVersionDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearVersionMetadatosDto;
@@ -24,10 +28,12 @@ import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCatalogoDoc
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCrearDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosExpedientes;
+import es.pfsgroup.plugin.gestorDocumental.model.servicios.RespuestaCrearExpediente;
 
 @Component
 public class GestorDocumentalServicioDocumentosManager implements GestorDocumentalServicioDocumentosApi {
 
+	private final Log logger = LogFactory.getLog(getClass());
 	@Autowired
 	private RestClientApi restClientApi;
 	
@@ -37,6 +43,10 @@ public class GestorDocumentalServicioDocumentosManager implements GestorDocument
 	private static final String TIPO_CONSULTA_PATH = "tipoConsulta=";
 	private static final String VINCULO_DOCUMENTO_PATH = "vinculoDocumento=";
 	private static final String VINCULO_EXPEDIENTE_PATH = "vinculoExpediente=";
+	private static final String CLASE_EXPEDIENTE_PATH = "clase_expediente=";
+	private static final String TIPO_EXPEDIENTE_PATH = "tipo_expediente=";
+	private static final String METADATA_PATH = "metadata=";
+
 	
 	private static final String DOCUMENTO = "documento";
 	private static final String USUARIO = "usuario";
@@ -48,6 +58,7 @@ public class GestorDocumentalServicioDocumentosManager implements GestorDocument
 	
 	private static final String URL_REST_CLIENT_GESTOR_DOCUMENTAL_DOCUMENTOS = "rest.client.gestor.documental.documentos";
 	private static final String EXCEPTION_TIEMPO_ESPERA_CREAR_SERVICIO = "Expedient not found:";
+	private static final String ERROR_SERVER_NOT_RESPONDING="El servidor de gestor documental no responde.";
 	
 	@Override
 	public RespuestaDocumentosExpedientes documentosExpediente(CabeceraPeticionRestClientDto cabecera, DocumentosExpedienteDto docExpDto) throws GestorDocumentalException {
@@ -339,4 +350,34 @@ public class GestorDocumentalServicioDocumentosManager implements GestorDocument
 		return restClientApi.getResponse(serverRequest);
 	}
 	
+	@Override
+	public RespuestaCrearExpediente crearEntidadContenedor(CrearContenedorDto crearContenedorDto) throws GestorDocumentalException {
+		ServerRequest serverRequest =  new ServerRequest();
+		serverRequest.setMethod(RestClientManager.METHOD_POST);
+		serverRequest.setPath(getPathCrearEntidad(crearContenedorDto));
+		serverRequest.setResponseClass(RespuestaCrearExpediente.class);
+		RespuestaCrearExpediente respuesta = (RespuestaCrearExpediente) getResponse(serverRequest);
+
+		if(!Checks.esNulo(respuesta) && !Checks.esNulo(respuesta.getMensajeError())) {
+			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
+			throw new GestorDocumentalException(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
+		}
+		if (Checks.esNulo(respuesta)) {
+			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);			
+		}
+		
+		return respuesta;
+	}
+
+	private String getPathCrearEntidad(CrearContenedorDto crearContenedorDto) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("/CrearContenedor");
+		sb.append("?").append(USUARIO_PATH).append(crearContenedorDto.getUsuario());
+		sb.append("&").append(PASSWORD_PATH).append(crearContenedorDto.getPassword());
+		sb.append("&").append(USUARIO_OPERACIONAL_PATH).append(crearContenedorDto.getUsuarioOperacional());
+		sb.append("&").append(METADATA_PATH).append(UriComponent.encode(crearContenedorDto.getMetadata(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
+		sb.append("&").append(TIPO_EXPEDIENTE_PATH).append(crearContenedorDto.getCodTipo());
+		sb.append("&").append(CLASE_EXPEDIENTE_PATH).append(crearContenedorDto.getCodClase());
+		return sb.toString();
+	}
 }

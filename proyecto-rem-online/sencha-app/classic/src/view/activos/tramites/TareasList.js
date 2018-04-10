@@ -37,6 +37,7 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
 	           	 text: 'AnularTrámite',
 	           	 secFunPermToShow: 'BOTON_ANULAR_TRAMITE',
 	          	 handler: 'anularTramite',
+	          	 disabled: true,
 	          	 bind: {
 	          		 hidden: '{tramite.ocultarBotonAnular}',
 	          		 disabled: '{!esEnTramite}'
@@ -49,7 +50,8 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
 	           	 secFunPermToShow: 'BOTON_RESOLUCION_EXPEDIENTE',
 	          	 handler: 'saltoResolucionExpediente',
 	          	 bind: {
-	          		hidden: '{tramite.ocultarBotonResolucion}'
+	          		 hidden: '{tramite.ocultarBotonResolucion}',
+	          		 disabled: '{tramite.estaEnTareaSiguienteResolucionExpediente}'
 	          	 }
              },
              {
@@ -60,6 +62,59 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
 	          	 handler: 'reasignarTarea',
 	          	 bind: {
 	          		 disabled: '{!listadoTareasTramite.selection}'
+	          	 }
+             },
+             {
+	           	 name: 'anularDevolucion',
+	           	 itemId: 'anularDevolucion',
+	           	 text: HreRem.i18n('btn.anulacion.devolucion'),
+	          	 handler: 'anularDevolucion',
+	          	 hidden: true,
+	          	 bind: {
+	          		 hidden: '{!tramite.estaTareaRespuestaBankiaDevolucion}'
+	          	 }
+             },
+             {
+	           	 name: 'solicitarAnulacionDevolucion',
+	           	 itemId: 'solicitarAnulacionDevolucion',
+	           	 text: HreRem.i18n('btn.solicitar.anulacion.devolucion'),
+	          	 handler: 'solicitarAnulacionDevolucion',
+	          	 hidden: true,
+	          	 bind: {
+	          		 hidden: '{!tramite.estaTareaPendienteDevolucion}'
+	          	 }
+             },
+             {
+	           	 name: 'anularSolicitudAnulacionDevolucion',
+	           	 itemId: 'anularSolicitudAnulacionDevolucion',
+	           	 text: HreRem.i18n('btn.anular.solicitud.anulacion.devolucion'),
+	          	 handler: 'anularSolicitudAnulacionDevolucion',
+	          	 hidden: true,
+	          	 bind: {
+	          		 hidden: '{!tramite.estaTareaRespuestaBankiaAnulacionDevolucion}'
+	          	 }
+             },
+             {
+
+	           	 name: 'btnLanzarTareaAdministrativa',
+	           	 itemId: 'btnLanzarTareaAdministrativa',
+	           	 text: HreRem.i18n('btn.lanzar.tarea.administrativa'),
+	           	 //secFunPermToShow: 'BOTON_RESOLUCION_EXPEDIENTE',
+	          	 handler: 'lanzarTareaAdministrativa',
+	          	 bind: {
+	          		hidden: '{tramite.ocultarBotonLanzarTareaAdministrativa}',
+	          		disabled: '{tramite.desactivarBotonLanzarTareaAdministrativa}'
+	          	 }
+             },
+             {
+	           	 name: 'btnReactivarTramite',
+	           	 itemId: 'btnReactivarTramite',
+	           	 text: HreRem.i18n('btn.reactivar.tramite'),
+	           	 //secFunPermToShow: 'BOTON_RESOLUCION_EXPEDIENTE',
+	          	 handler: 'reactivarTramite',
+	          	 bind: {
+	          		hidden: '{tramite.ocultarBotonReactivarTramite}',
+	          		disabled: true
 	          	 }
              }
    		];
@@ -165,5 +220,6 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
 		
 		// FIXME ¿¿Deberiamos cargar la primera página??
 		listadoTareasTramite.getStore().load();
+		me.up("tramitesdetalle").fireEvent("refrescarTramite", me.up("tramitesdetalle"));
     }
 });

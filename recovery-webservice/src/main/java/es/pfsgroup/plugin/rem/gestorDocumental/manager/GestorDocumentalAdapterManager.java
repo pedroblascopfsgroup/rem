@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
@@ -15,8 +14,7 @@ import org.springframework.stereotype.Service;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
-import es.capgemini.pfs.auditoria.Auditable;
-import es.capgemini.pfs.diccionarios.Dictionary;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -25,6 +23,7 @@ import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalExpedientesApi;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.BajaDocumentoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CabeceraPeticionRestClientDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearDocumentoDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CredencialesUsuarioDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DocumentosExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.RecoveryToGestorDocAssembler;
@@ -40,6 +39,7 @@ import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDo
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosExpedientes;
 import es.pfsgroup.plugin.gestorDocumental.model.servicios.RespuestaCrearExpediente;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
@@ -50,16 +50,16 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
-import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 
 @Service("gestorDocumentalAdapterManager")
 public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterApi, Downloader {
 	
 	protected static final Log logger = LogFactory.getLog(GestorDocumentalAdapterManager.class);
+	public static final String TIPO_EXPEDIENTE= "OP";
+
 	
 	@Override
 	public String[] getKeys() {
@@ -72,9 +72,6 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
     @Autowired 
     private GestorDocumentalApi gestorDocumentalApi;
     
-    @Autowired
-    private GastoProveedorApi gastoProveedorApi;
-    
     @Autowired 
     private GestorDocumentalExpedientesApi gestorDocumentalExpedientesApi;
     
@@ -83,6 +80,9 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
     
     @Autowired
     private GenericABMDao genericDao;
+    
+    @Autowired
+	private GenericAdapter genericAdapter;
     
     @Autowired
     private ActivoApi activoApi;
@@ -97,6 +97,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
 		List<DtoAdjunto> list;
 		String codigoEstado = Checks.esNulo(activo.getEstadoActivo()) ? null : activo.getEstadoActivo().getCodigo();
+		Usuario userLogin = genericAdapter.getUsuarioLogado();	
 		if (!Checks.esNulo(codigoEstado)) {
 			if (!codigoEstado.equals("01") && !codigoEstado.equals("02") && !codigoEstado.equals("03")) {
 				codigoEstado = "03";
@@ -105,7 +106,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 			codigoEstado = "03";
 		}
 		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(activo.getNumActivo().toString(), getTipoExpediente(activo), codigoEstado);
-		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto();
+		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
 		RespuestaDocumentosExpedientes respuesta = null;
 		respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
 		list = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuesta);
@@ -146,9 +147,9 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	public List<DtoAdjunto> getAdjuntosGasto(String numGasto) throws GestorDocumentalException {
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler =  new RecoveryToGestorDocAssembler(appProperties);
 		List<DtoAdjunto> list;		
-		
+		Usuario userLogin = genericAdapter.getUsuarioLogado();
 		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(numGasto, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO, GestorDocumentalConstants.CODIGO_CLASE_GASTO);
-		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto();
+		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
 		RespuestaDocumentosExpedientes respuesta = null;
 		respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
 		list = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuesta);
@@ -161,10 +162,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	public Long uploadDocumentoGasto(GastoProveedor gasto, WebFileItem webFileItem, String userLogin, String matricula) throws GestorDocumentalException {
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler =  new RecoveryToGestorDocAssembler(appProperties);
 		Long respuesta = null;
-		
-		//List<VBusquedaGastoActivo> listActivosGastos = gastoProveedorApi.getListActivosGastos(gasto.getId());
-		//CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(gasto.getNumGastoHaya().toString(), getTipoExpediente(activo), GestorDocumentalConstants.CODIGO_CLASE_GASTO);
-		
+				
 		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(gasto.getNumGastoHaya().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO, GestorDocumentalConstants.CODIGO_CLASE_GASTO);
 		
 		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDto(webFileItem, userLogin, matricula);
@@ -180,13 +178,14 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	}
 
 	@Override
-	public FileItem getFileItem(Long idDocumento) {
+	public FileItem getFileItem(Long idDocumento,String nombreDocumento) {
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler =  new RecoveryToGestorDocAssembler(appProperties);
-		BajaDocumentoDto login = recoveryToGestorDocAssembler.getDescargaDocumentoDto();
+		Usuario userLogin = genericAdapter.getUsuarioLogado();
+		BajaDocumentoDto login = recoveryToGestorDocAssembler.getDescargaDocumentoDto(userLogin.getUsername());
 		RespuestaDescargarDocumento respuesta = null;
 		FileItem fileItem = null;
 		try {
-			respuesta = gestorDocumentalApi.descargarDocumento(idDocumento, login);
+			respuesta = gestorDocumentalApi.descargarDocumento(idDocumento, login,nombreDocumento);
 			fileItem = GestorDocToRecoveryAssembler.getFileItem(respuesta);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -286,7 +285,8 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
 		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
 				expedienteComercial.getNumExpediente().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES, codigoEstado);
-		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto();
+		Usuario userLogin = genericAdapter.getUsuarioLogado();
+		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
 		RespuestaDocumentosExpedientes respuesta = null;
 		respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
 		list = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuesta);
@@ -357,8 +357,9 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		}
 		
 		String descripcionExpediente = "";
+		String tipoExpediente = TIPO_EXPEDIENTE;
 		RecoveryToGestorExpAssembler recoveryToGestorAssembler =  new RecoveryToGestorExpAssembler(appProperties);
-		CrearExpedienteComercialDto crearExpedienteComercialDto = recoveryToGestorAssembler.getCrearExpedienteComercialDto(idExpedienteComercial,descripcionExpediente, username, cliente, estadoExpediente, idSistemaOrigen,codClase);
+		CrearExpedienteComercialDto crearExpedienteComercialDto = recoveryToGestorAssembler.getCrearExpedienteComercialDto(idExpedienteComercial,descripcionExpediente, username, cliente, estadoExpediente, idSistemaOrigen,codClase,tipoExpediente);
 		
 		RespuestaCrearExpediente respuesta = null;
 		try {
@@ -389,7 +390,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		return "";
 	}
 	
-	public void crearRelacionActivosExpediente(ExpedienteComercial expedienteComercial, Long idDocRestClient, String[] listaActivos, String login) throws GestorDocumentalException {	
+	public void crearRelacionActivosExpediente(ExpedienteComercial expedienteComercial, Long idDocRestClient, String[] listaActivos, String login, CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException {	
 		
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
 		
@@ -406,7 +407,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		for (int x=0; x<listaActivos.length; x++) {
 			cabecera.setIdExpedienteHaya(listaActivos[x]);
 			try {
-				gestorDocumentalApi.crearRelacionExpediente(cabecera,credUsu);
+				gestorDocumentalApi.crearRelacionExpediente(cabecera,credUsu,crearRelacionExpedienteDto);
 			} catch (GestorDocumentalException gex) {
 				logger.debug(gex.getMessage());
 				errorMessage = errorMessage + "["+listaActivos[x]+"] "+gex.getMessage() + "\n"; }

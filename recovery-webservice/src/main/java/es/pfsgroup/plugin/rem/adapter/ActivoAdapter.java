@@ -1917,6 +1917,10 @@ public class ActivoAdapter {
 				}
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "subtipoTareaCodigoSubtarea",
 						tareaActivo.getSubtipoTarea().getCodigoSubtarea());
+				
+				if(!Checks.esNulo(tareaActivo.getAuditoria().getUsuarioBorrar())){
+					beanUtilNotNull.copyProperty(dtoListadoTareas, "usuarioFinaliza", tareaActivo.getAuditoria().getUsuarioBorrar());
+				}
 
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();

@@ -239,7 +239,15 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
 										            	bind:		'{carga.fechaCancelacionRegistral}',
 										            	reference: 'fechaCancelacionRegistral'
 										            	
-													}
+													},
+													{ 
+														xtype: 'textareafieldbase',
+											        	fieldLabel:  HreRem.i18n('fieldlabel.observaciones'),						        	
+											        	bind: '{carga.observaciones}',
+														maxLength: 200,
+											        	rowspan: 2,
+											        	height: 80
+											        }
 							
 											]
 						                 

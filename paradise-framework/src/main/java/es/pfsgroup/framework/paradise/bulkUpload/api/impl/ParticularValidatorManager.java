@@ -1458,4 +1458,47 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 	}
 	
+	@Override
+	public boolean comprobarDistintoPropietario(String numActivo, String numAgrupacion) {
+				
+		String agrPro;
+		String actPro;
+				
+		agrPro = rawDao.getExecuteSQL("SELECT PRO_ID FROM ACT_PAC_PROPIETARIO_ACTIVO PAC " + 
+				"JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = PAC.ACT_ID " + 
+				"JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = PAC.ACT_ID " + 
+				"JOIN ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID " + 
+				"WHERE AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+" AND PAC.ACT_ID = AGR.AGR_ACT_PRINCIPAL");
+		
+		if(Checks.esNulo(agrPro)) {
+			agrPro = rawDao.getExecuteSQL("SELECT PRO_ID FROM ACT_PAC_PROPIETARIO_ACTIVO PAC " + 
+					"JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = PAC.ACT_ID " + 
+					"JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = PAC.ACT_ID " + 
+					"JOIN ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID " + 
+					"WHERE AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+" AND ROWNUM = 1");
+		}
+		
+		actPro = rawDao.getExecuteSQL("SELECT PRO_ID FROM ACT_PAC_PROPIETARIO_ACTIVO PAC " +
+				"JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = PAC.ACT_ID AND ACT_NUM_ACTIVO = "+numActivo);
+		
+		
+		if(actPro.equals(agrPro)) return false;
+				else return true;
+	}
+
+	@Override
+	public boolean comprobarDistintoPropietarioListaActivos(String[] activos) {
+
+		String actPro = rawDao.getExecuteSQL("SELECT PRO_ID FROM ACT_PAC_PROPIETARIO_ACTIVO PAC "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = PAC.ACT_ID AND ACT_NUM_ACTIVO = " + activos[0]);
+
+		for (int i = 1; i < activos.length; i++) {
+			String actAComparar = rawDao.getExecuteSQL("SELECT PRO_ID FROM ACT_PAC_PROPIETARIO_ACTIVO PAC "
+					+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = PAC.ACT_ID AND ACT_NUM_ACTIVO = " + activos[i]);
+			if (actPro != actAComparar) return true;
+		}
+
+		return false;
+	}
+	
 }

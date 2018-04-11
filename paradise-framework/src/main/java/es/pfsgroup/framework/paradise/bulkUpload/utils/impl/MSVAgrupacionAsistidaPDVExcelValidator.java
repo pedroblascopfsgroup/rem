@@ -51,6 +51,7 @@ public class MSVAgrupacionAsistidaPDVExcelValidator extends MSVExcelValidatorAbs
 	public static final String ACTIVO_INCLUIDO_PERIMETRO = "msg.error.masivo.agrupar.activos.asistida.activo.incluidoPerimetro";
 	public static final String ACTIVO_NO_ASISTIDO = "msg.error.masivo.agrupar.activos.asistida.activo.noAsistido";
 	public static final String ACTIVO_NO_FINANCIERO = "msg.error.masivo.agrupar.activos.asistida.activo.noFinanciero";
+	public static final String ERROR_ACTIVO_DISTINTO_PROPIETARIO = "msg.error.masivo.agrupar.activos.propietarios.no.coinciden";
 
 	// Textos de validaciones para grupos de activos, estas variables llevan aparejado un texto y un codigo. Necesario para metodo comun
 	public static final class ACTIVOS_NO_MISMA_LOCALIZACION { static int codigoError = 1; static String mensajeError = "msg.error.masivo.agrupar.activos.asistida.activos.agrupacion.diferente.localizacion";};
@@ -117,6 +118,7 @@ public class MSVAgrupacionAsistidaPDVExcelValidator extends MSVExcelValidatorAbs
 			mapaErrores.put(messageServices.getMessage(ACTIVO_INCLUIDO_PERIMETRO), activosIncluidosPerimetroRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_ASISTIDO), activosAsistidosRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_FINANCIERO),activosFinancierosRows(exc));
+			mapaErrores.put(messageServices.getMessage(ERROR_ACTIVO_DISTINTO_PROPIETARIO), comprobarDistintoPropietario(exc));
 			
 			// Validaciones de grupo, para todos los activos de una agrupacion en el excel:
 			mapaErrores.put(messageServices.getMessage(AGRUPACIONES_CON_BAJA.mensajeError), activosAgrupMultipleValidacionRows(exc, AGRUPACIONES_CON_BAJA.codigoError));
@@ -462,6 +464,27 @@ public class MSVAgrupacionAsistidaPDVExcelValidator extends MSVExcelValidatorAbs
 		}
 		
 		return listaFilasError;
+	}
+	
+	private List<Integer> comprobarDistintoPropietario(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try {
+			for (i = 1; i < this.numFilasHoja; i++) {
+				String numAgrupacion = String.valueOf(Long.parseLong(exc.dameCelda(i, 0)));
+				String numActivo = String.valueOf(Long.parseLong(exc.dameCelda(i, 1)));
+				if (particularValidator.comprobarDistintoPropietario(numActivo, numAgrupacion))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0)
+				listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+
+		return listaFilas;
 	}
 
 

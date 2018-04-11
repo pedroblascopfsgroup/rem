@@ -68,6 +68,7 @@ import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoObraNueva;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
+import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoRestringida;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
@@ -557,6 +558,9 @@ public class AgrupacionAdapter {
 				
 				//Comprobamos no mezclar activos canarios y peninsulares
 				distintosTiposImpuesto(agrupacion, activo);
+				
+				//Comprobamos no
+				comprobarDistintoPropietario(agrupacion, activo);
 				
 				List<Oferta> ofertasAgrupacion = agrupacion.getOfertas();
 				if (tieneOfertasNoAnuladas(ofertasAgrupacion)) {
@@ -2300,5 +2304,23 @@ public class AgrupacionAdapter {
 			if (Arrays.asList(codProvinciasCanarias).contains(activo.getProvincia()))
 				throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_CANARIAS);
 		}
+	}
+	
+	private void comprobarDistintoPropietario(ActivoAgrupacion agrupacion, Activo activo) {
+
+		Activo actAgr;
+		
+		if (!Checks.esNulo(agrupacion.getActivoPrincipal())) {
+			actAgr = agrupacion.getActivoPrincipal();
+		}else {
+			actAgr = agrupacion.getActivos().get(0).getActivo();
+		}
+		
+			
+		if (actAgr.getPropietarioPrincipal().getId() != activo.getPropietarioPrincipal().getId()) {
+			throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_DISTINTO_PROPIETARIO);
+		}
+		
+		
 	}
 }

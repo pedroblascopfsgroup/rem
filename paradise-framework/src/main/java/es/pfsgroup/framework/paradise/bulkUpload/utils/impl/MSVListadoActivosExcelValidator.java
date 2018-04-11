@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
@@ -34,13 +33,15 @@ import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 
 @Component
 public class MSVListadoActivosExcelValidator extends MSVExcelValidatorAbstract {
 	
 	public static final String ACTIVE_NOT_SHARING_PLACE = "Todos los activos no comparten la misma PROVINCIA, MUNICIPIO, CP y CARTERA.";
-	
 	public static final String ACTIVE_NOT_EXISTS = "msg.error.masivo.listado.validator.activos.deben.existir";
+	public static final String ERROR_ACTIVO_DISTINTO_PROPIETARIO = "msg.error.masivo.agrupar.activos.propietarios.no.coinciden";
+
 
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -79,6 +80,8 @@ public class MSVListadoActivosExcelValidator extends MSVExcelValidatorAbstract {
 		MSVDtoValidacion dtoValidacionContenido = recorrerFichero(exc, excPlantilla, lista, validators, compositeValidators, true);
 		MSVDDOperacionMasiva operacionMasiva = msvProcesoApi.getOperacionMasiva(dtoFile.getIdTipoOperacion());
 		
+		List<String> listaErrores = new ArrayList<String>();
+		
 		//Validaciones especificas no contenidas en el fichero Excel de validacion
 		exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 		//Obtenemos el numero de filas reales que tiene la hoja excel a examinar
@@ -89,19 +92,28 @@ public class MSVListadoActivosExcelValidator extends MSVExcelValidatorAbstract {
 			e.printStackTrace();
 		}
 		
-		if (!dtoValidacionContenido.getFicheroTieneErrores()) {			
-			if (!isActiveExists(exc)){
+		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
+			if (!isActiveExists(exc)) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
-				List<String> listaErrores = new ArrayList<String>();
 				listaErrores.add(messageServices.getMessage(ACTIVE_NOT_EXISTS));
+			}
+
+			if (!comprobarDistintoPropietarioListaActivos(exc)) {
+				dtoValidacionContenido.setFicheroTieneErrores(true);
+				listaErrores.add(messageServices.getMessage(ERROR_ACTIVO_DISTINTO_PROPIETARIO));
+
+			}
+
+			if (dtoValidacionContenido.getFicheroTieneErrores()) {
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 				String nomFicheroErrores = exc.crearExcelErrores(listaErrores);
 				FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
 				dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
 			}
+
 		}
-		exc.cerrar();
 		
+		exc.cerrar();		
 		
 		return dtoValidacionContenido;
 	}
@@ -191,6 +203,26 @@ public class MSVListadoActivosExcelValidator extends MSVExcelValidatorAbstract {
 			return false;
 		}
 		
+		return true;
+	}
+
+	private boolean comprobarDistintoPropietarioListaActivos(MSVHojaExcel exc) {
+
+		try {
+			String[] activos = new String[exc.getNumeroFilas()-1];
+			for (int i = 1; i < this.numFilasHoja; i++) {
+				String numActivo = String.valueOf(Long.parseLong(exc.dameCelda(i, 0)));
+				activos[i-1] = numActivo;
+			}
+			if (particularValidator.comprobarDistintoPropietarioListaActivos(activos))
+				return false;
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+			return false;
+		}
+
 		return true;
 	}
 

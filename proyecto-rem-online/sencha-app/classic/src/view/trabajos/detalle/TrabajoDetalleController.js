@@ -268,7 +268,16 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			
 			var storeListaActivosTrabajo = me.lookupReference('listaActivosSubidaRef').getStore();
 			if(!Ext.isEmpty(storeListaActivosTrabajo) && !Ext.isEmpty(storeListaActivosTrabajo.data)){
+				var propietarioId = storeListaActivosTrabajo.data.items[0].data.propietarioId;
 				for (i=0; i < storeListaActivosTrabajo.data.length; i++) {
+					if(storeListaActivosTrabajo.data.items[i].data.propietarioId != propietarioId){
+						debugger;
+						Ext.MessageBox.alert(
+								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.diferente.propietario.titulo"),
+								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.diferente.propietario.mensaje")
+						);
+						return false;
+					}
 					if (storeListaActivosTrabajo.data.items[i].data.tienePerimetroGestion != "1"){
 						Ext.MessageBox.alert(
 								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),

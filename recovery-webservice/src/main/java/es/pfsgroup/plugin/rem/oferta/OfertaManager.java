@@ -755,8 +755,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 
 					// HREOS-1669 - Validar el tipo destino comercial
-					if (!Checks.esNulo(act.getTipoComercializacion()) && !Checks.esNulo(oferta.getTipoOferta())) {
-						String comercializacion = act.getTipoComercializacion().getCodigo();
+					if (!Checks.esNulo(act.getActivoPublicacion()) && !Checks.esNulo(act.getActivoPublicacion().getTipoComercializacion()) && !Checks.esNulo(oferta.getTipoOferta())) {
+						String comercializacion = act.getActivoPublicacion().getTipoComercializacion().getCodigo();
 
 						if ((DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())
 								&& (!DDTipoComercializacion.CODIGO_VENTA.equals(comercializacion)
@@ -2358,7 +2358,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 			if (!Checks.esNulo(expediente)){
-				return expediente.getOferta().getOfertaExpress();
+				return !Checks.esNulo(expediente.getOferta().getOfertaExpress()) && expediente.getOferta().getOfertaExpress();
 			}
 				
 		}

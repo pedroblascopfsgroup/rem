@@ -125,8 +125,8 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 				utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializar.class, tmpTipoComercializacion.substring(0, 2)));
 		
 		//Tipo de Destino comercial en el activo
-		if(!Checks.esNulo(tmpDestinoComercial))
-			activo.setTipoComercializacion((DDTipoComercializacion)
+		if(!Checks.esNulo(tmpDestinoComercial) && !Checks.esNulo(activo.getActivoPublicacion()))
+			activo.getActivoPublicacion().setTipoComercializacion((DDTipoComercializacion)
 					utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, tmpDestinoComercial.substring(0, 2)));
 		
 		//Tipo de alquiler del activo

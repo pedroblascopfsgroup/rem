@@ -2210,8 +2210,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, DDTipoComercializacion.CODIGO_VENTA);
-		if (!Checks.esNulo(tipoComercializacion)) {
-			activo.setTipoComercializacion(tipoComercializacion);
+		if (!Checks.esNulo(tipoComercializacion) && !Checks.esNulo(activo.getActivoPublicacion())) {
+			activo.getActivoPublicacion().setTipoComercializacion(tipoComercializacion);
 		}
 
 		saveOrUpdate(activo);

@@ -714,6 +714,27 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				!Checks.esNulo(activoPublicacion.getMotivoOcultacionAlquiler()) && !activoPublicacion.getMotivoOcultacionAlquiler().getEsMotivoManual();
 	}
 
+	// Comprobación mínima.
+	private Boolean isAdmisionOK(Long idActivo) {
+		Activo activo = activoDao.get(idActivo);
+
+		return !Checks.esNulo(activo.getAdmision()) && activo.getAdmision();
+	}
+
+	// Comprobación mínima.
+	private Boolean isGestionOK(Long idActivo) {
+		Activo activo = activoDao.get(idActivo);
+
+		return !Checks.esNulo(activo.getGestion()) && activo.getGestion();
+	}
+
+	// Comprobación mínima.
+	private Boolean isInformeComercialTiposIguales(Long idActivo) {
+		Activo activo = activoDao.get(idActivo);
+
+		return !activoApi.checkTiposDistintos(activo);
+	}
+
 	@Override
 	@Transactional
 	public Boolean setDatosPublicacionActivo(DtoDatosPublicacionActivo dto) throws JsonViewerException{
@@ -726,6 +747,21 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}
 
 		return false;
+	}
+
+	@Override
+	public Boolean isPublicadoVentaByIdActivo(Long idActivo) {
+		return this.isPublicadoVenta(idActivo);
+	}
+
+	@Override
+	public void validarPublicacionTramiteYPublicar(Long idActivo) {
+		if(this.isAdmisionOK(idActivo) && this.isGestionOK(idActivo) && this.tienePrecioVenta(idActivo) && this.isInformeComercialTiposIguales(idActivo)) {
+			DtoDatosPublicacionActivo dto = new DtoDatosPublicacionActivo();
+			dto.setIdActivo(idActivo);
+			dto.setPublicarVenta(true);
+			this.setDatosPublicacionActivo(dto);
+		}
 	}
 
 	/**

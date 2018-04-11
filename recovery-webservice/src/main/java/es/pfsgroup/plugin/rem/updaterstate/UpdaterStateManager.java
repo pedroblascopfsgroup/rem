@@ -118,6 +118,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public void updaterStateDisponibilidadComercialAndSave(Activo activo) {
 		this.updaterStateDisponibilidadComercial(activo);
 		activoApi.saveOrUpdate(activo);

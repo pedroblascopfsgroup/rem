@@ -2897,6 +2897,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if (!Checks.esNulo(expedienteComercial)) {
 
+			boolean actualizarEstadoPublicacion = false;
+
 			try {
 				beanUtilNotNull.copyProperties(expedienteComercial, dto);
 
@@ -2909,6 +2911,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					DDMotivoAnulacionExpediente motivoAnulacionExpediente = (DDMotivoAnulacionExpediente) utilDiccionarioApi
 							.dameValorDiccionarioByCod(DDMotivoAnulacionExpediente.class, dto.getCodMotivoAnulacion());
 					expedienteComercial.setMotivoAnulacion(motivoAnulacionExpediente);
+					actualizarEstadoPublicacion = true;
 				}
 
 				if (!Checks.esNulo(expedienteComercial.getReserva())) {
@@ -2929,6 +2932,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						}
 						// descongelamos el resto de ofertas del activo
 						ofertaApi.descongelarOfertas(expedienteComercial);
+						actualizarEstadoPublicacion = true;
 					}
 
 					if (!Checks.esNulo(dto.getFechaReserva())) {
@@ -2946,6 +2950,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					genericDao.save(Reserva.class, expedienteComercial.getReserva());
 					genericDao.save(Oferta.class, expedienteComercial.getOferta());
 					genericDao.save(ExpedienteComercial.class, expedienteComercial);
+				}
+				if(actualizarEstadoPublicacion) {
+					for(ActivoOferta activoOferta: expedienteComercial.getOferta().getActivosOferta()) {
+						activoAdapter.updatePortalPublicacion(activoOferta.getPrimaryKey().getActivo().getId());
+					}
 				}
 			} catch (IllegalAccessException e) {
 				logger.error("error en expedienteComercialManager", e);

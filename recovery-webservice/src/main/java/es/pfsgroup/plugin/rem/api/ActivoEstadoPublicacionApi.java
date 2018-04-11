@@ -120,4 +120,19 @@ public interface ActivoEstadoPublicacionApi {
 	 * @return Devuelve True si el activo tiene precio de renta web, False si no tiene el precio establecido.
 	 */
 	Boolean tienePrecioRentaByIdActivo(Long idActivo);
+
+	/**
+	 * Este método comprueba si un activo se encuentra en el estado de publicación venta 'publicado'.
+	 *
+	 * @param idActivo: ID del activo a comprobar.
+	 * @return Devuelve True si el activo se encuentra en el estado 'publicado', False si no lo está.
+	 */
+	Boolean isPublicadoVentaByIdActivo(Long idActivo);
+
+	/**
+	 * Este método valida si un activo puede ser publicado y si las condiciones son favorables lo publica.
+	 *
+	 * @param idActivo: ID del activo a publicar.
+	 */
+	void validarPublicacionTramiteYPublicar(Long idActivo);
 }

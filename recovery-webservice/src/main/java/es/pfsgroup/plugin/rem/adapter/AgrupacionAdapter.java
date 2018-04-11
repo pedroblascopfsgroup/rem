@@ -1408,8 +1408,8 @@ public class AgrupacionAdapter {
 
 			// Comprobar el tipo de destino comercial que tiene actualmente el
 			// activo y contrastar con la oferta.
-			if (!Checks.esNulo(activos.getActivo().getTipoComercializacion())) {
-				String comercializacion = activos.getActivo().getTipoComercializacion().getCodigo();
+			if (!Checks.esNulo(activos.getActivo().getActivoPublicacion()) && !Checks.esNulo(activos.getActivo().getActivoPublicacion().getTipoComercializacion())) {
+				String comercializacion = activos.getActivo().getActivoPublicacion().getTipoComercializacion().getCodigo();
 
 				if (DDTipoOferta.CODIGO_VENTA.equals(dto.getTipoOferta())
 						&& (!DDTipoComercializacion.CODIGO_VENTA.equals(comercializacion)

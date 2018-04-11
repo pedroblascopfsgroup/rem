@@ -2561,7 +2561,7 @@ public class ActivoAdapter {
 	}
 	
 	@Transactional(readOnly = false)
-	public boolean updatePortalPublicacion(Long id) { // TODO: eliminar.
+	public boolean updatePortalPublicacion(Long id) { // TODO: eliminar o renombrar a un nombre más específico.
 		Activo activo = activoApi.get(id);
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		activoDao.publicarActivoConHistorico(activo.getId(), usuarioLogado.getUsername());
@@ -2619,8 +2619,8 @@ public class ActivoAdapter {
 
 		// Comprobar el tipo de destino comercial que tiene actualmente el
 		// activo y contrastar con la oferta.
-		if (!Checks.esNulo(activo.getTipoComercializacion())) {
-			String comercializacion = activo.getTipoComercializacion().getCodigo();
+		if (!Checks.esNulo(activo.getActivoPublicacion()) && !Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion())) {
+			String comercializacion = activo.getActivoPublicacion().getTipoComercializacion().getCodigo();
 
 			if (DDTipoOferta.CODIGO_VENTA.equals(dto.getTipoOferta())
 					&& (!DDTipoComercializacion.CODIGO_VENTA.equals(comercializacion)

@@ -53,6 +53,7 @@ import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository("ActivoDao")
 public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements ActivoDao{
@@ -722,11 +723,15 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@Override
 	public Boolean publicarActivoConHistorico(Long idActivo, String username) {
+    	// Antes de realizar la llamada al SP realizar las operaciones previas con los datos.
+		getHibernateTemplate().flush();
     	return this.publicarActivo(idActivo, username, true);
 	}
 
 	@Override
 	public Boolean publicarActivoSinHistorico(Long idActivo, String username) {
+		// Antes de realizar la llamada al SP realizar las operaciones previas con los datos.
+		getHibernateTemplate().flush();
 		return this.publicarActivo(idActivo, username, false);
 	}
 

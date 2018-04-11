@@ -339,6 +339,7 @@ Ext.define('HreRem.ux.util.Constants', {
 
     MOTIVO_OCULTACION: {
         OTROS: '12'
+    },
     
     TIPO_RESOLUCION_COMITE: {
     	APRUEBA: '01',

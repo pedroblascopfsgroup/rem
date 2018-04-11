@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -34,6 +37,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -42,6 +46,7 @@ import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
@@ -88,6 +93,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	public static final String PROVEEDOR_EXISTS_EXCEPTION_MESSAGE = "Ya existe un proveedor con el NIF y características proporcionadas";
 	public static final String USUARIO_NOT_EXISTS_EXCEPTION_MESSAGE = "No se ha encontrado el usuario especificado";
 	public static final String ERROR_EVALUAR_MEDIADORES_MESSAGE = "Error al evaluar mediadores con calificaciones propuestas";
+	public static final String BAJA_PROVEEDOR_ACTIVOS_ASIGNADOS = "proveedor.baja.proveedor.con.activos";
 
 	public static final Integer comboOK = 1;
 	public static final Integer comboKO = 0;
@@ -125,6 +131,9 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Resource
+	MessageService messageServices;
 
 
 	@Override
@@ -246,6 +255,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 					beanUtilNotNull.copyProperty(dto, "motivoRetencionCodigo", proveedor.getMotivoRetencion().getCodigo());
 				}
 				beanUtilNotNull.copyProperty(dto, "fechaProceso", proveedor.getFechaProcesoBlanqueo());
+				beanUtilNotNull.copyProperty(dto, "email", proveedor.getEmail());
 				if(!Checks.esNulo(proveedor.getResultadoProcesoBlanqueo())) {
 					beanUtilNotNull.copyProperty(dto, "resultadoBlanqueoCodigo", proveedor.getResultadoProcesoBlanqueo().getCodigo());
 				}
@@ -288,7 +298,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean saveProveedorById(DtoActivoProveedor dto) {
+	public boolean saveProveedorById(DtoActivoProveedor dto) throws Exception {
 		ActivoProveedor proveedor = proveedoresDao.getProveedorById(Long.valueOf(dto.getId()));
 
 		try {
@@ -301,7 +311,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				beanUtilNotNull.copyProperty(proveedor, "tipoProveedor", tipoProveedor);
 			}
 			beanUtilNotNull.copyProperty(proveedor, "nombreComercial", dto.getNombreComercialProveedor());
-			beanUtilNotNull.copyProperty(proveedor, "fechaBaja", dto.getFechaBajaProveedor());
+			
 			beanUtilNotNull.copyProperty(proveedor, "docIdentificativo", dto.getNifProveedor());
 			if(!Checks.esNulo(dto.getTipoDocumentoCodigo())) {
 				DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getTipoDocumentoCodigo());
@@ -331,6 +341,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			beanUtilNotNull.copyProperty(proveedor, "paginaWeb", dto.getWebUrlProveedor());
 			beanUtilNotNull.copyProperty(proveedor, "fechaConstitucion", dto.getFechaConstitucionProveedor());
 			beanUtilNotNull.copyProperty(proveedor, "homologado", dto.getHomologadoCodigo());
+			beanUtilNotNull.copyProperty(proveedor, "email", dto.getEmail());
 			
 			if(!Checks.esNulo(dto.getOperativaCodigo())) {
 				DDOperativa operativa = (DDOperativa) utilDiccionarioApi.dameValorDiccionarioByCod(DDOperativa.class, dto.getOperativaCodigo());
@@ -446,6 +457,20 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			// Si viene fecha de baja, asignar el estado de proveedor a 'baja como proveedor'.
 			Date fechaEnBlanco = new Date();
 			fechaEnBlanco.setTime(0);
+			
+			if(!Checks.esNulo(dto.getFechaBajaProveedor()) || DDEstadoProveedor.ESTADO_BAJA_PROVEEDOR.equals(dto.getEstadoProveedorCodigo())){
+				if(!Checks.esNulo(proveedor.getTipoProveedor()) && DDTipoProveedor.COD_MEDIADOR.equals(proveedor.getTipoProveedor().getCodigo())){
+					
+					Long activosAsignadosProveedor= proveedoresDao.activosAsignadosProveedorMediador(dto.getId());
+					
+					if(!Checks.esNulo(activosAsignadosProveedor) && activosAsignadosProveedor > 0){
+						throw new JsonViewerException(messageServices.getMessage(BAJA_PROVEEDOR_ACTIVOS_ASIGNADOS));
+					}
+				
+				}
+			}
+			
+			beanUtilNotNull.copyProperty(proveedor, "fechaBaja", dto.getFechaBajaProveedor());
 			if(!Checks.esNulo(dto.getFechaBajaProveedor()) && dto.getFechaBajaProveedor().after(fechaEnBlanco)) {
 				DDEstadoProveedor estadoProveedor = (DDEstadoProveedor) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoProveedor.class, DDEstadoProveedor.ESTADO_BAJA_PROVEEDOR);
 				beanUtilNotNull.copyProperty(proveedor, "estadoProveedor", estadoProveedor);

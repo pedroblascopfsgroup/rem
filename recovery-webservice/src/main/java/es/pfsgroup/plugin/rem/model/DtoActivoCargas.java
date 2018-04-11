@@ -36,6 +36,7 @@ public class DtoActivoCargas {
     private String estadoDescripcion;
     private String estadoEconomicaCodigo;
     private String estadoEconomicaDescripcion;
+    private String observaciones;
     private Long idActivo;
     
     
@@ -205,6 +206,13 @@ public class DtoActivoCargas {
 	}
 	public void setOrigenDatoDescripcion(String origenDatoDescripcion) {
 		this.origenDatoDescripcion = origenDatoDescripcion;
-	}    
+	}
+	public String getObservaciones() {
+		return observaciones;
+	}
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
+	}
+	
 	
 }

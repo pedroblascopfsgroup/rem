@@ -84,6 +84,11 @@ Ext.define('HreRem.view.activos.tramites.HistoricoTareasList', {
 				        	text: 'Subtipo Tarea',
 				        	hidden: true,
 				        	flex: 1
+				        },
+				        {
+				            dataIndex: 'usuarioFinaliza',
+				            text: 'Usuario que finaliza la tarea',
+				            flex: 2
 				        }
 	    		],
 

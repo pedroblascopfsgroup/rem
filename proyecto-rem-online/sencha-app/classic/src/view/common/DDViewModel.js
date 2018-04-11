@@ -53,6 +53,15 @@ Ext.define('HreRem.view.common.DDViewModel', {
 			       
 			    ]
     		},
+    		
+    		comboNumCartas: {
+				data : [
+			        {"codigo":1, "descripcion": "1"},
+			        {"codigo":2, "descripcion": "2"},
+			        {"codigo":3, "descripcion": "3"}
+			       
+			    ]
+    		},
 
     		comboEstadoInformeComercial: {
 				data : [

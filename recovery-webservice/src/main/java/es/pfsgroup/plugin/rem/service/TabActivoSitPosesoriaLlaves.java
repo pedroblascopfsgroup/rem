@@ -101,7 +101,8 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 						BeanUtils.copyProperty(activoDto, "indicaPosesion", activo.getSituacionPosesoria().getSitaucionJuridica().getIndicaPosesion());
 					}					
 				} else {
-					if(!Checks.esNulo(activo.getSituacionPosesoria().getFechaRevisionEstado())) {
+					if (!Checks.esNulo(activo.getSituacionPosesoria().getFechaRevisionEstado())
+							|| !Checks.esNulo(activo.getSituacionPosesoria().getFechaTomaPosesion())) {
 						BeanUtils.copyProperty(activoDto, "indicaPosesion", 1);
 					} else {
 						BeanUtils.copyProperty(activoDto, "indicaPosesion", 0);
@@ -158,7 +159,9 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			if(!Checks.esNulo(dto.getFechaTomaPosesion())){
 				activo.getSituacionPosesoria().setEditadoFechaTomaPosesion(true);
 			}
-			
+//			if(!Checks.esNulo(dto.getIndicaPosesion())){
+//				activo.getSituacionPosesoria().getSitaucionJuridica().setIndicaPosesion(dto.getIndicaPosesion());
+//			}
 			activo.setSituacionPosesoria(genericDao.save(ActivoSituacionPosesoria.class, activo.getSituacionPosesoria()));
 			
 			if (dto.getTipoTituloPosesorioCodigo() != null) {

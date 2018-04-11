@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.gestorDocumental.api;
 
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CabeceraPeticionRestClientDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearContenedorDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearDocumentoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearVersionDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearVersionMetadatosDto;
@@ -14,6 +15,7 @@ import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCatalogoDoc
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCrearDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosExpedientes;
+import es.pfsgroup.plugin.gestorDocumental.model.servicios.RespuestaCrearExpediente;
 
 public interface GestorDocumentalServicioDocumentosApi {
 
@@ -115,6 +117,8 @@ public interface GestorDocumentalServicioDocumentosApi {
 	 * @return RespuestaGeneral
 	 * @throws GestorDocumentalException 
 	 */
-	RespuestaCatalogoDocumental catalogoDocumental(String codTipo, String codClase) throws GestorDocumentalException;	
+	RespuestaCatalogoDocumental catalogoDocumental(String codTipo, String codClase) throws GestorDocumentalException;
+
+	RespuestaCrearExpediente crearEntidadContenedor(CrearContenedorDto crearContenedorDto) throws GestorDocumentalException;	
 
 }

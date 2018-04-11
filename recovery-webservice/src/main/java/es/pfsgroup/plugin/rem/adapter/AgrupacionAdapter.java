@@ -522,9 +522,13 @@ public class AgrupacionAdapter {
 		Activo activo = genericDao.get(Activo.class, filter);
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idAgrupacion);
 
-		int num = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(agrupacion.getId());
-
 		try {
+			
+			if (Checks.esNulo(agrupacion)) {
+				throw new JsonViewerException("La agrupación no existe");
+			}
+			
+			int num = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(agrupacion.getId());
 
 			if (Checks.esNulo(activo)) {
 				throw new JsonViewerException("El activo no existe");
@@ -550,6 +554,10 @@ public class AgrupacionAdapter {
 			// Si la agrupación es de tipo comercial y contiene ofertas, en
 			// cualquier estado, rechazar el activo.
 			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+				
+				//Comprobamos no mezclar activos canarios y peninsulares
+				distintosTiposImpuesto(agrupacion, activo);
+				
 				List<Oferta> ofertasAgrupacion = agrupacion.getOfertas();
 				if (tieneOfertasNoAnuladas(ofertasAgrupacion)) {
 					throw new JsonViewerException(
@@ -1491,6 +1499,7 @@ public class AgrupacionAdapter {
 			oferta.setCliente(clienteComercial);
 			oferta.setPrescriptor((ActivoProveedor) proveedoresApi.searchProveedorCodigo(dto.getCodigoPrescriptor()));
 			oferta.setOrigen("REM");
+			oferta.setOfertaExpress(false);
 			genericDao.save(Oferta.class, oferta);
 			// Actualizamos la situacion comercial de los activos de la oferta
 			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
@@ -1708,6 +1717,9 @@ public class AgrupacionAdapter {
 				Date fechaInicioAux = agrupacion.getFechaInicioVigencia();
 				Date fechaFinAux = agrupacion.getFechaFinVigencia();
 				this.trazarCambioVigencia(id, fechaInicioAux, fechaFinAux);
+			}
+			if(!Checks.esNulo(dto.getAgrupacionEliminada())){
+				agrupacion.setEliminado(BooleanUtils.toInteger(dto.getAgrupacionEliminada()));
 			}
 		}
 
@@ -2259,5 +2271,34 @@ public class AgrupacionAdapter {
 			return false;
 		}
 		return true;		
+	}
+	
+	public void distintosTiposImpuesto(ActivoAgrupacion agrupacion, Activo activo) {
+		List<ActivoAgrupacionActivo> lista = agrupacion.getActivos();
+
+		Boolean canarias = false;
+
+		String codProvinciasCanarias[] = {"35", "38"};
+		
+		for (int i = 0; i < lista.size(); i++) {
+			ActivoAgrupacionActivo aga = lista.get(i);
+
+			for (int j = 0; j < lista.size(); j++) {
+				Activo act = aga.getActivo();
+				String codProvincia = act.getProvincia();
+
+				if (Arrays.asList(codProvinciasCanarias).contains(codProvincia)) {
+					canarias = true;
+				}
+			}
+		}
+
+		if (canarias) {
+			if (!Arrays.asList(codProvinciasCanarias).contains(activo.getProvincia()))
+				throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_NO_CANARIAS);
+		} else {
+			if (Arrays.asList(codProvinciasCanarias).contains(activo.getProvincia()))
+				throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_CANARIAS);
+		}
 	}
 }

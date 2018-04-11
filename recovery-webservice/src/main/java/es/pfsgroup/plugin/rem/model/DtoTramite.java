@@ -64,8 +64,20 @@ public class DtoTramite extends WebDto {
 	private Long numEC;
 	
 	private Long idExpediente;
-
 	
+	private Boolean estaTareaRespuestaBankiaDevolucion;
+	
+	private Boolean estaTareaPendienteDevolucion;
+	
+	private Boolean estaTareaRespuestaBankiaAnulacionDevolucion;
+	
+	private Boolean estaEnTareaSiguienteResolucionExpediente;
+	
+	private Boolean ocultarBotonLanzarTareaAdministrativa;
+
+	private Boolean ocultarBotonReactivarTramite;
+	
+	private Boolean desactivarBotonLanzarTareaAdministrativa;
 
 	public Long getIdTramite() {
 		return idTramite;
@@ -281,6 +293,62 @@ public class DtoTramite extends WebDto {
 
 	public void setOcultarBotonAnular(Boolean ocultarBotonAnular) {
 		this.ocultarBotonAnular = ocultarBotonAnular;
+	}
+
+	public Boolean getEstaTareaPendienteDevolucion() {
+		return estaTareaPendienteDevolucion;
+	}
+
+	public void setEstaTareaPendienteDevolucion(Boolean estaTareaPendienteDevolucion) {
+		this.estaTareaPendienteDevolucion = estaTareaPendienteDevolucion;
+	}
+
+	public Boolean getEstaTareaRespuestaBankiaDevolucion() {
+		return estaTareaRespuestaBankiaDevolucion;
+	}
+
+	public void setEstaTareaRespuestaBankiaDevolucion(Boolean estaTareaRespuestaBankiaDevolucion) {
+		this.estaTareaRespuestaBankiaDevolucion = estaTareaRespuestaBankiaDevolucion;
+	}
+
+	public Boolean getEstaTareaRespuestaBankiaAnulacionDevolucion() {
+		return estaTareaRespuestaBankiaAnulacionDevolucion;
+	}
+
+	public void setEstaTareaRespuestaBankiaAnulacionDevolucion(Boolean estaTareaRespuestaBankiaAnulacionDevolucion) {
+		this.estaTareaRespuestaBankiaAnulacionDevolucion = estaTareaRespuestaBankiaAnulacionDevolucion;
+	}
+
+	public Boolean getEstaEnTareaSiguienteResolucionExpediente() {
+		return estaEnTareaSiguienteResolucionExpediente;
+	}
+
+	public void setEstaEnTareaSiguienteResolucionExpediente(Boolean estaEnTareaSiguienteResolucionExpediente) {
+		this.estaEnTareaSiguienteResolucionExpediente = estaEnTareaSiguienteResolucionExpediente;
+	}
+	
+	public Boolean getOcultarBotonLanzarTareaAdministrativa() {
+		return ocultarBotonLanzarTareaAdministrativa;
+	}
+
+	public void setOcultarBotonLanzarTareaAdministrativa(Boolean ocultarBotonLanzarTareaAdministrativa) {
+		this.ocultarBotonLanzarTareaAdministrativa = ocultarBotonLanzarTareaAdministrativa;
+	}
+
+	public Boolean getOcultarBotonReactivarTramite() {
+		return ocultarBotonReactivarTramite;
+	}
+
+	public void setOcultarBotonReactivarTramite(Boolean ocultarBotonReactivarTramite) {
+		this.ocultarBotonReactivarTramite = ocultarBotonReactivarTramite;
+	}
+	
+	public Boolean getDesactivarBotonLanzarTareaAdministrativa() {
+		return desactivarBotonLanzarTareaAdministrativa;
+	}
+
+	public void setDesactivarBotonLanzarTareaAdministrativa(Boolean desactivarBotonLanzarTareaAdministrativa) {
+		this.desactivarBotonLanzarTareaAdministrativa = desactivarBotonLanzarTareaAdministrativa;
 	}
 	
 }

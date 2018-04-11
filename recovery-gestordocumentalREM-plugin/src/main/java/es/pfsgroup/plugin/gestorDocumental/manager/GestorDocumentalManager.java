@@ -2,8 +2,7 @@ package es.pfsgroup.plugin.gestorDocumental.manager;
 
 import java.io.IOException;
 
-import net.sf.json.JSONObject;
-
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonGenerationException;
@@ -21,6 +20,7 @@ import es.pfsgroup.plugin.gestorDocumental.api.RestClientApi;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.BajaDocumentoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CabeceraPeticionRestClientDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearDocumentoDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearVersionDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearVersionMetadatosDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CredencialesUsuarioDto;
@@ -34,6 +34,7 @@ import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCatalogoDoc
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCrearDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosExpedientes;
+import net.sf.json.JSONObject;
 
 @Component
 public class GestorDocumentalManager implements GestorDocumentalApi {
@@ -49,6 +50,12 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 	private static final String TIPO_CONSULTA_PATH = "tipoConsultaRelacion=";
 	private static final String VINCULO_DOCUMENTO_PATH = "vinculoDocumento=";
 	private static final String VINCULO_EXPEDIENTE_PATH = "vinculoExpediente=";
+	private static final String TIPO_RELACION_PATH = "tipo_relacion=";
+	private static final String ID_OPENTEXT_PATH = "id_opentext=";
+	private static final String TIPO_EXPEDIENTE_PATH = "tipo_expediente=";
+	private static final String CLASE_EXPEDIENTE_PATH = "clase_expediente=";
+	private static final String ID_ACTIVO_PATH = "id_activo=";
+	private static final String OPERACION_PATH = "operacion=";
 	
 	private static final String DOCUMENTO = "documento";
 	private static final String USUARIO = "usuario";
@@ -58,6 +65,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 	private static final String DESCRIPCION_DOCUMENTO = "descripcionDocumento";
 	private static final String GENERAL_DOCUMENTO = "generalDocumento";
 	private static final String ARCHIVO_FISICO = "archivoFisico";	
+	private static final String METADATA = "metadata";
 	
 	private static final String URL_REST_CLIENT_GESTOR_DOCUMENTAL_DOCUMENTOS = "rest.client.gestor.documental.documentos";
 	private static final String ERROR_SERVER_NOT_RESPONDING="El servidor de gestor documental no responde.";
@@ -80,7 +88,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 
 	private String getPathDocExp(CabeceraPeticionRestClientDto cabecera, DocumentosExpedienteDto docExpDto) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("/documentosExpediente");
+		sb.append("/ListarDocumentos");
 		sb.append("/").append(cabecera.getCodTipo());
 		sb.append("/").append(cabecera.getCodClase());
 		sb.append("/").append(cabecera.getIdExpedienteHaya());
@@ -89,6 +97,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 		sb.append("&").append(TIPO_CONSULTA_PATH).append(docExpDto.getTipoConsulta());
 		sb.append("&").append(VINCULO_DOCUMENTO_PATH).append(docExpDto.getVinculoDocumento());
 		sb.append("&").append(VINCULO_EXPEDIENTE_PATH).append(docExpDto.getVinculoExpediente());
+		sb.append("&").append(USUARIO_OPERACIONAL_PATH).append(docExpDto.getUsuarioOperacional());
 		return sb.toString();
 	}
 	
@@ -112,7 +121,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 	
 	private String getPathCrearDoc(CabeceraPeticionRestClientDto cabecera) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("/crearDocumento");
+		sb.append("/CrearDocumento");
 		sb.append("/").append(cabecera.getCodTipo());
 		sb.append("/").append(cabecera.getCodClase());
 		sb.append("/").append(cabecera.getIdExpedienteHaya());
@@ -126,38 +135,57 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 				.field(USUARIO, crearDoc.getUsuario())
 				.field(PASSWORD,  crearDoc.getPassword())
 				.field(USUARIO_OPERACIONAL, crearDoc.getUsuarioOperacional())
-				.field(GENERAL_DOCUMENTO, crearDoc.getGeneralDocumento())
-				.field(ARCHIVO_FISICO, crearDoc.getArchivoFisico())
-				.field(NOMBRE_DOCUMENTO, crearDoc.getNombreDocumento())
+				.field(METADATA, crearDoc.getGeneralDocumento())
 				.field(DESCRIPCION_DOCUMENTO, crearDoc.getDescripcionDocumento())
 				.bodyPart(filePart);
 		return multipart;
 	}
 	
 	@Override
-	public RespuestaDescargarDocumento descargarDocumento(Long idDocumento, BajaDocumentoDto login) throws GestorDocumentalException {
+	public RespuestaDescargarDocumento descargarDocumento(Long idDocumento, BajaDocumentoDto login, String nombreDocumento) throws GestorDocumentalException {
 		ServerRequest serverRequest =  new ServerRequest();
 		serverRequest.setMethod(RestClientManager.METHOD_GET);
 		serverRequest.setPath(getPathDescargarDoc(idDocumento, login));		
 		serverRequest.setResponseClass(RespuestaDescargarDocumento.class);
-		RespuestaDescargarDocumento respuesta = (RespuestaDescargarDocumento) getResponse(serverRequest);
-		if (Checks.esNulo(respuesta)) {
-			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);
+		Object respuesta = this.getBinaryResponse(serverRequest,"");
+		byte[] bytes = null;
+		
+		if(respuesta instanceof byte[]) {
+			bytes = (byte[]) respuesta;
 		}
-		if(!Checks.esNulo(respuesta.getCodigoError())) {
-			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
-			throw new GestorDocumentalException(respuesta.getMensajeError());
+		else {
+			throw new GestorDocumentalException("Error al descargarDocumento ["+idDocumento+"].");
 		}
+		
+		return this.rellenarRespuestaDescarga(bytes,nombreDocumento);
+	}
+	
+	private RespuestaDescargarDocumento rellenarRespuestaDescarga(byte[] contenido, String nombreDocumento){
+		
+		Byte[] bytes = ArrayUtils.toObject(contenido);
+		
+		RespuestaDescargarDocumento respuesta = new RespuestaDescargarDocumento();
+		respuesta.setContenido(bytes);
+		respuesta.setNombreDocumento(nombreDocumento);
+		
 		return respuesta;
 	}
 	
 	private String getPathDescargarDoc(Long idDocumento, BajaDocumentoDto login) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("/descargarDocumento");
+		sb.append("/DescargarDocumento");
 		sb.append("/").append(idDocumento);
 		sb.append("?").append(USUARIO_PATH).append(login.getUsuario());
 		sb.append("&").append(PASSWORD_PATH).append(login.getPassword());
+		sb.append("&").append(USUARIO_OPERACIONAL_PATH).append(login.getUsuarioOperacional());
 		return sb.toString();
+	}
+	
+	private Object getBinaryResponse(ServerRequest serverRequest, String fileName) {
+		serverRequest.setRestClientUrl(URL_REST_CLIENT_GESTOR_DOCUMENTAL_DOCUMENTOS);
+		Object respuesta = restClientApi.getBinaryResponse(serverRequest);
+		
+		return respuesta;
 	}
 	
 	@Override
@@ -274,7 +302,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 	@Override
 	public RespuestaGeneral bajaDocumento(BajaDocumentoDto baja, Integer idDocumento) throws GestorDocumentalException {
 		ServerRequest serverRequest =  new ServerRequest();
-		serverRequest.setMethod(RestClientManager.METHOD_PUT);
+		serverRequest.setMethod(RestClientManager.METHOD_POST);
 		serverRequest.setPath(getPathBajaDoc(baja, new Long(idDocumento)));
 		serverRequest.setMultipart(getMultipartBajaDoc(baja));
 		serverRequest.setResponseClass(RespuestaGeneral.class);
@@ -291,7 +319,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 	
 	private String getPathBajaDoc(BajaDocumentoDto baja, Long idDocumento) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("/bajaDocumento");
+		sb.append("/BajaDocumento");
 		sb.append("/").append(idDocumento);
 		sb.append("?").append(USUARIO_PATH).append(baja.getUsuario());
 		sb.append("&").append(PASSWORD_PATH).append(baja.getPassword());
@@ -310,10 +338,10 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 	}
 
 	@Override
-	public RespuestaGeneral crearRelacionExpediente(CabeceraPeticionRestClientDto cabecera, CredencialesUsuarioDto credUsu) throws GestorDocumentalException {
+	public RespuestaGeneral crearRelacionExpediente(CabeceraPeticionRestClientDto cabecera, CredencialesUsuarioDto credUsu,CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException {
 		ServerRequest serverRequest =  new ServerRequest();
 		serverRequest.setMethod(RestClientManager.METHOD_PUT);
-		serverRequest.setPath(getPathCrearRelExp(cabecera, credUsu));
+		serverRequest.setPath(getPathCrearRelExp(cabecera, credUsu,crearRelacionExpedienteDto));
 		serverRequest.setResponseClass(RespuestaGeneral.class);
 		RespuestaGeneral respuesta = (RespuestaGeneral) getResponse(serverRequest);
 		if (Checks.esNulo(respuesta)) {
@@ -326,16 +354,18 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 		return respuesta;
 	}
 	
-	private String getPathCrearRelExp(CabeceraPeticionRestClientDto cabecera, CredencialesUsuarioDto credUsuDto) {
+	private String getPathCrearRelExp(CabeceraPeticionRestClientDto cabecera, CredencialesUsuarioDto credUsuDto, CrearRelacionExpedienteDto crearRelacionExpedienteDto) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("/crearRelacionExpediente");
-		sb.append("/").append(cabecera.getCodTipo());
-		sb.append("/").append(cabecera.getCodClase());
-		sb.append("/").append(cabecera.getIdExpedienteHaya());
-		sb.append("/").append(cabecera.getIdDocumento());
+		sb.append("/Relacion");
 		sb.append("?").append(USUARIO_PATH).append(credUsuDto.getUsuario());
 		sb.append("&").append(PASSWORD_PATH).append(credUsuDto.getPassword());
 		sb.append("&").append(USUARIO_OPERACIONAL_PATH).append(credUsuDto.getUsuarioOperacional());
+		sb.append("&").append(TIPO_RELACION_PATH).append(crearRelacionExpedienteDto.getTipoRelacion());
+		sb.append("&").append(ID_OPENTEXT_PATH).append(cabecera.getIdDocumento());
+		sb.append("&").append(TIPO_EXPEDIENTE_PATH).append(cabecera.getCodTipo());
+		sb.append("&").append(CLASE_EXPEDIENTE_PATH).append(cabecera.getCodClase());
+		sb.append("&").append(ID_ACTIVO_PATH).append(cabecera.getIdExpedienteHaya());
+		sb.append("&").append(OPERACION_PATH).append(crearRelacionExpedienteDto.getOperacion());
 		return sb.toString();
 	}
 

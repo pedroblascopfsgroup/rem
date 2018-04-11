@@ -11,6 +11,11 @@ public class DocumentosExpedienteDto {
 	 * Password del usuario
 	 */
 	private String password;
+	
+	/**
+	 * Login del usuario que identifica al usuario en la aplicación externa (control de auditorías)
+	 */
+	private String usuarioOperacional;
 
 	/**
 	 * Identificador que diferencia el tipo de relación (por expediente o por
@@ -71,6 +76,14 @@ public class DocumentosExpedienteDto {
 	
 	public void setVinculoExpediente(Boolean vinculoExpediente) {
 		this.vinculoExpediente = vinculoExpediente;
+	}
+
+	public String getUsuarioOperacional() {
+		return usuarioOperacional;
+	}
+
+	public void setUsuarioOperacional(String usuarioOperacional) {
+		this.usuarioOperacional = usuarioOperacional;
 	}
 
 }

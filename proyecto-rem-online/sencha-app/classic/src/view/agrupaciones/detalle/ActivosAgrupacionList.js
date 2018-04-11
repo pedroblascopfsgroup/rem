@@ -406,48 +406,64 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 
     onDeleteClick: function(btn){
     	var me = this;
-
-        Ext.Msg.show({
-			   title: HreRem.i18n('title.confirmar.eliminacion'),
-			   msg: HreRem.i18n('msg.desea.eliminar'),
-			   buttons: Ext.MessageBox.YESNO,
-			   fn: function(buttonId) {
-			        if (buttonId == 'yes') {
-			        	me.mask(HreRem.i18n("msg.mask.espere"));
-			    		me.rowEditing.cancelEdit();
-			            var sm = me.getSelectionModel();
-
-						// Se borra 1 activo de la agrupacion
-						me.selection.erase({
-							params: {agrId: me.selection.data.agrId, activoId: me.selection.data.activoId},
-			            	success: function (a, operation, c) {
-                                me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-								me.unmask();
-								me.deleteSuccessFn();
-                            },
-                            
-                            failure: function (a, operation) {
-                            	var data = {};
-                            	try {
-                            		data = Ext.decode(operation._response.responseText);
-                            	}
-                            	catch (e){ };
-                            	if (!Ext.isEmpty(data.msg)) {
-                            		me.fireEvent("errorToast", data.msg);
-                            	} else {
-                            		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-                            	}
-								me.unmask();
-								me.deleteFailureFn()
-                            }
-                        });
-						
-			            if (me.getStore().getCount() > 0) {
-			                sm.select(0);
-			            }
-			        }
-			   }
-		});
+    	var sePuedeBorrar;
+    	var tipoAgrupacion = me.up('agrupacionesdetallemain').getViewModel().get('agrupacionficha').get('tipoAgrupacionCodigo');
+    	
+    	if((tipoAgrupacion != CONST.TIPOS_AGRUPACION['RESTRINGIDA'])){
+    		sePuedeBorrar = true;
+    	}else if(me.selection.data.activoPrincipal != 1){
+    		sePuedeBorrar = true;
+    	}else{
+    		sePuedeBorrar = false;
+    	}
+    		    	
+    	if(sePuedeBorrar){
+    	
+	        Ext.Msg.show({
+				   title: HreRem.i18n('title.confirmar.eliminacion'),
+				   msg: HreRem.i18n('msg.desea.eliminar'),
+				   buttons: Ext.MessageBox.YESNO,
+				   fn: function(buttonId) {
+				        if (buttonId == 'yes') {
+				        	me.mask(HreRem.i18n("msg.mask.espere"));
+				    		me.rowEditing.cancelEdit();
+				            var sm = me.getSelectionModel();
+	
+							// Se borra 1 activo de la agrupacion
+							me.selection.erase({
+								params: {agrId: me.selection.data.agrId, activoId: me.selection.data.activoId},
+				            	success: function (a, operation, c) {
+	                                me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+									me.unmask();
+									me.deleteSuccessFn();
+	                            },
+	                            
+	                            failure: function (a, operation) {
+	                            	var data = {};
+	                            	try {
+	                            		data = Ext.decode(operation._response.responseText);
+	                            	}
+	                            	catch (e){ };
+	                            	if (!Ext.isEmpty(data.msg)) {
+	                            		me.fireEvent("errorToast", data.msg);
+	                            	} else {
+	                            		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	                            	}
+									me.unmask();
+									me.deleteFailureFn()
+	                            }
+	                        });
+							
+				            if (me.getStore().getCount() > 0) {
+				                sm.select(0);
+				            }
+				        }
+				   }
+			});
+    	}else{
+    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.activoPrincipal"));
+    		me.deleteFailureFn();
+    	}
     },
     
     setTopBar: function(topBar) {

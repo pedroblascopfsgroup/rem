@@ -165,6 +165,7 @@
            <value>es.pfsgroup.plugin.rem.model.dd.DDTiposArras</value>
            <value>es.pfsgroup.plugin.rem.model.dd.DDMotivoNoObtencion</value>
            <value>es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionReserva</value>
+           <value>es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva</value>
     </list>
     </property>
     </bean>

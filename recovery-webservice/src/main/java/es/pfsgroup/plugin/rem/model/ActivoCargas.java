@@ -77,6 +77,9 @@ public class ActivoCargas implements Serializable, Auditable {
     @Column(name="CRG_FECHA_CANCEL_REGISTRAL")
     private Date fechaCancelacionRegistral;
     
+    @Column(name="CRG_OBSERVACIONES")
+    private String observaciones;
+    
     @ManyToOne
     @JoinColumn(name = "DD_ODT_ID")
     private DDOrigenDato origenDato;
@@ -177,6 +180,16 @@ public class ActivoCargas implements Serializable, Auditable {
 	public void setOrigenDato(DDOrigenDato origenDato) {
 		this.origenDato = origenDato;
 	}
+
+	public String getObservaciones() {
+		return observaciones;
+	}
+
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
+	}
+	
+	
 
 	
 }

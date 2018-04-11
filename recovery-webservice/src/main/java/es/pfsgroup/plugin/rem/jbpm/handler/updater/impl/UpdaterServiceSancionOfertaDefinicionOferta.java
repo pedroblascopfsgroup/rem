@@ -15,13 +15,16 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -40,6 +43,9 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private ActivoApi activoApi;
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaDefinicionOferta.class);
 
@@ -90,7 +96,19 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 						.expedienteComercialPorOferta(ofertaAceptada.getId());
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
 						DDEstadosExpedienteComercial.PTE_SANCION);
-				DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+				Filter filtroSinFormalizacion = genericDao.createFilter(FilterType.EQUALS, "codigo",
+						DDEstadosExpedienteComercial.APROBADO);
+				
+				PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(expediente.getOferta().getActivoPrincipal().getId());
+				
+				DDEstadosExpedienteComercial estado;
+				
+				if(perimetro.getAplicaFormalizar() == 0){
+					estado = genericDao.get(DDEstadosExpedienteComercial.class, filtroSinFormalizacion);
+				}else{
+					estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+				}
+				 
 				expediente.setEstado(estado);
 			}
 		}

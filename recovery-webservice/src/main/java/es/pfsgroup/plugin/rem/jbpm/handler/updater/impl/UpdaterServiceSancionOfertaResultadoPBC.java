@@ -75,6 +75,7 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 								Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
 								DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 								expediente.setEstado(estado);
+								expediente.setFechaVenta(null);
 								expediente.setEstadoPbc(0);
 								expediente.setFechaAnulacion(new Date());
 

@@ -1141,7 +1141,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		config.params = {};
 		config.params.id=record.get('id');
 		config.params.idGasto=record.get("idGasto");
-		
+		config.params.nombreDocumento=record.get("nombre");		
 		me.fireEvent("downloadFile", config);
 	},
 	

@@ -423,18 +423,10 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		Long id = Long.parseLong(request.getParameter("id"));
 		String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
 		Downloader dl = downloaderFactoryApi.getDownloader(key);
-		
-        
-		/*DtoAdjuntoExpediente dtoAdjunto = new DtoAdjuntoExpediente();
-		
-		dtoAdjunto.setId(Long.parseLong(request.getParameter("id")));
-		dtoAdjunto.setIdExpediente(Long.parseLong(request.getParameter("idExpediente")));
-	
-		
-       	FileItem fileItem = expedienteComercialApi.getFileItemAdjunto(dtoAdjunto);*/
+		String nombreDocumento = request.getParameter("nombreDocumento");
 		
        	try {
-       		FileItem fileItem = dl.getFileItem(id);
+       		FileItem fileItem = dl.getFileItem(id,nombreDocumento);
        		ServletOutputStream salida = response.getOutputStream(); 
        			
        		response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());

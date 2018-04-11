@@ -19,8 +19,9 @@ Ext.define('HreRem.view.expedientes.DiarioGestionesExpediente', {
 			    reference: 'listadoObservaciones',
 				cls	: 'panel-base shadow-panel',
 				bind: {
-					store: '{storeObservaciones}',
-					topBar: '{!esExpedienteBloqueado}'
+					store: '{storeObservaciones}'
+					//REMVIP-405 - Se pide que aunque el expediente este bloqueado se puedan añadir observaciones
+					//, topBar: '{!esExpedienteBloqueado}'
 				},	
 				
 				columns: [

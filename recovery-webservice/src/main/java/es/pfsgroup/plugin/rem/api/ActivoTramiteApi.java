@@ -9,6 +9,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 
@@ -39,6 +40,7 @@ public interface ActivoTramiteApi {
 	public static final String CODIGO_TRAMITE_COMERCIAL_VENTA = "T013";
 	public static final String CODIGO_TRAMITE_SANCION_OFERTA_ALQUILER = "T014";
 	
+	public static final String CODIGO_TAREA_RESOLUCION_EXPEDIENTE = "T013_ResolucionExpediente";
 	
 	/**
 	 * Recupera un trámite pasándole su id.
@@ -266,5 +268,21 @@ public interface ActivoTramiteApi {
 	 * @return 
 	 */
 	public Boolean tieneTramiteVigenteByActivoYProcedimiento(Long idActivo, String codigoTipoProcedimiento);
+	
+	/**
+	 * Devuelve la TareaExterna anterior a la tarea con el código codigoTarea del tramite con id idTramite
+	 * @param idTramite
+	 * @param codigoTarea
+	 * @return TareaExterna tarea anterior a la tarea con código codigoTarea del tramite con id idTramite
+	 */
+	public TareaExterna getTareaAnteriorByCodigoTarea(Long idTramite, String codigoTarea);
+	
+	/**
+	 * Reactiva la tarea Resultado PBC
+	 * @param tareaExterna
+	 * @param expediente
+	 * @return
+	 */
+	public void reactivarTareaResultadoPBC(TareaExterna tareaExterna, ExpedienteComercial expediente);
 }
 

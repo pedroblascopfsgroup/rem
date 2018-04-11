@@ -38,24 +38,25 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 @Component
 public class ComercialUserAssigantionService implements UserAssigantionService  {
 
-	private static final String CODIGO_T013_DEFINICION_OFERTA = "T013_DefinicionOferta";
-	private static final String CODIGO_T013_FIRMA_PROPIETARIO = "T013_FirmaPropietario";
-	private static final String CODIGO_T013_CIERRE_ECONOMICO = "T013_CierreEconomico";
-	private static final String CODIGO_T013_RESOLUCION_COMITE = "T013_ResolucionComite";
-	private static final String CODIGO_T013_RESPUESTA_OFERTANTE = "T013_RespuestaOfertante";
-	private static final String CODIGO_T013_DOBLE_FIRMA = "T013_DobleFirma";
-	private static final String CODIGO_T013_INFORME_JURIDICO = "T013_InformeJuridico";
-	private static final String CODIGO_T013_INSTRUCCIONES_RESERVA = "T013_InstruccionesReserva";
-	private static final String CODIGO_T013_OBTENCION_CONTRATO_RESERVA = "T013_ObtencionContratoReserva";
-	private static final String CODIGO_T013_RESOLUCION_TANTEO = "T013_ResolucionTanteo";
-	private static final String CODIGO_T013_RESULTADO_PBC = "T013_ResultadoPBC";
-	private static final String CODIGO_T013_POSICIONAMIENTO_FIRMA = "T013_PosicionamientoYFirma";
-	private static final String CODIGO_T013_DEVOLUCION_LLAVES = "T013_DevolucionLlaves";
-	private static final String CODIGO_T013_DOCUMENTOS_POSTVENTA = "T013_DocumentosPostVenta";
-	private static final String CODIGO_T013_RESOLUCION_EXPEDIENTE = "T013_ResolucionExpediente";
-	private static final String CODIGO_T013_RATIFICACION_COMITE = "T013_RatificacionComite";
-
-	
+	public static final String CODIGO_T013_DEFINICION_OFERTA = "T013_DefinicionOferta";
+	public static final String CODIGO_T013_FIRMA_PROPIETARIO = "T013_FirmaPropietario";
+	public static final String CODIGO_T013_CIERRE_ECONOMICO = "T013_CierreEconomico";
+	public static final String CODIGO_T013_RESOLUCION_COMITE = "T013_ResolucionComite";
+	public static final String CODIGO_T013_RESPUESTA_OFERTANTE = "T013_RespuestaOfertante";
+	public static final String CODIGO_T013_DOBLE_FIRMA = "T013_DobleFirma";
+	public static final String CODIGO_T013_INFORME_JURIDICO = "T013_InformeJuridico";
+	public static final String CODIGO_T013_INSTRUCCIONES_RESERVA = "T013_InstruccionesReserva";
+	public static final String CODIGO_T013_OBTENCION_CONTRATO_RESERVA = "T013_ObtencionContratoReserva";
+	public static final String CODIGO_T013_RESOLUCION_TANTEO = "T013_ResolucionTanteo";
+	public static final String CODIGO_T013_RESULTADO_PBC = "T013_ResultadoPBC";
+	public static final String CODIGO_T013_POSICIONAMIENTO_FIRMA = "T013_PosicionamientoYFirma";
+	public static final String CODIGO_T013_DEVOLUCION_LLAVES = "T013_DevolucionLlaves";
+	public static final String CODIGO_T013_DOCUMENTOS_POSTVENTA = "T013_DocumentosPostVenta";
+	public static final String CODIGO_T013_RESOLUCION_EXPEDIENTE = "T013_ResolucionExpediente";
+	public static final String CODIGO_T013_RATIFICACION_COMITE = "T013_RatificacionComite";
+	public static final String CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION = "T013_RespuestaBankiaDevolucion";
+	public static final String CODIGO_T013_PENDIENTE_DEVOLUCION = "T013_PendienteDevolucion";
+	public static final String CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION = "T013_RespuestaBankiaAnulacionDevolucion";
 
 	@Autowired
 	private ActivoApi activoApi;
@@ -86,7 +87,8 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		return new String[]{CODIGO_T013_DEFINICION_OFERTA, CODIGO_T013_FIRMA_PROPIETARIO, CODIGO_T013_CIERRE_ECONOMICO, CODIGO_T013_RESOLUCION_COMITE,
 				 	CODIGO_T013_RESPUESTA_OFERTANTE, CODIGO_T013_DOBLE_FIRMA, CODIGO_T013_INFORME_JURIDICO, CODIGO_T013_INSTRUCCIONES_RESERVA,
 				 	CODIGO_T013_OBTENCION_CONTRATO_RESERVA, CODIGO_T013_RESOLUCION_TANTEO, CODIGO_T013_RESULTADO_PBC, CODIGO_T013_POSICIONAMIENTO_FIRMA, 
-				 	CODIGO_T013_DEVOLUCION_LLAVES, CODIGO_T013_DOCUMENTOS_POSTVENTA, CODIGO_T013_RESOLUCION_EXPEDIENTE, CODIGO_T013_RATIFICACION_COMITE };
+				 	CODIGO_T013_DEVOLUCION_LLAVES, CODIGO_T013_DOCUMENTOS_POSTVENTA, CODIGO_T013_RESOLUCION_EXPEDIENTE, CODIGO_T013_RATIFICACION_COMITE,
+				 	CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION, CODIGO_T013_PENDIENTE_DEVOLUCION, CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION};
 	}
 
 	@Override
@@ -226,6 +228,10 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEVOLUCION_LLAVES, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_POSICIONAMIENTO_FIRMA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 		
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_PENDIENTE_DEVOLUCION, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		
 		return mapa;
 	}
 	
@@ -252,6 +258,9 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_TANTEO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEVOLUCION_LLAVES, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_POSICIONAMIENTO_FIRMA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_PENDIENTE_DEVOLUCION, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 		
 		if(isFinanciero){
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_FINANCIERO);
@@ -283,6 +292,9 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_TANTEO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEVOLUCION_LLAVES, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_POSICIONAMIENTO_FIRMA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_PENDIENTE_DEVOLUCION, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 
 		if(formalizacion){
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
@@ -321,6 +333,9 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_TANTEO, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEVOLUCION_LLAVES, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_POSICIONAMIENTO_FIRMA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_PENDIENTE_DEVOLUCION, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
 		
 		return mapa;
 	}
@@ -348,6 +363,9 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_TANTEO, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEVOLUCION_LLAVES, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_POSICIONAMIENTO_FIRMA, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_PENDIENTE_DEVOLUCION, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 		
 		if(isFinanciero){
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_FINANCIERO);
@@ -379,7 +397,9 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_TANTEO, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEVOLUCION_LLAVES, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_POSICIONAMIENTO_FIRMA, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
-
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_PENDIENTE_DEVOLUCION, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 		if(formalizacion){
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_FINANCIERO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_FIRMA_PROPIETARIO, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_FINANCIERO);
@@ -530,27 +550,31 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		return false;
 	}
 	
-	//Comprobar si el activo es Con Formalización
-		private boolean isConFormalizacion(TareaExterna tareaExterna) {
-			boolean esConFormalizacion = false;
-			TareaActivo tareaActivo = (TareaActivo) tareaExterna.getTareaPadre();
-			if (!Checks.esNulo(tareaActivo) && !Checks.esNulo(tareaActivo.getTramite())
-					&& !Checks.esNulo(tareaActivo.getTramite().getTrabajo())) {
-				
-				Activo activo = tareaActivo.getActivo();
-				if(activo==null && !tareaActivo.getTramite().getActivos().isEmpty()){
-					activo = tareaActivo.getTramite().getActivos().get(0);
-				}
-				PerimetroActivo perimetro = null;
-				if(activo != null){
-					perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
-				}
-				
-				if (!Checks.esNulo(perimetro) && BooleanUtils.toBoolean(perimetro.getAplicaFormalizar())) {
-					esConFormalizacion = true;
-				}
-			
+	// Comprobar si el activo es Con Formalización
+	private boolean isConFormalizacion(TareaExterna tareaExterna) {
+		boolean esConFormalizacion = false;
+		TareaActivo tareaActivo = (TareaActivo) tareaExterna.getTareaPadre();
+		if (!Checks.esNulo(tareaActivo) && !Checks.esNulo(tareaActivo.getTramite())
+				&& !Checks.esNulo(tareaActivo.getTramite().getTrabajo())) {
+
+			Activo activo = tareaActivo.getActivo();
+			if (activo == null && !tareaActivo.getTramite().getActivos().isEmpty()) {
+				activo = tareaActivo.getTramite().getActivos().get(0);
 			}
-			return esConFormalizacion;
+			PerimetroActivo perimetro = null;
+			if (activo != null) {
+				perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
+			}
+
+			if (!Checks.esNulo(perimetro)) {
+				if (!Checks.esNulo(perimetro.getAplicaFormalizar())) {
+					if (BooleanUtils.toBoolean(perimetro.getAplicaFormalizar())) {
+						esConFormalizacion = true;
+					}
+				}
+			}
+
 		}
+		return esConFormalizacion;
+	}
 }

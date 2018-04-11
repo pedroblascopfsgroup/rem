@@ -27,7 +27,6 @@ public class ActivoPropagacionFieldTabMap {
     public static final String TAB_ADMINISTRACION = "administracion";
     public static final String TAB_PATRIMONIO = "patrimonio";
 
-
     static {
     	Map<String, List<String>> pmap = new HashMap<String, List<String>>();
 
@@ -49,6 +48,7 @@ public class ActivoPropagacionFieldTabMap {
 	    			"puerta",
 	    			"escalera",
 	    			"numeroDomicilio",
+	    			"selloCalidad",
 	    			"tipoViaCodigo",
 	    			"codPostal",
 	    			"codPostalFormateado",

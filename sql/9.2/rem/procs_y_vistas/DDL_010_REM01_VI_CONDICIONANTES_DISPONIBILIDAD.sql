@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Pier Gotta
---## FECHA_CREACION=20180316
+--## AUTOR=Juanjo Arbona
+--## FECHA_CREACION=20180406
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-3890
+--## INCIDENCIA_LINK=REMVIP-448
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -20,6 +20,8 @@
 --##		0.7 HREOS-2992 - Correcciones para PDVs
 --##		0.8 HREOS-3344 - Cambio check obra nueva en construcción
 --##		0.9 HREOS-3890 - Vandalizado añadido
+--##		0.9 REMVIP-205 - Cambio de la forma de cálculo de el campo "Pendiente de inscripción"
+--##		0.9 REMVIP-448 - Añadir condicion de poner nulos a 0
 --##########################################
 --*/
 
@@ -108,7 +110,7 @@ AS
                   LEFT JOIN '||V_ESQUEMA||'.dd_eac_estado_activo eac2 ON eac2.dd_eac_id = act.dd_eac_id AND (eac2.dd_eac_codigo = ''02''  OR   eac2.dd_eac_codigo = ''06'')                                               -- OBRA NUEVA EN CONSTRUCCIÓN
                   LEFT JOIN '||V_ESQUEMA||'.dd_eac_estado_activo eac3 ON eac3.dd_eac_id = act.dd_eac_id AND eac3.dd_eac_codigo = ''07''                                                -- VANDALIZADO
                   LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps1 ON sps1.act_id = act.act_id AND sps1.sps_acc_tapiado = 1                                                                         -- TAPIADO
-                  LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps2 ON sps2.act_id = act.act_id AND sps2.sps_ocupado = 1 AND sps2.sps_con_titulo = 0                                      -- OCUPADO SIN TITULO
+                  LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps2 ON sps2.act_id = act.act_id AND sps2.sps_ocupado = 1 AND NVL (sps2.sps_con_titulo, 0) = 0                                      -- OCUPADO SIN TITULO
                   LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps3 ON sps3.act_id = act.act_id AND sps3.sps_ocupado = 1 AND sps3.sps_con_titulo = 1                                      -- OCUPADO CON TITULO
                   LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps4 ON sps4.act_id = act.act_id AND (sps4.sps_fecha_toma_posesion IS NULL AND aba2.dd_cla_id = 2)                         -- SIN TOMA POSESION INICIAL
                   LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps5 ON sps5.act_id = act.act_id                                                                                                -- OTROS MOTIVOS
@@ -116,10 +118,11 @@ AS
 				  LEFT JOIN '||V_ESQUEMA||'.DD_SIJ_SITUACION_JURIDICA sij on sps5.dd_sij_id = sij.dd_sij_id 
                   LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps7 ON sps7.act_id = act.act_id and (sps7.dd_sij_id is not null and sij.DD_SIJ_INDICA_POSESION = 0)                  
 				  LEFT JOIN
-                  (SELECT ACT_REG.act_id
+                  (SELECT act_tit.act_id
                      FROM '||V_ESQUEMA||'.act_reg_info_registral act_reg JOIN '||V_ESQUEMA||'.act_aba_activo_bancario aba ON aba.act_id = act_reg.act_id
-                     join '||V_ESQUEMA||'.BIE_DATOS_REGISTRALES BDR ON BDR.BIE_DREG_ID = act_REG.BIE_DREG_ID
-                    WHERE aba.dd_cla_id = 1 OR BDR.BIE_DREG_FECHA_INSCRIPCION IS NOT NULL) tit ON tit.act_id = act.act_id                                                            -- PENDIENTE DE INSCRIPCIÓN
+                     JOIN '||V_ESQUEMA||'.ACT_TIT_TITULO act_tit ON act_tit.act_id = act_reg.act_id 
+                     JOIN '||V_ESQUEMA||'.BIE_DATOS_REGISTRALES BDR ON BDR.BIE_DREG_ID = act_REG.BIE_DREG_ID
+                    WHERE aba.dd_cla_id = 1 OR act_tit.TIT_FECHA_INSC_REG IS NOT NULL) tit ON tit.act_id = act.act_id                                                            -- PENDIENTE DE INSCRIPCIÓN
                   LEFT JOIN '||V_ESQUEMA||'.act_reg_info_registral reg1 ON reg1.act_id = act.act_id
                   LEFT JOIN '||V_ESQUEMA||'.dd_eon_estado_obra_nueva eon ON eon.dd_eon_id = reg1.dd_eon_id AND eon.dd_eon_codigo IN (''02'')                                              -- OBRA NUEVA SIN DECLARAR
                   LEFT JOIN '||V_ESQUEMA||'.act_reg_info_registral reg2 ON reg2.act_id = act.act_id AND reg2.reg_div_hor_inscrito = 0                                           -- DIVISIÓN HORIZONTAL NO INSCRITA

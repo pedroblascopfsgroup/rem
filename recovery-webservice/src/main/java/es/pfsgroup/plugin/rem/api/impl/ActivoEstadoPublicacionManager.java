@@ -235,11 +235,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			//Si el campo del dto Ocultacion Forzada llega a false es que viene del metodo desocultarActivoOferta
 			if(!Checks.esNulo(dtoCambioEstadoPublicacion.getOcultacionForzada()) && !dtoCambioEstadoPublicacion.getOcultacionForzada()){
 				ActivoHistoricoEstadoPublicacion ultimoHistoricoPublicacion = activoApi.getUltimoHistoricoEstadoPublicacion(dtoCambioEstadoPublicacion.getIdActivo());
-				if(DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO.equals(activo.getEstadoPublicacion().getCodigo()) 
+				if(!Checks.esNulo(activo.getEstadoPublicacion()) && !Checks.esNulo(ultimoHistoricoPublicacion) && 
+						DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO.equals(activo.getEstadoPublicacion().getCodigo()) 
 						&& ActivoHistoricoEstadoPublicacion.MOTIVO_OCULTACION_AUTOMATICA.equals(ultimoHistoricoPublicacion.getMotivo())){
 					ActivoHistoricoEstadoPublicacion penultimoHistoricoPublicacion = activoApi.getPenultimoHistoricoEstadoPublicacion(dtoCambioEstadoPublicacion.getIdActivo());
 					
-					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", penultimoHistoricoPublicacion.getEstadoPublicacion().getCodigo());
+					if(!Checks.esNulo(penultimoHistoricoPublicacion)){
+						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", penultimoHistoricoPublicacion.getEstadoPublicacion().getCodigo());
+					}
 					motivo = getMotivo(dtoCambioEstadoPublicacion);
 				}
 			}

@@ -63,6 +63,7 @@ public class UpdaterServiceSancionOfertaDevolucionLlaves implements UpdaterServi
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expediente.setEstado(estado);
+						expediente.setFechaVenta(null);
 						expediente.setFechaAnulacion(new Date());
 						genericDao.save(ExpedienteComercial.class, expediente);
 

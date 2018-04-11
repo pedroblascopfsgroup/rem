@@ -109,12 +109,12 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 							inserccionOK = false;
 						}
 					}else{
-						if (!dto.getIdUsuario().equals(gac.getUsuario().getId())) {
+						//if (!dto.getIdUsuario().equals(gac.getUsuario().getId())) {
 							this.actualizaFechaHastaHistoricoGestorAdicionalActivo(gac);
 							gac.setUsuario(usu);
 							gac.setAuditoria(Auditoria.getNewInstance());
 							this.guardarHistoricoGestorAdicionalEntidad(gac, act);
-						}
+						//}
 						gestorEntidadDao.saveOrUpdate(gac);
 						
 						//Actualizamos usuarios de las tareas

@@ -43,6 +43,8 @@ public class DtoListadoTareas extends WebDto {
 	
 	private String nombreUsuarioSupervisor;
 	
+	private String usuarioFinaliza;
+	
 	public Long getIdTareaExterna() {
 		return idTareaExterna;
 	}
@@ -161,6 +163,14 @@ public class DtoListadoTareas extends WebDto {
 
 	public void setNombreUsuarioSupervisor(String nombreUsuarioSupervisor) {
 		this.nombreUsuarioSupervisor = nombreUsuarioSupervisor;
+	}
+	
+	public String getUsuarioFinaliza(){
+		return usuarioFinaliza;
+	}
+	
+	public void setUsuarioFinaliza(String usuarioFinaliza){
+		this.usuarioFinaliza = usuarioFinaliza;
 	}
 
 

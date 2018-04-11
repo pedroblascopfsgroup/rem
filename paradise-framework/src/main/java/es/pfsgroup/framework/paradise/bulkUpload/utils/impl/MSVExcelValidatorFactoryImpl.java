@@ -58,6 +58,9 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVAltaActivosExcelValidator altaActvos;
 	
 	@Autowired
+	private MSVAltaActivosTPExcelValidator altaActivosTP;
+	
+	@Autowired
 	private MSVActualizarPreciosActivoBloqueo actualizarBloqueoPrecioActivo;
 
 	@Autowired
@@ -193,6 +196,9 @@ public class MSVExcelValidatorFactoryImpl {
 			return actualizadorPublicadoVentaExcelValidator;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_PUBLICAR_ACTIVOS_ALQUILER.equals(codTipoOperacion)) {
 			return actualizadorPublicadoAlquilerExcelValidator;
+		}
+		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ALTA_ACTIVOS_THIRD_PARTY.equals(codTipoOperacion)){
+			return altaActivosTP;
 		}
 		return null;
 	}

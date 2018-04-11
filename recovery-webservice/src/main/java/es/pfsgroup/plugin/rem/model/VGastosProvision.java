@@ -86,6 +86,9 @@ public class VGastosProvision implements Serializable {
 	@Column(name = "PVE_NOMBRE")
 	private String nombreProveedor;
 	
+	@Column(name = "MOTIVO_RECHAZO")
+	private String motivoRechazo;
+	
 	@Transient
 	private boolean esGastoAgrupado; 
 	
@@ -251,7 +254,15 @@ public class VGastosProvision implements Serializable {
 	public void setImporteTotalAgrupacion(Double importeTotalAgrupacion) {
 		this.importeTotalAgrupacion = importeTotalAgrupacion;
 	}
-	
 
+	public String getMotivoRechazo() {
+		return motivoRechazo;
+	}
+
+	public void setMotivoRechazo(String motivoRechazo) {
+		this.motivoRechazo = motivoRechazo;
+	}
+	
+	
 	 
 }

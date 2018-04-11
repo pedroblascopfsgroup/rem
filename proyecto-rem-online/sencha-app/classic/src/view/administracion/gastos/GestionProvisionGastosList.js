@@ -123,7 +123,12 @@ Ext.define('HreRem.view.administracion.gastos.GestionProvisionGastosList', {
 	                     	text: HreRem.i18n('header.estado.autorizacion.propietario'),
 	                     	flex: 0.4,
 	                     	dataIndex: 'estadoAutorizacionPropietarioDescripcion'
-	                     }
+	                     },
+	                     {
+	    	                text: HreRem.i18n('fieldlabel.motivo.rechazo'),
+	    	                flex: 0.5,
+	    	                dataIndex: 'motivoRechazo'
+		    	         }
         ];
 
         me.dockedItems = [

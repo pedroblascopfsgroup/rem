@@ -163,6 +163,9 @@ public class VGastosProveedor implements Serializable {
 	@Column(name = "GPV_ALERTAS")
 	private Boolean alertas;
 	
+	@Column(name="MOTIVO_RECHAZO")
+	private String motivoRechazo;
+	
 	@Transient
 	private boolean esGastoAgrupado; 
 	
@@ -564,5 +567,14 @@ public class VGastosProveedor implements Serializable {
 
 	public void setAlertas(Boolean alertas) {
 		this.alertas = alertas;
-	}	 
+	}
+
+	public String getMotivoRechazo() {
+		return motivoRechazo;
+	}
+
+	public void setMotivoRechazo(String motivoRechazo) {
+		this.motivoRechazo = motivoRechazo;
+	}
+	
 }

@@ -40,7 +40,7 @@ DECLARE
     -- Creacion Tabla DD_TDS_TAREA_DESTINO_SALTO
     
     -- Comprobamos si existe la tabla   
-    V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''DD_TDS_TAREA_DESTINO_SALTO'' and owner = '''||V_ESQUEMA_M||'''';
+    V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''DD_TDS_TAREA_DESTINO_SALTO'' and owner = '''||V_ESQUEMA||'''';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     -- Si existe la tabla no hacemos nada
     IF V_NUM_TABLAS = 1 THEN 

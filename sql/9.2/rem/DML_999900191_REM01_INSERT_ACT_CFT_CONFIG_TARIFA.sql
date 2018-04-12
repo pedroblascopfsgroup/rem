@@ -111,14 +111,14 @@ DECLARE
 		T_TIPO_DATA('TP56','Actuación técnica','Desmontado cercado','Bankia','2.7','m2'),
 		T_TIPO_DATA('TP57','Actuación técnica','Retirada residuos','Bankia','36','m3'),
 		T_TIPO_DATA('TP58','Actuación técnica','Retirada fibrocemento','Bankia','68','m2'),
-		T_TIPO_DATA('TP59','Actuación técnica','Aislamiento ','Bankia','11.4','m2'),
+		T_TIPO_DATA('TP59','Actuación técnica','Aislamiento','Bankia','11.4','m2'),
 		T_TIPO_DATA('TP60','Actuación técnica','Desinfección urbanización','Bankia','243','m2'),
 		T_TIPO_DATA('TP61','Actuación técnica','Desinfección urbanización','Bankia','0.99','m2'),
 		T_TIPO_DATA('TP62','Actuación técnica','Cepo garaje','Bankia','80','unidad'),
-		T_TIPO_DATA('TP63','Gestión documentación','Obtención boletín','Bankia','80','unidad'),
-		T_TIPO_DATA('TP64','Gestión documentación','Obtención boletín','Bankia','125','unidad'),
-		T_TIPO_DATA('TP65','Gestión documentación','Obtención boletín','Bankia','99','unidad'),
-		T_TIPO_DATA('TP66','Gestión documentación','Obtención CEE','Bankia','80','unidad'),
+		T_TIPO_DATA('TP63','Obtención documentación','Boletín agua','Bankia','80','unidad'),
+		T_TIPO_DATA('TP64','Obtención documentación','Boletín electricidad','Bankia','125','unidad'),
+		T_TIPO_DATA('TP65','Obtención documentación','Boletín gas','Bankia','99','unidad'),
+		T_TIPO_DATA('TP66','Obtención documentación','Certificado Eficiencia Energética (CEE)','Bankia','80','unidad'),
 		T_TIPO_DATA('TP67','Actuación técnica','Reformas mayores','Bankia','28','hora'),
 		T_TIPO_DATA('TP68','Actuación técnica','Reformas mayores','Bankia','28','hora'),
 		T_TIPO_DATA('TP69','Actuación técnica','Reformas mayores','Bankia','28','hora'),
@@ -191,53 +191,53 @@ BEGIN
 		V_CRA_ID := NULL;
 
 		V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_TTF||' WHERE
-						DD_TTF_CODIGO = '''||V_TMP_TIPO_DATA(1)||''' AND
+						DD_TTF_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND
 						BORRADO = 0';
 		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TIPO;
 		
 		IF V_NUM_TIPO = 1 THEN
 			--Seleccionamos DD_TTF_ID
 			V_MSQL := 'SELECT DD_TTF_ID FROM '||V_ESQUEMA||'.'||V_TABLA_TTF||' WHERE
-							DD_TTF_CODIGO = '''||V_TMP_TIPO_DATA(1)||''' AND
+							DD_TTF_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND
 							BORRADO = 0';
 			EXECUTE IMMEDIATE V_MSQL INTO V_TTF_ID;
 		END IF;
 		
 		V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_TTR||' WHERE
-						DD_TTR_DESCRIPCION = '''||V_TMP_TIPO_DATA(2)||''' AND
+						DD_TTR_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''' AND
 						BORRADO = 0';
 		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TIPO;
 		
 		IF V_NUM_TIPO = 1 THEN
 			--Seleccionamos DD_TTR_ID
 			V_MSQL := 'SELECT DD_TTR_ID FROM '||V_ESQUEMA||'.'||V_TABLA_TTR||' WHERE
-							DD_TTR_DESCRIPCION = '''||V_TMP_TIPO_DATA(2)||''' AND
+							DD_TTR_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''' AND
 							BORRADO = 0';
 			EXECUTE IMMEDIATE V_MSQL INTO V_TTR_ID;
 		END IF;
 		
 		V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_STR||' WHERE
-						DD_STR_DESCRIPCION = '''||V_TMP_TIPO_DATA(3)||''' AND
+						DD_STR_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(3))||''' AND
 						BORRADO = 0';
 		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TIPO;
 		
 		IF V_NUM_TIPO = 1 THEN
 			--Seleccionamos DD_STR_ID
 			V_MSQL := 'SELECT DD_STR_ID FROM '||V_ESQUEMA||'.'||V_TABLA_STR||' WHERE
-							DD_STR_DESCRIPCION = '''||V_TMP_TIPO_DATA(3)||''' AND
+							DD_STR_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(3))||''' AND
 							BORRADO = 0';
 			EXECUTE IMMEDIATE V_MSQL INTO V_STR_ID;
 		END IF;
 		
 		V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_CRA||' WHERE
-						DD_CRA_DESCRIPCION = '''||V_TMP_TIPO_DATA(4)||''' AND
+						DD_CRA_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(4))||''' AND
 						BORRADO = 0';
 		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TIPO;
 		
 		IF V_NUM_TIPO = 1 THEN
 			--Seleccionamos DD_CRA_ID
 			V_MSQL := 'SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.'||V_TABLA_CRA||' WHERE
-							DD_CRA_DESCRIPCION = '''||V_TMP_TIPO_DATA(4)||''' AND
+							DD_CRA_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(4))||''' AND
 							BORRADO = 0';
 			EXECUTE IMMEDIATE V_MSQL INTO V_CRA_ID;
 		END IF;

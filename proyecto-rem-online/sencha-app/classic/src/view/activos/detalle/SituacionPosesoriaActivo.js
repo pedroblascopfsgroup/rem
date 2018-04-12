@@ -46,13 +46,12 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            		value: '{situacionPosesoria.indicaPosesion}'
 			            	}
 				        },
-						
 		                { 
 							xtype:'datefieldbase',
 							reference: 'fechaRevisionEstadoPosesorio',
-							allowBlank: false,
 					 		fieldLabel: HreRem.i18n('fieldlabel.fecha.revision.estado.posesorio'),
-			            	bind:		'{situacionPosesoria.fechaRevisionEstado}'						
+			            	bind:		'{situacionPosesoria.fechaRevisionEstado}',
+                            readOnly: true
 						},
 						{
 				        	xtype:'fieldset',
@@ -157,7 +156,6 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 		                { 
 
 				        	xtype: 'comboboxfieldbase',
-				        	allowBlank: false,
 							fieldLabel: HreRem.i18n('fieldlabel.ocupado'),
 				        	bind: {
 			            		store: '{comboSiNoRem}',
@@ -174,12 +172,11 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            			}
 			            			
 			            		}
-			            	}
+			            	},
+                            readOnly: true
 				        },				      
 				        { 
-				        	xtype: 'comboboxfieldbase',				        	
-				        	//rowspan: 2,
-				        	allowBlank: false,
+				        	xtype: 'comboboxfieldbase',
 				        	fieldLabel: HreRem.i18n('fieldlabel.riesgo.ocupacion'),
 				        	bind: {
 			            		store: '{comboSiNoRem}',
@@ -192,7 +189,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            				me.rowspan = 2;
 			            			}
 			            		}
-			            	}
+			            	},
+                            readOnly: true
 				        },
 				        { 
 				        	xtype: 'comboboxfieldbase',
@@ -201,7 +199,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 				        	bind: {
 			            		store: '{comboSiNoRem}',
 			            		value: '{situacionPosesoria.conTitulo}'
-			            	}
+			            	},
+                            readOnly: true
 				        },
 				        { 
 							xtype: 'textfieldbase',
@@ -243,7 +242,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							reference: 'datefieldFechaTitulo',
 							maxValue: null,
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.titulo.posesorio'),
-							bind:		'{situacionPosesoria.fechaTitulo}'
+							bind: '{situacionPosesoria.fechaTitulo}',
+                            readOnly: true
 		                },
 		                { 
 		                	xtype:'datefieldbase',
@@ -330,19 +330,22 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							xtype:'datefieldbase',
 							reference: 'fechaSolDesahucio',
 					 		fieldLabel: HreRem.i18n('fieldlabel.fecha.solicitud.desahucio'),
-			            	bind:		'{situacionPosesoria.fechaSolDesahucio}'
+			            	bind: '{situacionPosesoria.fechaSolDesahucio}',
+                            readOnly: true
 						},
 						{ 
 							xtype:'datefieldbase',
 							reference: 'fechaLanzamiento',
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.senyalamiento.lanzamiento'),
-		                	bind:		'{situacionPosesoria.fechalanzamiento}'
+		                	bind: '{situacionPosesoria.fechalanzamiento}',
+                            readOnly: true
 		                },
 		                { 
 		                	xtype:'datefieldbase',
 							reference: 'fechaLanzamientoEfectivo',
 		                	fieldLabel: HreRem.i18n('fieldlabel.fecha.lanzamiento.efectuado'),
-		                	bind:		'{situacionPosesoria.fechaLanzamientoEfectivo}'
+		                	bind: '{situacionPosesoria.fechaLanzamientoEfectivo}',
+                            readOnly: true
 		                }
 					
 					]

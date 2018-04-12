@@ -2512,7 +2512,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onCargasListDobleClick: function (grid, record) {
 		var me = this;
 
-		Ext.create("HreRem.view.activos.detalle.CargaDetalle", {carga: record, parent: grid.up("form"), modoEdicion: true}).show();
+		if(CONST.ORIGEN_DATO['REM'] === record.getData().origenDatoCodigo) {
+			Ext.create("HreRem.view.activos.detalle.CargaDetalle", {carga: record, parent: grid.up("form"), modoEdicion: true}).show();
+		}
 	},
 
 	abrirFormularioAnyadirCarga: function(grid) {

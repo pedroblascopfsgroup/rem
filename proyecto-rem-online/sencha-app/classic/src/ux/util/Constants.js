@@ -27,7 +27,7 @@ Ext.define('HreRem.ux.util.Constants', {
         GASTO: 6
     },
 
-    TIPOS_COMERCIALIZACION: {    	
+    TIPOS_COMERCIALIZACION: {
     	VENTA: '01',
     	ALQUILER_VENTA: '02',
     	SOLO_ALQUILER: '03',
@@ -340,11 +340,16 @@ Ext.define('HreRem.ux.util.Constants', {
     MOTIVO_OCULTACION: {
         OTROS: '12'
     },
-    
+
     TIPO_RESOLUCION_COMITE: {
     	APRUEBA: '01',
     	RECHAZA: '02',
     	CONTRAOFERTA: '03'
-    }
+    },
+
+	ORIGEN_DATO: {
+		REM: '01',
+		RECOVERY: '02'
+	}
 
 });

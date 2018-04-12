@@ -3135,7 +3135,6 @@ public class ActivoAdapter {
 	
 	@Transactional(readOnly = false)
 	public boolean saveTasacion(DtoTasacion dtoTasacion) {
-
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTasacion.getId());
 		ActivoTasacion activoTasacion = genericDao.get(ActivoTasacion.class, filtro);
 		
@@ -3145,14 +3144,17 @@ public class ActivoAdapter {
 			activoTasacion.setTipoTasacion(tipoTasacion);
 		}
 		
-		double importeTasacionFinDouble = 0;
+		double importeTasacionFinDouble = 0d;
 		if(!dtoTasacion.getImporteTasacionFin().isEmpty()){
 			importeTasacionFinDouble = Double.parseDouble(dtoTasacion.getImporteTasacionFin());
 		}
 		activoTasacion.setImporteTasacionFin(importeTasacionFinDouble);
+		activoTasacion.setFechaInicioTasacion(dtoTasacion.getFechaInicioTasacion());
+		// TODO: falta la fecha de solicitud.
+		activoTasacion.setFechaRecepcionTasacion(dtoTasacion.getFechaRecepcionTasacion());
+		activoTasacion.setNomTasador(dtoTasacion.getNomTasador());
 		
 		NMBValoracionesBien valoracionActivoTasacion = activoTasacion.getValoracionBien();
-		
 		try {
 			beanUtilNotNull.copyProperty(valoracionActivoTasacion, "fechaValorTasacion", dtoTasacion.getFechaValorTasacion());
 		} catch (IllegalAccessException e) {
@@ -3160,15 +3162,10 @@ public class ActivoAdapter {
 		} catch (InvocationTargetException e) {
 			logger.error(e.getMessage());
 		}
-		
 		genericDao.save(NMBValoracionesBien.class, valoracionActivoTasacion);
-		
-		activoTasacion.setNomTasador(dtoTasacion.getNomTasador());
-		
-		
+
 		genericDao.save(ActivoTasacion.class, activoTasacion);
 
 		return true;
-
 	}
 }

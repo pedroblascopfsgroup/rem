@@ -103,7 +103,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirPropietario', {
 			    					        	fieldLabel: HreRem.i18n('fieldlabel.porcentaje.propiedad'),
 			    					        	name: 'porcPropiedad',
 			    					        	maskRe: /[0-9.]/,
-			    					        	allowBlank: false
+                                                readOnly: true
 			    					        },
 			    					        {
 			    					        		xtype: 'comboboxfieldbase',
@@ -148,21 +148,23 @@ Ext.define('HreRem.view.activos.detalle.AnyadirPropietario', {
 											{
 												fieldLabel: HreRem.i18n('header.nombre.razon.social'),
 												name: 'nombre',
-												allowBlank: false
+                                                readOnly: true
 											},
 											{
 		    					        		xtype: 'comboboxfieldbase',
-		    					        	   fieldLabel: HreRem.i18n('fieldlabel.tipo.documento'),
-		    					        	   name: 'tipoDoc',
-											   displayField: 'descripcion',
-											   valueField: 'codigo',
-											   bind:{ 
+		    					        	    fieldLabel: HreRem.i18n('fieldlabel.tipo.documento'),
+		    					        	    name: 'tipoDoc',
+											    displayField: 'descripcion',
+											    valueField: 'codigo',
+											    bind:{
 												   	store: '{comboTipoDocumento}'
-												   		} 
+												},
+                                                readOnly: true
 	    		    						},
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.numero.documento'),
-												name: 'numDoc'
+												name: 'numDoc',
+                                                readOnly: true
 			    					        },
 			    					        {
 			    					        	fieldLabel: HreRem.i18n('fieldlabel.direccion'),

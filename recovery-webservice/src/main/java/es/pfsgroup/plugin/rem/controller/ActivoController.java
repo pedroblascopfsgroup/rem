@@ -2473,12 +2473,9 @@ public class ActivoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveTasacionActivo(DtoTasacion tasacionDto, ModelMap model) {
-
-
 		try {
 			boolean success = adapter.saveTasacion(tasacionDto);
 			model.put("success", success);
-
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put("success", false);

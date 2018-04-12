@@ -599,16 +599,14 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							{
 								xtype: 'textfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.bancario.expediente.num'),
-								bind: '{activo.numExpRiesgo}'
+								bind: '{activo.numExpRiesgo}',
+								readOnly: true
 							},
 							{
 								xtype:'textfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.bancario.producto.tipo'),
-								bind: '{activo.productoDescripcion}'
-								/*bind: {
-									store: '{comboTipoProductoBancario}',
-									value: '{activo.tipoProductoCodigo}'
-								}*/
+								bind: '{activo.productoDescripcion}',
+                                readOnly: true
 							},
 							{
 								xtype:'comboboxfieldbase',

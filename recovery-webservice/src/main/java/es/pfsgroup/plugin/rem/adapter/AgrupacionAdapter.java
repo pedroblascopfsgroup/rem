@@ -560,7 +560,7 @@ public class AgrupacionAdapter {
 				distintosTiposImpuesto(agrupacion, activo);
 				
 				//Comprobamos no
-				comprobarDistintoPropietario(agrupacion, activo);
+			//	comprobarDistintoPropietario(agrupacion, activo);
 				
 				List<Oferta> ofertasAgrupacion = agrupacion.getOfertas();
 				if (tieneOfertasNoAnuladas(ofertasAgrupacion)) {

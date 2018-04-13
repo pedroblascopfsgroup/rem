@@ -270,7 +270,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			if(!Ext.isEmpty(storeListaActivosTrabajo) && !Ext.isEmpty(storeListaActivosTrabajo.data)){
 				var propietarioId = storeListaActivosTrabajo.data.items[0].data.propietarioId;
 				for (i=0; i < storeListaActivosTrabajo.data.length; i++) {
-					if(check){
+					/*if(check){
 						if(storeListaActivosTrabajo.data.items[i].data.propietarioId != propietarioId){
 							Ext.MessageBox.alert(
 									HreRem.i18n("msgbox.multiples.trabajos.seleccionado.diferente.propietario.titulo"),
@@ -278,7 +278,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 							);
 							return false;
 						}
-					}
+					}*/
 					if (storeListaActivosTrabajo.data.items[i].data.tienePerimetroGestion != "1"){
 						Ext.MessageBox.alert(
 								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),

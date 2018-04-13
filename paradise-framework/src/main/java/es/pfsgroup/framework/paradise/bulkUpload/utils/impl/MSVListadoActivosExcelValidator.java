@@ -98,11 +98,11 @@ public class MSVListadoActivosExcelValidator extends MSVExcelValidatorAbstract {
 				listaErrores.add(messageServices.getMessage(ACTIVE_NOT_EXISTS));
 			}
 
-			if (!comprobarDistintoPropietarioListaActivos(exc)) {
+		/*	if (!comprobarDistintoPropietarioListaActivos(exc)) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				listaErrores.add(messageServices.getMessage(ERROR_ACTIVO_DISTINTO_PROPIETARIO));
 
-			}
+			}*/
 
 			if (dtoValidacionContenido.getFicheroTieneErrores()) {
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());

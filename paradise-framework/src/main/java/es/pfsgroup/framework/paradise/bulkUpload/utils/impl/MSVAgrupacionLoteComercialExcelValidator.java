@@ -127,7 +127,7 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 			mapaErrores.put(messageServices.getMessage(ACTIVO_SIN_PROPIETARIO), activosSinPropietariosRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_COMERCIALIZABLE), activosNoComercializablesRows(exc));
 			mapaErrores.put(messageServices.getMessage(ERROR_ACTIVO_CANARIAS), distintosTiposImpuesto(exc));
-			mapaErrores.put(messageServices.getMessage(ERROR_ACTIVO_DISTINTO_PROPIETARIO), comprobarDistintoPropietario(exc));
+			//mapaErrores.put(messageServices.getMessage(ERROR_ACTIVO_DISTINTO_PROPIETARIO), comprobarDistintoPropietario(exc));
 			
 			// mapaErrores.put(messageServices.getMessage(ACTIVO_INCLUIDO_PERIMETRO), activosIncluidosPerimetroRows(exc));
 			// mapaErrores.put(messageServices.getMessage(ACTIVO_NO_FINANCIERO),activosFinancierosRows(exc));
@@ -152,7 +152,7 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 							.get(messageServices.getMessage(AGRUPACION_ACTIVOS_SIN_OFERTAS_ACEPTADAS.mensajeError))
 							.isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ERROR_ACTIVO_CANARIAS)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(ERROR_ACTIVO_DISTINTO_PROPIETARIO)).isEmpty()
+					//|| !mapaErrores.get(messageServices.getMessage(ERROR_ACTIVO_DISTINTO_PROPIETARIO)).isEmpty()
 					) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());

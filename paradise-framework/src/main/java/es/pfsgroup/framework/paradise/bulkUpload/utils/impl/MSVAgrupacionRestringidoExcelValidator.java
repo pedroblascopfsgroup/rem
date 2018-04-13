@@ -92,10 +92,10 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 				listaErrores.add(ACTIVE_NOT_SHARING_PLACE);
 			}
 			
-			if (!comprobarDistintoPropietario(exc)) {
+			/*if (!comprobarDistintoPropietario(exc)) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				listaErrores.add(ERROR_ACTIVO_DISTINTO_PROPIETARIO);
-			}
+			}*/
 			
 			String[] activosEnAgrupacion = isActiveInAgrupacionRestringida(exc);
 			if (activosEnAgrupacion != null) {

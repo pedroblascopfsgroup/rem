@@ -1,13 +1,13 @@
 --/*
 --#########################################
---## AUTOR=DAP
---## FECHA_CREACION=20171027
---## ARTEFACTO=batch
---## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK='||V_USUARIO||'
+--## AUTOR=RLB
+--## FECHA_CREACION=20180413
+--## ARTEFACTO=web
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK='HREOS-4003'
 --## PRODUCTO=NO
 --## 
---## Finalidad: Proceso de borrado físico de ciertas tablas
+--## Finalidad: Proceso de inserción PTEC
 --##            
 --## INSTRUCCIONES:  
 --## VERSIONES:
@@ -22,8 +22,8 @@ SET DEFINE OFF;
 
 DECLARE
 
-  V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01';-- '#ESQUEMA#'; -- Configuracion Esquema
-  V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER';-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+  V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+  V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
   ERR_NUM NUMBER;-- Numero de errores
   ERR_MSG VARCHAR2(2048);-- Mensaje de error
   V_MSQL VARCHAR2(4000 CHAR);

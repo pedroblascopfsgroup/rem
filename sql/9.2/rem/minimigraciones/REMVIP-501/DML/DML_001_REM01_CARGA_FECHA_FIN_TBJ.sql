@@ -1,0 +1,65 @@
+--/*
+--#########################################
+--## AUTOR=DAP
+--## FECHA_CREACION=20180413
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=2.0.16
+--## INCIDENCIA_LINK=REMVIP-501
+--## PRODUCTO=NO
+--## 
+--## Finalidad: 
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+
+    V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+    V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-501';
+    V_TABLA VARCHAR2(40 CHAR) := 'ACT_TBJ_TRABAJO';
+    V_TABLA_MIG VARCHAR2(40 CHAR) := 'AUX_FECHA_FIN_TBJ';
+    V_SENTENCIA VARCHAR2(2000 CHAR);
+
+BEGIN
+
+    DBMS_OUTPUT.PUT_LINE('[INICIO] COMIENZA EL PROCESO DE ACTUALIZACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
+    
+    EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA||'.AUX_FECHA_FIN_TBJ AUX
+		WHERE EXISTS (
+		    SELECT ROWID
+		    FROM (
+		        SELECT ROWID, ROW_NUMBER() OVER(PARTITION BY TBJ ORDER BY TO_DATE(FECHA,''DD/MM/YYYY'') DESC) RN
+		        FROM '||V_ESQUEMA||'.AUX_FECHA_FIN_TBJ) AUX2
+		    WHERE AUX2.RN > 1 AND AUX2.ROWID = AUX.ROWID)';
+	DBMS_OUTPUT.PUT_LINE('	[INFO] Se han borrado '||SQL%ROWCOUNT||' filas en '||V_TABLA_MIG||' por duplicados.');
+
+	EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.ACT_TBJ_TRABAJO T1
+		USING '||V_ESQUEMA||'.AUX_FECHA_FIN_TBJ T2
+		ON (T1.TBJ_NUM_TRABAJO = T2.TBJ)
+		WHEN MATCHED THEN UPDATE SET
+		    T1.TBJ_FECHA_FIN = TO_DATE(T2.FECHA,''DD/MM/YYYY''), T1.USUARIOMODIFICAR = '''||V_USUARIO||'''
+		    , T1.FECHAMODIFICAR = SYSDATE
+		WHERE NVL(T1.TBJ_FECHA_FIN, TO_DATE(''01/01/2099'')) <> TO_DATE(T2.FECHA,''DD/MM/YYYY'')';
+    DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' filas en '||V_TABLA||' (TBJ_FECHA_FIN).');
+
+    COMMIT;
+
+    DBMS_OUTPUT.PUT_LINE('[FIN]');
+
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(SQLERRM);
+        ROLLBACK;
+        RAISE;
+END;
+/
+EXIT;

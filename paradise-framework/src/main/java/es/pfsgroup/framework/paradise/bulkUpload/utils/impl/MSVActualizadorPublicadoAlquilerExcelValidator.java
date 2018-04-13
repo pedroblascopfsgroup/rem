@@ -40,6 +40,8 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 	private static final String DESTINO_COMERCIAL_NO_ALQUILER = "Este activo no incluye el destino comercial de alquiler";
 	private static final String ACTIVO_SIN_PRECIO_ALQUILER = "Este activo no tiene asignado un precio de renta web";
 	private static final String ACTIVO_SIN_INFORME_APROBADO = "Este activo no tiene el informe aprobado";
+	private static final String CAMPO_OCULTAR_PRECIO_FORMATO_NO_VALIDO = "El campo ocultar precio contiene un valor no válido";
+	private static final String CAMPO_PUBLICAR_SIN_PRECIO_FORMATO_NO_VALIDO = "El campo publicar sin precio contiene un valor no válido";
 
 	private static final Integer NUMERO_HOJA_DATOS = 0;
 
@@ -92,6 +94,8 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 		
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 			Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
+			mapaErrores.put(CAMPO_OCULTAR_PRECIO_FORMATO_NO_VALIDO, isCampoOcultarPrecioFormatoValidoRows(exc));
+			mapaErrores.put(CAMPO_PUBLICAR_SIN_PRECIO_FORMATO_NO_VALIDO, isCampoPublicarSinPrecioFormatoValidoRows(exc));
 			mapaErrores.put(ACTIVO_NOT_EXISTS, isActiveNotExistsRows(exc));
 			mapaErrores.put(ACTIVO_VENDIDO, activosVendidosRows(exc));
 			mapaErrores.put(ACTIVO_NO_PUBLICABLE, activosNoPublicablesRows(exc));
@@ -100,7 +104,8 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 			mapaErrores.put(ACTIVO_SIN_INFORME_APROBADO, activosSinInformeAprobadoRows(exc));
 			mapaErrores.put(ACTIVO_SIN_PRECIO_ALQUILER, activosSinPrecioRentaOSinPublicarSinPrecioRows(exc));
 
-			if (!mapaErrores.get(ACTIVO_NOT_EXISTS).isEmpty() || !mapaErrores.get(ACTIVO_SIN_INFORME_APROBADO).isEmpty()
+			if (!mapaErrores.get(CAMPO_OCULTAR_PRECIO_FORMATO_NO_VALIDO).isEmpty() || !mapaErrores.get(CAMPO_PUBLICAR_SIN_PRECIO_FORMATO_NO_VALIDO).isEmpty()
+					|| !mapaErrores.get(ACTIVO_NOT_EXISTS).isEmpty() || !mapaErrores.get(ACTIVO_SIN_INFORME_APROBADO).isEmpty()
 					|| !mapaErrores.get(ACTIVO_VENDIDO).isEmpty() || !mapaErrores.get(ACTIVO_NO_COMERCIALIZABLE).isEmpty()
 					|| !mapaErrores.get(ACTIVO_NO_PUBLICABLE).isEmpty() || !mapaErrores.get(DESTINO_COMERCIAL_NO_ALQUILER).isEmpty()
 					|| !mapaErrores.get(ACTIVO_SIN_PRECIO_ALQUILER).isEmpty()){
@@ -152,6 +157,46 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 			}
 		}
 		return resultado;
+	}
+
+	private List<Integer> isCampoPublicarSinPrecioFormatoValidoRows(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try{
+			for(i=1; i<this.numFilasHoja;i++){
+				if(!Checks.esNulo(exc.dameCelda(i, 2)) && (!"s".equalsIgnoreCase(exc.dameCelda(i, 2)) || !"si".equalsIgnoreCase(exc.dameCelda(i, 2)) ||
+						!"n".equalsIgnoreCase(exc.dameCelda(i, 2)) || !"no".equalsIgnoreCase(exc.dameCelda(i, 2)))) {
+					listaFilas.add(i);
+				}
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+
+		return listaFilas;
+	}
+
+	private List<Integer> isCampoOcultarPrecioFormatoValidoRows(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try{
+			for(i=1; i<this.numFilasHoja;i++){
+				if(!Checks.esNulo(exc.dameCelda(i, 1)) && (!"s".equalsIgnoreCase(exc.dameCelda(i, 1)) || !"si".equalsIgnoreCase(exc.dameCelda(i, 1)) ||
+						!"n".equalsIgnoreCase(exc.dameCelda(i, 1)) || !"no".equalsIgnoreCase(exc.dameCelda(i, 1)))) {
+					listaFilas.add(i);
+				}
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+
+		return listaFilas;
 	}
 	
 	private File recuperarPlantilla(Long idTipoOperacion)  {

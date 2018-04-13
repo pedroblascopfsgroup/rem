@@ -3478,9 +3478,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		} catch (InvocationTargetException e) {
 			logger.error("Error en activoManager", e);
 			return false;
-		} catch (SQLException e) {
-			logger.error("Error en activoManager", e);
-			return false;
 		}
 
 		activo.setObservacionesVentaExterna(dto.getObservaciones());
@@ -3494,11 +3491,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	 * el activo (insertar valor en fecha venta o importe venta del activo)
 	 * 
 	 * @param activo
-	 * @param dto
-	 * @throws SQLException
 	 * @throws JsonViewerException
 	 */
-	private void setSituacionComercialAndEstadoPublicacion(Activo activo) throws JsonViewerException, SQLException {
+	private void setSituacionComercialAndEstadoPublicacion(Activo activo) throws JsonViewerException {
 		if (!Checks.esNulo(activo.getFechaVentaExterna()) || !Checks.esNulo(activo.getImporteVentaExterna())) {
 			// Situación comercial --------
 			DDSituacionComercial situacionComercial = (DDSituacionComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class, DDSituacionComercial.CODIGO_VENDIDO);
@@ -3506,7 +3501,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (!Checks.esNulo(situacionComercial)) activo.setSituacionComercial(situacionComercial);
 
 			// Estado publicación ----------
-			this.setActivoToNoPublicado(activo, messageServices.getMessage(MOTIVO_NO_PUBLICADO_POR_ACTIVO_VENDIDO));
+			//this.setActivoToNoPublicado(activo, messageServices.getMessage(MOTIVO_NO_PUBLICADO_POR_ACTIVO_VENDIDO));// TODO: llamar al SP de estado publicación.
+			activoAdapter.updatePortalPublicacion(activo.getId());
 		}
 	}
 

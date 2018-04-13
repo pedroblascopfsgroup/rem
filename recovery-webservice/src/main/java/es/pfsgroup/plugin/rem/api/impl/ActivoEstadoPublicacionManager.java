@@ -743,7 +743,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	public Boolean setDatosPublicacionActivo(DtoDatosPublicacionActivo dto) throws JsonViewerException{
 		ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(dto.getIdActivo());
 
-		if(this.registrarHistoricoPublicacion(activoPublicacion)) {
+		if(this.registrarHistoricoPublicacion(activoPublicacion, dto)) {
 			if(this.actualizarDatosEstadoActualPublicacion(dto, activoPublicacion)) {
 				return this.publicarActivoProcedure(dto.getIdActivo(), genericAdapter.getUsuarioLogado().getUsername());
 			}
@@ -806,6 +806,17 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarPrecioAlquiler", dto.getNoMostrarPrecioAlquiler());
 			beanUtilNotNull.copyProperty(activoPublicacion, "checkSinPrecioAlquiler", dto.getPublicarSinPrecioAlquiler());
 
+
+			if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualVenta()) || !Checks.esNulo(dto.getPublicarVenta()) ||
+					!Checks.esNulo(dto.getOcultarVenta()) || !Checks.esNulo(dto.getPublicarSinPrecioVenta()) || !Checks.esNulo(dto.getNoMostrarPrecioVenta())) {
+				activoPublicacion.setFechaInicioVenta(new Date());
+			}
+
+			if(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualAlquiler()) || !Checks.esNulo(dto.getPublicarAlquiler()) ||
+					!Checks.esNulo(dto.getOcultarAlquiler()) || !Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) || !Checks.esNulo(dto.getNoMostrarPrecioAlquiler())) {
+				activoPublicacion.setFechaInicioAlquiler(new Date());
+			}
+
 			activoPublicacionDao.save(activoPublicacion);
 		} catch (IllegalAccessException e) {
 			logger.error("Error al actualizar el estado actual de publicacion, error: ", e);
@@ -825,16 +836,24 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 * @param activoPublicacion: registro de publicación actual del activo.
 	 * @return Devuelve True si el proceso ha sido satisfactorio, False si no lo ha sido.
 	 */
-	private Boolean registrarHistoricoPublicacion(ActivoPublicacion activoPublicacion) {
+	private Boolean registrarHistoricoPublicacion(ActivoPublicacion activoPublicacion, DtoDatosPublicacionActivo dto) {
 		ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
 
 		try {
 			beanUtilNotNull.copyProperties(activoPublicacionHistorico, activoPublicacion);
-			if(Arrays.asList(DDTipoComercializacion.CODIGOS_VENTA).contains(activoPublicacion.getTipoComercializacion().getCodigo())) {
+
+			if(Arrays.asList(DDTipoComercializacion.CODIGOS_VENTA).contains(activoPublicacion.getTipoComercializacion().getCodigo()) &&
+					(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualVenta()) || !Checks.esNulo(dto.getPublicarVenta()) ||
+					!Checks.esNulo(dto.getOcultarVenta()) || !Checks.esNulo(dto.getPublicarSinPrecioVenta()) || !Checks.esNulo(dto.getNoMostrarPrecioVenta()))) {
 				activoPublicacionHistorico.setFechaFinVenta(new Date());
-			} else if(Arrays.asList(DDTipoComercializacion.CODIGOS_ALQUILER).contains(activoPublicacion.getTipoComercializacion().getCodigo())) {
-				activoPublicacionHistorico.setFechaFinAlquiler(new Date());
 			}
+
+			if(Arrays.asList(DDTipoComercializacion.CODIGOS_ALQUILER).contains(activoPublicacion.getTipoComercializacion().getCodigo()) &&
+					(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualAlquiler()) || !Checks.esNulo(dto.getPublicarAlquiler()) ||
+					!Checks.esNulo(dto.getOcultarAlquiler()) || !Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) || !Checks.esNulo(dto.getNoMostrarPrecioAlquiler()))) {
+				activoPublicacion.setFechaInicioAlquiler(new Date());
+			}
+
 		} catch (IllegalAccessException e) {
 			logger.error("Error al registrar en el historico el estado actual de publicacion, error: ", e);
 			return false;

@@ -18,11 +18,10 @@ public class ActivoPatrimonioDaoImpl extends AbstractEntityDao<ActivoPatrimonio,
 
 	@Override
 	public ActivoPatrimonio getActivoPatrimonioByActivo(Long idActivo) {
-		HQLBuilder hb = new HQLBuilder(" from ActivoPatrimonio ap");
-   	  	HQLBuilder.addFiltroLikeSiNotNull(hb, "ap.activo.id", idActivo, true);
-   	  	hb.appendWhere("ap.auditoria.borrado is not null");
+		Criteria criteria = getSession().createCriteria(ActivoPatrimonio.class);
+		criteria.add(Restrictions.eq("activo.id", idActivo));
 
-		return HibernateQueryUtils.uniqueResult(this, hb);
+		return HibernateUtils.castObject(ActivoPatrimonio.class, criteria.uniqueResult());
 	}
 
 	@Override

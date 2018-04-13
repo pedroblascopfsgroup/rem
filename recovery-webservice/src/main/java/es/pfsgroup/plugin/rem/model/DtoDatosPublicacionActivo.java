@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.rem.model;
 
 import es.capgemini.devon.dto.WebDto;
 
+import java.util.Date;
+
 /**
  * Dto para los datos de publicación de los activos.
  */
@@ -35,6 +37,61 @@ public class DtoDatosPublicacionActivo extends WebDto {
 	private Boolean deshabilitarCheckOcultarAlquiler;
 	private Boolean deshabilitarCheckPublicarSinPrecioAlquiler;
 	private Boolean deshabilitarCheckNoMostrarPrecioAlquiler;
+	private Date fechaInicioEstadoVenta;
+	private Date fechaInicioEstadoAlquiler;
+	private String tipoPublicacionVentaCodigo;
+	private String tipoPublicacionAlquilerCodigo;
+	private String tipoPublicacionVentaDescripcion;
+	private String tipoPublicacionAlquilerDescripcion;
+
+
+	public String getTipoPublicacionVentaDescripcion() {
+		return tipoPublicacionVentaDescripcion;
+	}
+
+	public void setTipoPublicacionVentaDescripcion(String tipoPublicacionVentaDescripcion) {
+		this.tipoPublicacionVentaDescripcion = tipoPublicacionVentaDescripcion;
+	}
+
+	public String getTipoPublicacionAlquilerDescripcion() {
+		return tipoPublicacionAlquilerDescripcion;
+	}
+
+	public void setTipoPublicacionAlquilerDescripcion(String tipoPublicacionAlquilerDescripcion) {
+		this.tipoPublicacionAlquilerDescripcion = tipoPublicacionAlquilerDescripcion;
+	}
+
+	public Date getFechaInicioEstadoVenta() {
+		return fechaInicioEstadoVenta;
+	}
+
+	public void setFechaInicioEstadoVenta(Date fechaInicioEstadoVenta) {
+		this.fechaInicioEstadoVenta = fechaInicioEstadoVenta;
+	}
+
+	public Date getFechaInicioEstadoAlquiler() {
+		return fechaInicioEstadoAlquiler;
+	}
+
+	public void setFechaInicioEstadoAlquiler(Date fechaInicioEstadoAlquiler) {
+		this.fechaInicioEstadoAlquiler = fechaInicioEstadoAlquiler;
+	}
+
+	public String getTipoPublicacionVentaCodigo() {
+		return tipoPublicacionVentaCodigo;
+	}
+
+	public void setTipoPublicacionVentaCodigo(String tipoPublicacionVentaCodigo) {
+		this.tipoPublicacionVentaCodigo = tipoPublicacionVentaCodigo;
+	}
+
+	public String getTipoPublicacionAlquilerCodigo() {
+		return tipoPublicacionAlquilerCodigo;
+	}
+
+	public void setTipoPublicacionAlquilerCodigo(String tipoPublicacionAlquilerCodigo) {
+		this.tipoPublicacionAlquilerCodigo = tipoPublicacionAlquilerCodigo;
+	}
 
 	public String getAdecuacionAlquilerCodigo() {
 		return adecuacionAlquilerCodigo;

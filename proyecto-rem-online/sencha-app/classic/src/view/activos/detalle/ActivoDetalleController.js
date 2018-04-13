@@ -3175,9 +3175,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var me = this;
     	var record = combo.findRecord(combo.valueField, combo.getValue());
     	var textArea = me.lookupReference(combo.textareaRefChained);
-    	textArea.reset();
 
-    	if(record && record.data.codigo === CONST.MOTIVO_OCULTACION['OTROS']) {
+    	if(record && record.data.esMotivoManual === 'true') {
     		textArea.setReadOnly(false);
     	} else {
     		textArea.setReadOnly(true);

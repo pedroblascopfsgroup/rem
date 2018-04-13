@@ -47,8 +47,12 @@ public class MSVActualizadorPublicarVenta extends AbstractMSVActualizador implem
 		DtoDatosPublicacionActivo dto = new DtoDatosPublicacionActivo();
 		dto.setIdActivo(activo.getId());
 		dto.setPublicarVenta(true);
-		dto.setNoMostrarPrecioVenta(this.obtenerBooleanExcel(exc.dameCelda(fila, COL_OCULTAR_PRECIO)));
-		dto.setPublicarSinPrecioVenta(this.obtenerBooleanExcel(exc.dameCelda(fila, COL_PUBLICAR_SIN_PRECIO)));
+		if(!Checks.esNulo(exc.dameCelda(fila, COL_OCULTAR_PRECIO))) {
+			dto.setNoMostrarPrecioVenta(this.obtenerBooleanExcel(exc.dameCelda(fila, COL_OCULTAR_PRECIO)));
+		}
+		if(!Checks.esNulo(exc.dameCelda(fila, COL_PUBLICAR_SIN_PRECIO))) {
+			dto.setPublicarSinPrecioVenta(this.obtenerBooleanExcel(exc.dameCelda(fila, COL_PUBLICAR_SIN_PRECIO)));
+		}
 
 		activoEstadoPublicacionApi.setDatosPublicacionActivo(dto);
 	}

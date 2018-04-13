@@ -60,9 +60,9 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 									colspan: 3,
 									layout: {
 										type: 'table',
-										columns: 3,
+										columns: 4,
 										rAttrs: {height: '30px', width: '100%'},
-										tdAttrs: {width: '33%'},
+										tdAttrs: {width: '25%'},
 										tableAttrs: {
 											style: {
 												width: '100%'
@@ -81,7 +81,18 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												fieldLabel:  HreRem.i18n('fieldlabel.datos.publicacion.estados.precio.web'),
 												bind: '{datospublicacionactivo.precioWebVenta}',
 												readOnly: true
-											}
+											},
+											{
+	                                            xtype: 'datefieldbase',
+	                                            fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.estado.fecha'),
+	                                            bind:		'{datospublicacionactivo.fechaInicioEstadoVenta}',
+	                                            readOnly	: true
+	                                        },
+	                                        {
+                                                fieldLabel:  HreRem.i18n('fieldlabel.datos.publicacion.estados.tipo.publicacion'),
+                                                bind: '{datospublicacionactivo.tipoPublicacionVentaDescripcion}',
+                                                readOnly: true
+                                            }
 										]
 								},
 								{
@@ -198,9 +209,9 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 									colspan: 3,
 									layout: {
 										type: 'table',
-										columns: 3,
+										columns: 4,
 										rAttrs: {height: '30px', width: '100%'},
-										tdAttrs: {width: '33%'},
+										tdAttrs: {width: '25%'},
 										tableAttrs: {
 											style: {
 												width: '100%'
@@ -220,15 +231,26 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												bind: '{datospublicacionactivo.precioWebAlquiler}',
 												readOnly: true
 											},
-											{
-                                                xtype: 'comboboxfieldbase',
-                                                fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.adecuacion'),                                                
-                                                bind: {
-                                                    store: '{comboAdecuacionAlquiler}',
-                                                    value: '{datospublicacionactivo.adecuacionAlquilerCodigo}'
-                                                },
-                                                readOnly: true
-                                            }
+	                                        {
+	                                            xtype: 'datefieldbase',
+	                                            fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.estado.fecha'),
+	                                            bind:		'{datospublicacionactivo.fechaInicioEstadoAlquiler}',
+	                                            readOnly	: true
+	                                        },
+	                                        {
+	                                             fieldLabel:  HreRem.i18n('fieldlabel.datos.publicacion.estados.tipo.publicacion'),
+	                                             bind: '{datospublicacionactivo.tipoPublicacionAlquilerDescripcion}',
+	                                             readOnly: true
+	                                        },
+	                                        {
+	                                            xtype: 'comboboxfieldbase',
+	                                            fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.adecuacion'),
+	                                            bind: {
+	                                                store: '{comboAdecuacionAlquiler}',
+	                                                value: '{datospublicacionactivo.adecuacionAlquilerCodigo}'
+	                                            },
+	                                            readOnly: true
+	                                        }
 										]
 								},
 								{

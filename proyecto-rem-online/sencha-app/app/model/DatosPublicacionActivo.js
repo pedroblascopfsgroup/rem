@@ -101,7 +101,29 @@ Ext.define('HreRem.model.DatosPublicacionActivo', {
         {
             name:'deshabilitarCheckNoMostrarPrecioAlquiler',
             type: 'boolean'
-        }
+        },
+        {
+            name:'fechaInicioEstadoVenta',
+            type:'date',
+            dateFormat: 'c'
+        },
+        {
+            name:'fechaInicioEstadoAlquiler',
+            type:'date',
+            dateFormat: 'c'
+        },
+        {
+            name:'tipoPublicacionVentaCodigo'
+        },
+        {
+            name:'tipoPublicacionAlquilerCodigo'
+        },
+        {
+	        name:'tipoPublicacionVentaDescripcion'
+	    },
+	    {
+	        name:'tipoPublicacionAlquilerDescripcion'
+	    }
 	],
 
 	proxy: {

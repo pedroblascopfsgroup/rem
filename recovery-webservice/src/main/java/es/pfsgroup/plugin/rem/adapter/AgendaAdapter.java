@@ -138,8 +138,20 @@ public class AgendaAdapter {
 			dto.setNombreTarea(dtoTareaFiltro.getDescripcionTarea());
 			dto.setDescripcionTarea(null);
 		}else{
-			dto.setNombreTarea(dtoTareaFiltro.getNombreTarea());
-			dto.setDescripcionTarea(dtoTareaFiltro.getDescripcionTarea());			
+			if (!Checks.esNulo(dtoTareaFiltro.getNombreTarea())) {
+				Filter filterNombre = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTareaFiltro.getNombreTarea());
+				TareaProcedimiento tarea = genericDao.get(TareaProcedimiento.class, filterNombre);
+				dto.setNombreTarea(tarea.getDescripcion());
+			} else {
+				dto.setNombreTarea(null);
+			}
+			if (!Checks.esNulo(dtoTareaFiltro.getDescripcionTarea())){
+				Filter filterDescripcion = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTareaFiltro.getDescripcionTarea());
+				TipoProcedimiento procedimiento = genericDao.get(TipoProcedimiento.class, filterDescripcion);
+				dto.setDescripcionTarea(procedimiento.getDescripcion());
+			} else {
+				dto.setDescripcionTarea(null);
+			}					
 		}
 	
 		// Adaptamos las fechas por si introducimos sólo unas de las dos.

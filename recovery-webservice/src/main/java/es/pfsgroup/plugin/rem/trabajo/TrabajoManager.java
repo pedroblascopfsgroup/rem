@@ -1086,6 +1086,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@BusinessOperation(overrides = "trabajoManager.createTramiteTrabajo")
 	public ActivoTramite createTramiteTrabajo(Trabajo trabajo) {
 		TipoProcedimiento tipoTramite = new TipoProcedimiento();
+		if(trabajo.getEsTarifaPlana() == null){
+			trabajo.setEsTarifaPlana(false);
+		}
 
 		// Tramites [FASE 1] -----------------------
 		if (trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL)) { // Obtención

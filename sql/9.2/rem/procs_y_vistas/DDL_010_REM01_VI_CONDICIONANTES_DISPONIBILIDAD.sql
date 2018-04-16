@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Vicente Martinez Cifre
---## FECHA_CREACION=20180305
+--## AUTOR=Juanjo Arbona
+--## FECHA_CREACION=20180406
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-205
+--## INCIDENCIA_LINK=REMVIP-448
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -20,6 +20,7 @@
 --##		0.7 HREOS-2992 - Correcciones para PDVs
 --##		0.8 HREOS-3344 - Cambio check obra nueva en construcción
 --##		0.9 REMVIP-205 - Cambio de la forma de cálculo de el campo "Pendiente de inscripción"
+--##		0.9 REMVIP-448 - Añadir condicion de poner nulos a 0
 --##########################################
 --*/
 
@@ -105,7 +106,7 @@ AS
 				  LEFT JOIN '||V_ESQUEMA||'.dd_eac_estado_activo eac1 ON eac1.dd_eac_id = act.dd_eac_id AND eac1.dd_eac_codigo = ''05''                                                -- RUINA
                   LEFT JOIN '||V_ESQUEMA||'.dd_eac_estado_activo eac2 ON eac2.dd_eac_id = act.dd_eac_id AND (eac2.dd_eac_codigo = ''02''  OR   eac2.dd_eac_codigo = ''06'')                                               -- OBRA NUEVA EN CONSTRUCCIÓN
                   LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps1 ON sps1.act_id = act.act_id AND sps1.sps_acc_tapiado = 1                                                                         -- TAPIADO
-                  LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps2 ON sps2.act_id = act.act_id AND sps2.sps_ocupado = 1 AND sps2.sps_con_titulo = 0                                      -- OCUPADO SIN TITULO
+                  LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps2 ON sps2.act_id = act.act_id AND sps2.sps_ocupado = 1 AND NVL (sps2.sps_con_titulo, 0) = 0                                      -- OCUPADO SIN TITULO
                   LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps3 ON sps3.act_id = act.act_id AND sps3.sps_ocupado = 1 AND sps3.sps_con_titulo = 1                                      -- OCUPADO CON TITULO
                   LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps4 ON sps4.act_id = act.act_id AND (sps4.sps_fecha_toma_posesion IS NULL AND aba2.dd_cla_id = 2)                         -- SIN TOMA POSESION INICIAL
                   LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps5 ON sps5.act_id = act.act_id                                                                                                -- OTROS MOTIVOS

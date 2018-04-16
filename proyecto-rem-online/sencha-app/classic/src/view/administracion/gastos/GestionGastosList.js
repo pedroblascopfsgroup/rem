@@ -125,6 +125,11 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
 	    	                     	text: HreRem.i18n('fieldlabel.cartera'),
 	    	                     	flex: 0.5,
 	    	                     	dataIndex: 'entidadPropietariaDescripcion'
+		    	                 },
+		    	                 {
+	    	                     	text: HreRem.i18n('fieldlabel.motivo.rechazo'),
+	    	                     	flex: 0.5,
+	    	                     	dataIndex: 'motivoRechazo'
 		    	                 },{
                              width: 30,
                              menuDisabled: true,

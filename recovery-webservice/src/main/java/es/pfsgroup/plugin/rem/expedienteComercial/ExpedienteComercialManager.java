@@ -194,7 +194,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public static final String TANTEO_CONDICIONES_TRANSMISION = "msg.defecto.oferta.tanteo.condiciones.transmision";
 	public static final String VISITA_SIN_RELACION_OFERTA = "oferta.validacion.numVisita";
 	public static final String PROVEDOR_NO_EXISTE_O_DISTINTO_TIPO = "El proveedor indicado no existe, o no es del tipo indicado";
-	public static final int NUMERO_DIAS_VENCIMIENTO = 40;
+	public static final int NUMERO_DIAS_VENCIMIENTO = 45;
 
 	public static final String PERFIL_GESTOR_FORMALIZACION = "HAYAGESTFORM";
 	public static final String PERFIL_SUPERVISOR_FORMALIZACION = "HAYASUPFORM";

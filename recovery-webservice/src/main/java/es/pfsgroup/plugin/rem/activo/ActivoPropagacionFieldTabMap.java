@@ -25,7 +25,6 @@ public class ActivoPropagacionFieldTabMap {
 
     public static final String TAB_COMERCIAL = "comercial";
     public static final String TAB_ADMINISTRACION = "administracion";
-
     
     static {
     	Map<String, List<String>> pmap = new HashMap<String, List<String>>();
@@ -48,6 +47,7 @@ public class ActivoPropagacionFieldTabMap {
 	    			"puerta",
 	    			"escalera",
 	    			"numeroDomicilio",
+	    			"selloCalidad",
 	    			"tipoViaCodigo",
 	    			"codPostal",
 	    			"codPostalFormateado",
@@ -503,7 +503,7 @@ public class ActivoPropagacionFieldTabMap {
     			Arrays.asList(
     				"numActivo",
     				"ibiExento"
-    			));
+    			)); 
         map = Collections.unmodifiableMap(pmap);
     }
 }

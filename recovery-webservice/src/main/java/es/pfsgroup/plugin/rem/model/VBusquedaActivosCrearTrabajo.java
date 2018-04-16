@@ -46,6 +46,17 @@ public class VBusquedaActivosCrearTrabajo implements Serializable {
 	
 	@Column(name="IN_PRP_TRAMITACION")
 	private Boolean activoEnPropuestaEnTramitacion;
+	
+	@Column(name="PRO_ID")
+	private String propietarioId;
+
+	public String getPropietarioId() {
+		return propietarioId;
+	}
+
+	public void setPropietarioId(String propietarioId) {
+		this.propietarioId = propietarioId;
+	}
 
 	public String getIdActivo() {
 		return idActivo;

@@ -41,6 +41,8 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 	
 	public static final String ACTIVE_IN_AGRUPACION_RESTRINGIDA = "Los siguientes activos pertenecen ya a una agrupación restringida: ";
 	
+	public static final String ERROR_ACTIVO_DISTINTO_PROPIETARIO = "El propietario del activo es distinto al propietario de la agrupación";
+
 	@Autowired
 	private MSVExcelParser excelParser;
 	
@@ -89,6 +91,11 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				listaErrores.add(ACTIVE_NOT_SHARING_PLACE);
 			}
+			
+			/*if (!comprobarDistintoPropietario(exc)) {
+				dtoValidacionContenido.setFicheroTieneErrores(true);
+				listaErrores.add(ERROR_ACTIVO_DISTINTO_PROPIETARIO);
+			}*/
 			
 			String[] activosEnAgrupacion = isActiveInAgrupacionRestringida(exc);
 			if (activosEnAgrupacion != null) {
@@ -219,4 +226,24 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 		return activos.isEmpty() ? null : activos.toArray(new String[]{});
 	}
 
+	private boolean comprobarDistintoPropietario(MSVHojaExcel exc) {
+
+		int i = 0;
+		try {
+			for (i = 1; i < this.numFilasHoja; i++) {
+				String numAgrupacion = String.valueOf(Long.parseLong(exc.dameCelda(i, 0)));
+				String numActivo = String.valueOf(Long.parseLong(exc.dameCelda(i, 1)));
+				if (particularValidator.comprobarDistintoPropietario(numActivo, numAgrupacion))
+					return false;
+			}
+		} catch (Exception e) {
+			if (i != 0)
+			return false;
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+
+		return true;
+	}
+	
 }

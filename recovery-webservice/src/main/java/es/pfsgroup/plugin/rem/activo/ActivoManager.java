@@ -3,7 +3,6 @@ package es.pfsgroup.plugin.rem.activo;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,7 +31,6 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
-import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
@@ -104,7 +102,6 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
-import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
@@ -127,9 +124,7 @@ import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
-import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPrecios;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
@@ -1094,19 +1089,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Filter filtroUsuarioGrupoPublicacionBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		Usuario grupoPublicacion = genericDao.get(Usuario.class, filtroUsuarioGrupoPublicacion, filtroUsuarioGrupoPublicacionBorrado);
 
-		if (guardadoEnHistorico) {
-			if (activoDao.deleteValoracionSinDuplicarById(id)) saveActivoValoracionHistorico(activoValoracion);
-		} else if (!Checks.esNulo(activoValoracion.getGestor()) && !adapter.getUsuarioLogado().equals(activoValoracion.getGestor())
+		if (guardadoEnHistorico && activoDao.deleteValoracionSinDuplicarById(id)) {
+			saveActivoValoracionHistorico(activoValoracion);
+		} else if (!Checks.esNulo(activoValoracion.getGestor()) && !adapter.getUsuarioLogado().getUsername().equals(activoValoracion.getGestor().getUsername())
 				&& !eXTGrupoUsuariosApi.usuarioPerteneceAGrupo(adapter.getUsuarioLogado(), grupoPrecio) && !eXTGrupoUsuariosApi.usuarioPerteneceAGrupo(adapter.getUsuarioLogado(), grupoPublicacion)) {
-			// Si el usuario logado es distinto al que ha creado la valoracion,
-			// no puede borrarla sin historico
+			// Si el usuario de la sesión es distinto al que ha creado la valoración, no puede borrarla sin histórico.
 			return false;
 		} else {
-			// Al anular el precio vigente, se hace un borrado lógico, y no se
-			// inserta en el histórico
+			// Al anular el precio vigente, se hace un borrado lógico, y no se inserta en el histórico.
 			genericDao.deleteById(ActivoValoraciones.class, id);
 		}
 		restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoValoracion.getActivo());
+		activoAdapter.actualizarEstadoPublicacionActivo(activoValoracion.getActivo().getId());
+
 		return true;
 	}
 
@@ -3502,7 +3497,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 			// Estado publicación ----------
 			//this.setActivoToNoPublicado(activo, messageServices.getMessage(MOTIVO_NO_PUBLICADO_POR_ACTIVO_VENDIDO));// TODO: llamar al SP de estado publicación.
-			activoAdapter.updatePortalPublicacion(activo.getId());
+			activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 		}
 	}
 

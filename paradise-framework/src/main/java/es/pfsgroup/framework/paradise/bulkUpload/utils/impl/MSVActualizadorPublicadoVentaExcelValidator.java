@@ -127,8 +127,8 @@ public class MSVActualizadorPublicadoVentaExcelValidator extends MSVExcelValidat
 		int i = 0;
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
-				if(!Checks.esNulo(exc.dameCelda(i, 2)) && (!"s".equalsIgnoreCase(exc.dameCelda(i, 2)) || !"si".equalsIgnoreCase(exc.dameCelda(i, 2)) ||
-						!"n".equalsIgnoreCase(exc.dameCelda(i, 2)) || !"no".equalsIgnoreCase(exc.dameCelda(i, 2)))) {
+				if(!Checks.esNulo(exc.dameCelda(i, 2)) && !"s".equalsIgnoreCase(exc.dameCelda(i, 2)) && !"si".equalsIgnoreCase(exc.dameCelda(i, 2)) &&
+						!"n".equalsIgnoreCase(exc.dameCelda(i, 2)) && !"no".equalsIgnoreCase(exc.dameCelda(i, 2))) {
 					listaFilas.add(i);
 				}
 			}
@@ -147,8 +147,8 @@ public class MSVActualizadorPublicadoVentaExcelValidator extends MSVExcelValidat
 		int i = 0;
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
-				if(!Checks.esNulo(exc.dameCelda(i, 1)) && (!"s".equalsIgnoreCase(exc.dameCelda(i, 1)) || !"si".equalsIgnoreCase(exc.dameCelda(i, 1)) ||
-						!"n".equalsIgnoreCase(exc.dameCelda(i, 1)) || !"no".equalsIgnoreCase(exc.dameCelda(i, 1)))) {
+				if(!Checks.esNulo(exc.dameCelda(i, 1)) && !"s".equalsIgnoreCase(exc.dameCelda(i, 1)) && !"si".equalsIgnoreCase(exc.dameCelda(i, 1)) &&
+						!"n".equalsIgnoreCase(exc.dameCelda(i, 1)) && !"no".equalsIgnoreCase(exc.dameCelda(i, 1))) {
 					listaFilas.add(i);
 				}
 			}

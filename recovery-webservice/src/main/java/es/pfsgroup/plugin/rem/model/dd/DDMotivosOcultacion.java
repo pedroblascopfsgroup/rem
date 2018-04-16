@@ -22,7 +22,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de motivo de ocultación para la publicacion de un activo.
+ * Modelo que gestiona el diccionario de motivo de ocultación para la publicación de un activo.
  */
 @Entity
 @Table(name = "DD_MTO_MOTIVOS_OCULTACION", schema = "${entity.schema}")
@@ -44,6 +44,8 @@ public class DDMotivosOcultacion implements Auditable, Dictionary {
 	public static final String CODIGO_REVISION_TECNICA = "10";
 	public static final String CODIGO_REVISION_EN_CURSO = "11";
 	public static final String CODIGO_OTROS = "12";
+	public static final String CODIGO_VENDIDO = "13";
+	public static final String CODIGO_SIN_PRECIO = "14";
 
 	@Id
 	@Column(name = "DD_MTO_ID")

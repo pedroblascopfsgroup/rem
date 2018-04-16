@@ -1,10 +1,7 @@
 package es.pfsgroup.plugin.rem.updaterstate;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import org.apache.commons.lang.BooleanUtils;
@@ -122,7 +119,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	public void updaterStateDisponibilidadComercialAndSave(Activo activo) {
 		this.updaterStateDisponibilidadComercial(activo);
 		activoApi.saveOrUpdate(activo);
-		activoAdapterApi.updatePortalPublicacion(activo.getId());
+		activoAdapterApi.actualizarEstadoPublicacionActivo(activo.getId());
 		this.updaterStateDisponibilidadComercialAndSave(activo,false);
 	}
 

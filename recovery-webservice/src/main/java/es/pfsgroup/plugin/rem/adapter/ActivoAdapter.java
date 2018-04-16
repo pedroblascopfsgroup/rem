@@ -2582,7 +2582,7 @@ public class ActivoAdapter {
 	public boolean saveTabActivo(WebDto dto, Long id, String tab) {
 		
 		if (this.saveTabActivoTransactional(dto, id, tab)){
-			//this.updatePortalPublicacion(dto, id);
+			//this.actualizarEstadoPublicacionActivo(dto, id);
 		}
 		return true;
 	}
@@ -2602,10 +2602,11 @@ public class ActivoAdapter {
 	}
 	
 	@Transactional(readOnly = false)
-	public boolean updatePortalPublicacion(Long id) { // TODO: eliminar o renombrar a un nombre más específico.
+	public boolean actualizarEstadoPublicacionActivo(Long id) {
 		Activo activo = activoApi.get(id);
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		activoDao.publicarActivoConHistorico(activo.getId(), usuarioLogado.getUsername());
+
 		return true;
 	}
 	

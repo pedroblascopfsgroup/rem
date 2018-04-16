@@ -248,7 +248,7 @@ public class Trabajo implements Serializable, Auditable {
     private Usuario supervisorActivoResponsable;
     
     @Column(name="STR_TARIFA_PLANA")
-    private Boolean esTarifaPlana;
+    private Boolean esTarifaPlana = false;
        	
 	@Version   
 	private Long version;

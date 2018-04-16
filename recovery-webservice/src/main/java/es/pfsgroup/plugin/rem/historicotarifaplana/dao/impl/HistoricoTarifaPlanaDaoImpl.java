@@ -17,7 +17,8 @@ public class HistoricoTarifaPlanaDaoImpl extends AbstractEntityDao<HistoricoTari
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Boolean subtipoTrabajoTieneTarifaPlanaVigente(Long idSubtipoTrabajo, Date fechaSolicitud) {	
+	public Boolean subtipoTrabajoTieneTarifaPlanaVigente(Long idSubtipoTrabajo, Date fechaSolicitud) {
+		Boolean resultado = false;
 		DetachedCriteria criteria = DetachedCriteria.forClass(HistoricoTarifaPlana.class);
         criteria.add(Restrictions.eq("subtipoTrabajo.id", idSubtipoTrabajo))
         		.add(Restrictions.eq("esTarifaPlana", true))
@@ -26,7 +27,11 @@ public class HistoricoTarifaPlanaDaoImpl extends AbstractEntityDao<HistoricoTari
         		.add(Restrictions.eq("auditoria.borrado", false));
         
         List<HistoricoTarifaPlana> listaHistoricoTarifaPlana = getHibernateTemplate().findByCriteria(criteria);
-		return !listaHistoricoTarifaPlana.isEmpty();
+        if(listaHistoricoTarifaPlana != null){
+        	resultado = !listaHistoricoTarifaPlana.isEmpty();
+        }
+        
+		return resultado;
 	}
 
 }

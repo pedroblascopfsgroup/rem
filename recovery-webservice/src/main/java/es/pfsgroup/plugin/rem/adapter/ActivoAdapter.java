@@ -1767,6 +1767,8 @@ public class ActivoAdapter {
 						tramite.getTrabajo().getTipoTrabajo().getDescripcion());
 				beanUtilNotNull.copyProperty(dtoTramite, "subtipoTrabajo",
 						tramite.getTrabajo().getSubtipoTrabajo().getDescripcion());
+				beanUtilNotNull.copyProperty(dtoTramite, "codigoSubtipoTrabajo",
+						tramite.getTrabajo().getSubtipoTrabajo().getCodigo());
 			}
 			if (!Checks.esNulo(tramite.getActivo().getTipoActivo()))
 				beanUtilNotNull.copyProperty(dtoTramite, "tipoActivo",
@@ -1834,8 +1836,11 @@ public class ActivoAdapter {
 							expedienteComercial.getEstado().getDescripcion());
 					beanUtilNotNull.copyProperty(dtoTramite, "numEC", expedienteComercial.getNumExpediente());
 				}
+				
+				beanUtilNotNull.copyProperty(dtoTramite, "esTarifaPlana", tramite.getTrabajo().getEsTarifaPlana());
 			}
 			
+
 			beanUtilNotNull.copyProperty(dtoTramite, "estaTareaRespuestaBankiaDevolucion", false);
 			beanUtilNotNull.copyProperty(dtoTramite, "estaTareaPendienteDevolucion", false);
 			beanUtilNotNull.copyProperty(dtoTramite, "estaEnTareaSiguienteResolucionExpediente", false);

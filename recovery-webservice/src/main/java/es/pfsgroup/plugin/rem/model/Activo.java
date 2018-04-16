@@ -409,6 +409,9 @@ public class Activo implements Serializable, Auditable {
     @OneToOne(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
     private ActivoBNK activoBNK;
+    
+    @Column(name = "OK_TECNICO")
+    private Boolean tieneOkTecnico;
 	
 	
 	
@@ -1606,6 +1609,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setActivoBNK(ActivoBNK activoBNK) {
 		this.activoBNK = activoBNK;
+	}
+
+	public Boolean getTieneOkTecnico() {
+		return tieneOkTecnico;
+	}
+
+	public void setTieneOkTecnico(Boolean tieneOkTecnico) {
+		this.tieneOkTecnico = tieneOkTecnico;
 	}
 	
 	

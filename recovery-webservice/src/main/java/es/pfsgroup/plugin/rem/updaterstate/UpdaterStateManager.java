@@ -95,6 +95,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	}
 	
 	private void updaterStateGestion(Activo activo){
+		/* Se cambia el calculo actual por el del check de OK Tecnico, HREOS-3953
 		//En caso de que esté 'OK' no se modifica el estado.
 		if(!this.getStateGestion(activo)){
 			TareaExterna tareaExternaDocGestion = activoTareaExternaApi.obtenerTareasAdmisionByCodigo(activo, "T001_CheckingDocumentacionGestion");
@@ -104,6 +105,8 @@ public class UpdaterStateManager implements UpdaterStateApi{
 				activo.setGestion(!Checks.esNulo(tareaDocGestion.getFechaFin()));
 			}
 		}
+		*/
+		activo.setGestion(activo.getTieneOkTecnico());
 	}
 	
 	@Override

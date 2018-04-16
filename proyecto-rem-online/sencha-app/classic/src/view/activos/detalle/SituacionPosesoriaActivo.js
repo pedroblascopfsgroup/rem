@@ -153,7 +153,12 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 		                		value: '{situacionPosesoria.fechaTomaPosesion}',
 		                		readOnly: '{esSituacionJudicial}'
 		                	}
-		                },				        
+		                },
+		                {
+							xtype: 'checkboxfieldbase',
+							fieldLabel: HreRem.i18n('filedlabel.tiene.ok.tecnico'),
+							bind: '{situacionPosesoria.tieneOkTecnico}'
+						},
 		                { 
 
 				        	xtype: 'comboboxfieldbase',
@@ -184,14 +189,6 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 				        	bind: {
 			            		store: '{comboSiNoRem}',
 			            		value: '{situacionPosesoria.riesgoOcupacion}'
-			            	},
-			            	listeners: {
-			            		afterbind: function(combo){
-			            			var me=this;
-			            			if(!me.up('activosdetallemain').getViewModel().get('activo.isCarteraBankia')){
-			            				me.rowspan = 2;
-			            			}
-			            		}
 			            	}
 				        },
 				        { 
@@ -213,7 +210,6 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            		value: '{situacionPosesoria.situacionJuridica}'
 			            	}
 				        }
-					
 					]
                 
             }, 

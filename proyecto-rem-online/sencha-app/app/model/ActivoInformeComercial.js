@@ -180,6 +180,10 @@ Ext.define('HreRem.model.ActivoInformeComercial', {
     		},
     		{
     			name: 'subtipoPlazagarajeCodigo'
+    		},
+    		{
+    			name: 'tieneProveedorTecnico',
+    			type: 'boolean'
     		}
     ],
 	proxy: {

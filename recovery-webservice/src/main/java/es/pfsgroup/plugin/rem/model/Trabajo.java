@@ -246,6 +246,9 @@ public class Trabajo implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="TBJ_SUPERVISOR_ACT_RESPONSABLE")
     private Usuario supervisorActivoResponsable;
+    
+    @Column(name="STR_TARIFA_PLANA")
+    private Boolean esTarifaPlana;
        	
 	@Version   
 	private Long version;
@@ -858,6 +861,14 @@ public class Trabajo implements Serializable, Auditable {
 
 	public void setSupervisorActivoResponsable(Usuario supervisorActivoResponsable) {
 		this.supervisorActivoResponsable = supervisorActivoResponsable;
+	}
+
+	public Boolean getEsTarifaPlana() {
+		return esTarifaPlana;
+	}
+
+	public void setEsTarifaPlana(Boolean esTarifaPlana) {
+		this.esTarifaPlana = esTarifaPlana;
 	}
 
 

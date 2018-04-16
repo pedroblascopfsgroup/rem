@@ -657,14 +657,14 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	},
 
 	addParamsTrabajo: function(store, operation, opts){
-		
 		var me = this;
 		//Acceder as� a los tres atributos que le hemos pasado a la openModalWindow
 		//de selecci�n de tarifa: tipo de trabajo, subtipo de trabajo y cartera
+		var idTrabajo = me.getViewModel().get("trabajo.id");
 		var carteraCodigo = me.getViewModel().get("trabajo.carteraCodigo"),
 		tipoTrabajoCodigo = me.getViewModel().get("trabajo.tipoTrabajoCodigo"),
 		subtipoTrabajoCodigo = me.getViewModel().get("trabajo.subtipoTrabajoCodigo");
-		store.getProxy().extraParams = {cartera: carteraCodigo, tipoTrabajo: tipoTrabajoCodigo, subtipoTrabajo: subtipoTrabajoCodigo};	
+		store.getProxy().extraParams = {idTrabajo: idTrabajo, cartera: carteraCodigo, tipoTrabajo: tipoTrabajoCodigo, subtipoTrabajo: subtipoTrabajoCodigo};	
 		return true;		
 
 	},

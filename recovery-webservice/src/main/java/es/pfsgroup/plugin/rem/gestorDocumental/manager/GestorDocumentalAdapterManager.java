@@ -383,7 +383,9 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		if (cartera!=null) {
 			if (DDCartera.CODIGO_CARTERA_HYT.equals(cartera.getCodigo())) {
 				return DDCartera.DESCRIPCION_CARTERA_HYT;
-			} else {
+			} else if(DDCartera.CODIGO_CARTERA_TANGO.equals(cartera.getCodigo())){
+				return "Waterfall";
+			}else {
 				return cartera.getDescripcion();
 			}
 		}

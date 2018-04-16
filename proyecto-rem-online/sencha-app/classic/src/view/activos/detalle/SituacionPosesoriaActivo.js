@@ -156,6 +156,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 		                { 
 
 				        	xtype: 'comboboxfieldbase',
+				        	allowBlank: false,
 							fieldLabel: HreRem.i18n('fieldlabel.ocupado'),
 				        	bind: {
 			            		store: '{comboSiNoRem}',
@@ -172,8 +173,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            			}
 			            			
 			            		}
-			            	},
-                            readOnly: true
+			            	}
 				        },				      
 				        { 
 				        	xtype: 'comboboxfieldbase',
@@ -199,8 +199,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 				        	bind: {
 			            		store: '{comboSiNoRem}',
 			            		value: '{situacionPosesoria.conTitulo}'
-			            	},
-                            readOnly: true
+			            	}
 				        },
 				        { 
 							xtype: 'textfieldbase',
@@ -242,8 +241,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							reference: 'datefieldFechaTitulo',
 							maxValue: null,
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.titulo.posesorio'),
-							bind: '{situacionPosesoria.fechaTitulo}',
-                            readOnly: true
+							bind: '{situacionPosesoria.fechaTitulo}'
 		                },
 		                { 
 		                	xtype:'datefieldbase',

@@ -268,7 +268,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			
 			var storeListaActivosTrabajo = me.lookupReference('listaActivosSubidaRef').getStore();
 			if(!Ext.isEmpty(storeListaActivosTrabajo) && !Ext.isEmpty(storeListaActivosTrabajo.data)){
-				var propietarioId = storeListaActivosTrabajo.data.items[0].data.propietarioId;
+				//var propietarioId = storeListaActivosTrabajo.data.items[0].data.propietarioId;
 				for (i=0; i < storeListaActivosTrabajo.data.length; i++) {
 					/*if(check){
 						if(storeListaActivosTrabajo.data.items[i].data.propietarioId != propietarioId){

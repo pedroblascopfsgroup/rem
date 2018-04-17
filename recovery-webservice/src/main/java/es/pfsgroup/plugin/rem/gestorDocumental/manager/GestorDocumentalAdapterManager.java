@@ -91,6 +91,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	private UtilDiccionarioApi utilDiccionarioApi;
     
     private final String GESTOR_DOCUMENTAL = "GESTOR_DOC";
+    private final String TANGO_MANDAR_GESTOR_DOCUMENTAL = "Waterfall";
     
 	@Override
 	public List<DtoAdjunto> getAdjuntosActivo(Activo activo) throws GestorDocumentalException {
@@ -383,7 +384,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 			if (DDCartera.CODIGO_CARTERA_HYT.equals(cartera.getCodigo())) {
 				return DDCartera.DESCRIPCION_CARTERA_HYT;
 			} else if(DDCartera.CODIGO_CARTERA_TANGO.equals(cartera.getCodigo())){
-				return "Waterfall";
+				return TANGO_MANDAR_GESTOR_DOCUMENTAL;
 			}else {
 				return cartera.getDescripcion();
 			}

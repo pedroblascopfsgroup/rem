@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=CARLOS LOPEZ
---## FECHA_CREACION=20180404
+--## FECHA_CREACION=20180405
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-3995
@@ -70,7 +70,7 @@ BEGIN
              , ACT.ACT_GESTION AS GESTION
              , nvl(HIC.INFORME_COMERCIAL,0)INFORME_COMERCIAL
              , VAL.PRECIO_A PRECIO_A
-             , VAL.PRECIO_V PRECIO_V
+             , VAL2.PRECIO_V PRECIO_V
              , CASE
                  WHEN ADO.ACT_ID IS NOT NULL THEN 1
                  ELSE 0
@@ -141,7 +141,7 @@ BEGIN
                               LEFT JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = ACT2.dd_tco_id AND TCO.BORRADO = 0 AND tco.dd_tco_codigo IN (''01'', ''02'', ''03'', ''04'')
                              WHERE ACT2.borrado = 0
                               )
-                      WHERE rn = 1)VAL ON VAL.ACT_ID = ACT.ACT_ID                          
+                      WHERE rn = 1)VAL2 ON VAL2.ACT_ID = ACT.ACT_ID                          
           LEFT JOIN (SELECT ADO.ACT_ID
                        FROM '|| V_ESQUEMA ||'.ACT_ADO_ADMISION_DOCUMENTO ADO
                        LEFT JOIN '|| V_ESQUEMA ||'.ACT_CFD_CONFIG_DOCUMENTO CFD ON CFD.CFD_ID = ADO.CFD_ID AND CFD.BORRADO = 0 AND CFD.CFD_APLICA_CALIFICACION = 1 AND CFD.CFD_APLICA_F_ETIQUETA = 1

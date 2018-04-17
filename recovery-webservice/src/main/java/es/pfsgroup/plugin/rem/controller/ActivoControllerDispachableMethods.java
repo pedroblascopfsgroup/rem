@@ -184,25 +184,6 @@ class ActivoControllerDispachableMethods {
 		});
 
 		/*
-		 * TAB_ACTIVO_HISTORICO_ESTADO_PUBLICACION
-		 */
-		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_ACTIVO_HISTORICO_ESTADO_PUBLICACION, new DispachableMethod<DtoCambioEstadoPublicacion>() {
-
-			@Override
-			public Class<DtoCambioEstadoPublicacion> getArgumentType() {
-				return DtoCambioEstadoPublicacion.class;
-			}
-
-			@Override
-			public void execute(Long id, DtoCambioEstadoPublicacion dto) {
-				if (dto != null ){
-					dto.setIdActivo(id);
-					this.controller.setHistoricoEstadoPublicacion(dto, new ModelMap());
-				}
-			}
-		});
-
-		/*
 		 * TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD
 		 */
 		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD, new DispachableMethod<DtoCondicionantesDisponibilidad>() {

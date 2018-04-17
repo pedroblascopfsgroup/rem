@@ -44,7 +44,6 @@ import es.pfsgroup.framework.paradise.agenda.adapter.NotificacionAdapter;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
-import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
@@ -141,7 +140,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -215,9 +213,6 @@ public class ActivoAdapter {
 	private JBPMActivoTramiteManagerApi jbpmActivoTramiteManagerApi;
 
 	@Autowired
-	protected JBPMProcessManagerApi jbpmProcessManagerApi;
-
-	@Autowired
 	protected TipoProcedimientoManager tipoProcedimiento;
 
 	@Autowired
@@ -248,7 +243,7 @@ public class ActivoAdapter {
 	private ActivoDao activoDao;
 
 	@Autowired
-	GestorDocumentalFotosApi gestorDocumentalFotos;
+	private GestorDocumentalFotosApi gestorDocumentalFotos;
 
 	@Autowired
 	private OfertaApi ofertaApi;
@@ -264,38 +259,31 @@ public class ActivoAdapter {
     
     @Autowired 
     private GestorExpedienteComercialManager gestorExpedienteComercialManager;
-    
 
 	@Resource
-	MessageService messageServices;
+	private MessageService messageServices;
 
-	// private static final String PROPIEDAD_ACTIVAR_REST_CLIENT =
-	// "rest.client.gestor.documental.activar";
+
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	public static final String OFERTA_INCOMPATIBLE_MSG = "El tipo de oferta es incompatible con el destino comercial del activo";
-	public static final String AVISO_TITULO_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.titulo.modificadas.condiciones.juridicas";
-	public static final String AVISO_DESCRIPCION_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.descripcion.modificadas.condiciones.juridicas";
+	private static final String AVISO_TITULO_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.titulo.modificadas.condiciones.juridicas";
+	private static final String AVISO_DESCRIPCION_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.descripcion.modificadas.condiciones.juridicas";
 
-	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
 	protected static final Log logger = LogFactory.getLog(ActivoAdapter.class);
 
+
 	public Activo getActivoById(Long id) {
-
 		return activoApi.get(id);
-
 	}
-
-	
 
 	@Transactional(readOnly = false)
 	public boolean saveDistribucion(DtoDistribucion dtoDistribucion, Long idDistribucion) {
-
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idDistribucion);
 		ActivoDistribucion activoDistribucion = genericDao.get(ActivoDistribucion.class, filtro);
 
 		try {
-
 			beanUtilNotNull.copyProperties(activoDistribucion, dtoDistribucion);
 			if (dtoDistribucion.getTipoHabitaculoCodigo() != null) {
 				DDTipoHabitaculo tipoHabitaculo = (DDTipoHabitaculo) proxyFactory.proxy(UtilDiccionarioApi.class)
@@ -306,35 +294,31 @@ public class ActivoAdapter {
 			genericDao.save(ActivoDistribucion.class, activoDistribucion);
 
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter, saveDistribucion", e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter, saveDistribucion", e);
 		}
 
 		return true;
-
 	}
 
 	@Transactional(readOnly = false)
 	public boolean saveCatastro(DtoActivoCatastro dtoCatastro, Long idCatastro) {
-
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idCatastro);
 		ActivoCatastro activoCatastro = genericDao.get(ActivoCatastro.class, filtro);
 
 		try {
-
 			beanUtilNotNull.copyProperties(activoCatastro, dtoCatastro);
 			genericDao.save(ActivoCatastro.class, activoCatastro);
 			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoCatastro.getActivo());
 
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter, saveCatastro", e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter, saveCatastro", e);
 		}
 
 		return true;
-
 	}
 
 	@Transactional(readOnly = false)
@@ -382,32 +366,28 @@ public class ActivoAdapter {
 
 	@Transactional(readOnly = false)
 	public boolean saveOcupanteLegal(DtoActivoOcupanteLegal dtoOcupanteLegal, Long idActivoOcupanteLegal) {
-
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idActivoOcupanteLegal);
 		ActivoOcupanteLegal activoOcupanteLegal = genericDao.get(ActivoOcupanteLegal.class, filtro);
 
 		try {
-
 			beanUtilNotNull.copyProperties(activoOcupanteLegal, dtoOcupanteLegal);
 			genericDao.save(ActivoOcupanteLegal.class, activoOcupanteLegal);
 
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter, saveOcupanteLegal", e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter, saveOcupanteLegal", e);
 		}
 
 		return true;
-
 	}
 
 	@Transactional(readOnly = false)
 	public boolean deleteDistribucion(DtoDistribucion dtoDistribucion, Long idDistribucion) {
-
 		try {
 			genericDao.deleteById(ActivoDistribucion.class, idDistribucion);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter, deleteDistribucion", e);
 		}
 
 		return true;
@@ -415,7 +395,6 @@ public class ActivoAdapter {
 
 	@Transactional(readOnly = false)
 	public boolean deleteCatastro(DtoActivoCatastro dtoCatastro, Long idCatastro) {
-
 		try {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idCatastro);
 			ActivoCatastro activoCatastro = genericDao.get(ActivoCatastro.class, filtro);
@@ -425,7 +404,7 @@ public class ActivoAdapter {
 			}
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter, deleteCatastro", e);
 		}
 
 		return true;
@@ -433,11 +412,10 @@ public class ActivoAdapter {
 
 	@Transactional(readOnly = false)
 	public boolean deleteOcupanteLegal(DtoActivoOcupanteLegal dtoOcupanteLegal, Long idActivoOcupanteLegal) {
-
 		try {
 			genericDao.deleteById(ActivoOcupanteLegal.class, idActivoOcupanteLegal);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter, deleteOcupanteLegal", e);
 		}
 
 		return true;
@@ -445,30 +423,26 @@ public class ActivoAdapter {
 
 	@Transactional(readOnly = false)
 	public boolean deleteObservacion(Long idObservacion) {
-
 		try {
-
 			genericDao.deleteById(ActivoObservacion.class, idObservacion);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter, deleteObservacion", e);
 		}
 
 		return true;
-
 	}
 
 	@Transactional(readOnly = false)
 	public boolean saveObservacionesActivo(DtoObservacion dtoObservacion) {
-
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(dtoObservacion.getId()));
 		ActivoObservacion activoObservacion = genericDao.get(ActivoObservacion.class, filtro);
 
 		try {
-
 			beanUtilNotNull.copyProperties(activoObservacion, dtoObservacion);
 			if(dtoObservacion.getTipoObservacionCodigo() != null) {
-				DDTipoObservacionActivo tipoObservacion = (DDTipoObservacionActivo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoObservacionActivo.class, dtoObservacion.getTipoObservacionCodigo());
+				DDTipoObservacionActivo tipoObservacion = (DDTipoObservacionActivo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoObservacionActivo.class,
+						dtoObservacion.getTipoObservacionCodigo());
 				if(tipoObservacion != null) {
 					activoObservacion.setTipoObservacion(tipoObservacion);
 				}
@@ -476,26 +450,21 @@ public class ActivoAdapter {
 			genericDao.save(ActivoObservacion.class, activoObservacion);
 
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter, saveObservacionesActivo", e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter, saveObservacionesActivo", e);
 		}
 
 		return true;
-
 	}
 
 	@Transactional(readOnly = false)
 	public boolean createObservacionesActivo(DtoObservacion dtoObservacion, Long idActivo) {
-
 		ActivoObservacion activoObservacion = new ActivoObservacion();
 		Activo activo = activoApi.get(idActivo);
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 		try {
-
-			// beanUtilNotNull.copyProperties(activoObservacion,
-			// dtoObservacion);
 			activoObservacion.setObservacion(dtoObservacion.getObservacion());
 			activoObservacion.setFecha(new Date());
 			activoObservacion.setUsuario(usuarioLogado);
@@ -510,11 +479,10 @@ public class ActivoAdapter {
 
 			genericDao.save(ActivoObservacion.class, activoObservacion);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter, createObservacionesActivo", e);
 		}
 
 		return true;
-
 	}
 
 	@Transactional(readOnly = false)
@@ -533,7 +501,7 @@ public class ActivoAdapter {
 			genericDao.save(ActivoCondicionEspecifica.class, activoCondicionEspecifica);
 			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO,activo);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter, createCondicionHistorico", e);
 		}
 
 		return true;
@@ -541,13 +509,11 @@ public class ActivoAdapter {
 
 	@Transactional(readOnly = false)
 	public boolean createDistribucion(DtoDistribucion dtoDistribucion, Long idActivo) {
-
 		ActivoDistribucion activoDistribucion = new ActivoDistribucion();
 		Activo activo = activoApi.get(idActivo);
 		ActivoInfoComercial infoComercial = activo.getInfoComercial();
 
 		try {
-
 			beanUtilNotNull.copyProperties(activoDistribucion, dtoDistribucion);
 			if (dtoDistribucion.getTipoHabitaculoCodigo() != null) {
 				DDTipoHabitaculo tipoHabitaculo = (DDTipoHabitaculo) proxyFactory.proxy(UtilDiccionarioApi.class)
@@ -565,9 +531,9 @@ public class ActivoAdapter {
 			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter, createDistribucion", e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter, createDistribucion", e);
 		}
 
 		return true;
@@ -576,11 +542,10 @@ public class ActivoAdapter {
 
 	@Transactional(readOnly = false)
 	public boolean createCatastro(DtoActivoCatastro dtoCatastro, Long idActivo) {
-
 		ActivoCatastro activoCatastro = new ActivoCatastro();
 		Activo activo = activoApi.get(idActivo);
-		try {
 
+		try {
 			beanUtilNotNull.copyProperties(activoCatastro, dtoCatastro);
 			activoCatastro.setActivo(activo);
 			ActivoCatastro catastroNuevo = genericDao.save(ActivoCatastro.class, activoCatastro);
@@ -589,23 +554,21 @@ public class ActivoAdapter {
 			activoApi.saveOrUpdate(activo);
 
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter, createCatastro", e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter, createCatastro", e);
 		}
 
 		return true;
-
 	}
 
 	@Transactional(readOnly = false)
 	public boolean createOcupanteLegal(DtoActivoOcupanteLegal dtoOcupanteLegal, Long idActivo) {
-
 		ActivoOcupanteLegal activoOcupanteLegal = new ActivoOcupanteLegal();
 		Activo activo = activoApi.get(idActivo);
 		ActivoSituacionPosesoria situacionPosesoria = activo.getSituacionPosesoria();
-		try {
 
+		try {
 			beanUtilNotNull.copyProperties(activoOcupanteLegal, dtoOcupanteLegal);
 			activoOcupanteLegal.setSituacionPosesoria(situacionPosesoria);
 			ActivoOcupanteLegal ocupanteLegalNuevo = genericDao.save(ActivoOcupanteLegal.class, activoOcupanteLegal);
@@ -615,13 +578,12 @@ public class ActivoAdapter {
 			activoApi.saveOrUpdate(activo);
 
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter, createOcupanteLegal", e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter, createOcupanteLegal", e);
 		}
 
 		return true;
-
 	}
 
 	public List<DtoActivoCargas> getListCargasById(Long id) {
@@ -2588,20 +2550,6 @@ public class ActivoAdapter {
 	}
 	
 	@Transactional(readOnly = false)
-	public boolean updatePublicarActivo(Long id) {
-		Activo activo = activoApi.get(id);
-		if(Checks.esNulo(activo)&&!Checks.esNulo(activo.getFechaPublicable())&&(!activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO)
-				|| !activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO)
-				|| !activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO)
-				|| !activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_DESPUBLICADO))) {
-			Usuario usuario = genericAdapter.getUsuarioLogado();
-			activoDao.publicarActivoConHistorico(activo.getId(), usuario.getUsername());
-		}
-		
-		return true;
-	}
-	
-	@Transactional(readOnly = false)
 	public boolean actualizarEstadoPublicacionActivo(Long id) {
 		Activo activo = activoApi.get(id);
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
@@ -2962,7 +2910,6 @@ public class ActivoAdapter {
 	 * la Ficha Cabecera
 	 * 
 	 * @param activo
-	 * @param dtoFicha
 	 */
 	
 
@@ -3091,18 +3038,16 @@ public class ActivoAdapter {
 	@Transactional(readOnly = false)
 	public boolean createTasacion(String importeTasacionFin, String tipoTasacionCodigo, String nomTasador, Date fechaValorTasacion, Long idActivo) {
 		Activo activo = activoApi.get(idActivo);
-		
 		NMBBien bienActivo = activo.getBien();
-		
 		NMBValoracionesBien valoracionBienActivo = new NMBValoracionesBien();
 		valoracionBienActivo.setBien(bienActivo);
 		
 		try {
 			beanUtilNotNull.copyProperty(valoracionBienActivo, "fechaValorTasacion", fechaValorTasacion);
 		} catch (IllegalAccessException e) {
-			logger.error(e.getMessage());
+			logger.error("Error en ActivoAdapter, createTasacion", e);
 		} catch (InvocationTargetException e) {
-			logger.error(e.getMessage());
+			logger.error("Error en ActivoAdapter, createTasacion", e);
 		}
 		
 		genericDao.save(NMBValoracionesBien.class, valoracionBienActivo);
@@ -3131,7 +3076,6 @@ public class ActivoAdapter {
 		activoApi.saveOrUpdate(activo);
 
 		return true;
-
 	}
 	
 	@Transactional(readOnly = false)
@@ -3151,7 +3095,6 @@ public class ActivoAdapter {
 		}
 		activoTasacion.setImporteTasacionFin(importeTasacionFinDouble);
 		activoTasacion.setFechaInicioTasacion(dtoTasacion.getFechaInicioTasacion());
-		// TODO: falta la fecha de solicitud.
 		activoTasacion.setFechaRecepcionTasacion(dtoTasacion.getFechaRecepcionTasacion());
 		activoTasacion.setNomTasador(dtoTasacion.getNomTasador());
 		
@@ -3159,12 +3102,12 @@ public class ActivoAdapter {
 		try {
 			beanUtilNotNull.copyProperty(valoracionActivoTasacion, "fechaValorTasacion", dtoTasacion.getFechaValorTasacion());
 		} catch (IllegalAccessException e) {
-			logger.error(e.getMessage());
+			logger.error("Error en ActivoAdapter, saveTasacion", e);
 		} catch (InvocationTargetException e) {
-			logger.error(e.getMessage());
+			logger.error("Error en ActivoAdapter, saveTasacion", e);
 		}
-		genericDao.save(NMBValoracionesBien.class, valoracionActivoTasacion);
 
+		genericDao.save(NMBValoracionesBien.class, valoracionActivoTasacion);
 		genericDao.save(ActivoTasacion.class, activoTasacion);
 
 		return true;

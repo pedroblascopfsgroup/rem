@@ -448,56 +448,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@BusinessOperation(overrides = "activoManager.savePrecioVigente")
 	@Transactional(readOnly = false)
 	public boolean savePrecioVigente(DtoPrecioVigente dto) {
-		ActivoValoraciones activoValoracion = null;
-		boolean resultado = true;
-
 		Activo activo = get(dto.getIdActivo());
 
-		try {
-			// Si no hay idPrecioVigente creamos precio
-			if (Checks.esNulo(dto.getIdPrecioVigente())) {
-
-				saveActivoValoracion(activo, activoValoracion, dto);
-
-			} else {
-
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdPrecioVigente());
-				activoValoracion = genericDao.get(ActivoValoraciones.class, filtro);
-				saveActivoValoracion(activo, activoValoracion, dto);
-
-			}
-
-			ExpedienteComercial expediente = expedienteComercialApi.getExpedienteComercialResetPBC(activo);
-			if (!Checks.esNulo(expediente)) {
-				ofertaApi.resetPBC(expediente, false);
-			}
-			// if(!activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO)
-			// ||
-			// !activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO)
-			// ||
-			// !activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO)
-			// ||
-			// !activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_DESPUBLICADO))
-			// {
-			// Usuario usuario = genericAdapter.getUsuarioLogado();
-			// int esError = activoDao.publicarActivo(activo.getId(), usuario.getUsername());
-			// if (esError != 1){
-			// logger.error(messageServices.getMessage("activo.publicacion.error.publicar.ordinario.server").concat("
-			// ").concat(String.valueOf(activo.getId())));
-			// throw new
-			// SQLException(messageServices.getMessage("activo.publicacion.error.publicar.ordinario.server").concat("
-			// ").concat(String.valueOf(activo.getId())));
-			// }
-			//
-			// logger.info(messageServices.getMessage("activo.publicacion.OK.publicar.ordinario.server").concat("
-			// ").concat(String.valueOf(activo.getId())));
-			// }
-		} catch (Exception ex) {
-			logger.error("Error en activoManager", ex);
-			resultado = false;
+		// Si no hay idPrecioVigente creamos precio
+		if (Checks.esNulo(dto.getIdPrecioVigente())) {
+			saveActivoValoracion(activo, null, dto);
+		} else {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdPrecioVigente());
+			ActivoValoraciones activoValoracion = genericDao.get(ActivoValoraciones.class, filtro);
+			saveActivoValoracion(activo, activoValoracion, dto);
 		}
 
-		return resultado;
+		ExpedienteComercial expediente = expedienteComercialApi.getExpedienteComercialResetPBC(activo);
+		if (!Checks.esNulo(expediente)) {
+			ofertaApi.resetPBC(expediente, false);
+		}
+
+		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
+
+		return true;
 	}
 
 	@Override

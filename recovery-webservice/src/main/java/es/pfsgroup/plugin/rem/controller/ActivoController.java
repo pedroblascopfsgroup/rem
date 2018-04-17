@@ -634,17 +634,16 @@ public class ActivoController extends ParadiseJsonController {
 
 		try {
 			boolean success = activoApi.savePrecioVigente(precioVigenteDto);
-			if (success)
-				adapter.updatePublicarActivo(precioVigenteDto.getIdActivo());
+			if (success) {
+				adapter.actualizarEstadoPublicacionActivo(precioVigenteDto.getIdActivo());
+			}
 			model.put("success", success);
-
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put("success", false);
 		}
 
 		return createModelAndViewJson(model);
-
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1945,34 +1944,6 @@ public class ActivoController extends ParadiseJsonController {
 		ExcelReport report = new PublicacionExcelReport(listaPublicacionesActivos);
 
 		excelReportGeneratorApi.generateAndSend(report, response);
-	}
-
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView setHistoricoEstadoPublicacion(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion,
-			ModelMap model) {// TODO: eliminar.
-
-		try {
-			model.put("success", activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion));
-		} catch (SQLException e) {
-			model.put("success", false);
-			logger.error("Error en ActivoController: ", e);
-		} catch (JsonViewerException jViewEx) {
-			logger.error("Error en ActivoController", jViewEx);
-			model.put("success", false);
-			model.put("msgError", jViewEx.getMessage());
-		}
-
-		return createModelAndViewJson(model);
-	}
-
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getHistoricoEstadoPublicacion(Long id, ModelMap model) {// TODO: eliminar.
-
-		model.put("data", activoEstadoPublicacionApi.getHistoricoEstadoPublicacionByActivo(id));
-
-		return createModelAndViewJson(model);
 	}
 
 	@SuppressWarnings("unchecked")

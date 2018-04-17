@@ -1006,7 +1006,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     		
     		historicoEstadosPublicacionVenta: {
     			pageSize: $AC.getDefaultPageSize(),
-    			model: 'HreRem.model.EstadoPublicacion',
+    			model: 'HreRem.model.HistoricoEstadosPublicacion',
     			proxy: {
     				type: 'uxproxy',
     				remoteUrl: 'activo/getHistoricoEstadosPublicacionVentaByIdActivo',
@@ -1016,7 +1016,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
     		historicoEstadosPublicacionAlquiler: {
     			pageSize: $AC.getDefaultPageSize(),
-    			model: 'HreRem.model.EstadoPublicacion',
+    			model: 'HreRem.model.HistoricoEstadosPublicacion',
     			proxy: {
     				type: 'uxproxy',
     				remoteUrl: 'activo/getHistoricoEstadosPublicacionAlquilerByIdActivo',

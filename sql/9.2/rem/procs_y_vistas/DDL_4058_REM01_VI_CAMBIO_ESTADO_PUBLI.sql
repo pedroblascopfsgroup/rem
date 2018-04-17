@@ -69,7 +69,8 @@ BEGIN
              , ACT.ACT_ADMISION AS ADMISION
              , ACT.ACT_GESTION AS GESTION
              , nvl(HIC.INFORME_COMERCIAL,0)INFORME_COMERCIAL
-             , VAL.PRECIO PRECIO
+             , VAL.PRECIO_A PRECIO_A
+             , VAL.PRECIO_V PRECIO_V
              , CASE
                  WHEN ADO.ACT_ID IS NOT NULL THEN 1
                  ELSE 0
@@ -99,24 +100,48 @@ BEGIN
                               WHERE HIC.BORRADO = 0
                             )
                       WHERE rn = 1) HIC ON ACT.ACT_ID = HIC.ACT_ID
-          LEFT JOIN (SELECT act_id, precio
+          LEFT JOIN (SELECT act_id, precio_A
                        FROM (SELECT ACT2.act_id,
                                    CASE
                                       WHEN NVL (tpc.dd_tpc_codigo, ''00'') = ''02'' /*Aprobado de venta (web)*/ AND NVL (tco.dd_tco_codigo, ''00'') IN (''01'', ''02'', ''04'')
                                          THEN 1
                                       WHEN NVL (tpc.dd_tpc_codigo, ''00'') = ''03'' /*Aprobado de renta (web)*/ AND NVL (tco.dd_tco_codigo, ''00'') IN (''02'', ''03'', ''04'')
                                          THEN 1
+                                      WHEN APU.APU_CHECK_PUB_SIN_PRECIO_A = 1
+                                         THEN 1   
                                       ELSE 0
-                                   END AS precio,
+                                   END AS precio_A,
                                    tpc.dd_tpc_codigo, tco.dd_tco_codigo,
                                    ROW_NUMBER () OVER (PARTITION BY ACT2.act_id ORDER BY DECODE (tpc.dd_tpc_codigo || tco.dd_tco_codigo, ''0201'', 0, ''0202'', 0, ''0204'', 0, ''0302'', 0, ''0303'', 0, ''0304'', 0, 1)) rn
                               FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2
+                              LEFT JOIN '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT2.ACT_ID AND APU.BORRADO = 0
                               LEFT JOIN '|| V_ESQUEMA ||'.act_val_valoraciones val ON val.act_id = ACT2.act_id AND val.borrado = 0
                               LEFT JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO tpc ON tpc.dd_tpc_id = val.dd_tpc_id AND tpc.dd_tpc_codigo IN (''02'', ''03'') AND TPC.BORRADO = 0 
                               LEFT JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = ACT2.dd_tco_id AND TCO.BORRADO = 0 AND tco.dd_tco_codigo IN (''01'', ''02'', ''03'', ''04'')
                              WHERE ACT2.borrado = 0
                               )
-                      WHERE rn = 1)VAL ON VAL.ACT_ID = ACT.ACT_ID    
+                      WHERE rn = 1)VAL ON VAL.ACT_ID = ACT.ACT_ID  
+          LEFT JOIN (SELECT act_id, precio_V
+                       FROM (SELECT ACT2.act_id,
+                                   CASE
+                                      WHEN NVL (tpc.dd_tpc_codigo, ''00'') = ''02'' /*Aprobado de venta (web)*/ AND NVL (tco.dd_tco_codigo, ''00'') IN (''01'', ''02'', ''04'')
+                                         THEN 1
+                                      WHEN NVL (tpc.dd_tpc_codigo, ''00'') = ''03'' /*Aprobado de renta (web)*/ AND NVL (tco.dd_tco_codigo, ''00'') IN (''02'', ''03'', ''04'')
+                                         THEN 1
+                                      WHEN APU.APU_CHECK_PUB_SIN_PRECIO_V = 1
+                                         THEN 1   
+                                      ELSE 0
+                                   END AS precio_V,
+                                   tpc.dd_tpc_codigo, tco.dd_tco_codigo,
+                                   ROW_NUMBER () OVER (PARTITION BY ACT2.act_id ORDER BY DECODE (tpc.dd_tpc_codigo || tco.dd_tco_codigo, ''0201'', 0, ''0202'', 0, ''0204'', 0, ''0302'', 0, ''0303'', 0, ''0304'', 0, 1)) rn
+                              FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2
+                              LEFT JOIN '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT2.ACT_ID AND APU.BORRADO = 0
+                              LEFT JOIN '|| V_ESQUEMA ||'.act_val_valoraciones val ON val.act_id = ACT2.act_id AND val.borrado = 0
+                              LEFT JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO tpc ON tpc.dd_tpc_id = val.dd_tpc_id AND tpc.dd_tpc_codigo IN (''02'', ''03'') AND TPC.BORRADO = 0 
+                              LEFT JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = ACT2.dd_tco_id AND TCO.BORRADO = 0 AND tco.dd_tco_codigo IN (''01'', ''02'', ''03'', ''04'')
+                             WHERE ACT2.borrado = 0
+                              )
+                      WHERE rn = 1)VAL ON VAL.ACT_ID = ACT.ACT_ID                          
           LEFT JOIN (SELECT ADO.ACT_ID
                        FROM '|| V_ESQUEMA ||'.ACT_ADO_ADMISION_DOCUMENTO ADO
                        LEFT JOIN '|| V_ESQUEMA ||'.ACT_CFD_CONFIG_DOCUMENTO CFD ON CFD.CFD_ID = ADO.CFD_ID AND CFD.BORRADO = 0 AND CFD.CFD_APLICA_CALIFICACION = 1 AND CFD.CFD_APLICA_F_ETIQUETA = 1
@@ -197,9 +222,12 @@ BEGIN
     V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.V_CAMBIO_ESTADO_PUBLI.INFORME_COMERCIAL IS ''Informe comercial 0/1'' ';      
     EXECUTE IMMEDIATE V_MSQL;
     
-    V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.V_CAMBIO_ESTADO_PUBLI.PRECIO IS ''Precio 0/1'' ';      
+    V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.V_CAMBIO_ESTADO_PUBLI.PRECIO_A IS ''Precio alquiler 0/1'' ';      
     EXECUTE IMMEDIATE V_MSQL;
 
+    V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.V_CAMBIO_ESTADO_PUBLI.PRECIO_V IS ''Precio venta 0/1'' ';      
+    EXECUTE IMMEDIATE V_MSQL;
+    
     V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.V_CAMBIO_ESTADO_PUBLI.CEE_VIGENTE IS ''CEE (Certificado de eficiencia energética) 0/1'' ';      
     EXECUTE IMMEDIATE V_MSQL;  
     

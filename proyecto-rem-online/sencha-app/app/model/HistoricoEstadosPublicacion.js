@@ -1,7 +1,7 @@
 /**
- * This view is used to present the details of estados de publicacion.
+ * Modelo para el store del grid de histórico de estados de publicación. Sirve para alquiler y venta.
  */
-Ext.define('HreRem.model.EstadoPublicacion', {
+Ext.define('HreRem.model.HistoricoEstadosPublicacion', {
 	extend: 'HreRem.model.Base',
 	idProperty: 'id',
 

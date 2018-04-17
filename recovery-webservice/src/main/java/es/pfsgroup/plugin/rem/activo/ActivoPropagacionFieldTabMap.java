@@ -21,7 +21,6 @@ public class ActivoPropagacionFieldTabMap {
     public static final String TAB_TASACION = "tasacion";
 
     public static final String TAB_DATOS_PUBLICACION = "datospublicacion";
-    public static final String TAB_ACTIVO_HISTORICO_ESTADO_PUBLICACION = "activohistoricoestadopublicacion";
     public static final String TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD = "activocondicionantesdisponibilidad";
 
     public static final String TAB_COMERCIAL = "comercial";
@@ -495,21 +494,6 @@ public class ActivoPropagacionFieldTabMap {
 					    "nomTasador",
 					    "importeTasacionFin"
 			    ));
-
-    	pmap.put(TAB_ACTIVO_HISTORICO_ESTADO_PUBLICACION,
-    			Arrays.asList(
-    				"idActivo",
-    				"publicacionOrdinaria",
-    				"publicacionForzada",
-    				"ocultacionForzada",
-					"ocultacionPrecio",
-					"despublicacionForzada",
-					"motivoPublicacion",
-					"motivoOcultacionPrecio",
-					"motivoDespublicacionForzada",
-					"motivoOcultacionForzada",
-					"observaciones"
-    			));
 
     	pmap.put(TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD,
     			Arrays.asList(

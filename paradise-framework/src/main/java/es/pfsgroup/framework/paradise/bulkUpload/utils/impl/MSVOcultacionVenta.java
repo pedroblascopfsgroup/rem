@@ -34,26 +34,25 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 
 @Component
 public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
-	
-	//Textos de errores de la validacion
-	public static final String ACTIVE_NOT_EXISTS = "El activo no existe";
-	public static final String ACTIVO_VENDIDO = "El activo está vendido";
-	public static final String ACTIVO_NO_PUBLICABLE = "El activo no es publicable";
-	public static final String ACTIVO_NO_COMERCIALIZABLE = "El activo no es comercializable";
-	public static final String DESTINO_FINAL_NO_VENTA = "El destino comercial no es venta";
-	public static final String ACTIVO_NO_PUBLICADO = "Activo no publicado";
-	public static final String ACTIVO_OCULTO = "El activo esta oculto";
-	public static final String MOTIVO_NOT_EXISTS = "El motivo de la ocultación no existe";
-	
-	// Posicion fija de Columnas excel, para cualquier referencia por posicion
-		public static final class COL_NUM {
-			static final int FILA_CABECERA = 2;
-			static final int DATOS_PRIMERA_FILA = 3;
-			
-			static final int NUM_ACTIVO_HAYA = 0;
-			static final int MOTIVO_OCULTACION = 1;
-			static final int DESCRIPCION_MOTIVO = 2;
-		}
+
+	private static final String ACTIVE_NOT_EXISTS = "El activo no existe";
+	private static final String ACTIVO_VENDIDO = "El activo está vendido";
+	private static final String ACTIVO_NO_PUBLICABLE = "El activo no es publicable";
+	private static final String ACTIVO_NO_COMERCIALIZABLE = "El activo no es comercializable";
+	private static final String DESTINO_FINAL_NO_VENTA = "El destino comercial no es venta";
+	private static final String ACTIVO_NO_PUBLICADO = "Activo no publicado";
+	private static final String ACTIVO_OCULTO = "El activo esta oculto";
+	private static final String MOTIVO_NOT_EXISTS = "El motivo de la ocultación no existe";
+	private static final String MOTIVO_TEXTO_LIBRE_SUPERA_LIMITE = "El texto libre del motivo de ocultación supera el máximo permitido de 250 carácteres";
+	private static final String MOTIVO_CODIGO_OCULTACION_NO_ESTA_DEFINIDO = "El código indicado para la ocultación no se encuentra entre los definidos";
+
+	private static final Integer MAX_CHAR_TEXTO_LIBRE = 250;
+
+	private static final class COL_NUM {
+		static final int NUM_ACTIVO_HAYA = 0;
+		static final int MOTIVO_OCULTACION = 1;
+		static final int DESCRIPCION_MOTIVO = 2;
+	}
 
 	@Autowired
 	private MSVBusinessValidationRunner validationRunner;
@@ -91,16 +90,14 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 		MSVDtoValidacion dtoValidacionContenido = recorrerFichero(exc, excPlantilla, lista, validators, compositeValidators, true);
 		MSVDDOperacionMasiva operacionMasiva = msvProcesoApi.getOperacionMasiva(dtoFile.getIdTipoOperacion());
 		
-		
 		//Validaciones especificas no contenidas en el fichero Excel de validacion
-				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-				//Obtenemos el numero de filas reales que tiene la hoja excel a examinar
-				try {
-					this.numFilasHoja = exc.getNumeroFilasByHoja(0, operacionMasiva);
-				} catch (Exception e) {
-					logger.error(e.getMessage());
-					e.printStackTrace();
-				}
+		exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
+		//Obtenemos el numero de filas reales que tiene la hoja excel a examinar
+		try {
+			this.numFilasHoja = exc.getNumeroFilasByHoja(0, operacionMasiva);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
 				
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 			Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
@@ -112,6 +109,8 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 			mapaErrores.put(ACTIVO_NO_PUBLICADO, activoNoPublicadoByRows(exc));
 			mapaErrores.put(ACTIVO_OCULTO, activoOcultoByRows(exc));
 			mapaErrores.put(MOTIVO_NOT_EXISTS, movitoNotExistsByRows(exc));
+			mapaErrores.put(MOTIVO_TEXTO_LIBRE_SUPERA_LIMITE, isTextoLibreExcedeMaximoPermitido(exc));
+			mapaErrores.put(MOTIVO_CODIGO_OCULTACION_NO_ESTA_DEFINIDO, isCodigoOcultacionEstaDefinido(exc));
 			
 			if (!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty()
 				||!mapaErrores.get(ACTIVO_VENDIDO).isEmpty()
@@ -120,7 +119,9 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 				||!mapaErrores.get(DESTINO_FINAL_NO_VENTA).isEmpty()
 				||!mapaErrores.get(ACTIVO_NO_PUBLICADO).isEmpty()
 				||!mapaErrores.get(ACTIVO_OCULTO).isEmpty()
-				||!mapaErrores.get(MOTIVO_NOT_EXISTS).isEmpty()){
+				||!mapaErrores.get(MOTIVO_NOT_EXISTS).isEmpty()
+				||!mapaErrores.get(MOTIVO_CODIGO_OCULTACION_NO_ESTA_DEFINIDO).isEmpty()
+				||!mapaErrores.get(MOTIVO_TEXTO_LIBRE_SUPERA_LIMITE).isEmpty()){
 				
 					dtoValidacionContenido.setFicheroTieneErrores(true);
 					exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -135,7 +136,46 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 		return dtoValidacionContenido;
 	}
 
-	
+	private List<Integer> isCodigoOcultacionEstaDefinido(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try {
+			for(i=1; i<this.numFilasHoja;i++){
+				String codigoMotivo = exc.dameCelda(i, COL_NUM.MOTIVO_OCULTACION);
+				if(!codigoMotivo.equalsIgnoreCase("09") && !codigoMotivo.equalsIgnoreCase("10") && !codigoMotivo.equalsIgnoreCase("11") &&
+						!codigoMotivo.equalsIgnoreCase("12")) {
+					listaFilas.add(i);
+				}
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+		}
+
+		return listaFilas;
+	}
+
+	private List<Integer> isTextoLibreExcedeMaximoPermitido(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try {
+			for(i=1; i<this.numFilasHoja;i++){
+				String textoLibre = exc.dameCelda(i, COL_NUM.DESCRIPCION_MOTIVO);
+				if(!textoLibre.isEmpty() && textoLibre.length() > MAX_CHAR_TEXTO_LIBRE) {
+					listaFilas.add(i);
+				}
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+		}
+
+		return listaFilas;
+	}
+
+
 	@Override
 	protected ResultadoValidacion validaContenidoCelda(String nombreColumna, String contenidoCelda,
 			MSVBusinessValidators contentValidators) {

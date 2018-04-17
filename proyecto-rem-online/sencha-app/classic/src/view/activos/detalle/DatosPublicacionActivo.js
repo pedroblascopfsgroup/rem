@@ -10,7 +10,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 	records		: ['datospublicacionactivo', 'activoCondicionantesDisponibilidad'],
 	recordsClass: ['HreRem.model.DatosPublicacionActivo', 'HreRem.model.ActivoCondicionantesDisponibilidad'],
 	requires	: ['HreRem.model.ActivoCondicionantesDisponibilidad', 'HreRem.model.DatosPublicacionActivo', 'HreRem.model.CondicionEspecifica',
-					'HreRem.view.activos.detalle.HistoricoCondicionesList', 'HreRem.model.EstadoPublicacion', 'HreRem.view.activos.detalle.HistoricoEstadosPublicacionList'],
+					'HreRem.view.activos.detalle.HistoricoCondicionesList', 'HreRem.model.HistoricoEstadosPublicacion', 'HreRem.view.activos.detalle.HistoricoEstadosPublicacionList'],
 	listeners	: {
 		boxready:'cargarTabData',
         activate:'onActivateTabDatosPublicacion'

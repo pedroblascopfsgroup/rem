@@ -40,14 +40,6 @@ public interface ActivoEstadoPublicacionApi {
 	boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion, DtoPublicacionValidaciones validacionesPublicacion) throws SQLException, JsonViewerException;
 
 	/**
-	 * Método que obtiene el estado de publicación por el ID del activo, así como su motivo y las observaciones si tuviese.
-	 *
-	 * @param id: ID del activo a filtrar.
-	 * @return Devuelve el estado de publicación en el que se encuentra el activo.
-	 */
-	DtoCambioEstadoPublicacion getHistoricoEstadoPublicacionByActivo(Long id);
-
-	/**
 	 * Cambia al NUEVO ESTADO DE PUBLICACION y REGISTRA EN EL HISTORICO DE PUBLICACION
 	 *
 	 * @param activo

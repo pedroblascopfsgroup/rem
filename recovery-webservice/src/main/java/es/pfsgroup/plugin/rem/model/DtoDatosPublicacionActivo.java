@@ -43,6 +43,7 @@ public class DtoDatosPublicacionActivo extends WebDto {
 	private String tipoPublicacionAlquilerCodigo;
 	private String tipoPublicacionVentaDescripcion;
 	private String tipoPublicacionAlquilerDescripcion;
+	private String eleccionUsuarioTipoPublicacionAlquiler;
 
 
 	public String getTipoPublicacionVentaDescripcion() {
@@ -316,4 +317,13 @@ public class DtoDatosPublicacionActivo extends WebDto {
 	public void setMotivoOcultacionManualAlquiler(String motivoOcultacionManualAlquiler) {
 		this.motivoOcultacionManualAlquiler = motivoOcultacionManualAlquiler;
 	}
+
+	public String getEleccionUsuarioTipoPublicacionAlquiler() {
+		return eleccionUsuarioTipoPublicacionAlquiler;
+	}
+
+	public void setEleccionUsuarioTipoPublicacionAlquiler(String eleccionUsuarioTipoPublicacionAlquiler) {
+		this.eleccionUsuarioTipoPublicacionAlquiler = eleccionUsuarioTipoPublicacionAlquiler;
+	}
+
 }

@@ -123,6 +123,9 @@ Ext.define('HreRem.model.DatosPublicacionActivo', {
 	    },
 	    {
 	        name:'tipoPublicacionAlquilerDescripcion'
+	    },
+	    {
+	        name:'eleccionUsuarioTipoPublicacionAlquiler'
 	    }
 	],
 

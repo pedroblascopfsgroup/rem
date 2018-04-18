@@ -725,14 +725,14 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	public Boolean publicarActivoConHistorico(Long idActivo, String username) {
     	// Antes de realizar la llamada al SP realizar las operaciones previas con los datos.
 		getHibernateTemplate().flush();
-    	return this.publicarActivo(idActivo, username, true);
+    	return this.publicarActivo(idActivo, username, true, null);
 	}
 
 	@Override
-	public Boolean publicarActivoSinHistorico(Long idActivo, String username) {
+	public Boolean publicarActivoSinHistorico(Long idActivo, String username, String eleccionUsuarioTipoPublicacionAlquiler) {
 		// Antes de realizar la llamada al SP realizar las operaciones previas con los datos.
 		getHibernateTemplate().flush();
-		return this.publicarActivo(idActivo, username, false);
+		return this.publicarActivo(idActivo, username, false, eleccionUsuarioTipoPublicacionAlquiler);
 	}
 
 	/**
@@ -743,11 +743,12 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	 * @param historificar: indica si la operación ha de realizar un histórico de los movimientos realizados.
 	 * @return Devuelve True si la operación ha sido satisfactorio, False si no ha sido satisfactoria.
 	 */
-	private Boolean publicarActivo(Long idActivo, String username, Boolean historificar) {
-		String procedureHQL = "BEGIN SP_CAMBIO_ESTADO_PUBLICACION(:idActivoParam, :usernameParam, :historificarParam);  END;";
+	private Boolean publicarActivo(Long idActivo, String username, Boolean historificar, String eleccionUsuarioTipoPublicacionAlquiler) {
+		String procedureHQL = "BEGIN SP_CAMBIO_ESTADO_PUBLICACION(:idActivoParam, :eleccionUsuarioParam, :usernameParam, :historificarParam);  END;";
 
 		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
 		callProcedureSql.setParameter("idActivoParam", idActivo);
+		callProcedureSql.setParameter("eleccionUsuarioParam", eleccionUsuarioTipoPublicacionAlquiler);
 		callProcedureSql.setParameter("usernameParam", username);
 		callProcedureSql.setParameter("historificarParam", historificar ? "S" : "N");
 

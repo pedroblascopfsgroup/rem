@@ -101,6 +101,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Integer estadoAlquiler;
 	private String estadoVentaDescripcion;
 	private String estadoAlquilerDescripcion;
+	private String estadoAlquilerCodigo;
+	private String estadoVentaCodigo;
 	private Boolean gestion;
 	private String tipoInfoComercialCodigo;
 	private String estadoPublicacionDescripcion;
@@ -275,6 +277,22 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	 * setLocalizacionActual(NMBLocalizacionesBienInfo localizacionActual) {
 	 * this.localizacionActual = localizacionActual; }
 	 */
+
+	public String getEstadoAlquilerCodigo() {
+		return estadoAlquilerCodigo;
+	}
+
+	public void setEstadoAlquilerCodigo(String estadoAlquilerCodigo) {
+		this.estadoAlquilerCodigo = estadoAlquilerCodigo;
+	}
+
+	public String getEstadoVentaCodigo() {
+		return estadoVentaCodigo;
+	}
+
+	public void setEstadoVentaCodigo(String estadoVentaCodigo) {
+		this.estadoVentaCodigo = estadoVentaCodigo;
+	}
 
 	public String getRating() {
 		return rating;

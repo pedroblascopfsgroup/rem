@@ -437,7 +437,7 @@ Ext.define('HreRem.model.Activo', {
     			name: 'tipoComercializacionDescripcion'
     		},
     		{
-    			name: 'estadoPublicacionDescripcion'// TODO: desglosar en venta y alquiler o quitar?
+    			name: 'estadoPublicacionDescripcion'
     		},
     		{
     			name: 'estadoPublicacionCodigo'
@@ -448,6 +448,12 @@ Ext.define('HreRem.model.Activo', {
     		{
     			name: 'estadoAlquilerDescripcion'
     		},
+    		{
+                name: 'estadoAlquilerCodigo'
+            },
+            {
+                name: 'estadoVentaCodigo'
+            },
 			{
 				name: 'incluidoEnPerimetro'
 			},

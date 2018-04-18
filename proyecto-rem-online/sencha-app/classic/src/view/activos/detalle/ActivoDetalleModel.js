@@ -352,6 +352,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
             } else {
                 this.getData().comboMotivosOcultacionAlquiler.clearFilter();
             }
+        },
+
+        debePreguntarPorTipoPublicacionAlquiler: function(get) {
+            var publicarSinPrecioAlquiler = get('datospublicacionactivo.publicarSinPrecioAlquiler');
+            var informeComercialAprobado = get('activo.informeComercialAceptado') === "true";
+            var precioRentaWeb = !Ext.isEmpty(get('datospublicacionactivo.precioWebAlquiler'));
+
+            return !informeComercialAprobado && (publicarSinPrecioAlquiler || precioRentaWeb);
         }
 	 },
 

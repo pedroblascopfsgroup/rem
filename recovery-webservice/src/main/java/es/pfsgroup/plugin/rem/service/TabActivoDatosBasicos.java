@@ -507,6 +507,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(!Checks.esNulo(activo.getActivoPublicacion())){
 			BeanUtils.copyProperty(activoDto, "estadoAlquilerDescripcion", !Checks.esNulo(activo.getActivoPublicacion().getEstadoPublicacionAlquiler()) ? activo.getActivoPublicacion().getEstadoPublicacionAlquiler().getDescripcion() : "");
 			BeanUtils.copyProperty(activoDto, "estadoVentaDescripcion", !Checks.esNulo(activo.getActivoPublicacion().getEstadoPublicacionVenta()) ? activo.getActivoPublicacion().getEstadoPublicacionVenta().getDescripcion(): "");
+			BeanUtils.copyProperty(activoDto, "estadoAlquilerCodigo", !Checks.esNulo(activo.getActivoPublicacion().getEstadoPublicacionAlquiler()) ? activo.getActivoPublicacion().getEstadoPublicacionAlquiler().getCodigo() : "");
+			BeanUtils.copyProperty(activoDto, "estadoVentaCodigo", !Checks.esNulo(activo.getActivoPublicacion().getEstadoPublicacionVenta()) ? activo.getActivoPublicacion().getEstadoPublicacionVenta().getCodigo(): "");
 		}
 
 		// HREOS-2761: Buscamos si existen activos candidatos para propagar cambios. Llamada única para el activo

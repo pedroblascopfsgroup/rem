@@ -2,10 +2,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.activodetalle',  
     requires: ['HreRem.view.activos.detalle.AnyadirEntidadActivo' , 'HreRem.view.activos.detalle.CargaDetalle',
-    "HreRem.view.activos.detalle.OpcionesPropagacionCambios"],
-    
+            'HreRem.view.activos.detalle.OpcionesPropagacionCambios', 'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion'],
+
     control: {
-    	
          'documentosactivo gridBase': {
              abrirFormulario: 'abrirFormularioAdjuntarDocumentos',
              onClickRemove: 'borrarDocumentoAdjunto',
@@ -3213,6 +3212,51 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
         me.getViewModel().get('filtrarComboMotivosOcultacionVenta');
         me.getViewModel().get('filtrarComboMotivosOcultacionAlquiler');
+    },
+
+    onChangeCheckboxPublicarAlquiler: function(checkbox, isDirty) {
+        var me = this;
+
+        if (isDirty && me.getViewModel().get('debePreguntarPorTipoPublicacionAlquiler')) {
+			var ventana = Ext.create('HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion');
+            ventana.show();
+        }
+    },
+
+    onChangeCheckboxPublicarSinPrecioAlquiler: function(checkbox, isDirty) {
+        var me = this;
+		var checkboxPublicarAlquiler = checkPublicarIsDirty = checkbox.up('activosdetallemain').lookupReference('chkbxpublicaralquiler');
+		var estadoPubAlquilerPublicado = me.getViewModel().get('activo').getData().estadoAlquilerCodigo === "03" ||
+			me.getViewModel().get('activo').getData().estadoAlquilerCodigo === "02" ||
+			me.getViewModel().get('activo').getData().estadoAlquilerCodigo === "04";
+
+		if(isDirty && !estadoPubAlquilerPublicado) {
+			var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) && !checkbox.getValue();
+            checkboxPublicarAlquiler.setReadOnly(readOnly);
+		}
+
+		if (!isDirty && !estadoPubAlquilerPublicado) {
+			var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) && !checkbox.getValue();
+			checkboxPublicarAlquiler.setReadOnly(readOnly);
+			checkbox.up('activosdetallemain').getViewModel().get('datospublicacionactivo').set('eleccionUsuarioTipoPublicacionAlquiler', null);
+			checkboxPublicarAlquiler.setValue(false);
+		}
+
+
+    },
+
+    establecerTipoPublicacionAlquiler: function(btn) {
+        var me = this;
+
+        Ext.ComponentQuery.query('activosdetallemain')[0].getViewModel().get('datospublicacionactivo').set('eleccionUsuarioTipoPublicacionAlquiler', btn.codigo);
+        btn.up('window').destroy();
+    },
+
+    cancelarEstablecerTipoPublicacionAlquiler: function(btn) {
+        var me = this;
+
+        Ext.ComponentQuery.query('activosdetallemain')[0].lookupReference('chkbxpublicaralquiler').setValue(false);
+        btn.up('window').destroy();
     }
 
 });

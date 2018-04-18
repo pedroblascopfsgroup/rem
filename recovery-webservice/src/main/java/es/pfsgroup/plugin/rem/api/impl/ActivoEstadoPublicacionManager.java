@@ -266,7 +266,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 					// Ademas, se publica el activo lanzando el procedure para
 					// este
-					publicarActivoProcedure(activo.getId(), genericAdapter.getUsuarioLogado().getNombre());
+					publicarActivoProcedure(activo.getId(), genericAdapter.getUsuarioLogado().getNombre(), null);
 
 					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO); // Cambiar
 																															// estado
@@ -734,7 +734,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 		if(this.registrarHistoricoPublicacion(activoPublicacion, dto)) {
 			if(this.actualizarDatosEstadoActualPublicacion(dto, activoPublicacion)) {
-				return this.publicarActivoProcedure(dto.getIdActivo(), genericAdapter.getUsuarioLogado().getUsername());
+				return this.publicarActivoProcedure(dto.getIdActivo(), genericAdapter.getUsuarioLogado().getUsername(), dto.getEleccionUsuarioTipoPublicacionAlquiler());
 			}
 		}
 
@@ -913,8 +913,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 * @throws JsonViewerException Provoca una excepción cuando el proceso del SP ha tenido algún error. De
 	 * este modo, se informa hacia la interfaz.
 	 */
-	private Boolean publicarActivoProcedure(Long idActivo, String username) throws JsonViewerException{
-		if(activoDao.publicarActivoSinHistorico(idActivo, username)) {
+	private Boolean publicarActivoProcedure(Long idActivo, String username, String eleccionUsuarioTipoPublicacionAlquiler) throws JsonViewerException{
+		if(activoDao.publicarActivoSinHistorico(idActivo, username, eleccionUsuarioTipoPublicacionAlquiler)) {
 			logger.info(messageServices.getMessage("activo.publicacion.OK.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
 			return true;
 		} else {

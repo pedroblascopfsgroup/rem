@@ -281,7 +281,10 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												bind: {
 													readOnly: '{datospublicacionactivo.deshabilitarCheckPublicarAlquiler}',
 													value: '{datospublicacionactivo.publicarAlquiler}'
-												}
+												},
+                                                listeners: {
+                                                     dirtychange: 'onChangeCheckboxPublicarAlquiler'
+                                                }
 											},
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.ocultar'),
@@ -301,7 +304,10 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												bind: {
 													readOnly: '{datospublicacionactivo.deshabilitarCheckPublicarSinPrecioAlquiler}',
 													value: '{datospublicacionactivo.publicarSinPrecioAlquiler}'
-												}
+												},
+	                                            listeners: {
+	                                                 dirtychange: 'onChangeCheckboxPublicarSinPrecioAlquiler'
+	                                            }
 											},
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.no.mostrar.precio'),

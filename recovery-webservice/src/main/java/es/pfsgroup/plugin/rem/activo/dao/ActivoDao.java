@@ -179,8 +179,9 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 *
 	 * @param idActivo: ID del activo para el cual se desea realizar la operación.
 	 * @param username: nombre del usuario, si la llamada es desde la web, que realiza la operación.
+	 * @param eleccionUsuarioTipoPublicacionAlquiler: indica si el tipo de publicación de alquiler es pre-publicado o publicado forzado.
 	 * @return Devuelve True si la operación ha sido satisfactorio, False si no ha sido satisfactoria.
 	 */
-	Boolean publicarActivoSinHistorico(Long idActivo, String username);
+	Boolean publicarActivoSinHistorico(Long idActivo, String username, String eleccionUsuarioTipoPublicacionAlquiler);
 
 }

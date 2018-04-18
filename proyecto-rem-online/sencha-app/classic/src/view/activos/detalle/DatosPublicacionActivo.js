@@ -164,7 +164,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												textareaRefChained: 'textareaMotivoOcultacionManualVenta',
 												bind: {
 													readOnly: '{datospublicacionactivo.deshabilitarCheckOcultarVenta}',
-													store: '{comboMotivosOcultacion}',
+													store: '{comboMotivosOcultacionVenta}',
 													value: '{datospublicacionactivo.motivoOcultacionVentaCodigo}'
 												},
 												listeners: {
@@ -322,7 +322,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												textareaRefChained: 'textareaMotivoOcultacionManualAlquiler',
 									        	bind: {
 								            		readOnly: '{datospublicacionactivo.deshabilitarCheckOcultarAlquiler}',
-								            		store: '{comboMotivosOcultacion}',
+								            		store: '{comboMotivosOcultacionAlquiler}',
 								            		value: '{datospublicacionactivo.motivoOcultacionAlquilerCodigo}'
 								            	},
 					    						listeners: {

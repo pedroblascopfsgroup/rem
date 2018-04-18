@@ -3190,11 +3190,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
         if(checkbox.getValue()) {
             combobox.setDisabled(false);
-            textarea.setDisabled(false);
+            textarea.setReadOnly(false);
         } else {
             combobox.setDisabled(true);
             combobox.clearValue();
-            textarea.setDisabled(true);
+            textarea.setReadOnly(true);
             textarea.reset();
         }
 
@@ -3211,7 +3211,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     onActivateTabDatosPublicacion: function(tab, eOpts) {
         var me = this;
 
-        me.getViewModel().get('filtrarComboMotivosOcultacion');
+        me.getViewModel().get('filtrarComboMotivosOcultacionVenta');
+        me.getViewModel().get('filtrarComboMotivosOcultacionAlquiler');
     }
 
 });

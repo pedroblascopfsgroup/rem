@@ -326,19 +326,33 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 		},
 
-		filtrarComboMotivosOcultacion: function(get) {
+		filtrarComboMotivosOcultacionVenta: function(get) {
 			var bloqueoCheckOcultar = get('datospublicacionactivo.deshabilitarCheckOcultarVenta');
 
 			if(!Ext.isEmpty(bloqueoCheckOcultar) && !bloqueoCheckOcultar) {
-				 this.getData().comboMotivosOcultacion.filter([{
+				 this.getData().comboMotivosOcultacionVenta.filter([{
                      filterFn: function(rec){
                          return rec.getData().esMotivoManual === 'true';
                      }
                  }]);
 			} else {
-				this.getData().comboMotivosOcultacion.clearFilter();
+				this.getData().comboMotivosOcultacionVenta.clearFilter();
 			}
-		}
+		},
+
+		filtrarComboMotivosOcultacionAlquiler: function(get) {
+            var bloqueoCheckOcultar = get('datospublicacionactivo.deshabilitarCheckOcultarAlquiler');
+
+            if(!Ext.isEmpty(bloqueoCheckOcultar) && !bloqueoCheckOcultar) {
+                 this.getData().comboMotivosOcultacionAlquiler.filter([{
+                     filterFn: function(rec){
+                         return rec.getData().esMotivoManual === 'true';
+                     }
+                 }]);
+            } else {
+                this.getData().comboMotivosOcultacionAlquiler.clearFilter();
+            }
+        }
 	 },
 
     stores: {
@@ -1024,7 +1038,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     			}
     		},
 
-    		comboMotivosOcultacion: {
+    		comboMotivosOcultacionVenta: {
     			model: 'HreRem.model.ComboBase',
 				proxy: {
 					type: 'uxproxy',
@@ -1032,6 +1046,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					extraParams: {diccionario: 'motivosOcultacion'}
 				}
     		},
+
+    		comboMotivosOcultacionAlquiler: {
+                model: 'HreRem.model.ComboBase',
+                proxy: {
+                    type: 'uxproxy',
+                    remoteUrl: 'generic/getDiccionario',
+                    extraParams: {diccionario: 'motivosOcultacion'}
+                }
+            },
     		
     		historicoInformeComercial:{
     			pageSize: $AC.getDefaultPageSize(),

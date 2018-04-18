@@ -199,19 +199,19 @@ public class TareaActivoManager implements TareaActivoApi {
 	@Override
 	@Transactional(readOnly=false)
 	public void saltoRespuestaBankiaAnulacionDevolucion(Long idTareaExterna){
-		saltoTarea(idTareaExterna,ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION);
+		saltoDesdeTareaExterna(idTareaExterna,ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION);
 	}
 	
 	@Override
 	@Transactional(readOnly=false)
 	public void saltoRespuestaBankiaDevolucion(Long idTareaExterna){
-		saltoTarea(idTareaExterna,ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION);
+		saltoDesdeTareaExterna(idTareaExterna,ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION);
 	}
 	
 	@Override
 	@Transactional(readOnly=false)
 	public void saltoPendienteDevolucion(Long idTareaExterna){
-		saltoTarea(idTareaExterna,ComercialUserAssigantionService.CODIGO_T013_PENDIENTE_DEVOLUCION);
+		saltoDesdeTareaExterna(idTareaExterna,ComercialUserAssigantionService.CODIGO_T013_PENDIENTE_DEVOLUCION);
 	}
 		
 	@Override

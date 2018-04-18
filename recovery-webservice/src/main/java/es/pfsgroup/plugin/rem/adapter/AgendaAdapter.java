@@ -564,7 +564,7 @@ public class AgendaAdapter {
 	
 	public Boolean saltoTareaByCodigo(Long idTareaExterna, String codigoTarea){
 		try{
-			tareaActivoApi.saltoTarea(idTareaExterna, codigoTarea);
+			tareaActivoApi.saltoDesdeTareaExterna(idTareaExterna, codigoTarea);
 		}catch(Exception ex){
 			return false;
 		}

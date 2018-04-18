@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.api;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
+import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
@@ -48,6 +50,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
+import es.pfsgroup.plugin.rem.model.ImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Reserva;
@@ -1093,5 +1096,13 @@ public interface ActivoApi {
 	 * Crea un expediente comercial
 	 * */
 	public boolean crearExpediente(Oferta oferta, Trabajo trabajo);
+	
+	public List<DtoImpuestosActivo> getImpuestosByActivo(Long idActivo);
+	
+	public boolean createImpuestos(DtoImpuestosActivo dtoImpuestosfilter) throws ParseException;
+
+	public boolean deleteImpuestos(DtoImpuestosActivo dtoImpuestosFilter);
+
+	public boolean updateImpuestos(DtoImpuestosActivo dtoImpuestosFilter) throws ParseException;
 
 }

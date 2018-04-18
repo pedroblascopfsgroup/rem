@@ -130,10 +130,10 @@ public class UpdaterStateManager implements UpdaterStateApi{
 			activo.setSituacionComercial((DDSituacionComercial)utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class,codigo));
 		}else{
 			this.updaterStateDisponibilidadComercial(activo);
-			//genericDao.update(Activo.class, activo);	
 			activoApi.saveOrUpdate(activo);
 		}
-		
+
+		activoAdapterApi.actualizarEstadoPublicacionActivo(activo.getId());
 	}
 	
 	@Override

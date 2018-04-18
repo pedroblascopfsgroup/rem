@@ -53,6 +53,14 @@ public class ActivoPublicacionHistorico implements Serializable, Auditable {
 	@JoinColumn(name = "DD_TPU_ID")
 	private DDTipoPublicacion tipoPublicacion;
 
+	@ManyToOne
+	@JoinColumn(name = "DD_TPU_V_ID")
+	private DDTipoPublicacion tipoPublicacionVenta;
+
+	@ManyToOne
+	@JoinColumn(name = "DD_TPU_A_ID")
+	private DDTipoPublicacion tipoPublicacionAlquiler;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_EPV_ID")
 	private DDEstadoPublicacionVenta estadoPublicacionVenta;
@@ -143,6 +151,22 @@ public class ActivoPublicacionHistorico implements Serializable, Auditable {
 
 	public void setTipoPublicacion(DDTipoPublicacion tipoPublicacion) {
 		this.tipoPublicacion = tipoPublicacion;
+	}
+
+	public DDTipoPublicacion getTipoPublicacionVenta() {
+		return tipoPublicacionVenta;
+	}
+
+	public void setTipoPublicacionVenta(DDTipoPublicacion tipoPublicacionVenta) {
+		this.tipoPublicacionVenta = tipoPublicacionVenta;
+	}
+
+	public DDTipoPublicacion getTipoPublicacionAlquiler() {
+		return tipoPublicacionAlquiler;
+	}
+
+	public void setTipoPublicacionAlquiler(DDTipoPublicacion tipoPublicacionAlquiler) {
+		this.tipoPublicacionAlquiler = tipoPublicacionAlquiler;
 	}
 
 	public DDEstadoPublicacionVenta getEstadoPublicacionVenta() {

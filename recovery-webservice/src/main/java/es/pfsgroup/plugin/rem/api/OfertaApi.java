@@ -533,8 +533,6 @@ public interface OfertaApi {
 	 */
 	public ActivoProveedor getPreescriptor(Oferta oferta);
 	
-	public void ocultarActivoOferta(Oferta oferta) throws Exception;
-	
 	public void desocultarActivoOferta(Oferta oferta) throws Exception;
 	
 	/**

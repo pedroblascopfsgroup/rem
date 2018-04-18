@@ -13,6 +13,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -191,6 +192,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private ActivoApi activoApi;
+
+	@Autowired
+	private ActivoAdapter activoAdapter;
 
 	@Autowired
 	private AgendaAdapter adapter;
@@ -942,7 +946,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}else{
 					updaterState.updaterStateDisponibilidadComercialAndSave(activo,false);
 				}
-
 			}
 		}
 	}
@@ -2293,31 +2296,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override
 	public ActivoProveedor getPreescriptor(Oferta oferta) {
 		return oferta.getPrescriptor();
-	}
-
-	@Override
-	public void ocultarActivoOferta(Oferta oferta) throws Exception {
-
-		if (oferta.getActivosOferta() != null && !oferta.getActivosOferta().isEmpty()) {
-			for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
-				Activo activo = activoOferta.getPrimaryKey().getActivo();
-				if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())
-						&& DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_RESERVA
-								.equals(activo.getSituacionComercial().getCodigo())) {
-
-					DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = activoEstadoPublicacionApi
-							.getState(activo.getId());
-					dtoCambioEstadoPublicacion.setOcultacionForzada(true);
-					dtoCambioEstadoPublicacion
-							.setMotivoPublicacion(ActivoHistoricoEstadoPublicacion.MOTIVO_OCULTACION_AUTOMATICA);
-					DtoPublicacionValidaciones dtoPublicacionValidaciones = new DtoPublicacionValidaciones();
-					dtoPublicacionValidaciones.setValidacionesNinguna();
-
-					activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion,
-							dtoPublicacionValidaciones);
-				}
-			}
-		}
 	}
 
 	@Override

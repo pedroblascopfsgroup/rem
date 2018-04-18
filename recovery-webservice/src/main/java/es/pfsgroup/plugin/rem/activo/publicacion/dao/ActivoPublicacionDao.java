@@ -43,14 +43,5 @@ public interface ActivoPublicacionDao extends AbstractDao<ActivoPublicacion, Lon
 	 * @return Devuelve una entidad de estado de publicación.
 	 */
 	ActivoPublicacion getActivoPublicacionPorIdActivo(Long idActivo);
-	
-	/**
-	 * Este método devuelve un listado de publicaciones de un activo por
-	 * el ID de activo que recibe.
-	 * 
-	 * @param dto : dto con el ID de activo para filtrar el listado.
-	 * @return Devuelve un listado con los resultados obtenidos.
-	 */
-	public List<ActivoPublicacion> getPublicacionActivoByIdActivo(DtoDatosPublicacion dto);
 
 }

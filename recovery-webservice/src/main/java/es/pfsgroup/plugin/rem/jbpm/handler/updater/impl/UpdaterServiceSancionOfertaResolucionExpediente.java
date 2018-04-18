@@ -115,16 +115,6 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 							tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
 							genericDao.save(ActivoTramite.class, tramite);
 
-							//Rechaza la oferta y descongela el resto
-							ofertaApi.rechazarOferta(ofertaAceptada);
-							try {
-								ofertaApi.descongelarOfertas(expediente);
-							} catch (Exception e) {
-								logger.error("Error descongelando ofertas.", e);
-							}
-							Filter filtroTanteo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoTanteo.CODIGO_EJERCIDO);
-							ofertaAceptada.setResultadoTanteo(genericDao.get(DDResultadoTanteo.class, filtroTanteo));
-
 							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 							expediente.setEstado(estado);
 							genericDao.save(ExpedienteComercial.class, expediente);
@@ -139,6 +129,16 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 								
 								genericDao.save(Reserva.class, reserva);
 							}
+
+							//Rechaza la oferta y descongela el resto
+							ofertaApi.rechazarOferta(ofertaAceptada);
+							try {
+								ofertaApi.descongelarOfertas(expediente);
+							} catch (Exception e) {
+								logger.error("Error descongelando ofertas.", e);
+							}
+							Filter filtroTanteo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoTanteo.CODIGO_EJERCIDO);
+							ofertaAceptada.setResultadoTanteo(genericDao.get(DDResultadoTanteo.class, filtroTanteo));
 						} else {
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.EN_DEVOLUCION);
 							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);

@@ -3465,7 +3465,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (!Checks.esNulo(situacionComercial)) activo.setSituacionComercial(situacionComercial);
 
 			// Estado publicación ----------
-			//this.setActivoToNoPublicado(activo, messageServices.getMessage(MOTIVO_NO_PUBLICADO_POR_ACTIVO_VENDIDO));// TODO: llamar al SP de estado publicación.
 			activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 		}
 	}

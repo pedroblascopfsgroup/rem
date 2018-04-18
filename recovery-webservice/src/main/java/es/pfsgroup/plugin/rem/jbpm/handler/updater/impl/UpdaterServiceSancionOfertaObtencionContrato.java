@@ -127,22 +127,12 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 						expedienteComercialApi.actualizarFVencimientoReservaTanteosRenunciados(null, tanteosExpediente);
 					}
 				}
-				
-				
 			}
-			
-		
+
 			genericDao.save(ExpedienteComercial.class, expediente);
 
-			
-			//Actualizar el estado comercial de los activos de la oferta
+			//Actualizar el estado comercial de los activos de la oferta y, consecuentemente, el estado de publicación.
 			ofertaApi.updateStateDispComercialActivosByOferta(ofertaAceptada);
-			//Actualizar el estado de la publicación de los activos de la oferta (ocultar activos)
-			try {
-				ofertaApi.ocultarActivoOferta(ofertaAceptada);
-			} catch (Exception e) {
-				logger.error("Error descongelando ofertas.", e);
-			} 
 		}
 
 	}

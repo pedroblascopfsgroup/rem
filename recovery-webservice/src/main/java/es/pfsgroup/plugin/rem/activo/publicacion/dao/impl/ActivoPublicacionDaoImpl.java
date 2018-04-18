@@ -56,11 +56,13 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 		dto.setMotivoOcultacionManualAlquiler(entidad.getMotivoOcultacionManualAlquiler());
 		dto.setFechaInicioEstadoVenta(entidad.getFechaInicioVenta());
 		dto.setFechaInicioEstadoAlquiler(entidad.getFechaInicioAlquiler());
-		if(!Checks.esNulo(entidad.getTipoPublicacion())) {
-			dto.setTipoPublicacionVentaCodigo(entidad.getTipoPublicacion().getCodigo());
-			dto.setTipoPublicacionAlquilerCodigo(entidad.getTipoPublicacion().getCodigo());
-			dto.setTipoPublicacionVentaDescripcion(entidad.getTipoPublicacion().getDescripcion());
-			dto.setTipoPublicacionAlquilerDescripcion(entidad.getTipoPublicacion().getDescripcion());
+		if(!Checks.esNulo(entidad.getTipoPublicacionVenta())) {
+			dto.setTipoPublicacionVentaCodigo(entidad.getTipoPublicacionVenta().getCodigo());
+			dto.setTipoPublicacionVentaDescripcion(entidad.getTipoPublicacionVenta().getDescripcion());
+		}
+		if(!Checks.esNulo(entidad.getTipoPublicacionAlquiler())) {
+			dto.setTipoPublicacionAlquilerCodigo(entidad.getTipoPublicacionAlquiler().getCodigo());
+			dto.setTipoPublicacionAlquilerDescripcion(entidad.getTipoPublicacionAlquiler().getDescripcion());
 		}
 
 		return dto;
@@ -91,12 +93,5 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 
 		return HibernateUtils.castObject(ActivoPublicacion.class, criteria.uniqueResult());
 	}
-		
-	@Override
-	public List<ActivoPublicacion> getPublicacionActivoByIdActivo(DtoDatosPublicacion dto) {		
-		String hql2 = "from ActivoPublicacion ap where ap.activo.id= ?";
-		List<ActivoPublicacion> list = getHibernateTemplate().find(hql2, new Object[] { dto.getIdActivo() });
-		
-		return list;
-	}
+
 }

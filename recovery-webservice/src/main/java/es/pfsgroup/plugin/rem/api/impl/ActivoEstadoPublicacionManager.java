@@ -1,29 +1,5 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
-import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import es.pfsgroup.commons.utils.dao.abm.Order;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
-import es.pfsgroup.plugin.rem.activo.perimetro.dao.PerimetroDao;
-import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
-import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionHistoricoDao;
-import es.pfsgroup.plugin.rem.activo.valoracion.dao.ActivoValoracionDao;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.model.dd.*;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -35,10 +11,30 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
+import es.pfsgroup.plugin.rem.activo.perimetro.dao.PerimetroDao;
+import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
+import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionHistoricoDao;
+import es.pfsgroup.plugin.rem.activo.valoracion.dao.ActivoValoracionDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Date;
 
 @Service("activoEstadoPublicacionManager")
 public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionApi{
@@ -691,14 +687,6 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		return !Checks.esNulo(activoPublicacion) && !Checks.esNulo(activoPublicacion.getEstadoPublicacionAlquiler()) &&
 				(DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())
 				|| DDEstadoPublicacionAlquiler.CODIGO_OCULTO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo()));
-	}
-
-	// Comprobación mínima.
-	private Boolean isPrePublicadoAlquiler(Long idActivo) {
-		ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(idActivo);
-
-		return !Checks.esNulo(activoPublicacion) && !Checks.esNulo(activoPublicacion.getEstadoPublicacionAlquiler()) &&
-				DDEstadoPublicacionAlquiler.CODIGO_PRE_PUBLICADO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo());
 	}
 
 	// Comprobación mínima.

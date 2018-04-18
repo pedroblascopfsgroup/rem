@@ -1,11 +1,7 @@
 package es.pfsgroup.plugin.rem.updaterstate;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -95,18 +91,19 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	}
 	
 	private void updaterStateGestion(Activo activo){
-		/* Se cambia el calculo actual por el del check de OK Tecnico, HREOS-3953
-		//En caso de que esté 'OK' no se modifica el estado.
-		if(!this.getStateGestion(activo)){
-			TareaExterna tareaExternaDocGestion = activoTareaExternaApi.obtenerTareasAdmisionByCodigo(activo, "T001_CheckingDocumentacionGestion");
-			if(!Checks.esNulo(tareaExternaDocGestion)){
-				TareaActivo tareaDocGestion = (TareaActivo) tareaExternaDocGestion.getTareaPadre();
-			
-				activo.setGestion(!Checks.esNulo(tareaDocGestion.getFechaFin()));
+		if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())){
+			activo.setGestion(activo.getTieneOkTecnico());
+		}
+		else{
+			if(!this.getStateGestion(activo)){
+				TareaExterna tareaExternaDocGestion = activoTareaExternaApi.obtenerTareasAdmisionByCodigo(activo, "T001_CheckingDocumentacionGestion");
+				if(!Checks.esNulo(tareaExternaDocGestion)){
+					TareaActivo tareaDocGestion = (TareaActivo) tareaExternaDocGestion.getTareaPadre();
+				
+					activo.setGestion(!Checks.esNulo(tareaDocGestion.getFechaFin()));
+				}
 			}
 		}
-		*/
-		activo.setGestion(activo.getTieneOkTecnico());
 	}
 	
 	@Override

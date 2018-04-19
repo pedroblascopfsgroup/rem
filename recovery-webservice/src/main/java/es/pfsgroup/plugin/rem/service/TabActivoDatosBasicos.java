@@ -54,12 +54,12 @@ import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 @Component
 public class TabActivoDatosBasicos implements TabActivoService {
 	
-	public static final String MSG_ERROR_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS = "activo.aviso.demsarcar.comercializar.ofertas.vivas";
-	public static final String MSG_ERROR_PERIMETRO_FORMALIZACION_EXPEDIENTE_VIVO = "activo.aviso.demsarcar.formalizar.expediente.vivo";
-	public static final String MOTIVO_ACTIVO_NO_COMERCIALIZABLE_NO_PUBLICADO = "activo.motivo.desmarcar.comercializar.no.publicar";
-	public static final String MSG_ERROR_PERIMETRO_COMERCIALIZACION_AGR_RESTRINGIDA_NO_PRINCIPAL = "activo.aviso.demsarcar.comercializar.agr.restringida.no.principal";
-	public static final String AVISO_TITULO_GESTOR_COMERCIAL = "activo.aviso.titulo.cambio.gestor.comercial";
-	public static final String AVISO_MENSAJE_GESTOR_COMERCIAL = "activo.aviso.descripcion.cambio.gestor.comercial";
+	private static final String MSG_ERROR_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS = "activo.aviso.demsarcar.comercializar.ofertas.vivas";
+	private static final String MSG_ERROR_PERIMETRO_FORMALIZACION_EXPEDIENTE_VIVO = "activo.aviso.demsarcar.formalizar.expediente.vivo";
+	private static final String MOTIVO_ACTIVO_NO_COMERCIALIZABLE_NO_PUBLICADO = "activo.motivo.desmarcar.comercializar.no.publicar";
+	private static final String MSG_ERROR_PERIMETRO_COMERCIALIZACION_AGR_RESTRINGIDA_NO_PRINCIPAL = "activo.aviso.demsarcar.comercializar.agr.restringida.no.principal";
+	private static final String AVISO_TITULO_GESTOR_COMERCIAL = "activo.aviso.titulo.cambio.gestor.comercial";
+	private static final String AVISO_MENSAJE_GESTOR_COMERCIAL = "activo.aviso.descripcion.cambio.gestor.comercial";
     
 
 	@Autowired
@@ -111,7 +111,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
 	
 	@Resource
-    MessageService messageServices;
+	private MessageService messageServices;
 	
 	protected static final Log logger = LogFactory.getLog(TabActivoDatosBasicos.class);	
 
@@ -637,20 +637,15 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			// Solo se guardan los datos si el usuario ha cambiado algun campo de perimetros
 			// El control de cambios se realiza revisando los datos que transporta el dto
 			// Solo se modifican/crean nuevos registros de perimetros si hay guardado de datos
-			if(
-				dto.getAplicaAsignarMediador() != null || dto.getAplicaComercializar() != null || dto.getAplicaFormalizar() != null || 
+			if(dto.getAplicaAsignarMediador() != null || dto.getAplicaComercializar() != null || dto.getAplicaFormalizar() != null ||
 				dto.getAplicaGestion() != null  || dto.getAplicaTramiteAdmision() != null || dto.getMotivoAplicaComercializarCodigo() != null ||
-				dto.getMotivoNoAplicaComercializar() != null || 
-				dto.getIncluidoEnPerimetro() != null ||	dto.getFechaAltaActivoRem() != null || dto.getAplicaTramiteAdmision() != null || 
-				dto.getFechaAplicaTramiteAdmision() != null || dto.getMotivoAplicaTramiteAdmision() != null ||	dto.getAplicaGestion() != null ||
-				dto.getFechaAplicaGestion() != null || dto.getMotivoAplicaGestion() != null || dto.getAplicaAsignarMediador() != null ||
-				dto.getFechaAplicaAsignarMediador() != null || dto.getMotivoAplicaAsignarMediador() != null || dto.getAplicaComercializar() != null || 
-				dto.getFechaAplicaComercializar() != null || dto.getMotivoAplicaComercializarCodigo() != null || dto.getMotivoAplicaComercializarDescripcion() != null ||
-				dto.getMotivoNoAplicaComercializar() != null || dto.getAplicaFormalizar() != null || dto.getFechaAplicaFormalizar() != null || dto.getMotivoAplicaFormalizar() != null ||
-				dto.getAplicaPublicar() != null || dto.getFechaAplicaPublicar() != null || dto.getMotivoAplicaPublicar() != null) 
-				 
+				dto.getMotivoNoAplicaComercializar() != null || dto.getIncluidoEnPerimetro() != null ||	dto.getFechaAltaActivoRem() != null ||
+				dto.getFechaAplicaTramiteAdmision() != null || dto.getMotivoAplicaTramiteAdmision() != null || dto.getFechaAplicaGestion() != null ||
+				dto.getMotivoAplicaGestion() != null || dto.getFechaAplicaAsignarMediador() != null || dto.getMotivoAplicaAsignarMediador() != null ||
+				dto.getFechaAplicaComercializar() != null || dto.getMotivoAplicaComercializarDescripcion() != null ||
+				dto.getFechaAplicaFormalizar() != null || dto.getMotivoAplicaFormalizar() != null || dto.getAplicaPublicar() != null ||
+				dto.getFechaAplicaPublicar() != null || dto.getMotivoAplicaPublicar() != null)
 			{
-				
 				PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
 				beanUtilNotNull.copyProperties(perimetroActivo, dto);
 				
@@ -709,7 +704,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}
 				
 				if(!Checks.esNulo(dto.getAplicaPublicar())) {
-					perimetroActivo.setAplicaPublicar(dto.getAplicaPublicar() ? true : false);
+					perimetroActivo.setAplicaPublicar(dto.getAplicaPublicar());
 					perimetroActivo.setFechaAplicaPublicar(new Date());
 				}
 				

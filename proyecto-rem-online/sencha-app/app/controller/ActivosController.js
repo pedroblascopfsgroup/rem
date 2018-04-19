@@ -205,29 +205,30 @@ Ext.define('HreRem.controller.ActivosController', {
     },
 
     refrescarDetalleActivo: function (detalle) {
-    	
     	var me = this,
     	id = detalle.getViewModel().get("activo.id");	;
-    	
+
     	HreRem.model.Activo.load(id, {
     		scope: this,
 		    success: function(activo) {
-		    	
-		    	detalle.getViewModel().set("activo", activo);		    	
-		    	detalle.configCmp(activo);
-		    	
-		    	HreRem.model.ActivoAviso.load(id, {
-		    		scope: this,
-				    success: function(avisos) {
-				    	detalle.getViewModel().set("avisos", avisos);
-				    }
-				});
-		    	me.logTime("Fin Set values"); 
+
+		    	if(!Ext.isEmpty(detalle.getViewModel())) {
+		    	    // Continuar si el activo sigue abierto en el tabpanel y su modelo existe.
+		    	    detalle.getViewModel().set("activo", activo);
+                    detalle.configCmp(activo);
+
+                    HreRem.model.ActivoAviso.load(id, {
+                        scope: this,
+                        success: function(avisos) {
+                            detalle.getViewModel().set("avisos", avisos);
+                        }
+                    });
+                    me.logTime("Fin Set values");
+		    	}
 		    }
 		});
-    	
     },
-    
+
     abrirDetalleActivo: function(record) {
     	var me = this,
     	id = record.get("id");    	

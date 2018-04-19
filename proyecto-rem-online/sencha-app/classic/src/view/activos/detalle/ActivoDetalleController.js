@@ -208,15 +208,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
    					return false;
 				}
 			}
-				
+
 			var successFn = function(response, eOpts) {
 				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-				me.getView().unmask();
-				me.refrescarActivo(form.refreshAfterSave);
-				me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+				if(!Ext.isEmpty(me.getView())) {
+					// Continuar si el activo sigue abierto en el tabpanel.
+					me.getView().unmask();
+                    me.refrescarActivo(form.refreshAfterSave);
+                    me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+				}
 			}
 			me.saveActivo(tabData, successFn);
-			
+
 		} else {
 			me.getView().unmask();
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
@@ -3217,18 +3220,36 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     onChangeCheckboxPublicarAlquiler: function(checkbox, isDirty) {
         var me = this;
 
-        if (isDirty && me.getViewModel().get('debePreguntarPorTipoPublicacionAlquiler')) {
-			var ventana = Ext.create('HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion');
-            ventana.show();
+        if (checkbox.getValue() && me.getViewModel().get('debePreguntarPorTipoPublicacionAlquiler')) {
+			Ext.create('HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion').show();
         }
     },
 
+	onChangeCheckboxPublicarSinPrecioVenta: function(checkbox, isDirty) {
+	    var me = this;
+	    var checkboxPublicarVenta = checkbox.up('activosdetallemain').lookupReference('chkbxpublicarventa');
+	    var estadoPubVentaPublicado = me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'] ||
+	        me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PRE_PUBLICADO'] ||
+	        me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['OCULTO'];
+
+	    if(isDirty && !estadoPubVentaPublicado) {
+	        var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) && !checkbox.getValue();
+	          checkboxPublicarVenta.setReadOnly(readOnly);
+	    }
+
+	    if (!isDirty && !estadoPubVentaPublicado) {
+	        var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) && !checkbox.getValue();
+	        checkboxPublicarVenta.setReadOnly(readOnly);
+	        checkboxPublicarVenta.setValue(false);
+	    }
+	},
+
     onChangeCheckboxPublicarSinPrecioAlquiler: function(checkbox, isDirty) {
         var me = this;
-		var checkboxPublicarAlquiler = checkPublicarIsDirty = checkbox.up('activosdetallemain').lookupReference('chkbxpublicaralquiler');
-		var estadoPubAlquilerPublicado = me.getViewModel().get('activo').getData().estadoAlquilerCodigo === "03" ||
-			me.getViewModel().get('activo').getData().estadoAlquilerCodigo === "02" ||
-			me.getViewModel().get('activo').getData().estadoAlquilerCodigo === "04";
+		var checkboxPublicarAlquiler = checkbox.up('activosdetallemain').lookupReference('chkbxpublicaralquiler');
+		var estadoPubAlquilerPublicado = me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'] ||
+			me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PRE_PUBLICADO'] ||
+			me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['OCULTO'];
 
 		if(isDirty && !estadoPubAlquilerPublicado) {
 			var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) && !checkbox.getValue();
@@ -3241,8 +3262,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			checkbox.up('activosdetallemain').getViewModel().get('datospublicacionactivo').set('eleccionUsuarioTipoPublicacionAlquiler', null);
 			checkboxPublicarAlquiler.setValue(false);
 		}
-
-
     },
 
     establecerTipoPublicacionAlquiler: function(btn) {

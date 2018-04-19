@@ -143,7 +143,10 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												bind: {
 													readOnly: '{datospublicacionactivo.deshabilitarCheckPublicarSinPrecioVenta}',
 													value: '{datospublicacionactivo.publicarSinPrecioVenta}'
-												}
+												},
+                                                listeners: {
+                                                     dirtychange: 'onChangeCheckboxPublicarSinPrecioVenta'
+                                                }
 											},
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.no.mostrar.precio'),

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=CARLOS LOPEZ
---## FECHA_CREACION=20180404
+--## FECHA_CREACION=20180408
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-3995
@@ -123,6 +123,44 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                      AND SPS.SPS_CON_TITULO = 1 
                                      AND SPS.SPS_FECHA_VENC_TITULO > sysdate
                                      AND SPS.ACT_ID= '||pACT_ID||    
+                         ' UNION                                     
+                          SELECT APU.ACT_ID
+                               , 1 OCULTO
+                               , MTO.DD_MTO_CODIGO
+                               , MTO.DD_MTO_ORDEN ORDEN
+                                    FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU
+                                    JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION DDTCO ON DDTCO.DD_TCO_ID = APU.DD_TCO_ID 
+                                          AND DDTCO.DD_TCO_CODIGO IN (''02'',''03'',''04'') 
+                                          AND DDTCO.BORRADO = 0
+                                    LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''14'' AND MTO.BORRADO = 0 /*Precio*/
+                                   WHERE APU.BORRADO = 0
+                                     AND APU.APU_CHECK_PUB_SIN_PRECIO_A = 0
+                                     AND NOT EXISTS (SELECT 1 
+                                                      FROM '|| V_ESQUEMA ||'.ACT_VAL_VALORACIONES VAL
+                                                      JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO TPC ON TPC.DD_TPC_ID = VAL.DD_TPC_ID AND TPC.BORRADO = 0 AND TPC.DD_TPC_CODIGO = ''03''/*Aprobado de renta (web)*/
+                                                     WHERE VAL.BORRADO = 0
+                                                       AND VAL.ACT_ID = APU.ACT_ID)                                     
+                                     AND ''A'' = '''||pTIPO||'''
+                                     AND APU.ACT_ID= '||pACT_ID||                                         
+                         ' UNION                                     
+                          SELECT APU.ACT_ID
+                               , 1 OCULTO
+                               , MTO.DD_MTO_CODIGO
+                               , MTO.DD_MTO_ORDEN ORDEN
+                                    FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU
+                                    JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION DDTCO ON DDTCO.DD_TCO_ID = APU.DD_TCO_ID 
+                                          AND DDTCO.DD_TCO_CODIGO IN (''01'',''02'') 
+                                          AND DDTCO.BORRADO = 0
+                                    LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''14'' AND MTO.BORRADO = 0 /*Precio*/
+                                   WHERE APU.BORRADO = 0
+                                     AND APU.APU_CHECK_PUB_SIN_PRECIO_V = 0
+                                     AND NOT EXISTS (SELECT 1 
+                                                      FROM '|| V_ESQUEMA ||'.ACT_VAL_VALORACIONES VAL
+                                                      JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO TPC ON TPC.DD_TPC_ID = VAL.DD_TPC_ID AND TPC.BORRADO = 0 AND TPC.DD_TPC_CODIGO = ''02''/*Aprobado de venta (web)*/
+                                                     WHERE VAL.BORRADO = 0
+                                                       AND VAL.ACT_ID = APU.ACT_ID)                                       
+                                     AND ''V'' = '''||pTIPO||'''
+                                     AND APU.ACT_ID= '||pACT_ID||                                           
                          ' UNION                                     
                           SELECT SPS.ACT_ID
                                , 1 OCULTO

@@ -58,7 +58,6 @@ BEGIN
                       (
                         AHP_ID
                         , ACT_ID
-                        , DD_TPU_ID
                         , DD_EPV_ID
                         , DD_EPA_ID
                         , DD_TCO_ID
@@ -86,10 +85,11 @@ BEGIN
                         , USUARIOBORRAR
                         , FECHABORRAR
                         , BORRADO
+                        , DD_TPU_V_ID
+                        , DD_TPU_A_ID
                       )
                     SELECT '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL
                         , ACT_ID
-                        , DD_TPU_ID
                         , DD_EPV_ID
                         , DD_EPA_ID
                         , DD_TCO_ID
@@ -117,10 +117,11 @@ BEGIN
                         , USUARIOBORRAR
                         , FECHABORRAR
                         , BORRADO
+                        , DD_TPU_V_ID
+                        , DD_TPU_A_ID
                     FROM(
                         SELECT  
                           ACT.ACT_ID
-                          , (SELECT DDTPU.DD_TPU_ID FROM '||V_ESQUEMA||'.DD_TPU_TIPO_PUBLICACION DDTPU WHERE DDTPU.DD_TPU_CODIGO = (SELECT TMP.DD_TPU_CODIGO FROM '||V_ESQUEMA||'.TMP_MAPEO_PUB_VENTA TMP WHERE TMP.DD_EPU_CODIGO = DDEPU.DD_EPU_CODIGO)) DD_TPU_ID
                           , (SELECT DDEPV.DD_EPV_ID FROM '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA DDEPV WHERE DDEPV.DD_EPV_CODIGO = (SELECT TMP.DD_EPV_CODIGO FROM '||V_ESQUEMA||'.TMP_MAPEO_PUB_VENTA TMP WHERE TMP.DD_EPU_CODIGO = DDEPU.DD_EPU_CODIGO)) DD_EPV_ID
                           , (SELECT DDEPA.DD_EPA_ID FROM '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER DDEPA WHERE DDEPA.DD_EPA_CODIGO = ''01'') DD_EPA_ID
                           , ACT.DD_TCO_ID
@@ -147,7 +148,9 @@ BEGIN
                           , HEP.FECHAMODIFICAR
                           , HEP.USUARIOBORRAR
                           , HEP.FECHABORRAR
-                          , HEP.BORRADO   
+                          , HEP.BORRADO
+                          , (SELECT DDTPU.DD_TPU_ID FROM '||V_ESQUEMA||'.DD_TPU_TIPO_PUBLICACION DDTPU WHERE DDTPU.DD_TPU_CODIGO = (SELECT TMP.DD_TPU_CODIGO FROM '||V_ESQUEMA||'.TMP_MAPEO_PUB_VENTA TMP WHERE TMP.DD_EPU_CODIGO = DDEPU.DD_EPU_CODIGO)) DD_TPU_V_ID
+                          , NULL DD_TPU_A_ID
                       FROM '||V_ESQUEMA||'.ACT_HEP_HIST_EST_PUBLICACION HEP
                       JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = HEP.ACT_ID AND ACT.BORRADO = 0
                       LEFT JOIN '||V_ESQUEMA||'.DD_EPU_ESTADO_PUBLICACION DDEPU ON DDEPU.DD_EPU_ID = HEP.DD_EPU_ID AND DDEPU.BORRADO = 0
@@ -167,7 +170,6 @@ BEGIN
                       (
                         AHP_ID
                         , ACT_ID
-                        , DD_TPU_ID
                         , DD_EPV_ID
                         , DD_EPA_ID
                         , DD_TCO_ID
@@ -195,10 +197,11 @@ BEGIN
                         , USUARIOBORRAR
                         , FECHABORRAR
                         , BORRADO
+                        , DD_TPU_V_ID
+                        , DD_TPU_A_ID
                       )
                     SELECT '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL
                         , ACT_ID
-                        , DD_TPU_ID
                         , DD_EPV_ID
                         , DD_EPA_ID
                         , DD_TCO_ID
@@ -226,9 +229,10 @@ BEGIN
                         , USUARIOBORRAR
                         , FECHABORRAR
                         , BORRADO
+                        , DD_TPU_V_ID
+                        , DD_TPU_A_ID
                     FROM(
                       SELECT  ACT.ACT_ID
-                        , (SELECT DDTPU.DD_TPU_ID FROM '||V_ESQUEMA||'.DD_TPU_TIPO_PUBLICACION DDTPU WHERE DDTPU.DD_TPU_CODIGO = (SELECT TMP.DD_TPU_CODIGO FROM '||V_ESQUEMA||'.TMP_MAPEO_PUB_ALQUILER TMP WHERE TMP.DD_EPU_CODIGO = DDEPU.DD_EPU_CODIGO)) DD_TPU_ID
                         , (SELECT DDEPV.DD_EPV_ID FROM '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA DDEPV WHERE DDEPV.DD_EPV_CODIGO = ''01'') DD_EPV_ID
                         , (SELECT DDEPA.DD_EPA_ID FROM '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER DDEPA WHERE DDEPA.DD_EPA_CODIGO = (SELECT TMP.DD_EPA_CODIGO FROM '||V_ESQUEMA||'.TMP_MAPEO_PUB_ALQUILER TMP WHERE TMP.DD_EPU_CODIGO = DDEPU.DD_EPU_CODIGO)) DD_EPA_ID
                         , ACT.DD_TCO_ID
@@ -255,7 +259,9 @@ BEGIN
                         , HEP.FECHAMODIFICAR
                         , HEP.USUARIOBORRAR
                         , HEP.FECHABORRAR
-                        , HEP.BORRADO   
+                        , HEP.BORRADO
+                        , NULL DD_TPU_V_ID
+                        , (SELECT DDTPU.DD_TPU_ID FROM '||V_ESQUEMA||'.DD_TPU_TIPO_PUBLICACION DDTPU WHERE DDTPU.DD_TPU_CODIGO = (SELECT TMP.DD_TPU_CODIGO FROM '||V_ESQUEMA||'.TMP_MAPEO_PUB_ALQUILER TMP WHERE TMP.DD_EPU_CODIGO = DDEPU.DD_EPU_CODIGO)) DD_TPU_A_ID   
                     FROM '||V_ESQUEMA||'.ACT_HEP_HIST_EST_PUBLICACION HEP
                     JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = HEP.ACT_ID AND ACT.BORRADO = 0
                     LEFT JOIN ' ||V_ESQUEMA||'.DD_EPU_ESTADO_PUBLICACION DDEPU ON DDEPU.DD_EPU_ID = HEP.DD_EPU_ID AND DDEPU.BORRADO = 0
@@ -275,7 +281,6 @@ BEGIN
                       (
                         AHP_ID
                         , ACT_ID
-                        , DD_TPU_ID
                         , DD_EPV_ID
                         , DD_EPA_ID
                         , DD_TCO_ID
@@ -306,7 +311,6 @@ BEGIN
                       )
                     SELECT '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL
                         , ACT_ID
-                        , DD_TPU_ID
                         , DD_EPV_ID
                         , DD_EPA_ID
                         , DD_TCO_ID
@@ -363,7 +367,9 @@ BEGIN
                         , HEP.FECHAMODIFICAR
                         , HEP.USUARIOBORRAR
                         , HEP.FECHABORRAR
-                        , HEP.BORRADO  
+                        , HEP.BORRADO
+                        , (SELECT DDTPU.DD_TPU_ID FROM '||V_ESQUEMA||'.DD_TPU_TIPO_PUBLICACION DDTPU WHERE DDTPU.DD_TPU_CODIGO = (SELECT TMP.DD_TPU_CODIGO FROM '||V_ESQUEMA||'.TMP_MAPEO_PUB_VENTA TMP WHERE TMP.DD_EPU_CODIGO = DDEPU.DD_EPU_CODIGO)) DD_TPU_V_ID
+                        , (SELECT DDTPU.DD_TPU_ID FROM '||V_ESQUEMA||'.DD_TPU_TIPO_PUBLICACION DDTPU WHERE DDTPU.DD_TPU_CODIGO = (SELECT TMP.DD_TPU_CODIGO FROM '||V_ESQUEMA||'.TMP_MAPEO_PUB_ALQUILER TMP WHERE TMP.DD_EPU_CODIGO = DDEPU.DD_EPU_CODIGO)) DD_TPU_A_ID  
                       FROM '||V_ESQUEMA||'.ACT_HEP_HIST_EST_PUBLICACION HEP
                       JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = HEP.ACT_ID AND ACT.BORRADO = 0
                       LEFT JOIN '||V_ESQUEMA||'.DD_EPU_ESTADO_PUBLICACION DDEPU ON DDEPU.DD_EPU_ID = HEP.DD_EPU_ID AND DDEPU.BORRADO = 0

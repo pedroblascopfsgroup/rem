@@ -54,7 +54,7 @@ BEGIN
                       (
                         APU_ID
                         ,ACT_ID
-                        ,DD_TPU_ID,DD_EPV_ID
+                        ,DD_EPV_ID
                         ,DD_EPA_ID,DD_TCO_ID
                         ,DD_MTO_V_ID
                         ,APU_MOT_OCULTACION_MANUAL_V
@@ -78,10 +78,12 @@ BEGIN
                         ,USUARIOBORRAR
                         ,FECHABORRAR
                         ,BORRADO
+                        ,DD_TPU_V_ID
+                        ,DD_TPU_A_ID
                       )
                     SELECT '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL
                         ,ACT_ID
-                        ,DD_TPU_ID,DD_EPV_ID
+                        ,DD_EPV_ID
                         ,DD_EPA_ID,DD_TCO_ID
                         ,DD_MTO_V_ID
                         ,APU_MOT_OCULTACION_MANUAL_V
@@ -105,10 +107,11 @@ BEGIN
                         ,USUARIOBORRAR
                         ,FECHABORRAR
                         ,BORRADO
+                        ,DD_TPU_V_ID
+                        ,DD_TPU_A_ID
                     FROM(
                         SELECT  
                           ACT.ACT_ID
-                          , NULL DD_TPU_ID
                           , (SELECT DDEPV.DD_EPV_ID FROM '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA DDEPV WHERE DDEPV.DD_EPV_CODIGO = ''01'') DD_EPV_ID
                           , (SELECT DDEPA.DD_EPA_ID FROM '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER DDEPA WHERE DDEPA.DD_EPA_CODIGO = ''01'') DD_EPA_ID
                           , ACT.DD_TCO_ID
@@ -133,7 +136,9 @@ BEGIN
                           , HEP.FECHAMODIFICAR
                           , HEP.USUARIOBORRAR
                           , HEP.FECHABORRAR
-                          , HEP.BORRADO    
+                          , HEP.BORRADO 
+                          , NULL DD_TPU_V_ID
+                          , NULL DD_TPU_A_ID   
                           , ROW_NUMBER () OVER (PARTITION BY HEP.ACT_ID ORDER BY HEP.HEP_FECHA_HASTA DESC) ROWNUMBER
                       FROM '||V_ESQUEMA||'.ACT_HEP_HIST_EST_PUBLICACION HEP
                       JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = HEP.ACT_ID AND ACT.BORRADO = 0
@@ -158,7 +163,7 @@ BEGIN
                       (
                         APU_ID
                         ,ACT_ID
-                        ,DD_TPU_ID,DD_EPV_ID
+                        ,DD_EPV_ID
                         ,DD_EPA_ID,DD_TCO_ID
                         ,DD_MTO_V_ID
                         ,APU_MOT_OCULTACION_MANUAL_V
@@ -182,10 +187,12 @@ BEGIN
                         ,USUARIOBORRAR
                         ,FECHABORRAR
                         ,BORRADO
+                        ,DD_TPU_V_ID
+                        ,DD_TPU_A_ID
                       )
                     SELECT '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL
                         ,ACT_ID
-                        ,DD_TPU_ID,DD_EPV_ID
+                        ,DD_EPV_ID
                         ,DD_EPA_ID,DD_TCO_ID
                         ,DD_MTO_V_ID
                         ,APU_MOT_OCULTACION_MANUAL_V
@@ -209,9 +216,10 @@ BEGIN
                         ,USUARIOBORRAR
                         ,FECHABORRAR
                         ,BORRADO
+                        ,DD_TPU_V_ID
+                        ,DD_TPU_A_ID
                     FROM(
                       SELECT  ACT.ACT_ID
-                        , NULL DD_TPU_ID
                         , (SELECT DDEPV.DD_EPV_ID FROM '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA DDEPV WHERE DDEPV.DD_EPV_CODIGO = ''01'') DD_EPV_ID
                         , (SELECT DDEPA.DD_EPA_ID FROM '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER DDEPA WHERE DDEPA.DD_EPA_CODIGO = ''01'') DD_EPA_ID
                         , ACT.DD_TCO_ID
@@ -236,7 +244,9 @@ BEGIN
                         , HEP.FECHAMODIFICAR
                         , HEP.USUARIOBORRAR
                         , HEP.FECHABORRAR
-                        , HEP.BORRADO    
+                        , HEP.BORRADO 
+                        , NULL DD_TPU_V_ID
+                        , NULL DD_TPU_A_ID   
                         , ROW_NUMBER () OVER (PARTITION BY HEP.ACT_ID ORDER BY HEP.HEP_FECHA_HASTA DESC) ROWNUMBER
                     FROM '||V_ESQUEMA||'.ACT_HEP_HIST_EST_PUBLICACION HEP
                     JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = HEP.ACT_ID AND ACT.BORRADO = 0
@@ -261,7 +271,7 @@ BEGIN
                       (
                         APU_ID
                         ,ACT_ID
-                        ,DD_TPU_ID,DD_EPV_ID
+                        ,DD_EPV_ID
                         ,DD_EPA_ID,DD_TCO_ID
                         ,DD_MTO_V_ID
                         ,APU_MOT_OCULTACION_MANUAL_V
@@ -285,10 +295,12 @@ BEGIN
                         ,USUARIOBORRAR
                         ,FECHABORRAR
                         ,BORRADO
+                        ,DD_TPU_V_ID
+                        ,DD_TPU_A_ID   
                       )
                     SELECT '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL
                         ,ACT_ID
-                        ,DD_TPU_ID,DD_EPV_ID
+                        ,DD_EPV_ID
                         ,DD_EPA_ID,DD_TCO_ID
                         ,DD_MTO_V_ID
                         ,APU_MOT_OCULTACION_MANUAL_V
@@ -312,9 +324,10 @@ BEGIN
                         ,USUARIOBORRAR
                         ,FECHABORRAR
                         ,BORRADO
+                        ,DD_TPU_V_ID
+                        ,DD_TPU_A_ID
                     FROM(
                       SELECT  ACT.ACT_ID
-                        , NULL DD_TPU_ID
                         , (SELECT DDEPV.DD_EPV_ID FROM '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA DDEPV WHERE DDEPV.DD_EPV_CODIGO = ''01'') DD_EPV_ID
                         , (SELECT DDEPA.DD_EPA_ID FROM '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER DDEPA WHERE DDEPA.DD_EPA_CODIGO = ''01'') DD_EPA_ID
                         , ACT.DD_TCO_ID
@@ -339,7 +352,9 @@ BEGIN
                         , HEP.FECHAMODIFICAR
                         , HEP.USUARIOBORRAR
                         , HEP.FECHABORRAR
-                        , HEP.BORRADO    
+                        , HEP.BORRADO 
+                        , NULL DD_TPU_V_ID
+                        , NULL DD_TPU_A_ID   
                         , ROW_NUMBER () OVER (PARTITION BY HEP.ACT_ID ORDER BY HEP.HEP_FECHA_HASTA DESC) ROWNUMBER
                       FROM '||V_ESQUEMA||'.ACT_HEP_HIST_EST_PUBLICACION HEP
                       JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = HEP.ACT_ID AND ACT.BORRADO = 0

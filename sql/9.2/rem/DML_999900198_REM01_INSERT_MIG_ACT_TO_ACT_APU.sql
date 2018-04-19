@@ -54,7 +54,6 @@ BEGIN
                       (
                         APU_ID
                         ,ACT_ID
-                        ,DD_TPU_ID
                         ,DD_EPV_ID
                         ,DD_EPA_ID
                         ,DD_TCO_ID
@@ -80,10 +79,11 @@ BEGIN
                         ,USUARIOBORRAR
                         ,FECHABORRAR
                         ,BORRADO
+                        ,DD_TPU_V_ID
+                        ,DD_TPU_A_ID
                       )
                     SELECT '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL
                         ,ACT_ID
-                        ,DD_TPU_ID
                         ,DD_EPV_ID
                         ,DD_EPA_ID
                         ,DD_TCO_ID
@@ -109,10 +109,11 @@ BEGIN
                         ,USUARIOBORRAR
                         ,FECHABORRAR
                         ,BORRADO
+                        ,DD_TPU_V_ID
+                        ,DD_TPU_A_ID
                     FROM(
                         SELECT  
                           ACT_ID
-                          , NULL DD_TPU_ID
                           , (SELECT DDEPV.DD_EPV_ID FROM '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA DDEPV WHERE DDEPV.DD_EPV_CODIGO = ''01'') DD_EPV_ID
                           , (SELECT DDEPA.DD_EPA_ID FROM '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER DDEPA WHERE DDEPA.DD_EPA_CODIGO = ''01'') DD_EPA_ID
                           , NVL(DD_TCO_ID, (SELECT DD_TCO_ID FROM DD_TCO_TIPO_COMERCIALIZACION WHERE DD_TCO_CODIGO = ''02'')) DD_TCO_ID
@@ -137,7 +138,9 @@ BEGIN
                           , NULL FECHAMODIFICAR
                           , NULL USUARIOBORRAR
                           , NULL FECHABORRAR
-                          , 0 BORRADO    
+                          , 0 BORRADO
+                          ,NULL DD_TPU_V_ID
+                          ,NULL DD_TPU_A_ID
                         FROM (SELECT ACT_ID, DD_TCO_ID
                               FROM ACT_ACTIVO
                               WHERE BORRADO = 0

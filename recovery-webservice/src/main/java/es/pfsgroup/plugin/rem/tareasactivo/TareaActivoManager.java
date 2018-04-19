@@ -394,6 +394,9 @@ public class TareaActivoManager implements TareaActivoApi {
 	@Override
 	@Transactional
 	public void guardarDatosResolucion(Long idTareaExterna,java.sql.Date fecha, String resolucion) {
+		if(fecha == null){
+			fecha = new java.sql.Date(System.currentTimeMillis());
+		}
 		TareaExterna tareaExterna = proxyFactory.proxy(TareaExternaApi.class).get(idTareaExterna);
         TareaExternaValor valorFecha = new TareaExternaValor();
         TareaExternaValor valorResolucion = new TareaExternaValor();

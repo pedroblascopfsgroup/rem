@@ -33,6 +33,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.persona.model.DDTipoGestorEntidad;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -506,11 +507,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 
 			if(listaActivos != null && listaActivos.size() == 1){
-				trabajo.setActivo(listaActivos.get(0));
+				Activo activo = listaActivos.get(0);
+				trabajo.setActivo(activo);
+				// Seteo del flag esTarifaPlana
+				trabajo.setEsTarifaPlana(this.esTrabajoTarifaPlana(activo, subtipoTrabajo, trabajo.getFechaSolicitud()));
 			}
-			
-			// Seteo del flag esTarifaPlana
-			trabajo.setEsTarifaPlana(historicoTarifaPlanaDao.subtipoTrabajoTieneTarifaPlanaVigente(subtipoTrabajo.getId(), trabajo.getFechaSolicitud()));
 			
 			trabajoDao.saveOrUpdate(trabajo);
 
@@ -1041,7 +1042,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajo.setSubtipoTrabajo(subtipoTrabajo);
 			
 			// Seteo del flag esTarifaPlana
-			trabajo.setEsTarifaPlana(historicoTarifaPlanaDao.subtipoTrabajoTieneTarifaPlanaVigente(subtipoTrabajo.getId(), new Date()));
+			Activo activoAux = activoApi.get(dtoTrabajo.getIdActivo());
+			if(!Checks.esNulo(activoAux)){
+				trabajo.setEsTarifaPlana(this.esTrabajoTarifaPlana(activoAux, subtipoTrabajo, new Date()));
+			}
 		}
 
 		if (dtoTrabajo.getIdMediador() != null) {
@@ -3295,5 +3299,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		return supervisorGestor;
 	}
-
+	
+	private Boolean esTrabajoTarifaPlana(Activo activo, DDSubtipoTrabajo subtipoTrabajo, Date fechaSolicitud){
+		Boolean resultado = false;
+		Usuario gestorProveedorTecnico = gestorActivoApi.getGestorByActivoYTipo(activo, "PTEC");
+		if(!Checks.esNulo(gestorProveedorTecnico) && historicoTarifaPlanaDao.subtipoTrabajoTieneTarifaPlanaVigente(subtipoTrabajo.getId(), fechaSolicitud)){
+			resultado = true;
+		}
+		return resultado;
+	}
 }

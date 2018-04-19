@@ -199,7 +199,7 @@ public class ResolucionComiteController {
 							for (TareaExterna tarea : listaTareas) {
 								if (!Checks.esNulo(tarea)) {
 									tareaActivoApi.guardarDatosResolucion(tarea.getId(), resolucionComiteDto.getFechaComite(), resolucionComiteDto.getCodigoResolucion());
-									tareaActivoApi.saltoTarea(tarea.getId(), tareaAnterior.getTareaProcedimiento().getCodigo());
+									tareaActivoApi.saltoDesdeTareaExterna(tarea.getId(), tareaAnterior.getTareaProcedimiento().getCodigo());
 									expedienteComercialApi.updateExpedienteComercialEstadoPrevioResolucionExpediente(eco, ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION);
 									break;
 								}

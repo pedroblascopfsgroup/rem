@@ -170,6 +170,10 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				            flex: 1,				            
 				            hideable: false
 					   },
+					   {    text: HreRem.i18n('title.activo.administracion.numFactura'),
+				        	dataIndex: 'numFactura',
+				        	flex: 1
+				       },
 				       {    text: HreRem.i18n('title.activo.administracion.tipo'),
 				        	dataIndex: 'tipoGastoDescripcion',
 				        	flex: 1

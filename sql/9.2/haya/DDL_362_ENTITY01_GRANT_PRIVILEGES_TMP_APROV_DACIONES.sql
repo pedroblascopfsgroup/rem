@@ -1,4 +1,25 @@
-set serveroutput on size unlimited
+--/*
+--##########################################
+--## AUTOR=SIMEON SHOPOV
+--## FECHA_CREACION=20180423
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=2.0.17
+--## INCIDENCIA_LINK=REMVIP-505
+--## PRODUCTO=SI
+--## Finalidad: Grants en la tabla TMP_APROV_DACIONES
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON SIZE UNLIMITED;
+SET DEFINE OFF;
  
 declare
  

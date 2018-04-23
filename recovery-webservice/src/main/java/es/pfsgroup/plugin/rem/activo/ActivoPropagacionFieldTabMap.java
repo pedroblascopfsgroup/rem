@@ -19,10 +19,8 @@ public class ActivoPropagacionFieldTabMap {
     public static final String TAB_MEDIADOR_ACTIVO = "mediadoractivo";
     public static final String TAB_CONDICIONES_ESPECIFICAS = "condicionesespecificas";
     public static final String TAB_TASACION = "tasacion";
-
     public static final String TAB_DATOS_PUBLICACION = "datospublicacion";
     public static final String TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD = "activocondicionantesdisponibilidad";
-
     public static final String TAB_COMERCIAL = "comercial";
     public static final String TAB_ADMINISTRACION = "administracion";
     public static final String TAB_PATRIMONIO = "patrimonio";
@@ -56,9 +54,12 @@ public class ActivoPropagacionFieldTabMap {
 
 	    			// perimetro
 	    			"motivoAplicaGestion",
+	    			"motivoAplicaPublicar",
 	    			"motivoAplicaComercializarCodigo",
+					"motivoNoAplicaComercializar",
 	    			"motivoAplicaFormalizar",
 	    			"aplicaGestion",
+	    			"aplicaPublicar",
 	    			"aplicaFormalizar",
 	    			"aplicaComercializar",
 

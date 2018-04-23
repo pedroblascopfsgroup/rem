@@ -92,15 +92,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		if(Ext.isDefined(models[index].getProxy().getApi().read)) {
 			// Si la API tiene metodo de lectura (read).
 			models[index].load({
-			    success: function(record) {		    	
-			    	me.getViewModel().set(nameModels[index], record);
-			    	index++;
-							
-					if (index < models.length) {							
-						me.cargarTabDataMultiple(form, index, models, nameModels);
-					} else {	
-						form.unmask();				
-					}
+			    success: function(record) {
+			        if(!Ext.isEmpty(me.getViewModel())) {
+				        me.getViewModel().set(nameModels[index], record);
+	                    index++;
+
+	                    if (index < models.length) {
+	                        me.cargarTabDataMultiple(form, index, models, nameModels);
+	                    } else {
+	                        form.unmask();
+	                    }
+			        }
 			    },			            
 				failure: function (a, operation) {
 					 form.unmask();
@@ -195,12 +197,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			var tabPropagableData = null;
 
 			if(activosPropagables.length > 0) {
-				
 				tabPropagableData = me.createFormPropagableData(form, tabData);	
 				if (!Ext.isEmpty(tabPropagableData)) {
 					// sacamos el activo actual del listado
 					var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
-					
+
 					// Abrimos la ventana de selección de activos
 					var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {form: form, activoActual: activo, activos: activosPropagables, tabData: tabData, propagableData: tabPropagableData}).show();
    					me.getView().add(ventanaOpcionesPropagacionCambios);
@@ -2980,7 +2981,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     
     createTabData: function(form) {
-    	
+
     	var me = this,
     	tabData = {};
     	
@@ -3075,11 +3076,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	} else {
     		records.push(form.getBindRecord());
     	}
-    	
+
     	Ext.Array.each(records, function(record, index) {
     		var name = record.getProxy().getExtraParams().tab;
-    		camposPropagables[name] = record.get("camposPropagables");    		
-    	}); 
+    		camposPropagables[name] = record.get("camposPropagables");
+    	});
 
     	Ext.Array.each(tabData.models, function(model, index) {
     		var data = {},

@@ -675,8 +675,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 						try {
 							this.accionesDesmarcarComercializar(activo);
 						} catch (SQLException e) {
+							logger.error("Error al realizar tareas posteriores al desmarcar check de perimetro de comercializar", e);
 							new JsonViewerException("Error en BBDD: ".concat(e.getMessage()));
-							e.printStackTrace();
 						}
 					}
 				}
@@ -689,10 +689,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 						this.validarPerimetroActivo(activo,2);
 					}
 				}
+
 				if(!Checks.esNulo(dto.getAplicaGestion())) {
 					perimetroActivo.setAplicaGestion(dto.getAplicaGestion() ? 1 : 0);
 					perimetroActivo.setFechaAplicaGestion(new Date());
 				}
+
 				if(!Checks.esNulo(dto.getAplicaTramiteAdmision())) {
 					perimetroActivo.setAplicaTramiteAdmision(dto.getAplicaTramiteAdmision() ? 1 : 0);
 					perimetroActivo.setFechaAplicaTramiteAdmision(new Date());
@@ -702,14 +704,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					DDMotivoComercializacion motivoAplicaComercializar = (DDMotivoComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDMotivoComercializacion.class,  dto.getMotivoAplicaComercializarCodigo());
 					perimetroActivo.setMotivoAplicaComercializar(motivoAplicaComercializar);
 				}
-				
+
 				if(!Checks.esNulo(dto.getAplicaPublicar())) {
 					perimetroActivo.setAplicaPublicar(dto.getAplicaPublicar());
 					perimetroActivo.setFechaAplicaPublicar(new Date());
 				}
-				
+
 				beanUtilNotNull.copyProperty(perimetroActivo, "motivoNoAplicaComercializar", dto.getMotivoNoAplicaComercializar());
-				
 
 				activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
 			}

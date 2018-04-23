@@ -1501,4 +1501,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return false;
 	}
 	
+	@Override
+	public boolean activoConOfertasTramitadas(String numActivo) {
+
+		String actofr = rawDao.getExecuteSQL("    SELECT COUNT(aof1.act_id) "
+				+ "    FROM OFR_OFERTAS ofr1 "
+				+ "    INNER JOIN ACT_OFR aof1 on ofr1.ofr_id = aof1.ofr_id "
+				+ "    INNER JOIN ACT_ACTIVO act1 on aof1.act_id = act1.act_id "
+				+ "    INNER JOIN DD_EOF_ESTADOS_OFERTA eof1 on ofr1.dd_eof_id = eof1.dd_eof_id "
+				+ "    WHERE "
+				+ "      eof1.dd_eof_codigo = '01' "
+				+ "      AND act1.act_num_activo = "+numActivo+" "
+				+ "      AND ofr1.borrado = 0 ");
+		
+		return actofr.equals("0");
+
+	}
+	
 }

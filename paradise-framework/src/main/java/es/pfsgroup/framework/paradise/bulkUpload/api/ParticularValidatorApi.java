@@ -290,4 +290,6 @@ public interface ParticularValidatorApi {
 
 	boolean comprobarDistintoPropietarioListaActivos(String[] activos);
 
+	boolean activoConOfertasTramitadas(String numActivo);
+
 }

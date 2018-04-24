@@ -34,6 +34,7 @@ public class DtoAdmisionDocumento extends WebDto {
 	
 	//Mapeado a mano
 	private String descripcionTipoDocumentoActivo;
+	private String codigoTipoDocumentoActivo;
 	
 
 	public Long getIdAdmisionDoc() {
@@ -168,9 +169,15 @@ public class DtoAdmisionDocumento extends WebDto {
 		return tipoCalificacionDescripcion;
 	}
 
-	public void setTipoCalificacionDescripcion(
-			String tipoCalificacionDescripcion) {
+	public void setTipoCalificacionDescripcion(String tipoCalificacionDescripcion) {
 		this.tipoCalificacionDescripcion = tipoCalificacionDescripcion;
 	}
-	
+
+	public String getCodigoTipoDocumentoActivo() {
+		return codigoTipoDocumentoActivo;
+	}
+
+	public void setCodigoTipoDocumentoActivo(String codigoTipoDocumentoActivo) {
+		this.codigoTipoDocumentoActivo = codigoTipoDocumentoActivo;
+	}
 }

@@ -94,4 +94,21 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 		return HibernateUtils.castObject(ActivoPublicacion.class, criteria.uniqueResult());
 	}
 
+	@Override
+	public Boolean getCheckSinPrecioVentaPorIdActivo(Long idActivo) {
+		Criteria criteria = getSession().createCriteria(ActivoPublicacion.class);
+		criteria.setProjection(Projections.property("checkSinPrecioVenta"));
+		criteria.add(Restrictions.eq("activo.id", idActivo));
+
+		return HibernateUtils.castObject(Boolean.class, criteria.uniqueResult());
+	}
+
+	@Override
+	public Boolean getCheckSinPrecioAlquilerPorIdActivo(Long idActivo) {
+		Criteria criteria = getSession().createCriteria(ActivoPublicacion.class);
+		criteria.setProjection(Projections.property("checkSinPrecioAlquiler"));
+		criteria.add(Restrictions.eq("activo.id", idActivo));
+
+		return HibernateUtils.castObject(Boolean.class, criteria.uniqueResult());
+	}
 }

@@ -297,11 +297,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionObraNueva", pertenceAgrupacionObraNueva);
 		}
 
-		// Obtener si el ultimo estado del informe comercial es ACEPTADO.
 		BeanUtils.copyProperty(activoDto, "informeComercialAceptado", activoApi.isInformeComercialAceptado(activo));
 
-
-		//HREOS-843 Situacion Comercial del activo
 		if(!Checks.esNulo(activo.getSituacionComercial())) {
 			BeanUtils.copyProperty(activoDto, "situacionComercialCodigo", activo.getSituacionComercial().getCodigo());
 			BeanUtils.copyProperty(activoDto, "situacionComercialDescripcion", activo.getSituacionComercial().getDescripcion());
@@ -345,79 +342,15 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		// En la sección de perímetro pero no dependiente del mismo.
 		BeanUtils.copyProperty(activoDto, "numInmovilizadoBankia", activo.getNumInmovilizadoBnk());
-		// ----------
-		
+
 		//Comprobar los condicionantes del indicador Venta y Alquiler
 		BeanUtils.copyProperties(activoDto, perimetroActivo);
-		
-		ActivoPatrimonio activoPatrimonio = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
-		
-		//Comprobar si el activo tiene el CEE
-		List<DtoAdmisionDocumento> listDtoAdmisionDocumento = activoAdapter.getListDocumentacionAdministrativaById(activo.getId());
-		
-		Boolean conCee = false;
-		
-		if(!Checks.esNulo(listDtoAdmisionDocumento)){
-			int listSize = listDtoAdmisionDocumento.size();
-			for(int i=0; i<listSize; i++){
-				if(listDtoAdmisionDocumento.get(i).getDescripcionTipoDocumentoActivo().equals("CEE (Certificado de eficiencia energética)")){ // TODO: utilizar código, no descripción.
-					conCee = true;
-				}
-			}
-		}
-		//------------
-		
-		DtoDatosPublicacionActivo dtoPa = activoEstadoPublicacionApi.getPublicarSinPrecioVentaAlquilerByIdActivo(activo.getId());
-		
-		//Indicador Venta
-		if(activoDto.getAdmision()
-				&& activoDto.getGestion()
-				&& activoDto.getInformeComercialAceptado()
-				&& (activoEstadoPublicacionApi.tienePrecioVentaByIdActivo(activo.getId()) || (!Checks.esNulo(dtoPa.getPublicarSinPrecioVenta()) && dtoPa.getPublicarSinPrecioVenta()))
-				){
-			activoDto.setEstadoVenta(1);
-		}else if(!activoDto.getAdmision()
-				&& !activoDto.getGestion()
-				&& !activoDto.getInformeComercialAceptado()
-				&& !(activoEstadoPublicacionApi.tienePrecioVentaByIdActivo(activo.getId()) || (!Checks.esNulo(dtoPa.getPublicarSinPrecioVenta()) && dtoPa.getPublicarSinPrecioVenta()))
-				){
-			activoDto.setEstadoVenta(0);
-		}else{
-			activoDto.setEstadoVenta(2);
-		}
-		
-		//Indicador Alquiler
-		if(activoDto.getAdmision()
-				&& activoDto.getGestion()
-				&& activoDto.getInformeComercialAceptado()
-				&& (!Checks.esNulo(activoPatrimonio)
-				&& !Checks.esNulo(activoPatrimonio.getAdecuacionAlquiler())
-				&& (DDAdecuacionAlquiler.CODIGO_ADA_SI.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())
-				|| DDAdecuacionAlquiler.CODIGO_ADA_NO_APLICA.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())))
-				&& conCee
-				&& (activoEstadoPublicacionApi.tienePrecioRentaByIdActivo(activo.getId()) || (!Checks.esNulo(dtoPa.getPublicarSinPrecioAlquiler()) && dtoPa.getPublicarSinPrecioAlquiler()))
-				){
-			activoDto.setEstadoAlquiler(1); // azul
-		}else if(!activoDto.getAdmision()
-				&& !activoDto.getGestion()
-				&& !activoDto.getInformeComercialAceptado()
-				&& (!Checks.esNulo(activoPatrimonio)
-				&& !Checks.esNulo(activoPatrimonio.getAdecuacionAlquiler())
-				&& !(DDAdecuacionAlquiler.CODIGO_ADA_SI.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())
-				|| DDAdecuacionAlquiler.CODIGO_ADA_NO_APLICA.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())))
-				&& conCee
-				&& !(activoEstadoPublicacionApi.tienePrecioRentaByIdActivo(activo.getId()) || (!Checks.esNulo(dtoPa.getPublicarSinPrecioAlquiler()) && dtoPa.getPublicarSinPrecioAlquiler()))
-				){
-			activoDto.setEstadoAlquiler(0); // naranja
-		}else{
-			activoDto.setEstadoAlquiler(2); // amarillo
-		}
-		
-		//--------------------
-		
-		// Datos de activo bancario -----------------
+
+		// Indicador del estado de publicación para venta y alquiler.
+		activoDto.setEstadoVenta(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionVenta(activo));
+		activoDto.setEstadoAlquiler(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAlquiler(activo));
+
 		// Datos de activo bancario del activo al Dto de datos basicos
-		// - Puede no existir registro de activo bancario en la tabla. Esto no producira errores de carga/guardado
 		ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());
 		
 		if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getClaseActivo())) {
@@ -429,28 +362,23 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "subtipoClaseActivoCodigo", activoBancario.getSubtipoClaseActivo().getCodigo());
 			BeanUtils.copyProperty(activoDto, "subtipoClaseActivoDescripcion", activoBancario.getSubtipoClaseActivo().getDescripcion());
 		}
-		
-		/*if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getTipoProducto())) {
-			BeanUtils.copyProperty(activoDto, "tipoProductoCodigo", activoBancario.getTipoProducto().getCodigo());
-			BeanUtils.copyProperty(activoDto, "tipoProductoDescripcion", activoBancario.getTipoProducto().getDescripcion());
-		}*/
+
 		//Como no envian el diccionario de tipoProducto, lo hemos sustituido por texto libre
 		if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getProductoDescripcion())) {
 			BeanUtils.copyProperty(activoDto, "productoDescripcion", activoBancario.getProductoDescripcion());
 		}
-		
+
 		if(!Checks.esNulo(activoBancario)) {
 			BeanUtils.copyProperty(activoDto, "numExpRiesgo", activoBancario.getNumExpRiesgo());
 		}
-		
+
 		if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getEstadoExpRiesgo())) {
 			BeanUtils.copyProperty(activoDto, "estadoExpRiesgoCodigo", activoBancario.getEstadoExpRiesgo().getCodigo());
 			BeanUtils.copyProperty(activoDto, "estadoExpRiesgoDescripcion", activoBancario.getEstadoExpRiesgo().getDescripcion());
 		}
-		
+
 		if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getEstadoExpIncorriente())) {
 			BeanUtils.copyProperty(activoDto, "estadoExpIncorrienteCodigo", activoBancario.getEstadoExpIncorriente().getCodigo());
-			
 		}
 
 		// En la sección de activo bancario pero no dependiente del mismo.
@@ -458,9 +386,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "entradaActivoBankiaCodigo", activo.getEntradaActivoBankia().getCodigo());
 		}
 
-		// ------------
-		
-		//Activo integrado en agrupación asisitida
 		BeanUtils.copyProperty(activoDto, "integradoEnAgrupacionAsistida",activoApi.isIntegradoAgrupacionAsistida(activo));
 		
 		//Tipo de activo segun el Mediador
@@ -471,39 +396,39 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(!Checks.esNulo(activo.getGestorSelloCalidad())){
 			BeanUtils.copyProperty(activoDto, "nombreGestorSelloCalidad", activo.getGestorSelloCalidad().getApellidoNombre());
 		}
-		
+
 		List<VPreciosVigentes> listaPrecios = activoApi.getPreciosVigentesById(activo.getId());
-		if (!Checks.esNulo(listaPrecios)) {
-			for (int i = 0; i < listaPrecios.size(); i++) {
-				if (listaPrecios.get(i).getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO)) {
-					BeanUtils.copyProperty(activoDto, "minimoAutorizado", listaPrecios.get(i).getImporte());
-				} else if (listaPrecios.get(i).getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA)) {
-					BeanUtils.copyProperty(activoDto, "aprobadoVentaWeb", listaPrecios.get(i).getImporte());
-				} else if (listaPrecios.get(i).getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA)) {
-					BeanUtils.copyProperty(activoDto, "aprobadoRentaWeb", listaPrecios.get(i).getImporte());
-				} else if (listaPrecios.get(i).getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_DESC_APROBADO)) {
-					BeanUtils.copyProperty(activoDto, "descuentoAprobado", listaPrecios.get(i).getImporte());
-				} else if (listaPrecios.get(i).getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO)) {
-					BeanUtils.copyProperty(activoDto, "descuentoPublicado", listaPrecios.get(i).getImporte());
-				} else if (listaPrecios.get(i).getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT)) {
-					BeanUtils.copyProperty(activoDto, "valorNetoContable", listaPrecios.get(i).getImporte());
-				} else if (listaPrecios.get(i).getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_COSTE_ADQUISICION)) {
-					BeanUtils.copyProperty(activoDto, "costeAdquisicion", listaPrecios.get(i).getImporte());
-				}
+		for (VPreciosVigentes listaPrecio : listaPrecios) {
+			if (listaPrecio.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO)) {
+				BeanUtils.copyProperty(activoDto, "minimoAutorizado", listaPrecio.getImporte());
+			} else if (listaPrecio.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA)) {
+				BeanUtils.copyProperty(activoDto, "aprobadoVentaWeb", listaPrecio.getImporte());
+			} else if (listaPrecio.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA)) {
+				BeanUtils.copyProperty(activoDto, "aprobadoRentaWeb", listaPrecio.getImporte());
+			} else if (listaPrecio.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_DESC_APROBADO)) {
+				BeanUtils.copyProperty(activoDto, "descuentoAprobado", listaPrecio.getImporte());
+			} else if (listaPrecio.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO)) {
+				BeanUtils.copyProperty(activoDto, "descuentoPublicado", listaPrecio.getImporte());
+			} else if (listaPrecio.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT)) {
+				BeanUtils.copyProperty(activoDto, "valorNetoContable", listaPrecio.getImporte());
+			} else if (listaPrecio.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_COSTE_ADQUISICION)) {
+				BeanUtils.copyProperty(activoDto, "costeAdquisicion", listaPrecio.getImporte());
 			}
 		}
-		if(!Checks.esNulo(activo.getTasacion()) && activo.getTasacion().size()>0){
+
+		if(!Checks.esNulo(activo.getTasacion()) && !activo.getTasacion().isEmpty()){
 			ActivoTasacion tasacionMasReciente = activo.getTasacion().get(0);
 			BeanUtils.copyProperty(activoDto, "valorUltimaTasacion", tasacionMasReciente.getImporteTasacionFin());
 		}
-		if(activo.getCodigoPromocionPrinex() != null ) {
+
+		if(!Checks.esNulo(activo.getCodigoPromocionPrinex())) {
 			BeanUtils.copyProperty(activoDto, "codigoPromocionPrinex", activo.getCodigoPromocionPrinex());
 		}
-		
-		if(activo.getActivoBNK() != null && activo.getActivoBNK().getAcbCoreaeTexto() != null && activo.getActivoBNK().getAcbCoreaeTexto() != ""){
+
+		if(!Checks.esNulo(activo.getActivoBNK()) && !Checks.esNulo(activo.getActivoBNK().getAcbCoreaeTexto())){
 			BeanUtils.copyProperty(activoDto, "acbCoreaeTexto", activo.getActivoBNK().getAcbCoreaeTexto());
 		}
-		
+
 		if(!Checks.esNulo(activo.getActivoPublicacion())){
 			BeanUtils.copyProperty(activoDto, "estadoAlquilerDescripcion", !Checks.esNulo(activo.getActivoPublicacion().getEstadoPublicacionAlquiler()) ? activo.getActivoPublicacion().getEstadoPublicacionAlquiler().getDescripcion() : "");
 			BeanUtils.copyProperty(activoDto, "estadoVentaDescripcion", !Checks.esNulo(activo.getActivoPublicacion().getEstadoPublicacionVenta()) ? activo.getActivoPublicacion().getEstadoPublicacionVenta().getDescripcion(): "");
@@ -513,11 +438,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 		// HREOS-2761: Buscamos si existen activos candidatos para propagar cambios. Llamada única para el activo
 		 activoDto.setActivosPropagables(activoPropagacionApi.getAllActivosAgrupacionPorActivo(activo));
-		 
+
 		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
 		 activoDto.setCamposPropagables(TabActivoService.TAB_DATOS_BASICOS);
 
-		
 		return activoDto;	
 	}
 

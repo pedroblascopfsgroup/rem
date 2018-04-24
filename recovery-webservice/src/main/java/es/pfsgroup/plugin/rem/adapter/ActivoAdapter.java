@@ -1177,42 +1177,38 @@ public class ActivoAdapter {
 	}
 
 	public List<DtoAdmisionDocumento> getListDocumentacionAdministrativaById(Long id) {
-
 		Activo activo = activoApi.get(id);
 
 		List<DtoAdmisionDocumento> listaDtoAdmisionDocumento = new ArrayList<DtoAdmisionDocumento>();
 
-		if (activo.getAdmisionDocumento() != null) {
+		if (!Checks.esNulo(activo.getAdmisionDocumento())) {
 
 			for (int i = 0; i < activo.getAdmisionDocumento().size(); i++) {
 				DtoAdmisionDocumento catastroDto = new DtoAdmisionDocumento();
+
 				try {
-
 					BeanUtils.copyProperties(catastroDto, activo.getAdmisionDocumento().get(i));
-					BeanUtils.copyProperty(catastroDto, "descripcionTipoDocumentoActivo", activo.getAdmisionDocumento()
-							.get(i).getConfigDocumento().getTipoDocumentoActivo().getDescripcion());
 
-					if (activo.getAdmisionDocumento() != null) {
-						if (activo.getAdmisionDocumento().get(i).getTipoCalificacionEnergetica() != null) {
-							BeanUtils.copyProperty(catastroDto, "tipoCalificacionCodigo",
-									activo.getAdmisionDocumento().get(i).getTipoCalificacionEnergetica().getCodigo());
-							BeanUtils.copyProperty(catastroDto, "tipoCalificacionDescripcion", activo
-									.getAdmisionDocumento().get(i).getTipoCalificacionEnergetica().getDescripcion());
-						}
+					if (!Checks.esNulo(activo.getAdmisionDocumento().get(i).getConfigDocumento())) {
+						BeanUtils.copyProperty(catastroDto, "descripcionTipoDocumentoActivo", activo.getAdmisionDocumento().get(i).getConfigDocumento().getTipoDocumentoActivo().getDescripcion());
+						BeanUtils.copyProperty(catastroDto, "codigoTipoDocumentoActivo", activo.getAdmisionDocumento().get(i).getConfigDocumento().getTipoDocumentoActivo().getCodigo());
 					}
 
+					if (!Checks.esNulo(activo.getAdmisionDocumento().get(i).getTipoCalificacionEnergetica())) {
+						BeanUtils.copyProperty(catastroDto, "tipoCalificacionCodigo", activo.getAdmisionDocumento().get(i).getTipoCalificacionEnergetica().getCodigo());
+						BeanUtils.copyProperty(catastroDto, "tipoCalificacionDescripcion", activo.getAdmisionDocumento().get(i).getTipoCalificacionEnergetica().getDescripcion());
+					}
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+					logger.error("Error al obtener un listado de documentos administrativos del activo.", e);
 				} catch (InvocationTargetException e) {
-					e.printStackTrace();
+					logger.error("Error al obtener un listado de documentos administrativos del activo.", e);
 				}
-				listaDtoAdmisionDocumento.add(catastroDto);
 
+				listaDtoAdmisionDocumento.add(catastroDto);
 			}
 		}
 
 		return listaDtoAdmisionDocumento;
-
 	}
 
 	public List<DtoFoto> getFotosById(Long id) {

@@ -16,6 +16,7 @@ import es.pfsgroup.plugin.rem.activo.perimetro.dao.PerimetroDao;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionHistoricoDao;
 import es.pfsgroup.plugin.rem.activo.valoracion.dao.ActivoValoracionDao;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
@@ -35,11 +36,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 @Service("activoEstadoPublicacionManager")
 public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionApi{
 	
 	protected static final Log logger = LogFactory.getLog(ActivoManager.class);
+	private static final Integer ESTADO_PUBLICACION_NARANJA = 0;
+	private static final Integer ESTADO_PUBLICACION_AZUL = 1;
+	private static final Integer ESTADO_PUBLICACION_AMARILLO = 2;
 
 	@Resource
 	private MessageService messageServices;
@@ -58,6 +63,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 	@Autowired
 	private PerimetroDao perimetroDao;
+
+	@Autowired
+	private ActivoAdapter activoAdapter;
 
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
@@ -955,6 +963,67 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}
 		
 		return dto;
+	}
+
+	@Override
+	public Integer getEstadoIndicadorPublicacionVenta(Activo activo) {
+		Boolean checkPublicarSinPrecio = activoPublicacionDao.getCheckSinPrecioVentaPorIdActivo(activo.getId());
+
+		if(activo.getAdmision()
+				&& activo.getGestion()
+				&& this.isInformeAprobado(activo.getId())
+				&& (this.tienePrecioVentaByIdActivo(activo.getId()) || (!Checks.esNulo(checkPublicarSinPrecio) && checkPublicarSinPrecio))
+				){
+			return ESTADO_PUBLICACION_AZUL;
+		}else if(!activo.getAdmision()
+				&& !activo.getGestion()
+				&& !this.isInformeAprobado(activo.getId())
+				&& !(this.tienePrecioVentaByIdActivo(activo.getId()) || (!Checks.esNulo(checkPublicarSinPrecio) && checkPublicarSinPrecio))
+				){
+			return ESTADO_PUBLICACION_NARANJA;
+		}else{
+			return ESTADO_PUBLICACION_AMARILLO;
+		}
+	}
+
+	@Override
+	public Integer getEstadoIndicadorPublicacionAlquiler(Activo activo) {
+		Boolean checkPublicarSinPrecio = activoPublicacionDao.getCheckSinPrecioAlquilerPorIdActivo(activo.getId());
+		ActivoPatrimonio activoPatrimonio = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
+		List<DtoAdmisionDocumento> listDtoAdmisionDocumento = activoAdapter.getListDocumentacionAdministrativaById(activo.getId());
+		Boolean conCee = false;
+
+		for(DtoAdmisionDocumento aListDtoAdmisionDocumento : listDtoAdmisionDocumento) {
+			if (DDTipoDocumentoActivo.CODIGO_CEE.equals(aListDtoAdmisionDocumento.getCodigoTipoDocumentoActivo())) {
+				conCee = true;
+			}
+		}
+
+		if(activo.getAdmision()
+				&& activo.getGestion()
+				&& this.isInformeAprobado(activo.getId())
+				&& (!Checks.esNulo(activoPatrimonio)
+				&& !Checks.esNulo(activoPatrimonio.getAdecuacionAlquiler())
+				&& (DDAdecuacionAlquiler.CODIGO_ADA_SI.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())
+				|| DDAdecuacionAlquiler.CODIGO_ADA_NO_APLICA.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())))
+				&& conCee
+				&& (this.tienePrecioRentaByIdActivo(activo.getId()) || (!Checks.esNulo(checkPublicarSinPrecio) && checkPublicarSinPrecio))
+				) {
+			return ESTADO_PUBLICACION_AZUL;
+		} else if(!activo.getAdmision()
+				&& !activo.getGestion()
+				&& !this.isInformeAprobado(activo.getId())
+				&& (!Checks.esNulo(activoPatrimonio)
+				&& !Checks.esNulo(activoPatrimonio.getAdecuacionAlquiler())
+				&& !(DDAdecuacionAlquiler.CODIGO_ADA_SI.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())
+				|| DDAdecuacionAlquiler.CODIGO_ADA_NO_APLICA.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())))
+				&& conCee
+				&& !(this.tienePrecioRentaByIdActivo(activo.getId()) || (!Checks.esNulo(checkPublicarSinPrecio) && checkPublicarSinPrecio))
+				) {
+			return ESTADO_PUBLICACION_NARANJA;
+		} else {
+			return ESTADO_PUBLICACION_AMARILLO;
+		}
 	}
 
 	@Override

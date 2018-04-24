@@ -44,4 +44,19 @@ public interface ActivoPublicacionDao extends AbstractDao<ActivoPublicacion, Lon
 	 */
 	ActivoPublicacion getActivoPublicacionPorIdActivo(Long idActivo);
 
+	/**
+	 * Este método obtiene el estado del check de publicación sin precio para venta dado un ID de activo.
+	 *
+	 * @param idActivo: ID del activo del que obtener el check.
+	 * @return Devuelve True si el check de publicar sin precio está marcado, False si no está marcado.
+	 */
+	Boolean getCheckSinPrecioVentaPorIdActivo(Long idActivo);
+
+	/**
+	 * Este método obtiene el estado del check de publicación sin precio para alquiler dado un ID de activo.
+	 *
+	 * @param idActivo: ID del activo del que obtener el check.
+	 * @return Devuelve True si el check de publicar sin precio está marcado, False si no está marcado.
+	 */
+	Boolean getCheckSinPrecioAlquilerPorIdActivo(Long idActivo);
 }

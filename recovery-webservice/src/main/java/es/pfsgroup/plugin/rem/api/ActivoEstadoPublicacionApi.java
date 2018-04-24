@@ -98,6 +98,22 @@ public interface ActivoEstadoPublicacionApi {
 	DtoDatosPublicacionActivo getPublicarSinPrecioVentaAlquilerByIdActivo(Long idActivo);
 
 	/**
+	 * Este método obtiene el estado del indicador del activo para el estado de venta.
+	 *
+	 * @param activo: entidad activo.
+	 * @return Devuelve el estado de publicación del activo para venta.
+	 */
+	Integer getEstadoIndicadorPublicacionVenta(Activo activo);
+
+	/**
+	 * Este método obtiene el estado del indicador del activo para el estado de alquiler.
+	 *
+	 * @param activo: entidad activo.
+	 * @return Devuelve el estado de publicación del activo para alquiler.
+	 */
+	Integer getEstadoIndicadorPublicacionAlquiler(Activo activo);
+
+	/**
 	 * Este método comprueba si un activo consta de precio de venta web.
 	 *
 	 * @param idActivo: ID del activo a comprobar.

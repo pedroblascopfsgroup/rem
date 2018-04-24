@@ -38,7 +38,6 @@ public abstract class AbstractNotificatorService{
 	@Resource
 	private Properties appProperties;
 	
-
 	@Autowired
 	private GenericABMDao genericDao;
 
@@ -50,7 +49,6 @@ public abstract class AbstractNotificatorService{
 	
 	private static final String STR_MISSING_VALUE = "---";
 	
-
 	private String generateFechaTrabajo(Trabajo trabajo){
 		String fecha = null;
 		DateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
@@ -247,7 +245,6 @@ public abstract class AbstractNotificatorService{
 public String creaCuerpoOfertaExpress(Oferta oferta){
 		
 		
-		
 		Activo activo = oferta.getActivoPrincipal();
 		
 		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
@@ -277,7 +274,9 @@ public String creaCuerpoOfertaExpress(Oferta oferta){
 			cuerpo = cuerpo + ".</p>";
 		}
 		ActivoBancario activoBancario = genericDao.get(ActivoBancario.class,
+
 				genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId())); 
+
 		if (!Checks.esNulo(expediente.getId()) && !Checks.esNulo(expediente.getReserva()) 
 				&& !DDClaseActivoBancario.CODIGO_FINANCIERO.equals(activoBancario.getClaseActivo().getCodigo())) {
 			String reservationKey = "";
@@ -379,5 +378,4 @@ protected String getCompradorFullName(Long compradorId) {
 		return STR_MISSING_VALUE;
 	}
 }
-
 }

@@ -1906,8 +1906,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if(dtoActivoTrabajo.getParticipacion() != null) {
 			porcentajeParticipacion = Float.valueOf(dtoActivoTrabajo.getParticipacion());
 		}
-
-		ActivoTrabajo activoTrabajo = activoTrabajoDao.findOne(Long.valueOf(dtoActivoTrabajo.getIdActivo()),Long.valueOf(dtoActivoTrabajo.getIdTrabajo()));
+		
+		Filter f1 = genericDao.createFilter(FilterType.EQUALS, "activo.id", Long.valueOf(dtoActivoTrabajo.getIdActivo()));
+		Filter f2 = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", Long.valueOf(dtoActivoTrabajo.getIdTrabajo()));
+		
+		ActivoTrabajo activoTrabajo = genericDao.get(ActivoTrabajo.class, f1, f2);
+		
 		activoTrabajo.setParticipacion(porcentajeParticipacion);
 		genericDao.update(ActivoTrabajo.class, activoTrabajo);
 

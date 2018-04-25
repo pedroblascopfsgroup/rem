@@ -16,6 +16,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
@@ -44,6 +45,9 @@ public abstract class AbstractNotificatorService{
 
 	@Autowired
 	private GestorActivoApi gestorActivoManager;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
 	
 	private static final String STR_MISSING_VALUE = "---";
 	
@@ -242,16 +246,19 @@ public abstract class AbstractNotificatorService{
 	
 public String creaCuerpoOfertaExpress(Oferta oferta){
 		
-		Filter filterExp = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
-		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filterExp);
 		
-		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "activo.id", oferta.getActivoPrincipal().getId());
+		
+		Activo activo = oferta.getActivoPrincipal();
+		
+		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 		ActivoTramite tramite = genericDao.get(ActivoTramite.class, filterAct);
 		
 		String codigoCartera = null;
-		if (!Checks.esNulo(tramite.getActivo()) && !Checks.esNulo(tramite.getActivo().getCartera())) {
-			codigoCartera = tramite.getActivo().getCartera().getCodigo();			
+		if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera())) {
+			codigoCartera = activo.getCartera().getCodigo();			
 		}
+		
+		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 		
 		String asunto = "Notificación de aprobación provisional de la oferta " + oferta.getNumOferta();
 		String cuerpo = "<p>Nos complace comunicarle que la oferta " + oferta.getNumOferta()
@@ -270,7 +277,7 @@ public String creaCuerpoOfertaExpress(Oferta oferta){
 			cuerpo = cuerpo + ".</p>";
 		}
 		ActivoBancario activoBancario = genericDao.get(ActivoBancario.class,
-				genericDao.createFilter(FilterType.EQUALS, "activo.id", tramite.getActivo().getId())); 
+				genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId())); 
 		if (!Checks.esNulo(expediente.getId()) && !Checks.esNulo(expediente.getReserva()) 
 				&& !DDClaseActivoBancario.CODIGO_FINANCIERO.equals(activoBancario.getClaseActivo().getCodigo())) {
 			String reservationKey = "";
@@ -300,10 +307,10 @@ public String creaCuerpoOfertaExpress(Oferta oferta){
 				gestorComercial = activoLoteComercial.getUsuarioGestorComercial();
 			} else {
 				// Lote Restringido
-				gestorComercial = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "GCOM");
+				gestorComercial = gestorActivoManager.getGestorByActivoYTipo(activo, "GCOM");
 			}
 		} else {
-		    gestorComercial = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "GCOM");
+		    gestorComercial = gestorActivoManager.getGestorByActivoYTipo(activo, "GCOM");
 		}
 
 		cuerpo = cuerpo + String.format("<p>Gestor comercial: %s </p>", (gestorComercial != null) ? gestorComercial.getApellidoNombre() : STR_MISSING_VALUE );

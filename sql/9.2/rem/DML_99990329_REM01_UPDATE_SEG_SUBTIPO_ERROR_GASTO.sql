@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=GMN
---## FECHA_CREACION=20180425
+--## FECHA_CREACION=20180426
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=swat-2.0.16-180319-rem
 --## INCIDENCIA_LINK=REMVIP-596
@@ -41,12 +41,12 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(250);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-          T_TIPO_DATA('04' , '85' , '85 - Gasto NO autorizado  (EL GASTO CORRESPONDE AL CLIENTE)' , 'Gasto NO autorizado  (EL GASTO CORRESPONDE AL CLIENTE)' )
-  , T_TIPO_DATA('04' , '86' , '86 - Gasto NO autorizado (GASTO PLUSVALIA, NO CORRESPONDE)' , 'Gasto NO autorizado (GASTO PLUSVALIA, NO CORRESPONDE)' )
-  , T_TIPO_DATA('04' , '87' , '87 - Gasto NO autorizado (GASTO CORRESPONDE AL CLIENTE -VENTA EXTERNA)' , 'Gasto NO autorizado (GASTO CORRESPONDE AL CLIENTE -VENTA EXTERNA)' )
-  , T_TIPO_DATA('04' , '88' , '88 - Gasto NO autorizado (GASTO PLUSVALIA, NO CORRESPONDE - VENTA EXTERNA)' , 'Gasto NO autorizado (GASTO PLUSVALIA, NO CORRESPONDE - VENTA EXTERNA)' )
-  , T_TIPO_DATA('04' , '99' , '99 - Gasto descartado por duplicidad' , 'Gasto descartado por duplicidad' )
-  , T_TIPO_DATA('04' , '400' , '400 - Error en líneas de factura' , 'Error en líneas de factura' ) 
+          T_TIPO_DATA('04' , '85' , '85 - Gasto NO autorizado  (EL GASTO CORRESPONDE AL CLIENTE)' , '85 - Gasto NO autorizado  (EL GASTO CORRESPONDE AL CLIENTE)' )
+  , T_TIPO_DATA('04' , '86' , '86 - Gasto NO autorizado (GASTO PLUSVALIA, NO CORRESPONDE)' , '86 - Gasto NO autorizado (GASTO PLUSVALIA, NO CORRESPONDE)' )
+  , T_TIPO_DATA('04' , '87' , '87 - Gasto NO autorizado (GASTO CORRESPONDE AL CLIENTE -VENTA EXTERNA)' , '87 - Gasto NO autorizado (GASTO CORRESPONDE AL CLIENTE -VENTA EXTERNA)' )
+  , T_TIPO_DATA('04' , '88' , '88 - Gasto NO autorizado (GASTO PLUSVALIA, NO CORRESPONDE - VENTA EXTERNA)' , '88 - Gasto NO autorizado (GASTO PLUSVALIA, NO CORRESPONDE - VENTA EXTERNA)' )
+  , T_TIPO_DATA('04' , '99' , '99 - Gasto descartado por duplicidad' , '99 - Gasto descartado por duplicidad' )
+  , T_TIPO_DATA('04' , '400' , '400 - Error en líneas de factura' , '400 - Error en líneas de factura' ) 
                 ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

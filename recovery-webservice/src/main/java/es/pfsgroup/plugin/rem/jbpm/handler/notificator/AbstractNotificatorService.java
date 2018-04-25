@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
@@ -257,6 +258,14 @@ public String creaCuerpoOfertaExpress(Oferta oferta){
 		
 		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 		
+		if (Checks.esNulo(expediente.getReserva())&& oferta.getOfertaExpress()){
+			Filter filterReserva = genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId());
+			Reserva reserva = genericDao.get(Reserva.class, filterReserva);
+			if (!Checks.esNulo(reserva)){
+				expediente.setReserva(reserva);
+			}
+		}
+		
 		String asunto = "Notificación de aprobación provisional de la oferta " + oferta.getNumOferta();
 		String cuerpo = "<p>Nos complace comunicarle que la oferta " + oferta.getNumOferta()
 				+ " a nombre de " + nombresOfertantes(expediente)
@@ -275,8 +284,8 @@ public String creaCuerpoOfertaExpress(Oferta oferta){
 		}
 		ActivoBancario activoBancario = genericDao.get(ActivoBancario.class,
 
-				genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId())); 
-
+				genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+		
 		if (!Checks.esNulo(expediente.getId()) && !Checks.esNulo(expediente.getReserva()) 
 				&& !DDClaseActivoBancario.CODIGO_FINANCIERO.equals(activoBancario.getClaseActivo().getCodigo())) {
 			String reservationKey = "";

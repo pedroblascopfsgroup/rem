@@ -362,13 +362,14 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		CrearExpedienteComercialDto crearExpedienteComercialDto = recoveryToGestorAssembler.getCrearExpedienteComercialDto(idExpedienteComercial,descripcionExpediente, username, cliente, estadoExpediente, idSistemaOrigen,codClase);
 		
 		RespuestaCrearExpediente respuesta = null;
+		/*
 		try {
 			respuesta = gestorDocumentalExpedientesApi.crearExpedienteComercial(crearExpedienteComercialDto);
 		} catch (GestorDocumentalException gex) {
 			logger.debug(gex.getMessage());
 			throw gex;
 		}
-		
+		*/
 		Integer idExpediente = null;
 		
 		if(!Checks.esNulo(respuesta)) {

@@ -30,6 +30,15 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 				title: HreRem.i18n('title.economicas'),
 				items : [
 					{
+						xtype: 'button',
+						text: HreRem.i18n('btn.enviar.condicionantes'),
+						handler: 'enviarCondicionantesEconomicosUvem',
+						margin: '10 40 5 10',
+						bind:{
+							hidden: '{!esCarteraBankia}'
+						}
+					},
+					{
 						xtype:'fieldsettable',
 						collapsible: false,
 						

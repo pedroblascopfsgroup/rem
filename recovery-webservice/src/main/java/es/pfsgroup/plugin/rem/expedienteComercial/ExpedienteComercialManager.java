@@ -5783,6 +5783,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return subcartera;
 		
 	}
+
+	@Override
+	public void enviarCondicionantesEconomicosUvem(Long idExpediente) throws Exception {
+		InstanciaDecisionDto instancia = creaInstanciaDecisionDto(idExpediente);
+		instancia.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_CONDICIONANTES_ECONOMICOS);
+		logger.info("------------ LLAMADA WS MOD3(CONDICIONANTES ECONOMICOS) -----------------");
+		uvemManagerApi.modificarInstanciaDecisionTres(instancia);	
+		logger.info("------------ LLAMADA WS REALIZADA CON EXITO -----------------");
+	}
 	
 
 }

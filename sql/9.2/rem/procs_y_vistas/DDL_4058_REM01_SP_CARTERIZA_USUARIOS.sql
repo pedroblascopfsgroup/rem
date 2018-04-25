@@ -65,18 +65,13 @@ BEGIN
 		
 		-- Si existe el usuario comprobamos que no este previamente carterizado		
 		EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.UCA_USUARIO_CARTERA WHERE USU_ID = '||USU_ID INTO V_QOUNT;
-		
-		IF V_QOUNT > 0 THEN
-			PL_OUTPUT := PL_OUTPUT || CHR(10) ||'[WARNING] El usuario ya esta carterizado.'
-					;
-		END IF;
 
 	END IF;
 
 	-- Si no estaba carterizado insertamos el nuevo registro
 	IF V_COUNT = 1 AND V_KOUNT = 1 AND V_QOUNT = 0 THEN
 		V_SQL := 'INSERT INTO '||V_ESQUEMA||'.UCA_USUARIO_CARTERA VALUES (
-					  S_UCA_USUARIO_CARTERA.NEXTVAL
+					  '||V_ESQUEMA||'.S_UCA_USUARIO_CARTERA.NEXTVAL
 					, '||USU_ID||'
 					, '||DD_CRA_ID||'
 					)

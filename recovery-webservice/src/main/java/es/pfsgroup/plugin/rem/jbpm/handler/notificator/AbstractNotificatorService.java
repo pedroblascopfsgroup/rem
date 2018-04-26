@@ -250,7 +250,11 @@ public String creaCuerpoOfertaExpress(Oferta oferta){
 		Activo activo = oferta.getActivoPrincipal();
 		
 		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-		ActivoTramite tramite = genericDao.get(ActivoTramite.class, filterAct);
+		List<ActivoTramite> tramites = genericDao.getList(ActivoTramite.class, filterAct);
+		
+		Integer numTramites = tramites.size();
+		
+		ActivoTramite tramite = tramites.get(numTramites-1);
 		
 		String codigoCartera = null;
 		if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera())) {

@@ -157,10 +157,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 		                {
 							xtype: 'checkboxfieldbase',
 							fieldLabel: HreRem.i18n('filedlabel.tiene.ok.tecnico'),
-							bind: {
-				        		hidden: '{!activo.isCarteraBankia}',				   
-			            		value: '{situacionPosesoria.tieneOkTecnico}'
-			            	}
+							bind: '{situacionPosesoria.tieneOkTecnico}'
 						},
 		                { 
 

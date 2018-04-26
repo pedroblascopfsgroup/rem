@@ -823,9 +823,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     T004_CierreEconomicoValidacion: function() {
     	var me = this;
     	var codigoSubtipoTrabajo = me.up('tramitesdetalle').getViewModel().get("tramite.codigoSubtipoTrabajo");
-    	var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
     	
-    	if(CONST.SUBTIPOS_TRABAJO['TOMA_POSESION'] != codigoSubtipoTrabajo || CONST.CARTERA['BANKIA'] != codigoCartera){
+    	if(CONST.SUBTIPOS_TRABAJO['TOMA_POSESION'] != codigoSubtipoTrabajo){
     		me.deshabilitarCampo(me.down('[name=tieneOkTecnico]'));
     		me.ocultarCampo(me.down('[name=tieneOkTecnico]'));
     	}    	    	

@@ -91,19 +91,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	}
 	
 	private void updaterStateGestion(Activo activo){
-		if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())){
-			activo.setGestion(activo.getTieneOkTecnico());
-		}
-		else{
-			if(!this.getStateGestion(activo)){
-				TareaExterna tareaExternaDocGestion = activoTareaExternaApi.obtenerTareasAdmisionByCodigo(activo, "T001_CheckingDocumentacionGestion");
-				if(!Checks.esNulo(tareaExternaDocGestion)){
-					TareaActivo tareaDocGestion = (TareaActivo) tareaExternaDocGestion.getTareaPadre();
-				
-					activo.setGestion(!Checks.esNulo(tareaDocGestion.getFechaFin()));
-				}
-			}
-		}
+		activo.setGestion(activo.getTieneOkTecnico());
 	}
 	
 	@Override

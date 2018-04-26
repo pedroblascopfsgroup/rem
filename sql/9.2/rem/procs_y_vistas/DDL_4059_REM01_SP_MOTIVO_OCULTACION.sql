@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=CARLOS LOPEZ
---## FECHA_CREACION=20180408
+--## FECHA_CREACION=20180425
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
---## INCIDENCIA_LINK=HREOS-3995
+--## INCIDENCIA_LINK=HREOS-4027
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -121,7 +121,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                    WHERE APU.BORRADO = 0.
                                      AND SPS.SPS_OCUPADO = 1 
                                      AND SPS.SPS_CON_TITULO = 1 
-                                     AND SPS.SPS_FECHA_VENC_TITULO > sysdate
+                                     AND ((TRUNC(SPS.SPS_FECHA_TITULO) <= TRUNC(SYSDATE) AND TRUNC(SPS.SPS_FECHA_VENC_TITULO) >= TRUNC(sysdate)) OR (TRUNC(SPS.SPS_FECHA_TITULO) <= TRUNC(SYSDATE) AND SPS.SPS_FECHA_VENC_TITULO IS NULL))
                                      AND SPS.ACT_ID= '||pACT_ID||    
                          ' UNION                                     
                           SELECT APU.ACT_ID

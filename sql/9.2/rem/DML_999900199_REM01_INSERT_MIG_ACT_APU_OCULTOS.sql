@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DANIEL ALGABA
---## FECHA_CREACION=20180405
+--## FECHA_CREACION=20180426
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-3975

@@ -391,7 +391,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 							}
 						}
 					}
-				}else if(cartera.equals(DDCartera.CODIGO_CARTERA_SAREB) || cartera.equals(DDCartera.CODIGO_CARTERA_TANGO)){
+				}else if(cartera.equals(DDCartera.CODIGO_CARTERA_SAREB) || cartera.equals(DDCartera.CODIGO_CARTERA_TANGO) || cartera.equals(DDCartera.CODIGO_CARTERA_GIANTS)){
 					if(!valorPrecioTransferenciaNull){
 							reglaSeleccionada = DDTipoPrecio.CODIGO_TPC_PT;
 					}else{

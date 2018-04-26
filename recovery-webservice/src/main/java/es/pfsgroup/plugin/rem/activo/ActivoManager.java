@@ -727,7 +727,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		//HREOS-2511 El combo "Comité seleccionado" vendrá informado para cartera Sareb
 		if(oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)
-				|| oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)) {
+				|| oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)
+				|| oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)) {
 			Double precioMinimoAutorizado = 0.0;
 			ActivoBancario activoBancario = getActivoBancarioByIdActivo(oferta.getActivoPrincipal().getId());
 			if(Checks.esNulo(oferta.getAgrupacion())) {
@@ -767,6 +768,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 				if(oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)){
 					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_TANGO)));
+				}
+				else if(oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)){
+					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_GIANTS)));
 				}
 				else{
 					// 1º Clase de activo (financiero/inmobiliario) y sin formalización.
@@ -4480,9 +4484,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						codigoTipoComercializacion = DDTipoComercializar.CODIGO_SINGULAR;
 				}
 			} 
-			else if(DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo()) ||
+			else if(DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())  ||
 					DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo()) ||
-					DDCartera.CODIGO_CARTERA_TANGO.equals(activo.getCartera().getCodigo())) 
+					DDCartera.CODIGO_CARTERA_TANGO.equals(activo.getCartera().getCodigo())  ||
+					DDCartera.CODIGO_CARTERA_GIANTS.equals(activo.getCartera().getCodigo())) 
 			{
 				importeLimite += 100000;
 				Double valorActivo = this.getImporteValoracionActivoByCodigo(activo, DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);

@@ -34,7 +34,7 @@ DECLARE
   TYPE T_CDC is table of VARCHAR2(250); 
   TYPE T_ARRAY_CDC IS TABLE OF T_CDC;
   V_CDC T_ARRAY_CDC := T_ARRAY_CDC(
-    T_CDC('04', '','')
+    T_CDC('04', '--','--')
   );
   V_TMP_CDC T_CDC;
 

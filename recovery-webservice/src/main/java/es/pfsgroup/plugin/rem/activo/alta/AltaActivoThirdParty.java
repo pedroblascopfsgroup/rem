@@ -132,6 +132,9 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 			actSit.setActivo(activo);
 			actSit.setVersion(new Long(0));
 			actSit.setAuditoria(auditoria);
+			if(!Checks.esNulo(dtoAATP.getFechaTomaPosesion())){
+				actSit.setFechaTomaPosesion(dtoAATP.getFechaTomaPosesion());
+			}
 			
 			genericDao.save(ActivoSituacionPosesoria.class, actSit);
 			
@@ -139,6 +142,9 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 			actTit.setActivo(activo);
 			actTit.setVersion(new Long(0));
 			actTit.setAuditoria(auditoria);
+			if(!Checks.esNulo(dtoAATP.getFechaInscripcion())){
+				actTit.setFechaInscripcionReg(dtoAATP.getFechaInscripcion());
+			}
 			
 			genericDao.save(ActivoTitulo.class, actTit);
 		} else {
@@ -323,6 +329,10 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAATP.getNifMediador());
 				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_MEDIADOR);
 				ActivoProveedor mediador = genericDao.get(ActivoProveedor.class, f1, f2);
+				if(Checks.esNulo(mediador)){
+					f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA);
+					mediador = genericDao.get(ActivoProveedor.class, f1, f2);
+				}
 				vivienda.setMediadorInforme(mediador);
 			}
 			beanUtilNotNull.copyProperty(vivienda, "planta", dtoAATP.getNumPlantasVivienda());
@@ -336,6 +346,10 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAATP.getNifMediador());
 				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_MEDIADOR);
 				ActivoProveedor mediador = genericDao.get(ActivoProveedor.class, f1, f2);
+				if(Checks.esNulo(mediador)){
+					f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA);
+					mediador = genericDao.get(ActivoProveedor.class, f1, f2);
+				}
 				localComercial.setMediadorInforme(mediador);
 			}
 			beanUtilNotNull.copyProperty(localComercial, "planta", dtoAATP.getNumPlantasVivienda());
@@ -349,6 +363,10 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAATP.getNifMediador());
 				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_MEDIADOR);
 				ActivoProveedor mediador = genericDao.get(ActivoProveedor.class, f1, f2);
+				if(Checks.esNulo(mediador)){
+					f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA);
+					mediador = genericDao.get(ActivoProveedor.class, f1, f2);
+				}
 				aparcamiento.setMediadorInforme(mediador);
 			}
 			beanUtilNotNull.copyProperty(aparcamiento, "planta", dtoAATP.getNumPlantasVivienda());
@@ -362,6 +380,10 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAATP.getNifMediador());
 				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_MEDIADOR);
 				ActivoProveedor mediador = genericDao.get(ActivoProveedor.class, f1, f2);
+				if(Checks.esNulo(mediador)){
+					f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA);
+					mediador = genericDao.get(ActivoProveedor.class, f1, f2);
+				}
 				activoInfoComercial.setMediadorInforme(mediador);
 			}
 			beanUtilNotNull.copyProperty(activoInfoComercial, "planta", dtoAATP.getNumPlantasVivienda());

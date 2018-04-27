@@ -292,4 +292,6 @@ public interface ParticularValidatorApi {
 
 	boolean activoConOfertasTramitadas(String numActivo);
 
+	Boolean existeProveedorMediadorByNIFConFVD(String proveedorMediadorNIF);
+
 }

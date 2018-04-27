@@ -86,55 +86,50 @@ public class TabActivoPatrimonio implements TabActivoService {
 		
 		DtoActivoPatrimonio activoPatrimonioDto = (DtoActivoPatrimonio) dto;
 		ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
-		ActivoHistoricoPatrimonio activoHistPatrimonio = new ActivoHistoricoPatrimonio();
-		DDAdecuacionAlquiler adecuacionAlquiler = null;
-		if(!Checks.esNulo(activoPatrimonioDto.getCodigoAdecuacion())) {
-			adecuacionAlquiler = genericDao.get(DDAdecuacionAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo",activoPatrimonioDto.getCodigoAdecuacion()));
-		}
 		
 		if(Checks.esNulo(activoPatrimonio)) {
 			activoPatrimonio = new ActivoPatrimonio();
-			
-			activoHistPatrimonio.setActivo(activo);
-			activoHistPatrimonio.setFechaInicioAdecuacionAlquiler(new Date());
-			activoHistPatrimonio.setFechaFinAdecuacionAlquiler(new Date());
-			activoHistPatrimonio.setFechaInicioHPM(new Date());
-			activoHistPatrimonio.setFechaFinHPM(new Date());
-
 			activoPatrimonio.setActivo(activo);
-			if(!Checks.esNulo(adecuacionAlquiler)) {
-				activoPatrimonio.setAdecuacionAlquiler(adecuacionAlquiler);
-			}
-			activoPatrimonio.setCheckHPM(!Checks.esNulo(activoPatrimonioDto.getChkPerimetroAlquiler()) ? activoPatrimonioDto.getChkPerimetroAlquiler() : null);
-			
-			activoHistoricoPatrimonioDao.save(activoHistPatrimonio);
-			
-		}else{
-		
+			activoPatrimonio.setCheckHPM(activoPatrimonioDto.getChkPerimetroAlquiler());
 			if(!Checks.esNulo(activoPatrimonioDto.getCodigoAdecuacion())) {
-				
+				if(!DDAdecuacionAlquiler.CODIGO_ADA_NULO.equals(activoPatrimonioDto.getCodigoAdecuacion())) {
+					DDAdecuacionAlquiler adecuacionAlquiler = genericDao.get(DDAdecuacionAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo",activoPatrimonioDto.getCodigoAdecuacion()));
+					activoPatrimonio.setAdecuacionAlquiler(adecuacionAlquiler);
+				} else {
+					activoPatrimonio.setAdecuacionAlquiler(null);
+				}
+			}
+		} else {
+			ActivoHistoricoPatrimonio activoHistPatrimonio = new ActivoHistoricoPatrimonio();
+			if(!Checks.esNulo(activoPatrimonioDto.getCodigoAdecuacion())) {
 				if(!Checks.esNulo(activoPatrimonio.getAdecuacionAlquiler())) {
 					activoHistPatrimonio.setAdecuacionAlquiler(activoPatrimonio.getAdecuacionAlquiler());
 				}
-				
-				activoPatrimonio.setAdecuacionAlquiler(adecuacionAlquiler);
+				if(!Checks.esNulo(activoPatrimonioDto.getCodigoAdecuacion())) {
+					if(!DDAdecuacionAlquiler.CODIGO_ADA_NULO.equals(activoPatrimonioDto.getCodigoAdecuacion())) {
+						DDAdecuacionAlquiler adecuacionAlquiler = genericDao.get(DDAdecuacionAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo",activoPatrimonioDto.getCodigoAdecuacion()));
+						activoPatrimonio.setAdecuacionAlquiler(adecuacionAlquiler);
+					} else {
+						activoPatrimonio.setAdecuacionAlquiler(null);
+					}
+				}
 			}
-			if(!Checks.estaVacio(listHistPatrimonio)) {
+
+			if (!Checks.estaVacio(listHistPatrimonio)) {
 				activoHistPatrimonio.setFechaInicioAdecuacionAlquiler(listHistPatrimonio.get(0).getFechaFinAdecuacionAlquiler());
 				activoHistPatrimonio.setFechaInicioHPM(listHistPatrimonio.get(0).getFechaFinHPM());
+			} else {
+				activoHistPatrimonio.setFechaInicioAdecuacionAlquiler(activoPatrimonio.getAuditoria().getFechaCrear());
+				activoHistPatrimonio.setFechaInicioHPM(activoPatrimonio.getAuditoria().getFechaCrear());
 			}
-			
+
 			activoHistPatrimonio.setFechaFinAdecuacionAlquiler(new Date());
 			activoHistPatrimonio.setFechaFinHPM(new Date());
 			activoHistPatrimonio.setActivo(activo);
+			activoHistPatrimonio.setCheckHPM(activoPatrimonio.getCheckHPM());
 			
 			if(!Checks.esNulo(activoPatrimonioDto.getChkPerimetroAlquiler())) {
-				activoHistPatrimonio.setCheckHPM(activoPatrimonio.getCheckHPM());
 				activoPatrimonio.setCheckHPM(activoPatrimonioDto.getChkPerimetroAlquiler());
-			}else {
-				if(!Checks.esNulo(activoPatrimonio.getCheckHPM())) {
-					activoHistPatrimonio.setCheckHPM(activoPatrimonio.getCheckHPM());
-				}
 			}
 			
 			activoHistoricoPatrimonioDao.save(activoHistPatrimonio);

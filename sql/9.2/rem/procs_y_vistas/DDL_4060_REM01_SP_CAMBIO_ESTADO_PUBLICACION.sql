@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=CARLOS LOPEZ
---## FECHA_CREACION=20180404
+--## FECHA_CREACION=20180426
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-3995
@@ -162,7 +162,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
 					  WHERE ACT_ID = '||nACT_ID||'
 						AND BORRADO = 0
 						AND (APU_CHECK_OCULTAR_A <> '||pOCULTAR||'
-						  OR DD_MTO_A_ID <> (SELECT DD_MTO_ID
+						  OR NVL(DD_MTO_A_ID,-1) <> (SELECT DD_MTO_ID
 											  FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION
 											 WHERE BORRADO = 0
 											   AND DD_MTO_CODIGO = '''||pDD_MTO_CODIGO||'''))
@@ -227,7 +227,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
 					  WHERE ACT_ID = '||nACT_ID||'
 						AND BORRADO = 0
 						AND (APU_CHECK_OCULTAR_V <> '||pOCULTAR||'
-						  OR DD_MTO_V_ID <> (SELECT DD_MTO_ID
+						  OR NVL(DD_MTO_V_ID,-1) <> (SELECT DD_MTO_ID
 											  FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION
 											 WHERE BORRADO = 0
 											   AND DD_MTO_CODIGO = '''||pDD_MTO_CODIGO||'''))

@@ -400,8 +400,13 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T013_RespuestaBankiaDevolucion" name="avanzaBPM"></transition>
+		<transition to="T013_ResolucionExpedienteDecision" name="avanzaBPM"></transition>
 	</state>
+	
+	<decision name="T013_ResolucionExpedienteDecision" expression="#{T013_ResolucionExpedienteDecision}">
+		<transition to="T013_RespuestaBankiaDevolucion" name="avanzaRespuestaBankia"></transition>
+		<transition to="Fin" name="noAvanzaRespuestaBankia"></transition>
+	</decision>
 	
 	<state name="T013_RespuestaBankiaDevolucion">
 		<event type="node-enter">

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=CARLOS LOPEZ
---## FECHA_CREACION=20180426
+--## FECHA_CREACION=20180430
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-3995
@@ -661,18 +661,15 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
             #ESQUEMA#.SP_MOTIVO_OCULTACION (nACT_ID, 'V', OutOCULTAR, OutMOTIVO);
     
             IF OutOCULTAR = 1 THEN
-              IF OutMOTIVO = '03' AND vDD_TAL_CODIGO = '01' THEN /*SI MOTIVO ES ALQUILADO Y TIPO ALQUILER ORDINARIO, NO OCULTAR*/
-                IF vDD_MTO_MANUAL_V = 0 THEN /*MOTIVO AUTOMÁTICO*/
-                  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
-                                SET APU_CHECK_OCULTAR_V = 0
-                                  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
-                                  , FECHAMODIFICAR = SYSDATE
-                                WHERE ACT_ID = '||nACT_ID||'
-                                AND BORRADO = 0
-                              ';
-            
-                  EXECUTE IMMEDIATE V_MSQL;                
-                END IF;
+              IF OutMOTIVO = '03' AND vDD_TAL_CODIGO = '01' AND vDD_MTO_MANUAL_V THEN /*SI MOTIVO ES ALQUILADO, TIPO ALQUILER ORDINARIO y MOTIVO AUTOMÁTICO, NO OCULTAR*/
+				  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+								SET APU_CHECK_OCULTAR_V = 0
+								  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+								  , FECHAMODIFICAR = SYSDATE
+								WHERE ACT_ID = '||nACT_ID||'
+								AND BORRADO = 0
+							  ';
+				  EXECUTE IMMEDIATE V_MSQL;                
               ELSE
                 PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'V', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
                 PLP$CAMBIO_ESTADO_VENTA(nACT_ID, '04', vUSUARIOMODIFICAR);

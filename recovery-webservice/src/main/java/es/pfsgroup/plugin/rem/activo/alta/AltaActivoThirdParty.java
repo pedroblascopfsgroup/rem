@@ -132,9 +132,6 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 			actSit.setActivo(activo);
 			actSit.setVersion(new Long(0));
 			actSit.setAuditoria(auditoria);
-			if(!Checks.esNulo(dtoAATP.getFechaTomaPosesion())){
-				actSit.setFechaTomaPosesion(dtoAATP.getFechaTomaPosesion());
-			}
 			
 			genericDao.save(ActivoSituacionPosesoria.class, actSit);
 			
@@ -642,6 +639,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				}else if (activo.getTipoTitulo().getCodigo().equals(DDTipoTituloActivo.tipoTituloJudicial)) {
 					NMBAdjudicacionBien adjudicacionBien = new NMBAdjudicacionBien();
 					adjudicacionBien.setBien(bien);
+					if(!Checks.esNulo(dtoAATP.getFechaTomaPosesion())){
+						adjudicacionBien.setFechaRealizacionPosesion(dtoAATP.getFechaTomaPosesion());
+					}
 					genericDao.save(NMBAdjudicacionBien.class, adjudicacionBien);
 					
 					//ActivoAdjudicacionJudicial
@@ -653,6 +653,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 					//ActivoAdjudicacionNoJudicial
 					ActivoAdjudicacionNoJudicial activoAdjudicacionNoJudicial = new ActivoAdjudicacionNoJudicial();
 					activoAdjudicacionNoJudicial.setActivo(activo);
+					if(!Checks.esNulo(dtoAATP.getFechaTomaPosesion())){
+						activoAdjudicacionNoJudicial.setFechaTitulo(dtoAATP.getFechaTomaPosesion());
+					}
 					genericDao.save(ActivoAdjudicacionNoJudicial.class, activoAdjudicacionNoJudicial);
 				}
 				

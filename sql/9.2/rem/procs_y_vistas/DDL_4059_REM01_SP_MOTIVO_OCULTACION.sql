@@ -70,7 +70,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                , MTO.DD_MTO_CODIGO
                                , MTO.DD_MTO_ORDEN ORDEN
                                     FROM '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO PTA
-                                    JOIN '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA ON DDADA.DD_ADA_ID = PTA.DD_ADA_ID AND DDADA.BORRADO = 0 AND DDADA.DD_ADA_CODIGO = ''02''
+                                    JOIN '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA ON DDADA.DD_ADA_ID = PTA.DD_ADA_ID AND DDADA.BORRADO = 0 AND DDADA.DD_ADA_CODIGO IN (''02'',''04'')
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''05'' AND MTO.BORRADO = 0 /*No adecuado*/
                                    WHERE PTA.BORRADO = 0
                                      AND ''A'' = '''||pTIPO||'''
@@ -193,7 +193,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                          AND EXISTS (SELECT 1 
                                                        FROM '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO PTA
                                                        JOIN '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA ON DDADA.DD_ADA_ID = PTA.DD_ADA_ID AND DDADA.BORRADO = 0
-                                                      WHERE DDADA.DD_ADA_CODIGO = ''02''
+                                                      WHERE DDADA.DD_ADA_CODIGO IN (''02'',''04'')
                                                         AND PTA.BORRADO = 0
                                                         AND PTA.ACT_ID = APU.ACT_ID)
                                           ))   

@@ -729,7 +729,11 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
             END IF;
     
             IF OutOCULTAR = 1 THEN
+              IF OutMOTIVO = '03' AND vDD_TAL_CODIGO = '01' THEN /*SI MOTIVO ES ALQUILADO Y TIPO ALQUILER ORDINARIO, NO OCULTAR*/
+                NULL;
+              ELSE
                 PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'V', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
+              END IF;
             END IF;
             
             /*Si el activo está oculto por un motivo automático y el proceso 

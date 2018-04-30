@@ -4576,12 +4576,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						//activoDto.setFechaTomaPosesion(null);
 					}
 				}
-			}
-			else if(DDTipoTituloActivo.tipoTituloNoJudicial.equals(activo.getTipoTitulo().getCodigo())){
-				if(!Checks.esNulo(activo.getAdjNoJudicial())){
-					if(Checks.esNulo(activo.getSituacionPosesoria().getEditadoFechaTomaPosesion()) || !activo.getSituacionPosesoria().getEditadoFechaTomaPosesion()){
-						activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaTitulo());
-						//activoDto.setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaTitulo());
+			} else if (DDTipoTituloActivo.tipoTituloNoJudicial.equals(activo.getTipoTitulo().getCodigo())) {
+				if (!Checks.esNulo(activo.getAdjNoJudicial())) {
+					if (!Checks.esNulo(activo.getSituacionPosesoria())) {
+						if (Checks.esNulo(activo.getSituacionPosesoria().getEditadoFechaTomaPosesion())) {
+							activo.getSituacionPosesoria()
+									.setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaTitulo());
+						} else if (!activo.getSituacionPosesoria().getEditadoFechaTomaPosesion()) {
+							activo.getSituacionPosesoria()
+									.setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaTitulo());
+
+						}
 					}
 				}
 			}

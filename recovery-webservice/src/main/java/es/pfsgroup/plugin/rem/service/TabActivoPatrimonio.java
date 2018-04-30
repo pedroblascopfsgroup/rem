@@ -71,9 +71,9 @@ public class TabActivoPatrimonio implements TabActivoService {
 				activoPatrimonioDto.setDescripcionAdecuacion(activoP.getAdecuacionAlquiler().getDescripcion());
 				activoPatrimonioDto.setDescripcionAdecuacionLarga(activoP.getAdecuacionAlquiler().getDescripcionLarga());
 			}
-			if(!Checks.esNulo(activo.getTipoAlquiler())) {
-				activoPatrimonioDto.setTipoAlquilerCodigo(activo.getTipoAlquiler().getCodigo());
-			}
+		}
+		if(!Checks.esNulo(activo.getTipoAlquiler())) {
+			activoPatrimonioDto.setTipoAlquilerCodigo(activo.getTipoAlquiler().getCodigo());
 		}
 		
 		return activoPatrimonioDto;

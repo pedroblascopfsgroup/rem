@@ -326,9 +326,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 			vivienda.setActivo(activo);
 			vivienda.setTipoActivo(activo.getTipoActivo());
 			vivienda.setNumPlantasInter(dtoAATP.getNumPlantasVivienda());
-<<<<<<< HEAD
-			vivienda.setMediadorInforme(this.obtenerMediador(dtoAATP.getNifMediador(),activo.getId()));
-=======
+//<<<<<<< HEAD
+//			vivienda.setMediadorInforme(this.obtenerMediador(dtoAATP.getNifMediador(),activo.getId()));
+//=======
 			if(!Checks.esNulo(dtoAATP.getNifMediador())){
 				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAATP.getNifMediador());
 				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_MEDIADOR);
@@ -339,7 +339,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				}
 				vivienda.setMediadorInforme(mediador);
 			}
->>>>>>> origin/swat-2.0.16-180430-rem
+//>>>>>>> origin/swat-2.0.16-180430-rem
 			beanUtilNotNull.copyProperty(vivienda, "planta", dtoAATP.getNumPlantasVivienda());
 			activoVivienda = vivienda;
 			genericDao.save(ActivoVivienda.class, vivienda);
@@ -347,9 +347,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 			ActivoLocalComercial localComercial = new ActivoLocalComercial();
 			localComercial.setActivo(activo);
 			localComercial.setTipoActivo(activo.getTipoActivo());
-<<<<<<< HEAD
-			localComercial.setMediadorInforme(this.obtenerMediador(dtoAATP.getNifMediador(),activo.getId()));
-=======
+//<<<<<<< HEAD
+//			localComercial.setMediadorInforme(this.obtenerMediador(dtoAATP.getNifMediador(),activo.getId()));
+//=======
 			if(!Checks.esNulo(dtoAATP.getNifMediador())){
 				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAATP.getNifMediador());
 				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_MEDIADOR);
@@ -360,7 +360,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				}
 				localComercial.setMediadorInforme(mediador);
 			}
->>>>>>> origin/swat-2.0.16-180430-rem
+//>>>>>>> origin/swat-2.0.16-180430-rem
 			beanUtilNotNull.copyProperty(localComercial, "planta", dtoAATP.getNumPlantasVivienda());
 			activoLocalComercial = localComercial;
 			genericDao.save(ActivoLocalComercial.class, localComercial);
@@ -368,9 +368,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 			ActivoPlazaAparcamiento aparcamiento = new ActivoPlazaAparcamiento();
 			aparcamiento.setActivo(activo);
 			aparcamiento.setTipoActivo(activo.getTipoActivo());
-<<<<<<< HEAD
-			aparcamiento.setMediadorInforme(this.obtenerMediador(dtoAATP.getNifMediador(),activo.getId()));
-=======
+//<<<<<<< HEAD
+//			aparcamiento.setMediadorInforme(this.obtenerMediador(dtoAATP.getNifMediador(),activo.getId()));
+//=======
 			if (!Checks.esNulo(dtoAATP.getNifMediador())){
 				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAATP.getNifMediador());
 				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_MEDIADOR);
@@ -381,7 +381,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				}
 				aparcamiento.setMediadorInforme(mediador);
 			}
->>>>>>> origin/swat-2.0.16-180430-rem
+//>>>>>>> origin/swat-2.0.16-180430-rem
 			beanUtilNotNull.copyProperty(aparcamiento, "planta", dtoAATP.getNumPlantasVivienda());
 			activoPlazaAparcamiento = aparcamiento;
 			genericDao.save(ActivoPlazaAparcamiento.class, aparcamiento);
@@ -389,9 +389,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 			ActivoInfoComercial activoInfoComercial = new ActivoInfoComercial();
 			activoInfoComercial.setActivo(activo);
 			activoInfoComercial.setTipoActivo(activo.getTipoActivo());
-<<<<<<< HEAD
-			activoInfoComercial.setMediadorInforme(this.obtenerMediador(dtoAATP.getNifMediador(),activo.getId()));
-=======
+//<<<<<<< HEAD
+//			activoInfoComercial.setMediadorInforme(this.obtenerMediador(dtoAATP.getNifMediador(),activo.getId()));
+//=======
 			if (!Checks.esNulo(dtoAATP.getNifMediador())){
 				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAATP.getNifMediador());
 				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_MEDIADOR);
@@ -402,7 +402,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				}
 				activoInfoComercial.setMediadorInforme(mediador);
 			}
->>>>>>> origin/swat-2.0.16-180430-rem
+//>>>>>>> origin/swat-2.0.16-180430-rem
 			beanUtilNotNull.copyProperty(activoInfoComercial, "planta", dtoAATP.getNumPlantasVivienda());
 			activoInfoComercialDos = activoInfoComercial;
 			genericDao.save(ActivoInfoComercial.class, activoInfoComercial);

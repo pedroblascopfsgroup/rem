@@ -46,12 +46,12 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 					}
     		},
     		
-    		comboPais: {
+    		comboCountries: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
-					extraParams: {diccionario: 'paises'}
+					extraParams: {diccionario: 'countries'}
 				}
     		},
     		

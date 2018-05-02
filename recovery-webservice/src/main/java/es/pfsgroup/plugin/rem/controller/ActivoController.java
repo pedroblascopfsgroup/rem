@@ -86,6 +86,7 @@ import es.pfsgroup.plugin.rem.model.DtoFoto;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
+import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoIncrementoPresupuestoActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoMovimientoLlave;
@@ -97,6 +98,7 @@ import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
 import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
@@ -2509,6 +2511,85 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", false);
 		}
 
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getImpuestosByActivo(Long idActivo, ModelMap model) {
+
+		try {
+
+			List<DtoImpuestosActivo> lista = activoApi.getImpuestosByActivo(idActivo);
+
+			model.put("data", lista);
+			model.put("success", true);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getImpuestos(DtoProveedorFilter dtoProveedorFiltro, ModelMap model) {
+		try {
+			
+			model.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createImpuestos(DtoImpuestosActivo dtoImpuestosFilter, ModelMap model){
+		
+		try {
+			boolean success = activoApi.createImpuestos(dtoImpuestosFilter);
+			model.put("success", success);
+		} catch(Exception ex) {
+			ex.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteImpuestos(DtoImpuestosActivo dtoImpuestosFilter, ModelMap model){
+		
+		try {
+			boolean success = activoApi.deleteImpuestos(dtoImpuestosFilter);
+			model.put("success", success);
+		} catch(Exception ex) {
+			ex.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateImpuestos(DtoImpuestosActivo dtoImpuestosFilter, ModelMap model){
+		
+		try{
+			boolean succes = activoApi.updateImpuestos(dtoImpuestosFilter);
+			model.put("succes", succes);
+		}catch(Exception e){
+			e.printStackTrace();
+			model.put("succes", false);
+		}
+		
 		return createModelAndViewJson(model);
 	}
 }

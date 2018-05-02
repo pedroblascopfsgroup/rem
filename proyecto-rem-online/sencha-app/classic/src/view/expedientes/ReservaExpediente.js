@@ -41,9 +41,10 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 			            	}
 				        },		                
 		                {
-//		                	xtype:'datefieldbase',
+		                	xtype:'datefieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.envio'),
-		                	bind:		'{reserva.fechaEnvio}'
+		                	bind:		'{reserva.fechaEnvio}',
+		                	readOnly: true
 		                },
 		                {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.importe'),

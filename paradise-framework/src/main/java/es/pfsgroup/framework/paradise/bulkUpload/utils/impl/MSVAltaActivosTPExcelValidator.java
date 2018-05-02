@@ -722,7 +722,7 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 
 		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
 			try {
-				if (!particularValidator.existeProveedorMediadorByNIF(exc.dameCelda(i, columnNumber)))
+				if (!particularValidator.existeProveedorMediadorByNIFConFVD(exc.dameCelda(i, columnNumber)))
 					listaFilas.add(i);
 			} catch (IllegalArgumentException e) {
 				logger.error(e.getMessage());

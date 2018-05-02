@@ -1127,6 +1127,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 		},
 		
+		storeImpuestosActivo: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.ImpuestosActivo',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getImpuestosByActivo',
+				extraParams: {idActivo: '{activo.id}'}
+			}
+		},
+		
 		storeEntidades: {
 			pageSize: $AC.getDefaultPageSize(),
 			model: 'HreRem.model.Proveedor',

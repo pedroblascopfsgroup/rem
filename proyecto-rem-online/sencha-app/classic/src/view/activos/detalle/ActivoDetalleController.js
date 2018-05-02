@@ -3310,5 +3310,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		window.gridDistribuciones.up('informecomercialactivo').funcionRecargar()
     	window.close();
     	
+    },
+    
+    onGridImpuestosActivoRowClick: function(grid , record , tr , rowIndex){
+    	grid.up().disableRemoveButton(false);
+    },
+    
+    onImpuestosActivoDobleClick: function(grid,record,tr,rowIndex) {        	       
+    	var me = this,
+    	record = grid.getStore().getAt(rowIndex);
     }
 });

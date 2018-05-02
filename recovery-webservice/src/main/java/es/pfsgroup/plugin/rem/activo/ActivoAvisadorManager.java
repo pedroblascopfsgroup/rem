@@ -67,14 +67,6 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		List<DtoAviso> listaAvisos = new ArrayList<DtoAviso>();
 		Activo activo = activoApi.get(id);
 		List<Perfil> perfilesUsuario = usuarioLogado.getPerfiles();
-		boolean esGestorActivo = false;
-		for (int i=0;i<perfilesUsuario.size();i++) {
-			
-			if (perfilesUsuario.get(i).getCodigo().equals("HAYAGESACT")) {
-				esGestorActivo = true;
-			}
-			
-		}
 		
 		boolean restringida = false;
 		boolean obraNueva = false;
@@ -121,7 +113,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		}
 		
 		//Aviso 3 / 4: Situación posesoria OCUPADO + Con o sín título
-		if (esGestorActivo && activo.getSituacionPosesoria().getOcupado() == 1) {
+		if (activo.getSituacionPosesoria().getOcupado() == 1) {
 			
 			if (activo.getSituacionPosesoria().getConTitulo() == 1) {
 				DtoAviso dtoAviso = new DtoAviso();
@@ -138,7 +130,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		}
 		
 		//Aviso 5: Tapiado 
-		if (esGestorActivo && BooleanUtils.toBoolean(activo.getSituacionPosesoria().getAccesoTapiado())) {
+		if (BooleanUtils.toBoolean(activo.getSituacionPosesoria().getAccesoTapiado())) {
 			DtoAviso dtoAviso = new DtoAviso();
 			dtoAviso.setDescripcion("Situación de acceso tapiado");
 			dtoAviso.setId(String.valueOf(id));
@@ -147,7 +139,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		}
 		
 		// Aviso 6: Acceso antiocupa
-		if (esGestorActivo && BooleanUtils.toBoolean(activo.getSituacionPosesoria().getAccesoAntiocupa())) {
+		if (BooleanUtils.toBoolean(activo.getSituacionPosesoria().getAccesoAntiocupa())) {
 			DtoAviso dtoAviso = new DtoAviso();
 			dtoAviso.setDescripcion("Situación de acceso con puerta antiocupa");
 			dtoAviso.setId(String.valueOf(id));
@@ -156,7 +148,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		}
 		
 		// Aviso 7: Pendiente toma posesión
-		if (esGestorActivo && activo.getAdjJudicial() != null && activo.getAdjJudicial().getAdjudicacionBien() != null 
+		if (activo.getAdjJudicial() != null && activo.getAdjJudicial().getAdjudicacionBien() != null 
 				&&  activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getFechaTomaPosesion() == null) {
 			
 			DtoAviso dtoAviso = new DtoAviso();

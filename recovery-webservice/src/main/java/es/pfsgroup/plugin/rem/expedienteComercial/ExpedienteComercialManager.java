@@ -3117,7 +3117,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idExpediente);
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
 		CompradorExpediente compradorExpediente = new CompradorExpediente();
-
+		compradorExpediente.setBorrado(false);
+		
 		if (!Checks.esNulo(compradorBusqueda)) {
 			CompradorExpedientePk pk = new CompradorExpedientePk();
 			pk.setComprador(compradorBusqueda);
@@ -5837,4 +5838,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 	}
 
+	@Override
+	public void enviarCondicionantesEconomicosUvem(Long idExpediente) throws Exception {
+		InstanciaDecisionDto instancia = creaInstanciaDecisionDto(idExpediente);
+		instancia.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_CONDICIONANTES_ECONOMICOS);
+		logger.info("------------ LLAMADA WS MOD3(CONDICIONANTES ECONOMICOS) -----------------");
+		uvemManagerApi.modificarInstanciaDecisionTres(instancia);	
+		logger.info("------------ LLAMADA WS REALIZADA CON EXITO -----------------");
+	}
+	
 }

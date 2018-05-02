@@ -8,20 +8,25 @@ import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.devon.files.FileItem;
+import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaGenerico;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 
 /**
  * Notificacion por correo cuando una nueva oferta llegue
@@ -122,9 +127,54 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			String contenido = 
 					String.format("<p>Ha recibido una nueva oferta con número identificador %s, a nombre de %s con identificador %s %s, por importe de %s €. Prescriptor: %s %s.</p>", 
 							oferta.getNumOferta().toString(), oferta.getCliente().getNombreCompleto(),tipoDocIndentificacion,docIdentificacion, NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()),codigoPrescriptor,nombrePrescriptor );
+			if (oferta.getOfertaExpress()) {
+				String asunto = "Notificación de aprobación provisional de la oferta " + oferta.getNumOferta();
+				List<DtoAdjuntoMail> adjuntos = new ArrayList<DtoAdjuntoMail>();
+				FileItem f1 = null;
+				FileItem f2 = null;
+				FileItem f3 = null;
+				
+				if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
+					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_formalizacion_cajamar.pdf");
+					f2 = FileItemUtils.fromResource("docs/ficha_cliente.xlsx");
+					f3 = FileItemUtils.fromResource("docs/manif_titular_real.doc");
+					
+					adjuntos.add(createAdjunto(f1, "Instrucciones_Reserva_Formalizacion_Cajamar.pdf"));
+					adjuntos.add(createAdjunto(f2, "Ficha_cliente.xlsx"));
+					adjuntos.add(createAdjunto(f3, "Manif_Titular_Real.doc"));
+				}
+				//ADJUNTOS SI ES SAREB
+				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)) {
+					f1 = FileItemUtils.fromResource("docs/instrucciones_de_reserva.docx");
+					adjuntos.add(createAdjunto(f1, "Instrucciones_de_reserva.docx"));
+				}
+				//ADJUNTOS SI ES BANKIA
+				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)){
+					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_Bankia_v6.docx");
+					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_Bankia.docx"));
+				}
+				//ADJUNTOS SI ES TANGO
+				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)){
+					f1 = FileItemUtils.fromResource("docs/contrato_reserva_Tango.docx");
+					adjuntos.add(createAdjunto(f1, "contrato_reserva_Tango.docx"));
+				}
 
-			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
+				String cuerpo = this.creaCuerpoOfertaExpress(oferta);
+				
+				genericAdapter.sendMail(mailsPara, mailsCC, asunto, cuerpo, adjuntos);
+			} else {
+				genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
+			}
+			
 		}
+	}
+	
+	private DtoAdjuntoMail createAdjunto(FileItem fileitem, String name) {
+		DtoAdjuntoMail adjMail = new DtoAdjuntoMail();
+		Adjunto adjunto = new Adjunto(fileitem);
+		adjMail.setAdjunto(adjunto);
+		adjMail.setNombre(name);	
+		return adjMail;
 	}
 
 	

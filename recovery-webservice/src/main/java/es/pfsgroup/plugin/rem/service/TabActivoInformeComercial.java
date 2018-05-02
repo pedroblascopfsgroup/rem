@@ -287,6 +287,19 @@ public class TabActivoInformeComercial implements TabActivoService {
 		try {
 			// Se guardan todas las propieades del "Informe Comercial" que son comunes a
 			// "Informacion Comercial"
+			
+			if (Checks.esNulo(activo.getInfoComercial())){
+				ActivoInfoComercial actInfoComercial = new ActivoInfoComercial();
+				actInfoComercial.setActivo(activo);
+				activo.setInfoComercial(actInfoComercial);
+				genericDao.save(ActivoInfoComercial.class, activo.getInfoComercial());
+				
+				ActivoEdificio actEdificio = new ActivoEdificio();
+				actEdificio.setInfoComercial(actInfoComercial);
+				activo.getInfoComercial().setEdificio(actEdificio);
+				genericDao.save(ActivoEdificio.class, activo.getInfoComercial().getEdificio());
+			}
+			
 			if (!Checks.esNulo(activo.getInfoComercial())) {
 				beanUtilNotNull.copyProperties(activo.getInfoComercial(), activoInformeDto);
 

@@ -63,7 +63,7 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('No existe la columna '||V_TEXT_CAMPO_EXPRESS);
 	END IF;
 
-
+ -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
        V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= '''||V_TEXT_CAMPO_FINANCIACION||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
 		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
@@ -74,13 +74,15 @@ BEGIN
 	ELSE 
 		DBMS_OUTPUT.PUT_LINE('No existe la columna '||V_TEXT_CAMPO_FINANCIACION);
 	END IF;
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         
-		V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= '''||TRIM(V_TMP_TIPO_DATA(1))||''' and DATA_TYPE = '''||TRIM(V_TMP_TIPO_DATA(2))||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+		V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= '''||TRIM(V_TMP_TIPO_DATA(1))||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
 		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 		
 		IF V_NUM_TABLAS = 1 THEN
 			DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||' '||TRIM(V_TMP_TIPO_DATA(1))||'''... Ya existe');
 		ELSE
+		    DBMS_OUTPUT.PUT_LINE('[INFO]  ... insertando columna '||TRIM(V_TMP_TIPO_DATA(1))||''' en la tabla '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ');
 			EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD '||V_TMP_TIPO_DATA(1)||' '||V_TMP_TIPO_DATA(2)||' '||V_TMP_TIPO_DATA(3)||' '||V_TMP_TIPO_DATA(4)||'';
 			EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||' IS '''||V_TMP_TIPO_DATA(5)||'''';
 			DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||'... Creada');        

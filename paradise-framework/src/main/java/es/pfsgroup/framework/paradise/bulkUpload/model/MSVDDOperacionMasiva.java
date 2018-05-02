@@ -87,6 +87,9 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
     @Column(name="DD_OPM_VALIDACION_FORMATO")
     private String validacionFormato;
     
+    @Column(name="DD_OPM_RESULTADO")
+    private Boolean resultado;
+    
     @Embedded
     private Auditoria auditoria;
 
@@ -157,4 +160,13 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 		return validacionFormato;
 	}
 
+	public Boolean getResultado() {
+		return resultado;
+	}
+
+	public void setResultado(Boolean resultado) {
+		this.resultado = resultado;
+	}
+
+	
 }

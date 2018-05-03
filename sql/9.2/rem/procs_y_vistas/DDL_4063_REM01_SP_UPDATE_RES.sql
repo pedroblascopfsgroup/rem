@@ -1,0 +1,64 @@
+--/*
+--##########################################
+--## AUTOR=SIMEON SHOPOV
+--## FECHA_CREACION=201803
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=2.0.17
+--## INCIDENCIA_LINK=REMVIP-643
+--## PRODUCTO=NO
+--##
+--## Finalidad: 
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+CREATE OR REPLACE PROCEDURE #ESQUEMA#.UPDATE_RES
+   (  RES_NUM_RESERVA IN NUMBER
+	, RES_FECHA_FIRMA IN VARCHAR2
+	, DD_ERE_ID IN NUMBER
+	, PL_OUTPUT OUT VARCHAR2
+   )
+   
+   AUTHID CURRENT_USER IS
+
+   V_SQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar        
+   V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+   V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+   ERR_NUM NUMBER(25); -- Vble. auxiliar para registrar errores en el script.
+   ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+   DESCRIPCION VARCHAR2(64 CHAR);
+
+BEGIN
+
+	IF DD_ERE_ID IS NOT NULL THEN
+		EXECUTE IMMEDIATE 'SELECT DD_ERE_DESCRIPCION FROM '||V_ESQUEMA||'.DD_ERE_ESTADOS_RESERVA WHERE DD_ERE_ID = '||DD_ERE_ID INTO DESCRIPCION;
+		V_SQL := 'UPDATE '||V_ESQUEMA||'.RES_RESERVAS SET DD_ERE_ID = '||DD_ERE_ID||' WHERE RES_NUM_RESERVA = '||RES_NUM_RESERVA;
+		EXECUTE IMMEDIATE V_SQL;
+		PL_OUTPUT := '[INFO] actualizado el estado de la reserva  '||RES_NUM_RESERVA||' a '||DESCRIPCION;
+	END IF;
+	
+
+
+	V_SQL := 'UPDATE '||V_ESQUEMA||'.RES_RESERVAS SET RES_FECHA_FIRMA = TO_DATE('''||RES_FECHA_FIRMA||''', ''DD/MM/YYYY'') WHERE RES_NUM_RESERVA = '||RES_NUM_RESERVA;
+	EXECUTE IMMEDIATE V_SQL;
+	PL_OUTPUT := PL_OUTPUT || CHR(10) ||'[INFO] actualizada la fecha de firma de la reserva '||RES_NUM_RESERVA||' a '||RES_FECHA_FIRMA;
+
+
+COMMIT;
+
+EXCEPTION
+   WHEN OTHERS THEN
+      ERR_NUM := SQLCODE;
+      ERR_MSG := SQLERRM;
+      PL_OUTPUT := PL_OUTPUT || CHR(10) ||'    [ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM);
+      PL_OUTPUT := PL_OUTPUT || CHR(10) ||'    '||ERR_MSG;
+      ROLLBACK;
+      RAISE;
+END UPDATE_RES;
+/
+EXIT;

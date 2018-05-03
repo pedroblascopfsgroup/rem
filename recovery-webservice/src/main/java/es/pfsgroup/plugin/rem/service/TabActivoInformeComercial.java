@@ -227,17 +227,7 @@ public class TabActivoInformeComercial implements TabActivoService {
 				// Nombre y telefono Administrador.
 				beanUtilNotNull.copyProperty(informeComercial, "nomAdministradorComunidad", comunidadPropietarios.getNomAdministrador());
 				beanUtilNotNull.copyProperty(informeComercial, "telAdministradorComunidad", comunidadPropietarios.getTelfAdministrador());
-				//Fecha de comunicacion
-				beanUtilNotNull.copyProperty(informeComercial, "fechaComunicacionComunidad", comunidadPropietarios.getFechaComunicacionComunidad());
-				//Cartas
-				beanUtilNotNull.copyProperty(informeComercial, "envioCartas", comunidadPropietarios.getEnvioCartas());
-				beanUtilNotNull.copyProperty(informeComercial, "numCartas", comunidadPropietarios.getNumCartas());
-				//Contacto
-				beanUtilNotNull.copyProperty(informeComercial, "contactoTel", comunidadPropietarios.getContactoTel());
-				//Visita
-				beanUtilNotNull.copyProperty(informeComercial, "visita", comunidadPropietarios.getVisita());
-				//Burofax
-				beanUtilNotNull.copyProperty(informeComercial, "burofax", comunidadPropietarios.getBurofax());
+				
 			}
 
 			
@@ -383,13 +373,6 @@ public class TabActivoInformeComercial implements TabActivoService {
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "telefonoAdministradorComunidadEdificio", activoInformeDto.getTelAdministradorComunidad());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "nombreAdministradorComunidadEdificio", activoInformeDto.getNomAdministradorComunidad());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "telefonoPresidenteComunidadEdificio", activoInformeDto.getTelPresidenteComunidad());
-					
-					beanUtilNotNull.copyProperty(activo.getComunidadPropietarios(), "fechaComunicacionComunidad", activoInformeDto.getFechaComunicacionComunidad());
-					beanUtilNotNull.copyProperty(activo.getComunidadPropietarios(), "envioCartas", activoInformeDto.getEnvioCartas());
-					beanUtilNotNull.copyProperty(activo.getComunidadPropietarios(), "numCartas", activoInformeDto.getNumCartas());
-					beanUtilNotNull.copyProperty(activo.getComunidadPropietarios(), "contactoTel", activoInformeDto.getContactoTel());
-					beanUtilNotNull.copyProperty(activo.getComunidadPropietarios(), "visita", activoInformeDto.getVisita());
-					beanUtilNotNull.copyProperty(activo.getComunidadPropietarios(), "burofax", activoInformeDto.getBurofax());
 					
 					
 					//terrazas

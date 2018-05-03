@@ -119,11 +119,6 @@ Ext.define('HreRem.model.ActivoInformeComercial', {
     			type:'date',
     			dateFormat: 'c'
     		},
-    		{
-    			name:'fechaComunicacionComunidad',
-    			type:'date',
-    			dateFormat: 'c'
-    		},
      		{
     			name:'fechaEstimacionRenta',
     			type:'date',

@@ -20,6 +20,7 @@ import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 
 import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
+import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 
@@ -266,6 +267,25 @@ class ActivoControllerDispachableMethods {
 			public void execute(Long id, DtoActivoAdministracion dto) {
 				if (dto != null ){
 					this.controller.saveActivoAdministracion(dto, id, new ModelMap());
+
+				}
+			}
+		});
+		
+		/*
+		 * TAB_COMUNIDAD-ENTIDADES
+		 */
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_COMUNIDAD_PROPIETARIOS, new DispachableMethod<DtoComunidadpropietariosActivo>() {
+
+			@Override
+			public Class<DtoComunidadpropietariosActivo> getArgumentType() {
+				return DtoComunidadpropietariosActivo.class;
+			}
+
+			@Override
+			public void execute(Long id, DtoComunidadpropietariosActivo dto) {
+				if (dto != null ){
+					this.controller.saveActivoComunidadPropietarios(dto, id, new ModelMap());
 
 				}
 			}

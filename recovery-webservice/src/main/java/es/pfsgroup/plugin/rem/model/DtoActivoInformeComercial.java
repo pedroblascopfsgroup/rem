@@ -52,12 +52,7 @@ public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
 	private Boolean lavadero;
 	private Boolean azotea;
 	private String descOtras;
-	private Date fechaComunicacionComunidad;
-	private Integer envioCartas;
-	private Integer numCartas;
-	private Integer contactoTel;
-	private Integer visita;
-	private Integer burofax;
+
 	
 	public String getInferiorMunicipioCodigo() {
 		return inferiorMunicipioCodigo;
@@ -304,42 +299,6 @@ public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
 	}
 	public void setDescOtras(String descOtras) {
 		this.descOtras = descOtras;
-	}
-	public Date getFechaComunicacionComunidad() {
-		return fechaComunicacionComunidad;
-	}
-	public void setFechaComunicacionComunidad(Date fechaComunicacionComunidad) {
-		this.fechaComunicacionComunidad = fechaComunicacionComunidad;
-	}
-	public Integer getEnvioCartas() {
-		return envioCartas;
-	}
-	public void setEnvioCartas(Integer envioCartas) {
-		this.envioCartas = envioCartas;
-	}
-	public Integer getNumCartas() {
-		return numCartas;
-	}
-	public void setNumCartas(Integer numCartas) {
-		this.numCartas = numCartas;
-	}
-	public Integer getContactoTel() {
-		return contactoTel;
-	}
-	public void setContactoTel(Integer contactoTel) {
-		this.contactoTel = contactoTel;
-	}
-	public Integer getVisita() {
-		return visita;
-	}
-	public void setVisita(Integer visita) {
-		this.visita = visita;
-	}
-	public Integer getBurofax() {
-		return burofax;
-	}
-	public void setBurofax(Integer burofax) {
-		this.burofax = burofax;
 	}
 	
 	

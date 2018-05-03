@@ -84,6 +84,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoCargas;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
+import es.pfsgroup.plugin.rem.model.ActivoComunidadPropietarios;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoCopropietario;
 import es.pfsgroup.plugin.rem.model.ActivoCopropietarioActivo;
@@ -119,6 +120,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
+import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
@@ -3287,8 +3289,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Page page = genericDao.getPage(ActivoIntegrado.class, dtoActivoIntegrado, activoIDFilter);
 		List<ActivoIntegrado> activosIntegrados = (List<ActivoIntegrado>) page.getResults();
 		List<DtoActivoIntegrado> dtoList = new ArrayList<DtoActivoIntegrado>();
+		
+		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoActivoIntegrado.getIdActivo()));
+		Activo activo = genericDao.get(Activo.class, filterAct);
+		
+		ActivoComunidadPropietarios comunidadPropietarios = new ActivoComunidadPropietarios();
+		comunidadPropietarios = activo.getComunidadPropietarios();
+		
 		for (ActivoIntegrado activoIntegrado : activosIntegrados) {
 			DtoActivoIntegrado dto = new DtoActivoIntegrado();
+			
 			try {
 				beanUtilNotNull.copyProperty(dto, "id", activoIntegrado.getId());
 				if (!Checks.esNulo(activoIntegrado.getProveedor())) {
@@ -3313,6 +3323,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				beanUtilNotNull.copyProperty(dto, "fechaInclusion", activoIntegrado.getFechaInclusion());
 				beanUtilNotNull.copyProperty(dto, "fechaExclusion", activoIntegrado.getFechaExclusion());
 				beanUtilNotNull.copyProperty(dto, "observaciones", activoIntegrado.getObservaciones());
+				
+				if (!Checks.esNulo(comunidadPropietarios)){
+					
+					beanUtilNotNull.copyProperty(dto, "fechaComunicacionComunidad", comunidadPropietarios.getFechaComunicacionComunidad());
+					beanUtilNotNull.copyProperty(dto, "envioCartas", comunidadPropietarios.getEnvioCartas());
+					beanUtilNotNull.copyProperty(dto, "numCartas", comunidadPropietarios.getNumCartas());
+					beanUtilNotNull.copyProperty(dto, "contactoTel", comunidadPropietarios.getContactoTel());
+					beanUtilNotNull.copyProperty(dto, "visita", comunidadPropietarios.getVisita());
+					beanUtilNotNull.copyProperty(dto, "burofax", comunidadPropietarios.getBurofax());
+				}
 
 				beanUtilNotNull.copyProperty(dto, "totalCount", page.getTotalCount());
 			} catch (IllegalAccessException e) {
@@ -3454,7 +3474,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (!Checks.esNulo(dto.getIdActivo())) {
 				Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "id",
 						Long.parseLong(dto.getIdActivo()));
-				Activo activo = genericDao.get(Activo.class, filterActivo);
+				Activo activo = genericDao.get(Activo.class, filterActivo);			
 				activoIntegrado.setActivo(activo);
 			}
 
@@ -4741,6 +4761,26 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return false;
+	}
+
+	@Override
+	public DtoComunidadpropietariosActivo getComunidadPropietariosActivo(Long idActivo) {
+		DtoComunidadpropietariosActivo comPropietarios = new DtoComunidadpropietariosActivo();
+		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+		Activo activo = genericDao.get(Activo.class, filterAct);
+		if (!Checks.esNulo(activo)){
+			ActivoComunidadPropietarios actCom = activo.getComunidadPropietarios();
+			if (!Checks.esNulo(actCom)){
+				comPropietarios.setFechaComunicacionComunidad(actCom.getFechaComunicacionComunidad());
+				comPropietarios.setEnvioCartas(actCom.getEnvioCartas());
+				comPropietarios.setNumCartas(actCom.getNumCartas());
+				comPropietarios.setContactoTel(actCom.getContactoTel());
+				comPropietarios.setVisita(actCom.getVisita());
+				comPropietarios.setBurofax(actCom.getBurofax());
+			}
+		}
+		
+		return comPropietarios;
 	}
 
 }

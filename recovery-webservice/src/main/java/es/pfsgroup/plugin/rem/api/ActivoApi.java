@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
+import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
@@ -828,6 +829,13 @@ public interface ActivoApi {
 	 * @return
 	 */
 	public List<DtoActivoIntegrado> getProveedoresByActivoIntegrado(DtoActivoIntegrado dtoActivoIntegrado);
+	
+	/**
+	 * 
+	 * @param idActivo
+	 * @return
+	 */
+	public DtoComunidadpropietariosActivo getComunidadPropietariosActivo(Long idActivo);
 
 	/**
 	 * Este método crea una integración de un activo en una entidad.

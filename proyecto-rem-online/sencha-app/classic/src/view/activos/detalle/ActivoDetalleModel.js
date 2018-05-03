@@ -1147,6 +1147,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 		},
 		
+		comboSiNoRemActivo: {
+				data : [
+			        {"codigo":"1", "descripcion":eval(String.fromCharCode(34,83,237,34))},
+			        {"codigo":"0", "descripcion":"No"}
+			    ]
+			},
+		
+    	comboNumCartas: {
+			data : [
+		        {"codigo":1, "descripcion": "1"},
+		        {"codigo":2, "descripcion": "2"},
+		        {"codigo":3, "descripcion": "3"}			       
+			 ]
+    	},
+		
 		storeGastosProveedor: {
 			pageSize: $AC.getDefaultPageSize(),
 			model: 'HreRem.model.Gasto',

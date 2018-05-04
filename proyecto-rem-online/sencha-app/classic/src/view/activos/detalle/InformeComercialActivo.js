@@ -814,51 +814,6 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 										vtype: 'telefono',
 										bind : '{infoComercial.telAdministradorComunidad}',
 										colspan: 2
-									},
-									{
-										xtype: 'datefieldbase',
-										fieldLabel : HreRem.i18n('fieldlabel.fecha.comunicacion.comunidad'),
-										bind : '{infoComercial.fechaComunicacionComunidad}'
-									}, 
-									{
-										xtype : 'comboboxfieldbase',
-									    fieldLabel : HreRem.i18n('fieldlabel.envio.cartas'),
-									    bind : {
-									      store : '{comboSiNoRem}',
-									      value : '{infoComercial.envioCartas}'
-									    }
-									},
-									{
-										xtype : 'comboboxfieldbase',
-									    fieldLabel : HreRem.i18n('fieldlabel.num.cartas'),
-									    bind : {
-									      store : '{comboNumCartas}',
-									      value : '{infoComercial.numCartas}'
-									    }
-									}, 
-									{
-										xtype : 'comboboxfieldbase',
-									    fieldLabel : HreRem.i18n('fieldlabel.contacto.telefonico'),
-									    bind : {
-									      store : '{comboSiNoRem}',
-									      value : '{infoComercial.contactoTel}'
-									    }
-									},
-									{
-										xtype : 'comboboxfieldbase',
-									    fieldLabel : HreRem.i18n('fieldlabel.visita'),
-									    bind : {
-									      store : '{comboSiNoRem}',
-									      value : '{infoComercial.visita}'
-									    }
-									}, 
-									{
-										xtype : 'comboboxfieldbase',
-									    fieldLabel : HreRem.i18n('fieldlabel.burofax'),
-									    bind : {
-									      store : '{comboSiNoRem}',
-									      value : '{infoComercial.burofax}'
-									    }
 									}
 							]
 						}

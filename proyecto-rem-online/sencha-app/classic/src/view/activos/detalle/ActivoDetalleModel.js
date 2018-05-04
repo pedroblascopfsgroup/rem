@@ -6,7 +6,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.IncrementoPresupuesto', 'HreRem.model.Distribuciones', 'HreRem.model.Observaciones',
     'HreRem.model.Carga', 'HreRem.model.Llaves', 'HreRem.model.PreciosVigentes','HreRem.model.VisitasActivo',
     'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel',
-    'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave'],
+    'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ImpuestosActivo'],
     
     data: {
     	activo: null,
@@ -1146,6 +1146,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {idActivo: '{activo.id}'}
 			}
 		},
+		
+		comboSiNoRemActivo: {
+				data : [
+			        {"codigo":"1", "descripcion":eval(String.fromCharCode(34,83,237,34))},
+			        {"codigo":"0", "descripcion":"No"}
+			    ]
+			},
+		
+    	comboNumCartas: {
+			data : [
+		        {"codigo":1, "descripcion": "1"},
+		        {"codigo":2, "descripcion": "2"},
+		        {"codigo":3, "descripcion": "3"}			       
+			 ]
+    	},
 		
 		storeGastosProveedor: {
 			pageSize: $AC.getDefaultPageSize(),

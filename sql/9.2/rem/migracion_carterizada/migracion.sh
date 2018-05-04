@@ -1,6 +1,6 @@
 #!/bin/bash
-if [ "$#" -ne 1 ]; then
-    echo "Parametros: <usuario/pass@host:puerto/ORACLE_SID>"
+if [ "$#" -ne 2 ]; then
+    echo "Parametros: <usuario/pass@host:puerto/ORACLE_SID> y <USUARIO_MIGRACION> (MIG_SAREB, MIG_CAJAMAR, MIG_BANKIA, MIG_COOPER, MIG_LIBERBANK)"
     exit 1
 fi
 inicio=`date +%s`
@@ -13,7 +13,7 @@ log_completo="Logs/migracion_completo_"$fecha_log".log"
 
 hora=`date +%H:%M:%S`
 echo "###############################################################"
-echo "####### [START] Comienza la migración: $hora"
+echo "####### [INICIO] Comienza la migración: $hora"
 echo "###############################################################"
 echo " "
 ##############################################################################################
@@ -89,7 +89,7 @@ echo "	-------------------------------------------------------"
 fecha=`date +%Y%m%d_%H%M%S`
 inicioparte=`date +%s`
 salida=Logs/004_carga_validaciones_$fecha.log
-./DML/mig_lanza_DML.sh $1 > $salida
+./DML/mig_lanza_DML.sh $1 $2 > $salida
 if [ $? != 0 ] ; then 
    echo -e "\n\n======>>> "Error cargando tablas de validación
    exit 1
@@ -149,6 +149,28 @@ else
 fi
 ##############################################################################################
 echo " "
+echo "	-------------------------------------------------------"
+echo "	------ [INFO] Copiando tablas de migración y validación funcional"
+echo "	-------------------------------------------------------"
+fecha_ini=`date +%Y%m%d_%H%M%S`
+inicioparte=`date +%s`
+salida=Logs/007_copiando_tablas_$fecha_ini.log 
+./POST_FASEA/mig_lanza_DDL.sh $1 $2 > $salida
+if [ $? != 0 ] ; then 
+   echo -e "\n\n======>>> "Error creando tablas
+   exit 1
+fi
+cat $salida >> $log_completo
+fin=`date +%s`
+let total=($fin-$inicioparte)/60
+if [ $total = 0 ] ; then
+   let total=($fin-$inicioparte)
+   echo "	Tablas copiadas en $total segundos."
+else
+   echo "	Tablas copiadas en $total minutos."
+fi
+##############################################################################################
+echo " "
 echo "	*******************************************************"
 echo "	****** [INFO] Revise log completo: $log_completo"
 echo "	*******************************************************"
@@ -157,7 +179,7 @@ echo " "
 fin=`date +%s`
 let total=($fin-$inicio)/60
 echo "###############################################################"
-echo "####### [END] Migración completada en [$total] minutos"
+echo "####### [FIN] Migración completada en [$total] minutos"
 echo "###############################################################"
 
 exit 0

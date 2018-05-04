@@ -1103,8 +1103,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 																			// obtención
 																			// documental
 																			// CEE
-				//Si el trabajo es Bankia/Sareb/Tango asignamos proveedorContacto
-				if(this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo)) {
+				//Si el trabajo es Bankia/Sareb/Tango/Giants asignamos proveedorContacto
+				if(this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo) || this.checkGiants(trabajo)) {
 					Filter filtroUsuProveedorBankiaSareb = genericDao.createFilter(FilterType.EQUALS, "username", GestorActivoApi.CIF_PROVEEDOR_BANKIA_SAREB_TINSA);
 					Usuario usuProveedorBankiaSareb = genericDao.get(Usuario.class, filtroUsuProveedorBankiaSareb);
 					if(!Checks.esNulo(usuProveedorBankiaSareb)) {
@@ -1125,8 +1125,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 																			// obtención
 																			// de
 																			// cédula
-				//Si el trabajo es Bankia/Sareb/Tango asignamos proveedorContacto
-				if(this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo)) {
+				//Si el trabajo es Bankia/Sareb/Tango/Giants asignamos proveedorContacto
+				if(this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo) || this.checkGiants(trabajo)) {
 					Usuario usuario = gestorActivoManager.getGestorByActivoYTipo(trabajo.getActivo(), GestorActivoApi.CODIGO_GESTORIA_CEDULAS);
 					if(!Checks.esNulo(usuario)) {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario",usuario);
@@ -1150,8 +1150,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 																													// obtención
 																													// documental
 
-				//Si el trabajo es Bankia/Sareb/Tango asignamos proveedorContacto
-				if(this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo)) {
+				//Si el trabajo es Bankia/Sareb/Tango/Giants asignamos proveedorContacto
+				if(this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo) || this.checkGiants(trabajo)) {
 
 					Usuario gestorAdmision = gestorActivoManager.getGestorByActivoYTipo(trabajo.getActivo(), GestorActivoApi.CODIGO_GESTOR_ADMISION);
 
@@ -3113,6 +3113,29 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 	
 	@Override
+	public boolean checkGiants(TareaExterna tareaExterna) {
+		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
+		if (!Checks.esNulo(trabajo)) {
+			Activo primerActivo = trabajo.getActivo();
+			if (!Checks.esNulo(primerActivo)) {
+				return (DDCartera.CODIGO_CARTERA_GIANTS.equals(primerActivo.getCartera().getCodigo()));
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean checkGiants(Trabajo trabajo) {
+		if (!Checks.esNulo(trabajo)) {
+			Activo primerActivo = trabajo.getActivo();
+			if (!Checks.esNulo(primerActivo)) {
+				return (DDCartera.CODIGO_CARTERA_GIANTS.equals(primerActivo.getCartera().getCodigo()));
+			}
+		}
+		return false;
+	}
+	
+	@Override
 	public boolean checkBankia(TareaExterna tareaExterna) {
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
 		if (!Checks.esNulo(trabajo)) {
@@ -3303,6 +3326,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		return supervisorGestor;
 	}
+
 	
 	private Boolean esTrabajoTarifaPlana(Activo activo, DDSubtipoTrabajo subtipoTrabajo, Date fechaSolicitud){
 		Boolean resultado = false;
@@ -3313,3 +3337,4 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return resultado;
 	}
 }
+

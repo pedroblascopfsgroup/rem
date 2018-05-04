@@ -1,10 +1,10 @@
 --/*
 --######################################### 
 --## AUTOR=SERGIO ORTUÑO
---## FECHA_CREACION=20180207
+--## FECHA_CREACION=20180502
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-3697
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-4036
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Procedimiento encargado de perfilar las funciones
@@ -229,6 +229,7 @@ T_VAR( 'MASIVO_PROPUESTA_PRECIOS','N','N','N','N','N','N','S','S','S','S','N','N
 T_VAR( 'MASIVO_PROPUESTA_PRECIOS','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'ALTA_ACTIVOS_FINAN','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'ALTA_ACTIVOS_THIRD_PARTY','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
+T_VAR( 'VENTA_DE_CARTERA','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'ASISTIDAPDV_CARGA','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'MASIVO_LOTE_COMERCIAL','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','N','N','N','N'),
 T_VAR( 'MASIVO_DESPUBLICAR_FORZADO','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),

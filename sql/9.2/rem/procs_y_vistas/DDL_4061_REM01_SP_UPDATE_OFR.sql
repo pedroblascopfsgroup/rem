@@ -41,8 +41,7 @@ BEGIN
 
 	EXECUTE IMMEDIATE 'SELECT DD_EOF_DESCRIPCION FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_ID = '||DD_EOF_ID INTO DESCRIPCION;
 
-	PL_OUTPUT := '[INFO] actualizado el estado de la oferta  '||OFR_NUM_OFERTA||' a '||DESCRIPCION
-					;
+	PL_OUTPUT := '[INFO] actualizado el estado de la oferta  '||OFR_NUM_OFERTA||' a '||DESCRIPCION;
 
 COMMIT;
 

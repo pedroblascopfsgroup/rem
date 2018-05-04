@@ -68,8 +68,8 @@ public class DtoTramite extends WebDto {
 	private Long idExpediente;
 	
 	private Boolean esTarifaPlana;
-
 	
+	private Boolean activoAplicaGestion;
 
 	public Long getIdTramite() {
 		return idTramite;
@@ -302,7 +302,13 @@ public class DtoTramite extends WebDto {
 	public void setEsTarifaPlana(Boolean esTarifaPlana) {
 		this.esTarifaPlana = esTarifaPlana;
 	}
-	
-	
+
+	public Boolean getActivoAplicaGestion() {
+		return activoAplicaGestion;
+	}
+
+	public void setActivoAplicaGestion(Boolean activoAplicaGestion) {
+		this.activoAplicaGestion = activoAplicaGestion;
+	}
 	
 }

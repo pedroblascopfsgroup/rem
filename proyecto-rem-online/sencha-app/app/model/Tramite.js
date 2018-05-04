@@ -114,6 +114,10 @@ Ext.define('HreRem.model.Tramite', {
     	{
     		name: 'esTarifaPlana',
     		type: 'boolean'
+    	},
+    	{
+    		name: 'activoAplicaGestion',
+    		type: 'boolean'
     	}
     ],
 

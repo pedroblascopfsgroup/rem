@@ -822,11 +822,16 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     T004_CierreEconomicoValidacion: function() {
     	var me = this;
     	var codigoSubtipoTrabajo = me.up('tramitesdetalle').getViewModel().get("tramite.codigoSubtipoTrabajo");
+    	var activoAplicaGestion = me.up('tramitesdetalle').getViewModel().get("tramite.activoAplicaGestion");
     	
     	if(CONST.SUBTIPOS_TRABAJO['TOMA_POSESION'] != codigoSubtipoTrabajo){
     		me.deshabilitarCampo(me.down('[name=tieneOkTecnico]'));
     		me.ocultarCampo(me.down('[name=tieneOkTecnico]'));
-    	}    	    	
+    	}
+    	
+    	if(!activoAplicaGestion){
+    		me.deshabilitarCampo(me.down('[name=tieneOkTecnico]'));
+    	}
     },
 
     T005_AnalisisPeticionValidacion: function() {

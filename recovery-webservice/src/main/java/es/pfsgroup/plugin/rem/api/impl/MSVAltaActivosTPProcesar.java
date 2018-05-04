@@ -18,6 +18,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.plugin.rem.factory.AltaActivoTPFactoryApi;
 import es.pfsgroup.plugin.rem.model.DtoAltaActivoThirdParty;
+import es.pfsgroup.plugin.rem.model.ResultadoProcesarFila;
 import es.pfsgroup.plugin.rem.service.AltaActivoThirdPartyService;
 
 @Component
@@ -142,7 +143,7 @@ public class MSVAltaActivosTPProcesar extends AbstractMSVActualizador implements
 	
 	@Override
 	@Transactional(readOnly = false)
-	public void procesaFila(MSVHojaExcel exc, int fila) throws Exception {
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws Exception {
 		
 		// Carga los datos de activo de la Fila excel al DTO
 		DtoAltaActivoThirdParty dtoAATP = new DtoAltaActivoThirdParty();
@@ -153,6 +154,7 @@ public class MSVAltaActivosTPProcesar extends AbstractMSVActualizador implements
 
 		AltaActivoThirdPartyService altaActivoThirdPartyService = altaActivoTPFactoryApi.getService(AltaActivoThirdPartyService.CODIGO_ALTA_ACTIVO_THIRD_PARTY);
 		altaActivoThirdPartyService.procesarAlta(dtoAATP);
+		return new ResultadoProcesarFila();
 	}
 	
 	private DtoAltaActivoThirdParty filaExcelToDtoAltaActivoThirdParty (MSVHojaExcel exc,DtoAltaActivoThirdParty dtoAATP, int fila) throws IllegalArgumentException, IOException, ParseException

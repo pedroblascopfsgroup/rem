@@ -63,6 +63,10 @@ public class MSVDocumentoMasivo implements Serializable, Auditable{
 	@Type(type = "es.capgemini.devon.hibernate.dao.BlobStreamType")
 	private FileItem erroresFicheroProcesar;
 	
+	@Column(name = "DMS_RESULTADO_FICH", nullable = true)
+	@Type(type = "es.capgemini.devon.hibernate.dao.BlobStreamType")
+	private FileItem resultadoFich;
+	
 	@Embedded
     private Auditoria auditoria;
 
@@ -141,4 +145,13 @@ public class MSVDocumentoMasivo implements Serializable, Auditable{
 		this.erroresFicheroProcesar = erroresFicheroProcesar;
 	}
 
+	public FileItem getResultadoFich() {
+		return resultadoFich;
+	}
+
+	public void setResultadoFich(FileItem resultadoFich) {
+		this.resultadoFich = resultadoFich;
+	}
+
+	
 }

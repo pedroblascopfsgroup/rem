@@ -291,5 +291,13 @@ public interface ParticularValidatorApi {
 	boolean comprobarDistintoPropietarioListaActivos(String[] activos);
 
 	boolean activoConOfertasTramitadas(String numActivo);
+	
+	public boolean existeComiteSancionador(String codComite);
+	
+	public boolean existeTipoimpuesto(String codTipoImpuesto);
+	
+	public boolean existeCodigoPrescriptor(String codPrescriptor);
+	
+	public boolean existeTipoDocumentoByCod(String codDocumento);
 
 }

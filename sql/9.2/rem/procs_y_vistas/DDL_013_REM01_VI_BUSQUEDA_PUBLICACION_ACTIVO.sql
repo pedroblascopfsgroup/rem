@@ -59,6 +59,8 @@ EXECUTE IMMEDIATE 'CREATE OR REPLACE FORCE VIEW ' || V_ESQUEMA || '.' || V_TEXT_
                                                                   cartera_codigo,
                                                                   estado_publicacion_codigo,
                                                                   estado_publicacion_descripcion,
+                                                                  TIPO_COMERCIALIZACION_CODIGO,
+                                                                  tipo_comercializacion_desc,
                                                                   admision,
                                                                   gestion,
                                                                   informe_comercial,
@@ -78,7 +80,7 @@ AS
     , CRA.DD_CRA_CODIGO AS CARTERA_CODIGO
     , DECODE(TCO.DD_TCO_CODIGO,''01'',EPV.DD_EPV_CODIGO,''03'',EPA.DD_EPA_CODIGO,''02'',EPA.DD_EPA_CODIGO||''/''||EPV.DD_EPV_CODIGO)   ESTADO_PUBLICACION_CODIGO 
     , DECODE(TCO.DD_TCO_CODIGO,''01'',EPV.DD_EPV_DESCRIPCION,''03'',EPA.DD_EPA_DESCRIPCION,''02'',EPA.DD_EPA_DESCRIPCION||''/''||EPV.DD_EPV_DESCRIPCION)   ESTADO_PUBLICACION_DESCRIPCION   
-    , TCO.DD_TCO_CODIGO AS TIPO_COMERCIALIZACION_COD
+    , TCO.DD_TCO_CODIGO AS TIPO_COMERCIALIZACION_CODIGO
     , TCO.DD_TCO_DESCRIPCION AS TIPO_COMERCIALIZACION_DESC           
     , ACT.ACT_ADMISION AS ADMISION
     , ACT.ACT_GESTION AS GESTION
@@ -117,7 +119,7 @@ AS
   LEFT JOIN '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = ACT_APU.DD_TCO_ID AND TCO.BORRADO = 0
   WHERE (PAC.PAC_ID IS NULL OR PAC.PAC_CHECK_COMERCIALIZAR = 1) AND ACT.BORRADO = 0)
   SELECT ACT_ID, ACT_NUM_ACTIVO, TIPO_ACTIVO_CODIGO, TIPO_ACTIVO_DESCRIPCION, SUBTIPO_ACTIVO_CODIGO, SUBTIPO_ACTIVO_DESCRIPCION
-    , DIRECCION, CARTERA_CODIGO, ESTADO_PUBLICACION_CODIGO, ESTADO_PUBLICACION_DESCRIPCION, TIPO_COMERCIALIZACION_COD, TIPO_COMERCIALIZACION_DESC, ADMISION, GESTION, INFORME_COMERCIAL
+    , DIRECCION, CARTERA_CODIGO, ESTADO_PUBLICACION_CODIGO, ESTADO_PUBLICACION_DESCRIPCION, TIPO_COMERCIALIZACION_CODIGO, TIPO_COMERCIALIZACION_DESC, ADMISION, GESTION, INFORME_COMERCIAL
     , PUBLICACION, PRECIO
   FROM VISTA_ACT_PUB
   WHERE RN = 1';

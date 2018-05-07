@@ -1961,6 +1961,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if (!Checks.esNulo(usuarioCartera)) {
 			dtoActivosPublicacion.setCartera(usuarioCartera.getCartera().getCodigo());
 		}
+		
+		//REMVIP-647 filtro por alquiler y venta
+		String filtroEstadoPublicacionAlquiler = dtoActivosPublicacion.getEstadoPublicacionAlquilerCodigo();
+		String filtroEstadoPublicacionVenta = dtoActivosPublicacion.getEstadoPublicacionCodigo();
+		
+		if(!Checks.esNulo(filtroEstadoPublicacionAlquiler) && !Checks.esNulo(filtroEstadoPublicacionVenta)){
+			String estadoAlquilerYVenta = filtroEstadoPublicacionAlquiler.concat("/").concat(filtroEstadoPublicacionVenta);
+			dtoActivosPublicacion.setEstadoPublicacionCodigo(estadoAlquilerYVenta);
+		}else if(Checks.esNulo(filtroEstadoPublicacionVenta) && !Checks.esNulo(filtroEstadoPublicacionAlquiler)) {
+			dtoActivosPublicacion.setTipoComercializacionCodigo(DDTipoComercializacion.CODIGOS_ALQUILER);
+			dtoActivosPublicacion.setEstadoPublicacionCodigo(filtroEstadoPublicacionAlquiler);
+		} else if(!Checks.esNulo(filtroEstadoPublicacionVenta) && Checks.esNulo(filtroEstadoPublicacionAlquiler)) {
+			dtoActivosPublicacion.setTipoComercializacionCodigo(DDTipoComercializacion.CODIGOS_VENTA);
+		}
 
 		return activoDao.getActivosPublicacion(dtoActivosPublicacion);
 	}

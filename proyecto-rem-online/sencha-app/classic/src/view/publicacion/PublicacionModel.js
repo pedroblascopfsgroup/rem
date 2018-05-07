@@ -61,6 +61,16 @@ Ext.define('HreRem.view.publicacion.PublicacionModel', {
 			
 		},
 		
+		comboEstadoPublicacionAlquiler: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosPublicacionAlquiler'}
+			}
+			
+		},
+		
 		comboCartera: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {

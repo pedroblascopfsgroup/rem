@@ -10,6 +10,8 @@ public class DtoActivosPublicacion extends WebDto {
 	private String subtipoActivo;
 	private String cartera;
 	private String estadoPublicacionCodigo;
+	private String estadoPublicacionAlquilerCodigo;
+	private String tipoComercializacionCodigo[];
 	private Boolean admision;
 	private Boolean gestion;
 	private Boolean publicacion;
@@ -89,6 +91,14 @@ public class DtoActivosPublicacion extends WebDto {
 		this.estadoPublicacionCodigo = estadoPublicacionCodigo;
 	}
 
+	public String getEstadoPublicacionAlquilerCodigo() {
+		return estadoPublicacionAlquilerCodigo;
+	}
+
+	public void setEstadoPublicacionAlquilerCodigo(String estadoPublicacionAlquilerCodigo) {
+		this.estadoPublicacionAlquilerCodigo = estadoPublicacionAlquilerCodigo;
+	}
+	
 	public Boolean getInformeComercial() {
 		return informeComercial;
 	}
@@ -97,4 +107,12 @@ public class DtoActivosPublicacion extends WebDto {
 		this.informeComercial = informeComercial;
 	}
 
+	public String[] getTipoComercializacionCodigo() {
+		return tipoComercializacionCodigo;
+	}
+
+	public void setTipoComercializacionCodigo(String[] tipoComercializacionCodigo) {
+		this.tipoComercializacionCodigo = tipoComercializacionCodigo;
+	}
+	
 }

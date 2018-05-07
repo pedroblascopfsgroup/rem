@@ -2167,12 +2167,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public Boolean existeTarifaTrabajo(TareaExterna tarea) {
 
 		Trabajo trabajo = getTrabajoByTareaExterna(tarea);
-
-		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
-		List<TrabajoConfiguracionTarifa> tarifasTrabajo = genericDao.getList(TrabajoConfiguracionTarifa.class,
-				filtroTrabajo);
-
-		return !tarifasTrabajo.isEmpty();
+		if(trabajo.getEsTarifaPlana()){
+			return true;
+		}else{
+			Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+			List<TrabajoConfiguracionTarifa> tarifasTrabajo = genericDao.getList(TrabajoConfiguracionTarifa.class,
+					filtroTrabajo);
+	
+			return !tarifasTrabajo.isEmpty();
+		}
 	}
 
 	@Override
@@ -2181,22 +2184,28 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		Trabajo trabajo = getTrabajoByTareaExterna(tarea);
 
-		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
-		List<TrabajoConfiguracionTarifa> tarifasTrabajo = genericDao.getList(TrabajoConfiguracionTarifa.class, filtroTrabajo);
+		if (trabajo.getEsTarifaPlana()) {
+			return true;
+		} else {
 
-		for (TrabajoConfiguracionTarifa tct : tarifasTrabajo) {
+			Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+			List<TrabajoConfiguracionTarifa> tarifasTrabajo = genericDao.getList(TrabajoConfiguracionTarifa.class,
+					filtroTrabajo);
 
-			if (tct.getMedicion() != null && tct.getPrecioUnitario() != null) {
+			for (TrabajoConfiguracionTarifa tct : tarifasTrabajo) {
 
-				Float importe = tct.getMedicion() * tct.getPrecioUnitario();
+				if (tct.getMedicion() != null && tct.getPrecioUnitario() != null) {
 
-				if (importe > 0) {
-					return true;
+					Float importe = tct.getMedicion() * tct.getPrecioUnitario();
+
+					if (importe > 0) {
+						return true;
+					}
 				}
 			}
-		}
 
-		return false;
+			return false;
+		}
 	}
 
 	@Override

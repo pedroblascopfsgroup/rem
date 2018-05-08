@@ -2,3 +2,7 @@
 	path = sql/pitertul
 	url = ssh://git.pfsgroup.es:29418/pfs-pitertul
     ignore = all
+[submodule "fwk"]
+        path = fwk
+        url = ssh://git.pfsgroup.es:29418/fwk
+    ignore = all

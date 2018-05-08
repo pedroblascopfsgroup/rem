@@ -2,19 +2,16 @@ package es.pfsgroup.plugin.gestorDocumental.dto.documentos;
 
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.plugin.gestorDocumental.model.GestorDocumentalConstants;
 
 public class RecoveryToGestorDocAssembler {
 	
-	private final Log logger = LogFactory.getLog(RecoveryToGestorDocAssembler.class);
-
+	private static final String ALTA = "ALTA";
+	private static final String PROCESO_CARGA = "WEB SERVICE REM";
+	
 	private String USUARIO;
 	private String PASSWORD;
-	//private final String TIPO_EXPEDIENTE="Tipo%20Expediente";
 	private final String TIPO_EXPEDIENTE="Global";
 
 	public RecoveryToGestorDocAssembler(Properties appProperties){
@@ -31,7 +28,7 @@ public class RecoveryToGestorDocAssembler {
 		return cabecera;
 	}
 
-	public DocumentosExpedienteDto getDocumentosExpedienteDto() {
+	public DocumentosExpedienteDto getDocumentosExpedienteDto(String userLogin) {
 
 		DocumentosExpedienteDto doc = new DocumentosExpedienteDto();
 		doc.setUsuario(USUARIO);
@@ -39,15 +36,15 @@ public class RecoveryToGestorDocAssembler {
 		doc.setTipoConsulta(TIPO_EXPEDIENTE);//HREOS-2296
 		doc.setVinculoDocumento(true);//HREOS-2296
 		doc.setVinculoExpediente(false);
+		doc.setUsuarioOperacional(userLogin);
 		return doc;
 	}
 	
-	public BajaDocumentoDto getDescargaDocumentoDto() {
+	public BajaDocumentoDto getDescargaDocumentoDto(String userLogin) {
 		BajaDocumentoDto login = new BajaDocumentoDto();
-
 		login.setUsuario(USUARIO);
 		login.setPassword(PASSWORD);
-		
+		login.setUsuarioOperacional(userLogin);
 		return login;
 	}
 	
@@ -73,11 +70,15 @@ public class RecoveryToGestorDocAssembler {
 	private String rellenarGeneralDocumento (String serie, String tdn1, String tdn2) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
-		sb.append(GestorDocumentalConstants.generalDocumento[5]).append("WEB SERVICE REM").append(", ");
-		sb.append(GestorDocumentalConstants.generalDocumento[6]).append("ALTA").append(", ");
-		sb.append(GestorDocumentalConstants.generalDocumento[7]).append(serie).append(", ");
-		sb.append(GestorDocumentalConstants.generalDocumento[8]).append(tdn1).append(", ");
-		sb.append(GestorDocumentalConstants.generalDocumento[9]).append(tdn2);
+			sb.append(GestorDocumentalConstants.modificarMetadatos[0]).append("{");
+				sb.append(GestorDocumentalConstants.modificarMetadatos[1]).append("\""+ALTA+"\"").append(",");
+				sb.append(GestorDocumentalConstants.modificarMetadatos[2]).append("\""+serie+"\"").append(",");
+				sb.append(GestorDocumentalConstants.modificarMetadatos[3]).append("\""+tdn1+"\"").append(",");
+				sb.append(GestorDocumentalConstants.modificarMetadatos[4]).append("\""+tdn2+"\"").append(",");
+				sb.append(GestorDocumentalConstants.modificarMetadatos[5]).append("\"" + PROCESO_CARGA + "\"").append("},");
+				sb.append(GestorDocumentalConstants.modificarMetadatos[6]).append("{");
+				sb.append(GestorDocumentalConstants.modificarMetadatos[7]).append("\"CONT\"");
+			sb.append("}");
 		sb.append("}");
 		return sb.toString();
 	}
@@ -162,6 +163,31 @@ public class RecoveryToGestorDocAssembler {
 		credUsu.setPassword(PASSWORD);
 		credUsu.setUsuarioOperacional(login);
 		return credUsu;
+	}
+	
+	public CrearContenedorDto getCrearEntidadlDto(String idEntidad, String username, String cliente, String idSistemaOrigen, String codClase) {
+		CrearContenedorDto doc = new CrearContenedorDto();
+		
+		doc.setUsuario(USUARIO);
+		doc.setPassword(PASSWORD);
+		doc.setCodClase(codClase);
+		doc.setUsuarioOperacional(username);
+		doc.setMetadata(rellenarEntidadMetadata(idEntidad, idEntidad, idSistemaOrigen, cliente));
+		
+		return doc;
+	}
+	
+	private static String rellenarEntidadMetadata (String id, String idExterno, String idSistemaOrigen, String cliente) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+			sb.append(GestorDocumentalConstants.ENTIDAD).append("{");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[0]).append("\"").append(id).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[1]).append("\"").append(idExterno).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[2]).append("\"").append(idSistemaOrigen).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[3]).append("\"").append(cliente).append("\"");
+			sb.append("}");
+		sb.append("}");
+		return sb.toString();
 	}
 	
 }

@@ -35,8 +35,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     numExpediente: null,
 
     initComponent: function() {
-
         var me = this;
+        
+        me. btn_guardar_txt = HreRem.i18n("btn.saveBtnText");
 
         me.width = 800;
         me.title = me.titulo;
@@ -678,12 +679,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
     T004_AnalisisPeticionValidacion: function() {
         var me = this;
-
+		var esTarifaPlana = me.up('tramitesdetalle').getViewModel().get('tramite.esTarifaPlana');
         me.deshabilitarCampo(me.down('[name=comboAseguradoras]'));
         me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
-//        if (me.down('[name=comboTarifa]').value == '02') {
-//            me.bloquearCampo(me.down('[name=comboTarifa]'));
-//        }
+        if (esTarifaPlana) {
+            me.bloquearCampo(me.down('[name=comboTarifa]'));
+        }
 
 
         me.down('[name=comboTramitar]').addListener('change', function(combo) {
@@ -817,6 +818,21 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
                 me.deshabilitarCampo(me.down('[name=comboValoracion]'));
             }
         })
+    },
+    
+    T004_CierreEconomicoValidacion: function() {
+    	var me = this;
+    	var codigoSubtipoTrabajo = me.up('tramitesdetalle').getViewModel().get("tramite.codigoSubtipoTrabajo");
+    	var activoAplicaGestion = me.up('tramitesdetalle').getViewModel().get("tramite.activoAplicaGestion");
+    	
+    	if(CONST.SUBTIPOS_TRABAJO['TOMA_POSESION'] != codigoSubtipoTrabajo){
+    		me.deshabilitarCampo(me.down('[name=tieneOkTecnico]'));
+    		me.ocultarCampo(me.down('[name=tieneOkTecnico]'));
+    	}
+    	
+    	if(!activoAplicaGestion){
+    		me.deshabilitarCampo(me.down('[name=tieneOkTecnico]'));
+    	}
     },
 
     T005_AnalisisPeticionValidacion: function() {
@@ -1308,6 +1324,35 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             	//me.down('[name=comboMotivoAnulacionReserva]').reset();
             }
         });
+    },
+    
+    T013_RespuestaBankiaDevolucionValidacion: function() {
+    	var me = this;
+    	var fecha = me.down('[name=fecha]');
+    	var comboRespuesta = me.down('[name=comboRespuesta]');
+    	var observaciones = me.down('[name=observaciones]');
+    	fecha.setReadOnly(true);
+    	comboRespuesta.setReadOnly(true);
+    	observaciones.setReadOnly(true);
+    },
+    T013_PendienteDevolucionValidacion: function() {
+    	var me = this;
+    	var fecha = me.down('[name=fecha]');
+    	var comboRespuesta = me.down('[name=comboRespuesta]');
+    	var observaciones = me.down('[name=observaciones]');
+    	fecha.setReadOnly(true);
+    	comboRespuesta.setReadOnly(true);
+    	observaciones.setReadOnly(true);
+    },
+    
+    T013_RespuestaBankiaAnulacionDevolucionValidacion: function() {
+    	var me = this;
+    	var fecha = me.down('[name=fecha]');
+    	var comboRespuesta = me.down('[name=comboRespuesta]');
+    	var observaciones = me.down('[name=observaciones]');
+    	fecha.setReadOnly(true);
+    	comboRespuesta.setReadOnly(true);
+    	observaciones.setReadOnly(true);
     },
 
     T014_PosicionamientoFirmaValidacion: function() {

@@ -87,7 +87,8 @@ public class ActivoPropagacionFieldTabMap {
 			    	"accesoTapiado",
 			    	"fechaAccesoTapiado",
 			    	"accesoAntiocupa",
-			    	"fechaAccesoAntiocupa"
+			    	"fechaAccesoAntiocupa",
+			    	"tieneOkTecnico"
     			));
 
     	pmap.put(TAB_INFORME_COMERCIAL, 

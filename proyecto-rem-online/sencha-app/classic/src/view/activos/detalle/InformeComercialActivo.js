@@ -108,6 +108,25 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 							colspan: 2
 						},
 					// Fila 4
+						{ 
+							fieldLabel: HreRem.i18n('fieldlabel.codigo.proveedor'),
+							readOnly: true,
+							bind: {
+				        		disabled: '{!infoComercial.tieneProveedorTecnico}',
+				        		value: '{infoComercial.codigoProveedor}'
+				        	}					
+							
+						},
+						{ 
+							fieldLabel: HreRem.i18n('fieldlabel.nombre.proveedor'),
+							readOnly: true,
+							colspan: 2,
+							bind: {
+				        		disabled: '{!infoComercial.tieneProveedorTecnico}',
+				        		value: '{infoComercial.nombreProveedor}'
+				        	}
+						},
+					// Fila 5
 						{
 							xtype:'fieldsettable',
 							title:HreRem.i18n('title.grid.historico.mediador.info.comercial'),
@@ -117,7 +136,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 								[
 									{xtype: "historicomediadorgrid", reference: "historicomediadorgrid", colspan: 3}
 								]
-						}
+						}						
 				]
 			},
 

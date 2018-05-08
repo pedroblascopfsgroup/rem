@@ -147,7 +147,7 @@ public interface ExpedienteComercialApi {
 	
 	
 	/**
-	 * Actualiza el estado de la reserva al codigo dado
+	 * Actualiza el estado de la dev reserva al codigo dado
 	 * 
 	 * @param expedienteComercial
 	 * @param codEstadoReserva
@@ -155,6 +155,32 @@ public interface ExpedienteComercialApi {
 	 */
 	public boolean updateEstadoDevolucionReserva(ExpedienteComercial expedienteComercial, String codEstadoReserva) throws Exception;
 	
+	/**
+	 * Actualiza el estado de la reserva al codigo dado
+	 * 
+	 * @param expedienteComercial
+	 * @param codEstadoReserva
+	 * @return
+	 */
+	boolean updateEstadoReserva(ExpedienteComercial expedienteComercial, String codEstadoReserva) throws Exception;
+	
+	/**
+	 * Actualiza el estado del expediente comercial con el codigo dado
+	 * 
+	 * @param expedienteComercial
+	 * @param codEstadoReserva
+	 * @return
+	 */
+	boolean updateEstadoExpedienteComercial(ExpedienteComercial expedienteComercial, String codEstadoExpedienteComercial) throws Exception;
+
+	/**
+	 * Este método devuelve el Expediente Comercial junto con la Reserva al estado previo a la tarea Resolución Expediente
+	 * 
+	 * @param idTramite: ID del trámite desde el cual se realiza la consulta.
+	 * @return Devuelve True si el estado del expdiente comercial es distinto a anulado, False si no lo es.
+	 * @throws Exception 
+	 */
+	public boolean updateExpedienteComercialEstadoPrevioResolucionExpediente(ExpedienteComercial expedienteComercial, String codigoTareaActual) throws Exception;
 
 	/**
 	 * Método que recupera las observaciones del expediente comercial

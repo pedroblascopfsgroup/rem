@@ -27,8 +27,7 @@ Ext.define('HreRem.ux.util.Constants', {
         GASTO: 6
     },
 
-    TIPOS_COMERCIALIZACION: {
-    	
+    TIPOS_COMERCIALIZACION: {    	
     	VENTA: '01',
     	ALQUILER_VENTA: '02',
     	SOLO_ALQUILER: '03',
@@ -168,7 +167,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	BANKIA: '03',
     	TERCEROS: '04',
     	HYT: '06',
-    	TANGO: '10'
+    	TANGO: '10',
+    	GIANTS: '12'
     },
 
     NOMBRE_CARTERA:	{
@@ -177,7 +177,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	'03': 'BANKIA',
     	'04': 'TERCEROS',
     	'06': 'HYT',
-    	'10': 'TANGO'
+    	'10': 'TANGO',
+    	'12': 'GIANTS'
     },
 
     
@@ -185,7 +186,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	CAJAMAR: 'CAJAMAR',
     	SAREB: 'SAREB',
     	BANKIA: 'BANKIA',
-    	TANGO: 'TANGO'
+    	TANGO: 'TANGO',
+    	GIANTS: 'GIANTS'
     },
     
     NOMBRE_SUBCARTERA: {
@@ -321,8 +323,8 @@ Ext.define('HreRem.ux.util.Constants', {
     SUBTIPOS_TRABAJO: {
 
 		TRAMITAR_PROPUESTA_PRECIOS: '44',
-		TRAMITAR_PROPUESTA_DESCUENTO: '45'
-    	
+		TRAMITAR_PROPUESTA_DESCUENTO: '45',
+		TOMA_POSESION: '57'   	
     },
 
     TIPO_IMPUESTO: {
@@ -336,6 +338,12 @@ Ext.define('HreRem.ux.util.Constants', {
     	JUDICIAL: '01',
     	NO_JUDICIAL: '02',
     	PDV: '03'
+    },
+    
+    TIPO_RESOLUCION_COMITE: {
+    	APRUEBA: '01',
+    	RECHAZA: '02',
+    	CONTRAOFERTA: '03'
     }
     
 });

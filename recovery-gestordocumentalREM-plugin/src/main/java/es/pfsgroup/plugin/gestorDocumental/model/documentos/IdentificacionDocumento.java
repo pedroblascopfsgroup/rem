@@ -15,6 +15,7 @@ public class IdentificacionDocumento {
 	/**
 	 * Identificador interno de Haya del expediente
 	 */
+	@Deprecated
 	private String idExpedienteHaya;
 
 	/**
@@ -51,6 +52,36 @@ public class IdentificacionDocumento {
 	 * Descripción del documento
 	 */
 	private String descripcionDocumento;
+	
+	/**
+	 * Mymetype del documento
+	 */
+	private String contentType;
+	
+	/**
+	 * Fecha de creación del documento
+	 */
+	private String createdate;
+	
+	/**
+	 * Tamaño del fichero en kb
+	 */
+	private String fileSize;
+	
+	/**
+	 * Indica si es un elemento relacionado o no
+	 */
+	private Boolean rel;
+	
+	/**
+	 * Descripción del tdn2 del documento
+	 */
+	private String tdn2_desc;
+	
+	/**
+	 * Nombre del activo donde está el documento (equivale a idExpedienteHaya)
+	 */
+	private String id_activo;
 
 	public String getTipoExpediente() {
 		return tipoExpediente;
@@ -130,6 +161,54 @@ public class IdentificacionDocumento {
 	
 	public void setDescripcionDocumento(String descripcionDocumento) {
 		this.descripcionDocumento = descripcionDocumento;
+	}
+
+	public String getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
+	public String getCreatedate() {
+		return createdate;
+	}
+
+	public void setCreatedate(String createdate) {
+		this.createdate = createdate;
+	}
+
+	public String getFileSize() {
+		return fileSize;
+	}
+
+	public void setFileSize(String fileSize) {
+		this.fileSize = fileSize;
+	}
+
+	public Boolean getRel() {
+		return rel;
+	}
+
+	public void setRel(Boolean rel) {
+		this.rel = rel;
+	}
+
+	public String getTdn2_desc() {
+		return tdn2_desc;
+	}
+
+	public void setTdn2_desc(String tdn2_desc) {
+		this.tdn2_desc = tdn2_desc;
+	}
+
+	public String getId_activo() {
+		return id_activo;
+	}
+
+	public void setId_activo(String id_activo) {
+		this.id_activo = id_activo;
 	}
 
 }

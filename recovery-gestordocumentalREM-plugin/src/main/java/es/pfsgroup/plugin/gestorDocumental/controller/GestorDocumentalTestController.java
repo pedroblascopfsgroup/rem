@@ -5,8 +5,6 @@ import java.util.Properties;
 import javax.annotation.Resource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import java.util.Iterator;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -18,6 +16,7 @@ import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalApi;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalExpedientesApi;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.BajaDocumentoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CabeceraPeticionRestClientDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CredencialesUsuarioDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DocumentosExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.RecoveryToGestorDocAssembler;
@@ -65,7 +64,7 @@ public class GestorDocumentalTestController {
 	public ModelAndView documentosExpediente(CabeceraPeticionRestClientDto cabecera, ModelMap model) {
 		
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler =  new RecoveryToGestorDocAssembler(appProperties);
-		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto();
+		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto("");
 		
 		try {
 		
@@ -86,12 +85,12 @@ public class GestorDocumentalTestController {
 	public ModelAndView descargarDocumento(Long idDocumento, ModelMap model) {
 		
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler =  new RecoveryToGestorDocAssembler(appProperties);
-		BajaDocumentoDto descargaDocumentoDto = recoveryToGestorDocAssembler.getDescargaDocumentoDto();
+		BajaDocumentoDto descargaDocumentoDto = recoveryToGestorDocAssembler.getDescargaDocumentoDto("");
 		
 		try {
 			RespuestaDescargarDocumento respuesta = null;
 			
-			respuesta = gestorDocumentalApi.descargarDocumento(idDocumento, descargaDocumentoDto);		
+			respuesta = gestorDocumentalApi.descargarDocumento(idDocumento, descargaDocumentoDto,"");		
 			
 			model.put("Respuesta", respuesta);
 		
@@ -106,11 +105,11 @@ public class GestorDocumentalTestController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView crearRelacionExpediente(CabeceraPeticionRestClientDto cabecera, CredencialesUsuarioDto credUsu, ModelMap model) {
+	public ModelAndView crearRelacionExpediente(CabeceraPeticionRestClientDto cabecera, CredencialesUsuarioDto credUsu,CrearRelacionExpedienteDto crearRelacionExpedienteDto, ModelMap model) {
 		
 		try {
 			
-			RespuestaGeneral repuesta = gestorDocumentalApi.crearRelacionExpediente(cabecera, credUsu);			
+			RespuestaGeneral repuesta = gestorDocumentalApi.crearRelacionExpediente(cabecera, credUsu,crearRelacionExpedienteDto);			
 			model.put("Respuesta", repuesta);
 			
 		} catch (GestorDocumentalException e) {

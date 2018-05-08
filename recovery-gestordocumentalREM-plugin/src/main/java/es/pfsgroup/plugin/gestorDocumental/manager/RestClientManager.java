@@ -1,5 +1,8 @@
 package es.pfsgroup.plugin.gestorDocumental.manager;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 
@@ -17,8 +20,9 @@ import org.glassfish.jersey.media.multipart.BodyPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import es.capgemini.devon.beans.Service;
-import es.pfsgroup.plugin.gestorDocumental.model.ServerRequest;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.gestorDocumental.api.RestClientApi;
+import es.pfsgroup.plugin.gestorDocumental.model.ServerRequest;
 
 
 @Service
@@ -60,7 +64,9 @@ public class RestClientManager implements RestClientApi {
 				logger.debug("Posted:");
 				for (int i=0;i<parts.size();i++){
 					BodyPart body = parts.get(i);
-					logger.debug("\nBodypart["+i+"]: "+body.getContentDisposition().toString()+"="+body.getEntity().toString());
+					if(!Checks.esNulo(body)){
+						logger.debug("\nBodypart["+i+"]: "+body.getContentDisposition().toString()+"="+body.getEntity().toString());
+					}
 				}
 			}
 		}
@@ -96,5 +102,36 @@ public class RestClientManager implements RestClientApi {
 		return activado;
 	}
 	
+	@Override
+	public Object getBinaryResponse(ServerRequest serverRequest) {
+		String restClientUrl = appProperties.getProperty(serverRequest.getRestClientUrl());
+		
+		final Client client = ClientBuilder.newBuilder().register(MultiPartFeature.class).register(JacksonFeature.class).build();
+		String url = restClientUrl + serverRequest.getPath();
+		WebTarget webTarget = client.target(url);
+		logger.info("URL: " + url);
+		Object response = webTarget.request().get();
+		
+		if (response == null) return null;
+		Response res = (Response) response;
+		InputStream is = (InputStream)res.getEntity();
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		int nRead;
+	    byte[] data = new byte[1024];
+	    try {
+		    while ((nRead = is.read(data, 0, data.length)) != -1) {
+		        buffer.write(data, 0, nRead);
+		    }
+		 
+		    buffer.flush();
+			byte[] bytes = buffer.toByteArray();
+			buffer.close();
+			is.close();
+			return bytes;
+		} catch (IOException e) {
+			logger.error("RestClientManager : Error al recoger bytes del archivo - " +e);
+			return null;
+		}
+	}
 	
 }

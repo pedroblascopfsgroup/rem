@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.activo;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -23,7 +24,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
-import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -39,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.InformeJuridico;
+import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -46,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
+import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 
 /**
@@ -65,15 +68,9 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 	@Autowired
 	private GenericABMDao genericDao;
 
-	@Autowired	
-	private ActivoAdapter activoAdapter;
-
 	@Autowired
 	private ActivoTramiteDao activoTramiteDao;
 
-	@Autowired
-	private ActivoManager activoManager;
-	
 	@Autowired
 	private DiccionarioTargetClassMap diccionarioTargetClassMap;
 
@@ -95,6 +92,8 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
     @Autowired
     private TareaActivoApi tareaActivoApi;
     
+    @Autowired
+	private TareaActivoManager tareaActivoManager;
     
 	
 	public ActivoTramite get(Long idTramite){
@@ -705,6 +704,77 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 	public Boolean tieneTramiteVigenteByActivoYProcedimiento(Long idActivo, String codigoTipoProcedimiento){
 		return activoTramiteDao.tieneTramiteVigenteByActivoYProcedimiento(idActivo, codigoTipoProcedimiento);
 	}
+
+	@Override
+	public TareaExterna getTareaAnteriorByCodigoTarea(Long idTramite, String codigoTarea) {
+		List<TareaActivo> listaTareas = tareaActivoApi.getTareasActivoByIdTramite(idTramite);
+		if(!Checks.esNulo(listaTareas)){
+			for(int i=0; i<listaTareas.size(); i++){
+				if(codigoTarea.equals(listaTareas.get(i).getTareaExterna().getTareaProcedimiento().getCodigo())){
+					return listaTareas.get(i-1).getTareaExterna();
+				}
+			}
+		}
+		
+		return null;
+	}
+
+	@Override
+	public void reactivarTareaResultadoPBC(TareaExterna tareaExterna, ExpedienteComercial expediente) {
+		ActivoTramite tramite = ((TareaActivo) tareaExterna.getTareaPadre()).getTramite();
+
+		List<TareaActivo> tareas = tareaActivoManager.getTareasActivoByIdTramite(tramite.getId());
+		TareaActivo tareaPBC = null;
+		
+		// En el tramite, se busca tarea "Resultado PBC" y se reactiva
+		for (TareaActivo tarea : tareas) {
+			if (!Checks.esNulo(tarea.getTareaExterna())){
+				if (ComercialUserAssigantionService.CODIGO_T013_RESULTADO_PBC.equals(tarea.getTareaExterna().getTareaProcedimiento().getCodigo())) {
+					if(!tarea.getTareaFinalizada() && tarea.getAuditoria().isBorrado()){
+						tarea.getAuditoria().setBorrado(false);
+						tareaPBC = tarea;
+					}
+				}
+			}
+
+		}
+
+		if (!Checks.esNulo(tareaPBC)){
+			// Se recalculan plazos en funcion de si existe tanteo
+			boolean tieneTanteo = false;
+			Date ultimaFechaTanteo = new Date(0);
+			if(new Integer(1).equals(expediente.getCondicionante().getSujetoTanteoRetracto()))//Comprueba si tiene tanteo
+			{
+				List<TanteoActivoExpediente> tanteos = expediente.getTanteoActivoExpediente();
+				for(TanteoActivoExpediente tanteo : tanteos){
+					if(!Checks.esNulo(tanteo.getFechaResolucion()) &&
+							tanteo.getFechaResolucion().compareTo(ultimaFechaTanteo) > 0){
+						ultimaFechaTanteo = tanteo.getFechaResolucion();
+						tieneTanteo = true;
+					}
+				}
+			}
+			
+			// Si no se ha actualizado la ultima fecha de tanteo, se establece Hoy
+			if ((new Date(0)).compareTo(ultimaFechaTanteo) == 0){
+				ultimaFechaTanteo = new Date();
+			}
+			
+			// CON tanteo: F.Resolucion Tanteo + 30 dias
+			// SIN tanteo: Hoy + 30 dias
+			Date fechaFinTarea = new Date();
+			if (tieneTanteo){
+				fechaFinTarea = addDays(ultimaFechaTanteo, 30);
+			} else {			
+				fechaFinTarea = addDays(new Date(), 30);
+			}
+			
+			tareaPBC.setFechaVenc(fechaFinTarea);
+		}
+	}
 	
-	
+	private Date addDays(Date d, int days){
+        d.setTime(d.getTime() + days * 1000 * 60 * 60 * 24);
+        return d;
+    }
 }

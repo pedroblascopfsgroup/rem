@@ -46,7 +46,7 @@ Ext.define('HreRem.view.trabajos.detalle.SeleccionTarifasTrabajo', {
 					}
 			);
 			
-	    	//me.getViewModel().set('trabajo.idTrabajo', me.idTrabajo);
+			me.getViewModel().set('trabajo.id', me.idTrabajo);
 	    	me.getViewModel().set('trabajo.carteraCodigo', me.carteraCodigo);
 	    	me.getViewModel().set('trabajo.tipoTrabajoCodigo', me.tipoTrabajoCodigo);
 	    	me.getViewModel().set('trabajo.subtipoTrabajoCodigo', me.subtipoTrabajoCodigo);

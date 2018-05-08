@@ -8,5 +8,7 @@ public interface RestClientApi {
 	Object getResponse(ServerRequest serverRequest);
 
 	boolean modoRestClientActivado();
+
+	Object getBinaryResponse(ServerRequest serverRequest);
 	
 }

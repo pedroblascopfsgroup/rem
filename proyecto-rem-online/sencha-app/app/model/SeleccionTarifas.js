@@ -1,11 +1,14 @@
 /**
- *  Modelo para el grid de selección de tarifa
+ *  Modelo para el grid de seleccion de tarifa
  */
 Ext.define('HreRem.model.SeleccionTarifas', {
     extend: 'HreRem.model.Base',
     idProperty: 'id',
 
-    fields: [    
+    fields: [
+    		{
+    			name:'idTrabajo'
+    		},
     		{
     			name:'codigoTarifa'
     		},

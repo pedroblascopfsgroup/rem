@@ -55,16 +55,17 @@ public class RecoveryToGestorExpAssembler {
 	private static String rellenarGastoMetadatos (String id, String numGasto, String idReo, String fechaGasto, String cliente) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
-		sb.append(GestorDocumentalConstants.gastoMetadatos[0]).append("'"+id+"'").append(",");
-		sb.append(GestorDocumentalConstants.gastoMetadatos[1]).append("'"+numGasto+"'").append(",");
-		sb.append(GestorDocumentalConstants.gastoMetadatos[2]).append("'"+idReo+"'").append(",");
-		sb.append(GestorDocumentalConstants.gastoMetadatos[3]).append("'"+fechaGasto+"'").append(",");
-		sb.append(GestorDocumentalConstants.gastoMetadatos[4]).append("'"+cliente+"'");
+			sb.append(GestorDocumentalConstants.GASTOS).append("{");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[0]).append("\"").append(id).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[1]).append("\"").append(numGasto).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[2]).append("\"").append(idReo).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[3]).append("\"").append(cliente).append("\"");
+			sb.append("}");
 		sb.append("}");
 		return sb.toString();
 	}
 
-	public CrearExpedienteComercialDto getCrearExpedienteComercialDto(String idExpedienteComercial, String descripcionExpediente, String username, String cliente, String estadoExpediente, String idSistemaOrigen, String codClase) {
+	public CrearExpedienteComercialDto getCrearExpedienteComercialDto(String idExpedienteComercial, String descripcionExpediente, String username, String cliente, String estadoExpediente, String idSistemaOrigen, String codClase, String tipoExpediente) {
 		CrearExpedienteComercialDto doc = new CrearExpedienteComercialDto();
 		
 		doc.setUsuario(USUARIO);
@@ -73,18 +74,19 @@ public class RecoveryToGestorExpAssembler {
 		doc.setUsuarioOperacional(username);
 		doc.setDescripcionExpediente(descripcionExpediente);
 		doc.setOperacionMetadatos(rellenarExpedienteComercialMetadatos(idExpedienteComercial, idExpedienteComercial, idSistemaOrigen, estadoExpediente, cliente));
-		
+		doc.setTipoClase(tipoExpediente);
 		return doc;
 	}
 	
 	private static String rellenarExpedienteComercialMetadatos (String id, String idExterno, String idSistemaOrigen, String estadoExpediente, String cliente) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
-		sb.append(GestorDocumentalConstants.expedienteComercialMetadatos[0]).append("'"+id+"'").append(",");
-		sb.append(GestorDocumentalConstants.expedienteComercialMetadatos[1]).append("'"+idExterno+"'").append(",");
-		sb.append(GestorDocumentalConstants.expedienteComercialMetadatos[2]).append("'"+idSistemaOrigen+"'").append(",");
-		sb.append(GestorDocumentalConstants.expedienteComercialMetadatos[3]).append("'"+estadoExpediente+"'").append(",");
-		sb.append(GestorDocumentalConstants.expedienteComercialMetadatos[4]).append("'"+cliente+"'");
+			sb.append(GestorDocumentalConstants.OPERACION).append("{");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[0]).append("\"").append(id).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[1]).append("\"").append(idExterno).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[2]).append("\"").append(idSistemaOrigen).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[3]).append("\"").append(cliente).append("\"");
+			sb.append("}");
 		sb.append("}");
 		return sb.toString();
 	}

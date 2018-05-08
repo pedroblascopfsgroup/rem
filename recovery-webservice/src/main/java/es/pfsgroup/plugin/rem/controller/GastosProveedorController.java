@@ -546,8 +546,8 @@ public class GastosProveedorController extends ParadiseJsonController {
 		
 		dtoAdjunto.setId(Long.parseLong(request.getParameter("id")));
 		dtoAdjunto.setIdEntidad(Long.parseLong(request.getParameter("idGasto")));
-	
-		
+		String nombreDocumento = request.getParameter("nombreDocumento");
+		dtoAdjunto.setNombre(nombreDocumento);
        	FileItem fileItem = gastoProveedorApi.getFileItemAdjunto(dtoAdjunto);
 		
        	try { 

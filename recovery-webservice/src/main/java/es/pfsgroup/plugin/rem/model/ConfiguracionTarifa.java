@@ -75,7 +75,9 @@ public class ConfiguracionTarifa implements Serializable, Auditable {
     @Column(name = "CFT_UNIDAD_MEDIDA")
 	private String unidadMedida;
 
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PVE_ID")
+	private ActivoProveedor proveedor;
     
 	@Version   
 	private Long version;
@@ -141,6 +143,14 @@ public class ConfiguracionTarifa implements Serializable, Auditable {
 
 	public void setUnidadMedida(String unidadMedida) {
 		this.unidadMedida = unidadMedida;
+	}
+
+	public ActivoProveedor getProveedor() {
+		return proveedor;
+	}
+
+	public void setProveedor(ActivoProveedor proveedor) {
+		this.proveedor = proveedor;
 	}
 
 	public Long getVersion() {

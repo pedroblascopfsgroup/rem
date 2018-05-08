@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Guillem Rey
---## FECHA_CREACION=20180201
+--## AUTOR=Carlos Gil Gimeno
+--## FECHA_CREACION=20180412
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1975
+--## INCIDENCIA_LINK=HREOS-3960
 --## PRODUCTO=NO
 --## Finalidad: Crear vista gestores activo
 --##           
@@ -306,7 +306,27 @@ SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo, null dd_eac_c
            AND dist3.cod_postal = loc.BIE_LOC_COD_POST
            AND dist3.tipo_gestor = ''SCOM''
           )
-          where act.borrado = 0				
+          where act.borrado = 0		
+		UNION ALL
+/*PROVEEDOR TECNICO*/
+ SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo, null dd_eac_codigo, null dd_tcr_codigo, dd_prov.dd_prv_codigo,
+      dist1.cod_municipio cod_municipio,
+      dist1.cod_postal cod_postal,
+      dist1.tipo_gestor AS tipo_gestor,
+      dist1.username username,
+      dist1.nombre_usuario nombre
+  FROM act_activo act JOIN act_loc_localizacion aloc ON act.act_id = aloc.act_id
+       JOIN bie_localizacion loc ON loc.bie_loc_id = aloc.bie_loc_id
+       JOIN '||V_ESQUEMA_M||'.dd_loc_localidad dd_loc ON loc.dd_loc_id = dd_loc.dd_loc_id
+       JOIN '||V_ESQUEMA_M||'.dd_prv_provincia dd_prov ON dd_prov.dd_prv_id = loc.dd_prv_id
+       JOIN dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
+       left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1
+       ON (dist1.cod_cartera = dd_cra.dd_cra_codigo
+           AND dd_prov.dd_prv_codigo = dist1.cod_provincia
+           AND dist1.tipo_gestor = ''PTEC''
+          )
+          where act.borrado = 0
+		
                            )
     WHERE tipo_gestor IS NOT NULL';
 

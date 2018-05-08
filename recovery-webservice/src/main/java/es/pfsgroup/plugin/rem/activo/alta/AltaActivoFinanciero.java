@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
@@ -94,6 +95,9 @@ public class AltaActivoFinanciero implements AltaActivoService {
 	
 	@Autowired
 	private RestApi restApi;
+	
+	@Autowired
+	private GestorActivoApi gestorActivoManager;
 
 	@Override
 	public String[] getKeys() {
@@ -339,6 +343,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 			vivienda.setActivo(activo);
 			vivienda.setTipoActivo(activo.getTipoActivo());
 			vivienda.setNumPlantasInter(dtoAAF.getNumPlantasVivienda());
+			vivienda.setMediadorInforme(this.obtenerMediador(dtoAAF.getNifMediador(),activo.getId()));
 			if (!Checks.esNulo(dtoAAF.getNifMediador())) {
 				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAAF.getNifMediador());
 				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_MEDIADOR);
@@ -356,6 +361,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 			ActivoLocalComercial localComercial = new ActivoLocalComercial();
 			localComercial.setActivo(activo);
 			localComercial.setTipoActivo(activo.getTipoActivo());
+			localComercial.setMediadorInforme(this.obtenerMediador(dtoAAF.getNifMediador(),activo.getId()));
 			if (!Checks.esNulo(dtoAAF.getNifMediador())) {
 				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAAF.getNifMediador());
 				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_MEDIADOR);
@@ -373,6 +379,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 			ActivoPlazaAparcamiento aparcamiento = new ActivoPlazaAparcamiento();
 			aparcamiento.setActivo(activo);
 			aparcamiento.setTipoActivo(activo.getTipoActivo());
+			aparcamiento.setMediadorInforme(this.obtenerMediador(dtoAAF.getNifMediador(),activo.getId()));
 			if (!Checks.esNulo(dtoAAF.getNifMediador())) {
 				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAAF.getNifMediador());
 				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_MEDIADOR);
@@ -391,6 +398,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 			ActivoInfoComercial activoInfoComercial = new ActivoInfoComercial();
 			activoInfoComercial.setActivo(activo);
 			activoInfoComercial.setTipoActivo(activo.getTipoActivo());
+			activoInfoComercial.setMediadorInforme(this.obtenerMediador(dtoAAF.getNifMediador(),activo.getId()));
 			if (!Checks.esNulo(dtoAAF.getNifMediador())) {
 				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAAF.getNifMediador());
 				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_MEDIADOR);
@@ -581,6 +589,17 @@ public class AltaActivoFinanciero implements AltaActivoService {
 
 		activo.setBien(bien);
 		genericDao.save(Activo.class, activo);
+	}
+	
+	private ActivoProveedor obtenerMediador(String nifMediador,Long idActivo){
+		ActivoProveedor mediador = null;
+		mediador = gestorActivoManager.obtenerProveedorTecnico(idActivo);
+		if (!Checks.esNulo(nifMediador) && Checks.esNulo(mediador)) {
+			Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", nifMediador);
+			Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_MEDIADOR);
+			mediador = genericDao.get(ActivoProveedor.class, f1,f2);			
+		}
+		return mediador;
 	}
 
 }

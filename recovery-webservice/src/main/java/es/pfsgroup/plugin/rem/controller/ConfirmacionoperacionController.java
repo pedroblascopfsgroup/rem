@@ -49,8 +49,6 @@ public class ConfirmacionoperacionController {
 	@Autowired
 	private UpdaterStateApi updaterState;
 
-	
-
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@SuppressWarnings("unchecked")

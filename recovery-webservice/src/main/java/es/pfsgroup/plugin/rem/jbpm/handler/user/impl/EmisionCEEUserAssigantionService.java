@@ -51,8 +51,12 @@ public class EmisionCEEUserAssigantionService implements UserAssigantionService 
 			
 			DDCartera cartera = tareaActivo.getTramite().getActivo().getCartera();
 			
-			// Si la cartera es BANKIA, SAREB o TANGO, el gestor de las tareas es TINSA CERTIFY
-			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_TANGO.equals(cartera.getCodigo())){
+			// Si la cartera es BANKIA, SAREB o TANGO o GIANTS, el gestor de las tareas es TINSA CERTIFY
+			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()) 
+			|| DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()) 
+			|| DDCartera.CODIGO_CARTERA_TANGO.equals(cartera.getCodigo())
+			|| DDCartera.CODIGO_CARTERA_GIANTS.equals(cartera.getCodigo())
+			){
 				//Usuario del Proveedor Tinsa para asignar a tareas (encontrado por CIF)
 				Filter filtroUsuProveedorBankiaSareb = genericDao.createFilter(FilterType.EQUALS, "username", GestorActivoApi.CIF_PROVEEDOR_BANKIA_SAREB_TINSA);
 				Usuario usuProveedorBankiaSareb = genericDao.get(Usuario.class, filtroUsuProveedorBankiaSareb);

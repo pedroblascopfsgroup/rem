@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.FuncionManager;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -24,6 +25,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
+import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
@@ -78,14 +80,6 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		Activo activo = activoApi.get(id);
 		ActivoPublicacion activopublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(id);
 		List<Perfil> perfilesUsuario = usuarioLogado.getPerfiles();
-		boolean esGestorActivo = false;
-		for (int i=0;i<perfilesUsuario.size();i++) {
-			
-			if (perfilesUsuario.get(i).getCodigo().equals("HAYAGESACT")) {
-				esGestorActivo = true;
-			}
-			
-		}
 		
 		boolean restringida = false;
 		boolean obraNueva = false;
@@ -131,52 +125,83 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			listaAvisos.add(dtoAviso);
 		}
 		
-		//Aviso 3 / 4: Situación posesoria OCUPADO + Con o sín título
-		if (esGestorActivo && activo.getSituacionPosesoria().getOcupado() == 1) {
-			
-			if (activo.getSituacionPosesoria().getConTitulo() == 1) {
-				DtoAviso dtoAviso = new DtoAviso();
-				dtoAviso.setDescripcion("Situación posesoria ocupado con título");
-				dtoAviso.setId(String.valueOf(id));
-				listaAvisos.add(dtoAviso);
-			} else {
-				DtoAviso dtoAviso = new DtoAviso();
-				dtoAviso.setDescripcion("Situación posesoria ocupado sin título");
-				dtoAviso.setId(String.valueOf(id));
-				listaAvisos.add(dtoAviso);
+		if (Checks.esNulo(activo.getSituacionPosesoria())) {
+			Auditoria auditoria = Auditoria.getNewInstance();
+
+			ActivoSituacionPosesoria actSit = new ActivoSituacionPosesoria();
+			actSit.setActivo(activo);
+			actSit.setVersion(new Long(0));
+			actSit.setAuditoria(auditoria);
+			activo.setSituacionPosesoria(actSit);
+
+		}
+		
+		// Aviso 3 / 4: Situación posesoria OCUPADO + Con o sín título
+		if (!Checks.esNulo(activo.getSituacionPosesoria().getOcupado())) {
+			if (activo.getSituacionPosesoria().getOcupado() == 1) {
+
+				if (activo.getSituacionPosesoria().getConTitulo() == 1) {
+					DtoAviso dtoAviso = new DtoAviso();
+					dtoAviso.setDescripcion("Situación posesoria ocupado con título");
+					dtoAviso.setId(String.valueOf(id));
+					listaAvisos.add(dtoAviso);
+				} else {
+					DtoAviso dtoAviso = new DtoAviso();
+					dtoAviso.setDescripcion("Situación posesoria ocupado sin título");
+					dtoAviso.setId(String.valueOf(id));
+					listaAvisos.add(dtoAviso);
+				}
+
 			}
-			
 		}
 		
-		//Aviso 5: Tapiado 
-		if (esGestorActivo && BooleanUtils.toBoolean(activo.getSituacionPosesoria().getAccesoTapiado())) {
-			DtoAviso dtoAviso = new DtoAviso();
-			dtoAviso.setDescripcion("Situación de acceso tapiado");
-			dtoAviso.setId(String.valueOf(id));
-			listaAvisos.add(dtoAviso);
-			
+		// Aviso 5: Tapiado
+		if (!Checks.esNulo(activo.getSituacionPosesoria().getAccesoTapiado())) {
+			if (BooleanUtils.toBoolean(activo.getSituacionPosesoria().getAccesoTapiado())) {
+				DtoAviso dtoAviso = new DtoAviso();
+				dtoAviso.setDescripcion("Situación de acceso tapiado");
+				dtoAviso.setId(String.valueOf(id));
+				listaAvisos.add(dtoAviso);
+
+			}
 		}
-		
+
 		// Aviso 6: Acceso antiocupa
-		if (esGestorActivo && BooleanUtils.toBoolean(activo.getSituacionPosesoria().getAccesoAntiocupa())) {
-			DtoAviso dtoAviso = new DtoAviso();
-			dtoAviso.setDescripcion("Situación de acceso con puerta antiocupa");
-			dtoAviso.setId(String.valueOf(id));
-			listaAvisos.add(dtoAviso);
-			
+		if (!Checks.esNulo(activo.getSituacionPosesoria().getAccesoAntiocupa())) {
+			if (BooleanUtils.toBoolean(activo.getSituacionPosesoria().getAccesoAntiocupa())) {
+				DtoAviso dtoAviso = new DtoAviso();
+				dtoAviso.setDescripcion("Situación de acceso con puerta antiocupa");
+				dtoAviso.setId(String.valueOf(id));
+				listaAvisos.add(dtoAviso);
+
+			}
 		}
 		
 		// Aviso 7: Pendiente toma posesión
-		if (esGestorActivo && activo.getAdjJudicial() != null && activo.getAdjJudicial().getAdjudicacionBien() != null 
-				&&  activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getFechaTomaPosesion() == null) {
-			
-			DtoAviso dtoAviso = new DtoAviso();
-			dtoAviso.setDescripcion("Pendiente toma de posesión");
-			dtoAviso.setId(String.valueOf(id));
-			listaAvisos.add(dtoAviso);
-			
+		if (!Checks.esNulo(activo.getAdjJudicial())
+				&& !Checks.esNulo(activo.getSituacionPosesoria().getFechaTomaPosesion())) {
+			if (activo.getAdjJudicial().getAdjudicacionBien() != null) {
+
+				DtoAviso dtoAviso = new DtoAviso();
+				dtoAviso.setDescripcion("Pendiente toma de posesión");
+				dtoAviso.setId(String.valueOf(id));
+				listaAvisos.add(dtoAviso);
+
+			}
 		}
 		
+		// Aviso 7: Pendiente toma posesión
+				if (!Checks.esNulo(activo.getAdjJudicial())
+						&& Checks.esNulo(activo.getSituacionPosesoria().getFechaTomaPosesion())) {
+					if (activo.getAdjJudicial().getAdjudicacionBien() != null) {
+
+						DtoAviso dtoAviso = new DtoAviso();
+						dtoAviso.setDescripcion("Pendiente toma de posesión");
+						dtoAviso.setId(String.valueOf(id));
+						listaAvisos.add(dtoAviso);
+
+					}
+				}
 		// Aviso 8: Sin gestión
 		// Si no es judicial...
 		if(!Checks.esNulo(activo)){

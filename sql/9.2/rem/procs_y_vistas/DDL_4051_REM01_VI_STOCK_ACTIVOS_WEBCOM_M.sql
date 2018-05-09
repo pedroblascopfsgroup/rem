@@ -199,7 +199,8 @@ BEGIN
        actpub.apu_check_ocultar_precio_v 													AS ind_ocultar_precio_venta, 
        actpub.apu_check_ocultar_precio_a 													AS ind_ocultar_precio_alquiler, 
        v.condicionantes 																	AS arr_cod_detalle_publicacion, 
-       v.descripcion_otros																	AS descripcion_otros
+       v.descripcion_otros																	AS descripcion_otros,
+		PVEPRV.PVE_COD_REM 																	AS ACTIVO_PROVEEDOR_TECNICO
     	FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
 		INNER JOIN '||V_ESQUEMA||'.ACT_LOC_LOCALIZACION LOC ON LOC.ACT_ID = ACT.ACT_ID
 		INNER JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION BLOC ON BLOC.BIE_LOC_ID = LOC.BIE_LOC_ID
@@ -276,6 +277,12 @@ BEGIN
 	               || TO_CHAR (v.estado_portal_externo) condicionantes,
 	               v.otro descripcion_otros
 	          FROM rem01.v_cond_disponibilidad v) v ON v.act_id = actpub.act_id		
+
+    	LEFT JOIN(  SELECT DISTINCT pve.PVE_COD_REM, gac.ACT_ID FROM '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO gac 
+                inner join '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD gee ON gee.GEE_ID = gac.GEE_ID
+                inner join '||V_ESQUEMA||'.ACT_PVC_PROVEEDOR_CONTACTO pvc ON pvc.USU_ID = gee.USU_ID
+                inner join '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR pve ON pve.PVE_ID = pvc.PVE_ID
+                inner join '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR tpr ON tpr.DD_TPR_ID = pve.DD_TPR_ID AND tpr.DD_TPR_CODIGO =''05'') PVEPRV ON PVEPRV.ACT_ID = act.ACT_ID
 
 		where act.borrado = 0 and sps.borrado = 0';
 

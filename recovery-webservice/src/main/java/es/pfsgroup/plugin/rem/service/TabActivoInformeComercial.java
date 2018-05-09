@@ -19,6 +19,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoComunidadPropietarios;
@@ -26,6 +27,7 @@ import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoLocalComercial;
 import es.pfsgroup.plugin.rem.model.ActivoPlazaAparcamiento;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
@@ -45,6 +47,9 @@ public class TabActivoInformeComercial implements TabActivoService {
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private GestorActivoApi gestorActivoManager;
 
 	@Autowired
 	private TabActivoFactoryApi tabActivoFactory;
@@ -137,6 +142,17 @@ public class TabActivoInformeComercial implements TabActivoService {
 					informeComercial.setAutorizacionWeb(0);
 				}
 				
+				// Datos del proveedor tecnico.
+				ActivoProveedor pve = gestorActivoManager.obtenerProveedorTecnico(activo.getId());
+				
+				if (!Checks.esNulo(pve)) {
+					beanUtilNotNull.copyProperty(informeComercial, "codigoProveedor", pve.getCodigoProveedorRem());
+					beanUtilNotNull.copyProperty(informeComercial, "nombreProveedor", pve.getNombre());
+					beanUtilNotNull.copyProperty(informeComercial, "tieneProveedorTecnico", true);
+				}else{
+					beanUtilNotNull.copyProperty(informeComercial, "tieneProveedorTecnico", false);
+				}
+				
 				// Datos de la Comunidad de vecinos al Dto.
 				// Comunidad inscrita = constituida.
 				beanUtilNotNull.copyProperty(informeComercial, "inscritaComunidad",
@@ -227,17 +243,7 @@ public class TabActivoInformeComercial implements TabActivoService {
 				// Nombre y telefono Administrador.
 				beanUtilNotNull.copyProperty(informeComercial, "nomAdministradorComunidad", comunidadPropietarios.getNomAdministrador());
 				beanUtilNotNull.copyProperty(informeComercial, "telAdministradorComunidad", comunidadPropietarios.getTelfAdministrador());
-				//Fecha de comunicacion
-				beanUtilNotNull.copyProperty(informeComercial, "fechaComunicacionComunidad", comunidadPropietarios.getFechaComunicacionComunidad());
-				//Cartas
-				beanUtilNotNull.copyProperty(informeComercial, "envioCartas", comunidadPropietarios.getEnvioCartas());
-				beanUtilNotNull.copyProperty(informeComercial, "numCartas", comunidadPropietarios.getNumCartas());
-				//Contacto
-				beanUtilNotNull.copyProperty(informeComercial, "contactoTel", comunidadPropietarios.getContactoTel());
-				//Visita
-				beanUtilNotNull.copyProperty(informeComercial, "visita", comunidadPropietarios.getVisita());
-				//Burofax
-				beanUtilNotNull.copyProperty(informeComercial, "burofax", comunidadPropietarios.getBurofax());
+				
 			}
 
 			
@@ -271,6 +277,19 @@ public class TabActivoInformeComercial implements TabActivoService {
 		try {
 			// Se guardan todas las propieades del "Informe Comercial" que son comunes a
 			// "Informacion Comercial"
+			
+			if (Checks.esNulo(activo.getInfoComercial())){
+				ActivoInfoComercial actInfoComercial = new ActivoInfoComercial();
+				actInfoComercial.setActivo(activo);
+				activo.setInfoComercial(actInfoComercial);
+				genericDao.save(ActivoInfoComercial.class, activo.getInfoComercial());
+				
+				ActivoEdificio actEdificio = new ActivoEdificio();
+				actEdificio.setInfoComercial(actInfoComercial);
+				activo.getInfoComercial().setEdificio(actEdificio);
+				genericDao.save(ActivoEdificio.class, activo.getInfoComercial().getEdificio());
+			}
+			
 			if (!Checks.esNulo(activo.getInfoComercial())) {
 				beanUtilNotNull.copyProperties(activo.getInfoComercial(), activoInformeDto);
 
@@ -370,13 +389,6 @@ public class TabActivoInformeComercial implements TabActivoService {
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "telefonoAdministradorComunidadEdificio", activoInformeDto.getTelAdministradorComunidad());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "nombreAdministradorComunidadEdificio", activoInformeDto.getNomAdministradorComunidad());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "telefonoPresidenteComunidadEdificio", activoInformeDto.getTelPresidenteComunidad());
-					
-					beanUtilNotNull.copyProperty(activo.getComunidadPropietarios(), "fechaComunicacionComunidad", activoInformeDto.getFechaComunicacionComunidad());
-					beanUtilNotNull.copyProperty(activo.getComunidadPropietarios(), "envioCartas", activoInformeDto.getEnvioCartas());
-					beanUtilNotNull.copyProperty(activo.getComunidadPropietarios(), "numCartas", activoInformeDto.getNumCartas());
-					beanUtilNotNull.copyProperty(activo.getComunidadPropietarios(), "contactoTel", activoInformeDto.getContactoTel());
-					beanUtilNotNull.copyProperty(activo.getComunidadPropietarios(), "visita", activoInformeDto.getVisita());
-					beanUtilNotNull.copyProperty(activo.getComunidadPropietarios(), "burofax", activoInformeDto.getBurofax());
 					
 					
 					//terrazas

@@ -268,7 +268,17 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			
 			var storeListaActivosTrabajo = me.lookupReference('listaActivosSubidaRef').getStore();
 			if(!Ext.isEmpty(storeListaActivosTrabajo) && !Ext.isEmpty(storeListaActivosTrabajo.data)){
+				//var propietarioId = storeListaActivosTrabajo.data.items[0].data.propietarioId;
 				for (i=0; i < storeListaActivosTrabajo.data.length; i++) {
+					/*if(check){
+						if(storeListaActivosTrabajo.data.items[i].data.propietarioId != propietarioId){
+							Ext.MessageBox.alert(
+									HreRem.i18n("msgbox.multiples.trabajos.seleccionado.diferente.propietario.titulo"),
+									HreRem.i18n("msgbox.multiples.trabajos.seleccionado.diferente.propietario.mensaje")
+							);
+							return false;
+						}
+					}*/
 					if (storeListaActivosTrabajo.data.items[i].data.tienePerimetroGestion != "1"){
 						Ext.MessageBox.alert(
 								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
@@ -647,14 +657,14 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	},
 
 	addParamsTrabajo: function(store, operation, opts){
-		
 		var me = this;
 		//Acceder as� a los tres atributos que le hemos pasado a la openModalWindow
 		//de selecci�n de tarifa: tipo de trabajo, subtipo de trabajo y cartera
+		var idTrabajo = me.getViewModel().get("trabajo.id");
 		var carteraCodigo = me.getViewModel().get("trabajo.carteraCodigo"),
 		tipoTrabajoCodigo = me.getViewModel().get("trabajo.tipoTrabajoCodigo"),
 		subtipoTrabajoCodigo = me.getViewModel().get("trabajo.subtipoTrabajoCodigo");
-		store.getProxy().extraParams = {cartera: carteraCodigo, tipoTrabajo: tipoTrabajoCodigo, subtipoTrabajo: subtipoTrabajoCodigo};	
+		store.getProxy().extraParams = {idTrabajo: idTrabajo, cartera: carteraCodigo, tipoTrabajo: tipoTrabajoCodigo, subtipoTrabajo: subtipoTrabajoCodigo};	
 		return true;		
 
 	},

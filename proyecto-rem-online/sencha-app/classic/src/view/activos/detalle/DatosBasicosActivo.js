@@ -248,7 +248,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							reference: 'pais',
 							fieldLabel: HreRem.i18n('fieldlabel.pais'),
 			            	bind: {
-			            		store: '{comboPais}',
+			            		store: '{comboCountries}',
 			            		value: '{activo.paisCodigo}'
 			            	},
     						colspan: 2,

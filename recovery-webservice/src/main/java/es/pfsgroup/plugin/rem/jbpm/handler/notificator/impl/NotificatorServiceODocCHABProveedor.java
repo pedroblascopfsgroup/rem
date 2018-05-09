@@ -68,7 +68,10 @@ public class NotificatorServiceODocCHABProveedor extends AbstractNotificatorServ
 			// o el seleccionado por el gestor de activo en el caso de Cajamar)
 			Activo activo = tramite.getActivo();
 			DDCartera cartera = tramite.getActivo().getCartera();
-			if ( cartera.equals(DDCartera.CODIGO_CARTERA_BANKIA) ||  cartera.equals(DDCartera.CODIGO_CARTERA_SAREB) || cartera.equals(DDCartera.CODIGO_CARTERA_TANGO)) {
+			if ( cartera.equals(DDCartera.CODIGO_CARTERA_BANKIA) ||  
+			     cartera.equals(DDCartera.CODIGO_CARTERA_SAREB)  || 
+			     cartera.equals(DDCartera.CODIGO_CARTERA_TANGO)  ||
+			     cartera.equals(DDCartera.CODIGO_CARTERA_GIANTS)) {
 				proveedor = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTORIA_CEDULAS);
 			}
 //			if ( cartera.equals(DDCartera.CODIGO_CARTERA_CAJAMAR) ) {

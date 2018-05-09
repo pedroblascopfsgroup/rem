@@ -53,6 +53,9 @@ Ext.define('HreRem.model.Tramite', {
       		name : 'subtipoTrabajo'
       	},
       	{
+      		name: 'codigoSubtipoTrabajo'
+      	},
+      	{
       		name : 'idExpediente'
       	},
       	{
@@ -134,6 +137,14 @@ Ext.define('HreRem.model.Tramite', {
     	},
     	{
     		name: 'desactivarBotonLanzarTareaAdministrativa',
+    		type: 'boolean'
+    	},
+    	{
+    		name: 'esTarifaPlana',
+    		type: 'boolean'
+    	},
+    	{
+    		name: 'activoAplicaGestion',
     		type: 'boolean'
     	}
     ],

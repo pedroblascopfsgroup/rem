@@ -41,7 +41,9 @@ DECLARE
         -- USUARIOCREAR ------ CARTERA --
         T_VAL('MIG_CAJAMAR'   , '01'),
         T_VAL('MIG_SAREB'     , '02'),
-        T_VAL('MIG_BANKIA'    , '03')
+        T_VAL('MIG_BANKIA'    , '03'),
+        T_VAL('MIG_LIBERBANK' , '08'),
+        T_VAL('MIG_COOPER'    , '03')
     );  
     V_TMP_VAL T_VAL; 
     

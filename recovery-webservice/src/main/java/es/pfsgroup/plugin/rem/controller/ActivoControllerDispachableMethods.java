@@ -9,6 +9,11 @@ import org.springframework.ui.ModelMap;
 
 import es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap;
 
+import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
+import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
+import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
+
 
 @SuppressWarnings("rawtypes")
 class ActivoControllerDispachableMethods {
@@ -291,7 +296,24 @@ class ActivoControllerDispachableMethods {
 			public void execute(Long id, DtoActivoPatrimonio dto) {
 				if (dto != null ){
 					this.controller.saveDatosPatrimonio(dto, id, new ModelMap());
+				}
+			}
+		});
+		
+		/*
+		 * TAB_COMUNIDAD-ENTIDADES
+		 */
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_COMUNIDAD_PROPIETARIOS, new DispachableMethod<DtoComunidadpropietariosActivo>() {
 
+			@Override
+			public Class<DtoComunidadpropietariosActivo> getArgumentType() {
+				return DtoComunidadpropietariosActivo.class;
+			}
+
+			@Override
+			public void execute(Long id, DtoComunidadpropietariosActivo dto) {
+				if (dto != null ){
+					this.controller.saveActivoComunidadPropietarios(dto, id, new ModelMap());
 
 				}
 			}

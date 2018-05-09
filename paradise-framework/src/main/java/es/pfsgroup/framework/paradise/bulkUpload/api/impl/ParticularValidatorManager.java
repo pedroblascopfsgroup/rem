@@ -1113,6 +1113,26 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 	}
 	
+	@Override
+	public Boolean existeProveedorMediadorByNIFConFVD(String proveedorMediadorNIF) {
+		if(Checks.esNulo(proveedorMediadorNIF)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_PVE_PROVEEDOR WHERE"
+				+ "		 PVE_DOCIDENTIF = '" + proveedorMediadorNIF + "'"
+				+ " 	 AND DD_TPR_ID = (SELECT DD_TPR_ID FROM DD_TPR_TIPO_PROVEEDOR WHERE DD_TPR_CODIGO = '04')" // Mediador-Colaborador-API.
+				+ " 	 OR DD_TPR_ID = (SELECT DD_TPR_ID FROM DD_TPR_TIPO_PROVEEDOR WHERE DD_TPR_CODIGO = '18')"  // Fuerza de Venta Directa
+				+ "		 AND BORRADO = 0");
+		
+		if("0".equals(resultado)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
 	public boolean existeSubCarteraByCod(String codSubCartera){
 		if (Checks.esNulo(codSubCartera)){
 			return false;
@@ -1640,6 +1660,66 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(actCanarias == agrCanarias) return false;
 				else return true;
 		
+	}
+	
+	@Override
+	public boolean comprobarDistintoPropietario(String numActivo, String numAgrupacion) {
+				
+		String agrPro;
+		String actPro;
+				
+		agrPro = rawDao.getExecuteSQL("SELECT PRO_ID FROM ACT_PAC_PROPIETARIO_ACTIVO PAC " + 
+				"JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = PAC.ACT_ID " + 
+				"JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = PAC.ACT_ID " + 
+				"JOIN ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID " + 
+				"WHERE AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+" AND PAC.ACT_ID = AGR.AGR_ACT_PRINCIPAL");
+		
+		if(Checks.esNulo(agrPro)) {
+			agrPro = rawDao.getExecuteSQL("SELECT PRO_ID FROM ACT_PAC_PROPIETARIO_ACTIVO PAC " + 
+					"JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = PAC.ACT_ID " + 
+					"JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = PAC.ACT_ID " + 
+					"JOIN ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID " + 
+					"WHERE AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+" AND ROWNUM = 1");
+		}
+		
+		actPro = rawDao.getExecuteSQL("SELECT PRO_ID FROM ACT_PAC_PROPIETARIO_ACTIVO PAC " +
+				"JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = PAC.ACT_ID AND ACT_NUM_ACTIVO = "+numActivo);
+		
+		
+		if(actPro.equals(agrPro)) return false;
+				else return true;
+	}
+
+	@Override
+	public boolean comprobarDistintoPropietarioListaActivos(String[] activos) {
+
+		String actPro = rawDao.getExecuteSQL("SELECT PRO_ID FROM ACT_PAC_PROPIETARIO_ACTIVO PAC "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = PAC.ACT_ID AND ACT_NUM_ACTIVO = " + activos[0]);
+
+		for (int i = 1; i < activos.length; i++) {
+			String actAComparar = rawDao.getExecuteSQL("SELECT PRO_ID FROM ACT_PAC_PROPIETARIO_ACTIVO PAC "
+					+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = PAC.ACT_ID AND ACT_NUM_ACTIVO = " + activos[i]);
+			if (actPro != actAComparar) return true;
+		}
+
+		return false;
+	}
+	
+	@Override
+	public boolean activoConOfertasTramitadas(String numActivo) {
+
+		String actofr = rawDao.getExecuteSQL("    SELECT COUNT(aof1.act_id) "
+				+ "    FROM OFR_OFERTAS ofr1 "
+				+ "    INNER JOIN ACT_OFR aof1 on ofr1.ofr_id = aof1.ofr_id "
+				+ "    INNER JOIN ACT_ACTIVO act1 on aof1.act_id = act1.act_id "
+				+ "    INNER JOIN DD_EOF_ESTADOS_OFERTA eof1 on ofr1.dd_eof_id = eof1.dd_eof_id "
+				+ "    WHERE "
+				+ "      eof1.dd_eof_codigo = '01' "
+				+ "      AND act1.act_num_activo = "+numActivo+" "
+				+ "      AND ofr1.borrado = 0 ");
+		
+		return actofr.equals("0");
+
 	}
 	
 }

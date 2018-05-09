@@ -95,6 +95,9 @@ public class VBusquedaGastoActivo implements Serializable {
 	@Column(name="DD_EGA_DESCRIPCION")
 	private String estadoGastoDescripcion;
 	
+	@Column(name = "GPV_REF_EMISOR")
+	private String numFactura;
+	
 	
 	public Long getId() {
 		return id;
@@ -303,6 +306,13 @@ public class VBusquedaGastoActivo implements Serializable {
 	public void setEstadoGastoDescripcion(String estadoGastoDescripcion) {
 		this.estadoGastoDescripcion = estadoGastoDescripcion;
 	}
-	
+
+	public String getNumFactura() {
+		return numFactura;
+	}
+
+	public void setNumFactura(String numFactura) {
+		this.numFactura = numFactura;
+	}
 
 }

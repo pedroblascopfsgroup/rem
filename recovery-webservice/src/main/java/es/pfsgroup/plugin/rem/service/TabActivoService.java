@@ -19,6 +19,7 @@ public interface TabActivoService extends GenericService{
 	public static final String TAB_INFORMACION_COMERCIAL = "informacioncomercial"; 	// Pestana 7
 	public static final String TAB_INFORME_COMERCIAL = "informecomercial";
 	public static final String TAB_ADMINISTRACION = "administracion";
+	public static final String TAB_COMUNIDAD_PROPIETARIOS = "datosComunidad";
 
 	public static final String TAB_DATOS_PUBLICACION = "datospublicacion";
     public static final String TAB_ACTIVO_HISTORICO_ESTADO_PUBLICACION = "activohistoricoestadopublicacion";

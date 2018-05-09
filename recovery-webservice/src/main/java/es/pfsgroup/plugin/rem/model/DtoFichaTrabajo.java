@@ -16,7 +16,7 @@ public class DtoFichaTrabajo {
 	private Long idTrabajo;
 	
     private String numTrabajo;
-    
+   
     private Long idTrabajoWebcom;
     
     private String nombreProveedor;
@@ -130,6 +130,8 @@ public class DtoFichaTrabajo {
     private Date fechaEmisionFactura;
     
     private String idsActivos;
+    
+    private Integer esTarifaPlana;
     
 	
     public Long getIdTrabajo() {
@@ -622,4 +624,14 @@ public class DtoFichaTrabajo {
 	public void setIdsActivos(String idsActivos) {
 		this.idsActivos = idsActivos;
 	}
+
+	public Integer getEsTarifaPlana() {
+		return esTarifaPlana;
+	}
+
+	public void setEsTarifaPlana(Integer esTarifaPlana) {
+		this.esTarifaPlana = esTarifaPlana;
+	}
+	
+	
 }

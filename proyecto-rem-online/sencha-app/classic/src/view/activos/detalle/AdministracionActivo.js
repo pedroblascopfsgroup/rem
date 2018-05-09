@@ -13,7 +13,7 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
     	}
     },
 	
-	requires: ['HreRem.model.ActivoAdministracion'],
+	requires: ['HreRem.model.ActivoAdministracion', 'HreRem.view.activos.detalle.ImpuestosActivoGrid'],
 
     recordName: "administracion",
 
@@ -170,6 +170,10 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				            flex: 1,				            
 				            hideable: false
 					   },
+					   {    text: HreRem.i18n('title.activo.administracion.numFactura'),
+				        	dataIndex: 'numFactura',
+				        	flex: 1
+				       },
 				       {    text: HreRem.i18n('title.activo.administracion.tipo'),
 				        	dataIndex: 'tipoGastoDescripcion',
 				        	flex: 1
@@ -236,7 +240,17 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				   ]
 				}
 			]
-	}
+	},
+		{
+			xtype:'fieldsettable',
+			title:HreRem.i18n('title.administracion.activo.tipo.impuesto'),
+			defaultType: 'textfieldbase',
+			colspan: 3,
+			items :
+				[
+					{xtype: "impuestosactivogrid", reference: "impuestosactivogrid"}
+				]
+		}
     ];
 
 		me.addPlugin({ptype: 'lazyitems', items: items });

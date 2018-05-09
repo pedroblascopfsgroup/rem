@@ -207,6 +207,9 @@ Ext.define('HreRem.model.FichaTrabajo', {
     			name: 'fechaEmisionFactura',
     			type:'date',
     			dateFormat: 'c'
+    		},
+    		{
+    			name: 'esTarifaPlana'
     		}
     ],
     

@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionEconomicaTrabajo;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
@@ -111,7 +112,7 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numActivo", dto.getNumActivo());
    		if(!Checks.esNulo(dto.getIdProveedor())) {
    			hb.appendWhere("tbj.importeTotal > " +BigDecimal.ZERO);
-   	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoEstado", "05");
+   	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoEstado", DDEstadoTrabajo.ESTADO_PENDIENTE_PAGO);
    	   		if(!Checks.esNulo(gasto.getPropietario())) {
    	   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.propietario", gasto.getPropietario().getId());
    	   		}
@@ -203,7 +204,7 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "cfgTar.tipoTrabajo.codigo", filtro.getTipoTrabajoCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "cfgTar.subtipoTrabajo.codigo", filtro.getSubtipoTrabajoCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "cfgTar.cartera.codigo", filtro.getCarteraCodigo());
-		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "cfgTar.proveedor.id", filtro.getIdProveedor());
 		return HibernateQueryUtils.page(this, hb, filtro);
 	}
 	

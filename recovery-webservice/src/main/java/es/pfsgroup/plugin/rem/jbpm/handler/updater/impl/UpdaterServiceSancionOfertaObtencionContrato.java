@@ -57,6 +57,8 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 		Filter filtro;
 		
+// Se comenta por errores en el merge c9d4164588f764216e0eeaf20836605357cf6b24
+
 //		for (TareaExternaValor valor : valores) {
 //
 //			if (FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -64,6 +66,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 //				if (!Checks.esNulo(reserva)) {
 //					//Si hay reserva y firma, se desbloquea la tarea ResultadoPBC
 //					reactivarTareaResultadoPBC(valor.getTareaExterna(), expediente);
+//					activoTramiteApi.reactivarTareaResultadoPBC(valor.getTareaExterna(), expediente);
 //					try {			
 //						reserva.setFechaFirma(ft.parse(valor.getValor()));
 //						genericDao.save(Reserva.class, reserva);
@@ -95,6 +98,9 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 			
 			
 		}		
+//		}
+//			genericDao.save(ExpedienteComercial.class, expediente);
+//		
 		
 		if (!Checks.esNulo(ofertaAceptada)) {
 			if (ofertaApi.checkDerechoTanteo(tramite.getTrabajo()))
@@ -131,7 +137,29 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 
 			genericDao.save(ExpedienteComercial.class, expediente);
 
+
 			//Actualizar el estado comercial de los activos de la oferta y, consecuentemente, el estado de publicación.
+			for (TareaExternaValor valor : valores) {
+
+				if (FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					Reserva reserva = expediente.getReserva();
+					if (!Checks.esNulo(reserva)) {
+						//Si hay reserva y firma, se desbloquea la tarea ResultadoPBC
+						activoTramiteApi.reactivarTareaResultadoPBC(valor.getTareaExterna(), expediente);
+						try {			
+							reserva.setFechaFirma(ft.parse(valor.getValor()));
+							genericDao.save(Reserva.class, reserva);
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+				genericDao.save(ExpedienteComercial.class, expediente);
+				
+				
+			}
+			
+			//Actualizar el estado comercial de los activos de la oferta
 			ofertaApi.updateStateDispComercialActivosByOferta(ofertaAceptada);
 		}
 

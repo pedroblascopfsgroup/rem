@@ -83,6 +83,10 @@ public class MSVExcelValidatorFactoryImpl {
 	
 	@Autowired
 	private MSVOcultacionAlquiler ocultacionAlquiler;
+
+	@Autowired
+	private MSVOkTecnicoExcelValidator okTecnicoValidator;
+
 	
 	
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
@@ -139,8 +143,14 @@ public class MSVExcelValidatorFactoryImpl {
 			else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_GESTORES.equals(codTipoOperacion)){
 				return actualizarGestores;
 			}
+
 			else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_OCULTACION_VENTA.equals(codTipoOperacion)){
 				return ocultacionVenta;
+			}
+			else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ALTA_ACTIVOS_THIRD_PARTY.equals(codTipoOperacion)){
+				return altaActivosTP;
+			}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CENTRAL_TECNICA_OK_TECNICO.equals(codTipoOperacion)){
+				return okTecnicoValidator;
 			}
 			else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_OCULTACION_ALQUILER.equals(codTipoOperacion)){
 				return ocultacionAlquiler;

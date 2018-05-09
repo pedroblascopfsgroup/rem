@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
+
 public interface ParticularValidatorApi {
 
 	public String getOneNumActivoAgrupacionRaw(String numAgrupacion);
@@ -343,5 +345,13 @@ public interface ParticularValidatorApi {
 	public boolean existeSubtipoActivoByCod(String codSubtipoActivo);
 
 	public Boolean distintosTiposImpuesto(String numActivo, String numAgrupacion);
+
+	public boolean comprobarDistintoPropietario(String numActivo, String numAgrupacion);
+
+	boolean comprobarDistintoPropietarioListaActivos(String[] activos);
+
+	boolean activoConOfertasTramitadas(String numActivo);
+
+	Boolean existeProveedorMediadorByNIFConFVD(String proveedorMediadorNIF);
 
 }

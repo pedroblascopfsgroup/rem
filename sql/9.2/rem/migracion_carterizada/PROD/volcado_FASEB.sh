@@ -2,7 +2,7 @@
 inicio=`date +%s`
 if [ "$#" -ne 2 ]; then
     echo "Parametros: <pass@host:puerto/ORACLE_SID>"
-    echo "Parametros: <USUARIO_MIGRACION> {CAJAMAR,SAREB,BANKIA}"
+    echo "Parametros: <USUARIO_MIGRACION> {CAJAMAR,SAREB,BANKIA,LIBERBANK,COOPER}"
     exit 1
 fi
 

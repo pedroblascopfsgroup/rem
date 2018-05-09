@@ -127,6 +127,7 @@ import es.pfsgroup.plugin.rem.model.DtoValoracion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.IncrementoPresupuesto;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
@@ -1725,6 +1726,8 @@ public class ActivoAdapter {
 						tramite.getTrabajo().getTipoTrabajo().getDescripcion());
 				beanUtilNotNull.copyProperty(dtoTramite, "subtipoTrabajo",
 						tramite.getTrabajo().getSubtipoTrabajo().getDescripcion());
+				beanUtilNotNull.copyProperty(dtoTramite, "codigoSubtipoTrabajo",
+						tramite.getTrabajo().getSubtipoTrabajo().getCodigo());
 			}
 			if (!Checks.esNulo(tramite.getActivo().getTipoActivo()))
 				beanUtilNotNull.copyProperty(dtoTramite, "tipoActivo",
@@ -1792,8 +1795,10 @@ public class ActivoAdapter {
 							expedienteComercial.getEstado().getDescripcion());
 					beanUtilNotNull.copyProperty(dtoTramite, "numEC", expedienteComercial.getNumExpediente());
 				}
+				
+				beanUtilNotNull.copyProperty(dtoTramite, "esTarifaPlana", tramite.getTrabajo().getEsTarifaPlana());
 			}
-			
+
 			beanUtilNotNull.copyProperty(dtoTramite, "estaTareaRespuestaBankiaDevolucion", false);
 			beanUtilNotNull.copyProperty(dtoTramite, "estaTareaPendienteDevolucion", false);
 			beanUtilNotNull.copyProperty(dtoTramite, "estaEnTareaSiguienteResolucionExpediente", false);
@@ -1814,7 +1819,10 @@ public class ActivoAdapter {
 					}
 				}
 			}
-
+			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(tramite.getActivo().getId());
+			boolean aplicaGestion = !Checks.esNulo(perimetroActivo) && Integer.valueOf(1).equals(perimetroActivo.getAplicaGestion())? true: false;
+			beanUtilNotNull.copyProperty(dtoTramite, "activoAplicaGestion", aplicaGestion);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

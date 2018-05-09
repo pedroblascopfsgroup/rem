@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=ISIDRO SOTOCA
---## FECHA_CREACION=20180312
+--## FECHA_CREACION=20180426
 --## ARTEFACTO=web
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-3893

@@ -20,6 +20,7 @@ import org.glassfish.jersey.media.multipart.BodyPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import es.capgemini.devon.beans.Service;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.gestorDocumental.api.RestClientApi;
 import es.pfsgroup.plugin.gestorDocumental.model.ServerRequest;
 
@@ -63,7 +64,9 @@ public class RestClientManager implements RestClientApi {
 				logger.debug("Posted:");
 				for (int i=0;i<parts.size();i++){
 					BodyPart body = parts.get(i);
-					logger.debug("\nBodypart["+i+"]: "+body.getContentDisposition().toString()+"="+body.getEntity().toString());
+					if(!Checks.esNulo(body)){
+						logger.debug("\nBodypart["+i+"]: "+body.getContentDisposition().toString()+"="+body.getEntity().toString());
+					}
 				}
 			}
 		}

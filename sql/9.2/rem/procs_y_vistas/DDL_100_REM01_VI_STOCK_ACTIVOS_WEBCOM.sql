@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20160919
+--## AUTOR=JIN LI HU
+--## FECHA_CREACION=20180509
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1551
+--## VERSION_ARTEFACTO=2.0.17
+--## INCIDENCIA_LINK=HREOS-4072
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico del stock de activos enviados a webcom. Se añaden campos HREOS-1551. Se amplia campo CondicionesEspecificas HREOS-1930.
 --##           
@@ -213,10 +213,10 @@ BEGIN
 					WHERE USU.USU_USERNAME = ''REM-USER'')) AS NUMBER (16, 0)) 				AS ID_USUARIO_REM_ACCION,
 		CAST(DDSTA.DD_STA_CODIGO AS VARCHAR2(5 CHAR))										AS COD_SUBTIPO_TITULO,
 		CAST(DDSCR.DD_SCR_CODIGO AS VARCHAR2(5 CHAR))										AS COD_SUB_CARTERA, 
-       TO_NUMBER(epv.dd_epv_codigo,99) 														AS cod_estado_publicacion,
-       TO_NUMBER(epa.dd_epa_codigo,99) 														AS cod_estado_pub_alquiler,
-       TO_NUMBER(tpu.dd_tpu_codigo,99) 														AS cod_subestado_pub_venta, 
-       TO_NUMBER(tpu.dd_tpu_codigo,99) 														AS cod_subestado_pub_alquiler,
+       CAST(epv.dd_epv_codigo AS VARCHAR2(5 CHAR)) 											AS cod_estado_publicacion,
+       CAST(epa.dd_epa_codigo AS VARCHAR2(5 CHAR)) 											AS cod_estado_pub_alquiler,
+       CAST(tpu.dd_tpu_codigo AS VARCHAR2(5 CHAR)) 											AS cod_subestado_pub_venta, 
+       CAST(tpu.dd_tpu_codigo AS VARCHAR2(5 CHAR)) 											AS cod_subestado_pub_alquiler,
        actpub.apu_check_ocultar_precio_v 													AS ind_ocultar_precio_venta, 
        actpub.apu_check_ocultar_precio_a 													AS ind_ocultar_precio_alquiler, 
        v.condicionantes 																	AS arr_cod_detalle_publicacion, 

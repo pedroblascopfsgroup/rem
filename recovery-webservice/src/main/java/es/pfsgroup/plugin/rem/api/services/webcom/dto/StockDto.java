@@ -45,7 +45,7 @@ public class StockDto implements WebcomRESTDto{
 	private DoubleDataType lng;
 	private StringDataType codEstadoConstruccion;
 	private LongDataType terrazas;
-	private LongDataType codEstadoPublicacion;
+	private StringDataType codEstadoPublicacion;
 	private DateDataType publicadoDesde;
 	private BooleanDataType reformas;
 	private StringDataType codRegimenProteccion;
@@ -130,13 +130,13 @@ public class StockDto implements WebcomRESTDto{
 	
 	//HREOS-3955
 	@MappedColumn("cod_estado_pub_alquiler")
-	private LongDataType codEstadoPublicacionAlquiler;
+	private StringDataType codEstadoPublicacionAlquiler;
 	
 	@MappedColumn("cod_subestado_pub_venta")
-	private LongDataType codSubEstadoPublicacionVenta;
+	private StringDataType codSubEstadoPublicacionVenta;
     
 	@MappedColumn("cod_subestado_pub_alquiler")
-	private LongDataType codSubEstadoPublicacionAlquiler;
+	private StringDataType codSubEstadoPublicacionAlquiler;
 
 	private BooleanDataType indOcultarPrecioVenta;
 	
@@ -316,10 +316,10 @@ public class StockDto implements WebcomRESTDto{
 	public void setTerrazas(LongDataType terrazas) {
 		this.terrazas = terrazas;
 	}
-	public LongDataType getCodEstadoPublicacion() {
+	public StringDataType getCodEstadoPublicacion() {
 		return codEstadoPublicacion;
 	}
-	public void setCodEstadoPublicacion(LongDataType codEstadoPublicacion) {
+	public void setCodEstadoPublicacion(StringDataType codEstadoPublicacion) {
 		this.codEstadoPublicacion = codEstadoPublicacion;
 	}
 	public DateDataType getPublicadoDesde() {
@@ -644,25 +644,25 @@ public class StockDto implements WebcomRESTDto{
 	public void setCodSubCartera(StringDataType codSubCartera) {
 		this.codSubCartera = codSubCartera;
 	}
-	public LongDataType getCodEstadoPublicacionAlquiler() {
+	public StringDataType getCodEstadoPublicacionAlquiler() {
 		return codEstadoPublicacionAlquiler;
 	}
 	public void setCodEstadoPublicacionAlquiler(
-			LongDataType codEstadoPublicacionAlquiler) {
+			StringDataType codEstadoPublicacionAlquiler) {
 		this.codEstadoPublicacionAlquiler = codEstadoPublicacionAlquiler;
 	}
-	public LongDataType getCodSubEstadoPublicacionVenta() {
+	public StringDataType getCodSubEstadoPublicacionVenta() {
 		return codSubEstadoPublicacionVenta;
 	}
 	public void setCodSubEstadoPublicacionVenta(
-			LongDataType codSubEstadoPublicacionVenta) {
+			StringDataType codSubEstadoPublicacionVenta) {
 		this.codSubEstadoPublicacionVenta = codSubEstadoPublicacionVenta;
 	}
-	public LongDataType getCodSubEstadoPublicacionAlquiler() {
+	public StringDataType getCodSubEstadoPublicacionAlquiler() {
 		return codSubEstadoPublicacionAlquiler;
 	}
 	public void setCodSubEstadoPublicacionAlquiler(
-			LongDataType codSubEstadoPublicacionAlquiler) {
+			StringDataType codSubEstadoPublicacionAlquiler) {
 		this.codSubEstadoPublicacionAlquiler = codSubEstadoPublicacionAlquiler;
 	}
 	public BooleanDataType getIndOcultarPrecioVenta() {

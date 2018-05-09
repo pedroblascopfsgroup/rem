@@ -124,8 +124,13 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 				}
 			}
 			
-			if(!Checks.esNulo(resultProcesaFila) && resultProcesaFila.isHashmapVacio()) {
+			if(mapaErrores.isEmpty() && !Checks.esNulo(resultProcesaFila) && !resultProcesaFila.isHashmapVacio()) {
+				MSVDocumentoMasivo archivo = ficheroDao.findByIdProceso(file.getProcesoMasivo().getId());
+				exc = excelParser.getExcel(archivo.getContenidoFichero().getFile());
+				String nomFicheroResultados = exc.crearExcelResultadosByHojaAndFilaCabecera(resultProcesaFila.gethMap(),0,0);
+				FileItem fileItemResultados = new FileItem(new File(nomFicheroResultados));
 				
+				processAdapter.setExcelResultadosProcesado(archivo, fileItemResultados);
 			}
 			
 			this.postProcesado(exc);

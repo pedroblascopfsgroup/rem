@@ -19,6 +19,7 @@ public class DtoMSVProcesoMasivo extends WebDto{
 	private boolean sePuedeProcesar;
 	private boolean conErrores;
 	private boolean validable;
+	private boolean conResultados;
 	private Long totalFilas;
 	private Long totalFilasOk;
 	private Long totalFilasKo;
@@ -107,6 +108,12 @@ public class DtoMSVProcesoMasivo extends WebDto{
 	}
 	public void setTotalFilasKo(Long totalFilasKo) {
 		this.totalFilasKo = totalFilasKo;
+	}
+	public boolean getConResultados() {
+		return conResultados;
+	}
+	public void setConResultados(boolean conResultados) {
+		this.conResultados = conResultados;
 	}
 	
 	

@@ -269,6 +269,40 @@ public class MSVHojaExcel {
 
 		return nombreFicheroErrores;
 	}
+	
+	public String crearExcelResultadosByHojaAndFilaCabecera(Map<String, String> mapaResultados, int numHoja,
+			int numFilaCabeceras) throws IllegalArgumentException, IOException, RowsExceededException, WriteException {
+		if (!isOpen) {
+			abrir();
+		}
+
+		String nombreFicheroResultados = getNombreFicheroResultados();
+
+		WritableWorkbook copy = Workbook.createWorkbook(new File(nombreFicheroResultados), libroExcel);
+		try {
+			WritableSheet hoja = copy.getSheet(numHoja);
+			int numColumnas = this.getNumeroColumnasByHojaAndFila(numHoja, numFilaCabeceras);
+			Iterator<String> it = mapaResultados.keySet().iterator();
+			int columna = numColumnas;
+			int filas = 1;
+			while (it.hasNext()) {
+				String resultado = (String) it.next();
+				addTexto(hoja, columna, filas, resultado);
+				
+				addTextoResultados(hoja, (columna + 1), filas,  mapaResultados.get(resultado));
+
+				if (!mapaResultados.get(resultado).isEmpty()) {
+					filas++;
+				}
+			}
+			copy.write();
+		} finally {
+			copy.close();
+		}
+		
+
+		return nombreFicheroResultados;
+	}
 
 	public String dameCelda(int fila, int columna) throws IllegalArgumentException, IOException, ParseException {
 
@@ -402,8 +436,33 @@ public class MSVHojaExcel {
 			sheet.addCell(label);
 		}
 	}
+	
+	private void addTextoResultados(WritableSheet sheet, int column, int row, String s)
+			throws RowsExceededException, WriteException {
+		Label label;
+		Cell celdaResultados = sheet.getCell(column, row);
+		String erroresAnteriores = celdaResultados.getContents();
+		label = new Label(column, row, erroresAnteriores + " - " + s);
+		sheet.addCell(label);
+	}
 
 	private String getNombreFicheroErrores() {
+		String path;
+		if (this.file != null) {
+			path = this.file.getAbsolutePath();
+		} else if (!Checks.esNulo(this.ruta)) {
+			path = this.ruta;
+		} else {
+			throw new IllegalStateException("No se ha inicializado el File ni la Ruta");
+		}
+
+		String nombre = path.replace(".xls", "Err.xls").replace(".csv", "Err.csv").replace(".tmp", "Err.tmp");
+		return nombre;
+
+	}
+	
+	private String getNombreFicheroResultados() {
+		
 		String path;
 		if (this.file != null) {
 			path = this.file.getAbsolutePath();

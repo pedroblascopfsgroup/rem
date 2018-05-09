@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=NOELIA LAPERA
---## FECHA_CREACION=20170430
+--## AUTOR=PIER GOTTA
+--## FECHA_CREACION=20180507
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4020
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Se añade DEFAULT EMPTY_BLOB()
 --##########################################
 --*/
 
@@ -38,7 +39,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(256);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('DMS_RESULTADO_FICH', 'BLOB','','NULL', 'Fichero de resultados del proceso masivo')
+        T_TIPO_DATA('DMS_RESULTADO_FICH', 'BLOB','EMPTY_BLOB()','NULL', 'Fichero de resultados del proceso masivo')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -58,7 +59,7 @@ BEGIN
 		IF V_NUM_TABLAS = 1 THEN
 			DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||' '||TRIM(V_TMP_TIPO_DATA(1))||'''... Ya existe');
 		ELSE
-			EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD '||V_TMP_TIPO_DATA(1)||' '||V_TMP_TIPO_DATA(2)||' '||V_TMP_TIPO_DATA(3)||' '||V_TMP_TIPO_DATA(4)||'';
+			EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD '||V_TMP_TIPO_DATA(1)||' '||V_TMP_TIPO_DATA(2)||' DEFAULT '||V_TMP_TIPO_DATA(3)||' '||V_TMP_TIPO_DATA(4)||'';
 			EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||' IS '''||V_TMP_TIPO_DATA(5)||'''';
 			DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||'... Creada');        
        	END IF;

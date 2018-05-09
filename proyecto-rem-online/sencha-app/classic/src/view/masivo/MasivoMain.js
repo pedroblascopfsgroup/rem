@@ -178,7 +178,14 @@ Ext.define('HreRem.view.masivo.MasivoMain', {
 						        	handler: 'onClickDescargarErrores',
 						        	text: 'Descargar errores',
 						        	disabled: true
-						        }			    	
+						        },
+						        {
+						        	itemId:'resultadoButton',
+						        	cls: 'tbar-grid-button',
+						        	handler: 'onClickDescargarResultados',
+						        	text: 'Descargar resultados',
+						        	disabled: true
+						        }
 					    	]
 					    },
 				        {

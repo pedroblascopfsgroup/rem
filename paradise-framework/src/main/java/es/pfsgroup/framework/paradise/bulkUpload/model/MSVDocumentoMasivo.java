@@ -49,11 +49,9 @@ public class MSVDocumentoMasivo implements Serializable, Auditable{
     @JoinColumn(name = "PRM_ID")
     private MSVProcesoMasivo procesoMasivo;
 	
-	
 	@Column(name = "DMS_CONTENIDO_FICH")
 	@Type(type = "es.capgemini.devon.hibernate.dao.BlobStreamType")
 	private FileItem contenidoFichero;
-	
 	
 	@Column(name = "DMS_ERRORES_FICH")
 	@Type(type = "es.capgemini.devon.hibernate.dao.BlobStreamType")

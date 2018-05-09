@@ -20,7 +20,7 @@ public interface TareaActivoApi {
 
 		public void saltoDesdeTareaExterna(Long idTareaExterna, String tareaDestino);
 		
-		public void saltoDesdeTramite(Long idTamite, String tareaDestino);
+//		public void saltoDesdeTramite(Long idTamite, String tareaDestino);
 		
 		public List<TareaActivo> getTareasActivoByIdTramite(Long idTramite);
 		
@@ -36,6 +36,7 @@ public interface TareaActivoApi {
 		
 		public void saltoFin(Long idTareaExterna);
 
+		@Deprecated
 		public void saltoPBC(Long idTareaExterna);
 
 		public void saltoInstruccionesReserva(Long idTareaExterna);

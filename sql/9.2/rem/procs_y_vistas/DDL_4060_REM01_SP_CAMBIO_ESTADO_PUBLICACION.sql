@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=CARLOS LOPEZ
---## FECHA_CREACION=20180503
+--## FECHA_CREACION=20180508
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
---## INCIDENCIA_LINK=HREOS-3995
+--## INCIDENCIA_LINK=HREOS-4074
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -213,6 +213,26 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
 			  vACTUALIZADO := 'S';
 		    END IF;		  
 		  END IF;
+		  
+		  IF pDD_MTO_CODIGO = '04' THEN /*Revisión adecuación*/
+		    V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO ACT
+						SET ACT.DD_ADA_ID = (SELECT ADA.DD_ADA_ID
+										    					 FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER ADA
+												    			WHERE ADA.DD_ADA_CODIGO = ''02''/*NO*/
+														    	  AND ADA.BORRADO = 0)
+						  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+						  , FECHAMODIFICAR = SYSDATE
+					  WHERE ACT_ID = '||nACT_ID||'
+						AND BORRADO = 0
+					'
+					;
+
+		    EXECUTE IMMEDIATE V_MSQL;
+		    IF SQL%ROWCOUNT > 0 THEN
+			  vACTUALIZADO := 'S';
+		    END IF;
+		  END IF; 		  
+		  	  
 		END IF;
 	END IF;
 	IF pTIPO = 'V' THEN

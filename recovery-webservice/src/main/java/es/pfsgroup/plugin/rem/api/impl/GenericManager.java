@@ -50,6 +50,7 @@ import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoLocalidadSimple;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
@@ -563,6 +564,22 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		return (List<DDComiteSancion>) genericDao.getListOrdered(DDComiteSancion.class, order, filter);
 
+	}
+	
+	@Override
+	public List<DDComiteSancion> getComitesByIdExpediente(String expediente) {
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(expediente));
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		
+		ExpedienteComercial expComercial = genericDao.get(ExpedienteComercial.class, filter, filtroBorrado);
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
+		
+		if(!Checks.esNulo(expComercial.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
+			return getComitesByCartera(expComercial.getOferta().getActivoPrincipal().getCartera().getCodigo());
+			//return (List<DDComiteSancion>) genericDao.getListOrdered(DDComiteSancion.class, order, filter, filtroBorrado);
+		} else {
+			return new ArrayList<DDComiteSancion>();
+		}
 	}
 
 	@Override

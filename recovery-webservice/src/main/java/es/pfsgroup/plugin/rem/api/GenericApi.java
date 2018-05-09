@@ -216,6 +216,8 @@ public interface GenericApi {
 	 */
 	List<DDMotivoRechazoOferta> getComboMotivoRechazoOferta(String tipoRechazoOfertaCodigo);
 
+	List<DDComiteSancion> getComitesByIdExpediente(String expediente);
+
 }
 
 	  

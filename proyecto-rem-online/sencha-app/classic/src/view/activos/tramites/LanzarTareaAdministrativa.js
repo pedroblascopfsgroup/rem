@@ -28,6 +28,8 @@ Ext.define('HreRem.view.activos.tramites.LanzarTareaAdministrativa', {
 	},
 	initComponent : function() {
 		var me = this;
+
+		me.getViewModel().set('idExpediente', me.idExpediente);
 		
 		me.setTitle(HreRem.i18n('title.lanzar.tarea.administrativa'));
 		
@@ -141,7 +143,6 @@ Ext.define('HreRem.view.activos.tramites.LanzarTareaAdministrativa', {
 	},
 
 	getCampos_definicionOferta_comiteSancionador : function() {
-
 		var items = {
 			xtype : 'comboboxfieldbase',
 			fieldLabel : HreRem
@@ -149,7 +150,7 @@ Ext.define('HreRem.view.activos.tramites.LanzarTareaAdministrativa', {
 			addUxReadOnlyEditFieldPlugin : false,
 			name : 'comiteSancionador',
 			bind : {
-				store : '{comboComiteSancion}'
+				store : '{comboComites}'
 			},
 			allowBlank : false
 		};

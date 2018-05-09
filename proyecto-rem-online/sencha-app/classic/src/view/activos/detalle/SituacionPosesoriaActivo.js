@@ -152,7 +152,15 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 		                		value: '{situacionPosesoria.fechaTomaPosesion}',
 		                		readOnly: '{esSituacionJudicial}'
 		                	}
-		                },				        
+		                },
+		                {
+							xtype: 'checkboxfieldbase',
+							fieldLabel: HreRem.i18n('filedlabel.tiene.ok.tecnico'),
+							bind: {
+								value: '{situacionPosesoria.tieneOkTecnico}',
+								readOnly: '{!activo.aplicaGestion}'
+							}
+						},
 		                { 
 
 				        	xtype: 'comboboxfieldbase',
@@ -211,7 +219,6 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            		value: '{situacionPosesoria.situacionJuridica}'
 			            	}
 				        }
-					
 					]
                 
             }, 

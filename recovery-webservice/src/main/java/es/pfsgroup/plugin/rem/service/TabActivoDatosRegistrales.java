@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -36,6 +37,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlanDinVentas;
+import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
@@ -230,6 +232,17 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				activo.getInfoRegistral().getInfoRegistralBien().setBien(activo.getBien());
 			}
 			
+			if (Checks.esNulo(activo.getSituacionPosesoria())) {
+				Auditoria auditoria = Auditoria.getNewInstance();
+
+				ActivoSituacionPosesoria actSit = new ActivoSituacionPosesoria();
+				actSit.setActivo(activo);
+				actSit.setVersion(new Long(0));
+				actSit.setAuditoria(auditoria);
+				activo.setSituacionPosesoria(actSit);
+
+			}
+			
 			beanUtilNotNull.copyProperties(activo, dto);
 			//beanUtilNotNull.copyProperties(activo.getInfoAdministrativa(), dto);
 			beanUtilNotNull.copyProperties(activo.getInfoRegistral(), dto);
@@ -242,6 +255,8 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			}
 			
 			beanUtilNotNull.copyProperties(activo.getTitulo(), dto);
+			
+			if(Checks.esNulo(dto.getFechaInscripcionReg())) activo.getTitulo().setFechaInscripcionReg(null);
 			
 			
 			if (dto.getEstadoTitulo() != null) {

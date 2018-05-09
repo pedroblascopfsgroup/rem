@@ -190,9 +190,9 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			            	value = parseFloat(value);
 			            	var msg = HreRem.i18n("fieldlabel.importe.participacion.igual")
 			            	var style = ""
-			            	if(value != parseFloat(this.lookupController().getViewModel().get('expediente.importe'))) {
+			            	if(value.toFixed(2) != parseFloat(this.lookupController().getViewModel().get('expediente.importe'))) {
 			            		msg = HreRem.i18n("fieldlabel.importe.participacion.desigual") + " " + 
-			            			(value*100 - (this.lookupController().getViewModel().get('expediente.importe'))*100)/100 + "&euro;"
+			            			((value.toFixed(2))*100 - (this.lookupController().getViewModel().get('expediente.importe'))*100)/100 + "&euro;"
 			            		style = "style= 'color: red'"
 			            	}
 			            	

@@ -146,6 +146,7 @@ public class StockDto implements WebcomRESTDto{
 	
 	private StringDataType descripcionOtros;
 
+	private LongDataType activoProveedorTecnico;
 	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
@@ -687,6 +688,11 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setDescripcionOtros(StringDataType descripcionOtros) {
 		this.descripcionOtros = descripcionOtros;
+	}
+	public LongDataType getActivoProveedorTecnico() {
+		return activoProveedorTecnico;
+	}
+	public void setActivoProveedorTecnico(LongDataType activoProveedorTecnico) {
+		this.activoProveedorTecnico = activoProveedorTecnico;
 	}	
-	
 }

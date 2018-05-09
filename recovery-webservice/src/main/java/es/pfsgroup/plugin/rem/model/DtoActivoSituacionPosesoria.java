@@ -2,8 +2,6 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
-import es.capgemini.devon.dto.WebDto;
-
 
 
 /**
@@ -40,6 +38,7 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	private String numJuegos;
 	private String situacionJuridica;
 	private Integer indicaPosesion;
+	private Boolean tieneOkTecnico;
 		
 	public String getNumeroActivo() {
 		return numeroActivo;
@@ -178,6 +177,12 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	}
 	public void setIndicaPosesion(Integer indicaPosesion) {
 		this.indicaPosesion = indicaPosesion;
+	}
+	public Boolean getTieneOkTecnico() {
+		return tieneOkTecnico;
+	}
+	public void setTieneOkTecnico(Boolean tieneOkTecnico) {
+		this.tieneOkTecnico = tieneOkTecnico;
 	}
 
 	

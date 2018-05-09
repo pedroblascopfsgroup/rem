@@ -34,6 +34,8 @@ import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionServiceFactoryApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.TrabajoUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.GestorActivoHistorico;
@@ -343,6 +345,35 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 		}
 		
 		return usuario;
+	}
+
+	@Override
+	public ActivoProveedor obtenerProveedorTecnico(Long idActivo) {
+		GestorActivo proveedorTecnico = null;
+		ActivoProveedor pve = null;
+		if (idActivo != null) {
+			Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+			Filter filterAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			List<GestorActivo> gestoresActivo = genericDao.getList(GestorActivo.class, filterActivo, filterAuditoria);
+			for (GestorActivo gestorActivo : gestoresActivo) {
+				if ("PTEC".equals(gestorActivo.getTipoGestor().getCodigo())) {
+					proveedorTecnico = gestorActivo;
+					break;
+				}
+			}
+			if (!Checks.esNulo(proveedorTecnico)) {
+				Filter filterGee = genericDao.createFilter(FilterType.EQUALS, "id", proveedorTecnico.getId());
+				GestorEntidad gestorEntidad = genericDao.get(GestorEntidad.class, filterGee, filterAuditoria);
+				Filter filterPvc = genericDao.createFilter(FilterType.EQUALS, "usuario.id",
+						gestorEntidad.getUsuario().getId());
+				ActivoProveedorContacto pvc = genericDao.get(ActivoProveedorContacto.class, filterAuditoria, filterPvc);
+				if (!Checks.esNulo(pvc)) {
+					pve = pvc.getProveedor();
+
+				}
+			}
+		}
+		return pve;
 	}
 
 }

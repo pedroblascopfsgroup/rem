@@ -52,7 +52,7 @@ Ext.define('HreRem.view.agenda.AgendaSearch', {
 					            		store: '{comboTipoTramite}'
 					            	},
 					            	displayField: 'descripcion',
-		    						valueField: 'descripcion',
+		    						valueField: 'codigo',
 		    						reference: 'descripcionTarea',
 		    						chainedStore: 'comboNombreTarea',
 		    						chainedReference: 'nombreTarea',
@@ -70,7 +70,7 @@ Ext.define('HreRem.view.agenda.AgendaSearch', {
 					            		disabled: '{!tipoTramite.selection}'
 					            	},
 					            	displayField: 'descripcion',
-		    						valueField: 'descripcion',
+		    						valueField: 'codigo',
 		    						mode: 'local'										
 						        }
 //		  				        { 

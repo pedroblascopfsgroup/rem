@@ -30,7 +30,6 @@ import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
@@ -38,8 +37,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
+import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateOfertaApi;
 
 @Component
 public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterService {
@@ -64,13 +63,15 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
     
 	@Autowired
 	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
+	
+	@Autowired
+	private UpdaterStateOfertaApi updaterStateOfertaApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionExpediente.class);
 
     private static final String COMBO_PROCEDE = "comboProcede";
     private static final String MOTIVO_ANULACION = "motivoAnulacion";
     private static final String MOTIVO_ANULACION_RESERVA = "comboMotivoAnulacionReserva";
-    private static final String CODIGO_TRAMITE_FINALIZADO = "11";
     private static final String CODIGO_T013_RESOLUCION_EXPEDIENTE = "T013_ResolucionExpediente";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -144,18 +145,12 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 							expediente.setEstado(estado);
 							genericDao.save(ExpedienteComercial.class, expediente);
+					
+					if(!DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
+							&& COMBO_PROCEDE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+							valorComboProcede= valor.getValor();
 							
-							Reserva reserva = expediente.getReserva();
-							if(!Checks.esNulo(reserva)){
-								reserva.setIndicadorDevolucionReserva(1);
-								Filter filtroEstadoReserva = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION);
-								DDEstadosReserva estadoReserva = genericDao.get(DDEstadosReserva.class, filtroEstadoReserva);
-								reserva.setEstadoReserva(estadoReserva);
-								reserva.setDevolucionReserva(this.getDevolucionReserva(valor.getValor()));
-
-								genericDao.save(Reserva.class, reserva);
-							}
-						}
+							updaterStateOfertaApi.updaterStateDevolucionReserva(valorComboProcede, tramite, ofertaAceptada, expediente);
 					}
 					
 					if(MOTIVO_ANULACION_RESERVA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
@@ -251,7 +246,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 					expediente.setFechaAnulacion(new Date());
 
 					//Finaliza el trámite
-					Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
+					Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", UpdaterStateOfertaApi.CODIGO_TRAMITE_FINALIZADO);
 					tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
 					genericDao.save(ActivoTramite.class, tramite);
 
@@ -285,10 +280,4 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 	public String[] getKeys() {
 		return this.getCodigoTarea();
 	}
-
-	private DDDevolucionReserva getDevolucionReserva(String codigo) {
-		Filter filtroDevolucionReserva = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
-		return genericDao.get(DDDevolucionReserva.class, filtroDevolucionReserva);
-	}
-
 }

@@ -12,8 +12,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +33,9 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.persona.model.DDTipoGestorEntidad;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.domain.Perfil;
@@ -73,6 +73,7 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
+import es.pfsgroup.plugin.rem.historicotarifaplana.dao.HistoricoTarifaPlanaDao;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
@@ -232,6 +233,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Autowired
 	private GastoProveedorApi gastoProveedorApi;
+	
+	@Autowired
+	private HistoricoTarifaPlanaDao historicoTarifaPlanaDao;
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -503,7 +507,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 
 			if(listaActivos != null && listaActivos.size() == 1){
-				trabajo.setActivo(listaActivos.get(0));
+				Activo activo = listaActivos.get(0);
+				trabajo.setActivo(activo);
+				// Seteo del flag esTarifaPlana
+				trabajo.setEsTarifaPlana(this.esTrabajoTarifaPlana(activo, subtipoTrabajo, trabajo.getFechaSolicitud()));
 			}
 			
 			trabajoDao.saveOrUpdate(trabajo);
@@ -672,7 +679,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Trabajo trabajo = new Trabajo();
 
 		try {
-
 			dtoToTrabajo(dtoTrabajo, trabajo);
 
 			trabajo.setFechaSolicitud(new Date());
@@ -1034,6 +1040,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			DDSubtipoTrabajo subtipoTrabajo = genericDao.get(DDSubtipoTrabajo.class, filtro);
 
 			trabajo.setSubtipoTrabajo(subtipoTrabajo);
+			
+			// Seteo del flag esTarifaPlana
+			Activo activoAux = activoApi.get(dtoTrabajo.getIdActivo());
+			if(!Checks.esNulo(activoAux)){
+				trabajo.setEsTarifaPlana(this.esTrabajoTarifaPlana(activoAux, subtipoTrabajo, new Date()));
+			}
 		}
 
 		if (dtoTrabajo.getIdMediador() != null) {
@@ -1078,6 +1090,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@BusinessOperation(overrides = "trabajoManager.createTramiteTrabajo")
 	public ActivoTramite createTramiteTrabajo(Trabajo trabajo) {
 		TipoProcedimiento tipoTramite = new TipoProcedimiento();
+		if(trabajo.getEsTarifaPlana() == null){
+			trabajo.setEsTarifaPlana(false);
+		}
 
 		// Tramites [FASE 1] -----------------------
 		if (trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL)) { // Obtención
@@ -1088,8 +1103,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 																			// obtención
 																			// documental
 																			// CEE
-				//Si el trabajo es Bankia/Sareb/Tango asignamos proveedorContacto
-				if(this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo)) {
+				//Si el trabajo es Bankia/Sareb/Tango/Giants asignamos proveedorContacto
+				if(this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo) || this.checkGiants(trabajo)) {
 					Filter filtroUsuProveedorBankiaSareb = genericDao.createFilter(FilterType.EQUALS, "username", GestorActivoApi.CIF_PROVEEDOR_BANKIA_SAREB_TINSA);
 					Usuario usuProveedorBankiaSareb = genericDao.get(Usuario.class, filtroUsuProveedorBankiaSareb);
 					if(!Checks.esNulo(usuProveedorBankiaSareb)) {
@@ -1110,8 +1125,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 																			// obtención
 																			// de
 																			// cédula
-				//Si el trabajo es Bankia/Sareb/Tango asignamos proveedorContacto
-				if(this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo)) {
+				//Si el trabajo es Bankia/Sareb/Tango/Giants asignamos proveedorContacto
+				if(this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo) || this.checkGiants(trabajo)) {
 					Usuario usuario = gestorActivoManager.getGestorByActivoYTipo(trabajo.getActivo(), GestorActivoApi.CODIGO_GESTORIA_CEDULAS);
 					if(!Checks.esNulo(usuario)) {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario",usuario);
@@ -1135,8 +1150,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 																													// obtención
 																													// documental
 
-				//Si el trabajo es Bankia/Sareb/Tango asignamos proveedorContacto
-				if(this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo)) {
+				//Si el trabajo es Bankia/Sareb/Tango/Giants asignamos proveedorContacto
+				if(this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo) || this.checkGiants(trabajo)) {
 
 					Usuario gestorAdmision = gestorActivoManager.getGestorByActivoYTipo(trabajo.getActivo(), GestorActivoApi.CODIGO_GESTOR_ADMISION);
 
@@ -1309,6 +1324,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				dtoTrabajo.setIdSupervisorActivo(supervisorActivo.getId());
 			}
 		}
+		
+		if(trabajo.getEsTarifaPlana()){
+			dtoTrabajo.setEsTarifaPlana(1);
+		}else{
+			dtoTrabajo.setEsTarifaPlana(0);
+		}
+		
 
 		return dtoTrabajo;
 	}
@@ -1906,8 +1928,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if(dtoActivoTrabajo.getParticipacion() != null) {
 			porcentajeParticipacion = Float.valueOf(dtoActivoTrabajo.getParticipacion());
 		}
-
-		ActivoTrabajo activoTrabajo = activoTrabajoDao.findOne(Long.valueOf(dtoActivoTrabajo.getIdActivo()),Long.valueOf(dtoActivoTrabajo.getIdTrabajo()));
+		
+		Filter f1 = genericDao.createFilter(FilterType.EQUALS, "activo.id", Long.valueOf(dtoActivoTrabajo.getIdActivo()));
+		Filter f2 = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", Long.valueOf(dtoActivoTrabajo.getIdTrabajo()));
+		
+		ActivoTrabajo activoTrabajo = genericDao.get(ActivoTrabajo.class, f1, f2);
+		
 		activoTrabajo.setParticipacion(porcentajeParticipacion);
 		genericDao.update(ActivoTrabajo.class, activoTrabajo);
 
@@ -1938,7 +1964,20 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		filtro.setCarteraCodigo(cartera);
 		filtro.setTipoTrabajoCodigo(tipoTrabajo);
 		filtro.setSubtipoTrabajoCodigo(subtipoTrabajo);
+		
+		if(!Checks.esNulo(filtro.getIdTrabajo())){
+			Trabajo trabajo = findOne(filtro.getIdTrabajo());
+			if(!Checks.esNulo(trabajo.getProveedorContacto()) && !Checks.esNulo(trabajo.getProveedorContacto().getProveedor())){
+				filtro.setIdProveedor(trabajo.getProveedorContacto().getProveedor().getId());
+			}
+		}
+
 		Page page = trabajoDao.getSeleccionTarifasTrabajo(filtro, usuarioLogado);
+		//Si no existen tarifas para un Proveedor, se recuperan las tarifas sin el filtro del Proveedor
+		if(page.getTotalCount() == 0){
+			filtro.setIdProveedor(null);
+			page = trabajoDao.getSeleccionTarifasTrabajo(filtro, usuarioLogado);
+		}
 
 		List<ConfiguracionTarifa> lista = (List<ConfiguracionTarifa>) page.getResults();
 		List<DtoConfiguracionTarifa> tarifas = new ArrayList<DtoConfiguracionTarifa>();
@@ -2132,12 +2171,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public Boolean existeTarifaTrabajo(TareaExterna tarea) {
 
 		Trabajo trabajo = getTrabajoByTareaExterna(tarea);
-
-		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
-		List<TrabajoConfiguracionTarifa> tarifasTrabajo = genericDao.getList(TrabajoConfiguracionTarifa.class,
-				filtroTrabajo);
-
-		return !tarifasTrabajo.isEmpty();
+		if(trabajo.getEsTarifaPlana()){
+			return true;
+		}else{
+			Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+			List<TrabajoConfiguracionTarifa> tarifasTrabajo = genericDao.getList(TrabajoConfiguracionTarifa.class,
+					filtroTrabajo);
+	
+			return !tarifasTrabajo.isEmpty();
+		}
 	}
 
 	@Override
@@ -2146,22 +2188,28 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		Trabajo trabajo = getTrabajoByTareaExterna(tarea);
 
-		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
-		List<TrabajoConfiguracionTarifa> tarifasTrabajo = genericDao.getList(TrabajoConfiguracionTarifa.class, filtroTrabajo);
+		if (trabajo.getEsTarifaPlana()) {
+			return true;
+		} else {
 
-		for (TrabajoConfiguracionTarifa tct : tarifasTrabajo) {
+			Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+			List<TrabajoConfiguracionTarifa> tarifasTrabajo = genericDao.getList(TrabajoConfiguracionTarifa.class,
+					filtroTrabajo);
 
-			if (tct.getMedicion() != null && tct.getPrecioUnitario() != null) {
+			for (TrabajoConfiguracionTarifa tct : tarifasTrabajo) {
 
-				Float importe = tct.getMedicion() * tct.getPrecioUnitario();
+				if (tct.getMedicion() != null && tct.getPrecioUnitario() != null) {
 
-				if (importe > 0) {
-					return true;
+					Float importe = tct.getMedicion() * tct.getPrecioUnitario();
+
+					if (importe > 0) {
+						return true;
+					}
 				}
 			}
-		}
 
-		return false;
+			return false;
+		}
 	}
 
 	@Override
@@ -3074,6 +3122,29 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 	
 	@Override
+	public boolean checkGiants(TareaExterna tareaExterna) {
+		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
+		if (!Checks.esNulo(trabajo)) {
+			Activo primerActivo = trabajo.getActivo();
+			if (!Checks.esNulo(primerActivo)) {
+				return (DDCartera.CODIGO_CARTERA_GIANTS.equals(primerActivo.getCartera().getCodigo()));
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean checkGiants(Trabajo trabajo) {
+		if (!Checks.esNulo(trabajo)) {
+			Activo primerActivo = trabajo.getActivo();
+			if (!Checks.esNulo(primerActivo)) {
+				return (DDCartera.CODIGO_CARTERA_GIANTS.equals(primerActivo.getCartera().getCodigo()));
+			}
+		}
+		return false;
+	}
+	
+	@Override
 	public boolean checkBankia(TareaExterna tareaExterna) {
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
 		if (!Checks.esNulo(trabajo)) {
@@ -3265,4 +3336,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return supervisorGestor;
 	}
 
+	
+	private Boolean esTrabajoTarifaPlana(Activo activo, DDSubtipoTrabajo subtipoTrabajo, Date fechaSolicitud){
+		Boolean resultado = false;
+		Usuario gestorProveedorTecnico = gestorActivoApi.getGestorByActivoYTipo(activo, "PTEC");
+		if(!Checks.esNulo(gestorProveedorTecnico) && historicoTarifaPlanaDao.subtipoTrabajoTieneTarifaPlanaVigente(subtipoTrabajo.getId(), fechaSolicitud)){
+			resultado = true;
+		}
+		return resultado;
+	}
 }
+

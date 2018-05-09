@@ -15,6 +15,8 @@ public class DtoNombreTarea extends WebDto {
 	
 	private String descripcion;
 	
+	private String codigo;
+	
 	public Long getId() {
 		return id;
 	}
@@ -30,4 +32,14 @@ public class DtoNombreTarea extends WebDto {
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
+
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+	
+	
 }

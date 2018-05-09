@@ -99,6 +99,7 @@ public class ExpedienteComercial implements Serializable, Auditable {
     
     @OneToMany(mappedBy = "expediente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ECO_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<CompradorExpediente> compradores;
     
     @OneToMany(mappedBy = "expediente", fetch = FetchType.LAZY)

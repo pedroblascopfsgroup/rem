@@ -8,20 +8,31 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 
 @Component
 public class UpdaterServiceActuacionTecnicaAnalisisPeticion implements UpdaterService {
 	
     @Autowired
     private GenericABMDao genericDao;
+    
+    @Autowired
+    private GestorActivoApi gestorActivoApi;
+    
+    @Autowired
+    private ProveedoresDao proveedoresDao;
     
 	private static final String CODIGO_T004_ANALISIS_PETICION = "T004_AnalisisPeticion";
 	
@@ -34,6 +45,19 @@ public class UpdaterServiceActuacionTecnicaAnalisisPeticion implements UpdaterSe
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		
 		Trabajo trabajo = tramite.getTrabajo();
+		
+		// Asignacion del Proveedor Tecnico si aplica
+		if(trabajo.getEsTarifaPlana()){
+			Activo activo = tramite.getActivo();
+			Usuario proveedorTecnico = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_TIPO_PROVEEDOR_TECNICO);
+			if(!Checks.esNulo(proveedorTecnico)){
+				ActivoProveedorContacto proveedorTecnicoContacto = proveedoresDao.getActivoProveedorContactoPorIdsUsuario(proveedorTecnico.getId());
+				if(!Checks.esNulo(proveedorTecnicoContacto)){
+					trabajo.setProveedorContacto(proveedorTecnicoContacto);
+				}
+			}
+			
+		}
 		
 		for(TareaExternaValor valor :  valores){
 

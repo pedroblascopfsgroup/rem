@@ -3277,6 +3277,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
         Ext.ComponentQuery.query('activosdetallemain')[0].lookupReference('chkbxpublicaralquiler').setValue(false);
         btn.up('window').destroy();
+    },
+    
+    onGridImpuestosActivoRowClick: function(grid , record , tr , rowIndex){
+    	grid.up().disableRemoveButton(false);
+    },
+    
+    onImpuestosActivoDobleClick: function(grid,record,tr,rowIndex) {        	       
+    	var me = this,
+    	record = grid.getStore().getAt(rowIndex);
     }
 
 });

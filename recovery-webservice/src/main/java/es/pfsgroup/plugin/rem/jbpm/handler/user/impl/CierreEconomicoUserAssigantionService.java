@@ -48,8 +48,12 @@ public class CierreEconomicoUserAssigantionService implements UserAssigantionSer
 			
 			DDCartera cartera = tareaActivo.getTramite().getActivo().getCartera();
 			
-			// Si la cartera es BANKIA, SAREB o TANGO, el gestor de las tareas es GESTOR ADMISION
-			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_TANGO.equals(cartera.getCodigo())){
+			// Si la cartera es BANKIA, SAREB o TANGO o GIANTS, el gestor de las tareas es GESTOR ADMISION
+			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()) 
+			|| DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()) 
+			|| DDCartera.CODIGO_CARTERA_TANGO.equals(cartera.getCodigo())
+			|| DDCartera.CODIGO_CARTERA_GIANTS.equals(cartera.getCodigo())
+			){
 				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_ADMISION);
 				EXTDDTipoGestor tipoGestorActivo = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
 

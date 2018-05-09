@@ -71,8 +71,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	    	 var gasto = me.getData().gasto;
 	    	 var esSareb = gasto.data.nombrePropietario == CONST.NOMBRE_CARTERA2['SAREB'];
 	    	 var esTango = gasto.data.nombrePropietario == CONST.NOMBRE_CARTERA2['TANGO'];
+	    	 var esGiants = gasto.data.nombrePropietario == CONST.NOMBRE_CARTERA2['GIANTS'];
 	    	 
-	    	 return get('gasto.asignadoAActivos') || esSareb || esTango;
+	    	 return get('gasto.asignadoAActivos') || esSareb || esTango || esGiants;
 	    	 
 	     },
 

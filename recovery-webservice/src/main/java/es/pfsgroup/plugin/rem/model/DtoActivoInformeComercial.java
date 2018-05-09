@@ -58,6 +58,9 @@ public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
 	private Integer contactoTel;
 	private Integer visita;
 	private Integer burofax;
+	private Boolean tieneProveedorTecnico;
+	private String codigoProveedor;
+	private String nombreProveedor;
 	
 	public String getInferiorMunicipioCodigo() {
 		return inferiorMunicipioCodigo;
@@ -305,6 +308,7 @@ public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
 	public void setDescOtras(String descOtras) {
 		this.descOtras = descOtras;
 	}
+
 	public Date getFechaComunicacionComunidad() {
 		return fechaComunicacionComunidad;
 	}
@@ -342,5 +346,23 @@ public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
 		this.burofax = burofax;
 	}
 	
+	public Boolean getTieneProveedorTecnico() {
+		return tieneProveedorTecnico;
+	}
+	public void setTieneProveedorTecnico(Boolean tieneProveedorTecnico) {
+		this.tieneProveedorTecnico = tieneProveedorTecnico;
+	}
+	public String getCodigoProveedor() {
+		return codigoProveedor;
+	}
+	public void setCodigoProveedor(String codigoProveedor) {
+		this.codigoProveedor = codigoProveedor;
+	}
+	public String getNombreProveedor() {
+		return nombreProveedor;
+	}
+	public void setNombreProveedor(String nombreProveedor) {
+		this.nombreProveedor = nombreProveedor;
+	}
 	
 }

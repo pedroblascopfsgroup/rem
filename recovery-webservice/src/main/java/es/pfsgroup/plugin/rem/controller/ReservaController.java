@@ -23,8 +23,10 @@ import es.pfsgroup.plugin.rem.api.ReservaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -103,13 +105,33 @@ public class ReservaController {
 					//El prescriptor solo se debe alimentar en la consulta del cobro de la venta.
 					//No se debe de enviar ni en el cobro de la reserva ni en la devolución.
 					ofertaUVEM.setCodPrescriptor("");
-				}else{
-					if(Checks.esNulo(oferta.getPrescriptor()) || 
-					  (!Checks.esNulo(oferta.getPrescriptor()) && Checks.esNulo(oferta.getPrescriptor().getCodigoApiProveedor())) ||
-					  (!Checks.esNulo(oferta.getPrescriptor()) && !Checks.esNulo(oferta.getPrescriptor().getCodigoApiProveedor()) && !oferta.getPrescriptor().getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_OFICINA_BANKIA))){
-						//Si la prescripción es de una oficina Bankia mandáis la oficina y en cualquier otro caso enviáis C000 que es sin prescriptor
-						ofertaUVEM.setCodPrescriptor("C000");
+				} else {
+					
+					boolean bankia = false;
+
+					List<GastosExpediente> gastosExpediente = expedienteComercial.getHonorarios();
+
+					if (!Checks.estaVacio(gastosExpediente)) {
+						for (GastosExpediente gastoExp : gastosExpediente) {
+							if (!Checks.esNulo(gastoExp.getAccionGastos())) {
+								if (DDAccionGastos.CODIGO_PRESCRIPCION.equals(gastoExp.getAccionGastos().getCodigo())) {
+									if (!Checks.esNulo(gastoExp.getProveedor())) {
+										if (DDTipoProveedor.COD_OFICINA_BANKIA
+												.equals(gastoExp.getProveedor().getTipoProveedor().getCodigo())) {
+											ofertaUVEM.setCodPrescriptor(
+													(gastoExp.getProveedor().getCodigoApiProveedor()));
+											bankia = true;
+											break;
+										}
+									}
+								}
+							}
+						}
 					}
+
+					if (!bankia)
+						ofertaUVEM.setCodPrescriptor("C000");
+
 				}			
 				
 				ArrayList<TitularUVEMDto> listaTitularUVEM = expedienteComercialApi.obtenerListaTitularesUVEM(expedienteComercial);

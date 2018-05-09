@@ -936,6 +936,7 @@ public interface ExpedienteComercialApi {
 	 * @return Devuelve True si el estado del expdiente comercial es distinto a anulado, False si no lo es.
 	 */
 	public boolean checkEstadoExpedienteDistintoAnulado(Long idTramite);
-	
+
+	public void enviarCondicionantesEconomicosUvem(Long idExpediente) throws Exception;	
 	
 }

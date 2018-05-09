@@ -461,7 +461,7 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_COMUNIDAD_PROPIETARIOS);
 			if (success)
-				adapter.updatePortalPublicacion(id);
+				adapter.actualizarEstadoPublicacionActivo(id);
 
 			// Después de haber guardado los cambios sobre informacion
 			// comercial, recalculamos el rating del activo.

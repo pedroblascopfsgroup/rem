@@ -99,52 +99,6 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 				}
 
 				for(TareaExternaValor valor :  valores) {
-
-					if(COMBO_PROCEDE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-						valorComboProcede= valor.getValor();
-						Filter filtro;
-
-						if(DDDevolucionReserva.CODIGO_NO.equals(valor.getValor())) {
-
-							//Anula el expediente
-							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
-							expediente.setFechaVenta(null);
-							expediente.setFechaAnulacion(new Date());
-
-							//Finaliza el trámite
-							Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
-							tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
-							genericDao.save(ActivoTramite.class, tramite);
-
-							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-							expediente.setEstado(estado);
-							genericDao.save(ExpedienteComercial.class, expediente);
-
-							Reserva reserva = expediente.getReserva();
-							if(!Checks.esNulo(reserva)){
-								reserva.setIndicadorDevolucionReserva(0);
-								Filter filtroEstadoReserva = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_RESUELTA_POSIBLE_REINTEGRO);
-								DDEstadosReserva estadoReserva = genericDao.get(DDEstadosReserva.class, filtroEstadoReserva);
-								reserva.setEstadoReserva(estadoReserva);
-								reserva.setDevolucionReserva(this.getDevolucionReserva(valor.getValor()));
-								
-								genericDao.save(Reserva.class, reserva);
-							}
-
-							//Rechaza la oferta y descongela el resto
-							ofertaApi.rechazarOferta(ofertaAceptada);
-							try {
-								ofertaApi.descongelarOfertas(expediente);
-							} catch (Exception e) {
-								logger.error("Error descongelando ofertas.", e);
-							}
-							Filter filtroTanteo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoTanteo.CODIGO_EJERCIDO);
-							ofertaAceptada.setResultadoTanteo(genericDao.get(DDResultadoTanteo.class, filtroTanteo));
-						} else {
-							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.EN_DEVOLUCION);
-							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-							expediente.setEstado(estado);
-							genericDao.save(ExpedienteComercial.class, expediente);
 					
 					if(!DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
 							&& COMBO_PROCEDE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {

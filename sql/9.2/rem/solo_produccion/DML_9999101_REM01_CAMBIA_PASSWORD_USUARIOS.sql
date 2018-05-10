@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=SIMEON SHOPOV
---## FECHA_CREACION=20180508
+--## FECHA_CREACION=20180509
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.18
---## INCIDENCIA_LINK=REMVIP-675
+--## INCIDENCIA_LINK=REMVIP-686
 --## PRODUCTO=NO
 --## 
 --## Finalidad: 
@@ -28,77 +28,69 @@ DECLARE
     V_COUNT_UPDATE NUMBER(16):= 0; -- Vble. para contar updates
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_USUARIO VARCHAR2(32 CHAR):= 'REMVIP-675';
+    V_USUARIO VARCHAR2(32 CHAR):= 'REMVIP-686';
 
 	USU_USERNAME VARCHAR2(55 CHAR);
 	USU_PASSWORD VARCHAR2(55 CHAR);
-
+	ORDER NUMBER(1);
+	
     TYPE T_JBV IS TABLE OF VARCHAR2(32000);
     TYPE T_ARRAY_JBV IS TABLE OF T_JBV; 
 	
 	V_JBV T_ARRAY_JBV := T_ARRAY_JBV(
-			  T_JBV('A027805','MBAGSDVHZZ')
-			, T_JBV('A107592','LYLDSVTNEB')
-			, T_JBV('A110337','GLTDNGQJBR')
-			, T_JBV('A111180','IMOMKNQAXM')
-			, T_JBV('A112826','GXYZWLISHY')
-			, T_JBV('A126422','YNGCWAHRPT')
-			, T_JBV('A127543','VEUNMVMBEP')
-			, T_JBV('A133647','HZLCBDWBVV')
-			, T_JBV('A135765','EPWIUFNWDZ')
-			, T_JBV('A139372','HLFRATTKBB')
-			, T_JBV('A143884','APSSAZQDDS')
-			, T_JBV('A146460','WMHMCPKIKP')
-			, T_JBV('A153731','VTNJHHSEMC')
-			, T_JBV('A154057','EXROOFPNLY')
-			, T_JBV('A154454','YJIKMJBPAK')
-			, T_JBV('A184225','IPDOKHXLXM')
-			, T_JBV('aarias','CVAVHKRWZN')
-			, T_JBV('acotarelo','OISSAHDOYH')
-			, T_JBV('aencarnacion','SBUQRPFPZL')
-			, T_JBV('agarciaar','SRILTFUZHL')
-			, T_JBV('ahernandezg','XPXSDIXHDJ')
-			, T_JBV('asarmiento','PQNSDTKFKH')
-			, T_JBV('bpacheco','WJOHZHOMSH')
-			, T_JBV('cbarrosh','TBDWAVKSXU')
-			, T_JBV('chidalgo','YUFNEVLSRD')
-			, T_JBV('cmoran','MQJVTWXLFV')
-			, T_JBV('cmurillo','QRIGFQLXKA')
-			, T_JBV('dcruz','NIAPUAEZAQ')
-			, T_JBV('egonzalezv','LADBCMXAIF')
-			, T_JBV('eruiz','RAJFBELQKP')
-			, T_JBV('fvallejos','VZARTGROVT')
-			, T_JBV('jcalatayuda','NIMIXSDGHO')
-			, T_JBV('jgarciato','VCYUGPMLGE')
-			, T_JBV('jmeijon','QAYAIFHUQX')
-			, T_JBV('jponte','FLJUNOTNMI')
-			, T_JBV('ksanz','SGTIJBONCZ')
-			, T_JBV('ladalberto','LHPUUVNUCO')
-			, T_JBV('mandres','QJRRIJRRHS')
-			, T_JBV('mcorona','XESZNZCNNK')
-			, T_JBV('mcorrales','ETCFRZHXPQ')
-			, T_JBV('mdejulio','CJWDAAQKZQ')
-			, T_JBV('mfranco','UMRUZZHRHH')
-			, T_JBV('mgarciame','GSNFTHJZOY')
-			, T_JBV('mgomezch','ATADWYFIJN')
-			, T_JBV('mmarrero','QWZFFDTJXZ')
-			, T_JBV('mmerino','HNQDVWRFDP')
-			, T_JBV('ngarcias','ZQEAUQKWDJ')
-			, T_JBV('nllano','NXOHNMWHOR')
-			, T_JBV('palonsom','GRMFBWQRJZ')
-			, T_JBV('rdregorio','NEZONLNKCJ')
-			, T_JBV('salzolav','NGHMGVANKK')
-			, T_JBV('sval','NYWPUANURE')
-			, T_JBV('vherrera','PYBDXBJCRP')
-			, T_JBV('vmarin','VJNWDNMMSL')
-			, T_JBV('acarabal','GDPGPIENIF')
-			, T_JBV('amanzanob','PDIDMKIROX')
-			, T_JBV('dvicentep','LVWXGQLJCN')
-			, T_JBV('eluque','LUYGKFGGQG')
-			, T_JBV('lclaret','GZFZTIUVNR')
-			, T_JBV('mgarciaarr','KXIPJNUAPS')
-			, T_JBV('omora','VQHHMAIOJD')
-			, T_JBV('mroque','QPQTXEERTT')	
+		   T_JBV('02709594X','ADBDFJMGGI',1)
+		 , T_JBV('02912870N','LAHSGZXTDY',1)
+		 , T_JBV('03867799G','UGGTJNAMRH',1)
+		 , T_JBV('03876878K','SBWWXGWRXN',1)
+		 , T_JBV('03877533D','RQLXXASCSR',1)
+		 , T_JBV('08938379G','VKMLJJQCQX',1)
+		 , T_JBV('09051371C','REICFIHDKE',1)
+		 , T_JBV('11814546K','NOJOWRGYVB',1)
+		 , T_JBV('13928917W','EVXDSBLMYN',1)
+		 , T_JBV('29199627T','ENVFPWZSBH',1)
+		 , T_JBV('33459310Z','EFQCFRCSKF',1)
+		 , T_JBV('38115797J','LVXNBJGTOD',1)
+		 , T_JBV('43452768H','WMQFKCLJHX',1)
+		 , T_JBV('46927378H','YLEMEKMZWC',1)
+		 , T_JBV('50468716T','GXHWAFWCZE',1)
+		 , T_JBV('50760288R','AVFSMPHBLN',1)
+		 , T_JBV('50868754E','PAEORQFKNX',1)
+		 , T_JBV('51391272A','MNRWZXRNHK',1)
+		 , T_JBV('52993706G','HLEMQLAMOP',1)
+		 , T_JBV('53382018F','XBAARYNNGO',1)
+		 , T_JBV('53472227X','DJPQBATWGU',1)
+		 , T_JBV('7089139Q','ZPNQAFMEAF',1)
+		 , T_JBV('70934859F','FDLNYDLEKF',1)
+		 , T_JBV('03887362V','LUXWBILXJW',2)
+		 , T_JBV('03893974M','FZBBGYGMFR',2)
+		 , T_JBV('14270925T','DTQSCBMAVL',2)
+		 , T_JBV('20253228A','FERDRAXYOJ',2)
+		 , T_JBV('33517318Q','BSEBGMBSAD',2)
+		 , T_JBV('44024784R','VPYAXNWKXW',2)
+		 , T_JBV('51935765V','TRCAZXAYZU',2)
+		 , T_JBV('52869104Q','HIEJTKFRKC',2)
+		 , T_JBV('52872988J','FIPTLDSNNP',2)
+		 , T_JBV('52958095C','WRPRJBPEAG',2)
+		 , T_JBV('74717518V','GJBENPZDSI',2)
+		 , T_JBV('78472108H','QBSMQFVVNN',2)
+		 , T_JBV('A82046061','MWPPLRJUNU',2)
+		 , T_JBV('A82451410','RMBMHTXPXE',2)
+		 , T_JBV('B03830510','MJPFCMWKMX',2)
+		 , T_JBV('B04485686','OCBQWSALZB',2)
+		 , T_JBV('B23657521','JRQTVYVQCN',2)
+		 , T_JBV('B45684677','KHEDSOJMAY',2)
+		 , T_JBV('B84105899','PXWPKNFBXG',2)
+		 , T_JBV('B85030641','UGGNYHHKVE',2)
+		 , T_JBV('B85343721','AGSQBHQKDW',2)
+		 , T_JBV('B85884336','QQJVQUEVVS',2)
+		 , T_JBV('B86689494','EPWIBIPLOO',2)
+		 , T_JBV('B86858073','SJTTPQENAN',2)
+		 , T_JBV('B92418524','KVSGCLALJT',2)
+		 , T_JBV('E98442098','ALASMBPICP',2)
+		 , T_JBV('irodriguezl','VJUXPFHNIQ',2)
+		 , T_JBV('mserranog','HPROYGBXTK',2)
+		 , T_JBV('pbravol','CQXOHFLJBR',2)
+		 , T_JBV('X4092272C','GAXVKABZUL',2)
 	); 
 V_TMP_JBV T_JBV;
 BEGIN
@@ -111,23 +103,26 @@ BEGIN
  V_TMP_JBV := V_JBV(I);
  			  USU_USERNAME := TRIM(V_TMP_JBV(1));
  			  USU_PASSWORD := TRIM(V_TMP_JBV(2));
-			
+			  ORDER 	   := TRIM(V_TMP_JBV(3));
 	
 
+	IF ORDER = 1 THEN
 		V_SQL := 'UPDATE '||V_ESQUEMA_M||'.'||V_TABLA||' SET
 					 USU_PASSWORD = '''||USU_PASSWORD||'''
 				   , USUARIOMODIFICAR = '''||V_USUARIO||'''
 				   , FECHAMODIFICAR = SYSDATE
 				   WHERE USU_USERNAME = '''||USU_USERNAME||'''
 					';
-           
+					
+		EXECUTE IMMEDIATE V_SQL;
+		
+		IF SQL%ROWCOUNT > 0 THEN
+			DBMS_OUTPUT.PUT_LINE('Actualizada la contraseña del usuario '||USU_USERNAME||' a '||USU_PASSWORD);
+			V_COUNT_UPDATE := V_COUNT_UPDATE + 1;
+		END IF;
+	END IF;           
 
-				EXECUTE IMMEDIATE V_SQL;
 				
-				IF SQL%ROWCOUNT > 0 THEN
-					DBMS_OUTPUT.PUT_LINE('Actualizada la contraseña del usuario '||USU_USERNAME||' a '||USU_PASSWORD);
-					V_COUNT_UPDATE := V_COUNT_UPDATE + 1;
-				END IF;
  END LOOP;			    
     
 	COMMIT;

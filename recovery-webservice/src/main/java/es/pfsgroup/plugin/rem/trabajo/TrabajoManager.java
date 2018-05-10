@@ -1958,7 +1958,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@SuppressWarnings("unchecked")
 	@Override
 	public DtoPage getSeleccionTarifasTrabajo(DtoGestionEconomicaTrabajo filtro, String cartera, String tipoTrabajo,
-			String subtipoTrabajo) {
+			String subtipoTrabajo, String codigoTarifa, String descripcionTarifa) {
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		filtro.setCarteraCodigo(cartera);
@@ -1971,7 +1971,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				filtro.setIdProveedor(trabajo.getProveedorContacto().getProveedor().getId());
 			}
 		}
-
+		if(!Checks.esNulo(codigoTarifa)){
+			filtro.setCodigoTarifaTrabajo(codigoTarifa);
+		}
+		if(!Checks.esNulo(descripcionTarifa)){
+			filtro.setDescripcionTarifaTrabajo(descripcionTarifa);
+		}
 		Page page = trabajoDao.getSeleccionTarifasTrabajo(filtro, usuarioLogado);
 		//Si no existen tarifas para un Proveedor, se recuperan las tarifas sin el filtro del Proveedor
 		if(page.getTotalCount() == 0){

@@ -310,10 +310,18 @@ public class TabActivoInformeComercial implements TabActivoService {
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getTipoActivoCodigo());
 					DDTipoActivo tipoActivo = (DDTipoActivo) genericDao.get(DDTipoActivo.class, filtro);
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "tipoActivo", tipoActivo);
+				} else if (!Checks.esNulo(activo.getTipoActivo())) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activo.getTipoActivo().getCodigo());
+					DDTipoActivo tipoActivo = (DDTipoActivo) genericDao.get(DDTipoActivo.class, filtro);
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "tipoActivo", tipoActivo);
 				}
 
 				if (!Checks.esNulo(activoInformeDto.getSubtipoActivoCodigo())) {
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getSubtipoActivoCodigo());
+					DDSubtipoActivo subtipoActivo = (DDSubtipoActivo) genericDao.get(DDSubtipoActivo.class, filtro);
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "subtipoActivo", subtipoActivo);
+				} else if (!Checks.esNulo(activo.getSubtipoActivo())){
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activo.getSubtipoActivo().getCodigo());
 					DDSubtipoActivo subtipoActivo = (DDSubtipoActivo) genericDao.get(DDSubtipoActivo.class, filtro);
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "subtipoActivo", subtipoActivo);
 				}

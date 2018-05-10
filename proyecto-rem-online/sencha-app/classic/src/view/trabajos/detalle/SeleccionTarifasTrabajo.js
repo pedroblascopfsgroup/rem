@@ -24,6 +24,10 @@ Ext.define('HreRem.view.trabajos.detalle.SeleccionTarifasTrabajo', {
     
     subtipoTrabajoCodigo: null,
     
+    codigoTarifaTrabajo: null,
+    
+    descripcionTarifaTrabajo: null,
+    
     parent: null, 
     
     listeners: {
@@ -50,6 +54,8 @@ Ext.define('HreRem.view.trabajos.detalle.SeleccionTarifasTrabajo', {
 	    	me.getViewModel().set('trabajo.carteraCodigo', me.carteraCodigo);
 	    	me.getViewModel().set('trabajo.tipoTrabajoCodigo', me.tipoTrabajoCodigo);
 	    	me.getViewModel().set('trabajo.subtipoTrabajoCodigo', me.subtipoTrabajoCodigo);
+	    	me.getViewModel().set('trabajo.codigoTarifaTrabajo', me.codigoTarifaTrabajo);
+	    	me.getViewModel().set('trabajo.descripcionTarifaTrabajo', me.descripcionTarifaTrabajo);
 	    	
 	    	// Refresca el combo y el grid para los nuevos parametros
 	    	me.lookupReference("comboSubtipoTrabajoTarificadoRef").getStore().load();
@@ -101,11 +107,36 @@ Ext.define('HreRem.view.trabajos.detalle.SeleccionTarifasTrabajo', {
 			            		store: '{comboSubtipoTrabajoTarificado}',
 			            		value: '{trabajo.subtipoTrabajoCodigo}'
 			            	},
-			            	listeners: {
+			            	/*listeners: {
 								select: 'refreshStoreSeleccionTarifas'
-    						},
+    						},*/
 			            	displayField: 'descripcion',
     						valueField: 'codigo'
+						},
+						{
+							fieldLabel:  HreRem.i18n('fieldlabel.proveedores.codigo'),
+							reference: 'textfieldCodigoTarifaTrabajoRef',
+							flex: 1,
+							xtype: 'textfield',
+							bind: {
+			            		value: '{trabajo.codigoTarifaTrabajo}'
+			            	}
+						},
+						{
+							fieldLabel:  HreRem.i18n('header.descripcion'),
+							reference: 'textfieldDescripcionTarifaTrabajoRef',
+							flex: 1,
+							xtype: 'textfield',
+							bind: {
+			            		value: '{trabajo.descripcionTarifaTrabajo}'
+			            	}
+						},
+						{
+							text: 'Filtrar',
+							reference: 'botonFiltrar',
+							flex: 0.5,
+							xtype: 'button',
+							handler: 'onClickBotonFiltrar'
 						}
 	            	]
 	            },

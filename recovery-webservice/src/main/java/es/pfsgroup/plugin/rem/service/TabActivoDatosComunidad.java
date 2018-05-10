@@ -107,15 +107,13 @@ public class TabActivoDatosComunidad implements TabActivoService {
 		DtoComunidadpropietariosActivo activoComunidadPropietariosDto = (DtoComunidadpropietariosActivo) webDto;
 
 		try {
-			// Se guardan todas las propieades del "Informe Comercial" que son comunes a
-			// "Informacion Comercial"
 			
-			if (Checks.esNulo(activo.getComunidadPropietarios())){
+			if (!Checks.esNulo(activo.getComunidadPropietarios())){
 				ActivoComunidadPropietarios actComPropietarios = activo.getComunidadPropietarios();;
 				genericDao.save(ActivoComunidadPropietarios.class, actComPropietarios);
 			}
 			
-			if (!Checks.esNulo(activo.getComunidadPropietarios())) {
+			if (Checks.esNulo(activo.getComunidadPropietarios())) {
 				beanUtilNotNull.copyProperties(activo.getComunidadPropietarios(), activoComunidadPropietariosDto);
 
 				if (!Checks.esNulo(activoComunidadPropietariosDto.getFechaComunicacionComunidad())) {

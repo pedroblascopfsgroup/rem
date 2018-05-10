@@ -71,7 +71,7 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 		setVariable(ConstantesBPMPFS.NOMBRE_NODO_SALIENTE, getNombreNodo(executionContext), executionContext);
 		
 		//HREOS-3393
-		if(!SALTO_RESOLUCION_EXPEDIENTE.equals(getTransitionName(executionContext))) {
+		if(!SALTO_T013_RESOLUCION_EXPEDIENTE.equals(getTransitionName(executionContext))) {
 			// Guardado adicional de datos de la tarea
 			guardadoAdicionalTarea(executionContext);
 			

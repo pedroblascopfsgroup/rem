@@ -660,11 +660,18 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		var me = this;
 		//Acceder as� a los tres atributos que le hemos pasado a la openModalWindow
 		//de selecci�n de tarifa: tipo de trabajo, subtipo de trabajo y cartera
+
 		var idTrabajo = me.getViewModel().get("trabajo.id");
+		//REMVIP-558 - Se añaden dos campos mas, descpripcion y codigo del trabajo
 		var carteraCodigo = me.getViewModel().get("trabajo.carteraCodigo"),
 		tipoTrabajoCodigo = me.getViewModel().get("trabajo.tipoTrabajoCodigo"),
-		subtipoTrabajoCodigo = me.getViewModel().get("trabajo.subtipoTrabajoCodigo");
-		store.getProxy().extraParams = {idTrabajo: idTrabajo, cartera: carteraCodigo, tipoTrabajo: tipoTrabajoCodigo, subtipoTrabajo: subtipoTrabajoCodigo};	
+		subtipoTrabajoCodigo = me.getViewModel().get("trabajo.subtipoTrabajoCodigo"),
+		codigoTarifaTrabajo = me.getViewModel().get('trabajo.codigoTarifaTrabajo'),
+		descripcionTarifaTrabajo = me.getViewModel().get('trabajo.descripcionTarifaTrabajo');
+		
+		store.getProxy().extraParams = {idTrabajo: idTrabajo, cartera: carteraCodigo, tipoTrabajo: tipoTrabajoCodigo, subtipoTrabajo: subtipoTrabajoCodigo
+			, codigoTarifa: codigoTarifaTrabajo, descripcionTarifa: descripcionTarifaTrabajo};	
+		
 		return true;		
 
 	},
@@ -979,6 +986,14 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
  		}
  		
 
+     },
+     
+     onClickBotonFiltrar: function(btn) {
+    	 var me = this;
+    	 
+    	 var store = me.getViewModel().get('storeSeleccionTarifas');
+    	 store.load();
+    	 
      },
 
      onClickRefrescarParticipacion: function(btn) {

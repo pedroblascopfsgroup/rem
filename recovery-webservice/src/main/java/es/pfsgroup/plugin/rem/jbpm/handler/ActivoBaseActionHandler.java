@@ -71,6 +71,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 
     public static final String SALTO_CIERRE_ECONOMICO = "saltoCierreEconomico";
     public static final String SALTO_RESOLUCION_EXPEDIENTE = "saltoResolucionExpediente";
+    public static final String SALTO_T013_RESOLUCION_EXPEDIENTE = "saltoT013_ResolucionExpediente";
     
     protected final Log logger = LogFactory.getLog(getClass());
 

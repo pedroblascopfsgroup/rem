@@ -174,7 +174,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            		change: function(combo, value) {
 			            			var me = this;
 			            			if(value=='0') {
-			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setValue(null);
+			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setValue(1);
 			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(true);
 			            			} else {
 			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(false);

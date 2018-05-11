@@ -969,14 +969,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	public Integer getEstadoIndicadorPublicacionVenta(Activo activo) {
 		Boolean checkPublicarSinPrecio = activoPublicacionDao.getCheckSinPrecioVentaPorIdActivo(activo.getId());
 
-		if(activo.getAdmision()
-				&& activo.getGestion()
+		if(isAdmisionOK(activo.getId())
+				&& isGestionOK(activo.getId())
 				&& this.isInformeAprobado(activo.getId())
 				&& (this.tienePrecioVentaByIdActivo(activo.getId()) || (!Checks.esNulo(checkPublicarSinPrecio) && checkPublicarSinPrecio))
 				){
 			return ESTADO_PUBLICACION_AZUL;
-		}else if(!activo.getAdmision()
-				&& !activo.getGestion()
+		}else if(!isAdmisionOK(activo.getId())
+				&& !isGestionOK(activo.getId())
 				&& !this.isInformeAprobado(activo.getId())
 				&& !(this.tienePrecioVentaByIdActivo(activo.getId()) || (!Checks.esNulo(checkPublicarSinPrecio) && checkPublicarSinPrecio))
 				){
@@ -999,8 +999,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			}
 		}
 
-		if(activo.getAdmision()
-				&& activo.getGestion()
+		if(isAdmisionOK(activo.getId())
+				&& isGestionOK(activo.getId())
 				&& this.isInformeAprobado(activo.getId())
 				&& (!Checks.esNulo(activoPatrimonio)
 				&& !Checks.esNulo(activoPatrimonio.getAdecuacionAlquiler())
@@ -1010,8 +1010,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				&& (this.tienePrecioRentaByIdActivo(activo.getId()) || (!Checks.esNulo(checkPublicarSinPrecio) && checkPublicarSinPrecio))
 				) {
 			return ESTADO_PUBLICACION_AZUL;
-		} else if(!activo.getAdmision()
-				&& !activo.getGestion()
+		} else if(!isAdmisionOK(activo.getId())
+				&& !isGestionOK(activo.getId())
 				&& !this.isInformeAprobado(activo.getId())
 				&& (!Checks.esNulo(activoPatrimonio)
 				&& !Checks.esNulo(activoPatrimonio.getAdecuacionAlquiler())

@@ -86,7 +86,7 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 					        	addUxReadOnlyEditFieldPlugin: false,
 					        	fieldLabel: HreRem.i18n('combolabel.publicaciones.combo.estado'),
 					        	name: 'estadoPublicacionCodigo',
-					        	value: CONST.ESTADOS_PUBLICACION['NO_PUBLICADO'], // Establecido por defecto.
+					        	//value: CONST.ESTADO_PUBLICACION_VENTA['NO_PUBLICADO'], // Establecido por defecto.
 					        	bind: {
 				            		store: '{comboEstadoPublicacion}'
 				            	}
@@ -120,6 +120,16 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 					                	value: '{filtroComboTipoActivo.value}'
 					                }
 				            	}
+					        },
+					        {
+					        	xtype : 'comboboxfieldbase',
+								addUxReadOnlyEditFieldPlugin : false,
+								fieldLabel : HreRem.i18n('combolabel.publicaciones.combo.estado.alquiler'),
+								name : 'estadoPublicacionAlquilerCodigo',
+								//value : CONST.ESTADO_PUBLICACION_ALQUILER['NO_PUBLICADO'], // Establecido por defecto.
+								bind : {
+									store : '{comboEstadoPublicacionAlquiler}'
+								}
 					        }
 						]
 			    	}

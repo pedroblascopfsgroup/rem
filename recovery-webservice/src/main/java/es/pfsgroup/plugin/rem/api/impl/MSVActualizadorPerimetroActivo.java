@@ -8,6 +8,8 @@ import java.util.Date;
 import javax.annotation.Resource;
 
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,7 +89,9 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 		String	tmpTipoAlquiler = exc.dameCelda(fila, 9);
 		Integer tmpAplicaFormalizar = getCheckValue(exc.dameCelda(fila, 10));
 		String  tmpMotivoAplicaFormalizar = exc.dameCelda(fila,11);
-
+		Integer tmpAplicaPublicar = getCheckValue(exc.dameCelda(fila, 12));
+		String  tmpMotivoAplicaPublicar = exc.dameCelda(fila,13);
+		
 		perimetroActivo.setActivo(activo);
 		//Incluido en perimetro		---------------------------
 		if(!CHECK_NO_CAMBIAR.equals(tmpIncluidoEnPerimetro)) perimetroActivo.setIncluidoEnPerimetro(tmpIncluidoEnPerimetro);
@@ -150,6 +154,14 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 		} 
 
 		if(!Checks.esNulo(tmpMotivoAplicaFormalizar)) perimetroActivo.setMotivoAplicaFormalizar(tmpMotivoAplicaFormalizar);
+		
+		//Aplica Publicar 		---------------------------
+		if(!CHECK_NO_CAMBIAR.equals(tmpAplicaPublicar)){
+			perimetroActivo.setAplicaPublicar(BooleanUtils.toBooleanObject(tmpAplicaPublicar));
+			perimetroActivo.setFechaAplicaPublicar(new Date());
+		} 
+
+		if(!Checks.esNulo(tmpMotivoAplicaPublicar)) perimetroActivo.setMotivoAplicaPublicar(tmpMotivoAplicaPublicar);
 		
 		
 		// ---------------------------

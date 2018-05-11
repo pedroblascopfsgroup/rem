@@ -41,7 +41,7 @@ parsear_simple()
 
 cp $FICHERO resultado.txt
 
-IN1="INTO;FROM;DELETE;UPDATE;SELECT;into;from;delete;update;select"
+IN1="INTO;FROM;DELETE;UPDATE;SELECT;JOIN;into;from;delete;update;select;join"
 IN2="HAYA;BANK;CM;REM;haya;bank;cm;rem"
 
 IFS=';' read -ra ADDR1 <<< "$IN1"
@@ -56,7 +56,7 @@ for i in "${ADDR1[@]}"; do
     done
 done
 
-cat resultado.txt | grep "[INSERT|DELETE|UPDATE]" > auxiliar.txt
+cat resultado.txt | grep "[INSERT|DELETE|UPDATE|MERGE]" > auxiliar.txt
 mv auxiliar.txt resultado.txt
 
 SENTENCIA1="V_SQL := q'["

@@ -440,6 +440,10 @@
 				def ofertaManager = ctx.getBean("ofertaManager");
 				return ofertaManager.checkReservaFirmada(tareaExterna);
 			}
+			def checkTarifaPlana = {
+				def trabajoManager = ctx.getBean("trabajoManager");
+                return trabajoManager.trabajoTieneTarifaPlana(tareaExterna);
+			}
   			 ]]></value>
   		</list>
   	</property>

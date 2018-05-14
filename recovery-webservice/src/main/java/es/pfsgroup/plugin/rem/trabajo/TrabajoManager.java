@@ -3315,6 +3315,18 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if(!Checks.esNulo(gestorProveedorTecnico) && historicoTarifaPlanaDao.subtipoTrabajoTieneTarifaPlanaVigente(subtipoTrabajo.getId(), fechaSolicitud)){
 			resultado = true;
 		}
+		resultado = true;
 		return resultado;
+	}
+	
+	@Override
+	public Boolean trabajoTieneTarifaPlana(TareaExterna tareaExterna){
+		Boolean esTarifaPlana = false;
+		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
+		if (!Checks.esNulo(trabajo)) {
+			esTarifaPlana = esTrabajoTarifaPlana(trabajo.getActivo(), trabajo.getSubtipoTrabajo(), trabajo.getFechaSolicitud());
+		}
+		esTarifaPlana = false;
+		return esTarifaPlana;
 	}
 }

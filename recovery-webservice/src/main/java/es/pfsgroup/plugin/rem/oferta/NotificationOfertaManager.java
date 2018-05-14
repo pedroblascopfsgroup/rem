@@ -17,12 +17,14 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaGenerico;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
@@ -49,6 +51,9 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	
 	@Autowired
 	private UsuarioManager usuarioManager;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
 
 	/**
 	 * Cada vez que llegue una oferta de un activo, 
@@ -158,10 +163,15 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 					f1 = FileItemUtils.fromResource("docs/contrato_reserva_Tango.docx");
 					adjuntos.add(createAdjunto(f1, "contrato_reserva_Tango.docx"));
 				}
-
-				String cuerpo = this.creaCuerpoOfertaExpress(oferta);
 				
-				genericAdapter.sendMail(mailsPara, mailsCC, asunto, cuerpo, adjuntos);
+				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+				
+				if (!Checks.esNulo(expediente)){
+					String cuerpo = this.creaCuerpoOfertaExpress(oferta);
+					
+					genericAdapter.sendMail(mailsPara, mailsCC, asunto, cuerpo, adjuntos);
+				}
+
 			} else {
 				genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 			}

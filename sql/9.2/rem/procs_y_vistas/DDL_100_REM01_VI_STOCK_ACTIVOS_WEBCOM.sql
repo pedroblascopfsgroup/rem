@@ -276,7 +276,8 @@ BEGIN
 		LEFT JOIN '||V_ESQUEMA||'.act_apu_activo_publicacion actpub ON actpub.ACT_ID = ACT.ACT_ID
         LEFT JOIN '||V_ESQUEMA||'.dd_epv_estado_pub_venta epv ON epv.dd_epv_id = actpub.dd_epv_id
        	LEFT JOIN '||V_ESQUEMA||'.dd_epa_estado_pub_alquiler epa ON epa.dd_epa_id = actpub.dd_epa_id
-       	LEFT JOIN '||V_ESQUEMA||'.dd_tpu_tipo_publicacion tpu ON tpu.dd_tpu_id = actpub.dd_tpu_id
+       	LEFT JOIN '||V_ESQUEMA||'.dd_tpu_tipo_publicacion tpu ON tpu.dd_tpu_id = actpub.DD_TPU_V_ID 
+       	LEFT JOIN '||V_ESQUEMA||'.dd_tpu_tipo_publicacion tpu ON tpu.dd_tpu_id = actpub.DD_TPU_A_ID 
        	LEFT JOIN
 	       (SELECT v.act_id,
 	                  v.sin_toma_posesion_inicial

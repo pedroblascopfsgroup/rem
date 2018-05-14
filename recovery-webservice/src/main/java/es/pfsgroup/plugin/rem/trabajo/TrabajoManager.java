@@ -3315,7 +3315,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if(!Checks.esNulo(gestorProveedorTecnico) && historicoTarifaPlanaDao.subtipoTrabajoTieneTarifaPlanaVigente(subtipoTrabajo.getId(), fechaSolicitud)){
 			resultado = true;
 		}
-		resultado = true;
 		return resultado;
 	}
 	
@@ -3326,7 +3325,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (!Checks.esNulo(trabajo)) {
 			esTarifaPlana = esTrabajoTarifaPlana(trabajo.getActivo(), trabajo.getSubtipoTrabajo(), trabajo.getFechaSolicitud());
 		}
-		esTarifaPlana = false;
 		return esTarifaPlana;
 	}
 }

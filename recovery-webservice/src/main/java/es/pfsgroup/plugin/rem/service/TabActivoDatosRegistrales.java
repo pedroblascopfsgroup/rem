@@ -256,7 +256,6 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			
 			beanUtilNotNull.copyProperties(activo.getTitulo(), dto);
 			
-			if(Checks.esNulo(dto.getFechaInscripcionReg())) activo.getTitulo().setFechaInscripcionReg(null);
 			
 			
 			if (dto.getEstadoTitulo() != null) {

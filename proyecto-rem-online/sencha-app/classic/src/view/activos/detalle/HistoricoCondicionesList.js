@@ -89,6 +89,10 @@ Ext.define('HreRem.view.activos.detalle.HistoricoCondicionesList', {
 		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
 			me.setTopBar(false);
 		}
+		
+		if(me.lookupController().getViewModel().get('activo').get('perteneceAgrupacionRestringidaVigente')) {
+			me.setTopBar(false);
+		}
 
 		if(me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionComercial') ||
 				me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionRestringida') ||

@@ -122,6 +122,10 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
 				}else{
 					visible = $AU.userHasFunction('EDITAR_TAB_DATOS_PUBLICACION');
 				}
+				
+				if(me.lookupController().getViewModel().get('activo').get('perteneceAgrupacionRestringidaVigente')){
+					visible = false;
+				}
 			}
 			me.down("[itemId=botoneditar]").setVisible(visible);
 		}

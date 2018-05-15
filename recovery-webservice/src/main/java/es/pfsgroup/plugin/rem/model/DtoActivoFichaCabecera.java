@@ -110,6 +110,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String tipoComercializarCodigo;
 	private String tipoComercializarDescripcion;
 	private Boolean pertenceAgrupacionRestringida;
+	private Boolean perteneceAgrupacionRestringidaVigente;
 	private Boolean pertenceAgrupacionComercial;
 	private Boolean pertenceAgrupacionAsistida;
 	private Boolean pertenceAgrupacionObraNueva;
@@ -954,6 +955,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setPertenceAgrupacionRestringida(
 			Boolean pertenceAgrupacionRestringida) {
 		this.pertenceAgrupacionRestringida = pertenceAgrupacionRestringida;
+	}
+
+	public Boolean getPerteneceAgrupacionRestringidaVigente() {
+		return perteneceAgrupacionRestringidaVigente;
+	}
+
+	public void setPerteneceAgrupacionRestringidaVigente(Boolean perteneceAgrupacionRestringidaVigente) {
+		this.perteneceAgrupacionRestringidaVigente = perteneceAgrupacionRestringidaVigente;
 	}
 
 	public Boolean getIncluidoEnPerimetro() {

@@ -265,6 +265,22 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 				}
 			}
+			Boolean perteneceAgrupacionRestringidaVigente = false;
+			Date currentDate = new Date();
+			for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
+				if(Checks.esNulo(agrupaciones.getAgrupacion().getFechaBaja())) {
+					if(!Checks.esNulo(agrupaciones.getAgrupacion().getTipoAgrupacion()) 
+							&& DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo())
+							&& (Checks.esNulo(agrupaciones.getAgrupacion().getFechaFinVigencia()) 
+									|| (!Checks.esNulo(agrupaciones.getAgrupacion().getFechaFinVigencia()) 
+											&& (agrupaciones.getAgrupacion().getFechaFinVigencia().before(currentDate) 
+											|| agrupaciones.getAgrupacion().getFechaFinVigencia().equals(currentDate))))
+					){
+						perteneceAgrupacionRestringidaVigente = true;
+						break;
+					}
+				}
+			}
 			Boolean pertenceAgrupacionComercial = false;
 			for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
 				if(Checks.esNulo(agrupaciones.getAgrupacion().getFechaBaja())) {
@@ -292,6 +308,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionRestringida", pertenceAgrupacionRestringida);
+			BeanUtils.copyProperty(activoDto, "perteneceAgrupacionRestringidaVigente", perteneceAgrupacionRestringidaVigente);
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionComercial", pertenceAgrupacionComercial);
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionAsistida", pertenceAgrupacionAsistida);
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionObraNueva", pertenceAgrupacionObraNueva);

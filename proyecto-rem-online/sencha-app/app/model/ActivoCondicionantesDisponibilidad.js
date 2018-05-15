@@ -89,7 +89,6 @@ Ext.define('HreRem.model.ActivoCondicionantesDisponibilidad', {
 		extraParams:{
 			tab: 'activocondicionantesdisponibilidad'
 		},
-		writeAll: true,
 		api: {
             read: 'activo/getCondicionantesDisponibilidad',
             update: 'activo/saveCondicionantesDisponibilidad',

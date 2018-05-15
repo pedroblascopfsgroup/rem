@@ -3220,7 +3220,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
     onChangeCheckboxPublicarAlquiler: function(checkbox, isDirty) {
         var me = this;
-
+        
         if (checkbox.getValue() && me.getViewModel().get('debePreguntarPorTipoPublicacionAlquiler')) {
 			Ext.create('HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion').show();
         }
@@ -3247,6 +3247,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
     onChangeCheckboxPublicarSinPrecioAlquiler: function(checkbox, isDirty) {
         var me = this;
+        
 		var checkboxPublicarAlquiler = checkbox.up('activosdetallemain').lookupReference('chkbxpublicaralquiler');
 		var estadoPubAlquilerPublicado = me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'] ||
 			me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PRE_PUBLICADO'] ||

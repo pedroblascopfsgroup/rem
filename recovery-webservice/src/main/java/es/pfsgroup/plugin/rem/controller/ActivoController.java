@@ -1846,10 +1846,7 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView saveCondicionantesDisponibilidad(Long idActivo, DtoCondicionantesDisponibilidad dto,
 			ModelMap model) {
 		try {
-			boolean success = activoApi.saveCondicionantesDisponibilidad(idActivo, dto);
-			activoApi.updateCondicionantesDisponibilidad(idActivo);
-			if (success)
-				adapter.actualizarEstadoPublicacionActivo(idActivo);
+			boolean success = adapter.guardarCondicionantesDisponibilidad(idActivo, dto);
 			model.put("success", success);
 
 		} catch (Exception e) {
@@ -1860,6 +1857,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getHistoricoValoresPrecios(DtoHistoricoPreciosFilter dto, ModelMap model) {

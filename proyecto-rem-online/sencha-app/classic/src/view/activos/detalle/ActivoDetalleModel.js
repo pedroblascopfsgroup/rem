@@ -357,7 +357,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
         debePreguntarPorTipoPublicacionAlquiler: function(get) {
             var publicarSinPrecioAlquiler = get('datospublicacionactivo.publicarSinPrecioAlquiler');
-            var informeComercialAprobado = get('activo.informeComercialAceptado') === "true";
+            var informeComercialAprobado = get('activo.informeComercialAceptado');
             var precioRentaWeb = !Ext.isEmpty(get('datospublicacionactivo.precioWebAlquiler'));
 
             return !informeComercialAprobado && (publicarSinPrecioAlquiler || precioRentaWeb);

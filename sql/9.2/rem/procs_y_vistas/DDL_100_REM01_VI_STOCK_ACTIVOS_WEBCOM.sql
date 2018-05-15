@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JIN LI HU
---## FECHA_CREACION=20180514
+--## FECHA_CREACION=20180515
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-4072
@@ -303,6 +303,7 @@ BEGIN
                 inner join '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD gee ON gee.GEE_ID = gac.GEE_ID
                 inner join '||V_ESQUEMA||'.ACT_PVC_PROVEEDOR_CONTACTO pvc ON pvc.USU_ID = gee.USU_ID
                 inner join '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR pve ON pve.PVE_ID = pvc.PVE_ID
+                inner join '||V_ESQUEMA||'.DD_EPR_ESTADO_PROVEEDOR epr ON epr.DD_EPR_ID = pve.DD_EPR_ID AND epr.DD_EPR_CODIGO = ''04''
                 inner join '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR tpr ON tpr.DD_TPR_ID = pve.DD_TPR_ID AND tpr.DD_TPR_CODIGO =''05'') PVEPRV ON PVEPRV.ACT_ID = act.ACT_ID
 
 		where act.borrado = 0 and sps.borrado = 0';

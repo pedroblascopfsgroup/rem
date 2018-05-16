@@ -189,10 +189,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		 			me.getViewModel().set("editing", false);
 		 		}
 			}
-			
 			// Obtener jsondata para guardar activo
 			var tabData = me.createTabData(form);
-			
+			if(tabData.models != null){
+				if (tabData.models[0].name == "datosregistrales"){
+					record = form.getBindRecord();
+					var fechaInscripcionReg = record.get("fechaInscripcionReg");
+					if  ((typeof fechaInscripcionReg) == 'string') {						
+						var from = fechaInscripcionReg.split("/");
+						fechaInscripcionReg = new Date(from[2], from[1] - 1, from[0])
+    				}
+					if(fechaInscripcionReg != null){
+						tabData.models[0].data.fechaInscripcionReg = new Date(fechaInscripcionReg);
+					}
+				}
+			}
 			var activosPropagables = me.getViewModel().get("activo.activosPropagables") || [];
 			var tabPropagableData = null;
 
@@ -2935,7 +2946,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 
 	saveActivo: function(jsonData, successFn) {
-		
 		var me = this,
 		url =  $AC.getRemoteUrl('activo/saveActivo');
 		

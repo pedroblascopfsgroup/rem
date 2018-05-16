@@ -86,6 +86,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     	}
 	     },
 	     
+	     getIconClsEstadoSituacionComercial: function(get){
+	    	 
+	    	 var estadoSituacionComercial= get('estadoSituacionComercial');
+	    	 if(estadoSituacionComercial) {
+		     		return 'app-tbfiedset-ico icono-ok'
+		     	} else {
+		     		return 'app-tbfiedset-ico icono-ko'
+		     	} 
+	     },
+	     
 	     getIconClsEstadoVenta: function(get) {
 		     	
 		     	var estadoVenta = get('activo.estadoVenta');

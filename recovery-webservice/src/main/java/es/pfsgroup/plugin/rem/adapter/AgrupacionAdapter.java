@@ -80,6 +80,7 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.DtoEstadoDisponibilidadComercial;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
@@ -432,6 +433,22 @@ public class AgrupacionAdapter {
 
 		try {
 			Page listaActivos = activoAgrupacionApi.getListActivosAgrupacionById(filtro, usuarioLogado);
+			return listaActivos;
+		} catch (Exception e) {
+			logger.error("error en agrupacionAdapter", e);
+			return null;
+		}
+	}
+	
+	public DtoEstadoDisponibilidadComercial getListActivosAgrupacion(DtoAgrupacionFilter filtro, Long id) {
+
+		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		if(!Checks.esNulo(id)) {
+			filtro.setAgrupacionId(String.valueOf(id));
+		}
+
+		try {
+			DtoEstadoDisponibilidadComercial listaActivos = activoAgrupacionApi.getListActivosAgrupacionByIdActivo(filtro, usuarioLogado);
 			return listaActivos;
 		} catch (Exception e) {
 			logger.error("error en agrupacionAdapter", e);

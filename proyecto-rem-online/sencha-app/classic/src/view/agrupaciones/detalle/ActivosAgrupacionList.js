@@ -49,13 +49,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
         		me.getStore().remove(me.getStore().getAt(me.editPosition));
         		editor.isNew = false;
         	}
-	    },
-    	afterbind: function(grid) {
-    		var me = this;
-			if (me.loadAfterBind) {
-				grid.getStore().load();
-			}
-		}
+	    }
     },
 
     initComponent: function () {
@@ -156,7 +150,22 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 				me.tbar.items.push(separador);
 				me.tbar.items.push(configGridMenu);
 			}
-    	}
+    	};
+		
+		var estadoRenderer =  function(condicionado) {
+        	var src = '',
+        	alt = '';
+        	
+        	if (condicionado) {
+        		src = 'icono_KO.svg';
+        		alt = 'KO';
+        	} else { 
+        		src = 'icono_OK.svg';
+        		alt = 'OK';
+        	}  
+
+        	return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
+        };  
 		
         me.columns= [
         	{
@@ -202,12 +211,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            flex: 1
 	        },
 	        {
-	            dataIndex: 'subtipoActivo',
+	            dataIndex: 'subtipoActivoDesc',
 	            text: HreRem.i18n('header.subtipo'),
-	            flex: 0.5,
-	            renderer: function (value) {
-	            	return Ext.isEmpty(value) ? "" : value.descripcion;
-	            }
+	            flex: 0.5
 	        },
 	        {
 	            dataIndex: 'subdivision',
@@ -255,6 +261,16 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            dataIndex: 'situacionComercial',
 	            text: HreRem.i18n('header.disponibilidad.comercial'),
 	            flex: 1
+	        },
+	        {
+	            dataIndex: 'estadoSituacionComercial',
+	            text: HreRem.i18n('header.estado.disponibilidad.comercial'),
+	            flex: 1,
+	            bind: {
+	            	hidden: '{!esAgrupacionRestringida}'
+	            },
+	            renderer: estadoRenderer
+	            
 	        },
 	        {
 	            dataIndex: 'importeMinimoAutorizado',

@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.activo;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,10 +40,15 @@ import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
+import es.pfsgroup.plugin.rem.model.DtoEstadoDisponibilidadComercial;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
+import es.pfsgroup.plugin.rem.model.DtoVActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
@@ -139,6 +146,44 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	@BusinessOperation(overrides = "activoAgrupacionManager.getListActivosAgrupacionById")
 	public Page getListActivosAgrupacionById(DtoAgrupacionFilter dto, Usuario usuarioLogado) {
 		return activoAgrupacionDao.getListActivosAgrupacionById(dto, usuarioLogado);
+	}
+	
+
+	public DtoEstadoDisponibilidadComercial getListActivosAgrupacionByIdActivo(DtoAgrupacionFilter dto, Usuario usuarioLogado) {
+		
+		DtoEstadoDisponibilidadComercial dtoEstadoDispcom = new DtoEstadoDisponibilidadComercial();
+		List<DtoVActivosAgrupacion> listaDto = new ArrayList<DtoVActivosAgrupacion>();
+		List<VActivosAgrupacion> lAgrupaActivos =  (List<VActivosAgrupacion>) activoAgrupacionDao.getListActivosAgrupacionById(dto, usuarioLogado).getResults();
+		//TODO LLAMAR A VListaActivosAgrupacionVSCondicionantes con el agrupacion id y comprobar dentro del for los campos que ves en if(!Checks.esNulo(vCondicionante)) 
+		for(VActivosAgrupacion actAgrup : lAgrupaActivos) {
+			DtoVActivosAgrupacion dtoVActAgrup = new DtoVActivosAgrupacion();	
+			/*VCondicionantesDisponibilidad vCondicionante = genericDao.get(VCondicionantesDisponibilidad.class, genericDao.createFilter(FilterType.EQUALS, "idActivo",actAgrup.getActivoId()));
+			if(!Checks.esNulo(vCondicionante)) {
+				if(vCondicionante.getConCargas() || vCondicionante.getDivHorizontalNoInscrita() || vCondicionante.getIsCondicionado() || vCondicionante.getObraNuevaEnConstruccion() ||
+						vCondicionante.getObraNuevaSinDeclarar() || vCondicionante.getOcupadoConTitulo() || vCondicionante.getOcupadoSinTitulo() || vCondicionante.getPendienteInscripcion() ||
+						vCondicionante.getPortalesExternos() || vCondicionante.getProindiviso() || vCondicionante.getRuina() || vCondicionante.getSinInformeAprobado() ||
+						vCondicionante.getSinTomaPosesionInicial() || vCondicionante.getTapiado() || vCondicionante.getVandalizado()) {
+					
+					dtoVActAgrup.setEstadoSituacionComercial(true);
+					
+				}else {
+					dtoVActAgrup.setEstadoSituacionComercial(false);
+				}
+			}*/
+			
+			BeanUtils.copyProperties(actAgrup,dtoVActAgrup);
+			if(!Checks.esNulo(actAgrup.getSubtipoActivo())) {
+				dtoVActAgrup.setCodigoSubtipoActivo(actAgrup.getSubtipoActivo().getCodigo());
+				dtoVActAgrup.setSubtipoActivoDesc(actAgrup.getSubtipoActivo().getDescripcion());
+			}
+			
+			listaDto.add(dtoVActAgrup);
+		}
+		 
+		dtoEstadoDispcom.setListado(listaDto);
+		dtoEstadoDispcom.setTotalCount(lAgrupaActivos.size());
+		
+		return  dtoEstadoDispcom;
 	}
 
 	@Override

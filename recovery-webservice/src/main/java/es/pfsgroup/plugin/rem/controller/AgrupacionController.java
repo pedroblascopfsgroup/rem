@@ -39,6 +39,7 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesActivo;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
+import es.pfsgroup.plugin.rem.model.DtoEstadoDisponibilidadComercial;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
@@ -152,9 +153,10 @@ public class AgrupacionController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListActivosAgrupacionById(DtoAgrupacionFilter filtro, Long id, ModelMap model) {
 
-		Page page = adapter.getListActivosAgrupacionById(filtro, id);
+		//TODO cambiar Page por el nuevo dto.
+		DtoEstadoDisponibilidadComercial page = adapter.getListActivosAgrupacion(filtro, id);
 		if(!Checks.esNulo(page)) {
-			model.put("data", page.getResults());
+			model.put("data", page.getListado());
 			model.put("totalCount", page.getTotalCount());
 			model.put("success", true);
 		} else {

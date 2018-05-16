@@ -56,6 +56,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
+import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -107,6 +108,7 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupacionesActivo;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoCondicionHistorico;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoDistribucion;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
@@ -207,6 +209,9 @@ public class ActivoAdapter {
 
 	@Autowired
 	private ActivoTareaExternaApi activoTareaExternaApi;
+	
+	@Autowired
+	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
 
 	@Autowired
 	private TareaActivoApi tareaActivoApi;
@@ -2570,6 +2575,19 @@ public class ActivoAdapter {
 			activoApi.updateCondicionantesDisponibilidad(idActivo);
 			if (success)
 				actualizarEstadoPublicacionActivo(idActivo);
+			
+			return success;
+		}else {
+			return false;
+		}
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean guardarEstadoPublicacionAlquiler(DtoDatosPublicacionActivo dto) {
+		if(!Checks.esNulo(dto.getEleccionUsuarioTipoPublicacionAlquiler()) || !dto.getPublicarAlquiler()) {
+			boolean success = activoEstadoPublicacionApi.setDatosPublicacionActivo(dto);
+			if (success)
+				actualizarEstadoPublicacionActivo(dto.getIdActivo());
 			
 			return success;
 		}else {

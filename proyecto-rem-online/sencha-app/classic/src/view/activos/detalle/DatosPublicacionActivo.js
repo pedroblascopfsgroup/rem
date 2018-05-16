@@ -117,13 +117,17 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 									},
 									items:
 										[
+											
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.publicar'),
 												reference: 'chkbxpublicarventa',
 												bind: {
 													readOnly: '{datospublicacionactivo.deshabilitarCheckPublicarVenta}',
 													value: '{datospublicacionactivo.publicarVenta}'
-												}
+												},
+                                                listeners: {
+                                                    dirtychange: 'onChangeCheckboxPublicarVenta'
+                                               }
 											},
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.ocultar'),

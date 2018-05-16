@@ -337,7 +337,7 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 		try{
 			for(int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++){
 				try{
-					if(!Checks.esNulo(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)) && !particularValidator.existeOfertaAprobadaActivo(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA))){
+					if(!Checks.esNulo(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)) && particularValidator.existeOfertaAprobadaActivo(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA))){
 						listaFilas.add(i);
 					} 
 				}catch (ParseException e){

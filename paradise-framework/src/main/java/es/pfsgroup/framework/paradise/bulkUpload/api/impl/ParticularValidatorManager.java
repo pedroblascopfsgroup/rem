@@ -1561,4 +1561,18 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		return !res.equals("0");
 	}
+	
+	@Override
+	public Boolean existeAgrupacionByDescripcion(String descripcionAgrupacion){
+		if(Checks.esNulo(descripcionAgrupacion))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_AGR_AGRUPACION WHERE"
+				+ "		 	AGR_DESCRIPCION ='"+descripcionAgrupacion+"' "
+				+ "		 	AND BORRADO = 0");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
 }

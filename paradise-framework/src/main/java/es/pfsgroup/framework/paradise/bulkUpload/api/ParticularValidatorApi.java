@@ -299,5 +299,12 @@ public interface ParticularValidatorApi {
 	public boolean existeCodigoPrescriptor(String codPrescriptor);
 	
 	public boolean existeTipoDocumentoByCod(String codDocumento);
-
+	
+	/**
+	 * El método indica si existe alguna agrupación con la descripcion indicada
+	 * 
+	 * @param descripcionAgrupacion : Descripion de la agrupación
+	 * @return : Devuelve True si existe, False si no existe el código.
+	 */
+	public Boolean existeAgrupacionByDescripcion(String descripcionAgrupacion);
 }

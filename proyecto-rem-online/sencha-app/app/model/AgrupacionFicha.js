@@ -127,7 +127,30 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 		    	},
 		    	{
 		    		name: 'cartera'
-		    	}
+		    	},
+		    	{
+		    		name: 'estadoVenta'
+		    	},
+		    	{
+		    		name: 'estadoAlquiler'
+		    	},
+		    	{
+		    		name: 'tipoComercializacionCodigo',
+		    	},
+		    	{
+	                name: 'incluyeDestinoComercialAlquiler',
+	                calculate: function(data) {
+	                    return data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] || data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'];
+	                },
+	                depends: 'tipoComercializacionCodigo'
+	            },
+	            {
+	                name: 'incluyeDestinoComercialVenta',
+	                calculate: function(data) {
+	                    return data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['VENTA'] || data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'];
+	                },
+	                depends: 'tipoComercializacionCodigo'
+	            }
     ],
     
 	proxy: {

@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
     extend: 'Ext.container.Container',
     xtype: 'cabeceraagrupacion',
-    requires: ['HreRem.view.common.ToolFieldSet'],
+    requires: ['HreRem.view.common.ToolFieldSet', 'HreRem.ux.button.BotonFavorito'],
     layout: 'fit',    
    
     initComponent: function () {
@@ -54,8 +54,29 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 						        type: 'hbox'
 						    },
 						    tools: [
-						    
-						   		{	xtype: 'tbfill'},
+						    	{
+									xtype: 'button',
+									cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+									bind: {
+										iconCls: '{getIconClsEstadoVenta}',
+										hidden: '{!esAgrupacionRestringidaIncluyeDestinoComercialVenta}'
+									},
+									iconAlign: 'right',
+									text: HreRem.i18n('title.agrupaciones.indicador.venta')
+								},
+								{
+									xtype: 'button',
+									cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+									bind: {
+										iconCls: '{getIconClsestadoAlquiler}',
+										hidden: '{!esAgrupacionRestringidaIncluyeDestinoComercialAlquiler}'
+									},
+									iconAlign: 'right',
+									text: HreRem.i18n('title.agrupaciones.indicador.alquiler')
+								},
+						   		{	
+									xtype: 'tbfill'
+								},
 						   		{
 						    		xtype: 'button',
 									cls: 'boton-cabecera',

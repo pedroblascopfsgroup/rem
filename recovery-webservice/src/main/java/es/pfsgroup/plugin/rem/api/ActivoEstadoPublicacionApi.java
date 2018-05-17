@@ -7,6 +7,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
 
 import java.sql.SQLException;
+import java.util.List;
 
 
 public interface ActivoEstadoPublicacionApi {
@@ -112,6 +113,20 @@ public interface ActivoEstadoPublicacionApi {
 	 * @return Devuelve el estado de publicación del activo para alquiler.
 	 */
 	Integer getEstadoIndicadorPublicacionAlquiler(Activo activo);
+	
+	/**
+	 * Este método obtiene el estado del indicador de la agrupación restringida para el estado de venta
+	 * @param activeList
+	 * @return Devuelve el estado de publicación de la grupación restringida para venta
+	 */
+	Integer getEstadoIndicadorPublicacionAgrupacionVenta(List<ActivoAgrupacionActivo> listaActivos);
+	
+	/**
+	 * Este método obtiene el estado del indicador de la agrupación restringida para el estado de alquiler
+	 * @param activeList
+	 * @return Devuelve el estado de publicación de la grupación restringida para alquiler
+	 */
+	Integer getEstadoIndicadorPublicacionAgrupacionAlquiler(List<ActivoAgrupacionActivo> listaActivos);
 
 	/**
 	 * Este método comprueba si un activo consta de precio de venta web.

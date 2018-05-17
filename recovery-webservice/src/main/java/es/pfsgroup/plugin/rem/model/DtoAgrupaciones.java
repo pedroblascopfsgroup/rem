@@ -46,6 +46,9 @@ public class DtoAgrupaciones extends WebDto {
 	private Integer isFormalizacion;
 	private Boolean estaCaducada;
 	private Boolean agrupacionEliminada;
+	private Integer estadoVenta;
+	private Integer estadoAlquiler;
+	private String tipoComercializacionCodigo;
 
 
 	public Boolean getEstaCaducada() {
@@ -250,6 +253,25 @@ public class DtoAgrupaciones extends WebDto {
 	public void setAgrupacionEliminada(Boolean agrupacionEliminada) {
 		this.agrupacionEliminada = agrupacionEliminada;
 	}
-
+	public Integer getEstadoVenta() {
+		return estadoVenta;
+	}
+	public void setEstadoVenta(Integer estadoVenta) {
+		this.estadoVenta = estadoVenta;
+	}
+	public Integer getEstadoAlquiler() {
+		return estadoAlquiler;
+	}
+	public void setEstadoAlquiler(Integer estadoAlquiler) {
+		this.estadoAlquiler = estadoAlquiler;
+	}
+	public String getTipoComercializacionCodigo() {
+		return tipoComercializacionCodigo;
+	}
+	public void setTipoComercializacionCodigo(String tipoComercializacionCodigo) {
+		this.tipoComercializacionCodigo = tipoComercializacionCodigo;
+	}
+	
+	
 
 }

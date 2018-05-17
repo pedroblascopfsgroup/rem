@@ -27,11 +27,33 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
         		return 'resources/images/'+src;	     
         	}
 	     },
-
+	     
 	     esAgrupacionRestringida: function(get) {
 	    	 
 		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
 		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA'])) {
+		     		return true;
+		     	} else {
+		     		return false;
+		     	}
+		 },
+		 
+		 esAgrupacionRestringidaIncluyeDestinoComercialVenta: function(get) {
+			 
+			 var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+			 var incluyeDestinoComercialVenta = get('agrupacionficha.incluyeDestinoComercialVenta');
+		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA']) && incluyeDestinoComercialVenta) {
+		     		return true;
+		     	} else {
+		     		return false;
+		     	}
+		 },
+		 
+		 esAgrupacionRestringidaIncluyeDestinoComercialAlquiler: function(get) {
+			 
+			 var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+			 var incluyeDestinoComercialAlquiler = get('agrupacionficha.incluyeDestinoComercialAlquiler');
+		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA']) && incluyeDestinoComercialAlquiler) {
 		     		return true;
 		     	} else {
 		     		return false;
@@ -102,7 +124,32 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 
 	     agrupacionTieneActivos: function(get) {
 	     		return (get('agrupacionficha.numeroActivos')>0);
-	     }
+	     },
+	     
+	     getIconClsEstadoVenta: function(get) {
+		     	
+		     	var estadoVenta = get('agrupacionficha.estadoVenta');
+		     	if(estadoVenta == 0) {
+		     		return 'app-tbfiedset-ico icono-ko'
+		     	} else if (estadoVenta == 1){
+		     		return 'app-tbfiedset-ico icono-ok'
+		     	}else if (estadoVenta == 2){
+		     		return 'app-tbfiedset-ico icono-okn'
+		     	}
+		 },
+		 
+		 getIconClsestadoAlquiler : function(get) {
+
+				var estadoAlquiler = get('agrupacionficha.estadoAlquiler');
+
+				if (estadoAlquiler == 0) {
+					return 'app-tbfiedset-ico icono-ko'
+				} else if (estadoAlquiler == 1) {
+					return 'app-tbfiedset-ico icono-ok'
+				} else if (estadoAlquiler == 2) {
+					return 'app-tbfiedset-ico icono-okn'
+					}
+		 }
     },
     
     stores: {

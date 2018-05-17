@@ -992,38 +992,105 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		ActivoPatrimonio activoPatrimonio = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
 		List<DtoAdmisionDocumento> listDtoAdmisionDocumento = activoAdapter.getListDocumentacionAdministrativaById(activo.getId());
 		Boolean conCee = false;
-
+		Boolean esVivienda = false;
+		
+		esVivienda = DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo());
+		
 		for(DtoAdmisionDocumento aListDtoAdmisionDocumento : listDtoAdmisionDocumento) {
 			if (DDTipoDocumentoActivo.CODIGO_CEE.equals(aListDtoAdmisionDocumento.getCodigoTipoDocumentoActivo())) {
 				conCee = true;
 			}
 		}
-
-		if(isAdmisionOK(activo.getId())
-				&& isGestionOK(activo.getId())
-				&& this.isInformeAprobado(activo.getId())
-				&& (!Checks.esNulo(activoPatrimonio)
-				&& !Checks.esNulo(activoPatrimonio.getAdecuacionAlquiler())
-				&& (DDAdecuacionAlquiler.CODIGO_ADA_SI.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())
-				|| DDAdecuacionAlquiler.CODIGO_ADA_NO_APLICA.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())))
-				&& conCee
-				&& (this.tienePrecioRentaByIdActivo(activo.getId()) || (!Checks.esNulo(checkPublicarSinPrecio) && checkPublicarSinPrecio))
-				) {
-			return ESTADO_PUBLICACION_AZUL;
-		} else if(!isAdmisionOK(activo.getId())
-				&& !isGestionOK(activo.getId())
-				&& !this.isInformeAprobado(activo.getId())
-				&& (!Checks.esNulo(activoPatrimonio)
-				&& !Checks.esNulo(activoPatrimonio.getAdecuacionAlquiler())
-				&& !(DDAdecuacionAlquiler.CODIGO_ADA_SI.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())
-				|| DDAdecuacionAlquiler.CODIGO_ADA_NO_APLICA.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())))
-				&& conCee
-				&& !(this.tienePrecioRentaByIdActivo(activo.getId()) || (!Checks.esNulo(checkPublicarSinPrecio) && checkPublicarSinPrecio))
-				) {
-			return ESTADO_PUBLICACION_NARANJA;
-		} else {
-			return ESTADO_PUBLICACION_AMARILLO;
+		
+		if(esVivienda){
+			if(isAdmisionOK(activo.getId())
+					&& isGestionOK(activo.getId())
+					&& this.isInformeAprobado(activo.getId())
+					&& (!Checks.esNulo(activoPatrimonio)
+					&& !Checks.esNulo(activoPatrimonio.getAdecuacionAlquiler())
+					&& (DDAdecuacionAlquiler.CODIGO_ADA_SI.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())
+					|| DDAdecuacionAlquiler.CODIGO_ADA_NO_APLICA.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())))
+					&& conCee
+					&& (this.tienePrecioRentaByIdActivo(activo.getId()) || (!Checks.esNulo(checkPublicarSinPrecio) && checkPublicarSinPrecio))
+					) {
+				return ESTADO_PUBLICACION_AZUL;
+			} else if(!isAdmisionOK(activo.getId())
+					&& !isGestionOK(activo.getId())
+					&& !this.isInformeAprobado(activo.getId())
+					&& (!Checks.esNulo(activoPatrimonio)
+					&& !Checks.esNulo(activoPatrimonio.getAdecuacionAlquiler())
+					&& !(DDAdecuacionAlquiler.CODIGO_ADA_SI.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())
+					|| DDAdecuacionAlquiler.CODIGO_ADA_NO_APLICA.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())))
+					&& conCee
+					&& !(this.tienePrecioRentaByIdActivo(activo.getId()) || (!Checks.esNulo(checkPublicarSinPrecio) && checkPublicarSinPrecio))
+					) {
+				return ESTADO_PUBLICACION_NARANJA;
+			} else {
+				return ESTADO_PUBLICACION_AMARILLO;
+			}
+		}else{
+			if(isAdmisionOK(activo.getId())
+					&& isGestionOK(activo.getId())
+					&& this.isInformeAprobado(activo.getId())
+					&& (!Checks.esNulo(activoPatrimonio)
+					&& !Checks.esNulo(activoPatrimonio.getAdecuacionAlquiler())
+					&& (DDAdecuacionAlquiler.CODIGO_ADA_SI.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())
+					|| DDAdecuacionAlquiler.CODIGO_ADA_NO_APLICA.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())))
+					&& (this.tienePrecioRentaByIdActivo(activo.getId()) || (!Checks.esNulo(checkPublicarSinPrecio) && checkPublicarSinPrecio))
+					) {
+				return ESTADO_PUBLICACION_AZUL;
+			} else if(!isAdmisionOK(activo.getId())
+					&& !isGestionOK(activo.getId())
+					&& !this.isInformeAprobado(activo.getId())
+					&& (!Checks.esNulo(activoPatrimonio)
+					&& !Checks.esNulo(activoPatrimonio.getAdecuacionAlquiler())
+					&& !(DDAdecuacionAlquiler.CODIGO_ADA_SI.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())
+					|| DDAdecuacionAlquiler.CODIGO_ADA_NO_APLICA.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())))
+					&& !(this.tienePrecioRentaByIdActivo(activo.getId()) || (!Checks.esNulo(checkPublicarSinPrecio) && checkPublicarSinPrecio))
+					) {
+				return ESTADO_PUBLICACION_NARANJA;
+			} else {
+				return ESTADO_PUBLICACION_AMARILLO;
+			}
 		}
+	}
+	
+	@Override
+	public Integer getEstadoIndicadorPublicacionAgrupacionVenta(List<ActivoAgrupacionActivo> listaActivos) {
+		Integer estado = 0;
+		for(int i = 0; i<listaActivos.size(); i++){
+			
+			Activo activo = listaActivos.get(i).getActivo();
+			
+			if(getEstadoIndicadorPublicacionVenta(activo) == 0){
+				estado = ESTADO_PUBLICACION_NARANJA; 
+				break;
+			}else if(getEstadoIndicadorPublicacionVenta(activo) == 2){
+				estado = ESTADO_PUBLICACION_AMARILLO;
+			}else if(getEstadoIndicadorPublicacionVenta(activo) == 1 && !ESTADO_PUBLICACION_AMARILLO.equals(estado)){ 
+				estado = ESTADO_PUBLICACION_AZUL;
+			}
+		}
+		return estado; 
+	}
+	
+	@Override
+	public Integer getEstadoIndicadorPublicacionAgrupacionAlquiler(List<ActivoAgrupacionActivo> listaActivos) {
+		Integer estado = 0;
+		for(int i = 0; i<listaActivos.size(); i++){
+			
+			Activo activo = listaActivos.get(i).getActivo();
+			
+			if(getEstadoIndicadorPublicacionAlquiler(activo) == 0){
+				estado = ESTADO_PUBLICACION_NARANJA; 
+				break;
+			}else if(getEstadoIndicadorPublicacionAlquiler(activo) == 2){
+				estado = ESTADO_PUBLICACION_AMARILLO;
+			}else if(getEstadoIndicadorPublicacionAlquiler(activo) == 1 && !ESTADO_PUBLICACION_AMARILLO.equals(estado)){ 
+				estado = ESTADO_PUBLICACION_AZUL;
+			}
+		}
+		return estado;
 	}
 
 	@Override

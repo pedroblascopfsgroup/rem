@@ -2581,19 +2581,6 @@ public class ActivoAdapter {
 			return false;
 		}
 	}
-	
-	@Transactional(readOnly = false)
-	public boolean guardarEstadoPublicacionAlquiler(DtoDatosPublicacionActivo dto) {
-		if(!Checks.esNulo(dto.getEleccionUsuarioTipoPublicacionAlquiler()) || !dto.getPublicarAlquiler()) {
-			boolean success = activoEstadoPublicacionApi.setDatosPublicacionActivo(dto);
-			if (success)
-				actualizarEstadoPublicacionActivo(dto.getIdActivo());
-			
-			return success;
-		}else {
-			return false;
-		}
-	}
 
 	@Transactional(readOnly = false)
 	public boolean saveTabActivoTransactional(WebDto dto, Long id, String tab) {

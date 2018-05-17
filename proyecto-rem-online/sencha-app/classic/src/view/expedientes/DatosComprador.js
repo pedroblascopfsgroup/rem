@@ -621,7 +621,8 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
     	var me = this;
     	
     	if($AU.userHasFunction(['MODIFICAR_TAB_COMPRADORES_EXPEDIENTES'])){
-    		if(($AU.userIsRol("HAYAGESTCOM") || $AU.userIsRol("HAYASUPCOM")) && me.checkCoe()){
+    		if(($AU.userIsRol("HAYAGESTCOM") || $AU.userIsRol("HAYASUPCOM") || $AU.userIsRol("FVDNEGOCIO")
+    				|| $AU.userIsRol("FVDBACKOFERTA") || $AU.userIsRol("FVDBACKVENTA") || $AU.userIsRol("SUPFVD")) && me.checkCoe()){
     			return false;
     		}
     		return true;

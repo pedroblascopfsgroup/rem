@@ -51,7 +51,7 @@ Ext.define('HreRem.controller.RefreshController', {
    	
    	refreshEntityOnActivate: function(entity, idEntity) {
    		var me = this;
-   		
+
    		switch(entity) {
    			
    			case CONST.ENTITY_TYPES['ACTIVO']:
@@ -75,12 +75,28 @@ Ext.define('HreRem.controller.RefreshController', {
    			
    				break;
 			case CONST.ENTITY_TYPES['TRAMITE']:
+				var entities =  Ext.ComponentQuery.query('tramitesdetalle');   				
+   				Ext.Array.each(entities, function(entity, index ) {
+   					if(entity.getViewModel().get("tramite.idTramite") == idEntity) {
+   						entity.lookupController().onClickBotonRefrescar();
+   					}
+   				});
 				break;
 				
 			case CONST.ENTITY_TYPES['GASTO']:
    				var entities =  Ext.ComponentQuery.query('gastodetallemain');
    				Ext.Array.each(entities, function(entity, index ) {
    					if(entity.getViewModel().get("gasto.id") == idEntity) {   						
+   						entity.lookupController().onClickBotonRefrescar();
+   					}   				 
+   				});
+   			
+   				break;
+   				
+   			case CONST.ENTITY_TYPES['EXPEDIENTE']:
+   				var entities =  Ext.ComponentQuery.query('expedientedetallemain');
+   				Ext.Array.each(entities, function(entity, index ) {
+   					if(entity.getViewModel().get("expediente.id") == idEntity) {   						
    						entity.lookupController().onClickBotonRefrescar();
    					}   				 
    				});

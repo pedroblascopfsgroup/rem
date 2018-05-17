@@ -105,6 +105,9 @@ Ext.define('HreRem.model.ActivoSituacionPosesoria', {
     		},
     		{
     			name:'indicaPosesion'
+    		},
+    		{
+    			name: 'tieneOkTecnico'
     		}
     		
     ],

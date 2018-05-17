@@ -108,6 +108,25 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 							colspan: 2
 						},
 					// Fila 4
+						{ 
+							fieldLabel: HreRem.i18n('fieldlabel.codigo.proveedor'),
+							readOnly: true,
+							bind: {
+				        		disabled: '{!infoComercial.tieneProveedorTecnico}',
+				        		value: '{infoComercial.codigoProveedor}'
+				        	}					
+							
+						},
+						{ 
+							fieldLabel: HreRem.i18n('fieldlabel.nombre.proveedor'),
+							readOnly: true,
+							colspan: 2,
+							bind: {
+				        		disabled: '{!infoComercial.tieneProveedorTecnico}',
+				        		value: '{infoComercial.nombreProveedor}'
+				        	}
+						},
+					// Fila 5
 						{
 							xtype:'fieldsettable',
 							title:HreRem.i18n('title.grid.historico.mediador.info.comercial'),
@@ -117,7 +136,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 								[
 									{xtype: "historicomediadorgrid", reference: "historicomediadorgrid", colspan: 3}
 								]
-						}
+						}						
 				]
 			},
 
@@ -795,51 +814,6 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 										vtype: 'telefono',
 										bind : '{infoComercial.telAdministradorComunidad}',
 										colspan: 2
-									},
-									{
-										xtype: 'datefieldbase',
-										fieldLabel : HreRem.i18n('fieldlabel.fecha.comunicacion.comunidad'),
-										bind : '{infoComercial.fechaComunicacionComunidad}'
-									}, 
-									{
-										xtype : 'comboboxfieldbase',
-									    fieldLabel : HreRem.i18n('fieldlabel.envio.cartas'),
-									    bind : {
-									      store : '{comboSiNoRem}',
-									      value : '{infoComercial.envioCartas}'
-									    }
-									},
-									{
-										xtype : 'comboboxfieldbase',
-									    fieldLabel : HreRem.i18n('fieldlabel.num.cartas'),
-									    bind : {
-									      store : '{comboNumCartas}',
-									      value : '{infoComercial.numCartas}'
-									    }
-									}, 
-									{
-										xtype : 'comboboxfieldbase',
-									    fieldLabel : HreRem.i18n('fieldlabel.contacto.telefonico'),
-									    bind : {
-									      store : '{comboSiNoRem}',
-									      value : '{infoComercial.contactoTel}'
-									    }
-									},
-									{
-										xtype : 'comboboxfieldbase',
-									    fieldLabel : HreRem.i18n('fieldlabel.visita'),
-									    bind : {
-									      store : '{comboSiNoRem}',
-									      value : '{infoComercial.visita}'
-									    }
-									}, 
-									{
-										xtype : 'comboboxfieldbase',
-									    fieldLabel : HreRem.i18n('fieldlabel.burofax'),
-									    bind : {
-									      store : '{comboSiNoRem}',
-									      value : '{infoComercial.burofax}'
-									    }
 									}
 							]
 						}

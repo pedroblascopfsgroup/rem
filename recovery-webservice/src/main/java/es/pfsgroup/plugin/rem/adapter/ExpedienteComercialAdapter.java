@@ -12,8 +12,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.tc.aspectwerkz.expression.regexp.Pattern;
-
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
@@ -22,22 +20,26 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
+import es.pfsgroup.plugin.rem.activo.ActivoManager;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.activo.ActivoManager;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
-
 @Service
 public class ExpedienteComercialAdapter {
 
-	private static final String EXCEPTION_EXPEDIENT_NOT_FOUND_COD = "ExceptionExp";	
+	private static final String EXCEPTION_EXPEDIENT_NOT_FOUND_COD = "ExceptionExp";
+	private static final String EXCEPTION_ACTIVO_NOT_FOUND_COD = "Error al obtener el activo, no existe";
+
+	private static final String RELACION_TIPO_DOCUMENTO_EXPEDIENTE = "d-e";	
+	private static final String OPERACION_ALTA = "Alta";	
 
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
@@ -88,7 +90,7 @@ public class ExpedienteComercialAdapter {
 				}
 			} catch (GestorDocumentalException gex) {
 				String[] error = gex.getMessage().split("-");
-				if(error.length > 0 && EXCEPTION_EXPEDIENT_NOT_FOUND_COD.equals(error[0].trim())){
+				if (error.length > 0 &&  (error[2].trim().contains(EXCEPTION_ACTIVO_NOT_FOUND_COD))) {
 					
 					Integer idExpediente;
 					try{
@@ -142,11 +144,22 @@ public class ExpedienteComercialAdapter {
 					expedienteComercialApi.uploadDocumento(webFileItem, idDocRestClient,null,null);
 					String activos = webFileItem.getParameter("activos");
 					String[] arrayActivos = null;
+					
 					if(activos != null && !activos.isEmpty()){
 						arrayActivos = activos.split(",");
 					}
 					if(arrayActivos != null && arrayActivos.length > 0){
-						gestorDocumentalAdapterApi.crearRelacionActivosExpediente(expedienteComercial, idDocRestClient, arrayActivos, usuarioLogado.getUsername());
+						CrearRelacionExpedienteDto crearRelacionExpedienteDto = new CrearRelacionExpedienteDto();
+						crearRelacionExpedienteDto.setTipoRelacion(RELACION_TIPO_DOCUMENTO_EXPEDIENTE);
+						String mat = subtipoDocumento.getMatricula();
+						if(!Checks.esNulo(mat)){
+							String[] matSplit = mat.split("-");
+							crearRelacionExpedienteDto.setCodTipoDestino(matSplit[0]);
+							crearRelacionExpedienteDto.setCodClaseDestino(matSplit[1]);
+						}
+						crearRelacionExpedienteDto.setOperacion(OPERACION_ALTA);
+						
+						gestorDocumentalAdapterApi.crearRelacionActivosExpediente(expedienteComercial, idDocRestClient, arrayActivos, usuarioLogado.getUsername(),crearRelacionExpedienteDto);
 						if(!Checks.esNulo(subtipoDocumento.getTipoDocumentoActivo())) {
 							webFileItem.putParameter("tipo", subtipoDocumento.getTipoDocumentoActivo().getCodigo());
 						}

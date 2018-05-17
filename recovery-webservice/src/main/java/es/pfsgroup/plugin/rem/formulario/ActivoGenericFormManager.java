@@ -509,10 +509,13 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             			trabajo.getActivo().getCartera();
             			Filter filtroSubtipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo", trabajo.getSubtipoTrabajo());
             			Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "cartera", trabajo.getActivo().getCartera());
-            			if(genericDao.getList(ConfiguracionTarifa.class, filtroSubtipoTrabajo, filtroCartera).isEmpty())
-            				item.setValue(DDSiNo.NO);
-            			else
+            			if(!genericDao.getList(ConfiguracionTarifa.class, filtroSubtipoTrabajo, filtroCartera).isEmpty() || trabajo.getEsTarifaPlana()){
             				item.setValue(DDSiNo.SI);
+            			}else {
+            				item.setValue(DDSiNo.NO);
+            			}  
+            			
+            			
             		}
             		
             		if(item.getNombre().equals("comboConflicto"))
@@ -547,7 +550,9 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             					}
             				}
             			}
-            		}
+            		}            		
+            		
+            			
             	}
             	if(item.getType().equals(TIPO_COMBOBOX_INICIAL_ED))
             	{

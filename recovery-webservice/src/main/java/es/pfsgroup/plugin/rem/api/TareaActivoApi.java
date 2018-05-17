@@ -1,10 +1,12 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.sql.Date;
 import java.util.List;
 
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.pfs.prorroga.dto.DtoSolicitarProrroga;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.plugin.rem.model.DtoSaltoTarea;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 
 
@@ -16,7 +18,9 @@ public interface TareaActivoApi {
 
 		public void generarAutoprorroga(DtoSolicitarProrroga dto)  throws BusinessOperationException;
 
-		public void saltoTarea(Long idTareaExterna, String tareaDestino);
+		public void saltoDesdeTareaExterna(Long idTareaExterna, String tareaDestino);
+		
+		public void saltoDesdeTramite(Long idTamite, String tareaDestino);
 		
 		public List<TareaActivo> getTareasActivoByIdTramite(Long idTramite);
 		
@@ -35,4 +39,21 @@ public interface TareaActivoApi {
 		public void saltoPBC(Long idTareaExterna);
 
 		public void saltoInstruccionesReserva(Long idTareaExterna);
+
+		public void saltoRespuestaBankiaAnulacionDevolucion(Long idTareaExterna);
+		
+		public void saltoRespuestaBankiaDevolucion(Long idTareaExterna);
+		
+		public void saltoPendienteDevolucion(Long idTareaExterna);
+		
+		/**
+		 * Guarda los datos de la resolución en la TEV_TAREA_EXTERNA_VALOR dado el id de la tarea externa, la fecha de la resolución y el código de la resolución del diccionario DDEstadoResolucion
+		 * @param idTareaExterna
+		 * @param fecha
+		 * @param resolucion
+		 */
+		public void guardarDatosResolucion(Long idTareaExterna, Date fecha, String resolucion);
+
+		void saltoTarea(Long idProcesBpm, String tareaDestino);
+
     }

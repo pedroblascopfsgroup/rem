@@ -53,6 +53,9 @@ Ext.define('HreRem.model.Tramite', {
       		name : 'subtipoTrabajo'
       	},
       	{
+      		name: 'codigoSubtipoTrabajo'
+      	},
+      	{
       		name : 'idExpediente'
       	},
       	{
@@ -106,6 +109,42 @@ Ext.define('HreRem.model.Tramite', {
     	},
     	{
     		name: 'ocultarBotonCierre',
+    		type: 'boolean'
+    	},
+    	{
+    		name: 'estaTareaRespuestaBankiaDevolucion',
+    		type: 'boolean'
+    	},
+    	{
+    		name: 'estaTareaPendienteDevolucion',
+    		type: 'boolean'
+    	},
+    	{
+    		name: 'estaTareaRespuestaBankiaAnulacionDevolucion',
+    		type: 'boolean'
+    	},
+    	{
+    		name: 'estaEnTareaSiguienteResolucionExpediente',
+    		type: 'boolean'
+    	},
+    	{
+    		name: 'ocultarBotonLanzarTareaAdministrativa',
+    		type: 'boolean'
+    	},
+    	{
+    		name: 'ocultarBotonReactivarTramite',
+    		type: 'boolean'
+    	},
+    	{
+    		name: 'desactivarBotonLanzarTareaAdministrativa',
+    		type: 'boolean'
+    	},
+    	{
+    		name: 'esTarifaPlana',
+    		type: 'boolean'
+    	},
+    	{
+    		name: 'activoAplicaGestion',
     		type: 'boolean'
     	}
     ],

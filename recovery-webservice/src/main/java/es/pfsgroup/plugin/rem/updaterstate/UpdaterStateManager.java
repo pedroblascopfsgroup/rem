@@ -1,11 +1,7 @@
 package es.pfsgroup.plugin.rem.updaterstate;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -95,15 +91,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	}
 	
 	private void updaterStateGestion(Activo activo){
-		//En caso de que esté 'OK' no se modifica el estado.
-		if(!this.getStateGestion(activo)){
-			TareaExterna tareaExternaDocGestion = activoTareaExternaApi.obtenerTareasAdmisionByCodigo(activo, "T001_CheckingDocumentacionGestion");
-			if(!Checks.esNulo(tareaExternaDocGestion)){
-				TareaActivo tareaDocGestion = (TareaActivo) tareaExternaDocGestion.getTareaPadre();
-			
-				activo.setGestion(!Checks.esNulo(tareaDocGestion.getFechaFin()));
-			}
-		}
+		activo.setGestion(activo.getTieneOkTecnico());
 	}
 	
 	@Override
@@ -391,7 +379,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 							}
 						}
 					}
-				}else if(cartera.equals(DDCartera.CODIGO_CARTERA_SAREB) || cartera.equals(DDCartera.CODIGO_CARTERA_TANGO)){
+				}else if(cartera.equals(DDCartera.CODIGO_CARTERA_SAREB) || cartera.equals(DDCartera.CODIGO_CARTERA_TANGO) || cartera.equals(DDCartera.CODIGO_CARTERA_GIANTS)){
 					if(!valorPrecioTransferenciaNull){
 							reglaSeleccionada = DDTipoPrecio.CODIGO_TPC_PT;
 					}else{

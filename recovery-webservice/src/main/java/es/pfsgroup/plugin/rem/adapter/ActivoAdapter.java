@@ -24,11 +24,13 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -68,6 +70,7 @@ import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManagerApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
@@ -125,6 +128,7 @@ import es.pfsgroup.plugin.rem.model.DtoValoracion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.IncrementoPresupuesto;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
@@ -1746,6 +1750,7 @@ public class ActivoAdapter {
 		DtoTramite dtoTramite = new DtoTramite();
 		ActivoTramite tramite = activoTramiteApi.get(idTramite);
 		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+		List<TareaProcedimiento> listaTareas = activoTramiteApi.getTareasActivasByIdTramite(idTramite);
 
 		try {
 			beanUtilNotNull.copyProperty(dtoTramite, "idTramite", tramite.getId());
@@ -1763,6 +1768,8 @@ public class ActivoAdapter {
 						tramite.getTrabajo().getTipoTrabajo().getDescripcion());
 				beanUtilNotNull.copyProperty(dtoTramite, "subtipoTrabajo",
 						tramite.getTrabajo().getSubtipoTrabajo().getDescripcion());
+				beanUtilNotNull.copyProperty(dtoTramite, "codigoSubtipoTrabajo",
+						tramite.getTrabajo().getSubtipoTrabajo().getCodigo());
 			}
 			if (!Checks.esNulo(tramite.getActivo().getTipoActivo()))
 				beanUtilNotNull.copyProperty(dtoTramite, "tipoActivo",
@@ -1802,6 +1809,18 @@ public class ActivoAdapter {
 				if (!ActivoTramiteApi.CODIGO_TRAMITE_PROPUESTA_PRECIOS.equals(tramite.getTipoTramite().getCodigo())) {
 					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonAnular", true);
 				}
+				
+				if ((!genericAdapter.isSuper(usuarioLogado)) || !(tramite.getTipoTramite().getCodigo().equals("T013"))) {
+					dtoTramite.setOcultarBotonLanzarTareaAdministrativa(true);
+					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonLanzarTareaAdministrativa", true);
+					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonReactivarTramite", true);
+				}
+				
+				if(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(tramite.getEstadoTramite().getCodigo())) {
+					beanUtilNotNull.copyProperty(dtoTramite, "desactivarBotonLanzarTareaAdministrativa", true);
+				}
+				
+				
 			}
 				
 				
@@ -1818,8 +1837,34 @@ public class ActivoAdapter {
 							expedienteComercial.getEstado().getDescripcion());
 					beanUtilNotNull.copyProperty(dtoTramite, "numEC", expedienteComercial.getNumExpediente());
 				}
+				
+				beanUtilNotNull.copyProperty(dtoTramite, "esTarifaPlana", tramite.getTrabajo().getEsTarifaPlana());
 			}
 
+			beanUtilNotNull.copyProperty(dtoTramite, "estaTareaRespuestaBankiaDevolucion", false);
+			beanUtilNotNull.copyProperty(dtoTramite, "estaTareaPendienteDevolucion", false);
+			beanUtilNotNull.copyProperty(dtoTramite, "estaEnTareaSiguienteResolucionExpediente", false);
+			beanUtilNotNull.copyProperty(dtoTramite, "estaTareaRespuestaBankiaAnulacionDevolucion", false);
+			if(!Checks.estaVacio(listaTareas)){
+				for(TareaProcedimiento tarea : listaTareas){
+					if(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION.equals(tarea.getCodigo())){
+						beanUtilNotNull.copyProperty(dtoTramite, "estaTareaRespuestaBankiaDevolucion", true);
+						beanUtilNotNull.copyProperty(dtoTramite, "estaEnTareaSiguienteResolucionExpediente", true);
+					}
+					else if(ComercialUserAssigantionService.CODIGO_T013_PENDIENTE_DEVOLUCION.equals(tarea.getCodigo())){
+						beanUtilNotNull.copyProperty(dtoTramite, "estaTareaPendienteDevolucion", true);
+						beanUtilNotNull.copyProperty(dtoTramite, "estaEnTareaSiguienteResolucionExpediente", true);
+					}
+					else if(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION.equals(tarea.getCodigo())){
+						beanUtilNotNull.copyProperty(dtoTramite, "estaTareaRespuestaBankiaAnulacionDevolucion", true);
+						beanUtilNotNull.copyProperty(dtoTramite, "estaEnTareaSiguienteResolucionExpediente", true);
+					}
+				}
+			}
+			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(tramite.getActivo().getId());
+			boolean aplicaGestion = !Checks.esNulo(perimetroActivo) && Integer.valueOf(1).equals(perimetroActivo.getAplicaGestion())? true: false;
+			beanUtilNotNull.copyProperty(dtoTramite, "activoAplicaGestion", aplicaGestion);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -2240,10 +2285,10 @@ public class ActivoAdapter {
 		// return null;
 	}
 
-	public FileItem download(Long id) throws Exception {
+	public FileItem download(Long id,String nombreDocumento) throws Exception {
 		String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
 		Downloader dl = downloaderFactoryApi.getDownloader(key);
-		return dl.getFileItem(id);
+		return dl.getFileItem(id,nombreDocumento);
 	}
 
 	public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {

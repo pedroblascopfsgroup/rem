@@ -39,7 +39,6 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.web.dto.factory.DTOFactory;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.mejoras.web.tareas.BuzonTareasViewHandler;
 import es.pfsgroup.plugin.recovery.mejoras.web.tareas.BuzonTareasViewHandlerFactory;
@@ -54,6 +53,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoCampo;
 import es.pfsgroup.plugin.rem.model.DtoNombreTarea;
 import es.pfsgroup.plugin.rem.model.DtoReasignarTarea;
+import es.pfsgroup.plugin.rem.model.DtoSaltoTarea;
 import es.pfsgroup.plugin.rem.model.DtoSolicitarProrrogaTarea;
 import es.pfsgroup.plugin.rem.model.DtoTarea;
 import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
@@ -63,6 +63,7 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.service.UpdaterTransitionService;
 import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
 
@@ -77,9 +78,6 @@ public class AgendaAdapter {
     @Resource
     MessageService messageServices;
     
-    @Autowired
-    private DTOFactory dtoFactory;
-	
     @Autowired
     private ApiProxyFactory proxyFactory;
     
@@ -114,6 +112,9 @@ public class AgendaAdapter {
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
+    
+    @Autowired 
+    private UpdaterTransitionService updaterTransitionService;
     
 	SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
     
@@ -560,6 +561,15 @@ public class AgendaAdapter {
 		}
 		return true;
 	}
+	
+	public Boolean saltoTareaByCodigo(Long idTareaExterna, String codigoTarea){
+		try{
+			tareaActivoApi.saltoDesdeTareaExterna(idTareaExterna, codigoTarea);
+		}catch(Exception ex){
+			return false;
+		}
+		return true;
+	}
 		
 	public Boolean saltoCierreEconomico(Long idTareaExterna){
 		try{
@@ -573,6 +583,24 @@ public class AgendaAdapter {
 	public Boolean saltoResolucionExpediente(Long idTareaExterna){
 		try{
 			tareaActivoApi.saltoResolucionExpediente(idTareaExterna);
+		}catch(Exception ex){
+			return false;
+		}
+		return true;
+	}
+	
+	public Boolean saltoRespuestaBankiaAnulacionDevolucion(Long idTareaExterna){
+		try{
+			tareaActivoApi.saltoRespuestaBankiaAnulacionDevolucion(idTareaExterna);
+		}catch(Exception ex){
+			return false;
+		}
+		return true;
+	}
+	
+	public Boolean saltoPendienteDevolucion(Long idTareaExterna){
+		try{
+			tareaActivoApi.saltoPendienteDevolucion(idTareaExterna);
 		}catch(Exception ex){
 			return false;
 		}
@@ -678,6 +706,22 @@ public class AgendaAdapter {
 				genericDao.save(PropuestaPrecio.class, propuesta);
 			}
 		}
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean lanzarTareaAdministrativa(DtoSaltoTarea dto) throws Exception {
+		
+		//Validacion de documentos de reserva si salta con reserva a ResultadoPBC o Posicionamiento y firma
+		updaterTransitionService.validarContratoYJustificanteReserva(dto);
+
+		// Creamos el salto a la tarea indicada.
+		tareaActivoApi.saltoDesdeTramite(dto.getIdTramite(), dto.getCodigoTareaDestino());
+		
+		// Guardamos campos en expediente, oferta, y reserva, y actualizamos estado de expediente
+		// TODO Pendientes de definir muchos campos.
+		updaterTransitionService.updateFrom(dto);
+
+		return true;
 	}
 	
 	

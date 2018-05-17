@@ -1,6 +1,6 @@
 Ext.define('HreRem.view.activos.detalle.AnyadirPropietario', {
 	extend		: 'HreRem.view.common.WindowBase',
-    xtype		: 'editarpropietariowindow',
+    xtype		: 'anyadirpropietariowindow',
     layout	: 'fit',
     width	: Ext.Element.getViewportWidth() / 1.2,    
     height	: Ext.Element.getViewportHeight() > 780 ? 780 : Ext.Element.getViewportHeight() - 50 ,

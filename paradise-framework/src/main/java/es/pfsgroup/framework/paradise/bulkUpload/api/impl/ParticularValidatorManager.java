@@ -929,6 +929,26 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 	}
 	
+	@Override
+	public Boolean existeProveedorMediadorByNIFConFVD(String proveedorMediadorNIF) {
+		if(Checks.esNulo(proveedorMediadorNIF)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_PVE_PROVEEDOR WHERE"
+				+ "		 PVE_DOCIDENTIF = '" + proveedorMediadorNIF + "'"
+				+ " 	 AND DD_TPR_ID = (SELECT DD_TPR_ID FROM DD_TPR_TIPO_PROVEEDOR WHERE DD_TPR_CODIGO = '04')" // Mediador-Colaborador-API.
+				+ " 	 OR DD_TPR_ID = (SELECT DD_TPR_ID FROM DD_TPR_TIPO_PROVEEDOR WHERE DD_TPR_CODIGO = '18')"  // Fuerza de Venta Directa
+				+ "		 AND BORRADO = 0");
+		
+		if("0".equals(resultado)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
 	public boolean existeSubCarteraByCod(String codSubCartera){
 		if (Checks.esNulo(codSubCartera)){
 			return false;

@@ -675,6 +675,22 @@ public interface TrabajoApi {
 	 * @return true si pertenece a la cartera, false si no
 	 */
 	public boolean checkTango(Trabajo trabajo);
+	
+	/**
+	 * Método que comprueba si el activo pertenece a la cartera Giants.
+	 * 
+	 * @param tareaExterna
+	 * @return true si pertenece a la cartera, false si no.
+	 */
+	public boolean checkGiants(TareaExterna tareaExterna);
+
+	/**
+	 * Método que comprueba si el activo pertenece a la cartera Giants.
+	 * 
+	 * @param trabajo
+	 * @return true si pertenece a la cartera, false si no
+	 */
+	public boolean checkGiants(Trabajo trabajo);
 
 	/**
 	 * Método que comprueba si el activo pertenece a la cartera Bankia.

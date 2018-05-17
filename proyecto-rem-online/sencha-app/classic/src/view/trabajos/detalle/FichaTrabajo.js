@@ -127,7 +127,17 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 					            	},
 					            	valueField: 'id',
 						        	reference: 'comboCiaAseguradora'
-						        }
+						        },
+						        { 
+						        	xtype: 'comboboxfieldbase',
+						        	colspan: 2,
+						        	fieldLabel: HreRem.i18n('fieldlabel.tarifa.plana'),
+						        	readOnly: true,
+						        	bind: {
+					            		store: '{comboSiNoRem}',
+										value: '{trabajo.esTarifaPlana}'	            		
+					            	}
+			        			}
 							]
 		           },
 		           {

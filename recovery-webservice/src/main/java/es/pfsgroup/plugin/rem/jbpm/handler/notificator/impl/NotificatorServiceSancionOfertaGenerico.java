@@ -203,10 +203,11 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		ArrayList<String> clavesGestores = new ArrayList<String>();
 		String claveGestorComercial = this.getTipoGestorComercial(ofertaAceptada);
 
-		// DESTINATARIOS SI ES SAREB, BANKIA o TANGO
+		// DESTINATARIOS SI ES SAREB, BANKIA o TANGO o GIANTS
 		if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)
 				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)
-				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)) {
+				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)
+				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)) {
 			clavesGestores.addAll(Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial));
 			if (formalizacion) {
 				clavesGestores.add(GESTOR_FORMALIZACION);
@@ -516,6 +517,11 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)){
 					f1 = FileItemUtils.fromResource("docs/contrato_reserva_Tango.docx");
 					adjuntos.add(createAdjunto(f1, "contrato_reserva_Tango.docx"));
+				}
+				//ADJUNTOS SI ES GIANTS
+				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)){
+					f1 = FileItemUtils.fromResource("docs/contrato_reserva_Giants.docx");
+					adjuntos.add(createAdjunto(f1, "contrato_reserva_Giants.docx"));
 				}
 			}
 			genericAdapter.sendMail(Arrays.asList(destinatarios), mailsCC, asunto, cuerpoCorreo, adjuntos);

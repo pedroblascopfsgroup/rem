@@ -51,6 +51,7 @@ public class DDEstadoTrabajo implements Auditable, Dictionary {
 	public static final String ESTADO_PENDIENTE_CIERRE_ECONOMICO = "11";
 	public static final String ESTADO_FINALIZADO = "12";
 	public static final String ESTADO_VALIDADO = "13";
+	public static final String ESTADO_PAGADO_TARIFA_PLANA = "14";
 	
 
 	@Id

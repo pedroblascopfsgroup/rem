@@ -124,6 +124,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	private static final String PESTANA_IMPUGNACION = "impugnacion";
 
 	private static final String EXCEPTION_EXPEDIENT_NOT_FOUND_COD = "ExceptionExp";
+	private static final String EXCEPTION_ACTIVO_NOT_FOUND_COD = "Error al obtener el activo, no existe";
 	private static final String COD_PEF_GESTORIA_ADMINISTRACION = "HAYAGESTADMT";
 	private static final String COD_PEF_GESTORIA_PLUSVALIA = "GESTOPLUS";
 	private static final String COD_PEF_USUARIO_CERTIFICADOR = "HAYACERTI";
@@ -1746,7 +1747,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				String[] error = gex.getMessage().split("-");
 
 				// Si no existe el expediente lo creamos
-				if (error.length > 0 &&  EXCEPTION_EXPEDIENT_NOT_FOUND_COD.equals(error[0].trim())) {
+				if (error.length > 0 &&  (error[2].trim().contains(EXCEPTION_ACTIVO_NOT_FOUND_COD))) {
 
 					Integer idExpediente;
 					try {
@@ -1917,7 +1918,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			try {
 				// adjuntoGasto= gasto.getAdjuntoGD(dtoAdjunto.getId());
-				fileItem = gestorDocumentalAdapterApi.getFileItem(dtoAdjunto.getId());
+				fileItem = gestorDocumentalAdapterApi.getFileItem(dtoAdjunto.getId(),dtoAdjunto.getNombre());//MODIFICAR
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 			}

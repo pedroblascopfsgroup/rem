@@ -42,6 +42,11 @@ public class RespuestaDescargarDocumento {
 	 * Contenido binario del documento
 	 */
 	private Byte[] contenido;
+	
+	/**
+	 * Content type
+	 */
+	private String contentType;
 
 	public String getCodigoError() {
 		return codigoError;
@@ -105,6 +110,14 @@ public class RespuestaDescargarDocumento {
 
 	public void setContenido(Byte[] contenido) {
 		this.contenido = contenido;
+	}
+
+	public String getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
 	}
 
 }

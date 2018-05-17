@@ -2,8 +2,23 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
       extend : 'HreRem.view.common.FormBase',
       xtype : 'datoscomunidadactivo',
       reference : 'datoscomunidadactivo',
+      cls			: 'panel-base shadow-panel',
+      collapsed	: false,
       scrollable : 'y',
+      refreshAfterSave: true,
       
+      listeners: {
+			boxready: function() { 
+    			var me = this;
+	    		me.lookupController().cargarTabData(me);
+    		}
+		},
+	
+	  recordName: "datosComunidad",
+      recordClass: "HreRem.model.ActivoComunidadPropietarios",
+      
+      requires : ['HreRem.model.ActivoComunidadPropietarios'],
+
       initComponent : function() {
 
         var me = this;
@@ -120,6 +135,58 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 									    ]
 									}
 						]
+				},
+				{
+				xtype:'fieldsettable',
+						title: HreRem.i18n('title.datos.comunidad.propietarios.activo'),
+						collapsible: false,
+						items :	[
+							{
+										xtype: 'datefieldbase',
+										fieldLabel : HreRem.i18n('fieldlabel.fecha.comunicacion.comunidad'),
+										bind : '{datosComunidad.fechaComunicacionComunidad}'
+									}, 
+									{
+										xtype : 'comboboxfieldbase',
+									    fieldLabel : HreRem.i18n('fieldlabel.envio.cartas'),
+									   bind : {
+									      store : '{comboSiNoRemActivo}',
+									      value : '{datosComunidad.envioCartas}'
+									    }
+									},
+									{
+										xtype : 'comboboxfieldbase',
+									    fieldLabel : HreRem.i18n('fieldlabel.num.cartas'),
+									   bind : {
+									      store : '{comboNumCartas}',
+									      value : '{datosComunidad.numCartas}'
+									    }
+									}, 
+									{
+										xtype : 'comboboxfieldbase',
+									    fieldLabel : HreRem.i18n('fieldlabel.contacto.telefonico'),
+									    bind : {
+									      store : '{comboSiNoRemActivo}',
+									      value : '{datosComunidad.contactoTel}'
+									    }
+									},
+									{
+										xtype : 'comboboxfieldbase',
+									    fieldLabel : HreRem.i18n('fieldlabel.visita'),
+									   bind : {
+									      store : '{comboSiNoRemActivo}',
+									      value : '{datosComunidad.visita}'
+									    }
+									}, 
+									{
+										xtype : 'comboboxfieldbase',
+									    fieldLabel : HreRem.i18n('fieldlabel.burofax'),
+									    bind : {
+									      store : '{comboSiNoRemActivo}',
+									      value : '{datosComunidad.burofax}'
+									    }
+									}
+						]
 				}
 			]
 			
@@ -128,13 +195,14 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 
       },
       
-      funcionRecargar: function() {
+       funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
+		me.lookupController().cargarTabData(me);
 		if(!me.disabled) {
 			Ext.Array.each(me.query('grid'), function(grid) {
 	  			grid.getStore().load();
 	  		});
 		}
-  	  }
+   }
   });

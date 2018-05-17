@@ -400,6 +400,77 @@
 				</targetBean>
 			</action>
 		</event>
+		<transition to="T013_ResolucionExpedienteDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="T013_ResolucionExpedienteDecision" expression="#{T013_ResolucionExpedienteDecision}">
+		<transition to="T013_RespuestaBankiaDevolucion" name="avanzaRespuestaBankia"></transition>
+		<transition to="Fin" name="noAvanzaRespuestaBankia"></transition>
+	</decision>
+	
+	<state name="T013_RespuestaBankiaDevolucion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T013_PendienteDevolucion" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="T013_PendienteDevolucion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T013_RespuestaBankiaAnulacionDevolucion" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="T013_RespuestaBankiaAnulacionDevolucion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
 		<transition to="Fin" name="avanzaBPM"></transition>
 	</state>
 	

@@ -307,4 +307,7 @@ public interface ParticularValidatorApi {
 	 * @return : Devuelve True si existe, False si no existe el código.
 	 */
 	public Boolean existeAgrupacionByDescripcion(String descripcionAgrupacion);
+	
+	public Boolean existeProveedorMediadorByNIFConFVD(String proveedorMediadorNIF);
+
 }

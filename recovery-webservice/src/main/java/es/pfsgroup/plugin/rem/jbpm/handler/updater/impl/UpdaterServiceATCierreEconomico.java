@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 
 @Component
 public class UpdaterServiceATCierreEconomico implements UpdaterService {
@@ -36,6 +37,7 @@ public class UpdaterServiceATCierreEconomico implements UpdaterService {
     private GenericABMDao genericDao;
     
 	private static final String FECHA_CIERRE = "fechaCierre";
+	private static final String TIENE_OK_TECNICO = "tieneOkTecnico";
 
 	private static final String CODIGO_T004_CIERRE_ECONOMICO = "T004_CierreEconomico";
 
@@ -60,15 +62,25 @@ public class UpdaterServiceATCierreEconomico implements UpdaterService {
 				}
 				
 				Filter filter = null;
-				if(Checks.esNulo(trabajo.getFechaPago())){
-					//Por finalizar la tarea "Cierre Económico", SIN fecha pago en trabajo, estado trabajo a "PENDIENTE PAGO"
-					filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_PENDIENTE_PAGO);
-				}else{
-					//Por finalizar la tarea "Cierre Económico", CON fecha pago en trabajo, estado trabajo a "PAGADO"
-					filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_PAGADO);
+				if(!trabajo.getEsTarifaPlana()){
+					if(Checks.esNulo(trabajo.getFechaPago())){
+						//Por finalizar la tarea "Cierre Económico", SIN fecha pago en trabajo, estado trabajo a "PENDIENTE PAGO"
+						filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_PENDIENTE_PAGO);
+					}else{
+						//Por finalizar la tarea "Cierre Económico", CON fecha pago en trabajo, estado trabajo a "PAGADO"
+						filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_PAGADO);
+					}
+				}
+				else{
+					//Si el trabajo es de tarifa plana, estado trabajo a "PAGADO CON TARIFA PLANA"
+					filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_PAGADO_TARIFA_PLANA);
 				}
 				DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filter);
 				trabajo.setEstado(estadoTrabajo);
+			}
+			//OK Tecnico, solo aparece en el Cierre economico de los trabajos de Toma de Posesion
+			else if(DDSubtipoTrabajo.CODIGO_TOMA_DE_POSESION.equals(trabajo.getSubtipoTrabajo().getCodigo()) && TIENE_OK_TECNICO.equals(valor.getNombre())){
+				trabajo.getActivo().setTieneOkTecnico(Boolean.valueOf(valor.getValor()));
 			}
 		}
 		int numActivos = trabajo.getActivosTrabajo().size();

@@ -36,14 +36,13 @@ public class ResultadoPBCEnterActionHandler extends ActivoGenericEnterActionHand
 		
 		TareaExterna tareaExterna = getTareaExterna(executionContext);
 		
+		Boolean saltando = !Checks.esNulo((Boolean) getVariable("saltando", executionContext)) ? (Boolean) getVariable("saltando", executionContext) : false;
+		
 		// Si hay reserva, se bloquea (borra) la tarea en espera de que el estado de la reserva este firmada
 		//(avanzando tarea "Obtencion contrato reserva")
-		if(!Checks.esNulo(tareaExterna)){
-			if (ofertaApi.checkReserva(tareaExterna) && !ofertaApi.checkEsExpress(tareaExterna)) {
-				
-				tareaExterna.getTareaPadre().getAuditoria().setBorrado(true);
-			}
-		};
+		if(!Checks.esNulo(tareaExterna) && ofertaApi.checkReserva(tareaExterna) && !ofertaApi.checkEsExpress(tareaExterna) && !saltando) {
+			tareaExterna.getTareaPadre().getAuditoria().setBorrado(true);
+		}
 
 	}
 }

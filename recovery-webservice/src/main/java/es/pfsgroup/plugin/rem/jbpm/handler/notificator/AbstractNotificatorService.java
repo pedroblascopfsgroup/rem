@@ -3,7 +3,6 @@ package es.pfsgroup.plugin.rem.jbpm.handler.notificator;
 import java.security.MessageDigest;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -27,6 +26,7 @@ import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
@@ -247,11 +247,14 @@ public abstract class AbstractNotificatorService{
 public String creaCuerpoOfertaExpress(Oferta oferta){
 		
 		
-		
 		Activo activo = oferta.getActivoPrincipal();
 		
 		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-		ActivoTramite tramite = genericDao.get(ActivoTramite.class, filterAct);
+		List<ActivoTramite> tramites = genericDao.getList(ActivoTramite.class, filterAct);
+		
+		Integer numTramites = tramites.size();
+		
+		ActivoTramite tramite = tramites.get(numTramites-1);
 		
 		String codigoCartera = null;
 		if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera())) {
@@ -260,9 +263,17 @@ public String creaCuerpoOfertaExpress(Oferta oferta){
 		
 		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 		
+		if (Checks.esNulo(expediente.getReserva())&& oferta.getOfertaExpress()){
+			Filter filterReserva = genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId());
+			Reserva reserva = genericDao.get(Reserva.class, filterReserva);
+			if (!Checks.esNulo(reserva)){
+				expediente.setReserva(reserva);
+			}
+		}
+		
 		String asunto = "Notificación de aprobación provisional de la oferta " + oferta.getNumOferta();
 		String cuerpo = "<p>Nos complace comunicarle que la oferta " + oferta.getNumOferta()
-				+ " a nombre de " + nombresOfertantes(expediente)
+				+ " a nombre de " + nombresOfertantesExpress(expediente)
 				+ " ha sido PROVISIONALMENTE ACEPTADA";
 		
 		if (DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera)) {
@@ -277,7 +288,9 @@ public String creaCuerpoOfertaExpress(Oferta oferta){
 			cuerpo = cuerpo + ".</p>";
 		}
 		ActivoBancario activoBancario = genericDao.get(ActivoBancario.class,
-				genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId())); 
+
+				genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+		
 		if (!Checks.esNulo(expediente.getId()) && !Checks.esNulo(expediente.getReserva()) 
 				&& !DDClaseActivoBancario.CODIGO_FINANCIERO.equals(activoBancario.getClaseActivo().getCodigo())) {
 			String reservationKey = "";
@@ -350,10 +363,35 @@ protected String computeKey(String key) {
 }
 
 protected String nombresOfertantes(ExpedienteComercial expediente) {
-	if ((expediente != null) && (expediente.getCompradores() != null) && (!expediente.getCompradores().isEmpty())) {
+	
+	Filter filterComprador = genericDao.createFilter(FilterType.EQUALS, "expediente", expediente.getId());
+	List<CompradorExpediente> compradoresExpediente = genericDao.getList(CompradorExpediente.class, filterComprador);
+	
+	if ((expediente != null) && (compradoresExpediente != null)) {
 		StringBuilder ofertantes= null;
-		for (CompradorExpediente ce : expediente.getCompradores()) {
+		for (CompradorExpediente ce : compradoresExpediente) {
 			String fullName = getCompradorFullName(ce.getComprador());
+			if (ofertantes != null) {
+				ofertantes.append(" / " + fullName);
+			} else {
+				ofertantes = new StringBuilder(fullName);
+			}
+		}
+		return (ofertantes != null) ? ofertantes.toString() : STR_MISSING_VALUE;
+	} else {
+		return STR_MISSING_VALUE;
+	}
+}
+
+protected String nombresOfertantesExpress(ExpedienteComercial expediente) {
+	
+	Filter filterComprador = genericDao.createFilter(FilterType.EQUALS, "expediente", expediente.getId());
+	List<CompradorExpediente> compradoresExpediente = genericDao.getList(CompradorExpediente.class, filterComprador);
+	
+	if ((expediente != null) && (compradoresExpediente != null)) {
+		StringBuilder ofertantes= null;
+		for (CompradorExpediente ce : compradoresExpediente) {
+			String fullName = getCompradorFullName(ce.getPrimaryKey().getComprador().getId());
 			if (ofertantes != null) {
 				ofertantes.append(" / " + fullName);
 			} else {

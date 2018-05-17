@@ -18,6 +18,8 @@ public class ActivoPropagacionFieldTabMap {
     public static final String TAB_CARGAS_ACTIVO = "cargasactivo";
     public static final String TAB_MEDIADOR_ACTIVO = "mediadoractivo";
     public static final String TAB_CONDICIONES_ESPECIFICAS = "condicionesespecificas";
+	public static final String TAB_COMUNIDAD_PROPIETARIOS = "datosComunidad";
+
 
     public static final String TAB_DATOS_PUBLICACION = "datospublicacion";
     public static final String TAB_ACTIVO_HISTORICO_ESTADO_PUBLICACION = "activohistoricoestadopublicacion";
@@ -85,7 +87,8 @@ public class ActivoPropagacionFieldTabMap {
 			    	"accesoTapiado",
 			    	"fechaAccesoTapiado",
 			    	"accesoAntiocupa",
-			    	"fechaAccesoAntiocupa"
+			    	"fechaAccesoAntiocupa",
+			    	"tieneOkTecnico"
     			));
 
     	pmap.put(TAB_INFORME_COMERCIAL, 
@@ -503,7 +506,18 @@ public class ActivoPropagacionFieldTabMap {
     			Arrays.asList(
     				"numActivo",
     				"ibiExento"
-    			)); 
+    			));
+    	
+    	pmap.put(TAB_COMUNIDAD_PROPIETARIOS,
+    			Arrays.asList(
+    				"fechaComunicacionComunidad",
+    				"envioCartas",
+    				"numCartas",
+    				"contactoTel",
+    				"visita",
+    				"burofax"
+    			));
+    	
         map = Collections.unmodifiableMap(pmap);
     }
 }

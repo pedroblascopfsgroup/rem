@@ -112,60 +112,46 @@ public class NotificatorServicePBCResultado extends AbstractNotificatorService i
 			return;
 		}
 		
-		DDCartera cartera = activo.getCartera();
+		//DDCartera cartera = activo.getCartera();
 		
-		if (DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()) 
-				|| DDCartera.CODIGO_CARTERA_LIBERBANK.equals(cartera.getCodigo())) {
-			
-			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
-
-			String titulo = "Resolución PBC&FT del expediente " + expediente.getNumExpediente() + ": Solicitud documentación para formalización venta";
-
-			dtoSendNotificator.setTitulo(titulo);
-
-			String contenido = String.format("<p>Le informamos que para iniciar la tramitación de la operación objeto del presente, precisamos que nos remita a la mayor brevedad posible lo siguiente:</p>"
-					+ "<p>El formulario de cliente anexo debidamente completado y firmado por el comprador o compradores* (de persona física o persona jurídica según proceda).</p>"
-					+ "<p>*Deberá aportarse un formulario por cada comprador en caso de que haya más de uno.</p>"
-					+ "<p>Aportar la información y documentación que se detalla en el documento adjunto denominado “Información y documentación”.</p>"
-					+ "<p>Dicha información y documentación deberá remitirse al siguiente buzón: ** (indicar por Lucia)</p>"
-					+ "<p>Le informamos que la autorización PBC&FT de la oferta %s se ha resuelto como %s.</p>", oferta.getNumOferta(), pbcEstado);
-			
-			List<DtoAdjuntoMail> adjuntos = new ArrayList<DtoAdjuntoMail>();
-			FileItem f1 = null;
-			FileItem f2 = null;
-			
-			List<String> mailsPara = getEmailsToSend(expediente, oferta);
-			List<String> mailsCC = new ArrayList<String>();
-			
-			if(!Checks.esNulo(activo.getCartera()) && DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())){
-				if(!Checks.esNulo(usuarioManager.getByUsername(USUARIO_FICTICIO_PBC_SAREB))){
-					mailsPara.add(usuarioManager.getByUsername(USUARIO_FICTICIO_PBC_SAREB).getEmail());
-				}				
-			} else if(!Checks.esNulo(activo.getCartera()) && DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())){
-				if(!Checks.esNulo(usuarioManager.getByUsername(USUARIO_FICTICIO_PBC_BANKIA))){
-					mailsPara.add(usuarioManager.getByUsername(USUARIO_FICTICIO_PBC_BANKIA).getEmail());
-				}				
-			} else if(!Checks.esNulo(activo.getCartera()) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
-				if(!Checks.esNulo(usuarioManager.getByUsername(USUARIO_FICTICIO_PBC_LIBERBANK))){
-					mailsPara.add(usuarioManager.getByUsername(USUARIO_FICTICIO_PBC_LIBERBANK).getEmail());
-				}				
-			}
-			
-			mailsCC.add(this.getCorreoFrom());
-			
-				if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())) {
-					f1 = FileItemUtils.fromResource("docs/anexo_1_a_Formulario_personas_fisicas.docx");
-					f2 = FileItemUtils.fromResource("docs/anexo_1_b_Formulario_personas_juridicas.docx");
-					
-					adjuntos.add(createAdjunto(f1, "Anexo_1_a_Formulario_personas_fisicas.docx"));
-					adjuntos.add(createAdjunto(f2, "Anexo_1_b_Formulario_personas_juridicas.docx"));
-				
-					genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido), adjuntos);
-				} else {
-					genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
-				}
-			
-		} else {
+//		if (DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()) 
+//				|| DDCartera.CODIGO_CARTERA_LIBERBANK.equals(cartera.getCodigo())) {
+//			
+//			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
+//
+//			String titulo = "Resolución PBC&FT del expediente " + expediente.getNumExpediente() + ": Solicitud documentación para formalización venta";
+//
+//			dtoSendNotificator.setTitulo(titulo);
+//
+//			String contenido = String.format("<p>Le informamos que para iniciar la tramitación de la operación objeto del presente, precisamos que nos remita a la mayor brevedad posible lo siguiente:</p>"
+//					+ "<p>El formulario de cliente anexo debidamente completado y firmado por el comprador o compradores* (de persona física o persona jurídica según proceda).</p>"
+//					+ "<p>*Deberá aportarse un formulario por cada comprador en caso de que haya más de uno.</p>"
+//					+ "<p>Aportar la información y documentación que se detalla en el documento adjunto denominado “Información y documentación”.</p>"
+//					+ "<p>Dicha información y documentación deberá remitirse al siguiente buzón: ** (indicar por Lucia)</p>"
+//					+ "<p>Le informamos que la autorización PBC&FT de la oferta %s se ha resuelto como %s.</p>", oferta.getNumOferta(), pbcEstado);
+//			
+//			List<DtoAdjuntoMail> adjuntos = new ArrayList<DtoAdjuntoMail>();
+//			FileItem f1 = null;
+//			FileItem f2 = null;
+//			
+//			List<String> mailsPara = getEmailsToSend(expediente, oferta);
+//			List<String> mailsCC = new ArrayList<String>();
+//			
+//			mailsCC.add(this.getCorreoFrom());
+//			
+//				if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())) {
+//					f1 = FileItemUtils.fromResource("docs/anexo_1_a_Formulario_personas_fisicas.docx");
+//					f2 = FileItemUtils.fromResource("docs/anexo_1_b_Formulario_personas_juridicas.docx");
+//					
+//					adjuntos.add(createAdjunto(f1, "Anexo_1_a_Formulario_personas_fisicas.docx"));
+//					adjuntos.add(createAdjunto(f2, "Anexo_1_b_Formulario_personas_juridicas.docx"));
+//				
+//					genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido), adjuntos);
+//				} else {
+//					genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
+//				}
+//			
+//		} else {
 			
 			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
 
@@ -182,7 +168,7 @@ public class NotificatorServicePBCResultado extends AbstractNotificatorService i
 
 			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 			
-		}
+		//}
 	}
 
 	private List<String> getEmailsToSend(ExpedienteComercial expediente, Oferta oferta) {
@@ -217,6 +203,20 @@ public class NotificatorServicePBCResultado extends AbstractNotificatorService i
 		if (gestorComercial != null && !Checks.esNulo(gestorComercial.getEmail())) {
 			mailsPara.add(gestorComercial.getEmail());
 		}
+		
+//		if(!Checks.esNulo(activo.getCartera()) && DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())){
+//			if(!Checks.esNulo(usuarioManager.getByUsername(USUARIO_FICTICIO_PBC_SAREB))){
+//				mailsPara.add(usuarioManager.getByUsername(USUARIO_FICTICIO_PBC_SAREB).getEmail());
+//			}				
+//		} else if(!Checks.esNulo(activo.getCartera()) && DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())){
+//			if(!Checks.esNulo(usuarioManager.getByUsername(USUARIO_FICTICIO_PBC_BANKIA))){
+//				mailsPara.add(usuarioManager.getByUsername(USUARIO_FICTICIO_PBC_BANKIA).getEmail());
+//			}				
+//		} else if(!Checks.esNulo(activo.getCartera()) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
+//			if(!Checks.esNulo(usuarioManager.getByUsername(USUARIO_FICTICIO_PBC_LIBERBANK))){
+//				mailsPara.add(usuarioManager.getByUsername(USUARIO_FICTICIO_PBC_LIBERBANK).getEmail());
+//			}				
+//		}
 		
 		return mailsPara;
 	}

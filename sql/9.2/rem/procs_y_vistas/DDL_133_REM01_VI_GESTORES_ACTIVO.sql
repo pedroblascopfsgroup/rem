@@ -334,7 +334,24 @@ SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo, null dd_eac_c
            AND dist1.tipo_gestor = ''PTEC''
           )
           where act.borrado = 0
-		
+		union all
+    -- GOLDEN TREE 
+  SELECT act.act_id, TO_NUMBER (cra.dd_cra_codigo) dd_cra_codigo, null dd_eac_codigo, tcr.dd_tcr_codigo, prv.dd_prv_codigo,
+       dist1.cod_municipio,
+       loc.bie_loc_cod_post cod_postal,
+       tge.dd_tge_codigo as tipo_gestor,
+       dist1.username,
+       dist1.nombre_USUARIO
+  FROM act_activo act
+  JOIN act_loc_localizacion aloc ON act.act_id = aloc.act_id
+  join BIE_LOCALIZACION loc on loc.bie_loc_id = aloc.bie_loc_id
+  left join REMMASTER.DD_PRV_PROVINCIA prv on prv.dd_prv_id = loc.dd_prv_id
+  left join DD_TCR_TIPO_COMERCIALIZAR tcr on tcr.dd_tcr_id = act.dd_tcr_id
+  left join DD_EAC_ESTADO_ACTIVO eac on eac.dd_eac_id = act.dd_eac_id
+  join REMMASTER.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = ''GTREE''
+  JOIN dd_cra_cartera cra on cra.dd_cra_id = act.dd_cra_id
+  JOIN rem01.act_ges_dist_gestores dist1 on dist1.COD_CARTERA = CRA.DD_CRA_CODIGO AND DIST1.tipo_gestor = tge.dd_tge_codigo
+  where act.borrado = 0
                            )
     WHERE tipo_gestor IS NOT NULL';
 

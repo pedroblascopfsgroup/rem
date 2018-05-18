@@ -1504,6 +1504,11 @@ public class AgrupacionAdapter {
 			oferta.setPrescriptor((ActivoProveedor) proveedoresApi.searchProveedorCodigo(dto.getCodigoPrescriptor()));
 			oferta.setOrigen("REM");
 			oferta.setOfertaExpress(false);
+			if (Checks.esNulo(dto.getVentaDirecta())){
+				oferta.setVentaDirecta(false);
+			} else {				
+				oferta.setVentaDirecta(dto.getVentaDirecta());
+			}
 			genericDao.save(Oferta.class, oferta);
 			// Actualizamos la situacion comercial de los activos de la oferta
 			ofertaApi.updateStateDispComercialActivosByOferta(oferta);

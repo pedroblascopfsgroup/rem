@@ -101,7 +101,6 @@ public class ActivoAgrupacionActivoManager extends BusinessOperationOverrider<Ac
 		}
 
 		Long resultado = activoAgrupacionActivoDao.save(activoAgrupacionActivo);
-		activoAgrupacionDao.aceptarTransacion();
 		restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoAgrupacionActivo.getActivo());
 		return resultado;
 	}

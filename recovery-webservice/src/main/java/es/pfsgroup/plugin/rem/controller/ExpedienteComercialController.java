@@ -163,7 +163,8 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	public ModelAndView getTabExpediente(Long id, String tab, ModelMap model) {
 
 		try {
-			model.put("data", expedienteComercialApi.getTabExpediente(id, tab));
+			Object data = expedienteComercialApi.getTabExpediente(id, tab);
+			model.put("data", data);
 			model.put("success", true);
 		} catch (Exception e) {
 			model.put("success", false);

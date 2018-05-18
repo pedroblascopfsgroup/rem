@@ -1038,6 +1038,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		dto.setObservaciones(oferta.getObservaciones());
 		
+		if(!Checks.esNulo(oferta.getVentaDirecta())){
+			dto.setVentaCartera(oferta.getVentaDirecta() ? "Si" : "No");
+		}
+		
 		return dto;
 	}
 

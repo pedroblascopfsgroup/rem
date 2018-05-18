@@ -241,8 +241,8 @@ public class ResolucionComiteController {
 							List<TareaExterna> listaTareas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
 							for (TareaExterna tarea : listaTareas) {
 								if (!Checks.esNulo(tarea)) {
-									//tareaActivoApi.guardarDatosResolucion(tarea.getId(), resolucionComiteDto.getFechaComite(), resolucionComiteDto.getCodigoResolucion());
 									tareaActivoApi.saltoCierreEconomico(tarea.getId());
+									expedienteComercialApi.bloquearExpediente(eco.getId());
 									break;
 								}
 							}

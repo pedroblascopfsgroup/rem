@@ -260,13 +260,6 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 
 	}
 
-	@Override
-	public void aceptarTransacion(){
-		getHibernateTemplate().flush();
-	}
-	
-
-	
 	/*
 	 * @Override public void
 	 * deleteActivoPrincipalByIdActivoAgrupacionActivo(Long id) {

@@ -235,6 +235,18 @@ public class ResolucionComiteController {
 						}
 						
 						resol = resolucionComiteApi.saveOrUpdateResolucionComite(resolucionComiteDto);
+						
+						//si es venta cartera
+						if(eco.getOferta().getVentaDirecta() != null && eco.getOferta().getVentaDirecta()){
+							List<TareaExterna> listaTareas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
+							for (TareaExterna tarea : listaTareas) {
+								if (!Checks.esNulo(tarea)) {
+									//tareaActivoApi.guardarDatosResolucion(tarea.getId(), resolucionComiteDto.getFechaComite(), resolucionComiteDto.getCodigoResolucion());
+									tareaActivoApi.saltoCierreEconomico(tarea.getId());
+									break;
+								}
+							}
+						}
 
 						if (!Checks.esNulo(resolucionComiteDto.getDevolucion())
 								&& resolucionComiteDto.getDevolucion().equals("S")) {
@@ -258,7 +270,8 @@ public class ResolucionComiteController {
 									+ ".\n";
 
 						}
-
+						
+						
 						// Envío correo/notificación
 						try {
 							notifrem = resolucionComiteApi.notificarResolucion(resol, usu, eco, mensajeDevolucion,

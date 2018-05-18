@@ -110,8 +110,10 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 				Boolean formalizacion = (1 == loteComercial.getIsFormalizacion()) ? true : false;
 				codigoGestor = this.getMapCodigoTipoGestorActivoAndLoteRestEntidad01Formalizacion(formalizacion).get(codigoTarea);
 			}
+		} else if(this.isActivoGiants(tareaActivo)){
+			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, true).get(codigoTarea);
 		} else {
-			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion).get(codigoTarea);
+			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false).get(codigoTarea);
 		}
 				
 		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoGestor);
@@ -191,15 +193,35 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 
 		return false;
 	}
+	/*
+	 * Comprueba si el activo es de Cartera Giants
+	 */
+	private boolean isActivoGiants(TareaActivo tareaActivo) {
+		
+		//Trabajo trabajo = tareaActivo.getTramite().getTrabajo();
+		Activo activo = tareaActivo.getActivo();
+		String codCarteraActivo = !Checks.esNulo(activo) ? (!Checks.esNulo(activo.getCartera()) ? activo.getCartera().getCodigo() : null) : null;
+		
+		if(!Checks.esNulo(codCarteraActivo) && DDCartera.CODIGO_CARTERA_GIANTS.equals(codCarteraActivo)) 
+		{	
+			return true;
+		}
+
+		return false;
+	}
 
 	//  --- Mapas con la relación Tarea - Tipo Gestor/supervisor  -------------------------------------------------
-	private HashMap<String,String> getMapCodigoTipoGestor(boolean isFdv, boolean isConFormalizacion) {
+	private HashMap<String,String> getMapCodigoTipoGestor(boolean isFdv, boolean isConFormalizacion, boolean isGiants) {
 		
 		HashMap<String,String> mapa = new HashMap<String,String>();
 		
 		if(!isFdv){			
-			mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);				
-			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_COMITE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+			if(isGiants){
+				mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_COMITE, GestorActivoApi.CODIGO_GESTOR_GOLDEN_TREE);
+			}else{
+				mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_COMITE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+			}	
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_OFERTANTE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
@@ -210,7 +232,11 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			else
 				mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RATIFICACION_COMITE, GestorActivoApi.CODIGO_FVD_NEGOCIO);
-			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_COMITE, GestorActivoApi.CODIGO_FVD_NEGOCIO);
+			if(isGiants){
+				mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_COMITE, GestorActivoApi.CODIGO_GESTOR_GOLDEN_TREE);
+			}else{
+				mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_COMITE, GestorActivoApi.CODIGO_FVD_NEGOCIO);
+			}
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_OFERTANTE, GestorActivoApi.CODIGO_FVD_NEGOCIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_FVD_NEGOCIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_FVD_BKOFERTA);

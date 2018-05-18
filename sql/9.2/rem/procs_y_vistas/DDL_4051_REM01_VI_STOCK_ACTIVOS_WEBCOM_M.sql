@@ -247,11 +247,15 @@ BEGIN
 					FROM '||V_ESQUEMA||'.ACT_COE_CONDICION_ESPECIFICA COE
 					WHERE COE.COE_FECHA_HASTA IS NULL AND COE.BORRADO = 0 AND COE.COE_FECHA_DESDE <= SYSDATE ) COE on COE.ACT_ID = ACT.ACT_ID
 
-    	LEFT JOIN(  SELECT DISTINCT pve.PVE_COD_REM, gac.ACT_ID FROM '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO gac 
-                inner join '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD gee ON gee.GEE_ID = gac.GEE_ID
-                inner join '||V_ESQUEMA||'.ACT_PVC_PROVEEDOR_CONTACTO pvc ON pvc.USU_ID = gee.USU_ID
-                inner join '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR pve ON pve.PVE_ID = pvc.PVE_ID
-                inner join '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR tpr ON tpr.DD_TPR_ID = pve.DD_TPR_ID AND tpr.DD_TPR_CODIGO =''05'') PVEPRV ON PVEPRV.ACT_ID = act.ACT_ID
+    	LEFT JOIN(  SELECT distinct pve.pve_cod_rem, gac.act_id
+                            FROM '||V_ESQUEMA||'.gac_gestor_add_activo gac INNER JOIN rem01.gee_gestor_entidad gee ON gee.gee_id = gac.gee_id
+                                 INNER JOIN '||V_ESQUEMA||'.act_pvc_proveedor_contacto pvc ON pvc.usu_id = gee.usu_id
+                                 INNER JOIN '||V_ESQUEMA||'.act_pve_proveedor pve ON pve.pve_id = pvc.pve_id
+                                 INNER JOIN '||V_ESQUEMA||'.dd_tpr_tipo_proveedor tpr ON tpr.dd_tpr_id = pve.dd_tpr_id AND tpr.dd_tpr_codigo = ''05''
+                                 INNER join '||V_ESQUEMA||'.act_activo act on act.act_id = gac.ACT_ID
+                                 INNER join '||V_ESQUEMA_M||'.dd_tge_tipo_gestor tge on tge.DD_TGE_ID = gee.DD_TGE_ID
+                                 INNER join '||V_ESQUEMA||'.ACT_ETP_ENTIDAD_PROVEEDOR etp on etp.DD_CRA_ID = act.DD_CRA_ID and etp.PVE_ID = pve.PVE_ID
+                            where tge.DD_TGE_CODIGO = ''PTEC'') PVEPRV ON PVEPRV.ACT_ID = act.ACT_ID
 
 		
 		where act.borrado = 0 and sps.borrado = 0';

@@ -54,6 +54,11 @@ import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
+<<<<<<< Updated upstream
+=======
+import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
+import es.pfsgroup.plugin.rem.model.VListaActivosAgrupacionVSCondicionantes;
+>>>>>>> Stashed changes
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
@@ -167,10 +172,10 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		DtoEstadoDisponibilidadComercial dtoEstadoDispcom = new DtoEstadoDisponibilidadComercial();
 		List<DtoVActivosAgrupacion> listaDto = new ArrayList<DtoVActivosAgrupacion>();
 		List<VActivosAgrupacion> lAgrupaActivos =  (List<VActivosAgrupacion>) activoAgrupacionDao.getListActivosAgrupacionById(dto, usuarioLogado).getResults();
-		//TODO LLAMAR A VListaActivosAgrupacionVSCondicionantes con el agrupacion id y comprobar dentro del for los campos que ves en if(!Checks.esNulo(vCondicionante)) 
+		 
 		for(VActivosAgrupacion actAgrup : lAgrupaActivos) {
 			DtoVActivosAgrupacion dtoVActAgrup = new DtoVActivosAgrupacion();	
-			/*VCondicionantesDisponibilidad vCondicionante = genericDao.get(VCondicionantesDisponibilidad.class, genericDao.createFilter(FilterType.EQUALS, "idActivo",actAgrup.getActivoId()));
+			VListaActivosAgrupacionVSCondicionantes vCondicionante = genericDao.get(VListaActivosAgrupacionVSCondicionantes.class, genericDao.createFilter(FilterType.EQUALS, "activoId",actAgrup.getActivoId()));
 			if(!Checks.esNulo(vCondicionante)) {
 				if(vCondicionante.getConCargas() || vCondicionante.getDivHorizontalNoInscrita() || vCondicionante.getIsCondicionado() || vCondicionante.getObraNuevaEnConstruccion() ||
 						vCondicionante.getObraNuevaSinDeclarar() || vCondicionante.getOcupadoConTitulo() || vCondicionante.getOcupadoSinTitulo() || vCondicionante.getPendienteInscripcion() ||
@@ -182,7 +187,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				}else {
 					dtoVActAgrup.setEstadoSituacionComercial(false);
 				}
-			}*/
+			}
 			
 			BeanUtils.copyProperties(actAgrup,dtoVActAgrup);
 			if(!Checks.esNulo(actAgrup.getSubtipoActivo())) {

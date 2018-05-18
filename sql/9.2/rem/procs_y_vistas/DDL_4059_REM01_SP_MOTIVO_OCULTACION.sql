@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=CARLOS LOPEZ
---## FECHA_CREACION=20180503
+--## FECHA_CREACION=20180518
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
---## INCIDENCIA_LINK=HREOS-4027
+--## INCIDENCIA_LINK=HREOS-4077
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -129,6 +129,20 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                      AND SPS.SPS_CON_TITULO = 1 
                                      AND ((TRUNC(SPS.SPS_FECHA_TITULO) <= TRUNC(SYSDATE) AND TRUNC(SPS.SPS_FECHA_VENC_TITULO) >= TRUNC(sysdate)) OR (TRUNC(SPS.SPS_FECHA_TITULO) <= TRUNC(SYSDATE) AND SPS.SPS_FECHA_VENC_TITULO IS NULL))
                                      AND SPS.ACT_ID= '||pACT_ID||    
+                                     
+                                     
+                         ' UNION
+                          SELECT APU.ACT_ID
+                               , 1 OCULTO
+                               , MTO.DD_MTO_CODIGO
+                               , MTO.DD_MTO_ORDEN ORDEN
+                                    FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU
+                                    JOIN '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD V ON V.ACT_ID = APU.ACT_ID AND V.ES_CONDICIONADO = 0
+                                    JOIN '|| V_ESQUEMA ||'.V_CAMBIO_ESTADO_PUBLI EST ON EST.ACT_ID = APU.ACT_ID AND EST.INFORME_COMERCIAL = 0
+                                    LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''06'' AND MTO.BORRADO = 0 /*Revisión Publicación*/
+                                   WHERE APU.BORRADO = 0.
+                                     AND APU.ES_CONDICONADO_ANTERIOR = 1 
+                                     AND APU.ACT_ID= '||pACT_ID||                                          
                          ' UNION                                     
                           SELECT APU.ACT_ID
                                , 1 OCULTO

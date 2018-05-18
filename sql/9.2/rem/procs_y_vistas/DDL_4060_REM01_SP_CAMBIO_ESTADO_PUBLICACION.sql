@@ -1,10 +1,8 @@
---/*
---##########################################
---## AUTOR=Pablo Sánchez
---## FECHA_CREACION=20180517
+--## AUTOR=CARLOS LOPEZ
+--## FECHA_CREACION=20180518
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
---## INCIDENCIA_LINK=HREOS-4074
+--## INCIDENCIA_LINK=HREOS-4077
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -56,11 +54,13 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
     nPRECIO_V         #ESQUEMA#.V_CAMBIO_ESTADO_PUBLI.PRECIO_V%TYPE;
     nCEE_VIGENTE      #ESQUEMA#.V_CAMBIO_ESTADO_PUBLI.CEE_VIGENTE%TYPE;
     nADECUADO         #ESQUEMA#.V_CAMBIO_ESTADO_PUBLI.ADECUADO%TYPE;
+    nES_CONDICONADO   #ESQUEMA#.V_CAMBIO_ESTADO_PUBLI.ES_CONDICONADO%TYPE;
     
     OutOCULTAR        #ESQUEMA#.ACT_APU_ACTIVO_PUBLICACION.APU_CHECK_OCULTAR_A%TYPE;
     OutMOTIVO         #ESQUEMA#.DD_MTO_MOTIVOS_OCULTACION.DD_MTO_CODIGO%TYPE;
     
     vACTUALIZADO      VARCHAR2(1 CHAR);
+    vACTUALIZAR_COND  VARCHAR2(1 CHAR);
     vUSUARIOMODIFICAR VARCHAR2(50 CHAR);
     vCondAlquiler     VARCHAR2(1 CHAR);
 
@@ -231,7 +231,11 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
 		    IF SQL%ROWCOUNT > 0 THEN
 			  vACTUALIZADO := 'S';
 		    END IF;
-		  END IF; 		  
+		  END IF; 	
+		  	  
+		  IF pDD_MTO_CODIGO = '06' THEN /*Revisión Publicación*/
+		    vACTUALIZAR_COND := 'N';
+		  END IF; 
 		  	  
 		END IF;
 	END IF;
@@ -298,7 +302,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
 		    END IF;		  
 		  END IF;
 
-		IF pDD_MTO_CODIGO IN ('04') THEN /*04	Revisión adecuación*/
+		IF pDD_MTO_CODIGO IN ('04') THEN /*Revisión adecuación*/
 		  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO PTA
 						SET DD_ADA_ID = (SELECT DDADA.DD_ADA_ID
 											 FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA
@@ -316,6 +320,11 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
 		  END IF;   
 		   
 		END IF;
+		
+		IF pDD_MTO_CODIGO = '06' THEN /*Revisión Publicación*/
+		  vACTUALIZAR_COND := 'N';
+		END IF; 		
+		
 	  END IF;	  		  
 	END IF;
 	
@@ -570,14 +579,14 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
 	  END IF;
     
       V_MSQL := '
-        SELECT DISTINCT
+        SELECT 
                V.ACT_ID, V.DD_TCO_CODIGO
              , V.CODIGO_ESTADO_A, V.DESC_ESTADO_A, V.CHECK_PUBLICAR_A, V.CHECK_OCULTAR_A, V.DD_MTO_CODIGO_A, V.DD_MTO_MANUAL_A
              , V.CODIGO_ESTADO_V, V.DESC_ESTADO_V, V.CHECK_PUBLICAR_V, V.CHECK_OCULTAR_V, V.DD_MTO_CODIGO_V, V.DD_MTO_MANUAL_V
              , V.DD_TPU_CODIGO_A, V.DD_TPU_CODIGO_V, V.DD_TAL_CODIGO
              , V.ADMISION, V.GESTION
              , V.INFORME_COMERCIAL, V.PRECIO_A, V.PRECIO_V
-             , V.CEE_VIGENTE, V.ADECUADO
+             , V.CEE_VIGENTE, V.ADECUADO, V.ES_CONDICONADO
           FROM '|| V_ESQUEMA ||'.V_CAMBIO_ESTADO_PUBLI V'
           ||vWHERE
        ;
@@ -590,10 +599,12 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
                               , vDD_TPU_CODIGO_A, vDD_TPU_CODIGO_V, vDD_TAL_CODIGO
                               , nADMISION, nGESTION
                               , nINFORME_COMERCIAL, nPRECIO_A, nPRECIO_V
-                              , nCEE_VIGENTE, nADECUADO;
+                              , nCEE_VIGENTE, nADECUADO
+                              , nES_CONDICONADO;
         EXIT WHEN v_cursor%NOTFOUND;
         
         vACTUALIZADO := 'N';
+        vACTUALIZAR_COND := 'S';
            
         /**************/
         /*No Publicado*/
@@ -776,6 +787,18 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
           END IF;      
         END IF;
   
+        IF vACTUALIZAR_COND = 'S' THEN
+		    V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
+						SET ACT.ES_CONDICONADO_ANTERIOR = '||nES_CONDICONADO||'
+						  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+						  , FECHAMODIFICAR = SYSDATE
+					  WHERE ACT_ID = '||nACT_ID||'
+						AND BORRADO = 0
+					'
+					;
+
+		    EXECUTE IMMEDIATE V_MSQL;        
+        END IF;
   
         /**************/
         /*HISTORIFICAR*/
@@ -795,7 +818,8 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
                                                   ,VERSION
                                                   ,USUARIOCREAR,FECHACREAR
                                                   ,USUARIOMODIFICAR,FECHAMODIFICAR
-                                                  ,USUARIOBORRAR,FECHABORRAR,BORRADO)
+                                                  ,USUARIOBORRAR,FECHABORRAR,BORRADO
+                                                  ,ES_CONDICONADO_ANTERIOR)
             SELECT  '|| V_ESQUEMA ||'.S_ACT_AHP_HIST_PUBLICACION.NEXTVAL, ACT_ID
                                                   ,(SELECT DD_TPU_ID FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION WHERE BORRADO = 0 AND DD_TPU_CODIGO = '''||vDD_TPU_CODIGO_A||''')DD_TPU_A_ID
                                                   ,(SELECT DD_TPU_ID FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION WHERE BORRADO = 0 AND DD_TPU_CODIGO = '''||vDD_TPU_CODIGO_V||''')DD_TPU_V_ID
@@ -816,6 +840,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
                                                   ,'''||pUSUARIOMODIFICAR||''' USUARIOCREAR, SYSDATE FECHACREAR
                                                   ,USUARIOMODIFICAR,FECHAMODIFICAR
                                                   ,USUARIOBORRAR,FECHABORRAR,BORRADO
+                                                  ,'''||nES_CONDICONADO_ANTERIOR||''' ES_CONDICONADO_ANTERIOR
               FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
              WHERE BORRADO = 0
                AND ACT_ID = '||nACT_ID||'

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=CARLOS LOPEZ
---## FECHA_CREACION=20180406
+--## FECHA_CREACION=20180518
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
---## INCIDENCIA_LINK=HREOS-3995
+--## INCIDENCIA_LINK=HREOS-4077
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -79,12 +79,15 @@ BEGIN
              , CASE
                  WHEN PTA.ACT_ID IS NOT NULL THEN 1
                  ELSE 0
-               END AS ADECUADO            
+               END AS ADECUADO  
+             , V.ES_CONDICIONADO ES_CONDICONADO          
           FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
           JOIN '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID AND APU.BORRADO = 0
           LEFT JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON APU.DD_TCO_ID = TCO.DD_TCO_ID AND TCO.BORRADO = 0
           LEFT JOIN '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER EPA ON APU.DD_EPA_ID = EPA.DD_EPA_ID AND EPA.BORRADO = 0
           LEFT JOIN '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA EPV ON APU.DD_EPV_ID = EPV.DD_EPV_ID AND EPV.BORRADO = 0
+          
+          LEFT JOIN '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD V ON V.ACT_ID = APU.ACT_ID
           
           LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON APU.DD_MTO_A_ID = MTO.DD_MTO_ID AND MTO.BORRADO = 0
           LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO2 ON APU.DD_MTO_V_ID = MTO2.DD_MTO_ID AND MTO2.BORRADO = 0
@@ -155,6 +158,13 @@ BEGIN
                       JOIN '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER ADA ON ADA.DD_ADA_ID = PTA.DD_ADA_ID AND ADA.BORRADO = 0 AND ADA.DD_ADA_CODIGO IN (''01'',''03'') /*Si,	No aplica*/
                      WHERE PTA.BORRADO = 0)PTA ON PTA.ACT_ID = ACT.ACT_ID 
          WHERE ACT.BORRADO = 0    
+           AND NOT EXISTS (SELECT 1
+                             FROM '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA 
+                             JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0
+                             JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0 AND TAG.DD_TAG_CODIGO = ''02''/*Restringida*/
+                            WHERE AGA.ACT_ID = ACT.ACT_ID 
+                              AND AGA.BORRADO = 0
+                          )         
       ';
 
     /*DBMS_OUTPUT.PUT_LINE(V_MSQL);*/
@@ -238,7 +248,9 @@ BEGIN
     
     V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.V_CAMBIO_ESTADO_PUBLI.ADECUADO IS ''Adecuado 0/1'' ';      
     EXECUTE IMMEDIATE V_MSQL;                         
-       
+
+    V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.V_CAMBIO_ESTADO_PUBLI.ES_CONDICONADO IS ''Campo calculado en la vista V_COND_DISPONIBILIDAD'' ';      
+    EXECUTE IMMEDIATE V_MSQL;         
 END;
 /
 

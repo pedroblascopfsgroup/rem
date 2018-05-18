@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion', {
 	extend		: 'HreRem.view.common.WindowBase',
 	xtype		: 'ventanaEleccionTipoPublicacion',
-	reference	: 'ventanaEleccionTipoPublicacion',
+	reference	: 'ventanaEleccionTipoPublicacionref',
 	controller	: 'tarea',
 	controller  : 'activodetalle',
 	width		: 350,
@@ -12,8 +12,8 @@ Ext.define('HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion', {
 		me.title = HreRem.i18n('window.tipo.publicacion.alquiler.title');
 
 		me.buttons = [
-			{itemId: 'btnForzado', text: HreRem.i18n('window.tipo.publicacion.alquiler.btn.prepublicar'), codigo: CONST.MODO_PUBLICACION_ALQUILER['PRE_PUBLICAR'], handler: 'establecerTipoPublicacionAlquiler'},
-			{itemId: 'btnPrepublicado', text: HreRem.i18n('window.tipo.publicacion.alquiler.btn.forzado'), codigo: CONST.MODO_PUBLICACION_ALQUILER['FORZADO'], handler: 'establecerTipoPublicacionAlquiler'},
+		    {itemId: 'btnPrepublicado', text: HreRem.i18n('window.tipo.publicacion.alquiler.btn.prepublicar'), codigo: CONST.MODO_PUBLICACION_ALQUILER['PRE_PUBLICAR'], handler: 'establecerTipoPublicacionAlquiler'},
+			{itemId: 'btnForzado', text: HreRem.i18n('window.tipo.publicacion.alquiler.btn.forzado'), codigo: CONST.MODO_PUBLICACION_ALQUILER['FORZADO'], handler: 'establecerTipoPublicacionAlquiler'},			
 			{itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'cancelarEstablecerTipoPublicacionAlquiler'}
 		];
 

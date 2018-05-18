@@ -2031,10 +2031,7 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView setDatosPublicacionActivo(DtoDatosPublicacionActivo dto, ModelMap model) {
 		try {
-			model.put("success", activoEstadoPublicacionApi.setDatosPublicacionActivo(dto));
-			//boolean success = adapter.guardarEstadoPublicacionAlquiler(dto);
-			boolean success = activoEstadoPublicacionApi.setDatosPublicacionActivo(dto);
-			model.put("success", success);
+			model.put("success", activoEstadoPublicacionApi.setDatosPublicacionActivo(dto));					
 		} catch (JsonViewerException e) {
 				model.put("msg", e.getMessage());
 				model.put("success", false);

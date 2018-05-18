@@ -3277,21 +3277,27 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		if (!isDirty && !estadoPubAlquilerPublicado) {
 			var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) && !checkbox.getValue();
 			checkboxPublicarAlquiler.setReadOnly(readOnly);
-			checkbox.up('activosdetallemain').getViewModel().get('datospublicacionactivo').set('eleccionUsuarioTipoPublicacionAlquiler', null);
+			checkbox.up('activosdetallemain').getViewModel().get('datospublicacionactivo').set('eleccionUsuarioTipoPublicacionAlquiler');
 			checkboxPublicarAlquiler.setValue(false);
 		}
     },
 
     establecerTipoPublicacionAlquiler: function(btn) {
         var me = this;
-
-        Ext.ComponentQuery.query('activosdetallemain')[0].getViewModel().get('datospublicacionactivo').set('eleccionUsuarioTipoPublicacionAlquiler', btn.codigo);
+        var list = Ext.ComponentQuery.query('activosdetallemain');
+        for(var i=0; i < list.length; i++) {
+        	if(list[i].tab.active) list[i].getViewModel().get('datospublicacionactivo').set('eleccionUsuarioTipoPublicacionAlquiler', btn.codigo);
+        }
+        
         btn.up('window').destroy();
     },
 
     cancelarEstablecerTipoPublicacionAlquiler: function(btn) {
         var me = this;
-        Ext.ComponentQuery.query('activosdetallemain')[0].lookupReference('chkbxpublicaralquiler').setValue(false);
+        var list = Ext.ComponentQuery.query('activosdetallemain');
+        for(var i=0; i < list.length; i++) {
+        	if(list[i].tab.active) list[i].lookupReference('chkbxpublicaralquiler').setValue(false);
+        }
         btn.up('window').destroy();
     },
     

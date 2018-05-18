@@ -20,6 +20,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -71,7 +72,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 
 	public static final int EXCEL_FILA_INICIAL = 3;
 	public static final int EXCEL_COL_NUMACTIVO = 0;
-		
+	public static final String NOMBRE_AGRUPACION = "masivo.vc.agrupacion.nombre";
 	
 	@Autowired
 	ActivoAdapter activoAdapter;
@@ -81,9 +82,6 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 	
 	@Autowired
 	ParticularValidatorApi particularValidatorApi;
-
-	@Autowired
-	private ApiProxyFactory proxyFactory;
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -106,11 +104,11 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 	@Autowired
 	private UvemManagerApi uvemManagerApi;
 	
-	
-	
-	
+	@Resource
+    MessageService messageServices;
+		
 	private MSVHojaExcel excel;
-	
+	private HashMap<String,String> listaAgrupaciones;
 	
 	@Override
 	public String getValidOperation() {
@@ -126,8 +124,27 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 	public void preProcesado(MSVHojaExcel exc)
 			throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
 		excel = exc;
+		calcularImporteOferta(excel);
 	}
 
+
+	private void calcularImporteOferta(MSVHojaExcel exc) throws IllegalArgumentException, IOException, ParseException {
+		listaAgrupaciones = new HashMap<String,String>();
+		String codigoOferta = null;
+		String precioVenta = null;
+		// Comprobamos las distintas agrupaciones que hay 
+		for (int i=this.getFilaInicial(); i<=excel.getNumeroFilas()-1;i++){
+			codigoOferta = exc.dameCelda(i, 7);
+			precioVenta = exc.dameCelda(i, 1);
+			if (!listaAgrupaciones.containsKey(codigoOferta)){
+				listaAgrupaciones.put(codigoOferta, precioVenta);
+			} else {
+				Double importe1 = Double.parseDouble(listaAgrupaciones.get(codigoOferta));
+				Double importe2 = Double.parseDouble(precioVenta);
+				listaAgrupaciones.put(codigoOferta, String.valueOf((importe1+importe2)));
+			};
+		}	
+	}
 
 	@Override
 	@Transactional(readOnly = false)
@@ -162,7 +179,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			if (esUltimoActivoAgrupacion(codigoOferta, fila)){
 				// Creamos la oferta sobre a agrupacion
 				//					PRECIO VENTA            NOMBRE                   RAZON SOCIAL            TIPO DOC                NUM DOC                 CÓDIGO PRESCRIPTOR     ID AGRUPACION  
-				crearOfertaAgrupcion(exc.dameCelda(fila, 1),exc.dameCelda(fila, 10), exc.dameCelda(fila, 11),exc.dameCelda(fila, 12),exc.dameCelda(fila, 13),exc.dameCelda(fila, 9),agrupacion.getId());
+				crearOfertaAgrupcion(exc.dameCelda(fila, 7),exc.dameCelda(fila, 10), exc.dameCelda(fila, 11),exc.dameCelda(fila, 12),exc.dameCelda(fila, 13),exc.dameCelda(fila, 9),agrupacion.getId());
 				
 				// Creamos un tramite para la oferta, y con ello el expedienteComercial
 				crearTramiteOferta(agrupacion.getId());
@@ -325,13 +342,13 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 		}
 	}
 
-	private void crearOfertaAgrupcion(String precioVenta, String nombre, String razonSocial, String tipoDoc,
+	private void crearOfertaAgrupcion(String codigoOferta, String nombre, String razonSocial, String tipoDoc,
 			String numdoc, String codigoPrescriptor, Long idAgrupacion) throws Exception {	
 		TransactionStatus transactionE = null;
 		try{
 			transactionE = transactionManager.getTransaction(new DefaultTransactionDefinition());
 			DtoOfertasFilter dtoFilter = new DtoOfertasFilter();
-			dtoFilter.setImporteOferta(precioVenta);
+			dtoFilter.setImporteOferta(listaAgrupaciones.get(codigoOferta));
 			dtoFilter.setTipoOferta(DDTipoOferta.CODIGO_VENTA);
 			dtoFilter.setNombreCliente(nombre);
 			dtoFilter.setRazonSocialCliente(razonSocial);
@@ -404,7 +421,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 		try{
 			transactionC = transactionManager.getTransaction(new DefaultTransactionDefinition());
 			DtoAgrupacionesCreateDelete dtoAgrupacionCrear = new DtoAgrupacionesCreateDelete();
-			dtoAgrupacionCrear.setNombre("No esta definido");
+			dtoAgrupacionCrear.setNombre(messageServices.getMessage(NOMBRE_AGRUPACION));
 			dtoAgrupacionCrear.setDescripcion(descripcionAgrupacion);
 			dtoAgrupacionCrear.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL);
 			dtoAgrupacionCrear.setFechaInicioVigencia(new Date());

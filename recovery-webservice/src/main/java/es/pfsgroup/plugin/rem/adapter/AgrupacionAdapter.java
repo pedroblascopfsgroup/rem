@@ -47,6 +47,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizaciones
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.activo.valoracion.dao.ActivoValoracionDao;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -68,7 +69,6 @@ import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoObraNueva;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
-import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoRestringida;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
@@ -81,6 +81,8 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoDisponibilidadComercial;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
@@ -207,6 +209,9 @@ public class AgrupacionAdapter {
 	
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
+	
+	@Autowired
+	private ActivoValoracionDao activoValoracionDao;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -377,26 +382,42 @@ public class AgrupacionAdapter {
 
 				// TODO: Hacer cuando esté listo el activo principal dentro de
 				// la agrupación
-
-				if (agrupacion.getActivoPrincipal() != null
-						&& !agrupacion.getActivoPrincipal().getPropietariosActivo().isEmpty()) {
-					ActivoPropietario propietario = agrupacion.getActivoPrincipal().getPropietarioPrincipal();
-					if (Checks.esNulo(propietario)) {
-						BeanUtils.copyProperty(dtoAgrupacion, "propietario", propietario.getFullName());
+				
+				Activo activoPrincipal = agrupacion.getActivoPrincipal();
+				
+				if(activoPrincipal != null) {					
+					PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activoPrincipal.getId());
+					
+					if(perimetroActivo != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "incluidoEnPerimetro", perimetroActivo.getIncluidoEnPerimetro() == 1);
 					}
-				}
+					
+					if (activoPrincipal.getTipoComercializacion() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionDescripcion",
+								activoPrincipal.getTipoComercializacion().getDescripcion());
+						BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionCodigo",
+								activoPrincipal.getTipoComercializacion().getCodigo());
+					}
 
-				if (agrupacion.getActivoPrincipal() != null && agrupacion.getActivoPrincipal().getCartera() != null) {
-					BeanUtils.copyProperty(dtoAgrupacion, "cartera",
-							agrupacion.getActivoPrincipal().getCartera().getDescripcion());
-					BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera",
-							agrupacion.getActivoPrincipal().getCartera().getCodigo());
-				} else if (agrupacion.getActivos() != null && !agrupacion.getActivos().isEmpty()
-						&& agrupacion.getActivos().get(0).getActivo().getCartera() != null) {
-					BeanUtils.copyProperty(dtoAgrupacion, "cartera",
-							agrupacion.getActivos().get(0).getActivo().getCartera().getDescripcion());
-					BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera",
-							agrupacion.getActivos().get(0).getActivo().getCartera().getCodigo());
+					if (!activoPrincipal.getPropietariosActivo().isEmpty()) {
+						ActivoPropietario propietario = activoPrincipal.getPropietarioPrincipal();
+						if (Checks.esNulo(propietario)) {
+							BeanUtils.copyProperty(dtoAgrupacion, "propietario", propietario.getFullName());
+						}
+					}				
+
+					if (activoPrincipal.getCartera() != null) {	
+						BeanUtils.copyProperty(dtoAgrupacion, "cartera",
+								activoPrincipal.getCartera().getDescripcion());
+						BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera",
+								activoPrincipal.getCartera().getCodigo());					
+					} else if (agrupacion.getActivos() != null && !agrupacion.getActivos().isEmpty()
+							&& agrupacion.getActivos().get(0).getActivo().getCartera() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "cartera",
+								agrupacion.getActivos().get(0).getActivo().getCartera().getDescripcion());
+						BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera",
+								agrupacion.getActivos().get(0).getActivo().getCartera().getCodigo());
+					}
 				}
 				/*
 				 * if(activo.getTipoActivo() != null ) {
@@ -2353,5 +2374,25 @@ public class AgrupacionAdapter {
 		}
 		
 		
+	}
+	
+	public DtoDatosPublicacionAgrupacion getDatosPublicacionAgrupacion(Long id) {
+		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
+		Activo activoPrincipal = agrupacion.getActivoPrincipal();
+		
+		DtoDatosPublicacionAgrupacion dto = activoEstadoPublicacionApi.getDatosPublicacionAgrupacion(activoPrincipal.getId());
+		
+		Double precioWebVenta = 0.0;
+		Double precioWebAlquiler = 0.0;
+		
+		for(ActivoAgrupacionActivo aga : agrupacion.getActivos()) {
+			precioWebVenta += activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId());
+			precioWebAlquiler += activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId());
+		}
+		
+		dto.setPrecioWebVenta(precioWebVenta);
+		dto.setPrecioWebAlquiler(precioWebAlquiler);
+		
+		return dto;
 	}
 }

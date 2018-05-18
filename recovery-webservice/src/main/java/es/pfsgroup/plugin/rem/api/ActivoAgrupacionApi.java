@@ -14,6 +14,8 @@ import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
+import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.DtoCondicionEspecificaAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoDisponibilidadComercial;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
 import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
@@ -129,5 +131,13 @@ public interface ActivoAgrupacionApi {
 	 * @return
 	 */
 	DtoEstadoDisponibilidadComercial getListActivosAgrupacionByIdActivo(DtoAgrupacionFilter dto, Usuario usuarioLogado);
+	
+	List<DtoCondicionEspecifica> getCondicionEspecificaByAgrupacion(Long id);
+	
+	Boolean createCondicionEspecifica(DtoCondicionEspecificaAgrupacion dto);
+	
+	Boolean saveCondicionEspecifica(DtoCondicionEspecificaAgrupacion dto);
+	
+	Boolean darDeBajaCondicionEspecifica(DtoCondicionEspecificaAgrupacion dto);
 		
 }

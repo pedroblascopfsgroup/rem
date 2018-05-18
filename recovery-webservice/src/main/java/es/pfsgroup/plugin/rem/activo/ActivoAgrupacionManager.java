@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.activo;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,8 +25,11 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -33,6 +37,7 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
@@ -40,15 +45,15 @@ import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
+import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.DtoCondicionEspecificaAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoDisponibilidadComercial;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
 import es.pfsgroup.plugin.rem.model.DtoVActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
-import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
@@ -92,6 +97,12 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	private OfertaApi ofertaApi;
 	
 	@Autowired
+	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private ActivoDao activoDao;
+	
+	@Autowired
 	private RestApi restApi;
 
 	// @Override
@@ -101,6 +112,8 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 	@Autowired
 	private ActivoAgrupacionFactoryApi activoAgrupacionFactoryApi;
+	
+	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
 	@Override
 	@BusinessOperation(overrides = "activoAgrupacionManager.get")
@@ -671,6 +684,49 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	public Boolean estaActivoEnOtraAgrupacionVigente(ActivoAgrupacion agrupacion,Activo activo) {
 		
 		return activoAgrupacionDao.estaActivoEnOtraAgrupacionVigente(agrupacion,activo);
+	}
+	
+	public List<DtoCondicionEspecifica> getCondicionEspecificaByAgrupacion(Long id) {
+		ActivoAgrupacion agrupacion = activoAgrupacionDao.get(id);
+		Activo activoPrincipal = agrupacion.getActivoPrincipal();
+		
+		return activoApi.getCondicionEspecificaByActivo(activoPrincipal.getId());
+	}
+	
+	public Boolean createCondicionEspecifica(DtoCondicionEspecificaAgrupacion dto) {
+		ActivoAgrupacion agrupacion = activoAgrupacionDao.get(dto.getIdAgrupacion());
+		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
+		
+		for(ActivoAgrupacionActivo aga : activos) {
+			dto.setIdActivo(aga.getActivo().getId());
+			activoApi.createCondicionEspecifica(dto);			
+		}
+		
+		return true;
+	}
+	
+	public Boolean saveCondicionEspecifica(DtoCondicionEspecificaAgrupacion dto) {
+		ActivoAgrupacion agrupacion = activoAgrupacionDao.get(dto.getIdAgrupacion());
+		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
+		
+		for(ActivoAgrupacionActivo aga : activos) {
+			dto.setIdActivo(aga.getActivo().getId());
+			if(!activoApi.saveCondicionEspecifica(dto)) return false;			
+		}
+		
+		return true;
+	}
+	
+	public Boolean darDeBajaCondicionEspecifica(DtoCondicionEspecificaAgrupacion dto) {
+		ActivoAgrupacion agrupacion = activoAgrupacionDao.get(dto.getIdAgrupacion());
+		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
+		
+		for(ActivoAgrupacionActivo aga : activos) {
+			dto.setIdActivo(aga.getActivo().getId());
+			if(!activoApi.darDeBajaCondicionEspecifica(dto)) return false;			
+		}
+		
+		return true;
 	}
 
 }

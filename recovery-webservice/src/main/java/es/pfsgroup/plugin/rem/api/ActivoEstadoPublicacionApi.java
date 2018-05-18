@@ -158,4 +158,8 @@ public interface ActivoEstadoPublicacionApi {
 	 * @param idActivo: ID del activo a publicar.
 	 */
 	void validarPublicacionTramiteYPublicar(Long idActivo);
+
+	DtoDatosPublicacionAgrupacion getDatosPublicacionAgrupacion(Long idActivo);
+	
+	Boolean setDatosPublicacionAgrupacion(Long id, DtoDatosPublicacionActivo dto);
 }

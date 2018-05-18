@@ -147,7 +147,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     getIconClsCondicionantesRuina: function(get) {
 	    	 var condicion = get('activoCondicionantesDisponibilidad.ruina');
 		     	if(!eval(condicion)) {
-		     		return 'app-tbfiedset-ico'
+		     		return 'app-tbfiedset-ico icono-ok'
 		     	} else {
 		     		return 'app-tbfiedset-ico icono-ko'
 		     	}
@@ -158,7 +158,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			if(CONST.CLASE_ACTIVO['FINANCIERO'] != claseActivo){
 				var condicion = get('activoCondicionantesDisponibilidad.pendienteInscripcion');
 			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico'
+			   		return 'app-tbfiedset-ico icono-ok'
 			   	} else {
 			   		return 'app-tbfiedset-ico icono-ko'
 			   	}
@@ -168,7 +168,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		getIconClsCondicionantesObraTerminada: function(get) {
 			var condicion = get('activoCondicionantesDisponibilidad.obraNuevaSinDeclarar');
 			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico'
+			   		return 'app-tbfiedset-ico icono-ok'
 			   	} else {
 			   		return 'app-tbfiedset-ico icono-ko'
 			   	}
@@ -178,7 +178,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			if(CONST.CLASE_ACTIVO['FINANCIERO'] != claseActivo){
 				var condicion = get('activoCondicionantesDisponibilidad.sinTomaPosesionInicial');
 				if(!eval(condicion)) {
-					return 'app-tbfiedset-ico'
+					return 'app-tbfiedset-ico icono-ok'
 				} else {
 					return 'app-tbfiedset-ico icono-ko'
 				}
@@ -188,7 +188,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		getIconClsCondicionantesProindiviso: function(get) {
 			var condicion = get('activoCondicionantesDisponibilidad.proindiviso');
 			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico'
+			   		return 'app-tbfiedset-ico icono-ok'
 			   	} else {
 			   		return 'app-tbfiedset-ico icono-ko'
 			   	}
@@ -196,7 +196,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		getIconClsCondicionantesObraNueva: function(get) {
 			var condicion = get('activoCondicionantesDisponibilidad.obraNuevaEnConstruccion');
 			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico'
+			   		return 'app-tbfiedset-ico icono-ok'
 			   	} else {
 			   		return 'app-tbfiedset-ico icono-ko'
 			   	}
@@ -204,7 +204,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		getIconClsCondicionantesOcupadoConTitulo: function(get) {
 			var condicion = get('activoCondicionantesDisponibilidad.ocupadoConTitulo');
 			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico'
+			   		return 'app-tbfiedset-ico icono-ok'
 			   	} else {
 			   		return 'app-tbfiedset-ico icono-ko'
 			   	}
@@ -212,7 +212,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		getIconClsCondicionantesTapiado: function(get) {
 			var condicion = get('activoCondicionantesDisponibilidad.tapiado');
 			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico'
+			   		return 'app-tbfiedset-ico icono-ok'
 			   	} else {
 			   		return 'app-tbfiedset-ico icono-ko'
 			   	}
@@ -220,7 +220,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		getIconClsCondicionantesOcupadoSinTitulo: function(get) {
 			var condicion = get('activoCondicionantesDisponibilidad.ocupadoSinTitulo');
 			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico'
+			   		return 'app-tbfiedset-ico icono-ok'
 			   	} else {
 			   		return 'app-tbfiedset-ico icono-ko'
 			   	}
@@ -228,7 +228,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		getIconClsCondicionantesDivHorizontal: function(get) {
 			var condicion = get('activoCondicionantesDisponibilidad.divHorizontalNoInscrita');
 			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico'
+			   		return 'app-tbfiedset-ico icono-ok'
 			   	} else {
 			   		return 'app-tbfiedset-ico icono-ko'
 			   	}
@@ -236,7 +236,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 getIconClsCondicionantesConCargas: function(get) {
 			var condicion = get('activoCondicionantesDisponibilidad.conCargas');
 			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico'
+			   		return 'app-tbfiedset-ico icono-ok'
 			   	} else {
 			   		return 'app-tbfiedset-ico icono-ko'
 			   	}
@@ -244,7 +244,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 getIconClsCondicionantesSinInformeAprobado: function(get) {
 			var condicion = get('activoCondicionantesDisponibilidad.sinInformeAprobado');
 			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico'
+			   		return 'app-tbfiedset-ico icono-ok'
 			   	} else {
 			   		return 'app-tbfiedset-ico icono-ko'
 			   	}
@@ -252,7 +252,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 getIconClsCondicionantesVandalizado: function(get) {
 					var condicion = get('activoCondicionantesDisponibilidad.vandalizado');
 					   	if(!eval(condicion)) {
-					   		return 'app-tbfiedset-ico'
+					   		return 'app-tbfiedset-ico icono-ok'
 					   	} else {
 					   		return 'app-tbfiedset-ico icono-ko'
 					   	}

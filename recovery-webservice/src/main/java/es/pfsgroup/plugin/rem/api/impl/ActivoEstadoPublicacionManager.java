@@ -18,6 +18,8 @@ import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionHistoricoD
 import es.pfsgroup.plugin.rem.activo.valoracion.dao.ActivoValoracionDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -25,6 +27,8 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
+
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -87,6 +92,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private ActivoAgrupacionApi activoAgrupacionApi;
+
+	@Autowired
+	private ActivoAgrupacionActivoApi activoAgrupacionActivoApi;
 	
     private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -538,6 +549,59 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
     	return dto;
 	}
+	
+	@Override
+	public DtoDatosPublicacionAgrupacion getDatosPublicacionAgrupacion(Long idActivo) {
+		DtoDatosPublicacionAgrupacion dto = new DtoDatosPublicacionAgrupacion(getDatosPublicacionActivo(idActivo));		
+		
+		Activo activoPrincipal = activoDao.get(idActivo);
+		
+		if(!Checks.esNulo(activoPrincipal)) {
+			try {
+				BeanUtils.copyProperty(dto, "idActivoPrincipal", activoPrincipal.getId());
+				
+				VCondicionantesDisponibilidad condicionantes = activoApi.getCondicionantesDisponibilidad(idActivo);
+				PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(idActivo);
+				ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(idActivo);
+				
+				if(!Checks.esNulo(condicionantes)) {
+					BeanUtils.copyProperty(dto, "ruina", condicionantes.getRuina());
+					BeanUtils.copyProperty(dto, "pendienteInscripcion", condicionantes.getPendienteInscripcion());
+					BeanUtils.copyProperty(dto, "obraNuevaSinDeclarar", condicionantes.getObraNuevaSinDeclarar());
+					BeanUtils.copyProperty(dto, "sinTomaPosesionInicial", condicionantes.getSinTomaPosesionInicial());
+					BeanUtils.copyProperty(dto, "proindiviso", condicionantes.getProindiviso());
+					BeanUtils.copyProperty(dto, "obraNuevaEnConstruccion", condicionantes.getObraNuevaEnConstruccion());
+					BeanUtils.copyProperty(dto, "ocupadoConTitulo", condicionantes.getOcupadoConTitulo());						
+					BeanUtils.copyProperty(dto, "tapiado", condicionantes.getTapiado());
+					BeanUtils.copyProperty(dto, "otro", condicionantes.getOtro());
+					BeanUtils.copyProperty(dto, "portalesExternos", condicionantes.getPortalesExternos());
+					BeanUtils.copyProperty(dto, "ocupadoSinTitulo", condicionantes.getOcupadoSinTitulo());
+					BeanUtils.copyProperty(dto, "divHorizontalNoInscrita", condicionantes.getDivHorizontalNoInscrita());
+					BeanUtils.copyProperty(dto, "isCondicionado", condicionantes.getIsCondicionado());
+					BeanUtils.copyProperty(dto, "estadoCondicionadoCodigo", condicionantes.getEstadoCondicionadoCodigo());
+					BeanUtils.copyProperty(dto, "sinInformeAprobado", condicionantes.getSinInformeAprobado());
+					BeanUtils.copyProperty(dto, "vandalizado", condicionantes.getVandalizado());
+					BeanUtils.copyProperty(dto, "conCargas", condicionantes.getConCargas());
+				}
+				
+				if(!Checks.esNulo(perimetroActivo)) {
+					BeanUtils.copyProperty(dto, "incluidoEnPerimetro", perimetroActivo.getIncluidoEnPerimetro() == 1);
+				}
+				
+				if(!Checks.esNulo(activoBancario)) {
+					if(!Checks.esNulo(activoBancario.getClaseActivo())) {
+						BeanUtils.copyProperty(dto, "claseActivoCodigo", activoBancario.getClaseActivo().getCodigo());
+					}
+				}
+			} catch (IllegalAccessException e) {
+				logger.error("error en activoEstadoPublicacionManager", e);
+			} catch (InvocationTargetException e) {
+				logger.error("error en activoEstadoPublicacionManager", e);
+			}
+		}
+
+    	return dto;
+	}
 
 	/**
 	 * Este método calcula si el check de publicar activo venta se ha de deshabilitar en base a unas reglas.
@@ -747,6 +811,28 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}
 
 		return false;
+	}
+	
+	@Override
+	@Transactional
+	public Boolean setDatosPublicacionAgrupacion(Long id, DtoDatosPublicacionActivo dto) throws JsonViewerException{
+		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);		
+		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
+		
+		for(ActivoAgrupacionActivo aga : activos) {
+			ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(aga.getActivo().getId());
+			
+			if(this.registrarHistoricoPublicacion(activoPublicacion, dto)) {
+				if(this.actualizarDatosEstadoActualPublicacion(dto, activoPublicacion)) {					
+					/*Boolean res = this.publicarActivoProcedure(dto.getIdActivo(), genericAdapter.getUsuarioLogado().getUsername(), dto.getEleccionUsuarioTipoPublicacionAlquiler());
+					if(Checks.esNulo(res) || !res) {
+						break;
+					}*/
+				}
+			}					
+		}
+
+		return true;
 	}
 
 	@Override

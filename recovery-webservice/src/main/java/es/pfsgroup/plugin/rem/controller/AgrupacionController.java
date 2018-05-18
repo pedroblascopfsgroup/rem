@@ -28,6 +28,7 @@ import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
+import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.excel.AgrupacionExcelReport;
 import es.pfsgroup.plugin.rem.excel.AgrupacionListadoActivosExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
@@ -39,6 +40,8 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesActivo;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
+import es.pfsgroup.plugin.rem.model.DtoCondicionEspecificaAgrupacion;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoEstadoDisponibilidadComercial;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
@@ -61,6 +64,9 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	@Autowired
 	private ActivoAgrupacionApi activoAgrupacionApi;
+	
+	@Autowired
+	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
 
 	@Autowired
 	private ExcelReportGeneratorApi excelReportGeneratorApi;
@@ -935,4 +941,58 @@ public class AgrupacionController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDatosPublicacionAgrupacion(Long id, ModelMap model) {
+		model.put("data", adapter.getDatosPublicacionAgrupacion(id));
+		model.put("success", true);
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView setDatosPublicacionAgrupacion(Long id, DtoDatosPublicacionActivo dto, ModelMap model) {
+		try {
+			model.put("success", activoEstadoPublicacionApi.setDatosPublicacionAgrupacion(id, dto));
+		} catch (JsonViewerException e) {
+				model.put("msg", e.getMessage());
+				model.put("success", false);
+				logger.error("Error al guardar los datos de publicacion de la agrupacion", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getCondicionEspecificaByAgrupacion(Long id, ModelMap model) {
+
+		model.put("data", activoAgrupacionApi.getCondicionEspecificaByAgrupacion(id));
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createCondicionEspecifica(DtoCondicionEspecificaAgrupacion dto, ModelMap model) {
+
+		model.put("data", activoAgrupacionApi.createCondicionEspecifica(dto));
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveCondicionEspecifica(DtoCondicionEspecificaAgrupacion dto, ModelMap model) {
+
+		model.put("data", activoAgrupacionApi.saveCondicionEspecifica(dto));
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView darDeBajaCondicionEspecifica(DtoCondicionEspecificaAgrupacion dto, ModelMap model) {
+
+		model.put("data", activoAgrupacionApi.darDeBajaCondicionEspecifica(dto));
+		return createModelAndViewJson(model);
+	}
 }

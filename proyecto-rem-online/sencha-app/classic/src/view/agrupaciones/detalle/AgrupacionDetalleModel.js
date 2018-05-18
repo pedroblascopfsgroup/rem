@@ -125,7 +125,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     agrupacionTieneActivos: function(get) {
 	     		return (get('agrupacionficha.numeroActivos')>0);
 	     },
-	     
+
 	     getIconClsEstadoVenta: function(get) {
 		     	
 		     	var estadoVenta = get('agrupacionficha.estadoVenta');
@@ -149,7 +149,161 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				} else if (estadoAlquiler == 2) {
 					return 'app-tbfiedset-ico icono-okn'
 					}
-		 }
+		 },
+
+	   //Condicionantes
+	     getIconClsCondicionantesRuina: function(get) {
+	    	 var condicion = get('datospublicacionagrupacion.ruina');
+	     	if(!eval(condicion)) {
+	     		return 'app-tbfiedset-ico icono-ok'
+	     	} else {
+	     		return 'app-tbfiedset-ico icono-ko'
+	     	}
+	     },
+		     
+		 getIconClsCondicionantesPendiente: function(get) {
+		 	var claseActivo= get('datospublicacionagrupacion.claseActivoCodigo');
+			if(CONST.CLASE_ACTIVO['FINANCIERO'] != claseActivo){
+				var condicion = get('datospublicacionagrupacion.pendienteInscripcion');
+			   	if(!eval(condicion)) {
+			   		return 'app-tbfiedset-ico icono-ok'
+			   	} else {
+			   		return 'app-tbfiedset-ico icono-ko'
+			   	}
+			}
+			return 'app-tbfiedset-ico'
+		},	
+		
+		getIconClsCondicionantesObraTerminada: function(get) {
+			var condicion = get('datospublicacionagrupacion.obraNuevaSinDeclarar');
+		   	if(!eval(condicion)) {
+		   		return 'app-tbfiedset-ico icono-ok'
+		   	} else {
+		   		return 'app-tbfiedset-ico icono-ko'
+		   	}
+		 },
+		 
+		getIconClsCondicionantesSinPosesion: function(get) {
+			var claseActivo= get('datospublicacionagrupacion.claseActivoCodigo');
+			if(CONST.CLASE_ACTIVO['FINANCIERO'] != claseActivo){
+				var condicion = get('datospublicacionagrupacion.sinTomaPosesionInicial');
+				if(!eval(condicion)) {
+					return 'app-tbfiedset-ico icono-ok'
+				} else {
+					return 'app-tbfiedset-ico icono-ko'
+				}
+			}
+			return 'app-tbfiedset-ico'
+		},
+		getIconClsCondicionantesProindiviso: function(get) {
+			var condicion = get('datospublicacionagrupacion.proindiviso');
+		   	if(!eval(condicion)) {
+		   		return 'app-tbfiedset-ico icono-ok'
+		   	} else {
+		   		return 'app-tbfiedset-ico icono-ko'
+		   	}
+		 },
+		getIconClsCondicionantesObraNueva: function(get) {
+			var condicion = get('datospublicacionagrupacion.obraNuevaEnConstruccion');
+		   	if(!eval(condicion)) {
+		   		return 'app-tbfiedset-ico icono-ok'
+		   	} else {
+		   		return 'app-tbfiedset-ico icono-ko'
+		   	}
+		 },					 
+		getIconClsCondicionantesOcupadoConTitulo: function(get) {
+			var condicion = get('datospublicacionagrupacion.ocupadoConTitulo');
+		   	if(!eval(condicion)) {
+		   		return 'app-tbfiedset-ico icono-ok'
+		   	} else {
+		   		return 'app-tbfiedset-ico icono-ko'
+		   	}
+		 },							 
+		getIconClsCondicionantesTapiado: function(get) {
+			var condicion = get('datospublicacionagrupacion.tapiado');
+		   	if(!eval(condicion)) {
+		   		return 'app-tbfiedset-ico icono-ok'
+		   	} else {
+		   		return 'app-tbfiedset-ico icono-ko'
+		   	}
+		 },
+		getIconClsCondicionantesOcupadoSinTitulo: function(get) {
+			var condicion = get('datospublicacionagrupacion.ocupadoSinTitulo');
+		   	if(!eval(condicion)) {
+		   		return 'app-tbfiedset-ico icono-ok'
+		   	} else {
+		   		return 'app-tbfiedset-ico icono-ko'
+		   	}
+		},	
+		getIconClsCondicionantesDivHorizontal: function(get) {
+			var condicion = get('datospublicacionagrupacion.divHorizontalNoInscrita');
+			   	if(!eval(condicion)) {
+			   		return 'app-tbfiedset-ico icono-ok'
+			   	} else {
+			   		return 'app-tbfiedset-ico icono-ko'
+			   	}
+		 },
+		 getIconClsCondicionantesConCargas: function(get) {
+			var condicion = get('datospublicacionagrupacion.conCargas');
+			   	if(!eval(condicion)) {
+			   		return 'app-tbfiedset-ico icono-ok'
+			   	} else {
+			   		return 'app-tbfiedset-ico icono-ko'
+			   	}
+		 },
+		 getIconClsCondicionantesSinInformeAprobado: function(get) {
+			var condicion = get('datospublicacionagrupacion.sinInformeAprobado');
+			   	if(!eval(condicion)) {
+			   		return 'app-tbfiedset-ico icono-ok'
+			   	} else {
+			   		return 'app-tbfiedset-ico icono-ko'
+			   	}
+		 },
+		 getIconClsCondicionantesVandalizado: function(get) {
+			var condicion = get('datospublicacionagrupacion.vandalizado');
+			   	if(!eval(condicion)) {
+			   		return 'app-tbfiedset-ico icono-ok'
+			   	} else {
+			   		return 'app-tbfiedset-ico icono-ko'
+			   	}
+		 },
+		 getSiNoFromOtro: function(get) {
+			var condicion = get('datospublicacionagrupacion.otro');
+
+		   	if(Ext.isEmpty(condicion)) {
+		   		return '0';
+		   	} else {
+		   		return '1';
+		   	}
+		 },
+		 //FinCondicionantes
+		 filtrarComboMotivosOcultacionVenta: function(get) {
+				var bloqueoCheckOcultar = get('datospublicacionagrupacion.deshabilitarCheckOcultarVenta');
+
+				if(!Ext.isEmpty(bloqueoCheckOcultar) && !bloqueoCheckOcultar) {
+					 this.getData().comboMotivosOcultacionVenta.filter([{
+	                     filterFn: function(rec){
+	                         return rec.getData().esMotivoManual === 'true';
+	                     }
+	                 }]);
+				} else {
+					this.getData().comboMotivosOcultacionVenta.clearFilter();
+				}
+			},
+
+			filtrarComboMotivosOcultacionAlquiler: function(get) {
+	            var bloqueoCheckOcultar = get('datospublicacionagrupacion.deshabilitarCheckOcultarAlquiler');
+
+	            if(!Ext.isEmpty(bloqueoCheckOcultar) && !bloqueoCheckOcultar) {
+	                 this.getData().comboMotivosOcultacionAlquiler.filter([{
+	                     filterFn: function(rec){
+	                         return rec.getData().esMotivoManual === 'true';
+	                     }
+	                 }]);
+	            } else {
+	                this.getData().comboMotivosOcultacionAlquiler.clearFilter();
+	            }
+	        }
     },
     
     stores: {
@@ -360,6 +514,80 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				extraParams: {diccionario: 'regimenesMatrimoniales'}
 			},
 			autoLoad: true   	
-	    }
+	    },
+	    
+	    comboMotivosOcultacionVenta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivosOcultacion'}
+			}
+		},
+		
+		comboAdecuacionAlquiler: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'comboAdecuacionAlquiler'}
+			}
+		},
+		
+		comboMotivosOcultacionAlquiler: {
+            model: 'HreRem.model.ComboBase',
+            proxy: {
+                type: 'uxproxy',
+                remoteUrl: 'generic/getDiccionario',
+                extraParams: {diccionario: 'motivosOcultacion'}
+            }
+        },
+        
+        comboSiNoRemActivo: {
+			data : [
+		        {"codigo":"1", "descripcion":eval(String.fromCharCode(34,83,237,34))},
+		        {"codigo":"0", "descripcion":"No"}
+		    ]
+		},
+		
+		storeEstadoDisponibilidadComercial: {
+			model: 'HreRem.model.DDBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadoDisponibilidadComercial'}
+			},
+			autoLoad: true
+		},
+		
+		historicoEstadosPublicacionVenta: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.HistoricoEstadosPublicacion',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getHistoricoEstadosPublicacionVentaByIdActivo',
+				extraParams: {idActivo: '{datospublicacionagrupacion.idActivoPrincipal}'}
+			}
+		},
+		
+		historicoEstadosPublicacionAlquiler: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.HistoricoEstadosPublicacion',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getHistoricoEstadosPublicacionAlquilerByIdActivo',
+				extraParams: {idActivo: '{datospublicacionagrupacion.idActivoPrincipal}'}
+			}
+		},
+		
+		historicocondicionesagrupacion: {    
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.CondicionEspecificaAgrupacion',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getCondicionEspecificaByActivo',
+				extraParams: {id: '{datospublicacionagrupacion.idActivoPrincipal}'}
+			}
+		}
      }
 });

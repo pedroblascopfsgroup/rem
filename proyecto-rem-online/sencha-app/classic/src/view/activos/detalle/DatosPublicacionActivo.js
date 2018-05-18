@@ -543,7 +543,25 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 										[
 											{
 												xtype: "historicocondicioneslist",
-												reference: "historicocondicioneslist"
+												reference: "historicocondicioneslist",
+												idPrincipal : 'activo.id',
+												propagationButton: true,
+												targetGrid	: 'condicionesespecificas',												
+											    bind: {
+											        store: '{historicocondiciones}'
+											    },
+											    dockedItems : [
+								      		        {
+								      		            xtype: 'pagingtoolbar',
+								      		            dock: 'bottom',
+								      		            itemId: 'activosPaginationToolbar',
+								      		            inputItemWidth: 60,
+								      		            displayInfo: true,
+								      		            bind: {
+								      		                store: '{historicocondiciones}'
+								      		            }
+								      		        }
+								      		    ]
 											}
 										]
 								}

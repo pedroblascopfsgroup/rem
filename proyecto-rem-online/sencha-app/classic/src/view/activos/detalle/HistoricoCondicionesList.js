@@ -2,13 +2,6 @@ Ext.define('HreRem.view.activos.detalle.HistoricoCondicionesList', {
     extend		: 'HreRem.view.common.GridBaseEditableRow',
     xtype		: 'historicocondicioneslist',
 	topBar		: true,
-	idPrincipal : 'activo.id',
-	propagationButton: true,
-	targetGrid	: 'condicionesespecificas',
-	
-    bind: {
-        store: '{historicocondiciones}'
-    },
 
     listeners: {
     	boxready: function() {
@@ -67,41 +60,35 @@ Ext.define('HreRem.view.activos.detalle.HistoricoCondicionesList', {
 		        }
 		
 		    ];
-		    me.dockedItems = [
-		        {
-		            xtype: 'pagingtoolbar',
-		            dock: 'bottom',
-		            itemId: 'activosPaginationToolbar',
-		            inputItemWidth: 60,
-		            displayInfo: true,
-		            bind: {
-		                store: '{historicocondiciones}'
-		            }
-		        }
-		    ];
+		    
 
 		    me.callParent();
    },
 
-   evaluarEdicion: function() {    	
-		var me = this;
-		
-		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
-			me.setTopBar(false);
-		}
-		
-		if(me.lookupController().getViewModel().get('activo').get('perteneceAgrupacionRestringidaVigente')) {
-			me.setTopBar(false);
-		}
-
-		if(me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionComercial') ||
-				me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionRestringida') ||
-				me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionAsistida') ||
-				me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionObraNueva')) {
-			me.down('toolbar').items.items[2].setHidden(false);
-		} else {
-			me.down('toolbar').items.items[2].setHidden(true);
-		}
+   evaluarEdicion: function() {    		   	   
+	   var me = this;
+	   var type = me.lookupController().getViewModel().type;
+	   
+	   if(type == 'activodetalle') {		   	   
+		   if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
+			   me.setTopBar(false);
+		   }
+	
+		   if(me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionComercial') ||
+		   me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionRestringida') ||
+		   me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionAsistida') ||
+		   me.lookupController().getViewModel().get('activo').get('pertenceAgrupacionObraNueva')) {
+			   me.down('toolbar').items.items[2].setHidden(false);
+		   } else {
+			   me.down('toolbar').items.items[2].setHidden(true);
+		   }
+	   } else if(type == 'agrupaciondetalle') {
+		   if(me.lookupController().getViewModel().get('agrupacionficha').get('incluidoEnPerimetro')=="false") {
+			   me.setTopBar(false);
+		   }
+		   
+		   me.down('toolbar').items.items[2].setHidden(false);
+	   }
    }
 
 });

@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=David Gonzalez
+--## AUTOR=María Villanueva
 --## FECHA_CREACION=20180519
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2

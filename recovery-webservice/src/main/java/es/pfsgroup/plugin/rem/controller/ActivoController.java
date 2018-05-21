@@ -2055,6 +2055,8 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createOferta(DtoOfertasFilter dtoOferta, ModelMap model) throws Exception {
 		try {
+			//solo son venta directa desde masivo
+			dtoOferta.setVentaDirecta(false);
 			boolean success = adapter.createOfertaActivo(dtoOferta);
 			model.put("success", success);
 

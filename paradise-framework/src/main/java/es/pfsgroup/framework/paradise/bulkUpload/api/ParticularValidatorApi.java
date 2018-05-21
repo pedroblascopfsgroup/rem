@@ -291,7 +291,23 @@ public interface ParticularValidatorApi {
 	boolean comprobarDistintoPropietarioListaActivos(String[] activos);
 
 	boolean activoConOfertasTramitadas(String numActivo);
-
-	Boolean existeProveedorMediadorByNIFConFVD(String proveedorMediadorNIF);
+	
+	public boolean existeComiteSancionador(String codComite);
+	
+	public boolean existeTipoimpuesto(String codTipoImpuesto);
+	
+	public boolean existeCodigoPrescriptor(String codPrescriptor);
+	
+	public boolean existeTipoDocumentoByCod(String codDocumento);
+	
+	/**
+	 * El método indica si existe alguna agrupación con la descripcion indicada
+	 * 
+	 * @param descripcionAgrupacion : Descripion de la agrupación
+	 * @return : Devuelve True si existe, False si no existe el código.
+	 */
+	public Boolean existeAgrupacionByDescripcion(String descripcionAgrupacion);
+	
+	public Boolean existeProveedorMediadorByNIFConFVD(String proveedorMediadorNIF);
 
 }

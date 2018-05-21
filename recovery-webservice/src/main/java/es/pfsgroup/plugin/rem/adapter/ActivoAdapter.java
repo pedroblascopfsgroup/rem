@@ -2686,6 +2686,7 @@ public class ActivoAdapter {
 
 		try {
 			Oferta oferta = new Oferta();
+			oferta.setVentaDirecta(dto.getVentaDirecta());
 			oferta.setOrigen(OfertaApi.ORIGEN_REM);
 			ClienteComercial clienteComercial = new ClienteComercial();
 

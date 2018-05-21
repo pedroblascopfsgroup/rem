@@ -26,17 +26,13 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelManagerApi;
 import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
-import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVProcesoDao;
-import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoValidacion;
-import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
-import es.pfsgroup.framework.paradise.bulkUpload.model.ExcelFileBean;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
-import es.pfsgroup.framework.paradise.bulkUpload.model.MSVProcesoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.rem.model.ResultadoProcesarFila;
 
 
 @Component
@@ -54,9 +50,6 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 	@Autowired
 	private MSVExcelParser excelParser;
 	
-	@Autowired
-	private MSVProcesoDao procesoDao;
-	
 	@Resource(name = "entityTransactionManager")
     private PlatformTransactionManager transactionManager;
 	
@@ -65,9 +58,10 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 	public static final int EXCEL_FILA_DEFECTO = 1;
 	
 	public abstract String getValidOperation();
+
 	
 	@Transactional(readOnly = false)
-	public abstract void procesaFila(MSVHojaExcel exc, int fila) throws IOException, ParseException, JsonViewerException, SQLException, Exception;
+	public abstract ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException, Exception;
 	
 	public Boolean isValidFor(MSVDDOperacionMasiva tipoOperacion) {
 
@@ -94,11 +88,21 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 			Integer numFilas = this.getNumFilas(file, exc);
 			List<Integer> listaFilas = new ArrayList<Integer>();
 			Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
-			for (int fila = this.getFilaInicial(); fila < numFilas; fila++) {
+			Long token = null;
+			ResultadoProcesarFila resultProcesaFila = null;
+			if(!Checks.esNulo(file) && !Checks.esNulo(file.getProcesoMasivo())) {
+				token = file.getProcesoMasivo().getToken();
+			}
+			
+			for (int fila = this.getFilaInicial(); fila < numFilas; fila++) {			
 				try{
-					transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-					this.procesaFila(exc, fila);
-					transactionManager.commit(transaction);
+					if (file.getProcesoMasivo().getTipoOperacion().getCodigo().equals(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA)){
+						resultProcesaFila = this.procesaFila(exc, fila,token);
+					} else {			
+						transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+						resultProcesaFila = this.procesaFila(exc, fila,token);
+						transactionManager.commit(transaction);					
+					}
 					processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), true);
 				}catch(Exception e){
 					listaFilas.add(fila);
@@ -107,8 +111,6 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 					transactionManager.rollback(transaction);
 					processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), false);					
 				}
-				
-				
 			}
 			if(!mapaErrores.isEmpty()){
 				MSVDocumentoMasivo archivo = ficheroDao.findByIdProceso(file.getProcesoMasivo().getId());
@@ -119,6 +121,15 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 					
 					processAdapter.setExcelErroresProcesado(archivo, fileItemErrores);
 				}
+			}
+			
+			if(mapaErrores.isEmpty() && !Checks.esNulo(resultProcesaFila) && !resultProcesaFila.isHashmapVacio()) {
+				MSVDocumentoMasivo archivo = ficheroDao.findByIdProceso(file.getProcesoMasivo().getId());
+				exc = excelParser.getExcel(archivo.getContenidoFichero().getFile());
+				String nomFicheroResultados = exc.crearExcelResultadosByHojaAndFilaCabecera(resultProcesaFila.gethMap(),0,0);
+				FileItem fileItemResultados = new FileItem(new File(nomFicheroResultados));
+				
+				processAdapter.setExcelResultadosProcesado(archivo, fileItemResultados);
 			}
 			
 			this.postProcesado(exc);

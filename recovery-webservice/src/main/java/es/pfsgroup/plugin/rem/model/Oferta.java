@@ -217,8 +217,14 @@ public class Oferta implements Serializable, Auditable {
     @Column(name = "OFR_UVEM_ID")
     private Long idUvem;
     
+    @Column(name = "OFR_VENTA_DIRECTA")
+    private Boolean ventaDirecta;
+     
     
 	
+
+	
+
 	public Date getFechaAlta() {
 		return fechaAlta;
 	}
@@ -630,5 +636,12 @@ public class Oferta implements Serializable, Auditable {
 		this.idUvem = idUvem;
 	}
 	
+	public Boolean getVentaDirecta() {
+		return ventaDirecta;
+	}
+
+	public void setVentaDirecta(Boolean ventaDirecta) {
+		this.ventaDirecta = ventaDirecta;
+	}
 
 }

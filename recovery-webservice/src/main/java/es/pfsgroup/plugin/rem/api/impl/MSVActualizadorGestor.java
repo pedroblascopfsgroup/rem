@@ -29,6 +29,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.ResultadoProcesarFila;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 
 
@@ -60,7 +61,7 @@ public class MSVActualizadorGestor extends AbstractMSVActualizador implements MS
 
 	@Override
 	@Transactional(readOnly = false)
-	public void procesaFila(MSVHojaExcel exc, int fila) throws IOException, ParseException, JsonViewerException, SQLException {
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
 		
 		Activo activo= null;
 		ActivoAgrupacion agrupacion= null;
@@ -119,7 +120,7 @@ public class MSVActualizadorGestor extends AbstractMSVActualizador implements MS
 				throw new ParseException("Error al procesar la fila " + fila,1);
 			}
 		}
-		
+		return new ResultadoProcesarFila();
 	}
 
 }

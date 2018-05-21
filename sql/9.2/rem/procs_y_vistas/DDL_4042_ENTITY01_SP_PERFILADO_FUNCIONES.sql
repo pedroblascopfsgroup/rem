@@ -1,10 +1,10 @@
 --/*
 --######################################### 
---## AUTOR=DAP
---## FECHA_CREACION=20180418
+--## AUTOR=SERGIO ORTUÑO
+--## FECHA_CREACION=20180502
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=2.0.17
---## INCIDENCIA_LINK=REMVIP-751
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-4036
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Procedimiento encargado de perfilar las funciones
@@ -260,6 +260,7 @@ T_VAR( 'MENU_TOP_AVISOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S'
 T_VAR( 'OPTIMIZACION_BUZON_TAREAS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'MODIFICAR_TAB_COMPRADORES_EXPEDIENTES','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','S','N','S','S','S','S','N','N','N','N'),
 T_VAR( 'MODIFICAR_TAB_COMPRADORES_EXPEDIENTES_RESERVA','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N')
+
 );
 V_TMP_VAR T_VAR;
 

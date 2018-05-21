@@ -1538,4 +1538,61 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	}
 	
+	@Override
+	public boolean existeComiteSancionador(String codComite){
+		String res = rawDao.getExecuteSQL("		SELECT COUNT(1) "
+				+ "		FROM DD_COS_COMITES_SANCION cos			"
+				+ "     WHERE cos.BORRADO = 0					"
+				+ "		AND cos.DD_COS_CODIGO = "+codComite+"   "
+				);
+		return !res.equals("0");
+	}
+	
+	@Override
+	public boolean existeTipoimpuesto(String codTipoImpuesto){
+		String res = rawDao.getExecuteSQL("		SELECT COUNT(1) "
+				+ "     FROM DD_TIT_TIPOS_IMPUESTO tit			"
+				+ "		WHERE tit.BORRADO = 0					"
+				+ "		AND tit.DD_TIT_CODIGO = "+codTipoImpuesto+" "
+				);
+				
+		
+		return !res.equals("0");
+	}
+	
+	@Override
+	public boolean existeCodigoPrescriptor(String codPrescriptor){
+		String res = rawDao.getExecuteSQL("		SELECT COUNT(1) "
+				+ "     FROM ACT_PVE_PROVEEDOR act			"
+				+ "		WHERE act.BORRADO = 0					"
+				+ "		AND act.PVE_COD_REM = "+codPrescriptor+" "
+				);
+		
+		return !res.equals("0");
+	}
+	
+	@Override
+	public boolean existeTipoDocumentoByCod(String codDocumento){
+		String res = rawDao.getExecuteSQL("		SELECT COUNT(1) "
+				+ "		FROM DD_TDI_TIPO_DOCUMENTO_ID tdi		"
+				+ "		WHERE tdi.BORRADO = 0					"
+				+ "		AND tdi.DD_TDI_CODIGO = "+codDocumento+" "
+				);
+		
+		return !res.equals("0");
+	}
+	
+	@Override
+	public Boolean existeAgrupacionByDescripcion(String descripcionAgrupacion){
+		if(Checks.esNulo(descripcionAgrupacion))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_AGR_AGRUPACION WHERE"
+				+ "		 	AGR_DESCRIPCION ='"+descripcionAgrupacion+"' "
+				+ "		 	AND BORRADO = 0");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
 }

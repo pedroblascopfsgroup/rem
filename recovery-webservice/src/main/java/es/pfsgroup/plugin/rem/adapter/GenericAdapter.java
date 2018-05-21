@@ -137,8 +137,7 @@ public class GenericAdapter {
 				agendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, adjuntos);
 			}
 		} catch (Exception e) {
-			logger.error("error enviando correo",e);
-			
+			logger.error("error enviando correo",e);			
 		}
 	}
 	

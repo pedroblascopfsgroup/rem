@@ -840,7 +840,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
                                                   ,'''||pUSUARIOMODIFICAR||''' USUARIOCREAR, SYSDATE FECHACREAR
                                                   ,USUARIOMODIFICAR,FECHAMODIFICAR
                                                   ,USUARIOBORRAR,FECHABORRAR,BORRADO
-                                                  ,'''||nES_CONDICONADO_ANTERIOR||''' ES_CONDICONADO_ANTERIOR
+                                                  ,'''||nES_CONDICONADO||''' ES_CONDICONADO_ANTERIOR
               FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
              WHERE BORRADO = 0
                AND ACT_ID = '||nACT_ID||'

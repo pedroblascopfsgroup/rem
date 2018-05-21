@@ -135,7 +135,7 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 		    		name: 'estadoAlquiler'
 		    	},
 		    	{
-		    		name: 'tipoComercializacionCodigo',
+		    		name: 'tipoComercializacionCodigo'
 		    	},
 		    	{
 					name: 'tipoComercializacionDescripcion'

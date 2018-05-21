@@ -34,6 +34,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceDe
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
+import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlanDinVentas;
@@ -205,6 +206,12 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 
 			}
 			
+		}
+		
+		ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());
+		
+		if(!Checks.esNulo(activoBancario)) {
+			BeanUtils.copyProperty(activoDto, "acreedorNumExp", activoBancario.getNumExpRiesgo());
 		}
 
 		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
@@ -445,7 +452,13 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 
 				}
 			
-			} 
+			}
+			ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());
+			
+			if(!Checks.esNulo(activoBancario)) {
+				activoBancario.setNumExpRiesgo(dto.getAcreedorNumExp().toString());
+				genericDao.save(ActivoBancario.class, activoBancario);
+			}
 			
 
 		} catch (IllegalAccessException e) {

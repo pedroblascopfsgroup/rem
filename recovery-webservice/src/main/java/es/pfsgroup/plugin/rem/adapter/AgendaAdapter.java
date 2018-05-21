@@ -68,6 +68,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.service.UpdaterTransitionService;
 import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
+import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
 
 @Service
 public class AgendaAdapter {
@@ -723,6 +724,12 @@ public class AgendaAdapter {
 
 		List<TareaExterna> listaTareas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(dto.getIdTramite());
 		for (int i = 0; i < listaTareas.size(); i++) {
+			if(listaTareas.size()>1) {
+				for (int j = 1; j < listaTareas.size(); j++) { 
+					TareaExterna tareaExterna = listaTareas.get(j);
+					proxyFactory.proxy(TareaExternaApi.class).borrar(tareaExterna);
+				}
+			}
 			TareaExterna tarea = listaTareas.get(i);
 			if (!Checks.esNulo(tarea)) {
 				//salto = adapter.saltoResolucionExpediente(tarea.getId());

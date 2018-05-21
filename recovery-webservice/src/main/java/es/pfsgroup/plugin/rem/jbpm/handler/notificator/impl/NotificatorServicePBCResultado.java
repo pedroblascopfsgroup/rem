@@ -63,8 +63,6 @@ public class NotificatorServicePBCResultado extends AbstractNotificatorService i
 
 	@Autowired
 	private GestorActivoApi gestorActivoManager;
-	
-	protected final Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -169,7 +167,7 @@ public class NotificatorServicePBCResultado extends AbstractNotificatorService i
 			List<String> mailsCC = new ArrayList<String>();
 
 			mailsCC.add(this.getCorreoFrom());
-			logger.info("Llegando a sendMail");
+
 			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 			
 		//}

@@ -524,7 +524,6 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					adjuntos.add(createAdjunto(f1, "contrato_reserva_Giants.docx"));
 				}
 			}
-			logger.info("Llegando a sendMail sancion oferta");
 			genericAdapter.sendMail(Arrays.asList(destinatarios), mailsCC, asunto, cuerpoCorreo, adjuntos);
 		}finally {
 			deleteFile(f1);

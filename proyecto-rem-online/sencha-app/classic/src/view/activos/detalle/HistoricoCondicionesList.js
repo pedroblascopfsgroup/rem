@@ -8,7 +8,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoCondicionesList', {
     		var me = this;
     		me.evaluarEdicion();
     	},
-    	rowclick: 'onGridCondicionesEspecificasRowClick'
+    	rowclick: 'onGridCondicionesEspecificasRowClick'    	
     },
     
     initComponent: function () {

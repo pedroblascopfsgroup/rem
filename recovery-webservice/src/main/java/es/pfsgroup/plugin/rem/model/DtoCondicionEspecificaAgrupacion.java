@@ -2,7 +2,7 @@ package es.pfsgroup.plugin.rem.model;
 
 public class DtoCondicionEspecificaAgrupacion extends DtoCondicionEspecifica {
 
-	private Long idAgrupacion;
+	private Long idAgrupacion;	
 
     @Override
 	public void setIdActivo(Long idActivo) {
@@ -17,5 +17,13 @@ public class DtoCondicionEspecificaAgrupacion extends DtoCondicionEspecifica {
 	@Override
 	public void setIdEntidad(Long idEntidad) {
 		this.idAgrupacion = idEntidad;
+	}
+	@Override
+	public String getTexto() {
+		return super.getTexto();
+	}
+	@Override
+	public void setTexto(String texto) {
+		super.setTexto(texto);
 	}
 }

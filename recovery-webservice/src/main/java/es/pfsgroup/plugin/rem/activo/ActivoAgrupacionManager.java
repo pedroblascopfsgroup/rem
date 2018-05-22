@@ -172,7 +172,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		 
 		for(VActivosAgrupacion actAgrup : lAgrupaActivos) {
 			DtoVActivosAgrupacion dtoVActAgrup = new DtoVActivosAgrupacion();	
-			VListaActivosAgrupacionVSCondicionantes vCondicionante = genericDao.get(VListaActivosAgrupacionVSCondicionantes.class, genericDao.createFilter(FilterType.EQUALS, "activoId",actAgrup.getActivoId()));
+			VListaActivosAgrupacionVSCondicionantes vCondicionante = genericDao.get(VListaActivosAgrupacionVSCondicionantes.class, genericDao.createFilter(FilterType.EQUALS, "activoId",actAgrup.getActivoId()), genericDao.createFilter(FilterType.EQUALS, "agrId", actAgrup.getAgrId()));
 			if(!Checks.esNulo(vCondicionante)) {
 				if(vCondicionante.getConCargas() || vCondicionante.getDivHorizontalNoInscrita() || vCondicionante.getIsCondicionado() || vCondicionante.getObraNuevaEnConstruccion() ||
 						vCondicionante.getObraNuevaSinDeclarar() || vCondicionante.getOcupadoConTitulo() || vCondicionante.getOcupadoSinTitulo() || vCondicionante.getPendienteInscripcion() ||

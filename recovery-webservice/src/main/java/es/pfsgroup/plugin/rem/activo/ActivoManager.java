@@ -1707,8 +1707,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	@Transactional(readOnly = false)
 	public Boolean saveCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica) {
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(dtoCondicionEspecifica.getId()));
-		ActivoCondicionEspecifica condicionEspecifica = genericDao.get(ActivoCondicionEspecifica.class, filtro);
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", dtoCondicionEspecifica.getIdActivo());
+		Order order = new Order(OrderType.DESC,"id");
+		ActivoCondicionEspecifica condicionEspecifica = genericDao.getListOrdered(ActivoCondicionEspecifica.class, order, filtro).get(0);
 
 		if (!Checks.esNulo(condicionEspecifica)) {
 			try {

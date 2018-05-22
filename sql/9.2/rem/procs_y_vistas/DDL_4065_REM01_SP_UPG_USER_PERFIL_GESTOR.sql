@@ -58,18 +58,18 @@ BEGIN
     V_USU_NOMBRE := INITCAP(REPLACE(REPLACE(REPLACE(''||V_USU_USER||'', '.', ' '), '_', ' '), '-', ' '));
 
     PL_OUTPUT := '[INICIO]' || CHR(10);
-    
+
     V_PASS := DAME_PASSWORD();
 
     V_MSQL := 'INSERT INTO '||V_ESQUEMA_M||'.USU_USUARIOS (USU_ID, ENTIDAD_ID, USU_USERNAME, USU_MAIL ,USU_NOMBRE, USU_PASSWORD
             , USU_GRUPO
-    		, USUARIOCREAR, FECHACREAR, USU_FECHA_VIGENCIA_PASS)
+            , USUARIOCREAR, FECHACREAR, USU_FECHA_VIGENCIA_PASS)
         SELECT '||V_ESQUEMA_M||'.S_USU_USUARIOS.NEXTVAL, 1, '''||V_USU_USER||''', '''||V_USU_MAIL||''', '''||V_USU_NOMBRE||''', '''||V_PASS||'''
-            , CASE 
+            , CASE
                 WHEN NVL('''||V_USU_GRUP||''',''0'') = '''||V_USU_USER||''' THEN 1
                 ELSE 0
                 END
-        	, '''||V_USUARIO||''', SYSDATE, SYSDATE + 3650
+            , '''||V_USUARIO||''', SYSDATE, SYSDATE + 3650
         FROM DUAL
         WHERE NOT EXISTS (
             SELECT 1
@@ -77,17 +77,17 @@ BEGIN
             WHERE USU_USERNAME = '''||V_USU_USER||'''
             )';
     EXECUTE IMMEDIATE V_MSQL;
-    
+
     IF SQL%ROWCOUNT = 0 THEN
         PL_OUTPUT := PL_OUTPUT || '   [INFO] No se ha creado el usuario ' || V_USU_USER || ' porque ya existe ' || CHR(10);
     ELSIF SQL%ROWCOUNT = 1 THEN
         PL_OUTPUT := PL_OUTPUT || '   [INFO] Usuario ' || V_USU_USER || ' creado con contraseña ' || V_PASS || CHR(10);
     END IF;
-    
+
     V_MSQL := 'INSERT INTO '||V_ESQUEMA_M||'.GRU_GRUPOS_USUARIOS (GRU_ID, USU_ID_GRUPO, USU_ID_USUARIO
-    		, USUARIOCREAR, FECHACREAR)
+            , USUARIOCREAR, FECHACREAR)
         SELECT '||V_ESQUEMA_M||'.S_GRU_GRUPOS_USUARIOS.NEXTVAL, USU_GRU.USU_ID, USU_USU.USU_ID
-        	, '''||V_USUARIO||''', SYSDATE
+            , '''||V_USUARIO||''', SYSDATE
         FROM '||V_ESQUEMA_M||'.USU_USUARIOS USU_GRU
         JOIN '||V_ESQUEMA_M||'.USU_USUARIOS USU_USU ON USU_USU.USU_USERNAME = '''||V_USU_USER||'''
         WHERE USU_GRU.USU_USERNAME = '''||V_USU_GRUP||''' AND USU_GRU.USU_GRUPO = 1
@@ -97,14 +97,14 @@ BEGIN
                 WHERE GRU.USU_ID_GRUPO = USU_GRU.USU_ID AND GRU.USU_ID_USUARIO = USU_USU.USU_ID
             )';
     EXECUTE IMMEDIATE V_MSQL;
-    
+
     IF SQL%ROWCOUNT = 0 THEN
         PL_OUTPUT := PL_OUTPUT || '   [INFO] No se crea registro de grupo porque ya existe o el usuario no es de grupo ' || CHR(10);
     ELSIF SQL%ROWCOUNT = 1 THEN
         PL_OUTPUT := PL_OUTPUT || '   [INFO] Usuario ' || V_USU_USER || ' añadido al grupo ' || V_USU_GRUP || CHR(10);
     END IF;
-    
-    IF V_COD_TDES IS NOT NULL THEN 
+
+    IF V_COD_TDES IS NOT NULL THEN
         V_MSQL := 'INSERT INTO '||V_ESQUEMA_M||'.DD_TDE_TIPO_DESPACHO (DD_TDE_ID, DD_TDE_CODIGO, DD_TDE_DESCRIPCION, DD_TDE_DESCRIPCION_LARGA
                 , USUARIOCREAR, FECHACREAR)
             SELECT '||V_ESQUEMA_M||'.S_DD_TDE_TIPO_DESPACHO.NEXTVAL, '''||V_COD_TDES||''', '''||V_TDE_DESC||''', '''||V_TDE_DESC||'''
@@ -116,79 +116,83 @@ BEGIN
                 WHERE DD_TDE_CODIGO = '''||V_COD_TDES||'''
                 )';
         EXECUTE IMMEDIATE V_MSQL;
-        
+
         IF SQL%ROWCOUNT = 0 THEN
             PL_OUTPUT := PL_OUTPUT || '   [INFO] Ya existe el tipo de despacho ' || V_TDE_DESC || CHR(10);
         ELSIF SQL%ROWCOUNT = 1 THEN
             PL_OUTPUT := PL_OUTPUT || '   [INFO] Tipo de despacho ' || V_TDE_DESC || ' creado ' || CHR(10);
         END IF;
     END IF;
+
+    IF V_DES_DESP IS NOT NULL AND V_COD_TDES IS NOT NULL THEN
+        V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO (DES_ID, DES_DESPACHO, ZON_ID, DD_TDE_ID, USUARIOCREAR, FECHACREAR)
+            SELECT '||V_ESQUEMA||'.S_DES_DESPACHO_EXTERNO.NEXTVAL, '''||V_DES_DESP||''', ZON.ZON_ID, TDE.DD_TDE_ID, '''||V_USUARIO||''', SYSDATE
+            FROM '||V_ESQUEMA||'.ZON_ZONIFICACION ZON
+            JOIN '||V_ESQUEMA_M||'.DD_TDE_TIPO_DESPACHO TDE ON TDE.DD_TDE_CODIGO = '''||V_COD_TDES||'''
+            WHERE ZON.ZON_COD = '''||V_ZON_COD||''' AND NOT EXISTS (
+                SELECT 1
+                FROM '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO DES
+                WHERE DES.ZON_ID = ZON.ZON_ID AND TDE.DD_TDE_ID = DES.DD_TDE_ID
+                )';
+        EXECUTE IMMEDIATE V_MSQL;
     
-    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO (DES_ID, DES_DESPACHO, ZON_ID, DD_TDE_ID, USUARIOCREAR, FECHACREAR)
-        SELECT '||V_ESQUEMA||'.S_DES_DESPACHO_EXTERNO.NEXTVAL, '''||V_DES_DESP||''', ZON.ZON_ID, TDE.DD_TDE_ID, '''||V_USUARIO||''', SYSDATE
-        FROM '||V_ESQUEMA||'.ZON_ZONIFICACION ZON
-        JOIN '||V_ESQUEMA_M||'.DD_TDE_TIPO_DESPACHO TDE ON TDE.DD_TDE_CODIGO = '''||V_COD_TDES||'''
-        WHERE ZON.ZON_COD = '''||V_ZON_COD||''' AND NOT EXISTS (
-            SELECT 1
+        IF SQL%ROWCOUNT = 0 THEN
+            PL_OUTPUT := PL_OUTPUT || '   [INFO] Ya existe el despacho para esa zona y tipo' || CHR(10);
+        ELSIF SQL%ROWCOUNT = 1 THEN
+            PL_OUTPUT := PL_OUTPUT || '   [INFO] Creado/actualizado el despacho ' || V_DES_DESP || CHR(10);
+        END IF;
+    
+        V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS (USD_ID, USU_ID, DES_ID, USD_GESTOR_DEFECTO, USD_SUPERVISOR, USUARIOCREAR, FECHACREAR)
+            SELECT '||V_ESQUEMA||'.S_USD_USUARIOS_DESPACHOS.NEXTVAL, USU.USU_ID, DES.DES_ID, 0, 0, '''||V_USUARIO||''', SYSDATE
             FROM '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO DES
-            WHERE DES.ZON_ID = ZON.ZON_ID AND TDE.DD_TDE_ID = DES.DD_TDE_ID
-            )';
-    EXECUTE IMMEDIATE V_MSQL;
+            JOIN '||V_ESQUEMA_M||'.USU_USUARIOS USU ON USU.USU_USERNAME = '''||V_USU_USER||'''
+            LEFT JOIN '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS USD ON USD.USU_ID = USU.USU_ID AND USD.DES_ID = DES.DES_ID
+            WHERE USD.USD_ID IS NULL AND DES.DES_DESPACHO = '''||V_DES_DESP||'''';
+        EXECUTE IMMEDIATE V_MSQL;
     
-    IF SQL%ROWCOUNT = 0 THEN
-        PL_OUTPUT := PL_OUTPUT || '   [INFO] Ya existe el despacho para esa zona y tipo' || CHR(10);
-    ELSIF SQL%ROWCOUNT = 1 THEN
-        PL_OUTPUT := PL_OUTPUT || '   [INFO] Creado/actualizado el despacho ' || V_DES_DESP || CHR(10);
+        IF SQL%ROWCOUNT = 0 THEN
+            PL_OUTPUT := PL_OUTPUT || '   [INFO] No se ha asignado despacho al usuario ' || V_USU_USER || CHR(10);
+        ELSIF SQL%ROWCOUNT = 1 THEN
+            PL_OUTPUT := PL_OUTPUT || '   [INFO] Despachado el usuario ' || V_USU_USER || ' en ' || V_DES_DESP || CHR(10);
+        END IF;
     END IF;
     
-    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS (USD_ID, USU_ID, DES_ID, USD_GESTOR_DEFECTO, USD_SUPERVISOR, USUARIOCREAR, FECHACREAR)
-        SELECT '||V_ESQUEMA||'.S_USD_USUARIOS_DESPACHOS.NEXTVAL, USU.USU_ID, DES.DES_ID, 0, 0, '''||V_USUARIO||''', SYSDATE
-        FROM '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO DES
-        JOIN '||V_ESQUEMA_M||'.USU_USUARIOS USU ON USU.USU_USERNAME = '''||V_USU_USER||'''
-        LEFT JOIN '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS USD ON USD.USU_ID = USU.USU_ID AND USD.DES_ID = DES.DES_ID
-        WHERE USD.USD_ID IS NULL AND DES.DES_DESPACHO = '''||V_DES_DESP||'''';
-    EXECUTE IMMEDIATE V_MSQL;
+    IF V_COD_PERF IS NOT NULL THEN
+        V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.PEF_PERFILES (PEF_ID, PEF_CODIGO, PEF_DESCRIPCION, PEF_DESCRIPCION_LARGA
+                , USUARIOCREAR, FECHACREAR)
+            SELECT '||V_ESQUEMA||'.S_PEF_PERFILES.NEXTVAL, '''||V_COD_PERF||''', '''||V_PEF_DESC||''', '''||V_PEF_DESC||'''
+                , '''||V_USUARIO||''', SYSDATE
+            FROM DUAL
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM '||V_ESQUEMA||'.PEF_PERFILES
+                WHERE PEF_CODIGO = '''||V_COD_PERF||'''
+                )';
+        EXECUTE IMMEDIATE V_MSQL;
     
-    IF SQL%ROWCOUNT = 0 THEN
-        PL_OUTPUT := PL_OUTPUT || '   [INFO] No se ha asignado despacho al usuario ' || V_USU_USER || CHR(10);
-    ELSIF SQL%ROWCOUNT = 1 THEN
-        PL_OUTPUT := PL_OUTPUT || '   [INFO] Despachado el usuario ' || V_USU_USER || ' en ' || V_DES_DESP || CHR(10);
-    END IF;
+        IF SQL%ROWCOUNT = 0 THEN
+            PL_OUTPUT := PL_OUTPUT || '   [INFO] Ya existe el perfil ' || V_COD_PERF || CHR(10);
+        ELSIF SQL%ROWCOUNT = 1 THEN
+            PL_OUTPUT := PL_OUTPUT || '   [INFO] Perfil ' || V_COD_PERF || ' creado ' || CHR(10);
+        END IF;
+
+        V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.ZON_PEF_USU (ZON_ID, PEF_ID, USU_ID, ZPU_ID, USUARIOCREAR, FECHACREAR)
+            SELECT ZON.ZON_ID, PEF.PEF_ID, USU.USU_ID, '||V_ESQUEMA||'.S_ZON_PEF_USU.NEXTVAL, '''||V_USUARIO||''', SYSDATE
+            FROM '||V_ESQUEMA||'.ZON_ZONIFICACION ZON
+            JOIN '||V_ESQUEMA||'.PEF_PERFILES PEF ON PEF.PEF_CODIGO = '''||V_COD_PERF||'''
+            JOIN '||V_ESQUEMA_M||'.USU_USUARIOS USU ON USU.USU_USERNAME = '''||V_USU_USER||'''
+            LEFT JOIN '||V_ESQUEMA||'.ZON_PEF_USU ZPU ON ZPU.PEF_ID = PEF.PEF_ID
+                AND ZPU.USU_ID = USU.USU_ID AND ZPU.ZON_ID = ZON.ZON_ID
+            WHERE ZON.ZON_COD = '''||V_ZON_COD||''' AND ZPU.ZPU_ID IS NULL';
+        EXECUTE IMMEDIATE V_MSQL;
     
-    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.PEF_PERFILES (PEF_ID, PEF_CODIGO, PEF_DESCRIPCION, PEF_DESCRIPCION_LARGA
-            , USUARIOCREAR, FECHACREAR)
-        SELECT '||V_ESQUEMA||'.S_PEF_PERFILES.NEXTVAL, '''||V_COD_PERF||''', '''||V_PEF_DESC||''', '''||V_PEF_DESC||'''
-            , '''||V_USUARIO||''', SYSDATE
-        FROM DUAL
-        WHERE NOT EXISTS (
-            SELECT 1
-            FROM '||V_ESQUEMA||'.PEF_PERFILES
-            WHERE PEF_CODIGO = '''||V_COD_PERF||'''
-            )';
-    EXECUTE IMMEDIATE V_MSQL;
-    
-    IF SQL%ROWCOUNT = 0 THEN
-        PL_OUTPUT := PL_OUTPUT || '   [INFO] Ya existe el perfil ' || V_COD_PERF || CHR(10);
-    ELSIF SQL%ROWCOUNT = 1 THEN
-        PL_OUTPUT := PL_OUTPUT || '   [INFO] Perfil ' || V_COD_PERF || ' creado ' || CHR(10);
+        IF SQL%ROWCOUNT = 0 THEN
+            PL_OUTPUT := PL_OUTPUT || '   [INFO] No se ha perfilado el usuario ' || V_USU_USER || CHR(10);
+        ELSIF SQL%ROWCOUNT = 1 THEN
+            PL_OUTPUT := PL_OUTPUT || '   [INFO] Perfilado el usuario ' || V_USU_USER || ' con ' || V_COD_PERF || CHR(10);
+        END IF;
     END IF;
 
-    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.ZON_PEF_USU (ZON_ID, PEF_ID, USU_ID, ZPU_ID, USUARIOCREAR, FECHACREAR)
-        SELECT ZON.ZON_ID, PEF.PEF_ID, USU.USU_ID, '||V_ESQUEMA||'.S_ZON_PEF_USU.NEXTVAL, '''||V_USUARIO||''', SYSDATE
-        FROM '||V_ESQUEMA||'.ZON_ZONIFICACION ZON
-        JOIN '||V_ESQUEMA||'.PEF_PERFILES PEF ON PEF.PEF_CODIGO = '''||V_COD_PERF||'''
-        JOIN '||V_ESQUEMA_M||'.USU_USUARIOS USU ON USU.USU_USERNAME = '''||V_USU_USER||'''
-        LEFT JOIN '||V_ESQUEMA||'.ZON_PEF_USU ZPU ON ZPU.PEF_ID = PEF.PEF_ID 
-            AND ZPU.USU_ID = USU.USU_ID AND ZPU.ZON_ID = ZON.ZON_ID
-        WHERE ZON.ZON_COD = '''||V_ZON_COD||''' AND ZPU.ZPU_ID IS NULL';
-    EXECUTE IMMEDIATE V_MSQL;
-    
-    IF SQL%ROWCOUNT = 0 THEN
-        PL_OUTPUT := PL_OUTPUT || '   [INFO] No se ha perfilado el usuario ' || V_USU_USER || CHR(10);
-    ELSIF SQL%ROWCOUNT = 1 THEN
-        PL_OUTPUT := PL_OUTPUT || '   [INFO] Perfilado el usuario ' || V_USU_USER || ' con ' || V_COD_PERF || CHR(10);
-    END IF;
-    
     IF V_COD_CART IS NOT NULL THEN
         V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.UCA_USUARIO_CARTERA (UCA_ID, USU_ID, DD_CRA_ID)
             SELECT '||V_ESQUEMA||'.S_UCA_USUARIO_CARTERA.NEXTVAL, USU.USU_ID, CRA.DD_CRA_ID
@@ -197,7 +201,7 @@ BEGIN
             LEFT JOIN '||V_ESQUEMA||'.UCA_USUARIO_CARTERA UCA ON UCA.USU_ID = USU.USU_ID AND UCA.DD_CRA_ID = CRA.DD_CRA_ID
             WHERE USU.USU_USERNAME = '''||V_USU_USER||''' AND UCA.UCA_ID IS NULL';
         EXECUTE IMMEDIATE V_MSQL;
-        
+
         IF SQL%ROWCOUNT = 0 THEN
             V_MSQL := 'SELECT DD_CRA_DESCRIPCION FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||V_COD_CART||'''';
             EXECUTE IMMEDIATE V_MSQL INTO V_CAR_DESC;
@@ -208,8 +212,8 @@ BEGIN
             PL_OUTPUT := PL_OUTPUT || '   [INFO] ' || V_USU_USER || ' carterizado para ' || V_CAR_DESC || CHR(10);
         END IF;
     END IF;
-    
-    IF V_COD_GEST IS NOT NULL THEN 
+
+    IF V_COD_GEST IS NOT NULL THEN
         V_MSQL := 'INSERT INTO '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR (DD_TGE_ID, DD_TGE_CODIGO, DD_TGE_DESCRIPCION, DD_TGE_DESCRIPCION_LARGA
                 , DD_TGE_EDITABLE_WEB, USUARIOCREAR, FECHACREAR)
             SELECT '||V_ESQUEMA_M||'.S_DD_TGE_TIPO_GESTOR.NEXTVAL, '''||V_COD_GEST||''', '''||V_GES_DESC||''', '''||V_GES_DESC||'''
@@ -221,14 +225,30 @@ BEGIN
                 WHERE DD_TGE_CODIGO = '''||V_COD_GEST||'''
                 )';
         EXECUTE IMMEDIATE V_MSQL;
-        
+
         IF SQL%ROWCOUNT = 0 THEN
             PL_OUTPUT := PL_OUTPUT || '   [INFO] Ya existe el tipo de gestor ' || V_GES_DESC || CHR(10);
         ELSIF SQL%ROWCOUNT = 1 THEN
             PL_OUTPUT := PL_OUTPUT || '   [INFO] Tipo de gestor ' || V_GES_DESC || ' creado ' || CHR(10);
         END IF;
-    END IF;
+
+        V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TGP_TIPO_GESTOR_PROPIEDAD (TGP_ID, DD_TGE_ID, TGP_CLAVE, TGP_VALOR, USUARIOCREAR, FECHACREAR)
+            SELECT '||V_ESQUEMA||'.S_TGP_TIPO_GESTOR_PROPIEDAD.NEXTVAL, TGE.DD_TGE_ID, ''DES_VALIDO'', TGE.DD_TGE_CODIGO, '''||V_USUARIO||''', SYSDATE
+            FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE
+            WHERE TGE.DD_TGE_CODIGO = '''||V_COD_GEST||''' AND NOT EXISTS (
+                SELECT 1
+                FROM '||V_ESQUEMA||'.TGP_TIPO_GESTOR_PROPIEDAD TGP
+                WHERE TGE.DD_TGE_CODIGO = TGP.TGP_VALOR AND TGP.DD_TGE_ID = TGE.DD_TGE_ID
+                )';
+        EXECUTE IMMEDIATE V_MSQL;
     
+        IF SQL%ROWCOUNT = 0 THEN
+            PL_OUTPUT := PL_OUTPUT || '   [INFO] Ya existe el tipo de gestor propiedad' || CHR(10);
+        ELSIF SQL%ROWCOUNT = 1 THEN
+            PL_OUTPUT := PL_OUTPUT || '   [INFO] Creado/actualizado el tipo de gestor propiedad ' || V_GES_DESC || CHR(10);
+        END IF;
+    END IF;
+
     IF NVL(V_CNF_GEST,0) = 1 THEN
         V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_GES_DIST_GESTORES T1
             USING (
@@ -249,7 +269,7 @@ BEGIN
         EXECUTE IMMEDIATE V_MSQL;
         PL_OUTPUT := PL_OUTPUT || '   [INFO] ' || SQL%ROWCOUNT || ' registro/s en configuración de gestores fusionado/s' || CHR(10);
     END IF;
-    
+
     PL_OUTPUT := PL_OUTPUT || '[FIN]';
     
 EXCEPTION

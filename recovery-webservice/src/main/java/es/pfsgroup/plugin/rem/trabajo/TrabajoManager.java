@@ -3195,6 +3195,28 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return false;
 	}
 	@Override
+	public boolean checkLiberbank(TareaExterna tareaExterna) {
+		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
+		if (!Checks.esNulo(trabajo)) {
+			Activo primerActivo = trabajo.getActivo();
+			if (!Checks.esNulo(primerActivo)) {
+				return (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(primerActivo.getCartera().getCodigo()));
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean checkLiberbank(Trabajo trabajo) {
+		if (!Checks.esNulo(trabajo)) {
+			Activo primerActivo = trabajo.getActivo();
+			if (!Checks.esNulo(primerActivo)) {
+				return (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(primerActivo.getCartera().getCodigo()));
+			}
+		}
+		return false;
+	}
+	@Override
 	public DDCartera getCartera(TareaExterna tareaExterna) {
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
 		if (!Checks.esNulo(trabajo)) {

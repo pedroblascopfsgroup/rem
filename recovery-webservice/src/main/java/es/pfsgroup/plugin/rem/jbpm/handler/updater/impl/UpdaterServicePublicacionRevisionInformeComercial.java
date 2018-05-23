@@ -120,7 +120,7 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
 						//Comprobamos que tenga precio para publicar
 						if(activoApi.getDptoPrecio(activo)){
 							// 3.) Se publica el activo, quitando la validacion de Informe Comercial, puesto que se ha aceptado antes
-							activoEstadoPublicacionApi.validarPublicacionTramiteYPublicar(activo.getId());
+							//activoEstadoPublicacionApi.validarPublicacionTramiteYPublicar(activo.getId());
 						}
 					}
 				} else {
@@ -175,7 +175,7 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
 			activoApi.saveOrUpdate(activo);
 		}
 		
-		
+		activoEstadoPublicacionApi.validarPublicacionTramiteYPublicarNuevo(activo.getId());
 
 	}
 

@@ -32,6 +32,9 @@
 		<transition to="Fin" name="KO"></transition>
 		<transition to="T004_SolicitudPresupuestos" name="OKNoTarificada"></transition>
 		<transition to="T004_EleccionProveedorYTarifa" name="OKTarificada"></transition>
+		<transition to="T004_FijacionPlazo" name="ConSaldo"></transition>
+		<transition to="T004_AutorizacionBankia" name="SuperaLimiteBankia"></transition>
+		<transition to="T004_SolicitudExtraordinaria" name="SinSaldo"></transition>
 	</decision>
 
 

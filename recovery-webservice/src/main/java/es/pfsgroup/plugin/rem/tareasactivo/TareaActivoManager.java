@@ -258,13 +258,13 @@ public class TareaActivoManager implements TareaActivoApi {
 		}
 	}
 	
-	@Override
-	@Transactional(readOnly=false)
-	public void saltoDesdeTramite(Long idTramite, String tareaDestino){
+//	@Override
+//	@Transactional(readOnly=false)
+//	public void saltoDesdeTramite(Long idTramite, String tareaDestino){
 		
-		ActivoTramite tramite = activoTramiteApi.get(Long.valueOf(idTramite));
-		saltoTarea(tramite.getProcessBPM(), tareaDestino);
-	}
+//		ActivoTramite tramite = activoTramiteApi.get(Long.valueOf(idTramite));
+//		saltoTarea(tramite.getProcessBPM(), tareaDestino);
+//	}
 	
 	@Override
 	@Transactional(readOnly=false)

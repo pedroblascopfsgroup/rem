@@ -607,8 +607,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				extraParams: {codigoProvincia: '{comprador.provinciaRteCodigo}'}
 			}
     	},
-
-		comboComites: {
+	    comboComites: {
 	    	model: 'HreRem.model.ComboBase',
 	    	proxy: {
 		        type: 'uxproxy',

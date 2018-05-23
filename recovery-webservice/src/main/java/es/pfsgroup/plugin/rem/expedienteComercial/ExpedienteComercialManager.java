@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.expedienteComercial;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -3435,7 +3436,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			Long porcentajeImpuesto, String codComiteSuperior) throws Exception {
 		String tipoImpuestoCodigo = null;
 		InstanciaDecisionDto instancia = new InstanciaDecisionDto();
-		Double importeXActivo = null;
+		BigDecimal importeXActivo = null;
 		short tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_SIN_IMPUESTO;
 		List<InstanciaDecisionDataDto> instanciaList = new ArrayList<InstanciaDecisionDataDto>();
 		boolean solicitaFinanciacion = false;
@@ -3457,7 +3458,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		Double importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta()
 				: oferta.getImporteContraOferta();
-		Double sumatorioImporte = new Double(0);
+		//Double sumatorioImporte = new Double(0);
+
+		BigDecimal sumatorioImporte = new BigDecimal(0);
 
 		for (int i = 0; i < listaActivos.size(); i++) {
 			Activo activo = listaActivos.get(i).getPrimaryKey().getActivo();
@@ -3468,16 +3471,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (Checks.esNulo(activo.getNumActivoUvem())) {
 				throw new JsonViewerException("El activo no tiene número de UVEM.");
 			}
-
-			importeXActivo = listaActivos.get(i).getImporteActivoOferta();
-			if(Checks.esNulo(importeXActivo)) {
-				importeXActivo = 0.00D;
+			
+			if (!Checks.esNulo(listaActivos.get(i).getImporteActivoOferta())) {
+				importeXActivo = new BigDecimal(String.valueOf(listaActivos.get(i).getImporteActivoOferta()));
+			} else {
+				importeXActivo = new BigDecimal(0);
 			}
-			sumatorioImporte += importeXActivo*100;
+			//importeXActivo = listaActivos.get(i).getImporteActivoOferta();
+
+			sumatorioImporte = sumatorioImporte.add(importeXActivo);
 
 			InstanciaDecisionDataDto instData = new InstanciaDecisionDataDto();
 			// ImportePorActivo
-			instData.setImporteConSigno(Double.valueOf(num.format(importeXActivo*100)).longValue());
+			//instData.setImporteConSigno(Double.valueOf(num.format(importeXActivo*100)).longValue());
+			instData.setImporteConSigno(importeXActivo.multiply(new BigDecimal(100)).longValue());
 			// NumActivoUvem
 			instData.setIdentificadorActivoEspecial(Integer.valueOf(activo.getNumActivoUvem().toString()));
 
@@ -3514,7 +3521,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			instanciaList.add(instData);
 		}
 
-		if (!importeTotal.equals(sumatorioImporte/100)) {
+		if (!importeTotal.equals(sumatorioImporte.doubleValue())) {
 			throw new JsonViewerException("La suma de los importes es diferente al importe de la oferta");
 		}
 

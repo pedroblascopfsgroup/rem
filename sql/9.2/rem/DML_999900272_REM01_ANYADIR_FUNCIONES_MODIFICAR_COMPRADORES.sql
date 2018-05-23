@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Vicente Martinez Cifre
---## FECHA_CREACION=20180515
+--## FECHA_CREACION=20180521
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-736
@@ -36,7 +36,8 @@ DECLARE
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
     --			Descripción														                                Función
-      T_FUNCION('Permitir modificar los compradores.',		            						'MODIFICAR_TAB_COMPRADORES_EXPEDIENTES')
+      T_FUNCION('Permitir modificar los compradores.',		            						'MODIFICAR_TAB_COMPRADORES_EXPEDIENTES'),
+      T_FUNCION('Permitir modificar los compradores con reserva.',		            			'MODIFICAR_TAB_COMPRADORES_EXPEDIENTES_RESERVA')
     ); 
     V_TMP_FUNCION T_FUNCION;
 

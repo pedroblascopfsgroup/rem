@@ -202,6 +202,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					if(fechaInscripcionReg != null){
 						tabData.models[0].data.fechaInscripcionReg = new Date(fechaInscripcionReg);
 					}
+				} else if (tabData.models[0].name == "informecomercial"){
+					record = form.getBindRecord();
+					if(record != null){
+						if(record.infoComercial != null){
+							tabData.models[0].data.valorEstimadoVenta = record.infoComercial.data.valorEstimadoVenta;
+							tabData.models[0].data.valorEstimadoRenta = record.infoComercial.data.valorEstimadoRenta;
+						}
+					}
 				}
 			}
 			var activosPropagables = me.getViewModel().get("activo.activosPropagables") || [];

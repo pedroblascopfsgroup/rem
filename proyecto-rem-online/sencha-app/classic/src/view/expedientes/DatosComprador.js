@@ -38,7 +38,8 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
     	me.buttonAlign = 'right';
 
     	if(!Ext.isEmpty(me.idComprador)){
-			me.buttons = [ { itemId: 'btnModificar', text: HreRem.i18n('btn.modificar'), handler: 'onClickBotonModificarComprador', bind:{disabled: !this.modoEdicion}},
+			//me.buttons = [ { itemId: 'btnModificar', text: HreRem.i18n('btn.modificar'), handler: 'onClickBotonModificarComprador', bind:{disabled: !me.esEditable()}},
+    		me.buttons = [ { itemId: 'btnModificar', text: HreRem.i18n('btn.modificar'), handler: 'onClickBotonModificarComprador', bind:{disabled: !this.modoEdicion}},
     					   { itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCerrarComprador'}];
     	} else {
     		me.buttons = [ { itemId: 'btnCrear', text: HreRem.i18n('btn.crear'), handler: 'onClickBotonCrearComprador'},
@@ -69,6 +70,21 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 	    				},
 					    
     					items: [
+    								/*{
+	    								xtype:'fieldsettable',
+	    								collapsible: false,
+	    								hidden: me.esEditable(),
+	    								margin: '10 10 10 10',
+	    								items :
+	    									[
+	    										{
+	    										xtype: 'label',
+	    										text: HreRem.i18n('fieldlabel.no.modificar.compradores'),
+	    										margin: '10 0 10 0',
+	    										style: 'font-weight: bold'
+	    										}
+	    									]
+    							    },*/
     								{    
 				                
 										xtype:'fieldsettable',
@@ -600,5 +616,34 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
     	var me = this,    	
     	form = me.down('formBase');
 		form.setBindRecord(comprador);
-    }
+    }/*,
+    
+    esEditable: function(){
+    	var me = this;
+    	
+    	if($AU.userHasFunction(['MODIFICAR_TAB_COMPRADORES_EXPEDIENTES'])){
+    		if(!$AU.userHasFunction(['MODIFICAR_TAB_COMPRADORES_EXPEDIENTES_RESERVA']) && me.checkCoe()){
+    			return false;
+    		}
+    		return true;
+    	}
+    	
+    	return false;
+    },
+    
+    checkCoe: function(){
+    	var me = this;
+    	
+    	var estadoExpediente = me.expediente.data.codigoEstado;
+    	var solicitaReserva = me.expediente.data.solicitaReserva;
+    	if((solicitaReserva == 0 || solicitaReserva == null) && (estadoExpediente == CONST.ESTADOS_EXPEDIENTE['RESERVADO'] || estadoExpediente == CONST.ESTADOS_EXPEDIENTE['APROBADO']
+    	|| estadoExpediente == CONST.ESTADOS_EXPEDIENTE['FIRMADO'] || estadoExpediente == CONST.ESTADOS_EXPEDIENTE['ANULADO'] || estadoExpediente == CONST.ESTADOS_EXPEDIENTE['VENDIDO'])){
+    		return true;
+    	}
+    	if(me.expediente.data.solicitaReserva == 1 && (estadoExpediente == CONST.ESTADOS_EXPEDIENTE['APROBADO'] || estadoExpediente == CONST.ESTADOS_EXPEDIENTE['FIRMADO'] 
+    	|| estadoExpediente == CONST.ESTADOS_EXPEDIENTE['ANULADO'] || estadoExpediente == CONST.ESTADOS_EXPEDIENTE['VENDIDO'])){
+    		return true;
+    	}
+    	return false;
+    }*/
 });

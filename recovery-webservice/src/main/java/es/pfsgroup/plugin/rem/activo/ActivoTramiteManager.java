@@ -659,7 +659,9 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 			for(int i=0; i<listaTareas.size(); i++){
 				tarAct = listaTareas.get(i);
 				if(Checks.esNulo(tarAct.getFechaFin())){
-					listaTareasProc.add(tarAct.getTareaExterna().getTareaProcedimiento());
+					if(!Checks.esNulo(tarAct.getTareaExterna())){
+						listaTareasProc.add(tarAct.getTareaExterna().getTareaProcedimiento());
+					}
 				}
 			}
 		}

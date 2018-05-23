@@ -1,10 +1,10 @@
 --/*
 --######################################### 
 --## AUTOR=DAP
---## FECHA_CREACION=20180521
+--## FECHA_CREACION=20180516
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-729
+--## INCIDENCIA_LINK=HREOS-2318
 --## PRODUCTO=NO
 --## 
 --## Finalidad: 
@@ -102,7 +102,6 @@ BEGIN
 			,SUPRES	        VARCHAR2(1 CHAR)
 			,GESMIN	        VARCHAR2(1 CHAR)
 			,SUPMIN         VARCHAR2(1 CHAR)
-			,GESPROV		VARCHAR2(1 CHAR)
       )
       LOGGING 
       NOCOMPRESS 

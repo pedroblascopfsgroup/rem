@@ -40,6 +40,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.mejoras.web.tareas.BuzonTareasViewHandler;
 import es.pfsgroup.plugin.recovery.mejoras.web.tareas.BuzonTareasViewHandlerFactory;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
@@ -48,6 +49,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
+import es.pfsgroup.plugin.rem.jbpm.handler.listener.ActivoGenerarSaltoImpl;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoCampo;
@@ -66,6 +68,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.service.UpdaterTransitionService;
 import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
+import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
 
 @Service
 public class AgendaAdapter {
@@ -607,6 +610,11 @@ public class AgendaAdapter {
 		return true;
 	}
 	
+	/*
+	 * Siempre que queramos usar logica de SALTO a TAREA, debemos usar TareaActivoManager.saltoDesdeTareaExterna
+	 * nunca llamar directamente a TareaActivoManager.saltoTarea, que es lo que hace saltoPBC (y que no se usa)
+	 * */
+	@Deprecated
 	public Boolean saltoPBC(Long idProcesBpm){
 		try{
 			tareaActivoApi.saltoPBC(idProcesBpm);
@@ -714,8 +722,21 @@ public class AgendaAdapter {
 		//Validacion de documentos de reserva si salta con reserva a ResultadoPBC o Posicionamiento y firma
 		updaterTransitionService.validarContratoYJustificanteReserva(dto);
 
-		// Creamos el salto a la tarea indicada.
-		tareaActivoApi.saltoDesdeTramite(dto.getIdTramite(), dto.getCodigoTareaDestino());
+		List<TareaExterna> listaTareas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(dto.getIdTramite());
+		for (int i = 0; i < listaTareas.size(); i++) {
+			if(listaTareas.size()>1) {
+				for (int j = 1; j < listaTareas.size(); j++) { 
+					TareaExterna tareaExterna = listaTareas.get(j);
+					proxyFactory.proxy(TareaExternaApi.class).borrar(tareaExterna);
+				}
+			}
+			TareaExterna tarea = listaTareas.get(i);
+			if (!Checks.esNulo(tarea)) {
+				//salto = adapter.saltoResolucionExpediente(tarea.getId());
+				tareaActivoApi.saltoDesdeTareaExterna(tarea.getId(),dto.getCodigoTareaDestino());
+				break;
+			}
+		}
 		
 		// Guardamos campos en expediente, oferta, y reserva, y actualizamos estado de expediente
 		// TODO Pendientes de definir muchos campos.

@@ -35,6 +35,7 @@ import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
+import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -793,6 +794,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 				}
 			}
+		}
+		
+		//HREOS-4112 El combo "Comité seleccionado" vendrá informado para cartera Liberbank
+		else if(!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera()) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+			nuevoExpediente.setComiteSancion(this.calculoComiteLiberbank(oferta));
 		}
 		
 		//HREOS-2683 El combo "Comité seleccionado" vendrá informado para cartera Cajamar
@@ -4787,5 +4793,142 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return comPropietarios;
 	}
+	
+	private DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada) {
+		ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
+		Double importeOferta = ofertaApi.getImporteOferta(ofertaAceptada);
+		Double importeUmbral = 500000.0;
+		
+		// Oferta sobre un solo activo
+		if(Checks.esNulo(agrupacion)) {
+			Activo activo = ofertaAceptada.getActivoPrincipal();											
+			
+			// Si disponemos de un activo, recuperamos los datos a comprobar
+			if(!Checks.esNulo(activo)) {
+				ActivoTasacion tasacion = this.getTasacionMasReciente(activo);
+				Double importeTasacion = null;
+				Double precioAprobadoVenta = null;	
+				Double precioMinimoAutorizado = null;				
+				
+				importeTasacion = (!Checks.esNulo(tasacion)) ? tasacion.getImporteTasacionFin() : null;
+				List<VPreciosVigentes> precios = this.getPreciosVigentesById(activo.getId());																										
+				for(VPreciosVigentes p : precios) {
+					if(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(p.getCodigoTipoPrecio())) {
+						precioAprobadoVenta = p.getImporte();
+					} else if(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(p.getCodigoTipoPrecio())) {
+						precioMinimoAutorizado = p.getImporte();
+					}
+				}
+															
+				if(((!Checks.esNulo(importeTasacion) && importeTasacion < importeUmbral) 
+						&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(precioMinimoAutorizado) && importeOferta >= precioMinimoAutorizado))
+				|| ((!Checks.esNulo(precioAprobadoVenta) && precioAprobadoVenta < importeUmbral) 
+						&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(precioMinimoAutorizado) && importeOferta >= precioMinimoAutorizado))) {
+					Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_LIBERBANK);
+					DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
+					
+					return comiteSancion;
+				} else if((((!Checks.esNulo(importeTasacion) && importeTasacion < importeUmbral) 
+						&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(precioMinimoAutorizado) && importeOferta < precioMinimoAutorizado)) 
+						|| (!Checks.esNulo(importeTasacion) && importeTasacion >= importeUmbral))
+				|| (((!Checks.esNulo(precioAprobadoVenta) && precioAprobadoVenta < importeUmbral) 
+						&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(precioMinimoAutorizado) && importeOferta < precioMinimoAutorizado))
+						|| (!Checks.esNulo(precioAprobadoVenta) && precioAprobadoVenta >= importeUmbral))) {
+										
+					DDTipoActivo tipoActivo = activo.getTipoActivo();
+					DDSubtipoActivo subtipoActivo = activo.getSubtipoActivo();
+					if(DDTipoActivo.COD_VIVIENDA.equals(tipoActivo.getCodigo()) 
+							|| DDSubtipoActivo.COD_GARAJE.equals(subtipoActivo.getCodigo()) 
+							|| DDSubtipoActivo.COD_TRASTERO.equals(subtipoActivo.getCodigo()) 
+							|| DDSubtipoActivo.COD_LOCAL_COMERCIAL.equals(subtipoActivo.getCodigo())) {
+						
+						Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_LIBERBANK_RESIDENCIAL);
+						DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
+						
+						return comiteSancion;
+					} else {
+						Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_LIBERBANK_SINGULAR_TERCIARIO);
+						DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
+						
+						return comiteSancion;
+					}					
+				}
+			}
+		
+		// Oferta sobre un lote
+		} else {
+			List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
+			Double sumaTasaciones = 0.0;
+			Double sumaPreciosMinimosAutorizados = 0.0;
+			
+			for(ActivoAgrupacionActivo aga : activos) {
+				ActivoTasacion tasacion = this.getTasacionMasReciente(aga.getActivo());
+				Double importeTasacion = null;
+				Double precioAprobadoVenta = null;	
+				Double precioMinimoAutorizado = null;
+				
+				importeTasacion = (!Checks.esNulo(tasacion)) ? tasacion.getImporteTasacionFin() : null;				
+				List<VPreciosVigentes> precios = this.getPreciosVigentesById(aga.getActivo().getId());																										
+				for(VPreciosVigentes p : precios) {
+					if(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(p.getCodigoTipoPrecio())) {
+						precioAprobadoVenta = p.getImporte();
+					} else if(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(p.getCodigoTipoPrecio())) {
+						precioMinimoAutorizado = p.getImporte();
+					}
+				}
 
+				sumaTasaciones += (!Checks.esNulo(importeTasacion)) ? importeTasacion : precioAprobadoVenta;
+				sumaPreciosMinimosAutorizados += precioMinimoAutorizado;
+			}
+			
+			if((!Checks.esNulo(sumaTasaciones) && sumaTasaciones < importeUmbral) 
+					&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(sumaPreciosMinimosAutorizados) && importeOferta >= sumaPreciosMinimosAutorizados)) {
+				Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_LIBERBANK);
+				DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
+				
+				return comiteSancion;
+			} else if((((!Checks.esNulo(sumaTasaciones) && sumaTasaciones < importeUmbral) 
+					&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(sumaPreciosMinimosAutorizados) && importeOferta <= sumaPreciosMinimosAutorizados)) 
+					|| (sumaTasaciones >= importeUmbral))) {
+				
+				Integer tipoResidencial = 0;
+				Integer tipoSingularTerciario = 0;
+				
+				for(ActivoAgrupacionActivo aga : activos) {
+					Activo activo = aga.getActivo();
+					DDTipoActivo tipoActivo = activo.getTipoActivo();
+					DDSubtipoActivo subtipoActivo = activo.getSubtipoActivo();
+					
+					if(DDTipoActivo.COD_VIVIENDA.equals(tipoActivo.getCodigo()) 
+							|| DDSubtipoActivo.COD_GARAJE.equals(subtipoActivo) 
+							|| DDSubtipoActivo.COD_TRASTERO.equals(subtipoActivo) 
+							|| DDSubtipoActivo.COD_LOCAL_COMERCIAL.equals(subtipoActivo)) {
+						
+						tipoResidencial++;						
+					} else {						
+						tipoSingularTerciario++;						
+					}
+				}
+				
+				if(tipoResidencial != 0 && tipoSingularTerciario != 0) {
+					Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_LIBERBANK_INVERSION_INMOBILIARIA);
+					DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
+					
+					return comiteSancion;
+				} else if(tipoResidencial > 0) {
+					Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_LIBERBANK_RESIDENCIAL);
+					DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
+					
+					return comiteSancion;
+				} else if(tipoSingularTerciario > 0) {
+					Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_LIBERBANK_SINGULAR_TERCIARIO);
+					DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
+					
+					return comiteSancion;
+				}							
+			}			
+		}
+		
+		return null;
+	}
 }

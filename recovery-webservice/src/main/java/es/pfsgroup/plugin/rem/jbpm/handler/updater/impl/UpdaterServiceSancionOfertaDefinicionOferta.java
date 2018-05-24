@@ -150,19 +150,6 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 						expediente.setComiteSancion(comiteSuperior);
 					}
 				}
-				
-				if(CAMPO_COMITE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-					Activo activo = ofertaAceptada.getActivoPrincipal();
-					if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera()) && !Checks.esNulo(activo.getCartera().getCodigo())) {
-						if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())) {						
-							Filter filterCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", DDCartera.CODIGO_CARTERA_LIBERBANK);
-							Filter filterDescripcion = genericDao.createFilter(FilterType.EQUALS, "descripcion", valor.getValor());
-							DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterCartera, filterDescripcion);
-							
-							expediente.setComiteSancion(comiteSancion);					
-						}
-					}
-				}
 			}
 		}
 		

@@ -1067,8 +1067,11 @@ public class UvemManager implements UvemManagerApi {
 			// Importe de la reserva
 			ImporteMonetario importeMonetarioReserva = new ImporteMonetario();
 			if (instanciaDecisionDto.getImporteReserva() != null) {
-				importeMonetarioReserva
-						.setImporteConSigno(Double.valueOf(instanciaDecisionDto.getImporteReserva() * 100).longValue());
+				//importeMonetarioReserva.setImporteConSigno(Double.valueOf(instanciaDecisionDto.getImporteReserva() * 100).longValue());
+
+				BigDecimal importe = BigDecimal.valueOf(instanciaDecisionDto.getImporteReserva());
+				importeMonetarioReserva.setImporteConSigno(importe.multiply(new BigDecimal(100)).longValue());
+				
 			} else {
 				importeMonetarioReserva.setImporteConSigno(new Long(0));
 			}

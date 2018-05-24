@@ -130,13 +130,14 @@ public class GenericAdapter {
 			// mailsPara, mailsCC, asunto, cuerpo, null);
 			//añado comprobacion para que no falle en local
 			String servidorCorreo = appProperties.getProperty(SERVIDOR_CORREO);
+			logger.info(servidorCorreo);
 			String puertoCorreo =appProperties.getProperty(PUERTO_CORREO);
+			logger.info(puertoCorreo);
 			if(!Checks.esNulo(servidorCorreo) && !Checks.esNulo(puertoCorreo)){
 				agendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, adjuntos);
 			}
 		} catch (Exception e) {
-			logger.error("error enviando correo",e);
-			
+			logger.error("error enviando correo",e);			
 		}
 	}
 	

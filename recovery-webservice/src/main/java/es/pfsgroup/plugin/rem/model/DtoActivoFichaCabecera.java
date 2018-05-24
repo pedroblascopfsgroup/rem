@@ -143,6 +143,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String subtipoClaseActivoCodigo;
 	private String subtipoClaseActivoDescripcion;
 	private String numExpRiesgo;
+	private String acreedorNumExp;
 	private String tipoProductoCodigo;
 	private String tipoProductoDescripcion;
 	private String estadoExpRiesgoCodigo;
@@ -1380,6 +1381,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setAcbCoreaeTexto(String acbCoreaeTexto) {
 		this.acbCoreaeTexto = acbCoreaeTexto;
+	}
+
+	public String getAcreedorNumExp() {
+		return acreedorNumExp;
+	}
+
+	public void setAcreedorNumExp(String acreedorNumExp) {
+		this.acreedorNumExp = acreedorNumExp;
 	}
 
 	

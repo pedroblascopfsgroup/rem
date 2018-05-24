@@ -1717,9 +1717,11 @@ public class ActivoAdapter {
 					e.printStackTrace();
 				}
 				
-				ActivoProveedor tasadora = this.getTasadoraByCodProveedorUvem(tasacionDto.getCodigoFirma());
-				if(!Checks.esNulo(tasadora)){
-					tasacionDto.setNomTasador(tasadora.getNombre());
+				if (!Checks.esNulo(tasacionDto.getCodigoFirma())) {
+					ActivoProveedor tasadora = this.getTasadoraByCodProveedorUvem(tasacionDto.getCodigoFirma());
+					if (!Checks.esNulo(tasadora)) {
+						tasacionDto.setNomTasador(tasadora.getNombre());
+					}
 				}
 				listaDtoTasacion.add(tasacionDto);
 			}

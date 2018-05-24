@@ -1086,17 +1086,23 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             }
         })
     },
-	T013_DefinicionOfertaValidacion: function() {
+	T013_DefinicionOfertaValidacion: function() {		
 		var me = this;
 
 		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		var comiteSuperior = me.down('[name=comiteSuperior]');
+		var comite = me.down('[name=comite]');
 		if(CONST.CARTERA['BANKIA'] == codigoCartera) {
 			me.desocultarCampo(comiteSuperior);
 		}else{
 			me.ocultarCampo(comiteSuperior);
 		}
 		
+		if(CONST.CARTERA['LIBERBANK'] == codigoCartera) {
+			me.bloquearCampo(comite);
+		} else {
+			me.desbloquearCampo(comite);
+		}
 	},
 	T013_DocumentosPostVentaValidacion: function() {
 		var me = this;

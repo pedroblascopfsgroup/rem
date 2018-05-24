@@ -178,7 +178,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	'03': 'BANKIA',
     	'04': 'TERCEROS',
     	'06': 'HYT',
-    	'08': 'LIBERBANK',
+    	'08': 'LIBERBANK',    	
     	'10': 'TANGO',
     	'12': 'GIANTS'
     },

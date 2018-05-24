@@ -2460,4 +2460,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 	}
+	
+	@Override
+	public Double getImporteOferta(Oferta oferta) {
+		return (!Checks.esNulo(oferta.getImporteContraOferta())) ? oferta.getImporteContraOferta() : oferta.getImporteOferta();
+	}
 }

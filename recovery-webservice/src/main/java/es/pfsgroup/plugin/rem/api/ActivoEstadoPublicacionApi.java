@@ -66,6 +66,10 @@ public interface ActivoEstadoPublicacionApi {
 
 	/**
 	 * Este método persiste en la DB los datos de la pantalla de datos de publicación del activo por ID de activo.
+	 * INFO: Este método tan sólo se llama desde el controlador, para la vista, y desde el masivo, para emular un
+	 * estado implícito de publicación. Si se desea calcular automáticamente el estado de publicación por cambios en
+	 * algún dato del activo llamar al método 'publicarActivoConHistorico' o bien 'publicarActivoSinHistorico' del
+	 * activoDao.
 	 *
 	 * @param dto: dto con los datos a guardar en la DB.
 	 * @return Devuelve True si la operación ha sido satisfactoria.

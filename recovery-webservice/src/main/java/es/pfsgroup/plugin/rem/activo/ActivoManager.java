@@ -1615,9 +1615,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		condicionantesDisponibilidad.setOtro(dtoCondicionanteDisponibilidad.getOtro());
 
-		// Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		// activoDao.publicarActivoPortal(idActivo, usuarioLogado.getUsername());
-
 		genericDao.save(ActivoSituacionPosesoria.class, condicionantesDisponibilidad);
 
 		return true;
@@ -2013,17 +2010,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
-	public boolean publicarActivo(Long idActivo) throws SQLException, JsonViewerException {
+	@Deprecated
+	public boolean publicarActivo(Long idActivo) throws SQLException, JsonViewerException { // TODO: eliminar.
 		return publicarActivo(idActivo, null);
 	}
 
 	@Override
-	public boolean publicarActivo(Long idActivo, String motivo) throws SQLException, JsonViewerException {
+	@Deprecated
+	public boolean publicarActivo(Long idActivo, String motivo) throws SQLException, JsonViewerException { // TODO: eliminar.
 		return publicarActivo(idActivo, motivo, null);
 	}
 
 	@Override
-	public boolean publicarActivo(Long idActivo, String motivo, DtoPublicacionValidaciones validacionesPublicacion) throws SQLException, JsonViewerException {
+	@Deprecated
+	public boolean publicarActivo(Long idActivo, String motivo, DtoPublicacionValidaciones validacionesPublicacion) throws SQLException, JsonViewerException { // TODO: eliminar.
 
 		DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = new DtoCambioEstadoPublicacion();
 		dtoCambioEstadoPublicacion.setActivo(idActivo);

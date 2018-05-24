@@ -1507,7 +1507,10 @@ public class AgrupacionAdapter {
 			if (Checks.esNulo(dto.getVentaDirecta())){
 				oferta.setVentaDirecta(false);
 			} else {				
-				oferta.setVentaDirecta(dto.getVentaDirecta());
+				oferta.setVentaDirecta(dto.getVentaDirecta());				
+			}
+			if(!Checks.esNulo(dto.getIdUvem())){
+				oferta.setIdUvem(dto.getIdUvem());
 			}
 			genericDao.save(Oferta.class, oferta);
 			// Actualizamos la situacion comercial de los activos de la oferta

@@ -209,7 +209,7 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 		Double importeTotal = null;
 		Date fechaActual = new Date();
 		
-		boolean tieneFechaIngresoChequeVenta = false;
+		//boolean tieneFechaIngresoChequeVenta = false;
 		
 
 		// Estas validaciones ya se realizan en el metodo validador del ws
@@ -226,13 +226,13 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 			throw new Exception("No existe expediente comercial para esta activo.");
 		}
 		
-		if (!Checks.esNulo(expedienteComercial.getFechaContabilizacionPropietario())) {
+		/*if (!Checks.esNulo(expedienteComercial.getFechaContabilizacionPropietario())) {
 			tieneFechaIngresoChequeVenta = true;
 		}
 		
-		if(!tieneFechaIngresoChequeVenta){
+		if(!tieneFechaIngresoChequeVenta && oferta.getVentaDirecta()){
 			throw new Exception("No esta registrado la fecha de ingreso del cheque de venta.");
-		}
+		}*/
 
 		Reserva reserva = expedienteComercial.getReserva();
 		// Importe Reserva:

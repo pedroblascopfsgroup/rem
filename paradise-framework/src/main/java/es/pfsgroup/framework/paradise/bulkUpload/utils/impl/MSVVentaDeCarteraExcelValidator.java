@@ -77,63 +77,68 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 	
 	public static final class COL_NUM{
 		
-		static final int FILA_CABECERA = 2;
-		static final int DATOS_PRIMERA_FILA = 3;
+		public static final int FILA_CABECERA = 2;
+		public static final int DATOS_PRIMERA_FILA = 3;
 		
 		//Datos Activo
-		static final int NUM_ACTIVO_HAYA = 0;
-		static final int PRECIO_VENTA = 1;
+		public static final int NUM_ACTIVO_HAYA = 0;
+		public static final int PRECIO_VENTA = 1;
 		
 		//Información expediente comercial
-		static final int COMITE_SANCIONADOR = 2;
-		static final int TIPO_IMPUESTO = 3;
-		static final int TIPO_APLICABLE = 4;
-		static final int FECHA_VENTA = 5;
-		static final int FECHA_INGRESO_CHEQUE=6;
+		public static final int COMITE_SANCIONADOR = 2;
+		public static final int TIPO_IMPUESTO = 3;
+		public static final int TIPO_APLICABLE = 4;
+		public static final int FECHA_VENTA = 5;
+		public static final int FECHA_INGRESO_CHEQUE=6;
+		public static final int CODIGO_CARTERA = 7;
 		
 		//Datos Oferta
 			//Identificacion
-		static final int CODIGO_UNICO_OFERTA = 7;
-		static final int USU_GESTOR_COMERCIALIZACION = 8;
+		public static final int CODIGO_UNICO_OFERTA = 8;
+		public static final int USU_GESTOR_COMERCIALIZACION = 9;
 		
 			//Prescriptor
-		static final int CODIGO_PRESCRIPTOR = 9;
+		public static final int CODIGO_PRESCRIPTOR = 10;
 		
 			//Titular
-		static final int NOMBRE_TITULAR = 10;
-		static final int RAZON_SOCIAL_TITULAR= 11;
-		static final int TIPO_DOCUMENTO_TITULAR= 12;
-		static final int DOC_IDENTIFICACION_TITULAR = 13;
-		static final int NUMERO_URSUS_TITULAR = 14;
-		static final int NUMERO_URSUS_CONYUGE_TITULAR = 15;
-		static final int PORCENTAJE_COMPRA_TITULAR = 16;
+		public static final int NOMBRE_TITULAR = 11;
+		public static final int RAZON_SOCIAL_TITULAR= 12;
+		public static final int TIPO_DOCUMENTO_TITULAR= 13;
+		public static final int DOC_IDENTIFICACION_TITULAR = 14;
+		public static final int NUMERO_URSUS_TITULAR = 15;
+		public static final int NUMERO_URSUS_CONYUGE_TITULAR = 16;
+		public static final int PORCENTAJE_COMPRA_TITULAR = 17;
+		public static final int REGIMEN_MATRIMONIAL = 18;
 		
 			//Titular 2
-		static final int NOMBRE_TITULAR_2 = 17;
-		static final int RAZON_SOCIAL_TITULAR_2= 18;
-		static final int TIPO_DOCUMENTO_TITULAR_2= 19;
-		static final int DOC_IDENTIFICACION_TITULAR_2 = 20;
-		static final int NUMERO_URSUS_TITULAR_2 = 21;
-		static final int NUMERO_URSUS_CONYUGE_TITULAR_2 = 22;
-		static final int PORCENTAJE_COMPRA_TITULAR_2 = 23;
+		public static final int NOMBRE_TITULAR_2 = 19;
+		public static final int RAZON_SOCIAL_TITULAR_2= 20;
+		public static final int TIPO_DOCUMENTO_TITULAR_2= 21;
+		public static final int DOC_IDENTIFICACION_TITULAR_2 = 22;
+		public static final int NUMERO_URSUS_TITULAR_2 = 23;
+		public static final int NUMERO_URSUS_CONYUGE_TITULAR_2 = 24;
+		public static final int PORCENTAJE_COMPRA_TITULAR_2 = 25;
+		public static final int REGIMEN_MATRIMONIAL_2 = 26;
 		
 			//Titular 3
-		static final int NOMBRE_TITULAR_3 = 24;
-		static final int RAZON_SOCIAL_TITULAR_3= 25;
-		static final int TIPO_DOCUMENTO_TITULAR_3= 26;
-		static final int DOC_IDENTIFICACION_TITULAR_3 = 27;
-		static final int NUMERO_URSUS_TITULAR_3 = 28;
-		static final int NUMERO_URSUS_CONYUGE_TITULAR_3 = 29;
-		static final int PORCENTAJE_COMPRA_TITULAR_3 = 30;
+		public static final int NOMBRE_TITULAR_3 = 27;
+		public static final int RAZON_SOCIAL_TITULAR_3= 28;
+		public static final int TIPO_DOCUMENTO_TITULAR_3= 29;
+		public static final int DOC_IDENTIFICACION_TITULAR_3 = 30;
+		public static final int NUMERO_URSUS_TITULAR_3 = 31;
+		public static final int NUMERO_URSUS_CONYUGE_TITULAR_3 = 32;
+		public static final int PORCENTAJE_COMPRA_TITULAR_3 = 33;
+		public static final int REGIMEN_MATRIMONIAL_3 = 34;
 		
 			//Titular 4
-		static final int NOMBRE_TITULAR_4 = 31;
-		static final int RAZON_SOCIAL_TITULAR_4= 32;
-		static final int TIPO_DOCUMENTO_TITULAR_4= 33;
-		static final int DOC_IDENTIFICACION_TITULAR_4 = 34;
-		static final int NUMERO_URSUS_TITULAR_4 = 35;
-		static final int NUMERO_URSUS_CONYUGE_TITULAR_4 = 36;
-		static final int PORCENTAJE_COMPRA_TITULAR_4 = 37;
+		public static final int NOMBRE_TITULAR_4 = 35;
+		public static final int RAZON_SOCIAL_TITULAR_4= 36;
+		public static final int TIPO_DOCUMENTO_TITULAR_4= 37;
+		public static final int DOC_IDENTIFICACION_TITULAR_4 = 38;
+		public static final int NUMERO_URSUS_TITULAR_4 = 39;
+		public static final int NUMERO_URSUS_CONYUGE_TITULAR_4 = 40;
+		public static final int PORCENTAJE_COMPRA_TITULAR_4 = 41;
+		public static final int REGIMEN_MATRIMONIAL_4 = 42;
 	}
 	
 	protected final Log logger = LogFactory.getLog(getClass());

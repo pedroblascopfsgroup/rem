@@ -51,7 +51,7 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 	private static final String EXPEDIENTE_COMERCIAL_METADATOS = "operacionMetadatos";
 
 	
-	private static final String URL_REST_CLIENT_GESTOR_DOCUMENTAL_EXPEDIENTES = "rest.client.gestor.documental.expedientes";
+	public static final String URL_REST_CLIENT_GESTOR_DOCUMENTAL_EXPEDIENTES = "rest.client.gestor.documental.expedientes";
 	private static final String ERROR_SERVER_NOT_RESPONDING="El servidor de gestor documental no responde.";
 	
 	

@@ -108,7 +108,9 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 					listaFilas.add(fila);
 					mapaErrores.put("KO", listaFilas);
 					logger.error("error procesando fila "+fila+" del proceso "+file.getProcesoMasivo().getId(),e);
-					transactionManager.rollback(transaction);
+					if (!file.getProcesoMasivo().getTipoOperacion().getCodigo().equals(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA)){
+						transactionManager.rollback(transaction);
+					}
 					processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), false);					
 				}
 			}

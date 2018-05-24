@@ -3446,6 +3446,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			throw new JsonViewerException("No existe oferta para el expediente.");
 		}
 
+		if(oferta.getVentaDirecta() != null){
+			instancia.setOfertaVentaCartera(oferta.getVentaDirecta());
+		}else{
+			instancia.setOfertaVentaCartera(false);
+		}
+		
 		List<ActivoOferta> listaActivos = oferta.getActivosOferta();
 		if (Checks.esNulo(listaActivos) || (!Checks.esNulo(listaActivos) && listaActivos.size() == 0)) {
 			throw new JsonViewerException("No hay activos para la oferta indicada.");
@@ -3622,7 +3628,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if(oferta.getAgrupacion() != null){
 			instancia.setOfertaAgrupacion(true);
-			instancia.setCodigoAgrupacionInmueble(oferta.getAgrupacion().getUvemCodigoAgrupacionInmueble());
+			if(oferta.getIdUvem() != null ){
+				instancia.setCodigoAgrupacionInmueble(Integer.valueOf(oferta.getIdUvem().toString()));
+			}
 		}
 		
 		

@@ -19,6 +19,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
@@ -41,6 +42,9 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
     
     @Autowired
     private ActivoApi activoApi;
+    
+    @Autowired
+    private ActivoDao activoDao;
     
     @Autowired
     private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
@@ -175,7 +179,7 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
 			activoApi.saveOrUpdate(activo);
 		}
 		
-		activoEstadoPublicacionApi.validarPublicacionTramiteYPublicarNuevo(activo.getId());
+		activoDao.publicarActivoConHistorico(activo.getId(), genericAdapter.getUsuarioLogado().getUsername());
 
 	}
 

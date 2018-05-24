@@ -849,13 +849,6 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			this.setDatosPublicacionActivo(dto);
 		}
 	}
-	
-	@Override
-	public void validarPublicacionTramiteYPublicarNuevo(Long idActivo) {		
-		DtoDatosPublicacionActivo dto = new DtoDatosPublicacionActivo();
-		dto.setIdActivo(idActivo);		
-		this.setDatosPublicacionActivo(dto);		
-	}
 
 	/**
 	 * Este método actualiza el registro del estado actual de publicación del activo con los datos del dto

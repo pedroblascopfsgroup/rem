@@ -166,6 +166,4 @@ public interface ActivoEstadoPublicacionApi {
 	DtoDatosPublicacionAgrupacion getDatosPublicacionAgrupacion(Long idActivo);
 	
 	Boolean setDatosPublicacionAgrupacion(Long id, DtoDatosPublicacionActivo dto);
-
-	void validarPublicacionTramiteYPublicarNuevo(Long idActivo);
 }

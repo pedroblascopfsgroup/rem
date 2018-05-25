@@ -516,7 +516,7 @@ public class AgrupacionAdapter {
 	}
 
 	@Transactional(readOnly = false)
-	public void createActivoAgrupacion(Long numActivo, Long idAgrupacion, Integer activoPrincipal)
+	public void createActivoAgrupacion(Long numActivo, Long idAgrupacion, Integer activoPrincipal,boolean ventaCartera)
 			throws JsonViewerException {
 
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
@@ -571,11 +571,13 @@ public class AgrupacionAdapter {
 				// la que lo vamos a meter NO lo es, lanzamos una Excepcion
 				// Si el activo es no Formalizable, pero la agrupación en la que
 				// lo vamos a meter SI que lo es, también lanzamos una Excepcion
-				if (activoApi.esActivoFormalizable(activo.getNumActivo())
-						&& NO_ES_FORMALIZABLE.equals(agrupacion.getIsFormalizacion())
-						|| !activoApi.esActivoFormalizable(activo.getNumActivo())
-								&& ES_FORMALIZABLE.equals(agrupacion.getIsFormalizacion())) {
-					throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_NO_COMPARTE_FORMALIZACION);
+				if(!ventaCartera){
+					if (activoApi.esActivoFormalizable(activo.getNumActivo())
+							&& NO_ES_FORMALIZABLE.equals(agrupacion.getIsFormalizacion())
+							|| !activoApi.esActivoFormalizable(activo.getNumActivo())
+									&& ES_FORMALIZABLE.equals(agrupacion.getIsFormalizacion())) {
+						throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_NO_COMPARTE_FORMALIZACION);
+					}
 				}
 			}
 			// Si es el primer activo, validamos si tenemos los datos necesarios
@@ -1482,6 +1484,7 @@ public class AgrupacionAdapter {
 					clienteComercial.setRegimenMatrimonial(regimen);
 				}
 			}
+			
 			genericDao.save(ClienteComercial.class, clienteComercial);
 
 			Oferta oferta = new Oferta();

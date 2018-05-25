@@ -36,7 +36,7 @@ public class MSVAgruparActivosObraNueva extends AbstractMSVActualizador implemen
 		
 		Long numAgrupRem = new Long(exc.dameCelda(1, 0));
 		Long agrupacionId = agrupacionAdapter.getAgrupacionIdByNumAgrupRem(numAgrupRem);
-		agrupacionAdapter.createActivoAgrupacion(new Long(exc.dameCelda(fila, 1)), agrupacionId, null);	
+		agrupacionAdapter.createActivoAgrupacion(new Long(exc.dameCelda(fila, 1)), agrupacionId, null,false);	
 		return new ResultadoProcesarFila();
 	}
 

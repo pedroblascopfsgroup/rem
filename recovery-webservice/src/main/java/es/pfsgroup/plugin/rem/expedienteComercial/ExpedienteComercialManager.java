@@ -2371,8 +2371,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(tex)) {
 				SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 				try {
-					resolucionDto.setFechaVenta(
-							df.parse(activoTramiteApi.getTareaValorByNombre(tex.getValores(), "fechaFirma")));
+					String fechaFirma = activoTramiteApi.getTareaValorByNombre(tex.getValores(), "fechaFirma");
+					if(!Checks.esNulo(fechaFirma)){
+						resolucionDto.setFechaVenta(df.parse(fechaFirma));
+					}
+					
 				} catch (ParseException e) {
 					logger.error("error en expedienteComercialManager", e);
 				}
@@ -2678,6 +2681,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(dto.getEmail())) {
 				}
 				comprador.setEmail(dto.getEmail());
+				
+				
 
 				Filter filtroExpedienteComercial = genericDao.createFilter(FilterType.EQUALS, "id",
 						Long.parseLong(dto.getIdExpedienteComercial()));
@@ -3156,7 +3161,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				compradorExpediente.setTitularContratacion(0);
 			}
 			compradorExpediente.setBorrado(false);
+			
+			if (!Checks.esNulo(dto.getCodTipoPersona())) {
+				DDTiposPersona tipoPersona = (DDTiposPersona) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTiposPersona.class, dto.getCodTipoPersona());
+				compradorExpediente.getPrimaryKey().getComprador().setTipoPersona(tipoPersona);
+			}
+			
 			expediente.getCompradores().add(compradorExpediente);
+			
+			
 
 			genericDao.save(ExpedienteComercial.class, expediente);
 

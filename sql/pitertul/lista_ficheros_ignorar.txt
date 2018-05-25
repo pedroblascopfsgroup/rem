@@ -1,6 +1,0 @@
-sql/9.2/haya/bcc/incidencias_produccion/DML_768_ENTITY01_GC-3743_INSERT_IMPULSO_PROCESAL.sql
-sql/9.2/bankia/migracion/bmn/DML_104_ENTITY01_ADD_VALUE_MIG_DD_VAL_VALIDACION.sql
-sql/9.2/haya/bcc/incidencias_produccion/DML_772_ENTITY01_GC-3773_DELETE_CENTRO_PROCURA_INSERT_PROCURADOR.sql
-sql/9.2/haya/jaipur/procs_y_vistas/DDL_003_ENTITY01_SP_alta_asuntos_pco_manual.sql
-sql/9.2/haya/jaipur/procs_y_vistas/DDL_004_ENTITY01_SP_alta_asuntos_concursos_manual.sql
-sql/9.2/haya/jaipur/procs_y_vistas/DDL_009_ENTITY01_SP_alta_asuntos_litigios_manual.sql

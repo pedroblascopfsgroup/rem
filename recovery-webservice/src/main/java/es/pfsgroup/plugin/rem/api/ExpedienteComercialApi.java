@@ -180,7 +180,7 @@ public interface ExpedienteComercialApi {
 	 * @return Devuelve True si el estado del expdiente comercial es distinto a anulado, False si no lo es.
 	 * @throws Exception 
 	 */
-	public boolean updateExpedienteComercialEstadoPrevioResolucionExpediente(ExpedienteComercial expedienteComercial, String codigoTareaActual) throws Exception;
+	public boolean updateExpedienteComercialEstadoPrevioResolucionExpediente(ExpedienteComercial expedienteComercial, String codigoTareaActual, String codigoTareaSalto, Boolean botonDeshacerAnulacion) throws Exception;
 
 	/**
 	 * Método que recupera las observaciones del expediente comercial
@@ -937,6 +937,8 @@ public interface ExpedienteComercialApi {
 	 */
 	public boolean checkEstadoExpedienteDistintoAnulado(Long idTramite);
 
-	public void enviarCondicionantesEconomicosUvem(Long idExpediente) throws Exception;	
+	public void enviarCondicionantesEconomicosUvem(Long idExpediente) throws Exception;
+	
+	boolean reservaFirmada(Long idTramite);
 	
 }

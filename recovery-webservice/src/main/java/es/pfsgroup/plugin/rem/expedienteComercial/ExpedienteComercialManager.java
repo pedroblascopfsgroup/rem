@@ -2434,15 +2434,19 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	@Transactional(readOnly = false)
 	public boolean updateEstadoReserva(ExpedienteComercial expedienteComercial, String codEstadoReserva) throws Exception{
-		DDEstadosReserva estadoReserva = (DDEstadosReserva) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosReserva.class, codEstadoReserva);
-		if(!Checks.esNulo(estadoReserva)){
-			if(!Checks.esNulo(expedienteComercial.getReserva())){
-				expedienteComercial.getReserva().setEstadoReserva(estadoReserva);
+		if(!Checks.esNulo(codEstadoReserva)){
+			DDEstadosReserva estadoReserva = (DDEstadosReserva) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosReserva.class, codEstadoReserva);
+			if(!Checks.esNulo(estadoReserva)){
+				if(!Checks.esNulo(expedienteComercial.getReserva())){
+					expedienteComercial.getReserva().setEstadoReserva(estadoReserva);
+				}
+			}else{
+				throw new Exception("El codigo del estado de la reserva no existe");
 			}
+			return this.update(expedienteComercial);
 		}else{
-			throw new Exception("El codigo del estado de la reserva no existe");
+			return this.update(expedienteComercial);
 		}
-		return this.update(expedienteComercial);
 	}
 	
 	@Override
@@ -2460,20 +2464,27 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 	
 	@Transactional(readOnly = false)
-	private void resetReservaEstadoPrevioResolucionExpediente(ExpedienteComercial expedienteComercial) throws Exception{
+	private void resetReservaEstadoPrevioResolucionExpediente(ExpedienteComercial expedienteComercial, String codigoReserva) throws Exception{
 		Reserva reserva = expedienteComercial.getReserva();
 		reserva.setIndicadorDevolucionReserva(null);
 		reserva.setDevolucionReserva(null);
-		this.updateEstadoReserva(expedienteComercial, DDEstadosReserva.CODIGO_FIRMADA);
+		this.updateEstadoReserva(expedienteComercial, codigoReserva);
 	}
 	
 	@Override
 	@Transactional(readOnly = false)
-	public boolean updateExpedienteComercialEstadoPrevioResolucionExpediente(ExpedienteComercial expedienteComercial, String codigoTareaActual) throws Exception{
-		if(codigoTareaActual.equals(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION) 
+	public boolean updateExpedienteComercialEstadoPrevioResolucionExpediente(ExpedienteComercial expedienteComercial, String codigoTareaActual, String codigoTareaSalto, Boolean botonDeshacerAnulacion) throws Exception{
+		if(codigoTareaSalto.equals(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA)
+				&& codigoTareaActual.equals(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION)
+				&& botonDeshacerAnulacion){
+			this.resetReservaEstadoPrevioResolucionExpediente(expedienteComercial, null);
+			this.updateEstadoExpedienteComercial(expedienteComercial, DDEstadosExpedienteComercial.EN_TRAMITACION);
+			
+			return this.update(expedienteComercial);
+		}else if(codigoTareaActual.equals(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION) 
 				|| codigoTareaActual.equals(ComercialUserAssigantionService.CODIGO_T013_PENDIENTE_DEVOLUCION)
 				|| codigoTareaActual.equals(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION)){
-			this.resetReservaEstadoPrevioResolucionExpediente(expedienteComercial);
+			this.resetReservaEstadoPrevioResolucionExpediente(expedienteComercial, DDEstadosReserva.CODIGO_FIRMADA);
 			this.updateEstadoExpedienteComercial(expedienteComercial, DDEstadosExpedienteComercial.RESERVADO);
 			
 			return this.update(expedienteComercial);
@@ -5680,6 +5691,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				ExpedienteComercial expediente = expedienteComercialDao
 						.getExpedienteComercialByTrabajo(trabajo.getId());
 				return (new Integer(1).equals(expediente.getBloqueado()) ? true : false);
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean reservaFirmada(Long idTramite) {
+		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
+		if (!Checks.esNulo(activoTramite)) {
+			Trabajo trabajo = activoTramite.getTrabajo();
+			if (!Checks.esNulo(trabajo)) {
+				ExpedienteComercial expediente = expedienteComercialDao
+						.getExpedienteComercialByTrabajo(trabajo.getId());
+				return expediente.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_FIRMADA);
 			}
 		}
 		return false;

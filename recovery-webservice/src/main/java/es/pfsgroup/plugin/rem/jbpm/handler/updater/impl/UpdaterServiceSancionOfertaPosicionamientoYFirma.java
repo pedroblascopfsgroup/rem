@@ -94,9 +94,11 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 							//TODO: Cuando esté el motivo de no comercialización como texto libre, poner el texto: "Vendido".
 							genericDao.save(PerimetroActivo.class, perimetro);
 
-							//Marcamos el activo como vendido
-							Filter filtroSituacionComercial = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_VENDIDO);
-							activo.setSituacionComercial(genericDao.get(DDSituacionComercial.class, filtroSituacionComercial));
+							//Marcamos el activo como vendido (siempre y cuando no pertenezca a la cartera Liberbank)
+							if(!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
+								Filter filtroSituacionComercial = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_VENDIDO);
+								activo.setSituacionComercial(genericDao.get(DDSituacionComercial.class, filtroSituacionComercial));
+							}
 
 							activo.setBloqueoPrecioFechaIni(new Date());
 

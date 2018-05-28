@@ -5684,6 +5684,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return false;
 	}
+	
+	@Override
+	public boolean checkExpedienteFechaChequeLiberbank(Long idTramite) {
+		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
+		if (!Checks.esNulo(activoTramite) && !Checks.esNulo(activoTramite.getActivo()) && !Checks.esNulo(activoTramite.getActivo().getCartera()) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activoTramite.getActivo().getCartera().getCodigo())) {
+			Trabajo trabajo = activoTramite.getTrabajo();
+			if (!Checks.esNulo(trabajo)) {
+				ExpedienteComercial expediente = expedienteComercialDao
+						.getExpedienteComercialByTrabajo(trabajo.getId());
+				return !Checks.esNulo(expediente.getFechaContabilizacionPropietario());
+			}
+		}
+		
+		return true;
+	}
 
 	@Override
 	public boolean checkEstadoExpedienteDistintoAnulado(Long idTramite) {

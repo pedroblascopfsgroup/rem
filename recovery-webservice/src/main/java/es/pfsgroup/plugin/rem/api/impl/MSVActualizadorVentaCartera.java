@@ -31,6 +31,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVVentaDeCarteraExcelValidator;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -54,7 +55,6 @@ import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.ResultadoProcesarFila;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -131,7 +131,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
 			throws IOException, ParseException, JsonViewerException, SQLException, Exception {
-
+		ResultadoProcesarFila resultado = new ResultadoProcesarFila();
 		ActivoAgrupacion agrupacion = null;
 		String codigoOferta = null;
 		logger.debug("--------------------- OFERTA_CARTERA: procesando fila: " + fila
@@ -208,6 +208,9 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 					
 					//creamos un posicionamiento en el expediente
 					crearPosicionamiento(agrupacion.getId());
+					
+					//bloqueamos el expediente comercial
+					bloquearExpediente(agrupacion.getId());
 
 					// Avanzar el tramite de la oferta, en este paso se llama al
 					// ALTA de uvem si los activos son de bankia
@@ -225,15 +228,12 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 				}
 			}
 		}
-
-		HashMap<String, String> resultadoPorcesar = new HashMap<String, String>();
-		// NUMERO ACTIVO HAYA
-		resultadoPorcesar.put(codigoOferta,
-				exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.NUM_ACTIVO_HAYA));
-		ResultadoProcesarFila resultado = new ResultadoProcesarFila();
-		resultado.sethMap(resultadoPorcesar);
+		
+		resultado.addResultado(codigoOferta, exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.NUM_ACTIVO_HAYA));
 		return resultado;
 	}
+	
+	
 
 	/**
 	 * Comprueba que la suma de los % de participación sume 100
@@ -301,6 +301,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 
 			DtoFichaExpediente dtoExp = new DtoFichaExpediente();
 			dtoExp.setFechaContabilizacionPropietario(fechaContabilizacionPropietario);
+			dtoExp.setEstadoPbc(1);
 			expedienteComercialApi.saveFichaExpediente(dtoExp, expedienteComercial.getId());
 
 			expedienteComercialApi.saveCondicionesExpediente(condicionantes, expedienteComercial.getId());
@@ -397,7 +398,8 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 					new String[] { expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getDescripcion() });
 			valoresTarea.put("comboConflicto", new String[] { "02" });
 			valoresTarea.put("comboRiesgo", new String[] { "02" });
-			valoresTarea.put("fechaEnvio", new String[] { new Date().toString() });
+			DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+			valoresTarea.put("fechaEnvio", new String[] { format.format(new Date()) });
 			valoresTarea.put("comiteSuperior", new String[] { "02" });
 			valoresTarea.put("observaciones", new String[] { "Masivo Venta cartera" });
 			valoresTarea.put("idTarea", new String[] { tareasTramite.get(0).getTareaPadre().getId().toString() });
@@ -543,6 +545,30 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			dtoOferta.setCodigoEstadoOferta(DDEstadoOferta.CODIGO_ACEPTADA);
 
 			agrupacionAdapter.saveOfertaAgrupacion(dtoOferta);
+			transactionManager.commit(transaction);
+		} catch (Exception e) {
+			transactionManager.rollback(transaction);
+			throw e;
+		}
+	}
+	
+	/**
+	 * Bloquear expediente comercial
+	 * @param idAgrupacion
+	 * @throws JsonViewerException
+	 * @throws Exception
+	 */
+	private void bloquearExpediente(Long idAgrupacion) throws JsonViewerException, Exception {
+		TransactionStatus transaction = null;
+		logger.debug("OFERTA_CARTERA: Bloqueando el expediente");
+		try {
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			List<VOfertasActivosAgrupacion> listaOfertas = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
+			Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id",
+					Long.parseLong(listaOfertas.get(0).getIdOferta())));
+			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
+			expedienteComercialApi.bloquearExpediente(expedienteComercial.getId());
+			
 			transactionManager.commit(transaction);
 		} catch (Exception e) {
 			transactionManager.rollback(transaction);

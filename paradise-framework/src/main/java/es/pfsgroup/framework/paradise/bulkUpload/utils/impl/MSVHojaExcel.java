@@ -11,12 +11,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.utils.FormatUtils;
 import es.pfsgroup.commons.utils.Checks;
 
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import jxl.Cell;
 import jxl.CellType;
 import jxl.DateCell;
@@ -302,6 +304,48 @@ public class MSVHojaExcel {
 		
 
 		return nombreFicheroResultados;
+	}
+	
+	public String crearExcelResultado(ArrayList<ResultadoProcesarFila> resultados,int numHoja,
+			int numFilaCabeceras)
+			throws IllegalArgumentException, IOException, RowsExceededException, WriteException {
+
+		return this.crearExcelProcesadoByHojaAndFilaCabecera(resultados, numHoja, numFilaCabeceras);
+	}
+
+	@SuppressWarnings("rawtypes")
+	public String crearExcelProcesadoByHojaAndFilaCabecera(ArrayList<ResultadoProcesarFila> resultados, int numHoja,
+			int numFilaCabeceras) throws IllegalArgumentException, IOException, RowsExceededException, WriteException {
+		if (!isOpen) {
+			abrir();
+		}
+
+		String nombreFicheroErrores = getNombreFicheroErrores();
+
+		WritableWorkbook copy = Workbook.createWorkbook(new File(nombreFicheroErrores), libroExcel);
+		try {
+
+			WritableSheet hoja = copy.getSheet(numHoja);
+			int numColumnas = this.getNumeroColumnasByHojaAndFila(numHoja, 0);
+			int columna = numColumnas;
+			addTexto(hoja, columna, numFilaCabeceras-1, "RESULTADO");
+			for(ResultadoProcesarFila resultado : resultados){
+				if(resultado.isCorrecto()){
+					addTextoErrores(hoja, columna, resultado.getFila(), "OK");
+				}else{
+					addTextoErrores(hoja, columna, resultado.getFila(), resultado.getErrorDesc());
+				}
+				
+			}
+
+			
+			copy.write();
+		} finally {
+			copy.close();
+		}
+		
+
+		return nombreFicheroErrores;
 	}
 
 	public String dameCelda(int fila, int columna) throws IllegalArgumentException, IOException, ParseException {

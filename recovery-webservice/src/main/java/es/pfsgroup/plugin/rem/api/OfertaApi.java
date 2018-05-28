@@ -547,5 +547,7 @@ public interface OfertaApi {
 	public void congelarExpedientesPorOfertaExpress(Oferta ofertaExpress) throws Exception;
 
 	public Double getImporteOferta(Oferta oferta);
+
+	boolean comprobarComiteLiberbankPlantillaPropuesta(TareaExterna tareaExterna);
 }
 

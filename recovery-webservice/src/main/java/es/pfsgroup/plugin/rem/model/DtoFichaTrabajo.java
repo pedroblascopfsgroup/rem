@@ -133,6 +133,8 @@ public class DtoFichaTrabajo {
     
     private Integer esTarifaPlana;
     
+    private String codigoPromocionPrinex;
+    
 	
     public Long getIdTrabajo() {
 		return idTrabajo;
@@ -631,6 +633,14 @@ public class DtoFichaTrabajo {
 
 	public void setEsTarifaPlana(Integer esTarifaPlana) {
 		this.esTarifaPlana = esTarifaPlana;
+	}
+
+	public String getCodigoPromocionPrinex() {
+		return codigoPromocionPrinex;
+	}
+
+	public void setCodigoPromocionPrinex(String codigoPromocionPrinex) {
+		this.codigoPromocionPrinex = codigoPromocionPrinex;
 	}
 	
 	

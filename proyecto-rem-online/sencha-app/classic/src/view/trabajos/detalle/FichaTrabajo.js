@@ -51,8 +51,8 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 						        },
 								{ 
 				                	xtype: 'textareafieldbase',
-				                	rowspan: 3,
-				                	height: 160,
+				                	rowspan: 2,
+				                	height: 100,
 				                	fieldLabel: HreRem.i18n('fieldlabel.descripcion'),
 				                	width: 		'100%',
 				                	bind:		'{trabajo.descripcion}',
@@ -97,7 +97,11 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 					            	hidden: (this.codigoTipoTrabajo!="03"),
 						        	reference: 'comboGestorActivoResposable'
 						        },
-						        
+						        { 
+									xtype: 'displayfieldbase',
+						        	fieldLabel:  HreRem.i18n('fieldlabel.codigo.promocion'),						        	
+						        	bind: '{trabajo.codigoPromocionPrinex}'
+						        },
 						        {
 						        	xtype: 'checkboxfieldbase',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.actuacion.cubierta.seguro'),

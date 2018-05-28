@@ -249,6 +249,9 @@ public class Trabajo implements Serializable, Auditable {
     
     @Column(name="STR_TARIFA_PLANA")
     private Boolean esTarifaPlana = false;
+    
+    @Column(name = "ACT_COD_PROMOCION_PRINEX")
+    private String codigoPromocionPrinex;
        	
 	@Version   
 	private Long version;
@@ -869,6 +872,14 @@ public class Trabajo implements Serializable, Auditable {
 
 	public void setEsTarifaPlana(Boolean esTarifaPlana) {
 		this.esTarifaPlana = esTarifaPlana;
+	}
+
+	public String getCodigoPromocionPrinex() {
+		return codigoPromocionPrinex;
+	}
+
+	public void setCodigoPromocionPrinex(String codigoPromocionPrinex) {
+		this.codigoPromocionPrinex = codigoPromocionPrinex;
 	}
 
 

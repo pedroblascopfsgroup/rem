@@ -1042,9 +1042,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajo.setSubtipoTrabajo(subtipoTrabajo);
 			
 			// Seteo del flag esTarifaPlana
-			Activo activoAux = activoApi.get(dtoTrabajo.getIdActivo());
-			if(!Checks.esNulo(activoAux)){
-				trabajo.setEsTarifaPlana(this.esTrabajoTarifaPlana(activoAux, subtipoTrabajo, new Date()));
+			if (!Checks.esNulo(dtoTrabajo.getIdActivo())) {
+				Activo activoAux = activoApi.get(dtoTrabajo.getIdActivo());
+				if (!Checks.esNulo(activoAux)) {
+					trabajo.setEsTarifaPlana(this.esTrabajoTarifaPlana(activoAux, subtipoTrabajo, new Date()));
+				}
 			}
 		}
 

@@ -2226,7 +2226,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					genericDao.update(Trabajo.class, trabajo);
 				}
 
-				genericDao.deleteById(GastoProveedorTrabajo.class, gpvTrabajo.getId());
+				//genericDao.deleteById(GastoProveedorTrabajo.class, gpvTrabajo.getId());
 			}
 		}
 	}

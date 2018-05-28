@@ -189,10 +189,29 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		 			me.getViewModel().set("editing", false);
 		 		}
 			}
-			
 			// Obtener jsondata para guardar activo
 			var tabData = me.createTabData(form);
-			
+			if(tabData.models != null){
+				if (tabData.models[0].name == "datosregistrales"){
+					record = form.getBindRecord();
+					var fechaInscripcionReg = record.get("fechaInscripcionReg");
+					if  ((typeof fechaInscripcionReg) == 'string') {						
+						var from = fechaInscripcionReg.split("/");
+						fechaInscripcionReg = new Date(from[2], from[1] - 1, from[0])
+    				}
+					if(fechaInscripcionReg != null){
+						tabData.models[0].data.fechaInscripcionReg = new Date(fechaInscripcionReg);
+					}
+				} else if (tabData.models[0].name == "informecomercial"){
+					record = form.getBindRecord();
+					if(record != null){
+						if(record.infoComercial != null){
+							tabData.models[0].data.valorEstimadoVenta = record.infoComercial.data.valorEstimadoVenta;
+							tabData.models[0].data.valorEstimadoRenta = record.infoComercial.data.valorEstimadoRenta;
+						}
+					}
+				}
+			}
 			var activosPropagables = me.getViewModel().get("activo.activosPropagables") || [];
 			var tabPropagableData = null;
 
@@ -2935,7 +2954,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 
 	saveActivo: function(jsonData, successFn) {
-		
 		var me = this,
 		url =  $AC.getRemoteUrl('activo/saveActivo');
 		

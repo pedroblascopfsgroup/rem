@@ -416,6 +416,10 @@
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkImporteParticipacion(idTramite);
             }
+            def checkInformeJuridicoFinalizado = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkInformeJuridicoFinalizado(idTramite);
+            }
             def checkEsMultiactivo = {
             	def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.checkEsMultiactivo(tareaExterna);
@@ -439,6 +443,10 @@
             def checkReservaFirmada = {
 				def ofertaManager = ctx.getBean("ofertaManager");
 				return ofertaManager.checkReservaFirmada(tareaExterna);
+			}
+			def checkTarifaPlana = {
+				def trabajoManager = ctx.getBean("trabajoManager");
+                return trabajoManager.trabajoTieneTarifaPlana(tareaExterna);
 			}
   			 ]]></value>
   		</list>

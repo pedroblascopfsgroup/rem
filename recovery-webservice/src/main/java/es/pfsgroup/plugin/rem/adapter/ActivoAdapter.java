@@ -1717,9 +1717,11 @@ public class ActivoAdapter {
 					e.printStackTrace();
 				}
 				
-				ActivoProveedor tasadora = this.getTasadoraByCodProveedorUvem(tasacionDto.getCodigoFirma());
-				if(!Checks.esNulo(tasadora)){
-					tasacionDto.setNomTasador(tasadora.getNombre());
+				if (!Checks.esNulo(tasacionDto.getCodigoFirma())) {
+					ActivoProveedor tasadora = this.getTasadoraByCodProveedorUvem(tasacionDto.getCodigoFirma());
+					if (!Checks.esNulo(tasadora)) {
+						tasacionDto.setNomTasador(tasadora.getNombre());
+					}
 				}
 				listaDtoTasacion.add(tasacionDto);
 			}
@@ -2392,22 +2394,23 @@ public class ActivoAdapter {
 
 		List<VBusquedaPresupuestosActivo> presupuestosActivo = (List<VBusquedaPresupuestosActivo>) pagePresupuestosActivo
 				.getResults();
+		
+		// Gastado + Pendiente de pago
+		DtoActivosTrabajoFilter dtoFilter = new DtoActivosTrabajoFilter();
+
+		dtoFilter.setIdActivo(presupuestosActivo.get(0).getIdActivo());
+		dtoFilter.setLimit(50000);
+		dtoFilter.setStart(0);
+		dtoFilter.setEstadoContable("1");
+
+		Page vista = trabajoApi.getListActivosPresupuesto(dtoFilter);
+		List<VBusquedaActivosTrabajoPresupuesto> listaTemp = (List<VBusquedaActivosTrabajoPresupuesto>) vista
+				.getResults();
 
 		for (VBusquedaPresupuestosActivo presupuesto : presupuestosActivo) {
-
-			// Gastado + Pendiente de pago
-			DtoActivosTrabajoFilter dtoFilter = new DtoActivosTrabajoFilter();
-
-			dtoFilter.setIdActivo(presupuesto.getIdActivo());
-			dtoFilter.setLimit(50000);
-			dtoFilter.setStart(0);
-			dtoFilter.setEstadoContable("1");
-
-			Page vista = trabajoApi.getListActivosPresupuesto(dtoFilter);
+			
 			if (vista.getTotalCount() > 0) {
-
-				List<VBusquedaActivosTrabajoPresupuesto> listaTemp = (List<VBusquedaActivosTrabajoPresupuesto>) vista
-						.getResults();
+				
 				presupuesto.setDispuesto(new Double(0));
 				for (VBusquedaActivosTrabajoPresupuesto activoTrabajoTemp : listaTemp) {
 					if(activoTrabajoTemp.getEjercicio().equals(presupuesto.getEjercicioAnyo())) {
@@ -2459,13 +2462,29 @@ public class ActivoAdapter {
 				.getListHistoricoPresupuestos(dtoFiltroHistorico, usuarioLogado).getResults().get(0);
 
 		// Disponible para ejercicio actual
+		// Se calcula el disponible, el gasto conforme la lógica anterior, pero optimizando costes
 		dtoFilter.setEjercicioPresupuestario(ejercicioActual);
 		Page vista = trabajoApi.getListActivosPresupuesto(dtoFilter);
 		if (vista.getTotalCount() > 0) {
-			VBusquedaActivosTrabajoPresupuesto activoTrabajo = (VBusquedaActivosTrabajoPresupuesto) vista.getResults()
-					.get(0);
-			presupuestoGrafico.setDisponible(new Double(activoTrabajo.getSaldoDisponible()));
-
+			List<VBusquedaActivosTrabajoPresupuesto> activosTrabajo = (List<VBusquedaActivosTrabajoPresupuesto>) vista.getResults();
+			presupuestoGrafico.setDisponible(new Double(activosTrabajo.get(0).getSaldoDisponible()));
+			presupuestoGrafico.setGastado(new Double(0));
+			presupuestoGrafico.setDispuesto(new Double(0));
+			
+			for(VBusquedaActivosTrabajoPresupuesto activoTrabajoTemp : activosTrabajo){
+				
+				if("1".equals(activoTrabajoTemp.getEstadoContable())){
+					presupuestoGrafico.setGastado(
+							presupuestoGrafico.getGastado() + new Double(activoTrabajoTemp.getImporteParticipa()));
+				}
+				
+				if("1".equals(activoTrabajoTemp.getEstadoContable()) && DDEstadoTrabajo.ESTADO_PENDIENTE_PAGO.equals(activoTrabajoTemp.getCodigoEstado())){
+					presupuestoGrafico.setDispuesto(
+							presupuestoGrafico.getDispuesto() + new Double(activoTrabajoTemp.getImporteParticipa()));
+				}
+			}
+			//Lógica anterior
+			/*
 			dtoFilter.setEstadoContable("1");
 
 			// Gastado + Pendiente de pago, para el ejercicio actual
@@ -2505,7 +2524,7 @@ public class ActivoAdapter {
 
 			} else {
 				presupuestoGrafico.setDispuesto(new Double(0));
-			}
+			}*/
 
 			presupuestoGrafico.setGastado(presupuestoGrafico.getGastado() - presupuestoGrafico.getDispuesto());
 			presupuestoGrafico.setPresupuesto(presupuestoGrafico.getDisponible() + presupuestoGrafico.getDispuesto()

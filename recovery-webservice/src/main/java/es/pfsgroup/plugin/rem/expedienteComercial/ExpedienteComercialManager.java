@@ -4875,7 +4875,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public Boolean checkImporteParticipacion(Long idTramite) {
-		Double totalImporteParticipacionActivos = 0d;
+		BigDecimal totalImporteParticipacionActivos = new BigDecimal(0);
 
 		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
 		if (activoTramite == null) {
@@ -4908,11 +4908,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		for (ActivoOferta activoOferta : activosExpediente) {
 			if (!Checks.esNulo(activoOferta.getImporteActivoOferta())) {
 				totalImporteParticipacionActivos = totalImporteParticipacionActivos
-						+ (100*activoOferta.getImporteActivoOferta());
+						.add(BigDecimal.valueOf(activoOferta.getImporteActivoOferta()));
 			}
 		}
 
-		return importeExpediente.equals(totalImporteParticipacionActivos/100);
+		return importeExpediente.equals(totalImporteParticipacionActivos.doubleValue());
 	}
 
 	public DtoCondicionesActivoExpediente getCondicionesActivoExpediete(Long idExpediente, Long idActivo) {

@@ -732,6 +732,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		    	model: 'HreRem.model.Presupuesto',
 		    	proxy: {
 			        type: 'uxproxy',
+			        timeout: 50000,
 			        localUrl: '/activos.json',
 			        remoteUrl: 'activo/findAllHistoricoPresupuestos',
 		        	extraParams: {idActivo: '{activo.id}'}

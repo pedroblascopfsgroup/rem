@@ -4793,8 +4793,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return comPropietarios;
 	}
-	
-	private DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada) {
+	@Override
+	public DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada) {
 		ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
 		Double importeOferta = ofertaApi.getImporteOferta(ofertaAceptada);
 		Double importeUmbral = 500000.0;

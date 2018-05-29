@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DANIEL ALGABA
---## FECHA_CREACION=20180523
+--## FECHA_CREACION=20180528
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.19
 --## INCIDENCIA_LINK=HREOS-4113
@@ -31,7 +31,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(4000);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    T_TIPO_DATA('T013_DefinicionOferta', 'existeAdjuntoUGCarteraValidacion("36", "E", "01") == null ? (existeAdjuntoUGCarteraValidacion("36", "E", "08") == null ? valores[''''T013_DefinicionOferta''''][''''comboConflicto''''] == DDSiNo.SI || valores[''''T013_DefinicionOferta''''][''''comboRiesgo''''] == DDSiNo.SI ? ''''El estado de la responsabilidad corporativa no es el correcto para poder avanzar.'''' : definicionOfertaT013(valores[''''T013_DefinicionOferta''''][''''comiteSuperior'''']) : existeAdjuntoUGCarteraValidacion("36", "E", "08")) : existeAdjuntoUGCarteraValidacion("36", "E", "01")')
+    T_TIPO_DATA('T013_DefinicionOferta', 'existeAdjuntoUGCarteraValidacion("36", "E", "01") == null ? valores[''''T013_DefinicionOferta''''][''''comboConflicto''''] == DDSiNo.SI || valores[''''T013_DefinicionOferta''''][''''comboRiesgo''''] == DDSiNo.SI  ?  ''''El estado de la responsabilidad corporativa no es el correcto para poder avanzar.'''' : comprobarComiteLiberbankPlantillaPropuesta() ? existeAdjuntoUGCarteraValidacion("36", "E", "08") : definicionOfertaT013(valores[''''T013_DefinicionOferta''''][''''comiteSuperior''''])  : existeAdjuntoUGCarteraValidacion("36", "E", "01")')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 

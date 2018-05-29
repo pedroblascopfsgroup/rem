@@ -328,6 +328,10 @@
             	def activoManager = ctx.getBean("activoManager");
             	return activoManager.comprobarActivoComercializable(idActivo);
             }
+            def comprobarComiteLiberbankPlantillaPropuesta = {
+            	def ofertaManager = ctx.getBean("ofertaManager");
+            	return ofertaManager.comprobarComiteLiberbankPlantillaPropuesta(tareaExterna);
+            }
             def comprobarObligatoriosDesignarMediador = {
             	def activoManager = ctx.getBean("activoManager");
                 return activoManager.comprobarObligatoriosDesignarMediador(idActivo);

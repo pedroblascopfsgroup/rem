@@ -98,6 +98,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
@@ -2464,5 +2465,45 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override
 	public Double getImporteOferta(Oferta oferta) {
 		return (!Checks.esNulo(oferta.getImporteContraOferta())) ? oferta.getImporteContraOferta() : oferta.getImporteOferta();
+	}
+	
+	@Override
+	public boolean comprobarComiteLiberbankPlantillaPropuesta(TareaExterna tareaExterna) {
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		DDComiteSancion comite = activoApi.calculoComiteLiberbank(ofertaAceptada);
+		ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
+		Double importeOferta = (!Checks.esNulo(ofertaAceptada.getImporteContraOferta())) ? ofertaAceptada.getImporteContraOferta() : ofertaAceptada.getImporteOferta();
+		
+		if (!Checks.esNulo(ofertaAceptada) && !Checks.esNulo(comite)) {
+			if(!DDComiteSancion.CODIGO_HAYA_LIBERBANK.equals(comite.getCodigo())){
+				if(Checks.esNulo(agrupacion)){
+					Activo activo = ofertaAceptada.getActivoPrincipal();
+					Double minimoAutorizado = activoApi.getImporteValoracionActivoByCodigo(activo,DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
+					
+					if(!Checks.esNulo(activo) && !Checks.esNulo(minimoAutorizado)) {
+						if(importeOferta<(minimoAutorizado*0.85)){
+							return true;
+						}
+					}
+				} else {
+					DtoAgrupacionFilter dtoAgrupActivo = new DtoAgrupacionFilter();
+					dtoAgrupActivo.setAgrId(agrupacion.getId());
+					List<ActivoAgrupacionActivo> activos = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo);
+					Double minimoAutorizado = 0.0;
+					if(!Checks.esNulo(dtoAgrupActivo)) {
+						for (ActivoAgrupacionActivo activo : activos) {
+							minimoAutorizado += activoApi.getImporteValoracionActivoByCodigo(activo.getActivo(),DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
+						}
+					}
+					if(!Checks.esNulo(minimoAutorizado)) {
+						if(importeOferta<(minimoAutorizado*0.85)) {
+							return true;
+						}
+					}
+				}
+			}
+				
+		}
+		return false;
 	}
 }

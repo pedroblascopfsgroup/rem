@@ -116,10 +116,10 @@ public class ActivoExcelReport extends AbstractExcelReport implements ExcelRepor
 	private String mapeoEstadoOcupacion(Activo activo)
 	{
 		ActivoSituacionPosesoria situacion;
-		if(!Checks.esNulo(activo) && !Checks.esNulo(situacion = activo.getSituacionPosesoria()))
+		if(!Checks.esNulo(activo) && !Checks.esNulo(situacion = activo.getSituacionPosesoria()) && !Checks.esNulo(situacion.getOcupado()))
 		{
 			if(situacion.getOcupado() == 0) return "No ocupado";
-			else if(situacion.getOcupado() == 1)
+			else if(!Checks.esNulo(situacion.getConTitulo()) && situacion.getOcupado() == 1)
 			{
 				if(situacion.getConTitulo() == 0) return "Ocupado sin título";
 				else if(situacion.getConTitulo() == 1)
@@ -128,6 +128,7 @@ public class ActivoExcelReport extends AbstractExcelReport implements ExcelRepor
 					else return "Ocupado con título";
 				}
 			}
+			else if(situacion.getOcupado() == 1) return "Ocupado sin título";
 		}
 		return "";
 	}

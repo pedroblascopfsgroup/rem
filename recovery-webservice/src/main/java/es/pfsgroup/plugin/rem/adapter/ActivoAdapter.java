@@ -126,6 +126,7 @@ import es.pfsgroup.plugin.rem.model.DtoTramite;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.DtoValoracion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.IncrementoPresupuesto;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -1449,6 +1450,7 @@ public class ActivoAdapter {
 		List<DtoListadoGestores> listadoGestoresDto = new ArrayList<DtoListadoGestores>();
 
 		for (GestorEntidadHistorico gestor : gestoresEntidad) {
+			
 			DtoListadoGestores dtoGestor = new DtoListadoGestores();
 			try {
 				BeanUtils.copyProperties(dtoGestor, gestor);
@@ -1456,6 +1458,14 @@ public class ActivoAdapter {
 				BeanUtils.copyProperties(dtoGestor, gestor.getTipoGestor());
 				BeanUtils.copyProperty(dtoGestor, "id", gestor.getId());
 				BeanUtils.copyProperty(dtoGestor, "idUsuario", gestor.getUsuario().getId());
+
+				GestorSustituto gestorSustituto = getGestorSustitutoVigente(gestor);
+
+				if (!Checks.esNulo(gestorSustituto)) {
+					dtoGestor.setApellidoNombre(dtoGestor.getApellidoNombre().concat(" (")
+							.concat(gestorSustituto.getUsuarioGestorSustituto().getApellidoNombre()).concat(")"));
+				}
+
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
@@ -3198,6 +3208,31 @@ public class ActivoAdapter {
 		genericDao.save(ActivoTasacion.class, activoTasacion);
 
 		return true;
+
+	}
+
+	@Transactional(readOnly = true)
+	private GestorSustituto getGestorSustitutoVigente(GestorEntidadHistorico gestor) {
+
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal", gestor.getUsuario());
+
+		try {
+			List<GestorSustituto> gestoresSustitutos = genericDao.getList(GestorSustituto.class, filter);
+
+			for (GestorSustituto sustituto : gestoresSustitutos) {
+				if (!Checks.esNulo(sustituto.getFechaFin())) {
+					if (sustituto.getFechaFin().before(new Date()) || sustituto.getFechaFin().equals(new Date())) {
+						return sustituto;
+					}
+				} else {
+					return sustituto;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
 
 	}
 }

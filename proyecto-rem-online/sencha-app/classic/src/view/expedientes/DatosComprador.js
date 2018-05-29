@@ -38,8 +38,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
     	me.buttonAlign = 'right';
 
     	if(!Ext.isEmpty(me.idComprador)){
-			//me.buttons = [ { itemId: 'btnModificar', text: HreRem.i18n('btn.modificar'), handler: 'onClickBotonModificarComprador', bind:{disabled: !me.esEditable()}},
-    		me.buttons = [ { itemId: 'btnModificar', text: HreRem.i18n('btn.modificar'), handler: 'onClickBotonModificarComprador', bind:{disabled: !this.modoEdicion}},
+			me.buttons = [ { itemId: 'btnModificar', text: HreRem.i18n('btn.modificar'), handler: 'onClickBotonModificarComprador', bind:{disabled: !me.esEditable()}},
     					   { itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCerrarComprador'}];
     	} else {
     		me.buttons = [ { itemId: 'btnCrear', text: HreRem.i18n('btn.crear'), handler: 'onClickBotonCrearComprador'},
@@ -70,7 +69,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 	    				},
 					    
     					items: [
-    								/*{
+    								{
 	    								xtype:'fieldsettable',
 	    								collapsible: false,
 	    								hidden: me.esEditable(),
@@ -84,7 +83,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 	    										style: 'font-weight: bold'
 	    										}
 	    									]
-    							    },*/
+    							    },
     								{    
 				                
 										xtype:'fieldsettable',
@@ -616,7 +615,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
     	var me = this,    	
     	form = me.down('formBase');
 		form.setBindRecord(comprador);
-    }/*,
+    },
     
     esEditable: function(){
     	var me = this;
@@ -645,5 +644,5 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
     		return true;
     	}
     	return false;
-    }*/
+    }
 });

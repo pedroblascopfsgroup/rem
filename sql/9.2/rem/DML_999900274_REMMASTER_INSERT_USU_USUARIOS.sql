@@ -38,8 +38,8 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     	T_TIPO_DATA('grulibres',1234,'Grupo Liberbank Residencial', '1'),
-	T_TIPO_DATA('grulibsinter',1234,'Grupo Liberbank Inversión Inmobiliaria', '1'),
-    	T_TIPO_DATA('grulibinvinm',1234,'Grupo Liberbank Singular - Terciario', '1')
+	T_TIPO_DATA('grulibinvinm',1234,'Grupo Liberbank Inversión Inmobiliaria', '1'),
+    	T_TIPO_DATA('grulibsinter',1234,'Grupo Liberbank Singular - Terciario', '1')
     	); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

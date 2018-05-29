@@ -639,7 +639,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
     	|| estadoExpediente == CONST.ESTADOS_EXPEDIENTE['FIRMADO'] || estadoExpediente == CONST.ESTADOS_EXPEDIENTE['ANULADO'] || estadoExpediente == CONST.ESTADOS_EXPEDIENTE['VENDIDO'])){
     		return true;
     	}
-    	if(me.expediente.data.solicitaReserva == 1 && (estadoExpediente == CONST.ESTADOS_EXPEDIENTE['APROBADO'] || estadoExpediente == CONST.ESTADOS_EXPEDIENTE['FIRMADO'] 
+    	if(solicitaReserva == 1 && (estadoExpediente == CONST.ESTADOS_EXPEDIENTE['RESERVADO'] || estadoExpediente == CONST.ESTADOS_EXPEDIENTE['FIRMADO'] 
     	|| estadoExpediente == CONST.ESTADOS_EXPEDIENTE['ANULADO'] || estadoExpediente == CONST.ESTADOS_EXPEDIENTE['VENDIDO'])){
     		return true;
     	}

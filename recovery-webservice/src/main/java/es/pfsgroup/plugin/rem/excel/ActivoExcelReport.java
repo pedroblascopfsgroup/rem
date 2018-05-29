@@ -118,7 +118,7 @@ public class ActivoExcelReport extends AbstractExcelReport implements ExcelRepor
 			if(situacion.getConTitulo() == 0) return "Ocupado sin título";
 			else if(situacion.getConTitulo() == 1)
 			{
-				if(!Checks.esNulo(situacion.getTipoTituloPosesorio())) return "Ocupado con título de " + situacion.getTipoTituloPosesorio();
+				if(!Checks.esNulo(situacion.getTipoTituloPosesorio())) return "Ocupado con título de " + situacion.getTipoTituloPosesorio().getDescripcion();
 				else return "Ocupado con título";
 			}
 			else return "";

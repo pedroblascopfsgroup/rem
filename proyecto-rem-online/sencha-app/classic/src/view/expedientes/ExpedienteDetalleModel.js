@@ -91,6 +91,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	return CONST.CARTERA['CAJAMAR'] == carteraCodigo;
 	     },
 	     
+	     esCarteraLiberbank: function(get) {
+		     	
+	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+	     	return CONST.CARTERA['LIBERBANK'] == carteraCodigo;
+		 },
+	     
 	     getTipoExpedienteCabecera: function(get) {
 	     
 	     	var tipoExpedidenteDescripcion =  get('expediente.tipoExpedienteDescripcion');
@@ -209,7 +215,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		     	var bloqueado = get('expediente.bloqueado');
 		     	return bloqueado;
 		     	
-		 }
+		 } 
 	 },
 
 

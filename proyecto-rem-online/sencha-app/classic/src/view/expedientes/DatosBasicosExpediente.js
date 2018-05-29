@@ -246,7 +246,8 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 										fieldLabel: HreRem.i18n('fieldlabel.fecha.devolucion.reserva'),
 										bind: {
 											disabled: '{!expediente.tieneReserva}',
-											value: '{expediente.fechaDevolucionEntregas}'
+											value: '{expediente.fechaDevolucionEntregas}',
+											readOnly: '{esCarteraLiberbank}'
 										}
 									},
 									{ 
@@ -266,7 +267,8 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							        	bind: {
 							        		disabled: '{!expediente.tieneReserva}',
 							        		store: '{storeEstadosDevolucion}',
-						            		value: '{expediente.estadoDevolucionCodigo}'
+						            		value: '{expediente.estadoDevolucionCodigo}',
+						            		readOnly: '{esCarteraLiberbank}'
 						            	},
 						            	listeners:{
 						            		change: function(){

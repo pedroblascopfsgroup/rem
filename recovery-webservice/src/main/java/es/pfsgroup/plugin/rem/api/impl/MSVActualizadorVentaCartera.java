@@ -183,21 +183,19 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 				if (comprobarParticipacion(exc, fila)) {
 					// Añadimos el porcentaje correcto al comprador principal,
 					// por defecto esta el 100%.
-					String regimenMatrimonial = exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.REGIMEN_MATRIMONIAL);
+					String regimenMatrimonial = exc.dameCelda(fila,
+							MSVVentaDeCarteraExcelValidator.COL_NUM.REGIMEN_MATRIMONIAL);
 					String estadoCivil = DDEstadosCiviles.CODIGO_ESTADO_CIVIL_SOLTERO;
 					if (regimenMatrimonial != null && !regimenMatrimonial.isEmpty()) {
 						estadoCivil = DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO;
 					}
-					
+
 					modificarCompradorPrincipal(agrupacion.getId(),
 							Double.parseDouble(exc.dameCelda(fila,
 									MSVVentaDeCarteraExcelValidator.COL_NUM.PORCENTAJE_COMPRA_TITULAR)),
 							Long.parseLong(
 									exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.NUMERO_URSUS_TITULAR)),
-							null,
-							regimenMatrimonial,
-							estadoCivil
-							);
+							null, regimenMatrimonial, estadoCivil);
 
 					// Añadimos el resto de TITULARES (Comprador) 2, 3 y 4.
 					anyadirRestoCompradores(exc, fila, agrupacion.getId());
@@ -205,11 +203,11 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 					// guardamos los datos que hacen falta para avanzar el exp
 					// comercial
 					guardarDatosNecesariosExpedienteComercial(exc, agrupacion.getId(), fila);
-					
-					//creamos un posicionamiento en el expediente
+
+					// creamos un posicionamiento en el expediente
 					crearPosicionamiento(agrupacion.getId());
-					
-					//bloqueamos el expediente comercial
+
+					// bloqueamos el expediente comercial
 					bloquearExpediente(agrupacion.getId());
 
 					// Avanzar el tramite de la oferta, en este paso se llama al
@@ -228,12 +226,11 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 				}
 			}
 		}
-		
-		resultado.addResultado(codigoOferta, exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.NUM_ACTIVO_HAYA));
+
+		resultado.addResultado(codigoOferta,
+				exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.NUM_ACTIVO_HAYA));
 		return resultado;
 	}
-	
-	
 
 	/**
 	 * Comprueba que la suma de los % de participación sume 100
@@ -299,9 +296,36 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			condicionantes.setTipoAplicable(
 					Double.valueOf(exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.TIPO_APLICABLE)));
 
+			if (exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.OPERACION_EXENTA) != null
+					&& !exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.OPERACION_EXENTA).isEmpty()
+					&& exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.OPERACION_EXENTA).toLowerCase().equals("si")) {
+				condicionantes.setOperacionExenta(true);
+			}else{
+				condicionantes.setOperacionExenta(false);
+			}
+			
+			if (exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.RENUNCIA_EXENCION) != null
+					&& !exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.RENUNCIA_EXENCION).isEmpty()
+					&& exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.RENUNCIA_EXENCION).toLowerCase().equals("si")) {
+				condicionantes.setRenunciaExencion(true);
+			}else{
+				condicionantes.setRenunciaExencion(false);
+			}
+			
+			if (exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.INVERSION_SUJETO_PASIVO) != null
+					&& !exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.INVERSION_SUJETO_PASIVO).isEmpty()
+					&& exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.INVERSION_SUJETO_PASIVO).toLowerCase().equals("si")) {
+				condicionantes.setInversionDeSujetoPasivo(true);
+			}else{
+				condicionantes.setInversionDeSujetoPasivo(false);
+			}
+			
+			
 			DtoFichaExpediente dtoExp = new DtoFichaExpediente();
 			dtoExp.setFechaContabilizacionPropietario(fechaContabilizacionPropietario);
 			dtoExp.setEstadoPbc(1);
+			dtoExp.setConflictoIntereses(0);
+			dtoExp.setRiesgoReputacional(0);
 			expedienteComercialApi.saveFichaExpediente(dtoExp, expedienteComercial.getId());
 
 			expedienteComercialApi.saveCondicionesExpediente(condicionantes, expedienteComercial.getId());
@@ -551,9 +575,10 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			throw e;
 		}
 	}
-	
+
 	/**
 	 * Bloquear expediente comercial
+	 * 
 	 * @param idAgrupacion
 	 * @throws JsonViewerException
 	 * @throws Exception
@@ -568,7 +593,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 					Long.parseLong(listaOfertas.get(0).getIdOferta())));
 			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
 			expedienteComercialApi.bloquearExpediente(expedienteComercial.getId());
-			
+
 			transactionManager.commit(transaction);
 		} catch (Exception e) {
 			transactionManager.rollback(transaction);
@@ -611,10 +636,9 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			dtoFilter.setVentaDirecta(true);
 			dtoFilter.setIdUvem(idUvem);
 			dtoFilter.setTipoPersona(DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA);
-			if(razonSocial != null && !razonSocial.isEmpty()){
+			if (razonSocial != null && !razonSocial.isEmpty()) {
 				dtoFilter.setTipoPersona(DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA);
 			}
-			
 
 			agrupacionAdapter.createOfertaAgrupacion(dtoFilter);
 			transactionManager.commit(transactionE);
@@ -780,9 +804,8 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 				listaAgrupaciones.put(codigoOferta, String.valueOf((importe1 + importe2)));
 			}
 
-		}		
+		}
 	}
-	
 
 	/**
 	 * Crear un posicionamiento en el expediente
@@ -790,10 +813,10 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 	 * @param idExpedienteComercial
 	 * @throws Exception
 	 */
-	private void crearPosicionamiento(Long idAgrupacion) throws Exception{
+	private void crearPosicionamiento(Long idAgrupacion) throws Exception {
 		logger.debug("OFERTA_CARTERA: creamos posicionamiento");
 		TransactionStatus transaction = null;
-		try{
+		try {
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 			Date posDate = new Date();
 			List<VOfertasActivosAgrupacion> listaOfertas = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
@@ -806,9 +829,9 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			posicionamiento.setFechaHoraPosicionamiento(posDate);
 			expedienteComercialApi.createPosicionamiento(posicionamiento, expedienteComercial.getId());
 			transactionManager.commit(transaction);
-		}catch(Exception e){
+		} catch (Exception e) {
 			transactionManager.rollback(transaction);
-			throw e;			
+			throw e;
 		}
 	}
 

@@ -1,10 +1,8 @@
 package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +10,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +18,9 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessCompositeValidators;
-import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessValidationFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessValidationRunner;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessValidators;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVValidationResult;
@@ -37,8 +31,6 @@ import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
-import jxl.write.WriteException;
-import jxl.write.biff.RowsExceededException;
 
 
 @Component
@@ -91,54 +83,57 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 		public static final int FECHA_VENTA = 5;
 		public static final int FECHA_INGRESO_CHEQUE=6;
 		public static final int CODIGO_CARTERA = 7;
+		public static final int OPERACION_EXENTA = 8;
+		public static final int RENUNCIA_EXENCION = 9;
+		public static final int INVERSION_SUJETO_PASIVO = 10;
 		
 		//Datos Oferta
 			//Identificacion
-		public static final int CODIGO_UNICO_OFERTA = 8;
-		public static final int USU_GESTOR_COMERCIALIZACION = 9;
+		public static final int CODIGO_UNICO_OFERTA = 11;
+		public static final int USU_GESTOR_COMERCIALIZACION = 12;
 		
 			//Prescriptor
-		public static final int CODIGO_PRESCRIPTOR = 10;
+		public static final int CODIGO_PRESCRIPTOR = 13;
 		
 			//Titular
-		public static final int NOMBRE_TITULAR = 11;
-		public static final int RAZON_SOCIAL_TITULAR= 12;
-		public static final int TIPO_DOCUMENTO_TITULAR= 13;
-		public static final int DOC_IDENTIFICACION_TITULAR = 14;
-		public static final int NUMERO_URSUS_TITULAR = 15;
-		public static final int NUMERO_URSUS_CONYUGE_TITULAR = 16;
-		public static final int PORCENTAJE_COMPRA_TITULAR = 17;
-		public static final int REGIMEN_MATRIMONIAL = 18;
+		public static final int NOMBRE_TITULAR = 14;
+		public static final int RAZON_SOCIAL_TITULAR= 15;
+		public static final int TIPO_DOCUMENTO_TITULAR= 16;
+		public static final int DOC_IDENTIFICACION_TITULAR = 17;
+		public static final int NUMERO_URSUS_TITULAR = 18;
+		public static final int NUMERO_URSUS_CONYUGE_TITULAR = 19;
+		public static final int PORCENTAJE_COMPRA_TITULAR = 20;
+		public static final int REGIMEN_MATRIMONIAL = 21;
 		
 			//Titular 2
-		public static final int NOMBRE_TITULAR_2 = 19;
-		public static final int RAZON_SOCIAL_TITULAR_2= 20;
-		public static final int TIPO_DOCUMENTO_TITULAR_2= 21;
-		public static final int DOC_IDENTIFICACION_TITULAR_2 = 22;
-		public static final int NUMERO_URSUS_TITULAR_2 = 23;
-		public static final int NUMERO_URSUS_CONYUGE_TITULAR_2 = 24;
-		public static final int PORCENTAJE_COMPRA_TITULAR_2 = 25;
-		public static final int REGIMEN_MATRIMONIAL_2 = 26;
+		public static final int NOMBRE_TITULAR_2 = 22;
+		public static final int RAZON_SOCIAL_TITULAR_2= 23;
+		public static final int TIPO_DOCUMENTO_TITULAR_2= 24;
+		public static final int DOC_IDENTIFICACION_TITULAR_2 = 25;
+		public static final int NUMERO_URSUS_TITULAR_2 = 26;
+		public static final int NUMERO_URSUS_CONYUGE_TITULAR_2 = 27;
+		public static final int PORCENTAJE_COMPRA_TITULAR_2 = 28;
+		public static final int REGIMEN_MATRIMONIAL_2 = 29;
 		
 			//Titular 3
-		public static final int NOMBRE_TITULAR_3 = 27;
-		public static final int RAZON_SOCIAL_TITULAR_3= 28;
-		public static final int TIPO_DOCUMENTO_TITULAR_3= 29;
-		public static final int DOC_IDENTIFICACION_TITULAR_3 = 30;
-		public static final int NUMERO_URSUS_TITULAR_3 = 31;
-		public static final int NUMERO_URSUS_CONYUGE_TITULAR_3 = 32;
-		public static final int PORCENTAJE_COMPRA_TITULAR_3 = 33;
-		public static final int REGIMEN_MATRIMONIAL_3 = 34;
+		public static final int NOMBRE_TITULAR_3 = 30;
+		public static final int RAZON_SOCIAL_TITULAR_3= 31;
+		public static final int TIPO_DOCUMENTO_TITULAR_3= 32;
+		public static final int DOC_IDENTIFICACION_TITULAR_3 = 33;
+		public static final int NUMERO_URSUS_TITULAR_3 = 34;
+		public static final int NUMERO_URSUS_CONYUGE_TITULAR_3 = 35;
+		public static final int PORCENTAJE_COMPRA_TITULAR_3 = 36;
+		public static final int REGIMEN_MATRIMONIAL_3 = 37;
 		
 			//Titular 4
-		public static final int NOMBRE_TITULAR_4 = 35;
-		public static final int RAZON_SOCIAL_TITULAR_4= 36;
-		public static final int TIPO_DOCUMENTO_TITULAR_4= 37;
-		public static final int DOC_IDENTIFICACION_TITULAR_4 = 38;
-		public static final int NUMERO_URSUS_TITULAR_4 = 39;
-		public static final int NUMERO_URSUS_CONYUGE_TITULAR_4 = 40;
-		public static final int PORCENTAJE_COMPRA_TITULAR_4 = 41;
-		public static final int REGIMEN_MATRIMONIAL_4 = 42;
+		public static final int NOMBRE_TITULAR_4 = 38;
+		public static final int RAZON_SOCIAL_TITULAR_4= 39;
+		public static final int TIPO_DOCUMENTO_TITULAR_4= 40;
+		public static final int DOC_IDENTIFICACION_TITULAR_4 = 41;
+		public static final int NUMERO_URSUS_TITULAR_4 = 42;
+		public static final int NUMERO_URSUS_CONYUGE_TITULAR_4 = 43;
+		public static final int PORCENTAJE_COMPRA_TITULAR_4 = 44;
+		public static final int REGIMEN_MATRIMONIAL_4 = 45;
 	}
 	
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -147,14 +142,8 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 	private MSVExcelParser excelParser;
 	
 	@Autowired
-	private ApiProxyFactory proxyFactory;
-
-	@Autowired
 	private MSVBusinessValidationRunner validationRunner;
 	
-	@Autowired
-	private MSVBusinessValidationFactory validationFactory;
-
 	@Autowired
 	private ParticularValidatorApi particularValidator;
 
@@ -302,16 +291,6 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 			}
 		}
 		return resultado;
-	}
-	
-	private File recuperarPlantilla(Long idTipoOperacion)  {
-		try {
-			FileItem fileItem = proxyFactory.proxy(ExcelRepoApi.class).dameExcelByTipoOperacion(idTipoOperacion);
-			return fileItem.getFile();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 	
 	private List<Integer> isActiveNotExistsByRows(MSVHojaExcel exc){

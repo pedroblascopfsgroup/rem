@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -3221,7 +3222,7 @@ public class ActivoAdapter {
 
 			for (GestorSustituto sustituto : gestoresSustitutos) {
 				if (!Checks.esNulo(sustituto.getFechaFin())) {
-					if (sustituto.getFechaFin().before(new Date()) || sustituto.getFechaFin().equals(new Date())) {
+					if (sustituto.getFechaFin().after(new Date()) || DateUtils.isSameDay(sustituto.getFechaFin(), new Date())) {
 						return sustituto;
 					}
 				} else {

@@ -134,7 +134,9 @@ public class DtoFichaTrabajo {
     private Integer esTarifaPlana;
     
     private String codigoPromocionPrinex;
-    
+
+    private Date fechaAutorizacionPropietario;
+
 	
     public Long getIdTrabajo() {
 		return idTrabajo;
@@ -641,6 +643,15 @@ public class DtoFichaTrabajo {
 
 	public void setCodigoPromocionPrinex(String codigoPromocionPrinex) {
 		this.codigoPromocionPrinex = codigoPromocionPrinex;
+	}
+	
+	public Date getFechaAutorizacionPropietario() {
+		return fechaAutorizacionPropietario;
+	}
+
+	public void setFechaAutorizacionPropietario(Date fechaAutorizacionPropietario) {
+		this.fechaAutorizacionPropietario = fechaAutorizacionPropietario;
+
 	}
 	
 	

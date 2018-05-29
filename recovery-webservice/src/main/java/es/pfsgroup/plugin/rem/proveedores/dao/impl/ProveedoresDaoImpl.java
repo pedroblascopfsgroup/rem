@@ -186,7 +186,7 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 	public List<VProveedores> getProveedoresFilteredByTiposTrabajo(String codigosTipoProveedores, String codCartera) {
 		HQLBuilder hb = new HQLBuilder(" from VProveedores v");
 
-		hb.appendWhere("v.codigoCartera = " + codCartera);
+		hb.appendWhere("v.codigoCartera = '" + codCartera + "'");
 		hb.appendWhere("v.baja = 0");
 
 		if (!Checks.esNulo(codigosTipoProveedores))

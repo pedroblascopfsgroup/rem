@@ -1254,7 +1254,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					&& !Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
 				dtoTrabajo.setNombreMediador(activo.getInfoComercial().getMediadorInforme().getNombre());
 			}
-
+			
 			dtoTrabajo.setCartera(activo.getCartera().getDescripcion());
 			dtoTrabajo.setPropietario(activo.getFullNamePropietario());
 			dtoTrabajo.setIdActivo(activo.getId());
@@ -1333,6 +1333,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setEsTarifaPlana(0);
 		}
 		
+		 if(!Checks.esNulo(trabajo.getFechaAutorizacionPropietario())) {
+			dtoTrabajo.setFechaAutorizacionPropietario(trabajo.getFechaAutorizacionPropietario());
+		 }
 
 		return dtoTrabajo;
 	}
@@ -3219,6 +3222,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		return false;
 	}
+
 	@Override
 	public DDCartera getCartera(TareaExterna tareaExterna) {
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);

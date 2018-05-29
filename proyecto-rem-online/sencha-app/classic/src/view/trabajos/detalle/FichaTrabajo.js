@@ -10,6 +10,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 
     initComponent: function () {
         var me = this;
+        console.log(this);
         me.setTitle(HreRem.i18n('title.ficha'));
 
         //Si el tipo es de Precios/Publicacion/Sancion no mostrar el bloque -Cuando hay que hacerlo...-
@@ -394,13 +395,16 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 					            		value: '{trabajo.tipoCalidadCodigo}'
 					            	},
 						        	readOnly: true
-						        },	
-						        {
-									xtype: 'datefieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.fecha.validacion'),
-									bind: '{trabajo.fechaValidacion}',
-									readOnly: true
-								},
+						        },
+						        {												
+						        	xtype: 'datefieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.fecha.autorizacion.propietario'),
+									bind: {
+										value: '{trabajo.fechaAutorizacionPropietario}',
+										hidden: '{!esVisibleFechaAutorizacionPropietario}',
+										readOnly: true
+									}
+						        },
 								{
 									xtype: 'datefieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.fecha.rechazo'),
@@ -432,18 +436,26 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 									xtype: 'datefieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.fecha.aprobacion'),
 									bind: '{trabajo.fechaAprobacion}',
-									readOnly: true
+									readOnly: true,
+									rowspan:2
 								},
 								{
 									xtype: 'datefieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.fecha.pago'),
-									bind: '{trabajo.fechaPago}',
+									fieldLabel: HreRem.i18n('fieldlabel.fecha.validacion'),
+									bind: '{trabajo.fechaValidacion}',
 									readOnly: true
 								},
 								{
 									xtype: 'datefieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.fecha.emision.factura'),
 									bind: '{trabajo.fechaEmisionFactura}',
+									readOnly: true
+								},
+								//Fila 5
+								{
+									xtype: 'datefieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.fecha.pago'),
+									bind: '{trabajo.fechaPago}',
 									readOnly: true
 								}
 							]

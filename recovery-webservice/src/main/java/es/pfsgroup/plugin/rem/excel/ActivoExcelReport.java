@@ -75,8 +75,12 @@ public class ActivoExcelReport extends AbstractExcelReport implements ExcelRepor
 		
 		for(VBusquedaActivos vBActivo: listaActivos)
 		{
-			Filter f1 = genericDao.createFilter(FilterType.EQUALS, "id", vBActivo.getId());
-			Activo activo = genericDao.get(Activo.class, f1);
+			Activo activo = null;
+			if(!Checks.esNulo(genericDao))
+			{
+				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "id", vBActivo.getId());
+				activo = genericDao.get(Activo.class, f1);
+			}
 
 			List<String> fila = new ArrayList<String>();
 			fila.add(vBActivo.getNumActivo());
@@ -130,7 +134,9 @@ public class ActivoExcelReport extends AbstractExcelReport implements ExcelRepor
 
 	private String mapeoEstadoFisico(Activo activo)
 	{
-		return activo.getEstadoActivo().getDescripcion();
+		String descripcion = "";
+		if(!Checks.esNulo(activo.getEstadoActivo()) && !Checks.esNulo(descripcion = activo.getEstadoActivo().getDescripcion())){}
+		return descripcion;
 	}
 
 	public String getReportName() {

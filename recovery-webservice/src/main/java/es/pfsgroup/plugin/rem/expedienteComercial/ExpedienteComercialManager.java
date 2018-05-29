@@ -2615,6 +2615,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				//if (!Checks.esNulo(dto.getNumeroClienteUrsus())) {
 					comprador.setIdCompradorUrsus(dto.getNumeroClienteUrsus());
+					comprador.setIdCompradorUrsusBh(dto.getNumeroClienteUrsusBh());
 				//}
 
 				if (!Checks.esNulo(dto.getCodTipoPersona())) {
@@ -3183,6 +3184,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(dto.getNumeroClienteUrsus())) {
 					comprador.setIdCompradorUrsus(dto.getNumeroClienteUrsus());
 				}
+				
+				if (!Checks.esNulo(dto.getNumeroClienteUrsusBh())) {
+					comprador.setIdCompradorUrsusBh(dto.getNumeroClienteUrsusBh());
+				}
 
 				if (!Checks.esNulo(dto.getCodTipoPersona())) {
 					DDTiposPersona tipoPersona = (DDTiposPersona) utilDiccionarioApi
@@ -3562,7 +3567,23 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (comprador.getFechaBaja() == null) {
 					TitularDto titular = new TitularDto();
 					Comprador primaryKey = comprador.getPrimaryKey().getComprador();
-					titular.setNumeroUrsus(primaryKey.getIdCompradorUrsus());
+					
+					Activo activoPrincipal = expediente.getOferta().getActivoPrincipal();
+
+					String codigoSubcartera = activoPrincipal.getSubcartera().getCodigo();
+					
+					if (DDSubcartera.CODIGO_BAN_BH.equals(codigoSubcartera)) {
+						Long idCompradorUrsusBh = primaryKey.getIdCompradorUrsusBh();
+						if (!Checks.esNulo(idCompradorUrsusBh)) {
+							titular.setNumeroUrsus(idCompradorUrsusBh);
+						}
+					} else {
+						Long idCompradorUrsus = primaryKey.getIdCompradorUrsus();
+						if (!Checks.esNulo(idCompradorUrsus)) {
+							titular.setNumeroUrsus(idCompradorUrsus);
+						}
+					}
+										
 					titular.setTitularContratacion(comprador.getTitularContratacion());
 
 					if (primaryKey.getTipoDocumento() != null) {
@@ -4159,27 +4180,56 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		for (int k = 0; k < expedienteComercial.getCompradores().size(); k++) {
 			CompradorExpediente compradorExpediente = expedienteComercial.getCompradores().get(k);
 			TitularUVEMDto titularUVEM = new TitularUVEMDto();
+			
+			Activo activoPrincipal = expedienteComercial.getOferta().getActivoPrincipal();
 
-			if (compradorExpediente.getPrimaryKey().getComprador().getIdCompradorUrsus() != null) {
-				titularUVEM.setCliente(
-						compradorExpediente.getPrimaryKey().getComprador().getIdCompradorUrsus().toString());
+			String codigoSubcartera = activoPrincipal.getSubcartera().getCodigo();
+			
+			//Si es Bankia Habitat
+			if (DDSubcartera.CODIGO_BAN_BH.equals(codigoSubcartera)) {
+				Long idCompradorUrsusBh = compradorExpediente.getPrimaryKey().getComprador().getIdCompradorUrsusBh();
+				if (!Checks.esNulo(idCompradorUrsusBh)) {
+					titularUVEM.setCliente(idCompradorUrsusBh.toString());
+				}
+				
+				if (!Checks.esNulo(compradorExpediente.getDocumentoConyuge())) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "documento", compradorExpediente.getDocumentoConyuge());
+					Filter filtro2 = genericDao.createFilter(FilterType.NOTNULL, "idCompradorUrsusBh");
+					List<Comprador> conyuges = genericDao.getList(Comprador.class, filtro,filtro2);
+					Comprador conyuge = null;
+					if(conyuges != null && conyuges.size()>0){
+						conyuge = conyuges.get(0);
+					}
+					if(!Checks.esNulo(conyuge) && !Checks.esNulo(conyuge.getIdCompradorUrsus())) {
+						titularUVEM.setConyuge(conyuge.getIdCompradorUrsusBh().toString());
+					}
+				}
+
+			//Si no es Bankia Habitat
+			} else {
+				Long idCompradorUrsus = compradorExpediente.getPrimaryKey().getComprador().getIdCompradorUrsus();
+				if (!Checks.esNulo(idCompradorUrsus)) {
+					titularUVEM.setCliente(idCompradorUrsus.toString());
+				}
+				
+				if (!Checks.esNulo(compradorExpediente.getDocumentoConyuge())) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "documento", compradorExpediente.getDocumentoConyuge());
+					Filter filtro2 = genericDao.createFilter(FilterType.NOTNULL, "idCompradorUrsus");
+					List<Comprador> conyuges = genericDao.getList(Comprador.class, filtro,filtro2);
+					Comprador conyuge = null;
+					if(conyuges != null && conyuges.size()>0){
+						conyuge = conyuges.get(0);
+					}
+					if(!Checks.esNulo(conyuge) && !Checks.esNulo(conyuge.getIdCompradorUrsus())) {
+						titularUVEM.setConyuge(conyuge.getIdCompradorUrsus().toString());
+					}
+				}
 			}
+			
 			if (compradorExpediente.getPorcionCompra() != null) {
 				titularUVEM.setPorcentaje(compradorExpediente.getPorcionCompra().toString());
 			}			
-			
-			if (compradorExpediente.getDocumentoConyuge() != null) {
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "documento", compradorExpediente.getDocumentoConyuge());
-				Filter filtro2 = genericDao.createFilter(FilterType.NOTNULL, "idCompradorUrsus");
-				List<Comprador> conyuges = genericDao.getList(Comprador.class, filtro,filtro2);
-				Comprador conyuge = null;
-				if(conyuges != null && conyuges.size()>0){
-					conyuge = conyuges.get(0);
-				}
-				if(!Checks.esNulo(conyuge) && !Checks.esNulo(conyuge.getIdCompradorUrsus())) {
-					titularUVEM.setConyuge(conyuge.getIdCompradorUrsus().toString());
-				}
-			}
+
 			if(!compradorPrincipal.equals(compradorExpediente.getPrimaryKey().getComprador())){
 				listaTitularUVEM.add(titularUVEM);
 			}else {
@@ -4217,7 +4267,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			for (int k = 0; k < expedienteComercial.getCompradoresAlta().size(); k++) {
 				CompradorExpediente compradorExpediente = expedienteComercial.getCompradoresAlta().get(k);
-				if (Checks.esNulo(compradorExpediente.getPrimaryKey().getComprador().getIdCompradorUrsus())) {
+				if (Checks.esNulo(compradorExpediente.getPrimaryKey().getComprador().getIdCompradorUrsus())
+						&& Checks.esNulo(compradorExpediente.getPrimaryKey().getComprador().getIdCompradorUrsusBh())) {
 					return false;
 				}
 			}

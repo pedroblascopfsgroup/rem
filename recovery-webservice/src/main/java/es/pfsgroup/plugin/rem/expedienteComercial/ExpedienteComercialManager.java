@@ -4875,7 +4875,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public Boolean checkImporteParticipacion(Long idTramite) {
-		Double totalImporteParticipacionActivos = 0d;
+		BigDecimal totalImporteParticipacionActivos = new BigDecimal(0);
 
 		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
 		if (activoTramite == null) {
@@ -4908,11 +4908,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		for (ActivoOferta activoOferta : activosExpediente) {
 			if (!Checks.esNulo(activoOferta.getImporteActivoOferta())) {
 				totalImporteParticipacionActivos = totalImporteParticipacionActivos
-						+ (100*activoOferta.getImporteActivoOferta());
+						.add(BigDecimal.valueOf(activoOferta.getImporteActivoOferta()));
 			}
 		}
 
-		return importeExpediente.equals(totalImporteParticipacionActivos/100);
+		return importeExpediente.equals(totalImporteParticipacionActivos.doubleValue());
 	}
 
 	public DtoCondicionesActivoExpediente getCondicionesActivoExpediete(Long idExpediente, Long idActivo) {
@@ -5683,6 +5683,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public boolean checkExpedienteFechaChequeLiberbank(Long idTramite) {
+		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
+		if (!Checks.esNulo(activoTramite) && !Checks.esNulo(activoTramite.getActivo()) && !Checks.esNulo(activoTramite.getActivo().getCartera()) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activoTramite.getActivo().getCartera().getCodigo())) {
+			Trabajo trabajo = activoTramite.getTrabajo();
+			if (!Checks.esNulo(trabajo)) {
+				ExpedienteComercial expediente = expedienteComercialDao
+						.getExpedienteComercialByTrabajo(trabajo.getId());
+				return !Checks.esNulo(expediente.getFechaContabilizacionPropietario());
+			}
+		}
+		
+		return true;
 	}
 
 	@Override

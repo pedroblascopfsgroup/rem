@@ -1157,7 +1157,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     
     T013_ObtencionContratoReservaValidacion: function(){
     	var me = this;
-    	if(me.down('[name=fechaFirma]').getValue()!=null && me.down('[name=fechaFirma]').getValue()!=""){
+    	if((me.down('[name=fechaFirma]').getValue()!=null && me.down('[name=fechaFirma]').getValue()!="") || CONST.CARTERA['LIBERBANK']){
     		me.bloquearCampo(me.down('[name=fechaFirma]'));
     	}
     },

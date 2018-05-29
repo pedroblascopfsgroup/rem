@@ -316,6 +316,10 @@
             	def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.checkLiberbank(tareaExterna);
             }
+            def checkExpedienteFechaChequeLiberbank = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkExpedienteFechaChequeLiberbank(idTramite);
+            }
             def checkExpedienteBloqueado = {
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkExpedienteBloqueado(idTramite);

@@ -4900,9 +4900,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					DDSubtipoActivo subtipoActivo = activo.getSubtipoActivo();
 					
 					if(DDTipoActivo.COD_VIVIENDA.equals(tipoActivo.getCodigo()) 
-							|| DDSubtipoActivo.COD_GARAJE.equals(subtipoActivo) 
-							|| DDSubtipoActivo.COD_TRASTERO.equals(subtipoActivo) 
-							|| DDSubtipoActivo.COD_LOCAL_COMERCIAL.equals(subtipoActivo)) {
+							|| DDSubtipoActivo.COD_GARAJE.equals(subtipoActivo.getCodigo()) 
+							|| DDSubtipoActivo.COD_TRASTERO.equals(subtipoActivo.getCodigo()) 
+							|| DDSubtipoActivo.COD_LOCAL_COMERCIAL.equals(subtipoActivo.getCodigo())) {
 						
 						tipoResidencial++;						
 					} else {						

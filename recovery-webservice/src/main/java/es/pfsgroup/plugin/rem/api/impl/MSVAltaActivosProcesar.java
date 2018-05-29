@@ -15,10 +15,10 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.plugin.rem.factory.AltaActivoFactoryApi;
 import es.pfsgroup.plugin.rem.model.DtoAltaActivoFinanciero;
-import es.pfsgroup.plugin.rem.model.ResultadoProcesarFila;
 import es.pfsgroup.plugin.rem.service.AltaActivoService;
 
 @Component

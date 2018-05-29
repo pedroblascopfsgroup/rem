@@ -55,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
@@ -288,7 +289,11 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 			            			if(trabajoApi.checkBankia(tareaExterna)){
 			            				String codigoComite = null;
 										try {
-											codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
+											if(!expediente.getOferta().getVentaDirecta()){
+												codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
+											}else{
+												codigoComite = DDComiteSancion.CODIGO_HAYA_SAREB;
+											}
 										} catch (Exception e) {
 											// TODO Auto-generated catch block
 											e.printStackTrace();

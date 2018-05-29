@@ -64,6 +64,7 @@ public class DtoOfertasFilter extends WebDto {
 	private Long numPrinex;
 	private Boolean agrupacionesVinculadas;	
 	private Boolean ventaDirecta;
+	private Long idUvem;
 	
 	public Long getNumOferta() {
 		return numOferta;
@@ -382,6 +383,12 @@ public class DtoOfertasFilter extends WebDto {
 	}
 	public void setVentaDirecta(Boolean ventaDirecta) {
 		this.ventaDirecta = ventaDirecta;
+	}
+	public Long getIdUvem() {
+		return idUvem;
+	}
+	public void setIdUvem(Long idUvem) {
+		this.idUvem = idUvem;
 	}
 		
 }

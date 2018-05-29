@@ -18,7 +18,7 @@ import es.pfsgroup.plugin.rem.api.GastoApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
-import es.pfsgroup.plugin.rem.model.ResultadoProcesarFila;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 
 
 @Component

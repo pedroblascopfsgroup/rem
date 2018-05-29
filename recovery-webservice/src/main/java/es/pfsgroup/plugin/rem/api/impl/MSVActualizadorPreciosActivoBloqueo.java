@@ -18,7 +18,7 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ResultadoProcesarFila;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 
 @Component
 public class MSVActualizadorPreciosActivoBloqueo extends AbstractMSVActualizador implements MSVLiberator {

@@ -106,7 +106,6 @@ import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
-import es.pfsgroup.plugin.rem.model.DtoSaltoTarea;
 import es.pfsgroup.plugin.rem.model.DtoSubsanacion;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
@@ -151,7 +150,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
-import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
@@ -2371,8 +2369,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(tex)) {
 				SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 				try {
-					resolucionDto.setFechaVenta(
-							df.parse(activoTramiteApi.getTareaValorByNombre(tex.getValores(), "fechaFirma")));
+					String fechaFirma = activoTramiteApi.getTareaValorByNombre(tex.getValores(), "fechaFirma");
+					if(!Checks.esNulo(fechaFirma)){
+						resolucionDto.setFechaVenta(df.parse(fechaFirma));
+					}
+					
 				} catch (ParseException e) {
 					logger.error("error en expedienteComercialManager", e);
 				}
@@ -2678,6 +2679,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(dto.getEmail())) {
 				}
 				comprador.setEmail(dto.getEmail());
+				
+				
 
 				Filter filtroExpedienteComercial = genericDao.createFilter(FilterType.EQUALS, "id",
 						Long.parseLong(dto.getIdExpedienteComercial()));
@@ -3156,7 +3159,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				compradorExpediente.setTitularContratacion(0);
 			}
 			compradorExpediente.setBorrado(false);
+			
+			if (!Checks.esNulo(dto.getCodTipoPersona())) {
+				DDTiposPersona tipoPersona = (DDTiposPersona) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTiposPersona.class, dto.getCodTipoPersona());
+				compradorExpediente.getPrimaryKey().getComprador().setTipoPersona(tipoPersona);
+			}
+			
 			expediente.getCompradores().add(compradorExpediente);
+			
+			
 
 			genericDao.save(ExpedienteComercial.class, expediente);
 
@@ -3440,13 +3452,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		short tipoDeImpuesto = InstanciaDecisionDataDto.TIPO_IMPUESTO_SIN_IMPUESTO;
 		List<InstanciaDecisionDataDto> instanciaList = new ArrayList<InstanciaDecisionDataDto>();
 		boolean solicitaFinanciacion = false;
-		DecimalFormat num = new DecimalFormat("###.##");
-
+	
 		Oferta oferta = expediente.getOferta();
 		if (Checks.esNulo(oferta)) {
 			throw new JsonViewerException("No existe oferta para el expediente.");
 		}
 
+		if(oferta.getVentaDirecta() != null){
+			instancia.setOfertaVentaCartera(oferta.getVentaDirecta());
+		}else{
+			instancia.setOfertaVentaCartera(false);
+		}
+		
 		List<ActivoOferta> listaActivos = oferta.getActivosOferta();
 		if (Checks.esNulo(listaActivos) || (!Checks.esNulo(listaActivos) && listaActivos.size() == 0)) {
 			throw new JsonViewerException("No hay activos para la oferta indicada.");
@@ -3629,7 +3646,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if(oferta.getAgrupacion() != null){
 			instancia.setOfertaAgrupacion(true);
-			instancia.setCodigoAgrupacionInmueble(oferta.getAgrupacion().getUvemCodigoAgrupacionInmueble());
+			if(oferta.getIdUvem() != null ){
+				instancia.setCodigoAgrupacionInmueble(Integer.valueOf(oferta.getIdUvem().toString()));
+			}
 		}
 		
 		

@@ -16,7 +16,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ResultadoProcesarFila;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 
 
 @Component

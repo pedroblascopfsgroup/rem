@@ -18,6 +18,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -25,8 +28,10 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.listener.ActivoGenerarSaltoImpl;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoSaltoTarea;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
@@ -36,11 +41,13 @@ import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import es.pfsgroup.plugin.rem.service.UpdaterTransitionService;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateOfertaApi;
 import net.sf.json.JSONObject;
 
@@ -72,6 +79,12 @@ public class ResolucionComiteController {
 	
 	@Autowired
 	private UpdaterStateOfertaApi updaterStateOfertaApi;
+	
+	@Autowired
+	private GenericABMDao genericDao;
+	
+	@Autowired 
+    private UpdaterTransitionService updaterTransitionService;
 
 	public static final String ACCION_ANULACION_RESOLUCION = "2";
 	public static final String ACCION_RESOLUCION_DEVOLUCION = "3";
@@ -241,8 +254,15 @@ public class ResolucionComiteController {
 							List<TareaExterna> listaTareas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
 							for (TareaExterna tarea : listaTareas) {
 								if (!Checks.esNulo(tarea)) {
-									tareaActivoApi.saltoCierreEconomico(tarea.getId());
+									DtoSaltoTarea salto = new DtoSaltoTarea();
+									salto.setIdTramite(tramite.getId());
+									salto.setPbcAprobado(1);
+									salto.setFechaRespuestaComite(resol.getFechaResolucion());
+									updaterTransitionService.updateT013_CierreEconomico(salto);									
+									
+									tareaActivoApi.saltoDesdeTareaExterna(tarea.getId(),ActivoGenerarSaltoImpl.CODIGO_SALTO_CIERRE);
 									expedienteComercialApi.bloquearExpediente(eco.getId());
+									
 									break;
 								}
 							}

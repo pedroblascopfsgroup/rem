@@ -637,7 +637,12 @@ public class Oferta implements Serializable, Auditable {
 	}
 	
 	public Boolean getVentaDirecta() {
-		return ventaDirecta;
+		if(ventaDirecta == null){
+			return false;
+		}else{
+			return ventaDirecta;
+		}
+		
 	}
 
 	public void setVentaDirecta(Boolean ventaDirecta) {

@@ -5,9 +5,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -29,40 +26,39 @@ import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
-import es.pfsgroup.plugin.rem.model.ResultadoProcesarFila;
-
 
 @Component
 abstract public class AbstractMSVActualizador implements MSVLiberator {
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
-		
+
 	@Autowired
 	ProcessAdapter processAdapter;
-	
+
 	@Autowired
 	private MSVFicheroDao ficheroDao;
-	
+
 	@Autowired
 	private MSVExcelParser excelParser;
-	
+
 	@Resource(name = "entityTransactionManager")
-    private PlatformTransactionManager transactionManager;
-	
+	private PlatformTransactionManager transactionManager;
+
 	private final Log logger = LogFactory.getLog(getClass());
 
 	public static final int EXCEL_FILA_DEFECTO = 1;
-	
+
 	public abstract String getValidOperation();
 
-	
 	@Transactional(readOnly = false)
-	public abstract ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException, Exception;
-	
+	public abstract ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
+			throws IOException, ParseException, JsonViewerException, SQLException, Exception;
+
 	public Boolean isValidFor(MSVDDOperacionMasiva tipoOperacion) {
 
 		if (!Checks.esNulo(tipoOperacion)) {
@@ -73,70 +69,66 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 			}
 		} else {
 			return false;
-		}		
+		}
 	}
 
 	@Override
-	public Boolean liberaFichero(MSVDocumentoMasivo file) throws IllegalArgumentException, IOException, JsonViewerException, SQLException, Exception {
-			
+	public Boolean liberaFichero(MSVDocumentoMasivo file)
+			throws IllegalArgumentException, IOException, JsonViewerException, SQLException, Exception {
+
 		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);
-		
+		ArrayList<ResultadoProcesarFila> resultados = new ArrayList<ResultadoProcesarFila>();
 		try {
-			
 			this.preProcesado(exc);
 			TransactionStatus transaction = null;
 			Integer numFilas = this.getNumFilas(file, exc);
-			List<Integer> listaFilas = new ArrayList<Integer>();
-			Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
 			Long token = null;
-			ResultadoProcesarFila resultProcesaFila = null;
-			if(!Checks.esNulo(file) && !Checks.esNulo(file.getProcesoMasivo())) {
+			if (!Checks.esNulo(file) && !Checks.esNulo(file.getProcesoMasivo())) {
 				token = file.getProcesoMasivo().getToken();
 			}
-			
-			for (int fila = this.getFilaInicial(); fila < numFilas; fila++) {			
-				try{
-					if (file.getProcesoMasivo().getTipoOperacion().getCodigo().equals(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA)){
-						resultProcesaFila = this.procesaFila(exc, fila,token);
-					} else {			
+
+			for (int fila = this.getFilaInicial(); fila < numFilas; fila++) {
+				ResultadoProcesarFila resultProcesaFila = null;
+				try {
+					if (file.getProcesoMasivo().getTipoOperacion().getCodigo()
+							.equals(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA)) {
+						resultProcesaFila = this.procesaFila(exc, fila, token);
+					} else {
 						transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-						resultProcesaFila = this.procesaFila(exc, fila,token);
-						transactionManager.commit(transaction);					
+						resultProcesaFila = this.procesaFila(exc, fila, token);
+						transactionManager.commit(transaction);
 					}
+					resultProcesaFila.setCorrecto(true);
+					resultProcesaFila.setFila(fila);
+					resultados.add(resultProcesaFila);
 					processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), true);
-				}catch(Exception e){
-					listaFilas.add(fila);
-					mapaErrores.put("KO", listaFilas);
-					logger.error("error procesando fila "+fila+" del proceso "+file.getProcesoMasivo().getId(),e);
-					transactionManager.rollback(transaction);
-					processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), false);					
-				}
-			}
-			if(!mapaErrores.isEmpty()){
-				MSVDocumentoMasivo archivo = ficheroDao.findByIdProceso(file.getProcesoMasivo().getId());
-				if (!Checks.esNulo(archivo)) {
-					exc = excelParser.getExcel(archivo.getContenidoFichero().getFile());
-					String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
-					FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-					
-					processAdapter.setExcelErroresProcesado(archivo, fileItemErrores);
+				} catch (Exception e) {
+					logger.error("error procesando fila " + fila + " del proceso " + file.getProcesoMasivo().getId(),
+							e);
+					if (!file.getProcesoMasivo().getTipoOperacion().getCodigo()
+							.equals(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA)) {
+						transactionManager.rollback(transaction);
+					}
+					resultProcesaFila = new ResultadoProcesarFila();
+					resultProcesaFila.setCorrecto(false);
+					resultProcesaFila.setFila(fila);
+					resultProcesaFila.setErrorDesc(e.getMessage());
+					resultados.add(resultProcesaFila);
+					processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), false);
 				}
 			}
 			
-			if(mapaErrores.isEmpty() && !Checks.esNulo(resultProcesaFila) && !resultProcesaFila.isHashmapVacio()) {
-				MSVDocumentoMasivo archivo = ficheroDao.findByIdProceso(file.getProcesoMasivo().getId());
-				exc = excelParser.getExcel(archivo.getContenidoFichero().getFile());
-				String nomFicheroResultados = exc.crearExcelResultadosByHojaAndFilaCabecera(resultProcesaFila.gethMap(),0,0);
-				FileItem fileItemResultados = new FileItem(new File(nomFicheroResultados));
-				
-				processAdapter.setExcelResultadosProcesado(archivo, fileItemResultados);
-			}
-			
+			MSVDocumentoMasivo archivo = ficheroDao.findByIdProceso(file.getProcesoMasivo().getId());
+			exc = excelParser.getExcel(archivo.getContenidoFichero().getFile());
+			String nomFicheroResultados = exc.crearExcelResultado(resultados,0, this.getFilaInicial());
+			FileItem fileItemResultados = new FileItem(new File(nomFicheroResultados));
+
+			processAdapter.setExcelResultadosProcesado(archivo, fileItemResultados);
+
 			this.postProcesado(exc);
 
-		}
-		catch (Exception e) {
-			logger.error("Error procesando fichero",e);
+		} catch (Exception e) {
+			logger.error("Error procesando fichero", e);
 			return false;
 		}
 
@@ -145,16 +137,18 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 
 	@Transactional(readOnly = false)
 	public Integer getNumFilas(MSVDocumentoMasivo file, MSVHojaExcel exc) throws IOException {
-		Integer numFilas = exc.getNumeroFilasByHoja(0,file.getProcesoMasivo().getTipoOperacion());
+		Integer numFilas = exc.getNumeroFilasByHoja(0, file.getProcesoMasivo().getTipoOperacion());
 		return numFilas;
 	}
-    
+
 	@Transactional(readOnly = false)
-	public void preProcesado(MSVHojaExcel exc) throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
+	public void preProcesado(MSVHojaExcel exc)
+			throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
 	}
-	
+
 	@Transactional(readOnly = false)
-	public void postProcesado(MSVHojaExcel exc) throws NumberFormatException, IllegalArgumentException, IOException, ParseException{
+	public void postProcesado(MSVHojaExcel exc)
+			throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
 	}
 
 	@Override

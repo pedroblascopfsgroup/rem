@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.oferta;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -905,6 +906,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.estaVacio(valoresTasacion)) {
 				// En cada activo de la agrupacion se añade una oferta en la
 				// tabla ACT_OFR
+				Double sumatorioImporte = Double.valueOf(0);
 				for (ActivoAgrupacionActivo activos : agrupacion.getActivos()) {
 
 					ActivoOferta activoOferta = new ActivoOferta();
@@ -919,10 +921,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 								.valueOf(activoAgrupacionApi.asignarPorcentajeParticipacionEntreActivos(activos,
 										valoresTasacion, valoresTasacion.get("total")));
 						activoOferta.setPorcentajeParticipacion(Double.parseDouble(participacion));
-						activoOferta.setImporteActivoOferta(
-								(oferta.getImporteOferta() * Double.parseDouble(participacion)) / 100);
+						Double importe = (oferta.getImporteOferta() * Double.parseDouble(participacion)) / 100;
+						importe =  Double.valueOf(new DecimalFormat("#.##").format(importe));
+						sumatorioImporte = sumatorioImporte +importe;
+						activoOferta.setImporteActivoOferta(importe);
 					}
 					listaActOfr.add(activoOferta);
+				}
+				//Pueden producirse pequeños errores de redondeo, en cuyo caso, aplicamos la diferencia al ultimo actv de la lista
+				if(listaActOfr != null && listaActOfr.size()>0 && oferta.getImporteOferta().compareTo(sumatorioImporte)>0){
+					ActivoOferta elUltimo = listaActOfr.get(listaActOfr.size()-1);
+					elUltimo.setImporteActivoOferta(elUltimo.getImporteActivoOferta()-(oferta.getImporteOferta()-sumatorioImporte));
+				}else if(listaActOfr != null && listaActOfr.size()>0 && oferta.getImporteOferta().compareTo(sumatorioImporte)<0){
+					ActivoOferta elUltimo = listaActOfr.get(listaActOfr.size()-1);
+					elUltimo.setImporteActivoOferta(elUltimo.getImporteActivoOferta()-(sumatorioImporte-oferta.getImporteOferta()));
 				}
 			}
 		}

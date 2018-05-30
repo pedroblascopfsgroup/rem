@@ -4941,6 +4941,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			resultado.setEstadoTituloInformada(activo.getTitulo().getEstado().getCodigo());
 		}
 		if (activo.getSituacionPosesoria() != null) {
+			
+			if (Checks.esNulo(activo.getSituacionPosesoria().getOcupado())) activo.getSituacionPosesoria().setOcupado(0);
+			if (Checks.esNulo(activo.getSituacionPosesoria().getConTitulo())) activo.getSituacionPosesoria().setConTitulo(0);
+			
 			if (activo.getSituacionPosesoria().getOcupado() != null
 					&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(0))) {
 				resultado.setSituacionPosesoriaCodigoInformada("01");

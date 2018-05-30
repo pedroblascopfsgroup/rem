@@ -940,5 +940,7 @@ public interface ExpedienteComercialApi {
 	public void enviarCondicionantesEconomicosUvem(Long idExpediente) throws Exception;
 	
 	boolean reservaFirmada(Long idTramite);
+
+	public Boolean checkInformeJuridicoFinalizado(Long idTramite);	
 	
 }

@@ -39,9 +39,8 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 public class MSVActivosGastoPorcentajeValidator extends MSVExcelValidatorAbstract{
 	public static final String ACTIVE_NOT_EXISTS = "El activo no existe.";
 	public static final String GASTO_NOT_EXISTS = "El gasto no existe.";
-	public static final String ACTIVO_GASTO_NO_RELACION = "El activo y el gasto no estan relacionados.";
+	public static final String ACTIVO_GASTO_NO_RELACION = "El activo y el gasto no están relacionados.";
 	public static final String PORCENTAJE_SUPERIOR_100 = "El porcentaje es superior a 100.";
-	public static final String PORCENTAJE_INFERIOR_100 = "El porcentaje es inferior a 100.";
 
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -96,10 +95,11 @@ public class MSVActivosGastoPorcentajeValidator extends MSVExcelValidatorAbstrac
 
 				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
 				mapaErrores.put(GASTO_NOT_EXISTS, isGastoNotExistsRows(exc));
-				//mapaErrores.put(GASTO_FECHA_TRASPASO_ANTERIOR, isFechaTraspasoPosteriorAFechaDevengo(exc));
+				mapaErrores.put(ACTIVO_GASTO_NO_RELACION, isRelacionActivoGastoNotExistsRows(exc));
+				mapaErrores.put(PORCENTAJE_SUPERIOR_100, isPorcentajeSuperiorA100(exc));
 				
 			if (!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() || !mapaErrores.get(GASTO_NOT_EXISTS).isEmpty()
-//					|| !mapaErrores.get(GASTO_FECHA_TRASPASO_ANTERIOR).isEmpty()
+					|| !mapaErrores.get(ACTIVO_GASTO_NO_RELACION).isEmpty() || !mapaErrores.get(PORCENTAJE_SUPERIOR_100).isEmpty()
 					) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -184,29 +184,6 @@ public class MSVActivosGastoPorcentajeValidator extends MSVExcelValidatorAbstrac
 		return listaFilas;
 	}
 	
-	private List<Integer> isActivoAsignado(MSVHojaExcel exc){
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		
-		try{
-			for(int i=1; i<this.numFilasHoja;i++){
-				try {
-					if(!particularValidator.activoNoAsignado(exc.dameCelda(i, 0),exc.dameCelda(i, 1)))
-						listaFilas.add(i);
-				} catch (ParseException e) {
-					listaFilas.add(i);
-				}
-			}
-			} catch (IllegalArgumentException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			} catch (IOException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			}
-		return listaFilas;
-	}
-	
-	
 	private List<Integer> isGastoNotExistsRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
@@ -229,13 +206,13 @@ public class MSVActivosGastoPorcentajeValidator extends MSVExcelValidatorAbstrac
 		return listaFilas;
 	}
 	
-	private List<Integer> isPropietarioGastoSinDocumento(MSVHojaExcel exc){
+	private List<Integer> isRelacionActivoGastoNotExistsRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					if(!particularValidator.propietarioGastoConDocumento(exc.dameCelda(i, 1)))
+					if(!particularValidator.tienenRelacionActivoGasto(exc.dameCelda(i, 0), exc.dameCelda(i, 1)))
 						listaFilas.add(i);
 				} catch (ParseException e) {
 					listaFilas.add(i);
@@ -251,113 +228,30 @@ public class MSVActivosGastoPorcentajeValidator extends MSVExcelValidatorAbstrac
 		return listaFilas;
 	}
 	
-	private List<Integer> isPropietarioGastoDiferenteActivo(MSVHojaExcel exc){
+	private List<Integer> isPorcentajeSuperiorA100(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
-		try{
-			for(int i=1; i<this.numFilasHoja;i++){
-				try {
-					if(!particularValidator.propietarioGastoIgualActivo(exc.dameCelda(i, 0),exc.dameCelda(i, 1)))
-						listaFilas.add(i);
-				} catch (ParseException e) {
+		for(int i=1; i<this.numFilasHoja;i++){
+			try {
+				if(Integer.parseInt(exc.dameCelda(i, 2))>100){
 					listaFilas.add(i);
 				}
-			}
+			} catch (NumberFormatException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
 			} catch (IllegalArgumentException e) {
 				listaFilas.add(0);
 				e.printStackTrace();
 			} catch (IOException e) {
 				listaFilas.add(0);
 				e.printStackTrace();
+			} catch (ParseException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
 			}
+		}
+		
 		return listaFilas;
 	}
 	
-	private List<Integer> isGastoAutorizado(MSVHojaExcel exc){
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		
-		try{
-			for(int i=1; i<this.numFilasHoja;i++){
-				try {
-					if(!particularValidator.isGastoNoAutorizado(exc.dameCelda(i, 1)))
-						listaFilas.add(i);
-				} catch (ParseException e) {
-					listaFilas.add(i);
-				}
-			}
-			} catch (IllegalArgumentException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			} catch (IOException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			}
-		return listaFilas;
-	}
-	
-	private List<Integer> isGastoAsociadoTrabajo(MSVHojaExcel exc){
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		
-		try{
-			for(int i=1; i<this.numFilasHoja;i++){
-				try {
-					if(!particularValidator.isGastoNoAsociadoTrabajo(exc.dameCelda(i, 1)))
-						listaFilas.add(i);
-				} catch (ParseException e) {
-					listaFilas.add(i);
-				}
-			}
-			} catch (IllegalArgumentException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			} catch (IOException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			}
-		return listaFilas;
-	}
-	
-	private List<Integer> isGastoNoPermiteAnyadirActivo(MSVHojaExcel exc){
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		
-		try{
-			for(int i=1; i<this.numFilasHoja;i++){
-				try {
-					if(!particularValidator.isGastoPermiteAnyadirActivo(exc.dameCelda(i, 1)))
-						listaFilas.add(i);
-				} catch (ParseException e) {
-					listaFilas.add(i);
-				}
-			}
-			} catch (IllegalArgumentException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			} catch (IOException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			}
-		return listaFilas;
-	}
-	
-	private List<Integer> isFechaTraspasoPosteriorAFechaDevengo(MSVHojaExcel exc){
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		
-		try{
-			for(int i=1; i<this.numFilasHoja;i++){
-				try {
-					if(!particularValidator.isFechaTraspasoPosteriorAFechaDevengo(exc.dameCelda(i, 0), exc.dameCelda(i, 1)))
-						listaFilas.add(i);
-				} catch (ParseException e) {
-					listaFilas.add(i);
-				}
-			}
-			} catch (IllegalArgumentException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			} catch (IOException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			}
-		return listaFilas;
-	}
 }

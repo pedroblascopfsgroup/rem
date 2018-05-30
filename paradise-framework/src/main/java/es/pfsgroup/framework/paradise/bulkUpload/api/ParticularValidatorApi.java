@@ -294,4 +294,6 @@ public interface ParticularValidatorApi {
 
 	Boolean existeProveedorMediadorByNIFConFVD(String proveedorMediadorNIF);
 
+	Boolean tienenRelacionActivoGasto(String numActivo, String numGasto);
+
 }

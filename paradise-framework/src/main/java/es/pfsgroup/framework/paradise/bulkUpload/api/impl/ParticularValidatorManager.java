@@ -1153,6 +1153,19 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean tienenRelacionActivoGasto(String numActivo, String numGasto){
+		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto) || Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM GPV_ACT "
+				+ "		WHERE GPV_ID = (SELECT GPV_ID FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = '"+numGasto+"')"
+				+ "		AND ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '"+numActivo+"')");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
 	public Boolean propietarioGastoConDocumento(String numGasto){
 		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;

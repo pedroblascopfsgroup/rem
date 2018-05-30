@@ -53,6 +53,8 @@ BEGIN
     END IF;
             
     PL_OUTPUT := PL_OUTPUT || '[FIN]';
+
+    COMMIT;
     
 EXCEPTION
     WHEN OTHERS THEN

@@ -42,6 +42,7 @@ import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
+import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
@@ -66,6 +67,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
@@ -124,6 +126,7 @@ import es.pfsgroup.plugin.rem.model.Posicionamiento;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.Subsanaciones;
 import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
+import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
@@ -201,6 +204,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public static final String PERFIL_SUPERVISOR_FORMALIZACION = "HAYASUPFORM";
 	public static final String PERFIL_GESTOR_MINUTAS = "GESMIN";
 	public static final String PERFIL_SUPERVISOR_MINUTAS = "SUPMIN";
+	 private static final String TAR_INFORME_JURIDICO = "Informe jurídico";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -251,6 +255,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Autowired
 	private ActivoApi activoApi;
+	
+    
+    @Autowired
+    private TareaActivoApi tareaActivoApi;
 
 	@Override
 	public String managerName() {
@@ -4882,6 +4890,33 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 
+	}
+	
+	@Override
+	public Boolean checkInformeJuridicoFinalizado(Long idTramite) {
+		
+		ActivoTramite tramite = activoTramiteApi.get(idTramite);
+		
+		List<TareaActivo> tareasActivas = tareaActivoApi.getTareasActivoByIdTramite(tramite.getId());
+		Boolean informeJuridicoFinalizado = false;
+		Boolean tieneTareaInformeJuridico = false;
+		
+		for (TareaActivo tarea : tareasActivas) {
+			Filter filterTar = genericDao.createFilter(FilterType.EQUALS, "id", tarea.getId());
+			TareaNotificacion tareaNotificacion = genericDao.get(TareaNotificacion.class, filterTar);
+			if (TAR_INFORME_JURIDICO.equals(tareaNotificacion.getTarea())){
+				if (tareaNotificacion.getTareaFinalizada()){
+					informeJuridicoFinalizado = true;
+				}
+				tieneTareaInformeJuridico = true;
+			}
+		}
+		
+		if (informeJuridicoFinalizado || !tieneTareaInformeJuridico){
+			return true;
+		}else {
+			return false;
+		}
 	}
 
 	@Override

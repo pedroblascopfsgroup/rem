@@ -326,7 +326,8 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 							                            }
 							                        ]
 										        },
-										        {
+										        
+										       {
 					                            	xtype: 'textfieldbase',
 											        fieldLabel:  HreRem.i18n('header.numero.ursus'),
 											        reference: 'numeroClienteUrsusRef',
@@ -335,7 +336,19 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										            	hidden: '{!esCarteraBankia}'
 										            },
 										            editable: true
+							                    },
+							                    
+							                    {
+					                            	xtype: 'textfieldbase',
+											        fieldLabel:  HreRem.i18n('header.numero.ursus.bh'),
+											        reference: 'numeroClienteUrsusBhRef',
+											        bind: {
+										            	value: '{comprador.numeroClienteUrsusBh}',
+										            	hidden: '{!esBankiaHabitat}'
+										            },
+										            editable: true
 					                            }
+										        
 //										        {
 //													xtype: 'textfieldbase',
 //													fieldLabel:  HreRem.i18n('header.numero.ursus'),

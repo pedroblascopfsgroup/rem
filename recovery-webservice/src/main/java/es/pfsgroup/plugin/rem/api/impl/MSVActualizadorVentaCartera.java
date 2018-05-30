@@ -166,6 +166,11 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 				// PRECIO VENTA NOMBRE RAZON SOCIAL TIPO DOC NUM DOC CÓDIGO
 				// PRESCRIPTOR ID AGRUPACION
 				// idUvem
+				Long idUvem = null;
+				if (exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.CODIGO_CARTERA) != null
+						&& !exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.CODIGO_CARTERA).isEmpty()){
+					idUvem = Long.valueOf(exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.CODIGO_CARTERA));
+				}
 				crearOfertaAgrupcion(exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.CODIGO_UNICO_OFERTA),
 						exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.NOMBRE_TITULAR),
 						exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.RAZON_SOCIAL_TITULAR),
@@ -173,7 +178,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 						exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.DOC_IDENTIFICACION_TITULAR),
 						exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.CODIGO_PRESCRIPTOR),
 						agrupacion.getId(),
-						Long.valueOf(exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.CODIGO_CARTERA)));
+						idUvem);
 
 				// Creamos un tramite para la oferta, y con ello el
 				// expedienteComercial
@@ -286,9 +291,13 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
 
 			String stringDate = exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.FECHA_INGRESO_CHEQUE);
-			DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-			Date fechaContabilizacionPropietario = format.parse(stringDate);
-			expedienteComercial.setFechaContabilizacionPropietario(fechaContabilizacionPropietario);
+			Date fechaContabilizacionPropietario = null;
+
+			if (stringDate != null && !stringDate.isEmpty()) {
+				DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+				fechaContabilizacionPropietario = format.parse(stringDate);
+				expedienteComercial.setFechaContabilizacionPropietario(fechaContabilizacionPropietario);
+			}
 
 			DtoCondiciones condicionantes = new DtoCondiciones();
 			condicionantes
@@ -298,29 +307,31 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 
 			if (exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.OPERACION_EXENTA) != null
 					&& !exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.OPERACION_EXENTA).isEmpty()
-					&& exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.OPERACION_EXENTA).toLowerCase().equals("si")) {
+					&& exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.OPERACION_EXENTA).toLowerCase()
+							.equals("si")) {
 				condicionantes.setOperacionExenta(true);
-			}else{
+			} else {
 				condicionantes.setOperacionExenta(false);
 			}
-			
+
 			if (exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.RENUNCIA_EXENCION) != null
 					&& !exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.RENUNCIA_EXENCION).isEmpty()
-					&& exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.RENUNCIA_EXENCION).toLowerCase().equals("si")) {
+					&& exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.RENUNCIA_EXENCION).toLowerCase()
+							.equals("si")) {
 				condicionantes.setRenunciaExencion(true);
-			}else{
+			} else {
 				condicionantes.setRenunciaExencion(false);
 			}
-			
+
 			if (exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.INVERSION_SUJETO_PASIVO) != null
 					&& !exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.INVERSION_SUJETO_PASIVO).isEmpty()
-					&& exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.INVERSION_SUJETO_PASIVO).toLowerCase().equals("si")) {
+					&& exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.INVERSION_SUJETO_PASIVO)
+							.toLowerCase().equals("si")) {
 				condicionantes.setInversionDeSujetoPasivo(true);
-			}else{
+			} else {
 				condicionantes.setInversionDeSujetoPasivo(false);
 			}
-			
-			
+
 			DtoFichaExpediente dtoExp = new DtoFichaExpediente();
 			dtoExp.setFechaContabilizacionPropietario(fechaContabilizacionPropietario);
 			dtoExp.setEstadoPbc(1);

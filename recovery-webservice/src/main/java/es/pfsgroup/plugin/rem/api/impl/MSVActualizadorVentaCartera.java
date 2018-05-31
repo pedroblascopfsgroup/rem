@@ -234,8 +234,6 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 				} else {
 					throw new Exception(" El porcentaje de los compradores no suma el 100%");
 				}
-			}else{
-				this.resultado.addResultado("NUM OFERTA",agrupacion.getNumAgrupRem().toString());
 			}
 		}
 
@@ -295,15 +293,23 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 					Long.parseLong(listaOfertas.get(0).getIdOferta())));
 			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
 
+			DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 			String stringDate = exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.FECHA_INGRESO_CHEQUE);
 			Date fechaContabilizacionPropietario = null;
 
 			if (stringDate != null && !stringDate.isEmpty()) {
-				DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 				fechaContabilizacionPropietario = format.parse(stringDate);
-				expedienteComercial.setFechaContabilizacionPropietario(fechaContabilizacionPropietario);
+			}
+			
+			String stringDateVenta = exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.FECHA_VENTA);
+			Date fechaVenta = null;
+
+			if (stringDateVenta != null && !stringDateVenta.isEmpty()) {
+				fechaVenta = format.parse(stringDateVenta);
 			}
 
+			
+			
 			DtoCondiciones condicionantes = new DtoCondiciones();
 			condicionantes
 					.setTipoImpuestoCodigo(exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.TIPO_IMPUESTO));
@@ -339,6 +345,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 
 			DtoFichaExpediente dtoExp = new DtoFichaExpediente();
 			dtoExp.setFechaContabilizacionPropietario(fechaContabilizacionPropietario);
+			dtoExp.setFechaVenta(fechaVenta);
 			dtoExp.setEstadoPbc(1);
 			dtoExp.setConflictoIntereses(0);
 			dtoExp.setRiesgoReputacional(0);
@@ -426,6 +433,8 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id",
 					Long.parseLong(listaOfertas.get(0).getIdOferta())));
 			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
+			this.resultado.addResultado("NUM OFERTA",oferta.getNumOferta().toString());
+			this.resultado.addResultado("EXP comercial",expedienteComercial.getNumExpediente().toString());
 			// Obtenemos el tramite del expediente, y de este sus tareas.
 			List<ActivoTramite> listaTramites = activoTramiteApi
 					.getTramitesActivoTrabajoList(expedienteComercial.getTrabajo().getId());

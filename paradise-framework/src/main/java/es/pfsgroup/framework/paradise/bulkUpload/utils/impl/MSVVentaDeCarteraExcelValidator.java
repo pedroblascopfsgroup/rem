@@ -3,6 +3,8 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +39,11 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 @Component
 public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 
+	public static final String TIPOS_APLICABLES_DIFERENTES = "El tipo de impuesto y el tipo aplicable han de ser iguales para todos los activos de la agrupación";
+	public static final String FORMATO_FECHA_CHEQUE_INVALIDO = "La fecha ingreso cheque tiene un formato incorrecto";
+	public static final String FORMATO_FECHA_VENTA_INVALIDO = "La fecha venta tiene un formato incorrecto";
+	public static final String PRESCRIPTORES_DIFERENTES = "Los activos tienen que tener el mismo prescriptor";
+	public static final String GESTORES_DIFERENTES = "Los activos tienen que tener el mismo gestor";
 	public static final String TITULARES_DIFERENTES = "Los activos tienen que tener los mismos titulares";
 	public static final String FECHA_INGRESO_CHEQUE_OBLIGATORIA = "La fecha ingreso cheque tiene que estar informada.";
 	public static final String ACTIVOS_DIFERENTES_SUBCARTERAS = "Existen activos de diferentes subcarteras en la oferta.";
@@ -219,7 +226,11 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 				mapaErrores.put(CARTERA_OBLIGATORIA, esCampoNullByRows(exc,COL_NUM.CODIGO_CARTERA));
 				mapaErrores.put(FECHA_INGRESO_CHEQUE_OBLIGATORIA, existenActivosDeBHSinFechaIngresoCheque(exc));
 				mapaErrores.put(TITULARES_DIFERENTES, validarTitualresOferta(exc));
-				
+				mapaErrores.put(GESTORES_DIFERENTES, existenGestoresDiferentesEnAgrupacion(exc));
+				mapaErrores.put(PRESCRIPTORES_DIFERENTES, existenPrescriptoresDiferentesEnAgrupacion(exc));
+				mapaErrores.put(FORMATO_FECHA_CHEQUE_INVALIDO, esFechaValidaByRows(exc, COL_NUM.FECHA_INGRESO_CHEQUE));
+				mapaErrores.put(FORMATO_FECHA_VENTA_INVALIDO, esFechaValidaByRows(exc, COL_NUM.FECHA_VENTA));
+				mapaErrores.put(TIPOS_APLICABLES_DIFERENTES, existenTiposAplicablesDiferentesEnAgrupacion(exc));
 				
 				
 				if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty()
@@ -252,6 +263,11 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 						||!mapaErrores.get(ACTIVOS_DIFERENTES_SUBCARTERAS).isEmpty()
 						||!mapaErrores.get(FECHA_INGRESO_CHEQUE_OBLIGATORIA).isEmpty()
 						||!mapaErrores.get(TITULARES_DIFERENTES).isEmpty()
+						||!mapaErrores.get(GESTORES_DIFERENTES).isEmpty()
+						||!mapaErrores.get(PRESCRIPTORES_DIFERENTES).isEmpty()
+						||!mapaErrores.get(FORMATO_FECHA_CHEQUE_INVALIDO).isEmpty()
+						||!mapaErrores.get(FORMATO_FECHA_VENTA_INVALIDO).isEmpty()
+						||!mapaErrores.get(TIPOS_APLICABLES_DIFERENTES).isEmpty()
 							){
 						dtoValidacionContenido.setFicheroTieneErrores(true);
 						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -643,6 +659,40 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 		return listaFilas;
 	}
 	
+	private List<Integer> esFechaValidaByRows(MSVHojaExcel exc, Integer campo){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
+		String valorDate = null;
+
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
+				valorDate = exc.dameCelda(i, campo);
+
+				// Si el valor Date no se puede obtener adecuadamente se lanza
+				// error para esa línea.
+				if (!Checks.esNulo(valorDate)) {
+					ft.setLenient(false);
+					ParsePosition p = new ParsePosition( 0 );
+					ft.parse(valorDate,p);
+					if(p.getIndex() < valorDate.length()) {
+						  throw new ParseException( valorDate, p.getIndex() );
+					}
+				}
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			}
+		}
+
+		return listaFilas;
+	}
+	
 	
 	private List<Integer> existenActivosDiferentesSubcarterasEnAgrupacion(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
@@ -657,6 +707,87 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 					}
 				}else{
 					ofertasSubcarteras.put(codigoOferta, codigoSubcartera);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return listaFilas;
+	}
+	
+	private List<Integer> existenGestoresDiferentesEnAgrupacion(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		HashMap<String, String> ofertasGestores = new HashMap<String, String>();
+		try {
+			for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+				String codigoOferta = exc.dameCelda(i, COL_NUM.CODIGO_UNICO_OFERTA);
+				String  gestor = exc.dameCelda(i, COL_NUM.USU_GESTOR_COMERCIALIZACION);
+				if(gestor == null){
+					gestor ="";
+				}
+				if(ofertasGestores.containsKey(codigoOferta)){
+					if(!ofertasGestores.get(codigoOferta).equals(gestor)){
+						listaFilas.add(i);
+					}
+				}else{
+					ofertasGestores.put(codigoOferta, gestor);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return listaFilas;
+	}
+	
+	private List<Integer> existenPrescriptoresDiferentesEnAgrupacion(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		HashMap<String, String> ofertasPrescriptores = new HashMap<String, String>();
+		try {
+			for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+				String codigoOferta = exc.dameCelda(i, COL_NUM.CODIGO_UNICO_OFERTA);
+				String  prescriptor = exc.dameCelda(i, COL_NUM.CODIGO_PRESCRIPTOR);
+				if(prescriptor == null){
+					prescriptor ="";
+				}
+				if(ofertasPrescriptores.containsKey(codigoOferta)){
+					if(!ofertasPrescriptores.get(codigoOferta).equals(prescriptor)){
+						listaFilas.add(i);
+					}
+				}else{
+					ofertasPrescriptores.put(codigoOferta, prescriptor);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return listaFilas;
+	}
+	
+	private List<Integer> existenTiposAplicablesDiferentesEnAgrupacion(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		HashMap<String, String> ofertasTiposinpositivos = new HashMap<String, String>();
+		try {
+			for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+				String codigoOferta = exc.dameCelda(i, COL_NUM.CODIGO_UNICO_OFERTA);
+				String  tipoImpuesto = exc.dameCelda(i, COL_NUM.TIPO_IMPUESTO);
+				String  tipoAplicable = exc.dameCelda(i, COL_NUM.TIPO_APLICABLE);
+				String tipoImpositivo = "";
+				if(tipoImpuesto != null && !tipoImpuesto.isEmpty()){
+					tipoImpositivo = tipoImpositivo+tipoImpuesto;
+				}
+				if(tipoAplicable != null && !tipoAplicable.isEmpty()){
+					tipoImpositivo = tipoImpositivo+tipoAplicable;
+				}
+				
+				if(ofertasTiposinpositivos.containsKey(codigoOferta)){
+					if(!ofertasTiposinpositivos.get(codigoOferta).equals(tipoImpositivo)){
+						listaFilas.add(i);
+					}
+				}else{
+					ofertasTiposinpositivos.put(codigoOferta, tipoImpositivo);
 				}
 			}
 		} catch (Exception e) {

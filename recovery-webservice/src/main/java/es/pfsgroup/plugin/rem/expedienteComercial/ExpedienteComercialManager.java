@@ -42,6 +42,7 @@ import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
+import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
@@ -66,6 +67,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
@@ -124,6 +126,7 @@ import es.pfsgroup.plugin.rem.model.Posicionamiento;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.Subsanaciones;
 import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
+import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
@@ -201,6 +204,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public static final String PERFIL_SUPERVISOR_FORMALIZACION = "HAYASUPFORM";
 	public static final String PERFIL_GESTOR_MINUTAS = "GESMIN";
 	public static final String PERFIL_SUPERVISOR_MINUTAS = "SUPMIN";
+	 private static final String TAR_INFORME_JURIDICO = "Informe jurídico";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -251,6 +255,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Autowired
 	private ActivoApi activoApi;
+	
+    
+    @Autowired
+    private TareaActivoApi tareaActivoApi;
 
 	@Override
 	public String managerName() {
@@ -2434,15 +2442,19 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	@Transactional(readOnly = false)
 	public boolean updateEstadoReserva(ExpedienteComercial expedienteComercial, String codEstadoReserva) throws Exception{
-		DDEstadosReserva estadoReserva = (DDEstadosReserva) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosReserva.class, codEstadoReserva);
-		if(!Checks.esNulo(estadoReserva)){
-			if(!Checks.esNulo(expedienteComercial.getReserva())){
-				expedienteComercial.getReserva().setEstadoReserva(estadoReserva);
+		if(!Checks.esNulo(codEstadoReserva)){
+			DDEstadosReserva estadoReserva = (DDEstadosReserva) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosReserva.class, codEstadoReserva);
+			if(!Checks.esNulo(estadoReserva)){
+				if(!Checks.esNulo(expedienteComercial.getReserva())){
+					expedienteComercial.getReserva().setEstadoReserva(estadoReserva);
+				}
+			}else{
+				throw new Exception("El codigo del estado de la reserva no existe");
 			}
+			return this.update(expedienteComercial);
 		}else{
-			throw new Exception("El codigo del estado de la reserva no existe");
+			return this.update(expedienteComercial);
 		}
-		return this.update(expedienteComercial);
 	}
 	
 	@Override
@@ -2460,20 +2472,27 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 	
 	@Transactional(readOnly = false)
-	private void resetReservaEstadoPrevioResolucionExpediente(ExpedienteComercial expedienteComercial) throws Exception{
+	private void resetReservaEstadoPrevioResolucionExpediente(ExpedienteComercial expedienteComercial, String codigoReserva) throws Exception{
 		Reserva reserva = expedienteComercial.getReserva();
 		reserva.setIndicadorDevolucionReserva(null);
 		reserva.setDevolucionReserva(null);
-		this.updateEstadoReserva(expedienteComercial, DDEstadosReserva.CODIGO_FIRMADA);
+		this.updateEstadoReserva(expedienteComercial, codigoReserva);
 	}
 	
 	@Override
 	@Transactional(readOnly = false)
-	public boolean updateExpedienteComercialEstadoPrevioResolucionExpediente(ExpedienteComercial expedienteComercial, String codigoTareaActual) throws Exception{
-		if(codigoTareaActual.equals(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION) 
+	public boolean updateExpedienteComercialEstadoPrevioResolucionExpediente(ExpedienteComercial expedienteComercial, String codigoTareaActual, String codigoTareaSalto, Boolean botonDeshacerAnulacion) throws Exception{
+		if(codigoTareaSalto.equals(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA)
+				&& codigoTareaActual.equals(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION)
+				&& botonDeshacerAnulacion){
+			this.resetReservaEstadoPrevioResolucionExpediente(expedienteComercial, null);
+			this.updateEstadoExpedienteComercial(expedienteComercial, DDEstadosExpedienteComercial.EN_TRAMITACION);
+			
+			return this.update(expedienteComercial);
+		}else if(codigoTareaActual.equals(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION) 
 				|| codigoTareaActual.equals(ComercialUserAssigantionService.CODIGO_T013_PENDIENTE_DEVOLUCION)
 				|| codigoTareaActual.equals(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION)){
-			this.resetReservaEstadoPrevioResolucionExpediente(expedienteComercial);
+			this.resetReservaEstadoPrevioResolucionExpediente(expedienteComercial, DDEstadosReserva.CODIGO_FIRMADA);
 			this.updateEstadoExpedienteComercial(expedienteComercial, DDEstadosExpedienteComercial.RESERVADO);
 			
 			return this.update(expedienteComercial);
@@ -4872,6 +4891,33 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 	}
+	
+	@Override
+	public Boolean checkInformeJuridicoFinalizado(Long idTramite) {
+		
+		ActivoTramite tramite = activoTramiteApi.get(idTramite);
+		
+		List<TareaActivo> tareasActivas = tareaActivoApi.getTareasActivoByIdTramite(tramite.getId());
+		Boolean informeJuridicoFinalizado = false;
+		Boolean tieneTareaInformeJuridico = false;
+		
+		for (TareaActivo tarea : tareasActivas) {
+			Filter filterTar = genericDao.createFilter(FilterType.EQUALS, "id", tarea.getId());
+			TareaNotificacion tareaNotificacion = genericDao.get(TareaNotificacion.class, filterTar);
+			if (TAR_INFORME_JURIDICO.equals(tareaNotificacion.getTarea())){
+				if (tareaNotificacion.getTareaFinalizada()){
+					informeJuridicoFinalizado = true;
+				}
+				tieneTareaInformeJuridico = true;
+			}
+		}
+		
+		if (informeJuridicoFinalizado || !tieneTareaInformeJuridico){
+			return true;
+		}else {
+			return false;
+		}
+	}
 
 	@Override
 	public Boolean checkImporteParticipacion(Long idTramite) {
@@ -4930,6 +4976,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			resultado.setEstadoTituloInformada(activo.getTitulo().getEstado().getCodigo());
 		}
 		if (activo.getSituacionPosesoria() != null) {
+			
+			if (Checks.esNulo(activo.getSituacionPosesoria().getOcupado())) activo.getSituacionPosesoria().setOcupado(0);
+			if (Checks.esNulo(activo.getSituacionPosesoria().getConTitulo())) activo.getSituacionPosesoria().setConTitulo(0);
+			
 			if (activo.getSituacionPosesoria().getOcupado() != null
 					&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(0))) {
 				resultado.setSituacionPosesoriaCodigoInformada("01");
@@ -5698,6 +5748,19 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		return true;
+	}
+
+	public boolean reservaFirmada(Long idTramite) {
+		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
+		if (!Checks.esNulo(activoTramite)) {
+			Trabajo trabajo = activoTramite.getTrabajo();
+			if (!Checks.esNulo(trabajo)) {
+				ExpedienteComercial expediente = expedienteComercialDao
+						.getExpedienteComercialByTrabajo(trabajo.getId());
+				return expediente.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_FIRMADA);
+			}
+		}
+		return false;
 	}
 
 	@Override

@@ -37,6 +37,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 @Component
 public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 
+	public static final String TITULARES_DIFERENTES = "Los activos tienen que tener los mismos titulares";
 	public static final String FECHA_INGRESO_CHEQUE_OBLIGATORIA = "La fecha ingreso cheque tiene que estar informada.";
 	public static final String ACTIVOS_DIFERENTES_SUBCARTERAS = "Existen activos de diferentes subcarteras en la oferta.";
 	public static final String CARTERA_OBLIGATORIA = "El código de cartera no esta informado.";
@@ -217,6 +218,7 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 				mapaErrores.put(ACTIVOS_DIFERENTES_SUBCARTERAS, existenActivosDiferentesSubcarterasEnAgrupacion(exc));
 				mapaErrores.put(CARTERA_OBLIGATORIA, esCampoNullByRows(exc,COL_NUM.CODIGO_CARTERA));
 				mapaErrores.put(FECHA_INGRESO_CHEQUE_OBLIGATORIA, existenActivosDeBHSinFechaIngresoCheque(exc));
+				mapaErrores.put(TITULARES_DIFERENTES, validarTitualresOferta(exc));
 				
 				
 				
@@ -249,6 +251,7 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 						||!mapaErrores.get(CARTERA_OBLIGATORIA).isEmpty()
 						||!mapaErrores.get(ACTIVOS_DIFERENTES_SUBCARTERAS).isEmpty()
 						||!mapaErrores.get(FECHA_INGRESO_CHEQUE_OBLIGATORIA).isEmpty()
+						||!mapaErrores.get(TITULARES_DIFERENTES).isEmpty()
 							){
 						dtoValidacionContenido.setFicheroTieneErrores(true);
 						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -673,6 +676,134 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 					if(fechaIngresoCheque==null || fechaIngresoCheque.isEmpty()){
 						listaFilas.add(i);
 					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return listaFilas;
+	}
+	
+	private List<Integer> validarTitualresOferta(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		HashMap<String, String> ofertasTitulares = new HashMap<String, String>();
+		try {
+			for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+				String codigoOferta = exc.dameCelda(i, COL_NUM.CODIGO_UNICO_OFERTA);
+
+				String infoTitulares = "";
+
+				// primer titular
+				if (exc.dameCelda(i, COL_NUM.NOMBRE_TITULAR) != null
+						&& !exc.dameCelda(i, COL_NUM.NOMBRE_TITULAR).isEmpty()) {
+					infoTitulares = exc.dameCelda(i, COL_NUM.NOMBRE_TITULAR);
+				}
+				if (exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR) != null
+						&& !exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR);
+				}
+				if (exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_TITULAR) != null
+						&& !exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_TITULAR).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_TITULAR);
+				}
+				if (exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR) != null
+						&& !exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR);
+				}
+				if (exc.dameCelda(i, COL_NUM.NUMERO_URSUS_TITULAR) != null
+						&& !exc.dameCelda(i, COL_NUM.NUMERO_URSUS_TITULAR).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.NUMERO_URSUS_TITULAR);
+				}
+				if (exc.dameCelda(i, COL_NUM.PORCENTAJE_COMPRA_TITULAR) != null
+						&& !exc.dameCelda(i, COL_NUM.PORCENTAJE_COMPRA_TITULAR).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.PORCENTAJE_COMPRA_TITULAR);
+				}
+				// segundo titular
+				if (exc.dameCelda(i, COL_NUM.NOMBRE_TITULAR_2) != null
+						&& !exc.dameCelda(i, COL_NUM.NOMBRE_TITULAR_2).isEmpty()) {
+					infoTitulares =infoTitulares+ exc.dameCelda(i, COL_NUM.NOMBRE_TITULAR_2);
+				}
+				if (exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR_2) != null
+						&& !exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR_2).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR_2);
+				}
+				if (exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_TITULAR_2) != null
+						&& !exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_TITULAR_2).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_TITULAR_2);
+				}
+				if (exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_2) != null
+						&& !exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_2).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_2);
+				}
+				if (exc.dameCelda(i, COL_NUM.NUMERO_URSUS_TITULAR_2) != null
+						&& !exc.dameCelda(i, COL_NUM.NUMERO_URSUS_TITULAR_2).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.NUMERO_URSUS_TITULAR_2);
+				}
+				if (exc.dameCelda(i, COL_NUM.PORCENTAJE_COMPRA_TITULAR_2) != null
+						&& !exc.dameCelda(i, COL_NUM.PORCENTAJE_COMPRA_TITULAR_2).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.PORCENTAJE_COMPRA_TITULAR_2);
+				}
+				// tercer titular
+				if (exc.dameCelda(i, COL_NUM.NOMBRE_TITULAR_3) != null
+						&& !exc.dameCelda(i, COL_NUM.NOMBRE_TITULAR_3).isEmpty()) {
+					infoTitulares = infoTitulares+exc.dameCelda(i, COL_NUM.NOMBRE_TITULAR_3);
+				}
+				if (exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR_3) != null
+						&& !exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR_3).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR_3);
+				}
+				if (exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_TITULAR_3) != null
+						&& !exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_TITULAR_3).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_TITULAR_3);
+				}
+				if (exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_3) != null
+						&& !exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_3).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_3);
+				}
+				if (exc.dameCelda(i, COL_NUM.NUMERO_URSUS_TITULAR_3) != null
+						&& !exc.dameCelda(i, COL_NUM.NUMERO_URSUS_TITULAR_3).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.NUMERO_URSUS_TITULAR_3);
+				}
+				if (exc.dameCelda(i, COL_NUM.PORCENTAJE_COMPRA_TITULAR_3) != null
+						&& !exc.dameCelda(i, COL_NUM.PORCENTAJE_COMPRA_TITULAR_3).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.PORCENTAJE_COMPRA_TITULAR_3);
+				}
+				// cuarto titular
+				if (exc.dameCelda(i, COL_NUM.NOMBRE_TITULAR_4) != null
+						&& !exc.dameCelda(i, COL_NUM.NOMBRE_TITULAR_4).isEmpty()) {
+					infoTitulares = infoTitulares+exc.dameCelda(i, COL_NUM.NOMBRE_TITULAR_4);
+				}
+				if (exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR_4) != null
+						&& !exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR_4).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR_4);
+				}
+				if (exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_TITULAR_4) != null
+						&& !exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_TITULAR_4).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_TITULAR_4);
+				}
+				if (exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_4) != null
+						&& !exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_4).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_4);
+				}
+				if (exc.dameCelda(i, COL_NUM.NUMERO_URSUS_TITULAR_4) != null
+						&& !exc.dameCelda(i, COL_NUM.NUMERO_URSUS_TITULAR_4).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.NUMERO_URSUS_TITULAR_3);
+				}
+				if (exc.dameCelda(i, COL_NUM.PORCENTAJE_COMPRA_TITULAR_4) != null
+						&& !exc.dameCelda(i, COL_NUM.PORCENTAJE_COMPRA_TITULAR_4).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.PORCENTAJE_COMPRA_TITULAR_4);
+				}
+
+				infoTitulares = infoTitulares.trim();
+
+				if (ofertasTitulares.containsKey(codigoOferta)) {
+					if (infoTitulares != null && ofertasTitulares.get(codigoOferta) != null
+							&& !infoTitulares.equals(ofertasTitulares.get(codigoOferta))) {
+						listaFilas.add(i);
+					}
+				} else {
+					ofertasTitulares.put(codigoOferta, infoTitulares);
 				}
 			}
 		} catch (Exception e) {

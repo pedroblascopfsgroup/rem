@@ -922,7 +922,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 										valoresTasacion, valoresTasacion.get("total")));
 						activoOferta.setPorcentajeParticipacion(Double.parseDouble(participacion));
 						Double importe = (oferta.getImporteOferta() * Double.parseDouble(participacion)) / 100;
-						importe =  Double.parseDouble(new DecimalFormat("#.##").format(importe));
+						String importeString = new DecimalFormat("#.##").format(importe);
+						try{
+							importe =  Double.parseDouble(importeString);
+						}catch(NumberFormatException e){
+							importeString = importeString.replace(",", ".");
+							importe =  Double.parseDouble(importeString);
+						}
 						sumatorioImporte = sumatorioImporte +importe;
 						activoOferta.setImporteActivoOferta(importe);
 					}

@@ -33,9 +33,13 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 
 
+
 @Component
 public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 
+	public static final String FECHA_INGRESO_CHEQUE_OBLIGATORIA = "La fecha ingreso cheque tiene que estar informada.";
+	public static final String ACTIVOS_DIFERENTES_SUBCARTERAS = "Existen activos de diferentes subcarteras en la oferta.";
+	public static final String CARTERA_OBLIGATORIA = "El código de cartera no esta informado.";
 	public static final String ACTIVE_NOT_EXISTS = "El activo no existe.";
 	public static final String ACTIVE_NULL = "El campo número activo no puede estar vacío";
 	public static final String PRECIO_VENTA_NULL = "El campo precio de venta no puede estar vacío";
@@ -152,7 +156,7 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
-
+	
 	private Integer numFilasHoja;
 	
 	
@@ -210,6 +214,10 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 				mapaErrores.put(CODIGO_PRESCRIPTOR_NOT_EXISTS, codigoPrescriptorNotExistsByRows(exc));
 				mapaErrores.put(NUMERO_URSUS_TITULAR_NULL, esCampoNullByRows(exc,COL_NUM.NUMERO_URSUS_TITULAR));
 				mapaErrores.put(PORCENTAJE_COMPRA_TITULAR_NULL, esCampoNullByRows(exc,COL_NUM.PORCENTAJE_COMPRA_TITULAR));
+				mapaErrores.put(ACTIVOS_DIFERENTES_SUBCARTERAS, existenActivosDiferentesSubcarterasEnAgrupacion(exc));
+				mapaErrores.put(CARTERA_OBLIGATORIA, esCampoNullByRows(exc,COL_NUM.CODIGO_CARTERA));
+				mapaErrores.put(FECHA_INGRESO_CHEQUE_OBLIGATORIA, existenActivosDeBHSinFechaIngresoCheque(exc));
+				
 				
 				
 				if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty()
@@ -238,6 +246,9 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 						||!mapaErrores.get(CODIGO_PRESCRIPTOR_NOT_EXISTS).isEmpty()
 						||!mapaErrores.get(NUMERO_URSUS_TITULAR_NULL).isEmpty()
 						||!mapaErrores.get(PORCENTAJE_COMPRA_TITULAR_NULL).isEmpty()
+						||!mapaErrores.get(CARTERA_OBLIGATORIA).isEmpty()
+						||!mapaErrores.get(ACTIVOS_DIFERENTES_SUBCARTERAS).isEmpty()
+						||!mapaErrores.get(FECHA_INGRESO_CHEQUE_OBLIGATORIA).isEmpty()
 							){
 						dtoValidacionContenido.setFicheroTieneErrores(true);
 						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -626,6 +637,48 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 				e.printStackTrace();
 			}
 		}
+		return listaFilas;
+	}
+	
+	
+	private List<Integer> existenActivosDiferentesSubcarterasEnAgrupacion(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		HashMap<String, String> ofertasSubcarteras = new HashMap<String, String>();
+		try {
+			for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+				String codigoOferta = exc.dameCelda(i, COL_NUM.CODIGO_UNICO_OFERTA);
+				String  codigoSubcartera = particularValidator.getSubcartera(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA));
+				if(ofertasSubcarteras.containsKey(codigoOferta)){
+					if(!ofertasSubcarteras.get(codigoOferta).equals(codigoSubcartera)){
+						listaFilas.add(i);
+					}
+				}else{
+					ofertasSubcarteras.put(codigoOferta, codigoSubcartera);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return listaFilas;
+	}
+	
+	private List<Integer> existenActivosDeBHSinFechaIngresoCheque(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		try {
+			for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+				String  codigoSubcartera = particularValidator.getSubcartera(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA));
+				String  fechaIngresoCheque = exc.dameCelda(i, COL_NUM.FECHA_INGRESO_CHEQUE);
+				if(codigoSubcartera != null && codigoSubcartera.equals("06")){
+					if(fechaIngresoCheque==null || fechaIngresoCheque.isEmpty()){
+						listaFilas.add(i);
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		return listaFilas;
 	}
 	

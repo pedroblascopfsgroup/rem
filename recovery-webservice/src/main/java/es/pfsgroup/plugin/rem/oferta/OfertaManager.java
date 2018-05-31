@@ -931,7 +931,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				//Pueden producirse pequeños errores de redondeo, en cuyo caso, aplicamos la diferencia al ultimo actv de la lista
 				if(listaActOfr != null && listaActOfr.size()>0 && oferta.getImporteOferta().compareTo(sumatorioImporte)>0){
 					ActivoOferta elUltimo = listaActOfr.get(listaActOfr.size()-1);
-					elUltimo.setImporteActivoOferta(elUltimo.getImporteActivoOferta()-(oferta.getImporteOferta()-sumatorioImporte));
+					elUltimo.setImporteActivoOferta(elUltimo.getImporteActivoOferta()+(oferta.getImporteOferta()-sumatorioImporte));
 				}else if(listaActOfr != null && listaActOfr.size()>0 && oferta.getImporteOferta().compareTo(sumatorioImporte)<0){
 					ActivoOferta elUltimo = listaActOfr.get(listaActOfr.size()-1);
 					elUltimo.setImporteActivoOferta(elUltimo.getImporteActivoOferta()-(sumatorioImporte-oferta.getImporteOferta()));

@@ -309,5 +309,7 @@ public interface ParticularValidatorApi {
 	public Boolean existeAgrupacionByDescripcion(String descripcionAgrupacion);
 	
 	public Boolean existeProveedorMediadorByNIFConFVD(String proveedorMediadorNIF);
+	
+	public String getSubcartera(String numActivo);
 
 }

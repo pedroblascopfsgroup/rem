@@ -1595,4 +1595,15 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		else
 			return true;
 	}
+
+	@Override
+	public String getSubcartera(String numActivo) {
+		String resultado = rawDao.getExecuteSQL("SELECT scr.DD_SCR_CODIGO "
+				+ "		FROM ACT_ACTIVO act "
+				+ "		INNER JOIN DD_SCR_SUBCARTERA scr "
+				+ "		ON act.DD_SCR_ID            = scr.DD_SCR_ID "
+				+ "		WHERE act.ACT_NUM_ACTIVO = "+numActivo);
+				
+		return resultado;
+	}
 }

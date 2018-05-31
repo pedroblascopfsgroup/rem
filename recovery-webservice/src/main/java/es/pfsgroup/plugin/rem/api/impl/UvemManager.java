@@ -1133,8 +1133,10 @@ public class UvemManager implements UvemManagerApi {
 
 				if (Boolean.TRUE.equals(instanciaDecisionDto.getOfertaVentaCartera())) {
 					// 0 :no es venta cartera
-					servicioGMPDJB13_INS
-					.setCodigoVentaCarteracovecw(instanciaDecisionDto.getCodigoAgrupacionInmueble());
+					if (instanciaDecisionDto.getCodigoAgrupacionInmueble() != null) {
+						servicioGMPDJB13_INS
+								.setCodigoVentaCarteracovecw(instanciaDecisionDto.getCodigoAgrupacionInmueble());
+					}
 
 					// 0 Para ofertas tipo venta
 					// 6 Oferta preventa cartera

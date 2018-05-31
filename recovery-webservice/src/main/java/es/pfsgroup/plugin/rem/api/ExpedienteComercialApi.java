@@ -938,14 +938,11 @@ public interface ExpedienteComercialApi {
 	public boolean checkEstadoExpedienteDistintoAnulado(Long idTramite);
 
 	public void enviarCondicionantesEconomicosUvem(Long idExpediente) throws Exception;
-<<<<<<< HEAD
 
 	boolean checkExpedienteFechaChequeLiberbank(Long idTramite);	
-=======
 	
 	boolean reservaFirmada(Long idTramite);
 
 	public Boolean checkInformeJuridicoFinalizado(Long idTramite);	
->>>>>>> 2.0.17-18053001-rem
 	
 }

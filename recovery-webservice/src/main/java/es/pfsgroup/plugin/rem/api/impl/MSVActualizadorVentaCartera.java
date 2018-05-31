@@ -109,6 +109,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 
 	private MSVHojaExcel excel;
 	private HashMap<String, String> listaAgrupaciones;
+	private ResultadoProcesarFila resultado;
 
 	@Override
 	public String getValidOperation() {
@@ -131,7 +132,9 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
 			throws IOException, ParseException, JsonViewerException, SQLException, Exception {
-		ResultadoProcesarFila resultado = new ResultadoProcesarFila();
+		resultado = new ResultadoProcesarFila();
+		this.resultado.addResultado("NUM ACTIVO",
+				exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.NUM_ACTIVO_HAYA));
 		ActivoAgrupacion agrupacion = null;
 		String codigoOferta = null;
 		logger.debug("--------------------- OFERTA_CARTERA: procesando fila: " + fila
@@ -153,6 +156,8 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			} else {
 				agrupacion = obtenerAgrupacion(descripcionAgrupacion);
 			}
+			
+			this.resultado.addResultado("NUM AGRUPACION",agrupacion.getNumAgrupRem().toString());
 
 			// Añadimos el activo a la agrupación
 			// NUMERO ACTIVO
@@ -229,11 +234,11 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 				} else {
 					throw new Exception(" El porcentaje de los compradores no suma el 100%");
 				}
+			}else{
+				this.resultado.addResultado("NUM OFERTA",agrupacion.getNumAgrupRem().toString());
 			}
 		}
 
-		resultado.addResultado(codigoOferta,
-				exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.NUM_ACTIVO_HAYA));
 		return resultado;
 	}
 
@@ -810,9 +815,9 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			if (!listaAgrupaciones.containsKey(codigoOferta)) {
 				listaAgrupaciones.put(codigoOferta, precioVenta);
 			} else {
-				Double importe1 = Double.parseDouble(listaAgrupaciones.get(codigoOferta));
-				Double importe2 = Double.parseDouble(precioVenta);
-				listaAgrupaciones.put(codigoOferta, String.valueOf((importe1 + importe2)));
+				//Double importe1 = Double.parseDouble(listaAgrupaciones.get(codigoOferta));
+				//Double importe2 = Double.parseDouble(precioVenta);
+				//listaAgrupaciones.put(codigoOferta, String.valueOf((importe1 + importe2)));
 			}
 
 		}

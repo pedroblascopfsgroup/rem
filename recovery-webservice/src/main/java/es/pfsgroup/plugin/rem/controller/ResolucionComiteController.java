@@ -156,7 +156,7 @@ public class ResolucionComiteController {
 								if (!Checks.esNulo(tarea)) {
 									tareaActivoApi.guardarDatosResolucion(tarea.getId(), resolucionComiteDto.getFechaAnulacion(), resolucionComiteDto.getCodigoResolucion());
 									tareaActivoApi.saltoDesdeTareaExterna(tarea.getId(), tareaAnterior.getTareaProcedimiento().getCodigo());
-									expedienteComercialApi.updateExpedienteComercialEstadoPrevioResolucionExpediente(eco, ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION);
+									expedienteComercialApi.updateExpedienteComercialEstadoPrevioResolucionExpediente(eco, ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION, tareaAnterior.getTareaProcedimiento().getCodigo(), false);
 									break;
 								}
 							}

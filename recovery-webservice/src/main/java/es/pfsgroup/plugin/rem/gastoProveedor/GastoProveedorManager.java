@@ -2547,4 +2547,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		genericDao.save(GastoProveedorActivo.class, gpa);
 	}
+
+	@Override
+	public GastoProveedorActivo buscarRelacionPorActivoYGasto(Activo activo, GastoProveedor gasto) {
+		
+		return genericDao.get(GastoProveedorActivo.class, genericDao.createFilter(FilterType.EQUALS, "activo", activo),
+				genericDao.createFilter(FilterType.EQUALS, "gastoProveedor", gasto));
+	}
 }

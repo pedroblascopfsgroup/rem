@@ -1115,5 +1115,6 @@ public interface ActivoApi {
 	public boolean updateImpuestos(DtoImpuestosActivo dtoImpuestosFilter) throws ParseException;
 
 	public DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada);
+	public boolean esLiberBank(Long idActivo);
 
 }

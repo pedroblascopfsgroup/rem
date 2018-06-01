@@ -818,4 +818,7 @@ public interface TrabajoApi {
 
 	boolean checkLiberbank(Trabajo trabajo);
 
+	public boolean superaLimiteLiberbank(Long idTrabajo);
+
+
 }

@@ -148,6 +148,7 @@ import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.ImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.PresupuestoActivo;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Reserva;
@@ -4793,6 +4794,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return comPropietarios;
 	}
+
 	@Override
 	public DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada) {
 		ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
@@ -4930,5 +4932,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return null;
+	}
+	
+	@Override
+	public boolean esLiberBank(Long idActivo){
+		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+		Activo activo = genericDao.get(Activo.class, filterAct);
+		
+		return DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo());
 	}
 }

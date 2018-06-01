@@ -6,7 +6,7 @@
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=REMVIP-874
 --## PRODUCTO=NO
---##
+--## 
 --## Finalidad: Script que añade en DD_SCR_SUBCARTERA los datos añadidos en T_ARRAY_DATA
 --## INSTRUCCIONES:
 --## VERSIONES:

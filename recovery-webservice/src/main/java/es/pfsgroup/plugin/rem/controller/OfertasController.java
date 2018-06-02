@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +56,6 @@ public class OfertasController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListOfertas(DtoOfertasFilter dtoOfertasFilter, ModelMap model) {
 		try {
-
 			dtoOfertasFilter.setSort("voferta.fechaCreacion");
 			dtoOfertasFilter.setDir("DESC");
 			
@@ -75,20 +75,15 @@ public class OfertasController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public void generateExcel(DtoOfertasFilter dtoOfertasFilter, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-
+	public void generateExcel(DtoOfertasFilter dtoOfertasFilter, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		dtoOfertasFilter.setStart(excelReportGeneratorApi.getStart());
 		dtoOfertasFilter.setLimit(excelReportGeneratorApi.getLimit());
 
-		List<VOfertasActivosAgrupacion> listaOfertas = (List<VOfertasActivosAgrupacion>) ofertaApi
-				//.getListOfertas(dtoOfertasFilter).getResults();
-				.getListOfertasUsuario(dtoOfertasFilter).getResults();
+		List<VOfertasActivosAgrupacion> listaOfertas = (List<VOfertasActivosAgrupacion>) ofertaApi.getListOfertasUsuario(dtoOfertasFilter).getResults();
 
 		ExcelReport report = new OfertasExcelReport(listaOfertas);
 
 		excelReportGeneratorApi.generateAndSend(report, response);
-
 	}
 
 	private ModelAndView createModelAndViewJson(ModelMap model) {

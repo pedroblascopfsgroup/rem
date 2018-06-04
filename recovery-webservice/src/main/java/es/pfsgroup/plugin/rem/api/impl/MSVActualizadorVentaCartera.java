@@ -109,6 +109,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 
 	private MSVHojaExcel excel;
 	private HashMap<String, String> listaAgrupaciones;
+	private ResultadoProcesarFila resultado;
 
 	@Override
 	public String getValidOperation() {
@@ -131,7 +132,9 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
 			throws IOException, ParseException, JsonViewerException, SQLException, Exception {
-		ResultadoProcesarFila resultado = new ResultadoProcesarFila();
+		resultado = new ResultadoProcesarFila();
+		this.resultado.addResultado("NUM ACTIVO",
+				exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.NUM_ACTIVO_HAYA));
 		ActivoAgrupacion agrupacion = null;
 		String codigoOferta = null;
 		logger.debug("--------------------- OFERTA_CARTERA: procesando fila: " + fila
@@ -153,6 +156,8 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			} else {
 				agrupacion = obtenerAgrupacion(descripcionAgrupacion);
 			}
+			
+			this.resultado.addResultado("NUM AGRUPACION",agrupacion.getNumAgrupRem().toString());
 
 			// Añadimos el activo a la agrupación
 			// NUMERO ACTIVO
@@ -232,8 +237,6 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			}
 		}
 
-		resultado.addResultado(codigoOferta,
-				exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.NUM_ACTIVO_HAYA));
 		return resultado;
 	}
 
@@ -290,15 +293,23 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 					Long.parseLong(listaOfertas.get(0).getIdOferta())));
 			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
 
+			DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 			String stringDate = exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.FECHA_INGRESO_CHEQUE);
 			Date fechaContabilizacionPropietario = null;
 
 			if (stringDate != null && !stringDate.isEmpty()) {
-				DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 				fechaContabilizacionPropietario = format.parse(stringDate);
-				expedienteComercial.setFechaContabilizacionPropietario(fechaContabilizacionPropietario);
+			}
+			
+			String stringDateVenta = exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.FECHA_VENTA);
+			Date fechaVenta = null;
+
+			if (stringDateVenta != null && !stringDateVenta.isEmpty()) {
+				fechaVenta = format.parse(stringDateVenta);
 			}
 
+			
+			
 			DtoCondiciones condicionantes = new DtoCondiciones();
 			condicionantes
 					.setTipoImpuestoCodigo(exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.TIPO_IMPUESTO));
@@ -334,6 +345,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 
 			DtoFichaExpediente dtoExp = new DtoFichaExpediente();
 			dtoExp.setFechaContabilizacionPropietario(fechaContabilizacionPropietario);
+			dtoExp.setFechaVenta(fechaVenta);
 			dtoExp.setEstadoPbc(1);
 			dtoExp.setConflictoIntereses(0);
 			dtoExp.setRiesgoReputacional(0);
@@ -421,6 +433,8 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id",
 					Long.parseLong(listaOfertas.get(0).getIdOferta())));
 			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
+			this.resultado.addResultado("NUM OFERTA",oferta.getNumOferta().toString());
+			this.resultado.addResultado("EXP comercial",expedienteComercial.getNumExpediente().toString());
 			// Obtenemos el tramite del expediente, y de este sus tareas.
 			List<ActivoTramite> listaTramites = activoTramiteApi
 					.getTramitesActivoTrabajoList(expedienteComercial.getTrabajo().getId());
@@ -810,9 +824,9 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			if (!listaAgrupaciones.containsKey(codigoOferta)) {
 				listaAgrupaciones.put(codigoOferta, precioVenta);
 			} else {
-				Double importe1 = Double.parseDouble(listaAgrupaciones.get(codigoOferta));
-				Double importe2 = Double.parseDouble(precioVenta);
-				listaAgrupaciones.put(codigoOferta, String.valueOf((importe1 + importe2)));
+				//Double importe1 = Double.parseDouble(listaAgrupaciones.get(codigoOferta));
+				//Double importe2 = Double.parseDouble(precioVenta);
+				//listaAgrupaciones.put(codigoOferta, String.valueOf((importe1 + importe2)));
 			}
 
 		}

@@ -27,8 +27,6 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.security.UsuarioSecurityManager;
-import es.capgemini.pfs.security.model.UsuarioSecurity;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -161,9 +159,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private TrabajoApi trabajoApi;
 
 	@Autowired
-	private UsuarioSecurityManager usuarioSecurityManager;
-
-	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
 
 	@Autowired
@@ -196,8 +191,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Autowired
 	private AgendaAdapter adapter;
 	
-	private OfertaApi ofertaApi;
-
+	
 	@Override
 	public String managerName() {
 		return "ofertaManager";
@@ -922,7 +916,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 										valoresTasacion, valoresTasacion.get("total")));
 						activoOferta.setPorcentajeParticipacion(Double.parseDouble(participacion));
 						Double importe = (oferta.getImporteOferta() * Double.parseDouble(participacion)) / 100;
-						importe =  Double.parseDouble(new DecimalFormat("#.##").format(importe));
+						String importeString = new DecimalFormat("#.##").format(importe);
+						try{
+							importe =  Double.parseDouble(importeString);
+						}catch(NumberFormatException e){
+							importeString = importeString.replace(",", ".");
+							importe =  Double.parseDouble(importeString);
+						}
 						sumatorioImporte = sumatorioImporte +importe;
 						activoOferta.setImporteActivoOferta(importe);
 					}
@@ -931,7 +931,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				//Pueden producirse pequeños errores de redondeo, en cuyo caso, aplicamos la diferencia al ultimo actv de la lista
 				if(listaActOfr != null && listaActOfr.size()>0 && oferta.getImporteOferta().compareTo(sumatorioImporte)>0){
 					ActivoOferta elUltimo = listaActOfr.get(listaActOfr.size()-1);
-					elUltimo.setImporteActivoOferta(elUltimo.getImporteActivoOferta()-(oferta.getImporteOferta()-sumatorioImporte));
+					elUltimo.setImporteActivoOferta(elUltimo.getImporteActivoOferta()+(oferta.getImporteOferta()-sumatorioImporte));
 				}else if(listaActOfr != null && listaActOfr.size()>0 && oferta.getImporteOferta().compareTo(sumatorioImporte)<0){
 					ActivoOferta elUltimo = listaActOfr.get(listaActOfr.size()-1);
 					elUltimo.setImporteActivoOferta(elUltimo.getImporteActivoOferta()-(sumatorioImporte-oferta.getImporteOferta()));

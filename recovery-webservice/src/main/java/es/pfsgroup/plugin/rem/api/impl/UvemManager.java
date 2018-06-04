@@ -1121,11 +1121,15 @@ public class UvemManager implements UvemManagerApi {
 			}
 
 			// codigo uvem de la ofician prescriptora
-			if (Checks.esNulo(instanciaDecisionDto.getCodigoProveedorUvem())) {
-				servicioGMPDJB13_INS.setIdentificadorDelColaboradoridcola("C000");
+			if (Boolean.TRUE.equals(instanciaDecisionDto.getOfertaVentaCartera())) {
+				servicioGMPDJB13_INS.setIdentificadorDelColaboradoridcola("D666");
 			} else {
-				servicioGMPDJB13_INS
-						.setIdentificadorDelColaboradoridcola(instanciaDecisionDto.getCodigoProveedorUvem());
+				if (Checks.esNulo(instanciaDecisionDto.getCodigoProveedorUvem())) {
+					servicioGMPDJB13_INS.setIdentificadorDelColaboradoridcola("C000");
+				} else {
+					servicioGMPDJB13_INS
+							.setIdentificadorDelColaboradoridcola(instanciaDecisionDto.getCodigoProveedorUvem());
+				}
 			}
 
 			// venta cartera
@@ -1133,8 +1137,10 @@ public class UvemManager implements UvemManagerApi {
 
 				if (Boolean.TRUE.equals(instanciaDecisionDto.getOfertaVentaCartera())) {
 					// 0 :no es venta cartera
-					servicioGMPDJB13_INS
-					.setCodigoVentaCarteracovecw(instanciaDecisionDto.getCodigoAgrupacionInmueble());
+					if (instanciaDecisionDto.getCodigoAgrupacionInmueble() != null) {
+						servicioGMPDJB13_INS
+								.setCodigoVentaCarteracovecw(instanciaDecisionDto.getCodigoAgrupacionInmueble());
+					}
 
 					// 0 Para ofertas tipo venta
 					// 6 Oferta preventa cartera

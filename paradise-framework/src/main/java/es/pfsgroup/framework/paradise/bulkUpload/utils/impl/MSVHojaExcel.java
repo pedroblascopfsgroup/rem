@@ -11,12 +11,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.utils.FormatUtils;
 import es.pfsgroup.commons.utils.Checks;
-
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import jxl.Cell;
@@ -313,7 +311,6 @@ public class MSVHojaExcel {
 		return this.crearExcelProcesadoByHojaAndFilaCabecera(resultados, numHoja, numFilaCabeceras);
 	}
 
-	@SuppressWarnings("rawtypes")
 	public String crearExcelProcesadoByHojaAndFilaCabecera(ArrayList<ResultadoProcesarFila> resultados, int numHoja,
 			int numFilaCabeceras) throws IllegalArgumentException, IOException, RowsExceededException, WriteException {
 		if (!isOpen) {
@@ -329,11 +326,30 @@ public class MSVHojaExcel {
 			int numColumnas = this.getNumeroColumnasByHojaAndFila(numHoja, 0);
 			int columna = numColumnas;
 			addTexto(hoja, columna, numFilaCabeceras-1, "RESULTADO");
+			addTexto(hoja, columna+1, numFilaCabeceras-1, "DESC. ERROR");
+			if (resultados != null && resultados.size() > 0 && resultados.get(0).gethMap() != null
+					&& resultados.get(0).gethMap().size() > 0) {
+				int colnN =2;
+				for (Map.Entry<String, String> entry : resultados.get(0).gethMap().entrySet()) {
+					addTexto(hoja, columna+colnN, numFilaCabeceras-1, entry.getKey());
+					colnN++;
+				}
+
+			}
 			for(ResultadoProcesarFila resultado : resultados){
 				if(resultado.isCorrecto()){
-					addTextoErrores(hoja, columna, resultado.getFila(), "OK");
+					addTexto(hoja, columna, resultado.getFila(), "OK");
+					if(resultado.gethMap() != null && resultado.gethMap().size() > 0){
+						int colnN =2;
+						for (Map.Entry<String, String> entry : resultado.gethMap().entrySet()) {
+							addTexto(hoja, columna+colnN, resultado.getFila(), entry.getValue());
+							colnN++;
+							
+						}
+					}
 				}else{
-					addTextoErrores(hoja, columna, resultado.getFila(), resultado.getErrorDesc());
+					addTexto(hoja, columna, resultado.getFila(), "FALSE");
+					addTextoErrores(hoja, columna+1, resultado.getFila(), resultado.getErrorDesc());
 				}
 				
 			}

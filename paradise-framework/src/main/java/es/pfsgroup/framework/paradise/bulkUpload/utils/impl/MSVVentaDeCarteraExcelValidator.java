@@ -3,6 +3,8 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,9 +35,19 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 
 
+
 @Component
 public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 
+	public static final String TIPOS_APLICABLES_DIFERENTES = "El tipo de impuesto y el tipo aplicable han de ser iguales para todos los activos de la agrupación";
+	public static final String FORMATO_FECHA_CHEQUE_INVALIDO = "La fecha ingreso cheque tiene un formato incorrecto";
+	public static final String FORMATO_FECHA_VENTA_INVALIDO = "La fecha venta tiene un formato incorrecto";
+	public static final String PRESCRIPTORES_DIFERENTES = "Los activos tienen que tener el mismo prescriptor";
+	public static final String GESTORES_DIFERENTES = "Los activos tienen que tener el mismo gestor";
+	public static final String TITULARES_DIFERENTES = "Los activos tienen que tener los mismos titulares";
+	public static final String FECHA_INGRESO_CHEQUE_OBLIGATORIA = "La fecha ingreso cheque tiene que estar informada.";
+	public static final String ACTIVOS_DIFERENTES_SUBCARTERAS = "Existen activos de diferentes subcarteras en la oferta.";
+	public static final String CARTERA_OBLIGATORIA = "El código de cartera no esta informado.";
 	public static final String ACTIVE_NOT_EXISTS = "El activo no existe.";
 	public static final String ACTIVE_NULL = "El campo número activo no puede estar vacío";
 	public static final String PRECIO_VENTA_NULL = "El campo precio de venta no puede estar vacío";
@@ -152,7 +164,7 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
-
+	
 	private Integer numFilasHoja;
 	
 	
@@ -210,6 +222,15 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 				mapaErrores.put(CODIGO_PRESCRIPTOR_NOT_EXISTS, codigoPrescriptorNotExistsByRows(exc));
 				mapaErrores.put(NUMERO_URSUS_TITULAR_NULL, esCampoNullByRows(exc,COL_NUM.NUMERO_URSUS_TITULAR));
 				mapaErrores.put(PORCENTAJE_COMPRA_TITULAR_NULL, esCampoNullByRows(exc,COL_NUM.PORCENTAJE_COMPRA_TITULAR));
+				mapaErrores.put(ACTIVOS_DIFERENTES_SUBCARTERAS, existenActivosDiferentesSubcarterasEnAgrupacion(exc));
+				mapaErrores.put(CARTERA_OBLIGATORIA, esCampoNullByRows(exc,COL_NUM.CODIGO_CARTERA));
+				mapaErrores.put(FECHA_INGRESO_CHEQUE_OBLIGATORIA, existenActivosDeBHSinFechaIngresoCheque(exc));
+				mapaErrores.put(TITULARES_DIFERENTES, validarTitualresOferta(exc));
+				mapaErrores.put(GESTORES_DIFERENTES, existenGestoresDiferentesEnAgrupacion(exc));
+				mapaErrores.put(PRESCRIPTORES_DIFERENTES, existenPrescriptoresDiferentesEnAgrupacion(exc));
+				mapaErrores.put(FORMATO_FECHA_CHEQUE_INVALIDO, esFechaValidaByRows(exc, COL_NUM.FECHA_INGRESO_CHEQUE));
+				mapaErrores.put(FORMATO_FECHA_VENTA_INVALIDO, esFechaValidaByRows(exc, COL_NUM.FECHA_VENTA));
+				mapaErrores.put(TIPOS_APLICABLES_DIFERENTES, existenTiposAplicablesDiferentesEnAgrupacion(exc));
 				
 				
 				if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty()
@@ -238,6 +259,15 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 						||!mapaErrores.get(CODIGO_PRESCRIPTOR_NOT_EXISTS).isEmpty()
 						||!mapaErrores.get(NUMERO_URSUS_TITULAR_NULL).isEmpty()
 						||!mapaErrores.get(PORCENTAJE_COMPRA_TITULAR_NULL).isEmpty()
+						||!mapaErrores.get(CARTERA_OBLIGATORIA).isEmpty()
+						||!mapaErrores.get(ACTIVOS_DIFERENTES_SUBCARTERAS).isEmpty()
+						||!mapaErrores.get(FECHA_INGRESO_CHEQUE_OBLIGATORIA).isEmpty()
+						||!mapaErrores.get(TITULARES_DIFERENTES).isEmpty()
+						||!mapaErrores.get(GESTORES_DIFERENTES).isEmpty()
+						||!mapaErrores.get(PRESCRIPTORES_DIFERENTES).isEmpty()
+						||!mapaErrores.get(FORMATO_FECHA_CHEQUE_INVALIDO).isEmpty()
+						||!mapaErrores.get(FORMATO_FECHA_VENTA_INVALIDO).isEmpty()
+						||!mapaErrores.get(TIPOS_APLICABLES_DIFERENTES).isEmpty()
 							){
 						dtoValidacionContenido.setFicheroTieneErrores(true);
 						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -626,6 +656,291 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 				e.printStackTrace();
 			}
 		}
+		return listaFilas;
+	}
+	
+	private List<Integer> esFechaValidaByRows(MSVHojaExcel exc, Integer campo){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
+		String valorDate = null;
+
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
+				valorDate = exc.dameCelda(i, campo);
+
+				// Si el valor Date no se puede obtener adecuadamente se lanza
+				// error para esa línea.
+				if (!Checks.esNulo(valorDate)) {
+					ft.setLenient(false);
+					ParsePosition p = new ParsePosition( 0 );
+					ft.parse(valorDate,p);
+					if(p.getIndex() < valorDate.length()) {
+						  throw new ParseException( valorDate, p.getIndex() );
+					}
+				}
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			}
+		}
+
+		return listaFilas;
+	}
+	
+	
+	private List<Integer> existenActivosDiferentesSubcarterasEnAgrupacion(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		HashMap<String, String> ofertasSubcarteras = new HashMap<String, String>();
+		try {
+			for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+				String codigoOferta = exc.dameCelda(i, COL_NUM.CODIGO_UNICO_OFERTA);
+				String  codigoSubcartera = particularValidator.getSubcartera(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA));
+				if(ofertasSubcarteras.containsKey(codigoOferta)){
+					if(!ofertasSubcarteras.get(codigoOferta).equals(codigoSubcartera)){
+						listaFilas.add(i);
+					}
+				}else{
+					ofertasSubcarteras.put(codigoOferta, codigoSubcartera);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return listaFilas;
+	}
+	
+	private List<Integer> existenGestoresDiferentesEnAgrupacion(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		HashMap<String, String> ofertasGestores = new HashMap<String, String>();
+		try {
+			for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+				String codigoOferta = exc.dameCelda(i, COL_NUM.CODIGO_UNICO_OFERTA);
+				String  gestor = exc.dameCelda(i, COL_NUM.USU_GESTOR_COMERCIALIZACION);
+				if(gestor == null){
+					gestor ="";
+				}
+				if(ofertasGestores.containsKey(codigoOferta)){
+					if(!ofertasGestores.get(codigoOferta).equals(gestor)){
+						listaFilas.add(i);
+					}
+				}else{
+					ofertasGestores.put(codigoOferta, gestor);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return listaFilas;
+	}
+	
+	private List<Integer> existenPrescriptoresDiferentesEnAgrupacion(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		HashMap<String, String> ofertasPrescriptores = new HashMap<String, String>();
+		try {
+			for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+				String codigoOferta = exc.dameCelda(i, COL_NUM.CODIGO_UNICO_OFERTA);
+				String  prescriptor = exc.dameCelda(i, COL_NUM.CODIGO_PRESCRIPTOR);
+				if(prescriptor == null){
+					prescriptor ="";
+				}
+				if(ofertasPrescriptores.containsKey(codigoOferta)){
+					if(!ofertasPrescriptores.get(codigoOferta).equals(prescriptor)){
+						listaFilas.add(i);
+					}
+				}else{
+					ofertasPrescriptores.put(codigoOferta, prescriptor);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return listaFilas;
+	}
+	
+	private List<Integer> existenTiposAplicablesDiferentesEnAgrupacion(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		HashMap<String, String> ofertasTiposinpositivos = new HashMap<String, String>();
+		try {
+			for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+				String codigoOferta = exc.dameCelda(i, COL_NUM.CODIGO_UNICO_OFERTA);
+				String  tipoImpuesto = exc.dameCelda(i, COL_NUM.TIPO_IMPUESTO);
+				String  tipoAplicable = exc.dameCelda(i, COL_NUM.TIPO_APLICABLE);
+				String tipoImpositivo = "";
+				if(tipoImpuesto != null && !tipoImpuesto.isEmpty()){
+					tipoImpositivo = tipoImpositivo+tipoImpuesto;
+				}
+				if(tipoAplicable != null && !tipoAplicable.isEmpty()){
+					tipoImpositivo = tipoImpositivo+tipoAplicable;
+				}
+				
+				if(ofertasTiposinpositivos.containsKey(codigoOferta)){
+					if(!ofertasTiposinpositivos.get(codigoOferta).equals(tipoImpositivo)){
+						listaFilas.add(i);
+					}
+				}else{
+					ofertasTiposinpositivos.put(codigoOferta, tipoImpositivo);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return listaFilas;
+	}
+	
+	private List<Integer> existenActivosDeBHSinFechaIngresoCheque(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		try {
+			for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+				String  codigoSubcartera = particularValidator.getSubcartera(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA));
+				String  fechaIngresoCheque = exc.dameCelda(i, COL_NUM.FECHA_INGRESO_CHEQUE);
+				if(codigoSubcartera != null && codigoSubcartera.equals("06")){
+					if(fechaIngresoCheque==null || fechaIngresoCheque.isEmpty()){
+						listaFilas.add(i);
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return listaFilas;
+	}
+	
+	private List<Integer> validarTitualresOferta(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		HashMap<String, String> ofertasTitulares = new HashMap<String, String>();
+		try {
+			for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+				String codigoOferta = exc.dameCelda(i, COL_NUM.CODIGO_UNICO_OFERTA);
+
+				String infoTitulares = "";
+
+				// primer titular
+				if (exc.dameCelda(i, COL_NUM.NOMBRE_TITULAR) != null
+						&& !exc.dameCelda(i, COL_NUM.NOMBRE_TITULAR).isEmpty()) {
+					infoTitulares = exc.dameCelda(i, COL_NUM.NOMBRE_TITULAR);
+				}
+				if (exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR) != null
+						&& !exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR);
+				}
+				if (exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_TITULAR) != null
+						&& !exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_TITULAR).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_TITULAR);
+				}
+				if (exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR) != null
+						&& !exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR);
+				}
+				if (exc.dameCelda(i, COL_NUM.NUMERO_URSUS_TITULAR) != null
+						&& !exc.dameCelda(i, COL_NUM.NUMERO_URSUS_TITULAR).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.NUMERO_URSUS_TITULAR);
+				}
+				if (exc.dameCelda(i, COL_NUM.PORCENTAJE_COMPRA_TITULAR) != null
+						&& !exc.dameCelda(i, COL_NUM.PORCENTAJE_COMPRA_TITULAR).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.PORCENTAJE_COMPRA_TITULAR);
+				}
+				// segundo titular
+				if (exc.dameCelda(i, COL_NUM.NOMBRE_TITULAR_2) != null
+						&& !exc.dameCelda(i, COL_NUM.NOMBRE_TITULAR_2).isEmpty()) {
+					infoTitulares =infoTitulares+ exc.dameCelda(i, COL_NUM.NOMBRE_TITULAR_2);
+				}
+				if (exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR_2) != null
+						&& !exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR_2).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR_2);
+				}
+				if (exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_TITULAR_2) != null
+						&& !exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_TITULAR_2).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_TITULAR_2);
+				}
+				if (exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_2) != null
+						&& !exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_2).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_2);
+				}
+				if (exc.dameCelda(i, COL_NUM.NUMERO_URSUS_TITULAR_2) != null
+						&& !exc.dameCelda(i, COL_NUM.NUMERO_URSUS_TITULAR_2).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.NUMERO_URSUS_TITULAR_2);
+				}
+				if (exc.dameCelda(i, COL_NUM.PORCENTAJE_COMPRA_TITULAR_2) != null
+						&& !exc.dameCelda(i, COL_NUM.PORCENTAJE_COMPRA_TITULAR_2).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.PORCENTAJE_COMPRA_TITULAR_2);
+				}
+				// tercer titular
+				if (exc.dameCelda(i, COL_NUM.NOMBRE_TITULAR_3) != null
+						&& !exc.dameCelda(i, COL_NUM.NOMBRE_TITULAR_3).isEmpty()) {
+					infoTitulares = infoTitulares+exc.dameCelda(i, COL_NUM.NOMBRE_TITULAR_3);
+				}
+				if (exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR_3) != null
+						&& !exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR_3).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR_3);
+				}
+				if (exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_TITULAR_3) != null
+						&& !exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_TITULAR_3).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_TITULAR_3);
+				}
+				if (exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_3) != null
+						&& !exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_3).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_3);
+				}
+				if (exc.dameCelda(i, COL_NUM.NUMERO_URSUS_TITULAR_3) != null
+						&& !exc.dameCelda(i, COL_NUM.NUMERO_URSUS_TITULAR_3).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.NUMERO_URSUS_TITULAR_3);
+				}
+				if (exc.dameCelda(i, COL_NUM.PORCENTAJE_COMPRA_TITULAR_3) != null
+						&& !exc.dameCelda(i, COL_NUM.PORCENTAJE_COMPRA_TITULAR_3).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.PORCENTAJE_COMPRA_TITULAR_3);
+				}
+				// cuarto titular
+				if (exc.dameCelda(i, COL_NUM.NOMBRE_TITULAR_4) != null
+						&& !exc.dameCelda(i, COL_NUM.NOMBRE_TITULAR_4).isEmpty()) {
+					infoTitulares = infoTitulares+exc.dameCelda(i, COL_NUM.NOMBRE_TITULAR_4);
+				}
+				if (exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR_4) != null
+						&& !exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR_4).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR_4);
+				}
+				if (exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_TITULAR_4) != null
+						&& !exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_TITULAR_4).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_TITULAR_4);
+				}
+				if (exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_4) != null
+						&& !exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_4).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_4);
+				}
+				if (exc.dameCelda(i, COL_NUM.NUMERO_URSUS_TITULAR_4) != null
+						&& !exc.dameCelda(i, COL_NUM.NUMERO_URSUS_TITULAR_4).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.NUMERO_URSUS_TITULAR_3);
+				}
+				if (exc.dameCelda(i, COL_NUM.PORCENTAJE_COMPRA_TITULAR_4) != null
+						&& !exc.dameCelda(i, COL_NUM.PORCENTAJE_COMPRA_TITULAR_4).isEmpty()) {
+					infoTitulares = infoTitulares + exc.dameCelda(i, COL_NUM.PORCENTAJE_COMPRA_TITULAR_4);
+				}
+
+				infoTitulares = infoTitulares.trim();
+
+				if (ofertasTitulares.containsKey(codigoOferta)) {
+					if (infoTitulares != null && ofertasTitulares.get(codigoOferta) != null
+							&& !infoTitulares.equals(ofertasTitulares.get(codigoOferta))) {
+						listaFilas.add(i);
+					}
+				} else {
+					ofertasTitulares.put(codigoOferta, infoTitulares);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		return listaFilas;
 	}
 	

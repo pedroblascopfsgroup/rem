@@ -3369,13 +3369,18 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Override
 	public Boolean trabajoEsTarificado(Long idTramite){
 		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
+		Trabajo trabajo = null;
 		if (!Checks.esNulo(activoTramite)) {
-			Trabajo trabajo = activoTramite.getTrabajo();
-			if(!Checks.esNulo(trabajo) && !Checks.esNulo(trabajo.getEsTarificado())){
-				return trabajo.getEsTarificado();
+			trabajo = activoTramite.getTrabajo();
+			if(!Checks.esNulo(trabajo)){
+				if(!Checks.esNulo(trabajo.getEsTarifaPlana()) && trabajo.getEsTarifaPlana().equals(true)){
+					return true;
+				}else if(!Checks.esNulo(trabajo.getEsTarificado())){
+					return trabajo.getEsTarificado();
+				}
 			}
-		}		
-		return false;
+		}
+		throw new NullPointerException();
 	}
 }
 

@@ -127,6 +127,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 					codigoPrescriptor= oferta.getPrescriptor().getCodigoProveedorRem().toString();
 				}
 				nombrePrescriptor= oferta.getPrescriptor().getNombre();
+				mailsPara.add(oferta.getPrescriptor().getEmail());
 			}
 			
 			String contenido = 

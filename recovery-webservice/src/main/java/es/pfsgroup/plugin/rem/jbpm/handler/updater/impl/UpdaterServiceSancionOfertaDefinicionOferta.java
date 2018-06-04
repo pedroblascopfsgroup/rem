@@ -15,16 +15,21 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -54,6 +59,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 	private static final String COMBO_CONFLICTO = "comboConflicto";
 	private static final String COMBO_RIESGO = "comboRiesgo";
 	private static final String COMBO_COMITE_SUPERIOR = "comiteSuperior";
+	private static final String CAMPO_COMITE = "comite";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -112,6 +118,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				expediente.setEstado(estado);
 			}
 		}
+		
 		for (TareaExternaValor valor : valores) {
 			Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 			if (!Checks.esNulo(ofertaAceptada)) {
@@ -145,6 +152,8 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				}
 			}
 		}
+		
+		
 
 	}
 

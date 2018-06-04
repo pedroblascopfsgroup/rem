@@ -265,6 +265,9 @@ public class VBusquedaActivos implements Serializable {
 	@Column(name="ACT_COD_PROMOCION_PRINEX")
 	private String codigoPromocionPrinex;
 	
+	@Column(name="DD_TPO_CODIGO")
+	private String tipoTituloPosesorio;
+	
 	public Long getId() {
 		return id;
 	}
@@ -635,7 +638,13 @@ public class VBusquedaActivos implements Serializable {
 		this.codigoPromocionPrinex = codigoPromocionPrinex;
 	}
 
+	public String getTipoTituloPosesorio() {
+		return tipoTituloPosesorio;
+	}
 
+	public void setTipoTituloPosesorio(String tipoTituloPosesorio) {
+		this.tipoTituloPosesorio = tipoTituloPosesorio;
+	}
 
 
 

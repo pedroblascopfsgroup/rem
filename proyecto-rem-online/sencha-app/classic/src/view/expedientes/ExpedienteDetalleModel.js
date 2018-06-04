@@ -63,7 +63,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     fechaIngresoChequeReadOnly: function(get) {
 	    	 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 	    	 var subCartera = get('expediente.propietario');
-	    	 return CONST.CARTERA['BANKIA'] == carteraCodigo && CONST.NOMBRE_SUBCARTERA['BANKIA_HABITAT'] != subCartera;
+	    	 return (CONST.CARTERA['BANKIA'] == carteraCodigo && CONST.NOMBRE_SUBCARTERA['BANKIA_HABITAT'] != subCartera) || CONST.CARTERA['LIBERBANK'] == carteraCodigo;
 	     },
 	     
 	     comiteSancionadorNoEditable: function(get) {
@@ -94,6 +94,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 	     	return CONST.CARTERA['CAJAMAR'] == carteraCodigo;
 	     },
+	     
+	     esCarteraLiberbank: function(get) {
+		     	
+	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+	     	return CONST.CARTERA['LIBERBANK'] == carteraCodigo;
+		 },
 	     
 	     getTipoExpedienteCabecera: function(get) {
 	     
@@ -213,7 +219,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		     	var bloqueado = get('expediente.bloqueado');
 		     	return bloqueado;
 		     	
-		 }
+		 } 
 	 },
 
 

@@ -1,17 +1,17 @@
   --/*
 --##########################################
---## AUTOR=JORGE ROS
---## FECHA_CREACION=20161020
+--## AUTOR=JUAN RUIZ
+--## FECHA_CREACION=20180522
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1026
+--## INCIDENCIA_LINK=HREOS-4107
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
---## HREOS-2176 Se añade join con PRP_PROPUESTAS_PRECIOS para saber si el activo se encuentra en alguna propuesta de precios.
+--## HREOS-4107 Se añade el campo ACT_COD_PROMOCION_PRINEX para el cod.Promo al crear trabajos con activos liberbank.
 --##########################################
 --*/
 
@@ -69,7 +69,9 @@ BEGIN
 		INNER JOIN ' || V_ESQUEMA || '.ACT_PRP ACP ON prp.PRP_ID = ACP.PRP_ID
 		INNER JOIN ' || V_ESQUEMA || '.DD_EPP_ESTADO_PROP_PRECIO epp ON prp.DD_EPP_ID = epp.DD_EPP_ID
 		WHERE epp.DD_EPP_CODIGO NOT IN (''03'',''04'',''05'')
-			AND acp.ACT_ID = act.ACT_ID ) AS IN_PRP_TRAMITACION
+			AND acp.ACT_ID = act.ACT_ID ) AS IN_PRP_TRAMITACION,
+	  ACT.ACT_COD_PROMOCION_PRINEX,
+	  CRA.DD_CRA_CODIGO AS CODIGO_CARTERA
     
     FROM ' ||V_ESQUEMA|| '.ACT_ACTIVO ACT
       LEFT JOIN ' ||V_ESQUEMA|| '.DD_SAC_SUBTIPO_ACTIVO STA ON STA.DD_SAC_ID = ACT.DD_SAC_ID

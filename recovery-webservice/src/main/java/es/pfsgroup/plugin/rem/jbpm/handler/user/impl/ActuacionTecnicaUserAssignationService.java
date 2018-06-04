@@ -14,10 +14,13 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.PresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.TrabajoConfiguracionTarifa;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 
@@ -67,11 +70,14 @@ public class ActuacionTecnicaUserAssignationService implements UserAssigantionSe
 		TareaActivo tareaActivo = (TareaActivo) tareaExterna.getTareaPadre();
 		Trabajo trabajo = tareaActivo.getTramite().getTrabajo();
 		String codigoTarea = tareaExterna.getTareaProcedimiento().getCodigo();
-		
-		if(CODIGO_T004_AUTORIZACION_PROPIETARIO.equals(codigoTarea)){
+		if(CODIGO_T004_AUTORIZACION_PROPIETARIO.equals(codigoTarea)
+				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(trabajo.getActivo().getCartera().getCodigo())){
 			List<ActivoTrabajo> listActivos = trabajo.getActivosTrabajo(); // Filtrar si uno o más activos
 			int nActivos = listActivos.size();
 			boolean hasCodPrinex = false;
+			Double importe = new Double("0.0");
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
 			
 			for(ActivoTrabajo activo : listActivos) {
 				if(null != activo.getActivo().getCodigoPromocionPrinex() && !activo.getActivo().getCodigoPromocionPrinex().isEmpty()){
@@ -80,14 +86,42 @@ public class ActuacionTecnicaUserAssignationService implements UserAssigantionSe
 				}
 			}
 			
-			if (!Checks.esNulo(trabajo.getEsTarificado()) && !trabajo.getEsTarificado()) { // No Tarificado
-				return gestorActivoApi.getGestorByActivoYTipo(trabajo.getActivo(),
-						this.getGestorAutorizacionPropietarioLiberBank(this.getImportePresupuestoAutorizadoLiberbank(trabajo)
-						,nActivos,hasCodPrinex));
-			}else { // Tarificado
-				return gestorActivoApi.getGestorByActivoYTipo(trabajo.getActivo(),
-						this.getGestorAutorizacionPropietarioLiberBank(trabajo.getImporteTotal(),nActivos,hasCodPrinex));
+			if (!Checks.esNulo(trabajo.getEsTarificado()) && !trabajo.getEsTarificado()) { // Presupuesto
+				List<PresupuestoTrabajo> presupuestos = genericDao.getList(PresupuestoTrabajo.class, filtro);
+				for (PresupuestoTrabajo presupuesto : presupuestos) {
+					if (!presupuesto.getAuditoria().isBorrado() && !Checks.esNulo(presupuesto.getImporte())
+							&& presupuesto.getEstadoPresupuesto() != null && "02".equals(presupuesto.getEstadoPresupuesto().getCodigo())) {
+							importe += presupuesto.getImporte();
+					}
+				}
+			}else { // Tarifas
+				List<TrabajoConfiguracionTarifa> cfgTarifas = genericDao.getList(TrabajoConfiguracionTarifa.class, filtro);
+				for (TrabajoConfiguracionTarifa tarifa : cfgTarifas) {
+					if (!tarifa.getAuditoria().isBorrado() && !Checks.esNulo(tarifa.getPrecioUnitario())
+							&& !Checks.esNulo(tarifa.getMedicion())) {
+						importe += tarifa.getPrecioUnitario() * tarifa.getMedicion();
+					}
+				}
 			}
+			String gestor = GestorActivoApi.CODIGO_GESTOR_ACTIVO;
+			if(nActivos > 1 && hasCodPrinex){
+				if(importe>= LIBERBANK_LIMITE_INFERIOR_AGRUPACIONES && importe < LIBERBANK_LIMITE_INTERMEDIO_AGRUPACIONES) {
+					gestor = GestorActivoApi.CODIGO_GESTOR_COMITE_INMOBILIARIO_LIBERBANK;
+				}else if(importe>= LIBERBANK_LIMITE_INTERMEDIO_AGRUPACIONES && importe < LIBERBANK_LIMITE_SUPERIOR_AGRUPACIONES) {
+					gestor = GestorActivoApi.CODIGO_GESTOR_COMITE_INVERSION_INMOBILIARIA_LIBERBANK;
+				}else if(importe>= LIBERBANK_LIMITE_SUPERIOR_AGRUPACIONES) {
+					gestor = GestorActivoApi.CODIGO_GESTOR_COMITE_DIRECCION_LIBERBANK;
+				}
+			}else {
+				if(importe>= LIBERBANK_LIMITE_INFERIOR && importe < LIBERBANK_LIMITE_INTERMEDIO_AGRUPACIONES) {
+					gestor = GestorActivoApi.CODIGO_GESTOR_COMITE_INMOBILIARIO_LIBERBANK;
+				}else if(importe>= LIBERBANK_LIMITE_INTERMEDIO_AGRUPACIONES && importe < LIBERBANK_LIMITE_SUPERIOR_AGRUPACIONES) {
+					gestor = GestorActivoApi.CODIGO_GESTOR_COMITE_INVERSION_INMOBILIARIA_LIBERBANK;
+				}else if(importe>= LIBERBANK_LIMITE_SUPERIOR_AGRUPACIONES) {
+					gestor = GestorActivoApi.CODIGO_GESTOR_COMITE_DIRECCION_LIBERBANK;
+				}
+			}
+			return gestorActivoApi.getGestorByActivoYTipo(trabajo.getActivo(),gestor);
 		}else if(!Checks.esNulo(tareaActivo.getTramite().getTrabajo().getUsuarioGestorActivoResponsable())){
 			return trabajo.getUsuarioGestorActivoResponsable();
 
@@ -98,43 +132,6 @@ public class ActuacionTecnicaUserAssignationService implements UserAssigantionSe
 		}
 			
 		return gestorActivoApi.getGestorByActivoYTipo(trabajo.getActivo(), GestorActivoApi.CODIGO_GESTOR_ACTIVO);
-	}
-
-	private double getImportePresupuestoAutorizadoLiberbank(Trabajo trabajo){
-		float importe = 0f;
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
-		
-		List<PresupuestoTrabajo> presupuestos = genericDao.getList(PresupuestoTrabajo.class, filtro);
-		
-		for (PresupuestoTrabajo presupuesto : presupuestos) {
-			if (!presupuesto.getAuditoria().isBorrado() && !Checks.esNulo(presupuesto.getImporte())
-					&& presupuesto.getEstadoPresupuesto() != null && "02".equals(presupuesto.getEstadoPresupuesto().getCodigo())) {
-				importe = presupuesto.getImporte();
-			}
-		}
-		return importe;
-	}
-	
-	private String getGestorAutorizacionPropietarioLiberBank(double importe, int nActivos, boolean hasCodPrinex) {
-		String gestor = GestorActivoApi.CODIGO_GESTOR_ACTIVO;
-		if(nActivos > 1 && hasCodPrinex){
-			if(importe>= LIBERBANK_LIMITE_INFERIOR_AGRUPACIONES && importe < LIBERBANK_LIMITE_INTERMEDIO_AGRUPACIONES) {
-				gestor = GestorActivoApi.CODIGO_GESTOR_COMITE_INMOBILIARIO_LIBERBANK;
-			}else if(importe>= LIBERBANK_LIMITE_INTERMEDIO_AGRUPACIONES && importe < LIBERBANK_LIMITE_SUPERIOR_AGRUPACIONES) {
-				gestor = GestorActivoApi.CODIGO_GESTOR_COMITE_INVERSION_INMOBILIARIA_LIBERBANK;
-			}else if(importe>= LIBERBANK_LIMITE_SUPERIOR_AGRUPACIONES) {
-				gestor = GestorActivoApi.CODIGO_GESTOR_COMITE_DIRECCION_LIBERBANK;
-			}
-		}else {
-			if(importe>= LIBERBANK_LIMITE_INFERIOR && importe < LIBERBANK_LIMITE_INTERMEDIO_AGRUPACIONES) {
-				gestor = GestorActivoApi.CODIGO_GESTOR_COMITE_INMOBILIARIO_LIBERBANK;
-			}else if(importe>= LIBERBANK_LIMITE_INTERMEDIO_AGRUPACIONES && importe < LIBERBANK_LIMITE_SUPERIOR_AGRUPACIONES) {
-				gestor = GestorActivoApi.CODIGO_GESTOR_COMITE_INVERSION_INMOBILIARIA_LIBERBANK;
-			}else if(importe>= LIBERBANK_LIMITE_SUPERIOR_AGRUPACIONES) {
-				gestor = GestorActivoApi.CODIGO_GESTOR_COMITE_DIRECCION_LIBERBANK;
-			}
-		}
-		return gestor;
 	}
 	
 	@Override
@@ -147,5 +144,4 @@ public class ActuacionTecnicaUserAssignationService implements UserAssigantionSe
 			return gestorActivoApi.getGestorByActivoYTipo(trabajo.getActivo(), GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS);
 		}
 	}
-
 }

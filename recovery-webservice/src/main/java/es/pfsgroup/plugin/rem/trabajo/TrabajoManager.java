@@ -3405,7 +3405,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		boolean supera = false;
 		
 		if (!Checks.esNulo(activoTramite)) {
+			Double importe = new Double("0.0");
 			Trabajo trabajo = activoTramite.getTrabajo();
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
 			List<ActivoTrabajo> listActivos = trabajo.getActivosTrabajo();
 			int nActivos = listActivos.size();
 			boolean hasCodPrinex = false;
@@ -3417,44 +3419,34 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				}
 			}
 			
-			if(trabajo.getEsTarificado()){ // Tarificado
-				supera = this.filtroLimiteLiberbank(trabajo.getImporteTotal(), nActivos, hasCodPrinex);
-			}else{ // No Tarificado (Por presupuesto)
-				supera = this.validatePresupuestoLiberbank(trabajo, nActivos, hasCodPrinex);
-			}
-		}
-		return supera;
-	}
-	
-	private boolean validatePresupuestoLiberbank(Trabajo trabajo, int nActivos, boolean hasCodPrinex) {
-		
-		boolean supera = false;
-		
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
-		if (!Checks.esNulo(trabajo.getEsTarificado()) && !trabajo.getEsTarificado()) {
-			List<PresupuestoTrabajo> presupuestos = genericDao.getList(PresupuestoTrabajo.class, filtro);
-			for (PresupuestoTrabajo presupuesto : presupuestos) {
-				if (!presupuesto.getAuditoria().isBorrado() && !Checks.esNulo(presupuesto.getImporte())
-						&& presupuesto.getEstadoPresupuesto() != null && "02".equals(presupuesto.getEstadoPresupuesto().getCodigo())) {
-						supera = this.filtroLimiteLiberbank(presupuesto.getImporte(), nActivos, hasCodPrinex);
+			if (!Checks.esNulo(trabajo.getEsTarificado()) && !trabajo.getEsTarificado()) { // Presupuesto
+				List<PresupuestoTrabajo> presupuestos = genericDao.getList(PresupuestoTrabajo.class, filtro);
+				for (PresupuestoTrabajo presupuesto : presupuestos) {
+					if (!presupuesto.getAuditoria().isBorrado() && !Checks.esNulo(presupuesto.getImporte())
+							&& presupuesto.getEstadoPresupuesto() != null && "02".equals(presupuesto.getEstadoPresupuesto().getCodigo())) {
+						importe += presupuesto.getImporte();
+					}
+				}
+			}else { // Tarifas
+				List<TrabajoConfiguracionTarifa> cfgTarifas = genericDao.getList(TrabajoConfiguracionTarifa.class, filtro);
+				for (TrabajoConfiguracionTarifa tarifa : cfgTarifas) {
+					if (!tarifa.getAuditoria().isBorrado() && !Checks.esNulo(tarifa.getPrecioUnitario())
+							&& !Checks.esNulo(tarifa.getMedicion())) {
+						importe += tarifa.getPrecioUnitario() * tarifa.getMedicion();
+					}
 				}
 			}
-		}		
+			
+			if(nActivos > 1 && hasCodPrinex) {
+				if( importe >= ActuacionTecnicaUserAssignationService.LIBERBANK_LIMITE_INFERIOR_AGRUPACIONES)
+					supera = true;
+			}else{
+				if(importe >= ActuacionTecnicaUserAssignationService.LIBERBANK_LIMITE_INFERIOR) {
+					supera = true;
+				}
+			}
+		}
 		return supera;
 	}
 	
-	private boolean filtroLimiteLiberbank(double importe, int nActivos, boolean hasCodPrinex) {
-		boolean supera = false;
-					
-		if(nActivos > 1 && hasCodPrinex) {
-			if( importe >= ActuacionTecnicaUserAssignationService.LIBERBANK_LIMITE_INFERIOR_AGRUPACIONES)
-				supera = true;
-		}else{
-			if(importe >= ActuacionTecnicaUserAssignationService.LIBERBANK_LIMITE_INFERIOR) {
-				supera = true;
-			}
-		}
-		
-		return supera;
-	}
 }

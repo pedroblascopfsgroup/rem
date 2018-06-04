@@ -44,6 +44,12 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CIF_PROVEEDOR_BANKIA_SAREB_TINSA = "B86689494";
 	public static final String CODIGO_TIPO_PROVEEDOR_TECNICO="PTEC";
 	public static final String CODIGO_GESTOR_GOLDEN_TREE = "GTREE";
+	public static final String CODIGO_GESTOR_COMITE_DIRECCION_LIBERBANK = "GCODI";
+	public static final String CODIGO_GESTOR_SINGULAR_TERCIARIA_LIBERBANK = "GLIBSINTER";
+	public static final String CODIGO_GESTOR_INVERSION_INMOBILIARIA_LIBERBANK = "GLIBINVINM";
+	public static final String CODIGO_GESTOR_COMITE_INVERSION_INMOBILIARIA_LIBERBANK = "GCOIN";
+	public static final String CODIGO_GESTOR_COMITE_INMOBILIARIO_LIBERBANK = "GCOINM";
+	public static final String CODIGO_GESTOR_LIBERBANK_RESIDENCIAL = "GLIBRES";
 	
 	Boolean insertarGestorAdicionalActivo(GestorEntidadDto dto);
 

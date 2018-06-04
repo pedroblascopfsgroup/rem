@@ -1543,7 +1543,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String res = rawDao.getExecuteSQL("		SELECT COUNT(1) "
 				+ "		FROM DD_COS_COMITES_SANCION cos			"
 				+ "     WHERE cos.BORRADO = 0					"
-				+ "		AND cos.DD_COS_CODIGO = "+codComite+"   "
+				+ "		AND cos.DD_COS_CODIGO = '"+codComite+"'   "
 				);
 		return !res.equals("0");
 	}
@@ -1553,7 +1553,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String res = rawDao.getExecuteSQL("		SELECT COUNT(1) "
 				+ "     FROM DD_TIT_TIPOS_IMPUESTO tit			"
 				+ "		WHERE tit.BORRADO = 0					"
-				+ "		AND tit.DD_TIT_CODIGO = "+codTipoImpuesto+" "
+				+ "		AND tit.DD_TIT_CODIGO = '"+codTipoImpuesto+"' "
 				);
 				
 		
@@ -1567,7 +1567,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			String res = rawDao.getExecuteSQL("		SELECT COUNT(1) "
 					+ "     FROM ACT_PVE_PROVEEDOR act			"
 					+ "		WHERE act.BORRADO = 0					"
-					+ "		AND act.PVE_COD_REM = "+codPrescriptor+" "
+					+ "		AND act.PVE_COD_REM = '"+codPrescriptor+"' "
 					);
 			resultado = !res.equals("0");
 		}
@@ -1583,7 +1583,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			String res = rawDao.getExecuteSQL("		SELECT COUNT(1) "
 					+ "		FROM DD_TDI_TIPO_DOCUMENTO_ID tdi		"
 					+ "		WHERE tdi.BORRADO = 0					"
-					+ "		AND tdi.DD_TDI_CODIGO = "+codDocumento+" "
+					+ "		AND tdi.DD_TDI_CODIGO = '"+codDocumento+"' "
 					);
 			
 			resultado = !res.equals("0");

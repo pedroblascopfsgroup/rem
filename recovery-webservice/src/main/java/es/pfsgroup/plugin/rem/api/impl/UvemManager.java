@@ -1048,7 +1048,7 @@ public class UvemManager implements UvemManagerApi {
 			}
 
 			if (Boolean.TRUE.equals(instanciaDecisionDto.getOfertaAgrupacion())
-					&& INSTANCIA_DECISION_ALTA.equals(accion)) {
+					&& INSTANCIA_DECISION_ALTA.equals(accion) && Boolean.FALSE.equals(instanciaDecisionDto.getOfertaVentaCartera())) {
 				if (instanciaDecisionDto.getCodigoAgrupacionInmueble() != null
 						&& instanciaDecisionDto.getCodigoAgrupacionInmueble() > 0) {
 					servicioGMPDJB13_INS

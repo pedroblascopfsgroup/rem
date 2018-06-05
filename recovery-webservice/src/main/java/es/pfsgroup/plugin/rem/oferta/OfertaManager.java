@@ -2144,41 +2144,43 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			return false;
 		}
 
-		// Reiniciar estado del PBC.
-		if (fullReset) {
-			// reseteamos responsabilidad corporativa
-			expediente.setConflictoIntereses(null);
-			expediente.setRiesgoReputacional(null);
-			expediente.setEstadoPbc(null);
-		} else {
-			expediente.setEstadoPbc(null);
-		}
+		if (!Checks.esNulo(expediente.getOferta()) && !expediente.getOferta().getVentaDirecta()) {
+			// Reiniciar estado del PBC.
+			if (fullReset) {
+				// reseteamos responsabilidad corporativa
+				expediente.setConflictoIntereses(null);
+				expediente.setRiesgoReputacional(null);
+				expediente.setEstadoPbc(null);
+			} else {
+				expediente.setEstadoPbc(null);
+			}
 
-		genericDao.update(ExpedienteComercial.class, expediente);
+			genericDao.update(ExpedienteComercial.class, expediente);
 
-		// Avisar al gestor de formalización del activo.
-		Notificacion notificacion = new Notificacion();
+			// Avisar al gestor de formalización del activo.
+			Notificacion notificacion = new Notificacion();
 
-		if (!Checks.esNulo(expediente.getOferta()) && !Checks.esNulo(expediente.getOferta().getActivoPrincipal())) {
+			if (!Checks.esNulo(expediente.getOferta()) && !Checks.esNulo(expediente.getOferta().getActivoPrincipal())) {
 
-			notificacion.setIdActivo(expediente.getOferta().getActivoPrincipal().getId());
+				notificacion.setIdActivo(expediente.getOferta().getActivoPrincipal().getId());
 
-			Usuario gestoriaFormalizacion = gestorExpedienteComercialManager
-					.getGestorByExpedienteComercialYTipo(expediente, "GFORM");
+				Usuario gestoriaFormalizacion = gestorExpedienteComercialManager
+						.getGestorByExpedienteComercialYTipo(expediente, "GFORM");
 
-			if (!Checks.esNulo(gestoriaFormalizacion)) {
+				if (!Checks.esNulo(gestoriaFormalizacion)) {
 
-				notificacion.setDestinatario(gestoriaFormalizacion.getId());
+					notificacion.setDestinatario(gestoriaFormalizacion.getId());
 
-				notificacion.setTitulo("Reseteo del PBC - Expediente " + expediente.getNumExpediente());
-				notificacion.setDescripcion(String.format(
-						"Se ha reseteado el PBC por modificación de algunos parámetros del expediente %s.",
-						expediente.getNumExpediente().toString()));
+					notificacion.setTitulo("Reseteo del PBC - Expediente " + expediente.getNumExpediente());
+					notificacion.setDescripcion(String.format(
+							"Se ha reseteado el PBC por modificación de algunos parámetros del expediente %s.",
+							expediente.getNumExpediente().toString()));
 
-				try {
-					notificacionAdapter.saveNotificacion(notificacion);
-				} catch (ParseException e) {
-					logger.error("error en OfertasManager", e);
+					try {
+						notificacionAdapter.saveNotificacion(notificacion);
+					} catch (ParseException e) {
+						logger.error("error en OfertasManager", e);
+					}
 				}
 			}
 		}

@@ -39,6 +39,8 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 @Component
 public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 
+	public static final String TIPO_DOC_OBLIGATORIO = "El tipo de documento  no esta informado.";
+	public static final String DOC_OBLIGATORIO = "El documento del cliente  no esta informado.";
 	public static final String TIPOS_APLICABLES_DIFERENTES = "El tipo de impuesto y el tipo aplicable han de ser iguales para todos los activos de la agrupación";
 	public static final String FORMATO_FECHA_CHEQUE_INVALIDO = "La fecha ingreso cheque tiene un formato incorrecto";
 	public static final String FORMATO_FECHA_VENTA_INVALIDO = "La fecha venta tiene un formato incorrecto";
@@ -231,6 +233,14 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 				mapaErrores.put(FORMATO_FECHA_CHEQUE_INVALIDO, esFechaValidaByRows(exc, COL_NUM.FECHA_INGRESO_CHEQUE));
 				mapaErrores.put(FORMATO_FECHA_VENTA_INVALIDO, esFechaValidaByRows(exc, COL_NUM.FECHA_VENTA));
 				mapaErrores.put(TIPOS_APLICABLES_DIFERENTES, existenTiposAplicablesDiferentesEnAgrupacion(exc));
+				mapaErrores.put(TIPO_DOC_OBLIGATORIO, esCampoNullByRows(exc,COL_NUM.TIPO_DOCUMENTO_TITULAR));
+				mapaErrores.put(TIPO_DOC_OBLIGATORIO, esCampoNullByRows(exc,COL_NUM.TIPO_DOCUMENTO_TITULAR_2));
+				mapaErrores.put(TIPO_DOC_OBLIGATORIO, esCampoNullByRows(exc,COL_NUM.TIPO_DOCUMENTO_TITULAR_3));
+				mapaErrores.put(TIPO_DOC_OBLIGATORIO, esCampoNullByRows(exc,COL_NUM.TIPO_DOCUMENTO_TITULAR_4));
+				mapaErrores.put(DOC_OBLIGATORIO, esCampoNullByRows(exc,COL_NUM.DOC_IDENTIFICACION_TITULAR));
+				mapaErrores.put(DOC_OBLIGATORIO, esCampoNullByRows(exc,COL_NUM.DOC_IDENTIFICACION_TITULAR_2));
+				mapaErrores.put(DOC_OBLIGATORIO, esCampoNullByRows(exc,COL_NUM.DOC_IDENTIFICACION_TITULAR_3));
+				mapaErrores.put(DOC_OBLIGATORIO, esCampoNullByRows(exc,COL_NUM.DOC_IDENTIFICACION_TITULAR_4));
 				
 				
 				if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty()
@@ -268,6 +278,8 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 						||!mapaErrores.get(FORMATO_FECHA_CHEQUE_INVALIDO).isEmpty()
 						||!mapaErrores.get(FORMATO_FECHA_VENTA_INVALIDO).isEmpty()
 						||!mapaErrores.get(TIPOS_APLICABLES_DIFERENTES).isEmpty()
+						||!mapaErrores.get(TIPO_DOC_OBLIGATORIO).isEmpty()
+						||!mapaErrores.get(DOC_OBLIGATORIO).isEmpty()
 							){
 						dtoValidacionContenido.setFicheroTieneErrores(true);
 						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());

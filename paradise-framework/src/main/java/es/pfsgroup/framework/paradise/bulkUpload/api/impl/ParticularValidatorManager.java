@@ -1538,4 +1538,18 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	}
 	
+	@Override
+	public boolean activoNoTieneOkupas(String numActivo) {
+
+		String actofr = rawDao.getExecuteSQL("    SELECT COUNT(1) "
+				+ "    FROM ACT_ACTIVO ACT "
+				+ "    JOIN ACT_SPS_SIT_POSESORIA SPS ON SPS.ACT_ID = ACT.ACT_ID "
+				+ "    WHERE ACT.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "    AND SPS.SPS_OCUPADO = 1 "
+				+ "	   AND SPS.SPS_CON_TITULO = 0 ");
+		
+		return actofr.equals("1");
+
+	}
+	
 }

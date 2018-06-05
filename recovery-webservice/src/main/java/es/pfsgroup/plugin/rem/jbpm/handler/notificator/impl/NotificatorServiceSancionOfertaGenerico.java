@@ -129,6 +129,9 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				
 				if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)){
 					destinatarios.add(usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR).getEmail());
+					if (!Checks.esNulo(oferta.getPrescriptor().getEmail())){
+						destinatarios.add(oferta.getPrescriptor().getEmail());
+					}
 				}
 				
 				if (destinatarios.isEmpty()) {

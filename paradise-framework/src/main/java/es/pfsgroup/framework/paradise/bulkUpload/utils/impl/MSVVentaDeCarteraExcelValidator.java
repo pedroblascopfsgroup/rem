@@ -234,13 +234,13 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract{
 				mapaErrores.put(FORMATO_FECHA_VENTA_INVALIDO, esFechaValidaByRows(exc, COL_NUM.FECHA_VENTA));
 				mapaErrores.put(TIPOS_APLICABLES_DIFERENTES, existenTiposAplicablesDiferentesEnAgrupacion(exc));
 				mapaErrores.put(TIPO_DOC_OBLIGATORIO, esCampoNullByRows(exc,COL_NUM.TIPO_DOCUMENTO_TITULAR));
-				mapaErrores.put(TIPO_DOC_OBLIGATORIO, esCampoNullByRows(exc,COL_NUM.TIPO_DOCUMENTO_TITULAR_2));
-				mapaErrores.put(TIPO_DOC_OBLIGATORIO, esCampoNullByRows(exc,COL_NUM.TIPO_DOCUMENTO_TITULAR_3));
-				mapaErrores.put(TIPO_DOC_OBLIGATORIO, esCampoNullByRows(exc,COL_NUM.TIPO_DOCUMENTO_TITULAR_4));
+				//mapaErrores.put(TIPO_DOC_OBLIGATORIO, esCampoNullByRows(exc,COL_NUM.TIPO_DOCUMENTO_TITULAR_2));
+				//mapaErrores.put(TIPO_DOC_OBLIGATORIO, esCampoNullByRows(exc,COL_NUM.TIPO_DOCUMENTO_TITULAR_3));
+				//mapaErrores.put(TIPO_DOC_OBLIGATORIO, esCampoNullByRows(exc,COL_NUM.TIPO_DOCUMENTO_TITULAR_4));
 				mapaErrores.put(DOC_OBLIGATORIO, esCampoNullByRows(exc,COL_NUM.DOC_IDENTIFICACION_TITULAR));
-				mapaErrores.put(DOC_OBLIGATORIO, esCampoNullByRows(exc,COL_NUM.DOC_IDENTIFICACION_TITULAR_2));
-				mapaErrores.put(DOC_OBLIGATORIO, esCampoNullByRows(exc,COL_NUM.DOC_IDENTIFICACION_TITULAR_3));
-				mapaErrores.put(DOC_OBLIGATORIO, esCampoNullByRows(exc,COL_NUM.DOC_IDENTIFICACION_TITULAR_4));
+				//mapaErrores.put(DOC_OBLIGATORIO, esCampoNullByRows(exc,COL_NUM.DOC_IDENTIFICACION_TITULAR_2));
+				//mapaErrores.put(DOC_OBLIGATORIO, esCampoNullByRows(exc,COL_NUM.DOC_IDENTIFICACION_TITULAR_3));
+				//mapaErrores.put(DOC_OBLIGATORIO, esCampoNullByRows(exc,COL_NUM.DOC_IDENTIFICACION_TITULAR_4));
 				
 				
 				if(!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty()

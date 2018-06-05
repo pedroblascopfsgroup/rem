@@ -2490,39 +2490,44 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override
 	public boolean comprobarComiteLiberbankPlantillaPropuesta(TareaExterna tareaExterna) {
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
-		DDComiteSancion comite =  this.calculoComiteLiberbank(ofertaAceptada);
-		ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
-		Double importeOferta = (!Checks.esNulo(ofertaAceptada.getImporteContraOferta())) ? ofertaAceptada.getImporteContraOferta() : ofertaAceptada.getImporteOferta();
-		
-		if (!Checks.esNulo(ofertaAceptada) && !Checks.esNulo(comite)) {
-			if(!DDComiteSancion.CODIGO_HAYA_LIBERBANK.equals(comite.getCodigo())){
-				if(Checks.esNulo(agrupacion)){
-					Activo activo = ofertaAceptada.getActivoPrincipal();
-					Double minimoAutorizado = activoApi.getImporteValoracionActivoByCodigo(activo,DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
-					
-					if(!Checks.esNulo(activo) && !Checks.esNulo(minimoAutorizado)) {
-						if(importeOferta<(minimoAutorizado*0.85)){
-							return true;
+		if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(ofertaAceptada.getActivoPrincipal().getCartera())) {
+			DDComiteSancion comite = this.calculoComiteLiberbank(ofertaAceptada);
+			ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
+			Double importeOferta = (!Checks.esNulo(ofertaAceptada.getImporteContraOferta()))
+					? ofertaAceptada.getImporteContraOferta() : ofertaAceptada.getImporteOferta();
+			if (!Checks.esNulo(ofertaAceptada) && !Checks.esNulo(comite)) {
+				if (!DDComiteSancion.CODIGO_HAYA_LIBERBANK.equals(comite.getCodigo())) {
+					if (Checks.esNulo(agrupacion)) {
+						Activo activo = ofertaAceptada.getActivoPrincipal();
+						Double minimoAutorizado = activoApi.getImporteValoracionActivoByCodigo(activo,
+								DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
+
+						if (!Checks.esNulo(activo) && !Checks.esNulo(minimoAutorizado)) {
+							if (importeOferta < (minimoAutorizado * 0.85)) {
+								return true;
+							}
 						}
-					}
-				} else {
-					DtoAgrupacionFilter dtoAgrupActivo = new DtoAgrupacionFilter();
-					dtoAgrupActivo.setAgrId(agrupacion.getId());
-					List<ActivoAgrupacionActivo> activos = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo);
-					Double minimoAutorizado = 0.0;
-					if(!Checks.esNulo(dtoAgrupActivo)) {
-						for (ActivoAgrupacionActivo activo : activos) {
-							minimoAutorizado += activoApi.getImporteValoracionActivoByCodigo(activo.getActivo(),DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
+					} else {
+						DtoAgrupacionFilter dtoAgrupActivo = new DtoAgrupacionFilter();
+						dtoAgrupActivo.setAgrId(agrupacion.getId());
+						List<ActivoAgrupacionActivo> activos = activoAgrupacionActivoApi
+								.getListActivosAgrupacion(dtoAgrupActivo);
+						Double minimoAutorizado = 0.0;
+						if (!Checks.esNulo(dtoAgrupActivo)) {
+							for (ActivoAgrupacionActivo activo : activos) {
+								minimoAutorizado += activoApi.getImporteValoracionActivoByCodigo(activo.getActivo(),
+										DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
+							}
 						}
-					}
-					if(!Checks.esNulo(minimoAutorizado)) {
-						if(importeOferta<(minimoAutorizado*0.85)) {
-							return true;
+						if (!Checks.esNulo(minimoAutorizado)) {
+							if (importeOferta < (minimoAutorizado * 0.85)) {
+								return true;
+							}
 						}
 					}
 				}
+
 			}
-				
 		}
 		return false;
 	}
@@ -2596,9 +2601,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			for(ActivoAgrupacionActivo aga : activos) {
 				ActivoTasacion tasacion = activoApi.getTasacionMasReciente(aga.getActivo());
-				Double importeTasacion = null;
-				Double precioAprobadoVenta = null;	
-				Double precioMinimoAutorizado = null;
+				Double importeTasacion = 0.0;
+				Double precioAprobadoVenta = 0.0;	
+				Double precioMinimoAutorizado = 0.0;
 				
 				importeTasacion = (!Checks.esNulo(tasacion)) ? tasacion.getImporteTasacionFin() : null;				
 				List<VPreciosVigentes> precios = activoApi.getPreciosVigentesById(aga.getActivo().getId());																										

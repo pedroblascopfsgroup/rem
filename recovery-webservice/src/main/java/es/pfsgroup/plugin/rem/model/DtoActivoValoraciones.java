@@ -24,6 +24,8 @@ public class DtoActivoValoraciones extends WebDto{
 	private String valorAsesoramientoLiquidativo;
 	private String vacbe;
 	private String costeAdquisicion;
+	private String deudaBruta;
+	private String valorRazonable;
 	
 	private String fsvVenta;
 	private String fsvRenta;
@@ -176,6 +178,18 @@ public class DtoActivoValoraciones extends WebDto{
 	}
 	public void setCosteAdquisicion(String costeAdquisicion) {
 		this.costeAdquisicion = costeAdquisicion;
+	}
+	public String getDeudaBruta() {
+		return deudaBruta;
+	}
+	public void setDeudaBruta(String deudaBruta) {
+		this.deudaBruta = deudaBruta;
+	}
+	public String getValorRazonable() {
+		return valorRazonable;
+	}
+	public void setValorRazonable(String valorRazonable) {
+		this.valorRazonable = valorRazonable;
 	}
 	public String getValorEstimadoRenta() {
 		return valorEstimadoRenta;

@@ -57,7 +57,9 @@ public class DDTipoPrecio implements Auditable, Dictionary {
 	public static final String CODIGO_TPC_COSTE_ADQUISICION = "18";		//	Coste de adquisición
 	public static final String CODIGO_TPC_FSV_VENTA = "19";				//	FSV venta
 	public static final String CODIGO_TPC_FSV_RENTA = "20";				//	FSV renta
-
+	public static final String CODIGO_TPC_DEUDA_BRUTA = "21";           //  Deuda Bruta
+	public static final String CODIGO_TPC_VALOR_RAZONABLE = "22";       //  Valor Razonable
+	
 	private static final long serialVersionUID = 1L;
 	
 	@Id

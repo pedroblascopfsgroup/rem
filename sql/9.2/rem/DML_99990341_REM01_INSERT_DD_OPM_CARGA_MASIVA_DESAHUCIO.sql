@@ -50,7 +50,7 @@ BEGIN
 				, ''FSD''
 				, ''Carga masiva de fecha de solicitud de desahucio''
 				, ''Carga masiva de fecha de solicitud de desahucio''
-				, (SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE USUARIOCREAR = '''||V_USUARIO||''')
+				, (SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE USUARIOCREAR = '''||V_USUARIO||''' AND ROWNUM = 1)
 				, '''||V_USUARIO||'''
 				, SYSDATE
 				, ''nD*,f''

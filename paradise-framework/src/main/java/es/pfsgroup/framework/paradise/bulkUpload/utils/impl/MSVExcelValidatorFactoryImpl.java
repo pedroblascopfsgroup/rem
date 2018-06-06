@@ -73,11 +73,7 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVActualizarGestores actualizarGestores;
 	
 	@Autowired
-	private MSVOkTecnicoExcelValidator okTecnicoValidator;
-	
-	@Autowired
-	private MSVActualizarFechaSolicitudDesahucioValidator fechaSolicitudDesahucio;
-	
+	private MSVOkTecnicoExcelValidator okTecnicoValidator;	
 	
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 		

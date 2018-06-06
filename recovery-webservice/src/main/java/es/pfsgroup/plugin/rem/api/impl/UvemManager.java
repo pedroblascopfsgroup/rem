@@ -1162,6 +1162,8 @@ public class UvemManager implements UvemManagerApi {
 
 			}else{
 				servicioGMPDJB13_INS.setCodigoVentaCarteracovecw(0);
+				servicioGMPDJB13_INS.setTipoDeOfertacotofw((short) 0);
+				servicioGMPDJB13_INS.setIndicadorDeVentaInmediatabivein(' ');
 			}
 
 			// Requeridos por el servicio

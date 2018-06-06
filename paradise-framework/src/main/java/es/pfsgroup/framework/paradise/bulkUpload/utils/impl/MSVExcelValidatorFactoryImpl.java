@@ -137,8 +137,6 @@ public class MSVExcelValidatorFactoryImpl {
 				return altaActivosTP;
 			}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CENTRAL_TECNICA_OK_TECNICO.equals(codTipoOperacion)){
 				return okTecnicoValidator;
-			}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_FECHA_SOLICITUD_DESAHUCIO.equals(codTipoOperacion)) {
-				return fechaSolicitudDesahucio;
 			}
 		
 		return null;

@@ -78,7 +78,6 @@ public class MSVExcelValidatorFactoryImpl {
 	@Autowired
 	private MSVOkTecnicoExcelValidator okTecnicoValidator;
 	
-	
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 		
 		if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPATION_RESTRICTED.equals(codTipoOperacion)) {
@@ -138,9 +137,13 @@ public class MSVExcelValidatorFactoryImpl {
 			}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CENTRAL_TECNICA_OK_TECNICO.equals(codTipoOperacion)){
 				return okTecnicoValidator;
 			}
+<<<<<<< HEAD
 			else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA.equals(codTipoOperacion)){
 				return ventaDeCartera;
 			}
+=======
+		
+>>>>>>> 2.0.17-18060502-rem
 		return null;
 	}
 

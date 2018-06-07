@@ -2295,15 +2295,19 @@ public class AgrupacionAdapter {
 
 		String codProvinciasCanarias[] = {"35", "38"};
 		
-		for (int i = 0; i < lista.size(); i++) {
-			ActivoAgrupacionActivo aga = lista.get(i);
+		if(lista.isEmpty() && Arrays.asList(codProvinciasCanarias).contains(activo.getProvincia())){
+			canarias = true;
+		}else{
+			for (int i = 0; i < lista.size(); i++) {
+				ActivoAgrupacionActivo aga = lista.get(i);
 
-			for (int j = 0; j < lista.size(); j++) {
-				Activo act = aga.getActivo();
-				String codProvincia = act.getProvincia();
+				for (int j = 0; j < lista.size(); j++) {
+					Activo act = aga.getActivo();
+					String codProvincia = act.getProvincia();
 
-				if (Arrays.asList(codProvinciasCanarias).contains(codProvincia)) {
-					canarias = true;
+					if (Arrays.asList(codProvinciasCanarias).contains(codProvincia)) {
+						canarias = true;
+					}
 				}
 			}
 		}

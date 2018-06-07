@@ -79,6 +79,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.Visita;
@@ -317,18 +318,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	public DtoPage getListOfertasUsuario(DtoOfertasFilter dto) {
-
 		Usuario usuarioGestor = null;
 		Usuario usuarioGestoria = null;
 
 		if (dto.getUsuarioGestor() != null) {
-			usuarioGestor = genericDao.get(Usuario.class,
-					genericDao.createFilter(FilterType.EQUALS, "id", dto.getUsuarioGestor()));
+			usuarioGestor = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getUsuarioGestor()));
 		}
 
 		if (dto.getGestoria() != null) {
-			usuarioGestoria = genericDao.get(Usuario.class,
-					genericDao.createFilter(FilterType.EQUALS, "id", dto.getGestoria()));
+			usuarioGestoria = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getGestoria()));
+		}
+
+		// Carterización del buscador.
+		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+		if (!Checks.esNulo(usuarioCartera)) {
+			dto.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
 		}
 
 		return ofertaDao.getListOfertas(dto, usuarioGestor, usuarioGestoria);

@@ -91,10 +91,16 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private Date fechaSolicitudMoratoria;
 	private String resolucionMoratoriaCodigo;
 	private Date fechaResolucionMoratoria;
-	
+	private String defectosTestimonio;
 	
 	// Mapeados a mano
 	private String tipoJuzgadoCodigo;
+	public String getDefectosTestimonio() {
+		return defectosTestimonio;
+	}
+	public void setDefectosTestimonio(String defectosTestimonio) {
+		this.defectosTestimonio = defectosTestimonio;
+	}
 	private String estadoAdjudicacionCodigo;
 	private String tipoPlazaCodigo;
 	private String entidadAdjudicatariaCodigo;

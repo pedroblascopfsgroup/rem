@@ -73,6 +73,8 @@ public class ActivoAdjudicacionNoJudicial implements Serializable, Auditable {
 	@Column(name = "ADN_NUM_REFERENCIA")
 	private String numReferencia;
 
+	@Column(name = "ADN_EXP_DEF_TESTI")
+	private String defectosTestimonio;
 	
 	@Version   
 	private Long version;
@@ -80,8 +82,6 @@ public class ActivoAdjudicacionNoJudicial implements Serializable, Auditable {
 	@Embedded
 	private Auditoria auditoria;
 
-	
-	
 	
 	public Long getId() {
 		return id;
@@ -163,5 +163,12 @@ public class ActivoAdjudicacionNoJudicial implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 
+	public String getDefectosTestimonio() {
+		return defectosTestimonio;
+	}
+
+	public void setDefectosTestimonio(String defectosTestimonio) {
+		this.defectosTestimonio = defectosTestimonio;
+	}
 
 }

@@ -4339,12 +4339,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Oferta oferta = expedienteComercial.getOferta();
 		Double importeOferta = !Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteContraOferta()
 				: oferta.getImporteOferta();
+
 		try {
 
 			List<ActivoOferta> activosOferta = expedienteComercial.getOferta().getActivosOferta();
 			for (ActivoOferta activoOferta : activosOferta) {
-				if (activoOferta.getPrimaryKey().getActivo().getId().equals(dto.getIdActivo())) {
+				if (activoOferta.getPrimaryKey().getActivo().getId().equals(dto.getIdActivo())
+						|| activoOferta.getPrimaryKey().getActivo().getNumActivo().equals(dto.getNumActivo())) {
+					
 					if (!Checks.esNulo(dto.getIdActivo())) {
+						if (!Checks.esNulo(dto.getImporteParticipacion())) {
+							activoOferta.setImporteActivoOferta(dto.getImporteParticipacion());
+							activoOferta
+									.setPorcentajeParticipacion(100 / (importeOferta / dto.getImporteParticipacion()));
+						}
+					} else if (!Checks.esNulo(dto.getNumActivo())) {
 						if (!Checks.esNulo(dto.getImporteParticipacion())) {
 							activoOferta.setImporteActivoOferta(dto.getImporteParticipacion());
 							activoOferta
@@ -4353,6 +4362,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					}
 				}
 			}
+			expedienteComercialDao.save(expedienteComercial);
 
 		} catch (Exception e) {
 			logger.error("error en expedienteComercialManager", e);

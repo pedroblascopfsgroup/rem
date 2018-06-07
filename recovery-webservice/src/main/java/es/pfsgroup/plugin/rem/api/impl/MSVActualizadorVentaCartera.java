@@ -47,6 +47,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
@@ -127,6 +128,9 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 		excel = exc;
 		HashMap<String, String> listaAgrupaciones = calcularImporteOferta(excel);
 		context.put(ProcesoMasivoContext.LISTA_AGRUPACIONES, listaAgrupaciones);
+
+		HashMap<String, ArrayList<DtoActivosExpediente>> listaActivosPorAgrupacion = obtenerActivosOferta(excel);
+		context.put(ProcesoMasivoContext.ACTIVOS_AGRUPACION, listaActivosPorAgrupacion);
 	}
 
 	@Transactional(readOnly = false)
@@ -234,7 +238,10 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 
 					// guardamos los datos que hacen falta para avanzar el exp
 					// comercial
-					guardarDatosNecesariosExpedienteComercial(exc, agrupacion.getId(), fila);
+					guardarDatosNecesariosExpedienteComercial(exc, agrupacion.getId(), fila, context);
+					
+					//actualizamos los importes de los activos
+					updateActivoExpediente(codigoOferta, agrupacion.getId(), context);
 
 					// creamos un posicionamiento en el expediente
 					crearPosicionamiento(agrupacion.getId());
@@ -304,8 +311,8 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 	 * @param fila
 	 * @throws Exception
 	 */
-	private void guardarDatosNecesariosExpedienteComercial(MSVHojaExcel exc, Long idAgrupacion, int fila)
-			throws Exception {
+	private void guardarDatosNecesariosExpedienteComercial(MSVHojaExcel exc, Long idAgrupacion, int fila,
+			ProcesoMasivoContext context) throws Exception {
 		logger.debug("OFERTA_CARTERA: Guardamos datos en el expediente comercial");
 		TransactionStatus transaction = null;
 		try {
@@ -858,6 +865,78 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 
 		}
 		return listaAgrupaciones;
+	}
+
+	/**
+	 * Calcula el importe de la oferta
+	 * 
+	 * @param exc
+	 * @throws IllegalArgumentException
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	private HashMap<String, ArrayList<DtoActivosExpediente>> obtenerActivosOferta(MSVHojaExcel exc)
+			throws IllegalArgumentException, IOException, ParseException {
+
+		HashMap<String, ArrayList<DtoActivosExpediente>> activosAgrupaciones = new HashMap<String, ArrayList<DtoActivosExpediente>>();
+
+		String codigoOferta = null;
+		Long numActivoHaya = null;
+		// Comprobamos las distintas agrupaciones que hay
+		for (int i = this.getFilaInicial(); i <= excel.getNumeroFilas() - 1; i++) {
+			codigoOferta = exc.dameCelda(i, MSVVentaDeCarteraExcelValidator.COL_NUM.CODIGO_UNICO_OFERTA);
+			numActivoHaya = Long.valueOf(exc.dameCelda(i, MSVVentaDeCarteraExcelValidator.COL_NUM.NUM_ACTIVO_HAYA));
+			Double precioVenta = Double
+					.parseDouble(exc.dameCelda(i, MSVVentaDeCarteraExcelValidator.COL_NUM.PRECIO_VENTA));
+
+			DtoActivosExpediente dtoActivoExpediente = new DtoActivosExpediente();
+			dtoActivoExpediente.setNumActivo(numActivoHaya);
+			dtoActivoExpediente.setImporteParticipacion(precioVenta);
+			if (!activosAgrupaciones.containsKey(codigoOferta)) {
+				activosAgrupaciones.put(codigoOferta, new ArrayList<DtoActivosExpediente>());
+				activosAgrupaciones.get(codigoOferta).add(dtoActivoExpediente);
+			} else {
+				activosAgrupaciones.get(codigoOferta).add(dtoActivoExpediente);
+			}
+
+		}
+		return activosAgrupaciones;
+	}
+
+	/**
+	 * Actualiza los importes de cada activo de la agrupacion
+	 * @param codigoOferta
+	 * @param idAgrupacion
+	 * @param context
+	 * @throws Exception
+	 */
+	@SuppressWarnings({ "unchecked" })
+	private void updateActivoExpediente(String codigoOferta, Long idAgrupacion, ProcesoMasivoContext context)
+			throws Exception {
+		logger.debug("OFERTA_CARTERA: actualizando importe de los activos");
+		TransactionStatus transaction = null;
+		try {
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			List<VOfertasActivosAgrupacion> listaOfertas = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
+			Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id",
+					Long.parseLong(listaOfertas.get(0).getIdOferta())));
+			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
+
+			ArrayList<DtoActivosExpediente> activosAgr = ((HashMap<String, ArrayList<DtoActivosExpediente>>) context
+					.get(ProcesoMasivoContext.ACTIVOS_AGRUPACION)).get(codigoOferta);
+			
+			for(DtoActivosExpediente activoExpediente : activosAgr){
+				expedienteComercialApi.updateActivoExpediente(activoExpediente, expedienteComercial.getId());
+			}
+			
+			
+
+			transactionManager.commit(transaction);
+		} catch (Exception e) {
+			transactionManager.rollback(transaction);
+			throw e;
+		}
+
 	}
 
 	/**

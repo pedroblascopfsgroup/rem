@@ -249,9 +249,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Autowired
 	private ExpedienteComercialDao expedienteComercialDao;
 	
-	@Autowired
-	private ActivoTramiteApi activoTramiteApi;
-	
 	@Override
 	public String managerName() {
 		return "trabajoManager";

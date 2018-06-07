@@ -1152,7 +1152,14 @@ public class UvemManager implements UvemManagerApi {
 					// ‘S’: si es una oferta de tipo 7 y no es de BH
 					// ‘N’ : no es venta cartera automática y tipo oferta 7
 					// Obligatorio distinto ‘ ‘ para venta cartera
-					servicioGMPDJB13_INS.setIndicadorDeVentaInmediatabivein('S');
+					
+					//Dani nos confirma que para activos BH hay que pasar N, aunque la Doc no es clara
+					if(DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA_HABITAT.equals(instanciaDecisionDto.getQcenre())){
+						servicioGMPDJB13_INS.setIndicadorDeVentaInmediatabivein('N');
+					}else{
+						servicioGMPDJB13_INS.setIndicadorDeVentaInmediatabivein('S');
+					}
+					
 				}else{
 					//es una alta pero no es de venta cartera
 					servicioGMPDJB13_INS.setCodigoVentaCarteracovecw(0);

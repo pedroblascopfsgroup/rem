@@ -3452,8 +3452,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return supera;
 	}
 	
-}
-	
 	@Override
 	public Boolean trabajoEsTarificado(Long idTramite){
 		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);

@@ -1537,5 +1537,5 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return actofr.equals("0");
 
 	}
-	
+
 }

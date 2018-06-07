@@ -471,6 +471,9 @@
 			def superaLimiteLiberbank = {
 				def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.superaLimiteLiberbank(idTramite);
+			def trabajoEsTarificado = {
+				def trabajoManager = ctx.getBean("trabajoManager");
+            	return trabajoManager.trabajoEsTarificado(idTramite);
 			}
   			 ]]></value>
   		</list>

@@ -73,8 +73,7 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVActualizarGestores actualizarGestores;
 	
 	@Autowired
-	private MSVOkTecnicoExcelValidator okTecnicoValidator;
-	
+	private MSVOkTecnicoExcelValidator okTecnicoValidator;	
 	
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 		
@@ -135,6 +134,7 @@ public class MSVExcelValidatorFactoryImpl {
 			}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CENTRAL_TECNICA_OK_TECNICO.equals(codTipoOperacion)){
 				return okTecnicoValidator;
 			}
+		
 		return null;
 	}
 

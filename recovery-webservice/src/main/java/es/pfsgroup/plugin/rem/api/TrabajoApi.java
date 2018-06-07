@@ -814,11 +814,14 @@ public interface TrabajoApi {
 
 	public Boolean trabajoTieneTarifaPlana(TareaExterna tareaExterna);
 
+
 	boolean checkLiberbank(TareaExterna tareaExterna);
 
 	boolean checkLiberbank(Trabajo trabajo);
 
 	public boolean superaLimiteLiberbank(Long idTrabajo);
+
+	Boolean trabajoEsTarificado(Long idTramite);
 
 
 }

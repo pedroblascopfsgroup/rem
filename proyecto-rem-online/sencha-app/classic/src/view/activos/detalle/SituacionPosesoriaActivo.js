@@ -328,11 +328,12 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						{ 
 							xtype:'datefieldbase',
 							reference: 'fechaSolDesahucio',
-					 		fieldLabel: HreRem.i18n('fieldlabel.fecha.solicitud.desahucio'),
+					 		fieldLabel: HreRem.i18n('fieldlabel.fecha.tratamiento.ocupacion'),
 			            	bind:		'{situacionPosesoria.fechaSolDesahucio}'
 						},
 						{ 
 							xtype:'datefieldbase',
+							hidden: true,
 							reference: 'fechaLanzamiento',
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.senyalamiento.lanzamiento'),
 		                	bind:		'{situacionPosesoria.fechalanzamiento}'
@@ -340,7 +341,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 		                { 
 		                	xtype:'datefieldbase',
 							reference: 'fechaLanzamientoEfectivo',
-		                	fieldLabel: HreRem.i18n('fieldlabel.fecha.lanzamiento.efectuado'),
+		                	fieldLabel: HreRem.i18n('fieldlabel.fecha.recuperacion.posesion'),
 		                	bind:		'{situacionPosesoria.fechaLanzamientoEfectivo}'
 		                }
 					

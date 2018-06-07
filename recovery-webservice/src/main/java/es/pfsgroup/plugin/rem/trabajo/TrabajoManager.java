@@ -236,6 +236,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Autowired
 	private HistoricoTarifaPlanaDao historicoTarifaPlanaDao;
+	
+	@Autowired
+	private ActivoTramiteApi activoTramiteApi;
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -3361,6 +3364,23 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			esTarifaPlana = esTrabajoTarifaPlana(trabajo.getActivo(), trabajo.getSubtipoTrabajo(), trabajo.getFechaSolicitud());
 		}
 		return esTarifaPlana;
+	}
+	
+	@Override
+	public Boolean trabajoEsTarificado(Long idTramite){
+		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
+		Trabajo trabajo = null;
+		if (!Checks.esNulo(activoTramite)) {
+			trabajo = activoTramite.getTrabajo();
+			if(!Checks.esNulo(trabajo)){
+				if(!Checks.esNulo(trabajo.getEsTarifaPlana()) && trabajo.getEsTarifaPlana().equals(true)){
+					return true;
+				}else if(!Checks.esNulo(trabajo.getEsTarificado())){
+					return trabajo.getEsTarificado();
+				}
+			}
+		}
+		throw new NullPointerException();
 	}
 }
 

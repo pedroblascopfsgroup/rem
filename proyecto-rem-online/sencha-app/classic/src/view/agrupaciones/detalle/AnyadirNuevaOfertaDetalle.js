@@ -264,7 +264,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 										bind: {
 											value: '{oferta.codigoSucursal}'
 										},
-										allowBlank: false,
+										allowBlank: true,
 										triggers: {
 											
 												buscarEmisor: {
@@ -297,7 +297,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 										name: 'nombreSucursal',
 										//disabled: true,
 										readOnly: true,
-										allowBlank: false
+										allowBlank: true
 									}
 									
 

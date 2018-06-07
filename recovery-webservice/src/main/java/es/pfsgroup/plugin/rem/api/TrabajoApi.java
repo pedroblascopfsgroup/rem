@@ -814,4 +814,6 @@ public interface TrabajoApi {
 
 	public Boolean trabajoTieneTarifaPlana(TareaExterna tareaExterna);
 
+	Boolean trabajoEsTarificado(Long idTramite);
+
 }

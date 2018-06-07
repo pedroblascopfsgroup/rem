@@ -452,6 +452,10 @@
 				def trabajoManager = ctx.getBean("trabajoManager");
                 return trabajoManager.trabajoTieneTarifaPlana(tareaExterna);
 			}
+			def trabajoEsTarificado = {
+				def trabajoManager = ctx.getBean("trabajoManager");
+            	return trabajoManager.trabajoEsTarificado(idTramite);
+			}
   			 ]]></value>
   		</list>
   	</property>

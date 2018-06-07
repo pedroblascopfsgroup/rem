@@ -271,6 +271,7 @@ BEGIN
                             FROM '||V_ESQUEMA||'.gac_gestor_add_activo gac INNER JOIN rem01.gee_gestor_entidad gee ON gee.gee_id = gac.gee_id
                                  INNER JOIN '||V_ESQUEMA||'.act_pvc_proveedor_contacto pvc ON pvc.usu_id = gee.usu_id
                                  INNER JOIN '||V_ESQUEMA||'.act_pve_proveedor pve ON pve.pve_id = pvc.pve_id
+                                 INNER JOIN '||V_ESQUEMA||'.dd_epr_estado_proveedor epr on epr.DD_EPR_ID = pve.DD_EPR_ID and epr.DD_EPR_CODIGO = ''04''                                                                  
                                  INNER JOIN '||V_ESQUEMA||'.dd_tpr_tipo_proveedor tpr ON tpr.dd_tpr_id = pve.dd_tpr_id AND tpr.dd_tpr_codigo = ''05''
                                  INNER join '||V_ESQUEMA||'.act_activo act on act.act_id = gac.ACT_ID
                                  INNER join '||V_ESQUEMA_M||'.dd_tge_tipo_gestor tge on tge.DD_TGE_ID = gee.DD_TGE_ID

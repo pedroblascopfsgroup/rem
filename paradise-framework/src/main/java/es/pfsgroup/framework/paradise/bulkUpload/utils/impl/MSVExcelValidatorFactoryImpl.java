@@ -78,7 +78,6 @@ public class MSVExcelValidatorFactoryImpl {
 	@Autowired
 	private MSVOkTecnicoExcelValidator okTecnicoValidator;
 	
-	
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 		
 		if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPATION_RESTRICTED.equals(codTipoOperacion)) {

@@ -376,6 +376,8 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			dtoExp.setEstadoPbc(1);
 			dtoExp.setConflictoIntereses(0);
 			dtoExp.setRiesgoReputacional(0);
+			dtoExp.setCodigoComiteSancionador(exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR));
+			
 			expedienteComercialApi.saveFichaExpediente(dtoExp, expedienteComercial.getId());
 			expedienteComercialApi.saveCondicionesExpediente(condicionantes, expedienteComercial.getId());
 

@@ -3024,6 +3024,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					expedienteComercial.getUltimoPosicionamiento()
 							.setFechaPosicionamiento(dto.getFechaPosicionamiento());
 				}
+				
+				if(!Checks.esNulo(dto.getCodigoComiteSancionador())){
+					expedienteComercial.setComiteSancion((DDComiteSancion) utilDiccionarioApi.dameValorDiccionarioByCod(
+											DDComiteSancion.class, dto.getCodigoComiteSancionador()));
+				}
 				if (expedienteComercial.getId() != null) {
 					genericDao.update(ExpedienteComercial.class, expedienteComercial);
 				} else {

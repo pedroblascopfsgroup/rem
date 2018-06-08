@@ -571,14 +571,13 @@ public class AgrupacionAdapter {
 				// la que lo vamos a meter NO lo es, lanzamos una Excepcion
 				// Si el activo es no Formalizable, pero la agrupación en la que
 				// lo vamos a meter SI que lo es, también lanzamos una Excepcion
-				if(!ventaCartera){
-					if (activoApi.esActivoFormalizable(activo.getNumActivo())
-							&& NO_ES_FORMALIZABLE.equals(agrupacion.getIsFormalizacion())
-							|| !activoApi.esActivoFormalizable(activo.getNumActivo())
-									&& ES_FORMALIZABLE.equals(agrupacion.getIsFormalizacion())) {
-						throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_NO_COMPARTE_FORMALIZACION);
-					}
+				if (activoApi.esActivoFormalizable(activo.getNumActivo())
+						&& NO_ES_FORMALIZABLE.equals(agrupacion.getIsFormalizacion())
+						|| !activoApi.esActivoFormalizable(activo.getNumActivo())
+								&& ES_FORMALIZABLE.equals(agrupacion.getIsFormalizacion())) {
+					throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_NO_COMPARTE_FORMALIZACION);
 				}
+
 			}
 			// Si es el primer activo, validamos si tenemos los datos necesarios
 			// del activo, y modificamos la agrupación con esos datos

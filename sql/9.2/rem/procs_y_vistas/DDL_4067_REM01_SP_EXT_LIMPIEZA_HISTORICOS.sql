@@ -47,6 +47,7 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_EXT_LIMPIEZA_HISTORICOS (
     V_FECHA_REQ                     DATE;
     V_NUM_DIAS                      NUMBER(16);
     V_REGS                          NUMBER(16) := 0;
+    V_REGS_CANDIDATOS               NUMBER(16) := 0;
 
     --Excepciones
     ERR_NEGOCIO EXCEPTION;
@@ -106,6 +107,7 @@ BEGIN
 
         IF V_NUM > 0 THEN 
             COD_RETORNO := 0;
+            V_REGS_CANDIDATOS := V_REGS_CANDIDATOS+V_NUM;
             DBMS_OUTPUT.PUT_LINE('[INFO] Se va a proceder a borrar '||V_NUM||'. registros en HLD_HISTORICO_LANZA_PER_DETA, correspondientes a días anteriores a '||V_FECHA_REQ||'.');
         ELSE
             COD_RETORNO := 1;
@@ -126,6 +128,7 @@ BEGIN
 
         IF V_NUM > 0 THEN 
             COD_RETORNO := 0;
+            V_REGS_CANDIDATOS := V_REGS_CANDIDATOS+V_NUM;
             DBMS_OUTPUT.PUT_LINE('[INFO] Se va a proceder a borrar '||V_NUM||'. registros en HLP_HISTORICO_LANZA_PERIODICO, correspondientes a días anteriores a '||V_FECHA_REQ||'.');
         ELSE
             COD_RETORNO := 1;
@@ -201,7 +204,7 @@ IF COD_RETORNO = 1 THEN
         SYSDATE,
         1,
         '''||V_NUM_DIAS||''',
-        '''||V_ERROR_DESC||'''
+        '''||V_ERROR_DESC||'. No se han podido borrar '||V_REGS_CANDIDATOS||' registros candidatos.''
     FROM DUAL
     ';
     EXECUTE IMMEDIATE V_MSQL;

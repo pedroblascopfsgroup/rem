@@ -90,7 +90,7 @@ BEGIN
 	 )';
 	  EXECUTE IMMEDIATE V_MSQL;
 	  
-	  
+	  COD_RETORNO := 0;
 COMMIT;
 
 EXCEPTION
@@ -122,7 +122,7 @@ EXCEPTION
 		  
 		COMMIT;
 	END IF;
-    
+    COD_RETORNO := 1;
     RAISE;
 
 END;

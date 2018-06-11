@@ -476,6 +476,10 @@
 				def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.trabajoEsTarificado(idTramite);
 			}
+			def checkFechaVenta = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkFechaVenta(idTramite);
+            }
   			 ]]></value>
   		</list>
   	</property>

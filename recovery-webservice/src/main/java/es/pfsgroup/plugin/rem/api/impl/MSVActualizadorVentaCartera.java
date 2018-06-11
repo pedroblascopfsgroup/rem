@@ -241,13 +241,18 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 					if (regimenMatrimonial != null && !regimenMatrimonial.isEmpty()) {
 						estadoCivil = DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO;
 					}
+					
+					String nombreRazonSocial = exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.NOMBRE_TITULAR);
+					if(nombreRazonSocial == null || nombreRazonSocial.isEmpty()){
+						nombreRazonSocial = exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.RAZON_SOCIAL_TITULAR);
+					}
 
 					modificarCompradorPrincipal(agrupacion.getId(),
 							Double.parseDouble(exc.dameCelda(fila,
 									MSVVentaDeCarteraExcelValidator.COL_NUM.PORCENTAJE_COMPRA_TITULAR)),
 							Long.parseLong(
 									exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.NUMERO_URSUS_TITULAR)),
-							null, regimenMatrimonial, estadoCivil);
+							null, regimenMatrimonial, estadoCivil,nombreRazonSocial);
 
 					// Añadimos el resto de TITULARES (Comprador) 2, 3 y 4.
 					anyadirRestoCompradores(exc, fila, agrupacion.getId());
@@ -676,7 +681,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 	 * @throws Exception
 	 */
 	private void modificarCompradorPrincipal(Long idAgrupacion, double nuevoPorcentaje, Long numeroUrsus,
-			Long numeroUrsusConyuge, String codigoRegimenMatrimonial, String codEstadoCivil) throws Exception {
+			Long numeroUrsusConyuge, String codigoRegimenMatrimonial, String codEstadoCivil,String nombreRazonSocial) throws Exception {
 		TransactionStatus transaction = null;
 		try {
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
@@ -698,6 +703,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			} else {
 				vDatosComprador.setCodEstadoCivil(DDEstadosCiviles.CODIGO_ESTADO_CIVIL_SOLTERO);
 			}
+			vDatosComprador.setNombreRazonSocial(nombreRazonSocial);
 			// falta ursus conyuge
 
 			expedienteComercialApi.saveFichaComprador(vDatosComprador);

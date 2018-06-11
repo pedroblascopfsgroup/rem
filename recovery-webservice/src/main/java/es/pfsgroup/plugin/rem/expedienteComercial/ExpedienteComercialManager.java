@@ -6022,5 +6022,29 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		uvemManagerApi.modificarInstanciaDecisionTres(instancia);	
 		logger.info("------------ LLAMADA WS REALIZADA CON EXITO -----------------");
 	}
+
+	@Override
+	public Boolean checkFechaVenta(Long idTramite) {
+		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
+		if (activoTramite == null) {
+			return false;
+		}
+
+		Trabajo trabajo = activoTramite.getTrabajo();
+		if (trabajo == null) {
+			return false;
+		}
+
+		ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByTrabajo(trabajo.getId());
+		if (expediente == null) {
+			return false;
+		}
+		if(expediente.getFechaContabilizacionPropietario() != null){
+			return true;
+		}else{
+			return false;
+		}
+		
+	}
 	
 }

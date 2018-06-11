@@ -42,7 +42,10 @@ import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
+import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.listener.ActivoGenerarSaltoImpl;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -55,6 +58,7 @@ import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
+import es.pfsgroup.plugin.rem.model.DtoSaltoTarea;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
@@ -64,9 +68,12 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDataDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
+import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
+import es.pfsgroup.plugin.rem.service.UpdaterTransitionService;
 
 @Component
 public class MSVActualizadorVentaCartera extends AbstractMSVActualizador implements MSVLiberator {
@@ -105,6 +112,15 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 
 	@Autowired
 	private UvemManagerApi uvemManagerApi;
+	
+	@Autowired 
+    private UpdaterTransitionService updaterTransitionService;
+	
+	@Autowired
+	private TareaActivoApi tareaActivoApi;
+	
+	@Autowired
+	private ResolucionComiteApi resolucionComiteApi;
 
 	@Resource
 	MessageService messageServices;
@@ -256,6 +272,13 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 
 					// Llamar al servicioweb Modi de Bankia
 					llamadaSercivioWeb(agrupacion.getId());
+					
+					//simular llegada resolución
+					simularResolucion(agrupacion.getId(), exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR));
+					
+					//saltamos a cierre economico
+					saltoCierreEconomico(agrupacion.getId());
+					
 					// Esperamos 15 segundos por Bankia
 					logger.debug(
 							"--------------------- OFERTA_CARTERA: fin -------------------------------------------");
@@ -494,6 +517,84 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 		}
 
 		return idTareaExterna;
+	}
+	
+	/**
+	 * Saltando a cierre economico
+	 * @param idAgrupacion
+	 * @throws Exception
+	 */
+	private void saltoCierreEconomico(Long idAgrupacion)
+			throws Exception {
+		logger.debug("OFERTA_CARTERA: Saltamos a cierre economico");
+		TransactionStatus transaction = null;
+		ActivoTramite tramite = null;
+		try {
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			List<VOfertasActivosAgrupacion> listaOfertas = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
+			Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id",
+					Long.parseLong(listaOfertas.get(0).getIdOferta())));
+			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
+			List<ActivoTramite> listaTramites = activoTramiteApi
+					.getTramitesActivoTrabajoList(expedienteComercial.getTrabajo().getId());
+			if (Checks.esNulo(listaTramites) || listaTramites.size() == 0) {
+				throw new Exception("No se ha podido recuperar el trámite de la oferta.");
+			} else {
+				tramite = listaTramites.get(0);
+				if (Checks.esNulo(tramite)) {
+					throw new Exception("No se ha podido recuperar el trámite de la oferta.");
+				}
+			}
+			List<TareaExterna> listaTareas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
+			for (TareaExterna tarea : listaTareas) {
+				if (!Checks.esNulo(tarea)) {
+					DtoSaltoTarea salto = new DtoSaltoTarea();
+					
+					salto.setIdTramite(tramite.getId());
+					salto.setPbcAprobado(1);
+					salto.setFechaRespuestaComite(new Date());
+					updaterTransitionService.updateT013_CierreEconomico(salto);									
+					
+					tareaActivoApi.saltoDesdeTareaExterna(tarea.getId(),ActivoGenerarSaltoImpl.CODIGO_SALTO_CIERRE);
+					
+					break;
+				}
+			}
+			transactionManager.commit(transaction);
+		} catch (Exception e) {
+			transactionManager.rollback(transaction);
+			throw e;
+		}
+		
+	}
+	
+	/**
+	 * Saltando a cierre economico
+	 * @param idAgrupacion
+	 * @throws Exception
+	 */
+	private void simularResolucion(Long idAgrupacion,String codigoComite)
+			throws Exception {
+		logger.debug("OFERTA_CARTERA: Creando la resolución");
+		TransactionStatus transaction = null;
+			try {
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			List<VOfertasActivosAgrupacion> listaOfertas = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
+			Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id",
+					Long.parseLong(listaOfertas.get(0).getIdOferta())));
+			ResolucionComiteDto resolucionComiteDto = new ResolucionComiteDto();
+			resolucionComiteDto.setCodigoComite(codigoComite);
+			resolucionComiteDto.setOfertaHRE(oferta.getNumOferta());
+			resolucionComiteDto.setCodigoResolucion("1");
+			resolucionComiteDto.setFechaComite(new java.sql.Date(new Date().getTime()));
+			resolucionComiteDto.setCodigoTipoResolucion(DDTipoResolucion.CODIGO_TIPO_RESOLUCION);
+			resolucionComiteApi.saveOrUpdateResolucionComite(resolucionComiteDto);
+			transactionManager.commit(transaction);
+		} catch (Exception e) {
+			transactionManager.rollback(transaction);
+			throw e;
+		}
+		
 	}
 
 	/**

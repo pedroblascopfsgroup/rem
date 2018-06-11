@@ -3701,7 +3701,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	public DtoComercialActivo getComercialActivo(DtoComercialActivo dto) {
-		Date fechaVenta = null;
+		//Date fechaVenta = null;
+		Date fechaVentaExterna = null;
+		Double importeVentaExterna = null;
 		if (Checks.esNulo(dto.getId())) {
 			return dto;
 		}
@@ -3726,7 +3728,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				// Obtener datos de venta en REM.
 				if (!Checks.esNulo(exp)) {
 					beanUtilNotNull.copyProperty(dto, "fechaVenta", exp.getFechaVenta());
-					fechaVenta = exp.getFechaVenta();
+					//fechaVenta = exp.getFechaVenta();
 					Double importe = null;
 					
 					if(!Checks.esNulo(activo.getSituacionComercial()) &&
@@ -3751,23 +3753,26 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			else{
 				beanUtilNotNull.copyProperty(dto, "importeVenta", null);
 			}
-
+			
+			fechaVentaExterna = activo.getFechaVentaExterna();
+			importeVentaExterna = activo.getImporteVentaExterna();
+			
 			// Si no existe oferta aceptada con expediente obtener datos de
 			// posible venta externa a REM.
 			if (!dto.getExpedienteComercialVivo()) {
 				beanUtilNotNull.copyProperty(dto, "expedienteComercialVivo", false);
-				if (!Checks.esNulo(activo.getFechaVentaExterna())) {
-					beanUtilNotNull.copyProperty(dto, "fechaVenta", activo.getFechaVentaExterna());
+				if (!Checks.esNulo(fechaVentaExterna)) {
+					beanUtilNotNull.copyProperty(dto, "fechaVenta", fechaVentaExterna);
 				}
-				if (!Checks.esNulo(activo.getImporteVentaExterna())) {
-					beanUtilNotNull.copyProperty(dto, "importeVenta", activo.getImporteVentaExterna());
+				if (!Checks.esNulo(importeVentaExterna)) {
+					beanUtilNotNull.copyProperty(dto, "importeVenta", importeVentaExterna);
 				}
 				
 			}
-			if(!Checks.esNulo(fechaVenta)){
+			if(!Checks.esNulo(fechaVentaExterna) && !Checks.esNulo(importeVentaExterna)){
 				beanUtilNotNull.copyProperty(dto, "ventaExterna", true);
 			}else{
-				beanUtilNotNull.copyProperty(dto, "ventaExterna", !Checks.esNulo(activo.getFechaVentaExterna()));
+				beanUtilNotNull.copyProperty(dto, "ventaExterna", !Checks.esNulo(fechaVentaExterna));
 			}
 
 			if (!Checks.esNulo(activo.getObservacionesVentaExterna())) {

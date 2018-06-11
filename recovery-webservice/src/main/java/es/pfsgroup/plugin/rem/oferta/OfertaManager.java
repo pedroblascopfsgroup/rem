@@ -1377,7 +1377,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							|| DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComiteSancion)
 							|| DDComiteSancion.CODIGO_HAYA_TANGO.equals(codigoComiteSancion)
 							|| DDComiteSancion.CODIGO_TANGO_TANGO.equals(codigoComiteSancion)
-							|| DDComiteSancion.CODIGO_HAYA_GIANTS.equals(codigoComiteSancion))
+							|| DDComiteSancion.CODIGO_HAYA_GIANTS.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_HAYA_LIBERBANK.equals(codigoComiteSancion))
 						return true;
 				} else {
 					if (trabajoApi.checkBankia(tareaExterna)) {

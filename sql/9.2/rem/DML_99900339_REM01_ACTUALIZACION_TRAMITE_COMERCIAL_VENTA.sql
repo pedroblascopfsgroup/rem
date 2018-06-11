@@ -30,7 +30,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     --				TAP_CODIGO							TAP_SCRIPT_VALIDACION
-         T_TIPO_DATA('T013_CierreEconomico',				'checkFechaVenta() ?( checkImporteParticipacion() ? (checkPoliticaCorporativa() ?  null : ''''El estado de la política corporativa no es el correcto para poder avanzar.'''') : ''''El sumatorio de importes de participación de los activos ha de ser el mismo que el importe total del expediente''''):''''La fecha de venta ha de estar informada''''')
+         T_TIPO_DATA('T013_CierreEconomico',				'checkFechaVenta() ?( checkImporteParticipacion() ? (checkPoliticaCorporativa() ?  null : ''''El estado de la política corporativa no es el correcto para poder avanzar.'''') : ''''El sumatorio de importes de participación de los activos ha de ser el mismo que el importe total del expediente''''):''''La fecha de ingreso cheque ha de estar informada''''')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 

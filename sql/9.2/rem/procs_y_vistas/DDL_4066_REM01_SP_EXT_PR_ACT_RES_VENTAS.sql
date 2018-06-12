@@ -25,9 +25,9 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
 
     --Parametros de entrada
     NUM_RESERVA                 IN NUMBER,
-    IDENTIFICACION_COBRO        IN NUMBER,
     FECHA_COBRO_RESERVA         IN VARCHAR2,
     FECHA_DEVOLUCION_RESERVA    IN VARCHAR2,
+    IDENTIFICACION_COBRO        IN NUMBER,
     FECHA_COBRO_VENTA           IN VARCHAR2,
 
     --Variables de salida
@@ -91,9 +91,9 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
     V_OP_3_PASOS                    NUMBER(1) := 2;
     V_PASOS                         NUMBER(3) := 0;
     V_ERROR_DESC                    VARCHAR2(1000 CHAR) := '';
-    FECHA_COBRO_RESERVA_DATE        DATE := to_date(FECHA_COBRO_RESERVA,'dd-MM-yyyy');
-    FECHA_DEVOLUCION_RESERVA_DATE   DATE := to_date(FECHA_DEVOLUCION_RESERVA,'dd-MM-yyyy');
-    FECHA_COBRO_VENTA_DATE          DATE := to_date(FECHA_COBRO_VENTA,'dd-MM-yyyy');
+    FECHA_COBRO_RESERVA_DATE        DATE;
+    FECHA_DEVOLUCION_RESERVA_DATE   DATE;
+    FECHA_COBRO_VENTA_DATE          DATE;
     PARAM1                          VARCHAR2(50 CHAR);
     PARAM2                          VARCHAR2(50 CHAR);
     PARAM3                          VARCHAR2(50 CHAR);          
@@ -155,6 +155,17 @@ BEGIN
 
     COD_RETORNO := 0;
     DBMS_OUTPUT.PUT_LINE('[INICIO] Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación.');
+    DBMS_OUTPUT.PUT_LINE('[INICIO] A continuación se mostrarán los parámetros de entrada:');
+    DBMS_OUTPUT.PUT_LINE('NUM_RESERVA: '||NUM_RESERVA);
+    DBMS_OUTPUT.PUT_LINE('IDENTIFICACION_COBRO: '||IDENTIFICACION_COBRO);
+    DBMS_OUTPUT.PUT_LINE('FECHA_COBRO_RESERVA (Se espera dd-MM-yyyy): '||FECHA_COBRO_RESERVA);
+    DBMS_OUTPUT.PUT_LINE('FECHA_DEVOLUCION_RESERVA (Se espera dd-MM-yyyy): '||FECHA_DEVOLUCION_RESERVA);
+    DBMS_OUTPUT.PUT_LINE('FECHA_COBRO_VENTA (Se espera dd-MM-yyyy): '||FECHA_COBRO_VENTA);
+
+    FECHA_COBRO_RESERVA_DATE         := to_date(FECHA_COBRO_RESERVA,'dd-MM-yyyy');
+    FECHA_DEVOLUCION_RESERVA_DATE    := to_date(FECHA_DEVOLUCION_RESERVA,'dd-MM-yyyy');
+    FECHA_COBRO_VENTA_DATE           := to_date(FECHA_COBRO_VENTA,'dd-MM-yyyy');
+
 
     --1. Comprobación de los parametros de entrada.
     -------------------------------------------------------

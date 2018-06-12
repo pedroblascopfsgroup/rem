@@ -2606,7 +2606,7 @@ public class ActivoAdapter {
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
 		if(!Checks.esNulo(usuarioCartera)){
-			if(!usuarioCartera.getCartera().getCodigo().equals(activo.getCartera().getId())){
+			if(!usuarioCartera.getCartera().getCodigo().equals(activo.getCartera().getCodigo())){
 				throw new AccesoActivoException("No tiene permiso para consultar al activo seleccionado");
 			}
 		}

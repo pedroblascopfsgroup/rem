@@ -3247,39 +3247,51 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	onChangeCheckboxPublicarSinPrecioVenta: function(checkbox, isDirty) {
 	    var me = this;
+	    var estadoCheckPublicarFicha = me.getViewModel().get('activo.aplicaPublicar');
 	    var checkboxPublicarVenta = checkbox.up('activosdetallemain').lookupReference('chkbxpublicarventa');
 	    var estadoPubVentaPublicado = me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'] ||
 	        me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PRE_PUBLICADO'] ||
 	        me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['OCULTO'];
 
-	    if(isDirty && !estadoPubVentaPublicado) {
-	        var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) && !checkbox.getValue();
-	          checkboxPublicarVenta.setReadOnly(readOnly);
-	    }
-
-	    if (!isDirty && !estadoPubVentaPublicado) {
-	        var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) && !checkbox.getValue();
-	        checkboxPublicarVenta.setReadOnly(readOnly);
-	        checkboxPublicarVenta.setValue(false);
-	    }
+	    if (!estadoCheckPublicarFicha){
+            checkbox.setValue(false);
+        } else {
+		    if(isDirty && !estadoPubVentaPublicado) {
+		        var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) && !checkbox.getValue();
+		          checkboxPublicarVenta.setReadOnly(readOnly);
+		    } else if (!isDirty && !estadoPubVentaPublicado) {
+		        var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) && !checkbox.getValue();
+		        checkboxPublicarVenta.setReadOnly(readOnly);
+		        checkboxPublicarVenta.setValue(false);
+		    } else {
+		    	checkboxPublicarVenta.setReadOnly(false);
+		    }
+        }
 	},
 
     onChangeCheckboxPublicarSinPrecioAlquiler: function(checkbox, isDirty) {
         var me = this;
+        var estadoCheckPublicarFicha = me.getViewModel().get('activo.aplicaPublicar');
 		var checkboxPublicarAlquiler = checkbox.up('activosdetallemain').lookupReference('chkbxpublicaralquiler');
 		var estadoPubAlquilerPublicado = me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'] ||
 			me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PRE_PUBLICADO'] ||
 			me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['OCULTO'];
-		if(isDirty && !estadoPubAlquilerPublicado) {
-			var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) && !checkbox.getValue();
-            checkboxPublicarAlquiler.setReadOnly(readOnly);
-		}
-		if (!isDirty && !estadoPubAlquilerPublicado) {
-			var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) && !checkbox.getValue();
-			checkboxPublicarAlquiler.setReadOnly(readOnly);
-			checkbox.up('activosdetallemain').getViewModel().get('datospublicacionactivo').set('eleccionUsuarioTipoPublicacionAlquiler');
-			checkboxPublicarAlquiler.setValue(false);
-		}
+		
+		if(!estadoCheckPublicarFicha){
+            checkbox.setValue(false);
+        } else {
+			if(isDirty && !estadoPubAlquilerPublicado) {
+				var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) && !checkbox.getValue();
+	            checkboxPublicarAlquiler.setReadOnly(readOnly);
+			} else if (!isDirty && !estadoPubAlquilerPublicado) {
+				var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) && !checkbox.getValue();
+				checkboxPublicarAlquiler.setReadOnly(readOnly);
+				checkbox.up('activosdetallemain').getViewModel().get('datospublicacionactivo').set('eleccionUsuarioTipoPublicacionAlquiler');
+				checkboxPublicarAlquiler.setValue(false);
+			} else {
+				checkboxPublicarAlquiler.setReadOnly(false);
+			}
+        }
     },
 
     establecerTipoPublicacionAlquiler: function(btn) {

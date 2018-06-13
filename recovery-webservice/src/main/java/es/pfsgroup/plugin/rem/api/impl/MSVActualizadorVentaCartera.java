@@ -66,6 +66,7 @@ import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
@@ -645,8 +646,15 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 							MSVVentaDeCarteraExcelValidator.COL_NUM.TIPO_DOCUMENTO_TITULAR_2 + contadorColumnas));
 					vDatosComprador.setNumDocumento(exc.dameCelda(fila,
 							MSVVentaDeCarteraExcelValidator.COL_NUM.DOC_IDENTIFICACION_TITULAR_2 + contadorColumnas));
-					vDatosComprador.setNumeroClienteUrsus(Long.parseLong(exc.dameCelda(fila,
-							MSVVentaDeCarteraExcelValidator.COL_NUM.NUMERO_URSUS_TITULAR_2 + contadorColumnas)));
+					
+					if(DDSubcartera.CODIGO_BAN_BH.equals(oferta.getActivoPrincipal().getSubcartera())){
+						vDatosComprador.setNumeroClienteUrsusBh(Long.parseLong(exc.dameCelda(fila,
+								MSVVentaDeCarteraExcelValidator.COL_NUM.NUMERO_URSUS_TITULAR_2 + contadorColumnas)));
+					}else{
+						vDatosComprador.setNumeroClienteUrsus(Long.parseLong(exc.dameCelda(fila,
+								MSVVentaDeCarteraExcelValidator.COL_NUM.NUMERO_URSUS_TITULAR_2 + contadorColumnas)));
+					}
+					
 					vDatosComprador.setDocumentoConyuge(exc.dameCelda(fila,
 							MSVVentaDeCarteraExcelValidator.COL_NUM.NUMERO_URSUS_CONYUGE_TITULAR_2 + contadorColumnas));
 					vDatosComprador.setPorcentajeCompra(Double.parseDouble(exc.dameCelda(fila,
@@ -695,7 +703,12 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			vDatosComprador.setIdExpedienteComercial(expedienteComercial.getId().toString());
 			vDatosComprador.setId(expedienteComercial.getCompradorPrincipal().getId().toString());
 			vDatosComprador.setPorcentajeCompra(nuevoPorcentaje);
-			vDatosComprador.setNumeroClienteUrsus(numeroUrsus);
+			if(DDSubcartera.CODIGO_BAN_BH.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
+				vDatosComprador.setNumeroClienteUrsusBh(numeroUrsus);
+			}else{
+				vDatosComprador.setNumeroClienteUrsus(numeroUrsus);
+			}
+			
 			vDatosComprador.setCodigoRegimenMatrimonial(codigoRegimenMatrimonial);
 			vDatosComprador.setCodEstadoCivil(codEstadoCivil);
 			if (codigoRegimenMatrimonial != null && !codigoRegimenMatrimonial.isEmpty()) {

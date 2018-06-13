@@ -158,13 +158,19 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INICIO] A continuación se mostrarán los parámetros de entrada:');
     DBMS_OUTPUT.PUT_LINE('NUM_RESERVA: '||NUM_RESERVA);
     DBMS_OUTPUT.PUT_LINE('IDENTIFICACION_COBRO: '||IDENTIFICACION_COBRO);
-    DBMS_OUTPUT.PUT_LINE('FECHA_COBRO_RESERVA (Se espera dd-MM-yyyy): '||FECHA_COBRO_RESERVA);
-    DBMS_OUTPUT.PUT_LINE('FECHA_DEVOLUCION_RESERVA (Se espera dd-MM-yyyy): '||FECHA_DEVOLUCION_RESERVA);
-    DBMS_OUTPUT.PUT_LINE('FECHA_COBRO_VENTA (Se espera dd-MM-yyyy): '||FECHA_COBRO_VENTA);
+    DBMS_OUTPUT.PUT_LINE('FECHA_COBRO_RESERVA (Se espera yyyy-MM-dd): '||FECHA_COBRO_RESERVA);
+    DBMS_OUTPUT.PUT_LINE('FECHA_DEVOLUCION_RESERVA (Se espera yyyy-MM-dd): '||FECHA_DEVOLUCION_RESERVA);
+    DBMS_OUTPUT.PUT_LINE('FECHA_COBRO_VENTA (Se espera yyyy-MM-dd): '||FECHA_COBRO_VENTA);
 
-    FECHA_COBRO_RESERVA_DATE         := to_date(FECHA_COBRO_RESERVA,'dd-MM-yyyy');
-    FECHA_DEVOLUCION_RESERVA_DATE    := to_date(FECHA_DEVOLUCION_RESERVA,'dd-MM-yyyy');
-    FECHA_COBRO_VENTA_DATE           := to_date(FECHA_COBRO_VENTA,'dd-MM-yyyy');
+    --Seteamos la descripción del error correspondiente a la imposibilidad de convertir el parametro de entrada a DATE.
+    V_ERROR_DESC := '[ERROR] No se ha podido convertir la fecha a DATE, comprobar máscara. Paramos la ejecución.';
+    COD_RETORNO := 1;
+    FECHA_COBRO_RESERVA_DATE         := to_date(FECHA_COBRO_RESERVA,'yyyy-MM-dd');
+    FECHA_DEVOLUCION_RESERVA_DATE    := to_date(FECHA_DEVOLUCION_RESERVA,'yyyy-MM-dd');
+    FECHA_COBRO_VENTA_DATE           := to_date(FECHA_COBRO_VENTA,'yyyy-MM-dd');
+    --En el caso de que se haya podido convertir satisfactoriamente, reiniciamos la descripcion del error.
+    COD_RETORNO := 0;
+    V_ERROR_DESC := '';
 
 
     --1. Comprobación de los parametros de entrada.
@@ -174,14 +180,15 @@ BEGIN
         WHEN NUM_RESERVA IS NULL AND IDENTIFICACION_COBRO IS NULL 
             THEN V_ERROR_DESC := '[ERROR] No se ha informado NUM_RESERVA ni IDENTIFICACION_COBRO. Por favor, informe uno de los dos parámetros. Paramos la ejecución.';
                  COD_RETORNO := 1;
-        WHEN NUM_RESERVA IS NOT NULL AND IDENTIFICACION_COBRO IS NOT NULL 
+        --Desactivamos la validación que nos prohibe actualizar por reserva y por cobro en una misma ejecución.
+        /*WHEN NUM_RESERVA IS NOT NULL AND IDENTIFICACION_COBRO IS NOT NULL 
             THEN V_ERROR_DESC := '[ERROR] Se ha informado NUM_RESERVA e IDENTIFICACION_COBRO simultáneamente, no es posible realizar dos operativas por ejecución. Por favor, ejecute de manera individual. Paramos la ejecución.';
-                 COD_RETORNO := 1;
+                 COD_RETORNO := 1;*/
         WHEN NUM_RESERVA IS NOT NULL AND (FECHA_COBRO_RESERVA IS NULL AND FECHA_DEVOLUCION_RESERVA IS NULL) 
             THEN V_ERROR_DESC := '[ERROR] Se ha informado NUM_RESERVA y no se han informado FECHA_COBRO_RESERVA o FECHA_DEVOLUCION_RESERVA. Por favor, ingrese una de las dos fechas. Paramos la ejecución.';
                  COD_RETORNO := 1;
         WHEN NUM_RESERVA IS NOT NULL AND (FECHA_COBRO_RESERVA IS NOT NULL AND FECHA_DEVOLUCION_RESERVA IS NOT NULL) 
-            THEN V_ERROR_DESC := '[ERROR] Se ha informado NUM_RESERVA, FECHA_COBRO_RESERVA y FECHA_DEVOLUCION_RESERVA simultáneamente, no es posible realizar dos operativas por ejecución. Por favor, ejecute de manera individual. Paramos la ejecución.';
+            THEN V_ERROR_DESC := '[ERROR] Se ha informado NUM_RESERVA, FECHA_COBRO_RESERVA y FECHA_DEVOLUCION_RESERVA simultáneamente, no es posible realizar éstas dos operativas por ejecución. Por favor, ejecute de manera individual. Paramos la ejecución.';
                  COD_RETORNO := 1;
         WHEN IDENTIFICACION_COBRO IS NOT NULL AND FECHA_COBRO_VENTA IS NULL 
             THEN V_ERROR_DESC := '[ERROR] Se ha informado IDENTIFICACION_COBRO y no se ha informado FECHA_COBRO_VENTA. Por favor, ingrese éste parámetro. Paramos la ejecución.';
@@ -301,7 +308,7 @@ BEGIN
                 IF COD_RETORNO = 0 THEN
                     --PASO 2/4 Actualizar el campo RES_RESERVA.RES_FECHA_FIRMA con el dato de Fecha de Cobro Recibido.--Recuperamos valor actual
                     V_MSQL := '
-                    SELECT NVL(TO_CHAR(RES_FECHA_FIRMA,''dd-MM-yyyy''),''-'') AS RES_FECHA_FIRMA FROM '||V_ESQUEMA||'.RES_RESERVAS WHERE RES_ID = '||V_RES_ID||'
+                    SELECT NVL(TO_CHAR(RES_FECHA_FIRMA,''yyyy-MM-dd''),''-'') AS RES_FECHA_FIRMA FROM '||V_ESQUEMA||'.RES_RESERVAS WHERE RES_ID = '||V_RES_ID||'
                     ';
                     EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_ACTUAL;
 
@@ -444,14 +451,13 @@ BEGIN
 
         ELSE
             COD_RETORNO := 1;
-            V_ERROR_DESC := '[ERROR] NO existe la reserva con el NÚMERO DE RESERVA '||NUM_RESERVA||', o está duplicada. Paramos la ejecución.';
-            DBMS_OUTPUT.PUT_LINE(V_ERROR_DESC);
+            V_ERROR_DESC := '[ERROR] [OP1] NO existe la reserva con el NÚMERO DE RESERVA '||NUM_RESERVA||', o está duplicada. Paramos la ejecución.';
         END IF;
 
     END IF; 
 
     --2.2. Para todos los registros con Número de Reserva  y Fecha de Devolución informada cuyo expediente esté en estado "Reservado"
-    IF (NUM_RESERVA IS NOT NULL AND FECHA_DEVOLUCION_RESERVA IS NOT NULL) AND COD_RETORNO = 0 AND V_PASOS = 0 THEN
+    IF (NUM_RESERVA IS NOT NULL AND FECHA_DEVOLUCION_RESERVA IS NOT NULL) AND COD_RETORNO = 0 /*AND V_PASOS = 0*/ THEN --Se ha comentado la comprobación de los pasos, para que no solo haga una operatoria por ejecución, sino todas las necesarias.
         
         V_ID_COBRO := NULL;
         V_NUM_RESERVA := NUM_RESERVA;
@@ -543,7 +549,7 @@ BEGIN
 
                     V_VALOR_NUEVO := FECHA_DEVOLUCION_RESERVA_DATE;
                     V_MSQL := '
-                    SELECT NVL(TO_CHAR(RES_FECHA_FIRMA,''dd-MM-yyyy''),''-'') AS RES_FECHA_FIRMA FROM '||V_ESQUEMA||'.RES_RESERVAS WHERE RES_ID = '||V_RES_ID||' AND ECO_ID = '||V_ECO_ID||'
+                    SELECT NVL(TO_CHAR(RES_FECHA_FIRMA,''yyyy-MM-dd''),''-'') AS RES_FECHA_FIRMA FROM '||V_ESQUEMA||'.RES_RESERVAS WHERE RES_ID = '||V_RES_ID||' AND ECO_ID = '||V_ECO_ID||'
                     ';
                     EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_ACTUAL;
 
@@ -733,14 +739,13 @@ BEGIN
 
         ELSE
             COD_RETORNO := 1;
-            V_ERROR_DESC := '[ERROR] NO existe la reserva con el NÚMERO DE RESERVA '||NUM_RESERVA||', o está duplicada. Paramos la ejecución.';
-            DBMS_OUTPUT.PUT_LINE(V_ERROR_DESC);
+            V_ERROR_DESC := '[ERROR] [OP2] NO existe la reserva con el NÚMERO DE RESERVA '||NUM_RESERVA||', o está duplicada. Paramos la ejecución.';
         END IF;
 
     END IF;
 
     --2.3. Para todos los registros con Identificación de Cobro  y Fecha de Cobro informada cuyo expediente esté en estado distinto a "Anulado" o "Vendido".
-    IF (IDENTIFICACION_COBRO IS NOT NULL AND FECHA_COBRO_VENTA IS NOT NULL) AND COD_RETORNO = 0 AND V_PASOS = 0 THEN
+    IF (IDENTIFICACION_COBRO IS NOT NULL AND FECHA_COBRO_VENTA IS NOT NULL) AND COD_RETORNO = 0 /*AND V_PASOS = 0*/ THEN --Se ha comentado la comprobación de los pasos, para que no solo haga una operatoria por ejecución, sino todas las necesarias.
         
         V_ID_COBRO := IDENTIFICACION_COBRO;
         V_NUM_RESERVA := NULL;
@@ -830,7 +835,7 @@ BEGIN
                     --PASO 2/2 Actualizar ECO_EXPEDIENTE_COMERCIAL.ECO_FECHA_CONT_PROPIETARIO con el valor de la fecha de cobro.
                     --Recuperamos valor actual
                     V_MSQL := '
-                    SELECT NVL(TO_CHAR(ECO_FECHA_CONT_PROPIETARIO,''dd-MM-yyyy''),''-'') AS ECO_FECHA_CONT_PROPIETARIO FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL WHERE ECO_ID = '||V_ECO_ID||'
+                    SELECT NVL(TO_CHAR(ECO_FECHA_CONT_PROPIETARIO,''yyyy-MM-dd''),''-'') AS ECO_FECHA_CONT_PROPIETARIO FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL WHERE ECO_ID = '||V_ECO_ID||'
                     ';
                     EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_ACTUAL;
 
@@ -838,7 +843,7 @@ BEGIN
 
                     V_MSQL := '
                     UPDATE '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL
-                    SET ECO_FECHA_CONT_PROPIETARIO = to_date('''||FECHA_COBRO_VENTA||''',''dd-MM-yyyy''),
+                    SET ECO_FECHA_CONT_PROPIETARIO = '''||FECHA_COBRO_VENTA_DATE||''',
                     USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
                     FECHAMODIFICAR = SYSDATE
                     WHERE ECO_ID = '||V_ECO_ID||'
@@ -882,8 +887,7 @@ BEGIN
 
         ELSE
             COD_RETORNO := 1;
-            V_ERROR_DESC := '[ERROR] NO existe la oferta con IDENTIFICACION_COBRO '||IDENTIFICACION_COBRO||', o está duplicada. Paramos la ejecución.';
-            DBMS_OUTPUT.PUT_LINE(V_ERROR_DESC);
+            V_ERROR_DESC := '[ERROR] [OP3] NO existe la oferta con IDENTIFICACION_COBRO '||IDENTIFICACION_COBRO||', o está duplicada. Paramos la ejecución.';
         END IF;
 
     END IF; 
@@ -896,6 +900,8 @@ IF COD_RETORNO = 1 THEN
     IF V_ERROR_DESC = '' THEN
         V_ERROR_DESC := 'POR ALGUNA RAZÓN NO SE HA ASIGNADO UNA DESCRIPCIÓN A ÉSTE ERROR. REVISAD!';
     END IF;
+
+    DBMS_OUTPUT.PUT_LINE(V_ERROR_DESC);
 
     IF V_NUM_RESERVA IS NULL AND V_ID_COBRO IS NULL THEN
         V_ID_COBRO := -1;
@@ -922,11 +928,13 @@ IF COD_RETORNO = 1 THEN
     ';
     EXECUTE IMMEDIATE V_MSQL;
     COMMIT;
-    RAISE ERR_NEGOCIO;
+    --Desactivamos el control de errores de negocio.
+    /*RAISE ERR_NEGOCIO;*/
 
-ELSE
+ELSE --(if COD_RETORNO = 0)
     
     DBMS_OUTPUT.PUT_LINE('[INFO] Procedemos a informar la tabla HLP_HISTORICO_LANZA_PERIODICO.');
+    --De momentos metemos concatenados Numero de Reserva e Id de cobro.
     V_MSQL := '
     INSERT INTO '||V_ESQUEMA||'.HLP_HISTORICO_LANZA_PERIODICO (
         HLP_SP_CARGA,
@@ -951,12 +959,13 @@ END IF;
 DBMS_OUTPUT.PUT_LINE('[FIN] Procedimiento SP_EXT_PR_ACT_RES_VENTA finalizado correctamente!');
 
 EXCEPTION
-     WHEN ERR_NEGOCIO THEN
+    --Desactivamos el control de errores de negocio.
+     /*WHEN ERR_NEGOCIO THEN
           DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha abortado el proceso ya que no se cumplía alguno de los requisitos.');
           DBMS_OUTPUT.PUT_LINE(V_MSQL);
           COD_RETORNO := 1;
           ROLLBACK;
-          RAISE;
+          RAISE;*/
      WHEN OTHERS THEN
           DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE));
           DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------');

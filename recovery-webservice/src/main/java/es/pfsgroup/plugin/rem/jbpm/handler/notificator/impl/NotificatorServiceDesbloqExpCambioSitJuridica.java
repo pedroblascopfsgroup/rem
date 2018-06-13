@@ -129,7 +129,7 @@ public class NotificatorServiceDesbloqExpCambioSitJuridica extends AbstractNotif
 			return null;
 		}
 
-		ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByTrabajo(trabajo.getId());
+		ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByIdTrabajo(trabajo.getId());
 
 		if (expediente == null) {
 			return null;

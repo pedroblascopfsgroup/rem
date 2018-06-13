@@ -327,7 +327,7 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 			return null;
 		}
 
-		ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByTrabajo(trabajo.getId());
+		ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByIdTrabajo(trabajo.getId());
 
 		if (expediente == null) {
 			return null;

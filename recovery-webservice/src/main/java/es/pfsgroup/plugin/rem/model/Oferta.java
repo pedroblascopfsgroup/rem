@@ -218,7 +218,7 @@ public class Oferta implements Serializable, Auditable {
     private Long idUvem;
     
     @Column(name = "OFR_VENTA_DIRECTA")
-    private Boolean ventaDirecta;
+    private Boolean ventaDirecta = false; 
      
     
 	

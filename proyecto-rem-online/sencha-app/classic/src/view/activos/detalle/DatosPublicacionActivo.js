@@ -149,7 +149,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 													value: '{datospublicacionactivo.publicarSinPrecioVenta}'
 												},
                                                 listeners: {
-                                                     change: 'onChangeCheckboxPublicarSinPrecioVenta'
+                                                     dirtychange: 'onChangeCheckboxPublicarSinPrecioVenta'
                                                 }
 											},
 											{
@@ -313,7 +313,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 													value: '{datospublicacionactivo.publicarSinPrecioAlquiler}'
 												},
 	                                            listeners: {
-	                                                 change: 'onChangeCheckboxPublicarSinPrecioAlquiler'
+	                                                 dirtychange: 'onChangeCheckboxPublicarSinPrecioAlquiler'
 	                                            }
 											},
 											{

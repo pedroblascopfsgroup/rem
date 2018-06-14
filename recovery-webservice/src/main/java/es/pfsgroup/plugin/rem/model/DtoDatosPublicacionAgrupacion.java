@@ -1,9 +1,9 @@
 package es.pfsgroup.plugin.rem.model;
 
-import java.util.Date;
-
 public class DtoDatosPublicacionAgrupacion extends DtoDatosPublicacionActivo {
 	
+	private static final long serialVersionUID = -3202851556168833024L;
+
 	public DtoDatosPublicacionAgrupacion(DtoDatosPublicacionActivo aux) {
 		this.setIdActivo(aux.getIdActivo());
 		this.setEstadoPublicacionVenta(aux.getEstadoPublicacionVenta());

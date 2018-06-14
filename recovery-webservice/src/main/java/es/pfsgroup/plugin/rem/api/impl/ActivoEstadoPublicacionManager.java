@@ -18,7 +18,6 @@ import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionHistoricoD
 import es.pfsgroup.plugin.rem.activo.valoracion.dao.ActivoValoracionDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
@@ -95,9 +94,6 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	
 	@Autowired
 	private ActivoAgrupacionApi activoAgrupacionApi;
-
-	@Autowired
-	private ActivoAgrupacionActivoApi activoAgrupacionActivoApi;
 	
     private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -560,29 +556,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			try {
 				BeanUtils.copyProperty(dto, "idActivoPrincipal", activoPrincipal.getId());
 				
-				VCondicionantesDisponibilidad condicionantes = activoApi.getCondicionantesDisponibilidad(idActivo);
 				PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(idActivo);
 				ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(idActivo);
-				
-				if(!Checks.esNulo(condicionantes)) {
-					BeanUtils.copyProperty(dto, "ruina", condicionantes.getRuina());
-					BeanUtils.copyProperty(dto, "pendienteInscripcion", condicionantes.getPendienteInscripcion());
-					BeanUtils.copyProperty(dto, "obraNuevaSinDeclarar", condicionantes.getObraNuevaSinDeclarar());
-					BeanUtils.copyProperty(dto, "sinTomaPosesionInicial", condicionantes.getSinTomaPosesionInicial());
-					BeanUtils.copyProperty(dto, "proindiviso", condicionantes.getProindiviso());
-					BeanUtils.copyProperty(dto, "obraNuevaEnConstruccion", condicionantes.getObraNuevaEnConstruccion());
-					BeanUtils.copyProperty(dto, "ocupadoConTitulo", condicionantes.getOcupadoConTitulo());						
-					BeanUtils.copyProperty(dto, "tapiado", condicionantes.getTapiado());
-					BeanUtils.copyProperty(dto, "otro", condicionantes.getOtro());
-					BeanUtils.copyProperty(dto, "portalesExternos", condicionantes.getPortalesExternos());
-					BeanUtils.copyProperty(dto, "ocupadoSinTitulo", condicionantes.getOcupadoSinTitulo());
-					BeanUtils.copyProperty(dto, "divHorizontalNoInscrita", condicionantes.getDivHorizontalNoInscrita());
-					BeanUtils.copyProperty(dto, "isCondicionado", condicionantes.getIsCondicionado());
-					BeanUtils.copyProperty(dto, "estadoCondicionadoCodigo", condicionantes.getEstadoCondicionadoCodigo());
-					BeanUtils.copyProperty(dto, "sinInformeAprobado", condicionantes.getSinInformeAprobado());
-					BeanUtils.copyProperty(dto, "vandalizado", condicionantes.getVandalizado());
-					BeanUtils.copyProperty(dto, "conCargas", condicionantes.getConCargas());
-				}
 				
 				if(!Checks.esNulo(perimetroActivo)) {
 					BeanUtils.copyProperty(dto, "incluidoEnPerimetro", perimetroActivo.getIncluidoEnPerimetro() == 1);
@@ -818,23 +793,16 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	public Boolean setDatosPublicacionAgrupacion(Long id, DtoDatosPublicacionActivo dto) throws JsonViewerException{
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);		
 		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
-		
 		for(ActivoAgrupacionActivo aga : activos) {
-			ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(aga.getActivo().getId());
-			
+			ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(aga.getActivo().getId());			
 			if(this.registrarHistoricoPublicacion(activoPublicacion, dto)) {
-				if(this.actualizarDatosEstadoActualPublicacion(dto, activoPublicacion)) {					
-					/*Boolean res = this.publicarActivoProcedure(dto.getIdActivo(), genericAdapter.getUsuarioLogado().getUsername(), dto.getEleccionUsuarioTipoPublicacionAlquiler());
-					if(Checks.esNulo(res) || !res) {
-						break;
-					}*/
-				}
-			}					
+				this.actualizarDatosEstadoActualPublicacion(dto, activoPublicacion);	
+			}
 		}
-
+		activoDao.publicarAgrupacionSinHistorico(id, genericAdapter.getUsuarioLogado().getUsername(), dto.getEleccionUsuarioTipoPublicacionAlquiler());
 		return true;
 	}
-
+	
 	@Override
 	public Boolean isPublicadoVentaByIdActivo(Long idActivo) {
 		return this.isPublicadoVenta(idActivo);
@@ -1016,6 +984,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			throw new JsonViewerException(messageServices.getMessage("activo.publicacion.error.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
 		}
 	}
+	
 
 	private boolean verificaValidacionesPublicacion(DtoPublicacionValidaciones dtoPublicacionValidaciones){  // TODO: eliminar.
 
@@ -1177,6 +1146,90 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			}
 		}
 		return estado;
+	}
+	
+	@Override
+	public Boolean getCheckPublicacionDeshabilitarAgrupacionVenta(List<ActivoAgrupacionActivo> listaActivos) {
+		Boolean checkPublicarVenta = false;
+		for(int i = 0; i<listaActivos.size(); i++){
+			Long activoid = listaActivos.get(i).getActivo().getId();
+			
+			if(!Checks.esNulo(deshabilitarCheckPublicarVenta(activoid))) {
+				if (deshabilitarCheckPublicarVenta(activoid)) {
+					checkPublicarVenta = true;
+					break;
+				}else {
+					checkPublicarVenta = false;
+					return checkPublicarVenta;
+				}
+				
+			}		
+
+		}
+		return checkPublicarVenta;
+	}
+	
+	@Override
+	public Boolean getCheckOcultarDeshabilitarAgrupacionVenta(List<ActivoAgrupacionActivo> listaActivos) {
+  		Boolean checkOcultarVenta = false;
+		for(int i = 0; i<listaActivos.size(); i++){
+			Long activoid = listaActivos.get(i).getActivo().getId();
+			
+			if(!Checks.esNulo(deshabilitarCheckOcultarVenta(activoid))) {
+				if (deshabilitarCheckOcultarVenta(activoid)) {
+					checkOcultarVenta = true;
+					break;
+				}else {
+					checkOcultarVenta = false;
+					return checkOcultarVenta;
+				}
+				
+			}
+
+		}
+		return checkOcultarVenta;
+	}
+	
+	@Override
+	public Boolean getCheckPublicacionDeshabilitarAgrupacionAlquiler(List<ActivoAgrupacionActivo> listaActivos) {
+  		Boolean checkPublicarAlquiler = false;
+		for(int i = 0; i<listaActivos.size(); i++){
+			Long activoid = listaActivos.get(i).getActivo().getId();
+			
+			if(!Checks.esNulo(deshabilitarCheckPublicarAlquiler(activoid))) {
+				if (deshabilitarCheckPublicarAlquiler(activoid)) {
+					checkPublicarAlquiler = true;
+					break;
+				}else {
+					checkPublicarAlquiler = false;
+					return checkPublicarAlquiler;
+				}
+				
+			}
+
+		}
+		return checkPublicarAlquiler;
+	}
+	
+	@Override
+	public Boolean getCheckOcultarDeshabilitarAgrupacionAlquiler(List<ActivoAgrupacionActivo> listaActivos) {
+  		Boolean checkOcultarAlquiler = false;
+		for(int i = 0; i<listaActivos.size(); i++){
+			Long activoid = listaActivos.get(i).getActivo().getId();
+			
+			if(!Checks.esNulo(deshabilitarCheckOcultarAlquiler(activoid))) {
+				if (deshabilitarCheckOcultarAlquiler(activoid)) {
+					checkOcultarAlquiler = true;
+					break;
+				}else {
+					checkOcultarAlquiler = false;
+					return checkOcultarAlquiler;
+				}
+				
+			}
+
+		}
+		return checkOcultarAlquiler;
 	}
 
 	@Override

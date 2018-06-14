@@ -8,7 +8,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', {
 	disableValidation: false,
 	recordName	: 'datospublicacionagrupacion',
 	recordClass : 'HreRem.model.DatosPublicacionAgrupacion', 
-	requires	: ['HreRem.model.DatosPublicacionAgrupacion', 'HreRem.model.HistoricoEstadosPublicacion', 'HreRem.view.activos.detalle.HistoricoEstadosPublicacionList', 'HreRem.model.CondicionEspecificaAgrupacion'],
+	requires	: ['HreRem.model.DatosPublicacionAgrupacion', 'HreRem.model.HistoricoEstadosPublicacion', 'HreRem.view.activos.detalle.HistoricoEstadosPublicacionList', 'HreRem.model.CondicionEspecificaAgrupacion', 'HreRem.view.activos.detalle.HistoricoCondicionesList'],
 	listeners	: {
 		boxready:'cargarTabData',
 		activate:'onActivateTabDatosPublicacion'
@@ -529,10 +529,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', {
 							{
 								xtype: "historicocondicioneslist",
 								reference: "historicocondicioneslist",
-								idPrincipal : 'datospublicacionagrupacion.id',											
+								idPrincipal : 'datospublicacionagrupacion.id',	
+								propagationButton: true,
+								targetGrid	: 'condicionesespecificas',	
 							    bind: {
 							        store: '{historicocondicionesagrupacion}'
 							    },
+							    confirmBeforeSave : true,
+							    
 							    dockedItems : [
 				      		        {
 				      		            xtype: 'pagingtoolbar',

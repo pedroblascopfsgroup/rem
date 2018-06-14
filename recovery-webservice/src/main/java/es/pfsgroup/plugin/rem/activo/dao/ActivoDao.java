@@ -184,4 +184,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 */
 	Boolean publicarActivoSinHistorico(Long idActivo, String username, String eleccionUsuarioTipoPublicacionAlquiler);
 
+	Boolean publicarAgrupacionConHistorico(Long idAgrupacion, String username);
+
+	Boolean publicarAgrupacionSinHistorico(Long idAgrupacion, String username, String eleccionUsuarioTipoPublicacionAlquiler);
+
 }

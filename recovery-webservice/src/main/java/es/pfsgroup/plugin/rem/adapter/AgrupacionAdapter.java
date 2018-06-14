@@ -81,7 +81,6 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoDisponibilidadComercial;
-import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
@@ -95,6 +94,7 @@ import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VActivosSubdivision;
 import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
+import es.pfsgroup.plugin.rem.model.VCondicionantesAgrDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
@@ -230,6 +230,7 @@ public class AgrupacionAdapter {
 	public DtoAgrupaciones getAgrupacionById(Long id) {
 
 		DtoAgrupaciones dtoAgrupacion = new DtoAgrupaciones();
+		
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
 
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
@@ -377,7 +378,9 @@ public class AgrupacionAdapter {
 							dtoAgrupacion.setEstadoVenta(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAgrupacionVenta(listaActivos));
 							dtoAgrupacion.setEstadoAlquiler(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAgrupacionAlquiler(listaActivos));
 						}
-					}
+
+					}	
+						
 				}
 
 				// TODO: Hacer cuando esté listo el activo principal dentro de
@@ -2379,19 +2382,43 @@ public class AgrupacionAdapter {
 	public DtoDatosPublicacionAgrupacion getDatosPublicacionAgrupacion(Long id) {
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
 		Activo activoPrincipal = agrupacion.getActivoPrincipal();
-		
 		DtoDatosPublicacionAgrupacion dto = activoEstadoPublicacionApi.getDatosPublicacionAgrupacion(activoPrincipal.getId());
-		
+		Filter idAgrupacionFilter = genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", id);
+		VCondicionantesAgrDisponibilidad vCondicionantesAgrDisponibilidad = genericDao.get(VCondicionantesAgrDisponibilidad.class, idAgrupacionFilter);
 		Double precioWebVenta = 0.0;
 		Double precioWebAlquiler = 0.0;
 		
 		for(ActivoAgrupacionActivo aga : agrupacion.getActivos()) {
-			precioWebVenta += activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId());
-			precioWebAlquiler += activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId());
+			precioWebVenta += !Checks.esNulo(activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId())) 
+					? activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId()): 0.0;
+			precioWebAlquiler += !Checks.esNulo(activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId())) 
+					? activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId()): 0.0;
 		}
 		
 		dto.setPrecioWebVenta(precioWebVenta);
 		dto.setPrecioWebAlquiler(precioWebAlquiler);
+		
+		dto.setRuina(vCondicionantesAgrDisponibilidad.getRuina());
+		dto.setPendienteInscripcion(vCondicionantesAgrDisponibilidad.getPendienteInscripcion());
+		dto.setObraNuevaSinDeclarar(vCondicionantesAgrDisponibilidad.getObraNuevaSinDeclarar());
+		dto.setSinTomaPosesionInicial(vCondicionantesAgrDisponibilidad.getSinTomaPosesionInicial());
+		dto.setProindiviso(vCondicionantesAgrDisponibilidad.getProindiviso());
+		dto.setObraNuevaEnConstruccion(vCondicionantesAgrDisponibilidad.getObraNuevaEnConstruccion());
+		dto.setOcupadoConTitulo(vCondicionantesAgrDisponibilidad.getOcupadoConTitulo());
+		dto.setOtro(vCondicionantesAgrDisponibilidad.getOtro());
+		dto.setEstadoCondicionadoCodigo(vCondicionantesAgrDisponibilidad.getEstadoCondicionadoCodigo());
+		dto.setPortalesExternos(vCondicionantesAgrDisponibilidad.getPortalesExternos());
+		dto.setOcupadoSinTitulo(vCondicionantesAgrDisponibilidad.getOcupadoSinTitulo());
+		dto.setDivHorizontalNoInscrita(vCondicionantesAgrDisponibilidad.getDivHorizontalNoInscrita());
+		dto.setIsCondicionado(vCondicionantesAgrDisponibilidad.getIsCondicionado());
+		dto.setSinInformeAprobado(vCondicionantesAgrDisponibilidad.getSinInformeAprobado());
+		dto.setVandalizado(vCondicionantesAgrDisponibilidad.getVandalizado());
+		dto.setConCargas(vCondicionantesAgrDisponibilidad.getConCargas());
+		
+		dto.setDeshabilitarCheckPublicarVenta(!Checks.esNulo(activoEstadoPublicacionApi.getCheckPublicacionDeshabilitarAgrupacionVenta(agrupacion.getActivos())));
+		dto.setDeshabilitarCheckOcultarVenta(!Checks.esNulo(activoEstadoPublicacionApi.getCheckOcultarDeshabilitarAgrupacionVenta(agrupacion.getActivos())));
+		dto.setDeshabilitarCheckPublicarAlquiler(!Checks.esNulo(activoEstadoPublicacionApi.getCheckPublicacionDeshabilitarAgrupacionAlquiler(agrupacion.getActivos())));
+		dto.setDeshabilitarCheckOcultarAlquiler(!Checks.esNulo(activoEstadoPublicacionApi.getCheckOcultarDeshabilitarAgrupacionAlquiler(agrupacion.getActivos())));
 		
 		return dto;
 	}

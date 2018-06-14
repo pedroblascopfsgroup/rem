@@ -1058,5 +1058,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 
         me.getViewModel().get('filtrarComboMotivosOcultacionVenta');
         me.getViewModel().get('filtrarComboMotivosOcultacionAlquiler');
+        
     }
 });

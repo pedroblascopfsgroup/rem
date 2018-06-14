@@ -162,8 +162,55 @@ public interface ActivoEstadoPublicacionApi {
 	 * @param idActivo: ID del activo a publicar.
 	 */
 	void validarPublicacionTramiteYPublicar(Long idActivo);
-
-	DtoDatosPublicacionAgrupacion getDatosPublicacionAgrupacion(Long idActivo);
 	
+	/**
+	 * Este método deshabilita el check de publicación venta de agrupación si algún activo no cumple las condiciones.
+	 * 
+	 * @param listaActivos: lista de activos de la agrupación.
+	 * @return
+	 */
+	Boolean getCheckPublicacionDeshabilitarAgrupacionVenta(List<ActivoAgrupacionActivo> listaActivos);
+	
+	/**
+	 * Este método deshabilita el check de ocultación venta de agrupación si algún activo no cumple las condiciones.
+	 * 
+	 * @param listaActivos: lista de activos de la agrupación.
+	 * @return
+	 */
+	Boolean getCheckOcultarDeshabilitarAgrupacionVenta(List<ActivoAgrupacionActivo> listaActivos);
+	
+	/**
+	 * Este método deshabilita el check de publicación alquiler de agrupación si algún activo no cumple las condiciones.
+	 * 
+	 * @param listaActivos: lista de activos de la agrupación.
+	 * @return
+	 */
+	Boolean getCheckPublicacionDeshabilitarAgrupacionAlquiler(List<ActivoAgrupacionActivo> listaActivos);
+
+	/**
+	 * Este método deshabilita el check de ocultación alquiler de agrupación si algún activo no cumple las condiciones.
+	 * 
+	 * @param listaActivos: lista de activos de la agrupación.
+	 * @return
+	 */
+	Boolean getCheckOcultarDeshabilitarAgrupacionAlquiler(List<ActivoAgrupacionActivo> listaActivos);
+
+	/**
+	 * Este método actualiza los checks de los activos de una agrupación y pública la agrupación.
+	 * 
+	 * @param id: id de la agrupación.
+	 * @param dto: dto de la pestaña datos publicación de un activo.
+	 * @return
+	 */
 	Boolean setDatosPublicacionAgrupacion(Long id, DtoDatosPublicacionActivo dto);
+
+	/**
+	 * Este método setea parte del dto de DtoDatosPublicacionAgrupacion.
+	 * 
+	 * @param idActivo: id del activo
+	 * @return
+	 */
+	DtoDatosPublicacionAgrupacion getDatosPublicacionAgrupacion(Long idActivo);
+
+
 }

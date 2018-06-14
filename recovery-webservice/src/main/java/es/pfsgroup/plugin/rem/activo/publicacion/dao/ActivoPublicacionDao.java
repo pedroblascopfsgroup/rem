@@ -1,10 +1,7 @@
 package es.pfsgroup.plugin.rem.activo.publicacion.dao;
 
-import java.util.List;
-
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
-import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
 
 public interface ActivoPublicacionDao extends AbstractDao<ActivoPublicacion, Long> {

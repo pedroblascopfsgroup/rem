@@ -54,7 +54,6 @@ import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository("ActivoDao")
 public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements ActivoDao{
@@ -727,7 +726,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	public Boolean publicarActivoConHistorico(Long idActivo, String username) {
     	// Antes de realizar la llamada al SP realizar las operaciones previas con los datos.
 		getHibernateTemplate().flush();
-    	return this.publicarActivo(idActivo, username, true, null);
+		return this.publicarActivo(idActivo, username, true, null);
 	}
 
 	@Override
@@ -735,6 +734,18 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		// Antes de realizar la llamada al SP realizar las operaciones previas con los datos.
 		getHibernateTemplate().flush();
 		return this.publicarActivo(idActivo, username, false, eleccionUsuarioTipoPublicacionAlquiler);
+	}
+	
+	@Override
+	public Boolean publicarAgrupacionSinHistorico(Long idAgrupacion, String username, String eleccionUsuarioTipoPublicacionAlquiler) {
+		getHibernateTemplate().flush();
+		return this.publicarAgrupacion(idAgrupacion, username, false, eleccionUsuarioTipoPublicacionAlquiler);
+	}
+	
+	@Override
+	public Boolean publicarAgrupacionConHistorico(Long idAgrupacion, String username) {
+		getHibernateTemplate().flush();
+		return this.publicarAgrupacion(idAgrupacion, username, true, null);
 	}
 
 	/**
@@ -757,6 +768,29 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		Integer resultado = callProcedureSql.executeUpdate();
 
     	return resultado == 1;
+	}
+	
+	/**
+	 * Este metodo lanza el procedimiento de cambio de estado de publicación de agrupaciones
+	 * 
+	 * @param idAgrupacion: ID del activo para el cual se desea realizar la operación.
+	 * @param username: nombre del usuario, si la llamada es desde la web, que realiza la operación.
+	 * @param historificar: indica si la operación ha de realizar un histórico de los movimientos realizados.
+	 * @return Devuelve True si la operacion ha sido satisfactoria, False si no ha sido satisfactoria.
+	 */
+	private Boolean publicarAgrupacion(Long idAgrupacion, String username, Boolean historificar, String eleccionUsuarioTipoPublicacionAlquiler) {
+		String procedureHQL = "BEGIN SP_CAMBIO_ESTADO_PUBLI_AGR(:idAgrupacionParam, :eleccionUsusarioParam, :usernameParam, :historificarParam); END;";
+	
+		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
+		callProcedureSql.setParameter("idAgrupacionParam", idAgrupacion);
+		callProcedureSql.setParameter("eleccionUsusarioParam", eleccionUsuarioTipoPublicacionAlquiler);
+		callProcedureSql.setParameter("usernameParam", username);
+		callProcedureSql.setParameter("historificarParam", historificar ? "S" : "N");
+		
+		Integer resultado = callProcedureSql.executeUpdate();
+		
+		return resultado == 1;
+		
 	}
 	
     public Long getNextNumExpedienteComercial() {

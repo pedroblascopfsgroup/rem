@@ -329,6 +329,7 @@ BEGIN
                     FECHAMODIFICAR = SYSDATE
                     WHERE RES_ID = '||V_RES_ID||'
                     AND ECO_ID = '||V_ECO_ID||'
+                    AND RES_FECHA_FIRMA IS NULL
                     ';
                     EXECUTE IMMEDIATE V_MSQL;
 
@@ -545,6 +546,7 @@ BEGIN
                     FECHAMODIFICAR = SYSDATE
                     WHERE RES_ID = '||V_RES_ID||'
                     AND ECO_ID = '||V_ECO_ID||'
+                    AND RES_FECHA_ANULACION IS NULL
                     ';
                     EXECUTE IMMEDIATE V_MSQL;
 

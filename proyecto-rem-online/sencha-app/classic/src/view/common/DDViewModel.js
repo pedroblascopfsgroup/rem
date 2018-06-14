@@ -92,6 +92,13 @@ Ext.define('HreRem.view.common.DDViewModel', {
 			    ]
     		},
     		
+    		comboPosibleInforme: {
+				data : [
+			        {"codigo": 1, "descripcion": eval(String.fromCharCode(34,83,237,34))},
+			        {"codigo": 0, "descripcion": "No"}
+			    ]
+    		},
+    		
     		comboAcuerdo: {
 				data : [
 			        {"codigo": 0, "descripcion": "No Solucionar"},

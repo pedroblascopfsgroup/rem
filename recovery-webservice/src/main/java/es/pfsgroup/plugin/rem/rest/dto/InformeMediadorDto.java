@@ -14,6 +14,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.EntityDefinition;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDAcabadoCarpinteria;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
@@ -78,10 +79,10 @@ public class InformeMediadorDto implements Serializable {
 	private Long idProveedorRem;
 
 	@NotNull(groups = Insert.class)
-	@EntityDefinition(procesar = false)
+	@EntityDefinition(propertyName = "posibleInforme", classObj = ActivoInfoComercial.class)
 	private Boolean posibleInforme;
 
-	@EntityDefinition(procesar = false)
+	@EntityDefinition(propertyName = "motivoNoPosibleInforme", classObj = ActivoInfoComercial.class)
 	private String motivoNoPosibleInforme;
 
 	//@NotNull(groups = Insert.class)

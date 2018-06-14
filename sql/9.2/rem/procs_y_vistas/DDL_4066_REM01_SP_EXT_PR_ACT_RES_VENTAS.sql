@@ -861,6 +861,10 @@ IF COD_RETORNO = 1 THEN
 
     DBMS_OUTPUT.PUT_LINE(V_ERROR_DESC);
 
+    --aqui ponemos los parametros de entrada
+    V_ID_COBRO := IDENTIFICACION_COBRO;
+    V_NUM_RESERVA := NUM_RESERVA;
+    
     IF V_NUM_RESERVA IS NULL AND V_ID_COBRO IS NULL THEN
         V_ID_COBRO := -1;
         V_NUM_RESERVA := NULL;

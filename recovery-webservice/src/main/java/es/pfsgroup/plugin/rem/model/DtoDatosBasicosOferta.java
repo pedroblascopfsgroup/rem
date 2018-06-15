@@ -67,6 +67,8 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private String necesitaFinanciacion;
 	
 	private String observaciones;
+	
+	private String ventaCartera;
 
 	public Long getIdOferta() {
 		return idOferta;
@@ -251,7 +253,17 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
-	}    	
+	}
+
+	public String getVentaCartera() {
+		return ventaCartera;
+	}
+
+	public void setVentaCartera(String ventaCartera) {
+		this.ventaCartera = ventaCartera;
+	}
+
+	    	
    	
    	
 }

@@ -132,6 +132,12 @@ Ext.define('HreRem.model.ActivoValoraciones', {
     		{
     			name:'incluidoBolsaRepreciar',
     			type: 'boolean'
+    		},
+    		{
+    			name:'deudaBruta'
+    		},
+    		{
+    			name:'valorRazonable'
     		}
     		
     ],

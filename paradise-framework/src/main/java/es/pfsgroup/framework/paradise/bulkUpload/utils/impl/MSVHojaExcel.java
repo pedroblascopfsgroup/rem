@@ -15,8 +15,8 @@ import java.util.Map;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.utils.FormatUtils;
 import es.pfsgroup.commons.utils.Checks;
-
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import jxl.Cell;
 import jxl.CellType;
 import jxl.DateCell;
@@ -269,6 +269,100 @@ public class MSVHojaExcel {
 
 		return nombreFicheroErrores;
 	}
+	
+	public String crearExcelResultadosByHojaAndFilaCabecera(Map<String, String> mapaResultados, int numHoja,
+			int numFilaCabeceras) throws IllegalArgumentException, IOException, RowsExceededException, WriteException {
+		if (!isOpen) {
+			abrir();
+		}
+
+		String nombreFicheroResultados = getNombreFicheroResultados();
+
+		WritableWorkbook copy = Workbook.createWorkbook(new File(nombreFicheroResultados), libroExcel);
+		try {
+			WritableSheet hoja = copy.getSheet(numHoja);
+			int numColumnas = this.getNumeroColumnasByHojaAndFila(numHoja, numFilaCabeceras);
+			Iterator<String> it = mapaResultados.keySet().iterator();
+			int columna = numColumnas;
+			int filas = 1;
+			while (it.hasNext()) {
+				String resultado = (String) it.next();
+				addTexto(hoja, columna, filas, resultado);
+				
+				addTextoResultados(hoja, (columna + 1), filas,  mapaResultados.get(resultado));
+
+				if (!mapaResultados.get(resultado).isEmpty()) {
+					filas++;
+				}
+			}
+			copy.write();
+		} finally {
+			copy.close();
+		}
+		
+
+		return nombreFicheroResultados;
+	}
+	
+	public String crearExcelResultado(ArrayList<ResultadoProcesarFila> resultados,int numHoja,
+			int numFilaCabeceras)
+			throws IllegalArgumentException, IOException, RowsExceededException, WriteException {
+
+		return this.crearExcelProcesadoByHojaAndFilaCabecera(resultados, numHoja, numFilaCabeceras);
+	}
+
+	public String crearExcelProcesadoByHojaAndFilaCabecera(ArrayList<ResultadoProcesarFila> resultados, int numHoja,
+			int numFilaCabeceras) throws IllegalArgumentException, IOException, RowsExceededException, WriteException {
+		if (!isOpen) {
+			abrir();
+		}
+
+		String nombreFicheroErrores = getNombreFicheroErrores();
+
+		WritableWorkbook copy = Workbook.createWorkbook(new File(nombreFicheroErrores), libroExcel);
+		try {
+
+			WritableSheet hoja = copy.getSheet(numHoja);
+			int numColumnas = this.getNumeroColumnasByHojaAndFila(numHoja, 0);
+			int columna = numColumnas;
+			addTexto(hoja, columna, numFilaCabeceras-1, "RESULTADO");
+			addTexto(hoja, columna+1, numFilaCabeceras-1, "DESC. ERROR");
+			if (resultados != null && resultados.size() > 0 && resultados.get(0).gethMap() != null
+					&& resultados.get(0).gethMap().size() > 0) {
+				int colnN =2;
+				for (Map.Entry<String, String> entry : resultados.get(0).gethMap().entrySet()) {
+					addTexto(hoja, columna+colnN, numFilaCabeceras-1, entry.getKey());
+					colnN++;
+				}
+
+			}
+			for(ResultadoProcesarFila resultado : resultados){
+				if(resultado.isCorrecto()){
+					addTexto(hoja, columna, resultado.getFila(), "OK");
+					if(resultado.gethMap() != null && resultado.gethMap().size() > 0){
+						int colnN =2;
+						for (Map.Entry<String, String> entry : resultado.gethMap().entrySet()) {
+							addTexto(hoja, columna+colnN, resultado.getFila(), entry.getValue());
+							colnN++;
+							
+						}
+					}
+				}else{
+					addTexto(hoja, columna, resultado.getFila(), "FALSE");
+					addTextoErrores(hoja, columna+1, resultado.getFila(), resultado.getErrorDesc());
+				}
+				
+			}
+
+			
+			copy.write();
+		} finally {
+			copy.close();
+		}
+		
+
+		return nombreFicheroErrores;
+	}
 
 	public String dameCelda(int fila, int columna) throws IllegalArgumentException, IOException, ParseException {
 
@@ -402,8 +496,33 @@ public class MSVHojaExcel {
 			sheet.addCell(label);
 		}
 	}
+	
+	private void addTextoResultados(WritableSheet sheet, int column, int row, String s)
+			throws RowsExceededException, WriteException {
+		Label label;
+		Cell celdaResultados = sheet.getCell(column, row);
+		String erroresAnteriores = celdaResultados.getContents();
+		label = new Label(column, row, erroresAnteriores + " - " + s);
+		sheet.addCell(label);
+	}
 
 	private String getNombreFicheroErrores() {
+		String path;
+		if (this.file != null) {
+			path = this.file.getAbsolutePath();
+		} else if (!Checks.esNulo(this.ruta)) {
+			path = this.ruta;
+		} else {
+			throw new IllegalStateException("No se ha inicializado el File ni la Ruta");
+		}
+
+		String nombre = path.replace(".xls", "Err.xls").replace(".csv", "Err.csv").replace(".tmp", "Err.tmp");
+		return nombre;
+
+	}
+	
+	private String getNombreFicheroResultados() {
+		
 		String path;
 		if (this.file != null) {
 			path = this.file.getAbsolutePath();

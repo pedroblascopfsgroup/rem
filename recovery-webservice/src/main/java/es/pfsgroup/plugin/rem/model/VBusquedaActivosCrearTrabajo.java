@@ -49,6 +49,12 @@ public class VBusquedaActivosCrearTrabajo implements Serializable {
 	
 	@Column(name="PRO_ID")
 	private String propietarioId;
+	
+	@Column(name = "ACT_COD_PROMOCION_PRINEX")
+    private String codigoPromocionPrinex;
+	
+	@Column(name="CODIGO_CARTERA")
+	private String codigoCartera;
 
 	public String getPropietarioId() {
 		return propietarioId;
@@ -136,6 +142,22 @@ public class VBusquedaActivosCrearTrabajo implements Serializable {
 
 	public void setActivoEnPropuestaEnTramitacion(Boolean activoEnPropuestaEnTramitacion) {
 		this.activoEnPropuestaEnTramitacion = activoEnPropuestaEnTramitacion;
+	}
+
+	public String getCodigoPromocionPrinex() {
+		return codigoPromocionPrinex;
+	}
+
+	public void setCodigoPromocionPrinex(String codigoPromocionPrinex) {
+		this.codigoPromocionPrinex = codigoPromocionPrinex;
+	}
+
+	public String getCodigoCartera() {
+		return codigoCartera;
+	}
+
+	public void setCodigoCartera(String codigoCartera) {
+		this.codigoCartera = codigoCartera;
 	}
 	
 	

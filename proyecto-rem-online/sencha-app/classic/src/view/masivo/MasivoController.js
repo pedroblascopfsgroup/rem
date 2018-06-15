@@ -97,6 +97,19 @@ Ext.define('HreRem.view.masivo.MasivoController', {
     },
     
     
+    onClickDescargarResultados: function(btn) {
+
+    	var me = this,
+		config = {};
+
+		config.url= $AC.getRemoteUrl("process/downloadResultados");
+		config.params = {};
+		config.params.idProcess = this.getView().down('grid').selection.data.id;
+
+		me.fireEvent("downloadFile", config);	
+    },
+    
+    
     onClickBotonProcesar: function(btn,b,c) {
 
     	var me = this;
@@ -152,10 +165,12 @@ Ext.define('HreRem.view.masivo.MasivoController', {
     	processButton = grid.down('#procesarButton'),
     	downloadButton = grid.down('#downloadButton'),
     	validarButton = grid.down('#validarButton');
+    	resultadoButton = grid.down('#resultadoButton');
     	
     	validarButton.setDisabled(!record.get("validable"));
     	processButton.setDisabled(!record.get("sePuedeProcesar"));
     	downloadButton.setDisabled(!record.get("conErrores"));
+    	resultadoButton.setDisabled(!record.get("conResultados"));
     	
     }
 });

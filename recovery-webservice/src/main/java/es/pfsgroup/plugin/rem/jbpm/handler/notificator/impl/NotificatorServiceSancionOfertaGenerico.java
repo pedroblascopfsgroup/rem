@@ -206,10 +206,11 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		ArrayList<String> clavesGestores = new ArrayList<String>();
 		String claveGestorComercial = this.getTipoGestorComercial(ofertaAceptada);
 
-		// DESTINATARIOS SI ES SAREB, BANKIA o TANGO o GIANTS
+		// DESTINATARIOS SI ES SAREB, BANKIA o TANGO o GIANTS o LIBERBANK
 		if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)
 				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)
 				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)
+				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)
 				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)) {
 			clavesGestores.addAll(Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial));
 			if (formalizacion) {
@@ -525,6 +526,11 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)){
 					f1 = FileItemUtils.fromResource("docs/contrato_reserva_Giants.docx");
 					adjuntos.add(createAdjunto(f1, "contrato_reserva_Giants.docx"));
+				}
+				//ADJUNTOS SI ES LIBERBANK
+				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
+					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_y_formalizacion_Liberbank.docx");
+					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_y_formalizacion_Liberbank.docx"));
 				}
 			}
 			genericAdapter.sendMail(Arrays.asList(destinatarios), mailsCC, asunto, cuerpoCorreo, adjuntos);

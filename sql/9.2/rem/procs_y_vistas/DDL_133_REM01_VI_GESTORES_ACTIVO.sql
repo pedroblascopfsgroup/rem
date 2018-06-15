@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Pablo Meseguer
---## FECHA_CREACION=20180412
+--## AUTOR=Pau Serrano Rodrigo
+--## FECHA_CREACION=20180530
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-808
+--## INCIDENCIA_LINK=HREOS-4102
 --## PRODUCTO=NO
 --## Finalidad: Crear vista gestores activo
 --##           
@@ -356,7 +356,57 @@ SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo, null dd_eac_c
   JOIN rem01.act_ges_dist_gestores dist1 on dist1.COD_CARTERA = CRA.DD_CRA_CODIGO AND DIST1.tipo_gestor = tge.dd_tge_codigo
   where act.borrado = 0
                            )
-    WHERE tipo_gestor IS NOT NULL';
+    WHERE tipo_gestor IS NOT NULL
+
+  UNION ALL
+  /*Gestor Liberbank Residencial (Liberbank)*/
+           SELECT act.act_id, dist1.cod_cartera, NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, dist1.tipo_gestor tipo_gestor,
+                  dist1.username username, dist1.nombre_usuario nombre
+             FROM act_activo act JOIN dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
+                  JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON (dist1.cod_cartera = dd_cra.dd_cra_codigo AND dist1.tipo_gestor = ''GLIBRES'')
+           where act.borrado = 0
+
+  UNION ALL
+  /*Gestor Inversión Inmobiliaria (Liberbank)*/
+           SELECT act.act_id, dist1.cod_cartera, NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, dist1.tipo_gestor tipo_gestor,
+                  dist1.username username, dist1.nombre_usuario nombre
+             FROM act_activo act JOIN dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
+                  JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON (dist1.cod_cartera = dd_cra.dd_cra_codigo AND dist1.tipo_gestor = ''GLIBINVINM'')
+           where act.borrado = 0
+
+    UNION ALL
+  /*Gestor Singular/Terciario (Liberbank)*/
+           SELECT act.act_id, dist1.cod_cartera, NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, dist1.tipo_gestor tipo_gestor,
+                  dist1.username username, dist1.nombre_usuario nombre
+             FROM act_activo act JOIN dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
+                  JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON (dist1.cod_cartera = dd_cra.dd_cra_codigo AND dist1.tipo_gestor = ''GLIBSINTER'')
+           where act.borrado = 0
+
+  UNION ALL
+  /*Gestor Comité de Inversiones Inmobiliarias (Liberbank)*/
+           SELECT act.act_id, dist1.cod_cartera, NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, dist1.tipo_gestor tipo_gestor,
+                  dist1.username username, dist1.nombre_usuario nombre
+             FROM act_activo act JOIN dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
+                  JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON (dist1.cod_cartera = dd_cra.dd_cra_codigo AND dist1.tipo_gestor = ''GCOIN'')
+           where act.borrado = 0
+
+  UNION ALL
+  /*Gestor Comité Inmobiliario (Liberbank)*/
+           SELECT act.act_id, dist1.cod_cartera, NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, dist1.tipo_gestor tipo_gestor,
+                  dist1.username username, dist1.nombre_usuario nombre
+             FROM act_activo act JOIN dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
+                  JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON (dist1.cod_cartera = dd_cra.dd_cra_codigo AND dist1.tipo_gestor = ''GCOINM'')
+           where act.borrado = 0
+
+  UNION ALL
+  /*Gestor Comité de Dirección (Liberbank)*/
+           SELECT act.act_id, dist1.cod_cartera, NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, dist1.tipo_gestor tipo_gestor,
+                  dist1.username username, dist1.nombre_usuario nombre
+             FROM act_activo act JOIN dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
+                  JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON (dist1.cod_cartera = dd_cra.dd_cra_codigo AND dist1.tipo_gestor = ''GCODI'')
+           where act.borrado = 0
+
+';
 
         --DBMS_OUTPUT.PUT_LINE(  V_MSQL); 
 	EXECUTE IMMEDIATE V_MSQL;

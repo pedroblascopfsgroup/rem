@@ -31,11 +31,13 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.id.activo.haya'),
 		                	bind:		'{activo.numActivo}'
 
-		                },	
+		                },	          	
 		                {
-							xtype: 'displayfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.activosearch.codigo.promocion'),
-							bind:		'{activo.codigoPromocionPrinex}'
+							bind:{	
+								readOnly: '{!esEditableCodigoPromocion}',
+								value:'{activo.codigoPromocionPrinex}'		
+							}						
 						},
 						{ 
 		                	xtype: 'textareafieldbase',

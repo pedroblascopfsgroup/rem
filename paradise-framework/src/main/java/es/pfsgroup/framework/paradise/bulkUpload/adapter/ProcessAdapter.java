@@ -150,6 +150,21 @@ public class ProcessAdapter {
 		return fileItem;
 	}
 	
+	public FileItem downloadResultados(Long idProcess) throws Exception{
+		MSVDocumentoMasivo document = ficheroDao.findByIdProceso(idProcess);
+		FileItem fileItem = null;
+		
+		if(document != null) {
+			
+			fileItem = document.getResultadoFich();
+			fileItem.setFileName("RESULTADO_"+document.getNombre());
+			fileItem.setContentType(ExcelRepoApi.TIPO_EXCEL);
+		}	
+		
+		return fileItem;
+
+	}
+	
 	@Transactional
 	public void setStateProcessing(Long idProcess) {
 		this.setStateProcessing(idProcess, null);
@@ -241,6 +256,60 @@ public class ProcessAdapter {
 		document.setErroresFicheroProcesar(fileItemErrores);
 		ficheroDao.saveOrUpdate(document);
 	}
-		
+	
+	@Transactional
+	public void setExcelResultadosProcesado(MSVDocumentoMasivo document, FileItem fileItemResultados)	{	
+		document.setResultadoFich(fileItemResultados);
+		ficheroDao.saveOrUpdate(document);
+	}
+
+	/**
+	 * @param page
+	 * @param listProcesosmasivos
+	 */
+	public void addListProcesosMasivo(Page page, List<DtoMSVProcesoMasivo> listProcesosmasivos) {
+		for (int i = 0; i < page.getResults().size(); i++) {
+			boolean sePuedeProcesar = false;
+			boolean conErrores = false;
+			boolean validable = false;
+			boolean conResultados = false;
+			MSVProcesoMasivo procesomasivo = (MSVProcesoMasivo) page.getResults().get(i);
+			DtoMSVProcesoMasivo masivoDto = new DtoMSVProcesoMasivo();
+			if (procesomasivo.getEstadoProceso() != null) {
+				masivoDto.setEstadoProceso(procesomasivo.getEstadoProceso().getDescripcion());
+			} else {
+				masivoDto.setEstadoProceso("Validando");
+			}
+			masivoDto.setUsuario(procesomasivo.getAuditoria().getUsuarioCrear());
+			masivoDto.setTipoOperacionId(procesomasivo.getTipoOperacion().getId());
+			masivoDto.setId(procesomasivo.getId().toString());
+			masivoDto.setNombre(procesomasivo.getDescripcion());
+			if (procesomasivo.getEstadoProceso() != null) {
+				if (MSVDDEstadoProceso.CODIGO_VALIDADO.equals(procesomasivo.getEstadoProceso().getCodigo())) {
+					sePuedeProcesar = true;
+				} else if (!procesomasivo.getTipoOperacion().getResultado() && (MSVDDEstadoProceso.CODIGO_PROCESADO.equals(procesomasivo.getEstadoProceso().getCodigo()) || 
+						MSVDDEstadoProceso.CODIGO_PROCESADO_CON_ERRORES.equals(procesomasivo.getEstadoProceso().getCodigo()))) {
+					conResultados = true;
+				} else  if (MSVDDEstadoProceso.CODIGO_ERROR.equals(procesomasivo.getEstadoProceso().getCodigo()) || 
+						MSVDDEstadoProceso.CODIGO_PROCESADO_CON_ERRORES.equals(procesomasivo.getEstadoProceso().getCodigo())) {
+					conErrores = true;
+				} else if (MSVDDEstadoProceso.CODIGO_PTE_VALIDAR
+						.equals(procesomasivo.getEstadoProceso().getCodigo())) {
+					validable = true;
+				} 
+			}
+			masivoDto.setSePuedeProcesar(sePuedeProcesar);
+			masivoDto.setConErrores(conErrores);
+			masivoDto.setValidable(validable);
+			masivoDto.setConResultados(conResultados);
+			masivoDto.setTipoOperacion(procesomasivo.getTipoOperacion().getDescripcion());
+			masivoDto.setFechaCrear(procesomasivo.getAuditoria().getFechaCrear());
+			masivoDto.setTotalFilas(procesomasivo.getTotalFilas());
+			masivoDto.setTotalFilasOk(procesomasivo.getTotalFilasOk());
+			masivoDto.setTotalFilasKo(procesomasivo.getTotalFilasKo());
+	
+			listProcesosmasivos.add(masivoDto);
+		}
+	}	
 	
 }

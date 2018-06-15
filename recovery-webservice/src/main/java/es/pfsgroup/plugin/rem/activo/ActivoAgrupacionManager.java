@@ -115,7 +115,6 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo.getActivo());
 			}
 		}
-		
 		return true;
 	}
 

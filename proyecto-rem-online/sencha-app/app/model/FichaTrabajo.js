@@ -210,6 +210,14 @@ Ext.define('HreRem.model.FichaTrabajo', {
     		},
     		{
     			name: 'esTarifaPlana'
+    		},
+    		{
+    			name: 'fechaAutorizacionPropietario',
+    			type:'date',
+        		dateFormat: 'c'
+    		},
+    		{
+    			name: 'cartera'
     		}
     ],
     

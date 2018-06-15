@@ -782,7 +782,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 					vDatosComprador.setNumDocumento(exc.dameCelda(fila,
 							MSVVentaDeCarteraExcelValidator.COL_NUM.DOC_IDENTIFICACION_TITULAR_2 + contadorColumnas));
 
-					if (DDSubcartera.CODIGO_BAN_BH.equals(oferta.getActivoPrincipal().getSubcartera())) {
+					if (DDSubcartera.CODIGO_BAN_BH.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) {
 						vDatosComprador.setNumeroClienteUrsusBh(Long.parseLong(exc.dameCelda(fila,
 								MSVVentaDeCarteraExcelValidator.COL_NUM.NUMERO_URSUS_TITULAR_2 + contadorColumnas)));
 					} else {

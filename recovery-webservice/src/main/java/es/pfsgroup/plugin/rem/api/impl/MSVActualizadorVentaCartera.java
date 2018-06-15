@@ -328,7 +328,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 
 			if (expedienteComercial.getCompradores() != null && !expedienteComercial.getCompradores().isEmpty()) {
 				for (CompradorExpediente comprador : expedienteComercial.getCompradores()) {
-					if (DDRegimenesMatrimoniales.COD_GANANCIALES
+					if (comprador.getRegimenMatrimonial() != null && DDRegimenesMatrimoniales.COD_GANANCIALES
 							.equals(comprador.getRegimenMatrimonial().getCodigo())) {
 						String docConyuge = null;
 						String ursusConyuge = null;

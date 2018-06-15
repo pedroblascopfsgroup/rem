@@ -71,13 +71,14 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
     nCONTADORMax      NUMBER := 10000;
     
     vQUERY            VARCHAR2(4000 CHAR);
+    vQUERY_SINACT     VARCHAR2(4000 CHAR);
     
   PROCEDURE PLP$LIMPIAR_ALQUILER(nAGR_ID NUMBER, pUSUARIOMODIFICAR VARCHAR2) IS
 
   BEGIN
     V_MSQL := '
       MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
-          USING '||vQUERY||'
+          USING '||vQUERY_SINACT||'
           ON (ACT.ACT_ID = AUX.ACT_ID)
         WHEN MATCHED THEN
           UPDATE 
@@ -98,7 +99,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
   BEGIN
     V_MSQL := '
       MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
-          USING '||vQUERY||'
+          USING '||vQUERY_SINACT||'
           ON (ACT.ACT_ID = AUX.ACT_ID)
         WHEN MATCHED THEN
           UPDATE 
@@ -119,7 +120,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
   BEGIN
     V_MSQL := '
       MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
-          USING '||vQUERY||'
+          USING '||vQUERY_SINACT||'
           ON (ACT.ACT_ID = AUX.ACT_ID)
         WHEN MATCHED THEN
           UPDATE 
@@ -143,7 +144,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
   BEGIN
     V_MSQL := '
       MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
-          USING '||vQUERY||'
+          USING '||vQUERY_SINACT||'
           ON (ACT.ACT_ID = AUX.ACT_ID)
         WHEN MATCHED THEN
           UPDATE 
@@ -172,7 +173,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
 		IF pDD_TCO_CODIGO IN ('02','03','04') THEN
     V_MSQL := '
       MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
-          USING '||vQUERY||'
+          USING '||vQUERY_SINACT||'
           ON (ACT.ACT_ID = AUX.ACT_ID)
         WHEN MATCHED THEN
           UPDATE 
@@ -200,7 +201,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
 		  IF pDD_MTO_CODIGO = '01' THEN /*No Publicable*/
         V_MSQL := '
           MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
-              USING '||vQUERY||'
+              USING '||vQUERY_SINACT||'
               ON (ACT.ACT_ID = AUX.ACT_ID)
             WHEN MATCHED THEN
               UPDATE 
@@ -223,7 +224,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
 		  IF pDD_MTO_CODIGO = '02' THEN /*No Comercializable*/
         V_MSQL := '      
           MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
-              USING '||vQUERY||'
+              USING '||vQUERY_SINACT||'
               ON (ACT.ACT_ID = AUX.ACT_ID)
             WHEN MATCHED THEN
               UPDATE 
@@ -245,7 +246,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
 		  IF pDD_MTO_CODIGO = '04' THEN /*Revisión adecuación*/
         V_MSQL := '      
           MERGE INTO '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO ACT
-              USING '||vQUERY||'
+              USING '||vQUERY_SINACT||'
               ON (ACT.ACT_ID = AUX.ACT_ID)
             WHEN MATCHED THEN
               UPDATE 
@@ -274,7 +275,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
 		IF pDD_TCO_CODIGO IN ('01','02') THEN
         V_MSQL := '     
           MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
-              USING '||vQUERY||'
+              USING '||vQUERY_SINACT||'
               ON (ACT.ACT_ID = AUX.ACT_ID)
             WHEN MATCHED THEN
               UPDATE 
@@ -301,7 +302,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
 		  IF pDD_MTO_CODIGO = '01' THEN /*No Publicable*/
         V_MSQL := '      
           MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
-              USING '||vQUERY||'
+              USING '||vQUERY_SINACT||'
               ON (ACT.ACT_ID = AUX.ACT_ID)
             WHEN MATCHED THEN
               UPDATE 
@@ -323,7 +324,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
 		  IF pDD_MTO_CODIGO = '02' THEN /*No Comercializable*/
         V_MSQL := '      
           MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
-              USING '||vQUERY||'
+              USING '||vQUERY_SINACT||'
               ON (ACT.ACT_ID = AUX.ACT_ID)
             WHEN MATCHED THEN
               UPDATE 
@@ -343,17 +344,22 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
 		  END IF;
 
 		IF pDD_MTO_CODIGO IN ('04') THEN /*Revisión adecuación*/
-		  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO PTA
-						SET DD_ADA_ID = (SELECT DDADA.DD_ADA_ID
-											 FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA
-											WHERE DDADA.BORRADO = 0
-											  AND DDADA.DD_ADA_CODIGO = ''02'')
-						  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
-						  , FECHAMODIFICAR = SYSDATE
-					  WHERE PTA.ACT_ID = '||nAGR_ID||'
-						AND PTA.BORRADO = 0 '
-					;
 
+			V_MSQL := '      
+			  MERGE INTO '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO ACT
+				  USING '||vQUERY_SINACT||'
+				  ON (ACT.ACT_ID = AUX.ACT_ID)
+				WHEN MATCHED THEN
+				  UPDATE 
+					SET DD_ADA_ID = (SELECT DDADA.DD_ADA_ID
+										 FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA
+										WHERE DDADA.BORRADO = 0
+										  AND DDADA.DD_ADA_CODIGO = ''02'')
+					  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+					  , FECHAMODIFICAR = SYSDATE
+				  WHERE BORRADO = 0
+					  ';   
+                  
 		  EXECUTE IMMEDIATE V_MSQL;
 		  IF SQL%ROWCOUNT > 0 THEN
 			vACTUALIZADO := 'S';
@@ -378,20 +384,24 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
       IF pPRECIO = 1 THEN
         IF pADMISION = 1 AND pGESTION = 1 THEN
           /*PUBLICADO ORDINARIO*/
-          V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
-                        SET DD_EPV_ID = (SELECT DD_EPV_ID
-                                           FROM '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA
-                                          WHERE BORRADO = 0
-                                            AND DD_EPV_CODIGO = ''03'')
-                          , DD_TPU_V_ID = (SELECT DD_TPU_ID
-                                           FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
-                                          WHERE BORRADO = 0
-                                            AND DD_TPU_CODIGO = ''01'')
-                          , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
-                          , FECHAMODIFICAR = SYSDATE
-                      WHERE ACT_ID = '||nAGR_ID||'
-                        AND BORRADO = 0
-                    ';
+			V_MSQL := '      
+			  MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
+				  USING '||vQUERY_SINACT||'
+				  ON (ACT.ACT_ID = AUX.ACT_ID)
+				WHEN MATCHED THEN
+				  UPDATE 
+					SET DD_EPV_ID = (SELECT DD_EPV_ID
+									   FROM '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA
+									  WHERE BORRADO = 0
+										AND DD_EPV_CODIGO = ''03'')
+					  , DD_TPU_V_ID = (SELECT DD_TPU_ID
+									   FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
+									  WHERE BORRADO = 0
+										AND DD_TPU_CODIGO = ''01'')
+					  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+					  , FECHAMODIFICAR = SYSDATE
+				  WHERE BORRADO = 0
+					  ';  
 
           EXECUTE IMMEDIATE V_MSQL;
           IF SQL%ROWCOUNT > 0 THEN
@@ -399,21 +409,24 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
           END IF;
         ELSE
           /*PUBLICADO FORZADO*/
-          V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
-                        SET DD_EPV_ID = (SELECT DD_EPV_ID
-                                           FROM '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA
-                                          WHERE BORRADO = 0
-                                            AND DD_EPV_CODIGO = ''03'')
-                          , DD_TPU_V_ID = (SELECT DD_TPU_ID
-                                           FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
-                                          WHERE BORRADO = 0
-                                            AND DD_TPU_CODIGO = ''02'')
-                          , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
-                          , FECHAMODIFICAR = SYSDATE
-                      WHERE ACT_ID = '||nAGR_ID||'
-                        AND BORRADO = 0
-                    ';
-
+			V_MSQL := '      
+			  MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
+				  USING '||vQUERY_SINACT||'
+				  ON (ACT.ACT_ID = AUX.ACT_ID)
+				WHEN MATCHED THEN
+				  UPDATE 
+					SET DD_EPV_ID = (SELECT DD_EPV_ID
+									   FROM '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA
+									  WHERE BORRADO = 0
+										AND DD_EPV_CODIGO = ''03'')
+					  , DD_TPU_V_ID = (SELECT DD_TPU_ID
+									   FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
+									  WHERE BORRADO = 0
+										AND DD_TPU_CODIGO = ''02'')
+					  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+					  , FECHAMODIFICAR = SYSDATE
+				  WHERE BORRADO = 0
+					  ';  
           EXECUTE IMMEDIATE V_MSQL;
           IF SQL%ROWCOUNT > 0 THEN
             vACTUALIZADO := 'S';
@@ -421,7 +434,12 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
         END IF;
       ELSE
         /*PRE PUBLICADO ORDINARIO*/
-        V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+			V_MSQL := '      
+			  MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
+				  USING '||vQUERY_SINACT||'
+				  ON (ACT.ACT_ID = AUX.ACT_ID)
+				WHEN MATCHED THEN
+				  UPDATE 
                       SET DD_EPV_ID = (SELECT DD_EPV_ID
                                          FROM '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA
                                         WHERE BORRADO = 0
@@ -432,10 +450,8 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
                                           AND DD_TPU_CODIGO = ''01'')
                         , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                         , FECHAMODIFICAR = SYSDATE
-                    WHERE ACT_ID = '||nAGR_ID||'
-                      AND BORRADO = 0
-                  ';
-
+				  WHERE BORRADO = 0
+					  '; 
         EXECUTE IMMEDIATE V_MSQL;
         IF SQL%ROWCOUNT > 0 THEN
           vACTUALIZADO := 'S';
@@ -444,7 +460,12 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
     ELSE
       IF pPRECIO = 1 THEN
         /*PUBLICADO FORZADO*/
-        V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+			V_MSQL := '      
+			  MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
+				  USING '||vQUERY_SINACT||'
+				  ON (ACT.ACT_ID = AUX.ACT_ID)
+				WHEN MATCHED THEN
+				  UPDATE 
                       SET DD_EPV_ID = (SELECT DD_EPV_ID
                                          FROM '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA
                                         WHERE BORRADO = 0
@@ -455,10 +476,8 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
                                           AND DD_TPU_CODIGO = ''02'')
                         , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                         , FECHAMODIFICAR = SYSDATE
-                    WHERE ACT_ID = '||nAGR_ID||'
-                      AND BORRADO = 0
-                  ';
-
+				  WHERE BORRADO = 0
+					  '; 
         EXECUTE IMMEDIATE V_MSQL;
         IF SQL%ROWCOUNT > 0 THEN
           vACTUALIZADO := 'S';
@@ -480,7 +499,12 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
       IF pPRECIO = 1 THEN
         IF pADMISION = 1 AND pGESTION = 1 THEN
           /*PUBLICADO ORDINARIO*/
-          V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+			V_MSQL := '      
+			  MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
+				  USING '||vQUERY_SINACT||'
+				  ON (ACT.ACT_ID = AUX.ACT_ID)
+				WHEN MATCHED THEN
+				  UPDATE 
                         SET DD_EPA_ID = (SELECT DD_EPA_ID
                                            FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
                                           WHERE BORRADO = 0
@@ -491,17 +515,20 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
                                             AND DD_TPU_CODIGO = ''01'')
                           , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                           , FECHAMODIFICAR = SYSDATE
-                      WHERE ACT_ID = '||nAGR_ID||'
-                        AND BORRADO = 0
-                    ';
-
+				  WHERE BORRADO = 0
+					  '; 
           EXECUTE IMMEDIATE V_MSQL;
           IF SQL%ROWCOUNT > 0 THEN
             vACTUALIZADO := 'S';
           END IF;
         ELSIF pCEE_VIGENTE = 1 AND pADECUADO = 1 THEN
           /*PUBLICADO FORZADO*/
-          V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+			V_MSQL := '      
+			  MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
+				  USING '||vQUERY_SINACT||'
+				  ON (ACT.ACT_ID = AUX.ACT_ID)
+				WHEN MATCHED THEN
+				  UPDATE 
                         SET DD_EPA_ID = (SELECT DD_EPA_ID
                                            FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
                                           WHERE BORRADO = 0
@@ -512,10 +539,8 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
                                             AND DD_TPU_CODIGO = ''02'')
                           , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                           , FECHAMODIFICAR = SYSDATE
-                      WHERE ACT_ID = '||nAGR_ID||'
-                        AND BORRADO = 0
-                    ';
-
+				  WHERE BORRADO = 0
+					  '; 
           EXECUTE IMMEDIATE V_MSQL;
           IF SQL%ROWCOUNT > 0 THEN
             vACTUALIZADO := 'S';
@@ -523,7 +548,12 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
         END IF;
       ELSE
         /*PRE PUBLICADO ORDINARIO*/
-        V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+			V_MSQL := '      
+			  MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
+				  USING '||vQUERY_SINACT||'
+				  ON (ACT.ACT_ID = AUX.ACT_ID)
+				WHEN MATCHED THEN
+				  UPDATE 
                       SET DD_EPA_ID = (SELECT DD_EPA_ID
                                          FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
                                         WHERE BORRADO = 0
@@ -534,10 +564,8 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
                                           AND DD_TPU_CODIGO = ''01'')
                         , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                         , FECHAMODIFICAR = SYSDATE
-                    WHERE ACT_ID = '||nAGR_ID||'
-                      AND BORRADO = 0
-                  ';
-
+				  WHERE BORRADO = 0
+					  '; 
         EXECUTE IMMEDIATE V_MSQL;
         IF SQL%ROWCOUNT > 0 THEN
           vACTUALIZADO := 'S';
@@ -547,7 +575,12 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
       IF pPRECIO = 1 THEN
 		IF pCondAlquiler = 0 THEN
 			/*PRE PUBLICADO ORDINARIO*/
-			V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+			V_MSQL := '      
+			  MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
+				  USING '||vQUERY_SINACT||'
+				  ON (ACT.ACT_ID = AUX.ACT_ID)
+				WHEN MATCHED THEN
+				  UPDATE 
 						  SET DD_EPA_ID = (SELECT DD_EPA_ID
 											 FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
 											WHERE BORRADO = 0
@@ -558,10 +591,8 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
 											  AND DD_TPU_CODIGO = ''01'')
 							, USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 							, FECHAMODIFICAR = SYSDATE
-						WHERE ACT_ID = '||nAGR_ID||'
-						  AND BORRADO = 0
-					  ';
-
+				  WHERE BORRADO = 0
+					  '; 
 			EXECUTE IMMEDIATE V_MSQL;
 			IF SQL%ROWCOUNT > 0 THEN
 			  vACTUALIZADO := 'S';
@@ -569,7 +600,12 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
 
 		ELSIF pCondAlquiler = 1 THEN
 			/*PUBLICADO FORZADO*/
-			V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+			V_MSQL := '      
+			  MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
+				  USING '||vQUERY_SINACT||'
+				  ON (ACT.ACT_ID = AUX.ACT_ID)
+				WHEN MATCHED THEN
+				  UPDATE 
 						  SET DD_EPA_ID = (SELECT DD_EPA_ID
 											 FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
 											WHERE BORRADO = 0
@@ -580,9 +616,8 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
 											  AND DD_TPU_CODIGO = ''02'')
 							, USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 							, FECHAMODIFICAR = SYSDATE
-						WHERE ACT_ID = '||nAGR_ID||'
-						  AND BORRADO = 0
-					  ';
+				  WHERE BORRADO = 0
+					  '; 
 
 			EXECUTE IMMEDIATE V_MSQL;
 			IF SQL%ROWCOUNT > 0 THEN
@@ -620,7 +655,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
     
       V_MSQL := '
         SELECT DISTINCT
-               V.ACT_ID, V.DD_TCO_CODIGO
+               V.AGR_ID, V.DD_TCO_CODIGO
              , V.CODIGO_ESTADO_A, V.DESC_ESTADO_A, V.CHECK_PUBLICAR_A, V.CHECK_OCULTAR_A, V.DD_MTO_CODIGO_A, V.DD_MTO_MANUAL_A
              , V.CODIGO_ESTADO_V, V.DESC_ESTADO_V, V.CHECK_PUBLICAR_V, V.CHECK_OCULTAR_V, V.DD_MTO_CODIGO_V, V.DD_MTO_MANUAL_V
              , V.DD_TPU_CODIGO_A, V.DD_TPU_CODIGO_V, V.DD_TAL_CODIGO
@@ -653,6 +688,15 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
                            AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
                       WHERE AGA.ACT_ID = ACT.ACT_ID 
                         AND AGA.BORRADO = 0
+                        AND AGR.AGR_ID = '||nAGR_ID||'
+                   )AUX';
+        vQUERY_SINACT := 
+                  ' (SELECT AGA.ACT_ID
+                       FROM  '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA
+                       JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0
+                       JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0 AND TAG.DD_TAG_CODIGO = ''02''	/*Restringida*/ 
+                           AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
+                      WHERE AGA.BORRADO = 0
                         AND AGR.AGR_ID = '||nAGR_ID||'
                    )AUX';
           
@@ -753,7 +797,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
                 IF vDD_MTO_MANUAL_V = 0 THEN /*MOTIVO AUTOMÁTICO*/
 					V_MSQL := '
 					  MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
-						  USING '||vQUERY||'
+						  USING '||vQUERY_SINACT||'
 						  ON (ACT.ACT_ID = AUX.ACT_ID)
 						WHEN MATCHED THEN
                                 SET APU_CHECK_OCULTAR_V = 0
@@ -844,14 +888,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
 		    
 			V_MSQL := '
 			  MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
-				  USING (SELECT AGA.ACT_ID
-                       FROM  '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA
-                       JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0
-                       JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0 AND TAG.DD_TAG_CODIGO = ''02''	/*Restringida*/ 
-                           AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
-                      WHERE AGA.BORRADO = 0
-                        AND AGR.AGR_ID = '||nAGR_ID||'
-                   )AUX
+				  USING '||vQUERY_SINACT||'
 				  ON (ACT.ACT_ID = AUX.ACT_ID)
 				WHEN MATCHED THEN
 				  UPDATE 

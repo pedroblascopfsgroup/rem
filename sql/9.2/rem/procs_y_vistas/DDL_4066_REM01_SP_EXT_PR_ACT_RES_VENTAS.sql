@@ -128,7 +128,8 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
     PARAM2                          VARCHAR2(50 CHAR);
     PARAM3                          VARCHAR2(50 CHAR);          
     V_VALOR_ACTUAL                  VARCHAR2(50 CHAR);
-    V_VALOR_NUEVO                   VARCHAR2(50 CHAR);       
+    V_VALOR_NUEVO                   VARCHAR2(50 CHAR); 
+    V_CODIGO_TO_HLP                 VARCHAR2(50 CHAR); 
 
     --Excepciones
     ERR_NEGOCIO EXCEPTION;
@@ -872,6 +873,16 @@ IF COD_RETORNO = 1 THEN
         V_NUM_RESERVA := NULL;
     END IF;
 
+    IF V_NUM_RESERVA IS NOT NULL AND V_ID_COBRO IS NOT NULL THEN
+        V_CODIGO_TO_HLP := 'RES: '||V_NUM_RESERVA||' | OFR: '||V_ID_COBRO;
+    ELSE
+        IF V_NUM_RESERVA IS NOT NULL THEN
+            V_CODIGO_TO_HLP := V_NUM_RESERVA;
+        ELSE
+            V_CODIGO_TO_HLP := V_ID_COBRO;
+        END IF;
+    END IF;
+
     ROLLBACK;
     DBMS_OUTPUT.PUT_LINE('[ERROR] Procedemos a informar la tabla HLP_HISTORICO_LANZA_PERIODICO.');
     V_MSQL := '
@@ -886,7 +897,7 @@ IF COD_RETORNO = 1 THEN
         ''SP_EXT_PR_ACT_RES_VENTA'',
         SYSDATE,
         1,
-        '''||V_NUM_RESERVA||V_ID_COBRO||''',
+        '''||V_CODIGO_TO_HLP||''',
         '''||V_ERROR_DESC||'''
     FROM DUAL
     ';
@@ -913,7 +924,7 @@ ELSE --(if COD_RETORNO = 0)
         ''SP_EXT_PR_ACT_RES_VENTA'',
         SYSDATE,
         0,
-        '''||V_NUM_RESERVA||V_ID_COBRO||''',
+        '''||V_CODIGO_TO_HLP||''',
         '''||V_PASOS||'''
     FROM DUAL
     ';

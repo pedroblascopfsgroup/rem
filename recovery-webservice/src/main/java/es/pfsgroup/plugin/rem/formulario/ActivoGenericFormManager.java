@@ -300,7 +300,11 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 			            			if(trabajoApi.checkBankia(tareaExterna)){
 			            				String codigoComite = null;
 										try {
-											codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
+											if(!expediente.getOferta().getVentaDirecta()){
+												codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
+											}else{
+												codigoComite = DDComiteSancion.CODIGO_HAYA_SAREB;
+											}
 										} catch (Exception e) {
 											// TODO Auto-generated catch block
 											e.printStackTrace();

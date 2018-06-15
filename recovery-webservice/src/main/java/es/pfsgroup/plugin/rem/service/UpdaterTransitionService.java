@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
@@ -110,6 +111,7 @@ public class UpdaterTransitionService {
 		
 		update(estado, dto);
 	}
+	@Transactional(readOnly = false)
 	public void updateT013_CierreEconomico(DtoSaltoTarea dto) {
 		//Firmado
 		Filter filtro;

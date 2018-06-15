@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.oferta;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,8 +27,6 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.security.UsuarioSecurityManager;
-import es.capgemini.pfs.security.model.UsuarioSecurity;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -164,9 +163,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private TrabajoApi trabajoApi;
-
-	@Autowired
-	private UsuarioSecurityManager usuarioSecurityManager;
 
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
@@ -913,6 +909,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.estaVacio(valoresTasacion)) {
 				// En cada activo de la agrupacion se añade una oferta en la
 				// tabla ACT_OFR
+				Double sumatorioImporte = Double.valueOf(0);
 				for (ActivoAgrupacionActivo activos : agrupacion.getActivos()) {
 
 					ActivoOferta activoOferta = new ActivoOferta();
@@ -927,10 +924,26 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 								.valueOf(activoAgrupacionApi.asignarPorcentajeParticipacionEntreActivos(activos,
 										valoresTasacion, valoresTasacion.get("total")));
 						activoOferta.setPorcentajeParticipacion(Double.parseDouble(participacion));
-						activoOferta.setImporteActivoOferta(
-								(oferta.getImporteOferta() * Double.parseDouble(participacion)) / 100);
+						Double importe = (oferta.getImporteOferta() * Double.parseDouble(participacion)) / 100;
+						String importeString = new DecimalFormat("#.##").format(importe);
+						try{
+							importe =  Double.parseDouble(importeString);
+						}catch(NumberFormatException e){
+							importeString = importeString.replace(",", ".");
+							importe =  Double.parseDouble(importeString);
+						}
+						sumatorioImporte = sumatorioImporte +importe;
+						activoOferta.setImporteActivoOferta(importe);
 					}
 					listaActOfr.add(activoOferta);
+				}
+				//Pueden producirse pequeños errores de redondeo, en cuyo caso, aplicamos la diferencia al ultimo actv de la lista
+				if(listaActOfr != null && listaActOfr.size()>0 && oferta.getImporteOferta().compareTo(sumatorioImporte)>0){
+					ActivoOferta elUltimo = listaActOfr.get(listaActOfr.size()-1);
+					elUltimo.setImporteActivoOferta(elUltimo.getImporteActivoOferta()+(oferta.getImporteOferta()-sumatorioImporte));
+				}else if(listaActOfr != null && listaActOfr.size()>0 && oferta.getImporteOferta().compareTo(sumatorioImporte)<0){
+					ActivoOferta elUltimo = listaActOfr.get(listaActOfr.size()-1);
+					elUltimo.setImporteActivoOferta(elUltimo.getImporteActivoOferta()-(sumatorioImporte-oferta.getImporteOferta()));
 				}
 			}
 		}
@@ -1364,7 +1377,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							|| DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComiteSancion)
 							|| DDComiteSancion.CODIGO_HAYA_TANGO.equals(codigoComiteSancion)
 							|| DDComiteSancion.CODIGO_TANGO_TANGO.equals(codigoComiteSancion)
-							|| DDComiteSancion.CODIGO_HAYA_GIANTS.equals(codigoComiteSancion))
+							|| DDComiteSancion.CODIGO_HAYA_GIANTS.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_HAYA_LIBERBANK.equals(codigoComiteSancion))
 						return true;
 				} else {
 					if (trabajoApi.checkBankia(tareaExterna)) {
@@ -2136,41 +2150,43 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			return false;
 		}
 
-		// Reiniciar estado del PBC.
-		if (fullReset) {
-			// reseteamos responsabilidad corporativa
-			expediente.setConflictoIntereses(null);
-			expediente.setRiesgoReputacional(null);
-			expediente.setEstadoPbc(null);
-		} else {
-			expediente.setEstadoPbc(null);
-		}
+		if (!Checks.esNulo(expediente.getOferta()) && !expediente.getOferta().getVentaDirecta()) {
+			// Reiniciar estado del PBC.
+			if (fullReset) {
+				// reseteamos responsabilidad corporativa
+				expediente.setConflictoIntereses(null);
+				expediente.setRiesgoReputacional(null);
+				expediente.setEstadoPbc(null);
+			} else {
+				expediente.setEstadoPbc(null);
+			}
 
-		genericDao.update(ExpedienteComercial.class, expediente);
+			genericDao.update(ExpedienteComercial.class, expediente);
 
-		// Avisar al gestor de formalización del activo.
-		Notificacion notificacion = new Notificacion();
+			// Avisar al gestor de formalización del activo.
+			Notificacion notificacion = new Notificacion();
 
-		if (!Checks.esNulo(expediente.getOferta()) && !Checks.esNulo(expediente.getOferta().getActivoPrincipal())) {
+			if (!Checks.esNulo(expediente.getOferta()) && !Checks.esNulo(expediente.getOferta().getActivoPrincipal())) {
 
-			notificacion.setIdActivo(expediente.getOferta().getActivoPrincipal().getId());
+				notificacion.setIdActivo(expediente.getOferta().getActivoPrincipal().getId());
 
-			Usuario gestoriaFormalizacion = gestorExpedienteComercialManager
-					.getGestorByExpedienteComercialYTipo(expediente, "GFORM");
+				Usuario gestoriaFormalizacion = gestorExpedienteComercialManager
+						.getGestorByExpedienteComercialYTipo(expediente, "GFORM");
 
-			if (!Checks.esNulo(gestoriaFormalizacion)) {
+				if (!Checks.esNulo(gestoriaFormalizacion)) {
 
-				notificacion.setDestinatario(gestoriaFormalizacion.getId());
+					notificacion.setDestinatario(gestoriaFormalizacion.getId());
 
-				notificacion.setTitulo("Reseteo del PBC - Expediente " + expediente.getNumExpediente());
-				notificacion.setDescripcion(String.format(
-						"Se ha reseteado el PBC por modificación de algunos parámetros del expediente %s.",
-						expediente.getNumExpediente().toString()));
+					notificacion.setTitulo("Reseteo del PBC - Expediente " + expediente.getNumExpediente());
+					notificacion.setDescripcion(String.format(
+							"Se ha reseteado el PBC por modificación de algunos parámetros del expediente %s.",
+							expediente.getNumExpediente().toString()));
 
-				try {
-					notificacionAdapter.saveNotificacion(notificacion);
-				} catch (ParseException e) {
-					logger.error("error en OfertasManager", e);
+					try {
+						notificacionAdapter.saveNotificacion(notificacion);
+					} catch (ParseException e) {
+						logger.error("error en OfertasManager", e);
+					}
 				}
 			}
 		}
@@ -2482,39 +2498,44 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override
 	public boolean comprobarComiteLiberbankPlantillaPropuesta(TareaExterna tareaExterna) {
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
-		DDComiteSancion comite =  this.calculoComiteLiberbank(ofertaAceptada);
-		ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
-		Double importeOferta = (!Checks.esNulo(ofertaAceptada.getImporteContraOferta())) ? ofertaAceptada.getImporteContraOferta() : ofertaAceptada.getImporteOferta();
-		
-		if (!Checks.esNulo(ofertaAceptada) && !Checks.esNulo(comite)) {
-			if(!DDComiteSancion.CODIGO_HAYA_LIBERBANK.equals(comite.getCodigo())){
-				if(Checks.esNulo(agrupacion)){
-					Activo activo = ofertaAceptada.getActivoPrincipal();
-					Double minimoAutorizado = activoApi.getImporteValoracionActivoByCodigo(activo,DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
-					
-					if(!Checks.esNulo(activo) && !Checks.esNulo(minimoAutorizado)) {
-						if(importeOferta<(minimoAutorizado*0.85)){
-							return true;
+		if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(ofertaAceptada.getActivoPrincipal().getCartera())) {
+			DDComiteSancion comite = this.calculoComiteLiberbank(ofertaAceptada);
+			ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
+			Double importeOferta = (!Checks.esNulo(ofertaAceptada.getImporteContraOferta()))
+					? ofertaAceptada.getImporteContraOferta() : ofertaAceptada.getImporteOferta();
+			if (!Checks.esNulo(ofertaAceptada) && !Checks.esNulo(comite)) {
+				if (!DDComiteSancion.CODIGO_HAYA_LIBERBANK.equals(comite.getCodigo())) {
+					if (Checks.esNulo(agrupacion)) {
+						Activo activo = ofertaAceptada.getActivoPrincipal();
+						Double minimoAutorizado = activoApi.getImporteValoracionActivoByCodigo(activo,
+								DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
+
+						if (!Checks.esNulo(activo) && !Checks.esNulo(minimoAutorizado)) {
+							if (importeOferta < (minimoAutorizado * 0.85)) {
+								return true;
+							}
 						}
-					}
-				} else {
-					DtoAgrupacionFilter dtoAgrupActivo = new DtoAgrupacionFilter();
-					dtoAgrupActivo.setAgrId(agrupacion.getId());
-					List<ActivoAgrupacionActivo> activos = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo);
-					Double minimoAutorizado = 0.0;
-					if(!Checks.esNulo(dtoAgrupActivo)) {
-						for (ActivoAgrupacionActivo activo : activos) {
-							minimoAutorizado += activoApi.getImporteValoracionActivoByCodigo(activo.getActivo(),DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
+					} else {
+						DtoAgrupacionFilter dtoAgrupActivo = new DtoAgrupacionFilter();
+						dtoAgrupActivo.setAgrId(agrupacion.getId());
+						List<ActivoAgrupacionActivo> activos = activoAgrupacionActivoApi
+								.getListActivosAgrupacion(dtoAgrupActivo);
+						Double minimoAutorizado = 0.0;
+						if (!Checks.esNulo(dtoAgrupActivo)) {
+							for (ActivoAgrupacionActivo activo : activos) {
+								minimoAutorizado += activoApi.getImporteValoracionActivoByCodigo(activo.getActivo(),
+										DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
+							}
 						}
-					}
-					if(!Checks.esNulo(minimoAutorizado)) {
-						if(importeOferta<(minimoAutorizado*0.85)) {
-							return true;
+						if (!Checks.esNulo(minimoAutorizado)) {
+							if (importeOferta < (minimoAutorizado * 0.85)) {
+								return true;
+							}
 						}
 					}
 				}
+
 			}
-				
 		}
 		return false;
 	}
@@ -2588,9 +2609,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			for(ActivoAgrupacionActivo aga : activos) {
 				ActivoTasacion tasacion = activoApi.getTasacionMasReciente(aga.getActivo());
-				Double importeTasacion = null;
-				Double precioAprobadoVenta = null;	
-				Double precioMinimoAutorizado = null;
+				Double importeTasacion = 0.0;
+				Double precioAprobadoVenta = 0.0;	
+				Double precioMinimoAutorizado = 0.0;
 				
 				importeTasacion = (!Checks.esNulo(tasacion)) ? tasacion.getImporteTasacionFin() : null;				
 				List<VPreciosVigentes> precios = activoApi.getPreciosVigentesById(aga.getActivo().getId());																										

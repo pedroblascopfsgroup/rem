@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 
 
@@ -50,7 +51,7 @@ public class MSVActualizadorPreciosFSVActivoImporte extends AbstractMSVActualiza
 
 	@Override
 	@Transactional(readOnly = false)
-	public void procesaFila(MSVHojaExcel exc, int fila) throws IOException, ParseException, JsonViewerException, SQLException {
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
 		
 		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 		
@@ -71,6 +72,7 @@ public class MSVActualizadorPreciosFSVActivoImporte extends AbstractMSVActualiza
 					null,
 					null);
 		}
+		return new ResultadoProcesarFila();
 	}
 
 	private void actualizarCrearValoresPrecios(Activo activo, String codigoTipoPrecio,

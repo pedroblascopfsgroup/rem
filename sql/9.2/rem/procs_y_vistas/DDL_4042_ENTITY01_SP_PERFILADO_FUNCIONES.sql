@@ -3,8 +3,8 @@
 --## AUTOR=DAP
 --## FECHA_CREACION=20180602
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=2.0.17
---## INCIDENCIA_LINK=REMVIP-751
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-4036
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Procedimiento encargado de perfilar las funciones

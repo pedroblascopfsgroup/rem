@@ -16,6 +16,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 
 
 @Component
@@ -34,7 +35,7 @@ public class MSVActualizadorMarcarIbiExentoActivo extends AbstractMSVActualizado
 
 	@Override
 	@Transactional(readOnly = false)
-	public void procesaFila(MSVHojaExcel exc, int fila) throws IOException, ParseException, JsonViewerException, SQLException {
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
 		
 		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 		
@@ -42,6 +43,7 @@ public class MSVActualizadorMarcarIbiExentoActivo extends AbstractMSVActualizado
 			activo.setIbiExento(true);
 			activoApi.saveOrUpdate(activo);
 		}
+		return new ResultadoProcesarFila();
 	}
 
 }

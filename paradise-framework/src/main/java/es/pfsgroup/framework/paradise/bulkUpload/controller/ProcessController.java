@@ -289,6 +289,36 @@ public class ProcessController extends ParadiseJsonController {
 		}
 
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public void downloadResultados(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	
+		Long idProcess = null;
+		try {
+
+			ServletOutputStream salida = response.getOutputStream();
+			idProcess = Long.parseLong(request.getParameter("idProcess"));
+			FileItem fileItem = processAdapter.downloadResultados(idProcess);
+
+			if (fileItem != null) {
+				response.setHeader("Content-disposition", "attachment; filename='" + fileItem.getFileName() + "'");
+				response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+				response.setHeader("Cache-Control", "max-age=0");
+				response.setHeader("Expires", "0");
+				response.setHeader("Pragma", "public");
+				response.setDateHeader("Expires", 0); // prevents caching at the
+														// proxy
+				response.setContentType(fileItem.getContentType());
+				// Write
+				FileUtils.copy(fileItem.getInputStream(), salida);
+				salida.flush();
+				salida.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public void setStateProcessing(HttpServletRequest request, HttpServletResponse response) throws Exception {

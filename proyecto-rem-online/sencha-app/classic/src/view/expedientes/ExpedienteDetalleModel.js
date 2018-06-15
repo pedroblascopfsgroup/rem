@@ -51,11 +51,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     },
 	     
 	     esCarteraBankia: function(get) {
-	     	
 	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 	     	return CONST.CARTERA['BANKIA'] == carteraCodigo;
 	     },
 	     
+	     esBankiaHabitat: function(get) {
+		    	var subCartera = get('expediente.propietario');
+		     	return CONST.NOMBRE_SUBCARTERA['BANKIA_HABITAT'] == subCartera;
+	     },
+	  	     
 	     fechaIngresoChequeReadOnly: function(get) {
 	    	 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 	    	 var subCartera = get('expediente.propietario');

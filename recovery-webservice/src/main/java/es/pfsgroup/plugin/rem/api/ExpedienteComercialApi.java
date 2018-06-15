@@ -945,4 +945,6 @@ public interface ExpedienteComercialApi {
 
 	public Boolean checkInformeJuridicoFinalizado(Long idTramite);	
 	
+	public Boolean checkFechaVenta(Long idTramite);	
+	
 }

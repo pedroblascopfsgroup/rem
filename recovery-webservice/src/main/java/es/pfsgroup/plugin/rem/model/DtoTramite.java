@@ -85,7 +85,6 @@ public class DtoTramite extends WebDto {
 	
 	private Boolean activoAplicaGestion;
 
-
 	public Long getIdTramite() {
 		return idTramite;
 	}

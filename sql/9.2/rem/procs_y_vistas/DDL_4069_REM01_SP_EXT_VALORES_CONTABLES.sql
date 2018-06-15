@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Marco Munoz
---## FECHA_CREACION=20180614
+--## FECHA_CREACION=20180615
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.18
 --## INCIDENCIA_LINK=HREOS-4154
@@ -344,7 +344,7 @@ BEGIN
 		SELECT
 			'''||V_NOMBRESP||''',
 			SYSDATE,
-			1,
+			0,
 			'''||ID_ACTIVO_HAYA||''',
 			'''||V_NUMREGISTROS||'''
 		FROM DUAL

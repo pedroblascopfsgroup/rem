@@ -292,7 +292,8 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract {
 						|| !mapaErrores.get(FORMATO_FECHA_VENTA_INVALIDO).isEmpty()
 						|| !mapaErrores.get(TIPOS_APLICABLES_DIFERENTES).isEmpty()
 						|| !mapaErrores.get(TIPO_DOC_OBLIGATORIO).isEmpty()
-						|| !mapaErrores.get(DOC_OBLIGATORIO).isEmpty()) {
+						|| !mapaErrores.get(DOC_OBLIGATORIO).isEmpty()
+						|| !mapaErrores.get(ACTIVO_EN_AGRUPACION_RESTRINGIDA).isEmpty()) {
 					dtoValidacionContenido.setFicheroTieneErrores(true);
 					exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 					String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);

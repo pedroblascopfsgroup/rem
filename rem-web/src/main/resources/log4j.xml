@@ -39,6 +39,15 @@
 			<param name="AcceptOnMatch" value="false" />
 		</filter>
 	</appender>
+	
+	<appender name="logTrust" class="es.capgemini.pfs.utils.log4j.CustomRollingFileAppender">
+		<param name="file" value="{DEVON_HOME}/log/logtrust/logTrust.log" />
+		<param name="MaxFileSize" value="2MB" />
+		<param name="MaxBackupIndex" value="10" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %m%n" />
+		</layout>
+	</appender>
 
 	<!-- Hay que setear la propiedad de sistema log.mail.sendError = true si 
 		se quiere el envio de mails -->
@@ -284,7 +293,10 @@
 		<appender-ref ref="syslog" />
 	</logger>
 
-
+	<logger name="es.pfsgroup.plugin.rem.logTrust.LogTrust" additivity="false">
+		<level value="debug" />
+		<appender-ref ref="logTrust" />
+	</logger>
 
 
 	<!--Descomentar para Ver las SQL-->

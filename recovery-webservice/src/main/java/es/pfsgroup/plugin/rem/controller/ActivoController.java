@@ -56,6 +56,8 @@ import es.pfsgroup.plugin.rem.excel.ActivoExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.PublicacionExcelReport;
+import es.pfsgroup.plugin.rem.logTrust.LogTrust;
+import es.pfsgroup.plugin.rem.logTrust.LogTrust.REQUEST_STATUS_CODE;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
@@ -108,7 +110,6 @@ import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
-import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
@@ -149,29 +150,31 @@ public class ActivoController extends ParadiseJsonController {
 	private ActivoPropagacionApi activoPropagacionApi;
 	
 	@Autowired
-	GestorDocumentalFotosApi gestorDocumentalFotos;
+	private LogTrust trustMe;
 	
 
 	/**
 	 * Método que recupera un conjunto de datos del Activo según su id
 	 * 
-	 * @param id
-	 *            Id del activo
-	 * @param pestana
-	 *            Pestaña del activo a cargar
-	 * @param model
-	 * @return
+	 * @param id: Id del activo.
+	 * @param pestana: Pestaña del activo a cargar.
+	 * @param model: modelmap con datos de la web.
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getTabActivo(Long id, String tab, ModelMap model) {
-
+	public ModelAndView getTabActivo(Long id, String tab, ModelMap model, HttpServletRequest request) {
 		try {
-			
 			model.put("data",  adapter.getTabActivo(id, tab));
+			trustMe.registrarSuceso(request, id);
 			
+		} catch (AccesoActivoException e) {
+			model.put("success", false);
+			model.put("error", e.getMessage());
+			trustMe.registrarError(request, id, REQUEST_STATUS_CODE.CODIGO_ESTADO_USUARIO_SIN_ACCESO);
+
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
+			trustMe.registrarError(request, id, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 			model.put("success", false);
 			model.put("error", e.getMessage());
 		}

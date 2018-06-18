@@ -68,8 +68,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     
 	     comiteSancionadorNoEditable: function(get) {
 	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
-	     	return CONST.CARTERA['BANKIA'] == carteraCodigo || CONST.CARTERA['CAJAMAR'] == carteraCodigo;	
-	     },
+	     	return CONST.CARTERA['BANKIA'] == carteraCodigo || CONST.CARTERA['CAJAMAR'] == carteraCodigo || CONST.CARTERA['LIBERBANK'] == carteraCodigo;	
+	     }, 
 	     
 	     esCarteraSareb: function(get) {
 	     	

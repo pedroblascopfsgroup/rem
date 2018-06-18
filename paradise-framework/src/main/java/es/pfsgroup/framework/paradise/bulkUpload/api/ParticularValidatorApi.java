@@ -4,8 +4,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
-
 public interface ParticularValidatorApi {
 
 	public String getOneNumActivoAgrupacionRaw(String numAgrupacion);
@@ -19,6 +17,8 @@ public interface ParticularValidatorApi {
 	public Boolean esMismaCarteraLocationByNumAgrupRem(String numAgrupRem);
 
 	public String existeActivoEnAgrupacion(Long idActivo, Long idAgrupacion);
+	
+	public Boolean activoEnAgrupacionRestringida(Long idActivo);
 
 	public Boolean esActivoEnAgrupacion(Long idActivo, Long idAgrupacion);
 	

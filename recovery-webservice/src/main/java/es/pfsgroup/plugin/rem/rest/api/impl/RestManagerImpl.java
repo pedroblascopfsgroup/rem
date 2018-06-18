@@ -188,6 +188,7 @@ public class RestManagerImpl implements RestApi {
 	}
 
 	@Override
+	//TODO logtrust
 	public void guardarPeticionRest(PeticionRest peticion) {
 		if (peticion != null) {
 			peticionDao.saveOrUpdate(peticion);

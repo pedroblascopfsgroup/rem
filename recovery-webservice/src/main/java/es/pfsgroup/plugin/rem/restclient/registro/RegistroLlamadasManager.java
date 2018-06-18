@@ -38,6 +38,7 @@ public class RegistroLlamadasManager {
 	private Properties appProperties;
 
 	@Transactional(readOnly = false, noRollbackFor = ErrorServicioWebcom.class, propagation = Propagation.NEVER)
+	//TODO logtrust
 	public void guardaRegistroLlamada(RestLlamada llamada, @SuppressWarnings("rawtypes") DetectorCambiosBD handler,Integer contError) {
 		logger.trace("Guardando traza de la llamada en BD");
 		

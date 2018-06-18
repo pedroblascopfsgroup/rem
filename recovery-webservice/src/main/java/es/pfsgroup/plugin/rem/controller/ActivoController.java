@@ -164,6 +164,7 @@ public class ActivoController extends ParadiseJsonController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getTabActivo(Long id, String tab, ModelMap model) {
 
 		try {
@@ -525,6 +526,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getListObservacionesById(Long id, ModelMap model) {
 
 		model.put("data", adapter.getListObservacionesById(id));
@@ -535,6 +537,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getListAgrupacionesActivoById(Long id, ModelMap model) {
 
 		model.put("data", adapter.getListAgrupacionesActivoById(id));
@@ -639,6 +642,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getListCatastroById(Long id, ModelMap model) {
 
 		model.put("data", adapter.getListCatastroById(id));
@@ -1007,6 +1011,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getTasacionById(Long id, ModelMap model) {
 
 		model.put("data", adapter.getTasacionById(id));
@@ -1038,6 +1043,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getGestores(Long idActivo, WebDto webDto, ModelMap model) {
 
 		model.put("data", adapter.getGestores(idActivo));
@@ -1087,6 +1093,7 @@ public class ActivoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	@Transactional(readOnly = false)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getFotosById(Long id, String tipoFoto, WebDto webDto, ModelMap model,
 			HttpServletRequest request, HttpServletResponse response) {
 
@@ -1268,6 +1275,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getPreciosVigentesById(Long id, WebDto webDto, ModelMap model) {
 
 		model.put("data", adapter.getPreciosVigentesById(id));
@@ -1277,6 +1285,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getListPropietarioById(Long id, ModelMap model) {
 
 		model.put("data", adapter.getListPropietarioById(id));
@@ -1307,6 +1316,7 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getListTasacionByIdGrid(Long id, ModelMap model) {
 
 		model.put("data", adapter.getListTasacionByIdGrid(id));
@@ -1343,6 +1353,7 @@ public class ActivoController extends ParadiseJsonController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getTramite(Long id, ModelMap model) {
 
 		model.put("data", adapter.getTramite(id));
@@ -1595,6 +1606,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getListAdjuntos(Long id, ModelMap model) {
 
 		try {
@@ -1875,6 +1887,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getHistoricoValoresPrecios(DtoHistoricoPreciosFilter dto, ModelMap model) {
 		try {
 			DtoPage page = activoApi.getHistoricoValoresPrecios(dto);
@@ -1893,6 +1906,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getPropuestas(DtoPropuestaFilter dtoPropuestaFiltro, ModelMap model) {
 
 		try {
@@ -2388,6 +2402,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getComercialActivo(DtoComercialActivo dto, ModelMap model) {
 
 		try {

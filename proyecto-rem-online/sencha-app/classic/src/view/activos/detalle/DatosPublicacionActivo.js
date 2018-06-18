@@ -237,7 +237,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 									 [
 										 {
 											 xtype: "historicocondicioneslist",
-											 reference: "historicocondicioneslist"
+											 reference: "historicocondicioneslist",
+											 secFunToEdit: 'EDITAR_GRID_PUBLICACION_CONDICIONES_ESPECIFICAS'
 										 }
 									 ]
 							 }

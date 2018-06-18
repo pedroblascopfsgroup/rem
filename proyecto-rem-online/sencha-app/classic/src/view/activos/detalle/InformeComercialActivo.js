@@ -134,7 +134,12 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 							colspan: 3,
 							items :
 								[
-									{xtype: "historicomediadorgrid", reference: "historicomediadorgrid", colspan: 3}
+									{
+										xtype: "historicomediadorgrid", 
+										secFunToEdit: 'EDITAR_GRID_PUBLICACION_HISTORICO_MEDIADORES',
+										reference: "historicomediadorgrid", 
+										colspan: 3
+									}
 								]
 						}						
 				]

@@ -208,7 +208,11 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 
 		};
 		
-		me.callParent();	
+		me.callParent();
+		
+		me.disableAddButton($AU.userIsRol('HAYACONSU'));
+		me.disablePropagationButton($AU.userIsRol('HAYACONSU'));
+		me.disablePagingToolBar($AU.userIsRol('HAYACONSU'));
 		
 	},
 	
@@ -283,7 +287,7 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 			//S�lo si no estamos editando, se llamar� a las dos l�neas siguientes
 			//if (!me.getPlugin("rowEditingPlugin").editing || typeof me.getPlugin("rowEditingPlugin").editing != 'undefined')
 			//{
-			me.disableAddButton(false);
+			me.disableAddButton($AU.userIsRol('HAYACONSU'));
 			me.disablePagingToolBar(false); 
 			//}
 		}

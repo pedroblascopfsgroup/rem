@@ -412,8 +412,8 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 		if (ursusNumber == null) {
 			ursusNumber = comprador.getPrimaryKey().getComprador().getIdCompradorUrsusBh();
 		}
-		String ursus = ursusNumber.toString();
-		if (ursus != null && !ursus.isEmpty()) {
+		if (ursusNumber != null) {
+			String ursus = ursusNumber.toString();
 			if (ursus.equals(exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.NUMERO_URSUS_TITULAR))) {
 				return 1;
 			} else if (ursus.equals(

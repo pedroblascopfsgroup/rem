@@ -167,7 +167,8 @@ public class GenericController extends ParadiseJsonController{
 	/**
 	 * Comprueba si se ha registrado el acceso del usuario, y sino lo registra
 	 */
-	@RequestMapping(method = RequestMethod.GET) 
+	@RequestMapping(method = RequestMethod.GET)
+	//TODO logtrust
 	public ModelAndView registerUser(){
 		adapter.registerUser();	
 		

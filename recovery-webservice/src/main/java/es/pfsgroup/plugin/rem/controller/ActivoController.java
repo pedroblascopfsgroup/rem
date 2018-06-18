@@ -57,6 +57,8 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.PublicacionExcelReport;
 import es.pfsgroup.plugin.rem.logTrust.LogTrust;
+import es.pfsgroup.plugin.rem.logTrust.LogTrust.ACCION_CODIGO;
+import es.pfsgroup.plugin.rem.logTrust.LogTrust.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrust.REQUEST_STATUS_CODE;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
@@ -165,16 +167,16 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView getTabActivo(Long id, String tab, ModelMap model, HttpServletRequest request) {
 		try {
 			model.put("data",  adapter.getTabActivo(id, tab));
-			trustMe.registrarSuceso(request, id);
+			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, tab, ACCION_CODIGO.CODIGO_VER);
 			
 		} catch (AccesoActivoException e) {
 			model.put("success", false);
 			model.put("error", e.getMessage());
-			trustMe.registrarError(request, id, REQUEST_STATUS_CODE.CODIGO_ESTADO_USUARIO_SIN_ACCESO);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, tab, ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_USUARIO_SIN_ACCESO);
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
-			trustMe.registrarError(request, id, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, tab, ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 			model.put("success", false);
 			model.put("error", e.getMessage());
 		}
@@ -402,6 +404,7 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	//TODO CREAR LOGTRUST
 	public ModelAndView saveActivoAdministracion(DtoActivoAdministracion activoDto, @RequestParam Long id,
 			ModelMap model) {
 
@@ -422,6 +425,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	//TODO CREAR LOGTRUST
 	public ModelAndView saveActivoSituacionPosesoria(DtoActivoSituacionPosesoria activoDto, @RequestParam Long id,
 			ModelMap model) {
 
@@ -441,6 +445,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	//TODO CREAR LOGTRUST
 	public ModelAndView saveActivoInformeComercial(DtoActivoInformeComercial activoDto, @RequestParam Long id,
 			ModelMap model) {
 
@@ -465,6 +470,7 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	//TODO CREAR LOGTRUST
 	public ModelAndView saveActivoComunidadPropietarios(DtoComunidadpropietariosActivo activoDto, @RequestParam Long id,
 			ModelMap model) {
 
@@ -528,6 +534,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getListObservacionesById(Long id, ModelMap model) {
 
 		model.put("data", adapter.getListObservacionesById(id));
@@ -538,6 +545,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getListAgrupacionesActivoById(Long id, ModelMap model) {
 
 		model.put("data", adapter.getListAgrupacionesActivoById(id));
@@ -594,6 +602,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	//TODO CREAR LOGTRUST
 	public ModelAndView saveLlave(DtoLlaves dto, ModelMap model) {
 
 		try {
@@ -642,6 +651,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getListCatastroById(Long id, ModelMap model) {
 
 		model.put("data", adapter.getListCatastroById(id));
@@ -662,6 +672,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	//TODO CREAR LOGTRUST
 	public ModelAndView saveCatastro(DtoActivoCatastro catastroDto, @RequestParam Long idCatastro, ModelMap model) {
 
 		try {
@@ -714,6 +725,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	//TODO CREAR LOGTRUST
 	public ModelAndView savePrecioVigente(DtoPrecioVigente precioVigenteDto, ModelMap model) {
 
 		try {
@@ -733,6 +745,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	//TODO CREAR LOGTRUST
 	public ModelAndView saveOfertaActivo(DtoOfertaActivo ofertaActivoDto, ModelMap model) {
 
 		try {
@@ -752,6 +765,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	//TODO CREAR LOGTRUST
 	public ModelAndView saveDistribucion(DtoDistribucion distribucionDto, @RequestParam Long idDistribucion,
 			ModelMap model) {
 
@@ -850,6 +864,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	//TODO CREAR LOGTRUST
 	public ModelAndView saveOcupanteLegal(DtoActivoOcupanteLegal dtoOcupanteLegal,
 			@RequestParam Long idActivoOcupanteLegal, ModelMap model) {
 
@@ -921,6 +936,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	//TODO CREAR LOGTRUST
 	public ModelAndView saveObservacionesActivo(DtoObservacion dtoObservacion, ModelMap model) {
 
 		try {
@@ -1010,6 +1026,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getTasacionById(Long id, ModelMap model) {
 
 		model.put("data", adapter.getTasacionById(id));
@@ -1041,6 +1058,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getGestores(Long idActivo, WebDto webDto, ModelMap model) {
 
 		model.put("data", adapter.getGestores(idActivo));
@@ -1090,6 +1108,7 @@ public class ActivoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	@Transactional(readOnly = false)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getFotosById(Long id, String tipoFoto, WebDto webDto, ModelMap model,
 			HttpServletRequest request, HttpServletResponse response) {
 
@@ -1271,6 +1290,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getPreciosVigentesById(Long id, WebDto webDto, ModelMap model) {
 
 		model.put("data", adapter.getPreciosVigentesById(id));
@@ -1280,6 +1300,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getListPropietarioById(Long id, ModelMap model) {
 
 		model.put("data", adapter.getListPropietarioById(id));
@@ -1310,6 +1331,7 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getListTasacionByIdGrid(Long id, ModelMap model) {
 
 		model.put("data", adapter.getListTasacionByIdGrid(id));
@@ -1346,6 +1368,7 @@ public class ActivoController extends ParadiseJsonController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getTramite(Long id, ModelMap model) {
 
 		model.put("data", adapter.getTramite(id));
@@ -1495,6 +1518,7 @@ public class ActivoController extends ParadiseJsonController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	//TODO CREAR LOGTRUST
 	public ModelAndView saveAdmisionDocumento(DtoAdmisionDocumento dtoAdmisionDocumento, ModelMap model) {
 
 		try {
@@ -1598,6 +1622,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getListAdjuntos(Long id, ModelMap model) {
 
 		try {
@@ -1859,6 +1884,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	//TODO CREAR LOGTRUST
 	public ModelAndView saveCondicionantesDisponibilidad(Long idActivo, DtoCondicionantesDisponibilidad dto,
 			ModelMap model) {
 		try {
@@ -1878,6 +1904,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getHistoricoValoresPrecios(DtoHistoricoPreciosFilter dto, ModelMap model) {
 		try {
 			DtoPage page = activoApi.getHistoricoValoresPrecios(dto);
@@ -1896,6 +1923,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getPropuestas(DtoPropuestaFilter dtoPropuestaFiltro, ModelMap model) {
 
 		try {
@@ -1940,6 +1968,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	//TODO CREAR LOGTRUST
 	public ModelAndView saveCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica, ModelMap model) {
 
 		model.put("success", activoApi.saveCondicionEspecifica(dtoCondicionEspecifica));
@@ -2359,6 +2388,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	//TODO CREAR LOGTRUST
 	public ModelAndView saveMovimientoLlave(DtoMovimientoLlave dto, ModelMap model) {
 
 		try {
@@ -2391,6 +2421,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	//TODO CREAR LOGTRUST
 	public ModelAndView getComercialActivo(DtoComercialActivo dto, ModelMap model) {
 
 		try {
@@ -2406,6 +2437,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	//TODO CREAR LOGTRUST
 	public ModelAndView saveComercialActivo(DtoComercialActivo dto, ModelMap model) {
 
 		try {
@@ -2533,6 +2565,7 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	//TODO CREAR LOGTRUST
 	public ModelAndView saveTasacionActivo(DtoTasacion tasacionDto, ModelMap model) {
 
 

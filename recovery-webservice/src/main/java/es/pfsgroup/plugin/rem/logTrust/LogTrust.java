@@ -26,10 +26,33 @@ public class LogTrust {
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private static final String SEPARADOR = ",";
 
-	public static enum REQUEST_STATUS_CODE {
+	public enum REQUEST_STATUS_CODE {
 		CODIGO_ESTADO_OK,
 		CODIGO_ESTADO_KO,
 		CODIGO_ESTADO_USUARIO_SIN_ACCESO
+	}
+	
+	public enum ACCION_CODIGO {
+		CODIGO_VER,
+		CODIGO_MODIFICAR,
+		CODIGO_ELIMINAR
+	}
+	
+	public enum ENTIDAD_CODIGO {
+		CODIGO_ACTIVO("activo"),
+		CODIGO_TRABAJO("trabajo"),
+		CODIGO_AGRUPACION("agrupacion");
+
+	    private final String text;
+
+	    ENTIDAD_CODIGO(final String text) {
+	        this.text = text;
+	    }
+
+	    @Override
+	    public String toString() {
+	        return text;
+	    }
 	}
 
 	@Autowired
@@ -47,9 +70,11 @@ public class LogTrust {
 	 *
 	 * @param peticion: objeto de la petición web para obtener la llamada.
 	 * @param idEntidad: ID de la entidad accedida.
+	 * @param tabOrEvento: indica la tab o el evento de la entidad con el que se interacciona.
+	 * @param accion: código de tipo de interaciión predefinido.
 	 */
-	public void registrarSuceso(HttpServletRequest peticion, Long idEntidad) {
-		this.obtenerInformacionDelEvento(peticion, idEntidad, REQUEST_STATUS_CODE.CODIGO_ESTADO_OK);
+	public void registrarSuceso(HttpServletRequest peticion, Long idEntidad, ENTIDAD_CODIGO entidad, String tabOrEvento, ACCION_CODIGO accion) {
+		this.obtenerInformacionDelEvento(peticion, entidad, idEntidad, accion, REQUEST_STATUS_CODE.CODIGO_ESTADO_OK, tabOrEvento);
 	}
 	
 	/**
@@ -57,13 +82,15 @@ public class LogTrust {
 	 *
 	 * @param peticion: objeto de la petición web para obtener la llamada.
 	 * @param idEntidad: ID de la entidad accedida.
+	 * @param tabOrEvento: indica la tab o el evento de la entidad con el que se interacciona.
+	 * @param accion: código de tipo de interaciión predefinido.
 	 * @param codigoEstadoPeticion: código de error predefinido.
 	 */
-	public void registrarError(HttpServletRequest peticion, Long idEntidad, REQUEST_STATUS_CODE codigoEstadoPeticion) {
-		this.obtenerInformacionDelEvento(peticion, idEntidad, codigoEstadoPeticion);
+	public void registrarError(HttpServletRequest peticion, Long idEntidad, ENTIDAD_CODIGO entidad, String tabOrEvento, ACCION_CODIGO accion, REQUEST_STATUS_CODE codigoEstadoPeticion) {
+		this.obtenerInformacionDelEvento(peticion, entidad, idEntidad, accion, codigoEstadoPeticion, tabOrEvento);
 	}
 	
-	public void obtenerInformacionDelEvento(HttpServletRequest peticion, Long idEntidad, REQUEST_STATUS_CODE codigoEstadoPeticion) {
+	public void obtenerInformacionDelEvento(HttpServletRequest peticion, ENTIDAD_CODIGO entidad, Long idEntidad, ACCION_CODIGO accion, REQUEST_STATUS_CODE codigoEstadoPeticion, String tabOrEvento) {
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		Activo activo = activoApi.get(idEntidad);
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
@@ -84,7 +111,7 @@ public class LogTrust {
 		StringBuilder builder = new StringBuilder();
 		builder.append(sdf.format(new Date()));
 		builder.append(SEPARADOR);
-		builder.append("ver-bien");
+		builder.append(this.obtenerStringCodigoAccion(entidad, accion, tabOrEvento));
 		builder.append(SEPARADOR);
 		builder.append(peticion.getRequestURI());
 		builder.append(SEPARADOR);
@@ -115,7 +142,27 @@ public class LogTrust {
 			case CODIGO_ESTADO_KO:
 				return "500";
 			case CODIGO_ESTADO_USUARIO_SIN_ACCESO:
-				return "400";
+				return "403";
+			default:
+				return "ERR";
+		}
+	}
+	
+	/**
+	 * Este método monta el string de código de acción cometida durante el registro.
+	 *
+	 * @param accion: indica el tipo de acción.
+	 * @param tabOrEvento: indica que pestaña o evento se ha solicitado.
+	 * @return Devuelve un literal que simboliza la acción del registro.
+	 */
+	private String obtenerStringCodigoAccion(ENTIDAD_CODIGO entidad, ACCION_CODIGO accion, String tabOrEvento) {
+		switch(accion) {
+			case CODIGO_VER:
+				return "ver-".concat(entidad.toString()).concat("-").concat(tabOrEvento);
+			case CODIGO_MODIFICAR:
+				return "modificar-".concat(entidad.toString()).concat("-").concat(tabOrEvento);
+			case CODIGO_ELIMINAR:
+				return "eliminar-".concat(entidad.toString()).concat("-").concat(tabOrEvento);
 			default:
 				return "ERR";
 		}

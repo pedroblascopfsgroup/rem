@@ -19,6 +19,8 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
@@ -41,6 +43,9 @@ public class MSVActivosGastoPorcentajeValidator extends MSVExcelValidatorAbstrac
 	public static final String GASTO_NOT_EXISTS = "El gasto no existe.";
 	public static final String ACTIVO_GASTO_NO_RELACION = "El activo y el gasto no están relacionados.";
 	public static final String PORCENTAJE_SUPERIOR_100 = "El porcentaje es superior a 100.";
+	public static final String PORCENTAJE_INFERIOR_100 = "El porcentaje es inferior a 100.";
+	public static final String NO_TODOS_ACTIVOS = "Deben estar todos los activos relacionados con el gasto.";
+	public static final String MAS_DE_UN_GASTO = "No puede haber mas de un gasto por carga masiva.";
 
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -66,6 +71,8 @@ public class MSVActivosGastoPorcentajeValidator extends MSVExcelValidatorAbstrac
 	private Integer numFilasHoja;
 	
 	protected final Log logger = LogFactory.getLog(getClass());
+	
+	private static final Integer MAXGASTOS = 1;
 
 	@Override
 	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) throws Exception {
@@ -93,14 +100,24 @@ public class MSVActivosGastoPorcentajeValidator extends MSVExcelValidatorAbstrac
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 				Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
 
-				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
-				mapaErrores.put(GASTO_NOT_EXISTS, isGastoNotExistsRows(exc));
-				mapaErrores.put(ACTIVO_GASTO_NO_RELACION, isRelacionActivoGastoNotExistsRows(exc));
-				mapaErrores.put(PORCENTAJE_SUPERIOR_100, isPorcentajeSuperiorA100(exc));
+				List<Integer> gastosRegistrados = gastosExcel(exc);
 				
-			if (!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() || !mapaErrores.get(GASTO_NOT_EXISTS).isEmpty()
+				if(MAXGASTOS == gastosRegistrados.size()){
+					mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
+					mapaErrores.put(GASTO_NOT_EXISTS, isGastoNotExistsRows(exc));
+					mapaErrores.put(ACTIVO_GASTO_NO_RELACION, isRelacionActivoGastoNotExistsRows(exc));
+					mapaErrores.put(PORCENTAJE_SUPERIOR_100, isPorcentajeSuperiorA100(exc));
+					mapaErrores.put(PORCENTAJE_INFERIOR_100, isPorcentajeInferiorA100(exc));
+					mapaErrores.put(NO_TODOS_ACTIVOS, isTodosActivosDelGasto(exc));
+				}else{
+					gastosRegistrados = new ArrayList<Integer>();
+					gastosRegistrados.add(1);
+					mapaErrores.put(MAS_DE_UN_GASTO, gastosRegistrados);
+				}
+				
+			if (!mapaErrores.get(MAS_DE_UN_GASTO).isEmpty() || !mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() || !mapaErrores.get(GASTO_NOT_EXISTS).isEmpty()
 					|| !mapaErrores.get(ACTIVO_GASTO_NO_RELACION).isEmpty() || !mapaErrores.get(PORCENTAJE_SUPERIOR_100).isEmpty()
-					) {
+					|| !mapaErrores.get(PORCENTAJE_INFERIOR_100).isEmpty() || !mapaErrores.get(NO_TODOS_ACTIVOS).isEmpty()) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
@@ -230,27 +247,85 @@ public class MSVActivosGastoPorcentajeValidator extends MSVExcelValidatorAbstrac
 	
 	private List<Integer> isPorcentajeSuperiorA100(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
+		Double porcentajeTotal = new Double(0);
 		
 		for(int i=1; i<this.numFilasHoja;i++){
-			try {
-				if(Integer.parseInt(exc.dameCelda(i, 2))>100){
-					listaFilas.add(i);
-				}
+			try{
+				porcentajeTotal += Double.parseDouble(exc.dameCelda(i, 2));
 			} catch (NumberFormatException e) {
-				listaFilas.add(0);
 				e.printStackTrace();
 			} catch (IllegalArgumentException e) {
-				listaFilas.add(0);
 				e.printStackTrace();
-			} catch (IOException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			} catch (ParseException e) {
-				listaFilas.add(0);
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 		
+		if(porcentajeTotal > 100.00){
+			listaFilas.add(1);
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> isPorcentajeInferiorA100(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		Double porcentajeTotal = new Double(0);
+		
+		for(int i=1; i<this.numFilasHoja;i++){
+			try{
+				porcentajeTotal += Double.parseDouble(exc.dameCelda(i, 2));
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if(porcentajeTotal < 100.00){
+			listaFilas.add(1);
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> gastosExcel(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		for(int i=1; i<this.numFilasHoja;i++){
+			try {
+				if(listaFilas.isEmpty()){
+					listaFilas.add(Integer.parseInt(exc.dameCelda(i, 1)));
+				}else if(!listaFilas.contains(Integer.parseInt(exc.dameCelda(i, 1)))){
+					listaFilas.add(Integer.parseInt(exc.dameCelda(i, 1)));
+				}
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} 
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> isTodosActivosDelGasto(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		try{
+		String numGasto = exc.dameCelda(1, 1);
+		List<Long> numActivos = particularValidator.getRelacionGastoActivo(numGasto);
+		for(int i=1; i<this.numFilasHoja; i++){
+			if(!numActivos.contains(Long.parseLong(exc.dameCelda(i, 0)))){
+				listaFilas.add(i);
+			}
+		}
+		}catch (NumberFormatException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
 		return listaFilas;
 	}
 	

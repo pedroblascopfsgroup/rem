@@ -1,5 +1,6 @@
 package es.pfsgroup.framework.paradise.bulkUpload.bvfactory.dao.impl;
 
+import java.util.List;
 import java.util.Properties;
 
 import javax.annotation.Resource;
@@ -65,6 +66,20 @@ public class MSVDocumentoMasivoHibernateRawSQLDaoImpl extends AbstractEntityDao<
 		Query query = this.sesionFactoryFacade.getSession(this).createSQLQuery(sqlValidacion);
 
 		Object[] result = (Object[]) query.uniqueResult();
+
+		return result;
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Object> getExecuteSQLList(String sqlValidacion) {
+		if (Checks.esNulo(sqlValidacion)) {
+			throw new IllegalArgumentException("'sqlValidacion' no puede ser NULL");
+		}
+
+		Query query = this.sesionFactoryFacade.getSession(this).createSQLQuery(sqlValidacion);
+
+		List<Object> result = (List<Object>) query.list();
 
 		return result;
 	}

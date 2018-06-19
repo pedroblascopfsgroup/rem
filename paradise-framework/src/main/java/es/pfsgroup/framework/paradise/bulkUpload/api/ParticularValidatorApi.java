@@ -296,4 +296,6 @@ public interface ParticularValidatorApi {
 
 	Boolean tienenRelacionActivoGasto(String numActivo, String numGasto);
 
+	List<Long> getRelacionGastoActivo(String numGasto);
+
 }

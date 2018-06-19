@@ -70,6 +70,7 @@ import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -261,6 +262,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Autowired
 	private VisitaDao visitasDao;
 
+	@Autowired
+	private ActivoPropagacionApi activoPropagacionApi;
+	
 	@Autowired
 	private UvemManagerApi uvemManagerApi;
 
@@ -4816,4 +4820,29 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo());
 	}
+
+	@Override
+	public DtoActivoFichaCabecera getActivosPropagables(Long idActivo) {
+
+		if (!Checks.esNulo(idActivo)) {
+			DtoActivoFichaCabecera activoDto = new DtoActivoFichaCabecera();
+
+			Activo activo = activoAdapter.getActivoById(idActivo);
+
+			if (!Checks.esNulo(activo)) {
+				try {
+					BeanUtils.copyProperties(activoDto, activo);
+					activoDto.setActivosPropagables(activoPropagacionApi.getAllActivosAgrupacionPorActivo(activo));
+					return activoDto;
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return null;
+
+	}
+
 }

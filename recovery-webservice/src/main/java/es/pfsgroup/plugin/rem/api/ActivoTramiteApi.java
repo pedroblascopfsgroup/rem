@@ -284,5 +284,7 @@ public interface ActivoTramiteApi {
 	 * @return
 	 */
 	public void reactivarTareaResultadoPBC(TareaExterna tareaExterna, ExpedienteComercial expediente);
+
+	List<TareaExterna> getListaTareaExternaByIdTramite(Long idTramite);
 }
 

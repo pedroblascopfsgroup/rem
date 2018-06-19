@@ -168,7 +168,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	TERCEROS: '04',
     	HYT: '06',
     	TANGO: '10',
-    	GIANTS: '12'
+    	GIANTS: '12',
+    	LIBERBANK: '08'
     },
 
     NOMBRE_CARTERA:	{
@@ -178,7 +179,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	'04': 'TERCEROS',
     	'06': 'HYT',
     	'10': 'TANGO',
-    	'12': 'GIANTS'
+    	'12': 'GIANTS',
+    	'08': 'LIBERBANK'
     },
 
     
@@ -187,7 +189,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	SAREB: 'SAREB',
     	BANKIA: 'BANKIA',
     	TANGO: 'TANGO',
-    	GIANTS: 'GIANTS'
+    	GIANTS: 'GIANTS',
+    	LIBERBANK: 'LIBERBANK'
     },
     
     NOMBRE_SUBCARTERA: {

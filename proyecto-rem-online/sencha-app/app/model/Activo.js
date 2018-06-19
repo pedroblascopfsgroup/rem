@@ -44,6 +44,13 @@ Ext.define('HreRem.model.Activo', {
     			depends: 'entidadPropietariaCodigo'
     		},
     		{
+    			name: 'isCarteraLiberbank',
+    			calculate: function(data) { 
+    				return data.entidadPropietariaCodigo == CONST.CARTERA['LIBERBANK'];
+    			},
+    			depends: 'entidadPropietariaCodigo'
+    		},
+    		{
     			name: 'subcarteraCodigo'
     		},
     		{
@@ -600,6 +607,10 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'activoBNK'
+			},
+			{
+				name: 'tienePosibleInformeMediador',
+				type: 'boolean'
 			}
     ],
     

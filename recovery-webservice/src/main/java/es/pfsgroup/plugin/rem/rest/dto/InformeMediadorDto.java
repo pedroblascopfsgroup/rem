@@ -79,10 +79,10 @@ public class InformeMediadorDto implements Serializable {
 	private Long idProveedorRem;
 
 	@NotNull(groups = Insert.class)
-	@EntityDefinition(propertyName = "posibleInforme", classObj = ActivoInfoComercial.class, transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
+	@EntityDefinition(propertyName = "posibleInforme", classObj = ActivoInfoComercial.class, transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER,  foreingField="posibleInforme")
 	private Boolean posibleInforme;
 
-	@EntityDefinition(propertyName = "motivoNoPosibleInforme", classObj = ActivoInfoComercial.class)
+	@EntityDefinition(propertyName = "motivoNoPosibleInforme", classObj = ActivoInfoComercial.class, foreingField="motivoNoPosibleInforme")
 	private String motivoNoPosibleInforme;
 
 	//@NotNull(groups = Insert.class)

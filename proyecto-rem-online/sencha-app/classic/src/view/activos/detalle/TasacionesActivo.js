@@ -86,6 +86,7 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 						    },
 						    {
 			                	xtype: 'button',
+			                	hidden: true,
 			                	reference: 'btnSolicitarTasacionBankia',
 			                	text: HreRem.i18n('btn.solicitar.tasacion.bankia'),
 			                	handler: 'onClickSolicitarTasacionBankia',

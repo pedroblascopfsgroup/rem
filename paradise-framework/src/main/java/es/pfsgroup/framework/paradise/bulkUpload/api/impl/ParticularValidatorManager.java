@@ -120,6 +120,29 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			AND BORRADO = 0");
 	}
 	
+	@Override
+	public Boolean activoEnAgrupacionRestringida(Long idActivo) {
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(aga.AGR_ID) "
+				+ "			  FROM ACT_AGA_AGRUPACION_ACTIVO aga, "
+				+ "			    ACT_AGR_AGRUPACION agr, "
+				+ "			    ACT_ACTIVO act, "
+				+ "			    DD_TAG_TIPO_AGRUPACION tipoAgr "
+				+ "			  WHERE aga.AGR_ID = agr.AGR_ID "
+				+ "			    AND act.act_id   = aga.act_id "
+				+ "			    AND tipoAgr.DD_TAG_ID = agr.DD_TAG_ID "
+				+ "			    AND act.ACT_NUM_ACTIVO = "+idActivo+" "
+				+ "			    AND tipoAgr.DD_TAG_CODIGO = '02' "
+				+ "			    AND aga.BORRADO  = 0 "
+				+ "			    AND aga.BORRADO  = 0 "
+				+ "			    AND agr.BORRADO  = 0 "
+				+ "			    AND act.BORRADO  = 0 ");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+
+	
 	
 	@Override
 	public Boolean esActivoEnAgrupacion(Long numActivo, Long numAgrupacion) {
@@ -1620,4 +1643,5 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return resultado;
 	}
 
+	
 }

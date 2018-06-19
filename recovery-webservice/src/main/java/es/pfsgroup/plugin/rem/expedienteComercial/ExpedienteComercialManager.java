@@ -3192,6 +3192,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				compradorExpediente.getPrimaryKey().getComprador().setTipoPersona(tipoPersona);
 			}
 			
+			if (!Checks.esNulo(dto.getNumeroClienteUrsus())) {
+				compradorBusqueda.setIdCompradorUrsus(dto.getNumeroClienteUrsus());
+			}
+			
+			if (!Checks.esNulo(dto.getNumeroClienteUrsusBh())) {
+				compradorBusqueda.setIdCompradorUrsusBh(dto.getNumeroClienteUrsusBh());
+			}
+			
 			expediente.getCompradores().add(compradorExpediente);
 			
 			
@@ -3623,8 +3631,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "documento",
 								comprador.getDocumentoConyuge());
 						Comprador compradorConyuge = genericDao.get(Comprador.class, filtro);
-						if (compradorConyuge != null && compradorConyuge.getIdCompradorUrsus() != null) {
-							titular.setConyugeNumeroUrsus(compradorConyuge.getIdCompradorUrsus());
+						if (compradorConyuge != null) {
+							if(compradorConyuge.getIdCompradorUrsus() != null){
+								titular.setConyugeNumeroUrsus(compradorConyuge.getIdCompradorUrsus());
+							}else if(compradorConyuge.getIdCompradorUrsusBh() != null){
+								titular.setConyugeNumeroUrsus(compradorConyuge.getIdCompradorUrsusBh());
+							}
+							
 						}
 					}
 					if (!primaryKey.equals(compradorPrincipal))

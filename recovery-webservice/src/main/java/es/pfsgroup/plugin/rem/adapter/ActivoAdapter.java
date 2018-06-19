@@ -1131,31 +1131,30 @@ public class ActivoAdapter {
 	}
 
 	public List<DtoActivoCatastro> getListCatastroById(Long id) {
-
 		Activo activo = activoApi.get(id);
-		// DtoCarga cargaDto = new ArrayList<DtoCarga>();
 		List<DtoActivoCatastro> listaDtoCatastro = new ArrayList<DtoActivoCatastro>();
 
 		if (activo.getInfoAdministrativa() != null && activo.getCatastro() != null) {
-
 			for (int i = 0; i < activo.getCatastro().size(); i++) {
 				DtoActivoCatastro catastroDto = new DtoActivoCatastro();
+
 				try {
 					BeanUtils.copyProperties(catastroDto, activo.getCatastro().get(i));
 					BeanUtils.copyProperty(catastroDto, "idCatastro", activo.getCatastro().get(i).getId());
+					BeanUtils.copyProperty(catastroDto, "idActivo", activo.getId());
 
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					e.printStackTrace();
-				}
-				listaDtoCatastro.add(catastroDto);
+					logger.error("Error en ActivoAdapter", e);
 
+				} catch (InvocationTargetException e) {
+					logger.error("Error en ActivoAdapter", e);
+				}
+
+				listaDtoCatastro.add(catastroDto);
 			}
 		}
 
 		return listaDtoCatastro;
-
 	}
 
 	public DtoActivoValoraciones getValoresPreciosActivoById(Long id) {

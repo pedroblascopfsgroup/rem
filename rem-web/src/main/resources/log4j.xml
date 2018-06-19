@@ -40,8 +40,17 @@
 		</filter>
 	</appender>
 	
-	<appender name="logTrust" class="es.capgemini.pfs.utils.log4j.CustomRollingFileAppender">
-		<param name="file" value="{DEVON_HOME}/log/logtrust/logTrust.log" />
+	<appender name="logTrustEvento" class="es.capgemini.pfs.utils.log4j.CustomRollingFileAppender">
+		<param name="file" value="{DEVON_HOME}/log/logtrust/logTrust_evento.log" />
+		<param name="MaxFileSize" value="2MB" />
+		<param name="MaxBackupIndex" value="10" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%m%n" />
+		</layout>
+	</appender>
+	
+	<appender name="logTrustAcceso" class="es.capgemini.pfs.utils.log4j.CustomRollingFileAppender">
+		<param name="file" value="{DEVON_HOME}/log/logtrust/logTrust_acceso.log" />
 		<param name="MaxFileSize" value="2MB" />
 		<param name="MaxBackupIndex" value="10" />
 		<layout class="org.apache.log4j.PatternLayout">
@@ -293,9 +302,14 @@
 		<appender-ref ref="syslog" />
 	</logger>
 
-	<logger name="es.pfsgroup.plugin.rem.logTrust.LogTrust" additivity="false">
+	<logger name="es.pfsgroup.plugin.rem.logTrust.LogTrustEvento" additivity="false">
 		<level value="debug" />
-		<appender-ref ref="logTrust" />
+		<appender-ref ref="logTrustEvento" />
+	</logger>
+	
+	<logger name="es.pfsgroup.plugin.rem.logTrust.LogTrustAcceso" additivity="false">
+		<level value="debug" />
+		<appender-ref ref="logTrustAcceso" />
 	</logger>
 
 

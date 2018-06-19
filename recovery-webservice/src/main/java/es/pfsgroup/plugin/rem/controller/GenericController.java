@@ -15,7 +15,6 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.JsonWriterConfiguratorTemplateRegistry;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
@@ -26,13 +25,12 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GenericApi;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustAcceso;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.dto.DDTipoDocumentoActivoDto;
-
 
 
 @Controller
@@ -43,6 +41,9 @@ public class GenericController extends ParadiseJsonController{
 	
 	@Autowired
 	private GenericApi genericApi;
+
+	@Autowired
+	private LogTrustAcceso trustMe;
 
 	
 	/**
@@ -168,9 +169,9 @@ public class GenericController extends ParadiseJsonController{
 	 * Comprueba si se ha registrado el acceso del usuario, y sino lo registra
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	//TODO logtrust
 	public ModelAndView registerUser(){
-		adapter.registerUser();	
+		adapter.registerUser();
+		trustMe.registrarAcceso();
 		
 		return new ModelAndView("jsonView",  new ModelMap("success", true));
 	}

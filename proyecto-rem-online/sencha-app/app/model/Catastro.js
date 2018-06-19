@@ -6,7 +6,9 @@ Ext.define('HreRem.model.Catastro', {
     idProperty: 'idCatastro',
 
     fields: [    
-  
+    		{
+    			name: 'idActivo'
+    		},
      		{
     			name:'numActivo'
     		},
@@ -66,18 +68,14 @@ Ext.define('HreRem.model.Catastro', {
     		{
     			name:'observaciones' 			
     		}
-    		
     ],
     
 	proxy: {
 		type: 'uxproxy',
-
 		api: {
             create: 'activo/createCatastro',
             update: 'activo/saveCatastro',
             destroy: 'activo/deleteCatastro'
         }
-        
-    }  
-
+    }
 });

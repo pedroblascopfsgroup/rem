@@ -38,11 +38,11 @@ DECLARE
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
     --			USU_USERNAME	CODIGO PERFIL
 	  T_FUNCION('gestalq',		'HAYAGESACT'),
-	  T_FUNCION('supalq',		'HAYAGESACT'),
+	  T_FUNCION('supalq',		'HAYASUPACT'),
 	  T_FUNCION('gestedi',		'HAYAGESACT'),
-	  T_FUNCION('supedi',		'HAYAGESACT'),
+	  T_FUNCION('supedi',		'HAYASUPACT'),
 	  T_FUNCION('gestsue',		'HAYAGESACT'),
-	  T_FUNCION('supsue',		'HAYAGESACT')
+	  T_FUNCION('supsue',		'HAYASUPACT')
     );
     V_TMP_FUNCION T_FUNCION;
     V_PERFILES VARCHAR2(100 CHAR) := '%'; 

@@ -212,7 +212,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				}
 			}
 			
-			me.checkActivosToPropagate(tabData.models[0].data.id, form, tabData);
+			var idActivo;
+			
+			if(	   tabData.models[0].name == "activohistoricoestadopublicacion"
+				|| tabData.models[0].name == "cargasactivo"
+				|| tabData.models[0].name == "activocondicionantesdisponibilidad"
+				|| tabData.models[0].name == "activotrabajo"
+				|| tabData.models[0].name == "activotrabajosubida"
+				|| tabData.models[0].name == "activotramite"
+				){
+				idActivo = tabData.models[0].data.idActivo;
+			} else {
+				idActivo = tabData.models[0].data.id;
+			}
+			
+			me.checkActivosToPropagate(idActivo, form, tabData);
 			
 		} else {
 			me.getView().unmask();

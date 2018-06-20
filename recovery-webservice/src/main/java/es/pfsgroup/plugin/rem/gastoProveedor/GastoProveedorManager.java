@@ -1177,6 +1177,25 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			elUltimoActivo.setParticipacionGasto(elUltimoActivo.getParticipacionGasto()+resto);
 		}
 	}
+	
+	public float regulaPorcentajeUltimoGasto(List<GastoProveedorActivo> gastosActivosList, Float ultimoPorcentaje){
+		if(Checks.esNulo(gastosActivosList) || Checks.estaVacio(gastosActivosList)){
+			return ultimoPorcentaje;
+		}
+		
+		Float porcentajeTotal = 0f;
+		
+		for (GastoProveedorActivo gastoProveedor : gastosActivosList){
+			porcentajeTotal += gastoProveedor.getParticipacionGasto();
+		}
+		
+		Float resto = 100f - porcentajeTotal;
+		if(resto != 0){
+			ultimoPorcentaje = ultimoPorcentaje + resto;
+		}
+		
+		return ultimoPorcentaje;
+	}
 
 	@Override
 	@Transactional(readOnly = false)

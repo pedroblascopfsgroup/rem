@@ -101,23 +101,27 @@ public class MSVActivosGastoPorcentajeValidator extends MSVExcelValidatorAbstrac
 				Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
 
 				List<Integer> gastosRegistrados = gastosExcel(exc);
+				List<Integer> gastosRegistradosNum = new ArrayList<Integer>();
 				
-				if(MAXGASTOS == gastosRegistrados.size()){
-					mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
-					mapaErrores.put(GASTO_NOT_EXISTS, isGastoNotExistsRows(exc));
-					mapaErrores.put(ACTIVO_GASTO_NO_RELACION, isRelacionActivoGastoNotExistsRows(exc));
-					mapaErrores.put(PORCENTAJE_SUPERIOR_100, isPorcentajeSuperiorA100(exc));
-					mapaErrores.put(PORCENTAJE_INFERIOR_100, isPorcentajeInferiorA100(exc));
-					mapaErrores.put(NO_TODOS_ACTIVOS, isTodosActivosDelGasto(exc));
-				}else{
-					gastosRegistrados = new ArrayList<Integer>();
-					gastosRegistrados.add(1);
-					mapaErrores.put(MAS_DE_UN_GASTO, gastosRegistrados);
-				}
+				if(MAXGASTOS != gastosRegistrados.size()){
+					gastosRegistradosNum.add(1);
+				}	
 				
-			if (!mapaErrores.get(MAS_DE_UN_GASTO).isEmpty() || !mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() || !mapaErrores.get(GASTO_NOT_EXISTS).isEmpty()
-					|| !mapaErrores.get(ACTIVO_GASTO_NO_RELACION).isEmpty() || !mapaErrores.get(PORCENTAJE_SUPERIOR_100).isEmpty()
-					|| !mapaErrores.get(PORCENTAJE_INFERIOR_100).isEmpty() || !mapaErrores.get(NO_TODOS_ACTIVOS).isEmpty()) {
+				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
+				mapaErrores.put(GASTO_NOT_EXISTS, isGastoNotExistsRows(exc));
+				mapaErrores.put(ACTIVO_GASTO_NO_RELACION, isRelacionActivoGastoNotExistsRows(exc));
+				mapaErrores.put(PORCENTAJE_SUPERIOR_100, isPorcentajeSuperiorA100(exc));
+				mapaErrores.put(PORCENTAJE_INFERIOR_100, isPorcentajeInferiorA100(exc));
+				mapaErrores.put(NO_TODOS_ACTIVOS, isTodosActivosDelGasto(exc));
+				mapaErrores.put(MAS_DE_UN_GASTO, gastosRegistradosNum);
+				
+			if (!mapaErrores.get(MAS_DE_UN_GASTO).isEmpty() 
+					|| !mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() 
+					|| !mapaErrores.get(GASTO_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(ACTIVO_GASTO_NO_RELACION).isEmpty() 
+					|| !mapaErrores.get(PORCENTAJE_SUPERIOR_100).isEmpty()
+					|| !mapaErrores.get(PORCENTAJE_INFERIOR_100).isEmpty() 
+					|| !mapaErrores.get(NO_TODOS_ACTIVOS).isEmpty()) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);

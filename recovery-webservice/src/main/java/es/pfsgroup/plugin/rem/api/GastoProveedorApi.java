@@ -281,5 +281,14 @@ public interface GastoProveedorApi {
 
 
 		public GastoProveedorActivo buscarRelacionPorActivoYGasto(Activo activo, GastoProveedor gasto);
+		
+		/**
+		 * Método que devuelve el porcenaje de participación del último gasto ajustado para corregir errores de redondeo.
+		 * 
+		 * @param  gastosActivosList: lista de GastoProveedorActivo
+		 * @param ultimoPorcentaje: porcentaje de participación del último gasto
+		 * 
+		 * */
+		public float regulaPorcentajeUltimoGasto(List<GastoProveedorActivo> gastosActivosList, Float ultimoPorcentaje);
 }
 

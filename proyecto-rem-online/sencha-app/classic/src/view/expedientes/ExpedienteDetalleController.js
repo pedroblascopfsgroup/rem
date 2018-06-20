@@ -1587,9 +1587,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this;
 		var numeroUrsus = field.up('formBase').down('[reference=seleccionClienteUrsus]').getValue();
 	 	var fieldNumeroClienteUrsus = field.up('formBase').down('[reference=numeroClienteUrsusRef]');
+	 	var fieldNumeroClienteUrsusBh = field.up('formBase').down('[reference=numeroClienteUrsusBhRef]');
 	 	var btnDatosClienteUrsus = field.up('formBase').down('[reference=btnVerDatosClienteUrsus]');
+	 	var fichaComprador= field.up('[xtype=formBase]');
+	 	var esBH = fichaComprador.getBindRecord().get('esBH');
 	 	btnDatosClienteUrsus.setDisabled(false);
-	 	fieldNumeroClienteUrsus.setValue(numeroUrsus);
+	 	
+	 	if(esBH=="true"){
+	 		fieldNumeroClienteUrsusBh.setValue(numeroUrsus);
+	 	}else{
+	 		fieldNumeroClienteUrsus.setValue(numeroUrsus);
+	 	} 	
 	},
 
 	mostrarDetallesClienteUrsus: function(field, newValue ,oldValue ,eOpts){

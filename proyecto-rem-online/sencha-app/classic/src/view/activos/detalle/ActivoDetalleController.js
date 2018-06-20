@@ -37,8 +37,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
              }
          },
          
-         'cargasactivo gridBase': {
-         	abrirFormulario: 'abrirFormularioAnyadirCarga',
+         'cargasactivo gridBase': {         	abrirFormulario: 'abrirFormularioAnyadirCarga',
          	onClickRemove: 'onClickRemoveCarga',
          	onClickPropagation :  'onClickPropagation' 
          }
@@ -3348,6 +3347,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    }
     	});
 		
-	},
+	}
     
 });

@@ -464,6 +464,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajo.setFechaSolicitud(new Date());
 			trabajo.setNumTrabajo(trabajoDao.getNextNumTrabajo());
 			trabajo.setSolicitante(genericAdapter.getUsuarioLogado());
+			trabajo.setResponsableTrabajo(genericAdapter.getUsuarioLogado());
 
 			trabajo.setTipoTrabajo(subtipoTrabajo.getTipoTrabajo());
 			trabajo.setSubtipoTrabajo(subtipoTrabajo);
@@ -855,6 +856,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					trabajo.setFechaSolicitud(new Date());
 					trabajo.setNumTrabajo(trabajoDao.getNextNumTrabajo());
 					trabajo.setSolicitante(genericAdapter.getUsuarioLogado());
+					trabajo.setResponsableTrabajo(genericAdapter.getUsuarioLogado());
 					trabajo.setEstado(getEstadoNuevoTrabajo(dtoTrabajo, activo));
 
 					// El gestor de activo se salta tareas de estos trámites y
@@ -933,11 +935,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				Usuario user = genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdSolicitante()));
 				if (!Checks.esNulo(user)) {
 					trabajo.setSolicitante(user);
+					trabajo.setResponsableTrabajo(user);
+
 				} else {
 					trabajo.setSolicitante(genericAdapter.getUsuarioLogado());
+					trabajo.setResponsableTrabajo(genericAdapter.getUsuarioLogado());
 				}
 			} else {
 				trabajo.setSolicitante(genericAdapter.getUsuarioLogado());
+				trabajo.setResponsableTrabajo(genericAdapter.getUsuarioLogado());
+
 			}
 			trabajo.setEstado(getEstadoNuevoTrabajo(dtoTrabajo, activo));
 
@@ -1086,6 +1093,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			
 			trabajo.setResponsableTrabajo(usuario);
 		}
+		
 	}
 
 	private void dtoGestionEconomicaToTrabajo(DtoGestionEconomicaTrabajo dtoGestionEconomica, Trabajo trabajo)
@@ -1276,8 +1284,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setIdActivo(activo.getId());
 		}
 
-		if (trabajo.getProveedorContacto() != null && trabajo.getProveedorContacto().getProveedor() != null)
+		if (trabajo.getProveedorContacto() != null && trabajo.getProveedorContacto().getProveedor() != null) {
 			dtoTrabajo.setNombreProveedor(trabajo.getProveedorContacto().getProveedor().getNombreComercial());
+			System.out.print(trabajo.getProveedorContacto().getProveedor().getId().toString());
+			dtoTrabajo.setIdProveedor(trabajo.getProveedorContacto().getProveedor().getId());
+		}
 
 		if (trabajo.getTipoTrabajo() != null) {
 			dtoTrabajo.setTipoTrabajoDescripcion(trabajo.getTipoTrabajo().getDescripcion());
@@ -1299,6 +1310,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		if (trabajo.getSolicitante() != null) {
 			dtoTrabajo.setSolicitante(trabajo.getSolicitante().getApellidoNombre());
+			dtoTrabajo.setIdSolicitante(trabajo.getSolicitante().getId());
 		} else {
 			if (trabajo.getMediador() != null) {
 				dtoTrabajo.setSolicitante(trabajo.getMediador().getNombre());

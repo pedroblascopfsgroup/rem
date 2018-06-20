@@ -21,6 +21,8 @@ public class DtoFichaTrabajo {
     
     private String nombreProveedor;
     
+    private Long idProveedor;
+    
     private String tipoTrabajoCodigo;
     
     private String tipoTrabajoDescripcion;
@@ -206,6 +208,14 @@ public class DtoFichaTrabajo {
 
 	public void setTipoTrabajoDescripcion(String tipoTrabajoDescripcion) {
 		this.tipoTrabajoDescripcion = tipoTrabajoDescripcion;
+	}
+	
+	public Long getIdProveedor() {
+		return idProveedor;
+	}
+
+	public void setIdProveedor(Long idProveedor) {
+		this.idProveedor = idProveedor;
 	}
 
 	public String getSubtipoTrabajoCodigo() {

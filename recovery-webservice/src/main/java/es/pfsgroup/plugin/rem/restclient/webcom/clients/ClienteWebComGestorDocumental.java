@@ -11,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.pfsgroup.plugin.rem.logTrust.LogTrustWebService;
 import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
@@ -32,6 +33,9 @@ public class ClienteWebComGestorDocumental {
 
 	@Autowired
 	private RestLlamadaDao llamadaDao;
+
+	@Autowired
+	private LogTrustWebService trustMe;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -65,6 +69,7 @@ public class ClienteWebComGestorDocumental {
 		try {
 			registro.setResponse(result.toString());
 			llamadaDao.guardaRegistro(registro);
+			trustMe.registrarLlamadaServicioWeb(registro);
 		} catch (Exception e) {
 			logger.error("Error al trazar la llamada al CDM", e);
 		}

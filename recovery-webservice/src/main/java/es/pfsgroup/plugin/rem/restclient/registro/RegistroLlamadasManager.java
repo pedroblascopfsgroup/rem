@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.beans.Service;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustWebService;
 import es.pfsgroup.plugin.rem.restclient.registro.dao.RestDatoRechazadoDao;
 import es.pfsgroup.plugin.rem.restclient.registro.dao.RestLlamadaDao;
 import es.pfsgroup.plugin.rem.restclient.registro.model.DatosRechazados;
@@ -33,61 +34,63 @@ public class RegistroLlamadasManager {
 
 	@Autowired
 	private RestDatoRechazadoDao datosRechazadosDao;
-	
+
 	@Resource
 	private Properties appProperties;
 
+	@Autowired
+	private LogTrustWebService trustMe;
+
 	@Transactional(readOnly = false, noRollbackFor = ErrorServicioWebcom.class, propagation = Propagation.NEVER)
-	//TODO logtrust
 	public void guardaRegistroLlamada(RestLlamada llamada, @SuppressWarnings("rawtypes") DetectorCambiosBD handler,Integer contError) {
 		logger.trace("Guardando traza de la llamada en BD");
 		
 		Integer MAXIMO_INTENTOS = DeteccionCambiosBDTask.MAXIMO_INTENTOS_DEFAULT;
-		String maximoIntentosProperties = !Checks
-				.esNulo(appProperties.getProperty("rest.client.webcom.maximo.intentos"))
+		String maximoIntentosProperties = !Checks.esNulo(appProperties.getProperty("rest.client.webcom.maximo.intentos"))
 						? appProperties.getProperty("rest.client.webcom.maximo.intentos") : null;
 		try {
 			if (maximoIntentosProperties != null) {
 				MAXIMO_INTENTOS = Integer.parseInt(maximoIntentosProperties);
 			}
+
 		} catch (Exception e) {
 			MAXIMO_INTENTOS = DeteccionCambiosBDTask.MAXIMO_INTENTOS_DEFAULT;
 		}
 
 		llamadaDao.guardaRegistro(llamada);
+		trustMe.registrarLlamadaServicioWeb(llamada);
 
 		// trazamos registros erroneos
 		String jsonStyleName = this.obtenerJsonStyleName(handler.clavePrimariaJson());
-		if (llamada.getDatosErroneos() != null && llamada.getDatosErroneos().size() > 0 && jsonStyleName != null
-				&& !jsonStyleName.isEmpty()) {
+		if (llamada.getDatosErroneos() != null && llamada.getDatosErroneos().size() > 0 && jsonStyleName != null && !jsonStyleName.isEmpty()) {
 			for (JSONObject jsonObject : llamada.getDatosErroneos()) {
 				boolean isHttp= false;
 				try {
 					if (jsonObject.containsKey(jsonStyleName) && handler.nombreVistaDatosActuales() != null) {
 						String id = jsonObject.getString(jsonStyleName);
+
 						if (id != null && StringUtils.isNumeric(id)) {
 							DatosRechazados datoRechazado = new DatosRechazados();
 							datoRechazado.setVista(handler.nombreVistaDatosActuales());
 							datoRechazado.setIdObjeto(Long.valueOf(id));
+
 							if (jsonObject.containsKey("invalidFields")) {
 								String invalidFields = jsonObject.getJSONObject("invalidFields").toString();
-								if(invalidFields.length()>99){
+								if(invalidFields.length() > 99){
 									invalidFields = invalidFields.substring(0,99);
 								}
 								datoRechazado.setDatosInvalidos(invalidFields);
+
 							}else{
 								datoRechazado.setDatosInvalidos("error http");
 								isHttp= true;
 							}
+
 							datoRechazado.setIteracion(llamada.getIteracion());
 							
-							if(!isHttp){
-								datosRechazadosDao.guardaRegistro(datoRechazado);
-							}else if(contError == MAXIMO_INTENTOS){
+							if(!isHttp || contError == MAXIMO_INTENTOS){
 								datosRechazadosDao.guardaRegistro(datoRechazado);
 							}
-							
-							
 						}
 					}
 				} catch (Exception e) {
@@ -96,7 +99,6 @@ public class RegistroLlamadasManager {
 				}
 			}
 		}
-
 	}
 
 	private String obtenerJsonStyleName(String ddbbStringName) {
@@ -127,6 +129,7 @@ public class RegistroLlamadasManager {
 
 		for (RestLlamada llamada : llamadas) {
 			llamadaDao.guardaRegistro(llamada);
+			trustMe.registrarLlamadaServicioWeb(llamada);
 		}
 
 	}

@@ -56,6 +56,10 @@ public class DtoFichaTrabajo {
     private Long idSupervisorActivo;
     
     private String supervisorActivo;
+    
+    private Long idResponsableTrabajo;
+    
+    private String responsableTrabajo;
         
     private Boolean esSolicitudConjunta;
     
@@ -145,7 +149,25 @@ public class DtoFichaTrabajo {
 	public void setIdTrabajo(Long idTrabajo) {
 		this.idTrabajo = idTrabajo;
 	}
+	
+	
     
+	public Long getIdResponsableTrabajo() {
+		return idResponsableTrabajo;
+	}
+
+	public void setIdResponsableTrabajo(Long idResponsableTrabajo) {
+		this.idResponsableTrabajo = idResponsableTrabajo;
+	}
+
+	public String getResponsableTrabajo() {
+		return responsableTrabajo;
+	}
+
+	public void setResponsableTrabajo(String responsableTrabajo) {
+		this.responsableTrabajo = responsableTrabajo;
+	}
+
 	public String getNumTrabajo() {
 		return numTrabajo;
 	}

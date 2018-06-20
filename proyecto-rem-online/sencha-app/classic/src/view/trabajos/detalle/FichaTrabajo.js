@@ -17,8 +17,16 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
         me.codigoTipoTrabajo = me.lookupController().getViewModel().get('trabajo').get('tipoTrabajoCodigo');
         me.idGestorActivoResponsable = me.lookupController().getViewModel().get('trabajo').get('idGestorActivoResponsable');
         me.idSupervisorActivo = me.lookupController().getViewModel().get('trabajo').get('idSupervisorActivo');
-
-        me.items= [
+        me.nombreProveedor =  me.lookupController().getViewModel().get('trabajo').get('nombreProveedor');
+        me.solicitante =  me.lookupController().getViewModel().get('trabajo').get('solicitante');
+        me.idResponsableTrabajo = me.lookupController().getViewModel().get('trabajo').get('idResponsableTrabajo');
+        //NOTA: En cuanto a la edición del campo “Responsable del trabajo”, sólo podrán ejecutar dicha acción, el responsable del mismo en ese instante, y su supervisor.
+        var editar = !($AU.getUser().userId == me.idGestorActivoResponsable || $AU.getUser().userId ==me.idSupervisorActivo);
+        //NOTA: En cuanto a la visualización del campo “Responsable del trabajo”, 
+        //lo podrán ver tanto el “Gestor/Supervisor de activo” y el “Gestor/Supervisor de alquileres, edificaciones, suelo”, así comomo, el proveedor y el solicitante.
+        var mostrar =  !($AU.getUser().userId ==  me.idResponsableTrabajo || $AU.getUser().userName == me.nombreProveedor || $AU.getUser().userName ==  me.solicitante);
+     
+             me.items= [
         			{
 						xtype:'fieldsettable',
 						defaultType: 'textfieldbase',						
@@ -39,7 +47,21 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 						        	xtype: 'displayfieldbase',
 						        	fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
 									bind:		'{trabajo.cartera}'
-								},			                
+								},
+								{
+						        	xtype: 'comboboxfieldbase',
+						        	editable: false,
+						        	fieldLabel: HreRem.i18n('fieldlabel.responsable.trabajo'),
+						        	bind: {
+					            		store: '{comboResponsableTrabajo}',
+					            		value: '{trabajo.idResponsableTrabajo}'
+					            	},
+					            	displayField: 'apellidoNombre',
+		    						valueField: 'id',
+		    						readOnly: editar,
+					            	hidden: mostrar,
+						    
+						        },
 				                { 
 						        	xtype: 'displayfieldbase',
 						        	fieldLabel: HreRem.i18n('fieldlabel.tipo.trabajo'),

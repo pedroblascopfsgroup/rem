@@ -1080,6 +1080,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			
 			trabajo.setSupervisorActivoResponsable(usuario);
 		}
+		if(!Checks.esNulo(dtoTrabajo.getIdResponsableTrabajo())){
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdResponsableTrabajo());
+			Usuario usuario = genericDao.get(Usuario.class, filtro);
+			
+			trabajo.setResponsableTrabajo(usuario);
+		}
 	}
 
 	private void dtoGestionEconomicaToTrabajo(DtoGestionEconomicaTrabajo dtoGestionEconomica, Trabajo trabajo)
@@ -1335,6 +1341,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				dtoTrabajo.setSupervisorActivo(supervisorActivo.getApellidoNombre());
 				dtoTrabajo.setIdSupervisorActivo(supervisorActivo.getId());
 			}
+		}
+		
+		if(!Checks.esNulo(trabajo.getResponsableTrabajo())){
+			dtoTrabajo.setResponsableTrabajo(trabajo.getResponsableTrabajo().getApellidoNombre());
+			dtoTrabajo.setIdResponsableTrabajo(trabajo.getResponsableTrabajo().getId());
+
 		}
 		
 		if(trabajo.getEsTarifaPlana()){

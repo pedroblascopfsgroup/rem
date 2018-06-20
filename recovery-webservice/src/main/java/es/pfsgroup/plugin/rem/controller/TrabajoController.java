@@ -28,12 +28,15 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
@@ -57,6 +60,7 @@ import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
+import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.TrabajoFoto;
@@ -80,7 +84,13 @@ public class TrabajoController extends ParadiseJsonController {
 	private TrabajoApi trabajoApi;
 	
 	@Autowired
+	private ActivoAdapter adapter;
+	
+	@Autowired
 	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
 	
 	@Autowired
 	private UploadAdapter uploadAdapter;
@@ -829,6 +839,27 @@ public class TrabajoController extends ParadiseJsonController {
 		}
 		return createModelAndViewJson(model);
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboResponsableTrabajo(WebDto webDto, ModelMap model) {
+		List<DtoUsuario> listaresponsables = new ArrayList<DtoUsuario>();
+		EXTDDTipoGestor alquileres= (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GALQ");
+		EXTDDTipoGestor suelos= (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GSUE");
+		EXTDDTipoGestor edificaciones= (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GEDI");
+		List<DtoUsuario> la  = adapter.getComboUsuarios(alquileres.getId());
+		List<DtoUsuario> ls  = adapter.getComboUsuarios(suelos.getId());
+		List<DtoUsuario> le  = adapter.getComboUsuarios(edificaciones.getId());
+		listaresponsables.addAll(la);
+		listaresponsables.addAll(le);
+		listaresponsables.addAll(ls);
+		
+			
+		model.put("data", listaresponsables);
+		
+		return new ModelAndView("jsonView", model);
+
 	}
 	
 	@SuppressWarnings("unchecked")

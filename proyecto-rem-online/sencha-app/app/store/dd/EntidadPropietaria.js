@@ -5,7 +5,6 @@ Ext.define('HreRem.store.dd.EntidadPropietaria', {
      model: 'HreRem.model.ComboBase',
      proxy: {
 		type: 'uxproxy',
-		remoteUrl: 'generic/getDiccionario',
-		extraParams: {diccionario: 'entidadesPropietarias'}
+		remoteUrl: 'generic/getDiccionarioCarteraPorCodigoFestor'
 	 }
  });

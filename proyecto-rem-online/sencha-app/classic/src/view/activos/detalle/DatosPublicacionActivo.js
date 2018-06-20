@@ -19,6 +19,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
     initComponent: function () {
         var me = this;
         me.setTitle(HreRem.i18n('title.datos.publicacion.activo'));
+        
+        var isCarteraLiberbank = me.lookupViewModel().get('activo.isCarteraLiberbank');
 
         me.items = [
 // Resumen estado publicación.
@@ -199,6 +201,17 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								    		style : 'background: transparent; border: none;',
 					                		bind: {
 					                			iconCls: '{getIconClsCondicionantesSinInformeAprobado}'
+					                		},
+					                		iconAlign: 'left'
+					                	},
+					                	 {
+					                		xtype: 'button',
+					                		cls: 'no-pointer',
+					                		hidden: !isCarteraLiberbank,
+								    		html : '<div style="color: #000;">'+HreRem.i18n('title.publicaciones.condicion.sinAcceso')+'</div>',
+								    		style : 'background: transparent; border: none;',
+					                		bind: {
+					                			iconCls: '{getIconClsCondicionantesSinAcceso}'
 					                		},
 					                		iconAlign: 'left'
 					                	},

@@ -309,6 +309,19 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 		// Obtener si el ultimo estado del informe comercial es ACEPTADO.
 		BeanUtils.copyProperty(activoDto, "informeComercialAceptado", activoApi.isInformeComercialAceptado(activo));
+		
+		//Obtener si tiene posible informe mediador
+		if (!Checks.esNulo(activo.getInfoComercial().getPosibleInforme())){
+			if (activo.getInfoComercial().getPosibleInforme() == 1){
+				BeanUtils.copyProperty(activoDto, "tienePosibleInformeMediador", true);
+			} else {
+				BeanUtils.copyProperty(activoDto, "tienePosibleInformeMediador", false);
+			}
+		} else {
+			BeanUtils.copyProperty(activoDto, "tienePosibleInformeMediador", true);
+		}
+		
+		
 
 
 		//HREOS-843 Situacion Comercial del activo

@@ -607,6 +607,10 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'activoBNK'
+			},
+			{
+				name: 'tienePosibleInformeMediador',
+				type: 'boolean'
 			}
     ],
     

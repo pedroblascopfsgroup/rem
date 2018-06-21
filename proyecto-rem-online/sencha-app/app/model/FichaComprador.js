@@ -183,6 +183,9 @@ Ext.define('HreRem.model.FichaComprador', {
 		},
 		{
 			name: 'codigoPaisRte'
+		},
+		{
+			name: 'esBH'
 		}
 		
     ],

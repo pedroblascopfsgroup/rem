@@ -50,6 +50,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
@@ -66,6 +67,7 @@ import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -113,13 +115,13 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 
 	@Autowired
 	private UvemManagerApi uvemManagerApi;
-	
-	@Autowired 
-    private UpdaterTransitionService updaterTransitionService;
-	
+
+	@Autowired
+	private UpdaterTransitionService updaterTransitionService;
+
 	@Autowired
 	private TareaActivoApi tareaActivoApi;
-	
+
 	@Autowired
 	private ResolucionComiteApi resolucionComiteApi;
 
@@ -242,10 +244,12 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 					if (regimenMatrimonial != null && !regimenMatrimonial.isEmpty()) {
 						estadoCivil = DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO;
 					}
-					
-					String nombreRazonSocial = exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.NOMBRE_TITULAR);
-					if(nombreRazonSocial == null || nombreRazonSocial.isEmpty()){
-						nombreRazonSocial = exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.RAZON_SOCIAL_TITULAR);
+
+					String nombreRazonSocial = exc.dameCelda(fila,
+							MSVVentaDeCarteraExcelValidator.COL_NUM.NOMBRE_TITULAR);
+					if (nombreRazonSocial == null || nombreRazonSocial.isEmpty()) {
+						nombreRazonSocial = exc.dameCelda(fila,
+								MSVVentaDeCarteraExcelValidator.COL_NUM.RAZON_SOCIAL_TITULAR);
 					}
 
 					modificarCompradorPrincipal(agrupacion.getId(),
@@ -253,16 +257,21 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 									MSVVentaDeCarteraExcelValidator.COL_NUM.PORCENTAJE_COMPRA_TITULAR)),
 							Long.parseLong(
 									exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.NUMERO_URSUS_TITULAR)),
-							null, regimenMatrimonial, estadoCivil,nombreRazonSocial);
+							null, regimenMatrimonial, estadoCivil, nombreRazonSocial);
 
 					// Añadimos el resto de TITULARES (Comprador) 2, 3 y 4.
 					anyadirRestoCompradores(exc, fila, agrupacion.getId());
 
+					// Setea el documento del conyuge para aquellos comprodores
+					// que esten
+					// casados en regimen de ganaciales
+					setearConyuges(exc, fila, agrupacion.getId());
+
 					// guardamos los datos que hacen falta para avanzar el exp
 					// comercial
 					guardarDatosNecesariosExpedienteComercial(exc, agrupacion.getId(), fila, context);
-					
-					//actualizamos los importes de los activos
+
+					// actualizamos los importes de los activos
 					updateActivoExpediente(codigoOferta, agrupacion.getId(), context);
 
 					// creamos un posicionamiento en el expediente
@@ -278,13 +287,14 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 
 					// Llamar al servicioweb Modi de Bankia
 					llamadaSercivioWeb(agrupacion.getId());
-					
-					//simular llegada resolución
-					simularResolucion(agrupacion.getId(), exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR));
-					
-					//saltamos a cierre economico
+
+					// simular llegada resolución
+					simularResolucion(agrupacion.getId(),
+							exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR));
+
+					// saltamos a cierre economico
 					saltoCierreEconomico(agrupacion.getId());
-					
+
 					// Esperamos 15 segundos por Bankia
 					logger.debug(
 							"--------------------- OFERTA_CARTERA: fin -------------------------------------------");
@@ -296,6 +306,132 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 		}
 
 		return resultado;
+	}
+
+	/**
+	 * Setea el documento del conyuge para aquellos comprodores que esten
+	 * casados en regimen de ganaciales
+	 * 
+	 * @param fila
+	 * @param idAgrupacion
+	 * @throws Exception
+	 */
+	private void setearConyuges(MSVHojaExcel exc, int fila, Long idAgrupacion) throws Exception {
+		logger.debug("OFERTA_CARTERA: Modificamos los conyuges de los compradores principales");
+		TransactionStatus transaction = null;
+		try {
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			List<VOfertasActivosAgrupacion> listaOfertas = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
+			Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id",
+					Long.parseLong(listaOfertas.get(0).getIdOferta())));
+			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
+
+			if (expedienteComercial.getCompradores() != null && !expedienteComercial.getCompradores().isEmpty()) {
+				for (CompradorExpediente comprador : expedienteComercial.getCompradores()) {
+					if (comprador.getRegimenMatrimonial() != null && DDRegimenesMatrimoniales.COD_GANANCIALES
+							.equals(comprador.getRegimenMatrimonial().getCodigo())) {
+						String docConyuge = null;
+						String ursusConyuge = null;
+						int colComprador = obtenerColumnaComprador(exc, fila, comprador);
+						if (colComprador > 0) {
+							if (colComprador == 1) {
+								ursusConyuge = exc.dameCelda(fila,
+										MSVVentaDeCarteraExcelValidator.COL_NUM.NUMERO_URSUS_CONYUGE_TITULAR);
+							} else if (colComprador == 2) {
+								ursusConyuge = exc.dameCelda(fila,
+										MSVVentaDeCarteraExcelValidator.COL_NUM.NUMERO_URSUS_CONYUGE_TITULAR_2);
+							} else if (colComprador == 3) {
+								ursusConyuge = exc.dameCelda(fila,
+										MSVVentaDeCarteraExcelValidator.COL_NUM.NUMERO_URSUS_CONYUGE_TITULAR_3);
+							} else if (colComprador == 4) {
+								ursusConyuge = exc.dameCelda(fila,
+										MSVVentaDeCarteraExcelValidator.COL_NUM.NUMERO_URSUS_CONYUGE_TITULAR_4);
+							}
+						}
+
+						if (ursusConyuge != null && !ursusConyuge.isEmpty()) {
+							docConyuge = obtenerDocumentoByUrsus(ursusConyuge, exc, fila);
+							if (docConyuge != null && !docConyuge.isEmpty()) {
+								comprador.setDocumentoConyuge(docConyuge);
+								genericDao.save(ExpedienteComercial.class, expedienteComercial);
+							}
+						}
+
+					}
+				}
+			}
+			transactionManager.commit(transaction);
+		} catch (Exception e) {
+			transactionManager.rollback(transaction);
+			throw e;
+		}
+	}
+
+	/**
+	 * Obtiene el documento dado un ursus
+	 * 
+	 * @param ursus
+	 * @param exc
+	 * @param fila
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	private String obtenerDocumentoByUrsus(String ursus, MSVHojaExcel exc, int fila)
+			throws IllegalArgumentException, IOException, ParseException {
+		if (ursus.equals(exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.NUMERO_URSUS_TITULAR))) {
+			return exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.DOC_IDENTIFICACION_TITULAR);
+		} else if (ursus
+				.equals(exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.NUMERO_URSUS_TITULAR_2))) {
+			return exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.DOC_IDENTIFICACION_TITULAR_2);
+		} else if (ursus
+				.equals(exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.NUMERO_URSUS_TITULAR_3))) {
+			return exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.DOC_IDENTIFICACION_TITULAR_3);
+		} else if (ursus
+				.equals(exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.NUMERO_URSUS_TITULAR_4))) {
+			return exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.DOC_IDENTIFICACION_TITULAR_4);
+		}
+		return null;
+	}
+
+	/**
+	 * Obtiene la columna en el excel de un comprador
+	 * 
+	 * @param exc
+	 * @param fila
+	 * @param comprador
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	private int obtenerColumnaComprador(MSVHojaExcel exc, int fila, CompradorExpediente comprador)
+			throws IllegalArgumentException, IOException, ParseException {
+		Long ursusNumber = comprador.getPrimaryKey().getComprador().getIdCompradorUrsus();
+		if (ursusNumber == null) {
+			ursusNumber = comprador.getPrimaryKey().getComprador().getIdCompradorUrsusBh();
+		}
+		if (ursusNumber != null) {
+			String ursus = ursusNumber.toString();
+			if (ursus.equals(exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.NUMERO_URSUS_TITULAR))) {
+				return 1;
+			} else if (ursus.equals(
+					exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.NUMERO_URSUS_TITULAR_2))) {
+				return 2;
+			} else if (ursus.equals(
+					exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.NUMERO_URSUS_TITULAR_3))) {
+				return 3;
+			} else if (ursus.equals(
+					exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.NUMERO_URSUS_TITULAR_4))) {
+				return 4;
+			} else {
+				return 0;
+			}
+		} else {
+			return 0;
+		}
+
 	}
 
 	/**
@@ -405,15 +541,15 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			dtoExp.setEstadoPbc(1);
 			dtoExp.setConflictoIntereses(0);
 			dtoExp.setRiesgoReputacional(0);
-			dtoExp.setCodigoComiteSancionador(exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR));
-			
+			dtoExp.setCodigoComiteSancionador(
+					exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR));
+
 			expedienteComercialApi.saveFichaExpediente(dtoExp, expedienteComercial.getId());
 			expedienteComercialApi.saveCondicionesExpediente(condicionantes, expedienteComercial.getId());
 
 			// modificamos los importes de participación de los activos
 
 			transactionManager.commit(transaction);
-			logger.debug("OFERTA_CARTERA:[fin] Guardamos datos en el expediente comercial");
 		} catch (Exception e) {
 			transactionManager.rollback(transaction);
 			throw e;
@@ -464,7 +600,6 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 				instanciaDecisionDto.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_CONDICIONANTES_ECONOMICOS);
 				uvemManagerApi.modificarInstanciaDecisionTres(instanciaDecisionDto);
 
-				logger.debug("OFERTA_CARTERA: [fin]llamando a uvem");
 			}
 			transactionManager.commit(transaction);
 		} catch (Exception e) {
@@ -524,14 +659,14 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 
 		return idTareaExterna;
 	}
-	
+
 	/**
 	 * Saltando a cierre economico
+	 * 
 	 * @param idAgrupacion
 	 * @throws Exception
 	 */
-	private void saltoCierreEconomico(Long idAgrupacion)
-			throws Exception {
+	private void saltoCierreEconomico(Long idAgrupacion) throws Exception {
 		logger.debug("OFERTA_CARTERA: Saltamos a cierre economico");
 		TransactionStatus transaction = null;
 		ActivoTramite tramite = null;
@@ -555,14 +690,14 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			for (TareaExterna tarea : listaTareas) {
 				if (!Checks.esNulo(tarea)) {
 					DtoSaltoTarea salto = new DtoSaltoTarea();
-					
+
 					salto.setIdTramite(tramite.getId());
 					salto.setPbcAprobado(1);
 					salto.setFechaRespuestaComite(new Date());
-					updaterTransitionService.updateT013_CierreEconomico(salto);									
-					
-					tareaActivoApi.saltoDesdeTareaExterna(tarea.getId(),ActivoGenerarSaltoImpl.CODIGO_SALTO_CIERRE);
-					
+					updaterTransitionService.updateT013_CierreEconomico(salto);
+
+					tareaActivoApi.saltoDesdeTareaExterna(tarea.getId(), ActivoGenerarSaltoImpl.CODIGO_SALTO_CIERRE);
+
 					break;
 				}
 			}
@@ -571,19 +706,19 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			transactionManager.rollback(transaction);
 			throw e;
 		}
-		
+
 	}
-	
+
 	/**
 	 * Saltando a cierre economico
+	 * 
 	 * @param idAgrupacion
 	 * @throws Exception
 	 */
-	private void simularResolucion(Long idAgrupacion,String codigoComite)
-			throws Exception {
+	private void simularResolucion(Long idAgrupacion, String codigoComite) throws Exception {
 		logger.debug("OFERTA_CARTERA: Creando la resolución");
 		TransactionStatus transaction = null;
-			try {
+		try {
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 			List<VOfertasActivosAgrupacion> listaOfertas = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
 			Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id",
@@ -600,7 +735,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			transactionManager.rollback(transaction);
 			throw e;
 		}
-		
+
 	}
 
 	/**
@@ -646,15 +781,15 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 							MSVVentaDeCarteraExcelValidator.COL_NUM.TIPO_DOCUMENTO_TITULAR_2 + contadorColumnas));
 					vDatosComprador.setNumDocumento(exc.dameCelda(fila,
 							MSVVentaDeCarteraExcelValidator.COL_NUM.DOC_IDENTIFICACION_TITULAR_2 + contadorColumnas));
-					
-					if(DDSubcartera.CODIGO_BAN_BH.equals(oferta.getActivoPrincipal().getSubcartera())){
+
+					if (DDSubcartera.CODIGO_BAN_BH.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) {
 						vDatosComprador.setNumeroClienteUrsusBh(Long.parseLong(exc.dameCelda(fila,
 								MSVVentaDeCarteraExcelValidator.COL_NUM.NUMERO_URSUS_TITULAR_2 + contadorColumnas)));
-					}else{
+					} else {
 						vDatosComprador.setNumeroClienteUrsus(Long.parseLong(exc.dameCelda(fila,
 								MSVVentaDeCarteraExcelValidator.COL_NUM.NUMERO_URSUS_TITULAR_2 + contadorColumnas)));
 					}
-					
+
 					vDatosComprador.setDocumentoConyuge(exc.dameCelda(fila,
 							MSVVentaDeCarteraExcelValidator.COL_NUM.NUMERO_URSUS_CONYUGE_TITULAR_2 + contadorColumnas));
 					vDatosComprador.setPorcentajeCompra(Double.parseDouble(exc.dameCelda(fila,
@@ -689,7 +824,8 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 	 * @throws Exception
 	 */
 	private void modificarCompradorPrincipal(Long idAgrupacion, double nuevoPorcentaje, Long numeroUrsus,
-			Long numeroUrsusConyuge, String codigoRegimenMatrimonial, String codEstadoCivil,String nombreRazonSocial) throws Exception {
+			Long numeroUrsusConyuge, String codigoRegimenMatrimonial, String codEstadoCivil, String nombreRazonSocial)
+			throws Exception {
 		TransactionStatus transaction = null;
 		try {
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
@@ -703,12 +839,12 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			vDatosComprador.setIdExpedienteComercial(expedienteComercial.getId().toString());
 			vDatosComprador.setId(expedienteComercial.getCompradorPrincipal().getId().toString());
 			vDatosComprador.setPorcentajeCompra(nuevoPorcentaje);
-			if(DDSubcartera.CODIGO_BAN_BH.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
+			if (DDSubcartera.CODIGO_BAN_BH.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) {
 				vDatosComprador.setNumeroClienteUrsusBh(numeroUrsus);
-			}else{
+			} else {
 				vDatosComprador.setNumeroClienteUrsus(numeroUrsus);
 			}
-			
+
 			vDatosComprador.setCodigoRegimenMatrimonial(codigoRegimenMatrimonial);
 			vDatosComprador.setCodEstadoCivil(codEstadoCivil);
 			if (codigoRegimenMatrimonial != null && !codigoRegimenMatrimonial.isEmpty()) {
@@ -1027,6 +1163,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 
 	/**
 	 * Actualiza los importes de cada activo de la agrupacion
+	 * 
 	 * @param codigoOferta
 	 * @param idAgrupacion
 	 * @param context
@@ -1046,12 +1183,10 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 
 			ArrayList<DtoActivosExpediente> activosAgr = ((HashMap<String, ArrayList<DtoActivosExpediente>>) context
 					.get(ProcesoMasivoContext.ACTIVOS_AGRUPACION)).get(codigoOferta);
-			
-			for(DtoActivosExpediente activoExpediente : activosAgr){
+
+			for (DtoActivosExpediente activoExpediente : activosAgr) {
 				expedienteComercialApi.updateActivoExpediente(activoExpediente, expedienteComercial.getId());
 			}
-			
-			
 
 			transactionManager.commit(transaction);
 		} catch (Exception e) {

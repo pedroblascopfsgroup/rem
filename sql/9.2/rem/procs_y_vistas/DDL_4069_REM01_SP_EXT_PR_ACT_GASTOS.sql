@@ -21,7 +21,7 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 SET DEFINE OFF;
 
-create or replace PROCEDURE       SP_EXT_PR_ACT_GASTOS (
+create or replace PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_GASTOS (
 
     --Parametros de entrada
     GPV_NUM_GASTO_HAYA          IN NUMBER,          --Obligatorio
@@ -312,7 +312,7 @@ BEGIN
         --------------
         -- PASO 2/6 --
         --------------
-        IF COD_RETORNO = 0 THEN
+        IF COD_RETORNO = 0 AND NUM_GASTO_DESTINATARIO IS NOT NULL THEN
             --PASO 2/6 Actualizar la referencia de la factura (GPV_GASTOS_PROVEEDOR.GPV_NUMERO_FACTURA_UVEM) con el número de gasto del destinatario.
             --Recuperamos el NUEVO valor
             V_VALOR_NUEVO := NUM_GASTO_DESTINATARIO;
@@ -345,7 +345,7 @@ BEGIN
         --------------
         -- PASO 3/6 --
         --------------
-        IF COD_RETORNO = 0 THEN
+        IF COD_RETORNO = 0 AND FECHA_CONTABILIZACION_DATE IS NOT NULL THEN
             --PASO 3/6 Actualizar la fecha de contabilización (GIC_GASTOS_INFO_CONTABILIDAD.GIC_FECHA_CONTABILIZACION) con el dato de Fecha de Contabilización.
             --Recuperamos el NUEVO valor
             V_VALOR_NUEVO := FECHA_CONTABILIZACION_DATE;
@@ -589,7 +589,7 @@ BEGIN
         --------------
         -- PASO 2/7 --
         --------------
-        IF COD_RETORNO = 0 THEN
+        IF COD_RETORNO = 0 AND NUM_GASTO_DESTINATARIO IS NOT NULL THEN
             --PASO 2/7 Actualizar la referencia de la factura (GPV_GASTOS_PROVEEDOR.GPV_NUMERO_FACTURA_UVEM) con el número de gasto del destinatario.
             --Recuperamos el NUEVO valor
             V_VALOR_NUEVO := NUM_GASTO_DESTINATARIO;
@@ -655,7 +655,7 @@ BEGIN
         --------------
         -- PASO 4/7 -- OPCIONAL
         --------------
-        IF COD_RETORNO = 0 THEN
+        IF COD_RETORNO = 0 AND FECHA_PAGO_DATE IS NOT NULL THEN
             --PASO 4/7 Actualizar la fecha de pago (GDE_GASTOS_DETALLE_ECONOMICO.GDE_FECHA_PAGO) con el dato de Fecha de Pago.
             --Recuperamos el NUEVO valor
             V_VALOR_NUEVO := FECHA_PAGO_DATE;

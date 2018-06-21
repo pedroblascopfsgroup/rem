@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Guillermo Llidó
---## FECHA_CREACION=20180621
+--## FECHA_CREACION=20180622
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-1038
@@ -46,7 +46,7 @@ BEGIN
 
 			EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.SGS_GESTOR_SUSTITUTO 
 									WHERE USU_ID_ORI = '||V_USU_ID_ORI||' 
-									AND (FECHA_FIN > '''||V_FECHA_INICIO||''' OR FECHA_FIN IS NULL) 
+									AND (FECHA_FIN > '''||V_FECHA_FIN||''' OR FECHA_FIN IS NULL) 
 									AND FECHA_INICIO < '''||V_FECHA_INICIO||'''
 									AND BORRADO = 0' INTO V_AUX;
 			IF V_AUX = 0 THEN	
@@ -56,7 +56,6 @@ BEGIN
 								, USU_ID_ORI
 								, USU_ID_SUS
 								, FECHA_INICIO
-                                , FECHA_FIN
 								, USUARIOCREAR
 								, FECHACREAR
 								, USUARIOMODIFICAR
@@ -68,7 +67,6 @@ BEGIN
 									,'||V_USU_ID_ORI||'
 									,'||V_USU_ID_SUS||'
 									,TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YYYY'')
-                                    ,TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YYYY'')
 									,'''||USUARIO||'''
 									,SYSDATE 
 									,NULL
@@ -110,11 +108,11 @@ BEGIN
 								  FECHA_FIN = TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YYYY'')
 								, USUARIOMODIFICAR = '''||USUARIO||'''
 								, FECHAMODIFICAR = SYSDATE
-							   WHERE USU_ID_ORI = '||V_USU_ID_ORI||'
+                                WHERE USU_ID_ORI = '||V_USU_ID_ORI||'
 								  AND USU_ID_SUS = '||V_USU_ID_SUS||'
 								  AND FECHA_INICIO = '''||V_FECHA_INICIO||'''
 								  AND BORRADO = 0';
- 
+
 					EXECUTE IMMEDIATE V_SQL;
 
 					PL_OUTPUT := '[INFO] El nuevo registro se ha modificado correctamente ';
@@ -127,7 +125,7 @@ BEGIN
 
 			ELSE
 
-				PL_OUTPUT := '[ERROR] Ya existe un registro dentro del rango de fechas '''||V_FECHA_INICIO||''' y '''||V_FECHA_FIN||''' para el Usuario '||V_USU_ID_ORI||' y Sustituto  '||V_USU_ID_SUS||' ';			
+				PL_OUTPUT := '[ERROR] Ya existe un registro dentro del rango de fechas TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YYYY'') y TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YYYY'') para el Usuario '||V_USU_ID_ORI||' y Sustituto  '||V_USU_ID_SUS||' ';			
 
 			END IF;	
 
@@ -149,16 +147,14 @@ BEGIN
 									, BORRADO = 1 
 							  WHERE USU_ID_ORI = '||V_USU_ID_ORI||'
 									AND USU_ID_SUS = '||V_USU_ID_SUS||'
-									AND FECHA_INICIO =  '''||V_FECHA_INICIO||'''
+									AND FECHA_INICIO = '''||V_FECHA_INICIO||'''
 									AND BORRADO = 0 ';
-                   
+
 					EXECUTE IMMEDIATE V_SQL;
 
 					PL_OUTPUT := '[INFO] El registro se ha borrado correctamente ';
 
 				ELSE 
-
-					IF V_FECHA_FIN IS NOT NULL THEN
 
 					V_SQL := 'UPDATE '||V_ESQUEMA||'.SGS_GESTOR_SUSTITUTO SET 
 									  USUARIOBORRAR = '''||USUARIO||'''
@@ -166,13 +162,12 @@ BEGIN
 									, BORRADO = 1 
 							  WHERE USU_ID_ORI = '||V_USU_ID_ORI||'
 									AND USU_ID_SUS = '||V_USU_ID_SUS||'
-									AND FECHA_INICIO =  '''||V_FECHA_INICIO||'''
+									AND FECHA_INICIO = '''||V_FECHA_INICIO||'''
 									AND BORRADO = 0 ';
-                    
+
 					EXECUTE IMMEDIATE V_SQL;
 
-					PL_OUTPUT := '[INFO] El registro se ha borrado correctamente ';
-
+					PL_OUTPUT := '[INFO] El registro se ha borrado correctamente ';					
 				END IF;
 
             ELSE 
@@ -187,15 +182,15 @@ BEGIN
         END CASE;
 
     ELSE 
+
 		CASE
-            WHEN OPERACION IS NULL THEN      PL_OUTPUT := '[ERROR] El campo OPERACION se encuentra vacio '; 
+            WHEN OPERACION IS NULL THEN		 PL_OUTPUT := '[ERROR] El campo OPERACION se encuentra vacio '; 
             WHEN V_USU_ID_ORI IS NULL THEN 	 PL_OUTPUT := '[ERROR] El campo V_USU_ID_ORI se encuentra vacio '; 	
             WHEN V_USU_ID_SUS IS NULL THEN 	 PL_OUTPUT := '[ERROR] El campo V_USU_ID_SUS se encuentra vacio '; 
             WHEN V_FECHA_INICIO IS NULL THEN PL_OUTPUT := '[ERROR] El campo V_FECHA_INICIO se encuentra vacio '; 
 		ELSE 
             PL_OUTPUT := '[ERROR] Alguno de los siguientes campos se encuentra vacio : OPERACION ,V_USU_ID_ORI ,V_USU_ID_SUS ,V_FECHA_INICIO '; 
 		END CASE;
-
 
     END IF;
 

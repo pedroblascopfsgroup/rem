@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=David González
---## FECHA_CREACION=20180605
+--## AUTOR=Pablo Meseguer
+--## FECHA_CREACION=20180620
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.0.18
---## INCIDENCIA_LINK=HREOS-4175
+--## VERSION_ARTEFACTO=2.0.19
+--## INCIDENCIA_LINK=HREOS-4197
 --## PRODUCTO=NO
 --## Finalidad: Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación. Liberbank.
 --## Info: https://link-doc.pfsgroup.es/confluence/display/REOS/SP_EXT_PR_ACT_RES_VENTA
@@ -13,6 +13,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Control de errores en HLP_HISTORICO_LANZA_PERIODICO
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -177,6 +178,42 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
          DBMS_OUTPUT.PUT_LINE('[INFO] HLD_HISTORICO_LANZA_PER_DETA | Registro insertado correctamente, no comiteado.');
       ELSE
          DBMS_OUTPUT.PUT_LINE('[ERROR] HLD_HISTORICO_LANZA_PER_DETA | No se ha podido insertar el registro correctamente.');
+      END IF;
+
+    END;
+    
+    --Procedure que inserta en HLP_HISTORICO_LANZA_PERIODICO, sin comitear.
+    PROCEDURE HLP_HISTORICO_LANZA_PERIODICO (
+      HLP_CODIGO_REG                  IN VARCHAR2,
+      HLP_RESULTADO_EJEC              IN NUMBER,
+      HLP_REGISTRO_EJEC               IN VARCHAR2
+    ) IS
+
+    BEGIN
+
+    V_MSQL := '
+      INSERT INTO '||V_ESQUEMA||'.HLP_HISTORICO_LANZA_PERIODICO (
+        HLP_SP_CARGA,
+        HLP_FECHA_EJEC,
+        HLP_RESULTADO_EJEC,
+        HLP_CODIGO_REG,
+        HLP_REGISTRO_EJEC
+      )
+      SELECT
+        ''SP_EXT_PR_ACT_RES_VENTA'',
+        SYSDATE,
+        '||HLP_RESULTADO_EJEC||',
+        '''||HLP_CODIGO_REG||''',
+        '''||HLP_REGISTRO_EJEC||'''
+      FROM DUAL
+      ';
+      EXECUTE IMMEDIATE V_MSQL;
+      
+
+      IF SQL%ROWCOUNT = 1 THEN
+         DBMS_OUTPUT.PUT_LINE('[INFO] HLP_HISTORICO_LANZA_PERIODICO | Registro insertado correctamente, no comiteado.');
+      ELSE
+         DBMS_OUTPUT.PUT_LINE('[ERROR] HLP_HISTORICO_LANZA_PERIODICO | No se ha podido insertar el registro correctamente.');
       END IF;
 
     END;
@@ -499,7 +536,7 @@ BEGIN
                 DBMS_OUTPUT.PUT_LINE('[INFO] ACT_ID > '||V_ACT_ID||', ECO_ID > '||V_ECO_ID||', OFR_ID > '||V_OFR_ID||', RES_ID > '||V_RES_ID||'.');
                 --PASO 1/6 Actualizar el estado del expediente a "Devuelto"
                 V_MSQL := '
-                SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''16'''; /*EN DEVOLUCION*/ 
+                SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''17'''; /*Anulado Pdte Devolución*/ 
                 EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_NUEVO;
 
                 V_MSQL := '
@@ -885,23 +922,7 @@ IF COD_RETORNO = 1 THEN
 
     ROLLBACK;
     DBMS_OUTPUT.PUT_LINE('[ERROR] Procedemos a informar la tabla HLP_HISTORICO_LANZA_PERIODICO.');
-    V_MSQL := '
-    INSERT INTO '||V_ESQUEMA||'.HLP_HISTORICO_LANZA_PERIODICO (
-        HLP_SP_CARGA,
-        HLP_FECHA_EJEC,
-        HLP_RESULTADO_EJEC,
-        HLP_CODIGO_REG,
-        HLP_REGISTRO_EJEC
-    )
-    SELECT
-        ''SP_EXT_PR_ACT_RES_VENTA'',
-        SYSDATE,
-        1,
-        '''||V_CODIGO_TO_HLP||''',
-        '''||V_ERROR_DESC||'''
-    FROM DUAL
-    ';
-    EXECUTE IMMEDIATE V_MSQL;
+    HLP_HISTORICO_LANZA_PERIODICO (TO_CHAR(V_CODIGO_TO_HLP), 1, V_ERROR_DESC);
     COMMIT;
     --Desactivamos el control de errores de negocio.
     /*RAISE ERR_NEGOCIO;*/
@@ -911,24 +932,7 @@ IF COD_RETORNO = 1 THEN
 ELSE --(if COD_RETORNO = 0)
     
     DBMS_OUTPUT.PUT_LINE('[INFO] Procedemos a informar la tabla HLP_HISTORICO_LANZA_PERIODICO.');
-    --De momentos metemos concatenados Numero de Reserva e Id de cobro.
-    V_MSQL := '
-    INSERT INTO '||V_ESQUEMA||'.HLP_HISTORICO_LANZA_PERIODICO (
-        HLP_SP_CARGA,
-        HLP_FECHA_EJEC,
-        HLP_RESULTADO_EJEC,
-        HLP_CODIGO_REG,
-        HLP_REGISTRO_EJEC
-    )
-    SELECT
-        ''SP_EXT_PR_ACT_RES_VENTA'',
-        SYSDATE,
-        0,
-        '''||V_CODIGO_TO_HLP||''',
-        '''||V_PASOS||'''
-    FROM DUAL
-    ';
-    EXECUTE IMMEDIATE V_MSQL;
+    HLP_HISTORICO_LANZA_PERIODICO ('RES: '||V_NUM_RESERVA||' | OFR: '||V_ID_COBRO, 0, V_PASOS);
     COMMIT;
 
     DBMS_OUTPUT.PUT_LINE('[FIN] Procedimiento SP_EXT_PR_ACT_RES_VENTA finalizado correctamente!');
@@ -944,13 +948,14 @@ EXCEPTION
           ROLLBACK;
           RAISE;*/
      WHEN OTHERS THEN
+		  ROLLBACK;
           DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE));
           DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------');
           DBMS_OUTPUT.PUT_LINE(SQLERRM);
           DBMS_OUTPUT.PUT_LINE(V_MSQL);
+          HLP_HISTORICO_LANZA_PERIODICO ('RES: '||NUM_RESERVA||' | OFR: '||IDENTIFICACION_COBRO, 1, SQLERRM);
           COD_RETORNO := 1;
-          ROLLBACK;
-          RAISE;
+          COMMIT;
 END SP_EXT_PR_ACT_RES_VENTA;
 /
 EXIT;

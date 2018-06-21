@@ -56,6 +56,7 @@ BEGIN
 								, USU_ID_ORI
 								, USU_ID_SUS
 								, FECHA_INICIO
+								, FECHA_FIN
 								, USUARIOCREAR
 								, FECHACREAR
 								, USUARIOMODIFICAR
@@ -67,6 +68,7 @@ BEGIN
 									,'||V_USU_ID_ORI||'
 									,'||V_USU_ID_SUS||'
 									,TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YYYY'')
+									,TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YYYY'')
 									,'''||USUARIO||'''
 									,SYSDATE 
 									,NULL

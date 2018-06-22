@@ -13,8 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -25,6 +27,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoVisitasFilter;
+import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisita;
@@ -48,6 +51,9 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 
 	@Autowired
 	private VisitaDao visitaDao;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
 
 	@Override
 	public String managerName() {
@@ -550,6 +556,12 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 
 	@Override
 	public DtoPage getListVisitasDetalle(DtoVisitasFilter dtoVisitasFilter) {
+
+		Usuario usuarioLogeado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS,"usuario.id", usuarioLogeado.getId()));
+		if(!Checks.esNulo(usuarioCartera)){;
+			dtoVisitasFilter.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
+		}
 
 		return visitaDao.getListVisitasDetalle(dtoVisitasFilter);
 

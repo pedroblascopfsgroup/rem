@@ -96,6 +96,10 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 		if(!Checks.esNulo(dtoVisitasFilter.getNumActivo())){
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vvisita.numActivo", dtoVisitasFilter.getNumActivo().toString());
 		}
+		
+		if(!Checks.esNulo(dtoVisitasFilter.getCarteraCodigo())){
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vvisita.carteraCodigo", dtoVisitasFilter.getCarteraCodigo());
+		}
 
 		Page pageVisitas = HibernateQueryUtils.page(this, hb, dtoVisitasFilter);
 

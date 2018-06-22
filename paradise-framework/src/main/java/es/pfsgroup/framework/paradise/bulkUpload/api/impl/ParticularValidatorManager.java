@@ -120,20 +120,34 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			AND BORRADO = 0");
 	}
 	
+	@Override
+	public Boolean esActivoPrincipalEnAgrupacion(Long numActivo) {
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(AGA.AGR_ID) "
+				+ " 		  FROM ACT_AGA_AGRUPACION_ACTIVO AGA, ACT_ACTIVO ACT "
+				+ "			  WHERE ACT.ACT_ID  = AGA.ACT_ID "
+				+ "				AND AGA.AGA_PRINCIPAL = 1"
+				+ "			    AND act.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "			    AND aga.BORRADO  = 0 "
+				+ "			    AND act.BORRADO  = 0");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
 	
 	@Override
 	public Boolean esActivoEnAgrupacion(Long numActivo, Long numAgrupacion) {
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(aga.AGR_ID) "
-				+ "			  FROM ACT_AGA_AGRUPACION_ACTIVO aga, "
-				+ "			    ACT_AGR_AGRUPACION agr, "
-				+ "			    ACT_ACTIVO act "
-				+ "			  WHERE aga.AGR_ID = agr.AGR_ID "
-				+ "			    AND act.act_id   = aga.act_id "
-				+ "			    AND act.ACT_NUM_ACTIVO = "+numActivo+" "
-				+ "			    AND agr.AGR_NUM_AGRUP_REM  = "+numAgrupacion+" "
-				+ "			    AND aga.BORRADO  = 0 "
-				+ "			    AND agr.BORRADO  = 0 "
-				+ "			    AND act.BORRADO  = 0 ");
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(AGA.AGR_ID) "
+				+ "			  FROM ACT_AGA_AGRUPACION_ACTIVO AGA, "
+				+ "			    ACT_AGR_AGRUPACION AGR, "
+				+ "			    ACT_ACTIVO ACT "
+				+ "			  WHERE AGA.AGR_ID = AGR.AGR_ID "
+				+ "			    AND ACT.ACT_ID   = AGA.ACT_ID "
+				+ "			    AND ACT.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "			    AND AGR.AGR_NUM_AGRUP_REM  = "+numAgrupacion+" "
+				+ "			    AND AGA.BORRADO  = 0 "
+				+ "			    AND AGR.BORRADO  = 0 "
+				+ "			    AND ACT.BORRADO  = 0 ");
 		if("0".equals(resultado))
 			return false;
 		else
@@ -1735,4 +1749,142 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	}
 
+	public String idAgrupacionDelActivoPrincipal(String numActivo) {
+		return rawDao.getExecuteSQL("SELECT AGA.AGR_ID"
+				+ "		  FROM ACT_ACTIVO ACT"
+				+ "		  JOIN  ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID AND AGA.BORRADO = 0"
+				+ "       JOIN ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID"
+				+ " 	  WHERE ACT.ACT_NUM_ACTIVO =" + numActivo + " "
+				+ "       AND AGR.DD_TAG_ID = 2");
+	}
+	
+	@Override
+	public Boolean esActivoVendidoAgrupacion(String numAgrupacion){
+		if(Checks.esNulo(numAgrupacion))
+			return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "			FROM  ACT_ACTIVO ACT"
+				+ "			JOIN  ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID AND AGA.BORRADO = 0"
+				+ "			JOIN  ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0"
+				+ "			JOIN  DD_SCM_SITUACION_COMERCIAL SCM ON SCM.DD_SCM_ID = ACT.DD_SCM_ID AND SCM.BORRADO = 0  AND SCM.DD_SCM_CODIGO IN ('05')"
+				+ "			AND   AGR.AGR_ID = " + numAgrupacion + " ");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public Boolean isActivoNoComercializableAgrupacion(String numAgrupacion) {
+		if(Checks.esNulo(numAgrupacion))
+			return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "			FROM  ACT_ACTIVO ACT "
+				+ "			JOIN  ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID AND AGA.BORRADO = 0 "
+				+ "			JOIN  ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0 "
+				+ "			JOIN  DD_SCM_SITUACION_COMERCIAL SCM ON SCM.DD_SCM_ID = ACT.DD_SCM_ID AND SCM.BORRADO = 0 AND SCM.DD_SCM_CODIGO IN ('01')"
+				+ "			AND   AGR.AGR_ID = " + numAgrupacion + " ");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public Boolean isActivoNoPublicableAgrupacion(String numAgrupacion) {
+		if(Checks.esNulo(numAgrupacion))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)" 
+				+ "    		FROM  ACT_ACTIVO ACT" 
+				+ "			JOIN  ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID AND AGA.BORRADO = 0" 
+				+ "			JOIN  ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0" 
+				+ "			JOIN  ACT_PAC_PERIMETRO_ACTIVO PAC ON ACT.ACT_ID = PAC.ACT_ID AND PAC.BORRADO = 0 AND PAC.PAC_CHECK_PUBLICAR <> 1" 
+				+ "			AND   AGR.AGR_ID = " + numAgrupacion + " ");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public Boolean isActivoDestinoComercialNoVentaAgrupacion(String numAgrupacion) {
+		if(Checks.esNulo(numAgrupacion))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "			FROM ACT_ACTIVO ACT"
+				+ "			JOIN  ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID AND AGA.BORRADO = 0"
+				+ "			JOIN  ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0"
+				+ "			JOIN  DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = ACT.DD_TCO_ID AND TCO.BORRADO = 0 AND TCO.DD_TCO_CODIGO NOT IN ('01', '02')"
+				+ "			AND   AGR.AGR_ID = " + numAgrupacion + " ");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public Boolean isActivoSinPrecioVentaWebAgrupacion(String numAgrupacion) {
+		if(Checks.esNulo(numAgrupacion))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT NUM_ACT - NUM_VAL "
+				+ "         FROM ( "
+				+ "         	SELECT COUNT(DISTINCT AGA.ACT_ID) NUM_ACT"
+				+ "				FROM  ACT_AGA_AGRUPACION_ACTIVO AGA"
+				+ " 			JOIN  ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0"
+				+ "				AND   AGR.AGR_ID = " + numAgrupacion + " "
+				+ "         	WHERE AGA.BORRADO = 0),"
+				+ " 				(SELECT COUNT(DISTINCT AGA.ACT_ID) NUM_VAL"
+				+ "					FROM  ACT_AGA_AGRUPACION_ACTIVO AGA "
+				+ "					JOIN  ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0 "
+				+ "					JOIN  ACT_VAL_VALORACIONES VAL ON VAL.ACT_ID = AGA.ACT_ID AND VAL.BORRADO = 0"
+				+ "					JOIN  DD_TPC_TIPO_PRECIO TPC ON TPC.DD_TPC_ID = VAL.DD_TPC_ID AND TPC.BORRADO = 0 AND TPC.DD_TPC_CODIGO = '02'"
+				+ " 				AND   AGR.AGR_ID = " + numAgrupacion + " "
+				+ " 				WHERE AGA.BORRADO = 0)");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public Boolean isActivoPublicadoAgrupacion(String numAgrupacion){
+		if(Checks.esNulo(numAgrupacion)) 
+			return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "			FROM  ACT_ACTIVO ACT "
+				+ "			JOIN  ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID AND AGA.BORRADO = 0"
+				+ "			JOIN  ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0 "
+				+ "			WHERE ACT.ACT_ID IN ("
+				+ "				SELECT APU.ACT_ID FROM ACT_APU_ACTIVO_PUBLICACION APU WHERE APU.BORRADO = 0)"
+				+ "			AND   AGR.AGR_ID = " + numAgrupacion + " ");
+		if("0".equals(resultado)){
+			return false;
+		}else {
+			return true;
+		}
+	}
+	
+	@Override
+	public Boolean isActivoSinInformeAprobadoAgrupacion(String numAgrupacion) {
+		if(Checks.esNulo(numAgrupacion))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT (1) "
+				+ "			FROM ACT_ACTIVO ACT "
+				+ "			JOIN REM01.ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID AND AGA.BORRADO = 0 "
+				+ "         JOIN REM01.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0 "
+				+ "			JOIN REM01.V_COND_DISPONIBILIDAD COND ON COND.ACT_ID = ACT.ACT_ID AND COND.SIN_INFORME_APROBADO = 1 "
+				+ "			AND   AGR.AGR_ID = " + numAgrupacion + " ");
+		if("0".equals(resultado)){
+			return true;
+		}else {
+			return false;
+		}
+	}
 }

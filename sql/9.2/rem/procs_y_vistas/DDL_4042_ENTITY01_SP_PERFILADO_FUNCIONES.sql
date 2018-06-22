@@ -1,17 +1,18 @@
 --/*
 --######################################### 
---## AUTOR=ANGEL PASTELERO
+--## AUTOR= PIER GOTTA
 --## FECHA_CREACION=20180418
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-4011
+--## INCIDENCIA_LINK=HREOS-4087
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Procedimiento encargado de perfilar las funciones.
 --##      
 --## INSTRUCCIONES:  
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 ANGEL PASTELERO - HREOS-4011
+--##	    0.2 PIER GOTTA - HREOS-4087
 --#########################################
 --*/
 
@@ -31,7 +32,8 @@ AS
 
   V_TABLA VARCHAR2(30 CHAR) := 'FUN_PEF';  -- Tabla objetivo     
   V_TABLA_TMP VARCHAR2(30 CHAR) := 'TMP_FUN_PEF';  -- Tabla objetivo
-
+  
+  vVERSION VARCHAR2(5 CHAR);
   --Array que contiene los registros que se van a actualizar
   TYPE T_VAR is table of VARCHAR2(250); 
   TYPE T_ARRAY IS TABLE OF T_VAR;
@@ -235,6 +237,10 @@ T_VAR( 'MASIVO_PUBLICACION_VENTA','N','N','N','N','N','N','S','S','S','S','N','N
 T_VAR( 'MASIVO_PUBLICACION_ALQUILER','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'MASIVO_OCULTACION_VENTA','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'MASIVO_OCULTACION_ALQUILER','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
+T_VAR
+( 'MASIVO_PUBLICACION_VENTA_RESTRINGIDO','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
+T_VAR
+( 'MASIVO_PUBLICACION_ALQUILER_RESTRINGIDO','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
 
 T_VAR( 'MENU_DASHBOARD','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'MENU_AGENDA','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S'),
@@ -258,6 +264,8 @@ BEGIN
     --######################################
     --########   INSERTAR VALORES  #########
     --######################################
+    
+    vVERSION := '0.2';
 
     -- Verificar si la tabla existe
     V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA_TMP||''' AND OWNER = '''||V_ESQUEMA||'''';

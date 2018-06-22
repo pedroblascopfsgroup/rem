@@ -9,8 +9,6 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
-import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

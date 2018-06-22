@@ -13,6 +13,12 @@ public class MSVExcelValidatorFactoryImpl {
 //	public static final Long CODE_BULKUPLOAD_ID_NEW_BUILDING = new Long(122);
 
 	@Autowired
+	private MSVActualizadorPublicadoVentaRestringidoExcelValidator agrupacionRestringidoPublicarVentaExcelValidator;
+	
+	@Autowired
+	private MSVActualizadorPublicadoAlquilerRestringidoExcelValidator agrupacionRestringidoPublicarAlquilerExcelValidator;
+	
+	@Autowired
 	private MSVAgrupacionRestringidoExcelValidator agrupacionRestringidoExcelValidator;
 	
 	@Autowired
@@ -91,15 +97,19 @@ public class MSVExcelValidatorFactoryImpl {
 	
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 		
-		if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPATION_RESTRICTED.equals(codTipoOperacion)) {
-			return agrupacionRestringidoExcelValidator;
-		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_NEW_BUILDING.equals(codTipoOperacion)) {
-			return agrupacionObraNuevaExcelValidator;
+			if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPATION_RESTRICTED.equals(codTipoOperacion)) {
+				return agrupacionRestringidoExcelValidator;
+			} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_VENTA_RESTRINGIDA.equals(codTipoOperacion)) {
+				return agrupacionRestringidoPublicarVentaExcelValidator;
+			} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_ALQUILER_RESTRINGIDA.equals(codTipoOperacion)) {
+				return agrupacionRestringidoPublicarAlquilerExcelValidator;
+			} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_NEW_BUILDING.equals(codTipoOperacion)) {
+				return agrupacionObraNuevaExcelValidator;
 			} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_ASISTIDA.equals(codTipoOperacion)) {
 				return agrupacionAsistidaExcelValidator;
 			} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_LOTE_COMERCIAL.equals(codTipoOperacion)) {
 				return agrupacionLoteComercialExcelValidator;
-			}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ALTA_ACTIVOS_FINANCIEROS.equals(codTipoOperacion)) {
+			} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ALTA_ACTIVOS_FINANCIEROS.equals(codTipoOperacion)) {
 				return altaActvos;
 			} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_LISTAACTIVOS.equals(codTipoOperacion)) {
 				return listadoActivosExcelValidator;

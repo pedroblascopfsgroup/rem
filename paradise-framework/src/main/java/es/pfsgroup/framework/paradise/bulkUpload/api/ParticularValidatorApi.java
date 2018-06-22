@@ -4,8 +4,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
-
 public interface ParticularValidatorApi {
 
 	public String getOneNumActivoAgrupacionRaw(String numAgrupacion);
@@ -21,8 +19,10 @@ public interface ParticularValidatorApi {
 	public String existeActivoEnAgrupacion(Long idActivo, Long idAgrupacion);
 
 	public Boolean esActivoEnAgrupacion(Long idActivo, Long idAgrupacion);
-	
+		
 	public Boolean esActivoEnAgrupacionPorTipo(Long numActivo, String codTipoAgrupacion);
+	
+	public Boolean esActivoPrincipalEnAgrupacion(Long numActivo);
 
 	public Boolean esActivoEnOtraAgrupacion(Long numActivo, Long numAgrupacion);
 
@@ -355,5 +355,19 @@ public interface ParticularValidatorApi {
 	Boolean existeProveedorMediadorByNIFConFVD(String proveedorMediadorNIF);
 
 	boolean activoMismoScmActivoPrincipalAgrupacion(String numActivo, String numAgrupacion);
+	public String idAgrupacionDelActivoPrincipal(String numActivo);
 
+	public Boolean esActivoVendidoAgrupacion(String numAgrupacion);
+
+	public Boolean isActivoNoComercializableAgrupacion(String numAgrupacion);
+
+	public Boolean isActivoNoPublicableAgrupacion(String numAgrupacion);
+ 
+	public Boolean isActivoDestinoComercialNoVentaAgrupacion(String numAgrupacion);
+
+	public Boolean isActivoSinPrecioVentaWebAgrupacion(String numAgrupacion);
+
+	public Boolean isActivoPublicadoAgrupacion(String numAgrupacion);
+
+	public Boolean isActivoSinInformeAprobadoAgrupacion(String numAgrupacion);
 }

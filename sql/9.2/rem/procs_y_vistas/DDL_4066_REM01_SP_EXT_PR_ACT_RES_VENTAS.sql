@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Pablo Meseguer
---## FECHA_CREACION=20180620
+--## FECHA_CREACION=20180622
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.19
 --## INCIDENCIA_LINK=HREOS-4197
@@ -14,6 +14,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##		0.2 Control de errores en HLP_HISTORICO_LANZA_PERIODICO
+--##        0.3 (20180622) - Marco Munoz - Se soluciona log de error de la HLP para tener siempre el mismo formato.
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -914,9 +915,9 @@ IF COD_RETORNO = 1 THEN
         V_CODIGO_TO_HLP := 'RES: '||V_NUM_RESERVA||' | OFR: '||V_ID_COBRO;
     ELSE
         IF V_NUM_RESERVA IS NOT NULL THEN
-            V_CODIGO_TO_HLP := V_NUM_RESERVA;
+            V_CODIGO_TO_HLP := 'RES: '||V_NUM_RESERVA||' | OFR: NULL';
         ELSE
-            V_CODIGO_TO_HLP := V_ID_COBRO;
+            V_CODIGO_TO_HLP := 'RES: NULL | OFR: '||V_ID_COBRO;
         END IF;
     END IF;
 

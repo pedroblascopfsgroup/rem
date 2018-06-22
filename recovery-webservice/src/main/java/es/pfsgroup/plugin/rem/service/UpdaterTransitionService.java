@@ -113,14 +113,7 @@ public class UpdaterTransitionService {
 	}
 	@Transactional(readOnly = false)
 	public void updateT013_CierreEconomico(DtoSaltoTarea dto) {
-		//Firmado
-		Filter filtro;
-		DDEstadosExpedienteComercial estado;
-
-		filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.FIRMADO);
-		estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-		
-		update(estado, dto);
+		update(dto);
 	}
 	public void updateT013_ResolucionComite(DtoSaltoTarea dto) {
 		//Pte sanción
@@ -209,6 +202,40 @@ public class UpdaterTransitionService {
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(activoTramite.getTrabajo());
 		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 		Reserva reserva = expediente.getReserva();
+		
+		expediente.setEstado(estado);
+		
+		updateExpediente(expediente, dto);
+		
+		updateOferta(ofertaAceptada, dto);
+		
+		if(Checks.esNulo(reserva))
+			expedienteComercialApi.createReservaExpediente(expediente);
+			
+		updateReserva(reserva, dto);
+		
+		
+	}
+	
+	private void update(DtoSaltoTarea dto) {
+		
+		ActivoTramite activoTramite = activoTramiteApi.get(dto.getIdTramite());
+		
+		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(activoTramite.getTrabajo());
+		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+		Reserva reserva = expediente.getReserva();
+		
+		Filter filtro;
+		DDEstadosExpedienteComercial estado;
+
+		//si esta informada la fecha de ingreso cheque el expediente pasa a vendido, si no a firmado
+		if(expediente.getFechaContabilizacionPropietario() != null){
+			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.VENDIDO);
+		}else{
+			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.FIRMADO);
+		}
+		
+		estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 		
 		expediente.setEstado(estado);
 		

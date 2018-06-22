@@ -103,6 +103,7 @@ import es.pfsgroup.plugin.rem.model.DtoFormalizacionResolucion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoInformeJuridico;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
+import es.pfsgroup.plugin.rem.model.DtoModificarCompradores;
 import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
@@ -6058,6 +6059,33 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			return false;
 		}
 		
+	}
+	
+	@Override
+	public DtoModificarCompradores vistaADtoModCompradores (VBusquedaDatosCompradorExpediente vista){
+		DtoModificarCompradores comprador = new DtoModificarCompradores();
+		
+		try {
+			beanUtilNotNull.copyProperties(comprador, vista);
+			
+			comprador.setEsBH(esBH(vista.getIdExpedienteComercial()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return comprador;
+	}
+	
+	@Override
+	public Boolean esBH(String idExpediente){
+		Long id = Long.parseLong(idExpediente);
+		
+		ExpedienteComercial exp = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+		ActivoOferta ofr = genericDao.get(ActivoOferta.class, genericDao.createFilter(FilterType.EQUALS, "oferta", exp.getOferta().getId()));
+		
+		Activo act = ofr.getPrimaryKey().getActivo();
+		
+		return DDSubcartera.CODIGO_BAN_BH.equals(act.getSubcartera().getCodigo());
 	}
 	
 }

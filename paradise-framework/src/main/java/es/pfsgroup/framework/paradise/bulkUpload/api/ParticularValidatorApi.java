@@ -354,4 +354,6 @@ public interface ParticularValidatorApi {
 
 	Boolean existeProveedorMediadorByNIFConFVD(String proveedorMediadorNIF);
 
+	boolean activoMismoScmActivoPrincipalAgrupacion(String numActivo, String numAgrupacion);
+
 }

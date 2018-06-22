@@ -1722,4 +1722,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	}
 	
+	@Override
+	public boolean activoMismoScmActivoPrincipalAgrupacion(String numActivo, String numAgrupacion) {
+
+		String activoSCM = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "FROM ACT_ACTIVO ACT "
+				+ "WHERE ACT.ACT_ID = "+ numActivo +" "
+				+ "AND DD_SCM_ID = "
+				+ "(SELECT ACT.DD_SCM_ID FROM ACT_ACTIVO ACT JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID WHERE AGA.AGA_PRINCIPAL = 1 AND AGA.AGR_ID = "+ numAgrupacion +")");
+		
+		return activoSCM.equals("1");
+
+	}
+
 }

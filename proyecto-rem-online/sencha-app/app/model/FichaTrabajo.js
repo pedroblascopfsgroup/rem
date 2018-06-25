@@ -21,6 +21,8 @@ Ext.define('HreRem.model.FichaTrabajo', {
 		name : 'numTrabajo'
 	}, {
 		name : 'nombreProveedor'
+	},{
+		name : 'idProveedor'
 	}, {
 		name : 'tipoTrabajoCodigo'
 	}, {

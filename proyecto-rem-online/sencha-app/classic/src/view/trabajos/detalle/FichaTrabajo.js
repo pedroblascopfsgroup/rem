@@ -21,10 +21,11 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
         me.idSolicitante =  me.lookupController().getViewModel().get('trabajo').get('idSolicitante');
         me.idResponsableTrabajo = me.lookupController().getViewModel().get('trabajo').get('idResponsableTrabajo');
         //NOTA: En cuanto a la edición del campo “Responsable del trabajo”, sólo podrán ejecutar dicha acción, el responsable del mismo en ese instante, y su supervisor.
-        var editar = ($AU.getUser().userId == me.idGestorActivoResponsable || $AU.getUser().userId == me.idSupervisorActivo);
+        var editar =  !($AU.getUser().userId == me.idResponsableTrabajo || $AU.getUser().userId == me.idSupervisorActivo);
         //NOTA: En cuanto a la visualización del campo “Responsable del trabajo”, 
         //lo podrán ver tanto el “Gestor/Supervisor de activo” y el “Gestor/Supervisor de alquileres, edificaciones, suelo”, así comomo, el proveedor y el solicitante.
-        var mostrar =  !($AU.getUser().userId ==  me.idResponsableTrabajo || $AU.getUser().userId ==  me.idProveedor ||$AU.getUser().userId==  me.idSolicitante);
+        var mostrar =  !($AU.getUser().userId ==  me.idResponsableTrabajo|| $AU.getUser().userId ==   me.idSupervisorActivo || 
+        		$AU.getUser().userId ==  me.idGestorActivoResponsable ||$AU.getUser().userId ==  me.idProveedor || $AU.getUser().userId==  me.idSolicitante);
         
              me.items= [
         			{

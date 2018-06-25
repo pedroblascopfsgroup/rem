@@ -186,6 +186,31 @@ public class GenericAdapter {
 
 		return usuario.getPerfiles().contains(perfilProveedor);
 	}
+	
+	
+	public Boolean isGestorAlquileres(Usuario usuario) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "GALQ");
+		Perfil perfilProveedor = genericDao.get(Perfil.class, filtro);
+
+		return usuario.getPerfiles().contains(perfilProveedor);
+	}
+	
+	public Boolean isGestorSuelos(Usuario usuario) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "GSUE");
+		Perfil perfilProveedor = genericDao.get(Perfil.class, filtro);
+
+		return usuario.getPerfiles().contains(perfilProveedor);
+	}
+	
+	public Boolean isGestorEdificaciones(Usuario usuario) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "GSUE");
+		Perfil perfilProveedor = genericDao.get(Perfil.class, filtro);
+
+		return usuario.getPerfiles().contains(perfilProveedor);
+	}
+
+	
+	
 
 	/**
 	 * Es proveedor HAYA o CEE?

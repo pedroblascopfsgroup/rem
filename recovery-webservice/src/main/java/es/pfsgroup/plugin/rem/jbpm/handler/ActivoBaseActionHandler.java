@@ -726,9 +726,15 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 		
 		Usuario gestor = userAssigantionService.getUser(tareaExterna);
 		Usuario supervisor = userAssigantionService.getSupervisor(tareaExterna);
+		Usuario nuevoResponsable = adapter.getUsuarioLogado();
+
 		
 		// Asignador de GESTOR por factoria - Gestores encontrados por tarea-Activo
-		if(!Checks.esNulo(gestor)){
+		
+		if ((!Checks.esNulo(nuevoResponsable)) && (adapter.isGestorAlquileres(nuevoResponsable) || adapter.isGestorSuelos(nuevoResponsable)|| adapter.isGestorEdificaciones(nuevoResponsable))) {
+				tareaActivo.setUsuario(nuevoResponsable);
+		}
+		else if(!Checks.esNulo(gestor) ){
 			tareaActivo.setUsuario(gestor);
 		} else {
 			// HREOS-1714 Si el asignador de usuarios NO encuentra el gestor correspondiente:
@@ -762,6 +768,11 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 				}
 			}
 		}
+		
+	
+		
+		
+		
 			
     }
     

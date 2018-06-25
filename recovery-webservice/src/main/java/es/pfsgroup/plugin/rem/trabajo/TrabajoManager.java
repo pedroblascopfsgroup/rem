@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -33,9 +34,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.persona.model.DDTipoGestorEntidad;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.domain.Perfil;
@@ -66,6 +65,7 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
@@ -103,7 +103,6 @@ import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
-import es.pfsgroup.plugin.rem.model.PresupuestoActivo;
 import es.pfsgroup.plugin.rem.model.PresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -121,7 +120,6 @@ import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresupuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAdelanto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
@@ -137,6 +135,7 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
+import es.pfsgroup.plugin.rem.trabajo.dao.impl.TrabajoDaoImpl;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
@@ -159,6 +158,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private TrabajoDaoImpl trabajoDaoImp;
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
@@ -207,6 +209,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	ActivoTareaExternaApi activoTareaExternaManagerApi;
 	
 	@Autowired
 	private UpdaterStateApi updaterStateApi;
@@ -289,6 +294,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Override
 	@BusinessOperation(overrides = "trabajoManager.getTrabajoById")
+	@Transactional(readOnly = false)
 	public Object getTrabajoById(Long id, String pestana) {
 
 		Trabajo trabajo = findOne(id);
@@ -331,6 +337,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public boolean saveFichaTrabajo(DtoFichaTrabajo dtoTrabajo, Long id) {
 
 		Trabajo trabajo = trabajoDao.get(id);
+		
 
 		try {
 
@@ -346,6 +353,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 
 			dtoToTrabajo(dtoTrabajo, trabajo);
+			editarTramites(trabajo);
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -1092,6 +1100,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			Usuario usuario = genericDao.get(Usuario.class, filtro);
 			
 			trabajo.setResponsableTrabajo(usuario);
+			
 		}
 		
 	}
@@ -1286,7 +1295,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		if (trabajo.getProveedorContacto() != null && trabajo.getProveedorContacto().getProveedor() != null) {
 			dtoTrabajo.setNombreProveedor(trabajo.getProveedorContacto().getProveedor().getNombreComercial());
-			System.out.print(trabajo.getProveedorContacto().getProveedor().getId().toString());
 			dtoTrabajo.setIdProveedor(trabajo.getProveedorContacto().getProveedor().getId());
 		}
 
@@ -1350,6 +1358,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		} else {
 			Usuario supervisorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS);
 			if(!Checks.esNulo(supervisorActivo)){
+				
+				List<TareaExterna> lista =  activoTareaExternaManagerApi.getTareasByIdTramite(activo.getId());
 				dtoTrabajo.setSupervisorActivo(supervisorActivo.getApellidoNombre());
 				dtoTrabajo.setIdSupervisorActivo(supervisorActivo.getId());
 			}
@@ -1358,7 +1368,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if(!Checks.esNulo(trabajo.getResponsableTrabajo())){
 			dtoTrabajo.setResponsableTrabajo(trabajo.getResponsableTrabajo().getApellidoNombre());
 			dtoTrabajo.setIdResponsableTrabajo(trabajo.getResponsableTrabajo().getId());
-
+			
 		}
 		
 		if(trabajo.getEsTarifaPlana()){
@@ -1370,9 +1380,36 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		 if(!Checks.esNulo(trabajo.getFechaAutorizacionPropietario())) {
 			dtoTrabajo.setFechaAutorizacionPropietario(trabajo.getFechaAutorizacionPropietario());
 		 }
+		 
+	
+		 
+		
+		 
 
 		return dtoTrabajo;
 	}
+	
+	@Transactional(readOnly = false)
+	private void editarTramites (Trabajo trabajo) {
+	
+	 List<ActivoTramite> listActTra = genericDao.getList(ActivoTramite.class,genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+	 for (ActivoTramite actTra : listActTra) {
+		 List<TareaActivo> listaActivo = genericDao.getList(TareaActivo.class,genericDao.createFilter(FilterType.EQUALS, "tramite.id", actTra.getId()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+		 for (TareaActivo tarAct: listaActivo) {
+			 if(!Checks.esNulo(trabajo.getResponsableTrabajo())){
+				 tarAct.setUsuario(trabajo.getResponsableTrabajo());
+					genericDao.save(TareaActivo.class, tarAct);
+						
+				 
+			 }
+			 else {
+				 
+			 }
+
+		 }
+	 }
+	}
+	 
 
 	private DtoGestionEconomicaTrabajo trabajoToDtoGestionEconomicaTrabajo(Trabajo trabajo)
 			throws IllegalAccessException, InvocationTargetException {

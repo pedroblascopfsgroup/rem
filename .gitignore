@@ -37,4 +37,7 @@ SQLs-list.txt
 sql/SQLs-list.txt
 sql/.project
 sql/pitertul
+reports/salida/
+reports/*.csv
+reports/salida.zip
 

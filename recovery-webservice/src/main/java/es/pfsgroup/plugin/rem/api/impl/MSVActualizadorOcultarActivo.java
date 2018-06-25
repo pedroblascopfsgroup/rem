@@ -18,6 +18,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 
 @Component
 public class MSVActualizadorOcultarActivo extends AbstractMSVActualizador implements MSVLiberator {
@@ -38,7 +39,7 @@ public class MSVActualizadorOcultarActivo extends AbstractMSVActualizador implem
 
 	@Override
 	@Transactional(readOnly = false)
-	public void procesaFila(MSVHojaExcel exc, int fila) throws IOException, ParseException, JsonViewerException, SQLException {
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
 		
 		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 		String motivo = exc.dameCelda(fila, 1);
@@ -52,6 +53,7 @@ public class MSVActualizadorOcultarActivo extends AbstractMSVActualizador implem
 		dtoCambioEstadoPublicacion.setMotivoOcultacionForzada(motivo);
 		
 		activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion);
+		return new ResultadoProcesarFila();
 	}
 
 }

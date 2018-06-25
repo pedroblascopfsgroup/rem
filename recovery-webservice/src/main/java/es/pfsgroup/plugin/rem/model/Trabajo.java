@@ -249,13 +249,18 @@ public class Trabajo implements Serializable, Auditable {
     
     @Column(name="STR_TARIFA_PLANA")
     private Boolean esTarifaPlana = false;
+    
+    @Column(name = "ACT_COD_PROMOCION_PRINEX")
+    private String codigoPromocionPrinex;
        	
 	@Version   
 	private Long version;
 	
-	
 	@Embedded
-	private Auditoria auditoria;		
+	private Auditoria auditoria;
+	
+	@Column(name="TBJ_FECHA_AUTORIZACION_PROPIET")
+    private Date fechaAutorizacionPropietario;	
 	
 	
 	public Long getId() {
@@ -265,7 +270,6 @@ public class Trabajo implements Serializable, Auditable {
 	public void setId(Long id) {
 		this.id = id;
 	}
-
 
 	public Long getNumTrabajo() {
 		return numTrabajo;
@@ -630,6 +634,14 @@ public class Trabajo implements Serializable, Auditable {
 	public void setAdjuntos(List<AdjuntoTrabajo> adjuntos) {
 		this.adjuntos = adjuntos;
 	}
+	
+	public Date getFechaAutorizacionPropietario() {
+		return fechaAutorizacionPropietario;
+	}
+
+	public void setFechaAutorizacionPropietario(Date fechaAutorizacionPropietario) {
+		this.fechaAutorizacionPropietario = fechaAutorizacionPropietario;
+	}
 
 	public Integer getDiasRetrasoOrigen() {
 		
@@ -657,7 +669,6 @@ public class Trabajo implements Serializable, Auditable {
 			return  Integer.valueOf(0);
 		}	
 	}
-	
 	
 	public Integer getDiasRetrasoMesCurso() {
 		try{
@@ -697,8 +708,6 @@ public class Trabajo implements Serializable, Auditable {
 		}	
 	}
 	
-
-	
 	public Double getImportePenalizacionTotal() {
 		try{
 			
@@ -720,7 +729,6 @@ public class Trabajo implements Serializable, Auditable {
 		}	
 	}
 
-	
 	public Double getImportePenalizacionMesCurso() {
 		try{
 			
@@ -781,11 +789,9 @@ public class Trabajo implements Serializable, Auditable {
         return null;
     }
 
-
 	public Boolean getEsTarificado() {
 		return esTarificado;
 	}
-
 
 	public void setEsTarificado(Boolean esTarificado) {
 		this.esTarificado = esTarificado;
@@ -871,5 +877,12 @@ public class Trabajo implements Serializable, Auditable {
 		this.esTarifaPlana = esTarifaPlana;
 	}
 
+	public String getCodigoPromocionPrinex() {
+		return codigoPromocionPrinex;
+	}
+
+	public void setCodigoPromocionPrinex(String codigoPromocionPrinex) {
+		this.codigoPromocionPrinex = codigoPromocionPrinex;
+	}
 
 }

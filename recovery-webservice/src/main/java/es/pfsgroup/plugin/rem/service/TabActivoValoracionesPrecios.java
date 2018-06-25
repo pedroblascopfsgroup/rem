@@ -102,6 +102,13 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 	
 						if(val.getTipoPrecio() != null && val.getTipoPrecio().getCodigo().equalsIgnoreCase("12"))
 							beanUtilNotNull.copyProperty(valoracionesDto, "valorEstimadoRenta", val.getImporte());
+						
+						if(val.getTipoPrecio() != null && val.getTipoPrecio().getCodigo().equalsIgnoreCase("21"))
+							beanUtilNotNull.copyProperty(valoracionesDto, "deudaBruta", val.getImporte());
+						
+						if(val.getTipoPrecio() != null && val.getTipoPrecio().getCodigo().equalsIgnoreCase("22"))
+							beanUtilNotNull.copyProperty(valoracionesDto, "valorRazonable", val.getImporte());
+						
 						/*
 						 * valorLegalVpo se informa desde la Info administrativa
 						if(val.getTipoPrecio() != null && val.getTipoPrecio().getCodigo().equalsIgnoreCase("09"))

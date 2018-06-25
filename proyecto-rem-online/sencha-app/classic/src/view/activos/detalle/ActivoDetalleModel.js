@@ -213,6 +213,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			   		return 'app-tbfiedset-ico icono-ko'
 			   	}
 			 },
+			 getIconClsCondicionantesSinAcceso: function(get) {
+			var condicion = get('activoCondicionantesDisponibilidad.sinAcceso');
+			   	if(!eval(condicion)) {
+			   		return 'app-tbfiedset-ico'
+			   	} else {
+			   		return 'app-tbfiedset-ico icono-ko'
+			   	}
+			 },
 		 getSiNoFromOtro: function(get) {
 				var condicion = get('activoCondicionantesDisponibilidad.otro');
 
@@ -272,6 +280,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		 
 		 activoPerteneceAgrupacionRestringida: function(get){
 		 	 return get('activo.pertenceAgrupacionRestringida');
+		 },
+		 
+		 esEditableCodigoPromocion: function(get){
+			 var isGestorActivos = $AU.userIsRol('HAYAGESACT') || $AU.userIsRol('HAYAGESTADM');
+			 var isLiberbank = get('activo.isCarteraLiberbank');
+			 if(isGestorActivos && isLiberbank) return true;
+			 else return false;
 		 }
 	 },
 

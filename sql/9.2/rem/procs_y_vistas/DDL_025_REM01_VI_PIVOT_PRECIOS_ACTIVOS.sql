@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=JOSEVI JIMENEZ
---## FECHA_CREACION=20170113
+--## AUTOR=JIN LI HU
+--## FECHA_CREACION=20180522
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1378
+--## INCIDENCIA_LINK=HREOS-4118
 --## PRODUCTO=NO
 --## Finalidad: DDL con vista de ultimo precio por activo. Correccion para quitar los borrados logicos de valoraciones
 --##           
@@ -78,7 +78,9 @@ BEGIN
 				''17'' as "VACBE",
 				''18'' as "COSTE_ADIQUISICION",
 				''19'' as "FSV_VENTA",
-				''20'' as "FSV_RENTA"))';
+				''20'' as "FSV_RENTA",
+				''21'' as "DEUDA_BRUTA",
+				''22'' as "VALOR_RAZONABLE"))';
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_PIVOT_PRECIOS_ACTIVOS...Creada OK');
   

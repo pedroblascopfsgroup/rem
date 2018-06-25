@@ -21,5 +21,5 @@ public interface GestorEntidadApi {
 	void borrarGestorAdicionalEntidad(GestorEntidadDto dto);
 	List<EXTDDTipoGestor> getListTipoGestorEditables(Long idTipoGestor);
 	List<Usuario> getListUsuariosGestoresExpedientePorTipo(Long idTipoGestor);
-
+	String getCodigoGestorPorUsuario(Long idUsuario);
 }

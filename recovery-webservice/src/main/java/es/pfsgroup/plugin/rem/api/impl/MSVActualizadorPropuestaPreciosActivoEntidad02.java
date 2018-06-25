@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
@@ -66,7 +67,7 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad02 extends AbstractMSVA
 
 	@Override
 	@Transactional(readOnly = false)
-	public void procesaFila(MSVHojaExcel exc, int fila) throws IOException, ParseException, JsonViewerException, SQLException {
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
 		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, EXCEL_COL_NUMACTIVO)));
 		Boolean actualizatTipoComercializacionActivo = false;
 		
@@ -158,7 +159,7 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad02 extends AbstractMSVA
 		//Actualizar el tipoComercialización del activo
 		if(actualizatTipoComercializacionActivo)
 			updaterState.updaterStateTipoComercializacion(activo);
-			
+		return new ResultadoProcesarFila();
 	}
 
 	private void actualizarCrearValoresPrecios(Activo activo, String codigoTipoPrecio,

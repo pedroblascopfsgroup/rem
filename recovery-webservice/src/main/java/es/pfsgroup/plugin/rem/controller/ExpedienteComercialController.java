@@ -53,6 +53,7 @@ import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoInformeJuridico;
 import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
+import es.pfsgroup.plugin.rem.model.DtoModificarCompradores;
 import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
@@ -97,7 +98,6 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@Autowired
 	private DownloaderFactoryApi downloaderFactoryApi;
-	
 	
 	/**
 	 * Método para modificar la plantilla de JSON utilizada en el servlet.
@@ -163,7 +163,8 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	public ModelAndView getTabExpediente(Long id, String tab, ModelMap model) {
 
 		try {
-			model.put("data", expedienteComercialApi.getTabExpediente(id, tab));
+			Object data = expedienteComercialApi.getTabExpediente(id, tab);
+			model.put("data", data);
 			model.put("success", true);
 		} catch (Exception e) {
 			model.put("success", false);
@@ -665,7 +666,10 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	public ModelAndView getCompradorById(VBusquedaDatosCompradorExpediente dto, ModelMap model ) {
 		
 		try {
-			VBusquedaDatosCompradorExpediente comprador = expedienteComercialApi.getDatosCompradorById(dto.getId(), dto.getIdExpedienteComercial());
+			VBusquedaDatosCompradorExpediente vista = expedienteComercialApi.getDatosCompradorById(dto.getId(), dto.getIdExpedienteComercial());
+			
+			DtoModificarCompradores comprador = expedienteComercialApi.vistaADtoModCompradores(vista);
+			
 			model.put("data", comprador);
 			//model.put("success", true);
 		}catch (Exception e) {

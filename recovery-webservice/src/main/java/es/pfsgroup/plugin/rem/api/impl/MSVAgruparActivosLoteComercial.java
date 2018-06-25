@@ -14,6 +14,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 
 @Component
 public class MSVAgruparActivosLoteComercial extends AbstractMSVActualizador implements MSVLiberator {
@@ -31,11 +32,12 @@ public class MSVAgruparActivosLoteComercial extends AbstractMSVActualizador impl
 
 	@Override
 	@Transactional(readOnly = false)
-	public void procesaFila(MSVHojaExcel exc, int fila) throws IOException, ParseException, JsonViewerException, SQLException {
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
 		
 		Long numAgrupRem = new Long(exc.dameCelda(fila, 0));
 		Long agrupacionId = agrupacionAdapter.getAgrupacionIdByNumAgrupRem(numAgrupRem);
-		agrupacionAdapter.createActivoAgrupacion(new Long(exc.dameCelda(fila, 1)), agrupacionId, null);	
+		agrupacionAdapter.createActivoAgrupacion(new Long(exc.dameCelda(fila, 1)), agrupacionId, null,false);	
+		return new ResultadoProcesarFila();
 	}
 
 }

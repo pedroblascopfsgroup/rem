@@ -73,11 +73,13 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVActualizarGestores actualizarGestores;
 	
 	@Autowired
+	private MSVVentaDeCarteraExcelValidator ventaDeCartera;
+
+	@Autowired
 	private MSVOkTecnicoExcelValidator okTecnicoValidator;
 	
 	@Autowired
 	private MSVActivosGastoPorcentajeValidator activosGastoPorcentajeValidator;
-	
 	
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 		
@@ -139,6 +141,9 @@ public class MSVExcelValidatorFactoryImpl {
 				return okTecnicoValidator;
 			}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_ACTIVOS_GASTOS_PORCENTAJE.equals(codTipoOperacion)){
 				return activosGastoPorcentajeValidator;
+			}
+			else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA.equals(codTipoOperacion)){
+				return ventaDeCartera;
 			}
 		return null;
 	}

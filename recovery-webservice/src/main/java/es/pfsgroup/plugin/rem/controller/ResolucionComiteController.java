@@ -25,8 +25,10 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.listener.ActivoGenerarSaltoImpl;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoSaltoTarea;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
@@ -41,6 +43,7 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import es.pfsgroup.plugin.rem.service.UpdaterTransitionService;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateOfertaApi;
 import net.sf.json.JSONObject;
 
@@ -72,6 +75,9 @@ public class ResolucionComiteController {
 	
 	@Autowired
 	private UpdaterStateOfertaApi updaterStateOfertaApi;
+	
+	@Autowired 
+    private UpdaterTransitionService updaterTransitionService;
 
 	public static final String ACCION_ANULACION_RESOLUCION = "2";
 	public static final String ACCION_RESOLUCION_DEVOLUCION = "3";
@@ -143,7 +149,7 @@ public class ResolucionComiteController {
 								if (!Checks.esNulo(tarea)) {
 									tareaActivoApi.guardarDatosResolucion(tarea.getId(), resolucionComiteDto.getFechaAnulacion(), resolucionComiteDto.getCodigoResolucion());
 									tareaActivoApi.saltoDesdeTareaExterna(tarea.getId(), tareaAnterior.getTareaProcedimiento().getCodigo());
-									expedienteComercialApi.updateExpedienteComercialEstadoPrevioResolucionExpediente(eco, ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION);
+									expedienteComercialApi.updateExpedienteComercialEstadoPrevioResolucionExpediente(eco, ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION, tareaAnterior.getTareaProcedimiento().getCodigo(), false);
 									break;
 								}
 							}
@@ -235,6 +241,25 @@ public class ResolucionComiteController {
 						}
 						
 						resol = resolucionComiteApi.saveOrUpdateResolucionComite(resolucionComiteDto);
+						
+						//si es venta cartera
+						if(eco.getOferta().getVentaDirecta() != null && eco.getOferta().getVentaDirecta()){
+							List<TareaExterna> listaTareas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
+							for (TareaExterna tarea : listaTareas) {
+								if (!Checks.esNulo(tarea)) {
+									DtoSaltoTarea salto = new DtoSaltoTarea();
+									salto.setIdTramite(tramite.getId());
+									salto.setPbcAprobado(1);
+									salto.setFechaRespuestaComite(resol.getFechaResolucion());
+									updaterTransitionService.updateT013_CierreEconomico(salto);									
+									
+									tareaActivoApi.saltoDesdeTareaExterna(tarea.getId(),ActivoGenerarSaltoImpl.CODIGO_SALTO_CIERRE);
+									expedienteComercialApi.bloquearExpediente(eco.getId());
+									
+									break;
+								}
+							}
+						}
 
 						if (!Checks.esNulo(resolucionComiteDto.getDevolucion())
 								&& resolucionComiteDto.getDevolucion().equals("S")) {
@@ -258,7 +283,8 @@ public class ResolucionComiteController {
 									+ ".\n";
 
 						}
-
+						
+						
 						// Envío correo/notificación
 						try {
 							notifrem = resolucionComiteApi.notificarResolucion(resol, usu, eco, mensajeDevolucion,

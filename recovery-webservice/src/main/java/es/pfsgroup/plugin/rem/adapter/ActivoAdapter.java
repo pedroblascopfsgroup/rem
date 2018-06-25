@@ -64,6 +64,7 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.controller.AccesoActivoException;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
@@ -1842,7 +1843,7 @@ public class ActivoAdapter {
 				
 				beanUtilNotNull.copyProperty(dtoTramite, "esTarifaPlana", tramite.getTrabajo().getEsTarifaPlana());
 			}
-			
+
 			beanUtilNotNull.copyProperty(dtoTramite, "estaTareaRespuestaBankiaDevolucion", false);
 			beanUtilNotNull.copyProperty(dtoTramite, "estaTareaPendienteDevolucion", false);
 			beanUtilNotNull.copyProperty(dtoTramite, "estaEnTareaSiguienteResolucionExpediente", false);
@@ -1863,12 +1864,10 @@ public class ActivoAdapter {
 					}
 				}
 			}
-
 			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(tramite.getActivo().getId());
 			boolean aplicaGestion = !Checks.esNulo(perimetroActivo) && Integer.valueOf(1).equals(perimetroActivo.getAplicaGestion())? true: false;
 			beanUtilNotNull.copyProperty(dtoTramite, "activoAplicaGestion", aplicaGestion);
 			
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -2598,11 +2597,17 @@ public class ActivoAdapter {
 		return listaDto;
 	}
 
-	public WebDto getTabActivo(Long id, String tab) throws IllegalAccessException, InvocationTargetException {
+	public WebDto getTabActivo(Long id, String tab) throws IllegalAccessException, InvocationTargetException,AccesoActivoException {
 
 		TabActivoService tabActivoService = tabActivoFactory.getService(tab);
 		Activo activo = activoApi.get(id);
-
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+		if(!Checks.esNulo(usuarioCartera)){
+			if(!usuarioCartera.getCartera().getCodigo().equals(activo.getCartera().getCodigo())){
+				throw new AccesoActivoException("No tiene permiso para consultar al activo seleccionado");
+			}
+		}
 		return tabActivoService.getTabData(activo);
 
 	}
@@ -2707,6 +2712,7 @@ public class ActivoAdapter {
 
 		try {
 			Oferta oferta = new Oferta();
+			oferta.setVentaDirecta(dto.getVentaDirecta());
 			oferta.setOrigen(OfertaApi.ORIGEN_REM);
 			ClienteComercial clienteComercial = new ClienteComercial();
 

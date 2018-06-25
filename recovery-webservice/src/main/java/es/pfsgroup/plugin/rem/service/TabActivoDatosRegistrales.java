@@ -455,9 +455,11 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			}
 			ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());
 			
-			if(!Checks.esNulo(activoBancario)) {
-				activoBancario.setNumExpRiesgo(dto.getAcreedorNumExp().toString());
-				genericDao.save(ActivoBancario.class, activoBancario);
+			if (!Checks.esNulo(activoBancario)) {
+				if (!Checks.esNulo(dto.getAcreedorNumExp())) {
+					activoBancario.setNumExpRiesgo(dto.getAcreedorNumExp().toString());
+					genericDao.save(ActivoBancario.class, activoBancario);
+				}
 			}
 			
 

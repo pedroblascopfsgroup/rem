@@ -312,13 +312,29 @@
             	def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.checkCajamar(tareaExterna);
             }
+            def checkLiberbank = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+            	return trabajoManager.checkLiberbank(tareaExterna);
+            }
+            def checkExpedienteFechaChequeLiberbank = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkExpedienteFechaChequeLiberbank(idTramite);
+            }
             def checkExpedienteBloqueado = {
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkExpedienteBloqueado(idTramite);
             }
+            def reservaFirmada = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.reservaFirmada(idTramite);
+            }
             def comprobarActivoComercializable = {
             	def activoManager = ctx.getBean("activoManager");
             	return activoManager.comprobarActivoComercializable(idActivo);
+            }
+            def comprobarComiteLiberbankPlantillaPropuesta = {
+            	def ofertaManager = ctx.getBean("ofertaManager");
+            	return ofertaManager.comprobarComiteLiberbankPlantillaPropuesta(tareaExterna);
             }
             def comprobarObligatoriosDesignarMediador = {
             	def activoManager = ctx.getBean("activoManager");
@@ -448,6 +464,22 @@
 				def trabajoManager = ctx.getBean("trabajoManager");
                 return trabajoManager.trabajoTieneTarifaPlana(tareaExterna);
 			}
+			def esLiberBank = {
+				def activoManager = ctx.getBean("activoManager");
+            	return activoManager.esLiberBank(idActivo);
+			}
+			def superaLimiteLiberbank = {
+				def trabajoManager = ctx.getBean("trabajoManager");
+            	return trabajoManager.superaLimiteLiberbank(idTramite);
+            }
+			def trabajoEsTarificado = {
+				def trabajoManager = ctx.getBean("trabajoManager");
+            	return trabajoManager.trabajoEsTarificado(idTramite);
+			}
+			def checkFechaVenta = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkFechaVenta(idTramite);
+            }
   			 ]]></value>
   		</list>
   	</property>

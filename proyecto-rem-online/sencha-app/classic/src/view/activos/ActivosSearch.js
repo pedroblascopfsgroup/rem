@@ -460,6 +460,15 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							        	bind: {
 						            		store: '{comboSiNoRem}'
 						            	}
+							        },
+							        {
+							        	xtype: 'comboboxfieldbase',
+							        	editable: false,
+										fieldLabel: HreRem.i18n('fieldlabel.titulo.posesorio'),
+						            	name: 'tipoTituloPosesorio',
+							        	bind: {
+						            		store: '{comboTipoTituloPosesorio}'
+						            	}
 							        }
 								]
 			            }

@@ -22,6 +22,8 @@ public class InstanciaDecisionDto {
 	private Boolean ofertaAgrupacion;
 	private Integer codigoAgrupacionInmueble;
 	
+	private Boolean ofertaVentaCartera;
+	
 	
 	
 
@@ -107,5 +109,13 @@ public class InstanciaDecisionDto {
 	public void setCodigoAgrupacionInmueble(Integer codigoAgrupacionInmueble) {
 		this.codigoAgrupacionInmueble = codigoAgrupacionInmueble;
 	}
+	public Boolean getOfertaVentaCartera() {
+		return ofertaVentaCartera;
+	}
+	public void setOfertaVentaCartera(Boolean ofertaVentaCartera) {
+		this.ofertaVentaCartera = ofertaVentaCartera;
+	}
+	
+	
 	
 }

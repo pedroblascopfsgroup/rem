@@ -103,6 +103,9 @@ public class Comprador implements Serializable, Auditable {
     @Column(name = "ID_COMPRADOR_URSUS")
     private Long idCompradorUrsus;
     
+    @Column(name = "ID_COMPRADOR_URSUS_BH")
+    private Long idCompradorUrsusBh;
+    
 
 	@Version   
 	private Long version;
@@ -254,7 +257,7 @@ public class Comprador implements Serializable, Auditable {
 	public void setLocalidad(Localidad localidad) {
 		this.localidad = localidad;
 	}
-
+	
 	public Long getIdCompradorUrsus() {
 		return idCompradorUrsus;
 	}
@@ -263,5 +266,11 @@ public class Comprador implements Serializable, Auditable {
 		this.idCompradorUrsus = idCompradorUrsus;
 	}    
     
-   
+	public Long getIdCompradorUrsusBh() {
+		return idCompradorUrsusBh;
+	}
+
+	public void setIdCompradorUrsusBh(Long idCompradorUrsusBh) {
+		this.idCompradorUrsusBh = idCompradorUrsusBh;
+	}    
 }

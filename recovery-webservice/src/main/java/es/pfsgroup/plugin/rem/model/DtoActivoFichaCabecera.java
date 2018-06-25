@@ -180,6 +180,9 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	// HREOS-2761
 	private List<?> activosPropagables;
 	
+	//REMVIP-969
+	private Boolean tienePosibleInformeMediador;
+	
 	private int page;
 	private int start;
 	private int limit;
@@ -1391,5 +1394,12 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.acreedorNumExp = acreedorNumExp;
 	}
 
+	public Boolean getTienePosibleInformeMediador() {
+		return tienePosibleInformeMediador;
+	}
+
+	public void setTienePosibleInformeMediador(Boolean tienePosibleInformeMediador) {
+		this.tienePosibleInformeMediador = tienePosibleInformeMediador;
+	}
 	
 }

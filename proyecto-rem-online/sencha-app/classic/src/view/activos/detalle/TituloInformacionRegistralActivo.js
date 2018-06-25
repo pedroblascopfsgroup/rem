@@ -622,6 +622,12 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                { 
 			                	fieldLabel: HreRem.i18n('fieldlabel.id.asunto.recovery'),
 			                	bind: '{datosRegistrales.idAsunto}'
+			                },
+			                { 
+			                	xtype: 'numberfieldbase',
+			                	maxLength: 4,
+			                	fieldLabel: HreRem.i18n('fieldlabel.expedientes.con.defectos.testimonio'),
+			                	bind: '{datosRegistrales.defectosTestimonio}'
 			                }					
 						
 						]
@@ -680,9 +686,14 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						 		bind: '{datosRegistrales.numReferencia}',
 						 		allowBlank: false
 
-							}
-						
-						
+							},
+			                { 
+								xtype: 'numberfieldbase',
+								maxLength: 4,
+			                	fieldLabel: HreRem.i18n('fieldlabel.expedientes.con.defectos.testimonio'),
+			                	bind: '{datosRegistrales.defectosTestimonio}'
+			                }	
+
 						]
             
         			},

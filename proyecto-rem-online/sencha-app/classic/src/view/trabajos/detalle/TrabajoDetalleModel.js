@@ -108,8 +108,32 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    		 return true;
 	    	 else
 	    		 return false;
-	    }
+	    },
 	    
+	    esVisibleFechaAutorizacionPropietario: function(get){
+	    	 me = this;
+			 if(get('trabajo.cartera')=='Liberbank' && CONST.TIPOS_TRABAJO["ACTUACION_TECNICA"] == me.get('trabajo.tipoTrabajoCodigo')) 
+				 return true;
+			 else 
+				 return false;
+		},
+	    
+		esVisibleFechaEjecucionReal: function(get){
+	    	 me = this;
+			 if(CONST.TIPOS_TRABAJO["ACTUACION_TECNICA"] == me.get('trabajo.tipoTrabajoCodigo')) 
+				 return true;
+			 else 
+				 return false;
+		},
+		
+		esVisibleFechaValidacion: function(get){
+	    	 me =  this;
+			 if(CONST.TIPOS_TRABAJO["ACTUACION_TECNICA"] == me.get('trabajo.tipoTrabajoCodigo')) 
+				 return true;
+			 else 
+				 return false;
+		}
+		
     },
     
     stores: {

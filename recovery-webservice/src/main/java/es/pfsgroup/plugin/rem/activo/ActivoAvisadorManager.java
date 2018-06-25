@@ -26,6 +26,9 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 
 
 @Service("activoAvisadorManager")
@@ -193,11 +196,13 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		
 		// Aviso 9: Estado Comercial		
 		if(!Checks.esNulo(activo.getSituacionComercial())) {
-			DtoAviso dtoAviso = new DtoAviso();
-			dtoAviso.setDescripcion(activo.getSituacionComercial().getDescripcion());
-			dtoAviso.setId(String.valueOf(id));
-			listaAvisos.add(dtoAviso);			
+				DtoAviso dtoAviso = new DtoAviso();
+				dtoAviso.setDescripcion(activo.getSituacionComercial().getDescripcion());
+				dtoAviso.setId(String.valueOf(id));
+				listaAvisos.add(dtoAviso);		
+			
 		}
+		
 		
 		// Aviso 10: Perímetro Haya
 		if(!activoApi.isActivoIncluidoEnPerimetro(id)) {
@@ -207,34 +212,17 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			listaAvisos.add(dtoAviso);	
 		}
 		
+		// Aviso 12: Estado activo vandalizado
+		if(!Checks.esNulo(activo.getEstadoActivo())) {
+			if(DDEstadoActivo.ESTADO_ACTIVO_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())) {
+				DtoAviso dtoAviso = new DtoAviso();
+				dtoAviso.setDescripcion(activo.getEstadoActivo().getDescripcion());
+				dtoAviso.setId(String.valueOf(id));
+				listaAvisos.add(dtoAviso);		
+			}
+		}
 		
 		return listaAvisos;
 		//activoDao.getListActivos(id, usuarioLogado);
 	}
-
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }

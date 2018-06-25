@@ -102,6 +102,8 @@ public class VBusquedaVisitasDetalle implements Serializable {
 	@Column(name="SUBTIPO_PRESCRIPTOR_COD")
 	private String subtipoPrescriptorCodigo;
 	
+	@Column(name="DD_CRA_ID")
+	private String idCartera;	
 	
 	public String getId() {
 		return id;
@@ -326,6 +328,14 @@ public class VBusquedaVisitasDetalle implements Serializable {
 
 	public void setIdPrescriptorREM(String idPrescriptorREM) {
 		this.idPrescriptorREM = idPrescriptorREM;
+	}
+	
+	public String getIdCartera() {
+		return idCartera;
+	}
+
+	public void setIdCartera(String idCartera) {
+		this.idCartera = idCartera;
 	}
 	
 

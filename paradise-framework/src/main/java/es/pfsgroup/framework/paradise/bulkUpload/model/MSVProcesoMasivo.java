@@ -72,6 +72,7 @@ public class MSVProcesoMasivo implements Auditable, Serializable {
     
     @Column(name = "PRM_TOTAL_FILAS_OK")
     private Long totalFilasOk;
+
     
 	public Long getId() {
 		return id;
@@ -152,6 +153,5 @@ public class MSVProcesoMasivo implements Auditable, Serializable {
 	public void setTotalFilasKo(Long totalFilasKo) {
 		this.totalFilasKo = totalFilasKo;
 	}
-	
 	
 }

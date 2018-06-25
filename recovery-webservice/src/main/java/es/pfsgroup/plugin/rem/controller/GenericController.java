@@ -23,9 +23,13 @@ import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfi
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.diccionarios.Dictionary;
+import es.capgemini.pfs.users.domain.Perfil;
+import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GenericApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
@@ -120,6 +124,26 @@ public class GenericController extends ParadiseJsonController{
 		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioTipoBloqueo(areaCodigo)));
 	}
 
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDiccionarioCarteraPorCodigoFestor() {	
+		
+		String diccionario = "entidadesPropietarias";
+		
+		AuthenticationData authData =  genericApi.getAuthenticationData();
+		
+		String[] codigosGestor = authData.getCodigoGestor().split(",");
+		
+		for(String codGestor : codigosGestor) {
+			if(GestorActivoApi.CODIGO_GESTOR_COMITE_INVERSION_INMOBILIARIA_LIBERBANK.equals(codGestor) || 
+				GestorActivoApi.CODIGO_GESTOR_COMITE_DIRECCION_LIBERBANK.equals(codGestor) || 
+				GestorActivoApi.CODIGO_GESTOR_COMITE_INMOBILIARIO_LIBERBANK.equals(codGestor))
+					diccionario = "gestorCommiteLiberbank";
+		}
+		
+		return createModelAndViewJson(new ModelMap("data", adapter.getDiccionario(diccionario)));
+		
+	}
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getIndicadorCondicionPrecioFiltered(String codigoCartera){
 		return createModelAndViewJson(new ModelMap("data", genericApi.getIndicadorCondicionPrecioFiltered(codigoCartera)));

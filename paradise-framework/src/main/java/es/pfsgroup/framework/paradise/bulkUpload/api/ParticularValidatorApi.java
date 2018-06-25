@@ -376,4 +376,6 @@ public interface ParticularValidatorApi {
 	public Boolean activosNoOcultosVentaAgrupacion(String numAgrupacion);
 
 	public Boolean activosNoOcultosAlquilerAgrupacion(String numAgrupacion);
+	
+	public Boolean isActivoSinPrecioAlquilerWebAgrupacion(String numAgrupacion);
 }

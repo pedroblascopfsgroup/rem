@@ -1877,10 +1877,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT (1) "
 				+ "			FROM ACT_ACTIVO ACT "
-				+ "			JOIN REM01.ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID AND AGA.BORRADO = 0 "
-				+ "         JOIN REM01.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0 "
-				+ "			JOIN REM01.V_COND_DISPONIBILIDAD COND ON COND.ACT_ID = ACT.ACT_ID AND COND.SIN_INFORME_APROBADO = 1 "
-				+ "			AND   AGR.AGR_ID = " + numAgrupacion + " ");
+				+ "			JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID AND AGA.BORRADO = 0 "
+				+ "         JOIN ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0 "
+				+ "			JOIN V_COND_DISPONIBILIDAD COND ON COND.ACT_ID = ACT.ACT_ID AND COND.SIN_INFORME_APROBADO = 1 "
+				+ "			AND  AGR.AGR_ID = " + numAgrupacion + " ");
 		if("0".equals(resultado)){
 			return true;
 		}else {
@@ -1905,7 +1905,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return true;
 	}
 
-	@Override
 	public Boolean activosNoOcultosVentaAgrupacion(String numAgrupacion){
 		if (Checks.esNulo(numAgrupacion)) return false;
 		
@@ -1939,5 +1938,30 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}else {
 			return true;
 		}
+	}	
+	
+	@Override
+	public Boolean isActivoSinPrecioAlquilerWebAgrupacion(String numAgrupacion) {
+		if(Checks.esNulo(numAgrupacion))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT NUM_ACT - NUM_VAL "
+				+ "         FROM ( "
+				+ "         	SELECT COUNT(DISTINCT AGA.ACT_ID) NUM_ACT"
+				+ "				FROM  ACT_AGA_AGRUPACION_ACTIVO AGA"
+				+ " 			JOIN  ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0"
+				+ "				AND   AGR.AGR_ID = " + numAgrupacion + " "
+				+ "         	WHERE AGA.BORRADO = 0),"
+				+ " 				(SELECT COUNT(DISTINCT AGA.ACT_ID) NUM_VAL"
+				+ "					FROM  ACT_AGA_AGRUPACION_ACTIVO AGA "
+				+ "					JOIN  ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0 "
+				+ "					JOIN  ACT_VAL_VALORACIONES VAL ON VAL.ACT_ID = AGA.ACT_ID AND VAL.BORRADO = 0"
+				+ "					JOIN  DD_TPC_TIPO_PRECIO TPC ON TPC.DD_TPC_ID = VAL.DD_TPC_ID AND TPC.BORRADO = 0 AND TPC.DD_TPC_CODIGO = '03'"
+				+ " 				AND   AGR.AGR_ID = " + numAgrupacion + " "
+				+ " 				WHERE AGA.BORRADO = 0)");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
 	}
 }

@@ -370,4 +370,10 @@ public interface ParticularValidatorApi {
 	public Boolean isActivoPublicadoAgrupacion(String numAgrupacion);
 
 	public Boolean isActivoSinInformeAprobadoAgrupacion(String numAgrupacion);
+
+	public Boolean isActivoDestinoComercialNoAlquilerAgrupacion(String numAgrupacion);
+
+	public Boolean activosNoOcultosVentaAgrupacion(String numAgrupacion);
+
+	public Boolean activosNoOcultosAlquilerAgrupacion(String numAgrupacion);
 }

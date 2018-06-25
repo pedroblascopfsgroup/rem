@@ -67,6 +67,7 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 	public static final String CODE_FILE_BULKUPLOAD_PUBLICAR_ACTIVOS_ALQUILER="APA";
 	public static final String CODE_FILE_BULKUPLOAD_ALTA_ACTIVOS_THIRD_PARTY = "AATP";
 	public static final String CODE_FILE_BULKUPLOAD_CENTRAL_TECNICA_OK_TECNICO = "OKTEC";
+	public static final String CODE_FILE_BULKUPLOAD_OCULTACION_ALQUILER_AGRUPACION_RESTRINGIDA = "OAAR";
 		  
 	private static final long serialVersionUID = 5938440720826995243L;
 

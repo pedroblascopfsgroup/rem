@@ -1,10 +1,10 @@
 --/*
 --######################################### 
---## AUTOR= PIER GOTTA
---## FECHA_CREACION=20180418
+--## AUTOR= JIN LI HU
+--## FECHA_CREACION=20180625
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-4087
+--## INCIDENCIA_LINK=HREOS-4090
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Procedimiento encargado de perfilar las funciones.
@@ -12,7 +12,8 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 ANGEL PASTELERO - HREOS-4011
---##	    0.2 PIER GOTTA - HREOS-4087
+--##	      0.2 PIER GOTTA - HREOS-4087
+--##        0.3 JIN LI, HU - HREOS-4090, HREOS-4091
 --#########################################
 --*/
 
@@ -253,7 +254,9 @@ T_VAR( 'MENU_ADMINISTRACION','S','S','S','S','S','S','S','S','S','S','N','S','S'
 T_VAR( 'MENU_MASIVO','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','S','N','N','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'MENU_CONFIGURACION','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'MENU_ACTIVOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
-T_VAR( 'MASIVO_OK_TECNICO','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','','N','N','N','N','N','N','N','N')
+T_VAR( 'MASIVO_OK_TECNICO','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','','N','N','N','N','N','N','N','N'),
+T_VAR( 'MASIVO_OCULTACION_VENTA_RESTRINGIDA','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N'),
+T_VAR( 'MASIVO_OCULTACION_ALQUILER_RESTRINGIDA','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N')
 );
 V_TMP_VAR T_VAR;
 
@@ -265,7 +268,7 @@ BEGIN
     --########   INSERTAR VALORES  #########
     --######################################
     
-    vVERSION := '0.2';
+    vVERSION := '0.3';
 
     -- Verificar si la tabla existe
     V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA_TMP||''' AND OWNER = '''||V_ESQUEMA||'''';

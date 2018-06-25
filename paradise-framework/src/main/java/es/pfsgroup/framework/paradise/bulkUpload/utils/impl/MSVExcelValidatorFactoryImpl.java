@@ -16,9 +16,6 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVActualizadorPublicadoVentaRestringidoExcelValidator agrupacionRestringidoPublicarVentaExcelValidator;
 	
 	@Autowired
-	private MSVActualizadorPublicadoAlquilerRestringidoExcelValidator agrupacionRestringidoPublicarAlquilerExcelValidator;
-	
-	@Autowired
 	private MSVAgrupacionRestringidoExcelValidator agrupacionRestringidoExcelValidator;
 	
 	@Autowired
@@ -92,6 +89,9 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVOkTecnicoExcelValidator okTecnicoValidator;
+	
+	@Autowired
+	private MSVOcultacionAlquilerAgrupacionRestringida ocultacionAlquilerAgrupacionRestringida;
 
 	
 	
@@ -101,8 +101,6 @@ public class MSVExcelValidatorFactoryImpl {
 				return agrupacionRestringidoExcelValidator;
 			} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_VENTA_RESTRINGIDA.equals(codTipoOperacion)) {
 				return agrupacionRestringidoPublicarVentaExcelValidator;
-			} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_ALQUILER_RESTRINGIDA.equals(codTipoOperacion)) {
-				return agrupacionRestringidoPublicarAlquilerExcelValidator;
 			} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_NEW_BUILDING.equals(codTipoOperacion)) {
 				return agrupacionObraNuevaExcelValidator;
 			} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_ASISTIDA.equals(codTipoOperacion)) {
@@ -219,6 +217,8 @@ public class MSVExcelValidatorFactoryImpl {
 		}
 		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ALTA_ACTIVOS_THIRD_PARTY.equals(codTipoOperacion)){
 			return altaActivosTP;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_OCULTACION_ALQUILER_AGRUPACION_RESTRINGIDA.equals(codTipoOperacion)){
+			return ocultacionAlquilerAgrupacionRestringida;
 		}
 		return null;
 	}

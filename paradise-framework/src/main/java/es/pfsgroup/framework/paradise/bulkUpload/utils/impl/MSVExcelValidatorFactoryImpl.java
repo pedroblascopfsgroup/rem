@@ -92,6 +92,9 @@ public class MSVExcelValidatorFactoryImpl {
 	
 	@Autowired
 	private MSVOcultacionAlquilerAgrupacionRestringida ocultacionAlquilerAgrupacionRestringida;
+	
+	@Autowired
+	private MSVOcultacionVentaAgrupacionRestringida ocultacionVentaAgrupacionRestringida;
 
 	
 	
@@ -219,6 +222,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return altaActivosTP;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_OCULTACION_ALQUILER_AGRUPACION_RESTRINGIDA.equals(codTipoOperacion)){
 			return ocultacionAlquilerAgrupacionRestringida;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_OCULTACION_VENTA_AGRUPACION_RESTRINGIDA.equals(codTipoOperacion)){
+			return ocultacionVentaAgrupacionRestringida;
 		}
 		return null;
 	}

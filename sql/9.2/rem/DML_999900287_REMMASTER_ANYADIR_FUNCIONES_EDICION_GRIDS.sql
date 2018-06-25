@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandro Valverde Herrera
---## FECHA_CREACION=20180618
+--## FECHA_CREACION=20180625
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4214
@@ -38,7 +38,11 @@ DECLARE
     --			Descripción														                                Función
       T_FUNCION('Permitir modificar grid de precios vigentes.',		            						'EDITAR_GRID_PRECIOS_VIGENTES'),
       T_FUNCION('Permitir modificar grid del historico de mediadores pestaña publicacion.',		            			'EDITAR_GRID_PUBLICACION_HISTORICO_MEDIADORES'),
-      T_FUNCION('Permitir modificar grid condiciones especificas pestaña publicacion.',		            			'EDITAR_GRID_PUBLICACION_CONDICIONES_ESPECIFICAS')
+      T_FUNCION('Permitir modificar grid condiciones especificas pestaña publicacion.',		            			'EDITAR_GRID_PUBLICACION_CONDICIONES_ESPECIFICAS'),
+      T_FUNCION('Permitir modificar grid listado de activos de expediente.',		            			'EDITAR_GRID_LISTADO_ACTIVOS_EXPEDIENTE'),
+      T_FUNCION('Permitir modificar grid honorarios de pestaña gestion economica de expediente.',		            			'EDITAR_GRID_GESTION_ECONOMICA_EXPEDIENTE'),
+      T_FUNCION('Permitir modificar grid textos de pestaña oferta de expediente.',		            			'EDITAR_GRID_TEXTOS_OFERTA_EXPEDIENTE'),
+      T_FUNCION('Permitir modificar grid posicionamiento y firma de pestaña formalizacion de expediente.',     			'EDITAR_GRID_POS_FIRMA_FORMALIZACION_EXPEDIENTE')
     ); 
     V_TMP_FUNCION T_FUNCION;
 

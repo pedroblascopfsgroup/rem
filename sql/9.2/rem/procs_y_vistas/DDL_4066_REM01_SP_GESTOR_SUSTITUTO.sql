@@ -30,8 +30,8 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_GESTOR_SUSTITUTO
    AS
 
    V_SQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar
-   V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquema
-   V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquema Master
+   V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+   V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
    ERR_NUM NUMBER(25); -- Vble. auxiliar para registrar errores en el script.
    ERR_MSG VARCHAR2(10024 CHAR); -- Vble. auxiliar para registrar errores en el script.
    V_AUX NUMBER(1); -- Variable auxiliar
@@ -218,6 +218,6 @@ EXCEPTION
       PL_OUTPUT := PL_OUTPUT || CHR(10) ||'    '||ERR_MSG;
       ROLLBACK;
       RAISE;
-END #ESQUEMA#.SP_GESTOR_SUSTITUTO;
+END SP_GESTOR_SUSTITUTO;
 /
 EXIT;

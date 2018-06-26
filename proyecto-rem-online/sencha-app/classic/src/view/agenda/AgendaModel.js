@@ -2,7 +2,7 @@ Ext.define('HreRem.view.agenda.AgendaModel', {
     extend: 'Ext.app.ViewModel',
     alias: 'viewmodel.agenda',
     
-    requires: ['HreRem.ux.data.Proxy', 'HreRem.model.Tarea'],
+    requires: ['HreRem.ux.data.Proxy', 'HreRem.model.Tarea', 'HreRem.model.TareaGestSustituto'],
     
  	stores: {
         
@@ -85,6 +85,27 @@ Ext.define('HreRem.view.agenda.AgendaModel', {
 				remoteUrl: 'agenda/getComboNombreTarea',
 				extraParams: {idTipoTramite: '{descripcionTarea.selection.id}'}
 			}
+		},
+		tareasGestorSustituto: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.TareaGestSustituto',
+	    	proxy: {
+		        type: 'uxproxy',
+		        localUrl: '/tareas.json',
+		        remoteUrl: 'agenda/getListTareasGestorSustituto',
+			    actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'}
+	    	},
+	    	//autoLoad: true,
+	    	session: true,
+	    	remoteSort: true,
+	    	remoteFilter: true,
+	    	sorters: [{
+	            property: 'fechaFin',
+	            direction: 'ASC'
+	        }],
+	        listeners : {
+	            beforeload : 'paramLoading'
+	        }
 		}
         
     }

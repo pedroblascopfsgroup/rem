@@ -1,8 +1,8 @@
-Ext.define('HreRem.view.agenda.AgendaList', {
+Ext.define('HreRem.view.agenda.AgendaListGestorSustituto', {
     extend: 'HreRem.view.common.GridBase',
-    xtype: 'agendalist',
+    xtype: 'agendalistgestorsustituto',
 	bind: {
-		store: '{tareas}'
+		store: '{tareasGestorSustituto}'
 	},
 	
     initComponent: function () {
@@ -15,7 +15,7 @@ Ext.define('HreRem.view.agenda.AgendaList', {
 	     
 	    me.columns = [
 	               
-	            {
+	            /*{
 			        xtype: 'actioncolumn',
 			        width: 30,
 			        handler: 'onEnlaceActivosClick',
@@ -27,7 +27,7 @@ Ext.define('HreRem.view.agenda.AgendaList', {
 			            }
 			        }],
 			        hideable: false
-	            },
+	            },*/
 			    {
 			        xtype: 'actioncolumn',
 			        width: 30,
@@ -42,89 +42,28 @@ Ext.define('HreRem.view.agenda.AgendaList', {
 	            {
 	            	text	 : HreRem.i18n('header.numero.tarea'),
 	                flex	 : 1,
-	                dataIndex: 'id',
-	                hidden: true,
-	                hideable: false
-	            }, 
-			    {               
-	                text	 : HreRem.i18n('header.id.actuacion'),
-	                flex	 : 1,
-	                dataIndex: 'idActuacion',
-	                hidden	 : true,
-	                hideable : false
-	            },
-	            {
-	                text	 : HreRem.i18n('header.id.tipo.actuacion'),               
-	                flex	 : 1,
-	                dataIndex: 'idTipoActuacion',
-	                hidden	 : true,
-	                hideable : false
-	            },
-	            {
-	            	text	 : HreRem.i18n('header.id.actuacion.origen'), 
-	            	flex	 : 1,
-	                dataIndex: 'idTipoActuacionPadre',
-	                align	 : 'center',
-	                hidden	 : true,
-	                hideable : false
-	            },
-	            {               
-	                text	 : HreRem.i18n('header.tipo.actuacion'),
-	                flex	 : 2,
-	                dataIndex: 'tipoActuacion',
-	                hidden	 : true,
-	                hideable : false
-	            },
-	            {
-	                text     : HreRem.i18n('header.id.tarea'),
-	                flex     : 1,
 	                dataIndex: 'idTarea',
-	                hidden	 : true,
-	                hideable : false
-	            },
-	            {
-	            	text	 : HreRem.i18n('header.id.activo'),
-	                flex	 : 1,
-	                dataIndex: 'codEntidad'
+	                hideable: false
 	            },
 	            {
 	                text     : HreRem.i18n('header.tarea'),
 	                flex     : 5,
-	                dataIndex: 'nombreTarea',
-	                renderer: function(value,p,r){
-	                	if(r.data['descripcionEntidad'] == '--')
-	                		return r.data['nombreTarea'] + '   ( ' + r.data['descripcionTarea'] + ' )';
-	                	else
-	                		return r.data['nombreTarea'];
-	                }
-	            },          
-	            {
-	                text     : HreRem.i18n('header.descripcion'),
-	                flex     : 3,
-	                hidden	 : true,
 	                dataIndex: 'descripcionTarea'
 	            }, 
 	            {
-	            	text	 : HreRem.i18n('header.id.activo'),
-	                flex	 : 1,
-	                dataIndex: 'idActivo',
-	                hidden	 : true,
-	                hideable : false
-	            },   
-	            {
 	            	text	 : HreRem.i18n('header.tramite'),
 	            	flex	 : 1,
-	            	dataIndex: 'contrato'
+	            	dataIndex: 'idTramite'
 	            },
 	            {
 	                text     : HreRem.i18n('header.tipo.tramite'),
 	                flex     : 2,
-	                dataIndex: 'descripcionEntidad'
+	                dataIndex: 'tipoTramite'
 	            },
 	            {
 	            	text     : HreRem.i18n('header.responsable'),
 	                flex     : 2,
-	                dataIndex: 'gestor'
+	                dataIndex: 'usuarioResponsable'
 	            },
 	            {                
 	                text	 : HreRem.i18n('header.fecha.inicio'),             
@@ -133,32 +72,23 @@ Ext.define('HreRem.view.agenda.AgendaList', {
 	                align	 : 'center',
 	                formatter: 'date("d/m/Y")'
 	            },
-	            {              
-	                text	 : HreRem.i18n('header.fecha.fin'), 
-	                flex	 : 1,
-	                dataIndex: 'fechaFin',
-	                align	 : 'center',
-	                hidden	 : true,
-	                hideable : false,
-	                formatter: 'date("d/m/Y")'
-	            },
 	            {           
 	                text	 : HreRem.i18n('header.fecha.vencimiento'),
 	                flex	 : 1,
-	                dataIndex: 'fechaVenc',
+	                dataIndex: 'fechaFin',
 	                align	 : 'center',
 	                formatter: 'date("d/m/Y")'
 	            },
 	            {
 	                text     : HreRem.i18n('header.plazo.vencer'),
 	                flex     : 1,
-	                dataIndex: 'diasVencidaNumber',
+	                dataIndex: 'plazoVencimiento',
 	                align	 : 'center'     
 	            },
 	            {
 	                text     : HreRem.i18n('header.prioridad'),
 	                flex     : 0.5,
-	                dataIndex: 'semaforo',
+	                dataIndex: 'prioridad',
 	                align	 : 'center',
 	                renderer: function(data) {
 	                	if(data == '2'){
@@ -172,14 +102,14 @@ Ext.define('HreRem.view.agenda.AgendaList', {
 					    	return '<div> <img src="'+ data +'"></div>';
 					    }
 	                }
-	            }, 
+	            }/*, 
 	            {               
 	                text	 : HreRem.i18n('header.id.gestor'),
 	                flex	 : 1,
 	                dataIndex: 'idGestor',
 	                hidden	 : true,
 	                hideable : false
-	            }     
+	            }  */   
 	
 	        ];
 	        
@@ -189,9 +119,8 @@ Ext.define('HreRem.view.agenda.AgendaList', {
 	            dock: 'bottom',
 	            itemId: 'agendaPaginationToolbar',
 	            displayInfo: true,
-	            reference: 'agendaPaginator',
 	            bind: {
-	                store: '{tareas}'
+	                store: '{tareasGestorSustituto}'
 	            }
 	        }
 	    ];

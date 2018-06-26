@@ -14,6 +14,8 @@ public class AuthenticationData {
 	
 	private String codigoGestor;
 	
+	private Integer esGestorSustituto;
+	
 
 	public String getUserName() {
 		return userName;
@@ -53,6 +55,14 @@ public class AuthenticationData {
 
 	public void setCodigoGestor(String codigoGestor) {
 		this.codigoGestor = codigoGestor;
+	}
+
+	public Integer getEsGestorSustituto() {
+		return esGestorSustituto;
+	}
+
+	public void setEsGestorSustituto(Integer esGestorSustituto) {
+		this.esGestorSustituto = esGestorSustituto;
 	}
 
 }

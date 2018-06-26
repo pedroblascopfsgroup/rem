@@ -20,6 +20,7 @@ import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -40,7 +41,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
-import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.mejoras.web.tareas.BuzonTareasViewHandler;
 import es.pfsgroup.plugin.recovery.mejoras.web.tareas.BuzonTareasViewHandlerFactory;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
@@ -49,7 +49,6 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
-import es.pfsgroup.plugin.rem.jbpm.handler.listener.ActivoGenerarSaltoImpl;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoCampo;
@@ -59,6 +58,7 @@ import es.pfsgroup.plugin.rem.model.DtoSaltoTarea;
 import es.pfsgroup.plugin.rem.model.DtoSolicitarProrrogaTarea;
 import es.pfsgroup.plugin.rem.model.DtoTarea;
 import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
+import es.pfsgroup.plugin.rem.model.DtoTareaGestorSustitutoFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -66,9 +66,9 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.service.UpdaterTransitionService;
+import es.pfsgroup.plugin.rem.tareasactivo.dao.VTareasGestorSustitutoDao;
 import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
-import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
 
 @Service
 public class AgendaAdapter {
@@ -119,6 +119,9 @@ public class AgendaAdapter {
     @Autowired 
     private UpdaterTransitionService updaterTransitionService;
     
+    @Autowired
+    private VTareasGestorSustitutoDao tareasGSDao;
+    
 	SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
     
 	public Page getListTareas(DtoTareaFilter dtoTareaFiltro){
@@ -126,6 +129,7 @@ public class AgendaAdapter {
 		DtoTarea dto = new DtoTarea();
 
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		
 	    List<Perfil> perfiles = usuarioLogado.getPerfiles();
 	    List<DDZona> zonas = usuarioLogado.getZonas();
 	    dto.setPerfiles(perfiles);
@@ -743,6 +747,10 @@ public class AgendaAdapter {
 		updaterTransitionService.updateFrom(dto);
 
 		return true;
+	}
+	
+	public Page getListTareasGS(DtoTareaGestorSustitutoFilter dto){
+		return tareasGSDao.getListTareasGS(dto);
 	}
 	
 	

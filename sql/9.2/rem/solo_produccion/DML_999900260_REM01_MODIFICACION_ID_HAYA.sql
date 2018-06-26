@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=SIMEON SHOPOV
---## FECHA_CREACION=201800510
+--## FECHA_CREACION=201800530
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-711
+--## INCIDENCIA_LINK=REMVIP-932
 --## PRODUCTO=NO
 --##
 --## Finalidad: Cambiar ID_HAYA con prefijo de 999
@@ -28,7 +28,7 @@ DECLARE
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-	
+	V_USUARIO VARCHAR2(65 CHAR) := 'REMVIP-932';
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
@@ -40,17 +40,12 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     	--act_num_activo	
-		       T_TIPO_DATA(132771)
-			 , T_TIPO_DATA(144635)
-			 , T_TIPO_DATA(148273)
-			 , T_TIPO_DATA(132772)
-			 , T_TIPO_DATA(156722)
-			 , T_TIPO_DATA(156723)
-			 , T_TIPO_DATA(132675)
-			 , T_TIPO_DATA(145247)
-			 , T_TIPO_DATA(156933)
-			 , T_TIPO_DATA(156934)
-			 , T_TIPO_DATA(132676)
+		   T_TIPO_DATA(187645)
+		 , T_TIPO_DATA(196243)
+		 , T_TIPO_DATA(187329)
+		 , T_TIPO_DATA(196244)
+		 , T_TIPO_DATA(194356)
+		 , T_TIPO_DATA(196601)
 	); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 
@@ -66,7 +61,7 @@ BEGIN
     
    		V_MSQL := 'update '||V_ESQUEMA||'.act_activo
 			  set act_num_activo = 999||act_num_activo,
-				USUARIOMODIFICAR = ''REMVIP-132'',
+				USUARIOMODIFICAR = '''||V_USUARIO||''',
 				FECHAMODIFICAR = SYSDATE
 		where act_num_activo ='||V_TMP_TIPO_DATA(1);
 		EXECUTE IMMEDIATE V_MSQL;

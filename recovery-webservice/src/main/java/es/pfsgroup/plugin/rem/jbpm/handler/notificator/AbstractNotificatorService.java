@@ -30,6 +30,7 @@ import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 
 
@@ -303,8 +304,26 @@ public String creaCuerpoOfertaExpress(Oferta oferta){
 			if(!Checks.esNulo(appProperties.getProperty("haya.reservation.url"))){
 				reservationUrl = appProperties.getProperty("haya.reservation.url");
 			}
-			cuerpo = cuerpo + "<p>Pinche <a href=\"" + reservationUrl + expediente.getId() + "/" + reservationKey
-					+ "/1\">aquí</a> para la descarga del contrato de reserva.</p>";
+			
+			if (DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera)) {
+				if (!DDSubtipoActivo.CODIGO_SUBTIPO_LOCAL_COMERCIAL.equals(activo.getSubtipoActivo().getCodigo())) {
+					cuerpo = cuerpo + "<p>Pinche <a href=\"" + reservationUrl + expediente.getId() + "/" + reservationKey
+							+ "/1\">aquí</a> para la descarga del contrato de reserva.</p>";	
+				}				
+			} else if (DDCartera.CODIGO_CARTERA_SAREB.equals(codigoCartera)){
+				if (DDSubtipoActivo.CODIGO_SUBTIPO_LOCAL_COMERCIAL.equals(activo.getSubtipoActivo().getCodigo()) || 
+						DDSubtipoActivo.CODIGO_SUBTIPO_NAVE_ADOSADA.equals(activo.getSubtipoActivo().getCodigo()) || 
+						DDSubtipoActivo.CODIGO_SUBTIPO_NAVE_AISLADA.equals(activo.getSubtipoActivo().getCodigo()) ||
+						DDSubtipoActivo.CODIGO_SUBTIPO_NO_URBAN_RUSTICO.equals(activo.getSubtipoActivo().getCodigo())) {
+					
+					cuerpo = cuerpo + "<p>Pinche <a href=\"" + reservationUrl + expediente.getId() + "/" + reservationKey
+							+ "/1\">aquí</a> para la descarga del contrato de reserva.</p>";
+					
+				}
+			} else {
+				cuerpo = cuerpo + "<p>Pinche <a href=\"" + reservationUrl + expediente.getId() + "/" + reservationKey
+						+ "/1\">aquí</a> para la descarga del contrato de reserva.</p>";
+			}
 		}
 
 		cuerpo = cuerpo + "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";

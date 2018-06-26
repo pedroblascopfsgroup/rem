@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
+import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
@@ -60,6 +61,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.Visita;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
@@ -1112,5 +1114,9 @@ public interface ActivoApi {
 	public boolean deleteImpuestos(DtoImpuestosActivo dtoImpuestosFilter);
 
 	public boolean updateImpuestos(DtoImpuestosActivo dtoImpuestosFilter) throws ParseException;
+
+	public boolean esLiberBank(Long idActivo);
+	
+	public DtoActivoFichaCabecera getActivosPropagables(Long idActivo);
 
 }

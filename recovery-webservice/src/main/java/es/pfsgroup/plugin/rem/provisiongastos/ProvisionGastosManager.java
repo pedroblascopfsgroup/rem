@@ -9,15 +9,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ProvisionGastosApi;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.model.DtoProvisionGastos;
 import es.pfsgroup.plugin.rem.model.DtoProvisionGastosFilter;
+import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaProvisionAgrupacionGastos;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.provisiongastos.dao.ProvisionAgrupacionGastosDao;
@@ -48,6 +52,9 @@ public class ProvisionGastosManager extends BusinessOperationOverrider<Provision
 	private GenericAdapter genericAdapter;
 	
 	@Autowired
+	private GenericABMDao genericDao;
+	
+	@Autowired
 	private GestorActivoDao gestorActivoDao;
 
 	@Override
@@ -60,8 +67,8 @@ public class ProvisionGastosManager extends BusinessOperationOverrider<Provision
 	@SuppressWarnings("unchecked")
 	@Override
 	public DtoPage findAll(DtoProvisionGastosFilter dto) {
-		
 		Page page = null;
+
 		List<DtoProvisionGastos> provisiones = new ArrayList<DtoProvisionGastos>();
 		
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
@@ -83,6 +90,12 @@ public class ProvisionGastosManager extends BusinessOperationOverrider<Provision
 			}
 		}
 		
+		// Carterización del buscador.
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+		if (!Checks.esNulo(usuarioCartera)) {
+			dto.setCodCartera(usuarioCartera.getCartera().getCodigo());
+		}
+
 		page = provisionAgrupacionGastosDao.findAll(dto);
 		
 		if(!Checks.esNulo(page)){

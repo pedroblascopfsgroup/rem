@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 
 /**
@@ -127,6 +128,10 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 					codigoPrescriptor= oferta.getPrescriptor().getCodigoProveedorRem().toString();
 				}
 				nombrePrescriptor= oferta.getPrescriptor().getNombre();
+				if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
+					mailsPara.add(oferta.getPrescriptor().getEmail());
+				}
+				
 			}
 			
 			String contenido = 
@@ -140,11 +145,20 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				FileItem f3 = null;
 				
 				if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
-					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_formalizacion_cajamar.pdf");
+					if (!Checks.esNulo(oferta.getPrescriptor())) {
+						if (DDTipoProveedor.COD_OFICINA_CAJAMAR.equals(oferta.getPrescriptor().getTipoProveedor().getCodigo())) {
+							f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_express_oficinas.docx");
+						} else {
+							f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_express_apis.docx");
+						}
+					} else {
+						f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_express_apis.docx");
+					}
+					
 					f2 = FileItemUtils.fromResource("docs/ficha_cliente.xlsx");
 					f3 = FileItemUtils.fromResource("docs/manif_titular_real.doc");
 					
-					adjuntos.add(createAdjunto(f1, "Instrucciones_Reserva_Formalizacion_Cajamar.pdf"));
+					adjuntos.add(createAdjunto(f1, "Instrucciones_Reserva_Formalizacion_Cajamar.docx"));
 					adjuntos.add(createAdjunto(f2, "Ficha_cliente.xlsx"));
 					adjuntos.add(createAdjunto(f3, "Manif_Titular_Real.doc"));
 				}

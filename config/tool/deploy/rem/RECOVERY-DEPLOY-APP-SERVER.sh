@@ -4,7 +4,7 @@ if [ "$#" -lt 1 ]; then
     echo ""
     echo "Uso: " $0 " <entorno>"
     echo ""
-    echo "   <entorno>: val03, val04, pre, pro"
+    echo "   <entorno>: val03, val04, pre, pro, formacion"
     echo "" 
     exit 1
 fi
@@ -24,6 +24,10 @@ fi
 
 if [ "$1" == "val04" ] ; then
     BASE_DIR=/home/map019/	
+fi
+
+if [ "$1" == "formacion" ] ; then
+    BASE_DIR=/recovery/map018/app-server/
 fi
 
 echo "Copiando fichero de configuración ..."

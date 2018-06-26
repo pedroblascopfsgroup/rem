@@ -78,6 +78,9 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		},
     		{
     			name: 'comitePropuestoCodigo'
+    		},
+    		{
+    			name: 'ventaCartera'
     		}
     ],
     

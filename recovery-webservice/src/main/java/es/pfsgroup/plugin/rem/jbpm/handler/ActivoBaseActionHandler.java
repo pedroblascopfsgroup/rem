@@ -657,7 +657,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
      */
     public boolean isTransicionMismoNodo(ExecutionContext executionContext) {
         Transition transicion = executionContext.getTransition();
-        if (transicion != null) { return transicion.getTo().getName().equals(transicion.getFrom().getName()); }
+        if (transicion != null && transicion.getTo() != null) { return transicion.getTo().getName().equals(transicion.getFrom().getName()); }
 
         return false;
     }

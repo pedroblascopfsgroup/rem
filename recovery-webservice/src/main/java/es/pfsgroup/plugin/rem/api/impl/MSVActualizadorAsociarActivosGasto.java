@@ -18,6 +18,7 @@ import es.pfsgroup.plugin.rem.api.GastoApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 
 
 @Component
@@ -42,7 +43,7 @@ public class MSVActualizadorAsociarActivosGasto extends AbstractMSVActualizador 
 
 	@Override
 	@Transactional(readOnly = false)
-	public void procesaFila(MSVHojaExcel exc, int fila) throws IOException, ParseException {
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException {
 		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 		GastoProveedor gasto= gastoApi.getByNumGasto(Long.parseLong(exc.dameCelda(fila, 1)));
 		
@@ -52,7 +53,7 @@ public class MSVActualizadorAsociarActivosGasto extends AbstractMSVActualizador 
 		else{
 			throw new JsonViewerException("Gasto o Activo no existe");
 		}
-		
+		return new ResultadoProcesarFila();
 	}
-
+	
 }

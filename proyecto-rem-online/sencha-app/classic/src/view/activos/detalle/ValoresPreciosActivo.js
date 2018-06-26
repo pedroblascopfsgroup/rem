@@ -347,7 +347,28 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 							   fieldLabel: HreRem.i18n('fieldlabel.coste.adquisicion'),
 							   bind:  '{valoraciones.costeAdquisicion}',
 							   hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!='01')
-							 }						 
+							 },
+							 {
+							   xtype: 'currencyfieldbase',
+							   readOnly: true,
+							   fieldLabel: HreRem.i18n('fieldlabel.valor.neto.contable'),
+							   bind:  '{valoraciones.vnc}',
+							   hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!='08')
+							 },
+							 {
+							   xtype: 'currencyfieldbase',
+							   readOnly: true,
+						       fieldLabel: HreRem.i18n('fieldlabel.valor.deuda.bruta'),
+							   bind:  '{valoraciones.deudaBruta}',
+							   hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!='08')
+							 },
+							 {
+							   xtype: 'currencyfieldbase',
+							   readOnly: true,
+							   fieldLabel: HreRem.i18n('fieldlabel.valor.valor.razonable'),
+							   bind:  '{valoraciones.valorRazonable}',
+							   hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!='08')
+							 }
 							 
 							]
 					},

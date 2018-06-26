@@ -66,6 +66,5 @@ public class TitularDto {
 	public void setTitularContratacion(Integer titularContratacion) {
 		this.titularContratacion = titularContratacion;
 	}
-	
 
 }

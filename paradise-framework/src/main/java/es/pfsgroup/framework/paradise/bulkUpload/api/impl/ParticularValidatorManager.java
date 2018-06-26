@@ -120,6 +120,29 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			AND BORRADO = 0");
 	}
 	
+	@Override
+	public Boolean activoEnAgrupacionRestringida(Long idActivo) {
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(aga.AGR_ID) "
+				+ "			  FROM ACT_AGA_AGRUPACION_ACTIVO aga, "
+				+ "			    ACT_AGR_AGRUPACION agr, "
+				+ "			    ACT_ACTIVO act, "
+				+ "			    DD_TAG_TIPO_AGRUPACION tipoAgr "
+				+ "			  WHERE aga.AGR_ID = agr.AGR_ID "
+				+ "			    AND act.act_id   = aga.act_id "
+				+ "			    AND tipoAgr.DD_TAG_ID = agr.DD_TAG_ID "
+				+ "			    AND act.ACT_NUM_ACTIVO = "+idActivo+" "
+				+ "			    AND tipoAgr.DD_TAG_CODIGO = '02' "
+				+ "			    AND aga.BORRADO  = 0 "
+				+ "			    AND aga.BORRADO  = 0 "
+				+ "			    AND agr.BORRADO  = 0 "
+				+ "			    AND act.BORRADO  = 0 ");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+
+	
 	
 	@Override
 	public Boolean esActivoEnAgrupacion(Long numActivo, Long numAgrupacion) {
@@ -1537,5 +1560,88 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return actofr.equals("0");
 
 	}
+	
+	@Override
+	public boolean existeComiteSancionador(String codComite){
+		String res = rawDao.getExecuteSQL("		SELECT COUNT(1) "
+				+ "		FROM DD_COS_COMITES_SANCION cos			"
+				+ "     WHERE cos.BORRADO = 0					"
+				+ "		AND cos.DD_COS_CODIGO = '"+codComite+"'   "
+				);
+		return !res.equals("0");
+	}
+	
+	@Override
+	public boolean existeTipoimpuesto(String codTipoImpuesto){
+		String res = rawDao.getExecuteSQL("		SELECT COUNT(1) "
+				+ "     FROM DD_TIT_TIPOS_IMPUESTO tit			"
+				+ "		WHERE tit.BORRADO = 0					"
+				+ "		AND tit.DD_TIT_CODIGO = '"+codTipoImpuesto+"' "
+				);
+				
+		
+		return !res.equals("0");
+	}
+	
+	@Override
+	public boolean existeCodigoPrescriptor(String codPrescriptor){
+		boolean resultado = false;
+		if(codPrescriptor != null && !codPrescriptor.isEmpty()){
+			String res = rawDao.getExecuteSQL("		SELECT COUNT(1) "
+					+ "     FROM ACT_PVE_PROVEEDOR act			"
+					+ "		WHERE act.BORRADO = 0					"
+					+ "		AND act.PVE_COD_REM = '"+codPrescriptor+"' "
+					);
+			resultado = !res.equals("0");
+		}
+		
+		
+		return resultado;
+	}
+	
+	@Override
+	public boolean existeTipoDocumentoByCod(String codDocumento){
+		boolean resultado = false;
+		if(codDocumento != null && !codDocumento.isEmpty()){
+			String res = rawDao.getExecuteSQL("		SELECT COUNT(1) "
+					+ "		FROM DD_TDI_TIPO_DOCUMENTO_ID tdi		"
+					+ "		WHERE tdi.BORRADO = 0					"
+					+ "		AND tdi.DD_TDI_CODIGO = '"+codDocumento+"' "
+					);
+			
+			resultado = !res.equals("0");
+			
+		}
+	
+		return resultado;
+	}
+	
+	@Override
+	public Boolean existeAgrupacionByDescripcion(String descripcionAgrupacion){
+		if(Checks.esNulo(descripcionAgrupacion))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_AGR_AGRUPACION WHERE"
+				+ "		 	AGR_DESCRIPCION ='"+descripcionAgrupacion+"' "
+				+ "		 	AND BORRADO = 0");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+
+	@Override
+	public String getSubcartera(String numActivo) {
+		String resultado = "";
+		if(numActivo != null && !numActivo.isEmpty()){
+			 resultado = rawDao.getExecuteSQL("SELECT scr.DD_SCR_CODIGO "
+					+ "		FROM ACT_ACTIVO act "
+					+ "		INNER JOIN DD_SCR_SUBCARTERA scr "
+					+ "		ON act.DD_SCR_ID            = scr.DD_SCR_ID "
+					+ "		WHERE act.ACT_NUM_ACTIVO = "+numActivo);
+		}
+		return resultado;
+	}
+
 	
 }

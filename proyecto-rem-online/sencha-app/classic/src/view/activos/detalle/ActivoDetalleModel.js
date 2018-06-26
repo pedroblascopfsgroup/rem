@@ -272,6 +272,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		 
 		 activoPerteneceAgrupacionRestringida: function(get){
 		 	 return get('activo.pertenceAgrupacionRestringida');
+		 },
+		 
+		 esEditableCodigoPromocion: function(get){
+			 var isGestorActivos = $AU.userIsRol('HAYAGESACT') || $AU.userIsRol('HAYAGESTADM');
+			 var isLiberbank = get('activo.isCarteraLiberbank');
+			 if(isGestorActivos && isLiberbank) return true;
+			 else return false;
 		 }
 	 },
 

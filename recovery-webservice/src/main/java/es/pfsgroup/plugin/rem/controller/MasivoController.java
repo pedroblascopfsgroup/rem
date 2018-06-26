@@ -18,8 +18,6 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.DtoMSVProcesoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoFiltroProcesos;
-import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDEstadoProceso;
-import es.pfsgroup.framework.paradise.bulkUpload.model.MSVProcesoMasivo;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.utils.JsonViewer;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
@@ -72,43 +70,7 @@ public class MasivoController extends ParadiseJsonController {
 		try {
 			Page page = processAdapter.mostrarProcesosPaginados(dto);
 			List<DtoMSVProcesoMasivo> listProcesosmasivos = new ArrayList<DtoMSVProcesoMasivo>();
-			for (int i = 0; i < page.getResults().size(); i++) {
-				boolean sePuedeProcesar = false;
-				boolean conErrores = false;
-				boolean validable = false;
-				MSVProcesoMasivo procesomasivo = (MSVProcesoMasivo) page.getResults().get(i);
-				DtoMSVProcesoMasivo masivoDto = new DtoMSVProcesoMasivo();
-				if (procesomasivo.getEstadoProceso() != null) {
-					masivoDto.setEstadoProceso(procesomasivo.getEstadoProceso().getDescripcion());
-				} else {
-					masivoDto.setEstadoProceso("Validando");
-				}
-				masivoDto.setUsuario(procesomasivo.getAuditoria().getUsuarioCrear());
-				masivoDto.setTipoOperacionId(procesomasivo.getTipoOperacion().getId());
-				masivoDto.setId(procesomasivo.getId().toString());
-				masivoDto.setNombre(procesomasivo.getDescripcion());
-				if (procesomasivo.getEstadoProceso() != null) {
-					if (MSVDDEstadoProceso.CODIGO_VALIDADO.equals(procesomasivo.getEstadoProceso().getCodigo())) {
-						sePuedeProcesar = true;
-					} else if (MSVDDEstadoProceso.CODIGO_ERROR.equals(procesomasivo.getEstadoProceso().getCodigo()) || 
-							MSVDDEstadoProceso.CODIGO_PROCESADO_CON_ERRORES.equals(procesomasivo.getEstadoProceso().getCodigo())) {
-						conErrores = true;
-					} else if (MSVDDEstadoProceso.CODIGO_PTE_VALIDAR
-							.equals(procesomasivo.getEstadoProceso().getCodigo())) {
-						validable = true;
-					}
-				}
-				masivoDto.setSePuedeProcesar(sePuedeProcesar);
-				masivoDto.setConErrores(conErrores);
-				masivoDto.setValidable(validable);
-				masivoDto.setTipoOperacion(procesomasivo.getTipoOperacion().getDescripcion());
-				masivoDto.setFechaCrear(procesomasivo.getAuditoria().getFechaCrear());
-				masivoDto.setTotalFilas(procesomasivo.getTotalFilas());
-				masivoDto.setTotalFilasOk(procesomasivo.getTotalFilasOk());
-				masivoDto.setTotalFilasKo(procesomasivo.getTotalFilasKo());
-
-				listProcesosmasivos.add(masivoDto);
-			}
+			processAdapter.addListProcesosMasivo(page, listProcesosmasivos);
 			model.put("data", listProcesosmasivos);
 			model.put("totalCount", page.getTotalCount());
 			model.put("success", true);

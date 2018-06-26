@@ -24,8 +24,10 @@ if [ -f $MAINSH ]; then
     java -Xms512M -Xmx1536M -Dconfig.dir=$DIR_CONFIG -Dconfig.file.mask=$CFG_FILE -Duser.country=ES -Duser.language=es -cp $CLASS2 $CLASEINICIO --context=Default "$@"
         
 if [ $? = 0 ]; then
+echo " --------------------------------------------------------------------------------------------------"
 echo "Comienzo transferencia fichero RUSTOCK.txt"
    lftp -c "open -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.235.59; ls /datos/usuarios/socpart/CISA/in"
+echo "---------------------------------------------------------------------------------------------------"
 
    lftp -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.235.59 <<EOF
   cd /datos/usuarios/socpart/CISA/in/
@@ -34,7 +36,10 @@ echo "Comienzo transferencia fichero RUSTOCK.txt"
   mput $DIR_SALIDA/RUSTOCK.txt
   bye
 EOF
-
+echo "---------------------------------------------------------------------------------------------------"
+echo "Finalización de transferencia fichero RUSTOCK.txt"
+  lftp -c "open -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.235.59; ls /datos/usuarios/socpart/CISA/in"
+echo "---------------------------------------------------------------------------------------------------"
   exit 0
 fi    
 

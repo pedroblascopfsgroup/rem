@@ -32,6 +32,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 //import es.pfsgroup.plugin.rem.jbpm.JBPMProcessManagerApi;
 import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoGenericFormManagerApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -42,7 +43,10 @@ import es.pfsgroup.plugin.rem.formulario.dao.ActivoGenericFormItemDao;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutorApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManagerApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ConfiguracionTarifa;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -54,10 +58,15 @@ import es.pfsgroup.plugin.rem.model.ResolucionComiteBankiaDto;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
+import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 
@@ -111,6 +120,9 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 
     @Autowired
 	private TrabajoApi trabajoApi;
+    
+    @Autowired
+    private ActivoApi activoApi;
     
     @Autowired
     private ResolucionComiteApi resolucionComiteApi;
@@ -288,14 +300,18 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 			            			if(trabajoApi.checkBankia(tareaExterna)){
 			            				String codigoComite = null;
 										try {
-											codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
+											if(!expediente.getOferta().getVentaDirecta()){
+												codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
+											}else{
+												codigoComite = DDComiteSancion.CODIGO_HAYA_SAREB;
+											}
 										} catch (Exception e) {
 											// TODO Auto-generated catch block
 											e.printStackTrace();
 										}
 										if(!Checks.esNulo(codigoComite))
 											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getDescripcion());
-			            			}else{
+			            			} else {
 			            				if(!Checks.esNulo(expediente.getComiteSancion()))
 			            					item.setValue(expediente.getComiteSancion().getDescripcion());
 				            		}
@@ -698,6 +714,4 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 		
 		return mapa;
 	}
-	
-
 }

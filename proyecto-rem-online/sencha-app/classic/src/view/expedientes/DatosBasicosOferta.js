@@ -84,8 +84,15 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                	bind:		{
 		                		value: '{datosbasicosoferta.importeContraOferta}'
 		                		//,readOnly: '{esCarteraSareb}'
-		                	},
-		                	colspan: 2
+		                	}
+		                },
+		                {	
+		                	xtype: 'textfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.venta.cartera'),
+		                	bind:		{
+		                		value: '{datosbasicosoferta.ventaCartera}'
+		                		,readOnly: 'true'
+		                	}		                	
 		                },
 
 		                {

@@ -29,6 +29,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
@@ -57,7 +58,7 @@ public class MSVActualizadorPreciosActivoImporte extends AbstractMSVActualizador
 	
 	@Override
 	@Transactional(readOnly = false)	
-	public void procesaFila(MSVHojaExcel exc, int fila) throws IOException, ParseException {
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException {
 		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 		
 		// Si alguno de los precios está vacío, comprobar si existe anterior y pasarlo al histórico sin crear o actualizar ningún otro.
@@ -119,6 +120,7 @@ public class MSVActualizadorPreciosActivoImporte extends AbstractMSVActualizador
 					exc.dameCelda(fila, 14),
 					exc.dameCelda(fila, 15));
 		}
+		return new ResultadoProcesarFila();
 		
 	}
 	

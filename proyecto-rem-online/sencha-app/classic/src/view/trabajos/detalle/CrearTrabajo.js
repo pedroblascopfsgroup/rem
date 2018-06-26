@@ -66,6 +66,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 										xtype:'fieldsettable',
 										collapsible: false,
 										title: HreRem.i18n('title.que.se.solicita'),
+										defaultType: 'textfieldbase',
 										items :
 											[
 												{ 
@@ -101,7 +102,6 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 						    						listeners: {
 									                	select: 'onChangeSubtipoTrabajoCombo'
 									            	},
-													colspan: 2,
 													allowBlank: false
 										        },
 										        {
@@ -134,6 +134,24 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 								                	width: 		'100%',
 								                	colspan: 1
 						                		},
+						                		{
+													fieldLabel: HreRem.i18n('fieldlabel.codigo.promocion'),
+													reference: 'codigoPromocionPrinex',
+													bind: {
+														value: '{trabajo.codigoPromocionPrinex}'
+													},
+													width: 		'100%',
+													listeners: {
+														change: function(textField, newValue, oldValue) {
+															if(Ext.isEmpty(newValue)) {
+																me.lookupReference('checkEnglobaTodosActivosRef').readOnly = false;
+															} else {
+																me.lookupReference('checkEnglobaTodosActivosRef').setValue(true);
+																me.lookupReference('checkEnglobaTodosActivosRef').readOnly = true;
+															}
+														}
+													}
+												},
 						                		{ 
 													xtype: 'comboboxfieldbase',
 										        	fieldLabel:  HreRem.i18n('fieldlabel.supervisor.activo'),
@@ -675,11 +693,17 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
      		me.down('[reference=fieldsetListaActivosSubida]').setVisible(true);
      		me.down('[reference=supervisorActivoCombo]').setValue(me.idSupervisor);
      		//me.down('[reference=supervisorActivoCombo]').readOnly= true;    		
+     		me.down('[reference=textAdvertenciaCrearTrabajo]').setVisible(false);
+     		me.down('[reference=codigoPromocionPrinex]').setVisible(true);
+     		me.down('[reference=codigoPromocionPrinex]').reset();
+     		me.down('[reference=codigoPromocionPrinex]').setDisabled(true);
      	} else {
      		me.down('[reference=filefieldActivosRef]').allowBlank=true;
      		me.down('[reference=fieldSetSubirFichero]').setVisible(false);
      		me.down('[reference=fieldsetListaActivosSubida]').setVisible(false);
      		me.down('[reference=supervisorActivoCombo]').readOnly= false; 
+     		me.down('[reference=textAdvertenciaCrearTrabajo]').setVisible(true);
+     		me.down('[reference=codigoPromocionPrinex]').setVisible(false);
      	}
     	
     	// Recarga las advertencias del trabajo

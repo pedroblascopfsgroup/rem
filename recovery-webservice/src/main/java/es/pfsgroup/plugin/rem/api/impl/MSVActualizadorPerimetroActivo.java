@@ -24,6 +24,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -63,7 +64,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 	
 	@Override
 	@Transactional(readOnly = false)
-	public void procesaFila(MSVHojaExcel exc, int fila) throws IOException, ParseException, JsonViewerException, SQLException {
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
 		
 		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 		
@@ -161,7 +162,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 		//Actualizar disponibilidad comercial del activo
 		updaterState.updaterStateDisponibilidadComercial(activo);
 		activoApi.saveOrUpdate(activo);
-		
+		return new ResultadoProcesarFila();
 	}
 	
 	/**

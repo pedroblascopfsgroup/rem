@@ -129,13 +129,13 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 				}
 
 			} catch (UserException e) {
-				logger.info("No se ha podido validar el formulario correctamente. Trámite [" + getActivoTramite(executionContext).getId() + "], tarea [" + tareaExterna.getId() + "]. Mensaje ["
+				logger.error("No se ha podido validar el formulario correctamente. Trámite [" + getActivoTramite(executionContext).getId() + "], tarea [" + tareaExterna.getId() + "]. Mensaje ["
 						+ e.getMessage() + "]", e);
 				// Relanzamos la userException para que le aparezca al usuario
 				// en pantalla
 				throw (e);
 			} catch (Exception e) {
-				logger.info("No se ha podido validar el formulario correctamente. Trámite [" + getActivoTramite(executionContext).getId() + "], tarea [" + tareaExterna.getId() + "]", e);
+				logger.error("No se ha podido validar el formulario correctamente. Trámite [" + getActivoTramite(executionContext).getId() + "], tarea [" + tareaExterna.getId() + "]", e);
 				throw new UserException("bpm.error.script");
 			}
 		}

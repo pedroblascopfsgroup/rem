@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
@@ -546,6 +547,10 @@ public interface OfertaApi {
 
 	public void congelarExpedientesPorOfertaExpress(Oferta ofertaExpress) throws Exception;
 
+	public Double getImporteOferta(Oferta oferta);
 
+	boolean comprobarComiteLiberbankPlantillaPropuesta(TareaExterna tareaExterna);
+
+	DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada);
 }
 

@@ -516,7 +516,7 @@ public class AgrupacionAdapter {
 	}
 
 	@Transactional(readOnly = false)
-	public void createActivoAgrupacion(Long numActivo, Long idAgrupacion, Integer activoPrincipal)
+	public void createActivoAgrupacion(Long numActivo, Long idAgrupacion, Integer activoPrincipal,boolean ventaCartera)
 			throws JsonViewerException {
 
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
@@ -577,6 +577,7 @@ public class AgrupacionAdapter {
 								&& ES_FORMALIZABLE.equals(agrupacion.getIsFormalizacion())) {
 					throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_NO_COMPARTE_FORMALIZACION);
 				}
+
 			}
 			// Si es el primer activo, validamos si tenemos los datos necesarios
 			// del activo, y modificamos la agrupación con esos datos
@@ -1482,6 +1483,7 @@ public class AgrupacionAdapter {
 					clienteComercial.setRegimenMatrimonial(regimen);
 				}
 			}
+			
 			genericDao.save(ClienteComercial.class, clienteComercial);
 
 			Oferta oferta = new Oferta();
@@ -1504,6 +1506,14 @@ public class AgrupacionAdapter {
 			oferta.setPrescriptor((ActivoProveedor) proveedoresApi.searchProveedorCodigo(dto.getCodigoPrescriptor()));
 			oferta.setOrigen("REM");
 			oferta.setOfertaExpress(false);
+			if (Checks.esNulo(dto.getVentaDirecta())){
+				oferta.setVentaDirecta(false);
+			} else {				
+				oferta.setVentaDirecta(dto.getVentaDirecta());				
+			}
+			if(!Checks.esNulo(dto.getIdUvem())){
+				oferta.setIdUvem(dto.getIdUvem());
+			}
 			genericDao.save(Oferta.class, oferta);
 			// Actualizamos la situacion comercial de los activos de la oferta
 			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
@@ -2284,15 +2294,19 @@ public class AgrupacionAdapter {
 
 		String codProvinciasCanarias[] = {"35", "38"};
 		
-		for (int i = 0; i < lista.size(); i++) {
-			ActivoAgrupacionActivo aga = lista.get(i);
+		if(lista.isEmpty() && Arrays.asList(codProvinciasCanarias).contains(activo.getProvincia())){
+			canarias = true;
+		}else{
+			for (int i = 0; i < lista.size(); i++) {
+				ActivoAgrupacionActivo aga = lista.get(i);
 
-			for (int j = 0; j < lista.size(); j++) {
-				Activo act = aga.getActivo();
-				String codProvincia = act.getProvincia();
+				for (int j = 0; j < lista.size(); j++) {
+					Activo act = aga.getActivo();
+					String codProvincia = act.getProvincia();
 
-				if (Arrays.asList(codProvinciasCanarias).contains(codProvincia)) {
-					canarias = true;
+					if (Arrays.asList(codProvinciasCanarias).contains(codProvincia)) {
+						canarias = true;
+					}
 				}
 			}
 		}

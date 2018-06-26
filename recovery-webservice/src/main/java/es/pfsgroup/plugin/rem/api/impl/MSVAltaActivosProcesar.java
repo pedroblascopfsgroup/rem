@@ -15,6 +15,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.plugin.rem.factory.AltaActivoFactoryApi;
 import es.pfsgroup.plugin.rem.model.DtoAltaActivoFinanciero;
@@ -114,7 +115,7 @@ public class MSVAltaActivosProcesar extends AbstractMSVActualizador implements M
 
 	@Override
 	@Transactional(readOnly = false)
-	public void procesaFila(MSVHojaExcel exc, int fila) throws Exception {
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws Exception {
 		
 		// Carga los datos de activo de la Fila excel al DTO
 		DtoAltaActivoFinanciero dtoAAF = new DtoAltaActivoFinanciero();
@@ -126,6 +127,7 @@ public class MSVAltaActivosProcesar extends AbstractMSVActualizador implements M
 		// FINANCIEROS
 		AltaActivoService altaActivoService = altaActivoFactoryApi.getService(AltaActivoService.CODIGO_ALTA_ACTIVO_FINANCIERO);
 		altaActivoService.procesarAlta(dtoAAF);
+		return new ResultadoProcesarFila();
 	}
 
 	/**

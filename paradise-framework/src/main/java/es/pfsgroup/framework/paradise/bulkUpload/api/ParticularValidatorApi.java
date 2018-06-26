@@ -4,8 +4,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
-
 public interface ParticularValidatorApi {
 
 	public String getOneNumActivoAgrupacionRaw(String numAgrupacion);
@@ -19,6 +17,8 @@ public interface ParticularValidatorApi {
 	public Boolean esMismaCarteraLocationByNumAgrupRem(String numAgrupRem);
 
 	public String existeActivoEnAgrupacion(Long idActivo, Long idAgrupacion);
+	
+	public Boolean activoEnAgrupacionRestringida(Long idActivo);
 
 	public Boolean esActivoEnAgrupacion(Long idActivo, Long idAgrupacion);
 	
@@ -291,7 +291,25 @@ public interface ParticularValidatorApi {
 	boolean comprobarDistintoPropietarioListaActivos(String[] activos);
 
 	boolean activoConOfertasTramitadas(String numActivo);
-
-	Boolean existeProveedorMediadorByNIFConFVD(String proveedorMediadorNIF);
+	
+	public boolean existeComiteSancionador(String codComite);
+	
+	public boolean existeTipoimpuesto(String codTipoImpuesto);
+	
+	public boolean existeCodigoPrescriptor(String codPrescriptor);
+	
+	public boolean existeTipoDocumentoByCod(String codDocumento);
+	
+	/**
+	 * El método indica si existe alguna agrupación con la descripcion indicada
+	 * 
+	 * @param descripcionAgrupacion : Descripion de la agrupación
+	 * @return : Devuelve True si existe, False si no existe el código.
+	 */
+	public Boolean existeAgrupacionByDescripcion(String descripcionAgrupacion);
+	
+	public Boolean existeProveedorMediadorByNIFConFVD(String proveedorMediadorNIF);
+	
+	public String getSubcartera(String numActivo);
 
 }

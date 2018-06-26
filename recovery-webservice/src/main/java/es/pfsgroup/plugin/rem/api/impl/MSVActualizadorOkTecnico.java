@@ -20,6 +20,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Component
@@ -47,7 +48,7 @@ public class MSVActualizadorOkTecnico extends AbstractMSVActualizador implements
 
 	@Override
 	@Transactional(readOnly = false)
-	public void procesaFila(MSVHojaExcel exc, int fila) throws IOException, ParseException, JsonViewerException, SQLException {
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
 		
 		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 		String oktecnico = exc.dameCelda(fila, 1);
@@ -70,6 +71,8 @@ public class MSVActualizadorOkTecnico extends AbstractMSVActualizador implements
 			activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion);
 			
 		}
+		return new ResultadoProcesarFila();
 	}
+	
 
 }

@@ -71,10 +71,12 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.historicotarifaplana.dao.HistoricoTarifaPlanaDao;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManager;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ActuacionTecnicaUserAssignationService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -101,6 +103,7 @@ import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.PresupuestoActivo;
 import es.pfsgroup.plugin.rem.model.PresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -118,6 +121,7 @@ import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresupuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAdelanto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
@@ -236,9 +240,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Autowired
 	private HistoricoTarifaPlanaDao historicoTarifaPlanaDao;
+	
+	@Autowired
+	private ActivoTramiteApi activoTramiteApi;
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
-
+	
+	@Autowired
+	private ExpedienteComercialDao expedienteComercialDao;
+	
 	@Override
 	public String managerName() {
 		return "trabajoManager";
@@ -1254,7 +1264,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					&& !Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
 				dtoTrabajo.setNombreMediador(activo.getInfoComercial().getMediadorInforme().getNombre());
 			}
-
+			
 			dtoTrabajo.setCartera(activo.getCartera().getDescripcion());
 			dtoTrabajo.setPropietario(activo.getFullNamePropietario());
 			dtoTrabajo.setIdActivo(activo.getId());
@@ -1333,6 +1343,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setEsTarifaPlana(0);
 		}
 		
+		 if(!Checks.esNulo(trabajo.getFechaAutorizacionPropietario())) {
+			dtoTrabajo.setFechaAutorizacionPropietario(trabajo.getFechaAutorizacionPropietario());
+		 }
 
 		return dtoTrabajo;
 	}
@@ -3175,6 +3188,29 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 	
 	@Override
+	public boolean checkLiberbank(TareaExterna tareaExterna) {
+		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
+		if (!Checks.esNulo(trabajo)) {
+			Activo primerActivo = trabajo.getActivo();
+			if (!Checks.esNulo(primerActivo)) {
+				return (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(primerActivo.getCartera().getCodigo()));
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean checkLiberbank(Trabajo trabajo) {
+		if (!Checks.esNulo(trabajo)) {
+			Activo primerActivo = trabajo.getActivo();
+			if (!Checks.esNulo(primerActivo)) {
+				return (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(primerActivo.getCartera().getCodigo()));
+			}
+		}
+		return false;
+	}
+	
+	@Override
 	public boolean checkCajamar(TareaExterna tareaExterna) {
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
 		if (!Checks.esNulo(trabajo)) {
@@ -3196,6 +3232,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		return false;
 	}
+
 	@Override
 	public DDCartera getCartera(TareaExterna tareaExterna) {
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
@@ -3361,6 +3398,72 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			esTarifaPlana = esTrabajoTarifaPlana(trabajo.getActivo(), trabajo.getSubtipoTrabajo(), trabajo.getFechaSolicitud());
 		}
 		return esTarifaPlana;
+	}
+
+	public boolean superaLimiteLiberbank(Long idTramite) {
+		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
+		boolean supera = false;
+		
+		if (!Checks.esNulo(activoTramite)) {
+			Double importe = new Double("0.0");
+			Trabajo trabajo = activoTramite.getTrabajo();
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+			List<ActivoTrabajo> listActivos = trabajo.getActivosTrabajo();
+			int nActivos = listActivos.size();
+			boolean hasCodPrinex = false;
+			
+			for(ActivoTrabajo activo : listActivos) {
+				if(null != activo.getActivo().getCodigoPromocionPrinex() && !activo.getActivo().getCodigoPromocionPrinex().isEmpty()){
+					hasCodPrinex = true;
+					break;
+				}
+			}
+			
+			if (!Checks.esNulo(trabajo.getEsTarificado()) && !trabajo.getEsTarificado()) { // Presupuesto
+				List<PresupuestoTrabajo> presupuestos = genericDao.getList(PresupuestoTrabajo.class, filtro);
+				for (PresupuestoTrabajo presupuesto : presupuestos) {
+					if (!presupuesto.getAuditoria().isBorrado() && !Checks.esNulo(presupuesto.getImporte())
+							&& presupuesto.getEstadoPresupuesto() != null && "02".equals(presupuesto.getEstadoPresupuesto().getCodigo())) {
+						importe += presupuesto.getImporte();
+					}
+				}
+			}else { // Tarifas
+				List<TrabajoConfiguracionTarifa> cfgTarifas = genericDao.getList(TrabajoConfiguracionTarifa.class, filtro);
+				for (TrabajoConfiguracionTarifa tarifa : cfgTarifas) {
+					if (!tarifa.getAuditoria().isBorrado() && !Checks.esNulo(tarifa.getPrecioUnitario())
+							&& !Checks.esNulo(tarifa.getMedicion())) {
+						importe += tarifa.getPrecioUnitario() * tarifa.getMedicion();
+					}
+				}
+			}
+			
+			if(nActivos > 1 && hasCodPrinex) {
+				if( importe >= ActuacionTecnicaUserAssignationService.LIBERBANK_LIMITE_INFERIOR_AGRUPACIONES)
+					supera = true;
+			}else{
+				if(importe >= ActuacionTecnicaUserAssignationService.LIBERBANK_LIMITE_INFERIOR) {
+					supera = true;
+				}
+			}
+		}
+		return supera;
+	}
+	
+	@Override
+	public Boolean trabajoEsTarificado(Long idTramite){
+		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
+		Trabajo trabajo = null;
+		if (!Checks.esNulo(activoTramite)) {
+			trabajo = activoTramite.getTrabajo();
+			if(!Checks.esNulo(trabajo)){
+				if(!Checks.esNulo(trabajo.getEsTarifaPlana()) && trabajo.getEsTarifaPlana().equals(true)){
+					return true;
+				}else if(!Checks.esNulo(trabajo.getEsTarificado())){
+					return trabajo.getEsTarificado();
+				}
+			}
+		}
+		throw new NullPointerException();
 	}
 }
 

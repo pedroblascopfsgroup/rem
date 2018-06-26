@@ -37,6 +37,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
@@ -122,6 +123,9 @@ public class ActivoController extends ParadiseJsonController {
 
 	@Autowired
 	private UploadAdapter uploadAdapter;
+
+	@Autowired
+	private GenericABMDao genericDao;
 
 	@Autowired
 	private ActivoApi activoApi;
@@ -1837,7 +1841,7 @@ public class ActivoController extends ParadiseJsonController {
 		for (DDRatingActivo rating : listaRating)
 			mapRating.put(rating.getCodigo(), rating.getDescripcion());
 
-		ExcelReport report = new ActivoExcelReport(listaActivos, mapRating);
+		ExcelReport report = new ActivoExcelReport(listaActivos, mapRating, genericDao);
 
 		excelReportGeneratorApi.generateAndSend(report, response);
 	}
@@ -2055,6 +2059,8 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createOferta(DtoOfertasFilter dtoOferta, ModelMap model) throws Exception {
 		try {
+			//solo son venta directa desde masivo
+			dtoOferta.setVentaDirecta(false);
 			boolean success = adapter.createOfertaActivo(dtoOferta);
 			model.put("success", success);
 
@@ -2613,6 +2619,21 @@ public class ActivoController extends ParadiseJsonController {
 		}catch(Exception e){
 			e.printStackTrace();
 			model.put("succes", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getActivosPropagables(String idActivo, ModelMap model){
+		
+		try{
+			model.put("data", activoApi.getActivosPropagables(Long.valueOf(idActivo)));
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put("success", false);
+			model.put("error", e.getMessage());
 		}
 		
 		return createModelAndViewJson(model);

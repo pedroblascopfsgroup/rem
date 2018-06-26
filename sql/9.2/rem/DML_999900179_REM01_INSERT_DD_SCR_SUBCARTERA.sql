@@ -1,12 +1,12 @@
 --/*
 --##########################################
---## AUTOR=Josep Ros
---## FECHA_CREACION=20180227
+--## AUTOR=DAP
+--## FECHA_CREACION=20180601
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=0
+--## VERSION_ARTEFACTO=2.0.17
+--## INCIDENCIA_LINK=REMVIP-874
 --## PRODUCTO=NO
---##
+--## 
 --## Finalidad: Script que añade en DD_SCR_SUBCARTERA los datos añadidos en T_ARRAY_DATA
 --## INSTRUCCIONES:
 --## VERSIONES:
@@ -33,6 +33,8 @@ DECLARE
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
 
+    V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-874';
+
     
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
@@ -40,11 +42,12 @@ DECLARE
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
         T_TIPO_DATA('25' ,'Quitas Bankia','Quitas Bankia','11'),
         T_TIPO_DATA('26' ,'Quitas LBK','Quitas LBK','11'),
-	T_TIPO_DATA('27' ,'Quitas Ibercaja','Quitas Ibercaja','11'),
-	T_TIPO_DATA('28' ,'Quitas ING','Quitas ING','11'),
-	T_TIPO_DATA('29' ,'Quitas Particulares','Quitas Particulares','11'),
-	T_TIPO_DATA('30' ,'Comercial -ING','Comercial -ING','11'),
-	T_TIPO_DATA('31' ,'Comercial-Particulares','Comercial-Particulares','11')
+      	T_TIPO_DATA('27' ,'Quitas Ibercaja','Quitas Ibercaja','11'),
+      	T_TIPO_DATA('28' ,'Quitas ING','Quitas ING','11'),
+      	T_TIPO_DATA('29' ,'Quitas Particulares','Quitas Particulares','11'),
+      	T_TIPO_DATA('30' ,'Comercial -ING','Comercial -ING','11'),
+      	T_TIPO_DATA('31' ,'Comercial-Particulares','Comercial-Particulares','11'),
+        T_TIPO_DATA('032' ,'Quitas Cajamar','Quitas Cajamar','11')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -71,7 +74,7 @@ BEGIN
        	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.DD_SCR_SUBCARTERA '||
                     'SET DD_SCR_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
 					', DD_SCR_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
-					', USUARIOMODIFICAR = ''HREOS-3876'' , FECHAMODIFICAR = SYSDATE '||
+					', USUARIOMODIFICAR = '''||V_USUARIO||''' , FECHAMODIFICAR = SYSDATE '||
 					', DD_CRA_ID = (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||''') '||
 					'WHERE DD_SCR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
           EXECUTE IMMEDIATE V_MSQL;
@@ -86,7 +89,7 @@ BEGIN
           V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.DD_SCR_SUBCARTERA (' ||
                       'DD_SCR_ID, DD_SCR_CODIGO, DD_SCR_DESCRIPCION, DD_SCR_DESCRIPCION_LARGA, DD_CRA_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
                       'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''','||
-                      '(SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||'''), 0, ''HREOS-3876'',SYSDATE,0 FROM DUAL';
+                      '(SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||'''), 0, '''||V_USUARIO||''',SYSDATE,0 FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
         

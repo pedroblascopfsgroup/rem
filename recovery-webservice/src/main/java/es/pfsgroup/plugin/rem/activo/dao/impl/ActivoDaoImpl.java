@@ -183,6 +183,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.accesoTapiado", dto.getAccesoTapiado());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.accesoAntiocupa", dto.getAccesoAntiocupa());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.situacionComercialCodigo", dto.getSituacionComercialCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoTituloPosesorio", dto.getTipoTituloPosesorio());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tco.codigo", dto.getTipoComercializacionCodigo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "perac.aplicaGestion", dto.getPerimetroGestion());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.flagRating", dto.getRatingCodigo());
@@ -995,15 +996,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	@Override
 	public List<Activo> getListActivosPorID(List<Long> activosID) {
 		HQLBuilder hb = new HQLBuilder("from Activo act" );
-		
-		StringBuilder cadenaID = new StringBuilder();
-		
-		for(Long activoID : activosID){
-			cadenaID.append(String.valueOf(activoID));
-			cadenaID.append(",");
-		}
 
-		hb.appendWhere("id in ("+cadenaID.substring(0, cadenaID.length()-1)+")");
+		HQLBuilder.addFiltroWhereInSiNotNull(hb, "id", activosID);
 		
 		return HibernateQueryUtils.list(this, hb);
 	}

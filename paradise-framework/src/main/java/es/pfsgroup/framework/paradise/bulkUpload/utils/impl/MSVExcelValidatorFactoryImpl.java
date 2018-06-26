@@ -73,8 +73,10 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVActualizarGestores actualizarGestores;
 	
 	@Autowired
+	private MSVVentaDeCarteraExcelValidator ventaDeCartera;
+
+	@Autowired
 	private MSVOkTecnicoExcelValidator okTecnicoValidator;
-	
 	
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 		
@@ -134,6 +136,9 @@ public class MSVExcelValidatorFactoryImpl {
 				return altaActivosTP;
 			}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CENTRAL_TECNICA_OK_TECNICO.equals(codTipoOperacion)){
 				return okTecnicoValidator;
+			}
+			else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA.equals(codTipoOperacion)){
+				return ventaDeCartera;
 			}
 		return null;
 	}

@@ -12,10 +12,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import net.sf.sojo.interchange.json.JsonParser;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,8 +47,8 @@ import es.pfsgroup.plugin.rem.model.DtoLocalidadSimple;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
@@ -68,6 +64,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import net.sf.sojo.interchange.json.JsonParser;
 
 @Service("genericManager")
 public class GenericManager extends BusinessOperationOverrider<GenericApi> implements GenericApi {
@@ -119,9 +118,21 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		authData.setAuthorities(authorities);
 		authData.setUserId(usuario.getId());
 		authData.setRoles(roles);
+		authData.setEsGestorSustituto(esGestorSustituto(usuario));
 
 		return authData;
 
+	}
+	
+	public Integer esGestorSustituto(Usuario usuarioLogado){
+		List<GestorSustituto> ges = new ArrayList<GestorSustituto>();
+		ges = genericDao.getList(GestorSustituto.class, genericDao.createFilter(FilterType.EQUALS, "usuarioGestorSustituto", usuarioLogado));
+		
+		if(Checks.estaVacio(ges)){
+			return 0;
+		}else{
+			return 1;
+		}
 	}
 
 	@Override

@@ -18,6 +18,13 @@ Ext.define('HreRem.view.agenda.AgendaSearch', {
 	
 		var me = this;
     	me.setTitle(HreRem.i18n('title.filtro.agenda'));
+    	me.listeners = {
+    	  	afterrender: function(cmp) {
+    	  		if($AU.getUser().esGestorSustituto == "0"){
+    	  			cmp.down("button[reference=btnGestorSustituto]").setVisible(false);
+    	  		}
+    	  	}
+    	};
 	    me.items= [
 
 	    {
@@ -147,7 +154,7 @@ Ext.define('HreRem.view.agenda.AgendaSearch', {
 	    	}*/
     		
     	];   	
-	    		
+    	
 	    me.callParent();
 	}
 });

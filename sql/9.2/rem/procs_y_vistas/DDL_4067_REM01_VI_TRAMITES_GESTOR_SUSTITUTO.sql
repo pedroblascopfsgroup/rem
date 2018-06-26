@@ -1,0 +1,116 @@
+--/*
+--##########################################
+--## AUTOR=Vicente Martinez Cifre
+--## FECHA_CREACION=20180626
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=REMVIP-987
+--## PRODUCTO=NO
+--## Finalidad: DDL creación vista VI_TRAMITES_GESTOR_SUSTITUTO.
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+
+DECLARE
+    seq_count number(3); -- Vble. para validar la existencia de las Secuencias.
+    table_count number(3); -- Vble. para validar la existencia de las Tablas.
+    v_column_count number(3); -- Vble. para validar la existencia de las Columnas.
+    v_constraint_count number(3); -- Vble. para validar la existencia de las Constraints.
+    err_num NUMBER; -- Número de errores.
+    err_msg VARCHAR2(2048); -- Mensaje de error.
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
+    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas.
+    V_TEXT_VISTA VARCHAR2(30 CHAR) := 'VI_TRAMITES_GESTOR_SUSTITUTO'; -- Vble. auxiliar para almacenar el nombre de la vista.
+    V_MSQL VARCHAR2(4000 CHAR); 
+
+    CUENTA NUMBER;
+    
+BEGIN
+
+  SELECT COUNT(*) INTO CUENTA FROM ALL_OBJECTS WHERE OBJECT_NAME = ''||V_TEXT_VISTA||'' AND OWNER=V_ESQUEMA AND OBJECT_TYPE='MATERIALIZED VIEW';  
+  IF CUENTA>0 THEN
+    DBMS_OUTPUT.PUT_LINE('DROP MATERIALIZED VIEW '|| V_ESQUEMA ||'.'||V_TEXT_VISTA||'...');
+    EXECUTE IMMEDIATE 'DROP MATERIALIZED VIEW ' || V_ESQUEMA || '.'||V_TEXT_VISTA||'';  
+    DBMS_OUTPUT.PUT_LINE('DROP MATERIALIZED VIEW '|| V_ESQUEMA ||'.'||V_TEXT_VISTA||'... borrada OK');
+  END IF;
+
+  SELECT COUNT(*) INTO CUENTA FROM ALL_OBJECTS WHERE OBJECT_NAME = ''||V_TEXT_VISTA||'' AND OWNER=V_ESQUEMA AND OBJECT_TYPE='VIEW';  
+  IF CUENTA>0 THEN
+    DBMS_OUTPUT.PUT_LINE('DROP VIEW '|| V_ESQUEMA ||'.'||V_TEXT_VISTA||'...');
+    EXECUTE IMMEDIATE 'DROP VIEW ' || V_ESQUEMA || '.'||V_TEXT_VISTA||'';  
+    DBMS_OUTPUT.PUT_LINE('DROP VIEW '|| V_ESQUEMA ||'.'||V_TEXT_VISTA||'... borrada OK');
+  END IF;
+
+  DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.'||V_TEXT_VISTA||'...');
+  EXECUTE IMMEDIATE '
+  CREATE VIEW ' || V_ESQUEMA || '.'|| V_TEXT_VISTA ||' (
+    "GESTOR_ORI", 
+    "GESTOR_SUS", 
+    "ACTIVO", 
+    "IDTAREA", 
+    "TAREA", 
+    "TRAMITE", 
+    "CODIGOTIPOTRAMITE", 
+    "TIPOTRAMITE", 
+    "RESPONSABLE", 
+    "FECHAINICIO", 
+    "FECHAFIN", 
+    "PLAZOVENCIMIENTO", 
+    "PRIORIDAD", 
+    "IDACTIVO"
+  ) AS 
+  SELECT SGS.USU_ID_ORI GESTOR_ORI, 
+    SGS.USU_ID_SUS GESTOR_SUS, 
+    ACT.ACT_NUM_ACTIVO ACTIVO, 
+    TAR.TAR_ID IDTAREA, 
+    TAR.TAR_TAREA TAREA, 
+    TRA.TRA_ID TRAMITE, 
+    TPO.DD_TPO_CODIGO CODIGOTIPOTRAMITE, 
+    TPO.DD_TPO_DESCRIPCION TIPOTRAMITE,
+    TRIM(USU.USU_NOMBRE||'' ''||USU.USU_APELLIDO1||'' ''||USU.USU_APELLIDO2) RESPONSABLE, 
+    TRA.TRA_FECHA_INICIO FECHAINICIO, 
+    TRA.TRA_FECHA_FIN FECHAFIN,
+    TRUNC(TO_DATE(TRA.TRA_FECHA_FIN,''DD-MM-YY''))-TRUNC(TO_DATE(SYSDATE,''DD-MM-YY'')) PLAZOVENCIMIENTO, 
+    0 PRIORIDAD, 
+    ACT.ACT_ID IDACTIVO
+  FROM REM01.SGS_GESTOR_SUSTITUTO SGS
+  JOIN REM01.TAC_TAREAS_ACTIVOS TAC ON SGS.USU_ID_ORI = TAC.USU_ID AND TAC.BORRADO = 0
+  JOIN REM01.TAR_TAREAS_NOTIFICACIONES TAR ON TAC.TAR_ID = TAR.TAR_ID AND TAR.BORRADO = 0
+  JOIN REM01.ACT_TRA_TRAMITE TRA ON TAC.TRA_ID = TRA.TRA_ID
+  JOIN REM01.DD_TPO_TIPO_PROCEDIMIENTO TPO ON TRA.DD_TPO_ID = TPO.DD_TPO_ID
+  JOIN REMMASTER.USU_USUARIOS USU ON SGS.USU_ID_ORI = USU.USU_ID
+  JOIN REM01.ACT_ACTIVO ACT ON TAC.ACT_ID = ACT.ACT_ID
+  WHERE SGS.FECHA_INICIO <= SYSDATE
+  AND (SGS.FECHA_FIN >= SYSDATE OR SGS.FECHA_FIN IN NULL)';
+
+
+  DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.'||V_TEXT_VISTA||'...Creada OK');
+  
+  EXECUTE IMMEDIATE 'COMMENT ON TABLE ' || V_ESQUEMA || '.'||V_TEXT_VISTA||' IS ''VISTA PARA RECOGER LAS TAREAS DE LOS GESTORES SUSTITUTOS''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TEXT_VISTA||'.GESTOR_ORI IS ''Id del usuario gestor originalo''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TEXT_VISTA||'.GESTOR_SUS IS ''Id del usuario gestor sustituto''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TEXT_VISTA||'.ACTIVO IS ''Número del activo''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TEXT_VISTA||'.IDTAREA IS ''Id de la tarea'''; 
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TEXT_VISTA||'.TAREA IS ''Descripción de la tarea''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TEXT_VISTA||'.TRAMITE IS ''Id del trámite''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TEXT_VISTA||'.CODIGOTIPOTRAMITE IS ''Código del tipo de trámite''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TEXT_VISTA||'.TIPOTRAMITE IS ''Tipo de trámite''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TEXT_VISTA||'.RESPONSABLE IS ''Nombre del responsable de la tarea (GESTOR_ORI)''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TEXT_VISTA||'.FECHAINICIO IS ''Fecha del inicio de del trámite''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TEXT_VISTA||'.FECHAFIN IS ''Fecha de fin de del trámite''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TEXT_VISTA||'.PLAZOVENCIMIENTO IS ''Plazo en el que vence la tarea''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TEXT_VISTA||'.PRIORIDAD IS ''Campo que marca el color de la bola de prioridad (0: Verde, 1:Amarillo, 2: Rojo)''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TEXT_VISTA||'.IDACTIVO IS ''Id del activo al cual pertenece la tarea''';
+  
+  DBMS_OUTPUT.PUT_LINE('Creados los comentarios en CREATE VIEW '|| V_ESQUEMA ||'.'||V_TEXT_VISTA||'...Creada OK');
+  
+END;
+/
+
+EXIT;

@@ -25,7 +25,7 @@ Ext.define('HreRem.view.activos.gestores.ComboGestores', {
 	        	matchFieldWidth: false,
 	        	fieldLabel: HreRem.i18n('gestores.comboGestores.fieldlabel.combo.gestor'),
 	        	bind: {
-            		store: '{comboTipoGestor}'
+            		store: '{comboTipoGestorByActivo}'
             	},
 				reference: 'tipoGestor',
 				name: 'tipoGestor',

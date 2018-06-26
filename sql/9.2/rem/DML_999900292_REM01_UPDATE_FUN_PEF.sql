@@ -35,7 +35,7 @@ BEGIN
 		      from '||V_ESQUEMA||'.fun_pef fp
 		    where exists (select 1 
 		                    from '||V_ESQUEMA_M||'.fun_funciones fun
-		                    where fun.fun_descripcion in (''EDITAR_GRID_PRECIOS_VIGENTES'',''EDITAR_GRID_PUBLICACION_HISTORICO_MEDIADORES'',''EDITAR_GRID_PUBLICACION_CONDICIONES_ESPECIFICAS'')
+		                    where fun.fun_descripcion in (''EDITAR_GRID_PRECIOS_VIGENTES'',''EDITAR_GRID_PUBLICACION_HISTORICO_MEDIADORES'',''EDITAR_GRID_PUBLICACION_CONDICIONES_ESPECIFICAS'',''EDITAR_GRID_LISTADO_ACTIVOS_EXPEDIENTE'',''EDITAR_GRID_GESTION_ECONOMICA_EXPEDIENTE'',''EDITAR_GRID_TEXTOS_OFERTA_EXPEDIENTE'',''EDITAR_GRID_POS_FIRMA_FORMALIZACION_EXPEDIENTE'')
 		                    and fun.fun_id= fp.fun_id
 		                 )
 		     and exists (select 1

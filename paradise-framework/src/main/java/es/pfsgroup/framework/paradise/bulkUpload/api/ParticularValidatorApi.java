@@ -312,4 +312,8 @@ public interface ParticularValidatorApi {
 	
 	public String getSubcartera(String numActivo);
 
+	Boolean tienenRelacionActivoGasto(String numActivo, String numGasto);
+
+	List<Long> getRelacionGastoActivo(String numGasto);
+
 }

@@ -184,6 +184,10 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 		
 	}
 	
+	public List<GestorEntidadHistorico> getListGestoresActivosAdicionalesHistoricoData(GestorEntidadDto gestorEntidadDto){
+		return gestorEntidadApi.getListGestoresActivosAdicionalesHistoricoData(gestorEntidadDto);
+	}
+	
 	public List<GestorEntidadHistorico> getListGestoresAdicionalesHistoricoData(GestorEntidadDto gestorEntidadDto){
 		return gestorEntidadApi.getListGestoresAdicionalesHistoricoData(gestorEntidadDto);
 	}

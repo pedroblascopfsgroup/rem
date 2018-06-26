@@ -1033,7 +1033,21 @@ public class ActivoController extends ParadiseJsonController {
 
 		return new ModelAndView("jsonView", model);
 
-	}	
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getGestoresActivos(Long idActivo, WebDto webDto, ModelMap model, Boolean incluirGestoresInactivos) {
+
+		if (incluirGestoresInactivos) {
+			model.put("data", adapter.getGestores(idActivo));
+		}
+		else {
+			model.put("data", adapter.getGestoresActivos(idActivo));
+		}
+
+		return new ModelAndView("jsonView", model);
+	}
 	
 
 	@SuppressWarnings("unchecked")

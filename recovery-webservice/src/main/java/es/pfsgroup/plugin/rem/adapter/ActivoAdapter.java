@@ -1438,7 +1438,35 @@ public class ActivoAdapter {
 		return getComboUsuarios(tipoGestorGestoria.getId());
 	}
 	
-	
+	public List<DtoListadoGestores> getGestoresActivos(Long idActivo) {
+		GestorEntidadDto gestorEntidadDto = new GestorEntidadDto();
+		gestorEntidadDto.setIdEntidad(idActivo);
+		gestorEntidadDto.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_ACTIVO);
+		List<GestorEntidadHistorico> gestoresEntidad = gestorActivoApi
+				.getListGestoresActivosAdicionalesHistoricoData(gestorEntidadDto);
+
+		List<DtoListadoGestores> listadoGestoresDto = new ArrayList<DtoListadoGestores>();
+
+		for (GestorEntidadHistorico gestor : gestoresEntidad) {
+			DtoListadoGestores dtoGestor = new DtoListadoGestores();
+			try {
+				BeanUtils.copyProperties(dtoGestor, gestor);
+				BeanUtils.copyProperties(dtoGestor, gestor.getUsuario());
+				BeanUtils.copyProperties(dtoGestor, gestor.getTipoGestor());
+				BeanUtils.copyProperty(dtoGestor, "id", gestor.getId());
+				BeanUtils.copyProperty(dtoGestor, "idUsuario", gestor.getUsuario().getId());
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+
+			listadoGestoresDto.add(dtoGestor);
+		}
+
+		return listadoGestoresDto;
+
+	}
 
 	public List<DtoListadoGestores> getGestores(Long idActivo) {
 		GestorEntidadDto gestorEntidadDto = new GestorEntidadDto();

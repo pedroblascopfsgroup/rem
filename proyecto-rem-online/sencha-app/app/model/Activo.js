@@ -611,7 +611,14 @@ Ext.define('HreRem.model.Activo', {
 			{
 				name: 'tienePosibleInformeMediador',
 				type: 'boolean'
-			}
+			},
+			{
+    			name: 'isVisibleCodPrinex',
+    			calculate: function(data) { 
+    				return data.entidadPropietariaCodigo == CONST.CARTERA['CAJAMAR'] || data.entidadPropietariaCodigo == CONST.CARTERA['LIBERBANK'];
+    			},
+    			depends: 'entidadPropietariaCodigo'
+    		}
     ],
     
 	proxy: {

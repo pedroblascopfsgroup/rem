@@ -21,103 +21,119 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 
 			{   
 				xtype:'fieldsettable',
-				defaultType: 'textfieldbase',
-				
-				title: HreRem.i18n('title.identificacion'),
+				layout:'hbox',
+				defaultType: 'container',
+		        title: HreRem.i18n('title.identificacion'),
 				items :
-					[
-		                {
-		                	xtype: 'displayfieldbase',
-		                	fieldLabel:  HreRem.i18n('fieldlabel.id.activo.haya'),
-		                	bind:		'{activo.numActivo}'
+					[{  // Columna 1
+						defaultType: 'textfieldbase',
+						flex: 1,
+						items:[
+							{
+			                	xtype: 'displayfieldbase',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.id.activo.haya'),
+			                	bind:		'{activo.numActivo}'
 
-		                },	          	
-		                {
-							fieldLabel: HreRem.i18n('fieldlabel.activosearch.codigo.promocion'),
-							bind:{	
-								readOnly: '{!esEditableCodigoPromocion}',
-								value:'{activo.codigoPromocionPrinex}'		
-							}						
-						},
-						{ 
-		                	xtype: 'textareafieldbase',
-		                	labelWidth: 200,
-		                	rowspan: 5,
-		                	height: 160,
-		                	labelAlign: 'top',
-		                	fieldLabel: HreRem.i18n('fieldlabel.breve.descripcion.activo'),
-		                	bind:		'{activo.descripcion}'
-		                },
-						{
-							xtype: 'displayfieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.id.activo.prinex'),
-							bind:		'{activo.idProp}'
-						},						
-						{ 
-				        	xtype: 'comboboxfieldbase',
-				        	fieldLabel: HreRem.i18n('fieldlabel.tipo.activo'),
-							reference: 'tipoActivo',
-				        	chainedStore: 'comboSubtipoActivo',
-							chainedReference: 'subtipoActivoCombo',
-				        	bind: {
-			            		store: '{comboTipoActivo}',
-			            		value: '{activo.tipoActivoCodigo}'
-			            	},
-    						listeners: {
-			                	select: 'onChangeChainedCombo'
-			            	},
-			            	allowBlank: false
-				        },
-						{
-							xtype: 'displayfieldbase',
-							fieldLabel:  HreRem.i18n('fieldlabel.id.activo.sareb'),
-			                bind:		'{activo.idSareb}'
-						},
-						{ 
-							xtype: 'comboboxfieldbase',
-				        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.activo'),
-				        	reference: 'subtipoActivoCombo',
-				        	bind: {
-			            		store: '{comboSubtipoActivo}',
-			            		value: '{activo.subtipoActivoCodigo}',
-			            		disabled: '{!activo.tipoActivoCodigo}'
-			            	},
-    						allowBlank: false
-				        },			       
-						{ 
-							xtype: 'displayfieldbase',
-							fieldLabel:  HreRem.i18n('fieldlabel.id.activo.uvem'),
-		                	bind:		'{activo.numActivoUvem}'
-		                },
-						{ 
-				        	xtype: 'comboboxfieldbase',
-				        	fieldLabel:  HreRem.i18n('fieldlabel.estado.fisico.activo'),
-				        	name: 'estadoActivoCodigo',
-				        	bind: {
-			            		store: '{comboEstadoActivo}',
-			            		value: '{activo.estadoActivoCodigo}'
-			            	}			
-				        },	
-		                { 
-		                	xtype: 'displayfieldbase',
-		                	fieldLabel:  HreRem.i18n('fieldlabel.id.activo.rem'),
-		                	bind:		'{activo.numActivoRem}'
-		                },
-		                {
-		                	xtype: 'comboboxfieldbase',
-				        	fieldLabel:  HreRem.i18n('fieldlabel.uso.dominante'),
-				        	name: 'tipoUsoDestinoCodigo',
-		                	bind: {
-			            		store: '{comboTipoUsoDestino}',
-			            		value: '{activo.tipoUsoDestinoCodigo}'
-			            	}
-		                },
-		                { 
-							xtype: 'displayfieldbase',
-							fieldLabel:  HreRem.i18n('fieldlabel.id.bien.recovery'),
-							bind:		'{activo.idRecovery}'
-						}
-					]
+			                },
+			                {
+								xtype: 'displayfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.id.activo.prinex'),
+								bind:		'{activo.idProp}'
+							},
+							{
+								xtype: 'displayfieldbase',
+								fieldLabel:  HreRem.i18n('fieldlabel.id.activo.sareb'),
+				                bind:		'{activo.idSareb}'
+							},
+							{ 
+								xtype: 'displayfieldbase',
+								fieldLabel:  HreRem.i18n('fieldlabel.id.activo.uvem'),
+			                	bind:		'{activo.numActivoUvem}'
+			                },
+			                { 
+			                	xtype: 'displayfieldbase',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.id.activo.rem'),
+			                	bind:		'{activo.numActivoRem}'
+			                },
+			                { 
+								xtype: 'displayfieldbase',
+								fieldLabel:  HreRem.i18n('fieldlabel.id.bien.recovery'),
+								bind:		'{activo.idRecovery}'
+							}
+						]
+					},
+					{	// Columna 2
+						defaultType: 'textfieldbase',
+						flex: 1,
+						items:[
+							{
+			                	fieldLabel: HreRem.i18n('fieldlabel.activosearch.codigo.promocion'),
+								bind:{	
+									readOnly: '{!esEditableCodigoPromocion}',
+									hidden: '{!activo.isVisibleCodPrinex}',
+									value:'{activo.codigoPromocionPrinex}'		
+								}						
+							},
+							{ 
+					        	xtype: 'comboboxfieldbase',
+					        	fieldLabel: HreRem.i18n('fieldlabel.tipo.activo'),
+								reference: 'tipoActivo',
+					        	chainedStore: 'comboSubtipoActivo',
+								chainedReference: 'subtipoActivoCombo',
+					        	bind: {
+				            		store: '{comboTipoActivo}',
+				            		value: '{activo.tipoActivoCodigo}'
+				            	},
+	    						listeners: {
+				                	select: 'onChangeChainedCombo'
+				            	},
+				            	allowBlank: false
+					        },
+					        { 
+								xtype: 'comboboxfieldbase',
+					        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.activo'),
+					        	reference: 'subtipoActivoCombo',
+					        	bind: {
+				            		store: '{comboSubtipoActivo}',
+				            		value: '{activo.subtipoActivoCodigo}',
+				            		disabled: '{!activo.tipoActivoCodigo}'
+				            	},
+	    						allowBlank: false
+					        },
+					        { 
+					        	xtype: 'comboboxfieldbase',
+					        	fieldLabel:  HreRem.i18n('fieldlabel.estado.fisico.activo'),
+					        	name: 'estadoActivoCodigo',
+					        	bind: {
+				            		store: '{comboEstadoActivo}',
+				            		value: '{activo.estadoActivoCodigo}'
+				            	}			
+					        },
+					        {
+			                	xtype: 'comboboxfieldbase',
+					        	fieldLabel:  HreRem.i18n('fieldlabel.uso.dominante'),
+					        	name: 'tipoUsoDestinoCodigo',
+			                	bind: {
+				            		store: '{comboTipoUsoDestino}',
+				            		value: '{activo.tipoUsoDestinoCodigo}'
+				            	}
+			                }
+						]
+					},{ // Columna 3
+						defaultType: 'textfieldbase',
+						flex: 1,
+						items:[
+							{ 
+			                	xtype: 'textareafieldbase',
+			                	labelWidth: 200,
+			                	rowspan: 5,
+			                	height: 160,
+			                	labelAlign: 'top',
+			                	fieldLabel: HreRem.i18n('fieldlabel.breve.descripcion.activo'),
+			                	bind:		'{activo.descripcion}'
+			                }
+						]
+					}]
            },
            
             {    

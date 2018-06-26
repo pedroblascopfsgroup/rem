@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Pau Serrano Rodrigo
---## FECHA_CREACION=20180530
+--## AUTOR=ISIDRO SOTOCA
+--## FECHA_CREACION=20180626
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-4102
+--## INCIDENCIA_LINK=HREOS-4208
 --## PRODUCTO=NO
 --## Finalidad: Crear vista gestores activo
 --##           
@@ -405,7 +405,228 @@ SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo, null dd_eac_c
              FROM act_activo act JOIN dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
                   JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON (dist1.cod_cartera = dd_cra.dd_cra_codigo AND dist1.tipo_gestor = ''GCODI'')
            where act.borrado = 0
-
+	UNION ALL
+    /*Gestor de suelos*/
+        SELECT 
+            act.act_id, 
+            TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo, 
+            TO_NUMBER (COALESCE (dist3.cod_estado_activo, dist2.cod_estado_activo, dist1.cod_estado_activo, dist0.cod_estado_activo)) dd_eac_codigo,
+            NULL dd_tcr_codigo, dd_prov.dd_prv_codigo, 
+            COALESCE (dist3.cod_municipio,dist2.cod_municipio,dist1.cod_municipio,dist0.cod_municipio) cod_municipio, 
+            COALESCE (dist3.cod_postal, dist2.cod_postal, dist1.cod_postal, dist0.cod_postal) cod_postal,
+            COALESCE (dist3.tipo_gestor, dist2.tipo_gestor, dist1.tipo_gestor, dist0.tipo_gestor) AS tipo_gestor, 
+            COALESCE (dist3.username, dist2.username, dist1.username, dist0.username) username,
+            COALESCE (dist3.nombre_usuario, dist2.nombre_usuario, dist1.nombre_usuario, dist0.nombre_usuario) nombre
+        FROM '||V_ESQUEMA||'.act_activo act 
+            JOIN '||V_ESQUEMA||'.act_loc_localizacion aloc ON act.act_id = aloc.act_id
+            JOIN '||V_ESQUEMA||'.bie_localizacion loc ON loc.bie_loc_id = aloc.bie_loc_id
+            JOIN '||V_ESQUEMA_M||'.dd_loc_localidad dd_loc ON loc.dd_loc_id = dd_loc.dd_loc_id
+            JOIN '||V_ESQUEMA_M||'.dd_prv_provincia dd_prov ON dd_prov.dd_prv_id = loc.dd_prv_id
+            JOIN '||V_ESQUEMA||'.dd_eac_estado_activo dd_eac ON dd_eac.dd_eac_id = act.dd_eac_id
+            JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
+            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0 ON (
+                dist0.cod_estado_activo is null
+                AND dist0.cod_cartera = dd_cra.dd_cra_codigo
+                AND dd_prov.dd_prv_codigo = dist0.cod_provincia
+                AND dist0.cod_municipio IS NULL
+                AND dist0.cod_postal IS NULL
+                AND dist0.tipo_gestor = ''GSUE''
+            )
+            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON (
+                dd_eac.dd_eac_codigo = dist1.cod_estado_activo
+                AND dist1.cod_cartera = dd_cra.dd_cra_codigo
+                AND dd_prov.dd_prv_codigo = dist1.cod_provincia
+                AND dist1.cod_municipio IS NULL
+                AND dist1.cod_postal IS NULL
+                AND dist1.tipo_gestor = ''GSUE''
+            )
+            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2 ON (
+                dd_eac.dd_eac_codigo = dist2.cod_estado_activo
+                AND dist2.cod_cartera = dd_cra.dd_cra_codigo
+                AND dd_prov.dd_prv_codigo = dist2.cod_provincia
+                AND dist2.cod_municipio = dd_loc.dd_loc_codigo
+                AND dist2.cod_postal IS NULL
+                AND dist2.tipo_gestor = ''GSUE''
+            )
+            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist3 ON (
+                dd_eac.dd_eac_codigo = dist3.cod_estado_activo
+                AND dist3.cod_cartera = dd_cra.dd_cra_codigo
+                AND dd_prov.dd_prv_codigo = dist3.cod_provincia
+                AND dist3.cod_municipio = dd_loc.dd_loc_codigo
+                AND dist3.cod_postal  = loc.BIE_LOC_COD_POST
+                AND dist3.tipo_gestor = ''GSUE''
+            )   
+        WHERE 
+            act.borrado = 0 
+            AND act.DD_TPA_ID = (SELECT DD_TPA_ID FROM '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO WHERE DD_TPA_CODIGO = ''01'')
+            AND act.DD_EAC_ID = (SELECT DD_EAC_ID FROM '||V_ESQUEMA||'.DD_EAC_ESTADO_ACTIVO WHERE DD_EAC_CODIGO = ''01'')
+    UNION ALL
+    /*Supervisor de suelos*/
+        SELECT 
+            act.act_id, 
+            TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo, 
+            TO_NUMBER (COALESCE (dist3.cod_estado_activo, dist2.cod_estado_activo, dist1.cod_estado_activo, dist0.cod_estado_activo)) dd_eac_codigo,
+            NULL dd_tcr_codigo, dd_prov.dd_prv_codigo, 
+            COALESCE (dist3.cod_municipio,dist2.cod_municipio,dist1.cod_municipio,dist0.cod_municipio) cod_municipio, 
+            COALESCE (dist3.cod_postal, dist2.cod_postal, dist1.cod_postal, dist0.cod_postal) cod_postal,
+            COALESCE (dist3.tipo_gestor, dist2.tipo_gestor, dist1.tipo_gestor, dist0.tipo_gestor) AS tipo_gestor, 
+            COALESCE (dist3.username, dist2.username, dist1.username, dist0.username) username,
+            COALESCE (dist3.nombre_usuario, dist2.nombre_usuario, dist1.nombre_usuario, dist0.nombre_usuario) nombre
+        FROM '||V_ESQUEMA||'.act_activo act 
+            JOIN '||V_ESQUEMA||'.act_loc_localizacion aloc ON act.act_id = aloc.act_id
+            JOIN '||V_ESQUEMA||'.bie_localizacion loc ON loc.bie_loc_id = aloc.bie_loc_id
+            JOIN '||V_ESQUEMA_M||'.dd_loc_localidad dd_loc ON loc.dd_loc_id = dd_loc.dd_loc_id
+            JOIN '||V_ESQUEMA_M||'.dd_prv_provincia dd_prov ON dd_prov.dd_prv_id = loc.dd_prv_id
+            JOIN '||V_ESQUEMA||'.dd_eac_estado_activo dd_eac ON dd_eac.dd_eac_id = act.dd_eac_id
+            JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
+            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0 ON (
+                dist0.cod_estado_activo is null
+                AND dist0.cod_cartera = dd_cra.dd_cra_codigo
+                AND dd_prov.dd_prv_codigo = dist0.cod_provincia
+                AND dist0.cod_municipio IS NULL
+                AND dist0.cod_postal IS NULL
+                AND dist0.tipo_gestor = ''SUPSUE''
+            ) 
+            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON (
+                dd_eac.dd_eac_codigo = dist1.cod_estado_activo
+                AND dist1.cod_cartera = dd_cra.dd_cra_codigo
+                AND dd_prov.dd_prv_codigo = dist1.cod_provincia
+                AND dist1.cod_municipio IS NULL
+                AND dist1.cod_postal IS NULL
+                AND dist1.tipo_gestor = ''SUPSUE''
+            )
+            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2 ON (
+                dd_eac.dd_eac_codigo = dist2.cod_estado_activo
+                AND dist2.cod_cartera = dd_cra.dd_cra_codigo
+                AND dd_prov.dd_prv_codigo = dist2.cod_provincia
+                AND dist2.cod_municipio = dd_loc.dd_loc_codigo
+                AND dist2.cod_postal IS NULL
+                AND dist2.tipo_gestor = ''SUPSUE''
+            )
+            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist3 ON (
+                dd_eac.dd_eac_codigo = dist3.cod_estado_activo
+                AND dist3.cod_cartera = dd_cra.dd_cra_codigo
+                AND dd_prov.dd_prv_codigo = dist3.cod_provincia
+                AND dist3.cod_municipio = dd_loc.dd_loc_codigo
+                AND dist3.cod_postal  = loc.BIE_LOC_COD_POST
+                AND dist3.tipo_gestor = ''SUPSUE''
+            )   
+        WHERE 
+            act.borrado = 0 
+            AND act.DD_TPA_ID = (SELECT DD_TPA_ID FROM '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO WHERE DD_TPA_CODIGO = ''01'')
+            AND act.DD_EAC_ID = (SELECT DD_EAC_ID FROM '||V_ESQUEMA||'.DD_EAC_ESTADO_ACTIVO WHERE DD_EAC_CODIGO = ''01'')
+    UNION ALL
+    /*Gestor de edificación*/
+        SELECT 
+            act.act_id, 
+            TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo, 
+            TO_NUMBER (COALESCE (dist3.cod_estado_activo, dist2.cod_estado_activo, dist1.cod_estado_activo, dist0.cod_estado_activo)) dd_eac_codigo,
+            NULL dd_tcr_codigo, dd_prov.dd_prv_codigo, 
+            COALESCE (dist3.cod_municipio,dist2.cod_municipio,dist1.cod_municipio,dist0.cod_municipio) cod_municipio, 
+            COALESCE (dist3.cod_postal, dist2.cod_postal, dist1.cod_postal, dist0.cod_postal) cod_postal,
+            COALESCE (dist3.tipo_gestor, dist2.tipo_gestor, dist1.tipo_gestor, dist0.tipo_gestor) AS tipo_gestor, 
+            COALESCE (dist3.username, dist2.username, dist1.username, dist0.username) username,
+            COALESCE (dist3.nombre_usuario, dist2.nombre_usuario, dist1.nombre_usuario, dist0.nombre_usuario) nombre
+        FROM '||V_ESQUEMA||'.act_activo act 
+            JOIN '||V_ESQUEMA||'.act_loc_localizacion aloc ON act.act_id = aloc.act_id
+            JOIN '||V_ESQUEMA||'.bie_localizacion loc ON loc.bie_loc_id = aloc.bie_loc_id
+            JOIN '||V_ESQUEMA_M||'.dd_loc_localidad dd_loc ON loc.dd_loc_id = dd_loc.dd_loc_id
+            JOIN '||V_ESQUEMA_M||'.dd_prv_provincia dd_prov ON dd_prov.dd_prv_id = loc.dd_prv_id
+            JOIN '||V_ESQUEMA||'.dd_eac_estado_activo dd_eac ON dd_eac.dd_eac_id = act.dd_eac_id
+            JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
+            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0 ON (
+                dist0.cod_estado_activo is null
+                AND dist0.cod_cartera = dd_cra.dd_cra_codigo
+                AND dd_prov.dd_prv_codigo = dist0.cod_provincia
+                AND dist0.cod_municipio IS NULL
+                AND dist0.cod_postal IS NULL
+                AND dist0.tipo_gestor = ''GEDI''
+            ) 
+            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON (
+                dd_eac.dd_eac_codigo = dist1.cod_estado_activo
+                AND dist1.cod_cartera = dd_cra.dd_cra_codigo
+                AND dd_prov.dd_prv_codigo = dist1.cod_provincia
+                AND dist1.cod_municipio IS NULL
+                AND dist1.cod_postal IS NULL
+                AND dist1.tipo_gestor = ''GEDI''
+            )
+            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2 ON (
+                dd_eac.dd_eac_codigo = dist2.cod_estado_activo
+                AND dist2.cod_cartera = dd_cra.dd_cra_codigo
+                AND dd_prov.dd_prv_codigo = dist2.cod_provincia
+                AND dist2.cod_municipio = dd_loc.dd_loc_codigo
+                AND dist2.cod_postal IS NULL
+                AND dist2.tipo_gestor = ''GEDI''
+            )
+            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist3 ON (
+                dd_eac.dd_eac_codigo = dist3.cod_estado_activo
+                AND dist3.cod_cartera = dd_cra.dd_cra_codigo
+                AND dd_prov.dd_prv_codigo = dist3.cod_provincia
+                AND dist3.cod_municipio = dd_loc.dd_loc_codigo
+                AND dist3.cod_postal  = loc.BIE_LOC_COD_POST
+                AND dist3.tipo_gestor = ''GEDI''
+            )   
+        WHERE 
+            act.borrado = 0 
+            AND ACT.DD_TPA_ID != (SELECT DD_TPA_ID FROM '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO WHERE DD_TPA_CODIGO = ''01'')
+            AND act.DD_EAC_ID IN (SELECT DD_EAC_ID FROM '||V_ESQUEMA||'.DD_EAC_ESTADO_ACTIVO WHERE DD_EAC_CODIGO IN (''09'', ''02'', ''06'', ''11'', ''10'', ''05'', ''08'', ''07''))
+            AND ACT.DD_EAC_ID IS NOT NULL
+    UNION ALL
+    /*Supervisor de edificación*/
+        SELECT 
+            act.act_id, 
+            TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo, 
+            TO_NUMBER (COALESCE (dist3.cod_estado_activo, dist2.cod_estado_activo, dist1.cod_estado_activo, dist0.cod_estado_activo)) dd_eac_codigo,
+            NULL dd_tcr_codigo, dd_prov.dd_prv_codigo, 
+            COALESCE (dist3.cod_municipio,dist2.cod_municipio,dist1.cod_municipio,dist0.cod_municipio) cod_municipio, 
+            COALESCE (dist3.cod_postal, dist2.cod_postal, dist1.cod_postal, dist0.cod_postal) cod_postal,
+            COALESCE (dist3.tipo_gestor, dist2.tipo_gestor, dist1.tipo_gestor, dist0.tipo_gestor) AS tipo_gestor, 
+            COALESCE (dist3.username, dist2.username, dist1.username, dist0.username) username,
+            COALESCE (dist3.nombre_usuario, dist2.nombre_usuario, dist1.nombre_usuario, dist0.nombre_usuario) nombre
+        FROM '||V_ESQUEMA||'.act_activo act 
+            JOIN '||V_ESQUEMA||'.act_loc_localizacion aloc ON act.act_id = aloc.act_id
+            JOIN '||V_ESQUEMA||'.bie_localizacion loc ON loc.bie_loc_id = aloc.bie_loc_id
+            JOIN '||V_ESQUEMA_M||'.dd_loc_localidad dd_loc ON loc.dd_loc_id = dd_loc.dd_loc_id
+            JOIN '||V_ESQUEMA_M||'.dd_prv_provincia dd_prov ON dd_prov.dd_prv_id = loc.dd_prv_id
+            LEFT JOIN '||V_ESQUEMA||'.dd_eac_estado_activo dd_eac ON dd_eac.dd_eac_id = act.dd_eac_id
+            JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
+            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0 ON (
+                dist0.cod_estado_activo is null
+                AND dist0.cod_cartera = dd_cra.dd_cra_codigo
+                AND dd_prov.dd_prv_codigo = dist0.cod_provincia
+                AND dist0.cod_municipio IS NULL
+                AND dist0.cod_postal IS NULL
+                AND dist0.tipo_gestor = ''SUPEDI''
+            ) 
+            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON (
+                dd_eac.dd_eac_codigo = dist1.cod_estado_activo
+                AND dist1.cod_cartera = dd_cra.dd_cra_codigo
+                AND dd_prov.dd_prv_codigo = dist1.cod_provincia
+                AND dist1.cod_municipio IS NULL
+                AND dist1.cod_postal IS NULL
+                AND dist1.tipo_gestor = ''SUPEDI''
+            )
+            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2 ON (
+                dd_eac.dd_eac_codigo = dist2.cod_estado_activo
+                AND dist2.cod_cartera = dd_cra.dd_cra_codigo
+                AND dd_prov.dd_prv_codigo = dist2.cod_provincia
+                AND dist2.cod_municipio = dd_loc.dd_loc_codigo
+                AND dist2.cod_postal IS NULL
+                AND dist2.tipo_gestor = ''SUPEDI''
+            )
+            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist3 ON (
+                dd_eac.dd_eac_codigo = dist3.cod_estado_activo
+                AND dist3.cod_cartera = dd_cra.dd_cra_codigo
+                AND dd_prov.dd_prv_codigo = dist3.cod_provincia
+                AND dist3.cod_municipio = dd_loc.dd_loc_codigo
+                AND dist3.cod_postal  = loc.BIE_LOC_COD_POST
+                AND dist3.tipo_gestor = ''SUPEDI''
+            )   
+        WHERE 
+            act.borrado = 0 
+            AND ACT.DD_TPA_ID != (SELECT DD_TPA_ID FROM '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO WHERE DD_TPA_CODIGO = ''01'')
+            AND act.DD_EAC_ID IN (SELECT DD_EAC_ID FROM '||V_ESQUEMA||'.DD_EAC_ESTADO_ACTIVO WHERE DD_EAC_CODIGO IN (''09'', ''02'', ''06'', ''11'', ''10'', ''05'', ''08'', ''07''))
+            AND ACT.DD_EAC_ID IS NOT NULL
 ';
 
         --DBMS_OUTPUT.PUT_LINE(  V_MSQL); 

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Guillermo Llidó
---## FECHA_CREACION=20180621
+--## FECHA_CREACION=20180626
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-1038
@@ -18,7 +18,7 @@ SET SERVEROUTPUT ON;
 SET DEFINE OFF;
 
 CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_GESTOR_SUSTITUTO
-    (     
+        (     
 		  OPERACION VARCHAR2
         , V_USU_ID_ORI IN NUMBER
         , V_USU_ID_SUS IN NUMBER
@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_GESTOR_SUSTITUTO
    ERR_MSG VARCHAR2(10024 CHAR); -- Vble. auxiliar para registrar errores en el script.
    V_AUX NUMBER(1); -- Variable auxiliar
    USUARIO VARCHAR2(50 CHAR):= 'SP_GESTOR_SUSTITUTO';
+   USUARIO_CONSULTA_REM VARCHAR2(50 CHAR):= 'REM_QUERY';
 
 BEGIN
     IF (OPERACION IS NOT NULL )AND (V_USU_ID_ORI IS NOT NULL) AND (V_USU_ID_SUS IS NOT NULL) AND (V_FECHA_INICIO IS NOT NULL) THEN 
@@ -79,11 +80,11 @@ BEGIN
 
 				EXECUTE IMMEDIATE V_SQL;
 
-				PL_OUTPUT := '[INFO] El nuevo registro se ha dado de alta correctamente ';
+				PL_OUTPUT := '[INFO] El nuevo registro se ha dado de alta correctamente ' || CHR(10) ;
 
 			  ELSE
 
-				PL_OUTPUT := '[ERROR] Ya existe un registro con ese rango de fechas';
+				PL_OUTPUT := PL_OUTPUT || '[ERROR] Ya existe un registro con ese rango de fechas' || CHR(10) ;
 
 			  END IF;
 
@@ -117,17 +118,17 @@ BEGIN
 
 					EXECUTE IMMEDIATE V_SQL;
 
-					PL_OUTPUT := '[INFO] El nuevo registro se ha modificado correctamente ';
+					PL_OUTPUT := PL_OUTPUT || '[INFO] El nuevo registro se ha modificado correctamente ' || CHR(10) ;
 
 				ELSE
 
-					PL_OUTPUT := '[ERROR] No existe un registro con esos datos';
+					PL_OUTPUT := PL_OUTPUT || '[ERROR] No existe un registro con esos datos' || CHR(10) ;
 
 				END IF;
 
 			ELSE
 
-				PL_OUTPUT := '[ERROR] Ya existe un registro dentro del rango de fechas TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YYYY'') y TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YYYY'') para el Usuario '||V_USU_ID_ORI||' y Sustituto  '||V_USU_ID_SUS||' ';			
+				PL_OUTPUT := PL_OUTPUT || '[ERROR] Ya existe un registro dentro del rango de fechas TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YYYY'') y TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YYYY'') para el Usuario '||V_USU_ID_ORI||' y Sustituto  '||V_USU_ID_SUS||' ' || CHR(10) ;			
 
 			END IF;	
 
@@ -154,7 +155,7 @@ BEGIN
 
 					EXECUTE IMMEDIATE V_SQL;
 
-					PL_OUTPUT := '[INFO] El registro se ha borrado correctamente ';
+					PL_OUTPUT := PL_OUTPUT || '[INFO] El registro se ha borrado correctamente ' || CHR(10) ;
 
 				ELSE 
 
@@ -169,32 +170,43 @@ BEGIN
 
 					EXECUTE IMMEDIATE V_SQL;
 
-					PL_OUTPUT := '[INFO] El registro se ha borrado correctamente ';					
+					PL_OUTPUT := PL_OUTPUT || '[INFO] El registro se ha borrado correctamente ' || CHR(10);					
 				END IF;
 
             ELSE 
 
-               	PL_OUTPUT := '[ERROR] No existe un registro con esos datos ';
+               	PL_OUTPUT := PL_OUTPUT || '[ERROR] No existe un registro con esos datos ' || CHR(10);
 
             END IF;
 
         ELSE
-            PL_OUTPUT := '[ERROR] No se ha reconocido el código de la operación a ejecutar '; 
+            PL_OUTPUT := PL_OUTPUT || '[ERROR] No se ha reconocido el código de la operación a ejecutar ' || CHR(10); 
 
         END CASE;
 
     ELSE 
 
 		CASE
-            WHEN OPERACION IS NULL THEN		 PL_OUTPUT := '[ERROR] El campo OPERACION se encuentra vacio '; 
-            WHEN V_USU_ID_ORI IS NULL THEN 	 PL_OUTPUT := '[ERROR] El campo V_USU_ID_ORI se encuentra vacio '; 	
-            WHEN V_USU_ID_SUS IS NULL THEN 	 PL_OUTPUT := '[ERROR] El campo V_USU_ID_SUS se encuentra vacio '; 
-            WHEN V_FECHA_INICIO IS NULL THEN PL_OUTPUT := '[ERROR] El campo V_FECHA_INICIO se encuentra vacio '; 
+            WHEN OPERACION IS NULL THEN		 PL_OUTPUT := PL_OUTPUT || '[ERROR] El campo OPERACION se encuentra vacio ' || CHR(10) ; 
+            WHEN V_USU_ID_ORI IS NULL THEN 	 PL_OUTPUT := PL_OUTPUT || '[ERROR] El campo V_USU_ID_ORI se encuentra vacio ' || CHR(10) ; 	
+            WHEN V_USU_ID_SUS IS NULL THEN 	 PL_OUTPUT := PL_OUTPUT || '[ERROR] El campo V_USU_ID_SUS se encuentra vacio ' || CHR(10) ; 
+            WHEN V_FECHA_INICIO IS NULL THEN PL_OUTPUT := PL_OUTPUT || '[ERROR] El campo V_FECHA_INICIO se encuentra vacio ' || CHR(10) ; 
 		ELSE 
-            PL_OUTPUT := '[ERROR] Alguno de los siguientes campos se encuentra vacio : OPERACION ,V_USU_ID_ORI ,V_USU_ID_SUS ,V_FECHA_INICIO '; 
+            PL_OUTPUT := PL_OUTPUT || '[ERROR] Alguno de los siguientes campos se encuentra vacio : OPERACION ,V_USU_ID_ORI ,V_USU_ID_SUS ,V_FECHA_INICIO ' || CHR(10) ; 
 		END CASE;
 
     END IF;
+
+	V_SQL := 'SELECT COUNT(1) FROM SYS.ALL_USERS WHERE USERNAME LIKE '''||USUARIO_CONSULTA_REM||'''';
+
+	EXECUTE IMMEDIATE V_SQL INTO V_AUX;
+
+	IF V_AUX = 1 THEN
+
+		V_SQL := 'GRANT EXECUTE ON '||V_ESQUEMA||'.'||USUARIO||' TO '||USUARIO_CONSULTA_REM||'';
+
+		EXECUTE IMMEDIATE V_SQL;
+	END IF;
 
 COMMIT;
 

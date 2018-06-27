@@ -458,7 +458,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 
 		// HREOS-2761: Buscamos si existen activos candidatos para propagar cambios. Llamada única para el activo
-		 activoDto.setActivosPropagables(activoPropagacionApi.getAllActivosAgrupacionPorActivo(activo));
+		// activoDto.setActivosPropagables(activoPropagacionApi.getAllActivosAgrupacionPorActivo(activo));
 		 
 		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
 		 activoDto.setCamposPropagables(TabActivoService.TAB_DATOS_BASICOS);

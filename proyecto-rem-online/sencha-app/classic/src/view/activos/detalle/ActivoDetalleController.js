@@ -37,8 +37,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
              }
          },
          
-         'cargasactivo gridBase': {
-         	abrirFormulario: 'abrirFormularioAnyadirCarga',
+         'cargasactivo gridBase': {         	abrirFormulario: 'abrirFormularioAnyadirCarga',
          	onClickRemove: 'onClickRemoveCarga',
          	onClickPropagation :  'onClickPropagation' 
          }
@@ -212,31 +211,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					}
 				}
 			}
-			var activosPropagables = me.getViewModel().get("activo.activosPropagables") || [];
-			var tabPropagableData = null;
-
-			if(activosPropagables.length > 0) {
-				
-				tabPropagableData = me.createFormPropagableData(form, tabData);	
-				if (!Ext.isEmpty(tabPropagableData)) {
-					// sacamos el activo actual del listado
-					var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
-					
-					// Abrimos la ventana de selección de activos
-					var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {form: form, activoActual: activo, activos: activosPropagables, tabData: tabData, propagableData: tabPropagableData}).show();
-   					me.getView().add(ventanaOpcionesPropagacionCambios);
-   					me.getView().unmask();
-   					return false;
-				}
+			
+			var idActivo;
+			
+			if(	   tabData.models[0].name == "activohistoricoestadopublicacion"
+				|| tabData.models[0].name == "cargasactivo"
+				|| tabData.models[0].name == "activocondicionantesdisponibilidad"
+				|| tabData.models[0].name == "activotrabajo"
+				|| tabData.models[0].name == "activotrabajosubida"
+				|| tabData.models[0].name == "activotramite"
+				){
+				idActivo = tabData.models[0].data.idActivo;
+			} else {
+				idActivo = tabData.models[0].data.id;
 			}
-				
-			var successFn = function(response, eOpts) {
-				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-				me.getView().unmask();
-				me.refrescarActivo(form.refreshAfterSave);
-				me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
-			}
-			me.saveActivo(tabData, successFn);
+			
+			me.checkActivosToPropagate(idActivo, form, tabData);
 			
 		} else {
 			me.getView().unmask();
@@ -265,24 +255,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 			var jsonData = {idEntidad: idActivo, numPlanta : numPlanta, tipoHabitaculoCodigo : tipoHabitaculoCodigo, superficie : superficie, cantidad : cantidad};
 			
-			var activosPropagables = me.getViewModel().get("activo.activosPropagables") || [];
-			var tabPropagableData = null;
-
-			if(activosPropagables.length > 0) {
-				
-				tabPropagableData = me.createFormPropagableData(form, tabData);	
-				if (!Ext.isEmpty(tabPropagableData)) {
-					// sacamos el activo actual del listado
-					var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
-					
-					// Abrimos la ventana de selección de activos
-					var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {form: form, activoActual: activo, activos: activosPropagables, tabData: tabData, propagableData: tabPropagableData}).show();
-   					me.getView().add(ventanaOpcionesPropagacionCambios);
-   					me.getView().unmask();
-   					return false;
-				}
-			}
-				
+			
 			var successFn = function(response, eOpts) {
 				if(Ext.decode(response.responseText).success == "false") {
 					me.fireEvent("errorToast", HreRem.i18n("msg.error.anyadir.distribucion.vivienda"));
@@ -295,6 +268,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 								
 			}
 			me.saveDistribucion(jsonData, successFn);
+			
 			
 		} else {
 			me.getView().unmask();
@@ -2706,7 +2680,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
   onClickPropagation : function(btn) {
     var me = this;
-
+    
     var activosPropagables = me.getViewModel().get("activo.activosPropagables") || [];
     var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo) {
               return activo.activoId == me.getViewModel().get("activo.id");
@@ -3337,5 +3311,56 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     onImpuestosActivoDobleClick: function(grid,record,tr,rowIndex) {        	       
     	var me = this,
     	record = grid.getStore().getAt(rowIndex);
-    }
+    },
+    
+	checkActivosToPropagate: function(idActivo, form, tabData){
+		var me = this,
+		url =  $AC.getRemoteUrl('activo/getActivosPropagables');
+		Ext.Ajax.request({
+    		url: url,
+			method : 'POST',
+    		params: {idActivo: idActivo},
+    		
+    		success: function(response, opts){
+    			var activosPropagables = Ext.decode(response.responseText).data.activosPropagables;
+				var tabPropagableData = null;
+				
+				if(me.getViewModel() != null){
+					if(me.getViewModel().get('activo') != null){
+						if(me.getViewModel().get('activo').data != null){
+							me.getViewModel().get('activo').data.activosPropagables = activosPropagables;
+						}
+					}
+				}
+				
+				if(activosPropagables.length > 0) {
+			
+					tabPropagableData = me.createFormPropagableData(form, tabData);	
+					if (!Ext.isEmpty(tabPropagableData)) {
+						// sacamos el activo actual del listado
+						var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
+				
+						// Abrimos la ventana de selección de activos
+						var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {form: form, activoActual: activo, activos: activosPropagables, tabData: tabData, propagableData: tabPropagableData}).show();
+							me.getView().add(ventanaOpcionesPropagacionCambios);
+							me.getView().unmask();
+							return false;
+					}
+				}
+			
+				var successFn = function(response, eOpts) {
+					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					me.getView().unmask();
+					me.refrescarActivo(form.refreshAfterSave);
+					me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+				}
+				me.saveActivo(tabData, successFn);
+    		},
+		 	failure: function(record, operation) {
+		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+		    }
+    	});
+		
+	}
+    
 });

@@ -225,7 +225,7 @@ Ext.define('HreRem.model.FichaTrabajo', {
 		type: 'uxproxy',
 		localUrl: 'trabajo.json',
 		remoteUrl: 'trabajo/getTrabajoById',
-		timeout: 300000,
+		timeout: 3000000,
 		api: {
             read: 'trabajo/findOne',
             create: 'trabajo/create',

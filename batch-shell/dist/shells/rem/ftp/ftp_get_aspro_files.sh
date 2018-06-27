@@ -1,23 +1,23 @@
 cd $DIR_INPUT_AUX
-rm -f $2.*
+rm -f $2_$1.*
 
-lftp -u rm01,R@59rp21 sftp://192.168.126.2 <<EOF
-cd /$1/
-mget $2.*
+lftp -u pfs,SwQdLRyFE8A5 sftp://192.168.126.7 <<EOF
+cd /Archivos/REM/HayaToPFS/$1
+mget $2_$1.*
 bye
 EOF
 
-check_integrity_1=`md5sum $2.dat`
-rm -f $2.*
+check_integrity_1=`md5sum $2_$1.dat`
+rm -f $2_$1.*
 sleep 30
 
-lftp -u rm01,R@59rp21 sftp://192.168.126.2 <<EOF
-cd /$1/
-mget $2.*
+lftp -u pfs,SwQdLRyFE8A5 sftp://192.168.126.7 <<EOF
+cd /Archivos/REM/HayaToPFS/$1
+mget $2_$1.*
 bye
 EOF
 
-check_integrity_2=`md5sum $2.dat`
+check_integrity_2=`md5sum $2_$1.dat`
 if [ "$check_integrity_1" != "$check_integrity_2" ]; then
-    rm -f $2.dat
+    rm -f $2_$1.dat
 fi

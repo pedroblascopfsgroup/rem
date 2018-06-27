@@ -11,9 +11,6 @@ public class MSVExcelValidatorFactoryImpl {
 	
 //	public static final Long CODE_BULKUPLOAD_ID_AGRUPATION_RESTRICTED = new Long(121);
 //	public static final Long CODE_BULKUPLOAD_ID_NEW_BUILDING = new Long(122);
-
-	@Autowired
-	private MSVActualizadorPublicadoVentaRestringidoExcelValidator agrupacionRestringidoPublicarVentaExcelValidator;
 	
 	@Autowired
 	private MSVAgrupacionRestringidoExcelValidator agrupacionRestringidoExcelValidator;
@@ -102,8 +99,6 @@ public class MSVExcelValidatorFactoryImpl {
 		
 			if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPATION_RESTRICTED.equals(codTipoOperacion)) {
 				return agrupacionRestringidoExcelValidator;
-			} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_VENTA_RESTRINGIDA.equals(codTipoOperacion)) {
-				return agrupacionRestringidoPublicarVentaExcelValidator;
 			} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_NEW_BUILDING.equals(codTipoOperacion)) {
 				return agrupacionObraNuevaExcelValidator;
 			} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_ASISTIDA.equals(codTipoOperacion)) {

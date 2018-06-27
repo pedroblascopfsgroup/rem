@@ -1964,4 +1964,41 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		else
 			return true;
 	}
+	
+	@Override
+	public Boolean isActivoNoPublicadoVenta(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)"
+				+ "			FROM ACT_ACTIVO ACT, ACT_APU_ACTIVO_PUBLICACION APU, DD_EPV_ESTADO_PUB_VENTA EPV"
+				+ "   		WHERE ACT.ACT_ID = APU.ACT_ID"
+				+ "			AND APU.DD_EPV_ID = EPV.DD_EPV_ID"
+				+ "			AND EPV.DD_EPV_CODIGO = '01'"
+				+ "         AND ACT.ACT_NUM_ACTIVO = " + numActivo + " ");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+		
+	}
+	
+	@Override
+	public Boolean isActivoNoPublicadoAlquiler(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)"
+				+ "			FROM ACT_ACTIVO ACT, ACT_APU_ACTIVO_PUBLICACION APU, DD_EPA_ESTADO_PUB_ALQUILER EPA"
+				+ "   		WHERE ACT.ACT_ID = APU.ACT_ID"
+				+ "			AND APU.DD_EPA_ID = EPA.DD_EPA_ID"
+				+ "			AND EPA.DD_EPA_CODIGO = '01'"
+				+ "         AND ACT.ACT_NUM_ACTIVO = " + numActivo + " ");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+		
+	}
+	
 }

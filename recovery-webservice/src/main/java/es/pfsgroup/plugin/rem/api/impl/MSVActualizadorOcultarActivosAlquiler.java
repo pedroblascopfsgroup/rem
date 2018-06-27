@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
@@ -8,6 +9,7 @@ import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,9 +52,21 @@ public class MSVActualizadorOcultarActivosAlquiler extends AbstractMSVActualizad
 		dto.setIdActivo(activo.getId());
 		dto.setOcultarAlquiler(true);
 		dto.setMotivoOcultacionAlquilerCodigo(exc.dameCelda(fila, COL_NUM.MOTIVO_OCULTACION));
-		dto.setMotivoOcultacionManualAlquiler(exc.dameCelda(fila, COL_NUM.DESCRIPCION_MOTIVO));
+		if(!Checks.esNulo(exc.dameCelda(fila, COL_NUM.DESCRIPCION_MOTIVO))){
+			dto.setMotivoOcultacionManualAlquiler(exc.dameCelda(fila, COL_NUM.DESCRIPCION_MOTIVO));
+		}
+		
+		if (activoApi.isActivoIntegradoAgrupacionRestringida(activo.getId())) {
+			if (activoApi.isActivoPrincipalAgrupacionRestringida(activo.getId())) {
+				ActivoAgrupacionActivo aga = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId());
+				if (!Checks.esNulo(aga)) {
+					activoEstadoPublicacionApi.setDatosPublicacionAgrupacion(aga.getAgrupacion().getId(), dto);
+				}
+			}
 
-		activoEstadoPublicacionApi.setDatosPublicacionActivo(dto);
+		} else {
+			activoEstadoPublicacionApi.setDatosPublicacionActivo(dto);
+		}
 	}
 
 }

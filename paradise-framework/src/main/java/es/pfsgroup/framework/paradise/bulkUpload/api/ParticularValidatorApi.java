@@ -368,8 +368,6 @@ public interface ParticularValidatorApi {
 
 	public Boolean isActivoSinPrecioVentaWebAgrupacion(String numAgrupacion);
 
-	public Boolean isActivoPublicadoAgrupacion(String numAgrupacion);
-
 	public Boolean isActivoSinInformeAprobadoAgrupacion(String numAgrupacion);
 
 	public Boolean isActivoDestinoComercialNoAlquilerAgrupacion(String numAgrupacion);
@@ -383,5 +381,4 @@ public interface ParticularValidatorApi {
 	public Boolean isActivoNoPublicadoAlquiler(String numActivo);
 
 	public Boolean isActivoNoPublicadoVenta(String numActivo);
-
 }

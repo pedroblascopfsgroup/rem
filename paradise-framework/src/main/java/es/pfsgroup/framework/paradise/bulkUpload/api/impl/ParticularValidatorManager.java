@@ -1852,25 +1852,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
-	public Boolean isActivoPublicadoAgrupacion(String numAgrupacion){
-		if(Checks.esNulo(numAgrupacion)) 
-			return false;
-		
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
-				+ "			FROM  ACT_ACTIVO ACT "
-				+ "			JOIN  ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID AND AGA.BORRADO = 0"
-				+ "			JOIN  ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0 "
-				+ "			WHERE ACT.ACT_ID IN ("
-				+ "				SELECT APU.ACT_ID FROM ACT_APU_ACTIVO_PUBLICACION APU WHERE APU.BORRADO = 0)"
-				+ "			AND   AGR.AGR_ID = " + numAgrupacion + " ");
-		if("0".equals(resultado)){
-			return false;
-		}else {
-			return true;
-		}
-	}
-	
-	@Override
 	public Boolean isActivoSinInformeAprobadoAgrupacion(String numAgrupacion) {
 		if(Checks.esNulo(numAgrupacion))
 			return false;
@@ -1969,7 +1950,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	public Boolean isActivoNoPublicadoVenta(String numActivo) {
 		if(Checks.esNulo(numActivo))
 			return false;
-		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)"
 				+ "			FROM ACT_ACTIVO ACT, ACT_APU_ACTIVO_PUBLICACION APU, DD_EPV_ESTADO_PUB_VENTA EPV"
 				+ "   		WHERE ACT.ACT_ID = APU.ACT_ID"
@@ -1980,14 +1960,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 		else
 			return true;
-		
 	}
-	
+
+
 	@Override
 	public Boolean isActivoNoPublicadoAlquiler(String numActivo) {
 		if(Checks.esNulo(numActivo))
 			return false;
-		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)"
 				+ "			FROM ACT_ACTIVO ACT, ACT_APU_ACTIVO_PUBLICACION APU, DD_EPA_ESTADO_PUB_ALQUILER EPA"
 				+ "   		WHERE ACT.ACT_ID = APU.ACT_ID"
@@ -1998,7 +1977,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 		else
 			return true;
-		
 	}
 	
 }

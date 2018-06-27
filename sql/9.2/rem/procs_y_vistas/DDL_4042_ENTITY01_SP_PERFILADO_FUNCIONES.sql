@@ -248,7 +248,8 @@ T_VAR( 'MENU_ADMINISTRACION','S','S','S','S','S','S','S','S','S','S','N','S','S'
 T_VAR( 'MENU_MASIVO','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','S','N','N','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'MENU_CONFIGURACION','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'MENU_ACTIVOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
-T_VAR( 'MASIVO_OK_TECNICO','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','','N','N','N','N','N','N','N','N');
+T_VAR( 'MASIVO_OK_TECNICO','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','','N','N','N','N','N','N','N','N')
+);
 V_TMP_VAR T_VAR;
 
 BEGIN

@@ -312,4 +312,8 @@ public interface ParticularValidatorApi {
 	
 	public String getSubcartera(String numActivo);
 
+	public Boolean agrupacionEstaVacia(String numAgrupacion);
+
+	public Boolean distintosTiposImpuestoAgrupacionVacia(List<String> activosList);
+
 }

@@ -1,5 +1,16 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
+import java.io.IOException;
+import java.sql.SQLException;
+import java.text.ParseException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
@@ -8,16 +19,8 @@ import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.io.IOException;
-import java.sql.SQLException;
-import java.text.ParseException;
 
 @Component
 public class MSVActualizadorOcultarActivosVenta extends AbstractMSVActualizador implements MSVLiberator {
@@ -50,9 +53,21 @@ public class MSVActualizadorOcultarActivosVenta extends AbstractMSVActualizador 
 		dto.setIdActivo(activo.getId());
 		dto.setOcultarVenta(true);
 		dto.setMotivoOcultacionVentaCodigo(exc.dameCelda(fila, COL_NUM.MOTIVO_OCULTACION));
-		dto.setMotivoOcultacionManualVenta(exc.dameCelda(fila, COL_NUM.DESCRIPCION_MOTIVO));
+		if(!Checks.esNulo(exc.dameCelda(fila, COL_NUM.DESCRIPCION_MOTIVO))){
+			dto.setMotivoOcultacionManualVenta(exc.dameCelda(fila, COL_NUM.DESCRIPCION_MOTIVO));
+		}
+		
+		if (activoApi.isActivoIntegradoAgrupacionRestringida(activo.getId())) {
+			if (activoApi.isActivoPrincipalAgrupacionRestringida(activo.getId())) {
+				ActivoAgrupacionActivo aga = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId());
+				if (!Checks.esNulo(aga)) {
+					activoEstadoPublicacionApi.setDatosPublicacionAgrupacion(aga.getAgrupacion().getId(), dto);
+				}
+			}
 
-		activoEstadoPublicacionApi.setDatosPublicacionActivo(dto);
+		} else {
+			activoEstadoPublicacionApi.setDatosPublicacionActivo(dto);
+		}
 	}
 
 }

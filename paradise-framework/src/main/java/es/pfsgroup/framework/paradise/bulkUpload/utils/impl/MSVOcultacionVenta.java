@@ -40,11 +40,17 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 	private static final String ACTIVO_NO_PUBLICABLE = "El activo no es publicable";
 	private static final String ACTIVO_NO_COMERCIALIZABLE = "El activo no es comercializable";
 	private static final String DESTINO_FINAL_NO_VENTA = "El destino comercial no es venta";
-	private static final String ACTIVO_NO_PUBLICADO = "Activo no publicado";
+	private static final String ACTIVO_NO_PUBLICADO = "El activo no está publicado en Venta";
 	private static final String ACTIVO_OCULTO = "El activo esta oculto";
 	private static final String MOTIVO_NOT_EXISTS = "El motivo de la ocultación no existe";
 	private static final String MOTIVO_TEXTO_LIBRE_SUPERA_LIMITE = "El texto libre del motivo de ocultación supera el máximo permitido de 250 carácteres";
 	private static final String MOTIVO_CODIGO_OCULTACION_NO_ESTA_DEFINIDO = "El código indicado para la ocultación no se encuentra entre los definidos";
+	private static final String AGRUPACION_ACTIVO_NO_PUBLICABLE = "Hay activos no publicables";
+	private static final String AGRUPACION_ACTIVO_NO_COMERCIALIZABLE = "Hay activos no comercializables";
+	private static final String AGRUPACION_DESTINO_FINAL_NO_VENTA = "Hay activos cuyo destino comercial no es venta";
+	private static final String AGRUPACION_ACTIVO_OCULTO = "Hay activos que están ocultos";
+	private static final String NO_ES_ACTIVO_PRINCIPAL = "El activo no es el activo principal de la agrupación restringida";
+	private static final String AGRUPACION_RESTRINGIDA = "02";
 
 	private static final Integer MAX_CHAR_TEXTO_LIBRE = 250;
 
@@ -101,27 +107,38 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 				
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 			Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
+			
 			mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
 			mapaErrores.put(ACTIVO_VENDIDO, activosVendidosRows(exc));
-			mapaErrores.put(ACTIVO_NO_PUBLICABLE, isActivoNoPublicableByRows(exc));
-			mapaErrores.put(ACTIVO_NO_COMERCIALIZABLE, activosNoComercializablesRows(exc));
-			mapaErrores.put(DESTINO_FINAL_NO_VENTA, destinoFinalNoVentaByRows(exc));
-			mapaErrores.put(ACTIVO_NO_PUBLICADO, activoNoPublicadoByRows(exc));
-			mapaErrores.put(ACTIVO_OCULTO, activoOcultoByRows(exc));
 			mapaErrores.put(MOTIVO_NOT_EXISTS, movitoNotExistsByRows(exc));
 			mapaErrores.put(MOTIVO_TEXTO_LIBRE_SUPERA_LIMITE, isTextoLibreExcedeMaximoPermitido(exc));
 			mapaErrores.put(MOTIVO_CODIGO_OCULTACION_NO_ESTA_DEFINIDO, isCodigoOcultacionEstaDefinido(exc));
+			mapaErrores.put(ACTIVO_NO_PUBLICADO, activoNoPublicadoByRows(exc));
+			mapaErrores.put(NO_ES_ACTIVO_PRINCIPAL, noEsActivoPrincipal(exc));
+			mapaErrores.put(AGRUPACION_ACTIVO_NO_PUBLICABLE, agrupacionIsActivoNoPublicableByRows(exc));
+			mapaErrores.put(AGRUPACION_ACTIVO_NO_COMERCIALIZABLE, agrupacionActivosNoComercializablesRows(exc));
+			mapaErrores.put(AGRUPACION_DESTINO_FINAL_NO_VENTA, agrupacionDestinoFinalNoVentaByRows(exc));
+			mapaErrores.put(AGRUPACION_ACTIVO_OCULTO, agrupacionActivoOcultoByRows(exc));
+			mapaErrores.put(ACTIVO_NO_PUBLICABLE, isActivoNoPublicableByRows(exc));
+			mapaErrores.put(ACTIVO_NO_COMERCIALIZABLE, activosNoComercializablesRows(exc));
+			mapaErrores.put(DESTINO_FINAL_NO_VENTA, destinoFinalNoVentaByRows(exc));
+			mapaErrores.put(ACTIVO_OCULTO, activoOcultoByRows(exc));
 			
 			if (!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty()
-				||!mapaErrores.get(ACTIVO_VENDIDO).isEmpty()
-				||!mapaErrores.get(ACTIVO_NO_PUBLICABLE).isEmpty()
-				||!mapaErrores.get(ACTIVO_NO_COMERCIALIZABLE).isEmpty()
-				||!mapaErrores.get(DESTINO_FINAL_NO_VENTA).isEmpty()
-				||!mapaErrores.get(ACTIVO_NO_PUBLICADO).isEmpty()
-				||!mapaErrores.get(ACTIVO_OCULTO).isEmpty()
-				||!mapaErrores.get(MOTIVO_NOT_EXISTS).isEmpty()
-				||!mapaErrores.get(MOTIVO_CODIGO_OCULTACION_NO_ESTA_DEFINIDO).isEmpty()
-				||!mapaErrores.get(MOTIVO_TEXTO_LIBRE_SUPERA_LIMITE).isEmpty()){
+					||!mapaErrores.get(ACTIVO_VENDIDO).isEmpty()
+					||!mapaErrores.get(NO_ES_ACTIVO_PRINCIPAL).isEmpty()
+					||!mapaErrores.get(ACTIVO_NO_PUBLICABLE).isEmpty()
+					||!mapaErrores.get(ACTIVO_NO_COMERCIALIZABLE).isEmpty()
+					||!mapaErrores.get(DESTINO_FINAL_NO_VENTA).isEmpty()
+					||!mapaErrores.get(ACTIVO_NO_PUBLICADO).isEmpty()
+					||!mapaErrores.get(ACTIVO_OCULTO).isEmpty()
+					||!mapaErrores.get(MOTIVO_NOT_EXISTS).isEmpty()
+					||!mapaErrores.get(MOTIVO_CODIGO_OCULTACION_NO_ESTA_DEFINIDO).isEmpty()
+					||!mapaErrores.get(MOTIVO_TEXTO_LIBRE_SUPERA_LIMITE).isEmpty()
+					||!mapaErrores.get(AGRUPACION_ACTIVO_NO_PUBLICABLE).isEmpty()
+					||!mapaErrores.get(AGRUPACION_ACTIVO_NO_COMERCIALIZABLE).isEmpty()
+					||!mapaErrores.get(AGRUPACION_DESTINO_FINAL_NO_VENTA).isEmpty()
+					||!mapaErrores.get(AGRUPACION_ACTIVO_OCULTO).isEmpty()){
 				
 					dtoValidacionContenido.setFicheroTieneErrores(true);
 					exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -134,6 +151,48 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 		exc.cerrar();
 		
 		return dtoValidacionContenido;
+	}
+
+	@Override
+	protected ResultadoValidacion validaContenidoCelda(String nombreColumna, String contenidoCelda,
+			MSVBusinessValidators contentValidators) {
+		ResultadoValidacion resultado = new ResultadoValidacion();
+		resultado.setValido(true);
+
+		if ((contentValidators != null) && (contentValidators.getValidatorForColumn(nombreColumna.trim()) != null)) {
+			MSVColumnValidator v = contentValidators.getValidatorForColumn(nombreColumna.trim());
+			MSVValidationResult result = validationRunner.runValidation(v, contenidoCelda);
+			resultado.setValido(result.isValid());
+			resultado.setErroresFila(result.getErrorMessage());
+		}
+
+		return resultado;
+	}
+
+	
+	/**
+	 * Realiza validaciones multivalor con diferentes valores de la fila
+	 *
+	 * @param mapaDatos
+	 * @param compositeValidators
+	 * @return
+	 */
+	@Override
+	protected ResultadoValidacion validaContenidoFila(Map<String, String> mapaDatos, List<String> listaCabeceras,
+			MSVBusinessCompositeValidators compositeValidators) {
+		ResultadoValidacion resultado = new ResultadoValidacion();
+		resultado.setValido(true);
+
+		if (compositeValidators != null) {
+			List<MSVMultiColumnValidator> listaValidadores = compositeValidators.getValidatorForColumns(listaCabeceras);
+			if (listaValidadores != null) {
+				MSVValidationResult result = validationRunner.runCompositeValidation(listaValidadores, mapaDatos);
+				resultado.setValido(result.isValid());
+				resultado.setErroresFila(result.getErrorMessage());
+			}
+		}
+
+		return resultado;
 	}
 
 	private List<Integer> isCodigoOcultacionEstaDefinido(MSVHojaExcel exc) {
@@ -175,52 +234,8 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 		return listaFilas;
 	}
 
-
-	@Override
-	protected ResultadoValidacion validaContenidoCelda(String nombreColumna, String contenidoCelda,
-			MSVBusinessValidators contentValidators) {
-		ResultadoValidacion resultado = new ResultadoValidacion();
-		resultado.setValido(true);
-
-		if ((contentValidators != null) && (contentValidators.getValidatorForColumn(nombreColumna.trim()) != null)) {
-			MSVColumnValidator v = contentValidators.getValidatorForColumn(nombreColumna.trim());
-			MSVValidationResult result = validationRunner.runValidation(v, contenidoCelda);
-			resultado.setValido(result.isValid());
-			resultado.setErroresFila(result.getErrorMessage());
-		}
-
-		return resultado;
-	}
-
-	
-	/**
-	 * Realiza validaciones multivalor con diferentes valores de la fila
-	 * 
-	 * @param mapaDatos
-	 * @param compositeValidators
-	 * @return
-	 */
-	@Override
-	protected ResultadoValidacion validaContenidoFila(Map<String, String> mapaDatos, List<String> listaCabeceras,
-			MSVBusinessCompositeValidators compositeValidators) {
-		ResultadoValidacion resultado = new ResultadoValidacion();
-		resultado.setValido(true);
-
-		if (compositeValidators != null) {
-			List<MSVMultiColumnValidator> listaValidadores = compositeValidators.getValidatorForColumns(listaCabeceras);
-			if (listaValidadores != null) {
-				MSVValidationResult result = validationRunner.runCompositeValidation(listaValidadores, mapaDatos);
-				resultado.setValido(result.isValid());
-				resultado.setErroresFila(result.getErrorMessage());
-			}
-		}
-
-		return resultado;
-	}
-	
-	
 	//metodos auxiliares
-	
+
 	private File recuperarPlantilla(Long idTipoOperacion)  {
 		try {
 			FileItem fileItem = proxyFactory.proxy(ExcelRepoApi.class).dameExcelByTipoOperacion(idTipoOperacion);
@@ -230,10 +245,10 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 		}
 		return null;
 	}
-	
+
 	private List<Integer> isActiveNotExistsRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		
+
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
@@ -252,10 +267,10 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 			}
 		return listaFilas;
 	}
-	
+
 	private List<Integer> activosVendidosRows(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		
+
 		int i = 0;
 		try {
 			for(i=1; i<this.numFilasHoja;i++){
@@ -267,52 +282,57 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
-		
+
 		return listaFilas;
 	}
-	
+
 	private List<Integer> activosNoComercializablesRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
 
 		int i = 0;
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
-				if(particularValidator.isActivoNoComercializable(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)))
-					listaFilas.add(i);
+				if(!particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)){
+					if(particularValidator.isActivoNoComercializable(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA))){
+						listaFilas.add(i);
+					}
+				}
 			}
 		} catch (Exception e) {
 			if (i != 0) listaFilas.add(i);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
-		
+
 		return listaFilas;
 	}
-	
+
 	private List<Integer> destinoFinalNoVentaByRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		
+
 		int i = 0;
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
-				if(particularValidator.destinoFinalNoVenta(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA))) listaFilas.add(i);
+				if(!particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)){
+					if(particularValidator.destinoFinalNoVenta(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA))) listaFilas.add(i);
+				}
 			}
 		}catch (Exception e){
 			if (i!=0) listaFilas.add(i);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
-		
+
 		return listaFilas;
 	}
-	
+
 	private List<Integer> activoNoPublicadoByRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		
+
 		int i = 0;
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
-				if(particularValidator.activoNoPublicado(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA))) listaFilas.add(i);
+				if(particularValidator.isActivoNoPublicadoVenta(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA))) listaFilas.add(i);
 			}
 		}catch (Exception e){
 			if(i!=0) listaFilas.add(i);
@@ -321,15 +341,17 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 		}
 		return listaFilas;
 	}
-	
+
 	private List<Integer> isActivoNoPublicableByRows(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		
+
 		int i = 0;
 		try{
 			for(i=1; i<this.numFilasHoja; i++){
-				if(particularValidator.isActivoNoPublicable(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA))){
-					listaFilas.add(i);
+				if(!particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)){
+					if(particularValidator.isActivoNoPublicable(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA))){
+						listaFilas.add(i);
+					}
 				}
 			}
 		} catch (Exception e){
@@ -339,29 +361,31 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 		}
 		return listaFilas;
 	}
-	
+
 	private List<Integer> activoOcultoByRows(MSVHojaExcel exc){
 		List <Integer> listaFilas = new ArrayList<Integer>();
-		
+
 		int i = 0;
 		try{
 			for(i=1;i<this.numFilasHoja;i++){
-				if(particularValidator.activoOcultoVenta(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA))){
-					listaFilas.add(i);
+				if(!particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)){
+					if(particularValidator.activoOcultoAlquiler(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA))){
+						listaFilas.add(i);
+					}
 				}
-			} 
+			}
 		}catch (Exception e){
 			if (i != 0) listaFilas.add(i);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
-		
+
 		return listaFilas;
 	}
-	
+
 	private List<Integer> movitoNotExistsByRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		
+
 		int i = 0;
 		try{
 			for(i=1;i<this.numFilasHoja;i++){
@@ -374,7 +398,113 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
-		
+
+		return listaFilas;
+	}
+
+	private List<Integer> agrupacionActivosNoComercializablesRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try{
+			for(i=1; i<this.numFilasHoja;i++){
+				String numAgrupacion = particularValidator.idAgrupacionDelActivoPrincipal(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA));
+				if(particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)){
+					if(particularValidator.isActivoNoComercializableAgrupacion(numAgrupacion)){
+						listaFilas.add(i);
+					}
+				}
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+
+		return listaFilas;
+	}
+
+	private List<Integer> agrupacionDestinoFinalNoVentaByRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try{
+			for(i=1; i<this.numFilasHoja;i++){
+				String numAgrupacion = particularValidator.idAgrupacionDelActivoPrincipal(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA));
+				if(particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)){
+					if(particularValidator.isActivoDestinoComercialNoVentaAgrupacion(numAgrupacion)) listaFilas.add(i);
+				}
+			}
+		}catch (Exception e){
+			if (i!=0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+
+		return listaFilas;
+	}
+
+	private List<Integer> agrupacionIsActivoNoPublicableByRows(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try{
+			for(i=1; i<this.numFilasHoja; i++){
+				String numAgrupacion = particularValidator.idAgrupacionDelActivoPrincipal(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA));
+				if(particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)){
+					if(particularValidator.isActivoNoPublicableAgrupacion(numAgrupacion)){
+						listaFilas.add(i);
+					}
+				}
+			}
+		} catch (Exception e){
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return listaFilas;
+	}
+
+	private List<Integer> agrupacionActivoOcultoByRows(MSVHojaExcel exc){
+		List <Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try{
+			for(i=1;i<this.numFilasHoja;i++){
+				String numAgrupacion = particularValidator.idAgrupacionDelActivoPrincipal(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA));
+				if(particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)){
+					if(!particularValidator.activosNoOcultosAlquilerAgrupacion(numAgrupacion)){
+						listaFilas.add(i);
+					}
+				}
+			}
+		}catch (Exception e){
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+
+		return listaFilas;
+	}
+	
+	private List<Integer> noEsActivoPrincipal(MSVHojaExcel exc){
+		List <Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try{
+			for(i=1;i<this.numFilasHoja;i++){
+				if(particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)){
+					if(!particularValidator.esActivoPrincipalEnAgrupacion(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)))){
+						listaFilas.add(i);
+					}
+				}
+			}
+		}catch (Exception e){
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+
 		return listaFilas;
 	}
 

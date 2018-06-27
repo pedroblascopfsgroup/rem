@@ -1845,10 +1845,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "					JOIN  DD_TPC_TIPO_PRECIO TPC ON TPC.DD_TPC_ID = VAL.DD_TPC_ID AND TPC.BORRADO = 0 AND TPC.DD_TPC_CODIGO = '02'"
 				+ " 				AND   AGR.AGR_ID = " + numAgrupacion + " "
 				+ " 				WHERE AGA.BORRADO = 0)");
-		if("0".equals(resultado))
-			return false;
-		else
-			return true;
+		return !"0".equals(resultado);
+
 	}
 	
 	@Override
@@ -1862,11 +1860,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "         JOIN ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0 "
 				+ "			JOIN V_COND_DISPONIBILIDAD COND ON COND.ACT_ID = ACT.ACT_ID AND COND.SIN_INFORME_APROBADO = 1 "
 				+ "			AND  AGR.AGR_ID = " + numAgrupacion + " ");
-		if("0".equals(resultado)){
-			return true;
-		}else {
-			return false;
-		}
+		return !"0".equals(resultado);
+
 	}
 	
 	@Override
@@ -1922,7 +1917,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}	
 	
 	@Override
-	public Boolean isActivoSinPrecioAlquilerWebAgrupacion(String numAgrupacion) {
+	public Boolean isActivoSinPrecioRentaWebAgrupacion(String numAgrupacion) {
 		if(Checks.esNulo(numAgrupacion))
 			return false;
 
@@ -1940,10 +1935,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "					JOIN  DD_TPC_TIPO_PRECIO TPC ON TPC.DD_TPC_ID = VAL.DD_TPC_ID AND TPC.BORRADO = 0 AND TPC.DD_TPC_CODIGO = '03'"
 				+ " 				AND   AGR.AGR_ID = " + numAgrupacion + " "
 				+ " 				WHERE AGA.BORRADO = 0)");
-		if("0".equals(resultado))
-			return false;
-		else
-			return true;
+		return !"0".equals(resultado);
+
 	}
 	
 	@Override

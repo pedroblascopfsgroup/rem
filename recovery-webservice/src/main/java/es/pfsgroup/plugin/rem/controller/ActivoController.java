@@ -2637,4 +2637,19 @@ public class ActivoController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getActivosPropagables(String idActivo, ModelMap model){
+		
+		try{
+			model.put("data", activoApi.getActivosPropagables(Long.valueOf(idActivo)));
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put("success", false);
+			model.put("error", e.getMessage());
+		}
+		
+		return createModelAndViewJson(model);
+	}
 }

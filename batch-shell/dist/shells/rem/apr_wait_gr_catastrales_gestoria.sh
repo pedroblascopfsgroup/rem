@@ -65,8 +65,8 @@ echo "Fin de la transferecia de los ficheros de la gestoria TECNOTRAMIT"
 #############
 ### TINSA_CERTIFY
 #############
-echo "Se inicia la transferecia de los ficheros de la gestoria TINSA_CERTIFY"
-fichero=TINSA_CERTIFY_CATASTRALES_GR
+echo "Se inicia la transferecia de los ficheros de la gestoria TINSACERTIFY"
+fichero=TINSACERTIFY_CATASTRALES_GR
 
 if [[ -z ${INSTALL_DIR/control/etl/tinsa_certify/input} ]] || [[ ! -d ${INSTALL_DIR/control/etl/tinsa_certify/input} ]]; then
     echo "$(basename $0) Error: DIR_DESTINO no definido o no es un directorio. Compruebe invocación previa a setBatchEnv.sh"
@@ -90,7 +90,7 @@ do
     fi
 done
 
-echo "Fin de la transferecia de los ficheros de la gestoria TINSA_CERTIFY"
+echo "Fin de la transferecia de los ficheros de la gestoria TINSACERTIFY"
 
 #############
 ### GARSA

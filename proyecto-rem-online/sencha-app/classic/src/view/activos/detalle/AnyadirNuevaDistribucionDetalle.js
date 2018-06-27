@@ -87,7 +87,6 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaDistribucionDetalle', {
     		
 		}
     	];
-    	
     	me.callParent();
     	
     }

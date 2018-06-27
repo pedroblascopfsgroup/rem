@@ -52,7 +52,7 @@ BEGIN
   EXECUTE IMMEDIATE 'CREATE VIEW ' || V_ESQUEMA || '.V_BUSQUEDA_TRABAJOS 
 
 	AS
-		SELECT 
+		SELECT /*+ use_hash(rn,act)(rn,tbj) */
 			tbj.tbj_id, 
 			act.act_id AS idactivo, 
 			rn.rango, 

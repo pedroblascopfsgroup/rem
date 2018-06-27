@@ -98,7 +98,7 @@
     		me.collapsible= true;
     		me.collapsed= false;    		
     		me.buttonAlign = 'left';
-    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcelTareas'}];
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcelTareas'}, {text: HreRem.i18n('btn.gesSustituto'), handler: 'onClickCargaTareasGestorSustituto', bind: { hidden: false}, reference: 'btnGestorSustituto'}];
     	}
     	
     	if (me.isSearchFormAlertas) {

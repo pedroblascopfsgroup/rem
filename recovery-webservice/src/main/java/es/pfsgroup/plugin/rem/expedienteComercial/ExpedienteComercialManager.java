@@ -20,6 +20,7 @@ import javax.annotation.Resource;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,6 +120,7 @@ import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Formalizacion;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
+import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.InformeJuridico;
 import es.pfsgroup.plugin.rem.model.ObservacionesExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -4789,6 +4791,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				BeanUtils.copyProperties(dtoGestor, gestor.getUsuario());
 				BeanUtils.copyProperties(dtoGestor, gestor.getTipoGestor());
 				BeanUtils.copyProperty(dtoGestor, "id", gestor.getId());
+				
+				GestorSustituto gestorSustituto = getGestorSustitutoVigente(gestor);
+
+				if (!Checks.esNulo(gestorSustituto)) {
+					dtoGestor.setApellidoNombre(dtoGestor.getApellidoNombre().concat(" (")
+							.concat(gestorSustituto.getUsuarioGestorSustituto().getApellidoNombre()).concat(")"));
+				}
+				
 			} catch (IllegalAccessException e) {
 				logger.error("error en expedienteComercialManager", e);
 			} catch (InvocationTargetException e) {
@@ -6035,6 +6045,30 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		logger.info("------------ LLAMADA WS MOD3(CONDICIONANTES ECONOMICOS) -----------------");
 		uvemManagerApi.modificarInstanciaDecisionTres(instancia);	
 		logger.info("------------ LLAMADA WS REALIZADA CON EXITO -----------------");
+	}
+	
+	@Transactional(readOnly = true)
+	private GestorSustituto getGestorSustitutoVigente(GestorEntidadHistorico gestor) {
+
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal", gestor.getUsuario());
+
+		try {
+			List<GestorSustituto> gestoresSustitutos = genericDao.getList(GestorSustituto.class, filter);
+
+			for (GestorSustituto sustituto : gestoresSustitutos) {
+				if (!Checks.esNulo(sustituto.getFechaFin())) {
+					if (sustituto.getFechaFin().after(new Date()) || DateUtils.isSameDay(sustituto.getFechaFin(), new Date())) {
+						return sustituto;
+					}
+				} else {
+					return sustituto;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 
 	@Override

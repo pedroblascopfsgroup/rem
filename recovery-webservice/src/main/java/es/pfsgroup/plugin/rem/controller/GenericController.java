@@ -159,7 +159,7 @@ public class GenericController extends ParadiseJsonController{
 	 * @return Usuario identificado y sus funciones según perfil
 	 */
 	@RequestMapping(method = RequestMethod.GET) 
-	public ModelAndView getAuthenticationData(){
+	public ModelAndView getAuthenticationData(WebDto webDto, ModelMap model){
 
 		AuthenticationData authData =  genericApi.getAuthenticationData();		
 		return new ModelAndView("jsonView",  new ModelMap("data", authData));

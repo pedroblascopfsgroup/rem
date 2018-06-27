@@ -37,11 +37,17 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 	private static final String ACTIVO_VENDIDO = "Este activo está vendido";
 	private static final String ACTIVO_NO_COMERCIALIZABLE = "Este activo no es comercializable";
 	private static final String ACTIVO_NO_PUBLICABLE = "Este activo no es publicable";
+	private static final String ACTIVO_PUBLICADO = "Este activo está publicado";
 	private static final String DESTINO_COMERCIAL_NO_ALQUILER = "Este activo no incluye el destino comercial de alquiler";
 	private static final String ACTIVO_SIN_INFORME_NI_PRECIO = "Este activo no tiene informe aprobado ni precio";
 	private static final String CAMPO_OCULTAR_PRECIO_FORMATO_NO_VALIDO = "El campo ocultar precio contiene un valor no válido";
 	private static final String CAMPO_PUBLICAR_SIN_PRECIO_FORMATO_NO_VALIDO = "El campo publicar sin precio contiene un valor no válido";
-
+	private static final String AGRUPACION_ACTIVO_NO_AGRUPACION_RESTRINGIDA_PRINCIPAL = "El activo no es el activo principal de una agrupación restringida";
+	private static final String AGRUPACION_ACTIVO_NO_COMERCIALIZABLE = "Existen activos no comercializables en la agrupación";
+	private static final String AGRUPACION_ACTIVO_NO_PUBLICABLE = "Existen activos no publicables en la agrupación";
+	private static final String AGRUPACION_DESTINO_COMERCIAL_NO_ALQUILER = "Existen activos que no incluyen destino comercial de alquiler en la agrupación";
+	private static final String AGRUPACION_ACTIVO_SIN_INFORME_NI_PRECIO = "Existen activos que no tienen informe aprobado ni precio en la agrupación";
+	private static final String CODIGO_TIPO_AGRUPACION_RESTRINGIDA = "02";
 	private static final Integer NUMERO_HOJA_DATOS = 0;
 
 	@Autowired
@@ -97,15 +103,24 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 			mapaErrores.put(CAMPO_PUBLICAR_SIN_PRECIO_FORMATO_NO_VALIDO, isCampoPublicarSinPrecioFormatoValidoRows(exc));
 			mapaErrores.put(ACTIVO_NOT_EXISTS, isActiveNotExistsRows(exc));
 			mapaErrores.put(ACTIVO_VENDIDO, activosVendidosRows(exc));
+			mapaErrores.put(ACTIVO_PUBLICADO, activoNoPublicadoRows(exc));
 			mapaErrores.put(ACTIVO_NO_PUBLICABLE, activosNoPublicablesRows(exc));
 			mapaErrores.put(ACTIVO_NO_COMERCIALIZABLE, activosNoComercializablesRows(exc));
 			mapaErrores.put(DESTINO_COMERCIAL_NO_ALQUILER, activosDestinoComercialNoAlquilerRows(exc));
 			mapaErrores.put(ACTIVO_SIN_INFORME_NI_PRECIO, activosSinInformeAprobadoNiPrecioOSinPublicarSinPrecioRows(exc));
+			mapaErrores.put(AGRUPACION_ACTIVO_NO_AGRUPACION_RESTRINGIDA_PRINCIPAL, esActivoPrincipalEnAgrupacionRestringida(exc));
+			mapaErrores.put(AGRUPACION_ACTIVO_NO_PUBLICABLE, activosAgrupacionNoPublicablesRows(exc));
+			mapaErrores.put(AGRUPACION_ACTIVO_NO_COMERCIALIZABLE, activosAgrupacionNoComercializablesRows(exc));
+			mapaErrores.put(AGRUPACION_DESTINO_COMERCIAL_NO_ALQUILER, activosAgrupacionDestinoComercialNoAlquilerRows(exc));
+			mapaErrores.put(AGRUPACION_ACTIVO_SIN_INFORME_NI_PRECIO, activosAgrupacionSinInformeAprobadoNiPrecioOSinPublicarSinPrecioRows(exc));
 
 			if (!mapaErrores.get(CAMPO_OCULTAR_PRECIO_FORMATO_NO_VALIDO).isEmpty() || !mapaErrores.get(CAMPO_PUBLICAR_SIN_PRECIO_FORMATO_NO_VALIDO).isEmpty()
 					|| !mapaErrores.get(ACTIVO_NOT_EXISTS).isEmpty() || !mapaErrores.get(ACTIVO_SIN_INFORME_NI_PRECIO).isEmpty()
-					|| !mapaErrores.get(ACTIVO_VENDIDO).isEmpty() || !mapaErrores.get(ACTIVO_NO_COMERCIALIZABLE).isEmpty()
-					|| !mapaErrores.get(ACTIVO_NO_PUBLICABLE).isEmpty() || !mapaErrores.get(DESTINO_COMERCIAL_NO_ALQUILER).isEmpty()){
+					|| !mapaErrores.get(ACTIVO_VENDIDO).isEmpty() || !mapaErrores.get(ACTIVO_NO_COMERCIALIZABLE).isEmpty() || !mapaErrores.get(ACTIVO_PUBLICADO).isEmpty()
+					|| !mapaErrores.get(ACTIVO_NO_PUBLICABLE).isEmpty() || !mapaErrores.get(DESTINO_COMERCIAL_NO_ALQUILER).isEmpty()
+					|| !mapaErrores.get(AGRUPACION_ACTIVO_NO_AGRUPACION_RESTRINGIDA_PRINCIPAL).isEmpty() || !mapaErrores.get(AGRUPACION_ACTIVO_NO_PUBLICABLE).isEmpty()
+					|| !mapaErrores.get(AGRUPACION_ACTIVO_NO_COMERCIALIZABLE).isEmpty() || !mapaErrores.get(AGRUPACION_DESTINO_COMERCIAL_NO_ALQUILER).isEmpty()
+					|| !mapaErrores.get(AGRUPACION_ACTIVO_SIN_INFORME_NI_PRECIO).isEmpty()){
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
@@ -240,9 +255,24 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 		} catch (Exception e) {
 			if (i != 0) listaFilas.add(i);
 			logger.error(e.getMessage());
-			e.printStackTrace();
 		}
 		
+		return listaFilas;
+	}
+	
+	private List<Integer> activoNoPublicadoRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		int i = 0;
+		try{
+			for(i=1; i<this.numFilasHoja;i++){
+				if(!particularValidator.isActivoNoPublicadoAlquiler(exc.dameCelda(i, 0)))
+					listaFilas.add(i);
+			}
+		}catch (Exception e){
+			if(i!=0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			
+		}
 		return listaFilas;
 	}
 
@@ -252,13 +282,15 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 		int i = 0;
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
-				if(particularValidator.isActivoNoPublicable(exc.dameCelda(i, 0)))
-					listaFilas.add(i);
+				if (!particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)) {
+					if(particularValidator.isActivoNoPublicable(exc.dameCelda(i, 0)))
+						listaFilas.add(i);
+				}
 			}
 		} catch (Exception e) {
 			if (i != 0) listaFilas.add(i);
 			logger.error(e.getMessage());
-			e.printStackTrace();
+			
 		}
 
 		return listaFilas;
@@ -270,8 +302,10 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 		int i = 0;
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
-				if(particularValidator.isActivoDestinoComercialNoAlquiler(exc.dameCelda(i, 0)))
-					listaFilas.add(i);
+				if (!particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)) {
+					if(particularValidator.isActivoDestinoComercialNoAlquiler(exc.dameCelda(i, 0)))
+						listaFilas.add(i);
+				}
 			}
 		} catch (Exception e) {
 			if (i != 0) listaFilas.add(i);
@@ -288,9 +322,11 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 		int i = 0;
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
-				if(particularValidator.isActivoSinInformeAprobado(exc.dameCelda(i, 0)) &&
-						!this.obtenerBooleanExcel(exc.dameCelda(i, 2)) && particularValidator.isActivoSinPrecioRentaWeb(exc.dameCelda(i, 0))) {
-					listaFilas.add(i);
+				if (!particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)) {
+					if(particularValidator.isActivoSinInformeAprobado(exc.dameCelda(i, 0)) &&
+							!this.obtenerBooleanExcel(exc.dameCelda(i, 2)) && particularValidator.isActivoSinPrecioRentaWeb(exc.dameCelda(i, 0))) {
+						listaFilas.add(i);
+					}	
 				}
 			}
 		} catch (Exception e) {
@@ -319,6 +355,110 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 			for(i=1; i<this.numFilasHoja;i++){
 				if(particularValidator.isActivoNoComercializable(exc.dameCelda(i, 0)))
 					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> esActivoPrincipalEnAgrupacionRestringida(MSVHojaExcel exc){
+		List<Integer> listFilas = new ArrayList<Integer>();
+		int i = 0;
+
+		try {
+			for(i = 1; i < this.numFilasHoja; i++) {
+				if (particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)) {
+					if(!particularValidator.esActivoPrincipalEnAgrupacion(Long.parseLong(exc.dameCelda(i, 0)))){
+						listFilas.add(i);
+					}
+				}
+			}
+		} catch (Exception e) {
+			throw new RuntimeException("No se ha podido comprobar si los activos están en otras agrupaciones restringidas", e);
+		}
+		
+		return listFilas;
+	}
+
+	private List<Integer> activosAgrupacionNoPublicablesRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try{
+			for(i=1; i<this.numFilasHoja;i++){
+				if (particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)) {
+					String idAgrupacion = particularValidator.idAgrupacionDelActivoPrincipal(exc.dameCelda(i, 0));
+					if(particularValidator.isActivoNoPublicableAgrupacion(idAgrupacion))
+						listaFilas.add(i);
+				}
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+
+		return listaFilas;
+	}
+
+	private List<Integer> activosAgrupacionDestinoComercialNoAlquilerRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try{
+			for(i=1; i<this.numFilasHoja;i++){
+				if (particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)) {
+					String idAgrupacion = particularValidator.idAgrupacionDelActivoPrincipal(exc.dameCelda(i, 0));
+					if(particularValidator.isActivoDestinoComercialNoAlquilerAgrupacion(idAgrupacion))
+						listaFilas.add(i);
+				}
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+
+		return listaFilas;
+	}
+
+	private List<Integer> activosAgrupacionSinInformeAprobadoNiPrecioOSinPublicarSinPrecioRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try{
+			for(i=1; i<this.numFilasHoja;i++){
+				if (particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)) {
+					String idAgrupacion = particularValidator.idAgrupacionDelActivoPrincipal(exc.dameCelda(i, 0));
+					if(particularValidator.isActivoSinInformeAprobadoAgrupacion(idAgrupacion) && particularValidator.isActivoSinPrecioRentaWebAgrupacion(idAgrupacion) &&
+							!this.obtenerBooleanExcel(exc.dameCelda(i, 2))) {
+						listaFilas.add(i);
+					}
+				}
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+		}
+
+		return listaFilas;
+	}
+	
+	private List<Integer> activosAgrupacionNoComercializablesRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try{
+			for(i=1; i<this.numFilasHoja;i++){
+				if (particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)) {
+					String idAgrupacion = particularValidator.idAgrupacionDelActivoPrincipal(exc.dameCelda(i, 0));
+					if(particularValidator.isActivoNoComercializableAgrupacion(idAgrupacion))
+						listaFilas.add(i);
+				}
 			}
 		} catch (Exception e) {
 			if (i != 0) listaFilas.add(i);

@@ -365,11 +365,13 @@ public class AgrupacionAdapter {
 					}
 
 					Activo activo = agrupacion.getActivoPrincipal();
-					dtoAgrupacion.setTipoComercializacionCodigo(activo.getActivoPublicacion().getTipoComercializacion().getCodigo());
+					if(!Checks.esNulo(activo)) {
+						dtoAgrupacion.setTipoComercializacionCodigo(activo.getActivoPublicacion().getTipoComercializacion().getCodigo());
+					}
 					List<ActivoAgrupacionActivo> listaActivos = agrupacion.getActivos();
 					
 					//Cálculo color de los indicadores
-					if(listaActivos != null){
+					if(!Checks.estaVacio(listaActivos)){
 						if(dtoAgrupacion.getTipoComercializacionCodigo().equals(DDTipoComercializacion.CODIGO_VENTA)){
 							dtoAgrupacion.setEstadoVenta(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAgrupacionVenta(listaActivos));
 						}else if(dtoAgrupacion.getTipoComercializacionCodigo().equals(DDTipoComercializacion.CODIGO_SOLO_ALQUILER)){
@@ -2415,10 +2417,10 @@ public class AgrupacionAdapter {
 		dto.setVandalizado(vCondicionantesAgrDisponibilidad.getVandalizado());
 		dto.setConCargas(vCondicionantesAgrDisponibilidad.getConCargas());
 		
-		dto.setDeshabilitarCheckPublicarVenta(!Checks.esNulo(activoEstadoPublicacionApi.getCheckPublicacionDeshabilitarAgrupacionVenta(agrupacion.getActivos())));
-		dto.setDeshabilitarCheckOcultarVenta(!Checks.esNulo(activoEstadoPublicacionApi.getCheckOcultarDeshabilitarAgrupacionVenta(agrupacion.getActivos())));
-		dto.setDeshabilitarCheckPublicarAlquiler(!Checks.esNulo(activoEstadoPublicacionApi.getCheckPublicacionDeshabilitarAgrupacionAlquiler(agrupacion.getActivos())));
-		dto.setDeshabilitarCheckOcultarAlquiler(!Checks.esNulo(activoEstadoPublicacionApi.getCheckOcultarDeshabilitarAgrupacionAlquiler(agrupacion.getActivos())));
+		dto.setDeshabilitarCheckPublicarVenta(activoEstadoPublicacionApi.getCheckPublicacionDeshabilitarAgrupacionVenta(agrupacion.getActivos()));
+		dto.setDeshabilitarCheckOcultarVenta(activoEstadoPublicacionApi.getCheckOcultarDeshabilitarAgrupacionVenta(agrupacion.getActivos()));
+		dto.setDeshabilitarCheckPublicarAlquiler(activoEstadoPublicacionApi.getCheckPublicacionDeshabilitarAgrupacionAlquiler(agrupacion.getActivos()));
+		dto.setDeshabilitarCheckOcultarAlquiler(activoEstadoPublicacionApi.getCheckOcultarDeshabilitarAgrupacionAlquiler(agrupacion.getActivos()));
 		
 		return dto;
 	}

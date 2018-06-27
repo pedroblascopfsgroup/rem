@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
@@ -9,6 +8,7 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,10 +24,10 @@ public class MSVActualizadorPublicarAlquiler extends AbstractMSVActualizador imp
 	private static final Integer COL_ID_ACTIVO = 0;
 	private static final Integer COL_OCULTAR_PRECIO = 1;
 	private static final Integer COL_PUBLICAR_SIN_PRECIO = 2;
-	@Autowired
-	ProcessAdapter processAdapter;
+
 	@Autowired
 	ActivoApi activoApi;
+	
 	@Autowired
 	ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
 
@@ -39,20 +39,31 @@ public class MSVActualizadorPublicarAlquiler extends AbstractMSVActualizador imp
 	@Override
 	@Transactional(readOnly = false)
 	public void procesaFila(MSVHojaExcel exc, int fila) throws IOException, ParseException, JsonViewerException, SQLException {
-
 		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, COL_ID_ACTIVO)));
 
 		DtoDatosPublicacionActivo dto = new DtoDatosPublicacionActivo();
 		dto.setIdActivo(activo.getId());
 		dto.setPublicarAlquiler(true);
-		if(!Checks.esNulo(exc.dameCelda(fila, COL_OCULTAR_PRECIO))) {
-			dto.setNoMostrarPrecioAlquiler(this.obtenerBooleanExcel(exc.dameCelda(fila, COL_OCULTAR_PRECIO)));
-		}
-		if(!Checks.esNulo(exc.dameCelda(fila, COL_PUBLICAR_SIN_PRECIO))) {
-			dto.setPublicarSinPrecioAlquiler(this.obtenerBooleanExcel(exc.dameCelda(fila, COL_PUBLICAR_SIN_PRECIO)));
+
+		if (!Checks.esNulo(exc.dameCelda(fila, COL_OCULTAR_PRECIO))) {
+			dto.setNoMostrarPrecioVenta(this.obtenerBooleanExcel(exc.dameCelda(fila, COL_OCULTAR_PRECIO)));
 		}
 
-		activoEstadoPublicacionApi.setDatosPublicacionActivo(dto);
+		if (!Checks.esNulo(exc.dameCelda(fila, COL_PUBLICAR_SIN_PRECIO))) {
+			dto.setPublicarSinPrecioVenta(this.obtenerBooleanExcel(exc.dameCelda(fila, COL_PUBLICAR_SIN_PRECIO)));
+		}
+
+		if (activoApi.isActivoIntegradoAgrupacionRestringida(activo.getId())) {
+			if (activoApi.isActivoPrincipalAgrupacionRestringida(activo.getId())) {
+				ActivoAgrupacionActivo aga = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId());
+				if (!Checks.esNulo(aga)) {
+					activoEstadoPublicacionApi.setDatosPublicacionAgrupacion(aga.getAgrupacion().getId(), dto);
+				}
+			}
+
+		} else {
+			activoEstadoPublicacionApi.setDatosPublicacionActivo(dto);
+		}
 	}
 
 	/**

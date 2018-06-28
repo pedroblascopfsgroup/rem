@@ -104,7 +104,10 @@ public class VBusquedaVisitasDetalle implements Serializable {
 	
 	@Column(name="CODIGO_CARTERA")
 	private String carteraCodigo;
-	
+
+	@Column(name="DD_CRA_ID")
+	private String idCartera;
+
 	
 	public String getId() {
 		return id;

@@ -63,17 +63,36 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 		 * como fecha de sanción, en caso contrario, la fecha de sanción será la
 		 * de resolución del comité externo.
 		 */
+		
+		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+		
+		ExpedienteComercial expediente = null;
+		
+		if(!Checks.esNulo(ofertaAceptada)){
+			expediente = expedienteComercialApi
+					.expedienteComercialPorOferta(ofertaAceptada.getId());
+		}
+		
+		for(TareaExternaValor valor: valores){
+			if(COMBO_COMITE_SUPERIOR.equals(valor.getNombre())){
+				Long n = Long.parseLong(valor.getValor());
+				expediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", n.toString())));
+				break;
+			}
+		}
+		
+		genericDao.save(ExpedienteComercial.class, expediente);
+		
+		
 		if (ofertaApi.checkAtribuciones(tramite.getTrabajo())) {
-			Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
-			if (!Checks.esNulo(ofertaAceptada)) {
-				ExpedienteComercial expediente = expedienteComercialApi
-						.expedienteComercialPorOferta(ofertaAceptada.getId());
+			
+			if(!Checks.esNulo(expediente)){
 				expediente.setFechaSancion(new Date());
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
 						DDEstadosExpedienteComercial.APROBADO);
 				DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 				expediente.setEstado(estado);
-
+	
 				// Una vez aprobado el expediente, se congelan el resto de
 				// ofertas que no estén rechazadas (aceptadas y pendientes)
 				List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
@@ -83,17 +102,18 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 						ofertaApi.congelarOferta(oferta);
 					}
 				}
-
+	
 				// Se comprueba si cada activo tiene KO de admisión o de gestión
 				// y se envía una notificación
 				notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
-
 			}
+
+			
 		} else {
-			Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
-			if (!Checks.esNulo(ofertaAceptada)) {
-				ExpedienteComercial expediente = expedienteComercialApi
-						.expedienteComercialPorOferta(ofertaAceptada.getId());
+			//Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+			if (!Checks.esNulo(expediente)) {
+				//ExpedienteComercial expediente = expedienteComercialApi
+				//		.expedienteComercialPorOferta(ofertaAceptada.getId());
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
 						DDEstadosExpedienteComercial.PTE_SANCION);
 				Filter filtroSinFormalizacion = genericDao.createFilter(FilterType.EQUALS, "codigo",
@@ -114,10 +134,10 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 		}
 		
 		for (TareaExternaValor valor : valores) {
-			Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
-			if (!Checks.esNulo(ofertaAceptada)) {
-				ExpedienteComercial expediente = expedienteComercialApi
-						.expedienteComercialPorOferta(ofertaAceptada.getId());
+			//Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+			if (!Checks.esNulo(expediente)) {
+				//ExpedienteComercial expediente = expedienteComercialApi
+				//		.expedienteComercialPorOferta(ofertaAceptada.getId());
 				if (COMBO_RIESGO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					if (DDSiNo.SI.equals(valor.getValor())) {
 						expediente.setRiesgoReputacional(1);

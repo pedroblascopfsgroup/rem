@@ -1376,7 +1376,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setIdResponsableTrabajo(trabajo.getResponsableTrabajo().getId());
 			
 		}
-		else {
+		else if (!Checks.esNulo(trabajo.getSolicitante())){
 			dtoTrabajo.setResponsableTrabajo(trabajo.getSolicitante().getApellidoNombre());
 			dtoTrabajo.setIdResponsableTrabajo(trabajo.getSolicitante().getId());
 		}
@@ -1393,7 +1393,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		 }
 		 
 		
-		 if (trabajo.getResponsableTrabajo().getId().equals(usuariologado.getId()) || dtoTrabajo.getIdSupervisorActivo().equals(usuariologado.getId())) {
+			
+		 if ( (!Checks.esNulo(trabajo.getResponsableTrabajo())) && (trabajo.getResponsableTrabajo().getId().equals(usuariologado.getId()) || dtoTrabajo.getIdSupervisorActivo().equals(usuariologado.getId()))) {
 			 dtoTrabajo.setBloquearResponsable(false);
 		 }
 		 else {

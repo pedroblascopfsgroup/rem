@@ -11,7 +11,7 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_GESTOR_ACTIVO = "GACT";
 	public static final String CODIGO_GESTOR_EDIFICACIONES = "GEDI";
 	public static final String CODIGO_GESTOR_SUELOS = "GSUE";
-	public static final String CODIGO_GESTOR_ALQUILER = "GEDI";
+	public static final String CODIGO_GESTOR_ALQUILER = "GALQ";
 	public static final String CODIGO_GESTOR_ADMISION = "GADM";
 	public static final String CODIGO_GESTORIA_ADMISION = "GGADM";
 	public static final String CODIGO_GESTORIA_CEDULAS = "GTOCED";

@@ -1,7 +1,6 @@
 #!/bin/bash
-# Generado por GUSTAVO MORA 20170810
+# Generado por DANIEL ALBERT 20180628
  
-
 
 filename=$(basename $0)
 nameETL="${filename%.*}"

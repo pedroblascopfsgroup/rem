@@ -369,7 +369,7 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 		try{
 			for(i=1;i<this.numFilasHoja;i++){
 				if(!particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)){
-					if(particularValidator.activoOcultoAlquiler(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA))){
+					if(particularValidator.activoOcultoVenta(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA))){
 						listaFilas.add(i);
 					}
 				}
@@ -473,7 +473,7 @@ public class MSVOcultacionVenta extends MSVExcelValidatorAbstract{
 			for(i=1;i<this.numFilasHoja;i++){
 				String numAgrupacion = particularValidator.idAgrupacionDelActivoPrincipal(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA));
 				if(particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)){
-					if(!particularValidator.activosNoOcultosAlquilerAgrupacion(numAgrupacion)){
+					if(!particularValidator.activosNoOcultosVentaAgrupacion(numAgrupacion)){
 						listaFilas.add(i);
 					}
 				}

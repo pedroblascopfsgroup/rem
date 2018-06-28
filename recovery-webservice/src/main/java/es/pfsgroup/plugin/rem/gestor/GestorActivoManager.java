@@ -410,4 +410,55 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 		return pve;
 	}
 
+	@Override
+	public Boolean isGestorSuelos(Activo activo, Usuario usuario) {
+		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_GESTOR_SUELOS);
+		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+		
+		List<Usuario> usuariosActivos = ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipoGestor.getId(),activo);		
+		return usuariosActivos.contains(usuario);
+	}
+
+	@Override
+	public Boolean isGestorEdificaciones(Activo activo, Usuario usuario) {
+		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_GESTOR_EDIFICACIONES);
+		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+		
+		List<Usuario> usuariosActivos = ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipoGestor.getId(),activo);		
+		return usuariosActivos.contains(usuario);
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void borrarGestorAdicionalEntidad(GestorEntidadDto dto) {
+
+		Filter filtroAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", dto.getIdUsuario());
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", dto.getIdEntidad());
+		
+		GestorEntidad gestorEntidad;
+		
+		gestorEntidad = genericDao.get(GestorActivo.class,filtroUsuario,filtroActivo,filtroAuditoria);
+		
+		if (gestorEntidad != null) {
+			this.actualizaFechaHastaHistoricoGestorAdicional(gestorEntidad);
+			gestorEntidadDao.delete(gestorEntidad);
+		}
+
+	}
+	
+	private void actualizaFechaHastaHistoricoGestorAdicional(GestorEntidad gee) {
+
+		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "tipoGestor.id", gee.getTipoGestor().getId());
+		List<GestorEntidadHistorico> geh = genericDao.getList(GestorEntidadHistorico.class, filtroTipoGestor);
+
+		Date hoy = new Date();
+		for (GestorEntidadHistorico g : geh) {
+			if (Checks.esNulo(g.getFechaHasta())) {
+				g.setFechaHasta(hoy);
+				gestorEntidadHistoricoDao.saveOrUpdate(g);
+			}
+		}
+	}
+
 }

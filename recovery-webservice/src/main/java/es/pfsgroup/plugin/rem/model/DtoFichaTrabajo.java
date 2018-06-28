@@ -142,6 +142,9 @@ public class DtoFichaTrabajo {
     private String codigoPromocionPrinex;
 
     private Date fechaAutorizacionPropietario;
+    
+    private Boolean bloquearResponsable;
+    
 
 	
     public Long getIdTrabajo() {
@@ -685,6 +688,16 @@ public class DtoFichaTrabajo {
 		this.fechaAutorizacionPropietario = fechaAutorizacionPropietario;
 
 	}
+
+	public Boolean getBloquearResponsable() {
+		return bloquearResponsable;
+	}
+
+	public void setBloquearResponsable(Boolean bloquearResponsable) {
+		this.bloquearResponsable = bloquearResponsable;
+	}
+	
+	
 	
 	
 }

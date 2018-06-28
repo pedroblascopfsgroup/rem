@@ -220,6 +220,33 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 		List<Usuario> usuariosActivos = ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipoGestor.getId(),activo);		
 		return usuariosActivos.contains(usuario);
 	}
+	
+	public Boolean esGestorEdificaciones(Activo activo, Usuario usuario){
+
+		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_GESTOR_EDIFICACIONES);
+		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+		
+		List<Usuario> usuariosActivos = ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipoGestor.getId(),activo);		
+		return usuariosActivos.contains(usuario);
+	}
+	
+	public Boolean esGestorSuelos(Activo activo, Usuario usuario){
+
+		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_GESTOR_SUELOS);
+		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+			
+		
+		List<Usuario> usuariosActivos = ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipoGestor.getId(),activo);		
+		return usuariosActivos.contains(usuario);
+	}
+	public Boolean esGestorAlquileres(Activo activo, Usuario usuario){
+
+		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_GESTOR_ALQUILER);
+		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+		
+		List<Usuario> usuariosActivos = ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipoGestor.getId(),activo);		
+		return usuariosActivos.contains(usuario);
+	}
 
 	public Boolean isSupervisorActivo(Activo activo, Usuario usuario){
 

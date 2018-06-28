@@ -9,6 +9,9 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 public interface GestorActivoApi extends GestorEntidadApi {
 
 	public static final String CODIGO_GESTOR_ACTIVO = "GACT";
+	public static final String CODIGO_GESTOR_EDIFICACIONES = "GEDI";
+	public static final String CODIGO_GESTOR_SUELOS = "GSUE";
+	public static final String CODIGO_GESTOR_ALQUILER = "GEDI";
 	public static final String CODIGO_GESTOR_ADMISION = "GADM";
 	public static final String CODIGO_GESTORIA_ADMISION = "GGADM";
 	public static final String CODIGO_GESTORIA_CEDULAS = "GTOCED";
@@ -60,6 +63,11 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	Boolean isGestorActivo(Activo activo, Usuario usuario);
 	
 	Boolean isSupervisorActivo(Activo activo, Usuario usuario);
+	
+	Boolean esGestorEdificaciones(Activo activo, Usuario usuario);
+	Boolean esGestorSuelos(Activo activo, Usuario usuario);
+	Boolean esGestorAlquileres(Activo activo, Usuario usuario);
+
 	
 	Boolean isGestorAdmision(Activo activo, Usuario usuario);
 	

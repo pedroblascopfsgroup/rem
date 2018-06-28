@@ -48,6 +48,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
+import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutorApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.ActivoGenericActionHandler.ConstantesBPMPFS;
@@ -55,6 +56,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorServiceFactoryApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionServiceFactoryApi;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TimerTareaActivo;
@@ -88,6 +90,9 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 
     @Autowired
     private TareaProcedimientoManager tareaProcedimientoManager;
+    
+    @Autowired
+    private GestorActivoManager gestorActivoManager;
 
     @Autowired
     private ActivoTareaExternaApi activoTareaExternaManagerApi;
@@ -713,7 +718,8 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
      */
     protected void asignaUsuario(Long idTarea){
 
-    	//TareaActivo tareaActivo  = tareaActivoApi.getByIdTareaExterna(idTarea);
+    	TareaActivo tarea  = tareaActivoApi.getByIdTareaExterna(idTarea);
+    	Activo activo = tarea.getActivo();
 		TareaExterna tareaExterna = activoTareaExternaManagerApi.get(idTarea);
 		TareaActivo tareaActivo = ((TareaActivo)tareaExterna.getTareaPadre());
 		EXTTareaProcedimiento tareaProcedimiento = (EXTTareaProcedimiento) tareaExterna.getTareaProcedimiento();
@@ -731,9 +737,11 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 		
 		// Asignador de GESTOR por factoria - Gestores encontrados por tarea-Activo
 		
-		if ((!Checks.esNulo(nuevoResponsable)) && (adapter.isGestorAlquileres(nuevoResponsable) || adapter.isGestorSuelos(nuevoResponsable)|| adapter.isGestorEdificaciones(nuevoResponsable))) {
-				tareaActivo.setUsuario(nuevoResponsable);
-		}
+		if ((!Checks.esNulo(nuevoResponsable)) && (gestorActivoManager.esGestorEdificaciones(activo, nuevoResponsable) || gestorActivoManager.esGestorSuelos(activo, nuevoResponsable)
+			 || gestorActivoManager.esGestorAlquileres(activo, nuevoResponsable))) {
+			tareaActivo.setUsuario(nuevoResponsable);
+			
+		}		
 		else if(!Checks.esNulo(gestor) ){
 			tareaActivo.setUsuario(gestor);
 		} else {

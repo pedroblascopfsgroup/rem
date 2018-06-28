@@ -16,12 +16,14 @@ import es.capgemini.pfs.api.controlAcceso.EXTControlAccesoApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.utils.AgendaMultifuncionCorreoUtils;
@@ -188,27 +190,8 @@ public class GenericAdapter {
 	}
 	
 	
-	public Boolean isGestorAlquileres(Usuario usuario) {
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "GALQ");
-		Perfil perfilProveedor = genericDao.get(Perfil.class, filtro);
 
-		return usuario.getPerfiles().contains(perfilProveedor);
-	}
 	
-	public Boolean isGestorSuelos(Usuario usuario) {
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "GSUE");
-		Perfil perfilProveedor = genericDao.get(Perfil.class, filtro);
-
-		return usuario.getPerfiles().contains(perfilProveedor);
-	}
-	
-	public Boolean isGestorEdificaciones(Usuario usuario) {
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "GSUE");
-		Perfil perfilProveedor = genericDao.get(Perfil.class, filtro);
-
-		return usuario.getPerfiles().contains(perfilProveedor);
-	}
-
 	
 	
 

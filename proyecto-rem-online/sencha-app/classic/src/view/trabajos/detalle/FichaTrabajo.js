@@ -20,8 +20,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
         me.idProveedor =  me.lookupController().getViewModel().get('trabajo').get('idProveedor');
         me.idSolicitante =  me.lookupController().getViewModel().get('trabajo').get('idSolicitante');
         me.idResponsableTrabajo = me.lookupController().getViewModel().get('trabajo').get('idResponsableTrabajo');
-        //NOTA: En cuanto a la edición del campo “Responsable del trabajo”, sólo podrán ejecutar dicha acción, el responsable del mismo en ese instante, y su supervisor.
-        var editar =  !($AU.getUser().userId == me.idResponsableTrabajo || $AU.getUser().userId == me.idSupervisorActivo);
+        var editar = me.lookupController().getViewModel().get('trabajo').get('bloquearResponsable');
         //NOTA: En cuanto a la visualización del campo “Responsable del trabajo”, 
         //lo podrán ver tanto el “Gestor/Supervisor de activo” y el “Gestor/Supervisor de alquileres, edificaciones, suelo”, así comomo, el proveedor y el solicitante.
         var mostrar =  !($AU.getUser().userId ==  me.idResponsableTrabajo|| $AU.getUser().userId ==   me.idSupervisorActivo || 
@@ -55,12 +54,15 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 						        	fieldLabel: HreRem.i18n('fieldlabel.responsable.trabajo'),
 						        	bind: {
 					            		store: '{comboResponsableTrabajo}',
-					            		value: '{trabajo.idResponsableTrabajo}'
+					            		value: '{trabajo.idResponsableTrabajo}',
+					            		readOnly: '{trabajo.bloquearResponsable}'
 					            	},
 					            	displayField: 'apellidoNombre',
 		    						valueField: 'id',
-		    						readOnly: editar,
-					            	hidden: mostrar
+		    						//readOnly: editar,
+		    						hidden: mostrar,
+						        	reference: 'comboTrabajoResposable'
+
 						    
 						        },
 				                { 

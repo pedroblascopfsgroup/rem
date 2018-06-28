@@ -167,6 +167,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Autowired
 	private ActivoDao activoDao;
+	
+	@Autowired
+	private GenericAdapter adapter;
 
 	@Autowired
 	private ActivoAgrupacionDao activoAgrupacionDao;
@@ -1280,6 +1283,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		beanUtilNotNull.copyProperties(dtoTrabajo, trabajo);
 
 		Activo activo = trabajo.getActivo();
+		
+		Usuario usuariologado = adapter.getUsuarioLogado();
+
 
 		if (!Checks.esNulo(activo)) {
 
@@ -1379,6 +1385,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		 if(!Checks.esNulo(trabajo.getFechaAutorizacionPropietario())) {
 			dtoTrabajo.setFechaAutorizacionPropietario(trabajo.getFechaAutorizacionPropietario());
+		 }
+		 
+		
+		 if (trabajo.getResponsableTrabajo().getId().equals(usuariologado.getId()) || dtoTrabajo.getIdSupervisorActivo() == usuariologado.getId()) {
+			 dtoTrabajo.setBloquearResponsable(false);
+		 }
+		 else {
+			 dtoTrabajo.setBloquearResponsable(true);
 		 }
 		 
 	

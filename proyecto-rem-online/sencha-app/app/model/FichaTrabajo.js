@@ -5,6 +5,7 @@ Ext.define('HreRem.model.FichaTrabajo', {
 	extend : 'HreRem.model.Base',
 	idProperty : 'id',
 
+
     fields: [ 
     		
 		    {
@@ -128,6 +129,9 @@ Ext.define('HreRem.model.FichaTrabajo', {
     			name: 'fechaEleccionProveedor',
     			type:'date',
     			dateFormat: 'c'
+    		}, {
+    			name: 'bloquearResponsable',
+    			type: 'boolean'
     		},
     		{
     			name: 'urgente'
@@ -229,5 +233,6 @@ Ext.define('HreRem.model.FichaTrabajo', {
         },
         extraParams: {pestana: 'ficha'}
     }    
+
 
 });

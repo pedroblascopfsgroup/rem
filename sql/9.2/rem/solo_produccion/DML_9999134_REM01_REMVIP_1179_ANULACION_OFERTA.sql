@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=REMVIP-1179
 --## PRODUCTO=NO
 --##
---## Finalidad: ANULACION OFERTA 90056099
+--## Finalidad: ANULACION  OFERTA 90056099
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial

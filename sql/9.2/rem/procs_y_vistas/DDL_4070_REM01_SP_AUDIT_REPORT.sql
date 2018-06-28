@@ -39,7 +39,7 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_AUDIT_REPORT(SP_OUTPUT OUT VARCHAR2) AS
     V_BODY VARCHAR2(500 CHAR) := '"Se adjunta el informe diario de modificaciones de campos de auditoría."';
     V_CC VARCHAR2(500 CHAR) := '"gustavo.mora@pfsgroup.es, vicente.martinez@pfsgroup.es"';
     V_ASUNTO VARCHAR2(250 CHAR) := '"Informe diario auditorías REM de ';
-    V_ADJUNTO VARCHAR2(250 CHAR) := 'context.output_dir + "/Hoja informe auditorias.xlsx"';
+    V_ADJUNTO VARCHAR2(250 CHAR) := '"Hoja_Audit_Report.xlsx"';
     
 BEGIN
 

@@ -56,11 +56,13 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     			var me = this;
     			var autorizarBtn = grid.down('button[itemId=autorizarBtn]');
     			var rechazarBtn = grid.down('button[itemId=rechazarBtn]');
+    			var rechazarContabilidadBtn = grid.down('button[itemId=rechazarContabilidadBtn]')
     			var displaySelection = grid.down('displayfield[itemId=displaySelection]');
     			var disabled = Ext.isEmpty(persistedSelection);
 
     			if (!Ext.isEmpty(autorizarBtn)) autorizarBtn.setDisabled(disabled);    		
     			if (!Ext.isEmpty(rechazarBtn)) rechazarBtn.setDisabled(disabled);
+    			if (!Ext.isEmpty(rechazarContabilidadBtn)) rechazarContabilidadBtn.setDisabled(disabled);
 
     			if(disabled) {
     				displaySelection.setValue("No seleccionados");
@@ -427,6 +429,21 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	
     },
     
+    onClickRechazarContabilidad: function(btn) {
+    	
+    	var me = this;
+    	Ext.Msg.show({
+    		title: HreRem.i18n('title.mensaje.confirmacion'),
+    		msg: HreRem.i18n('msg.desea.rechazar.gastos.seleccionados'),
+    		buttons: Ext.MessageBox.YESNO,
+    		fn: function(buttonId){
+    			if(buttonId == 'yes'){
+    				me.rechazarGastoContabilidad(btn, "SG")
+    			}
+    		}
+    	})
+    },
+    
     onClickRechazarGastosAgrupados: function(btn) {
     	
     	var me = this;    	
@@ -526,10 +543,82 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	
     },
     
-    validarSeleccionGasto: function(operacion, gasto, origen) {
+    rechazarGastoContabilidad: function(btn, origen){
     	
+    	var me = this;
+    	var listaGastos = btn.up('gridBase');
+    	var rechazo = "RECHAZADO POR CONTABILIDAD";
+		    	var gastos = listaGastos.getPersistedSelection(),
+				url =  $AC.getRemoteUrl('gastosproveedor/rechazarGastosContabilidad'),		
+				idsGasto = [], error=null;
+		
+				// Recuperamos todos los ids de los gastos seleccionados
+				// y validamos que se pueden rechazar
+				Ext.Array.each(gastos, function(gasto, index) {
+				    error = me.validarSeleccionGastoContabilidad("R", gasto, origen);
+				    if(Ext.isEmpty(error)) {
+				    	idsGasto.push(gasto.get("id"));	
+				    } else {
+				    	// Salimos del foreach y mostramos el error
+				    	return false;	
+				    }
+				});
+
+				if(Ext.isEmpty(error)) {
+					me.getView().mask(HreRem.i18n("msg.mask.loading"));
+	
+					Ext.Ajax.request({
+				    			
+					     url: url,
+					     params: {idsGasto: idsGasto, motivoRechazo: rechazo},
+					
+					     success: function(response, opts) {
+					     	
+					     	var data = {};
+					     	me.getView().unmask();	
+				            try {
+				                data = Ext.decode(response.responseText);
+				            } catch (e){ };
+				            
+				            if(data.success === "false") {
+					            if (!Ext.isEmpty(data.msg)) {
+					              	me.fireEvent("errorToast", data.msg);
+					            } else {
+					            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					            }
+				            } else {							         
+						         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+						         listaGastos.deselectAll();
+						         listaGastos.getStore().loadPage(1);
+						         Ext.Array.each(gastos, function(gasto, index) {
+						    		me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES["GASTO"], gasto.get("id"));
+								 });
+				            }
+					     },
+					     failure: function(response) {
+					     	me.getView().unmask();
+				     		var data = {};
+			                try {
+			                	data = Ext.decode(response.responseText);
+			                }
+			                catch (e){ };
+			                if (!Ext.isEmpty(data.msg)) {
+			                	me.fireEvent("errorToast", data.msg);
+			                } else {
+			                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			                }
+					     }
+				    		    
+				    });
+				} else {
+					me.fireEvent("errorToast", error);								
+				}    	 
+				
+		    
+    },
+    
+    validarSeleccionGasto: function(operacion, gasto, origen) { 
     	var me = this, error = null;
-    	
     	var OPERACION_AUTORIZAR = "A";
     	var OPERACION_RECHAZAR = "R";
     	
@@ -553,6 +642,24 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		
 		return error;
     	
+    },
+    
+    validarSeleccionGastoContabilidad: function(operacion, gasto, origen) {
+    	var me = this, error = null;
+    	var OPERACION_AUTORIZAR = "A";
+    	var OPERACION_RECHAZAR = "R";
+    	
+    	var SELECCION_GASTOS = "SG";
+    	var SELECCION_AGRUPACION = "SA";
+    	
+    	if((!(CONST.ESTADOS_GASTO['AUTORIZADO'] == gasto.get("estadoGastoCodigo")) || (CONST.ESTADOS_GASTO['SUBSANADO'] == gasto.get("estadoGastoCodigo"))) && OPERACION_RECHAZAR == operacion){
+    		error = ("<span>Se han seleccionado gastos que no tiene el estado Autorizados Administración</span></br>")
+    	} else if(OPERACION_RECHAZAR == operacion && CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO'] == gasto.get("estadoGastoCodigo")) {
+    		error = ("<span>Se han seleccionado gastos ya rechazados</span></br>")
+		} else if(!CONST.CARTERA['TANGO'] == gasto.get("entidadPropietariaCodigo")){
+			error = ("<span>Se han seleccionado gastos que no pertenecen a la cartera Tango</span></br>")
+		}
+    	return error;
     }
     	
 

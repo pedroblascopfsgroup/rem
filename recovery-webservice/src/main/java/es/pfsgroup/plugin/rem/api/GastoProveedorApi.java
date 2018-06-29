@@ -237,6 +237,15 @@ public interface GastoProveedorApi {
 		 */
 		public boolean rechazarGasto(Long idGasto, String motivoRechazo);
 		
+		
+		/**
+		 * Método para rechazar gastos contablidad recibidos
+		 * @param idsGastos
+		 * @param motivoRechazo
+		 * @return
+		 */
+		public boolean rechazarGastosContabilidad (Long[] idsGastos, String motivoRechazo);
+		
 		/**
 		 * Devuelve si ya existe un gasto comparando la información de varios campos concretos.
 		 * @param dto

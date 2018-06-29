@@ -2210,6 +2210,46 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		return true;
 	}
+	
+	@Override 
+	@Transactional(readOnly = false)
+	public boolean rechazarGastosContabilidad(Long[] idsGastos, String motivoRechazo) {
+
+		DDEstadoAutorizacionPropietario estadoAutorizacionPropietario = (DDEstadoAutorizacionPropietario) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionPropietario.class,
+				DDEstadoAutorizacionPropietario.CODIGO_RECHAZADO_CONTABILIDAD);
+		
+		for (Long id : idsGastos) {
+			GastoProveedor gasto = findOne(id);
+			
+			String error = updaterStateApi.validarCamposMinimos(gasto);
+			if (!Checks.esNulo(error)) {
+				throw new JsonViewerException("El gasto " + gasto.getNumGastoHaya() + " no se puede rechazar: " + error);
+			}
+			
+			// Se activa el borrado de los gastos-trabajo, y dejamos el trabajo como diponible para un
+			// futuro nuevo gasto
+			this.reactivarTrabajoParaGastos(gasto.getGastoProveedorTrabajos());
+
+			GastoGestion gastoGestion = gasto.getGastoGestion();
+			gastoGestion.setEstadoAutorizacionPropietario(estadoAutorizacionPropietario);
+			gastoGestion.setFechaEstadoAutorizacionPropietario(new Date());
+			gastoGestion.setMotivoRechazoAutorizacionPropietario(motivoRechazo);
+
+			gasto.setGastoGestion(gastoGestion);
+			updaterStateApi.updaterStates(gasto, DDEstadoGasto.RECHAZADO_PROPIETARIO);
+
+			
+			gasto.setProvision(null);
+
+			genericDao.update(GastoProveedor.class, gasto);
+
+			return true;		
+			
+		}
+
+		return true;
+	}
+
 
 	/*
 	 * Deja el Trabajo disponible para que sea asignable a un gasto, y activa el borrado lógico de

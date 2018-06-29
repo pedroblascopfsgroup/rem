@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.controller;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.util.List;
 
 import javax.servlet.ServletOutputStream;
@@ -641,6 +642,25 @@ public class GastosProveedorController extends ParadiseJsonController {
 		try {		
 			
 			boolean success = gastoProveedorApi.autorizarGastos(idsGasto);
+			model.put("success", success);
+			
+		} catch (JsonViewerException ex) {
+			model.put("msg", ex.getMessage());
+			model.put("success", false);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView autorizarGastosContabilidad(Long[] idsGasto, Date fechaConta, Date fechaPago, ModelMap model) {
+		try {		
+			
+			boolean success = gastoProveedorApi.autorizarGastosContabilidad(idsGasto, fechaConta, fechaPago);
 			model.put("success", success);
 			
 		} catch (JsonViewerException ex) {

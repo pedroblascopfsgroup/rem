@@ -57,12 +57,14 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     			var autorizarBtn = grid.down('button[itemId=autorizarBtn]');
     			var rechazarBtn = grid.down('button[itemId=rechazarBtn]');
     			var rechazarContabilidadBtn = grid.down('button[itemId=rechazarContabilidadBtn]')
+    			var autorizarContBtn = grid.down('button[itemId=autorizarContBtn]')
     			var displaySelection = grid.down('displayfield[itemId=displaySelection]');
     			var disabled = Ext.isEmpty(persistedSelection);
 
     			if (!Ext.isEmpty(autorizarBtn)) autorizarBtn.setDisabled(disabled);    		
     			if (!Ext.isEmpty(rechazarBtn)) rechazarBtn.setDisabled(disabled);
     			if (!Ext.isEmpty(rechazarContabilidadBtn)) rechazarContabilidadBtn.setDisabled(disabled);
+    			if (!Ext.isEmpty(autorizarContBtn)) autorizarContBtn.setDisabled(disabled);
 
     			if(disabled) {
     				displaySelection.setValue("No seleccionados");
@@ -326,6 +328,77 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		   }
 		});
     },
+     
+    onClickAutorizarContabilidad: function(btn){
+    	
+    	var me = this,
+    	listaGastos = btn.up('gridBase'),
+    	gastos = listaGastos.getPersistedSelection();
+    	
+    	// Recuperamos todos los ids de los trabajos seleccionados
+		// y validamos que se pueden autorizar
+    	Ext.Array.each(gastos, function(gasto, index) {
+		    error = me.validarSeleccionGastoContabilidad("A", gasto, null);
+		});
+    	
+    	if(!Ext.isEmpty(error)) {
+	    	me.fireEvent("errorToast", error);
+	    }else{
+	    	var win = new Ext.Window({
+	    		title: HreRem.i18n('title.mensaje.confirmacion'),
+	    		height: 150,
+	    		width: 700,
+	    		layout: 'fit',
+	    		items:{
+	    			xtype: 'form',
+	    			id: 'autorizarForm',
+	    			layout: {
+	    				type: 'hbox', 
+	    				pack: 'center', 
+	    				align: 'center' 
+	    			},
+	    			items:[
+	        			{
+	        				xtype: 'datefield',
+	        				id: 'fechaConta',
+	        				name: 'fechaConta',
+	        				reference: 'fechaConta',
+	        				fieldLabel: HreRem.i18n('msg.fecha.contabilizacion'),
+	        				allowBlank: me.fechaContaAllowBlank(gastos),
+	        				disabled: me.fechaContaHidden(gastos)
+	        			},{
+	        				xtype: 'datefield',
+	        				id: 'fechaPago',
+	        				name: 'fechaPago',
+	        				reference: 'fechaPago',
+	        				fieldLabel: HreRem.i18n('msg.fecha.pago'),
+	        				allowBlank: me.fechaPagoAllowBlank(gastos)
+	        			}
+	        		],
+	        		border: false,
+	        		buttonAlign: 'center',
+	        		buttons: [
+	        			  {
+	        				  text: 'Aceptar',
+	        				  formBind: true,
+	        				  handler: function(){
+	        					  me.autorizarGastoContabilidad(btn, "SG");
+	        					  win.close();
+	        				  }
+	        			  },
+	        			  {
+	        				  text: 'Cancelar', 
+	        				  handler: function(){
+	        					  win.close();
+	        				  }
+	        			  }
+	        		]
+	    		}
+	    	});
+
+	    	win.show();
+	    }
+    },
     
     onClickAutorizarGastosAgrupados: function(btn) {
     	
@@ -369,6 +442,79 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		    			
 			     url: url,
 			     params: {idsGasto: idsGasto},
+			
+			     success: function(response, opts) {
+			     	me.getView().unmask();
+			        var data = {};
+		            try {
+		                data = Ext.decode(response.responseText);
+		            } catch (e){ };
+		            
+		            if(data.success === "false") {
+			            if (!Ext.isEmpty(data.msg)) {
+			              	me.fireEvent("errorToast", data.msg);
+			            } else {
+			            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			            }
+		            } else {							         
+				         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				         listaGastos.deselectAll();
+				         listaGastos.getStore().loadPage(1);
+				         Ext.Array.each(gastos, function(gasto, index) {
+						    me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES["GASTO"], gasto.get("id"));
+						});
+		            }
+			     },
+			     failure: function(response) {
+			     	me.getView().unmask();
+		     		var data = {};
+	                try {
+	                	data = Ext.decode(response.responseText);
+	                }
+	                catch (e){ };
+	                if (!Ext.isEmpty(data.msg)) {
+	                	me.fireEvent("errorToast", data.msg);
+	                } else {
+	                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	                }
+			     }
+		    		    
+		    });
+		} else {
+			me.fireEvent("errorToast", error);
+		}
+    	
+    },
+    
+    autorizarGastoContabilidad: function(btn, origen) {
+    	
+    	var me = this,
+    	listaGastos = btn.up('gridBase'),
+    	fechaConta = Ext.getCmp('autorizarForm').getForm().findField('fechaConta').getValue(),
+    	fechaPago = Ext.getCmp('autorizarForm').getForm().findField('fechaPago').getValue(),
+    	gastos = listaGastos.getPersistedSelection(),
+		url =  $AC.getRemoteUrl('gastosproveedor/autorizarGastosContabilidad'),		
+		idsGasto = [], error=null;
+    	
+    	// Recuperamos todos los ids de los trabajos seleccionados
+    	Ext.Array.each(gastos, function(gasto, index) {
+		    error = me.validarSeleccionGastoContabilidad("A", gasto, origen);
+		    if(Ext.isEmpty(error)) {
+		    	idsGasto.push(gasto.get("id"));	
+		    }
+		});
+
+		if(Ext.isEmpty(error)){
+			me.getView().mask(HreRem.i18n("msg.mask.loading"));
+
+			Ext.Ajax.request({
+		    			
+			     url: url,
+			     params: {
+			    	 idsGasto: idsGasto,
+			    	 fechaConta: fechaConta,
+			    	 fechaPago: fechaPago
+			     },
 			
 			     success: function(response, opts) {
 			     	me.getView().unmask();
@@ -645,22 +791,97 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     },
     
     validarSeleccionGastoContabilidad: function(operacion, gasto, origen) {
+    	
     	var me = this, error = null;
+    	
     	var OPERACION_AUTORIZAR = "A";
     	var OPERACION_RECHAZAR = "R";
     	
     	var SELECCION_GASTOS = "SG";
     	var SELECCION_AGRUPACION = "SA";
     	
-    	if((!(CONST.ESTADOS_GASTO['AUTORIZADO'] == gasto.get("estadoGastoCodigo")) || (CONST.ESTADOS_GASTO['SUBSANADO'] == gasto.get("estadoGastoCodigo"))) && OPERACION_RECHAZAR == operacion){
-    		error = ("<span>Se han seleccionado gastos que no tiene el estado Autorizados Administración</span></br>")
-    	} else if(OPERACION_RECHAZAR == operacion && CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO'] == gasto.get("estadoGastoCodigo")) {
-    		error = ("<span>Se han seleccionado gastos ya rechazados</span></br>")
-		} else if(!CONST.CARTERA['TANGO'] == gasto.get("entidadPropietariaCodigo")){
-			error = ("<span>Se han seleccionado gastos que no pertenecen a la cartera Tango</span></br>")
-		}
-    	return error;
-    }
+    	if (!((CONST.ESTADOS_GASTO['AUTORIZADO'] == gasto.get("estadoGastoCodigo")) || 
+    			(CONST.ESTADOS_GASTO['SUBSANADO'] == gasto.get("estadoGastoCodigo")) ||
+    			(CONST.ESTADOS_GASTO['CONTABILIZADO'] == gasto.get("estadoGastoCodigo"))) && OPERACION_AUTORIZAR == operacion) {
+    	    		error = ("<span>Alguno de los gastos no se encuentra en el estado pertinente para ejecutar esta acci&oacute;n</span></br>")
+    	}
     	
+    	if((!(CONST.ESTADOS_GASTO['AUTORIZADO'] == gasto.get("estadoGastoCodigo")) || (CONST.ESTADOS_GASTO['SUBSANADO'] == gasto.get("estadoGastoCodigo"))) && OPERACION_RECHAZAR == operacion){
+       		error = ("<span>Se han seleccionado gastos que no son Autorizados Administraci&oacute;n</span></br>")
+       	} else if((OPERACION_RECHAZAR == operacion || OPERACION_AUTORIZAR == operacion) && CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO'] == gasto.get("estadoGastoCodigo")) {
+       		error = ("<span>Se han seleccionado gastos ya rechazados</span></br>")
+       	} else if(!CONST.CARTERA['TANGO'] == gasto.get("entidadPropietariaCodigo")){
+       		error = ("<span>Se han seleccionado gastos que no pertenecen a la cartera Tango</span></br>")
+       	}
+    			
+		return error;
+    	
+    },
+    
+    fechaContaAllowBlank: function(gastos){
+    	var autorizados = 0;
+	    var subsanados = 0;
+	    var contabilizados = 0;
+	    
+    	Ext.Array.each(gastos, function(gasto){
+    		if (CONST.ESTADOS_GASTO['AUTORIZADO'] == gasto.get("estadoGastoCodigo")) {
+    			autorizados += 1;
+    		} else if (CONST.ESTADOS_GASTO['SUBSANADO'] == gasto.get("estadoGastoCodigo")) {
+    			subsanados += 1;
+    		} else if (CONST.ESTADOS_GASTO['CONTABILIZADO'] == gasto.get("estadoGastoCodigo")) {
+    			contabilizados += 1;
+    		}
+		});
+    	
+    	if(autorizados != 0 || subsanados != 0) {
+	    	return false;	
+	    } else {
+	    	return true;	
+	    }
+    },
+    
+    fechaContaHidden: function(gastos){
+    	var autorizados = 0;
+	    var subsanados = 0;
+	    var contabilizados = 0;
+	    
+    	Ext.Array.each(gastos, function(gasto){
+    		if (CONST.ESTADOS_GASTO['AUTORIZADO'] == gasto.get("estadoGastoCodigo")) {
+    			autorizados += 1;
+    		} else if (CONST.ESTADOS_GASTO['SUBSANADO'] == gasto.get("estadoGastoCodigo")) {
+    			subsanados += 1;
+    		} else if (CONST.ESTADOS_GASTO['CONTABILIZADO'] == gasto.get("estadoGastoCodigo")) {
+    			contabilizados += 1;
+    		}
+		});
+
+    	if(autorizados == 0 && subsanados == 0 && contabilizados != 0) {
+	    	return true;	
+	    }else{
+	    	return false;
+	    }
+    },
+    
+    fechaPagoAllowBlank: function(gastos){
+    	var autorizados = 0;
+	    var subsanados = 0;
+	    var contabilizados = 0;
+	    
+    	Ext.Array.each(gastos, function(gasto){
+    		if (CONST.ESTADOS_GASTO['AUTORIZADO'] == gasto.get("estadoGastoCodigo")) {
+    			autorizados += 1;
+    		} else if (CONST.ESTADOS_GASTO['SUBSANADO'] == gasto.get("estadoGastoCodigo")) {
+    			subsanados += 1;
+    		} else if (CONST.ESTADOS_GASTO['CONTABILIZADO'] == gasto.get("estadoGastoCodigo")) {
+    			contabilizados += 1;
+    		}
+		});
+    	
+    	if(autorizados == 0 && subsanados == 0 && contabilizados != 0) {
+	    	return false;	
+	    } else {
+	    	return true;	
+	    }
+    }
 
 });

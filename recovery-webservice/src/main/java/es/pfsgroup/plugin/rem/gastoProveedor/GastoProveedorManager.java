@@ -2155,6 +2155,82 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		return true;
 	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean autorizarGastosContabilidad(Long[] idsGastos, Date fechaConta, Date fechaPago) {
+
+		for (Long id : idsGastos) {
+
+			autorizarGastoContabilidad(id, fechaConta, fechaPago);
+		}
+
+		return true;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean autorizarGastoContabilidad(Long idGasto, Date fechaConta, Date fechaPago) {
+
+		GastoProveedor gasto = findOne(idGasto);
+
+		DDEstadoAutorizacionPropietario estadoAutorizacionPropietario= (DDEstadoAutorizacionPropietario) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionPropietario.class,
+				DDEstadoAutorizacionPropietario.CODIGO_AUTORIZADO_POR_CONTABILIDAD);
+
+		GastoGestion gastoGestion = gasto.getGastoGestion();
+		
+		if(!Checks.esNulo(fechaConta) && !Checks.esNulo(fechaPago)){
+			GastoInfoContabilidad gastoInfoContabilidad = gasto.getGastoInfoContabilidad();
+			gastoInfoContabilidad.setFechaContabilizacion(fechaConta);
+			GastoDetalleEconomico gastoDetalleEconomico = gasto.getGastoDetalleEconomico();
+			gastoDetalleEconomico.setFechaPago(fechaPago);
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoGasto.PAGADO);
+			DDEstadoGasto estadoGasto = genericDao.get(DDEstadoGasto.class, filtro);
+			
+			if(DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo())){
+				gasto.setGastoDetalleEconomico(gastoDetalleEconomico);
+				gasto.setGastoInfoContabilidad(gastoInfoContabilidad);
+				gasto.setEstadoGasto(estadoGasto);
+			}else if(DDEstadoGasto.SUBSANADO.equals(gasto.getEstadoGasto().getCodigo())){
+				gasto.setGastoDetalleEconomico(gastoDetalleEconomico);
+				gasto.setGastoInfoContabilidad(gastoInfoContabilidad);
+				gasto.setEstadoGasto(estadoGasto);
+			}else if(DDEstadoGasto.CONTABILIZADO.equals(gasto.getEstadoGasto().getCodigo())){
+				gasto.setGastoDetalleEconomico(gastoDetalleEconomico);
+				gasto.setEstadoGasto(estadoGasto);
+			}
+		}else if(!Checks.esNulo(fechaConta) && Checks.esNulo(fechaPago)){
+			GastoInfoContabilidad gastoInfoContabilidad = gasto.getGastoInfoContabilidad();
+			gastoInfoContabilidad.setFechaContabilizacion(fechaConta);
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoGasto.PAGADO);
+			DDEstadoGasto estadoGasto = genericDao.get(DDEstadoGasto.class, filtro);
+			
+			if(DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo())){
+				gasto.setGastoInfoContabilidad(gastoInfoContabilidad);
+				gasto.setEstadoGasto(estadoGasto);
+			}else if(DDEstadoGasto.SUBSANADO.equals(gasto.getEstadoGasto().getCodigo())){
+				gasto.setGastoInfoContabilidad(gastoInfoContabilidad);
+				gasto.setEstadoGasto(estadoGasto);
+			}
+		}else if(Checks.esNulo(fechaConta) && !Checks.esNulo(fechaPago)){
+			GastoDetalleEconomico gastoDetalleEconomico = gasto.getGastoDetalleEconomico();
+			gastoDetalleEconomico.setFechaPago(fechaPago);
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoGasto.PAGADO);
+			DDEstadoGasto estadoGasto = genericDao.get(DDEstadoGasto.class, filtro);
+			
+			if(DDEstadoGasto.CONTABILIZADO.equals(gasto.getEstadoGasto().getCodigo())){
+				gasto.setGastoDetalleEconomico(gastoDetalleEconomico);
+				gasto.setEstadoGasto(estadoGasto);
+			}
+		}
+		
+		gastoGestion.setEstadoAutorizacionPropietario(estadoAutorizacionPropietario);
+		gastoGestion.setMotivoRechazoAutorizacionHaya(null);
+		gasto.setGastoGestion(gastoGestion);
+		genericDao.update(GastoProveedor.class, gasto);
+
+		return true;
+	}
 
 	@Override
 	@Transactional(readOnly = false)

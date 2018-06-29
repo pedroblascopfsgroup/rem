@@ -16,15 +16,16 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
       var me = this;
 
       	var configAddBtn = {iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onClickAdd', scope: this, secFunPermToRender: 'CREAR_GASTO'};
-		var configRechazarContabilidadButton = {text: HreRem.i18n('btn.rechazar.contabilidad') , cls:'tbar-grid-button', disabled: true, itemId:'rechazarContabilidadBtn', handler: 'onClickRechazarContabilidad', secFunPermToRender: 'BOTONES_GASTOS_CONTABILIDAD'};
 		var configAutorizarBtn = {text: HreRem.i18n('btn.autorizar'), cls:'tbar-grid-button', itemId:'autorizarBtn', handler: 'onClickAutorizar', disabled: true, secFunPermToRender: 'OPERAR_GASTO'};
 		var configRechazarButton = {text: HreRem.i18n('btn.rechazar') , cls:'tbar-grid-button', itemId:'rechazarBtn', handler: 'onClickRechazar', disabled: true, secFunPermToRender: 'OPERAR_GASTO'};
+		var configAutorizarContaBtn = {text: HreRem.i18n('btn.autorizar.contabilidad'), cls:'tbar-grid-button', itemId:'autorizarContBtn', handler: 'onClickAutorizarContabilidad', disabled: true, secFunPermToRender: 'BOTONES_GASTOS_CONTABILIDAD'};
+		var configRechazarContabilidadButton = {text: HreRem.i18n('btn.rechazar.contabilidad') , cls:'tbar-grid-button', disabled: true, itemId:'rechazarContabilidadBtn', handler: 'onClickRechazarContabilidad', secFunPermToRender: 'BOTONES_GASTOS_CONTABILIDAD'};
 		var separador = {xtype: 'tbfill'};
 
 		me.tbar = {
     		xtype: 'toolbar',
     		dock: 'top',
-    		items: [configAddBtn, separador, configRechazarContabilidadButton, configAutorizarBtn, configRechazarButton]
+    		items: [configAddBtn, separador, configAutorizarContaBtn, configRechazarContabilidadButton, configAutorizarBtn, configRechazarButton]
 		};
     	me.columns = [
 	 							{

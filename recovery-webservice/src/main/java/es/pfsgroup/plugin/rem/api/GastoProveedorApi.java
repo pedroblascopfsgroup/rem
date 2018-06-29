@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.Date;
 import java.util.List;
 
 import es.capgemini.devon.files.FileItem;
@@ -285,5 +286,11 @@ public interface GastoProveedorApi {
 		 * @param porcentajeParticipacion: indica el porcentaje de participacion del activo en el gasto.
 		 */
 		public void actualizarPorcentajeParticipacionGastoProveedorActivo(Long idActivo, Long idGasto, Float porcentajeParticipacion);
+
+
+		boolean autorizarGastosContabilidad(Long[] idsGastos, Date fechaConta, Date fechaPago);
+
+
+		boolean autorizarGastoContabilidad(Long idGasto, Date fechaConta, Date fechaPago);
 }
 

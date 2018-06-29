@@ -69,6 +69,8 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 	@Autowired
 	private GestorEntidadApi gestorEntidadApi;
 	
+	@Autowired
+	private GestorActivoDao gestorActivoDao;
 
 	@Transactional(readOnly = false)
 	public Boolean insertarGestorAdicionalActivo(GestorEntidadDto dto) {
@@ -436,24 +438,25 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 		Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", dto.getIdUsuario());
 		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", dto.getIdEntidad());
 		
-		GestorEntidad gestorEntidad;
+		GestorActivo gestorActivo = genericDao.get(GestorActivo.class,filtroUsuario,filtroActivo,filtroAuditoria);
 		
-		gestorEntidad = genericDao.get(GestorActivo.class,filtroUsuario,filtroActivo,filtroAuditoria);
-		
-		if (gestorEntidad != null) {
-			this.actualizaFechaHastaHistoricoGestorAdicional(gestorEntidad);
-			gestorEntidadDao.delete(gestorEntidad);
+		if (gestorActivo != null) {
+			this.actualizaFechaHastaHistoricoGestorAdicional(gestorActivo);
+			gestorActivoDao.delete(gestorActivo);
 		}
 
 	}
 	
-	private void actualizaFechaHastaHistoricoGestorAdicional(GestorEntidad gee) {
+	private void actualizaFechaHastaHistoricoGestorAdicional(GestorActivo gac) {
 
-		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "tipoGestor.id", gee.getTipoGestor().getId());
-		List<GestorEntidadHistorico> geh = genericDao.getList(GestorEntidadHistorico.class, filtroTipoGestor);
+		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "tipoGestor.id", gac.getTipoGestor().getId());
+		Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", gac.getUsuario().getId());
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", gac.getActivo().getId());
+		
+		List<GestorActivoHistorico> gah = genericDao.getList(GestorActivoHistorico.class, filtroTipoGestor,filtroUsuario,filtroActivo);
 
 		Date hoy = new Date();
-		for (GestorEntidadHistorico g : geh) {
+		for (GestorActivoHistorico g : gah) {
 			if (Checks.esNulo(g.getFechaHasta())) {
 				g.setFechaHasta(hoy);
 				gestorEntidadHistoricoDao.saveOrUpdate(g);

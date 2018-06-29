@@ -732,16 +732,32 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 		
 		Usuario gestor = userAssigantionService.getUser(tareaExterna);
 		Usuario supervisor = userAssigantionService.getSupervisor(tareaExterna);
-		Usuario nuevoResponsable = adapter.getUsuarioLogado();
+		Usuario galq = gestorActivoApi.getGestorByActivoYTipo(activo, "GALQ");
+		Usuario gsue = gestorActivoApi.getGestorByActivoYTipo(activo, "GSUE");
+		Usuario gedi = gestorActivoApi.getGestorByActivoYTipo(activo, "GEDI");
+		Usuario gact = gestorActivoApi.getGestorByActivoYTipo(activo, "GACT");
 
 		
 		// Asignador de GESTOR por factoria - Gestores encontrados por tarea-Activo
 	
-		if ((!Checks.esNulo(nuevoResponsable)) && (gestorActivoManager.isGestorEdificaciones(activo, nuevoResponsable) || gestorActivoManager.isGestorSuelos(activo, nuevoResponsable)
-			 || gestorActivoManager.isGestorAlquileres(activo, nuevoResponsable) || gestorActivoManager.isGestorActivo(activo, nuevoResponsable))) {
-			tareaActivo.setUsuario(nuevoResponsable);
+		if (!Checks.esNulo(galq)) {
+			tareaActivo.setUsuario(galq);
+		}
+		else if (!Checks.esNulo(gsue)) 
+		{
+			tareaActivo.setUsuario(gsue);
+		}
+		else if(!Checks.esNulo(gedi))
+		{
+			tareaActivo.setUsuario(gedi);
 			
-		}	
+		}
+		else if (!Checks.esNulo(gact)) {
+			
+			tareaActivo.setUsuario(gact);
+		}
+			
+		
 		else if(!Checks.esNulo(gestor) ){
 			tareaActivo.setUsuario(gestor);
 		} else {

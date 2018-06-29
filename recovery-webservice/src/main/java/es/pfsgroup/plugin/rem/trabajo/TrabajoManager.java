@@ -34,6 +34,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
@@ -935,6 +936,27 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		Trabajo trabajo = new Trabajo();
 
+		Usuario galq = gestorActivoApi.getGestorByActivoYTipo(activo, "GALQ");
+		Usuario gsue = gestorActivoApi.getGestorByActivoYTipo(activo, "GSUE");
+		Usuario gedi = gestorActivoApi.getGestorByActivoYTipo(activo, "GEDI");
+		Usuario gact = gestorActivoApi.getGestorByActivoYTipo(activo, "GACT");
+		if (!Checks.esNulo(galq))
+		{
+			trabajo.setResponsableTrabajo(galq);
+		}
+		else if (!Checks.esNulo(gsue)) {
+			trabajo.setResponsableTrabajo(gsue);
+		}
+		else if (!Checks.esNulo(gedi))
+		{
+			trabajo.setResponsableTrabajo(gedi);
+		}
+		else {
+			trabajo.setResponsableTrabajo(gact);
+		}
+		
+
+
 		try {
 
 			dtoToTrabajo(dtoTrabajo, trabajo);
@@ -946,15 +968,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				Usuario user = genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdSolicitante()));
 				if (!Checks.esNulo(user)) {
 					trabajo.setSolicitante(user);
-					trabajo.setResponsableTrabajo(user);
 
 				} else {
 					trabajo.setSolicitante(genericAdapter.getUsuarioLogado());
-					trabajo.setResponsableTrabajo(genericAdapter.getUsuarioLogado());
 				}
 			} else {
 				trabajo.setSolicitante(genericAdapter.getUsuarioLogado());
-				trabajo.setResponsableTrabajo(genericAdapter.getUsuarioLogado());
 
 			}
 			trabajo.setEstado(getEstadoNuevoTrabajo(dtoTrabajo, activo));

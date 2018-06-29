@@ -3,6 +3,8 @@
 --## AUTOR=Hector Gomez
 --## FECHA_CREACION=20180618
 --## INCIDENCIA_LINK=HREOS-4213
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Incluir campo TBJ_RESPONSABLE_TRABAJO en tabla ACT_TBJ_TRABAJO.

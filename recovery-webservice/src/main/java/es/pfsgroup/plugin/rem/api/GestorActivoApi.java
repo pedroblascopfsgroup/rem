@@ -68,9 +68,8 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	
 	Boolean isSupervisorActivo(Activo activo, Usuario usuario);
 	
-	Boolean esGestorEdificaciones(Activo activo, Usuario usuario);
-	Boolean esGestorSuelos(Activo activo, Usuario usuario);
-	Boolean esGestorAlquileres(Activo activo, Usuario usuario);
+
+	Boolean isGestorAlquileres(Activo activo, Usuario usuario);
 
 	
 	Boolean isGestorAdmision(Activo activo, Usuario usuario);

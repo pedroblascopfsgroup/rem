@@ -848,12 +848,16 @@ public class TrabajoController extends ParadiseJsonController {
 		EXTDDTipoGestor alquileres= (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GALQ");
 		EXTDDTipoGestor suelos= (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GSUE");
 		EXTDDTipoGestor edificaciones= (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GEDI");
+		EXTDDTipoGestor activo= (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GACT");
 		List<DtoUsuario> la  = adapter.getComboUsuarios(alquileres.getId());
 		List<DtoUsuario> ls  = adapter.getComboUsuarios(suelos.getId());
 		List<DtoUsuario> le  = adapter.getComboUsuarios(edificaciones.getId());
+		List<DtoUsuario> lgact  = adapter.getComboUsuarios(activo.getId());
+		
 		listaresponsables.addAll(la);
 		listaresponsables.addAll(le);
 		listaresponsables.addAll(ls);
+		listaresponsables.addAll(lgact);
 		
 			
 		model.put("data", listaresponsables);

@@ -42,6 +42,8 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 	public static final String ACTIVE_IN_AGRUPACION_RESTRINGIDA = "Los siguientes activos pertenecen ya a una agrupación restringida: ";
 	
 	public static final String ERROR_ACTIVO_DISTINTO_PROPIETARIO = "El propietario del activo es distinto al propietario de la agrupación";
+	
+	public static final String ACTIVO_ESTADO_PUBLICACION_DISTINTO = "El activo tiene un estado de publicación distinto al de la agrupación.";
 
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -96,6 +98,11 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				listaErrores.add(ERROR_ACTIVO_DISTINTO_PROPIETARIO);
 			}*/
+			
+			if (!comprobarEstadoPublicacionActivoAgrupacion(exc)) {
+				dtoValidacionContenido.setFicheroTieneErrores(true);
+				listaErrores.add(ACTIVO_ESTADO_PUBLICACION_DISTINTO);
+			}
 			
 			String[] activosEnAgrupacion = isActiveInAgrupacionRestringida(exc);
 			if (activosEnAgrupacion != null) {
@@ -239,6 +246,30 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 		} catch (Exception e) {
 			if (i != 0)
 			return false;
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+
+		return true;
+	}
+	
+	private boolean comprobarEstadoPublicacionActivoAgrupacion(MSVHojaExcel exc) {
+		
+		int i = 0;
+		try {
+			for (i = 1; i < this.numFilasHoja; i++) {
+				String numAgrupacion = String.valueOf(Long.parseLong(exc.dameCelda(i, 0)));
+				String numActivo = String.valueOf(Long.parseLong(exc.dameCelda(i, 1)));
+				if (!particularValidator.isMismoTipoComercializacionActivoPrincipalAgrupacion(numActivo, numAgrupacion)) {
+					return false;
+				} else {
+					if (!particularValidator.isMismoEpuActivoPrincipalAgrupacion(numActivo, numAgrupacion))
+						return false;
+				}
+			}
+		} catch (Exception e) {
+			if (i != 0)
+				return false;
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}

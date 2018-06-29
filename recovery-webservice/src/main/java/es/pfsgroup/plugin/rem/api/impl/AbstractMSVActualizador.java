@@ -83,6 +83,7 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public Boolean liberaFichero(MSVDocumentoMasivo file) throws IllegalArgumentException, IOException, JsonViewerException, SQLException, Exception {
 			
 		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);

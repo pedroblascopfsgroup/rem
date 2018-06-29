@@ -320,24 +320,4 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 		
 		
 	}
-	
-	private List<Integer> activosEstadoPublicacionRows(MSVHojaExcel exc){
-		List<Integer> listaFilas = new ArrayList<Integer>();
-
-		int i = 0;
-		try{
-			for(i=1; i<this.numFilasHoja;i++){
-				String numAgrupacion = String.valueOf(Long.parseLong(exc.dameCelda(i, 0)));
-				String numActivo = String.valueOf(Long.parseLong(exc.dameCelda(i, 1)));
-				if(particularValidator.activoMismoScmActivoPrincipalAgrupacion(numActivo, numAgrupacion))
-					listaFilas.add(i);
-			}
-		} catch (Exception e) {
-			if (i != 0) listaFilas.add(i);
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}
-		
-		return listaFilas;
-	}
 }

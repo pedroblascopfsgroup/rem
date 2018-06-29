@@ -353,8 +353,10 @@ public interface ParticularValidatorApi {
 	boolean activoConOfertasTramitadas(String numActivo);
 
 	Boolean existeProveedorMediadorByNIFConFVD(String proveedorMediadorNIF);
+	
+	boolean isMismoTipoComercializacionActivoPrincipalAgrupacion(String numActivo, String numAgrupacion);
 
-	boolean activoMismoScmActivoPrincipalAgrupacion(String numActivo, String numAgrupacion);
+	boolean isMismoEpuActivoPrincipalAgrupacion(String numActivo, String numAgrupacion);
 	
 	public String idAgrupacionDelActivoPrincipal(String numActivo);
 

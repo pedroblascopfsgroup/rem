@@ -738,7 +738,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 		// Asignador de GESTOR por factoria - Gestores encontrados por tarea-Activo
 	
 		if ((!Checks.esNulo(nuevoResponsable)) && (gestorActivoManager.isGestorEdificaciones(activo, nuevoResponsable) || gestorActivoManager.isGestorSuelos(activo, nuevoResponsable)
-			 || gestorActivoManager.isGestorAlquileres(activo, nuevoResponsable))) {
+			 || gestorActivoManager.isGestorAlquileres(activo, nuevoResponsable) || gestorActivoManager.isGestorActivo(activo, nuevoResponsable))) {
 			tareaActivo.setUsuario(nuevoResponsable);
 			
 		}	

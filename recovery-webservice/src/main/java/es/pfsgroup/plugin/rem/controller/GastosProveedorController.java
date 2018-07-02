@@ -1,7 +1,7 @@
 package es.pfsgroup.plugin.rem.controller;
 
 import java.io.IOException;
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletOutputStream;
@@ -657,7 +657,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView autorizarGastosContabilidad(Long[] idsGasto, Date fechaConta, Date fechaPago, ModelMap model) {
+	public ModelAndView autorizarGastosContabilidad(Long[] idsGasto, String fechaConta, String fechaPago, ModelMap model) {
 		try {		
 			
 			boolean success = gastoProveedorApi.autorizarGastosContabilidad(idsGasto, fechaConta, fechaPago);

@@ -4,18 +4,19 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
-import org.apache.commons.beanutils.PropertyUtils;
+
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,7 +33,6 @@ import es.capgemini.devon.message.MessageService;
 //import es.capgemini.devon.utils.PropertyUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.persona.model.DDPropietario;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -2158,7 +2158,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Override
 	@Transactional(readOnly = false)
-	public boolean autorizarGastosContabilidad(Long[] idsGastos, Date fechaConta, Date fechaPago) {
+	public boolean autorizarGastosContabilidad(Long[] idsGastos, String fechaConta, String fechaPago) {
 
 		for (Long id : idsGastos) {
 
@@ -2170,8 +2170,30 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean autorizarGastoContabilidad(Long idGasto, Date fechaConta, Date fechaPago) {
-
+	public boolean autorizarGastoContabilidad(Long idGasto, String fechaConta, String fechaPago) {
+		
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		
+		Date miFechaConta = null;
+		
+		Date miFechaPago = null;
+		
+		if(!Checks.esNulo(fechaConta)){
+			try {
+				miFechaConta = formatter.parse(fechaConta);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if(!Checks.esNulo(fechaPago)){
+			try {
+				miFechaPago = formatter.parse(fechaConta);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		GastoProveedor gasto = findOne(idGasto);
 
 		DDEstadoAutorizacionPropietario estadoAutorizacionPropietario= (DDEstadoAutorizacionPropietario) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionPropietario.class,
@@ -2179,42 +2201,44 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		GastoGestion gastoGestion = gasto.getGastoGestion();
 		
-		if(!Checks.esNulo(fechaConta) && !Checks.esNulo(fechaPago)){
+		if(!Checks.esNulo(miFechaConta) && !Checks.esNulo(miFechaPago)){
 			GastoInfoContabilidad gastoInfoContabilidad = gasto.getGastoInfoContabilidad();
-			gastoInfoContabilidad.setFechaContabilizacion(fechaConta);
+			gastoInfoContabilidad.setFechaContabilizacion(miFechaConta);
 			GastoDetalleEconomico gastoDetalleEconomico = gasto.getGastoDetalleEconomico();
-			gastoDetalleEconomico.setFechaPago(fechaPago);
+			gastoDetalleEconomico.setFechaPago(miFechaPago);
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoGasto.PAGADO);
-			DDEstadoGasto estadoGasto = genericDao.get(DDEstadoGasto.class, filtro);
+			DDEstadoGasto pagado = genericDao.get(DDEstadoGasto.class, filtro);
 			
 			if(DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo())){
 				gasto.setGastoDetalleEconomico(gastoDetalleEconomico);
 				gasto.setGastoInfoContabilidad(gastoInfoContabilidad);
-				gasto.setEstadoGasto(estadoGasto);
+				gasto.setEstadoGasto(pagado);
 			}else if(DDEstadoGasto.SUBSANADO.equals(gasto.getEstadoGasto().getCodigo())){
 				gasto.setGastoDetalleEconomico(gastoDetalleEconomico);
 				gasto.setGastoInfoContabilidad(gastoInfoContabilidad);
-				gasto.setEstadoGasto(estadoGasto);
+				gasto.setEstadoGasto(pagado);
 			}else if(DDEstadoGasto.CONTABILIZADO.equals(gasto.getEstadoGasto().getCodigo())){
 				gasto.setGastoDetalleEconomico(gastoDetalleEconomico);
-				gasto.setEstadoGasto(estadoGasto);
+				gasto.setEstadoGasto(pagado);
 			}
-		}else if(!Checks.esNulo(fechaConta) && Checks.esNulo(fechaPago)){
+		}else if(!Checks.esNulo(miFechaConta) && Checks.esNulo(miFechaPago)){
 			GastoInfoContabilidad gastoInfoContabilidad = gasto.getGastoInfoContabilidad();
-			gastoInfoContabilidad.setFechaContabilizacion(fechaConta);
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoGasto.PAGADO);
-			DDEstadoGasto estadoGasto = genericDao.get(DDEstadoGasto.class, filtro);
+			gastoInfoContabilidad.setFechaContabilizacion(miFechaConta);
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoGasto.CONTABILIZADO);
+			DDEstadoGasto contabilizado = genericDao.get(DDEstadoGasto.class, filtro);
 			
 			if(DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo())){
 				gasto.setGastoInfoContabilidad(gastoInfoContabilidad);
-				gasto.setEstadoGasto(estadoGasto);
+				gasto.setEstadoGasto(contabilizado);
 			}else if(DDEstadoGasto.SUBSANADO.equals(gasto.getEstadoGasto().getCodigo())){
 				gasto.setGastoInfoContabilidad(gastoInfoContabilidad);
-				gasto.setEstadoGasto(estadoGasto);
+				gasto.setEstadoGasto(contabilizado);
+			}else if(DDEstadoGasto.CONTABILIZADO.equals(gasto.getEstadoGasto().getCodigo())){
+				return true;
 			}
-		}else if(Checks.esNulo(fechaConta) && !Checks.esNulo(fechaPago)){
+		}else if(Checks.esNulo(miFechaConta) && !Checks.esNulo(miFechaPago)){
 			GastoDetalleEconomico gastoDetalleEconomico = gasto.getGastoDetalleEconomico();
-			gastoDetalleEconomico.setFechaPago(fechaPago);
+			gastoDetalleEconomico.setFechaPago(miFechaPago);
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoGasto.PAGADO);
 			DDEstadoGasto estadoGasto = genericDao.get(DDEstadoGasto.class, filtro);
 			

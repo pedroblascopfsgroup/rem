@@ -332,6 +332,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     onClickAutorizarContabilidad: function(btn){
     	
     	var me = this,
+    	nErrors = 0,
     	listaGastos = btn.up('gridBase'),
     	gastos = listaGastos.getPersistedSelection();
     	
@@ -339,12 +340,14 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		// y validamos que se pueden autorizar
     	Ext.Array.each(gastos, function(gasto, index) {
 		    error = me.validarSeleccionGastoContabilidad("A", gasto, null);
+		    if(!Ext.isEmpty(error)) {
+		    	nErrors += 1;
+		    	me.fireEvent("errorToast", error);
+		    }
 		});
     	
-    	if(!Ext.isEmpty(error)) {
-	    	me.fireEvent("errorToast", error);
-	    }else{
-	    	var win = new Ext.Window({
+    	if(nErrors == 0) {
+    		var win = new Ext.Window({
 	    		title: HreRem.i18n('title.mensaje.confirmacion'),
 	    		height: 150,
 	    		width: 700,
@@ -490,12 +493,11 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	
     	var me = this,
     	listaGastos = btn.up('gridBase'),
-    	fechaConta = Ext.getCmp('autorizarForm').getForm().findField('fechaConta').getValue(),
-    	fechaPago = Ext.getCmp('autorizarForm').getForm().findField('fechaPago').getValue(),
+    	fechaConta = Ext.getCmp('autorizarForm').getForm().findField('fechaConta').rawValue,
+    	fechaPago = Ext.getCmp('autorizarForm').getForm().findField('fechaPago').rawValue,  
     	gastos = listaGastos.getPersistedSelection(),
 		url =  $AC.getRemoteUrl('gastosproveedor/autorizarGastosContabilidad'),		
 		idsGasto = [], error=null;
-    	
     	// Recuperamos todos los ids de los trabajos seleccionados
     	Ext.Array.each(gastos, function(gasto, index) {
 		    error = me.validarSeleccionGastoContabilidad("A", gasto, origen);
@@ -808,9 +810,13 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	
     	if((!(CONST.ESTADOS_GASTO['AUTORIZADO'] == gasto.get("estadoGastoCodigo")) || (CONST.ESTADOS_GASTO['SUBSANADO'] == gasto.get("estadoGastoCodigo"))) && OPERACION_RECHAZAR == operacion){
        		error = ("<span>Se han seleccionado gastos que no son Autorizados Administraci&oacute;n</span></br>")
-       	} else if((OPERACION_RECHAZAR == operacion || OPERACION_AUTORIZAR == operacion) && CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO'] == gasto.get("estadoGastoCodigo")) {
+       	} 
+    	
+    	if((OPERACION_RECHAZAR == operacion || OPERACION_AUTORIZAR == operacion) && CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO'] == gasto.get("estadoGastoCodigo")) {
        		error = ("<span>Se han seleccionado gastos ya rechazados</span></br>")
-       	} else if(!CONST.CARTERA['TANGO'] == gasto.get("entidadPropietariaCodigo")){
+       	}
+    	
+    	if(!CONST.CARTERA['TANGO'] == gasto.get("entidadPropietariaCodigo")){
        		error = ("<span>Se han seleccionado gastos que no pertenecen a la cartera Tango</span></br>")
        	}
     			

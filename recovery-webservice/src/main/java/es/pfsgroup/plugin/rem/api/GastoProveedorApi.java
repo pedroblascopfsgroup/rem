@@ -288,9 +288,9 @@ public interface GastoProveedorApi {
 		public void actualizarPorcentajeParticipacionGastoProveedorActivo(Long idActivo, Long idGasto, Float porcentajeParticipacion);
 
 
-		boolean autorizarGastosContabilidad(Long[] idsGastos, Date fechaConta, Date fechaPago);
+		boolean autorizarGastosContabilidad(Long[] idsGastos, String fechaConta, String fechaPago);
 
 
-		boolean autorizarGastoContabilidad(Long idGasto, Date fechaConta, Date fechaPago);
+		boolean autorizarGastoContabilidad(Long idGasto, String fechaConta, String fechaPago);
 }
 

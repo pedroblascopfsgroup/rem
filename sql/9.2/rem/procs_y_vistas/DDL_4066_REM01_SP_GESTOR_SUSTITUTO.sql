@@ -121,9 +121,7 @@ BEGIN
                                 WHERE USU_ID_ORI = '||V_USU_ID_ORI||'
 								  AND FECHA_INICIO = '''||V_FECHA_INICIO||'''
 								  AND BORRADO = 0';
-                    
-                     dbms_output.put_line(V_SQL);
-                    
+                            
 					EXECUTE IMMEDIATE V_SQL;
 
 					PL_OUTPUT := PL_OUTPUT || '[INFO] El nuevo registro se ha modificado correctamente ' || CHR(10) ;

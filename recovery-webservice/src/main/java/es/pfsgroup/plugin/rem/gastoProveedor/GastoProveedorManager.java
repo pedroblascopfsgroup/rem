@@ -2178,7 +2178,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		Date miFechaPago = null;
 		
-		if(!Checks.esNulo(fechaConta)){
+		if(!Checks.esNulo(fechaConta) && !("").equals(fechaConta)){
 			try {
 				miFechaConta = formatter.parse(fechaConta);
 			} catch (ParseException e) {
@@ -2186,9 +2186,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 		}
 		
-		if(!Checks.esNulo(fechaPago)){
+		if(!Checks.esNulo(fechaPago) && !("").equals(fechaPago)){
 			try {
-				miFechaPago = formatter.parse(fechaConta);
+				miFechaPago = formatter.parse(fechaPago);
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
@@ -2222,27 +2222,27 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				gasto.setEstadoGasto(pagado);
 			}
 		}else if(!Checks.esNulo(miFechaConta) && Checks.esNulo(miFechaPago)){
-			GastoInfoContabilidad gastoInfoContabilidad = gasto.getGastoInfoContabilidad();
-			gastoInfoContabilidad.setFechaContabilizacion(miFechaConta);
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoGasto.CONTABILIZADO);
 			DDEstadoGasto contabilizado = genericDao.get(DDEstadoGasto.class, filtro);
 			
 			if(DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo())){
+				GastoInfoContabilidad gastoInfoContabilidad = gasto.getGastoInfoContabilidad();
+				gastoInfoContabilidad.setFechaContabilizacion(miFechaConta);
 				gasto.setGastoInfoContabilidad(gastoInfoContabilidad);
 				gasto.setEstadoGasto(contabilizado);
 			}else if(DDEstadoGasto.SUBSANADO.equals(gasto.getEstadoGasto().getCodigo())){
+				GastoInfoContabilidad gastoInfoContabilidad = gasto.getGastoInfoContabilidad();
+				gastoInfoContabilidad.setFechaContabilizacion(miFechaConta);
 				gasto.setGastoInfoContabilidad(gastoInfoContabilidad);
 				gasto.setEstadoGasto(contabilizado);
-			}else if(DDEstadoGasto.CONTABILIZADO.equals(gasto.getEstadoGasto().getCodigo())){
-				return true;
 			}
 		}else if(Checks.esNulo(miFechaConta) && !Checks.esNulo(miFechaPago)){
-			GastoDetalleEconomico gastoDetalleEconomico = gasto.getGastoDetalleEconomico();
-			gastoDetalleEconomico.setFechaPago(miFechaPago);
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoGasto.PAGADO);
 			DDEstadoGasto estadoGasto = genericDao.get(DDEstadoGasto.class, filtro);
 			
 			if(DDEstadoGasto.CONTABILIZADO.equals(gasto.getEstadoGasto().getCodigo())){
+				GastoDetalleEconomico gastoDetalleEconomico = gasto.getGastoDetalleEconomico();
+				gastoDetalleEconomico.setFechaPago(miFechaPago);
 				gasto.setGastoDetalleEconomico(gastoDetalleEconomico);
 				gasto.setEstadoGasto(estadoGasto);
 			}

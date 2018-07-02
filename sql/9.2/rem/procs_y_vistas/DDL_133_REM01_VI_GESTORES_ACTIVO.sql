@@ -25,6 +25,7 @@ SET DEFINE OFF;
 DECLARE
 
     V_MSQL VARCHAR2( 32000 CHAR); -- Sentencia a ejecutar    
+    V_MSQL2 VARCHAR2( 32000 CHAR); -- Sentencia a ejecutar    
     V_ESQUEMA VARCHAR2( 25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2( 25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     ERR_NUM NUMBER( 25);  -- Vble. auxiliar para registrar errores en el script.
@@ -404,7 +405,8 @@ SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo, null dd_eac_c
                   dist1.username username, dist1.nombre_usuario nombre
              FROM act_activo act JOIN dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
                   JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON (dist1.cod_cartera = dd_cra.dd_cra_codigo AND dist1.tipo_gestor = ''GCODI'')
-           where act.borrado = 0
+           where act.borrado = 0';
+V_MSQL2 := '
 	UNION ALL
     /*Gestor de suelos*/
         SELECT 

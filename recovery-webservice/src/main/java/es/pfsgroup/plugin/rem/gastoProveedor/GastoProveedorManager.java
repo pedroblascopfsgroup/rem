@@ -2268,12 +2268,37 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Override
 	@Transactional(readOnly = false)
-	public boolean autorizarGastosContabilidadAgrupacion(Long[] idsGastos, String fechaConta, String fechaPago) {
+	public boolean autorizarGastosContabilidadAgrupacion(Long[] idsGastos, Long idAgrupacion) {
 		
-		//FALTA CAMBIAR EL ESTADO DE LA AGRUPACIÓN
+		ProvisionGastos agrupGasto = provisionGastosDao.get(idAgrupacion);
 		
+		DDEstadoProvisionGastos estadoProvisionGastos = (DDEstadoProvisionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoProvisionGastos.class,
+				DDEstadoProvisionGastos.CODIGO_AUTORIZADO);
+		
+		if(!Checks.esNulo(agrupGasto)) {
+			
+			agrupGasto.setEstadoProvision(estadoProvisionGastos);
+			
+			agrupGasto.getAuditoria().setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
+			agrupGasto.getAuditoria().setFechaModificar(new Date());
+			
+			genericDao.update(ProvisionGastos.class, agrupGasto);
+		}
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		for (Long id : idsGastos) {
-
+			
+			GastoProveedor gasto = findOne(id);
+			
+			String fechaConta = null;
+			
+			if(!Checks.esNulo(gasto.getGastoInfoContabilidad()) && !Checks.esNulo(gasto.getGastoInfoContabilidad().getFechaContabilizacion())){
+				fechaConta = formatter.format(gasto.getGastoInfoContabilidad().getFechaContabilizacion());
+			}
+			String fechaPago = null;
+			if(!Checks.esNulo(gasto.getGastoDetalleEconomico()) && !Checks.esNulo(gasto.getGastoDetalleEconomico().getFechaPago())){
+				fechaPago = formatter.format(gasto.getGastoDetalleEconomico().getFechaPago());
+			}
+			
 			autorizarGastoContabilidad(id, fechaConta, fechaPago);
 		}
 

@@ -681,10 +681,10 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView autorizarGastosContabilidadAgrupacion(Long[] idsGasto, String fechaConta, String fechaPago, ModelMap model) {
+	public ModelAndView autorizarGastosContabilidadAgrupacion(Long[] idsGasto, Long idAgrupacion, ModelMap model) {
 		try {		
-			//FALTA ID AGRUPACION
-			boolean success = gastoProveedorApi.autorizarGastosContabilidadAgrupacion(idsGasto, fechaConta, fechaPago);
+			
+			boolean success = gastoProveedorApi.autorizarGastosContabilidadAgrupacion(idsGasto, idAgrupacion);
 			model.put("success", success);
 			
 		} catch (JsonViewerException ex) {

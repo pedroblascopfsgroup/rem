@@ -424,13 +424,13 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 	    }
     },
     
-    onClickAutorizarContabilidadAgrupacion: function(btn){
+    onClickAutorizarContabilidadAgrupacion: function(btn, origen){
     	
     	var me = this,
     	nErrors = 0,
     	agrupacion = btn.up('gridBase').getPersistedSelection();
     	
-    	
+    	var idAgrupacion = agrupacion[0].id;
     	
     	var urlGastos = $AC.getRemoteUrl('gastosproveedor/getListGastosProvisionAgrupGastos');
     	Ext.Ajax.request({
@@ -454,8 +454,10 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 				    	me.fireEvent("errorToast", error);	
 				    } 
 				});
-
-		    	if(nErrors == 0) {
+				if(nErrors == 0) {
+					me.autorizarGastoContabilidadAgrupacion(btn, "SG");
+				}
+		    	/*if(nErrors == 0) {
 		    		var win = new Ext.Window({
 			    		title: HreRem.i18n('title.mensaje.confirmacion'),
 			    		height: 150,
@@ -509,7 +511,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 			    	});
 
 			    	win.show();
-			    }
+			    }*/
 
 		     },
 		     failure: function(response) {
@@ -798,11 +800,12 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	
     	var me = this,
     	agrupacion = btn.up('gridBase').getPersistedSelection(),
-    	fechaConta = Ext.getCmp('autorizarForm').getForm().findField('fechaConta').rawValue,
-    	fechaPago = Ext.getCmp('autorizarForm').getForm().findField('fechaPago').rawValue,  
+    	//fechaConta = Ext.getCmp('autorizarForm').getForm().findField('fechaConta').rawValue,
+    	//fechaPago = Ext.getCmp('autorizarForm').getForm().findField('fechaPago').rawValue,  
     	//FALTA OBTENER LOS GASTOS
 		url =  $AC.getRemoteUrl('gastosproveedor/autorizarGastosContabilidadAgrupacion'),		
 		idsGasto = [], error=null;
+    	var idAgrupacion = agrupacion[0].id;
     	// Recuperamos todos los ids de los trabajos seleccionados
     	Ext.Array.each(gastos, function(gasto, index) {
     		var gastoModel = Ext.create('HreRem.model.Gasto');
@@ -810,7 +813,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 			gastoModel.set('estadoGastoCodigo', gasto.estadoGastoCodigo);
 		    error = me.validarSeleccionGastoContabilidad("A", gastoModel, origen);
 		    if(Ext.isEmpty(error)) {
-		    	idsGasto.push(gasto.get("id"));	
+		    	idsGasto.push(gasto.id);	   
 		    }
 		});
 
@@ -822,8 +825,9 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 			     url: url,
 			     params: {
 			    	 idsGasto: idsGasto,
-			    	 fechaConta: fechaConta,
-			    	 fechaPago: fechaPago
+			    	 idAgrupacion: idAgrupacion 
+			    	 //fechaConta: fechaConta,
+			    	 //fechaPago: fechaPago
 			     },
 			
 			     success: function(response, opts) {
@@ -841,10 +845,9 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 			            }
 		            } else {							         
 				         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-				         listaGastos.deselectAll();
-				         listaGastos.getStore().loadPage(1);
+				      
 				         Ext.Array.each(gastos, function(gasto, index) {
-						    me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES["GASTO"], gasto.get("id"));
+						    me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES["GASTO"], gasto.id);
 						});
 		            }
 			     },

@@ -293,7 +293,7 @@ public interface GastoProveedorApi {
 
 		boolean autorizarGastoContabilidad(Long idGasto, String fechaConta, String fechaPago);
 
-		boolean autorizarGastosContabilidadAgrupacion(Long[] idsGastos, String fechaConta, String fechaPago);
+		boolean autorizarGastosContabilidadAgrupacion(Long[] idsGastos, Long idAgrupacion);
 
 		/**
 		 * Método para rechazar agrupacion de gastos y los gastos de contablidad recibidos de dicha agrupacion 

@@ -15,16 +15,17 @@ Ext.define('HreRem.view.administracion.gastos.GestionProvisionesList', {
     initComponent: function () {
         
         var me = this;
+        me.setTitle(HreRem.i18n("title.agrupacion.gasto.listado.provisiones"));
+        var configRechazarContabilidadButton = {text: HreRem.i18n('btn.rechazar.contabilidad') , cls:'tbar-grid-button', disabled: true, itemId:'rechazarContabilidadAgrupGastoBtn', handler: 'onClickRechazarContabilidadAgrupGastos', secFunPermToRender: 'BOTONES_GASTOS_CONTABILIDAD'};
         var configAutorizarContaAgruGastosBtn = {text: HreRem.i18n('btn.autorizar.contabilidad'), cls:'tbar-grid-button', itemId:'autorizarContAgruGastosBtn', handler: 'onClickAutorizarContabilidadAgrupacion', disabled: true, secFunPermToRender: 'BOTONES_GASTOS_CONTABILIDAD'};
         var separador = {xtype: 'tbfill'};
         
         me.tbar = {
         		xtype: 'toolbar',
         		dock: 'top',
-        		items: [separador, configAutorizarContaAgruGastosBtn]
+        		items: [separador, configAutorizarContaAgruGastosBtn,configRechazarContabilidadButton]
     	};
-        
-        me.setTitle(HreRem.i18n("title.agrupacion.gasto.listado.provisiones"));
+
         me.columns= [
         
 		        {	        	
@@ -104,6 +105,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionProvisionesList', {
 		            ]
 		        }
 		];
+
     	
         //me.selModel = Ext.create('HreRem.view.common.CheckBoxModelBase');  
         

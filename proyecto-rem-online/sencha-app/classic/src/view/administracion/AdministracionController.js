@@ -133,10 +133,12 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     		persistedsselectionchange: function (sm, record, e, grid, persistedSelection) {
     			var me = this;
     			var autorizarContAgruGastosBtn = grid.down('button[itemId=autorizarContAgruGastosBtn]');
+    			var rechazarContabilidadAgrupGastoBtn = grid.down('button[itemId=rechazarContabilidadAgrupGastoBtn]');
     			var displaySelection = grid.down('displayfield[itemId=displaySelection]');
     			var disabled = Ext.isEmpty(persistedSelection);
 
     			if (!Ext.isEmpty(autorizarContAgruGastosBtn)) autorizarContAgruGastosBtn.setDisabled(disabled);
+    			if (!Ext.isEmpty(rechazarContabilidadAgrupGastoBtn)) rechazarContabilidadAgrupGastoBtn.setDisabled(disabled);
 
     			if(disabled) {
     				displaySelection.setValue("No seleccionados");
@@ -495,6 +497,106 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 
 	    	win.show();
 	    }
+    },
+    
+    
+    onClickRechazarContabilidadAgrupGastos: function(btn, origen){
+    	
+    	var me = this;
+    	var agrupacion = btn.up('gridBase').getPersistedSelection();
+    	var idAgrupacion = agrupacion[0].id;
+    	var rechazo = "RECHAZADO POR CONTABILIDAD";
+    	var gastos;
+		url =  $AC.getRemoteUrl('gastosproveedor/rechazarGastosContabilidad'),		
+		idsGasto = [], error=null;
+    	
+    	var urlGastos = $AC.getRemoteUrl('gastosproveedor/getListGastosProvisionAgrupGastos');
+    	Ext.Ajax.request({
+			
+		     url: urlGastos,
+		     params: {id: idAgrupacion},
+		
+		     success: function(response, opts) {
+		     	debugger;
+		     	var result = Ext.decode(response.responseText);
+		     },
+		     failure: function(response) {
+		     	me.getView().unmask();
+	     		var data = {};
+               try {
+               	data = Ext.decode(response.responseText);
+               }
+               catch (e){ };
+               if (!Ext.isEmpty(data.msg)) {
+               	me.fireEvent("errorToast", data.msg);
+               } else {
+               	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+               }
+		     }
+	    		    
+	    });
+    	
+
+		// Recuperamos todos los ids de los gastos seleccionados
+		// y validamos que se pueden rechazar
+		Ext.Array.each(gastos, function(gasto, index) {
+		    error = me.validarSeleccionGastoContabilidad("R", gasto, origen);
+		    if(Ext.isEmpty(error)) {
+		    	idsGasto.push(gasto.get("id"));	
+		    } else {
+		    	// Salimos del foreach y mostramos el error
+		    	return false;	
+		    }
+		});
+    	
+    	if(Ext.isEmpty(error)) {
+	    	/*url =  $AC.getRemoteUrl('gastosproveedor/rechazarGastosContabilidadAgrupGastos'),	
+			me.getView().mask(HreRem.i18n("msg.mask.loading"));
+	    	
+			Ext.Ajax.request({
+		    			
+			     url: url,
+			     params: {idAgrupGasto: idAgrupacion, motivoRechazo: rechazo},
+			
+			     success: function(response, opts) {
+			     	
+			     	var data = {};
+			     	me.getView().unmask();	
+		            try {
+		                data = Ext.decode(response.responseText);
+		            } catch (e){ };
+		            
+		            if(data.success === "false") {
+			            if (!Ext.isEmpty(data.msg)) {
+			              	me.fireEvent("errorToast", data.msg);
+			            } else {
+			            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			            }
+		            } else {							         
+				         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				         listaGastos.deselectAll();
+				         listaGastos.getStore().loadPage(1);
+				         Ext.Array.each(gastos, function(gasto, index) {
+				    		me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES["GASTO"], gasto.get("id"));
+						 });
+		            }
+			     },
+			     failure: function(response) {
+			     	me.getView().unmask();
+		     		var data = {};
+	                try {
+	                	data = Ext.decode(response.responseText);
+	                }
+	                catch (e){ };
+	                if (!Ext.isEmpty(data.msg)) {
+	                	me.fireEvent("errorToast", data.msg);
+	                } else {
+	                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	                }
+			     }
+		    		    
+		    });*/
+    	}
     },
     
     onClickAutorizarGastosAgrupados: function(btn) {

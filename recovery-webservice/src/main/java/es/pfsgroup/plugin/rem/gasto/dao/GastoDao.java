@@ -1,10 +1,13 @@
 package es.pfsgroup.plugin.rem.gasto.dao;
 
 
+import java.util.List;
+
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.VGastosProvision;
 
 
 public interface GastoDao extends AbstractDao<GastoProveedor, Long>{

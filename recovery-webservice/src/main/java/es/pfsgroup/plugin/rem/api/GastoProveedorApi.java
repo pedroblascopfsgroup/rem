@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
+import es.pfsgroup.plugin.rem.model.VGastosProvision;
 
 
 public interface GastoProveedorApi {
@@ -287,15 +288,26 @@ public interface GastoProveedorApi {
 		 */
 		public void actualizarPorcentajeParticipacionGastoProveedorActivo(Long idActivo, Long idGasto, Float porcentajeParticipacion);
 
-
 		boolean autorizarGastosContabilidad(Long[] idsGastos, String fechaConta, String fechaPago);
-
 
 		boolean autorizarGastoContabilidad(Long idGasto, String fechaConta, String fechaPago);
 
-
 		boolean autorizarGastosContabilidadAgrupacion(Long[] idsGastos, String fechaConta, String fechaPago);
 
+		/**
+		 * Método para rechazar agrupacion de gastos y los gastos de contablidad recibidos de dicha agrupacion 
+		 * @param idAgrupGasto
+		 * @param motivoRechazo
+		 * @return
+		 */
+		public boolean rechazarGastosContabilidadAgrupGastos(Long idAgrupGasto,String motivoRechazo);
 
+		/**
+		 * 
+		 * @param idProvision
+		 * @return
+		 */
+		List<VGastosProvision> getListGastosProvisionAgrupGastos(Long idProvision);
+		
 }
 

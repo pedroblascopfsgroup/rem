@@ -2255,7 +2255,21 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		return true;
 	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean autorizarGastosContabilidadAgrupacion(Long[] idsGastos, String fechaConta, String fechaPago) {
+		
+		//FALTA CAMBIAR EL ESTADO DE LA AGRUPACIÓN
+		
+		for (Long id : idsGastos) {
 
+			autorizarGastoContabilidad(id, fechaConta, fechaPago);
+		}
+
+		return true;
+	}
+	
 	@Override
 	@Transactional(readOnly = false)
 	public boolean rechazarGastos(Long[] idsGastos, String motivoRechazo) {

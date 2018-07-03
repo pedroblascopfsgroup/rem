@@ -292,5 +292,10 @@ public interface GastoProveedorApi {
 
 
 		boolean autorizarGastoContabilidad(Long idGasto, String fechaConta, String fechaPago);
+
+
+		boolean autorizarGastosContabilidadAgrupacion(Long[] idsGastos, String fechaConta, String fechaPago);
+
+
 }
 

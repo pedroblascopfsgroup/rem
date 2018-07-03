@@ -126,6 +126,25 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     			displayImporteTotal.setValue(Number(importeTotalAcumulado+importeTotalAgrupacion).toFixed(2));
     		}
     		
+    	},
+    	
+    	'gestionprovisioneslist' : {
+    		
+    		persistedsselectionchange: function (sm, record, e, grid, persistedSelection) {
+    			var me = this;
+    			var autorizarContAgruGastosBtn = grid.down('button[itemId=autorizarContAgruGastosBtn]');
+    			var displaySelection = grid.down('displayfield[itemId=displaySelection]');
+    			var disabled = Ext.isEmpty(persistedSelection);
+
+    			if (!Ext.isEmpty(autorizarContAgruGastosBtn)) autorizarContAgruGastosBtn.setDisabled(disabled);
+
+    			if(disabled) {
+    				displaySelection.setValue("No seleccionados");
+    			} else {
+    				displaySelection.setValue("1 agrupacion seleccionado"); 
+    			}
+    			
+    		} 
     	}
 
     },
@@ -403,6 +422,81 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 	    }
     },
     
+    onClickAutorizarContabilidadAgrupacion: function(btn){
+    	
+    	var me = this,
+    	nErrors = 0,
+    	agrupacion = btn.up('gridBase').getPersistedSelection();
+    	
+    	//FALTA OBTENER LOS GASTOS
+    	
+    	// Recuperamos todos los ids de los gastos seleccionados
+		// y validamos que se pueden autorizar
+    	Ext.Array.each(gastos, function(gasto, index) {
+		    error = me.validarSeleccionGastoContabilidad("A", gasto, null);
+		    if(!Ext.isEmpty(error)) {
+		    	nErrors += 1;
+		    	me.fireEvent("errorToast", error);
+		    }
+		});
+    	
+    	if(nErrors == 0) {
+    		var win = new Ext.Window({
+	    		title: HreRem.i18n('title.mensaje.confirmacion'),
+	    		height: 150,
+	    		width: 700,
+	    		layout: 'fit',
+	    		items:{
+	    			xtype: 'form',
+	    			id: 'autorizarForm',
+	    			layout: {
+	    				type: 'hbox', 
+	    				pack: 'center', 
+	    				align: 'center' 
+	    			},
+	    			items:[
+	        			{
+	        				xtype: 'datefield',
+	        				id: 'fechaConta',
+	        				name: 'fechaConta',
+	        				reference: 'fechaConta',
+	        				fieldLabel: HreRem.i18n('msg.fecha.contabilizacion'),
+	        				allowBlank: me.fechaContaAllowBlank(gastos),
+	        				disabled: me.fechaContaHidden(gastos)
+	        			},{
+	        				xtype: 'datefield',
+	        				id: 'fechaPago',
+	        				name: 'fechaPago',
+	        				reference: 'fechaPago',
+	        				fieldLabel: HreRem.i18n('msg.fecha.pago'),
+	        				allowBlank: me.fechaPagoAllowBlank(gastos)
+	        			}
+	        		],
+	        		border: false,
+	        		buttonAlign: 'center',
+	        		buttons: [
+	        			  {
+	        				  text: 'Aceptar',
+	        				  formBind: true,
+	        				  handler: function(){
+	        					  me.autorizarGastoContabilidadAgrupacion(btn, "SG");
+	        					  win.close();
+	        				  }
+	        			  },
+	        			  {
+	        				  text: 'Cancelar', 
+	        				  handler: function(){
+	        					  win.close();
+	        				  }
+	        			  }
+	        		]
+	    		}
+	    	});
+
+	    	win.show();
+	    }
+    },
+    
     onClickAutorizarGastosAgrupados: function(btn) {
     	
     	var me = this;    	
@@ -497,6 +591,78 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	fechaPago = Ext.getCmp('autorizarForm').getForm().findField('fechaPago').rawValue,  
     	gastos = listaGastos.getPersistedSelection(),
 		url =  $AC.getRemoteUrl('gastosproveedor/autorizarGastosContabilidad'),		
+		idsGasto = [], error=null;
+    	// Recuperamos todos los ids de los trabajos seleccionados
+    	Ext.Array.each(gastos, function(gasto, index) {
+		    error = me.validarSeleccionGastoContabilidad("A", gasto, origen);
+		    if(Ext.isEmpty(error)) {
+		    	idsGasto.push(gasto.get("id"));	
+		    }
+		});
+
+		if(Ext.isEmpty(error)){
+			me.getView().mask(HreRem.i18n("msg.mask.loading"));
+
+			Ext.Ajax.request({
+		    			
+			     url: url,
+			     params: {
+			    	 idsGasto: idsGasto,
+			    	 fechaConta: fechaConta,
+			    	 fechaPago: fechaPago
+			     },
+			
+			     success: function(response, opts) {
+			     	me.getView().unmask();
+			        var data = {};
+		            try {
+		                data = Ext.decode(response.responseText);
+		            } catch (e){ };
+		            
+		            if(data.success === "false") {
+			            if (!Ext.isEmpty(data.msg)) {
+			              	me.fireEvent("errorToast", data.msg);
+			            } else {
+			            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			            }
+		            } else {							         
+				         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				         listaGastos.deselectAll();
+				         listaGastos.getStore().loadPage(1);
+				         Ext.Array.each(gastos, function(gasto, index) {
+						    me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES["GASTO"], gasto.get("id"));
+						});
+		            }
+			     },
+			     failure: function(response) {
+			     	me.getView().unmask();
+		     		var data = {};
+	                try {
+	                	data = Ext.decode(response.responseText);
+	                }
+	                catch (e){ };
+	                if (!Ext.isEmpty(data.msg)) {
+	                	me.fireEvent("errorToast", data.msg);
+	                } else {
+	                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	                }
+			     }
+		    		    
+		    });
+		} else {
+			me.fireEvent("errorToast", error);
+		}
+    	
+    },
+
+    autorizarGastoContabilidadAgrupacion: function(btn, origen) {
+    	
+    	var me = this,
+    	agrupacion = btn.up('gridBase').getPersistedSelection(),
+    	fechaConta = Ext.getCmp('autorizarForm').getForm().findField('fechaConta').rawValue,
+    	fechaPago = Ext.getCmp('autorizarForm').getForm().findField('fechaPago').rawValue,  
+    	//FALTA OBTENER LOS GASTOS
+		url =  $AC.getRemoteUrl('gastosproveedor/autorizarGastosContabilidadAgrupacion'),		
 		idsGasto = [], error=null;
     	// Recuperamos todos los ids de los trabajos seleccionados
     	Ext.Array.each(gastos, function(gasto, index) {

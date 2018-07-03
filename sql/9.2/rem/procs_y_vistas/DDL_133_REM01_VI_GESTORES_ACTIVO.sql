@@ -412,7 +412,7 @@ V_MSQL2 := '
         SELECT 
             act.act_id, 
             TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo, 
-            TO_NUMBER (COALESCE (dist3.cod_estado_activo, dist2.cod_estado_activo, dist1.cod_estado_activo, dist0.cod_estado_activo)) dd_eac_codigo,
+            TO_NUMBER (dd_eac.DD_EAC_CODIGO) dd_eac_codigo,
             NULL dd_tcr_codigo, dd_prov.dd_prv_codigo, 
             COALESCE (dist3.cod_municipio,dist2.cod_municipio,dist1.cod_municipio,dist0.cod_municipio) cod_municipio, 
             COALESCE (dist3.cod_postal, dist2.cod_postal, dist1.cod_postal, dist0.cod_postal) cod_postal,
@@ -467,7 +467,7 @@ V_MSQL2 := '
         SELECT 
             act.act_id, 
             TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo, 
-            TO_NUMBER (COALESCE (dist3.cod_estado_activo, dist2.cod_estado_activo, dist1.cod_estado_activo, dist0.cod_estado_activo)) dd_eac_codigo,
+            TO_NUMBER (dd_eac.DD_EAC_CODIGO) dd_eac_codigo,
             NULL dd_tcr_codigo, dd_prov.dd_prv_codigo, 
             COALESCE (dist3.cod_municipio,dist2.cod_municipio,dist1.cod_municipio,dist0.cod_municipio) cod_municipio, 
             COALESCE (dist3.cod_postal, dist2.cod_postal, dist1.cod_postal, dist0.cod_postal) cod_postal,
@@ -522,7 +522,7 @@ V_MSQL2 := '
         SELECT 
             act.act_id, 
             TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo, 
-            TO_NUMBER (COALESCE (dist3.cod_estado_activo, dist2.cod_estado_activo, dist1.cod_estado_activo, dist0.cod_estado_activo)) dd_eac_codigo,
+            TO_NUMBER (dd_eac.DD_EAC_CODIGO) dd_eac_codigo,
             NULL dd_tcr_codigo, dd_prov.dd_prv_codigo, 
             COALESCE (dist3.cod_municipio,dist2.cod_municipio,dist1.cod_municipio,dist0.cod_municipio) cod_municipio, 
             COALESCE (dist3.cod_postal, dist2.cod_postal, dist1.cod_postal, dist0.cod_postal) cod_postal,
@@ -570,15 +570,15 @@ V_MSQL2 := '
             )   
         WHERE 
             act.borrado = 0 
-            AND ACT.DD_TPA_ID != (SELECT DD_TPA_ID FROM '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO WHERE DD_TPA_CODIGO = ''01'')
+            AND act.DD_TPA_ID != (SELECT DD_TPA_ID FROM '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO WHERE DD_TPA_CODIGO = ''01'')
             AND act.DD_EAC_ID IN (SELECT DD_EAC_ID FROM '||V_ESQUEMA||'.DD_EAC_ESTADO_ACTIVO WHERE DD_EAC_CODIGO IN (''09'', ''02'', ''06'', ''11'', ''10'', ''05'', ''08'', ''07''))
-            AND ACT.DD_EAC_ID IS NOT NULL
+            AND act.DD_EAC_ID IS NOT NULL
     UNION ALL
     /*Supervisor de edificación*/
         SELECT 
             act.act_id, 
             TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo, 
-            TO_NUMBER (COALESCE (dist3.cod_estado_activo, dist2.cod_estado_activo, dist1.cod_estado_activo, dist0.cod_estado_activo)) dd_eac_codigo,
+            TO_NUMBER (dd_eac.DD_EAC_CODIGO) dd_eac_codigo,
             NULL dd_tcr_codigo, dd_prov.dd_prv_codigo, 
             COALESCE (dist3.cod_municipio,dist2.cod_municipio,dist1.cod_municipio,dist0.cod_municipio) cod_municipio, 
             COALESCE (dist3.cod_postal, dist2.cod_postal, dist1.cod_postal, dist0.cod_postal) cod_postal,
@@ -626,9 +626,9 @@ V_MSQL2 := '
             )   
         WHERE 
             act.borrado = 0 
-            AND ACT.DD_TPA_ID != (SELECT DD_TPA_ID FROM '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO WHERE DD_TPA_CODIGO = ''01'')
+            AND act.DD_TPA_ID != (SELECT DD_TPA_ID FROM '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO WHERE DD_TPA_CODIGO = ''01'')
             AND act.DD_EAC_ID IN (SELECT DD_EAC_ID FROM '||V_ESQUEMA||'.DD_EAC_ESTADO_ACTIVO WHERE DD_EAC_CODIGO IN (''09'', ''02'', ''06'', ''11'', ''10'', ''05'', ''08'', ''07''))
-            AND ACT.DD_EAC_ID IS NOT NULL
+            AND act.DD_EAC_ID IS NOT NULL
 ';
 
         --DBMS_OUTPUT.PUT_LINE(  V_MSQL); 

@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
+import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProvision;
 
 
@@ -300,14 +301,14 @@ public interface GastoProveedorApi {
 		 * @param motivoRechazo
 		 * @return
 		 */
-		public boolean rechazarGastosContabilidadAgrupGastos(Long idAgrupGasto,String motivoRechazo);
+		public boolean rechazarGastosContabilidadAgrupGastos(Long idAgrupGasto,Long[] idsGasto,String motivoRechazo);
 
 		/**
 		 * 
 		 * @param idProvision
 		 * @return
 		 */
-		List<VGastosProvision> getListGastosProvisionAgrupGastos(Long idProvision);
+		List<VGastosProveedor> getListGastosProvisionAgrupGastos(Long idProvision);
 		
 }
 

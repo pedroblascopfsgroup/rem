@@ -849,7 +849,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 	public ModelAndView getListGastosProvisionAgrupGastos(Long id, ModelMap model) {
 		try {
 
-			List<VGastosProvision> lista = gastoProveedorApi.getListGastosProvisionAgrupGastos(id);
+			List<VGastosProveedor> lista = gastoProveedorApi.getListGastosProvisionAgrupGastos(id);
 
 			model.put("data", lista);
 			model.put("success", true);
@@ -890,10 +890,10 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings({"unchecked"})
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView rechazarGastosContabilidadAgrupGastos(Long idAgrupGasto, String motivoRechazo, ModelMap model) {
+	public ModelAndView rechazarGastosContabilidadAgrupGastos(Long idAgrupGasto, Long[] idsGasto, String motivoRechazo, ModelMap model) {
 		try {		
 			
-			boolean success = gastoProveedorApi.rechazarGastosContabilidadAgrupGastos(idAgrupGasto, motivoRechazo);
+			boolean success = gastoProveedorApi.rechazarGastosContabilidadAgrupGastos(idAgrupGasto,idsGasto, motivoRechazo);
 			model.put("success", success);
 			
 		} catch (JsonViewerException ex) {

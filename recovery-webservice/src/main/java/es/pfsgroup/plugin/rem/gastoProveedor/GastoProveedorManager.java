@@ -2381,9 +2381,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			gasto.setProvision(null);
 
-			genericDao.update(GastoProveedor.class, gasto);
-
-			return true;		
+			genericDao.update(GastoProveedor.class, gasto);	
 			
 		}
 

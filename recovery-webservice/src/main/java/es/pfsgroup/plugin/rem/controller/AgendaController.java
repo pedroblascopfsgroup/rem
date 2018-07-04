@@ -98,10 +98,7 @@ public class AgendaController extends TareaController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getFormularioTarea(Long idTarea, ModelMap model) {
-
 		model.put("data", adapter.getFormularioTarea(idTarea));
-		model.put("cartera", adapter.getCodigoCarteraActivoTarea(idTarea));
-		
 		return createModelAndViewJson(model);
 	}
 

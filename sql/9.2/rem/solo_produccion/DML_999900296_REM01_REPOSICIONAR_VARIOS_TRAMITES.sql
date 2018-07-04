@@ -29,6 +29,7 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_USUARIO VARCHAR2(200 CHAR):= 'REMVIP-1187';
+    PL_OUTPUT VARCHAR2(32000 CHAR);
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(250);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(

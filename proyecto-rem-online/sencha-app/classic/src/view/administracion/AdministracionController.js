@@ -442,7 +442,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		     	var result = Ext.decode(response.responseText);
 		     	gastos = result.data;
 		     	
-		     // Recuperamos todos los ids de los gastos seleccionados
+		     // Recuperamos todos los ids de los gastos de la agrupación
 				// y validamos que se pueden rechazar
 				Ext.Array.each(gastos, function(gasto, index) {
 					var gastoModel = Ext.create('HreRem.model.Gasto');
@@ -454,10 +454,8 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 				    	me.fireEvent("errorToast", error);	
 				    } 
 				});
+				
 				if(nErrors == 0) {
-					me.autorizarGastoContabilidadAgrupacion(btn, "SG");
-				}
-		    	/*if(nErrors == 0) {
 		    		var win = new Ext.Window({
 			    		title: HreRem.i18n('title.mensaje.confirmacion'),
 			    		height: 150,
@@ -478,15 +476,15 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 			        				name: 'fechaConta',
 			        				reference: 'fechaConta',
 			        				fieldLabel: HreRem.i18n('msg.fecha.contabilizacion'),
-			        				allowBlank: me.fechaContaAllowBlank(gastos),
-			        				disabled: me.fechaContaHidden(gastos)
+			        				allowBlank: me.fechaContaAllowBlankArray(gastos),
+			        				disabled: me.fechaContaHiddenArray(gastos)
 			        			},{
 			        				xtype: 'datefield',
 			        				id: 'fechaPago',
 			        				name: 'fechaPago',
 			        				reference: 'fechaPago',
 			        				fieldLabel: HreRem.i18n('msg.fecha.pago'),
-			        				allowBlank: me.fechaPagoAllowBlank(gastos)
+			        				allowBlank: me.fechaPagoAllowBlankArray(gastos)
 			        			}
 			        		],
 			        		border: false,
@@ -496,7 +494,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 			        				  text: 'Aceptar',
 			        				  formBind: true,
 			        				  handler: function(){
-			        					  me.autorizarGastoContabilidadAgrupacion(btn, "SG");
+			        					  me.autorizarGastoContabilidadAgrupacion(btn, "SA");
 			        					  win.close();
 			        				  }
 			        			  },
@@ -511,8 +509,8 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 			    	});
 
 			    	win.show();
-			    }*/
-
+			    }
+				
 		     },
 		     failure: function(response) {
 		     	me.getView().unmask();
@@ -527,9 +525,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
                }
 		     }
-	    		    
 	    });
-
     },
     
     
@@ -800,13 +796,12 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	
     	var me = this,
     	agrupacion = btn.up('gridBase').getPersistedSelection(),
-    	//fechaConta = Ext.getCmp('autorizarForm').getForm().findField('fechaConta').rawValue,
-    	//fechaPago = Ext.getCmp('autorizarForm').getForm().findField('fechaPago').rawValue,  
-    	//FALTA OBTENER LOS GASTOS
+    	fechaConta = Ext.getCmp('autorizarForm').getForm().findField('fechaConta').rawValue,
+    	fechaPago = Ext.getCmp('autorizarForm').getForm().findField('fechaPago').rawValue,  
 		url =  $AC.getRemoteUrl('gastosproveedor/autorizarGastosContabilidadAgrupacion'),		
 		idsGasto = [], error=null;
     	var idAgrupacion = agrupacion[0].id;
-    	// Recuperamos todos los ids de los trabajos seleccionados
+    	// Recuperamos todos los ids de los gastos de la agrupación seleccionada
     	Ext.Array.each(gastos, function(gasto, index) {
     		var gastoModel = Ext.create('HreRem.model.Gasto');
 			gastoModel.set('entidadPropietariaCodigo', gasto.entidadPropietariaCodigo);
@@ -825,9 +820,9 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 			     url: url,
 			     params: {
 			    	 idsGasto: idsGasto,
-			    	 idAgrupacion: idAgrupacion 
-			    	 //fechaConta: fechaConta,
-			    	 //fechaPago: fechaPago
+			    	 idAgrupacion: idAgrupacion, 
+			    	 fechaConta: fechaConta,
+			    	 fechaPago: fechaPago
 			     },
 			
 			     success: function(response, opts) {
@@ -848,7 +843,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 				      
 				         Ext.Array.each(gastos, function(gasto, index) {
 						    me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES["GASTO"], gasto.id);
-						});
+						 });
 		            }
 			     },
 			     failure: function(response) {
@@ -1140,15 +1135,37 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 	    var subsanados = 0;
 	    var contabilizados = 0;
 	    
-    	Ext.Array.each(gastos, function(gasto){
-    		if (CONST.ESTADOS_GASTO['AUTORIZADO'] == gasto.get("estadoGastoCodigo")) {
-    			autorizados += 1;
-    		} else if (CONST.ESTADOS_GASTO['SUBSANADO'] == gasto.get("estadoGastoCodigo")) {
-    			subsanados += 1;
-    		} else if (CONST.ESTADOS_GASTO['CONTABILIZADO'] == gasto.get("estadoGastoCodigo")) {
-    			contabilizados += 1;
-    		}
-		});
+	    	Ext.Array.each(gastos, function(gasto){
+	    		if (CONST.ESTADOS_GASTO['AUTORIZADO'] == gasto.get("estadoGastoCodigo")) {
+	    			autorizados += 1;
+	    		} else if (CONST.ESTADOS_GASTO['SUBSANADO'] == gasto.get("estadoGastoCodigo")) {
+	    			subsanados += 1;
+	    		} else if (CONST.ESTADOS_GASTO['CONTABILIZADO'] == gasto.get("estadoGastoCodigo")) {
+	    			contabilizados += 1;
+	    		}
+			});
+    	
+    	if(autorizados != 0 || subsanados != 0) {
+	    	return false;	
+	    } else {
+	    	return true;	
+	    }
+    },
+    
+    fechaContaAllowBlankArray: function(gastos){
+    	var autorizados = 0;
+	    var subsanados = 0;
+	    var contabilizados = 0;
+	    
+	    	Ext.Array.each(gastos, function(gasto){
+	    		if (CONST.ESTADOS_GASTO['AUTORIZADO'] == gasto.estadoGastoCodigo) {
+	    			autorizados += 1;
+	    		} else if (CONST.ESTADOS_GASTO['SUBSANADO'] == gasto.estadoGastoCodigo) {
+	    			subsanados += 1;
+	    		} else if (CONST.ESTADOS_GASTO['CONTABILIZADO'] == gasto.estadoGastoCodigo) {
+	    			contabilizados += 1;
+	    		}
+			});
     	
     	if(autorizados != 0 || subsanados != 0) {
 	    	return false;	
@@ -1161,16 +1178,38 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	var autorizados = 0;
 	    var subsanados = 0;
 	    var contabilizados = 0;
+	   
+	    Ext.Array.each(gastos, function(gasto){
+	   		if (CONST.ESTADOS_GASTO['AUTORIZADO'] == gasto.get("estadoGastoCodigo")) {
+	   			autorizados += 1;
+	   		} else if (CONST.ESTADOS_GASTO['SUBSANADO'] == gasto.get("estadoGastoCodigo")) {
+	    		subsanados += 1;
+	   		} else if (CONST.ESTADOS_GASTO['CONTABILIZADO'] == gasto.get("estadoGastoCodigo")) {
+	   			contabilizados += 1;
+	   		}
+		}); 
+
+    	if(autorizados == 0 && subsanados == 0 && contabilizados != 0) {
+	    	return true;	
+	    }else{
+	    	return false;
+	    }
+    },
+    
+    fechaContaHiddenArray: function(gastos){
+    	var autorizados = 0;
+	    var subsanados = 0;
+	    var contabilizados = 0;
 	    
-    	Ext.Array.each(gastos, function(gasto){
-    		if (CONST.ESTADOS_GASTO['AUTORIZADO'] == gasto.get("estadoGastoCodigo")) {
-    			autorizados += 1;
-    		} else if (CONST.ESTADOS_GASTO['SUBSANADO'] == gasto.get("estadoGastoCodigo")) {
-    			subsanados += 1;
-    		} else if (CONST.ESTADOS_GASTO['CONTABILIZADO'] == gasto.get("estadoGastoCodigo")) {
-    			contabilizados += 1;
-    		}
-		});
+	    Ext.Array.each(gastos, function(gasto){
+	    	if (CONST.ESTADOS_GASTO['AUTORIZADO'] == gasto.estadoGastoCodigo) {
+	    		autorizados += 1;
+	    	} else if (CONST.ESTADOS_GASTO['SUBSANADO'] == gasto.estadoGastoCodigo) {
+	    		subsanados += 1;
+	    	} else if (CONST.ESTADOS_GASTO['CONTABILIZADO'] == gasto.estadoGastoCodigo) {
+	    		contabilizados += 1;
+	    	}
+		}); 
 
     	if(autorizados == 0 && subsanados == 0 && contabilizados != 0) {
 	    	return true;	
@@ -1184,15 +1223,37 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 	    var subsanados = 0;
 	    var contabilizados = 0;
 	    
-    	Ext.Array.each(gastos, function(gasto){
-    		if (CONST.ESTADOS_GASTO['AUTORIZADO'] == gasto.get("estadoGastoCodigo")) {
-    			autorizados += 1;
-    		} else if (CONST.ESTADOS_GASTO['SUBSANADO'] == gasto.get("estadoGastoCodigo")) {
-    			subsanados += 1;
-    		} else if (CONST.ESTADOS_GASTO['CONTABILIZADO'] == gasto.get("estadoGastoCodigo")) {
-    			contabilizados += 1;
-    		}
-		});
+	    	Ext.Array.each(gastos, function(gasto){
+	    		if (CONST.ESTADOS_GASTO['AUTORIZADO'] == gasto.get("estadoGastoCodigo")) {
+	    			autorizados += 1;
+	    		} else if (CONST.ESTADOS_GASTO['SUBSANADO'] == gasto.get("estadoGastoCodigo")) {
+	    			subsanados += 1;
+	    		} else if (CONST.ESTADOS_GASTO['CONTABILIZADO'] == gasto.get("estadoGastoCodigo")) {
+	    			contabilizados += 1;
+	    		}
+			});
+    	
+    	if(autorizados == 0 && subsanados == 0 && contabilizados != 0) {
+	    	return false;	
+	    } else {
+	    	return true;	
+	    }
+    },
+    
+    fechaPagoAllowBlankArray: function(gastos){
+    	var autorizados = 0;
+	    var subsanados = 0;
+	    var contabilizados = 0;
+
+	    	Ext.Array.each(gastos, function(gasto){
+	    		if (CONST.ESTADOS_GASTO['AUTORIZADO'] == gasto.estadoGastoCodigo) {
+	    			autorizados += 1;
+	    		} else if (CONST.ESTADOS_GASTO['SUBSANADO'] == gasto.estadoGastoCodigo) {
+	    			subsanados += 1;
+	    		} else if (CONST.ESTADOS_GASTO['CONTABILIZADO'] == gasto.estadoGastoCodigo) {
+	    			contabilizados += 1;
+	    		}
+			});
     	
     	if(autorizados == 0 && subsanados == 0 && contabilizados != 0) {
 	    	return false;	

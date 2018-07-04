@@ -2258,9 +2258,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 		}
 		
+		gastoGestion.setFechaEstadoAutorizacionPropietario(new Date());
 		gastoGestion.setEstadoAutorizacionPropietario(estadoAutorizacionPropietario);
 		gastoGestion.setMotivoRechazoAutorizacionHaya(null);
-		gasto.setGastoGestion(gastoGestion);
+		genericDao.update(GastoGestion.class, gastoGestion);
 		genericDao.update(GastoProveedor.class, gasto);
 
 		return true;
@@ -2268,8 +2269,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Override
 	@Transactional(readOnly = false)
-	public boolean autorizarGastosContabilidadAgrupacion(Long[] idsGastos, Long idAgrupacion) {
+	public boolean autorizarGastosContabilidadAgrupacion(Long[] idsGastos, Long idAgrupacion, String fechaConta, String fechaPago) {
 		
+		
+		//Setamos el estado de la agrupación
 		ProvisionGastos agrupGasto = provisionGastosDao.get(idAgrupacion);
 		
 		DDEstadoProvisionGastos estadoProvisionGastos = (DDEstadoProvisionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoProvisionGastos.class,
@@ -2284,21 +2287,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			genericDao.update(ProvisionGastos.class, agrupGasto);
 		}
-		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		
+		//Seteamos el estado y las fechas a los gastos de la agrupación
 		for (Long id : idsGastos) {
-			
-			GastoProveedor gasto = findOne(id);
-			
-			String fechaConta = null;
-			
-			if(!Checks.esNulo(gasto.getGastoInfoContabilidad()) && !Checks.esNulo(gasto.getGastoInfoContabilidad().getFechaContabilizacion())){
-				fechaConta = formatter.format(gasto.getGastoInfoContabilidad().getFechaContabilizacion());
-			}
-			String fechaPago = null;
-			if(!Checks.esNulo(gasto.getGastoDetalleEconomico()) && !Checks.esNulo(gasto.getGastoDetalleEconomico().getFechaPago())){
-				fechaPago = formatter.format(gasto.getGastoDetalleEconomico().getFechaPago());
-			}
-			
 			autorizarGastoContabilidad(id, fechaConta, fechaPago);
 		}
 

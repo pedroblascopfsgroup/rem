@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Pier Gotta
---## FECHA_CREACION=20180629
+--## AUTOR=JIN LI, HU
+--## FECHA_CREACION=20180704
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4239
@@ -59,8 +59,13 @@ BEGIN
         V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         IF V_NUM_TABLAS > 0 THEN				         
-  		DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.USU_USUARIOS...no se modifica nada.');
-  			
+  		  DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''''); 
+  			V_MSQL := 'UPDATE '|| V_ESQUEMA_M ||'.USU_USUARIOS ' ||
+                  'SET USU_FECHA_VIGENCIA_PASS = SYSDATE+730 ' ||
+                  'WHERE USU_USERNAME = ''usugruconta''';
+        DBMS_OUTPUT.PUT_LINE(V_MSQL);          
+        EXECUTE IMMEDIATE V_MSQL;
+        DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO');
         ELSE
        
           DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   	
@@ -69,7 +74,7 @@ BEGIN
            
            V_MSQL := 'INSERT INTO '|| V_ESQUEMA_M ||'.USU_USUARIOS (' ||
                       'USU_ID, ENTIDAD_ID, USU_USERNAME, USU_PASSWORD, USU_NOMBRE, USU_FECHA_VIGENCIA_PASS,USU_GRUPO, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
-                      'SELECT '|| V_ID || ', 1,'''||TRIM(V_TMP_TIPO_DATA(1))||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''',SYSDATE,0,0,''HREOS-4239'',SYSDATE,0  FROM DUAL';
+                      'SELECT '|| V_ID || ', 1,'''||TRIM(V_TMP_TIPO_DATA(1))||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''',SYSDATE+730,0,0,''HREOS-4239'',SYSDATE,0  FROM DUAL';
           
                       
           EXECUTE IMMEDIATE V_MSQL;

@@ -27,13 +27,16 @@ import es.pfsgroup.framework.paradise.agenda.controller.TareaController;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.TareaExcelReport;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoReasignarTarea;
 import es.pfsgroup.plugin.rem.model.DtoSaltoTarea;
@@ -66,7 +69,10 @@ public class AgendaController extends TareaController {
 	
 	@Autowired
 	private UvemManagerApi uvemManagerApi;
-
+	
+	@Autowired
+	private TareaActivoApi activoTareaApi;
+	
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@SuppressWarnings("unchecked")
@@ -94,6 +100,8 @@ public class AgendaController extends TareaController {
 	public ModelAndView getFormularioTarea(Long idTarea, ModelMap model) {
 
 		model.put("data", adapter.getFormularioTarea(idTarea));
+		model.put("cartera", adapter.getCodigoCarteraActivoTarea(idTarea));
+		
 		return createModelAndViewJson(model);
 	}
 

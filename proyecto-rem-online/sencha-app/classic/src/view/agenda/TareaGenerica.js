@@ -736,16 +736,23 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
     T004_AutorizacionPropietarioValidacion: function() {
         var me = this;
-
-        me.deshabilitarCampo(me.down('[name=numIncremento]'));
-
-        me.down('[name=comboAmpliacion]').addListener('change', function(combo) {
-            if (combo.value == '01') {
-                me.habilitarCampo(me.down('[name=numIncremento]'));
-            } else {
-                me.deshabilitarCampo(me.down('[name=numIncremento]'));
-            }
-        })
+        if(CONST.CARTERA['LIBERBANK']===me.json.cartera){
+        	me.ocultarCampo(me.down('[name=numIncremento]'));
+        	me.ocultarCampo(me.down('[name=comboAmpliacion]'));
+        	me.deshabilitarCampo(me.down('[name=numIncremento]'));
+        	me.deshabilitarCampo(me.down('[name=comboAmpliacion]'));
+        }else{
+        	me.ocultarCampo(me.down('[name=comboAmpliacionYAutorizacion]'));
+        	me.deshabilitarCampo(me.down('[name=comboAmpliacionYAutorizacion]'));
+        	me.deshabilitarCampo(me.down('[name=numIncremento]'));
+        	me.down('[name=comboAmpliacion]').addListener('change', function(combo) {
+                if (combo.value == '01') {
+                    me.habilitarCampo(me.down('[name=numIncremento]'));
+                } else {
+                    me.deshabilitarCampo(me.down('[name=numIncremento]'));
+                }
+            });
+        }
     },
 
 

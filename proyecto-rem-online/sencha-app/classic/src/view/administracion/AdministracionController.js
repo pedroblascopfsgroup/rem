@@ -354,9 +354,10 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	
     	var me = this,
     	nErrors = 0,
-    	listaGastos = btn.up('gridBase'),
-    	gastos = listaGastos.getPersistedSelection();
     	
+    	grid = btn.up('gridBase'),
+    	tabPanel = grid.up(),
+    	gastos = grid.getPersistedSelection();
     	// Recuperamos todos los ids de los trabajos seleccionados
 		// y validamos que se pueden autorizar
     	Ext.Array.each(gastos, function(gasto, index) {
@@ -364,14 +365,16 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		    if(!Ext.isEmpty(error)) {
 		    	nErrors += 1;
 		    	me.fireEvent("errorToast", error);
+		    	return false;
 		    }
 		});
     	
     	if(nErrors == 0) {
-    		var win = new Ext.Window({
+    		var win = Ext.create('Ext.window.Window', {
 	    		title: HreRem.i18n('title.mensaje.confirmacion'),
 	    		height: 150,
 	    		width: 700,
+	    		renderTo: tabPanel.body,
 	    		layout: 'fit',
 	    		items:{
 	    			xtype: 'form',
@@ -424,11 +427,13 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 	    }
     },
     
-    onClickAutorizarContabilidadAgrupacion: function(btn, origen){
+    onClickAutorizarContabilidadAgrupacion: function(btn, origen){ 
     	
     	var me = this,
     	nErrors = 0,
-    	agrupacion = btn.up('gridBase').getPersistedSelection();
+    	grid = btn.up('gridBase'),
+    	tabPanel = grid.up(),
+    	agrupacion = grid.getPersistedSelection();
     	
     	var idAgrupacion = agrupacion[0].id;
     	
@@ -451,14 +456,16 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 				    error = me.validarSeleccionGastoContabilidad("A", gastoModel, origen);
 				    if(!Ext.isEmpty(error)) {
 				    	nErrors += 1;
-				    	me.fireEvent("errorToast", error);	
+				    	me.fireEvent("errorToast", error);
+				    	return false;
 				    } 
 				});
 				
 				if(nErrors == 0) {
-		    		var win = new Ext.Window({
+		    		var win = Ext.create('Ext.window.Window', {
 			    		title: HreRem.i18n('title.mensaje.confirmacion'),
 			    		height: 150,
+			    		renderTo: tabPanel.body,
 			    		width: 700,
 			    		layout: 'fit',
 			    		items:{
@@ -536,7 +543,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	var idAgrupacion = agrupacion[0].id;
     	var rechazo = "RECHAZADO POR CONTABILIDAD";
     	var gastos;
-		url =  $AC.getRemoteUrl('gastosproveedor/rechazarGastosContabilidad'),		
+    	var individual = false;
 		idsGasto = [], error=null;
     	
     	var urlGastos = $AC.getRemoteUrl('gastosproveedor/getListGastosProvisionAgrupGastos');
@@ -573,7 +580,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 					Ext.Ajax.request({
 				    			
 					     url: url,
-					     params: {idAgrupGasto: idAgrupacion,idsGasto: idsGasto, motivoRechazo: rechazo},
+					     params: {idAgrupGasto: idAgrupacion,idsGasto: idsGasto, motivoRechazo: rechazo, individual: individual},
 					
 					     success: function(response, opts) {
 					    		
@@ -729,6 +736,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	gastos = listaGastos.getPersistedSelection(),
 		url =  $AC.getRemoteUrl('gastosproveedor/autorizarGastosContabilidad'),		
 		idsGasto = [], error=null;
+    	var individual = true;
     	// Recuperamos todos los ids de los trabajos seleccionados
     	Ext.Array.each(gastos, function(gasto, index) {
 		    error = me.validarSeleccionGastoContabilidad("A", gasto, origen);
@@ -746,7 +754,8 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 			     params: {
 			    	 idsGasto: idsGasto,
 			    	 fechaConta: fechaConta,
-			    	 fechaPago: fechaPago
+			    	 fechaPago: fechaPago,
+			    	 individual: individual
 			     },
 			
 			     success: function(response, opts) {
@@ -800,6 +809,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	fechaPago = Ext.getCmp('autorizarForm').getForm().findField('fechaPago').rawValue,  
 		url =  $AC.getRemoteUrl('gastosproveedor/autorizarGastosContabilidadAgrupacion'),		
 		idsGasto = [], error=null;
+    	var individual = false;
     	var idAgrupacion = agrupacion[0].id;
     	// Recuperamos todos los ids de los gastos de la agrupación seleccionada
     	Ext.Array.each(gastos, function(gasto, index) {
@@ -822,7 +832,8 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 			    	 idsGasto: idsGasto,
 			    	 idAgrupacion: idAgrupacion, 
 			    	 fechaConta: fechaConta,
-			    	 fechaPago: fechaPago
+			    	 fechaPago: fechaPago,
+			    	 individual: individual
 			     },
 			
 			     success: function(response, opts) {
@@ -1005,6 +1016,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		    	var gastos = listaGastos.getPersistedSelection(),
 				url =  $AC.getRemoteUrl('gastosproveedor/rechazarGastosContabilidad'),		
 				idsGasto = [], error=null;
+		var individual = true;
 		
 				// Recuperamos todos los ids de los gastos seleccionados
 				// y validamos que se pueden rechazar
@@ -1024,7 +1036,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 					Ext.Ajax.request({
 				    			
 					     url: url,
-					     params: {idsGasto: idsGasto, motivoRechazo: rechazo},
+					     params: {idsGasto: idsGasto, motivoRechazo: rechazo, individual: individual},
 					
 					     success: function(response, opts) {
 					     	

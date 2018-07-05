@@ -662,10 +662,10 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView autorizarGastosContabilidad(Long[] idsGasto, String fechaConta, String fechaPago, ModelMap model) {
+	public ModelAndView autorizarGastosContabilidad(Long[] idsGasto, String fechaConta, String fechaPago, Boolean individual, ModelMap model) {
 		try {		
 			
-			boolean success = gastoProveedorApi.autorizarGastosContabilidad(idsGasto, fechaConta, fechaPago);
+			boolean success = gastoProveedorApi.autorizarGastosContabilidad(idsGasto, fechaConta, fechaPago, individual);
 			model.put("success", success);
 			
 		} catch (JsonViewerException ex) {
@@ -681,10 +681,10 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView autorizarGastosContabilidadAgrupacion(Long[] idsGasto, Long idAgrupacion, String fechaConta, String fechaPago, ModelMap model) {
+	public ModelAndView autorizarGastosContabilidadAgrupacion(Long[] idsGasto, Long idAgrupacion, String fechaConta, String fechaPago, Boolean individual, ModelMap model) {
 		try {		
 			
-			boolean success = gastoProveedorApi.autorizarGastosContabilidadAgrupacion(idsGasto, idAgrupacion, fechaConta, fechaPago);
+			boolean success = gastoProveedorApi.autorizarGastosContabilidadAgrupacion(idsGasto, idAgrupacion, fechaConta, fechaPago, individual);
 			model.put("success", success);
 			
 		} catch (JsonViewerException ex) {
@@ -758,10 +758,10 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings({"unchecked"})
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView rechazarGastosContabilidad(Long[] idsGasto, String motivoRechazo, ModelMap model) {
+	public ModelAndView rechazarGastosContabilidad(Long[] idsGasto, String motivoRechazo, Boolean individual, ModelMap model) {
 		try {		
 			
-			boolean success = gastoProveedorApi.rechazarGastosContabilidad(idsGasto, motivoRechazo);
+			boolean success = gastoProveedorApi.rechazarGastosContabilidad(idsGasto, motivoRechazo, individual);
 			model.put("success", success);
 			
 		} catch (JsonViewerException ex) {
@@ -890,10 +890,10 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings({"unchecked"})
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView rechazarGastosContabilidadAgrupGastos(Long idAgrupGasto, Long[] idsGasto, String motivoRechazo, ModelMap model) {
+	public ModelAndView rechazarGastosContabilidadAgrupGastos(Long idAgrupGasto, Long[] idsGasto, String motivoRechazo, Boolean individual, ModelMap model) {
 		try {		
 			
-			boolean success = gastoProveedorApi.rechazarGastosContabilidadAgrupGastos(idAgrupGasto,idsGasto, motivoRechazo);
+			boolean success = gastoProveedorApi.rechazarGastosContabilidadAgrupGastos(idAgrupGasto,idsGasto, motivoRechazo, individual);
 			model.put("success", success);
 			
 		} catch (JsonViewerException ex) {

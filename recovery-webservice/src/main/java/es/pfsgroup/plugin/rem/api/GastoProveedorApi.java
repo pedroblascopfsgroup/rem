@@ -247,7 +247,7 @@ public interface GastoProveedorApi {
 		 * @param motivoRechazo
 		 * @return
 		 */
-		public boolean rechazarGastosContabilidad (Long[] idsGastos, String motivoRechazo);
+		public boolean rechazarGastosContabilidad (Long[] idsGastos, String motivoRechazo, Boolean individual);
 		
 		/**
 		 * Devuelve si ya existe un gasto comparando la información de varios campos concretos.
@@ -289,11 +289,11 @@ public interface GastoProveedorApi {
 		 */
 		public void actualizarPorcentajeParticipacionGastoProveedorActivo(Long idActivo, Long idGasto, Float porcentajeParticipacion);
 
-		boolean autorizarGastosContabilidad(Long[] idsGastos, String fechaConta, String fechaPago);
+		boolean autorizarGastosContabilidad(Long[] idsGastos, String fechaConta, String fechaPago, Boolean individual);
 
-		boolean autorizarGastoContabilidad(Long idGasto, String fechaConta, String fechaPago);
+		boolean autorizarGastoContabilidad(Long idGasto, String fechaConta, String fechaPago, Boolean individual);
 
-		boolean autorizarGastosContabilidadAgrupacion(Long[] idsGastos, Long idAgrupacion, String fechaConta, String fechaPago);
+		boolean autorizarGastosContabilidadAgrupacion(Long[] idsGastos, Long idAgrupacion, String fechaConta, String fechaPago, Boolean individual);
 
 		/**
 		 * Método para rechazar agrupacion de gastos y los gastos de contablidad recibidos de dicha agrupacion 
@@ -301,7 +301,7 @@ public interface GastoProveedorApi {
 		 * @param motivoRechazo
 		 * @return
 		 */
-		public boolean rechazarGastosContabilidadAgrupGastos(Long idAgrupGasto,Long[] idsGasto,String motivoRechazo);
+		public boolean rechazarGastosContabilidadAgrupGastos(Long idAgrupGasto,Long[] idsGasto,String motivoRechazo, Boolean individual);
 
 		/**
 		 * 

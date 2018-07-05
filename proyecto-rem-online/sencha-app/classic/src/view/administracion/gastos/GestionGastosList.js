@@ -25,7 +25,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
 		me.tbar = {
     		xtype: 'toolbar',
     		dock: 'top',
-    		items: [configAddBtn, separador, configAutorizarContaBtn, configRechazarContabilidadButton, configAutorizarBtn, configRechazarButton]
+    		items: [configAddBtn, separador, configAutorizarBtn, configRechazarButton, configAutorizarContaBtn, configRechazarContabilidadButton]
 		};
     	me.columns = [
 	 							{

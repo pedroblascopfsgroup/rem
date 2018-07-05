@@ -2168,11 +2168,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Override
 	@Transactional(readOnly = false)
-	public boolean autorizarGastosContabilidad(Long[] idsGastos, String fechaConta, String fechaPago) {
+	public boolean autorizarGastosContabilidad(Long[] idsGastos, String fechaConta, String fechaPago, Boolean individual) {
 
 		for (Long id : idsGastos) {
 
-			autorizarGastoContabilidad(id, fechaConta, fechaPago);
+			autorizarGastoContabilidad(id, fechaConta, fechaPago, individual);
 		}
 
 		return true;
@@ -2180,7 +2180,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean autorizarGastoContabilidad(Long idGasto, String fechaConta, String fechaPago) {
+	public boolean autorizarGastoContabilidad(Long idGasto, String fechaConta, String fechaPago, Boolean individual) {
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		
@@ -2205,7 +2205,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 		
 		GastoProveedor gasto = findOne(idGasto);
-
+		
+		if(!Checks.esNulo(gasto.getProvision()) && individual){
+			throw new JsonViewerException("El gasto " + gasto.getNumGastoHaya() + " no se puede autorizar individualmente: pertenece a una agrupación.");
+		}else{
 		DDEstadoAutorizacionPropietario estadoAutorizacionPropietario= (DDEstadoAutorizacionPropietario) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionPropietario.class,
 				DDEstadoAutorizacionPropietario.CODIGO_AUTORIZADO_POR_CONTABILIDAD);
 
@@ -2213,21 +2216,24 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		if(!Checks.esNulo(miFechaConta) && !Checks.esNulo(miFechaPago)){
 			GastoInfoContabilidad gastoInfoContabilidad = gasto.getGastoInfoContabilidad();
-			gastoInfoContabilidad.setFechaContabilizacion(miFechaConta);
 			GastoDetalleEconomico gastoDetalleEconomico = gasto.getGastoDetalleEconomico();
-			gastoDetalleEconomico.setFechaPago(miFechaPago);
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoGasto.PAGADO);
 			DDEstadoGasto pagado = genericDao.get(DDEstadoGasto.class, filtro);
 			
 			if(DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo())){
+				gastoInfoContabilidad.setFechaContabilizacion(miFechaConta);
+				gastoDetalleEconomico.setFechaPago(miFechaPago);
 				gasto.setGastoDetalleEconomico(gastoDetalleEconomico);
 				gasto.setGastoInfoContabilidad(gastoInfoContabilidad);
 				gasto.setEstadoGasto(pagado);
 			}else if(DDEstadoGasto.SUBSANADO.equals(gasto.getEstadoGasto().getCodigo())){
+				gastoInfoContabilidad.setFechaContabilizacion(miFechaConta);
+				gastoDetalleEconomico.setFechaPago(miFechaPago);
 				gasto.setGastoDetalleEconomico(gastoDetalleEconomico);
 				gasto.setGastoInfoContabilidad(gastoInfoContabilidad);
 				gasto.setEstadoGasto(pagado);
 			}else if(DDEstadoGasto.CONTABILIZADO.equals(gasto.getEstadoGasto().getCodigo())){
+				gastoDetalleEconomico.setFechaPago(miFechaPago);
 				gasto.setGastoDetalleEconomico(gastoDetalleEconomico);
 				gasto.setEstadoGasto(pagado);
 			}
@@ -2263,13 +2269,15 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		gastoGestion.setMotivoRechazoAutorizacionHaya(null);
 		genericDao.update(GastoGestion.class, gastoGestion);
 		genericDao.update(GastoProveedor.class, gasto);
-
+		}
+		
 		return true;
+		
 	}
 	
 	@Override
 	@Transactional(readOnly = false)
-	public boolean autorizarGastosContabilidadAgrupacion(Long[] idsGastos, Long idAgrupacion, String fechaConta, String fechaPago) {
+	public boolean autorizarGastosContabilidadAgrupacion(Long[] idsGastos, Long idAgrupacion, String fechaConta, String fechaPago, Boolean individual) {
 		
 		
 		//Setamos el estado de la agrupación
@@ -2290,7 +2298,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		//Seteamos el estado y las fechas a los gastos de la agrupación
 		for (Long id : idsGastos) {
-			autorizarGastoContabilidad(id, fechaConta, fechaPago);
+			autorizarGastoContabilidad(id, fechaConta, fechaPago, individual);
 		}
 
 		return true;
@@ -2353,7 +2361,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Override 
 	@Transactional(readOnly = false)
-	public boolean rechazarGastosContabilidad(Long[] idsGastos, String motivoRechazo) {
+	public boolean rechazarGastosContabilidad(Long[] idsGastos, String motivoRechazo, Boolean individual) {
 
 		DDEstadoAutorizacionPropietario estadoAutorizacionPropietario = (DDEstadoAutorizacionPropietario) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionPropietario.class,
 				DDEstadoAutorizacionPropietario.CODIGO_RECHAZADO_CONTABILIDAD);
@@ -2361,28 +2369,31 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		for (Long id : idsGastos) {
 			GastoProveedor gasto = findOne(id);
 			
-			String error = updaterStateApi.validarCamposMinimos(gasto);
-			if (!Checks.esNulo(error)) {
-				throw new JsonViewerException("El gasto " + gasto.getNumGastoHaya() + " no se puede rechazar: " + error);
+			if(!Checks.esNulo(gasto.getProvision()) && individual){
+				throw new JsonViewerException("El gasto " + gasto.getNumGastoHaya() + " no se puede rechazar individualmente: pertenece a una agrupación.");
+			}else{
+				String error = updaterStateApi.validarCamposMinimos(gasto);
+				if (!Checks.esNulo(error)) {
+					throw new JsonViewerException("El gasto " + gasto.getNumGastoHaya() + " no se puede rechazar: " + error);
+				}
+				
+				// Se activa el borrado de los gastos-trabajo, y dejamos el trabajo como diponible para un
+				// futuro nuevo gasto
+				this.reactivarTrabajoParaGastos(gasto.getGastoProveedorTrabajos());
+
+				GastoGestion gastoGestion = gasto.getGastoGestion();
+				gastoGestion.setEstadoAutorizacionPropietario(estadoAutorizacionPropietario);
+				gastoGestion.setFechaEstadoAutorizacionPropietario(new Date());
+				gastoGestion.setMotivoRechazoAutorizacionPropietario(motivoRechazo);
+
+				gasto.setGastoGestion(gastoGestion);
+				updaterStateApi.updaterStates(gasto, DDEstadoGasto.RECHAZADO_PROPIETARIO);
+
+				
+				gasto.setProvision(null);
+
+				genericDao.update(GastoProveedor.class, gasto);
 			}
-			
-			// Se activa el borrado de los gastos-trabajo, y dejamos el trabajo como diponible para un
-			// futuro nuevo gasto
-			this.reactivarTrabajoParaGastos(gasto.getGastoProveedorTrabajos());
-
-			GastoGestion gastoGestion = gasto.getGastoGestion();
-			gastoGestion.setEstadoAutorizacionPropietario(estadoAutorizacionPropietario);
-			gastoGestion.setFechaEstadoAutorizacionPropietario(new Date());
-			gastoGestion.setMotivoRechazoAutorizacionPropietario(motivoRechazo);
-
-			gasto.setGastoGestion(gastoGestion);
-			updaterStateApi.updaterStates(gasto, DDEstadoGasto.RECHAZADO_PROPIETARIO);
-
-			
-			gasto.setProvision(null);
-
-			genericDao.update(GastoProveedor.class, gasto);	
-			
 		}
 
 		return true;
@@ -2728,7 +2739,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean rechazarGastosContabilidadAgrupGastos(Long idAgrupGasto,Long[] idsGasto, String motivoRechazo) {
+	public boolean rechazarGastosContabilidadAgrupGastos(Long idAgrupGasto,Long[] idsGasto, String motivoRechazo, Boolean individual) {
 		
 		if(Checks.esNulo(idAgrupGasto)) {
 			return false;
@@ -2743,7 +2754,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		resultadoAgrupGastos = rechazarAgrupacionGastoContabilidad(idAgrupGasto, motivoRechazo, estadoProvisionGastos);
 
-		resultadoGastos = rechazarGastosContabilidad(idsGasto, motivoRechazo);
+		resultadoGastos = rechazarGastosContabilidad(idsGasto, motivoRechazo, individual);
 		
 		if(resultadoGastos && resultadoAgrupGastos) {
 			resultadoFinal = true;

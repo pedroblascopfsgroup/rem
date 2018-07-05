@@ -50,7 +50,7 @@ BEGIN
 			WHEN OPERACION = 'ALTA' THEN
 
 				EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.SGS_GESTOR_SUSTITUTO
-                                                        WHERE USU_ID_ORI = '||V_USU_ID_ORI||'
+                                                        WHERE USU_ID_ORI = (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE UPPER(USU_USERNAME) = TRIM(UPPER('''||V_USU_ID_ORI||''')))
                                                         AND BORRADO = 0 
                                                         AND 
                                                         (
@@ -127,7 +127,7 @@ BEGIN
 			WHEN OPERACION = 'MOD' THEN
 
 				EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.SGS_GESTOR_SUSTITUTO
-                                                        WHERE USU_ID_ORI = '||V_USU_ID_ORI||'
+                                                        WHERE USU_ID_ORI = (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE UPPER(USU_USERNAME) = TRIM(UPPER('''||V_USU_ID_ORI||''')))
                                                         AND BORRADO = 0 
                                                         AND 
                                                         (

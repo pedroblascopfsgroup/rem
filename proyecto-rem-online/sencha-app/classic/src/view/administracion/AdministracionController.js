@@ -374,6 +374,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 	    		title: HreRem.i18n('title.mensaje.confirmacion'),
 	    		height: 150,
 	    		width: 700,
+	    		modal: true,
 	    		renderTo: tabPanel.body,
 	    		layout: 'fit',
 	    		items:{
@@ -427,8 +428,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 	    }
     },
     
-    onClickAutorizarContabilidadAgrupacion: function(btn, origen){ 
-    	
+    onClickAutorizarContabilidadAgrupacion: function(btn, origen){
     	var me = this,
     	nErrors = 0,
     	grid = btn.up('gridBase'),
@@ -447,7 +447,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		     	var result = Ext.decode(response.responseText);
 		     	gastos = result.data;
 		     	
-		     // Recuperamos todos los ids de los gastos de la agrupación
+		     // Recuperamos todos los ids de los gastos de la agrupaciï¿½n
 				// y validamos que se pueden rechazar
 				Ext.Array.each(gastos, function(gasto, index) {
 					var gastoModel = Ext.create('HreRem.model.Gasto');
@@ -465,6 +465,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		    		var win = Ext.create('Ext.window.Window', {
 			    		title: HreRem.i18n('title.mensaje.confirmacion'),
 			    		height: 150,
+			    		modal: true,
 			    		renderTo: tabPanel.body,
 			    		width: 700,
 			    		layout: 'fit',
@@ -598,9 +599,12 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 					            }
 				            } else {							         
 						         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+
 						         Ext.Array.each(gastos, function(gasto, index) {
 						    		me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES["GASTO"], gasto.id);
 								 });
+
+						         me.getView().down('gestionprovisiones').funcionRecargar();
 				            }
 					     },
 					     failure: function(response) {
@@ -811,7 +815,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		idsGasto = [], error=null;
     	var individual = false;
     	var idAgrupacion = agrupacion[0].id;
-    	// Recuperamos todos los ids de los gastos de la agrupación seleccionada
+    	// Recuperamos todos los ids de los gastos de la agrupaciï¿½n seleccionada
     	Ext.Array.each(gastos, function(gasto, index) {
     		var gastoModel = Ext.create('HreRem.model.Gasto');
 			gastoModel.set('entidadPropietariaCodigo', gasto.entidadPropietariaCodigo);
@@ -855,6 +859,8 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 				         Ext.Array.each(gastos, function(gasto, index) {
 						    me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES["GASTO"], gasto.id);
 						 });
+
+				         me.getView().down('gestionprovisiones').funcionRecargar();
 		            }
 			     },
 			     failure: function(response) {

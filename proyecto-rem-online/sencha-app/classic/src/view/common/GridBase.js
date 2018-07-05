@@ -105,8 +105,8 @@ Ext.define('HreRem.view.common.GridBase', {
 		})*/;
 		me.callParent();
 		
-		me.disableAddButton($AU.userIsRol('HAYACONSU'));
-		me.disablePropagationButton($AU.userIsRol('HAYACONSU'));
+		me.disableAddButton($AU.userIsRol('HAYACONSU') || $AU.userIsRol('PERFGCCLIBERBANK'));
+		me.disablePropagationButton($AU.userIsRol('HAYACONSU') || $AU.userIsRol('PERFGCCLIBERBANK'));
 				
 	},
 	

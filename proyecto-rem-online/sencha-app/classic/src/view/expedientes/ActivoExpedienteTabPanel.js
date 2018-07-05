@@ -61,7 +61,11 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTabPanel', {
 		me.bloqueado = bloqueado;
 		me.down("[itemId=botoneditar]").setVisible(false);
 		var editionEnabled = function() {
-			me.down("[itemId=botoneditar]").setVisible(true);
+			if ($AU.userIsRol('HAYACONSU') || $AU.userIsRol('PERFGCCLIBERBANK')) {
+				me.down("[itemId=botoneditar]").setVisible(false);
+			} else {
+				me.down("[itemId=botoneditar]").setVisible(true);
+			}
 		}
 		
 		if(!bloqueado){

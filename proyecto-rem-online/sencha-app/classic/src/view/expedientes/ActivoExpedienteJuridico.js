@@ -18,7 +18,7 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteJuridico', {
 		me.items = [
 		     {   
 				xtype:'fieldsettable',
-				defaultType: 'textfieldbase',				
+				defaultType: 'textfieldbase',
 				title: HreRem.i18n('title.situacion.activo.comunicada.comprador'),
 				items :
 					[
@@ -43,7 +43,8 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteJuridico', {
 		     ,
 			{
 			    xtype: 'bloqueosformalizacionlist',
-				reference: 'bloqueosformalizacionlistref'
+				reference: 'bloqueosformalizacionlistref',
+				secFunToEdit: 'EDITAR_GRID_INFROME_JURIDICO_EXPEDIENTE'
 			}
 		];
 

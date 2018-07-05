@@ -36,7 +36,9 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE(V_SQL);
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     IF V_NUM_TABLAS = 1 THEN
-      V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''T004_AutorizacionPropietario''''][''''comboAmpliacion''''] == DDSiNo.SI || valores[''''T004_AutorizacionPropietario''''][''''comboAmpliacionYAutorizacion''''] == DDSiNo.SI ? ''''OK'''' : ''''KO'''''' WHERE TAP_CODIGO = ''T004_AutorizacionPropietario''';
+      V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''T004_AutorizacionPropietario''''][''''comboAmpliacion''''] == DDSiNo.SI || valores[''''T004_AutorizacionPropietario''''][''''comboAmpliacionYAutorizacion''''] == DDSiNo.SI ? ''''OK'''' : ''''KO'''''',
+      USUARIOMODIFICAR=''HREOS-4251'', FECHAMODIFICAR= SYSDATE
+       WHERE TAP_CODIGO = ''T004_AutorizacionPropietario''';
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||sql%rowcount||' Registro actualizado en '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO');

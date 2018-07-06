@@ -74,6 +74,8 @@ import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
@@ -157,6 +159,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
@@ -6100,12 +6103,37 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (expediente == null) {
 			return false;
 		}
+		
+		if(checkAgrupacionAsistida(activoTramite.getActivo())) {
+			return true;
+		}
+		
 		if(expediente.getFechaContabilizacionPropietario() != null){
 			return true;
 		}else{
 			return false;
 		}
 		
+	}
+	
+	public Boolean checkAgrupacionAsistida(Activo activo) {
+		Date fechaHoy = new Date();
+		
+		if(!Checks.esNulo(activo)) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
+			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "agrupacion.eliminado", 0);
+			ActivoAgrupacionActivo aga= genericDao.get(ActivoAgrupacionActivo.class, filtro, filtro2);
+			if(!Checks.esNulo(aga)) {
+				ActivoAgrupacion agr = aga.getAgrupacion();
+				if(!Checks.esNulo(agr) && DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agr.getTipoAgrupacion().getCodigo())) {
+					if(fechaHoy.compareTo(agr.getFechaInicioVigencia()) >= 0 && fechaHoy.compareTo(agr.getFechaFinVigencia()) <= 0) {
+						return true;
+					}
+				}
+			}
+			
+		}
+		return false;
 	}
 	
 	@Override

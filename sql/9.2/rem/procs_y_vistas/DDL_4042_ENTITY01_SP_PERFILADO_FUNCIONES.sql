@@ -221,6 +221,7 @@ T_VAR( 'TAB_DATOS_PROVEEDORES','S','S','S','S','S','S','S','S','S','S','N','S','
 T_VAR( 'EDITAR_TAB_DATOS_PROVEEDORES','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','S'),
 T_VAR( 'TAB_DOCUMENTOS_PROVEEDORES','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'EDITAR_TAB_DOCUMENTOS_PROVEEDORES','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','S'),
+T_VAR( 'ADD_QUITAR_PROVEEDORES','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','S'),
 
 T_VAR( 'MASIVO_DESDESPUBLICAR_FORZADO','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'ACTUALIZAR_PUBLICAR','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N'),

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Marco Munoz
---## FECHA_CREACION=20180704
+--## FECHA_CREACION=20180706
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.18
 --## INCIDENCIA_LINK=HREOS-4268
@@ -17,8 +17,9 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 SET DEFINE OFF;
 
-create or replace PROCEDURE #ESQUEMA#.SP_EXT_ACTUALIZA_TASACION ( 
-          COD_EXPEDIENTE 	   IN  #ESQUEMA#.ACT_TAS_TASACION.TAS_EXPEDIENTE_EXTERNO%TYPE
+create or replace PROCEDURE       SP_EXT_ACTUALIZA_TASACION (
+          ID_ACTIVO_HAYA       IN  #ESQUEMA#.ACT_ACTIVO.ACT_NUM_ACTIVO%TYPE
+       ,  COD_EXPEDIENTE 	   IN  #ESQUEMA#.ACT_TAS_TASACION.TAS_EXPEDIENTE_EXTERNO%TYPE
        ,  IMPORTE_TAS_TOTAL    IN  #ESQUEMA#.ACT_TAS_TASACION.TAS_IMPORTE_TAS_FIN%TYPE
        ,  VALOR_MERCADO 	   IN  #ESQUEMA#.ACT_TAS_TASACION.TAS_VALOR_MERCADO%TYPE
        ,  VALOR_SUELO 		   IN  #ESQUEMA#.ACT_TAS_TASACION.TAS_IMPORTE_VAL_SOLAR%TYPE
@@ -48,7 +49,7 @@ create or replace PROCEDURE #ESQUEMA#.SP_EXT_ACTUALIZA_TASACION (
 ) AS
 
 
-V_MSQL VARCHAR2(32000 CHAR); 											-- Sentencia a ejecutar.      
+V_MSQL VARCHAR2(32000 CHAR); 											-- Sentencia a ejecutar.
 V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; 								-- Configuracion Esquema.
 V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; 					-- Configuracion Esquema Master.
 ERR_NUM NUMBER(25); 													-- Vble. auxiliar para registrar errores en el script.
@@ -57,13 +58,16 @@ V_TABLA VARCHAR2 (50 CHAR);
 V_COUNT NUMBER(1);
 V_RESULTADO VARCHAR2(50 CHAR);
 V_NOMBRESP VARCHAR2(50 CHAR) := 'SP_EXT_ACTUALIZA_TASACION';			-- Nombre del SP.
-HLP_REGISTRO_EJEC VARCHAR2(1024 CHAR) := ''; 	
-V_NOTABLES NUMBER(1) := 0;												-- Comprueba si existen las tablas HLD y HLP		
-V_NUMREGISTROS NUMBER(25) := 0;											-- Vble. auxiliar que guarda el número de registros actualizados	
+HLP_REGISTRO_EJEC VARCHAR2(1024 CHAR) := '';
+V_NOTABLES NUMBER(1) := 0;												-- Comprueba si existen las tablas HLD y HLP
+V_NUMREGISTROS NUMBER(25) := 0;											-- Vble. auxiliar que guarda el número de registros actualizados
 V_NUMREGISTROS2 NUMBER(25) := 0;
 V_VALID NUMBER(16,0);
+ACT_ID NUMBER(16,0);													-- ACT_ID DEL ACTIVO
 TAS_ID NUMBER(16,0);													-- TAS_ID DE LA TASACION
+BIE_VAL_ID NUMBER(16,0);
 FECHA_HOY TIMESTAMP := SYSTIMESTAMP;
+VALOR VARCHAR2 (256 CHAR);
 
 
 TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
@@ -104,39 +108,47 @@ BEGIN
 
    COD_RETORNO := 0;
 
-   /***********************************************************************************  
-   1.- Miramos que el parámetro obligatorio (COD_EXPEDIENTE) del SP vengan informado.
-   ************************************************************************************/
-   IF COD_RETORNO = 0 AND TRIM(COD_EXPEDIENTE) IS NULL THEN 
+   /**************************************************************************************************************************************************************
+   1.- Miramos que los parámetros obligatorios (ID_ACTIVO_HAYA y COD_EXPEDIENTE) del SP vengan informados.
+   ***************************************************************************************************************************************************************/
+   IF COD_RETORNO = 0 AND ID_ACTIVO_HAYA IS NULL THEN
+		HLP_REGISTRO_EJEC := '[ERROR] El ID_ACTIVO_HAYA indicado como parámetro de entrada no se ha ingresado. Por favor ingrese un valor para este campo.';
+		COD_RETORNO := 1;
+   END IF;
+   IF COD_RETORNO = 0 AND TRIM(COD_EXPEDIENTE) IS NULL THEN
 		HLP_REGISTRO_EJEC := '[ERROR] El COD_EXPEDIENTE indicado como parámetro de entrada no se ha ingresado. Por favor ingrese un valor para este campo.';
 		COD_RETORNO := 1;
-   END IF;   
+   END IF;
 
-   /*****************************************************************   
-   2.- Miramos que la tasación exista en la BD por COD_EXPEDIENTE.
-   ******************************************************************/  
-   IF COD_RETORNO = 0 THEN 
-		V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_TAS_TASACION TAS WHERE TRIM(TAS.TAS_EXPEDIENTE_EXTERNO) = TRIM('''||COD_EXPEDIENTE||''')';
+   /**************************************************************************************************************************************************************
+   2.- Miramos que el activo exista en la BD por ID_ACTIVO_HAYA.
+   ***************************************************************************************************************************************************************/
+   IF COD_RETORNO = 0 THEN
+		V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE ACT.ACT_NUM_ACTIVO = '||ID_ACTIVO_HAYA||' AND ACT.BORRADO = 0';
 		EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
 		IF V_COUNT < 1 THEN
-				HLP_REGISTRO_EJEC := '[ERROR] La tasación ['||TRIM(COD_EXPEDIENTE)||'] no existe en la tabla ACT_TAS_TASACION.';
+				HLP_REGISTRO_EJEC := '[ERROR] El activo ['||ID_ACTIVO_HAYA||'] no existe en la tabla ACT_ACTIVO o es un activo borrado.';
 				COD_RETORNO := 1;
 		ELSE
-			    V_MSQL := 'SELECT TAS.TAS_ID FROM '||V_ESQUEMA||'.ACT_TAS_TASACION TAS WHERE TRIM(TAS.TAS_EXPEDIENTE_EXTERNO) = TRIM('''||COD_EXPEDIENTE||''')';
-				EXECUTE IMMEDIATE V_MSQL INTO TAS_ID;
+			    V_MSQL := 'SELECT ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE ACT.ACT_NUM_ACTIVO = '||ID_ACTIVO_HAYA||' ';
+				EXECUTE IMMEDIATE V_MSQL INTO ACT_ID;
+                DBMS_OUTPUT.PUT_LINE('[INFO] - El activo '||ID_ACTIVO_HAYA||' existe en la ACT_ACTIVO. Continuamos la ejecución.');
+                
+                /*V_MSQL := 'SELECT TAS.TAS_ID FROM '||V_ESQUEMA||'.ACT_TAS_TASACION TAS WHERE TRIM(TAS.TAS_EXPEDIENTE_EXTERNO) = TRIM('''||COD_EXPEDIENTE||''')';
+				EXECUTE IMMEDIATE V_MSQL INTO TAS_ID;*/
 		END IF;
-   END IF; 
+   END IF;
 
-   /*****************************************************************   
+   /**************************************************************************************************************************************************************
    3.- Comprobamos que las tablas donde vamos a escribir (HLP y HLD) existan.
-   ******************************************************************/   
-   IF COD_RETORNO = 0 THEN 
+   ***************************************************************************************************************************************************************/
+   IF COD_RETORNO = 0 THEN
         V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME IN (''HLP_HISTORICO_LANZA_PERIODICO'',''HLD_HISTORICO_LANZA_PER_DETA'') AND OWNER LIKE '''||V_ESQUEMA||'''';
         EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
 
         IF V_COUNT > 1 AND COD_RETORNO = 0 THEN
             DBMS_OUTPUT.PUT_LINE('[INFO] Existen las tablas HLP_HISTORICO_LANZA_PERIODICO y HLD_HISTORICO_LANZA_PER_DETA. Continuamos la ejecución.');
-        ELSE          
+        ELSE
             HLP_REGISTRO_EJEC := '[ERROR] NO existe la tabla HLP_HISTORICO_LANZA_PERIODICO ó HLD_HISTORICO_LANZA_PER_DETA. O no existen ambas. Paramos la ejecución.';
             DBMS_OUTPUT.PUT_LINE(HLP_REGISTRO_EJEC);
             COD_RETORNO := 1;
@@ -144,66 +156,284 @@ BEGIN
         END IF;
    END IF;
 
-   /*****************************************************************   
-   4.- Actualizamos los valores pasados por parámetro a la tasación indicada en COD_EXPEDIENTE.
-   ******************************************************************/  
+   /**************************************************************************************************************************************************************
+   4.- Insertamos/Actualizamos la tasación.
+   ***************************************************************************************************************************************************************/
    IF COD_RETORNO = 0 AND V_NOTABLES = 0 THEN
-		
-		FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
-		LOOP
+        
+        
+        V_MSQL :=  'SELECT COUNT(*) 
+                    FROM '||V_ESQUEMA||'.ACT_TAS_TASACION TAS
+                    JOIN '||V_ESQUEMA||'.ACT_ACTIVO       ACT
+                      ON TAS.ACT_ID = ACT.ACT_ID
+                     AND ACT.ACT_NUM_ACTIVO = '||ID_ACTIVO_HAYA||'
+                     AND TAS.TAS_EXPEDIENTE_EXTERNO = TRIM('''||COD_EXPEDIENTE||''') ';
+        EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
 
-			V_TMP_TIPO_DATA := V_TIPO_DATA(I);		
+      
+      /**************************************************************************************************************************************************************
+       4.1.- Si la dupla (ID_ACTIVO_HAYA + COD_EXPEDIENTE) 
+             existe, actualizamos la tasación.
+       ***************************************************************************************************************************************************************/
+       IF V_COUNT = 1 THEN
+       
+            V_MSQL :=  'SELECT TAS.TAS_ID
+                        FROM '||V_ESQUEMA||'.ACT_TAS_TASACION TAS
+                        JOIN '||V_ESQUEMA||'.ACT_ACTIVO       ACT
+                        ON TAS.ACT_ID = ACT.ACT_ID
+                        AND ACT.ACT_NUM_ACTIVO = '||ID_ACTIVO_HAYA||'
+                        AND TAS.TAS_EXPEDIENTE_EXTERNO = TRIM('''||COD_EXPEDIENTE||''') ';
+            EXECUTE IMMEDIATE V_MSQL INTO TAS_ID;
+            
+            FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+            LOOP
+    
+                V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+    
+                V_MSQL := 'SELECT TAS.'||V_TMP_TIPO_DATA(2)||' FROM '||V_ESQUEMA||'.ACT_TAS_TASACION TAS WHERE TAS.TAS_ID = '||TAS_ID||' ';
+                EXECUTE IMMEDIATE V_MSQL INTO VALOR;
+                
+                V_MSQL := ' UPDATE '||V_ESQUEMA||'.ACT_TAS_TASACION TAS
+                            SET
+                                TAS.'||V_TMP_TIPO_DATA(2)||' = CASE WHEN '''||V_TMP_TIPO_DATA(2)||''' LIKE ''%FECHA%'' THEN ''''||TO_DATE('||V_TMP_TIPO_DATA(1)||',''yyyymmdd'')
+                                                                    ELSE '||V_TMP_TIPO_DATA(1)||' END,
+                                TAS.USUARIOMODIFICAR = '''||V_NOMBRESP||''',
+                                TAS.FECHAMODIFICAR = '''||FECHA_HOY||'''
+                            WHERE TRIM(TAS.TAS_EXPEDIENTE_EXTERNO) = TRIM('''||COD_EXPEDIENTE||''')
+                          ';
+                EXECUTE IMMEDIATE V_MSQL;
+                --DBMS_OUTPUT.PUT_LINE(V_MSQL);
+                V_NUMREGISTROS := SQL%ROWCOUNT;
+                
+                V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.HLD_HISTORICO_LANZA_PER_DETA (
+                              HLD_SP_CARGA,
+                              HLD_FECHA_EJEC,
+                              HLD_CODIGO_REG,
+                              HLD_TABLA_MODIFICAR,
+                              HLD_TABLA_MODIFICAR_CLAVE,
+                              HLD_TABLA_MODIFICAR_CLAVE_ID,
+                              HLD_CAMPO_MODIFICAR,
+                              HLD_VALOR_ORIGINAL,
+                              HLD_VALOR_ACTUALIZADO
+                            )
+                            SELECT '''||V_NOMBRESP||''',
+                                   '''||FECHA_HOY||''',
+                                   '||TAS_ID||',
+                                   ''ACT_TAS_TASACION'',
+                                   ''TAS_ID'',
+                                   '||TAS_ID||',
+                                   '''||V_TMP_TIPO_DATA(2)||''',
+                                   '''||VALOR||''',
+                                   CASE WHEN '''||V_TMP_TIPO_DATA(2)||''' = ''DD_TTS_ID'' THEN ''''||(SELECT TTS.DD_TTS_ID FROM '||V_ESQUEMA||'.DD_TTS_TIPO_TASACION TTS WHERE TTS.DD_TTS_CODIGO = '||V_TMP_TIPO_DATA(1)||')
+                                        WHEN '''||V_TMP_TIPO_DATA(2)||''' LIKE ''%FECHA%'' THEN ''''||TO_DATE('||V_TMP_TIPO_DATA(1)||',''yyyymmdd'')
+                                        ELSE '||V_TMP_TIPO_DATA(1)||' END
+                                   FROM DUAL
+                            ';
+                EXECUTE IMMEDIATE V_MSQL;
+                --DBMS_OUTPUT.PUT_LINE(V_MSQL);
+                V_NUMREGISTROS2 := V_NUMREGISTROS2 + SQL%ROWCOUNT;
+                   
+            END LOOP;
+            DBMS_OUTPUT.PUT_LINE('[INFO] - Se insertan '||V_NUMREGISTROS2||' registros en la HLD_HISTORICO_LANZA_PER_DETA.');
+            DBMS_OUTPUT.PUT_LINE('[INFO] - Se actualizan '||V_NUMREGISTROS||' registros en la ACT_TAS_TASACION.');
+       
+       
+       /**************************************************************************************************************************************************************
+       4.2.- Si la dupla (ID_ACTIVO_HAYA + COD_EXPEDIENTE) 
+             No existe, insertamos la tasación (Siempre y cuando la tasación no exista ya en BD.)
+       ***************************************************************************************************************************************************************/
+       ELSIF V_COUNT = 0 THEN
+        
+           V_MSQL :=  'SELECT COUNT(*) FROM '||V_ESQUEMA||'.ACT_TAS_TASACION TAS WHERE TRIM(TAS.TAS_EXPEDIENTE_EXTERNO) = TRIM('''||COD_EXPEDIENTE||''') ';
+           EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
+           
+           IF V_COUNT > 1 THEN
+                
+                HLP_REGISTRO_EJEC := '[ERROR] La tasación ['||COD_EXPEDIENTE||'] existe para otro activo que no es el indicado por parámetro.';
+                COD_RETORNO := 1;
+           
+           ELSE
+           
+                /*****************************************************************
+                Insertamos 1 registro en la BIE_VALORACIONES
+                *****************************************************************/
+               
+                V_MSQL :=  'SELECT '||V_ESQUEMA||'.S_BIE_VALORACIONES.NEXTVAL FROM DUAL';
+                EXECUTE IMMEDIATE V_MSQL INTO BIE_VAL_ID;
+                
+                V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.BIE_VALORACIONES BIE (
+                                  BIE_ID,
+                                  BIE_VAL_ID,
+                                  USUARIOCREAR,
+                                  FECHACREAR
+                                )
+                                SELECT 
+                                       (SELECT ACT.BIE_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE ACT.ACT_ID = '||ACT_ID||'),
+                                       '||BIE_VAL_ID||',
+                                       '''||V_NOMBRESP||''',
+                                       '''||FECHA_HOY||'''
+                                       FROM DUAL
+                            ';
+                EXECUTE IMMEDIATE V_MSQL;
+                V_NUMREGISTROS := SQL%ROWCOUNT;
+                DBMS_OUTPUT.PUT_LINE('[INFO] - Se inserta '||SQL%ROWCOUNT||' registro en la BIE_VALORACIONES.');
+                
+                V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.HLD_HISTORICO_LANZA_PER_DETA (
+                                  HLD_SP_CARGA,
+                                  HLD_FECHA_EJEC,
+                                  HLD_CODIGO_REG,
+                                  HLD_TABLA_MODIFICAR,
+                                  HLD_TABLA_MODIFICAR_CLAVE,
+                                  HLD_TABLA_MODIFICAR_CLAVE_ID,
+                                  HLD_CAMPO_MODIFICAR,
+                                  HLD_VALOR_ORIGINAL,
+                                  HLD_VALOR_ACTUALIZADO
+                                )
+                                SELECT '''||V_NOMBRESP||''',
+                                       '''||FECHA_HOY||''',
+                                       '||BIE_VAL_ID||',
+                                       ''BIE_VALORACIONES'',
+                                       ''BIE_VAL_ID'',
+                                       '||BIE_VAL_ID||',
+                                       ''BIE_VAL_ID'',
+                                       NULL,
+                                       '||BIE_VAL_ID||'
+                                FROM DUAL
+                                ';
+                EXECUTE IMMEDIATE V_MSQL;
+                DBMS_OUTPUT.PUT_LINE('[INFO] - Se inserta '||SQL%ROWCOUNT||' registro en la HLD_HISTORICO_LANZA_PER_DETA.');
+                
+                /*****************************************************************
+                Insertamos 1 registro en la ACT_TAS_TASACION
+                *****************************************************************/
+                
+                V_MSQL :=  'SELECT '||V_ESQUEMA||'.S_ACT_TAS_TASACION.NEXTVAL FROM DUAL';
+                EXECUTE IMMEDIATE V_MSQL INTO TAS_ID;
+                
+                V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.ACT_TAS_TASACION TAS (                              
+                                 ACT_ID
+                              ,  TAS_ID
+                              ,  BIE_VAL_ID
+                              ,  USUARIOCREAR
+                              ,  FECHACREAR      
+                              ,  TAS_IMPORTE_TAS_FIN
+                              ,  TAS_VALOR_MERCADO
+                              ,  TAS_IMPORTE_VAL_SOLAR
+                              ,  TAS_VALOR_SEGURO
+                              ,  TAS_VALOR_LIQUIDATIVO
+                              ,  TAS_IMPORTE_VALOR_TER
+                              ,  TAS_PORCENTAJE_OBRA
+                              ,  TAS_PORCENTAJE_AJUSTE
+                              ,  TAS_TASACION_MODIFICADA
+                              ,  TAS_CIF_TASADOR
+                              ,  TAS_NOMBRE_TASADOR
+                              ,  TAS_FECHA_INI_TASACION
+                              ,  TAS_TECNICO_TASADOR
+                              ,  DD_TTS_ID
+                              ,  TAS_FECHA_CADUCIDAD
+                              ,  TAS_TASACION_ACTIVA
+                              ,  TAS_FECHA_VIGENCIA_INI
+                              ,  TAS_FECHA_VIGENCIA_FIN
+                              ,  TAS_CONDICIONANTE
+                              ,  TAS_CONDICIONANTE_OBS
+                              ,  TAS_ORDEN_ECO
+                              ,  TAS_ORDEN_ECO_OBS
+                              ,  TAS_ADVERTENCIAS
+                              ,  TAS_ADVERTENCIAS_OBS
+                              ,  TAS_PORCENTAJE_PARTICIPACION         
+                            )
+                            SELECT '||ACT_ID||',             
+                                   '||TAS_ID||',
+                                   '||BIE_VAL_ID||',
+                                   '''||V_NOMBRESP||''',
+                                   '''||FECHA_HOY||''',
+                                   '''||IMPORTE_TAS_TOTAL||''',
+                                   '''||VALOR_MERCADO||''',
+                                   '''||VALOR_SUELO||''',
+                                   '''||VALOR_SEGURO||''',
+                                   '''||VALOR_LIQUIDATIVO||''',
+                                   '''||VALOR_OBRA_TERMINADA||''',
+                                   '''||PORCENTAJE_OBRA_EJEC||''',
+                                   '''||PORCENTAJE_AJUSTE||''',
+                                   '''||TASACION_MODIFICADA||''',
+                                   '''||CIF_TASADORA||''',
+                                   '''||NOMBRE_TASADORA||''',
+                                   TO_DATE('''||FECHA_TASACION||''',''yyyymmdd'') ,
+                                   '''||TECNICO_TASADOR||''',
+                                   (SELECT TTS.DD_TTS_ID FROM '||V_ESQUEMA||'.DD_TTS_TIPO_TASACION TTS WHERE TTS.DD_TTS_CODIGO = '''||TIPO_TASACION||'''),
+                                   TO_DATE('''||FECHA_CADUCIDAD||''',''yyyymmdd'') ,
+                                   '''||TASACION_ACTIVA||''',
+                                   TO_DATE('''||FECHA_VIGENCIA_INI||''',''yyyymmdd''),
+                                   TO_DATE('''||FECHA_VIGENCIA_FIN||''',''yyyymmdd''),
+                                   '''||CONDICIONANTE||''',
+                                   '''||CONDICIONANTE_OBS||''',
+                                   '''||ORDEN_ECO||''',
+                                   '''||ORDEN_ECO_OBS||''',
+                                   '''||ADVERTENCIAS||''',
+                                   '''||ADVERTENCIAS_OBS||''',
+                                   '''||PORCENTAJE_PARTICIPA||'''
+                            FROM DUAL
+                ';
+                EXECUTE IMMEDIATE V_MSQL;
+                V_NUMREGISTROS := V_NUMREGISTROS + SQL%ROWCOUNT;
+                DBMS_OUTPUT.PUT_LINE('[INFO] - Se inserta '||SQL%ROWCOUNT||' registro en la ACT_TAS_TASACION.');
 
-			V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.HLD_HISTORICO_LANZA_PER_DETA (
-						  HLD_SP_CARGA,
-						  HLD_FECHA_EJEC,
-						  HLD_CODIGO_REG,
-						  HLD_TABLA_MODIFICAR,
-						  HLD_TABLA_MODIFICAR_CLAVE,
-						  HLD_TABLA_MODIFICAR_CLAVE_ID,
-						  HLD_CAMPO_MODIFICAR,
-						  HLD_VALOR_ORIGINAL,
-						  HLD_VALOR_ACTUALIZADO
-						)
-						SELECT '''||V_NOMBRESP||''', 
-							   '''||FECHA_HOY||''', 
-							   '||TAS_ID||', 
-							   ''ACT_TAS_TASACION'', 
-							   ''TAS_ID'',  
-							   '||TAS_ID||',
-							   '''||V_TMP_TIPO_DATA(2)||''', 
-							   (SELECT TAS.'||V_TMP_TIPO_DATA(2)||' FROM '||V_ESQUEMA||'.ACT_TAS_TASACION TAS WHERE TAS.TAS_ID = '||TAS_ID||'), 
-							   CASE WHEN '''||V_TMP_TIPO_DATA(2)||''' = ''DD_TTS_ID'' THEN ''''||(SELECT TTS.DD_TTS_ID FROM '||V_ESQUEMA||'.DD_TTS_TIPO_TASACION TTS WHERE TTS.DD_TTS_CODIGO = '||V_TMP_TIPO_DATA(1)||')                
-							        WHEN '''||V_TMP_TIPO_DATA(2)||''' LIKE ''%FECHA%'' THEN ''''||TO_DATE('||V_TMP_TIPO_DATA(1)||',''yyyymmdd'')
-                                    ELSE '||V_TMP_TIPO_DATA(1)||' END
-							   FROM DUAL
-						';
-			EXECUTE IMMEDIATE V_MSQL;
-            --DBMS_OUTPUT.PUT_LINE(V_MSQL);
-			V_NUMREGISTROS2 := V_NUMREGISTROS2 + SQL%ROWCOUNT;
 
-			V_MSQL := ' UPDATE '||V_ESQUEMA||'.ACT_TAS_TASACION TAS
-						SET                            
-                            TAS.'||V_TMP_TIPO_DATA(2)||' = CASE WHEN '''||V_TMP_TIPO_DATA(2)||''' LIKE ''%FECHA%'' THEN ''''||TO_DATE('||V_TMP_TIPO_DATA(1)||',''yyyymmdd'')
-                                                              ELSE '||V_TMP_TIPO_DATA(1)||' END, 
-							TAS.USUARIOMODIFICAR = '''||V_NOMBRESP||''',
-							TAS.FECHAMODIFICAR = '''||FECHA_HOY||'''
-						WHERE TRIM(TAS.TAS_EXPEDIENTE_EXTERNO) = TRIM('''||COD_EXPEDIENTE||''')
-					  ';
-			EXECUTE IMMEDIATE V_MSQL;
-            --DBMS_OUTPUT.PUT_LINE(V_MSQL);
-			V_NUMREGISTROS := SQL%ROWCOUNT;
-			
-		END LOOP;
-		DBMS_OUTPUT.PUT_LINE('[INFO] - Se insertan '||V_NUMREGISTROS2||' registros en la HLD_HISTORICO_LANZA_PER_DETA.');		
-		DBMS_OUTPUT.PUT_LINE('[INFO] - Se actualizan '||V_NUMREGISTROS||' registros en la ACT_VAL_VALORACIONES.');
+                FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+                LOOP
+        
+                    V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+        
+                    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.HLD_HISTORICO_LANZA_PER_DETA (
+                                  HLD_SP_CARGA,
+                                  HLD_FECHA_EJEC,
+                                  HLD_CODIGO_REG,
+                                  HLD_TABLA_MODIFICAR,
+                                  HLD_TABLA_MODIFICAR_CLAVE,
+                                  HLD_TABLA_MODIFICAR_CLAVE_ID,
+                                  HLD_CAMPO_MODIFICAR,
+                                  HLD_VALOR_ORIGINAL,
+                                  HLD_VALOR_ACTUALIZADO
+                                )
+                                SELECT '''||V_NOMBRESP||''',
+                                       '''||FECHA_HOY||''',
+                                       '||TAS_ID||',
+                                       ''ACT_TAS_TASACION'',
+                                       ''TAS_ID'',
+                                       '||TAS_ID||',
+                                       '''||V_TMP_TIPO_DATA(2)||''',
+                                       NULL,
+                                       CASE WHEN '''||V_TMP_TIPO_DATA(2)||''' = ''DD_TTS_ID'' THEN ''''||(SELECT TTS.DD_TTS_ID FROM '||V_ESQUEMA||'.DD_TTS_TIPO_TASACION TTS WHERE TTS.DD_TTS_CODIGO = '||V_TMP_TIPO_DATA(1)||')
+                                            WHEN '''||V_TMP_TIPO_DATA(2)||''' LIKE ''%FECHA%'' THEN ''''||TO_DATE('||V_TMP_TIPO_DATA(1)||',''yyyymmdd'')
+                                            ELSE '||V_TMP_TIPO_DATA(1)||' END
+                                       FROM DUAL
+                                ';
+                    EXECUTE IMMEDIATE V_MSQL;
+                    V_NUMREGISTROS2 := V_NUMREGISTROS2 + SQL%ROWCOUNT;
+        
+                END LOOP;
+                DBMS_OUTPUT.PUT_LINE('[INFO] - Se insertan '||V_NUMREGISTROS2||' registros en la HLD_HISTORICO_LANZA_PER_DETA.');
+                
+
+           END IF;
+       
+      /**************************************************************************************************************************************************************
+       4.3.- Si la dupla (ID_ACTIVO_HAYA + COD_EXPEDIENTE) 
+             existe más de una vez, informamos el error.
+       ***************************************************************************************************************************************************************/
+       ELSIF V_COUNT > 1 THEN
+
+            HLP_REGISTRO_EJEC := '[ERROR] Existe más de una tasación para el par activo/tasación ['||ID_ACTIVO_HAYA||','||COD_EXPEDIENTE||'].';
+            COD_RETORNO := 1;
+
+       END IF;
 
    END IF;
 
-   /*****************************************************************     
+   /**************************************************************************************************************************************************************
    5.- Si ha habido algún error, insertamos 1 registro en la HLP con el error
-   ******************************************************************/
-   IF COD_RETORNO = 1 AND V_NOTABLES = 0 THEN  
+   ***************************************************************************************************************************************************************/
+   IF COD_RETORNO = 1 AND V_NOTABLES = 0 THEN
 		ROLLBACK;
 		DBMS_OUTPUT.PUT_LINE('[ERROR] Procedemos a informar la tabla HLP_HISTORICO_LANZA_PERIODICO.');
 		V_MSQL := '
@@ -218,17 +448,17 @@ BEGIN
 			'''||V_NOMBRESP||''',
 			'''||FECHA_HOY||''',
 			1,
-			NVL('||TAS_ID||',''-1''),
+			NVL('''||TAS_ID||''',''-1''),
 			'''||HLP_REGISTRO_EJEC||'''
 		FROM DUAL
 		';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] - Ha habido errores. Se inserta '||SQL%ROWCOUNT||' registro en la HLP_HISTORICO_LANZA_PERIODICO.');		
+		DBMS_OUTPUT.PUT_LINE('[INFO] - Ha habido errores. Se inserta '||SQL%ROWCOUNT||' registro en la HLP_HISTORICO_LANZA_PERIODICO.');
    END IF;
 
-   /*****************************************************************   
+   /**************************************************************************************************************************************************************
    6.- Si no ha habido ningun error, insertamos 1 registro en la HLP.
-   ******************************************************************/   
+   ***************************************************************************************************************************************************************/
    IF COD_RETORNO = 0 AND V_NOTABLES = 0 THEN
 		V_MSQL := '
 		INSERT INTO '||V_ESQUEMA||'.HLP_HISTORICO_LANZA_PERIODICO (
@@ -247,7 +477,7 @@ BEGIN
 		FROM DUAL
 	  ';
 	  EXECUTE IMMEDIATE V_MSQL;
-	  DBMS_OUTPUT.PUT_LINE('[INFO] - No ha habido errores. Se inserta '||SQL%ROWCOUNT||' registro en la HLP_HISTORICO_LANZA_PERIODICO.');		
+	  DBMS_OUTPUT.PUT_LINE('[INFO] - No ha habido errores. Se inserta '||SQL%ROWCOUNT||' registro en la HLP_HISTORICO_LANZA_PERIODICO.');
    END IF;
    COMMIT;
 
@@ -271,7 +501,7 @@ EXCEPTION
 			'''||V_NOMBRESP||''',
 			SYSDATE,
 			1,
-			NVL('||TAS_ID||',''-1''),
+			NVL('''||TAS_ID||''',''-1''),
 			'''||ERR_MSG||'''
 		FROM DUAL
 	  ';

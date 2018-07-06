@@ -405,7 +405,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         ];
         me.callParent();
 
-
+        
         //El me. se puede sustituir por me.getLookupController() y meterlo dentro del controlador de vista.
         var validacion = eval('me.' + me.codigoTarea + 'Validacion');
         if (!Ext.isEmpty(validacion))
@@ -736,6 +736,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
     T004_AutorizacionPropietarioValidacion: function() {
         var me = this;
+        debugger;
         if(CONST.CARTERA['LIBERBANK']===me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera')){
         	me.ocultarCampo(me.down('[name=numIncremento]'));
         	me.ocultarCampo(me.down('[name=comboAmpliacion]'));

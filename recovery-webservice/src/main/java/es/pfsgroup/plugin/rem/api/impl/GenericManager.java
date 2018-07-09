@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
@@ -127,11 +128,17 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	public Integer esGestorSustituto(Usuario usuarioLogado){
 		List<GestorSustituto> ges = new ArrayList<GestorSustituto>();
 		ges = genericDao.getList(GestorSustituto.class, genericDao.createFilter(FilterType.EQUALS, "usuarioGestorSustituto", usuarioLogado));
+		Date fechaHoy = new Date();
 		
 		if(Checks.estaVacio(ges)){
 			return 0;
 		}else{
-			return 1;
+			for(GestorSustituto gestor: ges){
+				if(fechaHoy.compareTo(gestor.getFechaInicio()) >= 0 && (Checks.esNulo(gestor.getFechaFin()) || fechaHoy.compareTo(gestor.getFechaFin()) <= 0)){
+					return 1;
+				}
+			}
+			return 0;
 		}
 	}
 

@@ -550,11 +550,24 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 
 		int i = 0;
 		try {
-			for (i = 1; i < this.numFilasHoja; i++) {
-				String numAgrupacion = String.valueOf(Long.parseLong(exc.dameCelda(i, 0)));
-				String numActivo = String.valueOf(Long.parseLong(exc.dameCelda(i, 1)));
-				if (particularValidator.distintosTiposImpuesto(numActivo, numAgrupacion))
-					listaFilas.add(i);
+			String numAgrupacion = String.valueOf(Long.parseLong(exc.dameCelda(1, 0)));
+
+			// Comprobamos que la agrupación no este vacía
+			if (!particularValidator.agrupacionEstaVacia(numAgrupacion)) {
+				for (i = 1; i < this.numFilasHoja; i++) {
+					String numActivo = String.valueOf(Long.parseLong(exc.dameCelda(i, 1)));
+					if (particularValidator.distintosTiposImpuesto(numActivo, numAgrupacion))
+						listaFilas.add(i);
+				}
+			} else {
+				List<String> activosList = new ArrayList<String>();
+				for (i = 1; i < this.numFilasHoja; i++) {
+					activosList.add(String.valueOf(Long.parseLong(exc.dameCelda(i, 1))));
+				}
+				
+				if(particularValidator.distintosTiposImpuestoAgrupacionVacia(activosList)) 
+					listaFilas.add(1);
+				
 			}
 		} catch (Exception e) {
 			if (i != 0)

@@ -119,7 +119,9 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			boolean isLiberbankInmobiliaria = false;
 			boolean isLiberbankTerciaria = false;
 			Oferta oferta = ofertaApi.getOfertaAceptadaByActivo(tareaActivo.getActivo());
-			String codigoCalculo = ofertaApi.calculoComiteLiberbank(oferta).getCodigo();
+
+			DDComiteSancion comiteSancion = ofertaApi.calculoComiteLiberbank(oferta);
+			String codigoCalculo = (!Checks.esNulo(comiteSancion) ? comiteSancion.getCodigo() : null);
 
 				if (!Checks.esNulo(codigoCalculo)) {
 					if(DDComiteSancion.CODIGO_LIBERBANK_RESIDENCIAL.equals(codigoCalculo)){

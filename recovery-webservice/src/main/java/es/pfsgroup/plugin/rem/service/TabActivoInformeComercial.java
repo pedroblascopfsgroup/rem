@@ -570,6 +570,7 @@ public class TabActivoInformeComercial implements TabActivoService {
 					valoraciones.add(valoracionEstimadoRenta);
 				}
 				
+			if(!Checks.esNulo(activo.getInfoComercial().getPosibleInforme())) {
 				if (activo.getInfoComercial().getPosibleInforme() == 0) {
 					Filter filterEstado = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_RECHAZO);
 					DDEstadoInformeComercial estadoRechazado = genericDao.get(DDEstadoInformeComercial.class, filterEstado);
@@ -609,6 +610,7 @@ public class TabActivoInformeComercial implements TabActivoService {
 				restApi.marcarRegistroParaEnvio(ENTIDADES.INFORME, activo.getInfoComercial());
 				activoApi.saveOrUpdate(activo);				
 			}
+		}
 			
 
 			

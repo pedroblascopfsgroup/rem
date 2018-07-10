@@ -46,11 +46,11 @@ public class MSVActualizadorPublicarAlquiler extends AbstractMSVActualizador imp
 		dto.setPublicarAlquiler(true);
 
 		if (!Checks.esNulo(exc.dameCelda(fila, COL_OCULTAR_PRECIO))) {
-			dto.setNoMostrarPrecioVenta(this.obtenerBooleanExcel(exc.dameCelda(fila, COL_OCULTAR_PRECIO)));
+			dto.setNoMostrarPrecioAlquiler(this.obtenerBooleanExcel(exc.dameCelda(fila, COL_OCULTAR_PRECIO)));
 		}
 
 		if (!Checks.esNulo(exc.dameCelda(fila, COL_PUBLICAR_SIN_PRECIO))) {
-			dto.setPublicarSinPrecioVenta(this.obtenerBooleanExcel(exc.dameCelda(fila, COL_PUBLICAR_SIN_PRECIO)));
+			dto.setPublicarSinPrecioAlquiler(this.obtenerBooleanExcel(exc.dameCelda(fila, COL_PUBLICAR_SIN_PRECIO)));
 		}
 
 		if (activoApi.isActivoIntegradoAgrupacionRestringida(activo.getId())) {

@@ -122,13 +122,12 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean esActivoPrincipalEnAgrupacion(Long numActivo) {
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(AGA.AGR_ID) "
-				+ " 		  FROM ACT_AGA_AGRUPACION_ACTIVO AGA, ACT_ACTIVO ACT "
-				+ "			  WHERE ACT.ACT_ID  = AGA.ACT_ID "
-				+ "				AND AGA.AGA_PRINCIPAL = 1"
-				+ "			    AND act.ACT_NUM_ACTIVO = "+numActivo+" "
-				+ "			    AND aga.BORRADO  = 0 "
-				+ "			    AND act.BORRADO  = 0");
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(AGR.AGR_ID) "
+				+ "           FROM ACT_AGR_AGRUPACION AGR, ACT_ACTIVO ACT "
+				+ "           WHERE ACT.ACT_ID  = AGR.AGR_ACT_PRINCIPAL "
+				+ "           AND ACT.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "           AND AGR.BORRADO  = 0 "
+				+ "           AND ACT.BORRADO  = 0");
 		if("0".equals(resultado))
 			return false;
 		else
@@ -1740,13 +1739,14 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	public boolean isMismoTipoComercializacionActivoPrincipalAgrupacion(String numActivo, String numAgrupacion) {
 		
 		String activoTCO = rawDao.getExecuteSQL("SELECT COUNT(1) "
-				+ "FROM ACT_APU_ACTIVO_PUBLICACION APU "
-				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = APU.ACT_ID "
-				+ "WHERE ACT.ACT_NUM_ACTIVO = "+numActivo+" AND APU.DD_TCO_ID = (SELECT APU.DD_TCO_ID "
-																		+ "FROM ACT_APU_ACTIVO_PUBLICACION APU "
-																		+ "JOIN ACT_ACTIVO ACT ON APU.ACT_ID = ACT.ACT_ID "
-																		+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID AND AGA.AGA_PRINCIPAL = 1 "
-																		+ "JOIN ACT_AGR_AGRUPACION AGR ON AGA.AGR_ID = AGR.AGR_ID AND AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+")");
+		        + "        FROM ACT_APU_ACTIVO_PUBLICACION APU "
+				+ "        JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = APU.ACT_ID "
+		        + "        WHERE ACT.ACT_NUM_ACTIVO = "+numActivo+" AND APU.DD_TCO_ID = (SELECT APU.DD_TCO_ID "
+				+ "                                   FROM ACT_APU_ACTIVO_PUBLICACION APU "
+		        + "                                   JOIN ACT_ACTIVO ACT ON APU.ACT_ID = ACT.ACT_ID "
+				+ "                                   JOIN ACT_AGR_AGRUPACION AGR ON ACT.ACT_ID = AGR.AGR_ACT_PRINCIPAL "
+		        + "                                   AND AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+")");
+		
 		return activoTCO.equals("1");
 	}
 	
@@ -1755,18 +1755,19 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	public boolean isMismoEpuActivoPrincipalAgrupacion(String numActivo, String numAgrupacion) {
 		
 		String activoEPU = rawDao.getExecuteSQL("SELECT COUNT(1) "
-				+ "FROM ACT_ACTIVO ACT "
-				+ "JOIN ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID = APU.ACT_ID "
-				+ "WHERE ACT.ACT_NUM_ACTIVO = "+numActivo+" AND APU.DD_EPV_ID = (SELECT APU.DD_EPV_ID "
-																				+ "FROM ACT_APU_ACTIVO_PUBLICACION APU "
-																				+ "JOIN ACT_ACTIVO ACT ON APU.ACT_ID = ACT.ACT_ID "
-																				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID AND AGA.AGA_PRINCIPAL = 1 "
-																				+ "JOIN ACT_AGR_AGRUPACION AGR ON AGA.AGR_ID = AGR.AGR_ID AND AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+") "
-														 + "AND APU.DD_EPA_ID = (SELECT APU.DD_EPA_ID "
-														 						+ "FROM ACT_APU_ACTIVO_PUBLICACION APU "
-														 						+ "JOIN ACT_ACTIVO ACT ON APU.ACT_ID = ACT.ACT_ID "
-														 						+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID AND AGA.AGA_PRINCIPAL = 1 "
-														 						+ "JOIN ACT_AGR_AGRUPACION AGR ON AGA.AGR_ID = AGR.AGR_ID AND AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+")");
+		        + "        FROM ACT_ACTIVO ACT "
+				+ "        JOIN ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID = APU.ACT_ID "
+		        + "        WHERE ACT.ACT_NUM_ACTIVO = "+numActivo+" AND APU.DD_EPV_ID = (SELECT APU.DD_EPV_ID "
+				+ "                                   FROM ACT_APU_ACTIVO_PUBLICACION APU"
+		        + "                                   JOIN ACT_ACTIVO ACT ON APU.ACT_ID = ACT.ACT_ID"
+				+ "                                   JOIN ACT_AGR_AGRUPACION AGR ON ACT.ACT_ID = AGR.AGR_ACT_PRINCIPAL "
+				+ "                                   AND AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+") "
+				+ "        AND APU.DD_EPA_ID = (SELECT APU.DD_EPA_ID "
+				+ "									  FROM ACT_APU_ACTIVO_PUBLICACION APU "
+				+ "                                   JOIN ACT_ACTIVO ACT ON APU.ACT_ID = ACT.ACT_ID "
+				+ "                                   JOIN ACT_AGR_AGRUPACION AGR ON ACT.ACT_ID = AGR.AGR_ACT_PRINCIPAL "
+				+ "                                   AND AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+")");
+				
 		return activoEPU.equals("1");
 
 	}

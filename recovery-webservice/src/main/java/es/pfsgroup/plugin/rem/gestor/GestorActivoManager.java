@@ -412,7 +412,7 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 	@Override
 	public Boolean isGestorAlquileres(Activo activo, Usuario usuario){
 
-		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_GESTOR_ALQUILER);
+		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_GESTOR_ALQUILERES);
 		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
 		
 		List<Usuario> usuariosActivos = ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipoGestor.getId(),activo);		

@@ -50,8 +50,8 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_GESTOR_COMITE_INVERSION_INMOBILIARIA_LIBERBANK = "GCOIN";
 	public static final String CODIGO_GESTOR_COMITE_INMOBILIARIO_LIBERBANK = "GCOINM";
 	public static final String CODIGO_GESTOR_LIBERBANK_RESIDENCIAL = "GLIBRES";
+	public static final String CODIGO_SUPERVISOR_ALQUILERES = "SUALQ";
 	public static final String CODIGO_GESTOR_ALQUILERES = "GALQ";
-	public static final String CODIGO_GESTOR_ALQUILER = "GALQ";
 	public static final String CODIGO_GESTOR_SUELOS = "GSUE";
 	public static final String CODIGO_SUPERVISOR_SUELOS = "SUPSUE";
 	public static final String CODIGO_GESTOR_EDIFICACIONES = "GEDI";

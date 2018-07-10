@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Guillermo Llidó
---## FECHA_CREACION=20180705
+--## FECHA_CREACION=20180710
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-1253
@@ -50,17 +50,17 @@ BEGIN
                                                         AND BORRADO = 0 
                                                         AND 
                                                         (
-                                                            (FECHA_INICIO <= TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YYYY'') AND FECHA_FIN >= TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YYYY'')) 
+                                                            (FECHA_INICIO <= TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') AND FECHA_FIN >= TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY'')) 
                                                             OR
-                                                            (FECHA_FIN <= TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YYYY'') AND FECHA_INICIO >= TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YYYY'')) 
+                                                            (FECHA_FIN <= TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') AND FECHA_INICIO >= TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY'')) 
                                                             OR
-                                                            (TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YYYY'') <= FECHA_FIN AND FECHA_FIN <= TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YYYY''))
+                                                            (TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') <= FECHA_FIN AND FECHA_FIN <= TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY''))
                                                             OR
-                                                            (TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YYYY'')<= FECHA_INICIO AND FECHA_INICIO <TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YYYY''))
+                                                            (TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'')<= FECHA_INICIO AND FECHA_INICIO <TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY''))
                                                             OR
-                                                            ((TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YYYY'')<= FECHA_INICIO) AND (FECHA_FIN IS NULL)) 
+                                                            ((TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'')<= FECHA_INICIO) AND (FECHA_FIN IS NULL)) 
                                                             OR
-                                                            ((TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YYYY'')<= FECHA_INICIO) AND (FECHA_FIN IS NULL)) 
+                                                            ((TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'')<= FECHA_INICIO) AND (FECHA_FIN IS NULL)) 
                                                         )'
                                                         INTO V_AUX ;
 
@@ -117,17 +117,17 @@ BEGIN
                                                         AND BORRADO = 0 
                                                         AND 
                                                         (
-                                                            (FECHA_INICIO <= TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YYYY'') AND FECHA_FIN >= TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YYYY'')) 
+                                                            (FECHA_INICIO <= TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') AND FECHA_FIN >= TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY'')) 
                                                             OR
-                                                            (FECHA_FIN <= TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YYYY'') AND FECHA_INICIO >= TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YYYY'')) 
+                                                            (FECHA_FIN <= TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') AND FECHA_INICIO >= TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY'')) 
                                                             OR
-                                                            (TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YYYY'') <= FECHA_FIN AND FECHA_FIN <= TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YYYY''))
+                                                            (TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') <= FECHA_FIN AND FECHA_FIN <= TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY''))
                                                             OR
-                                                            (TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YYYY'')<= FECHA_INICIO AND FECHA_INICIO <TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YYYY''))
+                                                            (TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'')<= FECHA_INICIO AND FECHA_INICIO <TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY''))
                                                             OR
-                                                            ((TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YYYY'')<= FECHA_INICIO) AND (FECHA_FIN IS NULL)) 
+                                                            ((TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'')<= FECHA_INICIO) AND (FECHA_FIN IS NULL)) 
                                                             OR
-                                                            ((TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YYYY'')<= FECHA_INICIO) AND (FECHA_FIN IS NULL)) 
+                                                            ((TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'')<= FECHA_INICIO) AND (FECHA_FIN IS NULL)) 
                                                         )'
                                                         INTO V_AUX ;
 

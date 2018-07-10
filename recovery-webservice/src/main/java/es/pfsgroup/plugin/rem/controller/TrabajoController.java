@@ -28,7 +28,6 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
-import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
@@ -39,6 +38,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoAvisadorApi;
@@ -46,6 +46,7 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.TrabajoExcelReport;
 import es.pfsgroup.plugin.rem.factory.GenerarPropuestaPreciosFactoryApi;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
@@ -65,11 +66,13 @@ import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.TrabajoFoto;
 import es.pfsgroup.plugin.rem.model.VBusquedaTrabajos;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.propuestaprecios.service.GenerarPropuestaPreciosService;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
@@ -115,7 +118,12 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	@Autowired
 	private GenerarPropuestaPreciosFactoryApi generarPropuestaApi;
-		
+	
+	@Autowired
+	private GestorActivoApi gestorActivoApi;
+	
+	@Autowired
+	private TrabajoDao trabajoDao;
 	
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -843,27 +851,50 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboResponsableTrabajo(WebDto webDto, ModelMap model) {
-		List<DtoUsuario> listaresponsables = new ArrayList<DtoUsuario>();
-		EXTDDTipoGestor alquileres= (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GALQ");
-		EXTDDTipoGestor suelos= (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GSUE");
-		EXTDDTipoGestor edificaciones= (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GEDI");
-		EXTDDTipoGestor activo= (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GACT");
-		List<DtoUsuario> la  = adapter.getComboUsuarios(alquileres.getId());
-		List<DtoUsuario> ls  = adapter.getComboUsuarios(suelos.getId());
-		List<DtoUsuario> le  = adapter.getComboUsuarios(edificaciones.getId());
-		List<DtoUsuario> lgact  = adapter.getComboUsuarios(activo.getId());
+	public ModelAndView getComboResponsableTrabajo(Long idTrabajo, ModelMap model) {
 		
-		listaresponsables.addAll(la);
-		listaresponsables.addAll(le);
-		listaresponsables.addAll(ls);
-		listaresponsables.addAll(lgact);
+		Trabajo trabajo = trabajoDao.get(idTrabajo);
 		
-			
-		model.put("data", listaresponsables);
+		Activo activo = trabajo.getActivo();
+		
+		Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+		Usuario gestorAlquileres = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
+		Usuario gestorSuelos = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS);
+		Usuario gestorEdificaciones = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+		
+		List<DtoUsuario> listaResponsables = new ArrayList<DtoUsuario>();
+		
+		DtoUsuario dtoGestorActivo = new DtoUsuario();
+		DtoUsuario dtoGestorAlquileres = new DtoUsuario();
+		DtoUsuario dtoGestorSuelos = new DtoUsuario();
+		DtoUsuario dtoGestorEdificaciones = new DtoUsuario();
+		
+		try {
+			if(!Checks.esNulo(gestorActivo)){
+				BeanUtils.copyProperties(dtoGestorActivo, gestorActivo);
+				listaResponsables.add(dtoGestorActivo);
+			}
+			if(!Checks.esNulo(gestorAlquileres)){
+				BeanUtils.copyProperties(dtoGestorAlquileres, gestorAlquileres);
+				listaResponsables.add(dtoGestorAlquileres);
+			}
+			if(!Checks.esNulo(gestorSuelos)){
+				BeanUtils.copyProperties(dtoGestorSuelos, gestorSuelos);
+				listaResponsables.add(dtoGestorSuelos);
+			}
+			if(!Checks.esNulo(gestorEdificaciones)){
+				BeanUtils.copyProperties(dtoGestorEdificaciones, gestorEdificaciones);
+				listaResponsables.add(dtoGestorEdificaciones);
+			}
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		
+		model.put("data", listaResponsables);
 		
 		return new ModelAndView("jsonView", model);
-
 	}
 	
 	@SuppressWarnings("unchecked")

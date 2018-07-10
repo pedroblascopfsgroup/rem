@@ -57,9 +57,12 @@ import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorServiceFactory
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionServiceFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TimerTareaActivo;
+import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 
 /**
@@ -129,7 +132,6 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
-	
 	
     /**
      * Método que recupera el ID del BPM asociado a la ejecución.
@@ -739,7 +741,49 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 
 		
 		// Asignador de GESTOR por factoria - Gestores encontrados por tarea-Activo
-	
+		Trabajo trabajo = tarea.getTramite().getTrabajo();
+		Usuario user = trabajo.getSolicitante();
+		
+		ActivoProveedorContacto activoProveedorContacto = genericDao.get(ActivoProveedorContacto.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", user.getId()));
+		
+		if(!Checks.esNulo(activoProveedorContacto)){
+			//usuario proveedor.
+			//comprobar tipo trabajo. si actuac. tecnica: el destino = responsable; sino : destino = g. activo
+			if(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo())){
+				setUsuarioDestinoTarea(tareaActivo, nombreUsuarioWS, gestor, null, null, null, gact);
+			}else{
+				setUsuarioDestinoTarea(tareaActivo, nombreUsuarioWS, gestor, galq, gsue, gedi, gact);
+			}
+		}else{
+			if(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo())){
+				tareaActivo.setUsuario(trabajo.getResponsableTrabajo());
+			}else{
+				setUsuarioDestinoTarea(tareaActivo, nombreUsuarioWS, gestor, galq, gsue, gedi, gact);
+			}
+		}
+		
+		// Asignador de SUPERVISOR por factoria - Supervisores encontrados por tarea-Activo
+		if(!Checks.esNulo(supervisor)){
+			tareaActivo.setSupervisorActivo(supervisor);
+		} else {
+			// HREOS-1714 Igual con supervisor
+			usuarioLogado = adapter.getUsuarioLogado();
+			if(!Checks.esNulo(usuarioLogado)){			
+				if(nombreUsuarioWS.equals(usuarioLogado)){
+					Usuario supervisorWS = gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS);
+					if(!Checks.esNulo(supervisorWS))
+						tareaActivo.setSupervisorActivo(supervisorWS);
+				} else {
+					tareaActivo.setSupervisorActivo(usuarioLogado);
+				}
+			}
+		}		
+    }
+
+	private void setUsuarioDestinoTarea(TareaActivo tareaActivo, String nombreUsuarioWS, Usuario gestor, Usuario galq,
+			Usuario gsue, Usuario gedi, Usuario gact) {
+		
+		Usuario usuarioLogado;
 		if (!Checks.esNulo(galq)) {
 			tareaActivo.setUsuario(galq);
 		}
@@ -775,30 +819,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 				}
 			}
 		}
-		
-		// Asignador de SUPERVISOR por factoria - Supervisores encontrados por tarea-Activo
-		if(!Checks.esNulo(supervisor)){
-			tareaActivo.setSupervisorActivo(supervisor);
-		} else {
-			// HREOS-1714 Igual con supervisor
-			usuarioLogado = adapter.getUsuarioLogado();
-			if(!Checks.esNulo(usuarioLogado)){			
-				if(nombreUsuarioWS.equals(usuarioLogado)){
-					Usuario supervisorWS = gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS);
-					if(!Checks.esNulo(supervisorWS))
-						tareaActivo.setSupervisorActivo(supervisorWS);
-				} else {
-					tareaActivo.setSupervisorActivo(usuarioLogado);
-				}
-			}
-		}
-		
-	
-		
-		
-		
-			
-    }
+	}
     
     /**
      * 

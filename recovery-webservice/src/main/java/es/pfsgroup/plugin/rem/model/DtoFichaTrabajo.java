@@ -145,7 +145,11 @@ public class DtoFichaTrabajo {
     
     private Boolean bloquearResponsable;
     
-
+    private Long idSupervisorAlquileres;
+    
+    private Long idSupervisorSuelos;
+    
+    private Long idSupervisorEdificaciones;
 	
     public Long getIdTrabajo() {
 		return idTrabajo;
@@ -695,6 +699,30 @@ public class DtoFichaTrabajo {
 
 	public void setBloquearResponsable(Boolean bloquearResponsable) {
 		this.bloquearResponsable = bloquearResponsable;
+	}
+
+	public Long getIdSupervisorAlquileres() {
+		return idSupervisorAlquileres;
+	}
+
+	public void setIdSupervisorAlquileres(Long idSupervisorAlquileres) {
+		this.idSupervisorAlquileres = idSupervisorAlquileres;
+	}
+
+	public Long getIdSupervisorSuelos() {
+		return idSupervisorSuelos;
+	}
+
+	public void setIdSupervisorSuelos(Long idSupervisorSuelos) {
+		this.idSupervisorSuelos = idSupervisorSuelos;
+	}
+
+	public Long getIdSupervisorEdificaciones() {
+		return idSupervisorEdificaciones;
+	}
+
+	public void setIdSupervisorEdificaciones(Long idSupervisorEdificaciones) {
+		this.idSupervisorEdificaciones = idSupervisorEdificaciones;
 	}
 	
 	

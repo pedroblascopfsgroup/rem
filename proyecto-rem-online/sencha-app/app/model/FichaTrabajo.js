@@ -96,6 +96,15 @@ Ext.define('HreRem.model.FichaTrabajo', {
     			name: 'supervisorActivo'
     		},
     		{
+    			name: 'idSupervisorAlquileres'
+    		},
+    		{
+    			name: 'idSupervisorSuelos'
+    		},
+    		{
+    			name: 'idSupervisorEdificaciones'
+    		},
+    		{
     			name: 'fechaConcreta',
     			type:'date',
     			dateFormat: 'c'

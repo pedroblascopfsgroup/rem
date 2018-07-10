@@ -1411,19 +1411,26 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setFechaAutorizacionPropietario(trabajo.getFechaAutorizacionPropietario());
 		 }
 		 
-		
+		 Usuario supervisorEdificaciones = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
+		 Usuario supervisorAlquileres = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES);
+		 Usuario supervisorSuelos = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
 			
 		 if ( (!Checks.esNulo(trabajo.getResponsableTrabajo())) && (trabajo.getResponsableTrabajo().getId().equals(usuariologado.getId()) || dtoTrabajo.getIdSupervisorActivo().equals(usuariologado.getId()))) {
+			 dtoTrabajo.setBloquearResponsable(false);
+		 }else if((!Checks.esNulo(trabajo.getResponsableTrabajo())) && ((!Checks.esNulo(supervisorEdificaciones))?usuariologado.getId().equals(supervisorEdificaciones.getId()):(!Checks.esNulo(supervisorAlquileres))?usuariologado.getId().equals(supervisorAlquileres.getId()):(!Checks.esNulo(supervisorSuelos))?usuariologado.getId().equals(supervisorSuelos.getId()):false)){
 			 dtoTrabajo.setBloquearResponsable(false);
 		 }
 		 else {
 			 dtoTrabajo.setBloquearResponsable(true);
 		 }
 		 
-	
-		 
-		
-		 
+		 if(!Checks.esNulo(supervisorEdificaciones)){
+			 dtoTrabajo.setIdSupervisorEdificaciones(supervisorEdificaciones.getId());
+		 }else if(!Checks.esNulo(supervisorAlquileres)){
+			 dtoTrabajo.setIdSupervisorAlquileres(supervisorAlquileres.getId());
+		 }else if(!Checks.esNulo(supervisorSuelos)){
+			 dtoTrabajo.setIdSupervisorSuelos(supervisorSuelos.getId());
+		 }
 
 		return dtoTrabajo;
 	}

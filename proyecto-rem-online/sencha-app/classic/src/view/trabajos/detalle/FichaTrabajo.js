@@ -20,12 +20,15 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
         me.idProveedor =  me.lookupController().getViewModel().get('trabajo').get('idProveedor');
         me.idSolicitante =  me.lookupController().getViewModel().get('trabajo').get('idSolicitante');
         me.idResponsableTrabajo = me.lookupController().getViewModel().get('trabajo').get('idResponsableTrabajo');
+        me.idSupervisorEdificaciones = me.lookupController().getViewModel().get('trabajo').get('idSupervisorEdificaciones');
+        me.idSupervisorAlquileres = me.lookupController().getViewModel().get('trabajo').get('idSupervisorAlquileres');
+        me.idSupervisorSuelos = me.lookupController().getViewModel().get('trabajo').get('idSupervisorSuelos');
         var editar = me.lookupController().getViewModel().get('trabajo').get('bloquearResponsable');
         //NOTA: En cuanto a la visualización del campo “Responsable del trabajo”, 
         //lo podrán ver tanto el “Gestor/Supervisor de activo” y el “Gestor/Supervisor de alquileres, edificaciones, suelo”, así comomo, el proveedor y el solicitante.
         var mostrar =  !($AU.getUser().userId ==  me.idResponsableTrabajo|| $AU.getUser().userId ==   me.idSupervisorActivo || 
-        		$AU.getUser().userId ==  me.idGestorActivoResponsable ||$AU.getUser().userId ==  me.idProveedor || $AU.getUser().userId==  me.idSolicitante);
-        
+        		$AU.getUser().userId == me.idGestorActivoResponsable || $AU.getUser().userId == me.idProveedor || $AU.getUser().userId == me.idSolicitante ||
+        		$AU.getUser().userId == me.idSupervisorEdificaciones || $AU.getUser().userId == me.idSupervisorAlquileres || $AU.getUser().userId == me.idSupervisorSuelos);
              me.items= [
         			{
 						xtype:'fieldsettable',

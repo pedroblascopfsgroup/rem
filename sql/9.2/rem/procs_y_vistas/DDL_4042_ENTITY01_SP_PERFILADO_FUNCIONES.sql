@@ -21,21 +21,21 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 SET DEFINE OFF;
 
-CREATE OR REPLACE PROCEDURE SP_PERFILADO_FUNCIONES (
+create or replace PROCEDURE SP_PERFILADO_FUNCIONES (
   V_USUARIO   VARCHAR2 DEFAULT 'SP_PEF_FUN'
 )
 AS
 
-  V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; 	-- '#ESQUEMA#'; -- Configuracion Esquema
-  V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#';	-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
-  V_SQL VARCHAR2(4000 CHAR); -- Vble. para almacenar la sentencia.    
+  V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; 	-- 'REM01'; -- Configuracion Esquema
+  V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#';	-- 'REMMASTER'; -- Configuracion Esquema Master
+  V_SQL VARCHAR2(4000 CHAR); -- Vble. para almacenar la sentencia.
   V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
 
-  V_TABLA VARCHAR2(30 CHAR) := 'FUN_PEF';  -- Tabla objetivo     
+  V_TABLA VARCHAR2(30 CHAR) := 'FUN_PEF';  -- Tabla objetivo
   V_TABLA_TMP VARCHAR2(30 CHAR) := 'TMP_FUN_PEF';  -- Tabla objetivo
 
   --Array que contiene los registros que se van a actualizar
-  TYPE T_VAR is table of VARCHAR2(250); 
+  TYPE T_VAR is table of VARCHAR2(250);
   TYPE T_ARRAY IS TABLE OF T_VAR;
   V_FUN T_ARRAY := T_ARRAY(
     ------    FUNCION   ---------------------------------------2---3---4---5---6---7---8---9--10--11--12--13--14--15--16--17--18--19--20--21--22--23--24--25--26--27--28--29--31--31--32--33--34--35--36--37--38--39--40--
@@ -222,6 +222,8 @@ T_VAR( 'EDITAR_TAB_DATOS_PROVEEDORES','N','N','N','N','N','N','N','N','N','N','N
 T_VAR( 'TAB_DOCUMENTOS_PROVEEDORES','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'),
 T_VAR( 'EDITAR_TAB_DOCUMENTOS_PROVEEDORES','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','S'),
 
+T_VAR( 'ADD_QUITAR_PROVEEDORES','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','S'),
+
 T_VAR( 'MASIVO_DESDESPUBLICAR_FORZADO','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'ACTUALIZAR_PUBLICAR','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'ACTUALIZAR_OCULTARACTIVO','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N'),
@@ -277,35 +279,35 @@ V_TMP_VAR T_VAR;
 BEGIN
 
     DBMS_OUTPUT.PUT_LINE('[INICIO]');
-
     --######################################
     --########   INSERTAR VALORES  #########
     --######################################
 
     -- Verificar si la tabla existe
     V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA_TMP||''' AND OWNER = '''||V_ESQUEMA||'''';
-    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;   
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
-    IF V_NUM_TABLAS > 0 THEN    
+    IF V_NUM_TABLAS > 0 THEN
 
       DBMS_OUTPUT.PUT_LINE('  [INFO] TRUNCANDO TABLA '||V_ESQUEMA||'.'||V_TABLA_TMP||'...');
 
       V_SQL := 'TRUNCATE TABLE '||V_ESQUEMA||'.'||V_TABLA_TMP||'';
       EXECUTE IMMEDIATE V_SQL;
 
-      FOR I IN V_FUN.FIRST .. V_FUN.LAST 
+      FOR I IN V_FUN.FIRST .. V_FUN.LAST
         LOOP
-        V_TMP_VAR := V_FUN(I);  
+        V_TMP_VAR := V_FUN(I);
 
         V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_TMP||' WHERE FUNCION = '''||V_TMP_VAR(1)||'''';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-
+        
         IF V_NUM_TABLAS = 0 THEN
 
           DBMS_OUTPUT.PUT_LINE('    [INFO] INSERTANDO PERFILADO PARA LA FUNCION '||V_TMP_VAR(1)||'...');
 
           V_SQL := '
             INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_TMP||' (
+
 			FUNCION                
 			,HAYAGESTADM	
 			,HAYASUPADM	
@@ -347,14 +349,15 @@ BEGIN
 			,HAYAGESTCOM	
 			,HAYASUPCOM
       ,HAYAGOLDTREE
-			,FVDNEGOCIO	
-			,FVDBACKOFERTA	
-			,FVDBACKVENTA	
-			,SUPFVD	
-			,GESRES	
-			,SUPRES	
-			,GESMIN	
-			,SUPMIN                     
+			,FVDNEGOCIO
+			,FVDBACKOFERTA
+			,FVDBACKVENTA
+			,SUPFVD
+			,GESRES
+			,SUPRES
+			,GESMIN
+			,SUPMIN
+			,GESPROV
             )
             SELECT
               '''||V_TMP_VAR(1)||'''
@@ -405,7 +408,8 @@ BEGIN
 			  , '''||V_TMP_VAR(46)||'''
 			  , '''||V_TMP_VAR(47)||'''
         , '''||V_TMP_VAR(48)||'''
-	, '''||V_TMP_VAR(49)||'''
+        , '''||V_TMP_VAR(49)||'''
+        , '''||V_TMP_VAR(50)||'''
             FROM DUAL
           '
           ;
@@ -415,7 +419,7 @@ BEGIN
           DBMS_OUTPUT.PUT_LINE('    [INFO] LA FUNCION '||V_TMP_VAR(1)||' YA TIENE PERFILADO.');
         END IF;
 
-      END LOOP; 
+      END LOOP;
 
       --######################################
       --########   BAJA TABLA FUN_PEF   ######
@@ -424,10 +428,10 @@ BEGIN
       DBMS_OUTPUT.PUT_LINE('  [INFO] DANDO DE BAJA PERFILADOS EN LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'...');
 
       V_SQL := '
-        DELETE FROM '||V_ESQUEMA||'.FUN_PEF 
-        WHERE (FUN_ID, PEF_ID) 
+        DELETE FROM '||V_ESQUEMA||'.FUN_PEF
+        WHERE (FUN_ID, PEF_ID)
         IN (
-          SELECT FUN_ID, PEF_ID 
+          SELECT FUN_ID, PEF_ID
           FROM (
             WITH PERFILES AS (
               SELECT
@@ -441,6 +445,7 @@ BEGIN
                 FOR
                 PERFIL
                 IN (
+<<<<<<< HEAD
              HAYAGESTADM	
 			,HAYASUPADM	
 			,HAYAGESACT	
@@ -481,23 +486,24 @@ BEGIN
 			,HAYAGESTCOM	
 			,HAYASUPCOM
       ,HAYAGOLDTREE
-			,FVDNEGOCIO	
-			,FVDBACKOFERTA	
-			,FVDBACKVENTA	
-			,SUPFVD	
-			,GESRES	
-			,SUPRES	
-			,GESMIN	
-			,SUPMIN 
+			,FVDNEGOCIO
+			,FVDBACKOFERTA
+			,FVDBACKVENTA
+			,SUPFVD
+			,GESRES
+			,SUPRES
+			,GESMIN
+			,SUPMIN
+            ,GESPROV
                 )
               )
             )
-            SELECT FUN.FUN_ID, PEF.PEF_ID 
-            FROM PERFILES 
+            SELECT FUN.FUN_ID, PEF.PEF_ID
+            FROM PERFILES
             JOIN '||V_ESQUEMA||'.PEF_PERFILES PEF ON PEF.PEF_CODIGO = PERFIL
             JOIN '||V_ESQUEMA_M||'.FUN_FUNCIONES FUN ON FUN.FUN_DESCRIPCION = FUNCION
             WHERE INCLUIR = ''N''
-            INTERSECT 
+            INTERSECT
             SELECT FUN_ID, PEF_ID FROM '||V_ESQUEMA||'.FUN_PEF
           )
         )
@@ -505,7 +511,7 @@ BEGIN
       ;
       EXECUTE IMMEDIATE V_SQL;
 
-      DBMS_OUTPUT.PUT_LINE('  [INFO] PERFILADOS DADOS DE BAJA - '||SQL%ROWCOUNT||''); 
+      DBMS_OUTPUT.PUT_LINE('  [INFO] PERFILADOS DADOS DE BAJA - '||SQL%ROWCOUNT||'');
 
       --######################################
       --########   ALTA TABLA FUN_PEF   ######
@@ -514,15 +520,15 @@ BEGIN
       DBMS_OUTPUT.PUT_LINE('  [INFO] DANDO DE ALTA NUEVOS PERFILADOS EN LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'...');
 
       V_SQL := '
-        INSERT INTO FUN_PEF (FP_ID, FUN_ID, PEF_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) 
-        SELECT 
+        INSERT INTO FUN_PEF (FP_ID, FUN_ID, PEF_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+        SELECT
           '||V_ESQUEMA||'.S_FUN_PEF.NEXTVAL
           , FUN_ID
           , PEF_ID
           , 0
           , '''||V_USUARIO||'''
           , SYSDATE
-          , 0 
+          , 0
         FROM (
             WITH PERFILES AS (
             SELECT
@@ -538,6 +544,7 @@ BEGIN
                   PERFIL
                IN
                (
+<<<<<<< HEAD
                 HAYAGESTADM	
 			,HAYASUPADM	
 			,HAYAGESACT	
@@ -578,30 +585,31 @@ BEGIN
 			,HAYAGESTCOM	
 			,HAYASUPCOM
       ,HAYAGOLDTREE
-			,FVDNEGOCIO	
-			,FVDBACKOFERTA	
-			,FVDBACKVENTA	
-			,SUPFVD	
-			,GESRES	
-			,SUPRES	
-			,GESMIN	
-			,SUPMIN 
+			,FVDNEGOCIO
+			,FVDBACKOFERTA
+			,FVDBACKVENTA
+			,SUPFVD
+			,GESRES
+			,SUPRES
+			,GESMIN
+			,SUPMIN
+            ,GESPROV
                )
             )
           )
-          SELECT FUN.FUN_ID, PEF.PEF_ID 
-          FROM PERFILES 
+          SELECT FUN.FUN_ID, PEF.PEF_ID
+          FROM PERFILES
           JOIN '||V_ESQUEMA||'.PEF_PERFILES PEF ON PEF.PEF_CODIGO = PERFIL
           JOIN '||V_ESQUEMA_M||'.FUN_FUNCIONES FUN ON FUN.FUN_DESCRIPCION = FUNCION
           WHERE INCLUIR = ''S''
-          MINUS 
+          MINUS
           SELECT FUN_ID, PEF_ID FROM '||V_ESQUEMA||'.FUN_PEF
         )
       '
       ;
       EXECUTE IMMEDIATE V_SQL;
 
-      DBMS_OUTPUT.PUT_LINE('  [INFO] PERFILADOS DADOS DE ALTA - '||SQL%ROWCOUNT||''); 
+      DBMS_OUTPUT.PUT_LINE('  [INFO] PERFILADOS DADOS DE ALTA - '||SQL%ROWCOUNT||'');
 
     ELSE
       DBMS_OUTPUT.PUT_LINE('  [INFO] LA TABLA '||V_ESQUEMA|| '.'||V_TABLA_TMP||'... NO EXISTE.');
@@ -620,6 +628,7 @@ EXCEPTION
     RAISE;
 
 END;
+
 
 /
 

@@ -1501,7 +1501,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		Boolean agrCanarias = false;
 		Boolean actCanarias = false;
-				
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_AGR_AGRUPACION AGR " + 
 				"JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID " + 
 				"JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AGA.ACT_ID " + 
@@ -1514,8 +1513,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		
 		resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_ACTIVO ACT " + 
-				"JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID " + 
-				"JOIN ACT_AGR_AGRUPACION AGR ON AGA.AGR_ID = AGR.AGR_ID " + 
 				"JOIN BIE_BIEN BIE ON BIE.BIE_ID = ACT.BIE_ID " + 
 				"JOIN BIE_LOCALIZACION LOC ON LOC.BIE_ID = BIE.BIE_ID " + 
 				"JOIN REMMASTER.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_ID = LOC.DD_PRV_ID AND DD_PRV_CODIGO IN ('35', '38') " + 
@@ -1671,5 +1668,51 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return resultado;
 	}
 
+	@Override
+	public Boolean agrupacionEstaVacia(String numAgrupacion) {
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_AGR_AGRUPACION AGR " + 
+				"JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID " + 
+				"WHERE AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+" ");
+		
+		return resultado.equals("0");		
+	}
+
+	@Override
+	public Boolean distintosTiposImpuestoAgrupacionVacia(List<String> listaActivos) {
+
+		Boolean actCanarias;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_ACTIVO ACT "
+				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID "
+				+ "JOIN ACT_AGR_AGRUPACION AGR ON AGA.AGR_ID = AGR.AGR_ID "
+				+ "JOIN BIE_BIEN BIE ON BIE.BIE_ID = ACT.BIE_ID "
+				+ "JOIN BIE_LOCALIZACION LOC ON LOC.BIE_ID = BIE.BIE_ID "
+				+ "JOIN REMMASTER.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_ID = LOC.DD_PRV_ID AND DD_PRV_CODIGO IN ('35', '38') "
+				+ "WHERE ACT.ACT_NUM_ACTIVO = " + listaActivos.get(0) + " ");
+
+		if (Integer.valueOf(resultado) > 0)
+			actCanarias = true;
+		else
+			actCanarias = false;
+
+		for (String activo : listaActivos) {
+			resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_ACTIVO ACT "
+					+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID "
+					+ "JOIN ACT_AGR_AGRUPACION AGR ON AGA.AGR_ID = AGR.AGR_ID "
+					+ "JOIN BIE_BIEN BIE ON BIE.BIE_ID = ACT.BIE_ID "
+					+ "JOIN BIE_LOCALIZACION LOC ON LOC.BIE_ID = BIE.BIE_ID "
+					+ "JOIN REMMASTER.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_ID = LOC.DD_PRV_ID AND DD_PRV_CODIGO IN ('35', '38') "
+					+ "WHERE ACT.ACT_NUM_ACTIVO = " + activo + " ");
+
+			if ((Integer.valueOf(resultado) > 0) != actCanarias) {
+				return true;
+			}
+		}
+
+		return false;
+
+	}
+	
 	
 }

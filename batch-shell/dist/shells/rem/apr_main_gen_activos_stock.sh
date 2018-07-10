@@ -24,22 +24,21 @@ if [ -f $MAINSH ]; then
     java -Xms512M -Xmx1536M -Dconfig.dir=$DIR_CONFIG -Dconfig.file.mask=$CFG_FILE -Duser.country=ES -Duser.language=es -cp $CLASS2 $CLASEINICIO --context=Default "$@"
         
 if [ $? = 0 ]; then
-echo " --------------------------------------------------------------------------------------------------"
-echo "Comienzo transferencia fichero RUSTOCK.txt"
-   lftp -c "open -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.235.59; ls /datos/usuarios/socpart/CISA/in"
-echo "---------------------------------------------------------------------------------------------------"
 
-   lftp -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.235.59 <<EOF
+  lftp -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.235.59 <<EOF
   cd /datos/usuarios/socpart/CISA/in/
   mput $DIR_SALIDA/RUSTOCK.txt
   cd /datos/usuarios/socpart/CISA/out/
   mput $DIR_SALIDA/RUSTOCK.txt
   bye
 EOF
-echo "---------------------------------------------------------------------------------------------------"
-echo "Finalización de transferencia fichero RUSTOCK.txt"
-  lftp -c "open -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.235.59; ls /datos/usuarios/socpart/CISA/in"
-echo "---------------------------------------------------------------------------------------------------"
+echo "Buenas tardes,"
+echo "Cadenas acabadas correctamente"
+echo "Ficheros en el servidor:"
+
+   lftp -c "open -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.235.59; ls /datos/usuarios/socpart/CISA/in | grep RUFACTUSP.txt"
+   lftp -c "open -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.235.59; ls /datos/usuarios/socpart/CISA/in | grep RUFACTUCP.txt"
+   lftp -c "open -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.235.59; ls /datos/usuarios/socpart/CISA/in | grep RUSTOCK.txt"
   exit 0
 fi    
 

@@ -30,6 +30,7 @@ import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
@@ -87,6 +88,13 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 			}
 			String valorComboProcede= null;
 			String valorComboMotivoAnularReserva= null;
+			
+			Activo activo = expediente.getOferta().getActivoPrincipal();
+			Boolean checkFormalizar = false;
+			if(!Checks.esNulo(activo)){
+				PerimetroActivo pac = genericDao.get(PerimetroActivo.class, genericDao.createFilter(FilterType.EQUALS, "activo", activo));
+				checkFormalizar = pac.getAplicaFormalizar() == 0 ? false : true;
+			}
 
 			if(!Checks.esNulo(expediente)) {
 
@@ -117,7 +125,8 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						DDMotivoAnulacionExpediente motivoAnulacion = genericDao.get(DDMotivoAnulacionExpediente.class, filtro);
 						expediente.setMotivoAnulacion(motivoAnulacion);
 
-						if(!tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) && !DDEstadosExpedienteComercial.EN_TRAMITACION.equals(estadoOriginal)) {
+						if(!tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) && !DDEstadosExpedienteComercial.EN_TRAMITACION.equals(estadoOriginal)
+								&& checkFormalizar) {
 							// Notificar del rechazo de la oferta a Bankia.
 							try {
 								uvemManagerApi.anularOferta(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionOfertaPorCodigoMotivoAnulacion(valor.getValor()));

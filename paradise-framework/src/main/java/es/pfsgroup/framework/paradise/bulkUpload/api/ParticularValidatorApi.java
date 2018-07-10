@@ -316,4 +316,8 @@ public interface ParticularValidatorApi {
 
 	List<Long> getRelacionGastoActivo(String numGasto);
 
+	public Boolean agrupacionEstaVacia(String numAgrupacion);
+
+	public Boolean distintosTiposImpuestoAgrupacionVacia(List<String> activosList);
+
 }

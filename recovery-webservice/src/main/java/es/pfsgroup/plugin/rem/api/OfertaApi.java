@@ -552,5 +552,7 @@ public interface OfertaApi {
 	boolean comprobarComiteLiberbankPlantillaPropuesta(TareaExterna tareaExterna);
 
 	DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada);
+
+	Boolean checkProvinciaCompradores(TareaExterna tareaExterna);
 }
 

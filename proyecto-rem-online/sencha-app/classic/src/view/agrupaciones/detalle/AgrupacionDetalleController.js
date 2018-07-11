@@ -937,11 +937,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     },
     
     onChangeCheckboxPublicarSinPrecioVenta: function(checkbox, isDirty) {
+    	
 	    var me = this;
 	    var checkboxPublicarVenta = checkbox.up('agrupacionesdetallemain').lookupReference('chkbxpublicarventa');
-	    var estadoPubVentaPublicado = me.getViewModel().get('agrupacionficha').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'] ||
-	        me.getViewModel().get('agrupacionficha').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PRE_PUBLICADO'] ||
-	        me.getViewModel().get('agrupacionficha').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['OCULTO'];
+	    var estadoPubVentaPublicado = me.getViewModel().get('datospublicacionagrupacion').getData().codigoEstadoPublicacionVenta === CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'] ||
+	        me.getViewModel().get('datospublicacionagrupacion').getData().codigoEstadoPublicacionVenta === CONST.ESTADO_PUBLICACION_VENTA['PRE_PUBLICADO'] ||
+	        me.getViewModel().get('datospublicacionagrupacion').getData().codigoEstadoPublicacionVenta === CONST.ESTADO_PUBLICACION_VENTA['OCULTO'];
 
 	    if(isDirty && !estadoPubVentaPublicado) {
 	        var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionagrupacion').getData().precioWebVenta) && !checkbox.getValue();
@@ -1001,11 +1002,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     },
     
     onChangeCheckboxPublicarSinPrecioAlquiler: function(checkbox, isDirty) {
+    	
         var me = this;
 		var checkboxPublicarAlquiler = checkbox.up('agrupacionesdetallemain').lookupReference('chkbxpublicaralquiler');
-		var estadoPubAlquilerPublicado = me.getViewModel().get('agrupacionficha').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'] ||
-			me.getViewModel().get('agrupacionficha').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PRE_PUBLICADO'] ||
-			me.getViewModel().get('agrupacionficha').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['OCULTO'];
+		var estadoPubAlquilerPublicado = me.getViewModel().get('datospublicacionagrupacion').getData().codigoEstadoPublicacionAlquiler === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'] ||
+			me.getViewModel().get('datospublicacionagrupacion').getData().codigoEstadoPublicacionAlquiler === CONST.ESTADO_PUBLICACION_ALQUILER['PRE_PUBLICADO'] ||
+			me.getViewModel().get('datospublicacionagrupacion').getData().codigoEstadoPublicacionAlquiler === CONST.ESTADO_PUBLICACION_ALQUILER['OCULTO'];
 
 		if(isDirty && !estadoPubAlquilerPublicado) {
 			var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionagrupacion').getData().precioWebAlquiler) && !checkbox.getValue();

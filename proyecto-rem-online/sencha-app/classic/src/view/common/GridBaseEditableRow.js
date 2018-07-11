@@ -434,6 +434,10 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
    	  		Ext.MessageBox.confirm(HreRem.i18n('title.agrupacion.guardar.condicion.title'), me.confirmSaveTxt, function(btn, value, opt){
    	  			if(btn === "yes"){
    	  				me.saveFunction(editor, context);
+   	  			} else{
+	   	  			if (context.store.load) {
+	                	context.store.load();
+	                }
    	  			}
    	  		}, me);
    		}else{

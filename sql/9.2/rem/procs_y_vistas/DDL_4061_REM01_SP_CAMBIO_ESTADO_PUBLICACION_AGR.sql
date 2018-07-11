@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=CARLOS LOPEZ
---## FECHA_CREACION=20180508
+--## AUTOR=Ivan Rubio
+--## FECHA_CREACION=20180711
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-4074
@@ -10,7 +10,8 @@
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial Carlos Lopez HREOS-4074
+--##		0.2 Cambio SP_MOTIVO_OCULTACION por SP_MOTIVO_OCULTACION_AGR Ivan Rubio HREOS-4218
 --##########################################
 --*/
 
@@ -769,7 +770,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
         
         IF vDD_TCO_CODIGO IN ('02','03','04') THEN
           IF (vCODIGO_ESTADO_A = '03' AND vCHECK_PUBLICAR_A = 1) THEN
-            #ESQUEMA#.SP_MOTIVO_OCULTACION (nAGR_ID, 'A', OutOCULTAR, OutMOTIVO);
+            #ESQUEMA#.SP_MOTIVO_OCULTACION_AGR (nAGR_ID, 'A', OutOCULTAR, OutMOTIVO);
     
             IF OutOCULTAR = 1 THEN
               PLP$CAMBIO_OCULTO_MOTIVO(nAGR_ID, 'A', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
@@ -790,7 +791,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
         
         IF vDD_TCO_CODIGO IN ('01','02') THEN
           IF (vCODIGO_ESTADO_V = '03' AND vCHECK_PUBLICAR_V = 1) THEN
-            #ESQUEMA#.SP_MOTIVO_OCULTACION (nAGR_ID, 'V', OutOCULTAR, OutMOTIVO);
+            #ESQUEMA#.SP_MOTIVO_OCULTACION_AGR (nAGR_ID, 'V', OutOCULTAR, OutMOTIVO);
     
             IF OutOCULTAR = 1 THEN
               IF OutMOTIVO = '03' AND vDD_TAL_CODIGO = '01' THEN /*SI MOTIVO ES ALQUILADO Y TIPO ALQUILER ORDINARIO, NO OCULTAR*/
@@ -835,7 +836,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
         
         IF vDD_TCO_CODIGO IN ('02','03','04') THEN
           IF vCODIGO_ESTADO_A = '04' THEN
-            #ESQUEMA#.SP_MOTIVO_OCULTACION (nAGR_ID, 'A', OutOCULTAR, OutMOTIVO);
+            #ESQUEMA#.SP_MOTIVO_OCULTACION_AGR (nAGR_ID, 'A', OutOCULTAR, OutMOTIVO);
     
             IF OutOCULTAR = 0 AND vDD_MTO_MANUAL_A = 0 THEN
               PLP$CAMBIO_ESTADO_ALQUILER(nAGR_ID, '03', vUSUARIOMODIFICAR);
@@ -857,7 +858,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
         
         IF vDD_TCO_CODIGO IN ('01','02') THEN
           IF vCODIGO_ESTADO_V = '04' THEN
-            #ESQUEMA#.SP_MOTIVO_OCULTACION (nAGR_ID, 'V', OutOCULTAR, OutMOTIVO);
+            #ESQUEMA#.SP_MOTIVO_OCULTACION_AGR (nAGR_ID, 'V', OutOCULTAR, OutMOTIVO);
     
             IF OutOCULTAR = 0 AND vDD_MTO_MANUAL_V = 0 THEN
               PLP$CAMBIO_ESTADO_VENTA(nAGR_ID, '03', vUSUARIOMODIFICAR);

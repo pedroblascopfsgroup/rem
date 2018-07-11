@@ -10,6 +10,12 @@ Ext.define('HreRem.model.DatosPublicacionAgrupacion', {
 	 			name: 'estadoPublicacionAlquiler'
 	 		},
 	 		{
+	 			name: 'codigoEstadoPublicacionVenta'
+	 		},
+	 		{
+	 			name: 'codigoEstadoPublicacionAlquiler'
+	 		},
+	 		{
 	 			name: 'precioWebVenta'
 	 		},
 	 		{

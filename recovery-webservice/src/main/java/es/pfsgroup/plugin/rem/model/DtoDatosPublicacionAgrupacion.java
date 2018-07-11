@@ -47,6 +47,8 @@ public class DtoDatosPublicacionAgrupacion extends DtoDatosPublicacionActivo {
 	private Boolean incluidoEnPerimetro;
 	private Long idActivoPrincipal;
 	private String claseActivoCodigo;
+	private String codigoEstadoPublicacionVenta;
+	private String codigoEstadoPublicacionAlquiler;
 	
 	//Condicionantes
 	private Boolean ruina;
@@ -233,5 +235,21 @@ public class DtoDatosPublicacionAgrupacion extends DtoDatosPublicacionActivo {
 
 	public void setConCargas(Boolean conCargas) {
 		this.conCargas = conCargas;
+	}
+
+	public String getCodigoEstadoPublicacionVenta() {
+		return codigoEstadoPublicacionVenta;
+	}
+
+	public void setCodigoEstadoPublicacionVenta(String codigoEstadoPublicacionVenta) {
+		this.codigoEstadoPublicacionVenta = codigoEstadoPublicacionVenta;
+	}
+
+	public String getCodigoEstadoPublicacionAlquiler() {
+		return codigoEstadoPublicacionAlquiler;
+	}
+
+	public void setCodigoEstadoPublicacionAlquiler(String codigoEstadoPublicacionAlquiler) {
+		this.codigoEstadoPublicacionAlquiler = codigoEstadoPublicacionAlquiler;
 	}
 }

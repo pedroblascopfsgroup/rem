@@ -2399,6 +2399,12 @@ public class AgrupacionAdapter {
 		
 		dto.setPrecioWebVenta(precioWebVenta);
 		dto.setPrecioWebAlquiler(precioWebAlquiler);
+		if(!Checks.esNulo(activoPrincipal.getActivoPublicacion()) && !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionAlquiler())) {
+			dto.setCodigoEstadoPublicacionAlquiler(activoPrincipal.getActivoPublicacion().getEstadoPublicacionAlquiler().getCodigo());	
+		}
+		if(!Checks.esNulo(activoPrincipal.getActivoPublicacion()) && !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionVenta())) {
+			dto.setCodigoEstadoPublicacionVenta(activoPrincipal.getActivoPublicacion().getEstadoPublicacionVenta().getCodigo());	
+		}
 		
 		dto.setRuina(vCondicionantesAgrDisponibilidad.getRuina());
 		dto.setPendienteInscripcion(vCondicionantesAgrDisponibilidad.getPendienteInscripcion());
@@ -2407,6 +2413,7 @@ public class AgrupacionAdapter {
 		dto.setProindiviso(vCondicionantesAgrDisponibilidad.getProindiviso());
 		dto.setObraNuevaEnConstruccion(vCondicionantesAgrDisponibilidad.getObraNuevaEnConstruccion());
 		dto.setOcupadoConTitulo(vCondicionantesAgrDisponibilidad.getOcupadoConTitulo());
+		dto.setTapiado(vCondicionantesAgrDisponibilidad.getTapiado());
 		dto.setOtro(vCondicionantesAgrDisponibilidad.getOtro());
 		dto.setEstadoCondicionadoCodigo(vCondicionantesAgrDisponibilidad.getEstadoCondicionadoCodigo());
 		dto.setPortalesExternos(vCondicionantesAgrDisponibilidad.getPortalesExternos());

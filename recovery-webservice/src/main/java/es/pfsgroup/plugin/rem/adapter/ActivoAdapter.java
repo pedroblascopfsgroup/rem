@@ -2563,7 +2563,12 @@ public class ActivoAdapter {
 	public boolean actualizarEstadoPublicacionActivo(Long id) {
 		Activo activo = activoApi.get(id);
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		activoDao.publicarActivoConHistorico(activo.getId(), usuarioLogado.getUsername());
+
+		if(activoApi.isActivoIntegradoAgrupacionRestringida(id)) {
+			activoDao.publicarAgrupacionConHistorico(activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(id).getAgrupacion().getId(), usuarioLogado.getUsername());
+		} else {
+			activoDao.publicarActivoConHistorico(activo.getId(), usuarioLogado.getUsername());
+		}
 
 		return true;
 	}

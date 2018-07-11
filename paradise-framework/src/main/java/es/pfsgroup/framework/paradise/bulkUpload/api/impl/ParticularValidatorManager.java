@@ -469,7 +469,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		INNER JOIN DD_SCR_SUBCARTERA scr "
 				+ "		ON act.DD_SCR_ID            = scr.DD_SCR_ID "
 				+ "		WHERE " 
-				+ "		scr.DD_SCR_CODIGO IN ('01','02','03','21') "
+				+ "		scr.DD_SCR_CODIGO IN ('01','02','03','38') "
 				+ "		AND act.ACT_NUM_ACTIVO = "+numActivo+" ");
 		if("0".equals(resultado))
 			return false;

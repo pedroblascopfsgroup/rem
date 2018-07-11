@@ -77,6 +77,10 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
     public static final String SALTO_CIERRE_ECONOMICO = "saltoCierreEconomico";
     public static final String SALTO_RESOLUCION_EXPEDIENTE = "saltoResolucionExpediente";
     public static final String SALTO_T013_RESOLUCION_EXPEDIENTE = "saltoT013_ResolucionExpediente";
+    public static final String CODIGO_SUPERVISOR_ALQUILERES = "SUALQ";
+    public static final String CODIGO_SUPERVISOR_SUELOS = "SUPSUE";
+    public static final String CODIGO_SUPERVISOR_EDIFICACIONES = "SUPEDI";
+    public static final String CODIGO_SUPERVISOR_ACTIVOS = "SUPACT";
     
     protected final Log logger = LogFactory.getLog(getClass());
 
@@ -725,7 +729,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 		TareaExterna tareaExterna = activoTareaExternaManagerApi.get(idTarea);
 		TareaActivo tareaActivo = ((TareaActivo)tareaExterna.getTareaPadre());
 		EXTTareaProcedimiento tareaProcedimiento = (EXTTareaProcedimiento) tareaExterna.getTareaProcedimiento();
-		Usuario usuarioLogado = null;
+		Usuario usuarioLogado = adapter.getUsuarioLogado();;
 		String nombreUsuarioWS = RestApi.REST_LOGGED_USER_USERNAME;
 		
 			
@@ -733,32 +737,54 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
     	UserAssigantionService userAssigantionService = userAssigantionServiceFactoryApi.getService(tareaProcedimiento.getCodigo());
 		
 		Usuario gestor = userAssigantionService.getUser(tareaExterna);
-		Usuario supervisor = userAssigantionService.getSupervisor(tareaExterna);
+		//Usuario supervisor = userAssigantionService.getSupervisor(tareaExterna);
 		Usuario galq = gestorActivoApi.getGestorByActivoYTipo(activo, "GALQ");
 		Usuario gsue = gestorActivoApi.getGestorByActivoYTipo(activo, "GSUE");
 		Usuario gedi = gestorActivoApi.getGestorByActivoYTipo(activo, "GEDI");
 		Usuario gact = gestorActivoApi.getGestorByActivoYTipo(activo, "GACT");
+		Usuario supervisor = null;
 
 		
 		// Asignador de GESTOR por factoria - Gestores encontrados por tarea-Activo
 		Trabajo trabajo = tarea.getTramite().getTrabajo();
-		Usuario user = trabajo.getSolicitante();
+		Usuario solicitante = trabajo.getSolicitante();
+		Usuario responsableTrabajo = trabajo.getResponsableTrabajo();
 		
-		ActivoProveedorContacto activoProveedorContacto = genericDao.get(ActivoProveedorContacto.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", user.getId()));
+		//Obtención de Supervisor
+		if(responsableTrabajo.equals(galq)){
+			supervisor = gestorActivoApi.getGestorByActivoYTipo(activo, CODIGO_SUPERVISOR_ALQUILERES);
+		}else if(responsableTrabajo.equals(gsue)){
+			supervisor = gestorActivoApi.getGestorByActivoYTipo(activo, CODIGO_SUPERVISOR_SUELOS);
+		}else if(responsableTrabajo.equals(gedi)){
+			supervisor = gestorActivoApi.getGestorByActivoYTipo(activo, CODIGO_SUPERVISOR_EDIFICACIONES);
+		}else if(responsableTrabajo.equals(gact)){
+			supervisor = gestorActivoApi.getGestorByActivoYTipo(activo, CODIGO_SUPERVISOR_ACTIVOS);
+		}
 		
-		if(!Checks.esNulo(activoProveedorContacto)){
-			//usuario proveedor.
-			//comprobar tipo trabajo. si actuac. tecnica: el destino = responsable; sino : destino = g. activo
-			if(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo())){
-				setUsuarioDestinoTarea(tareaActivo, nombreUsuarioWS, gestor, null, null, null, gact);
-			}else{
-				setUsuarioDestinoTarea(tareaActivo, nombreUsuarioWS, gestor, galq, gsue, gedi, gact);
+		if(!Checks.esNulo(solicitante) && !Checks.esNulo(responsableTrabajo)){
+			//Seteo de destinatario de las tareas del trabajo
+			if(solicitante.equals(responsableTrabajo)){ //Cuando el trabajo es recien creado
+				tareaActivo.setUsuario(solicitante);
+			}else{ //Cuando el solicitante es Proveedor u otro gestor que no sea el Gestor de Activo/Alquileres/Suelos/Edificaciones o Cuando cambias de responsable y avanzas la tarea
+				tareaActivo.setUsuario(responsableTrabajo);
 			}
 		}else{
-			if(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo())){
-				tareaActivo.setUsuario(trabajo.getResponsableTrabajo());
-			}else{
-				setUsuarioDestinoTarea(tareaActivo, nombreUsuarioWS, gestor, galq, gsue, gedi, gact);
+			if(!Checks.esNulo(gestor) ){
+				tareaActivo.setUsuario(gestor);
+			} else {
+				// HREOS-1714 Si el asignador de usuarios NO encuentra el gestor correspondiente:
+				// - Las tareas que se generen por usuario WS, deben asignarse al gestor y supervisor de activo
+				// - Para este mismo caso, el resto de usuarios registraran al usuario logado
+				usuarioLogado = adapter.getUsuarioLogado();
+				if(!Checks.esNulo(usuarioLogado)){			
+					if(nombreUsuarioWS.equals(usuarioLogado)){
+						Usuario gestorWS = gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+						if(!Checks.esNulo(gestorWS))
+							tareaActivo.setUsuario(gestorWS);
+					} else {
+						tareaActivo.setUsuario(usuarioLogado);
+					}
+				}
 			}
 		}
 		
@@ -767,7 +793,6 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 			tareaActivo.setSupervisorActivo(supervisor);
 		} else {
 			// HREOS-1714 Igual con supervisor
-			usuarioLogado = adapter.getUsuarioLogado();
 			if(!Checks.esNulo(usuarioLogado)){			
 				if(nombreUsuarioWS.equals(usuarioLogado)){
 					Usuario supervisorWS = gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS);
@@ -779,47 +804,6 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 			}
 		}		
     }
-
-	private void setUsuarioDestinoTarea(TareaActivo tareaActivo, String nombreUsuarioWS, Usuario gestor, Usuario galq,
-			Usuario gsue, Usuario gedi, Usuario gact) {
-		
-		Usuario usuarioLogado;
-		if (!Checks.esNulo(galq)) {
-			tareaActivo.setUsuario(galq);
-		}
-		else if (!Checks.esNulo(gsue)) 
-		{
-			tareaActivo.setUsuario(gsue);
-		}
-		else if(!Checks.esNulo(gedi))
-		{
-			tareaActivo.setUsuario(gedi);
-			
-		}
-		else if (!Checks.esNulo(gact)) {
-			
-			tareaActivo.setUsuario(gact);
-		}
-			
-		
-		else if(!Checks.esNulo(gestor) ){
-			tareaActivo.setUsuario(gestor);
-		} else {
-			// HREOS-1714 Si el asignador de usuarios NO encuentra el gestor correspondiente:
-			// - Las tareas que se generen por usuario WS, deben asignarse al gestor y supervisor de activo
-			// - Para este mismo caso, el resto de usuarios registraran al usuario logado
-			usuarioLogado = adapter.getUsuarioLogado();
-			if(!Checks.esNulo(usuarioLogado)){			
-				if(nombreUsuarioWS.equals(usuarioLogado)){
-					Usuario gestorWS = gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), GestorActivoApi.CODIGO_GESTOR_ACTIVO);
-					if(!Checks.esNulo(gestorWS))
-						tareaActivo.setUsuario(gestorWS);
-				} else {
-					tareaActivo.setUsuario(usuarioLogado);
-				}
-			}
-		}
-	}
     
     /**
      * 

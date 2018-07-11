@@ -940,23 +940,28 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Usuario gsue = gestorActivoApi.getGestorByActivoYTipo(activo, "GSUE");
 		Usuario gedi = gestorActivoApi.getGestorByActivoYTipo(activo, "GEDI");
 		Usuario gact = gestorActivoApi.getGestorByActivoYTipo(activo, "GACT");
-		if (!Checks.esNulo(galq))
-		{
-			trabajo.setResponsableTrabajo(galq);
-		}
-		else if (!Checks.esNulo(gsue)) {
-			trabajo.setResponsableTrabajo(gsue);
-		}
-		else if (!Checks.esNulo(gedi))
-		{
-			trabajo.setResponsableTrabajo(gedi);
-		}
-		else {
-			trabajo.setResponsableTrabajo(gact);
+		
+		Usuario solicitante = genericAdapter.getUsuarioLogado();
+		
+		if((!Checks.esNulo(galq) && solicitante.equals(galq)) 
+				|| (!Checks.esNulo(gsue) && solicitante.equals(gsue)) 
+				|| (!Checks.esNulo(gedi) && solicitante.equals(gedi)) 
+				|| (!Checks.esNulo(gact) && solicitante.equals(gact))){
+			trabajo.setResponsableTrabajo(solicitante);
+		}else{
+			if (!Checks.esNulo(galq))
+			{
+				trabajo.setResponsableTrabajo(galq);
+			}
+			else if (!Checks.esNulo(gsue)) {
+				trabajo.setResponsableTrabajo(gsue);
+			}
+			else if (!Checks.esNulo(gedi))
+			{
+				trabajo.setResponsableTrabajo(gedi);
+			}
 		}
 		
-
-
 		try {
 
 			dtoToTrabajo(dtoTrabajo, trabajo);
@@ -1411,13 +1416,29 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setFechaAutorizacionPropietario(trabajo.getFechaAutorizacionPropietario());
 		 }
 		 
+		 Usuario supervisorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS);
 		 Usuario supervisorEdificaciones = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
 		 Usuario supervisorAlquileres = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES);
 		 Usuario supervisorSuelos = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
+		 Usuario gestorEdificaciones = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+		 Usuario gestorAlquileres = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
+		 Usuario gestorSuelos = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS);
+		 Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+		 Usuario responsableTrabajo = trabajo.getResponsableTrabajo();
 			
-		 if ( (!Checks.esNulo(trabajo.getResponsableTrabajo())) && (trabajo.getResponsableTrabajo().getId().equals(usuariologado.getId()) || dtoTrabajo.getIdSupervisorActivo().equals(usuariologado.getId()))) {
+		 if(!Checks.esNulo(responsableTrabajo)?usuariologado.equals(responsableTrabajo):false){
 			 dtoTrabajo.setBloquearResponsable(false);
-		 }else if((!Checks.esNulo(trabajo.getResponsableTrabajo())) && ((!Checks.esNulo(supervisorEdificaciones))?usuariologado.getId().equals(supervisorEdificaciones.getId()):(!Checks.esNulo(supervisorAlquileres))?usuariologado.getId().equals(supervisorAlquileres.getId()):(!Checks.esNulo(supervisorSuelos))?usuariologado.getId().equals(supervisorSuelos.getId()):false)){
+		 }else if(((!Checks.esNulo(responsableTrabajo) && !Checks.esNulo(gestorEdificaciones))?responsableTrabajo.equals(gestorEdificaciones):false) 
+				 && (!Checks.esNulo(supervisorEdificaciones)?usuariologado.equals(supervisorEdificaciones):false)){
+			 dtoTrabajo.setBloquearResponsable(false);
+		 }else if(((!Checks.esNulo(responsableTrabajo) && !Checks.esNulo(gestorAlquileres))?responsableTrabajo.equals(gestorAlquileres):false) 
+				 && (!Checks.esNulo(supervisorAlquileres)?usuariologado.equals(supervisorAlquileres):false)){
+			 dtoTrabajo.setBloquearResponsable(false);
+		 }else if(((!Checks.esNulo(responsableTrabajo) && !Checks.esNulo(gestorSuelos))?responsableTrabajo.equals(gestorSuelos):false) 
+				 && (!Checks.esNulo(supervisorSuelos)?usuariologado.equals(supervisorSuelos):false)){
+			 dtoTrabajo.setBloquearResponsable(false);
+		 }else if(((!Checks.esNulo(responsableTrabajo) && !Checks.esNulo(gestorActivo))?responsableTrabajo.equals(gestorActivo):false) 
+				 && (!Checks.esNulo(supervisorActivo)?usuariologado.equals(supervisorActivo):false)){
 			 dtoTrabajo.setBloquearResponsable(false);
 		 }
 		 else {

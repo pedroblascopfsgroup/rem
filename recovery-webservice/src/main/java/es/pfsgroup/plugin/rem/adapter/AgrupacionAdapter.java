@@ -389,6 +389,7 @@ public class AgrupacionAdapter {
 				// la agrupación
 				
 				Activo activoPrincipal = agrupacion.getActivoPrincipal();
+				List<ActivoAgrupacionActivo> listaActivosAgr = agrupacion.getActivos();
 				
 				if(activoPrincipal != null) {					
 					PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activoPrincipal.getId());
@@ -397,11 +398,41 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "incluidoEnPerimetro", perimetroActivo.getIncluidoEnPerimetro() == 1);
 					}
 					
-					if (activoPrincipal.getTipoComercializacion() != null) {
-						BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionDescripcion",
-								activoPrincipal.getTipoComercializacion().getDescripcion());
+					if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
+						Boolean esMismoDestinoComercial = false;
+						//
+						System.out.println("Activo Principal ("+activoPrincipal.getNumActivo()+"): "+activoPrincipal.getActivoPublicacion().getTipoComercializacion().getDescripcion());
+						for (int i=0; i<listaActivosAgr.size(); i++) {
+							//
+							System.out.println("Activo numero ("+listaActivosAgr.get(i).getActivo().getNumActivo()+"): "+listaActivosAgr.get(i).getActivo().getActivoPublicacion().getTipoComercializacion().getDescripcion());
+							if (listaActivosAgr.get(i).getActivo().getActivoPublicacion().getTipoComercializacion().getDescripcion()
+									.equalsIgnoreCase(activoPrincipal.getActivoPublicacion().getTipoComercializacion().getDescripcion())) {
+								esMismoDestinoComercial = true;
+							} else {
+								esMismoDestinoComercial = false;
+								break;
+							}
+						}
+						
+						if (esMismoDestinoComercial == true) {
+							if (activoPrincipal.getActivoPublicacion().getTipoComercializacion() != null) {
+								BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionDescripcion",
+										activoPrincipal.getActivoPublicacion().getTipoComercializacion().getDescripcion());
+							}
+						} else {
+							BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionDescripcion",
+									"El destino comercial es incoherente");
+						}
+						
 						BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionCodigo",
-								activoPrincipal.getTipoComercializacion().getCodigo());
+								activoPrincipal.getActivoPublicacion().getTipoComercializacion().getCodigo());
+					} else {
+						if (activoPrincipal.getActivoPublicacion().getTipoComercializacion() != null) {
+							BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionDescripcion",
+									activoPrincipal.getActivoPublicacion().getTipoComercializacion().getDescripcion());
+							BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionCodigo",
+									activoPrincipal.getActivoPublicacion().getTipoComercializacion().getCodigo());
+						}
 					}
 
 					if (!activoPrincipal.getPropietariosActivo().isEmpty()) {

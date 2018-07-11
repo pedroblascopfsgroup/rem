@@ -119,6 +119,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', {
 								bind: {
 									readOnly: '{datospublicacionagrupacion.deshabilitarCheckPublicarVenta}',
 									value: '{datospublicacionagrupacion.publicarVenta}'
+								},
+								listeners: {
+									dirtychange: 'onChangeCheckboxPublicarVenta'
 								}
 							},
 							{

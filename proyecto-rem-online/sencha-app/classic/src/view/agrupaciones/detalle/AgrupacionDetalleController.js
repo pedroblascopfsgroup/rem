@@ -911,6 +911,19 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     	}).show();  	
     },
     
+    onChangeCheckboxPublicarVenta: function(checkbox, isDirty){
+    	var me = this;
+    	var chkbxPublicarSinPrecioVenta = checkbox.up('agrupacionesdetallemain').lookupReference('chkbxpublicarsinprecioventa').getValue();
+    	if (!chkbxPublicarSinPrecioVenta &&
+    			(Ext.isEmpty(me.getViewModel().get('datospublicacionagrupacion').getData().precioWebVenta) || 
+    					me.getViewModel().get('datospublicacionagrupacion').getData().precioWebVenta==="0.00")) {
+    		checkbox.setValue(false);
+    		checkbox.setReadOnly(true); 		
+    	} else {
+    		checkbox.setReadOnly(false); 
+    	} 
+    },
+    
     onChangeCheckboxOcultar: function(checkbox, isDirty) {
         var me = this;
         var combobox = me.lookupReference(checkbox.comboRefChained);
@@ -974,6 +987,17 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
         if (checkbox.getValue() && me.getViewModel().get('debePreguntarPorTipoPublicacionAlquiler')) {
 			Ext.create('HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion').show();
         }
+        
+    	var me = this;
+    	var chkbxPublicarSinPrecioAlquiler = checkbox.up('agrupacionesdetallemain').lookupReference('chkbxpublicarsinprecioalquiler').getValue();
+    	if (!chkbxPublicarSinPrecioAlquiler && 
+    			(Ext.isEmpty(me.getViewModel().get('datospublicacionagrupacion').getData().precioWebAlquiler) || 
+    				me.getViewModel().get('datospublicacionagrupacion').getData().precioWebAlquiler==="0.00")) {
+    		checkbox.setValue(false);
+    		checkbox.setReadOnly(true);
+    	} else {
+    		checkbox.setReadOnly(false); 
+    	} 
     },
     
     onChangeCheckboxOcultar: function(checkbox, isDirty) {

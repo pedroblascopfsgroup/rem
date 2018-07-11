@@ -154,18 +154,15 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		beanUtilNotNull.copyProperty(activo, "tipoTitulo", utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivo.class, DDTipoTituloActivo.tipoTituloPDV));
 		beanUtilNotNull.copyProperty(activo, "subtipoTitulo", utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoTituloActivo.class, dtoAAF.getSubtipoTituloCodigo()));
 		beanUtilNotNull.copyProperty(activo, "cartera", utilDiccionarioApi.dameValorDiccionarioByCod(DDCartera.class, dtoAAF.getCarteraCodigo()));
+		beanUtilNotNull.copyProperty(activo, "subcartera", utilDiccionarioApi.dameValorDiccionarioByCod(DDSubcartera.class, dtoAAF.getSubcarteraCodigo()));
 		if (!Checks.esNulo(activo.getCartera())) {
-			// Calcular la subcartera en base a la cartera (siempre tipo asistida) y establecer el
-			// 'num activo cartera'.
+			// Establecer el 'num activo cartera'.
 			if (DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
 				beanUtilNotNull.copyProperty(activo, "numActivoUvem", dtoAAF.getNumActivoCartera());
-				beanUtilNotNull.copyProperty(activo, "subcartera", utilDiccionarioApi.dameValorDiccionarioByCod(DDSubcartera.class, DDSubcartera.CODIGO_BAN_ASISTIDA));
 			} else if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())) {
 				beanUtilNotNull.copyProperty(activo, "numActivo", dtoAAF.getNumActivoCartera());
-				beanUtilNotNull.copyProperty(activo, "subcartera", utilDiccionarioApi.dameValorDiccionarioByCod(DDSubcartera.class, DDSubcartera.CODIGO_CAJ_ASISTIDA));
 			} else if (DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
 				beanUtilNotNull.copyProperty(activo, "idSareb", dtoAAF.getNumActivoCartera());
-				beanUtilNotNull.copyProperty(activo, "subcartera", utilDiccionarioApi.dameValorDiccionarioByCod(DDSubcartera.class, DDSubcartera.CODIGO_SAR_ASISTIDA));
 			}
 		}
 		beanUtilNotNull.copyProperty(activo, "idRecovery", dtoAAF.getIdAsuntoRecovery());

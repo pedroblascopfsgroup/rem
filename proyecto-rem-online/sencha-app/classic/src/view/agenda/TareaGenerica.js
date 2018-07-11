@@ -736,7 +736,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
     T004_AutorizacionPropietarioValidacion: function() {
         var me = this;
-        debugger;
+        
         if(CONST.CARTERA['LIBERBANK']===me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera')){
         	me.ocultarCampo(me.down('[name=numIncremento]'));
         	me.ocultarCampo(me.down('[name=comboAmpliacion]'));

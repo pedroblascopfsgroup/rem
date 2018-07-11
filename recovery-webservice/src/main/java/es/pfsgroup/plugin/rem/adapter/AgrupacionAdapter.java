@@ -400,11 +400,7 @@ public class AgrupacionAdapter {
 					
 					if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 						Boolean esMismoDestinoComercial = false;
-						//
-						System.out.println("Activo Principal ("+activoPrincipal.getNumActivo()+"): "+activoPrincipal.getActivoPublicacion().getTipoComercializacion().getDescripcion());
 						for (int i=0; i<listaActivosAgr.size(); i++) {
-							//
-							System.out.println("Activo numero ("+listaActivosAgr.get(i).getActivo().getNumActivo()+"): "+listaActivosAgr.get(i).getActivo().getActivoPublicacion().getTipoComercializacion().getDescripcion());
 							if (listaActivosAgr.get(i).getActivo().getActivoPublicacion().getTipoComercializacion().getDescripcion()
 									.equalsIgnoreCase(activoPrincipal.getActivoPublicacion().getTipoComercializacion().getDescripcion())) {
 								esMismoDestinoComercial = true;

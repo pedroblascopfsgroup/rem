@@ -41,7 +41,7 @@ public class TareaActivoDaoImpl extends AbstractEntityDao<TareaActivo, Long> imp
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tac.tramite.id", idTramite);
 		hb.orderBy("tac.id", HQLBuilder.ORDER_DESC);
 
-		return HibernateQueryUtils.uniqueResult(this, hb);
+		return HibernateQueryUtils.list(this, hb).get(0);
 	}
 
 }

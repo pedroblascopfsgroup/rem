@@ -33,6 +33,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelManagerApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
+import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberatorsFactory;
@@ -80,6 +81,7 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoEstadoDisponibilidadComercial;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
@@ -209,6 +211,9 @@ public class AgrupacionAdapter {
 	
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
+	
+	@Autowired
+	private ParticularValidatorApi particularValidator;
 	
 	@Autowired
 	private ActivoValoracionDao activoValoracionDao;
@@ -687,6 +692,21 @@ public class AgrupacionAdapter {
 			// 'especiales'.
 			if (DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 				activoApi.updateActivoAsistida(activo);
+			}
+			
+			if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+				
+				if (particularValidator.isMismoEpuActivoPrincipalAgrupacion(String.valueOf(numActivo), String.valueOf(agrupacion.getNumAgrupRem()))) {
+					DtoDatosPublicacionActivo dto = new DtoDatosPublicacionActivo();
+					dto.setIdActivo(activo.getId());
+					
+					ActivoAgrupacionActivo aga = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(agrupacion.getActivoPrincipal().getId());
+					if (!Checks.esNulo(aga)) {
+						activoEstadoPublicacionApi.setDatosPublicacionAgrupacion(aga.getAgrupacion().getId(), dto);
+					}
+				} else {
+					throw new JsonViewerException(BusinessValidators.ERROR_ESTADO_PUBLICACION_NOT_EQUAL);
+				}
 			}
 
 			// Actualizar el tipoComercialización del activo

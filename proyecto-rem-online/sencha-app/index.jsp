@@ -14,19 +14,20 @@
     <script type="text/javascript" src="resources/js/AppConfig.js"></script>
     <script type="text/javascript">
         var Ext = Ext || {}; // Ext namespace won't be defined yet...
-
-        // This function is called by the Microloader after it has performed basic
-        // device detection. The results are provided in the "tags" object. You can
-        // use these tags here or even add custom tags. These can be used by platform
-        // filters in your manifest or by platformConfig expressions in your app.
-        //
+		<%--
+         This function is called by the Microloader after it has performed basic
+         device detection. The results are provided in the "tags" object. You can
+         use these tags here or even add custom tags. These can be used by platform
+         filters in your manifest or by platformConfig expressions in your app.
+        --%>
         Ext.beforeLoad = function (tags) {
             var s = location.search,  // the query string (ex "?foo=1&bar")
                 profile;
-
+            <%--
             // For testing look for "?classic" or "?modern" in the URL to override
             // device detection default.
             //
+            --%>
             if (s.match(/\bclassic\b/)) {
                 profile = 'classic';
             }
@@ -35,21 +36,23 @@
             }
             else {
                 profile = tags.desktop ? 'classic' : 'modern';
-                //profile = tags.phone ? 'modern' : 'classic';
+                <%-- //profile = tags.phone ? 'modern' : 'classic'; --%>
             }
             
-            // Profile por defecto que no tendrá en cuenta el dispositivo  
+            <%-- // Profile por defecto que no tendrá en cuenta el dispositivo  --%>
             profile = 'classic';
-            // ----------------------------------------------------------
+            <%-- // ---------------------------------------------------------- --%>
             
             Ext.manifest = profile; // this name must match a build profile name
 
+            <%--
             // This function is called once the manifest is available but before
             // any data is pulled from it.
             //
             //return function (manifest) {
                 // peek at / modify the manifest object
             //};
+            --%>
              <%
             java.util.Date currentDate = new java.util.Date();
             java.lang.Long hoy = new java.util.Date().getTime();      
@@ -60,10 +63,10 @@
         };
     </script>
     
-    <!-- The line below must be kept intact for Sencha Cmd to build your application -->
+    <%-- The line below must be kept intact for Sencha Cmd to build your application --%>
     <script id="microloader" data-app="5b430458-ad79-457b-a1d5-35448e8ae93c" type="text/javascript" src="bootstrap.js"></script>
-        <!-- Google maps -->
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3&libraries=places&key=AIzaSyByCmJtDrYVLf6nRYlyPl3Z7N3EwsandsE"></script>
+        <%-- Google maps --%>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3&libraries=places&key=AIzaSyBaNU-xCCtdDJVEm7HsO27rRdswyrWfGEI"></script>
     
     
 

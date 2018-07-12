@@ -49,7 +49,6 @@ import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.listener.ActivoGenerarSaltoImpl;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.VTareaActivoCount;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
@@ -331,6 +330,11 @@ public class TareaActivoManager implements TareaActivoApi {
 	@Override
 	public List<TareaActivo> getTareasActivoByIdTramite(Long idTramite) {
 		return tareaActivoDao.getTareasActivoTramiteHistorico(idTramite);
+	}
+	
+	@Override
+	public TareaActivo getUltimaTareaActivoByIdTramite(Long idTramite) {
+		return tareaActivoDao.getUltimaTareaActivoPorIdTramite(idTramite);
 	}
 
 	@Override

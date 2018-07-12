@@ -48,7 +48,6 @@ import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
-import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutorApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.ActivoGenericActionHandler.ConstantesBPMPFS;
@@ -57,12 +56,11 @@ import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorServiceFactory
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionServiceFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TimerTareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 
 /**
@@ -81,6 +79,8 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
     public static final String CODIGO_SUPERVISOR_SUELOS = "SUPSUE";
     public static final String CODIGO_SUPERVISOR_EDIFICACIONES = "SUPEDI";
     public static final String CODIGO_SUPERVISOR_ACTIVOS = "SUPACT";
+    private static final String CODIGO_T004_AUTORIZACION_BANKIA = "T004_AutorizacionBankia";
+    private static final String CODIGO_T004_AUTORIZACION_PROPIETARIO = "T004_AutorizacionPropietario";
     
     protected final Log logger = LogFactory.getLog(getClass());
 
@@ -97,9 +97,6 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 
     @Autowired
     private TareaProcedimientoManager tareaProcedimientoManager;
-    
-    @Autowired
-    private GestorActivoManager gestorActivoManager;
 
     @Autowired
     private ActivoTareaExternaApi activoTareaExternaManagerApi;
@@ -144,64 +141,6 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
     protected Long getProcessId() {
         return executionContext.getContextInstance().getId();
     }
-
-//    /**
-//     * Devuelve el plazo (en milisegundos) de una tarea de un procedimiento.
-//     * @param idTipoPlaza id de la plaza a la que pertenece
-//     * @param idTipoTarea id del tipo de tarea
-//     * @param idTipoJuzgado id del tipo de juzgado al que pertenece
-//     * @param idProcedimiento id del procedimiento al que pertenece
-//     * @return plazo de la tarea en milisegundos
-//     */
-//    protected Long getPlazoTarea(Long idTipoPlaza, Long idTipoTarea, Long idTipoJuzgado, Long idProcedimiento) {
-//        PlazoTareaExternaPlaza plazoTareaExternaPlaza = plazoTareaExternaPlazaManager.getByTipoTareaTipoPlazaTipoJuzgado(idTipoTarea, idTipoPlaza,
-//                idTipoJuzgado);
-//
-//        String script = "Sin determinar";
-//        Long plazo;
-//        try {
-//            script = plazoTareaExternaPlaza.getScriptPlazo();
-//            String result = contextScriptsUtils.evaluaScript(idProcedimiento, null, idTipoTarea, null, script).toString();
-//            plazo = Long.parseLong(result.toString());
-//        } catch (Exception e) {
-//            logger.error("Error en el script de consulta de plazo [" + script + "]. Procedimiento [" + idProcedimiento + "], tipoTarea ["
-//                    + idTipoTarea + "].", e);
-//            throw new UserException("bpm.error.script");
-//        }
-//        return plazo;
-//    }
-
-//    /**
-//     * Método que inicializa las fechas de una tarea.
-//     * @param tarea Tarea del BPM para inicializar las fechas
-//     */
-//    protected void iniciaFechasTarea(TareaNotificacion tarea) {
-//        Date fechaInicio = (Date) getVariable(BPMContants.FECHA_ACTIVACION_TAREAS);
-//        if (fechaInicio == null) {
-//            fechaInicio = new Date();
-//        }
-//
-//        Long idProcedimiento = tarea.getProcedimiento().getId();
-//
-//        Long idTipoJuzgado = null;
-//        Long idTipoPlaza = null;
-//
-//        try {
-//            idTipoJuzgado = tarea.getProcedimiento().getJuzgado().getId();
-//            idTipoPlaza = tarea.getProcedimiento().getJuzgado().getPlaza().getId();
-//        } catch (NullPointerException e) {
-//            ;//El procedimiento puede no tener ni plaza ni juzgado, no se hace nada
-//        }
-//
-//        Long idTipoTarea = tarea.getTareaExterna().getTareaProcedimiento().getId();
-//
-//        Long plazo = getPlazoTarea(idTipoPlaza, idTipoTarea, idTipoJuzgado, idProcedimiento);
-//        Date fechaVenc = new Date(fechaInicio.getTime() + plazo);
-//
-//        tarea.setFechaInicio(fechaInicio);
-//        tarea.setFechaVenc(fechaVenc);
-//        tarea.setAlerta(false);
-//    }
 
     /**
      * Método que devuelve si el BPM está o no detenido.
@@ -731,44 +670,22 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 		EXTTareaProcedimiento tareaProcedimiento = (EXTTareaProcedimiento) tareaExterna.getTareaProcedimiento();
 		Usuario usuarioLogado = adapter.getUsuarioLogado();;
 		String nombreUsuarioWS = RestApi.REST_LOGGED_USER_USERNAME;
-		
-			
+
 		// Factoria asignador gestores por tarea
     	UserAssigantionService userAssigantionService = userAssigantionServiceFactoryApi.getService(tareaProcedimiento.getCodigo());
-		
-		Usuario gestor = userAssigantionService.getUser(tareaExterna);
-		//Usuario supervisor = userAssigantionService.getSupervisor(tareaExterna);
-		Usuario galq = gestorActivoApi.getGestorByActivoYTipo(activo, "GALQ");
-		Usuario gsue = gestorActivoApi.getGestorByActivoYTipo(activo, "GSUE");
-		Usuario gedi = gestorActivoApi.getGestorByActivoYTipo(activo, "GEDI");
-		Usuario gact = gestorActivoApi.getGestorByActivoYTipo(activo, "GACT");
 		Usuario supervisor = null;
 
-		
 		// Asignador de GESTOR por factoria - Gestores encontrados por tarea-Activo
 		Trabajo trabajo = tarea.getTramite().getTrabajo();
 		Usuario solicitante = trabajo.getSolicitante();
 		Usuario responsableTrabajo = trabajo.getResponsableTrabajo();
-		
-		//Obtención de Supervisor
-		if(responsableTrabajo.equals(galq)){
-			supervisor = gestorActivoApi.getGestorByActivoYTipo(activo, CODIGO_SUPERVISOR_ALQUILERES);
-		}else if(responsableTrabajo.equals(gsue)){
-			supervisor = gestorActivoApi.getGestorByActivoYTipo(activo, CODIGO_SUPERVISOR_SUELOS);
-		}else if(responsableTrabajo.equals(gedi)){
-			supervisor = gestorActivoApi.getGestorByActivoYTipo(activo, CODIGO_SUPERVISOR_EDIFICACIONES);
-		}else if(responsableTrabajo.equals(gact)){
-			supervisor = gestorActivoApi.getGestorByActivoYTipo(activo, CODIGO_SUPERVISOR_ACTIVOS);
-		}
-		
-		if(!Checks.esNulo(solicitante) && !Checks.esNulo(responsableTrabajo)){
-			//Seteo de destinatario de las tareas del trabajo
-			if(solicitante.equals(responsableTrabajo)){ //Cuando el trabajo es recien creado
-				tareaActivo.setUsuario(solicitante);
-			}else{ //Cuando el solicitante es Proveedor u otro gestor que no sea el Gestor de Activo/Alquileres/Suelos/Edificaciones o Cuando cambias de responsable y avanzas la tarea
-				tareaActivo.setUsuario(responsableTrabajo);
-			}
-		}else{
+
+		if(!Checks.esNulo(tareaExterna) && !Checks.esNulo(tareaExterna.getTareaProcedimiento()) && 
+				(CODIGO_T004_AUTORIZACION_BANKIA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) || 
+				(CODIGO_T004_AUTORIZACION_PROPIETARIO.equals(tareaExterna.getTareaProcedimiento().getCodigo()) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())))){
+			supervisor = userAssigantionService.getSupervisor(tareaExterna);
+			Usuario gestor = userAssigantionService.getUser(tareaExterna); 
+			
 			if(!Checks.esNulo(gestor) ){
 				tareaActivo.setUsuario(gestor);
 			} else {
@@ -786,8 +703,33 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 					}
 				}
 			}
+
+		}else{
+			Usuario galq = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
+			Usuario gsue = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS);
+			Usuario gedi = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+			Usuario gact = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+
+			if(!Checks.esNulo(galq)?responsableTrabajo.equals(galq):false){
+				supervisor = gestorActivoApi.getGestorByActivoYTipo(activo, CODIGO_SUPERVISOR_ALQUILERES);
+			}else if(!Checks.esNulo(gsue)?responsableTrabajo.equals(gsue):false){
+				supervisor = gestorActivoApi.getGestorByActivoYTipo(activo, CODIGO_SUPERVISOR_SUELOS);
+			}else if(!Checks.esNulo(gedi)?responsableTrabajo.equals(gedi):false){
+				supervisor = gestorActivoApi.getGestorByActivoYTipo(activo, CODIGO_SUPERVISOR_EDIFICACIONES);
+			}else if(!Checks.esNulo(gact)?responsableTrabajo.equals(gact):false){
+				supervisor = gestorActivoApi.getGestorByActivoYTipo(activo, CODIGO_SUPERVISOR_ACTIVOS);
+			}
+			
+			if(!Checks.esNulo(solicitante) && !Checks.esNulo(responsableTrabajo)){
+				//Seteo de destinatario de las tareas del trabajo
+				if(solicitante.equals(responsableTrabajo)){ //Cuando el trabajo es recien creado
+					tareaActivo.setUsuario(solicitante);
+				}else{ //Cuando el solicitante es Proveedor u otro gestor que no sea el Gestor de Activo/Alquileres/Suelos/Edificaciones o Cuando cambias de responsable y avanzas la tarea
+					tareaActivo.setUsuario(responsableTrabajo);
+				}
+			}
 		}
-		
+
 		// Asignador de SUPERVISOR por factoria - Supervisores encontrados por tarea-Activo
 		if(!Checks.esNulo(supervisor)){
 			tareaActivo.setSupervisorActivo(supervisor);

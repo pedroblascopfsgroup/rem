@@ -140,6 +140,10 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 				        { 
 				        	fieldLabel: HreRem.i18n('fieldlabel.referencia.catastral'),
 				        	name: 'refCatastral'
+				        },
+				        { 
+				        	fieldLabel: HreRem.i18n('fieldlabel.num.prinex.liberbank'),
+				        	name: 'numPrinexLbb'
 				        }
 				    ]}
 			    ]

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=20180711
+--## FECHA_CREACION=20180712
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-4074
@@ -11,7 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial Carlos Lopez HREOS-4074
---##		0.2 Cambio SP_MOTIVO_OCULTACION por SP_MOTIVO_OCULTACION_AGR Ivan Rubio HREOS-4218
+--##		0.2 Cambio SP_MOTIVO_OCULTACION por SP_MOTIVO_OCULTACION_AGR por fleco Ivan Rubio HREOS-4218
 --##########################################
 --*/
 
@@ -77,6 +77,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
   PROCEDURE PLP$LIMPIAR_ALQUILER(nAGR_ID NUMBER, pUSUARIOMODIFICAR VARCHAR2) IS
 
   BEGIN
+	--V0.2
     V_MSQL := '
       MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
           USING '||vQUERY_SINACT||'
@@ -943,7 +944,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
                                                   ,USUARIOBORRAR,FECHABORRAR,BORRADO
               FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
              WHERE ACT.BORRADO = 0
-               AND EXISTS '|| vQUERY
+               AND EXISTS '|| replace(vQUERY,'AUX','')
                     ;
           EXECUTE IMMEDIATE V_MSQL;
         END IF;

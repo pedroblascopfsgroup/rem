@@ -346,6 +346,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		Trabajo trabajo = trabajoDao.get(id);
 		
+		List<ActivoTramite> activoTramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
+		ActivoTramite activoTramite = activoTramites.get(0);
+		TareaActivo tareaActivo = tareaActivoApi.getUltimaTareaActivoByIdTramite(activoTramite.getId());
+		
+		if(!Checks.esNulo(tareaActivo.getTareaExterna()) && !Checks.esNulo(tareaActivo.getTareaExterna().getTareaProcedimiento()) &&
+				!Checks.esNulo(dtoTrabajo.getIdResponsableTrabajo()) &&
+				(CODIGO_T004_AUTORIZACION_BANKIA.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) || 
+				(CODIGO_T004_AUTORIZACION_PROPIETARIO.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo()) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(trabajo.getActivo().getCartera().getCodigo()))) {
+			throw new JsonViewerException("No se permite cambiar de responsable para la tarea Autorizacion del propietario");
+		}
 
 		try {
 

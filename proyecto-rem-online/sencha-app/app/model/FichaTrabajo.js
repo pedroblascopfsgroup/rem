@@ -240,7 +240,10 @@ Ext.define('HreRem.model.FichaTrabajo', {
             update: 'trabajo/saveFichaTrabajo',
             destroy: 'trabajo/findOne'
         },
-        extraParams: {pestana: 'ficha'}
+        extraParams: {pestana: 'ficha'},
+        reader:{
+        	messageProperty: 'error'
+        }
     }    
 
 

@@ -158,21 +158,20 @@ public class TrabajoController extends ParadiseJsonController {
 		
 	}	
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveFichaTrabajo(DtoFichaTrabajo dtoTrabajo, @RequestParam Long id){
-		
-		boolean success = false;
-		
+	public ModelAndView saveFichaTrabajo(ModelMap model, DtoFichaTrabajo dtoTrabajo, @RequestParam Long id){
 		try {
-			
-			success = trabajoApi.saveFichaTrabajo(dtoTrabajo, id);
+			Boolean success = trabajoApi.saveFichaTrabajo(dtoTrabajo, id);
+			model.put("success", success);
 			
 		} catch(Exception e) {
 			logger.error(e.getMessage());
+			model.put("error", e.getMessage());
+			model.put("success", false);
 		}
-		
-		return createModelAndViewJson(new ModelMap("success", success));
-		
+
+		return createModelAndViewJson(model);
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)

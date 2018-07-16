@@ -1316,6 +1316,38 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return false;
 	}
+	
+	@Override
+	public Boolean checkNifConyugueLBB(TareaExterna tareaExterna) {
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		if (!Checks.esNulo(ofertaAceptada)) {
+			ExpedienteComercial expediente = expedienteComercialApi
+					.expedienteComercialPorOferta(ofertaAceptada.getId());
+			
+			ActivoOferta activoOferta = genericDao.get(ActivoOferta.class, genericDao.createFilter(FilterType.EQUALS, "oferta", ofertaAceptada.getId()));
+			Activo activo = activoOferta.getPrimaryKey().getActivo();
+			
+			if(!Checks.esNulo(expediente) && !Checks.esNulo(activo) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
+				List<CompradorExpediente> listaCex = expediente.getCompradores();
+				Boolean tieneNifConyugue = false;
+				
+				for(CompradorExpediente cex: listaCex){
+					Comprador com = cex.getPrimaryKey().getComprador();
+					ClienteComercial cli = com.getClienteComercial();
+					if(!Checks.esNulo(com) && !Checks.esNulo(cli) && !Checks.esNulo(cli.getEstadoCivil()) && 
+							DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(cli.getEstadoCivil().getCodigo()) && !Checks.esNulo(cex.getDocumentoConyuge())){
+						tieneNifConyugue = true;
+						break;
+					}
+				}
+				
+				return tieneNifConyugue;
+			} else if (!Checks.esNulo(activo) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
+				return true;
+			}
+		}
+		return false;
+	}
 
 	@Override
 	public boolean checkConflictoIntereses(TareaExterna tareaExterna) {

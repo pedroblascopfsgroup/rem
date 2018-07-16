@@ -47,7 +47,7 @@ BEGIN
 		IF V_NUM_TABLAS > 0 THEN
 
 		    V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET
-				TAP_SCRIPT_VALIDACION = ''checkImporteParticipacion() ? (checkCompradores() ? checkProvinciaCompradores() ? checkNifConyugueLBB() ? (checkVendido() ? ''''El activo está vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ? null : ''''El estado de la política corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''El NIF del cónyugue debe estar informado si el comprador está casado'''' : ''''Todos los compradores tienen que tener provincia informada'''' : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participación de los activos ha de ser el mismo que el importe total del expediente'''''',
+				TAP_SCRIPT_VALIDACION = ''checkImporteParticipacion() ? (checkCompradores() ? checkProvinciaCompradores() ? checkNifConyugueLBB() ? (checkVendido() ? ''''El activo está vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ? null : ''''El estado de la política corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''El NIF del cónyuge debe estar informado si el comprador está casado'''' : ''''Todos los compradores tienen que tener provincia informada'''' : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participación de los activos ha de ser el mismo que el importe total del expediente'''''',
 				USUARIOMODIFICAR = '''||V_USUARIOMODIFICAR||''',
 				FECHAMODIFICAR = SYSDATE
 				WHERE TAP_CODIGO = ''T013_InstruccionesReserva''';
@@ -63,7 +63,7 @@ BEGIN
 		IF V_NUM_TABLAS > 0 THEN
 
 		    V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET
-				TAP_SCRIPT_VALIDACION = ''checkImporteParticipacion() ? (checkCompradores() ? checkProvinciaCompradores() ? checkNifConyugueLBB() ? (checkVendido() ? ''''El activo está vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ? (checkCompradoresTienenNumeroUrsus() ? null : ''''No todos los compradores tienen numero URSUS'''' ) : ''''El estado de la política corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''El NIF del cónyugue debe estar informado si el comprador está casado'''' : ''''Todos los compradores tienen que tener provincia informada'''' : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participación de los activos ha de ser el mismo que el importe total del expediente'''''',
+				TAP_SCRIPT_VALIDACION = ''checkImporteParticipacion() ? (checkCompradores() ? checkProvinciaCompradores() ? checkNifConyugueLBB() ? (checkVendido() ? ''''El activo está vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ? (checkCompradoresTienenNumeroUrsus() ? null : ''''No todos los compradores tienen numero URSUS'''' ) : ''''El estado de la política corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''El NIF del cónyuge debe estar informado si el comprador está casado'''' : ''''Todos los compradores tienen que tener provincia informada'''' : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participación de los activos ha de ser el mismo que el importe total del expediente'''''',
 				USUARIOMODIFICAR = '''||V_USUARIOMODIFICAR||''',
 				FECHAMODIFICAR = SYSDATE
 				WHERE TAP_CODIGO = ''T013_ResultadoPBC''';

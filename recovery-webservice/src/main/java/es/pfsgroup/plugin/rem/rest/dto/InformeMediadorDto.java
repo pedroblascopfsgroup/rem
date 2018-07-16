@@ -450,10 +450,10 @@ public class InformeMediadorDto implements Serializable {
 	private Boolean buenEstadoContadorAguaInstalaciones;
 
 	@EntityDefinition(propertyName = "gasBuenEstado", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
-	private Boolean buenEstadoIntalacionGasInstalaciones;
+	private Boolean buenEstadoInstalacionGasInstalaciones;
 
 	@EntityDefinition(propertyName = "gasConContador", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
-	private Boolean buenEstadoContadorGasInstalacion;
+	private Boolean buenEstadoContadorGasInstalaciones;
 
 	@Diccionary(clase = DDEstadoConservacion.class, message = "El codEstadoConservacionEdificio no existe", groups = {
 			Insert.class, Update.class })
@@ -1850,20 +1850,20 @@ public class InformeMediadorDto implements Serializable {
 		this.buenEstadoContadorAguaInstalaciones = buenEstadoContadorAguaInstalaciones;
 	}
 
-	public Boolean getBuenEstadoIntalacionGasInstalaciones() {
-		return buenEstadoIntalacionGasInstalaciones;
+	public Boolean getBuenEstadoInstalacionGasInstalaciones() {
+		return buenEstadoInstalacionGasInstalaciones;
 	}
 
-	public void setBuenEstadoIntalacionGasInstalaciones(Boolean buenEstadoIntalacionGasInstalaciones) {
-		this.buenEstadoIntalacionGasInstalaciones = buenEstadoIntalacionGasInstalaciones;
+	public void setBuenEstadoInstalacionGasInstalaciones(Boolean buenEstadoInstalacionGasInstalaciones) {
+		this.buenEstadoInstalacionGasInstalaciones = buenEstadoInstalacionGasInstalaciones;
 	}
 
-	public Boolean getBuenEstadoContadorGasInstalacion() {
-		return buenEstadoContadorGasInstalacion;
+	public Boolean getBuenEstadoContadorGasInstalaciones() {
+		return buenEstadoContadorGasInstalaciones;
 	}
 
-	public void setBuenEstadoContadorGasInstalacion(Boolean buenEstadoContadorGasInstalacion) {
-		this.buenEstadoContadorGasInstalacion = buenEstadoContadorGasInstalacion;
+	public void setBuenEstadoContadorGasInstalaciones(Boolean buenEstadoContadorGasInstalaciones) {
+		this.buenEstadoContadorGasInstalaciones = buenEstadoContadorGasInstalaciones;
 	}
 
 	public String getCodEstadoConservacionEdificio() {

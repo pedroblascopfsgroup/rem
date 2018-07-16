@@ -1839,12 +1839,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 
 	comprobarObligatoriedadCamposNexos: function() {
+		
 		var me = this,
 		campoEstadoCivil = me.lookupReference('estadoCivil'),
 		campoRegEconomico = me.lookupReference('regimenMatrimonial'),
 		campoNumConyuge = me.lookupReference('numRegConyuge'),
 		campoApellidos = me.lookupReference('apellidos');
-
 		// Si el tipo de persona es FÍSICA, entonces el campos Estado civil es obligatorio y se habilitan campos dependientes.
 		if(me.lookupReference('tipoPersona').getValue() === "1" ) {
 			//campoEstadoCivil.setDisabled(false);
@@ -1856,10 +1856,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			if(campoEstadoCivil.getValue() === "02") {
 				// Si el Estado civil es 'Casado', entonces Reg. económico es obligatorio.
 				campoRegEconomico.allowBlank = false;
+				if(me.getViewModel().get('expediente.entidadPropietariaCodigo') == CONST.CARTERA['LIBERBANK']){
+					campoNumConyuge.allowBlank = false;
+				}
 				//campoRegEconomico.setDisabled(false);
 				//campoNumConyuge.setDisabled(false);
 			} else {
 				campoRegEconomico.allowBlank = true;
+				campoNumConyuge.allowBlank = true;
 				//campoRegEconomico.reset();
 				//campoNumConyuge.reset();
 				//campoRegEconomico.setDisabled(true);
@@ -1881,6 +1885,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		// Validar campos para que se muestre o desaparezca la visual roja.
 		campoEstadoCivil.validate();
 		campoRegEconomico.validate();
+		campoNumConyuge.validate();
 	},
 
 	onClickGenerarHojaExcel: function(btn) {

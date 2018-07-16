@@ -1686,5 +1686,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	}
 	
+	@Override
+	public Boolean subcarteraPerteneceCartera(String subcartera, String cartera){
+		
+		if(!Checks.esNulo(cartera) && !Checks.esNulo(subcartera)){
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM REM01.DD_SCR_SUBCARTERA SCR "
+					+ "JOIN REM01.DD_CRA_CARTERA CRA ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.DD_CRA_CODIGO = "+cartera+" "
+					+ "WHERE DD_SCR_CODIGO = "+subcartera+"");
+			
+			if ((Integer.valueOf(resultado) > 0)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	
 }

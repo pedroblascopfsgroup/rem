@@ -448,8 +448,18 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 					type: 'uxproxy',
 					remoteUrl: 'activo/getComboSupervisorActivos'
 				}  		
-    		}
+    		},
 
+    		comboResponsableTrabajo: {    		
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboResponsableTrabajo',
+					extraParams: {
+						idTrabajo: '{trabajo.id}'
+					}	
+				}
+    		}
     }
-    
+
 });

@@ -50,6 +50,13 @@ public class GestorEntidadManager implements GestorEntidadApi {
 
 	@Autowired
 	GestorEntidadDao gestorEntidadDao;
+	
+	public List<GestorEntidadHistorico> getListGestoresActivosAdicionalesHistoricoData(GestorEntidadDto dto) {
+
+		List<GestorEntidadHistorico> listado = gestorEntidadHistoricoDao.getListGestorActivoOrderedByEntidad(dto);
+
+		return listado;
+	}
 
 	public List<GestorEntidadHistorico> getListGestoresAdicionalesHistoricoData(GestorEntidadDto dto) {
 

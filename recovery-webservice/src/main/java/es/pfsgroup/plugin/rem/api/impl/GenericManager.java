@@ -18,7 +18,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.ModelMap;
 
+import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -35,10 +37,12 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
@@ -60,6 +64,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -84,6 +89,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
 
 	@Resource
 	private Properties appProperties;
@@ -332,6 +340,40 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		return (List<EXTDDTipoGestor>) genericDao.getListOrdered(EXTDDTipoGestor.class, order,
 				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+	}
+	
+	@Override
+	@BusinessOperationDefinition("genericManager.getComboTipoGestorActivo")
+	public List<EXTDDTipoGestor> getComboTipoGestorByActivo(WebDto webDto, ModelMap model, String idActivo) {
+		
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
+		List<EXTDDTipoGestor> listaTiposGestor  = genericDao.getListOrdered(EXTDDTipoGestor.class, order, 
+																			genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+		try {
+			Activo activo = activoApi.get(Long.parseLong(idActivo));
+			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo())) {
+				// Si el Activo NO es de tipo Suelo eliminamos el gestor de Suelos de la lista
+				String codigoTipoActivo = activo.getTipoActivo().getCodigo();
+				EXTDDTipoGestor tipoGestorEdificaciones = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"GEDI"); // Gestor de Edificaciones
+				
+				if (!DDTipoActivo.COD_SUELO.equals(codigoTipoActivo)) {
+					EXTDDTipoGestor tipoGestorSuelo = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"GSUE"); // Gestor de Suelos
+					listaTiposGestor.remove(tipoGestorSuelo);
+					
+					// Si el Activo NO es de tipo Suelo y el Estado físico del activo esta vacio eliminamos el gestor de edificacionnes
+					if (Checks.esNulo(activo.getEstadoActivo())) {
+						listaTiposGestor.remove(tipoGestorEdificaciones);
+					}
+				} else {
+					// Si el Activo es de tipo Suelo eliminamos el gestor de edificacionnes
+					listaTiposGestor.remove(tipoGestorEdificaciones);
+				}
+			}
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		}
+
+		return listaTiposGestor;
 	}
 
 	@Override

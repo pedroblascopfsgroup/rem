@@ -69,6 +69,8 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 	@Autowired
 	private GestorEntidadApi gestorEntidadApi;
 	
+	@Autowired
+	private GestorActivoDao gestorActivoDao;
 
 	@Transactional(readOnly = false)
 	public Boolean insertarGestorAdicionalActivo(GestorEntidadDto dto) {
@@ -184,6 +186,10 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 		
 	}
 	
+	public List<GestorEntidadHistorico> getListGestoresActivosAdicionalesHistoricoData(GestorEntidadDto gestorEntidadDto){
+		return gestorEntidadApi.getListGestoresActivosAdicionalesHistoricoData(gestorEntidadDto);
+	}
+	
 	public List<GestorEntidadHistorico> getListGestoresAdicionalesHistoricoData(GestorEntidadDto gestorEntidadDto){
 		return gestorEntidadApi.getListGestoresAdicionalesHistoricoData(gestorEntidadDto);
 	}
@@ -216,6 +222,9 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 		List<Usuario> usuariosActivos = ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipoGestor.getId(),activo);		
 		return usuariosActivos.contains(usuario);
 	}
+	
+
+
 
 	public Boolean isSupervisorActivo(Activo activo, Usuario usuario){
 
@@ -276,6 +285,9 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 		List<Usuario> usuariosActivos = ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipoGestor.getId(),activo);		
 		return usuariosActivos.contains(usuario);
 	}
+	
+	
+	
 	
 	public Boolean isGestorPreciosOMarketing(Activo activo, Usuario usuario){
 		if (isGestorPrecios(activo, usuario) || isGestorMarketing(activo, usuario)){
@@ -377,6 +389,68 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 			}
 		}
 		return pve;
+	}
+
+	@Override
+	public Boolean isGestorSuelos(Activo activo, Usuario usuario) {
+		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_GESTOR_SUELOS);
+		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+		
+		List<Usuario> usuariosActivos = ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipoGestor.getId(),activo);		
+		return usuariosActivos.contains(usuario);
+	}
+
+	@Override
+	public Boolean isGestorEdificaciones(Activo activo, Usuario usuario) {
+		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_GESTOR_EDIFICACIONES);
+		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+		
+		List<Usuario> usuariosActivos = ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipoGestor.getId(),activo);		
+		return usuariosActivos.contains(usuario);
+	}
+
+	@Override
+	public Boolean isGestorAlquileres(Activo activo, Usuario usuario){
+
+		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_GESTOR_ALQUILERES);
+		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+		
+		List<Usuario> usuariosActivos = ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipoGestor.getId(),activo);		
+		return usuariosActivos.contains(usuario);
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void borrarGestorAdicionalEntidad(GestorEntidadDto dto) {
+
+		Filter filtroAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", dto.getIdUsuario());
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", dto.getIdEntidad());
+		
+		GestorActivo gestorActivo = genericDao.get(GestorActivo.class,filtroUsuario,filtroActivo,filtroAuditoria);
+		
+		if (gestorActivo != null) {
+			this.actualizaFechaHastaHistoricoGestorAdicional(gestorActivo);
+			gestorActivoDao.delete(gestorActivo);
+		}
+
+	}
+	
+	private void actualizaFechaHastaHistoricoGestorAdicional(GestorActivo gac) {
+
+		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "tipoGestor.id", gac.getTipoGestor().getId());
+		Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", gac.getUsuario().getId());
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", gac.getActivo().getId());
+		
+		List<GestorActivoHistorico> gah = genericDao.getList(GestorActivoHistorico.class, filtroTipoGestor,filtroUsuario,filtroActivo);
+
+		Date hoy = new Date();
+		for (GestorActivoHistorico g : gah) {
+			if (Checks.esNulo(g.getFechaHasta())) {
+				g.setFechaHasta(hoy);
+				gestorEntidadHistoricoDao.saveOrUpdate(g);
+			}
+		}
 	}
 
 }

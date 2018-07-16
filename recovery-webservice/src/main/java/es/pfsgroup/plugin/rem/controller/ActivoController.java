@@ -213,12 +213,10 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView saveDatosBasicos(DtoActivoFichaCabecera activoDto, @RequestParam Long id, ModelMap model) {
 
 		try {
-
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_DATOS_BASICOS);
 			if (success)
 				adapter.updatePortalPublicacion(id);
 			model.put("success", success);
-
 		} catch (JsonViewerException jvex) {
 			model.put("success", false);
 			model.put("msgError", jvex.getMessage());
@@ -1033,7 +1031,21 @@ public class ActivoController extends ParadiseJsonController {
 
 		return new ModelAndView("jsonView", model);
 
-	}	
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getGestoresActivos(Long idActivo, WebDto webDto, ModelMap model, Boolean incluirGestoresInactivos) {
+
+		if (incluirGestoresInactivos) {
+			model.put("data", adapter.getGestores(idActivo));
+		}
+		else {
+			model.put("data", adapter.getGestoresActivos(idActivo));
+		}
+
+		return new ModelAndView("jsonView", model);
+	}
 	
 
 	@SuppressWarnings("unchecked")

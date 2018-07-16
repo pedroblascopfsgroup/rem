@@ -3,6 +3,9 @@ package es.pfsgroup.plugin.rem.api;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.ui.ModelMap;
+
+import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
@@ -81,6 +84,9 @@ public interface GenericApi {
 	
 	@BusinessOperationDefinition("genericManager.getComboTipoGestor")
 	public List<EXTDDTipoGestor> getComboTipoGestor();
+	
+	@BusinessOperationDefinition("genericManager.getComboTipoGestorActivo")
+	public List<EXTDDTipoGestor> getComboTipoGestorByActivo(WebDto webDto, ModelMap model, String idActivo);
 
 	List<EXTDDTipoGestor> getComboTipoGestorFiltrado(Set<String> tipoGestorCodigos);
 

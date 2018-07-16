@@ -47,6 +47,8 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 	// Textos con errores de validacion
 	public static final String ACTIVE_EXISTS = "El activo existe.";
 	public static final String CARTERA_IS_NULL = "La cartera del activo no puede estar vacío.";
+	public static final String SUBCARTERA_IS_NULL = "La subcartera del activo no puede estar vacia";
+	public static final String SUBCARTERA_CARTERA_INCORRECTA = "La subcartera no pertenece a la cartera indicada";
 	public static final String SUBTIPO_TITULO_IS_NULL = "El subtipo de título del activo no puede estar vacío.";
 	public static final String TIPO_ACTIVO_IS_NULL = "El tipo de activo no puede estar vacío.";
 	public static final String SUBTIPO_ACTIVO_IS_NULL = "El subtipo de activo no puede estar vacío.";
@@ -110,73 +112,74 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 
 		static final int NUM_ACTIVO_HAYA = 0;
 		static final int COD_CARTERA = 1;
-		static final int COD_SUBTIPO_TITULO = 2;
-		static final int NUM_ACTIVO_CARTERA = 3; // (UVEM, PRINEX, SAREB)
-		static final int NUM_BIEN_RECOVERY = 4;
-		static final int ID_ASUNTO_RECOVERY = 5;
-		static final int COD_TIPO_ACTIVO = 6;
-		static final int COD_SUBTIPO_ACTIVO = 7;
-		static final int COD_ESTADO_FISICO = 8;
-		static final int COD_USO_DOMINANTE = 9;
-		static final int DESC_ACTIVO = 10;
+		static final int COD_SUBCARTERA = 2;
+		static final int COD_SUBTIPO_TITULO = 3;
+		static final int NUM_ACTIVO_CARTERA = 4; // (UVEM, PRINEX, SAREB)
+		static final int NUM_BIEN_RECOVERY = 5;
+		static final int ID_ASUNTO_RECOVERY = 6;
+		static final int COD_TIPO_ACTIVO = 7;
+		static final int COD_SUBTIPO_ACTIVO = 8;
+		static final int COD_ESTADO_FISICO = 9;
+		static final int COD_USO_DOMINANTE = 10;
+		static final int DESC_ACTIVO = 11;
 
-		static final int COD_TIPO_VIA = 11;
-		static final int NOMBRE_VIA = 12;
-		static final int NUM_VIA = 13;
-		static final int ESCALERA = 14;
-		static final int PLANTA = 15;
-		static final int PUERTA = 16;
-		static final int COD_PROVINCIA = 17;
-		static final int COD_MUNICIPIO = 18;
-		static final int COD_UNIDAD_MUNICIPIO = 19;
-		static final int CODPOSTAL = 20;
+		static final int COD_TIPO_VIA = 12;
+		static final int NOMBRE_VIA = 13;
+		static final int NUM_VIA = 14;
+		static final int ESCALERA = 15;
+		static final int PLANTA = 16;
+		static final int PUERTA = 17;
+		static final int COD_PROVINCIA = 18;
+		static final int COD_MUNICIPIO = 19;
+		static final int COD_UNIDAD_MUNICIPIO = 20;
+		static final int CODPOSTAL = 21;
 
-		static final int COD_DESTINO_COMER = 21;
-		static final int COD_TIPO_ALQUILER = 22;
+		static final int COD_DESTINO_COMER = 22;
+		static final int COD_TIPO_ALQUILER = 23;
 
-		static final int NUM_PRESTAMO = 23; // (MATRIZ, DIVIDIDO)
-		static final int ESTADO_EXP_RIESGO = 24;
-		static final int NIF_SOCIEDAD_ACREEDORA = 25;
-		static final int CODIGO_SOCIEDAD_ACREEDORA = 26;
-		static final int NOMBRE_SOCIEDAD_ACREEDORA = 27;
-		static final int DIRECCION_SOCIEDAD_ACREEDORA = 28;
-		static final int IMPORTE_DEUDA = 29;
-		static final int ID_GARANTIA = 30;
+		static final int NUM_PRESTAMO = 24; // (MATRIZ, DIVIDIDO)
+		static final int ESTADO_EXP_RIESGO = 25;
+		static final int NIF_SOCIEDAD_ACREEDORA = 26;
+		static final int CODIGO_SOCIEDAD_ACREEDORA = 27;
+		static final int NOMBRE_SOCIEDAD_ACREEDORA = 28;
+		static final int DIRECCION_SOCIEDAD_ACREEDORA = 29;
+		static final int IMPORTE_DEUDA = 30;
+		static final int ID_GARANTIA = 31;
 
-		static final int POBL_REGISTRO = 31;
-		static final int NUM_REGISTRO = 32;
-		static final int TOMO = 33;
-		static final int LIBRO = 34;
-		static final int FOLIO = 35;
-		static final int FINCA = 36;
-		static final int IDUFIR_CRU = 37;
-		static final int SUPERFICIE_CONSTRUIDA_M2 = 38;
-		static final int SUPERFICIE_UTIL_M2 = 39;
-		static final int SUPERFICIE_REPERCUSION_EE_CC = 40;
-		static final int PARCELA = 41; // (INCLUIDA OCUPADA EDIFICACION)
-		static final int ES_INTEGRADO_DIV_HORIZONTAL = 42;
+		static final int POBL_REGISTRO = 32;
+		static final int NUM_REGISTRO = 33;
+		static final int TOMO = 34;
+		static final int LIBRO = 35;
+		static final int FOLIO = 36;
+		static final int FINCA = 37;
+		static final int IDUFIR_CRU = 38;
+		static final int SUPERFICIE_CONSTRUIDA_M2 = 39;
+		static final int SUPERFICIE_UTIL_M2 = 40;
+		static final int SUPERFICIE_REPERCUSION_EE_CC = 41;
+		static final int PARCELA = 42; // (INCLUIDA OCUPADA EDIFICACION)
+		static final int ES_INTEGRADO_DIV_HORIZONTAL = 43;
 
-		static final int NIF_PROPIETARIO = 43;
-		static final int GRADO_PROPIEDAD = 44;
-		static final int PERCENT_PROPIEDAD = 45;
+		static final int NIF_PROPIETARIO = 44;
+		static final int GRADO_PROPIEDAD = 45;
+		static final int PERCENT_PROPIEDAD = 46;
 
-		static final int REF_CATASTRAL = 46;
-		static final int VPO = 47;
-		static final int CALIFICACION_CEE = 48;
+		static final int REF_CATASTRAL = 47;
+		static final int VPO = 48;
+		static final int CALIFICACION_CEE = 49;
 
-		static final int NIF_MEDIADOR = 49;
-		static final int VIVIENDA_NUM_PLANTAS = 50;
-		static final int VIVIENDA_NUM_BANYOS = 51;
-		static final int VIVIENDA_NUM_ASEOS = 52;
-		static final int VIVIENDA_NUM_DORMITORIOS = 53;
-		static final int TRASTERO_ANEJO = 54;
-		static final int GARAJE_ANEJO = 55;
-		static final int ASCENSOR = 56;
+		static final int NIF_MEDIADOR = 50;
+		static final int VIVIENDA_NUM_PLANTAS = 51;
+		static final int VIVIENDA_NUM_BANYOS = 52;
+		static final int VIVIENDA_NUM_ASEOS = 53;
+		static final int VIVIENDA_NUM_DORMITORIOS = 54;
+		static final int TRASTERO_ANEJO = 55;
+		static final int GARAJE_ANEJO = 56;
+		static final int ASCENSOR = 57;
 
-		static final int PRECIO_MINIMO = 57;
-		static final int PRECIO_VENTA_WEB = 58;
-		static final int VALOR_TASACION = 59;
-		static final int FECHA_TASACION = 60;
+		static final int PRECIO_MINIMO = 58;
+		static final int PRECIO_VENTA_WEB = 59;
+		static final int VALOR_TASACION = 60;
+		static final int FECHA_TASACION = 61;
 	};
 
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -224,6 +227,8 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 			Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();
 			mapaErrores.put(ACTIVE_EXISTS, isActiveExistsRows(exc));
 			mapaErrores.put(CARTERA_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_CARTERA));
+			mapaErrores.put(SUBCARTERA_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_SUBCARTERA));
+			mapaErrores.put(SUBCARTERA_CARTERA_INCORRECTA, isCarteraCorrecta(exc, COL_NUM.COD_SUBCARTERA));
 			mapaErrores.put(SUBTIPO_TITULO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_SUBTIPO_TITULO));
 			mapaErrores.put(TIPO_ACTIVO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_TIPO_ACTIVO));
 			mapaErrores.put(SUBTIPO_ACTIVO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_SUBTIPO_ACTIVO));
@@ -291,6 +296,8 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 					isCodigoUnidadInferiorMunicipioValido(exc, COL_NUM.COD_UNIDAD_MUNICIPIO));
 
 			if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(CARTERA_IS_NULL).isEmpty()
+					|| !mapaErrores.get(SUBCARTERA_IS_NULL).isEmpty()
+					|| !mapaErrores.get(SUBCARTERA_CARTERA_INCORRECTA).isEmpty()
 					|| !mapaErrores.get(SUBTIPO_TITULO_IS_NULL).isEmpty()
 					|| !mapaErrores.get(TIPO_ACTIVO_IS_NULL).isEmpty()
 					|| !mapaErrores.get(SUBTIPO_ACTIVO_IS_NULL).isEmpty()
@@ -884,6 +891,29 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 			}
 		}
 
+		return listaFilas;
+	}
+	
+	private List<Integer> isCarteraCorrecta(MSVHojaExcel exc, int columnNumber){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
+				if(!particularValidator.subcarteraPerteneceCartera(exc.dameCelda(i, columnNumber), exc.dameCelda(i, columnNumber-1))){
+					listaFilas.add(i);
+				}
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		return listaFilas;
 	}
 }

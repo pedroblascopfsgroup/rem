@@ -320,4 +320,6 @@ public interface ParticularValidatorApi {
 
 	public Boolean distintosTiposImpuestoAgrupacionVacia(List<String> activosList);
 
+	Boolean subcarteraPerteneceCartera(String subcartera, String cartera);
+
 }

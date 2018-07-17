@@ -361,6 +361,7 @@ BEGIN
                               ,  TAS_PORCENTAJE_AJUSTE
                               ,  TAS_TASACION_MODIFICADA
                               ,  TAS_CIF_TASADOR
+                              ,  TAS_EXPEDIENTE_EXTERNO
                               ,  TAS_NOMBRE_TASADOR
                               ,  TAS_FECHA_INI_TASACION
                               ,  TAS_TECNICO_TASADOR
@@ -409,6 +410,7 @@ BEGIN
                                    '''||PORCENTAJE_AJUSTE||''',
                                    '''||TASACION_MODIFICADA||''',
                                    '''||CIF_TASADORA||''',
+                                   '''||COD_EXPEDIENTE||''',
                                    '''||NOMBRE_TASADORA||''',
                                    TO_DATE('''||FECHA_TASACION||''',''yyyymmdd'') ,
                                    '''||TECNICO_TASADOR||''',
@@ -517,7 +519,7 @@ BEGIN
 			'''||V_NOMBRESP||''',
 			'''||FECHA_HOY||''',
 			1,
-			NVL('''||TAS_ID||''',''-1''),
+			NVL('''||ACT_ID||''',''-1''),
 			'''||HLP_REGISTRO_EJEC||'''
 		FROM DUAL
 		';
@@ -570,7 +572,7 @@ EXCEPTION
 			'''||V_NOMBRESP||''',
 			SYSDATE,
 			1,
-			NVL('''||TAS_ID||''',''-1''),
+			NVL('''||ACT_ID||''',''-1''),
 			'''||ERR_MSG||'''
 		FROM DUAL
 	  ';

@@ -103,7 +103,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		String codigoGestor = null;
 		ActivoLoteComercial loteComercial = this.obtenerLoteComercial(tareaActivo);
 
-		if(this.isTrabajoDeActivoOrLoteRestEntidad01(tareaActivo)) {
+		if(this.isTrabajoDeActivoOrLoteRestEntidad01(tareaActivo) || this.isActivoLiberbank(tareaActivo)) {
 			if(null == loteComercial) {
 				// Si no es un lote comercial comprobar si es financiero o inmobiliario.
 				codigoGestor = this.getMapCodigoTipoGestorActivoAndLoteRestEntidad01(isActivoFinanciero).get(codigoTarea);
@@ -114,7 +114,8 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			}
 		} else if(this.isActivoGiants(tareaActivo)){
 			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, true, false, false, false, false).get(codigoTarea);
-		} else if(this.isActivoLiberbank(tareaActivo)){
+			//Esto se deja comentado por si hace falta marcha atras por rectificacion de cliente
+		} /*else if(this.isActivoLiberbank(tareaActivo)){
 			boolean isLiberbankResidencial = false;
 			boolean isLiberbankInmobiliaria = false;
 			boolean isLiberbankTerciaria = false;
@@ -133,7 +134,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 
 			
 			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, true, isLiberbankResidencial, isLiberbankInmobiliaria, isLiberbankTerciaria).get(codigoTarea);
-		}else {
+		}*/else {
 			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false).get(codigoTarea);
 		}
 				

@@ -313,7 +313,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				Filter filterUsu = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", gesComercial.getId());
 				GestorSustituto sgs = genericDao.get(GestorSustituto.class, filterUsu);
 				if (!Checks.esNulo(sgs)){
-					if (!Checks.esNulo(sgs.getFechaFin()) && !Checks.esNulo(sgs.getFechaInicio()) && sgs.getFechaFin().before(new Date())) {
+					if (!Checks.esNulo(sgs.getFechaFin()) && !Checks.esNulo(sgs.getFechaInicio()) && sgs.getFechaFin().before(new Date()) 
+							&& (sgs.getFechaInicio().after(new Date()) || sgs.getFechaInicio().equals(new Date()))) {
 						addMail(s, sgs.getUsuarioGestorSustituto().getEmail(), gestores);
 					}
 				}
@@ -325,7 +326,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				Filter filterUsu = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", gesLoteComercial.getId());
 				GestorSustituto sgs = genericDao.get(GestorSustituto.class, filterUsu);
 				if (!Checks.esNulo(sgs)){
-					if (!Checks.esNulo(sgs.getFechaFin()) && !Checks.esNulo(sgs.getFechaInicio()) && sgs.getFechaFin().before(new Date())) {
+					if (!Checks.esNulo(sgs.getFechaFin()) && !Checks.esNulo(sgs.getFechaInicio()) && sgs.getFechaFin().before(new Date()) 
+							&& (sgs.getFechaInicio().after(new Date()) || sgs.getFechaInicio().equals(new Date()))) {
 						addMail(s, sgs.getUsuarioGestorSustituto().getEmail(), gestores);
 					}
 				}
@@ -337,7 +339,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				Filter filterUsu = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", gesFormalizacion.getId());
 				GestorSustituto sgs = genericDao.get(GestorSustituto.class, filterUsu);
 				if (!Checks.esNulo(sgs)){
-					if (!Checks.esNulo(sgs.getFechaFin()) && !Checks.esNulo(sgs.getFechaInicio()) && sgs.getFechaFin().before(new Date())) {
+					if (!Checks.esNulo(sgs.getFechaFin()) && !Checks.esNulo(sgs.getFechaInicio()) && sgs.getFechaFin().before(new Date()) 
+							&& (sgs.getFechaInicio().after(new Date()) || sgs.getFechaInicio().equals(new Date()))) {
 						addMail(s, sgs.getUsuarioGestorSustituto().getEmail(), gestores);
 					}
 				}
@@ -349,7 +352,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				Filter filterUsu = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", gesBack.getId());
 				GestorSustituto sgs = genericDao.get(GestorSustituto.class, filterUsu);
 				if (!Checks.esNulo(sgs)){
-					if (!Checks.esNulo(sgs.getFechaFin()) && !Checks.esNulo(sgs.getFechaInicio()) && sgs.getFechaFin().before(new Date())) {
+					if (!Checks.esNulo(sgs.getFechaFin()) && !Checks.esNulo(sgs.getFechaInicio()) && sgs.getFechaFin().before(new Date()) 
+							&& (sgs.getFechaInicio().after(new Date()) || sgs.getFechaInicio().equals(new Date()))) {
 						addMail(s, sgs.getUsuarioGestorSustituto().getEmail(), gestores);
 					}
 				}
@@ -361,7 +365,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				Filter filterUsu = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", gesGesFase.getId());
 				GestorSustituto sgs = genericDao.get(GestorSustituto.class, filterUsu);
 				if (!Checks.esNulo(sgs)){
-					if (!Checks.esNulo(sgs.getFechaFin()) && !Checks.esNulo(sgs.getFechaInicio()) && sgs.getFechaFin().before(new Date())) {
+					if (!Checks.esNulo(sgs.getFechaFin()) && !Checks.esNulo(sgs.getFechaInicio()) && sgs.getFechaFin().before(new Date()) 
+							&& (sgs.getFechaInicio().after(new Date()) || sgs.getFechaInicio().equals(new Date()))) {
 						addMail(s, sgs.getUsuarioGestorSustituto().getEmail(), gestores);
 					}
 				}

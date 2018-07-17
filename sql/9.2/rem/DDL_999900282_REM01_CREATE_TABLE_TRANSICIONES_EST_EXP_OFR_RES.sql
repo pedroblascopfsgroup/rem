@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20180717
+--## FECHA_CREACION=20180718
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-1076
@@ -49,12 +49,12 @@ DECLARE
 		DBMS_OUTPUT.PUT_LINE('[INFO] Ya existia la secuencia S_'||V_TABLA);	
 	  
 	END IF;
- 
-		V_SQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TABLA||'''';
+         
+        V_SQL := 'SELECT COUNT(1) FROM SYS.ALL_TABLES WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TABLA||'''';
 
 	EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
 	
-	IF V_COUNT = 1 THEN
+	IF V_COUNT > 0 THEN
     
         V_SQL := 'DROP TABLE '||V_ESQUEMA||'.'||V_TABLA||'';
  
@@ -72,7 +72,7 @@ DECLARE
 
 	EXECUTE IMMEDIATE V_SQL INTO V_COUNT;    
         
-	IF V_COUNT > 0 THEN
+	IF V_COUNT = 0 THEN
  
 		V_SQL := 'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||' (
 				   '||V_TABLA||'_ID NUMBER(16,0) NOT NULL

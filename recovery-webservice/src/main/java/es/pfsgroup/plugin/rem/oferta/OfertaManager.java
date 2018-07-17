@@ -1324,8 +1324,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ExpedienteComercial expediente = expedienteComercialApi
 					.expedienteComercialPorOferta(ofertaAceptada.getId());
 			
-			ActivoOferta activoOferta = genericDao.get(ActivoOferta.class, genericDao.createFilter(FilterType.EQUALS, "oferta", ofertaAceptada.getId()));
-			Activo activo = activoOferta.getPrimaryKey().getActivo();
+			List<ActivoOferta> activosOferta = genericDao.getList(ActivoOferta.class, genericDao.createFilter(FilterType.EQUALS, "oferta", ofertaAceptada.getId()));
+			Activo activo = activosOferta.get(0).getPrimaryKey().getActivo();
 			
 			if(!Checks.esNulo(expediente) && !Checks.esNulo(activo) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
 				List<CompradorExpediente> listaCex = expediente.getCompradores();

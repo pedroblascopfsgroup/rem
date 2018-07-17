@@ -303,29 +303,9 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		for (String s : claves) {
 			String email = null;
 			if (GESTOR_PRESCRIPTOR.equals(s)) {
-				addMail(s, extractEmailProveedor(ofertaApi.getPreescriptor(oferta)), gestores);
-				
-				ActivoProveedor preescriptor = ofertaApi.getPreescriptor(oferta);
-				Filter filterUsu = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.username", preescriptor.getDocIdentificativo());
-				GestorSustituto sgs = genericDao.get(GestorSustituto.class, filterUsu);
-				if (!Checks.esNulo(sgs)){
-					if (!Checks.esNulo(sgs.getFechaFin()) && !Checks.esNulo(sgs.getFechaInicio()) && sgs.getFechaFin().before(new Date())) {
-						addMail(s, sgs.getUsuarioGestorSustituto().getEmail(), gestores);
-					}
-				}
-				
+				addMail(s, extractEmailProveedor(ofertaApi.getPreescriptor(oferta)), gestores);				
 			} else if (GESTOR_MEDIADOR.equals(s)) {
-				addMail(s, extractEmailProveedor(activoApi.getMediador(activo)), gestores);
-				
-				ActivoProveedor mediador = activoApi.getMediador(activo);
-				Filter filterUsu = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.username", mediador.getDocIdentificativo());
-				GestorSustituto sgs = genericDao.get(GestorSustituto.class, filterUsu);
-				if (!Checks.esNulo(sgs)){
-					if (!Checks.esNulo(sgs.getFechaFin()) && !Checks.esNulo(sgs.getFechaInicio()) && sgs.getFechaFin().before(new Date())) {
-						addMail(s, sgs.getUsuarioGestorSustituto().getEmail(), gestores);
-					}
-				}
-				
+				addMail(s, extractEmailProveedor(activoApi.getMediador(activo)), gestores);			
 			} else if (GESTOR_COMERCIAL_ACTIVO.equals(s) || GESTOR_COMERCIAL_LOTE_RESTRINGIDO.equals(s)) {
 				addMail(s, extractEmail(gestorActivoApi.getGestorByActivoYTipo(activo, "GCOM")), gestores);
 				

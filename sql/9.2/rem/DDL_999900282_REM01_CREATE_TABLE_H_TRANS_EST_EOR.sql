@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=REMVIP-1076
 --## PRODUCTO=NO
 --##
---## Finalidad: Crear la tabla de relaciones de estados de EXPEDIENTE , RESERVA , OFERTA.
+--## Finalidad: Crear la tabla de historico de estados de EXPEDIENTE , RESERVA , OFERTA.
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -26,7 +26,7 @@ DECLARE
     V_COUNT NUMBER(16); -- Vble. para contar.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_TABLA VARCHAR2(27 CHAR) := 'TRANS_EST_EXP_OFR_RES'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TABLA VARCHAR2(27 CHAR) := 'H_TRANS_EST_EOR'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 	V_USUARIO VARCHAR2(32 CHAR) := 'REMVIP-1076';
     USUARIO_CONSULTA_REM VARCHAR2(50 CHAR):= 'REM_QUERY';
     
@@ -53,32 +53,30 @@ DECLARE
 		V_SQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TABLA||'''';
 
 	EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
-	
-	IF V_COUNT = 1 THEN
-    
-        V_SQL := 'DROP TABLE '||V_ESQUEMA||'.'||V_TABLA||'';
- 
-		EXECUTE IMMEDIATE V_SQL;
 		
-		DBMS_OUTPUT.PUT_LINE('[INFO] Se ha borrado la tabla '||V_ESQUEMA||'.'||V_TABLA||'');
-	
-    ELSE
-    	
-        DBMS_OUTPUT.PUT_LINE('[INFO] No se ha borrado la tabla porque no existia ');
-    
-    END IF;    
-        
-    V_SQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TABLA||'''';
-
-	EXECUTE IMMEDIATE V_SQL INTO V_COUNT;    
-        
-	IF V_COUNT > 0 THEN
+	IF V_COUNT = 0 THEN
  
 		V_SQL := 'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||' (
 				   '||V_TABLA||'_ID NUMBER(16,0) NOT NULL
-				 , DD_EOF_COD VARCHAR2(50 CHAR) NOT NULL
-				 , DD_EEC_COD VARCHAR2(50 CHAR) NOT NULL
-				 , DD_ERE_COD VARCHAR2(50 CHAR) 
+				 , ECO_NUM_EXPEDIENTE NUMBER(16,0) 
+				 , DD_EOF_COD_ANT VARCHAR(50 CHAR)
+                 , DD_EOF_DES_ANT VARCHAR(50 CHAR)
+				 , DD_EEC_COD_ANT VARCHAR(50 CHAR)
+                 , DD_EEC_DES_ANT VARCHAR(50 CHAR)
+				 , DD_ERE_COD_ANT VARCHAR(50 CHAR)
+                 , DD_ERE_DES_ANT VARCHAR(50 CHAR)
+				 , DD_EOF_COD_POST VARCHAR(50 CHAR)
+                 , DD_EOF_DES_POST VARCHAR(50 CHAR)
+				 , DD_EEC_COD_POST VARCHAR(50 CHAR) 
+                 , DD_EEC_DES_POST VARCHAR(50 CHAR)
+				 , DD_ERE_COD_POST VARCHAR(50 CHAR) 
+                 , DD_ERE_DES_POST VARCHAR(50 CHAR)
+                 , FECHA_VENTA_ANT DATE 
+                 , FECHA_VENTA_POST DATE 
+                 , FECHA_ING_CHEQUE_ANT DATE 
+                 , FECHA_ING_CHEQUE_POST DATE
+                 , FECHA_FIR_RES_ANT DATE
+                 , FECHA_FIR_RES_POST DATE
 				 , VERSION NUMBER(16,0) DEFAULT 0 NOT NULL 
 				 , USUARIOCREAR VARCHAR2(50 CHAR) NOT NULL ENABLE
 				 , FECHACREAR TIMESTAMP (6) NOT NULL ENABLE
@@ -88,7 +86,6 @@ DECLARE
 				 , FECHABORRAR TIMESTAMP (6)
 				 , BORRADO NUMBER(1,0) DEFAULT 0 NOT NULL
 				 , CONSTRAINT '||V_TABLA||'_ID_PK PRIMARY KEY ('||V_TABLA||'_ID)
-				 , CONSTRAINT UK_'||V_TABLA||' UNIQUE (DD_EOF_COD,DD_EEC_COD,DD_ERE_COD)
 				)
 			  ';
 

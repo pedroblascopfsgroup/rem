@@ -1294,25 +1294,47 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ExpedienteComercial expediente = expedienteComercialApi
 					.expedienteComercialPorOferta(ofertaAceptada.getId());
 			
-			List<ActivoOferta> activosOferta = genericDao.getList(ActivoOferta.class, genericDao.createFilter(FilterType.EQUALS, "oferta", ofertaAceptada.getId()));
-			Activo activo = activosOferta.get(0).getPrimaryKey().getActivo();
-			
-			if(!Checks.esNulo(expediente) && !Checks.esNulo(activo) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
-				List<CompradorExpediente> listaCex = expediente.getCompradores();
-				Boolean tienenProvincia = true;
+			if(!Checks.esNulo(ofertaAceptada.getAgrupacion())){
+				ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
 				
-				for(CompradorExpediente cex: listaCex){
-					Comprador com = cex.getPrimaryKey().getComprador();
-					if(!Checks.esNulo(com) && Checks.esNulo(com.getProvincia())){
-						tienenProvincia = false;
-						break;
+				if(!Checks.esNulo(expediente) && !Checks.esNulo(agrupacion) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(agrupacion.getActivoPrincipal().getCartera().getCodigo())){
+					List<CompradorExpediente> listaCex = expediente.getCompradores();
+					Boolean tienenProvincia = true;
+					
+					for(CompradorExpediente cex: listaCex){
+						Comprador com = cex.getPrimaryKey().getComprador();
+						if(!Checks.esNulo(com) && Checks.esNulo(com.getProvincia())){
+							tienenProvincia = false;
+							break;
+						}
 					}
+					
+					return tienenProvincia;
+				} else if (!Checks.esNulo(agrupacion) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(agrupacion.getActivoPrincipal().getCartera().getCodigo())){
+					return true;
 				}
+			}else{
+				List<ActivoOferta> activosOferta = genericDao.getList(ActivoOferta.class, genericDao.createFilter(FilterType.EQUALS, "oferta", ofertaAceptada.getId()));
+				Activo activo = activosOferta.get(0).getPrimaryKey().getActivo();
 				
-				return tienenProvincia;
-			} else if (!Checks.esNulo(activo) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
-				return true;
+				if(!Checks.esNulo(expediente) && !Checks.esNulo(activo) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
+					List<CompradorExpediente> listaCex = expediente.getCompradores();
+					Boolean tienenProvincia = true;
+					
+					for(CompradorExpediente cex: listaCex){
+						Comprador com = cex.getPrimaryKey().getComprador();
+						if(!Checks.esNulo(com) && Checks.esNulo(com.getProvincia())){
+							tienenProvincia = false;
+							break;
+						}
+					}
+					
+					return tienenProvincia;
+				} else if (!Checks.esNulo(activo) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
+					return true;
+				}
 			}
+			
 		}
 		return false;
 	}

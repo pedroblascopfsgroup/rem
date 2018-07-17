@@ -6119,20 +6119,24 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public Boolean checkAgrupacionAsistida(Activo activo) {
 		Date fechaHoy = new Date();
 		
-		if(!Checks.esNulo(activo)) {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
-			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "agrupacion.eliminado", 0);
-			List<ActivoAgrupacionActivo> lista = genericDao.getList(ActivoAgrupacionActivo.class, filtro, filtro2);
-			ActivoAgrupacionActivo aga = lista.get(0);
-			if(!Checks.esNulo(aga)) {
-				ActivoAgrupacion agr = aga.getAgrupacion();
-				if(!Checks.esNulo(agr) && DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agr.getTipoAgrupacion().getCodigo())) {
-					if(fechaHoy.compareTo(agr.getFechaInicioVigencia()) >= 0 && fechaHoy.compareTo(agr.getFechaFinVigencia()) <= 0) {
-						return true;
+		try{
+			if(!Checks.esNulo(activo)) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
+				Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "agrupacion.eliminado", 0);
+				List<ActivoAgrupacionActivo> lista = genericDao.getList(ActivoAgrupacionActivo.class, filtro, filtro2);
+				ActivoAgrupacionActivo aga = lista.get(0);
+				if(!Checks.esNulo(aga)) {
+					ActivoAgrupacion agr = aga.getAgrupacion();
+					if(!Checks.esNulo(agr) && DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agr.getTipoAgrupacion().getCodigo())) {
+						if(fechaHoy.compareTo(agr.getFechaInicioVigencia()) >= 0 && fechaHoy.compareTo(agr.getFechaFinVigencia()) <= 0) {
+							return true;
+						}
 					}
 				}
+				
 			}
-			
+		}catch(Exception e){
+			return false;
 		}
 		return false;
 	}

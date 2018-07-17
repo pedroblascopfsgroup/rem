@@ -182,7 +182,7 @@ public class InformeMediadorDto implements Serializable {
 	@NotNull(groups = Insert.class)
 	@Diccionary(clase = DDTipoGradoPropiedad.class, message = "El codTipoPropiedad no existe", groups = { Insert.class,
 			Update.class })
-	@EntityDefinition(procesar = false)
+	@EntityDefinition(propertyName = "tipoGradoPropiedad", classObj = DDTipoGradoPropiedad.class)
 	private String codTipoPropiedad;
 
 	@NotNull(groups = Insert.class)
@@ -309,7 +309,7 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "reformaPresupuesto")
 	private Double otrasReformasNecesariasImporteAproximado;
 
-	@EntityDefinition(propertyName = "distribucionTxt")
+	@EntityDefinition(propertyName = "infoDistribucionInterior")
 	private String distribucionInterior;
 
 	@EntityDefinition(propertyName = "edificioDivisible")
@@ -378,7 +378,8 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "mtsFachadaPpal")
 	private Float metrosLinealesFachadaPrincipal;
 
-	@EntityDefinition(propertyName = "mtsAlturaLibre")
+	//@EntityDefinition(propertyName = "mtsAlturaLibre")
+	@EntityDefinition(procesar = false)
 	private Float altura;
 
 	@Diccionary(clase = DDSubtipoPlazaGaraje.class, message = "El codSubtipoPlazasGaraje no existe", groups = {
@@ -406,7 +407,8 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "anchura")
 	private Float ancho;
 
-	@EntityDefinition(propertyName = "aparcamientoAltura")
+	//@EntityDefinition(propertyName = "aparcamientoAltura")
+	@EntityDefinition(procesar = false)
 	private Float alto;
 
 	@EntityDefinition(propertyName = "profundidad")

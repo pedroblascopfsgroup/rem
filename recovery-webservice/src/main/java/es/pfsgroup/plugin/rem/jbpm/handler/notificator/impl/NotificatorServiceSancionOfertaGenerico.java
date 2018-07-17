@@ -568,7 +568,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				}
 				//ADJUNTOS SI ES BANKIA
 				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)){
-					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_Bankia_v6.docx");
+					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_Bankia_v7.docx");
 					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_Bankia.docx"));
 				}
 				//ADJUNTOS SI ES TANGO

@@ -6122,7 +6122,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if(!Checks.esNulo(activo)) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
 			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "agrupacion.eliminado", 0);
-			ActivoAgrupacionActivo aga= genericDao.get(ActivoAgrupacionActivo.class, filtro, filtro2);
+			List<ActivoAgrupacionActivo> lista = genericDao.getList(ActivoAgrupacionActivo.class, filtro, filtro2);
+			ActivoAgrupacionActivo aga = lista.get(0);
 			if(!Checks.esNulo(aga)) {
 				ActivoAgrupacion agr = aga.getAgrupacion();
 				if(!Checks.esNulo(agr) && DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agr.getTipoAgrupacion().getCodigo())) {

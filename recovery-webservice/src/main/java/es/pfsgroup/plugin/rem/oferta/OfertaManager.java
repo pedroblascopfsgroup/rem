@@ -1329,14 +1329,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			if(!Checks.esNulo(expediente) && !Checks.esNulo(activo) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
 				List<CompradorExpediente> listaCex = expediente.getCompradores();
-				Boolean tieneNifConyugue = false;
+				Boolean tieneNifConyugue = true;
 				
 				for(CompradorExpediente cex: listaCex){
-					Comprador com = cex.getPrimaryKey().getComprador();
-					ClienteComercial cli = com.getClienteComercial();
-					if(!Checks.esNulo(com) && !Checks.esNulo(cli) && !Checks.esNulo(cli.getEstadoCivil()) && 
-							DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(cli.getEstadoCivil().getCodigo()) && !Checks.esNulo(cex.getDocumentoConyuge())){
-						tieneNifConyugue = true;
+					if(!Checks.esNulo(cex)  && DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(cex.getEstadoCivil().getCodigo()) && Checks.esNulo(cex.getDocumentoConyuge())){
+						tieneNifConyugue = false;
 						break;
 					}
 				}

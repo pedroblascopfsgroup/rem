@@ -6144,6 +6144,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			beanUtilNotNull.copyProperties(comprador, vista);
 			
 			comprador.setEsBH(esBH(vista.getIdExpedienteComercial()));
+			comprador.setEntidadPropietariaCodigo(esCodigoExpedienteLiberbank(vista.getIdExpedienteComercial()));
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -6161,6 +6163,19 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Activo act = ofr.getPrimaryKey().getActivo();
 		
 		return DDSubcartera.CODIGO_BAN_BH.equals(act.getSubcartera().getCodigo());
+	}
+	
+	@Override
+	public String esCodigoExpedienteLiberbank(String idExpediente) {
+		Long id = Long.parseLong(idExpediente);
+
+		ExpedienteComercial exp = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+		ActivoOferta ofr = genericDao.get(ActivoOferta.class, genericDao.createFilter(FilterType.EQUALS, "oferta", exp.getOferta().getId()));
+		
+		Activo act = ofr.getPrimaryKey().getActivo();
+		
+		return act.getCartera().getCodigo();
+		
 	}
 	
 }

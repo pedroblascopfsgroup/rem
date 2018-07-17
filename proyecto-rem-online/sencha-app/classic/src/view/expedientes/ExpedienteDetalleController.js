@@ -1856,8 +1856,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			if(campoEstadoCivil.getValue() === "02") {
 				// Si el Estado civil es 'Casado', entonces Reg. económico es obligatorio.
 				campoRegEconomico.allowBlank = false;
-				if(me.getViewModel().get('expediente.entidadPropietariaCodigo') == CONST.CARTERA['LIBERBANK']){
+				if(me.getViewModel().get('esCarteraLiberbank')|| me.getViewModel().get('comprador.entidadPropietariaCodigo') == CONST.CARTERA['LIBERBANK']){
 					campoNumConyuge.allowBlank = false;
+					campoEstadoCivil.validate();
+
+				}else{
+					campoNumConyuge.allowBlank = true;
 				}
 				//campoRegEconomico.setDisabled(false);
 				//campoNumConyuge.setDisabled(false);

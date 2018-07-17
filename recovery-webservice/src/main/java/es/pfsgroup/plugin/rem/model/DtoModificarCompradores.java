@@ -11,6 +11,8 @@ public class DtoModificarCompradores {
 	
 	private String codTipoPersona;
 	
+	private String entidadPropietariaCodigo;
+
 	private String descripcionTipoPersona;
 	
 	private Integer titularReserva;
@@ -149,6 +151,14 @@ public class DtoModificarCompradores {
 
 	public void setCodTipoPersona(String codTipoPersona) {
 		this.codTipoPersona = codTipoPersona;
+	}
+	
+	public String getEntidadPropietariaCodigo() {
+		return entidadPropietariaCodigo;
+	}
+
+	public void setEntidadPropietariaCodigo(String entidadPropietariaCodigo) {
+		this.entidadPropietariaCodigo = entidadPropietariaCodigo;
 	}
 
 	public String getDescripcionTipoPersona() {

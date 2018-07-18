@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 Se añaden datos de entrada del SP CARGA_TASACIONES
+--##		1.02 Se modifica el tamaño de los campos de observaciones de 100 a 250
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -140,7 +141,8 @@ V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 V_TMP_TIPO_DATA T_TIPO_DATA;
 
 BEGIN
-
+	-- Version 1.02
+	
    COD_RETORNO := 0;
 
    /**************************************************************************************************************************************************************
@@ -519,7 +521,7 @@ BEGIN
 			'''||V_NOMBRESP||''',
 			'''||FECHA_HOY||''',
 			1,
-			NVL('''||ACT_ID||''',''-1''),
+			NVL('''||ID_ACTIVO_HAYA||''',''-1''),
 			'''||HLP_REGISTRO_EJEC||'''
 		FROM DUAL
 		';
@@ -543,7 +545,7 @@ BEGIN
 			'''||V_NOMBRESP||''',
 			'''||FECHA_HOY||''',
 			0,
-			'||TAS_ID||',
+			'||ID_ACTIVO_HAYA||',
 			'''||V_NUMREGISTROS||'''
 		FROM DUAL
 	  ';
@@ -572,7 +574,7 @@ EXCEPTION
 			'''||V_NOMBRESP||''',
 			SYSDATE,
 			1,
-			NVL('''||ACT_ID||''',''-1''),
+			NVL('''||ID_ACTIVO_HAYA||''',''-1''),
 			'''||ERR_MSG||'''
 		FROM DUAL
 	  ';

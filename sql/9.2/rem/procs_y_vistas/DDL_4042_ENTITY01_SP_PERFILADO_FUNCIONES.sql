@@ -1,7 +1,7 @@
 --/*
 --######################################### 
---## AUTOR=Alejandro Valverde Herrera
---## FECHA_CREACION=20180705
+--## AUTOR=Sergio Ortuño
+--## FECHA_CREACION=20180718
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4238
@@ -12,6 +12,7 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Resolución conflictos
 --#########################################
 --*/
 
@@ -445,7 +446,6 @@ BEGIN
                 FOR
                 PERFIL
                 IN (
-<<<<<<< HEAD
              HAYAGESTADM	
 			,HAYASUPADM	
 			,HAYAGESACT	
@@ -544,7 +544,6 @@ BEGIN
                   PERFIL
                IN
                (
-<<<<<<< HEAD
                 HAYAGESTADM	
 			,HAYASUPADM	
 			,HAYAGESACT	

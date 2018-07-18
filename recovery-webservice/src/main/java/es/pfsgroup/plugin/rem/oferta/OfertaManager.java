@@ -1297,7 +1297,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if(!Checks.esNulo(ofertaAceptada.getAgrupacion())){
 				ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
 				
-				if(!Checks.esNulo(expediente) && !Checks.esNulo(agrupacion) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(agrupacion.getActivoPrincipal().getCartera().getCodigo())){
+				ActivoAgrupacionActivo aga = agrupacion.getActivos().get(0);
+				
+				if(!Checks.esNulo(expediente) && !Checks.esNulo(aga) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(aga.getActivo().getCartera().getCodigo())){
 					List<CompradorExpediente> listaCex = expediente.getCompradores();
 					Boolean tienenProvincia = true;
 					
@@ -1310,7 +1312,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 					
 					return tienenProvincia;
-				} else if (!Checks.esNulo(agrupacion) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(agrupacion.getActivoPrincipal().getCartera().getCodigo())){
+				} else if (!Checks.esNulo(aga) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(aga.getActivo().getCartera().getCodigo())){
 					return true;
 				}
 			}else{

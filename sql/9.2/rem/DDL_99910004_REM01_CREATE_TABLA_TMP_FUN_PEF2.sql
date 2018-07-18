@@ -1,7 +1,7 @@
 --/*
 --######################################### 
---## AUTOR=DAP
---## FECHA_CREACION=20180516
+--## AUTOR=Sergio Ortuño
+--## FECHA_CREACION=20180718
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-2318
@@ -11,7 +11,9 @@
 --##      
 --## INSTRUCCIONES:  
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial DAP
+--##		0.2 Añadido GESPROV SOG
+--##		0.3 Añadido PERFGCCLIBERBANK SOG
 --#########################################
 --*/
 
@@ -81,6 +83,7 @@ BEGIN
 			,HAYALLA	    VARCHAR2(1 CHAR)
 			,HAYASLLA	    VARCHAR2(1 CHAR)
 			,PERFGCCBANKIA	VARCHAR2(1 CHAR)
+			,PERFGCCLIBERBANK VARCHAR(1 CHAR)
 			,GESTOADM	    VARCHAR2(1 CHAR)
 			,GESTIAFORM	    VARCHAR2(1 CHAR)
 			,HAYAGESTADMT	VARCHAR2(1 CHAR)
@@ -102,6 +105,7 @@ BEGIN
 			,SUPRES	        VARCHAR2(1 CHAR)
 			,GESMIN	        VARCHAR2(1 CHAR)
 			,SUPMIN         VARCHAR2(1 CHAR)
+			,GESPROV 		VARCHAR2(1 CHAR)
       )
       LOGGING 
       NOCOMPRESS 

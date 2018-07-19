@@ -8,12 +8,13 @@
 --## PRODUCTO=NO
 --## Finalidad: Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación. Liberbank.
 --## Info: https://link-doc.pfsgroup.es/confluence/display/REOS/SP_EXT_PR_ACT_RES_VENTA
---##       Mantengamos la documentación al día. Si subimos de versión, reflejemoslo en el SP.
+--##       Mantengamos la documentación al día. Si subimos de versión, reflejemoslo en el SP, en el comentario tras el BEGIN
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
---##        0.2 Control de errores en HLP_HISTORICO_LANZA_PERIODICO
+--##        0.1  Versión inicial
+--##        0.2  Control de errores en HLP_HISTORICO_LANZA_PERIODICO
+--##        1.01 Se elimina la restricción para los gastos con iva. Ahora pueden actualizar la fecha de contabilización.
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -59,7 +60,7 @@ create or replace PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_GASTOS (
     V_GPV_NUM_GASTO_HAYA            VARCHAR2(16 CHAR);
 
     --Info
-    V_OP_1_DESC                     VARCHAR2(400 CHAR) := '[OPERATORIA] Para todos los registros con FECHA DE CONTABILIZACION relacionado con un gasto SIN IVA cuyo estado no sea "Rechazado administración","Contabilizado","Pagado" "Rechazado propietario" o "Anulado".';
+    V_OP_1_DESC                     VARCHAR2(400 CHAR) := '[OPERATORIA] Para todos los registros con FECHA DE CONTABILIZACION relacionado con un gasto cuyo estado no sea "Rechazado administración","Contabilizado","Pagado" "Rechazado propietario" o "Anulado".';
     V_OP_2_DESC                     VARCHAR2(400 CHAR) := '[OPERATORIA] Para todos los registros con FECHA DE PAGO relacionado con un gasto cuyo estado no sea "Rechazado administración","Pagado" "Rechazado propietario" o "Anulado".';
 
     --Queries
@@ -193,7 +194,7 @@ create or replace PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_GASTOS (
     END;
 
 BEGIN
---v0.1
+--Version : 1.01
 
     --Iniciamos con COD_RETORNO = 0.
     COD_RETORNO := 0;
@@ -287,14 +288,9 @@ BEGIN
 
         --Mostramos la descripción de la operatoria en ejecución
         DBMS_OUTPUT.PUT_LINE(V_OP_1_DESC);
-        DBMS_OUTPUT.PUT_LINE('V_TIT_ID: '||V_TIT_ID);
         -----------------
         -- PASO PREVIO --
         -----------------
-        --¿Está relacionado con un gasto SIN IVA?
-        IF V_TIT_ID IS NULL THEN
-            --OK
-            DBMS_OUTPUT.PUT_LINE('[INFO] El gasto '||V_GPV_NUM_GASTO_HAYA||' está relacionado con un gasto SIN IVA. Continuamos la ejecución.');
             --¿El estado del gasto es "Rechazado administración","Contabilizado","Pagado" "Rechazado propietario" o "Anulado"?
             IF V_EGA_CODIGO IN ('02','04','05','06','08') THEN
                 --KO
@@ -304,11 +300,6 @@ BEGIN
                 --OK
                 DBMS_OUTPUT.PUT_LINE('[INFO] El gasto '||V_GPV_NUM_GASTO_HAYA||' NO TIENE un estado "Rechazado administración","Contabilizado","Pagado", "Rechazado propietario" o "Anulado". Continuamos la ejecución.');
             END IF;
-        ELSE
-            --KO
-            COD_RETORNO := 1;
-            V_ERROR_DESC := '[INFO] El gasto '||V_GPV_NUM_GASTO_HAYA||' NO ESTÁ relacionado con un gasto SIN IVA. Paramos la ejecución.';
-        END IF;
 
         --Si hemos llegado hasta aquí, ejecutamos la operatoria 1.
         --------------

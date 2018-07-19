@@ -64,6 +64,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
@@ -95,6 +96,7 @@ import es.pfsgroup.plugin.rem.model.ActivoCopropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.ActivoHistoricoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoInformeComercialHistoricoMediador;
@@ -121,6 +123,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
+import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
@@ -261,6 +264,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private VisitaDao visitasDao;
+	
+	@Autowired
+	private ActivoHistoricoPatrimonioDao activoHistoricoPatrimonioDao;
 
 	@Autowired
 	private ActivoPropagacionApi activoPropagacionApi;
@@ -4659,6 +4665,42 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 		}
 		
+	}
+	
+	@Override
+	public List<DtoActivoPatrimonio> getHistoricoAdecuacionesAlquilerByActivo(Long idActivo) {
+		List<ActivoHistoricoPatrimonio> ListActHistPatrimonio = activoHistoricoPatrimonioDao.getHistoricoAdecuacionesAlquilerByActivo(idActivo);
+		List<DtoActivoPatrimonio> listActPatrimonioDto = new ArrayList<DtoActivoPatrimonio>();
+
+		if (!Checks.esNulo(ListActHistPatrimonio)) {
+			for (ActivoHistoricoPatrimonio activoHistPatrimonio : ListActHistPatrimonio) {
+				try {
+					DtoActivoPatrimonio actPatrimonioDto = new DtoActivoPatrimonio();
+					BeanUtils.copyProperties(actPatrimonioDto, activoHistPatrimonio);
+					actPatrimonioDto.setIdPatrimonio(!Checks.esNulo(activoHistPatrimonio.getId()) ? activoHistPatrimonio.getId().toString() : null);
+					actPatrimonioDto.setIdActivo(!Checks.esNulo(activoHistPatrimonio.getActivo()) ? activoHistPatrimonio.getActivo().getId().toString() : null);
+					actPatrimonioDto.setCodigoAdecuacion(!Checks.esNulo(activoHistPatrimonio.getAdecuacionAlquiler()) ? activoHistPatrimonio.getAdecuacionAlquiler().getCodigo() : null);
+					actPatrimonioDto.setDescripcionAdecuacion(!Checks.esNulo(activoHistPatrimonio.getAdecuacionAlquiler()) ? activoHistPatrimonio.getAdecuacionAlquiler().getDescripcion() : null);
+					actPatrimonioDto.setDescripcionAdecuacionLarga(!Checks.esNulo(activoHistPatrimonio.getAdecuacionAlquiler()) ? activoHistPatrimonio.getAdecuacionAlquiler().getDescripcionLarga() :
+					 null);
+					actPatrimonioDto.setCheckPerimetroAlquiler(activoHistPatrimonio.getCheckHPM());
+					actPatrimonioDto.setFechaInicioAdecuacion(activoHistPatrimonio.getFechaInicioAdecuacionAlquiler());
+					actPatrimonioDto.setFechaFinAdecuacion(activoHistPatrimonio.getFechaFinAdecuacionAlquiler());
+					actPatrimonioDto.setFechaInicioPerimetroAlquiler(activoHistPatrimonio.getFechaInicioHPM());
+					actPatrimonioDto.setFechaFinPerimetroAlquiler(activoHistPatrimonio.getFechaFinHPM());
+
+					listActPatrimonioDto.add(actPatrimonioDto);
+
+				} catch (IllegalAccessException e) {
+					logger.error(e);
+
+				} catch (InvocationTargetException e) {
+					logger.error(e);
+				}
+			}
+		}
+
+		return listActPatrimonioDto;
 	}
 
 	@Override

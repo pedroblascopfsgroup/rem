@@ -166,6 +166,20 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public ActivoAgrupacionActivo getActivoAgrupacionActivoAgrRestringidaPorActivoID(Long id);
 	
 	public void deleteActivoDistribucion(Long idActivoInfoComercial);
+	
+	/**
+	 * Este método lanza el procedimiento de cambio de estado de publicación y realiza la operación de generar un
+	 * histórico para los movimientos realizados.
+	 *
+	 * @param idActivo: ID del activo para el cual se desea realizar la operación.
+	 * @param username: nombre del usuario, si la llamada es desde la web, que realiza la operación.
+	 * @return Devuelve True si la operación ha sido satisfactorio, False si no ha sido satisfactoria.
+	 */
+	Boolean publicarActivoConHistorico(Long idActivo, String username);
+	
+	Boolean publicarAgrupacionConHistorico(Long idAgrupacion, String username);
+	
+	Boolean publicarAgrupacionSinHistorico(Long idAgrupacion, String username, String eleccionUsuarioTipoPublicacionAlquiler);
 
 
 }

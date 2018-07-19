@@ -67,7 +67,7 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
-import es.pfsgroup.plugin.rem.controller.AccesoActivoException;
+//import es.pfsgroup.plugin.rem.controller.AccesoActivoException;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
@@ -2647,17 +2647,11 @@ public class ActivoAdapter {
 		return listaDto;
 	}
 
-	public WebDto getTabActivo(Long id, String tab) throws IllegalAccessException, InvocationTargetException,AccesoActivoException {
+	public WebDto getTabActivo(Long id, String tab) throws IllegalAccessException, InvocationTargetException {
 
 		TabActivoService tabActivoService = tabActivoFactory.getService(tab);
 		Activo activo = activoApi.get(id);
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		if(!Checks.esNulo(usuarioCartera)){
-			if(!usuarioCartera.getCartera().getCodigo().equals(activo.getCartera().getCodigo())){
-				throw new AccesoActivoException("No tiene permiso para consultar al activo seleccionado");
-			}
-		}
+
 		return tabActivoService.getTabData(activo);
 
 	}
@@ -2698,47 +2692,11 @@ public class ActivoAdapter {
 
 		TabActivoService tabActivoService = tabActivoFactory.getService(tab);
 		Activo activo = activoApi.get(id);
-		
+
 		activo = tabActivoService.saveTabActivo(activo, dto);
 
 		activoApi.saveOrUpdate(activo);
 
-		if(!Checks.esNulo(((DtoActivoFichaCabecera)dto).getTipoActivoCodigo()) 
-				&& DDTipoActivo.COD_SUELO.equals(((DtoActivoFichaCabecera)dto).getTipoActivoCodigo())){
-			// ANYADIR GESTOR Y SUPERVISOR SUELOS
-			if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS))
-				logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_SUELOS);
-			if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_SUELOS))
-				logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
-			
-		}else if(!Checks.esNulo(((DtoActivoFichaCabecera)dto).getTipoActivoCodigo()) 
-				&& gestorActivoApi.existeGestorEnActivo(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS)){
-			// Cambiar los gestores
-			this.cambiarTrabajosActivosAGestorActivo(activo,GestorActivoApi.CODIGO_GESTOR_SUELOS);
-			// BORRAR GESTOR Y SUPERVISOR SUELOS
-			this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_SUELOS);
-			this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
-		}
-		
-		if(!Checks.esNulo(((DtoActivoFichaCabecera)dto).getTipoActivoCodigo())
-				&& !DDTipoActivo.COD_SUELO.equals(((DtoActivoFichaCabecera)dto).getTipoActivoCodigo())
-				&& Checks.esNulo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES)) ) {
-				//&& (!Checks.esNulo(activo.getEstadoActivo()) || !Checks.esNulo(((DtoActivoFichaCabecera)dto).getEstadoActivoCodigo()))){
-			
-			if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES))
-				logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
-			if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES))
-				logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
-		
-		}else if(!Checks.esNulo(((DtoActivoFichaCabecera)dto).getTipoActivoCodigo()) 
-				&& DDTipoActivo.COD_SUELO.equals(((DtoActivoFichaCabecera)dto).getTipoActivoCodigo())) {
-			// Cambiar los gestores
-			this.cambiarTrabajosActivosAGestorActivo(activo,GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
-			// BORRAR GESTOR Y SUPERVISOR EDIFICACIONES
-			this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
-			this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
-		}
-		
 		// Metodo que recoge funciones que requieren el guardado previo de los
 		// datos
 		afterSaveTabActivo(dto, activo, tabActivoService);
@@ -3394,5 +3352,19 @@ public class ActivoAdapter {
 
 		return null;
 
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean actualizarEstadoPublicacionActivo(Long id) {
+		Activo activo = activoApi.get(id);
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+
+		if(activoApi.isActivoIntegradoAgrupacionRestringida(id)) {
+			activoDao.publicarAgrupacionConHistorico(activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(id).getAgrupacion().getId(), usuarioLogado.getUsername());
+		} else {
+			activoDao.publicarActivoConHistorico(activo.getId(), usuarioLogado.getUsername());
+		}
+
+		return true;
 	}
 }

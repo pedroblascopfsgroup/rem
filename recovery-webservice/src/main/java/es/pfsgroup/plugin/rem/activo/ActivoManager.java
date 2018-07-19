@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -64,6 +65,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
@@ -95,6 +97,7 @@ import es.pfsgroup.plugin.rem.model.ActivoCopropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.ActivoHistoricoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoInformeComercialHistoricoMediador;
@@ -121,6 +124,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
+import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
@@ -261,6 +265,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private VisitaDao visitasDao;
+	
+	@Autowired
+	private ActivoHistoricoPatrimonioDao activoHistoricoPatrimonioDao;
 
 	@Autowired
 	private ActivoPropagacionApi activoPropagacionApi;
@@ -344,6 +351,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String MOTIVO_NO_PUBLICADO_POR_ACTIVO_VENDIDO = "activo.motivo.vendido.no.publicar";
 	private static final String AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO = "activo.motivo.oferta.tipo.numero.documento";
 	private static final String AVISO_MENSAJE_CLIENTE_OBLIGATORIO = "activo.motivo.oferta.cliente";
+	private static final String AVISO_MENSAJE_EXISTEN_OFERTAS_VENTA = "activo.motivo.oferta.existe.venta";
+	private static final String AVISO_MENSAJE_ACITVO_ALQUILADO_O_OCUPADO = "activo.motivo.oferta.alquilado.ocupado";
 	private static final String AVISO_MEDIADOR_NO_EXISTE= "activo.aviso.mediador.no.existe";
 	private static final String AVISO_MEDIADOR_BAJA= "activo.aviso.mediador.baja";
 
@@ -532,6 +541,47 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			
 			DDEstadoOferta tipoOferta = (DDEstadoOferta) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
+			
+			
+			/**
+			 * 
+			 * si el activo está marcado como alquilado u ocupado (sin título) 
+			 * no se podrá poner la oferta como tramitada, 
+			 * se mostrara un mensaje de error indicando que el activo está alquilado u ocupado.
+			 *
+			 */
+			
+			if(!Checks.esNulo(tipoOferta) && !Checks.esNulo(oferta.getActivoPrincipal())
+					&& DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())
+					&& !Checks.esNulo(oferta.getActivoPrincipal().getSituacionPosesoria())
+					&& !Checks.esNulo(oferta.getActivoPrincipal().getSituacionPosesoria().getOcupado())
+					&& oferta.getActivoPrincipal().getSituacionPosesoria().getOcupado() == 1) {
+				
+				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACITVO_ALQUILADO_O_OCUPADO));
+				
+			}
+			
+			// Si el estado de la oferta es tramitada y tipo oferta es alquiler
+			// Sole se podrá realizar el cambio si no existe para el mismo activo una oferta de tipo venta
+			if (!Checks.esNulo(tipoOferta) && !Checks.esNulo(oferta.getTipoOferta())
+					&& DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())
+					&& DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
+				
+				// Consultar ofertas activo
+				List<ActivoOferta> ofertasActivo = oferta.getActivoPrincipal().getOfertas();
+				
+				
+				for(ActivoOferta acivoOferta: ofertasActivo) {
+					// Si existe oferta de venta lanzar error
+					if(DDTipoOferta.CODIGO_VENTA.equals(acivoOferta.getPrimaryKey().getOferta().getTipoOferta().getCodigo())
+							&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(acivoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo())) {
+						
+						throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_EXISTEN_OFERTAS_VENTA));
+						
+					}
+				}
+				
+			}
 
 			oferta.setEstadoOferta(tipoOferta);
 
@@ -798,7 +848,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					if(esFinanciero && !Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo()) && getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) {
 						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_SAREB)));
 					// 2º Si es inmobiliario: Tipo de comercialización (singular/retail).
-					} else if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo()) && activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_SINGULAR)) {
+					} else if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo()) && !Checks.esNulo(activoBancario.getActivo().getTipoComercializar()) && DDTipoComercializar.CODIGO_SINGULAR.equals(activoBancario.getActivo().getTipoComercializar().getCodigo())) {
 						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_SAREB)));
 					// 3º Si es retail: Comparamos precio mínimo e importe oferta.
 					} else if(!Checks.esNulo(precioMinimoAutorizado) && precioMinimoAutorizado > oferta.getImporteOferta()) {
@@ -4658,6 +4708,42 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 		}
 		
+	}
+	
+	@Override
+	public List<DtoActivoPatrimonio> getHistoricoAdecuacionesAlquilerByActivo(Long idActivo) {
+		List<ActivoHistoricoPatrimonio> ListActHistPatrimonio = activoHistoricoPatrimonioDao.getHistoricoAdecuacionesAlquilerByActivo(idActivo);
+		List<DtoActivoPatrimonio> listActPatrimonioDto = new ArrayList<DtoActivoPatrimonio>();
+
+		if (!Checks.esNulo(ListActHistPatrimonio)) {
+			for (ActivoHistoricoPatrimonio activoHistPatrimonio : ListActHistPatrimonio) {
+				try {
+					DtoActivoPatrimonio actPatrimonioDto = new DtoActivoPatrimonio();
+					BeanUtils.copyProperties(actPatrimonioDto, activoHistPatrimonio);
+					actPatrimonioDto.setIdPatrimonio(!Checks.esNulo(activoHistPatrimonio.getId()) ? activoHistPatrimonio.getId().toString() : null);
+					actPatrimonioDto.setIdActivo(!Checks.esNulo(activoHistPatrimonio.getActivo()) ? activoHistPatrimonio.getActivo().getId().toString() : null);
+					actPatrimonioDto.setCodigoAdecuacion(!Checks.esNulo(activoHistPatrimonio.getAdecuacionAlquiler()) ? activoHistPatrimonio.getAdecuacionAlquiler().getCodigo() : null);
+					actPatrimonioDto.setDescripcionAdecuacion(!Checks.esNulo(activoHistPatrimonio.getAdecuacionAlquiler()) ? activoHistPatrimonio.getAdecuacionAlquiler().getDescripcion() : null);
+					actPatrimonioDto.setDescripcionAdecuacionLarga(!Checks.esNulo(activoHistPatrimonio.getAdecuacionAlquiler()) ? activoHistPatrimonio.getAdecuacionAlquiler().getDescripcionLarga() :
+					 null);
+					actPatrimonioDto.setCheckPerimetroAlquiler(activoHistPatrimonio.getCheckHPM());
+					actPatrimonioDto.setFechaInicioAdecuacion(activoHistPatrimonio.getFechaInicioAdecuacionAlquiler());
+					actPatrimonioDto.setFechaFinAdecuacion(activoHistPatrimonio.getFechaFinAdecuacionAlquiler());
+					actPatrimonioDto.setFechaInicioPerimetroAlquiler(activoHistPatrimonio.getFechaInicioHPM());
+					actPatrimonioDto.setFechaFinPerimetroAlquiler(activoHistPatrimonio.getFechaFinHPM());
+
+					listActPatrimonioDto.add(actPatrimonioDto);
+
+				} catch (IllegalAccessException e) {
+					logger.error(e);
+
+				} catch (InvocationTargetException e) {
+					logger.error(e);
+				}
+			}
+		}
+
+		return listActPatrimonioDto;
 	}
 
 	@Override

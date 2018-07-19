@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.ui.ModelMap;
 
+import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap;
 import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
@@ -271,7 +272,25 @@ class ActivoControllerDispachableMethods {
 				}
 			}
 		});
-		
+			
+		/*
+		 * TAB_PATRIMONIO
+		 */
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_PATRIMONIO, new DispachableMethod<DtoActivoPatrimonio>() {
+
+			@Override
+			public Class<DtoActivoPatrimonio> getArgumentType() {
+				return DtoActivoPatrimonio.class;
+			}
+
+			@Override
+			public void execute(Long id, DtoActivoPatrimonio dto) {
+				if (dto != null ){
+					this.controller.saveDatosPatrimonio(dto, id, new ModelMap());
+				}
+			}
+		});
+
 		/*
 		 * TAB_COMUNIDAD-ENTIDADES
 		 */

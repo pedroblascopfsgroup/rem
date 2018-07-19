@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20180719
+--## FECHA_CREACION=20180720
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-1373
@@ -26,7 +26,7 @@ DECLARE
     V_COUNT NUMBER(16); -- Vble. para contar.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_TABLA VARCHAR2(27 CHAR) := 'DD_TPA_TIPO_ACTIVO_BDE'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TABLA VARCHAR2(27 CHAR) := 'DD_TBE_TIPO_ACTIVO_BDE'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 	V_USUARIO VARCHAR2(32 CHAR) := 'REMVIP-1373';
     USUARIO_CONSULTA_REM VARCHAR2(50 CHAR):= 'REM_QUERY';
     

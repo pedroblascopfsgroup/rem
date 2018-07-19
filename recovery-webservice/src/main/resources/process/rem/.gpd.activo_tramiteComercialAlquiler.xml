@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="activo_tramiteComercialVenta" width="1131" height="860">
+<root-container name="activo_tramiteComercialAlquiler" width="1367" height="860">
   <node name="inicio" x="11" y="11" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -107,9 +107,6 @@
     </edge>
   </node>
   <node name="T015_ResolucionPBCDecision" x="251" y="540" width="248" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>

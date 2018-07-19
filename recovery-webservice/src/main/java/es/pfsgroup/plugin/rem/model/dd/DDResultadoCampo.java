@@ -33,7 +33,7 @@ public class DDResultadoCampo implements Auditable, Dictionary{
 	@Id
 	@Column(name = "DD_REC_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDResultadoConsultaGenerator")
-	@SequenceGenerator(name = "DDResultadoConsulta", sequenceName = "DD_REC_RESULTADO_CONSULTA")
+	@SequenceGenerator(name = "DDResultadoConsultaGenerator", sequenceName = "DD_REC_RESULTADO_CONSULTA")
 	private Long id;
 	    
 	@Column(name = "DD_REC_CODIGO")   

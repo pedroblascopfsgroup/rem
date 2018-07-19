@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -350,6 +351,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String MOTIVO_NO_PUBLICADO_POR_ACTIVO_VENDIDO = "activo.motivo.vendido.no.publicar";
 	private static final String AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO = "activo.motivo.oferta.tipo.numero.documento";
 	private static final String AVISO_MENSAJE_CLIENTE_OBLIGATORIO = "activo.motivo.oferta.cliente";
+	private static final String AVISO_MENSAJE_EXISTEN_OFERTAS_VENTA = "activo.motivo.oferta.existe.venta";
+	private static final String AVISO_MENSAJE_ACITVO_ALQUILADO_O_OCUPADO = "activo.motivo.oferta.alquilado.ocupado";
 	private static final String AVISO_MEDIADOR_NO_EXISTE= "activo.aviso.mediador.no.existe";
 	private static final String AVISO_MEDIADOR_BAJA= "activo.aviso.mediador.baja";
 
@@ -538,6 +541,47 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			
 			DDEstadoOferta tipoOferta = (DDEstadoOferta) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
+			
+			
+			/**
+			 * 
+			 * si el activo está marcado como alquilado u ocupado (sin título) 
+			 * no se podrá poner la oferta como tramitada, 
+			 * se mostrara un mensaje de error indicando que el activo está alquilado u ocupado.
+			 *
+			 */
+			
+			if(!Checks.esNulo(tipoOferta) && !Checks.esNulo(oferta.getActivoPrincipal())
+					&& DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())
+					&& !Checks.esNulo(oferta.getActivoPrincipal().getSituacionPosesoria())
+					&& !Checks.esNulo(oferta.getActivoPrincipal().getSituacionPosesoria().getOcupado())
+					&& oferta.getActivoPrincipal().getSituacionPosesoria().getOcupado() == 1) {
+				
+				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACITVO_ALQUILADO_O_OCUPADO));
+				
+			}
+			
+			// Si el estado de la oferta es tramitada y tipo oferta es alquiler
+			// Sole se podrá realizar el cambio si no existe para el mismo activo una oferta de tipo venta
+			if (!Checks.esNulo(tipoOferta) && !Checks.esNulo(oferta.getTipoOferta())
+					&& DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())
+					&& DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
+				
+				// Consultar ofertas activo
+				List<ActivoOferta> ofertasActivo = oferta.getActivoPrincipal().getOfertas();
+				
+				
+				for(ActivoOferta acivoOferta: ofertasActivo) {
+					// Si existe oferta de venta lanzar error
+					if(DDTipoOferta.CODIGO_VENTA.equals(acivoOferta.getPrimaryKey().getOferta().getTipoOferta().getCodigo())
+							&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(acivoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo())) {
+						
+						throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_EXISTEN_OFERTAS_VENTA));
+						
+					}
+				}
+				
+			}
 
 			oferta.setEstadoOferta(tipoOferta);
 
@@ -804,7 +848,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					if(esFinanciero && !Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo()) && getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) {
 						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_SAREB)));
 					// 2º Si es inmobiliario: Tipo de comercialización (singular/retail).
-					} else if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo()) && activoBancario.getActivo().getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_SINGULAR)) {
+					} else if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo()) && !Checks.esNulo(activoBancario.getActivo().getTipoComercializar()) && DDTipoComercializar.CODIGO_SINGULAR.equals(activoBancario.getActivo().getTipoComercializar().getCodigo())) {
 						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_SAREB)));
 					// 3º Si es retail: Comparamos precio mínimo e importe oferta.
 					} else if(!Checks.esNulo(precioMinimoAutorizado) && precioMinimoAutorizado > oferta.getImporteOferta()) {

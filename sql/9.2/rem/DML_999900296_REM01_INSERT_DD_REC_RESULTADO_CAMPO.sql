@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=NURIA GARCES
---## FECHA_CREACION=20180716
+--## FECHA_CREACION=20180719
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-4309
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-4323
 --## PRODUCTO=NO
+--## Finalidad: Script que añade en DD_REC_RESULTADO_CAMPO los datos añadidos en T_ARRAY_DATA
 --##
---## Finalidad: Script que añade en DD_TGE_TIPO_GESTOR los datos añadidos en T_ARRAY_DATA
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -34,11 +34,12 @@ DECLARE
     V_ID NUMBER(16);
 
     
+    
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('GESTCOMALQ', 'Gestor comercial alquiler',      'Gestor comercial alquiler'),
-    	T_TIPO_DATA('SUPCOMALQ',  'Supervisor comercial alquiler',  'Supervisor comercial alquiler')
+        T_TIPO_DATA('01'	,'Aprobado'		,'Aprobado'),
+        T_TIPO_DATA('02'	,'Rechazado'		,'Rechazado')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -47,38 +48,45 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
 
 	 
-    -- LOOP para insertar los valores en DD_TGE_TIPO_GESTOR -----------------------------------------------------------------
-    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN DD_TGE_TIPO_GESTOR ');
+    -- LOOP para insertar los valores en DD_REC_RESULTADO_CAMPO -----------------------------------------------------------------
+    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN DD_REC_RESULTADO_CAMPO] ');
     FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
       LOOP
       
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
     
         --Comprobamos el dato a insertar
-        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_REC_RESULTADO_CAMPO WHERE DD_REC_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         
-        --Si existE
+        --Si existe lo modificamos
         IF V_NUM_TABLAS > 0 THEN				
           
-         DBMS_OUTPUT.PUT_LINE('[INFO]: EL REGISTRO YA EXISTE');
+          DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
+       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.DD_REC_RESULTADO_CAMPO '||
+                    'SET DD_REC_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
+					', DD_REC_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
+					', USUARIOMODIFICAR = ''DML'' , FECHAMODIFICAR = SYSDATE '||
+					'WHERE DD_REC_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+          EXECUTE IMMEDIATE V_MSQL;
+          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
           
        --Si no existe, lo insertamos   
        ELSE
        
           DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
-          V_MSQL := 'SELECT '|| V_ESQUEMA_M ||'.S_DD_TGE_TIPO_GESTOR.NEXTVAL FROM DUAL';
+          V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_DD_REC_RESULTADO_CAMPO.NEXTVAL FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
-          V_MSQL := 'INSERT INTO '|| V_ESQUEMA_M ||'.DD_TGE_TIPO_GESTOR (' ||
-                      'DD_TGE_ID, DD_TGE_CODIGO, DD_TGE_DESCRIPCION, DD_TGE_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
-                      'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''' ,'''||V_TMP_TIPO_DATA(2)||''','''||TRIM(V_TMP_TIPO_DATA(3))||''', 0, ''DML'',SYSDATE,0 FROM DUAL';
+          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.DD_REC_RESULTADO_CAMPO (' ||
+                      'DD_REC_ID, DD_REC_CODIGO, DD_REC_DESCRIPCION, DD_REC_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
+                      'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''', 0, ''DML'',SYSDATE,0 FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
         
        END IF;
       END LOOP;
     COMMIT;
-    DBMS_OUTPUT.PUT_LINE('[FIN]: DICCIONARIO DD_TGE_TIPO_GESTOR ACTUALIZADO CORRECTAMENTE ');
+    DBMS_OUTPUT.PUT_LINE('[FIN]: DICCIONARIO DD_REC_RESULTADO_CAMPO ACTUALIZADO CORRECTAMENTE ');
    
 
 EXCEPTION
@@ -98,3 +106,7 @@ END;
 /
 
 EXIT
+
+
+
+   

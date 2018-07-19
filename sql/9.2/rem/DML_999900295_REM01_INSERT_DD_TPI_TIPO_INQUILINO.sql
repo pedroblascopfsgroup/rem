@@ -1,9 +1,9 @@
 --/*
 --##########################################
 --## AUTOR=NURIA GARCES
---## FECHA_CREACION=20180718
+--## FECHA_CREACION=20180719
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.3
+--## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4322
 --## PRODUCTO=NO
 --## Finalidad: Script que añade en DD_TPI_TIPO_INQUILINO los datos añadidos en T_ARRAY_DATA

@@ -3,7 +3,7 @@
 --## AUTOR=NURIA GARCES
 --## FECHA_CREACION=20180719
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.3
+--## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4323
 --## PRODUCTO=NO
 --## Finalidad: Tabla para gestionar el diccionario de resultado de campo

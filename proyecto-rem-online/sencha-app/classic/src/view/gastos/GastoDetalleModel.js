@@ -66,7 +66,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     },
 	     
 	     asignadoAActivosPropietarioSareb: function(get) {
-	    	 
 	    	 var me = this;
 	    	 var gasto = me.getData().gasto;
 	    	 var esSareb = gasto.data.nombrePropietario == CONST.NOMBRE_CARTERA2['SAREB'];
@@ -77,7 +76,14 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	    	 
 	     },
 
-
+	     esCarteraBakia: function(get){
+	    	 return get('detalleeconomico.cartera') == CONST.CARTERA['BANKIA'];
+	     },
+	     
+	     esCarteraSareb: function(get){
+	    	 return get('detalleeconomico.cartera') == CONST.CARTERA['SAREB'];
+	     },
+	     
 	     esReembolsoPago: function(get){
 	     	var me= this;
 

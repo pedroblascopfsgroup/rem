@@ -22,8 +22,8 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_GESTOR_SUSTITUTO_V2
 		  OPERACION IN VARCHAR2
         , V_USU_ID_ORI IN VARCHAR2
         , V_USU_ID_SUS IN VARCHAR2
-        , V_FECHA_INICIO IN VARCHAR2
-        , V_FECHA_FIN IN VARCHAR2
+        , FECHA_INICIO IN VARCHAR2
+        , FECHA_FIN IN VARCHAR2
         , PL_OUTPUT OUT VARCHAR2
     )
 
@@ -39,6 +39,11 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_GESTOR_SUSTITUTO_V2
    USUARIO_CONSULTA_REM VARCHAR2(50 CHAR):= 'REM_QUERY';
 
 BEGIN
+
+    V_FECHA_INICIO := TO_DATE(TO_DATE(''''||FECHA_INICIO||'''','DD/MM/YYYY'),'DD/MM/YY');
+
+	V_FECHA_FIN := TO_DATE(TO_DATE(''''||FECHA_FIN||'''','DD/MM/YYYY'),'DD/MM/YY');
+
     IF (OPERACION IS NOT NULL )AND (V_USU_ID_ORI IS NOT NULL) AND (V_FECHA_INICIO IS NOT NULL) THEN
 	
 		EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE UPPER(USU_USERNAME) = TRIM(UPPER('''||V_USU_ID_ORI||'''))' INTO V_AUX;
@@ -49,24 +54,25 @@ BEGIN
 
 			WHEN OPERACION = 'ALTA' THEN
 
-				EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.SGS_GESTOR_SUSTITUTO
+				 V_SQL :=  'SELECT COUNT(1) FROM '||V_ESQUEMA||'.SGS_GESTOR_SUSTITUTO
                                                         WHERE USU_ID_ORI = (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE UPPER(USU_USERNAME) = TRIM(UPPER('''||V_USU_ID_ORI||''')))
                                                         AND BORRADO = 0 
                                                         AND 
                                                         (
-                                                            (FECHA_INICIO <= TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') AND FECHA_FIN >= TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY'')) 
+                                                            (FECHA_INICIO <= '''||V_FECHA_INICIO||''' AND FECHA_FIN >= '''||V_FECHA_FIN||''' )
                                                             OR
-                                                            (FECHA_FIN <= TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') AND FECHA_INICIO >= TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY'')) 
+                                                            (FECHA_FIN <= '''||V_FECHA_INICIO||''' AND FECHA_INICIO >= '''||V_FECHA_FIN||''')
                                                             OR
-                                                            (TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') <= FECHA_FIN AND FECHA_FIN <= TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY''))
+                                                            ('''||V_FECHA_INICIO||''' <= FECHA_FIN AND FECHA_FIN <= '''||V_FECHA_FIN||''' )
                                                             OR
-                                                            (TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'')<= FECHA_INICIO AND FECHA_INICIO <TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY''))
+                                                            ('''||V_FECHA_INICIO||''' <= FECHA_INICIO AND FECHA_INICIO < '''||V_FECHA_FIN||''' )
                                                             OR
-                                                            ((TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'')<= FECHA_INICIO) AND (FECHA_FIN IS NULL)) 
+                                                            (( '''||V_FECHA_INICIO||''' <= FECHA_INICIO) AND (FECHA_FIN IS NULL))
                                                             OR
-                                                            ((TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'')<= FECHA_INICIO) AND (FECHA_FIN IS NULL)) 
-                                                        )'
-                                                        INTO V_AUX ;
+                                                            (( '''||V_FECHA_INICIO||''' <= FECHA_INICIO) AND (FECHA_FIN IS NULL))
+                                                        )';
+                
+                EXECUTE IMMEDIATE V_SQL INTO V_AUX ;
 										
 				IF V_USU_ID_SUS IS NOT NULL THEN
 				
@@ -126,24 +132,25 @@ BEGIN
 
 			WHEN OPERACION = 'MOD' THEN
 
-				EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.SGS_GESTOR_SUSTITUTO
+				 V_SQL :=  'SELECT COUNT(1) FROM '||V_ESQUEMA||'.SGS_GESTOR_SUSTITUTO
                                                         WHERE USU_ID_ORI = (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE UPPER(USU_USERNAME) = TRIM(UPPER('''||V_USU_ID_ORI||''')))
                                                         AND BORRADO = 0 
                                                         AND 
                                                         (
-                                                            (FECHA_INICIO <= TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') AND FECHA_FIN >= TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY'')) 
+                                                            (FECHA_INICIO <= '''||V_FECHA_INICIO||''' AND FECHA_FIN >= '''||V_FECHA_FIN||''' )
                                                             OR
-                                                            (FECHA_FIN <= TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') AND FECHA_INICIO >= TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY'')) 
+                                                            (FECHA_FIN <= '''||V_FECHA_INICIO||''' AND FECHA_INICIO >= '''||V_FECHA_FIN||''')
                                                             OR
-                                                            (TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') <= FECHA_FIN AND FECHA_FIN <= TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY''))
+                                                            ('''||V_FECHA_INICIO||''' <= FECHA_FIN AND FECHA_FIN <= '''||V_FECHA_FIN||''' )
                                                             OR
-                                                            (TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'')<= FECHA_INICIO AND FECHA_INICIO <TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY''))
+                                                            ('''||V_FECHA_INICIO||''' <= FECHA_INICIO AND FECHA_INICIO < '''||V_FECHA_FIN||''' )
                                                             OR
-                                                            ((TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'')<= FECHA_INICIO) AND (FECHA_FIN IS NULL)) 
+                                                            (( '''||V_FECHA_INICIO||''' <= FECHA_INICIO) AND (FECHA_FIN IS NULL))
                                                             OR
-                                                            ((TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'')<= FECHA_INICIO) AND (FECHA_FIN IS NULL)) 
-                                                        )'
-                                                        INTO V_AUX ;
+                                                            (( '''||V_FECHA_INICIO||''' <= FECHA_INICIO) AND (FECHA_FIN IS NULL))
+                                                        )';
+                
+                EXECUTE IMMEDIATE V_SQL INTO V_AUX ;
 
 				IF V_AUX = 0 THEN
 

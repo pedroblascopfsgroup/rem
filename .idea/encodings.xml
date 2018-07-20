@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+    <file url="file://$PROJECT_DIR$" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/batch-monitor" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/batch-shell" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/devon-framework" charset="UTF-8" />
@@ -12,6 +13,49 @@
     <file url="file://$PROJECT_DIR$/devon-framework/devon-web" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/devon-framework/devon-webflow" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/paradise-framework" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/api/MSVDiccionarioApi.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/api/MSVProcesoApi.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/bvfactory/MSVBusinessCompositeValidators.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/bvfactory/MSVBusinessCompositeValidatorsAutowiredSupport.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/bvfactory/MSVBusinessValidationFactory.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/bvfactory/MSVBusinessValidationRunner.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/bvfactory/MSVBusinessValidators.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/bvfactory/MSVBusinessValidatorsAutowiredSupport.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/bvfactory/MSVRawSQLDao.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/bvfactory/MSVValidationResult.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/bvfactory/dao/SessionFactoryFacade.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/bvfactory/dao/impl/SessionFactoryFacadeImpl.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/bvfactory/impl/MSVBusinessValidationSQLRunnerImpl.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/bvfactory/impl/MSVBusinessValidationSpringAutowiredFactoryImpl.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/bvfactory/impl/validators/querys/MSVFactoriaQuerysSQLGenericAlta.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/bvfactory/impl/validators/querys/MSVFactoriaQuerysSQLValidarAgrupacionObraNueva.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/bvfactory/impl/validators/querys/MSVFactoriaQuerysSQLValidarAgrupacionRestringido.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/bvfactory/impl/validators/querys/MSVFactoriaQuerysSQLValidarListadoActivos.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/bvfactory/impl/validators/types/MSVColumnMultiResultSQL.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/bvfactory/impl/validators/types/MSVColumnSQLValidatorImpl.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/bvfactory/impl/validators/types/MSVGenericColumnValidator.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/bvfactory/types/MSVColumnSQLValidator.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/bvfactory/types/MSVColumnValidator.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/bvfactory/types/MSVResultadoValidacionSQL.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/bvfactory/types/MSVResultadoValidacionSQLERROR.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/bvfactory/types/MSVResultadoValidacionSQLOK.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/liberators/MSVLiberatorsFactory.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/utils/filecolumns/MSVCargaDocumentacionColumns.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/utils/filecolumns/MSVConfirmContratoOriginalColumns.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/utils/filecolumns/MSVConfirmRecepDocuImpresaColumns.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/utils/filecolumns/MSVConfirmRecepTasasColumns.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/utils/filecolumns/MSVConfirmRecepTestimonioColumns.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/utils/filecolumns/MSVEnviarImprimirColumns.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/utils/filecolumns/MSVEnviarJuzgadoColumns.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/utils/filecolumns/MSVEnvioDemandaColumns.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/utils/filecolumns/MSVEnvioImpresionColumns.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/utils/filecolumns/MSVGenerarFicheroTasasColumns.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/utils/filecolumns/MSVGenericContratoColumns.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/utils/filecolumns/MSVListadoActivosColumns.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/utils/filecolumns/MSVRegenerarDocumentacionColumns.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/utils/filecolumns/MSVSolicitarPagoTasasColumns.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/utils/filecolumns/MSVSolicitarTestimonioColumns.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework/src/main/java/es/pfsgroup/framework/paradise/bulkUpload/utils/filecolumns/MSVValidarFicheroTasasColumns.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/pfs-commons-java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/plugins" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/proyecto-rem-online" charset="ISO-8859-1" />
@@ -36,6 +80,7 @@
     <file url="file://$PROJECT_DIR$/recovery-domain" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/recovery-editor-plugin" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/recovery-expediente-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-gestordocumentalREM-plugin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/recovery-instruccionesExterna-plugin" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/recovery-integracionuvem-plugin" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/recovery-itinerarios-plugin" charset="ISO-8859-1" />
@@ -54,6 +99,7 @@
     <file url="file://$PROJECT_DIR$/recovery-procuradores-plugin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/recovery-sidhi-api" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/recovery-sidhiweb-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-webservice" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/rem-web" charset="UTF-8" />
   </component>
 </project>

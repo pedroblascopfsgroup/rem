@@ -8,7 +8,6 @@
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>es.pfsgroup.devon</groupId>
 	<artifactId>devon-webflow</artifactId>
 	<packaging>jar</packaging>
 
@@ -27,6 +26,7 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
@@ -74,6 +74,7 @@
 					<formats>
 						<format>xml</format>
 					</formats>
+					<check/>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -83,6 +84,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
+				<version>3.0.1</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>

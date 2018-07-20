@@ -178,6 +178,9 @@ Ext.define('HreRem.model.DetalleEconomicoGasto', {
 			name : 'fechaAnticipo',
 			type : 'date',
 			dateFormat: 'c'
+		},
+		{
+			name: 'cartera'
 		}
 	],
     

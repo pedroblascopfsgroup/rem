@@ -79,11 +79,31 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		     		return false;
 		     	}
 		 },
+		 
+		 esAgrupacionProyecto: function(get) {
+	    	 
+		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROYECTO'])) {
+		     		return true;
+		     	} else {
+		     		return false;
+		     	}
+		 },
 
 	     esAgrupacionObraNuevaOrAsistida: function(get) {
 	    	 
 	     	return get('esAgrupacionObraNueva') || get('esAgrupacionAsistida');
 	     },
+	     
+	     esAgrupacionObraNuevaOrAsistidaOrProyecto: function(get) {
+	    	 
+		   	return get('esAgrupacionObraNueva') || get('esAgrupacionAsistida') || get('esAgrupacionProyecto');
+		 },
+	     
+	     esAgrupacionLoteComercialOrProyecto: function(get) {
+	    	 
+		  	return get('esAgrupacionLoteComercial') || get('esAgrupacionProyecto');
+		 },
 	     
 	     existeFechaBaja : function(get) {
 	    	var existeFechaBaja = get('agrupacionficha.existeFechaBaja');

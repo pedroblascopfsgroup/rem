@@ -70,6 +70,7 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoProyecto;
 import es.pfsgroup.plugin.rem.model.ActivoRestringida;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
@@ -356,6 +357,30 @@ public class AgrupacionAdapter {
 								agrupacionTemp.getProvincia().getDescripcion());
 						BeanUtils.copyProperty(dtoAgrupacion, "provinciaCodigo",
 								agrupacionTemp.getProvincia().getCodigo());
+					}
+
+					// SI ES TIPO PROYECTO
+				} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {
+
+					ActivoAgrupacion activoAgrupacion = (ActivoAgrupacion) agrupacion;
+					
+					Filter filtroActivoProyecto = genericDao.createFilter(FilterType.EQUALS, "agrupacion", activoAgrupacion);
+					ActivoProyecto proyectoTemp = genericDao.get(ActivoProyecto.class, filtroActivoProyecto);
+
+					BeanUtils.copyProperties(dtoAgrupacion, proyectoTemp);
+
+					if (proyectoTemp.getLocalidad() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "municipioDescripcion",
+								proyectoTemp.getLocalidad().getDescripcion());
+						BeanUtils.copyProperty(dtoAgrupacion, "municipioCodigo",
+								proyectoTemp.getLocalidad().getCodigo());
+					}
+
+					if (proyectoTemp.getProvincia() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "provinciaDescripcion",
+								proyectoTemp.getProvincia().getDescripcion());
+						BeanUtils.copyProperty(dtoAgrupacion, "provinciaCodigo",
+								proyectoTemp.getProvincia().getCodigo());
 					}
 
 				}
@@ -766,6 +791,17 @@ public class AgrupacionAdapter {
 			restringida.setCodigoPostal(pobl.getCodPostal());
 			restringida.setActivoPrincipal(activo);
 			return restringida;
+			
+		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {	
+			ActivoAgrupacion activoAgrupacion = (ActivoAgrupacion) agrupacion;
+			
+			Filter filtroActivoProyecto = genericDao.createFilter(FilterType.EQUALS, "agrupacion", activoAgrupacion);
+			ActivoProyecto proyecto = genericDao.get(ActivoProyecto.class, filtroActivoProyecto);
+			
+			proyecto.setLocalidad(pobl.getLocalidad());
+			proyecto.setProvincia(pobl.getProvincia());
+			proyecto.setCodigoPostal(pobl.getCodPostal());
+			return proyecto.getAgrupacion();
 
 		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
 			ActivoAsistida asistida = (ActivoAsistida) agrupacion;
@@ -1122,6 +1158,28 @@ public class AgrupacionAdapter {
 
 			genericDao.save(ActivoRestringida.class, restringida);
 
+			// Si es PROYECTO
+		} else if (dtoAgrupacion.getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {
+
+			ActivoAgrupacion activoAgrupacion = new ActivoAgrupacion();
+			
+			activoAgrupacion.setDescripcion(dtoAgrupacion.getDescripcion());
+			activoAgrupacion.setNombre(dtoAgrupacion.getNombre());
+			activoAgrupacion.setTipoAgrupacion(tipoAgrupacion);
+			activoAgrupacion.setFechaAlta(new Date());
+			activoAgrupacion.setNumAgrupRem(numAgrupacionRem);
+			
+			genericDao.save(ActivoAgrupacion.class, activoAgrupacion);
+			
+			ActivoProyecto proyecto = new ActivoProyecto();
+			
+			Filter filtroAgrupacionId = genericDao.createFilter(FilterType.EQUALS, "id", activoAgrupacion.getId());
+			ActivoAgrupacion idActivoAgrupacion = (ActivoAgrupacion) genericDao.get(ActivoAgrupacion.class, filtroAgrupacionId);
+						
+			proyecto.setAgrupacion(idActivoAgrupacion);
+			
+			genericDao.save(ActivoProyecto.class, proyecto);
+
 			// Si es ASISTIDA
 		} else if (dtoAgrupacion.getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
 
@@ -1172,6 +1230,17 @@ public class AgrupacionAdapter {
 			} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 
 				genericDao.deleteById(ActivoRestringida.class, Long.valueOf(dtoAgrupacion.getId()));
+
+			} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {
+				
+				ActivoAgrupacion activoAgrupacion = (ActivoAgrupacion) agrupacion;
+				
+				Filter filtroActivoProyecto = genericDao.createFilter(FilterType.EQUALS, "agrupacion", activoAgrupacion);
+				ActivoProyecto activoProyecto = genericDao.get(ActivoProyecto.class, filtroActivoProyecto);				
+				
+				genericDao.deleteById(ActivoProyecto.class, activoProyecto.getId());
+				
+				genericDao.deleteById(ActivoAgrupacion.class, Long.valueOf(dtoAgrupacion.getId()));
 
 			} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
 
@@ -1893,6 +1962,49 @@ public class AgrupacionAdapter {
 				return false;
 			}
 		}
+		
+		// Si es de tipo 'Proyecto'.
+		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {
+			
+			ActivoAgrupacion activoAgrupacion = (ActivoAgrupacion) agrupacion;
+			
+			Filter filtroActivoProyecto = genericDao.createFilter(FilterType.EQUALS, "agrupacion", activoAgrupacion);
+			ActivoProyecto proyecto = genericDao.get(ActivoProyecto.class, filtroActivoProyecto);
+
+			try {
+
+				beanUtilNotNull.copyProperties(proyecto, dto);
+
+				if (dto.getMunicipioCodigo() != null) {
+
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMunicipioCodigo());
+					Localidad municipioNuevo = (Localidad) genericDao.get(Localidad.class, filtro);
+
+					proyecto.setLocalidad(municipioNuevo);
+				}
+
+				if (dto.getProvinciaCodigo() != null) {
+
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getProvinciaCodigo());
+					DDProvincia provinciaNueva = (DDProvincia) genericDao.get(DDProvincia.class, filtro);
+
+					proyecto.setProvincia(provinciaNueva);
+				}
+				
+				if (dto.getCodigoPostal() != null) {
+
+					proyecto.setCodigoPostal(dto.getCodigoPostal());
+				}
+				
+				activoAgrupacionApi.saveOrUpdate(proyecto.getAgrupacion());
+
+			} catch (Exception e) {
+
+				logger.error("error en agrupacionAdapter", e);
+				return false;
+			}
+		}
+		
 		//si modificamos la vigencia ejecutamos reactivación activos
 		if(vigenciaModificada && agrupacion.getActivos() != null){
 			// lo ejecutamos de forma asincrona, si hay muchos tarda em completar

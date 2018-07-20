@@ -547,9 +547,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			 * 
 			 * si el activo está marcado como alquilado u ocupado (sin título) 
 			 * no se podrá poner la oferta como tramitada, 
-			 * se mostrara un mensaje de error indicando que el activo está alquilado u ocupado.
 			 *
 			 */
+			
+			
+			if(!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getActivoPrincipal())
+					&& DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())
+					&& !Checks.esNulo(oferta.getActivoPrincipal().getSituacionComercial())
+					&& !Checks.esNulo(oferta.getActivoPrincipal().getSituacionComercial().getCodigo())
+					&& DDSituacionComercial.CODIGO_ALQUILADO.equals(oferta.getActivoPrincipal().getSituacionComercial().getCodigo())) {
+				
+				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACITVO_ALQUILADO_O_OCUPADO));
+				
+			}
 			
 			if(!Checks.esNulo(tipoOferta) && !Checks.esNulo(oferta.getActivoPrincipal())
 					&& DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())

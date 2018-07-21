@@ -134,7 +134,7 @@ public class GastoPrinex implements Serializable, Auditable {
 	private String tipoPartida;
 	
 	@Column(name = "GPL_APARTADO")
-	private String aprtado;
+	private String apartado;
 	
 	@Column(name = "GPL_CAPITULO")
 	private String capitulo;
@@ -463,12 +463,12 @@ public class GastoPrinex implements Serializable, Auditable {
 		this.tipoPartida = tipoPartida;
 	}
 
-	public String getAprtado() {
-		return aprtado;
+	public String getApartado() {
+		return apartado;
 	}
 
-	public void setAprtado(String aprtado) {
-		this.aprtado = aprtado;
+	public void setApartado(String apartado) {
+		this.apartado = apartado;
 	}
 
 	public String getCapitulo() {

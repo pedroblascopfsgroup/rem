@@ -74,7 +74,7 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 		public static final int GPL_SCTA_IVAD =17;
 		public static final int GPL_CONDICIONES =18;
 		public static final int GPL_CTA_BANCO =19;
-		public static final int GPL_SCTA_BANCO =2;
+		public static final int GPL_SCTA_BANCO =20;
 		public static final int GPL_CTA_EFECTOS =21;
 		public static final int GPL_SCTA_EFECTOS =22;
 		public static final int GPL_APUNTE =23;

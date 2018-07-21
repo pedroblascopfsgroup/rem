@@ -80,6 +80,9 @@ public class MSVExcelValidatorFactoryImpl {
 	
 	@Autowired
 	private MSVActivosGastoPorcentajeValidator activosGastoPorcentajeValidator;
+
+	@Autowired
+	private MSVInfoDetallePrinexLbkExcelValidator infoDetallePrinexLbk;
 	
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 		
@@ -144,6 +147,9 @@ public class MSVExcelValidatorFactoryImpl {
 			}
 			else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA.equals(codTipoOperacion)){
 				return ventaDeCartera;
+			}
+			else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_INFO_DETALLE_PRINEX_LBK.equals(codTipoOperacion)){
+				return infoDetallePrinexLbk;
 			}
 		return null;
 	}

@@ -61,59 +61,59 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 	
 	public static final class COL_NUM{
 		
-		public static final int FILA_CABECERA = 1;
-		public static final int DATOS_PRIMERA_FILA = 2;
+		public static final int FILA_CABECERA = 0;
+		public static final int DATOS_PRIMERA_FILA = 1;
 		
 		//Datos excel
-		public static final int GPV_NUM_GASTO_HAYA =1;
-		public static final int GPL_FECHA_CONTABLE =2;
-		public static final int GPL_DIARIO_CONTB =3;
-		public static final int GPL_D347 =4;
-		public static final int GPL_DELEGACION =5;
-		public static final int GPL_BASE_RETENCION =6;
-		public static final int GPL_PROCENTAJE_RETEN =7;
-		public static final int GPL_IMPORTE_RENTE =8;
-		public static final int GPL_APLICAR_RETENCION =9;
-		public static final int GPL_BASE_IRPF =10;
-		public static final int GPL_PROCENTAJE_IRPF =11;
-		public static final int GPL_IMPORTE_IRPF =12;
-		public static final int GPL_CLAVE_IRPF =13;
-		public static final int GPL_SUBCLAVE_IRPF =14;
-		public static final int GPL_CEUTA =15;
-		public static final int GPL_CTA_IVAD =16;
-		public static final int GPL_SCTA_IVAD =17;
-		public static final int GPL_CONDICIONES =18;
-		public static final int GPL_CTA_BANCO =19;
-		public static final int GPL_SCTA_BANCO =20;
-		public static final int GPL_CTA_EFECTOS =21;
-		public static final int GPL_SCTA_EFECTOS =22;
-		public static final int GPL_APUNTE =23;
-		public static final int GPL_CENTRODESTINO =24;
-		public static final int GPL_TIPO_FRA_SII =25;
-		public static final int GPL_CLAVE_RE =26;
-		public static final int GPL_CLAVE_RE_AD1 =27;
-		public static final int GPL_CLAVE_RE_AD2 =28;
-		public static final int GPL_TIPO_OP_INTRA =29;
-		public static final int GPL_DESC_BIENES =30;
-		public static final int GPL_DESCRIPCION_OP =31;
-		public static final int GPL_SIMPLIFICADA =32;
-		public static final int GPL_FRA_SIMPLI_IDEN =33;
-		public static final int GPL_DIARIO1 =34;
-		public static final int GPL_DIARIO2 =35;
-		public static final int GPL_TIPO_PARTIDA =36;
-		public static final int GPL_APARTADO =37;
-		public static final int GPL_CAPITULO =38;
-		public static final int GPL_PARTIDA =39;
-		public static final int GPL_CTA_GASTO =40;
-		public static final int GPL_SCTA_GASTO =41;
-		public static final int GPL_REPERCUTIR =42;
-		public static final int GPL_CONCEPTO_FAC =43;
-		public static final int GPL_FECHA_FAC =44;
-		public static final int GPL_COD_COEF =45;
-		public static final int GPL_CODI_DIAR_IVA_V =46;
-		public static final int GPL_PCTJE_IVA_V =47;
-		public static final int GPL_NOMBRE =48;
-		public static final int GPL_CARACTERISTICA =49;
+		public static final int GPV_NUM_GASTO_HAYA =0;
+		public static final int GPL_FECHA_CONTABLE =1;
+		public static final int GPL_DIARIO_CONTB =2;
+		public static final int GPL_D347 =3;
+		public static final int GPL_DELEGACION =4;
+		public static final int GPL_BASE_RETENCION =5;
+		public static final int GPL_PROCENTAJE_RETEN =6;
+		public static final int GPL_IMPORTE_RENTE =7;
+		public static final int GPL_APLICAR_RETENCION =8;
+		public static final int GPL_BASE_IRPF =9;
+		public static final int GPL_PROCENTAJE_IRPF =10;
+		public static final int GPL_IMPORTE_IRPF =11;
+		public static final int GPL_CLAVE_IRPF =12;
+		public static final int GPL_SUBCLAVE_IRPF =13;
+		public static final int GPL_CEUTA =14;
+		public static final int GPL_CTA_IVAD =15;
+		public static final int GPL_SCTA_IVAD =16;
+		public static final int GPL_CONDICIONES =17;
+		public static final int GPL_CTA_BANCO =18;
+		public static final int GPL_SCTA_BANCO =19;
+		public static final int GPL_CTA_EFECTOS =20;
+		public static final int GPL_SCTA_EFECTOS =21;
+		public static final int GPL_APUNTE =22;
+		public static final int GPL_CENTRODESTINO =23;
+		public static final int GPL_TIPO_FRA_SII =24;
+		public static final int GPL_CLAVE_RE =25;
+		public static final int GPL_CLAVE_RE_AD1 =26;
+		public static final int GPL_CLAVE_RE_AD2 =27;
+		public static final int GPL_TIPO_OP_INTRA =28;
+		public static final int GPL_DESC_BIENES =29;
+		public static final int GPL_DESCRIPCION_OP =30;
+		public static final int GPL_SIMPLIFICADA =31;
+		public static final int GPL_FRA_SIMPLI_IDEN =32;
+		public static final int GPL_DIARIO1 =33;
+		public static final int GPL_DIARIO2 =34;
+		public static final int GPL_TIPO_PARTIDA =35;
+		public static final int GPL_APARTADO =36;
+		public static final int GPL_CAPITULO =37;
+		public static final int GPL_PARTIDA =38;
+		public static final int GPL_CTA_GASTO =39;
+		public static final int GPL_SCTA_GASTO =40;
+		public static final int GPL_REPERCUTIR =41;
+		public static final int GPL_CONCEPTO_FAC =42;
+		public static final int GPL_FECHA_FAC =43;
+		public static final int GPL_COD_COEF =44;
+		public static final int GPL_CODI_DIAR_IVA_V =45;
+		public static final int GPL_PCTJE_IVA_V =46;
+		public static final int GPL_NOMBRE =47;
+		public static final int GPL_CARACTERISTICA =48;
 	
 	}
 	
@@ -161,14 +161,14 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 				mapaErrores.put(GASTO_NOT_EXISTS, isGastoNotExistsByRows(exc));
 				mapaErrores.put(FORMATO_FECHA_CONTABLE_INVALIDO, esFechaValidaByRows(exc, COL_NUM.GPL_FECHA_CONTABLE));
 				mapaErrores.put(FORMATO_FECHA_FAC_INVALIDO, esFechaValidaByRows(exc, COL_NUM.GPL_FECHA_FAC));
-				mapaErrores.put(GPV_NUM_GASTO_HAYA_IS_NAN, isColumnNANByRows(exc, COL_NUM.GPV_NUM_GASTO_HAYA)); 
-				mapaErrores.put(GPL_BASE_RETENCION_IS_NAN, isColumnNANByRows(exc, COL_NUM.GPL_BASE_RETENCION)); 
-				mapaErrores.put(GPL_PROCENTAJE_RETEN_IS_NAN, isColumnNANByRows(exc, COL_NUM.GPL_PROCENTAJE_RETEN)); 
-				mapaErrores.put(GPL_IMPORTE_RENTE_IS_NAN, isColumnNANByRows(exc, COL_NUM.GPL_IMPORTE_RENTE)); 
-				mapaErrores.put(GPL_BASE_IRPF_IS_NAN, isColumnNANByRows(exc, COL_NUM.GPL_BASE_IRPF)); 
-				mapaErrores.put(GPL_PROCENTAJE_IRPF_IS_NAN, isColumnNANByRows(exc, COL_NUM.GPL_PROCENTAJE_IRPF)); 
-				mapaErrores.put(GPL_IMPORTE_IRPF_IS_NAN, isColumnNANByRows(exc, COL_NUM.GPL_IMPORTE_IRPF)); 
-				mapaErrores.put(GPL_PCTJE_IVA_V_IS_NAN, isColumnNANByRows(exc, COL_NUM.GPL_PCTJE_IVA_V)); 
+				mapaErrores.put(GPV_NUM_GASTO_HAYA_IS_NAN, isColumnNANPrecioIncorrectoByRows(exc, COL_NUM.GPV_NUM_GASTO_HAYA)); 
+				mapaErrores.put(GPL_BASE_RETENCION_IS_NAN, isColumnNANPrecioIncorrectoByRows(exc, COL_NUM.GPL_BASE_RETENCION)); 
+				mapaErrores.put(GPL_PROCENTAJE_RETEN_IS_NAN, isColumnNANPrecioIncorrectoByRows(exc, COL_NUM.GPL_PROCENTAJE_RETEN)); 
+				mapaErrores.put(GPL_IMPORTE_RENTE_IS_NAN, isColumnNANPrecioIncorrectoByRows(exc, COL_NUM.GPL_IMPORTE_RENTE)); 
+				mapaErrores.put(GPL_BASE_IRPF_IS_NAN, isColumnNANPrecioIncorrectoByRows(exc, COL_NUM.GPL_BASE_IRPF)); 
+				mapaErrores.put(GPL_PROCENTAJE_IRPF_IS_NAN, isColumnNANPrecioIncorrectoByRows(exc, COL_NUM.GPL_PROCENTAJE_IRPF)); 
+				mapaErrores.put(GPL_IMPORTE_IRPF_IS_NAN, isColumnNANPrecioIncorrectoByRows(exc, COL_NUM.GPL_IMPORTE_IRPF)); 
+				mapaErrores.put(GPL_PCTJE_IVA_V_IS_NAN, isColumnNANPrecioIncorrectoByRows(exc, COL_NUM.GPL_PCTJE_IVA_V)); 
 				
 				if( !mapaErrores.get(GASTO_NOT_EXISTS).isEmpty() || 
 					!mapaErrores.get(GASTO_NULL).isEmpty() ||
@@ -316,18 +316,32 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 		return listaFilas;
 	}
 	
-	private List<Integer> isColumnNANByRows(MSVHojaExcel exc, int columnNumber) {
+	private List<Integer> isColumnNANPrecioIncorrectoByRows(MSVHojaExcel exc, int columnNumber) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
+		Double precio = null;
 
 		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
 			try {
-				String valor = exc.dameCelda(i, columnNumber);
-				if (Checks.esNulo(valor) || !StringUtils.isNumeric(valor)) {
-					listaFilas.add(i);
+				
+				String value = exc.dameCelda(i, columnNumber);
+				if(value != null && !value.isEmpty()){
+					if(value.contains(",")){
+						value = value.replace(",", ".");
+					}
 				}
+				
+				precio = !Checks.esNulo(value)
+						? Double.parseDouble(value) : null;
+
+				// Si el precio no es un número válido.
+				if ((!Checks.esNulo(precio) && precio.isNaN()))
+					listaFilas.add(i);
 			} catch (NumberFormatException e) {
 				logger.error(e.getMessage());
 				listaFilas.add(i);
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
 			} catch (IOException e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
@@ -338,5 +352,6 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 		}
 
 		return listaFilas;
-	}
+	}	
+	
 }

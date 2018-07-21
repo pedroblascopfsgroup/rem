@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Pau Serrano
---## FECHA_CREACION=20180721
+--## FECHA_CREACION=20180722
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4330
@@ -35,7 +35,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	  T_FUNCION('PRINEX', 'Info detalle PRINEX LBK', 'Información detalle PRINEX LBK','MASIVO_PRINEX_LBK','n*,b')
+	  T_FUNCION('PRINEX', 'Info detalle PRINEX LBK', 'Información detalle PRINEX LBK','MASIVO_PRINEX_LBK','nD*,f,s,s,s,i,i,i,s,i,i,i,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,f,s,s,i,s,s')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_PERFILES VARCHAR2(100 CHAR) := '%';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.

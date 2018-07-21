@@ -51,7 +51,7 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 			gastoNuevo = true;
 		}
 		
-		for(int columna = 1; columna < 50; columna++){
+		for(int columna = 1; columna < 49; columna++){
 			actualizarEntidad(gasto, columna, exc, fila);
 		}
 
@@ -244,10 +244,10 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 		return fecha;
 	}
 
-	private Long dameNumero(MSVHojaExcel exc, int fila, Integer columna)
+	private Double dameNumero(MSVHojaExcel exc, int fila, Integer columna)
 			throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
-		Long resultado = null;
-		resultado = Long.valueOf(exc.dameCelda(fila, columna));
+		Double resultado = null;
+		resultado = Double.valueOf(exc.dameCelda(fila, columna));
 		return resultado;
 	}
 

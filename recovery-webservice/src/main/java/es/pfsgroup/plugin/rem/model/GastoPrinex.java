@@ -41,25 +41,25 @@ public class GastoPrinex implements Serializable, Auditable {
 	private String delegacion;
 	
 	@Column(name = "GPL_BASE_RETENCION")
-    private Long retencionBase;
+    private Double retencionBase;
 	
 	@Column(name = "GPL_PROCENTAJE_RETEN")
-    private Long porcentajeRetencion;
+    private Double porcentajeRetencion;
 	
 	@Column(name = "GPL_IMPORTE_RENTE")
-    private Long importeRetencion;
+    private Double importeRetencion;
 	
 	@Column(name = "GPL_APLICAR_RETENCION")
 	private String aplicarRetencion;
 	
 	@Column(name = "GPL_BASE_IRPF")
-    private Long baseIrpf;
+    private Double baseIrpf;
 	
 	@Column(name = "GPL_PROCENTAJE_IRPF")
-    private Long porcentajeIrpf;
+    private Double porcentajeIrpf;
 	
 	@Column(name = "GPL_IMPORTE_IRPF")
-    private Long importeIrpf;
+    private Double importeIrpf;
 	
 	@Column(name = "GPL_CLAVE_IRPF")
 	private String claveIrpf;
@@ -164,7 +164,7 @@ public class GastoPrinex implements Serializable, Auditable {
 	private String codiDiarIvaV;
 	
 	@Column(name = "GPL_PCTJE_IVA_V")
-    private Long pctjeIvaV;
+    private Double pctjeIvaV;
 	
 	@Column(name = "GPL_NOMBRE")
 	private String nombre;
@@ -215,27 +215,27 @@ public class GastoPrinex implements Serializable, Auditable {
 		this.delegacion = delegacion;
 	}
 
-	public Long getRetencionBase() {
+	public Double getRetencionBase() {
 		return retencionBase;
 	}
 
-	public void setRetencionBase(Long retencionBase) {
+	public void setRetencionBase(Double retencionBase) {
 		this.retencionBase = retencionBase;
 	}
 
-	public Long getPorcentajeRetencion() {
+	public Double getPorcentajeRetencion() {
 		return porcentajeRetencion;
 	}
 
-	public void setPorcentajeRetencion(Long porcentajeRetencion) {
+	public void setPorcentajeRetencion(Double porcentajeRetencion) {
 		this.porcentajeRetencion = porcentajeRetencion;
 	}
 
-	public Long getImporteRetencion() {
+	public Double getImporteRetencion() {
 		return importeRetencion;
 	}
 
-	public void setImporteRetencion(Long importeRetencion) {
+	public void setImporteRetencion(Double importeRetencion) {
 		this.importeRetencion = importeRetencion;
 	}
 
@@ -247,27 +247,27 @@ public class GastoPrinex implements Serializable, Auditable {
 		this.aplicarRetencion = aplicarRetencion;
 	}
 
-	public Long getBaseIrpf() {
+	public Double getBaseIrpf() {
 		return baseIrpf;
 	}
 
-	public void setBaseIrpf(Long baseIrpf) {
+	public void setBaseIrpf(Double baseIrpf) {
 		this.baseIrpf = baseIrpf;
 	}
 
-	public Long getPorcentajeIrpf() {
+	public Double getPorcentajeIrpf() {
 		return porcentajeIrpf;
 	}
 
-	public void setPorcentajeIrpf(Long porcentajeIrpf) {
+	public void setPorcentajeIrpf(Double porcentajeIrpf) {
 		this.porcentajeIrpf = porcentajeIrpf;
 	}
 
-	public Long getImporteIrpf() {
+	public Double getImporteIrpf() {
 		return importeIrpf;
 	}
 
-	public void setImporteIrpf(Long importeIrpf) {
+	public void setImporteIrpf(Double importeIrpf) {
 		this.importeIrpf = importeIrpf;
 	}
 
@@ -543,11 +543,11 @@ public class GastoPrinex implements Serializable, Auditable {
 		this.codiDiarIvaV = codiDiarIvaV;
 	}
 
-	public Long getPctjeIvaV() {
+	public Double getPctjeIvaV() {
 		return pctjeIvaV;
 	}
 
-	public void setPctjeIvaV(Long pctjeIvaV) {
+	public void setPctjeIvaV(Double pctjeIvaV) {
 		this.pctjeIvaV = pctjeIvaV;
 	}
 

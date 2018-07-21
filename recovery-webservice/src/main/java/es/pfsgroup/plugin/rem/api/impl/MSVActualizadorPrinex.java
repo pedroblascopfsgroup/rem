@@ -10,6 +10,7 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -21,6 +22,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVInfoDetallePrinex
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.model.GastoPrinex;
 
+@Component
 public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MSVLiberator {
 
 	@Autowired
@@ -30,14 +32,15 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 
 	@Override
 	public String getValidOperation() {
-		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA;
+		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_INFO_DETALLE_PRINEX_LBK;
 	}
 
 	@Override
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
 			throws IOException, ParseException, JsonViewerException, SQLException, Exception {
 
-		Long gpvNumGasto = null;
+		ResultadoProcesarFila resultado = new ResultadoProcesarFila();
+		Long gpvNumGasto = Long.valueOf(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPV_NUM_GASTO_HAYA));
 		Boolean gastoNuevo = false;
 
 		// obtenemos el gasto prinex si no existe lo creamos
@@ -62,12 +65,12 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 		} else {
 			genericDao.update(GastoPrinex.class, gasto);
 		}
-		return null;
+		return resultado;
 	}
 
 	private void actualizarEntidad(GastoPrinex entidad, Integer columna, MSVHojaExcel exc, int fila)
 			throws IllegalArgumentException, IOException, ParseException {
-		if (exc.dameCelda(fila, columna) == null || !exc.dameCelda(fila, columna).isEmpty()) {
+		if (exc.dameCelda(fila, columna) == null || exc.dameCelda(fila, columna).isEmpty()) {
 			return;
 		}
 
@@ -249,6 +252,7 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 		Double resultado = null;
 		resultado = Double.valueOf(exc.dameCelda(fila, columna));
 		return resultado;
-	}
+	}	
+	
 
 }

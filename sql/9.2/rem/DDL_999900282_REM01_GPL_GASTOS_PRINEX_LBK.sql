@@ -103,7 +103,15 @@ BEGIN
                   GPL_CODI_DIAR_IVA_V     VARCHAR2(20 CHAR),
                   GPL_PCTJE_IVA_V         NUMBER(5,2),
                   GPL_NOMBRE              VARCHAR2(20 CHAR),
-                  GPL_CARACTERISTICA      VARCHAR2(20 CHAR)
+                  GPL_CARACTERISTICA      VARCHAR2(20 CHAR),
+                  VERSION                 NUMBER(38,0)        DEFAULT 0 NOT NULL ENABLE, 
+                  USUARIOCREAR            VARCHAR2(10 CHAR)       NOT NULL ENABLE, 
+                  FECHACREAR              TIMESTAMP (6)         NOT NULL ENABLE, 
+                  USUARIOMODIFICAR        VARCHAR2(10 CHAR), 
+                  FECHAMODIFICAR          TIMESTAMP (6), 
+                  USUARIOBORRAR           VARCHAR2(10 CHAR), 
+                  FECHABORRAR             TIMESTAMP (6), 
+                  BORRADO                 NUMBER(1,0)         DEFAULT 0 NOT NULL ENABLE
                 )
 
 		LOGGING 

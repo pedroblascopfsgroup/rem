@@ -48,15 +48,6 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 	public static final String FORMATO_FECHA_CONTABLE_INVALIDO = "El campo GPL_FECHA_CONTABLE tiene un formato incorrecto";
 	public static final String FORMATO_FECHA_FAC_INVALIDO = "El campo GPL_FECHA_FAC tiene un formato incorrecto";
 	
-	public static final String GPV_NUM_GASTO_HAYA_IS_NAN = "El campo GPV_NUM_GASTO_HAYA_IS_NAN no tiene un formato numérico válido";
-	public static final String GPL_BASE_RETENCION_IS_NAN = "El campo GPL_BASE_RETENCION_IS_NAN no tiene un formato numérico válido";
-	public static final String GPL_PROCENTAJE_RETEN_IS_NAN = "El campo GPL_PROCENTAJE_RETEN_IS_NAN no tiene un formato numérico válido";
-	public static final String GPL_IMPORTE_RENTE_IS_NAN = "El campo GPL_IMPORTE_RENTE_IS_NAN no tiene un formato numérico válido";
-	public static final String GPL_BASE_IRPF_IS_NAN = "El campo GPL_BASE_IRPF_IS_NAN no tiene un formato numérico válido";
-	public static final String GPL_PROCENTAJE_IRPF_IS_NAN = "El campo GPL_PROCENTAJE_IRPF_IS_NAN no tiene un formato numérico válido";
-	public static final String GPL_IMPORTE_IRPF_IS_NAN = "El campo GPL_IMPORTE_IRPF_IS_NAN no tiene un formato numérico válido";
-	public static final String GPL_PCTJE_IVA_V_IS_NAN = "El campo GPL_PCTJE_IVA_V_IS_NAN no tiene un formato numérico válido";
-	
 	public static final String FICHERO_VACIO = "El fichero debe tener al menos una fila. La primera columna es obligatoria.";
 	
 	public static final class COL_NUM{
@@ -161,27 +152,11 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 				mapaErrores.put(GASTO_NOT_EXISTS, isGastoNotExistsByRows(exc));
 				mapaErrores.put(FORMATO_FECHA_CONTABLE_INVALIDO, esFechaValidaByRows(exc, COL_NUM.GPL_FECHA_CONTABLE));
 				mapaErrores.put(FORMATO_FECHA_FAC_INVALIDO, esFechaValidaByRows(exc, COL_NUM.GPL_FECHA_FAC));
-				mapaErrores.put(GPV_NUM_GASTO_HAYA_IS_NAN, isColumnNANPrecioIncorrectoByRows(exc, COL_NUM.GPV_NUM_GASTO_HAYA)); 
-				mapaErrores.put(GPL_BASE_RETENCION_IS_NAN, isColumnNANPrecioIncorrectoByRows(exc, COL_NUM.GPL_BASE_RETENCION)); 
-				mapaErrores.put(GPL_PROCENTAJE_RETEN_IS_NAN, isColumnNANPrecioIncorrectoByRows(exc, COL_NUM.GPL_PROCENTAJE_RETEN)); 
-				mapaErrores.put(GPL_IMPORTE_RENTE_IS_NAN, isColumnNANPrecioIncorrectoByRows(exc, COL_NUM.GPL_IMPORTE_RENTE)); 
-				mapaErrores.put(GPL_BASE_IRPF_IS_NAN, isColumnNANPrecioIncorrectoByRows(exc, COL_NUM.GPL_BASE_IRPF)); 
-				mapaErrores.put(GPL_PROCENTAJE_IRPF_IS_NAN, isColumnNANPrecioIncorrectoByRows(exc, COL_NUM.GPL_PROCENTAJE_IRPF)); 
-				mapaErrores.put(GPL_IMPORTE_IRPF_IS_NAN, isColumnNANPrecioIncorrectoByRows(exc, COL_NUM.GPL_IMPORTE_IRPF)); 
-				mapaErrores.put(GPL_PCTJE_IVA_V_IS_NAN, isColumnNANPrecioIncorrectoByRows(exc, COL_NUM.GPL_PCTJE_IVA_V)); 
 				
 				if( !mapaErrores.get(GASTO_NOT_EXISTS).isEmpty() || 
 					!mapaErrores.get(GASTO_NULL).isEmpty() ||
 					!mapaErrores.get(FORMATO_FECHA_CONTABLE_INVALIDO).isEmpty() ||
-					!mapaErrores.get(FORMATO_FECHA_FAC_INVALIDO).isEmpty() ||
-					!mapaErrores.get(GPV_NUM_GASTO_HAYA_IS_NAN).isEmpty() ||
-					!mapaErrores.get(GPL_BASE_RETENCION_IS_NAN).isEmpty() ||
-					!mapaErrores.get(GPL_PROCENTAJE_RETEN_IS_NAN).isEmpty() ||
-					!mapaErrores.get(GPL_IMPORTE_RENTE_IS_NAN).isEmpty() ||
-					!mapaErrores.get(GPL_BASE_IRPF_IS_NAN).isEmpty() ||
-					!mapaErrores.get(GPL_PROCENTAJE_IRPF_IS_NAN).isEmpty() ||
-					!mapaErrores.get(GPL_IMPORTE_IRPF_IS_NAN).isEmpty() ||
-					!mapaErrores.get(GPL_PCTJE_IVA_V_IS_NAN).isEmpty()
+					!mapaErrores.get(FORMATO_FECHA_FAC_INVALIDO).isEmpty() 
 				){
 						dtoValidacionContenido.setFicheroTieneErrores(true);
 						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -315,43 +290,5 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 
 		return listaFilas;
 	}
-	
-	private List<Integer> isColumnNANPrecioIncorrectoByRows(MSVHojaExcel exc, int columnNumber) {
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		Double precio = null;
-
-		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
-			try {
-				
-				String value = exc.dameCelda(i, columnNumber);
-				if(value != null && !value.isEmpty()){
-					if(value.contains(",")){
-						value = value.replace(",", ".");
-					}
-				}
-				
-				precio = !Checks.esNulo(value)
-						? Double.parseDouble(value) : null;
-
-				// Si el precio no es un número válido.
-				if ((!Checks.esNulo(precio) && precio.isNaN()))
-					listaFilas.add(i);
-			} catch (NumberFormatException e) {
-				logger.error(e.getMessage());
-				listaFilas.add(i);
-			} catch (IllegalArgumentException e) {
-				logger.error(e.getMessage());
-				e.printStackTrace();
-			} catch (IOException e) {
-				logger.error(e.getMessage());
-				e.printStackTrace();
-			} catch (ParseException e) {
-				logger.error(e.getMessage());
-				listaFilas.add(i);
-			}
-		}
-
-		return listaFilas;
-	}	
 	
 }

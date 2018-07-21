@@ -230,7 +230,7 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 			break;
 
 		default:
-			logger.error("columna no procesada");
+			
 		}
 	}
 

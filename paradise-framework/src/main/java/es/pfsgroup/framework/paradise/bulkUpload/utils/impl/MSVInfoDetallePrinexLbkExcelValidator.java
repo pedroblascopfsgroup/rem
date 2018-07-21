@@ -178,13 +178,32 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 	@Override
 	protected ResultadoValidacion validaContenidoCelda(String nombreColumna, String contenidoCelda,
 			MSVBusinessValidators contentValidators) {
-		return null;
+		ResultadoValidacion resultado = new ResultadoValidacion();
+		resultado.setValido(true);
+		
+		if ((contentValidators != null) && (contentValidators.getValidatorForColumn(nombreColumna.trim()) != null)){
+			MSVColumnValidator v = contentValidators.getValidatorForColumn(nombreColumna.trim());
+			MSVValidationResult result = validationRunner.runValidation(v,contenidoCelda);
+			resultado.setValido(result.isValid());
+			resultado.setErroresFila(result.getErrorMessage());
+		}
+		return resultado;
 	}
-	
 	@Override
 	protected ResultadoValidacion validaContenidoFila(Map<String, String> mapaDatos, List<String> listaCabeceras,
 			MSVBusinessCompositeValidators compositeValidators) {
-		return null;
+		ResultadoValidacion resultado = new ResultadoValidacion();
+		resultado.setValido(true);
+		
+		if (compositeValidators != null) {
+			List<MSVMultiColumnValidator> listaValidadores = compositeValidators.getValidatorForColumns(listaCabeceras);
+			if (listaValidadores != null) {
+				MSVValidationResult result = validationRunner.runCompositeValidation(listaValidadores, mapaDatos);
+				resultado.setValido(result.isValid());
+				resultado.setErroresFila(result.getErrorMessage());
+			}
+		}
+		return resultado;
 	}
 	
 	private List<Integer> esCampoNullByRows(MSVHojaExcel exc, Integer campo){

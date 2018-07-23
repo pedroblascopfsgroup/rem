@@ -542,17 +542,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			DDEstadoOferta tipoOferta = (DDEstadoOferta) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
 			
-			
-			/**
-			 * 
-			 * si el activo está marcado como alquilado u ocupado (sin título) 
-			 * no se podrá poner la oferta como tramitada, 
-			 *
-			 */
-			
-			
+			// Si el activo esta marcado como alquilado no permitiremos tramitar ofertas de alquiler
 			if(!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getActivoPrincipal())
 					&& DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())
+					&& DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())
 					&& !Checks.esNulo(oferta.getActivoPrincipal().getSituacionComercial())
 					&& !Checks.esNulo(oferta.getActivoPrincipal().getSituacionComercial().getCodigo())
 					&& DDSituacionComercial.CODIGO_ALQUILADO.equals(oferta.getActivoPrincipal().getSituacionComercial().getCodigo())) {
@@ -561,11 +554,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				
 			}
 			
+			// Si el activo esta marcado como ocupado sin titulo no permitiremos tramitar ofertas de alquiler
 			if(!Checks.esNulo(tipoOferta) && !Checks.esNulo(oferta.getActivoPrincipal())
 					&& DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())
+					&& DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())
 					&& !Checks.esNulo(oferta.getActivoPrincipal().getSituacionPosesoria())
 					&& !Checks.esNulo(oferta.getActivoPrincipal().getSituacionPosesoria().getOcupado())
-					&& oferta.getActivoPrincipal().getSituacionPosesoria().getOcupado() == 1) {
+					&& oferta.getActivoPrincipal().getSituacionPosesoria().getOcupado() == 1
+						&& (Checks.esNulo(oferta.getActivoPrincipal().getSituacionPosesoria().getConTitulo())
+							|| (!Checks.esNulo(oferta.getActivoPrincipal().getSituacionPosesoria().getConTitulo()) 
+									&& oferta.getActivoPrincipal().getSituacionPosesoria().getConTitulo() == 0))
+					) {
 				
 				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACITVO_ALQUILADO_O_OCUPADO));
 				

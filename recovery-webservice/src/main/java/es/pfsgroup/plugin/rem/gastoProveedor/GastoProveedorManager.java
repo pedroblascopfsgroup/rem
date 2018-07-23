@@ -619,7 +619,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		GastoDetalleEconomico detalleGasto = genericDao.get(GastoDetalleEconomico.class, filtro);
 
 		if (!Checks.esNulo(detalleGasto)) {
-
+			
+			dto.setCartera(gasto.getPropietario().getCartera().getCodigo());
 			dto.setImportePrincipalSujeto(detalleGasto.getImportePrincipalSujeto());
 			dto.setImportePrincipalNoSujeto(detalleGasto.getImportePrincipalNoSujeto());
 			dto.setImporteRecargo(detalleGasto.getImporteRecargo());

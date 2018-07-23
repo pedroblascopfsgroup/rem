@@ -717,7 +717,8 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																					    xtype: 'checkboxfieldbase',
 																					    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.pagado.bankia'),
 																					    bind: {
-																				        	value: '{detalleeconomico.pagadoConexionBankia}'
+																				        	value: '{detalleeconomico.pagadoConexionBankia}',
+																				        	readOnly: '{!esCarteraBakia}'
 																	            		},
 																	            		listeners: {
 																	            			change: 'onChangePagadoBankia'
@@ -770,7 +771,8 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																					    xtype: 'checkboxfieldbase',
 																					    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.anticipo'),
 																					    bind: {
-																				        	value: '{detalleeconomico.anticipo}'
+																				        	value: '{detalleeconomico.anticipo}',
+																				        	readOnly: '{!esCarteraSareb}'
 																	            		},
 																	            		listeners: {
 																	            			change: 'onChangeAnticipo'

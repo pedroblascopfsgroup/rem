@@ -9,6 +9,8 @@ Ext.define('HreRem.view.agenda.AgendaController', {
 
 		var searchForm = btn.up('formBase');
 		
+		var store = this.getViewModel().get('tareas');
+		
 		if (searchForm.isValid()) {
 			var criteria = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
 			
@@ -17,7 +19,8 @@ Ext.define('HreRem.view.agenda.AgendaController', {
 					delete criteria[key];
 				}
 			});
-
+			this.lookupReference('agendalist').reconfigure(store)
+			this.lookupReference('agendaPaginator').setStore(store);
 			this.lookupReference('agendalist').getStore().loadPage(1);
         }
 	},
@@ -302,6 +305,28 @@ Ext.define('HreRem.view.agenda.AgendaController', {
 		me.fireEvent("downloadFile", config);		
     	
     	
+    },
+    
+    onClickCargaTareasGestorSustituto: function(btn){
+
+    	var initialData = {};
+
+		var searchForm = btn.up('formBase');
+		
+		var store = this.getViewModel().get('tareasGestorSustituto');
+		
+		if (searchForm.isValid()) {
+			var criteria = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
+			
+			Ext.Object.each(criteria, function(key, val) {
+				if (Ext.isEmpty(val)) {
+					delete criteria[key];
+				}
+			});
+			this.lookupReference('agendalist').reconfigure(store)
+			this.lookupReference('agendaPaginator').setStore(store);
+			this.lookupReference('agendalist').getStore().loadPage(1);
+		}
     }
     
     

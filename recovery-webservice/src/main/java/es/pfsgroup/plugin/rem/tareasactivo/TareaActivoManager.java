@@ -390,7 +390,7 @@ public class TareaActivoManager implements TareaActivoApi {
 	}
 	
 	private List<VTareaActivoCount> getContadores(Usuario usuario) {
-		List<EXTGrupoUsuarios> grupos = genericDao.getList(EXTGrupoUsuarios.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId()));
+		List<EXTGrupoUsuarios> grupos = genericDao.getList(EXTGrupoUsuarios.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 		List<VTareaActivoCount> contadores = vTareaActivoCountDao.getContador(usuario, grupos);
 		return contadores;
 	}

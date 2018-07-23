@@ -633,6 +633,10 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
     esEditable: function(){
     	var me = this;
     	
+    	if($AU.userIsRol("HAYASUPER")){
+    		return true;
+    	}
+    	
     	if($AU.userHasFunction(['MODIFICAR_TAB_COMPRADORES_EXPEDIENTES'])){
     		if(!$AU.userHasFunction(['MODIFICAR_TAB_COMPRADORES_EXPEDIENTES_RESERVA']) && me.checkCoe()){
     			return false;

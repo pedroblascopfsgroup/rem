@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
@@ -51,6 +52,7 @@ import es.pfsgroup.plugin.rem.model.DtoLocalidadSimple;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
@@ -125,9 +127,27 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		authData.setAuthorities(authorities);
 		authData.setUserId(usuario.getId());
 		authData.setRoles(roles);
+		authData.setEsGestorSustituto(esGestorSustituto(usuario));
 
 		return authData;
 
+	}
+	
+	public Integer esGestorSustituto(Usuario usuarioLogado){
+		List<GestorSustituto> ges = new ArrayList<GestorSustituto>();
+		ges = genericDao.getList(GestorSustituto.class, genericDao.createFilter(FilterType.EQUALS, "usuarioGestorSustituto", usuarioLogado));
+		Date fechaHoy = new Date();
+		
+		if(Checks.estaVacio(ges)){
+			return 0;
+		}else{
+			for(GestorSustituto gestor: ges){
+				if(fechaHoy.compareTo(gestor.getFechaInicio()) >= 0 && (Checks.esNulo(gestor.getFechaFin()) || fechaHoy.compareTo(gestor.getFechaFin()) <= 0)){
+					return 1;
+				}
+			}
+			return 0;
+		}
 	}
 
 	@Override

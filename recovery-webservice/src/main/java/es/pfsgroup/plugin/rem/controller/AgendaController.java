@@ -39,9 +39,8 @@ import es.pfsgroup.plugin.rem.model.DtoReasignarTarea;
 import es.pfsgroup.plugin.rem.model.DtoSaltoTarea;
 import es.pfsgroup.plugin.rem.model.DtoSolicitarProrrogaTarea;
 import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
+import es.pfsgroup.plugin.rem.model.DtoTareaGestorSustitutoFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzones;
 
 @Controller
@@ -72,7 +71,7 @@ public class AgendaController extends TareaController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getListTareas(DtoTareaFilter dtoTareaFiltro, ModelMap model) {
+	public ModelAndView getListTareas(DtoTareaFilter dtoTareaFiltro, ModelMap model, Boolean btnGesSustituto) {
 		Page p = adapter.getListTareas(dtoTareaFiltro);
 		model.put("data", p.getResults());
 		// avisos
@@ -578,6 +577,25 @@ public class AgendaController extends TareaController {
 
 		model.put("success", success);
 
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getListTareasGestorSustituto(ModelMap model, DtoTareaGestorSustitutoFilter dto) {
+		
+		try{
+			
+			Page page = adapter.getListTareasGS(dto);
+			
+			model.put("succes", true);
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+			
+		}catch (Exception e){
+			e.printStackTrace();
+			model.put("succes", false);
+		}
 		return createModelAndViewJson(model);
 	}
 

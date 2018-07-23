@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.proveedores;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -467,6 +468,15 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 						throw new JsonViewerException(messageServices.getMessage(BAJA_PROVEEDOR_ACTIVOS_ASIGNADOS));
 					}
 				
+				}
+			}
+			
+			if(!Checks.esNulo(dto.getFechaBajaProveedor()) || DDEstadoProveedor.ESTADO_BAJA_PROVEEDOR.equals(dto.getEstadoProveedorCodigo())){
+				if(!Checks.esNulo(proveedor.getTipoProveedor()) && DDTipoProveedor.COD_MANTENIMIENTO_TECNICO.equals(proveedor.getTipoProveedor().getCodigo())){
+					BigDecimal activosAsignadosNVendidoNoTraspasado = proveedoresDao.activosAsignadosNoVendidosNoTraspasadoProveedorTecnico(dto.getId());
+					if(!Checks.esNulo(activosAsignadosNVendidoNoTraspasado) && !activosAsignadosNVendidoNoTraspasado.equals(new BigDecimal("0"))){
+						throw new JsonViewerException(messageServices.getMessage(BAJA_PROVEEDOR_ACTIVOS_ASIGNADOS));
+					}
 				}
 			}
 			

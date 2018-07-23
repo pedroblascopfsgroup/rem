@@ -20,6 +20,7 @@ import javax.annotation.Resource;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,8 @@ import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
@@ -119,9 +122,11 @@ import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Formalizacion;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
+import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.InformeJuridico;
 import es.pfsgroup.plugin.rem.model.ObservacionesExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Posicionamiento;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.Subsanaciones;
@@ -154,6 +159,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
@@ -4789,6 +4795,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				BeanUtils.copyProperties(dtoGestor, gestor.getUsuario());
 				BeanUtils.copyProperties(dtoGestor, gestor.getTipoGestor());
 				BeanUtils.copyProperty(dtoGestor, "id", gestor.getId());
+				
+				GestorSustituto gestorSustituto = getGestorSustitutoVigente(gestor);
+
+				if (!Checks.esNulo(gestorSustituto)) {
+					dtoGestor.setApellidoNombre(dtoGestor.getApellidoNombre().concat(" (")
+							.concat(gestorSustituto.getUsuarioGestorSustituto().getApellidoNombre()).concat(")"));
+				}
+				
 			} catch (IllegalAccessException e) {
 				logger.error("error en expedienteComercialManager", e);
 			} catch (InvocationTargetException e) {
@@ -5867,6 +5881,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return false;
 	}
+	
+	public boolean checkActivoNoFormalizar(Long idTramite) {
+		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
+		if (!Checks.esNulo(activoTramite)) {
+			Activo activo = activoTramite.getActivo();
+			if (!Checks.esNulo(activo)) {
+				PerimetroActivo pac = genericDao.get(PerimetroActivo.class, genericDao.createFilter(FilterType.EQUALS, "activo", activo));
+				return pac.getAplicaFormalizar() == 0 ? true : false;
+			}
+		}
+		return false;
+	}
 
 	@Override
 	public boolean checkEstadoExpedienteDistintoAnulado(Long idTramite) {
@@ -6036,6 +6062,30 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		uvemManagerApi.modificarInstanciaDecisionTres(instancia);	
 		logger.info("------------ LLAMADA WS REALIZADA CON EXITO -----------------");
 	}
+	
+	@Transactional(readOnly = true)
+	private GestorSustituto getGestorSustitutoVigente(GestorEntidadHistorico gestor) {
+
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal", gestor.getUsuario());
+
+		try {
+			List<GestorSustituto> gestoresSustitutos = genericDao.getList(GestorSustituto.class, filter);
+
+			for (GestorSustituto sustituto : gestoresSustitutos) {
+				if (!Checks.esNulo(sustituto.getFechaFin())) {
+					if (sustituto.getFechaFin().after(new Date()) || DateUtils.isSameDay(sustituto.getFechaFin(), new Date())) {
+						return sustituto;
+					}
+				} else {
+					return sustituto;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
 
 	@Override
 	public Boolean checkFechaVenta(Long idTramite) {
@@ -6053,12 +6103,42 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (expediente == null) {
 			return false;
 		}
+		
+		if(checkAgrupacionAsistida(activoTramite.getActivo())) {
+			return true;
+		}
+		
 		if(expediente.getFechaContabilizacionPropietario() != null){
 			return true;
 		}else{
 			return false;
 		}
 		
+	}
+	
+	public Boolean checkAgrupacionAsistida(Activo activo) {
+		Date fechaHoy = new Date();
+		
+		try{
+			if(!Checks.esNulo(activo)) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
+				Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "agrupacion.eliminado", 0);
+				List<ActivoAgrupacionActivo> lista = genericDao.getList(ActivoAgrupacionActivo.class, filtro, filtro2);
+				ActivoAgrupacionActivo aga = lista.get(0);
+				if(!Checks.esNulo(aga)) {
+					ActivoAgrupacion agr = aga.getAgrupacion();
+					if(!Checks.esNulo(agr) && DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agr.getTipoAgrupacion().getCodigo())) {
+						if(fechaHoy.compareTo(agr.getFechaInicioVigencia()) >= 0 && fechaHoy.compareTo(agr.getFechaFinVigencia()) <= 0) {
+							return true;
+						}
+					}
+				}
+				
+			}
+		}catch(Exception e){
+			return false;
+		}
+		return false;
 	}
 	
 	@Override

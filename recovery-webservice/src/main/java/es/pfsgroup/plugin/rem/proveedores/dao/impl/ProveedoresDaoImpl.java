@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.SQLQuery;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.pagination.Page;
@@ -288,13 +289,42 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		try {
 
 			HQLBuilder hb = new HQLBuilder(
-					"select count(*) from ActivoInfoComercial where mediadorInforme.id = "+idProveedor);
+					"select count(*) from ActivoInfoComercial ico, PerimetroActivo pac ");
+			hb.appendWhere("ico.activo.id = pac.activo.id");
+			hb.appendWhere("ico.activo.situacionComercial.codigo not in ('05','06')");
+			hb.appendWhere("pac.incluidoEnPerimetro = 1");
+			hb.appendWhere("ico.mediadorInforme.id = "+idProveedor);
 			return ((Long) getHibernateTemplate().find(hb.toString()).get(0));
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	@Override
+	public BigDecimal activosAsignadosNoVendidosNoTraspasadoProveedorTecnico(Long idProveedor) {
+		
+		BigDecimal count = new BigDecimal("0");
+		
+		String queryString = "SELECT COUNT(1) FROM ACT_PVE_PROVEEDOR PVE "
+							+ " JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.PVE_ID_EMISOR = PVE.PVE_ID "
+							+ " JOIN GPV_ACT GPVACT ON GPVACT.GPV_ID = GPV.GPV_ID "
+							+ " JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = GPVACT.ACT_ID AND ACT.BORRADO = 0 "
+							+ " JOIN DD_SCM_SITUACION_COMERCIAL SCM ON SCM.DD_SCM_ID = ACT.DD_SCM_ID AND SCM.DD_SCM_CODIGO NOT IN ('05', '06') "
+							+ " WHERE PVE.PVE_ID = "+idProveedor;
+		
+		SQLQuery sqlQuery = getHibernateTemplate().getSessionFactory()
+				.getCurrentSession().createSQLQuery(queryString);
+		
+		final Object obj = sqlQuery.uniqueResult();
+        if (obj != null) {
+            count = (BigDecimal) obj;
+        }
+		
+								
+		return count;
+		
 	}
 	
 	

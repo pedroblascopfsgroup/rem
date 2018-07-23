@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Guillermo Llidó
---## FECHA_CREACION=20180618
+--## FECHA_CREACION=20180626
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-1076
@@ -22,15 +22,15 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.UPDATE_RES
    (  ECO_NUM_EXPEDIENTE IN NUMBER
     , RES_NUM_RESERVA IN NUMBER
 	, DD_ERE_CODIGO IN VARCHAR2
-    , USUARIO_MODIFICAR VARCHAR2
+    , USUARIO_MODIFICAR IN VARCHAR2
 	, PL_OUTPUT OUT VARCHAR2
    )
 
    AS
 
    V_SQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar
-   V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquema
-   V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquema Master
+   V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+   V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
    ERR_NUM NUMBER(25); -- Vble. auxiliar para registrar errores en el script.
    ERR_MSG VARCHAR2(10024 CHAR); -- Vble. auxiliar para registrar errores en el script.
    DESCRIPCION VARCHAR2(150 CHAR); -- Descripción del estado de la reserva
@@ -50,7 +50,7 @@ ESTADOS DE LA RESERVA    Código Descripción
 
 BEGIN
 
-	IF DD_ERE_CODIGO IS NOT NULL THEN
+	IF (DD_ERE_CODIGO IS NOT NULL) AND (RES_NUM_RESERVA IS NOT NULL) AND (ECO_NUM_EXPEDIENTE IS NOT NULL)AND (USUARIO_MODIFICAR IS NOT NULL)  THEN
         EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_ERE_ESTADOS_RESERVA WHERE DD_ERE_CODIGO = '''||DD_ERE_CODIGO||'''' INTO V_AUX;
         
         IF V_AUX > 0 THEN
@@ -81,7 +81,7 @@ BEGIN
         END IF;
 
     ELSE 
-        PL_OUTPUT := '[ERROR] No se ha informado correctamente del campo DD_ERE_CODIGO ';
+        PL_OUTPUT := '[ERROR] No se ha informado correctamente de todos los campos ';
 	END IF;
 
 

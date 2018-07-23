@@ -488,6 +488,10 @@
 				def ofertaManager = ctx.getBean("ofertaManager");
 				return ofertaManager.checkProvinciaCompradores(tareaExterna);
 			}
+			def checkNifConyugueLBB = {
+				def ofertaManager = ctx.getBean("ofertaManager");
+				return ofertaManager.checkNifConyugueLBB(tareaExterna);
+			}
   			 ]]></value>
   		</list>
   	</property>

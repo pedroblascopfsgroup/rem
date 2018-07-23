@@ -1340,6 +1340,58 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return false;
 	}
+	
+	@Override
+	public Boolean checkNifConyugueLBB(TareaExterna tareaExterna) {
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		if (!Checks.esNulo(ofertaAceptada)) {
+			ExpedienteComercial expediente = expedienteComercialApi
+					.expedienteComercialPorOferta(ofertaAceptada.getId());
+			
+			if(!Checks.esNulo(ofertaAceptada.getAgrupacion())){
+				ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
+				
+				ActivoAgrupacionActivo aga = agrupacion.getActivos().get(0);
+				
+				if(!Checks.esNulo(expediente) && !Checks.esNulo(aga) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(aga.getActivo().getCartera().getCodigo())){
+					List<CompradorExpediente> listaCex = expediente.getCompradores();
+					Boolean tieneNifConyugue = true;
+					
+					for(CompradorExpediente cex: listaCex){
+						if(!Checks.esNulo(cex) && DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(cex.getEstadoCivil().getCodigo()) && Checks.esNulo(cex.getDocumentoConyuge())){
+							tieneNifConyugue = false;
+							break;
+						}
+					}
+					
+					return tieneNifConyugue;
+				} else if (!Checks.esNulo(aga) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(aga.getActivo().getCartera().getCodigo())){
+					return true;
+				}
+			}else{
+				List<ActivoOferta> activosOferta = genericDao.getList(ActivoOferta.class, genericDao.createFilter(FilterType.EQUALS, "oferta", ofertaAceptada.getId()));
+				Activo activo = activosOferta.get(0).getPrimaryKey().getActivo();
+				
+				if(!Checks.esNulo(expediente) && !Checks.esNulo(activo) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
+					List<CompradorExpediente> listaCex = expediente.getCompradores();
+					Boolean tieneNifConyugue = true;
+					
+					for(CompradorExpediente cex: listaCex){
+						if(!Checks.esNulo(cex) && DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(cex.getEstadoCivil().getCodigo()) && Checks.esNulo(cex.getDocumentoConyuge())){
+							tieneNifConyugue = false;
+							break;
+						}
+					}
+					
+					return tieneNifConyugue;
+				} else if (!Checks.esNulo(activo) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
+					return true;
+				}
+			}
+			
+		}
+		return false;
+	}
 
 	@Override
 	public boolean checkConflictoIntereses(TareaExterna tareaExterna) {

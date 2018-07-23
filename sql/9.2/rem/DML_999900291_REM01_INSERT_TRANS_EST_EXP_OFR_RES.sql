@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20180711
+--## FECHA_CREACION=20180718
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-1076
@@ -34,23 +34,32 @@ DECLARE
     TYPE T_TIPO_DATA_2 IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA_2 IS TABLE OF T_TIPO_DATA_2;
     V_TIPO_DATA_2 T_ARRAY_DATA_2 := T_ARRAY_DATA_2(
-    --		DD_OFR_COD	DD_EEC_COD	DD_ERE_COD
-		T_TIPO_DATA_2(04,01,01,1),
-		T_TIPO_DATA_2(01,01,01,2),
-		T_TIPO_DATA_2(01,10,01,3),
-		T_TIPO_DATA_2(01,04,01,4),
-		T_TIPO_DATA_2(03,04,01,5),
-		T_TIPO_DATA_2(01,11,01,6),
-		T_TIPO_DATA_2(01,06,02,7),
-		T_TIPO_DATA_2(01,05,02,8),
-		T_TIPO_DATA_2(01,03,02,9),
-		T_TIPO_DATA_2(01,08,02,10),
-		T_TIPO_DATA_2(01,16,05,11),
-		T_TIPO_DATA_2(03,16,05,12),
-		T_TIPO_DATA_2(02,02,06,13),
-		T_TIPO_DATA_2(02,02,07,14),
-		T_TIPO_DATA_2(03,02,07,15),
-		T_TIPO_DATA_2(02,02,08,16)
+    --		DD_OFR_COD	DD_EEC_COD	DD_ERE_COD	 INDICE
+		T_TIPO_DATA_2('04','01','01','1'),
+		T_TIPO_DATA_2('01','01','01','2'),
+		T_TIPO_DATA_2('01','10','01','3'),
+		T_TIPO_DATA_2('01','04','01','4'),
+		T_TIPO_DATA_2('03','04','01','5'),
+		T_TIPO_DATA_2('01','11','01','6'),
+		T_TIPO_DATA_2('01','06','02','7'),
+		T_TIPO_DATA_2('01','05','02','8'),
+		T_TIPO_DATA_2('01','03','02','9'),
+		T_TIPO_DATA_2('01','08','02','10'),
+		T_TIPO_DATA_2('01','16','05','11'),
+		T_TIPO_DATA_2('03','16','05','12'),
+		T_TIPO_DATA_2('02','02','06','13'),
+		T_TIPO_DATA_2('02','02','07','14'),
+		T_TIPO_DATA_2('03','02','07','15'),
+		T_TIPO_DATA_2('02','02','08','16'),
+		T_TIPO_DATA_2('04','01','NULL','17'),
+		T_TIPO_DATA_2('01','01','NULL','18'),
+		T_TIPO_DATA_2('01','10','NULL','19'),
+		T_TIPO_DATA_2('01','04','NULL','20'),
+		T_TIPO_DATA_2('03','04','NULL','21'),
+		T_TIPO_DATA_2('01','11','NULL','22'),
+		T_TIPO_DATA_2('01','05','NULL','23'),
+		T_TIPO_DATA_2('01','03','NULL','24'),
+		T_TIPO_DATA_2('01','08','NULL','25')
 	); 
     V_TMP_TIPO_DATA_2 T_TIPO_DATA_2;
 
@@ -68,41 +77,82 @@ DECLARE
 		  LOOP
 		  
 			V_TMP_TIPO_DATA_2 := V_TIPO_DATA_2(I);
-		
-			  V_SQL := 'SELECT COUNT(1) FROM '||V_TABLA||' WHERE 
-								DD_EOF_ID = (SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = '||TRIM(V_TMP_TIPO_DATA_2(1))||')
-							AND DD_EEC_ID = (SELECT DD_EEC_ID FROM DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = '||TRIM(V_TMP_TIPO_DATA_2(2))||')
-							AND DD_ERE_ID = (SELECT DD_ERE_ID FROM DD_ERE_ESTADOS_RESERVA WHERE DD_ERE_CODIGO = '||TRIM(V_TMP_TIPO_DATA_2(3))||')';
-											
-                EXECUTE IMMEDIATE V_SQL INTO V_AUX;			
 			  
-				IF V_AUX = 0 THEN 
-				
-				  V_SQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
-					  TRANS_EST_EXP_OFR_RES_ID
-					, DD_EOF_ID
-					, DD_EEC_ID
-					, DD_ERE_ID
-					, USUARIOCREAR
-					, FECHACREAR
-					) VALUES (
-					  S_'||V_TABLA||'.NEXTVAL
-					, (SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = '||TRIM(V_TMP_TIPO_DATA_2(1))||')
-					, (SELECT DD_EEC_ID FROM DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = '||TRIM(V_TMP_TIPO_DATA_2(2))||')
-					, (SELECT DD_ERE_ID FROM DD_ERE_ESTADOS_RESERVA WHERE DD_ERE_CODIGO = '||TRIM(V_TMP_TIPO_DATA_2(3))||')
-					, '''||V_USUARIO||'''
-					, SYSDATE
-					)';
-							                            																		
-					EXECUTE IMMEDIATE V_SQL;
-								
-					DBMS_OUTPUT.PUT_LINE('[INFO] Insertado en la tabla de transiciones el registro con indice '||TRIM(V_TMP_TIPO_DATA_2(4))||'');
+			  IF V_TMP_TIPO_DATA_2(3) != 'NULL' THEN
+			  
+				  V_SQL := 'SELECT COUNT(1) FROM '||V_TABLA||' WHERE 
+									DD_EOF_COD = '''||TRIM(V_TMP_TIPO_DATA_2(1))||'''
+								AND DD_EEC_COD = '''||TRIM(V_TMP_TIPO_DATA_2(2))||'''
+								AND DD_ERE_COD = '''||TRIM(V_TMP_TIPO_DATA_2(3))||'''';
+												                                                
+					EXECUTE IMMEDIATE V_SQL INTO V_AUX;			
+				  
+					IF V_AUX = 0 THEN 
 					
-				ELSE 
-				
-					DBMS_OUTPUT.PUT_LINE('[INFO] El registro con indice '||TRIM(V_TMP_TIPO_DATA_2(4))||' ya existe en la tabla '||V_TABLA );
+					  V_SQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
+						  TRANS_EST_EXP_OFR_RES_ID
+						, DD_EOF_COD
+						, DD_EEC_COD
+						, DD_ERE_COD
+						, USUARIOCREAR
+						, FECHACREAR
+						) VALUES (
+						  S_'||V_TABLA||'.NEXTVAL
+						,'''||TRIM(V_TMP_TIPO_DATA_2(1))||'''
+						,'''||TRIM(V_TMP_TIPO_DATA_2(2))||'''
+						,'''||TRIM(V_TMP_TIPO_DATA_2(3))||'''
+						,'''||V_USUARIO||'''
+						,SYSDATE
+						)';
+								                        
+						EXECUTE IMMEDIATE V_SQL;
+									
+						DBMS_OUTPUT.PUT_LINE('[INFO] Insertado en la tabla de transiciones el registro con indice '||TRIM(V_TMP_TIPO_DATA_2(4))||'');
+						
+					ELSE 
+					
+						DBMS_OUTPUT.PUT_LINE('[INFO] El registro con indice '||TRIM(V_TMP_TIPO_DATA_2(4))||' ya existe en la tabla '||V_TABLA );
 
-				END IF;
+					END IF;
+			
+			ELSE 
+				
+				 V_SQL := 'SELECT COUNT(1) FROM '||V_TABLA||' WHERE  
+							    DD_EOF_COD = '''||TRIM(V_TMP_TIPO_DATA_2(1))||'''
+							AND DD_EEC_COD = '''||TRIM(V_TMP_TIPO_DATA_2(2))||'''
+							AND DD_ERE_COD IS NULL ';
+												                    
+					EXECUTE IMMEDIATE V_SQL INTO V_AUX;			
+				  
+					IF V_AUX = 0 THEN 
+					
+					  V_SQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
+						  TRANS_EST_EXP_OFR_RES_ID
+						, DD_EOF_COD
+						, DD_EEC_COD
+						, DD_ERE_COD
+						, USUARIOCREAR
+						, FECHACREAR
+						) VALUES (
+						  S_'||V_TABLA||'.NEXTVAL
+						,'''||TRIM(V_TMP_TIPO_DATA_2(1))||'''
+						,'''||TRIM(V_TMP_TIPO_DATA_2(2))||'''
+						,'||TRIM(V_TMP_TIPO_DATA_2(3))||'
+						, '''||V_USUARIO||'''
+						, SYSDATE
+						)';
+						                        
+						EXECUTE IMMEDIATE V_SQL;
+									
+						DBMS_OUTPUT.PUT_LINE('[INFO] Insertado en la tabla de transiciones el registro con indice '||TRIM(V_TMP_TIPO_DATA_2(4))||'');
+						
+					ELSE 
+					
+						DBMS_OUTPUT.PUT_LINE('[INFO] El registro con indice '||TRIM(V_TMP_TIPO_DATA_2(4))||' ya existe en la tabla '||V_TABLA );
+
+					END IF;
+			
+			END IF;
 				
 		END LOOP;
 	  

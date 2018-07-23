@@ -950,6 +950,8 @@ public interface ExpedienteComercialApi {
 
 	public Boolean esBH(String idExpediente);
 
-	DtoModificarCompradores vistaADtoModCompradores(VBusquedaDatosCompradorExpediente vista);	
+	DtoModificarCompradores vistaADtoModCompradores(VBusquedaDatosCompradorExpediente vista);
+
+	public String getCodigoCarteraExpediente(String idExpediente);	
 	
 }

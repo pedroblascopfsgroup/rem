@@ -92,7 +92,6 @@ public class DtoActivoFilter extends WebDto {
 	private Long usuarioGestor;
 	private String codigoPromocionPrinex;
 	private String tipoTituloPosesorio;
-	private String numPrinexLbb;
 	
 	public String getNumActivo() {
 		return numActivo;
@@ -585,12 +584,6 @@ public class DtoActivoFilter extends WebDto {
 	}
 	public void setTipoTituloPosesorio(String tipoTituloPosesorio) {
 		this.tipoTituloPosesorio = tipoTituloPosesorio;
-	}
-	public String getNumPrinexLbb() {
-		return numPrinexLbb;
-	}
-	public void setNumPrinexLbb(String numPrinexLbb) {
-		this.numPrinexLbb = numPrinexLbb;
 	}
 	
 }

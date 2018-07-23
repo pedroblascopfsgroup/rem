@@ -59,11 +59,16 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	private static final String GESTOR_PRESCRIPTOR = "prescriptor";
 	private static final String GESTOR_MEDIADOR = "mediador";
 	private static final String GESTOR_COMERCIAL_ACTIVO = "gestor-comercial-activo";
+	private static final String GESTOR_COMERCIAL_ACTIVO_SUS = "gestor-comercial-activo-sustituto";
 	private static final String GESTOR_COMERCIAL_LOTE_RESTRINGIDO = "gestor-comercial-lote-restringido";
 	private static final String GESTOR_COMERCIAL_LOTE_COMERCIAL = "gestor-comercial-lote-comercial";
+	private static final String GESTOR_COMERCIAL_LOTE_COMERCIAL_SUS = "gestor-comercial-lote-comercial-sustituto";
 	private static final String GESTOR_FORMALIZACION = "gestor-formalizacion";
+	private static final String GESTOR_FORMALIZACION_SUS = "gestor-formalizacion-sustituto";
 	private static final String GESTOR_BACKOFFICE = "gestor-backoffice";
+	private static final String GESTOR_BACKOFFICE_SUS = "gestor-backoffice-sustituto";
 	private static final String GESTOR_GESTORIA_FASE_3 = "gestoria-fase-3";
+	private static final String GESTOR_GESTORIA_FASE_3_SUS = "gestoria-fase-3-sustituto";
 	private static final String USUARIO_FICTICIO_OFERTA_CAJAMAR = "ficticioOfertaCajamar";
 	
 	// Patrón para validar el email
@@ -211,18 +216,18 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)
 				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)
 				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)) {
-			clavesGestores.addAll(Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial));
+			clavesGestores.addAll(Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial, GESTOR_COMERCIAL_ACTIVO_SUS));
 			if (formalizacion) {
-				clavesGestores.add(GESTOR_FORMALIZACION);
-				clavesGestores.add(GESTOR_GESTORIA_FASE_3);
+				clavesGestores.addAll(Arrays.asList(GESTOR_FORMALIZACION, GESTOR_FORMALIZACION_SUS));
+				clavesGestores.addAll(Arrays.asList(GESTOR_GESTORIA_FASE_3, GESTOR_GESTORIA_FASE_3_SUS));
 			}
 
 			// DESTINATARIOS SI ES CAJAMAR
 		} else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
 			clavesGestores.addAll(
-					Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial, GESTOR_BACKOFFICE));
+					Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial, GESTOR_BACKOFFICE, GESTOR_COMERCIAL_ACTIVO_SUS, GESTOR_BACKOFFICE_SUS));
 			if (formalizacion) {
-				clavesGestores.add(GESTOR_FORMALIZACION);
+				clavesGestores.addAll(Arrays.asList(GESTOR_FORMALIZACION, GESTOR_FORMALIZACION_SUS));
 			}
 		}
 
@@ -311,11 +316,13 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				
 				Usuario gesComercial = gestorActivoApi.getGestorByActivoYTipo(activo, "GCOM");
 				Filter filterUsu = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", gesComercial.getId());
-				GestorSustituto sgs = genericDao.get(GestorSustituto.class, filterUsu);
-				if (!Checks.esNulo(sgs)){
-					if (!Checks.esNulo(sgs.getFechaFin()) && !Checks.esNulo(sgs.getFechaInicio()) && sgs.getFechaFin().before(new Date()) 
-							&& (sgs.getFechaInicio().after(new Date()) || sgs.getFechaInicio().equals(new Date()))) {
-						addMail(s, sgs.getUsuarioGestorSustituto().getEmail(), gestores);
+				List<GestorSustituto> sgsList = genericDao.getList(GestorSustituto.class, filterUsu);
+				for (GestorSustituto sgs : sgsList) {
+					if (!Checks.esNulo(sgs)){
+						if (!Checks.esNulo(sgs.getFechaFin()) && sgs.getFechaFin().after(new Date()) && !Checks.esNulo(sgs.getFechaInicio()) 
+								&& (sgs.getFechaInicio().before(new Date()) || sgs.getFechaInicio().equals(new Date()))) {
+							addMail(GESTOR_COMERCIAL_ACTIVO_SUS, extractEmail(sgs.getUsuarioGestorSustituto()), gestores);
+						}
 					}
 				}
 				
@@ -324,11 +331,13 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				
 				Usuario gesLoteComercial = loteComercial.getUsuarioGestorComercial();
 				Filter filterUsu = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", gesLoteComercial.getId());
-				GestorSustituto sgs = genericDao.get(GestorSustituto.class, filterUsu);
-				if (!Checks.esNulo(sgs)){
-					if (!Checks.esNulo(sgs.getFechaFin()) && !Checks.esNulo(sgs.getFechaInicio()) && sgs.getFechaFin().before(new Date()) 
-							&& (sgs.getFechaInicio().after(new Date()) || sgs.getFechaInicio().equals(new Date()))) {
-						addMail(s, sgs.getUsuarioGestorSustituto().getEmail(), gestores);
+				List<GestorSustituto> sgsList = genericDao.getList(GestorSustituto.class, filterUsu);
+				for (GestorSustituto sgs : sgsList) {
+					if (!Checks.esNulo(sgs)){
+						if (!Checks.esNulo(sgs.getFechaFin()) && sgs.getFechaFin().after(new Date()) && !Checks.esNulo(sgs.getFechaInicio()) 
+								&& (sgs.getFechaInicio().before(new Date()) || sgs.getFechaInicio().equals(new Date()))) {
+							addMail(GESTOR_COMERCIAL_LOTE_COMERCIAL_SUS, extractEmail(sgs.getUsuarioGestorSustituto()), gestores);
+						}
 					}
 				}
 				
@@ -337,11 +346,13 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				
 				Usuario gesFormalizacion = gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GFORM");
 				Filter filterUsu = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", gesFormalizacion.getId());
-				GestorSustituto sgs = genericDao.get(GestorSustituto.class, filterUsu);
-				if (!Checks.esNulo(sgs)){
-					if (!Checks.esNulo(sgs.getFechaFin()) && !Checks.esNulo(sgs.getFechaInicio()) && sgs.getFechaFin().before(new Date()) 
-							&& (sgs.getFechaInicio().after(new Date()) || sgs.getFechaInicio().equals(new Date()))) {
-						addMail(s, sgs.getUsuarioGestorSustituto().getEmail(), gestores);
+				List<GestorSustituto> sgsList = genericDao.getList(GestorSustituto.class, filterUsu);
+				for (GestorSustituto sgs : sgsList) {
+					if (!Checks.esNulo(sgs)){
+						if (!Checks.esNulo(sgs.getFechaFin()) && sgs.getFechaFin().after(new Date()) && !Checks.esNulo(sgs.getFechaInicio()) 
+								&& (sgs.getFechaInicio().before(new Date()) || sgs.getFechaInicio().equals(new Date()))) {
+							addMail(GESTOR_FORMALIZACION_SUS, extractEmail(sgs.getUsuarioGestorSustituto()), gestores);
+						}
 					}
 				}
 				
@@ -350,11 +361,13 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				
 				Usuario gesBack = gestorActivoApi.getGestorByActivoYTipo(activo, "GBO");
 				Filter filterUsu = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", gesBack.getId());
-				GestorSustituto sgs = genericDao.get(GestorSustituto.class, filterUsu);
-				if (!Checks.esNulo(sgs)){
-					if (!Checks.esNulo(sgs.getFechaFin()) && !Checks.esNulo(sgs.getFechaInicio()) && sgs.getFechaFin().before(new Date()) 
-							&& (sgs.getFechaInicio().after(new Date()) || sgs.getFechaInicio().equals(new Date()))) {
-						addMail(s, sgs.getUsuarioGestorSustituto().getEmail(), gestores);
+				List<GestorSustituto> sgsList = genericDao.getList(GestorSustituto.class, filterUsu);
+				for (GestorSustituto sgs : sgsList) {
+					if (!Checks.esNulo(sgs)){
+						if (!Checks.esNulo(sgs.getFechaFin()) && sgs.getFechaFin().after(new Date()) && !Checks.esNulo(sgs.getFechaInicio()) 
+								&& (sgs.getFechaInicio().before(new Date()) || sgs.getFechaInicio().equals(new Date()))) {
+							addMail(GESTOR_BACKOFFICE_SUS, extractEmail(sgs.getUsuarioGestorSustituto()), gestores);
+						}
 					}
 				}
 				
@@ -363,11 +376,13 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				
 				Usuario gesGesFase = gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GIAFORM");
 				Filter filterUsu = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", gesGesFase.getId());
-				GestorSustituto sgs = genericDao.get(GestorSustituto.class, filterUsu);
-				if (!Checks.esNulo(sgs)){
-					if (!Checks.esNulo(sgs.getFechaFin()) && !Checks.esNulo(sgs.getFechaInicio()) && sgs.getFechaFin().before(new Date()) 
-							&& (sgs.getFechaInicio().after(new Date()) || sgs.getFechaInicio().equals(new Date()))) {
-						addMail(s, sgs.getUsuarioGestorSustituto().getEmail(), gestores);
+				List<GestorSustituto> sgsList = genericDao.getList(GestorSustituto.class, filterUsu);
+				for (GestorSustituto sgs : sgsList) {
+					if (!Checks.esNulo(sgs)){
+						if (!Checks.esNulo(sgs.getFechaFin()) && sgs.getFechaFin().after(new Date()) && !Checks.esNulo(sgs.getFechaInicio()) 
+								&& (sgs.getFechaInicio().before(new Date()) || sgs.getFechaInicio().equals(new Date()))) {
+							addMail(GESTOR_GESTORIA_FASE_3_SUS, extractEmail(sgs.getUsuarioGestorSustituto()), gestores);
+						}
 					}
 				}
 				

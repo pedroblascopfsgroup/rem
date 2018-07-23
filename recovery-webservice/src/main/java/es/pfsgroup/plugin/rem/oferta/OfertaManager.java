@@ -1358,8 +1358,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					Boolean tieneNifConyugue = true;
 					
 					for(CompradorExpediente cex: listaCex){
-						Comprador com = cex.getPrimaryKey().getComprador();
-						if(!Checks.esNulo(com) && Checks.esNulo(com.getProvincia())){
+						if(!Checks.esNulo(cex) && DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(cex.getEstadoCivil().getCodigo()) && Checks.esNulo(cex.getDocumentoConyuge())){
 							tieneNifConyugue = false;
 							break;
 						}
@@ -1378,7 +1377,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					Boolean tieneNifConyugue = true;
 					
 					for(CompradorExpediente cex: listaCex){
-						if(!Checks.esNulo(cex)  && DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(cex.getEstadoCivil().getCodigo()) && Checks.esNulo(cex.getDocumentoConyuge())){
+						if(!Checks.esNulo(cex) && DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(cex.getEstadoCivil().getCodigo()) && Checks.esNulo(cex.getDocumentoConyuge())){
 							tieneNifConyugue = false;
 							break;
 						}

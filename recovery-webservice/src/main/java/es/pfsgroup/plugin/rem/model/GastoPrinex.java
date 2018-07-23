@@ -25,7 +25,7 @@ public class GastoPrinex implements Serializable, Auditable {
 	private static final long serialVersionUID = -5657034208602725667L;
 
 	@Id
-    @Column(name = "GPV_NUM_GASTO_HAYA")
+    @Column(name = "GPV_ID")
     private Long id;
 	
 	@Column(name = "GPL_FECHA_CONTABLE")

@@ -20,13 +20,18 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVInfoDetallePrinexLbkExcelValidator;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.rem.api.GastoApi;
 import es.pfsgroup.plugin.rem.model.GastoPrinex;
+import es.pfsgroup.plugin.rem.model.GastoProveedor;
 
 @Component
 public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MSVLiberator {
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private GastoApi gastoApi;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -44,13 +49,18 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 		Boolean gastoNuevo = false;
 
 		// obtenemos el gasto prinex si no existe lo creamos
+		GastoProveedor gastoProveedor = gastoApi.getByNumGasto(gpvNumGasto);
+		
+		if(gastoProveedor == null){
+			throw new Exception("No existe el gasto");
+		}
 
 		GastoPrinex gasto = genericDao.get(GastoPrinex.class,
-				genericDao.createFilter(FilterType.EQUALS, "id", gpvNumGasto));
+				genericDao.createFilter(FilterType.EQUALS, "id", gastoProveedor.getId()));
 
 		if (gasto == null) {
 			gasto = new GastoPrinex();
-			gasto.setId(gpvNumGasto);
+			gasto.setId(gastoProveedor.getId());
 			gastoNuevo = true;
 		}
 		

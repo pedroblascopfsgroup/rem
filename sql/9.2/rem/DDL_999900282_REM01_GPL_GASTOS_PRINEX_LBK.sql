@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Sergio Hernández
---## FECHA_CREACION=20180720
+--## AUTOR=Ramón Llinares
+--## FECHA_CREACION=20180723
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
@@ -55,7 +55,7 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TABLA||'...');
 		V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TABLA||'
                 (
-                  GPV_NUM_GASTO_HAYA      NUMBER(16,0) NOT NULL,
+                  GPV_ID      NUMBER(16,0) NOT NULL,
                   GPL_FECHA_CONTABLE      DATE,
                   GPL_DIARIO_CONTB        VARCHAR2(20 CHAR),
                   GPL_D347                VARCHAR2(20 CHAR),
@@ -123,12 +123,12 @@ BEGIN
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'... Tabla creada.');
 		
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.GPV_NUM_GASTO_HAYA IS ''PK de la tabla. Enlaza con GPV_GASTOS_PROVEEDOR''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.GPV_ID IS ''PK de la tabla. Enlaza con GPV_GASTOS_PROVEEDOR''';
 		EXECUTE IMMEDIATE V_MSQL;
 
 
 		-- Creamos primary key
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT '||V_TABLA||'_PK PRIMARY KEY (GPV_NUM_GASTO_HAYA) USING INDEX)';
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT '||V_TABLA||'_PK PRIMARY KEY (GPV_ID) USING INDEX)';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'_PK... PK creada.');
 		

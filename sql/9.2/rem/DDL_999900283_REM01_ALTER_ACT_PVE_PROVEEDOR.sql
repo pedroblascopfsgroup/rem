@@ -1,12 +1,12 @@
 --/*
 --##########################################
 --## AUTOR=Pier Gotta	
---## FECHA_CREACION=20180710
+--## FECHA_CREACION=20180724
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-1276
+--## INCIDENCIA_LINK=REMVIP-1351
 --## PRODUCTO=NO
---## Finalidad: Inserción de nuevos campos en APR_AUX_ACT_ACTIVO
+--## Finalidad: Inserción del campo PVE_ENVIADO en la tabla ACT_PVE_PROVEEDOR
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -30,7 +30,7 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
-    V_TABLA VARCHAR2(50 CHAR):= 'APR_AUX_ACT_ACTIVO';
+    V_TABLA VARCHAR2(50 CHAR):= 'ACT_PVE_PROVEEDOR';
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
   
     
@@ -41,24 +41,18 @@ BEGIN
     V_SQL := 'SELECT COUNT(1) FROM all_tab_columns WHERE TABLE_NAME = '''||V_TABLA||''' AND OWNER = '''||V_ESQUEMA||''' 
 			  AND COLUMN_NAME IN 
 			  (
-			  	''ACT_DESCRIPCION'',''LOC_LATITUD'',''LOC_LONGITUD'',''REG_IDUFIR'',''DD_SITUACION_INSCRIPCION'',''ADJ_FECHA_DECRETO_FIRME'',''AJD_ID_ASUNTO'')';
+			  	''PVE_ENVIADO'')';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     
     -- Si existen los campos lo indicamos sino los creamos
     IF V_NUM_TABLAS >= 1 THEN
-        DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||'... Las columnas ya existen en la tabla.');
+        DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||'... La columna ya existe en la tabla.');
     ELSE
         V_SQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' 
-				  ADD (ACT_DESCRIPCION VARCHAR2(250 CHAR),
-				  LOC_LATITUD NUMBER(21,15),
-				  LOC_LONGITUD NUMBER(21,15),
-				  REG_IDUFIR VARCHAR2(50 CHAR),
-				  DD_SITUACION_INSCRIPCION NUMBER(16,0),
-				  ADJ_FECHA_DECRETO_FIRME DATE,
-				  AJD_ID_ASUNTO NUMBER(16,0)
+				  ADD (PVE_ENVIADO TIMESTAMP(6)
 				  )';
         EXECUTE IMMEDIATE V_SQL; 
-        DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.'||V_TABLA||'... Se han añadido las nuevas columnas con exito');
+        DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.'||V_TABLA||'... Se ha añadido la nueva columnas con exito');
 	END IF;
     
     

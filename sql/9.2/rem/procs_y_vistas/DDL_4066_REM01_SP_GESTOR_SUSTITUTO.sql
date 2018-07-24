@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Guillermo Llidó
---## FECHA_CREACION=20180721
+--## FECHA_CREACION=20180724
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-1253
@@ -42,9 +42,9 @@ create or replace PROCEDURE #ESQUEMA#.SP_GESTOR_SUSTITUTO
 
 BEGIN
 	
-	V_FECHA_INICIO := TO_DATE(TO_DATE(''||FECHA_INICIO||'','DD/MM/YYYY'),'DD/MM/YY');
+	V_FECHA_INICIO := TO_DATE(TO_DATE(''||FECHA_INICIO||'','DD/MM/RRRR'),'DD/MM/RR');
   
-    V_FECHA_FIN := TO_DATE(TO_DATE(''||FECHA_FIN||'','DD/MM/YYYY'),'DD/MM/YY');
+    V_FECHA_FIN := TO_DATE(TO_DATE(''||FECHA_FIN||'','DD/MM/RRRR'),'DD/MM/RR');
     
     IF (OPERACION IS NOT NULL )AND (V_USU_ID_ORI IS NOT NULL) AND (V_FECHA_INICIO IS NOT NULL) THEN
 
@@ -65,7 +65,7 @@ BEGIN
                                                             OR
                                                             (TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') <= TO_DATE(FECHA_INICIO,''DD/MM/YY'') AND TO_DATE(FECHA_INICIO,''DD/MM/YY'') < TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY'') )
                                                             OR
-                                                            ((To_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') <= TO_DATE(FECHA_INICIO,''DD/MM/YY'')) AND (FECHA_FIN IS NULL))
+                                                            ((TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') <= TO_DATE(FECHA_INICIO,''DD/MM/YY'')) AND (FECHA_FIN IS NULL))
                                                             OR
                                                             ((TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') <= TO_DATE(FECHA_INICIO,''DD/MM/YY'')) AND (FECHA_FIN IS NULL))
                                                         )';            
@@ -91,8 +91,8 @@ BEGIN
                                 VALUES ( '||V_ESQUEMA||'.S_SGS_GESTOR_SUSTITUTO.NEXTVAL
                                         ,'||V_USU_ID_ORI||'
                                         ,'||V_USU_ID_SUS||'
-                                        ,TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YYYY'')
-                                        ,TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YYYY'')
+                                        ,'''||V_FECHA_INICIO||'''
+                                        ,'''||V_FECHA_FIN||'''
                                         ,'''||USUARIO||'''
                                         ,SYSDATE
                                         ,NULL
@@ -132,7 +132,7 @@ BEGIN
                                                             OR
                                                             (TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') <= TO_DATE(FECHA_INICIO,''DD/MM/YY'') AND TO_DATE(FECHA_INICIO,''DD/MM/YY'') < TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY'') )
                                                             OR
-                                                            ((To_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') <= TO_DATE(FECHA_INICIO,''DD/MM/YY'')) AND (FECHA_FIN IS NULL))
+                                                            ((TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') <= TO_DATE(FECHA_INICIO,''DD/MM/YY'')) AND (FECHA_FIN IS NULL))
                                                             OR
                                                             ((TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') <= TO_DATE(FECHA_INICIO,''DD/MM/YY'')) AND (FECHA_FIN IS NULL))
                                                         )';            
@@ -148,7 +148,7 @@ BEGIN
 				IF V_AUX > 0 THEN
 
 					V_SQL := 'UPDATE '||V_ESQUEMA||'.SGS_GESTOR_SUSTITUTO SET
-								  FECHA_FIN = TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YYYY'')
+								  FECHA_FIN = '''||V_FECHA_FIN||'''
 								, USUARIOMODIFICAR = '''||USUARIO||'''
 								, FECHAMODIFICAR = SYSDATE
                                 WHERE USU_ID_ORI = '||V_USU_ID_ORI||'
@@ -167,7 +167,7 @@ BEGIN
 
 			ELSE
 
-				PL_OUTPUT := PL_OUTPUT || '[ERROR] Ya existe un registro dentro del rango de fechas TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YYYY'') y TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YYYY'') para el Usuario '||V_USU_ID_ORI||' y Sustituto  '||V_USU_ID_SUS||' ' || CHR(10) ;
+				PL_OUTPUT := PL_OUTPUT || '[ERROR] Ya existe un registro dentro del rango de fechas '''||V_FECHA_INICIO||''' y '''||V_FECHA_FIN||''' para el Usuario '||V_USU_ID_ORI||' y Sustituto  '||V_USU_ID_SUS||' ' || CHR(10) ;
 
 			END IF;
 
@@ -185,7 +185,7 @@ BEGIN
                     IF V_FECHA_FIN IS NOT NULL THEN
 
                         V_SQL := 'UPDATE '||V_ESQUEMA||'.SGS_GESTOR_SUSTITUTO SET
-                                        FECHA_FIN = TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YYYY'')
+                                        FECHA_FIN = '''||V_FECHA_FIN||'''
                                         , USUARIOBORRAR = '''||USUARIO||'''
                                         , FECHABORRAR = SYSDATE
                                         , BORRADO = 1

@@ -4,9 +4,9 @@
 --## FECHA_CREACION=20180718
 --## ARTEFACTO=web
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-3913
+--## INCIDENCIA_LINK=HREOS-4318
 --## PRODUCTO=SI
---## Finalidad: DDL Creación de la tabla HIST_TP_TARIFA_PLANA
+--## Finalidad: DDL Creación de la tabla TMP_*_HREOS_4318
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:

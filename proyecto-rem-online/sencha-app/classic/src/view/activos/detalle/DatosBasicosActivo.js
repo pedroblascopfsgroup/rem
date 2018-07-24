@@ -59,7 +59,21 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype: 'displayfieldbase',
 								fieldLabel:  HreRem.i18n('fieldlabel.id.bien.recovery'),
 								bind:		'{activo.idRecovery}'
-							}
+							},
+							{
+			                	xtype: 'displayfieldbase',
+					        	fieldLabel:  HreRem.i18n('fieldlabel.categoria.contable'),
+					        	bind:{	value: '{activo.catContableDescripcion}',
+					        			hidden: '{!activo.isCarteraLiberbank}'		
+					        		}
+			                },
+			                {
+			                	xtype: 'displayfieldbase',
+					        	fieldLabel:  HreRem.i18n('fieldlabel.codigo.promocion.final'),
+					        	bind:{	value: '{activo.codPromocionFinal}',
+					        			hidden: '{!activo.isCarteraLiberbank}'
+					        	}
+			                }
 						]
 					},
 					{	// Columna 2
@@ -99,6 +113,27 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				            		disabled: '{!activo.tipoActivoCodigo}'
 				            	},
 	    						allowBlank: false
+					        },
+					        { 
+								xtype: 'comboboxfieldbase',
+					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.activo.bde'),
+					        	reference: 'tipoActivoBde',
+					        	bind: {
+				            		store: '{comboTipoActivoBde}',
+				            		value: '{activo.tipoActivoCodigoBde}',
+				            		hidden: '{!activo.isCarteraLiberbank}'
+				            	}
+				            	
+					        },
+					        { 
+					        	xtype: 'comboboxfieldbase',
+					        	fieldLabel: HreRem.i18n('fieldlabel.subtipo.activo.bde'),
+								reference: 'subtipoActivoComboBde',
+					        	bind: {
+				            		store: '{comboSubtipoActivoBde}',
+				            		value: '{activo.subtipoActivoCodigoBde}',
+				            		hidden: '{!activo.isCarteraLiberbank}'
+				            	}
 					        },
 					        { 
 					        	xtype: 'comboboxfieldbase',

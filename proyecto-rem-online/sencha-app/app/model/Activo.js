@@ -177,7 +177,25 @@ Ext.define('HreRem.model.Activo', {
     		}, 
     		{
     			name:'tipoActivoDescripcion'
+    		},
+    		{
+    			name:'tipoActivoCodigoBde'
     		}, 
+    		{
+    			name:'subtipoActivoCodigoBde'
+    		}, 
+    		{
+    			name:'subtipoActivoDescripcionBde'
+    		}, 
+    		{
+    			name:'tipoActivoDescripcionBde'
+    		},
+    		{
+    			name:'codPromocionFinal'
+    		}, 
+    		{
+    			name:'catContableDescripcion'
+    		},
     		{
     			name:'municipioDescripcion'
     		},

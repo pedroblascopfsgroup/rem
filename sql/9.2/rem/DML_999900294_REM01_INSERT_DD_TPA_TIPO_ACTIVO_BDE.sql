@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20180719
+--## FECHA_CREACION=20180724
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-1373

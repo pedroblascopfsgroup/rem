@@ -587,7 +587,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					DDSubtipoActivoBDE subTipoActivoBde = (DDSubtipoActivoBDE) diccionarioApi.dameValorDiccionarioByCod(DDSubtipoActivoBDE.class,  dto.getSubtipoActivoCodigoBde());
 					actInfLiber.setSubtipoActivoBde(subTipoActivoBde);
 				}
-				actInfLiber.setActivo(activo);
+				actInfLiber.setId(activo.getId());
 				genericDao.save(ActivoInfoLiberbank.class, actInfLiber);
 			}
 			

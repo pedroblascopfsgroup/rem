@@ -87,6 +87,10 @@ public class ActivoProyecto implements Serializable, Auditable {
     @JoinColumn(name = "PRY_DOBLE_GESTOR_ACTIVO")
 	private Usuario dobleGestorActivo;
 	
+	@ManyToOne
+    @JoinColumn(name = "PRY_GESTOR_COMERCIAL")
+	private Usuario gestorcomercial;
+	
 	private Auditoria auditoria;
 	
 	
@@ -193,6 +197,14 @@ public class ActivoProyecto implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Usuario getGestorcomercial() {
+		return gestorcomercial;
+	}
+
+	public void setGestorcomercial(Usuario gestorcomercial) {
+		this.gestorcomercial = gestorcomercial;
 	}
 	
 }

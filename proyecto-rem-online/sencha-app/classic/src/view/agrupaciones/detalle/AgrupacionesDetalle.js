@@ -122,17 +122,38 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 		var editionEnabled = function() {
 			me.down("[itemId=botoneditar]").setVisible(true);
 		}
+		var editionDisabled = function() {
+			me.down("[itemId=botoneditar]").setVisible(false);
+		}
 
 		var esEditable = me.lookupController().getViewModel().get('agrupacionficha.esEditable');
 
 		//Si la agrupación es editable
 		if(esEditable) {
-			// Si la pestaña recibida no tiene asignadas funciones de edicion 
-			if(Ext.isEmpty(tab.funPermEdition)) {
-	    		editionEnabled();
-	    	} else {
-	    		$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
-	    	}   
+			//Se comprueba si es de tipo proyecto 
+			var Agrupacionproyecto = false;
+			var tipoAgrupacion =  me.lookupController().getViewModel().get('agrupacionficha.tipoAgrupacionCodigo');
+	     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROYECTO'])) {
+	     		Agrupacionproyecto= true;
+	     	}
+				// Si la pestaña recibida no tiene asignadas funciones de edicion 
+				if(Ext.isEmpty(tab.funPermEdition)) {
+		    		editionEnabled();
+		    		} else {
+			    		//Si los usuarios son gestores de suelo o edificacion podran editar la pestaña ficha si no , no podrán.
+			    		if(Agrupacionproyecto){
+			    			
+				    		if( $AU.getUser().userName == "Gestor de Suelos" || $AU.getUser().userName == "Gestor de Edificaciones"){
+				    			$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
+				    		}else{
+					    		$AU.confirmFunToFunctionExecution(editionDisabled, tab.funPermEdition);
+							}
+				    		
+			    		}else{
+			    			$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
+			    		}
+		    		}
+			
     	}
     }
 });

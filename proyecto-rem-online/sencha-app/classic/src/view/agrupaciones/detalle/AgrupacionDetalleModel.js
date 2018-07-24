@@ -89,6 +89,31 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		     		return false;
 		     	}
 		 },
+		 agrupacionProyectoTieneActivos: function(get) {
+	    	 
+		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+		     	var numeroActivos = get('agrupacionficha.numeroActivos');
+		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROYECTO']) && numeroActivos > 0) {
+		     		return true;
+		     	} else {
+		     		return false;
+		     	}
+		 },
+		 agrupacionTieneActivosOrExisteFechaBaja: function(get) {
+		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+		     	var numeroActivos = get('agrupacionficha.numeroActivos');
+		     	var existeFechaBaja = get('agrupacionficha.existeFechaBaja');
+		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROYECTO'])) {
+		     		if(numeroActivos > 0 || existeFechaBaja){
+		     			return true;
+		     		}else{
+		     			return false;
+		     		}
+		     		
+		     	} else {
+		     		return existeFechaBaja;
+		     	}
+		 },
 
 	     esAgrupacionObraNuevaOrAsistida: function(get) {
 	    	 
@@ -104,7 +129,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	    	 
 		  	return get('esAgrupacionLoteComercial') || get('esAgrupacionProyecto');
 		 },
-	     
+     
 	     existeFechaBaja : function(get) {
 	    	var existeFechaBaja = get('agrupacionficha.existeFechaBaja');
 	    	return existeFechaBaja;
@@ -297,6 +322,26 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				extraParams: {agrId: '{agrupacionficha.id}', codigoGestor: 'GCOM'}
 			}   	
 	    },
+	    //GESTOR DOBLE
+	    comboDobleGestorActivo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'agrupacion/getDobleGestorActivo',
+				extraParams: {agrId: '{agrupacionficha.id}', codigoGestorEdi: 'GEDI', codigoGestorSu: 'GSUE'}
+			}   	
+	    }
+	    //GESTOR DE ACTIVOS
+	    ,
+	    comboGestorActivos: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'agrupacion/getGestoresLoteComercial',
+				extraParams: {agrId: '{agrupacionficha.id}', codigoGestor: 'GACT'}
+			}   	
+	    }
+	    ,
 
 	    comboGestorFormalizacion: {
 			model: 'HreRem.model.ComboBase',

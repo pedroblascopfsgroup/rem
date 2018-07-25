@@ -2723,10 +2723,7 @@ public class ActivoAdapter {
 						this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
 						this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
 						this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
-
-
-								
-					if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES))
+         			if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES))
 							logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
 					if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES))
 							logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES);

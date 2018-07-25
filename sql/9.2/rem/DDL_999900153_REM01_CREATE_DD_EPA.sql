@@ -70,6 +70,7 @@ BEGIN
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
 	
+<<<<<<< HEAD
 		-- Comprobamos si existe la secuencia
 		V_MSQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_'||V_TEXT_TABLA||''' and sequence_owner = '''||V_ESQUEMA||'''';
 		  
@@ -134,6 +135,12 @@ BEGIN
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BORRADO IS ''Indicador de borrado.''';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna BORRADO creado.');
+=======
+		-- Creamos sequence
+		V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';		
+		EXECUTE IMMEDIATE V_MSQL;		
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
+>>>>>>> 88b6244... Revert "comprobar secuencia EPV, EPA, MTO"
 
 		COMMIT;
 	END IF;

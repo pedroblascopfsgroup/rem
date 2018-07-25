@@ -2719,6 +2719,12 @@ public class ActivoAdapter {
 			//Cuando en REM se marque que un activo entra en el perímetro de alquiler (bien individual o masivamente) REM asignará Gestor y Supervisor de activo de este tipo según cliente y provincia
 				if(!Checks.esNulo(((DtoActivoPatrimonio)dto).getChkPerimetroAlquiler())  ) {
 				 if (((DtoActivoPatrimonio)dto).getChkPerimetroAlquiler() ) { 
+						this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_SUELOS);
+						this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
+						this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+						this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
+
+
 								
 					if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES))
 							logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_ALQUILERES);

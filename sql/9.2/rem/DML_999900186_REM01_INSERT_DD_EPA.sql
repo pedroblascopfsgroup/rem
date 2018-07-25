@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Carlos López
---## FECHA_CREACION=20180307
+--## AUTOR=JIN LI HU
+--## FECHA_CREACION=20180306
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-3897
@@ -31,13 +31,15 @@ DECLARE
     V_TABLA VARCHAR2(30 CHAR) := 'DD_EPA_ESTADO_PUB_ALQUILER';  -- Tabla a modificar
     V_TABLA_SEQ VARCHAR2(30 CHAR) := 'S_DD_EPA_ESTADO_PUB_ALQUILER';  -- Tabla a modificar    
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
     V_USR VARCHAR2(30 CHAR) := 'HREOS-3890'; -- USUARIOCREAR/USUARIOMODIFICAR
        
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
         T_TIPO_DATA('01', 'No Publicado Alquiler', 'No Publicado Alquiler'),
-        T_TIPO_DATA('02', 'Pre Publicado Alquiler', 'No tiene precio aprobado de publicación. No tiene CEE. No tiene check de adecuación.'),
+        T_TIPO_DATA('02', 'Pre Publicado Alquiler', 'No tiene precio aprobado de
+publicación. No tiene CEE. No tiene check de adecuación.'),
         T_TIPO_DATA('03', 'Publicado Alquiler', 'Publicado Alquiler'),
         T_TIPO_DATA('04', 'Oculto Alquiler', 'Publicado Alquiler')
     ); 
@@ -53,37 +55,34 @@ BEGIN
       LOOP
       
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
-		V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE DD_EPA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0';
-		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;    
-		
-		IF V_NUM_TABLAS = 0 THEN    
-				--Insertar datos
-				DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
-			EXECUTE IMMEDIATE '
-					INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
-					   DD_EPA_ID
-					  ,DD_EPA_CODIGO
-					  ,DD_EPA_DESCRIPCION
-				  ,DD_EPA_DESCRIPCION_LARGA
-					  ,VERSION
-					  ,USUARIOCREAR
-					  ,FECHACREAR
-					  ,BORRADO
-					)   
-					SELECT
-					  '||V_ESQUEMA||'.'||V_TABLA_SEQ||'.NEXTVAL
-					  , '''||V_TMP_TIPO_DATA(1)||'''
-					  , '''||V_TMP_TIPO_DATA(2)||'''
-					  , '''||V_TMP_TIPO_DATA(3)||'''
-					  , 0
-					  , '''||V_USR||'''
-					  , SYSDATE
-				  , 0
-					FROM DUAL
-					'
-					;
-				DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
-		end if;
+    
+        --Insertar datos
+        DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
+	EXECUTE IMMEDIATE '
+            INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
+               DD_EPA_ID
+              ,DD_EPA_CODIGO
+              ,DD_EPA_DESCRIPCION
+	      ,DD_EPA_DESCRIPCION_LARGA
+              ,VERSION
+              ,USUARIOCREAR
+              ,FECHACREAR
+              ,BORRADO
+            )   
+            SELECT
+              '||V_ESQUEMA||'.'||V_TABLA_SEQ||'.NEXTVAL
+              , '''||V_TMP_TIPO_DATA(1)||'''
+              , '''||V_TMP_TIPO_DATA(2)||'''
+              , '''||V_TMP_TIPO_DATA(3)||'''
+              , 0
+              , '''||V_USR||'''
+              , SYSDATE
+	      , 0
+            FROM DUAL
+            '
+            ;
+        DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
+
       END LOOP;
     COMMIT;
     DBMS_OUTPUT.PUT_LINE('[FIN]: DICCIONARIO DD_EPA_ESTADO_PUB_ALQUILER ACTUALIZADO CORRECTAMENTE ');

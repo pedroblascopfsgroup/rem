@@ -29,6 +29,10 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDCategoriaContable implements Auditable, Dictionary {
+	
+	public static final String COD_INMOVILIZADO ="I";
+	public static final String COD_EXISTENCIAS ="E";
+	public static final String COD_ACTIVO_NO_CORRIENTE ="N";
 
 	private static final long serialVersionUID = 1L;
 	

@@ -2735,9 +2735,7 @@ public class ActivoAdapter {
 					 else if (!((DtoActivoPatrimonio)dto).getChkPerimetroAlquiler()) { 
 							//en este caso si existieran trabajos abiertos REM los reasignará al Gestor de mantenimiento (ACTIVO)
 							int numTrabajos = 0;
-							this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
-							this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES);
-							for (ActivoTramite actTram : listaActivoTramite ) {
+						    for (ActivoTramite actTram : listaActivoTramite ) {
 								if (Checks.esNulo(actTram.getFechaFin())) 
 								numTrabajos++;											
 							}
@@ -2745,6 +2743,8 @@ public class ActivoAdapter {
 							if (numTrabajos >= 1) { 
 								this.cambiarTrabajosActivosAGestorActivo(activo,GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
 							}
+							this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
+							this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES);
 				}			
 			}	//fin 	if(!Checks.esNulo(((DtoActivoPatrimonio)dto).getChkPerimetroAlquiler())  ) {
 	

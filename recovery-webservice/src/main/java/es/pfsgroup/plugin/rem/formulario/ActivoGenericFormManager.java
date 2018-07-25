@@ -69,6 +69,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
+import es.pfsgroup.plugin.rem.oferta.OfertaManager;
 
 @Service
 public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
@@ -126,6 +127,9 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
     
     @Autowired
     private ResolucionComiteApi resolucionComiteApi;
+    
+    @Autowired
+    private OfertaManager ofertaManager;
 
     
     /**
@@ -297,8 +301,8 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
             				if (!Checks.esNulo(expediente)){
             					if(trabajoApi.checkFormalizacion(tareaExterna)){
+            						String codigoComite = null;
 			            			if(trabajoApi.checkBankia(tareaExterna)){
-			            				String codigoComite = null;
 										try {
 											if(!expediente.getOferta().getVentaDirecta()){
 												codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
@@ -311,7 +315,11 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 										}
 										if(!Checks.esNulo(codigoComite))
 											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getDescripcion());
-			            			} else {
+			            			} else if(trabajoApi.checkLiberbank(tareaExterna)) {
+			            				codigoComite = ofertaManager.calculoComiteLiberbank(ofertaAceptada).getCodigo();
+			            				if(!Checks.esNulo(codigoComite))
+											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getDescripcion());
+			            			}else {
 			            				if(!Checks.esNulo(expediente.getComiteSancion()))
 			            					item.setValue(expediente.getComiteSancion().getDescripcion());
 				            		}

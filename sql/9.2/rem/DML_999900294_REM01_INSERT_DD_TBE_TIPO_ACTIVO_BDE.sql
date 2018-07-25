@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20180724
+--## FECHA_CREACION=20180725
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-1373
@@ -27,7 +27,7 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_AUX NUMBER(16);
-    V_TABLA VARCHAR2(27 CHAR) := 'DD_TPA_TIPO_ACTIVO_BDE'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TABLA VARCHAR2(27 CHAR) := 'DD_TBE_TIPO_ACTIVO_BDE'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 	V_USUARIO VARCHAR2(32 CHAR) := 'REMVIP-1373';
 
  -- ARRAY PARA LA REACTIVACIÓN DE AGRUPACIONES

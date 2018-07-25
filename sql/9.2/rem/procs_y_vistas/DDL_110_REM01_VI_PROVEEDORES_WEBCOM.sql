@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20160920
+--## AUTOR=SHG
+--## FECHA_CREACION=20180725
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 SHG- Incluyo oficinas Liberbank (38)
 --##########################################
 --*/
 
@@ -168,7 +169,7 @@ BEGIN
 		LEFT JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR DDTPR ON DDTPR.DD_TPR_ID = PVE.DD_TPR_ID
 		LEFT JOIN DOMICILIO_SOCIAL SOC ON SOC.PVE_ID = PVE.PVE_ID AND SOC.DD_TDP_CODIGO = ''01''
     	LEFT JOIN DELEGACION DEL ON DEL.PVE_ID = PVE.PVE_ID AND DEL.DD_TDP_CODIGO = ''02''		
-		WHERE DDTPR.DD_TPR_CODIGO IS NOT NULL AND DDTPR.DD_TPR_CODIGO IN (''04'', ''18'', ''23'', ''28'', ''29'', ''30'', ''31'', ''32'', ''33'', ''34'', ''35'', ''05'')';
+		WHERE DDTPR.DD_TPR_CODIGO IS NOT NULL AND DDTPR.DD_TPR_CODIGO IN (''04'', ''18'', ''23'', ''28'', ''29'', ''30'', ''31'', ''32'', ''33'', ''34'', ''35'', ''38'',''05'')';
    	 	
  		DBMS_OUTPUT.PUT_LINE('[INFO] Vista materializada : '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'... creada');
 

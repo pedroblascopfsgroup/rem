@@ -70,17 +70,10 @@ BEGIN
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
 	
-		-- Comprobamos si existe la secuencia
-		V_MSQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_'||V_TEXT_TABLA||''' and sequence_owner = '''||V_ESQUEMA||'''';
-		  
-		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
-		
-		IF V_NUM_TABLAS = 0 THEN
-			-- Creamos sequence
-			V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';		
-			EXECUTE IMMEDIATE V_MSQL;		
-			DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
-		END IF;
+		-- Creamos sequence
+		V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';		
+		EXECUTE IMMEDIATE V_MSQL;		
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
 
 		COMMIT;
 	END IF;

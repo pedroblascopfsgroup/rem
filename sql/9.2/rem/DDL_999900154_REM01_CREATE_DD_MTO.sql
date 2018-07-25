@@ -83,67 +83,6 @@ BEGIN
 			EXECUTE IMMEDIATE V_MSQL;		
 			DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
 		END IF;
-		
-		-- Creamos el comentario de las columnas
-		V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS ''Tabla de motivo de ocultación.''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la tabla creado.');		
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_MTO_ID IS ''Código identificador único del motivo''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_MTO_ID creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_MTO_CODIGO IS ''Código identificador único del motivo''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_MTO_CODIGO creado.');	
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_MTO_DESCRIPCION IS ''Descripción del motivo''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_MTO_DESCRIPCION creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_MTO_DESCRIPCION_LARGA IS ''Descripción larga del motivo''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_MTO_DESCRIPCION_LARGA creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TCO_ID IS ''Código identificador único del tipo de comercialización''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_TCO_ID creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_MTO_MANUAL IS ''Indicador de Manual/Automático''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_MTO_MANUAL creado.');	
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.VERSION IS ''Indica la versión del registro.''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna VERSION creado.');
-		
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOCREAR IS ''Indica el usuario que creó el registro.''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna USUARIOCREAR creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHACREAR IS ''Indica la fecha en la que se creó el registro.''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna FECHACREAR creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOMODIFICAR IS ''Indica el usuario que modificó el registro.''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna USUARIOMODIFICAR creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHAMODIFICAR IS ''Indica la fecha en la que se modificó el registro.''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna FECHAMODIFICAR creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOBORRAR IS ''Indica el usuario que borró el registro.''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna USUARIOBORRAR creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHABORRAR IS ''Indica la fecha en la que se borró el registro.''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna FECHABORRAR creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BORRADO IS ''Indicador de borrado.''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna BORRADO creado.');
 
 		COMMIT;
 	END IF;

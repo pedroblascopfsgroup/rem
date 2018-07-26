@@ -151,6 +151,12 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_SCTA_BANCO:
 			entidad.setSctaBanco(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_SCTA_BANCO));
 			break;
+		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CTA_EFECTOS:
+			entidad.setCtaEfectos(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CTA_EFECTOS));
+			break;
+		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_SCTA_EFECTOS:
+			entidad.setSctaEfectos(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_SCTA_EFECTOS));
+			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_APUNTE:
 			entidad.setApunte(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_APUNTE));
 			break;

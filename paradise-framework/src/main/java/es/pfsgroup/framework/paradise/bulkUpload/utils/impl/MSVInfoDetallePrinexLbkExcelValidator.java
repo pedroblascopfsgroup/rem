@@ -50,6 +50,15 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 	
 	public static final String FICHERO_VACIO = "El fichero debe tener al menos una fila. La primera columna es obligatoria.";
 	
+	public static final String PORCENTAJE_IRPF_SUPERIOR_100 = "El porcentaje IRPF es superior a 100";
+	public static final String PORCENTAJE_IRPF_INFERIOR_0 = "El porcentaje IRPF es menor que 0";
+	
+	public static final String PORCENTAJE_RETEN_SUPERIOR_100 = "El porcentaje retención es superior a 100";
+	public static final String PORCENTAJE_RETEN_INFERIOR_0 = "El porcentaje retención es menor que 0";
+	
+	public static final String PORCENTAJE_IVA_SUPERIOR_100 = "El porcentaje iva es superior a 100";
+	public static final String PORCENTAJE_IVA_INFERIOR_0 = "El porcentaje iva es menor que 0";
+	
 	public static final class COL_NUM{
 		
 		public static final int FILA_CABECERA = 0;
@@ -152,11 +161,23 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 				mapaErrores.put(GASTO_NOT_EXISTS, isGastoNotExistsByRows(exc));
 				mapaErrores.put(FORMATO_FECHA_CONTABLE_INVALIDO, esFechaValidaByRows(exc, COL_NUM.GPL_FECHA_CONTABLE));
 				mapaErrores.put(FORMATO_FECHA_FAC_INVALIDO, esFechaValidaByRows(exc, COL_NUM.GPL_FECHA_FAC));
+				mapaErrores.put(PORCENTAJE_IRPF_SUPERIOR_100, isPorcentajeSuperiorA100(exc,COL_NUM.GPL_PROCENTAJE_IRPF));
+				mapaErrores.put(PORCENTAJE_IRPF_INFERIOR_0, isPorcentajeInferiorA0(exc,COL_NUM.GPL_PROCENTAJE_IRPF));
+				mapaErrores.put(PORCENTAJE_RETEN_SUPERIOR_100, isPorcentajeSuperiorA100(exc,COL_NUM.GPL_PROCENTAJE_RETEN));
+				mapaErrores.put(PORCENTAJE_RETEN_INFERIOR_0, isPorcentajeInferiorA0(exc,COL_NUM.GPL_PROCENTAJE_RETEN));
+				mapaErrores.put(PORCENTAJE_IVA_SUPERIOR_100, isPorcentajeSuperiorA100(exc,COL_NUM.GPL_PCTJE_IVA_V));
+				mapaErrores.put(PORCENTAJE_IVA_INFERIOR_0, isPorcentajeInferiorA0(exc,COL_NUM.GPL_PCTJE_IVA_V));
 				
 				if( !mapaErrores.get(GASTO_NOT_EXISTS).isEmpty() || 
 					!mapaErrores.get(GASTO_NULL).isEmpty() ||
 					!mapaErrores.get(FORMATO_FECHA_CONTABLE_INVALIDO).isEmpty() ||
-					!mapaErrores.get(FORMATO_FECHA_FAC_INVALIDO).isEmpty() 
+					!mapaErrores.get(FORMATO_FECHA_FAC_INVALIDO).isEmpty() ||
+					!mapaErrores.get(PORCENTAJE_IRPF_SUPERIOR_100).isEmpty()||
+					!mapaErrores.get(PORCENTAJE_IRPF_INFERIOR_0).isEmpty()||
+					!mapaErrores.get(PORCENTAJE_RETEN_SUPERIOR_100).isEmpty()||
+					!mapaErrores.get(PORCENTAJE_RETEN_INFERIOR_0).isEmpty()||
+					!mapaErrores.get(PORCENTAJE_IVA_SUPERIOR_100).isEmpty()||
+					!mapaErrores.get(PORCENTAJE_IVA_INFERIOR_0).isEmpty()
 				){
 						dtoValidacionContenido.setFicheroTieneErrores(true);
 						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -288,6 +309,56 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 			}
 		}
 
+		return listaFilas;
+	}
+	
+	private List<Integer> isPorcentajeSuperiorA100(MSVHojaExcel exc,Integer columna){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		for(int i=1; i<this.numFilasHoja;i++){
+			try{
+				if (!Checks.esNulo(exc.dameCelda(i, columna))) {
+					Double porcentaje = Double.parseDouble(exc.dameCelda(i, columna));
+					if(porcentaje > 100.00){
+						listaFilas.add(i);
+					}
+				}
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> isPorcentajeInferiorA0(MSVHojaExcel exc,Integer columna){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		for(int i=1; i<this.numFilasHoja;i++){
+			try{
+				if (!Checks.esNulo(exc.dameCelda(i, columna))) {
+					Double porcentaje = Double.parseDouble(exc.dameCelda(i,columna));
+					if(porcentaje < 0.0){
+						listaFilas.add(i);
+					}
+				}
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		
+		
 		return listaFilas;
 	}
 	

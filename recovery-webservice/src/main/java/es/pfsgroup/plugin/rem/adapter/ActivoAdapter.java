@@ -2749,6 +2749,25 @@ public class ActivoAdapter {
 							}
 							this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
 							this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES);
+							
+							if (activo.getTipoActivo().getCodigo().equals(DDTipoActivo.COD_SUELO)) {
+								
+								if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS))
+									logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_SUELOS);
+								if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_SUELOS))
+									logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
+								
+								
+							}
+							else {
+								if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES))
+									logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+								if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES))
+									logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
+							
+							
+								
+							}
 				}			
 			}	//fin 	if(!Checks.esNulo(((DtoActivoPatrimonio)dto).getChkPerimetroAlquiler())  ) {
 	

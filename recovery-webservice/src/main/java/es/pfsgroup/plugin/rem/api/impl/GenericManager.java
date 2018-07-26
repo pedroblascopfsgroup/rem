@@ -359,6 +359,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			EXTDDTipoGestor tipoGestorEdificaciones = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"GEDI"); // Gestor de Edificaciones
 			EXTDDTipoGestor tipoGestorSuelo = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"GSUE"); // Gestor de Suelos
 			EXTDDTipoGestor tipoGestorAlquileres = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"GALQ"); // Gestor de Alquileres
+			EXTDDTipoGestor tipoSupervisorEdificaciones = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"SUPEDI"); // Gestor de Edificaciones
+			EXTDDTipoGestor tipoSupervisorSuelo = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"SUPSUE"); // Gestor de Suelos
+			EXTDDTipoGestor tipoSupervisorAlquileres = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"SUALQ"); // Gestor de Alquileres
 			Activo activo = activoApi.get(Long.parseLong(idActivo));
 			String codigoTipoActivo = activo.getTipoActivo().getCodigo();
 			ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
@@ -368,7 +371,10 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			
 				if (actPatrimonio.getCheckHPM()) {
 					listaTiposGestor.remove(tipoGestorSuelo);
+					listaTiposGestor.remove(tipoSupervisorSuelo);
 					listaTiposGestor.remove(tipoGestorEdificaciones);
+					listaTiposGestor.remove(tipoSupervisorEdificaciones);
+					
 
 
 				}
@@ -376,42 +382,56 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				
 				else if (!DDTipoActivo.COD_SUELO.equals(codigoTipoActivo)) {
 					listaTiposGestor.remove(tipoGestorSuelo);
+					listaTiposGestor.remove(tipoSupervisorSuelo);
 					listaTiposGestor.remove(tipoGestorAlquileres);
+					listaTiposGestor.remove(tipoSupervisorAlquileres);
+					
 
 					
 					// Si el Activo NO es de tipo Suelo y el Estado físico del activo esta vacio eliminamos el gestor de edificacionnes
 					if (Checks.esNulo(activo.getEstadoActivo())) {
 						listaTiposGestor.remove(tipoGestorEdificaciones);
+						listaTiposGestor.remove(tipoSupervisorEdificaciones);
 						listaTiposGestor.remove(tipoGestorAlquileres);
+						listaTiposGestor.remove(tipoSupervisorAlquileres);
 
 					}
 				} else {
-					// Si el Activo es de tipo Suelo eliminamos el gestor de edificacionnes
+					// Si el Activo es de tipo Suelo eliminamos el gestor de edificacionnes y gestor de alquileres
 					listaTiposGestor.remove(tipoGestorEdificaciones);
+					listaTiposGestor.remove(tipoSupervisorEdificaciones);
 					listaTiposGestor.remove(tipoGestorAlquileres);
+					listaTiposGestor.remove(tipoSupervisorAlquileres);
 
 				}
 			}
+			
+			
 			else {
 				if (!DDTipoActivo.COD_SUELO.equals(codigoTipoActivo)) {
 					listaTiposGestor.remove(tipoGestorSuelo);
+					listaTiposGestor.remove(tipoSupervisorSuelo);
 					listaTiposGestor.remove(tipoGestorAlquileres);
+					listaTiposGestor.remove(tipoSupervisorAlquileres);
+					
 
 					
 					// Si el Activo NO es de tipo Suelo y el Estado físico del activo esta vacio eliminamos el gestor de edificacionnes
 					if (Checks.esNulo(activo.getEstadoActivo())) {
 						listaTiposGestor.remove(tipoGestorEdificaciones);
+						listaTiposGestor.remove(tipoSupervisorEdificaciones);
 						listaTiposGestor.remove(tipoGestorAlquileres);
+						listaTiposGestor.remove(tipoSupervisorAlquileres);
 
 					}
 				} else {
 					// Si el Activo es de tipo Suelo eliminamos el gestor de edificacionnes
 					listaTiposGestor.remove(tipoGestorEdificaciones);
+					listaTiposGestor.remove(tipoSupervisorEdificaciones);
 					listaTiposGestor.remove(tipoGestorAlquileres);
+					listaTiposGestor.remove(tipoSupervisorAlquileres);
 
 				}
-				
-						
 			}
 		} catch (NumberFormatException e) {
 			e.printStackTrace();

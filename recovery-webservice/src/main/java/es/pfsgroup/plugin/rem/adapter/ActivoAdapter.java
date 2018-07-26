@@ -89,7 +89,6 @@ import es.pfsgroup.plugin.rem.model.ActivoCopropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
-import es.pfsgroup.plugin.rem.model.ActivoHistoricoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoMovimientoLlave;
@@ -142,6 +141,7 @@ import es.pfsgroup.plugin.rem.model.IncrementoPresupuesto;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
@@ -2727,7 +2727,11 @@ public class ActivoAdapter {
 							logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
 					if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES))
 							logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES);
-				  }
+				  
+				
+				 
+				 
+				 }
 					
 					//Cuando en REM se marque que un activo sale del perímetro de alquiler (bien individual o masivamente) REM eliminará el Gestor y Supervisor de activo de este tipo.	
 				
@@ -2750,7 +2754,7 @@ public class ActivoAdapter {
 	
 		
 		}
-		//todos los activos existentes en REM que no estén dentro del perímetro de alquiler
+		//todos los activos existentes en REM que no estén dentro del perímetro de alquiler pero que alguna vez si que lo han estado
 		else if (!Checks.esNulo(actPatrimonio)  && !Checks.esNulo(actPatrimonio.getCheckHPM())) { 
 			if( !actPatrimonio.getCheckHPM()){
 		
@@ -2794,7 +2798,56 @@ public class ActivoAdapter {
 		
 		}
 		}
+		//todos los activos existentes en REM que no estén dentro del perímetro de alquiler 
+		else {
+			
+
+			if(!Checks.esNulo(((DtoActivoFichaCabecera)dto).getTipoActivoCodigo()) 
+					&& DDTipoActivo.COD_SUELO.equals(((DtoActivoFichaCabecera)dto).getTipoActivoCodigo())){
+				// ANYADIR GESTOR Y SUPERVISOR SUELOS
+				if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS))
+					logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_SUELOS);
+				if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_SUELOS))
+					logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
+				
+			}else if(!Checks.esNulo(((DtoActivoFichaCabecera)dto).getTipoActivoCodigo()) 
+					&& gestorActivoApi.existeGestorEnActivo(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS)){
+				// Cambiar los gestores
+				this.cambiarTrabajosActivosAGestorActivo(activo,GestorActivoApi.CODIGO_GESTOR_SUELOS);
+				// BORRAR GESTOR Y SUPERVISOR SUELOS
+				this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_SUELOS);
+				this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
+			}
+			
+			if(!Checks.esNulo(((DtoActivoFichaCabecera)dto).getTipoActivoCodigo())
+					&& !DDTipoActivo.COD_SUELO.equals(((DtoActivoFichaCabecera)dto).getTipoActivoCodigo())
+					&& Checks.esNulo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES)) ) {
+					//&& (!Checks.esNulo(activo.getEstadoActivo()) || !Checks.esNulo(((DtoActivoFichaCabecera)dto).getEstadoActivoCodigo()))){
+				
+				if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES))
+					logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+				if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES))
+					logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
+			
+			}else if(!Checks.esNulo(((DtoActivoFichaCabecera)dto).getTipoActivoCodigo()) 
+					&& DDTipoActivo.COD_SUELO.equals(((DtoActivoFichaCabecera)dto).getTipoActivoCodigo())) {
+				// Cambiar los gestores
+				this.cambiarTrabajosActivosAGestorActivo(activo,GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+				// BORRAR GESTOR Y SUPERVISOR EDIFICACIONES
+				this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+				this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+		}
 		
+
 		
 		// Metodo que recoge funciones que requieren el guardado previo de los
 		// datos
@@ -2843,6 +2896,7 @@ public class ActivoAdapter {
 					// Asignar trabajos a gestor Activo
 					activoTrabajo.getTrabajo().setResponsableTrabajo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO));
 					trabajoDao.saveOrUpdate(activoTrabajo.getTrabajo());
+
 				}
 			}
 		}else if(GestorActivoApi.CODIGO_GESTOR_SUELOS.equals(tipoGestorCodigo)) {
@@ -2862,6 +2916,7 @@ public class ActivoAdapter {
 					// Asignar trabajos a gestor Activo
 					activoTrabajo.getTrabajo().setResponsableTrabajo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO));
 					trabajoDao.saveOrUpdate(activoTrabajo.getTrabajo());
+
 				}
 			}
 		}else if(GestorActivoApi.CODIGO_GESTOR_ALQUILERES.equals(tipoGestorCodigo)) {
@@ -2881,10 +2936,19 @@ public class ActivoAdapter {
 					// Asignar trabajos a gestor Activo
 					activoTrabajo.getTrabajo().setResponsableTrabajo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO));
 					trabajoDao.saveOrUpdate(activoTrabajo.getTrabajo());
+				
+					
 				}
+			
 			}
-		}
+		
 	}
+	}
+	
+	
+
+			
+		
 	
 	private void borrarGestor(Activo activo, String tipoGestorCodigo) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", tipoGestorCodigo);

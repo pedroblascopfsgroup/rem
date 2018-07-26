@@ -2,7 +2,7 @@
 --/*
 --###########################################
 --## AUTOR=Sergio Nieto
---## FECHA_CREACION=20180725
+--## FECHA_CREACION=20180726
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.19
 --## INCIDENCIA_LINK=HREOS-4318

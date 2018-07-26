@@ -1701,5 +1701,26 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return false;
 	}
 	
+	@Override
+	public Boolean mediadorExisteVigente(String codMediador){
+		
+		if(!Checks.esNulo(codMediador)){
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_PVE_PROVEEDOR "
+					+ " WHERE PVE_COD_REM = "+ codMediador +" AND BORRADO = 0");
+			
+			if ((Integer.valueOf(resultado) > 0)) {
+				
+				resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_PVE_PROVEEDOR "
+						+ " WHERE PVE_COD_REM = "+ codMediador +" AND PVE_FECHA_BAJA IS NULL OR PVE_FECHA_BAJA >= SYSDATE"
+						+ " AND BORRADO = 0");
+				
+				if ((Integer.valueOf(resultado) > 0)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	
 }

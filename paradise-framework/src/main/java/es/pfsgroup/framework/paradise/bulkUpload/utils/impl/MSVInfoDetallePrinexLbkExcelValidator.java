@@ -44,6 +44,7 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 
 	public static final String GASTO_NOT_EXISTS = "El gasto no existe (campo GPV_NUM_GASTO_HAYA).";
 	public static final String GASTO_NULL = "El campo GPV_NUM_GASTO_HAYA no puede estar vacío";
+	public static final String GASTO_NOT_LIBERBANK = "El gasto no es de la cartera Liberbank";
 
 	public static final String FORMATO_FECHA_CONTABLE_INVALIDO = "El campo GPL_FECHA_CONTABLE tiene un formato incorrecto";
 	public static final String FORMATO_FECHA_FAC_INVALIDO = "El campo GPL_FECHA_FAC tiene un formato incorrecto";
@@ -167,6 +168,7 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 				mapaErrores.put(PORCENTAJE_RETEN_INFERIOR_0, isPorcentajeInferiorA0(exc,COL_NUM.GPL_PROCENTAJE_RETEN));
 				mapaErrores.put(PORCENTAJE_IVA_SUPERIOR_100, isPorcentajeSuperiorA100(exc,COL_NUM.GPL_PCTJE_IVA_V));
 				mapaErrores.put(PORCENTAJE_IVA_INFERIOR_0, isPorcentajeInferiorA0(exc,COL_NUM.GPL_PCTJE_IVA_V));
+				mapaErrores.put(GASTO_NOT_LIBERBANK, isGastoNotLiberbankByRows(exc));
 				
 				if( !mapaErrores.get(GASTO_NOT_EXISTS).isEmpty() || 
 					!mapaErrores.get(GASTO_NULL).isEmpty() ||
@@ -177,7 +179,8 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 					!mapaErrores.get(PORCENTAJE_RETEN_SUPERIOR_100).isEmpty()||
 					!mapaErrores.get(PORCENTAJE_RETEN_INFERIOR_0).isEmpty()||
 					!mapaErrores.get(PORCENTAJE_IVA_SUPERIOR_100).isEmpty()||
-					!mapaErrores.get(PORCENTAJE_IVA_INFERIOR_0).isEmpty()
+					!mapaErrores.get(PORCENTAJE_IVA_INFERIOR_0).isEmpty()||
+					!mapaErrores.get(GASTO_NOT_LIBERBANK).isEmpty()
 				){
 						dtoValidacionContenido.setFicheroTieneErrores(true);
 						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -263,6 +266,28 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 			for(int i= COL_NUM.DATOS_PRIMERA_FILA; i<this.numFilasHoja;i++){
 				try {
 					if(!Checks.esNulo(exc.dameCelda(i, COL_NUM.GPV_NUM_GASTO_HAYA)) && !particularValidator.existeGasto(exc.dameCelda(i, COL_NUM.GPV_NUM_GASTO_HAYA)))
+						listaFilas.add(i);
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+			} catch (IllegalArgumentException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			} catch (IOException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			}
+		return listaFilas;		
+	}
+	
+	private List<Integer> isGastoNotLiberbankByRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try{
+			for(int i= COL_NUM.DATOS_PRIMERA_FILA; i<this.numFilasHoja;i++){
+				try {
+					if(!Checks.esNulo(exc.dameCelda(i, COL_NUM.GPV_NUM_GASTO_HAYA)) && !particularValidator.esGastoDeLiberbank(exc.dameCelda(i, COL_NUM.GPV_NUM_GASTO_HAYA)))
 						listaFilas.add(i);
 				} catch (ParseException e) {
 					listaFilas.add(i);

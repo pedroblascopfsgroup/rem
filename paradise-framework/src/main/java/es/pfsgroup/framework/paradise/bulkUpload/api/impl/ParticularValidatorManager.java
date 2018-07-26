@@ -1176,6 +1176,23 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean esGastoDeLiberbank(String numGasto){
+		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM GPV_GASTOS_PROVEEDOR GPV "
+				+ "      JOIN ACT_PRO_PROPIETARIO PRO ON GPV.PRO_ID = PRO.PRO_ID "
+				+ "      JOIN DD_CRA_CARTERA CRA ON PRO.DD_CRA_ID = CRA.DD_CRA_ID "
+				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = "+numGasto+" "
+				+ "         AND CRA.DD_CRA_CODIGO = '08' "
+				+ "		 	AND GPV.BORRADO = 0");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
 	public Boolean tienenRelacionActivoGasto(String numActivo, String numGasto){
 		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto) || Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo))
 			return false;

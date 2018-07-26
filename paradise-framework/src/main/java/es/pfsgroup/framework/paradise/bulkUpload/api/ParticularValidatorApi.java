@@ -322,4 +322,6 @@ public interface ParticularValidatorApi {
 
 	Boolean subcarteraPerteneceCartera(String subcartera, String cartera);
 
+	Boolean esGastoDeLiberbank(String numGasto);
+
 }

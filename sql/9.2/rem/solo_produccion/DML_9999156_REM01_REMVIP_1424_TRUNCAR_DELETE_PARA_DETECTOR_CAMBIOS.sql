@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=VIOREL REMUS OVIDIU
---## FECHA_CREACION=20180725
+--## FECHA_CREACION=20180726
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-1424

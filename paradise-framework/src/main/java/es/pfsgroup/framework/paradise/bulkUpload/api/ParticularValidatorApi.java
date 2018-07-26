@@ -316,4 +316,14 @@ public interface ParticularValidatorApi {
 
 	public Boolean distintosTiposImpuestoAgrupacionVacia(List<String> activosList);
 
+	public Boolean agrupacionEsProyecto(String numAgrupacion);
+
+	public Boolean activoTienePRV(String numActivo);
+
+	public Boolean activoTieneLOC(String numActivo);
+
+	public Boolean esMismaProvincia(Long numActivo, Long numAgrupacion);
+
+	public Boolean esMismaLocalidad(Long numActivo, Long numAgrupacion);
+
 }

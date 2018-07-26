@@ -796,7 +796,8 @@ public class AgrupacionAdapter {
 			throw new JsonViewerException(BusinessValidators.ERROR_PROV_NULL);
 
 		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA)
-				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
+				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)
+				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {
 
 			if (Checks.esNulo(activo.getCartera()))
 				throw new JsonViewerException(BusinessValidators.ERROR_CARTERA_NULL);

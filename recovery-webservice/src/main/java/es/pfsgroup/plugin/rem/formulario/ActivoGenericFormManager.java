@@ -316,9 +316,13 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 										if(!Checks.esNulo(codigoComite))
 											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getDescripcion());
 			            			} else if(trabajoApi.checkLiberbank(tareaExterna)) {
-			            				codigoComite = ofertaManager.calculoComiteLiberbank(ofertaAceptada).getCodigo();
-			            				if(!Checks.esNulo(codigoComite))
+			            				DDComiteSancion comite = ofertaManager.calculoComiteLiberbank(ofertaAceptada);
+			            				if(!Checks.esNulo(comite)) {
+			            					codigoComite = comite.getCodigo();
+			            				}
+			            				if(!Checks.esNulo(codigoComite)) {
 											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getDescripcion());
+			            				}
 			            			}else {
 			            				if(!Checks.esNulo(expediente.getComiteSancion()))
 			            					item.setValue(expediente.getComiteSancion().getDescripcion());

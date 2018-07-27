@@ -44,12 +44,12 @@ DECLARE
 		T_TIPO_DATA( 'lib.mcarreno','Mario Luis','Carreño','Gonzalez','mlcarrenog@liberbank.es','XXZNJRPNEL','PERFGCCLIBERBANK','grulibinvinm',''),
 		T_TIPO_DATA( 'lib.aortega','Ana Belen','Ortega','Mantas','abortegam@liberbank.es','EIHHALXKFP','PERFGCCLIBERBANK','grulibres',''),
 		T_TIPO_DATA( 'lib.gcampillo','Gabriel','Campillo','Lorenzo','gcampillol@liberbank.es','VBSWLFGYTW','PERFGCCLIBERBANK','grulibres',''),
-		T_TIPO_DATA( 'lib.gcampillo','Gabriel','Campillo','Lorenzo','gcampillol@liberbank.es','VBSWLFGYTW','PERFGCCLIBERBANK','grulibinvinm ',''),
+		T_TIPO_DATA( 'lib.gcampillo','Gabriel','Campillo','Lorenzo','gcampillol@liberbank.es','VBSWLFGYTW','PERFGCCLIBERBANK','grulibinvinm',''),
 		T_TIPO_DATA( 'lib.gcampillo','Gabriel','Campillo','Lorenzo','gcampillol@liberbank.es','VBSWLFGYTW','PERFGCCLIBERBANK','grulibsinter',''),
-		T_TIPO_DATA( 'lib.smacanas','Samuel Winston','Macanas','Daniello','swmacanasd@liberbank.es','WVPOPRCNEL','PERFGCCLIBERBANK','grulibres            ',''),
+		T_TIPO_DATA( 'lib.smacanas','Samuel Winston','Macanas','Daniello','swmacanasd@liberbank.es','WVPOPRCNEL','PERFGCCLIBERBANK','grulibres',''),
 		T_TIPO_DATA( 'lib.smacanas','Samuel Winston','Macanas','Daniello','swmacanasd@liberbank.es','WVPOPRCNEL','PERFGCCLIBERBANK','grulibinvinm',''),
 		T_TIPO_DATA( 'lib.smacanas','Samuel Winston','Macanas','Daniello','swmacanasd@liberbank.es','WVPOPRCNEL','PERFGCCLIBERBANK','grulibsinter',''),
-		T_TIPO_DATA( 'lib.jgil','Juan','Gil','Diez','jgild@liberbank.es','PUFPPZPKFP','PERFGCCLIBERBANK','grulibinvinm      ',''),
+		T_TIPO_DATA( 'lib.jgil','Juan','Gil','Diez','jgild@liberbank.es','PUFPPZPKFP','PERFGCCLIBERBANK','grulibinvinm',''),
 		T_TIPO_DATA( 'lib.jgil','Juan','Gil','Diez','jgild@liberbank.es','PUFPPZPKFP','PERFGCCLIBERBANK','grulibsinter',''),
 		T_TIPO_DATA( 'lib.sbravo','Silvia','Bravo','Periañez','sbravop@liberbank.es','VVVULKRYWW','PERFGCCLIBERBANK','grulibsinter','')
 

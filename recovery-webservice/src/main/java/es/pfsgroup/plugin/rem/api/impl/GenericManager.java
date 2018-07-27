@@ -54,9 +54,11 @@ import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -304,13 +306,21 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@BusinessOperationDefinition("genericManager.getComboEspecial")
 	public List<DtoDiccionario> getComboEspecial(String diccionario) {
 		List<DtoDiccionario> listaDD = new ArrayList<DtoDiccionario>();
-		if (diccionario.equals("DDSeguros")) {
+		if (diccionario.equals("DDSeguros") || diccionario.equals("DDSegurosVigentes")) {
 			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 			Filter filtroAseguradora = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo",
 					DDTipoProveedor.COD_ASEGURADORA);
+			List<ActivoProveedor> listaSeguros = null;
 			Order order = new Order(OrderType.ASC, "nombre");
-			List<ActivoProveedor> listaSeguros = genericDao.getListOrdered(ActivoProveedor.class, order, filtroBorrado,
-					filtroAseguradora);
+			if(diccionario.equals("DDSegurosVigentes")) {
+				Filter filtroVigente = genericDao.createFilter(FilterType.EQUALS, "estadoProveedor.codigo",
+						DDEstadoProveedor.ESTADO_BIGENTE);
+				listaSeguros = genericDao.getListOrdered(ActivoProveedor.class, order, filtroBorrado,
+						filtroAseguradora,filtroVigente );
+			}else {
+				listaSeguros = genericDao.getListOrdered(ActivoProveedor.class, order, filtroBorrado,
+						filtroAseguradora);	
+			}
 
 			for (ActivoProveedor seguro : listaSeguros) {
 				DtoDiccionario seguroDD = new DtoDiccionario();
@@ -327,6 +337,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			}
 		} else if (diccionario.equals("DDPropietario")) {
 			listaDD = this.getListDtoPropietarioDiccionario();
+		} else if (diccionario.equals("DDComiteCartera")) {
+			//TODO Conseguir la cartera del tramite/expediente para poder sacar los comites de DDComiteSancion.
 		}
 
 		return listaDD;
@@ -779,5 +791,16 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		
 		return listaSubcartera;
 		
+	}
+
+	@Override
+	public List<DDComiteAlquiler> getComitesAqluilerByCartera(Long idActivo) {
+		
+		Activo activo = activoApi.get(idActivo);
+		
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", activo.getCartera().getCodigo());
+
+		return (List<DDComiteAlquiler>) genericDao.getListOrdered(DDComiteAlquiler.class, order, filter);
 	}
 }

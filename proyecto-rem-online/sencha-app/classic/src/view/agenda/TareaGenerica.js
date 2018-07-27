@@ -1426,6 +1426,502 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             me.habilitarCampo(me.down('[name=fechaEnvio]'));
         }
     },
+    
+    
+    
+    T015_DefinicionOfertaValidacion: function(){
+    	var me = this;
+    	
+    	me.campoObligatorio(me.down('[name=tipoInquilino]'));
+    	me.campoObligatorio(me.down('[name=tipoTratamiento]'));
+
+    	me.deshabilitarCampo(me.down('[name=nMesesFianza]'));
+    	me.deshabilitarCampo(me.down('[name=importeFianza]'));
+    	me.deshabilitarCampo(me.down('[name=deposito]'));
+    	me.deshabilitarCampo(me.down('[name=nMeses]'));
+    	me.deshabilitarCampo(me.down('[name=importeDeposito]'));
+    	me.deshabilitarCampo(me.down('[name=fiadorSolidario]'));
+    	me.deshabilitarCampo(me.down('[name=nombreFS]'));
+    	me.deshabilitarCampo(me.down('[name=documento]'));
+    	me.deshabilitarCampo(me.down('[name=tipoImpuesto]'));
+    	me.deshabilitarCampo(me.down('[name=porcentajeImpuesto]'));
+
+    	me.down('[name=tipoTratamiento]').addListener('change', function() {
+    		var tratamiento = me.down('[name=tipoTratamiento]');
+
+    		if(tratamiento.value == '03'){
+    			me.habilitarCampo(me.down('[name=nMesesFianza]'));
+    	    	me.habilitarCampo(me.down('[name=importeFianza]'));
+    	    	me.habilitarCampo(me.down('[name=deposito]'));
+    	    	me.habilitarCampo(me.down('[name=fiadorSolidario]'));
+    	    	me.habilitarCampo(me.down('[name=tipoImpuesto]'));
+    	    	me.habilitarCampo(me.down('[name=porcentajeImpuesto]'));
+    			
+    			me.desocultarCampo(me.down('[name=nMesesFianza]'));
+    	    	me.desocultarCampo(me.down('[name=importeFianza]'));
+    	    	me.desocultarCampo(me.down('[name=deposito]'));
+    	    	me.desocultarCampo(me.down('[name=nMeses]'));
+    	    	me.desocultarCampo(me.down('[name=importeDeposito]'));
+    	    	me.desocultarCampo(me.down('[name=fiadorSolidario]'));
+    	    	me.desocultarCampo(me.down('[name=nombreFS]'));
+    	    	me.desocultarCampo(me.down('[name=documento]'));
+    	    	me.desocultarCampo(me.down('[name=tipoImpuesto]'));
+    	    	me.desocultarCampo(me.down('[name=porcentajeImpuesto]'));
+    	    	me.desocultarCampo(me.down('[name=observaciones]'));
+    	    	
+    	    	me.down('[name=nMesesFianza]').noObligatorio=false;
+    	    	me.down('[name=importeFianza]').noObligatorio=false;
+    	    	
+    	    	me.campoObligatorio(me.down('[name=nMesesFianza]'));
+    	    	me.campoObligatorio(me.down('[name=importeFianza]'));
+    	    	
+    	    	me.campoNoObligatorio(me.down('[name=tipoImpuesto]'));
+    		}else{
+    			me.ocultarCampo(me.down('[name=nMesesFianza]'));
+    	    	me.ocultarCampo(me.down('[name=importeFianza]'));
+    	    	me.ocultarCampo(me.down('[name=deposito]'));
+    	    	me.ocultarCampo(me.down('[name=nMeses]'));
+    	    	me.ocultarCampo(me.down('[name=importeDeposito]'));
+    	    	me.ocultarCampo(me.down('[name=fiadorSolidario]'));
+    	    	me.ocultarCampo(me.down('[name=nombreFS]'));
+    	    	me.ocultarCampo(me.down('[name=documento]'));
+    	    	me.ocultarCampo(me.down('[name=tipoImpuesto]'));
+    	    	me.ocultarCampo(me.down('[name=porcentajeImpuesto]'));
+    	    	me.ocultarCampo(me.down('[name=observaciones]'));
+    	    	
+    	    	me.down('[name=nMesesFianza]').noObligatorio=true;
+    	    	me.down('[name=importeFianza]').noObligatorio=true;
+    	    	
+    	    	me.campoNoObligatorio(me.down('[name=nMesesFianza]'));
+    	    	me.campoNoObligatorio(me.down('[name=importeFianza]'));
+    	    	me.campoNoObligatorio(me.down('[name=tipoImpuesto]'));
+
+    	    	
+    	    	me.borrarCampo(me.down('[name=nMesesFianza]'));
+    	    	me.borrarCampo(me.down('[name=nMeses]'));
+    	    	me.borrarCampo(me.down('[name=importeDeposito]'));
+    	    	me.borrarCampo(me.down('[name=fiadorSolidario]'));
+    	    	me.borrarCampo(me.down('[name=nombreFS]'));
+    	    	me.borrarCampo(me.down('[name=documento]'));
+    	    	me.borrarCampo(me.down('[name=deposito]'));
+    	    	me.borrarCampo(me.down('[name=tipoImpuesto]'));
+    	    	me.borrarCampo(me.down('[name=porcentajeImpuesto]'));
+    	    	me.borrarCampo(me.down('[name=observaciones]'));
+    	    	
+    		}
+
+        });
+    	
+    	me.down('[name=deposito]').addListener('change', function(){
+    		var deposito = me.down('[name=deposito]');
+    		
+    		if(deposito.value){
+    			me.down('[name=nMeses]').noObligatorio=false;
+    			me.down('[name=importeDeposito]').noObligatorio=false;
+    			
+    			me.habilitarCampo(me.down('[name=nMeses]'));
+            	me.habilitarCampo(me.down('[name=importeDeposito]'));
+    		}else{
+    			me.down('[name=nMeses]').noObligatorio=true;
+    			me.down('[name=importeDeposito]').noObligatorio=true;
+    			me.deshabilitarCampo(me.down('[name=nMeses]'));
+            	me.deshabilitarCampo(me.down('[name=importeDeposito]'));
+            	
+            	me.borrarCampo(me.down('[name=nMeses]'));
+            	me.borrarCampo(me.down('[name=importeDeposito]'));
+            	
+            	me.campoNoObligatorio(me.down('[name=nMeses]'));
+            	me.campoNoObligatorio(me.down('[name=importeDeposito]'));
+    		}	
+    	});
+    	
+    	me.down('[name=fiadorSolidario]').addListener('change', function(){
+    		
+    		var fiadorSolidario = me.down('[name=fiadorSolidario]');
+    		
+    		if(fiadorSolidario.value){
+    			me.down('[name=nombreFS]').noObligatorio=false;
+    			me.down('[name=documento]').noObligatorio=false;
+    			
+    			me.habilitarCampo(me.down('[name=nombreFS]'));
+            	me.habilitarCampo(me.down('[name=documento]'));
+    		}else{
+    			me.down('[name=nombreFS]').noObligatorio=true;
+    			me.down('[name=documento]').noObligatorio=true;
+    			me.deshabilitarCampo(me.down('[name=nombreFS]'));
+            	me.deshabilitarCampo(me.down('[name=documento]'));
+            	
+            	me.borrarCampo(me.down('[name=nombreFS]'));
+            	me.borrarCampo(me.down('[name=documento]'));
+            	
+            	me.campoNoObligatorio(me.down('[name=nombreFS]'));
+            	me.campoNoObligatorio(me.down('[name=documento]'));
+    		}        	
+    	});
+ 
+    },
+    
+    T015_VerificarScoringValidacion: function(){
+    	var me = this;
+    	
+    	me.campoObligatorio(me.down('[name=resultadoScoring]'));
+    	me.deshabilitarCampo(me.down('[name=nMeses]'));
+    	me.deshabilitarCampo(me.down('[name=importeDeposito]'));
+    	me.deshabilitarCampo(me.down('[name=nombreFS]'));
+    	me.deshabilitarCampo(me.down('[name=documento]'));
+    	
+    	me.down('[name=resultadoScoring]').addListener('change', function() {
+    		var resultadoScoring = me.down('[name=resultadoScoring]');
+
+    		if(resultadoScoring.value == '01'){
+    			
+    			me.down('[name=nExpediente]').noObligatorio=false;
+    			me.down('[name=nMesesFianza]').noObligatorio=false;
+    			me.down('[name=importeFianza]').noObligatorio=false;
+    			
+    			me.habilitarCampo(me.down('[name=nMesesFianza]'));
+    			me.habilitarCampo(me.down('[name=importeFianza]'));
+    			
+    			me.campoObligatorio(me.down('[name=nExpediente]'));
+    			me.campoObligatorio(me.down('[name=nMesesFianza]'));
+    			me.campoObligatorio(me.down('[name=importeFianza]'));
+    		}else{
+    			me.down('[name=nExpediente]').noObligatorio=true;
+    			me.down('[name=nMesesFianza]').noObligatorio=true;
+    			me.down('[name=importeFianza]').noObligatorio=true;
+    			
+            	me.deshabilitarCampo(me.down('[name=importeFianza]'));
+            	
+            	me.borrarCampo(me.down('[name=nMesesFianza]'));
+            	me.borrarCampo(me.down('[name=importeFianza]'));
+    			
+    			me.campoNoObligatorio(me.down('[name=nExpediente]'));
+            	me.campoNoObligatorio(me.down('[name=nMesesFianza]'));
+            	me.campoNoObligatorio(me.down('[name=importeFianza]'));
+    		}
+        });
+    	
+    	
+    	me.down('[name=deposito]').addListener('change', function(){
+    		var deposito = me.down('[name=deposito]');
+    		
+    		if(deposito.value){
+    			me.down('[name=nMeses]').noObligatorio=false;
+    			me.down('[name=importeDeposito]').noObligatorio=false;
+    			
+    			me.habilitarCampo(me.down('[name=nMeses]'));
+            	me.habilitarCampo(me.down('[name=importeDeposito]'));
+            	
+            	me.campoObligatorio(me.down('[name=nMeses]'));
+            	me.campoObligatorio(me.down('[name=importeDeposito]'));
+    		}else{
+    			me.down('[name=nMeses]').noObligatorio=true;
+    			me.down('[name=importeDeposito]').noObligatorio=true;
+    			
+    			me.deshabilitarCampo(me.down('[name=nMeses]'));
+            	me.deshabilitarCampo(me.down('[name=importeDeposito]'));
+            	
+            	me.borrarCampo(me.down('[name=nMeses]'));
+            	me.borrarCampo(me.down('[name=importeDeposito]'));
+            	
+            	me.campoNoObligatorio(me.down('[name=nMeses]'));
+            	me.campoNoObligatorio(me.down('[name=importeDeposito]'));
+
+    		}	
+    	});
+    	
+    	me.down('[name=fiadorSolidario]').addListener('change', function(){
+    		
+    		var fiadorSolidario = me.down('[name=fiadorSolidario]');
+    		
+    		if(fiadorSolidario.value){
+    			
+    			me.down('[name=nombreFS]').noObligatorio=false;
+    			me.down('[name=documento]').noObligatorio=false;
+    			
+    			me.habilitarCampo(me.down('[name=nombreFS]'));
+            	me.habilitarCampo(me.down('[name=documento]'));
+            	
+            	me.campoObligatorio(me.down('[name=nombreFS]'));
+            	me.campoObligatorio(me.down('[name=documento]'));
+    		}else{
+    			me.down('[name=nombreFS]').noObligatorio=true;
+    			me.down('[name=documento]').noObligatorio=true;
+    			
+    			me.deshabilitarCampo(me.down('[name=nombreFS]'));
+            	me.deshabilitarCampo(me.down('[name=documento]'));
+            	
+            	me.borrarCampo(me.down('[name=nombreFS]'));
+            	me.borrarCampo(me.down('[name=documento]'));
+            	
+            	me.campoNoObligatorio(me.down('[name=nombreFS]'));
+            	me.campoNoObligatorio(me.down('[name=documento]'));
+    		}        	
+    	});
+
+    },
+    
+    T015_VerificarSeguroRentasValidacion: function(){
+    	var me = this;
+    	
+    	me.campoObligatorio(me.down('[name=resultadoRentas]'));
+    	me.campoObligatorio(me.down('[name=aseguradora]'));
+    	
+    	me.deshabilitarCampo(me.down('[name=nMeses]'));
+    	me.deshabilitarCampo(me.down('[name=importeDeposito]'));
+    	me.deshabilitarCampo(me.down('[name=nombreFS]'));
+    	me.deshabilitarCampo(me.down('[name=documento]'));
+    	me.deshabilitarCampo(me.down('[name=nMesesFianza]'));
+    	me.deshabilitarCampo(me.down('[name=importeFianza]'));
+    	
+    	me.down('[name=resultadoRentas]').addListener('change', function() {
+    		var resultadoRentas = me.down('[name=resultadoRentas]');
+
+    		if(resultadoRentas.value == '01'){
+    			
+    			me.down('[name=nMesesFianza]').noObligatorio=false;
+    			me.down('[name=importeFianza]').noObligatorio=false;
+    			
+    			me.habilitarCampo(me.down('[name=nMesesFianza]'));
+    			me.habilitarCampo(me.down('[name=importeFianza]'));
+    			
+    			me.campoObligatorio(me.down('[name=nMesesFianza]'));
+    			me.campoObligatorio(me.down('[name=importeFianza]'));
+    		}else{
+    			me.down('[name=nMesesFianza]').noObligatorio=true;
+    			me.down('[name=importeFianza]').noObligatorio=true;
+    			
+            	me.deshabilitarCampo(me.down('[name=nMesesFianza]'));
+            	me.deshabilitarCampo(me.down('[name=importeFianza]'));
+            	
+            	me.borrarCampo(me.down('[name=nMesesFianza]'));
+            	me.borrarCampo(me.down('[name=importeFianza]'));
+    			
+            	me.campoNoObligatorio(me.down('[name=nMesesFianza]'));
+            	me.campoNoObligatorio(me.down('[name=importeFianza]'));
+    		}
+        });
+    	
+    	
+    	me.down('[name=deposito]').addListener('change', function(){
+    		var deposito = me.down('[name=deposito]');
+    		
+    		if(deposito.value){
+    			me.down('[name=nMeses]').noObligatorio=false;
+    			me.down('[name=importeDeposito]').noObligatorio=false;
+    			
+    			me.habilitarCampo(me.down('[name=nMeses]'));
+            	me.habilitarCampo(me.down('[name=importeDeposito]'));
+            	
+            	me.campoObligatorio(me.down('[name=nMeses]'));
+            	me.campoObligatorio(me.down('[name=importeDeposito]'));
+    		}else{
+    			me.down('[name=nMeses]').noObligatorio=true;
+    			me.down('[name=importeDeposito]').noObligatorio=true;
+    			
+    			me.deshabilitarCampo(me.down('[name=nMeses]'));
+            	me.deshabilitarCampo(me.down('[name=importeDeposito]'));
+            	
+            	me.borrarCampo(me.down('[name=nMeses]'));
+            	me.borrarCampo(me.down('[name=importeDeposito]'));
+            	
+            	me.campoNoObligatorio(me.down('[name=nMeses]'));
+            	me.campoNoObligatorio(me.down('[name=importeDeposito]'));
+
+    		}	
+    	});
+    	
+    	me.down('[name=fiadorSolidario]').addListener('change', function(){
+    		
+    		var fiadorSolidario = me.down('[name=fiadorSolidario]');
+    		
+    		if(fiadorSolidario.value){
+    			
+    			me.down('[name=nombreFS]').noObligatorio=false;
+    			me.down('[name=documento]').noObligatorio=false;
+    			
+    			me.habilitarCampo(me.down('[name=nombreFS]'));
+            	me.habilitarCampo(me.down('[name=documento]'));
+            	
+            	me.campoObligatorio(me.down('[name=nombreFS]'));
+            	me.campoObligatorio(me.down('[name=documento]'));
+    		}else{
+    			me.down('[name=nombreFS]').noObligatorio=true;
+    			me.down('[name=documento]').noObligatorio=true;
+    			
+    			me.deshabilitarCampo(me.down('[name=nombreFS]'));
+            	me.deshabilitarCampo(me.down('[name=documento]'));
+            	
+            	me.borrarCampo(me.down('[name=nombreFS]'));
+            	me.borrarCampo(me.down('[name=documento]'));
+            	
+            	me.campoNoObligatorio(me.down('[name=nombreFS]'));
+            	me.campoNoObligatorio(me.down('[name=documento]'));
+    		}        	
+    	});
+    	
+    	
+    	me.down('[name=envioEmail]').addListener('afterrender', function(){
+    		
+    		var envioEmail = me.down('[name=envioEmail]');
+    		
+    		Ext.apply(envioEmail, {vtype: 'email'});
+    	});
+    },
+    
+    T015_ElevarASancionValidacion: function(){
+    	var me = this;
+    	var idActivo= me.idActivo;
+
+    	me.campoObligatorio(me.down('[name=resolucionOferta]'));
+    	
+    	me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
+		me.deshabilitarCampo(me.down('[name=comite]'));
+		me.deshabilitarCampo(me.down('[name=fechaElevacion]'));
+		
+		if(!Ext.ClassManager.isCreated('comiteAlquiler')){
+			Ext.define('comiteAlquiler', {
+			     extend: 'Ext.data.Model',
+			     fields: [
+			         {name: 'codigo', type: 'string'},
+			         {name: 'descripcion',  type: 'string'}
+			     ]
+			 });
+		}
+
+		var storeComite = Ext.create('Ext.data.Store', {
+		     model: 'comiteAlquiler',
+		     proxy: {
+		         type: 'uxproxy',
+		         remoteUrl: 'generic/getComitesAqluilerByCartera',
+		         extraParams: {idActivo: idActivo},
+		         reader: {
+		             type: 'json',
+		             rootProperty: 'data'
+		         }
+		     },
+		     autoLoad: true
+		 });
+		me.down('[name=comite]').setStore(storeComite);
+		
+		storeComite.load();
+			
+    	me.down('[name=resolucionOferta]').addListener('change', function(){
+    		
+    		var resolucionOferta = me.down('[name=resolucionOferta]');
+
+    		if(resolucionOferta.value == '01'){
+
+        		me.down('[name=motivoAnulacion]').noObligatorio=true;
+    			me.down('[name=fechaElevacion]').noObligatorio=false;
+    			me.down('[name=comite]').noObligatorio=true;
+    			
+    			me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
+    			me.habilitarCampo(me.down('[name=comite]'));
+    			me.habilitarCampo(me.down('[name=fechaElevacion]'));
+    			
+    			me.campoNoObligatorio(me.down('[name=motivoAnulacion]'));
+    			me.campoObligatorio(me.down('[name=fechaElevacion]'));
+
+    			me.setFechaActual(me.down('[name=fechaElevacion]'));
+    		}else{
+    			
+    			me.down('[name=motivoAnulacion]').noObligatorio=false;
+    			me.down('[name=fechaElevacion]').noObligatorio=true;
+    			
+    			me.habilitarCampo(me.down('[name=motivoAnulacion]'));
+            	me.deshabilitarCampo(me.down('[name=fechaElevacion]'));
+            	me.deshabilitarCampo(me.down('[name=comite]'));
+            	
+            	me.borrarCampo(me.down('[name=comite]'));
+            	me.borrarCampo(me.down('[name=fechaElevacion]'));
+            	
+            	me.campoObligatorio(me.down('[name=motivoAnulacion]'));
+            	me.campoNoObligatorio(me.down('[name=fechaElevacion]'));
+    			
+    		}
+    	});
+    	
+    },
+    
+    
+    T015_ResolucionExpedienteValidacion: function(){
+    	var me = this;
+    	me.deshabilitarCampo(me.down('[name=motivo]'));
+    	me.deshabilitarCampo(me.down('[name=importeContraoferta]'));
+    	
+    	me.down('[name=resolucionExpediente]').addListener('change', function(){
+    		
+    		var resolucionExpediente = me.down('[name=resolucionExpediente]');
+    		
+    		if(resolucionExpediente.value == '01'){
+    			
+    			me.down('[name=motivo]').noObligatorio=true;
+    			me.down('[name=importeContraoferta]').noObligatorio=true;
+    			
+    			me.deshabilitarCampo(me.down('[name=motivo]'));
+    			me.deshabilitarCampo(me.down('[name=importeContraoferta]'));
+    			
+    		} else if (resolucionExpediente.value == '03'){
+    			
+    			me.down('[name=motivo]').noObligatorio=true;
+    			me.down('[name=importeContraoferta]').noObligatorio=true;
+    			
+    			me.deshabilitarCampo(me.down('[name=motivo]'));
+    			me.habilitarCampo(me.down('[name=importeContraoferta]'));
+
+    		}else{
+    			
+    			me.down('[name=motivo]').noObligatorio=true;
+    			me.down('[name=importeContraoferta]').noObligatorio=true;
+    			
+    			me.habilitarCampo(me.down('[name=motivo]'));
+    			me.deshabilitarCampo(me.down('[name=importeContraoferta]'));
+
+    		}
+
+    	});
+    	
+    },
+    
+    T015_ResolucionPBCValidacion: function(){
+    	var me = this;
+    	me.down('[name=resultadoPBC]').noObligatorio=false;
+    	me.campoObligatorio(me.down('[name=resultadoPBC]'));
+    },
+    
+    T015_PosicionamientoValidacion: function(){
+    	var me = this;
+    	me.down('[name=lugarFirma]').noObligatorio=false;
+    	me.campoObligatorio(me.down('[name=lugarFirma]'));
+    },
+    
+    T015_CierreContratoValidacion: function(){
+    	var me = this;
+    	me.down('[name=docOK]').noObligatorio=false;
+    	me.down('[name=ncontratoPrinex]').noObligatorio=false;
+    	me.campoObligatorio(me.down('[name=docOK]'));
+    	me.campoObligatorio(me.down('[name=ncontratoPrinex]'));
+    	me.down('[name=ncontratoPrinex]').minLength=9;
+    	me.down('[name=ncontratoPrinex]').maxLength=9;
+    	
+    	me.setFechaActual(me.down('[name=fechaValidacion]'));
+    	
+    	me.down('[name=ncontratoPrinex]').addListener('change', function(){
+    		var ncontratoPrinex = me.down('[name=ncontratoPrinex]');
+
+    		if(ncontratoPrinex.value.length < 9){
+    			if(ncontratoPrinex.value.length == 4){
+        			ncontratoPrinex.setValue(ncontratoPrinex.value + '-'); 
+        		}
+    		}else{
+    			me.down('[name=ncontratoPrinex]').noObligatorio=true;
+    			me.campoNoObligatorio(me.down('[name=ncontratoPrinex]'));
+    		}
+
+    	});
+    	
+    },
 
     habilitarCampo: function(campo) {
         var me = this;
@@ -1469,6 +1965,11 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     desocultarCampo: function(campo) {
         var me = this;
         campo.setHidden(false);
+    },
+    
+    setFechaActual: function(campo){
+    	var fecha = new Date();
+		campo.setValue(Ext.Date.format(fecha, 'd/m/Y'));
     }
 
 });

@@ -29,8 +29,8 @@
 	</state>
 
 	<decision name ="T015_DefinicionOfertaDecision" expression="#{T015_DefinicionOfertaDecision}">
-		<transition to="T015_ElevarASancion" name="verificaScoring"></transition>
-		<transition to="T015_VerificarScoringDecision" name="verificaSeguroRenta"></transition>
+		<transition to="T015_VerificarScoring" name="verificaScoring"></transition>
+		<transition to="T015_VerificarSeguroRentas" name="verificaSeguroRenta"></transition>
 		<transition to="T015_ElevarASancion" name="elevarSancion"></transition>
 	</decision>
 	
@@ -139,7 +139,7 @@
 	
 	<decision name ="T015_ResolucionExpedienteDecision" expression="#{T015_ResolucionExpedienteDecision}">
 		<transition to="Fin" name="Anulada"></transition>
-		<transition to="T015_ResolucionExpediente" name="Aprobada"></transition>
+		<transition to="T015_ResolucionPBC" name="Aprobada"></transition>
 		<transition to="T015_AceptacionCliente" name="Contraofertar"></transition>
 	</decision>
 	
@@ -167,14 +167,10 @@
 	
 	<decision name ="T015_AceptacionClienteDecision" expression="#{T015_AceptacionClienteDecision}">
 		<transition to="Fin" name="No"></transition>
-		<transition to="forkSi" name="Si"></transition>
+		<transition to="T015_ElevarASancion" name="SiNnguna"></transition>
+		<transition to="T015_VerificarScoring" name="SiScoring"></transition>
+		<transition to="T015_VerificarSeguroRentas" name="SiSeguroRentas"></transition>
 	</decision>
-	
-	<fork name="forkSi">
-		<transition to="T015_ElevarASancion" name="ninguna"></transition>
-		<transition to="T015_VerificarScoring" name="scoring"></transition>
-		<transition to="T015_VerificarSeguroRentas" name="seguroRentas"></transition>
-	</fork>
 	
 	<state name="T015_ResolucionPBC">
 		<event type="node-enter">
@@ -266,7 +262,21 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="fin" name="avanzaBPM"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
 	</state>
+	
+	
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>activoEndProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+	
 
 </process-definition>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="activo_tramiteComercialAlquiler" width="1367" height="860">
+<root-container name="activo_tramiteComercialAlquiler" width="1368" height="861">
   <node name="inicio" x="11" y="11" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -89,11 +89,6 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
-  </node>
-  <node name="forkSi" x="658" y="731" width="252" height="24">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -129,4 +124,5 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
+  <node name="Fin" x="0" y="0" width="132" height="36"/>
 </root-container>

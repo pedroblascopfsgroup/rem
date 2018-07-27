@@ -2709,9 +2709,7 @@ public class ActivoAdapter {
 		Activo activo = activoApi.get(id);
 		activo = tabActivoService.saveTabActivo(activo, dto);
 		activoApi.saveOrUpdate(activo);
-		
 		ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
-		List<ActivoTramite> listaActivoTramite = activoTramiteDaoImpl.getListaTramitesActivo(activo.getId());
 		
 		
 		if (dto instanceof  DtoActivoPatrimonio  && !Checks.esNulo(actPatrimonio)   &&  !Checks.esNulo(((DtoActivoPatrimonio)dto).getChkPerimetroAlquiler())) {
@@ -2719,16 +2717,24 @@ public class ActivoAdapter {
 			//Cuando en REM se marque que un activo entra en el perímetro de alquiler (bien individual o masivamente) REM asignará Gestor y Supervisor de activo de este tipo según cliente y provincia
 				if(!Checks.esNulo(((DtoActivoPatrimonio)dto).getChkPerimetroAlquiler())  ) {
 				 if (((DtoActivoPatrimonio)dto).getChkPerimetroAlquiler() ) { 
-						this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_SUELOS);
-						this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
-						this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
-						this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
+					 
+					//anyadimos el nuevo gestor 
          			if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES))
 							logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
 					if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES))
 							logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES);
-				  
-				
+					
+					//si el codigo del tipo de actvo no es nulo, comprabamos si es de tipo de suelo borramos el gestor/supervisor de suelos en caso contrario el de alquileres.
+					if (!Checks.esNulo(activo.getTipoActivo().getCodigo())) {
+							if (activo.getTipoActivo().getCodigo().equals(DDTipoActivo.COD_SUELO)) { 
+								this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_SUELOS);
+								this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
+								}
+							else {
+								this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+								this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
+								}
+					}
 				 
 				 
 				 }
@@ -2736,44 +2742,39 @@ public class ActivoAdapter {
 					//Cuando en REM se marque que un activo sale del perímetro de alquiler (bien individual o masivamente) REM eliminará el Gestor y Supervisor de activo de este tipo.	
 				
 						
-					 else if (!((DtoActivoPatrimonio)dto).getChkPerimetroAlquiler()) { 
+					 else if (!((DtoActivoPatrimonio)dto).getChkPerimetroAlquiler() && gestorActivoApi.existeGestorEnActivo(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES)  ) { 
 							//en este caso si existieran trabajos abiertos REM los reasignará al Gestor de mantenimiento (ACTIVO)
-							int numTrabajos = 0;
-						    for (ActivoTramite actTram : listaActivoTramite ) {
-								if (Checks.esNulo(actTram.getFechaFin())) 
-								numTrabajos++;											
-							}
-							
-							if (numTrabajos >= 1) { 
-								this.cambiarTrabajosActivosAGestorActivo(activo,GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
-							}
+														
+							this.cambiarTrabajosActivosAGestorActivo(activo,GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
 							this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
 							this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES);
 							
-							if (activo.getTipoActivo().getCodigo().equals(DDTipoActivo.COD_SUELO)) {
+
+							//si el codigo del tipo de actvo no es nulo, comprabamos si es de tipo de suelo anyadimos el gestor/supervisor de suelos en caso contrario el de alquileres.
+							if (!Checks.esNulo(activo.getTipoActivo().getCodigo())) {
 								
-								if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS))
-									logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_SUELOS);
-								if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_SUELOS))
-									logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
-								
-								
-							}
-							else {
-								if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES))
-									logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
-								if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES))
-									logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
+								if (activo.getTipoActivo().getCodigo().equals(DDTipoActivo.COD_SUELO)) {
+									
+									if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS))
+										logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_SUELOS);
+									if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_SUELOS))
+										logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
+								}
+								else {
+									if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES))
+										logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+									if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES))
+										logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
 							
-							
-								
+								}
 							}
 				}			
 			}	//fin 	if(!Checks.esNulo(((DtoActivoPatrimonio)dto).getChkPerimetroAlquiler())  ) {
 	
 		
 		}
-		//todos los activos existentes en REM que no estén dentro del perímetro de alquiler pero que alguna vez si que lo han estado
+		//todos los activos existentes en REM que no estén dentro del perímetro de alquiler pero que alguna vez si que lo han estado, en este caso es posible que en algun momento el activo haya estado
+		//dentro del perimetro de alquiler por lo que hacemos la siguiente comprobación
 		else if (!Checks.esNulo(actPatrimonio)  && !Checks.esNulo(actPatrimonio.getCheckHPM())) { 
 			if( !actPatrimonio.getCheckHPM()){
 		
@@ -2817,7 +2818,7 @@ public class ActivoAdapter {
 		
 		}
 		}
-		//todos los activos existentes en REM que no estén dentro del perímetro de alquiler 
+		//todos los activos existentes en REM que no estén dentro del perímetro de alquiler y que nunca lo hayan estado
 		else {
 			
 
@@ -2856,14 +2857,7 @@ public class ActivoAdapter {
 				this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
 				this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
 			}
-			
-			
-			
-			
-			
-			
-			
-			
+	
 		}
 		
 

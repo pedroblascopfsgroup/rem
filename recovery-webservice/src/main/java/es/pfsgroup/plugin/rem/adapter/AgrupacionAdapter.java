@@ -651,12 +651,12 @@ public class AgrupacionAdapter {
 					// Solo tratar con agrupaciones del tipo 'restringida'.
 					if (activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo()
 							.equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
-						incluidoAgrupacionRestringida = true;
+					
 						// Solo tratar con agrupaciones que no tengan informada 'fecha baja'.
 						if(Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getFechaBaja()) && 
 								!Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getActivos())){
-						List<ActivoAgrupacionActivo> activosAgrupacion = activoAgrupacionActivo.getAgrupacion().getActivos();
-						
+							List<ActivoAgrupacionActivo> activosAgrupacion = activoAgrupacionActivo.getAgrupacion().getActivos();
+							incluidoAgrupacionRestringida = true;
 						if (!Checks.estaVacio(activosAgrupacion)) {
 							// Obtener todos los activos de la agrupación
 							// restringida en la que se encuentra el activo a

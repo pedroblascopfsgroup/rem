@@ -13,7 +13,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
---##		    0.2 Control de errores en HLP_HISTORICO_LANZA_PERIODICO
+--##		0.2 Control de errores en HLP_HISTORICO_LANZA_PERIODICO
 --##        0.3 (20180622) - Marco Munoz - Se soluciona log de error de la HLP para tener siempre el mismo formato.
 --##        0.4 (20180724) - Pablo Meseguer - Se deja de utilizar el numero de reserva y se añade tratamiento para los expedientes economicos en "En devolucion"
 --##########################################
@@ -40,7 +40,7 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
 
     --Configuracion
     V_ESQUEMA                       VARCHAR2(15 CHAR) := '#ESQUEMA#';
-    V_ESQUEMA_MASTER                VARCHAR2(15 CHAR) := '#ESQUEMA_M#';
+    V_ESQUEMA_MASTER                VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
     
     --IDs
     V_RES_ID                        NUMBER(16) := -1;
@@ -134,7 +134,7 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
     --Utiles
     V_NUM                           NUMBER(16);
     V_OP_1_PASOS                    NUMBER(1) := 4;
-    V_OP_2_PASOS                    NUMBER(1) := 6;
+    V_OP_2_PASOS                    NUMBER(1) := 8;
     V_OP_3_PASOS                    NUMBER(1) := 2;
     V_PASOS                         NUMBER(3) := 0;
     V_ERROR_DESC                    VARCHAR2(1000 CHAR) := '';
@@ -758,7 +758,7 @@ BEGIN
                                     --PASO 7/8 Revivir las tareas pertenecientes a expedientes económicos de ofertas congeladas
                                     V_MSQL := '
                                     UPDATE '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES 
-                                    SET BORRADO = 0
+                                    SET BORRADO = 0,
                                     USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
                                     FECHAMODIFICAR = SYSDATE
                                     WHERE TAR_ID IN (
@@ -795,6 +795,7 @@ BEGIN
                                         V_VALOR_NUEVO := '';
     
                                     ELSE
+                                        V_PASOS := V_PASOS+1;
                                         DBMS_OUTPUT.PUT_LINE('[INFO] PASO 7/8 | No existen tareas pertenecientes a expedientes ecomicos de ofertas "Congeladas" para la OFERTA '||IDENTIFICACION_COBRO||'.');
                                     END IF;
                                     
@@ -813,7 +814,7 @@ BEGIN
                                         USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
                                         FECHAMODIFICAR = SYSDATE
                                         WHERE OFR_ID IN (
-                                            SELECT OFR_ID
+                                            SELECT OFR1.OFR_ID
                                             FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR1
                                             INNER JOIN '||V_ESQUEMA||'.ACT_OFR ACT_OFR1 ON ACT_OFR1.OFR_ID = OFR1.OFR_ID
                                             INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT1 ON ACT1.ACT_ID = ACT_OFR1.ACT_ID
@@ -836,6 +837,7 @@ BEGIN
                                           V_VALOR_NUEVO := '';
           
                                       ELSE
+                                          V_PASOS := V_PASOS+1;
                                           DBMS_OUTPUT.PUT_LINE('[INFO] PASO 8/8 | No existen ofertas "Congeladas" para la OFERTA '||IDENTIFICACION_COBRO||'.');
                                       END IF;
                                     

@@ -10,16 +10,11 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.users.FuncionManager;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -34,24 +29,9 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	
 	protected static final Log logger = LogFactory.getLog(ActivoAvisadorManager.class);
-	
-	@Autowired
-	private Executor executor;
-
-	@Autowired
-	private GenericABMDao genericDao;
-
-	@Autowired
-	private ActivoDao activoDao;
-
-	@Autowired
-	private ApiProxyFactory proxyFactory;
-	
+		
 	@Autowired 
     private ActivoApi activoApi;
-
-	@Autowired
-	private FuncionManager funcionManager;
 
 	@Override
 	@BusinessOperation(overrides = "activoAvisadorManager.get")
@@ -207,9 +187,16 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			listaAvisos.add(dtoAviso);	
 		}
 		
+		// Aviso 11: Activo en trámite
+		if(activo.getEnTramite()) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Activo en trámite");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);	
+		}
+		
 		
 		return listaAvisos;
-		//activoDao.getListActivos(id, usuarioLogado);
 	}
 
 

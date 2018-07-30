@@ -412,7 +412,9 @@ public class Activo implements Serializable, Auditable {
     
     @Column(name = "OK_TECNICO")
     private Boolean tieneOkTecnico;
-	
+    
+    @Column(name = "ACT_EN_TRAMITE")
+    private Boolean enTramite;
 	
 	
     // Getters del activo --------------------------------------------
@@ -1617,6 +1619,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setTieneOkTecnico(Boolean tieneOkTecnico) {
 		this.tieneOkTecnico = tieneOkTecnico;
+	}
+
+	public Boolean getEnTramite() {
+		return enTramite;
+	}
+
+	public void setEnTramite(Boolean enTramite) {
+		this.enTramite = enTramite;
 	}
 	
 	

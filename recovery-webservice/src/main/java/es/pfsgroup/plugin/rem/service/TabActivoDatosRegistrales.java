@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.procesosJudiciales.model.DDFavorable;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
@@ -325,7 +326,8 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getPoblacionRegistro());
 				Localidad municipioNuevo = (Localidad) genericDao.get(Localidad.class, filtro);
 				activo.getInfoRegistral().getInfoRegistralBien().setLocalidad(municipioNuevo);
-				activo.getInfoRegistral().getInfoRegistralBien().setProvincia(municipioNuevo.getProvincia());
+				DDProvincia provincia = municipioNuevo.getProvincia();
+				activo.getInfoRegistral().getInfoRegistralBien().setProvincia(provincia);
 				
 			}
 			

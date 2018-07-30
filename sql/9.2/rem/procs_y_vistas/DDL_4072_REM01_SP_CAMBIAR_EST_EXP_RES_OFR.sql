@@ -180,7 +180,7 @@ BEGIN
                     VAR_FEC_ANT_FIR_RES := 'TO_DATE('''||FEC_ANT_FIR_RES||''',''DD/MM/RR'')';
                 END IF;
 
-				-- Aqui va el insert a la tabla de históricos para evitar fallos por parte del usuario.
+	-- Aqui va el insert a la tabla de históricos para evitar fallos por parte del usuario.
 
 				V_SQL := 'INSERT INTO '||V_ESQUEMA||'.H_TRANS_EST_EOR (
 							  H_TRANS_EST_EOR_ID
@@ -211,7 +211,7 @@ BEGIN
 							  S_H_TRANS_EST_EOR.NEXTVAL
 							, '||V_NUM_EXPEDIENTE||'
 							, '''||EST_ANT_OFR_COD||'''
-							, '''||EST_ANT_OFR_COD||'''
+							, (SELECT DD_EOF_DESCRIPCION FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO ='''||EST_ANT_OFR_COD||''')
 							, '''||EST_ANT_EXP_COD||'''
 							, (SELECT DD_EEC_DESCRIPCION FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = '''||EST_ANT_EXP_COD||''')
 							, '''||EST_ANT_RES_COD||'''
@@ -481,7 +481,7 @@ BEGIN
 												SELECT OFR.OFR_ID FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR
 													INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID AND ECO.BORRADO = 0
 													WHERE ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'
-														
+
                                                         )';
 --                            DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;

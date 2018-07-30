@@ -154,7 +154,7 @@ BEGIN
                 
                 EXECUTE IMMEDIATE V_SQL INTO V_AUX ;
 
-				IF V_AUX = 0 THEN
+				IF V_AUX > 0 THEN
 
 					EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.SGS_GESTOR_SUSTITUTO
 											WHERE USU_ID_ORI = (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE TRIM(UPPER(USU_USERNAME)) = TRIM(UPPER('''||V_USU_ID_ORI||''')))
@@ -183,7 +183,7 @@ BEGIN
 
 				ELSE
 
-					PL_OUTPUT := PL_OUTPUT || '[ERROR] Ya existe un registro dentro del rango de fechas '''||V_FECHA_INICIO||''' y '''||V_FECHA_FIN||''' para el Usuario '||V_USU_ID_ORI||' y Sustituto  '||V_USU_ID_SUS||' ' || CHR(10) ;
+					PL_OUTPUT := PL_OUTPUT || '[ERROR] No existe un registro dentro del rango de fechas '''||V_FECHA_INICIO||''' y '''||V_FECHA_FIN||''' para el Usuario '||V_USU_ID_ORI||' y Sustituto  '||V_USU_ID_SUS||' ' || CHR(10) ;
 
 				END IF;
 

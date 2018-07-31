@@ -4,6 +4,6 @@
         ignore = all
 [submodule "sql/pitertul"]
 	path = sql/pitertul
-	url = ssh://git.pfsgroup.es:29418/pfs-pitertul
+	url = ssh://pedro.blasco@git.pfsgroup.es:29418/pfs-pitertul
         ignore = all
 

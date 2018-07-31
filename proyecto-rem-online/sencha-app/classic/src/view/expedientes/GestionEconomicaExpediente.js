@@ -37,6 +37,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 					    reference: 'listadohoronarios',
 					    idPrincipal : 'expediente.id',
 						cls	: 'panel-base shadow-panel',
+						secFunToEdit: 'EDITAR_GRID_GESTION_ECONOMICA_EXPEDIENTE',
 						bind: {
 							store: '{storeHoronarios}'
 						},									

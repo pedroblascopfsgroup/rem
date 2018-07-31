@@ -23,7 +23,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
 
 			var tipoTrabajoCodigo = tabPanel.lookupController().getViewModel().get("trabajo.tipoTrabajoCodigo");
 			var tab = null;
-
 			switch (tipoTrabajoCodigo) {
 				case CONST.TIPOS_TRABAJO["PRECIOS"]:
 					tab = tabPanel.down("[xtype='fotostrabajo']");
@@ -116,8 +115,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
 
     initComponent: function () {
     	var me = this;
-
-        var items = [];
+    	var items = [];
     	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fichatrabajo', funPermEdition: ['EDITAR_FICHA_TRABAJO']})}, ['TAB_FICHA_TRABAJO']),
     	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'activostrabajo', ocultarBotonesEdicion: true})}, ['TAB_ACTIVOS_TRABAJO']),
     	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tramitestareastrabajo', ocultarBotonesEdicion: true})}, ['TAB_TRAMITES_TRABAJO']),

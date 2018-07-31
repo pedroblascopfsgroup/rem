@@ -138,7 +138,7 @@ BEGIN
                                                         )';            
             EXECUTE IMMEDIATE V_SQL INTO V_AUX ;
 
-			IF V_AUX = 0 THEN
+			IF V_AUX > 0 THEN
 
 				EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.SGS_GESTOR_SUSTITUTO
 										WHERE USU_ID_ORI = '||V_USU_ID_ORI||'

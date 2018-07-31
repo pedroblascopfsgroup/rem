@@ -1966,6 +1966,7 @@ public class ActivoAdapter {
 				// beanUtilNotNull.copyProperty(dtoListadoTareas, "idTramite",
 				// value);
 
+				beanUtilNotNull.copyProperty(dtoListadoTareas, "codigoTarea",tareaExterna.getTareaProcedimiento().getCodigo());
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "fechaInicio", tareaActivo.getFechaInicio());
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "fechaVenc", tareaActivo.getFechaVenc());
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "fechaFin", tareaActivo.getFechaFin());

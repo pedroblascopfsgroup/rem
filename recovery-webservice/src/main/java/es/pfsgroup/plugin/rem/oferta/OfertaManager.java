@@ -56,6 +56,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -86,6 +87,7 @@ import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDCategoriaContable;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
@@ -1524,7 +1526,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							|| DDComiteSancion.CODIGO_HAYA_TANGO.equals(codigoComiteSancion)
 							|| DDComiteSancion.CODIGO_HAYA_HYT.equals(codigoComiteSancion)
 							|| DDComiteSancion.CODIGO_HAYA_THIRD_PARTIES.equals(codigoComiteSancion)
-							|| DDComiteSancion.CODIGO_HAYA_GIANTS.equals(codigoComiteSancion))
+							|| DDComiteSancion.CODIGO_HAYA_GIANTS.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_HAYA_LIBERBANK.equals(codigoComiteSancion))
 						return true;
 				} else {
 					if (trabajoApi.checkBankia(trabajo)) {
@@ -2611,7 +2614,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override
 	public boolean comprobarComiteLiberbankPlantillaPropuesta(TareaExterna tareaExterna) {
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
-		if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(ofertaAceptada.getActivoPrincipal().getCartera())) {
+		if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
 			DDComiteSancion comite = this.calculoComiteLiberbank(ofertaAceptada);
 			ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
 			Double importeOferta = (!Checks.esNulo(ofertaAceptada.getImporteContraOferta()))
@@ -2678,8 +2681,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						precioMinimoAutorizado = p.getImporte();
 					}
 				}
-															
-				if(((!Checks.esNulo(importeTasacion) && importeTasacion < importeUmbral) 
+				
+				Filter filterInfLiber = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+				ActivoInfoLiberbank activoInfoLiberbank = genericDao.get(ActivoInfoLiberbank.class, filterInfLiber);
+				
+				if (!Checks.esNulo(activoInfoLiberbank) && !Checks.esNulo(activoInfoLiberbank.getCodPromocion()) && !Checks.esNulo(activoInfoLiberbank.getCategoriaContable()) &&
+						DDCategoriaContable.COD_INMOVILIZADO.equals(activoInfoLiberbank.getCategoriaContable().getCodigo())){
+					
+					Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_LIBERBANK);
+					DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
+					
+					return comiteSancion;
+					
+				}else if(((!Checks.esNulo(importeTasacion) && importeTasacion < importeUmbral) 
 						&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(precioMinimoAutorizado) && importeOferta >= precioMinimoAutorizado))
 				|| ((!Checks.esNulo(precioAprobadoVenta) && precioAprobadoVenta < importeUmbral) 
 						&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(precioMinimoAutorizado) && importeOferta >= precioMinimoAutorizado))) {

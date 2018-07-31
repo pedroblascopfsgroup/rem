@@ -119,7 +119,9 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			boolean isLiberbankInmobiliaria = false;
 			boolean isLiberbankTerciaria = false;
 			Oferta oferta = ofertaApi.getOfertaAceptadaByActivo(tareaActivo.getActivo());
-			String codigoCalculo = ofertaApi.calculoComiteLiberbank(oferta).getCodigo();
+
+			DDComiteSancion comiteSancion = ofertaApi.calculoComiteLiberbank(oferta);
+			String codigoCalculo = (!Checks.esNulo(comiteSancion) ? comiteSancion.getCodigo() : null);
 
 				if (!Checks.esNulo(codigoCalculo)) {
 					if(DDComiteSancion.CODIGO_LIBERBANK_RESIDENCIAL.equals(codigoCalculo)){
@@ -159,6 +161,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		TareaActivo tareaActivo = (TareaActivo)tareaExterna.getTareaPadre();
 		boolean isFuerzaVentaDirecta = this.isFuerzaVentaDirecta(tareaExterna);
 		boolean isActivoFinanciero = this.isFinanciero(tareaExterna);
+		boolean isLiberbank = this.isActivoLiberbank(tareaActivo);
 		String codigoTarea = tareaExterna.getTareaProcedimiento().getCodigo();
 		String codigoSupervisor = null;
 		ActivoLoteComercial loteComercial = this.obtenerLoteComercial(tareaActivo);
@@ -173,7 +176,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 				codigoSupervisor = this.getMapCodigoTipoSupervisorActivoAndLoteRestEntidad01Formalizacion(formalizacion).get(codigoTarea);
 			}
 		}else {
-			codigoSupervisor = this.getMapCodigoTipoSupervisor(isFuerzaVentaDirecta).get(codigoTarea);
+			codigoSupervisor = this.getMapCodigoTipoSupervisor(isFuerzaVentaDirecta, isLiberbank).get(codigoTarea);
 		}
 		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoSupervisor);
 		
@@ -294,6 +297,13 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_POSICIONAMIENTO_FIRMA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 		
 		if(isLiberbank){
+			//mapa.put(CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_OFERTANTE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);	
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_EXPEDIENTE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_OBTENCION_CONTRATO_RESERVA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+			
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_INFORME_JURIDICO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 			if(isLiberbankResidencial) {
@@ -387,9 +397,10 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		return mapa;
 	}
 	
-	private HashMap<String,String> getMapCodigoTipoSupervisor(boolean isFdv) {
+	private HashMap<String,String> getMapCodigoTipoSupervisor(boolean isFdv, boolean isLiberbank) {
+
+		HashMap<String,String> mapa = new HashMap<String,String>();		
 		
-		HashMap<String,String> mapa = new HashMap<String,String>();
 		
 		if(!isFdv){
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
@@ -416,6 +427,15 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_PENDIENTE_DEVOLUCION, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+		
+		
+		if(isLiberbank){
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_LIBERBANK);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_OFERTANTE, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_LIBERBANK);	
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_EXPEDIENTE, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_LIBERBANK);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_LIBERBANK);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T013_OBTENCION_CONTRATO_RESERVA, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_LIBERBANK);
+		}
 		
 		return mapa;
 	}

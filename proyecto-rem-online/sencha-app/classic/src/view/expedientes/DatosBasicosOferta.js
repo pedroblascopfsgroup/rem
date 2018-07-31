@@ -261,6 +261,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 					    topBar: false,
 					    reference: 'listadoTextosOferta',
 						cls	: 'panel-base shadow-panel',
+						secFunToEdit: 'EDITAR_GRID_TEXTOS_OFERTA_EXPEDIENTE',
 						bind: {
 							store: '{storeTextosOferta}'
 						},									

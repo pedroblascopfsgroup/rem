@@ -1502,7 +1502,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	@Override
 	public boolean comprobarDistintoPropietario(String numActivo, String numAgrupacion) {
 				
-		String agrPro;
+		String agrPro = null;
 		String actPro;
 				
 		agrPro = rawDao.getExecuteSQL("SELECT PRO_ID FROM ACT_PAC_PROPIETARIO_ACTIVO PAC " + 
@@ -1522,7 +1522,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		actPro = rawDao.getExecuteSQL("SELECT PRO_ID FROM ACT_PAC_PROPIETARIO_ACTIVO PAC " +
 				"JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = PAC.ACT_ID AND ACT_NUM_ACTIVO = "+numActivo);
 		
-		
+		if(Checks.esNulo(agrPro)) return false;
+			
+			
 		if(actPro.equals(agrPro)) return false;
 				else return true;
 	}

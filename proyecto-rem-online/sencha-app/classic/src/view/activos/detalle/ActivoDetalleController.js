@@ -199,7 +199,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						fechaInscripcionReg = new Date(from[2], from[1] - 1, from[0])
     				}
 					if(fechaInscripcionReg != null){
-						tabData.models[0].data.fechaInscripcionReg = new Date(fechaInscripcionReg);
+						//tabData.models[0].data.fechaInscripcionReg = new Date(fechaInscripcionReg);
 					}
 				} else if (tabData.models[0].name == "informecomercial"){
 					record = form.getBindRecord();

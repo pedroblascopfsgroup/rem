@@ -25,15 +25,13 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDEstadoScoring implements Auditable, Dictionary{
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -9143947935650424829L;
+	
+	private static final long serialVersionUID = 1L;
 	
 	
-	public final static String MOTIVO_RECHAZO_1 = "01";
-	public final static String MOTIVO_RECHAZO_2 = "02";
-	public final static String MOTIVO_RECHAZO_3 = "03";
+	public final static String Pendiente = "01";
+	public final static String aceptado = "02";
+	public final static String rechazado = "03";
 	
 
 	@Id

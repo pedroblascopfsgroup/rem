@@ -39,6 +39,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 
 
 /**
@@ -152,6 +154,10 @@ public class ExpedienteComercial implements Serializable, Auditable {
     
     @Column(name="ECO_NUMERO_CONTRATO_ALQUILER")
     private String numContratoAlquiler;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TAL_ID")
+    private DDTipoAlquiler tipoAlquiler;
     
     @Column(name="ECO_PLAZO_OPCION_COMPRA")
     private Date fechaPlazoOpcionCompraAlquiler;
@@ -663,5 +669,14 @@ public class ExpedienteComercial implements Serializable, Auditable {
 	public void setNecesitaFinanciacion(Boolean necesitaFinanciacion) {
 		this.necesitaFinanciacion = necesitaFinanciacion;
 	}
+
+	public DDTipoAlquiler getTipoAlquiler() {
+		return tipoAlquiler;
+	}
+
+	public void setTipoAlquiler(DDTipoAlquiler tipoAlquiler) {
+		this.tipoAlquiler = tipoAlquiler;
+	}
+	
    
 }

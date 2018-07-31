@@ -20,10 +20,10 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 
 
 @Entity
-@Table(name = "DD_MOR_MOTIVO_RECHAZO", schema = "${entity.schema}")
+@Table(name = "DD_ESS_ESTADO_SCORING", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDMotivoRechazoAlquiler implements Auditable, Dictionary{
+public class DDEstadoScoring implements Auditable, Dictionary{
 	
 	/**
 	 * 
@@ -37,18 +37,18 @@ public class DDMotivoRechazoAlquiler implements Auditable, Dictionary{
 	
 
 	@Id
-	@Column(name = "DD_MOR_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDMotivoRechazoAlquilerGenerator")
-	@SequenceGenerator(name = "DDMotivoRechazoAlquilerGenerator", sequenceName = "S_DD_MOR_MOTIVO_RECHAZO")
+	@Column(name = "DD_ESS_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEstadoScoringGenerator")
+	@SequenceGenerator(name = "DDEstadoScoringGenerator", sequenceName = "S_DD_ESS_ESTADO_SCORING")
 	private Long id;
 	    
-	@Column(name = "DD_MOR_CODIGO")   
+	@Column(name = "DD_ESS_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_MOR_DESCRIPCION")   
+	@Column(name = "DD_ESS_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_MOR_DESCRIPCION_LARGA")   
+	@Column(name = "DD_ESS_DESCRIPCION_LARGA")   
 	private String descripcionLarga;	    
 
 	@Version   

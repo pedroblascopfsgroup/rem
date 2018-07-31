@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Pier Gotta
---## FECHA_CREACION=20183107
+--## FECHA_CREACION=20180731
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-1469

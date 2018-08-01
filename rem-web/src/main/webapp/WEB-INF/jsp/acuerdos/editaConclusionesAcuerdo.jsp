@@ -43,7 +43,6 @@
 	});
 
 	//SOLICITANTE
-	debugger;
 	var dictSolicitante = <app:dict value="${solicitantes}"/>;
 	
 	//store generico de combo diccionario

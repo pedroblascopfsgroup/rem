@@ -159,14 +159,49 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 
 		esOfertaVenta: function(get){
 			var me= this;
-
+		
 			var tipoOferta= get('expediente.tipoExpedienteDescripcion');
-
 	     	if(tipoOferta=='Venta'){
 	     		return true;
 	     	}
 	     	return false;
 	     },
+	     compradorTipoEsAlquiler: function(get){
+
+			var tipoOferta= get('expediente.tipoExpedienteCodigo');
+			var comprador = HreRem.i18n('fieldlabel.comprador');
+			
+	     	if(tipoOferta==CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"]){
+	     		
+				comprador = HreRem.i18n('fieldlabel.inquilino');
+	     		return comprador;
+	     	}
+	     	return comprador;
+	     },
+	     reservaTipoEsAlquiler: function(get){
+				
+				var tipoOferta= get('expediente.tipoExpedienteCodigo');
+				var reserva= HreRem.i18n('fieldlabel.fecha.reserva');
+				
+		     	if(tipoOferta==CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"]){
+		     		
+		     		reserva = HreRem.i18n('fieldlabel.fecha.scoring');
+		     		return reserva;
+		     	}
+		     	return reserva;
+		     },
+		     fechaVentaEsAlquiler: function(get){
+					
+					var tipoOferta= get('expediente.tipoExpedienteCodigo');
+					var fVenta= HreRem.i18n('fieldlabel.fecha.venta');
+					
+			     	if(tipoOferta==CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"]){
+			     		
+			     		fVenta = HreRem.i18n('fieldlabel.fecha.contrato');
+			     		return fVenta;
+			     	}
+			     	return fVenta;
+			     },
 	     
 	     esExpedienteSinReserva: function(get) {
 	     	

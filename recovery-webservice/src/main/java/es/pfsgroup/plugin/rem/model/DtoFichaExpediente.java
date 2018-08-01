@@ -73,6 +73,10 @@ public class DtoFichaExpediente extends WebDto {
 	private Double importeDevolucionEntregas;
 
 	private Date fechaDevolucionEntregas;
+	
+	private String tipoAlquiler;
+	
+	private String tipoInquilino;
 
 	private boolean tieneReserva;
 
@@ -520,6 +524,24 @@ public class DtoFichaExpediente extends WebDto {
 	public void setCodigoComiteSancionador(String codigoComiteSancionador) {
 		this.codigoComiteSancionador = codigoComiteSancionador;
 	}
+
+	public String getTipoAlquiler() {
+		return tipoAlquiler;
+	}
+
+	public void setTipoAlquiler(String tipoAlquiler) {
+		this.tipoAlquiler = tipoAlquiler;
+	}
+
+	public String getTipoInquilino() {
+		return tipoInquilino;
+	}
+
+	public void setTipoInquilino(String tipoInquilino) {
+		this.tipoInquilino = tipoInquilino;
+	}
+
+
 	
 	
 	

@@ -162,6 +162,12 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			name: 'riesgoReputacional'	
     		},
     		{
+    			name:'tipoAlquiler'
+    		},
+    		{
+    			name:'tipoInquilino'
+    		},
+    		{
     			name: 'alquilerOpcionCompra'
     		},
     		{

@@ -79,7 +79,7 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 		}else{
 			gasto = genericDao.get(GastoPrinex.class,
 									genericDao.createFilter(FilterType.EQUALS, "idGasto", gastoProveedor.getId()),
-									genericDao.createFilter(FilterType.EQUALS, "idActivo", null));
+									genericDao.createFilter(FilterType.NULL, "idActivo"));
 		}
 		
 		//SET ACT_ID Y GPV_ID
@@ -92,7 +92,7 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 			gastoNuevo = true;
 		}
 		
-		for(int columna = 1; columna < 58; columna++){
+		for(int columna = 1; columna < 57; columna++){
 			actualizarEntidad(gasto, columna, exc, fila);
 		}
 
@@ -122,16 +122,16 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 			entidad.setClave1(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_1));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_2:
-			entidad.setClave1(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_2));
+			entidad.setClave2(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_2));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_3:
-			entidad.setClave1(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_3));
+			entidad.setClave3(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_3));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_4:
-			entidad.setClave1(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_4));
+			entidad.setClave4(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_4));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_IMPORTE_GASTO:
-			entidad.setRetencionBase(
+			entidad.setImporteGasto(
 					dameNumero(exc, fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_IMPORTE_GASTO));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_FECHA_CONTABLE:

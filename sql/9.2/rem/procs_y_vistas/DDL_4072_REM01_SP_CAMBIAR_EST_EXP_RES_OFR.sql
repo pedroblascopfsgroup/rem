@@ -41,39 +41,39 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_CAMBIAR_EST_EXP_RES_OFR
    V_NUM_TABLAS NUMBER(16); -- Variable auxiliar
    USUARIO_CONSULTA_REM VARCHAR2(50 CHAR):= 'REM_QUERY';
    V_AUX NUMBER(16);
-   EST_ANT_EXP_COD VARCHAR2(2 CHAR);
-   EST_ANT_RES_COD VARCHAR2(2 CHAR);
-   EST_ANT_OFR_COD VARCHAR2(2 CHAR);
-   FEC_ANT_VENTA DATE;
-   FEC_ANT_ING_CHEQUE DATE;
-   FEC_ANT_FIR_RES DATE;
-   
+   EST_ANT_EXP_COD VARCHAR2(4 CHAR);
+   EST_ANT_RES_COD VARCHAR2(4 CHAR);
+   EST_ANT_OFR_COD VARCHAR2(4 CHAR);
+   FEC_ANT_VENTA VARCHAR2(50 CHAR);
+   FEC_ANT_ING_CHEQUE VARCHAR2(50 CHAR);
+   FEC_ANT_FIR_RES VARCHAR2(50 CHAR);
+
    ESTADO_EXPEDIENTE VARCHAR2(2 CHAR);
    ESTADO_OFERTA VARCHAR2(2 CHAR);
    ESTADO_RESERVA VARCHAR2(2 CHAR);
-   
+
    VAR_F_VENTA VARCHAR2(50 CHAR);
    VAR_F_ING_CHEQUE VARCHAR2(50 CHAR);
-   VAR_F_FIR_RES VARCHAR2(50 CHAR); 
-   
+   VAR_F_FIR_RES VARCHAR2(50 CHAR);
+
    VAR_FEC_ANT_VENTA VARCHAR2(50 CHAR);
    VAR_FEC_ANT_ING_CHEQUE VARCHAR2(50 CHAR);
    VAR_FEC_ANT_FIR_RES VARCHAR2(50 CHAR);
-   
-   
-   
-BEGIN
 
-	DBMS_OUTPUT.PUT_LINE('[INICIO] '|| CHR(10));
+
+
+BEGIN
+        
+        PL_OUTPUT := PL_OUTPUT ||'[INICIO]  '|| CHR(10);
 
         --Comprobamos que la tansición a realizar es posible.
 
         IF V_ESTADO_RESERVA = '' THEN
-            ESTADO_RESERVA := NULL ;
+            ESTADO_RESERVA := 'NULL' ;
             V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.TRANS_EST_EXP_OFR_RES TRA
 						WHERE DD_EEC_COD = '''||V_ESTADO_EXPEDIENTE||'''
 						  AND DD_EOF_COD = '''||V_ESTADO_OFERTA||'''
-						  AND DD_ERE_COD = '||ESTADO_RESERVA||'';                        
+						  AND DD_ERE_COD = '||ESTADO_RESERVA||'';
 
             PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha modificado la variabla vacia por NULL '|| CHR(10) ;
 
@@ -115,71 +115,136 @@ BEGIN
 
         END IF;
 
-        --                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
 
 		EXECUTE IMMEDIATE V_SQL INTO V_AUX;
 
 		IF V_AUX = 1 THEN
 
 			V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL WHERE ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
-
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
+            EXECUTE IMMEDIATE V_SQL INTO V_AUX;
+            
 			IF V_AUX = 1 THEN
-
+                
+                V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
+                                INNER JOIN '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL EEC ON ECO.DD_EEC_ID = EEC.DD_EEC_ID AND EEC.BORRADO = 0
+                                WHERE ECO.BORRADO = 0 AND ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
+                EXECUTE IMMEDIATE V_SQL INTO V_AUX;
+                IF V_AUX > 0 THEN
 				-- Estado anterior EXPEDIENTE
-				V_SQL := 'SELECT EEC.DD_EEC_CODIGO FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
-							INNER JOIN '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL EEC ON ECO.DD_EEC_ID = EEC.DD_EEC_ID AND EEC.BORRADO = 0
-							WHERE ECO.BORRADO = 0 AND ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
-				EXECUTE IMMEDIATE V_SQL INTO EST_ANT_EXP_COD;
-				-- Estado anterior RESERVA
-				V_SQL := 'SELECT NVL2(ERE.DD_ERE_CODIGO,ERE.DD_ERE_CODIGO,NULL) FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
+                    V_SQL := 'SELECT EEC.DD_EEC_CODIGO FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
+                                INNER JOIN '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL EEC ON ECO.DD_EEC_ID = EEC.DD_EEC_ID AND EEC.BORRADO = 0
+                                WHERE ECO.BORRADO = 0 AND ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
+                    EXECUTE IMMEDIATE V_SQL INTO EST_ANT_EXP_COD;
+				ELSE
+                    EST_ANT_EXP_COD:= 'NULL';
+                END IF;
+                
+                V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
 							INNER JOIN '||V_ESQUEMA||'.RES_RESERVAS RES ON ECO.ECO_ID = RES.ECO_ID AND RES.BORRADO = 0
 							LEFT JOIN '||V_ESQUEMA||'.DD_ERE_ESTADOS_RESERVA ERE ON ERE.DD_ERE_ID = RES.DD_ERE_ID AND ERE.BORRADO = 0
 							WHERE ECO.BORRADO = 0 AND ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
-                EXECUTE IMMEDIATE V_SQL INTO EST_ANT_RES_COD;
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
+                EXECUTE IMMEDIATE V_SQL INTO V_AUX;
+                
+                IF V_AUX > 0 THEN
+                    -- Estado anterior RESERVA
+                    V_SQL := 'SELECT NVL2(ERE.DD_ERE_CODIGO,ERE.DD_ERE_CODIGO,NULL) FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
+                                INNER JOIN '||V_ESQUEMA||'.RES_RESERVAS RES ON ECO.ECO_ID = RES.ECO_ID AND RES.BORRADO = 0
+                                LEFT JOIN '||V_ESQUEMA||'.DD_ERE_ESTADOS_RESERVA ERE ON ERE.DD_ERE_ID = RES.DD_ERE_ID AND ERE.BORRADO = 0
+                                WHERE ECO.BORRADO = 0 AND ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
+                    EXECUTE IMMEDIATE V_SQL INTO EST_ANT_RES_COD;
+                ELSE
+                    EST_ANT_RES_COD:= 'NULL';
+                END IF;
+                
+                V_SQL := 'SELECT COUNT(1)  FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
+							INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON ECO.OFR_ID = OFR.OFR_ID AND OFR.BORRADO = 0
+							INNER JOIN '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA EOF ON EOF.DD_EOF_ID = OFR.DD_EOF_ID AND EOF.BORRADO = 0
+							WHERE ECO.BORRADO = 0 AND ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
+                EXECUTE IMMEDIATE V_SQL INTO V_AUX;
+                IF V_AUX > 0 THEN
 				-- Estado anterior OFERTA
 				V_SQL := 'SELECT EOF.DD_EOF_CODIGO  FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
 							INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON ECO.OFR_ID = OFR.OFR_ID AND OFR.BORRADO = 0
 							INNER JOIN '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA EOF ON EOF.DD_EOF_ID = OFR.DD_EOF_ID AND EOF.BORRADO = 0
 							WHERE ECO.BORRADO = 0 AND ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                 EXECUTE IMMEDIATE V_SQL INTO EST_ANT_OFR_COD;
-				-- FECHA VENTA anterior
-				V_SQL := 'SELECT NVL2(ECO.ECO_FECHA_VENTA,ECO.ECO_FECHA_VENTA, NULL)  FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO WHERE ECO.BORRADO = 0 AND ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
-                EXECUTE IMMEDIATE V_SQL INTO FEC_ANT_VENTA;
-
-                IF FEC_ANT_VENTA IS NULL THEN
+                ELSE
+                    EST_ANT_OFR_COD:= 'NULL';
+                END IF;
+                
+                V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO WHERE ECO.BORRADO = 0 AND ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
+                EXECUTE IMMEDIATE V_SQL INTO V_AUX;
+                IF V_AUX > 0 THEN
+                    -- FECHA VENTA anterior
+                    V_SQL := 'SELECT ECO.ECO_FECHA_VENTA FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO WHERE ECO.BORRADO = 0 AND ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
+                    EXECUTE IMMEDIATE V_SQL INTO FEC_ANT_VENTA;
+    
+                    IF FEC_ANT_VENTA IS NULL THEN
+                        VAR_FEC_ANT_VENTA := 'NULL';
+                    ELSE
+                        VAR_FEC_ANT_VENTA := 'TO_DATE('''||FEC_ANT_VENTA||''',''DD/MM/RR'')';
+                    END IF;
+                ELSE
+                    FEC_ANT_VENTA  := 'NULL';
                     VAR_FEC_ANT_VENTA := 'NULL';
-                ELSE
-                    VAR_FEC_ANT_VENTA := 'TO_DATE('''||FEC_ANT_VENTA||''',''DD/MM/RR'')';
                 END IF;
+                
+                V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO WHERE ECO.BORRADO = 0 AND ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
+                EXECUTE IMMEDIATE V_SQL INTO V_AUX;
+                -- DBMS_OUTPUT.PUT_LINE(V_AUX);
 
-            	-- FECHA INGRESO CHEQUE anterior
-				V_SQL := 'SELECT NVL2(ECO.ECO_FECHA_CONT_PROPIETARIO,ECO.ECO_FECHA_CONT_PROPIETARIO, NULL) FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO WHERE ECO.BORRADO = 0 AND ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
-                EXECUTE IMMEDIATE V_SQL INTO FEC_ANT_ING_CHEQUE;
-
-                IF FEC_ANT_ING_CHEQUE IS NULL THEN
+                IF V_AUX > 0 THEN
+                    -- FECHA INGRESO CHEQUE anterior
+                    V_SQL := 'SELECT ECO.ECO_FECHA_CONT_PROPIETARIO FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO WHERE ECO.BORRADO = 0 AND ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
+    -- DBMS_OUTPUT.PUT_LINE(V_SQL);
+                    EXECUTE IMMEDIATE V_SQL INTO FEC_ANT_ING_CHEQUE;
+    
+                    IF FEC_ANT_ING_CHEQUE IS NULL THEN
+                        VAR_FEC_ANT_ING_CHEQUE := 'NULL';
+                    ELSE
+                        VAR_FEC_ANT_ING_CHEQUE := 'TO_DATE('''||FEC_ANT_ING_CHEQUE||''',''DD/MM/RR'')';
+                    END IF;
+                ELSE 
+                    FEC_ANT_ING_CHEQUE:= 'NULL';
                     VAR_FEC_ANT_ING_CHEQUE := 'NULL';
-                ELSE
-                    VAR_FEC_ANT_ING_CHEQUE := 'TO_DATE('''||FEC_ANT_ING_CHEQUE||''',''DD/MM/RR'')';
                 END IF;
-
-                -- FECHA FIRMA DE LA RESERVA anterior
-				V_SQL := 'SELECT NVL2(RES.RES_FECHA_FIRMA,TO_DATE(RES.RES_FECHA_FIRMA,''DD/MM/RR''), NULL) FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
+                
+                V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
 							INNER JOIN '||V_ESQUEMA||'.RES_RESERVAS RES ON RES.ECO_ID = ECO.ECO_ID AND RES.BORRADO = 0
 							WHERE ECO.BORRADO = 0 AND ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
-                EXECUTE IMMEDIATE V_SQL INTO FEC_ANT_FIR_RES;
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
+                EXECUTE IMMEDIATE V_SQL INTO V_AUX;
+                                -- DBMS_OUTPUT.PUT_LINE(V_AUX);
 
-                IF FEC_ANT_FIR_RES IS NULL THEN
-                    VAR_FEC_ANT_FIR_RES := 'NULL';
+                IF V_AUX > 0 THEN 
+                    -- FECHA FIRMA DE LA RESERVA anterior
+                    V_SQL := 'SELECT TO_DATE(RES.RES_FECHA_FIRMA,''DD/MM/RR'') FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
+                                INNER JOIN '||V_ESQUEMA||'.RES_RESERVAS RES ON RES.ECO_ID = ECO.ECO_ID AND RES.BORRADO = 0
+                                WHERE ECO.BORRADO = 0 AND ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
+    -- DBMS_OUTPUT.PUT_LINE(V_SQL);
+                    EXECUTE IMMEDIATE V_SQL INTO FEC_ANT_FIR_RES;
+    
+                    IF FEC_ANT_FIR_RES IS NULL THEN
+                        VAR_FEC_ANT_FIR_RES := 'NULL';
+                    ELSE
+                        VAR_FEC_ANT_FIR_RES := '''TO_DATE('''||FEC_ANT_FIR_RES||''',''DD/MM/RR'')''';
+                    END IF;
                 ELSE
-                    VAR_FEC_ANT_FIR_RES := 'TO_DATE('''||FEC_ANT_FIR_RES||''',''DD/MM/RR'')';
+                    FEC_ANT_FIR_RES := 'NULL';
+                    VAR_FEC_ANT_FIR_RES := 'NULL';
                 END IF;
-
+                    -- DBMS_OUTPUT.PUT_LINE(FEC_ANT_FIR_RES);
 	-- Aqui va el insert a la tabla de históricos para evitar fallos por parte del usuario.
 
 				V_SQL := 'INSERT INTO '||V_ESQUEMA||'.H_TRANS_EST_EOR (
@@ -233,13 +298,13 @@ BEGIN
 							, SYSDATE
 							, 0
 							)';
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                 EXECUTE IMMEDIATE V_SQL;
 
 				CASE
 
 				-- 1 Si se intenta cambiar el estado de la reserva en un expediente anulado.
-				WHEN EST_ANT_EXP_COD = '02' AND  V_ESTADO_EXPEDIENTE = '02' AND (V_ESTADO_RESERVA = '06' OR V_ESTADO_RESERVA = '07' OR V_ESTADO_RESERVA = '08') THEN
+				WHEN  V_ESTADO_EXPEDIENTE = '02' AND (V_ESTADO_RESERVA = '06' OR V_ESTADO_RESERVA = '07' OR V_ESTADO_RESERVA = '08') THEN
 
 
 					IF V_F_FIR_RES IS NOT NULL THEN
@@ -253,7 +318,7 @@ BEGIN
 									   ,ECO.FECHAMODIFICAR = SYSDATE
 									WHERE ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
 						EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado del EXPEDIENTE '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -269,7 +334,7 @@ BEGIN
 													WHERE ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'
 														)';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
 						EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la OFERTA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -285,7 +350,7 @@ BEGIN
 															WHERE RES.BORRADO = 0 AND ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'
 														)';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la RESERVA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -301,7 +366,7 @@ BEGIN
 									   ,ECO.FECHAMODIFICAR = SYSDATE
 									WHERE ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado del EXPEDIENTE '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -317,7 +382,7 @@ BEGIN
 													WHERE ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'
 														)';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la OFERTA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -333,7 +398,7 @@ BEGIN
 															WHERE RES.BORRADO = 0 AND ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'
 														)';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la RESERVA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -346,7 +411,7 @@ BEGIN
 					END IF;
 
 				-- Pasar Estado expediente a "Firmado" - "Bloqueo Adm." - "Reservado" - "En devolución"
-				WHEN EST_ANT_EXP_COD != '02' AND (V_ESTADO_EXPEDIENTE = '03' OR V_ESTADO_EXPEDIENTE = '05' OR V_ESTADO_EXPEDIENTE = '06' OR V_ESTADO_EXPEDIENTE = '16')
+				WHEN (V_ESTADO_EXPEDIENTE = '03' OR V_ESTADO_EXPEDIENTE = '05' OR V_ESTADO_EXPEDIENTE = '06' OR V_ESTADO_EXPEDIENTE = '16')
 					 AND (V_F_FIR_RES IS NOT NULL OR FEC_ANT_FIR_RES IS NOT NULL) THEN
 
 					IF V_F_FIR_RES IS NOT NULL THEN
@@ -360,7 +425,7 @@ BEGIN
 									   ,FECHAMODIFICAR = SYSDATE
 									WHERE ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado del EXPEDIENTE '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -376,7 +441,7 @@ BEGIN
 													WHERE ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'
 														)';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la OFERTA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -392,7 +457,7 @@ BEGIN
 															WHERE RES.BORRADO = 0 AND ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'
 														)';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la RESERVA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -408,7 +473,7 @@ BEGIN
 									   ,FECHAMODIFICAR = SYSDATE
 									WHERE ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado del EXPEDIENTE '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -424,7 +489,7 @@ BEGIN
 													WHERE ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'
 														)';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la OFERTA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -440,7 +505,7 @@ BEGIN
 															WHERE RES.BORRADO = 0 AND ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'
 														)';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
 						EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la RESERVA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -454,7 +519,7 @@ BEGIN
 					END IF;
 
 				-- Pasar Estado expediente a "En tramitación" - "Contraofertado" - "Pte. Sanción" - "Aprobado"
-				WHEN EST_ANT_EXP_COD != '02' AND (V_ESTADO_EXPEDIENTE = '01' OR V_ESTADO_EXPEDIENTE = '04' OR V_ESTADO_EXPEDIENTE = '10' OR V_ESTADO_EXPEDIENTE = '11') THEN
+				WHEN (V_ESTADO_EXPEDIENTE = '01' OR V_ESTADO_EXPEDIENTE = '04' OR V_ESTADO_EXPEDIENTE = '10' OR V_ESTADO_EXPEDIENTE = '11') THEN
 
 					IF V_ESTADO_RESERVA IS NOT NULL THEN
 
@@ -467,7 +532,7 @@ BEGIN
 									   ,FECHAMODIFICAR = SYSDATE
 									WHERE ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado del EXPEDIENTE '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -483,7 +548,7 @@ BEGIN
 													WHERE ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'
 
                                                         )';
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la OFERTA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -491,15 +556,18 @@ BEGIN
 						-- Actualizar estado reserva
 						V_SQL := 'UPDATE '||V_ESQUEMA||'.RES_RESERVAS RES
 									SET RES.DD_ERE_ID = (SELECT ERE.DD_ERE_ID FROM '||V_ESQUEMA||'.DD_ERE_ESTADOS_RESERVA ERE WHERE ERE.DD_ERE_CODIGO = '''||V_ESTADO_RESERVA||''')
-									   ,RES_FECHA_FIRMA = NULL
-									   ,USUARIOMODIFICAR = '''||V_USUARIO_MODIFICAR||'''
-									   ,FECHAMODIFICAR = SYSDATE
+									   ,RES.RES_FECHA_FIRMA = NULL
+                                       ,RES.RES_IND_IMP_ANULACION = NULL 
+                                       ,RES.DD_EDE_ID = NULL
+                                       ,RES.DD_DER_ID = NULL
+									   ,RES.USUARIOMODIFICAR = '''||V_USUARIO_MODIFICAR||'''
+									   ,RES.FECHAMODIFICAR = SYSDATE
 									WHERE RES.RES_ID = (SELECT RES.RES_ID FROM '||V_ESQUEMA||'.RES_RESERVAS RES
 															INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.ECO_ID = RES.ECO_ID AND ECO.BORRADO = 0
 															WHERE RES.BORRADO = 0 AND ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'
 														)';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la RESERVA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -515,7 +583,7 @@ BEGIN
 									   ,FECHAMODIFICAR = SYSDATE
 									WHERE ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado del EXPEDIENTE '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -531,7 +599,7 @@ BEGIN
 													WHERE ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'
 														)';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la OFERTA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -539,15 +607,18 @@ BEGIN
 						-- Actualizar estado reserva
 						V_SQL := 'UPDATE '||V_ESQUEMA||'.RES_RESERVAS RES
 									SET RES.DD_ERE_ID = NULL
-									   ,RES_FECHA_FIRMA = NULL
-									   ,USUARIOMODIFICAR = '''||V_USUARIO_MODIFICAR||'''
-									   ,FECHAMODIFICAR = SYSDATE
+									   ,RES.RES_FECHA_FIRMA = NULL
+                                       ,RES.RES_IND_IMP_ANULACION = NULL 
+                                       ,RES.DD_EDE_ID = NULL
+                                       ,RES.DD_DER_ID = NULL
+									   ,RES.USUARIOMODIFICAR = '''||V_USUARIO_MODIFICAR||'''
+									   ,RES.FECHAMODIFICAR = SYSDATE
 									WHERE RES.RES_ID = (SELECT RES.RES_ID FROM '||V_ESQUEMA||'.RES_RESERVAS RES
 															INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.ECO_ID = RES.ECO_ID AND ECO.BORRADO = 0
 															WHERE RES.BORRADO = 0 AND ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'
 														)';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la RESERVA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -555,7 +626,7 @@ BEGIN
                     END IF;
 
 				-- Estado expediente a "Vendido"
-				WHEN EST_ANT_EXP_COD != '02' AND V_ESTADO_EXPEDIENTE = '08' AND (V_F_ING_CHEQUE IS NOT NULL OR FEC_ANT_ING_CHEQUE IS NOT NULL) AND (V_F_VENTA IS NOT NULL OR FEC_ANT_VENTA IS NOT NULL)THEN
+				WHEN V_ESTADO_EXPEDIENTE = '08' AND (V_F_ING_CHEQUE IS NOT NULL OR FEC_ANT_ING_CHEQUE IS NOT NULL) AND (V_F_VENTA IS NOT NULL OR FEC_ANT_VENTA IS NOT NULL)THEN
 
 					IF V_F_FIR_RES IS NOT NULL AND V_ESTADO_RESERVA IS NOT NULL THEN
 
@@ -568,7 +639,7 @@ BEGIN
 									   ,FECHAMODIFICAR = SYSDATE
 									WHERE ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado del EXPEDIENTE '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -584,7 +655,7 @@ BEGIN
 													WHERE ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'
 														)';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la OFERTA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -600,7 +671,7 @@ BEGIN
 															WHERE RES.BORRADO = 0 AND ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'
 														)';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la RESERVA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -616,7 +687,7 @@ BEGIN
 									   ,FECHAMODIFICAR = SYSDATE
 									WHERE ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado del EXPEDIENTE '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -632,7 +703,7 @@ BEGIN
 													WHERE ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'
 														)';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la OFERTA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -648,7 +719,7 @@ BEGIN
 															WHERE RES.BORRADO = 0 AND ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'
 														)';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la RESERVA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -664,7 +735,7 @@ BEGIN
 									   ,FECHAMODIFICAR = SYSDATE
 									WHERE ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado del EXPEDIENTE '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -680,7 +751,7 @@ BEGIN
 													WHERE ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'
 														)';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la OFERTA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -696,7 +767,7 @@ BEGIN
 															WHERE RES.BORRADO = 0 AND ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'
 														)';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la RESERVA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -712,7 +783,7 @@ BEGIN
 									   ,FECHAMODIFICAR = SYSDATE
 									WHERE ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado del EXPEDIENTE '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -728,14 +799,14 @@ BEGIN
 													WHERE ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'
 														)';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la OFERTA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
 
 						-- Actualizar estado reserva
 						V_SQL := 'UPDATE '||V_ESQUEMA||'.RES_RESERVAS RES
-									SET RES.DD_ERE_ID = NULL
+									SET RES.DD_ERE_ID = (SELECT ERE.DD_ERE_ID FROM '||V_ESQUEMA||'.DD_ERE_ESTADOS_RESERVA ERE WHERE ERE.DD_ERE_CODIGO = '''||V_ESTADO_RESERVA||''')
 									   ,RES_FECHA_FIRMA = TRIM(TO_DATE('''||FEC_ANT_FIR_RES||''',''DD/MM/RR''))
 									   ,USUARIOMODIFICAR = TRIM(TO_DATE('''||V_USUARIO_MODIFICAR||''',''DD/MM/RR''))
 									   ,FECHAMODIFICAR = SYSDATE
@@ -744,7 +815,7 @@ BEGIN
 															WHERE RES.BORRADO = 0 AND ECO.ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||'
 														)';
 
---                            DBMS_OUTPUT.PUT_LINE(V_SQL);
+-- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la RESERVA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
@@ -761,7 +832,7 @@ BEGIN
 
 				ELSE
 
-					PL_OUTPUT := PL_OUTPUT ||'[ERROR] No se puede revivir un expediente Anulado '|| CHR(10);
+					PL_OUTPUT := PL_OUTPUT ||'[ERROR] No existe la casuística indicada '|| CHR(10);
 
 				END CASE;
 

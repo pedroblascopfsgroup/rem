@@ -72,7 +72,6 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 					                   		xtype:'container',
 					                   		flex: 4,
 					                   		maxWidth: 800,
-					                   		reference:'dynamicColumns',
 											height: 125,
 					                   		margin: '5 10 10 30 ',
 											defaultType: 'displayfield',

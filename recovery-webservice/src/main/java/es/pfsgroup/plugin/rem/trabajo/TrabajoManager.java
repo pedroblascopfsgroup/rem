@@ -173,9 +173,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	private TrabajoDao trabajoDao;
 
 	@Autowired
-	private ActivoTrabajoDao activoTrabajoDao;
-
-	@Autowired
 	private GestorActivoManager gestorActivoManager;
 
 	@Autowired
@@ -245,9 +242,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	private ActivoTramiteApi activoTramiteApi;
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
-	
-	@Autowired
-	private ExpedienteComercialDao expedienteComercialDao;
 	
 	@Override
 	public String managerName() {
@@ -3465,5 +3459,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		throw new NullPointerException();
 	}
+	
+	public Boolean activoEnTramite(Long idActivo) {
+		Activo activo = activoApi.get(idActivo);
+		return activo.getEnTramite();
+	}
+	
+	
 }
 

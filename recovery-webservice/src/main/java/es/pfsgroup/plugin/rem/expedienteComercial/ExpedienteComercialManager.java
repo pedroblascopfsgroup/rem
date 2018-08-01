@@ -156,6 +156,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
@@ -819,6 +820,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			oferta = expediente.getOferta();
 			condiciones = expediente.getCondicionante();
 			
+			
 			if(!Checks.esNulo(condiciones)){
 				dto.setSolicitaReserva(condiciones.getSolicitaReserva());
 			}
@@ -847,6 +849,22 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 					} else if (DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
 						dto.setImporte(oferta.getImporteOferta());
+						
+						if(!Checks.esNulo(expediente.getTipoAlquiler())) {
+							dto.setTipoAlquiler(expediente.getTipoAlquiler().getDescripcion());
+						}
+						if(!Checks.esNulo(expediente.getCompradorPrincipal())) {
+							
+							Filter filtro = genericDao.createFilter(FilterType.EQUALS, "comprador",expediente.getCompradorPrincipal().getId());
+							Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "expediente",expediente.getId());
+							CompradorExpediente compradorExpediente = genericDao.get(CompradorExpediente.class, filtro,filtro2);
+							if(!Checks.esNulo(compradorExpediente.getTipoInquilino())) {
+							if(!Checks.esNulo(compradorExpediente.getTipoInquilino().getDescripcion())) {
+							dto.setTipoInquilino(compradorExpediente.getTipoInquilino().getDescripcion());
+							}
+							}
+							
+						}
 					}
 
 				}
@@ -863,6 +881,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(expediente.getCompradorPrincipal())) {
 					dto.setComprador(expediente.getCompradorPrincipal().getFullName());
 				}
+				
+			
+				
 
 				if (!Checks.esNulo(expediente.getEstado())) {
 					dto.setEstado(expediente.getEstado().getDescripcion());
@@ -978,6 +999,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				} else {
 					dto.setBloqueado(true);
 				}
+				
+				
 
 			}
 		}

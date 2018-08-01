@@ -23,7 +23,7 @@ public class GastoAvisoTieneGPL implements GastoAvisadorApi{
 
 		DtoAviso dtoAviso = new DtoAviso();
 		
-		GastoPrinex gastoPrinex = genericDao.get(GastoPrinex.class,genericDao.createFilter(FilterType.EQUALS, "id", gasto.getId()));
+		GastoPrinex gastoPrinex = genericDao.get(GastoPrinex.class,genericDao.createFilter(FilterType.EQUALS, "idGasto", gasto.getId()));
 		
 		if(!Checks.esNulo(gastoPrinex) ) {
 

@@ -3230,7 +3230,11 @@ public class ActivoAdapter {
 			for (GestorSustituto sustituto : gestoresSustitutos) {
 				if (!Checks.esNulo(sustituto.getFechaFin())) {
 					if (sustituto.getFechaFin().after(new Date()) || DateUtils.isSameDay(sustituto.getFechaFin(), new Date())) {
-						return sustituto;
+						if (sustituto.getFechaInicio().before(new Date()) || DateUtils.isSameDay(sustituto.getFechaInicio(), new Date())) {
+							if (!sustituto.getAuditoria().isBorrado()) {
+							   return sustituto;
+							}
+						}
 					}
 				} else {
 					return sustituto;

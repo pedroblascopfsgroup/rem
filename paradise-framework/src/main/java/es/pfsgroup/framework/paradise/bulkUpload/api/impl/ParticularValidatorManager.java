@@ -132,6 +132,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			    AND tipoAgr.DD_TAG_ID = agr.DD_TAG_ID "
 				+ "			    AND act.ACT_NUM_ACTIVO = "+idActivo+" "
 				+ "			    AND tipoAgr.DD_TAG_CODIGO = '02' "
+				+ "				AND agr.AGR_FECHA_BAJA is null"
 				+ "			    AND aga.BORRADO  = 0 "
 				+ "			    AND aga.BORRADO  = 0 "
 				+ "			    AND agr.BORRADO  = 0 "

@@ -1746,5 +1746,27 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return false;
 	}
 	
+	@Override
+	public Boolean esParGastoActivo(String numGasto, String numActivo){
+		if(!StringUtils.isNumeric(numGasto) || !StringUtils.isNumeric(numActivo))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM GPV_ACT "
+				+ "		WHERE GPV_ID = (SELECT GPV_ID FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = '"+numGasto+"')"
+				+ "		AND ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '"+numActivo+"')");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public Boolean existePromocion(String promocion){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM ACT_ACTIVO "
+				+ "WHERE ACT_COD_PROMOCION_PRINEX = '"+promocion+"'");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
 	
 }

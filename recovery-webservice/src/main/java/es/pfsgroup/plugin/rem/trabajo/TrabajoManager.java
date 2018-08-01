@@ -957,7 +957,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		Usuario solicitante = genericAdapter.getUsuarioLogado();
 		
-		if((!Checks.esNulo(galq) && solicitante.equals(galq)) 
+		if(Checks.esNulo(galq) && Checks.esNulo(gsue) && Checks.esNulo(gedi) && !Checks.esNulo(gact)){
+			trabajo.setResponsableTrabajo(gact);
+		}else if((!Checks.esNulo(galq) && solicitante.equals(galq)) 
 				|| (!Checks.esNulo(gsue) && solicitante.equals(gsue)) 
 				|| (!Checks.esNulo(gedi) && solicitante.equals(gedi)) 
 				|| (!Checks.esNulo(gact) && solicitante.equals(gact))){

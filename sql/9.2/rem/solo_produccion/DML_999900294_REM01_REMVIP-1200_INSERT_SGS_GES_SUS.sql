@@ -25,7 +25,7 @@ DECLARE
    ERR_NUM NUMBER(25); -- Vble. auxiliar para registrar errores en el script.
    ERR_MSG VARCHAR2(10024 CHAR); -- Vble. auxiliar para registrar errores en el script.
    DESCRIPCION VARCHAR2(150 CHAR); -- Descripción del estado de la reserva
-   V_AUX NUMBER(1); -- Variable auxiliar
+   V_AUX NUMBER(10); -- Variable auxiliar
    PL_OUTPUT VARCHAR2(32000 CHAR);
 
 BEGIN 

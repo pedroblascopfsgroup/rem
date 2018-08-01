@@ -63,6 +63,7 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
@@ -1282,6 +1283,60 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				total += cex.getPorcionCompra();
 			}
 			return total.equals(new Double(100));
+		}
+		return false;
+	}
+	
+	@Override
+	public Boolean checkProvinciaCompradores(TareaExterna tareaExterna) {
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		if (!Checks.esNulo(ofertaAceptada)) {
+			ExpedienteComercial expediente = expedienteComercialApi
+					.expedienteComercialPorOferta(ofertaAceptada.getId());
+			
+			if(!Checks.esNulo(ofertaAceptada.getAgrupacion())){
+				ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
+				
+				ActivoAgrupacionActivo aga = agrupacion.getActivos().get(0);
+				
+				if(!Checks.esNulo(expediente) && !Checks.esNulo(aga) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(aga.getActivo().getCartera().getCodigo())){
+					List<CompradorExpediente> listaCex = expediente.getCompradores();
+					Boolean tienenProvincia = true;
+					
+					for(CompradorExpediente cex: listaCex){
+						Comprador com = cex.getPrimaryKey().getComprador();
+						if(!Checks.esNulo(com) && Checks.esNulo(com.getProvincia())){
+							tienenProvincia = false;
+							break;
+						}
+					}
+					
+					return tienenProvincia;
+				} else if (!Checks.esNulo(aga) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(aga.getActivo().getCartera().getCodigo())){
+					return true;
+				}
+			}else{
+				List<ActivoOferta> activosOferta = genericDao.getList(ActivoOferta.class, genericDao.createFilter(FilterType.EQUALS, "oferta", ofertaAceptada.getId()));
+				Activo activo = activosOferta.get(0).getPrimaryKey().getActivo();
+				
+				if(!Checks.esNulo(expediente) && !Checks.esNulo(activo) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
+					List<CompradorExpediente> listaCex = expediente.getCompradores();
+					Boolean tienenProvincia = true;
+					
+					for(CompradorExpediente cex: listaCex){
+						Comprador com = cex.getPrimaryKey().getComprador();
+						if(!Checks.esNulo(com) && Checks.esNulo(com.getProvincia())){
+							tienenProvincia = false;
+							break;
+						}
+					}
+					
+					return tienenProvincia;
+				} else if (!Checks.esNulo(activo) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
+					return true;
+				}
+			}
+			
 		}
 		return false;
 	}

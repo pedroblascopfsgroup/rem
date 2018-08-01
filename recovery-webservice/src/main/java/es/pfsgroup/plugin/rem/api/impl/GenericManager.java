@@ -39,10 +39,12 @@ import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
@@ -91,6 +93,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private ActivoPatrimonioDaoImpl activoPatrimonio;
 	
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
@@ -357,28 +362,87 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@Override
 	@BusinessOperationDefinition("genericManager.getComboTipoGestorActivo")
 	public List<EXTDDTipoGestor> getComboTipoGestorByActivo(WebDto webDto, ModelMap model, String idActivo) {
-		
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 		List<EXTDDTipoGestor> listaTiposGestor  = genericDao.getListOrdered(EXTDDTipoGestor.class, order, 
 																			genericDao.createFilter(FilterType.EQUALS, "borrado", false));
-		try {
-			Activo activo = activoApi.get(Long.parseLong(idActivo));
-			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo())) {
-				// Si el Activo NO es de tipo Suelo eliminamos el gestor de Suelos de la lista
-				String codigoTipoActivo = activo.getTipoActivo().getCodigo();
-				EXTDDTipoGestor tipoGestorEdificaciones = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"GEDI"); // Gestor de Edificaciones
 				
-				if (!DDTipoActivo.COD_SUELO.equals(codigoTipoActivo)) {
-					EXTDDTipoGestor tipoGestorSuelo = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"GSUE"); // Gestor de Suelos
+		try {
+		
+			EXTDDTipoGestor tipoGestorEdificaciones = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"GEDI"); // Gestor de Edificaciones
+			EXTDDTipoGestor tipoGestorSuelo = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"GSUE"); // Gestor de Suelos
+			EXTDDTipoGestor tipoGestorAlquileres = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"GALQ"); // Gestor de Alquileres
+			EXTDDTipoGestor tipoSupervisorEdificaciones = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"SUPEDI"); // Gestor de Edificaciones
+			EXTDDTipoGestor tipoSupervisorSuelo = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"SUPSUE"); // Gestor de Suelos
+			EXTDDTipoGestor tipoSupervisorAlquileres = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"SUALQ"); // Gestor de Alquileres
+			Activo activo = activoApi.get(Long.parseLong(idActivo));
+			String codigoTipoActivo = activo.getTipoActivo().getCodigo();
+			ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
+
+			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo()) && (!Checks.esNulo(actPatrimonio) && !Checks.esNulo(actPatrimonio.getCheckHPM()))) {
+				// Si el Activo NO es de tipo Suelo eliminamos el gestor de Suelos de la lista
+			
+				if (actPatrimonio.getCheckHPM()) {
 					listaTiposGestor.remove(tipoGestorSuelo);
+					listaTiposGestor.remove(tipoSupervisorSuelo);
+					listaTiposGestor.remove(tipoGestorEdificaciones);
+					listaTiposGestor.remove(tipoSupervisorEdificaciones);
+					
+
+
+				}
+				
+				
+				else if (!DDTipoActivo.COD_SUELO.equals(codigoTipoActivo)) {
+					listaTiposGestor.remove(tipoGestorSuelo);
+					listaTiposGestor.remove(tipoSupervisorSuelo);
+					listaTiposGestor.remove(tipoGestorAlquileres);
+					listaTiposGestor.remove(tipoSupervisorAlquileres);
+					
+
 					
 					// Si el Activo NO es de tipo Suelo y el Estado físico del activo esta vacio eliminamos el gestor de edificacionnes
 					if (Checks.esNulo(activo.getEstadoActivo())) {
 						listaTiposGestor.remove(tipoGestorEdificaciones);
+						listaTiposGestor.remove(tipoSupervisorEdificaciones);
+						listaTiposGestor.remove(tipoGestorAlquileres);
+						listaTiposGestor.remove(tipoSupervisorAlquileres);
+
+					}
+				} else {
+					// Si el Activo es de tipo Suelo eliminamos el gestor de edificacionnes y gestor de alquileres
+					listaTiposGestor.remove(tipoGestorEdificaciones);
+					listaTiposGestor.remove(tipoSupervisorEdificaciones);
+					listaTiposGestor.remove(tipoGestorAlquileres);
+					listaTiposGestor.remove(tipoSupervisorAlquileres);
+
+				}
+			}
+			
+			
+			else {
+				if (!DDTipoActivo.COD_SUELO.equals(codigoTipoActivo)) {
+					listaTiposGestor.remove(tipoGestorSuelo);
+					listaTiposGestor.remove(tipoSupervisorSuelo);
+					listaTiposGestor.remove(tipoGestorAlquileres);
+					listaTiposGestor.remove(tipoSupervisorAlquileres);
+					
+
+					
+					// Si el Activo NO es de tipo Suelo y el Estado físico del activo esta vacio eliminamos el gestor de edificacionnes
+					if (Checks.esNulo(activo.getEstadoActivo())) {
+						listaTiposGestor.remove(tipoGestorEdificaciones);
+						listaTiposGestor.remove(tipoSupervisorEdificaciones);
+						listaTiposGestor.remove(tipoGestorAlquileres);
+						listaTiposGestor.remove(tipoSupervisorAlquileres);
+
 					}
 				} else {
 					// Si el Activo es de tipo Suelo eliminamos el gestor de edificacionnes
 					listaTiposGestor.remove(tipoGestorEdificaciones);
+					listaTiposGestor.remove(tipoSupervisorEdificaciones);
+					listaTiposGestor.remove(tipoGestorAlquileres);
+					listaTiposGestor.remove(tipoSupervisorAlquileres);
+
 				}
 			}
 		} catch (NumberFormatException e) {

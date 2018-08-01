@@ -16,7 +16,6 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,6 +56,9 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoHistoricoPatrimonioDaoImpl;
+import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
+import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoTramiteDaoImpl;
 import es.pfsgroup.plugin.rem.activotrabajo.dao.ActivoTrabajoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
@@ -93,6 +95,7 @@ import es.pfsgroup.plugin.rem.model.ActivoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoObservacion;
 import es.pfsgroup.plugin.rem.model.ActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
@@ -107,7 +110,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
-import es.pfsgroup.plugin.rem.model.DtoActivoTrabajo;
+import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
@@ -281,8 +284,12 @@ public class ActivoAdapter {
 	@Autowired
 	private TrabajoDao trabajoDao;
 	
+	
 	@Autowired
-	private ActivoTrabajoDao activoTrabajoDao;
+	private ActivoPatrimonioDaoImpl activoPatrimonio;
+	
+	
+	
 	
 	// private static final String PROPIEDAD_ACTIVAR_REST_CLIENT =
 	// "rest.client.gestor.documental.activar";
@@ -2692,10 +2699,188 @@ public class ActivoAdapter {
 
 		TabActivoService tabActivoService = tabActivoFactory.getService(tab);
 		Activo activo = activoApi.get(id);
-
 		activo = tabActivoService.saveTabActivo(activo, dto);
-
 		activoApi.saveOrUpdate(activo);
+		ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
+
+		if (dto instanceof DtoActivoPatrimonio && !Checks.esNulo(actPatrimonio)
+				&& !Checks.esNulo(((DtoActivoPatrimonio) dto).getChkPerimetroAlquiler())) {
+			// todos los activos que en REM están marcados dentro del perímetro
+			// de alquiler
+			// Cuando en REM se marque que un activo entra en el perímetro de
+			// alquiler (bien individual o masivamente) REM asignará Gestor y
+			// Supervisor de activo de este tipo según cliente y provincia
+			if (!Checks.esNulo(((DtoActivoPatrimonio) dto).getChkPerimetroAlquiler())) {
+				if (((DtoActivoPatrimonio) dto).getChkPerimetroAlquiler()) {
+
+					// anyadimos el nuevo gestor
+					if (!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES))
+						logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "
+								+ GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
+					if (!this.anydairGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES))
+						logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "
+								+ GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES);
+
+					// si el codigo del tipo de actvo no es nulo, comprabamos si
+					// es de tipo de suelo borramos el gestor/supervisor de
+					// suelos en caso contrario el de alquileres.
+					if (!Checks.esNulo(activo.getTipoActivo().getCodigo())) {
+						if (activo.getTipoActivo().getCodigo().equals(DDTipoActivo.COD_SUELO)) {
+							this.borrarGestor(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS);
+							this.borrarGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
+						} else {
+							this.borrarGestor(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+							this.borrarGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
+						}
+					}
+
+				}
+
+				// Cuando en REM se marque que un activo sale del perímetro de
+				// alquiler (bien individual o masivamente) REM eliminará el
+				// Gestor y Supervisor de activo de este tipo.
+
+				else if (!((DtoActivoPatrimonio) dto).getChkPerimetroAlquiler()
+						&& gestorActivoApi.existeGestorEnActivo(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES)) {
+					// en este caso si existieran trabajos abiertos REM los
+					// reasignará al Gestor de mantenimiento (ACTIVO)
+
+					this.cambiarTrabajosActivosAGestorActivo(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
+					this.borrarGestor(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
+					this.borrarGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES);
+
+					// si el codigo del tipo de actvo no es nulo, comprabamos si
+					// es de tipo de suelo anyadimos el gestor/supervisor de
+					// suelos en caso contrario el de alquileres.
+					if (!Checks.esNulo(activo.getTipoActivo().getCodigo())) {
+
+						if (activo.getTipoActivo().getCodigo().equals(DDTipoActivo.COD_SUELO)) {
+
+							if (!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS))
+								logger.error(
+										"Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "
+												+ GestorActivoApi.CODIGO_GESTOR_SUELOS);
+							if (!this.anydairGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_SUELOS))
+								logger.error(
+										"Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "
+												+ GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
+						} else {
+							if (!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES))
+								logger.error(
+										"Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "
+												+ GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+							if (!this.anydairGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES))
+								logger.error(
+										"Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "
+												+ GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
+
+						}
+					}
+				}
+			} // fin
+				// if(!Checks.esNulo(((DtoActivoPatrimonio)dto).getChkPerimetroAlquiler())
+				// ) {
+
+		}
+		// todos los activos existentes en REM que no estén dentro del perímetro
+		// de alquiler pero que alguna vez si que lo han estado, en este caso es
+		// posible que en algun momento el activo haya estado
+		// dentro del perimetro de alquiler por lo que hacemos la siguiente
+		// comprobación
+		else if (!Checks.esNulo(actPatrimonio) && !Checks.esNulo(actPatrimonio.getCheckHPM())) {
+			if (!actPatrimonio.getCheckHPM()) {
+
+				if (!Checks.esNulo(((DtoActivoFichaCabecera) dto).getTipoActivoCodigo())
+						&& DDTipoActivo.COD_SUELO.equals(((DtoActivoFichaCabecera) dto).getTipoActivoCodigo())) {
+					// ANYADIR GESTOR Y SUPERVISOR SUELOS
+					if (!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS))
+						logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "
+								+ GestorActivoApi.CODIGO_GESTOR_SUELOS);
+					if (!this.anydairGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_SUELOS))
+						logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "
+								+ GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
+
+				} else if (!Checks.esNulo(((DtoActivoFichaCabecera) dto).getTipoActivoCodigo())
+						&& gestorActivoApi.existeGestorEnActivo(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS)) {
+					// Cambiar los gestores
+					this.cambiarTrabajosActivosAGestorActivo(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS);
+					// BORRAR GESTOR Y SUPERVISOR SUELOS
+					this.borrarGestor(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS);
+					this.borrarGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
+				}
+
+				if (!Checks.esNulo(((DtoActivoFichaCabecera) dto).getTipoActivoCodigo())
+						&& !DDTipoActivo.COD_SUELO.equals(((DtoActivoFichaCabecera) dto).getTipoActivoCodigo())
+						&& Checks.esNulo(gestorActivoApi.getGestorByActivoYTipo(activo,
+								GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES))) {
+					// && (!Checks.esNulo(activo.getEstadoActivo()) ||
+					// !Checks.esNulo(((DtoActivoFichaCabecera)dto).getEstadoActivoCodigo()))){
+
+					if (!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES))
+						logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "
+								+ GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+					if (!this.anydairGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES))
+						logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "
+								+ GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
+
+				} else if (!Checks.esNulo(((DtoActivoFichaCabecera) dto).getTipoActivoCodigo())
+						&& DDTipoActivo.COD_SUELO.equals(((DtoActivoFichaCabecera) dto).getTipoActivoCodigo())) {
+					// Cambiar los gestores
+					this.cambiarTrabajosActivosAGestorActivo(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+					// BORRAR GESTOR Y SUPERVISOR EDIFICACIONES
+					this.borrarGestor(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+					this.borrarGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
+				}
+
+			}
+		}
+		// todos los activos existentes en REM que no estén dentro del perímetro
+		// de alquiler y que nunca lo hayan estado
+		else {
+
+			if (!Checks.esNulo(((DtoActivoFichaCabecera) dto).getTipoActivoCodigo())
+					&& DDTipoActivo.COD_SUELO.equals(((DtoActivoFichaCabecera) dto).getTipoActivoCodigo())) {
+				// ANYADIR GESTOR Y SUPERVISOR SUELOS
+				if (!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS))
+					logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "
+							+ GestorActivoApi.CODIGO_GESTOR_SUELOS);
+				if (!this.anydairGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_SUELOS))
+					logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "
+							+ GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
+
+			} else if (!Checks.esNulo(((DtoActivoFichaCabecera) dto).getTipoActivoCodigo())
+					&& gestorActivoApi.existeGestorEnActivo(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS)) {
+				// Cambiar los gestores
+				this.cambiarTrabajosActivosAGestorActivo(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS);
+				// BORRAR GESTOR Y SUPERVISOR SUELOS
+				this.borrarGestor(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS);
+				this.borrarGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
+			}
+
+			if (!Checks.esNulo(((DtoActivoFichaCabecera) dto).getTipoActivoCodigo())
+					&& !DDTipoActivo.COD_SUELO.equals(((DtoActivoFichaCabecera) dto).getTipoActivoCodigo())
+					&& Checks.esNulo(gestorActivoApi.getGestorByActivoYTipo(activo,
+							GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES))) {
+				// && (!Checks.esNulo(activo.getEstadoActivo()) ||
+				// !Checks.esNulo(((DtoActivoFichaCabecera)dto).getEstadoActivoCodigo()))){
+
+				if (!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES))
+					logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "
+							+ GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+				if (!this.anydairGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES))
+					logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "
+							+ GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
+
+			} else if (!Checks.esNulo(((DtoActivoFichaCabecera) dto).getTipoActivoCodigo())
+					&& DDTipoActivo.COD_SUELO.equals(((DtoActivoFichaCabecera) dto).getTipoActivoCodigo())) {
+				// Cambiar los gestores
+				this.cambiarTrabajosActivosAGestorActivo(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+				// BORRAR GESTOR Y SUPERVISOR EDIFICACIONES
+				this.borrarGestor(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+				this.borrarGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
+			}
+
+		}
 
 		// Metodo que recoge funciones que requieren el guardado previo de los
 		// datos
@@ -2744,6 +2929,7 @@ public class ActivoAdapter {
 					// Asignar trabajos a gestor Activo
 					activoTrabajo.getTrabajo().setResponsableTrabajo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO));
 					trabajoDao.saveOrUpdate(activoTrabajo.getTrabajo());
+
 				}
 			}
 		}else if(GestorActivoApi.CODIGO_GESTOR_SUELOS.equals(tipoGestorCodigo)) {
@@ -2763,10 +2949,39 @@ public class ActivoAdapter {
 					// Asignar trabajos a gestor Activo
 					activoTrabajo.getTrabajo().setResponsableTrabajo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO));
 					trabajoDao.saveOrUpdate(activoTrabajo.getTrabajo());
+
 				}
 			}
-		}
+		}else if(GestorActivoApi.CODIGO_GESTOR_ALQUILERES.equals(tipoGestorCodigo)) {
+			for(ActivoTrabajo activoTrabajo : activo.getActivoTrabajos()) {
+				Usuario  usuGestor = activoTrabajo.getTrabajo().getResponsableTrabajo();
+				String estadoTrabajo = activoTrabajo.getTrabajo().getEstado().getCodigo();
+	
+				if(gestorActivoApi.isGestorAlquileres(activo, usuGestor) && (
+						DDEstadoTrabajo.ESTADO_SOLICITADO.equals(estadoTrabajo) ||
+						DDEstadoTrabajo.ESTADO_EN_TRAMITE.equals(estadoTrabajo) ||
+						DDEstadoTrabajo.ESTADO_IMPOSIBLE_OBTENCION.equals(estadoTrabajo) ||
+						DDEstadoTrabajo.ESTADO_CEE_PENDIENTE_ETIQUETA.equals(estadoTrabajo) ||
+						DDEstadoTrabajo.ESTADO_FINALIZADO_PENDIENTE_VALIDACION.equals(estadoTrabajo) ||
+						DDEstadoTrabajo.ESTADO_PENDIENTE_CIERRE_ECONOMICO.equals(estadoTrabajo) ||
+						DDEstadoTrabajo.ESTADO_VALIDADO.equals(estadoTrabajo)
+						)) {
+					// Asignar trabajos a gestor Activo
+					activoTrabajo.getTrabajo().setResponsableTrabajo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO));
+					trabajoDao.saveOrUpdate(activoTrabajo.getTrabajo());
+				
+					
+				}
+			
+			}
+		
 	}
+	}
+	
+	
+
+			
+		
 	
 	private void borrarGestor(Activo activo, String tipoGestorCodigo) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", tipoGestorCodigo);

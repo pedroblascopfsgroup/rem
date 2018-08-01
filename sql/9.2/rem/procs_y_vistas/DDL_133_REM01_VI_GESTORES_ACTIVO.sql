@@ -616,6 +616,15 @@ V_MSQL2 := '
             act.borrado = 0 
             AND act.DD_TPA_ID != (SELECT DD_TPA_ID FROM '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO WHERE DD_TPA_CODIGO = ''01'')
             AND act.DD_EAC_ID IN (SELECT DD_EAC_ID FROM '||V_ESQUEMA||'.DD_EAC_ESTADO_ACTIVO WHERE DD_EAC_CODIGO IN (''09'', ''02'', ''06'', ''11'', ''10'', ''05'', ''08'', ''07''))
+	UNION ALL
+
+	/*Gestor / supervisor de alquileres*/
+	SELECT act.act_id, NULL dd_cra_codigo, NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, dist1.tipo_gestor, dist1.username username,
+	                  dist1.nombre_usuario nombre
+	             FROM act_activo act JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON dist1.tipo_gestor IN (''GALQ'', ''SUALQ'')
+				 JOIN '||V_ESQUEMA||'.ACT_PTA_PATRIMONIO_ACTIVO ACT_PTA ON ACT_PTA.ACT_ID = ACT.ACT_ID 
+	           where act.borrado = 0 AND ACT_PTA.CHECK_HPM = 1
+
 ';
 
     --DBMS_OUTPUT.PUT_LINE(  V_MSQL); 

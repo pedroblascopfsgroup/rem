@@ -107,7 +107,7 @@ public class VBusquedaVisitasDetalle implements Serializable {
 
 	@Column(name="DD_CRA_ID")
 	private String idCartera;
-
+	
 	
 	public String getId() {
 		return id;
@@ -342,6 +342,13 @@ public class VBusquedaVisitasDetalle implements Serializable {
 		this.carteraCodigo = carteraCodigo;
 	}
 	
+	public String getIdCartera() {
+		return idCartera;
+	}
+
+	public void setIdCartera(String idCartera) {
+		this.idCartera = idCartera;
+	}
 	
 
 }

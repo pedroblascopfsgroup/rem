@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=SIMEON SHOPOV 
---## FECHA_CREACION=20180703
+--## AUTOR=VIOREL REMUS OVIDIU
+--## FECHA_CREACION=20180710
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-1236
+--## INCIDENCIA_LINK=REMVIP-1292
 --## PRODUCTO=NO
 --##
---## Finalidad: Crear la tabla de gestores sustitutos
+--## Finalidad: CAMBIAR EL ESTADO DEL EXPEDIENTE A VENDIDO
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -23,35 +23,24 @@ DECLARE
     V_SQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar         
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
-    V_COUNT NUMBER(16); -- Vble. para contar.
+    --V_COUNT NUMBER(16); -- Vble. para contar.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_TABLA VARCHAR2(27 CHAR) := 'PRV_CP'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-	V_USUARIO VARCHAR2(32 CHAR) := 'REMVIP-1236';
-    
- BEGIN
- 
- V_SQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TABLA||'''';
+    V_TABLA VARCHAR2(27 CHAR) := 'ECO_EXPEDIENTE_COMERCIAL'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_USUARIO VARCHAR2(32 CHAR) := 'REMVIP-1292';
 
- EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
- 
- IF V_COUNT = 0 THEN
- 
- V_SQL := 'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||' (
- 			   NUM_CP VARCHAR2(2 CHAR) NOT NULL
- 			 , DD_PRV_CODIGO VARCHAR2(20 CHAR) NOT NULL
-			)
-		  ';
+  BEGIN
 
-  EXECUTE IMMEDIATE V_SQL;
+  EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET 
+  					   DD_EEC_ID = (SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''08'') 
+					 , USUARIOMODIFICAR = '''||V_USUARIO||''' 
+					 , FECHAMODIFICAR = SYSDATE 
+					 WHERE ECO_NUM_EXPEDIENTE = 81312 
+  					';
+  					
+  DBMS_OUTPUT.put_line('[INFO] Cambiado el estado del expediente 81312 a VENDIDO'); 
  
-  DBMS_OUTPUT.PUT_LINE('[INFO] Creada la tabla '||V_TABLA);
-
-  ELSE
-    DBMS_OUTPUT.PUT_LINE('[INFO] Ya existia la tabla '||V_TABLA);	
-  END IF;
-
- COMMIT;
+  COMMIT;
  
 EXCEPTION
      WHEN OTHERS THEN

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Guillermo Llidó
---## FECHA_CREACION=20180703
+--## FECHA_CREACION=20180710
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-1038
+--## INCIDENCIA_LINK=REMVIP-1253
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -17,9 +17,9 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 SET DEFINE OFF;
 
-create or replace PROCEDURE       #ESQUEMA#.SP_GESTOR_SUSTITUTO
+create or replace PROCEDURE #ESQUEMA#.SP_GESTOR_SUSTITUTO
         (
-		  OPERACION VARCHAR2
+		  OPERACION IN VARCHAR2
         , V_USU_ID_ORI IN NUMBER
         , V_USU_ID_SUS IN NUMBER
         , V_FECHA_INICIO IN VARCHAR2
@@ -34,7 +34,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_GESTOR_SUSTITUTO
    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
    ERR_NUM NUMBER(25); -- Vble. auxiliar para registrar errores en el script.
    ERR_MSG VARCHAR2(10024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-   V_AUX NUMBER(1); -- Variable auxiliar
+   V_AUX NUMBER(10); -- Variable auxiliar
    USUARIO VARCHAR2(50 CHAR):= 'SP_GESTOR_SUSTITUTO';
    USUARIO_CONSULTA_REM VARCHAR2(50 CHAR):= 'REM_QUERY';
 
@@ -44,12 +44,25 @@ BEGIN
        CASE
 
         WHEN OPERACION = 'ALTA' THEN
-
-			EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.SGS_GESTOR_SUSTITUTO
-									WHERE USU_ID_ORI = '||V_USU_ID_ORI||'
-									AND (FECHA_FIN > '''||V_FECHA_FIN||''' OR FECHA_FIN IS NULL)
-									AND FECHA_INICIO < '''||V_FECHA_INICIO||'''
-									AND BORRADO = 0' INTO V_AUX;
+           
+            EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.SGS_GESTOR_SUSTITUTO
+                                                        WHERE USU_ID_ORI = '||V_USU_ID_ORI||'
+                                                        AND BORRADO = 0 
+                                                        AND 
+                                                        (
+                                                            (FECHA_INICIO <= TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') AND FECHA_FIN >= TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY'')) 
+                                                            OR
+                                                            (FECHA_FIN <= TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') AND FECHA_INICIO >= TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY'')) 
+                                                            OR
+                                                            (TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') <= FECHA_FIN AND FECHA_FIN <= TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY''))
+                                                            OR
+                                                            (TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'')<= FECHA_INICIO AND FECHA_INICIO <TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY''))
+                                                            OR
+                                                            ((TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'')<= FECHA_INICIO) AND (FECHA_FIN IS NULL)) 
+                                                            OR
+                                                            ((TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'')<= FECHA_INICIO) AND (FECHA_FIN IS NULL)) 
+                                                        )'
+                                                        INTO V_AUX ;
 
 			IF V_USU_ID_SUS IS NOT NULL THEN
 
@@ -80,7 +93,7 @@ BEGIN
                                         ,NULL
                                         ,NULL
                                         )';
-
+                    
                     EXECUTE IMMEDIATE V_SQL;
 
                     PL_OUTPUT := '[INFO] El nuevo registro se ha dado de alta correctamente ' || CHR(10) ;
@@ -100,10 +113,23 @@ BEGIN
         WHEN OPERACION = 'MOD' THEN
 
             EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.SGS_GESTOR_SUSTITUTO
-									WHERE USU_ID_ORI = '||V_USU_ID_ORI||'
-									AND FECHA_FIN >= '''||V_FECHA_FIN||'''
-									AND FECHA_INICIO <= '''||V_FECHA_INICIO||'''
-									AND BORRADO = 0' INTO V_AUX;
+                                                        WHERE USU_ID_ORI = '||V_USU_ID_ORI||'
+                                                        AND BORRADO = 0 
+                                                        AND 
+                                                        (
+                                                            (FECHA_INICIO <= TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') AND FECHA_FIN >= TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY'')) 
+                                                            OR
+                                                            (FECHA_FIN <= TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') AND FECHA_INICIO >= TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY'')) 
+                                                            OR
+                                                            (TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'') <= FECHA_FIN AND FECHA_FIN <= TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY''))
+                                                            OR
+                                                            (TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'')<= FECHA_INICIO AND FECHA_INICIO <TO_DATE('''||V_FECHA_FIN||''',''DD/MM/YY''))
+                                                            OR
+                                                            ((TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'')<= FECHA_INICIO) AND (FECHA_FIN IS NULL)) 
+                                                            OR
+                                                            ((TO_DATE('''||V_FECHA_INICIO||''',''DD/MM/YY'')<= FECHA_INICIO) AND (FECHA_FIN IS NULL)) 
+                                                        )'
+                                                        INTO V_AUX ;
 
 			IF V_AUX = 0 THEN
 

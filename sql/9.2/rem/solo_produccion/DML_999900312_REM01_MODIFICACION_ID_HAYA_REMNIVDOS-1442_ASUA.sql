@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Sergio Ortuño
---## FECHA_CREACION=20180727
+--## FECHA_CREACION=20180728
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMNIVDOS-1442

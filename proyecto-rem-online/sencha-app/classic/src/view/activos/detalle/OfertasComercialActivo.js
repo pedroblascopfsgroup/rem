@@ -156,10 +156,10 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 		    			},
 		    			{
 		                    xtype: 'fieldsettable',
-		                    title: HreRem.i18n('title.comerical.oferta.detalle.oferta.express'),
-		                    bind: {
+		                    title: HreRem.i18n('title.comerical.oferta'),
+		                    /*bind: {
 		                        hidden: '{!activo.isCarteraCajamar}'
-		                    },
+		                    },*/
 		                    colspan: 3,
 		                    items: [
 		                    		{
@@ -198,10 +198,10 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 		    		// Fila 4 - Solo Cajamar
 		    			{
 		                    xtype: 'fieldsettable',
-		                    title: HreRem.i18n('title.comerical.oferta.detalle.cajamar'),
-		                    bind: {
+		                    title: HreRem.i18n('title.comerical.oferta.detalle'),
+		                    /*bind: {
 		                        hidden: '{!activo.isCarteraCajamar}'
-		                    },
+		                    },*/
 		                    colspan: 3,
 		                    items: [
 									{

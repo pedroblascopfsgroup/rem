@@ -228,11 +228,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		String fechaGasto = !Checks.esNulo(gasto.getFechaEmision()) ? formatter.format(gasto.getFechaEmision()) : "";
 		String idReo = !Checks.estaVacio(gasto.getGastoProveedorActivos()) ?  gasto.getGastoProveedorActivos().get(0).getActivo().getNumActivo().toString() : "";		
-		String cliente = "";
-		
-		if((Checks.esNulo(cliente) || cliente.isEmpty())) {			
-			cliente = getClienteByMGP(gasto.getPropietario());
-		}	
+		String cliente = getClienteByMGP(gasto.getPropietario());	
 		
 		
 		String descripcionExpediente =  !Checks.esNulo(gasto.getConcepto()) ? gasto.getConcepto() :  "";

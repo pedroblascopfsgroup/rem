@@ -146,9 +146,9 @@ public class GenericAdapter {
 			logger.info(servidorCorreo);
 			String puertoCorreo =appProperties.getProperty(PUERTO_CORREO);
 			logger.info(puertoCorreo);
-			//if(!Checks.esNulo(servidorCorreo) && !Checks.esNulo(puertoCorreo)){
+			if(!Checks.esNulo(servidorCorreo) && !Checks.esNulo(puertoCorreo)){
 				agendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, adjuntos);
-			//}
+			}
 		} catch (Exception e) {
 			//Sacamos log de los receptores y el asunto del mail para trazar los errores
 			logger.error("mailsPara: " + mailsPara + ", mailsCC: " + mailsCC + ", asunto: " + asunto);

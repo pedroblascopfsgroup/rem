@@ -50,8 +50,10 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.MapeoGestorDocumental;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 
 @Service("gestorDocumentalAdapterManager")
@@ -344,7 +346,8 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 				ActivoOferta actOfe = listActOfe.get(0);
 				idSistemaOrigen = actOfe.getPrimaryKey().getActivo().getNumActivo().toString();
 				DDCartera cartera = actOfe.getPrimaryKey().getActivo().getCartera();
-				cliente = getClienteByCartera(cartera);
+				DDSubcartera subcartera = actOfe.getPrimaryKey().getActivo().getSubcartera();
+				cliente = getClienteByCarteraySubcartera(cartera, subcartera);
 			}
 		}
 		String estadoExpediente = "Alta";
@@ -378,6 +381,27 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		}
 		
 		return idExpediente;	
+	}
+	
+	private String getClienteByCarteraySubcartera(DDCartera cartera, DDSubcartera subcartera) {
+		
+		if(Checks.esNulo(subcartera)) {
+			return "";
+		}
+		
+		MapeoGestorDocumental mgd = new MapeoGestorDocumental();
+		
+		if(!Checks.esNulo(cartera)) {
+			mgd = genericDao.get(MapeoGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "cartera", cartera),
+					genericDao.createFilter(FilterType.EQUALS, "subcartera", subcartera));
+			
+			if(Checks.esNulo(mgd.getClienteGestorDocumental())) {
+				return "";
+			}
+		}
+		
+		return mgd.getClienteGestorDocumental();
+
 	}
 	
 	// Obtiene en nombre del Cliente tal y como se va a utilizar en el GD

@@ -138,7 +138,7 @@ public class GenericAdapter {
 		// llamada al método enviarCorreoConAdjuntos
 		try {
 			//Sacamos log de los receptores de mail para trazar posibles petes
-			logger.info("mailsPara: " + mailsPara + ", mailsCC: " + mailsCC);
+			logger.info("mailsPara: " + mailsPara + ", mailsCC: " + mailsCC + ", asunto: " + asunto);
 			// AgendaMultifuncionCorreoUtils.dameInstancia(executor).enviarCorreoConAdjuntos(null,
 			// mailsPara, mailsCC, asunto, cuerpo, null);
 			//añado comprobacion para que no falle en local

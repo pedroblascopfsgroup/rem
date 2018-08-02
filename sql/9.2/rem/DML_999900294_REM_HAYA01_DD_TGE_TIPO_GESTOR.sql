@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=NOELIA LAPERA
---## FECHA_CREACION=20180730
+--## FECHA_CREACION=20180802
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -43,7 +43,9 @@ DECLARE
 	T_TIPO_DATA('SUPEDI'	,'Supervisor de activo edificación'			,'Supervisor de activo edificación'),
 	T_TIPO_DATA('GSUE'	,'Gestor de activo suelos'				,'Gestor de activo suelos'),
 	T_TIPO_DATA('SUPSUE'	,'Supervisor de activo suelos'				,'Supervisor de activo suelos'),
-	T_TIPO_DATA('GACT'	,'Gestor de mantenimiento'				,'Gestor de mantenimiento')
+	T_TIPO_DATA('GACT'	,'Gestor de mantenimiento'				,'Gestor de mantenimiento'),
+	T_TIPO_DATA('SUPACT'	,'Supervisor de mantenimiento'				,'Supervisor de mantenimiento')
+
 
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

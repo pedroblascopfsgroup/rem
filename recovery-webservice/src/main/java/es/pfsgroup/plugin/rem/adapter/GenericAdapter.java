@@ -142,6 +142,17 @@ public class GenericAdapter {
 			// AgendaMultifuncionCorreoUtils.dameInstancia(executor).enviarCorreoConAdjuntos(null,
 			// mailsPara, mailsCC, asunto, cuerpo, null);
 			//añado comprobacion para que no falle en local
+			for(int i = 0; i < mailsPara.size(); i++) {
+				if(Checks.esNulo(mailsPara.get(i))) {
+					mailsPara.remove(i);
+				}
+			}
+			
+			if (mailsPara.isEmpty()) {
+				logger.warn(
+						"El correo de " + asunto + " no se va a enviar");
+				return;
+			}
 			String servidorCorreo = appProperties.getProperty(SERVIDOR_CORREO);
 			logger.info(servidorCorreo);
 			String puertoCorreo =appProperties.getProperty(PUERTO_CORREO);

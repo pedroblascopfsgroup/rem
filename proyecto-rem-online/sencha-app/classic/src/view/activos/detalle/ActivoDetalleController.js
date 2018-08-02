@@ -2680,12 +2680,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
   onClickPropagation : function(btn) {
     var me = this;
-    
     //var activosPropagables = me.getViewModel().get("activo.activosPropagables") || [];
     var idActivo = btn.up('tabpanel').getActiveTab().getBindRecord().activo.id,
     url = $AC.getRemoteUrl('activo/getActivosPropagables'),
-    form = btn.up('historicocondicioneslist').up('form');
-    //form = btn.up('form').getForm();
+    form = btn.up('form');
     
     form.mask(HreRem.i18n("msg.mask.espere"));
     

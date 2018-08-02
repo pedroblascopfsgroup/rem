@@ -41,16 +41,17 @@ import es.pfsgroup.plugin.gestorDocumental.model.servicios.RespuestaCrearExpedie
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.dto.documentos.GestorDocToRecoveryAssembler;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.MapeoGestorDocumental;
+import es.pfsgroup.plugin.rem.model.MapeoPropietarioGestorDocumental;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -227,19 +228,10 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		String fechaGasto = !Checks.esNulo(gasto.getFechaEmision()) ? formatter.format(gasto.getFechaEmision()) : "";
 		String idReo = !Checks.estaVacio(gasto.getGastoProveedorActivos()) ?  gasto.getGastoProveedorActivos().get(0).getActivo().getNumActivo().toString() : "";		
-		DDCartera cartera = null;
-		if (gasto.getPropietario()!=null) {
-			cartera = gasto.getPropietario().getCartera();
-		}else{
-			//si no hay propietario es sareb
-			cartera = (DDCartera) utilDiccionarioApi
-					.dameValorDiccionarioByCod(DDCartera.class, DDCartera.CODIGO_CARTERA_SAREB);
-			
-		}
-		String cliente = !Checks.estaVacio(gasto.getGastoProveedorActivos()) ?  getClienteByCartera(cartera) : "";
+		String cliente = "";
 		
 		if((Checks.esNulo(cliente) || cliente.isEmpty())) {			
-			cliente = getClienteByCartera(cartera);
+			cliente = getClienteByMGP(gasto.getPropietario());
 		}	
 		
 		
@@ -263,6 +255,20 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		}
 		
 		return idExpediente;	
+	}
+	
+	private String getClienteByMGP(ActivoPropietario propietario) {
+		
+		MapeoPropietarioGestorDocumental mgp = null;
+		
+		if(!Checks.esNulo(propietario)) {
+			mgp = genericDao.get(MapeoPropietarioGestorDocumental.class, 
+					genericDao.createFilter(FilterType.EQUALS, "propietario", propietario));
+		}	
+		
+		if(Checks.esNulo(mgp) || Checks.esNulo(mgp.getClienteGestorDocumental())) return "";
+		
+		return mgp.getClienteGestorDocumental();
 	}
 	
 	@Override

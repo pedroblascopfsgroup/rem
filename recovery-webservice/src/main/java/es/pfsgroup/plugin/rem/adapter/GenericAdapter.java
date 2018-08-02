@@ -137,6 +137,8 @@ public class GenericAdapter {
 		// TODO: Para poner remitente, sustituirlo por el primer null de la
 		// llamada al método enviarCorreoConAdjuntos
 		try {
+			//Sacamos log de los receptores de mail para trazar posibles petes
+			logger.info("mailsPara: " + mailsPara + ", mailsCC: " + mailsCC);
 			// AgendaMultifuncionCorreoUtils.dameInstancia(executor).enviarCorreoConAdjuntos(null,
 			// mailsPara, mailsCC, asunto, cuerpo, null);
 			//añado comprobacion para que no falle en local

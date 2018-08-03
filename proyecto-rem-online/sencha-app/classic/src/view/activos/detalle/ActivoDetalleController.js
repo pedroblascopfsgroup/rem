@@ -199,7 +199,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						fechaInscripcionReg = new Date(from[2], from[1] - 1, from[0])
     				}
 					if(fechaInscripcionReg != null){
-						tabData.models[0].data.fechaInscripcionReg = new Date(fechaInscripcionReg);
+						//tabData.models[0].data.fechaInscripcionReg = new Date(fechaInscripcionReg);
 					}
 				} else if (tabData.models[0].name == "informecomercial"){
 					record = form.getBindRecord();
@@ -2680,24 +2680,52 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
   onClickPropagation : function(btn) {
     var me = this;
+    //var activosPropagables = me.getViewModel().get("activo.activosPropagables") || [];
+    var idActivo = btn.up('tabpanel').getActiveTab().getBindRecord().activo.id,
+    url = $AC.getRemoteUrl('activo/getActivosPropagables'),
+    form = btn.up('form');
     
-    var activosPropagables = me.getViewModel().get("activo.activosPropagables") || [];
-    var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo) {
-              return activo.activoId == me.getViewModel().get("activo.id");
-            }), 1)[0];
-    var grid = btn.up().up();
+    form.mask(HreRem.i18n("msg.mask.espere"));
+    
+	Ext.Ajax.request({
+		url: url,
+		method : 'POST',
+		params: {idActivo: idActivo},
+		
+		success: function(response, opts){
+			
+			form.unmask();
+			var activosPropagables = Ext.decode(response.responseText).data.activosPropagables;
+			var tabPropagableData = null;
+			if(me.getViewModel() != null){
+				if(me.getViewModel().get('activo') != null){
+					if(me.getViewModel().get('activo').data != null){
+						me.getViewModel().get('activo').data.activosPropagables = activosPropagables;
+					}
+				}
+			}
+						
+		var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo) {
+	              return activo.activoId == me.getViewModel().get("activo.id");
+	            }), 1)[0];
+	    var grid = btn.up().up();
 
-    // Abrimos la ventana de selección de activos
-    var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {
-          form : null,
-          activoActual : activo,
-          activos : activosPropagables,
-          tabData : grid.getSelection()[0].data,
-          propagableData : null,
-          targetGrid: grid.targetGrid
-        }).show();
-
-    	me.getView().add(ventanaOpcionesPropagacionCambios);
+	    // Abrimos la ventana de selección de activos
+	    var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {
+	          form : null,
+	          activoActual : activo,
+	          activos : activosPropagables,
+	          tabData : grid.getSelection()[0].data,
+	          propagableData : null,
+	          targetGrid: grid.targetGrid
+	        }).show();
+	    	    
+	    	me.getView().add(ventanaOpcionesPropagacionCambios);
+		},
+	 	failure: function(record, operation) {
+	 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+	    }
+	});
   	},
 
 	onClickBotonCancelarCarga: function(btn) { 

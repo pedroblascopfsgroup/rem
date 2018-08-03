@@ -323,6 +323,16 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente
 	 * @return
 	 */
+	
+	String getTareaDefinicionDeOferta(Long idExpedienteComercial, WebDto webDto);
+
+	/**
+	 * Método que obtiene la tarea de definición oferta
+	 * 
+	 * @param dto
+	 * @param idExpediente
+	 * @return
+	 */
 	public DtoPage getPosicionamientosExpediente(Long idExpediente);
 
 	/**

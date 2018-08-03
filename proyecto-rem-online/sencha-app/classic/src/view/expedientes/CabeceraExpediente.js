@@ -71,7 +71,7 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 								        {								                   		
 					                   		xtype:'container',
 					                   		flex: 4,
-					                   		maxWidth: 800,
+					                   		maxWidth: 900,
 											height: 125,
 					                   		margin: '5 10 10 30 ',
 											defaultType: 'displayfield',
@@ -82,7 +82,7 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 											    type: 'table',
 										        columns: columns,
 										        trAttrs: {width: '100%', pading: 0},
-										        tdAttrs: {width: '33%',  pading: 0},
+										        tdAttrs: {width: '20%',  pading: 0},
 										        tableAttrs: {
 										            style: {
 										                width: '100%'
@@ -113,11 +113,13 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 											            	bind:		'{expediente.fechaAlta}',
 											            	renderer: Ext.util.Format.dateRenderer('d/m/Y')
 											            },
-											            { 
+											            {   
+											            	xtype:'comboboxfieldbase',
 															fieldLabel: HreRem.i18n('fieldlabel.tipo.alquiler'),
 															cls: 'cabecera-info-field',
 															bind :{ 
 																value: '{expediente.tipoAlquiler}',
+																store: '{comboTipoAlquiler}',
 																hidden: '{esOfertaVenta}'
 															}
 										                },
@@ -140,11 +142,13 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 										                	bind:		'{expediente.fechaSancion}',
 										                	renderer: Ext.util.Format.dateRenderer('d/m/Y')
 										                },
-										                { 
+										                {  
+										                	xtype:'comboboxfieldbase',
 															fieldLabel:HreRem.i18n('fieldlabel.tipo.inquilino'),
 															cls: 'cabecera-info-field',
 															bind :{ 
 																value: '{expediente.tipoInquilino}',
+																store :'{comboTiposInquilino}',
 																hidden: '{esOfertaVenta}'
 															}
 										                },

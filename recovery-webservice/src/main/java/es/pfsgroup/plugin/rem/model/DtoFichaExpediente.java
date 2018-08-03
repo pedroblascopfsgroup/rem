@@ -59,6 +59,8 @@ public class DtoFichaExpediente extends WebDto {
 	private Date fechaAltaOferta;
 
 	private Date fechaPosicionamiento;
+	
+	private Date fechaSancionComite;
 
 	private String codMotivoAnulacion;
 
@@ -539,6 +541,14 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setTipoInquilino(String tipoInquilino) {
 		this.tipoInquilino = tipoInquilino;
+	}
+
+	public Date getFechaSancionComite() {
+		return fechaSancionComite;
+	}
+
+	public void setFechaSancionComite(Date fechaSancionComite) {
+		this.fechaSancionComite = fechaSancionComite;
 	}
 
 

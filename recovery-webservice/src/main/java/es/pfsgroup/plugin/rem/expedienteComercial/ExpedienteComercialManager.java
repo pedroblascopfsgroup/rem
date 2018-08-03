@@ -8,12 +8,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -61,6 +64,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -106,6 +110,8 @@ import es.pfsgroup.plugin.rem.model.DtoFormalizacionResolucion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoInformeJuridico;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
+import es.pfsgroup.plugin.rem.model.DtoListadoTareas;
+import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
 import es.pfsgroup.plugin.rem.model.DtoModificarCompradores;
 import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
@@ -165,6 +171,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -210,6 +217,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public static final String PERFIL_GESTOR_MINUTAS = "GESMIN";
 	public static final String PERFIL_SUPERVISOR_MINUTAS = "SUPMIN";
 	 private static final String TAR_INFORME_JURIDICO = "Informe jurídico";
+	 
+	 //Texto para fieldLabel fecha reserva
+	 private static final String FECHA_SEGURO_RENTA = "Fecha seguro de renta";
+	 private static final String FECHA_SCORING = "Fecha Scoring";
+
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -264,6 +276,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
     
     @Autowired
     private TareaActivoApi tareaActivoApi;
+    
+    @Autowired
+	private TrabajoAdapter trabajoAdapter;
 
 	@Override
 	public String managerName() {
@@ -854,7 +869,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						dto.setImporte(oferta.getImporteOferta());
 						
 						if(!Checks.esNulo(expediente.getTipoAlquiler())) {
-							dto.setTipoAlquiler(expediente.getTipoAlquiler().getDescripcion());
+							dto.setTipoAlquiler(expediente.getTipoAlquiler().getCodigo());
 						}
 						if(!Checks.esNulo(expediente.getCompradorPrincipal())) {
 							
@@ -863,7 +878,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							CompradorExpediente compradorExpediente = genericDao.get(CompradorExpediente.class, filtro,filtro2);
 							if(!Checks.esNulo(compradorExpediente.getTipoInquilino())) {
 							if(!Checks.esNulo(compradorExpediente.getTipoInquilino().getDescripcion())) {
-							dto.setTipoInquilino(compradorExpediente.getTipoInquilino().getDescripcion());
+							dto.setTipoInquilino(compradorExpediente.getTipoInquilino().getCodigo());
 							}
 							}
 							
@@ -885,7 +900,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					dto.setComprador(expediente.getCompradorPrincipal().getFullName());
 				}
 				
-			
+				if(!Checks.esNulo(expediente.getFechaSancionComite())) {
+					dto.setFechaSancionComite(expediente.getFechaSancionComite());
+				}
 				
 
 				if (!Checks.esNulo(expediente.getEstado())) {
@@ -2881,6 +2898,53 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public String getTareaDefinicionDeOferta(Long idExpedienteComercial, WebDto webDto) {
+		Oferta	oferta = null;
+		ExpedienteComercial expediente = findOne(idExpedienteComercial);
+		List<ActivoTramite> listaTramites = null;
+		listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
+		String reultadoTramite="null";
+		try {
+			if(!Checks.esNulo(expediente)) {
+				oferta = expediente.getOferta();
+				if(!Checks.esNulo(oferta)) {
+					if (DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
+						if(!Checks.estaVacio(listaTramites)) {
+				
+								ActivoTramite tramite = listaTramites.get(0);
+								Set<TareaActivo> listaTareas = listaTramites.get(0).getTareas();
+								
+								if(!Checks.estaVacio(listaTareas)  && listaTareas.size() >= 2) {
+									for (TareaActivo tarea : listaTareas) {
+										if(!Checks.esNulo(tarea.getTarea())) {
+											if(tarea.getTarea().equals("Verificar seguro de rentas")) {
+												reultadoTramite = FECHA_SEGURO_RENTA;
+												return reultadoTramite;
+												
+											} else if(tarea.getTarea().equals("Verificar scoring")) {
+												reultadoTramite = FECHA_SCORING;	
+												return reultadoTramite;
+											}
+									}
+										
+									}
+									
+								}
+				
+			}
+		}
+		}
+			}
+		
+		} catch (Exception e) {
+			logger.error("error en expedienteComercialManager", e);
+			return reultadoTramite;
+		}
+		return reultadoTramite;
+	}
 
 	@Override
 	@Transactional(readOnly = false)
@@ -3006,22 +3070,56 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public boolean saveFichaExpediente(DtoFichaExpediente dto, Long idExpediente) {
 
 		ExpedienteComercial expedienteComercial = findOne(idExpediente);
-
+		CompradorExpediente compradorExpediente  = null;
+		
 		if (!Checks.esNulo(expedienteComercial)) {
 
 			try {
-				beanUtilNotNull.copyProperties(expedienteComercial, dto);
 
 				if (Checks.esNulo(dto.getEstadoPbc()) || !Checks.esNulo(dto.getConflictoIntereses())
 						|| !Checks.esNulo(dto.getRiesgoReputacional())) {
 					ofertaApi.resetPBC(expedienteComercial, false);
 				}
-
+				
+				if(!Checks.esNulo(dto.getNumContratoAlquiler())) {
+					expedienteComercial.setNumContratoAlquiler(dto.getNumContratoAlquiler());
+					}
+				
+				if(!Checks.esNulo(dto.getRiesgoReputacional())) {
+					expedienteComercial.setRiesgoReputacional(dto.getRiesgoReputacional());
+					}
+							
+				if(!Checks.esNulo(dto.getConflictoIntereses())) {
+					expedienteComercial.setConflictoIntereses(dto.getConflictoIntereses());
+					}
+				
+				if(!Checks.esNulo(dto.getFechaVenta())) {
+					expedienteComercial.setFechaVenta(dto.getFechaVenta());
+					}
+				
+				if(!Checks.esNulo(dto.getFechaSancion())) {
+					expedienteComercial.setFechaSancion(dto.getFechaSancion());
+					}
+				
+				if(!Checks.esNulo(dto.getFechaSancionComite())) {
+					expedienteComercial.setFechaSancionComite(dto.getFechaSancionComite());
+				}
+				
+				if(!Checks.esNulo(dto.getEstadoPbc())) {
+					expedienteComercial.setEstadoPbc(dto.getEstadoPbc());
+					}
+				
+				
+				if(!Checks.esNulo(dto.getPeticionarioAnulacion())) {
+					expedienteComercial.setPeticionarioAnulacion(dto.getPeticionarioAnulacion());
+					}
+				
 				if (!Checks.esNulo(dto.getCodMotivoAnulacion())) {
 					DDMotivoAnulacionExpediente motivoAnulacionExpediente = (DDMotivoAnulacionExpediente) utilDiccionarioApi
 							.dameValorDiccionarioByCod(DDMotivoAnulacionExpediente.class, dto.getCodMotivoAnulacion());
 					expedienteComercial.setMotivoAnulacion(motivoAnulacionExpediente);
 				}
+			
 
 				if (!Checks.esNulo(expedienteComercial.getReserva())) {
 					if (!Checks.esNulo(dto.getEstadoDevolucionCodigo())) {
@@ -3048,6 +3146,31 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						expedienteComercial.getReserva().setFechaFirma(dto.getFechaReserva());
 					}
 				}
+				
+				if(!Checks.esNulo(dto.getTipoAlquiler())) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",dto.getTipoAlquiler());
+					DDTipoAlquiler tipoAlquiler = genericDao.get(DDTipoAlquiler.class, filtro);
+					
+					expedienteComercial.setTipoAlquiler(tipoAlquiler);
+				}
+				
+				if(!Checks.esNulo(dto.getTipoInquilino())) {
+					
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "comprador",expedienteComercial.getCompradorPrincipal().getId());
+					Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "expediente",expedienteComercial.getId());
+					compradorExpediente = genericDao.get(CompradorExpediente.class, filtro,filtro2);
+					
+					if(!Checks.esNulo(compradorExpediente)) {
+						
+						Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "codigo",dto.getTipoInquilino());
+						DDTipoInquilino tipoInquilino = genericDao.get(DDTipoInquilino.class, filtro3);
+						
+						compradorExpediente.setTipoInquilino(tipoInquilino);
+					}
+					
+				}
+				
+				
 				if (!Checks.esNulo(expedienteComercial.getUltimoPosicionamiento())
 						&& !Checks.esNulo(dto.getFechaPosicionamiento())) {
 					expedienteComercial.getUltimoPosicionamiento()
@@ -3058,13 +3181,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					expedienteComercial.setComiteSancion((DDComiteSancion) utilDiccionarioApi.dameValorDiccionarioByCod(
 											DDComiteSancion.class, dto.getCodigoComiteSancionador()));
 				}
+				
 				if (expedienteComercial.getId() != null) {
 					genericDao.update(ExpedienteComercial.class, expedienteComercial);
+					if(!Checks.esNulo(compradorExpediente)) {
+						genericDao.update(CompradorExpediente.class, compradorExpediente);
+					}
 				} else {
 					genericDao.save(Reserva.class, expedienteComercial.getReserva());
 					genericDao.save(Oferta.class, expedienteComercial.getOferta());
 					genericDao.save(ExpedienteComercial.class, expedienteComercial);
-				}
+					}
 			} catch (IllegalAccessException e) {
 				logger.error("error en expedienteComercialManager", e);
 			} catch (InvocationTargetException e) {

@@ -39,7 +39,17 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							xtype: 'displayfieldbase',
 							fieldLabel:  HreRem.i18n('fieldlabel.propietario'),
 			                bind:		'{expediente.propietario}'
-						},		       
+						},
+						  {  
+							xtype:'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.tipo.alquiler'),
+							cls: 'cabecera-info-field',
+							bind :{ 
+								value: '{expediente.tipoAlquiler}',
+								hidden: '{esOfertaVenta}',
+								store: '{comboTipoAlquiler}'
+							}
+		                },
 						{ 
 							xtype: 'displayfieldbase',
 							fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
@@ -49,6 +59,16 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							xtype: 'displayfieldbase',
 							fieldLabel:  HreRem.i18n('fiedlabel.numero.activo.agrupacion'),
 		                	bind:		'{expediente.numEntidad}'
+		                },
+		                { 
+		                	xtype:'comboboxfieldbase',
+							fieldLabel:HreRem.i18n('fieldlabel.tipo.inquilino'),
+							cls: 'cabecera-info-field',
+							bind :{ 
+								value: '{expediente.tipoInquilino}',
+								hidden: '{esOfertaVenta}',
+									store :'{comboTiposInquilino}'
+							}
 		                }
 						
 					]
@@ -172,14 +192,22 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 	                	xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
 						fieldLabel: HreRem.i18n('fieldlabel.fecha.reserva'),
-	                	bind:		'{expediente.fechaReserva}'
+	                	bind:		{
+	                		value: '{expediente.fechaReserva}'
+	                		
+	                	},
+	                	listeners: {
+							render: 'tareaDefinicionDeOferta'
+						}
 	                	//,readOnly: true
 	                },
 	                {
 	                	xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
-	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.venta'),
-	                	bind:		'{expediente.fechaVenta}'
+	                	bind:		{
+	                		value: '{expediente.fechaVenta}',
+	                		fieldLabel:'{fechaVentaEsAlquiler}'
+	                		}
 	                	//,readOnly: true
 	                	
 	                },
@@ -189,9 +217,27 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.ingreso.cheque'),
 	                	bind: {
 	                		value: '{expediente.fechaContabilizacionPropietario}',
-	                		readOnly: '{fechaIngresoChequeReadOnly}'
+	                		readOnly: '{fechaIngresoChequeReadOnly}',
+	                		hidden: '{!esOfertaVenta}'
 	                	}		
-	                }
+	                },
+	            	{ 
+						xtype: 'textfieldbase',
+	                	fieldLabel:  HreRem.i18n('fieldlabel.numero.contrato.alquiler'),
+			        	bind: {
+			        		value:'{expediente.numContratoAlquiler}',
+			        		hidden: '{esOfertaVenta}'	
+			        	}
+			        },
+			        { 
+						xtype: 'datefieldbase',
+						formatter: 'date("d/m/Y")',
+	                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.elevacion.comite'),
+			        	bind: {
+			        		value: '{expediente.fechaSancionComite}',
+			        		hidden: '{esOfertaVenta}'	
+			        	}
+			        }
 
 				]
 				
@@ -231,11 +277,12 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 				        },
 						{    
 			                xtype:'fieldsettable',
+			                fieldLabel:  HreRem.i18n('fieldlabel.motivo.anulacion'),
 							defaultType: 'displayfield',
-							title: HreRem.i18n('title.devolucion.reserva'),
 							colspan: 3,
 							bind: {
-								disabled: '{!expediente.tieneReserva}'
+								disabled: '{!expediente.tieneReserva}',
+								hidden: '{!esOfertaVenta}'
 							},
 							items: [
 									{

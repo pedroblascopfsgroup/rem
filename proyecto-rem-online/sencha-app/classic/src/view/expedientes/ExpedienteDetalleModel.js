@@ -178,6 +178,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	}
 	     	return comprador;
 	     },
+	     	     
 	     reservaTipoEsAlquiler: function(get){
 				
 				var tipoOferta= get('expediente.tipoExpedienteCodigo');
@@ -254,7 +255,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		     	var bloqueado = get('expediente.bloqueado');
 		     	return bloqueado;
 		     	
-		 } 
+		 },
+		 
+	     esTipoAlquiler: function(get){
+			var tipoExpedienteCodigo = get('expediente.tipoExpedienteCodigo');
+			
+			return (tipoExpedienteCodigo == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"]);
+	     }
 	 },
 
 

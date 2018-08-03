@@ -260,7 +260,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     esTipoAlquiler: function(get){
 			var tipoExpedienteCodigo = get('expediente.tipoExpedienteCodigo');
 			
-			return (tipoExpedienteCodigo == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"]);
+			return (tipoExpedienteCodigo != CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"]);
 	     }
 	 },
 

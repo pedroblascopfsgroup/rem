@@ -237,8 +237,8 @@ public class GenericController extends ParadiseJsonController{
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboSubtipoTrabajo(String tipoTrabajoCodigo){
-		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubtipoTrabajo(tipoTrabajoCodigo)));	
+	public ModelAndView getComboSubtipoTrabajo(String tipoTrabajoCodigo, Long idActivo){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubtipoTrabajo(tipoTrabajoCodigo, idActivo)));	
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)

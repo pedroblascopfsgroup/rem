@@ -1113,7 +1113,37 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     		otrosDetallePbc.setDisabled(true);
     	}
 	},
-	
+	tareaDefinicionDeOferta: function(rec){
+		var me = this;
+		var url =  $AC.getRemoteUrl('expedientecomercial/getTareaDefinicionDeOferta');
+		Ext.Ajax.request({
+		
+		     url: url,
+		     params: {
+		    	 idExpediente : me.getViewModel().get("expediente.id")
+		     		}
+			
+		    ,success: function (response,a, operation, context) {
+		    	var data = {};
+		    	try {
+		    		data = Ext.decode(response.responseText);
+		    	}  catch (e){
+		    		
+		    	};
+		    	 	var label = data.codigo;
+		    	 	if(label != "null"){
+		    	 		rec.setFieldLabel(data.codigo)
+		    	 	}
+		    	 	
+            },
+            
+            failure: function (a, operation, context) {
+            	rec.labelEl.update(HreRem.i18n('fieldlabel.fecha.reserva'));
+            }
+	     
+		});
+	}
+	,
 	onMarcarPrincipalClick: function(grid, rowIndex, colIndex, item, e, rec){
 		var me = this;
     	me.gridOrigen = grid;

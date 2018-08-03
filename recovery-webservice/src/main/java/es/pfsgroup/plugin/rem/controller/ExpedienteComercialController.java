@@ -539,6 +539,23 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	}
 	
 	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getTareaDefinicionDeOferta(Long idExpediente, WebDto webDto, ModelMap model) {
+
+		try {
+			String codigo = expedienteComercialApi.getTareaDefinicionDeOferta(idExpediente, webDto);
+		
+			model.put("codigo", codigo);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("codigo", "null");
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getPosicionamientosExpediente(Long idExpediente, WebDto webDto, ModelMap model) {
 		

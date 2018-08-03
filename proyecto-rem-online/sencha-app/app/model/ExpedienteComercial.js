@@ -150,6 +150,11 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			name: 'primaOpcionCompraAlquiler'	
     		},
     		{
+    			name: 'fechaSancionComite',
+    			type:'date', 
+        		dateFormat: 'c'
+    		},
+    		{
     			name: 'precioOpcionCompraAlquiler'	
     		},
     		{

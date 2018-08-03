@@ -290,6 +290,24 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			}   
     		
     	},
+    	comboTipoAlquiler: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposAlquilerActivo'}
+			}   
+    		
+    	},
+    	comboTiposInquilino: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposInquilino'}
+			}   
+    		
+    	},
     	
     	storeTiposArras: {
 			model: 'HreRem.model.ComboBase',

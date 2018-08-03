@@ -141,7 +141,7 @@ public class GenericAdapter {
 			// mailsPara, mailsCC, asunto, cuerpo, null);
 			//añado comprobacion para que no falle en local
 			for(int i = 0; i < mailsPara.size(); i++) {
-				if(Checks.esNulo(mailsPara.get(i))) {
+				if(Checks.esNulo(mailsPara.get(i)) || "null".equals(mailsPara.get(i).toLowerCase())) {
 					mailsPara.remove(i);
 				}
 			}

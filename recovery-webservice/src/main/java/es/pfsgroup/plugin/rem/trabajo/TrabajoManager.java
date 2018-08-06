@@ -3463,7 +3463,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				}
 			}
 		}
-		throw new NullPointerException();
+		return false;
 	}
 }
 

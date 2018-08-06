@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=20180731
+--## FECHA_CREACION=20180806
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4335
@@ -45,7 +45,7 @@ BEGIN
 	
 	IF V_NUM_TABLAS > 0 THEN
 	
-	    V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' SET TAP_SCRIPT_VALIDACION_JBPM = ''activoEnTramite() ? ''''No se puede avanzar la tarea ya que el activo se encuentra en estado "En trámite"'''' : esFechaMenor(valores[''''T004_CierreEconomico''''][''''fechaCierre''''], fechaValidacionTrabajo()) ? ''''Fecha cierre debe ser posterior o igual a fecha de validaci&oacute;n del trabajo'''' : null'','|| 
+	    V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' SET TAP_SCRIPT_VALIDACION_JBPM = ''activoEnTramite() ? ''''No se puede avanzar la tarea ya que el activo se encuentra en estado "En tr&#225;mite"'''' : esFechaMenor(valores[''''T004_CierreEconomico''''][''''fechaCierre''''], fechaValidacionTrabajo()) ? ''''Fecha cierre debe ser posterior o igual a fecha de validaci&oacute;n del trabajo'''' : null'','|| 
 	    'USUARIOMODIFICAR= '''||V_USUSARIO_MOD||''' ,'||
 		'FECHAMODIFICAR= SYSDATE '||
 	    'WHERE TAP_CODIGO = ''T004_CierreEconomico'' ';

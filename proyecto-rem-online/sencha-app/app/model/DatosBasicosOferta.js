@@ -81,6 +81,22 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		},
     		{
     			name: 'ventaCartera'
+    		},
+    		{
+    			name: 'permiteProponer',
+    			convert: function(value) {
+    				if (!Ext.isEmpty(value)) {
+						if  ((typeof value) == 'string') {
+	    					if(value == "true"){
+	    						return true;
+	    					}else{
+	    						return false;
+	    					}
+	    				} else {
+	    					return value;
+	    				}
+    				}
+    			}
     		}
     ],
     

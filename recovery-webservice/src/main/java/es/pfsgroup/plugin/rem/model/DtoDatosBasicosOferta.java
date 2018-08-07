@@ -69,6 +69,8 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private String observaciones;
 	
 	private String ventaCartera;
+	
+	private Boolean permiteProponer;
 
 	public Long getIdOferta() {
 		return idOferta;
@@ -263,7 +265,12 @@ public class DtoDatosBasicosOferta extends WebDto {
 		this.ventaCartera = ventaCartera;
 	}
 
-	    	
-   	
-   	
+	public Boolean getPermiteProponer() {
+		return permiteProponer;
+	}
+
+	public void setPermiteProponer(Boolean permiteProponer) {
+		this.permiteProponer = permiteProponer;
+	}
+
 }

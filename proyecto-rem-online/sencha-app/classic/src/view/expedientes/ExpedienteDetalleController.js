@@ -2285,5 +2285,25 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    	 me.getView().unmask();
 		     }
 		});		
+	},
+	
+	onClickGeneraOfertarHojaExcel: function(btn) {
+    	var me = this,
+		config = {};
+
+		config.params = {};
+		config.params.idOferta=me.getViewModel().get("datosbasicosoferta.idOferta");
+		config.url= $AC.getRemoteUrl("ofertas/generateExcelOferta");
+		
+		Ext.Msg.confirm(
+				HreRem.i18n("title.propuesta.oferta"),
+				HreRem.i18n("msg.propuesta.oferta"),
+				function(btn){
+					if (btn == "yes"){
+
+						me.fireEvent("downloadFile", config);
+					}
+				}
+			);
 	}
 });

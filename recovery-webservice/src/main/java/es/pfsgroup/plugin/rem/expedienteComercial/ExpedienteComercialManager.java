@@ -1095,6 +1095,31 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setVentaCartera(oferta.getVentaDirecta() ? "Si" : "No");
 		}
 		
+		if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
+			///Comprobamos si la tarea Elevar a Sanción está activa
+			
+			List<ActivoTramite> activostramite = activoTramiteApi.getListaTramitesActivo(oferta.getActivoPrincipal().getId());
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "T015_ElevarASancion");
+			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			TareaProcedimiento tap = genericDao.get(TareaProcedimiento.class, filtro, filtroBorrado);
+			
+			dto.setPermiteProponer(false);
+			
+			for(ActivoTramite actt : activostramite){
+				List<TareaExterna> tareas = activoTareaExternaApi.getByIdTareaProcedimientoIdTramite(actt.getId(),tap.getId());
+				for(TareaExterna t : tareas){
+					if(!t.getTareaPadre().getTareaFinalizada() && !t.getTareaPadre().getAuditoria().isBorrado()){
+						dto.setPermiteProponer(true);
+						break;
+					}
+				}
+			}
+			
+		}else{
+			dto.setPermiteProponer(false);
+		}
+		
 		return dto;
 	}
 

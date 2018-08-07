@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import es.capgemini.devon.files.FileItem;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
@@ -27,7 +30,9 @@ import es.pfsgroup.plugin.rem.excel.OfertasExcelReport;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaRequestDto;
@@ -50,6 +55,12 @@ public class OfertasController {
 
 	@Autowired
 	GenericABMDao genericDao;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private NotificationOfertaManager notificationOferta;
 
 	
 	@SuppressWarnings("unchecked")
@@ -224,6 +235,21 @@ public class OfertasController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getDiccionarioSubtipoProveedorCanal(){
 		return createModelAndViewJson(new ModelMap("data", ofertaApi.getDiccionarioSubtipoProveedorCanal()));
+	}
+	
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public void generateExcelOferta(Long idOferta, HttpServletRequest request, HttpServletResponse response) throws IOException {
+		
+		DtoOfertasFilter dto = new DtoOfertasFilter();
+		dto.setIdOferta(idOferta);
+		ExcelReport report = new OfertasExcelReport(ofertaApi.getListOfertasFromView(dto));
+		File file = excelReportGeneratorApi.generateReport(report);
+		
+		Oferta oferta = ofertaApi.getOfertaById(idOferta);
+		notificationOferta.sendNotificationPropuestaOferta(oferta, new FileItem(file));
+		
+		excelReportGeneratorApi.sendReport(file, response);
 	}
 	
 }

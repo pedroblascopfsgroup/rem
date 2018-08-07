@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.oferta;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -25,6 +26,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
@@ -190,6 +192,57 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 			}
 			
+		}
+	}
+	
+	
+	/**
+	 * Al proponer una oferta, 
+	 * se enviará una notificación (correo) al gestor comercial correspondiente, 
+	 * 
+	 * @param tramite
+	 */
+	public void sendNotificationPropuestaOferta(Oferta oferta, FileItem file) {
+
+		Usuario usuario = null;
+		Activo activo = oferta.getActivoPrincipal();
+
+		usuario = gestorActivoManager.getGestorByActivoYTipo(activo, "GESTCOMALQ");
+
+		if (activo != null && usuario != null) {
+
+			String titulo = "Propuesta oferta para el inmueble con referencia: " + activo.getNumActivo();
+			
+			DtoSendNotificator dtoSendNotificator = new DtoSendNotificator();
+
+			dtoSendNotificator.setNumActivo(activo.getNumActivo());
+			dtoSendNotificator.setDireccion(generateDireccion(activo));
+			dtoSendNotificator.setTitulo(titulo);
+
+			if(!Checks.esNulo(oferta.getAgrupacion())) {
+				dtoSendNotificator.setNumAgrupacion(oferta.getAgrupacion().getNumAgrupRem());	
+			}
+
+			List<String> mailsPara = new ArrayList<String>();
+			List<String> mailsCC = new ArrayList<String>();
+
+			if(!Checks.esNulo(usuario)){
+				mailsPara.add(usuario.getEmail());
+				
+				List<GestorSustituto> sustitutos = genericDao.getList(GestorSustituto.class, genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", usuario.getId()));
+				for (GestorSustituto gestorSustituto : sustitutos) {
+					if ((gestorSustituto.getFechaFin().after(new Date()) || gestorSustituto.getFechaFin().equals(new Date())) && (gestorSustituto.getFechaInicio().before(new Date()) || gestorSustituto.getFechaInicio().equals(new Date())) && !gestorSustituto.getAuditoria().isBorrado()){
+						mailsPara.add(gestorSustituto.getUsuarioGestorSustituto().getEmail());
+					}
+				}
+			}
+			
+			mailsCC.add(this.getCorreoFrom());
+			
+			List<DtoAdjuntoMail> adjuntos = new ArrayList<DtoAdjuntoMail>();
+			adjuntos.add(createAdjunto(file, "Propuesta_Oferta.xlsx"));
+
+			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.creaCuerpoPropuestaOferta(oferta), adjuntos);
 		}
 	}
 	

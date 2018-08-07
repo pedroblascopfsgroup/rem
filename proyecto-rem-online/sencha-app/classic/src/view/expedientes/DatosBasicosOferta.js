@@ -209,10 +209,10 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                },
 		    			{
 		                    xtype: 'fieldsettable',
-		                    title: HreRem.i18n('title.comerical.oferta.detalle.oferta.express'),
-		                    bind: {
+		                    title: HreRem.i18n('title.comerical.oferta'),
+		                    /*bind: {
 		                        hidden: '{!esCarteraCajamar}'
-		                    },
+		                    },*/
 		                    colspan: 3,
 		                    items: [
 		                    		{

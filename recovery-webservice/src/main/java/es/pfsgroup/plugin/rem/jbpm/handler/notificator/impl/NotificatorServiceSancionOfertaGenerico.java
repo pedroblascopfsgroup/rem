@@ -36,6 +36,8 @@ import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
+import es.pfsgroup.plugin.rem.model.ActivoPropietario;
+import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
@@ -522,8 +524,22 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			if(!Checks.esNulo(appProperties.getProperty("haya.reservation.url"))){
 				reservationUrl = appProperties.getProperty("haya.reservation.url");
 			}
-			cuerpo = cuerpo + "<p>Pinche <a href=\"" + reservationUrl + expediente.getId() + "/" + reservationKey
-					+ "/1\">aquí</a> para la descarga del contrato de reserva.</p>";
+			
+			Filter filterProp = genericDao.createFilter(FilterType.EQUALS, "activo.id", tramite.getActivo().getId());
+			ActivoPropietario propietario = genericDao.get(ActivoPropietarioActivo.class, filterProp).getPropietario();
+			
+			if(tramite.getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
+				if (!ActivoPropietario.CODIGO_FONDOS_TITULIZACION.equals(propietario.getCodigo()) && ActivoPropietario.CODIGO_GIVP.equals(propietario.getCodigo()) 
+						&& ActivoPropietario.CODIGO_GIVP_II.equals(propietario.getCodigo())){					
+					cuerpo = cuerpo + "<p>Pinche <a href=\"" + reservationUrl + expediente.getId() + "/" + reservationKey
+							+ "/1\">aquí</a> para la descarga del contrato de reserva.</p>";
+				}
+			} else {
+				cuerpo = cuerpo + "<p>Pinche <a href=\"" + reservationUrl + expediente.getId() + "/" + reservationKey
+						+ "/1\">aquí</a> para la descarga del contrato de reserva.</p>";
+			}
+			
+			
 		}
 
 		cuerpo = cuerpo + "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
@@ -557,7 +573,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			adjuntarInstrucciones = true;
 		}
 		
-		enviaNotificacionGenerico(tramite.getActivo(), asunto, cuerpoCorreo, adjuntarInstrucciones, destinatarios);
+		enviaNotificacionGenerico(tramite.getActivo(), asunto, cuerpoCorreo, adjuntarInstrucciones, oferta, destinatarios);
 	}
 
 	private void enviaNotificacionRechazar(ActivoTramite tramite, Activo activo, Oferta oferta,
@@ -574,10 +590,10 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		dtoSendNotificator.setTitulo(asunto);
 
 		String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
-		enviaNotificacionGenerico(tramite.getActivo(), asunto, cuerpoCorreo, false, destinatarios);
+		enviaNotificacionGenerico(tramite.getActivo(), asunto, cuerpoCorreo, false, oferta, destinatarios);
 	}
 
-	private void enviaNotificacionGenerico(Activo activo, String asunto, String cuerpoCorreo, boolean adjuntaInstrucciones,
+	private void enviaNotificacionGenerico(Activo activo, String asunto, String cuerpoCorreo, boolean adjuntaInstrucciones, Oferta oferta,
 			String... destinatarios) {
 		if (Checks.esNulo(destinatarios)) {
 			throw new IllegalArgumentException("Es necesario especificar el destinatario de la notificación.");
@@ -588,13 +604,26 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		FileItem f1 = null;
 		FileItem f2 = null;
 		FileItem f3 = null;
+		
+		Filter filterProp = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoPropietario propietario = genericDao.get(ActivoPropietarioActivo.class, filterProp).getPropietario();
 
 		try {
 
 			if (adjuntaInstrucciones) {
 				//ADJUNTOS SI ES CAJAMAR
 				if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
-					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_formalizacion_cajamar.pdf");
+					if (ActivoPropietario.CODIGO_FONDOS_TITULIZACION.equals(propietario.getCodigo()) || ActivoPropietario.CODIGO_GIVP.equals(propietario.getCodigo()) 
+							|| ActivoPropietario.CODIGO_GIVP_II.equals(propietario.getCodigo())){
+						if (oferta.getOfertaExpress()){
+							f1 = FileItemUtils.fromResource("docs/07_2018_Instrucciones_Reserva_express_OFICINAS.pdf");
+						}else {
+							f1 = FileItemUtils.fromResource("docs/Instrucciones_Reserva_Formalizacion_estandar_072018.pdf");
+						}					
+					}else {
+						f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_formalizacion_cajamar.pdf");
+					}
+					
 					f2 = FileItemUtils.fromResource("docs/ficha_cliente.xlsx");
 					f3 = FileItemUtils.fromResource("docs/manif_titular_real.doc");
 					

@@ -669,9 +669,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				&& !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
 				&& DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
 			nuevoCondicionante.setSolicitaReserva(1);
-			DDTipoCalculo tipoCalculoImporteFijo = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO);
-			nuevoCondicionante.setTipoCalculoReserva(tipoCalculoImporteFijo);
-			nuevoCondicionante.setImporteReserva(new Double(1000));
+			DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
+			nuevoCondicionante.setTipoCalculoReserva(tipoCalculo);
+			nuevoCondicionante.setPorcentajeReserva(new Double(3));
+			nuevoCondicionante.setImporteReserva(oferta.getImporteOferta() * (new Double(3) / 100));
 			nuevoCondicionante.setPlazoFirmaReserva(5);
 
 			//Obtiene las condiciones del activo con la misma logica que se aplica para calcularlas

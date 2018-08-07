@@ -12,9 +12,6 @@
 --##        0.1 Version inicial
 --##########################################
 --*/
-
---Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
-
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 SET DEFINE OFF;

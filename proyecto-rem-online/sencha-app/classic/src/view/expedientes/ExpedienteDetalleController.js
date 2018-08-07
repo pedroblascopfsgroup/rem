@@ -105,6 +105,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				// Si la API tiene metodo de lectura (read).
 				model.load({
 				    success: function(record) {
+				    	var itemsExpedienteForm = form.getForm().getFields().items;
+				    	var itemReserva = itemsExpedienteForm.find(function(item){return item.fieldLabel === "Fecha de reserva"});
+				    	if(itemReserva != null){
+				    		me.tareaDefinicionDeOferta(itemReserva);   
+				    	}
 				    	form.setBindRecord(record);			    	
 				    	form.unmask();
 				    	if(Ext.isFunction(form.afterLoad)) {
@@ -1134,7 +1139,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    	 	if(label != "null"){
 		    	 		rec.setFieldLabel(data.codigo)
 		    	 	}
-		    	 	
             },
             
             failure: function (a, operation, context) {

@@ -26,6 +26,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 			},
 
 			beforetabchange: function (tabPanel, tabNext, tabCurrent) {
+				if(tabNext.getTitle() == "Ficha"){
+					var itemsExpedienteForm = tabNext.getForm().getFields().items;
+			    	
+			    	var itemReserva = itemsExpedienteForm.find(function(item){return item.fieldLabel === "Fecha de reserva"});
+
+			    	if(itemReserva != null){
+			    		var me = tabNext;
+			    		me.lookupController().tareaDefinicionDeOferta(itemReserva);   
+			    	}
+					
+				}
 	        	tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
 	        	// Comprobamos si estamos editando para confirmar el cambio de pestaña
 	        	if (tabCurrent != null) {

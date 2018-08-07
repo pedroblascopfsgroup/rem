@@ -35,13 +35,22 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleMain', {
     	 * La formula que desactiva la pestaña de reserva no actua cuando se renderiza por primera vez el expediente
     	 */
     	var reservaDisabled;
-    	var bloqueado;
-    	reservaDisabled = !me.getViewModel().get('expediente.tieneReserva') || me.getViewModel().get('expediente.tipoExpedienteCodigo') === "02";
+		var bloqueado;
+		var tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
+		
+    	reservaDisabled = !me.getViewModel().get('expediente.tieneReserva') || me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler;
 		reservaDisabled = Ext.isDefined(reservaDisabled)? reservaDisabled : true;
 		bloqueado = me.getViewModel().get('expediente.bloqueado');
     	me.down('reservaexpediente').setDisabled(reservaDisabled);
 		me.down('expedientedetalle').bloquearExpediente(me.down('datosbasicosexpediente'),bloqueado);
 		me.down('ofertaexpediente').bloquearExpediente(me.down('ofertaexpediente'),bloqueado);
+
+		// HREOS-4366
+		if(me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){				
+			var tabReserva = me.down('reservaexpediente');
+			tabReserva.tab.setVisible(false);
+		}
+
 		if(me.down('activoExpedienteTabPanel') != undefined){
 			me.down('activoExpedienteTabPanel').bloquearExpediente(me.down('activoExpedienteTabPanel'),bloqueado);
 		}

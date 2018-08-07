@@ -318,4 +318,6 @@ public interface ParticularValidatorApi {
 
 	Boolean subcarteraPerteneceCartera(String subcartera, String cartera);
 
+	Boolean mediadorExisteVigente(String codMediador);
+
 }

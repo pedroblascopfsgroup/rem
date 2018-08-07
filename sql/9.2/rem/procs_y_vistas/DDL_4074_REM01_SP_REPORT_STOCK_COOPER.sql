@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20180801
+--## FECHA_CREACION=20180806
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.18
 --## INCIDENCIA_LINK=REMVIP-1408
@@ -27,9 +27,9 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_REPORT_STOCK_COOPER(SP_OUTPUT OUT VARCH
     V_TABLA_MAIL 	VARCHAR2(30 CHAR) := 'INFORME_ENVIO_MAIL_COOPER';
 
     V_FROM 			VARCHAR2(100 CHAR) := 'noreply.rem@pfsgroup.es';
-    V_TO 			VARCHAR2(100 CHAR) := 'luis.morales@haya.es, jhernandezbe@haya.es, jespejo@haya.es';
+    V_TO 			VARCHAR2(100 CHAR) := 'daniel.albert@pfsgroup.es';
     V_BODY 			VARCHAR2(500 CHAR) := 'Se adjunta el informe diario del stock de COOPER.';
-    V_CC 			VARCHAR2(500 CHAR) := 'lgomezc@haya.es, dgutierrez@haya.es, guillermo.llido@pfsgroup.es';
+    V_CC 			VARCHAR2(500 CHAR) := 'guillermo.llido@pfsgroup.es';
     V_ASUNTO 		VARCHAR2(250 CHAR) := 'Informe REM del Stock de COOPER ';
     V_ADJUNTO 		VARCHAR2(250 CHAR) := 'Informe_stock_cartera_COOPER.xlsx';
     

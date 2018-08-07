@@ -153,7 +153,9 @@ public class GestorDocToRecoveryAssembler {
 		fileSalidaTemporal.deleteOnExit();
 		
 		resultado.setFileName(nomFichero + ext);
-		resultado.setContentType(contentType);			
+		if(!Checks.esNulo(contentType)) {
+			resultado.setContentType(contentType);	
+		}		
 		resultado.setFile(fileSalidaTemporal);
         OutputStream outputStream = resultado.getOutputStream(); // Last step is to get FileItem's output stream, and write your inputStream in it. This is the way to write to your FileItem.
         IOUtils.copy(stream, outputStream);

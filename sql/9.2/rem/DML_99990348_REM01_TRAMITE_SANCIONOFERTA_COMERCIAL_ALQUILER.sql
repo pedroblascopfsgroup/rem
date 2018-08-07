@@ -182,7 +182,7 @@ DECLARE
                 '3*24*60*60*1000L',
                 'NULL',
                 '',
-				'valores[''''T015_CierreContrato''''][''''docOK''''] != ''''false'''' ? null : ''''Debe marcar la casilla "Documentación OK" para poder avanzar la tarea.''''',
+				'valores[''''T015_CierreContrato''''][''''docOK''''] != ''''false'''' ? null : ''''Debe marcar la casilla "Documentaci&#243;n OK" para poder avanzar la tarea.''''',
 				''          
 			)
 			

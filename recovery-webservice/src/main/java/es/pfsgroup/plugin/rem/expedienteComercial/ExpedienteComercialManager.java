@@ -37,6 +37,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.adjunto.model.Adjunto;
+import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -221,6 +222,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	 //Texto para fieldLabel fecha reserva
 	 private static final String FECHA_SEGURO_RENTA = "Fecha seguro de renta";
 	 private static final String FECHA_SCORING = "Fecha Scoring";
+	 
+	public static final String ESTADO_PROCEDIMIENTO_FINALIZADO = "11";
 
 
 	@Autowired
@@ -1096,23 +1099,26 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
-			///Comprobamos si la tarea Elevar a Sanción está activa
+			///Comprobamos si la tarea Elevar a Sanción está activa	
+			dto.setPermiteProponer(false);
 			
-			List<ActivoTramite> activostramite = activoTramiteApi.getListaTramitesActivo(oferta.getActivoPrincipal().getId());
-			
+			List<ActivoTramite> tramitesActivo = tramiteDao.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "T015_ElevarASancion");
 			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 			TareaProcedimiento tap = genericDao.get(TareaProcedimiento.class, filtro, filtroBorrado);
 			
-			dto.setPermiteProponer(false);
-			
-			for(ActivoTramite actt : activostramite){
-				List<TareaExterna> tareas = activoTareaExternaApi.getByIdTareaProcedimientoIdTramite(actt.getId(),tap.getId());
-				for(TareaExterna t : tareas){
-					if(!t.getTareaPadre().getTareaFinalizada() && !t.getTareaPadre().getAuditoria().isBorrado()){
-						dto.setPermiteProponer(true);
-						break;
-					}
+			for(ActivoTramite actt : tramitesActivo){
+				if(!DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(actt.getEstadoTramite().getCodigo()) &&
+				   !DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(actt.getEstadoTramite().getCodigo()) &&
+				   !ESTADO_PROCEDIMIENTO_FINALIZADO.equals(actt.getEstadoTramite().getCodigo())
+				){
+					List<TareaExterna> tareas = activoTareaExternaApi.getByIdTareaProcedimientoIdTramite(actt.getId(),tap.getId());
+					for(TareaExterna t : tareas){
+						if(t.getTareaPadre().getTareaFinalizada() && t.getTareaPadre().getAuditoria().isBorrado()){
+							dto.setPermiteProponer(true);
+							break;
+						}
+					}	
 				}
 			}
 			

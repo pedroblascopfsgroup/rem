@@ -5,3 +5,5 @@
 [submodule "sql/pitertul"]
 	path = sql/pitertul
 	url = ssh://git.pfsgroup.es:29418/pfs-pitertul
+        ignore = all
+

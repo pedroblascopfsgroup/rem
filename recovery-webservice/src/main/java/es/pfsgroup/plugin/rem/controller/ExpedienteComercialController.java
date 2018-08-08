@@ -1219,9 +1219,9 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboTipoGestorFiltered(WebDto webDto, ModelMap model){
+	public ModelAndView getComboTipoGestorFiltered(Long idExpediente, WebDto webDto, ModelMap model){
 		
-		model.put("data", expedienteComercialApi.getComboTipoGestor());
+		model.put("data", expedienteComercialApi.getComboTipoGestor(idExpediente));
 		return new ModelAndView("jsonView", model);
 	}
 	

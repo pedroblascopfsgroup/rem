@@ -664,7 +664,7 @@ public interface ExpedienteComercialApi {
 	 * Devuelve una lista de los tipos de gestor correspondientes a los expedientes comerciales
 	 * @return
 	 */
-	public List<EXTDDTipoGestor> getComboTipoGestor();
+	public List<EXTDDTipoGestor> getComboTipoGestor(Long idExpediente);
 	
 	/**
 	 * Actualiza el importe con el que participa un activo en un expediente

@@ -783,8 +783,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		comboTipoGestorFilteredExpediente: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
-			type: 'uxproxy',
-			remoteUrl: 'expedientecomercial/getComboTipoGestorFiltered'
+				type: 'uxproxy',
+				remoteUrl: 'expedientecomercial/getComboTipoGestorFiltered',
+				extraParams: {idExpediente: '{expediente.id}'}
 			}/*,autoLoad: true*/
 		},
 		

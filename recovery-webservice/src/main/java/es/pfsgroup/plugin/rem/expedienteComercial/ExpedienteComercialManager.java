@@ -4990,9 +4990,19 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<EXTDDTipoGestor> getComboTipoGestor() {
+	public List<EXTDDTipoGestor> getComboTipoGestor(Long idExpediente) {
 
+		List<Object> gestoresAincluir = new ArrayList<Object>();
+		
+		ExpedienteComercial eco = expedienteComercialDao.get(idExpediente);
+		if(!Checks.esNulo(eco) && !Checks.esNulo(eco.getOferta()) && DDTipoOferta.CODIGO_ALQUILER.equals(eco.getOferta().getTipoOferta().getCodigo())){
+			gestoresAincluir = Arrays.asList(gestorExpedienteApi.getCodigosTipoGestorExpedienteComercialAlquiler());
+		}else{
+			gestoresAincluir = Arrays.asList(gestorExpedienteApi.getCodigosTipoGestorExpedienteComercial());
+		}
+		
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 		List<EXTDDTipoGestor> listAllTiposGestor = (List<EXTDDTipoGestor>) genericDao.getListOrdered(
 				EXTDDTipoGestor.class, order, genericDao.createFilter(FilterType.EQUALS, "borrado", false));
@@ -5000,8 +5010,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if (!Checks.estaVacio(listAllTiposGestor)) {
 			for (EXTDDTipoGestor tipoGestor : listAllTiposGestor) {
-				if (Arrays.asList(gestorExpedienteApi.getCodigosTipoGestorExpedienteComercial())
-						.contains(tipoGestor.getCodigo()))
+				if (gestoresAincluir.contains(tipoGestor.getCodigo()))
 					listTiposGestor.add(tipoGestor);
 			}
 		}

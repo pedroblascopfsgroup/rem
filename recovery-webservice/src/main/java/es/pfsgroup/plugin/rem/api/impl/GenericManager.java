@@ -858,13 +858,14 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	}
 
 	@Override
-	public List<DDComiteAlquiler> getComitesAqluilerByCartera(Long idActivo) {
+	public List<DDComiteAlquiler> getComitesAlquilerByCartera(Long idActivo) {
 		
 		Activo activo = activoApi.get(idActivo);
 		
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
+		
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", activo.getCartera().getCodigo());
-
-		return (List<DDComiteAlquiler>) genericDao.getListOrdered(DDComiteAlquiler.class, order, filter);
+		Filter filterBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		return (List<DDComiteAlquiler>) genericDao.getListOrdered(DDComiteAlquiler.class, order, filter, filterBorrado);
 	}
 }

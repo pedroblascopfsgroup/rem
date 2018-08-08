@@ -1793,7 +1793,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		     model: 'comiteAlquiler',
 		     proxy: {
 		         type: 'uxproxy',
-		         remoteUrl: 'generic/getComitesAqluilerByCartera',
+		         remoteUrl: 'generic/getComitesAlquilerByCartera',
 		         extraParams: {idActivo: idActivo},
 		         reader: {
 		             type: 'json',

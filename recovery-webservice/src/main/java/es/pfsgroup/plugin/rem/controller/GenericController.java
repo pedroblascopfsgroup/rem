@@ -326,7 +326,7 @@ public class GenericController extends ParadiseJsonController{
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubcartera(idCartera)));	
 	}
 	
-	@RequestMapping
+	@RequestMapping(method= RequestMethod.GET)
 	public ModelAndView getComitesAqluilerByCartera(Long idActivo, ModelMap model){
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComitesAqluilerByCartera(idActivo)));	
 	}

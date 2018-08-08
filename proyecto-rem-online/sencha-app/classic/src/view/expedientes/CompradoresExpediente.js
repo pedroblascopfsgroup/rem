@@ -14,8 +14,6 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 		var tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
 		var title = HreRem.i18n('title.compradores');
 		
-		console.log(me.lookupViewModel().get('expediente'));
-		
 		if(me.lookupViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){
 			title = HreRem.i18n('title.inquilinos');
 		};

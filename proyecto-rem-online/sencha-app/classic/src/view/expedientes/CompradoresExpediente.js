@@ -9,9 +9,18 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
   
 
     initComponent: function () {
+		
+		var me = this;
+		var tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
+		var title = HreRem.i18n('title.compradores');
+		
+		console.log(me.lookupViewModel().get('expediente'));
+		
+		if(me.lookupViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){
+			title = HreRem.i18n('title.inquilinos');
+		};
 
-        var me = this;
-        me.setTitle(HreRem.i18n('title.compradores'));
+		me.setTitle(title);
 		
 		var coloredRender = function (value, meta, record) {
     		var borrado = record.get('borrado');
@@ -40,7 +49,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 
 			{   
 				xtype: 'fieldset',
-            	title:  HreRem.i18n('title.compradores'),
+            	title:  title,
             	items : [
             		{
 						xtype: 'button',
@@ -62,7 +71,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						},									
 						listeners : {
 					    	rowdblclick: 'onCompradoresListDobleClick',
-					    	beforerender: 'esEditableCompradores'
+							beforerender: 'esEditableCompradores'
 					    },
 					    features: [{
 				            id: 'summary',
@@ -207,8 +216,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					    onClickAdd: function (btn) {
 							var me = this;
 							var controller= me.lookupController();
-							controller.abrirFormularioCrearComprador(me);
-											    				    	
+							controller.abrirFormularioCrearComprador(me);											    				    	
 						}
 					}
             	]

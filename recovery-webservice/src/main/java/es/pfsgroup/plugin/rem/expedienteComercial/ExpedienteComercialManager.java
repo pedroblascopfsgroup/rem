@@ -868,13 +868,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setId(expediente.getId());
 
 			if (!Checks.esNulo(oferta) && !Checks.esNulo(activo)) {
-
+				
+				dto.setOrigen(oferta.getOrigen());
 				dto.setNumExpediente(expediente.getNumExpediente());
 				if (!Checks.esNulo(activo.getCartera())) {
 					dto.setEntidadPropietariaDescripcion(activo.getCartera().getDescripcion());
 					dto.setEntidadPropietariaCodigo(activo.getCartera().getCodigo());
 				}
-
+				
 				if (!Checks.esNulo(oferta.getTipoOferta())) {
 					dto.setTipoExpedienteDescripcion(oferta.getTipoOferta().getDescripcion());
 					dto.setTipoExpedienteCodigo(oferta.getTipoOferta().getCodigo());

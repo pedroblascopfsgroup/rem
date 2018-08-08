@@ -83,6 +83,18 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     			name: 'ventaCartera'
     		},
     		{
+    			name: 'tipoAlquilerCodigo'
+    		},
+    		{
+    			name: 'tipoInquilinoCodigo'
+    		},
+    		{
+    			name: 'numContratoPrinex'
+    		},
+    		{
+    			name: 'refCircuitoCliente'
+    		},
+    		{
     			name: 'permiteProponer',
     			convert: function(value) {
     				if (!Ext.isEmpty(value)) {

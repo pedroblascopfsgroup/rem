@@ -506,6 +506,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			expedienteComercial.setComiteSancion(comiteSancion);
 			expedienteComercial.setComiteSuperior(comiteSancion);
 		}
+		
+		//HREOS-4360
+		if (!Checks.esNulo(dto.getTipoAlquilerCodigo())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoAlquilerCodigo());
+			DDTipoAlquiler tipoAlquiler = genericDao.get(DDTipoAlquiler.class, filtro);
+			oferta.setTipoAlquiler(tipoAlquiler);
+		}
+		if (!Checks.esNulo(dto.getTipoInquilinoCodigo())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoInquilinoCodigo());
+			DDTipoInquilino tipoInquilino = genericDao.get(DDTipoInquilino.class, filtro);
+			oferta.setTipoInquilino(tipoInquilino);
+		}
+		oferta.setNumContratoPrinex(dto.getNumContratoPrinex());
+		oferta.setRefCircuitoCliente(dto.getRefCircuitoCliente());
 
 		if (!Checks.esNulo(dto.getNumVisita())) {
 
@@ -750,6 +764,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						 */
 					}
 				}
+				
 				genericDao.save(Oferta.class, oferta);
 			}
 
@@ -1096,6 +1111,32 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if(!Checks.esNulo(oferta.getVentaDirecta())){
 			dto.setVentaCartera(oferta.getVentaDirecta() ? "Si" : "No");
+		}
+		
+		//HREOS-4360
+		if (!Checks.esNulo(oferta.getTipoAlquiler())) {
+			dto.setTipoAlquilerCodigo(oferta.getTipoAlquiler().getCodigo());
+		} 
+		else {
+			dto.setTipoAlquilerCodigo(null);
+		}
+		if (!Checks.esNulo(oferta.getTipoInquilino())) {
+			dto.setTipoInquilinoCodigo(oferta.getTipoInquilino().getCodigo());
+		} 
+		else {
+			dto.setTipoInquilinoCodigo(null);
+		}
+		if (!Checks.esNulo(oferta.getNumContratoPrinex())) {
+			dto.setNumContratoPrinex(oferta.getNumContratoPrinex());
+		} 
+		else {
+			dto.setNumContratoPrinex(null);
+		}
+		if (!Checks.esNulo(oferta.getRefCircuitoCliente())) {
+			dto.setRefCircuitoCliente(oferta.getRefCircuitoCliente());
+		} 
+		else {
+			dto.setRefCircuitoCliente(null);
 		}
 		
 		if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){

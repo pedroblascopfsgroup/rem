@@ -21,7 +21,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
     initComponent: function () {
 
         var me = this;
-		me.setTitle(HreRem.i18n('title.datos.basicos.oferta'));
+		me.setTitle(HreRem.i18n('title.datos.basicos'));
         var items= [
 
 			{   
@@ -94,7 +94,41 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                		,readOnly: 'true'
 		                	}		                	
 		                },
-
+		                {	
+		                	xtype: 'comboboxfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.alquiler'),
+		                	bind: {
+		                		store: '{comboTipoAlquiler}',
+		                		value: '{datosbasicosoferta.tipoAlquilerCodigo}',
+		                		hidden: '{!esTipoAlquiler}'
+		                	}		                	
+		                },
+		                {	
+		                	xtype: 'comboboxfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.inquilino'),
+		                	bind: {
+		                		store: '{comboTiposInquilino}',
+		                		value: '{datosbasicosoferta.tipoInquilinoCodigo}',
+		                		hidden: '{!esTipoAlquiler}'
+		                	}		                	
+		                },
+		                {	
+		                	xtype: 'textfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.num.contrato.prinex'),
+		                	bind: {
+		                		value: '{datosbasicosoferta.numContratoPrinex}',
+		                		hidden: '{!esTipoAlquiler}'
+		                	}		                	
+		                },
+		                {	
+		                	xtype: 'textfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.ref.circuito.cliente'),
+		                	colspan: 3,
+		                	bind: {
+		                		value: '{datosbasicosoferta.refCircuitoCliente}',
+		                		hidden: '{!esTipoAlquiler}'
+		                	}		                	
+		                },
 		                {
 		                	xtype: 'fieldset',
 		                	title:  HreRem.i18n('title.comite.sancionador'),

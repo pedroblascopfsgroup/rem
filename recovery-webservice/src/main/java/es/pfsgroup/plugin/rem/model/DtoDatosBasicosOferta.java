@@ -2,7 +2,14 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
 import es.capgemini.devon.dto.WebDto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 
 
 /**
@@ -69,6 +76,14 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private String observaciones;
 	
 	private String ventaCartera;
+	
+	private String tipoAlquilerCodigo;
+	
+	private String tipoInquilinoCodigo;
+
+	private String numContratoPrinex;
+	
+	private String refCircuitoCliente;
 	
 	private Boolean permiteProponer;
 
@@ -271,6 +286,38 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setPermiteProponer(Boolean permiteProponer) {
 		this.permiteProponer = permiteProponer;
+	}
+	
+	public String getTipoAlquilerCodigo() {
+		return tipoAlquilerCodigo;
+	}
+
+	public void setTipoAlquilerCodigo(String tipoAlquilerDescripcion) {
+		this.tipoAlquilerCodigo = tipoAlquilerDescripcion;
+	}
+
+	public String getTipoInquilinoCodigo() {
+		return tipoInquilinoCodigo;
+	}
+
+	public void setTipoInquilinoCodigo(String tipoInquilinoDescripcion) {
+		this.tipoInquilinoCodigo = tipoInquilinoDescripcion;
+	}
+
+	public String getNumContratoPrinex() {
+		return numContratoPrinex;
+	}
+
+	public void setNumContratoPrinex(String numContratoPrinex) {
+		this.numContratoPrinex = numContratoPrinex;
+	}
+
+	public String getRefCircuitoCliente() {
+		return refCircuitoCliente;
+	}
+
+	public void setRefCircuitoCliente(String refCircuitoCliente) {
+		this.refCircuitoCliente = refCircuitoCliente;
 	}
 
 }

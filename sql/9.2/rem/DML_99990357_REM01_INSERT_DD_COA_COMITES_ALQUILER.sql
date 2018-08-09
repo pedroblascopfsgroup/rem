@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=20180727
+--## FECHA_CREACION=20180809
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4311
@@ -39,28 +39,28 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     --				CODIGO COA		DESCRIPCION				DESCRIPCION_LARGA		CODIGO CARTERA
-        T_TIPO_DATA('1',			'Haya Cajamar',			'Haya Cajamar',			'01'),
-        T_TIPO_DATA('2',			'Cajamar',				'Cajamar',				'01'),
-        T_TIPO_DATA('3',			'Haya Sareb',			'Haya Sareb',			'02'),
-        T_TIPO_DATA('4',			'Sareb'	,				'Sareb',				'02'),
-        T_TIPO_DATA('5',			'Haya Bankia',			'Haya Bankia',			'03'),
-        T_TIPO_DATA('6',			'Bankia',				'Bankia',				'03'),
-        T_TIPO_DATA('7',			'Haya Otras carteras',	'Haya Otras carteras',	'04'),
-        T_TIPO_DATA('8',			'Otras carteras',		'Otras carteras',		'04'),
-        T_TIPO_DATA('9',			'Haya HyT',				'Haya HyT',				'06'),
-        T_TIPO_DATA('10',			'HyT'	,				'HyT',					'06'),
-        T_TIPO_DATA('11',			'Haya Cerberus',		'Haya Cerberus',		'07'),
-        T_TIPO_DATA('12',			'Cerberus',				'Cerberus',				'07'),
-        T_TIPO_DATA('13',			'Haya Liberbank',		'Haya Liberbank',		'08'),
-        T_TIPO_DATA('14',			'Liberbank',			'Liberbank',			'08'),
-        T_TIPO_DATA('15',			'Haya Tango'	,		'Haya Tango',			'10'),
-        T_TIPO_DATA('16',			'Tango'	,				'Tango',				'10'),
-        T_TIPO_DATA('17',			'Haya Third Parties',	'Haya Third Parties',	'11'),
-        T_TIPO_DATA('18',			'Third Parties'	,		'Third Parties',		'11'),
-        T_TIPO_DATA('19',			'Haya Giants'	,		'Haya Giants',			'12'),
-        T_TIPO_DATA('20',			'Giants'	,			'Giants',				'12'),
-        T_TIPO_DATA('21',			'Haya Sin definir'	,	'Haya Sin definir',		'05'),
-        T_TIPO_DATA('22',			'Sin definir'	,		'Sin definir',			'05')
+        T_TIPO_DATA('1',			'HAYA',						'HAYA',				'01'),
+        T_TIPO_DATA('2',			'Comité Cajamar',			'Comité Cajamar',	'01'),
+        T_TIPO_DATA('3',			'HAYA',						'HAYA',				'02'),
+        T_TIPO_DATA('4',			'Comité Sareb'	,			'Sareb',			'02'),
+        T_TIPO_DATA('5',			'HAYA',						'HAYA',				'03'),
+        T_TIPO_DATA('6',			'Comité Bankia',			'Comité Bankia',	'03'),
+        T_TIPO_DATA('7',			'HAYA',						'HAYA',				'04'),
+        T_TIPO_DATA('8',			'Comité Otras carteras','Comité Otras carteras','04'),
+        T_TIPO_DATA('9',			'HAYA',						'HAYA',				'06'),
+        T_TIPO_DATA('10',			'Comité HyT',			'Comité HyT',			'06'),
+        T_TIPO_DATA('11',			'HAYA',					'HAYA',					'07'),
+        T_TIPO_DATA('12',			'Comité Cerberus',		'Comité Cerberus',		'07'),
+        T_TIPO_DATA('13',			'HAYA',					'HAYA',					'08'),
+        T_TIPO_DATA('14',			'Comité Liberbank',		'Comité Liberbank',		'08'),
+        T_TIPO_DATA('15',			'HAYA'	,				'HAYA',					'10'),
+        T_TIPO_DATA('16',			'Comité Tango'	,		'Comité Tango',			'10'),
+        T_TIPO_DATA('17',			'HAYA',					'HAYA',					'11'),
+        T_TIPO_DATA('18',			'Comité Third Parties',	'Comité Third Parties',	'11'),
+        T_TIPO_DATA('19',			'HAYA'	,				'HAYA',					'12'),
+        T_TIPO_DATA('20',			'Comité Giants',		'Comité Giants',		'12'),
+        T_TIPO_DATA('21',			'HAYA',					'HAYA',					'05'),
+        T_TIPO_DATA('22',			'Comité Sin definir',	'Comité Sin definir',	'05')
         
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
@@ -88,7 +88,7 @@ BEGIN
 					  'SET DD_'||V_TEXT_CHARS||'_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
 					  ', DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
 					  ', DD_CRA_ID = (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||''')'||
-					  ', USUARIOMODIFICAR = '|| V_USU_MODIFICAR ||' , FECHAMODIFICAR = SYSDATE '||
+					  ', USUARIOMODIFICAR = '|| V_USU_MODIFICAR ||' , FECHAMODIFICAR = SYSDATE, FECHABORRAR=null, USUARIOBORRAR=null, BORRADO=0 '||
 					  'WHERE DD_'||V_TEXT_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
 			EXECUTE IMMEDIATE V_MSQL;
 			DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');

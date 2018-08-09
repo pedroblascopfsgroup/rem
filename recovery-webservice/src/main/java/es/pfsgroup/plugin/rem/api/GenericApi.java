@@ -227,7 +227,7 @@ public interface GenericApi {
 	
 	
 	
-	public List<DDComiteAlquiler> getComitesAqluilerByCartera(Long idActivo);
+	public List<DDComiteAlquiler> getComitesAlquilerByCartera(Long idActivo);
 
 }
 

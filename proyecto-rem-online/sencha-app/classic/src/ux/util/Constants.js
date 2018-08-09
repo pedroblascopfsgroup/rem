@@ -222,7 +222,12 @@ Ext.define('HreRem.ux.util.Constants', {
     TIPOS_OFERTA: {
     	VENTA : '01',
     	ALQUILER: '02'
-    },
+	},
+	
+	TIPOS_ORIGEN: {
+		REM: 'REM',
+		WCOM: 'WCOM'
+	},
     
     TIPOS_PROVEEDOR_EXPEDIENTE: {
     	CAT : '28',

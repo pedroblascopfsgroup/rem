@@ -37,6 +37,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.adjunto.model.Adjunto;
+import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -221,6 +222,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	 //Texto para fieldLabel fecha reserva
 	 private static final String FECHA_SEGURO_RENTA = "Fecha seguro de renta";
 	 private static final String FECHA_SCORING = "Fecha Scoring";
+	 
+	public static final String ESTADO_PROCEDIMIENTO_FINALIZADO = "11";
 
 
 	@Autowired
@@ -503,6 +506,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			expedienteComercial.setComiteSancion(comiteSancion);
 			expedienteComercial.setComiteSuperior(comiteSancion);
 		}
+		
+		//HREOS-4360
+		if (!Checks.esNulo(dto.getTipoAlquilerCodigo())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoAlquilerCodigo());
+			DDTipoAlquiler tipoAlquiler = genericDao.get(DDTipoAlquiler.class, filtro);
+			oferta.setTipoAlquiler(tipoAlquiler);
+		}
+		if (!Checks.esNulo(dto.getTipoInquilinoCodigo())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoInquilinoCodigo());
+			DDTipoInquilino tipoInquilino = genericDao.get(DDTipoInquilino.class, filtro);
+			oferta.setTipoInquilino(tipoInquilino);
+		}
+		oferta.setNumContratoPrinex(dto.getNumContratoPrinex());
+		oferta.setRefCircuitoCliente(dto.getRefCircuitoCliente());
 
 		if (!Checks.esNulo(dto.getNumVisita())) {
 
@@ -747,6 +764,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						 */
 					}
 				}
+				
 				genericDao.save(Oferta.class, oferta);
 			}
 
@@ -850,13 +868,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setId(expediente.getId());
 
 			if (!Checks.esNulo(oferta) && !Checks.esNulo(activo)) {
-
+				
+				dto.setOrigen(oferta.getOrigen());
 				dto.setNumExpediente(expediente.getNumExpediente());
 				if (!Checks.esNulo(activo.getCartera())) {
 					dto.setEntidadPropietariaDescripcion(activo.getCartera().getDescripcion());
 					dto.setEntidadPropietariaCodigo(activo.getCartera().getCodigo());
 				}
-
+				
 				if (!Checks.esNulo(oferta.getTipoOferta())) {
 					dto.setTipoExpedienteDescripcion(oferta.getTipoOferta().getDescripcion());
 					dto.setTipoExpedienteCodigo(oferta.getTipoOferta().getCodigo());
@@ -1095,24 +1114,53 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setVentaCartera(oferta.getVentaDirecta() ? "Si" : "No");
 		}
 		
+		//HREOS-4360
+		if (!Checks.esNulo(oferta.getTipoAlquiler())) {
+			dto.setTipoAlquilerCodigo(oferta.getTipoAlquiler().getCodigo());
+		} 
+		else {
+			dto.setTipoAlquilerCodigo(null);
+		}
+		if (!Checks.esNulo(oferta.getTipoInquilino())) {
+			dto.setTipoInquilinoCodigo(oferta.getTipoInquilino().getCodigo());
+		} 
+		else {
+			dto.setTipoInquilinoCodigo(null);
+		}
+		if (!Checks.esNulo(oferta.getNumContratoPrinex())) {
+			dto.setNumContratoPrinex(oferta.getNumContratoPrinex());
+		} 
+		else {
+			dto.setNumContratoPrinex(null);
+		}
+		if (!Checks.esNulo(oferta.getRefCircuitoCliente())) {
+			dto.setRefCircuitoCliente(oferta.getRefCircuitoCliente());
+		} 
+		else {
+			dto.setRefCircuitoCliente(null);
+		}
+		
 		if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
-			///Comprobamos si la tarea Elevar a Sanción está activa
+			///Comprobamos si la tarea Elevar a Sanción está activa	
+			dto.setPermiteProponer(false);
 			
-			List<ActivoTramite> activostramite = activoTramiteApi.getListaTramitesActivo(oferta.getActivoPrincipal().getId());
-			
+			List<ActivoTramite> tramitesActivo = tramiteDao.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "T015_ElevarASancion");
 			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 			TareaProcedimiento tap = genericDao.get(TareaProcedimiento.class, filtro, filtroBorrado);
 			
-			dto.setPermiteProponer(false);
-			
-			for(ActivoTramite actt : activostramite){
-				List<TareaExterna> tareas = activoTareaExternaApi.getByIdTareaProcedimientoIdTramite(actt.getId(),tap.getId());
-				for(TareaExterna t : tareas){
-					if(!t.getTareaPadre().getTareaFinalizada() && !t.getTareaPadre().getAuditoria().isBorrado()){
-						dto.setPermiteProponer(true);
-						break;
-					}
+			for(ActivoTramite actt : tramitesActivo){
+				if(!DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(actt.getEstadoTramite().getCodigo()) &&
+				   !DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(actt.getEstadoTramite().getCodigo()) &&
+				   !ESTADO_PROCEDIMIENTO_FINALIZADO.equals(actt.getEstadoTramite().getCodigo())
+				){
+					List<TareaExterna> tareas = activoTareaExternaApi.getByIdTareaProcedimientoIdTramite(actt.getId(),tap.getId());
+					for(TareaExterna t : tareas){
+						if(t.getTareaPadre().getTareaFinalizada() && t.getTareaPadre().getAuditoria().isBorrado()){
+							dto.setPermiteProponer(true);
+							break;
+						}
+					}	
 				}
 			}
 			

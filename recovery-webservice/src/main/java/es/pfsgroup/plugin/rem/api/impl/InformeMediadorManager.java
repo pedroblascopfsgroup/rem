@@ -1421,7 +1421,13 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					if (informeEntity.getActivo() == null) {
 						informeEntity.setActivo(activo);
 					}
-
+					if (Checks.esNulo(informeEntity.getMediadorInforme())){
+						Filter filterPve = genericDao.createFilter(FilterType.EQUALS, "id", informe.getIdProveedorRem());
+						ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filterPve);
+						if (!Checks.esNulo(proveedor)){
+							informeEntity.setMediadorInforme(proveedor);
+						}
+					}
 					informeEntity = (ActivoInfoComercial) dtoToEntity.saveDtoToBbdd(informe, entitys,
 							(JSONObject) jsonFields.getJSONArray("data").get(i));
 					// Si viene información de las plantas lo guardamos

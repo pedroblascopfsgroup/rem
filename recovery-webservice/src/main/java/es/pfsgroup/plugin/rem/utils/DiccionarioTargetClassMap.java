@@ -194,7 +194,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("countries", DDCicCodigoIsoCirbeBKP.class);
 		mapa.put("calculoImpuesto", DDCalculoImpuesto.class);
 		mapa.put("tiposInquilino", DDTipoInquilino.class);
-		
+		mapa.put("estadoScoring", DDEstadoScoring.class);
 		return Collections.unmodifiableMap(mapa);
 	}
 	

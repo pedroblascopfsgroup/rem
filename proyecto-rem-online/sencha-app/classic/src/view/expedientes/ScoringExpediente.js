@@ -30,28 +30,24 @@ Ext.define('HreRem.view.expedientes.ScoringExpediente', {
 							fieldLabel:HreRem.i18n('fieldlabel.estado'),
 							cls: 'cabecera-info-field',
 							bind :{ 
-								value: '{expediente.tipoInquilino}',
-								hidden: '{esOfertaVenta}',
-									store :'{comboTiposInquilino}'
+									store :'{comboEstadoScoring}'
 							}
 		                },
 		                { 
 							xtype: 'textfieldbase',
 		                	fieldLabel:HreRem.i18n('fieldlabel.motivo.rechazo'),
-				        	bind: '{expediente.numContratoAlquiler}',
-				        	readOnly: true
+				        	readOnly: false
 				        },
 				        { 
 							xtype: 'textfieldbase',
 		                	fieldLabel: HreRem.i18n('fieldlabel.numero.solicitud'),
-				        	bind: '{expediente.numContratoAlquiler}',
 				        	readOnly: true
 				        },
 				        { 
 							xtype: 'checkboxfield',
 		                	name : HreRem.i18n('fieldlabel.revision'),
-		                    label: HreRem.i18n('fieldlabel.revision'),
-				        	readOnly: true
+		                	fieldLabel: HreRem.i18n('fieldlabel.revision'),
+				        	readOnly: false
 				        },
 				        { 
 							xtype: 'textfieldbase',
@@ -77,10 +73,6 @@ Ext.define('HreRem.view.expedientes.ScoringExpediente', {
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',				
 				title: HreRem.i18n('title.bloque.historico.scoring'),
-				layout: {
-					type: 'table',
-					columns: 1
-				},
 				bind: {
 					hidden: '{esOfertaVentaFicha}',
 					disabled: '{esOfertaVentaFicha}'

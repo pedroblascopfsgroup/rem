@@ -5139,7 +5139,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		ExpedienteComercial expediente = findOne(idExpediente);
 		List<DtoActivosExpediente> listaActivos = new ArrayList<DtoActivosExpediente>();
 		List<ActivoOferta> activosExpediente = expediente.getOferta().getActivosOferta();
-
+		
 		for (ActivoOferta activoOferta : activosExpediente) {
 			DtoActivosExpediente dto = new DtoActivosExpediente();
 			Activo activo = activoOferta.getPrimaryKey().getActivo();
@@ -6351,4 +6351,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return DDSubcartera.CODIGO_BAN_BH.equals(act.getSubcartera().getCodigo());
 	}
 	
+	
+	public List<DDTipoCalculo> getComboTipoCalculo(Long idExpediente) {
+
+		ExpedienteComercial expediente = findOne(idExpediente);
+		
+		Filter f1 = genericDao.createFilter(FilterType.EQUALS, "tipoOferta.id", expediente.getOferta().getTipoOferta().getId());
+		
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		
+		List<DDTipoCalculo> listaTipoCalculo = genericDao.getList(DDTipoCalculo.class, f1, filtroBorrado);
+		
+		return listaTipoCalculo;
+	}
 }

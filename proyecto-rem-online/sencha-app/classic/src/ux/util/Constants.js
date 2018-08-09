@@ -83,7 +83,10 @@ Ext.define('HreRem.ux.util.Constants', {
         
     TIPOS_CALCULO: {
     	PORCENTAJE: '01',
-    	FIJO: '02'
+    	FIJO: '02',
+    	PORCENTAJE_ALQ: '03',
+    	FIJO_ALQ: '04',
+    	MENSUALIDAD_ALQ: '05'
     },
     
     TIPOS_DESTINATARIO_GASTO: {

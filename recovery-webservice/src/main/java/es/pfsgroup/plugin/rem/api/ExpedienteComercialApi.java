@@ -46,6 +46,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
@@ -961,5 +962,7 @@ public interface ExpedienteComercialApi {
 	public Boolean esBH(String idExpediente);
 
 	DtoModificarCompradores vistaADtoModCompradores(VBusquedaDatosCompradorExpediente vista);	
+	
+	public List<DDTipoCalculo> getComboTipoCalculo(Long idExpediente);
 	
 }

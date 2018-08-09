@@ -1528,4 +1528,12 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboTipoCalculo(Long idExpediente, WebDto webDto, ModelMap model){
+		
+		model.put("data", expedienteComercialApi.getComboTipoCalculo(idExpediente));
+		return new ModelAndView("jsonView", model);
+	}
+	
 }

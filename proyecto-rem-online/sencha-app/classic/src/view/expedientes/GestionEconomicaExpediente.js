@@ -224,8 +224,8 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 										model: 'HreRem.model.ComboBase',
 										proxy: {
 											type: 'uxproxy',
-											remoteUrl: 'generic/getDiccionario',
-											extraParams: {diccionario: 'tiposCalculo'}
+											remoteUrl: 'expedientecomercial/getComboTipoCalculo',
+											extraParams: {idExpediente: me.lookupController().getViewModel().get("expediente.id")}
 										},
 										autoLoad: true
 									}),

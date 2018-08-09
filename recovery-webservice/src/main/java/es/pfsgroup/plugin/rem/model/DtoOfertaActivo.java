@@ -20,6 +20,7 @@ public class DtoOfertaActivo extends WebDto {
 	private String codigoEstadoOferta;
 	private String tipoRechazoCodigo;
 	private String motivoRechazoCodigo;
+	private Boolean esAnulacion;
 	
 	
 	public Long getIdOferta() {
@@ -64,6 +65,12 @@ public class DtoOfertaActivo extends WebDto {
 	}
 	public void setMotivoRechazoCodigo(String motivoRechazoCodigo) {
 		this.motivoRechazoCodigo = motivoRechazoCodigo;
+	}
+	public Boolean getEsAnulacion() {
+		return esAnulacion;
+	}
+	public void setEsAnulacion(Boolean esAnulacion) {
+		this.esAnulacion = esAnulacion;
 	}
 
 	

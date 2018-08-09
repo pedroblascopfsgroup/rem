@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Sergio Belenguer Gadea
---## FECHA_CREACION=20180727
+--## FECHA_CREACION=20180803
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.13
 --## INCIDENCIA_LINK=REMNIVDOS-3420

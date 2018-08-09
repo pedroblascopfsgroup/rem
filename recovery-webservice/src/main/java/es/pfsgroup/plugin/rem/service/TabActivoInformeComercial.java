@@ -404,6 +404,7 @@ public class TabActivoInformeComercial implements TabActivoService {
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "ediDescripcion", activoInformeDto.getEdiDescripcion());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "entornoInfraestructura", activoInformeDto.getEntornoInfraestructuras());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "entornoComunicacion", activoInformeDto.getEntornoComunicaciones());
+					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "edificioDescPlantas", activoInformeDto.getEdificioDescPlantas());
 				
 				}
 					
@@ -595,6 +596,7 @@ public class TabActivoInformeComercial implements TabActivoService {
 			beanUtilNotNull.copyProperty(edi, "ediDescripcion", activoInformeDto.getEdiDescripcion());
 			beanUtilNotNull.copyProperty(edi, "entornoInfraestructura", activoInformeDto.getEntornoInfraestructuras());
 			beanUtilNotNull.copyProperty(edi, "entornoComunicacion", activoInformeDto.getEntornoComunicaciones());
+			beanUtilNotNull.copyProperty(edi, "edificioDescPlantas", activoInformeDto.getEdificioDescPlantas());
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 

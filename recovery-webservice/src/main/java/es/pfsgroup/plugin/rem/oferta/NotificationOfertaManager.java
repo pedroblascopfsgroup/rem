@@ -15,6 +15,7 @@ import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -111,11 +112,16 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				mailsPara.add(usuario.getEmail());
 				
 				List<GestorSustituto> sustitutos = genericDao.getList(GestorSustituto.class, genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", usuario.getId()));
-				for (GestorSustituto gestorSustituto : sustitutos) {
-					if ((gestorSustituto.getFechaFin().after(new Date()) || gestorSustituto.getFechaFin().equals(new Date())) && (gestorSustituto.getFechaInicio().before(new Date()) || gestorSustituto.getFechaInicio().equals(new Date())) && !gestorSustituto.getAuditoria().isBorrado()){
-						mailsPara.add(gestorSustituto.getUsuarioGestorSustituto().getEmail());
+				if (!Checks.esNulo(sustitutos)){
+					for (GestorSustituto gestorSustituto : sustitutos) {
+						if (!Checks.esNulo(gestorSustituto)){
+							if ((gestorSustituto.getFechaFin().after(new Date()) || gestorSustituto.getFechaFin().equals(new Date())) && (gestorSustituto.getFechaInicio().before(new Date()) || gestorSustituto.getFechaInicio().equals(new Date())) && !gestorSustituto.getAuditoria().isBorrado()){
+								mailsPara.add(gestorSustituto.getUsuarioGestorSustituto().getEmail());
+							}
+						}
+						
 					}
-				}
+				}				
 			}
 			if(!Checks.esNulo(supervisor)){
 				mailsPara.add(supervisor.getEmail());

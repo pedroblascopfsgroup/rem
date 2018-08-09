@@ -573,6 +573,24 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			}
 	    },
 	    
+	    comboEstadoReserva: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosReserva'}
+			}
+	    },
+	    
+	    comboEstadoExpediente: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosExpediente'}
+			}
+	    },
+	    
 	    comboColaboradorPrescriptor: {
 	    	model: 'HreRem.model.ComboBase',
 			proxy: {

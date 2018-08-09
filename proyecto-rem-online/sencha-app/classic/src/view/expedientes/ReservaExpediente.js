@@ -50,16 +50,26 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.importe'),
 		                	bind:		'{reserva.importe}'
 		                },
-		                {
+		                /*{
 		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.reserva'),
 		                	bind:		'{reserva.estadoReservaDescripcion}'
+		                },*/
+		                {
+		                	xtype: 'comboboxfieldbase',
+		                	bind: {
+								store: '{comboEstadoReserva}',
+								value: '{reserva.estadoReservaCodigo}'
+							},
+							readOnly: !$AU.userIsRol("HAYASUPER"),
+		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.reserva')
 		                },
 		                {
 		                	xtype:'datefieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.firma'),
 		                	bind: {
 		                		value: '{reserva.fechaFirma}',
-		                		readOnly: '{fechaIngresoChequeReadOnly}'
+		                		//readOnly: '{fechaIngresoChequeReadOnly}'
+		                		readOnly: !$AU.userIsRol("HAYASUPER")
 	                		}
 		                },
 		                {		                

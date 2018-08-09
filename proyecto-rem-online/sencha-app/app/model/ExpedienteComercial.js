@@ -180,6 +180,9 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		{
     			name: 'bloqueado',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'codigoEstado'
     		}
     		 
     ],

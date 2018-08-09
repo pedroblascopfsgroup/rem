@@ -56,7 +56,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 								store: '{comboEstadoOferta}',
 								value: '{datosbasicosoferta.estadoCodigo}'
 							},
-							readOnly: true,
+							readOnly: !$AU.userIsRol("HAYASUPER"),
 		                	fieldLabel:  HreRem.i18n('fieldlabel.estado')
 		                },
 		                {	

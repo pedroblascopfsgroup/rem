@@ -31,7 +31,7 @@ DECLARE
 BEGIN
 
 
-REM01.AVANCE_TRAMITE('VRO',720130,'T013_RespuestaBankiaDevolucion',null,null,PL_OUTPUT);
+REM01.AVANCE_TRAMITE('VRO',72130,'T013_RespuestaBankiaDevolucion',null,null,PL_OUTPUT);
 DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
 
 

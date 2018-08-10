@@ -3277,7 +3277,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		record.save({
 
                 params: {
-                    idEntidad: Ext.isEmpty(grid.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(grid.idPrincipal)
+                    idEntidad: Ext.isEmpty(grid.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(grid.idPrincipal),
+                    esAnulacion: true
                 },
                 success: function (a, operation, c) {																			
 					grid.saveSuccessFn();

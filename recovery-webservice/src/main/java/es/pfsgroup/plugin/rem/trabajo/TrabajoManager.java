@@ -2455,11 +2455,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			        if(!Checks.esNulo(source.getTipoDocIdentificativo())){
 			        	target.setCodTipoDocIdentificativo(source.getTipoDocIdentificativo().getCodigo());
 			        }
-			        if(!Checks.esNulo(source.getUsuario().getUsuarioGrupo())){
-			        	target.setUsuarioGrupo(source.getUsuario().getUsuarioGrupo());
-			        }
-			        listaDtoProveedorContactoSimple.add(target);
-			        
+					if (!Checks.esNulo(source.getUsuario())) {
+						if (!Checks.esNulo(source.getUsuario().getUsuarioGrupo())) {
+							target.setUsuarioGrupo(source.getUsuario().getUsuarioGrupo());
+						}
+						listaDtoProveedorContactoSimple.add(target);
+					}
 				} catch (IllegalAccessException e) {
 					logger.error("Error al consultar las localidades sin filtro",e);
 					throw new Exception(e);

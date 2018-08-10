@@ -6,13 +6,13 @@ import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,6 @@ import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
-import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVVentaDeCarteraExcelValidator.COL_NUM;
 
 
 
@@ -60,6 +59,13 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 	public static final String PORCENTAJE_IVA_SUPERIOR_100 = "El porcentaje iva es superior a 100";
 	public static final String PORCENTAJE_IVA_INFERIOR_0 = "El porcentaje iva es menor que 0";
 	
+	public static final String NOT_PAIR_GASTO_ACTIVO = "El gasto indicado no pertenece al activo indicado";
+	public static final String PROMOCION_NOT_EXISTS = "La promocion indicada no existe";
+	
+	public static final String DIARIO1_VALORES_POSIBLES = "Los valores válidos para el campo Diario 1 són: Vacío,1,2,20 y 60";
+	public static final String DIARIO2_VALORES_POSIBLES = "Los valores válidos para el campo Diario 2 són: Vacío y 60";
+	public static final String DIARIO1_VS_DIARIO2 = "No es posible cumplimentar en campo Diario 2 si el campo Diario 1 está vacío";
+	
 	public static final class COL_NUM{
 		
 		public static final int FILA_CABECERA = 0;
@@ -67,54 +73,68 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 		
 		//Datos excel
 		public static final int GPV_NUM_GASTO_HAYA =0;
-		public static final int GPL_FECHA_CONTABLE =1;
-		public static final int GPL_DIARIO_CONTB =2;
-		public static final int GPL_D347 =3;
-		public static final int GPL_DELEGACION =4;
-		public static final int GPL_BASE_RETENCION =5;
-		public static final int GPL_PROCENTAJE_RETEN =6;
-		public static final int GPL_IMPORTE_RENTE =7;
-		public static final int GPL_APLICAR_RETENCION =8;
-		public static final int GPL_BASE_IRPF =9;
-		public static final int GPL_PROCENTAJE_IRPF =10;
-		public static final int GPL_IMPORTE_IRPF =11;
-		public static final int GPL_CLAVE_IRPF =12;
-		public static final int GPL_SUBCLAVE_IRPF =13;
-		public static final int GPL_CEUTA =14;
-		public static final int GPL_CTA_IVAD =15;
-		public static final int GPL_SCTA_IVAD =16;
-		public static final int GPL_CONDICIONES =17;
-		public static final int GPL_CTA_BANCO =18;
-		public static final int GPL_SCTA_BANCO =19;
-		public static final int GPL_CTA_EFECTOS =20;
-		public static final int GPL_SCTA_EFECTOS =21;
-		public static final int GPL_APUNTE =22;
-		public static final int GPL_CENTRODESTINO =23;
-		public static final int GPL_TIPO_FRA_SII =24;
-		public static final int GPL_CLAVE_RE =25;
-		public static final int GPL_CLAVE_RE_AD1 =26;
-		public static final int GPL_CLAVE_RE_AD2 =27;
-		public static final int GPL_TIPO_OP_INTRA =28;
-		public static final int GPL_DESC_BIENES =29;
-		public static final int GPL_DESCRIPCION_OP =30;
-		public static final int GPL_SIMPLIFICADA =31;
-		public static final int GPL_FRA_SIMPLI_IDEN =32;
-		public static final int GPL_DIARIO1 =33;
-		public static final int GPL_DIARIO2 =34;
-		public static final int GPL_TIPO_PARTIDA =35;
-		public static final int GPL_APARTADO =36;
-		public static final int GPL_CAPITULO =37;
-		public static final int GPL_PARTIDA =38;
-		public static final int GPL_CTA_GASTO =39;
-		public static final int GPL_SCTA_GASTO =40;
-		public static final int GPL_REPERCUTIR =41;
-		public static final int GPL_CONCEPTO_FAC =42;
-		public static final int GPL_FECHA_FAC =43;
-		public static final int GPL_COD_COEF =44;
-		public static final int GPL_CODI_DIAR_IVA_V =45;
-		public static final int GPL_PCTJE_IVA_V =46;
-		public static final int GPL_NOMBRE =47;
-		public static final int GPL_CARACTERISTICA =48;
+		public static final int ACT_NUM_ACTIVO_HAYA =1;
+		public static final int GPL_PROYECTO =2;
+		public static final int GPL_TIPO_INMUEBLE =3;
+		public static final int GPL_CLAVE_1 =4;
+		public static final int GPL_CLAVE_2 =5;
+		public static final int GPL_CLAVE_3 =6;
+		public static final int GPL_CLAVE_4 =7;
+		public static final int GPL_IMPORTE_GASTO =8;
+		public static final int GPL_FECHA_CONTABLE =9;
+		public static final int GPL_DIARIO_CONTB =10;
+		public static final int GPL_D347 =11;
+		public static final int GPL_DELEGACION =12;
+		public static final int GPL_BASE_RETENCION =13;
+		public static final int GPL_PROCENTAJE_RETEN =14;
+		public static final int GPL_IMPORTE_RENTE =15;
+		public static final int GPL_APLICAR_RETENCION =16;
+		public static final int GPL_BASE_IRPF =17;
+		public static final int GPL_PROCENTAJE_IRPF =18;
+		public static final int GPL_IMPORTE_IRPF =19;
+		public static final int GPL_CLAVE_IRPF =20;
+		public static final int GPL_SUBCLAVE_IRPF =21;
+		public static final int GPL_CEUTA =22;
+		public static final int GPL_CTA_IVAD =23;
+		public static final int GPL_SCTA_IVAD =24;
+		public static final int GPL_CONDICIONES =25;
+		public static final int GPL_CTA_BANCO =26;
+		public static final int GPL_SCTA_BANCO =27;
+		public static final int GPL_CTA_EFECTOS =28;
+		public static final int GPL_SCTA_EFECTOS =29;
+		public static final int GPL_APUNTE =30;
+		public static final int GPL_CENTRODESTINO =31;
+		public static final int GPL_TIPO_FRA_SII =32;
+		public static final int GPL_CLAVE_RE =33;
+		public static final int GPL_CLAVE_RE_AD1 =34;
+		public static final int GPL_CLAVE_RE_AD2 =35;
+		public static final int GPL_TIPO_OP_INTRA =36;
+		public static final int GPL_DESC_BIENES =37;
+		public static final int GPL_DESCRIPCION_OP =38;
+		public static final int GPL_SIMPLIFICADA =39;
+		public static final int GPL_FRA_SIMPLI_IDEN =40;
+		public static final int GPL_DIARIO1 =41;
+		public static final int GPL_DIARIO1_BASE = 42;
+		public static final int GPL_DIARIO1_TIPO = 43;
+		public static final int GPL_DIARIO1_CUOTA = 44;
+		public static final int GPL_DIARIO2 =45;
+		public static final int GPL_DIARIO2_BASE = 46;
+		public static final int GPL_DIARIO2_TIPO = 47;
+		public static final int GPL_DIARIO2_CUOTA = 48;
+		public static final int GPL_TIPO_PARTIDA =49;
+		public static final int GPL_APARTADO =50;
+		public static final int GPL_CAPITULO =51;
+		public static final int GPL_PARTIDA =52;
+		public static final int GPL_CTA_GASTO =53;
+		public static final int GPL_SCTA_GASTO =54;
+		public static final int GPL_REPERCUTIR =55;
+		public static final int GPL_CONCEPTO_FAC =56;
+		public static final int GPL_FECHA_FAC =57;
+		public static final int GPL_COD_COEF =58;
+		public static final int GPL_CODI_DIAR_IVA_V =59;
+		public static final int GPL_PCTJE_IVA_V =60;
+		public static final int GPL_NOMBRE =61;
+		public static final int GPL_CARACTERISTICA =62;
 	
 	}
 	
@@ -169,6 +189,13 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 				mapaErrores.put(PORCENTAJE_IVA_SUPERIOR_100, isPorcentajeSuperiorA100(exc,COL_NUM.GPL_PCTJE_IVA_V));
 				mapaErrores.put(PORCENTAJE_IVA_INFERIOR_0, isPorcentajeInferiorA0(exc,COL_NUM.GPL_PCTJE_IVA_V));
 				mapaErrores.put(GASTO_NOT_LIBERBANK, isGastoNotLiberbankByRows(exc));
+				mapaErrores.put(NOT_PAIR_GASTO_ACTIVO, esParGastoActivo(exc, COL_NUM.GPV_NUM_GASTO_HAYA, COL_NUM.ACT_NUM_ACTIVO_HAYA));
+				mapaErrores.put(PROMOCION_NOT_EXISTS, existePromocion(exc, COL_NUM.GPL_PROYECTO));
+				mapaErrores.put(DIARIO1_VALORES_POSIBLES, validaDiario1(exc, COL_NUM.GPL_DIARIO1));
+				mapaErrores.put(DIARIO2_VALORES_POSIBLES, validaDiario2(exc, COL_NUM.GPL_DIARIO2));
+				mapaErrores.put(DIARIO2_VALORES_POSIBLES, validaDiario2(exc, COL_NUM.GPL_DIARIO2));
+				mapaErrores.put(DIARIO1_VS_DIARIO2, validaDiario1Diario2(exc, COL_NUM.GPL_DIARIO1, COL_NUM.GPL_DIARIO2));
+				
 				
 				if( !mapaErrores.get(GASTO_NOT_EXISTS).isEmpty() || 
 					!mapaErrores.get(GASTO_NULL).isEmpty() ||
@@ -180,7 +207,12 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 					!mapaErrores.get(PORCENTAJE_RETEN_INFERIOR_0).isEmpty()||
 					!mapaErrores.get(PORCENTAJE_IVA_SUPERIOR_100).isEmpty()||
 					!mapaErrores.get(PORCENTAJE_IVA_INFERIOR_0).isEmpty()||
-					!mapaErrores.get(GASTO_NOT_LIBERBANK).isEmpty()
+					!mapaErrores.get(GASTO_NOT_LIBERBANK).isEmpty()||
+					!mapaErrores.get(NOT_PAIR_GASTO_ACTIVO).isEmpty()||
+					!mapaErrores.get(PROMOCION_NOT_EXISTS).isEmpty()||
+					!mapaErrores.get(DIARIO1_VALORES_POSIBLES).isEmpty()||
+					!mapaErrores.get(DIARIO2_VALORES_POSIBLES).isEmpty() ||
+					!mapaErrores.get(DIARIO1_VS_DIARIO2).isEmpty()
 				){
 						dtoValidacionContenido.setFicheroTieneErrores(true);
 						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -387,4 +419,111 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 		return listaFilas;
 	}
 	
+	private List<Integer> esParGastoActivo(MSVHojaExcel exc, Integer numGasto, Integer idActivo){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		for(int i = 1; i<this.numFilasHoja; i++){
+			try{
+				if(!Checks.esNulo(exc.dameCelda(i, numGasto)) && !Checks.esNulo(exc.dameCelda(i, idActivo))){
+					if(!particularValidator.esParGastoActivo(exc.dameCelda(i, numGasto), exc.dameCelda(i, idActivo))){
+						listaFilas.add(i);
+					}
+				}
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> existePromocion(MSVHojaExcel exc, Integer promocion){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		for(int i = 1; i<this.numFilasHoja; i++){
+			try{
+				if(!Checks.esNulo(exc.dameCelda(i, promocion))){
+					if(!particularValidator.existePromocion(exc.dameCelda(i, promocion))){
+						listaFilas.add(i);
+					}
+				}
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return listaFilas;
+	}
+	
+	
+	private List<Integer> validaDiario1(MSVHojaExcel exc, Integer columna){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		List<String> valoresValidos = Arrays.asList("1", "2", "20", "60");
+		for(int i = 1; i<this.numFilasHoja; i++){
+			try{
+				String valor = exc.dameCelda(i, columna);
+				if(!Checks.esNulo(valor) && !valoresValidos.contains(valor)){
+					listaFilas.add(i);
+				}
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> validaDiario2(MSVHojaExcel exc, Integer columna){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		List<String> valoresValidos = Arrays.asList("60");
+		for(int i = 1; i<this.numFilasHoja; i++){
+			try{
+				String valor = exc.dameCelda(i, columna);
+				if(!Checks.esNulo(valor) && !valoresValidos.contains(valor)){
+					listaFilas.add(i);
+				}
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> validaDiario1Diario2(MSVHojaExcel exc, Integer columnaDiario1, Integer columnaDiario2){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		for(int i = 1; i<this.numFilasHoja; i++){
+			try{
+				String valorDiario1 = exc.dameCelda(i, columnaDiario1);
+				String valorDiario2 = exc.dameCelda(i, columnaDiario2);
+				if(Checks.esNulo(valorDiario1) && !Checks.esNulo(valorDiario2)){
+					listaFilas.add(i);
+				}
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return listaFilas;
+	}
 }

@@ -324,4 +324,10 @@ public interface ParticularValidatorApi {
 
 	Boolean esGastoDeLiberbank(String numGasto);
 
+	Boolean esParGastoActivo(String numGasto, String numActivo);
+
+	Boolean existePromocion(String promocion);
+
+
+
 }

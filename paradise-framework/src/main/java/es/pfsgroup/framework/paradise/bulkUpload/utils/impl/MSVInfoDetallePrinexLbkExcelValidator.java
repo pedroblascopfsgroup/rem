@@ -193,7 +193,6 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 				mapaErrores.put(PROMOCION_NOT_EXISTS, existePromocion(exc, COL_NUM.GPL_PROYECTO));
 				mapaErrores.put(DIARIO1_VALORES_POSIBLES, validaDiario1(exc, COL_NUM.GPL_DIARIO1));
 				mapaErrores.put(DIARIO2_VALORES_POSIBLES, validaDiario2(exc, COL_NUM.GPL_DIARIO2));
-				mapaErrores.put(DIARIO2_VALORES_POSIBLES, validaDiario2(exc, COL_NUM.GPL_DIARIO2));
 				mapaErrores.put(DIARIO1_VS_DIARIO2, validaDiario1Diario2(exc, COL_NUM.GPL_DIARIO1, COL_NUM.GPL_DIARIO2));
 				
 				

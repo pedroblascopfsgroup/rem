@@ -2,7 +2,10 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+
 import es.capgemini.devon.dto.WebDto;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
 
 
 /**
@@ -68,7 +71,20 @@ public class DtoCondiciones extends WebDto {
 	private Boolean operacionExenta;
 	private Boolean inversionDeSujetoPasivo;
 	
-	
+	private Integer mesesFianza;
+	private Double importeFianza;
+	private Boolean fianzaActualizable;
+	private Integer mesesDeposito;
+	private Double importeDeposito;
+	private Boolean depositoActualizable;
+	private String avalista;
+	private String documentoFiador;
+	private String codigoEntidad;
+	private Double importeAval;
+	private Boolean renunciaTanteo;
+	private Double carencia;
+	private Double bonificacion;
+	private Double gastosRepercutibles;
 
 	//********Datos que vienen del activos (no se editan)********
 	private Date fechaUltimaActualizacion;
@@ -78,6 +94,86 @@ public class DtoCondiciones extends WebDto {
 	private String tipoTitulo;
 	private Integer vpo;
 	//********-------------------------------------------********
+	
+	public Integer getMesesFianza() {
+		return mesesFianza;
+	}
+
+	public void setMesesFianza(Integer mesesFianza) {
+		this.mesesFianza = mesesFianza;
+	}
+
+	public Double getImporteFianza() {
+		return importeFianza;
+	}
+
+	public void setImporteFianza(Double importeFianza) {
+		this.importeFianza = importeFianza;
+	}
+
+	public Boolean getFianzaActualizable() {
+		return fianzaActualizable;
+	}
+
+	public void setFianzaActualizable(Boolean fianzaActualizable) {
+		this.fianzaActualizable = fianzaActualizable;
+	}
+
+	public Integer getMesesDeposito() {
+		return mesesDeposito;
+	}
+
+	public void setMesesDeposito(Integer mesesDeposito) {
+		this.mesesDeposito = mesesDeposito;
+	}
+
+	public Double getImporteDeposito() {
+		return importeDeposito;
+	}
+
+	public void setImporteDeposito(Double importeDeposito) {
+		this.importeDeposito = importeDeposito;
+	}
+
+	public Boolean getDepositoActualizable() {
+		return depositoActualizable;
+	}
+
+	public void setDepositoActualizable(Boolean depositoActualizable) {
+		this.depositoActualizable = depositoActualizable;
+	}
+
+	public String getAvalista() {
+		return avalista;
+	}
+
+	public void setAvalista(String avalista) {
+		this.avalista = avalista;
+	}
+
+	public String getDocumentoFiador() {
+		return documentoFiador;
+	}
+
+	public void setDocumentoFiador(String documentoFiador) {
+		this.documentoFiador = documentoFiador;
+	}
+
+	public String getCodigoEntidad() {
+		return codigoEntidad;
+	}
+
+	public void setCodigoEntidad(String codigoEntidad) {
+		this.codigoEntidad = codigoEntidad;
+	}
+
+	public Double getImporteAval() {
+		return importeAval;
+	}
+
+	public void setImporteAval(Double importeAval) {
+		this.importeAval = importeAval;
+	}
 
 	public Long getIdCondiciones() {
 		return idCondiciones;
@@ -529,7 +625,38 @@ public class DtoCondiciones extends WebDto {
 
 	public void setInversionDeSujetoPasivo(Boolean inversionDeSujetoPasivo) {
 		this.inversionDeSujetoPasivo = inversionDeSujetoPasivo;
-	}  
-   	
+	}
+
+	public Boolean getRenunciaTanteo() {
+		return renunciaTanteo;
+	}
+
+	public void setRenunciaTanteo(Boolean renunciaTanteo) {
+		this.renunciaTanteo = renunciaTanteo;
+	}
+
+	public Double getCarencia() {
+		return carencia;
+	}
+
+	public void setCarencia(Double carencia) {
+		this.carencia = carencia;
+	}
+
+	public Double getBonificacion() {
+		return bonificacion;
+	}
+
+	public void setBonificacion(Double bonificacion) {
+		this.bonificacion = bonificacion;
+	}
+
+	public Double getGastosRepercutibles() {
+		return gastosRepercutibles;
+	}
+
+	public void setGastosRepercutibles(Double gastosRepercutibles) {
+		this.gastosRepercutibles = gastosRepercutibles;
+	}    	
    	
 }

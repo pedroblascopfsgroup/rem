@@ -2241,7 +2241,34 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			}
 		}
 	},
-
+	onCambioCheckPorcentual: function(checkbox, newValue, oldValue, eOpts) {
+			var me = this,
+			ipc = me.lookupReference('checkboxIPC');
+			porcentaje = me.lookupReference('escaladoRentaPorcentaje');
+			
+			if(newValue) {
+				ipc.show();
+				porcentaje.show();
+			} else {
+				ipc.hide();
+				porcentaje.hide();
+				
+			}
+	},	
+	onCambioCheckRevMercado: function(checkbox, newValue, oldValue, eOpts) {
+		var me = this,
+		fecha = me.lookupReference('revisionMercadoFecha');
+		cadaMes = me.lookupReference('escaladoRentasMeses');
+		
+		if(newValue) {
+			fecha.show();
+			cadaMes.show();
+		} else {
+			fecha.hide();
+			cadaMes.hide();
+			
+		}
+	},
 	onCambioInversionSujetoPasivo: function(checkbox, newValue, oldValue, eOpts) {
 		if(!Ext.isEmpty(oldValue)){
 			var me = this,

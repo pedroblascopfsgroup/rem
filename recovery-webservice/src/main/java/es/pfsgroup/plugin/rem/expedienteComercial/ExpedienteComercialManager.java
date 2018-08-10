@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.persistence.Column;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -155,6 +156,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -1944,6 +1946,67 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(condiciones.getTipoPorCuentaLicencia())) {
 				dto.setLicenciaPorCuentaDe(condiciones.getTipoPorCuentaLicencia().getCodigo());
 			}
+			
+			//Condiciones expediente tipo alquiler
+			if (!Checks.esNulo(condiciones.getMesesFianza())) {
+				dto.setMesesFianza(condiciones.getMesesFianza());
+			}
+	
+			if (!Checks.esNulo(condiciones.getImporteFianza())) {
+				dto.setImporteFianza(condiciones.getImporteFianza());
+			}
+			
+			if (!Checks.esNulo(condiciones.getFianzaActualizable())) {
+				dto.setFianzaActualizable(condiciones.getFianzaActualizable());
+			}
+						
+			if (!Checks.esNulo(condiciones.getMesesFianza())) {
+				dto.setMesesFianza(condiciones.getMesesFianza());
+			}
+						
+			if (!Checks.esNulo(condiciones.getMesesDeposito())) {
+				dto.setMesesDeposito(condiciones.getMesesDeposito());
+			}
+						
+			if (!Checks.esNulo(condiciones.getImporteDeposito())) {
+				dto.setImporteDeposito(condiciones.getImporteDeposito());
+			}
+						
+			if (!Checks.esNulo(condiciones.getDepositoActualizable())) {
+				dto.setDepositoActualizable(condiciones.getDepositoActualizable());
+			}
+						
+			if (!Checks.esNulo(condiciones.getAvalista())) {
+				dto.setAvalista(condiciones.getAvalista());
+			}
+						
+			if (!Checks.esNulo(condiciones.getEntidadBancariaFiador())) { //############################### ERROR ###############
+				dto.setCodigoEntidad(condiciones.getEntidadBancariaFiador().getCodigo());
+			}
+							
+			if (!Checks.esNulo(condiciones.getDocumentoFiador())) { 
+				dto.setDocumentoFiador(condiciones.getDocumentoFiador());
+			}
+						
+			if (!Checks.esNulo(condiciones.getImporteAval())) { 
+				dto.setImporteAval(condiciones.getImporteAval());
+			}
+						
+			if (!Checks.esNulo(condiciones.getRenunciaTanteo())) { 
+				dto.setRenunciaTanteo(condiciones.getRenunciaTanteo());
+			}
+						
+			if (!Checks.esNulo(condiciones.getCarencia())) { 
+				dto.setCarencia(condiciones.getCarencia());
+			}
+						
+			if (!Checks.esNulo(condiciones.getBonificacion())) { 
+				dto.setBonificacion(condiciones.getBonificacion());
+			}
+						
+			if (!Checks.esNulo(condiciones.getGastosRepercutibles())) { 
+				dto.setGastosRepercutibles(condiciones.getGastosRepercutibles());
+			}						
 		}
 
 		return dto;
@@ -1955,10 +2018,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		ExpedienteComercial expedienteComercial = findOne(idExpediente);
 		CondicionanteExpediente condiciones = expedienteComercial.getCondicionante();
+		DDEntidadesAvalistas entidadAvalista = new DDEntidadesAvalistas();
+		
+		if(!Checks.esNulo(dto.getCodigoEntidad())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoEntidad());
+			entidadAvalista  = genericDao.get(DDEntidadesAvalistas.class, filtro);
+		}
 
+		
+		
 		if (!Checks.esNulo(condiciones)) {
 			condiciones = dtoCondicionantestoCondicionante(condiciones, dto);
 			expedienteComercial.setCondicionante(condiciones);
+			if(!Checks.esNulo(dto.getCodigoEntidad())) {
+				condiciones.setEntidadBancariaFiador(entidadAvalista);
+			}			
 		} else {
 			condiciones = new CondicionanteExpediente();
 			condiciones.setExpediente(expedienteComercial);
@@ -2223,6 +2297,62 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(dto.getSujetoTramiteTanteo())) {
 				condiciones.setSujetoTanteoRetracto(dto.getSujetoTramiteTanteo() == true ? 1 : 0);
 			}
+			
+			// Juridicas-situacion del activo
+			if (!Checks.esNulo(dto.getSujetoTramiteTanteo())) {
+				condiciones.setSujetoTanteoRetracto(dto.getSujetoTramiteTanteo() == true ? 1 : 0);
+			}
+			
+			// Condiciones Alquiler activo
+//			if (!Checks.esNulo(dto.getMesesFianza())) {
+//				condiciones.setMesesFianza(dto.getMesesFianza());
+//			}
+			
+//			if (!Checks.esNulo(dto.getImporteFianza())) {
+//				condiciones.setImporteFianza(dto.getImporteFianza());
+//			}
+			
+//			if (!Checks.esNulo(dto.getImporteFianza())) {
+//				condiciones.setFianzaActualizable(dto.getFianzaActualizable());
+//			}
+			
+//			if (!Checks.esNulo(dto.getMesesDeposito())) {
+//				condiciones.setMesesDeposito(dto.getMesesDeposito());
+//			}
+			
+//			if (!Checks.esNulo(dto.getDepositoActualizable())) {
+//				condiciones.setDepositoActualizable(dto.getDepositoActualizable());
+//			}
+			
+//			if (!Checks.esNulo(dto.getAvalista())) {
+//				condiciones.setAvalista(dto.getAvalista());
+//			}
+			
+//			if (!Checks.esNulo(dto.getDocumentoFiador())) {
+//			condiciones.setDocumentoFiador(dto.getDocumentoFiador());
+//			}
+			
+			
+			if (!Checks.esNulo(dto.getImporteAval())) {
+				condiciones.setImporteAval(dto.getImporteAval());
+			}			
+			
+			if (!Checks.esNulo(dto.getCarencia())) {
+				condiciones.setCarencia(dto.getCarencia());
+			}
+			
+			if (!Checks.esNulo(dto.getGastosRepercutibles())) {
+				condiciones.setGastosRepercutibles(dto.getGastosRepercutibles());
+			}
+			
+			if (!Checks.esNulo(dto.getBonificacion())) {
+				condiciones.setBonificacion(dto.getBonificacion());
+			}
+			
+			if (!Checks.esNulo(dto.getRenunciaTanteo())) {
+				condiciones.setRenunciaTanteo(dto.getRenunciaTanteo());
+			}
+			
 		} catch (Exception ex) {
 			logger.error("error en expedienteComercialManager", ex);
 			return condiciones;
@@ -3382,7 +3512,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					genericDao.save(Reserva.class, expedienteComercial.getReserva());
 					genericDao.save(Oferta.class, expedienteComercial.getOferta());
 					genericDao.save(ExpedienteComercial.class, expedienteComercial);
-					}
+				}
 			} catch (IllegalAccessException e) {
 				logger.error("error en expedienteComercialManager", e);
 			} catch (InvocationTargetException e) {

@@ -389,6 +389,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			}   
     	},
     	
+    	comboEntidadesAvalistas: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'entidadesAvalistas'}
+			}   
+    	},
+    	
     	comboTipoCalculo: {
     		model: 'HreRem.model.ComboBase',
 			proxy: {

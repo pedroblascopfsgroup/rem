@@ -196,7 +196,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposInquilino", DDTipoInquilino.class);
 		mapa.put("estadoScoring", DDEstadoScoring.class);
 		mapa.put("estadoSeguroRentas", DDEstadoSeguroRentas.class);
-
+		mapa.put("entidadesAvalistas", DDEntidadesAvalistas.class);
+		
 		return Collections.unmodifiableMap(mapa);
 	}
 	

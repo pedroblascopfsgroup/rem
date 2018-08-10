@@ -48,7 +48,11 @@ DECLARE
 	  T_COL(''||V_ESQUEMA||'', ''||V_TABLA||''        , 'ALQ_AVALISTA'   	 	 	, 'VARCHAR(100)' ),
 	  T_COL(''||V_ESQUEMA||'', ''||V_TABLA||''        , 'ALQ_FIADOR_DOCUMENTO'       	, 'VARCHAR(100)' ),
   	  T_COL(''||V_ESQUEMA||'', ''||V_TABLA||''        , 'ALQ_FIADOR_ENTIDAD_BANCARIA'	, 'NUMBER(16,0)'),
-	  T_COL(''||V_ESQUEMA||'', ''||V_TABLA||''        , 'ALQ_IMPORTE_AVAL'    	 	, 'NUMBER(16,2)' )
+	  T_COL(''||V_ESQUEMA||'', ''||V_TABLA||''        , 'ALQ_IMPORTE_AVAL'    	 	, 'NUMBER(16,2)' ),
+	  T_COL(''||V_ESQUEMA||'', ''||V_TABLA||''        , 'ALQ_RENUNCIA_TANTEO'    	 	, 'NUMBER(1,0)' ),
+	  T_COL(''||V_ESQUEMA||'', ''||V_TABLA||''        , 'ALQ_CARENCIA'    	 	, 'NUMBER(16,2)' ),
+	  T_COL(''||V_ESQUEMA||'', ''||V_TABLA||''        , 'ALQ_BONIFICACION'    	 	, 'NUMBER(16,2)' ),
+	  T_COL(''||V_ESQUEMA||'', ''||V_TABLA||''        , 'ALQ_GASTOS_REPERCUTIBLES'    	 	, 'NUMBER(16,2)' )
 	
   );  
   V_TMP_COL T_COL;

@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoHstcoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoInformeJuridico;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
 import es.pfsgroup.plugin.rem.model.DtoModificarCompradores;
@@ -31,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
+import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
@@ -104,6 +106,18 @@ public interface ExpedienteComercialApi {
 	 * @return resultado de la operacion
 	 */
 	public boolean saveTextoOferta(DtoTextosOferta dto, Long idEntidad);
+	
+	
+	/**
+	 * Método que guarda un Seguro de rentas del expediente comercial
+	 * y en el historico de rentas
+	 * 
+	 * @param dto
+	 * @param idEntidad
+	 *            id del expediente
+	 * @return resultado de la operacion
+	 */
+	public boolean saveSeguroRentasExpediente(DtoSeguroRentas dto, Long idEntidad);
 
 	/**
 	 * Método que guarda la información de la pestaña datos básicos de la oferta
@@ -379,7 +393,16 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public List<DtoGastoExpediente> getHonorariosActivoByOfertaAceptada(Oferta oferta, Activo activo);
-
+	
+	/**
+	 * Método que obtiene los honorarios(gastos) del expediente
+	 * 
+	 * @param idExpediente
+	 * @return
+	 */
+	
+	public List<DtoHstcoSeguroRentas> getHstcoSeguroRentas(Long idExpediente);
+	
 	/**
 	 * Método que obtiene los honorarios(gastos) del expediente
 	 * 
@@ -961,7 +984,17 @@ public interface ExpedienteComercialApi {
 
 	public Boolean esBH(String idExpediente);
 
-	DtoModificarCompradores vistaADtoModCompradores(VBusquedaDatosCompradorExpediente vista);	
+	DtoModificarCompradores vistaADtoModCompradores(VBusquedaDatosCompradorExpediente vista);
+
+	/**
+	 * Este método envia un correo a los receptores Gestor comercial alquiler, Supervisor comercial alquiler y Prescriptor
+	 * con el suerpo del mensaje que se recibe por parametro.
+	 * 
+	 * @param cuerpoEmail: Contenido del cuerpo del mensaje.
+	 * @param idExpediente: Id del expediente al que hace referencia.
+	 * @return Devuelve True si el mensaje ha sido enviado y false si no ha sido asi.
+	 */
+	boolean enviarCorreoComercializadora(String cuerpoEmail, Long idExpediente);	
 	
 	public List<DDTipoCalculo> getComboTipoCalculo(Long idExpediente);
 	

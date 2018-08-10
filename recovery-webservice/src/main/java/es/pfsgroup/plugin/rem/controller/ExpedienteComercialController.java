@@ -49,6 +49,7 @@ import es.pfsgroup.plugin.rem.model.DtoCondicionesActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
+import es.pfsgroup.plugin.rem.model.DtoHstcoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoInformeJuridico;
@@ -59,6 +60,7 @@ import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
+import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
@@ -278,6 +280,30 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		return createModelAndViewJson(model);
 		
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveSeguroRentasExpediente(DtoSeguroRentas dto, @RequestParam Long id, ModelMap model) {
+		try {		
+			
+			model.put("success", expedienteComercialApi.saveSeguroRentasExpediente(dto, id));
+			
+		}catch (JsonViewerException e) {
+			e.printStackTrace();
+			model.put("msg", e.getMessage());
+			model.put("success", false);
+		}
+		
+		catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -652,7 +678,24 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		return createModelAndViewJson(model);
 		
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHstcoSeguroRentas(ModelMap model, Long idExpediente) {
+		
+		try {
+			List<DtoHstcoSeguroRentas> list = expedienteComercialApi.getHstcoSeguroRentas(idExpediente);
+			model.put("data", list);
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
 	/**
 	 * Recupera la lista de compradores para la pestanya Compradores /PBC de un expediente
 	 * @param idExpediente
@@ -1533,6 +1576,21 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	public ModelAndView getComboTipoCalculo(Long idExpediente, WebDto webDto, ModelMap model){
 		
 		model.put("data", expedienteComercialApi.getComboTipoCalculo(idExpediente));
+		return new ModelAndView("jsonView", model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView enviarCorreoComercializadora(String cuerpoEmail, Long idExpediente, ModelMap model) {
+
+		try {
+			boolean success = expedienteComercialApi.enviarCorreoComercializadora(cuerpoEmail, idExpediente);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
 		return new ModelAndView("jsonView", model);
 	}
 	

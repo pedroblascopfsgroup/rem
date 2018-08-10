@@ -205,8 +205,50 @@ Ext.define('HreRem.model.CondicionesExpediente', {
 	    },
 	    {
 	    	name: 'inversionDeSujetoPasivo'
+	    },
+	    {
+	    	name: 'mesesFianza'
+	    },
+	    {
+	    	name: 'importeFianza'
+	    },
+	    {
+	    	name: 'fianzaActualizable'
+	    },
+	    {
+	    	name: 'mesesDeposito'
+	    },
+	    {
+	    	name: 'importeDeposito'
+	    },
+	    {
+	    	name: 'depositoActualizable'
+	    },
+	    {
+	    	name: 'avalista'
+	    },
+	    {
+	    	name: 'documentoFiador'
+	    },
+	    {
+	    	name: 'codigoEntidad'
+	    },
+	    {
+	    	name: 'importeAval'
+	    },
+	    {
+	    	name: 'renunciaTanteo'
+	    },
+	    {
+	    	name: 'carencia'
+	    },
+	    {
+	    	name: 'bonificacion'
+	    },
+	    {
+	    	name: 'gastosRepercutibles'
 	    }
-
+	    
     ],
     
     proxy: {

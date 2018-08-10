@@ -256,16 +256,31 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     
 	     esExpedienteBloqueado: function(get) {
 		     	
-		     	var bloqueado = get('expediente.bloqueado');
+		     	var bloqueado = get('expediente.bloqueado') === "01";
 		     	return bloqueado;
 		     	
 		 },
+
 		 
 	     esTipoAlquiler: function(get){
 			var tipoExpedienteCodigo = get('expediente.tipoExpedienteCodigo');
 						
 			return (tipoExpedienteCodigo == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"]);
-	     }
+	     },
+	     
+	     esEstadoPendiente: function(get) {
+		     	
+		     	var pendiente = get('segurorentasexpediente.estado');
+		     	return pendiente;
+		     	
+		 },
+		 
+	     enRevision: function(get) {
+		     	
+		     	var revision = get('segurorentasexpediente.revision');
+		     	return revision;
+		     	
+		 }
 	 },
 
 
@@ -371,6 +386,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'entidadesFinancieras'}
+			}   
+    	},
+    	
+    	comboEntidadesAvalistas: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'entidadesAvalistas'}
 			}   
     	},
     	
@@ -610,6 +634,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        extraParams: {idExpediente: '{expediente.id}'}
 	    	}
 		},
+		storeHstcoSeguroRentas: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.HstcoSeguroRentas',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getHstcoSeguroRentas',
+		        extraParams: {idExpediente: '{expediente.id}'}
+	    	}
+		},
 		storeBloqueosActivo: {
 			pageSize: $AC.getDefaultPageSize(),
 	    	model: 'HreRem.model.BloqueoActivo',
@@ -636,7 +669,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				extraParams: {diccionario: 'tiposOfertas'}
 			}
 	    },
-	    
+		comboEstadoSeguroRentas: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadoSeguroRentas'}
+			}
+	    },
 	    comboEstadoOferta: {
 	    	model: 'HreRem.model.ComboBase',
 			proxy: {

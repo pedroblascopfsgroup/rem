@@ -13,7 +13,6 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
         var codigoTipoProveedorFilter= null;
         me.codigoTipoProveedorFilter=null;
         var storeProveedores=null;
-        
 		me.setTitle(HreRem.i18n('title.gestion.economica'));
         var items= [
 

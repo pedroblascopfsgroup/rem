@@ -160,7 +160,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		TRAMITES:			'tramitestareasexpediente',
 		DOCU:				'documentosexpediente',
 		FORMA:				'formalizacionexpediente',
-		GESECO:				'gestioneconomicaexpediente'		
+		GESECO:				'gestioneconomicaexpediente',
+		SEGREN: 			'segurorentasexpediente'
 //		INVISIBLE:		Si creamos un registro-enlace-expediente en TFI y como codigo (en TFI_NOMBRE) damos este valor, ocultara el enlace
     },
 

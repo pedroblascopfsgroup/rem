@@ -24,7 +24,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
             afterdelete: function(grid) {
             	grid.getStore().load();
             }
-        }
+        },
+        'diariogestionesexpediente':{
+           	enviarComercializadora:'onClickEnviarComercializadora'
+           }
     },
     
    
@@ -2258,7 +2261,34 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			}
 		}
 	},
-
+	onCambioCheckPorcentual: function(checkbox, newValue, oldValue, eOpts) {
+			var me = this,
+			ipc = me.lookupReference('checkboxIPC');
+			porcentaje = me.lookupReference('escaladoRentaPorcentaje');
+			
+			if(newValue) {
+				ipc.show();
+				porcentaje.show();
+			} else {
+				ipc.hide();
+				porcentaje.hide();
+				
+			}
+	},	
+	onCambioCheckRevMercado: function(checkbox, newValue, oldValue, eOpts) {
+		var me = this,
+		fecha = me.lookupReference('revisionMercadoFecha');
+		cadaMes = me.lookupReference('escaladoRentasMeses');
+		
+		if(newValue) {
+			fecha.show();
+			cadaMes.show();
+		} else {
+			fecha.hide();
+			cadaMes.hide();
+			
+		}
+	},
 	onCambioInversionSujetoPasivo: function(checkbox, newValue, oldValue, eOpts) {
 		if(!Ext.isEmpty(oldValue)){
 			var me = this,
@@ -2281,6 +2311,32 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			}
 		}
 	},
+	
+	onchkbxEnRevisionChange: function(checkbox, newValue, oldValue, eOpts){
+    	var me = this;
+    	seguroComentario = me.lookupReference('textareafieldsegurocomentarios');
+    	if(newValue == false){   
+    		seguroComentario.setValue("");
+        }  
+
+    	
+    },
+    
+    habilitarcheckrevisionOnChange: function(combo, newValue){
+		var me = this;
+    	enRevision = me.lookupReference('chkboxEnRevision');
+    	seguroComentario = me.lookupReference('textareafieldsegurocomentarios');
+    	//Si el estado es pendiente(01), habilitamos el check de revision 
+    	if(newValue === '01'){   
+    		enRevision.setReadOnly(false);
+    		seguroComentario.setReadOnly(false);
+			
+        }  
+    	else{
+    		enRevision.setReadOnly(true);
+    		seguroComentario.setReadOnly(true);
+    	}
+ 	},
 
 	onHaCambiadoFechaResolucion: function( field, newDate, oldDate, eOpts){
 		var me = this;
@@ -2368,7 +2424,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				}
 			);
 	},
-	
+
 	onClickEnviarMailAprobacion: function(btn) {
 		
 		var me = this;
@@ -2404,6 +2460,34 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					}
 				}
 			);
+	},
+
+	onClickEnviarComercializadora: function(rec){
+		var me = this;
+		var url = $AC.getRemoteUrl('expedientecomercial/enviarCorreoComercializadora');
+		var idExpediente = me.getViewModel().get('expediente.id');
+		var observacion = rec.getData().observacion
+
+
+		Ext.Ajax.request({
+			
+		    url: url,
+		    params: {
+		     			cuerpoEmail: observacion,
+		     			idExpediente: idExpediente
+		     		}
+			
+		   ,success: function (a, operation, context) {
+               	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				me.getView().unmask();
+           },
+           
+           failure: function (a, operation, context) {
+           	 	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				me.getView().unmask();
+           }
+	     
+		});
 	}
 	
 });

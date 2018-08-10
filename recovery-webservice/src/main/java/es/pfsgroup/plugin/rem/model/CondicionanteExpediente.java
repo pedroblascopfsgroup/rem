@@ -25,6 +25,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
@@ -216,13 +217,56 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     @Column(name="COE_INVERSION_SUJETO_PASIVO")
     private Boolean inversionDeSujetoPasivo;
     
+	@Column(name="ALQ_FIANZA_MESES")
+    private Integer mesesFianza;
+    
+    @Column(name="ALQ_FIANZA_IMPORTE")
+    private Double importeFianza;
+    
+    @Column(name="ALQ_FIANZA_ACTUALIZABLE")
+    private Boolean fianzaActualizable;
+    
+    @Column(name="ALQ_DEPOSITO_MESES")
+    private Integer mesesDeposito;
+    
+    @Column(name="ALQ_DEPOSITO_IMPORTE")
+    private Double importeDeposito;
+    
+    @Column(name="ALQ_DEPOSITO_ACTUALIZABLE")
+    private Boolean depositoActualizable;
+    
+    @Column(name="ALQ_AVALISTA")
+    private String avalista;
+    
+    @Column(name="ALQ_FIADOR_DOCUMENTO")
+    private String documentoFiador;
+        
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ALQ_FIADOR_ENTIDAD_BANCARIA")
+	private DDEntidadesAvalistas entidadBancariaFiador;
+    
+    @Column(name="ALQ_IMPORTE_AVAL")
+    private Double importeAval;
+    
+    @Column(name="ALQ_RENUNCIA_TANTEO")
+    private Boolean renunciaTanteo;
+    
+    @Column(name="ALQ_CARENCIA")
+    private Double carencia;
+    
+    @Column(name="ALQ_BONIFICACION")
+    private Double bonificacion;
+    
+    @Column(name="ALQ_GASTOS_REPERCUTIBLES")
+    private Double gastosRepercutibles;
+           
     @Version   
 	private Long version;
 
 	@Embedded
 	private Auditoria auditoria;
-    
-    
+	   
+	
 
 	public Long getId() {
 		return id;
@@ -637,6 +681,116 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 		this.inversionDeSujetoPasivo = inversionDeSujetoPasivo;
 	}
 	
+	public Integer getMesesFianza() {
+		return mesesFianza;
+	}
 
-   
+	public void setMesesFianza(Integer mesesFianza) {
+		this.mesesFianza = mesesFianza;
+	}
+
+	public Double getImporteFianza() {
+		return importeFianza;
+	}
+
+	public void setImporteFianza(Double importeFianza) {
+		this.importeFianza = importeFianza;
+	}
+
+	public Boolean getFianzaActualizable() {
+		return fianzaActualizable;
+	}
+
+	public void setFianzaActualizable(Boolean fianzaActualizable) {
+		this.fianzaActualizable = fianzaActualizable;
+	}
+
+	public Integer getMesesDeposito() {
+		return mesesDeposito;
+	}
+
+	public void setMesesDeposito(Integer mesesDeposito) {
+		this.mesesDeposito = mesesDeposito;
+	}
+
+	public Double getImporteDeposito() {
+		return importeDeposito;
+	}
+
+	public void setImporteDeposito(Double importeDeposito) {
+		this.importeDeposito = importeDeposito;
+	}
+
+	public Boolean getDepositoActualizable() {
+		return depositoActualizable;
+	}
+
+	public void setDepositoActualizable(Boolean depositoActualizable) {
+		this.depositoActualizable = depositoActualizable;
+	}
+
+	public String getAvalista() {
+		return avalista;
+	}
+
+	public void setAvalista(String avalista) {
+		this.avalista = avalista;
+	}
+
+	public String getDocumentoFiador() {
+		return documentoFiador;
+	}
+
+	public void setDocumentoFiador(String documentoFiador) {
+		this.documentoFiador = documentoFiador;
+	}
+
+	public DDEntidadesAvalistas getEntidadBancariaFiador() {
+		return entidadBancariaFiador;
+	}
+
+	public void setEntidadBancariaFiador(DDEntidadesAvalistas entidadBancariaFiador) {
+		this.entidadBancariaFiador = entidadBancariaFiador;
+	}
+
+	public Double getImporteAval() {
+		return importeAval;
+	}
+
+	public void setImporteAval(Double importeAval) {
+		this.importeAval = importeAval;
+	}
+
+	public Boolean getRenunciaTanteo() {
+		return renunciaTanteo;
+	}
+
+	public void setRenunciaTanteo(Boolean renunciaTanteo) {
+		this.renunciaTanteo = renunciaTanteo;
+	}
+
+	public Double getCarencia() {
+		return carencia;
+	}
+
+	public void setCarencia(Double carencia) {
+		this.carencia = carencia;
+	}
+
+	public Double getBonificacion() {
+		return bonificacion;
+	}
+
+	public void setBonificacion(Double bonificacion) {
+		this.bonificacion = bonificacion;
+	}
+
+	public Double getGastosRepercutibles() {
+		return gastosRepercutibles;
+	}
+
+	public void setGastosRepercutibles(Double gastosRepercutibles) {
+		this.gastosRepercutibles = gastosRepercutibles;
+	}
+	  
 }

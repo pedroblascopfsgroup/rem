@@ -28,6 +28,9 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 				collapsible: true,
 				defaultType: 'displayfieldbase',				
 				title: HreRem.i18n('title.economicas'),
+				bind: {
+			    	hidden: '{!esOfertaVenta}'
+	            },
 				items : [
 					{
 						xtype: 'button',
@@ -166,7 +169,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                },
 							                {
 							                	xtype: 'checkboxfieldbase',
-							                	reference: 'chkboxOperacionExenta',
+							                	reference: 'chckboxfieldbase',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.operacion.exenta'),
 							                	bind: {
 					        						value: '{condiciones.operacionExenta}',
@@ -499,237 +502,403 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 					}
 					
 		        ]
-			},
-			{   
+			},{
+		
+	//##############################################################################################################			
+	//##################################### PESTAÑA A DESARROLLAR ################################################## 			
+	//##############################################################################################################			   
 				xtype:'fieldset',
 				collapsible: true,
-				defaultType: 'displayfieldbase',
-				/*bind: {
-					hidden: '{!esOfertaVenta}',
-					disabled: '{!esOfertaVenta}'
-			    },*/
-				hidden: 'true',
-				title: HreRem.i18n('title.juridicas'),
+				defaultType: 'displayfieldbase',				
+				title: HreRem.i18n('title.economicas'),
+				bind: {
+			    	hidden: '{esOfertaVenta}'
+	            },
 				items : [
-				
-					{   
+					{
 						xtype:'fieldsettable',
 						collapsible: false,
-						defaultType: 'displayfieldbase',				
-						title: HreRem.i18n('title.situacion.activo'),
-						items : [
-							{
-				        		xtype:'displayfieldbase',
-					        	fieldLabel: HreRem.i18n('fieldlabel.fecha.toma.posesion'),
-					        	bind: '{condiciones.fechaTomaPosesion}'
-					        },
-					        {
-							    xtype: 'checkboxfieldbase',
-							    fieldLabel:  HreRem.i18n('fieldlabel.sujeto.tramite.tanteo'),
-							    readOnly:true, 
-							    hidden: true,
-							    bind: '{condiciones.sujetoTramiteTanteo}',
-							    colspan: 2
-		                	},
-					        { 
-								xtype:'comboboxfieldbase',
-								fieldLabel:  HreRem.i18n('fieldlabel.ocupado'),
-								readOnly:true,
-								reference: 'comboOcupado',
-				        		bind: {
-			            			store: '{comboSiNoRem}',
-			            			value: '{condiciones.ocupado}'
-			            		}
-					        },
-					        { 
-								xtype:'comboboxfieldbase',
-								readOnly:true,
-								reference: 'comboConTitulo',
-			                	fieldLabel:  HreRem.i18n('fieldlabel.con.titulo'),
-					        	bind: {
-			            			store: '{comboSiNoRem}',
-			            			value: '{condiciones.conTitulo}'
-			            		}
-					        },
-					        { 
-								
-			                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.titulo'),
-					        	bind: '{condiciones.tipoTitulo}'
-					        }
-					        
-					        
-					        
-				        ]
+						
+						border: false,
+							defaultType: 'displayfieldbase',				
+							items : [
+					
+								{
+						        	xtype:'fieldset',
+						        	height: 140,
+						        	margin: '0 10 10 0',
+						        	layout: {
+								        type: 'table',
+						        		columns: 2
+						        	},
+									defaultType: 'textfieldbase',
+									title: HreRem.i18n("fieldlabel.fianza"),
+									items :
+										[
+											{ 
+												xtype: 'numberfieldbase',
+												reference: 'mesesDeposito',
+										 		fieldLabel: HreRem.i18n('fieldlabel.meses'),
+										 		bind: '{condiciones.mesesFianza}',
+				                				readOnly: true
+							                },
+							                {
+							                	xtype: 'checkboxfieldbase',
+							                	reference: 'chekboxReservaConImpuesto',
+							                	fieldLabel:  HreRem.i18n('fieldlabel.fianza.actualizable'),
+							                	bind: {
+							                		value: '{condiciones.fianzaActualizable}'										             
+							                	},
+							                	readOnly: true
+		                					},
+		                					{ 
+												xtype: 'numberfieldbase',
+												reference: 'importeDeposito',
+										 		fieldLabel: HreRem.i18n('fieldlabel.importe'),
+										 		symbol: HreRem.i18n('symbol.euro'),				
+				                				bind: '{condiciones.importeFianza}',
+				                				readOnly: true
+				                				
+							                }
+				
+										]
+								},
+						        
+						        {
+						        	xtype:'fieldset',
+						        	height: 140,
+						        	margin: '0 10 10 0',
+						        	layout: {
+								        type: 'table',
+						        		columns: 2
+						        	},
+									defaultType: 'textfieldbase',
+									title: HreRem.i18n("fieldlabel.fiscales"),
+									items :
+										[
+											 	{
+										        	xtype: 'comboboxfieldbase',							        	
+										        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.impuesto'),
+										        	bind: {
+									            		store: '{comboTiposImpuesto}',
+									            		value: '{condiciones.tipoImpuestoCodigo}'
+									            	},
+						            				displayField: 'descripcion',
+			    									valueField: 'codigo'
+										        },	
+										        {
+													xtype: 'numberfieldbase',
+													reference: 'tipoAplicable',
+											 		symbol: HreRem.i18n("symbol.porcentaje"),
+													fieldLabel: HreRem.i18n('fieldlabel.tipo.aplicable'),
+					                				bind: {
+					                					value: '{condiciones.tipoAplicable}'
+					                				}
+								                },
+								                {
+								                	xtype: 'checkboxfieldbase',
+								                	reference: 'renunciaTanteoRetracto',
+								                	fieldLabel:  HreRem.i18n('fieldlabel.renuncia.tanteo.retracto'),
+								                	bind: {
+						        						value: '{condiciones.renunciaTanteo}'
+				            						},
+				            						
+			                					},
+										        {
+			                						xtype: 'numberfieldbase',
+								                	reference: 'carencias',
+								                	fieldLabel:  HreRem.i18n('fieldlabel.carencia'),
+								                	bind: {
+						        						value: '{condiciones.carencia}'
+				            						},
+			                					},
+			                					{		                
+			                						xtype: 'numberfieldbase',
+								                	reference: 'bonificacion',
+								                	fieldLabel:  HreRem.i18n('fieldlabel.bonificacion'),
+								                	bind: {
+						        						value: '{condiciones.bonificacion}'							             
+				            						},
+				            						
+			                					},
+										        {
+			                						xtype: 'numberfieldbase',
+								                	reference: 'gastosRepercutibles',
+								                	fieldLabel:  HreRem.i18n('fieldlabel.gastos.repercutibles'),
+								                	bind: {
+								                		value: '{condiciones.gastosRepercutibles}'
+								                	}
+			                					}
+											]
+						        	}
+						        ]
 					},
 					{
-						xtype:'fieldset',
-				collapsible: false,
-				width: '100%',
-				layout: {
-			        type: 'hbox',
-			       	align: 'stretch'
-			    },
-				title:HreRem.i18n('title.requerimientos.comprador'),
-				items :
-					[	{
-							xtype: 'container',
-							layout: {type: 'vbox'},
-							defaultType: 'textfieldbase',
-							width: '50%',
-							items: [
-								{ 
-						        	xtype: 'comboboxfieldbase',
-						        	fieldLabel: HreRem.i18n('fieldlabel.situacion,titulo'),
-						        	bind: {
-					            		store: '{comboSituacionTitulo}',
-					            		value: '{condiciones.estadoTituloCodigo}'			            		
-					            	},
-					            	displayField: 'descripcion',
-		    						valueField: 'codigo'
-						        },						        
-								{ 
-						        	xtype: 'comboboxfieldbase',
-						        	fieldLabel: HreRem.i18n('fieldlabel.con.posesion.inicial'),
-						        	bind: {
-					            		store: '{comboSiNoRem}',
-					            		value: '{condiciones.posesionInicial}'			            		
-					            	},
-					            	displayField: 'descripcion',
-		    						valueField: 'codigo'
-						        },
-				                { 
-						        	xtype: 'comboboxfieldbase',
-//						        	editable: false,
-						        	fieldLabel: HreRem.i18n('fieldlabel.situacion.posesoria'),
-						        	bind: {
-					            		store: '{comboSituacionPosesoria}',
-					            		value: '{condiciones.situacionPosesoriaCodigo}'			            		
-					            	},
-					            	displayField: 'descripcion',
-		    						valueField: 'codigo',
-		    						editable: true
-						        }
-	            			]
-		                
-						},
-		                
-				        
-				        
-				        
-		                { 
-			        	    xtype:'fieldset',
-			        	    margin: '0 15 10 5',	
-			        	    width: '50%',
-							defaultType: 'textfieldbase',
-							title: HreRem.i18n('title.renuncia.saneamiento'),
-							items :
-							[
-					 			 { 
-						        	xtype: 'comboboxfieldbase',
-						        	fieldLabel: HreRem.i18n('fieldlabel.eviccion'),
-						        	bind: {
-					            		store: '{comboSiNoRem}',
-					            		value: '{condiciones.renunciaSaneamientoEviccion}'			            		
-					            	},
-					            	displayField: 'descripcion',
-		    						valueField: 'codigo'
-						        },
-						        { 
-						        	xtype: 'comboboxfieldbase',
-						        	fieldLabel: HreRem.i18n('fieldlabel.vicios.ocultos'),
-						        	bind: {
-					            		store: '{comboSiNoRem}',
-					            		value: '{condiciones.renunciaSaneamientoVicios}'			            		
-					            	},
-					            	displayField: 'descripcion',
-		    						valueField: 'codigo'
-						        }
-					 		]
-						}
-
-					 ]
+						xtype:'fieldsettable',
+						collapsible: false,
+						border: false,
+							defaultType: 'displayfieldbase',				
+							items : [
+													
+								{
+									xtype:'fieldset',
+									height: 140,
+						        	margin: '0 10 10 0',
+						        	layout: {
+								        type: 'table',
+						        		columns: 2
+						        	},
+									defaultType: 'textfieldbase',
+									title: HreRem.i18n("fieldlabel.deposito"),				
+									items : [
+										
+											{	
+							                	xtype: 'textfieldbase',
+							                	fieldLabel:  HreRem.i18n('fieldlabel.meses'),
+							                	bind: {
+													value: '{condiciones.mesesDeposito}'
+												},
+												readOnly: true
+							                },
+											{
+							                	xtype: 'checkboxfieldbase',
+							                	reference: 'chekboxReservaConImpuesto',
+							                	fieldLabel:  HreRem.i18n('fieldlabel.deposito.actualizable'),
+							                	bind: {
+							                		value: '{condiciones.depositoActualizable}'										             
+							                	},
+							                	readOnly: true
+		                					},
+		                					{ 
+												xtype: 'numberfieldbase',
+												reference: 'importeDeposito',
+										 		fieldLabel: HreRem.i18n('fieldlabel.importe'),
+				                				bind: '{condiciones.importeDeposito}',
+				                				symbol: HreRem.i18n('symbol.euro'),	
+				                				readOnly: true
+				                				
+							                }
+											
+										]
+								},
+						        
+						        {
+						        	xtype:'fieldset',
+						        	height: 140,
+						        	margin: '0 10 10 0',
+						        	layout: {
+								        type: 'table',
+						        		columns: 2
+						        	},
+									defaultType: 'displayfieldbase',
+									title: HreRem.i18n("fieldlabel.fiador.solidario"),
+									items :
+										[								
+											 
+											{	
+							                	xtype: 'textfieldbase',
+							                	fieldLabel:  HreRem.i18n('fieldlabel.avalista'),
+							                	bind: {
+													value: '{condiciones.avalista}'
+												},
+												readOnly: true
+							                },
+							                { 
+												xtype: 'comboboxfieldbase',
+							                	fieldLabel:  HreRem.i18n('fieldlabel.entidad.bancaria'),
+									        	bind: {
+								            		store: '{comboEntidadesAvalistas}',
+								            		value: '{condiciones.codigoEntidad}'								      				    							
+								            	},
+								            	displayField: 'descripcion',
+					    						valueField: 'codigo',
+					    						reference: 'entidadBancariaFiador'
+					    						
+									        },
+									        {	
+							                	xtype: 'textfieldbase',
+							                	fieldLabel:  HreRem.i18n('fieldlabel.documento'),
+							                	bind: {
+													value: '{condiciones.documentoFiador}'
+												},
+												readOnly: true
+							                },
+											{ 
+												xtype: 'numberfieldbase',
+												reference: 'importeDeposito',
+										 		fieldLabel: HreRem.i18n('fieldlabel.importe.aval'),
+				                				bind: '{condiciones.importeAval}',
+				                				symbol: HreRem.i18n('symbol.euro'),	
+				                				readOnly: false
+				                				
+							                } 	
+										]
+						        	}
+						        ]
 					}
-				
-				
-				
+					
 		        ]
+			
 			},
-			{   
-				xtype:'fieldsettable',
-				defaultType: 'displayfieldbase',
+			
+			{
+				
+				xtype:'fieldset',
+				collapsible: true,
+				defaultType: 'displayfieldbase',				
+				title: HreRem.i18n('title.escalado.rentas'),
 				bind: {
-					hidden: '{!esOfertaVenta}',
-					disabled: '{!esOfertaVenta}'
-				},
-				title: HreRem.i18n('title.condicionantes.administrativos'),
+						  hidden: '{esOfertaVenta}'
+				      },
 				items : [
+					
+					{
+						
+						
+
+						xtype:'fieldsettable',
+						collapsible: false,
+						
+						border: false,
+							defaultType: 'displayfieldbase',				
+							items : [
+					
+								{
+						        	xtype:'fieldset',
+						        	height: 100,
+						        	margin: '0 10 10 0',
+						        	layout: {
+								        type: 'table',
+						        		columns: 1
+						        	},
+									defaultType: 'textfieldbase',
+									items :
+										[
+											{
+						        	           	xtype: 'checkboxfieldbase',
+							                	reference: 'checkboxEscaladoFijo',
+							                	fieldLabel:  HreRem.i18n('fieldlabel.fijo'),
+							                	bind: {
+							                		value: '{condiciones.reservaConImpuesto4}'										             
+							                	}
+		                					},
+		                					{	
+											 	xtype:'datefieldbase',
+											 	fieldLabel:  HreRem.i18n('fieldlabel.fecha'),
+					        					bind: '{condiciones.fechaUltimaActualizacion5}',
+					        					readOnly: true
+									        },
+									        {	
+											 	xtype:'datefieldbase',
+											 	fieldLabel:  HreRem.i18n('fieldlabel.incremento.renta'),
+					        					bind: '{condiciones.fechaUltimaActualizacion2}',
+					        					readOnly: true
+									        }
 				
-							{ 
-								xtype:'comboboxfieldbase',
-			                	fieldLabel:  HreRem.i18n('fieldlabel.vpo'),
-								readOnly:true,
-								reference: 'comboVpo',
-								bind: {
-			            			store: '{comboSiNoRem}',
-			            			value: '{condiciones.vpo}'
-			            		},
-		    					listeners: {
-		    						edit:  'cargaValorVpo'
-			            		}
-					        },
-					        { 
-								xtype: 'comboboxfieldbase',
-			                	fieldLabel:  HreRem.i18n('fieldlabel.procede.descalificacion'),
-			                	reference: 'procedeDescalificacionRef',
-					        	bind: {
-				            		store: '{comboSiNoRem}',
-				            		value: '{condiciones.procedeDescalificacion}'
-				            	},
-				            	listeners: {
-				            		change: 'onHaCambiadoProcedeDescalificacion'
-				            	},
-		    					disabled: true
-					        },
-					        { 
-								xtype: 'comboboxfieldbase',
-							    fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
-								bind: {
-									store: '{comboTiposPorCuenta}',
-								    value: '{condiciones.procedeDescalificacionPorCuentaDe}'
+										]
 								},
-								reference: 'procedeDescalificacionPorCuentaDe',
-								disabled: true
-					        },	
-					        { 
-								xtype: 'textfieldbase',
-			                	fieldLabel:  HreRem.i18n('fieldlabel.licencia'),
-					        	bind: {
-				            		value: '{condiciones.licencia}'
-				            	},
-				            	listeners: {
-				            		change: 'onHaCambiadoLicencia'
-				            	}
-					        },
-					        
-					        {
-					        					        						        	
-					        },
-					        { 
-								xtype: 'comboboxfieldbase',
-							    fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
-								bind: {
-									store: '{comboTiposPorCuenta}',
-								    value: '{condiciones.licenciaPorCuentaDe}'
-								},
-								reference: 'licenciaPorCuentaDe',
-								disabled: true
-					        }
-				
-				
-		        ]
-			}
+						        
+						        {
+						        	xtype:'fieldset',
+						        	height: 100,
+						        	margin: '0 10 10 0',
+						        	layout: {
+								        type: 'table',
+						        		columns: 1
+						        	},
+									defaultType: 'textfieldbase',
+									items :
+										[
+											
+											{
+						        	           	xtype: 'checkboxfieldbase',
+							                	reference: 'chekboxPorcentual',
+							                	fieldLabel:  HreRem.i18n('fieldlabel.porcentual'),
+							                	bind: {
+							                		value: '{condiciones.reservaConImpuesto3}',										   
+							                	},
+							                	listeners: {
+					                					change: 'onCambioCheckPorcentual'
+					                				}
+		                					},
+		                					
+		                					{
+						        	           	xtype: 'checkboxfieldbase',
+							                	reference: 'checkboxIPC',
+							                	fieldLabel:  HreRem.i18n('fieldlabel.ipc'),
+							                	bind: {
+							                		value: '{condiciones.reservaConImpuesto1}'										             
+							                	}
+		                					},
+		                					{ 
+												xtype: 'displayfieldbase',
+												reference: 'escaladoRentaPorcentaje',
+										 		symbol: HreRem.i18n('symbol.porcentaje'),
+												fieldLabel: HreRem.i18n('fieldlabel.porcentaje'),
+				                				bind: '{condiciones.impuestos}'
+							                }
+											
+										]
+						        	},
+						        	{
+							        	xtype:'fieldset',
+							        	height: 100,
+							        	margin: '0 10 10 0',
+							        	layout: {
+									        type: 'table',
+							        		columns: 1
+							        	},
+										defaultType: 'textfieldbase',
+										items :
+											[
+												{
+							        	           	xtype: 'checkboxfieldbase',
+								                	reference: 'chekboxRevisionMercado',
+								                	fieldLabel:  HreRem.i18n('fieldlabel.revision.mercado'),
+								                	bind: {
+								                		value: '{}'										             
+								                	},
+								                	listeners: {
+					                					change: 'onCambioCheckRevMercado'
+					                				}
+			                					},
+			                					{	
+												 	xtype:'datefieldbase',
+												 	reference: 'revisionMercadoFecha',
+												 	fieldLabel:  HreRem.i18n('fieldlabel.fecha'),
+						        					bind: '{}',
+						        					readOnly: true
+										        },												        								                
+								                { 
+													xtype: 'displayfieldbase',
+													reference: 'escaladoRentasMeses',
+											 		symbol: HreRem.i18n('symbol.meses'),
+											 		labelSeparator: "",
+													fieldLabel: HreRem.i18n('fieldlabel.cada'),
+					                				bind: ' meses'
+								                }
+										        
+										        
+													
+											]					        		
+						        		}	
+						        	
+						        	]
+	
+								}
+								
+								
+					        ]
+						
+						}
+			
+			
+// #############################################################################################################################	
+// #############################################################################################################################	
+			
+			
     	];
-    
+        		    
 	    me.addPlugin({ptype: 'lazyitems', items: items });
 	    
 	    me.callParent(); 

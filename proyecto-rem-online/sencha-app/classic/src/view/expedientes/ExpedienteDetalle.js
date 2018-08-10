@@ -8,7 +8,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
     			'HreRem.view.expedientes.TramitesTareasExpediente','HreRem.view.expedientes.CondicionesExpediente',
     			'HreRem.view.expedientes.FormalizacionExpediente', 'HreRem.view.expedientes.GestionEconomicaExpediente',
 				'HreRem.view.expedientes.CompradoresExpediente', 'HreRem.view.expedientes.OfertaTanteoYRetracto',
-				'HreRem.view.expedientes.GestoresExpediente','HreRem.view.expedientes.ScoringExpediente'],
+				'HreRem.view.expedientes.GestoresExpediente','HreRem.view.expedientes.ScoringExpediente',
+				'HreRem.view.expedientes.SeguroRentasExpediente'],
+
+
 	bloqueado: false,
 
     listeners	: {
@@ -113,6 +116,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'formalizacionexpediente', funPermEdition: ['EDITAR_TAB_FORMALIZACION_EXPEDIENTES']})}, ['TAB_FORMALIZACION_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'gestioneconomicaexpediente', ocultarBotonesEdicion: true})}, ['TAB_GESTION_ECONOMICA_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'scoringexpediente', funPermEdition: ['EDITAR_TAB_DATOS_BASICOS_EXPEDIENTES']})}, ['TAB_DATOS_BASICOS_EXPEDIENTES']);
+	        items.push({xtype: 'segurorentasexpediente'});
 
 	        me.addPlugin({ptype: 'lazyitems', items: items});
 	        me.callParent();
@@ -131,7 +135,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 			}
 			
 			if(!bloqueado){
-				// Si la pestaña recibida no tiene asignados roles de edicion 
+				// Si la pestaña recibida no tiene asignados roles de edicion
 				if(Ext.isEmpty(tab.funPermEdition)) {
 					editionEnabled();
 				} else {

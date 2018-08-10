@@ -8,7 +8,6 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -953,8 +952,6 @@ public interface ExpedienteComercialApi {
 
 	DtoModificarCompradores vistaADtoModCompradores(VBusquedaDatosCompradorExpediente vista);
 
-	public String getCodigoCarteraExpediente(String idExpediente);
-
-	Boolean checkCamposSucursal(Long idtramite);	
+	public String getCodigoCarteraExpediente(String idExpediente);	
 	
 }

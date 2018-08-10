@@ -436,10 +436,6 @@
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkInformeJuridicoFinalizado(idTramite);
             }
-            def checkCamposSucursal = {
-            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
-            	return expedienteComercialManager.checkCamposSucursal(idTramite);
-            }
             def checkEsMultiactivo = {
             	def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.checkEsMultiactivo(tareaExterna);

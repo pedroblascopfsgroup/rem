@@ -5047,29 +5047,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			return false;
 		}
 	}
-	
-	@Override
-	public Boolean checkCamposSucursal(Long idTramite) {
-		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
-		
-		if(!Checks.esNulo(activoTramite)) {
-			Trabajo trabajo = activoTramite.getTrabajo();
-			if(!Checks.esNulo(trabajo)) {
-				ExpedienteComercial expediente = findOneByTrabajo(trabajo);
-				if(!Checks.esNulo(expediente)) {
-					Reserva reserva = expediente.getReserva();
-					if(!Checks.esNulo(reserva)) {
-						DtoReserva dto = expedienteToDtoReserva(expediente);
-						return (!Checks.esNulo(dto) && (!Checks.esNulo(dto.getSucursal()) && !Checks.esNulo(dto.getCodigoSucursal()))) ? true : false;
-					}else {
-						return true;
-					}
-				}
-			}
-		}
-		
-		return false;
-	}
 
 	@Override
 	public Boolean checkImporteParticipacion(Long idTramite) {

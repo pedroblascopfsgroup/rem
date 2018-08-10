@@ -660,10 +660,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	onCompradoresListDobleClick : function(gridView,record) {
-		var me=this;
-		var codigoEstado= me.getViewModel().get("expediente.codigoEstado");
+		var me=this,
+		codigoEstado= me.getViewModel().get("expediente.codigoEstado"), 
+		fechaPosicionamiento = me.getViewModel().get("expediente.fechaPosicionamiento"),
+		tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"],
+		tipoExpedienteVenta = CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"];
 		
-		if(codigoEstado!=CONST.ESTADOS_EXPEDIENTE['VENDIDO']){
+		if((codigoEstado!=CONST.ESTADOS_EXPEDIENTE['VENDIDO'] && me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteVenta)
+				||  (me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler && Ext.isEmpty(fechaPosicionamiento))){
 			var idCliente = record.get("id"),
 			expediente= me.getViewModel().get("expediente");
 			var storeGrid= gridView.store;
@@ -673,20 +677,20 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 	},
 	esEditableCompradores : function(field){
-	     	var me = this;
-	     	var viewModel = me.getViewModel();
-	     	if(viewModel.get('esCarteraBankia')){
-				if ((viewModel.get('expediente.codigoEstado') != CONST.ESTADOS_EXPEDIENTE['FIRMADO']
-						    && viewModel.get('expediente.codigoEstado') != CONST.ESTADOS_EXPEDIENTE['VENDIDO'] )
-						    && $AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES'])){
-					field.topBar = true;
-					field.down('toolbar').show();
-				}else{
-					field.topBar = false;
-					field.down('toolbar').hide();
-				}
-	     	}
-		},
+		var me = this;
+		var viewModel = me.getViewModel();
+		if(viewModel.get('esCarteraBankia')){
+			if ((viewModel.get('expediente.codigoEstado') != CONST.ESTADOS_EXPEDIENTE['FIRMADO']
+						&& viewModel.get('expediente.codigoEstado') != CONST.ESTADOS_EXPEDIENTE['VENDIDO'] )
+						&& $AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES'])){
+				field.topBar = true;
+				field.down('toolbar').show();
+			}else{
+				field.topBar = false;
+				field.down('toolbar').hide();
+			}
+		}
+	},
 	onHaCambiadoSolicitaFinanciacion: function(combo, value){
 		var me = this,
     	disabled = value == 0,
@@ -1442,21 +1446,34 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 
 	abrirFormularioCrearComprador: function(grid) {
+		
 		var me = this,
 		idExpediente = me.getViewModel().get("expediente.id"),
-		codigoEstado= me.getViewModel().get("expediente.codigoEstado");
-		bloqueado = me.getViewModel().get("expediente.bloqueado");
-		if(!bloqueado){		
-			if(CONST.ESTADOS_EXPEDIENTE['VENDIDO']!=codigoEstado){
-				var ventanaCompradores= grid.up().up();
-				var expediente= me.getViewModel().get("expediente");
-				Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente}).show();
-				me.onClickBotonRefrescar();
-			}
-			else{
+		codigoEstado = me.getViewModel().get("expediente.codigoEstado"),
+		tipoExpedienteCodigo = me.getViewModel().get("expediente.tipoExpedienteCodigo"),
+		origen = me.getViewModel().get("expediente.origen"),
+		bloqueado = me.getViewModel().get("expediente.bloqueado"),
+		tipoOrigenWCOM = CONST.TIPOS_ORIGEN["WCOM"],
+		fechaSancion = me.getViewModel().get('expediente.fechaSancion');
+
+		if(!bloqueado){
+			if(CONST.ESTADOS_EXPEDIENTE['VENDIDO'] != codigoEstado){
+				if(CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] == tipoExpedienteCodigo && tipoOrigenWCOM != origen){
+					if(Ext.isEmpty(fechaSancion)){
+						var ventanaCompradores= grid.up().up();
+						var expediente= me.getViewModel().get("expediente");
+						Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente}).show();
+						me.onClickBotonRefrescar();
+					} else {
+						me.fireEvent("errorToast","Expediente sancionado");
+					}
+				} else {
+					me.fireEvent("errorToast","Expediente con origen WCOM");
+				}
+			} else{
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.vendido"));
 			}
-		}else{
+		} else{
 			me.fireEvent("errorToast","Expediente bloqueado");
 		}
 	},

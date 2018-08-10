@@ -11,7 +11,14 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
     initComponent: function () {
 		
 		var me = this;
--       me.setTitle(HreRem.i18n('title.compradores'));
+		var tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
+		var title = HreRem.i18n('title.compradores');
+
+		if(me.lookupViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){
+			title = HreRem.i18n('title.inquilinos');
+		};
+		
+		me.setTitle(title);
 		
 		var coloredRender = function (value, meta, record) {
     		var borrado = record.get('borrado');
@@ -40,7 +47,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 
 			{   
 				xtype: 'fieldset',
-            	title:  HreRem.i18n('title.compradores'),
+            	title:  title,
             	items : [
             		{
 						xtype: 'button',

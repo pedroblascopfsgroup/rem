@@ -52,6 +52,8 @@ public class DtoFichaExpediente extends WebDto {
 
 	private Date fechaSancion;
 
+	private String origen;
+
 	private Date fechaReserva;
 
 	private Date fechaFin;
@@ -229,6 +231,14 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setFechaSancion(Date fechaSancion) {
 		this.fechaSancion = fechaSancion;
+	}
+
+	public String getOrigen() {
+		return origen;
+	}
+	
+	public void setOrigen(String origen) {
+		this.origen = origen;
 	}
 
 	public Date getFechaReserva() {

@@ -204,6 +204,25 @@ public class GastoPrinex implements Serializable, Auditable {
 	@Column(name = "GPL_CARACTERISTICA")
 	private String caracteristica;
 	
+	@Column(name = "GPL_DIARIO1_BASE")
+	private Long diario1Base;
+	
+	@Column(name = "GPL_DIARIO1_TIPO")
+	private Long diario1Tipo;
+	
+	@Column(name = "GPL_DIARIO1_CUOTA")
+	private Long diario1Cuota;
+	
+	@Column(name = "GPL_DIARIO2_BASE")
+	private Long diario2Base;
+	
+	@Column(name = "GPL_DIARIO2_TIPO")
+	private Long diario2Tipo;
+	
+	@Column(name = "GPL_DIARIO2_CUOTA")
+	private Long diario2Cuota;
+	
+	
 	@Embedded
 	private Auditoria auditoria;
 
@@ -678,6 +697,53 @@ public class GastoPrinex implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
-	
 
+	public Long getDiario1Base() {
+		return diario1Base;
+	}
+
+	public void setDiario1Base(Long diario1Base) {
+		this.diario1Base = diario1Base;
+	}
+
+	public Long getDiario1Tipo() {
+		return diario1Tipo;
+	}
+
+	public void setDiario1Tipo(Long diario1Tipo) {
+		this.diario1Tipo = diario1Tipo;
+	}
+
+	public Long getDiario1Cuota() {
+		return diario1Cuota;
+	}
+
+	public void setDiario1Cuota(Long diario1Cuota) {
+		this.diario1Cuota = diario1Cuota;
+	}
+
+	public Long getDiario2Base() {
+		return diario2Base;
+	}
+
+	public void setDiario2Base(Long diario2Base) {
+		this.diario2Base = diario2Base;
+	}
+
+	public Long getDiario2Tipo() {
+		return diario2Tipo;
+	}
+
+	public void setDiario2Tipo(Long diario2Tipo) {
+		this.diario2Tipo = diario2Tipo;
+	}
+
+	public Long getDiario2Cuota() {
+		return diario2Cuota;
+	}
+
+	public void setDiario2Cuota(Long diario2Cuota) {
+		this.diario2Cuota = diario2Cuota;
+	}
+	
 }

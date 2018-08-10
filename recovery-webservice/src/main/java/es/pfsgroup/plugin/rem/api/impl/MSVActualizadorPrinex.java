@@ -92,7 +92,7 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 			gastoNuevo = true;
 		}
 		
-		for(int columna = 1; columna < 57; columna++){
+		for(int columna = 1; columna < 63; columna++){
 			actualizarEntidad(gasto, columna, exc, fila);
 		}
 
@@ -292,6 +292,24 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CARACTERISTICA:
 			entidad.setCaracteristica(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CARACTERISTICA));
+			break;
+		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO1_BASE:
+			entidad.setDiario1Base(Long.valueOf(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO1_BASE)));
+			break;
+		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO1_CUOTA:
+			entidad.setDiario1Cuota(Long.valueOf(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO1_CUOTA)));
+			break;
+		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO1_TIPO:
+			entidad.setDiario1Tipo(Long.valueOf(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO1_TIPO)));
+			break;
+		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO2_BASE:
+			entidad.setDiario2Base(Long.valueOf(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO2_BASE)));
+			break;
+		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO2_CUOTA:
+			entidad.setDiario2Cuota(Long.valueOf(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO2_CUOTA)));
+			break;
+		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO2_TIPO:
+			entidad.setDiario2Tipo(Long.valueOf(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO2_TIPO)));
 			break;
 
 		default:

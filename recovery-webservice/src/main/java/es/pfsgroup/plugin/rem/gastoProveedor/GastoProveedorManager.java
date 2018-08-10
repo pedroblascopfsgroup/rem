@@ -620,7 +620,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		if (!Checks.esNulo(detalleGasto)) {
 			
-			dto.setCartera(gasto.getPropietario().getCartera().getCodigo());
+			if(!Checks.esNulo(gasto.getPropietario())) {
+				if(!Checks.esNulo(gasto.getPropietario().getCartera())) {
+					if(!Checks.esNulo(gasto.getPropietario().getCartera().getCodigo())) {
+						dto.setCartera(gasto.getPropietario().getCartera().getCodigo());
+					}
+				}
+			}
+			
 			dto.setImportePrincipalSujeto(detalleGasto.getImportePrincipalSujeto());
 			dto.setImportePrincipalNoSujeto(detalleGasto.getImportePrincipalNoSujeto());
 			dto.setImporteRecargo(detalleGasto.getImporteRecargo());

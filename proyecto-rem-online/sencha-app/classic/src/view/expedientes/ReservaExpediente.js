@@ -68,8 +68,7 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.firma'),
 		                	bind: {
 		                		value: '{reserva.fechaFirma}',
-		                		//readOnly: '{fechaIngresoChequeReadOnly}'
-		                		readOnly: !$AU.userIsRol("HAYASUPER")
+		                		readOnly: '{fechaIngresoChequeReadOnly}'
 	                		}
 		                },
 		                {		                

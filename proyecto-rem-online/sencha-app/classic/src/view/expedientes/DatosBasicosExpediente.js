@@ -198,8 +198,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.ingreso.cheque'),
 	                	bind: {
 	                		value: '{expediente.fechaContabilizacionPropietario}',
-	                		//readOnly: '{fechaIngresoChequeReadOnly}'
-	                		readOnly: !$AU.userIsRol("HAYASUPER")
+	                		readOnly: '{fechaIngresoChequeReadOnly}'
 	                	}		
 	                }
 

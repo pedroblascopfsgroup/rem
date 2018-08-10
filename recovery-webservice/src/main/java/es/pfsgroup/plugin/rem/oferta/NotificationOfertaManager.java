@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.oferta;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -20,11 +21,11 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
-import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaGenerico;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
@@ -108,6 +109,13 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 
 			if(!Checks.esNulo(usuario)){
 				mailsPara.add(usuario.getEmail());
+				
+				List<GestorSustituto> sustitutos = genericDao.getList(GestorSustituto.class, genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", usuario.getId()));
+				for (GestorSustituto gestorSustituto : sustitutos) {
+					if ((gestorSustituto.getFechaFin().after(new Date()) || gestorSustituto.getFechaFin().equals(new Date())) && (gestorSustituto.getFechaInicio().before(new Date()) || gestorSustituto.getFechaInicio().equals(new Date())) && !gestorSustituto.getAuditoria().isBorrado()){
+						mailsPara.add(gestorSustituto.getUsuarioGestorSustituto().getEmail());
+					}
+				}
 			}
 			if(!Checks.esNulo(supervisor)){
 				mailsPara.add(supervisor.getEmail());
@@ -116,7 +124,9 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				if(!Checks.esNulo(usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR))){
 					mailsPara.add(usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR).getEmail());
 				}				
-			}			
+			}
+
+			
 			mailsCC.add(this.getCorreoFrom());
 			
 			if(!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getCliente()) && !Checks.esNulo(oferta.getCliente().getTipoDocumento())){

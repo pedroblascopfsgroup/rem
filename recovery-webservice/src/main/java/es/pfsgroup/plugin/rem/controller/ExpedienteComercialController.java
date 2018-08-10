@@ -1578,5 +1578,20 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		model.put("data", expedienteComercialApi.getComboTipoCalculo(idExpediente));
 		return new ModelAndView("jsonView", model);
 	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView enviarCorreoComercializadora(String cuerpoEmail, Long idExpediente, ModelMap model) {
+
+		try {
+			boolean success = expedienteComercialApi.enviarCorreoComercializadora(cuerpoEmail, idExpediente);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		return new ModelAndView("jsonView", model);
+	}
 	
 }

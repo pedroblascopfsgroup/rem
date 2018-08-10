@@ -48,8 +48,27 @@ Ext.define('HreRem.view.expedientes.DiarioGestionesExpediente', {
 			       	    dataIndex: 'observacion',
 			       		flex:6,
 			       		editor: {xtype:'textarea'}
-			       }
-			       	        
+			       },
+			       {
+			    	   flex: 2,
+			    	   align: 'center',
+			           renderer: function (v, m, r) {
+			        	   var id = Ext.id();
+			        	   Ext.defer(function () {
+			        	       Ext.widget('button', {
+			        	          renderTo: id, 
+			        	          text: HreRem.i18n('title.diario.gestiones.enviar.comercializadora'),
+					              tooltip: HreRem.i18n('title.diario.gestiones.enviar.comercializadora'), 
+			        	          width: 200,
+			        	          handler: function () {me.fireEvent('enviarComercializadora', r); }
+			        	       });
+			        	   }, 50);
+			        	   return Ext.String.format('<div id="{0}"></div>', id);
+			           },
+			           bind: {
+			            	hidden: '{esOfertaVenta}'
+			           }
+			       }			       
 			    ],
 			    listeners : {
    	                beforeedit : function(editor, context, eOpts ) {

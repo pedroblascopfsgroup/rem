@@ -16,10 +16,18 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.Column;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -6316,6 +6324,30 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return mailsPara;
 
 	}
+	
+	private ArrayList<String> obtenerEmailsEnviarComercializadora(ExpedienteComercial expediente) {
+		ArrayList<String> mailsParaEnviarComercializadora = new ArrayList<String>();
+		if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null) {
+			Usuario gestorActivoGestorAlquileres = gestorActivoApi.getGestorByActivoYTipo(
+					expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL_ALQUILERES);
+			if (gestorActivoGestorAlquileres != null && gestorActivoGestorAlquileres.getEmail() != null) {
+				mailsParaEnviarComercializadora.add(gestorActivoGestorAlquileres.getEmail());
+			}
+		}
+		if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null) {
+			Usuario gestorActivoSupervisorAlquileres = gestorActivoApi.getGestorByActivoYTipo(
+					expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_ALQUILERES);
+			if (gestorActivoSupervisorAlquileres != null && gestorActivoSupervisorAlquileres.getEmail() != null) {
+				mailsParaEnviarComercializadora.add(gestorActivoSupervisorAlquileres.getEmail());
+			}
+		}
+		if (expediente.getOferta() != null && expediente.getOferta().getPrescriptor() != null
+				&& expediente.getOferta().getPrescriptor().getEmail() != null) {
+			mailsParaEnviarComercializadora.add(expediente.getOferta().getPrescriptor().getEmail());
+		}
+		return mailsParaEnviarComercializadora;
+
+	}
 
 	@Override
 	public boolean checkExpedienteBloqueado(Long idTramite) {
@@ -6647,7 +6679,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return DDSubcartera.CODIGO_BAN_BH.equals(act.getSubcartera().getCodigo());
 	}
 	
-	
 	public List<DDTipoCalculo> getComboTipoCalculo(Long idExpediente) {
 
 		ExpedienteComercial expediente = findOne(idExpediente);
@@ -6660,4 +6691,24 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		return listaTipoCalculo;
 	}
+
+	@Override
+	public boolean enviarCorreoComercializadora(String cuerpoEmail, Long idExpediente) {
+		boolean resultado = false;
+		ExpedienteComercial expediente = this.findOne(idExpediente);
+
+		try {
+			// notificamos por correo a los interesados			
+			ArrayList<String> mailsParaEnviarComercializadora = this.obtenerEmailsEnviarComercializadora(expediente);
+			String asunto = "Incidencia en la oferta de alquiler";
+			String cuerpo = cuerpoEmail;
+
+			genericAdapter.sendMail(mailsParaEnviarComercializadora, new ArrayList<String>(), asunto, cuerpo);
+			resultado = true;
+		} catch (Exception e) {
+			logger.error("No se ha podido notificar la incidencia en la oferta de alquiler.", e);
+		}
+		return resultado;
+	}
+
 }

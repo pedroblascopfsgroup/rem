@@ -24,7 +24,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
             afterdelete: function(grid) {
             	grid.getStore().load();
             }
-        }
+        },
+        'diariogestionesexpediente':{
+           	enviarComercializadora:'onClickEnviarComercializadora'
+           }
     },
     
    
@@ -2404,7 +2407,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				}
 			);
 	},
-	
+
 	onClickEnviarMailAprobacion: function(btn) {
 		
 		var me = this;
@@ -2440,6 +2443,34 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					}
 				}
 			);
+	},
+
+	onClickEnviarComercializadora: function(rec){
+		var me = this;
+		var url = $AC.getRemoteUrl('expedientecomercial/enviarCorreoComercializadora');
+		var idExpediente = me.getViewModel().get('expediente.id');
+		var observacion = rec.getData().observacion
+
+
+		Ext.Ajax.request({
+			
+		    url: url,
+		    params: {
+		     			cuerpoEmail: observacion,
+		     			idExpediente: idExpediente
+		     		}
+			
+		   ,success: function (a, operation, context) {
+               	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				me.getView().unmask();
+           },
+           
+           failure: function (a, operation, context) {
+           	 	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				me.getView().unmask();
+           }
+	     
+		});
 	}
 	
 });

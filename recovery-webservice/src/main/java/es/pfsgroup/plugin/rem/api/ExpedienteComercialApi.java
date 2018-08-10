@@ -984,7 +984,17 @@ public interface ExpedienteComercialApi {
 
 	public Boolean esBH(String idExpediente);
 
-	DtoModificarCompradores vistaADtoModCompradores(VBusquedaDatosCompradorExpediente vista);	
+	DtoModificarCompradores vistaADtoModCompradores(VBusquedaDatosCompradorExpediente vista);
+
+	/**
+	 * Este método envia un correo a los receptores Gestor comercial alquiler, Supervisor comercial alquiler y Prescriptor
+	 * con el suerpo del mensaje que se recibe por parametro.
+	 * 
+	 * @param cuerpoEmail: Contenido del cuerpo del mensaje.
+	 * @param idExpediente: Id del expediente al que hace referencia.
+	 * @return Devuelve True si el mensaje ha sido enviado y false si no ha sido asi.
+	 */
+	boolean enviarCorreoComercializadora(String cuerpoEmail, Long idExpediente);	
 	
 	public List<DDTipoCalculo> getComboTipoCalculo(Long idExpediente);
 	

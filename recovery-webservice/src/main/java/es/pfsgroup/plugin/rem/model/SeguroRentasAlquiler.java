@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -64,14 +65,22 @@ public class SeguroRentasAlquiler implements Serializable, Auditable {
 	@Column(name = "SRE_ASEGURADORAS")
 	private String aseguradoras;
 	
-	@Column(name = "SRE_EMAIL_POLIZA_ASEGURADOA")
+	@Column(name = "SRE_EMAIL_POLIZA_ASEGURADORA")
 	private String emailPolizaAseguradora;
+	
+	@Column(name = "COMENTARIOS")
+	private String comentarios;
 	
 	@Version   
 	private Long version;
 	
 	@Embedded
 	private Auditoria auditoria;
+	
+	@OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ECO_ID")
+    private ExpedienteComercial expediente;
+
 
 	public Long getId() {
 		return id;
@@ -137,9 +146,21 @@ public class SeguroRentasAlquiler implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 
+	public ExpedienteComercial getExpediente() {
+		return expediente;
+	}
 
-	
-	
+	public void setExpediente(ExpedienteComercial expediente) {
+		this.expediente = expediente;
+	}
+
+	public String getComentarios() {
+		return comentarios;
+	}
+
+	public void setComentarios(String comentarios) {
+		this.comentarios = comentarios;
+	}
 	
 	
 }

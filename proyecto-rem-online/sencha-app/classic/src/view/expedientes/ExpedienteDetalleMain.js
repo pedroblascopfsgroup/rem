@@ -39,6 +39,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleMain', {
 		var tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
 		
     	reservaDisabled = !me.getViewModel().get('expediente.tieneReserva') || me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler;
+
 		reservaDisabled = Ext.isDefined(reservaDisabled)? reservaDisabled : true;
 		bloqueado = me.getViewModel().get('expediente.bloqueado');
     	me.down('reservaexpediente').setDisabled(reservaDisabled);
@@ -53,6 +54,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleMain', {
 
 		if(me.down('activoExpedienteTabPanel') != undefined){
 			me.down('activoExpedienteTabPanel').bloquearExpediente(me.down('activoExpedienteTabPanel'),bloqueado);
+		}
+		if(me.getViewModel().get('expediente.tipoExpedienteCodigo') === "01"){				
+			var tabSeguro= me.down('segurorentasexpediente');
+			tabSeguro.tab.setVisible(false);
 		}
     }
 });

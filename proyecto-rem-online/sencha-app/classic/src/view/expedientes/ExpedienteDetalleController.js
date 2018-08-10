@@ -2264,6 +2264,32 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			}
 		}
 	},
+	
+	onchkbxEnRevisionChange: function(checkbox, newValue, oldValue, eOpts){
+    	var me = this;
+    	seguroComentario = me.lookupReference('textareafieldsegurocomentarios');
+    	if(newValue == false){   
+    		seguroComentario.setValue("");
+        }  
+
+    	
+    },
+    
+    habilitarcheckrevisionOnChange: function(combo, newValue){
+		var me = this;
+    	enRevision = me.lookupReference('chkboxEnRevision');
+    	seguroComentario = me.lookupReference('textareafieldsegurocomentarios');
+    	//Si el estado es pendiente(01), habilitamos el check de revision 
+    	if(newValue === '01'){   
+    		enRevision.setReadOnly(false);
+    		seguroComentario.setReadOnly(false);
+			
+        }  
+    	else{
+    		enRevision.setReadOnly(true);
+    		seguroComentario.setReadOnly(true);
+    	}
+ 	},
 
 	onHaCambiadoFechaResolucion: function( field, newDate, oldDate, eOpts){
 		var me = this;

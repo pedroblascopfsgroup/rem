@@ -39,6 +39,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.batch.mantenimiento.movimientos.HistorificarMovimientosTasklet;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
@@ -109,6 +110,7 @@ import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionResolucion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoHstcoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoInformeJuridico;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
 import es.pfsgroup.plugin.rem.model.DtoListadoTareas;
@@ -119,6 +121,7 @@ import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
+import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoSubsanacion;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
@@ -130,12 +133,14 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Formalizacion;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
+import es.pfsgroup.plugin.rem.model.HistoricoSeguroRentasAlquiler;
 import es.pfsgroup.plugin.rem.model.InformeJuridico;
 import es.pfsgroup.plugin.rem.model.ObservacionesExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Posicionamiento;
 import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.SeguroRentasAlquiler;
 import es.pfsgroup.plugin.rem.model.Subsanaciones;
 import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -153,6 +158,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -206,6 +212,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public final String PESTANA_RESERVA = "reserva";
 	public final String PESTANA_CONDICIONES = "condiciones";
 	public final String PESTANA_FORMALIZACION = "formalizacion";
+	public final String PESTANA_SEGURO_RENTAS= "segurorentasexpediente";
 
 	// Textos a mostrar por defecto
 	public static final String TANTEO_CONDICIONES_TRANSMISION = "msg.defecto.oferta.tanteo.condiciones.transmision";
@@ -338,7 +345,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		WebDto dto = null;
 
 		try {
-
+			
 			if (PESTANA_FICHA.equals(tab)) {
 				dto = expedienteToDtoFichaExpediente(expediente);
 			} else if (PESTANA_DATOSBASICOS_OFERTA.equals(tab)) {
@@ -351,7 +358,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto = expedienteToDtoCondiciones(expediente);
 			} else if (PESTANA_FORMALIZACION.equals(tab)) {
 				dto = expedienteToDtoFormalizacion(expediente);
+			} else if(PESTANA_SEGURO_RENTAS.equals(tab)) {
+				dto = expedienteToDtoSeguroRentas(expediente);
 			}
+			
 
 		} catch (Exception e) {
 			logger.error("error en expedienteComercialManager", e);
@@ -457,6 +467,61 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		genericDao.save(TextosOferta.class, textoOferta);
 
+		return true;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean saveSeguroRentasExpediente(DtoSeguroRentas dto, Long idEntidad) {
+		
+		SeguroRentasAlquiler seguro;
+		
+		if (!Checks.esNulo(dto.getId())) {
+			Filter filtroSeg = genericDao.createFilter(FilterType.EQUALS, "id", dto.getId());
+			seguro= genericDao.get(SeguroRentasAlquiler.class, filtroSeg);	
+		}
+		
+		else {
+			seguro = new SeguroRentasAlquiler();
+		}
+		
+		if (!Checks.esNulo(dto.getRevision())) {
+			if(dto.getRevision()) {
+				seguro.setEnRevision (Integer.valueOf(1));
+			}
+			else{
+				seguro.setEnRevision(Integer.valueOf(0));
+			}
+		}
+		if (!Checks.esNulo(dto.getEstado())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstado());
+			DDEstadoSeguroRentas estadoSeguroRentas = genericDao.get(DDEstadoSeguroRentas.class, filtro);
+			seguro.setEstadoSeguroRentas(estadoSeguroRentas);
+		}
+		if (!Checks.esNulo(dto.getEmailPoliza())) {
+			seguro.setEmailPolizaAseguradora(dto.getEmailPoliza());
+		}
+		if (!Checks.esNulo(dto.getAseguradoras())) {
+			seguro.setAseguradoras(dto.getAseguradoras());
+		}
+		if (!Checks.esNulo(dto.getComentarios())) {
+			seguro.setComentarios(dto.getComentarios());
+		}
+		
+		if (!Checks.esNulo(dto.getId())) {
+			try {
+				genericDao.update(SeguroRentasAlquiler.class, seguro);
+			} catch (Exception e) {
+				logger.error("error en expedienteComercialManager", e);
+			}
+		}	
+		else {
+			try {
+				genericDao.save(SeguroRentasAlquiler.class, seguro);
+			}  catch (Exception e) {
+				logger.error("error en expedienteComercialManager", e);
+			}
+		}
 		return true;
 	}
 
@@ -2459,6 +2524,60 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		return formalizacionDto;
 	}
+	
+	
+	public DtoSeguroRentas expedienteToDtoSeguroRentas(ExpedienteComercial expediente){
+	
+		DtoSeguroRentas seguroRentasDto = new DtoSeguroRentas();
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId());
+		SeguroRentasAlquiler seguroRentas = genericDao.get(SeguroRentasAlquiler.class, filtro);
+		if (!Checks.esNulo(seguroRentas)) {
+			seguroRentasDto.setId(seguroRentas.getId());
+			
+			if(seguroRentas.getEnRevision()==1) {
+				seguroRentasDto.setRevision(true);
+			}
+			else {
+				seguroRentasDto.setRevision(false);
+			}
+			seguroRentasDto.setMotivoRechazo(seguroRentas.getMotivoRechazo());
+			seguroRentasDto.setEstado(seguroRentas.getEstadoSeguroRentas().getCodigo());
+			seguroRentasDto.setAseguradoras(seguroRentas.getAseguradoras());
+			seguroRentasDto.setEmailPoliza(seguroRentas.getEmailPolizaAseguradora());
+			seguroRentasDto.setComentarios(seguroRentas.getComentarios());
+		}
+		return seguroRentasDto;
+	}
+	
+	
+	public List<DtoHstcoSeguroRentas> getHstcoSeguroRentas (Long idExpediente) {
+		
+		SeguroRentasAlquiler seguroRentas = new SeguroRentasAlquiler();
+		Filter filtroRentas = genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente);
+		seguroRentas = genericDao.get(SeguroRentasAlquiler.class, filtroRentas);
+		List <DtoHstcoSeguroRentas> listaHstco = new ArrayList<DtoHstcoSeguroRentas>();
+		List<HistoricoSeguroRentasAlquiler> listaHistoricoSeguroRenta = new ArrayList<HistoricoSeguroRentasAlquiler>();
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "seguroRentasAlquiler.id", seguroRentas.getId());
+		listaHistoricoSeguroRenta = genericDao.getList(HistoricoSeguroRentasAlquiler.class, filtro);
+        for (HistoricoSeguroRentasAlquiler hist : listaHistoricoSeguroRenta) 
+        	{
+        		DtoHstcoSeguroRentas aux =new DtoHstcoSeguroRentas();
+	        	aux.setId(hist.getId()); 
+	        	aux.setFechaSancion(hist.getFechaSancion());
+	        	aux.setSolicitud(hist.getIdSolicitud()); 
+	        	aux.setDocSco(hist.getDocumentoScoring());
+	        	aux.setMesesFianza(hist.getMesesFianza()); 
+	        	aux.setImporteFianza(hist.getImportFianza());
+	        	listaHstco.add(aux);
+        	}
+		
+		return listaHstco;
+		
+	}
+	
+	
+	
 
 	public DtoFormalizacionResolucion formalizacionToDto(Formalizacion formalizacion) {
 		DtoFormalizacionResolucion resolucionDto = new DtoFormalizacionResolucion();

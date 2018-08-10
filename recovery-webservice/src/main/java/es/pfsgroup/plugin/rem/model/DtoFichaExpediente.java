@@ -94,7 +94,7 @@ public class DtoFichaExpediente extends WebDto {
 	private Integer riesgoReputacional;
 	private Integer estadoPbc;
 	private Date fechaVenta;
-	private String origen;
+	
 
 	private Integer alquilerOpcionCompra;
 	private String codigoEstado;
@@ -462,14 +462,6 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setFechaVenta(Date fechaVenta) {
 		this.fechaVenta = fechaVenta;
-	}
-
-	public String getOrigen() {
-		return origen;
-	}
-
-	public void setOrigen(String origen) {
-		this.origen = origen;
 	}
 
 	public String getCodigoEstado() {

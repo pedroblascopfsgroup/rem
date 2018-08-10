@@ -661,22 +661,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	onCompradoresListDobleClick : function(gridView,record) {
 		var me=this;
-		var codigoEstado = me.getViewModel().get("expediente.codigoEstado");
-		var fechaPosicionamiento = me.getViewModel().get("expediente.fechaPosicionamiento");
-		var tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
-		var tipoExpedienteVenta = CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"];
-
+		var codigoEstado= me.getViewModel().get("expediente.codigoEstado");
+		
 		if(codigoEstado!=CONST.ESTADOS_EXPEDIENTE['VENDIDO']){
 			var idCliente = record.get("id"),
 			expediente= me.getViewModel().get("expediente");
 			var storeGrid= gridView.store;
 			var edicion = me.getViewModel().get("puedeModificarCompradores");
 
-			if((me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler && fechaPosicionamiento == null) 
-						|| me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteVenta){
-				Ext.create("HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: edicion, storeGrid:storeGrid, expediente: expediente }).show();
-			}
-		};
+			Ext.create("HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: edicion, storeGrid:storeGrid, expediente: expediente }).show();
+		}
 	},
 	esEditableCompradores : function(field){
 	     	var me = this;
@@ -1813,16 +1807,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	procedeDescalificacion = me.lookupReference('procedeDescalificacionRef');
 
 		procedeDescalificacion.setDisabled(disabled);
-	},
-
-	meCagoEnLaPuta: function() {
-		var quieroMorir = true;
-
-		if(quieroMorir){
-			return false;
-		} else {
-			return true;
-		}
 	},
 
 	comprobarCamposFechas: function(editor, gridNfo) {

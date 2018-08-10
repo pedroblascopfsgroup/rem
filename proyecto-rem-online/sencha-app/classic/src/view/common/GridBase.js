@@ -56,18 +56,10 @@ Ext.define('HreRem.view.common.GridBase', {
 		
 		me.emptyText = HreRem.i18n("grid.empty.text");
 
-		var deshabilitarBotonCompradores = false;
-		var tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
-		var tipoOrigenWCOM = CONST.TIPOS_ORIGEN["WCOM"];
-
-		if(me.lookupViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler 
-					&& (me.lookupViewModel().get('expediente.origen') === tipoOrigenWCOM
-					|| tipoExpedienteAlquiler && me.lookupViewModel().get('expediente.fechaSancion') != null)){
-			deshabilitarBotonCompradores = true;		}
-
+		
 		if(me.topBar) {
 
-			var configAddButton = {iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onClickAdd', scope: this, hidden: !me.addButton, disabled: deshabilitarBotonCompradores };
+			var configAddButton = {iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onClickAdd', scope: this, hidden: !me.addButton };
 			var configRemoveButton = {iconCls:'x-fa fa-minus', itemId:'removeButton', handler: 'onClickRemove', scope: this, disabled: true, hidden: !me.removeButton };
 			
 			//var configPropagationButton = {iconCls:'x-fa fa-th-list', itemId:'propagationButton', handler: 'onClickPropagation', disabled: true, hidden: !me.propagationButton };

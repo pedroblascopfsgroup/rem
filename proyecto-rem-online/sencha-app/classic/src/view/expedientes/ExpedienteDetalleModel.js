@@ -27,6 +27,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			}
     		return true;
     	 },
+    	 
+    	 expedienteEstaAprobado: function(get){
+    		 return get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['APROBADO'];
+    	 },
     	
 		 puedeCrearEliminarCompradores: function(get) {
     		return get('comprobacionCreacionModificacionCompradores') && $AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES']);

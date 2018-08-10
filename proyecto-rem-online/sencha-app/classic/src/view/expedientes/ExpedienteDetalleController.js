@@ -2366,5 +2366,43 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					}
 				}
 			);
+	},
+	
+	onClickEnviarMailAprobacion: function(btn) {
+		
+		var me = this;
+		
+		Ext.Msg.confirm(
+				HreRem.i18n("title.enviar.email.de.aprobacion"),
+				HreRem.i18n("msg.enviar.mail.aprobacion"),
+				function(btn){
+					if (btn == "yes"){
+						
+						var url = $AC.getRemoteUrl("ofertas/enviarMailAprobacion");
+						var parametros = {
+								idOferta: me.getViewModel().get("datosbasicosoferta.idOferta")
+						};
+						
+						me.getView().mask();
+						Ext.Ajax.request({
+				    	     url: url,
+				    	     params: parametros,
+				    	     success: function(response, opts) {
+				    	    	 console.log("success");
+				    	    	 if(Ext.decode(response.responseText).success == "false") {
+				    	    		me.fireEvent("errorToast", Ext.decode(response.responseText).errorCode);
+				    	    		me.getView().unmask();
+				    	         }
+				    	    	 else if (Ext.decode(response.responseText).success == "true"){
+				    	        	me.getView().unmask();
+				    	        	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+								 }
+				    	     }
+				    	 });
+						
+					}
+				}
+			);
 	}
+	
 });

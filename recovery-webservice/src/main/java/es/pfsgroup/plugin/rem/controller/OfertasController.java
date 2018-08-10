@@ -30,6 +30,7 @@ import es.pfsgroup.plugin.rem.excel.OfertasExcelReport;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
@@ -250,6 +251,35 @@ public class OfertasController {
 		notificationOferta.sendNotificationPropuestaOferta(oferta, new FileItem(file));
 		
 		excelReportGeneratorApi.sendReport(file, response);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView enviarMailAprobacion(ModelMap model, Long idOferta) {
+		
+		try {
+			
+			Oferta oferta = ofertaApi.getOfertaById(idOferta);
+			String errorCode = notificationOferta.enviarMailAprobacion(oferta);
+			
+			if(errorCode == null || errorCode.isEmpty()){
+				model.put("success", true);
+			}
+			else{
+				model.put("success", false);
+				model.put("errorCode", errorCode);
+			}			
+			
+			
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("errorCode", "imposible.bloquear.general");
+		}		
+		
+		return createModelAndViewJson(model);
+		
 	}
 	
 }

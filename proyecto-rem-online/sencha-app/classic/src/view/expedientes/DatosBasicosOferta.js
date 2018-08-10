@@ -282,14 +282,30 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 					    			
 		                    ]
                 		},
-						{
-		                	xtype: 'button',
-		                	reference: 'btnSendPropuesta',
-		        		    bind: {hidden: '{!datosbasicosoferta.permiteProponer}'},
-		                	rowspan: 2,
-		                	text: HreRem.i18n('btn.propuesta.oferta'),
-		                	handler: 'onClickGeneraOfertarHojaExcel'
-		                }
+                		{
+                			xtype: "container",
+                			layout: "hbox",
+                			items: [
+                				{
+        		                	xtype: 'button',
+        		                	reference: 'btnSendPropuesta',
+        		        		    bind: {hidden: '{!datosbasicosoferta.permiteProponer}'},
+        		                	rowspan: 2,
+        		                	text: HreRem.i18n('btn.propuesta.oferta'),
+        		                	handler: 'onClickGeneraOfertarHojaExcel'
+        		                },
+        		                {
+        		                	xtype: 'button',
+        		                	reference: 'btnSendAprobacion',
+        		        		    bind: {
+        		        		    	hidden: '{!esTipoAlquiler}',
+        		        		    	disabled: '{!expedienteEstaAprobado}'
+        		        		    },
+        		                	text: HreRem.i18n('btn.enviar.mail.aprobacion'),
+        		                	handler: 'onClickEnviarMailAprobacion'
+        		                }
+                			]
+                		}
 		        ]
 			},
 			{

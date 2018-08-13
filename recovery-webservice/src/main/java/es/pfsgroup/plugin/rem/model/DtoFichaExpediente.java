@@ -103,6 +103,8 @@ public class DtoFichaExpediente extends WebDto {
 	private Integer solicitaReserva; 
 	
 	private String codigoComiteSancionador;
+	
+	private String subcarteraCodigo;
 
 	public Long getId() {
 		return id;
@@ -519,6 +521,14 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setCodigoComiteSancionador(String codigoComiteSancionador) {
 		this.codigoComiteSancionador = codigoComiteSancionador;
+	}
+
+	public String getSubcarteraCodigo() {
+		return subcarteraCodigo;
+	}
+
+	public void setSubcarteraCodigo(String subcarteraCodigo) {
+		this.subcarteraCodigo = subcarteraCodigo;
 	}
 	
 	

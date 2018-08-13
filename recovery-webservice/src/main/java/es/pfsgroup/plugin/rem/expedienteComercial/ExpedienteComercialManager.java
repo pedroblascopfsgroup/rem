@@ -840,6 +840,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					dto.setEntidadPropietariaDescripcion(activo.getCartera().getDescripcion());
 					dto.setEntidadPropietariaCodigo(activo.getCartera().getCodigo());
 				}
+				
+				if(!Checks.esNulo(activo.getSubcartera())) {
+					dto.setSubcarteraCodigo(activo.getSubcartera().getCodigo());
+				}
 
 				if (!Checks.esNulo(oferta.getTipoOferta())) {
 					dto.setTipoExpedienteDescripcion(oferta.getTipoOferta().getDescripcion());

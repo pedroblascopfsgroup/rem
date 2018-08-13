@@ -183,6 +183,9 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		},
     		{
     			name: 'codigoEstado'
+    		},
+    		{
+    			name: 'subcarteraCodigo'
     		}
     		 
     ],

@@ -105,6 +105,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 	     	return CONST.CARTERA['LIBERBANK'] == carteraCodigo;
 		 },
+		 
+		 esSubcarteraBH: function(get) {
+			 var subcarteraCodigo = get('expediente.subcarteraCodigo');
+		     return CONST.SUBCARTERA['BH'] == subcarteraCodigo;
+		 },
 	     
 	     getTipoExpedienteCabecera: function(get) {
 	     

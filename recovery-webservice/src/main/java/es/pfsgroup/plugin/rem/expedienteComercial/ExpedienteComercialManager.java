@@ -2311,37 +2311,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(dto.getSujetoTramiteTanteo())) {
 				condiciones.setSujetoTanteoRetracto(dto.getSujetoTramiteTanteo() == true ? 1 : 0);
 			}
-			
-			// Condiciones Alquiler activo
-//			if (!Checks.esNulo(dto.getMesesFianza())) {
-//				condiciones.setMesesFianza(dto.getMesesFianza());
-//			}
-			
-//			if (!Checks.esNulo(dto.getImporteFianza())) {
-//				condiciones.setImporteFianza(dto.getImporteFianza());
-//			}
-			
-//			if (!Checks.esNulo(dto.getImporteFianza())) {
-//				condiciones.setFianzaActualizable(dto.getFianzaActualizable());
-//			}
-			
-//			if (!Checks.esNulo(dto.getMesesDeposito())) {
-//				condiciones.setMesesDeposito(dto.getMesesDeposito());
-//			}
-			
-//			if (!Checks.esNulo(dto.getDepositoActualizable())) {
-//				condiciones.setDepositoActualizable(dto.getDepositoActualizable());
-//			}
-			
-//			if (!Checks.esNulo(dto.getAvalista())) {
-//				condiciones.setAvalista(dto.getAvalista());
-//			}
-			
-//			if (!Checks.esNulo(dto.getDocumentoFiador())) {
-//			condiciones.setDocumentoFiador(dto.getDocumentoFiador());
-//			}
-			
-			
+								
 			if (!Checks.esNulo(dto.getImporteAval())) {
 				condiciones.setImporteAval(dto.getImporteAval());
 			}			

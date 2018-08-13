@@ -503,10 +503,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 					
 		        ]
 			},{
-		
-	//##############################################################################################################			
-	//##################################### PESTAÑA A DESARROLLAR ################################################## 			
-	//##############################################################################################################			   
+			   
 				xtype:'fieldset',
 				collapsible: true,
 				defaultType: 'displayfieldbase',				
@@ -629,6 +626,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								                		value: '{condiciones.gastosRepercutibles}'
 								                	}
 			                					}
+			                					
 											]
 						        	}
 						        ]
@@ -780,16 +778,21 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                	fieldLabel:  HreRem.i18n('fieldlabel.fijo'),
 							                	bind: {
 							                		value: '{condiciones.reservaConImpuesto4}'										             
-							                	}
+							                	},
+							                	listeners: {
+				                					change: 'onCambioCheckEscaladoFijo'
+				                				}
 		                					},
 		                					{	
 											 	xtype:'datefieldbase',
+											 	reference: 'tipoEscaladoFecha',
 											 	fieldLabel:  HreRem.i18n('fieldlabel.fecha'),
 					        					bind: '{condiciones.fechaUltimaActualizacion5}',
 					        					readOnly: true
 									        },
 									        {	
 											 	xtype:'datefieldbase',
+											 	reference: 'tipoEscaladoIncremento',
 											 	fieldLabel:  HreRem.i18n('fieldlabel.incremento.renta'),
 					        					bind: '{condiciones.fechaUltimaActualizacion2}',
 					        					readOnly: true
@@ -891,12 +894,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 					        ]
 						
 						}
-			
-			
-// #############################################################################################################################	
-// #############################################################################################################################	
-			
-			
+					
     	];
         		    
 	    me.addPlugin({ptype: 'lazyitems', items: items });

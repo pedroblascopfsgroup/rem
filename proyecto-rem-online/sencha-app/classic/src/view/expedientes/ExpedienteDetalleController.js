@@ -2279,14 +2279,24 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this,
 		fecha = me.lookupReference('revisionMercadoFecha');
 		cadaMes = me.lookupReference('escaladoRentasMeses');
-		
 		if(newValue) {
 			fecha.show();
 			cadaMes.show();
 		} else {
 			fecha.hide();
 			cadaMes.hide();
-			
+		}
+	},
+	onCambioCheckEscaladoFijo: function(checkbox, newValue, oldValue, eOpts) {
+		var me = this,
+		fijoFecha = me.lookupReference('tipoEscaladoFecha');
+		fijoIncremento = me.lookupReference('tipoEscaladoIncremento');
+		if(newValue) {
+			fijoIncremento.show();
+			fijoFecha.show();
+		} else {
+			fijoIncremento.hide();
+			fijoFecha.hide();
 		}
 	},
 	onCambioInversionSujetoPasivo: function(checkbox, newValue, oldValue, eOpts) {

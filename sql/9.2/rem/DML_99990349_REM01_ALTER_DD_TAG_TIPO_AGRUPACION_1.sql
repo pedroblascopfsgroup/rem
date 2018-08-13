@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Angel Sánchez
---## FECHA_CREACION=20161227
+--## FECHA_CREACION=20180813
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4394

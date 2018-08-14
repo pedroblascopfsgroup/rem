@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carlos Gil Gimeno
---## FECHA_CREACION=20180810
+--## FECHA_CREACION=20180814
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4416
@@ -36,7 +36,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('PRINEX','n*,n,n,s,s,s,s,s,i,f,s,s,s,i,i,i,s,i,i,i,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,n,n,n,s,n,n,n,s,s,s,s,s,s,s,s,f,s,s,i,s,s')
+        T_TIPO_DATA('PRINEX','n*,n,n,s,s,s,s,s,i,f,s,s,s,i,i,i,s,i,i,i,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,i,i,i,s,i,i,i,s,s,s,s,s,s,s,s,f,s,s,i,s,s')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

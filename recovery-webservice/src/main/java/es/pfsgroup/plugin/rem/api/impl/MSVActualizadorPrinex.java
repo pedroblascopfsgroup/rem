@@ -294,22 +294,22 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 			entidad.setCaracteristica(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CARACTERISTICA));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO1_BASE:
-			entidad.setDiario1Base(Long.valueOf(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO1_BASE)));
+			entidad.setDiario1Base(dameNumero(exc, fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO1_BASE));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO1_CUOTA:
-			entidad.setDiario1Cuota(Long.valueOf(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO1_CUOTA)));
+			entidad.setDiario1Cuota(dameNumero(exc, fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO1_CUOTA));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO1_TIPO:
-			entidad.setDiario1Tipo(Long.valueOf(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO1_TIPO)));
+			entidad.setDiario1Tipo(dameNumero(exc, fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO1_TIPO));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO2_BASE:
-			entidad.setDiario2Base(Long.valueOf(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO2_BASE)));
+			entidad.setDiario2Base(dameNumero(exc, fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO2_BASE));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO2_CUOTA:
-			entidad.setDiario2Cuota(Long.valueOf(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO2_CUOTA)));
+			entidad.setDiario2Cuota(dameNumero(exc, fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO2_CUOTA));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO2_TIPO:
-			entidad.setDiario2Tipo(Long.valueOf(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO2_TIPO)));
+			entidad.setDiario2Tipo(dameNumero(exc, fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO2_TIPO));
 			break;
 
 		default:

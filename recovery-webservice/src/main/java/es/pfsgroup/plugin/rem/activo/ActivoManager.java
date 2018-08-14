@@ -750,7 +750,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		//HREOS-2511 El combo "Comité seleccionado" vendrá informado para cartera Sareb
 		if(oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)
 				|| oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)
-				|| oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)) {
+				|| oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)
+				|| oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CERBERUS)) {
 			Double precioMinimoAutorizado = 0.0;
 			ActivoBancario activoBancario = getActivoBancarioByIdActivo(oferta.getActivoPrincipal().getId());
 			if(Checks.esNulo(oferta.getAgrupacion())) {
@@ -793,8 +794,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 				else if(oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)){
 					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_GIANTS)));
-				}
-				else{
+				}else if(oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CERBERUS)) {
+					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_CERBERUS)));
+				}else{
 					// 1º Clase de activo (financiero/inmobiliario) y sin formalización.
 					if(esFinanciero && !Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo()) && getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) {
 						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_SAREB)));

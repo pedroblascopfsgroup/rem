@@ -109,9 +109,12 @@ public class DtoFichaExpediente extends WebDto {
 	
 	private Boolean bloqueado;
 	
+
 	private Integer solicitaReserva; 
 	
 	private String codigoComiteSancionador;
+	
+	private Boolean definicionOfertaFinalizada;
 
 	public Long getId() {
 		return id;
@@ -562,7 +565,13 @@ public class DtoFichaExpediente extends WebDto {
 		this.fechaSancionComite = fechaSancionComite;
 	}
 
+	public Boolean getDefinicionOfertaFinalizada() {
+		return definicionOfertaFinalizada;
+	}
 
+	public void setDefinicionOfertaFinalizada(Boolean definicionOfertaFinalizada) {
+		this.definicionOfertaFinalizada = definicionOfertaFinalizada;
+	}
 	
 	
 	

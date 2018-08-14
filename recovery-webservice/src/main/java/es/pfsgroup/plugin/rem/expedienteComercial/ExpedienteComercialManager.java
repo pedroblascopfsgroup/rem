@@ -56,6 +56,7 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -194,6 +195,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedorHonorario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRiesgoClase;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTratamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposDocumentos;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
@@ -1046,6 +1048,36 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setFechaContabilizacionPropietario(expediente.getFechaContabilizacionPropietario());
 				dto.setFechaDevolucionEntregas(expediente.getFechaDevolucionEntregas());
 				dto.setImporteDevolucionEntregas(expediente.getImporteDevolucionEntregas());
+				
+				
+				
+				//TODO ja
+				dto.setDefinicionOfertaFinalizada(false);
+				
+				if (!Checks.esNulo(expediente.getTrabajo().getId())) {
+				
+					List<ActivoTramite> tramitesActivo = tramiteDao.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "T015_DefinicionOferta");
+					Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+					TareaProcedimiento tap = genericDao.get(TareaProcedimiento.class, filtro, filtroBorrado);
+					
+					for(ActivoTramite actt : tramitesActivo){
+						List<TareaExterna> tareas = activoTareaExternaApi.getByIdTareaProcedimientoIdTramite(actt.getId(),tap.getId());
+						for(TareaExterna t : tareas){
+							if(t.getTareaPadre().getTareaFinalizada() && t.getTareaPadre().getAuditoria().isBorrado()){
+								List <TareaExternaValor> listaTareaExterna= activoTareaExternaApi.obtenerValoresTarea(t.getId());
+								for (TareaExternaValor te: listaTareaExterna) {
+									if(te.getNombre().equals("tipoTratamiento") && DDTipoTratamiento.TIPO_TRATAMIENTO_SEGURO_DE_RENTAS.equals(te.getValor())) {
+										dto.setDefinicionOfertaFinalizada(true);
+										break;
+									}
+									
+								}
+							}
+						}
+					}
+				}
+				
 
 				if (!Checks.esNulo(expediente.getCondicionante())) {
 					// dto.setTieneReserva(expediente.getCondicionante().getTipoCalculoReserva()

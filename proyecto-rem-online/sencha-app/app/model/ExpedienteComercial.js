@@ -123,6 +123,10 @@ Ext.define('HreRem.model.ExpedienteComercial', {
        			type: 'boolean'
     		},
     		{
+    			name: 'definicionOfertaFinalizada',
+       			type: 'boolean'
+    		},
+    		{
     			name: 'fechaInicioAlquiler',
     			type:'date',
     			dateFormat: 'c'

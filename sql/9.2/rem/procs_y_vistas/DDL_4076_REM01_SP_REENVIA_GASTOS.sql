@@ -1,0 +1,86 @@
+--/*
+--##########################################
+--## AUTOR=Guillermo Llidó
+--## FECHA_CREACION=20180814
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=REMVIP-1535
+--## PRODUCTO=NO
+--##
+--## Finalidad: 
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_REENVIA_GASTOS
+        (     
+		  V_LISTA_GASTOS IN VARCHAR2
+		, V_USUARIO_MODIFICAR IN VARCHAR2
+        , PL_OUTPUT OUT VARCHAR2
+    )
+
+   AS
+
+   V_SQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar
+   V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+   V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+   ERR_NUM NUMBER(25); -- Vble. auxiliar para registrar errores en el script.
+   ERR_MSG VARCHAR2(10024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+   V_NUM_TABLAS NUMBER(16); -- Variable auxiliar
+   USUARIO_CONSULTA_REM VARCHAR2(50 CHAR):= 'REM_QUERY';
+
+BEGIN	
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] ');		
+				
+        	V_SQL := 'MERGE INTO REM01.GGE_GASTOS_GESTION T1 USING
+							(SELECT GPV_ID FROM REM01.GPV_GASTOS_PROVEEDOR GPV WHERE GPV_NUM_GASTO_HAYA IN ('||V_LISTA_GASTOS||')
+							)T2 ON (
+							T1.GPV_ID = T2.GPV_ID
+						) WHEN MATCHED THEN
+							UPDATE
+							SET T1.DD_EAH_ID = 3,
+								T1.GGE_FECHA_EAH = SYSDATE,
+								T1.DD_EAP_ID = 1,
+								T1.GGE_FECHA_EAP = NULL,
+								T1.GGE_MOTIVO_RECHAZO_PROP = NULL,
+								T1.GGE_FECHA_ENVIO_PRPTRIO = NULL,
+								T1.USUARIOMODIFICAR = '''||V_USUARIO_MODIFICAR||''',
+								T1.FECHAMODIFICAR = SYSDATE';
+			
+			EXECUTE IMMEDIATE V_SQL;
+			
+			V_SQL := 'MERGE INTO REM01.GPV_GASTOS_PROVEEDOR T1 USING
+							(SELECT GPV_ID FROM REM01.GPV_GASTOS_PROVEEDOR GPV WHERE GPV_NUM_GASTO_HAYA IN ('||V_LISTA_GASTOS||')
+							)T2 ON (
+							T1.GPV_ID = T2.GPV_ID
+						) WHEN MATCHED THEN
+							UPDATE
+							SET T1.DD_EGA_ID = 3,
+								T1.PRG_ID = NULL,
+								T1.USUARIOMODIFICAR = '''||V_USUARIO_MODIFICAR||''',
+								T1.FECHAMODIFICAR = SYSDATE';
+								
+			EXECUTE IMMEDIATE V_SQL;
+			
+    COMMIT;
+    
+    PL_OUTPUT := PL_OUTPUT ||'[FIN]: GASTOS REENVIADOS CORRECTAMENTE '|| CHR(10);
+
+EXCEPTION
+   WHEN OTHERS THEN
+      ERR_NUM := SQLCODE;
+      ERR_MSG := SQLERRM;
+      PL_OUTPUT := PL_OUTPUT || CHR(10) ||'    [ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM);
+      PL_OUTPUT := PL_OUTPUT || CHR(10) ||'    '||ERR_MSG;
+      ROLLBACK;
+      RAISE;
+END SP_REENVIA_GASTOS;
+/
+EXIT

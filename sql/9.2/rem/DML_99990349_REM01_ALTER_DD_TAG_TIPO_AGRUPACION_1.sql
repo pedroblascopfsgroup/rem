@@ -34,8 +34,8 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('15'			,'Comercial-Venta'						,'Comercial-Venta'),
-        T_TIPO_DATA('16'			,'Comercial-Alquiler'					,'Comercial-Alquiler')
+        T_TIPO_DATA('14'			,'Comercial-Venta'						,'Comercial-Venta'),
+        T_TIPO_DATA('15'			,'Comercial-Alquiler'					,'Comercial-Alquiler')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 

@@ -28,7 +28,7 @@ DECLARE
     V_COUNT_UPDATE NUMBER(16):= 0; -- Vble. para contar updates
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-	
+BEGIN
 	
 	V_SQL := 'UPDATE REM01.ACT_ACTIVO ACT SET
 			  ACT_FECHA_IND_PUBLICABLE = SYSDATE

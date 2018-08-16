@@ -51,6 +51,7 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 	public static final String ERROR_ACTIVO_CANARIAS = "msg.error.masivo.agrupar.activos.agr.canaria.act.canaria";
 	public static final String ERROR_ACTIVO_DISTINTO_PROPIETARIO = "msg.error.masivo.agrupar.activos.propietarios.no.coinciden";
 	public static final String ERROR_ACTIVO_CON_OFERTA_TRAMITADA = "msg.error.masivo.agrupar.activos.oferta.tramitada";
+	public static final String ACTIVO_DESTINO_COMERCIAL_ALQUILER = "msg.error.masivo.activo.destino.comercial.alquiler";
 
 	// Validaciones de activo NO utilizadas porque no esta definido como validar en esos casos al incluir en lotes comerciales
 	/*
@@ -129,6 +130,7 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_COMERCIALIZABLE), activosNoComercializablesRows(exc));
 			mapaErrores.put(messageServices.getMessage(ERROR_ACTIVO_CANARIAS), distintosTiposImpuesto(exc));
 			mapaErrores.put(messageServices.getMessage(ERROR_ACTIVO_CON_OFERTA_TRAMITADA), activoConOfertasTramitadas(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVO_DESTINO_COMERCIAL_ALQUILER), activosDestinoComercialAlquilerRows(exc));
 			//mapaErrores.put(messageServices.getMessage(ERROR_ACTIVO_DISTINTO_PROPIETARIO), comprobarDistintoPropietario(exc));
 			
 			// mapaErrores.put(messageServices.getMessage(ACTIVO_INCLUIDO_PERIMETRO), activosIncluidosPerimetroRows(exc));
@@ -155,6 +157,7 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 							.isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ERROR_ACTIVO_CANARIAS)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ERROR_ACTIVO_CON_OFERTA_TRAMITADA)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_DESTINO_COMERCIAL_ALQUILER)).isEmpty()
 					//|| !mapaErrores.get(messageServices.getMessage(ERROR_ACTIVO_DISTINTO_PROPIETARIO)).isEmpty()
 					) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -617,6 +620,25 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 			e.printStackTrace();
 		}
 
+		return listaFilas;
+	}
+	
+	
+	private List<Integer> activosDestinoComercialAlquilerRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try{
+			for(i=1; i<this.numFilasHoja;i++){
+				if(particularValidator.activoConDestinoComercialAlquiler(exc.dameCelda(i, 1)))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
 		return listaFilas;
 	}
 

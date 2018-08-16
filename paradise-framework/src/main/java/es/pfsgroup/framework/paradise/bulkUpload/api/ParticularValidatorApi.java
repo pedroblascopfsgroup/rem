@@ -317,5 +317,32 @@ public interface ParticularValidatorApi {
 	public Boolean distintosTiposImpuestoAgrupacionVacia(List<String> activosList);
 
 	Boolean subcarteraPerteneceCartera(String subcartera, String cartera);
+	
+	/**
+	 * 
+	 * @param idActivo
+	 * @return devuelve true si un activo tiene un destino comercial de tipo venta (no confundir con venta y alquiler)
+	 */
+	public Boolean activoConDestinoComercialVenta(String idActivo);
+	
+	/**
+	 *
+	 * @param numActivo
+	 * @return devuelve true si el activo tiene una situación comercial de alquilado
+	 */
+	public Boolean esActivoAlquilado(String numActivo);
+
+	/**
+	 * @param numActivo
+	 * @return devuelve true si el activo se encuentra incluido en una agrupacion viva de tipo comercial
+	 */
+	public Boolean activoEnAgrupacionComercialViva(String numActivo);
+
+	/**
+	 * 
+	 * @param idActivo
+	 * @return devuelve true si un activo tiene un destino comercial de tipo alquiler (no confundir con venta y alquiler)
+	 */
+	public Boolean activoConDestinoComercialAlquiler(String numActivo);
 
 }

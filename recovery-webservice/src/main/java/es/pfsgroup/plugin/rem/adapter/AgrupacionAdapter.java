@@ -573,7 +573,8 @@ public class AgrupacionAdapter {
 
 			// Si la agrupación es de tipo comercial y contiene ofertas, en
 			// cualquier estado, rechazar el activo.
-			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupacion.getTipoAgrupacion().getCodigo())
+					 || DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 				
 				//Comprobamos no mezclar activos canarios y peninsulares
 				distintosTiposImpuesto(agrupacion, activo);
@@ -609,7 +610,8 @@ public class AgrupacionAdapter {
 			// Validaciones de agrupación
 			agrupacionValidate(activo, agrupacion);
 
-			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupacion.getTipoAgrupacion().getCodigo())
+					|| DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 				saveAgrupacionLoteComercial(activo, agrupacion);
 			} else {
 				ActivoAgrupacionActivo activoAgrupacionActivo = new ActivoAgrupacionActivo();

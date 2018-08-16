@@ -47,7 +47,8 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesController', {
 
 		btn.up('panel').getForm().reset();
 	},
-
+	
+	
 	// Funcion para cuando hace click en una fila
     onAgrupacionesListDobleClick: function(grid, record) {       
     	var me = this;    	

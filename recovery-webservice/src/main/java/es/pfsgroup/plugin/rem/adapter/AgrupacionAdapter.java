@@ -1094,12 +1094,15 @@ public class AgrupacionAdapter {
 	}
 
 	@Transactional(readOnly = false)
-	public boolean createAgrupacion(DtoAgrupacionesCreateDelete dtoAgrupacion) throws Exception {
+	public DtoAgrupacionesCreateDelete createAgrupacion(DtoAgrupacionesCreateDelete dtoAgrupacion) throws Exception {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoAgrupacion.getTipoAgrupacion());
 		DDTipoAgrupacion tipoAgrupacion = (DDTipoAgrupacion) genericDao.get(DDTipoAgrupacion.class, filtro);
 
 		Long numAgrupacionRem = activoAgrupacionApi.getNextNumAgrupacionRemManual();
+		
+		dtoAgrupacion.setNumAgrupacionRem(numAgrupacionRem);
+		
 		// Si es OBRA NUEVA
 		if (dtoAgrupacion.getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA)) {
 
@@ -1112,6 +1115,8 @@ public class AgrupacionAdapter {
 			obraNueva.setNumAgrupRem(numAgrupacionRem);
 
 		    genericDao.save(ActivoObraNueva.class, obraNueva);
+		    
+		    dtoAgrupacion.setId(obraNueva.getId().toString());
 
 			// Si es RESTRINGIDA
 		} else if (dtoAgrupacion.getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
@@ -1125,6 +1130,8 @@ public class AgrupacionAdapter {
 			restringida.setNumAgrupRem(numAgrupacionRem);
 
 			genericDao.save(ActivoRestringida.class, restringida);
+			
+			dtoAgrupacion.setId(restringida.getId().toString());
 
 			// Si es ASISTIDA
 		} else if (dtoAgrupacion.getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
@@ -1141,6 +1148,8 @@ public class AgrupacionAdapter {
 
 			genericDao.save(ActivoAsistida.class, asistida);
 			
+			dtoAgrupacion.setId(asistida.getId().toString());
+			
 
 			// Si es LOTE COMERCIAL
 		} else if (dtoAgrupacion.getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
@@ -1154,12 +1163,11 @@ public class AgrupacionAdapter {
 			loteComercial.setNumAgrupRem(numAgrupacionRem);
 
 			genericDao.save(ActivoLoteComercial.class, loteComercial);
+			
+			dtoAgrupacion.setId(loteComercial.getId().toString());
 		}
-		
-		
-		
 
-		return true;
+		return dtoAgrupacion;
 	}
 
 	@Transactional(readOnly = false)

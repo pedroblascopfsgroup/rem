@@ -14,7 +14,8 @@ public class DtoAgrupacionesCreateDelete {
 	private String tipoAgrupacion;
 	private Date fechaInicioVigencia;
 	private Date fechaFinVigencia;
-	
+	private Long numAgrupacionRem;
+
 	public String getNombre() {
 		return nombre;
 	}
@@ -50,6 +51,12 @@ public class DtoAgrupacionesCreateDelete {
 	}
 	public void setFechaFinVigencia(Date fechaFinVigencia) {
 		this.fechaFinVigencia = fechaFinVigencia;
+	}
+	public Long getNumAgrupacionRem() {
+		return numAgrupacionRem;
+	}
+	public void setNumAgrupacionRem(Long numAgrupacionRem) {
+		this.numAgrupacionRem = numAgrupacionRem;
 	}
 	
 	

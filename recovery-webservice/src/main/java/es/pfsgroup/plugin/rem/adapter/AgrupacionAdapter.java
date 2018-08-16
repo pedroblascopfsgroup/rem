@@ -221,6 +221,11 @@ public class AgrupacionAdapter {
 	private static final Integer NO_ES_FORMALIZABLE = new Integer(0);
 	private static final Integer ES_FORMALIZABLE = new Integer(1);
 	private static final String TIPO_AGRUPACION_RESTRINGIDA = "02";
+	private static final String TIPO_COMERCIAL_VENTA = "Venta";
+	private static final String TIPO_COMERCIAL_VENTA_CODIGO = "14";
+	private static final String TIPO_COMERCIAL_ALQUILER = "Alquiler";
+	private static final String TIPO_GESTOR_COMERCIAL_VENTA = "GCOM";
+	private static final String TIPO_GESTOR_COMERCIAL_ALQUILER = "GESTCOMALQ";
 
 	public DtoAgrupaciones getAgrupacionById(Long id) {
 
@@ -251,8 +256,10 @@ public class AgrupacionAdapter {
 						agrupacion.getTipoAgrupacion().getCodigo());
 
 				// Si es de tipo 'Lote Comercial'
-				if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
+				if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL) 
+						|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_COMERCIAL_ALQUILER) ) {
 					ActivoLoteComercial agrupacionTemp = (ActivoLoteComercial) agrupacion;
+					
 
 					if (agrupacionTemp.getLocalidad() != null) {
 						BeanUtils.copyProperty(dtoAgrupacion, "municipioDescripcion",
@@ -283,6 +290,18 @@ public class AgrupacionAdapter {
 					if (!Checks.esNulo(agrupacionTemp.getUsuarioGestorComercialBackOffice())) {
 						BeanUtils.copyProperty(dtoAgrupacion, "codigoGestorComercialBackOffice",
 								agrupacionTemp.getUsuarioGestorComercialBackOffice().getId());
+					}
+					
+					if (!Checks.esNulo(agrupacion.getTipoAlquiler())) {
+						BeanUtils.copyProperty(dtoAgrupacion, "tipoAlquilerCodigo", agrupacion.getTipoAlquiler().getCodigo());
+					}
+					
+					if(agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
+						BeanUtils.copyProperty(dtoAgrupacion, "subTipoComercial", TIPO_COMERCIAL_VENTA);
+					}
+					else
+					{
+						BeanUtils.copyProperty(dtoAgrupacion, "subTipoComercial", TIPO_COMERCIAL_ALQUILER);
 					}
 				}
 
@@ -1959,6 +1978,30 @@ public class AgrupacionAdapter {
 	}
 
 	public List<DtoUsuario> getUsuariosPorCodTipoGestor(String codigoGestor) {
+
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoGestor);
+		EXTDDTipoGestor tipoGestor = (EXTDDTipoGestor) genericDao.get(EXTDDTipoGestor.class, filtro);
+
+		if (!Checks.esNulo(tipoGestor)) {
+			return activoAdapter.getComboUsuarios(tipoGestor.getId());
+		}
+
+		return null;
+	}
+	
+	public List<DtoUsuario> getUsuariosPorCodTipoGestor(Long idAgr) {
+		
+		
+		String codigoGestor;
+		Filter filtroAgr = genericDao.createFilter(FilterType.EQUALS, "id", idAgr);
+		ActivoAgrupacion activoAgrup=  (ActivoAgrupacion) genericDao.get(ActivoAgrupacion.class, filtroAgr);
+		if(activoAgrup.getTipoAgrupacion().getCodigo().equals(TIPO_COMERCIAL_VENTA_CODIGO)) {
+			
+			codigoGestor=TIPO_GESTOR_COMERCIAL_VENTA;
+		}
+		else {
+			codigoGestor=TIPO_GESTOR_COMERCIAL_ALQUILER;
+		}
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoGestor);
 		EXTDDTipoGestor tipoGestor = (EXTDDTipoGestor) genericDao.get(EXTDDTipoGestor.class, filtro);

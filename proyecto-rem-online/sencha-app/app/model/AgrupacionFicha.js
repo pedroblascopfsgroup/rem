@@ -127,7 +127,14 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 		    	},
 		    	{
 		    		name: 'cartera'
-		    	}
+		    	},
+		    	{
+		    		name: 'subTipoComercial'
+		    	},
+		    	{
+		    		name: 'tipoAlquilerCodigo'
+		    	}    	
+		    	
     ],
     
 	proxy: {

@@ -46,6 +46,8 @@ public class DtoAgrupaciones extends WebDto {
 	private Integer isFormalizacion;
 	private Boolean estaCaducada;
 	private Boolean agrupacionEliminada;
+	private String subTipoComercial; 
+	private String tipoAlquilerCodigo;
 
 
 	public Boolean getEstaCaducada() {
@@ -249,6 +251,18 @@ public class DtoAgrupaciones extends WebDto {
 	}
 	public void setAgrupacionEliminada(Boolean agrupacionEliminada) {
 		this.agrupacionEliminada = agrupacionEliminada;
+	}
+	public String getSubTipoComercial() {
+		return subTipoComercial;
+	}
+	public void setSubTipoComercial(String subTipoComercial) {
+		this.subTipoComercial = subTipoComercial;
+	}
+	public String getTipoAlquilerCodigo() {
+		return tipoAlquilerCodigo;
+	}
+	public void setTipoAlquilerCodigo(String tipoAlquilerCodigo) {
+		this.tipoAlquilerCodigo = tipoAlquilerCodigo;
 	}
 
 

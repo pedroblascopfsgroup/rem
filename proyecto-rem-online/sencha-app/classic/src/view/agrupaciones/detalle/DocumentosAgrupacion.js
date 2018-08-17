@@ -22,7 +22,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.DocumentosAgrupacion', {
 				},
 				cls	: 'grid-editable-row',
 				bind: {
-					store: '{}',
 					topBar: '{agrupacionficha.esEditable}',
 					editOnSelect: '{agrupacionficha.esEditable}'
 				},
@@ -92,10 +91,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.DocumentosAgrupacion', {
 			        {
 			            xtype: 'pagingtoolbar',
 			            dock: 'bottom',
-			            displayInfo: true,
-			            bind: {
-							store: '{}'
-						}
+			            displayInfo: true
 			        }
 			    ]
 			    

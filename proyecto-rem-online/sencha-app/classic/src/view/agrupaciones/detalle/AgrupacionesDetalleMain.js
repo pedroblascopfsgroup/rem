@@ -43,5 +43,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalleMain', {
 
     	me.down('cabeceraagrupacion').configCmp(data); 
     	me.down('agrupacionesdetalle').configCmp(data);
+    	
+     	
+    	if(me.getViewModel().get('agrupacionficha.tipoAgrupacionCodigo') === CONST.TIPOS_AGRUPACION['PROYECTO']){				
+			var tabSeguimientoAgrupacion= me.down('seguimientoagrupacion');
+			tabSeguimientoAgrupacion.tab.setVisible(false);
+		/*	var tabObservacionesAgrupacion= me.down('observacionesagrupacion');
+			tabObservacionesAgrupacion.tab.setVisible(false);*/
+			
+		}
     }
 });

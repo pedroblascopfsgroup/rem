@@ -36,6 +36,7 @@ public class DDTipoAgrupacion implements Auditable, Dictionary {
 	public static final String AGRUPACION_LOTE_COMERCIAL = "14";
 	public static final String AGRUPACION_LOTE_COMERCIAL_VENTA = AGRUPACION_LOTE_COMERCIAL;
 	public static final String AGRUPACION_LOTE_COMERCIAL_ALQUILER = "15";
+	public static final String AGRUPACION_COMERCIAL_ALQUILER = AGRUPACION_LOTE_COMERCIAL_ALQUILER;
 	
 	/**
 	 * 

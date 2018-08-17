@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=Angel Pastelero
---## FECHA_CREACION=20180813
+--## FECHA_CREACION=20180816
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4399
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que añade en DD_OPM_OPERACION_MASIVA los datos añadidos en T_ARRAY_DATA
+--## Finalidad: Script que añade en DD_OPM_OPERACION_MASIVA los NUEVOS TIPOS DE LOTE COMERCIAL (no reutilizable para otros tipos)
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -40,7 +40,8 @@ DECLARE
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     		--  	CODIGO		DESCRIPCION						DESCRIPCION_LARGA					DD_OPM_VALIDACION_FORMATO
     		
-		T_TIPO_DATA('AGAL'  ,'Agrupaciones: Agrupar activos (Lote com. Alquiler)'  	,'Agrupaciones: Agrupar activos (Lote comercial Alquiler)'	,'nT*,nD*')
+		T_TIPO_DATA('AGAL'  ,'Agrupaciones: Agrupar activos (Lote com. Alquiler)'  	,'Agrupaciones: Agrupar activos (Lote comercial Alquiler)'	,'nT*,nD*'),
+		T_TIPO_DATA('AGLC'  ,'Agrupaciones: Agrupar activos (Lote com. Venta)'  	,'Agrupaciones: Agrupar activos (Lote comercial Venta)'	,'nT*,nD*')
 
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

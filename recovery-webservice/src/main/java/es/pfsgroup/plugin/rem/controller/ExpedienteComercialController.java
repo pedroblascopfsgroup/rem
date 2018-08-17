@@ -48,6 +48,8 @@ import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoCondicionesActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
+import es.pfsgroup.plugin.rem.model.DtoExpedienteHistScoring;
+import es.pfsgroup.plugin.rem.model.DtoExpedienteScoring;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHstcoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
@@ -1592,6 +1594,46 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 			model.put("success", false);
 		}
 		return new ModelAndView("jsonView", model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoScoring(ModelMap model, Long idScoring) {
+		
+		try {
+			List<DtoExpedienteHistScoring> list = expedienteComercialApi.getHistoricoScoring(idScoring);
+			model.put("data", list);
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveExpedienteScoring(DtoExpedienteScoring dto, @RequestParam Long id, ModelMap model) {
+		try {		
+			
+			model.put("success", expedienteComercialApi.saveExpedienteScoring(dto, id));
+			
+		}catch (JsonViewerException e) {
+			e.printStackTrace();
+			model.put("msg", e.getMessage());
+			model.put("success", false);
+		}
+		
+		catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
 	}
 	
 }

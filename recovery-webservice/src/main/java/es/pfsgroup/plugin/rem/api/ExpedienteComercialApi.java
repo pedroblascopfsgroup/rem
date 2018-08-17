@@ -20,6 +20,8 @@ import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoCondicionesActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
+import es.pfsgroup.plugin.rem.model.DtoExpedienteHistScoring;
+import es.pfsgroup.plugin.rem.model.DtoExpedienteScoring;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
@@ -997,5 +999,21 @@ public interface ExpedienteComercialApi {
 	boolean enviarCorreoComercializadora(String cuerpoEmail, Long idExpediente);	
 	
 	public List<DDTipoCalculo> getComboTipoCalculo(Long idExpediente);
+	
+	/**
+	 * Método que obtiene el histórico de scoring del expediente comercial de alquiler.
+	 * 
+	 * @param idExpediente
+	 * @return
+	 */
+	public List<DtoExpedienteHistScoring> getHistoricoScoring(Long idScoring);
+	
+	/**
+	 * Método que guarda la pestaña Scoring el bloque detalle.
+	 * @param dto
+	 * @param idEntidad
+	 * @return
+	 */
+	public boolean saveExpedienteScoring(DtoExpedienteScoring dto, Long idEntidad);
 	
 }

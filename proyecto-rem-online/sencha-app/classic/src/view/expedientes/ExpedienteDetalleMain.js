@@ -59,5 +59,20 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleMain', {
 			var tabSeguro= me.down('segurorentasexpediente');
 			tabSeguro.tab.setVisible(false);
 		}
+		
+		if(!me.getViewModel().get('expediente.definicionOfertaFinalizada')){				
+			var tabSeguro= me.down('segurorentasexpediente');
+			var tabScoring= me.down('scoringexpediente');
+			tabSeguro.tab.setVisible(false);
+			tabScoring.tab.setVisible(false);
+		}
+		
+		var tabScoring= me.down('scoringexpediente');
+		if(!me.getViewModel().get('expediente.definicionOfertaScoring')){				
+			tabScoring.tab.setVisible(false);
+		}else{
+			tabScoring.tab.setVisible(true);
+		}
+		
     }
 });

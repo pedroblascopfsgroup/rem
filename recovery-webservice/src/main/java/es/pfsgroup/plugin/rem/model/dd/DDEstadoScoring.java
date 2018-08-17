@@ -29,9 +29,9 @@ public class DDEstadoScoring implements Auditable, Dictionary{
 	private static final long serialVersionUID = 1L;
 	
 	
-	public final static String Pendiente = "01";
-	public final static String aceptado = "02";
-	public final static String rechazado = "03";
+	public final static String PENDIENTE = "01";
+	public final static String ACEPTADO = "02";
+	public final static String RECHAZADO = "03";
 	
 
 	@Id

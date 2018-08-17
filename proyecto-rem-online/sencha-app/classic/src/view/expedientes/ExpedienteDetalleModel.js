@@ -5,7 +5,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
                 'HreRem.model.EntregaReserva', 'HreRem.model.ObservacionesExpediente', 'HreRem.model.AdjuntoExpedienteComercial',
                 'HreRem.model.Posicionamiento', 'HreRem.model.ComparecienteVendedor', 'HreRem.model.Subsanacion', 'HreRem.model.Notario',
                 'HreRem.model.ComparecienteBusqueda', 'HreRem.model.Honorario',
-				'HreRem.model.CompradorExpediente', 'HreRem.model.FichaComprador','HreRem.model.BloqueoActivo','HreRem.model.TanteoActivo'],
+				'HreRem.model.CompradorExpediente', 'HreRem.model.FichaComprador','HreRem.model.BloqueoActivo','HreRem.model.TanteoActivo'
+				,'HreRem.model.ExpedienteScoring', 'HreRem.model.HistoricoExpedienteScoring'],
     
     data: {
     },
@@ -878,7 +879,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'paises'}
 			}
-    	}
+    	},
+    	storeHistoricoScoring: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.HistoricoExpedienteScoring',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getHistoricoScoring',
+		        extraParams: {idScoring: '{scoring.id}'}
+	    	}
+		},
     	
 		
     }

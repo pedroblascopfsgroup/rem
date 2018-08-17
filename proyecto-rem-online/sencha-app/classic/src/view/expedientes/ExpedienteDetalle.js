@@ -115,7 +115,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentosexpediente', ocultarBotonesEdicion: true})}, ['TAB_DOCUMENTOS_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'formalizacionexpediente', funPermEdition: ['EDITAR_TAB_FORMALIZACION_EXPEDIENTES']})}, ['TAB_FORMALIZACION_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'gestioneconomicaexpediente', ocultarBotonesEdicion: true})}, ['TAB_GESTION_ECONOMICA_EXPEDIENTES']);
-	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'scoringexpediente', funPermEdition: ['EDITAR_TAB_DATOS_BASICOS_EXPEDIENTES']})}, ['TAB_DATOS_BASICOS_EXPEDIENTES']);
+	        items.push({xtype: 'scoringexpediente'});
 	        items.push({xtype: 'segurorentasexpediente'});
 
 	        me.addPlugin({ptype: 'lazyitems', items: items});

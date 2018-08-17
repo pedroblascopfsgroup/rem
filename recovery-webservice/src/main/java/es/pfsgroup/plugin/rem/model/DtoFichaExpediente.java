@@ -115,6 +115,8 @@ public class DtoFichaExpediente extends WebDto {
 	private String codigoComiteSancionador;
 	
 	private Boolean definicionOfertaFinalizada;
+	
+	private Boolean definicionOfertaScoring;
 
 	public Long getId() {
 		return id;
@@ -571,6 +573,14 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setDefinicionOfertaFinalizada(Boolean definicionOfertaFinalizada) {
 		this.definicionOfertaFinalizada = definicionOfertaFinalizada;
+	}
+
+	public Boolean getDefinicionOfertaScoring() {
+		return definicionOfertaScoring;
+	}
+
+	public void setDefinicionOfertaScoring(Boolean definicionOfertaScoring) {
+		this.definicionOfertaScoring = definicionOfertaScoring;
 	}
 	
 	

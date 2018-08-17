@@ -1,16 +1,23 @@
 Ext.define('HreRem.view.expedientes.ScoringExpediente', {
-    extend: 'HreRem.view.common.FormBase',
-    xtype: 'scoringexpediente',    
-    cls	: 'panel-base shadow-panel',
-    collapsed: false,
+    extend		: 'HreRem.view.common.FormBase',
+    xtype		: 'scoringexpediente',    
+    cls			: 'panel-base shadow-panel',
+    collapsed	: false,
     disableValidation: true,
-    reference: 'scoringexpediente',
+    reference	: 'scoringexpediente',
     scrollable	: 'y',
-	recordName: "expediente",
+	recordName	: "scoring",
 	
-	recordClass: "HreRem.model.ExpedienteComercial",
+	recordClass	: "HreRem.model.ExpedienteScoring",
     
-    requires: ['HreRem.model.ExpedienteComercial'],
+    requires	: ['HreRem.model.ExpedienteScoring', 'HreRem.model.HistoricoExpedienteScoring'],
+    
+    listeners: {
+    	boxready: function() {
+    		var me = this;
+    		me.lookupController().cargarTabData(me);
+    	}
+    },
     
     initComponent: function () {
 
@@ -20,15 +27,14 @@ Ext.define('HreRem.view.expedientes.ScoringExpediente', {
 
 			{   
 				xtype:'fieldsettable',
-				defaultType: 'textfieldbase',				
 				title: HreRem.i18n('fieldlabel.bloque.detalle'),
 				items :
 					[
-		                
 		                { 
 		                	xtype:'comboboxfieldbase',
-							fieldLabel:HreRem.i18n('fieldlabel.estado'),
+							fieldLabel:HreRem.i18n('fieldlabel.estadoScoring'),
 							cls: 'cabecera-info-field',
+							readOnly: true,
 							bind :{ 
 									store :'{comboEstadoScoring}'
 							}
@@ -36,103 +42,109 @@ Ext.define('HreRem.view.expedientes.ScoringExpediente', {
 		                { 
 							xtype: 'textfieldbase',
 		                	fieldLabel:HreRem.i18n('fieldlabel.motivo.rechazo'),
-				        	readOnly: false
+				        	readOnly: true,
+				        	bind : '{scoring.motivoRechazo}' 
 				        },
 				        { 
 							xtype: 'textfieldbase',
 		                	fieldLabel: HreRem.i18n('fieldlabel.numero.solicitud'),
-				        	readOnly: true
+				        	readOnly: false,
+				        	bind : '{scoring.idSolicitud}'
 				        },
 				        { 
-							xtype: 'checkboxfield',
+							xtype: 'checkboxfieldbase',
 		                	name : HreRem.i18n('fieldlabel.revision'),
 		                	fieldLabel: HreRem.i18n('fieldlabel.revision'),
-				        	readOnly: false
+				        	readOnly: false,
+				        	bind : '{scoring.revision}',
+				        	listeners: {
+				        		change: 'onChangeRevision'
+				        	}
 				        },
 				        { 
-							xtype: 'textfieldbase',
-		                	fieldLabel: HreRem.i18n('fieldlabel.aseguradoras'),
-				        	bind: '{expediente.numContratoAlquiler}',
-				        	readOnly: true
-				        },
-				        { 
-							xtype: 'textfieldbase',
-		                	fieldLabel: HreRem.i18n('fieldlabel.email.poliza.segura'),
-				        	bind: '{expediente.numContratoAlquiler}',
-				        	readOnly: true
-				        },
-				        { 
-							xtype: 'textfieldbase',
+							xtype: 'textareafieldbase',
 		                	fieldLabel: HreRem.i18n('fieldlabel.comentario'),
-				        	readOnly: true
+				        	readOnly: true,
+				        	disabled: true,
+				        	reference:'scoringComentarios',
+				        	bind:{
+				        		value:  '{scoring.comentarios}'
+	     					},	
+	                        maxWidth: 500,
+	                        maxLength: 200
 				        }
 						
 					]
            },
            {   
-				xtype:'fieldsettable',
+				xtype:'fieldset',
 				defaultType: 'textfieldbase',				
 				title: HreRem.i18n('title.bloque.historico.scoring'),
 				bind: {
-					hidden: '{esOfertaVentaFicha}',
-					disabled: '{esOfertaVentaFicha}'
+					hidden: '{sinContraoferta}'
 			    },
 				items :
 					[
-		                {   
-						xtype:'fieldsettable',
-						collapsible: false,
-						border: false,
-						defaultType: 'displayfieldbase',				
-						items : [
-						
-							{
-				        		xtype:'datefieldbase',
-								formatter: 'date("d/m/Y")',
-					        	fieldLabel: HreRem.i18n('fieldlabel.fecha.sancion'),
-					        	bind: '{expediente.fechaInicioAlquiler}',
-					        	readOnly: true,
-					        	maxValue: null
-					        },
-					       
-							{ 
-								xtype: 'textfieldbase',
-			                	fieldLabel: HreRem.i18n('fieldlabel.resultado'),
-					        	bind: '{expediente.numContratoAlquiler}',
-					        	readOnly: true
-					        },
-					        { 
-								xtype: 'textfieldbase',
-			                	fieldLabel:HreRem.i18n('fieldlabel.numero.solicitud'),
-					        	bind: '{expediente.numContratoAlquiler}',
-					        	readOnly: true
-					        },
-					        { 
-								xtype: 'textfieldbase',
-			                	fieldLabel:HreRem.i18n('fieldlabel.documento'),
-					        	bind: '{expediente.numContratoAlquiler}',
-					        	readOnly: true
-					        },
-					        { 
-								xtype: 'textfieldbase',
-			                	fieldLabel:HreRem.i18n('fieldlabel.meses.fianza'),
-					        	bind: '{expediente.numContratoAlquiler}',
-					        	readOnly: true
-					        },
-					        { 
-								xtype: 'textfieldbase',
-			                	fieldLabel:HreRem.i18n('fieldlabel.importe.fianza'),
-					        	bind: '{expediente.numContratoAlquiler}',
-					        	readOnly: true
+						{   
+				        	   xtype: 'gridBaseEditableRow',
+				               idPrincipal: 'id',
+				               cls: 'panel-base shadow-panel',
+				               bind: {
+				            	   store: '{storeHistoricoScoring}'  
+				               },
+							   columns :
+								[
+					                {   
+					                	text: HreRem.i18n('fieldlabel.fecha.sancion'),
+							        	dataIndex: 'fechaSancion',
+				                        flex: 1,
+				                        formatter: 'date("d/m/Y")'
+							        },
+							       
+									{ 
+							        	text: HreRem.i18n('fieldlabel.resultado'),
+					                	dataIndex: 'resultadoScoring',
+				                        flex: 1
+							        },
+							        { 
+							        	text:HreRem.i18n('fieldlabel.numero.solicitud'),
+					                	dataIndex: 'nSolicitud',
+					                	
+				                        flex: 1
+							        },
+							        {	
+							            text:HreRem.i18n('fieldlabel.documento.scoring'),
+							            dataIndex: 'docScoring',
+							            flex: 1
+							        },
+							        { 
+					                	text:HreRem.i18n('fieldlabel.meses.fianza'),
+					                	dataIndex: 'nMesesFianza',
+				                        flex: 1
+							        	
+							        },
+							        { 
+					                	text:HreRem.i18n('fieldlabel.importe.fianza'),
+					                	dataIndex: 'importeFianza',
+				                        flex: 1
+							        }
+								]
+				           },{
+					            xtype: 'pagingtoolbar',
+					            dock: 'bottom',
+					            itemId: 'activosPaginationToolbar',
+					            inputItemWidth: 60,
+					            displayInfo: true,
+					            bind: {
+					                store: '{storeHistoricoScoring}'
+					            }
 					        }
-					        
-				        ]
-					}
 					]
+		    
            }
            
     	];
-    
+        
 	    me.addPlugin({ptype: 'lazyitems', items: items });
 	    
 	    me.callParent(); 
@@ -140,7 +152,7 @@ Ext.define('HreRem.view.expedientes.ScoringExpediente', {
     
     funcionRecargar: function() {
     	var me = this; 
-		me.recargar = false;		
+		me.recargar = false;
 		me.lookupController().cargarTabData(me);
     	
     }

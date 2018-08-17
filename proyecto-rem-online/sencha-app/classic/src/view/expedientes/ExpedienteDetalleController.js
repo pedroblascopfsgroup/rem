@@ -2498,6 +2498,26 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
            }
 	     
 		});
+	},
+	
+	onChangeRevision: function(checkbox, newVal, oldVal) {
+		var me = this;
+		var scoringComentarios= me.lookupReference('scoringComentarios');
+		if(checkbox.checked){
+			scoringComentarios.setDisabled(false);
+			scoringComentarios.setReadOnly(false);
+			scoringComentarios.setValue("");
+		}else{
+			scoringComentarios.setDisabled(true);
+			scoringComentarios.setReadOnly(true);
+			
+		}
+	},
+	
+	sinContraoferta: function(checkbox, newVal, oldVal){
+		var me = this;
+		debugger;
+		return false;
 	}
 	
 });

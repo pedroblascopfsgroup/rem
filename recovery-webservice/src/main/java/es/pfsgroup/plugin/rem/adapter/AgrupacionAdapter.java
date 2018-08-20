@@ -33,6 +33,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelManagerApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
+import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberatorsFactory;
@@ -206,6 +207,9 @@ public class AgrupacionAdapter {
 	
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
+	
+	@Autowired
+	private ParticularValidatorApi particularValidator;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -543,7 +547,7 @@ public class AgrupacionAdapter {
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idAgrupacion);
 
 		try {
-			
+			// Validaciones
 			if (Checks.esNulo(agrupacion)) {
 				throw new JsonViewerException("La agrupación no existe");
 			}
@@ -553,7 +557,49 @@ public class AgrupacionAdapter {
 			if (Checks.esNulo(activo)) {
 				throw new JsonViewerException("El activo no existe");
 			}
-
+			
+			if (!Checks.esNulo(numActivo)){
+				if(!particularValidator.esActivoIncluidoPerimetro(Long.toString(numActivo))){
+					throw new JsonViewerException("El activo se encuetra fuera del perímetro HAYA");
+				}
+			}
+			
+			if (!Checks.esNulo(numActivo)){
+				if(particularValidator.isActivoNoComercializable(Long.toString(numActivo))){
+					throw new JsonViewerException("El activo no es comercializable");
+				}
+			}
+			
+			if (!Checks.esNulo(agrupacion) && !Checks.esNulo(numActivo) && !Checks.esNulo(activo)){
+				if(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(agrupacion.getTipoAgrupacion().getCodigo())){
+					if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getTipoComercializacion().getCodigo())){
+						throw new JsonViewerException("El destino comercial del activo no coincide con el de la agrupación");
+					}
+				}else if(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())){
+					if(DDTipoComercializacion.CODIGO_VENTA.equals(activo.getTipoComercializacion().getCodigo())){
+						throw new JsonViewerException("El destino comercial del activo no coincide con el de la agrupación");
+					}else if(!Checks.esNulo(activo.getTipoAlquiler())){
+						if(!activo.getTipoAlquiler().getCodigo().equals(agrupacion.getTipoAlquiler().getCodigo())){
+							throw new JsonViewerException("El tipo de alquiler del activo es distinto al de la agrupación");
+						}
+					}else if(particularValidator.esActivoAlquilado(Long.toString(numActivo))){
+						throw new JsonViewerException("El activo está alquilado");
+					}
+				}
+			}
+			
+			if (!Checks.esNulo(numActivo)){
+				if(particularValidator.existeActivoConOfertaViva(Long.toString(numActivo))){
+					throw new JsonViewerException("El activo tiene ofertas individuales vivas");
+				}
+			}
+			
+			if (!Checks.esNulo(numActivo)){
+				if(particularValidator.activoEnAgrupacionComercialViva(Long.toString(numActivo))){
+					throw new JsonViewerException("El activo está incluido en otro lote comercial vivo");
+				}
+			}
+			
 			// Si la agrupación es asistida, el activo además de existir tiene
 			// que ser asistido.
 			if (DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {

@@ -6,7 +6,10 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Where;
@@ -25,8 +28,37 @@ public class GastoPrinex implements Serializable, Auditable {
 	private static final long serialVersionUID = -5657034208602725667L;
 
 	@Id
-    @Column(name = "GPV_ID")
+    @Column(name = "GPL_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "GastoPrinexGenerator")
+	@SequenceGenerator(name = "GastoPrinexGenerator", sequenceName = "S_GPL_GASTOS_PRINEX_LBK")
     private Long id;
+	
+	@Column(name = "GPV_ID")
+	private Long idGasto;
+	
+	@Column(name = "ACT_ID")
+	private Long idActivo;
+	
+	@Column(name = "GPL_PROYECTO")
+	private Long promocion;
+	
+	@Column(name = "GPL_TIPO_INMUEBLE")
+	private String tipoInmueble;
+	
+	@Column(name = "GPL_CLAVE_1")
+	private String clave1;
+	
+	@Column(name = "GPL_CLAVE_2")
+	private String clave2;
+	
+	@Column(name = "GPL_CLAVE_3")
+	private String clave3;
+	
+	@Column(name = "GPL_CLAVE_4")
+	private String clave4;
+	
+	@Column(name = "GPL_IMPORTE_GASTO")
+	private Double importeGasto;
 	
 	@Column(name = "GPL_FECHA_CONTABLE")
     private Date fechaContable;
@@ -172,6 +204,25 @@ public class GastoPrinex implements Serializable, Auditable {
 	@Column(name = "GPL_CARACTERISTICA")
 	private String caracteristica;
 	
+	@Column(name = "GPL_DIARIO1_BASE")
+	private Double diario1Base;
+	
+	@Column(name = "GPL_DIARIO1_TIPO")
+	private Double diario1Tipo;
+	
+	@Column(name = "GPL_DIARIO1_CUOTA")
+	private Double diario1Cuota;
+	
+	@Column(name = "GPL_DIARIO2_BASE")
+	private Double diario2Base;
+	
+	@Column(name = "GPL_DIARIO2_TIPO")
+	private Double diario2Tipo;
+	
+	@Column(name = "GPL_DIARIO2_CUOTA")
+	private Double diario2Cuota;
+	
+	
 	@Embedded
 	private Auditoria auditoria;
 
@@ -181,6 +232,78 @@ public class GastoPrinex implements Serializable, Auditable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	public Long getIdGasto() {
+		return idGasto;
+	}
+
+	public void setIdGasto(Long idGasto) {
+		this.idGasto = idGasto;
+	}
+
+	public Long getIdActivo() {
+		return idActivo;
+	}
+
+	public void setIdActivo(Long idActivo) {
+		this.idActivo = idActivo;
+	}
+
+	public Long getPromocion() {
+		return promocion;
+	}
+
+	public void setPromocion(Long promocion) {
+		this.promocion = promocion;
+	}
+
+	public String getTipoInmueble() {
+		return tipoInmueble;
+	}
+
+	public void setTipoInmueble(String tipoInmueble) {
+		this.tipoInmueble = tipoInmueble;
+	}
+
+	public String getClave1() {
+		return clave1;
+	}
+
+	public void setClave1(String clave1) {
+		this.clave1 = clave1;
+	}
+
+	public String getClave2() {
+		return clave2;
+	}
+
+	public void setClave2(String clave2) {
+		this.clave2 = clave2;
+	}
+
+	public String getClave3() {
+		return clave3;
+	}
+
+	public void setClave3(String clave3) {
+		this.clave3 = clave3;
+	}
+
+	public String getClave4() {
+		return clave4;
+	}
+
+	public void setClave4(String clave4) {
+		this.clave4 = clave4;
+	}
+
+	public Double getImporteGasto() {
+		return importeGasto;
+	}
+
+	public void setImporteGasto(Double importeGasto) {
+		this.importeGasto = importeGasto;
 	}
 
 	public Date getFechaContable() {
@@ -574,6 +697,53 @@ public class GastoPrinex implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
-	
 
+	public Double getDiario1Base() {
+		return diario1Base;
+	}
+
+	public void setDiario1Base(Double diario1Base) {
+		this.diario1Base = diario1Base;
+	}
+
+	public Double getDiario1Tipo() {
+		return diario1Tipo;
+	}
+
+	public void setDiario1Tipo(Double diario1Tipo) {
+		this.diario1Tipo = diario1Tipo;
+	}
+
+	public Double getDiario1Cuota() {
+		return diario1Cuota;
+	}
+
+	public void setDiario1Cuota(Double diario1Cuota) {
+		this.diario1Cuota = diario1Cuota;
+	}
+
+	public Double getDiario2Base() {
+		return diario2Base;
+	}
+
+	public void setDiario2Base(Double diario2Base) {
+		this.diario2Base = diario2Base;
+	}
+
+	public Double getDiario2Tipo() {
+		return diario2Tipo;
+	}
+
+	public void setDiario2Tipo(Double diario2Tipo) {
+		this.diario2Tipo = diario2Tipo;
+	}
+
+	public Double getDiario2Cuota() {
+		return diario2Cuota;
+	}
+
+	public void setDiario2Cuota(Double diario2Cuota) {
+		this.diario2Cuota = diario2Cuota;
+	}
+	
 }

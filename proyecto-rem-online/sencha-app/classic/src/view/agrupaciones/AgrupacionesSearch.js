@@ -60,12 +60,28 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesSearch', {
 						       		{ 
 							        	xtype: 'combo',
 							        	fieldLabel: HreRem.i18n('fieldlabel.tipo'),
+							        	reference: 'prueba',
 							        	name: 'tipoAgrupacion',
 							        	bind: {
 						            		store: '{comboTipoAgrupacion}'
 						            	},
 						            	displayField: 'descripcion',
-			    						valueField: 'codigo'
+						            	valueField: 'codigo',
+						            	listeners: {
+											select: 'onChangeTipoAgrupacion'
+										}
+							        },
+							        { 
+							        	xtype: 'combo',
+							        	fieldLabel: HreRem.i18n('fieldlabel.tipo.alquiler'),
+							        	name: 'tipoAlquiler',
+							        	hidden: true,
+							        	bind: {
+						            		store: '{comboTipoAlquilerAgrupaciones}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+			    						reference: 'comboTipoAlquiler'
 							        },
 							        { 
 										xtype: 'combo',

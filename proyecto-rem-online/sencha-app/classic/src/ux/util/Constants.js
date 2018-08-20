@@ -40,7 +40,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	RESTRINGIDA: '02',
     	ASISTIDA: '13',
     	LOTE_COMERCIAL: '14',
-    	COMERCIAL_ALQUILER: '15'
+    	COMERCIAL_ALQUILER:'15'
     },
     
     TIPOS_ACTIVO: {

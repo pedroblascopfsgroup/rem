@@ -269,6 +269,22 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView searchActivoCarteraAndGastoPrinex(@RequestParam String numGastoHaya) {
+		ModelMap model = new ModelMap();
+		
+		try {
+			model.put("data", gastoProveedorApi.searchActivoCarteraAndGastoPrinex(numGastoHaya));
+			model.put("success", true);			
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveDetalleEconomico(DtoDetalleEconomicoGasto dto, @RequestParam Long id, ModelMap model) {
 		try {		
 			

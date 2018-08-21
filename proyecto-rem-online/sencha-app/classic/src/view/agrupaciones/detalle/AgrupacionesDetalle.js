@@ -7,7 +7,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
     requires 	: ['HreRem.view.agrupaciones.detalle.FichaAgrupacion','HreRem.view.agrupaciones.detalle.ObservacionesAgrupacion',
         			'HreRem.view.agrupaciones.detalle.SubdivisionesAgrupacionMain','HreRem.view.agrupaciones.detalle.FotosAgrupacion',
         			'HreRem.view.agrupaciones.detalle.ActivosAgrupacion','HreRem.view.agrupaciones.detalle.ObservacionesAgrupacion',
-        			'Ext.ux.TabReorderer','HreRem.view.agrupacion.detalle.ComercialAgrupacion'],
+        			'Ext.ux.TabReorderer','HreRem.view.agrupacion.detalle.ComercialAgrupacion', 'HreRem.model.AgrupacionFicha'],
     listeners: {
     	boxready: function (tabPanel) {
     		if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
@@ -92,13 +92,13 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 
     initComponent: function () {
         var me = this;
-
+        
         var items = [];
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fichaagrupacion', funPermEdition: ['EDITAR_AGRUPACION']})}, ['TAB_AGRUPACION']),
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'activosagrupacion', ocultarBotonesEdicion: true})}, ['TAB_LISTA_ACTIVOS_AGRUPACION']),
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fotosagrupacion', ocultarBotonesEdicion: true, hidden: true})}, ['TAB_FOTOS_AGRUPACION']),
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fotosagrupacion', ocultarBotonesEdicion: true, tabConfig:{bind: {hidden: '{esComercialVentaOAlquiler}'}}})}, ['TAB_FOTOS_AGRUPACION']),
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'observacionesagrupacion', ocultarBotonesEdicion: true})}, ['TAB_OBSERVACIONES_AGRUPACION']),
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'subdivisionesagrupacionmain', ocultarBotonesEdicion: true, bind: {disabled:'{!esAgrupacionObraNuevaOrAsistida}'}, hidden: true})}, ['TAB_SUBDIVISIONES_AGRUPACION']),
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'subdivisionesagrupacionmain', ocultarBotonesEdicion: true, tabConfig:{bind: {hidden: '{esComercialVentaOAlquiler}'}}, bind: {disabled:'{!esAgrupacionObraNuevaOrAsistida}'}})}, ['TAB_SUBDIVISIONES_AGRUPACION']),
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'comercialagrupacion', ocultarBotonesEdicion: true, bind: {disabled:'{esAgrupacionObraNuevaOrAsistida}'}})}, ['TAB_COMERCIAL_AGRUPACION'])
 
         me.addPlugin({ptype: 'lazyitems', items: items});

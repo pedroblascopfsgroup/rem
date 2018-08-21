@@ -57,6 +57,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     		return false;
 	     	}
 		 },
+		 
+		 esComercialVentaOAlquiler: function(get) {
+		     	var tipoComercialAlquiler = get('agrupacionficha.tipoAgrupacionCodigo');
+		     	if((tipoComercialAlquiler == CONST.TIPOS_AGRUPACION['COMERCIAL_ALQUILER']) || (tipoComercialAlquiler == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL'])) {
+		     		return true;
+		     	} else {
+		     		return false;
+		     	}
+		 },
 		     
 		 esAgrupacionLoteComercial: function(get) {
 		    	 

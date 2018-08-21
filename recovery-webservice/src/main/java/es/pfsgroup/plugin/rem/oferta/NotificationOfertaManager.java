@@ -276,9 +276,9 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		prescriptor = ofertaAceptada.getPrescriptor();
 		if(!Checks.esNulo(prescriptor)){
 			destinatarios.add(prescriptor.getEmail());
-		}
+		}		
 		
-		custodio = ofertaAceptada.getCustodio();
+		custodio = ofertaAceptada.getActivoPrincipal().getInfoComercial().getMediadorInforme();
 		if(!Checks.esNulo(custodio)){
 			destinatarios.add(custodio.getEmail());
 		}

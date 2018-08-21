@@ -13,6 +13,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -214,6 +215,7 @@ public class AgrupacionAdapter {
 	private final Log logger = LogFactory.getLog(getClass());
 
 	public static final String OFERTA_INCOMPATIBLE_AGR_MSG = "El tipo de oferta es incompatible con el destino comercial de algún activo";
+	public static final String OFERTA_INCOMPATIBLE_TIPO_AGR_MSG = "oferta.incompatible.tipo.agrupacion";
 	public static final String OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG = "No se puede aceptar la oferta debido a que no se encuentran todos los gestores asignados";
 	public static final String PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG = "No ha sido posible publicar. Algún activo no tiene las condiciones necesarias";
 	public static final String PUBLICACION_MOTIVO_MSG = "Publicado desde agrupación";
@@ -1492,9 +1494,30 @@ public class AgrupacionAdapter {
 
 	@Transactional(readOnly = false)
 	public boolean createOfertaAgrupacion(DtoOfertasFilter dto) throws Exception {
-		List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
-
+		
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(dto.getIdAgrupacion());
+		
+		
+		// Comprobar tipo oferta compatible con tipo agrupacion
+		if (!Checks.esNulo(agrupacion) && !Checks.esNulo(agrupacion.getTipoAgrupacion())) {
+			
+				if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())
+					&& DDTipoOferta.CODIGO_VENTA.equals(dto.getTipoOferta())) {
+				
+				throw new JsonViewerException(messageServices.getMessage(OFERTA_INCOMPATIBLE_TIPO_AGR_MSG));
+		
+				}
+				
+				if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(agrupacion.getTipoAgrupacion().getCodigo())
+						&& DDTipoOferta.CODIGO_ALQUILER.equals(dto.getTipoOferta())) {
+					
+					throw new JsonViewerException(messageServices.getMessage(OFERTA_INCOMPATIBLE_TIPO_AGR_MSG));
+	
+				}
+
+		}
+
+		List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
 
 		for (ActivoAgrupacionActivo activos : agrupacion.getActivos()) {
 
@@ -1504,15 +1527,13 @@ public class AgrupacionAdapter {
 				String comercializacion = activos.getActivo().getTipoComercializacion().getCodigo();
 
 				if (DDTipoOferta.CODIGO_VENTA.equals(dto.getTipoOferta())
-						&& (!DDTipoComercializacion.CODIGO_VENTA.equals(comercializacion)
-								&& !DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(comercializacion))) {
-					throw new Exception(AgrupacionAdapter.OFERTA_INCOMPATIBLE_AGR_MSG);
+						&& DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(comercializacion)) {
+					throw new JsonViewerException(AgrupacionAdapter.OFERTA_INCOMPATIBLE_AGR_MSG);
 				}
 
 				if (DDTipoOferta.CODIGO_ALQUILER.equals(dto.getTipoOferta())
-						&& (!DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(comercializacion)
-								&& !DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(comercializacion))) {
-					throw new Exception(AgrupacionAdapter.OFERTA_INCOMPATIBLE_AGR_MSG);
+						&& DDTipoComercializacion.CODIGO_VENTA.equals(comercializacion)) {
+					throw new JsonViewerException(AgrupacionAdapter.OFERTA_INCOMPATIBLE_AGR_MSG);
 				}
 			}
 		}

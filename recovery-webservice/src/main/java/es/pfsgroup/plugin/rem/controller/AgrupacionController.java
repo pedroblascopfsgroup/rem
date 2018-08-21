@@ -695,14 +695,12 @@ public class AgrupacionController extends ParadiseJsonController {
 																		// idTrabajo);
 			model.put("success", success);
 
+		} catch (JsonViewerException jvex) {
+			model.put("msg", jvex.getMessage());
+			model.put("success", false);
 		} catch (Exception e) {
-			if (e.getMessage().equals(AgrupacionAdapter.OFERTA_INCOMPATIBLE_AGR_MSG)) {
-				model.put("msg", AgrupacionAdapter.OFERTA_INCOMPATIBLE_AGR_MSG);
-				model.put("success", false);
-			} else {
-				logger.error(e);
-				model.put("success", false);
-			}
+			logger.error(e);
+			model.put("success", false);
 		}
 		return createModelAndViewJson(model);
 	}

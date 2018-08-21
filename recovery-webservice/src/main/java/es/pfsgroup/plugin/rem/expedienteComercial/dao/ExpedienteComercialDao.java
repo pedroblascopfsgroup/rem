@@ -50,4 +50,14 @@ public interface ExpedienteComercialDao extends AbstractDao<ExpedienteComercial,
 	 */
 	public ExpedienteComercial getExpedienteComercialByTrabajo(Long idTrabajo);
 	
+	/**
+	 * Devuelve los documentos de tipo y subtipo del expediente 
+	 * @param idExp
+	 * @param idTipo
+	 * @param idSubtipo
+	 * @return 
+	 */
+	
+	public Long hayDocumentoSubtipo(Long idExp, Long idTipo, Long idSubtipo);
+	
 }

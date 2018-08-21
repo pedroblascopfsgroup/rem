@@ -38,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
+import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -237,7 +238,16 @@ public interface ExpedienteComercialApi {
 	 * 
 	 * @return
 	 */
+
 	public DtoPage getActivosExpediente(Long idExpediente);
+	
+	/**
+	 * Método que recupera los tipos de documento del expediente comercial
+	 * 
+	 * @return
+	 */
+	
+	public List <DtoTipoDocExpedientes> getTipoDocumentoExpediente(String tipoExpediente);
 
 	/**
 	 * Recupera el adjunto del Expediente comercial
@@ -999,6 +1009,16 @@ public interface ExpedienteComercialApi {
 	boolean enviarCorreoComercializadora(String cuerpoEmail, Long idExpediente);	
 	
 	public List<DDTipoCalculo> getComboTipoCalculo(Long idExpediente);
+	
+	/**
+	 * Este método comprueba si el expediente ya contiene un documento del tipo y subtipo indicado
+	 * 
+	 * @param WebFileItem: Datos del documento.
+	 * @param ExpedienteComercial: Expediente Comercial al que hace referencia.
+	 * @return Devuelve True si existe el documento.
+	 */
+	
+	public Boolean existeDocSubtipo(WebFileItem fileItem, ExpedienteComercial expedienteComercialEntrada) throws Exception;
 	
 	/**
 	 * Método que obtiene el histórico de scoring del expediente comercial de alquiler.

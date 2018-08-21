@@ -66,6 +66,7 @@ import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
+import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 
@@ -442,6 +443,24 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getTipoDocumentoExpediente(ModelMap model, String tipoExpediente) {
+		
+		try {
+			List <DtoTipoDocExpedientes> dto= expedienteComercialApi.getTipoDocumentoExpediente(tipoExpediente);
+			
+			model.put("data", dto);
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
 	/**
 	 * 
 	 * @param request

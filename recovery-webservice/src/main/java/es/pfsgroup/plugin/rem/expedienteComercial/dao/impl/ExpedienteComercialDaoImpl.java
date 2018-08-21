@@ -77,4 +77,23 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 		else
 			return null;
 	}
+	
+	
+	@Override
+	public Long hayDocumentoSubtipo(Long idExp, Long idTipo, Long idSubtipo) {
+
+		try {
+			HQLBuilder hb = new HQLBuilder("select count(*) from AdjuntoExpedienteComercial adj where adj.expediente.id = "
+					+ idExp + " and adj.tipoDocumentoExpediente.id = " + idTipo + " and adj.subtipoDocumentoExpediente.id = " + idSubtipo);
+			return ((Long) getHibernateTemplate().find(hb.toString()).get(0));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+	
+	
+	
 }

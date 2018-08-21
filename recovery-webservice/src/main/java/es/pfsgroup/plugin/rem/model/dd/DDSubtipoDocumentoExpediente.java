@@ -56,6 +56,37 @@ public class DDSubtipoDocumentoExpediente implements Auditable, Dictionary {
     public static final String CODIGO_AUTORIZACION_VENTA = "21";
     public static final String CODIGO_CONTRAOFERTA= "22";
     public static final String CODIGO_APROBACION= "23";
+    public static final String CODIGO_CONTRATO_AMPLIACION_ARRAS= "24";
+    public static final String CODIGO_CONTRATO_ALQUILER_2= "25";
+    public static final String CODIGO_INFORME_JURIDICO= "26";
+    public static final String CODIGO_CATASTRO= "27";
+    public static final String CODIGO_SUBSANACION= "28";
+    public static final String CODIGO_CLIENTE_DNI= "29";
+    public static final String CODIGO_CLIENTE_NIF= "30";
+    public static final String CODIGO_PODER_REPRESENTANTE= "31";
+    public static final String CODIGO_SOLICITUD_VISITA= "32";
+    public static final String CODIGO_AUTORIZACION_VENTA_VPO= "33";
+    public static final String CODIGO_COMUNIDAD_PROPIETARIOS= "34";
+    public static final String CODIGO_RETROCESION_VENTA= "35";
+    public static final String CODIGO_PLANTILLA_PROPUESTA= "36";
+    public static final String CODIGO_FICHA_CLIENTE= "37";
+    public static final String CODIGO_APROBACION_PBC= "38";
+    public static final String CODIGO_ESTUDIO_MERCADO= "39";
+    public static final String CODIGO_FICHA_TECNICA= "40";
+    public static final String CODIGO_INFORME_FISCAL= "41";
+    public static final String CODIGO_CORREO_ELECTRONICO= "42";
+    public static final String CODIGO_SCORING= "43";
+    public static final String CODIGO_SEGURO_RENTAS= "44";
+    public static final String CODIGO_SANCION_OFERTA= "45";
+    public static final String CODIGO_RENOVACION_CONTRATO= "46";
+    public static final String CODIGO_PRE_CONTRATO= "47";
+    public static final String CODIGO_PRE_LIQUIDACION_ITP= "48";
+    public static final String CODIGO_CONTRATO= "49";
+    public static final String CODIGO_LIQUIDACION_IPP= "50";
+    public static final String CODIGO_FIANZA= "51";
+    public static final String CODIGO_GARANTIA_ADICIONAL= "52";
+    public static final String CODIGO_AVAL_BANCARIO= "53";
+    public static final String CODIGO_JUSTIFICANTE_INGRESOS= "54";
     
 	/**
 	 * 

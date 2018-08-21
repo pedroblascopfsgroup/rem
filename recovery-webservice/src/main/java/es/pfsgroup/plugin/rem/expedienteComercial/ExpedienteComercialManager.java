@@ -124,6 +124,7 @@ import es.pfsgroup.plugin.rem.model.DtoSubsanacion;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
+import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.EntidadProveedor;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
@@ -1042,10 +1043,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setFechaContabilizacionPropietario(expediente.getFechaContabilizacionPropietario());
 				dto.setFechaDevolucionEntregas(expediente.getFechaDevolucionEntregas());
 				dto.setImporteDevolucionEntregas(expediente.getImporteDevolucionEntregas());
-				
-				
-				
-				//TODO ja
 				dto.setDefinicionOfertaFinalizada(false);
 				
 				if (!Checks.esNulo(expediente.getTrabajo().getId())) {
@@ -1839,6 +1836,28 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		return true;
 	}
+	
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean existeDocSubtipo(WebFileItem fileItem, ExpedienteComercial expedienteComercialEntrada) throws Exception {
+		
+		Boolean existe= Boolean.FALSE;
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("subtipo"));
+		DDSubtipoDocumentoExpediente subTipoDocumento= genericDao.get(DDSubtipoDocumentoExpediente.class, filtro);
+
+		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
+		DDTipoDocumentoExpediente tipoDocumento = (DDTipoDocumentoExpediente) genericDao.get(DDTipoDocumentoExpediente.class, filtroTipo);
+		if (expedienteComercialDao.hayDocumentoSubtipo(Long.valueOf(fileItem.getParameter("idEntidad")),
+				tipoDocumento.getId(),subTipoDocumento.getId())>=1){
+			
+			existe = Boolean.TRUE;
+		};
+		
+		return existe;
+	}
+
 
 	@Override
 	public Page getCompradoresByExpediente(Long idExpediente, WebDto dto) {
@@ -2073,7 +2092,34 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		return dto;
 	}
-
+	
+	@Override
+	@Transactional(readOnly = false)
+	public List <DtoTipoDocExpedientes> getTipoDocumentoExpediente (String tipoExpediente){
+		
+		List <DtoTipoDocExpedientes> listDto= new ArrayList <DtoTipoDocExpedientes>();
+		List <DDTipoDocumentoExpediente> listaTipDocExp= new ArrayList <DDTipoDocumentoExpediente>();
+		
+		if(!Checks.esNulo(tipoExpediente)) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "tipoOferta.codigo", tipoExpediente);
+			listaTipDocExp  = genericDao.getList(DDTipoDocumentoExpediente.class, filtro);
+		}
+		
+		for (DDTipoDocumentoExpediente tipDocExp : listaTipDocExp) {
+			DtoTipoDocExpedientes aux= new DtoTipoDocExpedientes();
+			aux.setId(tipDocExp.getId());
+			aux.setCodigo(tipDocExp.getCodigo());
+			aux.setDescripcion(tipDocExp.getDescripcion());
+			aux.setDescripcionLarga(tipDocExp.getDescripcionLarga());
+			listDto.add(aux);
+		}
+		
+		Collections.sort(listDto);
+		return listDto;	
+	}
+	
+	
+	
 	@Override
 	@Transactional(readOnly = false)
 	public boolean saveCondicionesExpediente(DtoCondiciones dto, Long idExpediente) {

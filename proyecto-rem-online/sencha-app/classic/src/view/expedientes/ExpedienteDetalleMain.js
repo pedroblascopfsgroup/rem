@@ -55,11 +55,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleMain', {
 		if(me.down('activoExpedienteTabPanel') != undefined){
 			me.down('activoExpedienteTabPanel').bloquearExpediente(me.down('activoExpedienteTabPanel'),bloqueado);
 		}
-		if(!me.getViewModel().get('expediente.definicionOfertaFinalizada')){				
-			var tabSeguro= me.down('segurorentasexpediente');
-			tabSeguro.tab.setVisible(false);
-		}
-		
+
 		if(!me.getViewModel().get('expediente.definicionOfertaFinalizada')){				
 			var tabSeguro= me.down('segurorentasexpediente');
 			var tabScoring= me.down('scoringexpediente');

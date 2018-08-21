@@ -64,9 +64,9 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	private Boolean anticipo;
 	private Date fechaAnticipo;
 	private String cartera;
-	private Long exencionlbk;
-	private Long totalImportePromocion;
-	private Long importeTotalPrinex;
+	private Double exencionlbk;
+	private Double totalImportePromocion;
+	private Double importeTotalPrinex;
 	private Boolean prorrata;
 	
 
@@ -330,29 +330,29 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	public void setCartera(String cartera) {
 		this.cartera = cartera;
 	}
-	public Long getExencionlbk() {
-		return exencionlbk;
-	}
-	public void setExencionlbk(Long exencionlbk) {
-		this.exencionlbk = exencionlbk;
-	}
-	public Long getTotalImportePromocion() {
-		return totalImportePromocion;
-	}
-	public void setTotalImportePromocion(Long totalImportePromocion) {
-		this.totalImportePromocion = totalImportePromocion;
-	}
-	public Long getImporteTotalPrinex() {
-		return importeTotalPrinex;
-	}
-	public void setImporteTotalPrinex(Long importeTotalPrinex) {
-		this.importeTotalPrinex = importeTotalPrinex;
-	}
 	public Boolean getProrrata() {
 		return prorrata;
 	}
 	public void setProrrata(Boolean prorrata) {
 		this.prorrata = prorrata;
+	}
+	public Double getExencionlbk() {
+		return exencionlbk;
+	}
+	public void setExencionlbk(Double exencionlbk) {
+		this.exencionlbk = exencionlbk;
+	}
+	public Double getTotalImportePromocion() {
+		return totalImportePromocion;
+	}
+	public void setTotalImportePromocion(Double totalImportePromocion) {
+		this.totalImportePromocion = totalImportePromocion;
+	}
+	public Double getImporteTotalPrinex() {
+		return importeTotalPrinex;
+	}
+	public void setImporteTotalPrinex(Double importeTotalPrinex) {
+		this.importeTotalPrinex = importeTotalPrinex;
 	}
 	
    	

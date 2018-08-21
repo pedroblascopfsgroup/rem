@@ -673,10 +673,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				gastoPrinex = listGastoPrinex.get(0);
 				if(!Checks.esNulo(gastoPrinex)) {
 					Double importePromocion = 0.0;
-					Long diarioBase = new Long(0);
-					Long diarioCuota = new Long(0);
-					Long diario2Base = new Long(0);
-					Long diario2Cuota = new Long(0);
+					Double diarioBase = 0.0;
+					Double diarioCuota = 0.0;
+					Double diario2Base = 0.0;
+					Double diario2Cuota = 0.0;
 					
 					
 				if(("20").equals(gastoPrinex.getDiario1())){
@@ -712,7 +712,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						}
 					}
 					
-				dto.setTotalImportePromocion((importePromocion).longValue());
+				dto.setTotalImportePromocion(importePromocion);
 			
 				if(!Checks.esNulo(gastoPrinex.getDiario1())) {
 					if(!Checks.esNulo(gastoPrinex.getDiario1Base())) {
@@ -733,8 +733,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						}
 							
 					}
-					Long importePromocionLong = (importePromocion).longValue();
-					Long importeTotalPrinex = diarioBase+diarioCuota+diario2Base+diario2Cuota+importePromocionLong;
+					Double importeTotalPrinex = diarioBase+diarioCuota+diario2Base+diario2Cuota+importePromocion;
 					
 					dto.setImporteTotalPrinex(importeTotalPrinex);
 					

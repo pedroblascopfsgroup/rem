@@ -185,7 +185,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 				        						defaults: {
 				        							style: 'text-align: right',
 											        fieldStyle:'text-align:right;',
-											        labelStyle: 'text-align:left;',
+											        labelStyle: 'text-align:left;'
 				        						},
 												items :
 													[

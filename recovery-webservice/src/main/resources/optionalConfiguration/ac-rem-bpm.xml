@@ -316,6 +316,11 @@
             	def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.checkLiberbank(tareaExterna);
             }
+            def checkGiants = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+            	return trabajoManager.checkGiants(tareaExterna);
+            }
+            
             def checkExpedienteFechaChequeLiberbank = {
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkExpedienteFechaChequeLiberbank(idTramite);

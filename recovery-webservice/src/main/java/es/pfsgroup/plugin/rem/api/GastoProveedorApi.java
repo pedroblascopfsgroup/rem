@@ -79,6 +79,15 @@ public interface GastoProveedorApi {
 		 * @param idGasto
 		 * @return
 		 */
+		
+		public boolean searchActivoCarteraAndGastoPrinex(String numGastoHaya);
+		
+		/**
+		 * Método que recoge información de la pestaña Detalle económico del gasto
+		 * @param dto
+		 * @param idGasto
+		 * @return
+		 */
 		boolean saveDetalleEconomico(DtoDetalleEconomicoGasto dto, Long idGasto);
 		
 		/**

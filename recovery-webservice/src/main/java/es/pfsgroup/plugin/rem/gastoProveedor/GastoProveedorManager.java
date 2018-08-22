@@ -82,6 +82,7 @@ import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
 import es.pfsgroup.plugin.rem.model.GastoImpugnacion;
 import es.pfsgroup.plugin.rem.model.GastoInfoContabilidad;
+import es.pfsgroup.plugin.rem.model.GastoPrinex;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoProveedorActivo;
 import es.pfsgroup.plugin.rem.model.GastoProveedorTrabajo;
@@ -610,6 +611,40 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		return null;
 	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean searchActivoCarteraAndGastoPrinex(String numGastoHaya) {
+
+		GastoProveedor gastoProveedor = new GastoProveedor();
+		Long numGastoHayaLong = Long.valueOf(numGastoHaya);
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", numGastoHayaLong);
+		gastoProveedor = genericDao.get(GastoProveedor.class, filtro);
+
+		if (!Checks.esNulo(gastoProveedor)) {
+			GastoProveedorActivo gastoProveedorActivo = new GastoProveedorActivo();
+			Long idGastoProveedor = gastoProveedor.getId();
+			
+			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id",idGastoProveedor);
+			gastoProveedorActivo = genericDao.get(GastoProveedorActivo.class, filtro2);
+			
+			if(!Checks.esNulo(gastoProveedorActivo)) {
+				Activo activo = new Activo();
+				activo = gastoProveedorActivo.getActivo();
+				if((DDCartera.CODIGO_CARTERA_LIBERBANK).equals(activo.getCartera().getCodigo())) {
+					List<GastoPrinex> gastoPrinex = new ArrayList<GastoPrinex>();
+					Long activoId = activo.getId();
+					Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "idActivo",activoId);
+					gastoPrinex = genericDao.getList(GastoPrinex.class, filtro3);
+					if(!Checks.estaVacio(gastoPrinex)) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
 
 	private DtoDetalleEconomicoGasto detalleEconomicoToDtoDetalleEconomico(GastoProveedor gasto) {
 
@@ -628,7 +663,86 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setImporteCostas(detalleGasto.getImporteCostas());
 			dto.setImporteOtrosIncrementos(detalleGasto.getImporteOtrosIncrementos());
 			dto.setImporteProvisionesSuplidos(detalleGasto.getImporteProvisionesSuplidos());
-
+			
+			if(!Checks.esNulo(detalleGasto.getGastoProveedor())) {
+				GastoPrinex gastoPrinex = new GastoPrinex();
+				List<GastoPrinex> listGastoPrinex = new ArrayList<GastoPrinex>();
+				Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "idGasto",gasto.getId());
+				listGastoPrinex = genericDao.getList(GastoPrinex.class, filtro3);
+				if(!Checks.estaVacio(listGastoPrinex)) {
+				gastoPrinex = listGastoPrinex.get(0);
+				if(!Checks.esNulo(gastoPrinex)) {
+					Double importePromocion = 0.0;
+					Double diarioBase = 0.0;
+					Double diarioCuota = 0.0;
+					Double diario2Base = 0.0;
+					Double diario2Cuota = 0.0;
+					
+					
+				if(("20").equals(gastoPrinex.getDiario1())){
+					dto.setProrrata(true);
+				}else {
+					dto.setProrrata(false);
+				}
+				
+				if(!Checks.esNulo(gastoPrinex.getDiario1()) || !Checks.esNulo(gastoPrinex.getDiario2())) {
+					
+					if(!Checks.esNulo(gastoPrinex.getDiario1())) {
+						if(("60").equals(gastoPrinex.getDiario1())){
+							
+							dto.setExencionlbk(gastoPrinex.getDiario1Base());
+							
+						}else {
+							
+							if(!Checks.esNulo(gastoPrinex.getDiario2())) {
+								if(("60").equals(gastoPrinex.getDiario2())){
+									
+									dto.setExencionlbk(gastoPrinex.getDiario2Base());
+								}
+							}
+							
+						}
+					}
+						
+					
+				}
+					for (GastoPrinex gastoPrinexList : listGastoPrinex) {
+						if(!Checks.esNulo(gastoPrinexList.getImporteGasto()) && !Checks.esNulo(gastoPrinexList.getPromocion()) && Checks.esNulo(gastoPrinexList.getIdActivo())) {
+						importePromocion+=gastoPrinexList.getImporteGasto();
+						}
+					}
+					
+				dto.setTotalImportePromocion(importePromocion);
+			
+				if(!Checks.esNulo(gastoPrinex.getDiario1())) {
+					if(!Checks.esNulo(gastoPrinex.getDiario1Base())) {
+						diarioBase=gastoPrinex.getDiario1Base();
+						
+					}
+					if(!Checks.esNulo(gastoPrinex.getDiario1Cuota())) {
+						diarioCuota=gastoPrinex.getDiario1Cuota();
+					}
+					
+					if(!Checks.esNulo(gastoPrinex.getDiario2())) {
+						if(!Checks.esNulo(gastoPrinex.getDiario2Base())) {
+							diario2Base=gastoPrinex.getDiario2Base();
+						}
+							
+						if(!Checks.esNulo(gastoPrinex.getDiario2Cuota())) {
+							diario2Cuota=gastoPrinex.getDiario2Cuota();	
+						}
+							
+					}
+					Double importeTotalPrinex = diarioBase+diarioCuota+diario2Base+diario2Cuota+importePromocion;
+					
+					dto.setImporteTotalPrinex(importeTotalPrinex);
+					
+				}
+				
+				}
+				}
+			}
+			
 			if (!Checks.esNulo(detalleGasto.getImpuestoIndirectoTipo())) {
 				dto.setImpuestoIndirectoTipoCodigo(detalleGasto.getImpuestoIndirectoTipo().getCodigo());
 			}

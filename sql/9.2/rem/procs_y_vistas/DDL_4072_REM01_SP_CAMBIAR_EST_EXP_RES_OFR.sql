@@ -238,7 +238,7 @@ BEGIN
                     IF FEC_ANT_FIR_RES IS NULL THEN
                         VAR_FEC_ANT_FIR_RES := 'NULL';
                     ELSE
-                        VAR_FEC_ANT_FIR_RES := '''TO_DATE('''||FEC_ANT_FIR_RES||''',''DD/MM/RR'')''';
+                        VAR_FEC_ANT_FIR_RES := 'TO_DATE('''||FEC_ANT_FIR_RES||''',''DD/MM/RR'')';
                     END IF;
                 ELSE
                     FEC_ANT_FIR_RES := 'NULL';

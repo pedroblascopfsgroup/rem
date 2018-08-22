@@ -345,4 +345,36 @@ public interface ParticularValidatorApi {
 	 */
 	public Boolean activoConDestinoComercialAlquiler(String numActivo);
 
+	
+	/**
+	 * 
+	 * @param numAgrupacion
+	 * @return devuelve true si la agrupacion es de tipo comercial alquiler
+	 */
+	public Boolean esAgrupacionTipoAlquiler(String numAgrupacion);
+
+	/**
+	 * 
+	 * 
+	 * @param numAgrupacion
+	 * @param numActivo
+	 * @return Devuelve true si el activo tiene el mismo tipo de alquiler que la agrupacion.
+	 * 		   
+	 */
+	public Boolean mismoTipoAlquilerActivoAgrupacion(String numAgrupacion, String numActivo);
+
+	/**
+	 * 
+	 * @param numAgrupacion
+	 * @return devuelve true si la agrupacion es de tipo comercial venta
+	 */
+	public Boolean esAgrupacionTipoComercialVenta(String numAgrupacion);
+
+	/**
+	 * 
+	 * @param numAgrupacion
+	 * @return devuelve el código de la subcartera de una agrupación según su activo principal
+	 */
+	public String getCodigoSubcarteraAgrupacion(String numAgrupacion);
+
 }

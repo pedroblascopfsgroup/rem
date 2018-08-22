@@ -37,12 +37,12 @@ import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVAgrupacionLoteComercialExcelValidator.ACTIVOS_NO_MISMA_CARTERA;
-import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVAgrupacionLoteComercialExcelValidator.AGRUPACIONES_CON_BAJA;
-import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVAgrupacionLoteComercialExcelValidator.AGRUPACION_ACTIVOS_SIN_OFERTAS_ACEPTADAS;
 
 @Component
 public class MSVAgrupacionLoteComercialAlquilerExcelValidator extends MSVExcelValidatorAbstract {
 	
+	public static final String AGRUPACION_NO_EXISTE = "msg.error.masivo.agrupar.agrupacion.no.existe";
+	public static final String AGRUPACION_NO_TIPO_ALQUILER = "msg.error.masivo.agrupar.agrupacion.no.tipo.alquiler";
 	public static final String ACTIVO_NO_EXISTE = "msg.error.masivo.agrupar.activos.asistida.activo.noExiste";
 	public static final String ACTIVO_NO_COMERCIALIZABLE = "msg.error.masivo.agrupar.activos.no.comercializables";
 	public static final String ACTIVO_DESTINO_COMERCIAL_VENTA = "msg.error.masivo.activo.destino.comercial.venta";
@@ -53,6 +53,8 @@ public class MSVAgrupacionLoteComercialAlquilerExcelValidator extends MSVExcelVa
 	public static final String ACTIVO_OFERTAS_VIVAS = "msg.error.masivo.activo.ofertas.vivas";
 	public static final String ACTIVO_LOTE_COMERCIAL_VIVO = "msg.error.masivo.activo.en.lote.comercial.vivo";
 	public static final String ERROR_ACTIVO_CANARIAS = "msg.error.masivo.agrupar.activos.agr.canaria.act.canaria";
+	public static final String ACTIVO_DISTINTO_TIPO_ALQUILER = "msg.error.masivo.agrupar.activos.distinto.tipo.alquiler.agrupacion";
+	public static final String ACTIVO_VENDIDO = "msg.error.masivo.agrupar.activos.asistida.activo.vendido";
 	
 	
 	
@@ -89,46 +91,6 @@ public class MSVAgrupacionLoteComercialAlquilerExcelValidator extends MSVExcelVa
 			throw new IllegalArgumentException("idTipoOperacion no puede ser null");
 		}
 		
-		
-		
-/**			
- 			Para agrupaciones comerciales de tipo Alquiler vamos a validar las siguientes condiciones :
-
-HREOS-4399
-		   1. Activo inexistente.
-		   2. Activo fuera perímetro HAYA.
-		   3. Activo NO comercializable.
-		   4. Activo destino comercial "Venta".
-		   5. Activo tipo de alquiler distinto al de la agrupación.
-		   6. Activo con ofertas individuales vivas.
-		   7. Activo en otro lote comercial vivo.
-		   8. Activo Alquilado.
-		   9. Activos sean de la misma Cartera.
-		  10. Activos sean de la península o Canarias.
-		  11. Activos sean del mismo Propietario.
-		  12. Activos sean de la misma Subcartera.
-		  
-HREOS-4399
-*/
-		
-		/**			
-			Para agrupaciones comerciales de tipo Alquiler vamos a validar las siguientes condiciones :
-
-
-	   5. Activo tipo de alquiler distinto al de la agrupación.
-	   		DD_TAL_TIPO_ALQUILER <--- DICCIONARIO TIPOS ALQUILERES
-	   		DD_TAL_ID <---- COLUMNA EN ACT_ACTIVOS
-	   		
-	   		No se como sacar el tipo de alquiler de la agrupación.
-	   		ACT_AGR_AGRUPACION <--- tabla agrupaciones
-	   		
-	   		
-	   		¿¿¿¿ 13. Agrupacion existe ????
-	  
-		 */
-		
-		
-		
 		MSVHojaExcel exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 		
 		getPlantillaExcel(dtoFile.getIdTipoOperacion());
@@ -155,46 +117,64 @@ HREOS-4399
 		
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 			
-			// 1. Activo inexistente.
+			// Agrupación inexistente
+			
+			mapaErrores.put(messageServices.getMessage(AGRUPACION_NO_EXISTE), agrupacionNotExistsRows(exc));
+			
+			// Agrupación del tipo correcto
+			
+			mapaErrores.put(messageServices.getMessage(AGRUPACION_NO_TIPO_ALQUILER), agrupacionNoTipoAlquilerRows(exc));
+			
+			// Activo inexistente.
 			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_EXISTE), activesNotExistsRows(exc));
 			
-			// 2. Activo fuera perímetro HAYA.
+			// Activo vendido 
+			
+			mapaErrores.put(messageServices.getMessage(ACTIVO_VENDIDO), activosVendidosRows(exc));
+			
+			// Activo fuera perímetro HAYA.
 			mapaErrores.put(messageServices.getMessage(ACTIVO_FUERA_PERIMETRO), activosFueraPerimetroRows(exc));
 			
-			// 3. Activo NO comercializable.
+			// Activo NO comercializable.
 			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_COMERCIALIZABLE), activosNoComercializablesRows(exc));
 			
-			// 4. Activo destino comercial "Venta".
+			// Activo destino comercial "Venta".
 			mapaErrores.put(messageServices.getMessage(ACTIVO_DESTINO_COMERCIAL_VENTA), activosDestinoComercialVentaRows(exc));
 			
-			// 6. Activo con ofertas individuales vivas.
+			//  Activo tipo de alquiler distinto al de la agrupación.
+			mapaErrores.put(messageServices.getMessage(ACTIVO_DISTINTO_TIPO_ALQUILER), activosDistintoTipoAlquilerRows(exc));
+			
+			// Activo con ofertas individuales vivas.
 			mapaErrores.put(messageServices.getMessage(ACTIVO_OFERTAS_VIVAS), activosConOfertasVivasRows(exc));
 			
-			// 7. Activo en otro lote comercial vivo.
+			// Activo en otro lote comercial vivo.
 			mapaErrores.put(messageServices.getMessage(ACTIVO_LOTE_COMERCIAL_VIVO), activosEnLoteComercialVivoRows(exc));
 			
-			// 8. Activo Alquilado.
+			// Activo Alquilado.
 			mapaErrores.put(messageServices.getMessage(ACTIVO_ALQUILADO), activosSituacionComercialAlquiladoRows(exc));
 			
-			// 9. Activos sean de la misma Cartera
+			// Activos sean de la misma Cartera
 			mapaErrores.put(messageServices.getMessage(ACTIVOS_NO_MISMA_CARTERA.mensajeError), activosAgrupMultipleValidacionRows(exc, ACTIVOS_NO_MISMA_CARTERA.codigoError));
 			
-			// 10. Activos sean de la península o Canarias.
+			// Activos sean de la península o Canarias.
 			mapaErrores.put(messageServices.getMessage(ERROR_ACTIVO_CANARIAS), distintosTiposImpuesto(exc));
 			
-			// 11. Activos sean del mismo Propietario.
+			// Activos sean del mismo Propietario.
 			mapaErrores.put(messageServices.getMessage(ACTIVO_DISTINTO_PROPIETARIO), comprobarDistintoPropietario(exc));
 			
-			// 12. Activos sean de la misma Subcartera.
+			// Activos sean de la misma Subcartera.
 			mapaErrores.put(messageServices.getMessage(ACTIVO_DISTINTA_SUBCARTERA), activosDistintaSubcartera(exc));
 			
 			
 		}
 		
-		if (!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty()
+		if (!mapaErrores.get(messageServices.getMessage(AGRUPACION_NO_EXISTE)).isEmpty()
+				|| !mapaErrores.get(messageServices.getMessage(AGRUPACION_NO_TIPO_ALQUILER)).isEmpty()
+				|| !mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty()
 				|| !mapaErrores.get(messageServices.getMessage(ACTIVO_FUERA_PERIMETRO)).isEmpty()
 				|| !mapaErrores.get(messageServices.getMessage(ACTIVO_NO_COMERCIALIZABLE)).isEmpty()
 				|| !mapaErrores.get(messageServices.getMessage(ACTIVO_DESTINO_COMERCIAL_VENTA)).isEmpty()
+				|| !mapaErrores.get(messageServices.getMessage(ACTIVO_DISTINTO_TIPO_ALQUILER)).isEmpty()
 				|| !mapaErrores.get(messageServices.getMessage(ACTIVO_OFERTAS_VIVAS)).isEmpty()
 				|| !mapaErrores.get(messageServices.getMessage(ACTIVO_LOTE_COMERCIAL_VIVO)).isEmpty()
 				|| !mapaErrores.get(messageServices.getMessage(ACTIVO_ALQUILADO)).isEmpty()
@@ -202,6 +182,7 @@ HREOS-4399
 				|| !mapaErrores.get(messageServices.getMessage(ERROR_ACTIVO_CANARIAS)).isEmpty()
 				|| !mapaErrores.get(messageServices.getMessage(ACTIVO_DISTINTO_PROPIETARIO)).isEmpty()
 				|| !mapaErrores.get(messageServices.getMessage(ACTIVO_DISTINTA_SUBCARTERA)).isEmpty()
+				|| !mapaErrores.get(messageServices.getMessage(ACTIVO_VENDIDO)).isEmpty()
 				) {
 			
 			dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -278,6 +259,42 @@ HREOS-4399
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
 				if(!particularValidator.existeActivo(exc.dameCelda(i, 1)))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> agrupacionNotExistsRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try{
+			for(i=1; i<this.numFilasHoja;i++){
+				if(!particularValidator.existeAgrupacion(exc.dameCelda(i, 0)))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> agrupacionNoTipoAlquilerRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try{
+			for(i=1; i<this.numFilasHoja;i++){
+				if(particularValidator.existeAgrupacion(exc.dameCelda(i, 0)) && !particularValidator.esAgrupacionTipoAlquiler(exc.dameCelda(i, 0)))
 					listaFilas.add(i);
 			}
 		} catch (Exception e) {
@@ -369,7 +386,8 @@ HREOS-4399
 			for (i = 1; i < this.numFilasHoja; i++) {
 				String numAgrupacion = String.valueOf(Long.parseLong(exc.dameCelda(i, 0)));
 				String numActivo = String.valueOf(Long.parseLong(exc.dameCelda(i, 1)));
-				if (particularValidator.existeActivo(exc.dameCelda(i, 1)) && particularValidator.comprobarDistintoPropietario(numActivo, numAgrupacion))
+				if (particularValidator.existeActivo(exc.dameCelda(i, 1)) && particularValidator.existeAgrupacion(numAgrupacion) 
+						&& particularValidator.comprobarDistintoPropietario(numActivo, numAgrupacion))
 					listaFilas.add(i);
 			}
 		} catch (Exception e) {
@@ -386,17 +404,10 @@ HREOS-4399
 		List<Integer> listaFilas = new ArrayList<Integer>();
 
 		int i = 0;
-		int cont = 1;
-		
 		
 		try {
-			String subcartPadre = null;
 			
-			do {
-				subcartPadre = particularValidator.getSubcartera(exc.dameCelda(cont, 1));
-				cont++;
-			} while ((subcartPadre == null || "".equals(subcartPadre)) && cont < this.numFilasHoja);
-			
+			String subcartPadre = particularValidator.getCodigoSubcarteraAgrupacion(exc.dameCelda(1, 0));
 			
 			for(i=1; i<this.numFilasHoja;i++){
 				if(!Checks.esNulo(subcartPadre) && 
@@ -442,7 +453,7 @@ HREOS-4399
 				for(int a=1; a<this.numFilasHoja; a++){
 					// Si es una fila de la agrupacion que se esta evaluando, se anota el activo
 					if(numAgrupacion.equals(Long.parseLong(exc.dameCelda(a, 0))))
-						numActivos.add(Long.parseLong(exc.dameCelda(a, 1)));				
+						numActivos.add(Long.parseLong(exc.dameCelda(a, 1)));
 				}
 				numActivosNumAgrup.put(numAgrupacion, numActivos);
 			}
@@ -464,22 +475,12 @@ HREOS-4399
 					
 					// Lanza la validacion para el grupo completo de num activos de la agrupacion (BBDD+excel), con un filtro IN de SQL
 					// La validacion que se lanza es la que se ha indicado por parametro, solo se lanza 1 de ellas.
-					/**
-					// Validacion agrupacion dada de baja
-					if(codigoValidacionMultiple == AGRUPACIONES_CON_BAJA.codigoError &&
-							particularValidator.esAgrupacionConBaja(String.valueOf(numAgrupacion)))
-						listaFilasError.add(getNumPrimeraFilaAgrupacionError(exc, numAgrupacion));
-					*/
+
 					// Validacion misma cartera
 					if(codigoValidacionMultiple == ACTIVOS_NO_MISMA_CARTERA.codigoError &&
 							!particularValidator.esActivosMismaCartera(inSqlGrupoActivos, numAgrupacion.toString()))
 						listaFilasError.add(getNumPrimeraFilaAgrupacionError(exc, numAgrupacion));
-/**
-					// Validacion agrupacion y activos sin ofertas aceptadas
-					if(codigoValidacionMultiple == AGRUPACION_ACTIVOS_SIN_OFERTAS_ACEPTADAS.codigoError &&
-							particularValidator.esActivosOfertasAceptadas(inSqlGrupoActivos, String.valueOf(numAgrupacion)))
-						listaFilasError.add(getNumPrimeraFilaAgrupacionError(exc, numAgrupacion));
-*/
+
 				}
 			}
 
@@ -557,6 +558,29 @@ HREOS-4399
 		return listaFilas;
 	}
 	
+	private List<Integer> activosDistintoTipoAlquilerRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		int i = 0;
+		try {
+			String numActivo;
+			String numAgrupacion;
+			for(i=1; i<this.numFilasHoja;i++){
+				numActivo = exc.dameCelda(i, 1);
+				numAgrupacion = exc.dameCelda(i, 0);
+				if(particularValidator.existeActivo(numActivo) && particularValidator.existeAgrupacion(numAgrupacion) 
+						&& !particularValidator.mismoTipoAlquilerActivoAgrupacion(numAgrupacion,numActivo))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
 	private List<Integer> activosEnLoteComercialVivoRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
 
@@ -582,23 +606,31 @@ HREOS-4399
 		try {
 			String numAgrupacion = String.valueOf(Long.parseLong(exc.dameCelda(1, 0)));
 
-			// Comprobamos que la agrupación no este vacía
-			if (!particularValidator.agrupacionEstaVacia(numAgrupacion)) {
-				for (i = 1; i < this.numFilasHoja; i++) {
-					String numActivo = String.valueOf(Long.parseLong(exc.dameCelda(i, 1)));
-					if (particularValidator.distintosTiposImpuesto(numActivo, numAgrupacion))
-						listaFilas.add(i);
-				}
-			} else {
-				List<String> activosList = new ArrayList<String>();
-				for (i = 1; i < this.numFilasHoja; i++) {
-					activosList.add(String.valueOf(Long.parseLong(exc.dameCelda(i, 1))));
-				}
+			if (particularValidator.existeAgrupacion(numAgrupacion)) {
 				
-				if(particularValidator.distintosTiposImpuestoAgrupacionVacia(activosList)) 
-					listaFilas.add(1);
+				// Comprobamos que la agrupación no este vacía
+				if (!particularValidator.agrupacionEstaVacia(numAgrupacion)) {
+					for (i = 1; i < this.numFilasHoja; i++) {
+						String numActivo = String.valueOf(Long.parseLong(exc.dameCelda(i, 1)));
+						if (particularValidator.existeActivo(numActivo) && particularValidator.existeAgrupacion(numAgrupacion)
+								&& particularValidator.distintosTiposImpuesto(numActivo, numAgrupacion))
+							listaFilas.add(i);
+					}
+				} else {
+					List<String> activosList = new ArrayList<String>();
+					for (i = 1; i < this.numFilasHoja; i++) {
+						if (particularValidator.existeActivo(exc.dameCelda(i, 1))) {
+							activosList.add(String.valueOf(Long.parseLong(exc.dameCelda(i, 1))));
+						}
+					}
+
+					if(particularValidator.distintosTiposImpuestoAgrupacionVacia(activosList)) 
+						listaFilas.add(1);
+					
+				}
 				
 			}
+			
 		} catch (Exception e) {
 			if (i != 0)
 				listaFilas.add(i);
@@ -606,6 +638,24 @@ HREOS-4399
 			e.printStackTrace();
 		}
 
+		return listaFilas;
+	}
+	
+	private List<Integer> activosVendidosRows(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		int i = 0;
+		try {
+			for(i=1; i<this.numFilasHoja;i++){
+				if(particularValidator.esActivoVendido(exc.dameCelda(i, 1)))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
 		return listaFilas;
 	}
 

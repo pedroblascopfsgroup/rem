@@ -1778,5 +1778,76 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	}
 	
+	@Override
+	public Boolean esAgrupacionTipoAlquiler(String numAgrupacion) {
+		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_AGR_AGRUPACION agr " + 
+				" INNER JOIN DD_TAG_TIPO_AGRUPACION tipo ON tipo.DD_TAG_ID = agr.DD_TAG_ID AND DD_TAG_CODIGO = '15'" + 
+				" WHERE agr.AGR_NUM_AGRUP_REM = '" + numAgrupacion + "'" +
+				" AND agr.BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
+	
+	
+	@Override
+	public Boolean mismoTipoAlquilerActivoAgrupacion(String numAgrupacion, String numActivo) {
+		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
+			return false;
+
+		String tipoAlquilerAgrupacion = rawDao.getExecuteSQL("SELECT DD_TAL_ID FROM ACT_AGR_AGRUPACION agr WHERE agr.AGR_NUM_AGRUP_REM = '" + numAgrupacion + "'" + 
+				" AND agr.BORRADO = 0");
+		
+		String tipoAlquilerActivo = rawDao.getExecuteSQL("SELECT DD_TAL_ID FROM ACT_ACTIVO act WHERE act.ACT_NUM_ACTIVO = '" + numActivo + "'" + 
+				" AND act.BORRADO = 0");
+
+		if (!Checks.esNulo(tipoAlquilerAgrupacion) && tipoAlquilerAgrupacion != "") {
+
+			return tipoAlquilerAgrupacion.equals(tipoAlquilerActivo);
+
+		} else {
+			
+			try {
+				
+				return tipoAlquilerActivo.equals(tipoAlquilerAgrupacion);
+				
+			} catch (Exception e) {
+				return false;
+			}
+			
+		}
+
+	}
+	
+	
+	@Override
+	public Boolean esAgrupacionTipoComercialVenta(String numAgrupacion) {
+		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_AGR_AGRUPACION agr " + 
+				" INNER JOIN DD_TAG_TIPO_AGRUPACION tipo ON tipo.DD_TAG_ID = agr.DD_TAG_ID AND DD_TAG_CODIGO = '14'" + 
+				" WHERE agr.AGR_NUM_AGRUP_REM = '" + numAgrupacion + "'" +
+				" AND agr.BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public String getCodigoSubcarteraAgrupacion(String numAgrupacion) {
+		String resultado = "";
+		if(numAgrupacion != null && !numAgrupacion.isEmpty()){
+			 resultado = rawDao.getExecuteSQL("SELECT scr.DD_SCR_CODIGO " + 
+			 		" FROM ACT_ACTIVO act  " + 
+			 		" INNER JOIN ACT_AGR_AGRUPACION agr ON agr.AGR_NUM_AGRUP_REM = '" + numAgrupacion + "'" + 
+			 		" INNER JOIN ACT_AGA_AGRUPACION_ACTIVO aga ON agr.AGR_ID = aga.AGR_ID AND aga.AGA_PRINCIPAL = 1 " + 
+			 		" INNER JOIN DD_SCR_SUBCARTERA scr ON act.DD_SCR_ID = scr.DD_SCR_ID  " + 
+			 		" WHERE act.ACT_ID = aga.ACT_ID");
+		}
+		return resultado;
+	}
+	
 	
 }

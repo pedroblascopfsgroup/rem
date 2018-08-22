@@ -143,7 +143,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 			    		//Si los usuarios son gestores de suelo o edificacion podran editar la pestaña ficha si no , no podrán.
 			    		if(Agrupacionproyecto){
 			    			
-				    		if( $AU.getUser().userName == "Gestor de Suelos" || $AU.getUser().userName == "Gestor de Edificaciones"){
+			    			if( $AU.userIsRol(CONST.PERFILES['AQUIPERFILGESTORSUELOS']) || $AU.userIsRol(CONST.PERFILES['AQUIPERFILGESTOREDIFICACIONES'])){
 				    			$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
 				    		}else{
 					    		$AU.confirmFunToFunctionExecution(editionDisabled, tab.funPermEdition);

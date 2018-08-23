@@ -72,6 +72,18 @@ Ext.define('HreRem.view.expedientes.ScoringExpediente', {
 	     					},	
 	                        maxWidth: 500,
 	                        maxLength: 200
+				        },
+				        { 
+							xtype: 'textfieldbase',
+		                	fieldLabel:HreRem.i18n('fieldlabel.aseguradoras'),
+				        	readOnly: true,
+				        	bind : '{scoring.aseguradoras}' 
+				        },
+				        { 
+							xtype: 'textfieldbase',
+		                	fieldLabel:HreRem.i18n('fieldlabel.email.poliza.segura'),
+				        	readOnly: true,
+				        	bind : '{scoring.emailPolizaSegura}' 
 				        }
 						
 					]

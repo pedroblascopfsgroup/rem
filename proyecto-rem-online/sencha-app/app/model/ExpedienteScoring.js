@@ -22,6 +22,12 @@ Ext.define('HreRem.model.ExpedienteScoring', {
     		},
 		    {
     			name:'comentarios'
+    		},
+    		{
+    			name:'aseguradoras'
+    		},
+    		{
+    			name:'emailPolizaSegura'
     		}
     		 
     ],

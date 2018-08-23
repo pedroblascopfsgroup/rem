@@ -1220,8 +1220,9 @@ public class AgrupacionAdapter {
 			dtoAgrupacion.setId(asistida.getId().toString());
 			
 
-			// Si es LOTE COMERCIAL
-		} else if (dtoAgrupacion.getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
+			// Si es LOTE COMERCIAL 
+		} else if ((DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(dtoAgrupacion.getTipoAgrupacion())) 
+				|| (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(dtoAgrupacion.getTipoAgrupacion()))) {
 
 			ActivoLoteComercial loteComercial = new ActivoLoteComercial();
 

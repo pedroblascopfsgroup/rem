@@ -481,23 +481,24 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Transactional(readOnly = false)
 	public boolean saveSeguroRentasExpediente(DtoSeguroRentas dto, Long idEntidad) {
 		
-		SeguroRentasAlquiler seguro;
+		SeguroRentasAlquiler seguro= null;
+		ExpedienteComercial expedienteComercial = findOne(idEntidad);
 		
-		if (!Checks.esNulo(dto.getId())) {
-			Filter filtroSeg = genericDao.createFilter(FilterType.EQUALS, "id", dto.getId());
+		if (!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getId())) {
+			Filter filtroSeg = genericDao.createFilter(FilterType.EQUALS, "expediente.id", expedienteComercial.getId());
 			seguro= genericDao.get(SeguroRentasAlquiler.class, filtroSeg);	
 		}
 		
-		else {
+		if (Checks.esNulo(seguro)) {
 			seguro = new SeguroRentasAlquiler();
+			seguro.setExpediente(expedienteComercial);
 		}
-		
 		if (!Checks.esNulo(dto.getRevision())) {
 			if(dto.getRevision()) {
-				seguro.setEnRevision (Integer.valueOf(1));
+				seguro.setEnRevision(1);
 			}
 			else{
-				seguro.setEnRevision(Integer.valueOf(0));
+				seguro.setEnRevision(0);
 			}
 		}
 		if (!Checks.esNulo(dto.getEstado())) {
@@ -511,11 +512,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (!Checks.esNulo(dto.getAseguradoras())) {
 			seguro.setAseguradoras(dto.getAseguradoras());
 		}
-		if (!Checks.esNulo(dto.getComentarios())) {
-			seguro.setComentarios(dto.getComentarios());
-		}
+
+		seguro.setComentarios(dto.getComentarios());
 		
-		if (!Checks.esNulo(dto.getId())) {
+		if (!Checks.esNulo(seguro.getId())) {
 			try {
 				genericDao.update(SeguroRentasAlquiler.class, seguro);
 			} catch (Exception e) {
@@ -2761,25 +2761,26 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	public List<DtoHstcoSeguroRentas> getHstcoSeguroRentas (Long idExpediente) {
 		
+		List <DtoHstcoSeguroRentas> listaHstco = new ArrayList<DtoHstcoSeguroRentas>();
 		SeguroRentasAlquiler seguroRentas = new SeguroRentasAlquiler();
 		Filter filtroRentas = genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente);
 		seguroRentas = genericDao.get(SeguroRentasAlquiler.class, filtroRentas);
-		List <DtoHstcoSeguroRentas> listaHstco = new ArrayList<DtoHstcoSeguroRentas>();
-		List<HistoricoSeguroRentasAlquiler> listaHistoricoSeguroRenta = new ArrayList<HistoricoSeguroRentasAlquiler>();
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "seguroRentasAlquiler.id", seguroRentas.getId());
-		listaHistoricoSeguroRenta = genericDao.getList(HistoricoSeguroRentasAlquiler.class, filtro);
-        for (HistoricoSeguroRentasAlquiler hist : listaHistoricoSeguroRenta) 
-        	{
-        		DtoHstcoSeguroRentas aux =new DtoHstcoSeguroRentas();
-	        	aux.setId(hist.getId()); 
-	        	aux.setFechaSancion(hist.getFechaSancion());
-	        	aux.setSolicitud(hist.getIdSolicitud()); 
-	        	aux.setDocSco(hist.getDocumentoScoring());
-	        	aux.setMesesFianza(hist.getMesesFianza()); 
-	        	aux.setImporteFianza(hist.getImportFianza());
-	        	listaHstco.add(aux);
-        	}
+		if(!Checks.esNulo(seguroRentas) && !Checks.esNulo(seguroRentas.getId())) {
 		
+			List<HistoricoSeguroRentasAlquiler> listaHistoricoSeguroRenta = new ArrayList<HistoricoSeguroRentasAlquiler>();
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "seguroRentasAlquiler.id", seguroRentas.getId());
+			listaHistoricoSeguroRenta = genericDao.getList(HistoricoSeguroRentasAlquiler.class, filtro);
+	        for (HistoricoSeguroRentasAlquiler hist : listaHistoricoSeguroRenta) {
+	        		DtoHstcoSeguroRentas aux =new DtoHstcoSeguroRentas();
+		        	aux.setId(hist.getId()); 
+		        	aux.setFechaSancion(hist.getFechaSancion());
+		        	aux.setSolicitud(hist.getIdSolicitud()); 
+		        	aux.setDocSco(hist.getDocumentoScoring());
+		        	aux.setMesesFianza(hist.getMesesFianza()); 
+		        	aux.setImporteFianza(hist.getImportFianza());
+		        	listaHstco.add(aux);
+	        }
+		}
 		return listaHstco;
 		
 	}

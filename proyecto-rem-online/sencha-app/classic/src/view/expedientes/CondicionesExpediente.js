@@ -598,7 +598,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								                	fieldLabel:  HreRem.i18n('fieldlabel.renuncia.tanteo.retracto'),
 								                	bind: {
 						        						value: '{condiciones.renunciaTanteo}'
-				            						},
+				            						}
 				            						
 			                					},
 										        {
@@ -607,7 +607,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								                	fieldLabel:  HreRem.i18n('fieldlabel.carencia'),
 								                	bind: {
 						        						value: '{condiciones.carencia}'
-				            						},
+				            						}
 			                					},
 			                					{		                
 			                						xtype: 'numberfieldbase',
@@ -615,7 +615,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								                	fieldLabel:  HreRem.i18n('fieldlabel.bonificacion'),
 								                	bind: {
 						        						value: '{condiciones.bonificacion}'							             
-				            						},
+				            						}
 				            						
 			                					},
 										        {
@@ -818,7 +818,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                	reference: 'chekboxPorcentual',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.porcentual'),
 							                	bind: {
-							                		value: '{condiciones.reservaConImpuesto3}',										   
+							                		value: '{condiciones.reservaConImpuesto3}'									   
 							                	},
 							                	listeners: {
 					                					change: 'onCambioCheckPorcentual'

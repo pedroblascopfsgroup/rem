@@ -287,10 +287,10 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveSeguroRentasExpediente(DtoSeguroRentas dto, @RequestParam Long id, ModelMap model) {
+	public ModelAndView saveSeguroRentasExpediente(DtoSeguroRentas dto, @RequestParam Long idSeguroRentas, ModelMap model) {
 		try {		
 			
-			model.put("success", expedienteComercialApi.saveSeguroRentasExpediente(dto, id));
+			model.put("success", expedienteComercialApi.saveSeguroRentasExpediente(dto, idSeguroRentas));
 			
 		}catch (JsonViewerException e) {
 			e.printStackTrace();

@@ -3,7 +3,7 @@
  */
 Ext.define('HreRem.model.SeguroRentasExpediente', {
     extend: 'HreRem.model.Base',
-    idProperty: 'id',
+    idProperty: 'idSeguroRentas',
 
     fields: [ 
 		    {

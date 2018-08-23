@@ -6,7 +6,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
                 'HreRem.model.Posicionamiento', 'HreRem.model.ComparecienteVendedor', 'HreRem.model.Subsanacion', 'HreRem.model.Notario',
                 'HreRem.model.ComparecienteBusqueda', 'HreRem.model.Honorario','HreRem.model.HstcoSeguroRentas','HreRem.model.TipoDocumentoExpediente',
 				'HreRem.model.CompradorExpediente', 'HreRem.model.FichaComprador','HreRem.model.BloqueoActivo','HreRem.model.TanteoActivo',
-				'HreRem.model.ExpedienteScoring', 'HreRem.model.HistoricoExpedienteScoring'],
+				'HreRem.model.ExpedienteScoring', 'HreRem.model.HistoricoExpedienteScoring', 'HreRem.model.SeguroRentasExpediente'],
     
     data: {
     },
@@ -888,8 +888,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        remoteUrl: 'expedientecomercial/getHistoricoScoring',
 		        extraParams: {idScoring: '{scoring.id}'}
 	    	}
-		},
-    	
-		
+		}	
     }
 });

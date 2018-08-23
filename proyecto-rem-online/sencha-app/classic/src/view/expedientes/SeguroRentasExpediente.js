@@ -27,7 +27,7 @@ Ext.define('HreRem.view.expedientes.SeguroRentasExpediente', {
                     items: [
 	        			{
 	        				xtype: 'comboboxfieldbase',
-	                        fieldLabel: HreRem.i18n('fieldlabel.estado.scoring'),
+	                        fieldLabel: HreRem.i18n('fieldlabel.estado.rentas'),
 	                        reference: 'comboboxfieldEstado',
 		                	bind: {
 								store: '{comboEstadoSeguroRentas}',
@@ -36,8 +36,7 @@ Ext.define('HreRem.view.expedientes.SeguroRentasExpediente', {
             				displayField: 'descripcion',
 							valueField: 'codigo',
 	        			 	listeners: {
-	        			 			change:	'habilitarcheckrevisionOnChange'
-	        			 			//TODO JA			
+	        			 			change:	'habilitarcheckrevisionOnChange'			
 	        			 	}
 	        			},
 	        			{
@@ -53,13 +52,15 @@ Ext.define('HreRem.view.expedientes.SeguroRentasExpediente', {
 	                    	 xtype: 'textfieldbase',
 	                         fieldLabel: HreRem.i18n('fieldlabel.aseguradoras'),
 	                         reference: 'extfieldaseguradoras',
-	                         bind: '{segurorentasexpediente.aseguradoras}'
+	                         bind: '{segurorentasexpediente.aseguradoras}',
+	                         maxLength: 50
 
 	                     },
 	                     {
 	                    	 xtype: 'textfieldbase',
 	                         fieldLabel: HreRem.i18n('fieldlabel.emailPoliza'),
-	                         bind: '{segurorentasexpediente.emailPoliza}'
+	                         bind: '{segurorentasexpediente.emailPoliza}',
+	                         maxLength: 50
 
 	                     },
 	                     {
@@ -82,7 +83,7 @@ Ext.define('HreRem.view.expedientes.SeguroRentasExpediente', {
                              reference: 'textareafieldsegurocomentarios',
      						 bind:{
      							value:  '{segurorentasexpediente.comentarios}',
-    							hidden: '{!enRevision}'
+    							disabled: '{!enRevision}'
      						 },	
                              maxWidth: 500,
                              maxLength: 200
@@ -104,7 +105,7 @@ Ext.define('HreRem.view.expedientes.SeguroRentasExpediente', {
     						},
                             columns: [
                                 {
-                                    text: HreRem.i18n('header.fecha.sancion.scoring'),
+                                    text: HreRem.i18n('header.fecha.sancion.rentas'),
                                     dataIndex: 'fechaSancion',
                                     flex: 1,
                                     formatter: 'date("d/m/Y")'
@@ -132,7 +133,7 @@ Ext.define('HreRem.view.expedientes.SeguroRentasExpediente', {
                                 {
                                     text: HreRem.i18n('fieldlabel.importe.fianza'),
                                     dataIndex: 'importeFianza',
-                                    flex: 1,
+                                    flex: 1
 
                                 }
                             ]

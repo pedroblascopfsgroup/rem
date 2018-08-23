@@ -2327,7 +2327,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	seguroComentario = me.lookupReference('textareafieldsegurocomentarios');
     	if(newValue == false){   
     		seguroComentario.setValue("");
+    		seguroComentario.setDisabled(true);
+    		seguroComentario.setReadOnly(true);
         }  
+    	else{
+    		seguroComentario.setDisabled(false);
+    		seguroComentario.setReadOnly(false);
+    	}
 
     	
     },
@@ -2339,11 +2345,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	//Si el estado es pendiente(01), habilitamos el check de revision 
     	if(newValue === '01'){   
     		enRevision.setReadOnly(false);
+    		seguroComentario.setDisabled(false);
     		seguroComentario.setReadOnly(false);
 			
         }  
     	else{
     		enRevision.setReadOnly(true);
+    		seguroComentario.setDisabled(true);
     		seguroComentario.setReadOnly(true);
     	}
  	},

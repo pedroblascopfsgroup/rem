@@ -79,7 +79,7 @@ Ext.define('HreRem.view.common.GridBase', {
 				xtype: 'toolbar',
 				dock: 'top',
 				tipo: 'toolbarañadireliminar',
-				items: [configAddButton, configRemoveButton], //, configPropagationButton] <- HREOS-2775 Este item se queda es standby
+				items: [configAddButton, configRemoveButton] //, configPropagationButton] <- HREOS-2775 Este item se queda es standby
 			};
 		};
 		

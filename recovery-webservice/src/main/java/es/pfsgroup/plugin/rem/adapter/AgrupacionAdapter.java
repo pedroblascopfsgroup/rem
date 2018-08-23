@@ -1880,7 +1880,7 @@ public class AgrupacionAdapter {
 			}
 		}
 
-		// Si es de tipo 'Lote Comercial'.
+		// Si es de tipo 'Lote Comercial-Venta'.
 		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
 			ActivoLoteComercial loteComercial = (ActivoLoteComercial) agrupacion;
 
@@ -1919,6 +1919,41 @@ public class AgrupacionAdapter {
 					loteComercial.setUsuarioGestorComercialBackOffice(usuario);
 				}
 				// TODO: 1er comprovar si es pot canviar "formalizacion"
+
+				activoAgrupacionApi.saveOrUpdate(loteComercial);
+
+			} catch (Exception e) {
+				logger.error("error en agrupacionAdapter", e);
+				return false;
+			}
+		}
+		
+		// Si es de tipo 'Lote Comercial-Alquiler'.
+		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER)) {
+			ActivoLoteComercial loteComercial = (ActivoLoteComercial) agrupacion;
+
+			try {
+				beanUtilNotNull.copyProperties(loteComercial, dto);
+
+				if (dto.getMunicipioCodigo() != null) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMunicipioCodigo());
+					Localidad municipioNuevo = (Localidad) genericDao.get(Localidad.class, filtro);
+
+					loteComercial.setLocalidad(municipioNuevo);
+				}
+
+				if (dto.getProvinciaCodigo() != null) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getProvinciaCodigo());
+					DDProvincia provinciaNueva = (DDProvincia) genericDao.get(DDProvincia.class, filtro);
+
+					loteComercial.setProvincia(provinciaNueva);
+				}
+
+
+				if (!Checks.esNulo(dto.getCodigoGestorComercial())) {
+					Usuario usuario = proxyFactory.proxy(UsuarioApi.class).get(dto.getCodigoGestorComercial());
+					loteComercial.setUsuarioGestorComercial(usuario);
+				}
 
 				activoAgrupacionApi.saveOrUpdate(loteComercial);
 

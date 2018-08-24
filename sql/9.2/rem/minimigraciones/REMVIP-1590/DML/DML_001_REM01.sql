@@ -1,0 +1,72 @@
+--/*
+--#########################################
+--## AUTOR=DAP
+--## FECHA_CREACION=20180714
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=?
+--## INCIDENCIA_LINK=REMVIP-1590
+--## PRODUCTO=NO
+--## 
+--## Finalidad: 
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+
+	V_TABLA VARCHAR2(30 CHAR) := 'AUX_MONZA'; -- Variable para tabla de salida para el borrado
+	V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01';-- '#ESQUEMA#'; -- Configuracion Esquema
+	V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER';-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+	ERR_NUM NUMBER;-- Numero de errores
+	ERR_MSG VARCHAR2(2048);-- Mensaje de error
+	V_SQL VARCHAR2(4000 CHAR);
+	PL_OUTPUT VARCHAR2(32000 CHAR);
+	V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-1590';
+
+BEGIN
+	
+	PL_OUTPUT := '[INICIO]'||CHR(10);
+
+	V_SQL := 'MERGE INTO '||V_ESQUEMA||'.GEX_GASTOS_EXPEDIENTE T1
+			  USING (
+			  SELECT DISTINCT GEX.GEX_ID
+              FROM '||V_ESQUEMA||'.'||V_TABLA||' AUX
+			  JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_NUM_OFERTA = AUX.OFR_NUM_OFERTA
+			  JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID
+			  JOIN '||V_ESQUEMA||'.GEX_GASTOS_EXPEDIENTE GEX ON GEX.ECO_ID = ECO.ECO_ID
+			  WHERE GEX.DD_ACC_ID = 5
+			  AND GEX.DD_TCC_ID = 1	  
+			  AND GEX_IMPORTE_CALCULO = 0.75
+			  ) T2 ON (T1.GEX_ID = T2.GEX_ID)
+			   WHEN MATCHED THEN UPDATE SET
+			  	  T1.GEX_IMPORTE_CALCULO = T1.GEX_IMPORTE_CALCULO/3
+				, T1.GEX_IMPORTE_FINAL = T1.GEX_IMPORTE_FINAL/3	
+				, T1.USUARIOMODIFICAR = '''||V_USUARIO||'''
+				, T1.FECHAMODIFICAR = SYSDATE
+			 ';
+	
+	EXECUTE IMMEDIATE V_SQL;
+
+	COMMIT;
+
+	PL_OUTPUT := PL_OUTPUT || '[FIN]'||CHR(10);
+	DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
+
+EXCEPTION
+    WHEN OTHERS THEN
+      PL_OUTPUT := PL_OUTPUT ||'[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE)||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||'-----------------------------------------------------------'||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||SQLERRM||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||V_SQL||CHR(10);
+      DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
+      ROLLBACK;
+      RAISE;
+END;
+/
+EXIT;

@@ -61,6 +61,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     },
 	  	     
 	     fechaIngresoChequeReadOnly: function(get) {
+	    	 
+	    	 if($AU.userIsRol("HAYASUPER")){
+	    		 return false;
+	    	 }
+	    	 
 	    	 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 	    	 var subCartera = get('expediente.propietario');
 	    	 return (CONST.CARTERA['BANKIA'] == carteraCodigo && CONST.NOMBRE_SUBCARTERA['BANKIA_HABITAT'] != subCartera) || CONST.CARTERA['LIBERBANK'] == carteraCodigo;
@@ -99,6 +104,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		     	
 	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 	     	return CONST.CARTERA['LIBERBANK'] == carteraCodigo;
+		 },
+		 
+		 esSubcarteraBH: function(get) {
+			 var subcarteraCodigo = get('expediente.subcarteraCodigo');
+		     return CONST.SUBCARTERA['BH'] == subcarteraCodigo;
 		 },
 	     
 	     getTipoExpedienteCabecera: function(get) {
@@ -570,6 +580,24 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'estadosOfertas'}
+			}
+	    },
+	    
+	    comboEstadoReserva: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosReserva'}
+			}
+	    },
+	    
+	    comboEstadoExpediente: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosExpediente'}
 			}
 	    },
 	    

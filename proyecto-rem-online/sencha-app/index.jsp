@@ -66,7 +66,7 @@
     <%-- The line below must be kept intact for Sencha Cmd to build your application --%>
     <script id="microloader" data-app="5b430458-ad79-457b-a1d5-35448e8ae93c" type="text/javascript" src="bootstrap.js"></script>
         <%-- Google maps --%>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3&libraries=places&key=AIzaSyBaNU-xCCtdDJVEm7HsO27rRdswyrWfGEI"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3&libraries=places&key=AIzaSyCHM4WB2ypg6R5ZygQW_bh3cAgA5c6DyZs"></script>
     
     
 

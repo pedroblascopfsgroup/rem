@@ -1035,5 +1035,12 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public boolean saveExpedienteScoring(DtoExpedienteScoring dto, Long idEntidad);
+
+	/**
+	 * Metodo que envia correo a a el asegurador informando de la firma de contrato de alquiler
+	 * @param idExpediente
+	 * @return
+	 */
+	public boolean enviarCorreoAsegurador(Long idExpediente);
 	
 }

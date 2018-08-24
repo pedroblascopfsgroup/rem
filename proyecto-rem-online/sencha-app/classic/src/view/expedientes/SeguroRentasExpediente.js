@@ -20,6 +20,14 @@ Ext.define('HreRem.view.expedientes.SeguroRentasExpediente', {
     initComponent: function() {
         var me = this;
         me.setTitle(HreRem.i18n('title.seguro.rentas'));
+        var expedienteEstado = function (value){
+        	var estado = me.lookupViewModel().get("expediente.estado");
+        	if(estado == 'Firmado'){
+        		return false;
+        	}
+        	return true; 
+        }
+        
         var items = [
         		{
                     xtype: 'fieldset',
@@ -87,7 +95,16 @@ Ext.define('HreRem.view.expedientes.SeguroRentasExpediente', {
      						 },	
                              maxWidth: 500,
                              maxLength: 200
-	                     }
+	                     },
+        				{
+		                	xtype: 'button',
+		                	margin:'10 0 10 0',
+		                	reference: 'btnReenviarMailAsegurador',      		                	
+		        		    hidden: expedienteEstado(),
+		                	text: HreRem.i18n('btn.reenviar.mail.asegurador'),
+		                	handler: 'onClickEnviarEmailAsegurador'
+		                }
+
                     ]
         		},
                 {
@@ -141,6 +158,7 @@ Ext.define('HreRem.view.expedientes.SeguroRentasExpediente', {
                     ]
                 }
             ];
+            
 
         me.addPlugin({
             ptype: 'lazyitems',

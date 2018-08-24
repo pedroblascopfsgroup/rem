@@ -1615,6 +1615,24 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		return new ModelAndView("jsonView", model);
 	}
 	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView enviarCorreoAsegurador(Long idExpediente, ModelMap model) {
+
+		try {
+			boolean success = expedienteComercialApi.enviarCorreoAsegurador(idExpediente);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		return new ModelAndView("jsonView", model);
+	}
+	
+	
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getHistoricoScoring(ModelMap model, Long idScoring) {

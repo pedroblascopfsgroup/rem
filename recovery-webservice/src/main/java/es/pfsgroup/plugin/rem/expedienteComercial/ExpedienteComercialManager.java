@@ -60,6 +60,7 @@ import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
@@ -2743,14 +2744,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (!Checks.esNulo(seguroRentas)) {
 			seguroRentasDto.setId(seguroRentas.getId());
 			
-			if(seguroRentas.getEnRevision()==1) {
+			if(!Checks.esNulo(seguroRentas.getEnRevision()) && seguroRentas.getEnRevision()==1) {
 				seguroRentasDto.setRevision(true);
 			}
 			else {
 				seguroRentasDto.setRevision(false);
 			}
 			seguroRentasDto.setMotivoRechazo(seguroRentas.getMotivoRechazo());
-			seguroRentasDto.setEstado(seguroRentas.getEstadoSeguroRentas().getCodigo());
+			if(!Checks.esNulo(seguroRentas.getEstadoSeguroRentas())) {
+				seguroRentasDto.setEstado(seguroRentas.getEstadoSeguroRentas().getCodigo());
+			}
 			seguroRentasDto.setAseguradoras(seguroRentas.getAseguradoras());
 			seguroRentasDto.setEmailPoliza(seguroRentas.getEmailPolizaAseguradora());
 			seguroRentasDto.setComentarios(seguroRentas.getComentarios());
@@ -6884,6 +6887,78 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public boolean enviarCorreoAsegurador(Long idExpediente) {
+		boolean resultado = false;
+		ExpedienteComercial expediente = this.findOne(idExpediente);
+
+		try {
+			ArrayList<String> mailsParaEnviarAsegurador = this.obtenerEmailsParaEnviarAsegurador(expediente);	
+			mailsParaEnviarAsegurador.add("joseluis.barba@pfsgroup.es");
+			String asunto = "Firma contrato alquiler";
+			
+		
+		
+			/*TODO
+			 * Falta definir cuerpo del e-mail
+			 */
+			String cuerpo = "FALTA DEFINICIÓN";
+			List<AdjuntoExpedienteComercial> adjuntosRecuperados = new ArrayList<AdjuntoExpedienteComercial>();	
+			List<DtoAdjuntoMail> adjuntosParaEnviarAsegurador = new ArrayList<DtoAdjuntoMail>();	
+			adjuntosRecuperados = expediente.getAdjuntos();
+			
+			
+			for (AdjuntoExpedienteComercial adjunto : adjuntosRecuperados) {
+				
+				if (DDSubtipoDocumentoExpediente.CODIGO_CONTRATO.equals(adjunto.getSubtipoDocumentoExpediente().getCodigo())) {
+				DtoAdjuntoMail dtoAdjuntoMail = new DtoAdjuntoMail();
+				dtoAdjuntoMail.setAdjunto(adjunto.getAdjunto());
+				dtoAdjuntoMail.setNombre(adjunto.getNombre());
+				adjuntosParaEnviarAsegurador.add(dtoAdjuntoMail);
+				}
+			}
+			
+			genericAdapter.sendMail(mailsParaEnviarAsegurador, new ArrayList<String>(),asunto,cuerpo,adjuntosParaEnviarAsegurador);
+			resultado = true;
+		} catch (Exception e) {
+			logger.error("No se ha podido notificar a la aseguradora.", e);
+		}
+		return resultado;
+	}
+
+	private ArrayList<String> obtenerEmailsParaEnviarAsegurador(ExpedienteComercial expediente) {
+			
+		
+			/*TODO
+			 * Falta definir, en el caso de que el campo "Envío email poliza asegurado" este vacío como se obtiene el mail de la aseguradora
+			 */
+			
+			ArrayList<String> mailsParaEnviarAsegurador = new ArrayList<String>();
+
+			if(!Checks.esNulo(expediente.getSeguroRentasAlquiler()) && !Checks.esNulo(expediente.getSeguroRentasAlquiler().getEmailPolizaAseguradora())) {
+				mailsParaEnviarAsegurador.add(expediente.getSeguroRentasAlquiler().getEmailPolizaAseguradora());
+			}
+			
+			if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null) {
+				Usuario gestorActivoGestorAlquileres = gestorActivoApi.getGestorByActivoYTipo(
+						expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL_ALQUILERES);
+				if (gestorActivoGestorAlquileres != null && gestorActivoGestorAlquileres.getEmail() != null) {
+					mailsParaEnviarAsegurador.add(gestorActivoGestorAlquileres.getEmail());
+				}
+			}
+			
+			if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null) {
+				Usuario gestorActivoSupervisorAlquileres = gestorActivoApi.getGestorByActivoYTipo(
+						expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_ALQUILERES);
+				if (gestorActivoSupervisorAlquileres != null && gestorActivoSupervisorAlquileres.getEmail() != null) {
+					mailsParaEnviarAsegurador.add(gestorActivoSupervisorAlquileres.getEmail());
+				}
+			}
+			
+			return mailsParaEnviarAsegurador;
+		
 	}
 	
 

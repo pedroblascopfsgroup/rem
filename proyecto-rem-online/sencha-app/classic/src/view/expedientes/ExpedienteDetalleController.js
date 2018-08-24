@@ -2479,6 +2479,48 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				}
 			);
 	},
+	
+	onClickEnviarEmailAsegurador: function(btn) {
+		
+		var me = this;
+		
+		Ext.Msg.confirm(
+				HreRem.i18n("title.enviar.email.a.la.aseguradora"),
+				HreRem.i18n("msg.header.enviar.mail.a.la.aseguradora"),
+				function(btn){
+					if (btn == "yes"){
+						
+						var url = $AC.getRemoteUrl("expedientecomercial/enviarCorreoAsegurador");
+						var parametros = {
+								idExpediente : me.getViewModel().get('expediente.id')
+						};
+						
+						me.getView().mask();
+						Ext.Ajax.request({
+				    	     url: url,
+				    	     params: parametros,
+				    	     success: function(response, opts) {
+				    	    	 console.log("success");
+				    	    	 if(Ext.decode(response.responseText).success == "false") {
+				    	    		me.fireEvent("errorToast", Ext.decode(response.responseText).errorCode);
+				    	    		me.getView().unmask();
+				    	         }
+				    	    	 else if (Ext.decode(response.responseText).success == "true"){
+				    	        	me.getView().unmask();
+				    	        	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+								 }
+				    	     },
+				    	     failure:  function(response, opts) {
+				    	     	me.getView().unmask();
+				    	     	me.fireEvent("errorToast",  HreRem.i18n("msg.operacion.ko") );
+				    	     }
+				    	 });
+						
+					}
+				}
+			);
+	},
+	
 
 	onClickEnviarComercializadora: function(rec){
 		var me = this;

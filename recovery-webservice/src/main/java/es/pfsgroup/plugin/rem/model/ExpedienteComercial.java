@@ -225,6 +225,11 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @Column(name="ECO_NECESITA_FINANCIACION")
     private Boolean necesitaFinanciacion;
     
+    @OneToOne(mappedBy = "expediente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ECO_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private SeguroRentasAlquiler seguroRentasAlquiler;
+    
 	@Version   
 	private Long version;
 
@@ -675,6 +680,14 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setTipoAlquiler(DDTipoAlquiler tipoAlquiler) {
 		this.tipoAlquiler = tipoAlquiler;
+	}
+
+	public SeguroRentasAlquiler getSeguroRentasAlquiler() {
+		return seguroRentasAlquiler;
+	}
+
+	public void setSeguroRentasAlquiler(SeguroRentasAlquiler seguroRentasAlquiler) {
+		this.seguroRentasAlquiler = seguroRentasAlquiler;
 	}
 	
    

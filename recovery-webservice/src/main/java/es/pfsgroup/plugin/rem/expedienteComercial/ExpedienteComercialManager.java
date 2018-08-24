@@ -939,11 +939,22 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 
 			dto.setId(expediente.getId());
-
+			
 			if (!Checks.esNulo(oferta) && !Checks.esNulo(activo)) {
 				
 				dto.setOrigen(oferta.getOrigen());
+
+				if (!Checks.esNulo(expediente.getMotivoAnulacion())) {
+					dto.setCodMotivoAnulacion(expediente.getMotivoAnulacion().getCodigo());
+					dto.setDescMotivoAnulacion(expediente.getMotivoAnulacion().getDescripcion());
+				}
 				dto.setNumExpediente(expediente.getNumExpediente());
+				if(!Checks.esNulo(expediente.getTrabajo())) {
+					dto.setIdTrabajo(expediente.getTrabajo().getId());
+					dto.setEstadoTrabajo(expediente.getTrabajo().getEstado().getDescripcion());
+					dto.setMotivoAnulacionTrabajo(expediente.getTrabajo().getMotivoRechazo());
+				}
+
 				if (!Checks.esNulo(activo.getCartera())) {
 					dto.setEntidadPropietariaDescripcion(activo.getCartera().getDescripcion());
 					dto.setEntidadPropietariaCodigo(activo.getCartera().getCodigo());
@@ -2495,7 +2506,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		try {
 			beanUtilNotNull.copyProperty(posicionamiento, "motivoAplazamiento", dto.getMotivoAplazamiento());
 			beanUtilNotNull.copyProperty(posicionamiento, "fechaAviso", dto.getFechaHoraAviso());
-			beanUtilNotNull.copyProperty(posicionamiento, "fechaPosicionamiento", dto.getFechaHoraPosicionamiento());
+			
+			if(!Checks.esNulo(dto.getFechaHoraFirma())) {
+				beanUtilNotNull.copyProperty(posicionamiento, "fechaPosicionamiento", dto.getFechaHoraFirma());			
+			} else if(!Checks.esNulo(dto.getFechaHoraPosicionamiento())) {
+				beanUtilNotNull.copyProperty(posicionamiento, "fechaPosicionamiento", dto.getFechaHoraPosicionamiento());
+			}	
+						
+			beanUtilNotNull.copyProperty(posicionamiento, "lugarFirma", dto.getLugarFirma());
 
 		} catch (IllegalAccessException e) {
 			logger.error(e.getMessage());
@@ -4319,8 +4337,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if(lista.isEmpty()){
 			
 			posicionamiento = dtoToPosicionamiento(dto, posicionamiento);
-			posicionamiento.setExpediente(expediente);
-
+			posicionamiento.setExpediente(expediente);			
+			
 			genericDao.save(Posicionamiento.class, posicionamiento);
 			
 			return true;
@@ -4337,6 +4355,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				posicionamiento.setExpediente(expediente);
 	
 				genericDao.save(Posicionamiento.class, posicionamiento);
+				
 				return true;
 			}
 			
@@ -4351,7 +4370,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdPosicionamiento());
 		Posicionamiento posicionamiento = genericDao.get(Posicionamiento.class, filtro);
-
+		
 		posicionamiento = dtoToPosicionamiento(dto, posicionamiento);
 		
 		if(!Checks.esNulo(posicionamiento.getMotivoAplazamiento())){
@@ -6959,6 +6978,96 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			
 			return mailsParaEnviarAsegurador;
 		
+	}
+	
+	@Override
+	public boolean enviarCorreoGestionLlaves(Long idExpediente) {
+	boolean resultado = false;
+	ExpedienteComercial expediente = this.findOne(idExpediente);
+	Posicionamiento posicionamiento = expediente.getUltimoPosicionamiento();
+	
+		// Solo enviamos el correo si hay un posicionamiento vigente.
+		if(!Checks.esNulo(posicionamiento)) {
+		
+			DateFormat fechaCompleta = new SimpleDateFormat("dd/MM/yyyy");
+		    String fechaFirmaContrato = fechaCompleta.format(posicionamiento.getFechaPosicionamiento());
+		    
+		    DateFormat horaCompleta = new SimpleDateFormat("HH:mm");
+		    String horaFirma = horaCompleta.format(posicionamiento.getFechaPosicionamiento());
+		    
+			try {
+		
+				ArrayList<String> mailsParaEnviarAsegurador = this.obtenerEmailsEnviarGestionLlaves(expediente);
+				String asunto = "Firma contrato alquiler";
+				String cuerpo = "Estimado cliente,<br><br> "
+						+ "Le informamos que la firma del contrato y la entrega de las llaves del piso se va a realizar el día " + fechaFirmaContrato
+						+ " a las " + horaFirma + " en ".concat(String.valueOf(posicionamiento.getLugarFirma())) 
+						+ "<br><br> Un saludo.";
+			
+				genericAdapter.sendMail(mailsParaEnviarAsegurador, new ArrayList<String>(), asunto, cuerpo);
+				resultado = true;
+			} catch (Exception e) {
+				logger.error("No se ha podido notificar a la aseguradora.", e);
+			}	
+		}
+		return resultado;
+	}
+	
+	private ArrayList<String> obtenerEmailsEnviarGestionLlaves(ExpedienteComercial expediente) {
+		
+		ArrayList<String> mailsParaEnviarComercializadora = new ArrayList<String>();
+		
+		/*TODO
+		 * Gestión llaves
+		 */
+		
+		/*TODO
+		 * API Custodio.
+		 */
+		
+		if (expediente.getOferta() != null && expediente.getOferta().getPrescriptor() != null
+				&& expediente.getOferta().getPrescriptor().getEmail() != null) {
+			mailsParaEnviarComercializadora.add(expediente.getOferta().getPrescriptor().getEmail());
+		}
+		
+		if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null) {
+			Usuario gestorActivoGestorAlquileres = gestorActivoApi.getGestorByActivoYTipo(
+					expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL_ALQUILERES);
+			if (gestorActivoGestorAlquileres != null && gestorActivoGestorAlquileres.getEmail() != null) {
+				mailsParaEnviarComercializadora.add(gestorActivoGestorAlquileres.getEmail());
+			}
+		}
+		
+		if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null) {
+			Usuario gestorActivoSupervisorAlquileres = gestorActivoApi.getGestorByActivoYTipo(
+					expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_ALQUILERES);
+			if (gestorActivoSupervisorAlquileres != null && gestorActivoSupervisorAlquileres.getEmail() != null) {
+				mailsParaEnviarComercializadora.add(gestorActivoSupervisorAlquileres.getEmail());
+			}
+		}
+		
+		if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null) {
+			Usuario gestorActivoGestor = gestorActivoApi.getGestorByActivoYTipo(
+					expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+			if (gestorActivoGestor != null && gestorActivoGestor.getEmail() != null) {
+				mailsParaEnviarComercializadora.add(gestorActivoGestor.getEmail());
+			}
+		}
+		
+		if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null) {
+			Usuario gestorActivoSupervisor = gestorActivoApi.getGestorByActivoYTipo(
+					expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+			if (gestorActivoSupervisor != null && gestorActivoSupervisor.getEmail() != null) {
+				mailsParaEnviarComercializadora.add(gestorActivoSupervisor.getEmail());
+			}
+		}		
+		
+		/*TODO
+		 * Gestor activo HPM.
+		 */
+						
+		return mailsParaEnviarComercializadora;
+
 	}
 	
 

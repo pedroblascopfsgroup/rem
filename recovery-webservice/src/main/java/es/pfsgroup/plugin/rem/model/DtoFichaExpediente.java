@@ -82,6 +82,12 @@ public class DtoFichaExpediente extends WebDto {
 	
 	private String tipoInquilino;
 
+	private Long idTrabajo;
+	
+	private String estadoTrabajo;
+	
+	private String motivoAnulacionTrabajo;
+
 	private boolean tieneReserva;
 
 	private Date fechaInicioAlquiler;
@@ -557,6 +563,30 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setTipoInquilino(String tipoInquilino) {
 		this.tipoInquilino = tipoInquilino;
+	}
+
+	public Long getIdTrabajo() {
+		return idTrabajo;
+	}
+
+	public void setIdTrabajo(Long idTrabajo) {
+		this.idTrabajo = idTrabajo;
+	}
+	
+	public void setEstadoTrabajo(String estadoTrabajo) {
+		this.estadoTrabajo = estadoTrabajo;
+	}
+	
+	public String getEstadoTrabajo() {
+		return estadoTrabajo;
+	}
+	
+	public String getMotivoAnulacionTrabajo() {
+		return motivoAnulacionTrabajo;
+	}
+
+	public void setMotivoAnulacionTrabajo(String motivoAnulacionTrabajo) {
+		this.motivoAnulacionTrabajo = motivoAnulacionTrabajo;
 	}
 
 	public Date getFechaSancionComite() {

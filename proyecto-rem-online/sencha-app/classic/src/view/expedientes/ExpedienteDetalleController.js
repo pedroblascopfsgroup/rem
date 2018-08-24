@@ -1847,6 +1847,22 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		me.lookupReference('horaPosicionamientoRef').setDisabled(false);
 		me.lookupReference('motivoAplazamientoRef').setDisabled(true);
 	},
+
+	comprobarCamposFechasAlquiler: function(editor, gridNfo) {
+		var me = this;
+
+		if(editor.isNew) {
+			me.lookupReference('fechaFirmaRef').setValue();
+			me.lookupReference('horaFirmaRef').setValue();
+			me.lookupReference('motivoAplazamientoRef').setValue();
+		}
+		me.changeFecha(me.lookupReference('fechaFirmaRef'));
+		me.changeHora(me.lookupReference('horaFirmaRef'));
+		
+		me.lookupReference('fechaFirmaRef').setDisabled(false);
+		me.lookupReference('horaFirmaRef').setDisabled(false);
+		me.lookupReference('lugarFirmaRef').setDisabled(false);
+	},
 	
 	comprobacionesDobleClick: function(editor, gridNfo) {
 		var me = this;
@@ -1867,8 +1883,25 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		me.lookupReference('motivoAplazamientoRef').setDisabled(false);
 	},
 
+	comprobacionesDobleClickAlquiler: function(editor, gridNfo) {
+		var me = this;
+
+		if(editor.isNew) {
+			me.lookupReference('fechaFirmaRef').setValue();
+			me.lookupReference('horaFirmaRef').setValue();
+		}
+		me.changeFecha(me.lookupReference('fechaFirmaRef'));
+		me.changeHora(me.lookupReference('horaFirmaRef'));
+		
+		me.lookupReference('fechaFirmaRef').setDisabled(true);
+		me.lookupReference('horaFirmaRef').setDisabled(true);
+		me.lookupReference('lugarFirmaRef').setDisabled(true);
+		me.lookupReference('motivoAplazamientoRef').setDisabled(false);
+	},
+
 	onRowClickPosicionamiento:  function(gridView, record) {
 		var me = this;  
+
 		if(!Ext.isEmpty(record.get('fechaFinPosicionamiento'))){
 			gridView.grid.down('#removeButton').setDisabled(true);
 		}
@@ -1882,11 +1915,22 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 	},
 
+	onRowClickPosicionamientoAlquiler:  function(gridView, record) {
+		var me = this; 
+		if(!Ext.isEmpty(record.get('fechaFinPosicionamiento'))){
+			gridView.grid.down('#removeButton').setDisabled(true);
+		}
+		else{
+			gridView.grid.down('#removeButton').setDisabled(false);
+		}
+
+	},
+
 	changeFecha: function(campoFecha) {
 		var me = this,
 		referencia = campoFecha.getReference().replace('fecha','hora'),
 		campoHora = me.lookupReference(referencia);
-
+		
 		if(campoFecha.getValue() != null) {
 			campoHora.setDisabled(false);
 			campoHora.allowBlank = false;
@@ -1904,7 +1948,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	changeHora: function(campoHora) {
 		var me = this;
-
 		if(campoHora.getValue() != null) {
 			campoHora.wasValid = false;
 			
@@ -2463,7 +2506,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				    	     url: url,
 				    	     params: parametros,
 				    	     success: function(response, opts) {
-				    	    	 console.log("success");
 				    	    	 if(Ext.decode(response.responseText).success == "false") {
 				    	    		me.fireEvent("errorToast", Ext.decode(response.responseText).errorCode);
 				    	    		me.getView().unmask();
@@ -2566,8 +2608,53 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	sinContraoferta: function(checkbox, newVal, oldVal){
 		var me = this;
-		debugger;
-		return false;
-	}
 	
+		return false;
+	},
+
+	enlaceAbrirTrabajo: function(button) {
+		
+		var me = this,		
+		idTrabajo =  me.getViewModel().get("expediente.idTrabajo");
+
+		if(!Ext.isEmpty(idTrabajo)){
+			me.getView().fireEvent('abrirDetalleTrabajoById', idTrabajo, null, button.reflinks);
+		}
+	},
+	
+	onClickEnviarGestionLlaves: function(button){
+		var me = this;
+
+		Ext.Msg.confirm(
+			HreRem.i18n("title.enviar.email.de.gestion.llaves"),
+			HreRem.i18n("msg.enviar.email.gestion.llaves"),
+			function(btn){
+				if (btn == "yes"){
+					var url = $AC.getRemoteUrl("expedientecomercial/enviarCorreoGestionLlaves");
+					var parametros = {
+							idExpediente : me.getViewModel().get('expediente.id')
+					};
+					
+					me.getView().mask(HreRem.i18n("msg.mask.loading")); 
+					Ext.Ajax.request({
+				   	    url: url,
+				   	    params: parametros,
+				   	    success: function(response, opts) {
+				   	   		if(Ext.decode(response.responseText).success == "false") {
+						   	   	me.fireEvent("errorToast", Ext.decode(response.responseText).errorCode);
+						   	   	me.getView().unmask();
+				   	        } else if (Ext.decode(response.responseText).success == "true"){
+					   	       	me.getView().unmask();
+					   	       	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				   	        }
+				   	    },
+				   	    failure: function(response, opts){
+				   	    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				   	    	me.getView().unmask();
+				   	    }
+					});
+				}					
+			}			
+		);		
+	}
 });

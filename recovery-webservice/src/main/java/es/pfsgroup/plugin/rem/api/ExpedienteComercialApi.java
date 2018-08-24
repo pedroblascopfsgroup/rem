@@ -1043,4 +1043,12 @@ public interface ExpedienteComercialApi {
 	 */
 	public boolean enviarCorreoAsegurador(Long idExpediente);
 	
+	
+	/**
+	 * Método que envía un correo para avisar de la fecha prevista para la entrega de llaves del alquiler
+	 * @param idExpediente
+	 * @return
+	 */
+	public boolean enviarCorreoGestionLlaves(Long idExpediente);
+	
 }

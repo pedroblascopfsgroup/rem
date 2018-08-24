@@ -85,8 +85,8 @@ Ext.define('HreRem.controller.ActivosController', {
 			abrirDetalleTrabajoById: 'abrirDetalleTrabajoById',
 			abrirDetalleActivoPrincipal: 'abrirDetalleActivoPrincipal',
         	abrirDetalleExpedienteById: 'abrirDetalleExpedienteById'
-    	},
-    	
+		},
+		    	
     	'tareaNotificacion' : {
         	actualizarGridTareas: 'actualizarGridTareas',
 			abrirDetalleTrabajoById: 'abrirDetalleTrabajoById',
@@ -187,7 +187,8 @@ Ext.define('HreRem.controller.ActivosController', {
     		abrirDetalleActivoPrincipal: 'abrirDetalleActivoPrincipal',
     		abrirDetalleTramiteTarea : 'abrirDetalleTramiteTarea',
     		abrirDetalleTramiteHistoricoTarea : 'abrirDetalleTramiteHistoricoTarea',
-    		refrescarExpediente: 'refrescarExpedienteComercial'
+			refrescarExpediente: 'refrescarExpedienteComercial',
+			abrirDetalleTrabajoById: 'abrirDetalleTrabajoById'
     	},
     	
     	'configuracionmain': {
@@ -580,6 +581,7 @@ Ext.define('HreRem.controller.ActivosController', {
     },
     
     abrirDetalleTrabajo: function(record, refLinks) {
+		
     	var me = this,
     	titulo = "Trabajo " + record.get("numTrabajo"),
     	id = record.get("id");
@@ -589,7 +591,7 @@ Ext.define('HreRem.controller.ActivosController', {
     },
     
     abrirDetalleTrabajoById: function(id, titulo, refLinks) {
-
+		
     	var me = this,
     	cfg = {}, 
     	tab=null;
@@ -695,7 +697,8 @@ Ext.define('HreRem.controller.ActivosController', {
 		    	if(Ext.isEmpty(titulo)) {		    		
 		    		titulo = "Expediente " + expediente.get("numExpediente");
 		    		tab.setTitle(titulo);
-		    	}
+				}
+				
 		    	tab.getViewModel().set("expediente", expediente);
 		    	tab.configCmp(expediente);
 		    	

@@ -106,6 +106,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
@@ -1936,18 +1937,26 @@ public class AgrupacionAdapter {
 			try {
 				beanUtilNotNull.copyProperties(loteComercial, dto);
 
-				if (dto.getMunicipioCodigo() != null) {
+				if (!Checks.esNulo(dto.getMunicipioCodigo())) {
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMunicipioCodigo());
 					Localidad municipioNuevo = (Localidad) genericDao.get(Localidad.class, filtro);
 
 					loteComercial.setLocalidad(municipioNuevo);
 				}
 
-				if (dto.getProvinciaCodigo() != null) {
+				if (!Checks.esNulo(dto.getProvinciaCodigo())) {
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getProvinciaCodigo());
 					DDProvincia provinciaNueva = (DDProvincia) genericDao.get(DDProvincia.class, filtro);
 
 					loteComercial.setProvincia(provinciaNueva);
+				}
+				
+				if (!Checks.esNulo(dto.getTipoAlquilerCodigo())) {
+					
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoAlquilerCodigo());
+					DDTipoAlquiler tipoAlquiler = (DDTipoAlquiler) genericDao.get(DDTipoAlquiler.class, filtro);
+					
+					loteComercial.setTipoAlquiler(tipoAlquiler);
 				}
 
 

@@ -36,7 +36,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							// TODO Investigar porqu� al quitar este campo, el valor del siguiente campo se manda siempre al guardar, aunque no se haya modificado.
 			            	hidden: true
 						},
-				        { 
+				        {
 							xtype: 'comboboxfieldbase',
 							reference: 'conPosesion',
 							fieldLabel: HreRem.i18n('fieldlabel.con.posesion'),
@@ -316,48 +316,40 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 		    			            }
 		    			        }
 		    			    ]
-		    				
 		    			}
-					
 					]
-                
-            }, 
-            
-            {    
-                
+            },
+            {
 				xtype:'fieldsettable',
 				title:HreRem.i18n('title.ocupante.ilegal'),
 				bind: {hidden:'{!esOcupacionIlegal}'},
 				defaultType: 'textfieldbase',
-				items :
-					[
-						{ 
-							xtype:'datefieldbase',
-							reference: 'fechaSolDesahucio',
-					 		fieldLabel: HreRem.i18n('fieldlabel.fecha.solicitud.desahucio'),
-			            	bind: '{situacionPosesoria.fechaSolDesahucio}',
-                            readOnly: true
-						},
-						{ 
-							xtype:'datefieldbase',
-							reference: 'fechaLanzamiento',
-							fieldLabel: HreRem.i18n('fieldlabel.fecha.senyalamiento.lanzamiento'),
-		                	bind: '{situacionPosesoria.fechalanzamiento}',
-                            readOnly: true
-		                },
-		                { 
-		                	xtype:'datefieldbase',
-							reference: 'fechaLanzamientoEfectivo',
-		                	fieldLabel: HreRem.i18n('fieldlabel.fecha.lanzamiento.efectuado'),
-		                	bind: '{situacionPosesoria.fechaLanzamientoEfectivo}',
-                            readOnly: true
-		                }
-					
-					]
-                
+				items : [
+					{
+						xtype:'datefieldbase',
+						reference: 'fechaSolDesahucio',
+				        fieldLabel: HreRem.i18n('fieldlabel.fecha.tratamiento.ocupacion'),
+		                bind:		'{situacionPosesoria.fechaSolDesahucio}',
+				        readOnly: true
+					},
+					{
+						xtype:'datefieldbase',
+						hidden: true,
+						reference: 'fechaLanzamiento',
+						fieldLabel: HreRem.i18n('fieldlabel.fecha.senyalamiento.lanzamiento'),
+	                    bind: '{situacionPosesoria.fechalanzamiento}',
+                        readOnly: true
+	                },
+	                {
+	                    xtype:'datefieldbase',
+						reference: 'fechaLanzamientoEfectivo',
+	                    fieldLabel: HreRem.i18n('fieldlabel.fecha.recuperacion.posesion'),
+	                    bind:		'{situacionPosesoria.fechaLanzamientoEfectivo}',
+	                    readOnly: true
+	                }
+				]
             },
-            {    
-                
+            {
 				xtype:'fieldsettable',
 				title:'Llaves',
 				defaultType: 'textfieldbase',
@@ -450,7 +442,6 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
     },
 
     getErrorsExtendedFormBase: function() {
-
    		var me = this,
    		errores = [],
    		error,
@@ -467,30 +458,29 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
    			errores.push(error);
    			fechaTomaPosesion.markInvalid(error);   			
    		}  		
-   		
+
    		if(!Ext.isEmpty(fechaLanzamiento.getValue()) && fechaLanzamiento.getValue() < fechaSolDesahucio.getValue()) {
 		    error = HreRem.i18n("txt.validacion.fechaLanzamiento.menor.fechaSolDesahucio");
    			errores.push(error);
    			fechaLanzamiento.markInvalid(error);   			
-   		}  	
-   		
+   		}
+
    		if(!Ext.isEmpty(fechaLanzamientoEfectivo.getValue()) && fechaLanzamientoEfectivo.getValue() < fechaLanzamiento.getValue()) {
 		    error = HreRem.i18n("txt.validacion.fechaLanzamientoEfectivo.menor.fechaLanzamiento");
    			errores.push(error);
    			fechaLanzamientoEfectivo.markInvalid(error);   			
    		}  	
-   		
+
    		//La fecha de t�tulo posesorio debe ser anterior a la fecha de vencimiento
    		if(!Ext.isEmpty(datefieldFechaTitulo.getValue()) && datefieldFechaTitulo.getValue() >= datefieldFechaVencTitulo.getValue()) {
 		    error = HreRem.i18n("txt.validacion.datefieldFechaTitulo.mayor.datefieldFechaVencTitulo");
    			errores.push(error);
    			datefieldFechaTitulo.markInvalid(error);   			
    		}  	
-   		
+
    		me.addExternalErrors(errores);
-   		
-   },     
-    
+   },
+
     funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
@@ -499,5 +489,5 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			grid.getStore().load();
   		});
    }
-    
+
 });

@@ -34,6 +34,7 @@ import es.pfsgroup.plugin.rem.model.ActivoInstalacion;
 import es.pfsgroup.plugin.rem.model.ActivoLocalComercial;
 import es.pfsgroup.plugin.rem.model.ActivoParamentoVertical;
 import es.pfsgroup.plugin.rem.model.ActivoPlazaAparcamiento;
+import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoSolado;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
@@ -1322,6 +1323,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						parcheEspecificacionTablas(informeEntity, informe);
 						informeEntity = (ActivoLocalComercial) dtoToEntity.obtenerObjetoEntity(
 								informe.getIdActivoHaya(), ActivoLocalComercial.class, "activo.numActivo");
+						((ActivoLocalComercial)informeEntity).setMtsAlturaLibre(informe.getAltura());
 						entitys.add(informeEntity);
 
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_EN_COSTRUCCION)) {
@@ -1338,6 +1340,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						parcheEspecificacionTablas(informeEntity, informe);
 						informeEntity = (ActivoPlazaAparcamiento) dtoToEntity.obtenerObjetoEntity(
 								informe.getIdActivoHaya(), ActivoPlazaAparcamiento.class, "activo.numActivo");
+						((ActivoPlazaAparcamiento)informeEntity).setAparcamientoAltura(informe.getAltura());
 						entitys.add(informeEntity);
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_SUELO)) {
 						informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
@@ -1379,6 +1382,9 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 						ActivoZonaComun zonaComun = (ActivoZonaComun) dtoToEntity.obtenerObjetoEntity(
 								informe.getIdActivoHaya(), ActivoZonaComun.class, "infoComercial.activo.numActivo");
+						
+						ActivoPropietarioActivo propActivo = (ActivoPropietarioActivo) dtoToEntity.obtenerObjetoEntity(
+								informe.getIdActivoHaya(), ActivoPropietarioActivo.class, "activo.numActivo");
 
 						entitys.add(informeEntity);
 						entitys.add(activoInfraestructura);
@@ -1390,6 +1396,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						entitys.add(banyo);
 						entitys.add(instalacion);
 						entitys.add(zonaComun);
+						entitys.add(propActivo);
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_EDIFICIO_COMPLETO)) {
 						informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
 								ActivoInfoComercial.class, "activo.numActivo");
@@ -1414,7 +1421,13 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					if (informeEntity.getActivo() == null) {
 						informeEntity.setActivo(activo);
 					}
-
+					if (Checks.esNulo(informeEntity.getMediadorInforme())){
+						Filter filterPve = genericDao.createFilter(FilterType.EQUALS, "id", informe.getIdProveedorRem());
+						ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filterPve);
+						if (!Checks.esNulo(proveedor)){
+							informeEntity.setMediadorInforme(proveedor);
+						}
+					}
 					informeEntity = (ActivoInfoComercial) dtoToEntity.saveDtoToBbdd(informe, entitys,
 							(JSONObject) jsonFields.getJSONArray("data").get(i));
 					// Si viene información de las plantas lo guardamos

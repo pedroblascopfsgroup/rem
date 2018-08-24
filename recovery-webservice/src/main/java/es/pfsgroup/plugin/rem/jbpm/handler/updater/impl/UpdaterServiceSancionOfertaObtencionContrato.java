@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -17,6 +18,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -35,7 +37,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 
 	@Autowired
 	private OfertaApi ofertaApi;
-	
+
 	@Autowired
 	private ActivoTramiteApi activoTramiteApi;
 
@@ -44,11 +46,14 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
 
+	@Autowired
+	private GestorActivoApi gestorActivoApi;
+
 	private static final String CODIGO_T013_OBTENCION_CONTRATO_RESERVA = "T013_ObtencionContratoReserva";
 	private static final String FECHA_FIRMA = "fechaFirma";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
-	
+
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaObtencionContrato.class);
 
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
@@ -103,7 +108,22 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 //		
 		
 		if (!Checks.esNulo(ofertaAceptada)) {
-			if (ofertaApi.checkDerechoTanteo(tramite.getTrabajo()))
+			
+			Boolean finalizado = false;
+			
+			List<TareaExterna> listaTareas = activoTramiteApi
+					.getListaTareaExternaByIdTramite(tramite.getId());
+			for (int i = 0; i < listaTareas.size(); i++) {
+				TareaExterna tarea = listaTareas.get(i);
+				if (!Checks.esNulo(tarea)) {
+					if (tarea.getTareaProcedimiento().getCodigo().equalsIgnoreCase("T013_ResolucionTanteo")) {
+						finalizado = !Checks.esNulo(tarea.getTareaPadre().getFechaFin());
+						break;
+					}
+				}
+			}
+			
+			if (ofertaApi.checkDerechoTanteo(tramite.getTrabajo()) && !finalizado)
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.BLOQUEO_ADM);
 			else
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RESERVADO);
@@ -171,6 +191,6 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 
 	public String[] getKeys() {
 		return this.getCodigoTarea();
-	}    
+	}
 
 }

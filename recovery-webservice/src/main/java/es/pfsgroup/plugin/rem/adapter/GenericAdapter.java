@@ -11,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.api.controlAcceso.EXTControlAccesoApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.diccionarios.Dictionary;
@@ -25,6 +26,8 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.utils.AgendaMultifuncionCorreoUtils;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.model.UsuarioCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 
@@ -79,9 +82,9 @@ public class GenericAdapter {
 		//TODO: Para ver que diccionarios no tienen auditoria.
 		lista = diccionarioApi.dameValoresDiccionario(clase);
 		
+		List listaPeriodicidad = new ArrayList();
 		//sí el diccionario es 'tiposPeriodicidad' modificamos el orden
 		if(clase.equals(DDTipoPeriocidad.class)){
-			List listaPeriodicidad = new ArrayList();
 			if(!Checks.esNulo(lista)){
 				for(int i=1; i<=lista.size();i++){
 					String cod;
@@ -94,6 +97,14 @@ public class GenericAdapter {
 				lista = listaPeriodicidad;
 			}else{
 				return listaPeriodicidad;
+			}
+		} else if (clase.equals(DDCartera.class)) {
+			Usuario usuarioLogado = getUsuarioLogado();
+			UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
+					genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+			if (!Checks.esNulo(usuarioCartera)) {
+				listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(clase, usuarioCartera.getCartera().getCodigo()));
+				lista = listaPeriodicidad;
 			}
 		}
 			
@@ -129,14 +140,28 @@ public class GenericAdapter {
 			// AgendaMultifuncionCorreoUtils.dameInstancia(executor).enviarCorreoConAdjuntos(null,
 			// mailsPara, mailsCC, asunto, cuerpo, null);
 			//añado comprobacion para que no falle en local
+			for(int i = 0; i < mailsPara.size(); i++) {
+				if(Checks.esNulo(mailsPara.get(i)) || "null".equals(mailsPara.get(i).toLowerCase())) {
+					mailsPara.remove(i);
+				}
+			}
+			
+			if (mailsPara.isEmpty()) {
+				logger.warn(
+						"El correo de " + asunto + " no se va a enviar");
+				return;
+			}
 			String servidorCorreo = appProperties.getProperty(SERVIDOR_CORREO);
+			logger.info(servidorCorreo);
 			String puertoCorreo =appProperties.getProperty(PUERTO_CORREO);
+			logger.info(puertoCorreo);
 			if(!Checks.esNulo(servidorCorreo) && !Checks.esNulo(puertoCorreo)){
 				agendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, adjuntos);
 			}
 		} catch (Exception e) {
-			logger.error("error enviando correo",e);
-			
+			//Sacamos log de los receptores y el asunto del mail para trazar los errores
+			logger.error("mailsPara: " + mailsPara + ", mailsCC: " + mailsCC + ", asunto: " + asunto);
+			logger.error("error enviando correo",e);			
 		}
 	}
 	

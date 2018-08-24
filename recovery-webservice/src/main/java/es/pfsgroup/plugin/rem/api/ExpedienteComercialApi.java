@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoInformeJuridico;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
+import es.pfsgroup.plugin.rem.model.DtoModificarCompradores;
 import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
@@ -180,7 +181,7 @@ public interface ExpedienteComercialApi {
 	 * @return Devuelve True si el estado del expdiente comercial es distinto a anulado, False si no lo es.
 	 * @throws Exception 
 	 */
-	public boolean updateExpedienteComercialEstadoPrevioResolucionExpediente(ExpedienteComercial expedienteComercial, String codigoTareaActual) throws Exception;
+	public boolean updateExpedienteComercialEstadoPrevioResolucionExpediente(ExpedienteComercial expedienteComercial, String codigoTareaActual, String codigoTareaSalto, Boolean botonDeshacerAnulacion) throws Exception;
 
 	/**
 	 * Método que recupera las observaciones del expediente comercial
@@ -937,6 +938,20 @@ public interface ExpedienteComercialApi {
 	 */
 	public boolean checkEstadoExpedienteDistintoAnulado(Long idTramite);
 
-	public void enviarCondicionantesEconomicosUvem(Long idExpediente) throws Exception;	
+	public void enviarCondicionantesEconomicosUvem(Long idExpediente) throws Exception;
+
+	boolean checkExpedienteFechaChequeLiberbank(Long idTramite);	
+	
+	boolean reservaFirmada(Long idTramite);
+
+	public Boolean checkInformeJuridicoFinalizado(Long idTramite);	
+	
+	public Boolean checkFechaVenta(Long idTramite);
+
+	public Boolean esBH(String idExpediente);
+
+	DtoModificarCompradores vistaADtoModCompradores(VBusquedaDatosCompradorExpediente vista);
+
+	public String getCodigoCarteraExpediente(String idExpediente);	
 	
 }

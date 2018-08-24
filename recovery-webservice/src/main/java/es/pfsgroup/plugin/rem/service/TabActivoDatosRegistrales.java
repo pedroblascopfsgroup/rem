@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.procesosJudiciales.model.DDFavorable;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
@@ -34,6 +35,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceDe
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
+import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlanDinVentas;
@@ -206,6 +208,12 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			}
 			
 		}
+		
+		ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());
+		
+		if(!Checks.esNulo(activoBancario)) {
+			BeanUtils.copyProperty(activoDto, "acreedorNumExp", activoBancario.getNumExpRiesgo());
+		}
 
 		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
 		activoDto.setCamposPropagables(TabActivoService.TAB_DATOS_REGISTRALES);
@@ -254,10 +262,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				activo.getTitulo().setAuditoria(Auditoria.getNewInstance());				
 			}
 			
-			beanUtilNotNull.copyProperties(activo.getTitulo(), dto);
-			
-			if(Checks.esNulo(dto.getFechaInscripcionReg())) activo.getTitulo().setFechaInscripcionReg(null);
-			
+			beanUtilNotNull.copyProperties(activo.getTitulo(), dto);			
 			
 			if (dto.getEstadoTitulo() != null) {
 				
@@ -318,7 +323,9 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getPoblacionRegistro());
 				Localidad municipioNuevo = (Localidad) genericDao.get(Localidad.class, filtro);
 				activo.getInfoRegistral().getInfoRegistralBien().setLocalidad(municipioNuevo);
-				activo.getInfoRegistral().getInfoRegistralBien().setProvincia(municipioNuevo.getProvincia());
+				Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getProvinciaRegistro());
+				DDProvincia provincia = genericDao.get(DDProvincia.class, filtro2);
+				activo.getInfoRegistral().getInfoRegistralBien().setProvincia(provincia);
 				
 			}
 			
@@ -445,7 +452,15 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 
 				}
 			
-			} 
+			}
+			ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());
+			
+			if (!Checks.esNulo(activoBancario)) {
+				if (!Checks.esNulo(dto.getAcreedorNumExp())) {
+					activoBancario.setNumExpRiesgo(dto.getAcreedorNumExp().toString());
+					genericDao.save(ActivoBancario.class, activoBancario);
+				}
+			}
 			
 
 		} catch (IllegalAccessException e) {

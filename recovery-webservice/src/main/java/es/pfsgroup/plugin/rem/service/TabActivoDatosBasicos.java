@@ -85,7 +85,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private ActivoAdapter activoAdapter;
-	
+
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
 	
@@ -103,13 +103,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private ActivoPublicacionDao activoPublicacionDao;
-	
+
 	@Autowired
 	private ActivoPatrimonioDao activoPatrimonioDao;
-	
+
 	@Autowired
 	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
-	
+
 	@Resource
 	private MessageService messageServices;
 	
@@ -131,7 +131,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		DtoActivoFichaCabecera activoDto = new DtoActivoFichaCabecera();
 
 		BeanUtils.copyProperties(activoDto, activo);
-			
+
 		if (activo.getLocalizacion() != null) {
 			BeanUtils.copyProperties(activoDto, activo.getLocalizacion().getLocalizacionBien());
 			BeanUtils.copyProperties(activoDto, activo.getLocalizacion());
@@ -269,11 +269,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			Date currentDate = new Date();
 			for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
 				if(Checks.esNulo(agrupaciones.getAgrupacion().getFechaBaja())) {
-					if(!Checks.esNulo(agrupaciones.getAgrupacion().getTipoAgrupacion()) 
+					if(!Checks.esNulo(agrupaciones.getAgrupacion().getTipoAgrupacion())
 							&& DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo())
-							&& (Checks.esNulo(agrupaciones.getAgrupacion().getFechaFinVigencia()) 
-									|| (!Checks.esNulo(agrupaciones.getAgrupacion().getFechaFinVigencia()) 
-											&& (agrupaciones.getAgrupacion().getFechaFinVigencia().before(currentDate) 
+							&& (Checks.esNulo(agrupaciones.getAgrupacion().getFechaFinVigencia())
+									|| (!Checks.esNulo(agrupaciones.getAgrupacion().getFechaFinVigencia())
+											&& (agrupaciones.getAgrupacion().getFechaFinVigencia().before(currentDate)
 											|| agrupaciones.getAgrupacion().getFechaFinVigencia().equals(currentDate))))
 					){
 						perteneceAgrupacionRestringidaVigente = true;
@@ -356,7 +356,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		BeanUtils.copyProperty(activoDto,"aplicaFormalizar", new Integer(1).equals(perimetroActivo.getAplicaFormalizar()));
 		if(!Checks.esNulo(perimetroActivo.getAplicaPublicar()))
 			BeanUtils.copyProperty(activoDto,"aplicaPublicar", new Integer(1).equals(perimetroActivo.getAplicaPublicar() ? 1 : 0));
-		
+
 		// En la sección de perímetro pero no dependiente del mismo.
 		BeanUtils.copyProperty(activoDto, "numInmovilizadoBankia", activo.getNumInmovilizadoBnk());
 
@@ -452,9 +452,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "estadoAlquilerCodigo", !Checks.esNulo(activo.getActivoPublicacion().getEstadoPublicacionAlquiler()) ? activo.getActivoPublicacion().getEstadoPublicacionAlquiler().getCodigo() : "");
 			BeanUtils.copyProperty(activoDto, "estadoVentaCodigo", !Checks.esNulo(activo.getActivoPublicacion().getEstadoPublicacionVenta()) ? activo.getActivoPublicacion().getEstadoPublicacionVenta().getCodigo(): "");
 		}
-
-		// HREOS-2761: Buscamos si existen activos candidatos para propagar cambios. Llamada única para el activo
-		 activoDto.setActivosPropagables(activoPropagacionApi.getAllActivosAgrupacionPorActivo(activo));
 
 		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
 		 activoDto.setCamposPropagables(TabActivoService.TAB_DATOS_BASICOS);

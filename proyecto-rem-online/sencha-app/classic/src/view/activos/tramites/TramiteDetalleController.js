@@ -308,9 +308,8 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 		
 		var me = this;
   		var salto_tarea_window = Ext.create('HreRem.view.activos.tramites.LanzarTareaAdministrativa',{idTramite: me.getViewModel().get("tramite.idTramite"), idExpediente: me.getViewModel().get("tramite.idExpediente")});
-  		salto_tarea_window.show();
   		me.getView().add(salto_tarea_window);
-		
+  		salto_tarea_window.show();
 	},
 	
 	reactivarTramite : function(button) {

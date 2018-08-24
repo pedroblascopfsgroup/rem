@@ -94,6 +94,13 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			me.lookupReference("fieldSetMomentoRealizacionRef").setVisible(true);
 		}
 		
+		if(combo.getValue() == CONST.TIPOS_TRABAJO.ACTUACION_TECNICA) {
+			me.lookupReference("codigoPromocionPrinex").setDisabled(false);
+		} else {
+			me.lookupReference("codigoPromocionPrinex").setDisabled(true);
+			me.lookupReference("codigoPromocionPrinex").setValue(null);
+		}
+		
 		me.lookupReference("listaActivosSubidaRef").getColumnManager().getHeaderByDataIndex("activoEnPropuestaEnTramitacion").setVisible(false);
     	
 		
@@ -179,6 +186,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			    }
 			    		    
 			});
+			
 		} else {
 		
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
@@ -257,28 +265,19 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	// en un sólo trabajo. Si no se ha seleccionado informa al usuario de que se va a
 	// generar un trabajo por cada activo.
 	onClickBotonCrearTrabajo: function(btn) {
-
 		var me =this;
 		var arraySelection = me.lookupReference('activosagrupaciontrabajo').getActivoIDPersistedSelection();
 		// Comprobar el estado del checkbox para agrupar los activos en un trabajo.
 		var check = me.lookupReference('checkEnglobaTodosActivosRef').getValue();	
-
+		var codPromo;
 		//Si no se ha seleccionado ning�n activo
 		if(Ext.isEmpty(arraySelection)){
 			
 			var storeListaActivosTrabajo = me.lookupReference('listaActivosSubidaRef').getStore();
 			if(!Ext.isEmpty(storeListaActivosTrabajo) && !Ext.isEmpty(storeListaActivosTrabajo.data)){
-				//var propietarioId = storeListaActivosTrabajo.data.items[0].data.propietarioId;
-				for (i=0; i < storeListaActivosTrabajo.data.length; i++) {
-					/*if(check){
-						if(storeListaActivosTrabajo.data.items[i].data.propietarioId != propietarioId){
-							Ext.MessageBox.alert(
-									HreRem.i18n("msgbox.multiples.trabajos.seleccionado.diferente.propietario.titulo"),
-									HreRem.i18n("msgbox.multiples.trabajos.seleccionado.diferente.propietario.mensaje")
-							);
-							return false;
-						}
-					}*/
+				codPromo = me.lookupReference('codigoPromocionPrinex').getValue();
+				var actuacionTecnica = (me.lookupReference('tipoTrabajo').getValue() == CONST.TIPOS_TRABAJO.ACTUACION_TECNICA ? true : false);
+				for (var i=0; i < storeListaActivosTrabajo.data.length; i++) {
 					if (storeListaActivosTrabajo.data.items[i].data.tienePerimetroGestion != "1"){
 						Ext.MessageBox.alert(
 								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
@@ -286,6 +285,24 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 						);
 						return false;
 			        }
+					if (actuacionTecnica && !Ext.isEmpty(codPromo)) {
+						if (storeListaActivosTrabajo.data.items[i].data.codigoCartera == CONST.CARTERA.LIBERBANK) {
+							if (!Ext.isEmpty(codPromo) && storeListaActivosTrabajo.data.items[i].data.codigoPromocionPrinex != codPromo){
+								Ext.MessageBox.alert(
+										HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
+										HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinCodPromo.mensaje.todos")
+								);
+								return false;
+					        }
+						} else {
+							Ext.MessageBox.alert(
+									HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
+									HreRem.i18n("msgbox.multiples.trabajos.seleccionado.todosCarteraLiberbank.mensaje.todos")
+							);
+							return false;
+						}
+					}
+					arraySelection.push(storeListaActivosTrabajo.data.items[i].data.idActivo);
 				}
 			}
 			//Si se marca el check y se esta creando desde agrupaciones
@@ -295,7 +312,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 						HreRem.i18n("msgbox.multiples.trabajos.seleccionado.check.mensaje"),
 						function(result) {
 			        		if(result === 'yes'){
-			        			me.crearTrabajo(btn,arraySelection);
+			        			me.crearTrabajo(btn,arraySelection,codPromo);
 			        		}
 			    		}
 				);
@@ -306,12 +323,12 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 						HreRem.i18n("msgbox.multiples.trabajos.check.mensaje"),
 						function(result) {
 			        		if(result === 'yes'){
-			        			me.crearTrabajo(btn,arraySelection);
+			        			me.crearTrabajo(btn,arraySelection,codPromo);
 			        		}
 			    		}
 				);
 			}else{
-				me.crearTrabajo(btn,arraySelection);
+				me.crearTrabajo(btn,arraySelection,codPromo);
 			}
 		}
 		else{
@@ -321,7 +338,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 						HreRem.i18n("msgbox.multiples.trabajos.seleccionados.check.mensaje"),
 						function(result) {
 			        		if(result === 'yes'){
-			        			me.crearTrabajo(btn,arraySelection);
+			        			me.crearTrabajo(btn,arraySelection,codPromo);
 			        		}
 			    		}
 				);
@@ -332,7 +349,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 						HreRem.i18n("msgbox.multiples.trabajos.checks.mensaje"),
 						function(result) {
 			        		if(result === 'yes'){
-			        			me.crearTrabajo(btn,arraySelection);
+			        			me.crearTrabajo(btn,arraySelection,codPromo);
 			        		}
 			    		}
 				);
@@ -349,7 +366,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     },
 	
 	// Este método crea el trabajo especificado en la ventana pop-up de crear trabajo.
-	crearTrabajo: function(btn,arraySelection) {
+	crearTrabajo: function(btn,arraySelection, codigoPromocionPrinex) {
 		var me =this,
 		window = btn.up("window"),
 		form = window.down("form"),
@@ -361,6 +378,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		form.getBindRecord().set("idAgrupacion", idAgrupacion);
 		form.getBindRecord().set("idProceso", idProceso);
 		form.getBindRecord().set("idsActivos", arraySelection);
+		form.getBindRecord().set("codigoPromocionPrinex", codigoPromocionPrinex);
 				
 		var success = function(record, operation) {
 			me.getView().unmask();
@@ -660,11 +678,18 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		var me = this;
 		//Acceder as� a los tres atributos que le hemos pasado a la openModalWindow
 		//de selecci�n de tarifa: tipo de trabajo, subtipo de trabajo y cartera
+
 		var idTrabajo = me.getViewModel().get("trabajo.id");
+		//REMVIP-558 - Se añaden dos campos mas, descpripcion y codigo del trabajo
 		var carteraCodigo = me.getViewModel().get("trabajo.carteraCodigo"),
 		tipoTrabajoCodigo = me.getViewModel().get("trabajo.tipoTrabajoCodigo"),
-		subtipoTrabajoCodigo = me.getViewModel().get("trabajo.subtipoTrabajoCodigo");
-		store.getProxy().extraParams = {idTrabajo: idTrabajo, cartera: carteraCodigo, tipoTrabajo: tipoTrabajoCodigo, subtipoTrabajo: subtipoTrabajoCodigo};	
+		subtipoTrabajoCodigo = me.getViewModel().get("trabajo.subtipoTrabajoCodigo"),
+		codigoTarifaTrabajo = me.getViewModel().get('trabajo.codigoTarifaTrabajo'),
+		descripcionTarifaTrabajo = me.getViewModel().get('trabajo.descripcionTarifaTrabajo');
+		
+		store.getProxy().extraParams = {idTrabajo: idTrabajo, cartera: carteraCodigo, tipoTrabajo: tipoTrabajoCodigo, subtipoTrabajo: subtipoTrabajoCodigo
+			, codigoTarifa: codigoTarifaTrabajo, descripcionTarifa: descripcionTarifaTrabajo};	
+		
 		return true;		
 
 	},
@@ -979,6 +1004,14 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
  		}
  		
 
+     },
+     
+     onClickBotonFiltrar: function(btn) {
+    	 var me = this;
+    	 
+    	 var store = me.getViewModel().get('storeSeleccionTarifas');
+    	 store.load();
+    	 
      },
 
      onClickRefrescarParticipacion: function(btn) {

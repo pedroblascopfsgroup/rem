@@ -51,15 +51,24 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     },
 	     
 	     esCarteraBankia: function(get) {
-	     	
 	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 	     	return CONST.CARTERA['BANKIA'] == carteraCodigo;
 	     },
 	     
+	     esBankiaHabitat: function(get) {
+		    	var subCartera = get('expediente.propietario');
+		     	return CONST.NOMBRE_SUBCARTERA['BANKIA_HABITAT'] == subCartera;
+	     },
+	  	     
 	     fechaIngresoChequeReadOnly: function(get) {
+	    	 
+	    	 if($AU.userIsRol("HAYASUPER")){
+	    		 return false;
+	    	 }
+	    	 
 	    	 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 	    	 var subCartera = get('expediente.propietario');
-	    	 return CONST.CARTERA['BANKIA'] == carteraCodigo && CONST.NOMBRE_SUBCARTERA['BANKIA_HABITAT'] != subCartera;
+	    	 return (CONST.CARTERA['BANKIA'] == carteraCodigo && CONST.NOMBRE_SUBCARTERA['BANKIA_HABITAT'] != subCartera) || CONST.CARTERA['LIBERBANK'] == carteraCodigo;
 	     },
 	     
 	     comiteSancionadorNoEditable: function(get) {
@@ -90,6 +99,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 	     	return CONST.CARTERA['CAJAMAR'] == carteraCodigo;
 	     },
+	     
+	     esCarteraLiberbank: function(get) {
+		     	
+	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+	     	return CONST.CARTERA['LIBERBANK'] == carteraCodigo;
+		 },
+		 
+		 esSubcarteraBH: function(get) {
+			 var subcarteraCodigo = get('expediente.subcarteraCodigo');
+		     return CONST.SUBCARTERA['BH'] == subcarteraCodigo;
+		 },
 	     
 	     getTipoExpedienteCabecera: function(get) {
 	     
@@ -209,7 +229,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		     	var bloqueado = get('expediente.bloqueado');
 		     	return bloqueado;
 		     	
-		 }
+		 } 
 	 },
 
 
@@ -563,6 +583,24 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			}
 	    },
 	    
+	    comboEstadoReserva: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosReserva'}
+			}
+	    },
+	    
+	    comboEstadoExpediente: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosExpediente'}
+			}
+	    },
+	    
 	    comboColaboradorPrescriptor: {
 	    	model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -607,8 +645,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				extraParams: {codigoProvincia: '{comprador.provinciaRteCodigo}'}
 			}
     	},
-
-		comboComites: {
+	    comboComites: {
 	    	model: 'HreRem.model.ComboBase',
 	    	proxy: {
 		        type: 'uxproxy',

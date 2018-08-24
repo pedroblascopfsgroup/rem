@@ -92,12 +92,10 @@ public class ActivoAdjudicacionJudicial implements Serializable, Auditable {
 	
 	@Column(name = "AJD_ID_ASUNTO")
 	private Long idAsunto;
-/*	
-	@Column(name = "AJD_NUM_EXP_RIESGO_ADJ")
-	private Integer numExpRiesgoAdj;*/
 	
+	@Column(name = "AJD_EXP_DEF_TESTI")
+	private String defectosTestimonio;
 
-	
 	@Version   
 	private Long version;
 	
@@ -231,6 +229,13 @@ public class ActivoAdjudicacionJudicial implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 
+	public String getDefectosTestimonio() {
+		return defectosTestimonio;
+	}
+
+	public void setDefectosTestimonio(String defectosTestimonio) {
+		this.defectosTestimonio = defectosTestimonio;
+	}
 	
 	
 }

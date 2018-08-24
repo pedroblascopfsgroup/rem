@@ -47,7 +47,8 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 	public static final String SOLO_UN_CAMPO_RELLENO = "Solo debe rellenar un campo: ACTIVO, AGRUPACION o EXPEDIENTE.";
 	public static final String USUARIO_NO_ES_TIPO_GESTOR= "El usuario no corresponde con el Tipo de gestor";
 	public static final String COMBINACION_GESTOR_CARTERA_ACAGEX_INVALIDA= "Combinación tipo de gestor- cartera - agrupación/activo/expediente invalida";
-
+	public static final String MEDIADOR_NO_EXISTE = "El mediador introducido no existe o esta dado de baja en REM";
+	
 	@Autowired
 	private MSVExcelParser excelParser;
 	
@@ -107,6 +108,7 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 			mapaErrores.put(SOLO_UN_CAMPO_RELLENO, soloUnCampoRelleno(exc));
 			mapaErrores.put(USUARIO_NO_ES_TIPO_GESTOR, usuarioEsTipoGestor(exc));
 			mapaErrores.put(COMBINACION_GESTOR_CARTERA_ACAGEX_INVALIDA, combinacionGestorCarteraAcagexValida(exc));
+			mapaErrores.put(MEDIADOR_NO_EXISTE, mediadorExiste(exc));
 
 			if (!mapaErrores.get(ACTIVO_NO_EXISTE).isEmpty() || !mapaErrores.get(AGRUPACION_NO_EXISTE).isEmpty()
 					|| !mapaErrores.get(EXPEDIENTE_COMERCIAL_NO_EXISTE).isEmpty()
@@ -114,7 +116,8 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 					|| !mapaErrores.get(USERNAME_NO_EXISTE).isEmpty()
 					|| !mapaErrores.get(SOLO_UN_CAMPO_RELLENO).isEmpty()
 					|| !mapaErrores.get(USUARIO_NO_ES_TIPO_GESTOR).isEmpty()
-					|| !mapaErrores.get(COMBINACION_GESTOR_CARTERA_ACAGEX_INVALIDA).isEmpty()) {
+					|| !mapaErrores.get(COMBINACION_GESTOR_CARTERA_ACAGEX_INVALIDA).isEmpty()
+					|| !mapaErrores.get(MEDIADOR_NO_EXISTE).isEmpty()) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
@@ -381,6 +384,38 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 		}
 		
 		return listaFilas;
+		
+		
+		
+	}
+	
+	private List<Integer> mediadorExiste(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					String codMediador = exc.dameCelda(i, 5);
+					
+					if(!Checks.esNulo(codMediador) && !particularValidator.mediadorExisteVigente(codMediador)) {
+						listaFilas.add(i);
+					}
+					
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		}catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+		
+		
 		
 	}
 	

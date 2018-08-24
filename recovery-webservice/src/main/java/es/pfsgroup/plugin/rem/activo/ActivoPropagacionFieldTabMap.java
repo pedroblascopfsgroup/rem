@@ -428,6 +428,8 @@ public class ActivoPropagacionFieldTabMap {
 					"propiedadActivoDireccion",
 					"tipoGradoPropiedadCodigo",
 					"estadoTitulo",
+					"fechaInscripcionReg",
+					"fechaRealizacionPosesion",
 					"fechaAdjudicacion",
 					"numAuto",
 					"procurador",

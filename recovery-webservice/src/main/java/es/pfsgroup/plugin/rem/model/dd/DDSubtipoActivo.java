@@ -34,7 +34,13 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDSubtipoActivo implements Auditable, Dictionary {
 	
-	
+	public static final String COD_LOCAL_COMERCIAL ="13";
+	public static final String COD_GARAJE ="24";
+	public static final String COD_TRASTERO ="25";
+	public static final String CODIGO_SUBTIPO_LOCAL_COMERCIAL = "13";
+	public static final String CODIGO_SUBTIPO_NO_URBAN_RUSTICO = "01";
+	public static final String CODIGO_SUBTIPO_NAVE_AISLADA = "17";
+	public static final String CODIGO_SUBTIPO_NAVE_ADOSADA = "18";
 
 	/**
 	 * 

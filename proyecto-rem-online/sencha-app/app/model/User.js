@@ -19,6 +19,17 @@ Ext.define('HreRem.model.User', {
     	},
     	{
     		name: "codigoGestor"
+    	},
+    	{
+    		name: 'esGestorSustituto',
+    		type: 'boolean',
+    		convert: function(value, record) {
+    			if (record.data.data.esGestorSustituto == "0") { 
+    				return false 
+    			} else { 
+    				return true
+    			}
+    		}
     	}
     ]
 			

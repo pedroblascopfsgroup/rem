@@ -296,8 +296,15 @@ Ext.define('HreRem.controller.ActivosController', {
 		     	//me.getView().fireEvent('openModalWindow', "HreRem.view.activos.detalle.seleccionmasivo.SeleccionCambiosMasivo");
 		    },
 		    failure: function (a, operation) {
-				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    	if(operation.getResponse().status === 408){
+		    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    	}else{
+		    		var response = Ext.decode(operation.getResponse().responseText);
+	 		    	me.fireEvent("errorToast", response.error);
+		    	}
+		    	//me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 				tab.unmask();
+				Ext.resumeLayouts(true);
 	       	}
 		});
 		

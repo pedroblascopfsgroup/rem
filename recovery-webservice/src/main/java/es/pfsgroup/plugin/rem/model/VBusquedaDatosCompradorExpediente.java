@@ -177,6 +177,9 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	@Column(name = "ID_COMPRADOR_URSUS")
 	private Long numeroClienteUrsus;
 	
+	@Column(name = "ID_COMPRADOR_URSUS_BH")
+	private Long numeroClienteUrsusBh;
+	
 	@Column(name = "COD_GRADO_PROPIEDAD")
 	private String codigoGradoPropiedad;
 	
@@ -619,6 +622,14 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 
 	public void setNumeroClienteUrsus(Long numeroClienteUrsus) {
 		this.numeroClienteUrsus = numeroClienteUrsus;
+	}
+	
+	public Long getNumeroClienteUrsusBh() {
+		return numeroClienteUrsusBh;
+	}
+
+	public void setNumeroClienteUrsusBh(Long numeroClienteUrsusBh) {
+		this.numeroClienteUrsusBh = numeroClienteUrsusBh;
 	}
 
 	public String getCodigoGradoPropiedad() {

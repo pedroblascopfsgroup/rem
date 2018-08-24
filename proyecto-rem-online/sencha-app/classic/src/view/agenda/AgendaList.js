@@ -189,6 +189,7 @@ Ext.define('HreRem.view.agenda.AgendaList', {
 	            dock: 'bottom',
 	            itemId: 'agendaPaginationToolbar',
 	            displayInfo: true,
+	            reference: 'agendaPaginator',
 	            bind: {
 	                store: '{tareas}'
 	            }

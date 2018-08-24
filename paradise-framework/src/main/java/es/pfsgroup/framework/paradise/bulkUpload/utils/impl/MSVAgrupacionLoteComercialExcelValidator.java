@@ -129,7 +129,7 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_COMERCIALIZABLE), activosNoComercializablesRows(exc));
 			mapaErrores.put(messageServices.getMessage(ERROR_ACTIVO_CANARIAS), distintosTiposImpuesto(exc));
 			mapaErrores.put(messageServices.getMessage(ERROR_ACTIVO_CON_OFERTA_TRAMITADA), activoConOfertasTramitadas(exc));
-			//mapaErrores.put(messageServices.getMessage(ERROR_ACTIVO_DISTINTO_PROPIETARIO), comprobarDistintoPropietario(exc));
+			mapaErrores.put(messageServices.getMessage(ERROR_ACTIVO_DISTINTO_PROPIETARIO), comprobarDistintoPropietario(exc));
 			
 			// mapaErrores.put(messageServices.getMessage(ACTIVO_INCLUIDO_PERIMETRO), activosIncluidosPerimetroRows(exc));
 			// mapaErrores.put(messageServices.getMessage(ACTIVO_NO_FINANCIERO),activosFinancierosRows(exc));
@@ -155,7 +155,7 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 							.isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ERROR_ACTIVO_CANARIAS)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ERROR_ACTIVO_CON_OFERTA_TRAMITADA)).isEmpty()
-					//|| !mapaErrores.get(messageServices.getMessage(ERROR_ACTIVO_DISTINTO_PROPIETARIO)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ERROR_ACTIVO_DISTINTO_PROPIETARIO)).isEmpty()
 					) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -550,11 +550,24 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 
 		int i = 0;
 		try {
-			for (i = 1; i < this.numFilasHoja; i++) {
-				String numAgrupacion = String.valueOf(Long.parseLong(exc.dameCelda(i, 0)));
-				String numActivo = String.valueOf(Long.parseLong(exc.dameCelda(i, 1)));
-				if (particularValidator.distintosTiposImpuesto(numActivo, numAgrupacion))
-					listaFilas.add(i);
+			String numAgrupacion = String.valueOf(Long.parseLong(exc.dameCelda(1, 0)));
+
+			// Comprobamos que la agrupación no este vacía
+			if (!particularValidator.agrupacionEstaVacia(numAgrupacion)) {
+				for (i = 1; i < this.numFilasHoja; i++) {
+					String numActivo = String.valueOf(Long.parseLong(exc.dameCelda(i, 1)));
+					if (particularValidator.distintosTiposImpuesto(numActivo, numAgrupacion))
+						listaFilas.add(i);
+				}
+			} else {
+				List<String> activosList = new ArrayList<String>();
+				for (i = 1; i < this.numFilasHoja; i++) {
+					activosList.add(String.valueOf(Long.parseLong(exc.dameCelda(i, 1))));
+				}
+				
+				if(particularValidator.distintosTiposImpuestoAgrupacionVacia(activosList)) 
+					listaFilas.add(1);
+				
 			}
 		} catch (Exception e) {
 			if (i != 0)

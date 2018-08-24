@@ -176,24 +176,11 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 
 			}
 		}
-		
-		// Aviso 7: Pendiente toma posesión
-		if (!Checks.esNulo(activo.getAdjJudicial())
-				&& !Checks.esNulo(activo.getSituacionPosesoria().getFechaTomaPosesion())) {
-			if (activo.getAdjJudicial().getAdjudicacionBien() != null) {
-
-				DtoAviso dtoAviso = new DtoAviso();
-				dtoAviso.setDescripcion("Pendiente toma de posesión");
-				dtoAviso.setId(String.valueOf(id));
-				listaAvisos.add(dtoAviso);
-
-			}
-		}
-		
+				
 		// Aviso 7: Pendiente toma posesión
 				if (!Checks.esNulo(activo.getAdjJudicial())
 						&& Checks.esNulo(activo.getSituacionPosesoria().getFechaTomaPosesion())) {
-					if (activo.getAdjJudicial().getAdjudicacionBien() != null) {
+					if (!Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien())) {
 
 						DtoAviso dtoAviso = new DtoAviso();
 						dtoAviso.setDescripcion("Pendiente toma de posesión");

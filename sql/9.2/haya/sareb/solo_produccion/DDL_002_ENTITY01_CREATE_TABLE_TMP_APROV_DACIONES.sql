@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=SIMEON SHOPOV
---## FECHA_CREACION=20180503
+--## FECHA_CREACION=20180813
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-505
+--## INCIDENCIA_LINK=REMVIP-1529
 --## PRODUCTO=SI
 --## Finalidad: DDL Creación de la tabla TMP_APROV_DACIONES
 --##           

@@ -70,6 +70,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.impl.UpdaterServiceSancionOfe
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
@@ -119,10 +120,10 @@ public class UvemManager implements UvemManagerApi {
 
 	@Autowired
 	private RestLlamadaDao llamadaDao;
-	
+
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
-	
+
 	@Autowired
 	private OfertaApi ofertaApi;
 
@@ -226,14 +227,14 @@ public class UvemManager implements UvemManagerApi {
 
 			} else if (servicio instanceof GMPDJB13_INS) {
 				((GMPDJB13_INS) servicio).setLongitudMensajeDeSalidarcslon(2);
-				((GMPDJB13_INS) servicio).setCodigoComitecocom7((short) 3);
+				((GMPDJB13_INS) servicio).setCodigoComitecocom7(Short.valueOf(DDComiteSancion.CODIGO_BANKIA_DGVIER));
 				((GMPDJB13_INS) servicio).setCodigoDeOfertaHayacoofhx2("9");
-				if(((GMPDJB13_INS) servicio).getCodigoDeAgrupacionDeInmueblecoagiw() > 0){
-					((GMPDJB13_INS) servicio).setCodigoDeAgrupacionDeInmueblecoagiw2(((GMPDJB13_INS) servicio).getCodigoDeAgrupacionDeInmueblecoagiw());
-				}else{
+				if (((GMPDJB13_INS) servicio).getCodigoDeAgrupacionDeInmueblecoagiw() > 0) {
+					((GMPDJB13_INS) servicio).setCodigoDeAgrupacionDeInmueblecoagiw2(
+							((GMPDJB13_INS) servicio).getCodigoDeAgrupacionDeInmueblecoagiw());
+				} else {
 					((GMPDJB13_INS) servicio).setCodigoDeAgrupacionDeInmueblecoagiw2(rand.nextInt() & MASK);
 				}
-				
 
 			} else if (servicio instanceof GMPAJC34_INS) {
 				ImporteMonetario importe = new ImporteMonetario();
@@ -1045,17 +1046,19 @@ public class UvemManager implements UvemManagerApi {
 				}
 
 			}
-			
-			if(Boolean.TRUE.equals(instanciaDecisionDto.getOfertaAgrupacion()) && INSTANCIA_DECISION_ALTA.equals(accion)){
-				if(instanciaDecisionDto.getCodigoAgrupacionInmueble() != null && instanciaDecisionDto.getCodigoAgrupacionInmueble() > 0){
-					servicioGMPDJB13_INS.setCodigoDeAgrupacionDeInmueblecoagiw(instanciaDecisionDto.getCodigoAgrupacionInmueble());
-				}else{
+
+			if (Boolean.TRUE.equals(instanciaDecisionDto.getOfertaAgrupacion())
+					&& INSTANCIA_DECISION_ALTA.equals(accion) && Boolean.FALSE.equals(instanciaDecisionDto.getOfertaVentaCartera())) {
+				if (instanciaDecisionDto.getCodigoAgrupacionInmueble() != null
+						&& instanciaDecisionDto.getCodigoAgrupacionInmueble() > 0) {
+					servicioGMPDJB13_INS
+							.setCodigoDeAgrupacionDeInmueblecoagiw(instanciaDecisionDto.getCodigoAgrupacionInmueble());
+				} else {
 					servicioGMPDJB13_INS.setCodigoDeAgrupacionDeInmueblecoagiw(0);
 				}
-			}else{
+			} else {
 				servicioGMPDJB13_INS.setCodigoDeAgrupacionDeInmueblecoagiw(0);
 			}
-			
 
 			if (numeroOcurrencias != null) {
 				servicioGMPDJB13_INS.setNumeroDeOcurrenciasnumocu(numeroOcurrencias);
@@ -1064,8 +1067,11 @@ public class UvemManager implements UvemManagerApi {
 			// Importe de la reserva
 			ImporteMonetario importeMonetarioReserva = new ImporteMonetario();
 			if (instanciaDecisionDto.getImporteReserva() != null) {
-				importeMonetarioReserva
-						.setImporteConSigno(Double.valueOf(instanciaDecisionDto.getImporteReserva() * 100).longValue());
+				//importeMonetarioReserva.setImporteConSigno(Double.valueOf(instanciaDecisionDto.getImporteReserva() * 100).longValue());
+
+				BigDecimal importe = BigDecimal.valueOf(instanciaDecisionDto.getImporteReserva());
+				importeMonetarioReserva.setImporteConSigno(importe.multiply(new BigDecimal(100)).longValue());
+				
 			} else {
 				importeMonetarioReserva.setImporteConSigno(new Long(0));
 			}
@@ -1115,11 +1121,56 @@ public class UvemManager implements UvemManagerApi {
 			}
 
 			// codigo uvem de la ofician prescriptora
-			if (Checks.esNulo(instanciaDecisionDto.getCodigoProveedorUvem())) {
-				servicioGMPDJB13_INS.setIdentificadorDelColaboradoridcola("C000");
+			if (Boolean.TRUE.equals(instanciaDecisionDto.getOfertaVentaCartera())) {
+				servicioGMPDJB13_INS.setIdentificadorDelColaboradoridcola("D666");
 			} else {
-				servicioGMPDJB13_INS
-						.setIdentificadorDelColaboradoridcola(instanciaDecisionDto.getCodigoProveedorUvem());
+				if (Checks.esNulo(instanciaDecisionDto.getCodigoProveedorUvem())) {
+					servicioGMPDJB13_INS.setIdentificadorDelColaboradoridcola("C000");
+				} else {
+					servicioGMPDJB13_INS
+							.setIdentificadorDelColaboradoridcola(instanciaDecisionDto.getCodigoProveedorUvem());
+				}
+			}
+
+			// venta cartera
+			if (INSTANCIA_DECISION_ALTA.equals(accion)) {
+
+				if (Boolean.TRUE.equals(instanciaDecisionDto.getOfertaVentaCartera())) {
+					// 0 :no es venta cartera
+					if (instanciaDecisionDto.getCodigoAgrupacionInmueble() != null) {
+						servicioGMPDJB13_INS
+								.setCodigoVentaCarteracovecw(instanciaDecisionDto.getCodigoAgrupacionInmueble());
+					}
+
+					// 0 Para ofertas tipo venta
+					// 6 Oferta preventa cartera
+					// 7 Oferta venta cierre definitivo cartera
+					// Obligatorio distinto 0 para venta cartera
+					servicioGMPDJB13_INS.setTipoDeOfertacotofw((short) 7);
+
+					// ‘ ‘ : para tipo de oferta sea 0
+					// ‘S’: si es una oferta de tipo 7 y no es de BH
+					// ‘N’ : no es venta cartera automática y tipo oferta 7
+					// Obligatorio distinto ‘ ‘ para venta cartera
+					
+					//Dani nos confirma que para activos BH hay que pasar N, aunque la Doc no es clara
+					if(DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA_HABITAT.equals(instanciaDecisionDto.getQcenre())){
+						servicioGMPDJB13_INS.setIndicadorDeVentaInmediatabivein('N');
+					}else{
+						servicioGMPDJB13_INS.setIndicadorDeVentaInmediatabivein('S');
+					}
+					
+				}else{
+					//es una alta pero no es de venta cartera
+					servicioGMPDJB13_INS.setCodigoVentaCarteracovecw(0);
+					servicioGMPDJB13_INS.setTipoDeOfertacotofw((short) 0);
+					servicioGMPDJB13_INS.setIndicadorDeVentaInmediatabivein(' ');
+				}
+
+			}else{
+				servicioGMPDJB13_INS.setCodigoVentaCarteracovecw(0);
+				servicioGMPDJB13_INS.setTipoDeOfertacotofw((short) 0);
+				servicioGMPDJB13_INS.setIndicadorDeVentaInmediatabivein(' ');
 			}
 
 			// Requeridos por el servicio
@@ -1128,15 +1179,15 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPDJB13_INS.setidSesionWL("");
 
 			servicioGMPDJB13_INS.setAlias(ALIAS);
-			
-			
+
 			// servicioGMPDJB13_INS.execute();
 			executeService(servicioGMPDJB13_INS);
 
 			result.setLongitudMensajeSalida(servicioGMPDJB13_INS.getLongitudMensajeDeSalidarcslon());
 			result.setCodigoComite(servicioGMPDJB13_INS.getCodigoComitecocom7() + "");
 			result.setCodigoDeOfertaHaya(servicioGMPDJB13_INS.getCodigoDeOfertaHayacoofhx2());
-			//HREOS-3844: Postacordado Bankia 2: Añadir código de la oferta en FFDD
+			// HREOS-3844: Postacordado Bankia 2: Añadir código de la oferta en
+			// FFDD
 			result.setCodigoAgrupacionInmueble(servicioGMPDJB13_INS.getCodigoDeAgrupacionDeInmueblecoagiw2());
 			result.setCodigoOfertaUvem(servicioGMPDJB13_INS.getCodigoDeOfertacoofew());
 		} catch (WIException e) {
@@ -1297,16 +1348,18 @@ public class UvemManager implements UvemManagerApi {
 			// COSEM1
 			if (CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA.equals(codigoServicioModificacion)) {
 				servicioGMPTOE83_INS.setCodigoServicioModificacionSolicitcosem1('4');
-			} else if (CODIGO_SERVICIO_MODIFICACION.ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA.equals(codigoServicioModificacion)){
+			} else if (CODIGO_SERVICIO_MODIFICACION.ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA
+					.equals(codigoServicioModificacion)) {
 				servicioGMPTOE83_INS.setCodigoServicioModificacionSolicitcosem1('5');
-			} else if (CODIGO_SERVICIO_MODIFICACION.SOLICITUD_ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA.equals(codigoServicioModificacion)){
+			} else if (CODIGO_SERVICIO_MODIFICACION.SOLICITUD_ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA
+					.equals(codigoServicioModificacion)) {
 				servicioGMPTOE83_INS.setCodigoServicioModificacionSolicitcosem1('6');
-			} else if (CODIGO_SERVICIO_MODIFICACION.ANULAR_SOLICITUD_ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA.equals(codigoServicioModificacion)){
+			} else if (CODIGO_SERVICIO_MODIFICACION.ANULAR_SOLICITUD_ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA
+					.equals(codigoServicioModificacion)) {
 				servicioGMPTOE83_INS.setCodigoServicioModificacionSolicitcosem1('7');
-			} else{
+			} else {
 				throw new JsonViewerException("Error, opción no soportada");
 			}
-			
 
 			// LCOMOA
 			if (!Checks.esNulo(motivoAnulacionReserva)) {
@@ -1335,11 +1388,11 @@ public class UvemManager implements UvemManagerApi {
 			// BINDRE
 			if (INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA.equals(indicadorDevolucionReserva)) {
 				servicioGMPTOE83_INS.setIndicadorDevolucionReservabindre('s');
-			} else if (INDICADOR_DEVOLUCION_RESERVA.NO_DEVOLUCION_RESERVA.equals(indicadorDevolucionReserva)){
+			} else if (INDICADOR_DEVOLUCION_RESERVA.NO_DEVOLUCION_RESERVA.equals(indicadorDevolucionReserva)) {
 				servicioGMPTOE83_INS.setIndicadorDevolucionReservabindre('N');
-			} else if (INDICADOR_DEVOLUCION_RESERVA.NO_APLICA.equals(indicadorDevolucionReserva)){
+			} else if (INDICADOR_DEVOLUCION_RESERVA.NO_APLICA.equals(indicadorDevolucionReserva)) {
 				servicioGMPTOE83_INS.setIndicadorDevolucionReservabindre(' ');
-			} else{
+			} else {
 				throw new Exception("indicador devolución no soportado");
 			}
 
@@ -1630,21 +1683,22 @@ public class UvemManager implements UvemManagerApi {
 			return null;
 		}
 	}
-	
+
 	@Override
 	public void modificacionesSegunPropuesta(TareaExterna tareaExterna) {
-		
+
 		Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
 		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 		Long porcentajeImpuesto = null;
 		if (!Checks.esNulo(expediente.getCondicionante())) {
 			if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
 				porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
-			} 
+			}
 		}
-		
+
 		try {
-			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto, null);
+			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi
+					.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto, null);
 			instanciaDecisionDto.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_HONORARIOS);
 			logger.info("------------ LLAMADA WS MOD3(HONORARIOS) -----------------");
 			this.modificarInstanciaDecisionTres(instanciaDecisionDto);
@@ -1661,15 +1715,15 @@ public class UvemManager implements UvemManagerApi {
 			logger.error("error en OfertasManager", e);
 			throw new UserException(e.getMessage());
 		}
-		
+
 	}
-	
+
 	@Override
-	public boolean esTramiteOffline(String codigoTarea,ExpedienteComercial expediente) {
+	public boolean esTramiteOffline(String codigoTarea, ExpedienteComercial expediente) {
 		boolean esOffline = false;
 		boolean tieneFechaFirmaReserva = false;
-		if(!Checks.esNulo(expediente.getReserva())){
-			if (!Checks.esNulo(expediente.getReserva().getFechaFirma())){
+		if (!Checks.esNulo(expediente.getReserva())) {
+			if (!Checks.esNulo(expediente.getReserva().getFechaFirma())) {
 				tieneFechaFirmaReserva = true;
 			}
 		}
@@ -1677,13 +1731,12 @@ public class UvemManager implements UvemManagerApi {
 		if (!Checks.esNulo(expediente.getFechaContabilizacionPropietario())) {
 			tieneFechaIngresoChequeVenta = true;
 		}
-		if(codigoTarea.equals(UpdaterServiceSancionOfertaInstruccionesReserva.CODIGO_T013_INSTRUCCIONES_RESERVA)){
-			esOffline = tieneFechaFirmaReserva || tieneFechaIngresoChequeVenta;			
-		}else if(codigoTarea.equals(UpdaterServiceSancionOfertaResultadoPBC.CODIGO_T013_RESULTADO_PBC)){
+		if (codigoTarea.equals(UpdaterServiceSancionOfertaInstruccionesReserva.CODIGO_T013_INSTRUCCIONES_RESERVA)) {
+			esOffline = tieneFechaFirmaReserva || tieneFechaIngresoChequeVenta;
+		} else if (codigoTarea.equals(UpdaterServiceSancionOfertaResultadoPBC.CODIGO_T013_RESULTADO_PBC)) {
 			esOffline = tieneFechaIngresoChequeVenta;
 		}
 		return esOffline;
-	}	
-	
+	}
 
 }

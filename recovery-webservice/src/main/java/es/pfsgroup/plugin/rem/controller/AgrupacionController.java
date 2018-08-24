@@ -194,7 +194,7 @@ public class AgrupacionController extends ParadiseJsonController {
 			@RequestParam(required = false) Integer activoPrincipal, ModelMap model) {
 
 		try {
-			adapter.createActivoAgrupacion(numActivo, idEntidad, activoPrincipal);
+			adapter.createActivoAgrupacion(numActivo, idEntidad, activoPrincipal,false);
 			model.put("success", true);
 
 		} catch (JsonViewerException jvex) {

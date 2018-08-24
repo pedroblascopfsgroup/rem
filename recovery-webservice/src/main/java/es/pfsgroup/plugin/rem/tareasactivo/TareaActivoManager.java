@@ -186,7 +186,7 @@ public class TareaActivoManager implements TareaActivoApi {
 	@Override
 	@Transactional(readOnly=false)
 	public void saltoCierreEconomico(Long idTareaExterna){
-			saltoDesdeTareaExterna(idTareaExterna,ActivoGenerarSaltoImpl.CODIGO_SALTO_CIERRE);
+			saltoDesdeTareaExterna(idTareaExterna,ActivoGenerarSaltoImpl.CODIGO_SALTO_CIERRE_TRABAJO);
 	}
 	
 	
@@ -258,13 +258,13 @@ public class TareaActivoManager implements TareaActivoApi {
 		}
 	}
 	
-	@Override
-	@Transactional(readOnly=false)
-	public void saltoDesdeTramite(Long idTramite, String tareaDestino){
+//	@Override
+//	@Transactional(readOnly=false)
+//	public void saltoDesdeTramite(Long idTramite, String tareaDestino){
 		
-		ActivoTramite tramite = activoTramiteApi.get(Long.valueOf(idTramite));
-		saltoTarea(tramite.getProcessBPM(), tareaDestino);
-	}
+//		ActivoTramite tramite = activoTramiteApi.get(Long.valueOf(idTramite));
+//		saltoTarea(tramite.getProcessBPM(), tareaDestino);
+//	}
 	
 	@Override
 	@Transactional(readOnly=false)
@@ -386,7 +386,7 @@ public class TareaActivoManager implements TareaActivoApi {
 	}
 	
 	private List<VTareaActivoCount> getContadores(Usuario usuario) {
-		List<EXTGrupoUsuarios> grupos = genericDao.getList(EXTGrupoUsuarios.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId()));
+		List<EXTGrupoUsuarios> grupos = genericDao.getList(EXTGrupoUsuarios.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 		List<VTareaActivoCount> contadores = vTareaActivoCountDao.getContador(usuario, grupos);
 		return contadores;
 	}

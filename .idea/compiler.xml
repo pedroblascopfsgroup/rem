@@ -87,9 +87,12 @@
       <module name="pfs-commons-java" target="1.6" />
       <module name="pfs-testfwk" target="1.6" />
       <module name="plugins" target="1.6" />
+      <module name="proyecto-bankia-online" target="1.6" />
       <module name="proyecto-rem-online" target="1.6" />
+      <module name="rec-batch" target="1.6" />
       <module name="rec-common" target="1.6" />
       <module name="rec-encrypt" target="1.6" />
+      <module name="rec-web" target="1.6" />
       <module name="recovery" target="1.5" />
       <module name="recovery-agendaMultifuncion-plugin" target="1.6" />
       <module name="recovery-api-plugin" target="1.6" />
@@ -114,6 +117,8 @@
       <module name="recovery-gestordocumental-plugin" target="1.6" />
       <module name="recovery-gestordocumentalREM-plugin" target="1.6" />
       <module name="recovery-instruccionesExterna-plugin" target="1.6" />
+      <module name="recovery-integracionuvem-plugin" target="1.6" />
+      <module name="recovery-iplus-plugin" target="1.6" />
       <module name="recovery-itinerarios-plugin" target="1.6" />
       <module name="recovery-liquidaciones-plugin" target="1.6" />
       <module name="recovery-liquidacionesWeb-plugin" target="1.6" />

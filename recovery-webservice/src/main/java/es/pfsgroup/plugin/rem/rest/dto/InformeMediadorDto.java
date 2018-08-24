@@ -71,10 +71,11 @@ public class InformeMediadorDto implements Serializable {
 		Update.class })
 	private Long idProveedorRemAnterior;
 
-	@NotNull(groups = { Insert.class, Update.class })
-	@Diccionary(clase = ActivoProveedor.class, foreingField="codigoProveedorRem",message = "El idProveedorRem no existe", groups = { Insert.class,
-			Update.class })
-	@EntityDefinition(propertyName = "mediadorInforme", classObj = ActivoProveedor.class, foreingField = "codigoProveedorRem")
+	//Guarda idProveedorRem como mediador del activo
+//	@NotNull(groups = { Insert.class, Update.class })
+// 	@Diccionary(clase = ActivoProveedor.class, foreingField="codigoProveedorRem",message = "El idProveedorRem no existe", groups = { Insert.class,
+// 			Update.class })
+// 	@EntityDefinition(propertyName = "mediadorInforme", classObj = ActivoProveedor.class, foreingField = "codigoProveedorRem")
 	private Long idProveedorRem;
 
 	@NotNull(groups = Insert.class)
@@ -181,7 +182,7 @@ public class InformeMediadorDto implements Serializable {
 	@NotNull(groups = Insert.class)
 	@Diccionary(clase = DDTipoGradoPropiedad.class, message = "El codTipoPropiedad no existe", groups = { Insert.class,
 			Update.class })
-	@EntityDefinition(procesar = false)
+	@EntityDefinition(propertyName = "tipoGradoPropiedad", classObj = DDTipoGradoPropiedad.class)
 	private String codTipoPropiedad;
 
 	@NotNull(groups = Insert.class)
@@ -308,7 +309,7 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "reformaPresupuesto")
 	private Double otrasReformasNecesariasImporteAproximado;
 
-	@EntityDefinition(propertyName = "distribucionTxt")
+	@EntityDefinition(propertyName = "infoDistribucionInterior")
 	private String distribucionInterior;
 
 	@EntityDefinition(propertyName = "edificioDivisible")
@@ -377,7 +378,8 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "mtsFachadaPpal")
 	private Float metrosLinealesFachadaPrincipal;
 
-	@EntityDefinition(propertyName = "mtsAlturaLibre")
+	//@EntityDefinition(propertyName = "mtsAlturaLibre")
+	@EntityDefinition(procesar = false)
 	private Float altura;
 
 	@Diccionary(clase = DDSubtipoPlazaGaraje.class, message = "El codSubtipoPlazasGaraje no existe", groups = {
@@ -405,7 +407,8 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "anchura")
 	private Float ancho;
 
-	@EntityDefinition(propertyName = "aparcamientoAltura")
+	//@EntityDefinition(propertyName = "aparcamientoAltura")
+	@EntityDefinition(procesar = false)
 	private Float alto;
 
 	@EntityDefinition(propertyName = "profundidad")
@@ -449,10 +452,10 @@ public class InformeMediadorDto implements Serializable {
 	private Boolean buenEstadoContadorAguaInstalaciones;
 
 	@EntityDefinition(propertyName = "gasBuenEstado", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
-	private Boolean buenEstadoIntalacionGasInstalaciones;
+	private Boolean buenEstadoInstalacionGasInstalaciones;
 
 	@EntityDefinition(propertyName = "gasConContador", transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
-	private Boolean buenEstadoContadorGasInstalacion;
+	private Boolean buenEstadoContadorGasInstalaciones;
 
 	@Diccionary(clase = DDEstadoConservacion.class, message = "El codEstadoConservacionEdificio no existe", groups = {
 			Insert.class, Update.class })
@@ -1849,20 +1852,20 @@ public class InformeMediadorDto implements Serializable {
 		this.buenEstadoContadorAguaInstalaciones = buenEstadoContadorAguaInstalaciones;
 	}
 
-	public Boolean getBuenEstadoIntalacionGasInstalaciones() {
-		return buenEstadoIntalacionGasInstalaciones;
+	public Boolean getBuenEstadoInstalacionGasInstalaciones() {
+		return buenEstadoInstalacionGasInstalaciones;
 	}
 
-	public void setBuenEstadoIntalacionGasInstalaciones(Boolean buenEstadoIntalacionGasInstalaciones) {
-		this.buenEstadoIntalacionGasInstalaciones = buenEstadoIntalacionGasInstalaciones;
+	public void setBuenEstadoInstalacionGasInstalaciones(Boolean buenEstadoInstalacionGasInstalaciones) {
+		this.buenEstadoInstalacionGasInstalaciones = buenEstadoInstalacionGasInstalaciones;
 	}
 
-	public Boolean getBuenEstadoContadorGasInstalacion() {
-		return buenEstadoContadorGasInstalacion;
+	public Boolean getBuenEstadoContadorGasInstalaciones() {
+		return buenEstadoContadorGasInstalaciones;
 	}
 
-	public void setBuenEstadoContadorGasInstalacion(Boolean buenEstadoContadorGasInstalacion) {
-		this.buenEstadoContadorGasInstalacion = buenEstadoContadorGasInstalacion;
+	public void setBuenEstadoContadorGasInstalaciones(Boolean buenEstadoContadorGasInstalaciones) {
+		this.buenEstadoContadorGasInstalaciones = buenEstadoContadorGasInstalaciones;
 	}
 
 	public String getCodEstadoConservacionEdificio() {

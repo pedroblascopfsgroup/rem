@@ -283,7 +283,7 @@ public interface TrabajoApi {
 	 */
 	@BusinessOperationDefinition("trabajoManager.getSeleccionTarifasTrabajo")
 	public DtoPage getSeleccionTarifasTrabajo(DtoGestionEconomicaTrabajo filtro, String cartera, String tipoTrabajo,
-			String subtipoTrabajo);
+			String subtipoTrabajo, String codigoTarifa, String descripcionTarifa);
 
 	/**
 	 * Devuelve una lista de tarifas aplicadas al trabajo determinado
@@ -811,5 +811,15 @@ public interface TrabajoApi {
 	 * @return
 	 */
 	public boolean checkReservaNecesariaNotNull(ExpedienteComercial expediente);
+
+	public Boolean trabajoTieneTarifaPlana(TareaExterna tareaExterna);
+
+	boolean checkLiberbank(TareaExterna tareaExterna);
+
+	boolean checkLiberbank(Trabajo trabajo);
+
+	public boolean superaLimiteLiberbank(Long idTrabajo);
+
+	Boolean trabajoEsTarificado(Long idTramite);
 
 }

@@ -659,7 +659,9 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 			for(int i=0; i<listaTareas.size(); i++){
 				tarAct = listaTareas.get(i);
 				if(Checks.esNulo(tarAct.getFechaFin())){
-					listaTareasProc.add(tarAct.getTareaExterna().getTareaProcedimiento());
+					if(!Checks.esNulo(tarAct.getTareaExterna())){
+						listaTareasProc.add(tarAct.getTareaExterna().getTareaProcedimiento());
+					}
 				}
 			}
 		}
@@ -777,4 +779,22 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
         d.setTime(d.getTime() + days * 1000 * 60 * 60 * 24);
         return d;
     }
+	
+	@Override
+	public List<TareaExterna> getListaTareaExternaByIdTramite(Long idTramite) {
+		TareaActivo tarAct = null;
+		List<TareaExterna> listaTareaExterna = new ArrayList<TareaExterna>();
+		
+		List<TareaActivo>  listaTareas = tareaActivoApi.getTareasActivoByIdTramite(idTramite);
+		if(!Checks.esNulo(listaTareas)){
+			for(int i=0; i<listaTareas.size(); i++){
+				tarAct = listaTareas.get(i);
+				
+				listaTareaExterna.add(tarAct.getTareaExterna());
+				
+			}
+		}
+
+		return listaTareaExterna;
+	}
 }

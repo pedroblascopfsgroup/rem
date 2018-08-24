@@ -3,14 +3,20 @@ package es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.devon.files.FileItem;
+import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -27,13 +33,18 @@ import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 
 @Component
 public class NotificatorServicePBCResultado extends AbstractNotificatorService implements NotificatorService {
 
 	private static final String COMBO_RESULTADO = "comboResultado";
 	private static final String CODIGO_T013_RESULTADO_PBC = "T013_ResultadoPBC";
+	private static final String USUARIO_FICTICIO_PBC_BANKIA = "ficticioPbcBankia";
+	private static final String USUARIO_FICTICIO_PBC_SAREB = "ficticioPbcSareb";
+	private static final String USUARIO_FICTICIO_PBC_LIBERBANK = "ficticioPbcLiberbank";
 
 	@Autowired
 	private GenericAdapter genericAdapter;
@@ -55,6 +66,9 @@ public class NotificatorServicePBCResultado extends AbstractNotificatorService i
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
 
 	@Override
 	public String[] getKeys() {
@@ -93,22 +107,86 @@ public class NotificatorServicePBCResultado extends AbstractNotificatorService i
 		if (oferta == null) {
 			return;
 		}
+		
+		Activo activo = oferta.getActivoPrincipal();
+		
+		if (activo == null) {
+			return;
+		}
+		
+		DDCartera cartera = activo.getCartera();
+		
+		if (DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()) 
+				|| DDCartera.CODIGO_CARTERA_LIBERBANK.equals(cartera.getCodigo())) {
+			
+			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
 
-		DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
+			String titulo = "Resolución PBC&FT del expediente " + expediente.getNumExpediente() + ": Solicitud documentación para formalización venta";
 
-		String titulo = "Resolución PBC&FT del expediente " + expediente.getNumExpediente();
+			dtoSendNotificator.setTitulo(titulo);
 
-		dtoSendNotificator.setTitulo(titulo);
+			String contenido = String.format("<p>Le informamos que para iniciar la tramitación de la operación objeto del presente, precisamos que nos remita a la mayor brevedad posible lo siguiente:</p>"
+					+ "<ul style='list-style-type:none'>"
+					+ "<li>- El formulario de cliente anexo debidamente completado y firmado por el comprador o compradores* (de persona física o persona jurídica según proceda).</li><br/>"
+					+ "<ul style='list-style-type:none'>"
+					+ "<li>* Deberá aportarse un formulario por cada comprador en caso de que haya más de uno.</li><br/>"
+					+ "</ul>"
+					+ "<li>- Aportar la información y documentación que se detalla en el documento adjunto denominado “Información y documentación”.</li>"
+					+ "</ul>"
+					+ "<p>Le informamos que la autorización PBC&FT de la oferta %s se ha resuelto como %s.</p>", oferta.getNumOferta(), pbcEstado);
+			
+			List<DtoAdjuntoMail> adjuntos = new ArrayList<DtoAdjuntoMail>();
+			FileItem f1 = null;
+			FileItem f2 = null;
+			FileItem f3 = null;
+			
+			List<String> mailsPara = getEmailsToSend(expediente, oferta);
+			List<String> mailsCC = new ArrayList<String>();
+			
+			mailsCC.add(this.getCorreoFrom());
+			
+				if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(cartera.getCodigo())) {
+					
+					f1 = FileItemUtils.fromResource("docs/anexo_1_a_Formulario_personas_fisicas_liberbank.docx");
+					f2 = FileItemUtils.fromResource("docs/anexo_1_b_Formulario_personas_juridicas_liberbank.docx");
+					f3 = FileItemUtils.fromResource("docs/informacion_y_documentacion.docx");
+					
+					adjuntos.add(createAdjunto(f1, "Anexo_1_a_Formulario_personas_fisicas.docx"));
+					adjuntos.add(createAdjunto(f2, "Anexo_1_b_Formulario_personas_juridicas.docx"));
+					adjuntos.add(createAdjunto(f3, "Información_y_documentación.docx"));
+					
+				}else {
+					
+					f1 = FileItemUtils.fromResource("docs/anexo_1_a_Formulario_personas_fisicas.docx");
+					f2 = FileItemUtils.fromResource("docs/anexo_1_b_Formulario_personas_juridicas.docx");
+					f3 = FileItemUtils.fromResource("docs/informacion_y_documentacion.docx");
+					
+					adjuntos.add(createAdjunto(f1, "Anexo_1_a_Formulario_personas_fisicas.docx"));
+					adjuntos.add(createAdjunto(f2, "Anexo_1_b_Formulario_personas_juridicas.docx"));
+					adjuntos.add(createAdjunto(f3, "Información_y_documentación.docx"));
+					
+				}
+								
+				genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido), adjuntos);
+			
+		} else {
+			
+			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
 
-		String contenido = String.format("<p>Le informamos que la autorización PBC&FT de la oferta %s se ha resuelto como %s.</p>", oferta.getNumOferta(), pbcEstado);
+			String titulo = "Resolución PBC&FT del expediente " + expediente.getNumExpediente();
 
-		List<String> mailsPara = getEmailsToSend(expediente, oferta);
-		List<String> mailsCC = new ArrayList<String>();
+			dtoSendNotificator.setTitulo(titulo);
 
-		mailsCC.add(this.getCorreoFrom());
+			String contenido = String.format("<p>Le informamos que la autorización PBC&FT de la oferta %s se ha resuelto como %s.</p>", oferta.getNumOferta(), pbcEstado);
 
-		genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
+			List<String> mailsPara = getEmailsToSend(expediente, oferta);
+			List<String> mailsCC = new ArrayList<String>();
 
+			mailsCC.add(this.getCorreoFrom());
+
+			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
+			
+		}
 	}
 
 	private List<String> getEmailsToSend(ExpedienteComercial expediente, Oferta oferta) {
@@ -143,6 +221,21 @@ public class NotificatorServicePBCResultado extends AbstractNotificatorService i
 		if (gestorComercial != null && !Checks.esNulo(gestorComercial.getEmail())) {
 			mailsPara.add(gestorComercial.getEmail());
 		}
+		
+		if(!Checks.esNulo(activo.getCartera()) && DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())){
+			if(!Checks.esNulo(usuarioManager.getByUsername(USUARIO_FICTICIO_PBC_SAREB))){
+				mailsPara.add(usuarioManager.getByUsername(USUARIO_FICTICIO_PBC_SAREB).getEmail());
+			}				
+		} else if(!Checks.esNulo(activo.getCartera()) && DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())){
+			if(!Checks.esNulo(usuarioManager.getByUsername(USUARIO_FICTICIO_PBC_BANKIA))){
+				mailsPara.add(usuarioManager.getByUsername(USUARIO_FICTICIO_PBC_BANKIA).getEmail());
+			}				
+		} else if(!Checks.esNulo(activo.getCartera()) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
+			if(!Checks.esNulo(usuarioManager.getByUsername(USUARIO_FICTICIO_PBC_LIBERBANK))){
+				mailsPara.add(usuarioManager.getByUsername(USUARIO_FICTICIO_PBC_LIBERBANK).getEmail());
+			}				
+		}
+		
 		return mailsPara;
 	}
 
@@ -166,6 +259,14 @@ public class NotificatorServicePBCResultado extends AbstractNotificatorService i
 		}
 
 		return expediente;
+	}
+	
+	private DtoAdjuntoMail createAdjunto(FileItem fileitem, String name) {
+		DtoAdjuntoMail adjMail = new DtoAdjuntoMail();
+		Adjunto adjunto = new Adjunto(fileitem);
+		adjMail.setAdjunto(adjunto);
+		adjMail.setNombre(name);	
+		return adjMail;
 	}
 
 }

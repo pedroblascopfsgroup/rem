@@ -1,5 +1,13 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
@@ -15,14 +23,6 @@ import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
-
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public interface ActivoApi {
 
@@ -160,7 +160,7 @@ public interface ActivoApi {
 	/**
 	 * True si el activo tiene asignado un presupuesto para el ejercicio actual, "aunque sea 0 euros"
 	 *
-	 * @param idActivo
+	 * @param idActivo: ID del activo.
 	 * @return
 	 */
 	@BusinessOperationDefinition("activoManager.checkHayPresupuestoEjercicioActual")
@@ -320,7 +320,7 @@ public interface ActivoApi {
 	/**
 	 * Obtiene el último estado de publicacion ordinaria en el que estuvo un activo (ordinaria, oculto, precio oculto)
 	 *
-	 * @param activoID
+	 * @param activoID: ID del activo.
 	 * @return
 	 */
 	ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicado(Long activoID);
@@ -976,6 +976,10 @@ public interface ActivoApi {
 	boolean createImpuestos(DtoImpuestosActivo dtoImpuestosfilter) throws ParseException;
 
 	boolean deleteImpuestos(DtoImpuestosActivo dtoImpuestosFilter);
+
+	boolean esLiberBank(Long idActivo);
+
+	DtoActivoFichaCabecera getActivosPropagables(Long idActivo);
 
 	boolean updateImpuestos(DtoImpuestosActivo dtoImpuestosFilter) throws ParseException;
 

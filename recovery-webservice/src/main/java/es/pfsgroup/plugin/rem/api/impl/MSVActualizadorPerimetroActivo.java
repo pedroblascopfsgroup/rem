@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -52,7 +53,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 
 	@Autowired
 	private ActivoDao activoDao;
-	
+
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
 	
@@ -69,7 +70,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 	
 	@Override
 	@Transactional(readOnly = false)
-	public void procesaFila(MSVHojaExcel exc, int fila) throws IOException, ParseException, JsonViewerException, SQLException {
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
 		
 		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 		
@@ -91,7 +92,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 		String  tmpMotivoAplicaFormalizar = exc.dameCelda(fila,11);
 		Integer tmpAplicaPublicar = getCheckValue(exc.dameCelda(fila, 12));
 		String  tmpMotivoAplicaPublicar = exc.dameCelda(fila,13);
-		
+
 		perimetroActivo.setActivo(activo);
 		//Incluido en perimetro		---------------------------
 		if(!CHECK_NO_CAMBIAR.equals(tmpIncluidoEnPerimetro)) perimetroActivo.setIncluidoEnPerimetro(tmpIncluidoEnPerimetro);
@@ -159,11 +160,11 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 		if(!CHECK_NO_CAMBIAR.equals(tmpAplicaPublicar)){
 			perimetroActivo.setAplicaPublicar(BooleanUtils.toBooleanObject(tmpAplicaPublicar));
 			perimetroActivo.setFechaAplicaPublicar(new Date());
-		} 
+		}
 
 		if(!Checks.esNulo(tmpMotivoAplicaPublicar)) perimetroActivo.setMotivoAplicaPublicar(tmpMotivoAplicaPublicar);
-		
-		
+
+
 		// ---------------------------
 		//Persiste los datos, creando el registro de perimetro
 		// Todos los datos son de PerimetroActivo, a excepcion del tipo comercializacion que es del Activo
@@ -180,6 +181,8 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 
 		// Actualizar estado publicación activo a través del procedure.
 		activoDao.publicarActivoConHistorico(activo.getId(), "masivo - perímetro");
+
+		return new ResultadoProcesarFila();
 	}
 	
 	/**

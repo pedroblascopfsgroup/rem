@@ -74,7 +74,9 @@ sql/9.2/rem/migracion_carterizada/INFORMES/CONTRASTE/OUTPUT/REPORT-informe_contr
 sql/9.2/rem/migracion_carterizada/INFORMES/CONTRASTE/OUTPUT/REPORT-informe_contraste.xlsx
 sql/9.2/rem/migracion_carterizada/Ficheros_entrada/Ficheros_antiguos/
 sql/9.2/rem/migracion_carterizada/Ficheros_entrada/*.csv
-
+reports/salida/
+reports/*.csv
+reports/salida.zip
 
 ### SQL ###
 

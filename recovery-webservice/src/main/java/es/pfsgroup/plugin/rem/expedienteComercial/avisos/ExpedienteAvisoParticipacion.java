@@ -28,24 +28,24 @@ public class ExpedienteAvisoParticipacion implements ExpedienteAvisadorApi {
 		Double importeOferta = !Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteContraOferta() : oferta.getImporteOferta();
 		//BigDecimal sumaTotal= new BigDecimal("0.00");
 		//BigDecimal sumaCien= new BigDecimal("100.00");
-		double suma = 0D;
-		double importeActivoOferta = 0D;
+		BigDecimal suma = new BigDecimal(0);
+		BigDecimal importeActivoOferta = null;
 		DtoAviso dto = new DtoAviso();
 		
 		try {
 
 			List<ActivoOferta> activosOferta = oferta.getActivosOferta();
 			for (ActivoOferta activoOferta : activosOferta) {
-				//suma += activoOferta.getImporteActivoOferta();
+
+				if (!Checks.esNulo(activoOferta.getImporteActivoOferta())) {
+					importeActivoOferta = new BigDecimal(String.valueOf(activoOferta.getImporteActivoOferta()));
+				} else {
+					importeActivoOferta = new BigDecimal(0);
+				}
 				
-				//String suma = activoOferta.getPorcentajeParticipacion().toString();
-				//suma = suma.replace(',', '.');
-				//sumaTotal = sumaTotal.add(new BigDecimal(suma));
-				importeActivoOferta = Math.round(activoOferta.getImporteActivoOferta()*100.0)/100.0;
-				
-				suma += importeActivoOferta;
+				suma = suma.add(importeActivoOferta);
 			}
-			if(((suma*100)/100) != importeOferta) {
+			if(suma.doubleValue() != importeOferta) {
 				dto.setId(String.valueOf(expediente.getId()));
 				dto.setDescripcion("% participación de activos incorrecto");
 			}

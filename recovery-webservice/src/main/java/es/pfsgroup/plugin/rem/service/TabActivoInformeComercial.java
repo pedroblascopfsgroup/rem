@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -9,13 +10,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.coreextension.utils.UtilDiccionarioManager;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -33,12 +38,15 @@ import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConstruccion;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
+import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Component
 public class TabActivoInformeComercial implements TabActivoService {
@@ -59,6 +67,12 @@ public class TabActivoInformeComercial implements TabActivoService {
 	
 	@Autowired
 	private RestApi restApi;
+
+	@Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
 
 	@Override
 	public String[] getKeys() {
@@ -310,10 +324,18 @@ public class TabActivoInformeComercial implements TabActivoService {
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getTipoActivoCodigo());
 					DDTipoActivo tipoActivo = (DDTipoActivo) genericDao.get(DDTipoActivo.class, filtro);
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "tipoActivo", tipoActivo);
+				} else if (!Checks.esNulo(activo.getTipoActivo())) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activo.getTipoActivo().getCodigo());
+					DDTipoActivo tipoActivo = (DDTipoActivo) genericDao.get(DDTipoActivo.class, filtro);
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "tipoActivo", tipoActivo);
 				}
 
 				if (!Checks.esNulo(activoInformeDto.getSubtipoActivoCodigo())) {
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getSubtipoActivoCodigo());
+					DDSubtipoActivo subtipoActivo = (DDSubtipoActivo) genericDao.get(DDSubtipoActivo.class, filtro);
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "subtipoActivo", subtipoActivo);
+				} else if (!Checks.esNulo(activo.getSubtipoActivo())){
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activo.getSubtipoActivo().getCodigo());
 					DDSubtipoActivo subtipoActivo = (DDSubtipoActivo) genericDao.get(DDSubtipoActivo.class, filtro);
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "subtipoActivo", subtipoActivo);
 				}
@@ -351,8 +373,10 @@ public class TabActivoInformeComercial implements TabActivoService {
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "estadoConservacion", estadoConservacion);
 				}
 
-				// Datos del edificio.
-				if (!Checks.esNulo(activo.getInfoComercial().getEdificio())) {
+				// Datos del edificio. Si el edificio es nulo, creamos registro en la tabla 
+				if (Checks.esNulo(activo.getInfoComercial().getEdificio())) {
+					activo.getInfoComercial().setEdificio(crearRegistroEdificio(activoInformeDto, activo));
+				}else {
 					// Reformas.
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "reformaFachada", activoInformeDto.getReformaFachada());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "reformaEscalera", activoInformeDto.getReformaEscalera());
@@ -361,41 +385,44 @@ public class TabActivoInformeComercial implements TabActivoService {
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "reformaCubierta", activoInformeDto.getReformaCubierta());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "reformaOtraZona", activoInformeDto.getReformaOtrasZonasComunes());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "reformaOtroDescEdificio", activoInformeDto.getReformaOtroDescEdificio());
-
+	
 					// Inf general.
 					if (!Checks.esNulo(activoInformeDto.getEstadoConservacionEdificioCodigo())) {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getEstadoConservacionEdificioCodigo());
 						DDEstadoConservacion estadoConservacion = (DDEstadoConservacion) genericDao.get(DDEstadoConservacion.class, filtro);
 						beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "estadoConservacionEdificio", estadoConservacion);
 					}
-
+	
 					if (!Checks.esNulo(activoInformeDto.getAnyoRehabilitacionEdificio())) {
 						beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "anyoRehabilitacionEdificio",
 								Integer.parseInt(activoInformeDto.getAnyoRehabilitacionEdificio()));
 					}
-
+	
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "numPlantas", activoInformeDto.getNumPlantas());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "ascensorEdificio", activoInformeDto.getAscensor());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "numAscensores", activoInformeDto.getNumAscensores());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "ediDescripcion", activoInformeDto.getEdiDescripcion());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "entornoInfraestructura", activoInformeDto.getEntornoInfraestructuras());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "entornoComunicacion", activoInformeDto.getEntornoComunicaciones());
+					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "edificioDescPlantas", activoInformeDto.getEdificioDescPlantas());
+				
+				}
 					
-					//Datos de la propiedad de comunitarios
-					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "existeComunidadEdificio", activoInformeDto.getInscritaComunidad());
-					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "derramaOrientativaComunidad", activoInformeDto.getDerramaOrientativaComunidad());
-					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "cuotaOrientativaComunidad", activoInformeDto.getCuotaOrientativaComunidad());
-					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "nombrePresidenteComunidadEdificio", activoInformeDto.getNomPresidenteComunidad());
-					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "telefonoAdministradorComunidadEdificio", activoInformeDto.getTelAdministradorComunidad());
-					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "nombreAdministradorComunidadEdificio", activoInformeDto.getNomAdministradorComunidad());
-					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "telefonoPresidenteComunidadEdificio", activoInformeDto.getTelPresidenteComunidad());
+				//Datos de la propiedad de comunitarios
+				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "existeComunidadEdificio", activoInformeDto.getInscritaComunidad());
+				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "derramaOrientativaComunidad", activoInformeDto.getDerramaOrientativaComunidad());
+				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "cuotaOrientativaComunidad", activoInformeDto.getCuotaOrientativaComunidad());
+				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "nombrePresidenteComunidadEdificio", activoInformeDto.getNomPresidenteComunidad());
+				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "telefonoAdministradorComunidadEdificio", activoInformeDto.getTelAdministradorComunidad());
+				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "nombreAdministradorComunidadEdificio", activoInformeDto.getNomAdministradorComunidad());
+				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "telefonoPresidenteComunidadEdificio", activoInformeDto.getTelPresidenteComunidad());
 					
 					
-					//terrazas
-					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "numeroTerrazasCubiertas", activoInformeDto.getNumTerrazaCubierta());
-					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "descripcionTerrazasCubiertas", activoInformeDto.getDescTerrazaCubierta());
-					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "numeroTerrazasDescubiertas", activoInformeDto.getNumTerrazaDescubierta());
-					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "descripcionTerrazasDescubiertas", activoInformeDto.getDescTerrazaDescubierta());
+				//terrazas
+				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "numeroTerrazasCubiertas", activoInformeDto.getNumTerrazaCubierta());
+				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "descripcionTerrazasCubiertas", activoInformeDto.getDescTerrazaCubierta());
+				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "numeroTerrazasDescubiertas", activoInformeDto.getNumTerrazaDescubierta());
+				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "descripcionTerrazasDescubiertas", activoInformeDto.getDescTerrazaDescubierta());
 					
 					
 					
@@ -424,7 +451,7 @@ public class TabActivoInformeComercial implements TabActivoService {
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "otrosOtrasDependencias", activoInformeDto.getDescOtras());
 					
 					
-				}
+				
 
 				// Datos de Infraestructura
 				if (!Checks.esNulo(activo.getInfoComercial().getInfraestructura())) {
@@ -472,21 +499,46 @@ public class TabActivoInformeComercial implements TabActivoService {
 				}
 				
 				//// HREOS-3025 Valor estimado del mediador: No se copia donde debe
+				Boolean valorEstimadoVentaExists = false;
+				Boolean valorEstimadoRentaExists = false;
+				
 				List<ActivoValoraciones> valoraciones = activo.getValoracion();
 				if (!Checks.esNulo(valoraciones) || !Checks.estaVacio(valoraciones)) {
 					for (ActivoValoraciones valoracion : valoraciones) {
 						if (!Checks.esNulo(activoInformeDto.getValorEstimadoVenta())) {
 							if (DDTipoPrecio.CODIGO_TPC_ESTIMADO_VENTA.equals(valoracion.getTipoPrecio().getCodigo())) {
 								valoracion.setImporte(activoInformeDto.getValorEstimadoVenta());
+								valorEstimadoVentaExists = true;
 							}
 						}
 						if (!Checks.esNulo(activoInformeDto.getValorEstimadoRenta())) {
 							if (DDTipoPrecio.CODIGO_TPC_ESTIMADO_RENTA.equals(valoracion.getTipoPrecio().getCodigo())) {
 								valoracion.setImporte(activoInformeDto.getValorEstimadoRenta());
+								valorEstimadoRentaExists = true;
 							}
 						}
 					}
 				}
+				
+				if(!valorEstimadoVentaExists && !Checks.esNulo(activoInformeDto.getValorEstimadoVenta())) {
+					ActivoValoraciones valoracionEstimadoVenta = new ActivoValoraciones();
+					valoracionEstimadoVenta.setImporte(activoInformeDto.getValorEstimadoVenta());
+					valoracionEstimadoVenta.setAuditoria(Auditoria.getNewInstance());
+					valoracionEstimadoVenta.setTipoPrecio((DDTipoPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPrecio.class, DDTipoPrecio.CODIGO_TPC_ESTIMADO_VENTA));
+					valoracionEstimadoVenta.setActivo(activo);
+					valoraciones.add(valoracionEstimadoVenta);
+				}
+			
+				
+				if(!valorEstimadoRentaExists && !Checks.esNulo(activoInformeDto.getValorEstimadoRenta())) {
+					ActivoValoraciones valoracionEstimadoRenta = new ActivoValoraciones();
+					valoracionEstimadoRenta.setImporte(activoInformeDto.getValorEstimadoRenta());
+					valoracionEstimadoRenta.setAuditoria(Auditoria.getNewInstance());
+					valoracionEstimadoRenta.setTipoPrecio((DDTipoPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPrecio.class, DDTipoPrecio.CODIGO_TPC_ESTIMADO_RENTA));
+					valoracionEstimadoRenta.setActivo(activo);
+					valoraciones.add(valoracionEstimadoRenta);
+				}
+				
 				activo.setValoracion(valoraciones);
 				activo.setInfoComercial(genericDao.save(ActivoInfoComercial.class, activo.getInfoComercial()));
 				restApi.marcarRegistroParaEnvio(ENTIDADES.INFORME, activo.getInfoComercial());
@@ -502,6 +554,56 @@ public class TabActivoInformeComercial implements TabActivoService {
 		}
 
 		return activo;
+	}
+	
+	private ActivoEdificio crearRegistroEdificio(DtoActivoInformeComercial activoInformeDto, Activo activo) {
+		ActivoEdificio edi = new ActivoEdificio();
+		
+		edi.setInfoComercial(activo.getInfoComercial());
+		
+		Auditoria auditoria = new Auditoria();
+		auditoria.setFechaCrear(new Date());
+		auditoria.setBorrado(false);
+		auditoria.setUsuarioCrear(proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado().getUsername());
+		
+		edi.setAuditoria(auditoria);
+		
+		// Reformas.
+		try {
+			beanUtilNotNull.copyProperty(edi, "reformaFachada", activoInformeDto.getReformaFachada());
+			beanUtilNotNull.copyProperty(edi, "reformaEscalera", activoInformeDto.getReformaEscalera());
+			beanUtilNotNull.copyProperty(edi, "reformaPortal", activoInformeDto.getReformaPortal());
+			beanUtilNotNull.copyProperty(edi, "reformaAscensor", activoInformeDto.getReformaAscensor());
+			beanUtilNotNull.copyProperty(edi, "reformaCubierta", activoInformeDto.getReformaCubierta());
+			beanUtilNotNull.copyProperty(edi, "reformaOtraZona", activoInformeDto.getReformaOtrasZonasComunes());
+			beanUtilNotNull.copyProperty(edi, "reformaOtroDescEdificio", activoInformeDto.getReformaOtroDescEdificio());
+		
+			// Inf general.
+			if (!Checks.esNulo(activoInformeDto.getEstadoConservacionEdificioCodigo())) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getEstadoConservacionEdificioCodigo());
+				DDEstadoConservacion estadoConservacion = (DDEstadoConservacion) genericDao.get(DDEstadoConservacion.class, filtro);
+				beanUtilNotNull.copyProperty(edi, "estadoConservacionEdificio", estadoConservacion);
+			}
+		
+			if (!Checks.esNulo(activoInformeDto.getAnyoRehabilitacionEdificio())) {
+				beanUtilNotNull.copyProperty(edi, "anyoRehabilitacionEdificio",
+						Integer.parseInt(activoInformeDto.getAnyoRehabilitacionEdificio()));
+			}
+		
+			beanUtilNotNull.copyProperty(edi, "numPlantas", activoInformeDto.getNumPlantas());
+			beanUtilNotNull.copyProperty(edi, "ascensorEdificio", activoInformeDto.getAscensor());
+			beanUtilNotNull.copyProperty(edi, "numAscensores", activoInformeDto.getNumAscensores());
+			beanUtilNotNull.copyProperty(edi, "ediDescripcion", activoInformeDto.getEdiDescripcion());
+			beanUtilNotNull.copyProperty(edi, "entornoInfraestructura", activoInformeDto.getEntornoInfraestructuras());
+			beanUtilNotNull.copyProperty(edi, "entornoComunicacion", activoInformeDto.getEntornoComunicaciones());
+			beanUtilNotNull.copyProperty(edi, "edificioDescPlantas", activoInformeDto.getEdificioDescPlantas());
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		
+		genericDao.save(ActivoEdificio.class, edi);
+		
+		return edi;
 	}
 
 	private void getDatosByTipoActivo(Activo activo, DtoActivoInformeComercial activoInformeDto) {

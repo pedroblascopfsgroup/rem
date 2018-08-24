@@ -22,6 +22,7 @@ public class DtoTrabajoListActivos extends WebDto {
 	private String situacionPosesoria;
 	private String numFincaRegistral;
 	private String tienePerimetroGestion;
+	private String codigoPromocionPrinex;
 	
 	public String getIdActivo() {
 		return idActivo;
@@ -82,6 +83,12 @@ public class DtoTrabajoListActivos extends WebDto {
 	}
 	public void setTienePerimetroGestion(String tienePerimetroGestion) {
 		this.tienePerimetroGestion = tienePerimetroGestion;
+	}
+	public String getCodigoPromocionPrinex() {
+		return codigoPromocionPrinex;
+	}
+	public void setCodigoPromocionPrinex(String codigoPromocionPrinex) {
+		this.codigoPromocionPrinex = codigoPromocionPrinex;
 	}
 	
 }

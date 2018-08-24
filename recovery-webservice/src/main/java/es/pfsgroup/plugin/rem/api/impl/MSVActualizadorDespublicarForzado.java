@@ -12,12 +12,14 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
+
 
 @Component
 public class MSVActualizadorDespublicarForzado extends AbstractMSVActualizador implements MSVLiberator {
@@ -38,7 +40,7 @@ public class MSVActualizadorDespublicarForzado extends AbstractMSVActualizador i
 
 	@Override
 	@Transactional(readOnly = false)
-	public void procesaFila(MSVHojaExcel exc, int fila) throws IOException, ParseException, JsonViewerException, SQLException {
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
 		
 		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 		String motivo = exc.dameCelda(fila, 1);
@@ -53,6 +55,7 @@ public class MSVActualizadorDespublicarForzado extends AbstractMSVActualizador i
 		dtoCambioEstadoPublicacion.setMotivoDespublicacionForzada(motivo);
 		
 		activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion);
+		return new ResultadoProcesarFila();
 	}
 
 }

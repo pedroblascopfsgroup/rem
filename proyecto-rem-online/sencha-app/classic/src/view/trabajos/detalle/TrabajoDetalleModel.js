@@ -108,7 +108,14 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    		 return true;
 	    	 else
 	    		 return false;
-	    }
+	    },
+	    
+	    esVisibleFechaAutorizacionPropietario: function(get){
+			 if(get('trabajo.cartera')=='Liberbank') 
+				 return true;
+			 else 
+				 return false;
+		}
 	    
     },
     

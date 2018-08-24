@@ -276,6 +276,13 @@
 		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
+	<logger name="es.pfsgroup.plugin.rem.api.impl.MSVActualizadorVentaCartera"
+		additivity="false">
+		<level value="debug" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+		<appender-ref ref="syslog" />
+	</logger>
 
 
 

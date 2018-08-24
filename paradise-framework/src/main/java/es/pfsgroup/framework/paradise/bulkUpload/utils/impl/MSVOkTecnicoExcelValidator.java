@@ -93,10 +93,10 @@ public class MSVOkTecnicoExcelValidator extends MSVExcelValidatorAbstract {
 			
 			List<Integer> activosInextistentes = isActiveExistsRows(exc);
 			mapaErrores.put(ACTIVO_INEXISTENTE, activosInextistentes);
-			if(Checks.estaVacio(activosInextistentes)){
+	//		if(Checks.estaVacio(activosInextistentes)){
 				mapaErrores.put(ACTIVO_VENDIDO, activosVendidosRows(exc));
 				mapaErrores.put(ACTIVO_FUERA_PERIMETRO, activosIncluidosPerimetroRows(exc));	
-			}
+	//		}
 			
 			if (!mapaErrores.get(ACTIVO_INEXISTENTE).isEmpty() || !mapaErrores.get(ACTIVO_VENDIDO).isEmpty() || !mapaErrores.get(ACTIVO_FUERA_PERIMETRO).isEmpty()) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);

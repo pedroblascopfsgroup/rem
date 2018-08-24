@@ -15,6 +15,7 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.JsonWriterConfiguratorTemplateRegistry;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
@@ -134,7 +135,7 @@ public class GenericController extends ParadiseJsonController{
 	 * @return Usuario identificado y sus funciones según perfil
 	 */
 	@RequestMapping(method = RequestMethod.GET) 
-	public ModelAndView getAuthenticationData(){
+	public ModelAndView getAuthenticationData(WebDto webDto, ModelMap model){
 
 		AuthenticationData authData =  genericApi.getAuthenticationData();		
 		return new ModelAndView("jsonView",  new ModelMap("data", authData));
@@ -289,6 +290,11 @@ public class GenericController extends ParadiseJsonController{
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComitesByCartera(String carteraCodigo, ModelMap model){
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComitesByCartera(carteraCodigo)));	
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComitesByIdExpediente(String idExpediente, ModelMap model){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComitesByIdExpediente(idExpediente)));	
 	}
 	
 	@RequestMapping(method= RequestMethod.GET)

@@ -71,7 +71,7 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 		setVariable(ConstantesBPMPFS.NOMBRE_NODO_SALIENTE, getNombreNodo(executionContext), executionContext);
 		
 		//HREOS-3393
-		if(!SALTO_RESOLUCION_EXPEDIENTE.equals(getTransitionName(executionContext))) {
+		if(!SALTO_T013_RESOLUCION_EXPEDIENTE.equals(getTransitionName(executionContext))) {
 			// Guardado adicional de datos de la tarea
 			guardadoAdicionalTarea(executionContext);
 			
@@ -129,13 +129,13 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 				}
 
 			} catch (UserException e) {
-				logger.info("No se ha podido validar el formulario correctamente. Trámite [" + getActivoTramite(executionContext).getId() + "], tarea [" + tareaExterna.getId() + "]. Mensaje ["
+				logger.error("No se ha podido validar el formulario correctamente. Trámite [" + getActivoTramite(executionContext).getId() + "], tarea [" + tareaExterna.getId() + "]. Mensaje ["
 						+ e.getMessage() + "]", e);
 				// Relanzamos la userException para que le aparezca al usuario
 				// en pantalla
 				throw (e);
 			} catch (Exception e) {
-				logger.info("No se ha podido validar el formulario correctamente. Trámite [" + getActivoTramite(executionContext).getId() + "], tarea [" + tareaExterna.getId() + "]", e);
+				logger.error("No se ha podido validar el formulario correctamente. Trámite [" + getActivoTramite(executionContext).getId() + "], tarea [" + tareaExterna.getId() + "]", e);
 				throw new UserException("bpm.error.script");
 			}
 		}

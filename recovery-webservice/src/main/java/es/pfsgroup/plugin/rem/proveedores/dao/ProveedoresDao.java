@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.proveedores.dao;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import es.capgemini.pfs.dao.AbstractDao;
@@ -65,6 +66,14 @@ public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
 	
 
 	public Long activosAsignadosProveedorMediador(Long idProveedor);
+	
+	/**
+	 * Este método devuelve el número de activos asignados no vendidos ni traspasados en base al proveedor
+	 * técnico 
+	 * 
+	 * @param idProveedor: id del proveedor 
+	 * */
+	public BigDecimal activosAsignadosNoVendidosNoTraspasadoProveedorTecnico(Long idProveedor);
 
 	/** Este método obtiene un proveedor contacto en base a un ID de usuario.
 	 * 

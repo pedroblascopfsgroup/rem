@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.activo.alta;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,6 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistr
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
-import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -55,7 +55,9 @@ import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.DtoAltaActivoThirdParty;
+import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.PresupuestoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
@@ -651,7 +653,26 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				ActivoBancario activoBancario = new ActivoBancario();
 				activoBancario.setActivo(activo);
 				beanUtilNotNull.copyProperty(activoBancario, "claseActivo", utilDiccionarioApi.dameValorDiccionarioByDes(DDClaseActivoBancario.class, claseActivo));
-				genericDao.save(ActivoBancario.class, activoBancario);	
+				genericDao.save(ActivoBancario.class, activoBancario);
+				if(DDClaseActivoBancario.CODIGO_INMOBILIARIO.equals(activoBancario.getClaseActivo().getCodigo())){
+					PresupuestoActivo presupuesto = new PresupuestoActivo();
+					presupuesto.setImporteInicial(50000.00);
+					presupuesto.setActivo(activo);
+					
+					Calendar cal = Calendar.getInstance();
+					String anyo = ((Integer) cal.get(Calendar.YEAR)).toString();
+					Ejercicio ej = genericDao.get(Ejercicio.class, genericDao.createFilter(FilterType.EQUALS, "anyo", anyo));
+					presupuesto.setEjercicio(ej);
+					
+					presupuesto.setFechaAsignacion(new Date());
+					
+					Auditoria auditoria = new Auditoria();
+					auditoria.setUsuarioCrear("CARGA_MASIVA");
+					auditoria.setFechaCrear(new Date());
+					presupuesto.setAuditoria(auditoria);
+					
+					genericDao.save(PresupuestoActivo.class, presupuesto);
+				}
 				if (activo.getTipoTitulo().getCodigo().equals(DDTipoTituloActivo.tipoTituloPDV)){
 					ActivoPlanDinVentas planDinVentas = new ActivoPlanDinVentas();
 					planDinVentas.setActivo(activo);

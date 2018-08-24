@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Vicente Martinez
---## FECHA_CREACION=20180305
+--## AUTOR=DAP
+--## FECHA_CREACION=20180604
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1787, HREOS-2142, REMVIP-205
+--## VERSION_ARTEFACTO=2.0.17
+--## INCIDENCIA_LINK=HREOS-1787, HREOS-2142, REMVIP-205, REMVIP-972
 --## PRODUCTO=NO
 --## Finalidad: Vista Materializada exclusiva para Stock que contiene la relación de activos con los condicionantes de venta
 --##           
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial
 --##		0.2 Correcciones para PDVs
 --##		0.3 REMVIP-205 - Cambio de la forma de cálculo de el campo "Pendiente de inscripción"
+--##		0.4 REMVIP-972 - Se añade código 06 al cruce con EAC 
 --##########################################
 --*/
 
@@ -142,7 +143,7 @@ BEGIN
 		NVL2 (NPA.ACT_ID, 1, 0)                                              AS PROINDIVISO,
 		DECODE (SPS.SPS_ACC_TAPIADO, 1, 1, 0)                                AS TAPIADO,
 		DECODE (EON.DD_EON_CODIGO, ''02'', 1, ''04'', 1, ''05'', 1, 0)       AS OBRANUEVA_SINDECLARAR,
-		DECODE (EAC.DD_EAC_CODIGO, ''02'', 1, 0)                             AS OBRANUEVA_ENCONSTRUCCION,
+		DECODE (EAC.DD_EAC_CODIGO, ''02'', 1, ''06'', 1, 0)                  AS OBRANUEVA_ENCONSTRUCCION,
 		DECODE (REG.REG_DIV_HOR_INSCRITO, 0, 1, 0)                           AS DIVHORIZONTAL_NOINSCRITA,
 		DECODE (EAC.DD_EAC_CODIGO, ''05'', 1, 0)                             AS RUINA,
 		SPS.SPS_OTRO                                                         AS OTRO,

@@ -48,6 +48,10 @@ Ext.define('HreRem.model.Proceso', {
     			type: 'boolean'
     		},
     		{
+    			name: 'conResultados',
+    			type: 'boolean'
+    		},
+    		{
     			name:'totalFilas'
     		},
     		{

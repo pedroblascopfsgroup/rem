@@ -79,6 +79,7 @@ public class UpdaterServiceComunAutorizacionPropietario implements
 				try {
 					if(!Checks.esNulo(valor.getValor()))
 						nuevoIncremento.setFechaAprobacion(ft.parse(valor.getValor()));
+						trabajo.setFechaAutorizacionPropietario(ft.parse(valor.getValor()));
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

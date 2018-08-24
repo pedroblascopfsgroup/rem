@@ -20,6 +20,7 @@ import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -57,6 +58,7 @@ import es.pfsgroup.plugin.rem.model.DtoSaltoTarea;
 import es.pfsgroup.plugin.rem.model.DtoSolicitarProrrogaTarea;
 import es.pfsgroup.plugin.rem.model.DtoTarea;
 import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
+import es.pfsgroup.plugin.rem.model.DtoTareaGestorSustitutoFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -64,6 +66,7 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.service.UpdaterTransitionService;
+import es.pfsgroup.plugin.rem.tareasactivo.dao.VTareasGestorSustitutoDao;
 import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
 
@@ -116,6 +119,9 @@ public class AgendaAdapter {
     @Autowired 
     private UpdaterTransitionService updaterTransitionService;
     
+    @Autowired
+    private VTareasGestorSustitutoDao tareasGSDao;
+    
 	SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
     
 	public Page getListTareas(DtoTareaFilter dtoTareaFiltro){
@@ -123,6 +129,7 @@ public class AgendaAdapter {
 		DtoTarea dto = new DtoTarea();
 
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		
 	    List<Perfil> perfiles = usuarioLogado.getPerfiles();
 	    List<DDZona> zonas = usuarioLogado.getZonas();
 	    dto.setPerfiles(perfiles);
@@ -607,6 +614,11 @@ public class AgendaAdapter {
 		return true;
 	}
 	
+	/*
+	 * Siempre que queramos usar logica de SALTO a TAREA, debemos usar TareaActivoManager.saltoDesdeTareaExterna
+	 * nunca llamar directamente a TareaActivoManager.saltoTarea, que es lo que hace saltoPBC (y que no se usa)
+	 * */
+	@Deprecated
 	public Boolean saltoPBC(Long idProcesBpm){
 		try{
 			tareaActivoApi.saltoPBC(idProcesBpm);
@@ -714,14 +726,31 @@ public class AgendaAdapter {
 		//Validacion de documentos de reserva si salta con reserva a ResultadoPBC o Posicionamiento y firma
 		updaterTransitionService.validarContratoYJustificanteReserva(dto);
 
-		// Creamos el salto a la tarea indicada.
-		tareaActivoApi.saltoDesdeTramite(dto.getIdTramite(), dto.getCodigoTareaDestino());
+		List<TareaExterna> listaTareas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(dto.getIdTramite());
+		for (int i = 0; i < listaTareas.size(); i++) {
+			if(listaTareas.size()>1) {
+				for (int j = 1; j < listaTareas.size(); j++) { 
+					TareaExterna tareaExterna = listaTareas.get(j);
+					proxyFactory.proxy(TareaExternaApi.class).borrar(tareaExterna);
+				}
+			}
+			TareaExterna tarea = listaTareas.get(i);
+			if (!Checks.esNulo(tarea)) {
+				//salto = adapter.saltoResolucionExpediente(tarea.getId());
+				tareaActivoApi.saltoDesdeTareaExterna(tarea.getId(),dto.getCodigoTareaDestino());
+				break;
+			}
+		}
 		
 		// Guardamos campos en expediente, oferta, y reserva, y actualizamos estado de expediente
 		// TODO Pendientes de definir muchos campos.
 		updaterTransitionService.updateFrom(dto);
 
 		return true;
+	}
+	
+	public Page getListTareasGS(DtoTareaGestorSustitutoFilter dto){
+		return tareasGSDao.getListTareasGS(dto);
 	}
 	
 	

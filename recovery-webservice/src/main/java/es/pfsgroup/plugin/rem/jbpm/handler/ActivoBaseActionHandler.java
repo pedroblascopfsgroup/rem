@@ -71,6 +71,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 
     public static final String SALTO_CIERRE_ECONOMICO = "saltoCierreEconomico";
     public static final String SALTO_RESOLUCION_EXPEDIENTE = "saltoResolucionExpediente";
+    public static final String SALTO_T013_RESOLUCION_EXPEDIENTE = "saltoT013_ResolucionExpediente";
     
     protected final Log logger = LogFactory.getLog(getClass());
 
@@ -656,7 +657,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
      */
     public boolean isTransicionMismoNodo(ExecutionContext executionContext) {
         Transition transicion = executionContext.getTransition();
-        if (transicion != null) { return transicion.getTo().getName().equals(transicion.getFrom().getName()); }
+        if (transicion != null && transicion.getTo() != null) { return transicion.getTo().getName().equals(transicion.getFrom().getName()); }
 
         return false;
     }

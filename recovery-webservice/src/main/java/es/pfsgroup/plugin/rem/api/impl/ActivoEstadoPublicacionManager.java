@@ -85,7 +85,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 	@Autowired
 	private ActivoValoracionDao activoValoracionDao;
-	
+
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
 	
@@ -94,22 +94,22 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	
 	@Autowired
 	private ActivoAgrupacionApi activoAgrupacionApi;
-	
+
     private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
-    public DtoCambioEstadoPublicacion getState(Long idActivo){  // TODO: eliminar.
+    public DtoCambioEstadoPublicacion getState(Long idActivo){ // TODO: eliminar.
     	DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = new DtoCambioEstadoPublicacion();
     	Activo activo = activoApi.get(idActivo);
     	dtoCambioEstadoPublicacion.setActivo(idActivo);
-    	
+
     	// Si el activo NO tiene estado, se toma como "no publicado"
     	DDEstadoPublicacion estadoPublicacion = null;
     	if(!Checks.esNulo(activo.getEstadoPublicacion())){
-    		estadoPublicacion = activo.getEstadoPublicacion();    		
+    		estadoPublicacion = activo.getEstadoPublicacion();
     	} else {
-    		estadoPublicacion = (DDEstadoPublicacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacion.class, DDEstadoPublicacion.CODIGO_NO_PUBLICADO); 
+    		estadoPublicacion = (DDEstadoPublicacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacion.class, DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
     	}
-    	
+
     	if(DDEstadoPublicacion.CODIGO_PUBLICADO.equals(estadoPublicacion.getCodigo())){
     		dtoCambioEstadoPublicacion.setPublicacionOrdinaria(true);
     	} else if(!Checks.esNulo(activo.getFechaPublicable())){
@@ -130,7 +130,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
     	} else if(DDEstadoPublicacion.CODIGO_NO_PUBLICADO.equals(estadoPublicacion.getCodigo())){
     		//Se quedaría todo a false en este estado
     	}
-    	
+
     	return dtoCambioEstadoPublicacion;
     }
 
@@ -247,8 +247,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			if(!Checks.esNulo(dtoCambioEstadoPublicacion.getOcultacionForzada()) && !dtoCambioEstadoPublicacion.getOcultacionForzada()){
 				ActivoHistoricoEstadoPublicacion ultimoHistoricoPublicacion = activoApi.getUltimoHistoricoEstadoPublicacion(dtoCambioEstadoPublicacion.getIdActivo());
 				if(!Checks.esNulo(activo.getEstadoPublicacion()) && !Checks.esNulo(ultimoHistoricoPublicacion) &&
-						DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO.equals(activo.getEstadoPublicacion().getCodigo())
-						&& ActivoHistoricoEstadoPublicacion.MOTIVO_OCULTACION_AUTOMATICA.equals(ultimoHistoricoPublicacion.getMotivo())){
+						DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO.equals(activo.getEstadoPublicacion().getCodigo())) {
 					ActivoHistoricoEstadoPublicacion penultimoHistoricoPublicacion = activoApi.getPenultimoHistoricoEstadoPublicacion(dtoCambioEstadoPublicacion.getIdActivo());
 
 					if(!Checks.esNulo(penultimoHistoricoPublicacion)){
@@ -294,11 +293,6 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				else{
 					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
 				}
-				//else {
-//					new JsonViewerException(
-//							"No es posible publicar el activo. Revise condiciones (Gestion, Admision, Inf. Comercial, Precio venta Web)");
-//					return false;
-//				}
 
 				// Ultimo historico: PUBLICADO OCULTO o PUBLICADO PRECIO OCULTO
 			} else {
@@ -320,7 +314,6 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 						// Ademas, se publica el activo lanzando el procedure para este
 						OkPublicacionSinPublicar= false;
-						//publicarActivoProcedure(activo.getId(), genericAdapter.getUsuarioLogado().getNombre());
 					} else {
 					// Si no cumple condiciones, se pasa a NO PUBLICADO
 						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
@@ -330,9 +323,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 						}
 					}
 				}
-				else if(/*DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO.equals(activo.getEstadoPublicacion().getCodigo()) ||
-						DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO.equals(activo.getEstadoPublicacion().getCodigo()) ||*/
-						DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO.equals(activo.getEstadoPublicacion().getCodigo()) ||
+				else if(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO.equals(activo.getEstadoPublicacion().getCodigo()) ||
 						DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO_PRECIOOCULTO.equals(activo.getEstadoPublicacion().getCodigo())){
 
 					if(cumpleCondicionesPublicar && !Checks.esNulo(activo.getFechaPublicable())){
@@ -363,29 +354,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			activo.setFechaPublicable(null);
 			activoApi.saveOrUpdate(activo);
 			motivo = getMotivo(dtoCambioEstadoPublicacion);
-
-			// Si cumple condiciones de publicar o ya estaba como Publicable, se publica el activo
-//			if(cumpleCondicionesPublicar && !Checks.esNulo(activo.getFechaPublicable())){
-//				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO); // Cambiar estado activo obligatoriamente.
-//				motivo = dtoCambioEstadoPublicacion.getMotivoPublicacion();
-//
-//				// Ademas, se publica el activo lanzando el procedure para este
-//				publicarActivoProcedure(activo.getId(), genericAdapter.getUsuarioLogado().getNombre());
-//			} else {
-//			// Si no cumple condiciones, se pasa a NO PUBLICADO
-//				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
-//				activo.setFechaPublicable(null);
-//				activoApi.saveOrUpdate(activo);
-//			}
 		}
-
 
 		if(OkPublicacionSinPublicar || publicacionForzadaSinOrdinario){
 			return true;
 		}
 		else{
 			if(filtro == null && dtoCambioEstadoPublicacion.getPublicacionOrdinaria()){
-				//filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO);
 				return true;
 			}else {
 				// Cambia al NUEVO ESTADO DE PUBLICACION y REGISTRA EN EL HISTORICO DE PUBLICACION -------------
@@ -417,12 +392,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
      */
     @Override
     @Transactional(readOnly = false)
-    public boolean cambiarEstadoPublicacionAndRegistrarHistorico(Activo activo, String motivo, Filter filtro, DDEstadoPublicacion estadoPublicacionActual,
-    			Boolean isPublicacionForzada, Boolean isPublicacionOrdinaria) throws SQLException, JsonViewerException{  // TODO: eliminar.
-    	
+    public boolean cambiarEstadoPublicacionAndRegistrarHistorico(Activo activo, String motivo, Filter filtro, DDEstadoPublicacion estadoPublicacionActual, Boolean isPublicacionForzada,
+                                                                 Boolean isPublicacionOrdinaria) throws SQLException, JsonViewerException{  // TODO: eliminar.
+
 		// 1.) Comprueba si hay NUEVO ESTADO al que cambiar (filtro != null)
 		if(!Checks.esNulo(filtro)){
-			
+
 	    	if(Checks.esNulo(estadoPublicacionActual))
 				estadoPublicacionActual = (DDEstadoPublicacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacion.class, DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
 
@@ -431,20 +406,20 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	    	if (Checks.esNulo(activo.getEstadoPublicacion()) || !estadoPublicacionActual.getCodigo().equals(filtro.getPropertyValue())){
 	    		ActivoHistoricoEstadoPublicacion activoHistoricoEstadoPublicacion = new ActivoHistoricoEstadoPublicacion();
 	    		DDEstadoPublicacion estadoPublicacion= null;
-				
+
 	    		// ANTERIOR <> ACTUAL
 					estadoPublicacion = genericDao.get(DDEstadoPublicacion.class, filtro);
 					activo.setEstadoPublicacion(estadoPublicacion);
-	
+
 					// Registra el cambio de estado de publicacion en el HISTORICO de PUBLICACION
-					// - Debe registrar cualquier cambio de estado a excepcion del cambio a estado PUBLICADO 
+					// - Debe registrar cualquier cambio de estado a excepcion del cambio a estado PUBLICADO
 					//   el cual ya se ha registrado por el procedure de publicacion
 					try {
 						//if(DDEstadoPublicacion.CODIGO_PUBLICADO.equals(filtro.getPropertyValue())){
 							// Si existen otros registros en historico
 							ActivoHistoricoEstadoPublicacion ultimoHistorico = activoApi.getUltimoHistoricoEstadoPublicacion(activo.getId());
 							if(!Checks.esNulo(ultimoHistorico) ){
-				
+
 								// Establecer la fecha de hoy en el campo 'Fecha Hasta' del anterior/último histórico y el usuario que lo ha modificado.
 								// Situado al principio en caso de que todavía no existan historicos para el el Activo en concreto.
 								if(!Checks.esNulo(ultimoHistorico)) {
@@ -457,23 +432,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 							} else {
 								activoHistoricoEstadoPublicacion.setEstadoPublicacion(estadoPublicacion);
 							}
-							
+
 							// Calcula el DDPortal en relación a los condicionantes
 							Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", activo.getId());
 							VCondicionantesDisponibilidad condicionantesDisponibilidad = (VCondicionantesDisponibilidad) genericDao.get(VCondicionantesDisponibilidad.class, filtroActivo);
 							if(!Checks.esNulo(condicionantesDisponibilidad)) {
 								if(!condicionantesDisponibilidad.getIsCondicionado()){
-								/*if(!condicionantesDisponibilidad.getRuina() &&
-										!condicionantesDisponibilidad.getPendienteInscripcion() &&
-										!condicionantesDisponibilidad.getObraNuevaSinDeclarar() &&
-										!condicionantesDisponibilidad.getSinTomaPosesionInicial() &&
-										!condicionantesDisponibilidad.getProindiviso() &&
-										!condicionantesDisponibilidad.getObraNuevaEnConstruccion() &&
-										!condicionantesDisponibilidad.getOcupadoConTitulo() &&
-										!condicionantesDisponibilidad.getTapiado() &&
-										!condicionantesDisponibilidad.getPortalesExternos() &&
-										!condicionantesDisponibilidad.getOcupadoSinTitulo() &&
-										!condicionantesDisponibilidad.getDivHorizontalNoInscrita()) {*/
 									activoHistoricoEstadoPublicacion.setPortal((DDPortal) utilDiccionarioApi.dameValorDiccionarioByCod(DDPortal.class, DDPortal.CODIGO_HAYA));
 								} else {
 									activoHistoricoEstadoPublicacion.setPortal((DDPortal) utilDiccionarioApi.dameValorDiccionarioByCod(DDPortal.class, DDPortal.CODIGO_INVERSORES));
@@ -481,19 +445,19 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 							} else {
 								activoHistoricoEstadoPublicacion.setPortal((DDPortal) utilDiccionarioApi.dameValorDiccionarioByCod(DDPortal.class, DDPortal.CODIGO_HAYA));
 							}
-							
-							
-							
+
+
+
 							activoHistoricoEstadoPublicacion.setActivo(activo);
 							beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "motivo", motivo);
 							beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "fechaDesde" , new Date());
 							beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "estadoPublicacion", estadoPublicacion);
-							if(filtro.getPropertyValue().equals(DDEstadoPublicacion.CODIGO_NO_PUBLICADO) || 
+							if(filtro.getPropertyValue().equals(DDEstadoPublicacion.CODIGO_NO_PUBLICADO) ||
 							   filtro.getPropertyValue().equals(DDEstadoPublicacion.CODIGO_DESPUBLICADO)){
 								activoHistoricoEstadoPublicacion.setPortal(null);
 							}
-							
-							
+
+
 							if(!Checks.esNulo(isPublicacionForzada) && isPublicacionForzada) {
 								Filter filtroTpu = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoPublicacion.CODIGO_FORZADA);
 								DDTipoPublicacion tipoPublicacion = genericDao.get(DDTipoPublicacion.class, filtroTpu);
@@ -503,10 +467,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 								DDTipoPublicacion tipoPublicacion = genericDao.get(DDTipoPublicacion.class, filtroTpu);
 								beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "tipoPublicacion", tipoPublicacion);
 							}
-							
+
 							activoApi.saveOrUpdate(activo);
 							genericDao.save(ActivoHistoricoEstadoPublicacion.class, activoHistoricoEstadoPublicacion);
-	
+
 						//} // Cierra if ... CODIGO_PUBLICADO.equals
 					} catch (IllegalAccessException e) {
 						logger.error(e);
@@ -518,7 +482,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 						throw new JsonViewerException("No ha sido posible realizar el cambio de publicación con este activo. Se ha producido un error interno.");
 					}
 	    	}
-	    	
+
 		// filtro = null (Detectado un cambio de estado NO CONTROLADO (valores DTO no corresponden con nuevo estado))
 		} else {
 			throw new JsonViewerException("No ha sido posible realizar el cambio de publicación con este activo. Estado de publicación inexistente.");
@@ -545,24 +509,24 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
     	return dto;
 	}
-	
+
 	@Override
 	public DtoDatosPublicacionAgrupacion getDatosPublicacionAgrupacion(Long idActivo) {
-		DtoDatosPublicacionAgrupacion dto = new DtoDatosPublicacionAgrupacion(getDatosPublicacionActivo(idActivo));		
-		
+		DtoDatosPublicacionAgrupacion dto = new DtoDatosPublicacionAgrupacion(getDatosPublicacionActivo(idActivo));
+
 		Activo activoPrincipal = activoDao.get(idActivo);
-		
+
 		if(!Checks.esNulo(activoPrincipal)) {
 			try {
 				BeanUtils.copyProperty(dto, "idActivoPrincipal", activoPrincipal.getId());
-				
+
 				PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(idActivo);
 				ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(idActivo);
-				
+
 				if(!Checks.esNulo(perimetroActivo)) {
 					BeanUtils.copyProperty(dto, "incluidoEnPerimetro", perimetroActivo.getIncluidoEnPerimetro() == 1);
 				}
-				
+
 				if(!Checks.esNulo(activoBancario)) {
 					if(!Checks.esNulo(activoBancario.getClaseActivo())) {
 						BeanUtils.copyProperty(dto, "claseActivoCodigo", activoBancario.getClaseActivo().getCodigo());
@@ -787,22 +751,24 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 		return false;
 	}
-	
+
 	@Override
 	@Transactional
 	public Boolean setDatosPublicacionAgrupacion(Long id, DtoDatosPublicacionActivo dto) throws JsonViewerException{
-		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);		
+		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
 		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
+
 		for(ActivoAgrupacionActivo aga : activos) {
-			ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(aga.getActivo().getId());			
+			ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(aga.getActivo().getId());
 			if(this.registrarHistoricoPublicacion(activoPublicacion, dto)) {
-				this.actualizarDatosEstadoActualPublicacion(dto, activoPublicacion);	
+				this.actualizarDatosEstadoActualPublicacion(dto, activoPublicacion);
 			}
 		}
+
 		activoDao.publicarAgrupacionSinHistorico(id, genericAdapter.getUsuarioLogado().getUsername(), dto.getEleccionUsuarioTipoPublicacionAlquiler());
 		return true;
 	}
-	
+
 	@Override
 	public Boolean isPublicadoVentaByIdActivo(Long idActivo) {
 		return this.isPublicadoVenta(idActivo);
@@ -870,6 +836,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			}
 
 			activoPublicacionDao.save(activoPublicacion);
+
 		} catch (IllegalAccessException e) {
 			logger.error("Error al actualizar el estado actual de publicacion, error: ", e);
 			return false;
@@ -913,6 +880,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			logger.error("Error al registrar en el historico el estado actual de publicacion, error: ", e);
 			return false;
 		}
+
 		activoPublicacionHistoricoDao.save(activoPublicacionHistorico);
 
 		return true;
@@ -984,10 +952,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			throw new JsonViewerException(messageServices.getMessage("activo.publicacion.error.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
 		}
 	}
-	
 
 	private boolean verificaValidacionesPublicacion(DtoPublicacionValidaciones dtoPublicacionValidaciones){  // TODO: eliminar.
-
 		if(!Checks.esNulo(dtoPublicacionValidaciones) && !Checks.esNulo(dtoPublicacionValidaciones.getActivo())){
 			boolean tieneOkAdmision = Checks.esNulo(dtoPublicacionValidaciones.getActivo().getAdmision()) ? false :  dtoPublicacionValidaciones.getActivo().getAdmision(); // Tiene OK de admision
 			boolean tieneOkGestion = Checks.esNulo(dtoPublicacionValidaciones.getActivo().getGestion()) ? false :  dtoPublicacionValidaciones.getActivo().getGestion(); // Tiene OK de gestion
@@ -998,25 +964,26 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					|| Checks.esNulo(tieneInfComercialTiposIguales))
 				return false;
 			return
-					(dtoPublicacionValidaciones.isValidarOKGestion() ? tieneOkGestion : true) &&
-					(dtoPublicacionValidaciones.isValidarOKAdmision() ? tieneOkAdmision : true) &&
+					(!dtoPublicacionValidaciones.isValidarOKGestion() || tieneOkGestion) &&
+					(!dtoPublicacionValidaciones.isValidarOKAdmision() || tieneOkAdmision) &&
 					(dtoPublicacionValidaciones.isValidarOKPrecio() ? tieneOkPrecios : true) &&
-					(dtoPublicacionValidaciones.isValidarInfComercialTiposIguales() ? tieneInfComercialTiposIguales : true) &&
-					(dtoPublicacionValidaciones.isValidarInfComercialAceptado() ? tieneInfComercialAceptado : true);
+					(!dtoPublicacionValidaciones.isValidarInfComercialTiposIguales() || tieneInfComercialTiposIguales) &&
+					(!dtoPublicacionValidaciones.isValidarInfComercialAceptado() || tieneInfComercialAceptado);
 		}
+
 		return false;
 	}
-	
+
 	@Override
 	public DtoDatosPublicacionActivo getPublicarSinPrecioVentaAlquilerByIdActivo(Long idActivo){
 		ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(idActivo);
 		DtoDatosPublicacionActivo dto = new DtoDatosPublicacionActivo();
-		
+
 		if(!Checks.esNulo(activoPublicacion)){
 			dto.setPublicarSinPrecioVenta(activoPublicacion.getCheckSinPrecioVenta());
 			dto.setPublicarSinPrecioAlquiler(activoPublicacion.getCheckSinPrecioAlquiler());
 		}
-		
+
 		return dto;
 	}
 
@@ -1046,17 +1013,15 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		Boolean checkPublicarSinPrecio = activoPublicacionDao.getCheckSinPrecioAlquilerPorIdActivo(activo.getId());
 		ActivoPatrimonio activoPatrimonio = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
 		List<DtoAdmisionDocumento> listDtoAdmisionDocumento = activoAdapter.getListDocumentacionAdministrativaById(activo.getId());
-		Boolean conCee = false;
-		Boolean esVivienda = false;
-		
-		esVivienda = DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo());
-		
+		boolean conCee = false;
+		boolean esVivienda = DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo());
+
 		for(DtoAdmisionDocumento aListDtoAdmisionDocumento : listDtoAdmisionDocumento) {
 			if (DDTipoDocumentoActivo.CODIGO_CEE.equals(aListDtoAdmisionDocumento.getCodigoTipoDocumentoActivo())) {
 				conCee = true;
 			}
 		}
-		
+
 		if(esVivienda){
 			if(isAdmisionOK(activo.getId())
 					&& isGestionOK(activo.getId())
@@ -1069,6 +1034,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					&& (this.tienePrecioRentaByIdActivo(activo.getId()) || (!Checks.esNulo(checkPublicarSinPrecio) && checkPublicarSinPrecio))
 					) {
 				return ESTADO_PUBLICACION_AZUL;
+
 			} else if(!isAdmisionOK(activo.getId())
 					&& !isGestionOK(activo.getId())
 					&& !this.isInformeAprobado(activo.getId())
@@ -1080,9 +1046,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					&& !(this.tienePrecioRentaByIdActivo(activo.getId()) || (!Checks.esNulo(checkPublicarSinPrecio) && checkPublicarSinPrecio))
 					) {
 				return ESTADO_PUBLICACION_NARANJA;
+
 			} else {
 				return ESTADO_PUBLICACION_AMARILLO;
 			}
+
 		}else{
 			if(isAdmisionOK(activo.getId())
 					&& isGestionOK(activo.getId())
@@ -1094,6 +1062,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					&& (this.tienePrecioRentaByIdActivo(activo.getId()) || (!Checks.esNulo(checkPublicarSinPrecio) && checkPublicarSinPrecio))
 					) {
 				return ESTADO_PUBLICACION_AZUL;
+
 			} else if(!isAdmisionOK(activo.getId())
 					&& !isGestionOK(activo.getId())
 					&& !this.isInformeAprobado(activo.getId())
@@ -1104,131 +1073,134 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					&& !(this.tienePrecioRentaByIdActivo(activo.getId()) || (!Checks.esNulo(checkPublicarSinPrecio) && checkPublicarSinPrecio))
 					) {
 				return ESTADO_PUBLICACION_NARANJA;
+
 			} else {
 				return ESTADO_PUBLICACION_AMARILLO;
 			}
 		}
 	}
-	
+
 	@Override
 	public Integer getEstadoIndicadorPublicacionAgrupacionVenta(List<ActivoAgrupacionActivo> listaActivos) {
 		Integer estado = 0;
-		for(int i = 0; i<listaActivos.size(); i++){
-			
-			Activo activo = listaActivos.get(i).getActivo();
-			
-			if(getEstadoIndicadorPublicacionVenta(activo) == 0){
-				estado = ESTADO_PUBLICACION_NARANJA; 
+
+		for (ActivoAgrupacionActivo listaActivo : listaActivos) {
+			Activo activo = listaActivo.getActivo();
+
+			if (getEstadoIndicadorPublicacionVenta(activo) == 0) {
+				estado = ESTADO_PUBLICACION_NARANJA;
 				break;
-			}else if(getEstadoIndicadorPublicacionVenta(activo) == 2){
+			} else if (getEstadoIndicadorPublicacionVenta(activo) == 2) {
 				estado = ESTADO_PUBLICACION_AMARILLO;
-			}else if(getEstadoIndicadorPublicacionVenta(activo) == 1 && !ESTADO_PUBLICACION_AMARILLO.equals(estado)){ 
+			} else if (getEstadoIndicadorPublicacionVenta(activo) == 1 && !ESTADO_PUBLICACION_AMARILLO.equals(estado)) {
 				estado = ESTADO_PUBLICACION_AZUL;
 			}
 		}
-		return estado; 
+
+		return estado;
 	}
-	
+
 	@Override
 	public Integer getEstadoIndicadorPublicacionAgrupacionAlquiler(List<ActivoAgrupacionActivo> listaActivos) {
 		Integer estado = 0;
-		for(int i = 0; i<listaActivos.size(); i++){
-			
-			Activo activo = listaActivos.get(i).getActivo();
-			
-			if(getEstadoIndicadorPublicacionAlquiler(activo) == 0){
-				estado = ESTADO_PUBLICACION_NARANJA; 
+
+		for (ActivoAgrupacionActivo listaActivo : listaActivos) {
+			Activo activo = listaActivo.getActivo();
+
+			if (getEstadoIndicadorPublicacionAlquiler(activo) == 0) {
+				estado = ESTADO_PUBLICACION_NARANJA;
 				break;
-			}else if(getEstadoIndicadorPublicacionAlquiler(activo) == 2){
+			} else if (getEstadoIndicadorPublicacionAlquiler(activo) == 2) {
 				estado = ESTADO_PUBLICACION_AMARILLO;
-			}else if(getEstadoIndicadorPublicacionAlquiler(activo) == 1 && !ESTADO_PUBLICACION_AMARILLO.equals(estado)){ 
+			} else if (getEstadoIndicadorPublicacionAlquiler(activo) == 1 && !ESTADO_PUBLICACION_AMARILLO.equals(estado)) {
 				estado = ESTADO_PUBLICACION_AZUL;
 			}
 		}
+
 		return estado;
 	}
-	
+
 	@Override
 	public Boolean getCheckPublicacionDeshabilitarAgrupacionVenta(List<ActivoAgrupacionActivo> listaActivos) {
-		Boolean checkPublicarVenta = false;
-		for(int i = 0; i<listaActivos.size(); i++){
-			Long activoid = listaActivos.get(i).getActivo().getId();
-			
-			if(!Checks.esNulo(deshabilitarCheckPublicarVenta(activoid))) {
+		boolean checkPublicarVenta = false;
+
+		for (ActivoAgrupacionActivo listaActivo : listaActivos) {
+			Long activoid = listaActivo.getActivo().getId();
+
+			if (!Checks.esNulo(deshabilitarCheckPublicarVenta(activoid))) {
 				if (deshabilitarCheckPublicarVenta(activoid)) {
 					checkPublicarVenta = true;
 					break;
-				}else {
-					checkPublicarVenta = false;
+
+				} else {
 					return checkPublicarVenta;
 				}
-				
-			}		
-
+			}
 		}
+
 		return checkPublicarVenta;
 	}
-	
+
 	@Override
 	public Boolean getCheckOcultarDeshabilitarAgrupacionVenta(List<ActivoAgrupacionActivo> listaActivos) {
-  		Boolean checkOcultarVenta = false;
-		for(int i = 0; i<listaActivos.size(); i++){
-			Long activoid = listaActivos.get(i).getActivo().getId();
-			
-			if(!Checks.esNulo(deshabilitarCheckOcultarVenta(activoid))) {
+  		boolean checkOcultarVenta = false;
+
+		for (ActivoAgrupacionActivo listaActivo : listaActivos) {
+			Long activoid = listaActivo.getActivo().getId();
+
+			if (!Checks.esNulo(deshabilitarCheckOcultarVenta(activoid))) {
 				if (deshabilitarCheckOcultarVenta(activoid)) {
 					checkOcultarVenta = true;
 					break;
-				}else {
-					checkOcultarVenta = false;
+
+				} else {
 					return checkOcultarVenta;
 				}
-				
 			}
-
 		}
+
 		return checkOcultarVenta;
 	}
-	
+
 	@Override
 	public Boolean getCheckPublicacionDeshabilitarAgrupacionAlquiler(List<ActivoAgrupacionActivo> listaActivos) {
-  		Boolean checkPublicarAlquiler = false;
-		for(int i = 0; i<listaActivos.size(); i++){
-			Long activoid = listaActivos.get(i).getActivo().getId();
-			
-			if(!Checks.esNulo(deshabilitarCheckPublicarAlquiler(activoid))) {
+  		boolean checkPublicarAlquiler = false;
+
+		for (ActivoAgrupacionActivo listaActivo : listaActivos) {
+			Long activoid = listaActivo.getActivo().getId();
+
+			if (!Checks.esNulo(deshabilitarCheckPublicarAlquiler(activoid))) {
 				if (deshabilitarCheckPublicarAlquiler(activoid)) {
 					checkPublicarAlquiler = true;
 					break;
-				}else {
-					checkPublicarAlquiler = false;
+
+				} else {
 					return checkPublicarAlquiler;
 				}
-				
 			}
-
 		}
+
 		return checkPublicarAlquiler;
 	}
-	
+
 	@Override
 	public Boolean getCheckOcultarDeshabilitarAgrupacionAlquiler(List<ActivoAgrupacionActivo> listaActivos) {
-  		Boolean checkOcultarAlquiler = false;
-		for(int i = 0; i<listaActivos.size(); i++){
-			Long activoid = listaActivos.get(i).getActivo().getId();
-			
-			if(!Checks.esNulo(deshabilitarCheckOcultarAlquiler(activoid))) {
+  		boolean checkOcultarAlquiler = false;
+
+		for (ActivoAgrupacionActivo listaActivo : listaActivos) {
+			Long activoid = listaActivo.getActivo().getId();
+
+			if (!Checks.esNulo(deshabilitarCheckOcultarAlquiler(activoid))) {
 				if (deshabilitarCheckOcultarAlquiler(activoid)) {
 					checkOcultarAlquiler = true;
 					break;
-				}else {
-					checkOcultarAlquiler = false;
+
+				} else {
 					return checkOcultarAlquiler;
 				}
-				
 			}
-
 		}
+
 		return checkOcultarAlquiler;
 	}
 

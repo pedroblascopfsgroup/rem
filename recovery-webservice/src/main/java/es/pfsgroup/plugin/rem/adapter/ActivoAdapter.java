@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,7 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.controller.AccesoActivoException;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
@@ -128,6 +130,7 @@ import es.pfsgroup.plugin.rem.model.DtoTramite;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.DtoValoracion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.IncrementoPresupuesto;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -1413,6 +1416,7 @@ public class ActivoAdapter {
 		List<DtoListadoGestores> listadoGestoresDto = new ArrayList<DtoListadoGestores>();
 
 		for (GestorEntidadHistorico gestor : gestoresEntidad) {
+			
 			DtoListadoGestores dtoGestor = new DtoListadoGestores();
 			try {
 				BeanUtils.copyProperties(dtoGestor, gestor);
@@ -1420,6 +1424,14 @@ public class ActivoAdapter {
 				BeanUtils.copyProperties(dtoGestor, gestor.getTipoGestor());
 				BeanUtils.copyProperty(dtoGestor, "id", gestor.getId());
 				BeanUtils.copyProperty(dtoGestor, "idUsuario", gestor.getUsuario().getId());
+
+				GestorSustituto gestorSustituto = getGestorSustitutoVigente(gestor);
+
+				if (!Checks.esNulo(gestorSustituto)) {
+					dtoGestor.setApellidoNombre(dtoGestor.getApellidoNombre().concat(" (")
+							.concat(gestorSustituto.getUsuarioGestorSustituto().getApellidoNombre()).concat(")"));
+				}
+
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
@@ -1681,9 +1693,11 @@ public class ActivoAdapter {
 					e.printStackTrace();
 				}
 				
-				ActivoProveedor tasadora = this.getTasadoraByCodProveedorUvem(tasacionDto.getCodigoFirma());
-				if(!Checks.esNulo(tasadora)){
-					tasacionDto.setNomTasador(tasadora.getNombre());
+				if (!Checks.esNulo(tasacionDto.getCodigoFirma())) {
+					ActivoProveedor tasadora = this.getTasadoraByCodProveedorUvem(tasacionDto.getCodigoFirma());
+					if (!Checks.esNulo(tasadora)) {
+						tasacionDto.setNomTasador(tasadora.getNombre());
+					}
 				}
 				listaDtoTasacion.add(tasacionDto);
 			}
@@ -2356,22 +2370,23 @@ public class ActivoAdapter {
 
 		List<VBusquedaPresupuestosActivo> presupuestosActivo = (List<VBusquedaPresupuestosActivo>) pagePresupuestosActivo
 				.getResults();
+		
+		// Gastado + Pendiente de pago
+		DtoActivosTrabajoFilter dtoFilter = new DtoActivosTrabajoFilter();
+
+		dtoFilter.setIdActivo(presupuestosActivo.get(0).getIdActivo());
+		dtoFilter.setLimit(50000);
+		dtoFilter.setStart(0);
+		dtoFilter.setEstadoContable("1");
+
+		Page vista = trabajoApi.getListActivosPresupuesto(dtoFilter);
+		List<VBusquedaActivosTrabajoPresupuesto> listaTemp = (List<VBusquedaActivosTrabajoPresupuesto>) vista
+				.getResults();
 
 		for (VBusquedaPresupuestosActivo presupuesto : presupuestosActivo) {
-
-			// Gastado + Pendiente de pago
-			DtoActivosTrabajoFilter dtoFilter = new DtoActivosTrabajoFilter();
-
-			dtoFilter.setIdActivo(presupuesto.getIdActivo());
-			dtoFilter.setLimit(50000);
-			dtoFilter.setStart(0);
-			dtoFilter.setEstadoContable("1");
-
-			Page vista = trabajoApi.getListActivosPresupuesto(dtoFilter);
+			
 			if (vista.getTotalCount() > 0) {
-
-				List<VBusquedaActivosTrabajoPresupuesto> listaTemp = (List<VBusquedaActivosTrabajoPresupuesto>) vista
-						.getResults();
+				
 				presupuesto.setDispuesto(new Double(0));
 				for (VBusquedaActivosTrabajoPresupuesto activoTrabajoTemp : listaTemp) {
 					if(activoTrabajoTemp.getEjercicio().equals(presupuesto.getEjercicioAnyo())) {
@@ -2423,13 +2438,29 @@ public class ActivoAdapter {
 				.getListHistoricoPresupuestos(dtoFiltroHistorico, usuarioLogado).getResults().get(0);
 
 		// Disponible para ejercicio actual
+		// Se calcula el disponible, el gasto conforme la lógica anterior, pero optimizando costes
 		dtoFilter.setEjercicioPresupuestario(ejercicioActual);
 		Page vista = trabajoApi.getListActivosPresupuesto(dtoFilter);
 		if (vista.getTotalCount() > 0) {
-			VBusquedaActivosTrabajoPresupuesto activoTrabajo = (VBusquedaActivosTrabajoPresupuesto) vista.getResults()
-					.get(0);
-			presupuestoGrafico.setDisponible(new Double(activoTrabajo.getSaldoDisponible()));
-
+			List<VBusquedaActivosTrabajoPresupuesto> activosTrabajo = (List<VBusquedaActivosTrabajoPresupuesto>) vista.getResults();
+			presupuestoGrafico.setDisponible(new Double(activosTrabajo.get(0).getSaldoDisponible()));
+			presupuestoGrafico.setGastado(new Double(0));
+			presupuestoGrafico.setDispuesto(new Double(0));
+			
+			for(VBusquedaActivosTrabajoPresupuesto activoTrabajoTemp : activosTrabajo){
+				
+				if("1".equals(activoTrabajoTemp.getEstadoContable())){
+					presupuestoGrafico.setGastado(
+							presupuestoGrafico.getGastado() + new Double(activoTrabajoTemp.getImporteParticipa()));
+				}
+				
+				if("1".equals(activoTrabajoTemp.getEstadoContable()) && DDEstadoTrabajo.ESTADO_PENDIENTE_PAGO.equals(activoTrabajoTemp.getCodigoEstado())){
+					presupuestoGrafico.setDispuesto(
+							presupuestoGrafico.getDispuesto() + new Double(activoTrabajoTemp.getImporteParticipa()));
+				}
+			}
+			//Lógica anterior
+			/*
 			dtoFilter.setEstadoContable("1");
 
 			// Gastado + Pendiente de pago, para el ejercicio actual
@@ -2469,7 +2500,7 @@ public class ActivoAdapter {
 
 			} else {
 				presupuestoGrafico.setDispuesto(new Double(0));
-			}
+			}*/
 
 			presupuestoGrafico.setGastado(presupuestoGrafico.getGastado() - presupuestoGrafico.getDispuesto());
 			presupuestoGrafico.setPresupuesto(presupuestoGrafico.getDisponible() + presupuestoGrafico.getDispuesto()
@@ -2541,11 +2572,17 @@ public class ActivoAdapter {
 		return listaDto;
 	}
 
-	public WebDto getTabActivo(Long id, String tab) throws IllegalAccessException, InvocationTargetException {
+	public WebDto getTabActivo(Long id, String tab) throws IllegalAccessException, InvocationTargetException,AccesoActivoException {
 
 		TabActivoService tabActivoService = tabActivoFactory.getService(tab);
 		Activo activo = activoApi.get(id);
-
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+		if(!Checks.esNulo(usuarioCartera)){
+			if(!usuarioCartera.getCartera().getCodigo().equals(activo.getCartera().getCodigo())){
+				throw new AccesoActivoException("No tiene permiso para consultar al activo seleccionado");
+			}
+		}
 		return tabActivoService.getTabData(activo);
 
 	}
@@ -2669,6 +2706,7 @@ public class ActivoAdapter {
 
 		try {
 			Oferta oferta = new Oferta();
+			oferta.setVentaDirecta(dto.getVentaDirecta());
 			oferta.setOrigen(OfertaApi.ORIGEN_REM);
 			ClienteComercial clienteComercial = new ClienteComercial();
 
@@ -3153,5 +3191,34 @@ public class ActivoAdapter {
 		genericDao.save(ActivoTasacion.class, activoTasacion);
 
 		return true;
+	}
+
+	@Transactional(readOnly = true)
+	private GestorSustituto getGestorSustitutoVigente(GestorEntidadHistorico gestor) {
+
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal", gestor.getUsuario());
+
+		try {
+			List<GestorSustituto> gestoresSustitutos = genericDao.getList(GestorSustituto.class, filter);
+
+			for (GestorSustituto sustituto : gestoresSustitutos) {
+				if (!Checks.esNulo(sustituto.getFechaFin())) {
+					if (sustituto.getFechaFin().after(new Date()) || DateUtils.isSameDay(sustituto.getFechaFin(), new Date())) {
+						if (sustituto.getFechaInicio().before(new Date()) || DateUtils.isSameDay(sustituto.getFechaInicio(), new Date())) {
+							if (!sustituto.getAuditoria().isBorrado()) {
+							   return sustituto;
+							}
+						}
+					}
+				} else {
+					return sustituto;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+
 	}
 }

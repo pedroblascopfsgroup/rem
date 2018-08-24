@@ -101,6 +101,10 @@ public class DtoFichaExpediente extends WebDto {
 	private Boolean bloqueado;
 	
 	private Integer solicitaReserva; 
+	
+	private String codigoComiteSancionador;
+	
+	private String subcarteraCodigo;
 
 	public Long getId() {
 		return id;
@@ -510,5 +514,23 @@ public class DtoFichaExpediente extends WebDto {
 	public void setSolicitaReserva(Integer solicitaReserva) {
 		this.solicitaReserva = solicitaReserva;
 	}
+
+	public String getCodigoComiteSancionador() {
+		return codigoComiteSancionador;
+	}
+
+	public void setCodigoComiteSancionador(String codigoComiteSancionador) {
+		this.codigoComiteSancionador = codigoComiteSancionador;
+	}
+
+	public String getSubcarteraCodigo() {
+		return subcarteraCodigo;
+	}
+
+	public void setSubcarteraCodigo(String subcarteraCodigo) {
+		this.subcarteraCodigo = subcarteraCodigo;
+	}
+	
+	
 	
 }

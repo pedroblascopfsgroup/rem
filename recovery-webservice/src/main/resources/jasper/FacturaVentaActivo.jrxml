@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FacturaVenta11" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="079f936d-1f90-4974-a62f-aea5d516b0a7">
 	<property name="ireport.zoom" value="1.6105100000000103"/>
 	<property name="ireport.x" value="0"/>
@@ -17,6 +18,7 @@
 	<parameter name="fechaEscritura" class="java.lang.String"/>
 	<parameter name="direccionActivo" class="java.lang.String"/>
 	<parameter name="infoRegistralActivo" class="java.lang.String"/>
+	<parameter name="tipoImpuesto" class="java.lang.String"/>
 	<parameter name="iva" class="java.lang.String"/>
 	<parameter name="importeVenta" class="java.lang.String"/>
 	<parameter name="importeImpuestos" class="java.lang.String"/>
@@ -136,13 +138,13 @@
 			<rectangle>
 				<reportElement x="12" y="407" width="530" height="107" uuid="5013828c-4902-48a3-9794-937abff9db94"/>
 			</rectangle>
-			<staticText>
-				<reportElement x="20" y="463" width="21" height="12" uuid="859387a7-4eac-423f-a0d8-dc823d86ccee"/>
+			<textField isBlankWhenNull="true">
+				<reportElement x="20" y="463" width="39" height="12" uuid="859387a7-4eac-423f-a0d8-dc823d86ccee"/>
 				<textElement>
 					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 				</textElement>
-				<text><![CDATA[IVA:]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$P{tipoImpuesto}]]></textFieldExpression>
+			</textField>
 			<staticText>
 				<reportElement x="20" y="485" width="101" height="14" uuid="328f8bda-0bab-45e0-a3fe-9152feb7583d"/>
 				<textElement>
@@ -285,7 +287,7 @@
 				<textFieldExpression><![CDATA[$P{infoRegistralActivo}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="45" y="463" width="76" height="13" uuid="b34c735f-3081-4711-8c92-e652131acccd"/>
+				<reportElement x="59" y="463" width="62" height="13" uuid="b34c735f-3081-4711-8c92-e652131acccd"/>
 				<textElement>
 					<font fontName="Verdana" size="8" isBold="true"/>
 				</textElement>

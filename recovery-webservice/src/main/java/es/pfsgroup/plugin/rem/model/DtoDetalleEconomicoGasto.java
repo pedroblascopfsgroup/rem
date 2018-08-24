@@ -63,6 +63,7 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	private Date fechaConexion;
 	private Boolean anticipo;
 	private Date fechaAnticipo;
+	private String cartera;
 	
 
 	public Long getGastoProveedor() {
@@ -319,6 +320,12 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	public void setFechaAnticipo(Date fechaAnticipo) {
 		this.fechaAnticipo = fechaAnticipo;
 	}
-
+	public String getCartera() {
+		return cartera;
+	}
+	public void setCartera(String cartera) {
+		this.cartera = cartera;
+	}
+	
    	
 }

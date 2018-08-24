@@ -5,9 +5,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -26,107 +23,119 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelManagerApi;
 import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
-import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVProcesoDao;
-import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoValidacion;
-import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
-import es.pfsgroup.framework.paradise.bulkUpload.model.ExcelFileBean;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
-import es.pfsgroup.framework.paradise.bulkUpload.model.MSVProcesoMasivo;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ProcesoMasivoContext;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
-
 
 @Component
 abstract public class AbstractMSVActualizador implements MSVLiberator {
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
-		
+
 	@Autowired
-	ProcessAdapter processAdapter;
-	
+	private ProcessAdapter processAdapter;
+
 	@Autowired
 	private MSVFicheroDao ficheroDao;
-	
+
 	@Autowired
 	private MSVExcelParser excelParser;
-	
-	@Autowired
-	private MSVProcesoDao procesoDao;
-	
+
 	@Resource(name = "entityTransactionManager")
-    private PlatformTransactionManager transactionManager;
-	
+	private PlatformTransactionManager transactionManager;
+
 	private final Log logger = LogFactory.getLog(getClass());
 
-	public static final int EXCEL_FILA_DEFECTO = 1;
-	
+	private static final int EXCEL_FILA_DEFECTO = 1;
+
 	public abstract String getValidOperation();
-	
+
 	@Transactional(readOnly = false)
-	public abstract void procesaFila(MSVHojaExcel exc, int fila) throws IOException, ParseException, JsonViewerException, SQLException, Exception;
-	
+	public abstract ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException, Exception;
+
+	@Transactional(readOnly = false)
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken, ProcesoMasivoContext context) throws IOException, ParseException, JsonViewerException, SQLException,
+			Exception {
+		return this.procesaFila(exc, fila, prmToken);
+	}
+
 	public Boolean isValidFor(MSVDDOperacionMasiva tipoOperacion) {
 
 		if (!Checks.esNulo(tipoOperacion)) {
-			if (this.getValidOperation().equals(tipoOperacion.getCodigo())) {
-				return true;
-			} else {
-				return false;
-			}
+			return this.getValidOperation().equals(tipoOperacion.getCodigo());
 		} else {
 			return false;
-		}		
+		}
 	}
 
 	@Override
 	@Transactional(readOnly = false)
 	public Boolean liberaFichero(MSVDocumentoMasivo file) throws IllegalArgumentException, IOException, JsonViewerException, SQLException, Exception {
-			
+
 		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);
-		
+		ArrayList<ResultadoProcesarFila> resultados = new ArrayList<ResultadoProcesarFila>();
 		try {
-			
-			this.preProcesado(exc);
+			ProcesoMasivoContext context = new ProcesoMasivoContext();
+			this.preProcesado(exc, context);
 			TransactionStatus transaction = null;
 			Integer numFilas = this.getNumFilas(file, exc);
-			List<Integer> listaFilas = new ArrayList<Integer>();
-			Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
+			Long token = null;
+			if (!Checks.esNulo(file) && !Checks.esNulo(file.getProcesoMasivo())) {
+				token = file.getProcesoMasivo().getToken();
+			}
+
 			for (int fila = this.getFilaInicial(); fila < numFilas; fila++) {
-				try{
-					transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-					this.procesaFila(exc, fila);
-					transactionManager.commit(transaction);
-					processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), true);
-				}catch(Exception e){
-					listaFilas.add(fila);
-					mapaErrores.put("KO", listaFilas);
-					logger.error("error procesando fila "+fila+" del proceso "+file.getProcesoMasivo().getId(),e);
-					transactionManager.rollback(transaction);
-					processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), false);					
+				ResultadoProcesarFila resultProcesaFila = null;
+				try {
+					if (file.getProcesoMasivo().getTipoOperacion().getCodigo().equals(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA)) {
+						resultProcesaFila = this.procesaFila(exc, fila, token, context);
+					} else {
+						transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+						resultProcesaFila = this.procesaFila(exc, fila, token);
+						transactionManager.commit(transaction);
+					}
+					if (resultProcesaFila.getErrorDesc() != null && !resultProcesaFila.getErrorDesc().isEmpty()) {
+						resultProcesaFila.setFila(fila);
+						resultados.add(resultProcesaFila);
+						processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), false);
+					} else {
+						resultProcesaFila.setCorrecto(true);
+						resultProcesaFila.setFila(fila);
+						resultados.add(resultProcesaFila);
+						processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), true);
+					}
+
+				} catch (Exception e) {
+					logger.error("error procesando fila " + fila + " del proceso " + file.getProcesoMasivo().getId(), e);
+					if (!file.getProcesoMasivo().getTipoOperacion().getCodigo().equals(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA)) {
+						transactionManager.rollback(transaction);
+					}
+					resultProcesaFila = new ResultadoProcesarFila();
+					resultProcesaFila.setCorrecto(false);
+					resultProcesaFila.setFila(fila);
+					resultProcesaFila.setErrorDesc(e.getMessage());
+					resultados.add(resultProcesaFila);
+					processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), false);
 				}
-				
-				
 			}
-			if(!mapaErrores.isEmpty()){
-				MSVDocumentoMasivo archivo = ficheroDao.findByIdProceso(file.getProcesoMasivo().getId());
-				if (!Checks.esNulo(archivo)) {
-					exc = excelParser.getExcel(archivo.getContenidoFichero().getFile());
-					String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
-					FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-					
-					processAdapter.setExcelErroresProcesado(archivo, fileItemErrores);
-				}
-			}
-			
+
+			MSVDocumentoMasivo archivo = ficheroDao.findByIdProceso(file.getProcesoMasivo().getId());
+			exc = excelParser.getExcel(archivo.getContenidoFichero().getFile());
+			String nomFicheroResultados = exc.crearExcelResultado(resultados, 0, this.getFilaInicial());
+			FileItem fileItemResultados = new FileItem(new File(nomFicheroResultados));
+
+			processAdapter.setExcelResultadosProcesado(archivo, fileItemResultados);
+
 			this.postProcesado(exc);
 
-		}
-		catch (Exception e) {
-			logger.error("Error procesando fichero",e);
+		} catch (Exception e) {
+			logger.error("Error procesando fichero", e);
 			return false;
 		}
 
@@ -135,16 +144,20 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 
 	@Transactional(readOnly = false)
 	public Integer getNumFilas(MSVDocumentoMasivo file, MSVHojaExcel exc) throws IOException {
-		Integer numFilas = exc.getNumeroFilasByHoja(0,file.getProcesoMasivo().getTipoOperacion());
-		return numFilas;
+		return exc.getNumeroFilasByHoja(0, file.getProcesoMasivo().getTipoOperacion());
 	}
-    
+
 	@Transactional(readOnly = false)
 	public void preProcesado(MSVHojaExcel exc) throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
+		this.preProcesado(exc, null);
 	}
-	
+
 	@Transactional(readOnly = false)
-	public void postProcesado(MSVHojaExcel exc) throws NumberFormatException, IllegalArgumentException, IOException, ParseException{
+	public void preProcesado(MSVHojaExcel exc, ProcesoMasivoContext context) throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
+	}
+
+	@Transactional(readOnly = false)
+	public void postProcesado(MSVHojaExcel exc) throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
 	}
 
 	@Override

@@ -619,7 +619,15 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		GastoDetalleEconomico detalleGasto = genericDao.get(GastoDetalleEconomico.class, filtro);
 
 		if (!Checks.esNulo(detalleGasto)) {
-
+			
+			if(!Checks.esNulo(gasto.getPropietario())) {
+				if(!Checks.esNulo(gasto.getPropietario().getCartera())) {
+					if(!Checks.esNulo(gasto.getPropietario().getCartera().getCodigo())) {
+						dto.setCartera(gasto.getPropietario().getCartera().getCodigo());
+					}
+				}
+			}
+			
 			dto.setImportePrincipalSujeto(detalleGasto.getImportePrincipalSujeto());
 			dto.setImportePrincipalNoSujeto(detalleGasto.getImportePrincipalNoSujeto());
 			dto.setImporteRecargo(detalleGasto.getImporteRecargo());
@@ -2226,7 +2234,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					genericDao.update(Trabajo.class, trabajo);
 				}
 
-				genericDao.deleteById(GastoProveedorTrabajo.class, gpvTrabajo.getId());
+				//genericDao.deleteById(GastoProveedorTrabajo.class, gpvTrabajo.getId());
 			}
 		}
 	}

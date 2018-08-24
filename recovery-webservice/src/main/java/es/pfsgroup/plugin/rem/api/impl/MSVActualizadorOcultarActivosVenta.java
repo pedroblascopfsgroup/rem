@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class MSVActualizadorOcultarActivosVenta extends AbstractMSVActualizador 
 
 	@Override
 	@Transactional(readOnly = false)
-	public void procesaFila(MSVHojaExcel exc, int fila) throws IOException, ParseException, JsonViewerException, SQLException {
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
 		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, COL_NUM.NUM_ACTIVO_HAYA)));
 
 		DtoDatosPublicacionActivo dto = new DtoDatosPublicacionActivo();
@@ -68,6 +69,8 @@ public class MSVActualizadorOcultarActivosVenta extends AbstractMSVActualizador 
 		} else {
 			activoEstadoPublicacionApi.setDatosPublicacionActivo(dto);
 		}
+
+		return new ResultadoProcesarFila();
 	}
 
 }

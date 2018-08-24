@@ -17,6 +17,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 
 @Component
 public class MSVActualizadorAutorizarEdicion extends AbstractMSVActualizador implements MSVLiberator {
@@ -37,12 +38,14 @@ public class MSVActualizadorAutorizarEdicion extends AbstractMSVActualizador imp
 
 	@Override
 	@Transactional(readOnly = false)
-	public void procesaFila(MSVHojaExcel exc, int fila) throws IOException, ParseException, JsonViewerException, SQLException {
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
 		
 		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 		DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = activoEstadoPublicacionApi.getState(activo.getId());
 		//TODO: Pendiente de saber que rellenar en el DTO. Probablemente no se use el mismo actualizador.
 		activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion);
+		return new ResultadoProcesarFila();
 	}
+	
 
 }

@@ -189,7 +189,7 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 					}
 				}
 			},
-			
+
 			comboAdecuaciones: {
 				model: 'HreRem.model.ComboBase',
 					proxy: {
@@ -197,7 +197,16 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 						remoteUrl: 'generic/getDiccionario',
 						extraParams: {diccionario: 'adecuaciones'}
 					}
-    		}
+			},
+
+			comboTipoTituloPosesorio: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tiposPosesorio'}
+				}
+			}
      }
 
 });

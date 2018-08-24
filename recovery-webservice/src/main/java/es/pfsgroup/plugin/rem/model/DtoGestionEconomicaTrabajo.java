@@ -58,6 +58,10 @@ public class DtoGestionEconomicaTrabajo extends WebDto {
 	private Long idProveedorContacto;
 	
 	private String codigoTipoProveedor;
+	
+	private String codigoTarifaTrabajo;
+	
+	private String descripcionTarifaTrabajo;
 
 	public Long getIdTrabajo() {
 		return idTrabajo;
@@ -233,6 +237,22 @@ public class DtoGestionEconomicaTrabajo extends WebDto {
 
 	public void setCodigoTipoProveedor(String codigoTipoProveedor) {
 		this.codigoTipoProveedor = codigoTipoProveedor;
+	}
+
+	public String getCodigoTarifaTrabajo() {
+		return codigoTarifaTrabajo;
+	}
+
+	public void setCodigoTarifaTrabajo(String codigoTarifaTrabajo) {
+		this.codigoTarifaTrabajo = codigoTarifaTrabajo;
+	}
+
+	public String getDescripcionTarifaTrabajo() {
+		return descripcionTarifaTrabajo;
+	}
+
+	public void setDescripcionTarifaTrabajo(String descripcionTarifaTrabajo) {
+		this.descripcionTarifaTrabajo = descripcionTarifaTrabajo;
 	}
 	
 }

@@ -64,6 +64,7 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 	public static final String CODE_FILE_BULKUPLOAD_PUBLICAR_ACTIVOS_VENTA="APV";
 	public static final String CODE_FILE_BULKUPLOAD_PUBLICAR_ACTIVOS_ALQUILER="APA";
 	public static final String CODE_FILE_BULKUPLOAD_ALTA_ACTIVOS_THIRD_PARTY = "AATP";
+	public static final String CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA = "VDC";
 	public static final String CODE_FILE_BULKUPLOAD_CENTRAL_TECNICA_OK_TECNICO = "OKTEC";
 	public static final String CODE_FILE_BULKUPLOAD_OCULTACION_ALQUILER_AGRUPACION_RESTRINGIDA = "OAAR";
 	public static final String CODE_FILE_BULKUPLOAD_OCULTACION_VENTA_AGRUPACION_RESTRINGIDA = "OVAR";
@@ -93,6 +94,9 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
     
     @Column(name="DD_OPM_VALIDACION_FORMATO")
     private String validacionFormato;
+    
+    @Column(name="DD_OPM_RESULTADO")
+    private Boolean resultado;
     
     @Embedded
     private Auditoria auditoria;
@@ -164,4 +168,13 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 		return validacionFormato;
 	}
 
+	public Boolean getResultado() {
+		return resultado;
+	}
+
+	public void setResultado(Boolean resultado) {
+		this.resultado = resultado;
+	}
+
+	
 }

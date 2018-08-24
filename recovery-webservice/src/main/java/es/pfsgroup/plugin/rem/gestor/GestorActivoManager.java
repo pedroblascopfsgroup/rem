@@ -366,10 +366,13 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 				GestorEntidad gestorEntidad = genericDao.get(GestorEntidad.class, filterGee, filterAuditoria);
 				Filter filterPvc = genericDao.createFilter(FilterType.EQUALS, "usuario.id",
 						gestorEntidad.getUsuario().getId());
-				ActivoProveedorContacto pvc = genericDao.get(ActivoProveedorContacto.class, filterAuditoria, filterPvc);
-				if (!Checks.esNulo(pvc)) {
-					pve = pvc.getProveedor();
+				List<ActivoProveedorContacto> pvc = genericDao.getList(ActivoProveedorContacto.class, filterAuditoria,
+						filterPvc);
+				if (!Checks.estaVacio(pvc)) {
+					if (!Checks.esNulo(pvc.get(0))) {
+						pve = pvc.get(0).getProveedor();
 
+					}
 				}
 			}
 		}

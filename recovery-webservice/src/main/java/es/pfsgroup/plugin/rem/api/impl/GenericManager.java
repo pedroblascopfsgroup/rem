@@ -5,16 +5,13 @@ import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
 
 import javax.annotation.Resource;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import net.sf.sojo.interchange.json.JsonParser;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
@@ -50,8 +47,9 @@ import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoLocalidadSimple;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
@@ -67,6 +65,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import net.sf.sojo.interchange.json.JsonParser;
 
 @Service("genericManager")
 public class GenericManager extends BusinessOperationOverrider<GenericApi> implements GenericApi {
@@ -118,9 +119,27 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		authData.setAuthorities(authorities);
 		authData.setUserId(usuario.getId());
 		authData.setRoles(roles);
+		authData.setEsGestorSustituto(esGestorSustituto(usuario));
 
 		return authData;
 
+	}
+	
+	public Integer esGestorSustituto(Usuario usuarioLogado){
+		List<GestorSustituto> ges = new ArrayList<GestorSustituto>();
+		ges = genericDao.getList(GestorSustituto.class, genericDao.createFilter(FilterType.EQUALS, "usuarioGestorSustituto", usuarioLogado));
+		Date fechaHoy = new Date();
+		
+		if(Checks.estaVacio(ges)){
+			return 0;
+		}else{
+			for(GestorSustituto gestor: ges){
+				if(fechaHoy.compareTo(gestor.getFechaInicio()) >= 0 && (Checks.esNulo(gestor.getFechaFin()) || fechaHoy.compareTo(gestor.getFechaFin()) <= 0)){
+					return 1;
+				}
+			}
+			return 0;
+		}
 	}
 
 	@Override
@@ -563,6 +582,22 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		return (List<DDComiteSancion>) genericDao.getListOrdered(DDComiteSancion.class, order, filter);
 
+	}
+	
+	@Override
+	public List<DDComiteSancion> getComitesByIdExpediente(String expediente) {
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(expediente));
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		
+		ExpedienteComercial expComercial = genericDao.get(ExpedienteComercial.class, filter, filtroBorrado);
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
+		
+		if(!Checks.esNulo(expComercial.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
+			return getComitesByCartera(expComercial.getOferta().getActivoPrincipal().getCartera().getCodigo());
+			//return (List<DDComiteSancion>) genericDao.getListOrdered(DDComiteSancion.class, order, filter, filtroBorrado);
+		} else {
+			return new ArrayList<DDComiteSancion>();
+		}
 	}
 
 	@Override

@@ -17,7 +17,9 @@
     <file url="file://$PROJECT_DIR$/proyecto-rem-online" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/proyecto-rem-online/sencha-app/app/model/DatosPublicacionActivo.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/proyecto-rem-online/sencha-app/classic/src/view/activos/detalle/CabeceraActivo.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/rec-batch" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/rec-common" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/rec-web" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/recovery-agendaMultifuncion-plugin" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/recovery-api-plugin" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/recovery-ayuda-plugin" charset="UTF-8" />
@@ -35,6 +37,7 @@
     <file url="file://$PROJECT_DIR$/recovery-editor-plugin" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/recovery-expediente-plugin" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/recovery-instruccionesExterna-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-integracionuvem-plugin" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/recovery-itinerarios-plugin" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/recovery-liquidaciones-plugin" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/recovery-liquidacionesWeb-plugin" charset="ISO-8859-1" />

@@ -274,27 +274,25 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 				        	},
 							defaultType: 'textfieldbase',
 							items :[									
-									{
-										xtype: 'comboboxfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.estado'),
-						            	bind: {
-						            		store: '{comboEstadoObraNueva}',
-						            		value: '{datosRegistrales.estadoObraNuevaCodigo}'
-						            	}
-									},
-					                { 
-										xtype:'datefieldbase',
-										formatter: 'date("d/m/Y")',
-								 		fieldLabel: HreRem.i18n('fieldlabel.fecha.cfo'),
-								 		bind: '{datosRegistrales.fechaCfo}'			            	
-									}
+								{
+									xtype: 'comboboxfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.estado'),
+					                bind: {
+					                    store: '{comboEstadoObraNueva}',
+					                    value: '{datosRegistrales.estadoObraNuevaCodigo}'
+					                }
+								},
+				                {
+									xtype:'datefieldbase',
+									formatter: 'date("d/m/Y")',
+							        fieldLabel: HreRem.i18n('fieldlabel.fecha.cfo'),
+							        bind: '{datosRegistrales.fechaCfo}'
+								}
 							]
 				        }
 					]
-                
 			},
 			{
-                
 				xtype:'fieldset',
 				defaultType: 'textfieldbase',
 				title: HreRem.i18n('title.titulo'),
@@ -624,24 +622,25 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                { 
 			                	fieldLabel: HreRem.i18n('fieldlabel.id.asunto.recovery'),
 			                	bind: '{datosRegistrales.idAsunto}',
-                                readOnly: true
-			                }					
-						
+                                readOnly: true,
+			                	bind: '{datosRegistrales.idAsunto}'
+			                },
+			                {
+			                	xtype: 'numberfieldbase',
+			                	maxLength: 4,
+			                	fieldLabel: HreRem.i18n('fieldlabel.expedientes.con.defectos.testimonio'),
+			                	bind: '{datosRegistrales.defectosTestimonio}'
+			                }
 						]
-                
             		},
-            		
-            		{    
-                
+            		{
 						xtype:'fieldsettable',
 						reference:'noJudicial',
 						colspan: 4,
 		            	hidden: false,
 						defaultType: 'textfieldbase',
 						title: HreRem.i18n('title.adjudicacion.no.judicial'),
-						items :
-
-						[
+						items : [
 							{
 					        	xtype: 'comboboxfieldbase',					        	
 						 		fieldLabel: HreRem.i18n('fieldlabel.gestion.hre'),
@@ -681,7 +680,13 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						 		fieldLabel: HreRem.i18n('fieldlabel.protocolo.autos.numero.expediente'),
 						 		bind: '{datosRegistrales.numReferencia}',
                                 readOnly: true
-							}
+							},
+                            {
+                                xtype: 'numberfieldbase',
+                                maxLength: 4,
+                                fieldLabel: HreRem.i18n('fieldlabel.expedientes.con.defectos.testimonio'),
+                                bind: '{datosRegistrales.defectosTestimonio}'
+                            }
 						]
         			},
         			{
@@ -691,8 +696,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						hidden: false,
 						defaultType: 'textfieldbase',
 						title: 'PDV',
-						items :
-						[
+						items : [
 							{
 						 		fieldLabel: HreRem.i18n('fieldlabel.sociedad.acreedora'),
 						 		bind: '{datosRegistrales.acreedorNombre}',
@@ -799,7 +803,6 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 	},
 
 	getErrorsExtendedFormBase: function() {
-   		
    		var me = this,
    		errores = [],
    		error,   		
@@ -816,20 +819,18 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
    		fechaFirmezaAutoAdjudicacion = me.down("[reference=fechaFirmezaAutoAdjudicacion]"),
    		fechaTomaPosesion = me.down("[reference=fechaTomaPosesionJudicial]"),
    		fechaAutoAdjudicacion = me.down("[reference=fechaAutoAdjudicacion]");
-   		
-   		
-   		
+
    		if(provinciaRegistro.getValue() != codigoProvinciaDomicilio) {
    			error = HreRem.i18n("txt.validacion.provincia.diferente.registro");
    			errores.push(error);
    			provinciaRegistro.markInvalid(error); 
    		}
-   		
+
    		if(superficieUtil.getValue() > superficieConstruida.getValue()) {
    			error = HreRem.i18n("txt.validacion.suputil.mayor.supconstruida");
    			errores.push(error);
    			superficieUtil.markInvalid(error); 		
-   			
+
    		} else if (superficieConstruida.getValue() > superficieElementosComunes.getValue() || superficieUtil.getValue() > superficieElementosComunes.getValue()) {
    			error = HreRem.i18n("txt.validacion.superficies.mayor.suplementoscomunes");
    			errores.push(error);
@@ -849,21 +850,16 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
    				error = HreRem.i18n("txt.validacion.fechaAutoAdjudicacion.mayor.fechaFirmezaAutoAdjudicacion");
 	   			errores.push(error);
 	   			fechaFirmezaAutoAdjudicacion.markInvalid(error);
-   				
    			}
-   			
-   			
    		}
-   		
+
    		me.addExternalErrors(errores);
-   		
-   },   
-   
+   },
+
    funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
 		me.lookupController().cargarTabData(me);
 		me.down('grid').getStore().load();
    }
-
 });

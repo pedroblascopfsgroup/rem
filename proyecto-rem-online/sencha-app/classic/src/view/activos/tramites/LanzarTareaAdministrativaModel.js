@@ -5,7 +5,8 @@ Ext.define('HreRem.view.activos.tramites.LanzarTareaAdministrativaModel', {
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase' ],
     
     data: {
-    	tramite: null
+    	tramite: null,
+    	idExpediente: null
     },
     
 
@@ -25,6 +26,16 @@ Ext.define('HreRem.view.activos.tramites.LanzarTareaAdministrativaModel', {
 				extraParams: {diccionario: 'comitesSancion'}
 			}
 		},
+		/*Este es el que se utiliza para sacar los comites de la cartera*/
+		comboComites: {
+	    	model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getComitesByIdExpediente',
+		        extraParams: {idExpediente: '{idExpediente}'}
+	    	}	    	
+	    },
+	    
 		comboMotivoAnulacionExpediente: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {

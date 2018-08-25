@@ -213,7 +213,7 @@ Ext.define('HreRem.view.common.TareaController', {
 					  	me.getView().down('[handler=enlaceAbrirExpediente]').hide();
 				  }
 				  
-				  if(codigoTramite == "T013" || codigoTramite == "T014"){
+				  if(codigoTramite == "T013" || codigoTramite == "T014" || codigoTramite == "T015"){
 				  	  //Se visibiliza boton-enlace EXPEDIENTE
 				  	  //Se oculta el trabajo
 				  	  	me.getView().down('[handler=enlaceAbrirTrabajo]').hide();

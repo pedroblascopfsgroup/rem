@@ -2,7 +2,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     extend: 'HreRem.view.common.TareaBase',
     xtype: 'tareagenerica',
     reference: 'windowTareaGenerica',
-    requires: ['HreRem.view.common.TareaController', 'HreRem.view.common.GenericCombo', 'HreRem.view.common.GenericComboEspecial', 'HreRem.view.common.GenericTextLabel', 'HreRem.view.agenda.TareaModel'],
+    requires: ['HreRem.view.common.TareaController', 'HreRem.view.common.GenericCombo', 'HreRem.view.common.GenericComboEspecial', 'HreRem.view.common.GenericTextLabel', 'HreRem.view.common.DisplayFieldBase', 'HreRem.view.agenda.TareaModel'],
     controller: 'tarea',
     viewModel: {
         type: 'tarea'
@@ -244,7 +244,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
                     me.campos[i].allowBlank = me.campos[i].noObligatorio;
                     camposFiltrados.push(me.campos[i]);
                     break;
-
                 case 'checkbox':
                     var checkbox = {};
                     checkbox.xtype = 'checkboxfield';
@@ -263,14 +262,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             }
 
         }
-
-        camposFiltrados[camposFiltrados.length] = me.campos[me.campos.length - 1];
-        camposFiltrados[camposFiltrados.length - 1].labelWidth = 180;
-        camposFiltrados[camposFiltrados.length - 1].width = '100%';
-        camposFiltrados[camposFiltrados.length - 1].colspan = 2;
-        camposFiltrados[camposFiltrados.length - 1].rowspan = 4;
-
-
+        
+        if(me.campos[me.campos.length - 1].xtype != 'displayfieldbase'){
+	        camposFiltrados[camposFiltrados.length] = me.campos[me.campos.length - 1];
+	        camposFiltrados[camposFiltrados.length - 1].labelWidth = 180;
+	        camposFiltrados[camposFiltrados.length - 1].width = '100%';
+	        camposFiltrados[camposFiltrados.length - 1].colspan = 2;
+	        camposFiltrados[camposFiltrados.length - 1].rowspan = 4;
+        }
         if (camposFiltrados.length % 2 == 0) {
             camposFiltrados[camposFiltrados.length - 2].labelWidth = 180;
             camposFiltrados[camposFiltrados.length - 2].colspan = 2;
@@ -1561,6 +1560,13 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
  
     },
     
+    T015_FirmaValidacion: function(){
+    	var me = this;
+    	
+    	me.down('[name=fechaFirma]').noObligatorio=false;
+    	me.campoObligatorio(me.down('[name=fechaFirma]'));
+    },
+    
     T015_VerificarScoringValidacion: function(){
     	var me = this;
     	
@@ -1904,7 +1910,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     
     T015_PosicionamientoValidacion: function(){
     	var me = this;
+    	me.down('[name=fechaFirmaContrato]').noObligatorio=false;
     	me.down('[name=lugarFirma]').noObligatorio=false;
+    	me.campoObligatorio(me.down('[name=fechaFirmaContrato]'));
     	me.campoObligatorio(me.down('[name=lugarFirma]'));
     },
     

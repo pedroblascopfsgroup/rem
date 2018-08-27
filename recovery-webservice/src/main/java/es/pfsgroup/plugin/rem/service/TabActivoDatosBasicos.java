@@ -227,19 +227,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "tipoInfoComercialCodigo", activo.getInfoComercial().getTipoInfoComercial().getCodigo());
 		}
 		
-		if(activo.getEstadoPublicacion() != null){
-			// Si el activo contiene datos de publicación.
-			BeanUtils.copyProperty(activoDto, "estadoPublicacionDescripcion", activo.getEstadoPublicacion().getDescripcion());
-			BeanUtils.copyProperty(activoDto, "estadoPublicacionCodigo", activo.getEstadoPublicacion().getCodigo());
-		} else {
-			// Si el activo no contiene datos de publicación se trata como NO PUBLICADO.
-			DDEstadoPublicacion estadoPublicacion = (DDEstadoPublicacion) diccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacion.class, DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
-			if(!Checks.esNulo(estadoPublicacion)) {
-				activoDto.setEstadoPublicacionDescripcion(estadoPublicacion.getDescripcion());
-			}
-			activoDto.setEstadoPublicacionCodigo(DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
-		}
-		
 		if(activo.getTipoComercializar() != null){
 			BeanUtils.copyProperty(activoDto, "tipoComercializarCodigo", activo.getTipoComercializar().getCodigo());
 			BeanUtils.copyProperty(activoDto, "tipoComercializarDescripcion", activo.getTipoComercializar().getDescripcion());
@@ -610,12 +597,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					
 					//Acciones al desmarcar check comercializar
 					if(!dto.getAplicaComercializar()) {
-						try {
-							this.accionesDesmarcarComercializar(activo);
-						} catch (SQLException e) {
-							logger.error("Error al realizar tareas posteriores al desmarcar check de perimetro de comercializar", e);
-							new JsonViewerException("Error en BBDD: ".concat(e.getMessage()));
-						}
+						this.accionesDesmarcarComercializar(activo);
 					}
 				}
 				if(!Checks.esNulo(dto.getAplicaFormalizar())) {
@@ -773,19 +755,15 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	 * Acciones al desmarcar check Comercializar
 	 * 1. Valida si se puede demarcar (Activo sin ofertas vivas).
 	 * 2. Valida si el activo pertenece a una agrupación de tipo restringida y es el activo principal.
-	 * 3. Si puede desmarcar y es activo principal de una agrupación de tipo restringida, hay que poner
-	 *  el activo en estado publicación a 'No publicado' y desmarcar todos los comercializar de los activos
-	 *  que componen la agrupación restringida.
-	 * @param activo
-	 * @throws SQLException 
-	 * @throws JsonViewerException 
+	 * 3. Si puede desmarcar y es activo principal de una agrupación de tipo restringida, actualizar estado publicación.
+	 *
+	 * @param activo: activo sobre el que se desmarca comercializar.
 	 */
-	private void accionesDesmarcarComercializar(Activo activo) throws JsonViewerException, SQLException {
+	private void accionesDesmarcarComercializar(Activo activo) {
 		this.validarPerimetroActivo(activo,1);
 		this.validarPerimetroActivo(activo,3);
-		//Si se permite desmarcar, cambiamos el estado de publicación del activo a 'No Publicado'
-		String motivo = messageServices.getMessage(MOTIVO_ACTIVO_NO_COMERCIALIZABLE_NO_PUBLICADO);
-		activoApi.setActivoToNoPublicado(activo, motivo);
+
+		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 	}
 	
 	/**

@@ -56,7 +56,6 @@ import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
-import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -69,7 +68,6 @@ import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
-import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
@@ -89,7 +87,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
@@ -117,7 +114,6 @@ import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
-import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
 import net.sf.json.JSONObject;
 
 @Service("ofertaManager")
@@ -841,9 +837,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				//genericDao.update(CondicionanteExpediente.class, coe);
 				
 				//Se ocultará el activo con el motivo “Oferta Express Cajamar”
-				Activo activo = oferta.getActivoPrincipal();			
+				/*Activo activo = oferta.getActivoPrincipal();
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO);
-				activoEstadoPublicacionApi.cambiarEstadoPublicacionAndRegistrarHistorico(activo, ActivoHistoricoEstadoPublicacion.MOTIVO_OFERTA_EXPRES, filtro,activo.getEstadoPublicacion(), null, null);
+				activoEstadoPublicacionApi.cambiarEstadoPublicacionAndRegistrarHistorico(activo, ActivoHistoricoEstadoPublicacion.MOTIVO_OFERTA_EXPRES, filtro,activo.getEstadoPublicacion(), null, null);*/
 				
 			}else{
 				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));	
@@ -2439,31 +2435,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Override
 	public void desocultarActivoOferta(Oferta oferta) throws Exception {
-
 		if (oferta.getActivosOferta() != null && !oferta.getActivosOferta().isEmpty()) {
 			for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
 				Activo activo = activoOferta.getPrimaryKey().getActivo();
-				if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())
-						&& (DDSituacionComercial.CODIGO_DISPONIBLE_VENTA
-								.equals(activo.getSituacionComercial().getCodigo())
-								|| DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA
-										.equals(activo.getSituacionComercial().getCodigo())
-								|| DDSituacionComercial.CODIGO_DISPONIBLE_CONDICIONADO
-										.equals(activo.getSituacionComercial().getCodigo()))) {
-
-					DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = activoEstadoPublicacionApi
-							.getState(activo.getId());
-
-					dtoCambioEstadoPublicacion.setPublicacionOrdinaria(true);
-					dtoCambioEstadoPublicacion.setOcultacionForzada(false);
-					dtoCambioEstadoPublicacion
-							.setMotivoPublicacion(ActivoHistoricoEstadoPublicacion.MOTIVO_DESOCULTACION_AUTOMATICA);
-					DtoPublicacionValidaciones dtoPublicacionValidaciones = new DtoPublicacionValidaciones();
-					dtoPublicacionValidaciones.setValidacionesNinguna();
-					dtoPublicacionValidaciones.setActivo(activo);
-
-					activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion,
-							dtoPublicacionValidaciones);
+				if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo()) && (DDSituacionComercial.CODIGO_DISPONIBLE_VENTA.equals(activo.getSituacionComercial().getCodigo())
+						|| DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA.equals(activo.getSituacionComercial().getCodigo())
+						|| DDSituacionComercial.CODIGO_DISPONIBLE_CONDICIONADO.equals(activo.getSituacionComercial().getCodigo()))) {
+					activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 				}
 			}
 		}

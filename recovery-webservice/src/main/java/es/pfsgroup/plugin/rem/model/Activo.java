@@ -40,7 +40,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -54,11 +53,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 
-
 /**
  * Modelo que gestiona los activos.
- * 
- * @author Anahuac de Vicente
  */
 @Entity
 @Table(name = "ACT_ACTIVO", schema = "${entity.schema}")
@@ -319,10 +315,6 @@ public class Activo implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TPU_ID")
     private DDTipoPublicacion tipoPublicacion;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_EPU_ID")
-    private DDEstadoPublicacion estadoPublicacion;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TCO_ID")
@@ -1337,7 +1329,7 @@ public class Activo implements Serializable, Auditable {
     
 	/**
      * devuelve el adjunto por Id.
-     * @param id id
+     * @param idDocRestClient: id
      * @return adjunto
      */
     public ActivoAdjuntoActivo getAdjuntoGD(Long idDocRestClient) {
@@ -1393,14 +1385,6 @@ public class Activo implements Serializable, Auditable {
 
 	public void setTipoPublicacion(DDTipoPublicacion tipoPublicacion) {
 		this.tipoPublicacion = tipoPublicacion;
-	}
-	
-	public DDEstadoPublicacion getEstadoPublicacion() {
-		return estadoPublicacion;
-	}
-
-	public void setEstadoPublicacion(DDEstadoPublicacion estadoPublicacion) {
-		this.estadoPublicacion = estadoPublicacion;
 	}
 
 	public DDTipoComercializacion getTipoComercializacion() {

@@ -680,49 +680,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		}
 	},
 
-	onClickPublicarActivosSeleccionadosSubmenuGrid: function(menuItem) {
-		var me = this;
-
-		menuItem.up('activosagrupacionlist').mask();
-
-		var arraySelection = menuItem.up('activosagrupacionlist').getActivoIDPersistedSelection();
-		var url = $AC.getRemoteUrl('agrupacion/publicarActivosAgrupacion');
-		var params = {
-					'agrupacionID': me.getViewModel().get("agrupacionficha.id"),
-					'activosID': arraySelection
-				};
-
-		me.genericAJAXController(menuItem, url, params);
-	},
-
-	onClickPublicarSubdivisionesActivosSeleccioandosSubmenuGrid: function(menuItem) {
-		var me = this;
-
-		menuItem.up('activosagrupacionlist').mask();
-
-		var arraySelection = menuItem.up('activosagrupacionlist').getActivoIDPersistedSelection();
-		var url = $AC.getRemoteUrl('agrupacion/publicarSubdivisionesActivosAgrupacion');
-		var params = {
-					'agrupacionID': me.getViewModel().get("agrupacionficha.id"),
-					'activosID': arraySelection
-				};
-
-		me.genericAJAXController(menuItem, url, params);
-	},
-
-	onClickPublicarAgrupacionSubmenuGrid: function(menuItem) {
-		var me = this;
-
-		menuItem.up('activosagrupacionlist').mask();
-
-		var url = $AC.getRemoteUrl('agrupacion/publicarAgrupacion');
-		var params = {
-				'agrupacionID': me.getViewModel().get("agrupacionficha.id")
-			};
-
-		me.genericAJAXController(menuItem, url, params);
-	},
-
 	genericAJAXController: function(menuItem, url, params) {
 		var me = this;
 		Ext.Ajax.request({

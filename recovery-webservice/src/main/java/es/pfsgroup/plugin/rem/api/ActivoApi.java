@@ -22,7 +22,6 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
-import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
 
 public interface ActivoApi {
 
@@ -300,52 +299,6 @@ public interface ActivoApi {
 	 * @return Devuelve los resultados paginados del grid de la búsqueda de activos publicación.
 	 */
 	Page getActivosPublicacion(DtoActivosPublicacion dtoActivosPublicacion);
-
-	/**
-	 * Este método obtiene el último HistoricoEstadoPublicacion por el ID de activo.
-	 *
-	 * @param activoID : ID del activo para buscar el HistoricoEstadoPublicacion.
-	 * @return Devuelve el último histórico por ID para el ID del activo.
-	 */
-	ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicacion(Long activoID);
-
-	/**
-	 * Este método obtiene el penúltimo HistoricoEstadoPublicacion por el ID de activo.
-	 *
-	 * @param activoID : ID del activo para buscar el HistoricoEstadoPublicacion.
-	 * @return Devuelve el último histórico por ID para el ID del activo.
-	 */
-	ActivoHistoricoEstadoPublicacion getPenultimoHistoricoEstadoPublicacion(Long activoID);
-
-	/**
-	 * Obtiene el último estado de publicacion ordinaria en el que estuvo un activo (ordinaria, oculto, precio oculto)
-	 *
-	 * @param activoID: ID del activo.
-	 * @return
-	 */
-	ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicado(Long activoID);
-
-	/**
-	 * Igual que publicarActivo pero con motivo de publicacion
-	 *
-	 * @param idActivo
-	 * @param motivo
-	 * @return
-	 * @throws SQLException
-	 */
-	boolean publicarActivo(Long idActivo, String motivo) throws SQLException, JsonViewerException;
-
-	/**
-	 * Igual que publicarActivo pero seleccionando las validaciones de publicacion a realizar
-	 *
-	 * @param idActivo
-	 * @param motivo
-	 * @param validacionesPublicacion
-	 * @return
-	 * @throws SQLException
-	 * @throws JsonViewerException
-	 */
-	boolean publicarActivo(Long idActivo, String motivo, DtoPublicacionValidaciones validacionesPublicacion) throws SQLException, JsonViewerException;
 
 	/**
 	 * Inserta o actualiza una visita aun activo
@@ -864,16 +817,6 @@ public interface ActivoApi {
 	 * @return
 	 */
 	boolean isActivoConOfertasVivas(Activo activo);
-
-	/**
-	 * Cambia el Estado de publicación a 'No publicado' y registra el cambio en el histórico
-	 *
-	 * @param activo
-	 * @param motivo
-	 * @throws SQLException
-	 * @throws JsonViewerException
-	 */
-	void setActivoToNoPublicado(Activo activo, String motivo) throws JsonViewerException, SQLException;
 
 	/**
 	 * Este método llama al api del ActivoDao el cual obtiene el siguiente número de la secuencia para el campo de 'ACT_NUM_ACTIVO_REM'.

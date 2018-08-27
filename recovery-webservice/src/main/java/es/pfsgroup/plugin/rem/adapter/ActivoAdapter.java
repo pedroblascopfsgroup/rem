@@ -2597,17 +2597,8 @@ public class ActivoAdapter {
 	}
 	
 	@Transactional(readOnly = false)
-	public boolean actualizarEstadoPublicacionActivo(Long id) {
-		Activo activo = activoApi.get(id);
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-
-		if(activoApi.isActivoIntegradoAgrupacionRestringida(id)) {
-			activoDao.publicarAgrupacionConHistorico(activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(id).getAgrupacion().getId(), usuarioLogado.getUsername());
-		} else {
-			activoDao.publicarActivoConHistorico(activo.getId(), usuarioLogado.getUsername());
-		}
-
-		return true;
+	public boolean actualizarEstadoPublicacionActivo(Long idActivo) {
+		return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(idActivo);
 	}
 	
 	@Transactional(readOnly = false)

@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.adapter;
 
 import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -80,7 +79,6 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
-import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoEstadoDisponibilidadComercial;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
@@ -93,7 +91,6 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
-import es.pfsgroup.plugin.rem.model.VActivosSubdivision;
 import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.VCondicionantesAgrDisponibilidad;
@@ -102,7 +99,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
@@ -2064,269 +2060,6 @@ public class AgrupacionAdapter {
 		}
 
 		return null;
-	}
-
-	/**
-	 * Este método realiza operaciones de publicación en los activos
-	 * seleccionados pertenecientes a una agrupación.
-	 * 
-	 * @param agrupacionID
-	 *            : ID de la agrupación de los activos.
-	 * @param activosID
-	 *            : Lista con los ID de los activos a publicar.
-	 * @return Devuelve True si la operación ha sido satisfactoria.
-	 * @throws Exception
-	 *             Devuelve una excepción si alguno de los activos no se puede
-	 *             publicar.
-	 */
-	public boolean publicarActivosAgrupacion(Long agrupacionID, String activosID) throws Exception {
-		if (Checks.esNulo(agrupacionID) || Checks.esNulo(activosID)) {
-			return false;
-		}
-
-		// Comprobar si la agrupación está finalizada.
-		Filter filterAgrupacionID = genericDao.createFilter(FilterType.EQUALS, "id", agrupacionID);
-		ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filterAgrupacionID);
-		if (!Checks.esNulo(agrupacion)) {
-			if (agrupacion.getEliminado() == 1) {
-				throw new Exception(AgrupacionAdapter.PUBLICACION_AGRUPACION_BAJA_ERROR_MSG);
-			}
-		}
-
-		List<String> activosIDArray = Arrays.asList(activosID.split(","));
-		List<String> activosIDAPublicar = new ArrayList<String>();
-
-		// Comprobar el estado de publicación de cada activo.
-		for (String idActivo : activosIDArray) {
-			Activo activo = activoDao.get(Long.parseLong(idActivo));
-			if (!Checks.esNulo(activo.getEstadoPublicacion())) {
-				if (DDEstadoPublicacion.CODIGO_NO_PUBLICADO.equals(activo.getEstadoPublicacion().getCodigo())) {
-					if (activo.getSituacionComercial().getCodigo()
-							.equals(DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE)
-							|| activo.getSituacionComercial().getCodigo().equals(DDSituacionComercial.CODIGO_TRASPASADO)
-							|| activo.getSituacionComercial().getCodigo().equals(DDSituacionComercial.CODIGO_VENDIDO)) {
-						throw new Exception(AgrupacionAdapter.PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG);
-					}
-					activosIDAPublicar.add(idActivo);
-				} else {
-					// Si algún activo tiene estado y no se encuentra en estado
-					// 'No Publicado' comprobar si ya ha sido publicado.
-					if (!DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO
-							.equals(activo.getEstadoPublicacion().getCodigo())) {
-						// Si el estado indica que tampoco está ya publicado
-						// entonces se encuentra en cualquier otro estado.
-						throw new Exception(AgrupacionAdapter.PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG);
-					}
-				}
-			} else {
-				// Sin estado de publicación se añade el activo.
-				activosIDAPublicar.add(idActivo);
-			}
-		}
-
-		// Publicar los activos de manera forzada.
-		for (String idActivo : activosIDAPublicar) {
-			DtoCambioEstadoPublicacion dtoPublicacion = new DtoCambioEstadoPublicacion();
-			dtoPublicacion.setActivo(Long.parseLong(idActivo));
-			dtoPublicacion.setPublicacionForzada(true);
-			dtoPublicacion.setMotivoPublicacion(AgrupacionAdapter.PUBLICACION_MOTIVO_MSG);
-
-			try {
-				activoEstadoPublicacionApi.publicacionChangeState(dtoPublicacion);
-			} catch (SQLException e) {
-				logger.error("error en agrupacionAdapter", e);
-				return false;
-			} catch (JsonViewerException jViewEx) {
-				jViewEx.printStackTrace();
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	/**
-	 * Este método realiza operaciones de publicación en las subdivisiones de
-	 * los activos seleccionados pertenecientes a una agrupación.
-	 * 
-	 * @param agrupacionID
-	 *            : ID de la agrupación de los activos.
-	 * @param activosID
-	 *            : Lista con los ID de los activos para buscar sus
-	 *            subdivisiones y publicarlas.
-	 * @return Devuelve True si la operación ha sido satisfactoria.
-	 * @throws Exception
-	 *             Devuelve una excepción si alguno de los activos no se puede
-	 *             publicar.
-	 */
-	public boolean publicarSubdivisionesActivosAgrupacion(Long agrupacionID, String activosID) throws Exception {
-		if (Checks.esNulo(agrupacionID) || Checks.esNulo(activosID)) {
-			return false;
-		}
-
-		// Comprobar si la agrupación está finalizada.
-		Filter filterAgrID = genericDao.createFilter(FilterType.EQUALS, "id", agrupacionID);
-		ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filterAgrID);
-		if (!Checks.esNulo(agrupacion)) {
-			if (agrupacion.getEliminado() == 1) {
-				throw new Exception(AgrupacionAdapter.PUBLICACION_AGRUPACION_BAJA_ERROR_MSG);
-			}
-		}
-
-		List<String> activosIDArray = Arrays.asList(activosID.split(","));
-		List<Long> activosIDAPublicar = new ArrayList<Long>();
-
-		List<Long> listaActivosSubdivisiones = new ArrayList<Long>();
-		List<Long> listaSubdivisionesID = new ArrayList<Long>();
-		Filter filterAgrupacionID = genericDao.createFilter(FilterType.EQUALS, "agrupacionId", agrupacionID);
-
-		// Obtener una lista de subdivisiones a las que pertenecen los activos
-		// especificados y la agrupación especificada.
-		for (String idActivo : activosIDArray) {
-			Filter filterActivoID = genericDao.createFilter(FilterType.EQUALS, "activoId", Long.parseLong(idActivo));
-			VActivosSubdivision subdivision = genericDao.get(VActivosSubdivision.class, filterActivoID,
-					filterAgrupacionID);
-			if (!Checks.esNulo(subdivision)) {
-				if (!listaSubdivisionesID.contains(subdivision.getIdSubdivision())) {
-					listaSubdivisionesID.add(subdivision.getIdSubdivision());
-				}
-			}
-		}
-
-		// Con la lista de subdivisiones obtener ahora todos los activos
-		// pertenecientes a estas agrupaciones.
-		for (Long subdivisionID : listaSubdivisionesID) {
-			Filter filterSubdivisionID = genericDao.createFilter(FilterType.EQUALS, "idSubdivision", subdivisionID);
-			List<VActivosSubdivision> subdivisiones = (List<VActivosSubdivision>) genericDao
-					.getList(VActivosSubdivision.class, filterSubdivisionID, filterAgrupacionID);
-			for (VActivosSubdivision subdivision : subdivisiones) {
-				if (!listaActivosSubdivisiones.contains(subdivision.getActivoId())) {
-					listaActivosSubdivisiones.add(subdivision.getActivoId());
-				}
-			}
-		}
-
-		// Comprobar el estado de publicación de cada activo.
-		for (Long idActivo : listaActivosSubdivisiones) {
-			Activo activo = activoDao.get(idActivo);
-			if (!Checks.esNulo(activo.getEstadoPublicacion())) {
-				if (DDEstadoPublicacion.CODIGO_NO_PUBLICADO.equals(activo.getEstadoPublicacion().getCodigo())) {
-					activosIDAPublicar.add(idActivo);
-				} else {
-					// Si algún activo tiene estado y no se encuentra en estado
-					// 'No Publicado' comprobar si ya ha sido publicado.
-					if (!DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO
-							.equals(activo.getEstadoPublicacion().getCodigo())) {
-						// Si el estado indica que tampoco está ya publicado
-						// entonces se encuentra en cualquier otro estado.
-						throw new Exception(AgrupacionAdapter.PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG);
-					}
-				}
-			} else {
-				// Sin estado de publicación se añade el activo.
-				activosIDAPublicar.add(idActivo);
-			}
-		}
-
-		// Publicar los activos de manera forzada.
-		for (Long idActivo : activosIDAPublicar) {
-			DtoCambioEstadoPublicacion dtoPublicacion = new DtoCambioEstadoPublicacion();
-			dtoPublicacion.setActivo(idActivo);
-			dtoPublicacion.setPublicacionForzada(true);
-			dtoPublicacion.setMotivoPublicacion(AgrupacionAdapter.PUBLICACION_MOTIVO_MSG);
-
-			try {
-				activoEstadoPublicacionApi.publicacionChangeState(dtoPublicacion);
-			} catch (SQLException e) {
-				logger.error("error en agrupacionAdapter", e);
-				return false;
-			} catch (JsonViewerException jViewEx) {
-				jViewEx.printStackTrace();
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	/**
-	 * Este método realiza operaciones de publicación en todos los activos
-	 * pertenecientes a la agrupación por el ID de agrupación recibido.
-	 * 
-	 * @param agrupacionID
-	 *            : ID de la agrupación.
-	 * @return Devuelve True si la operación ha sido satisfactoria.
-	 * @throws Exception
-	 *             Devuelve una excepción si alguno de los activos no se puede
-	 *             publicar.
-	 */
-	public boolean publicarAgrupacion(Long agrupacionID) throws Exception {
-		if (Checks.esNulo(agrupacionID)) {
-			return false;
-		}
-
-		// Comprobar si la agrupación está finalizada.
-		Filter filterAgrupacionID = genericDao.createFilter(FilterType.EQUALS, "id", agrupacionID);
-		ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filterAgrupacionID);
-		if (!Checks.esNulo(agrupacion)) {
-			if (agrupacion.getEliminado() == 1) {
-				throw new Exception(AgrupacionAdapter.PUBLICACION_AGRUPACION_BAJA_ERROR_MSG);
-			}
-		}
-
-		List<ActivoAgrupacionActivo> activosAgrupaciones = (List<ActivoAgrupacionActivo>) genericDao.getList(
-				ActivoAgrupacionActivo.class,
-				genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrupacionID));
-		List<Activo> activosList = new ArrayList<Activo>();
-		List<Activo> activosDefinitivosList = new ArrayList<Activo>();
-
-		if (!Checks.estaVacio(activosAgrupaciones)) {
-			for (ActivoAgrupacionActivo activoAgrupacion : activosAgrupaciones) {
-				activosList.add(activoAgrupacion.getActivo());
-			}
-		}
-
-		// Comprobar el estado de publicación de cada activo.
-		for (Activo activo : activosList) {
-			if (!Checks.esNulo(activo.getEstadoPublicacion())) {
-				if (DDEstadoPublicacion.CODIGO_NO_PUBLICADO.equals(activo.getEstadoPublicacion().getCodigo())) {
-					activosDefinitivosList.add(activo);
-				} else {
-					// Si algún activo tiene estado y no se encuentra en estado
-					// 'No Publicado' comprobar si ya ha sido publicado.
-					if (!DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO
-							.equals(activo.getEstadoPublicacion().getCodigo())) {
-						// Si el estado indica que tampoco está ya publicado
-						// entonces se encuentra en cualquier otro estado.
-						throw new Exception(AgrupacionAdapter.PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG);
-					}
-				}
-			} else {
-				// Sin estado de publicación se añade el activo.
-				activosDefinitivosList.add(activo);
-			}
-		}
-
-		// Publicar los activos de manera forzada.
-		for (Activo activo : activosList) {
-			DtoCambioEstadoPublicacion dtoPublicacion = new DtoCambioEstadoPublicacion();
-			dtoPublicacion.setActivo(activo.getId());
-			dtoPublicacion.setPublicacionForzada(true);
-			dtoPublicacion.setMotivoPublicacion(AgrupacionAdapter.PUBLICACION_MOTIVO_MSG);
-
-			try {
-				activoEstadoPublicacionApi.publicacionChangeState(dtoPublicacion);
-			} catch (SQLException e) {
-				logger.error("error en agrupacionAdapter", e);
-				return false;
-			} catch (JsonViewerException jViewEx) {
-				jViewEx.printStackTrace();
-				return false;
-			}
-		}
-
-		return true;
-
 	}
 
 	private String getEstadoNuevaOferta(ActivoAgrupacion agrupacion) {

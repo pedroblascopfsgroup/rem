@@ -36,7 +36,6 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
-import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
@@ -51,7 +50,6 @@ import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 
@@ -125,9 +123,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		if (dto.getMunicipio() != null)
    			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.localidadDescripcion", dto.getMunicipio(), true);
    		
-   		/*if (dto.getUnidadInferior() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.unidadPoblacional.descripcion", dto.getUnidadInferior(), true);*/
-   		
    		if (dto.getPaisCodigo() != null)
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.paisCodigo", dto.getPaisCodigo());
    		
@@ -150,7 +145,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conTitulo", dto.getConTitulo());
 
    		if (dto.getComboSelloCalidad() != null){
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.selloCalidad", dto.getComboSelloCalidad().equals(Integer.valueOf(1)) ? true : false);
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.selloCalidad", dto.getComboSelloCalidad().equals(1));
    		}
 
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "scr.codigo", dto.getSubcarteraCodigo());
@@ -330,7 +325,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.selloCalidad", dto.getComboSelloCalidad());
    		
 		return HibernateQueryUtils.list(this, hb);
-
 	}
     
     @Override
@@ -379,31 +373,25 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
     	HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + id + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA);
 
    		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
-
 	}
     
     @SuppressWarnings("unchecked")
 	@Override
     public List<DDUnidadPoblacional> getComboInferiorMunicipio(String codigoMunicipio) {
-    	
 		 String hql = "from DDUnidadPoblacional where localidad.codigo= ? and codigo NOT LIKE '%0000'";
-		
-		 List<DDUnidadPoblacional> list = getHibernateTemplate().find(hql, new Object[] { codigoMunicipio });
-		 return list;
-	 
+
+	    return (List<DDUnidadPoblacional>) getHibernateTemplate().find(hql, new Object[] { codigoMunicipio });
     }
     
     @Override
 	public Integer getMaxOrdenFotoById(Long id) {
-
     	HQLBuilder hb = new HQLBuilder("select max(orden) from ActivoFoto foto where foto.activo.id = " + id);
+
     	try {
-    		//Integer cont = ((Integer) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
-    		return ((Integer) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
+    		return (Integer) getHibernateTemplate().find(hb.toString()).get(0);
     	} catch (Exception e) {
     		return 0;
     	}
-
 	}
     
     @Override
@@ -414,17 +402,14 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
     	+ " and foto.subdivision = "
     	+ hashSdv);
     	try {
-    		//Integer cont = ((Integer) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
-    		return ((Integer) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
+    		return (Integer) getHibernateTemplate().find(hb.toString()).get(0);
     	} catch (Exception e) {
     		return 0;
     	}
-
 	}
     
     @Override
    	public Long getPresupuestoActual(Long id) {
-
     	SimpleDateFormat df = new SimpleDateFormat("yyyy");
     	String yearNow = df.format(new Date());
     	
@@ -440,12 +425,10 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
        		e.printStackTrace();
        		return null;
        	}
-
    	}
     
     @Override
    	public Long getUltimoHistoricoPresupuesto(Long id) {
-
        	HQLBuilder hb = new HQLBuilder("select presupuesto.id from PresupuestoActivo presupuesto "
        			+ " where presupuesto.activo.id = " + id 
        			+ " order by presupuesto.ejercicio.anyo desc ");
@@ -458,16 +441,13 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
        		e.printStackTrace();
        		return null;
        	}
-
    	}
     
     @Override
 	public Page getListActivosPrecios(DtoActivoFilter dto) {
-
 		HQLBuilder hb = new HQLBuilder(" from VBusquedaActivosPrecios act");
 	
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo());
-   		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subcarteraCodigo", dto.getSubcarteraCodigo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoTituloActivoCodigo", dto.getTipoTituloActivoCodigo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subTipoTituloActivoCodigo", dto.getSubtipoTituloActivoCodigo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.inscrito", dto.getInscrito());
@@ -488,17 +468,13 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		//caso multiseleccion propietarios
    		if(dto.getPropietario() != null && !dto.getPropietario().isEmpty() && dto.getPropietario().contains(",")){
    			ArrayList<String> valores = new ArrayList<String>();
-   			for(String token : dto.getPropietario().split(",")){
-   				valores.add(token);
-   			}
+		    Collections.addAll(valores, dto.getPropietario().split(","));
    			HQLBuilder.addFiltroWhereInSiNotNull(hb, "act.idPropietario", valores);
    			
    		}else{
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.idPropietario", dto.getPropietario());
    		}
-   		
-   		
-   		
+
    		if (dto.getSubcarteraCodigo() != null) {
    			if("00".equals(dto.getSubcarteraCodigo())) {
    				List<String> lista = new ArrayList<String>();
@@ -558,7 +534,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conBloqueo", dto.getConBloqueo());
    		
-   		//HREOS-639 - Indicador de activos para preciar/repreciar/descuento
+   		// Indicador de activos para preciar/repreciar/descuento
    		if(Checks.esNulo(dto.getCheckTodosActivos()) || !dto.getCheckTodosActivos()) {
 	   		if(!Checks.esNulo(dto.getTipoPropuestaCodigo())) {
 		   		if(dto.getTipoPropuestaCodigo().equals("01")) {
@@ -572,38 +548,29 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		   		}
 	   		}
    		}
-		return HibernateQueryUtils.page(this, hb, dto);
 
+		return HibernateQueryUtils.page(this, hb, dto);
 	}
     
     @Override
 	public Page getHistoricoValoresPrecios(DtoHistoricoPreciosFilter dto) {
-
 		HQLBuilder hb = new HQLBuilder(" from ActivoHistoricoValoraciones hist");
-	
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "hist.activo.id", Long.parseLong(dto.getIdActivo()));   		
    		
 		return HibernateQueryUtils.page(this, hb, dto);
-
 	}
 
 	@Override
 	public void deleteValoracionById(Long id) {
-	
-		StringBuilder sb = new StringBuilder("delete from ActivoValoraciones val where val.id = "+id);		
-		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
-		
+		this.getSessionFactory().getCurrentSession().createQuery("delete from ActivoValoraciones val where val.id = " + id).executeUpdate();
 	}
 	
 	@Override
 	public boolean deleteValoracionSinDuplicarById(Long id) {
-
-		StringBuilder sb = new StringBuilder("delete from ActivoValoraciones val where val.id = " + id);
-		Query query = this.getSessionFactory().getCurrentSession().createQuery(sb.toString());
+		Query query = this.getSessionFactory().getCurrentSession().createQuery("delete from ActivoValoraciones val where val.id = " + id);
 		int afectado = query.executeUpdate();
 
-		return (afectado > 0) ? true : false;
-			
+		return afectado > 0;
 	}
 
     @SuppressWarnings("unchecked")
@@ -635,16 +602,16 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		if(!Checks.esNulo(dto.getTipoDeFecha())) {
    			switch(Integer.parseInt(dto.getTipoDeFecha())) {
 	   			case 1:
-	   				agregarFiltroFecha(hb,dto.getFechaDesde().toString(),dto.getFechaHasta(),"propact.fechaEmision");	
+	   				agregarFiltroFecha(hb,dto.getFechaDesde(),dto.getFechaHasta(),"propact.fechaEmision");
 	   				break;
 	   			case 2:
-	   				agregarFiltroFecha(hb,dto.getFechaDesde().toString(),dto.getFechaHasta(),"propact.fechaEnvio");	
+	   				agregarFiltroFecha(hb,dto.getFechaDesde(),dto.getFechaHasta(),"propact.fechaEnvio");
 	   				break;
 	   			case 3:
-	   				agregarFiltroFecha(hb,dto.getFechaDesde().toString(),dto.getFechaHasta(),"propact.fechaSancion");	
+	   				agregarFiltroFecha(hb,dto.getFechaDesde(),dto.getFechaHasta(),"propact.fechaSancion");
 	   				break;
 	   			case 4:
-	   				agregarFiltroFecha(hb,dto.getFechaDesde().toString(),dto.getFechaHasta(),"propact.fechaCarga");	
+	   				agregarFiltroFecha(hb,dto.getFechaDesde(),dto.getFechaHasta(),"propact.fechaCarga");
 	   				break;
    				default:
    					break;
@@ -685,43 +652,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			return null;
 		return busquedaActivo.getPrecio();
 	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicacion(Long activoID) {
-		
-		String hql = "from ActivoHistoricoEstadoPublicacion historico where historico.activo.id = ? and auditoria.borrado = false order by historico.id desc";
-		
-		 List<ActivoHistoricoEstadoPublicacion> historicoLista = getHibernateTemplate().find(hql, new Object[] { activoID });
-		 
-		 return !Checks.estaVacio(historicoLista)?historicoLista.get(0):null;
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public ActivoHistoricoEstadoPublicacion getPenultimoHistoricoEstadoPublicacion(Long activoID) {
-		
-		String hql = "from ActivoHistoricoEstadoPublicacion historico where historico.activo.id = ? and auditoria.borrado = false order by historico.id desc";
-		
-		List<ActivoHistoricoEstadoPublicacion> historicoLista = getHibernateTemplate().find(hql, new Object[] { activoID });
-		 
-		return (!Checks.estaVacio(historicoLista) && historicoLista.size() > 1)?historicoLista.get(1):null;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicado(Long activoID) {
-		
-		String hql = "from ActivoHistoricoEstadoPublicacion historico where historico.activo.id = ? " +
-				" and historico.estadoPublicacion.codigo in ("+DDEstadoPublicacion.CODIGO_PUBLICADO + ","
-				+ DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO + ","
-				+ DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO +") " +
-				" and auditoria.borrado = false order by historico.id desc";
-		
-		 List<ActivoHistoricoEstadoPublicacion> historicoLista = getHibernateTemplate().find(hql, new Object[] { activoID });
-		 
-		 return !Checks.estaVacio(historicoLista)?historicoLista.get(0):null;
-	}
 
 	@Override
 	public Boolean publicarActivoConHistorico(Long idActivo, String username) {
@@ -755,7 +685,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	 * @param idActivo: ID del activo para el cual se desea realizar la operación.
 	 * @param username: nombre del usuario, si la llamada es desde la web, que realiza la operación.
 	 * @param historificar: indica si la operación ha de realizar un histórico de los movimientos realizados.
-	 * @return Devuelve True si la operación ha sido satisfactorio, False si no ha sido satisfactoria.
+	 * @return Devuelve True si la operación ha sido satisfactoria, False si no ha sido satisfactoria.
 	 */
 	private Boolean publicarActivo(Long idActivo, String username, Boolean historificar, String eleccionUsuarioTipoPublicacionAlquiler) {
 		String procedureHQL = "BEGIN SP_CAMBIO_ESTADO_PUBLICACION(:idActivoParam, :eleccionUsuarioParam, :usernameParam, :historificarParam);  END;";
@@ -766,7 +696,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		callProcedureSql.setParameter("usernameParam", username);
 		callProcedureSql.setParameter("historificarParam", historificar ? "S" : "N");
 
-		Integer resultado = callProcedureSql.executeUpdate();
+		int resultado = callProcedureSql.executeUpdate();
 
     	return resultado == 1;
 	}
@@ -788,10 +718,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		callProcedureSql.setParameter("usernameParam", username);
 		callProcedureSql.setParameter("historificarParam", historificar ? "S" : "N");
 		
-		Integer resultado = callProcedureSql.executeUpdate();
+		int resultado = callProcedureSql.executeUpdate();
 		
 		return resultado == 1;
-		
 	}
 	
     public Long getNextNumExpedienteComercial() {
@@ -822,7 +751,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 				// Se le añade un día para que encuentre las fechas del día anterior hasta las 23:59
 				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(fechaHasta); // Configuramos la fecha que se recibe
+				if (fechaHasta != null) {
+					calendar.setTime(fechaHasta); // Configuramos la fecha que se recibe
+				}
 				calendar.add(Calendar.DAY_OF_YEAR, 1);  // numero de días a añadir, o restar en caso de días<0
 
 				HQLBuilder.addFiltroBetweenSiNotNull(hb, tipoFecha, null, calendar.getTime());
@@ -880,13 +811,11 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder hb = new HQLBuilder(" from ActivoTasacion tas");
 		hb.appendWhere(" tas.activo.id = " + idActivo);
 		hb.orderBy("tas.valoracionBien.fechaValorTasacion", HQLBuilder.ORDER_DESC);
-		List<ActivoTasacion> activoTasacionList = (List<ActivoTasacion>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
-		return activoTasacionList;
+		return (List<ActivoTasacion>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 	}
 	
 	@Override
 	public Page getActivosFromCrearTrabajo(List<String> listIdActivos, DtoTrabajoListActivos dto) {
-		
 		HQLBuilder hb = new HQLBuilder(" from VBusquedaActivosCrearTrabajo act");
 		HQLBuilder.addFiltroWhereInSiNotNull(hb, "numActivoHaya", listIdActivos);
 		
@@ -895,7 +824,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	@Override
 	public Page getLlavesByActivo(DtoLlaves dto) {
-		
 		HQLBuilder hb = new HQLBuilder(" from ActivoLlave lla");
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activo.id", Long.parseLong(dto.getIdActivo()));
 		
@@ -904,7 +832,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	@Override
 	public Page getListMovimientosLlaveByLlave(WebDto dto, Long idLlave) {
-		
 		HQLBuilder hb = new HQLBuilder("select mov from ActivoMovimientoLlave mov, ActivoLlave lla ");
 		hb.appendWhere("lla.id = mov.activoLlave.id");
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "lla.id", idLlave);
@@ -929,8 +856,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	/**
 	 * Inserta un orderBy en la consulta, para los movimientos, ya que al ser una consulta de dos tablas, 
 	 * no las ordena por defecto desde sencha.
-	 * @param dto
-	 * @param hb
+	 * @param dto:
+	 * @param hb:
 	 */
 	private void ordenarMovimientos(WebDto dto, HQLBuilder hb) {
 		
@@ -1013,14 +940,12 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	@Override
 	public String getCodigoTipoComercializarByActivo(Long idActivo) {
-		String codComercializar = rawDao.getExecuteSQL("SELECT tcr.DD_TCR_CODIGO "
+		return rawDao.getExecuteSQL("SELECT tcr.DD_TCR_CODIGO "
 				+ "		  FROM ACT_ACTIVO act"
 				+ "			INNER JOIN DD_TCR_TIPO_COMERCIALIZAR tcr ON act.dd_tcr_id = tcr.dd_tcr_id"
 				+ "			WHERE act.ACT_ID = "+idActivo
-				+ "			AND act.BORRADO = 0"				
+				+ "			AND act.BORRADO = 0"
 				+ "         AND ROWNUM = 1 ");
-		
-		return codComercializar;
 	}
 	
 	@SuppressWarnings("unchecked")

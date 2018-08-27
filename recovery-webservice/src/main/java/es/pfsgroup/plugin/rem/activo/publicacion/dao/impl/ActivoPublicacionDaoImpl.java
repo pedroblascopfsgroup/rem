@@ -15,6 +15,8 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.Type;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
+
 @Repository("ActivoPublicacionDao")
 public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacion, Long> implements ActivoPublicacionDao {
 
@@ -105,5 +107,15 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 		criteria.add(Restrictions.eq("activo.id", idActivo));
 
 		return HibernateUtils.castObject(Boolean.class, criteria.uniqueResult());
+	}
+
+	@Override
+	public Date getFechaInicioEstadoActualPublicacionVenta(Long idActivo) {
+		Criteria criteria = getSession().createCriteria(ActivoPublicacion.class);
+		criteria.setProjection(Projections.property("fechaInicioVenta"));
+		criteria.add(Restrictions.eq("activo.id", idActivo)).createCriteria("estadoPublicacionVenta")
+				.add(Restrictions.in("codigo", new String[] {DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA, DDEstadoPublicacionVenta.CODIGO_OCULTO_VENTA}));
+
+		return HibernateUtils.castObject(Date.class, criteria.uniqueResult());
 	}
 }

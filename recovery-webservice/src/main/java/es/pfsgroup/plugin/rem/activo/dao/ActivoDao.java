@@ -12,7 +12,6 @@ import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
-import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
@@ -26,9 +25,6 @@ import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 
 public interface ActivoDao extends AbstractDao<Activo, Long>{
-	
-	/* Nombre que le damos al Activo buscado en la HQL */
-	public static final String NAME_OF_ENTITY_ACT = "act";
 	
 	public Page getListActivos(DtoActivoFilter dtoActivoFiltro, Usuario usuLogado);
 	
@@ -65,12 +61,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public Page getPropuestas(DtoPropuestaFilter dtoPropuestaFiltro);
 
 	public Page getActivosPublicacion(DtoActivosPublicacion dtoActivosPublicacion);
-
-	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicacion(Long activoID);
-	
-	public ActivoHistoricoEstadoPublicacion getPenultimoHistoricoEstadoPublicacion(Long activoID);
-	
-	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicado(Long activoID);
 	
     public Long getNextNumOferta();
 

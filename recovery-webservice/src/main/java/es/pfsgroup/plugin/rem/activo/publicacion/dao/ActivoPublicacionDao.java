@@ -4,6 +4,8 @@ import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
 
+import java.util.Date;
+
 public interface ActivoPublicacionDao extends AbstractDao<ActivoPublicacion, Long> {
 
 	/**
@@ -56,4 +58,12 @@ public interface ActivoPublicacionDao extends AbstractDao<ActivoPublicacion, Lon
 	 * @return Devuelve True si el check de publicar sin precio está marcado, False si no está marcado.
 	 */
 	Boolean getCheckSinPrecioAlquilerPorIdActivo(Long idActivo);
+
+	/**
+	 * Este método obtiene la fecha de inicio del estado de publicación venta en el que se encuentra el activo.
+	 *
+	 * @param idActivo: ID del activo del que obtener la fecha de inicio de estado de publicación venta.
+	 * @return Devuelve un objeto fecha si el activo consta de estado de publicación, null de otro modo.
+	 */
+	Date getFechaInicioEstadoActualPublicacionVenta(Long idActivo);
 }

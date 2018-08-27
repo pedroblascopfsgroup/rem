@@ -1743,38 +1743,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
-	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicacion(Long activoID) {
-		return activoDao.getUltimoHistoricoEstadoPublicacion(activoID);
-	}
-
-	@Override
-	public ActivoHistoricoEstadoPublicacion getPenultimoHistoricoEstadoPublicacion(Long activoID) {
-		return activoDao.getPenultimoHistoricoEstadoPublicacion(activoID);
-	}
-
-	@Override
-	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicado(Long activoID) {
-		return activoDao.getUltimoHistoricoEstadoPublicado(activoID);
-	}
-
-	@Override
-	@Deprecated
-	public boolean publicarActivo(Long idActivo, String motivo) throws SQLException, JsonViewerException { // TODO: eliminar.
-		return publicarActivo(idActivo, motivo, null);
-	}
-
-	@Override
-	@Deprecated
-	public boolean publicarActivo(Long idActivo, String motivo, DtoPublicacionValidaciones validacionesPublicacion) throws SQLException, JsonViewerException { // TODO: eliminar.
-		DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = new DtoCambioEstadoPublicacion();
-		dtoCambioEstadoPublicacion.setActivo(idActivo);
-		dtoCambioEstadoPublicacion.setMotivoPublicacion(motivo);
-		dtoCambioEstadoPublicacion.setPublicacionOrdinaria(true);
-
-		return activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion, validacionesPublicacion);
-	}
-
-	@Override
 	public Visita insertOrUpdateVisitaActivo(Visita visita) throws IllegalAccessException, InvocationTargetException {
 		if (visita.getId() != null) {
 			// insert
@@ -2154,12 +2122,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Integer contador = 0;
 
 		for (ActivoAgrupacionActivo activoAgrupacion : activos) {
-			if (!Checks.esNulo(activoAgrupacion.getActivo().getEstadoPublicacion())) {
-				String codEstadoPublicacion = activoAgrupacion.getActivo().getEstadoPublicacion().getCodigo();
-				if (codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO) || codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO) || codEstadoPublicacion.equals
-				(DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO) || codEstadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO_PRECIOOCULTO)) {
-					contador++;
-				}
+			Long idActivo = activoAgrupacion.getActivo().getId();
+			if(activoEstadoPublicacionApi.isPublicadoVentaByIdActivo(idActivo) || activoEstadoPublicacionApi.isPublicadoAlquilerByIdActivo(idActivo)) {
+				contador++;
 			}
 		}
 
@@ -3698,13 +3663,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		return false;
-	}
-
-	@Override
-	public void setActivoToNoPublicado(Activo activo, String motivo) throws JsonViewerException, SQLException {
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
-
-		activoEstadoPublicacionApi.cambiarEstadoPublicacionAndRegistrarHistorico(activo, motivo, filtro, activo.getEstadoPublicacion(), null, null);
 	}
 
 	@Override

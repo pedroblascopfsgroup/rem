@@ -55,8 +55,18 @@ sonarlint-state.xml
 
 package.sh
 proyecto-rem-online/sencha-app/classic.json
+proyecto-rem-online/sencha-app/classic.jsonp
+proyecto-rem-online/sencha-app/modern.json
+proyecto-rem-online/sencha-app/modern.jsonp
+proyecto-rem-online/sencha-app/ext/
+proyecto-rem-online/sencha-app/build/
+proyecto-rem-online/sencha-app/bootstrap.css
+proyecto-rem-online/sencha-app/bootstrap.js
+proyecto-rem-online/sencha-app/bootstrap.json
+proyecto-rem-online/sencha-app/bootstrap.jsonp
 proyecto-rem-online/sencha-app/sass/example/bootstrap.js
 proyecto-rem-online/sencha-app/sass/example/example.css
+proyecto-rem-online/sencha-app/resources/sass/.sass-cache/
 sql/9.2/rem/migracion_carterizada/SP/SPs.list
 sql/9.2/rem/migracion_carterizada/PROD/DML_PROD/DMLs.list
 sql/9.2/rem/migracion_carterizada/PROD/DML_PROD/TMP/*.sql
@@ -77,6 +87,7 @@ sql/9.2/rem/migracion_carterizada/Ficheros_entrada/*.csv
 reports/salida/
 reports/*.csv
 reports/salida.zip
+
 
 ### SQL ###
 

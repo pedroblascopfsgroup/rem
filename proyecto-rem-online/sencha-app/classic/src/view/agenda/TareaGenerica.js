@@ -1581,18 +1581,15 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
     		if(resultadoScoring.value == '01'){
     			
-    			me.down('[name=nExpediente]').noObligatorio=false;
     			me.down('[name=nMesesFianza]').noObligatorio=false;
     			me.down('[name=importeFianza]').noObligatorio=false;
     			
     			me.habilitarCampo(me.down('[name=nMesesFianza]'));
     			me.habilitarCampo(me.down('[name=importeFianza]'));
     			
-    			me.campoObligatorio(me.down('[name=nExpediente]'));
     			me.campoObligatorio(me.down('[name=nMesesFianza]'));
     			me.campoObligatorio(me.down('[name=importeFianza]'));
     		}else{
-    			me.down('[name=nExpediente]').noObligatorio=true;
     			me.down('[name=nMesesFianza]').noObligatorio=true;
     			me.down('[name=importeFianza]').noObligatorio=true;
     			
@@ -1601,7 +1598,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             	me.borrarCampo(me.down('[name=nMesesFianza]'));
             	me.borrarCampo(me.down('[name=importeFianza]'));
     			
-    			me.campoNoObligatorio(me.down('[name=nExpediente]'));
             	me.campoNoObligatorio(me.down('[name=nMesesFianza]'));
             	me.campoNoObligatorio(me.down('[name=importeFianza]'));
     		}

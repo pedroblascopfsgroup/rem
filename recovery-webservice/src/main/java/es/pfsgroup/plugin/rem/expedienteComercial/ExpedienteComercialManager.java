@@ -6915,11 +6915,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		try {
 			ArrayList<String> mailsParaEnviarAsegurador = this.obtenerEmailsParaEnviarAsegurador(expediente);	
-			mailsParaEnviarAsegurador.add("joseluis.barba@pfsgroup.es");
-			String asunto = "Firma contrato alquiler";
-			
-		
-		
+			String asunto = "Firma contrato alquiler";		
 			/*TODO
 			 * Falta definir cuerpo del e-mail
 			 */

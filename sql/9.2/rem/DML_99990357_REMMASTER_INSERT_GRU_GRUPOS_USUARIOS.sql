@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Isidro Sotoca
---## FECHA_CREACION=20180827
+--## FECHA_CREACION=20180828
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4446
@@ -38,7 +38,7 @@ DECLARE
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
     	--		USU_USERNAME_GRUPO		USU_USERNAME_USUARIO
-   	  	T_FUNCION('gestalq', 			'gestalq')
+   	  	T_FUNCION('lcmpart', 			'lcmpart')
     ); 
     V_TMP_FUNCION T_FUNCION;
     

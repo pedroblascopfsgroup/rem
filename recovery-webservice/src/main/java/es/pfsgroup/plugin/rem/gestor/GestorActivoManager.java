@@ -426,8 +426,10 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 		Filter filtroAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", dto.getIdUsuario());
 		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", dto.getIdEntidad());
+		Filter filtroTipoGestor =genericDao.createFilter(FilterType.EQUALS, "tipoGestor.id", dto.getIdTipoGestor());
 		
-		GestorActivo gestorActivo = genericDao.get(GestorActivo.class,filtroUsuario,filtroActivo,filtroAuditoria);
+		
+		GestorActivo gestorActivo = genericDao.get(GestorActivo.class,filtroUsuario,filtroActivo,filtroAuditoria,filtroTipoGestor);
 		
 		if (gestorActivo != null) {
 			this.actualizaFechaHastaHistoricoGestorAdicional(gestorActivo);

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Jose Navarro
---## FECHA_CREACION=20180826
+--## FECHA_CREACION=20180829
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4443
@@ -36,7 +36,7 @@ DECLARE
     	T_TIPO_DATA('deposito', 		'1'),
 	T_TIPO_DATA('nMeses', 			'3'),
 	T_TIPO_DATA('importeDeposito', 		'4'),
-	T_TIPO_DATA('fiadorSolidario', 		'6'),
+	T_TIPO_DATA('fiadorSolidario', 		'5'),
 	T_TIPO_DATA('nombreFS', 		'7'),
 	T_TIPO_DATA('documento', 		'8'),
 	T_TIPO_DATA('resultadoScoring', 	'9'),
@@ -59,7 +59,7 @@ DECLARE
     	T_TIPO_DATA2('deposito', 		'1'),
 	T_TIPO_DATA2('nMeses', 			'3'),
 	T_TIPO_DATA2('importeDeposito', 	'4'),
-	T_TIPO_DATA2('fiadorSolidario', 	'6'),
+	T_TIPO_DATA2('fiadorSolidario', 	'5'),
 	T_TIPO_DATA2('nombreFS', 		'7'),
 	T_TIPO_DATA2('documento', 		'8'),
 	T_TIPO_DATA2('resultadoRentas', 	'9'),
@@ -83,7 +83,7 @@ DECLARE
     	T_TIPO_DATA3('deposito', 		'1'),
 	T_TIPO_DATA3('nMeses', 			'3'),
 	T_TIPO_DATA3('importeDeposito', 	'4'),
-	T_TIPO_DATA3('fiadorSolidario', 	'6'),
+	T_TIPO_DATA3('fiadorSolidario', 	'5'),
 	T_TIPO_DATA3('nombreFS', 		'7'),
 	T_TIPO_DATA3('documento', 		'8'),
 	T_TIPO_DATA3('tipoTratamiento', 	'9'),
@@ -105,11 +105,11 @@ DECLARE
     	T_TIPO_DATA4('T015_Firma', 					'2'),
     	T_TIPO_DATA4('T015_ResolucionPBC', 				'3'),
     	T_TIPO_DATA4('T015_DefinicionOferta', 				'2'),
-    	T_TIPO_DATA4('T015_DefinicionOferta', 				'5'),
+    	T_TIPO_DATA4('T015_DefinicionOferta', 				'6'),
     	T_TIPO_DATA4('T015_VerificarSeguroRentas', 			'2'),
-    	T_TIPO_DATA4('T015_VerificarSeguroRentas', 			'5'),
+    	T_TIPO_DATA4('T015_VerificarSeguroRentas', 			'6'),
     	T_TIPO_DATA4('T015_VerificarScoring', 				'2'),
-    	T_TIPO_DATA4('T015_VerificarScoring', 				'5')
+    	T_TIPO_DATA4('T015_VerificarScoring', 				'6')
     );
     V_TMP_TIPO_DATA4 T_TIPO_DATA4;
     

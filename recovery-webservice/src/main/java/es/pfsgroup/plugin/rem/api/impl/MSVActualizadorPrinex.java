@@ -57,6 +57,7 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 		
 		if(!Checks.esNulo(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.ACT_NUM_ACTIVO_HAYA))){
 			numActivo = Long.valueOf(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.ACT_NUM_ACTIVO_HAYA));
+			
 			activo = activoApi.getByNumActivo(numActivo);
 		}
 		
@@ -79,11 +80,12 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 		}else{
 			gasto = genericDao.get(GastoPrinex.class,
 									genericDao.createFilter(FilterType.EQUALS, "idGasto", gastoProveedor.getId()),
-									genericDao.createFilter(FilterType.NULL, "idActivo"));
+									genericDao.createFilter(FilterType.NULL, "idActivo"),
+									genericDao.createFilter(FilterType.EQUALS, "promocion", Long.valueOf(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_PROYECTO))));
 		}
-		
+				
 		//SET ACT_ID Y GPV_ID
-		if (gasto == null) {
+		if (Checks.esNulo(gasto)) {
 			gasto = new GastoPrinex();
 			gasto.setIdGasto(gastoProveedor.getId());
 			if(!Checks.esNulo(activo)){

@@ -424,7 +424,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					addMail(s, gestores.put(s, extractEmail(supBackLiberbank)), gestores);
 				}
 			} else if(GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO.equals(s)) {
-				Usuario gesBackInmobiliario = gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GCBOINM");
+				Usuario gesBackInmobiliario = gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "HAYAGBOINM");
 				if(!Checks.esNulo(gesBackInmobiliario)) {
 					addMail(s, gestores.put(s, extractEmail(gesBackInmobiliario)), gestores);
 				}

@@ -19,6 +19,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 
 @Component
 public class TabActivoValoracionesPrecios implements TabActivoService {
@@ -76,8 +77,13 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 					} else {		
 						
 						
-						if(val.getTipoPrecio() != null && val.getTipoPrecio().getCodigo().equalsIgnoreCase("01"))
+						if(val.getTipoPrecio() != null && val.getTipoPrecio().getCodigo().equalsIgnoreCase("01") 
+								&& !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())) {
 							BeanUtils.copyProperty(valoracionesDto, "vnc", val.getImporte());
+							
+						}else if(val.getTipoPrecio() != null && val.getTipoPrecio().getCodigo().equalsIgnoreCase("25")){
+							BeanUtils.copyProperty(valoracionesDto, "vnc", val.getImporte());
+						}		
 						
 						if(val.getTipoPrecio() != null && val.getTipoPrecio().getCodigo().equalsIgnoreCase("14"))
 							beanUtilNotNull.copyProperty(valoracionesDto, "valorReferencia", val.getImporte());
@@ -103,10 +109,10 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 						if(val.getTipoPrecio() != null && val.getTipoPrecio().getCodigo().equalsIgnoreCase("12"))
 							beanUtilNotNull.copyProperty(valoracionesDto, "valorEstimadoRenta", val.getImporte());
 						
-						if(val.getTipoPrecio() != null && val.getTipoPrecio().getCodigo().equalsIgnoreCase("21"))
+						if(val.getTipoPrecio() != null && val.getTipoPrecio().getCodigo().equalsIgnoreCase("24"))
 							beanUtilNotNull.copyProperty(valoracionesDto, "deudaBruta", val.getImporte());
 						
-						if(val.getTipoPrecio() != null && val.getTipoPrecio().getCodigo().equalsIgnoreCase("22"))
+						if(val.getTipoPrecio() != null && val.getTipoPrecio().getCodigo().equalsIgnoreCase("23")) 
 							beanUtilNotNull.copyProperty(valoracionesDto, "valorRazonable", val.getImporte());
 						
 						/*

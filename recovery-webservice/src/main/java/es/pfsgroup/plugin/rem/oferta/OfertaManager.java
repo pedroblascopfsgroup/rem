@@ -2670,7 +2670,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				ActivoTasacion tasacion = activoApi.getTasacionMasReciente(activo);
 				Double importeTasacion = null;
 				Double precioAprobadoVenta = null;	
-				Double precioMinimoAutorizado = null;				
+				Double precioMinimoAutorizado = null;
+				Double precioDescuentoPublicado = null;
 				
 				importeTasacion = (!Checks.esNulo(tasacion)) ? tasacion.getImporteTasacionFin() : null;
 				List<VPreciosVigentes> precios = activoApi.getPreciosVigentesById(activo.getId());																										
@@ -2695,6 +2696,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					
 				}else if(((!Checks.esNulo(importeTasacion) && importeTasacion < importeUmbral) 
 						&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(precioMinimoAutorizado) && importeOferta >= precioMinimoAutorizado))
+				|| ((!Checks.esNulo(importeTasacion) && importeTasacion < importeUmbral) 
+						&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(precioDescuentoPublicado) && importeOferta >= precioDescuentoPublicado))
 				|| ((!Checks.esNulo(precioAprobadoVenta) && precioAprobadoVenta < importeUmbral) 
 						&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(precioMinimoAutorizado) && importeOferta >= precioMinimoAutorizado))) {
 					Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_LIBERBANK);

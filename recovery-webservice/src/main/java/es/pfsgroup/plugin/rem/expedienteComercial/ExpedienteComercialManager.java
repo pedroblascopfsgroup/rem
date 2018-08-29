@@ -746,6 +746,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (!Checks.esNulo(dto.getImporteOferta())) {
 			ofertaApi.resetPBC(expedienteComercial, false);
 		}
+		
+		if(!Checks.esNulo(dto.getImporteOferta())){
+			expedienteComercial.setComiteSancion(ofertaApi.calculoComiteLiberbank(oferta));
+		}
 
 		try {
 			beanUtilNotNull.copyProperties(oferta, dto);
@@ -774,6 +778,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			this.actualizarImporteReservaPorExpediente(expedienteComercial);
 			this.actualizarHonorariosPorExpediente(expedienteComercial.getId());
 		}
+		
 
 		return true;
 	}

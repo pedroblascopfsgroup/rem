@@ -542,8 +542,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			
 		}
 		
-		cuerpo = cuerpo + "<p>A tal efecto le solicitamos a través de este documento que:</br>"
-				+ "- Confirme los datos de la oferta remitidos informando de cualquier error que detecte en los mismos.</br>" + 
+		cuerpo = cuerpo + "<p>A tal efecto le solicitamos a través de este documento que:\n"
+				+ "- Confirme los datos de la oferta remitidos informando de cualquier error que detecte en los mismos.\n" + 
 				"- Autorice a HAYA REAL ESTATE, S.A. para que a través de sus colaboradores pueda elevar en su nombre la documentación necesaria a la indicada herramienta ePBC.</p>";
 		
 

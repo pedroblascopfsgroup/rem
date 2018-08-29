@@ -747,9 +747,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			ofertaApi.resetPBC(expedienteComercial, false);
 		}
 		
-		if(!Checks.esNulo(dto.getImporteOferta())){
-			expedienteComercial.setComiteSancion(ofertaApi.calculoComiteLiberbank(oferta));
-		}
+		
 
 		try {
 			beanUtilNotNull.copyProperties(oferta, dto);
@@ -765,7 +763,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		// oferta.setImporteContraOferta(dto.getImporteContraoferta());
 
 		expedienteComercial.setOferta(oferta);
-
+		
+		if(!Checks.esNulo(dto.getImporteOferta())){
+			expedienteComercial.setComiteSancion(ofertaApi.calculoComiteLiberbank(oferta));
+		}
+		
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 
 		// Si se ha modificado el importe de la oferta o de la contraoferta

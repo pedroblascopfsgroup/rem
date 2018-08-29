@@ -2680,6 +2680,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						precioAprobadoVenta = p.getImporte();
 					} else if(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(p.getCodigoTipoPrecio())) {
 						precioMinimoAutorizado = p.getImporte();
+					}  else if(DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO.equals(p.getCodigoTipoPrecio())) {
+						precioDescuentoPublicado = p.getImporte();
 					}
 				}
 				

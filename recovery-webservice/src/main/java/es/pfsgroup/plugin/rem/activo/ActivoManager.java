@@ -49,6 +49,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
@@ -336,6 +337,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Resource
 	private Properties appProperties;
+	
+	@Autowired
+	private MSVRawSQLDao rawDao;
 	
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
@@ -4846,4 +4850,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	}
 
+	public List<Long> getIdAgrupacionesActivo(Long idActivo){
+		if(Checks.esNulo(idActivo)) return null;
+		
+		List<Object> listaObj = (List<Object>) rawDao.getExecuteSQLList("SELECT AGR_ID FROM ACT_AGA_AGRUPACION_ACTIVO WHERE ACT_ID = " + idActivo.toString());
+		
+		List<Long> listaAgr = new ArrayList<Long>();
+		
+		for(Object o: listaObj) {
+			listaAgr.add(Long.parseLong(o.toString()));
+		}
+		
+		return listaAgr;
+	}
+	
 }

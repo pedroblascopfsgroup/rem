@@ -560,6 +560,10 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		} else {
 		    gestorComercial = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "GCOM");
 		}
+		
+		if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(codigoCartera)) {
+			gestorComercial = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "HAYAGBOINM");
+		}
 
 		cuerpo = cuerpo + String.format("<p>Gestor comercial: %s </p>", (gestorComercial != null) ? gestorComercial.getApellidoNombre() : STR_MISSING_VALUE );
 		cuerpo = cuerpo + String.format("<p>%s</p>", (gestorComercial != null) ? gestorComercial.getEmail() : STR_MISSING_VALUE);

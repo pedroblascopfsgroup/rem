@@ -102,6 +102,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 
 	     agrupacionTieneActivos: function(get) {
 	     		return (get('agrupacionficha.numeroActivos')>0);
+	     },
+	     
+	     esAgrupacionLiberbank: function(get) {
+	    	 return get('agrupacionficha.codigoCartera') == CONST.CARTERA['LIBERBANK'];
 	     }
     },
     
@@ -275,6 +279,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'agrupacion/getGestoresLoteComercial',
 				extraParams: {agrId: '{agrupacionficha.id}', codigoGestor: 'GCOM'}
+			}   	
+	    },
+	    
+	    comboGestorComercialBackoffice: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'agrupacion/getGestoresLoteComercial',
+				extraParams: {agrId: '{agrupacionficha.id}', codigoGestor: 'HAYAGBOINM'}
 			}   	
 	    },
 

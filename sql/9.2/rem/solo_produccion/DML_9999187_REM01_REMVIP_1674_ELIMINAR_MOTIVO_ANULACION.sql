@@ -14,11 +14,9 @@
 --##########################################
 --*/
 
-
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 SET DEFINE OFF;
-
 
 DECLARE
     V_SQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     

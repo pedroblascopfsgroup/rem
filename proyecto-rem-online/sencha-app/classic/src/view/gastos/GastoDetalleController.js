@@ -688,39 +688,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	
     	
     },
-    updateGastoByPrinexLBK: function(){
-    	me = this;
-    	var url =  $AC.getRemoteUrl('gastosproveedor/updateGastoByPrinexLBK');
-    	var idGasto = me.getViewModel().get("gasto.id"); 
-
-
-		Ext.Ajax.request({		    			
-	 		url: url,
-	   		params: {
-	   			idGasto: idGasto
-   			},	    		
-	    	success: function(response, opts) {
-	    		
-	    		var data = {};
-	            try {
-	            	data = Ext.decode(response.responseText);
-	            	if(data.success == "true"){
-	            		me.refrescarGasto(true);
-	            	}
-	            	
-	            }
-	            catch (e){ };
-    			
-    		
-	    		
-	    	},
-   			failure: function(response) {
-				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-		    }
-		});
-
-    	
-    },
+    
     asociarGastoConActivos: function(idGasto, numeroActivo, numeroAgrupacion, detalle, form, window) {
     	
     	var me = this;
@@ -1395,6 +1363,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	}
     },
     isLiberbankAndGastosPrinex:function(panel){
+    	
     	var me = this;
     	var url = $AC.getRemoteUrl('gastosproveedor/searchActivoCarteraAndGastoPrinex');
     	var gastoHaya = me.getViewModel().get("gasto.numGastoHaya"); 

@@ -129,6 +129,7 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 					flex : 1,
 					editor: 'numberfield',
 					summaryType: function(){
+							
 						var store = this;
 	                    var records = store.getData().items;
 	                    var field = ['participacion'];
@@ -188,11 +189,9 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 		            		style = "style= 'color: red'";
 		            	}			            	
 		            	return "<span "+style+ ">"+msg+"</span>"
-		            },listeners:{
-						beforerender:'updateGastoByPrinexLBK'
-					}
-
+		            }
 				}
+
 		];
 		
 		me.callParent();

@@ -275,14 +275,6 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 
 	}
 
-	public GastoProveedor getGastoById(Long id) {
-		
-		HQLBuilder hb = new HQLBuilder("from GastoProveedor gpv" );
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "id", id);
-		
-		return HibernateQueryUtils.uniqueResult(this, hb);
-	}
-
 	// Convierte una lista en una cadena con los elementos separados por comas
 	private String listToCadenaCommas(List<?> lista) {
 

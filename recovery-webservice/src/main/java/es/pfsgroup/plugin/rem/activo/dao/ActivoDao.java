@@ -85,8 +85,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public Page getPropuestaActivosVinculadosByActivo(DtoPropuestaActivosVinculados dto);
 
 	public Activo getActivoByNumActivo(Long activoVinculado);
-	
-	public Activo getActivoById(Long activoId);
 
 	public PropuestaActivosVinculados getPropuestaActivosVinculadosByID(Long id);
 

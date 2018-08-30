@@ -1001,15 +1001,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 		return HibernateQueryUtils.list(this, hb);
 	}
-	
-	@Override
-	public Activo getActivoById(Long activoId) {
-		HQLBuilder hb = new HQLBuilder("from Activo act" );
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "id", activoId);
-		
-		return HibernateQueryUtils.uniqueResult(this, hb);
-	}
-	
 
 	/*Borra todos las distribuciones excelto las de tipo garaje y trastero*/
 	public void deleteActivoDistribucion(Long idActivoInfoComercial){

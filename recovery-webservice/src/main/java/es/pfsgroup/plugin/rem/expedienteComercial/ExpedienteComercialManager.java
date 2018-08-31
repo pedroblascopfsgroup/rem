@@ -974,20 +974,23 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						if(!Checks.esNulo(expediente.getTipoAlquiler())) {
 							dto.setTipoAlquiler(expediente.getTipoAlquiler().getCodigo());
 						}
-						if(!Checks.esNulo(expediente.getCompradorPrincipal())) {
-							
-							Filter filtro = genericDao.createFilter(FilterType.EQUALS, "comprador",expediente.getCompradorPrincipal().getId());
-							Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "expediente",expediente.getId());
-							CompradorExpediente compradorExpediente = genericDao.get(CompradorExpediente.class, filtro,filtro2);
-							if(!Checks.esNulo(compradorExpediente.getTipoInquilino())) {
-							if(!Checks.esNulo(compradorExpediente.getTipoInquilino().getDescripcion())) {
-							dto.setTipoInquilino(compradorExpediente.getTipoInquilino().getCodigo());
+						
+						if (!Checks.esNulo(oferta.getTipoInquilino())) {
+							dto.setTipoInquilino(oferta.getTipoInquilino().getCodigo());
+						} else {
+							if(!Checks.esNulo(expediente.getCompradorPrincipal())) {
+								
+								Filter filtro = genericDao.createFilter(FilterType.EQUALS, "comprador",expediente.getCompradorPrincipal().getId());
+								Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "expediente",expediente.getId());
+								CompradorExpediente compradorExpediente = genericDao.get(CompradorExpediente.class, filtro,filtro2);
+								if(!Checks.esNulo(compradorExpediente.getTipoInquilino())) {
+								if(!Checks.esNulo(compradorExpediente.getTipoInquilino().getDescripcion())) {
+								dto.setTipoInquilino(compradorExpediente.getTipoInquilino().getCodigo());
+								}
+								}
 							}
-							}
-							
 						}
 					}
-
 				}
 
 				dto.setPropietario(activo.getFullNamePropietario());
@@ -6809,24 +6812,38 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	public DtoExpedienteScoring  expedienteToDtoScoring(ExpedienteComercial expediente) {
 		
-		DtoExpedienteScoring dto = new DtoExpedienteScoring();
+		DtoExpedienteScoring scoringDto = new DtoExpedienteScoring();
 		
 		if(!Checks.esNulo(expediente.getEstado())) {
 
 			if(DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) {
-				dto.setComboEstadoScoring(DDEstadoScoring.ACEPTADO);
+				scoringDto.setComboEstadoScoring(DDEstadoScoring.ACEPTADO);
 			}else if(DDEstadosExpedienteComercial.ANULADO.equals(expediente.getEstado().getCodigo())){
-				dto.setComboEstadoScoring(DDEstadoScoring.RECHAZADO);
+				scoringDto.setComboEstadoScoring(DDEstadoScoring.RECHAZADO);
 			}else {
-				dto.setComboEstadoScoring(DDEstadoScoring.PENDIENTE);
+				scoringDto.setComboEstadoScoring(DDEstadoScoring.PENDIENTE);
 			}
 		}
-		//TODO llamada a ScoringAlquiler con el SCO_ID y recoger datos para setearlos en el dto y mandarlos a la vista.
 		
-		
-		
-		
-		return dto;
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId());
+		ScoringAlquiler scoringAlquiler = genericDao.get(ScoringAlquiler.class, filtro);
+		if (!Checks.esNulo(scoringAlquiler)) {
+			scoringDto.setId(scoringAlquiler.getId());
+			scoringDto.setMotivoRechazo(scoringAlquiler.getMotivoRechazo());
+			scoringDto.setnSolicitud(scoringAlquiler.getIdSolicitud());
+			
+			if(!Checks.esNulo(scoringAlquiler.getRevision()) && scoringAlquiler.getRevision()==1) {
+				scoringDto.setRevision(true);
+			}
+			else {
+				scoringDto.setRevision(false);
+			}
+			
+			scoringDto.setComentarios(scoringAlquiler.getComentarios());
+			
+		}
+				
+		return scoringDto;
 	}
 
 	@Override

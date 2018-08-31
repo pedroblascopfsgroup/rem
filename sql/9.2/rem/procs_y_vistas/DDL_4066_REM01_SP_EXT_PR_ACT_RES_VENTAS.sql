@@ -335,7 +335,7 @@ BEGIN
         V_MSQL := V_COUNT||V_FROM_RESERVA;
         EXECUTE IMMEDIATE V_MSQL INTO V_NUM USING IDENTIFICACION_COBRO;
 
-        IF V_NUM = 1 THEN
+        IF V_NUM > 0 THEN
             DBMS_OUTPUT.PUT_LINE('[INFO] Existen una oferta para el campo IDENTIFICACION COBRO '||IDENTIFICACION_COBRO||'. Continuamos la ejecución.');
 
             --Comprobamos que el estado del expediente NO está en los estados "Reservado", "Firmado","Vendido", "En Devolución" ó "Anulado".
@@ -548,7 +548,7 @@ BEGIN
         V_MSQL := V_COUNT||V_FROM_RESERVA;
         EXECUTE IMMEDIATE V_MSQL INTO V_NUM USING IDENTIFICACION_COBRO;
 
-        IF V_NUM = 1 THEN
+        IF V_NUM > 0 THEN
             DBMS_OUTPUT.PUT_LINE('[INFO] Existen una oferta con el campo IDENTIFICACION COBRO  '||IDENTIFICACION_COBRO||'. Continuamos la ejecución.');
 
             --Comprobamos que el estado del expediente está en "Reservado" o "En devolución".

@@ -13,6 +13,7 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Añadidos gestores y supervisores no tenidos en cuenta y creados por REMVIP.
 --###########################################
 ----*/
 
@@ -55,6 +56,11 @@ DECLARE
 		T_TIPO_DATA('GACT','rdl'),
 		T_TIPO_DATA('GACT','rguirado'),
 		T_TIPO_DATA('GACT','selena'),
+		T_TIPO_DATA('GACT','acabello'),
+		T_TIPO_DATA('GACT','jlpelaz'),
+		T_TIPO_DATA('GACT','ibenedito'),
+		T_TIPO_DATA('GACT','rdura'),
+		T_TIPO_DATA('GACT','jbadia'),
 		T_TIPO_DATA('GSUE','aalvear'),
 		T_TIPO_DATA('GSUE','mgomezp'),
 		T_TIPO_DATA('GSUE','prodriguezdelema'),
@@ -63,6 +69,7 @@ DECLARE
 		T_TIPO_DATA('SUPACT','bbaviera'),
 		T_TIPO_DATA('SUPACT','lfabe'),
 		T_TIPO_DATA('SUPACT','rbarroso'),
+		T_TIPO_DATA('SUPACT','jcordoba'),
 		T_TIPO_DATA('SUPSUE','jcordoba')
 
 	); 

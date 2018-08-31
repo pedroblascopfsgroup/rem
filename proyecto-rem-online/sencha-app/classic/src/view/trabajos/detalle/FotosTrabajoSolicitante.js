@@ -147,8 +147,9 @@ Ext.define('HreRem.view.trabajos.detalle.FotosTrabajoSolicitante', {
 		}
 		];
 		
-        me.disableAddButton($AU.userIsRol('HAYACONSU') || $AU.userIsRol('PERFGCCLIBERBANK'));
     	me.callParent();
+        me.disableAddButton($AU.userIsRol('HAYACONSU') || $AU.userIsRol('PERFGCCLIBERBANK'));
+
     	
     },
     

@@ -218,14 +218,16 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)
 				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)
 				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)) {
-			clavesGestores.addAll(Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial, GESTOR_COMERCIAL_ACTIVO_SUS));
+			
+			if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())) {
+				clavesGestores.addAll(Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, SUPERVISOR_BACKOFFICE_LIBERBANK));
+			} else {
+				clavesGestores.addAll(Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial, GESTOR_COMERCIAL_ACTIVO_SUS));
+			}
+			
 			if (formalizacion) {
 				clavesGestores.addAll(Arrays.asList(GESTOR_FORMALIZACION, GESTOR_FORMALIZACION_SUS));
 				clavesGestores.addAll(Arrays.asList(GESTOR_GESTORIA_FASE_3, GESTOR_GESTORIA_FASE_3_SUS));
-			}
-			
-			if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
-				clavesGestores.addAll(Arrays.asList(GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, SUPERVISOR_BACKOFFICE_LIBERBANK));
 			}
 
 			// DESTINATARIOS SI ES CAJAMAR
@@ -419,12 +421,12 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					}
 				}
 			} else if (SUPERVISOR_BACKOFFICE_LIBERBANK.equals(s)) {
-				Usuario supBackLiberbank= gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "SBACKOFFICEINMLIBER");
+				Usuario supBackLiberbank= gestorActivoApi.getGestorByActivoYTipo(activo, "SBACKOFFICEINMLIBER");
 				if(!Checks.esNulo(supBackLiberbank)) {
 					addMail(s, gestores.put(s, extractEmail(supBackLiberbank)), gestores);
 				}
 			} else if(GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO.equals(s)) {
-				Usuario gesBackInmobiliario = gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "HAYAGBOINM");
+				Usuario gesBackInmobiliario = gestorActivoApi.getGestorByActivoYTipo(activo, "HAYAGBOINM");
 				if(!Checks.esNulo(gesBackInmobiliario)) {
 					addMail(s, gestores.put(s, extractEmail(gesBackInmobiliario)), gestores);
 				}

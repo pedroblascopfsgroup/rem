@@ -565,11 +565,9 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		
 		if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(codigoCartera)) {
 			gestorComercial = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "HAYAGBOINM");
-			cuerpo = cuerpo + String.format("<p>Gestor comercial backoffice: %s </p>", (gestorComercial != null) ? gestorComercial.getApellidoNombre() : STR_MISSING_VALUE );
-		}else {
-			cuerpo = cuerpo + String.format("<p>Gestor comercial: %s </p>", (gestorComercial != null) ? gestorComercial.getApellidoNombre() : STR_MISSING_VALUE );
 		}
 
+		cuerpo = cuerpo + String.format("<p>Gestor comercial: %s </p>", (gestorComercial != null) ? gestorComercial.getApellidoNombre() : STR_MISSING_VALUE );
 		cuerpo = cuerpo + String.format("<p>%s</p>", (gestorComercial != null) ? gestorComercial.getEmail() : STR_MISSING_VALUE);
 
 		DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);

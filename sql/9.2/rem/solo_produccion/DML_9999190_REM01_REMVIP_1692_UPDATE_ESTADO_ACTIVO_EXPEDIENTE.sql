@@ -1,0 +1,69 @@
+--/*
+--#########################################
+--## AUTOR=VIOREL REMUS OVIDIU
+--## FECHA_CREACION=20180904
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=REMVIP-1692
+--## PRODUCTO=NO
+--## 
+--## Finalidad: poner activo en disponible para la venta con reserva
+--##            
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+    V_ESQUEMA VARCHAR2(25 CHAR) := '#ESQUEMA#';-- '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR) := '#ESQUEMA_MASTER#';-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-1692';
+    V_SQL VARCHAR2(4000 CHAR); 
+    ERR_NUM NUMBER;-- Numero de errores
+    ERR_MSG VARCHAR2(2048);-- Mensaje de error
+    PL_OUTPUT VARCHAR2(32000 CHAR);
+    V_SITUACION_COMERCIAL VARCHAR2(20 CHAR):= '04'; --DISPONIBLE PARA LA VENTA CON RESERVA
+    ACT_NUM_ACTIVO NUMBER(16,0):= 5929497;
+    V_NUM_EXPEDIENTE NUMBER(16,0):= 102883;
+
+BEGIN
+
+    --PONGO EL ACTIVO EN DISPONIBLE PARA LA VENTA CON RESERVA Y QUITO LA FECHA DE VENTA DEL EXPEDIENTE
+	V_SQL := 'UPDATE '||V_ESQUEMA||'.ACT_ACTIVO SET
+				  DD_SCM_ID = (SELECT DD_SCM_ID FROM '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL WHERE DD_SCM_CODIGO = '''||V_SITUACION_COMERCIAL||''')
+				, USUARIOMODIFICAR = '''||V_USUARIO||'''
+				, FECHAMODIFICAR   = SYSDATE
+				WHERE ACT_NUM_ACTIVO = '||ACT_NUM_ACTIVO||'
+				';
+	EXECUTE IMMEDIATE V_SQL;
+	DBMS_OUTPUT.PUT_LINE('  [INFO] '||SQL%ROWCOUNT||' estado activo actualizado');
+
+	
+	V_SQL := 'UPDATE '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL SET 
+				 ECO_FECHA_VENTA   = NULL 
+				, USUARIOMODIFICAR  = '''||V_USUARIO||''' 
+				, FECHAMODIFICAR    = SYSDATE  
+				WHERE ECO_NUM_EXPEDIENTE = '||V_NUM_EXPEDIENTE||' 
+				';
+
+	EXECUTE IMMEDIATE V_SQL;
+	DBMS_OUTPUT.PUT_LINE('  [INFO] '||SQL%ROWCOUNT||' fecha venta actualizada');
+
+   COMMIT;
+
+EXCEPTION
+    WHEN OTHERS THEN
+		DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE));
+		DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------');
+		DBMS_OUTPUT.PUT_LINE(SQLERRM);
+		ROLLBACK;
+		RAISE;
+
+END;
+/
+EXIT;

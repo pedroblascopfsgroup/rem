@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,6 +21,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
@@ -33,21 +35,15 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 @Entity
 @Table(name = "ACT_PRY_PROYECTO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class ActivoProyecto implements Serializable, Auditable {
+public class ActivoProyecto extends ActivoAgrupacion implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	@Id
-    @Column(name = "PRY_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "ActivoProyectoGenerator")
-    @SequenceGenerator(name = "ActivoProyectoGenerator", sequenceName = "S_ACT_PRY_PROYECTO")
-    private Long id;
-
 	@ManyToOne
-    @JoinColumn(name = "AGR_ID")
+    @JoinColumn(name = "AGR_ID", insertable = false, updatable = false)
 	private ActivoAgrupacion agrupacion;
 	
     @ManyToOne
@@ -91,17 +87,9 @@ public class ActivoProyecto implements Serializable, Auditable {
     @JoinColumn(name = "PRY_GESTOR_COMERCIAL")
 	private Usuario gestorcomercial;
 	
-	private Auditoria auditoria;
-	
-	
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_CRA_ID")
+    private DDCartera cartera;  
 	
 	public ActivoAgrupacion getAgrupacion() {
 		return agrupacion;
@@ -190,14 +178,6 @@ public class ActivoProyecto implements Serializable, Auditable {
 	public void setDobleGestorActivo(Usuario dobleGestorActivo) {
 		this.dobleGestorActivo = dobleGestorActivo;
 	}
-	
-	public Auditoria getAuditoria() {
-		return auditoria;
-	}
-
-	public void setAuditoria(Auditoria auditoria) {
-		this.auditoria = auditoria;
-	}
 
 	public Usuario getGestorcomercial() {
 		return gestorcomercial;
@@ -206,5 +186,12 @@ public class ActivoProyecto implements Serializable, Auditable {
 	public void setGestorcomercial(Usuario gestorcomercial) {
 		this.gestorcomercial = gestorcomercial;
 	}
-	
+
+	public DDCartera getCartera() {
+		return cartera;
+	}
+
+	public void setCartera(DDCartera cartera) {
+		this.cartera = cartera;
+	}
 }

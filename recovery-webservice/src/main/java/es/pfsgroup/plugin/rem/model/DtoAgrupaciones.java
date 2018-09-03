@@ -31,7 +31,6 @@ public class DtoAgrupaciones extends WebDto {
 	private String codigoPostal;
 	private String tipoAgrupacionCodigo;
 	private String estadoObraNuevaCodigo;
-	private String cartera;
 	private String codigoCartera;
 	@SuppressWarnings("unused")
 	private Boolean existeFechaBaja;
@@ -173,12 +172,6 @@ public class DtoAgrupaciones extends WebDto {
 	}
 	public void setEstadoObraNuevaCodigo(String estadoObraNuevaCodigo) {
 		this.estadoObraNuevaCodigo = estadoObraNuevaCodigo;
-	}
-	public String getCartera() {
-		return cartera;
-	}
-	public void setCartera(String cartera) {
-		this.cartera = cartera;
 	}
 	public Boolean getExisteFechaBaja() {
 		if (this.fechaBaja != null)

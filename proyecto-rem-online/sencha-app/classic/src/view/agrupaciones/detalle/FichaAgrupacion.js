@@ -97,11 +97,13 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 			            	}		
 						},
 						{ 
-							xtype		: 'displayfieldbase',
+							xtype		: 'comboboxfieldbase',
 							fieldLabel	: HreRem.i18n('fieldlabel.entidad.propietaria'),
 							bind		: {
-								value: '{agrupacionficha.cartera}',
-								readOnly: '{agrupacionTieneActivosOrExisteFechaBaja}'
+								store: '{comboCartera}',
+								value: '{agrupacionficha.codigoCartera}',
+								readOnly: '{agrupacionTieneActivosOrExisteFechaBaja}',
+								allowBlank	:'{esAgrupacionLoteComercial}'	
 							}	
 						},
 						{

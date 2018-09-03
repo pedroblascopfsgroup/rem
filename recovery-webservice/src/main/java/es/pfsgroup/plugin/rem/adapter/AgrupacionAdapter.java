@@ -420,6 +420,11 @@ public class AgrupacionAdapter {
 								proyectoTemp.getGestorcomercial().getId());
 					}
 					
+					if (proyectoTemp.getCartera() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "cartera", proyectoTemp.getCartera().getDescripcion());
+						BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera", proyectoTemp.getCartera().getCodigo());
+					}
+					
 				}
 
 				// TODO: Hacer cuando esté listo el activo principal dentro de
@@ -433,13 +438,16 @@ public class AgrupacionAdapter {
 					}
 				}
 
-				if (agrupacion.getActivoPrincipal() != null && agrupacion.getActivoPrincipal().getCartera() != null) {
+				if (agrupacion.getActivoPrincipal() != null 
+						&& agrupacion.getActivoPrincipal().getCartera() != null
+						&& !agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {
 					BeanUtils.copyProperty(dtoAgrupacion, "cartera",
 							agrupacion.getActivoPrincipal().getCartera().getDescripcion());
 					BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera",
 							agrupacion.getActivoPrincipal().getCartera().getCodigo());
 				} else if (agrupacion.getActivos() != null && !agrupacion.getActivos().isEmpty()
-						&& agrupacion.getActivos().get(0).getActivo().getCartera() != null) {
+						&& agrupacion.getActivos().get(0).getActivo().getCartera() != null
+						&& !agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {
 					BeanUtils.copyProperty(dtoAgrupacion, "cartera",
 							agrupacion.getActivos().get(0).getActivo().getCartera().getDescripcion());
 					BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera",
@@ -662,6 +670,17 @@ public class AgrupacionAdapter {
 				activoAgrupacionActivo.setFechaInclusion(today);
 				activoAgrupacionActivoApi.save(activoAgrupacionActivo);
 			}
+			
+			//Validaciones para las agrupaciones de tipo proyecto
+			if (DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+				ActivoProyecto proyecto = (ActivoProyecto) agrupacion;
+				if(!activo.getCartera().equals(proyecto.getCartera())
+						|| !activo.getProvincia().equals(proyecto.getProvincia().getCodigo())
+						|| !activo.getMunicipio().equals(proyecto.getLocalidad().getCodigo())){
+					throw new JsonViewerException("El activo no tiene la misma Provincia o Municipio o Cartera que la agrupación");
+				}
+			}
+			
 			// En asistidas hay que hacer una serie de actualizaciones
 			// 'especiales'.
 			if (DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
@@ -2004,13 +2023,8 @@ public class AgrupacionAdapter {
 		// Si es de tipo 'Proyecto'.
 		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {
 			
+			ActivoProyecto proyecto = (ActivoProyecto) agrupacion;
 			
-			ActivoAgrupacion activoAgrupacion = (ActivoAgrupacion) agrupacion;
-			
-			Filter filtroActivoProyecto = genericDao.createFilter(FilterType.EQUALS, "agrupacion", activoAgrupacion);
-			ActivoProyecto proyecto = genericDao.get(ActivoProyecto.class, filtroActivoProyecto);
-			
-
 			try {
 
 				beanUtilNotNull.copyProperties(proyecto, dto);
@@ -2062,13 +2076,13 @@ public class AgrupacionAdapter {
 				
 				if(dto.getNombre() != null) {
 					
-					activoAgrupacion.setNombre(dto.getNombre());
+					proyecto.setNombre(dto.getNombre());
 					
 				}
 				
 				if(dto.getDescripcion() != null) {
 					
-					activoAgrupacion.setDescripcion(dto.getDescripcion());
+					proyecto.setDescripcion(dto.getDescripcion());
 				}
 				
 				
@@ -2098,9 +2112,18 @@ public class AgrupacionAdapter {
 				
 				if (dto.getFechaBaja() != null) {
 	
-					activoAgrupacion.setFechaBaja(dto.getFechaBaja());
+					proyecto.setFechaBaja(dto.getFechaBaja());
 				}
 				
+				if (!Checks.esNulo(dto.getCodigoCartera())) {
+					
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoCartera());
+					
+					DDCartera cartera = genericDao.get(DDCartera.class, filtro);
+					
+					proyecto.setCartera(cartera);
+				
+				}
 				
 				activoAgrupacionApi.saveOrUpdate(proyecto.getAgrupacion());
 

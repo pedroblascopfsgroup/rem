@@ -134,7 +134,7 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 		    		name: 'codigoGestorComercialBackOffice'
 		    	},
 		    	{
-		    		name: 'cartera'
+		    		name: 'codigoCartera'
 		    	},
 		    	{
 		    		name: 'estadoActivoCodigo'

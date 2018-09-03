@@ -151,6 +151,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
     },
     
     stores: {
+    	comboCartera: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'entidadesPropietarias'}
+			}   	
+	    },
     	
     	comboProvincia: {
 			model: 'HreRem.model.ComboBase',

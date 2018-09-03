@@ -414,6 +414,23 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateGastoByPrinexLBK( @RequestParam String idGasto, ModelMap model) {
+		try {		
+			
+			boolean success = gastoProveedorApi.updateGastoByPrinexLBK(idGasto);
+			model.put("success", success);
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView updateGestionGasto(DtoGestionGasto dtoGestion, @RequestParam Long id, ModelMap model) {
 		try {		
 			

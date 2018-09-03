@@ -91,6 +91,14 @@ public interface GastoProveedorApi {
 		boolean saveDetalleEconomico(DtoDetalleEconomicoGasto dto, Long idGasto);
 		
 		/**
+		 * Método que updatea la información de la pestaña Detalle económico del gasto segun prinex
+		 * @param dto
+		 * @param idGasto
+		 * @return
+		 */
+		boolean updateGastoByPrinexLBK(String idGasto);
+		
+		/**
 		 * Método que recupera los activos relacionados con un gasto
 		 * @return
 		 */

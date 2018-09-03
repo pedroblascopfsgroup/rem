@@ -143,6 +143,17 @@ public class GenericAdapter {
 			// AgendaMultifuncionCorreoUtils.dameInstancia(executor).enviarCorreoConAdjuntos(null,
 			// mailsPara, mailsCC, asunto, cuerpo, null);
 			//añado comprobacion para que no falle en local
+			for(int i = 0; i < mailsPara.size(); i++) {
+				if(Checks.esNulo(mailsPara.get(i)) || "null".equals(mailsPara.get(i).toLowerCase())) {
+					mailsPara.remove(i);
+				}
+			}
+			
+			if (mailsPara.isEmpty()) {
+				logger.warn(
+						"El correo de " + asunto + " no se va a enviar");
+				return;
+			}
 			String servidorCorreo = appProperties.getProperty(SERVIDOR_CORREO);
 			logger.info(servidorCorreo);
 			String puertoCorreo =appProperties.getProperty(PUERTO_CORREO);
@@ -151,6 +162,8 @@ public class GenericAdapter {
 				agendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, adjuntos);
 			}
 		} catch (Exception e) {
+			//Sacamos log de los receptores y el asunto del mail para trazar los errores
+			logger.error("mailsPara: " + mailsPara + ", mailsCC: " + mailsCC + ", asunto: " + asunto);
 			logger.error("error enviando correo",e);			
 		}
 	}

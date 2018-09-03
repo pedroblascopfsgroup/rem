@@ -195,6 +195,10 @@ Ext.define('HreRem.ux.util.Constants', {
     	LIBERBANK:'LIBERBANK'
     },
     
+    SUBCARTERA: {
+    	BH: '06'
+    },
+    
     NOMBRE_SUBCARTERA: {
     	BANKIA_HABITAT: 'BANKIA HABITAT'
     },

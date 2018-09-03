@@ -10,6 +10,7 @@ import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 
 @Component
 public class TabActivoCargas implements TabActivoService {
@@ -33,10 +34,12 @@ public class TabActivoCargas implements TabActivoService {
 		BeanUtils.copyProperties(activoDto, activo);
 		
 		// Establecemos el estado de las cargas manualmente.
-		if(activoCargasApi.esActivoConCargasNoCanceladasRegistral(activo.getId()) || activoCargasApi.esActivoConCargasNoCanceladasEconomica(activo.getId())) {
-			activoDto.setConCargas(1);
-		} else {
-			activoDto.setConCargas(0);
+		if(activo.getCartera().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)){
+			if(activoCargasApi.esActivoConCargasNoCanceladasRegistral(activo.getId()) || activoCargasApi.esActivoConCargasNoCanceladasEconomica(activo.getId())) {
+				activoDto.setConCargas(1);
+			} else {
+				activoDto.setConCargas(0);
+			}
 		}
 		
 		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña

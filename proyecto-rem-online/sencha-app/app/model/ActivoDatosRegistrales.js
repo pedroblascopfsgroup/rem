@@ -256,6 +256,8 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
 	    				} else {
 	    					return value;
 	    				}
+    				} else {
+    					return value;
     				}
     			}
     		},

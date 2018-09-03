@@ -1558,7 +1558,10 @@ public class ActivoController extends ParadiseJsonController {
 			response.setHeader("Pragma", "public");
 			response.setDateHeader("Expires", 0); // prevents caching at the
 													// proxy
-			response.setContentType(fileItem.getContentType());
+			if(!Checks.esNulo(fileItem.getContentType())) {
+				response.setContentType(fileItem.getContentType());
+			}
+			
 			// Write
 			FileUtils.copy(fileItem.getInputStream(), salida);
 			salida.flush();

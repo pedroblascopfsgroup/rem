@@ -571,8 +571,8 @@ public class AgrupacionAdapter {
 				//Comprobamos no mezclar activos canarios y peninsulares
 				distintosTiposImpuesto(agrupacion, activo);
 				
-				//Comprobamos no
-			//	comprobarDistintoPropietario(agrupacion, activo);
+				//Comprobamos que los activos son del mismo propietario
+				comprobarDistintoPropietario(agrupacion, activo);
 				
 				List<Oferta> ofertasAgrupacion = agrupacion.getOfertas();
 				if (tieneOfertasNoAnuladas(ofertasAgrupacion)) {
@@ -2338,16 +2338,16 @@ public class AgrupacionAdapter {
 	
 	private void comprobarDistintoPropietario(ActivoAgrupacion agrupacion, Activo activo) {
 
-		Activo actAgr;
+		Activo actAgr = null;
 		
 		if (!Checks.esNulo(agrupacion.getActivoPrincipal())) {
 			actAgr = agrupacion.getActivoPrincipal();
-		}else {
+		}else if(!Checks.esNulo(agrupacion.getActivos()) && !Checks.estaVacio(agrupacion.getActivos())){
 			actAgr = agrupacion.getActivos().get(0).getActivo();
 		}
 		
 			
-		if (actAgr.getPropietarioPrincipal().getId() != activo.getPropietarioPrincipal().getId()) {
+		if (!Checks.esNulo(actAgr) && actAgr.getPropietarioPrincipal().getId() != activo.getPropietarioPrincipal().getId()) {
 			throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_DISTINTO_PROPIETARIO);
 		}
 		

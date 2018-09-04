@@ -334,14 +334,18 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if(!Checks.estaVacio(listGastoPrinex)) {
 						for (GastoPrinex gastoPrinexList : listGastoPrinex) {
 				
-				if(!Checks.esNulo(gastoPrinexList.getPromocion()) && !Checks.esNulo(gastoPrinexList.getIdActivo())  && !Checks.esNulo(gastoPrinexList.getImporteGasto())) {
+				if(!Checks.esNulo(gastoPrinexList.getIdActivo())  && !Checks.esNulo(gastoPrinexList.getImporteGasto())) {
 					gastoTotal+=gastoPrinexList.getImporteGasto();
 				}
 						}
 			}
 
 			if (!Checks.esNulo(gasto.getGastoDetalleEconomico())) {
-				dto.setImporteTotal(gasto.getGastoDetalleEconomico().getImporteTotal()+gastoTotal);
+				if(!Checks.esNulo(gasto.getGastoDetalleEconomico().getImporteTotal())){
+					dto.setImporteTotal(gasto.getGastoDetalleEconomico().getImporteTotal()+gastoTotal);
+				}else{
+					dto.setImporteTotal(gastoTotal);
+				}
 			}
 
 			if (!Checks.esNulo(gasto.getGestoria())) {
@@ -685,7 +689,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					
 					for (GastoPrinex gastoPrinexList : listGastoPrinex) {
 						
-						if(!Checks.esNulo(gastoPrinexList.getPromocion()) && !Checks.esNulo(gastoPrinexList.getIdActivo())  && !Checks.esNulo(gastoPrinexList.getImporteGasto())) {
+						if(!Checks.esNulo(gastoPrinexList.getIdActivo())  && !Checks.esNulo(gastoPrinexList.getImporteGasto())) {
 							gastoTotal+=gastoPrinexList.getImporteGasto();
 						}
 					}
@@ -775,7 +779,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				GastoPrinex gastoPrinex = new GastoPrinex();
 				List<GastoPrinex> listGastoPrinex = new ArrayList<GastoPrinex>();
 				Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "idGasto",gasto.getId());
-				listGastoPrinex = genericDao.getList(GastoPrinex.class, filtro3);
+				Order order = new Order(OrderType.ASC, "id");
+				listGastoPrinex = genericDao.getListOrdered(GastoPrinex.class,order,filtro3);
 				if(!Checks.estaVacio(listGastoPrinex)) {
 				gastoPrinex = listGastoPrinex.get(0);
 				if(!Checks.esNulo(gastoPrinex)) {
@@ -822,7 +827,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				}
 				
 					for (GastoPrinex gastoPrinexList : listGastoPrinex) {
-						if(!Checks.esNulo(gastoPrinexList.getImporteGasto()) && !Checks.esNulo(gastoPrinexList.getPromocion()) && Checks.esNulo(gastoPrinexList.getIdActivo())) {
+						if(!Checks.esNulo(gastoPrinexList.getImporteGasto()) && Checks.esNulo(gastoPrinexList.getIdActivo())) {
 						importePromocion+=gastoPrinexList.getImporteGasto();
 						}
 					}
@@ -1408,7 +1413,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		// Calcular porcentaje equitativo.
 		Float numActivos = (float) gastosActivosList.size() - contador;
 		
-		Float porcentaje = (100f-porcentajePrinex) / numActivos;
+		Float porcentaje =(float)0;
+		if(numActivos > 0) {
+			porcentaje = (100f-porcentajePrinex) / numActivos;
+		}		
 		
 		//truncamos a dos decimales
 		porcentaje = Float.valueOf(df.format(porcentaje).replace(',', '.'));

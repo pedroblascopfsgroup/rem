@@ -343,22 +343,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@BusinessOperation(overrides = "trabajoManager.saveFichaTrabajo")
 	@Transactional
 	public boolean saveFichaTrabajo(DtoFichaTrabajo dtoTrabajo, Long id) {
-
 		Trabajo trabajo = trabajoDao.get(id);
-		
 		List<ActivoTramite> activoTramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
 		ActivoTramite activoTramite = activoTramites.get(0);
 		TareaActivo tareaActivo = tareaActivoApi.getUltimaTareaActivoByIdTramite(activoTramite.getId());
-		
-		if(!Checks.esNulo(tareaActivo.getTareaExterna()) && !Checks.esNulo(tareaActivo.getTareaExterna().getTareaProcedimiento()) &&
-				!Checks.esNulo(dtoTrabajo.getIdResponsableTrabajo()) &&
-				(CODIGO_T004_AUTORIZACION_BANKIA.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) || 
-				(CODIGO_T004_AUTORIZACION_PROPIETARIO.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo()) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(trabajo.getActivo().getCartera().getCodigo()))) {
-			throw new JsonViewerException("No se permite cambiar de responsable para la tarea Autorizacion del propietario");
-		}
 
 		try {
-
 			// Si estado trabajo = EMITIDO PENDIENTE PAGO y se ha rellenado
 			// "fecha pago", estado trabajo = PAGADO
 			// Este cambio de estado se produce en la tarea "Cierre Económico"
@@ -371,7 +361,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 
 			dtoToTrabajo(dtoTrabajo, trabajo);
-			editarTramites(trabajo);
+			if(!Checks.esNulo(tareaActivo.getTareaExterna()) && !Checks.esNulo(tareaActivo.getTareaExterna().getTareaProcedimiento()) &&
+					!Checks.esNulo(dtoTrabajo.getIdResponsableTrabajo()) &&
+					(CODIGO_T004_AUTORIZACION_BANKIA.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) || 
+					(CODIGO_T004_AUTORIZACION_PROPIETARIO.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo()) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(trabajo.getActivo().getCartera().getCodigo()))){
+				// Si las condiciones no se cumplen evitar cambiar el responsable al trámite lanzando excepción.
+				throw new JsonViewerException("No se permite cambiar de responsable para la tarea Autorizacion del propietario");
+			} else if(!Checks.esNulo(dtoTrabajo.getIdResponsableTrabajo())) {
+				// Si las condiciones si se cumplen, comprobar de igual forma si se ha cambiado específicamente el responsable del trabajo.
+				editarTramites(trabajo);
+			}
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());

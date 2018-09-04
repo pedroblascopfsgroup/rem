@@ -221,41 +221,7 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
 
     END;
     
-    --Procedure que inserta en HLP_HISTORICO_LANZA_PERIODICO, sin comitear.
-    PROCEDURE HLP_HISTORICO_LANZA_PERIODICO (
-      HLP_CODIGO_REG                  IN VARCHAR2,
-      HLP_RESULTADO_EJEC              IN NUMBER,
-      HLP_REGISTRO_EJEC               IN VARCHAR2
-    ) IS
-
-    BEGIN
-
-    V_MSQL := '
-      INSERT INTO '||V_ESQUEMA||'.HLP_HISTORICO_LANZA_PERIODICO (
-        HLP_SP_CARGA,
-        HLP_FECHA_EJEC,
-        HLP_RESULTADO_EJEC,
-        HLP_CODIGO_REG,
-        HLP_REGISTRO_EJEC
-      )
-      SELECT
-        ''SP_EXT_PR_ACT_RES_VENTA'',
-        SYSDATE,
-        '||HLP_RESULTADO_EJEC||',
-        '''||HLP_CODIGO_REG||''',
-        '''||HLP_REGISTRO_EJEC||'''
-      FROM DUAL
-      ';
-      EXECUTE IMMEDIATE V_MSQL;
-      
-
-      IF SQL%ROWCOUNT = 1 THEN
-         DBMS_OUTPUT.PUT_LINE('[INFO] HLP_HISTORICO_LANZA_PERIODICO | Registro insertado correctamente, no comiteado.');
-      ELSE
-         DBMS_OUTPUT.PUT_LINE('[ERROR] HLP_HISTORICO_LANZA_PERIODICO | No se ha podido insertar el registro correctamente.');
-      END IF;
-
-    END;
+   
 
     --Procedure que inserta en HLP_HISTORICO_LANZA_PERIODICO, sin comitear.
     PROCEDURE HLP_HISTORICO_LANZA_PERIODICO (

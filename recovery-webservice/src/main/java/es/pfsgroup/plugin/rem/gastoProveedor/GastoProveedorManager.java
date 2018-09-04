@@ -715,25 +715,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 							if(!Checks.esNulo(gastoProveedorActivos)) {
 								gastoProveedorActivos.setParticipacionGasto(participacionGasto);
 								genericDao.update(GastoProveedorActivo.class, gastoProveedorActivos);
-							}else {
-								Activo activoGasto = new Activo();
-								activoGasto = ActivoDao.getActivoById(gastoPrinexListActivos.getIdActivo());
-								List<ActivoCatastro> activoCatastro = new ArrayList<ActivoCatastro>();
-								Filter filtro7 = genericDao.createFilter(FilterType.EQUALS, "activo.id",activoGasto.getId());
-								activoCatastro = genericDao.getList(ActivoCatastro.class, filtro7);
-								GastoProveedor gastoProveedor = new GastoProveedor();
-								Filter filtro6 = genericDao.createFilter(FilterType.EQUALS, "id",idGastoLong);
-								gastoProveedor = genericDao.get(GastoProveedor.class, filtro6);
-								if(!Checks.esNulo(activoGasto)) {
-									gastoProveedorActivos.setActivo(activoGasto);
-									gastoProveedorActivos.setGastoProveedor(gastoProveedor);
-									gastoProveedorActivos.setParticipacionGasto(participacionGasto);
-										if(!Checks.estaVacio(activoCatastro) && !Checks.esNulo(activoCatastro.get(0).getRefCatastral())) {
-											gastoProveedorActivos.setReferenciaCatastral(activoCatastro.get(0).getRefCatastral());
-										}
-									genericDao.save(GastoProveedorActivo.class, gastoProveedorActivos);
-									
-								}
 							}
 						}
 					}
@@ -825,6 +806,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				if(!Checks.esNulo(gastoPrinex.getDiario1Tipo())) {
 					dto.setImpuestoIndirectoTipoImpositivo(gastoPrinex.getDiario1Tipo());
 				}
+				if(!Checks.esNulo(gastoPrinex.getDiario1Cuota())) {
+					dto.setImpuestoIndirectoCuota(gastoPrinex.getDiario1Cuota());
+				}
 				
 					for (GastoPrinex gastoPrinexList : listGastoPrinex) {
 						if(!Checks.esNulo(gastoPrinexList.getImporteGasto()) && Checks.esNulo(gastoPrinexList.getIdActivo())) {
@@ -861,7 +845,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				
 				}
 				}else {
-					dto.setImpuestoIndirectoTipoImpositivo(detalleGasto.getImpuestoIndirectoTipoImpositivo());
+					if(!Checks.esNulo(detalleGasto.getImpuestoIndirectoTipoImpositivo())) {
+						dto.setImpuestoIndirectoTipoImpositivo(detalleGasto.getImpuestoIndirectoTipoImpositivo());
+					}
+					if(!Checks.esNulo(detalleGasto.getImpuestoIndirectoCuota())) {
+						dto.setImpuestoIndirectoCuota(detalleGasto.getImpuestoIndirectoCuota());
+					}
 				}
 				
 			}
@@ -889,9 +878,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				}
 
 			}
-
-			dto.setImpuestoIndirectoCuota(detalleGasto.getImpuestoIndirectoCuota());
-
 			dto.setIrpfTipoImpositivo(detalleGasto.getIrpfTipoImpositivo());
 			dto.setIrpfCuota(detalleGasto.getIrpfCuota());
 			// TIPO IMPUESTO DIRECTO

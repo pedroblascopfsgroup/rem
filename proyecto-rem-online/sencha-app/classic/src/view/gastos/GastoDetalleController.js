@@ -258,8 +258,12 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
      */
 	onClickBotonRefrescar: function (btn) {
 		var me = this;
+		tabPanel = me.getView().down("tabpanel");
+		var activeTab = tabPanel.getActiveTab();
+		if(activeTab.xtype = "activosafectadosgasto"){
+			me.updateGastoByPrinexLBK();
+		}
 		me.refrescarGasto(true);
-
 	},
 	
 	refrescarGasto: function(refrescarPestañaActiva) {	

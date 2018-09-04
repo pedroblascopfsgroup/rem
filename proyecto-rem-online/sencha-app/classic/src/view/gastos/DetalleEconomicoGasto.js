@@ -215,7 +215,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 														}
 													],
 													listeners:{
-														afterrender:'isLiberbankAndGastosPrinex'
+														beforerender:'isLiberbankAndGastosPrinex'
 													}
 											},
 											{   

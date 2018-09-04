@@ -604,22 +604,27 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		//HREOS-2799
 		//Activos de Cajamar, debe tener en Reserva - tipo de Arras por defecto: Confirmatorias
 		Oferta oferta = expedienteComercial.getOferta();
-		
-		if(!Checks.esNulo(oferta.getActivoPrincipal())
-				&& !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
-				&& DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
+		DDTiposArras tipoArras = null;
+		if(!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())){
+			 
+						if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+								tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.CONFIRMATORIAS);					
+			 			}
+					
+					
+						if(DDCartera.CODIGO_CARTERA_ZEUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+					            tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.PENITENCIALES);
+						}
 			
-			DDTiposArras tipoArrasConfirmatorias = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.CONFIRMATORIAS);
-			if(Checks.esNulo(expedienteComercial.getReserva())){
-				Reserva reservaExpediente = expedienteComercialApi.createReservaExpediente(expedienteComercial);
-				reservaExpediente.setTipoArras(tipoArrasConfirmatorias);
-				
-				genericDao.save(Reserva.class, reservaExpediente);
-
-			} else {
-				expedienteComercial.getReserva().setTipoArras(tipoArrasConfirmatorias);				
-			}
-		}
+						if(Checks.esNulo(expedienteComercial.getReserva())){
+								Reserva reservaExpediente = expedienteComercialApi.createReservaExpediente(expedienteComercial);
+								reservaExpediente.setTipoArras(tipoArras);
+								genericDao.save(Reserva.class, reservaExpediente);
+						} else {
+								expedienteComercial.getReserva().setTipoArras(tipoArras);				
+							}
+					}
+		
 		
 		return expedienteComercial;
 	}
@@ -662,18 +667,29 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		nuevoCondicionante.setAuditoria(Auditoria.getNewInstance());
 		nuevoCondicionante.setExpediente(nuevoExpediente);
 		
-		// HREOS-2799
-		//Activos de Cajamar, debe haber reserva necesaria con un importe fijo de 1.000 euros y plazo 5 dias
-		//Activos de Cajamar, deben copiar las condiciones informadas del activo en las condiciones al comprador
-		if(!Checks.esNulo(oferta.getActivoPrincipal())
-				&& !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
-				&& DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
-			nuevoCondicionante.setSolicitaReserva(1);
-			DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
-			nuevoCondicionante.setTipoCalculoReserva(tipoCalculo);
-			nuevoCondicionante.setPorcentajeReserva(new Double(3));
-			nuevoCondicionante.setImporteReserva(oferta.getImporteOferta() * (new Double(3) / 100));
-			nuevoCondicionante.setPlazoFirmaReserva(5);
+		
+		if(!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())) {
+						// HREOS-2799
+						//Activos de Cajamar, debe haber reserva necesaria con un importe fijo de 1.000 euros y plazo 5 dias
+						//Activos de Cajamar, deben copiar las condiciones informadas del activo en las condiciones al comprador
+						if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+							nuevoCondicionante.setSolicitaReserva(1);
+							DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
+							nuevoCondicionante.setTipoCalculoReserva(tipoCalculo);
+							nuevoCondicionante.setPorcentajeReserva(new Double(3));
+							nuevoCondicionante.setImporteReserva(oferta.getImporteOferta() * (new Double(3) / 100));
+							nuevoCondicionante.setPlazoFirmaReserva(5);
+						}
+						// HREOS-4455
+						//Activos de ZEUS, debe haber reserva necesaria con un importe fijo del 5%
+						if(DDCartera.CODIGO_CARTERA_ZEUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+							nuevoCondicionante.setSolicitaReserva(1);
+							DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
+							nuevoCondicionante.setTipoCalculoReserva(tipoCalculo);
+							nuevoCondicionante.setPorcentajeReserva(new Double(5));
+							nuevoCondicionante.setImporteReserva(oferta.getImporteOferta() * (new Double(5) / 100));	
+						}
+
 
 			//Obtiene las condiciones del activo con la misma logica que se aplica para calcularlas
 			// y mostrarlas en pantalla, para copiarlas en las condiciones al comprador

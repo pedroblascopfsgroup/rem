@@ -1322,9 +1322,13 @@ public class AgrupacionAdapter {
 		if (!Checks.estaVacio(agr.getActivos()) && !Checks.esNulo(agr.getActivos().get(0))
 				&& !Checks.esNulo(agr.getActivos().get(0).getActivo())
 				&& !Checks.esNulo(agr.getActivos().get(0).getActivo().getCartera())
-				&& !Checks.esNulo(agr.getActivos().get(0).getActivo().getCartera().getCodigo()) && agr.getActivos()
-						.get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
-			if (Checks.esNulo(loteComercial.getUsuarioGestorComercial())) {
+				&& !Checks.esNulo(agr.getActivos().get(0).getActivo().getCartera().getCodigo()) 
+				&& (agr.getActivos().get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)
+						|| agr.getActivos().get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK))) {
+			if (Checks.esNulo(loteComercial.getUsuarioGestorComercial()) && 
+					!agr.getActivos().get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
+				return false;
+			} else if(Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice())) {
 				return false;
 			}
 		} else {

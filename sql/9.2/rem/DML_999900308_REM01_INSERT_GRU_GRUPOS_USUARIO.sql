@@ -44,7 +44,9 @@ DECLARE
       T_FUNCION('usugrurba', 'lmarcos'),
       T_FUNCION('usugrubac', 'lmarcos'),
       T_FUNCION('usugrurba', 'prodriguezg'),
-      T_FUNCION('usugrubac', 'prodriguezg')
+      T_FUNCION('usugrubac', 'prodriguezg'),
+      T_FUNCION('SBACKOFFICEINMLIBER', 'imartin'),
+      T_FUNCION('SBACKOFFICEINMLIBER', 'lclaret')
     ); 
     V_TMP_FUNCION T_FUNCION;
     
